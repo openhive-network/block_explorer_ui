@@ -34,6 +34,10 @@
  .username {
      margin: 20px 0 0 20px;
      font-size: 20px;
+<<<<<<< HEAD
+=======
+     text-transform: capitalize;
+>>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
  }
 
  .voteWeightContainer {

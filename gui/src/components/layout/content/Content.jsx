@@ -3,8 +3,12 @@ import MainPage from "../../../pages/mainPage/MainPage";
 import BlockPage from "../../../pages/blockPage/BlockPage";
 import UserPage from "../../../pages/userPage/UserPage";
 import TransactionPage from "../../../pages/transactionPage/TransactionPage";
+<<<<<<< HEAD
 import WitnessesPage from "../../../pages/witnessPage/WitnessesPage";
 import CommentsPage from "../../../pages/commentsPage/CommentsPage";
+=======
+import WitnessesPage from "../../../pages/WitnessesPage";
+>>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
 import { Routes, Route } from "react-router-dom";
 import ErrorPage from "../../../pages/ErrorPage";
 import { UserProfileContext } from "../../../contexts/userProfileContext";
@@ -48,12 +52,17 @@ export default function Content() {
       <Routes>
         <Route exact path="/" element={<MainPage />} />
         <Route
+<<<<<<< HEAD
           path={blockNumber && `block/${blockNumber}`}
+=======
+          path={`block/${blockNumber}`}
+>>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
           element={
             <BlockPage setBlockNumber={setBlockNumber} block_nr={blockNumber} />
           }
         />
         <Route
+<<<<<<< HEAD
           path={userProfile && `user/${userProfile}`}
           element={<UserPage user={userProfile} />}
         />
@@ -62,6 +71,15 @@ export default function Content() {
           element={<TransactionPage transaction={transactionId} />}
         />
         <Route path="/comments" element={<CommentsPage />} />
+=======
+          path={`user/${userProfile}`}
+          element={<UserPage user={userProfile} />}
+        />
+        <Route
+          path={`transaction/${transactionId}`}
+          element={<TransactionPage transaction={transactionId} />}
+        />
+>>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
         <Route path="witnesses" element={<WitnessesPage />} />
         <Route path="error" element={<ErrorPage />} />
       </Routes>

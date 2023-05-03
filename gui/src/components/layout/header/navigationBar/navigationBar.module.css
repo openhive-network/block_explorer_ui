@@ -1,6 +1,10 @@
 .navbar {
     width: 100vw;
+<<<<<<< HEAD
     padding: 10px 50px;
+=======
+    padding: 0 50px 0px 50px;
+>>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
 }
 
 .navbarBrand {
@@ -14,13 +18,18 @@
     height: 50px;
 }
 
+<<<<<<< HEAD
 .navLink,
 .linkWitnesses {
+=======
+.navLink {
+>>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
     margin: 10px;
     color: #fff;
     font-size: 20px;
 }
 
+<<<<<<< HEAD
 .navLink:hover,
 .linkWitnesses:hover {
     color: rgb(238, 66, 66);
@@ -40,5 +49,10 @@
     .searchBox {
         width: 100%;
         margin: 0 20px 0 0;
+=======
+@media only screen and (max-width: 1200px) {
+    .navbar {
+        padding: 0 50px 20px 50px;
+>>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
     }
 }

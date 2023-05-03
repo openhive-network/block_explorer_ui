@@ -10,6 +10,7 @@ export default function UserInfoTable({ user_info }) {
     <div className={styles.userInfoContainer}>
       {keys?.map((key, index) => {
         const render_key = () => {
+<<<<<<< HEAD
           if (["recovery_account", "reset_account"].includes(key)) {
             return <Link to={`/user/${user_info[key]}`}>{user_info[key]}</Link>;
           }
@@ -19,6 +20,12 @@ export default function UserInfoTable({ user_info }) {
                 {user_info[key]}
               </a>
             );
+=======
+          if (
+            ["recovery_account", "reset_account", "owner", "url"].includes(key)
+          ) {
+            return <Link to={`/user/${user_info[key]}`}>{user_info[key]}</Link>;
+>>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
           } else return user_info[key];
         };
 

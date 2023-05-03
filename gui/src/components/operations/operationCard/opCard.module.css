@@ -9,6 +9,7 @@
 }
 
 .toast {
+<<<<<<< HEAD
     background-color: #2C3136;
     max-height: 500px;
     overflow: auto;
@@ -36,4 +37,7 @@
 .links {
     display: flex;
     flex-direction: column
+=======
+    background-color: #2C3136
+>>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
 }
