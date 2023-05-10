@@ -17,6 +17,7 @@ export const UserProfileContextProvider = ({ children }) => {
 
   const [opTypesLoading, setOpTypesLoading] = useState(false);
   const [userDataLoading, setUserDataLoading] = useState(false);
+  const [userAccountBalances, setUserAccountBalances] = useState({});
 
   const debouncePagination = useDebounce(pagination, 200);
 
@@ -105,6 +106,24 @@ export const UserProfileContextProvider = ({ children }) => {
     return () => set_resource_credits({});
   }, [userProfile]);
 
+  useEffect(() => {
+    axios({
+      method: "post",
+      url: `http://192.168.4.250:3000/rpc/get_btracker_account_balance`,
+      headers: { "Content-Type": "application/json" },
+      data: {
+        _account: userProfile,
+      },
+    }).then((res) => setUserAccountBalances(res?.data));
+  }, [userProfile]);
+
+  const userInfo = {
+    ...user_info,
+    vesting_shares: `${userAccountBalances?.vesting_shares / 1000000} VESTS`,
+    balance: `${userAccountBalances?.hive_balance / 1000} HIVE`,
+    hbd_balance: `${userAccountBalances?.hbd_balance / 1000} HBD`,
+  };
+
   return (
     <UserProfileContext.Provider
       value={{
@@ -118,7 +137,7 @@ export const UserProfileContextProvider = ({ children }) => {
         set_acc_history_limit: set_acc_history_limit,
         acc_history_limit: acc_history_limit,
         set_op_filters: set_op_filters,
-        user_info: user_info,
+        user_info: userInfo,
         op_types: op_types,
         op_filters: op_filters,
         startDateState: startDateState,
