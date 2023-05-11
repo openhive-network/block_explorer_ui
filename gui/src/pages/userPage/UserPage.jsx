@@ -124,7 +124,7 @@ export default function User_Page({ user }) {
                 set_show_filters={set_show_filters}
               />
 
-              <Sticky innerZ={9999} enabled={true}>
+              <Sticky innerZ={2} enabled={true}>
                 <Row className={styles.stickyRow}>
                   <Col className="d-flex justify-content-between align-items-center">
                     <Box>
