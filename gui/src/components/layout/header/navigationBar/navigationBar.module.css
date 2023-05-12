@@ -38,6 +38,7 @@
 .searchBox {
     width: 400px;
     margin: 0 20px;
+    z-index: 999;
 }
 
 

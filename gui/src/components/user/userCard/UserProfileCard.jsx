@@ -36,6 +36,7 @@ export default function UserProfileCard({ user }) {
 <<<<<<< HEAD
   const user_vesting_shares =
     Number(user_info?.vesting_shares?.split("VESTS")[0]) * 1000000;
+<<<<<<< HEAD
   
     return (
 =======
@@ -50,6 +51,10 @@ export default function UserProfileCard({ user }) {
 
   return (
 >>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
+=======
+
+  return (
+>>>>>>> 909516a62bbebba2f1ac013c119e460f3b889cb2
     <div className={styles.userCardContainer}>
       <div className={styles.nameContainer}>
         <div className={styles.userPictureContainer}>
