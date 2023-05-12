@@ -13,11 +13,7 @@ export default function Operation({ value, type, full_trx }) {
   const { vesting_fund, vesting_shares } = useContext(HeadBlockContext);
   const keys = Object.keys(type.value);
   const [showJson, setShowJson] = useState(false);
-<<<<<<< HEAD
   const [showDetails, setShowDetails] = useState(true);
-=======
-  const [showDetails, setShowDetails] = useState(false);
->>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
   const [is_page_trx, set_is_page_trx] = useState(null);
   const trx_page = document.location.href.includes("transaction");
 
@@ -54,7 +50,6 @@ export default function Operation({ value, type, full_trx }) {
     return (
       <>
         {trx_page === false && (
-<<<<<<< HEAD
           <>
             <span>
               {!full_trx.trx_id && (
@@ -86,35 +81,6 @@ export default function Operation({ value, type, full_trx }) {
             </div>
           </>
         )}
-=======
-          <span>
-            <button
-              onClick={() => setShowJson(!showJson)}
-              className={styles.jsonButton}
-            >
-              Show JSON
-            </button>
-            <button
-              onClick={() => setShowDetails(!showDetails)}
-              className={styles.detailsButton}
-            >
-              Show details
-            </button>
-          </span>
-        )}
-
-        <div
-          style={{ marginTop: "20px", textAlign: "left" }}
-          hidden={is_page_trx === false ? false : !showJson}
-        >
-          <pre style={{ color: "#3aff33" }}>
-            {JSON.stringify(full_trx, null, 2)}{" "}
-          </pre>
-        </div>
-        <div hidden={is_page_trx === false ? false : !showDetails}>
-          {prettyViewCard()}
-        </div>
->>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
       </>
     );
   }
@@ -1410,9 +1376,6 @@ export default function Operation({ value, type, full_trx }) {
         </div>
       );
     default:
-<<<<<<< HEAD
       return null;
-=======
->>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
   }
 }

@@ -34,32 +34,17 @@
 .authDataContainer {
     background: #18003fef;
     border-radius: 10px;
-<<<<<<< HEAD
     padding: 20px;
-=======
->>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
     margin-top: 20px;
 }
 
 
 .authData {
     overflow: auto;
-<<<<<<< HEAD
     padding: 15px 0;
     color: #d8fd50;
 }
 
-=======
-    padding: 10px;
-    color: #d8fd50;
-}
-
-.authDataContainerMemo {
-    background: #18003fef;
-    border-radius: 10px;
-    margin-top: 20px;
-}
->>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
 
 .tresholdContainer {
     text-align: left;

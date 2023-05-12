@@ -67,17 +67,9 @@ export const modify_obj_hbd = (key, head_block) => {
   return Number(head_block[key]?.amount).toFixed(3);
 };
 export const modify_obj_number = (key, head_block) => {
-<<<<<<< HEAD
   return head_block[key] !== 0
     ? tidyNumber(Number(head_block[key]))
     : Number(head_block[key]);
-=======
-  const result =
-    head_block[key] !== 0
-      ? tidyNumber(Number(head_block[key]))
-      : Number(head_block[key]);
-  return result;
->>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
 };
 export const modify_obj_date = (key, head_block) => {
   return head_block[key]?.split("T").join(" ");
@@ -115,12 +107,8 @@ export const votePower = (user_info) => {
   var secondsago =
     (new Date() - new Date(user_info?.last_vote_time + "Z")) / 1000;
   var vpow = user_info?.voting_power + (10000 * secondsago) / 432000;
-<<<<<<< HEAD
   return Math.min(vpow / 10000000).toFixed(2);
   // return Math.min(vpow / 100, 100).toFixed(2);
-=======
-  return Math.min(vpow / 100, 100).toFixed(2);
->>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
 };
 
 export const calcResourseCredits = (resource_credits) => {
@@ -143,116 +131,56 @@ export const timeDelta = (timestamp, moment) => {
   return moment.duration(diff, "minutes").humanize(true);
 };
 
-<<<<<<< HEAD
 export const resourceBudgetComments = (resource_credits) => {
   if (resource_credits?.rc_manabar !== undefined) {
     var cost = 1175937456;
-=======
-export const resourceBudgetComments = (resource_credits, costs, tidyNumber) => {
-  if (resource_credits?.rc_manabar !== undefined) {
-    var cost = 1175937456;
-    if (costs !== null) {
-      cost = costs.comment;
-    }
->>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
     var available = resource_credits?.rc_manabar?.current_mana / cost;
     if (available >= 1000000) {
       return "1M+";
     } else {
-<<<<<<< HEAD
       return available.toFixed(0);
-=======
-      return tidyNumber(available.toFixed(0));
->>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
     }
   } else {
     return null;
   }
 };
 
-<<<<<<< HEAD
 export const resourceBudgetVotes = (resource_credits) => {
   if (resource_credits?.rc_manabar !== undefined) {
     var cost = 109514642;
-=======
-export const resourceBudgetVotes = (resource_credits, costs, tidyNumber) => {
-  if (resource_credits?.rc_manabar !== undefined) {
-    var cost = 109514642;
-    if (costs !== null) {
-      cost = costs.vote;
-    }
->>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
     var available = resource_credits?.rc_manabar?.current_mana / cost;
     if (available >= 1000000) {
       return "1M+";
     } else {
-<<<<<<< HEAD
       return available.toFixed(0);
-=======
-      return tidyNumber(available.toFixed(0));
->>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
     }
   } else {
     return null;
   }
 };
 
-<<<<<<< HEAD
 export const resourceBudgetTransfers = (resource_credits) => {
   if (resource_credits?.rc_manabar !== undefined) {
     var cost = 487237759;
-=======
-export const resourceBudgetTransfers = (
-  resource_credits,
-  costs,
-  tidyNumber
-) => {
-  if (resource_credits?.rc_manabar !== undefined) {
-    var cost = 487237759;
-    if (costs !== null) {
-      cost = costs.transfer;
-    }
->>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
     var available = resource_credits?.rc_manabar?.current_mana / cost;
     if (available >= 1000000) {
       return "1M+";
     } else {
-<<<<<<< HEAD
       return available.toFixed(0);
-=======
-      return tidyNumber(available.toFixed(0));
->>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
     }
   } else {
     return null;
   }
 };
 
-<<<<<<< HEAD
 export const resourceBudgetClaimAccounts = (resource_credits) => {
   if (resource_credits?.rc_manabar !== undefined) {
     var cost = 8541343515163;
-=======
-export const resourceBudgetClaimAccounts = (
-  resource_credits,
-  costs,
-  tidyNumber
-) => {
-  if (resource_credits?.rc_manabar !== undefined) {
-    var cost = 8541343515163;
-    if (costs !== null) {
-      cost = costs.claim_account;
-    }
->>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
     var available = resource_credits?.rc_manabar?.current_mana / cost;
     if (available >= 1000000) {
       return "1M+";
     } else {
-<<<<<<< HEAD
       return available.toFixed(0);
-=======
-      return tidyNumber(available.toFixed(0));
->>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
     }
   } else {
     return null;
@@ -260,11 +188,7 @@ export const resourceBudgetClaimAccounts = (
 };
 
 export const calculateReputation = (reputation) => {
-<<<<<<< HEAD
   if (reputation === null || reputation === 0) return reputation;
-=======
-  if (reputation == null) return reputation;
->>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
   let neg = reputation < 0;
   let rep = String(reputation);
   rep = neg ? rep.substring(1) : rep;

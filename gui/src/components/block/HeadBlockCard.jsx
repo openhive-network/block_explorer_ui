@@ -111,11 +111,6 @@ export default function HeadBlockCard({ profile_picture }) {
                 "hbd_stop_percent",
                 "hbd_start_percent",
                 "last_irreversible_block_num",
-<<<<<<< HEAD
-=======
-                "hbd_interest_rate",
-                "hbd_print_rate",
->>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
                 "required_actions_partition_percent",
                 "content_reward_percent",
                 "vesting_reward_percent",
@@ -139,7 +134,6 @@ export default function HeadBlockCard({ profile_picture }) {
                 </div>
               );
             }
-<<<<<<< HEAD
             if (["hbd_interest_rate", "hbd_print_rate"].includes(key)) {
               return (
                 <div key={i}>
@@ -150,8 +144,6 @@ export default function HeadBlockCard({ profile_picture }) {
                 </div>
               );
             }
-=======
->>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
             if (["init_hbd_supply"].includes(key)) {
               return (
                 <div key={i}>

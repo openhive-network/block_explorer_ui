@@ -5,7 +5,6 @@ export const WitnessContext = createContext();
 
 export const WitnessContextProvider = ({ children }) => {
   const [witnessData, setWitnessData] = useState(null);
-<<<<<<< HEAD
   const [witnessTableOrderBy, setWitnessTableOrderBy] = useState("rank");
   const [witnessOrderDescending, witnessSetOrderDescending] = useState(false);
   const [witnessLimit, setWitnessLimit] = useState(0);
@@ -54,25 +53,6 @@ export const WitnessContextProvider = ({ children }) => {
         setWitnessLimit: setWitnessLimit,
         witnessLimit: witnessLimit,
       }}
-=======
-
-  // Get witnesses data
-  useEffect(() => {
-    axios({
-      method: "post",
-      url: "https://api.hive.blog",
-      data: {
-        jsonrpc: "2.0",
-        method: "condenser_api.get_witnesses_by_vote",
-        params: [null, 100],
-        id: 1,
-      },
-    }).then((res) => setWitnessData(res?.data?.result));
-  }, []);
-  return (
-    <WitnessContext.Provider
-      value={{ witnessData: witnessData, setWitnessData: setWitnessData }}
->>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
     >
       {children}
     </WitnessContext.Provider>

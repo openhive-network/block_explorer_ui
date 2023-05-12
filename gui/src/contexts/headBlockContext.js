@@ -3,23 +3,14 @@ import axios from "axios";
 
 export const HeadBlockContext = createContext();
 export const HeadBlockContextProvider = ({ children }) => {
-<<<<<<< HEAD
   const [head_block_data, setHead_block_data] = useState(null);
   const [head_block, setHead_block] = useState("");
-=======
-  const [head_block, setHead_block] = useState("");
-  const [head_block_data, setHead_block_data] = useState([]);
->>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
   const [feed_price, set_feed_price] = useState("");
   const [reward_fund, set_reward_fund] = useState("");
 
   // 192.168.5.118 -steem7
   // 192.168.4.250 -steem10
   // Get reward funds
-<<<<<<< HEAD
-=======
-
->>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
   useEffect(() => {
     axios({
       method: "post",
@@ -62,20 +53,12 @@ export const HeadBlockContextProvider = ({ children }) => {
   const vesting_shares = Number(head_block?.total_vesting_shares?.amount);
 
   //Get head block data
-<<<<<<< HEAD
 
   useEffect(() => {
     if (current_head_block) {
       axios({
         method: "post",
         url: `http://192.168.4.250:3000/rpc/get_ops_by_block`,
-=======
-  useEffect(() => {
-    if (head_block !== "") {
-      axios({
-        method: "post",
-        url: "http://192.168.5.126:3002/rpc/get_ops_by_block",
->>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
         headers: { "Content-Type": "application/json" },
         data: {
           _block_num: current_head_block,
@@ -83,12 +66,8 @@ export const HeadBlockContextProvider = ({ children }) => {
         },
       }).then((res) => setHead_block_data(res?.data.reverse()));
     }
-<<<<<<< HEAD
     // return () => setHead_block_data(null);
   }, [current_head_block]);
-=======
-  }, [head_block, current_head_block]);
->>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
 
   return (
     <HeadBlockContext.Provider
@@ -99,12 +78,9 @@ export const HeadBlockContextProvider = ({ children }) => {
         vesting_shares: vesting_shares,
         head_block: head_block,
         head_block_data: head_block_data,
-<<<<<<< HEAD
         setHead_block: setHead_block,
         set_feed_price: set_feed_price,
         set_reward_fund: set_reward_fund,
-=======
->>>>>>> 7efaf0620017e63760595dfddc85e167fc663d3c
       }}
     >
       {children}
