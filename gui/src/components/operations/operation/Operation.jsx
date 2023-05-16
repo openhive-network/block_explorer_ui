@@ -25,6 +25,13 @@ export default function Operation({ value, type, full_trx }) {
     }
   }, [trx_page]);
 
+  const renderJsonValues = (keyName) => {
+    if (keyName.includes("json")) {
+      return JSON.stringify(JSON.parse(type.value[keyName]), null, 2);
+    }
+    return JSON.stringify(type.value[keyName]);
+  };
+
   function prettyViewCard() {
     return (
       <Row className="d-flex">
@@ -35,7 +42,9 @@ export default function Operation({ value, type, full_trx }) {
               <Card.Body className={styles.prettyCardBody}>
                 <Row>
                   <Col xs={6}>{key}</Col>
-                  <Col xs={6}>{JSON.stringify(type.value[key])}</Col>
+                  <Col xs={6}>
+                    <pre>{renderJsonValues(key)}</pre>
+                  </Col>
                 </Row>
               </Card.Body>
             </Card>
