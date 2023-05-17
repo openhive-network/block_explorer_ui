@@ -107,14 +107,17 @@ export const UserProfileContextProvider = ({ children }) => {
   }, [userProfile]);
 
   useEffect(() => {
-    axios({
-      method: "post",
-      url: `http://192.168.4.250:3000/rpc/get_btracker_account_balance`,
-      headers: { "Content-Type": "application/json" },
-      data: {
-        _account: userProfile,
-      },
-    }).then((res) => setUserAccountBalances(res?.data));
+    if (userProfile) {
+      axios({
+        method: "post",
+        url: `http://192.168.4.250:3000/rpc/get_btracker_account_balance`,
+        headers: { "Content-Type": "application/json" },
+        data: {
+          _account: userProfile,
+        },
+      }).then((res) => setUserAccountBalances(res?.data));
+    }
+    return () => setUserAccountBalances({});
   }, [userProfile]);
 
   const userInfo = {
