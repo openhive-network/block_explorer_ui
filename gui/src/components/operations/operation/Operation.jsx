@@ -27,9 +27,14 @@ export default function Operation({ value, type, full_trx }) {
 
   const renderJsonValues = (keyName) => {
     if (keyName.includes("json")) {
-      return JSON.stringify(JSON.parse(type.value[keyName]), null, 2);
+      if (type.value[keyName].length !== 0 || type.value[keyName]) {
+        return JSON.stringify(JSON.parse(type.value[keyName]), null, 2);
+      } else {
+        return JSON.stringify(type.value[keyName]);
+      }
+    } else {
+      return JSON.stringify(type.value[keyName]);
     }
-    return JSON.stringify(type.value[keyName]);
   };
 
   function prettyViewCard() {
