@@ -94,7 +94,7 @@ export default function DataTable() {
           _witness: currentWitness.witness,
           _limit: 100,
           _offset: votersPagination,
-          _order_by: orderBy, //orderBy
+          _order_by: orderBy,
           _order_is: orderDescending ? "desc" : "asc",
         },
       }).then((res) => setWitnessVotersList(res.data));

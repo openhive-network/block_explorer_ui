@@ -116,13 +116,22 @@ export default function VotersListTable({
               <tbody>
                 {witnessVotersList?.map((voter) => (
                   <tr
-                    key={voter.account}
+                    key={voter?.account}
                     style={{ fontSize: "16px", fontWeight: "light" }}
                   >
                     <td>{linkToUserProfile(voter.account)}</td>
-                    <td>{voter.hive_power.toFixed(2)}</td>
-                    <td>{voter.account_hive_power.toFixed(2)}</td>
-                    <td>{voter.proxied_hive_power.toFixed(2)}</td>
+                    <td>
+                      {voter?.hive_power?.toFixed(2) ??
+                        JSON.stringify(voter?.hive_power)}
+                    </td>
+                    <td>
+                      {voter?.account_hive_power?.toFixed(2) ??
+                        JSON.stringify(voter.account_hive_power)}
+                    </td>
+                    <td>
+                      {voter?.proxied_hive_power?.toFixed(2) ??
+                        JSON.stringify(voter?.proxied_hive_power)}
+                    </td>
                   </tr>
                 ))}
               </tbody>

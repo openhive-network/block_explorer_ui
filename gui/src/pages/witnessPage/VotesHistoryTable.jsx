@@ -63,14 +63,23 @@ export default function VotesHistoryTable({
               <tbody>
                 {witnessVotersList?.map((witness) => (
                   <tr
-                    key={witness.account}
+                    key={witness?.account}
                     style={{ fontSize: "16px", fontWeight: "light" }}
                   >
-                    <td>{dateString(witness.timestamp)}</td>
-                    <td>{linkToUserProfile(witness.account)}</td>
-                    <td>{witness.hive_power.toFixed(2)}</td>
-                    <td>{witness.account_hive_power.toFixed(2)}</td>
-                    <td>{witness.proxied_hive_power.toFixed(2)}</td>
+                    <td>{dateString(witness?.timestamp)}</td>
+                    <td>{linkToUserProfile(witness?.account)}</td>
+                    <td>
+                      {witness?.hive_power?.toFixed(2) ??
+                        JSON.stringify(witness.hive_power)}
+                    </td>
+                    <td>
+                      {witness?.account_hive_power?.toFixed(2) ??
+                        JSON.stringify(witness.account_hive_power)}
+                    </td>
+                    <td>
+                      {witness?.proxied_hive_power?.toFixed(2) ??
+                        JSON.stringify(witness.proxied_hive_power)}
+                    </td>
                   </tr>
                 ))}
               </tbody>
