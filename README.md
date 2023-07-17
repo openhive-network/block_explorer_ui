@@ -1,58 +1,34 @@
-## About
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-haf block explorer is a web app for viewing information in transactions and operations of accounts and blocks, as well as block witness (creator) information.<br>Search can be performed by `_account`, `_block_num`, `_block_hash`, `_trx_hash`.
+## Getting Started
 
-API docs for **devs** can be found [here](https://gitlab.syncad.com/hive/haf_block_explorer/-/wikis/New-API-Calls)
+First, run the development server:
 
-## Requirements
-
-Node: `latest`<br>
-npm: `latest`
-
-## Setup
-
-To start using haf block explorer, first
-```
-./run.sh install-postgrest
-./run.sh install-plpython
-```
-then install gui dependancies
-```
-cd gui ; npm install ; cd ..
-```
-finally start server with:
-```
-./run.sh re-start
-```
-This will create required postgres schemas and roles.
-
-## Starting 
-
-After setup start postgREST server with:
-```
-./run.sh start <PORT>
-```
-`PORT` is optional, default is 3000.
-
-Run web app with:
-```
-cd gui ; npm start
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
 ```
 
-## Testing performance
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-haf block explorer has 10 performance/load test suites ready in `tests/performance/endpoints.jmx`.<br>To run tests you must have JMeter installed:
-```
-./run.sh install-jmeter
-```
-then run tests with:
-```
-./run.sh run-tests <THREAD_NUM> <LOOP_NUM> <DB_SIZE>
-```
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-E.g. this will run 20 threads (THREAD_NUM * SUITE_NUM) with 200 loops and with unique params for each request:
-```
-./run.sh run-tests 2 200 4000
-```
+This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-Read test result in Apache JMeter Dashboard, generated at `tests/performance/result/result_report/index,html`
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
