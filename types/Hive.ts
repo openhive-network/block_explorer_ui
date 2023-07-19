@@ -61,4 +61,4 @@ declare module Hive {
   }
 }
 
-export default Hive
+export default Hive;
