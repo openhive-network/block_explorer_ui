@@ -1,9 +1,9 @@
-import { ReactElement } from "react";
+import type { ReactNode } from 'react';
 import Footer from "./footer";
 import Navbar from "./navbar";
 
 interface LayoutProps {
-  children: ReactElement;
+  children: ReactNode;
 }
 
 export default function Layout ({children}: LayoutProps) {
