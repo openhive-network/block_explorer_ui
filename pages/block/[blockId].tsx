@@ -1,5 +1,9 @@
+import Layout from '@/components/layout';
+
 export default function Block () {
-    return <div>
-        Block
-    </div>
+  return (
+    <Layout>
+      <div>Block</div>
+    </Layout>
+  )
 }

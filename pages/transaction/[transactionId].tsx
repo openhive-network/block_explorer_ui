@@ -1,5 +1,9 @@
+import Layout from '@/components/layout';
+
 export default function Transaction() {
-    return <div>
-        Transaction
-      </div>
+  return (
+    <Layout>
+      <div>Transaction</div>
+    </Layout>
+  )
 }

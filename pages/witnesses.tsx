@@ -1,5 +1,9 @@
+import Layout from '@/components/layout';
+
 export default function Witnesses () {
-  return <div>
-      Witnesses
-    </div>
+  return (
+    <Layout>
+      <div>Wtinesses</div>
+    </Layout>
+  )
 }
