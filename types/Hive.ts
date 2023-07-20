@@ -27,8 +27,8 @@ declare module Hive {
     _top_op_id: number;
     _limit: number;
     _filter: number[];
-    _date_start: unknown,
-    _date_end: unknown,
+    _date_start: unknown;
+    _date_end: unknown;
   }
 
   interface GetAccountProps {
@@ -47,7 +47,7 @@ declare module Hive {
     _limit: number;
     _offset: number;
     _order_by: string;
-    _order_is: string
+    _order_is: string;
   }
 
   interface GetWitnessVotersNumProps {
@@ -58,6 +58,9 @@ declare module Hive {
     _witness: string;
     _limit: number;
     _offset: number;
+  }
+  interface GetOperationTypesProps {
+    _operation_type_pattern: string | null;
   }
 }
 
