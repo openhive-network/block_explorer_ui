@@ -1,6 +1,7 @@
 declare module Explorer {
   interface BlockOperationTypes {
     type: string;
+    // Value depends on operationType, probably should be 'any' at the time
     value: {
       amount_to_sell: {
         amount: string;

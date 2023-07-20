@@ -3,11 +3,13 @@ import fetchingService from "@/services/FetchingService";
 import Explorer from "@/types/Explorer";
 import OperationTypesModal from "@/components/global/OperationTypesModal";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import VirtualOperations from "@/components/block/VirtualOperations";
+import NonVirtualOperations from "@/components/block/NonVirtualOperations";
 
 export default function Block() {
   // TODO : Remove initial values later
 
-  const [initialBlockNumber, setInitialBlockNumber] = useState(12345);
+  const [initialBlockNumber, setInitialBlockNumber] = useState(5000000);
   const [initialBlockFilters, setInitialBlockFilters] = useState([]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -35,7 +37,7 @@ export default function Block() {
     (operation) => operation.virtual_op
   );
 
-  const nonVirtualOperation = blockOperations.filter(
+  const nonVirtualOperations = blockOperations.filter(
     (operation) => !operation.virtual_op
   );
 
@@ -79,7 +81,7 @@ export default function Block() {
             </div>
             <div className="items-center m-3">
               <p>Transactions: {virtualOperations.length} </p>
-              <p>Virtual Operations: {nonVirtualOperation.length} </p>
+              <p>Virtual Operations: {nonVirtualOperations.length} </p>
               <p>Block Time : {blockTimeStamp}</p>
             </div>
           </section>
@@ -96,17 +98,9 @@ export default function Block() {
               operationTypes={operationTypes}
             />
           </section>
-          <section className="flex-column items-center justify-center p-10">
-            <div>
-              {blockOperations.map((operation: any) => (
-                <div
-                  key={operation.operation_id}
-                  className="p-10 m-10 bg-gray-500 w-auto"
-                >
-                  <pre>{JSON.stringify(operation, null, 3)}</pre>
-                </div>
-              ))}
-            </div>
+          <section className="p-10">
+            <NonVirtualOperations nonVirtualOperations={nonVirtualOperations} />
+            <VirtualOperations virtualOperations={virtualOperations} />
           </section>
         </div>
       )}
