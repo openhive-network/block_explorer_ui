@@ -1,4 +1,5 @@
 import Explorer from "@/types/Explorer";
+import OperationCard from "../OperationCard";
 
 type Props = {
   virtualOperations: Explorer.Block[];
@@ -8,17 +9,19 @@ const VirtualOperations = (props: Props) => {
   const { virtualOperations } = props;
 
   return (
-    <div className="w-auto">
+    <div className="mt-10">
       <div className="text-center">
         <p className="text-lg text-white">Virtual Operations</p>
       </div>
       {virtualOperations.length ? (
         virtualOperations.map((operation) => (
-          <div
-            key={operation.operation_id}
-            className="p-10 m-10 bg-gray-500 w-auto"
-          >
-            <pre>{JSON.stringify(operation, null, 3)}</pre>
+          <div key={operation.operation_id}>
+            <OperationCard
+              operation={operation.operations}
+              age={operation.age}
+              blockNumber={operation.block}
+              transactionId={operation.trx_id}
+            />
           </div>
         ))
       ) : (
