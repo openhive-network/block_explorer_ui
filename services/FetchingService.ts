@@ -1,5 +1,6 @@
 import Hive from "@/types/Hive";
 import { config } from "@/Config";
+import Explorer from "@/types/Explorer";
 
 class FetchingService {
 
@@ -31,7 +32,7 @@ class FetchingService {
     return await this.makePostRequest(url, requestBody);
   }
 
-  async getTransaction(transactionHash: string): Promise<unknown> {
+  async getTransaction(transactionHash: string): Promise<Explorer.TransactionQueryResponse> {
     const requestBody: Hive.GetTransactionProps = {_trx_hash: transactionHash};
     const url = `http://${config.apiAdress}/rpc/get_transaction`;
     return await this.makePostRequest(url, requestBody);
