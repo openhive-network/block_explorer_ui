@@ -20,7 +20,7 @@ class FetchingService {
     }
   }
 
-  async getDynamicGlobalProperties(): Promise<unknown> {
+  async getDynamicGlobalProperties(): Promise<Hive.DynamicGlobalQuery> {
     const requestBody: Hive.HiveBlogProps = {jsonrpc: "2.0", method: "database_api.get_dynamic_global_properties", id: 1};
     const url = `${config.hiveBlogAdress}`;
     return await this.makePostRequest(url, requestBody);
