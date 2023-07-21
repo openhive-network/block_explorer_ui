@@ -18,6 +18,15 @@ module.exports = {
     extend: {
       colors: {
         "explorer-dark-gray": "#292F3D",
+        "explorer-yellow": "#FFF351",
+        "explorer-ligh-blue": "#6AF5FF",
+        "explorer-dark-blue": "#160855",
+        "explorer-blue": "#0041F3",
+        "explorer-turquoise": "#00D9FF",
+        "explorer-red": "#FF0000",
+        "explorer-orange": "#FFAC33",
+        "explorer-ligh-green": "#64FFAA",
+        "explorer-ligh-gray": "#ADA9A9DC",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

@@ -1,11 +1,20 @@
 declare module Explorer {
-  interface Operation {
-    type: string;
+  export type OperationType = 
+  "vote_operation" |
+  "comment_operation"
+
+  export interface Operation {
+    type: OperationType;
     value: {
       author: string;
       permlink: string;
-      voter: string;
-      weight: number;
+      voter?: string;
+      weight?: number;
+      body?: string;
+      json_metadata?: string;
+      parent_author?: string;
+      parent_permlink?: string;
+      title?: string;
     }
   }
   
