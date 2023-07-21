@@ -1,35 +1,38 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import fetchingService from "@/services/FetchingService";
 import Explorer from "@/types/Explorer";
-import OperationTypesModal from "@/components/global/OperationTypesModal";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
-import VirtualOperations from "@/components/block/VirtualOperations";
-import NonVirtualOperations from "@/components/block/NonVirtualOperations";
+import HeaderSection from "@/components/block/HeaderSection";
+import FiltersSection from "@/components/block/FiltersSection";
+import OperationsSection from "@/components/block/OperationsSection";
 
 export default function Block() {
-  // TODO : Remove initial values later
+  const router = useRouter();
 
-  const [initialBlockNumber, setInitialBlockNumber] = useState(5000000);
-  const [initialBlockFilters, setInitialBlockFilters] = useState([]);
+  const { blockId } = router.query;
 
+  let blockIdToNum = Number(blockId);
+
+  const [blockNumber, setBlockNumber] = useState(0);
+  const [blockFilters, setBlockFilters] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const {
     isLoading: isBlockOperationsLoading,
     data: blockOperations,
   }: UseQueryResult<Explorer.Block[]> = useQuery({
-    queryKey: ["block_operations", initialBlockNumber, initialBlockFilters],
-    queryFn: () =>
-      fetchingService.getOpsByBlock(initialBlockNumber, initialBlockFilters),
+    queryKey: ["block_operations", blockNumber, blockFilters],
+    queryFn: () => fetchingService.getOpsByBlock(blockNumber, blockFilters),
   });
 
-  const { data: operationTypes }: UseQueryResult<Explorer.OperationTypes[]> =
-    useQuery({
-      queryKey: ["operation_types"],
-      queryFn: () => fetchingService.getOperationTypes(""),
-    });
+  useEffect(() => {
+    if (!blockIdToNum) return;
 
-  if (!blockOperations || !blockOperations.length || !operationTypes?.length) {
+    setBlockNumber(blockIdToNum);
+  }, [blockIdToNum]);
+
+  if (!blockOperations || !blockOperations.length) {
     return null;
   }
 
@@ -41,11 +44,19 @@ export default function Block() {
     (operation) => !operation.virtual_op
   );
 
-  const handleNextBlockNumber = () =>
-    setInitialBlockNumber((prev) => (prev += 1));
+  const handleNextBlock = () => {
+    router.push({
+      pathname: "[blockId]",
+      query: { blockId: (blockIdToNum += 1) },
+    });
+  };
 
-  const handePreviousBlockNumber = () =>
-    setInitialBlockNumber((prev) => (prev -= 1));
+  const handePreviousBlock = () => {
+    router.push({
+      pathname: "[blockId]",
+      query: { blockId: (blockIdToNum -= 1) },
+    });
+  };
 
   const blockTimeStamp = blockOperations[0].timestamp;
 
@@ -62,46 +73,24 @@ export default function Block() {
       {isBlockOperationsLoading ? (
         <div>Loading .....</div>
       ) : (
-        <div className="p-10">
-          <section className="flex-column items-center justify-center bg-gray-600 text-white ">
-            <p>Block Number : {initialBlockNumber}</p>
-            <div className="items-center m-3">
-              <button
-                onClick={handePreviousBlockNumber}
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-              >
-                Previous Block
-              </button>
-              <button
-                onClick={handleNextBlockNumber}
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-              >
-                Next block
-              </button>
-            </div>
-            <div className="items-center m-3">
-              <p>Transactions: {virtualOperations.length} </p>
-              <p>Virtual Operations: {nonVirtualOperations.length} </p>
-              <p>Block Time : {blockTimeStamp}</p>
-            </div>
-          </section>
-          <section className="flex justify-center mt-4 ">
-            <button
-              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-              onClick={handleOpenModal}
-            >
-              Filters
-            </button>
-            <OperationTypesModal
-              isOpen={isModalOpen}
-              close={handleCloseModal}
-              operationTypes={operationTypes}
-            />
-          </section>
-          <section className="p-10">
-            <NonVirtualOperations nonVirtualOperations={nonVirtualOperations} />
-            <VirtualOperations virtualOperations={virtualOperations} />
-          </section>
+        <div className="p-10 w-full h-full">
+          <HeaderSection
+            blockNumber={blockNumber}
+            nextBlock={handleNextBlock}
+            prevBlock={handePreviousBlock}
+            timeStamp={blockTimeStamp}
+            virtualOperationLength={virtualOperations.length}
+            nonVirtualOperationLength={nonVirtualOperations.length}
+          />
+          <FiltersSection
+            openModal={handleOpenModal}
+            closeModal={handleCloseModal}
+            isModalOpen={isModalOpen}
+          />
+          <OperationsSection
+            virtualOperations={virtualOperations}
+            nonVirtualOperations={nonVirtualOperations}
+          />
         </div>
       )}
     </>
