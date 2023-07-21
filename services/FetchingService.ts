@@ -37,7 +37,9 @@ class FetchingService {
     return await this.makePostRequest(url, requestBody);
   }
 
-  async getTransaction(transactionHash: string): Promise<unknown> {
+  async getTransaction(
+    transactionHash: string
+  ): Promise<Explorer.TransactionQueryResponse> {
     const requestBody: Hive.GetTransactionProps = {
       _trx_hash: transactionHash,
     };
