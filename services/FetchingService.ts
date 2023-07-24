@@ -36,7 +36,6 @@ class FetchingService {
     const url = `http://${config.apiAdress}/rpc/get_ops_by_block`;
     return await this.makePostRequest(url, requestBody);
   }
-
   async getTransaction(
     transactionHash: string
   ): Promise<Explorer.TransactionQueryResponse> {
@@ -44,6 +43,35 @@ class FetchingService {
       _trx_hash: transactionHash,
     };
     const url = `http://${config.apiAdress}/rpc/get_transaction`;
+    return await this.makePostRequest(url, requestBody);
+  }
+  async getDynamicGlobalProperties(): Promise<Hive.DynamicGlobalQuery> {
+    const requestBody: Hive.HiveBlogProps = {
+      jsonrpc: "2.0",
+      method: "database_api.get_dynamic_global_properties",
+      id: 1,
+    };
+    const url = `${config.hiveBlogAdress}`;
+    return await this.makePostRequest(url, requestBody);
+  }
+
+  async getCurrentPriceFeed(): Promise<unknown> {
+    const requestBody: Hive.HiveBlogProps = {
+      jsonrpc: "2.0",
+      method: "database_api.get_current_price_feed",
+      id: 1,
+    };
+    const url = `${config.hiveBlogAdress}`;
+    return await this.makePostRequest(url, requestBody);
+  }
+
+  async getRewardFunds(): Promise<unknown> {
+    const requestBody: Hive.HiveBlogProps = {
+      jsonrpc: "2.0",
+      method: "database_api.get_reward_funds",
+      id: 1,
+    };
+    const url = `${config.hiveBlogAdress}`;
     return await this.makePostRequest(url, requestBody);
   }
 
