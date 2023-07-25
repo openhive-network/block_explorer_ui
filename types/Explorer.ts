@@ -1,12 +1,11 @@
 declare module Explorer {
-<<<<<<< HEAD
   interface Block {
     acc_operation_id: string | null;
     age: string;
     block: number;
     op_in_trx: number;
     operation_id: number;
-    operations: Operation;
+    operation: Operation;
     timestamp: string;
     trx_id: string;
     trx_in_block: number;
@@ -44,9 +43,6 @@ declare module Explorer {
     timestamp: string;
     transaction_id: string;
   }
-=======
-
->>>>>>> new-develop
 }
 
 export default Explorer;

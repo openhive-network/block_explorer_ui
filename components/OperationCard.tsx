@@ -1,5 +1,6 @@
 import Hive from "@/types/Hive";
 import moment from "moment";
+
 interface OperationCardProps {
   operation: Hive.Operation;
   blockNumber: number;
@@ -23,7 +24,9 @@ const OperationCard: React.FC<OperationCardProps> = ({
           <div>
             Trx{" "}
             <span className="text-explorer-turquoise">
-              {transactionId.slice(0, 10)}
+              {transactionId
+                ? transactionId.slice(0, 10)
+                : JSON.stringify(transactionId)}
             </span>
           </div>
           <div>

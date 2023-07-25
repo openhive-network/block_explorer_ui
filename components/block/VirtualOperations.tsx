@@ -17,8 +17,8 @@ const VirtualOperations = (props: Props) => {
         virtualOperations.map((operation) => (
           <div key={operation.operation_id}>
             <OperationCard
-              operation={operation.operations}
-              age={operation.age}
+              operation={operation.operation}
+              date={operation.timestamp}
               blockNumber={operation.block}
               transactionId={operation.trx_id}
             />
