@@ -50,7 +50,7 @@ class FetchingService {
     return await this.makePostRequest(url, requestBody);
   }
 
-  async getTransaction(transactionHash: string): Promise<Explorer.TransactionQueryResponse> {
+  async getTransaction(transactionHash: string): Promise<Hive.TransactionQueryResponse> {
     const requestBody: Hive.GetTransactionProps = {_trx_hash: transactionHash};
     const url = `${config.apiAdress}/rpc/get_transaction`;
     return await this.makePostRequest(url, requestBody);
