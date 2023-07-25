@@ -10,6 +10,7 @@ type Props = {
 
 export default function OperationTypesModal(props: Props) {
   const { isOpen, close, operationTypes } = props;
+
   const cancelButtonRef = useRef(null);
 
   return (
@@ -32,8 +33,8 @@ export default function OperationTypesModal(props: Props) {
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
         </Transition.Child>
 
-        <div className="fixed inset-0 z-10 overflow-y-auto ">
-          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+        <div className="fixed inset-0 z-10 overflow-y-auto  ">
+          <div className="flex min-h-full  items-end justify-center p-4 text-center sm:items-center sm:p-0">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
@@ -43,8 +44,9 @@ export default function OperationTypesModal(props: Props) {
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+              <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 w-4/6">
                 <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                  {/* // center container */}
                   <div className="sm:flex sm:items-start">
                     <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                       <Dialog.Title
@@ -53,13 +55,14 @@ export default function OperationTypesModal(props: Props) {
                       >
                         Operation Types
                       </Dialog.Title>
-                      <div className="mt-2 max-w-full text-gray-700">
-                        <ul className="my-4 space-y-3">
-                          {operationTypes?.map((operation: any) => {
+
+                      <div className="mt-2 w-full text-gray-700">
+                        <ul className="my-4 grid grid-cols-3 gap-4 place-items-stretch">
+                          {operationTypes.map((operation: any) => {
                             return (
                               <li
                                 key={operation[0]}
-                                className="flex items-center p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 hover:bg-gray-100 group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white"
+                                className="flex w-full items-center p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 hover:bg-gray-100 group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white"
                               >
                                 <input
                                   id="bordered-checkbox-1"

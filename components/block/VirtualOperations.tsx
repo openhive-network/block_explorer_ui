@@ -11,7 +11,7 @@ const VirtualOperations = (props: Props) => {
   return (
     <div className="mt-10">
       <div className="text-center">
-        <p className="text-lg text-white">Virtual Operations</p>
+        <p className="text-3xl text-white">Virtual Operations</p>
       </div>
       {virtualOperations.length ? (
         virtualOperations.map((operation) => (

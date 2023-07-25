@@ -1,5 +1,5 @@
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
-import OperationTypesModal from "../global/OperationTypesModal";
+import OperationTypesModal from "./OperationTypesModal";
 import Explorer from "@/types/Explorer";
 import fetchingService from "@/services/FetchingService";
 

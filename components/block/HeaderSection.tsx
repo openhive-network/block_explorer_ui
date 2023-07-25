@@ -1,3 +1,5 @@
+import { ChevronRightCircle, ChevronLeftCircle } from "lucide-react";
+
 interface Props {
   blockNumber: number;
   nextBlock: () => void;
@@ -18,27 +20,43 @@ const HeaderSection = (props: Props) => {
   } = props;
 
   return (
-    <section className="flex items-center justify-center">
-      <div className=" w-4/6 text-center bg-gray-600 text-white ">
-        <p>Block Number : {blockNumber}</p>
+    <section className="w-full flex flex-col items-center text-2xl">
+      <div className="w-4/6 py-4 bg-explorer-dark-gray  text-center text-white">
+        <p>
+          Block Number :{" "}
+          <span className="text-explorer-turquoise">{blockNumber}</span>
+        </p>
         <div className="items-center m-3">
           <button
             onClick={prevBlock}
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+            className="text-white bg-transparent hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
           >
-            Previous Block
+            <ChevronLeftCircle />
           </button>
           <button
             onClick={nextBlock}
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+            className="text-white bg-transparent hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
           >
-            Next block
+            <ChevronRightCircle />
           </button>
         </div>
         <div className="items-center m-3">
-          <p>Transactions: {virtualOperationLength} </p>
-          <p>Virtual Operations: {nonVirtualOperationLength} </p>
-          <p>Block Time : {timeStamp}</p>
+          <p>
+            Transactions :{" "}
+            <span className="text-explorer-turquoise">
+              {virtualOperationLength}
+            </span>
+          </p>
+          <p>
+            Virtual Operations :{" "}
+            <span className="text-explorer-turquoise">
+              {nonVirtualOperationLength}
+            </span>
+          </p>
+          <p>
+            Block Time :{" "}
+            <span className="text-explorer-turquoise">{timeStamp}</span>
+          </p>
         </div>
       </div>
     </section>

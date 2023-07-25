@@ -11,7 +11,7 @@ const NonVirtualOperations = (props: Props) => {
   return (
     <div className="flex-column justify-center align-center">
       <div className="text-center">
-        <p className="text-lg text-white">Operations</p>
+        <p className="text-3xl text-white">Operations</p>
       </div>
       {nonVirtualOperations.length ? (
         nonVirtualOperations.map((operation) => (
