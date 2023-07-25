@@ -1,4 +1,5 @@
 declare module Explorer {
+<<<<<<< HEAD
   interface Block {
     acc_operation_id: string | null;
     age: string;
@@ -43,6 +44,9 @@ declare module Explorer {
     timestamp: string;
     transaction_id: string;
   }
+=======
+
+>>>>>>> new-develop
 }
 
 export default Explorer;

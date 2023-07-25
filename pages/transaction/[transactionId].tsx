@@ -2,9 +2,10 @@
 import { useRouter } from 'next/router';
 import { useQuery  } from '@tanstack/react-query';
 import fetchingService from '@/services/FetchingService';
-import Explorer from '@/types/Explorer';
+import Hive from '@/types/Hive';
 import OperationCard from '@/components/OperationCard';
 import { addSpacesAndCapitalizeFirst } from '@/utils/StringUtils';
+import moment from "moment";
 
 const displayTransactionData = (key: string, value: string | string[] | number) => {
   if (!["operations", "signatures"].includes(key)) 
@@ -20,10 +21,12 @@ export default function Transaction() {
   const router = useRouter();
   const transactionId = router.query.transactionId as string;
 
-  const {data, isLoading, error} = useQuery<Explorer.TransactionQueryResponse, Error>(
+  const {data, isLoading, error} = useQuery<Hive.TransactionQueryResponse, Error>(
     [`block-${router.query.transactionId}`], 
     () => fetchingService.getTransaction(transactionId)
   )
+
+  console.log('DATA', data);
 
   return (
     <div className='w-full max-w-5xl px-4 text-white'>
@@ -33,20 +36,22 @@ export default function Transaction() {
           <div>Transaction <span className='text-explorer-turquoise'>{data.transaction_id}</span></div>
           <div>in block 
             <span className='text-explorer-turquoise'>{" " + data.block_num}</span > at 
-            <span className='text-explorer-turquoise'>{" " + data.timestamp} UTC</span>
+            <span className='text-explorer-turquoise'>{" " + moment(data.timestamp).format("DD/MM/YYYY hh:mm:ss")}</span>
           </div>
         </div>
-        <OperationCard 
-          operation={data.operations[0]}
-          age={data.age}
-          blockNumber={data.block_num}
-          expiration={data.expiration}
-          transactionId={data.transaction_id}
-        />
+        {data.operations && data.operations.map((operation, index) => (
+          <OperationCard 
+            key={index}
+            operation={operation}
+            date={data.timestamp}
+            blockNumber={data.block_num}
+            transactionId={data.transaction_id}
+          />
+        ))}
         <div className='mt-6 w-full bg-explorer-dark-gray py-2 rounded-[6px] px-2'>
           <div className='flex justify-center text-3xl'>Raw transaction</div>
           <table className='w-full'>
-            {Object.keys(data).map((key) => displayTransactionData(key, data[key as keyof Omit<Explorer.TransactionQueryResponse, "operations">]))}
+            {Object.keys(data).map((key) => displayTransactionData(key, data[key as keyof Omit<Hive.TransactionQueryResponse, "operations">]))}
           </table>
         </div>
       </>}
