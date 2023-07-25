@@ -82,11 +82,7 @@ export default function Block() {
             virtualOperationLength={virtualOperations.length}
             nonVirtualOperationLength={nonVirtualOperations.length}
           />
-          <FiltersSection
-            openModal={handleOpenModal}
-            closeModal={handleCloseModal}
-            isModalOpen={isModalOpen}
-          />
+          <FiltersSection />
           <OperationsSection
             virtualOperations={virtualOperations}
             nonVirtualOperations={nonVirtualOperations}
