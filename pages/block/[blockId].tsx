@@ -16,7 +16,6 @@ export default function Block() {
 
   const [blockNumber, setBlockNumber] = useState(0);
   const [blockFilters, setBlockFilters] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const {
     isLoading: isBlockOperationsLoading,
@@ -59,14 +58,6 @@ export default function Block() {
   };
 
   const blockTimeStamp = blockOperations[0].timestamp;
-
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-  };
 
   return (
     <>
