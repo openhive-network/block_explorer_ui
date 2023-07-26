@@ -1,13 +1,13 @@
 import Hive from "@/types/Hive";
 import OperationCard from "../OperationCard";
 
-type Props = {
+type VirtualOperationsProps = {
   virtualOperations: Hive.OpsByBlockResponse[];
 };
 
-const VirtualOperations = (props: Props) => {
-  const { virtualOperations } = props;
-
+const VirtualOperations: React.FC<VirtualOperationsProps> = ({
+  virtualOperations,
+}) => {
   return (
     <div className="mt-10">
       <div className="text-center">

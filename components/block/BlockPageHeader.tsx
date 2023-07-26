@@ -1,6 +1,6 @@
 import { ChevronRightCircle, ChevronLeftCircle } from "lucide-react";
 
-interface Props {
+interface BlockPageHeaderProps {
   blockNumber: number;
   nextBlock: () => void;
   prevBlock: () => void;
@@ -9,16 +9,14 @@ interface Props {
   nonVirtualOperationLength: number;
 }
 
-const HeaderSection = (props: Props) => {
-  const {
-    blockNumber,
-    nextBlock,
-    prevBlock,
-    timeStamp,
-    virtualOperationLength,
-    nonVirtualOperationLength,
-  } = props;
-
+const BlockPageHeader: React.FC<BlockPageHeaderProps> = ({
+  blockNumber,
+  nextBlock,
+  prevBlock,
+  timeStamp,
+  virtualOperationLength,
+  nonVirtualOperationLength,
+}) => {
   return (
     <section className="w-full flex flex-col items-center text-2xl">
       <div className="w-4/6 py-4 bg-explorer-dark-gray  text-center text-white">
@@ -63,4 +61,4 @@ const HeaderSection = (props: Props) => {
   );
 };
 
-export default HeaderSection;
+export default BlockPageHeader;

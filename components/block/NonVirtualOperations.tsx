@@ -1,13 +1,13 @@
 import Hive from "@/types/Hive";
 import OperationCard from "../OperationCard";
 
-type Props = {
+type NonVirtualOperationsProps = {
   nonVirtualOperations: Hive.OpsByBlockResponse[];
 };
 
-const NonVirtualOperations = (props: Props) => {
-  const { nonVirtualOperations } = props;
-
+const NonVirtualOperations: React.FC<NonVirtualOperationsProps> = ({
+  nonVirtualOperations,
+}) => {
   return (
     <div className="flex-column justify-center align-center">
       <div className="text-center">

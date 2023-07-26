@@ -2,13 +2,15 @@ import NonVirtualOperations from "./NonVirtualOperations";
 import VirtualOperations from "./VirtualOperations";
 import Hive from "@/types/Hive";
 
-interface Props {
+interface OperationsSectionProps {
   nonVirtualOperations: Hive.OpsByBlockResponse[];
   virtualOperations: Hive.OpsByBlockResponse[];
 }
 
-const OperationsSection = (props: Props) => {
-  const { nonVirtualOperations, virtualOperations } = props;
+const OperationsSection: React.FC<OperationsSectionProps> = ({
+  nonVirtualOperations,
+  virtualOperations,
+}) => {
   return (
     <section className="p-10 flex items-center justify-center">
       <div className="w-4/5">

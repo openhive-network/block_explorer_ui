@@ -1,18 +1,11 @@
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
-
 import Hive from "@/types/Hive";
-import fetchingService from "@/services/FetchingService";
 import OperationTypesDialog from "./OperationTypesDialog";
 
-const FiltersSection = () => {
-  const { data: operationTypes }: UseQueryResult<Hive.OperationTypes[]> =
-    useQuery({
-      queryKey: ["operation_types"],
-      queryFn: () => fetchingService.getOperationTypes(""),
-    });
+type FiltersSectionProps = {
+  operationTypes: Hive.OperationTypes[];
+};
 
-  if (!operationTypes) return null;
-
+const FiltersSection: React.FC<FiltersSectionProps> = ({ operationTypes }) => {
   return (
     <section className="flex justify-center mt-4 ">
       <OperationTypesDialog operationTypes={operationTypes} />

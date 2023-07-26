@@ -3,9 +3,10 @@ import { useRouter } from "next/router";
 import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
-import HeaderSection from "@/components/block/HeaderSection";
+import BlockPageHeader from "@/components/block/BlockPageHeader";
 import FiltersSection from "@/components/block/FiltersSection";
-import OperationsSection from "@/components/block/OperationsSection";
+import NonVirtualOperations from "@/components/block/NonVirtualOperations";
+import VirtualOperations from "@/components/block/VirtualOperations";
 
 export default function Block() {
   const router = useRouter();
@@ -25,13 +26,24 @@ export default function Block() {
     queryFn: () => fetchingService.getOpsByBlock(blockNumber, blockFilters),
   });
 
+  const { data: operationTypes }: UseQueryResult<Hive.OperationTypes[]> =
+    useQuery({
+      queryKey: ["operation_types"],
+      queryFn: () => fetchingService.getOperationTypes(""),
+    });
+
   useEffect(() => {
     if (!blockIdToNum) return;
 
     setBlockNumber(blockIdToNum);
   }, [blockIdToNum]);
 
-  if (!blockOperations || !blockOperations.length) {
+  if (
+    !blockOperations ||
+    !blockOperations.length ||
+    !operationTypes ||
+    !operationTypes.length
+  ) {
     return null;
   }
 
@@ -65,7 +77,7 @@ export default function Block() {
         <div>Loading .....</div>
       ) : (
         <div className="p-10 w-full h-full">
-          <HeaderSection
+          <BlockPageHeader
             blockNumber={blockNumber}
             nextBlock={handleNextBlock}
             prevBlock={handePreviousBlock}
@@ -73,11 +85,15 @@ export default function Block() {
             virtualOperationLength={virtualOperations.length}
             nonVirtualOperationLength={nonVirtualOperations.length}
           />
-          <FiltersSection />
-          <OperationsSection
-            virtualOperations={virtualOperations}
-            nonVirtualOperations={nonVirtualOperations}
-          />
+          <FiltersSection operationTypes={operationTypes} />
+          <section className="p-10 flex items-center justify-center">
+            <div className="w-4/5">
+              <NonVirtualOperations
+                nonVirtualOperations={nonVirtualOperations}
+              />
+              <VirtualOperations virtualOperations={virtualOperations} />
+            </div>
+          </section>
         </div>
       )}
     </>
