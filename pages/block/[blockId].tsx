@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import fetchingService from "@/services/FetchingService";
-import Explorer from "@/types/Explorer";
+import Hive from "@/types/Hive";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import HeaderSection from "@/components/block/HeaderSection";
 import FiltersSection from "@/components/block/FiltersSection";
@@ -20,7 +20,7 @@ export default function Block() {
   const {
     isLoading: isBlockOperationsLoading,
     data: blockOperations,
-  }: UseQueryResult<Explorer.Block[]> = useQuery({
+  }: UseQueryResult<Hive.OpsByBlockResponse[]> = useQuery({
     queryKey: ["block_operations", blockNumber, blockFilters],
     queryFn: () => fetchingService.getOpsByBlock(blockNumber, blockFilters),
   });

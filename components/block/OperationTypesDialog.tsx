@@ -10,10 +10,10 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Explorer from "../../types/Explorer";
+import Hive from "@/types/Hive";
 
 type Props = {
-  operationTypes: Explorer.OperationTypes[];
+  operationTypes: Hive.OperationTypes[];
 };
 
 function OperationTypesDialog(props: Props) {
@@ -35,7 +35,7 @@ function OperationTypesDialog(props: Props) {
         </DialogHeader>
 
         <ul className="my-4 grid grid-cols-3 gap-4 place-items-stretch text-white">
-          {operationTypes.map((operation: any) => {
+          {operationTypes.map((operation) => {
             return (
               <li
                 key={operation[0]}

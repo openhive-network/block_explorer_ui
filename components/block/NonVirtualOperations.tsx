@@ -1,8 +1,8 @@
-import Explorer from "@/types/Explorer";
+import Hive from "@/types/Hive";
 import OperationCard from "../OperationCard";
 
 type Props = {
-  nonVirtualOperations: Explorer.Block[];
+  nonVirtualOperations: Hive.OpsByBlockResponse[];
 };
 
 const NonVirtualOperations = (props: Props) => {

@@ -1,5 +1,4 @@
 import Hive from "@/types/Hive";
-import Explorer from "@/types/Explorer";
 import { config } from "@/Config";
 
 class FetchingService {
@@ -19,7 +18,7 @@ class FetchingService {
 
   async getBlockOpTypes(
     blockNumber: number
-  ): Promise<Explorer.OperationTypes[]> {
+  ): Promise<Hive.OperationTypes[]> {
     const requestBody: Hive.GetBlockOpTypesProps = { _block_num: blockNumber };
     const url = `${config.apiAdress}/rpc/get_block_op_types`;
     return await this.makePostRequest(url, requestBody);
@@ -28,7 +27,7 @@ class FetchingService {
   async getOpsByBlock(
     blockNumber: number,
     filter: number[]
-  ): Promise<Explorer.Block[]> {
+  ): Promise<Hive.OpsByBlockResponse[]> {
     const requestBody: Hive.GetOpsByBlockProps = {
       _block_num: blockNumber,
       _filter: filter,
@@ -38,7 +37,7 @@ class FetchingService {
   }
   async getTransaction(
     transactionHash: string
-  ): Promise<Explorer.TransactionQueryResponse> {
+  ): Promise<Hive.TransactionQueryResponse> {
     const requestBody: Hive.GetTransactionProps = {
       _trx_hash: transactionHash,
     };
@@ -161,7 +160,7 @@ class FetchingService {
 
   async getOperationTypes(
     operation_type_pattern: string | null
-  ): Promise<Explorer.OperationTypes[]> {
+  ): Promise<Hive.OperationTypes[]> {
     const requestBody: Hive.GetOperationTypesProps = {
       _operation_type_pattern: operation_type_pattern,
     };

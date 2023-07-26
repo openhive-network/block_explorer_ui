@@ -1,10 +1,10 @@
 import NonVirtualOperations from "./NonVirtualOperations";
 import VirtualOperations from "./VirtualOperations";
-import Explorer from "@/types/Explorer";
+import Hive from "@/types/Hive";
 
 interface Props {
-  nonVirtualOperations: Explorer.Block[];
-  virtualOperations: Explorer.Block[];
+  nonVirtualOperations: Hive.OpsByBlockResponse[];
+  virtualOperations: Hive.OpsByBlockResponse[];
 }
 
 const OperationsSection = (props: Props) => {
