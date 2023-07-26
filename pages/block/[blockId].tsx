@@ -81,12 +81,12 @@ export default function Block() {
             blockNumber={blockNumber}
             nextBlock={handleNextBlock}
             prevBlock={handePreviousBlock}
-            timeStamp={blockTimeStamp}
+            timeStamp={new Date(blockTimeStamp)}
             virtualOperationLength={virtualOperations.length}
             nonVirtualOperationLength={nonVirtualOperations.length}
           />
           <FiltersSection operationTypes={operationTypes} />
-          <section className="p-10 flex items-center justify-center">
+          <section className="p-10 flex items-center justify-center text-white">
             <div className="w-4/5">
               <NonVirtualOperations
                 nonVirtualOperations={nonVirtualOperations}
