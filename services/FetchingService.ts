@@ -4,7 +4,6 @@ import { config } from "@/Config";
 class FetchingService {
   async makePostRequest<T>(url: string, requestBody: T) {
     try {
-      console.log("URL", url);
       const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -44,7 +43,14 @@ class FetchingService {
     const url = `${config.apiAdress}/rpc/get_transaction`;
     return await this.makePostRequest(url, requestBody);
   }
-  async getDynamicGlobalProperties(): Promise<Hive.DynamicGlobalQuery> {
+
+  async getRewardFunds(): Promise<Hive.RewardFundsQuery> {
+    const requestBody: Hive.HiveBlogProps = {jsonrpc: "2.0", method: "database_api.get_reward_funds", id: 1};
+    const url = `${config.hiveBlogAdress}`;
+    return await this.makePostRequest(url, requestBody);
+  }
+
+  async getDynamicGlobalProperties(): Promise<Hive.DynamicGlobalBlockQuery> {
     const requestBody: Hive.HiveBlogProps = {
       jsonrpc: "2.0",
       method: "database_api.get_dynamic_global_properties",
@@ -54,20 +60,10 @@ class FetchingService {
     return await this.makePostRequest(url, requestBody);
   }
 
-  async getCurrentPriceFeed(): Promise<unknown> {
+  async getCurrentPriceFeed(): Promise<Hive.PriceFeedQuery> {
     const requestBody: Hive.HiveBlogProps = {
       jsonrpc: "2.0",
       method: "database_api.get_current_price_feed",
-      id: 1,
-    };
-    const url = `${config.hiveBlogAdress}`;
-    return await this.makePostRequest(url, requestBody);
-  }
-
-  async getRewardFunds(): Promise<unknown> {
-    const requestBody: Hive.HiveBlogProps = {
-      jsonrpc: "2.0",
-      method: "database_api.get_reward_funds",
       id: 1,
     };
     const url = `${config.hiveBlogAdress}`;

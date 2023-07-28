@@ -1,11 +1,14 @@
+import { config } from "@/Config";
 import Hive from "@/types/Hive";
 import moment from "moment";
+import Link from "next/link";
 
 interface OperationCardProps {
   operation: Hive.Operation;
   blockNumber: number;
   transactionId: string;
-  date: string;
+  date: Date;
+  isVirtual: boolean;
 }
 
 const OperationCard: React.FC<OperationCardProps> = ({
@@ -13,6 +16,7 @@ const OperationCard: React.FC<OperationCardProps> = ({
   blockNumber,
   transactionId,
   date,
+  isVirtual,
 }) => {
   return (
     <div className="mt-6 w-full bg-explorer-dark-gray px-4 py-2 rounded-[6px] text-xs	">
@@ -21,21 +25,20 @@ const OperationCard: React.FC<OperationCardProps> = ({
       </div>
       <div className="flex justify-between">
         <div className="flex flex-col">
-          <div>
-            Trx{" "}
-            <span className="text-explorer-turquoise">
-              {transactionId
-                ? transactionId.slice(0, 10)
-                : JSON.stringify(transactionId)}
-            </span>
+          {!isVirtual && (
+            <div className="my-1" >
+              Trx{" "}
+              <Link className="text-explorer-turquoise" href={`/transaction/${transactionId}`}>{transactionId.slice(0, 10)}</Link>
+            </div>
+          )}
+
+          <div className="my-1" >
+            Block <Link className="text-explorer-turquoise" href={`/block/${blockNumber}`}>{blockNumber}</Link>
           </div>
-          <div>
-            Block <span className="text-explorer-turquoise">{blockNumber}</span>
-          </div>
-          <div>
+          <div className="my-1"  >
             Date:{" "}
             <span className="text-explorer-turquoise">
-              {moment(date).format("DD/MM/YYYY hh:mm:ss")}
+              {moment(date).format(config.baseMomentTimeFormat)}
             </span>
           </div>
         </div>

@@ -1,3 +1,4 @@
+import { config } from "@/Config";
 import { ChevronRightCircle, ChevronLeftCircle } from "lucide-react";
 import moment from "moment";
 
@@ -54,7 +55,7 @@ const BlockPageHeader: React.FC<BlockPageHeaderProps> = ({
           </p>
           <p>
             Block Time :{" "}
-            <span className="text-explorer-turquoise">{moment(timeStamp).format("DD/MM/YYYY hh:mm:ss")}</span>
+            <span className="text-explorer-turquoise">{moment(timeStamp).format(config.baseMomentTimeFormat)}</span>
           </p>
         </div>
       </div>

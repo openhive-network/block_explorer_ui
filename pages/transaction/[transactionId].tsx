@@ -6,6 +6,7 @@ import Hive from '@/types/Hive';
 import OperationCard from '@/components/OperationCard';
 import { addSpacesAndCapitalizeFirst } from '@/utils/StringUtils';
 import moment from "moment";
+import { config } from '@/Config';
 
 const displayTransactionData = (key: string, value: string | string[] | number) => {
   if (!["operations", "signatures"].includes(key)) 
@@ -36,16 +37,17 @@ export default function Transaction() {
           <div>Transaction <span className='text-explorer-turquoise'>{data.transaction_id}</span></div>
           <div>in block 
             <span className='text-explorer-turquoise'>{" " + data.block_num}</span > at 
-            <span className='text-explorer-turquoise'>{" " + moment(data.timestamp).format("DD/MM/YYYY hh:mm:ss")}</span>
+            <span className='text-explorer-turquoise'>{" " + moment(data.timestamp).format(config.baseMomentTimeFormat)}</span>
           </div>
         </div>
         {data.operations && data.operations.map((operation, index) => (
           <OperationCard 
             key={index}
             operation={operation}
-            date={data.timestamp}
+            date={new Date(data.timestamp)}
             blockNumber={data.block_num}
             transactionId={data.transaction_id}
+            isVirtual={false}
           />
         ))}
         <div className='mt-6 w-full bg-explorer-dark-gray py-2 rounded-[6px] px-2'>

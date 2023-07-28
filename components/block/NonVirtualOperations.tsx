@@ -18,9 +18,10 @@ const NonVirtualOperations: React.FC<NonVirtualOperationsProps> = ({
           <div key={operation.operation_id}>
             <OperationCard
               operation={operation.operation}
-              date={operation.timestamp}
+              date={new Date(operation.timestamp)}
               blockNumber={operation.block}
               transactionId={operation.trx_id}
+              isVirtual={operation.virtual_op}
             />
           </div>
         ))
