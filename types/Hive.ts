@@ -207,6 +207,13 @@ declare module Hive {
     timestamp: string;
     transaction_id: string;
   }
+
+  type InputTypes = "account_name" | "account_name_array" | "block_num" | "transaction_hash"
+
+  interface InputTypeResponse {
+    input_type: InputTypes;
+    input_value: string | string[]
+  }
 }
 
 export default Hive;

@@ -1,6 +1,6 @@
 import Link from "next/link"
-import { Input } from "./ui/input"
 import Image from 'next/image'
+import SearchBar from "./SearchBar"
 
 export default function Navbar () {
   return (
@@ -16,7 +16,7 @@ export default function Navbar () {
       </div>
 
 
-      <Input className="w-1/3" type="text" placeholder="Search user, block, transaction" />
+      <SearchBar />
     </div>
   )
 }

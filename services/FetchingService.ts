@@ -15,6 +15,14 @@ class FetchingService {
     }
   }
 
+  async getInputType(
+    input: string
+  ): Promise<Hive.InputTypeResponse> {
+    const requestBody= {_input: input};
+    const url = `${config.apiAdress}/rpc/get_input_type`;
+    return await this.makePostRequest(url, requestBody);
+  }
+
   async getBlockOpTypes(
     blockNumber: number
   ): Promise<Hive.OperationTypes[]> {
