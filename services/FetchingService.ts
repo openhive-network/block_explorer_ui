@@ -128,13 +128,15 @@ class FetchingService {
     limit: number,
     offset: number,
     orderBy: string,
-    orderIs: string
-  ): Promise<unknown> {
+    orderIs: string,
+    toHp: boolean
+  ): Promise<Hive.Witness[]> {
     const requestBody: Hive.GetWitnessesProps = {
       _limit: limit,
       _offset: offset,
       _order_by: orderBy,
       _order_is: orderIs,
+      _to_hp: toHp
     };
     const url = `${config.apiAdress}/rpc/get_witnesses`;
     return await this.makePostRequest(url, requestBody);
@@ -171,6 +173,14 @@ class FetchingService {
     const url = `${config.apiAdress}/rpc/get_matching_operation_types`;
     return await this.makePostRequest(url, requestBody);
   }
+  async getWitness(witnessName: string): Promise<[Hive.Witness]> {
+    const requestBody: Hive.GetWitnessProps = {
+      _account: witnessName
+    }
+    const url = `${config.apiAdress}/rpc/get_witness`
+    return await this.makePostRequest(url, requestBody);
+  }
+  
 }
 
 const fetchingService = new FetchingService();

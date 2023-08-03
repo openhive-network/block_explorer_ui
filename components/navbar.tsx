@@ -10,7 +10,7 @@ export default function Navbar () {
         <Link href={"/"} className="pr-12">
           <Image src="/hive-logo.png" alt="Hive logo" width={50} height={50} />
         </Link>
-        <Link href={"/"}>
+        <Link href={"/witnesses"}>
           Witnesses
         </Link>
       </div>

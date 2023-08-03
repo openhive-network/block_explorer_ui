@@ -48,6 +48,7 @@ declare module Hive {
     _offset: number;
     _order_by: string;
     _order_is: string;
+    _to_hp: boolean;
   }
 
   interface GetWitnessVotersNumProps {
@@ -61,6 +62,10 @@ declare module Hive {
   }
   interface GetOperationTypesProps {
     _operation_type_pattern: string | null;
+  }
+
+  interface GetWitnessProps {
+    _account: string;
   }
 
   interface Supply {
@@ -213,6 +218,21 @@ declare module Hive {
   interface InputTypeResponse {
     input_type: InputTypes;
     input_value: string | string[]
+  }
+  interface Witness {
+    witness: string,
+    rank: number,
+    url: string,
+    votes: number,
+    votes_daily_change: unknown,
+    voters_num: number,
+    voters_num_daily_change: number,
+    price_feed: number,
+    bias: number,
+    feed_age: string,
+    block_size: number,
+    signing_key: string,
+    version: string
   }
 }
 
