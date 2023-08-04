@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { useQuery  } from '@tanstack/react-query';
 import fetchingService from '@/services/FetchingService';
 import Link from 'next/link';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 
 const witnessPropertiesMap = new Map([
@@ -33,25 +34,52 @@ export default function WitnessDetails() {
   const witnessQuery = useQuery({
     queryKey: ["witness"],
     queryFn: () => fetchingService.getWitness(witnessName),
-    select: (witnessData) => witnessData[0]
+    select: (witnessData) => witnessData[0],
+    enabled: !!witnessName
+  })
+
+  const votersQuery = useQuery({
+    queryKey: ["voters"],
+    queryFn: () => fetchingService.getWitnessVoters(witnessName, 100, 0),
+    enabled: !!witnessName
   })
 
   return (
-    <div className='mt-6 w-full bg-explorer-dark-gray py-2 rounded-[6px] max-w-5xl px-4 text-white'>
-        <h3 className='text-center text-xl'>Witness</h3>
-        <div className='w-full'>
-          {witnessQuery.data && Object.entries(witnessQuery.data)?.map(([key, value]) => (
-            <div className="border-b border-solid border-gray-700 flex py-1" key={key}>
-              <span className='mr-4'>{witnessPropertiesMap.get(key)}</span>
-              {linkMap.get(key) ? (
-                linkMap.get(key)?.(value)
-              ) : (
-                <span> {value}</span>
-              )}
-              
-            </div>
-          ))}
-        </div>
+    <div className='w-full flex justify-center flex-col items-center'>
+      <div className='mt-6 w-full bg-explorer-dark-gray py-2 rounded-[6px] max-w-5xl px-4 text-white'>
+          <h3 className='text-center text-xl'>Witness</h3>
+          <div className='w-full'>
+            {witnessQuery.data && Object.entries(witnessQuery.data)?.map(([key, value]) => (
+              <div className="border-b border-solid border-gray-700 flex py-1" key={key}>
+                <span className='mr-4'>{witnessPropertiesMap.get(key)}</span>
+                {linkMap.get(key) ? (
+                  linkMap.get(key)?.(value)
+                ) : (
+                  <span> {value}</span>
+                )}
+                
+              </div>
+            ))}
+          </div>
+      </div>
+      <div className="w-1/2 items--center justify-center">
+        <Table >
+          <TableHeader>
+            <TableRow>
+              <TableHead>Voter</TableHead>
+              <TableHead>Hive power</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {votersQuery?.data && votersQuery?.data?.map((voter, index) => (
+              <TableRow key={index} className={`${index % 2 === 0 ? "bg-gray-50" : "bg-gray-200"}`}>
+                <TableCell className=' text-blue-600'><Link href={`/account/${voter.account}`}>{voter.account}</Link></TableCell>
+                <TableCell >{voter.hive_power} </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   )
 }

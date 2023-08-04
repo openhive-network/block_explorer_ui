@@ -151,10 +151,8 @@ class FetchingService {
   async getWitnessVoters(
     witness: string,
     limit: number,
-    offset: number,
-    orderBy: string,
-    orderIs: string
-  ): Promise<unknown> {
+    offset: number
+  ): Promise<Hive.Voter[]> {
     const requestBody: Hive.GetWitnessVotersProps = {
       _witness: witness,
       _limit: limit,

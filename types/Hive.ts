@@ -234,6 +234,14 @@ declare module Hive {
     signing_key: string,
     version: string
   }
+
+  interface Voter {
+    account: string;
+    hive_power: number;
+    account_hive_power: null;
+    proxied_hive_power: null;
+    timestamp: Date;
+  }
 }
 
 export default Hive;
