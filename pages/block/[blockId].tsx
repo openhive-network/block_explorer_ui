@@ -16,14 +16,14 @@ export default function Block() {
   let blockIdToNum = Number(blockId);
 
   const [blockNumber, setBlockNumber] = useState(0);
-  const [blockFilters, setBlockFilters] = useState([]);
+  const [blockFilters, setBlockFilters] = useState<string[]>([]);
 
   const {
     isLoading: isBlockOperationsLoading,
     data: blockOperations,
   }: UseQueryResult<Hive.OpsByBlockResponse[]> = useQuery({
-    queryKey: ["block_operations", blockNumber, blockFilters],
-    queryFn: () => fetchingService.getOpsByBlock(blockNumber, blockFilters),
+    queryKey: ["block_operations", blockNumber],
+    queryFn: () => fetchingService.getOpsByBlock(blockNumber, []),
   });
 
   const { data: operationTypes }: UseQueryResult<Hive.OperationTypes[]> =
@@ -38,20 +38,11 @@ export default function Block() {
     setBlockNumber(blockIdToNum);
   }, [blockIdToNum]);
 
-  if (
-    !blockOperations ||
-    !blockOperations.length ||
-    !operationTypes ||
-    !operationTypes.length
-  ) {
-    return null;
-  }
-
-  const virtualOperations = blockOperations.filter(
+  const virtualOperations = blockOperations?.filter(
     (operation) => operation.virtual_op
   );
 
-  const nonVirtualOperations = blockOperations.filter(
+  const nonVirtualOperations = blockOperations?.filter(
     (operation) => !operation.virtual_op
   );
 
@@ -69,11 +60,13 @@ export default function Block() {
     });
   };
 
-  const blockTimeStamp = blockOperations[0].timestamp;
-
   return (
     <>
-      {isBlockOperationsLoading ? (
+      {isBlockOperationsLoading ||
+      !blockOperations?.length ||
+      !operationTypes?.length ||
+      !virtualOperations?.length ||
+      !nonVirtualOperations?.length ? (
         <div>Loading .....</div>
       ) : (
         <div className="p-10 w-full h-full">
@@ -81,17 +74,34 @@ export default function Block() {
             blockNumber={blockNumber}
             nextBlock={handleNextBlock}
             prevBlock={handePreviousBlock}
-            timeStamp={new Date(blockTimeStamp)}
-            virtualOperationLength={virtualOperations.length}
+            timeStamp={new Date(blockOperations[0].timestamp)}
+            virtualOperationLength={virtualOperations?.length}
             nonVirtualOperationLength={nonVirtualOperations.length}
           />
-          <FiltersSection operationTypes={operationTypes} />
+          <FiltersSection
+            operationTypes={operationTypes.sort((a, b) => a[1].localeCompare(b[1]))}
+            setFilters={(filters) => setBlockFilters(filters)}
+          />
           <section className="p-10 flex items-center justify-center text-white">
             <div className="w-4/5">
               <NonVirtualOperations
-                nonVirtualOperations={nonVirtualOperations}
+                nonVirtualOperations={
+                  !!blockFilters.length
+                    ? nonVirtualOperations.filter((operation) =>
+                        blockFilters.includes(operation.operation.type)
+                      )
+                    : nonVirtualOperations
+                }
               />
-              <VirtualOperations virtualOperations={virtualOperations} />
+              <VirtualOperations
+                virtualOperations={
+                  !!blockFilters.length
+                    ? virtualOperations.filter((operation) =>
+                        blockFilters.includes(operation.operation.type)
+                      )
+                    : virtualOperations
+                }
+              />
             </div>
           </section>
         </div>

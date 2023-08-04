@@ -18,7 +18,7 @@ const getResultTypeHeader = (result: Hive.InputTypeResponse) => {
       return "transaction";
 
     default:
-      return "user";
+      return "account";
   }
 };
 

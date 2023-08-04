@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -14,11 +15,23 @@ import Hive from "@/types/Hive";
 
 type OperationTypesDialogProps = {
   operationTypes: Hive.OperationTypes[];
+  setFilters: (filters: string[]) => void;
 };
 
 const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
   operationTypes,
+  setFilters,
 }) => {
+  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+
+  const onFiltersSelect = (filter: string) => {
+    if (selectedFilters.includes(filter)) {
+      setSelectedFilters(selectedFilters.filter(filterName => filterName !== filter));
+    } else {
+      setSelectedFilters([...selectedFilters, filter]);
+    }
+  }
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -44,13 +57,14 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
                 <Input
                   id="bordered-checkbox-1"
                   type="checkbox"
-                  value=""
+                  checked={selectedFilters.includes(operation[1])}
                   name="bordered-checkbox"
                   className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                  onChange={() => onFiltersSelect(operation[1])}
                 />
                 <Label
                   htmlFor="bordered-checkbox-1"
-                  className="p-4 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                  className="p-4 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300 whitespace-nowrap overflow-hidden text-ellipsis"
                 >
                   {operation[1]}
                 </Label>
@@ -59,7 +73,9 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           })}
         </ul>
         <DialogFooter>
-          <Button type="submit">Save changes</Button>
+          <Button type="submit" onClick={() => setFilters(selectedFilters)}>
+            Save changes
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

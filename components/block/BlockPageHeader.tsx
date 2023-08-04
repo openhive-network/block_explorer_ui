@@ -21,7 +21,7 @@ const BlockPageHeader: React.FC<BlockPageHeaderProps> = ({
 }) => {
   return (
     <section className="w-full flex flex-col items-center text-2xl">
-      <div className="w-4/6 py-4 bg-explorer-dark-gray  text-center text-white">
+      <div className="w-4/6 py-4 bg-explorer-dark-gray  text-center text-white rounded-[6px]">
         <p>
           Block Number :{" "}
           <span className="text-explorer-turquoise">{blockNumber}</span>

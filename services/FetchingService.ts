@@ -171,6 +171,7 @@ class FetchingService {
     const url = `${config.apiAdress}/rpc/get_matching_operation_types`;
     return await this.makePostRequest(url, requestBody);
   }
+  
   async getWitness(witnessName: string): Promise<[Hive.Witness]> {
     const requestBody: Hive.GetWitnessProps = {
       _account: witnessName
