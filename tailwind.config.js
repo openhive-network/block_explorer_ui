@@ -27,6 +27,7 @@ module.exports = {
         "explorer-orange": "#FFAC33",
         "explorer-ligh-green": "#64FFAA",
         "explorer-ligh-gray": "#ADA9A9DC",
+        "explorer-bg-start": "rgb(214, 219, 220)",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

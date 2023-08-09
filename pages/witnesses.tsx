@@ -21,8 +21,8 @@ export default function Witnesses() {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="sticky left-0 bg-black"></TableHead>
-            <TableHead className="sticky left-6 bg-black">Name</TableHead>
+            <TableHead className="sticky left-0 bg-explorer-bg-start"></TableHead>
+            <TableHead className="sticky left-6 bg-explorer-bg-start">Name</TableHead>
             <TableHead>Votes</TableHead>
             <TableHead>Voters</TableHead>
             <TableHead>Block Size</TableHead>
@@ -32,7 +32,7 @@ export default function Witnesses() {
             <TableHead>Version</TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody className="text-black">
+        <TableBody>
           {witnessesQuery.data?.map((singleWitness, index) => (
             <TableRow
               key={index}
