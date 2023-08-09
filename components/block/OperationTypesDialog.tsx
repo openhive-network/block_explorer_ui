@@ -26,11 +26,13 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
 
   const onFiltersSelect = (filter: string) => {
     if (selectedFilters.includes(filter)) {
-      setSelectedFilters(selectedFilters.filter(filterName => filterName !== filter));
+      setSelectedFilters(
+        selectedFilters.filter((filterName) => filterName !== filter)
+      );
     } else {
       setSelectedFilters([...selectedFilters, filter]);
     }
-  }
+  };
 
   return (
     <Dialog>
@@ -52,7 +54,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
             return (
               <li
                 key={operation[0]}
-                className="flex  items-center p-3 font-bold text-base rounded-lg bg-inherit hover:border-2-gray group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white"
+                className="col-span-3 md:col-span-1 flex items-center p-3 font-bold text-base rounded-lg bg-inherit hover:border-2-gray group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white"
               >
                 <Input
                   id="bordered-checkbox-1"

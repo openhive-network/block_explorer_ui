@@ -35,7 +35,7 @@ const renderSearchData = (
             <div
               key={index}
               className={cn("px-4 py-2 flex items-center justify-between", {
-                "bg-explorer-ligh-gray bg-opacity-50": selected === index,
+                "md:bg-explorer-ligh-gray bg-opacity-50": selected === index,
                 "border-t border-gray-700": !!index,
               })}
             >
@@ -46,7 +46,7 @@ const renderSearchData = (
               >
                 User <span className="text-explorer-turquoise">{account}</span>
               </Link>
-              {selected === index && <Enter />}
+              {selected === index && <Enter className="hidden md:inline" />}
             </div>
           );
         })}
@@ -64,7 +64,7 @@ const renderSearchData = (
           {capitalizeFirst(resultType)}{" "}
           <span className="text-explorer-turquoise">{data.input_value}</span>
         </Link>
-        <Enter />
+        <Enter className="hidden md:inline" />
       </div>
     );
   }
@@ -142,7 +142,7 @@ const SearchBar: React.FC = () => {
   }, [inputFocus, searchData, selectedResult]);
 
   return (
-    <div className="w-1/3 relative" ref={searchContainerRef}>
+    <div className="w-full md:w-1/3 relative" ref={searchContainerRef}>
       <div className="border-input border flex items-center pr-2">
         <Input
           className="border-0"

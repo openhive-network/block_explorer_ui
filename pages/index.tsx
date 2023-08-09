@@ -30,12 +30,12 @@ export default function Home() {
   }) || [];
   
   return (
-      <div className='grid grid-cols-4 text-white mx-8'>
+      <div className='grid grid-cols-4 text-white mx-4 md:mx-8'>
         <HeadBlockCard 
           headBlockCardData={dynamicGlobalQuery.data}
           transactionCount={operationsByBlock.data?.length || 0}
         />
-        <div className="col-start-2 col-span-3">
+        <div className="col-start-1 md:col-start-2 col-span-4 md:col-span-3">
           {operationsByBlock.isSuccess && operationsByBlock.data?.map(((operationByBlock, index) => (
             <OperationCard 
               key={index}

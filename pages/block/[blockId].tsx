@@ -69,7 +69,7 @@ export default function Block() {
       !nonVirtualOperations?.length ? (
         <div>Loading .....</div>
       ) : (
-        <div className="p-10 w-full h-full">
+        <div className="md:p-10 w-full h-full">
           <BlockPageHeader
             blockNumber={blockNumber}
             nextBlock={handleNextBlock}
@@ -79,11 +79,13 @@ export default function Block() {
             nonVirtualOperationLength={nonVirtualOperations.length}
           />
           <FiltersSection
-            operationTypes={operationTypes.sort((a, b) => a[1].localeCompare(b[1]))}
+            operationTypes={operationTypes.sort((a, b) =>
+              a[1].localeCompare(b[1])
+            )}
             setFilters={(filters) => setBlockFilters(filters)}
           />
-          <section className="p-10 flex items-center justify-center text-white">
-            <div className="w-4/5">
+          <section className="md:p-10 flex items-center justify-center text-white">
+            <div className="w-full p-4 md:p-0 md:w-4/5">
               <NonVirtualOperations
                 nonVirtualOperations={
                   !!blockFilters.length

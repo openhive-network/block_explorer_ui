@@ -20,8 +20,8 @@ const BlockPageHeader: React.FC<BlockPageHeaderProps> = ({
   nonVirtualOperationLength,
 }) => {
   return (
-    <section className="w-full flex flex-col items-center text-2xl">
-      <div className="w-4/6 py-4 bg-explorer-dark-gray  text-center text-white rounded-[6px]">
+    <section className="w-full flex flex-col items-center text-2xl p-4">
+      <div className="w-full md:w-4/6 py-4 bg-explorer-dark-gray  text-center text-white rounded-[6px]">
         <p>
           Block Number :{" "}
           <span className="text-explorer-turquoise">{blockNumber}</span>
@@ -55,7 +55,9 @@ const BlockPageHeader: React.FC<BlockPageHeaderProps> = ({
           </p>
           <p>
             Block Time :{" "}
-            <span className="text-explorer-turquoise">{moment(timeStamp).format(config.baseMomentTimeFormat)}</span>
+            <span className="text-explorer-turquoise">
+              {moment(timeStamp).format(config.baseMomentTimeFormat)}
+            </span>
           </p>
         </div>
       </div>

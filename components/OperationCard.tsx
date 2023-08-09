@@ -19,23 +19,34 @@ const OperationCard: React.FC<OperationCardProps> = ({
   isVirtual,
 }) => {
   return (
-    <div className="mt-6 w-full bg-explorer-dark-gray px-4 py-2 rounded-[6px] text-xs	">
+    <div className="mt-6 w-full bg-explorer-dark-gray px-4 py-2 rounded-[6px] text-xs	overflow-hidden">
       <div className="flex justify-center text-xl text-explorer-orange mb-4">
         {operation.type}
       </div>
       <div className="flex justify-between">
         <div className="flex flex-col">
           {!isVirtual && (
-            <div className="my-1" >
+            <div className="my-1">
               Trx{" "}
-              <Link className="text-explorer-turquoise" href={`/transaction/${transactionId}`}>{transactionId.slice(0, 10)}</Link>
+              <Link
+                className="text-explorer-turquoise"
+                href={`/transaction/${transactionId}`}
+              >
+                {transactionId.slice(0, 10)}
+              </Link>
             </div>
           )}
 
-          <div className="my-1" >
-            Block <Link className="text-explorer-turquoise" href={`/block/${blockNumber}`}>{blockNumber}</Link>
+          <div className="my-1">
+            Block{" "}
+            <Link
+              className="text-explorer-turquoise"
+              href={`/block/${blockNumber}`}
+            >
+              {blockNumber}
+            </Link>
           </div>
-          <div className="my-1"  >
+          <div className="my-1">
             Date:{" "}
             <span className="text-explorer-turquoise">
               {moment(date).format(config.baseMomentTimeFormat)}
