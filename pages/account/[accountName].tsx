@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import OperationTypesDialog from "../../components/block/OperationTypesDialog";
 import CustomPagination from "../../components/CustomPagination";
 import Hive from "@/types/Hive";
+import Image from "next/image";
 
 const OPERATIONS_LIMIT = 100;
 
@@ -67,10 +68,7 @@ export default function Account() {
         <div className="flex justify-between text-explorer-orange text-2xl my-4">
           {accountDetails.name}{" "}
           <span>
-            <img
-              className="w-[50px] h-[50px] rounded-full"
-              src={accountDetails.profile_image}
-            ></img>
+            <Image className="rounded-full" src={accountDetails.profile_image} alt="avatar" width={50} height={50} /> 
           </span>
         </div>
         <div>
@@ -106,7 +104,8 @@ export default function Account() {
             </div>
           </div>
           <div className="col-end-12">
-            <OperationTypesDialog operationTypes={accountOperationTypes} />
+            <OperationTypesDialog operationTypes={accountOperationTypes}
+            setFilters={() => {}} />
           </div>
         </div>
         {accountOperations.map((operation: any) => (
