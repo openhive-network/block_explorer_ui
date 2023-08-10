@@ -8,6 +8,7 @@ import OperationTypesDialog from "../../components/block/OperationTypesDialog";
 import CustomPagination from "../../components/CustomPagination";
 import Hive from "@/types/Hive";
 import Image from "next/image";
+import {getHiveAvatarUrl} from "@/utils/HiveBlogUtils"
 
 const OPERATIONS_LIMIT = 100;
 
@@ -68,7 +69,7 @@ export default function Account() {
         <div className="flex justify-between text-explorer-orange text-2xl my-4">
           {accountDetails.name}{" "}
           <span>
-            <Image className="rounded-full" src={accountDetails.profile_image} alt="avatar" width={50} height={50} /> 
+            <Image className="rounded-full" src={getHiveAvatarUrl(accountNameFromRoute)} alt="avatar" width={50} height={50} /> 
           </span>
         </div>
         <div>
