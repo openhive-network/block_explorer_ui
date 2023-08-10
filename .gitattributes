@@ -1,0 +1,2 @@
+*.sh text=auto eol=lf
+Dockerfile text=auto eol=lf

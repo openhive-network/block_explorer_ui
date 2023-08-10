@@ -3,9 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "NEXT_PUBLIC_API_ADDRESS=http://192.168.4.250:3000 next dev",
+    "dev": "react-env -- next dev",
+    "copy:public": "shx cp -R public/ .next/standalone/",
+    "copy:static": "shx cp -R .next/static/ .next/standalone/.next",
     "build": "next build",
-    "start": "next start",
+    "build:standalone": "cross-env BUILD_STANDALONE=true next build && npm run copy:public && npm run copy:static",
+    "start": "react-env -- next start",
+    "start:standalone": "cd .next/standalone && react-env -- node server.js",
     "lint": "next lint"
   },
   "dependencies": {
@@ -29,12 +33,16 @@
     "postcss": "8.4.26",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "sharp": "^0.32.4",
     "tailwind-merge": "^1.14.0",
     "tailwindcss": "3.3.3",
     "tailwindcss-animate": "^1.0.6",
     "typescript": "5.1.6"
   },
   "devDependencies": {
-    "@tanstack/eslint-plugin-query": "^4.29.25"
+    "@beam-australia/react-env": "^3.1.1",
+    "@tanstack/eslint-plugin-query": "^4.29.25",
+    "cross-env": "^7.0.3",
+    "shx": "^0.3.4"
   }
 }

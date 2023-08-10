@@ -1,0 +1,9 @@
+version: '3.9'
+services:
+  block-explorer-ui:
+    image: registry.gitlab.syncad.com/hive/block_explorer_ui:${IMAGE_TAG:-latest}
+    environment:
+      PORT:
+      REACT_APP_API_ADDRESS:
+    ports:
+      - "${PORT}:${PORT}"
