@@ -34,7 +34,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
-  ],
+, "components/customHooks/usePagination.ts"  ],
   "exclude": [
     "node_modules"
   ]

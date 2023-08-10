@@ -151,11 +151,9 @@ declare module Hive {
     curation_reward_curve: string;
   }
 
-  type RewardFundsQuery = JsonRpcBasicResponse<{funds: RewardFunds[]}>;
+  type RewardFundsQuery = JsonRpcBasicResponse<{ funds: RewardFunds[] }>;
 
-  type OperationType = 
-  "vote_operation" |
-  "comment_operation"
+  type OperationType = "vote_operation" | "comment_operation";
 
   interface Operation {
     type: OperationType;
@@ -213,26 +211,109 @@ declare module Hive {
     transaction_id: string;
   }
 
-  type InputTypes = "account_name" | "account_name_array" | "block_num" | "transaction_hash"
+  interface AccountDetailsQueryResponse {
+    id: number;
+    name: string;
+    owner: {
+      weight_threshold: number;
+      account_auths: string[];
+      key_auths: [string, number][];
+    };
+    active: {
+      weight_threshold: number;
+      account_auths: string[];
+      key_auths: [string, number][];
+    };
+    posting: {
+      weight_threshold: number;
+      account_auths: string[];
+      key_auths: [string, number][];
+    };
+    memo_key: string;
+    profile_image: string;
+    json_metadata: string;
+    posting_json_metadata: string;
+    last_owner_update: string;
+    last_account_update: string;
+    created: string;
+    mined: string | boolean;
+    recovery_account: string;
+    post_count: number;
+    can_vote: string | boolean;
+    voting_manabar: {
+      current_mana: string | number;
+      last_update_time: number;
+    };
+    downvote_manabar: {
+      current_mana: string | number;
+      last_update_time: number;
+    };
+    voting_power: string;
+    balance: number;
+    savings_balance: number;
+    hbd_balance: number;
+    hbd_saving_balance: number;
+    savings_withdraw_requests: number;
+    reward_hbd_balance: number;
+    reward_hive_balance: number;
+    reward_vesting_balance: number;
+    reward_vesting_hive: number;
+    vesting_shares: number;
+    delegated_vesting_shares: number;
+    received_vesting_shares: number;
+    vesting_withdraw_rate: number;
+    to_withdraw: number;
+    withdrawn: number;
+    withdraw_routes: number;
+    post_voting_power: number;
+    posting_rewards: number;
+    curation_rewards: number;
+    proxied_vsf_votes: [string, number, number, number] | any;
+    witnesses_voted_for: string | number;
+    last_post: string | Date;
+    last_root_post: string | Date;
+    last_vote_time: string | Date;
+    vesting_balance: number;
+    reputation: string | number;
+    witness_votes: string[];
+  }
+
+  interface OpsByAccountResponse {
+    acc_operation_id: number | null;
+    age: string;
+    block: number;
+    op_in_trx: number;
+    operation_id: number;
+    operation: Operation;
+    timestamp: string;
+    trx_id: string | null;
+    trx_in_block: number;
+    virtual_op: boolean;
+  }
+  type InputTypes =
+    | "account_name"
+    | "account_name_array"
+    | "block_num"
+    | "transaction_hash";
 
   interface InputTypeResponse {
     input_type: InputTypes;
-    input_value: string | string[]
+    input_value: string | string[];
   }
   interface Witness {
-    witness: string,
-    rank: number,
-    url: string,
-    votes: number,
-    votes_daily_change: unknown,
-    voters_num: number,
-    voters_num_daily_change: number,
-    price_feed: number,
-    bias: number,
-    feed_age: string,
-    block_size: number,
-    signing_key: string,
-    version: string
+    witness: string;
+    rank: number;
+    url: string;
+    votes: number;
+    votes_daily_change: unknown;
+    voters_num: number;
+    voters_num_daily_change: number;
+    price_feed: number;
+    bias: number;
+    feed_age: string;
+    block_size: number;
+    signing_key: string;
+    version: string;
   }
 
   interface Voter {
