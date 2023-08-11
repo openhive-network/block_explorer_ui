@@ -42,15 +42,15 @@ const BlockPageHeader: React.FC<BlockPageHeaderProps> = ({
         </div>
         <div className="items-center m-3">
           <p>
-            Transactions :{" "}
+            Operations :{" "}
             <span className="text-explorer-turquoise">
-              {virtualOperationLength}
+              {nonVirtualOperationLength}
             </span>
           </p>
           <p>
             Virtual Operations :{" "}
             <span className="text-explorer-turquoise">
-              {nonVirtualOperationLength}
+              {virtualOperationLength}
             </span>
           </p>
           <p>
