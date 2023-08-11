@@ -13,7 +13,7 @@ import Link from "next/link";
 export default function Witnesses() {
   const witnessesQuery = useQuery({
     queryKey: ["witnesses"],
-    queryFn: () => fetchingService.getWitnesses(100, 0, "votes", "desc", false),
+    queryFn: () => fetchingService.getWitnesses(200, 0, "votes", "desc", false),
   });
 
   return (
