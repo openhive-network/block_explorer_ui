@@ -5,7 +5,7 @@ stages:
 
 variables:
   # Variables required by Common CI jobs
-  CI_COMMON_JOB_VERSION: "1d271c28906d267c1172641bb2aa42727f16b513"
+  CI_COMMON_JOB_VERSION: "bade6e0b0c68841ea0b1c001bd453e38d27a6f98"
   DOCKER_BUILDER_TAG: "$CI_COMMON_JOB_VERSION"
   DOCKER_DIND_TAG: "$CI_COMMON_JOB_VERSION"
   IMAGE_REMOVER_TAG: "$CI_COMMON_JOB_VERSION"
@@ -13,7 +13,7 @@ variables:
 include:
   - template: Workflows/Branch-Pipelines.gitlab-ci.yml
   - project: 'hive/common-ci-configuration'
-    ref: 1d271c28906d267c1172641bb2aa42727f16b513 # develop
+    ref: bade6e0b0c68841ea0b1c001bd453e38d27a6f98 # develop
     file: '/templates/docker_image_jobs.gitlab-ci.yml'
 
 docker-build:
@@ -47,6 +47,7 @@ docker-build:
     - public-runner-docker
 
 .node-job:
+  extends: .job-defaults
   image:
     name: node:18.15-alpine3.17
     entrypoint: []
@@ -81,6 +82,7 @@ lint:
       - "npm-lint.log"
 
 staging:deploy:
+  extends: .job-defaults
   stage: deploy
   needs:
     - docker-build
@@ -113,6 +115,7 @@ staging:deploy:
     - hs-bexplorer
 
 staging:stop:
+  extends: .job-defaults
   stage: deploy
   needs:
     - staging:deploy
