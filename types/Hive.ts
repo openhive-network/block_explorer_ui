@@ -24,11 +24,11 @@ declare module Hive {
 
   interface GetOpsByAccountProps {
     _account: string;
-    _top_op_id: number;
+    _page_num: number;
     _limit: number;
     _filter: number[];
-    _date_start: unknown;
-    _date_end: unknown;
+    _date_start: Date | null;
+    _date_end: Date | null;
   }
 
   interface GetAccountProps {
@@ -48,7 +48,6 @@ declare module Hive {
     _offset: number;
     _order_by: string;
     _order_is: string;
-    _to_hp: boolean;
   }
 
   interface GetWitnessVotersNumProps {
@@ -57,8 +56,8 @@ declare module Hive {
 
   interface GetWitnessVotersProps {
     _witness: string;
-    _limit: number;
-    _offset: number;
+    _order_by : string;
+    _order_is : string;
   }
   interface GetOperationTypesProps {
     _operation_type_pattern: string | null;
@@ -235,7 +234,7 @@ declare module Hive {
     posting_json_metadata: string;
     last_owner_update: string;
     last_account_update: string;
-    created: string;
+    created: Date;
     mined: string | boolean;
     recovery_account: string;
     post_count: number;
@@ -276,6 +275,9 @@ declare module Hive {
     vesting_balance: number;
     reputation: string | number;
     witness_votes: string[];
+    proxy: string;
+    last_account_recovery: Date;
+    delayed_vests: number;
   }
 
   interface OpsByAccountResponse {
@@ -304,8 +306,10 @@ declare module Hive {
     witness: string;
     rank: number;
     url: string;
-    votes: number;
-    votes_daily_change: unknown;
+    votes_vests: number;
+    votes_hive_power: number;
+    votes_daily_change_vests: number;
+    votes_daily_change_hive_power: number;
     voters_num: number;
     voters_num_daily_change: number;
     price_feed: number;
@@ -318,10 +322,13 @@ declare module Hive {
 
   interface Voter {
     account: string;
-    hive_power: number;
-    account_hive_power: null;
-    proxied_hive_power: null;
-    timestamp: Date;
+    votes_vests: number;
+    votes_hive_power: number;
+    account_vests: number;
+    account_hive_power: number;
+    proxied_vests: number;
+    proxied_hive_power: number;
+    timestamp: Date
   }
 }
 

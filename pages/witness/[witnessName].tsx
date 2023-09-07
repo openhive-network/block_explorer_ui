@@ -40,7 +40,7 @@ export default function WitnessDetails() {
 
   const votersQuery = useQuery({
     queryKey: ["voters"],
-    queryFn: () => fetchingService.getWitnessVoters(witnessName, 100, 0),
+    queryFn: () => fetchingService.getWitnessVoters(witnessName, "vests", "desc"),
     enabled: !!witnessName
   })
 
@@ -74,7 +74,7 @@ export default function WitnessDetails() {
             {votersQuery?.data && votersQuery?.data?.map((voter, index) => (
               <TableRow key={index} className={`${index % 2 === 0 ? "bg-gray-50" : "bg-gray-200"}`}>
                 <TableCell className=' text-blue-600'><Link href={`/account/${voter.account}`}>{voter.account}</Link></TableCell>
-                <TableCell >{voter.hive_power} </TableCell>
+                <TableCell >{voter.votes_hive_power} </TableCell>
               </TableRow>
             ))}
           </TableBody>

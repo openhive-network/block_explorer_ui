@@ -9,6 +9,8 @@ import CustomPagination from "../../components/CustomPagination";
 import Hive from "@/types/Hive";
 import Image from "next/image";
 import {getHiveAvatarUrl} from "@/utils/HiveBlogUtils"
+import moment from "moment";
+import { config } from "@/Config";
 
 const OPERATIONS_LIMIT = 100;
 
@@ -17,7 +19,7 @@ export default function Account() {
 
   const accountNameFromRoute = router.query.accountName as string;
 
-  const [topOperationCount, setTopOperationCount] = useState(-1);
+  const [page, setPage] = useState(0);
   const [operationFilters, setOperationFilters] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -37,13 +39,13 @@ export default function Account() {
     queryKey: [
       "account_operations",
       accountNameFromRoute,
-      topOperationCount,
+      page,
       operationFilters,
     ],
     queryFn: () =>
       fetchingService.getOpsByAccount(
         accountNameFromRoute,
-        topOperationCount,
+        page,
         OPERATIONS_LIMIT,
         operationFilters
       ),
@@ -80,7 +82,7 @@ export default function Account() {
           <div>Reputation : NEEDS CALC</div>
           <div>Posts count: {accountDetails.post_count}</div>
           <div>Age : NEEDS CALC</div>
-          <div>Created at: {accountDetails.created}</div>
+          <div>Created at: {moment(accountDetails.created).format(config.baseMomentTimeFormat)}</div>
         </div>
         <div>
           <div className="text-center mt-8">Recource credits</div>
@@ -100,7 +102,7 @@ export default function Account() {
                 totalCount={firstOperationOnPage}
                 pageSize={OPERATIONS_LIMIT}
                 onPageChange={(page: any) => setCurrentPage(page)}
-                setAction={setTopOperationCount}
+                setAction={setPage}
               />
             </div>
           </div>

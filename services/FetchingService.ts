@@ -86,14 +86,14 @@ class FetchingService {
 
   async getOpsByAccount(
     account: string,
-    topOpId: number,
+    pagerNum: number,
     limit: number,
     filter: number[]
   ): Promise<unknown> {
     const requestBody: Hive.GetOpsByAccountProps = {
       _account: account,
       _filter: filter,
-      _top_op_id: topOpId,
+      _page_num: pagerNum,
       _limit: limit,
       _date_start: null,
       _date_end: null,
@@ -129,14 +129,12 @@ class FetchingService {
     offset: number,
     orderBy: string,
     orderIs: string,
-    toHp: boolean
   ): Promise<Hive.Witness[]> {
     const requestBody: Hive.GetWitnessesProps = {
       _limit: limit,
       _offset: offset,
       _order_by: orderBy,
-      _order_is: orderIs,
-      _to_hp: toHp
+      _order_is: orderIs
     };
     const url = `${config.apiAdress}/rpc/get_witnesses`;
     return await this.makePostRequest(url, requestBody);
@@ -150,13 +148,13 @@ class FetchingService {
 
   async getWitnessVoters(
     witness: string,
-    limit: number,
-    offset: number
+    orderBy: string,
+    orderIs: string
   ): Promise<Hive.Voter[]> {
     const requestBody: Hive.GetWitnessVotersProps = {
       _witness: witness,
-      _limit: limit,
-      _offset: offset,
+      _order_by: orderBy,
+      _order_is: orderIs,
     };
     const url = `${config.apiAdress}/rpc/get_witness_voters`;
     return await this.makePostRequest(url, requestBody);

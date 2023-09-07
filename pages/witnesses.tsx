@@ -13,7 +13,7 @@ import Link from "next/link";
 export default function Witnesses() {
   const witnessesQuery = useQuery({
     queryKey: ["witnesses"],
-    queryFn: () => fetchingService.getWitnesses(200, 0, "votes", "desc", false),
+    queryFn: () => fetchingService.getWitnesses(200, 0, "votes", "desc"),
   });
 
   return (
@@ -57,7 +57,7 @@ export default function Witnesses() {
                   {singleWitness.witness}
                 </Link>
               </TableCell>
-              <TableCell>{singleWitness.votes.toLocaleString()}</TableCell>
+              <TableCell>{singleWitness.votes_vests.toLocaleString()}</TableCell>
               <TableCell>{singleWitness.voters_num.toLocaleString()}</TableCell>
               <TableCell>
                 {singleWitness.block_size
