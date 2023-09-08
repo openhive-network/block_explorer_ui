@@ -67,6 +67,10 @@ declare module Hive {
     _account: string;
   }
 
+  interface GetBlockByTimeProps {
+    _timestamp: Date
+  }
+
   interface Supply {
     amount: string;
     precision: number;
@@ -292,6 +296,28 @@ declare module Hive {
     trx_in_block: number;
     virtual_op: boolean;
   }
+
+  interface GetBlockByTimeResponse {
+    age: string;
+    created_at: string;
+    current_hbd_supply: number;
+    current_supply: number;
+    dhf_interval_ledger: number;
+    extensions: null | any;
+    hash: string;
+    hbd_interest_rate: number;
+    num: number;
+    prev: string;
+    producer_account_id: number;
+    signing_key: string;
+    total_reward_fund_hive: number;
+    total_vesting_fund_hive: number;
+    total_vesting_shares: number;
+    transaction_merkle_root: string;
+    virtual_supply: number;
+    witness_signature: string;
+  }
+
   type InputTypes =
     | "account_name"
     | "account_name_array"

@@ -15,17 +15,13 @@ class FetchingService {
     }
   }
 
-  async getInputType(
-    input: string
-  ): Promise<Hive.InputTypeResponse> {
-    const requestBody= {_input: input};
+  async getInputType(input: string): Promise<Hive.InputTypeResponse> {
+    const requestBody = { _input: input };
     const url = `${config.apiAdress}/rpc/get_input_type`;
     return await this.makePostRequest(url, requestBody);
   }
 
-  async getBlockOpTypes(
-    blockNumber: number
-  ): Promise<Hive.OperationTypes[]> {
+  async getBlockOpTypes(blockNumber: number): Promise<Hive.OperationTypes[]> {
     const requestBody: Hive.GetBlockOpTypesProps = { _block_num: blockNumber };
     const url = `${config.apiAdress}/rpc/get_block_op_types`;
     return await this.makePostRequest(url, requestBody);
@@ -53,7 +49,11 @@ class FetchingService {
   }
 
   async getRewardFunds(): Promise<Hive.RewardFundsQuery> {
-    const requestBody: Hive.HiveBlogProps = {jsonrpc: "2.0", method: "database_api.get_reward_funds", id: 1};
+    const requestBody: Hive.HiveBlogProps = {
+      jsonrpc: "2.0",
+      method: "database_api.get_reward_funds",
+      id: 1,
+    };
     const url = `${config.hiveBlogAdress}`;
     return await this.makePostRequest(url, requestBody);
   }
@@ -128,13 +128,13 @@ class FetchingService {
     limit: number,
     offset: number,
     orderBy: string,
-    orderIs: string,
+    orderIs: string
   ): Promise<Hive.Witness[]> {
     const requestBody: Hive.GetWitnessesProps = {
       _limit: limit,
       _offset: offset,
       _order_by: orderBy,
-      _order_is: orderIs
+      _order_is: orderIs,
     };
     const url = `${config.apiAdress}/rpc/get_witnesses`;
     return await this.makePostRequest(url, requestBody);
@@ -169,15 +169,22 @@ class FetchingService {
     const url = `${config.apiAdress}/rpc/get_matching_operation_types`;
     return await this.makePostRequest(url, requestBody);
   }
-  
+
   async getWitness(witnessName: string): Promise<[Hive.Witness]> {
     const requestBody: Hive.GetWitnessProps = {
-      _account: witnessName
-    }
-    const url = `${config.apiAdress}/rpc/get_witness`
+      _account: witnessName,
+    };
+    const url = `${config.apiAdress}/rpc/get_witness`;
     return await this.makePostRequest(url, requestBody);
   }
-  
+
+  async getBlockByTime(date: any): Promise<Hive.GetBlockByTimeResponse> {
+    const requestBody: Hive.GetBlockByTimeProps = {
+      _timestamp: date,
+    };
+    const url = `${config.apiAdress}/rpc/get_block_by_time`;
+    return await this.makePostRequest(url, requestBody);
+  }
 }
 
 const fetchingService = new FetchingService();

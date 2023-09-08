@@ -28,7 +28,7 @@ export default function Navbar() {
           </div>
           <div
             className={cn(
-              "fixed top-0 left-0 bg-explorer-dark-gray w-screen h-screen translate-x-full duration-500",
+              "fixed top-0 left-0 bg-explorer-dark-gray w-screen h-screen translate-x-full duration-500 z-50",
               { "translate-x-0": menuOpen }
             )}
           >

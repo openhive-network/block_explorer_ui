@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
-import BlockPageHeader from "@/components/block/BlockPageHeader";
+import BlockPageNavigation from "@/components/block/BlockPageNavigation";
 import FiltersSection from "@/components/block/FiltersSection";
 import NonVirtualOperations from "@/components/block/NonVirtualOperations";
 import VirtualOperations from "@/components/block/VirtualOperations";
@@ -60,6 +60,13 @@ export default function Block() {
     });
   };
 
+  const handleGoToBlock = (blockNumber: string) => {
+    router.push({
+      pathname: "[blockId]",
+      query: { blockId: blockNumber },
+    });
+  }
+
   return (
     <>
       {isBlockOperationsLoading ||
@@ -70,10 +77,9 @@ export default function Block() {
         <div>Loading .....</div>
       ) : (
         <div className="md:p-10 w-full h-full">
-          <BlockPageHeader
+          <BlockPageNavigation
             blockNumber={blockNumber}
-            nextBlock={handleNextBlock}
-            prevBlock={handePreviousBlock}
+            goToBlock={handleGoToBlock}
             timeStamp={new Date(blockOperations[0].timestamp)}
             virtualOperationLength={virtualOperations?.length}
             nonVirtualOperationLength={nonVirtualOperations.length}
