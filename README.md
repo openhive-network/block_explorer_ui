@@ -31,7 +31,7 @@ Right now the application is using
 
 ## Ongoing state
 
-The Block Explorer recrated the old functionalities of previous GUI. We are in the moment when we start working on the new functionalities. The project is dockerize, so you can see CI deployment there: [http://hive-staging.pl.syncad.com:5000/](LINK).
+The Block Explorer recrated the old functionalities of previous GUI. We are in the moment when we start working on the new functionalities. The project is dockerize, so you can see CI deployment there: [Link](http://hive-staging.pl.syncad.com:5000/).
 
 ## Git workflow
 
