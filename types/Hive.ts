@@ -282,6 +282,7 @@ declare module Hive {
     proxy: string;
     last_account_recovery: Date;
     delayed_vests: number;
+    ops_count: number;
   }
 
   interface OpsByAccountResponse {
@@ -354,7 +355,7 @@ declare module Hive {
     account_hive_power: number;
     proxied_vests: number;
     proxied_hive_power: number;
-    timestamp: Date
+    timestamp: Date;
   }
 }
 

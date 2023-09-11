@@ -7,7 +7,6 @@ interface PaginationProps {
   siblingCount?: number;
   currentPage: number;
   pageSize: number;
-  setAction: (value: number) => void;
 }
 
 const CustomPagination: React.FC<PaginationProps> = ({
@@ -16,7 +15,6 @@ const CustomPagination: React.FC<PaginationProps> = ({
   siblingCount = 1,
   currentPage,
   pageSize,
-  setAction,
 }) => {
   const paginationRange: any = usePagination({
     currentPage,
@@ -31,12 +29,10 @@ const CustomPagination: React.FC<PaginationProps> = ({
 
   const onNext = () => {
     onPageChange(currentPage + 1);
-    setAction(totalCount - pageSize);
   };
 
   const onPrevious = () => {
     onPageChange(currentPage - 1);
-    setAction(totalCount + pageSize);
   };
   const lastPage = paginationRange[paginationRange.length - 1];
   const firstPage = paginationRange[0];

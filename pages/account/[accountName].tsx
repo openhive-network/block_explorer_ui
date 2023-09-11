@@ -8,7 +8,7 @@ import OperationTypesDialog from "../../components/block/OperationTypesDialog";
 import CustomPagination from "../../components/CustomPagination";
 import Hive from "@/types/Hive";
 import Image from "next/image";
-import {getHiveAvatarUrl} from "@/utils/HiveBlogUtils"
+import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import moment from "moment";
 import { config } from "@/Config";
 
@@ -19,9 +19,8 @@ export default function Account() {
 
   const accountNameFromRoute = router.query.accountName as string;
 
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [operationFilters, setOperationFilters] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
 
   // Account details
   const {
@@ -63,7 +62,6 @@ export default function Account() {
   if (!accountDetails || !accountOperations || !accountOperationTypes) {
     return null;
   }
-  const firstOperationOnPage = accountOperations[0].acc_operation_id ?? 0;
 
   return (
     <div className="grid grid-cols-4 text-white mx-8">
@@ -71,7 +69,13 @@ export default function Account() {
         <div className="flex justify-between text-explorer-orange text-2xl my-4">
           {accountDetails.name}{" "}
           <span>
-            <Image className="rounded-full" src={getHiveAvatarUrl(accountNameFromRoute)} alt="avatar" width={50} height={50} /> 
+            <Image
+              className="rounded-full"
+              src={getHiveAvatarUrl(accountNameFromRoute)}
+              alt="avatar"
+              width={50}
+              height={50}
+            />
           </span>
         </div>
         <div>
@@ -82,7 +86,10 @@ export default function Account() {
           <div>Reputation : NEEDS CALC</div>
           <div>Posts count: {accountDetails.post_count}</div>
           <div>Age : NEEDS CALC</div>
-          <div>Created at: {moment(accountDetails.created).format(config.baseMomentTimeFormat)}</div>
+          <div>
+            Created at:{" "}
+            {moment(accountDetails.created).format(config.baseMomentTimeFormat)}
+          </div>
         </div>
         <div>
           <div className="text-center mt-8">Recource credits</div>
@@ -98,17 +105,18 @@ export default function Account() {
           <div className="col-start-7">
             <div className="w-full flex justify-center">
               <CustomPagination
-                currentPage={currentPage}
-                totalCount={firstOperationOnPage}
+                currentPage={page}
+                totalCount={accountDetails.ops_count}
                 pageSize={OPERATIONS_LIMIT}
-                onPageChange={(page: any) => setCurrentPage(page)}
-                setAction={setPage}
+                onPageChange={(page: number) => setPage(page)}
               />
             </div>
           </div>
           <div className="col-end-12">
-            <OperationTypesDialog operationTypes={accountOperationTypes}
-            setFilters={() => {}} />
+            <OperationTypesDialog
+              operationTypes={accountOperationTypes}
+              setFilters={() => {}}
+            />
           </div>
         </div>
         {accountOperations.map((operation: any) => (
