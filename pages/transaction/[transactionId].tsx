@@ -30,9 +30,10 @@ export default function Transaction() {
   const { data, isLoading, error } = useQuery<
     Hive.TransactionQueryResponse,
     Error
-  >([`block-${router.query.transactionId}`], () =>
-    fetchingService.getTransaction(transactionId)
-  );
+  >({queryKey: [`block-${router.query.transactionId}`],
+    queryFn: () => fetchingService.getTransaction(transactionId),
+    refetchOnWindowFocus: false,
+  });
 
   return (
     <div className="w-full max-w-5xl px-4 text-white">

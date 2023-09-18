@@ -14,6 +14,7 @@ export default function Witnesses() {
   const witnessesQuery = useQuery({
     queryKey: ["witnesses"],
     queryFn: () => fetchingService.getWitnesses(200, 0, "votes", "desc"),
+    refetchOnWindowFocus: false,
   });
 
   return (

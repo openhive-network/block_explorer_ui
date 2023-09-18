@@ -35,13 +35,15 @@ export default function WitnessDetails() {
     queryKey: ["witness"],
     queryFn: () => fetchingService.getWitness(witnessName),
     select: (witnessData) => witnessData[0],
-    enabled: !!witnessName
+    enabled: !!witnessName,
+    refetchOnWindowFocus: false,
   })
 
   const votersQuery = useQuery({
     queryKey: ["voters"],
     queryFn: () => fetchingService.getWitnessVoters(witnessName, "vests", "desc"),
-    enabled: !!witnessName
+    enabled: !!witnessName,
+    refetchOnWindowFocus: false,
   })
 
   return (

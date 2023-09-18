@@ -15,14 +15,16 @@ export default function Home() {
   const dynamicGlobalQuery = useQuery({
     queryKey: [`global`],
     queryFn: getGlobalBlockData,
-    select: (dynamicGlobalBlockData) => adjustDynamicGlobalBlockData(dynamicGlobalBlockData[0], dynamicGlobalBlockData[1], dynamicGlobalBlockData[2])
+    select: (dynamicGlobalBlockData) => adjustDynamicGlobalBlockData(dynamicGlobalBlockData[0], dynamicGlobalBlockData[1], dynamicGlobalBlockData[2]),
+    refetchOnWindowFocus: false,
   })
 
   
   const operationsByBlock = useQuery({
     queryKey: ["operationsByBlock"],
     queryFn: () => fetchingService.getOpsByBlock(dynamicGlobalQuery.data?.headBlockNumber || 0, []),
-    enabled: !!dynamicGlobalQuery.data?.headBlockNumber
+    enabled: !!dynamicGlobalQuery.data?.headBlockNumber,
+    refetchOnWindowFocus: false,
   }) 
   
   let operations: Hive.Operation[] = operationsByBlock.data?.map((operationByBlock) => {
