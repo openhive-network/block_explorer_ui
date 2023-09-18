@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, Dispatch, SetStateAction } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -15,24 +15,32 @@ import Hive from "@/types/Hive";
 
 type OperationTypesDialogProps = {
   operationTypes: Hive.OperationTypes[];
-  setFilters: (filters: string[]) => void;
+  setFilters: Dispatch<SetStateAction<number[]>>;
 };
 
 const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
   operationTypes,
   setFilters,
 }) => {
-  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+  const [selectedFilterIds, setSelectedFiltersIds] = useState<number[]>([]);
 
-  const onFiltersSelect = (filter: string) => {
-    if (selectedFilters.includes(filter)) {
-      setSelectedFilters(
-        selectedFilters.filter((filterName) => filterName !== filter)
+  const onFiltersSelect = (id: number) => {
+    if (selectedFilterIds.includes(id)) {
+      setSelectedFiltersIds(
+        selectedFilterIds.filter((filterId) => filterId !== id)
       );
     } else {
-      setSelectedFilters([...selectedFilters, filter]);
+      setSelectedFiltersIds([...selectedFilterIds, id]);
     }
   };
+
+  const handleOnSubmit = () => {
+    setFilters(selectedFilterIds);
+  }
+
+  const handleOnClear = () => {
+    setSelectedFiltersIds([])
+  }
 
   return (
     <Dialog>
@@ -53,16 +61,16 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           {operationTypes.map((operation) => {
             return (
               <li
+                onClick={() => onFiltersSelect(operation[0])}
                 key={operation[0]}
                 className="col-span-3 md:col-span-1 flex items-center p-3 font-bold text-base rounded-lg bg-inherit hover:border-2-gray group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white"
               >
                 <Input
-                  id="bordered-checkbox-1"
                   type="checkbox"
-                  checked={selectedFilters.includes(operation[1])}
+                  checked={selectedFilterIds.includes(operation[0])}
                   name="bordered-checkbox"
                   className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  onChange={() => onFiltersSelect(operation[1])}
+                  onChange={() => onFiltersSelect(operation[0])}
                 />
                 <Label
                   htmlFor="bordered-checkbox-1"
@@ -75,7 +83,10 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           })}
         </ul>
         <DialogFooter>
-          <Button type="submit" onClick={() => setFilters(selectedFilters)}>
+          <Button type="button" variant='secondary' onClick={handleOnClear}>
+            Clear filters
+          </Button>
+          <Button type="submit" variant='default' onClick={handleOnSubmit}>
             Save changes
           </Button>
         </DialogFooter>

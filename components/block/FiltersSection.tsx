@@ -1,9 +1,10 @@
+import { Dispatch, SetStateAction } from "react";
 import Hive from "@/types/Hive";
 import OperationTypesDialog from "./OperationTypesDialog";
 
 type FiltersSectionProps = {
   operationTypes: Hive.OperationTypes[];
-  setFilters: (filters: string[]) => void;
+  setFilters: Dispatch<SetStateAction<number[]>>
 };
 
 const FiltersSection: React.FC<FiltersSectionProps> = ({

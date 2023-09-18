@@ -16,20 +16,19 @@ export default function Block() {
   let blockIdToNum = Number(blockId);
 
   const [blockNumber, setBlockNumber] = useState(0);
-  const [blockFilters, setBlockFilters] = useState<string[]>([]);
+  const [blockFilters, setBlockFilters] = useState<number[]>([]);
 
-  const {
-    isLoading: isBlockOperationsLoading,
-    data: blockOperations,
-  }: UseQueryResult<Hive.OpsByBlockResponse[]> = useQuery({
-    queryKey: ["block_operations", blockNumber],
-    queryFn: () => fetchingService.getOpsByBlock(blockNumber, []),
+  const { data: blockOperations }: UseQueryResult<Hive.OpsByBlockResponse[]> = useQuery({
+    queryKey: ["block_operations", blockNumber, blockFilters],
+    queryFn: () => fetchingService.getOpsByBlock(blockNumber, blockFilters),
+    refetchOnWindowFocus: false,
   });
 
   const { data: operationTypes }: UseQueryResult<Hive.OperationTypes[]> =
     useQuery({
       queryKey: ["operation_types"],
       queryFn: () => fetchingService.getOperationTypes(""),
+      refetchOnWindowFocus: false,
     });
 
   useEffect(() => {
@@ -67,53 +66,39 @@ export default function Block() {
     });
   }
 
+  if (!blockOperations || !operationTypes) {
+    return 'Loading ...'
+  };
+
+  if (!blockOperations.length || !operationTypes.length) {
+    return 'No Data'
+  }
+
   return (
-    <>
-      {isBlockOperationsLoading ||
-      !blockOperations?.length ||
-      !operationTypes?.length ||
-      !virtualOperations?.length ||
-      !nonVirtualOperations?.length ? (
-        <div>Loading .....</div>
-      ) : (
-        <div className="md:p-10 w-full h-full">
-          <BlockPageNavigation
-            blockNumber={blockNumber}
-            goToBlock={handleGoToBlock}
-            timeStamp={new Date(blockOperations[0].timestamp)}
-            virtualOperationLength={virtualOperations?.length}
-            nonVirtualOperationLength={nonVirtualOperations.length}
+    <div className="md:p-10 w-full h-full">
+      <BlockPageNavigation
+        blockNumber={blockNumber}
+        goToBlock={handleGoToBlock}
+        timeStamp={new Date(blockOperations[0].timestamp)}
+        virtualOperationLength={virtualOperations?.length ?? 0}
+        nonVirtualOperationLength={nonVirtualOperations?.length ?? 0}
+      />
+      <FiltersSection
+        operationTypes={operationTypes.sort((a, b) =>
+          a[1].localeCompare(b[1])
+        )}
+        setFilters={setBlockFilters}
+      />
+      <section className="md:p-10 flex items-center justify-center text-white">
+        <div className="w-full p-4 md:p-0 md:w-4/5">
+          <NonVirtualOperations
+            nonVirtualOperations={nonVirtualOperations || []}
           />
-          <FiltersSection
-            operationTypes={operationTypes.sort((a, b) =>
-              a[1].localeCompare(b[1])
-            )}
-            setFilters={(filters) => setBlockFilters(filters)}
+          <VirtualOperations
+            virtualOperations={virtualOperations || []}
           />
-          <section className="md:p-10 flex items-center justify-center text-white">
-            <div className="w-full p-4 md:p-0 md:w-4/5">
-              <NonVirtualOperations
-                nonVirtualOperations={
-                  !!blockFilters.length
-                    ? nonVirtualOperations.filter((operation) =>
-                        blockFilters.includes(operation.operation.type)
-                      )
-                    : nonVirtualOperations
-                }
-              />
-              <VirtualOperations
-                virtualOperations={
-                  !!blockFilters.length
-                    ? virtualOperations.filter((operation) =>
-                        blockFilters.includes(operation.operation.type)
-                      )
-                    : virtualOperations
-                }
-              />
-            </div>
-          </section>
         </div>
-      )}
-    </>
+      </section>
+    </div>
   );
 }

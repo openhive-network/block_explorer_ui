@@ -20,7 +20,7 @@ export default function Account() {
   const accountNameFromRoute = router.query.accountName as string;
 
   const [page, setPage] = useState(1);
-  const [operationFilters, setOperationFilters] = useState([]);
+  const [operationFilters, setOperationFilters] = useState<number[]>([]);
 
   // Account details
   const {
@@ -60,7 +60,10 @@ export default function Account() {
     });
 
   if (!accountDetails || !accountOperations || !accountOperationTypes) {
-    return null;
+    return 'Loading ...';
+  }
+  if (!accountOperations.length) {
+    return 'No data';
   }
 
   return (
@@ -115,7 +118,7 @@ export default function Account() {
           <div className="col-end-12">
             <OperationTypesDialog
               operationTypes={accountOperationTypes}
-              setFilters={() => {}}
+              setFilters={setOperationFilters}
             />
           </div>
         </div>
