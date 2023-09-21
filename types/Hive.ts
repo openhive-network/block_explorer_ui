@@ -58,6 +58,7 @@ declare module Hive {
     _witness: string;
     _order_by : string;
     _order_is : string;
+    _limit?: number
   }
   interface GetOperationTypesProps {
     _operation_type_pattern: string | null;
@@ -333,9 +334,9 @@ declare module Hive {
     witness: string;
     rank: number;
     url: string;
-    votes_vests: number;
+    vests: number;
     votes_hive_power: number;
-    votes_daily_change_vests: number;
+    votes_daily_change: number;
     votes_daily_change_hive_power: number;
     voters_num: number;
     voters_num_daily_change: number;
@@ -348,8 +349,8 @@ declare module Hive {
   }
 
   interface Voter {
-    account: string;
-    votes_vests: number;
+    voter: string;
+    vests: number;
     votes_hive_power: number;
     account_vests: number;
     account_hive_power: number;

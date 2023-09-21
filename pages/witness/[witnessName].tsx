@@ -75,7 +75,7 @@ export default function WitnessDetails() {
           <TableBody>
             {votersQuery?.data && votersQuery?.data?.map((voter, index) => (
               <TableRow key={index} className={`${index % 2 === 0 ? "bg-gray-50" : "bg-gray-200"}`}>
-                <TableCell className=' text-blue-600'><Link href={`/account/${voter.account}`}>{voter.account}</Link></TableCell>
+                <TableCell className=' text-blue-600'><Link href={`/account/${voter.voter}`}>{voter.voter}</Link></TableCell>
                 <TableCell >{voter.votes_hive_power} </TableCell>
               </TableRow>
             ))}

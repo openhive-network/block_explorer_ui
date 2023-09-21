@@ -149,13 +149,15 @@ class FetchingService {
   async getWitnessVoters(
     witness: string,
     orderBy: string,
-    orderIs: string
+    orderIs: string,
+    limit?: number
   ): Promise<Hive.Voter[]> {
     const requestBody: Hive.GetWitnessVotersProps = {
       _witness: witness,
       _order_by: orderBy,
       _order_is: orderIs,
     };
+    if (limit) requestBody._limit = limit;
     const url = `${config.apiAdress}/rpc/get_witness_voters`;
     return await this.makePostRequest(url, requestBody);
   }
