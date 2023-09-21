@@ -2,19 +2,14 @@ import { useState, Dispatch, SetStateAction } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  DialogContent
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Hive from "@/types/Hive";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import Link from "next/link";
-import { MoveDown, MoveUp } from "lucide-react";
+import { MoveDown, MoveUp, Loader2 } from "lucide-react";
 import { Switch } from "../ui/switch";
 
 
@@ -23,6 +18,7 @@ type VotersDialogProps = {
   isVotersOpen: boolean;
   voters: Hive.Voter[] | null;
   sorterInfo: {isAsc: boolean, sortKey: string}
+  loading: boolean;
   changeVotersDialogue: (isOpen: boolean) => void,
   changeSorter: (newIsAsc: boolean, newSortKey: string) => void,
 };
@@ -39,6 +35,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
   isVotersOpen,
   voters,
   sorterInfo,
+  loading,
   changeVotersDialogue,
   changeSorter
 }) => {
@@ -58,7 +55,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
   return (
     <Dialog open={isVotersOpen} onOpenChange={changeVotersDialogue}>
       <DialogContent className="h-3/4 max-w-2xl overflow-auto bg-white" >
-        <div className="text-center font-semibold	">{accountName}</div>
+        <div className="flex  justify-center  items-centertext-center font-semibold	">{accountName} {loading && <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />}</div>
         <div className="flex"><label>Vests</label><Switch className="mx-2" checked={showHivePower} onCheckedChange={setShowHivePower}  /><label>Hive Power</label></div>
         <Table >
           <TableHeader>

@@ -20,6 +20,7 @@ export default function Witnesses() {
   const [isVotersOpen, setIsVotersOpen] = useState<boolean>(false);
   const [sortKey, setSortKey] = useState<string>("vests");
   const [isAsc, setIsAsc] = useState<boolean>(false);
+  const [voterLoading, setVoterLoading] = useState<boolean>(false);
   const votersRef = useRef<Hive.Voter[] | null>();
   const sortKeyRef = useRef<string>();
   const isAscRef = useRef<boolean>();
@@ -35,6 +36,7 @@ export default function Witnesses() {
   });
 
   const getVotersData = async (accountName: string) => {
+    setVoterLoading(true);
     setVoterAccount(accountName);
     const direction = isAscRef.current ? "asc" : "desc";
     if (!votersRef.current) {
@@ -43,6 +45,7 @@ export default function Witnesses() {
     }
     const allVoters = await fetchingService.getWitnessVoters(accountName, sortKeyRef.current || sortKey, direction);
     setVoters(allVoters);
+    setVoterLoading(false);
   }
 
   const changeVotersDialogue = (isOpen: boolean) => {
@@ -64,6 +67,7 @@ export default function Witnesses() {
         isVotersOpen={isVotersOpen} 
         voters={voters} 
         sorterInfo={{isAsc, sortKey}}
+        loading={voterLoading}
         changeVotersDialogue={changeVotersDialogue} 
         changeSorter={changeSorter}
       />
