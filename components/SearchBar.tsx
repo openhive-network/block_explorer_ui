@@ -125,7 +125,7 @@ const SearchBar: React.FC = () => {
             router.push(`/account/${searchData.input_value[selectedResult]}`);
           } else {
             router.push(
-              `${getResultTypeHeader(searchData)}/${searchData.input_value}`
+              `/${getResultTypeHeader(searchData)}/${searchData.input_value}`
             );
           }
           resetSearchBar();

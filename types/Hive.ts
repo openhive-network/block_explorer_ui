@@ -69,7 +69,7 @@ declare module Hive {
   }
 
   interface GetBlockByTimeProps {
-    _timestamp: Date
+    _timestamp: Date;
   }
 
   interface Supply {
@@ -157,7 +157,11 @@ declare module Hive {
 
   type RewardFundsQuery = JsonRpcBasicResponse<{ funds: RewardFunds[] }>;
 
-  type OperationType = "vote_operation" | "comment_operation";
+  type OperationType =
+    | "vote_operation"
+    | "comment_operation"
+    | "custom_json_operation"
+    | "transfer_operation";
 
   interface Operation {
     type: OperationType;
@@ -171,6 +175,18 @@ declare module Hive {
       parent_author?: string;
       parent_permlink?: string;
       title?: string;
+      required_posting_auths?: string[];
+      required_auths?: string[];
+      id?: string;
+      json?: string;
+      amount?: {
+        nai: string;
+        amount: string;
+        precision: number;
+      };
+      memo?: string;
+      from?: string;
+      to?: string;
     };
   }
   interface TransactionQueryResponse {

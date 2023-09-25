@@ -5,10 +5,13 @@ import SearchBar from "./SearchBar";
 import { useMediaQuery } from "@/utils/Hooks";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Toggle } from "./ui/toggle";
+import { useUserSettingsContext } from "./contexts/UserSettingsContext";
 
 export default function Navbar() {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [menuOpen, setMenuOpen] = useState(false);
+  const { settings, setSettings } = useUserSettingsContext();
 
   return (
     <div className="flex p-2 justify-between bg-explorer-dark-gray text-white	items-center w-full">
@@ -44,7 +47,7 @@ export default function Navbar() {
         </div>
       ) : (
         <>
-          <div className="flex items-center	pl-12">
+          <div className="flex items-center pl-12">
             <Link href={"/"} className="pr-12">
               <Image
                 src="/hive-logo.png"
@@ -54,6 +57,14 @@ export default function Navbar() {
               />
             </Link>
             <Link href={"/witnesses"}>Witnesses</Link>
+            <Toggle
+              checked={settings.rawJsonView}
+              onClick={() =>
+                setSettings({ ...settings, rawJsonView: !settings.rawJsonView })
+              }
+              leftLabel="Raw Json view"
+              className="ml-6"
+            />
           </div>
 
           <SearchBar />

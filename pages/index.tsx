@@ -4,6 +4,7 @@ import OperationCard from '@/components/OperationCard';
 import Hive from '@/types/Hive';
 import { adjustDynamicGlobalBlockData } from '@/utils/QueryDataSelectors';
 import HeadBlockCard from '@/components/home/HeadBlockCard';
+import DetailedOperationCard from '@/components/DetailedOperationCard';
 
 export default function Home() {
 
@@ -32,20 +33,19 @@ export default function Home() {
   }) || [];
   
   return (
-      <div className='grid grid-cols-4 text-white mx-4 md:mx-8'>
+      <div className='grid grid-cols-6 text-white mx-4 md:mx-8'>
         <HeadBlockCard 
           headBlockCardData={dynamicGlobalQuery.data}
           transactionCount={operationsByBlock.data?.length || 0}
         />
-        <div className="col-start-1 md:col-start-2 col-span-4 md:col-span-3">
+        <div className="col-start-1 md:col-start-3 col-span-6 md:col-span-4">
           {operationsByBlock.isSuccess && operationsByBlock.data?.map(((operationByBlock, index) => (
-            <OperationCard 
+            <DetailedOperationCard 
               key={index}
               blockNumber={operationByBlock.block}
               transactionId={operationByBlock.trx_id || ""}
               operation={operationByBlock.operation}
               date={new Date(operationByBlock.timestamp)}
-              isVirtual={operationByBlock.virtual_op}
             />
           )))}
         </div>

@@ -7,6 +7,7 @@ import BlockPageNavigation from "@/components/block/BlockPageNavigation";
 import FiltersSection from "@/components/block/FiltersSection";
 import NonVirtualOperations from "@/components/block/NonVirtualOperations";
 import VirtualOperations from "@/components/block/VirtualOperations";
+import DetailedOperationCard from "@/components/DetailedOperationCard";
 
 export default function Block() {
   const router = useRouter();
@@ -39,11 +40,11 @@ export default function Block() {
 
   const virtualOperations = blockOperations?.filter(
     (operation) => operation.virtual_op
-  );
+  ) || [];
 
   const nonVirtualOperations = blockOperations?.filter(
     (operation) => !operation.virtual_op
-  );
+  ) || [];
 
   const handleNextBlock = () => {
     router.push({
@@ -91,12 +92,27 @@ export default function Block() {
       />
       <section className="md:p-10 flex items-center justify-center text-white">
         <div className="w-full p-4 md:p-0 md:w-4/5">
-          <NonVirtualOperations
-            nonVirtualOperations={nonVirtualOperations || []}
-          />
-          <VirtualOperations
-            virtualOperations={virtualOperations || []}
-          />
+          {nonVirtualOperations?.map(operation => 
+            <DetailedOperationCard 
+              operation={operation.operation}
+              date={new Date(operation.timestamp)}
+              blockNumber={operation.block}
+              transactionId={operation.trx_id}
+              key={operation.timestamp}
+            />
+          )}
+          <div className="text-center mt-4">
+            <p className="text-3xl text-black">Virtual Operations</p>
+          </div>
+          {virtualOperations?.map(operation => 
+            <DetailedOperationCard 
+              operation={operation.operation}
+              date={new Date(operation.timestamp)}
+              blockNumber={operation.block}
+              transactionId={operation.trx_id}
+              key={operation.timestamp}
+            />
+          )}
         </div>
       </section>
     </div>
