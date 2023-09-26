@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { useState } from "react";
+import { ArrowDownToLine, ArrowUpToLine } from "lucide-react";
 
 type AccountDetailsCardProps = {
   userDetails: any;
@@ -7,6 +9,7 @@ type AccountDetailsCardProps = {
 const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
   userDetails,
 }) => {
+  const [isPropertiesHidden, setIsPropertiesHidden] = useState(true);
   const keys = userDetails && Object.keys(userDetails);
 
   const render_key = (key: string) => {
@@ -20,7 +23,11 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
     if (["url"].includes(key)) {
       return (
         <div className="text-blue-400">
-          <Link href={userDetails[key]} target="_blank" rel="noreferrer">
+          <Link
+            href={userDetails[key]}
+            target="_blank"
+            rel="noreferrer"
+          >
             {userDetails[key]}
           </Link>
         </div>
@@ -28,11 +35,35 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
     } else return userDetails[key];
   };
 
+  const handlePropertiesVisibility = () => {
+    setIsPropertiesHidden(!isPropertiesHidden);
+  };
+
   return (
-    <div>
-      <div className="text-center mt-8">Properties</div>
-      <div className="flex-column">
+    <div className="bg-explorer-dark-gray p-2 rounded-[6px] h-fit rounded mt-8">
+      <div className="h-full flex justify-between align-center p-2">
+        Properties
+        <button
+          onClick={handlePropertiesVisibility}
+          className="hover:bg-slate-600 mx-2"
+        >
+          {isPropertiesHidden ? <ArrowDownToLine /> : <ArrowUpToLine />}
+        </button>
+      </div>
+      <div
+        hidden={isPropertiesHidden}
+        className="flex-column"
+      >
         {keys?.map((key: string, index: number) => {
+          if (
+            [
+              "json_metadata",
+              "posting_json_metadata",
+              "witness_votes",
+              "profile_image",
+            ].includes(key)
+          )
+            return null;
           return (
             <div
               key={index}
@@ -43,7 +74,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
               </div>
               <span className=" overflow-auto">
                 {typeof userDetails?.[key] != "string" ? (
-                  <pre>{JSON.stringify(userDetails?.[key], null, 2)}</pre>
+                  <pre>{JSON.stringify(userDetails?.[key])}</pre>
                 ) : (
                   render_key(key)
                 )}
