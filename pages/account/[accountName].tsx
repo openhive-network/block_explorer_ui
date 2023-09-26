@@ -11,6 +11,7 @@ import Image from "next/image";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import moment from "moment";
 import { config } from "@/Config";
+import { Progress } from "@/components/ui/progress";
 
 const OPERATIONS_LIMIT = 100;
 
@@ -60,10 +61,10 @@ export default function Account() {
     });
 
   if (!accountDetails || !accountOperations || !accountOperationTypes) {
-    return 'Loading ...';
+    return "Loading ...";
   }
   if (!accountOperations.length) {
-    return 'No data';
+    return "No data";
   }
 
   return (
@@ -82,21 +83,54 @@ export default function Account() {
           </span>
         </div>
         <div>
-          <div>Voting weight : NEEDS CALC</div>
-          <div>Voting Power : NEEDS CALC </div>
-          <div>Downvote power : NEEDS CALC</div>
-          <div>Recourse credits : NEEDS CALC</div>
-          <div>Reputation : NEEDS CALC</div>
-          <div>Posts count: {accountDetails.post_count}</div>
-          <div>Age : NEEDS CALC</div>
-          <div>
-            Created at:{" "}
-            {moment(accountDetails.created).format(config.baseMomentTimeFormat)}
+          <div className="text-center">
+            <p className="text-xl">Vote weight</p>
+            <p>50</p>
           </div>
-        </div>
-        <div>
-          <div className="text-center mt-8">Recource credits</div>
-          Need calc
+          <div className="text-center text-gray-500">
+            <p className="my-2">Voting Power</p>
+            <Progress
+              value={53}
+              color="#cecafa"
+              style={{ background: "#03182c" }}
+            />
+          </div>
+
+          <div className="text-center text-gray-500">
+            <p className="my-2">Downvote power </p>
+            <Progress
+              value={25}
+              color="#cecafa"
+              style={{ background: "#03182c" }}
+            />
+          </div>
+
+          <div className="text-center text-gray-500">
+            <p className="my-2">Recourse credits </p>
+            <Progress
+              value={75}
+              color="#cecafa"
+              style={{ background: "#03182c" }}
+            />
+          </div>
+          <div className="flex justify-between p-5 break-all">
+            <div className="text-center">
+              <p className="text-xl">Reputation</p>
+              <p className="text-lg">75</p>
+              <p className="text-xs text-gray-500">
+                {accountDetails.post_count} posts
+              </p>
+            </div>
+            <div className="text-center">
+              <p className="text-xl">Age</p>
+              <p className="text-lg">54</p>
+              <p className="text-xs text-gray-500">
+                {moment(accountDetails.created).format(
+                  config.baseMomentTimeFormat
+                )}
+              </p>
+            </div>
+          </div>
         </div>
         <div>
           <AccountDetailsCard userDetails={accountDetails} />
