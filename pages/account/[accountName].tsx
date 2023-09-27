@@ -10,8 +10,8 @@ import Hive from "@/types/Hive";
 import Image from "next/image";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import moment from "moment";
-import { config } from "@/Config";
 import { Progress } from "@/components/ui/progress";
+import DetailedOperationCard from "@/components/DetailedOperationCard";
 
 const OPERATIONS_LIMIT = 100;
 
@@ -68,32 +68,20 @@ export default function Account() {
   }
 
   return (
-    <div className="grid grid-cols-4 text-white mx-8">
-      <div className='mt-6 col-start-1 col-span-1 bg-explorer-dark-gray p-2 rounded-["6px] mx-6 h-fit rounded'>
-        <div className="flex justify-between text-explorer-orange text-2xl my-4">
-          {accountDetails.name}{" "}
-          <span>
-            <Image
-              className="rounded-full"
-              src={getHiveAvatarUrl(accountNameFromRoute)}
-              alt="avatar"
-              width={50}
-              height={50}
-            />
-          </span>
-        </div>
-        <div>
-          <div className="text-center">
-            <p className="text-xl">Vote weight</p>
-            <p>50</p>
-          </div>
-          <div className="text-center text-gray-500">
-            <p className="my-2">Voting Power</p>
-            <Progress
-              value={53}
-              color="#cecafa"
-              style={{ background: "#03182c" }}
-            />
+    <div className="grid grid-cols-3 text-white mx-8">
+      <div className="mt-6 col-start-1 col-span-1 ">
+        <div className='bg-explorer-dark-gray p-2 rounded-["6px] mx-6 h-fit rounded'>
+          <div className="flex justify-between text-explorer-orange text-2xl my-4">
+            {accountDetails.name}{" "}
+            <span>
+              <Image
+                className="rounded-full"
+                src={getHiveAvatarUrl(accountNameFromRoute)}
+                alt="avatar"
+                width={50}
+                height={50}
+              />
+            </span>
           </div>
           <div>
             <div className="text-center">
@@ -135,12 +123,9 @@ export default function Account() {
                 </p>
               </div>
               <div className="text-center">
-                <p className="text-xl">Age</p>
-                <p className="text-lg">54</p>
-                <p className="text-xs text-gray-500">
-                  {moment(accountDetails.created).format(
-                    config.baseMomentTimeFormat
-                  )}
+                <p className="text-lg">Creation Date</p>
+                <p className="text-lg ">
+                  {moment(accountDetails.created).format("DD/MM/YYYY")}
                 </p>
               </div>
             </div>
@@ -172,12 +157,12 @@ export default function Account() {
         </div>
         {accountOperations.map((operation: any) => (
           <div key={operation.acc_operation_id}>
-            <OperationCard
+            <DetailedOperationCard
               operation={operation.operation}
+              date={new Date(operation.timestamp)}
               blockNumber={operation.block}
               transactionId={operation.trx_id}
-              date={operation.timestamp}
-              isVirtual={operation.virtual_op}
+              key={operation.timestamp}
             />
           </div>
         ))}
