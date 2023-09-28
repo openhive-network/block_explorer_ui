@@ -1,12 +1,14 @@
 import { ChevronRightCircle, ChevronLeftCircle } from "lucide-react";
 import fetchingService from "@/services/FetchingService";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import DateTimePicker from "react-datetime-picker";
-import 'react-datetime-picker/dist/DateTimePicker.css';
-import 'react-calendar/dist/Calendar.css';
-import 'react-clock/dist/Clock.css';
+import "react-datetime-picker/dist/DateTimePicker.css";
+import "react-calendar/dist/Calendar.css";
+import "react-clock/dist/Clock.css";
+import FiltersSection from "./FiltersSection";
+import Hive from "@/types/Hive";
 
 interface BlockPageNavigationProps {
   blockNumber: number;
@@ -14,6 +16,8 @@ interface BlockPageNavigationProps {
   timeStamp: Date;
   virtualOperationLength: number;
   nonVirtualOperationLength: number;
+  setFilters: Dispatch<SetStateAction<number[]>>;
+  operationTypes: Hive.OperationTypes[];
 }
 
 const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
@@ -22,6 +26,8 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   timeStamp,
   virtualOperationLength,
   nonVirtualOperationLength,
+  setFilters,
+  operationTypes,
 }) => {
   const [block, setBlock] = useState(blockNumber.toString());
   const [blockDate, setBlockDate] = useState(timeStamp);
@@ -32,14 +38,16 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   };
 
   const handleGoToBlockByTime = async () => {
-    const blockByTime = await fetchingService.getBlockByTime(new Date(blockDate.toString() + "Z"));
+    const blockByTime = await fetchingService.getBlockByTime(
+      new Date(blockDate.toString() + "Z")
+    );
     if (blockByTime) {
       handleBlockChange(blockByTime.num.toString());
     }
   };
 
   return (
-    <section className="w-full flex flex-col items-center text-2xl p-4 sticky top-0">
+    <section className="w-full flex flex-col items-center text-2xl p-4 sticky top-12 mb-8 md:mb-4 md:top-16 md:mt-10">
       <div className="w-full md:w-4/6 py-4 bg-explorer-dark-gray text-center text-white rounded-[6px] shadow-xl">
         <div className="w-full flex justify-between items-center px-8">
           <button
@@ -106,6 +114,12 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
             </Button>
           </div>
         </div>
+        <FiltersSection
+          operationTypes={operationTypes.sort((a, b) =>
+            a[1].localeCompare(b[1])
+          )}
+          setFilters={setFilters}
+        />
       </div>
     </section>
   );

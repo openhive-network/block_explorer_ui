@@ -1,11 +1,11 @@
-import Explorer from "@/types/Explorer"
-import Image from "next/image"
-import Link from "next/link"
-import {getHiveAvatarUrl} from "@/utils/HiveBlogUtils"
+import Explorer from "@/types/Explorer";
+import Image from "next/image";
+import Link from "next/link";
+import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 
 interface HeadBlockCardProps {
-  headBlockCardData?: Explorer.HeadBlockCardData,
-  transactionCount: number
+  headBlockCardData?: Explorer.HeadBlockCardData;
+  transactionCount: number;
 }
 
 const cardNameMap = new Map([
@@ -34,33 +34,61 @@ const cardNameMap = new Map([
   ["currentRemoveThreshold", "Current remove threshold"],
   ["earlyVotingSeconds", "Early voting seconds"],
   ["midVotingSeconds", "Mid voting seconds"],
-  ["maxConvecutiveRecurrentTransferFailures", "Max consecutive recurrent transfer failures"],
+  [
+    "maxConvecutiveRecurrentTransferFailures",
+    "Max consecutive recurrent transfer failures",
+  ],
   ["maxRecurrentTransferEndDate", "Max recurrent transfer end date"],
   ["minRecurrentTransfersRecurrence", "Min recurrent transfers recurrence"],
-  ["maxOpenRecurrentTransfers", "Max open recurrent transfers"]
-])
+  ["maxOpenRecurrentTransfers", "Max open recurrent transfers"],
+]);
 
-const HeadBlockCard: React.FC<HeadBlockCardProps> = ({headBlockCardData, transactionCount}) => {
-  return(
-    <div className='mt-6 col-start-1 col-span-6 md:col-span-2 bg-explorer-dark-gray p-2 rounded-["6px] md:mx-6 h-fit rounded'>
-      <div className='text-explorer-orange text-2xl my-2'>
-        <Link href={`/block/${headBlockCardData?.headBlockNumber}`} >Block: {headBlockCardData?.headBlockNumber}</Link>
+const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
+  headBlockCardData,
+  transactionCount,
+}) => {
+  return (
+    <div className='col-start-1 col-span-6 md:col-span-2 bg-explorer-dark-gray p-2 rounded-["6px] md:mx-6 h-fit rounded'>
+      <div className="text-explorer-orange text-2xl my-2">
+        <Link href={`/block/${headBlockCardData?.headBlockNumber}`}>
+          Block: {headBlockCardData?.headBlockNumber}
+        </Link>
       </div>
       <div className="my-2">Operations per block: {transactionCount}</div>
       <div>
-        <Link className="flex justif-between items-center" href={`/account/${headBlockCardData?.witnessName}`} >
-          <span>Current witness: </span> <span className="text-explorer-orange mx-2">{headBlockCardData?.witnessName}</span>
-          <Image className="rounded-full" src={getHiveAvatarUrl(headBlockCardData?.witnessName)} alt="avatar" width={40} height={40} /> 
+        <Link
+          className="flex justif-between items-center"
+          href={`/account/${headBlockCardData?.witnessName}`}
+        >
+          <span>Current witness: </span>{" "}
+          <span className="text-explorer-orange mx-2">
+            {headBlockCardData?.witnessName}
+          </span>
+          <Image
+            className="rounded-full"
+            src={getHiveAvatarUrl(headBlockCardData?.witnessName)}
+            alt="avatar"
+            width={40}
+            height={40}
+          />
         </Link>
       </div>
       <div>
         <div className="text-center mt-8">Properties</div>
-        {Object.entries(headBlockCardData?.headBlockDetails || {}).map(([key, value]) => (
-          <div key={key} className="border-b border-solid border-gray-700 flex justify-between py-1"><span className="mr-2">{`${cardNameMap.get(key)}: `}</span><span>{value}</span></div>
-        ))}
+        {Object.entries(headBlockCardData?.headBlockDetails || {}).map(
+          ([key, value]) => (
+            <div
+              key={key}
+              className="border-b border-solid border-gray-700 flex justify-between py-1"
+            >
+              <span className="mr-2">{`${cardNameMap.get(key)}: `}</span>
+              <span>{value}</span>
+            </div>
+          )
+        )}
       </div>
     </div>
-  )        
-}
+  );
+};
 
-export default HeadBlockCard
+export default HeadBlockCard;

@@ -14,7 +14,7 @@ export default function Navbar() {
   const { settings, setSettings } = useUserSettingsContext();
 
   return (
-    <div className="flex p-2 justify-between bg-explorer-dark-gray text-white	items-center w-full">
+    <div className="flex p-2 justify-between bg-explorer-dark-gray text-white	items-center w-full fixed top-0 z-50">
       {isMobile ? (
         <div className="flex items-center justify-between w-full">
           <Link href={"/"} className="pr-3">
@@ -38,10 +38,20 @@ export default function Navbar() {
             <div className="w-full flex items-center justify-end py-3 px-2">
               <X onClick={() => setMenuOpen(false)} height={40} width={40} />
             </div>
-            <div className="flex flex-col px-4 text-2xl">
+            <div className="flex flex-col px-4 text-2xl gap-y-2">
               <Link href={"/witnesses"} onClick={() => setMenuOpen(false)}>
                 Witnesses
               </Link>
+              <Toggle
+                checked={settings.rawJsonView}
+                onClick={() =>
+                  setSettings({
+                    ...settings,
+                    rawJsonView: !settings.rawJsonView,
+                  })
+                }
+                leftLabel="Raw Json view"
+              />
             </div>
           </div>
         </div>

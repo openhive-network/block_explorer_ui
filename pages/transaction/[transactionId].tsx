@@ -2,11 +2,11 @@ import { useRouter } from "next/router";
 import { useQuery } from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
-import OperationCard from "@/components/OperationCard";
 import { addSpacesAndCapitalizeFirst } from "@/utils/StringUtils";
+import DetailedOperationCard from "@/components/DetailedOperationCard";
+import Link from "next/link";
 import moment from "moment";
 import { config } from "@/Config";
-import Link from "next/link";
 
 const displayTransactionData = (
   key: string,
@@ -30,16 +30,17 @@ export default function Transaction() {
   const { data, isLoading, error } = useQuery<
     Hive.TransactionQueryResponse,
     Error
-  >({queryKey: [`block-${router.query.transactionId}`],
+  >({
+    queryKey: [`block-${router.query.transactionId}`],
     queryFn: () => fetchingService.getTransaction(transactionId),
     refetchOnWindowFocus: false,
   });
 
   return (
-    <div className="w-full max-w-5xl px-4 text-white">
+    <div className="w-full max-w-5xl px-4 text-white mt-12 md:mt-10">
       {!isLoading && !!data && (
         <>
-          <div className="mt-4 md:mt-10 w-full bg-explorer-dark-gray px-4 py-2 rounded-[6px] flex flex-col md:items-center md:text-3xl">
+          <div className="mt-4 md:mt-10 w-full bg-explorer-dark-gray px-4 py-2 rounded-[6px] flex flex-col md:items-center md:text-2xl">
             <div>
               Transaction{" "}
               <span className="text-explorer-turquoise">
@@ -63,13 +64,14 @@ export default function Transaction() {
           </div>
           {data.operations &&
             data.operations.map((operation, index) => (
-              <OperationCard
+              <DetailedOperationCard
                 key={index}
                 operation={operation}
                 date={new Date(data.timestamp)}
                 blockNumber={data.block_num}
                 transactionId={data.transaction_id}
-                isVirtual={false}
+                skipBlockTrxDate
+                className="mt-4"
               />
             ))}
           <div className="mt-6 w-full bg-explorer-dark-gray py-2 rounded-[6px] px-2">

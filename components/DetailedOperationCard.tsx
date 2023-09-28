@@ -1,20 +1,22 @@
+import React, { useState } from "react";
+import Link from "next/link";
+import { Check, ChevronDown, ChevronUp, ClipboardCopy } from "lucide-react";
+import moment from "moment";
 import { config } from "@/Config";
 import Hive from "@/types/Hive";
 import { isJson } from "@/utils/StringUtils";
-import moment from "moment";
-import Link from "next/link";
-import React, { useState } from "react";
 import { Button } from "./ui/button";
-import { Check, ChevronDown, ChevronUp, ClipboardCopy } from "lucide-react";
-import { Toggle } from "./ui/toggle";
 import JSONView from "./JSONView";
 import { useUserSettingsContext } from "./contexts/UserSettingsContext";
+import { cn } from "@/lib/utils";
 
 interface DetailedOperationCardProps {
   operation: Hive.Operation;
   transactionId?: string;
   blockNumber: number;
   date: Date;
+  skipBlockTrxDate?: boolean;
+  className?: string;
 }
 
 const getOneLineDescription = (operation: Hive.Operation) => {
@@ -107,6 +109,8 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
   transactionId,
   blockNumber,
   date,
+  skipBlockTrxDate = false,
+  className,
 }) => {
   const [seeDetails, setSeeDetails] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -119,46 +123,59 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
   };
 
   return (
-    <div className="mt-6 w-full bg-explorer-dark-gray px-4 py-2 rounded-[6px] text-xs	overflow-hidden">
-      <div className="flex justify-center text-xl text-explorer-orange mb-4">
-        {operation.type}
-      </div>
-      <div className="flex items-center justify-between gap-x-8">
-        <div className="flex gap-x-2 flex-shrink-0">
-          <div className="my-1">
-            Block{" "}
-            <Link
-              className="text-explorer-turquoise"
-              href={`/block/${blockNumber}`}
-            >
-              {blockNumber}
-            </Link>
-          </div>
-
-          {transactionId && (
+    <div
+      className={cn(
+        "w-full bg-explorer-dark-gray px-4 py-2 rounded-[6px] text-xs	overflow-hidden",
+        className
+      )}
+    >
+      <div className="flex justify-between items-center mb-2 flex-wrap">
+        <div
+          className={cn(
+            "text-explorer-orange font-bold w-full md:w-auto text-center text-sm",
+            {
+              "flex-grow": skipBlockTrxDate,
+            }
+          )}
+        >
+          {operation.type}
+        </div>
+        {!skipBlockTrxDate && (
+          <>
             <div className="my-1">
-              Trx{" "}
+              Block{" "}
               <Link
                 className="text-explorer-turquoise"
-                href={`/transaction/${transactionId}`}
+                href={`/block/${blockNumber}`}
               >
-                {transactionId.slice(0, 10)}
+                {blockNumber}
               </Link>
             </div>
-          )}
 
-          <div className="my-1">
-            Date:{" "}
-            <span className="text-explorer-turquoise">
-              {moment(date).format(config.baseMomentTimeFormat)}
-            </span>
-          </div>
-        </div>
+            {transactionId && (
+              <div className="my-1">
+                Trx{" "}
+                <Link
+                  className="text-explorer-turquoise"
+                  href={`/transaction/${transactionId}`}
+                >
+                  {transactionId.slice(0, 10)}
+                </Link>
+              </div>
+            )}
 
-        <div className="flex justify-center truncate text-right">
-          <div className="inline truncate">
-            {getOneLineDescription(operation)}
-          </div>
+            <div className="my-1">
+              Date:{" "}
+              <span className="text-explorer-turquoise">
+                {moment(date).format(config.baseMomentTimeFormat)}
+              </span>
+            </div>
+          </>
+        )}
+      </div>
+      <div className="w-full flex justify-center truncate mb-2">
+        <div className="inline truncate">
+          {getOneLineDescription(operation)}
         </div>
       </div>
 

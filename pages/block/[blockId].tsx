@@ -19,11 +19,12 @@ export default function Block() {
   const [blockNumber, setBlockNumber] = useState(0);
   const [blockFilters, setBlockFilters] = useState<number[]>([]);
 
-  const { data: blockOperations }: UseQueryResult<Hive.OpsByBlockResponse[]> = useQuery({
-    queryKey: ["block_operations", blockNumber, blockFilters],
-    queryFn: () => fetchingService.getOpsByBlock(blockNumber, blockFilters),
-    refetchOnWindowFocus: false,
-  });
+  const { data: blockOperations }: UseQueryResult<Hive.OpsByBlockResponse[]> =
+    useQuery({
+      queryKey: ["block_operations", blockNumber, blockFilters],
+      queryFn: () => fetchingService.getOpsByBlock(blockNumber, blockFilters),
+      refetchOnWindowFocus: false,
+    });
 
   const { data: operationTypes }: UseQueryResult<Hive.OperationTypes[]> =
     useQuery({
@@ -38,41 +39,25 @@ export default function Block() {
     setBlockNumber(blockIdToNum);
   }, [blockIdToNum]);
 
-  const virtualOperations = blockOperations?.filter(
-    (operation) => operation.virtual_op
-  ) || [];
+  const virtualOperations =
+    blockOperations?.filter((operation) => operation.virtual_op) || [];
 
-  const nonVirtualOperations = blockOperations?.filter(
-    (operation) => !operation.virtual_op
-  ) || [];
-
-  const handleNextBlock = () => {
-    router.push({
-      pathname: "[blockId]",
-      query: { blockId: (blockIdToNum += 1) },
-    });
-  };
-
-  const handePreviousBlock = () => {
-    router.push({
-      pathname: "[blockId]",
-      query: { blockId: (blockIdToNum -= 1) },
-    });
-  };
+  const nonVirtualOperations =
+    blockOperations?.filter((operation) => !operation.virtual_op) || [];
 
   const handleGoToBlock = (blockNumber: string) => {
     router.push({
       pathname: "[blockId]",
       query: { blockId: blockNumber },
     });
-  }
-
-  if (!blockOperations || !operationTypes) {
-    return 'Loading ...'
   };
 
+  if (!blockOperations || !operationTypes) {
+    return "Loading ...";
+  }
+
   if (!blockOperations.length || !operationTypes.length) {
-    return 'No Data'
+    return "No Data";
   }
 
   return (
@@ -83,36 +68,32 @@ export default function Block() {
         timeStamp={new Date(blockOperations[0].timestamp)}
         virtualOperationLength={virtualOperations?.length ?? 0}
         nonVirtualOperationLength={nonVirtualOperations?.length ?? 0}
-      />
-      <FiltersSection
-        operationTypes={operationTypes.sort((a, b) =>
-          a[1].localeCompare(b[1])
-        )}
         setFilters={setBlockFilters}
+        operationTypes={operationTypes}
       />
-      <section className="md:p-10 flex items-center justify-center text-white">
-        <div className="w-full p-4 md:p-0 md:w-4/5">
-          {nonVirtualOperations?.map(operation => 
-            <DetailedOperationCard 
+      <section className="md:px-10 flex items-center justify-center text-white">
+        <div className="w-full p-4 md:p-0 md:w-4/5 flex flex-col gap-y-2 md:gap-y-6">
+          {nonVirtualOperations?.map((operation) => (
+            <DetailedOperationCard
               operation={operation.operation}
               date={new Date(operation.timestamp)}
               blockNumber={operation.block}
               transactionId={operation.trx_id}
               key={operation.timestamp}
             />
-          )}
+          ))}
           <div className="text-center mt-4">
             <p className="text-3xl text-black">Virtual Operations</p>
           </div>
-          {virtualOperations?.map(operation => 
-            <DetailedOperationCard 
+          {virtualOperations?.map((operation) => (
+            <DetailedOperationCard
               operation={operation.operation}
               date={new Date(operation.timestamp)}
               blockNumber={operation.block}
               transactionId={operation.trx_id}
               key={operation.timestamp}
             />
-          )}
+          ))}
         </div>
       </section>
     </div>

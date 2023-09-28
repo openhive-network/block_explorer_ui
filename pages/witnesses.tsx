@@ -1,3 +1,6 @@
+import React, { useRef, useState } from "react";
+import Link from "next/link";
+import { MenuSquareIcon } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -8,11 +11,8 @@ import {
 } from "@/components/ui/table";
 import fetchingService from "@/services/FetchingService";
 import { useQuery } from "@tanstack/react-query";
-import Link from "next/link";
 import VotersDialog from "@/components/Witnesses/VotersDialog";
 import Hive from "@/types/Hive";
-import React, { useRef, useState } from "react";
-import { MenuSquareIcon } from "lucide-react";
 
 export default function Witnesses() {
   const [voters, setVoters] = useState<Hive.Voter[] | null>(null);
@@ -40,42 +40,53 @@ export default function Witnesses() {
     setVoterAccount(accountName);
     const direction = isAscRef.current ? "asc" : "desc";
     if (!votersRef.current) {
-      const voters = await fetchingService.getWitnessVoters(accountName, sortKeyRef.current || sortKey, direction, 50);
+      const voters = await fetchingService.getWitnessVoters(
+        accountName,
+        sortKeyRef.current || sortKey,
+        direction,
+        50
+      );
       setVoters(voters);
     }
-    const allVoters = await fetchingService.getWitnessVoters(accountName, sortKeyRef.current || sortKey, direction);
+    const allVoters = await fetchingService.getWitnessVoters(
+      accountName,
+      sortKeyRef.current || sortKey,
+      direction
+    );
     setVoters(allVoters);
     setVoterLoading(false);
-  }
+  };
 
   const changeVotersDialogue = (isOpen: boolean) => {
     setIsVotersOpen(isOpen);
     if (!isOpen) setVoters(null);
-  }
+  };
 
   const changeSorter = async (newIsAsc: boolean, newSortKey: string) => {
     const isAscForChange = newSortKey === sortKey ? newIsAsc : false;
     await setSortKey(newSortKey);
     await setIsAsc(isAscForChange);
     getVotersData(voterAccount);
-  }
+  };
 
   return (
-    <div className="m-8 max-w-[100vw]">
-      <VotersDialog 
-        accountName={voterAccount} 
-        isVotersOpen={isVotersOpen} 
-        voters={voters} 
-        sorterInfo={{isAsc, sortKey}}
+    <div className="mt-16 md:m-8 max-w-[100vw]">
+      <VotersDialog
+        accountName={voterAccount}
+        isVotersOpen={isVotersOpen}
+        voters={voters}
+        sorterInfo={{ isAsc, sortKey }}
         loading={voterLoading}
-        changeVotersDialogue={changeVotersDialogue} 
+        changeVotersDialogue={changeVotersDialogue}
         changeSorter={changeSorter}
       />
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead className="sticky left-0 bg-explorer-bg-start"></TableHead>
-            <TableHead className="sticky left-6 bg-explorer-bg-start">Name</TableHead>
+            <TableHead className="sticky left-6 bg-explorer-bg-start">
+              Name
+            </TableHead>
             <TableHead>Votes</TableHead>
             <TableHead>Voters</TableHead>
             <TableHead>Block Size</TableHead>
@@ -111,7 +122,17 @@ export default function Witnesses() {
                 </Link>
               </TableCell>
               <TableCell>{singleWitness.vests?.toLocaleString()}</TableCell>
-              <TableCell onClick={() => {getVotersData(singleWitness.witness); setIsVotersOpen(true)}}><span  className="flex items-center cursor-pointer">{singleWitness.voters_num.toLocaleString()}<MenuSquareIcon className="w-4 ml-1" /></span></TableCell>
+              <TableCell
+                onClick={() => {
+                  getVotersData(singleWitness.witness);
+                  setIsVotersOpen(true);
+                }}
+              >
+                <span className="flex items-center cursor-pointer">
+                  {singleWitness.voters_num.toLocaleString()}
+                  <MenuSquareIcon className="w-4 ml-1" />
+                </span>
+              </TableCell>
               <TableCell>
                 {singleWitness.block_size
                   ? singleWitness.block_size.toLocaleString()
