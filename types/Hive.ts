@@ -72,6 +72,22 @@ declare module Hive {
     _timestamp: Date;
   }
 
+  interface GetOperationKeysProps {
+    _operation_id: number;
+    _key: string[]
+  }
+
+  interface GetBlockByOpProps {
+    _operations: number[],
+    _account: string | null,
+    _from: number | null,
+    _to: number | null,
+    _limit: number | null,
+    _order_is: "asc" | "desc"
+    _key_content: string | null,
+    _set_key: string[] | null
+  }
+
   interface Supply {
     amount: string;
     precision: number;
@@ -374,6 +390,8 @@ declare module Hive {
     proxied_hive_power: number;
     timestamp: Date;
   }
+
+  type BlockByOpResponse = number[];
 }
 
 export default Hive;

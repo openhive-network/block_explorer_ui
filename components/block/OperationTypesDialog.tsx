@@ -1,4 +1,4 @@
-import { useState, Dispatch, SetStateAction } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -15,38 +15,40 @@ import Hive from "@/types/Hive";
 
 type OperationTypesDialogProps = {
   operationTypes: Hive.OperationTypes[];
-  setFilters: Dispatch<SetStateAction<number[]>>;
+  triggerTitle: string;
+  setSelectedOperations: (operationIds: number[]) => void;
 };
 
 const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
   operationTypes,
-  setFilters,
+  triggerTitle,
+  setSelectedOperations
 }) => {
-  const [selectedFilterIds, setSelectedFiltersIds] = useState<number[]>([]);
+  const [selectedOperationsIds, setSelectedOperationsIds] = useState<number[]>([]);
 
   const onFiltersSelect = (id: number) => {
-    if (selectedFilterIds.includes(id)) {
-      setSelectedFiltersIds(
-        selectedFilterIds.filter((filterId) => filterId !== id)
+    if (selectedOperationsIds.includes(id)) {
+      setSelectedOperationsIds(
+        selectedOperationsIds.filter((operationId) => operationId !== id)
       );
     } else {
-      setSelectedFiltersIds([...selectedFilterIds, id]);
+      setSelectedOperationsIds([...selectedOperationsIds, id]);
     }
   };
 
   const handleOnSubmit = () => {
-    setFilters(selectedFilterIds);
+    setSelectedOperations(selectedOperationsIds);
   }
 
   const handleOnClear = () => {
-    setSelectedFiltersIds([])
+    setSelectedOperationsIds([])
   }
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="bg-gray-500 hover:bg-gray-700">
-          Operation Filters
+        <Button className="bg-gray-500 hover:bg-gray-700 rounded-[4px]">
+          {triggerTitle}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-[80%] max-h-[80%] flex-column justify-center align-center overflow-auto bg-white text-black ">
@@ -67,7 +69,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
               >
                 <Input
                   type="checkbox"
-                  checked={selectedFilterIds.includes(operation[0])}
+                  checked={selectedOperationsIds.includes(operation[0])}
                   name="bordered-checkbox"
                   className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   onChange={() => onFiltersSelect(operation[0])}

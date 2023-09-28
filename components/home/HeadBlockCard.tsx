@@ -43,16 +43,11 @@ const cardNameMap = new Map([
   ["maxOpenRecurrentTransfers", "Max open recurrent transfers"],
 ]);
 
-const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
-  headBlockCardData,
-  transactionCount,
-}) => {
-  return (
-    <div className='col-start-1 col-span-6 md:col-span-2 bg-explorer-dark-gray p-2 rounded-["6px] md:mx-6 h-fit rounded'>
-      <div className="text-explorer-orange text-2xl my-2">
-        <Link href={`/block/${headBlockCardData?.headBlockNumber}`}>
-          Block: {headBlockCardData?.headBlockNumber}
-        </Link>
+const HeadBlockCard: React.FC<HeadBlockCardProps> = ({headBlockCardData, transactionCount}) => {
+  return(
+    <div className='mt-6 col-start-1 col-span-6 md:col-span-1 bg-explorer-dark-gray p-2 rounded-["6px] md:mx-6 h-fit rounded'>
+      <div className='text-explorer-orange text-2xl my-2'>
+        <Link href={`/block/${headBlockCardData?.headBlockNumber}`} >Block: {headBlockCardData?.headBlockNumber}</Link>
       </div>
       <div className="my-2">Operations per block: {transactionCount}</div>
       <div>

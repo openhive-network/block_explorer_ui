@@ -15,7 +15,8 @@ const FiltersSection: React.FC<FiltersSectionProps> = ({
     <section className="flex justify-center mt-4 ">
       <OperationTypesDialog
         operationTypes={operationTypes}
-        setFilters={setFilters}
+        setSelectedOperations={setFilters}
+        triggerTitle={"Operation Filters"}
       />
     </section>
   );

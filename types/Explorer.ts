@@ -38,6 +38,18 @@ declare module Explorer {
     witnessName: string;
     headBlockNumber: number;
   }
+
+  interface BlockSearchProps {
+    operations: number[];
+    accountName: string | null;
+    fromBlock: number | null;
+    toBlock: number | null;
+    limit: number;
+    deepProps: {
+      content: any;
+      keys: string[] | null;
+    }
+  }
 }
 
 export default Explorer;

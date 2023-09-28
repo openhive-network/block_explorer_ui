@@ -31,6 +31,7 @@ module.exports = {
         "switch-off": "rgb(200, 200, 200)",
         "switch-on": "rgb(100, 100, 100)",
         "switch-button": "rgb(20, 20, 20)",
+        "blocked": "rgba(255, 255, 255, 0.7)",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -50,7 +51,7 @@ module.exports = {
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+          foreground: "rgba(255, 255, 255, 0.5)",
         },
         accent: {
           DEFAULT: "hsl(var(--accent))",

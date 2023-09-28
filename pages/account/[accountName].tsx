@@ -99,7 +99,8 @@ export default function Account() {
           <div className="col-end-12">
             <OperationTypesDialog
               operationTypes={accountOperationTypes}
-              setFilters={setOperationFilters}
+              setSelectedOperations={setOperationFilters}
+              triggerTitle={"Operation Filters"}
             />
           </div>
         </div>
