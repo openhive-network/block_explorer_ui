@@ -2,19 +2,14 @@ import { cn } from "@/lib/utils";
 import React from "react";
 
 interface JSONViewProps {
-  json: unknown;
+  json: object;
   className?: string;
 }
 
-const JSONView: React.FC<JSONViewProps> = ({
-  json,
-  className
-}) => {
+const JSONView: React.FC<JSONViewProps> = ({ json, className }) => {
   return (
     <div className={cn("overflow-auto", className)}>
-      <pre>
-        {JSON.stringify(json, null, 2)}
-      </pre>
+      <pre>{JSON.stringify(json, null, 2)}</pre>
     </div>
   );
 };

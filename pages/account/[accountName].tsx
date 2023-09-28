@@ -1,5 +1,4 @@
 import { useState } from "react";
-import OperationCard from "../../components/OperationCard";
 import AccountDetailsCard from "../../components/account/AccountDetailsCard";
 import fetchingService from "@/services/FetchingService";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
@@ -7,11 +6,9 @@ import { useRouter } from "next/router";
 import OperationTypesDialog from "../../components/block/OperationTypesDialog";
 import CustomPagination from "../../components/CustomPagination";
 import Hive from "@/types/Hive";
-import Image from "next/image";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
-import moment from "moment";
-import { Progress } from "@/components/ui/progress";
 import DetailedOperationCard from "@/components/DetailedOperationCard";
+import JSONCard from "@/components/JSONCard";
+import AccountMainCard from "@/components/account/AccountMainCard";
 
 const OPERATIONS_LIMIT = 100;
 
@@ -68,72 +65,23 @@ export default function Account() {
   }
 
   return (
-    <div className="grid grid-cols-3 text-white mx-8">
-      <div className="mt-6 col-start-1 col-span-1 ">
-        <div className='bg-explorer-dark-gray p-2 rounded-["6px] mx-6 h-fit rounded'>
-          <div className="flex justify-between text-explorer-orange text-2xl my-4">
-            {accountDetails.name}{" "}
-            <span>
-              <Image
-                className="rounded-full"
-                src={getHiveAvatarUrl(accountNameFromRoute)}
-                alt="avatar"
-                width={50}
-                height={50}
-              />
-            </span>
-          </div>
-          <div>
-            <div className="text-center">
-              <p className="text-xl">Vote weight</p>
-              <p className="text-lg">50</p>
-            </div>
-            <div className="text-center text-gray-500">
-              <p className="my-2">Voting Power</p>
-              <Progress
-                value={53}
-                color="#cecafa"
-                style={{ background: "#03182c" }}
-              />
-            </div>
-
-            <div className="text-center text-gray-500">
-              <p className="my-2">Downvote power </p>
-              <Progress
-                value={25}
-                color="#cecafa"
-                style={{ background: "#03182c" }}
-              />
-            </div>
-
-            <div className="text-center text-gray-500">
-              <p className="my-2">Recourse credits </p>
-              <Progress
-                value={75}
-                color="#cecafa"
-                style={{ background: "#03182c" }}
-              />
-            </div>
-            <div className="flex justify-between p-5 break-all">
-              <div className="text-center">
-                <p className="text-xl">Reputation</p>
-                <p className="text-lg">75</p>
-                <p className="text-xs text-gray-500">
-                  {accountDetails.post_count} posts
-                </p>
-              </div>
-              <div className="text-center">
-                <p className="text-lg">Creation Date</p>
-                <p className="text-lg ">
-                  {moment(accountDetails.created).format("DD/MM/YYYY")}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className='bg-explorer-dark-gray rounded-["6px] mx-6 h-fit rounded'>
-          <AccountDetailsCard userDetails={accountDetails} />
-        </div>
+    <div className="grid grid-cols-3 text-white mx-8 w-full">
+      <div className="mt-6 col-start-1 col-span-1">
+        <AccountMainCard
+          accountDetails={accountDetails}
+          accountName={accountNameFromRoute}
+        />
+        <AccountDetailsCard userDetails={accountDetails} />
+        <JSONCard
+          header="JSON Metadata"
+          json={accountDetails.json_metadata}
+          showCollapseButton={true}
+        />
+        <JSONCard
+          header="Posting JSON Metadata"
+          json={accountDetails.posting_json_metadata}
+          showCollapseButton={true}
+        />
       </div>
 
       <div className="col-start-2 col-span-3">
