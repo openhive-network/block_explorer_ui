@@ -1,6 +1,6 @@
 import { useState } from "react";
 import JSONView from "./JSONView";
-import { ArrowDownToLine, ArrowUpToLine } from "lucide-react";
+import { ArrowDown, ArrowUp } from "lucide-react";
 
 interface JSONCardProps {
   header: string;
@@ -32,7 +32,7 @@ const JSONCard: React.FC<JSONCardProps> = ({
               onClick={handleHideData}
               className="hover:bg-slate-600 mx-2"
             >
-              {isDataHidden ? <ArrowDownToLine /> : <ArrowUpToLine />}
+              {isDataHidden ? <ArrowDown /> : <ArrowUp />}
             </button>
           ) : null}
         </div>

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowDownToLine, ArrowUpToLine } from "lucide-react";
+import { ArrowDown, ArrowUp } from "lucide-react";
 
 type AccountDetailsCardProps = {
   userDetails: any;
@@ -47,7 +47,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
           onClick={handlePropertiesVisibility}
           className="hover:bg-slate-600 mx-2"
         >
-          {isPropertiesHidden ? <ArrowDownToLine /> : <ArrowUpToLine />}
+          {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
         </button>
       </div>
       <div
