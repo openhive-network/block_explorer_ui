@@ -15,11 +15,11 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
 }) => {
   return (
     <div className='bg-explorer-dark-gray p-2 rounded-["6px] mx-6 h-fit rounded'>
-      <div className="flex justify-between text-explorer-orange text-2xl my-4">
+      <div className="flex justify-between bg-explorer-dark-gray text-explorer-orange text-2xl my-4">
         {accountDetails.name}
         <span>
           <Image
-            className="rounded-full"
+            className="rounded-full border-2 border-explorer-orange"
             src={getHiveAvatarUrl(accountName)}
             alt="avatar"
             width={50}
@@ -32,7 +32,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
           <p className="text-xl">Vote weight</p>
           <p className="text-lg">50</p>
         </div>
-        <div className="text-center text-gray-500">
+        <div className="text-center">
           <p className="my-2">Voting Power</p>
           <Progress
             value={53}
@@ -41,7 +41,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
           />
         </div>
 
-        <div className="text-center text-gray-500">
+        <div className="text-center">
           <p className="my-2">Downvote power </p>
           <Progress
             value={25}
@@ -50,7 +50,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
           />
         </div>
 
-        <div className="text-center text-gray-500">
+        <div className="text-center">
           <p className="my-2">Recourse credits </p>
           <Progress
             value={75}
@@ -68,7 +68,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
           </div>
           <div className="text-center">
             <p className="text-lg">Creation Date</p>
-            <p className="text-xs text-gray-500">
+            <p className="text-lg">
               {moment(accountDetails.created).format("DD/MM/YYYY")}
             </p>
           </div>
