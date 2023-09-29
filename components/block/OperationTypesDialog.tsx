@@ -22,7 +22,7 @@ type OperationTypesDialogProps = {
 const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
   operationTypes,
   triggerTitle,
-  setSelectedOperations
+  setSelectedOperations,
 }) => {
   const [selectedOperationsIds, setSelectedOperationsIds] = useState<number[]>([]);
 
@@ -38,11 +38,11 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
 
   const handleOnSubmit = () => {
     setSelectedOperations(selectedOperationsIds);
-  }
+  };
 
   const handleOnClear = () => {
-    setSelectedOperationsIds([])
-  }
+    setSelectedOperationsIds([]);
+  };
 
   return (
     <Dialog>
@@ -51,7 +51,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           {triggerTitle}
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[80%] max-h-[80%] flex-column justify-center align-center overflow-auto bg-white text-black ">
+      <DialogContent className="max-w-[80%] max-h-[80%] flex-column justify-center align-center overflow-auto bg-white text-black">
         <DialogHeader>
           <DialogTitle>Operation Types</DialogTitle>
           <DialogDescription>
@@ -63,20 +63,20 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           {operationTypes.map((operation) => {
             return (
               <li
-                onClick={() => onFiltersSelect(operation[0])}
-                key={operation[0]}
-                className="col-span-3 md:col-span-1 flex items-center p-3 font-bold text-base rounded-lg bg-inherit hover:border-2-gray group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white"
+              onClick={() => onFiltersSelect(operation[0])}
+              key={operation[0]}
+              className="col-span-3 pl-2 md:col-span-1 flex items-center font-bold text-base rounded-lg bg-inherit hover:border-2-gray group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white "
               >
                 <Input
                   type="checkbox"
                   checked={selectedOperationsIds.includes(operation[0])}
                   name="bordered-checkbox"
-                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                  className=" w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 "
                   onChange={() => onFiltersSelect(operation[0])}
                 />
                 <Label
                   htmlFor="bordered-checkbox-1"
-                  className="p-4 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300 whitespace-nowrap overflow-hidden text-ellipsis"
+                  className="p-2 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300 whitespace-nowrap overflow-hidden text-ellipsis"
                 >
                   {operation[1]}
                 </Label>
@@ -85,7 +85,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           })}
         </ul>
         <DialogFooter>
-          <Button type="button" variant='secondary' onClick={handleOnClear}>
+        <Button type="button" variant='secondary' onClick={handleOnClear}>
             Clear filters
           </Button>
           <Button type="submit" variant='default' onClick={handleOnSubmit}>
