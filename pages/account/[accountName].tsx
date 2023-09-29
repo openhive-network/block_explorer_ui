@@ -105,7 +105,10 @@ export default function Account() {
           </div>
         </div>
         {accountOperations.map((operation: any) => (
-          <div key={operation.acc_operation_id}>
+          <div
+            className="m-2"
+            key={operation.acc_operation_id}
+          >
             <DetailedOperationCard
               operation={operation.operation}
               date={new Date(operation.timestamp)}
