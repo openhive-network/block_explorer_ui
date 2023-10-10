@@ -7,16 +7,24 @@ import Hive from "@/types/Hive";
 interface AccountMainCardProps {
   accountDetails: Hive.AccountDetailsQueryResponse;
   accountName: string;
+  openVotersModal: () => void;
 }
 
 const AccountMainCard: React.FC<AccountMainCardProps> = ({
   accountDetails,
   accountName,
+  openVotersModal,
 }) => {
   return (
     <div className='bg-explorer-dark-gray p-2 rounded-["6px] mx-6 h-fit rounded'>
       <div className="flex justify-between bg-explorer-dark-gray text-explorer-orange text-2xl my-4">
-        {accountDetails.name}
+        {accountDetails.is_witness ? (
+          <div>
+            {accountDetails.name} <span className="text-sm">(witness)</span>
+          </div>
+        ) : (
+          <div>{accountDetails.name}</div>
+        )}
         <span>
           <Image
             className="rounded-full border-2 border-explorer-orange"
@@ -74,6 +82,16 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
           </div>
         </div>
       </div>
+      {accountDetails.is_witness && (
+        <div className="flex justify-end">
+          <button
+            onClick={openVotersModal}
+            className="bg-explorer-orange text-explorer-dark-gray rounded-[5px] p-2"
+          >
+            Show Voters
+          </button>
+        </div>
+      )}
     </div>
   );
 };

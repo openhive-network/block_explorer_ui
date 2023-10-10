@@ -3,14 +3,19 @@ import { useState } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 
 type AccountDetailsCardProps = {
+  header: string;
   userDetails: any;
 };
 
 const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
+  header,
   userDetails,
 }) => {
   const [isPropertiesHidden, setIsPropertiesHidden] = useState(true);
-  const keys = userDetails && Object.keys(userDetails);
+
+  if (!userDetails) return null;
+
+  const keys = Object.keys(userDetails);
 
   const render_key = (key: string) => {
     if (["recovery_account", "reset_account"].includes(key)) {
@@ -42,7 +47,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
   return (
     <div className="bg-explorer-dark-gray p-2 rounded-[6px] rounded mt-8 mx-6">
       <div className="h-full flex justify-between align-center p-2">
-        <div className="text-lg">Properties</div>
+        <div className="text-lg">{header}</div>
         <button
           onClick={handlePropertiesVisibility}
           className="hover:bg-slate-600 mx-2"
@@ -54,7 +59,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
         hidden={isPropertiesHidden}
         className="flex-column"
       >
-        {keys?.map((key: string, index: number) => {
+        {keys.map((key: string, index: number) => {
           if (
             [
               "json_metadata",
@@ -73,8 +78,8 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
                 {key}
               </div>
               <span className=" overflow-auto">
-                {typeof userDetails?.[key] != "string" ? (
-                  <pre>{JSON.stringify(userDetails?.[key])}</pre>
+                {typeof userDetails[key] != "string" ? (
+                  <pre>{JSON.stringify(userDetails[key])}</pre>
                 ) : (
                   render_key(key)
                 )}

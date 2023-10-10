@@ -56,9 +56,9 @@ declare module Hive {
 
   interface GetWitnessVotersProps {
     _witness: string;
-    _order_by : string;
-    _order_is : string;
-    _limit?: number
+    _order_by: string;
+    _order_is: string;
+    _limit?: number;
   }
   interface GetOperationTypesProps {
     _operation_type_pattern: string | null;
@@ -74,18 +74,18 @@ declare module Hive {
 
   interface GetOperationKeysProps {
     _operation_id: number;
-    _key: string[]
+    _key: string[];
   }
 
   interface GetBlockByOpProps {
-    _operations: number[],
-    _account: string | null,
-    _from: number | null,
-    _to: number | null,
-    _limit: number | null,
-    _order_is: "asc" | "desc"
-    _key_content: string | null,
-    _set_key: string[] | null
+    _operations: number[];
+    _account: string | null;
+    _from: number | null;
+    _to: number | null;
+    _limit: number | null;
+    _order_is: "asc" | "desc";
+    _key_content: string | null;
+    _set_key: string[] | null;
   }
 
   interface Supply {
@@ -316,6 +316,7 @@ declare module Hive {
     last_account_recovery: Date;
     delayed_vests: number;
     ops_count: number;
+    is_witness: boolean;
   }
 
   interface OpsByAccountResponse {

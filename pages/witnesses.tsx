@@ -15,7 +15,7 @@ import VotersDialog from "@/components/Witnesses/VotersDialog";
 import Hive from "@/types/Hive";
 
 export default function Witnesses() {
-  const [voters, setVoters] = useState<Hive.Voter[] | null>(null);
+  const [voters, setVoters] = useState<Hive.Voter[] | undefined>(undefined);
   const [voterAccount, setVoterAccount] = useState<string>("");
   const [isVotersOpen, setIsVotersOpen] = useState<boolean>(false);
   const [sortKey, setSortKey] = useState<string>("vests");
@@ -59,7 +59,7 @@ export default function Witnesses() {
 
   const changeVotersDialogue = (isOpen: boolean) => {
     setIsVotersOpen(isOpen);
-    if (!isOpen) setVoters(null);
+    if (!isOpen) setVoters(undefined);
   };
 
   const changeSorter = async (newIsAsc: boolean, newSortKey: string) => {

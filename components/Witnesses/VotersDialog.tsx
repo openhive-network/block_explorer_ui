@@ -17,11 +17,11 @@ import { cn } from "@/lib/utils";
 type VotersDialogProps = {
   accountName: string;
   isVotersOpen: boolean;
-  voters: Hive.Voter[] | null;
+  voters: Hive.Voter[] | undefined;
   sorterInfo: { isAsc: boolean; sortKey: string };
-  loading: boolean;
+  loading?: boolean;
   changeVotersDialogue: (isOpen: boolean) => void;
-  changeSorter: (newIsAsc: boolean, newSortKey: string) => void;
+  changeSorter?: (newIsAsc: boolean, newSortKey: string) => void;
 };
 
 const tableColums = [
@@ -43,7 +43,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
   const [showHivePower, setShowHivePower] = useState<boolean>(false);
 
   const onHeaderClick = (propertyKey: string) => {
-    changeSorter(!sorterInfo.isAsc, propertyKey);
+    if (changeSorter) changeSorter(!sorterInfo.isAsc, propertyKey);
   };
 
   const showSorter = (columnName: string) => {
@@ -53,7 +53,10 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
   };
 
   return (
-    <Dialog open={isVotersOpen} onOpenChange={changeVotersDialogue}>
+    <Dialog
+      open={isVotersOpen}
+      onOpenChange={changeVotersDialogue}
+    >
       <DialogContent className="h-3/4 max-w-2xl overflow-auto bg-white">
         <div className="flex  justify-center  items-centertext-center font-semibold	">
           {accountName}{" "}

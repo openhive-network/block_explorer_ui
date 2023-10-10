@@ -15,7 +15,7 @@ const JSONCard: React.FC<JSONCardProps> = ({
 }) => {
   const [isDataHidden, setIsDataHidden] = useState(true);
 
-  if (!json) return;
+  if (!json || json === "{}") return null;
 
   const handleHideData = () => {
     setIsDataHidden(!isDataHidden);

@@ -9,6 +9,8 @@ import Hive from "@/types/Hive";
 import DetailedOperationCard from "@/components/DetailedOperationCard";
 import JSONCard from "@/components/JSONCard";
 import AccountMainCard from "@/components/account/AccountMainCard";
+import AccountWitnessVotesCard from "@/components/account/AccountWitnessVotesCard";
+import VotersDialog from "@/components/Witnesses/VotersDialog";
 
 const OPERATIONS_LIMIT = 100;
 
@@ -19,6 +21,7 @@ export default function Account() {
 
   const [page, setPage] = useState(1);
   const [operationFilters, setOperationFilters] = useState<number[]>([]);
+  const [openVotersModal, setOpenVotersModal] = useState(false);
 
   // Account details
   const {
@@ -57,6 +60,23 @@ export default function Account() {
       refetchOnWindowFocus: false,
     });
 
+  // Witness data
+  const { data: witnessDetails }: UseQueryResult<Hive.Witness> = useQuery({
+    queryKey: ["account_witness_details", accountNameFromRoute],
+    queryFn: () => fetchingService.getWitness(accountNameFromRoute),
+    select: (witnessData: any) => witnessData[0],
+    enabled: !!accountNameFromRoute && !!accountDetails?.is_witness,
+    refetchOnWindowFocus: false,
+  });
+
+  const { data: witnessVoters }: UseQueryResult<Hive.Voter[]> = useQuery({
+    queryKey: ["account_witness_voters", accountNameFromRoute],
+    queryFn: () =>
+      fetchingService.getWitnessVoters(accountNameFromRoute, "vests", "desc"),
+    enabled: !!accountNameFromRoute && !!accountDetails?.is_witness,
+    refetchOnWindowFocus: false,
+  });
+
   if (!accountDetails || !accountOperations || !accountOperationTypes) {
     return "Loading ...";
   }
@@ -64,14 +84,22 @@ export default function Account() {
     return "No data";
   }
 
+  const handleOpenVotersModal = () => {
+    setOpenVotersModal(!openVotersModal);
+  };
+
   return (
     <div className="grid grid-cols-3 text-white mx-8 w-full">
       <div className="mt-6 col-start-1 col-span-1">
         <AccountMainCard
           accountDetails={accountDetails}
           accountName={accountNameFromRoute}
+          openVotersModal={handleOpenVotersModal}
         />
-        <AccountDetailsCard userDetails={accountDetails} />
+        <AccountDetailsCard
+          header="Properties"
+          userDetails={accountDetails}
+        />
         <JSONCard
           header="JSON Metadata"
           json={accountDetails.json_metadata}
@@ -81,6 +109,18 @@ export default function Account() {
           header="Posting JSON Metadata"
           json={accountDetails.posting_json_metadata}
           showCollapseButton={true}
+        />
+        <AccountDetailsCard
+          header="Witness Properties"
+          userDetails={witnessDetails}
+        />
+        <AccountWitnessVotesCard voters={accountDetails.witness_votes} />
+        <VotersDialog
+          accountName={accountNameFromRoute}
+          isVotersOpen={openVotersModal}
+          voters={witnessVoters}
+          sorterInfo={{ isAsc: true, sortKey: "name" }}
+          changeVotersDialogue={handleOpenVotersModal}
         />
       </div>
 
