@@ -86,7 +86,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                     "sticky left-0 bg-white": !index,
                   })}
                 >
-                  <span className="flex">
+                  <span className="flex text-black">
                     {column.name} {showSorter(column.key)}
                   </span>
                 </TableHead>

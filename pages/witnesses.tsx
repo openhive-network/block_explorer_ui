@@ -83,17 +83,17 @@ export default function Witnesses() {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="sticky left-0 bg-explorer-bg-start"></TableHead>
-            <TableHead className="sticky left-6 bg-explorer-bg-start">
+            <TableHead className="sticky left-0 bg-explorer-bg-start text-black"></TableHead>
+            <TableHead className="sticky left-6 bg-explorer-bg-start text-black">
               Name
             </TableHead>
-            <TableHead>Votes</TableHead>
-            <TableHead>Voters</TableHead>
-            <TableHead>Block Size</TableHead>
-            <TableHead>Price Feed</TableHead>
-            <TableHead>Feed Age</TableHead>
-            <TableHead>Signing Key</TableHead>
-            <TableHead>Version</TableHead>
+            <TableHead className="text-black">Votes</TableHead>
+            <TableHead className="text-black">Voters</TableHead>
+            <TableHead className="text-black">Block Size</TableHead>
+            <TableHead className="text-black">Price Feed</TableHead>
+            <TableHead className="text-black">Feed Age</TableHead>
+            <TableHead className="text-black">Signing Key</TableHead>
+            <TableHead className="text-black">Version</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

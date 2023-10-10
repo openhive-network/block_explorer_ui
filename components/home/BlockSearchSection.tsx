@@ -142,6 +142,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({
           <Button className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]" onClick={startSearch} disabled={!selectedOperationTypes.length}>
             <span>Search</span> {loading && <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />}
           </Button>
+          {!selectedOperationTypes.length && <label className="ml-2 text-muted-foreground">Pick at least 1 operation type</label>}
         </div>
       </div>
       {foundBlocksIds && (

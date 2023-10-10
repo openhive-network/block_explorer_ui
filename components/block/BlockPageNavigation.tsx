@@ -115,9 +115,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
           </div>
         </div>
         <FiltersSection
-          operationTypes={operationTypes.sort((a, b) =>
-            a[1].localeCompare(b[1])
-          )}
+          operationTypes={operationTypes}
           setFilters={setFilters}
         />
       </div>
