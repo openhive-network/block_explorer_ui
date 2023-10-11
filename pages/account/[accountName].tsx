@@ -11,6 +11,7 @@ import JSONCard from "@/components/JSONCard";
 import AccountMainCard from "@/components/account/AccountMainCard";
 import AccountWitnessVotesCard from "@/components/account/AccountWitnessVotesCard";
 import VotersDialog from "@/components/Witnesses/VotersDialog";
+import ScrollTopButton from "@/components/ScrollTopButton";
 
 const OPERATIONS_LIMIT = 100;
 
@@ -89,54 +90,22 @@ export default function Account() {
   };
 
   return (
-    <div className="grid grid-cols-3 text-white mx-8 w-full">
-      <div className="mt-6 col-start-1 col-span-1">
-        <AccountMainCard
-          accountDetails={accountDetails}
-          accountName={accountNameFromRoute}
-          openVotersModal={handleOpenVotersModal}
-        />
-        <AccountDetailsCard
-          header="Properties"
-          userDetails={accountDetails}
-        />
-        <JSONCard
-          header="JSON Metadata"
-          json={accountDetails.json_metadata}
-          showCollapseButton={true}
-        />
-        <JSONCard
-          header="Posting JSON Metadata"
-          json={accountDetails.posting_json_metadata}
-          showCollapseButton={true}
-        />
-        <AccountDetailsCard
-          header="Witness Properties"
-          userDetails={witnessDetails}
-        />
-        <AccountWitnessVotesCard voters={accountDetails.witness_votes} />
-        <VotersDialog
-          accountName={accountNameFromRoute}
-          isVotersOpen={openVotersModal}
-          voters={witnessVoters}
-          sorterInfo={{ isAsc: true, sortKey: "name" }}
-          changeVotersDialogue={handleOpenVotersModal}
-        />
-      </div>
+    <>
+      <div className="bg-explorer-orange items-center fixed grid grid-flow-row-dense grid-cols-3 top-16 right-0 left-0 p-2 ">
+        <div className="col-span-2 justify-self-end">
+          <CustomPagination
+            currentPage={page}
+            totalCount={accountDetails.ops_count}
+            pageSize={OPERATIONS_LIMIT}
+            onPageChange={(page: number) => setPage(page)}
+          />
+        </div>
 
-      <div className="col-start-2 col-span-3">
-        <div className="grid grid-cols-full mt-6">
-          <div className="col-start-7">
-            <div className="w-full flex justify-center">
-              <CustomPagination
-                currentPage={page}
-                totalCount={accountDetails.ops_count}
-                pageSize={OPERATIONS_LIMIT}
-                onPageChange={(page: number) => setPage(page)}
-              />
+        <div className="justify-self-end">
+          <div className="grid gap-x-5 grid-flow-row-dense grid-cols-2">
+            <div className="justify-self-end self-center">
+              <ScrollTopButton />
             </div>
-          </div>
-          <div className="col-end-12 mt-1">
             <OperationTypesDialog
               operationTypes={accountOperationTypes}
               setSelectedOperations={setOperationFilters}
@@ -144,21 +113,76 @@ export default function Account() {
             />
           </div>
         </div>
-        {accountOperations.map((operation: any) => (
-          <div
-            className="m-2"
-            key={operation.acc_operation_id}
-          >
-            <DetailedOperationCard
-              operation={operation.operation}
-              date={new Date(operation.timestamp)}
-              blockNumber={operation.block}
-              transactionId={operation.trx_id}
-              key={operation.timestamp}
-            />
-          </div>
-        ))}
       </div>
-    </div>
+
+      <div className="grid grid-cols-3 text-white mx-8 mt-14 w-full">
+        <div className="mt-2 col-start-1 col-span-1">
+          <AccountMainCard
+            accountDetails={accountDetails}
+            accountName={accountNameFromRoute}
+            openVotersModal={handleOpenVotersModal}
+          />
+          <AccountDetailsCard
+            header="Properties"
+            userDetails={accountDetails}
+          />
+          <JSONCard
+            header="JSON Metadata"
+            json={accountDetails.json_metadata}
+            showCollapseButton={true}
+          />
+          <JSONCard
+            header="Posting JSON Metadata"
+            json={accountDetails.posting_json_metadata}
+            showCollapseButton={true}
+          />
+          <AccountDetailsCard
+            header="Witness Properties"
+            userDetails={witnessDetails}
+          />
+          <AccountWitnessVotesCard voters={accountDetails.witness_votes} />
+          <VotersDialog
+            accountName={accountNameFromRoute}
+            isVotersOpen={openVotersModal}
+            voters={witnessVoters}
+            sorterInfo={{ isAsc: true, sortKey: "name" }}
+            changeVotersDialogue={handleOpenVotersModal}
+          />
+        </div>
+
+        <div className="col-start-2 col-span-3">
+          {/* <div className="mt-6 bg-red-500 overflow auto right-0 left-0 top-10 mb-20 flex justify-center items-center fixed">
+          <CustomPagination
+            currentPage={page}
+            totalCount={accountDetails.ops_count}
+            pageSize={OPERATIONS_LIMIT}
+            onPageChange={(page: number) => setPage(page)}
+          />
+
+          <OperationTypesDialog
+            operationTypes={accountOperationTypes}
+            setSelectedOperations={setOperationFilters}
+            triggerTitle={"Operation Filters"}
+          />
+        </div> */}
+          <div>
+            {accountOperations.map((operation: any) => (
+              <div
+                className="m-2"
+                key={operation.acc_operation_id}
+              >
+                <DetailedOperationCard
+                  operation={operation.operation}
+                  date={new Date(operation.timestamp)}
+                  blockNumber={operation.block}
+                  transactionId={operation.trx_id}
+                  key={operation.timestamp}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </>
   );
 }

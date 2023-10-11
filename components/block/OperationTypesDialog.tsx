@@ -47,7 +47,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="bg-gray-500 hover:bg-gray-700 rounded-[4px]">
+        <Button className="bg-explorer-dark-gray text-white hover:bg-gray-700 rounded-[4px]">
           {triggerTitle}
         </Button>
       </DialogTrigger>
@@ -63,9 +63,9 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           {operationTypes.map((operation) => {
             return (
               <li
-              onClick={() => onFiltersSelect(operation[0])}
-              key={operation[0]}
-              className="col-span-3 pl-2 md:col-span-1 flex items-center font-bold text-base rounded-lg bg-inherit hover:border-2-gray group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white "
+                onClick={() => onFiltersSelect(operation[0])}
+                key={operation[0]}
+                className="col-span-3 pl-2 md:col-span-1 flex items-center font-bold text-base rounded-lg bg-inherit hover:border-2-gray group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white "
               >
                 <Input
                   type="checkbox"
@@ -85,10 +85,18 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           })}
         </ul>
         <DialogFooter>
-        <Button type="button" variant='secondary' onClick={handleOnClear}>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={handleOnClear}
+          >
             Clear filters
           </Button>
-          <Button type="submit" variant='default' onClick={handleOnSubmit}>
+          <Button
+            type="submit"
+            variant="default"
+            onClick={handleOnSubmit}
+          >
             Save changes
           </Button>
         </DialogFooter>

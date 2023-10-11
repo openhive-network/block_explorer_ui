@@ -40,19 +40,19 @@ const CustomPagination: React.FC<PaginationProps> = ({
   return (
     <ul className="flex list-none">
       <li
-        className={`p-[12px] h-[32px] text-center m-2 text-gray-700 flex box-border items-center tracking-widest rounded-2xl leading-6 text-sm w-min-[32px] hover:bg-gray-500 cursor-pointer ${
+        className={`p-[12px] h-[32px] text-center m-2 text-explorer-dark-gray flex box-border items-center tracking-widest rounded-2xl leading-6 text-sm w-min-[32px] cursor-pointer ${
           currentPage === firstPage && "pointer-events-none"
         }`}
         onClick={onPrevious}
       >
-        <div className="relative w-[0.4em] h-[0.4em] border-t-[2px] border-r-[2px] border-gray-600 -rotate-[135deg]" />
+        <div className="relative w-[0.4em] h-[0.4em] border-t-[2px] border-r-[2px] border-explorer-dark-gray -rotate-[135deg]" />
       </li>
       {paginationRange.map((pageNumber: number | string, i: number) => {
         if (pageNumber === DOTS) {
           return (
             <li
               key={i}
-              className="hover:bg-transparent cursor-pointer p-[12px] h-[32px] text-center m-2 text-gray-700 flex box-border items-center tracking-widest rounded-2xl leading-6 text-sm w-min-[32px] "
+              className="hover:bg-transparent p-[12px] h-[32px] text-center m-2 text-bg-explorer-dark-gray flex box-border items-center tracking-widest rounded-2xl leading-6 text-sm w-min-[32px] "
             >
               &#8230;
             </li>
@@ -62,8 +62,8 @@ const CustomPagination: React.FC<PaginationProps> = ({
         return (
           <li
             key={i}
-            className={`p-[12px] h-[32px] text-center m-2 text-gray-700 flex box-border items-center tracking-widest rounded-2xl leading-6 text-sm w-min-[32px] hover:bg-gray-500 cursor-pointer ${
-              pageNumber === currentPage && `bg-gray-500`
+            className={`p-[12px] h-[32px] text-center m-2 text-white flex box-border items-center tracking-widest rounded-2xl leading-6 text-sm w-min-[32px] hover:bg-explorer-dark-gray cursor-pointer ${
+              pageNumber === currentPage && `bg-explorer-dark-gray`
             } `}
             onClick={() => onPageChange(pageNumber)}
           >
@@ -72,12 +72,12 @@ const CustomPagination: React.FC<PaginationProps> = ({
         );
       })}
       <li
-        className={`p-[12px] h-[32px] text-center m-2 text-gray-700 flex box-border items-center tracking-widest rounded-2xl leading-6 text-sm w-min-[32px] hover:bg-gray-500 cursor-pointer   ${
+        className={`p-[12px] h-[32px] text-center m-2 text-explorer-dark-gray flex box-border items-center tracking-widest rounded-2xl leading-6 text-sm w-min-[32px] cursor-pointer   ${
           currentPage === lastPage && "pointer-events-none"
         }`}
         onClick={onNext}
       >
-        <div className="relative w-[0.4em] h-[0.4em] border-t-[2px] border-r-[2px] border-gray-600 rotate-45" />
+        <div className="relative w-[0.4em] h-[0.4em] border-t-[2px] border-r-[2px] border-explorer-dark-gray rotate-45" />
       </li>
     </ul>
   );
