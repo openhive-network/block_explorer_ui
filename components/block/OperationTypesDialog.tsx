@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -16,15 +16,20 @@ import Hive from "@/types/Hive";
 type OperationTypesDialogProps = {
   operationTypes: Hive.OperationTypes[];
   triggerTitle: string;
+  selectedOperations: number[];
+  colorClass: string;
   setSelectedOperations: (operationIds: number[]) => void;
 };
 
 const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
   operationTypes,
   triggerTitle,
+  selectedOperations,
+  colorClass,
   setSelectedOperations,
 }) => {
   const [selectedOperationsIds, setSelectedOperationsIds] = useState<number[]>([]);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const onFiltersSelect = (id: number) => {
     if (selectedOperationsIds.includes(id)) {
@@ -38,28 +43,33 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
 
   const handleOnSubmit = () => {
     setSelectedOperations(selectedOperationsIds);
+    onOpenChange(false)
   };
 
   const handleOnClear = () => {
     setSelectedOperationsIds([]);
   };
 
+  const onOpenChange = (open: boolean) => {
+    if (open) {
+      setSelectedOperationsIds(selectedOperations);
+    }
+    setIsOpen(open);
+  }
+
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={(open) => {onOpenChange(open)}}>
       <DialogTrigger asChild>
-        <Button className="bg-explorer-dark-gray text-white hover:bg-gray-700 rounded-[4px]">
+        <Button className={ `${colorClass}  text-white hover:bg-gray-700 rounded-[4px]`}>
           {triggerTitle}
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[80%] max-h-[80%] flex-column justify-center align-center overflow-auto bg-white text-black">
+      <DialogContent className="max-w-[80%] h-[80%] flex-column justify-center align-center  bg-white text-black">
         <DialogHeader>
-          <DialogTitle>Operation Types</DialogTitle>
-          <DialogDescription>
-            Select operations you want to see
-          </DialogDescription>
+          <DialogTitle className="flex justify-center pt-2">Operation Types</DialogTitle>
         </DialogHeader>
 
-        <ul className="my-4 grid grid-cols-3 gap-4 place-items-stretch text-white">
+        <ul className="my-4 grid grid-cols-3 gap-4 place-items-stretch text-white overflow-auto ">
           {operationTypes.map((operation) => {
             return (
               <li
@@ -85,20 +95,17 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           })}
         </ul>
         <DialogFooter>
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={handleOnClear}
-          >
-            Clear filters
-          </Button>
-          <Button
-            type="submit"
-            variant="default"
-            onClick={handleOnSubmit}
-          >
-            Save changes
-          </Button>
+          <div className="flex">
+          <Button type="button" variant='secondary' onClick={() => {onOpenChange(false)}}>
+              Cancel
+            </Button>
+            <Button type="button" variant='secondary' onClick={handleOnClear}>
+              Clear
+            </Button>
+            <Button className="bg-blue-800 hover:bg-blue-600 text-white rounded" type="submit" variant='default' onClick={handleOnSubmit}>
+              Apply
+            </Button>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>

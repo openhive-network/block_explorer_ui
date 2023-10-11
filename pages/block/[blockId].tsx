@@ -4,7 +4,6 @@ import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import BlockPageNavigation from "@/components/block/BlockPageNavigation";
-import FiltersSection from "@/components/block/FiltersSection";
 import NonVirtualOperations from "@/components/block/NonVirtualOperations";
 import VirtualOperations from "@/components/block/VirtualOperations";
 import DetailedOperationCard from "@/components/DetailedOperationCard";
@@ -70,6 +69,7 @@ export default function Block() {
         nonVirtualOperationLength={nonVirtualOperations?.length ?? 0}
         setFilters={setBlockFilters}
         operationTypes={operationTypes}
+        selectedOperationIds={blockFilters}
       />
       <section className="md:px-10 flex items-center justify-center text-white">
         <div className="w-full p-4 md:p-0 md:w-4/5 flex flex-col gap-y-2 md:gap-y-6">

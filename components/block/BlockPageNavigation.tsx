@@ -7,8 +7,8 @@ import DateTimePicker from "react-datetime-picker";
 import "react-datetime-picker/dist/DateTimePicker.css";
 import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
-import FiltersSection from "./FiltersSection";
 import Hive from "@/types/Hive";
+import OperationTypesDialog from "./OperationTypesDialog";
 
 interface BlockPageNavigationProps {
   blockNumber: number;
@@ -18,6 +18,7 @@ interface BlockPageNavigationProps {
   nonVirtualOperationLength: number;
   setFilters: Dispatch<SetStateAction<number[]>>;
   operationTypes: Hive.OperationTypes[];
+  selectedOperationIds: number[];
 }
 
 const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
@@ -28,6 +29,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   nonVirtualOperationLength,
   setFilters,
   operationTypes,
+  selectedOperationIds
 }) => {
   const [block, setBlock] = useState(blockNumber.toString());
   const [blockDate, setBlockDate] = useState(timeStamp);
@@ -114,10 +116,15 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
             </Button>
           </div>
         </div>
-        <FiltersSection
-          operationTypes={operationTypes}
-          setFilters={setFilters}
-        />
+        <section className="flex justify-center mt-4 ">
+          <OperationTypesDialog
+            operationTypes={operationTypes}
+            setSelectedOperations={setFilters}
+            selectedOperations={selectedOperationIds}
+            colorClass="bg-gray-500"
+            triggerTitle={"Operation Filters"}
+          />
+      </section>
       </div>
     </section>
   );

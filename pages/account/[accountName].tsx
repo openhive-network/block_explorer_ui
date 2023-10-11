@@ -109,6 +109,8 @@ export default function Account() {
             <OperationTypesDialog
               operationTypes={accountOperationTypes}
               setSelectedOperations={setOperationFilters}
+              selectedOperations={operationFilters}
+              colorClass="bg-explorer-dark-gray"
               triggerTitle={"Operation Filters"}
             />
           </div>
