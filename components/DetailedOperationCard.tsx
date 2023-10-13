@@ -15,13 +15,16 @@ interface DetailedOperationCardProps {
   transactionId?: string;
   blockNumber: number;
   date: Date;
-  skipBlockTrxDate?: boolean;
+  skipBlock?: boolean;
+  skipTrx?: boolean;
+  skipDate?: boolean;
   className?: string;
 }
 
 const getOneLineDescription = (operation: Hive.Operation) => {
+  const { value } = operation;
   const { from, to, amount, voter, weight, author, permlink, parent_author } =
-    operation.value;
+    value;
   switch (operation.type) {
     case "custom_json_operation":
       const user =
@@ -100,16 +103,39 @@ const getOneLineDescription = (operation: Hive.Operation) => {
       );
 
     default:
-      return null;
+      const userName =
+        value.author ||
+        value.owner ||
+        value.account ||
+        value.producer ||
+        value.curator ||
+        value.seller;
+      return (
+        userName && (
+          <>
+            <Link
+              href={`/account/${userName}`}
+              className="text-explorer-ligh-green"
+            >
+              {userName}
+            </Link>{" "}
+            sent {operation.type}
+          </>
+        )
+      );
   }
 };
+
+const userField = ["author", "value", "owner", "account", "producer", "curator", "seller", "voter"];
 
 const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
   operation,
   transactionId,
   blockNumber,
   date,
-  skipBlockTrxDate = false,
+  skipBlock = false,
+  skipTrx = false,
+  skipDate = false,
   className,
 }) => {
   const [seeDetails, setSeeDetails] = useState(false);
@@ -117,7 +143,7 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
   const { settings } = useUserSettingsContext();
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(JSON.stringify(operation.value));
+    navigator.clipboard.writeText(JSON.stringify(operation.value).replaceAll("\\", ""));
     setCopied(true);
     setTimeout(() => setCopied(false), 1000);
   };
@@ -134,43 +160,43 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
           className={cn(
             "text-explorer-orange font-bold w-full md:w-auto text-center text-sm",
             {
-              "flex-grow": skipBlockTrxDate,
+              "flex-grow": skipBlock && skipTrx && skipDate,
             }
           )}
         >
           {operation.type}
         </div>
-        {!skipBlockTrxDate && (
-          <>
-            <div className="my-1">
-              Block{" "}
-              <Link
-                className="text-explorer-turquoise"
-                href={`/block/${blockNumber}`}
-              >
-                {blockNumber}
-              </Link>
-            </div>
+        {!skipBlock && (
+          <div className="my-1">
+            Block{" "}
+            <Link
+              className="text-explorer-turquoise"
+              href={`/block/${blockNumber}`}
+            >
+              {blockNumber}
+            </Link>
+          </div>
+        )}
 
-            {transactionId && (
-              <div className="my-1">
-                Trx{" "}
-                <Link
-                  className="text-explorer-turquoise"
-                  href={`/transaction/${transactionId}`}
-                >
-                  {transactionId.slice(0, 10)}
-                </Link>
-              </div>
-            )}
+        {transactionId && !skipTrx && (
+          <div className="my-1">
+            Trx{" "}
+            <Link
+              className="text-explorer-turquoise"
+              href={`/transaction/${transactionId}`}
+            >
+              {transactionId.slice(0, 10)}
+            </Link>
+          </div>
+        )}
 
-            <div className="my-1">
-              Date:{" "}
-              <span className="text-explorer-turquoise">
-                {moment(date).format(config.baseMomentTimeFormat)}
-              </span>
-            </div>
-          </>
+        {!skipDate && (
+          <div className="my-1">
+            Date:{" "}
+            <span className="text-explorer-turquoise">
+              {moment(date).format(config.baseMomentTimeFormat)}
+            </span>
+          </div>
         )}
       </div>
       <div className="w-full flex justify-center truncate mb-2">
@@ -215,19 +241,22 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
             {Object.entries(operation.value)
               .sort(([key, _property]) => (key === "json" ? 1 : -1))
               .map(([key, property]) => {
+                const value = isJson(property)
+                ? JSON.stringify(property).replaceAll("\\", "")
+                : property.toString() === ""
+                ? "-"
+                : property.toString();
                 return (
                   <div
                     key={key}
                     className="border-b border-solid border-gray-700 flex justify-between py-1"
                   >
                     <div className="font-bold">{key}:</div>
-                    <div className="max-w-[90%] overflow-auto text-right">
-                      {isJson(property)
-                        ? JSON.stringify(property)
-                        : property.toString() === ""
-                        ? "-"
-                        : property.toString()}
-                    </div>
+                    {userField.includes(key) ? 
+                    <Link href={`/account/${property}`} className="text-explorer-turquoise">{value}</Link>
+                    :<div className="max-w-[90%] overflow-auto text-right">
+                      {value}
+                    </div>}
                   </div>
                 );
               })}

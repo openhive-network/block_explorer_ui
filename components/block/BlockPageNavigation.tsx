@@ -1,6 +1,6 @@
 import { ChevronRightCircle, ChevronLeftCircle } from "lucide-react";
 import fetchingService from "@/services/FetchingService";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import DateTimePicker from "react-datetime-picker";
@@ -19,6 +19,8 @@ interface BlockPageNavigationProps {
   setFilters: Dispatch<SetStateAction<number[]>>;
   operationTypes: Hive.OperationTypes[];
   selectedOperationIds: number[];
+  onTopClick: () => void;
+  onVirtualOpsClick: () => void;
 }
 
 const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
@@ -29,19 +31,45 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   nonVirtualOperationLength,
   setFilters,
   operationTypes,
-  selectedOperationIds
+  selectedOperationIds,
+  onTopClick,
+  onVirtualOpsClick,
 }) => {
   const [block, setBlock] = useState(blockNumber.toString());
-  const [blockDate, setBlockDate] = useState(timeStamp);
+  const [blockDate, setBlockDate] = useState(
+    new Date(timeStamp.toLocaleDateString('en-US'))
+  );
+
+  useEffect(() => {
+    setBlock(blockNumber.toString());
+    setBlockDate(timeStamp);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [blockNumber]);
+
+  useEffect(() => {
+    const keyDownEvent = (event: KeyboardEvent) => {
+      if (event.code === "Enter") {
+        handleBlockChange(block);
+      }
+    };
+
+    document.addEventListener("keydown", keyDownEvent);
+    return () => {
+      document.removeEventListener("keydown", keyDownEvent);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [block]);
 
   const handleBlockChange = (blockNumber: string) => {
-    goToBlock(blockNumber);
-    setBlock(blockNumber);
+    if (Number(blockNumber) > 0) {
+      goToBlock(blockNumber);
+      setBlock(blockNumber);
+    }
   };
 
   const handleGoToBlockByTime = async () => {
     const blockByTime = await fetchingService.getBlockByTime(
-      new Date(blockDate.toString() + "Z")
+      new Date(blockDate.toUTCString())
     );
     if (blockByTime) {
       handleBlockChange(blockByTime.num.toString());
@@ -49,7 +77,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   };
 
   return (
-    <section className="w-full flex flex-col items-center text-2xl p-4 sticky top-12 mb-8 md:mb-4 md:top-16 md:mt-10">
+    <section className="w-full flex flex-col items-center text-2xl p-4 sticky top-12 mb-8 md:mb-4 md:top-16">
       <div className="w-full md:w-4/6 py-4 bg-explorer-dark-gray text-center text-white rounded-[6px] shadow-xl">
         <div className="w-full flex justify-between items-center px-8">
           <button
@@ -116,7 +144,8 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
             </Button>
           </div>
         </div>
-        <section className="flex justify-center mt-4 ">
+        <div className="flex justify-between items-center px-4 mt-4">
+          <Button onClick={onTopClick}>To Top</Button>
           <OperationTypesDialog
             operationTypes={operationTypes}
             setSelectedOperations={setFilters}
@@ -124,7 +153,8 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
             colorClass="bg-gray-500"
             triggerTitle={"Operation Filters"}
           />
-      </section>
+          <Button onClick={onVirtualOpsClick}>To Virt Ops</Button>
+        </div>
       </div>
     </section>
   );

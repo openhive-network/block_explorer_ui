@@ -7,6 +7,7 @@ import DetailedOperationCard from "@/components/DetailedOperationCard";
 import Link from "next/link";
 import moment from "moment";
 import { config } from "@/Config";
+import PageNotFound from "@/components/PageNotFound";
 
 const displayTransactionData = (
   key: string,
@@ -27,14 +28,17 @@ export default function Transaction() {
   const router = useRouter();
   const transactionId = router.query.transactionId as string;
 
-  const { data, isLoading, error } = useQuery<
-    Hive.TransactionQueryResponse,
-    Error
-  >({
+  const { data, isLoading } = useQuery<Hive.TransactionQueryResponse, Error>({
     queryKey: [`block-${router.query.transactionId}`],
     queryFn: () => fetchingService.getTransaction(transactionId),
     refetchOnWindowFocus: false,
   });
+
+  const trxError = (data as { [key: string]: any })?.code || null;
+
+  if (trxError) {
+    return <PageNotFound message={`Transaction not found.`} />;
+  }
 
   return (
     <div className="w-full max-w-5xl px-4 text-white mt-12 md:mt-10">
@@ -70,7 +74,9 @@ export default function Transaction() {
                 date={new Date(data.timestamp)}
                 blockNumber={data.block_num}
                 transactionId={data.transaction_id}
-                skipBlockTrxDate
+                skipBlock
+                skipTrx
+                skipDate
                 className="mt-4"
               />
             ))}

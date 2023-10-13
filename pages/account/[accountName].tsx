@@ -13,6 +13,7 @@ import AccountWitnessVotesCard from "@/components/account/AccountWitnessVotesCar
 import VotersDialog from "@/components/Witnesses/VotersDialog";
 import ScrollTopButton from "@/components/ScrollTopButton";
 import MainModule from "@hive/wax";
+import PageNotFound from "@/components/PageNotFound";
 
 const OPERATIONS_LIMIT = 100;
 
@@ -92,7 +93,7 @@ export default function Account() {
     return "Loading ...";
   }
   if (!accountOperations.length) {
-    return "No data";
+    return <PageNotFound message={`Account not found.`} />;
   }
 
   const handleOpenVotersModal = () => {

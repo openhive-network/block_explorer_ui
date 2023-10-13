@@ -9,7 +9,7 @@ interface JSONViewProps {
 const JSONView: React.FC<JSONViewProps> = ({ json, className }) => {
   return (
     <div className={cn("overflow-auto", className)}>
-      <pre>{JSON.stringify(json, null, 2)}</pre>
+      <pre>{JSON.stringify(json, null, 2).replaceAll("\\", "")}</pre>
     </div>
   );
 };

@@ -182,7 +182,12 @@ declare module Hive {
   interface Operation {
     type: OperationType;
     value: {
-      author: string;
+      author?: string;
+      owner?: string;
+      account?: string;
+      producer?: string;
+      curator?: string;
+      seller?: string;
       permlink: string;
       voter?: string;
       weight?: number;

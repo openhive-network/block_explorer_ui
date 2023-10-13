@@ -123,7 +123,7 @@ export default function Home() {
               {witnessesQuery.data && witnessesQuery.data.map((witness, index) => (
                 <TableRow className=' text-base' key={index}>
                   <TableCell>{index + 1}</TableCell>
-                  <TableCell><Link href={`/account/${witness.witness}`}>{witness.witness}</Link></TableCell>
+                  <TableCell><Link href={`/account/${witness.witness}`} className='text-explorer-turquoise'>{witness.witness}</Link></TableCell>
                   <TableCell><Link href={`/account/${witness.witness}`}><Image className="rounded-full" src={getHiveAvatarUrl(witness.witness)} alt="avatar" width={40} height={40} /></Link>  </TableCell>
                  
                 </TableRow>
