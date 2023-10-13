@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AccountDetailsCard from "../../components/account/AccountDetailsCard";
 import fetchingService from "@/services/FetchingService";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
@@ -12,6 +12,7 @@ import AccountMainCard from "@/components/account/AccountMainCard";
 import AccountWitnessVotesCard from "@/components/account/AccountWitnessVotesCard";
 import VotersDialog from "@/components/Witnesses/VotersDialog";
 import ScrollTopButton from "@/components/ScrollTopButton";
+import MainModule from "@hive/wax";
 
 const OPERATIONS_LIMIT = 100;
 
@@ -77,6 +78,15 @@ export default function Account() {
     enabled: !!accountNameFromRoute && !!accountDetails?.is_witness,
     refetchOnWindowFocus: false,
   });
+
+  const calculateManabar = async () => {
+    const maiinModule = await MainModule();
+    const protocolProvider = new maiinModule.protocol();
+    const result =
+     // params: const int32_t now, const int32_t max_mana_low, const int32_t max_mana_high, const int32_t current_mana_low, const int32_t current_mana_high, const uint32_t last_update_time
+      protocolProvider.cpp_calculate_current_manabar_value(0, 100, 100, 0, 0, 0);
+      console.log("TEST", JSON.stringify(result))
+  }
 
   if (!accountDetails || !accountOperations || !accountOperationTypes) {
     return "Loading ...";
