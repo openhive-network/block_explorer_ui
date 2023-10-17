@@ -12,15 +12,18 @@ import {
 import fetchingService from "@/services/FetchingService";
 import { useQuery } from "@tanstack/react-query";
 import VotersDialog from "@/components/Witnesses/VotersDialog";
+import VotesHistoryDialog from "@/components/Witnesses/VotesHistoryDialog";
 import Hive from "@/types/Hive";
 
 export default function Witnesses() {
   const [voters, setVoters] = useState<Hive.Voter[] | undefined>(undefined);
   const [voterAccount, setVoterAccount] = useState<string>("");
   const [isVotersOpen, setIsVotersOpen] = useState<boolean>(false);
+  const [isVotesHistoryOpen, setIsVotesHistoryOpen] = useState<boolean>(false);
   const [sortKey, setSortKey] = useState<string>("vests");
   const [isAsc, setIsAsc] = useState<boolean>(false);
   const [voterLoading, setVoterLoading] = useState<boolean>(false);
+  const [votesHistory, setVotesHistory] = useState<Hive.WitnessVotesHistory[] | undefined>(undefined);
   const votersRef = useRef<Hive.Voter[] | null>();
   const sortKeyRef = useRef<string>();
   const isAscRef = useRef<boolean>();
@@ -57,10 +60,25 @@ export default function Witnesses() {
     setVoterLoading(false);
   };
 
+  const getVotesHistoryData = async (accountName: string) => {
+    const history = await fetchingService.getWitnessVotesHistory(
+      accountName,
+      "desc",
+      "timestamp",
+      100
+    );
+    setVotesHistory(history);
+  }
+
   const changeVotersDialogue = (isOpen: boolean) => {
     setIsVotersOpen(isOpen);
     if (!isOpen) setVoters(undefined);
   };
+
+  const changeVotesHistoryDialog = (isOpen: boolean) => {
+    setIsVotesHistoryOpen(isOpen);
+    if (!isOpen) setVotesHistory(undefined);
+  }
 
   const changeSorter = async (newIsAsc: boolean, newSortKey: string) => {
     const isAscForChange = newSortKey === sortKey ? newIsAsc : false;
@@ -79,6 +97,12 @@ export default function Witnesses() {
         loading={voterLoading}
         changeVotersDialogue={changeVotersDialogue}
         changeSorter={changeSorter}
+      />
+      <VotesHistoryDialog 
+        accountName={voterAccount}
+        isVotesHistoryOpen={isVotesHistoryOpen}
+        votesHistory={votesHistory}
+        changeVoteHistoryDialogue={changeVotesHistoryDialog}
       />
       <Table>
         <TableHeader>
@@ -121,7 +145,16 @@ export default function Witnesses() {
                   {singleWitness.witness}
                 </Link>
               </TableCell>
-              <TableCell>{singleWitness.vests?.toLocaleString()}</TableCell>
+              <TableCell onClick={() => {
+                  getVotesHistoryData(singleWitness.witness);
+                  setIsVotesHistoryOpen(true);
+                }}>
+                
+                <span className="flex items-center cursor-pointer">
+                {singleWitness.vests?.toLocaleString()}
+                  <MenuSquareIcon className="w-4 ml-1" />
+                </span>
+              </TableCell>
               <TableCell
                 onClick={() => {
                   getVotersData(singleWitness.witness);

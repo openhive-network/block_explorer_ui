@@ -221,6 +221,26 @@ class FetchingService {
     return await this.makePostRequest(url, requestBody);
   }
 
+  async getWitnessVotesHistory(
+    witness: string,
+    orderIs: string,
+    orderBy: string,
+    limit: number,
+    fromTime?: Date,
+    toTime?: Date
+  ): Promise<Hive.WitnessVotesHistory[]> {
+    const requestBody: Hive.GetWitnessVotesHistory = {
+      _witness: witness,
+      _order_is: orderIs,
+      _order_by: orderBy,
+      _limit: limit,
+      _from_time: fromTime,
+      _to_time: toTime,
+    }
+    const url = `${config.apiAdress}/rpc/get_witness_votes_history  `;
+    return await this.makePostRequest(url, requestBody);
+  }
+
 }
 
 

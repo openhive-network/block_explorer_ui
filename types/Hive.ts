@@ -88,6 +88,15 @@ declare module Hive {
     _set_key: string[] | null;
   }
 
+  interface GetWitnessVotesHistory {
+    _witness: string;
+    _order_is: string;
+    _order_by: string;
+    _limit: number;
+    _from_time?: Date;
+    _to_time?: Date;
+  }
+
   interface Supply {
     amount: string;
     precision: number;
@@ -395,6 +404,18 @@ declare module Hive {
     proxied_vests: number;
     proxied_hive_power: number;
     timestamp: Date;
+  }
+
+  interface WitnessVotesHistory {
+    voter: string,
+    approve: boolean,
+    vests: number,
+    vests_hive_power: number,
+    account_vests: number,
+    account_hive_power: number,
+    proxied_vests: number,
+    proxied_hive_power: number,
+    timestamp: Date
   }
 
   type BlockByOpResponse = number[];
