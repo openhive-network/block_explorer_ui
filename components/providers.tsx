@@ -1,26 +1,33 @@
-import { createContext, useContext, type ReactNode, useState } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useMemo, type ReactNode } from "react";
+import {
+  QueryCache,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
 import Layout from "./layout";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import {
-  UserSettings,
-  UserSettingsContext,
-} from "./contexts/UserSettingsContext";
-
-const queryClient = new QueryClient();
+import { useAlertContext } from "./contexts/AlertContext";
 
 const Providers = ({ children }: { children: ReactNode }) => {
-  const [userSettings, setUserSettings] = useState<UserSettings>({
-    rawJsonView: false,
-  });
+  const { setAlerts } = useAlertContext();
+
+  const queryClient = useMemo(
+    () =>
+      new QueryClient({
+        queryCache: new QueryCache({
+          onError: (error) => {
+            setAlerts([
+              { type: "error", message: `Error: ${(error as Error).message}` },
+            ]);
+          },
+        }),
+      }),
+    [setAlerts]
+  );
 
   return (
     <QueryClientProvider client={queryClient}>
-      <UserSettingsContext.Provider
-        value={{ settings: userSettings, setSettings: setUserSettings }}
-      >
-        <Layout>{children}</Layout>
-      </UserSettingsContext.Provider>
+      <Layout>{children}</Layout>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
