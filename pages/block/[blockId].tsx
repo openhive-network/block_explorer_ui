@@ -79,7 +79,7 @@ export default function Block() {
       <BlockPageNavigation
         blockNumber={blockNumber}
         goToBlock={handleGoToBlock}
-        timeStamp={new Date(blockOperations[0].timestamp + "z")}
+        timeStamp={new Date(blockOperations[0].timestamp + "Z")}
         virtualOperationLength={virtualOperations?.length ?? 0}
         nonVirtualOperationLength={nonVirtualOperations?.length ?? 0}
         setFilters={setBlockFilters}

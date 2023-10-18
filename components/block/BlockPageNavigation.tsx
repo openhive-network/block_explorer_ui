@@ -37,7 +37,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
 }) => {
   const [block, setBlock] = useState(blockNumber.toString());
   const [blockDate, setBlockDate] = useState(
-    new Date(timeStamp.toLocaleDateString('en-US'))
+    new Date(timeStamp.toLocaleDateString("en-US"))
   );
 
   useEffect(() => {
@@ -129,7 +129,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
               onChange={(date) => setBlockDate(date!)}
               className="text-explorer-turquoise md:ml-4 border border-explorer-turquoise"
               calendarClassName="text-gray-800"
-              format="dd/MM/yyyy hh:mm:ss aa"
+              format="yyyy/MM/dd HH:mm:ss"
               clearIcon={null}
               calendarIcon={null}
               disableClock
