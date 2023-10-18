@@ -140,7 +140,7 @@ export default function Witnesses() {
                 }
               >
                 {" "}
-                <Link href={`/witness/${singleWitness.witness}`}>
+                <Link href={`/account/${singleWitness.witness}`}>
                   {singleWitness.witness}
                 </Link>
               </TableCell>
