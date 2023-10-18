@@ -64,7 +64,7 @@ RUN_OPTIONS=(
     "--rm"
     "--publish" "$PORT:$PORT"
     "--env" "PORT=$PORT"
-    "--env" "REACT_APP_API_ENDPOINT=$API_ENDPOINT"
+    "--env" "REACT_APP_API_ADDRESS=$API_ENDPOINT"
     "--name" "$CONTAINER_NAME"
 )
 
