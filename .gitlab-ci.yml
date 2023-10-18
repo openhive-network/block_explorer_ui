@@ -81,15 +81,11 @@ lint:
     paths:
       - "npm-lint.log"
 
-staging:deploy:
+.deploy:
   extends: .job-defaults
   stage: deploy
   needs:
     - docker-build
-  variables:
-    PORT: 5000
-    API_ENDPOINT: http://192.168.4.250:3000
-    CONTAINER_NAME: block-explorer-ui
   before_script:
     - |
       echo -e "\e[0Ksection_start:$(date +%s):login[collapsed=true]\r\e[0KLogging to Docker registry..."
@@ -103,10 +99,42 @@ staging:deploy:
         --port=$PORT \
         --name=$CONTAINER_NAME \
         --detach
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual
+      allow_failure: true
+  tags:
+    - hs-bexplorer
+
+staging:deploy:
+  extends: .deploy
+  variables:
+    PORT: 5000
+    API_ENDPOINT: http://192.168.4.250:3000
+    CONTAINER_NAME: block-explorer-ui
   environment:
     name: staging
     action: start
     on_stop: staging:stop
+
+test:deploy:
+  extends: .deploy
+  variables:
+    PORT: 5001
+    API_ENDPOINT: http://192.168.6.7:3000
+    CONTAINER_NAME: block-explorer-ui-2
+  environment:
+    name: test
+    action: start
+    on_stop: test:stop
+
+.stop:
+  extends: .job-defaults
+  stage: deploy
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - docker ps -q --filter "name=$CONTAINER_NAME" | grep -q . && docker stop $CONTAINER_NAME
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       when: manual
@@ -115,21 +143,23 @@ staging:deploy:
     - hs-bexplorer
 
 staging:stop:
-  extends: .job-defaults
-  stage: deploy
+  extends: .stop
   needs:
     - staging:deploy
   variables:
     CONTAINER_NAME: block-explorer-ui
     GIT_STRATEGY: none
-  script:
-    - docker ps -q --filter "name=$CONTAINER_NAME" | grep -q . && docker stop $CONTAINER_NAME
   environment:
     name: staging
     action: stop
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: manual
-      allow_failure: true
-  tags:
-    - hs-bexplorer
+
+test:stop:
+  extends: .stop
+  needs:
+    - test:deploy
+  variables:
+    CONTAINER_NAME: block-explorer-ui-2
+    GIT_STRATEGY: none
+  environment:
+    name: test
+    action: stop
