@@ -104,7 +104,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                 >
                   <TableCell
                     className={`text-blue-600 sticky left-0 bg-explorer-bg-start ${
-                      index % 2 === 0 ? "bg-gray-50" : "bg-gray-200"
+                      index % 2 === 0 ? "bg-gray-50 md:bg-inherit" : "bg-gray-200 md:bg-inherit"
                     }`}
                   >
                     <Link href={`/account/${voter.voter}`}>{voter.voter}</Link>

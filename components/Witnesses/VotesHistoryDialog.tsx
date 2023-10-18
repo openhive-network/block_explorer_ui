@@ -87,12 +87,14 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                           index % 2 === 0 ? "bg-gray-50" : "bg-gray-200"
                         }`}
                       >
-                        <TableCell>
+                        <TableCell className={`sticky left-0 bg-explorer-bg-start ${
+                          index % 2 === 0 ? "bg-gray-50 md:bg-inherit" : "bg-gray-200 md:bg-inherit"
+                        }`} >
                           {moment(vote.timestamp).format(config.baseMomentTimeFormat)}
                         </TableCell>
                         <TableCell
-                          className={`text-blue-600 sticky left-0 bg-explorer-bg-start ${
-                            index % 2 === 0 ? "bg-gray-50" : "bg-gray-200"
+                          className={`text-blue-600 ${
+                            index % 2 === 0 ? "bg-gray-50 md:bg-inherit" : "bg-gray-200 md:bg-inherit"
                           }`}
                         >
                           <Link href={`/account/${vote.voter}`}>{vote.voter}</Link>

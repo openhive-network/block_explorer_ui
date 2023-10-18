@@ -116,7 +116,6 @@ export default function Witnesses() {
             <TableHead className="text-black">Block Size</TableHead>
             <TableHead className="text-black">Price Feed</TableHead>
             <TableHead className="text-black">Feed Age</TableHead>
-            <TableHead className="text-black">Signing Key</TableHead>
             <TableHead className="text-black">Version</TableHead>
           </TableRow>
         </TableHeader>
@@ -128,7 +127,7 @@ export default function Witnesses() {
             >
               <TableCell
                 className={
-                  `${index % 2 === 0 ? "bg-gray-50" : "bg-gray-200"}` +
+                  `${index % 2 === 0 ? "bg-gray-50 md:bg-inherit" : "bg-gray-200 md:bg-inherit"}` +
                   " sticky left-0"
                 }
               >
@@ -136,7 +135,7 @@ export default function Witnesses() {
               </TableCell>
               <TableCell
                 className={
-                  `${index % 2 === 0 ? "bg-gray-50" : "bg-gray-200"}` +
+                  `${index % 2 === 0 ? "bg-gray-50 md:bg-inherit" : "bg-gray-200 md:bg-inherit"}` +
                   " text-blue-800 sticky left-6"
                 }
               >
@@ -178,11 +177,6 @@ export default function Witnesses() {
               </TableCell>
               <TableCell>
                 {singleWitness.feed_age ? singleWitness.feed_age : "--"}
-              </TableCell>
-              <TableCell>
-                {singleWitness.signing_key
-                  ? `${singleWitness.signing_key.slice(0, 10)}...`
-                  : "--"}
               </TableCell>
               <TableCell>{singleWitness.version}</TableCell>
             </TableRow>
