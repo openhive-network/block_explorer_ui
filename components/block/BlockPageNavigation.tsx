@@ -1,4 +1,4 @@
-import { ChevronRightCircle, ChevronLeftCircle } from "lucide-react";
+import { ChevronRight, ChevronLeft } from "lucide-react";
 import fetchingService from "@/services/FetchingService";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Input } from "../ui/input";
@@ -19,7 +19,6 @@ interface BlockPageNavigationProps {
   setFilters: Dispatch<SetStateAction<number[]>>;
   operationTypes: Hive.OperationPattern[];
   selectedOperationIds: number[];
-  onTopClick: () => void;
   onVirtualOpsClick: () => void;
 }
 
@@ -32,7 +31,6 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   setFilters,
   operationTypes,
   selectedOperationIds,
-  onTopClick,
   onVirtualOpsClick,
 }) => {
   const [block, setBlock] = useState(blockNumber.toString());
@@ -77,57 +75,44 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   };
 
   return (
-    <section className="w-full flex flex-col items-center text-2xl p-4 sticky top-12 mb-8 md:mb-4 md:top-16">
-      <div className="w-full md:w-4/6 py-4 bg-explorer-dark-gray text-center text-white rounded-[6px] shadow-xl">
-        <div className="w-full flex justify-between items-center px-8">
-          <button
-            onClick={() => handleBlockChange((blockNumber - 1).toString())}
-            className="text-white bg-transparent hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-          >
-            <ChevronLeftCircle />
-          </button>
+    <section className="w-full flex flex-col items-center text-md px-4">
+      <div className="w-full md:w-4/6 py-4 bg-explorer-dark-gray text-center text-white rounded-[6px] shadow-xl border border-explorer-bg-start">
+        <div className="w-full flex justify-evenly items-center md:px-8 flex-wrap gap-y-4">
           <div className="flex justify-center items-center flex-wrap">
             <p>Block Number : </p>
+            <button
+              onClick={() => handleBlockChange((blockNumber - 1).toString())}
+              className="text-white bg-transparent ml-2 md:ml-4 text-sm border border-white h-[30px] md:px-1"
+            >
+              <ChevronLeft />
+            </button>
             <Input
-              className="max-w-[150px] md:max-w-[200px] md:ml-4 text-explorer-turquoise text-2xl [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="max-w-[100px] py-0 h-[30px] md:max-w-[112px] text-explorer-turquoise text-md [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               value={block}
               onChange={(e) => setBlock(e.target.value)}
               type="number"
             />
+            <button
+              onClick={() => handleBlockChange((blockNumber + 1).toString())}
+              className="text-white bg-transparent text-sm border border-white h-[30px] md:px-1"
+            >
+              <ChevronRight />
+            </button>
             <Button
               variant={"outline"}
+              className="px-2 h-[30px]"
               disabled={Number(block) === blockNumber}
               onClick={() => handleBlockChange(block)}
             >
               Go
             </Button>
           </div>
-          <button
-            onClick={() => handleBlockChange((blockNumber + 1).toString())}
-            className="text-white bg-transparent hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-          >
-            <ChevronRightCircle />
-          </button>
-        </div>
-        <div className="items-center m-3">
-          <p>
-            Operations :{" "}
-            <span className="text-explorer-turquoise">
-              {nonVirtualOperationLength}
-            </span>
-          </p>
-          <p>
-            Virtual Operations :{" "}
-            <span className="text-explorer-turquoise">
-              {virtualOperationLength}
-            </span>
-          </p>
-          <div className="flex flex-wrap items-center justify-center w-full mt-3">
+          <div className="flex flex-wrap items-center justify-center">
             Block Time :{" "}
             <DateTimePicker
               value={blockDate}
               onChange={(date) => setBlockDate(date!)}
-              className="text-explorer-turquoise md:ml-4 border border-explorer-turquoise"
+              className="text-explorer-turquoise ml-2 md:ml-4 border border-explorer-turquoise"
               calendarClassName="text-gray-800"
               format="yyyy/MM/dd HH:mm:ss"
               clearIcon={null}
@@ -137,6 +122,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
             />
             <Button
               variant={"outline"}
+              className="px-2 h-[30px]"
               disabled={timeStamp.getTime() === blockDate.getTime()}
               onClick={() => handleGoToBlockByTime()}
             >
@@ -144,8 +130,21 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
             </Button>
           </div>
         </div>
+        <div className="mt-3 mx-auto">
+          <p className="inline-block">
+            Operations :{" "}
+            <span className="text-explorer-turquoise">
+              {nonVirtualOperationLength}
+            </span>
+          </p>
+          <p className="ml-4 inline-block">
+            Virtual Operations :{" "}
+            <span className="text-explorer-turquoise">
+              {virtualOperationLength}
+            </span>
+          </p>
+        </div>
         <div className="flex justify-between items-center px-4 mt-4">
-          <Button onClick={onTopClick}>To Top</Button>
           <OperationTypesDialog
             operationTypes={operationTypes}
             setSelectedOperations={setFilters}
@@ -153,7 +152,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
             colorClass="bg-gray-500"
             triggerTitle={"Operation Filters"}
           />
-          <Button onClick={onVirtualOpsClick}>To Virt Ops</Button>
+          <Button onClick={onVirtualOpsClick}>To Virtual Ops</Button>
         </div>
       </div>
     </section>

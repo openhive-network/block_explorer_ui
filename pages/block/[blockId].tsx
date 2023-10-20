@@ -7,6 +7,8 @@ import BlockPageNavigation from "@/components/block/BlockPageNavigation";
 import DetailedOperationCard from "@/components/DetailedOperationCard";
 import { scrollTo } from "@/utils/UI";
 import PageNotFound from "@/components/PageNotFound";
+import { Button } from "@/components/ui/button";
+import { ArrowUp } from "lucide-react";
 
 export default function Block() {
   const router = useRouter();
@@ -75,7 +77,12 @@ export default function Block() {
   }
 
   return (
-    <div className="w-full h-full" ref={topRef}>
+    <div
+      className="w-full h-full"
+      style={{ scrollMargin: "100px" }}
+      ref={topRef}
+      id="block-page-top"
+    >
       <BlockPageNavigation
         blockNumber={blockNumber}
         goToBlock={handleGoToBlock}
@@ -85,11 +92,19 @@ export default function Block() {
         setFilters={setBlockFilters}
         operationTypes={operationTypes}
         selectedOperationIds={blockFilters}
-        onTopClick={() => scrollTo(topRef)}
         onVirtualOpsClick={() => scrollTo(virtualOpsRef)}
       />
+      <div className="sticky top-[calc(100vh-50px)] md:top-[calc(100vh-60px)] w-full flex justify-end px-3 md:px-12">
+        <Button
+          onClick={(e) => scrollTo(topRef)}
+          className="bg-[#ADA9A9] rounded-[6px] text-white hover:bg-gray-700"
+        >
+          <p className="hidden md:inline">To Top</p>
+          <ArrowUp className="p-0 md:pl-2" />
+        </Button>
+      </div>
       <section className="md:px-10 flex items-center justify-center text-white">
-        <div className="w-full p-4 md:p-0 md:w-4/5 flex flex-col gap-y-2 md:gap-y-6">
+        <div className="w-full px-4 md:p-0 md:w-4/5 flex flex-col gap-y-2 md:gap-y-6">
           {nonVirtualOperations?.map((operation, index) => (
             <DetailedOperationCard
               operation={operation.operation}
@@ -101,7 +116,11 @@ export default function Block() {
               skipDate
             />
           ))}
-          <div className="text-center mt-4" ref={virtualOpsRef}>
+          <div
+            className="text-center mt-4"
+            ref={virtualOpsRef}
+            style={{ scrollMargin: "100px" }}
+          >
             <p className="text-3xl text-black">Virtual Operations</p>
           </div>
           {virtualOperations?.map((operation, index) => (
