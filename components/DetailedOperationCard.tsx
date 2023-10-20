@@ -111,7 +111,7 @@ const getOneLineDescription = (operation: Hive.Operation) => {
         value.curator ||
         value.seller;
       return (
-        userName && (
+        userName && !(userName instanceof Object) && (
           <>
             <Link
               href={`/account/${userName}`}

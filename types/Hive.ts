@@ -192,7 +192,7 @@ declare module Hive {
     type: OperationType;
     value: {
       author?: string;
-      owner?: string;
+      owner?: string | Object;
       account?: string;
       producer?: string;
       curator?: string;
