@@ -197,7 +197,7 @@ declare module Hive {
       producer?: string;
       curator?: string;
       seller?: string;
-      permlink: string;
+      permlink?: string;
       voter?: string;
       weight?: number;
       body?: string;
@@ -217,6 +217,7 @@ declare module Hive {
       memo?: string;
       from?: string;
       to?: string;
+      message?: string;
     };
   }
 

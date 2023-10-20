@@ -142,8 +142,13 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
   const [copied, setCopied] = useState(false);
   const { settings } = useUserSettingsContext();
 
+  let valueAsObject = operation.value;
+  if (typeof valueAsObject === "string") {
+    valueAsObject = {message: valueAsObject}
+  }
+
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(JSON.stringify(operation.value).replaceAll("\\", ""));
+    navigator.clipboard.writeText(JSON.stringify(valueAsObject).replaceAll("\\", ""));
     setCopied(true);
     setTimeout(() => setCopied(false), 1000);
   };
@@ -235,10 +240,10 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
 
       {seeDetails &&
         (settings.rawJsonView ? (
-          <JSONView json={operation.value} />
+          <JSONView json={valueAsObject} />
         ) : (
           <div className="flex flex-col justify-center mt-2">
-            {Object.entries(operation.value)
+            { Object.entries(valueAsObject)
               .sort(([key, _property]) => (key === "json" ? 1 : -1))
               .map(([key, property]) => {
                 const value = isJson(property)
