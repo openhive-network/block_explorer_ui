@@ -219,18 +219,6 @@ declare module Hive {
       to?: string;
     };
   }
-  interface TransactionQueryResponse {
-    age: string;
-    block_num: number;
-    expiration: string;
-    extensions: any[];
-    operations: Operation[];
-    ref_block_num: number;
-    ref_block_prefix: number;
-    signatures: string[];
-    timestamp: string;
-    transaction_id: string;
-  }
 
   interface OpsByBlockResponse {
     acc_operation_id: string | null;
@@ -248,17 +236,28 @@ declare module Hive {
 
   type OperationTypes = [number, string, boolean];
 
+  interface OperationPattern {
+    op_type_id: number;
+    operation_name: string;
+    is_virtual: boolean;
+  }
+
   interface TransactionQueryResponse {
+    transaction_json: TransactionDetails
+    timestamp: Date;
     age: string;
-    block_num: number;
-    expiration: string;
-    extensions: any[];
-    operations: Operation[];
+  }
+
+  interface TransactionDetails {
     ref_block_num: number;
     ref_block_prefix: number;
+    extensions: any[];
+    expiration: Date;
+    operations: Operation[];
     signatures: string[];
-    timestamp: string;
     transaction_id: string;
+    block_num: number;
+    transaction_num: number;
   }
 
   interface AccountDetailsQueryResponse {
@@ -334,16 +333,16 @@ declare module Hive {
   }
 
   interface OpsByAccountResponse {
-    acc_operation_id: number | null;
-    age: string;
-    block: number;
-    op_in_trx: number;
     operation_id: number;
-    operation: Operation;
-    timestamp: string;
-    trx_id: string | null;
+    block_num: number;
     trx_in_block: number;
-    virtual_op: boolean;
+    trx_id: string | null;
+    op_pos: number;
+    op_type_id: number;
+    virtual_op: true;
+    timestamp: Date;
+    age: string;
+    operation: Operation;
   }
 
   interface GetBlockByTimeResponse {

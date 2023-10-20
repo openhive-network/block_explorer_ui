@@ -56,7 +56,7 @@ export default function Account() {
   });
 
   // Account operation types (filters)
-  const { data: accountOperationTypes }: UseQueryResult<Hive.OperationTypes[]> =
+  const { data: accountOperationTypes }: UseQueryResult<Hive.OperationPattern[]> =
     useQuery({
       queryKey: ["account_operation_types", accountNameFromRoute],
       queryFn: () => fetchingService.getAccOpTypes(accountNameFromRoute),
@@ -67,7 +67,6 @@ export default function Account() {
   const { data: witnessDetails }: UseQueryResult<Hive.Witness> = useQuery({
     queryKey: ["account_witness_details", accountNameFromRoute],
     queryFn: () => fetchingService.getWitness(accountNameFromRoute),
-    select: (witnessData: any) => witnessData[0],
     enabled: !!accountNameFromRoute && !!accountDetails?.is_witness,
     refetchOnWindowFocus: false,
   });
@@ -187,7 +186,7 @@ export default function Account() {
                 <DetailedOperationCard
                   operation={operation.operation}
                   date={new Date(operation.timestamp)}
-                  blockNumber={operation.block}
+                  blockNumber={operation.block_num}
                   transactionId={operation.trx_id}
                   key={operation.timestamp}
                 />

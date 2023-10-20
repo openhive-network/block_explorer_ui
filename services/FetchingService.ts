@@ -164,7 +164,7 @@ class FetchingService {
 
   async getOperationTypes(
     operation_type_pattern: string | null
-  ): Promise<Hive.OperationTypes[]> {
+  ): Promise<Hive.OperationPattern[]> {
     const requestBody: Hive.GetOperationTypesProps = {
       _operation_type_pattern: operation_type_pattern,
     };
@@ -172,7 +172,7 @@ class FetchingService {
     return await this.makePostRequest(url, requestBody);
   }
 
-  async getWitness(witnessName: string): Promise<[Hive.Witness]> {
+  async getWitness(witnessName: string): Promise<Hive.Witness> {
     const requestBody: Hive.GetWitnessProps = {
       _account: witnessName,
     };

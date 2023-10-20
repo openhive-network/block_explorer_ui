@@ -27,7 +27,7 @@ export default function Block() {
       refetchOnWindowFocus: false,
     });
 
-  const { data: operationTypes }: UseQueryResult<Hive.OperationTypes[]> =
+  const { data: operationTypes }: UseQueryResult<Hive.OperationPattern[]> =
     useQuery({
       queryKey: ["operation_types"],
       queryFn: () => fetchingService.getOperationTypes(""),

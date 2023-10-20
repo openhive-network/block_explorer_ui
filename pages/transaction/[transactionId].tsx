@@ -8,20 +8,26 @@ import Link from "next/link";
 import moment from "moment";
 import { config } from "@/Config";
 import PageNotFound from "@/components/PageNotFound";
+import Explorer from "@/types/Explorer";
+
+
 
 const displayTransactionData = (
   key: string,
-  value: string | string[] | number
+  value: string | string[] | number | Date | Hive.Operation[] | Object
 ) => {
-  if (!["operations", "signatures"].includes(key))
+  if (value instanceof Array || value instanceof Object) {
+    return null
+  } else {
     return (
-      <tr className="border-b border-solid border-gray-700 max-w-full overflow-hidden flex flex-col md:table-row">
+      <tr key={key} className="border-b border-solid border-gray-700 max-w-full overflow-hidden flex flex-col md:table-row">
         <td className="pl-4 py-1">{addSpacesAndCapitalizeFirst(key)}</td>
         <td align="right" className="pr-4">
           {value}
         </td>
       </tr>
-    );
+    )
+  }
 };
 
 export default function Transaction() {
@@ -48,16 +54,16 @@ export default function Transaction() {
             <div>
               Transaction{" "}
               <span className="text-explorer-turquoise">
-                {data.transaction_id}
+                {data.transaction_json.transaction_id}
               </span>
             </div>
             <div>
               in block
               <Link
-                href={`/block/${data.block_num}`}
+                href={`/block/${data.transaction_json.block_num}`}
                 className="text-explorer-turquoise"
               >
-                {" " + data.block_num}
+                {" " + data.transaction_json.block_num}
               </Link>{" "}
               at
               <span className="text-explorer-turquoise">
@@ -66,14 +72,14 @@ export default function Transaction() {
               </span>
             </div>
           </div>
-          {data.operations &&
-            data.operations.map((operation, index) => (
+          {data.transaction_json.operations &&
+            data.transaction_json.operations.map((operation, index) => (
               <DetailedOperationCard
                 key={index}
                 operation={operation}
                 date={new Date(data.timestamp)}
-                blockNumber={data.block_num}
-                transactionId={data.transaction_id}
+                blockNumber={data.transaction_json.block_num}
+                transactionId={data.transaction_json.transaction_id}
                 skipBlock
                 skipTrx
                 skipDate
@@ -83,13 +89,24 @@ export default function Transaction() {
           <div className="mt-6 w-full bg-explorer-dark-gray py-2 rounded-[6px] px-2">
             <div className="flex justify-center text-3xl">Raw transaction</div>
             <table className="w-full">
+              {Object.keys(data.transaction_json).map((key) =>
+                displayTransactionData(
+                  key,
+                  data.transaction_json[
+                    key as keyof Omit<
+                      Hive.TransactionDetails,
+                      "operations"
+                    >
+                  ]
+                )
+              )}
               {Object.keys(data).map((key) =>
                 displayTransactionData(
                   key,
                   data[
                     key as keyof Omit<
                       Hive.TransactionQueryResponse,
-                      "operations"
+                      "transaction_json"
                     >
                   ]
                 )

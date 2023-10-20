@@ -14,7 +14,7 @@ import { Loader2, X } from "lucide-react";
 interface BlockSearchSectionProps {
   getBlockDataForSearch: (blockSearchProps: Explorer.BlockSearchProps) => void;
   getOperationKeys: (operationId: number | null, nextKey?: string) => void;
-  operationsTypes: Hive.OperationTypes[];
+  operationsTypes: Hive.OperationPattern[];
   foundBlocksIds: number[] | null;
   currentOperationKeys: string[] | null;
   operationKeysChain: string[] | null;
@@ -67,7 +67,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({
   }
 
   const getOperationButtonTitle = (): string => {
-    if (selectedOperationTypes && selectedOperationTypes.length === 1) return operationsTypes[selectedOperationTypes[0]][1]
+    if (selectedOperationTypes && selectedOperationTypes.length === 1) return operationsTypes[selectedOperationTypes[0]].operation_name
     if (selectedOperationTypes && selectedOperationTypes.length > 1) return `${selectedOperationTypes.length} operations`
     return "Operations"
   }

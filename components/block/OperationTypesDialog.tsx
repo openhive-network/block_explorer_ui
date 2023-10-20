@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import Hive from "@/types/Hive";
 
 type OperationTypesDialogProps = {
-  operationTypes: Hive.OperationTypes[];
+  operationTypes: Hive.OperationPattern[];
   triggerTitle: string;
   selectedOperations: number[];
   colorClass: string;
@@ -73,22 +73,22 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           {operationTypes.map((operation) => {
             return (
               <li
-                onClick={() => onFiltersSelect(operation[0])}
-                key={operation[0]}
+                onClick={() => onFiltersSelect(operation.op_type_id)}
+                key={operation.op_type_id}
                 className="col-span-3 pl-2 md:col-span-1 flex items-center font-bold text-base rounded-lg bg-inherit hover:border-2-gray group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white "
               >
                 <Input
                   type="checkbox"
-                  checked={selectedOperationsIds.includes(operation[0])}
+                  checked={selectedOperationsIds.includes(operation.op_type_id)}
                   name="bordered-checkbox"
                   className=" w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 "
-                  onChange={() => onFiltersSelect(operation[0])}
+                  onChange={() => onFiltersSelect(operation.op_type_id)}
                 />
                 <Label
                   htmlFor="bordered-checkbox-1"
                   className="p-2 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300 whitespace-nowrap overflow-hidden text-ellipsis"
                 >
-                  {operation[1]}
+                  {operation.operation_name}
                 </Label>
               </li>
             );

@@ -17,7 +17,7 @@ interface BlockPageNavigationProps {
   virtualOperationLength: number;
   nonVirtualOperationLength: number;
   setFilters: Dispatch<SetStateAction<number[]>>;
-  operationTypes: Hive.OperationTypes[];
+  operationTypes: Hive.OperationPattern[];
   selectedOperationIds: number[];
   onTopClick: () => void;
   onVirtualOpsClick: () => void;
