@@ -138,13 +138,13 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
         <div className="mt-3 mx-auto">
           <p className="inline-block">
             Operations :{" "}
-            <span className="text-explorer-turquoise">
+            <span>
               {nonVirtualOperationLength}
             </span>
           </p>
           <p className="ml-4 inline-block">
             Virtual Operations :{" "}
-            <span className="text-explorer-turquoise">
+            <span>
               {virtualOperationLength}
             </span>
           </p>
@@ -157,7 +157,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
             colorClass="bg-gray-500"
             triggerTitle={"Operation Filters"}
           />
-          <Button onClick={onVirtualOpsClick}>To Virtual Ops</Button>
+          <Button onClick={onVirtualOpsClick} >To Virtual Ops</Button>
         </div>
       </div>
     </section>
