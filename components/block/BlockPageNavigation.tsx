@@ -70,7 +70,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
       new Date(blockDate.toUTCString())
     );
     if (blockByTime) {
-      handleBlockChange(blockByTime.num.toString());
+      handleBlockChange(blockByTime.toString());
     }
   };
 
