@@ -31,6 +31,9 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
   const [selectedOperationsIds, setSelectedOperationsIds] = useState<number[]>([]);
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
+  const virtualOperations = operationTypes.filter((operationType) => operationType.is_virtual);
+  const nonVirtualOperations = operationTypes.filter((operationType) => !operationType.is_virtual);
+
   const onFiltersSelect = (id: number) => {
     if (selectedOperationsIds.includes(id)) {
       setSelectedOperationsIds(
@@ -57,6 +60,31 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     setIsOpen(open);
   }
 
+  const selectAll = () => {
+    const allIds = operationTypes.map((operationType) => operationType.op_type_id);
+    setSelectedOperationsIds(allIds);
+  }
+
+  const selectReal = () => {
+    const realIds = nonVirtualOperations.map((operationType) => operationType.op_type_id);
+    let finaList = [...realIds, ...selectedOperationsIds];
+    finaList = finaList.filter((id, index) => finaList.indexOf(id) === index);
+    setSelectedOperationsIds([...finaList]);
+  }
+
+  const selectVirtual = () => {
+    const virtualIds = virtualOperations.map((operationType) => operationType.op_type_id);
+    let finaList = [...virtualIds, ...selectedOperationsIds];
+    finaList = finaList.filter((id, index) => finaList.indexOf(id) === index);
+    setSelectedOperationsIds(finaList);
+  }
+
+  const invertSelection = () => {
+    const allIds = operationTypes.map((operationType) => operationType.op_type_id);
+    const finaList = allIds.filter((id) => selectedOperationsIds.find((selectedId) => selectedId === id) === undefined);
+    setSelectedOperationsIds(finaList);
+  }
+
   const renderOperation = (operation: Hive.OperationPattern) => {
     return (
       <li
@@ -81,8 +109,6 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     )
   }
 
-  const virtualOperations = operationTypes.filter((operationType) => operationType.is_virtual);
-  const nonVirtualOperations = operationTypes.filter((operationType) => !operationType.is_virtual);
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => {onOpenChange(open)}}>
@@ -106,16 +132,32 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
         </ul>
       </div>
         <DialogFooter>
-          <div className="flex">
-          <Button type="button" variant='secondary' onClick={() => {onOpenChange(false)}}>
-              Cancel
-            </Button>
-            <Button type="button" variant='secondary' onClick={handleOnClear}>
-              Clear
-            </Button>
-            <Button className="bg-blue-800 hover:bg-blue-600 text-white rounded" type="submit" variant='default' onClick={handleOnSubmit}>
-              Apply
-            </Button>
+          <div className="flex justify-between w-full">
+            <div className="flex">
+              <Button type="button" variant='secondary' onClick={selectAll}>
+                Select all
+              </Button>
+              <Button type="button" variant='secondary' onClick={selectReal}>
+                Select real
+              </Button>
+              <Button type="button" variant='secondary' onClick={selectVirtual}>
+                Select virtual
+              </Button>
+              <Button type="button" variant='secondary' onClick={invertSelection}>
+                Invert
+              </Button>
+            </div>
+            <div className="flex">
+              <Button type="button" variant='secondary' onClick={() => {onOpenChange(false)}}>
+                Cancel
+              </Button>
+              <Button type="button" variant='secondary' onClick={handleOnClear}>
+                Clear
+              </Button>
+              <Button className="bg-blue-800 hover:bg-blue-600 text-white rounded" type="submit" variant='default' onClick={handleOnSubmit}>
+                Apply
+              </Button>
+            </div>
           </div>
         </DialogFooter>
       </DialogContent>
