@@ -49,7 +49,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({headBlockCardData, transac
       <div className='text-explorer-turquoise text-2xl my-2'>
         <Link href={`/block/${headBlockCardData?.headBlockNumber}`} >Block: {headBlockCardData?.headBlockNumber}</Link>
       </div>
-      <div className="my-2">Operations per block: {transactionCount}</div>
+      <div className="my-2">Operations per block: {!!transactionCount && transactionCount}</div>
       <div>
         <Link
           className="flex justif-between items-center"
