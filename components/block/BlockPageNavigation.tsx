@@ -60,8 +60,12 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
 
   const handleBlockChange = (blockNumber: string) => {
     if (Number(blockNumber) > 0) {
+      if (blockNumber === block) {
+        setBlockDate(timeStamp);
+      }
       goToBlock(blockNumber);
       setBlock(blockNumber);
+
     }
   };
 
@@ -91,6 +95,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
               value={block}
               onChange={(e) => setBlock(e.target.value)}
               type="number"
+              
             />
             <button
               onClick={() => handleBlockChange((blockNumber + 1).toString())}
