@@ -41,7 +41,7 @@ const CustomPagination: React.FC<PaginationProps> = ({
     <ul className="flex list-none">
       <li
         className={`p-[12px] h-[32px] text-center m-2 text-explorer-dark-gray flex box-border items-center tracking-widest rounded-2xl leading-6 text-sm w-min-[32px] cursor-pointer ${
-          currentPage === firstPage && "pointer-events-none"
+          currentPage === firstPage && "hidden"
         }`}
         onClick={onPrevious}
       >
@@ -73,7 +73,7 @@ const CustomPagination: React.FC<PaginationProps> = ({
       })}
       <li
         className={`p-[12px] h-[32px] text-center m-2 text-explorer-dark-gray flex box-border items-center tracking-widest rounded-2xl leading-6 text-sm w-min-[32px] cursor-pointer   ${
-          currentPage === lastPage && "pointer-events-none"
+          currentPage === lastPage && "hidden"
         }`}
         onClick={onNext}
       >

@@ -244,7 +244,7 @@ declare module Hive {
   }
 
   interface TransactionQueryResponse {
-    transaction_json: TransactionDetails
+    transaction_json: TransactionDetails;
     timestamp: Date;
     age: string;
   }
@@ -407,15 +407,15 @@ declare module Hive {
   }
 
   interface WitnessVotesHistory {
-    voter: string,
-    approve: boolean,
-    vests: number,
-    vests_hive_power: number,
-    account_vests: number,
-    account_hive_power: number,
-    proxied_vests: number,
-    proxied_hive_power: number,
-    timestamp: Date
+    voter: string;
+    approve: boolean;
+    vests: number;
+    vests_hive_power: number;
+    account_vests: number;
+    account_hive_power: number;
+    proxied_vests: number;
+    proxied_hive_power: number;
+    timestamp: Date;
   }
 
   type BlockByOpResponse = number[];
