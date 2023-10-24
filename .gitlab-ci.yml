@@ -141,9 +141,9 @@ dev:deploy:
     - |
       cd docker
       export REACT_APP_API_ADDRESS="$API_ENDPOINT"
-      export 
+      docker info
       docker compose \
-        --project-name "$CONTAINER_NAME"
+        --project-name "$CONTAINER_NAME" \
         --file docker-compose.ssl.yml \
         up --detach
   environment:
