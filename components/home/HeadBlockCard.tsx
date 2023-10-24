@@ -60,7 +60,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({headBlockCardData, transac
             {headBlockCardData?.witnessName}
           </span>
           <Image
-            className="rounded-full"
+            className="rounded-full border-2 border-explorer-turquoise"
             src={getHiveAvatarUrl(headBlockCardData?.witnessName)}
             alt="avatar"
             width={40}

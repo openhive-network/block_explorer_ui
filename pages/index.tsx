@@ -156,7 +156,7 @@ export default function Home() {
                   <TableCell>
                     <Link href={`/account/${witness.witness}`}>
                       <Image
-                        className="rounded-full"
+                        className="rounded-full border-2 border-explorer-turquoise"
                         src={getHiveAvatarUrl(witness.witness)}
                         alt="avatar"
                         width={40}
