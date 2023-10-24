@@ -39,8 +39,11 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   );
 
   useEffect(() => {
-    setBlock(blockNumber.toString());
     setBlockDate(timeStamp);
+  }, [timeStamp])
+
+  useEffect(() => {
+    setBlock(blockNumber.toString());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [blockNumber]);
 
@@ -65,7 +68,6 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
       }
       goToBlock(blockNumber);
       setBlock(blockNumber);
-
     }
   };
 
@@ -95,7 +97,6 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
               value={block}
               onChange={(e) => setBlock(e.target.value)}
               type="number"
-              
             />
             <button
               onClick={() => handleBlockChange((blockNumber + 1).toString())}
@@ -137,16 +138,10 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
         </div>
         <div className="mt-3 mx-auto">
           <p className="inline-block">
-            Operations :{" "}
-            <span>
-              {nonVirtualOperationLength}
-            </span>
+            Operations : <span>{nonVirtualOperationLength}</span>
           </p>
           <p className="ml-4 inline-block">
-            Virtual Operations :{" "}
-            <span>
-              {virtualOperationLength}
-            </span>
+            Virtual Operations : <span>{virtualOperationLength}</span>
           </p>
         </div>
         <div className="flex justify-between items-center px-4 mt-4">
@@ -157,7 +152,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
             colorClass="bg-gray-500"
             triggerTitle={"Operation Filters"}
           />
-          <Button onClick={onVirtualOpsClick} >To Virtual Ops</Button>
+          <Button onClick={onVirtualOpsClick}>To Virtual Ops</Button>
         </div>
       </div>
     </section>

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
@@ -20,14 +20,17 @@ export default function Block() {
   let blockIdToNum = Number(blockId);
 
   const [blockNumber, setBlockNumber] = useState(blockIdToNum);
+  const [blockDate, setBlockDate] = useState<Date>();
   const [blockFilters, setBlockFilters] = useState<number[]>([]);
 
-  const { data: blockOperations }: UseQueryResult<Hive.OpsByBlockResponse[]> =
-    useQuery({
-      queryKey: [`block_operations`, blockNumber, blockFilters],
-      queryFn: () => fetchingService.getOpsByBlock(blockNumber, blockFilters),
-      refetchOnWindowFocus: false,
-    });
+  const {
+    data: blockOperations,
+    isLoading: trxLoading,
+  }: UseQueryResult<Hive.OpsByBlockResponse[]> = useQuery({
+    queryKey: [`block_operations`, blockNumber, blockFilters],
+    queryFn: () => fetchingService.getOpsByBlock(blockNumber, blockFilters),
+    refetchOnWindowFocus: false,
+  });
 
   const { data: operationTypes }: UseQueryResult<Hive.OperationPattern[]> =
     useQuery({
@@ -42,6 +45,12 @@ export default function Block() {
     if (!blockIdToNum) return;
     setBlockNumber(blockIdToNum);
   }, [blockIdToNum]);
+
+  useEffect(() => {
+    if (blockOperations && blockOperations[0]) {
+      setBlockDate(new Date(blockOperations[0].timestamp + "Z"));
+    }
+  }, [blockOperations]);
 
   const virtualOperations =
     (!blockError &&
@@ -60,11 +69,7 @@ export default function Block() {
     });
   };
 
-  if (!blockOperations || !operationTypes) {
-    return "Loading ...";
-  }
-
-  if (!blockOperations.length || !operationTypes.length || blockError) {
+  if ((trxLoading === false && !blockOperations?.length) || blockError) {
     return (
       <PageNotFound
         message={
@@ -76,7 +81,9 @@ export default function Block() {
     );
   }
 
-  return (
+  return !blockDate ? (
+    <div>Loading ...</div>
+  ) : (
     <div
       className="w-full h-full"
       style={{ scrollMargin: "100px" }}
@@ -86,11 +93,11 @@ export default function Block() {
       <BlockPageNavigation
         blockNumber={blockNumber}
         goToBlock={handleGoToBlock}
-        timeStamp={new Date(blockOperations[0].timestamp + "Z")}
+        timeStamp={blockDate}
         virtualOperationLength={virtualOperations?.length ?? 0}
         nonVirtualOperationLength={nonVirtualOperations?.length ?? 0}
         setFilters={setBlockFilters}
-        operationTypes={operationTypes}
+        operationTypes={operationTypes || []}
         selectedOperationIds={blockFilters}
         onVirtualOpsClick={() => scrollTo(virtualOpsRef)}
       />
@@ -103,39 +110,41 @@ export default function Block() {
           <ArrowUp className="p-0 md:pl-2" />
         </Button>
       </div>
-      <section className="md:px-10 flex items-center justify-center text-white">
-        <div className="w-full px-4 md:p-0 md:w-4/5 flex flex-col gap-y-2 md:gap-y-6">
-          {nonVirtualOperations?.map((operation, index) => (
-            <DetailedOperationCard
-              operation={operation.operation}
-              date={new Date(operation.timestamp)}
-              blockNumber={operation.block}
-              transactionId={operation.trx_id}
-              key={operation.timestamp + index}
-              skipBlock
-              skipDate
-            />
-          ))}
-          <div
-            className="text-center mt-4"
-            ref={virtualOpsRef}
-            style={{ scrollMargin: "100px" }}
-          >
-            <p className="text-3xl text-black">Virtual Operations</p>
+      {trxLoading === false && (
+        <section className="md:px-10 flex items-center justify-center text-white">
+          <div className="w-full px-4 md:p-0 md:w-4/5 flex flex-col gap-y-2 md:gap-y-6">
+            {nonVirtualOperations?.map((operation, index) => (
+              <DetailedOperationCard
+                operation={operation.operation}
+                date={new Date(operation.timestamp)}
+                blockNumber={operation.block}
+                transactionId={operation.trx_id}
+                key={operation.timestamp + index}
+                skipBlock
+                skipDate
+              />
+            ))}
+            <div
+              className="text-center mt-4"
+              ref={virtualOpsRef}
+              style={{ scrollMargin: "100px" }}
+            >
+              <p className="text-3xl text-black">Virtual Operations</p>
+            </div>
+            {virtualOperations?.map((operation, index) => (
+              <DetailedOperationCard
+                operation={operation.operation}
+                date={new Date(operation.timestamp)}
+                blockNumber={operation.block}
+                transactionId={operation.trx_id}
+                key={operation.timestamp + index}
+                skipBlock
+                skipDate
+              />
+            ))}
           </div>
-          {virtualOperations?.map((operation, index) => (
-            <DetailedOperationCard
-              operation={operation.operation}
-              date={new Date(operation.timestamp)}
-              blockNumber={operation.block}
-              transactionId={operation.trx_id}
-              key={operation.timestamp + index}
-              skipBlock
-              skipDate
-            />
-          ))}
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   );
 }
