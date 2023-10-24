@@ -146,13 +146,13 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
               <Button type="button" variant='secondary' onClick={invertSelection}>
                 Invert
               </Button>
+              <Button type="button" variant='secondary' onClick={handleOnClear}>
+                Clear
+              </Button>
             </div>
             <div className="flex">
               <Button type="button" variant='secondary' onClick={() => {onOpenChange(false)}}>
                 Cancel
-              </Button>
-              <Button type="button" variant='secondary' onClick={handleOnClear}>
-                Clear
               </Button>
               <Button className="bg-blue-800 hover:bg-blue-600 text-white rounded" type="submit" variant='default' onClick={handleOnSubmit}>
                 Apply
