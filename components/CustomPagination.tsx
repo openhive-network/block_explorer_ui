@@ -9,6 +9,11 @@ interface PaginationProps {
   pageSize: number;
 }
 
+const scrollToTop = () => {
+  document.body.scrollTop = 0;
+  document.documentElement.scrollTop = 0;
+};
+
 const CustomPagination: React.FC<PaginationProps> = ({
   onPageChange,
   totalCount,
@@ -29,10 +34,17 @@ const CustomPagination: React.FC<PaginationProps> = ({
 
   const onNext = () => {
     onPageChange(currentPage + 1);
+    scrollToTop();
   };
 
   const onPrevious = () => {
     onPageChange(currentPage - 1);
+    scrollToTop();
+  };
+
+  const handlePageChange = (page: number | string) => {
+    onPageChange(page);
+    scrollToTop();
   };
   const lastPage = paginationRange[paginationRange.length - 1];
   const firstPage = paginationRange[0];
@@ -65,7 +77,7 @@ const CustomPagination: React.FC<PaginationProps> = ({
             className={`p-[12px] h-[32px] text-center m-2 text-white flex box-border items-center tracking-widest rounded-2xl leading-6 text-sm w-min-[32px] hover:bg-explorer-dark-gray cursor-pointer ${
               pageNumber === currentPage && `bg-explorer-dark-gray`
             } `}
-            onClick={() => onPageChange(pageNumber)}
+            onClick={() => handlePageChange(pageNumber)}
           >
             {pageNumber}
           </li>

@@ -38,6 +38,7 @@ export default function Account() {
   // Account operations
   const {
     data: accountOperations,
+    isLoading: isAccountOperationsLoading,
   }: UseQueryResult<Hive.OpsByAccountResponse[]> = useQuery({
     queryKey: [
       "account_operations",
@@ -56,12 +57,13 @@ export default function Account() {
   });
 
   // Account operation types (filters)
-  const { data: accountOperationTypes }: UseQueryResult<Hive.OperationPattern[]> =
-    useQuery({
-      queryKey: ["account_operation_types", accountNameFromRoute],
-      queryFn: () => fetchingService.getAccOpTypes(accountNameFromRoute),
-      refetchOnWindowFocus: false,
-    });
+  const {
+    data: accountOperationTypes,
+  }: UseQueryResult<Hive.OperationPattern[]> = useQuery({
+    queryKey: ["account_operation_types", accountNameFromRoute],
+    queryFn: () => fetchingService.getAccOpTypes(accountNameFromRoute),
+    refetchOnWindowFocus: false,
+  });
 
   // Witness data
   const { data: witnessDetails }: UseQueryResult<Hive.Witness> = useQuery({
@@ -83,15 +85,22 @@ export default function Account() {
     const maiinModule = await MainModule();
     const protocolProvider = new maiinModule.protocol();
     const result =
-     // params: const int32_t now, const int32_t max_mana_low, const int32_t max_mana_high, const int32_t current_mana_low, const int32_t current_mana_high, const uint32_t last_update_time
-      protocolProvider.cpp_calculate_current_manabar_value(0, 100, 100, 0, 0, 0);
-      console.log("TEST", JSON.stringify(result))
-  }
+      // params: const int32_t now, const int32_t max_mana_low, const int32_t max_mana_high, const int32_t current_mana_low, const int32_t current_mana_high, const uint32_t last_update_time
+      protocolProvider.cpp_calculate_current_manabar_value(
+        0,
+        100,
+        100,
+        0,
+        0,
+        0
+      );
+    console.log("TEST", JSON.stringify(result));
+  };
 
-  if (!accountDetails || !accountOperations || !accountOperationTypes) {
+  if (!accountDetails || !accountOperationTypes) {
     return "Loading ...";
   }
-  if (!accountOperations.length) {
+  if (!accountOperations?.length && !isAccountOperationsLoading) {
     return <PageNotFound message={`Account not found.`} />;
   }
 
@@ -163,35 +172,27 @@ export default function Account() {
         </div>
 
         <div className="col-start-2 col-span-3">
-          {/* <div className="mt-6 bg-red-500 overflow auto right-0 left-0 top-10 mb-20 flex justify-center items-center fixed">
-          <CustomPagination
-            currentPage={page}
-            totalCount={accountDetails.ops_count}
-            pageSize={OPERATIONS_LIMIT}
-            onPageChange={(page: number) => setPage(page)}
-          />
-
-          <OperationTypesDialog
-            operationTypes={accountOperationTypes}
-            setSelectedOperations={setOperationFilters}
-            triggerTitle={"Operation Filters"}
-          />
-        </div> */}
           <div>
-            {accountOperations.map((operation: any) => (
-              <div
-                className="m-2"
-                key={operation.acc_operation_id}
-              >
-                <DetailedOperationCard
-                  operation={operation.operation}
-                  date={new Date(operation.timestamp)}
-                  blockNumber={operation.block_num}
-                  transactionId={operation.trx_id}
-                  key={operation.timestamp}
-                />
+            {isAccountOperationsLoading ? (
+              <div className="flex justify-center text-center items-center">
+                Loading ...
               </div>
-            ))}
+            ) : (
+              accountOperations?.map((operation: any) => (
+                <div
+                  className="m-2"
+                  key={operation.acc_operation_id}
+                >
+                  <DetailedOperationCard
+                    operation={operation.operation}
+                    date={new Date(operation.timestamp)}
+                    blockNumber={operation.block_num}
+                    transactionId={operation.trx_id}
+                    key={operation.timestamp}
+                  />
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>
