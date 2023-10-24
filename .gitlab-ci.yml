@@ -128,6 +128,33 @@ test:deploy:
     action: start
     on_stop: test:stop
 
+# Job that can be run from any branch, for testing deployment changes
+dev:deploy:
+  extends: .deploy
+  variables:
+    HOST: hive-staging.pl.syncad.com
+    PORT: 5002
+    API_ENDPOINT: http://192.168.4.250:3000
+    CONTAINER_NAME: block-explorer-ui-3
+    REVERSE_PROXY_CONTAINER_NAME: ${CONTAINER_NAME}-proxy
+  script:
+    - |
+      cd docker
+      export REACT_APP_API_ADDRESS="$API_ENDPOINT"
+      export 
+      docker compose \
+        --project-name "$CONTAINER_NAME"
+        --file docker-compose.ssl.yml \
+        up --detach
+  environment:
+    name: dev
+    action: start
+    on_stop: dev:stop
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      when: manual
+      allow_failure: true
+
 .stop:
   extends: .job-defaults
   stage: deploy
@@ -163,3 +190,24 @@ test:stop:
   environment:
     name: test
     action: stop
+
+# Job that can be run from any branch, for testing deployment changes
+dev:stop:
+  extends: .stop
+  needs:
+    - dev:deploy
+  variables:
+    CONTAINER_NAME: block-explorer-ui-3
+    REVERSE_PROXY_CONTAINER_NAME: ${CONTAINER_NAME}-proxy
+    GIT_STRATEGY: none
+  script:
+    - docker ps -q --filter "name=$REVERSE_PROXY_CONTAINER_NAME" | grep -q . && docker rm --force "$REVERSE_PROXY_CONTAINER_NAME"
+    - docker ps -q --filter "name=$CONTAINER_NAME" | grep -q . && docker rm --force "$CONTAINER_NAME"
+    - docker network ls -q --filter "name=$CONTAINER_NAME_default" | docker network rm "$CONTAINER_NAME_default"
+  environment:
+    name: dev
+    action: stop
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      when: manual
+      allow_failure: true

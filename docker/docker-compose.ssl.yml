@@ -1,0 +1,27 @@
+version: '3.9'
+services:
+  block-explorer-ui:
+    image: ${IMAGE_NAME:-registry.gitlab.syncad.com/hive/block_explorer_ui:latest}
+    container_name: ${CONTAINER_NAME:-block-explorer-ui}
+    environment:
+      CONTAINER_NAME: 
+      PORT:
+      REACT_APP_API_ADDRESS:
+  reverse-proxy:
+    image: caddy:${CADDY_TAG:-2.7.5}
+    container_name: ${REVERSE_PROXY_CONTAINER_NAME:-reverse-proxy}
+    command:
+      - caddy
+      - reverse-proxy
+      - --from=https://${HOST:-localhost}:${PORT}
+      - --to=block-explorer-ui:${PORT}
+      - --internal-certs
+    environment:
+      REVERSE_PROXY_CONTAINER_NAME: 
+      HOST: 
+      PORT:
+    ports:
+      - "${PORT}:${PORT}"
+    depends_on:
+      block-explorer-ui:
+        condition: service_started
