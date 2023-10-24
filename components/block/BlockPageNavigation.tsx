@@ -19,7 +19,6 @@ interface BlockPageNavigationProps {
   setFilters: Dispatch<SetStateAction<number[]>>;
   operationTypes: Hive.OperationPattern[];
   selectedOperationIds: number[];
-  onVirtualOpsClick: () => void;
 }
 
 const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
@@ -31,7 +30,6 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   setFilters,
   operationTypes,
   selectedOperationIds,
-  onVirtualOpsClick,
 }) => {
   const [block, setBlock] = useState(blockNumber.toString());
   const [blockDate, setBlockDate] = useState(
@@ -144,7 +142,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
             Virtual Operations : <span>{virtualOperationLength}</span>
           </p>
         </div>
-        <div className="flex justify-between items-center px-4 mt-4">
+        <div className="flex justify-center items-center px-4 mt-4">
           <OperationTypesDialog
             operationTypes={operationTypes}
             setSelectedOperations={setFilters}
@@ -152,7 +150,6 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
             colorClass="bg-gray-500"
             triggerTitle={"Operation Filters"}
           />
-          <Button onClick={onVirtualOpsClick}>To Virtual Ops</Button>
         </div>
       </div>
     </section>

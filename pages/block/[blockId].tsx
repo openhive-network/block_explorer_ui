@@ -99,15 +99,21 @@ export default function Block() {
         setFilters={setBlockFilters}
         operationTypes={operationTypes || []}
         selectedOperationIds={blockFilters}
-        onVirtualOpsClick={() => scrollTo(virtualOpsRef)}
       />
-      <div className="sticky top-[calc(100vh-50px)] md:top-[calc(100vh-60px)] w-full flex justify-end px-3 md:px-12">
+      <div className="sticky top-[calc(100vh-90px)] md:top-[calc(100vh-100px)] w-full flex flex-col items-end px-3 md:px-12">
         <Button
-          onClick={(e) => scrollTo(topRef)}
-          className="bg-[#ADA9A9] rounded-[6px] text-white hover:bg-gray-700"
+          onClick={() => scrollTo(topRef)}
+          className="bg-[#ADA9A9] rounded-[6px] text-white hover:bg-gray-700 w-fit mb-1 md:mb-2"
         >
           <p className="hidden md:inline">To Top</p>
           <ArrowUp className="p-0 md:pl-2" />
+        </Button>
+        <Button
+          onClick={() => scrollTo(virtualOpsRef)}
+          className="bg-[#ADA9A9] rounded-[6px] text-white hover:bg-gray-700 w-fit"
+        >
+          <p className="hidden md:inline">To Virtual Ops</p>
+          <p className="md:hidden inline">V Ops</p>
         </Button>
       </div>
       {trxLoading === false && (
