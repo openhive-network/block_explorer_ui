@@ -33,7 +33,6 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   selectedOperationIds,
   isLoading
 }) => {
-  console.log("LEGNTHS", virtualOperationLength, nonVirtualOperationLength);
   const [block, setBlock] = useState(blockNumber.toString());
   const [blockDate, setBlockDate] = useState(
     new Date(timeStamp.toLocaleDateString("en-US"))
@@ -82,7 +81,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   };
 
   return (
-    <section className="w-full flex flex-col items-center text-md px-4">
+    <section className="w-full flex flex-col items-center text-md px-4 mb-2 md:mb-4">
       <div className="w-full md:w-4/6 py-4 bg-explorer-dark-gray text-center text-white rounded-[6px] shadow-xl border border-explorer-bg-start">
         <div className="w-full flex justify-evenly items-center md:px-8 flex-wrap gap-y-4">
           <div className="flex justify-center items-center flex-wrap">

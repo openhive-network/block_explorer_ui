@@ -20,3 +20,23 @@ export const isJson = (item: unknown) => {
     JSON.stringify(value).includes("{")
   );
 };
+
+/**
+ * properly formats json inlcuding nested json objects
+ *
+ * @param json json object
+ * @returns formatted json
+ */
+export const formatJson = (json: { [key: string]: any }) => {
+  let formatted = json;
+  Object.keys(formatted).forEach((key) => {
+    if (isJson(json[key])) {
+      try {
+        formatted[key] = JSON.parse(json[key]);
+      } catch (error) {
+        formatted[key] = json[key];
+      }
+    }
+  });
+  return JSON.stringify(formatted, null, 2);
+};

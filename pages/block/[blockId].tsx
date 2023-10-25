@@ -101,7 +101,7 @@ export default function Block() {
         selectedOperationIds={blockFilters}
         isLoading={trxLoading}
       />
-      <div className="sticky top-[calc(100vh-90px)] md:top-[calc(100vh-100px)] w-full flex flex-col items-end px-3 md:px-12">
+      <div className="fixed top-[calc(100vh-90px)] md:top-[calc(100vh-100px)] w-full flex flex-col items-end px-3 md:px-12">
         <Button
           onClick={() => scrollTo(topRef)}
           className="bg-[#ADA9A9] rounded-[6px] text-white hover:bg-gray-700 w-fit mb-1 md:mb-2"
@@ -119,7 +119,7 @@ export default function Block() {
       </div>
       {trxLoading === false ? (
         <section className="md:px-10 flex items-center justify-center text-white">
-          <div className="w-full px-4 md:p-0 md:w-4/5 flex flex-col gap-y-2 md:gap-y-6">
+          <div className="w-full px-4 md:p-0 md:w-4/5 flex flex-col gap-y-2">
             {nonVirtualOperations?.map((operation, index) => (
               <DetailedOperationCard
                 operation={operation.operation}

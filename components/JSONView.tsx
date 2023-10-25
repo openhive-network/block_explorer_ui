@@ -1,5 +1,6 @@
-import { cn } from "@/lib/utils";
 import React from "react";
+import { cn } from "@/lib/utils";
+import { formatJson } from "@/utils/StringUtils";
 
 interface JSONViewProps {
   json: object;
@@ -9,7 +10,7 @@ interface JSONViewProps {
 const JSONView: React.FC<JSONViewProps> = ({ json, className }) => {
   return (
     <div className={cn("overflow-auto", className)}>
-      <pre>{JSON.stringify(json, null, 2).replaceAll("\\", "")}</pre>
+      <pre>{formatJson(json)}</pre>
     </div>
   );
 };
