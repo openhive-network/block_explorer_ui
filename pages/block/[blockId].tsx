@@ -8,7 +8,7 @@ import DetailedOperationCard from "@/components/DetailedOperationCard";
 import { scrollTo } from "@/utils/UI";
 import PageNotFound from "@/components/PageNotFound";
 import { Button } from "@/components/ui/button";
-import { ArrowUp } from "lucide-react";
+import { ArrowUp, Loader2 } from "lucide-react";
 
 export default function Block() {
   const router = useRouter();
@@ -94,8 +94,8 @@ export default function Block() {
         blockNumber={blockNumber}
         goToBlock={handleGoToBlock}
         timeStamp={blockDate}
-        virtualOperationLength={virtualOperations?.length ?? 0}
-        nonVirtualOperationLength={nonVirtualOperations?.length ?? 0}
+        virtualOperationLength={virtualOperations?.length}
+        nonVirtualOperationLength={nonVirtualOperations?.length}
         setFilters={setBlockFilters}
         operationTypes={operationTypes || []}
         selectedOperationIds={blockFilters}
@@ -116,7 +116,7 @@ export default function Block() {
           <p className="md:hidden inline">V Ops</p>
         </Button>
       </div>
-      {trxLoading === false && (
+      {trxLoading === false ? (
         <section className="md:px-10 flex items-center justify-center text-white">
           <div className="w-full px-4 md:p-0 md:w-4/5 flex flex-col gap-y-2 md:gap-y-6">
             {nonVirtualOperations?.map((operation, index) => (
@@ -150,6 +150,10 @@ export default function Block() {
             ))}
           </div>
         </section>
+      ) : (
+        <div className="flex justify-center items-center">
+          <Loader2 className="animate-spin mt-1 h-16 w-16 ml-3 ... " />
+        </div>
       )}
     </div>
   );
