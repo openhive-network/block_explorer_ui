@@ -14,11 +14,12 @@ interface BlockPageNavigationProps {
   blockNumber: number;
   goToBlock: (blockNumber: string) => void;
   timeStamp: Date;
-  virtualOperationLength: number;
-  nonVirtualOperationLength: number;
+  virtualOperationLength?: number;
+  nonVirtualOperationLength?: number;
   setFilters: Dispatch<SetStateAction<number[]>>;
   operationTypes: Hive.OperationPattern[];
   selectedOperationIds: number[];
+  isLoading: boolean;
 }
 
 const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
@@ -30,7 +31,9 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   setFilters,
   operationTypes,
   selectedOperationIds,
+  isLoading
 }) => {
+  console.log("LEGNTHS", virtualOperationLength, nonVirtualOperationLength);
   const [block, setBlock] = useState(blockNumber.toString());
   const [blockDate, setBlockDate] = useState(
     new Date(timeStamp.toLocaleDateString("en-US"))
@@ -136,10 +139,10 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
         </div>
         <div className="mt-3 mx-auto">
           <p className="inline-block">
-            Operations : <span>{nonVirtualOperationLength}</span>
+            Operations : <span>{!isLoading && nonVirtualOperationLength}</span>
           </p>
           <p className="ml-4 inline-block">
-            Virtual Operations : <span>{virtualOperationLength}</span>
+            Virtual Operations : <span>{!isLoading && virtualOperationLength}</span>
           </p>
         </div>
         <div className="flex justify-center items-center px-4 mt-4">

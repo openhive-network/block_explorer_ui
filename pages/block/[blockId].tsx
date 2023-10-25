@@ -99,6 +99,7 @@ export default function Block() {
         setFilters={setBlockFilters}
         operationTypes={operationTypes || []}
         selectedOperationIds={blockFilters}
+        isLoading={trxLoading}
       />
       <div className="sticky top-[calc(100vh-90px)] md:top-[calc(100vh-100px)] w-full flex flex-col items-end px-3 md:px-12">
         <Button
