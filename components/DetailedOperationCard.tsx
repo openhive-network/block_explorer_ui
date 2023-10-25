@@ -147,11 +147,13 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
     valueAsObject = {message: valueAsObject}
   }
 
+  // Leave copy feature for later https app
+  /* 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(JSON.stringify(valueAsObject).replaceAll("\\", ""));
     setCopied(true);
     setTimeout(() => setCopied(false), 1000);
-  };
+  }; */
 
   return (
     <div
@@ -222,18 +224,6 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
               See more details
               <ChevronDown />
             </div>
-          )}
-        </Button>
-        <Button className="p-0" onClick={() => copyToClipboard()}>
-          {copied ? (
-            <>
-              <p className="text-explorer-ligh-green">JSON copied </p>
-              <Check className="inline h-4 w-4 ml-2 text-explorer-ligh-green" />
-            </>
-          ) : (
-            <>
-              Copy raw JSON <ClipboardCopy className="inline h-4 w-4 ml-2" />
-            </>
           )}
         </Button>
       </div>
