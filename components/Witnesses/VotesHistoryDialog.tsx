@@ -60,17 +60,17 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                 />
                 <label>Hive Power</label>
               </div>
-              <Table>
+              <Table className="text-white">
                 <TableHeader>
                   <TableRow>
                     {tableColums.map((column, index) => (
                       <TableHead
                         key={column.key}
                         className={cn({
-                          "sticky left-0 bg-white": !index,
+                          "sticky left-0": !index,
                         })}
                       >
-                        <span className="flex text-black">
+                        <span className="flex ">
                           {column.name}
                         </span>
                       </TableHead>
@@ -84,32 +84,32 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                       <TableRow
                         key={index}
                         className={`${
-                          index % 2 === 0 ? "bg-gray-50" : "bg-gray-200"
+                          index % 2 === 0 ? "bg-gray-700" : "bg-gray-800"
                         }`}
                       >
-                        <TableCell className={`sticky left-0 bg-explorer-bg-start ${
-                          index % 2 === 0 ? "bg-gray-50 md:bg-inherit" : "bg-gray-200 md:bg-inherit"
+                        <TableCell className={`sticky left-0 ${
+                          index % 2 === 0 ? "bg-gray-700 md:bg-inherit" : "bg-gray-800 md:bg-inherit"
                         }`} >
                           {moment(vote.timestamp).format(config.baseMomentTimeFormat)}
                         </TableCell>
                         <TableCell
-                          className={`text-blue-600 ${
-                            index % 2 === 0 ? "bg-gray-50 md:bg-inherit" : "bg-gray-200 md:bg-inherit"
+                          className={`text-explorer-turquoise ${
+                            index % 2 === 0 ? "bg-gray-700 md:bg-inherit" : "bg-gray-800 md:bg-inherit"
                           }`}
                         >
                           <Link href={`/account/${vote.voter}`}>{vote.voter}</Link>
                         </TableCell>
-                        <TableCell className={`${vote.approve ? "text-green-700" : "text-red-700"}`}>
+                        <TableCell className={`${vote.approve ? "text-green-400" : "text-red-400"}`}>
                           {showHivePower
                             ? vote.vests_hive_power
                             : vote.vests.toLocaleString()}{" "}
                         </TableCell>
-                        <TableCell className={`${vote.approve ? "text-green-700" : "text-red-700"}`}>
+                        <TableCell className={`${vote.approve ? "text-green-400" : "text-red-400"}`}>
                           {showHivePower
                             ? vote.account_hive_power
                             : vote.account_vests.toLocaleString()}{" "}
                         </TableCell>
-                        <TableCell className={`${vote.approve ? "text-green-700" : "text-red-700"}`}>
+                        <TableCell className={`${vote.approve ? "text-green-400" : "text-red-400"}`}>
                           {showHivePower
                             ? vote.proxied_hive_power
                             : vote.proxied_vests.toLocaleString()}{" "}

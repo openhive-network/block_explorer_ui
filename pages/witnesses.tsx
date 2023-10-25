@@ -105,30 +105,30 @@ export default function Witnesses() {
         votesHistory={votesHistory}
         changeVoteHistoryDialogue={changeVotesHistoryDialog}
       />
-      <Table>
+      <Table className="text-white">
         <TableHeader>
           <TableRow>
-            <TableHead className="sticky left-0 bg-explorer-bg-start text-black"></TableHead>
-            <TableHead className="sticky left-6 bg-explorer-bg-start text-black">
+            <TableHead className="sticky left-0 "></TableHead>
+            <TableHead className="sticky left-6">
               Name
             </TableHead>
-            <TableHead className="text-black">Votes</TableHead>
-            <TableHead className="text-black">Voters</TableHead>
-            <TableHead className="text-black">Block Size</TableHead>
-            <TableHead className="text-black">Price Feed</TableHead>
-            <TableHead className="text-black">Feed Age</TableHead>
-            <TableHead className="text-black">Version</TableHead>
+            <TableHead>Votes</TableHead>
+            <TableHead>Voters</TableHead>
+            <TableHead>Block Size</TableHead>
+            <TableHead>Price Feed</TableHead>
+            <TableHead>Feed Age</TableHead>
+            <TableHead>Version</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {witnessesQuery.data?.map((singleWitness, index) => (
             <TableRow
               key={index}
-              className={`${index % 2 === 0 ? "bg-gray-50" : "bg-gray-200"}`}
+              className={`${index % 2 === 0 ? "bg-gray-800" : "bg-gray-900"}`}
             >
               <TableCell
                 className={
-                  `${index % 2 === 0 ? "bg-gray-50 md:bg-inherit" : "bg-gray-200 md:bg-inherit"}` +
+                  `${index % 2 === 0 ? "bg-gray-800 md:bg-inherit" : "bg-gray-900 md:bg-inherit"}` +
                   " sticky left-0"
                 }
               >
@@ -136,8 +136,8 @@ export default function Witnesses() {
               </TableCell>
               <TableCell
                 className={
-                  `${index % 2 === 0 ? "bg-gray-50 md:bg-inherit" : "bg-gray-200 md:bg-inherit"}` +
-                  " text-blue-800 sticky left-6"
+                  `${index % 2 === 0 ? "bg-gray-800 md:bg-inherit" : "bg-gray-900 md:bg-inherit"}` +
+                  " text-explorer-turquoise sticky left-6"
                 }
               >
                 {" "}

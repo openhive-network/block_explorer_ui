@@ -73,7 +73,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
           />
           <label>Hive Power</label>
         </div>
-        <Table>
+        <Table className="text-white">
           <TableHeader>
             <TableRow>
               {tableColums.map((column, index) => (
@@ -83,10 +83,10 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                   }}
                   key={column.key}
                   className={cn({
-                    "sticky left-0 bg-white": !index,
+                    "sticky md:static left-0": !index,
                   })}
                 >
-                  <span className="flex text-black">
+                  <span className="flex">
                     {column.name} {showSorter(column.key)}
                   </span>
                 </TableHead>
@@ -99,12 +99,12 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                 <TableRow
                   key={index}
                   className={`${
-                    index % 2 === 0 ? "bg-gray-50" : "bg-gray-200"
+                    index % 2 === 0 ? "bg-gray-800" : "bg-gray-900"
                   }`}
                 >
                   <TableCell
-                    className={`text-blue-600 sticky left-0 bg-explorer-bg-start ${
-                      index % 2 === 0 ? "bg-gray-50 md:bg-inherit" : "bg-gray-200 md:bg-inherit"
+                    className={`text-explorer-turquoise sticky md:static left-0 ${
+                      index % 2 === 0 ? "bg-gray-800 md:bg-inherit" : "bg-gray-900 md:bg-inherit"
                     }`}
                   >
                     <Link href={`/account/${voter.voter}`}>{voter.voter}</Link>
