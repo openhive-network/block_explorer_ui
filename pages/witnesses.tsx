@@ -61,6 +61,7 @@ export default function Witnesses() {
   };
 
   const getVotesHistoryData = async (accountName: string) => {
+    setVoterAccount(accountName);
     const history = await fetchingService.getWitnessVotesHistory(
       accountName,
       "desc",
