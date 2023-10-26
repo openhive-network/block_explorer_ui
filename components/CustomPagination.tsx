@@ -1,4 +1,3 @@
-import { Dispatch, SetStateAction } from "react";
 import { usePagination, DOTS } from "./customHooks/usePagination";
 
 interface PaginationProps {
@@ -74,8 +73,9 @@ const CustomPagination: React.FC<PaginationProps> = ({
         return (
           <li
             key={i}
-            className={`p-[12px] h-[32px] text-center m-2 text-white flex box-border items-center tracking-widest rounded-2xl leading-6 text-sm w-min-[32px] hover:bg-explorer-dark-gray cursor-pointer ${
-              pageNumber === currentPage && `bg-explorer-dark-gray`
+            className={`p-[12px] h-[32px] text-center m-2  text-white flex box-border items-center tracking-widest rounded-2xl leading-6 text-sm w-min-[32px] hover:bg-explorer-dark-gray cursor-pointer ${
+              pageNumber === currentPage &&
+              `text-inherit text-explorer-dark-gray font-extrabold bg-white hover:bg-white cursor-auto`
             } `}
             onClick={() => handlePageChange(pageNumber)}
           >
