@@ -50,7 +50,7 @@ export const usePagination: React.FC<PaginationProps> = ({
       after/before the left/right page count as that would lead to a change if our Pagination
       component size which we do not want
     */
-    const shouldShowLeftDots = leftSiblingIndex > 2;
+    const shouldShowLeftDots = leftSiblingIndex > 3;
     const shouldShowRightDots = rightSiblingIndex < totalPageCount - 2;
 
     const firstPageIndex = 1;
