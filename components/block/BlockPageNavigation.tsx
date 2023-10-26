@@ -9,6 +9,9 @@ import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
 import Hive from "@/types/Hive";
 import OperationTypesDialog from "./OperationTypesDialog";
+import Link from "next/link";
+import Image from "next/image";
+import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 
 interface BlockPageNavigationProps {
   blockNumber: number;
@@ -20,6 +23,7 @@ interface BlockPageNavigationProps {
   operationTypes: Hive.OperationPattern[];
   selectedOperationIds: number[];
   isLoading: boolean;
+  blockDetails?: Hive.BlockDetails;
 }
 
 const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
@@ -31,7 +35,8 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   setFilters,
   operationTypes,
   selectedOperationIds,
-  isLoading
+  isLoading,
+  blockDetails,
 }) => {
   const [block, setBlock] = useState(blockNumber.toString());
   const [blockDate, setBlockDate] = useState(
@@ -40,7 +45,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
 
   useEffect(() => {
     setBlockDate(timeStamp);
-  }, [timeStamp])
+  }, [timeStamp]);
 
   useEffect(() => {
     setBlock(blockNumber.toString());
@@ -141,17 +146,48 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
             Operations : <span>{!isLoading && nonVirtualOperationLength}</span>
           </p>
           <p className="ml-4 inline-block">
-            Virtual Operations : <span>{!isLoading && virtualOperationLength}</span>
+            Virtual Operations :{" "}
+            <span>{!isLoading && virtualOperationLength}</span>
+          </p>
+          <p className="ml-4 inline-block">
+            <OperationTypesDialog
+              operationTypes={operationTypes}
+              setSelectedOperations={setFilters}
+              selectedOperations={selectedOperationIds}
+              colorClass="bg-gray-500"
+              triggerTitle={"Operation Filters"}
+            />
           </p>
         </div>
-        <div className="flex justify-center items-center px-4 mt-4">
-          <OperationTypesDialog
-            operationTypes={operationTypes}
-            setSelectedOperations={setFilters}
-            selectedOperations={selectedOperationIds}
-            colorClass="bg-gray-500"
-            triggerTitle={"Operation Filters"}
-          />
+        <div className="flex items-center gap-x-1 mt-3 px-8 md:px-4 w-full justify-center">
+          <p>Produced at: </p>
+          <p>{blockDetails?.created_at}</p>
+          <p>by</p>
+          <Link
+            className="flex justif-between items-center"
+            href={`/account/${blockDetails?.producer_account}`}
+          >
+            <span className="text-explorer-turquoise mx-2">
+              {blockDetails?.producer_account}
+            </span>
+            <Image
+              className="rounded-full border-2 border-explorer-turquoise"
+              src={getHiveAvatarUrl(blockDetails?.producer_account)}
+              alt="avatar"
+              width={40}
+              height={40}
+            />
+          </Link>
+        </div>
+        <div className="flex items-center gap-x-4 mt-3 px-8 md:px-4 w-full justify-center flex-wrap text-sm md:text-base">
+          <p>
+            <p className="text-base">Hash</p>
+            {blockDetails?.hash}
+          </p>
+          <p>
+            <p className="text-base">Prev hash</p>
+            {blockDetails?.prev}
+          </p>
         </div>
       </div>
     </section>

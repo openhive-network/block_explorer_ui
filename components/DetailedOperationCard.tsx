@@ -111,7 +111,8 @@ const getOneLineDescription = (operation: Hive.Operation) => {
         value.curator ||
         value.seller;
       return (
-        userName && !(userName instanceof Object) && (
+        userName &&
+        !(userName instanceof Object) && (
           <>
             <Link
               href={`/account/${userName}`}
@@ -126,7 +127,17 @@ const getOneLineDescription = (operation: Hive.Operation) => {
   }
 };
 
-const userField = ["author", "value", "owner", "account", "producer", "curator", "seller", "voter"];
+const userField = [
+  "author",
+  "value",
+  "owner",
+  "account",
+  "producer",
+  "curator",
+  "seller",
+  "voter",
+];
+const userAuthField = ["required_posting_auths", "required_auths"];
 
 const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
   operation,
@@ -140,12 +151,12 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
 }) => {
   const [seeDetails, setSeeDetails] = useState(true);
   const { settings } = useUserSettingsContext();
-  
+
   let valueAsObject = operation.value;
   if (typeof valueAsObject === "string") {
-    valueAsObject = {message: valueAsObject}
+    valueAsObject = { message: valueAsObject };
   }
-  
+
   // Leave copy feature for later https app
   // const [copied, setCopied] = useState(false);
   /* 
@@ -233,25 +244,51 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
           <JSONView json={valueAsObject} />
         ) : (
           <div className="flex flex-col justify-center mt-2">
-            { Object.entries(valueAsObject)
+            {Object.entries(valueAsObject)
               .sort(([key, _property]) => (key === "json" ? 1 : -1))
               .map(([key, property]) => {
                 const value = isJson(property)
-                ? JSON.stringify(property).replaceAll("\\", "")
-                : property.toString() === ""
-                ? "-"
-                : property.toString();
+                  ? JSON.stringify(property).replaceAll("\\", "")
+                  : property.toString() === ""
+                  ? "-"
+                  : property.toString();
                 return (
                   <div
                     key={key}
                     className="border-b border-solid border-gray-700 flex justify-between py-1"
                   >
                     <div className="font-bold">{key}:</div>
-                    {userField.includes(key) ? 
-                    <Link href={`/account/${property}`} className="text-explorer-turquoise">{value}</Link>
-                    :<div className="max-w-[90%] overflow-auto text-right">
-                      {value}
-                    </div>}
+                    {userField.includes(key) ? (
+                      <Link
+                        href={`/account/${property}`}
+                        className="text-explorer-turquoise"
+                      >
+                        {value}
+                      </Link>
+                    ) : userAuthField.includes(key) ? (
+                      <div className="flex">
+                        {value
+                          .toString()
+                          .split(",")
+                          .map((account, index) =>
+                            account === "-" ? (
+                              <p key={account + index}>{account}</p>
+                            ) : (
+                              <Link
+                                href={`/account/${account}`}
+                                className="text-explorer-turquoise"
+                                key={account + index}
+                              >
+                                {account}
+                              </Link>
+                            )
+                          )}
+                      </div>
+                    ) : (
+                      <div className="max-w-[90%] overflow-auto text-right">
+                        {value}
+                      </div>
+                    )}
                   </div>
                 );
               })}

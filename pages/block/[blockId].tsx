@@ -23,6 +23,12 @@ export default function Block() {
   const [blockDate, setBlockDate] = useState<Date>();
   const [blockFilters, setBlockFilters] = useState<number[]>([]);
 
+  const { data: blockDetails }: UseQueryResult<Hive.BlockDetails> = useQuery({
+    queryKey: ["block_details", blockNumber],
+    queryFn: () => fetchingService.getBlockDetails(blockNumber),
+    refetchOnWindowFocus: false,
+  });
+
   const {
     data: blockOperations,
     isLoading: trxLoading,
@@ -47,10 +53,10 @@ export default function Block() {
   }, [blockIdToNum]);
 
   useEffect(() => {
-    if (blockOperations && blockOperations[0]) {
-      setBlockDate(new Date(blockOperations[0].timestamp + "Z"));
+    if (blockDetails && blockDetails.created_at) {
+      setBlockDate(new Date(blockDetails.created_at + "Z"));
     }
-  }, [blockOperations]);
+  }, [blockDetails]);
 
   const virtualOperations =
     (!blockError &&
@@ -100,6 +106,7 @@ export default function Block() {
         operationTypes={operationTypes || []}
         selectedOperationIds={blockFilters}
         isLoading={trxLoading}
+        blockDetails={blockDetails}
       />
       <div className="fixed top-[calc(100vh-90px)] md:top-[calc(100vh-100px)] w-full flex flex-col items-end px-3 md:px-12">
         <Button

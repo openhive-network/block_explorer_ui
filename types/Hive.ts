@@ -418,6 +418,27 @@ declare module Hive {
     timestamp: Date;
   }
 
+  interface BlockDetails {
+    age: string;
+    block_num: number;
+    created_at: string;
+    current_hbd_supply: number;
+    current_supply: number;
+    dhf_interval_ledger: number;
+    extensions: null;
+    hash: string;
+    hbd_interest_rate: number;
+    prev: string;
+    producer_account: string;
+    signing_key: string;
+    total_reward_fund_hive: number;
+    total_vesting_fund_hive: number;
+    total_vesting_shares: string;
+    transaction_merkle_root: string;
+    virtual_supply: number;
+    witness_signature: string;
+  }
+
   type BlockByOpResponse = number[];
 }
 

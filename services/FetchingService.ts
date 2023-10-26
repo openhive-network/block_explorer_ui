@@ -15,6 +15,12 @@ class FetchingService {
     }
   }
 
+  async getBlockDetails(blockNumber: number): Promise<Hive.BlockDetails> {
+    const requestBody = { _block_num: blockNumber };
+    const url = `${config.apiAdress}/rpc/get_block`;
+    return await this.makePostRequest(url, requestBody);
+  }
+
   async getInputType(input: string): Promise<Hive.InputTypeResponse> {
     const requestBody = { _input: input };
     const url = `${config.apiAdress}/rpc/get_input_type`;
@@ -188,23 +194,26 @@ class FetchingService {
     return await this.makePostRequest(url, requestBody);
   }
 
-  async getOperationKeys(operationId: number, keys: string[]): Promise<string[]> {
+  async getOperationKeys(
+    operationId: number,
+    keys: string[]
+  ): Promise<string[]> {
     const requestBody: Hive.GetOperationKeysProps = {
       _operation_id: operationId,
-      _key: keys
-    }
+      _key: keys,
+    };
     const url = `${config.apiAdress}/rpc/get_operation_keys `;
     return await this.makePostRequest(url, requestBody);
   }
 
   async getBlockByOp(
-    operations: number[], 
-    accountName: string | null, 
-    from: number | null, 
-    to: number | null, 
+    operations: number[],
+    accountName: string | null,
+    from: number | null,
+    to: number | null,
     limit: number,
     orderIs: "asc" | "desc",
-    propertyValue: any | null, 
+    propertyValue: any | null,
     propertyKeys: string[] | null
   ): Promise<Hive.BlockByOpResponse> {
     const requestBody: Hive.GetBlockByOpProps = {
@@ -215,8 +224,8 @@ class FetchingService {
       _limit: limit,
       _order_is: orderIs,
       _key_content: propertyValue,
-      _set_key: propertyKeys
-    }
+      _set_key: propertyKeys,
+    };
     const url = `${config.apiAdress}/rpc/get_block_by_op  `;
     return await this.makePostRequest(url, requestBody);
   }
@@ -236,13 +245,11 @@ class FetchingService {
       _limit: limit,
       _from_time: fromTime,
       _to_time: toTime,
-    }
+    };
     const url = `${config.apiAdress}/rpc/get_witness_votes_history  `;
     return await this.makePostRequest(url, requestBody);
   }
-
 }
-
 
 const fetchingService = new FetchingService();
 
