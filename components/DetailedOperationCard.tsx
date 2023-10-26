@@ -138,16 +138,16 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
   skipDate = false,
   className,
 }) => {
-  const [seeDetails, setSeeDetails] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [seeDetails, setSeeDetails] = useState(true);
   const { settings } = useUserSettingsContext();
-
+  
   let valueAsObject = operation.value;
   if (typeof valueAsObject === "string") {
     valueAsObject = {message: valueAsObject}
   }
-
+  
   // Leave copy feature for later https app
+  // const [copied, setCopied] = useState(false);
   /* 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(JSON.stringify(valueAsObject).replaceAll("\\", ""));
