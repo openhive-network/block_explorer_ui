@@ -15,14 +15,14 @@ class FetchingService {
     }
   }
 
-  async getBlockDetails(blockNumber: number): Promise<Hive.BlockDetails> {
-    const requestBody = { _block_num: blockNumber };
+  async getBlock(blockNumber: number): Promise<Hive.BlockDetails> {
+    const requestBody: Hive.GetBlockProps = { _block_num: blockNumber };
     const url = `${config.apiAdress}/rpc/get_block`;
     return await this.makePostRequest(url, requestBody);
   }
 
   async getInputType(input: string): Promise<Hive.InputTypeResponse> {
-    const requestBody = { _input: input };
+    const requestBody: Hive.GetInputTypeProps = { _input: input };
     const url = `${config.apiAdress}/rpc/get_input_type`;
     return await this.makePostRequest(url, requestBody);
   }

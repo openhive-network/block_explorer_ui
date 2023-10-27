@@ -25,7 +25,7 @@ export default function Block() {
 
   const { data: blockDetails }: UseQueryResult<Hive.BlockDetails> = useQuery({
     queryKey: ["block_details", blockNumber],
-    queryFn: () => fetchingService.getBlockDetails(blockNumber),
+    queryFn: () => fetchingService.getBlock(blockNumber),
     refetchOnWindowFocus: false,
   });
 

@@ -88,6 +88,14 @@ declare module Hive {
     _set_key: string[] | null;
   }
 
+  interface GetBlockProps {
+    _block_num: number;
+  }
+
+  interface GetInputTypeProps {
+    _input: string;
+  }
+
   interface GetWitnessVotesHistory {
     _witness: string;
     _order_is: string;
