@@ -1,9 +1,9 @@
 import type { AppProps } from "next/app";
+import { ErrorBoundary } from "react-error-boundary";
 import Context from "@/components/context";
 import Providers from "@/components/providers";
 import "@/styles/globals.css";
-import { ErrorBoundary } from "react-error-boundary";
-import ErrorPage from "@/components/ErrorPage";
+import ErrorPage from "@/pages/ErrorPage";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
