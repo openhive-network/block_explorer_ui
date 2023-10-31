@@ -1,16 +1,16 @@
+import { Dispatch, SetStateAction, useEffect, useState, useRef } from "react";
 import { ChevronRight, ChevronLeft } from "lucide-react";
-import fetchingService from "@/services/FetchingService";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import DateTimePicker from "react-datetime-picker";
+import Link from "next/link";
+import Image from "next/image";
 import "react-datetime-picker/dist/DateTimePicker.css";
 import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
+import DateTimePicker from "react-datetime-picker";
 import Hive from "@/types/Hive";
+import fetchingService from "@/services/FetchingService";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 import OperationTypesDialog from "./OperationTypesDialog";
-import Link from "next/link";
-import Image from "next/image";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 
 interface BlockPageNavigationProps {
@@ -42,6 +42,19 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   const [blockDate, setBlockDate] = useState(
     new Date(timeStamp.toLocaleDateString("en-US"))
   );
+
+  const datePickerRef = useRef<HTMLDivElement>(null); 
+
+  useEffect(() => {
+    if (datePickerRef && datePickerRef.current) {
+      datePickerRef.current.addEventListener("contextmenu", e => e.preventDefault());
+    }
+
+    return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+      datePickerRef?.current?.removeEventListener("contextmenu", e => e.preventDefault());
+    };
+  }, [])
 
   useEffect(() => {
     setBlockDate(timeStamp);
@@ -118,7 +131,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
               Go
             </Button>
           </div>
-          <div className="flex flex-wrap items-center justify-center">
+          <div className="flex flex-wrap items-center justify-center" ref={datePickerRef}>
             Block Time :{" "}
             <DateTimePicker
               value={blockDate}
