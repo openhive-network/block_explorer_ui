@@ -74,7 +74,6 @@ declare module Hive {
 
   interface GetOperationKeysProps {
     _operation_id: number;
-    _key: string[];
   }
 
   interface GetBlockByOpProps {
@@ -84,8 +83,8 @@ declare module Hive {
     _to: number | null;
     _limit: number | null;
     _order_is: "asc" | "desc";
-    _key_content: string | null;
-    _set_key: string[] | null;
+    _key_content: string[] | null;
+    _setof_keys: string[][] | null;
   }
 
   interface GetBlockProps {
@@ -447,7 +446,10 @@ declare module Hive {
     witness_signature: string;
   }
 
-  type BlockByOpResponse = number[];
+  interface BlockByOpResponse {
+    block_num: number;
+    op_type_id: number[];
+  }
 }
 
 export default Hive;

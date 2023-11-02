@@ -14,11 +14,11 @@ import React, { useEffect, useState } from "react";
 
 export default function Home() {
   const [foundBlocksIds, setFoundBlocksIds] = useState<number[] | null>(null);
-  const [operationKeysChain, setOpertionKeysChain] = useState<string[] | null>(
+  const [selectedKeys, setSelectedKeys] = useState<string[] | null>(
     null
   );
-  const [currentOperationKeys, setCurrentOperationKeys] = useState<
-    string[] | null
+  const [operationKeys, setOperationKeys] = useState<
+    string[][] | null
   >(null);
   const [blockSearchLoading, setBlochSearchLoading] = useState<boolean>(false);
 
@@ -76,49 +76,43 @@ export default function Home() {
       blockSearchProps;
     let deepPropsKey: string[] | null =
       deepProps.keys && deepProps.keys.length !== 0 ? deepProps.keys : null;
-    const blocks = await fetchingService.getBlockByOp(
+    const foundBlocks = await fetchingService.getBlockByOp(
       operations,
       accountName,
       fromBlock,
       toBlock,
       limit,
       "desc",
-      deepProps.content,
-      deepPropsKey
+      [deepProps.content],
+      deepProps.keys ? [deepProps.keys] : null
     );
-    setFoundBlocksIds(blocks);
+    setFoundBlocksIds(foundBlocks.map(foundBlock => foundBlock.block_num));
     setBlochSearchLoading(false);
   };
 
   const getOperationKeys = async (
-    operationId: number | null,
-    nextKey?: string
+    operationId: number | null
   ) => {
     if (operationId !== null) {
-      let completeKeysChain: string[] = [];
-      if (operationKeysChain) completeKeysChain = [...operationKeysChain];
-      if (nextKey) {
-        completeKeysChain = [...completeKeysChain, nextKey];
-      } else {
-        completeKeysChain = [];
-      }
 
       const nextKeys = await fetchingService.getOperationKeys(
-        operationId,
-        completeKeysChain
+        operationId
       );
-      setCurrentOperationKeys(nextKeys);
-      setOpertionKeysChain(completeKeysChain);
+      setOperationKeys(nextKeys);
+      setSelectedKeys(null);
     } else {
-      setCurrentOperationKeys(null);
-      setOpertionKeysChain(null);
+      setOperationKeys(null);
+      setSelectedKeys(null);
     }
   };
 
-  let operations: Hive.Operation[] =
-    operationsByBlock?.map((operationByBlock) => {
-      return operationByBlock.operation;
-    }) || [];
+  const setProperKeysForProperty = (index: number | null) => {
+    if (index !== null && operationKeys?.[index]) {
+      setSelectedKeys(operationKeys[index]);
+    } else {
+      setSelectedKeys(null);
+    }
+  }
 
   return (
     <div className="grid grid-cols-4 text-white mx-4 md:mx-8 w-full">
@@ -130,10 +124,11 @@ export default function Home() {
         <BlockSearchSection
           getBlockDataForSearch={getBlockDataForSearch}
           getOperationKeys={getOperationKeys}
+          setSelectedKeys={setProperKeysForProperty}
           operationsTypes={operationsTypes.data || []}
           foundBlocksIds={foundBlocksIds}
-          currentOperationKeys={currentOperationKeys}
-          operationKeysChain={operationKeysChain}
+          currentOperationKeys={operationKeys}
+          operationKeysChain={selectedKeys}
           loading={blockSearchLoading}
         />
       </div>

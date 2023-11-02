@@ -13,10 +13,11 @@ import { Loader2, X } from "lucide-react";
 
 interface BlockSearchSectionProps {
   getBlockDataForSearch: (blockSearchProps: Explorer.BlockSearchProps) => void;
-  getOperationKeys: (operationId: number | null, nextKey?: string) => void;
+  getOperationKeys: (operationId: number | null) => void;
+  setSelectedKeys: (index: number| null) => void;
   operationsTypes: Hive.OperationPattern[];
   foundBlocksIds: number[] | null;
-  currentOperationKeys: string[] | null;
+  currentOperationKeys: string[][] | null;
   operationKeysChain: string[] | null;
   loading: boolean;
 }
@@ -25,6 +26,7 @@ interface BlockSearchSectionProps {
 const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({
   getBlockDataForSearch, 
   getOperationKeys, 
+  setSelectedKeys,
   operationsTypes, 
   foundBlocksIds, 
   currentOperationKeys, 
@@ -63,7 +65,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({
   }
 
   const onSelect = (newValue: string) => {
-    getOperationKeys(selectedOperationTypes[0], newValue)
+    setSelectedKeys(Number(newValue));
   }
 
   const getOperationButtonTitle = (): string => {
@@ -118,20 +120,29 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({
             <div className="flex items-center  m-2">
 
               <Select onValueChange={onSelect}>
-                <SelectTrigger className="text-blocked" >
-                  {(operationKeysChain && !!operationKeysChain.length) ? operationKeysChain.map((key) => (
-                  <div key={key} className={"mx-1 text-blocked"}>{key}</div>
+                <SelectTrigger className="text-blocked justify-normal" >
+                  {(operationKeysChain && !!operationKeysChain.length) ? operationKeysChain.map((key, index) => ( key !== "value" &&
+                  <div key={key} className={"mx-1 text-blocked"}>{index !== 1 && "/"} {key}</div>
                   )) : (
-                    <div>Pick a key</div>
+                    <div>Pick a property</div>
                   )}
                 </SelectTrigger>
-                <SelectContent className="bg-white text-black rounded-[2px]">
-                  {currentOperationKeys.map((opKey) => (
-                    <SelectItem className="m-1 text-center" key={opKey} value={opKey}>{opKey}</SelectItem>
+                <SelectContent className="bg-white text-black rounded-[2px] max-h-[31rem] overflow-y-scroll">
+                  {currentOperationKeys.map((keys, index) => (
+                    <SelectItem className="m-1 text-center" key={index} value={index.toFixed(0)} defaultChecked={false} >
+                      <div className="flex gap-x-2">
+                        {keys.map((key, index) => ( key !== "value" && 
+                          <div key={key}>{index !== 1 && "/"} {key} </div>
+                        ))}
+                      </div>
+                   </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              <X onClick={() => getOperationKeys(selectedOperationTypes[0])} height={30} width={30} />   
+              {operationKeysChain && !!operationKeysChain.length &&
+              
+                <Button onClick={() => {setSelectedKeys(null)}}>Clear</Button>
+              }
             </div>
             <div className="flex items-center  m-2">
               <Input

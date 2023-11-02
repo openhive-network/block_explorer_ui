@@ -194,14 +194,10 @@ class FetchingService {
     return await this.makePostRequest(url, requestBody);
   }
 
-  async getOperationKeys(
-    operationId: number,
-    keys: string[]
-  ): Promise<string[]> {
+  async getOperationKeys(operationId: number): Promise<string[][]> {
     const requestBody: Hive.GetOperationKeysProps = {
       _operation_id: operationId,
-      _key: keys,
-    };
+    }
     const url = `${config.apiAdress}/rpc/get_operation_keys `;
     return await this.makePostRequest(url, requestBody);
   }
@@ -213,9 +209,9 @@ class FetchingService {
     to: number | null,
     limit: number,
     orderIs: "asc" | "desc",
-    propertyValue: any | null,
-    propertyKeys: string[] | null
-  ): Promise<Hive.BlockByOpResponse> {
+    propertyValue: string[] | null,
+    propertyKeys: string[][] | null
+  ): Promise<Hive.BlockByOpResponse[]> {
     const requestBody: Hive.GetBlockByOpProps = {
       _operations: operations,
       _account: accountName,
@@ -224,7 +220,7 @@ class FetchingService {
       _limit: limit,
       _order_is: orderIs,
       _key_content: propertyValue,
-      _set_key: propertyKeys,
+      _setof_keys: propertyKeys
     };
     const url = `${config.apiAdress}/rpc/get_block_by_op  `;
     return await this.makePostRequest(url, requestBody);
