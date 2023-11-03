@@ -76,7 +76,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({
 
   return(
     <div className='mt-6 col-start-1 col-span-4 md:col-span-1 '>
-      <div className=' bg-explorer-dark-gray p-2 rounded-["6px] md:mx-6 h-fit rounded'>
+      <div className=' bg-explorer-dark-gray p-2 rounded-["6px] md:mx-2 h-fit rounded'>
       <div className="text-center text-xl">Block Search</div>
         <div className="flex items-center m-2">
           <OperationTypesDialog 
@@ -163,15 +163,17 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({
         </div>
       </div>
       {foundBlocksIds && (
-        <div className=' bg-explorer-dark-gray p-2 rounded-["6px] md:mx-6 h-fit rounded mt-4'>
+        <div className=' bg-explorer-dark-gray p-2 rounded-["6px] md:mx-2 h-fit rounded mt-4'>
           <div className="text-center">Results:</div>
           <div className="flex flex-wrap">
-            {foundBlocksIds.map((blockId) => (
+            {foundBlocksIds.length > 0 ? foundBlocksIds.map((blockId) => (
               <Link key={blockId} href={`block/${blockId}`}>
 
                 <div className="m-1 border border-solid p-1" >{blockId}</div>
               </Link>
-            ))}
+            )) : (
+              <div className="flex justify-center w-full my-2">No blocks matching given criteria</div>
+            )}
           </div>
           
         </div>

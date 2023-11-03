@@ -83,7 +83,7 @@ export default function Home() {
       toBlock,
       limit,
       "desc",
-      [deepProps.content],
+      deepProps.content ? [deepProps.content] : null,
       deepProps.keys ? [deepProps.keys] : null
     );
     setFoundBlocksIds(foundBlocks.map(foundBlock => foundBlock.block_num));

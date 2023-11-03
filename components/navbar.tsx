@@ -78,13 +78,14 @@ export default function Navbar() {
         ) : (
           <>
             <div className="flex items-center pl-12">
-              <Link href={"/"} className="pr-12">
+              <Link href={"/"} className="pr-12 flex justify-normal items-center text-explorer-turquoise font-medium">
                 <Image
                   src="/hive-logo.png"
                   alt="Hive logo"
                   width={50}
                   height={50}
                 />
+                <div className="ml-4">Hive Block Explorer</div>
               </Link>
               <Link href={"/witnesses"}>Witnesses</Link>
               <Toggle

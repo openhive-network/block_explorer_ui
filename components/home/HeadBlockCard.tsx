@@ -74,7 +74,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({headBlockCardData, transac
           ([key, value]) => (
             <div
               key={key}
-              className="border-b border-solid border-gray-700 flex justify-between py-1"
+              className="border-b border-solid border-gray-700 flex justify-between py-1 flex-col"
             >
               <span className="mr-2">{`${cardNameMap.get(key)}: `}</span>
               <span>{value}</span>
