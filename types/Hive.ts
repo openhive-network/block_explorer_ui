@@ -99,7 +99,7 @@ declare module Hive {
     _witness: string;
     _order_is: string;
     _order_by: string;
-    _limit: number;
+    _limit: number | null;
     _from_time?: Date;
     _to_time?: Date;
   }

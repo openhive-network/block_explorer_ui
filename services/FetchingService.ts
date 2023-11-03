@@ -230,7 +230,7 @@ class FetchingService {
     witness: string,
     orderIs: string,
     orderBy: string,
-    limit: number,
+    limit: number | null,
     fromTime?: Date,
     toTime?: Date
   ): Promise<Hive.WitnessVotesHistory[]> {

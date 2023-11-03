@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { usePagination, DOTS } from "./customHooks/usePagination";
 
 interface PaginationProps {
@@ -6,6 +7,7 @@ interface PaginationProps {
   siblingCount?: number;
   currentPage: number;
   pageSize: number;
+  className?: string;
 }
 
 const scrollToTop = () => {
@@ -19,6 +21,7 @@ const CustomPagination: React.FC<PaginationProps> = ({
   siblingCount = 1,
   currentPage,
   pageSize,
+  className,
 }) => {
   const paginationRange: any = usePagination({
     currentPage,
@@ -49,7 +52,7 @@ const CustomPagination: React.FC<PaginationProps> = ({
   const firstPage = paginationRange[0];
 
   return (
-    <ul className="flex list-none">
+    <ul className={cn("flex list-none", className)}>
       <li
         className={`p-[12px] h-[32px] text-center m-2 text-explorer-dark-gray flex box-border items-center tracking-widest rounded-2xl leading-6 text-sm w-min-[32px] cursor-pointer ${
           currentPage === firstPage && "hidden"
@@ -73,7 +76,7 @@ const CustomPagination: React.FC<PaginationProps> = ({
         return (
           <li
             key={i}
-            className={`p-[12px] h-[32px] text-center m-2  text-white flex box-border items-center tracking-widest rounded-2xl leading-6 text-sm w-min-[32px] hover:bg-explorer-dark-gray cursor-pointer ${
+            className={`p-[12px] h-[32px] text-center m-2 flex box-border items-center tracking-widest rounded-2xl leading-6 text-sm w-min-[32px] hover:bg-white cursor-pointer ${
               pageNumber === currentPage &&
               `text-inherit text-explorer-dark-gray font-extrabold bg-white hover:bg-white cursor-auto`
             } `}

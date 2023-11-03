@@ -24,6 +24,7 @@ export default function Witnesses() {
   const [isAsc, setIsAsc] = useState<boolean>(false);
   const [voterLoading, setVoterLoading] = useState<boolean>(false);
   const [votesHistory, setVotesHistory] = useState<Hive.WitnessVotesHistory[] | undefined>(undefined);
+  const [votesHistoryLoading, setVotesHistoryLoading] = useState<boolean>(false);
   const votersRef = useRef<Hive.Voter[] | null>();
   const sortKeyRef = useRef<string>();
   const isAscRef = useRef<boolean>();
@@ -60,15 +61,19 @@ export default function Witnesses() {
     setVoterLoading(false);
   };
 
-  const getVotesHistoryData = async (accountName: string) => {
+  const getVotesHistoryData = async (accountName: string, fromDate?: Date, toDate?: Date, noLimit?: boolean) => {
+    setVotesHistoryLoading(true);
     setVoterAccount(accountName);
     const history = await fetchingService.getWitnessVotesHistory(
       accountName,
       "desc",
       "timestamp",
-      100
+      noLimit ? null : 100,
+      fromDate,
+      toDate
     );
     setVotesHistory(history);
+    setVotesHistoryLoading(false);
   }
 
   const changeVotersDialogue = (isOpen: boolean) => {
@@ -103,7 +108,9 @@ export default function Witnesses() {
         accountName={voterAccount}
         isVotesHistoryOpen={isVotesHistoryOpen}
         votesHistory={votesHistory}
+        loading={votesHistoryLoading}
         changeVoteHistoryDialogue={changeVotesHistoryDialog}
+        onTimeRangeFilter={(fromDate, toDate) => getVotesHistoryData(voterAccount, fromDate, toDate, true)}
       />
       <Table className="text-white">
         <TableHeader>
