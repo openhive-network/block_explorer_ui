@@ -93,7 +93,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
               />
               <label>Hive Power</label>
             </div>
-            <div className="flex justify-between items-center flex-wrap">
+            <div className="flex justify-between items-center flex-wrap bg-gray-800 rounded-[4px] text-white p-2">
               <div>
                 From:{" "}
                 <DateTimePicker
@@ -122,7 +122,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                   showLeadingZeros={false}
                 />
               </div>
-              <Button onClick={() => onTimeRangeFilter(fromDate, toDate)}>
+              <Button onClick={() => onTimeRangeFilter(fromDate, toDate)} className="bg-gray-500 rounded-[4px] hover:bg-gray-600">
                 Set Time Range
               </Button>
             </div>
