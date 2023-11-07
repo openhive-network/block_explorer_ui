@@ -45,7 +45,7 @@ const cardNameMap = new Map([
 
 const HeadBlockCard: React.FC<HeadBlockCardProps> = ({headBlockCardData, transactionCount}) => {
   return(
-    <div className='mt-6 col-start-1 col-span-6 md:col-span-1 bg-explorer-dark-gray p-2 rounded-["6px] md:mx-6 h-fit rounded'>
+    <div className='col-start-1 col-span-6 md:col-span-1 bg-explorer-dark-gray p-2 rounded-["6px] md:mx-6 h-fit rounded'>
       <div className='text-explorer-turquoise text-2xl my-2'>
         <Link href={`/block/${headBlockCardData?.headBlockNumber}`} >Block: {headBlockCardData?.headBlockNumber}</Link>
       </div>

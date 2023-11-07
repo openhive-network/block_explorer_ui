@@ -1,16 +1,16 @@
+import React, { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import fetchingService from "@/services/FetchingService";
 import { useQuery } from "@tanstack/react-query";
-import OperationCard from "@/components/OperationCard";
 import Hive from "@/types/Hive";
-import { adjustDynamicGlobalBlockData } from "@/utils/QueryDataSelectors";
 import HeadBlockCard from "@/components/home/HeadBlockCard";
-import Link from "next/link";
+import { adjustDynamicGlobalBlockData } from "@/utils/QueryDataSelectors";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import Image from "next/image";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import BlockSearchSection from "@/components/home/BlockSearchSection";
 import Explorer from "@/types/Explorer";
-import React, { useEffect, useState } from "react";
+import LastBlocksWidget from "@/components/LastBlocksWidget";
 
 export default function Home() {
   const [foundBlocksIds, setFoundBlocksIds] = useState<number[] | null>(null);
@@ -121,6 +121,7 @@ export default function Home() {
         transactionCount={operationsByBlock?.length || 0}
       />
       <div className="col-start-1 md:col-start-2 col-span-6 md:col-span-2">
+        <LastBlocksWidget className="mt-6 md:mt-0"/>
         <BlockSearchSection
           getBlockDataForSearch={getBlockDataForSearch}
           getOperationKeys={getOperationKeys}
@@ -132,8 +133,8 @@ export default function Home() {
           loading={blockSearchLoading}
         />
       </div>
-      <div className="col-start-1 md:col-start-4 col-span-6 md:col-span-1 mt-6 bg-explorer-dark-gray py-2 rounded-[6px] text-xs	overflow-hidden md:mx-6">
-        <div className=" text-lg text-center">Top Witnesses</div>
+      <div className="col-start-1 md:col-start-4 col-span-6 md:col-span-1 bg-explorer-dark-gray py-2 rounded-[6px] text-xs	overflow-hidden md:mx-6">
+        <div className="text-lg text-center">Top Witnesses</div>
         <Table>
           <TableBody>
             {witnessesQuery.data &&

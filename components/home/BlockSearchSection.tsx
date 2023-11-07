@@ -75,8 +75,8 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({
   }
 
   return(
-    <div className='mt-6 col-start-1 col-span-4 md:col-span-1 '>
-      <div className=' bg-explorer-dark-gray p-2 rounded-["6px] md:mx-2 h-fit rounded'>
+    <div className='mt-6 col-start-1 col-span-4 md:col-span-1 mb-6 md:mb-0'>
+      <div className=' bg-explorer-dark-gray p-2 rounded-["6px] h-fit rounded'>
       <div className="text-center text-xl">Block Search</div>
         <div className="flex items-center m-2">
           <OperationTypesDialog 

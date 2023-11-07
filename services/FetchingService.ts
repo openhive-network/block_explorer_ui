@@ -21,6 +21,12 @@ class FetchingService {
     return await this.makePostRequest(url, requestBody);
   }
 
+  async getLastBlocks(limit: number): Promise<Hive.LastBlocksTypeResponse[]> {
+    const requestBody: Hive.GetLatestBlocksProps = { _limit: limit };
+    const url = `${config.apiAdress}/rpc/get_latest_blocks `;
+    return await this.makePostRequest(url, requestBody);
+  }
+
   async getInputType(input: string): Promise<Hive.InputTypeResponse> {
     const requestBody: Hive.GetInputTypeProps = { _input: input };
     const url = `${config.apiAdress}/rpc/get_input_type`;

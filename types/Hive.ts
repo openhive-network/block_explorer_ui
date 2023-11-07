@@ -95,6 +95,10 @@ declare module Hive {
     _input: string;
   }
 
+  interface GetLatestBlocksProps {
+    _limit: number;  
+  }
+
   interface GetWitnessVotesHistory {
     _witness: string;
     _order_is: string;
@@ -449,6 +453,15 @@ declare module Hive {
   interface BlockByOpResponse {
     block_num: number;
     op_type_id: number[];
+  }
+
+  interface LastBlocksTypeResponse {
+    block_num: number;
+    witness: string;
+    ops_count: Array<{
+      count: number;
+      op_type_id: number;
+    }>;
   }
 }
 
