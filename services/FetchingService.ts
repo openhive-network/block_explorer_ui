@@ -42,10 +42,11 @@ class FetchingService {
   async getOpsByBlock(
     blockNumber: number,
     filter: number[]
-  ): Promise<Hive.OpsByBlockResponse[]> {
+  ): Promise<Hive.OperationResponse[]> {
     const requestBody: Hive.GetOpsByBlockProps = {
       _block_num: blockNumber,
       _filter: filter,
+      _body_limit: config.opsBodyLimit
     };
     const url = `${config.apiAdress}/rpc/get_ops_by_block`;
     return await this.makePostRequest(url, requestBody);
@@ -101,7 +102,7 @@ class FetchingService {
     pagerNum: number,
     limit: number,
     filter: number[]
-  ): Promise<unknown> {
+  ): Promise<Hive.OperationResponse[]> {
     const requestBody: Hive.GetOpsByAccountProps = {
       _account: account,
       _filter: filter,
@@ -109,6 +110,7 @@ class FetchingService {
       _limit: limit,
       _date_start: null,
       _date_end: null,
+      _body_limit: config.opsBodyLimit
     };
     const url = `${config.apiAdress}/rpc/get_ops_by_account`;
     return await this.makePostRequest(url, requestBody);
@@ -249,6 +251,16 @@ class FetchingService {
       _to_time: toTime,
     };
     const url = `${config.apiAdress}/rpc/get_witness_votes_history  `;
+    return await this.makePostRequest(url, requestBody);
+  }
+
+  async getOperation(
+    operationId: number
+  ): Promise<Hive.OperationResponse> {
+    const requestBody: Hive.GetOperationProps = {
+      _operation_id: operationId
+    };
+    const url = `${config.apiAdress}/rpc/get_operation`
     return await this.makePostRequest(url, requestBody);
   }
 }

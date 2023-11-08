@@ -12,6 +12,7 @@ declare module Hive {
   interface GetOpsByBlockProps {
     _block_num: number;
     _filter: number[];
+    _body_limit: number;
   }
 
   interface GetTransactionProps {
@@ -29,6 +30,7 @@ declare module Hive {
     _filter: number[];
     _date_start: Date | null;
     _date_end: Date | null;
+    _body_limit: number;
   }
 
   interface GetAccountProps {
@@ -97,6 +99,9 @@ declare module Hive {
 
   interface GetLatestBlocksProps {
     _limit: number;  
+  }
+  interface GetOperationProps {
+    _operation_id: number;
   }
 
   interface GetWitnessVotesHistory {
@@ -232,10 +237,9 @@ declare module Hive {
     };
   }
 
-  interface OpsByBlockResponse {
-    acc_operation_id: string | null;
+  interface OperationResponse {
     age: string;
-    block: number;
+    block_num: number;
     op_in_trx: number;
     operation_id: number;
     operation: Operation;
@@ -243,6 +247,7 @@ declare module Hive {
     trx_id: string;
     trx_in_block: number;
     virtual_op: boolean;
+    is_modified: boolean;
     length: number;
   }
 
@@ -344,18 +349,6 @@ declare module Hive {
     is_witness: boolean;
   }
 
-  interface OpsByAccountResponse {
-    operation_id: number;
-    block_num: number;
-    trx_in_block: number;
-    trx_id: string | null;
-    op_pos: number;
-    op_type_id: number;
-    virtual_op: true;
-    timestamp: Date;
-    age: string;
-    operation: Operation;
-  }
 
   interface GetBlockByTimeResponse {
     age: string;

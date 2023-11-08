@@ -32,7 +32,7 @@ export default function Block() {
   const {
     data: blockOperations,
     isLoading: trxLoading,
-  }: UseQueryResult<Hive.OpsByBlockResponse[]> = useQuery({
+  }: UseQueryResult<Hive.OperationResponse[]> = useQuery({
     queryKey: [`block_operations`, blockNumber, blockFilters],
     queryFn: () => fetchingService.getOpsByBlock(blockNumber, blockFilters),
     refetchOnWindowFocus: false,
@@ -130,12 +130,14 @@ export default function Block() {
             {nonVirtualOperations?.map((operation, index) => (
               <DetailedOperationCard
                 operation={operation.operation}
+                operationId={operation.operation_id}
                 date={new Date(operation.timestamp)}
-                blockNumber={operation.block}
+                blockNumber={operation.block_num}
                 transactionId={operation.trx_id}
                 key={operation.timestamp + index}
                 skipBlock
                 skipDate
+                isShortened={operation.is_modified}
               />
             ))}
             <div
@@ -148,12 +150,14 @@ export default function Block() {
             {virtualOperations?.map((operation, index) => (
               <DetailedOperationCard
                 operation={operation.operation}
+                operationId={operation.operation_id}
                 date={new Date(operation.timestamp)}
-                blockNumber={operation.block}
+                blockNumber={operation.block_num}
                 transactionId={operation.trx_id}
                 key={operation.timestamp + index}
                 skipBlock
                 skipDate
+                isShortened={operation.is_modified}
               />
             ))}
           </div>

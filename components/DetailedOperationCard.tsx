@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 
 interface DetailedOperationCardProps {
   operation: Hive.Operation;
+  operationId?: number;
   transactionId?: string;
   blockNumber: number;
   date: Date;
@@ -19,6 +20,8 @@ interface DetailedOperationCardProps {
   skipTrx?: boolean;
   skipDate?: boolean;
   className?: string;
+  isShortened?: boolean;
+  forceStyle?: "raw-json" | "table";
 }
 
 const getOneLineDescription = (operation: Hive.Operation) => {
@@ -141,6 +144,7 @@ const userAuthField = ["required_posting_auths", "required_auths"];
 
 const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
   operation,
+  operationId,
   transactionId,
   blockNumber,
   date,
@@ -148,6 +152,8 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
   skipTrx = false,
   skipDate = false,
   className,
+  isShortened,
+  forceStyle
 }) => {
   const [seeDetails, setSeeDetails] = useState(true);
   const { settings } = useUserSettingsContext();
@@ -231,16 +237,25 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
               <ChevronUp />
             </div>
           ) : (
-            <div className="flex items-center gap-x-1">
+            <div className="flex items-center gap-x-1 ">
               See more details
               <ChevronDown />
             </div>
           )}
         </Button>
+        {
+          isShortened && 
+          <Link href={`/longOperation/${operationId}`}>
+            <Button className=" text-explorer-turquoise">
+              See full operation
+            </Button>
+          </Link>
+        }
+        
       </div>
 
       {seeDetails &&
-        (settings.rawJsonView ? (
+        (settings.rawJsonView || forceStyle === "raw-json" ? (
           <JSONView json={valueAsObject} />
         ) : (
           <div className="flex flex-col justify-center mt-2">

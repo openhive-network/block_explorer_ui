@@ -49,7 +49,7 @@ export default function Home() {
   });
 
   const { data: operationsByBlock } = useQuery<
-    Hive.OpsByBlockResponse[],
+    Hive.OperationResponse[],
     Error
   >({
     queryKey: ["operationsByBlock"],

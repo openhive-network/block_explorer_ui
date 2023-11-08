@@ -41,7 +41,7 @@ export default function Account() {
   const {
     data: accountOperations,
     isLoading: isAccountOperationsLoading,
-  }: UseQueryResult<Hive.OpsByAccountResponse[]> = useQuery({
+  }: UseQueryResult<Hive.OperationResponse[]> = useQuery({
     queryKey: [
       "account_operations",
       accountNameFromRoute,
@@ -187,10 +187,12 @@ export default function Account() {
                 >
                   <DetailedOperationCard
                     operation={operation.operation}
+                    operationId={operation.operation_id}
                     date={new Date(operation.timestamp)}
                     blockNumber={operation.block_num}
                     transactionId={operation.trx_id}
                     key={operation.timestamp}
+                    isShortened={operation.is_modified}
                   />
                 </div>
               ))
