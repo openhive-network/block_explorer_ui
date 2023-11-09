@@ -2,10 +2,13 @@ import Explorer from "@/types/Explorer";
 import Image from "next/image";
 import Link from "next/link";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
+import Hive from "@/types/Hive";
+import { AlertCircle } from "lucide-react";
 
 interface HeadBlockCardProps {
   headBlockCardData?: Explorer.HeadBlockCardData;
-  transactionCount: number;
+  blockDetails?: Hive.BlockDetails;
+  transactionCount?: number;
 }
 
 const cardNameMap = new Map([
@@ -43,25 +46,42 @@ const cardNameMap = new Map([
   ["maxOpenRecurrentTransfers", "Max open recurrent transfers"],
 ]);
 
-const HeadBlockCard: React.FC<HeadBlockCardProps> = ({headBlockCardData, transactionCount}) => {
-  return(
+const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
+  headBlockCardData,
+  transactionCount,
+  blockDetails,
+}) => {
+  console.log(headBlockCardData?.headBlockNumber, blockDetails?.block_num);
+  return (
     <div className='col-start-1 col-span-6 md:col-span-1 bg-explorer-dark-gray p-2 rounded-["6px] md:mx-6 h-fit rounded'>
-      <div className='text-explorer-turquoise text-2xl my-2'>
-        <Link href={`/block/${headBlockCardData?.headBlockNumber}`} >Block: {headBlockCardData?.headBlockNumber}</Link>
+      {headBlockCardData?.headBlockNumber &&
+        blockDetails?.block_num &&
+        headBlockCardData?.headBlockNumber !== blockDetails?.block_num && (
+          <div className="flex gap-x-2 text-explorer-orange">
+            <AlertCircle />
+            <p>Data migh not be synchronized</p>
+          </div>
+        )}
+      <div className="text-explorer-turquoise text-2xl my-2">
+        <Link href={`/block/${blockDetails?.block_num}`}>
+          Block: {blockDetails?.block_num}
+        </Link>
       </div>
-      <div className="my-2">Operations per block: {!!transactionCount && transactionCount}</div>
+      <div className="my-2">
+        Operations per block: {!!transactionCount && transactionCount}
+      </div>
       <div>
         <Link
           className="flex justif-between items-center"
-          href={`/account/${headBlockCardData?.witnessName}`}
+          href={`/account/${blockDetails?.producer_account}`}
         >
           <span>Current witness: </span>{" "}
           <span className="text-explorer-turquoise mx-2">
-            {headBlockCardData?.witnessName}
+            {blockDetails?.producer_account}
           </span>
           <Image
             className="rounded-full border-2 border-explorer-turquoise"
-            src={getHiveAvatarUrl(headBlockCardData?.witnessName)}
+            src={getHiveAvatarUrl(blockDetails?.producer_account)}
             alt="avatar"
             width={40}
             height={40}

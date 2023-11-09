@@ -15,6 +15,11 @@ class FetchingService {
     }
   }
 
+  async getHeadBlockNum(): Promise<number> {
+    const url = `${config.apiAdress}/rpc/get_head_block_num`;
+    return await this.makePostRequest(url, {});
+  }
+
   async getBlock(blockNumber: number): Promise<Hive.BlockDetails> {
     const requestBody: Hive.GetBlockProps = { _block_num: blockNumber };
     const url = `${config.apiAdress}/rpc/get_block`;

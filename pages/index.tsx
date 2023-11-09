@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import fetchingService from "@/services/FetchingService";
-import { useQuery } from "@tanstack/react-query";
+import { UseQueryResult, useQuery } from "@tanstack/react-query";
 import Hive from "@/types/Hive";
 import HeadBlockCard from "@/components/home/HeadBlockCard";
 import { adjustDynamicGlobalBlockData } from "@/utils/QueryDataSelectors";
@@ -45,6 +45,26 @@ export default function Home() {
   const witnessesQuery = useQuery({
     queryKey: ["witnesses"],
     queryFn: () => fetchingService.getWitnesses(20, 0, "votes", "desc"),
+    refetchOnWindowFocus: false,
+  });
+
+  const { data: headBlockNum } = useQuery({
+    queryKey: ["headBlockNum"],
+    queryFn: () => fetchingService.getHeadBlockNum(),
+    refetchOnWindowFocus: false,
+  });
+
+  const { data: headBlockData } = useQuery({
+    queryKey: ["headBlockData", headBlockNum],
+    queryFn: () => fetchingService.getBlock(headBlockNum || 0),
+    refetchOnWindowFocus: false,
+  });
+
+  const {
+    data: blockOperations,
+  }: UseQueryResult<Hive.OperationResponse[]> = useQuery({
+    queryKey: [`block_operations`, headBlockNum],
+    queryFn: () => fetchingService.getOpsByBlock(headBlockNum || 0, []),
     refetchOnWindowFocus: false,
   });
 
@@ -118,7 +138,8 @@ export default function Home() {
     <div className="grid grid-cols-4 text-white mx-4 md:mx-8 w-full">
       <HeadBlockCard
         headBlockCardData={dynamicGlobalQuery.data}
-        transactionCount={operationsByBlock?.length || 0}
+        transactionCount={blockOperations?.length}
+        blockDetails={headBlockData}
       />
       <div className="col-start-1 md:col-start-2 col-span-6 md:col-span-2">
         <LastBlocksWidget className="mt-6 md:mt-0"/>
