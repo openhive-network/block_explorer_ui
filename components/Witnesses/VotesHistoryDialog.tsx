@@ -21,6 +21,7 @@ import moment from "moment";
 import { config } from "@/Config";
 import { Button } from "../ui/button";
 import CustomPagination from "../CustomPagination";
+import {ArrowUpCircleIcon, ArrowDownCircleIcon} from "lucide-react"
 
 type VotersDialogProps = {
   accountName: string;
@@ -34,9 +35,8 @@ type VotersDialogProps = {
 const tableColums = [
   { key: "timestamp", name: "Date" },
   { key: "voter", name: "Voter" },
-  { key: "vests", name: "Votes" },
-  { key: "account_vests", name: "Account" },
-  { key: "proxied_vests", name: "Proxy" },
+  { key: "vote", name: "Vote" },
+  { key: "power", name: "Current voter power" },
 ];
 
 const PAGE_SIZE = 100;
@@ -187,27 +187,12 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                           vote.approve ? "text-green-400" : "text-red-400"
                         }`}
                       >
+                        {vote.approve ? <ArrowUpCircleIcon /> : <ArrowDownCircleIcon />}
+                      </TableCell>
+                      <TableCell>
                         {showHivePower
                           ? vote.vests_hive_power
                           : vote.vests.toLocaleString()}{" "}
-                      </TableCell>
-                      <TableCell
-                        className={`${
-                          vote.approve ? "text-green-400" : "text-red-400"
-                        }`}
-                      >
-                        {showHivePower
-                          ? vote.account_hive_power
-                          : vote.account_vests.toLocaleString()}{" "}
-                      </TableCell>
-                      <TableCell
-                        className={`${
-                          vote.approve ? "text-green-400" : "text-red-400"
-                        }`}
-                      >
-                        {showHivePower
-                          ? vote.proxied_hive_power
-                          : vote.proxied_vests.toLocaleString()}{" "}
                       </TableCell>
                     </TableRow>
                   ))}
