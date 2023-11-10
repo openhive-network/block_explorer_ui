@@ -22,8 +22,8 @@ const displayTransactionData = (
   } else {
     return (
       <tr key={key} className="border-b border-solid border-gray-700 max-w-full overflow-hidden flex flex-col md:table-row">
-        <td className="pl-4 py-1">{addSpacesAndCapitalizeFirst(key)}</td>
-        <td align="right" className="pr-4">
+        <td className="pl-2 py-1">{addSpacesAndCapitalizeFirst(key)}</td>
+        <td align="right" className="pr-2">
           {value}
         </td>
       </tr>
@@ -52,26 +52,30 @@ export default function Transaction() {
     <div className="w-full max-w-5xl px-4 text-white">
       {!isLoading && !!data && (
         <>
-          <div className="w-full bg-explorer-dark-gray px-4 py-2 rounded-[6px] flex flex-col md:items-center md:text-2xl">
+          <div className="w-full bg-explorer-dark-gray px-4 py-2 rounded-[6px] flex flex-col justify-center md:items-center md:text-md">
             <div>
               Transaction{" "}
               <span className="text-explorer-turquoise">
                 {data.transaction_json.transaction_id}
               </span>
             </div>
-            <div>
-              in block
-              <Link
-                href={`/block/${data.transaction_json.block_num}`}
-                className="text-explorer-turquoise"
-              >
-                {" " + data.transaction_json.block_num}
-              </Link>{" "}
-              at
-              <span className="text-explorer-turquoise">
-                {" " +
-                  moment(data.timestamp).format(config.baseMomentTimeFormat)}
-              </span>
+            <div className="w-full flex justify-evenly">
+              <div>
+                Block
+                <Link
+                  href={`/block/${data.transaction_json.block_num}`}
+                  className="text-explorer-turquoise"
+                >
+                  {" " + data.transaction_json.block_num}
+                </Link>
+              </div>
+              <div>
+                Date
+                <span className="text-explorer-turquoise">
+                  {" " +
+                    moment(data.timestamp).format(config.baseMomentTimeFormat)}
+                </span>
+              </div>
             </div>
           </div>
           {data.transaction_json.operations &&
@@ -89,9 +93,9 @@ export default function Transaction() {
               />
             ))}
           <div className="mt-6 w-full bg-explorer-dark-gray py-2 rounded-[6px] px-2">
-            <div className="flex justify-center text-3xl">Raw transaction</div>
+            <div className="flex justify-center text-md">Transaction Details</div>
             {settings.rawJsonView ? <JSONView json={data.transaction_json} className="text-xs"/> : 
-            <table className="w-full">
+            <table className="w-full text-xs">
               {Object.keys(data.transaction_json).map((key) =>
                 displayTransactionData(
                   key,
