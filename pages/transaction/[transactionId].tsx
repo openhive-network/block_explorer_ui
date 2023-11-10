@@ -8,7 +8,8 @@ import Link from "next/link";
 import moment from "moment";
 import { config } from "@/Config";
 import PageNotFound from "@/components/PageNotFound";
-import Explorer from "@/types/Explorer";
+import { useUserSettingsContext } from "@/components/contexts/UserSettingsContext";
+import JSONView from "@/components/JSONView";
 
 
 
@@ -32,6 +33,7 @@ const displayTransactionData = (
 
 export default function Transaction() {
   const router = useRouter();
+  const { settings } = useUserSettingsContext();
   const transactionId = router.query.transactionId as string;
 
   const { data, isLoading } = useQuery<Hive.TransactionQueryResponse, Error>({
@@ -47,10 +49,10 @@ export default function Transaction() {
   }
 
   return (
-    <div className="w-full max-w-5xl px-4 text-white mt-12 md:mt-10">
+    <div className="w-full max-w-5xl px-4 text-white">
       {!isLoading && !!data && (
         <>
-          <div className="mt-4 md:mt-10 w-full bg-explorer-dark-gray px-4 py-2 rounded-[6px] flex flex-col md:items-center md:text-2xl">
+          <div className="w-full bg-explorer-dark-gray px-4 py-2 rounded-[6px] flex flex-col md:items-center md:text-2xl">
             <div>
               Transaction{" "}
               <span className="text-explorer-turquoise">
@@ -88,6 +90,7 @@ export default function Transaction() {
             ))}
           <div className="mt-6 w-full bg-explorer-dark-gray py-2 rounded-[6px] px-2">
             <div className="flex justify-center text-3xl">Raw transaction</div>
+            {settings.rawJsonView ? <JSONView json={data.transaction_json} className="text-xs"/> : 
             <table className="w-full">
               {Object.keys(data.transaction_json).map((key) =>
                 displayTransactionData(
@@ -111,7 +114,7 @@ export default function Transaction() {
                   ]
                 )
               )}
-            </table>
+            </table>}
           </div>
         </>
       )}
