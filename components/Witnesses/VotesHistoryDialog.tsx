@@ -21,7 +21,7 @@ import moment from "moment";
 import { config } from "@/Config";
 import { Button } from "../ui/button";
 import CustomPagination from "../CustomPagination";
-import {ArrowUpCircleIcon, ArrowDownCircleIcon} from "lucide-react"
+import { ArrowUpCircleIcon, ArrowDownCircleIcon } from "lucide-react";
 
 type VotersDialogProps = {
   accountName: string;
@@ -66,7 +66,9 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
 
   const handlePageChange = (page: number) => {
     setPage(page);
-    setDisplayData(votesHistory?.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1));
+    setDisplayData(
+      votesHistory?.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1)
+    );
   };
 
   return (
@@ -122,7 +124,10 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                   showLeadingZeros={false}
                 />
               </div>
-              <Button onClick={() => onTimeRangeFilter(fromDate, toDate)} className="bg-gray-500 rounded-[4px] hover:bg-gray-600">
+              <Button
+                onClick={() => onTimeRangeFilter(fromDate, toDate)}
+                className="bg-gray-500 rounded-[4px] hover:bg-gray-600"
+              >
                 Set Time Range
               </Button>
             </div>
@@ -143,7 +148,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                     <TableHead
                       key={column.key}
                       className={cn({
-                        "sticky left-0": !index,
+                        "sticky md:static left-0": !index,
                       })}
                     >
                       <span className="flex ">{column.name}</span>
@@ -157,27 +162,15 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                     <TableRow
                       key={index}
                       className={`${
-                        index % 2 === 0 ? "bg-gray-700" : "bg-gray-800"
+                        index % 2 === 0 ? "bg-gray-800" : "bg-gray-900"
                       }`}
                     >
-                      <TableCell
-                        className={`sticky left-0 ${
-                          index % 2 === 0
-                            ? "bg-gray-700 md:bg-inherit"
-                            : "bg-gray-800 md:bg-inherit"
-                        }`}
-                      >
+                      <TableCell className="sticky left-0">
                         {moment(vote.timestamp).format(
                           config.baseMomentTimeFormat
                         )}
                       </TableCell>
-                      <TableCell
-                        className={`text-explorer-turquoise ${
-                          index % 2 === 0
-                            ? "bg-gray-700 md:bg-inherit"
-                            : "bg-gray-800 md:bg-inherit"
-                        }`}
-                      >
+                      <TableCell className="text-explorer-turquoise">
                         <Link href={`/account/${vote.voter}`}>
                           {vote.voter}
                         </Link>
@@ -187,7 +180,11 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                           vote.approve ? "text-green-400" : "text-red-400"
                         }`}
                       >
-                        {vote.approve ? <ArrowUpCircleIcon /> : <ArrowDownCircleIcon />}
+                        {vote.approve ? (
+                          <ArrowUpCircleIcon />
+                        ) : (
+                          <ArrowDownCircleIcon />
+                        )}
                       </TableCell>
                       <TableCell>
                         {showHivePower

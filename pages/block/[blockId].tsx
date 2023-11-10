@@ -75,7 +75,7 @@ export default function Block() {
     });
   };
 
-  if ((trxLoading === false && !blockOperations?.length) || blockError) {
+  if ((trxLoading === false && !blockOperations) || blockError) {
     return (
       <PageNotFound
         message={
@@ -145,7 +145,7 @@ export default function Block() {
               ref={virtualOpsRef}
               style={{ scrollMargin: "100px" }}
             >
-              <p className="text-3xl text-black">Virtual Operations</p>
+              <p className="text-3xl text-black">{(!!blockOperations && !blockOperations.length) ? "No operations were found" : "Virtual Operations"}</p>
             </div>
             {virtualOperations?.map((operation, index) => (
               <DetailedOperationCard
