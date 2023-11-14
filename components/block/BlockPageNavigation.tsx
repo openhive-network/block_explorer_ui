@@ -10,7 +10,7 @@ import Hive from "@/types/Hive";
 import fetchingService from "@/services/FetchingService";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import OperationTypesDialog from "./OperationTypesDialog";
+import OperationTypesDialog from "@/components/OperationTypesDialog";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 
 interface BlockPageNavigationProps {

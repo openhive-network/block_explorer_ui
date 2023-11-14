@@ -80,9 +80,9 @@ declare module Hive {
 
   interface GetBlockByOpProps {
     _operations: number[];
-    _account: string | null;
-    _from: number | null;
-    _to: number | null;
+    _account?: string | null;
+    _from?: number | null;
+    _to?: number | null;
     _limit: number | null;
     _order_is: "asc" | "desc";
     _key_content: string[] | null;

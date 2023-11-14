@@ -41,9 +41,9 @@ declare module Explorer {
 
   interface BlockSearchProps {
     operations: number[];
-    accountName: string | null;
-    fromBlock: number | null;
-    toBlock: number | null;
+    accountName?: string;
+    fromBlock?: number;
+    toBlock?: number;
     limit: number;
     deepProps: {
       content: any;

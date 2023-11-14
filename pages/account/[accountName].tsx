@@ -3,7 +3,7 @@ import AccountDetailsCard from "../../components/account/AccountDetailsCard";
 import fetchingService from "@/services/FetchingService";
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { useRouter } from "next/router";
-import OperationTypesDialog from "../../components/block/OperationTypesDialog";
+import OperationTypesDialog from "@/components/OperationTypesDialog";
 import CustomPagination from "../../components/CustomPagination";
 import Hive from "@/types/Hive";
 import DetailedOperationCard from "@/components/DetailedOperationCard";

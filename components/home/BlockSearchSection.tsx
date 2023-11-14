@@ -4,11 +4,12 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { Dialog } from "../ui/dialog";
 import { DialogTrigger } from "@radix-ui/react-dialog";
-import OperationTypesDialog from "../block/OperationTypesDialog";
+import OperationTypesDialog from "@/components/OperationTypesDialog";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { Select, SelectContent, SelectTrigger, SelectItem } from "../ui/select";
 import { Loader2, X } from "lucide-react";
+import SingleOperationTypeDialog from "../SingleOperationTypeDialog";
 
 
 interface BlockSearchSectionProps {
@@ -20,6 +21,7 @@ interface BlockSearchSectionProps {
   currentOperationKeys: string[][] | null;
   operationKeysChain: string[] | null;
   loading: boolean;
+  headblockNumber?: number;
 }
 
 
@@ -31,19 +33,21 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({
   foundBlocksIds, 
   currentOperationKeys, 
   operationKeysChain,
-  loading
+  loading,
+  headblockNumber
 }) => {
 
-  const [accountName, setAccountName] = useState<string | null>(null);
-  const [fromBlock, setFromBlock] = useState<number | null>(null);
-  const [toBlock, setToBlock] = useState<number | null>(null);
+  const [accountName, setAccountName] = useState<string | undefined>(undefined);
+  const [fromBlock, setFromBlock] = useState<number | undefined>(undefined);
+  const [toBlock, setToBlock] = useState<number | undefined>(undefined);
   const [selectedOperationTypes, setSelectedOperationTypes] = useState<number[]>([]);
+  const [selectedOperationType, setSelectedOperationType] = useState<number | null>(null);
   const [fieldContent, setFieldContent] = useState<string | null>(null);
 
   const startSearch = () => {
     const blockSearchProps: Explorer.BlockSearchProps = {
       accountName,
-      operations: selectedOperationTypes,
+      operations: selectedOperationType ? [selectedOperationType] : [],
       fromBlock,
       toBlock,
       limit: 100,
@@ -55,23 +59,49 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({
     getBlockDataForSearch(blockSearchProps);
   }
 
+  /*
   const changeSelectedOperationTypes = (operationIds: number[]) => {
     if (operationIds.length === 1) {
       getOperationKeys(operationIds[0]);
     } else {
       getOperationKeys(null);
     }
-    return setSelectedOperationTypes(operationIds);
+    setSelectedOperationTypes(operationIds);
+  }
+  */
+
+  const changeSelectedOperationType = (operationId: number | null) => {
+    if (operationId !== null) {
+      getOperationKeys(operationId);
+    } else {
+      getOperationKeys(null);
+    }
+    setSelectedOperationType(operationId);
   }
 
   const onSelect = (newValue: string) => {
     setSelectedKeys(Number(newValue));
   }
 
+  /*
   const getOperationButtonTitle = (): string => {
     if (selectedOperationTypes && selectedOperationTypes.length === 1) return operationsTypes[selectedOperationTypes[0]].operation_name
     if (selectedOperationTypes && selectedOperationTypes.length > 1) return `${selectedOperationTypes.length} operations`
     return "Operations"
+  } 
+  */
+
+  const getSingleOperationTriggerTitle = (): string => {
+    if (selectedOperationType !== null) return operationsTypes[selectedOperationType].operation_name
+    return "Operation"
+  }
+
+  const setNumericValue = (value: number, fieldSetter: Function) => {
+    if (value === 0) {
+      fieldSetter(undefined);
+    } else {
+      fieldSetter(value);
+    }
   }
 
   return(
@@ -79,87 +109,104 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({
       <div className=' bg-explorer-dark-gray p-2 rounded-["6px] h-fit rounded'>
       <div className="text-center text-xl">Block Search</div>
         <div className="flex items-center m-2">
-          <OperationTypesDialog 
+          {
+            /*
+            <OperationTypesDialog 
+              operationTypes={operationsTypes} 
+              selectedOperations={selectedOperationTypes} 
+              setSelectedOperations={changeSelectedOperationTypes} 
+              colorClass="bg-gray-500"
+              triggerTitle={getOperationButtonTitle()} 
+            />   
+            */
+          }
+          <SingleOperationTypeDialog 
             operationTypes={operationsTypes} 
-            selectedOperations={selectedOperationTypes} 
-            setSelectedOperations={changeSelectedOperationTypes} 
+            selectedOperation={selectedOperationType}
+            setSelectedOperation={changeSelectedOperationType}
             colorClass="bg-gray-500"
-            triggerTitle={getOperationButtonTitle()} 
-          />   
+            triggerTitle={getSingleOperationTriggerTitle()} 
+          />
         </div>
-        <div className="flex items-center m-2">      
+        <div className="flex flex-col m-2">
+          <label className="mx-2">Account name</label>      
           <Input
             className="w-1/2"
             type="text"
             value={accountName || ""}
-            onChange={(e) => setAccountName(e.target.value)}
-            placeholder="Account"
+            onChange={(e) => setAccountName(e.target.value === "" ? undefined : e.target.value)}
+            placeholder="---"
           />
         </div>
         <div className="flex items-center  m-2">
-          <Input
-            className="w-1/2"
-            type="number"
-            value={fromBlock || ""}
-            onChange={(e) => setFromBlock(Number(e.target.value))}
-            placeholder="From"
-          />
-          <Input
-            className="w-1/2"
-            type="number"
-            value={toBlock || ""}
-            onChange={(e) => setToBlock(Number(e.target.value))}
-            placeholder="To"
-          />
-        </div>
-        <div className="flex items-center  m-2">
-
+          <div className="flex flex-col w-full">
+            <label className="mx-2">From block</label>
+            <Input
+              type="number"
+              value={fromBlock || ""}
+              onChange={(e) => setNumericValue(Number(e.target.value), setFromBlock)}
+              placeholder="1"
+            />
+          </div>
+          <div className="flex flex-col w-full">
+            <label className="mx-2">To block</label>
+            <Input
+              type="number"
+              value={toBlock || ""}
+              onChange={(e) => setNumericValue(Number(e.target.value), setToBlock)}
+              placeholder={String(headblockNumber || 1)}
+            />
+          </div>
         </div>
         {currentOperationKeys &&   
           <>
-            <div className="flex items-center  m-2">
+            <div className="flex flex-col  m-2">
+              <label className="mx-2">Key</label>
+              <div className="flex">
 
-              <Select onValueChange={onSelect}>
-                <SelectTrigger className="text-blocked justify-normal" >
-                  {(operationKeysChain && !!operationKeysChain.length) ? operationKeysChain.map((key, index) => ( key !== "value" &&
-                  <div key={key} className={"mx-1 text-blocked"}>{index !== 1 && "/"} {key}</div>
-                  )) : (
-                    <div>Pick a property</div>
-                  )}
-                </SelectTrigger>
-                <SelectContent className="bg-white text-black rounded-[2px] max-h-[31rem] overflow-y-scroll">
-                  {currentOperationKeys.map((keys, index) => (
-                    <SelectItem className="m-1 text-center" key={index} value={index.toFixed(0)} defaultChecked={false} >
-                      <div className="flex gap-x-2">
-                        {keys.map((key, index) => ( key !== "value" && 
-                          <div key={key}>{index !== 1 && "/"} {key} </div>
-                        ))}
-                      </div>
-                   </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {operationKeysChain && !!operationKeysChain.length &&
-              
-                <Button onClick={() => {setSelectedKeys(null)}}>Clear</Button>
-              }
+                <Select onValueChange={onSelect}>
+                  <SelectTrigger className="justify-normal" >
+                    {(operationKeysChain && !!operationKeysChain.length) ? operationKeysChain.map((key, index) => ( key !== "value" &&
+                    <div key={key} className={"mx-1"}>{index !== 1 && "/"} {key}</div>
+                    )) : (
+                      <div className="text-blocked">Pick a property</div>
+                    )}
+                  </SelectTrigger>
+                  <SelectContent className="bg-white text-black rounded-[2px] max-h-[31rem] overflow-y-scroll">
+                    {currentOperationKeys.map((keys, index) => (
+                      <SelectItem className="m-1 text-center" key={index} value={index.toFixed(0)} defaultChecked={false} >
+                        <div className="flex gap-x-2">
+                          {keys.map((key, index) => ( key !== "value" && 
+                            <div key={key}>{index !== 1 && "/"} {key} </div>
+                          ))}
+                        </div>
+                    </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {operationKeysChain && !!operationKeysChain.length &&
+                
+                  <Button onClick={() => {setSelectedKeys(null)}}>Clear</Button>
+                }
+              </div>
             </div>
-            <div className="flex items-center  m-2">
+            <div className="flex m-2 flex-col">
+              <label className="mx-2">Value</label>
               <Input
                 className="w-1/2"
                 type="text"
                 value={fieldContent || ""}
                 onChange={(e) => setFieldContent(e.target.value)}
-                placeholder="Content"
+                placeholder="---"
               />     
             </div>
           </>  
         }
         <div className="flex items-center  m-2">
-          <Button className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]" onClick={startSearch} disabled={!selectedOperationTypes.length}>
+          <Button className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]" onClick={startSearch} disabled={!selectedOperationType}>
             <span>Search</span> {loading && <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />}
           </Button>
-          {!selectedOperationTypes.length && <label className="ml-2 text-muted-foreground">Pick at least 1 operation type</label>}
+          {!selectedOperationType && <label className="ml-2 text-muted-foreground">Pick operation type</label>}
         </div>
       </div>
       {foundBlocksIds && (

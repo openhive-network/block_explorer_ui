@@ -1,5 +1,6 @@
 import Hive from "@/types/Hive";
 import { config } from "@/Config";
+import Explorer from "@/types/Explorer";
 
 class FetchingService {
   async makePostRequest<T>(url: string, requestBody: T) {
@@ -216,24 +217,17 @@ class FetchingService {
   }
 
   async getBlockByOp(
-    operations: number[],
-    accountName: string | null,
-    from: number | null,
-    to: number | null,
-    limit: number,
-    orderIs: "asc" | "desc",
-    propertyValue: string[] | null,
-    propertyKeys: string[][] | null
+    blockSearchProps: Explorer.BlockSearchProps
   ): Promise<Hive.BlockByOpResponse[]> {
     const requestBody: Hive.GetBlockByOpProps = {
-      _operations: operations,
-      _account: accountName,
-      _from: from,
-      _to: to,
-      _limit: limit,
-      _order_is: orderIs,
-      _key_content: propertyValue,
-      _setof_keys: propertyKeys
+      _operations: blockSearchProps.operations,
+      _account: blockSearchProps?.accountName,
+      _from: blockSearchProps.fromBlock,
+      _to: blockSearchProps.toBlock,
+      _limit: blockSearchProps.limit,
+      _order_is: "desc",
+      _key_content: blockSearchProps.deepProps.content,
+      _setof_keys:  blockSearchProps.deepProps.keys ? [blockSearchProps.deepProps.keys] : null
     };
     const url = `${config.apiAdress}/rpc/get_block_by_op  `;
     return await this.makePostRequest(url, requestBody);

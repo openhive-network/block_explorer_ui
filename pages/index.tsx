@@ -92,19 +92,8 @@ export default function Home() {
     blockSearchProps: Explorer.BlockSearchProps
   ) => {
     setBlochSearchLoading(true);
-    const { accountName, operations, fromBlock, toBlock, limit, deepProps } =
-      blockSearchProps;
-    let deepPropsKey: string[] | null =
-      deepProps.keys && deepProps.keys.length !== 0 ? deepProps.keys : null;
     const foundBlocks = await fetchingService.getBlockByOp(
-      operations,
-      accountName,
-      fromBlock,
-      toBlock,
-      limit,
-      "desc",
-      deepProps.content ? [deepProps.content] : null,
-      deepProps.keys ? [deepProps.keys] : null
+      blockSearchProps
     );
     setFoundBlocksIds(foundBlocks.map(foundBlock => foundBlock.block_num));
     setBlochSearchLoading(false);
@@ -152,6 +141,7 @@ export default function Home() {
           currentOperationKeys={operationKeys}
           operationKeysChain={selectedKeys}
           loading={blockSearchLoading}
+          headblockNumber={headBlockNum}
         />
       </div>
       <div className="col-start-1 md:col-start-4 col-span-6 md:col-span-1 bg-explorer-dark-gray py-2 rounded-[6px] text-xs	overflow-hidden md:mx-6">
