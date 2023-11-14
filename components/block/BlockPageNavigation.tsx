@@ -19,7 +19,7 @@ interface BlockPageNavigationProps {
   timeStamp: Date;
   virtualOperationLength?: number;
   nonVirtualOperationLength?: number;
-  setFilters: Dispatch<SetStateAction<number[]>>;
+  setFilters: (filters: number[]) => void;
   operationTypes: Hive.OperationPattern[];
   selectedOperationIds: number[];
   isLoading: boolean;

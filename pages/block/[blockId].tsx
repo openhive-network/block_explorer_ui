@@ -10,18 +10,23 @@ import PageNotFound from "@/components/PageNotFound";
 import { Button } from "@/components/ui/button";
 import { ArrowUp, Loader2 } from "lucide-react";
 
+const FILTERS = "filters";
+const SPLIT = "-";
+
 export default function Block() {
   const router = useRouter();
   const virtualOpsRef = useRef(null);
   const topRef = useRef(null);
 
-  const { blockId } = router.query;
+  const { blockId, filters } = router.query;
 
   let blockIdToNum = Number(blockId);
 
   const [blockNumber, setBlockNumber] = useState(blockIdToNum);
   const [blockDate, setBlockDate] = useState<Date>();
-  const [blockFilters, setBlockFilters] = useState<number[]>([]);
+  const [blockFilters, setBlockFilters] = useState<number[]>(
+    (filters as string)?.split(SPLIT).map((filter) => Number(filter)) || []
+  );
 
   const { data: blockDetails }: UseQueryResult<Hive.BlockDetails> = useQuery({
     queryKey: ["block_details", blockNumber],
@@ -75,6 +80,28 @@ export default function Block() {
     });
   };
 
+  const handleFilterChange = (filters: number[]) => {
+    setBlockFilters(filters);
+    if (!!filters.length) {
+      router.replace({
+        query: { ...router.query, [FILTERS]: filters.join(SPLIT) },
+      });
+    } else {
+      delete router.query[FILTERS];
+      router.replace({
+        query: { ...router.query },
+      });
+    }
+  };
+
+  useEffect(() => {
+    filters &&
+      handleFilterChange(
+        (filters as string)?.split(SPLIT).map((filter) => Number(filter))
+      );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters]);
+
   if ((trxLoading === false && !blockOperations) || blockError) {
     return (
       <PageNotFound
@@ -102,7 +129,7 @@ export default function Block() {
         timeStamp={blockDate}
         virtualOperationLength={virtualOperations?.length}
         nonVirtualOperationLength={nonVirtualOperations?.length}
-        setFilters={setBlockFilters}
+        setFilters={handleFilterChange}
         operationTypes={operationTypes || []}
         selectedOperationIds={blockFilters}
         isLoading={trxLoading}
@@ -145,7 +172,11 @@ export default function Block() {
               ref={virtualOpsRef}
               style={{ scrollMargin: "100px" }}
             >
-              <p className="text-3xl text-black">{(!!blockOperations && !blockOperations.length) ? "No operations were found" : "Virtual Operations"}</p>
+              <p className="text-3xl text-black">
+                {!!blockOperations && !blockOperations.length
+                  ? "No operations were found"
+                  : "Virtual Operations"}
+              </p>
             </div>
             {virtualOperations?.map((operation, index) => (
               <DetailedOperationCard
