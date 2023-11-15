@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.7.15",
-    "@hive/wax": "^0.0.2-stable.221498e",
+    "@hive/wax": "^0.0.2-dev.1db1f2c",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-progress": "^1.0.3",
