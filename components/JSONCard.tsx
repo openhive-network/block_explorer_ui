@@ -23,7 +23,7 @@ const JSONCard: React.FC<JSONCardProps> = ({
   const jsonToObj = JSON.parse(json);
 
   return (
-    <div className="bg-explorer-dark-gray p-4 rounded-[6px] rounded mt-8 mx-6">
+    <div className="bg-explorer-dark-gray p-4 rounded-[6px] mt-2 mx-2 md:mx-6">
       <div className="flex-column justify-center align-center">
         <div className="flex justify-between">
           <div className="text-lg">{header}</div>

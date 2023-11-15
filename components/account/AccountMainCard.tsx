@@ -16,7 +16,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
   openVotersModal,
 }) => {
   return (
-    <div className='bg-explorer-dark-gray p-2 rounded-["6px] mx-6 h-fit rounded'>
+    <div className='bg-explorer-dark-gray p-2 rounded-["6px] mx-2 md:mx-6 h-fit rounded'>
       <div className="flex justify-between bg-explorer-dark-gray text-explorer-orange text-2xl my-4">
         {accountDetails.is_witness ? (
           <div>

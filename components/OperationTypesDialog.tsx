@@ -117,7 +117,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           {triggerTitle}
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[80%] h-[80%] flex-column justify-center align-center  bg-white text-black ">
+      <DialogContent className="max-w-[95%] md:max-w-[80%] h-[90%] md:h-[80%] flex-column justify-center align-center  bg-white text-black ">
         <DialogHeader>
           <DialogTitle className="flex justify-center pt-2">Operation Types</DialogTitle>
         </DialogHeader>
@@ -132,7 +132,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
         </ul>
       </div>
         <DialogFooter>
-          <div className="flex justify-between w-full">
+          <div className="flex flex-wrap justify-between w-full gap-y-4">
             <div className="flex">
               <Button type="button" variant='secondary' onClick={selectAll}>
                 Select all
@@ -150,7 +150,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
                 Clear
               </Button>
             </div>
-            <div className="flex">
+            <div className="flex w-full md:w-auto justify-center">
               <Button type="button" variant='secondary' onClick={() => {onOpenChange(false)}}>
                 Cancel
               </Button>

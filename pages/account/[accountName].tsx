@@ -14,7 +14,6 @@ import VotersDialog from "@/components/Witnesses/VotersDialog";
 import ScrollTopButton from "@/components/ScrollTopButton";
 import MainModule from "@hive/wax";
 import PageNotFound from "@/components/PageNotFound";
-import { numToHighLow } from "@/lib/utils";
 
 
 const OPERATIONS_LIMIT = 100;
@@ -112,8 +111,8 @@ export default function Account() {
 
   return (
     <>
-      <div className="bg-explorer-orange items-center fixed grid grid-flow-row-dense grid-cols-3 top-16 right-0 left-0 p-2 ">
-        <div className="col-span-2 justify-self-end">
+      <div className="bg-explorer-orange items-center fixed grid grid-flow-row-dense grid-cols-3 top-14 md:top-16 right-0 left-0 p-2">
+        <div className="col-span-3 md:col-span-2 md:justify-self-end justify-self-center z-10 max-w-full">
           <CustomPagination
             currentPage={page}
             totalCount={accountDetails.ops_count}
@@ -122,7 +121,7 @@ export default function Account() {
           />
         </div>
 
-        <div className="justify-self-end">
+        <div className="justify-self-end col-span-3 md:col-span-1">
           <div className="grid gap-x-5 grid-flow-row-dense grid-cols-2">
             <div className="justify-self-end self-center">
               <ScrollTopButton />
@@ -138,8 +137,8 @@ export default function Account() {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 text-white mx-8 mt-14 w-full">
-        <div className="mt-2 col-start-1 col-span-1">
+      <div className="grid grid-cols-1 md:grid-cols-3 text-white mx-8 mt-24 md:mt-14 w-full">
+        <div className="mt-2 col-start-1 col-span-1 -z-10">
           <AccountMainCard
             accountDetails={accountDetails}
             accountName={accountNameFromRoute}
@@ -173,7 +172,7 @@ export default function Account() {
           />
         </div>
 
-        <div className="col-start-2 col-span-3">
+        <div className="col-start-1 md:col-start-2 col-span-1 md:col-span-3">
           <div>
             {isAccountOperationsLoading ? (
               <div className="flex justify-center text-center items-center">

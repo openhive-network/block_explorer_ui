@@ -18,7 +18,7 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
   };
 
   return (
-    <div className="bg-explorer-dark-gray p-2 rounded-[6px] rounded mt-8 mx-6">
+    <div className="bg-explorer-dark-gray p-2 rounded-[6px] m-2 md:mx-6">
       <div className="h-full flex justify-between align-center p-2">
         <div className="text-lg">Witness Votes</div>
         <button

@@ -54,7 +54,7 @@ const CustomPagination: React.FC<PaginationProps> = ({
   return (
     <ul className={cn("flex list-none", className)}>
       <li
-        className={`p-[12px] h-[32px] text-center m-2 text-explorer-dark-gray flex box-border items-center tracking-widest rounded-2xl leading-6 text-sm w-min-[32px] cursor-pointer ${
+        className={`p-3 h-8 text-center mx-0 mt-2 md:m-2 text-explorer-dark-gray flex box-border items-center tracking-widest rounded-2xl leading-6 text-sm w-min-[32px] cursor-pointer ${
           currentPage === firstPage && "hidden"
         }`}
         onClick={onPrevious}
@@ -66,7 +66,7 @@ const CustomPagination: React.FC<PaginationProps> = ({
           return (
             <li
               key={i}
-              className="hover:bg-transparent p-[12px] h-[32px] text-center m-2 text-bg-explorer-dark-gray flex box-border items-center tracking-widest rounded-2xl leading-6 text-sm w-min-[32px] "
+              className="hover:bg-transparent p-0 md:p-3 h-8 text-center m-2 text-bg-explorer-dark-gray flex box-border items-center tracking-widest rounded-2xl leading-6 text-sm w-min-[32px] "
             >
               &#8230;
             </li>
@@ -76,7 +76,7 @@ const CustomPagination: React.FC<PaginationProps> = ({
         return (
           <li
             key={i}
-            className={`p-[12px] h-[32px] text-center m-2 flex box-border items-center tracking-widest rounded-2xl leading-6 text-sm w-min-[32px] hover:bg-white cursor-pointer ${
+            className={`p-2 md:p-3 h-8 text-center m-2 flex box-border items-center tracking-widest rounded-2xl leading-6 text-sm w-min-[32px] hover:bg-white cursor-pointer ${
               pageNumber === currentPage &&
               `text-inherit text-explorer-dark-gray font-extrabold bg-white hover:bg-white cursor-auto`
             } `}
@@ -87,7 +87,7 @@ const CustomPagination: React.FC<PaginationProps> = ({
         );
       })}
       <li
-        className={`p-[12px] h-[32px] text-center m-2 text-explorer-dark-gray flex box-border items-center tracking-widest rounded-2xl leading-6 text-sm w-min-[32px] cursor-pointer   ${
+        className={`p-3 h-8 text-center mx-0 mt-2 md:m-2 text-explorer-dark-gray flex box-border items-center tracking-widest rounded-2xl leading-6 text-sm w-min-[32px] cursor-pointer   ${
           currentPage === lastPage && "hidden"
         }`}
         onClick={onNext}
