@@ -222,12 +222,12 @@ class FetchingService {
     const requestBody: Hive.GetBlockByOpProps = {
       _operations: blockSearchProps.operations,
       _account: blockSearchProps?.accountName,
-      _from: blockSearchProps.fromBlock,
-      _to: blockSearchProps.toBlock,
+      _from: blockSearchProps?.fromBlock,
+      _to: blockSearchProps?.toBlock,
       _limit: blockSearchProps.limit,
       _order_is: "desc",
-      _key_content: blockSearchProps.deepProps.content,
-      _setof_keys:  blockSearchProps.deepProps.keys ? [blockSearchProps.deepProps.keys] : null
+      _key_content: blockSearchProps.deepProps.content ? [blockSearchProps.deepProps.content] : undefined,
+      _setof_keys:  blockSearchProps.deepProps.keys ? [blockSearchProps.deepProps.keys] : undefined
     };
     const url = `${config.apiAdress}/rpc/get_block_by_op  `;
     return await this.makePostRequest(url, requestBody);

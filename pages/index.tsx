@@ -141,7 +141,6 @@ export default function Home() {
           currentOperationKeys={operationKeys}
           operationKeysChain={selectedKeys}
           loading={blockSearchLoading}
-          headblockNumber={headBlockNum}
         />
       </div>
       <div className="col-start-1 md:col-start-4 col-span-6 md:col-span-1 bg-explorer-dark-gray py-2 rounded-[6px] text-xs	overflow-hidden md:mx-6">

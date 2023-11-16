@@ -21,7 +21,6 @@ interface BlockSearchSectionProps {
   currentOperationKeys: string[][] | null;
   operationKeysChain: string[] | null;
   loading: boolean;
-  headblockNumber?: number;
 }
 
 
@@ -34,20 +33,18 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({
   currentOperationKeys, 
   operationKeysChain,
   loading,
-  headblockNumber
 }) => {
 
   const [accountName, setAccountName] = useState<string | undefined>(undefined);
   const [fromBlock, setFromBlock] = useState<number | undefined>(undefined);
   const [toBlock, setToBlock] = useState<number | undefined>(undefined);
   const [selectedOperationTypes, setSelectedOperationTypes] = useState<number[]>([]);
-  const [selectedOperationType, setSelectedOperationType] = useState<number | null>(null);
   const [fieldContent, setFieldContent] = useState<string | null>(null);
 
   const startSearch = () => {
     const blockSearchProps: Explorer.BlockSearchProps = {
       accountName,
-      operations: selectedOperationType ? [selectedOperationType] : [],
+      operations: selectedOperationTypes.length ? selectedOperationTypes : [],
       fromBlock,
       toBlock,
       limit: 100,
@@ -59,7 +56,6 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({
     getBlockDataForSearch(blockSearchProps);
   }
 
-  /*
   const changeSelectedOperationTypes = (operationIds: number[]) => {
     if (operationIds.length === 1) {
       getOperationKeys(operationIds[0]);
@@ -68,33 +64,16 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({
     }
     setSelectedOperationTypes(operationIds);
   }
-  */
-
-  const changeSelectedOperationType = (operationId: number | null) => {
-    if (operationId !== null) {
-      getOperationKeys(operationId);
-    } else {
-      getOperationKeys(null);
-    }
-    setSelectedOperationType(operationId);
-  }
 
   const onSelect = (newValue: string) => {
     setSelectedKeys(Number(newValue));
   }
 
-  /*
   const getOperationButtonTitle = (): string => {
     if (selectedOperationTypes && selectedOperationTypes.length === 1) return operationsTypes[selectedOperationTypes[0]].operation_name
     if (selectedOperationTypes && selectedOperationTypes.length > 1) return `${selectedOperationTypes.length} operations`
     return "Operations"
   } 
-  */
-
-  const getSingleOperationTriggerTitle = (): string => {
-    if (selectedOperationType !== null) return operationsTypes[selectedOperationType].operation_name
-    return "Operation"
-  }
 
   const setNumericValue = (value: number, fieldSetter: Function) => {
     if (value === 0) {
@@ -109,24 +88,13 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({
       <div className=' bg-explorer-dark-gray p-2 rounded-["6px] h-fit rounded'>
       <div className="text-center text-xl">Block Search</div>
         <div className="flex items-center m-2">
-          {
-            /*
-            <OperationTypesDialog 
-              operationTypes={operationsTypes} 
-              selectedOperations={selectedOperationTypes} 
-              setSelectedOperations={changeSelectedOperationTypes} 
-              colorClass="bg-gray-500"
-              triggerTitle={getOperationButtonTitle()} 
-            />   
-            */
-          }
-          <SingleOperationTypeDialog 
+          <OperationTypesDialog 
             operationTypes={operationsTypes} 
-            selectedOperation={selectedOperationType}
-            setSelectedOperation={changeSelectedOperationType}
+            selectedOperations={selectedOperationTypes} 
+            setSelectedOperations={changeSelectedOperationTypes} 
             colorClass="bg-gray-500"
-            triggerTitle={getSingleOperationTriggerTitle()} 
-          />
+            triggerTitle={getOperationButtonTitle()} 
+          />   
         </div>
         <div className="flex flex-col m-2">
           <label className="mx-2">Account name</label>      
@@ -154,7 +122,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({
               type="number"
               value={toBlock || ""}
               onChange={(e) => setNumericValue(Number(e.target.value), setToBlock)}
-              placeholder={String(headblockNumber || 1)}
+              placeholder={"Headblock"}
             />
           </div>
         </div>
@@ -203,10 +171,10 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({
           </>  
         }
         <div className="flex items-center  m-2">
-          <Button className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]" onClick={startSearch} disabled={!selectedOperationType}>
+          <Button className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]" onClick={startSearch} disabled={!selectedOperationTypes.length}>
             <span>Search</span> {loading && <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />}
           </Button>
-          {!selectedOperationType && <label className="ml-2 text-muted-foreground">Pick operation type</label>}
+          {!selectedOperationTypes.length && <label className="ml-2 text-muted-foreground">Pick operation type</label>}
         </div>
       </div>
       {foundBlocksIds && (
