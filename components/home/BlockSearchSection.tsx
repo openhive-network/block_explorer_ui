@@ -60,6 +60,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({
     if (operationIds.length === 1) {
       getOperationKeys(operationIds[0]);
     } else {
+      setFieldContent(null);
       getOperationKeys(null);
     }
     setSelectedOperationTypes(operationIds);
@@ -126,50 +127,47 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({
             />
           </div>
         </div>
-        {currentOperationKeys &&   
-          <>
-            <div className="flex flex-col  m-2">
-              <label className="mx-2">Key</label>
-              <div className="flex">
+          <div className="flex flex-col  m-2">
+            <label className="mx-2">Key</label>
+            <div className="flex">
 
-                <Select onValueChange={onSelect}>
-                  <SelectTrigger className="justify-normal" >
-                    {(operationKeysChain && !!operationKeysChain.length) ? operationKeysChain.map((key, index) => ( key !== "value" &&
-                    <div key={key} className={"mx-1"}>{index !== 1 && "/"} {key}</div>
-                    )) : (
-                      <div className="text-blocked">Pick a property</div>
-                    )}
-                  </SelectTrigger>
-                  <SelectContent className="bg-white text-black rounded-[2px] max-h-[31rem] overflow-y-scroll">
-                    {currentOperationKeys.map((keys, index) => (
-                      <SelectItem className="m-1 text-center" key={index} value={index.toFixed(0)} defaultChecked={false} >
-                        <div className="flex gap-x-2">
-                          {keys.map((key, index) => ( key !== "value" && 
-                            <div key={key}>{index !== 1 && "/"} {key} </div>
-                          ))}
-                        </div>
-                    </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {operationKeysChain && !!operationKeysChain.length &&
-                
-                  <Button onClick={() => {setSelectedKeys(null)}}>Clear</Button>
-                }
-              </div>
+              <Select onValueChange={onSelect}>
+                <SelectTrigger className="justify-normal" disabled={!selectedOperationTypes || selectedOperationTypes.length !== 1}>
+                  {(operationKeysChain && !!operationKeysChain.length) ? operationKeysChain.map((key, index) => ( key !== "value" &&
+                  <div key={key} className={"mx-1"}>{index !== 1 && "/"} {key}</div>
+                  )) : (
+                    <div className="text-blocked">{!selectedOperationTypes || selectedOperationTypes.length !== 1 ? "Select exactly 1 operation to use key-value search" : "Pick a property"} </div>
+                  )}
+                </SelectTrigger>
+                <SelectContent className="bg-white text-black rounded-[2px] max-h-[31rem] overflow-y-scroll">
+                  {currentOperationKeys?.map((keys, index) => (
+                    <SelectItem className="m-1 text-center" key={index} value={index.toFixed(0)} defaultChecked={false} >
+                      <div className="flex gap-x-2">
+                        {keys.map((key, index) => ( key !== "value" && 
+                          <div key={key}>{index !== 1 && "/"} {key} </div>
+                        ))}
+                      </div>
+                  </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {currentOperationKeys && !!currentOperationKeys.length &&
+              
+                <Button onClick={() => {setSelectedKeys(null)}}>Clear</Button>
+              }
             </div>
-            <div className="flex m-2 flex-col">
-              <label className="mx-2">Value</label>
-              <Input
-                className="w-1/2"
-                type="text"
-                value={fieldContent || ""}
-                onChange={(e) => setFieldContent(e.target.value)}
-                placeholder="---"
-              />     
-            </div>
-          </>  
-        }
+          </div>
+          <div className="flex m-2 flex-col">
+            <label className="mx-2">Value</label>
+            <Input
+              className="w-1/2"
+              type="text"
+              value={fieldContent || ""}
+              onChange={(e) => setFieldContent(e.target.value)}
+              placeholder="---"
+              disabled={!selectedOperationTypes || selectedOperationTypes.length !== 1}
+            />     
+          </div>
         <div className="flex items-center  m-2">
           <Button className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]" onClick={startSearch} disabled={!selectedOperationTypes.length}>
             <span>Search</span> {loading && <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />}
