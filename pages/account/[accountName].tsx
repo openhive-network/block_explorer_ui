@@ -111,8 +111,8 @@ export default function Account() {
 
   return (
     <>
-      <div className="bg-explorer-orange items-center fixed grid grid-flow-row-dense grid-cols-3 top-14 md:top-16 right-0 left-0 p-2">
-        <div className="col-span-3 md:col-span-2 md:justify-self-end justify-self-center z-10 max-w-full">
+      <div className="bg-explorer-orange items-center fixed grid grid-flow-row-dense grid-cols-3 top-14 md:top-16 right-0 left-0 p-2 z-50">
+        <div className="col-span-3 md:col-span-2 md:justify-self-end justify-self-center z-20 max-w-full">
           <CustomPagination
             currentPage={page}
             totalCount={accountDetails.ops_count}
@@ -138,7 +138,7 @@ export default function Account() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 text-white mx-8 mt-24 md:mt-14 w-full">
-        <div className="mt-2 col-start-1 col-span-1 -z-10">
+        <div className="mt-2 col-start-1 col-span-1">
           <AccountMainCard
             accountDetails={accountDetails}
             accountName={accountNameFromRoute}
