@@ -5,6 +5,8 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  Label,
+  LabelList,
   Legend,
   ResponsiveContainer,
   Tooltip,
@@ -171,30 +173,39 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
   return (
     <div
       className={cn(
-        "w-[95%] m-auto md:w-full h-96 bg-explorer-dark-gray rounded-[6px] text-white",
+        "w-[95%] m-auto md:w-full h-[420px] bg-explorer-dark-gray rounded-[6px] text-white",
         className
       )}
     >
+      <p className="w-full text-center pt-2">Last Blocks</p>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={data}
           margin={{
             top: 20,
             right: 30,
-            left: isMobile ? -20 : 0,
-            bottom: 10,
+            left: isMobile ? 10 : 20,
+            bottom: isMobile ? 90 : 60,
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" stroke="#fff" axisLine={false} />
+          <XAxis dataKey="name" stroke="#fff" axisLine={false}>
+          <Label position='bottom' style={{ textAnchor: 'middle' }}>
+              Block
+          </Label>
+          </XAxis>
           <YAxis
             stroke="#fff"
             axisLine={false}
             domain={[0, (dataMax: number) => Math.floor(dataMax * 1.2)]}
             allowDataOverflow={true}
-          />
+          >
+            <Label angle={270} position='insideLeft' style={{ textAnchor: 'middle' }}>
+                Operations
+            </Label>
+          </YAxis>
           <Tooltip cursor={{ fill: "#0000002A" }} content={<CustomTooltip />} />
-          <Legend />
+          <Legend wrapperStyle={{ position: "relative" }} align="center" />
           <Bar
             dataKey="other"
             stackId="a"
