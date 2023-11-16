@@ -50,7 +50,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
   onTimeRangeFilter,
 }) => {
   const [showHivePower, setShowHivePower] = useState<boolean>(false);
-  const [fromDate, setFromDate] = useState<Date>(new Date("0"));
+  const [fromDate, setFromDate] = useState<Date>(new Date());
   const [toDate, setToDate] = useState<Date>(new Date());
   const [page, setPage] = useState(1);
   const [displayData, setDisplayData] = useState<Hive.WitnessVotesHistory[]>();
