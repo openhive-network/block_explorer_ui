@@ -262,6 +262,17 @@ class FetchingService {
     const url = `${config.apiAdress}/rpc/get_operation`
     return await this.makePostRequest(url, requestBody);
   }
+
+  async condenserGetAccount(account: string): Promise<unknown> {
+    const requestBody: any = {
+      jsonrpc: "2.0",
+      method: "condenser_api.get_accounts",
+      params: [[account]],
+      id: "1",
+    };
+    const url = `${config.hiveBlogAdress}`;
+    return await this.makePostRequest(url, requestBody);
+  }
 }
 
 const fetchingService = new FetchingService();

@@ -85,7 +85,14 @@ export default function Account() {
     refetchOnWindowFocus: false,
   });
 
-  const calculateManabar = async (maxManaSupply: number, currentManaSupply: number, lastUpdateTime: Date) => {
+    // Condenser account details
+    const { data: condenserAccountDetails }: UseQueryResult<any> = useQuery({
+      queryKey: ["condenser_account_details", accountNameFromRoute],
+      queryFn: () => fetchingService.condenserGetAccount(accountNameFromRoute),
+      refetchOnWindowFocus: false,
+    });
+
+  const calculateManabar = async (maxManaSupply: number, currentManaSupply: number, lastUpdateTime: number) => {
     const mainModule = await MainModule();
     const protocolProvider = new mainModule.protocol();
     const maxSupplyAsHighLow = numToHighLow(maxManaSupply);
@@ -98,20 +105,30 @@ export default function Account() {
         maxSupplyAsHighLow.high,
         currentSupplyAsHighLow.low, // As before, value taken from API, handled with long library. Current mana supply. Low first, high second.
         currentSupplyAsHighLow.high,
-        lastUpdateTime.valueOf() // Last update time from API as number timestamp
+        lastUpdateTime // Last update time from API as number timestamp
       );
     return Number(result.content);
   };
 
-  const updateVotePowerManabar = async (maxManaSupply: number, currentManaSupply: number, lastUpdateTime: Date) => {
+  const updateVotePowerManabar = async (maxManaSupply: number, currentManaSupply: number, lastUpdateTime: number) => {
     const manaSupply = await calculateManabar(maxManaSupply, currentManaSupply, lastUpdateTime);
     setVotePowerManabar(manaSupply);
   }
 
-  const updateDownvotePowerManabar = async (maxManaSupply: number, currentManaSupply: number, lastUpdateTime: Date) => {
+  const updateDownvotePowerManabar = async (maxManaSupply: number, currentManaSupply: number, lastUpdateTime: number) => {
     const manaSupply = await calculateManabar(maxManaSupply, currentManaSupply, lastUpdateTime);
     setDownvotePowerManabar(manaSupply);
   }
+
+  useEffect(() => {
+    if (condenserAccountDetails) {
+      const maxVotingPowerAsString = condenserAccountDetails.result[0].post_voting_power as string;
+      const numberMaxVotingPower = Number(maxVotingPowerAsString.replace(" VESTS", "").replace(".", ""));
+      const currentManaSupply  = Number(condenserAccountDetails.result[0].voting_manabar.current_mana);
+      const lastUpdateTime = condenserAccountDetails.result[0].voting_manabar.last_update_time as number;
+      updateVotePowerManabar(numberMaxVotingPower, currentManaSupply, lastUpdateTime);
+    }
+  }, [condenserAccountDetails])
 
   if (!accountDetails || !accountOperationTypes) {
     return "Loading ...";
