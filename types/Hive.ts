@@ -75,7 +75,7 @@ declare module Hive {
   }
 
   interface GetOperationKeysProps {
-    _operation_id: number;
+    _op_type_id: number;
   }
 
   interface GetBlockByOpProps {

@@ -100,12 +100,12 @@ export default function Home() {
   };
 
   const getOperationKeys = async (
-    operationId: number | null
+    operationTypeId: number | null
   ) => {
-    if (operationId !== null) {
+    if (operationTypeId !== null) {
 
       const nextKeys = await fetchingService.getOperationKeys(
-        operationId
+        operationTypeId
       );
       setOperationKeys(nextKeys);
       setSelectedKeys(null);

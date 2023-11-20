@@ -56,14 +56,14 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({
     getBlockDataForSearch(blockSearchProps);
   }
 
-  const changeSelectedOperationTypes = (operationIds: number[]) => {
-    if (operationIds.length === 1) {
-      getOperationKeys(operationIds[0]);
+  const changeSelectedOperationTypes = (operationTypesIds: number[]) => {
+    if (operationTypesIds.length === 1) {
+      getOperationKeys(operationTypesIds[0]);
     } else {
       setFieldContent(null);
       getOperationKeys(null);
     }
-    setSelectedOperationTypes(operationIds);
+    setSelectedOperationTypes(operationTypesIds);
   }
 
   const onSelect = (newValue: string) => {

@@ -208,9 +208,9 @@ class FetchingService {
     return await this.makePostRequest(url, requestBody);
   }
 
-  async getOperationKeys(operationId: number): Promise<string[][]> {
+  async getOperationKeys(operationTypeId: number): Promise<string[][]> {
     const requestBody: Hive.GetOperationKeysProps = {
-      _operation_id: operationId,
+      _op_type_id: operationTypeId,
     }
     const url = `${config.apiAdress}/rpc/get_operation_keys `;
     return await this.makePostRequest(url, requestBody);
