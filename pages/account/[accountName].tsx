@@ -11,10 +11,10 @@ import JSONCard from "@/components/JSONCard";
 import AccountMainCard from "@/components/account/AccountMainCard";
 import AccountWitnessVotesCard from "@/components/account/AccountWitnessVotesCard";
 import VotersDialog from "@/components/Witnesses/VotersDialog";
+import VotesHistoryDialog from "@/components/Witnesses/VotesHistoryDialog";
 import ScrollTopButton from "@/components/ScrollTopButton";
 import MainModule from "@hive/wax";
 import PageNotFound from "@/components/PageNotFound";
-
 
 const OPERATIONS_LIMIT = 100;
 
@@ -26,7 +26,13 @@ export default function Account() {
   const [page, setPage] = useState(1);
   const [operationFilters, setOperationFilters] = useState<number[]>([]);
   const [openVotersModal, setOpenVotersModal] = useState(false);
-
+  const [isVotesHistoryModalOpen, setIsVotesHistoryModalOpen] = useState(false);
+  const [votesHistoryLoading, setVotesHistoryLoading] =
+    useState<boolean>(false);
+  const [voterAccount, setVoterAccount] = useState<string>("");
+  const [votesHistory, setVotesHistory] = useState<
+    Hive.WitnessVotesHistory[] | undefined
+  >(undefined);
   // Account details
   const {
     data: accountDetails,
@@ -98,6 +104,14 @@ export default function Account() {
     console.log("TEST", JSON.stringify(result));
   };
 
+  useEffect(() => {
+    if (isVotesHistoryModalOpen) {
+      getVotesHistoryData(accountNameFromRoute);
+    } else {
+      setVotesHistory(undefined);
+    }
+  }, [isVotesHistoryModalOpen, accountNameFromRoute]);
+
   if (!accountDetails || !accountOperationTypes) {
     return "Loading ...";
   }
@@ -107,6 +121,30 @@ export default function Account() {
 
   const handleOpenVotersModal = () => {
     setOpenVotersModal(!openVotersModal);
+  };
+
+  const getVotesHistoryData = async (
+    accountName: string,
+    fromDate?: Date,
+    toDate?: Date,
+    noLimit?: boolean
+  ) => {
+    setVotesHistoryLoading(true);
+    setVoterAccount(accountName);
+    const history = await fetchingService.getWitnessVotesHistory(
+      accountName,
+      "desc",
+      "timestamp",
+      noLimit ? null : 100,
+      fromDate,
+      toDate
+    );
+    setVotesHistory(history);
+    setVotesHistoryLoading(false);
+  };
+
+  const handleOpenVotesHistoryModal = () => {
+    setIsVotesHistoryModalOpen(!isVotesHistoryModalOpen);
   };
 
   return (
@@ -143,6 +181,7 @@ export default function Account() {
             accountDetails={accountDetails}
             accountName={accountNameFromRoute}
             openVotersModal={handleOpenVotersModal}
+            openVotesHistoryModal={handleOpenVotesHistoryModal}
           />
           <AccountDetailsCard
             header="Properties"
@@ -169,6 +208,16 @@ export default function Account() {
             voters={witnessVoters}
             sorterInfo={{ isAsc: true, sortKey: "name" }}
             changeVotersDialogue={handleOpenVotersModal}
+          />
+          <VotesHistoryDialog
+            accountName={accountNameFromRoute}
+            isVotesHistoryOpen={isVotesHistoryModalOpen}
+            votesHistory={votesHistory}
+            loading={votesHistoryLoading}
+            changeVoteHistoryDialogue={handleOpenVotesHistoryModal}
+            onTimeRangeFilter={(fromDate, toDate) =>
+              getVotesHistoryData(voterAccount, fromDate, toDate, true)
+            }
           />
         </div>
 
