@@ -23,17 +23,19 @@ const JSONCard: React.FC<JSONCardProps> = ({
   const jsonToObj = JSON.parse(json);
 
   return (
-    <div className="bg-explorer-dark-gray p-4 rounded-[6px] mt-2 mx-2 md:mx-6">
-      <div className="flex-column justify-center align-center">
-        <div className="flex justify-between">
+    <div
+      onClick={handleHideData}
+      className="bg-explorer-dark-gray p-2 rounded-[6px] mt-2 mx-2 md:mx-6"
+    >
+      <div className="flex-column justify-center  align-center">
+        <div className="flex justify-between p-2 hover:bg-slate-600 cursor-pointer">
           <div className="text-lg">{header}</div>
           {showCollapseButton ? (
-            <button
-              onClick={handleHideData}
-              className="hover:bg-slate-600 mx-2"
-            >
-              {isDataHidden ? <ArrowDown /> : <ArrowUp />}
-            </button>
+            isDataHidden ? (
+              <ArrowDown />
+            ) : (
+              <ArrowUp />
+            )
           ) : null}
         </div>
         <div

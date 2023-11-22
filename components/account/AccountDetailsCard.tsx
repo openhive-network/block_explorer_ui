@@ -45,15 +45,13 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
   };
 
   return (
-    <div className="bg-explorer-dark-gray p-2 rounded-[6px] mt-2 mx-2 md:mx-6">
-      <div className="h-full flex justify-between align-center p-2">
+    <div
+      onClick={handlePropertiesVisibility}
+      className="bg-explorer-dark-gray p-2 rounded-[6px] mt-2 mx-2 md:mx-6"
+    >
+      <div className="h-full flex justify-between align-center p-2 hover:bg-slate-600 cursor-pointer">
         <div className="text-lg">{header}</div>
-        <button
-          onClick={handlePropertiesVisibility}
-          className="hover:bg-slate-600 mx-2"
-        >
-          {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
-        </button>
+        {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
       </div>
       <div
         hidden={isPropertiesHidden}
