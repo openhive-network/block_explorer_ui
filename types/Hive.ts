@@ -33,6 +33,11 @@ declare module Hive {
     _body_limit: number;
   }
 
+  interface GetAccountOpsCountProps {
+    _account: string;
+    _operations: number[]
+  }
+
   interface GetAccountProps {
     _account: string;
   }

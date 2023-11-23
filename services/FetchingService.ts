@@ -122,6 +122,18 @@ class FetchingService {
     return await this.makePostRequest(url, requestBody);
   }
 
+  async getAccountOperationsCount(
+    operations: number[], 
+    account: string
+  ): Promise<number> {
+    const requestBody: Hive.GetAccountOpsCountProps = {
+      _account: account,
+      _operations: operations,
+    };
+    const url = `${config.apiAdress}/rpc/get_account_operations_count`;
+    return await this.makePostRequest(url, requestBody);
+  }
+
   async getAccount(account: string): Promise<unknown> {
     const requestBody: Hive.GetAccountProps = { _account: account };
     const url = `${config.apiAdress}/rpc/get_account`;

@@ -15,16 +15,20 @@ import ScrollTopButton from "@/components/ScrollTopButton";
 import MainModule from "@hive/wax";
 import PageNotFound from "@/components/PageNotFound";
 
-
+const FILTERS = "filters";
+const SPLIT = "-";
 const OPERATIONS_LIMIT = 100;
 
 export default function Account() {
   const router = useRouter();
 
   const accountNameFromRoute = router.query.accountName as string;
+  const { filters } = router.query;
 
   const [page, setPage] = useState(1);
-  const [operationFilters, setOperationFilters] = useState<number[]>([]);
+  const [operationFilters, setOperationFilters] = useState<number[]>(
+    (filters as string)?.split(SPLIT).map((filter) => Number(filter)) || []
+  );
   const [openVotersModal, setOpenVotersModal] = useState(false);
 
   // Account details
@@ -57,6 +61,16 @@ export default function Account() {
     refetchOnWindowFocus: false,
   });
 
+  const { data: operationsCount } = useQuery({
+    queryKey: ["operations_count", operationFilters],
+    queryFn: () =>
+      fetchingService.getAccountOperationsCount(
+        operationFilters,
+        accountNameFromRoute
+      ),
+    refetchOnWindowFocus: false,
+  });
+
   // Account operation types (filters)
   const {
     data: accountOperationTypes,
@@ -81,6 +95,29 @@ export default function Account() {
     enabled: !!accountNameFromRoute && !!accountDetails?.is_witness,
     refetchOnWindowFocus: false,
   });
+
+  const handleFilterChange = (filters: number[]) => {
+    setOperationFilters(filters);
+    setPage(1);
+    if (!!filters.length) {
+      router.replace({
+        query: { ...router.query, [FILTERS]: filters.join(SPLIT) },
+      });
+    } else {
+      delete router.query[FILTERS];
+      router.replace({
+        query: { ...router.query },
+      });
+    }
+  };
+
+  useEffect(() => {
+    filters &&
+      handleFilterChange(
+        (filters as string)?.split(SPLIT).map((filter) => Number(filter))
+      );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters]);
 
   const calculateManabar = async () => {
     const mainModule = await MainModule();
@@ -115,7 +152,11 @@ export default function Account() {
         <div className="col-span-3 md:col-span-2 md:justify-self-end justify-self-center z-20 max-w-full">
           <CustomPagination
             currentPage={page}
-            totalCount={accountDetails.ops_count}
+            totalCount={
+              !!operationsCount && !isNaN(operationsCount)
+                ? operationsCount
+                : accountDetails.ops_count
+            }
             pageSize={OPERATIONS_LIMIT}
             onPageChange={(page: number) => setPage(page)}
           />
@@ -128,7 +169,7 @@ export default function Account() {
             </div>
             <OperationTypesDialog
               operationTypes={accountOperationTypes}
-              setSelectedOperations={setOperationFilters}
+              setSelectedOperations={handleFilterChange}
               selectedOperations={operationFilters}
               colorClass="bg-explorer-dark-gray"
               triggerTitle={"Operation Filters"}
@@ -179,10 +220,10 @@ export default function Account() {
                 Loading ...
               </div>
             ) : (
-              accountOperations?.map((operation: any) => (
+              accountOperations?.map((operation: any, index) => (
                 <div
                   className="m-2"
-                  key={operation.acc_operation_id}
+                  key={`${operation.acc_operation_id}_${index}`}
                 >
                   <DetailedOperationCard
                     operation={operation.operation}
@@ -190,7 +231,7 @@ export default function Account() {
                     date={new Date(operation.timestamp)}
                     blockNumber={operation.block_num}
                     transactionId={operation.trx_id}
-                    key={operation.timestamp}
+                    key={`${operation.timestamp}_${index}`}
                     isShortened={operation.is_modified}
                   />
                 </div>
