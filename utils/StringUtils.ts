@@ -7,7 +7,14 @@ export const addSpacesAndCapitalizeFirst = (text: string) => {
 };
 
 export const isJson = (item: unknown) => {
+  try {
+    JSON.parse(item as string);
+  } catch (error) {
+    return false;
+  }
+
   let value = typeof item !== "string" ? JSON.stringify(item) : item;
+
   try {
     value = JSON.parse(value);
   } catch (e) {
@@ -22,21 +29,23 @@ export const isJson = (item: unknown) => {
 };
 
 /**
- * properly formats json inlcuding nested json objects
+ * properly formats json including nested json objects
  *
  * @param json json object
- * @returns formatted json
+ * @returns formatted and parsed json
  */
 export const formatJson = (json: { [key: string]: any }) => {
   let formatted = json;
-  Object.keys(formatted).forEach((key) => {
-    if (isJson(json[key])) {
+  json && Object.keys(json).forEach(key => {
+    if (typeof json[key] === "object") {
+      formatted[key] = formatJson(json[key]);
+    } else {
       try {
         formatted[key] = JSON.parse(json[key]);
       } catch (error) {
         formatted[key] = json[key];
       }
     }
-  });
-  return JSON.stringify(formatted, null, 2);
+  })
+  return formatted
 };

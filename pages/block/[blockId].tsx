@@ -9,6 +9,8 @@ import { scrollTo } from "@/utils/UI";
 import PageNotFound from "@/components/PageNotFound";
 import { Button } from "@/components/ui/button";
 import { ArrowUp, Loader2 } from "lucide-react";
+import { useUserSettingsContext } from "@/components/contexts/UserSettingsContext";
+import JSONView from "@/components/JSONView";
 
 const FILTERS = "filters";
 const SPLIT = "-";
@@ -27,6 +29,8 @@ export default function Block() {
   const [blockFilters, setBlockFilters] = useState<number[]>(
     (filters as string)?.split(SPLIT).map((filter) => Number(filter)) || []
   );
+
+  const { settings } = useUserSettingsContext();
 
   const { data: blockDetails }: UseQueryResult<Hive.BlockDetails> = useQuery({
     queryKey: ["block_details", blockNumber],
@@ -152,47 +156,57 @@ export default function Block() {
         </Button>
       </div>
       {trxLoading === false ? (
-        <section className="md:px-10 flex items-center justify-center text-white">
-          <div className="w-full px-4 md:p-0 md:w-4/5 flex flex-col gap-y-2">
-            {nonVirtualOperations?.map((operation, index) => (
-              <DetailedOperationCard
-                operation={operation.operation}
-                operationId={operation.operation_id}
-                date={new Date(operation.timestamp)}
-                blockNumber={operation.block_num}
-                transactionId={operation.trx_id}
-                key={operation.timestamp + index}
-                skipBlock
-                skipDate
-                isShortened={operation.is_modified}
-              />
-            ))}
-            <div
-              className="text-center mt-4"
-              ref={virtualOpsRef}
-              style={{ scrollMargin: "100px" }}
-            >
-              <p className="text-3xl text-black">
-                {!!blockOperations && !blockOperations.length
-                  ? "No operations were found"
-                  : "Virtual Operations"}
-              </p>
+        settings.rawJsonView ? (
+          <JSONView
+            json={{
+              details: { ...blockDetails },
+              operations: { ...blockOperations },
+            }}
+            className="w-full md:w-[962px] mt-6 m-auto py-2 px-4 bg-explorer-dark-gray rounded-[6px] text-white text-xs break-words break-all"
+          />
+        ) : (
+          <section className="md:px-10 flex items-center justify-center text-white">
+            <div className="w-full px-4 md:p-0 md:w-4/5 flex flex-col gap-y-2">
+              {nonVirtualOperations?.map((operation, index) => (
+                <DetailedOperationCard
+                  operation={operation.operation}
+                  operationId={operation.operation_id}
+                  date={new Date(operation.timestamp)}
+                  blockNumber={operation.block_num}
+                  transactionId={operation.trx_id}
+                  key={operation.timestamp + index}
+                  skipBlock
+                  skipDate
+                  isShortened={operation.is_modified}
+                />
+              ))}
+              <div
+                className="text-center mt-4"
+                ref={virtualOpsRef}
+                style={{ scrollMargin: "100px" }}
+              >
+                <p className="text-3xl text-black">
+                  {!!blockOperations && !blockOperations.length
+                    ? "No operations were found"
+                    : "Virtual Operations"}
+                </p>
+              </div>
+              {virtualOperations?.map((operation, index) => (
+                <DetailedOperationCard
+                  operation={operation.operation}
+                  operationId={operation.operation_id}
+                  date={new Date(operation.timestamp)}
+                  blockNumber={operation.block_num}
+                  transactionId={operation.trx_id}
+                  key={operation.timestamp + index}
+                  skipBlock
+                  skipDate
+                  isShortened={operation.is_modified}
+                />
+              ))}
             </div>
-            {virtualOperations?.map((operation, index) => (
-              <DetailedOperationCard
-                operation={operation.operation}
-                operationId={operation.operation_id}
-                date={new Date(operation.timestamp)}
-                blockNumber={operation.block_num}
-                transactionId={operation.trx_id}
-                key={operation.timestamp + index}
-                skipBlock
-                skipDate
-                isShortened={operation.is_modified}
-              />
-            ))}
-          </div>
-        </section>
+          </section>
+        )
       ) : (
         <div className="flex justify-center items-center">
           <Loader2 className="animate-spin mt-1 h-16 w-16 ml-3 ... " />

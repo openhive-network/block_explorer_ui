@@ -11,23 +11,24 @@ import PageNotFound from "@/components/PageNotFound";
 import { useUserSettingsContext } from "@/components/contexts/UserSettingsContext";
 import JSONView from "@/components/JSONView";
 
-
-
 const displayTransactionData = (
   key: string,
   value: string | string[] | number | Date | Hive.Operation[] | Object
 ) => {
   if (value instanceof Array || value instanceof Object) {
-    return null
+    return null;
   } else {
     return (
-      <tr key={key} className="border-b border-solid border-gray-700 max-w-full overflow-hidden flex flex-col md:table-row">
+      <tr
+        key={key}
+        className="border-b border-solid border-gray-700 max-w-full overflow-hidden flex flex-col md:table-row"
+      >
         <td className="pl-2 py-1">{addSpacesAndCapitalizeFirst(key)}</td>
         <td align="right" className="pr-2">
           {value}
         </td>
       </tr>
-    )
+    );
   }
 };
 
@@ -78,48 +79,62 @@ export default function Transaction() {
               </div>
             </div>
           </div>
-          {data.transaction_json.operations &&
-            data.transaction_json.operations.map((operation, index) => (
-              <DetailedOperationCard
-                key={index}
-                operation={operation}
-                date={new Date(data.timestamp)}
-                blockNumber={data.transaction_json.block_num}
-                transactionId={data.transaction_json.transaction_id}
-                skipBlock
-                skipTrx
-                skipDate
-                className="mt-4"
-              />
-            ))}
-          <div className="mt-6 w-full bg-explorer-dark-gray py-2 rounded-[6px] px-2">
-            <div className="flex justify-center text-md">Transaction Details</div>
-            {settings.rawJsonView ? <JSONView json={data.transaction_json} className="text-xs"/> : 
-            <table className="w-full text-xs">
-              {Object.keys(data.transaction_json).map((key) =>
-                displayTransactionData(
-                  key,
-                  data.transaction_json[
-                    key as keyof Omit<
-                      Hive.TransactionDetails,
-                      "operations"
-                    >
-                  ]
-                )
-              )}
-              {Object.keys(data).map((key) =>
-                displayTransactionData(
-                  key,
-                  data[
-                    key as keyof Omit<
-                      Hive.TransactionQueryResponse,
-                      "transaction_json"
-                    >
-                  ]
-                )
-              )}
-            </table>}
-          </div>
+          {settings.rawJsonView ? (
+            <JSONView
+              json={data}
+              className="w-full md:w-[992px] mt-6 m-auto py-2 px-4 bg-explorer-dark-gray rounded-[6px] text-white text-xs break-words break-all"
+            />
+          ) : (
+            <>
+              {data.transaction_json.operations &&
+                data.transaction_json.operations.map((operation, index) => (
+                  <DetailedOperationCard
+                    key={index}
+                    operation={operation}
+                    date={new Date(data.timestamp)}
+                    blockNumber={data.transaction_json.block_num}
+                    transactionId={data.transaction_json.transaction_id}
+                    skipBlock
+                    skipTrx
+                    skipDate
+                    className="mt-4"
+                  />
+                ))}
+              <div className="mt-6 w-full bg-explorer-dark-gray py-2 rounded-[6px] px-2">
+                <div className="flex justify-center text-md">
+                  Transaction Details
+                </div>
+                {settings.rawJsonView ? (
+                  <JSONView json={data.transaction_json} className="text-xs" />
+                ) : (
+                  <table className="w-full text-xs">
+                    {Object.keys(data.transaction_json).map((key) =>
+                      displayTransactionData(
+                        key,
+                        data.transaction_json[
+                          key as keyof Omit<
+                            Hive.TransactionDetails,
+                            "operations"
+                          >
+                        ]
+                      )
+                    )}
+                    {Object.keys(data).map((key) =>
+                      displayTransactionData(
+                        key,
+                        data[
+                          key as keyof Omit<
+                            Hive.TransactionQueryResponse,
+                            "transaction_json"
+                          >
+                        ]
+                      )
+                    )}
+                  </table>
+                )}
+              </div>
+            </>
+          )}
         </>
       )}
     </div>
