@@ -16,6 +16,7 @@ import MainModule from "@hive/wax";
 import PageNotFound from "@/components/PageNotFound";
 
 const FILTERS = "filters";
+const PAGE = "page";
 const SPLIT = "-";
 const OPERATIONS_LIMIT = 100;
 
@@ -23,9 +24,9 @@ export default function Account() {
   const router = useRouter();
 
   const accountNameFromRoute = router.query.accountName as string;
-  const { filters } = router.query;
+  const { filters, page } = router.query;
 
-  const [page, setPage] = useState(1);
+  const [pageNum, setPageNum] = useState((page && Number(page)) || 1);
   const [operationFilters, setOperationFilters] = useState<number[]>(
     (filters as string)?.split(SPLIT).map((filter) => Number(filter)) || []
   );
@@ -48,13 +49,13 @@ export default function Account() {
     queryKey: [
       "account_operations",
       accountNameFromRoute,
-      page,
+      pageNum,
       operationFilters,
     ],
     queryFn: () =>
       fetchingService.getOpsByAccount(
         accountNameFromRoute,
-        page,
+        pageNum,
         OPERATIONS_LIMIT,
         operationFilters
       ),
@@ -96,9 +97,18 @@ export default function Account() {
     refetchOnWindowFocus: false,
   });
 
+  const handlePageChange = (page: number) => {
+    setPageNum(page);
+    router.replace({query: { ...router.query, [PAGE]: page }});
+  }
+
+  useEffect(() => {
+    page && handlePageChange(Number(page));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page])
+
   const handleFilterChange = (filters: number[]) => {
     setOperationFilters(filters);
-    setPage(1);
     if (!!filters.length) {
       router.replace({
         query: { ...router.query, [FILTERS]: filters.join(SPLIT) },
@@ -151,14 +161,14 @@ export default function Account() {
       <div className="bg-explorer-orange items-center fixed grid grid-flow-row-dense grid-cols-3 top-14 md:top-16 right-0 left-0 p-2 z-50">
         <div className="col-span-3 md:col-span-2 md:justify-self-end justify-self-center z-20 max-w-full">
           <CustomPagination
-            currentPage={page}
+            currentPage={pageNum}
             totalCount={
               !!operationsCount && !isNaN(operationsCount)
                 ? operationsCount
                 : accountDetails.ops_count
             }
             pageSize={OPERATIONS_LIMIT}
-            onPageChange={(page: number) => setPage(page)}
+            onPageChange={(page: number) => handlePageChange(page)}
           />
         </div>
 
@@ -169,7 +179,7 @@ export default function Account() {
             </div>
             <OperationTypesDialog
               operationTypes={accountOperationTypes}
-              setSelectedOperations={handleFilterChange}
+              setSelectedOperations={(filters) => {handleFilterChange(filters); handlePageChange(1);}}
               selectedOperations={operationFilters}
               colorClass="bg-explorer-dark-gray"
               triggerTitle={"Operation Filters"}
