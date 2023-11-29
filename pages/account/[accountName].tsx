@@ -1,133 +1,50 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AccountDetailsCard from "../../components/account/AccountDetailsCard";
-import fetchingService from "@/services/FetchingService";
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 import CustomPagination from "../../components/CustomPagination";
-import Hive from "@/types/Hive";
 import DetailedOperationCard from "@/components/DetailedOperationCard";
 import JSONCard from "@/components/JSONCard";
 import AccountMainCard from "@/components/account/AccountMainCard";
 import AccountWitnessVotesCard from "@/components/account/AccountWitnessVotesCard";
 import VotersDialog from "@/components/Witnesses/VotersDialog";
+import VotesHistoryDialog from "@/components/Witnesses/VotesHistoryDialog";
 import ScrollTopButton from "@/components/ScrollTopButton";
 import MainModule from "@hive/wax";
 import PageNotFound from "@/components/PageNotFound";
+import useAccountDetails from "@/api/accountPage/useAccountDetails";
+import useAccountOperations from "@/api/accountPage/useAccountOperations";
+import useWitnessDetails from "@/api/common/useWitnessDetails";
+import useAccountOperationTypes from "@/api/accountPage/useAccountOperationTypes";
 
-const FILTERS = "filters";
-const PAGE = "page";
-const SPLIT = "-";
 const OPERATIONS_LIMIT = 100;
 
 export default function Account() {
   const router = useRouter();
 
   const accountNameFromRoute = router.query.accountName as string;
-  const { filters, page } = router.query;
 
-  const [pageNum, setPageNum] = useState((page && Number(page)) || 1);
-  const [operationFilters, setOperationFilters] = useState<number[]>(
-    (filters as string)?.split(SPLIT).map((filter) => Number(filter)) || []
-  );
-  const [openVotersModal, setOpenVotersModal] = useState(false);
+  const [page, setPage] = useState(1);
+  const [operationFilters, setOperationFilters] = useState<number[]>([]);
+  const [isVotersModalOpen, setIsVotersModalOpen] = useState(false);
+  const [isVotesHistoryModalOpen, setIsVotesHistoryModalOpen] = useState(false);
 
-  // Account details
-  const {
-    data: accountDetails,
-  }: UseQueryResult<Hive.AccountDetailsQueryResponse> = useQuery({
-    queryKey: ["account_details", accountNameFromRoute],
-    queryFn: () => fetchingService.getAccount(accountNameFromRoute),
-    refetchOnWindowFocus: false,
-  });
-
-  // Account operations
-  const {
-    data: accountOperations,
-    isLoading: isAccountOperationsLoading,
-  }: UseQueryResult<Hive.OperationResponse[]> = useQuery({
-    queryKey: [
-      "account_operations",
+  const { accountDetails } = useAccountDetails(accountNameFromRoute);
+  const { accountOperations, isAccountOperationsLoading } =
+    useAccountOperations(
       accountNameFromRoute,
-      pageNum,
+      page,
       operationFilters,
-    ],
-    queryFn: () =>
-      fetchingService.getOpsByAccount(
-        accountNameFromRoute,
-        pageNum,
-        OPERATIONS_LIMIT,
-        operationFilters
-      ),
-    refetchOnWindowFocus: false,
-  });
+      OPERATIONS_LIMIT
+    );
 
-  const { data: operationsCount } = useQuery({
-    queryKey: ["operations_count", operationFilters],
-    queryFn: () =>
-      fetchingService.getAccountOperationsCount(
-        operationFilters,
-        accountNameFromRoute
-      ),
-    refetchOnWindowFocus: false,
-  });
+  const { accountOperationTypes } =
+    useAccountOperationTypes(accountNameFromRoute);
 
-  // Account operation types (filters)
-  const {
-    data: accountOperationTypes,
-  }: UseQueryResult<Hive.OperationPattern[]> = useQuery({
-    queryKey: ["account_operation_types", accountNameFromRoute],
-    queryFn: () => fetchingService.getAccOpTypes(accountNameFromRoute),
-    refetchOnWindowFocus: false,
-  });
-
-  // Witness data
-  const { data: witnessDetails }: UseQueryResult<Hive.Witness> = useQuery({
-    queryKey: ["account_witness_details", accountNameFromRoute],
-    queryFn: () => fetchingService.getWitness(accountNameFromRoute),
-    enabled: !!accountNameFromRoute && !!accountDetails?.is_witness,
-    refetchOnWindowFocus: false,
-  });
-
-  const { data: witnessVoters }: UseQueryResult<Hive.Voter[]> = useQuery({
-    queryKey: ["account_witness_voters", accountNameFromRoute],
-    queryFn: () =>
-      fetchingService.getWitnessVoters(accountNameFromRoute, "vests", "desc"),
-    enabled: !!accountNameFromRoute && !!accountDetails?.is_witness,
-    refetchOnWindowFocus: false,
-  });
-
-  const handlePageChange = (page: number) => {
-    setPageNum(page);
-    router.replace({query: { ...router.query, [PAGE]: page }});
-  }
-
-  useEffect(() => {
-    page && handlePageChange(Number(page));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page])
-
-  const handleFilterChange = (filters: number[]) => {
-    setOperationFilters(filters);
-    if (!!filters.length) {
-      router.replace({
-        query: { ...router.query, [FILTERS]: filters.join(SPLIT) },
-      });
-    } else {
-      delete router.query[FILTERS];
-      router.replace({
-        query: { ...router.query },
-      });
-    }
-  };
-
-  useEffect(() => {
-    filters &&
-      handleFilterChange(
-        (filters as string)?.split(SPLIT).map((filter) => Number(filter))
-      );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters]);
+  const { witnessDetails } = useWitnessDetails(
+    accountNameFromRoute,
+    !!accountDetails?.is_witness
+  );
 
   const calculateManabar = async () => {
     const mainModule = await MainModule();
@@ -145,7 +62,7 @@ export default function Account() {
     console.log("TEST", JSON.stringify(result));
   };
 
-  if (!accountDetails || !accountOperationTypes) {
+  if (!accountDetails) {
     return "Loading ...";
   }
   if (!accountOperations?.length && !isAccountOperationsLoading) {
@@ -153,7 +70,11 @@ export default function Account() {
   }
 
   const handleOpenVotersModal = () => {
-    setOpenVotersModal(!openVotersModal);
+    setIsVotersModalOpen(!isVotersModalOpen);
+  };
+
+  const handleOpenVotesHistoryModal = () => {
+    setIsVotesHistoryModalOpen(!isVotesHistoryModalOpen);
   };
 
   return (
@@ -161,14 +82,10 @@ export default function Account() {
       <div className="bg-explorer-orange items-center fixed grid grid-flow-row-dense grid-cols-3 top-14 md:top-16 right-0 left-0 p-2 z-50">
         <div className="col-span-3 md:col-span-2 md:justify-self-end justify-self-center z-20 max-w-full">
           <CustomPagination
-            currentPage={pageNum}
-            totalCount={
-              !!operationsCount && !isNaN(operationsCount)
-                ? operationsCount
-                : accountDetails.ops_count
-            }
+            currentPage={page}
+            totalCount={accountDetails.ops_count}
             pageSize={OPERATIONS_LIMIT}
-            onPageChange={(page: number) => handlePageChange(page)}
+            onPageChange={(page: number) => setPage(page)}
           />
         </div>
 
@@ -179,7 +96,7 @@ export default function Account() {
             </div>
             <OperationTypesDialog
               operationTypes={accountOperationTypes}
-              setSelectedOperations={(filters) => {handleFilterChange(filters); handlePageChange(1);}}
+              setSelectedOperations={setOperationFilters}
               selectedOperations={operationFilters}
               colorClass="bg-explorer-dark-gray"
               triggerTitle={"Operation Filters"}
@@ -194,6 +111,7 @@ export default function Account() {
             accountDetails={accountDetails}
             accountName={accountNameFromRoute}
             openVotersModal={handleOpenVotersModal}
+            openVotesHistoryModal={handleOpenVotesHistoryModal}
           />
           <AccountDetailsCard
             header="Properties"
@@ -216,10 +134,13 @@ export default function Account() {
           <AccountWitnessVotesCard voters={accountDetails.witness_votes} />
           <VotersDialog
             accountName={accountNameFromRoute}
-            isVotersOpen={openVotersModal}
-            voters={witnessVoters}
-            sorterInfo={{ isAsc: true, sortKey: "name" }}
+            isVotersOpen={isVotersModalOpen}
             changeVotersDialogue={handleOpenVotersModal}
+          />
+          <VotesHistoryDialog
+            accountName={accountNameFromRoute}
+            isVotesHistoryOpen={isVotesHistoryModalOpen}
+            changeVoteHistoryDialogue={handleOpenVotesHistoryModal}
           />
         </div>
 
@@ -230,10 +151,10 @@ export default function Account() {
                 Loading ...
               </div>
             ) : (
-              accountOperations?.map((operation: any, index) => (
+              accountOperations?.map((operation: any) => (
                 <div
                   className="m-2"
-                  key={`${operation.acc_operation_id}_${index}`}
+                  key={operation.acc_operation_id}
                 >
                   <DetailedOperationCard
                     operation={operation.operation}
@@ -241,7 +162,7 @@ export default function Account() {
                     date={new Date(operation.timestamp)}
                     blockNumber={operation.block_num}
                     transactionId={operation.trx_id}
-                    key={`${operation.timestamp}_${index}`}
+                    key={operation.timestamp}
                     isShortened={operation.is_modified}
                   />
                 </div>

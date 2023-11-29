@@ -8,12 +8,14 @@ interface AccountMainCardProps {
   accountDetails: Hive.AccountDetailsQueryResponse;
   accountName: string;
   openVotersModal: () => void;
+  openVotesHistoryModal: () => void;
 }
 
 const AccountMainCard: React.FC<AccountMainCardProps> = ({
   accountDetails,
   accountName,
   openVotersModal,
+  openVotesHistoryModal,
 }) => {
   return (
     <div className='bg-explorer-dark-gray p-2 rounded-["6px] mx-2 md:mx-6 h-fit rounded'>
@@ -83,12 +85,18 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
         </div>
       </div>
       {accountDetails.is_witness && (
-        <div className="flex justify-end">
+        <div className="flex justify-between">
           <button
             onClick={openVotersModal}
             className="bg-explorer-orange text-explorer-dark-gray rounded-[5px] p-2"
           >
-            Show Voters
+            Voters
+          </button>
+          <button
+            onClick={openVotesHistoryModal}
+            className="bg-explorer-orange text-explorer-dark-gray rounded-[5px] p-2"
+          >
+            Votes History
           </button>
         </div>
       )}
