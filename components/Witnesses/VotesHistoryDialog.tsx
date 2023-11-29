@@ -19,17 +19,14 @@ import { Switch } from "../ui/switch";
 import { cn } from "@/lib/utils";
 import moment from "moment";
 import { config } from "@/Config";
-import { Button } from "../ui/button";
 import CustomPagination from "../CustomPagination";
 import { ArrowUpCircleIcon, ArrowDownCircleIcon } from "lucide-react";
+import useWitnessVotesHistory from "@/api/common/useWitnessVotesHistory";
 
 type VotersDialogProps = {
   accountName: string;
   isVotesHistoryOpen: boolean;
-  votesHistory: Hive.WitnessVotesHistory[] | undefined;
-  loading: boolean;
   changeVoteHistoryDialogue: (isOpen: boolean) => void;
-  onTimeRangeFilter: (fromDate: Date, toDate: Date) => void;
 };
 
 const tableColums = [
@@ -44,16 +41,22 @@ const PAGE_SIZE = 100;
 const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
   accountName,
   isVotesHistoryOpen,
-  votesHistory,
-  loading,
   changeVoteHistoryDialogue,
-  onTimeRangeFilter,
 }) => {
   const [showHivePower, setShowHivePower] = useState<boolean>(false);
-  const [fromDate, setFromDate] = useState<Date>(new Date());
-  const [toDate, setToDate] = useState<Date>(new Date());
   const [page, setPage] = useState(1);
   const [displayData, setDisplayData] = useState<Hive.WitnessVotesHistory[]>();
+  const [fromDate, setFromDate] = useState<Date>(
+    moment().subtract(7, "days").toDate()
+  );
+  const [toDate, setToDate] = useState<Date>(moment().toDate());
+
+  const { votesHistory, isVotesHistoryLoading } = useWitnessVotesHistory(
+    accountName,
+    isVotesHistoryOpen,
+    fromDate,
+    toDate
+  );
 
   useEffect(() => {
     setPage(1);
@@ -72,7 +75,10 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
   };
 
   return (
-    <Dialog open={isVotesHistoryOpen} onOpenChange={changeVoteHistoryDialogue}>
+    <Dialog
+      open={isVotesHistoryOpen}
+      onOpenChange={changeVoteHistoryDialogue}
+    >
       <DialogContent
         className={`h-3/4 max-w-2xl overflow-auto bg-white ${
           !votesHistory && "flex justify-center items-center"
@@ -82,7 +88,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
           <>
             <div className="flex justify-center items-centertext-center font-semibold">
               {accountName}{" "}
-              {loading && (
+              {isVotesHistoryLoading && (
                 <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
               )}
             </div>
@@ -95,7 +101,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
               />
               <label>Hive Power</label>
             </div>
-            <div className="flex justify-between items-center flex-wrap bg-gray-800 rounded-[4px] text-white p-2">
+            <div className="flex justify-around items-center bg-gray-800 rounded-[4px] text-white p-2">
               <div>
                 From:{" "}
                 <DateTimePicker
@@ -124,12 +130,6 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                   showLeadingZeros={false}
                 />
               </div>
-              <Button
-                onClick={() => onTimeRangeFilter(fromDate, toDate)}
-                className="bg-gray-500 rounded-[4px] hover:bg-gray-600"
-              >
-                Set Time Range
-              </Button>
             </div>
             {votesHistory && votesHistory?.length > PAGE_SIZE && (
               <div className="flex justify-center">

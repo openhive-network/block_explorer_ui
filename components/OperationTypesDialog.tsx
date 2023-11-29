@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -14,12 +13,11 @@ import { Label } from "@/components/ui/label";
 import Hive from "@/types/Hive";
 
 type OperationTypesDialogProps = {
-  operationTypes: Hive.OperationPattern[];
+  operationTypes: Hive.OperationPattern[] | undefined;
   triggerTitle: string;
   selectedOperations: number[];
   colorClass: string;
   setSelectedOperations: (operationIds: number[]) => void;
-  desktopPercentageSize?: number;
 };
 
 const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
@@ -28,13 +26,20 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
   selectedOperations,
   colorClass,
   setSelectedOperations,
-  desktopPercentageSize = 80
 }) => {
-  const [selectedOperationsIds, setSelectedOperationsIds] = useState<number[]>([]);
+  const [selectedOperationsIds, setSelectedOperationsIds] = useState<number[]>(
+    []
+  );
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  const virtualOperations = operationTypes.filter((operationType) => operationType.is_virtual);
-  const nonVirtualOperations = operationTypes.filter((operationType) => !operationType.is_virtual);
+  if (!operationTypes || !operationTypes.length) return;
+
+  const virtualOperations = operationTypes.filter(
+    (operationType) => operationType.is_virtual
+  );
+  const nonVirtualOperations = operationTypes.filter(
+    (operationType) => !operationType.is_virtual
+  );
 
   const onFiltersSelect = (id: number) => {
     if (selectedOperationsIds.includes(id)) {
@@ -48,7 +53,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
 
   const handleOnSubmit = () => {
     setSelectedOperations(selectedOperationsIds);
-    onOpenChange(false)
+    onOpenChange(false);
   };
 
   const handleOnClear = () => {
@@ -60,32 +65,44 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
       setSelectedOperationsIds(selectedOperations);
     }
     setIsOpen(open);
-  }
+  };
 
   const selectAll = () => {
-    const allIds = operationTypes.map((operationType) => operationType.op_type_id);
+    const allIds = operationTypes.map(
+      (operationType) => operationType.op_type_id
+    );
     setSelectedOperationsIds(allIds);
-  }
+  };
 
   const selectReal = () => {
-    const realIds = nonVirtualOperations.map((operationType) => operationType.op_type_id);
+    const realIds = nonVirtualOperations.map(
+      (operationType) => operationType.op_type_id
+    );
     let finaList = [...realIds, ...selectedOperationsIds];
     finaList = finaList.filter((id, index) => finaList.indexOf(id) === index);
     setSelectedOperationsIds([...finaList]);
-  }
+  };
 
   const selectVirtual = () => {
-    const virtualIds = virtualOperations.map((operationType) => operationType.op_type_id);
+    const virtualIds = virtualOperations.map(
+      (operationType) => operationType.op_type_id
+    );
     let finaList = [...virtualIds, ...selectedOperationsIds];
     finaList = finaList.filter((id, index) => finaList.indexOf(id) === index);
     setSelectedOperationsIds(finaList);
-  }
+  };
 
   const invertSelection = () => {
-    const allIds = operationTypes.map((operationType) => operationType.op_type_id);
-    const finaList = allIds.filter((id) => selectedOperationsIds.find((selectedId) => selectedId === id) === undefined);
+    const allIds = operationTypes.map(
+      (operationType) => operationType.op_type_id
+    );
+    const finaList = allIds.filter(
+      (id) =>
+        selectedOperationsIds.find((selectedId) => selectedId === id) ===
+        undefined
+    );
     setSelectedOperationsIds(finaList);
-  }
+  };
 
   const renderOperation = (operation: Hive.OperationPattern) => {
     return (
@@ -108,55 +125,95 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           {operation.operation_name}
         </Label>
       </li>
-    )
-  }
-
+    );
+  };
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => {onOpenChange(open)}}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        onOpenChange(open);
+      }}
+    >
       <DialogTrigger asChild>
-        <Button className={ `${colorClass}  text-white hover:bg-gray-700 rounded-[4px]`}>
+        <Button
+          className={`${colorClass}  text-white hover:bg-gray-700 rounded-[4px]`}
+        >
           {triggerTitle}
         </Button>
       </DialogTrigger>
-      <DialogContent className={`max-w-[95%] md:max-w-[80%] h-[90%] md:h-[${desktopPercentageSize}%] flex-column justify-center align-center  bg-white text-black `}>
+      <DialogContent className="max-w-[95%] md:max-w-[80%] h-[90%] md:h-[80%] flex-column justify-center align-center  bg-white text-black ">
         <DialogHeader>
-          <DialogTitle className="flex justify-center pt-2">Operation Types</DialogTitle>
+          <DialogTitle className="flex justify-center pt-2">
+            Operation Types
+          </DialogTitle>
         </DialogHeader>
-      <div className="overflow-auto">
-
-        <ul className="my-4 grid grid-cols-3 gap-4 place-items-stretch text-white ">
-          {nonVirtualOperations.map((operation) => renderOperation(operation))}
-        </ul>
-        <div className="text-center mt-8">Virtual operations</div>
-        <ul className="my-4 grid grid-cols-3 gap-4 place-items-stretch text-white ">
-          {virtualOperations.map((operation) => renderOperation(operation))}
-        </ul>
-      </div>
+        <div className="overflow-auto">
+          <ul className="my-4 grid grid-cols-3 gap-4 place-items-stretch text-white ">
+            {nonVirtualOperations.map((operation) =>
+              renderOperation(operation)
+            )}
+          </ul>
+          <div className="text-center mt-8">Virtual operations</div>
+          <ul className="my-4 grid grid-cols-3 gap-4 place-items-stretch text-white ">
+            {virtualOperations.map((operation) => renderOperation(operation))}
+          </ul>
+        </div>
         <DialogFooter>
           <div className="flex flex-wrap justify-between w-full gap-y-4">
             <div className="flex">
-              <Button type="button" variant='secondary' onClick={selectAll}>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={selectAll}
+              >
                 Select all
               </Button>
-              <Button type="button" variant='secondary' onClick={selectReal}>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={selectReal}
+              >
                 Select real
               </Button>
-              <Button type="button" variant='secondary' onClick={selectVirtual}>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={selectVirtual}
+              >
                 Select virtual
               </Button>
-              <Button type="button" variant='secondary' onClick={invertSelection}>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={invertSelection}
+              >
                 Invert
               </Button>
-              <Button type="button" variant='secondary' onClick={handleOnClear}>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={handleOnClear}
+              >
                 Clear
               </Button>
             </div>
             <div className="flex w-full md:w-auto justify-center">
-              <Button type="button" variant='secondary' onClick={() => {onOpenChange(false)}}>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => {
+                  onOpenChange(false);
+                }}
+              >
                 Cancel
               </Button>
-              <Button className="bg-blue-800 hover:bg-blue-600 text-white rounded" type="submit" variant='default' onClick={handleOnSubmit}>
+              <Button
+                className="bg-blue-800 hover:bg-blue-600 text-white rounded"
+                type="submit"
+                variant="default"
+                onClick={handleOnSubmit}
+              >
                 Apply
               </Button>
             </div>

@@ -230,7 +230,6 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({
                   setSelectedOperations={setSelectedCommentSearchOperationTypes}
                   colorClass="bg-gray-500"
                   triggerTitle={getOperationButtonTitle()}
-                  desktopPercentageSize={50}
                 />
               </div>
               <div className="flex flex-col m-2">
