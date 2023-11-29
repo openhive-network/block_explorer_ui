@@ -19,6 +19,7 @@ type OperationTypesDialogProps = {
   selectedOperations: number[];
   colorClass: string;
   setSelectedOperations: (operationIds: number[]) => void;
+  desktopPercentageSize?: number;
 };
 
 const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
@@ -27,6 +28,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
   selectedOperations,
   colorClass,
   setSelectedOperations,
+  desktopPercentageSize = 80
 }) => {
   const [selectedOperationsIds, setSelectedOperationsIds] = useState<number[]>([]);
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -117,7 +119,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           {triggerTitle}
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[95%] md:max-w-[80%] h-[90%] md:h-[80%] flex-column justify-center align-center  bg-white text-black ">
+      <DialogContent className={`max-w-[95%] md:max-w-[80%] h-[90%] md:h-[${desktopPercentageSize}%] flex-column justify-center align-center  bg-white text-black `}>
         <DialogHeader>
           <DialogTitle className="flex justify-center pt-2">Operation Types</DialogTitle>
         </DialogHeader>

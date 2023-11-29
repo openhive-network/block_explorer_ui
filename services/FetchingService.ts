@@ -274,6 +274,24 @@ class FetchingService {
     const url = `${config.apiAdress}/rpc/get_operation`
     return await this.makePostRequest(url, requestBody);
   }
+
+  async getCommentOperation(
+    commentSearchProps: Explorer.CommentSearchProps
+  ): Promise<Hive.CommentOperationResponse> {
+    const requestBody: Hive.GetCommentOperationProps = {
+      _author: commentSearchProps.accountName,
+      _permlink: commentSearchProps.permlink,
+      _page_num: commentSearchProps.pageNumber,
+      _operations: commentSearchProps.operations,
+      _from: commentSearchProps.fromBlock,
+      _to: commentSearchProps.toBlock,
+      _start_date: commentSearchProps.startDate,
+      _end_date: commentSearchProps.endDate,
+      _body_limit: config.opsBodyLimit,
+    };
+    const url = `${config.apiAdress}/rpc/get_comment_operations`
+    return await this.makePostRequest(url, requestBody);
+  }
 }
 
 const fetchingService = new FetchingService();

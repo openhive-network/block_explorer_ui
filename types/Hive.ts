@@ -92,6 +92,8 @@ declare module Hive {
     _order_is: "asc" | "desc";
     _key_content?: string[] | null;
     _setof_keys?: string[][] | null;
+    _start_date?: Date;
+    _end_date?: Date;
   }
 
   interface GetBlockProps {
@@ -107,6 +109,18 @@ declare module Hive {
   }
   interface GetOperationProps {
     _operation_id: number;
+  }
+
+  interface GetCommentOperationProps {
+    _author: string;
+    _permlink?: string;
+    _page_num?: number;
+    _operations?: number[];
+    _from?: number;
+    _to?: number;
+    _start_date?: Date;
+    _end_date?: Date;
+    _body_limit: number;
   }
 
   interface GetWitnessVotesHistory {
@@ -460,6 +474,27 @@ declare module Hive {
       count: number;
       op_type_id: number;
     }>;
+  }
+
+  interface OperationsCount {
+    total_operations: number;
+    total_pages: number;
+  }
+
+
+
+  interface CommentOperation {
+    block_num: number;
+    body: Operation;
+    is_modified: boolean;
+    operation_id: number;
+    permlink: string;
+
+  }
+
+  interface CommentOperationResponse extends OperationsCount {
+    operations_result: CommentOperation[];
+
   }
 }
 

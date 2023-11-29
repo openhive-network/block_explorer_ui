@@ -44,11 +44,24 @@ declare module Explorer {
     accountName?: string;
     fromBlock?: number;
     toBlock?: number;
+    startDate?: Date;
+    endDate?: Date;
     limit: number;
     deepProps: {
-      content: any;
-      keys: string[] | null;
+      content?: any;
+      keys?: string[];
     }
+  }
+
+  interface CommentSearchProps {
+    accountName: string;
+    permlink?: string;
+    pageNumber?: number;
+    operations?: number[];
+    fromBlock?: number;
+    toBlock?: number;
+    startDate?: Date;
+    endDate?: Date;
   }
 }
 
