@@ -15,7 +15,7 @@ interface DetailedOperationCardProps {
   operationId?: number;
   transactionId?: string;
   blockNumber: number;
-  date: Date;
+  date?: Date;
   skipBlock?: boolean;
   skipTrx?: boolean;
   skipDate?: boolean;

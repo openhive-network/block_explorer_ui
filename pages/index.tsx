@@ -14,13 +14,14 @@ import LastBlocksWidget from "@/components/LastBlocksWidget";
 
 export default function Home() {
   const [foundBlocksIds, setFoundBlocksIds] = useState<number[] | null>(null);
-  const [selectedKeys, setSelectedKeys] = useState<string[] | null>(
-    null
+  const [selectedKeys, setSelectedKeys] = useState<string[] | undefined>(
+    undefined
   );
   const [operationKeys, setOperationKeys] = useState<
     string[][] | null
   >(null);
   const [blockSearchLoading, setBlochSearchLoading] = useState<boolean>(false);
+  const [foundOperations, setFoundOperations] = useState<Hive.CommentOperationResponse | null>(null);
 
   function getGlobalBlockData() {
     return Promise.all([
@@ -89,14 +90,22 @@ export default function Home() {
   });
 
   const getBlockDataForSearch = async (
-    blockSearchProps: Explorer.BlockSearchProps
+    blockSearchProps?: Explorer.BlockSearchProps,
+    commentSearchProps?: Explorer.CommentSearchProps
   ) => {
-    setBlochSearchLoading(true);
-    const foundBlocks = await fetchingService.getBlockByOp(
-      blockSearchProps
-    );
-    setFoundBlocksIds(foundBlocks.map(foundBlock => foundBlock.block_num));
-    setBlochSearchLoading(false);
+    if (commentSearchProps) {
+      setBlochSearchLoading(true);
+      const foundOperations = await fetchingService.getCommentOperation(commentSearchProps);
+      setFoundOperations(foundOperations);
+      setBlochSearchLoading(false);
+    } else if (blockSearchProps) {
+      setBlochSearchLoading(true);
+      const foundBlocks = await fetchingService.getBlockByOp(
+        blockSearchProps
+      );
+      setFoundBlocksIds(foundBlocks.map(foundBlock => foundBlock.block_num));
+      setBlochSearchLoading(false);
+    }
   };
 
   const getOperationKeys = async (
@@ -108,10 +117,10 @@ export default function Home() {
         operationTypeId
       );
       setOperationKeys(nextKeys);
-      setSelectedKeys(null);
+      setSelectedKeys(undefined);
     } else {
       setOperationKeys(null);
-      setSelectedKeys(null);
+      setSelectedKeys(undefined);
     }
   };
 
@@ -119,7 +128,7 @@ export default function Home() {
     if (index !== null && operationKeys?.[index]) {
       setSelectedKeys(operationKeys[index]);
     } else {
-      setSelectedKeys(null);
+      setSelectedKeys(undefined);
     }
   }
 
@@ -138,6 +147,7 @@ export default function Home() {
           setSelectedKeys={setProperKeysForProperty}
           operationsTypes={operationsTypes.data || []}
           foundBlocksIds={foundBlocksIds}
+          foundOperations={foundOperations}
           currentOperationKeys={operationKeys}
           operationKeysChain={selectedKeys}
           loading={blockSearchLoading}

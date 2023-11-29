@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { usePagination, DOTS } from "./customHooks/usePagination";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface PaginationProps {
   onPageChange: (value: any) => void;
@@ -8,6 +9,7 @@ interface PaginationProps {
   currentPage: number;
   pageSize: number;
   className?: string;
+  shouldScrollToTop?: boolean;
 }
 
 const scrollToTop = () => {
@@ -22,6 +24,7 @@ const CustomPagination: React.FC<PaginationProps> = ({
   currentPage,
   pageSize,
   className,
+  shouldScrollToTop = true
 }) => {
   const paginationRange: any = usePagination({
     currentPage,
@@ -36,17 +39,17 @@ const CustomPagination: React.FC<PaginationProps> = ({
 
   const onNext = () => {
     onPageChange(currentPage + 1);
-    scrollToTop();
+    if (shouldScrollToTop) scrollToTop();
   };
 
   const onPrevious = () => {
     onPageChange(currentPage - 1);
-    scrollToTop();
+    if (shouldScrollToTop) scrollToTop();
   };
 
   const handlePageChange = (page: number | string) => {
     onPageChange(page);
-    scrollToTop();
+    if (shouldScrollToTop) scrollToTop();
   };
   const lastPage = paginationRange[paginationRange.length - 1];
   const firstPage = paginationRange[0];
@@ -59,7 +62,7 @@ const CustomPagination: React.FC<PaginationProps> = ({
         }`}
         onClick={onPrevious}
       >
-        <div className="relative w-[0.4em] h-[0.4em] border-t-[2px] border-r-[2px] border-explorer-dark-gray -rotate-[135deg]" />
+        <ChevronLeft />
       </li>
       {paginationRange.map((pageNumber: number | string, i: number) => {
         if (pageNumber === DOTS) {
@@ -92,7 +95,7 @@ const CustomPagination: React.FC<PaginationProps> = ({
         }`}
         onClick={onNext}
       >
-        <div className="relative w-[0.4em] h-[0.4em] border-t-[2px] border-r-[2px] border-explorer-dark-gray rotate-45" />
+        <ChevronRight/>
       </li>
     </ul>
   );
