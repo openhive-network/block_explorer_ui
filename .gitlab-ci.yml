@@ -110,7 +110,7 @@ staging:deploy:
   extends: .deploy
   variables:
     PORT: 5000
-    API_ENDPOINT: http://192.168.4.250:3000
+    API_ENDPOINT: http://192.168.3.107:3000
     CONTAINER_NAME: block-explorer-ui
   environment:
     name: staging
