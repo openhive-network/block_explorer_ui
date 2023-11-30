@@ -9,7 +9,7 @@ Usage: $0 [OPTION[=VALUE]]...
 Run a Block Explorer UI Docker instance
 OPTIONS:
   --image=IMAGE         Docker image to run (default: 'registry.gitlab.syncad.com/hive/block_explorer_ui:latest')
-  --api-endpoint=URL    API endpoint to be used by the new instance (default: 'http://192.168.3.107:3000')
+  --api-endpoint=URL    API endpoint to be used by the new instance (default: 'http://192.168.4.250:3000')
   --port=PORT           Port to be exposed (default: 5000)
   --name=NAME           Container name to be used (default: block_explorer_ui)
   --detach              Run in detached mode 
@@ -19,7 +19,7 @@ EOF
 
 IMAGE=${IMAGE:-"registry.gitlab.syncad.com/hive/block_explorer_ui:latest"}
 PORT=${PORT:-"5000"}
-API_ENDPOINT=${API_ENDPOINT:-"http://192.168.3.107:3000"}
+API_ENDPOINT=${API_ENDPOINT:-"http://192.168.4.250:3000"}
 CONTAINER_NAME=${CONTAINER_NAME:-"block_explorer_ui"}
 DETACH=${DETACH:-false}
 
