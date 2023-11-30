@@ -1,9 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useState } from "react";
 
 const Comments: React.FC = () => {
+  const [accountName, setAccountName] = useState<string>();
+  const [permlink, setPermlink] = useState<string>();
+  const [fromBlock, setFromBlock] = useState<string>();
+  const [toBlock, setToBlock] = useState<string>();
   const router = useRouter();
 
   return (
@@ -26,8 +30,8 @@ const Comments: React.FC = () => {
           <Input
             className="w-1/2"
             type="text"
-            value={""}
-            onChange={(e) => null}
+            value={accountName}
+            onChange={(e) => setAccountName(e.target.value)}
             placeholder="---"
           />
         </div>
@@ -36,18 +40,18 @@ const Comments: React.FC = () => {
           <Input
             className="w-full"
             type="text"
-            value={""}
-            onChange={(e) => null}
+            value={permlink}
+            onChange={(e) => setPermlink(e.target.value)}
             placeholder="---"
           />
         </div>
-        <div className="flex items-center  m-2">
+        <div className="flex items-center m-2">
           <div className="flex flex-col w-full">
             <label className="mx-2">From block</label>
             <Input
               type="number"
-              value={""}
-              onChange={(e) => null}
+              value={fromBlock}
+              onChange={(e) => setFromBlock(e.target.value)}
               placeholder="1"
             />
           </div>
@@ -55,8 +59,8 @@ const Comments: React.FC = () => {
             <label className="mx-2">To block</label>
             <Input
               type="number"
-              value={""}
-              onChange={(e) => null}
+              value={toBlock}
+              onChange={(e) => setToBlock(e.target.value)}
               placeholder={"Headblock"}
             />
           </div>
@@ -65,7 +69,7 @@ const Comments: React.FC = () => {
           <Button
             className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]"
             onClick={() => null}
-            disabled={false}
+            disabled={!accountName?.length}
           >
             <span>Search</span>{" "}
             {/* {loading && (
