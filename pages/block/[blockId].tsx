@@ -1,16 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/router";
-import fetchingService from "@/services/FetchingService";
-import Hive from "@/types/Hive";
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
+import { ArrowUp, Loader2 } from "lucide-react";
 import BlockPageNavigation from "@/components/block/BlockPageNavigation";
 import DetailedOperationCard from "@/components/DetailedOperationCard";
 import { scrollTo } from "@/utils/UI";
 import PageNotFound from "@/components/PageNotFound";
 import { Button } from "@/components/ui/button";
-import { ArrowUp, Loader2 } from "lucide-react";
 import { useUserSettingsContext } from "@/components/contexts/UserSettingsContext";
 import JSONView from "@/components/JSONView";
+import useBlockData from "@/api/common/useBlockData";
+import useOperationTypes from "@/api/common/useOperationTypes";
 
 const FILTERS = "filters";
 const SPLIT = "-";
@@ -18,48 +17,27 @@ const SPLIT = "-";
 export default function Block() {
   const router = useRouter();
   const virtualOpsRef = useRef(null);
-  const topRef = useRef(null);
 
   const { blockId, filters } = router.query;
 
-  let blockIdToNum = Number(blockId);
-
-  const [blockNumber, setBlockNumber] = useState(blockIdToNum);
+  const [blockNumber, setBlockNumber] = useState(Number(blockId));
   const [blockDate, setBlockDate] = useState<Date>();
-  const [blockFilters, setBlockFilters] = useState<number[]>(
-    (filters as string)?.split(SPLIT).map((filter) => Number(filter)) || []
-  );
+  const [blockFilters, setBlockFilters] = useState<number[]>([]);
 
   const { settings } = useUserSettingsContext();
 
-  const { data: blockDetails }: UseQueryResult<Hive.BlockDetails> = useQuery({
-    queryKey: ["block_details", blockNumber],
-    queryFn: () => fetchingService.getBlock(blockNumber),
-    refetchOnWindowFocus: false,
-  });
+  const { blockDetails, blockOperations, blockError, loading } = useBlockData(
+    blockNumber,
+    blockFilters
+  );
 
-  const {
-    data: blockOperations,
-    isLoading: trxLoading,
-  }: UseQueryResult<Hive.OperationResponse[]> = useQuery({
-    queryKey: [`block_operations`, blockNumber, blockFilters],
-    queryFn: () => fetchingService.getOpsByBlock(blockNumber, blockFilters),
-    refetchOnWindowFocus: false,
-  });
-
-  const { data: operationTypes }: UseQueryResult<Hive.OperationPattern[]> =
-    useQuery({
-      queryKey: ["operation_types"],
-      queryFn: () => fetchingService.getOperationTypes(""),
-      refetchOnWindowFocus: false,
-    });
-
-  const blockError = (blockOperations as { [key: string]: any })?.code || null;
+  const { operationTypes } = useOperationTypes();
 
   useEffect(() => {
-    if (!blockIdToNum) return;
-    setBlockNumber(blockIdToNum);
-  }, [blockIdToNum]);
+    if (!!blockId) {
+      setBlockNumber(Number(blockId));
+    }
+  }, [blockId]);
 
   useEffect(() => {
     if (blockDetails && blockDetails.created_at) {
@@ -67,15 +45,18 @@ export default function Block() {
     }
   }, [blockDetails]);
 
-  const virtualOperations =
-    (!blockError &&
-      blockOperations?.filter((operation) => operation.virtual_op)) ||
-    [];
-
-  const nonVirtualOperations =
-    (!blockError &&
-      blockOperations?.filter((operation) => !operation.virtual_op)) ||
-    [];
+  const { virtualOperations, nonVirtualOperations } = useMemo(() => {
+    if (!blockError && blockOperations) {
+      return {
+        virtualOperations: blockOperations?.filter(
+          (operation) => operation.virtual_op
+        ),
+        nonVirtualOperations: blockOperations?.filter(
+          (operation) => !operation.virtual_op
+        ),
+      };
+    } else return { virtualOperations: [], nonVirtualOperations: [] };
+  }, [blockError, blockOperations]);
 
   const handleGoToBlock = (blockNumber: string) => {
     router.push({
@@ -106,7 +87,7 @@ export default function Block() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
 
-  if ((trxLoading === false && !blockOperations) || blockError) {
+  if ((loading === false && !blockOperations) || blockError) {
     return (
       <PageNotFound
         message={
@@ -124,7 +105,6 @@ export default function Block() {
     <div
       className="w-full h-full"
       style={{ scrollMargin: "100px" }}
-      ref={topRef}
       id="block-page-top"
     >
       <BlockPageNavigation
@@ -136,12 +116,17 @@ export default function Block() {
         setFilters={handleFilterChange}
         operationTypes={operationTypes || []}
         selectedOperationIds={blockFilters}
-        isLoading={trxLoading}
+        isLoading={loading}
         blockDetails={blockDetails}
       />
       <div className="fixed top-[calc(100vh-90px)] md:top-[calc(100vh-100px)] w-full flex flex-col items-end px-3 md:px-12">
         <Button
-          onClick={() => scrollTo(topRef)}
+          onClick={() =>
+            window.scrollTo({
+              top: 0,
+              behavior: "smooth",
+            })
+          }
           className="bg-[#ADA9A9] rounded-[6px] text-white hover:bg-gray-700 w-fit mb-1 md:mb-2"
         >
           <p className="hidden md:inline">To Top</p>
@@ -155,7 +140,7 @@ export default function Block() {
           <p className="md:hidden inline">V Ops</p>
         </Button>
       </div>
-      {trxLoading === false ? (
+      {loading === false ? (
         settings.rawJsonView ? (
           <JSONView
             json={{
