@@ -8,8 +8,9 @@ import PageNotFound from "@/components/PageNotFound";
 import { Button } from "@/components/ui/button";
 import { useUserSettingsContext } from "@/components/contexts/UserSettingsContext";
 import JSONView from "@/components/JSONView";
-import useBlockData from "@/api/common/useBlockData";
-import useOperationTypes from "@/api/common/useOperationTypes";
+import useBlockData from "@/api/blockPage/useBlockData";
+import useBlockOperations from "@/api/common/useBlockOperations";
+import useOperationsTypes from "@/api/common/useOperationsTypes";
 
 const FILTERS = "filters";
 const SPLIT = "-";
@@ -26,12 +27,17 @@ export default function Block() {
 
   const { settings } = useUserSettingsContext();
 
-  const { blockDetails, blockOperations, blockError, loading } = useBlockData(
+  const { blockDetails, loading } = useBlockData(
     blockNumber,
     blockFilters
   );
 
-  const { operationTypes } = useOperationTypes();
+    const {blockError, blockOperations} = useBlockOperations(
+      blockNumber,
+      blockFilters
+    )
+
+  const { operationsTypes } = useOperationsTypes();
 
   useEffect(() => {
     if (!!blockId) {
@@ -114,7 +120,7 @@ export default function Block() {
         virtualOperationLength={virtualOperations?.length}
         nonVirtualOperationLength={nonVirtualOperations?.length}
         setFilters={handleFilterChange}
-        operationTypes={operationTypes || []}
+        operationTypes={operationsTypes || []}
         selectedOperationIds={blockFilters}
         isLoading={loading}
         blockDetails={blockDetails}

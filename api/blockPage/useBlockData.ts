@@ -13,24 +13,10 @@ const useBlockData = (blockNumber: number, blockFilters: number[]) => {
     refetchOnWindowFocus: false,
   });
 
-  const {
-    data: blockOperations,
-    isLoading: trxLoading,
-    error: trxError,
-  }: UseQueryResult<Hive.OperationResponse[]> = useQuery({
-    queryKey: [`block_operations`, blockNumber, blockFilters],
-    queryFn: () => fetchingService.getOpsByBlock(blockNumber, blockFilters),
-    refetchOnWindowFocus: false,
-  });
-
-  const blockError = (blockOperations as { [key: string]: any })?.code || null;
-
   return {
     blockDetails,
-    blockOperations,
-    loading: blockDetailsLoading || trxLoading,
-    error: blockDetailsError || trxError,
-    blockError,
+    loading: blockDetailsLoading,
+    error: blockDetailsError
   };
 };
 
