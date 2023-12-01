@@ -10,6 +10,7 @@ import { config } from "@/Config";
 import PageNotFound from "@/components/PageNotFound";
 import { useUserSettingsContext } from "@/components/contexts/UserSettingsContext";
 import JSONView from "@/components/JSONView";
+import useTransactionData from "@/api/common/useTransactionData";
 
 const displayTransactionData = (
   key: string,
@@ -37,13 +38,7 @@ export default function Transaction() {
   const { settings } = useUserSettingsContext();
   const transactionId = router.query.transactionId as string;
 
-  const { data, isLoading } = useQuery<Hive.TransactionQueryResponse, Error>({
-    queryKey: [`block-${router.query.transactionId}`],
-    queryFn: () => fetchingService.getTransaction(transactionId),
-    refetchOnWindowFocus: false,
-  });
-
-  const trxError = (data as { [key: string]: any })?.code || null;
+  const { trxData, trxLoading, trxError } = useTransactionData(transactionId);
 
   if (trxError) {
     return <PageNotFound message={`Transaction not found.`} />;
@@ -51,49 +46,51 @@ export default function Transaction() {
 
   return (
     <div className="w-full max-w-5xl px-4 text-white">
-      {!isLoading && !!data && (
+      {!trxLoading && !!trxData && (
         <>
           <div className="w-full bg-explorer-dark-gray px-4 py-2 rounded-[6px] flex flex-col justify-center md:items-center md:text-md">
             <div>
               Transaction{" "}
               <span className="text-explorer-turquoise">
-                {data.transaction_json.transaction_id}
+                {trxData.transaction_json.transaction_id}
               </span>
             </div>
             <div className="w-full flex justify-evenly">
               <div>
                 Block
                 <Link
-                  href={`/block/${data.transaction_json.block_num}`}
+                  href={`/block/${trxData.transaction_json.block_num}`}
                   className="text-explorer-turquoise"
                 >
-                  {" " + data.transaction_json.block_num}
+                  {" " + trxData.transaction_json.block_num}
                 </Link>
               </div>
               <div>
                 Date
                 <span className="text-explorer-turquoise">
                   {" " +
-                    moment(data.timestamp).format(config.baseMomentTimeFormat)}
+                    moment(trxData.timestamp).format(
+                      config.baseMomentTimeFormat
+                    )}
                 </span>
               </div>
             </div>
           </div>
           {settings.rawJsonView ? (
             <JSONView
-              json={data}
+              json={trxData}
               className="w-full md:w-[992px] mt-6 m-auto py-2 px-4 bg-explorer-dark-gray rounded-[6px] text-white text-xs break-words break-all"
             />
           ) : (
             <>
-              {data.transaction_json.operations &&
-                data.transaction_json.operations.map((operation, index) => (
+              {trxData.transaction_json.operations &&
+                trxData.transaction_json.operations.map((operation, index) => (
                   <DetailedOperationCard
                     key={index}
                     operation={operation}
-                    date={new Date(data.timestamp)}
-                    blockNumber={data.transaction_json.block_num}
-                    transactionId={data.transaction_json.transaction_id}
+                    date={new Date(trxData.timestamp)}
+                    blockNumber={trxData.transaction_json.block_num}
+                    transactionId={trxData.transaction_json.transaction_id}
                     skipBlock
                     skipTrx
                     skipDate
@@ -105,13 +102,16 @@ export default function Transaction() {
                   Transaction Details
                 </div>
                 {settings.rawJsonView ? (
-                  <JSONView json={data.transaction_json} className="text-xs" />
+                  <JSONView
+                    json={trxData.transaction_json}
+                    className="text-xs"
+                  />
                 ) : (
                   <table className="w-full text-xs">
-                    {Object.keys(data.transaction_json).map((key) =>
+                    {Object.keys(trxData.transaction_json).map((key) =>
                       displayTransactionData(
                         key,
-                        data.transaction_json[
+                        trxData.transaction_json[
                           key as keyof Omit<
                             Hive.TransactionDetails,
                             "operations"
@@ -119,10 +119,10 @@ export default function Transaction() {
                         ]
                       )
                     )}
-                    {Object.keys(data).map((key) =>
+                    {Object.keys(trxData).map((key) =>
                       displayTransactionData(
                         key,
-                        data[
+                        trxData[
                           key as keyof Omit<
                             Hive.TransactionQueryResponse,
                             "transaction_json"
