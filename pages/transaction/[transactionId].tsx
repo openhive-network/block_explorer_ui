@@ -1,6 +1,4 @@
 import { useRouter } from "next/router";
-import { useQuery } from "@tanstack/react-query";
-import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
 import { addSpacesAndCapitalizeFirst } from "@/utils/StringUtils";
 import DetailedOperationCard from "@/components/DetailedOperationCard";

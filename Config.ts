@@ -11,5 +11,6 @@ export const config = {
   witnessesPerPages: {
     witnesses: 200,
     home: 20
-  }
+  },
+  lastBlocksForWidget: 20
 }
