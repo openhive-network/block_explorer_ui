@@ -1,12 +1,9 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import fetchingService from "@/services/FetchingService";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Bar,
   BarChart,
   CartesianGrid,
   Label,
-  LabelList,
   Legend,
   ResponsiveContainer,
   Tooltip,
@@ -19,6 +16,7 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/utils/Hooks";
 import { useRouter } from "next/router";
+import useLastBlocks from "@/api/homePage/useLastBlocks";
 
 interface LastBlocksWidgetProps {
   className?: string;
@@ -119,14 +117,12 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
   const [data, setData] = useState<ChartBlockData[]>([]);
   const router = useRouter();
 
-  const lastBlocks = useQuery({
-    queryKey: ["lastBlocks"],
-    queryFn: () => fetchingService.getLastBlocks(20),
-    refetchOnWindowFocus: false,
-  });
+  const lastBlocks = useLastBlocks();
+
+
 
   useEffect(() => {
-    setData(getOpsCount(lastBlocks.data || []).reverse());
+    setData(getOpsCount(lastBlocks.lastBlocksData || []).reverse());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(lastBlocks)]);
 
@@ -135,7 +131,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
   const CustomBarLabel = useCallback(
     (props: any) => {
       const { viewBox, x, y, name } = props;
-      const witness = lastBlocks?.data?.find(
+      const witness = lastBlocks.lastBlocksData?.find(
         (block) => block.block_num.toString() === name
       )?.witness;
       const size = isMobile ? 16 : 40;
@@ -167,7 +163,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
         </g>
       );
     },
-    [lastBlocks?.data, isMobile, router]
+    [lastBlocks.lastBlocksData, isMobile, router]
   );
 
   return (
