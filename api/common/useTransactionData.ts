@@ -7,7 +7,7 @@ const useTransactionData = (transactionId: string) => {
     Hive.TransactionQueryResponse,
     Error
   >({
-    queryKey: [`block-${transactionId}`],
+    queryKey: [`transaction-${transactionId}`],
     queryFn: () => fetchingService.getTransaction(transactionId),
     refetchOnWindowFocus: false,
   });
