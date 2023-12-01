@@ -115,12 +115,13 @@ declare module Hive {
     _author: string;
     _permlink?: string;
     _page_num?: number;
-    _operations?: number[];
+    _operation_types?: number[];
     _from?: number;
     _to?: number;
     _start_date?: Date;
     _end_date?: Date;
     _body_limit: number;
+    _page_size: number;
   }
 
   interface GetWitnessVotesHistory {
@@ -489,7 +490,7 @@ declare module Hive {
     is_modified: boolean;
     operation_id: number;
     permlink: string;
-
+    created_at: Date;
   }
 
   interface CommentOperationResponse extends OperationsCount {

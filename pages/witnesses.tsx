@@ -11,14 +11,15 @@ import {
 } from "@/components/ui/table";
 import VotersDialog from "@/components/Witnesses/VotersDialog";
 import VotesHistoryDialog from "@/components/Witnesses/VotesHistoryDialog";
-import useWitnesses from "@/api/witnessesPage/useWitnesses";
+import useWitnesses from "@/api/common/useWitnesses";
+import { config } from "@/Config";
 
 export default function Witnesses() {
   const [voterAccount, setVoterAccount] = useState<string>("");
   const [isVotersOpen, setIsVotersOpen] = useState<boolean>(false);
   const [isVotesHistoryOpen, setIsVotesHistoryOpen] = useState<boolean>(false);
 
-  const { witnessData, isWitnessDataLoading } = useWitnesses();
+  const { witnessData, isWitnessDataLoading } = useWitnesses(config.witnessesPerPages.witnesses);
 
   if (isWitnessDataLoading) {
     return <Loader2 className="animate-spin mt-1 h-8 w-8 ml-3 ..." />;

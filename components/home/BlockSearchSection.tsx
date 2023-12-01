@@ -14,36 +14,27 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "..
 import DetailedOperationCard from "../DetailedOperationCard";
 import { config } from "@/Config";
 import CustomPagination from "../CustomPagination";
+import useCommentSearch from "@/api/common/useCommentSearch";
+import useBlockSearch from "@/api/homePage/useBlockSearch";
+import useOperationKeys from "@/api/homePage/useOperationKeys";
+import useOperationTypes from "@/api/common/useOperationsTypes";
 
 
-interface BlockSearchSectionProps {
-  getBlockDataForSearch: (blockSearchProps?: Explorer.BlockSearchProps, commentSearchProps?: Explorer.CommentSearchProps) => void;
-  getOperationKeys: (operationId: number | null) => void;
-  setSelectedKeys: (index: number | null) => void;
-  operationsTypes: Hive.OperationPattern[];
-  foundBlocksIds: number[] | null;
-  foundOperations: Hive.CommentOperationResponse | null;
-  currentOperationKeys: string[][] | null;
-  operationKeysChain?: string[];
-  loading: boolean;
-}
+interface BlockSearchSectionProps {};
 
 
-const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({
-  getBlockDataForSearch,
-  getOperationKeys,
-  setSelectedKeys,
-  operationsTypes,
-  foundBlocksIds,
-  foundOperations,
-  currentOperationKeys,
-  operationKeysChain,
-  loading,
-}) => {
+const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
+
+  const operationsTypes = useOperationTypes().operationsTypes || [];
+  const commentSearch = useCommentSearch();
+  const blockSearch = useBlockSearch();
+  const operationKeysHook = useOperationKeys();
 
   const [accountName, setAccountName] = useState<string | undefined>(undefined);
   const [fromBlock, setFromBlock] = useState<number | undefined>(undefined);
   const [toBlock, setToBlock] = useState<number | undefined>(undefined);
+  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
+  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
   const [selectedOperationTypes, setSelectedOperationTypes] = useState<number[]>([]);
   const [selectedCommentSearchOperationTypes, setSelectedCommentSearchOperationTypes] = useState<number[]>([]);
   const [fieldContent, setFieldContent] = useState<string | undefined>(undefined);
@@ -51,6 +42,26 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({
   const [accordionValue, setAccordionValue] = useState<string>("block");
   const [previousCommentSearchProps, setPreviousCommentSearchProps] = useState<Explorer.CommentSearchProps | undefined>(undefined);
   const [commentPaginationPage, setCommentPaginationPage] = useState<number>(1);
+  const [selectedKeys, setSelectedKeys] = useState<string[] | undefined>(undefined);
+  const [lastSearchKey, setLastSearchKey] = useState<"block" | "account" | "comment" | undefined>(undefined);
+
+  const getOperationKeys = async (
+    operationTypeId: number | null
+  ) => {
+    if (operationTypeId !== null) {
+      operationKeysHook.getOperationKeys(operationTypeId);
+    } else {
+      operationKeysHook.getOperationKeys(undefined);
+    }
+  };
+
+  const setKeysForProperty = (index: number | null) => {
+    if (index !== null && operationKeysHook.operationKeysData?.[index]) {
+      setSelectedKeys(operationKeysHook.operationKeysData[index]);
+    } else {
+      setSelectedKeys(undefined);
+    }
+  }
 
   const startCommentSearch = () => {
     if (accountName) {
@@ -60,30 +71,32 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({
         fromBlock,
         toBlock
       };
-      getBlockDataForSearch(undefined, commentSearchProps);
+      commentSearch.searchCommentOperations(commentSearchProps);
       setPreviousCommentSearchProps(commentSearchProps);
+      setLastSearchKey("comment");
     }
   }
 
   const startBlockSearch = () => {
     const blockSearchProps: Explorer.BlockSearchProps = {
       accountName,
-      operations: selectedOperationTypes.length ? selectedOperationTypes : [],
+      operations: selectedOperationTypes.length ? selectedOperationTypes : operationsTypes.map((opType) => opType.op_type_id),
       fromBlock,
       toBlock,
       limit: config.standardPaginationSize,
       deepProps: {
-        keys: operationKeysChain,
+        keys: selectedKeys,
         content: fieldContent
       }
     }
-    getBlockDataForSearch(blockSearchProps);
+    blockSearch.searchBlocksIds(blockSearchProps);
+    setLastSearchKey("block");
   }
 
   const changeCommentSearchPagination = (newPageNum: number) => {
     if (previousCommentSearchProps?.accountName) {
       const newSearchProps: Explorer.CommentSearchProps = {...previousCommentSearchProps, pageNumber: newPageNum};
-      getBlockDataForSearch(undefined, newSearchProps);
+      commentSearch.searchCommentOperations(newSearchProps);
       setCommentPaginationPage(newPageNum);
     }
   }
@@ -99,7 +112,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({
   }
 
   const onSelect = (newValue: string) => {
-    setSelectedKeys(Number(newValue));
+    setKeysForProperty(Number(newValue));
   }
 
   const getOperationButtonTitle = (): string => {
@@ -116,11 +129,47 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({
     }
   }
 
+  const renderRangeSection = () => {
+    return (
+      <>
+        <div className="flex items-center  m-2">
+          <div className="flex flex-col w-full">
+            <label className="mx-2">From block</label>
+            <Input
+              type="number"
+              value={fromBlock || ""}
+              onChange={(e) =>
+                setNumericValue(Number(e.target.value), setFromBlock)
+              }
+              placeholder="1"
+            />
+          </div>
+          <div className="flex flex-col w-full">
+            <label className="mx-2">To block</label>
+            <Input
+              type="number"
+              value={toBlock || ""}
+              onChange={(e) =>
+                setNumericValue(Number(e.target.value), setToBlock)
+              }
+              placeholder={"Headblock"}
+            />
+          </div>
+        </div>
+      </>
+    )
+  }
+
   return (
-    <div className='mt-6 col-start-1 col-span-4 md:col-span-1 mb-6 md:mb-0'>
+    <div className="mt-6 col-start-1 col-span-4 md:col-span-1 mb-6 md:mb-0">
       <div className=' bg-explorer-dark-gray p-2 rounded-["6px] h-fit rounded'>
         <div className="text-center text-xl">Block Search</div>
-        <Accordion type="single" className="w-full" value={accordionValue} onValueChange={setAccordionValue}>
+        <Accordion
+          type="single"
+          className="w-full"
+          value={accordionValue}
+          onValueChange={setAccordionValue}
+        >
           <AccordionItem value="block">
             <AccordionTrigger>Block Search</AccordionTrigger>
             <AccordionContent>
@@ -139,58 +188,75 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({
                   className="w-1/2"
                   type="text"
                   value={accountName || ""}
-                  onChange={(e) => setAccountName(e.target.value === "" ? undefined : e.target.value)}
+                  onChange={(e) =>
+                    setAccountName(
+                      e.target.value === "" ? undefined : e.target.value
+                    )
+                  }
                   placeholder="---"
                 />
               </div>
-              <div className="flex items-center  m-2">
-                <div className="flex flex-col w-full">
-                  <label className="mx-2">From block</label>
-                  <Input
-                    type="number"
-                    value={fromBlock || ""}
-                    onChange={(e) => setNumericValue(Number(e.target.value), setFromBlock)}
-                    placeholder="1"
-                  />
-                </div>
-                <div className="flex flex-col w-full">
-                  <label className="mx-2">To block</label>
-                  <Input
-                    type="number"
-                    value={toBlock || ""}
-                    onChange={(e) => setNumericValue(Number(e.target.value), setToBlock)}
-                    placeholder={"Headblock"}
-                  />
-                </div>
-              </div>
+              {renderRangeSection()}
               <div className="flex flex-col  m-2">
                 <label className="mx-2">Key</label>
                 <div className="flex">
-
                   <Select onValueChange={onSelect}>
-                    <SelectTrigger className="justify-normal" disabled={!selectedOperationTypes || selectedOperationTypes.length !== 1}>
-                      {(operationKeysChain && !!operationKeysChain.length) ? operationKeysChain.map((key, index) => (key !== "value" &&
-                        <div key={key} className={"mx-1"}>{index !== 1 && "/"} {key}</div>
-                      )) : (
-                        <div className="text-blocked">{!selectedOperationTypes || selectedOperationTypes.length !== 1 ? "Select exactly 1 operation to use key-value search" : "Pick a property"} </div>
+                    <SelectTrigger
+                      className="justify-normal"
+                      disabled={
+                        !selectedOperationTypes ||
+                        selectedOperationTypes.length !== 1
+                      }
+                    >
+                      {selectedKeys && !!selectedKeys.length ? (
+                        selectedKeys.map(
+                          (key, index) =>
+                            key !== "value" && (
+                              <div key={key} className={"mx-1"}>
+                                {index !== 1 && "/"} {key}
+                              </div>
+                            )
+                        )
+                      ) : (
+                        <div className="text-blocked">
+                          {!selectedOperationTypes ||
+                          selectedOperationTypes.length !== 1
+                            ? "Select exactly 1 operation to use key-value search"
+                            : "Pick a property"}{" "}
+                        </div>
                       )}
                     </SelectTrigger>
                     <SelectContent className="bg-white text-black rounded-[2px] max-h-[31rem] overflow-y-scroll">
-                      {currentOperationKeys?.map((keys, index) => (
-                        <SelectItem className="m-1 text-center" key={index} value={index.toFixed(0)} defaultChecked={false} >
+                      {operationKeysHook.operationKeysData?.map((keys, index) => (
+                        <SelectItem
+                          className="m-1 text-center"
+                          key={index}
+                          value={index.toFixed(0)}
+                          defaultChecked={false}
+                        >
                           <div className="flex gap-x-2">
-                            {keys.map((key, index) => (key !== "value" &&
-                              <div key={key}>{index !== 1 && "/"} {key} </div>
-                            ))}
+                            {keys.map(
+                              (key, index) =>
+                                key !== "value" && (
+                                  <div key={key}>
+                                    {index !== 1 && "/"} {key}{" "}
+                                  </div>
+                                )
+                            )}
                           </div>
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
-                  {operationKeysChain && !!operationKeysChain.length &&
-
-                    <Button onClick={() => { setSelectedKeys(null) }}>Clear</Button>
-                  }
+                  {selectedKeys && !!selectedKeys.length && (
+                    <Button
+                      onClick={() => {
+                        setKeysForProperty(null);
+                      }}
+                    >
+                      Clear
+                    </Button>
+                  )}
                 </div>
               </div>
               <div className="flex m-2 flex-col">
@@ -201,23 +267,29 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({
                   value={fieldContent || ""}
                   onChange={(e) => setFieldContent(e.target.value)}
                   placeholder="---"
-                  disabled={!selectedOperationTypes || selectedOperationTypes.length !== 1}
+                  disabled={
+                    !selectedOperationTypes ||
+                    selectedOperationTypes.length !== 1
+                  }
                 />
               </div>
               <div className="flex items-center  m-2">
-                <Button className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]" onClick={startBlockSearch} disabled={!selectedOperationTypes.length}>
-                  <span>Search</span> {loading && <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />}
+                <Button
+                  className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]"
+                  onClick={startBlockSearch}
+                >
+                  <span>Search</span>{" "}
+                  {blockSearch.blockSearchDataLoading && (
+                    <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
+                  )}
                 </Button>
-                {!selectedOperationTypes.length && <label className="ml-2 text-muted-foreground">Pick operation type</label>}
               </div>
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="account">
             <AccordionTrigger>Account search</AccordionTrigger>
             <AccordionContent>
-              <div className="flex m-2 flex-col">
-                Coming soon
-              </div>
+              <div className="flex m-2 flex-col">Coming soon</div>
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="comment">
@@ -225,7 +297,9 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({
             <AccordionContent>
               <div className="flex items-center m-2">
                 <OperationTypesDialog
-                  operationTypes={operationsTypes.filter((opType) => config.commentOperationsTypeIds.includes(opType.op_type_id))}
+                  operationTypes={operationsTypes.filter((opType) =>
+                    config.commentOperationsTypeIds.includes(opType.op_type_id)
+                  )}
                   selectedOperations={selectedCommentSearchOperationTypes}
                   setSelectedOperations={setSelectedCommentSearchOperationTypes}
                   colorClass="bg-gray-500"
@@ -238,7 +312,11 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({
                   className="w-1/2"
                   type="text"
                   value={accountName || ""}
-                  onChange={(e) => setAccountName(e.target.value === "" ? undefined : e.target.value)}
+                  onChange={(e) =>
+                    setAccountName(
+                      e.target.value === "" ? undefined : e.target.value
+                    )
+                  }
                   placeholder="---"
                 />
               </div>
@@ -248,76 +326,78 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({
                   className="w-full"
                   type="text"
                   value={permlink}
-                  onChange={(e) => setPermlink(e.target.value === "" ? undefined : e.target.value)}
+                  onChange={(e) =>
+                    setPermlink(
+                      e.target.value === "" ? undefined : e.target.value
+                    )
+                  }
                   placeholder="---"
                 />
               </div>
+              {renderRangeSection()}
               <div className="flex items-center  m-2">
-                <div className="flex flex-col w-full">
-                  <label className="mx-2">From block</label>
-                  <Input
-                    type="number"
-                    value={fromBlock || ""}
-                    onChange={(e) => setNumericValue(Number(e.target.value), setFromBlock)}
-                    placeholder="1"
-                  />
-                </div>
-                <div className="flex flex-col w-full">
-                  <label className="mx-2">To block</label>
-                  <Input
-                    type="number"
-                    value={toBlock || ""}
-                    onChange={(e) => setNumericValue(Number(e.target.value), setToBlock)}
-                    placeholder={"Headblock"}
-                  />
-                </div>
-              </div>
-              <div className="flex items-center  m-2">
-                <Button className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]" onClick={startCommentSearch} disabled={!accountName}>
-                  <span>Search</span> {loading && <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />}
+                <Button
+                  className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]"
+                  onClick={startCommentSearch}
+                  disabled={!accountName}
+                >
+                  <span>Search</span>{" "}
+                  {commentSearch.commentSearchDataLoading && (
+                    <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
+                  )}
                 </Button>
-                {!accountName && <label className="ml-2 text-muted-foreground">Set account name</label>}
+                {!accountName && (
+                  <label className="ml-2 text-muted-foreground">
+                    Set account name
+                  </label>
+                )}
               </div>
             </AccordionContent>
           </AccordionItem>
         </Accordion>
       </div>
-      {foundBlocksIds && (
+      {blockSearch.blockSearchData && lastSearchKey === "block" && (
         <div className=' bg-explorer-dark-gray p-2 rounded-["6px] md:mx-2 h-fit rounded mt-4'>
           <div className="text-center">Results:</div>
           <div className="flex flex-wrap">
-            {foundBlocksIds.length > 0 ? foundBlocksIds.map((blockId) => (
-              <Link key={blockId} href={`block/${blockId}`}>
-
-                <div className="m-1 border border-solid p-1" >{blockId}</div>
-              </Link>
-            )) : (
-              <div className="flex justify-center w-full my-2">No blocks matching given criteria</div>
+            {blockSearch.blockSearchData.length > 0 ? (
+              blockSearch.blockSearchData.map((blockId) => (
+                <Link key={blockId} href={`block/${blockId}`}>
+                  <div className="m-1 border border-solid p-1">{blockId}</div>
+                </Link>
+              ))
+            ) : (
+              <div className="flex justify-center w-full my-2">
+                No blocks matching given criteria
+              </div>
             )}
           </div>
-
         </div>
       )}
-      {!!foundOperations?.operations_result &&
+      {!!commentSearch.commentSearchData?.operations_result && lastSearchKey === "comment" && (
         <div>
           <div className="text-black mt-6">
-
             <CustomPagination
               currentPage={commentPaginationPage}
-              totalCount={foundOperations?.total_operations}
+              totalCount={commentSearch.commentSearchData?.total_operations}
               pageSize={config.standardPaginationSize}
               onPageChange={changeCommentSearchPagination}
               shouldScrollToTop={false}
             />
           </div>
-          {foundOperations?.operations_result.map((foundOperation) => (
-
-            <DetailedOperationCard className="my-6" operation={foundOperation.body} key={foundOperation.operation_id} blockNumber={foundOperation.block_num} />
+          {commentSearch.commentSearchData?.operations_result.map((foundOperation) => (
+            <DetailedOperationCard
+              className="my-6"
+              operation={foundOperation.body}
+              key={foundOperation.operation_id}
+              blockNumber={foundOperation.block_num}
+              date={foundOperation.created_at}
+            />
           ))}
         </div>
-      }
+      )}
     </div>
-  )
+  );
 }
 
 export default BlockSearchSection

@@ -282,12 +282,13 @@ class FetchingService {
       _author: commentSearchProps.accountName,
       _permlink: commentSearchProps.permlink,
       _page_num: commentSearchProps.pageNumber,
-      _operations: commentSearchProps.operations,
+      _operation_types: commentSearchProps.operations,
       _from: commentSearchProps.fromBlock,
       _to: commentSearchProps.toBlock,
       _start_date: commentSearchProps.startDate,
       _end_date: commentSearchProps.endDate,
       _body_limit: config.opsBodyLimit,
+      _page_size: config.standardPaginationSize
     };
     const url = `${config.apiAdress}/rpc/get_comment_operations`
     return await this.makePostRequest(url, requestBody);
