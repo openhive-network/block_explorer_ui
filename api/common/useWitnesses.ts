@@ -1,14 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 
-const useWitnesses = () => {
+const useWitnesses = (witnessesLimit: number) => {
   const {
     data: witnessData,
     isLoading: isWitnessDataLoading,
     isError: isWitnessDataError,
   } = useQuery({
     queryKey: ["witnesses"],
-    queryFn: () => fetchingService.getWitnesses(200, 0, "votes", "desc"),
+    queryFn: () => fetchingService.getWitnesses(witnessesLimit, 0, "votes", "desc"),
     refetchOnWindowFocus: false,
   });
 

@@ -2,11 +2,11 @@ import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
 import { UseQueryResult, useQuery } from "@tanstack/react-query";
 
-const useOperationTypes = () => {
+const useOperationsTypes = () => {
   const {
-    data: operationTypes,
-    isLoading: operationTypesLoading,
-    error: operationTypesError,
+    data: operationsTypes,
+    isLoading: operationsTypesLoading,
+    error: operationsTypesError,
   }: UseQueryResult<Hive.OperationPattern[]> = useQuery({
     queryKey: ["operation_types"],
     queryFn: () => fetchingService.getOperationTypes(""),
@@ -14,10 +14,10 @@ const useOperationTypes = () => {
   });
 
   return {
-    operationTypes,
-    operationTypesLoading,
-    operationTypesError
+    operationsTypes,
+    operationsTypesLoading,
+    operationsTypesError
   }
 }
 
-export default useOperationTypes;
+export default useOperationsTypes;
