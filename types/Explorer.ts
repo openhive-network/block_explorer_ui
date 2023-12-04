@@ -39,13 +39,16 @@ declare module Explorer {
     headBlockNumber: number;
   }
 
-  interface BlockSearchProps {
-    operations: number[];
+  interface CommonSearchProps {
+    operations?: number[];
     accountName?: string;
     fromBlock?: number;
     toBlock?: number;
     startDate?: Date;
     endDate?: Date;
+  }
+
+  interface BlockSearchProps extends CommonSearchProps {
     limit: number;
     deepProps: {
       content?: any;
@@ -53,15 +56,9 @@ declare module Explorer {
     }
   }
 
-  interface CommentSearchProps {
-    accountName: string;
+  interface CommentSearchProps extends CommonSearchProps {
     permlink?: string;
     pageNumber?: number;
-    operations?: number[];
-    fromBlock?: number;
-    toBlock?: number;
-    startDate?: Date;
-    endDate?: Date;
   }
 }
 

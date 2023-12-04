@@ -18,6 +18,7 @@ import useCommentSearch from "@/api/common/useCommentSearch";
 import useBlockSearch from "@/api/homePage/useBlockSearch";
 import useOperationKeys from "@/api/homePage/useOperationKeys";
 import useOperationTypes from "@/api/common/useOperationsTypes";
+import useHeadBlockNumber from "@/api/common/useHeadBlockNum";
 import DateTimePicker from "react-datetime-picker";
 import "react-datetime-picker/dist/DateTimePicker.css";
 import "react-calendar/dist/Calendar.css";
@@ -33,12 +34,14 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
   const commentSearch = useCommentSearch();
   const blockSearch = useBlockSearch();
   const operationKeysHook = useOperationKeys();
+  const headBlockHook = useHeadBlockNumber();
 
   const [accountName, setAccountName] = useState<string | undefined>(undefined);
   const [fromBlock, setFromBlock] = useState<number | undefined>(undefined);
   const [toBlock, setToBlock] = useState<number | undefined>(undefined);
   const [startDate, setStartDate] = useState<Date | undefined>(new Date(config.firstBlockTime));
   const [endDate, setEndDate] = useState<Date | undefined>(new Date (Date.now()));
+  const [lastUnitValue, setLastUnitValue] = useState<number | undefined>(undefined);
   const [selectedOperationTypes, setSelectedOperationTypes] = useState<number[]>([]);
   const [selectedCommentSearchOperationTypes, setSelectedCommentSearchOperationTypes] = useState<number[]>([]);
   const [fieldContent, setFieldContent] = useState<string | undefined>(undefined);
@@ -81,12 +84,17 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
     }
   }
 
-  const startBlockSearch = () => {
+  const startBlockSearch = async () => {
+    let newFromBlock: number | undefined = undefined;
+    if (lastUnitValue) {
+      const currentHeadBlockNumber = await headBlockHook.checkTemporaryHeadBlockNumber();
+      newFromBlock = Number(currentHeadBlockNumber) - lastUnitValue;
+    }
     const blockSearchProps: Explorer.BlockSearchProps = {
       accountName,
       operations: selectedOperationTypes.length ? selectedOperationTypes : operationsTypes.map((opType) => opType.op_type_id),
-      fromBlock,
-      toBlock,
+      fromBlock: newFromBlock ? newFromBlock : fromBlock,
+      toBlock: newFromBlock ? undefined : toBlock,
       limit: config.standardPaginationSize,
       deepProps: {
         keys: selectedKeys,
@@ -187,6 +195,19 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
               calendarIcon={null}
               disableClock
               showLeadingZeros={false}
+            />
+          </div>
+        </div>
+        <div className="flex items-center  m-2">
+          <div className="flex flex-col w-full">
+            <label className="mx-2">Last blocks</label>
+            <Input
+              type="number"
+              value={lastUnitValue || ""}
+              onChange={(e) =>
+                setNumericValue(Number(e.target.value), setLastUnitValue)
+              }
+              placeholder={"Last"}
             />
           </div>
         </div>
