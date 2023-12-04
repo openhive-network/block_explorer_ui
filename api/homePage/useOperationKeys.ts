@@ -28,7 +28,6 @@ const useOperationKeys = () => {
 
   const getOperationKeys = async (newOperationTypeId: number | undefined) => {
     await setOperationTypeId(newOperationTypeId);
-    refetch();
   }
 
   return { operationKeysData, operationKeysDataLoading, operationKeysDataError, getOperationKeys };

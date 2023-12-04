@@ -12,7 +12,11 @@ const useHeadBlockNumber = () => {
     refetchOnWindowFocus: false,
   });
 
-  return { headBlockNumberData, headBlockNumberDataLoading, headBlockNumberDataError };
+  const checkTemporaryHeadBlockNumber = async () => {
+    return await fetchingService.getHeadBlockNum();
+  }
+
+  return { headBlockNumberData, headBlockNumberDataLoading, headBlockNumberDataError, checkTemporaryHeadBlockNumber };
 };
 
 export default useHeadBlockNumber;

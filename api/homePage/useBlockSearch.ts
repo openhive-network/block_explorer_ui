@@ -23,13 +23,13 @@ const useBlockSearch = () => {
       const foundBlocks = await fetchingService.getBlockByOp(blockSearchProps);
       return foundBlocks.map((foundBlock) => foundBlock.block_num);
     } else {
+      console.log('HERE BUT WHY?', blockSearchProps);
       return await undefined;
     }
   }
 
   const searchBlocksIds = async (newBlockSearchProps: Explorer.BlockSearchProps) => {
     await setBlockSearchProps(newBlockSearchProps);
-    refetch();
   }
 
   return { blockSearchData, blockSearchDataLoading, blockSearchDataError, searchBlocksIds };

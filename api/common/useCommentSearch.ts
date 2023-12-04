@@ -28,7 +28,6 @@ const useCommentSearch = () => {
 
   const searchCommentOperations = async (newCommentSearchProps: Explorer.CommentSearchProps) => {
     await setCommentSearchProps(newCommentSearchProps);
-    refetch();
   }
 
   return { commentSearchData, commentSearchDataLoading, commentSearchDataError, searchCommentOperations };
