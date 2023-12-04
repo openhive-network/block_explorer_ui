@@ -18,6 +18,10 @@ import useCommentSearch from "@/api/common/useCommentSearch";
 import useBlockSearch from "@/api/homePage/useBlockSearch";
 import useOperationKeys from "@/api/homePage/useOperationKeys";
 import useOperationTypes from "@/api/common/useOperationsTypes";
+import DateTimePicker from "react-datetime-picker";
+import "react-datetime-picker/dist/DateTimePicker.css";
+import "react-calendar/dist/Calendar.css";
+import "react-clock/dist/Clock.css";
 
 
 interface BlockSearchSectionProps {};
@@ -33,8 +37,8 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
   const [accountName, setAccountName] = useState<string | undefined>(undefined);
   const [fromBlock, setFromBlock] = useState<number | undefined>(undefined);
   const [toBlock, setToBlock] = useState<number | undefined>(undefined);
-  const [startDate, setStartDate] = useState<Date | undefined>(undefined);
-  const [endDate, setEndDate] = useState<Date | undefined>(undefined);
+  const [startDate, setStartDate] = useState<Date | undefined>(new Date(config.firstBlockTime));
+  const [endDate, setEndDate] = useState<Date | undefined>(new Date (Date.now()));
   const [selectedOperationTypes, setSelectedOperationTypes] = useState<number[]>([]);
   const [selectedCommentSearchOperationTypes, setSelectedCommentSearchOperationTypes] = useState<number[]>([]);
   const [fieldContent, setFieldContent] = useState<string | undefined>(undefined);
@@ -153,6 +157,36 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                 setNumericValue(Number(e.target.value), setToBlock)
               }
               placeholder={"Headblock"}
+            />
+          </div>
+        </div>
+        <div className="flex items-center  m-2">
+          <div className="flex flex-col w-full">
+            <label className="mx-2">From date</label>
+            <DateTimePicker 
+              value={startDate} 
+              onChange={(date) => setStartDate(date!)}
+              className="text-white ml-2  border"
+              calendarClassName="text-gray-800"
+              format="yyyy/MM/dd HH:mm:ss"
+              clearIcon={null}
+              calendarIcon={null}
+              disableClock
+              showLeadingZeros={false}
+            />
+          </div>
+          <div className="flex flex-col w-full">
+            <label className="mx-2">To date</label>
+            <DateTimePicker 
+              value={endDate} 
+              onChange={(date) => setEndDate(date!)}
+              className="text-white ml-2 border"
+              calendarClassName="text-gray-800"
+              format="yyyy/MM/dd HH:mm:ss"
+              clearIcon={null}
+              calendarIcon={null}
+              disableClock
+              showLeadingZeros={false}
             />
           </div>
         </div>
