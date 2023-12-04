@@ -1,34 +1,72 @@
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { Loader2 } from "lucide-react";
+import { config } from "@/Config";
 import useCommentSearch from "@/api/common/useCommentSearch";
+import CustomPagination from "@/components/CustomPagination";
 import DetailedOperationCard from "@/components/DetailedOperationCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Explorer from "@/types/Explorer";
-import { Loader2 } from "lucide-react";
-import { useRouter } from "next/router";
-import React, { useState } from "react";
 
 const Comments: React.FC = () => {
-  const [accountName, setAccountName] = useState<string>();
-  const [permlink, setPermlink] = useState<string>();
-  const [fromBlock, setFromBlock] = useState<number>();
-  const [toBlock, setToBlock] = useState<number>();
+  const [searchParams, setSearchParams] = useState<{
+    accountName?: string;
+    permlink?: string;
+    fromBlock?: string;
+    toBlock?: string;
+    page: number;
+  }>({ page: 1 });
   const commentSearch = useCommentSearch();
-  const [previousCommentSearchProps, setPreviousCommentSearchProps] = useState<Explorer.CommentSearchProps | undefined>(undefined);
+  const [previousCommentSearchProps, setPreviousCommentSearchProps] = useState<
+    Explorer.CommentSearchProps | undefined
+  >(undefined);
+  const router = useRouter();
+
+  const { accountName, permlink, fromBlock, toBlock, page } = searchParams;
 
   const startCommentSearch = () => {
     if (accountName) {
       const commentSearchProps: Explorer.CommentSearchProps = {
         accountName,
         permlink,
-        fromBlock,
-        toBlock
+        fromBlock: fromBlock ? Number(fromBlock) : undefined,
+        toBlock: toBlock ? Number(toBlock) : undefined,
       };
       commentSearch.searchCommentOperations(commentSearchProps);
       setPreviousCommentSearchProps(commentSearchProps);
+      let urlParams = searchParams;
+      (Object.keys(searchParams) as (keyof typeof searchParams)[]).forEach((key) => {
+        if (!searchParams[key]) {
+          delete urlParams[key];
+        }
+      })
+      router.replace({query: {...urlParams}})
     }
-  }
+  };
 
-  console.log(commentSearch)
+  const changeCommentSearchPagination = (newPageNum: number) => {
+    if (previousCommentSearchProps?.accountName) {
+      const newSearchProps: Explorer.CommentSearchProps = {
+        ...previousCommentSearchProps,
+        pageNumber: newPageNum,
+      };
+      commentSearch.searchCommentOperations(newSearchProps);
+      setSearchParams({ ...searchParams, page: newPageNum });
+      router.replace({query: {...router.query, page: newPageNum}});
+    }
+  };
+
+  useEffect(() => {
+    setSearchParams({
+      accountName: accountName || router.query.accountName as string,
+      permlink: router.query.permlink as string,
+      fromBlock: router.query.fromBlock as string,
+      toBlock: router.query.toBlock as string,
+      page: Number(router.query.page) || page,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.query]);
 
   return (
     <div className="w-full md:w-4/5">
@@ -39,7 +77,9 @@ const Comments: React.FC = () => {
             className="w-1/2"
             type="text"
             value={accountName}
-            onChange={(e) => setAccountName(e.target.value)}
+            onChange={(e) =>
+              setSearchParams({ ...searchParams, accountName: e.target.value })
+            }
             placeholder="---"
           />
         </div>
@@ -49,7 +89,9 @@ const Comments: React.FC = () => {
             className="w-full"
             type="text"
             value={permlink}
-            onChange={(e) => setPermlink(e.target.value)}
+            onChange={(e) =>
+              setSearchParams({ ...searchParams, permlink: e.target.value })
+            }
             placeholder="---"
           />
         </div>
@@ -59,7 +101,12 @@ const Comments: React.FC = () => {
             <Input
               type="number"
               value={fromBlock}
-              onChange={(e) => setFromBlock(Number(e.target.value))}
+              onChange={(e) =>
+                setSearchParams({
+                  ...searchParams,
+                  fromBlock: e.target.value,
+                })
+              }
               placeholder="1"
             />
           </div>
@@ -68,7 +115,12 @@ const Comments: React.FC = () => {
             <Input
               type="number"
               value={toBlock}
-              onChange={(e) => setToBlock(Number(e.target.value))}
+              onChange={(e) =>
+                setSearchParams({
+                  ...searchParams,
+                  toBlock: e.target.value,
+                })
+              }
               placeholder={"Headblock"}
             />
           </div>
@@ -91,15 +143,30 @@ const Comments: React.FC = () => {
           )}
         </div>
       </div>
-      {commentSearch.commentSearchData?.operations_result.map((foundOperation) => (
-        <DetailedOperationCard
-          className="my-6 text-white"
-          operation={foundOperation.body}
-          key={foundOperation.operation_id}
-          blockNumber={foundOperation.block_num}
-          date={foundOperation.created_at}
-        />
-      ))}
+      {commentSearch.commentSearchData && (
+        <>
+          <div className="w-full flex justify-center mt-4">
+            <CustomPagination
+              currentPage={page}
+              totalCount={commentSearch.commentSearchData?.total_operations}
+              pageSize={config.standardPaginationSize}
+              onPageChange={changeCommentSearchPagination}
+              shouldScrollToTop={false}
+            />
+          </div>
+          {commentSearch.commentSearchData?.operations_result?.map(
+            (foundOperation) => (
+              <DetailedOperationCard
+                className="my-6 text-white"
+                operation={foundOperation.body}
+                key={foundOperation.operation_id}
+                blockNumber={foundOperation.block_num}
+                date={foundOperation.created_at}
+              />
+            )
+          )}
+        </>
+      )}
     </div>
   );
 };
