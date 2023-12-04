@@ -8,6 +8,10 @@ import DetailedOperationCard from "@/components/DetailedOperationCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Explorer from "@/types/Explorer";
+import useOperationTypes from "@/api/common/useOperationsTypes";
+import OperationTypesDialog from "@/components/OperationTypesDialog";
+
+const COMMENT_OPERATIONS = [1, 19, 53, 61, 63, 0, 72];
 
 const Comments: React.FC = () => {
   const [searchParams, setSearchParams] = useState<{
@@ -17,6 +21,7 @@ const Comments: React.FC = () => {
     toBlock?: string;
     page: number;
   }>({ page: 1 });
+  const [filters, setFilters] = useState<number[]>([]);
   const commentSearch = useCommentSearch();
   const [previousCommentSearchProps, setPreviousCommentSearchProps] = useState<
     Explorer.CommentSearchProps | undefined
@@ -24,6 +29,11 @@ const Comments: React.FC = () => {
   const router = useRouter();
 
   const { accountName, permlink, fromBlock, toBlock, page } = searchParams;
+
+  const operationsTypes =
+    useOperationTypes().operationsTypes?.filter((operation) =>
+      COMMENT_OPERATIONS.includes(operation.op_type_id)
+    ) || [];
 
   const startCommentSearch = () => {
     if (accountName) {
@@ -36,12 +46,14 @@ const Comments: React.FC = () => {
       commentSearch.searchCommentOperations(commentSearchProps);
       setPreviousCommentSearchProps(commentSearchProps);
       let urlParams = searchParams;
-      (Object.keys(searchParams) as (keyof typeof searchParams)[]).forEach((key) => {
-        if (!searchParams[key]) {
-          delete urlParams[key];
+      (Object.keys(searchParams) as (keyof typeof searchParams)[]).forEach(
+        (key) => {
+          if (!searchParams[key]) {
+            delete urlParams[key];
+          }
         }
-      })
-      router.replace({query: {...urlParams}})
+      );
+      router.replace({ query: { ...urlParams } });
     }
   };
 
@@ -53,13 +65,13 @@ const Comments: React.FC = () => {
       };
       commentSearch.searchCommentOperations(newSearchProps);
       setSearchParams({ ...searchParams, page: newPageNum });
-      router.replace({query: {...router.query, page: newPageNum}});
+      router.replace({ query: { ...router.query, page: newPageNum } });
     }
   };
 
   useEffect(() => {
     setSearchParams({
-      accountName: accountName || router.query.accountName as string,
+      accountName: accountName || (router.query.accountName as string),
       permlink: router.query.permlink as string,
       fromBlock: router.query.fromBlock as string,
       toBlock: router.query.toBlock as string,
@@ -125,7 +137,8 @@ const Comments: React.FC = () => {
             />
           </div>
         </div>
-        <div className="flex items-center  m-2">
+
+        <div className="flex items-center justify-between m-2">
           <Button
             className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]"
             onClick={() => startCommentSearch()}
@@ -136,11 +149,13 @@ const Comments: React.FC = () => {
               <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
             )}
           </Button>
-          {false && (
-            <label className="ml-2 text-muted-foreground">
-              Set account name
-            </label>
-          )}
+          <OperationTypesDialog
+            operationTypes={operationsTypes}
+            setSelectedOperations={setFilters}
+            selectedOperations={filters}
+            colorClass="bg-gray-500 ml-2"
+            triggerTitle={"Operation Filters"}
+          />
         </div>
       </div>
       {commentSearch.commentSearchData && (
