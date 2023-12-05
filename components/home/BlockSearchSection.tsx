@@ -1,6 +1,6 @@
 import Explorer from "@/types/Explorer"
 import Hive from "@/types/Hive";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { Input } from "../ui/input";
 import { Dialog } from "../ui/dialog";
 import { DialogTrigger } from "@radix-ui/react-dialog";
@@ -92,6 +92,9 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
   const operationKeysHook = useOperationKeys();
   const headBlockHook = useHeadBlockNumber();
 
+  const blockSearchRef = useRef(blockSearch);
+  const commentSearchRef = useRef(commentSearch);
+
   const getOperationKeys = async (
     operationTypeId: number | null
   ) => {
@@ -142,7 +145,6 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
         endDate: payloadEndDate
       };
       setCommentSearchProps(commentSearchProps);
-      commentSearch.refetch();
       setPreviousCommentSearchProps(commentSearchProps);
       setLastSearchKey("comment");
     }
@@ -204,6 +206,11 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
       fieldSetter(value);
     }
   }
+
+  useEffect(() => {
+    blockSearchRef.current.refetch();
+    commentSearchRef.current.refetch();
+  }, [blockSearchProps, commentSearchProps]);
 
   const renderRangeSection = () => {
     return (
