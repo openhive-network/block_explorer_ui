@@ -27,7 +27,7 @@ declare module Hive {
     _account: string;
     _page_num: number;
     _page_size: number;
-    _filter: number[];
+    _filter?: number[];
     _date_start: Date | null;
     _date_end: Date | null;
     _body_limit: number;
@@ -269,6 +269,10 @@ declare module Hive {
     virtual_op: boolean;
     is_modified: boolean;
     length: number;
+  }
+
+  interface AccountOperationsResponse extends OperationsCount {
+    operations_result: OperationResponse[];
   }
 
   type OperationTypes = [number, string, boolean];
