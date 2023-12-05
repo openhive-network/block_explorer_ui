@@ -113,7 +113,7 @@ class FetchingService {
       _account: account,
       _filter: filter,
       _page_num: pagerNum,
-      _limit: limit,
+      _page_size: limit,
       _date_start: null,
       _date_end: null,
       _body_limit: config.opsBodyLimit

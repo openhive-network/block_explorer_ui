@@ -16,8 +16,7 @@ import useAccountDetails from "@/api/accountPage/useAccountDetails";
 import useAccountOperations from "@/api/accountPage/useAccountOperations";
 import useWitnessDetails from "@/api/common/useWitnessDetails";
 import useAccountOperationTypes from "@/api/accountPage/useAccountOperationTypes";
-
-const OPERATIONS_LIMIT = 100;
+import { config } from "@/Config";
 
 export default function Account() {
   const router = useRouter();
@@ -35,7 +34,7 @@ export default function Account() {
       accountNameFromRoute,
       page,
       operationFilters,
-      OPERATIONS_LIMIT
+      config.standardPaginationSize
     );
 
   const { accountOperationTypes } =
@@ -84,7 +83,7 @@ export default function Account() {
           <CustomPagination
             currentPage={page}
             totalCount={accountDetails.ops_count}
-            pageSize={OPERATIONS_LIMIT}
+            pageSize={config.standardPaginationSize}
             onPageChange={(page: number) => setPage(page)}
           />
         </div>
