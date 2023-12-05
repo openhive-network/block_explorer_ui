@@ -41,7 +41,8 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
   const [toBlock, setToBlock] = useState<number | undefined>(undefined);
   const [startDate, setStartDate] = useState<Date | undefined>(new Date(config.firstBlockTime));
   const [endDate, setEndDate] = useState<Date | undefined>(new Date (Date.now()));
-  const [lastUnitValue, setLastUnitValue] = useState<number | undefined>(undefined);
+  const [lastBlocksValue, setLastBlocksValue] = useState<number | undefined>(undefined);
+  const [lastTimeUnitValue, setLastTimeUnitValue] = useState<number | undefined>(undefined);
   const [selectedOperationTypes, setSelectedOperationTypes] = useState<number[]>([]);
   const [selectedCommentSearchOperationTypes, setSelectedCommentSearchOperationTypes] = useState<number[]>([]);
   const [fieldContent, setFieldContent] = useState<string | undefined>(undefined);
@@ -86,9 +87,9 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
 
   const startBlockSearch = async () => {
     let newFromBlock: number | undefined = undefined;
-    if (lastUnitValue) {
+    if (lastBlocksValue) {
       const currentHeadBlockNumber = await headBlockHook.checkTemporaryHeadBlockNumber();
-      newFromBlock = Number(currentHeadBlockNumber) - lastUnitValue;
+      newFromBlock = Number(currentHeadBlockNumber) - lastBlocksValue;
     }
     const blockSearchProps: Explorer.BlockSearchProps = {
       accountName,
@@ -203,9 +204,9 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
             <label className="mx-2">Last blocks</label>
             <Input
               type="number"
-              value={lastUnitValue || ""}
+              value={lastBlocksValue || ""}
               onChange={(e) =>
-                setNumericValue(Number(e.target.value), setLastUnitValue)
+                setNumericValue(Number(e.target.value), setLastBlocksValue)
               }
               placeholder={"Last"}
             />
