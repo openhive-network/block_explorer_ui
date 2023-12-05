@@ -84,9 +84,10 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
   const [rangeSelectKey, setRangeSelectKey] = useState<string>("lastBlocks");
   const [timeUnitSelectKey, setTimeUnitSelectKey] = useState<string>("days");
   const [blockSearchProps, setBlockSearchProps] = useState<Explorer.BlockSearchProps | undefined>(undefined);
+  const [commentSearchProps, setCommentSearchProps] = useState<Explorer.CommentSearchProps | undefined>(undefined);
   
   const operationsTypes = useOperationTypes().operationsTypes || [];
-  const commentSearch = useCommentSearch();
+  const commentSearch = useCommentSearch(commentSearchProps);
   const blockSearch = useBlockSearch(blockSearchProps);
   const operationKeysHook = useOperationKeys();
   const headBlockHook = useHeadBlockNumber();
@@ -140,7 +141,8 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
         startDate: payloadStartDate,
         endDate: payloadEndDate
       };
-      commentSearch.searchCommentOperations(commentSearchProps);
+      setCommentSearchProps(commentSearchProps);
+      commentSearch.refetch();
       setPreviousCommentSearchProps(commentSearchProps);
       setLastSearchKey("comment");
     }
@@ -169,7 +171,8 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
   const changeCommentSearchPagination = (newPageNum: number) => {
     if (previousCommentSearchProps?.accountName) {
       const newSearchProps: Explorer.CommentSearchProps = {...previousCommentSearchProps, pageNumber: newPageNum};
-      commentSearch.searchCommentOperations(newSearchProps);
+      setCommentSearchProps(newSearchProps);
+      commentSearch.refetch();
       setCommentPaginationPage(newPageNum);
     }
   }

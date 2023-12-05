@@ -3,8 +3,7 @@ import fetchingService from "@/services/FetchingService";
 import Explorer from "@/types/Explorer";
 import { useState } from "react";
 
-const useCommentSearch = () => {
-  const [commentSearchProps, setCommentSearchProps] = useState<Explorer.CommentSearchProps | undefined>(undefined);
+const useCommentSearch = (commentSearchProps: Explorer.CommentSearchProps | undefined) => {
 
   const {
     data: commentSearchData,
@@ -26,11 +25,7 @@ const useCommentSearch = () => {
     }
   }
 
-  const searchCommentOperations = async (newCommentSearchProps: Explorer.CommentSearchProps) => {
-    await setCommentSearchProps(newCommentSearchProps);
-  }
-
-  return { commentSearchData, commentSearchDataLoading, commentSearchDataError, searchCommentOperations };
+  return { commentSearchData, commentSearchDataLoading, commentSearchDataError, refetch };
 };
 
 export default useCommentSearch;
