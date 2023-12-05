@@ -27,7 +27,7 @@ import "react-clock/dist/Clock.css";
 
 interface BlockSearchSectionProps {};
 
-const selectOptions = [
+const rangeSelectOptions = [
   {
     name: "Last blocks",
     key: "lastBlocks"
@@ -43,6 +43,21 @@ const selectOptions = [
   {
     name: "Time range",
     key: "timeRange"
+  }
+];
+
+const timeSelectOptions = [
+  {
+    name: "Days",
+    key: "days"
+  },
+  {
+    name: "Weeks",
+    key: "weeks"
+  },
+  {
+    name: "Months",
+    key: "months"
   }
 ]
 
@@ -72,6 +87,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
   const [selectedKeys, setSelectedKeys] = useState<string[] | undefined>(undefined);
   const [lastSearchKey, setLastSearchKey] = useState<"block" | "account" | "comment" | undefined>(undefined);
   const [rangeSelectKey, setRangeSelectKey] = useState<string>("lastBlocks");
+  const [timeUnitSelectKey, setTimeUnitSelectKey] = useState<string>("days");
 
   const getOperationKeys = async (
     operationTypeId: number | null
@@ -164,16 +180,13 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
 
   const renderRangeSection = () => {
     return (
-      <>
+      <div className="m-2">
         <Select onValueChange={setRangeSelectKey}>
           <SelectTrigger>
-            <div>
-
-              {selectOptions.find((selectOption) => selectOption.key === rangeSelectKey)?.name}
-            </div>
+            {rangeSelectOptions.find((selectOption) => selectOption.key === rangeSelectKey)?.name}
           </SelectTrigger>
           <SelectContent className="bg-white text-black rounded-[2px] max-h-[31rem]">
-            {selectOptions.map((selectOption, index) => (
+            {rangeSelectOptions.map((selectOption, index) => (
               <SelectItem                          
                 className="m-1 text-center"
                 key={index}
@@ -186,8 +199,57 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
           </SelectContent>
         </Select>
         {
+          rangeSelectKey === "lastBlocks" &&
+            <div className="flex items-center  my-2">
+              <div className="flex flex-col w-full">
+                <Input
+                  type="number"
+                  value={lastBlocksValue || ""}
+                  onChange={(e) =>
+                    setNumericValue(Number(e.target.value), setLastBlocksValue)
+                  }
+                  placeholder={"Last"}
+                />
+              </div>
+            </div>
+        }
+        {
+          rangeSelectKey === "lastTime" &&
+          <>
+            <div className="flex items-center justify-center  my-2">
+              <div className="flex flex-col w-full ">
+                <Input
+                  type="number"
+                  value={lastTimeUnitValue || ""}
+                  onChange={(e) =>
+                    setNumericValue(Number(e.target.value), setLastTimeUnitValue)
+                  }
+                  placeholder={"Last"}
+                />
+              </div>
+              <Select onValueChange={setTimeUnitSelectKey}>
+                <SelectTrigger>
+                  {timeSelectOptions.find((selectOption) => selectOption.key === timeUnitSelectKey)?.name}
+                </SelectTrigger>
+                <SelectContent className="bg-white text-black rounded-[2px] max-h-[31rem]">
+                  {timeSelectOptions.map((selectOption, index) => (
+                    <SelectItem                          
+                      className="m-1 text-center"
+                      key={index}
+                      value={selectOption.key}
+                      defaultChecked={false}
+                    >
+                      {selectOption.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </>
+        }
+        {
           rangeSelectKey === "blockRange" &&
-            <div className="flex items-center  m-2">
+            <div className="flex items-center  my-2">
               <div className="flex flex-col w-full">
                 <label className="mx-2">From block</label>
                 <Input
@@ -213,24 +275,8 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
             </div>
         }
         {
-          rangeSelectKey === "lastBlocks" &&
-            <div className="flex items-center  m-2">
-              <div className="flex flex-col w-full">
-                <label className="mx-2">Last blocks</label>
-                <Input
-                  type="number"
-                  value={lastBlocksValue || ""}
-                  onChange={(e) =>
-                    setNumericValue(Number(e.target.value), setLastBlocksValue)
-                  }
-                  placeholder={"Last"}
-                />
-              </div>
-            </div>
-        }
-        {
           rangeSelectKey === "timeRange" &&
-            <div className="flex items-center  m-2">
+            <div className="flex items-center  my-2">
               <div className="flex flex-col w-full">
                 <label className="mx-2">From date</label>
                 <DateTimePicker 
@@ -262,7 +308,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
             </div>
         }
 
-      </>
+      </div>
     )
   }
 
