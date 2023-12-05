@@ -5,14 +5,14 @@ import Hive from "@/types/Hive";
 const useAccountOperations = (
   accountName: string,
   operationPage: number,
-  operationFilters: number[],
+  operationFilters: number[] | undefined,
   pageSize: number
 ) => {
   const {
     data: accountOperations,
     isLoading: isAccountOperationsLoading,
     isError: isAccountOperationsError,
-  }: UseQueryResult<Hive.OperationResponse[]> = useQuery({
+  }: UseQueryResult<Hive.AccountOperationsResponse> = useQuery({
     queryKey: [
       "account_operations",
       accountName,

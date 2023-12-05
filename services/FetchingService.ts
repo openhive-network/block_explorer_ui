@@ -107,7 +107,7 @@ class FetchingService {
     account: string,
     pagerNum: number,
     limit: number,
-    filter: number[]
+    filter?: number[]
   ): Promise<Hive.OperationResponse[]> {
     const requestBody: Hive.GetOpsByAccountProps = {
       _account: account,

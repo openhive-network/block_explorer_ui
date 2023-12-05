@@ -33,7 +33,7 @@ export default function Account() {
     useAccountOperations(
       accountNameFromRoute,
       page,
-      operationFilters,
+      operationFilters.length ? operationFilters : undefined,
       config.standardPaginationSize
     );
 
@@ -64,7 +64,7 @@ export default function Account() {
   if (!accountDetails) {
     return "Loading ...";
   }
-  if (!accountOperations?.length && !isAccountOperationsLoading) {
+  if (!accountOperations?.total_operations && !isAccountOperationsLoading) {
     return <PageNotFound message={`Account not found.`} />;
   }
 
@@ -150,7 +150,7 @@ export default function Account() {
                 Loading ...
               </div>
             ) : (
-              accountOperations?.map((operation: any) => (
+              accountOperations?.operations_result?.map((operation: any) => (
                 <div
                   className="m-2"
                   key={operation.acc_operation_id}
