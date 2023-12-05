@@ -20,6 +20,7 @@ import useOperationKeys from "@/api/homePage/useOperationKeys";
 import useOperationTypes from "@/api/common/useOperationsTypes";
 import useHeadBlockNumber from "@/api/common/useHeadBlockNum";
 import DateTimePicker from "react-datetime-picker";
+import { substractFromDate } from "@/lib/utils";
 import "react-datetime-picker/dist/DateTimePicker.css";
 import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
@@ -122,16 +123,24 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
   }
 
   const startBlockSearch = async () => {
-    let newFromBlock: number | undefined = undefined;
-    if (lastBlocksValue) {
+    let payloadFromBlock: number | undefined = rangeSelectKey === "blockRange" ? fromBlock : undefined;
+    let payloadToBlock: number | undefined = rangeSelectKey === "blockRange" ? toBlock : undefined;
+    let payloadStartDate: Date | undefined = rangeSelectKey === "timeRange" ? startDate : undefined;
+    let payloadEndDate: Date | undefined = rangeSelectKey === "timeRange" ? endDate : undefined;
+    if (lastBlocksValue && rangeSelectKey === "lastBlocks") {
       const currentHeadBlockNumber = await headBlockHook.checkTemporaryHeadBlockNumber();
-      newFromBlock = Number(currentHeadBlockNumber) - lastBlocksValue;
+      payloadFromBlock = Number(currentHeadBlockNumber) - lastBlocksValue;
+    }
+    if (lastTimeUnitValue && rangeSelectKey === "lastTime") {
+      payloadStartDate = substractFromDate(new Date(), lastTimeUnitValue, timeUnitSelectKey);
     }
     const blockSearchProps: Explorer.BlockSearchProps = {
       accountName,
       operations: selectedOperationTypes.length ? selectedOperationTypes : operationsTypes.map((opType) => opType.op_type_id),
-      fromBlock: newFromBlock ? newFromBlock : fromBlock,
-      toBlock: newFromBlock ? undefined : toBlock,
+      fromBlock: payloadFromBlock,
+      toBlock: payloadToBlock,
+      startDate: payloadStartDate,
+      endDate: payloadEndDate,
       limit: config.standardPaginationSize,
       deepProps: {
         keys: selectedKeys,

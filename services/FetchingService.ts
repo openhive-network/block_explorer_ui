@@ -232,10 +232,12 @@ class FetchingService {
     blockSearchProps: Explorer.BlockSearchProps
   ): Promise<Hive.BlockByOpResponse[]> {
     const requestBody: Hive.GetBlockByOpProps = {
-      _operations: blockSearchProps.operations,
+      _operations: blockSearchProps.operations || [],
       _account: blockSearchProps?.accountName,
       _from: blockSearchProps?.fromBlock,
       _to: blockSearchProps?.toBlock,
+      _start_date: blockSearchProps.startDate,
+      _end_date: blockSearchProps.endDate,
       _limit: blockSearchProps.limit,
       _order_is: "desc",
       _key_content: blockSearchProps.deepProps.content ? [blockSearchProps.deepProps.content] : undefined,
@@ -279,7 +281,7 @@ class FetchingService {
     commentSearchProps: Explorer.CommentSearchProps
   ): Promise<Hive.CommentOperationResponse> {
     const requestBody: Hive.GetCommentOperationProps = {
-      _author: commentSearchProps.accountName,
+      _author: commentSearchProps.accountName || "",
       _permlink: commentSearchProps.permlink,
       _page_num: commentSearchProps.pageNumber,
       _operation_types: commentSearchProps.operations,

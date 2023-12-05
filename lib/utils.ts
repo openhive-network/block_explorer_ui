@@ -18,3 +18,23 @@ export const numToHighLow = (value: number) => {
 
   return {low: long.low, high: long.high};
 };
+
+/**
+ * Substract given units from given date.
+ * @param date normal JS date
+ * @param numberToSubstract units to substract
+ * @param unit days weeks or months
+ * @returns date after substraction
+ */
+export const substractFromDate = (date: Date, numberToSubstract: number, unit: string): Date => {
+  let resultDate = date;
+  if (unit === "days") {
+    resultDate.setDate(resultDate.getDate() - numberToSubstract);
+  } else if (unit === "weeks") {
+    const numberOfDaysInWeeks = numberToSubstract * 7;
+    resultDate.setDate(resultDate.getDate() - numberOfDaysInWeeks);
+  } else if (unit === "months") {
+    resultDate.setMonth(resultDate.getMonth() - numberToSubstract);
+  }
+  return resultDate;
+}
