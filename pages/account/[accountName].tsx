@@ -82,7 +82,7 @@ export default function Account() {
         <div className="col-span-3 md:col-span-2 md:justify-self-end justify-self-center z-20 max-w-full">
           <CustomPagination
             currentPage={page}
-            totalCount={accountDetails.ops_count}
+            totalCount={accountOperations?.total_operations || 0}
             pageSize={config.standardPaginationSize}
             onPageChange={(page: number) => setPage(page)}
           />
