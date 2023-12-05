@@ -65,12 +65,6 @@ const timeSelectOptions = [
 
 const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
 
-  const operationsTypes = useOperationTypes().operationsTypes || [];
-  const commentSearch = useCommentSearch();
-  const blockSearch = useBlockSearch();
-  const operationKeysHook = useOperationKeys();
-  const headBlockHook = useHeadBlockNumber();
-
   const [accountName, setAccountName] = useState<string | undefined>(undefined);
   const [fromBlock, setFromBlock] = useState<number | undefined>(undefined);
   const [toBlock, setToBlock] = useState<number | undefined>(undefined);
@@ -89,6 +83,13 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
   const [lastSearchKey, setLastSearchKey] = useState<"block" | "account" | "comment" | undefined>(undefined);
   const [rangeSelectKey, setRangeSelectKey] = useState<string>("lastBlocks");
   const [timeUnitSelectKey, setTimeUnitSelectKey] = useState<string>("days");
+  const [blockSearchProps, setBlockSearchProps] = useState<Explorer.BlockSearchProps | undefined>(undefined);
+  
+  const operationsTypes = useOperationTypes().operationsTypes || [];
+  const commentSearch = useCommentSearch();
+  const blockSearch = useBlockSearch(blockSearchProps);
+  const operationKeysHook = useOperationKeys();
+  const headBlockHook = useHeadBlockNumber();
 
   const getOperationKeys = async (
     operationTypeId: number | null
@@ -147,7 +148,8 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
         content: fieldContent
       }
     }
-    blockSearch.searchBlocksIds(blockSearchProps);
+    setBlockSearchProps(blockSearchProps);
+    blockSearch.refetch();
     setLastSearchKey("block");
   }
 

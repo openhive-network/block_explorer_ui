@@ -3,9 +3,7 @@ import fetchingService from "@/services/FetchingService";
 import Explorer from "@/types/Explorer";
 import { useState } from "react";
 
-const useBlockSearch = () => {
-  const [blockSearchProps, setBlockSearchProps] = useState<Explorer.BlockSearchProps | undefined>(undefined);
-
+const useBlockSearch = (blockSearchProps?: Explorer.BlockSearchProps) => {
   const {
     data: blockSearchData,
     isFetching: blockSearchDataLoading,
@@ -23,15 +21,11 @@ const useBlockSearch = () => {
       const foundBlocks = await fetchingService.getBlockByOp(blockSearchProps);
       return foundBlocks.map((foundBlock) => foundBlock.block_num);
     } else {
-      return await undefined;
+      return await null;
     }
   }
 
-  const searchBlocksIds = async (newBlockSearchProps: Explorer.BlockSearchProps) => {
-    await setBlockSearchProps(newBlockSearchProps);
-  }
-
-  return { blockSearchData, blockSearchDataLoading, blockSearchDataError, searchBlocksIds };
+  return { blockSearchData, blockSearchDataLoading, blockSearchDataError, refetch };
 };
 
 export default useBlockSearch;
