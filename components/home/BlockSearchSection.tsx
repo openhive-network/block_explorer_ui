@@ -109,21 +109,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
     }
   }
 
-  const startCommentSearch = () => {
-    if (accountName) {
-      const commentSearchProps: Explorer.CommentSearchProps = {
-        accountName,
-        permlink,
-        fromBlock,
-        toBlock
-      };
-      commentSearch.searchCommentOperations(commentSearchProps);
-      setPreviousCommentSearchProps(commentSearchProps);
-      setLastSearchKey("comment");
-    }
-  }
-
-  const startBlockSearch = async () => {
+  const getRangesValues = async () => {
     let payloadFromBlock: number | undefined = rangeSelectKey === "blockRange" ? fromBlock : undefined;
     let payloadToBlock: number | undefined = rangeSelectKey === "blockRange" ? toBlock : undefined;
     let payloadStartDate: Date | undefined = rangeSelectKey === "timeRange" ? startDate : undefined;
@@ -135,6 +121,33 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
     if (lastTimeUnitValue && rangeSelectKey === "lastTime") {
       payloadStartDate = substractFromDate(new Date(), lastTimeUnitValue, timeUnitSelectKey);
     }
+    return {
+      payloadFromBlock, 
+      payloadToBlock,
+      payloadStartDate,
+      payloadEndDate
+    }
+  }
+
+  const startCommentSearch = async () => {
+    const {payloadFromBlock, payloadToBlock, payloadStartDate, payloadEndDate } = await getRangesValues();
+    if (accountName) {
+      const commentSearchProps: Explorer.CommentSearchProps = {
+        accountName,
+        permlink,
+        fromBlock: payloadFromBlock,
+        toBlock: payloadToBlock,
+        startDate: payloadStartDate,
+        endDate: payloadEndDate
+      };
+      commentSearch.searchCommentOperations(commentSearchProps);
+      setPreviousCommentSearchProps(commentSearchProps);
+      setLastSearchKey("comment");
+    }
+  }
+
+  const startBlockSearch = async () => {
+    const {payloadFromBlock, payloadToBlock, payloadStartDate, payloadEndDate } = await getRangesValues();
     const blockSearchProps: Explorer.BlockSearchProps = {
       accountName,
       operations: selectedOperationTypes.length ? selectedOperationTypes : operationsTypes.map((opType) => opType.op_type_id),
