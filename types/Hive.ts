@@ -26,7 +26,7 @@ declare module Hive {
   interface GetOpsByAccountProps {
     _account: string;
     _page_num: number;
-    _limit: number;
+    _page_size: number;
     _filter: number[];
     _date_start: Date | null;
     _date_end: Date | null;

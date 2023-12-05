@@ -6,7 +6,7 @@ const useAccountOperations = (
   accountName: string,
   operationPage: number,
   operationFilters: number[],
-  opeartionLimit: number
+  pageSize: number
 ) => {
   const {
     data: accountOperations,
@@ -23,7 +23,7 @@ const useAccountOperations = (
       fetchingService.getOpsByAccount(
         accountName,
         operationPage,
-        opeartionLimit,
+        pageSize,
         operationFilters
       ),
     refetchOnWindowFocus: false,
