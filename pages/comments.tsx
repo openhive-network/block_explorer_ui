@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Loader2 } from "lucide-react";
 import { config } from "@/Config";
@@ -12,6 +12,8 @@ import useOperationTypes from "@/api/common/useOperationsTypes";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 
 const COMMENT_OPERATIONS = [1, 19, 53, 61, 63, 0, 72];
+const FILTERS = "filters";
+const SPLIT = "-";
 
 const Comments: React.FC = () => {
   const [searchParams, setSearchParams] = useState<{
@@ -35,13 +37,14 @@ const Comments: React.FC = () => {
       COMMENT_OPERATIONS.includes(operation.op_type_id)
     ) || [];
 
-  const startCommentSearch = () => {
+  const startCommentSearch = (filters: number[]) => {
     if (accountName) {
       const commentSearchProps: Explorer.CommentSearchProps = {
         accountName,
         permlink,
         fromBlock: fromBlock ? Number(fromBlock) : undefined,
         toBlock: toBlock ? Number(toBlock) : undefined,
+        operations: !!filters.length ? filters : undefined,
       };
       commentSearch.searchCommentOperations(commentSearchProps);
       setPreviousCommentSearchProps(commentSearchProps);
@@ -53,7 +56,7 @@ const Comments: React.FC = () => {
           }
         }
       );
-      router.replace({ query: { ...urlParams } });
+      router.replace({ query: { ...router.query, ...urlParams } });
     }
   };
 
@@ -69,6 +72,21 @@ const Comments: React.FC = () => {
     }
   };
 
+  const handleFiltersChange = (filters: number[]) => {
+    setFilters(filters);
+    startCommentSearch(filters);
+    if (!!filters.length) {
+      router.replace({
+        query: { ...router.query, [FILTERS]: filters.join(SPLIT) },
+      });
+    } else {
+      delete router.query[FILTERS];
+      router.replace({
+        query: { ...router.query },
+      });
+    }
+  };
+
   useEffect(() => {
     setSearchParams({
       accountName: accountName || (router.query.accountName as string),
@@ -77,6 +95,12 @@ const Comments: React.FC = () => {
       toBlock: router.query.toBlock as string,
       page: Number(router.query.page) || page,
     });
+    router.query[FILTERS] &&
+      setFilters(
+        (router.query[FILTERS] as string)
+          ?.split(SPLIT)
+          .map((filter) => Number(filter))
+      );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query]);
 
@@ -141,7 +165,7 @@ const Comments: React.FC = () => {
         <div className="flex items-center justify-between m-2">
           <Button
             className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]"
-            onClick={() => startCommentSearch()}
+            onClick={() => startCommentSearch(filters)}
             disabled={!accountName?.length}
           >
             <span>Search</span>{" "}
@@ -151,7 +175,7 @@ const Comments: React.FC = () => {
           </Button>
           <OperationTypesDialog
             operationTypes={operationsTypes}
-            setSelectedOperations={setFilters}
+            setSelectedOperations={handleFiltersChange}
             selectedOperations={filters}
             colorClass="bg-gray-500 ml-2"
             triggerTitle={"Operation Filters"}
