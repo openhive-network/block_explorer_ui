@@ -22,7 +22,7 @@ const useCommentSearch = () => {
     if (commentSearchProps) {
       return await fetchingService.getCommentOperation(commentSearchProps);
     } else {
-      return await undefined;
+      return await null;
     }
   }
 

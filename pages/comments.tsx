@@ -21,29 +21,32 @@ const Comments: React.FC = () => {
     fromBlock?: number;
     toBlock?: number;
     page: number;
-  }>({ page: 1 });
-  const [filters, setFilters] = useState<number[]>([]);
+    filters: number[];
+  }>({ page: 1, filters: [] });
+  const [initialSearch, setInitialSearch] = useState(false);
   const commentSearch = useCommentSearch();
   const [previousCommentSearchProps, setPreviousCommentSearchProps] = useState<
     Explorer.CommentSearchProps | undefined
   >(undefined);
   const router = useRouter();
 
-  const { accountName, permlink, fromBlock, toBlock, page } = searchParams;
+  const { accountName, permlink, fromBlock, toBlock, page, filters } =
+    searchParams;
 
   const operationsTypes =
     useOperationTypes().operationsTypes?.filter((operation) =>
       config.commentOperationsTypeIds.includes(operation.op_type_id)
     ) || [];
 
-  const startCommentSearch = (filters: number[]) => {
-    if (accountName) {
+  const startCommentSearch = (params: typeof searchParams) => {
+    if (params.accountName) {
+      setInitialSearch(true);
       const commentSearchProps: Explorer.CommentSearchProps = {
-        accountName,
-        permlink,
-        fromBlock: fromBlock ? Number(fromBlock) : undefined,
-        toBlock: toBlock ? Number(toBlock) : undefined,
-        operations: !!filters.length ? filters : undefined,
+        accountName: params.accountName,
+        permlink: params.permlink,
+        fromBlock: params.fromBlock,
+        toBlock: params.toBlock,
+        operations: !!params.filters.length ? params.filters : undefined,
       };
       commentSearch.searchCommentOperations(commentSearchProps);
       setPreviousCommentSearchProps(commentSearchProps);
@@ -72,8 +75,9 @@ const Comments: React.FC = () => {
   };
 
   const handleFiltersChange = (filters: number[]) => {
-    setFilters(filters);
-    startCommentSearch(filters);
+    const newSearchParams = { ...searchParams, filters: filters };
+    setSearchParams(newSearchParams);
+    startCommentSearch(newSearchParams);
     if (!!filters.length) {
       router.replace({
         query: { ...router.query, [FILTERS]: filters.join(SPLIT) },
@@ -87,7 +91,7 @@ const Comments: React.FC = () => {
   };
 
   useEffect(() => {
-    setSearchParams({
+    const urlParams = {
       accountName: accountName || (router.query.accountName as string),
       permlink: router.query.permlink as string,
       fromBlock: !isNaN(Number(router.query.fromBlock))
@@ -97,13 +101,18 @@ const Comments: React.FC = () => {
         ? Number(router.query.toBlock)
         : undefined,
       page: Number(router.query.page) || page,
-    });
-    router.query[FILTERS] &&
-      setFilters(
-        (router.query[FILTERS] as string)
-          ?.split(SPLIT)
-          .map((filter) => Number(filter))
-      );
+      filters: router.query[FILTERS]
+        ? (router.query[FILTERS] as string)
+            ?.split(SPLIT)
+            .map((filter) => Number(filter))
+        : [],
+    };
+
+    setSearchParams(urlParams);
+
+    if (router.query.accountName && !initialSearch) {
+      startCommentSearch(urlParams);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query]);
 
@@ -168,7 +177,7 @@ const Comments: React.FC = () => {
         <div className="flex items-center justify-between m-2">
           <Button
             className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]"
-            onClick={() => startCommentSearch(filters)}
+            onClick={() => startCommentSearch(searchParams)}
             disabled={!accountName?.length}
           >
             <span>Search</span>{" "}
