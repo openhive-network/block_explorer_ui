@@ -11,7 +11,6 @@ import Explorer from "@/types/Explorer";
 import useOperationTypes from "@/api/common/useOperationsTypes";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 
-const COMMENT_OPERATIONS = [1, 19, 53, 61, 63, 0, 72];
 const FILTERS = "filters";
 const SPLIT = "-";
 
@@ -19,8 +18,8 @@ const Comments: React.FC = () => {
   const [searchParams, setSearchParams] = useState<{
     accountName?: string;
     permlink?: string;
-    fromBlock?: string;
-    toBlock?: string;
+    fromBlock?: number;
+    toBlock?: number;
     page: number;
   }>({ page: 1 });
   const [filters, setFilters] = useState<number[]>([]);
@@ -34,7 +33,7 @@ const Comments: React.FC = () => {
 
   const operationsTypes =
     useOperationTypes().operationsTypes?.filter((operation) =>
-      COMMENT_OPERATIONS.includes(operation.op_type_id)
+      config.commentOperationsTypeIds.includes(operation.op_type_id)
     ) || [];
 
   const startCommentSearch = (filters: number[]) => {
@@ -91,8 +90,12 @@ const Comments: React.FC = () => {
     setSearchParams({
       accountName: accountName || (router.query.accountName as string),
       permlink: router.query.permlink as string,
-      fromBlock: router.query.fromBlock as string,
-      toBlock: router.query.toBlock as string,
+      fromBlock: !isNaN(Number(router.query.fromBlock))
+        ? Number(router.query.fromBlock)
+        : undefined,
+      toBlock: !isNaN(Number(router.query.toBlock))
+        ? Number(router.query.toBlock)
+        : undefined,
       page: Number(router.query.page) || page,
     });
     router.query[FILTERS] &&
@@ -140,7 +143,7 @@ const Comments: React.FC = () => {
               onChange={(e) =>
                 setSearchParams({
                   ...searchParams,
-                  fromBlock: e.target.value,
+                  fromBlock: Number(e.target.value),
                 })
               }
               placeholder="1"
@@ -154,7 +157,7 @@ const Comments: React.FC = () => {
               onChange={(e) =>
                 setSearchParams({
                   ...searchParams,
-                  toBlock: e.target.value,
+                  toBlock: Number(e.target.value),
                 })
               }
               placeholder={"Headblock"}
