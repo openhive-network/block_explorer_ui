@@ -599,7 +599,11 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
       {!!commentSearch.commentSearchData?.operations_result && lastSearchKey === "comment" && (
         <div>
           <Link href={getCommentPageLink()}>
-            <Button>Go to comment page</Button>
+            <Button 
+              className=" bg-blue-800 hover:bg-blue-600 rounded-[4px] mt-8"
+            >
+              Go to result page
+            </Button>
           </Link>
           <div className="text-black mt-6">
             <CustomPagination
