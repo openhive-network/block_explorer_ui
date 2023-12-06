@@ -212,7 +212,7 @@ class FetchingService {
     return await this.makePostRequest(url, requestBody);
   }
 
-  async getBlockByTime(date: any): Promise<Hive.GetBlockByTimeResponse> {
+  async getBlockByTime(date: Date): Promise<Hive.GetBlockByTimeResponse> {
     const requestBody: Hive.GetBlockByTimeProps = {
       _timestamp: date,
     };
