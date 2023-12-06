@@ -36,5 +36,6 @@ export const substractFromDate = (date: Date, numberToSubstract: number, unit: s
   } else if (unit === "months") {
     resultDate.setMonth(resultDate.getMonth() - numberToSubstract);
   }
+  resultDate.setMilliseconds(0);
   return resultDate;
 }
