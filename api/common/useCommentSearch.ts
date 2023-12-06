@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 import Explorer from "@/types/Explorer";
-import { useState } from "react";
 
 const useCommentSearch = (commentSearchProps: Explorer.CommentSearchProps | undefined) => {
 
