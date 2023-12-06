@@ -153,7 +153,7 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
   skipDate = false,
   className,
   isShortened,
-  forceStyle
+  forceStyle,
 }) => {
   const [seeDetails, setSeeDetails] = useState(true);
   const { settings } = useUserSettingsContext();
@@ -243,15 +243,13 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
             </div>
           )}
         </Button>
-        {
-          isShortened && 
+        {isShortened && (
           <Link href={`/longOperation/${operationId}`}>
             <Button className=" text-explorer-turquoise">
               See full operation
             </Button>
           </Link>
-        }
-        
+        )}
       </div>
 
       {seeDetails &&
@@ -262,11 +260,12 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
             {Object.entries(valueAsObject)
               .sort(([key, _property]) => (key === "json" ? 1 : -1))
               .map(([key, property]) => {
-                const value = isJson(property)
-                  ? JSON.stringify(property).replaceAll("\\", "")
-                  : property.toString() === ""
-                  ? "-"
-                  : property.toString();
+                const value =
+                  isJson(property) || isJson(JSON.stringify(property))
+                    ? JSON.stringify(property).replaceAll("\\", "")
+                    : property.toString() === ""
+                    ? "-"
+                    : property.toString();
                 return (
                   <div
                     key={key}

@@ -67,7 +67,7 @@ export default function Block() {
   const handleGoToBlock = (blockNumber: string) => {
     router.push({
       pathname: "[blockId]",
-      query: { blockId: blockNumber },
+      query: { ...router.query, blockId: blockNumber },
     });
   };
 
@@ -179,7 +179,7 @@ export default function Block() {
                 <p className="text-3xl text-black">
                   {!!blockOperations && !blockOperations.length
                     ? "No operations were found"
-                    : "Virtual Operations"}
+                    : !!virtualOperations.length ? "Virtual Operations" : null}
                 </p>
               </div>
               {virtualOperations?.map((operation, index) => (
