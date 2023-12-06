@@ -352,7 +352,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                 <DateTimePicker 
                   value={startDate} 
                   onChange={(date) => setStartDate(date!)}
-                  className="text-white ml-2  border"
+                  className="text-white  border"
                   calendarClassName="text-gray-800"
                   format="yyyy/MM/dd HH:mm:ss"
                   clearIcon={null}
