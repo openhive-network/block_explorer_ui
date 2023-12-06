@@ -147,7 +147,8 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
         fromBlock: payloadFromBlock,
         toBlock: payloadToBlock,
         startDate: payloadStartDate,
-        endDate: payloadEndDate
+        endDate: payloadEndDate,
+        operations: selectedCommentSearchOperationTypes.length ? selectedCommentSearchOperationTypes : undefined
       };
       setCommentSearchProps(commentSearchProps);
       setPreviousCommentSearchProps(commentSearchProps);
