@@ -250,9 +250,9 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
 
   const renderRangeSection = () => {
     return (
-      <div className="m-2">
+      <div className="m-2 my-4 border-y border-solid border-gray-600">
         <Select onValueChange={setRangeSelectKey}>
-          <SelectTrigger>
+          <SelectTrigger className="mt-2">
             {rangeSelectOptions.find((selectOption) => selectOption.key === rangeSelectKey)?.name}
           </SelectTrigger>
           <SelectContent className="bg-white text-black rounded-[2px] max-h-[31rem]">
