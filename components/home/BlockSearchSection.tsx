@@ -24,6 +24,8 @@ import { substractFromDate } from "@/lib/utils";
 import "react-datetime-picker/dist/DateTimePicker.css";
 import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
+import useBlockByTime from "@/api/common/useBlockByTime";
+import { operation } from "@hive/wax";
 
 
 interface BlockSearchSectionProps {};
@@ -85,12 +87,15 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
   const [timeUnitSelectKey, setTimeUnitSelectKey] = useState<string>("days");
   const [blockSearchProps, setBlockSearchProps] = useState<Explorer.BlockSearchProps | undefined>(undefined);
   const [commentSearchProps, setCommentSearchProps] = useState<Explorer.CommentSearchProps | undefined>(undefined);
+  const [requestFromBlock, setRequestFromBlock] = useState<number | undefined>(undefined);
+  const [requestToBlock, setRequestToBlock] = useState<number | undefined>(undefined);
   
   const operationsTypes = useOperationTypes().operationsTypes || [];
   const commentSearch = useCommentSearch(commentSearchProps);
   const blockSearch = useBlockSearch(blockSearchProps);
   const operationKeysHook = useOperationKeys();
   const headBlockHook = useHeadBlockNumber();
+  const blockByTimeHook = useBlockByTime();
 
   const blockSearchRef = useRef(blockSearch);
   const commentSearchRef = useRef(commentSearch);
@@ -147,6 +152,21 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
       setCommentSearchProps(commentSearchProps);
       setPreviousCommentSearchProps(commentSearchProps);
       setLastSearchKey("comment");
+    }
+
+    if (payloadFromBlock) {
+      setRequestFromBlock(payloadFromBlock);
+    }
+    if (payloadToBlock) {
+      setRequestToBlock(payloadToBlock);
+    }
+    if (payloadStartDate) {
+      const blockByTime = await blockByTimeHook.checkBlockByTime(payloadStartDate);
+      setRequestFromBlock(blockByTime);
+    }
+    if (payloadEndDate) {
+      const blockByTime = await blockByTimeHook.checkBlockByTime(payloadEndDate);
+      setRequestToBlock(blockByTime);
     }
   }
 
@@ -205,6 +225,21 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
     } else {
       fieldSetter(value);
     }
+  }
+
+  const getCommentPageLink = () => {
+    const linkAccountName = `accountName=${commentSearchProps?.accountName}`;
+    const linkPermlink = !!commentSearchProps?.permlink ? `&permlink=${commentSearchProps?.permlink}` : "";
+    const linkFromBlock = !!requestFromBlock ? `&fromBlock=${requestFromBlock}` : "";
+    const linkToBlock = !!requestToBlock ? `&toBlock=${requestToBlock}` : "";
+    let linkFilters = "";
+    if (commentSearchProps?.operations) {
+      linkFilters = "&filters="
+      commentSearchProps?.operations.forEach((operation, index) => {
+        linkFilters += `${index !== 0 ? "-" : ""}${operation}`;
+      })
+    }
+    return `comments?${linkAccountName}${linkPermlink}${linkFromBlock}${linkToBlock}${linkFilters}`;
   }
 
   useEffect(() => {
@@ -562,6 +597,9 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
       )}
       {!!commentSearch.commentSearchData?.operations_result && lastSearchKey === "comment" && (
         <div>
+          <Link href={getCommentPageLink()}>
+            <Button>Go to comment page</Button>
+          </Link>
           <div className="text-black mt-6">
             <CustomPagination
               currentPage={commentPaginationPage}
