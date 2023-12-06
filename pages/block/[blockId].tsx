@@ -32,7 +32,7 @@ export default function Block() {
     blockFilters
   );
 
-    const {blockError, blockOperations} = useBlockOperations(
+    const {blockError, blockOperations, trxLoading} = useBlockOperations(
       blockNumber,
       blockFilters
     )
@@ -93,7 +93,7 @@ export default function Block() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
 
-  if ((loading === false && !blockOperations) || blockError) {
+  if ((trxLoading === false && !blockOperations) || blockError) {
     return (
       <PageNotFound
         message={

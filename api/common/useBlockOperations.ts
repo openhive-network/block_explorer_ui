@@ -18,6 +18,7 @@ const useBlockOperations = (blockNumber: number, blockFilters: number[]) => {
 
   return {
     blockOperations,
+    trxLoading,
     blockError,
   };
 };
