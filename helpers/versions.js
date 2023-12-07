@@ -7,4 +7,5 @@ try {
   console.log(`Commit Hash written to .env.local: ${commitHash}`);
 } catch (error) {
   console.error('Error getting commit hash:', error);
+  process.exit(1);
 }
