@@ -13,7 +13,6 @@ const useCommentSearch = (commentSearchProps: Explorer.CommentSearchProps | unde
     queryKey: ["commentSearch"],
     queryFn: () => fetchCommentOperations(commentSearchProps),
     refetchOnWindowFocus: false,
-    enabled: !!commentSearchProps
   });
 
   const fetchCommentOperations = async (commentSearchProps: Explorer.CommentSearchProps | undefined) => {

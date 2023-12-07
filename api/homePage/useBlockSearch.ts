@@ -13,7 +13,6 @@ const useBlockSearch = (blockSearchProps?: Explorer.BlockSearchProps) => {
     queryKey: ["blockSearch"],
     queryFn: () => fetchBlocksNumbers(blockSearchProps),
     refetchOnWindowFocus: false,
-    enabled: !!blockSearchProps
   });
 
   const fetchBlocksNumbers = async (blockSearchProps: Explorer.BlockSearchProps | undefined) => {
