@@ -118,10 +118,6 @@ const Comments: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query]);
 
-  useEffect(() => {
-    commentSearchRef.current.refetch();
-  }, [commentSearchProps]);
-
   return (
     <div className="w-full md:w-4/5">
       <div className="bg-explorer-dark-gray text-white p-4 rounded-[6px] w-full">
