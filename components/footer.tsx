@@ -1,11 +1,15 @@
+import useHafbeVersion from "@/api/common/useHafbeVersion";
 import { config } from "@/Config";
 
 export default function Footer() {
+
+  const {hafbeVersionData} = useHafbeVersion()
   const current_year = new Date().getFullYear();
   return (
-    <div className="mt-auto	flex flex-col justify-center items-center">
-      <p>HIVE Blocks &copy; {current_year} </p>
-      <p><span>Commit hash: </span>{config.gitHash}</p>
+    <div className="flex flex-col justify-center items-center bg-explorer-dark-gray w-full mt-12 text-white">
+      <p className="my-2">Block Explorer by HIVE &copy; {current_year} </p>
+      <p className="my-2"><span>Last commit hash: </span>{config.gitHash}</p>
+      <p className="my-2"><span>Hafbe version hash: </span>{hafbeVersionData}</p>
     </div>
   );
 }

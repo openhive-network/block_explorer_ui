@@ -295,6 +295,12 @@ class FetchingService {
     const url = `${config.apiAdress}/rpc/get_comment_operations`
     return await this.makePostRequest(url, requestBody);
   }
+
+  async getHafbeVersion(): Promise<string> {
+    const requestBody = {};
+    const url = `${config.apiAdress}/rpc/get_hafbe_version`;
+    return await this.makePostRequest(url, requestBody);
+  }
 }
 
 const fetchingService = new FetchingService();
