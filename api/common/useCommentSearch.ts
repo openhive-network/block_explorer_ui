@@ -1,37 +1,25 @@
 import { useQuery } from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 import Explorer from "@/types/Explorer";
-import { useState } from "react";
 
-const useCommentSearch = () => {
-  const [commentSearchProps, setCommentSearchProps] = useState<Explorer.CommentSearchProps | undefined>(undefined);
+const useCommentSearch = (commentSearchProps: Explorer.CommentSearchProps | undefined) => {
 
   const {
     data: commentSearchData,
     isFetching: commentSearchDataLoading,
-    isError: commentSearchDataError,
-    refetch
+    isError: commentSearchDataError
   } = useQuery({
-    queryKey: ["commentSearch"],
+    queryKey: ["commentSearch", commentSearchProps],
     queryFn: () => fetchCommentOperations(commentSearchProps),
     refetchOnWindowFocus: false,
-    enabled: !!commentSearchProps
   });
 
   const fetchCommentOperations = async (commentSearchProps: Explorer.CommentSearchProps | undefined) => {
-    if (commentSearchProps) {
-      return await fetchingService.getCommentOperation(commentSearchProps);
-    } else {
-      return await null;
-    }
+    if (!commentSearchProps) return null;
+    return await fetchingService.getCommentOperation(commentSearchProps);
   }
 
-  const searchCommentOperations = async (newCommentSearchProps: Explorer.CommentSearchProps) => {
-    await setCommentSearchProps(newCommentSearchProps);
-    refetch();
-  }
-
-  return { commentSearchData, commentSearchDataLoading, commentSearchDataError, searchCommentOperations };
+  return { commentSearchData, commentSearchDataLoading, commentSearchDataError };
 };
 
 export default useCommentSearch;

@@ -18,3 +18,4 @@ export const numToHighLow = (value: number) => {
 
   return {low: long.low, high: long.high};
 };
+

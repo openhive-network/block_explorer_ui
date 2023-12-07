@@ -1,4 +1,4 @@
-import React, { use, useEffect, useState } from "react";
+import React, { use, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { Loader2 } from "lucide-react";
 import { config } from "@/Config";
@@ -24,14 +24,16 @@ const Comments: React.FC = () => {
     filters: number[];
   }>({ page: 1, filters: [] });
   const [initialSearch, setInitialSearch] = useState(false);
-  const commentSearch = useCommentSearch();
+  const [commentSearchProps, setCommentSearchProps] = useState<Explorer.CommentSearchProps | undefined>(undefined);
   const [previousCommentSearchProps, setPreviousCommentSearchProps] = useState<
-    Explorer.CommentSearchProps | undefined
+  Explorer.CommentSearchProps | undefined
   >(undefined);
   const router = useRouter();
-
+  
+  const commentSearch = useCommentSearch(commentSearchProps);
   const { accountName, permlink, fromBlock, toBlock, page, filters } =
-    searchParams;
+  searchParams;
+  const commentSearchRef = useRef(commentSearch);
 
   const operationsTypes =
     useOperationTypes().operationsTypes?.filter((operation) =>
@@ -48,7 +50,7 @@ const Comments: React.FC = () => {
         toBlock: params.toBlock,
         operations: !!params.filters.length ? params.filters : undefined,
       };
-      commentSearch.searchCommentOperations(commentSearchProps);
+      setCommentSearchProps(commentSearchProps);
       setPreviousCommentSearchProps(commentSearchProps);
       let urlParams = searchParams;
       (Object.keys(searchParams) as (keyof typeof searchParams)[]).forEach(
@@ -68,7 +70,7 @@ const Comments: React.FC = () => {
         ...previousCommentSearchProps,
         pageNumber: newPageNum,
       };
-      commentSearch.searchCommentOperations(newSearchProps);
+      setCommentSearchProps(newSearchProps);
       setSearchParams({ ...searchParams, page: newPageNum });
       router.replace({ query: { ...router.query, page: newPageNum } });
     }

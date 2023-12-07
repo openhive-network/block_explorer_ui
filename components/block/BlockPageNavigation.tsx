@@ -7,11 +7,12 @@ import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
 import DateTimePicker from "react-datetime-picker";
 import Hive from "@/types/Hive";
-import fetchingService from "@/services/FetchingService";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
+import useBlockByTime from "@/api/common/useBlockByTime";
+import moment from "moment";
 
 interface BlockPageNavigationProps {
   blockNumber: number;
@@ -42,6 +43,8 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   const [blockDate, setBlockDate] = useState(
     new Date(timeStamp.toLocaleDateString("en-US"))
   );
+
+  const {checkBlockByTime} = useBlockByTime();
 
   const datePickerRef = useRef<HTMLDivElement>(null); 
 
@@ -90,9 +93,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   };
 
   const handleGoToBlockByTime = async () => {
-    const blockByTime = await fetchingService.getBlockByTime(
-      new Date(blockDate.toUTCString())
-    );
+    const blockByTime = await checkBlockByTime(moment(blockDate).utc().toDate());
     if (blockByTime) {
       handleBlockChange(blockByTime.toString());
     }
