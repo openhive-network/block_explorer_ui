@@ -12,6 +12,7 @@ import { Button } from "../ui/button";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import useBlockByTime from "@/api/common/useBlockByTime";
+import moment from "moment";
 
 interface BlockPageNavigationProps {
   blockNumber: number;
@@ -92,7 +93,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   };
 
   const handleGoToBlockByTime = async () => {
-    const blockByTime = await checkBlockByTime(new Date(blockDate.toUTCString()));
+    const blockByTime = await checkBlockByTime(moment(blockDate).utc().toDate());
     if (blockByTime) {
       handleBlockChange(blockByTime.toString());
     }
