@@ -17,12 +17,9 @@ const useBlockSearch = (blockSearchProps?: Explorer.BlockSearchProps) => {
   });
 
   const fetchBlocksNumbers = async (blockSearchProps: Explorer.BlockSearchProps | undefined) => {
-    if (blockSearchProps) {
-      const foundBlocks = await fetchingService.getBlockByOp(blockSearchProps);
-      return foundBlocks.map((foundBlock) => foundBlock.block_num);
-    } else {
-      return await null;
-    }
+    if (!blockSearchProps) return null;
+    const foundBlocks = await fetchingService.getBlockByOp(blockSearchProps);
+    return foundBlocks.map((foundBlock) => foundBlock.block_num);
   }
 
   return { blockSearchData, blockSearchDataLoading, blockSearchDataError, refetch };

@@ -17,11 +17,8 @@ const useCommentSearch = (commentSearchProps: Explorer.CommentSearchProps | unde
   });
 
   const fetchCommentOperations = async (commentSearchProps: Explorer.CommentSearchProps | undefined) => {
-    if (commentSearchProps) {
-      return await fetchingService.getCommentOperation(commentSearchProps);
-    } else {
-      return await null;
-    }
+    if (!commentSearchProps) return null;
+    return await fetchingService.getCommentOperation(commentSearchProps);
   }
 
   return { commentSearchData, commentSearchDataLoading, commentSearchDataError, refetch };

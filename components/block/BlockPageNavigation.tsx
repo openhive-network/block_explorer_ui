@@ -43,7 +43,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
     new Date(timeStamp.toLocaleDateString("en-US"))
   );
 
-  const blockByTimeHook = useBlockByTime();
+  const {checkBlockByTime} = useBlockByTime();
 
   const datePickerRef = useRef<HTMLDivElement>(null); 
 
@@ -92,7 +92,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   };
 
   const handleGoToBlockByTime = async () => {
-    const blockByTime = await blockByTimeHook.checkBlockByTime(new Date(blockDate.toUTCString()));
+    const blockByTime = await checkBlockByTime(new Date(blockDate.toUTCString()));
     if (blockByTime) {
       handleBlockChange(blockByTime.toString());
     }

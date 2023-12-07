@@ -4,10 +4,8 @@ import Explorer from "@/types/Explorer";
 
 const useBlockByTime = () => {
 
-  const checkBlockByTime = async (date?: Date) => {
-    if (date) {
+  const checkBlockByTime = async (date: Date) => {
       return await fetchingService.getBlockByTime(date);
-    }
   }
 
   return { checkBlockByTime };

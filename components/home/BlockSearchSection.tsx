@@ -90,7 +90,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
   const [requestFromBlock, setRequestFromBlock] = useState<number | undefined>(undefined);
   const [requestToBlock, setRequestToBlock] = useState<number | undefined>(undefined);
   
-  const operationsTypes = useOperationTypes().operationsTypes || [];
+  const {operationsTypes} = useOperationTypes() || [];
   const commentSearch = useCommentSearch(commentSearchProps);
   const blockSearch = useBlockSearch(blockSearchProps);
   const operationKeysHook = useOperationKeys();
@@ -175,7 +175,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
     const {payloadFromBlock, payloadToBlock, payloadStartDate, payloadEndDate } = await getRangesValues();
     const blockSearchProps: Explorer.BlockSearchProps = {
       accountName,
-      operations: selectedOperationTypes.length ? selectedOperationTypes : operationsTypes.map((opType) => opType.op_type_id),
+      operations: selectedOperationTypes.length ? selectedOperationTypes : operationsTypes?.map((opType) => opType.op_type_id),
       fromBlock: payloadFromBlock,
       toBlock: payloadToBlock,
       startDate: payloadStartDate,
@@ -215,7 +215,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
   }
 
   const getOperationButtonTitle = (): string => {
-    if (selectedOperationTypes && selectedOperationTypes.length === 1) return operationsTypes[selectedOperationTypes[0]].operation_name
+    if (selectedOperationTypes && selectedOperationTypes.length === 1) return operationsTypes?.[selectedOperationTypes[0]].operation_name || ""
     if (selectedOperationTypes && selectedOperationTypes.length > 1) return `${selectedOperationTypes.length} operations`
     return "Operations"
   }
@@ -519,7 +519,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
             <AccordionContent>
               <div className="flex items-center m-2">
                 <OperationTypesDialog
-                  operationTypes={operationsTypes.filter((opType) =>
+                  operationTypes={operationsTypes?.filter((opType) =>
                     config.commentOperationsTypeIds.includes(opType.op_type_id)
                   )}
                   selectedOperations={selectedCommentSearchOperationTypes}
