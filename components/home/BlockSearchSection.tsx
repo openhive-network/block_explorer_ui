@@ -5,7 +5,7 @@ import OperationTypesDialog from "@/components/OperationTypesDialog";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { Select, SelectContent, SelectTrigger, SelectItem } from "../ui/select";
-import { Loader2 } from "lucide-react";
+import { Loader2, HelpCircle } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import DetailedOperationCard from "../DetailedOperationCard";
 import { config } from "@/Config";
@@ -17,6 +17,7 @@ import useOperationTypes from "@/api/common/useOperationsTypes";
 import useBlockByTime from "@/api/common/useBlockByTime";
 import useSearchRanges from "../searchRanges/useSearchRanges";
 import SearchRanges from "../searchRanges/SearchRanges";
+import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "../ui/tooltip";
 
 
 interface BlockSearchSectionProps {};
@@ -150,16 +151,8 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
 
   const getOperationButtonTitle = (): string => {
     if (selectedOperationTypes && selectedOperationTypes.length === 1) return operationsTypes?.[selectedOperationTypes[0]].operation_name || ""
-    if (selectedOperationTypes && selectedOperationTypes.length > 1) return `${selectedOperationTypes.length} operations`
-    return "Operations"
-  }
-
-  const setNumericValue = (value: number, fieldSetter: Function) => {
-    if (value === 0) {
-      fieldSetter(undefined);
-    } else {
-      fieldSetter(value);
-    }
+    if (selectedOperationTypes && selectedOperationTypes.length > 1) return `${selectedOperationTypes.length} operation types`
+    return "Operation types"
   }
 
   const getCommentPageLink = () => {
@@ -190,15 +183,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
           <AccordionItem value="block">
             <AccordionTrigger>Block Search</AccordionTrigger>
             <AccordionContent>
-              <div className="flex items-center m-2">
-                <OperationTypesDialog
-                  operationTypes={operationsTypes}
-                  selectedOperations={selectedOperationTypes}
-                  setSelectedOperations={changeSelectedOperationTypes}
-                  colorClass="bg-gray-500"
-                  triggerTitle={getOperationButtonTitle()}
-                />
-              </div>
+              <p className="ml-2">Find block numbers for given properties.</p>
               <div className="flex flex-col m-2">
                 <label className="mx-2">Account name</label>
                 <Input
@@ -233,8 +218,29 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                 setLastBlocksValue={setLastBlocksValue}
                 setLastTimeUnitValue={setLastTimeUnitValue}
               />
+              <div className="flex items-center m-2">
+                <OperationTypesDialog
+                  operationTypes={operationsTypes}
+                  selectedOperations={selectedOperationTypes}
+                  setSelectedOperations={changeSelectedOperationTypes}
+                  colorClass="bg-gray-500"
+                  triggerTitle={getOperationButtonTitle()}
+                />
+              </div>
               <div className="flex flex-col  m-2">
-                <label className="mx-2">Key</label>
+                <div className="flex mb-">
+                  <label className="mx-2">Property</label>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <HelpCircle />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <div className="bg-white text-black p-2">Pick property from body of operation and its value. You can use that only for single operation.</div>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
                 <div className="flex">
                   <Select onValueChange={onSelect}>
                     <SelectTrigger
@@ -325,12 +331,14 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
           <AccordionItem value="account">
             <AccordionTrigger>Account search</AccordionTrigger>
             <AccordionContent>
+              <p className="ml-2">{"Find account's operations for given properties."}</p>
               <div className="flex m-2 flex-col">Coming soon</div>
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="comment">
             <AccordionTrigger>Comment search</AccordionTrigger>
             <AccordionContent>
+              <p className="ml-2">Find all operations related to comments of given account or for exact permlink.</p>
               <div className="flex items-center m-2">
                 <OperationTypesDialog
                   operationTypes={operationsTypes?.filter((opType) =>
@@ -343,7 +351,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                 />
               </div>
               <div className="flex flex-col m-2">
-                <label className="mx-2">Account name</label>
+                <label className="mx-2">Account name *</label>
                 <Input
                   className="w-1/2"
                   type="text"
