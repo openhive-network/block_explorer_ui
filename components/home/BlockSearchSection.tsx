@@ -1,15 +1,11 @@
 import Explorer from "@/types/Explorer"
-import Hive from "@/types/Hive";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Input } from "../ui/input";
-import { Dialog } from "../ui/dialog";
-import { DialogTrigger } from "@radix-ui/react-dialog";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { Select, SelectContent, SelectTrigger, SelectItem } from "../ui/select";
-import { Loader2, X } from "lucide-react";
-import SingleOperationTypeDialog from "../SingleOperationTypeDialog";
+import { Loader2 } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import DetailedOperationCard from "../DetailedOperationCard";
 import { config } from "@/Config";
@@ -20,12 +16,11 @@ import useOperationKeys from "@/api/homePage/useOperationKeys";
 import useOperationTypes from "@/api/common/useOperationsTypes";
 import useHeadBlockNumber from "@/api/common/useHeadBlockNum";
 import DateTimePicker from "react-datetime-picker";
-import { substractFromDate } from "@/lib/utils";
 import "react-datetime-picker/dist/DateTimePicker.css";
 import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
 import useBlockByTime from "@/api/common/useBlockByTime";
-import { operation } from "@hive/wax";
+import moment from "moment";
 
 
 interface BlockSearchSectionProps {};
@@ -128,7 +123,8 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
       payloadFromBlock = Number(currentHeadBlockNumber) - lastBlocksValue;
     }
     if (lastTimeUnitValue && rangeSelectKey === "lastTime") {
-      payloadStartDate = substractFromDate(new Date(), lastTimeUnitValue, timeUnitSelectKey);
+      const test = timeUnitSelectKey as "days" | "weeks" | "months";
+      payloadStartDate = moment().subtract(lastTimeUnitValue, test).milliseconds(0).toDate();
     }
     return {
       payloadFromBlock, 
