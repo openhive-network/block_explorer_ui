@@ -7,10 +7,9 @@ const useBlockSearch = (blockSearchProps?: Explorer.BlockSearchProps) => {
   const {
     data: blockSearchData,
     isFetching: blockSearchDataLoading,
-    isError: blockSearchDataError,
-    refetch
+    isError: blockSearchDataError
   } = useQuery({
-    queryKey: ["blockSearch"],
+    queryKey: ["blockSearch", blockSearchProps],
     queryFn: () => fetchBlocksNumbers(blockSearchProps),
     refetchOnWindowFocus: false,
   });
@@ -21,7 +20,7 @@ const useBlockSearch = (blockSearchProps?: Explorer.BlockSearchProps) => {
     return foundBlocks.map((foundBlock) => foundBlock.block_num);
   }
 
-  return { blockSearchData, blockSearchDataLoading, blockSearchDataError, refetch };
+  return { blockSearchData, blockSearchDataLoading, blockSearchDataError };
 };
 
 export default useBlockSearch;

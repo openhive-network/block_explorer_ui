@@ -93,9 +93,6 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
   const {checkTemporaryHeadBlockNumber} = useHeadBlockNumber();
   const {checkBlockByTime} = useBlockByTime();
 
-  const blockSearchRef = useRef(blockSearch);
-  const commentSearchRef = useRef(commentSearch);
-
   const setKeysForProperty = (index: number | null) => {
     if (index !== null && operationKeysData?.[index]) {
       setSelectedKeys(operationKeysData[index]);
@@ -174,7 +171,6 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
       }
     }
     setBlockSearchProps(blockSearchProps);
-    blockSearch.refetch();
     setLastSearchKey("block");
   }
 
@@ -182,7 +178,6 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
     if (previousCommentSearchProps?.accountName) {
       const newSearchProps: Explorer.CommentSearchProps = {...previousCommentSearchProps, pageNumber: newPageNum};
       setCommentSearchProps(newSearchProps);
-      commentSearch.refetch();
       setCommentPaginationPage(newPageNum);
     }
   }
@@ -229,11 +224,6 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
     }
     return `comments?${linkAccountName}${linkPermlink}${linkFromBlock}${linkToBlock}${linkFilters}`;
   }
-
-  useEffect(() => {
-    blockSearchRef.current.refetch();
-    commentSearchRef.current.refetch();
-  }, [blockSearchProps, commentSearchProps]);
 
   const renderRangeSection = () => {
     return (

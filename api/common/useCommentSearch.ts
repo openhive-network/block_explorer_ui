@@ -7,10 +7,9 @@ const useCommentSearch = (commentSearchProps: Explorer.CommentSearchProps | unde
   const {
     data: commentSearchData,
     isFetching: commentSearchDataLoading,
-    isError: commentSearchDataError,
-    refetch
+    isError: commentSearchDataError
   } = useQuery({
-    queryKey: ["commentSearch"],
+    queryKey: ["commentSearch", commentSearchProps],
     queryFn: () => fetchCommentOperations(commentSearchProps),
     refetchOnWindowFocus: false,
   });
@@ -20,7 +19,7 @@ const useCommentSearch = (commentSearchProps: Explorer.CommentSearchProps | unde
     return await fetchingService.getCommentOperation(commentSearchProps);
   }
 
-  return { commentSearchData, commentSearchDataLoading, commentSearchDataError, refetch };
+  return { commentSearchData, commentSearchDataLoading, commentSearchDataError };
 };
 
 export default useCommentSearch;
