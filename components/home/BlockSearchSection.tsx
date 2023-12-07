@@ -84,30 +84,21 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
   const [commentSearchProps, setCommentSearchProps] = useState<Explorer.CommentSearchProps | undefined>(undefined);
   const [requestFromBlock, setRequestFromBlock] = useState<number | undefined>(undefined);
   const [requestToBlock, setRequestToBlock] = useState<number | undefined>(undefined);
+  const [singleOperationTypeId, setSingleOperationTypeId] = useState<number | undefined>(undefined);
   
   const {operationsTypes} = useOperationTypes() || [];
   const commentSearch = useCommentSearch(commentSearchProps);
   const blockSearch = useBlockSearch(blockSearchProps);
-  const operationKeysHook = useOperationKeys();
-  const headBlockHook = useHeadBlockNumber();
-  const blockByTimeHook = useBlockByTime();
+  const {operationKeysData} = useOperationKeys(singleOperationTypeId);
+  const {checkTemporaryHeadBlockNumber} = useHeadBlockNumber();
+  const {checkBlockByTime} = useBlockByTime();
 
   const blockSearchRef = useRef(blockSearch);
   const commentSearchRef = useRef(commentSearch);
 
-  const getOperationKeys = async (
-    operationTypeId: number | null
-  ) => {
-    if (operationTypeId !== null) {
-      operationKeysHook.getOperationKeys(operationTypeId);
-    } else {
-      operationKeysHook.getOperationKeys(undefined);
-    }
-  };
-
   const setKeysForProperty = (index: number | null) => {
-    if (index !== null && operationKeysHook.operationKeysData?.[index]) {
-      setSelectedKeys(operationKeysHook.operationKeysData[index]);
+    if (index !== null && operationKeysData?.[index]) {
+      setSelectedKeys(operationKeysData[index]);
     } else {
       setSelectedKeys(undefined);
     }
@@ -119,7 +110,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
     let payloadStartDate: Date | undefined = rangeSelectKey === "timeRange" ? startDate : undefined;
     let payloadEndDate: Date | undefined = rangeSelectKey === "timeRange" ? endDate : undefined;
     if (lastBlocksValue && rangeSelectKey === "lastBlocks") {
-      const currentHeadBlockNumber = await headBlockHook.checkTemporaryHeadBlockNumber();
+      const currentHeadBlockNumber = await checkTemporaryHeadBlockNumber();
       payloadFromBlock = Number(currentHeadBlockNumber) - lastBlocksValue;
     }
     if (lastTimeUnitValue && rangeSelectKey === "lastTime") {
@@ -158,11 +149,11 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
       setRequestToBlock(payloadToBlock);
     }
     if (payloadStartDate) {
-      const blockByTime = await blockByTimeHook.checkBlockByTime(payloadStartDate);
+      const blockByTime = await checkBlockByTime(payloadStartDate);
       setRequestFromBlock(blockByTime);
     }
     if (payloadEndDate) {
-      const blockByTime = await blockByTimeHook.checkBlockByTime(payloadEndDate);
+      const blockByTime = await checkBlockByTime(payloadEndDate);
       setRequestToBlock(blockByTime);
     }
   }
@@ -198,10 +189,10 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
 
   const changeSelectedOperationTypes = (operationTypesIds: number[]) => {
     if (operationTypesIds.length === 1) {
-      getOperationKeys(operationTypesIds[0]);
+      setSingleOperationTypeId(operationTypesIds[0])
     } else {
       setFieldContent(undefined);
-      getOperationKeys(null);
+      setSingleOperationTypeId(undefined);
     }
     setSelectedOperationTypes(operationTypesIds);
   }
@@ -445,7 +436,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                       )}
                     </SelectTrigger>
                     <SelectContent className="bg-white text-black rounded-[2px] max-h-[31rem] overflow-y-scroll">
-                      {operationKeysHook.operationKeysData?.map((keys, index) => (
+                      {operationKeysData?.map((keys, index) => (
                         <SelectItem
                           className="m-1 text-center"
                           key={index}

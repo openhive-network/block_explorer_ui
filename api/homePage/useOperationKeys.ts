@@ -1,18 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
-import Explorer from "@/types/Explorer";
 import { useState } from "react";
 
-const useOperationKeys = () => {
-  const [operationTypeId, setOperationTypeId] = useState<number | undefined>(undefined);
-
+const useOperationKeys = (operationTypeId: number | undefined) => {
   const {
     data: operationKeysData,
     isFetching: operationKeysDataLoading,
-    isError: operationKeysDataError,
-    refetch
+    isError: operationKeysDataError
   } = useQuery({
-    queryKey: ["operationKeys"],
+    queryKey: ["operationKeys", operationTypeId],
     queryFn: () => fetchOperationKeys(operationTypeId),
     refetchOnWindowFocus: false,
     enabled: !!operationTypeId
@@ -26,11 +22,7 @@ const useOperationKeys = () => {
     }
   }
 
-  const getOperationKeys = async (newOperationTypeId: number | undefined) => {
-    await setOperationTypeId(newOperationTypeId);
-  }
-
-  return { operationKeysData, operationKeysDataLoading, operationKeysDataError, getOperationKeys };
+  return { operationKeysData, operationKeysDataLoading, operationKeysDataError };
 };
 
 export default useOperationKeys;
