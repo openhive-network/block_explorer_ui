@@ -1,0 +1,97 @@
+import { useState } from "react";
+import { config } from "@/Config"; 
+import useHeadBlockNumber from "@/api/common/useHeadBlockNum";
+import moment from "moment";
+import Explorer from "@/types/Explorer";
+
+const useSearchRanges = () => {
+  const rangeSelectOptions: Explorer.SelectOption[] = [
+    {
+      name: "Last blocks",
+      key: "lastBlocks"
+    },
+    {
+      name: "Last days/weeks/months",
+      key: "lastTime"
+    },
+    {
+      name: "Block range",
+      key: "blockRange"
+    },
+    {
+      name: "Time range",
+      key: "timeRange"
+    }
+  ];
+  
+  const timeSelectOptions: Explorer.SelectOption[] = [
+    {
+      name: "Days",
+      key: "days"
+    },
+    {
+      name: "Weeks",
+      key: "weeks"
+    },
+    {
+      name: "Months",
+      key: "months"
+    }
+  ]
+
+  const [fromBlock, setFromBlock] = useState<number | undefined>(undefined);
+  const [toBlock, setToBlock] = useState<number | undefined>(undefined);
+  const [startDate, setStartDate] = useState<Date | undefined>(new Date(config.firstBlockTime));
+  const [endDate, setEndDate] = useState<Date | undefined>(new Date (Date.now()));
+  const [lastBlocksValue, setLastBlocksValue] = useState<number | undefined>(undefined);
+  const [lastTimeUnitValue, setLastTimeUnitValue] = useState<number | undefined>(undefined);
+  const [rangeSelectKey, setRangeSelectKey] = useState<string>("lastBlocks");
+  const [timeUnitSelectKey, setTimeUnitSelectKey] = useState<string>("days");
+
+  const {checkTemporaryHeadBlockNumber} = useHeadBlockNumber();
+
+  const getRangesValues = async () => {
+    let payloadFromBlock: number | undefined = rangeSelectKey === "blockRange" ? fromBlock : undefined;
+    let payloadToBlock: number | undefined = rangeSelectKey === "blockRange" ? toBlock : undefined;
+    let payloadStartDate: Date | undefined = rangeSelectKey === "timeRange" ? startDate : undefined;
+    let payloadEndDate: Date | undefined = rangeSelectKey === "timeRange" ? endDate : undefined;
+    if (lastBlocksValue && rangeSelectKey === "lastBlocks") {
+      const currentHeadBlockNumber = await checkTemporaryHeadBlockNumber();
+      payloadFromBlock = Number(currentHeadBlockNumber) - lastBlocksValue;
+    }
+    if (lastTimeUnitValue && rangeSelectKey === "lastTime") {
+      const typedTimeUnit = timeUnitSelectKey as "days" | "weeks" | "months";
+      payloadStartDate = moment().subtract(lastTimeUnitValue, typedTimeUnit).milliseconds(0).toDate();
+    }
+    return {
+      payloadFromBlock, 
+      payloadToBlock,
+      payloadStartDate,
+      payloadEndDate
+    }
+  }
+
+  return {
+    rangeSelectOptions,
+    timeSelectOptions,
+    fromBlock,
+    toBlock,
+    startDate,
+    endDate,
+    lastBlocksValue,
+    lastTimeUnitValue,
+    rangeSelectKey,
+    timeUnitSelectKey,
+    setFromBlock,
+    setToBlock,
+    setStartDate,
+    setEndDate,
+    setLastBlocksValue,
+    setLastTimeUnitValue,
+    setRangeSelectKey,
+    setTimeUnitSelectKey,
+    getRangesValues
+  }
+}
+
+export default useSearchRanges;

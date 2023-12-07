@@ -1,5 +1,5 @@
 import Explorer from "@/types/Explorer"
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { Input } from "../ui/input";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 import { Button } from "../ui/button";
@@ -14,61 +14,16 @@ import useCommentSearch from "@/api/common/useCommentSearch";
 import useBlockSearch from "@/api/homePage/useBlockSearch";
 import useOperationKeys from "@/api/homePage/useOperationKeys";
 import useOperationTypes from "@/api/common/useOperationsTypes";
-import useHeadBlockNumber from "@/api/common/useHeadBlockNum";
-import DateTimePicker from "react-datetime-picker";
-import "react-datetime-picker/dist/DateTimePicker.css";
-import "react-calendar/dist/Calendar.css";
-import "react-clock/dist/Clock.css";
 import useBlockByTime from "@/api/common/useBlockByTime";
-import moment from "moment";
+import useSearchRanges from "../searchRanges/useSearchRanges";
+import SearchRanges from "../searchRanges/SearchRanges";
 
 
 interface BlockSearchSectionProps {};
 
-const rangeSelectOptions = [
-  {
-    name: "Last blocks",
-    key: "lastBlocks"
-  },
-  {
-    name: "Last days/weeks/months",
-    key: "lastTime"
-  },
-  {
-    name: "Block range",
-    key: "blockRange"
-  },
-  {
-    name: "Time range",
-    key: "timeRange"
-  }
-];
-
-const timeSelectOptions = [
-  {
-    name: "Days",
-    key: "days"
-  },
-  {
-    name: "Weeks",
-    key: "weeks"
-  },
-  {
-    name: "Months",
-    key: "months"
-  }
-]
-
-
 const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
 
   const [accountName, setAccountName] = useState<string | undefined>(undefined);
-  const [fromBlock, setFromBlock] = useState<number | undefined>(undefined);
-  const [toBlock, setToBlock] = useState<number | undefined>(undefined);
-  const [startDate, setStartDate] = useState<Date | undefined>(new Date(config.firstBlockTime));
-  const [endDate, setEndDate] = useState<Date | undefined>(new Date (Date.now()));
-  const [lastBlocksValue, setLastBlocksValue] = useState<number | undefined>(undefined);
-  const [lastTimeUnitValue, setLastTimeUnitValue] = useState<number | undefined>(undefined);
   const [selectedOperationTypes, setSelectedOperationTypes] = useState<number[]>([]);
   const [selectedCommentSearchOperationTypes, setSelectedCommentSearchOperationTypes] = useState<number[]>([]);
   const [fieldContent, setFieldContent] = useState<string | undefined>(undefined);
@@ -78,47 +33,44 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
   const [commentPaginationPage, setCommentPaginationPage] = useState<number>(1);
   const [selectedKeys, setSelectedKeys] = useState<string[] | undefined>(undefined);
   const [lastSearchKey, setLastSearchKey] = useState<"block" | "account" | "comment" | undefined>(undefined);
-  const [rangeSelectKey, setRangeSelectKey] = useState<string>("lastBlocks");
-  const [timeUnitSelectKey, setTimeUnitSelectKey] = useState<string>("days");
   const [blockSearchProps, setBlockSearchProps] = useState<Explorer.BlockSearchProps | undefined>(undefined);
   const [commentSearchProps, setCommentSearchProps] = useState<Explorer.CommentSearchProps | undefined>(undefined);
   const [requestFromBlock, setRequestFromBlock] = useState<number | undefined>(undefined);
   const [requestToBlock, setRequestToBlock] = useState<number | undefined>(undefined);
   const [singleOperationTypeId, setSingleOperationTypeId] = useState<number | undefined>(undefined);
-  
   const {operationsTypes} = useOperationTypes() || [];
   const commentSearch = useCommentSearch(commentSearchProps);
   const blockSearch = useBlockSearch(blockSearchProps);
   const {operationKeysData} = useOperationKeys(singleOperationTypeId);
-  const {checkTemporaryHeadBlockNumber} = useHeadBlockNumber();
   const {checkBlockByTime} = useBlockByTime();
+
+  const {
+    rangeSelectOptions,
+    timeSelectOptions,
+    fromBlock,
+    toBlock,
+    startDate,
+    endDate,
+    lastBlocksValue,
+    lastTimeUnitValue,
+    rangeSelectKey,
+    timeUnitSelectKey,
+    setFromBlock,
+    setToBlock,
+    setStartDate,
+    setEndDate,
+    setLastBlocksValue,
+    setLastTimeUnitValue,
+    setRangeSelectKey,
+    setTimeUnitSelectKey,
+    getRangesValues
+  } = useSearchRanges();
 
   const setKeysForProperty = (index: number | null) => {
     if (index !== null && operationKeysData?.[index]) {
       setSelectedKeys(operationKeysData[index]);
     } else {
       setSelectedKeys(undefined);
-    }
-  }
-
-  const getRangesValues = async () => {
-    let payloadFromBlock: number | undefined = rangeSelectKey === "blockRange" ? fromBlock : undefined;
-    let payloadToBlock: number | undefined = rangeSelectKey === "blockRange" ? toBlock : undefined;
-    let payloadStartDate: Date | undefined = rangeSelectKey === "timeRange" ? startDate : undefined;
-    let payloadEndDate: Date | undefined = rangeSelectKey === "timeRange" ? endDate : undefined;
-    if (lastBlocksValue && rangeSelectKey === "lastBlocks") {
-      const currentHeadBlockNumber = await checkTemporaryHeadBlockNumber();
-      payloadFromBlock = Number(currentHeadBlockNumber) - lastBlocksValue;
-    }
-    if (lastTimeUnitValue && rangeSelectKey === "lastTime") {
-      const test = timeUnitSelectKey as "days" | "weeks" | "months";
-      payloadStartDate = moment().subtract(lastTimeUnitValue, test).milliseconds(0).toDate();
-    }
-    return {
-      payloadFromBlock, 
-      payloadToBlock,
-      payloadStartDate,
-      payloadEndDate
     }
   }
 
@@ -225,140 +177,6 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
     return `comments?${linkAccountName}${linkPermlink}${linkFromBlock}${linkToBlock}${linkFilters}`;
   }
 
-  const renderRangeSection = () => {
-    return (
-      <div className="m-2 my-4 border-y border-solid border-gray-600">
-        <Select onValueChange={setRangeSelectKey}>
-          <SelectTrigger className="mt-2">
-            {rangeSelectOptions.find((selectOption) => selectOption.key === rangeSelectKey)?.name}
-          </SelectTrigger>
-          <SelectContent className="bg-white text-black rounded-[2px] max-h-[31rem]">
-            {rangeSelectOptions.map((selectOption, index) => (
-              <SelectItem                          
-                className="m-1 text-center"
-                key={index}
-                value={selectOption.key}
-                defaultChecked={false}
-              >
-                {selectOption.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {
-          rangeSelectKey === "lastBlocks" &&
-            <div className="flex items-center  my-2">
-              <div className="flex flex-col w-full">
-                <Input
-                  type="number"
-                  value={lastBlocksValue || ""}
-                  onChange={(e) =>
-                    setNumericValue(Number(e.target.value), setLastBlocksValue)
-                  }
-                  placeholder={"Last"}
-                />
-              </div>
-            </div>
-        }
-        {
-          rangeSelectKey === "lastTime" &&
-          <>
-            <div className="flex items-center justify-center  my-2">
-              <div className="flex flex-col w-full ">
-                <Input
-                  type="number"
-                  value={lastTimeUnitValue || ""}
-                  onChange={(e) =>
-                    setNumericValue(Number(e.target.value), setLastTimeUnitValue)
-                  }
-                  placeholder={"Last"}
-                />
-              </div>
-              <Select onValueChange={setTimeUnitSelectKey}>
-                <SelectTrigger>
-                  {timeSelectOptions.find((selectOption) => selectOption.key === timeUnitSelectKey)?.name}
-                </SelectTrigger>
-                <SelectContent className="bg-white text-black rounded-[2px] max-h-[31rem]">
-                  {timeSelectOptions.map((selectOption, index) => (
-                    <SelectItem                          
-                      className="m-1 text-center"
-                      key={index}
-                      value={selectOption.key}
-                      defaultChecked={false}
-                    >
-                      {selectOption.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </>
-        }
-        {
-          rangeSelectKey === "blockRange" &&
-            <div className="flex items-center  my-2">
-              <div className="flex flex-col w-full">
-                <label className="mx-2">From block</label>
-                <Input
-                  type="number"
-                  value={fromBlock || ""}
-                  onChange={(e) =>
-                    setNumericValue(Number(e.target.value), setFromBlock)
-                  }
-                  placeholder="1"
-                />
-              </div>
-              <div className="flex flex-col w-full">
-                <label className="mx-2">To block</label>
-                <Input
-                  type="number"
-                  value={toBlock || ""}
-                  onChange={(e) =>
-                    setNumericValue(Number(e.target.value), setToBlock)
-                  }
-                  placeholder={"Headblock"}
-                />
-              </div>
-            </div>
-        }
-        {
-          rangeSelectKey === "timeRange" &&
-            <div className="flex items-center  my-2">
-              <div className="flex flex-col w-full">
-                <label className="mx-2">From date</label>
-                <DateTimePicker 
-                  value={startDate} 
-                  onChange={(date) => setStartDate(date!)}
-                  className="text-white  border"
-                  calendarClassName="text-gray-800"
-                  format="yyyy/MM/dd HH:mm:ss"
-                  clearIcon={null}
-                  calendarIcon={null}
-                  disableClock
-                  showLeadingZeros={false}
-                />
-              </div>
-              <div className="flex flex-col w-full">
-                <label className="mx-2">To date</label>
-                <DateTimePicker 
-                  value={endDate} 
-                  onChange={(date) => setEndDate(date!)}
-                  className="text-white ml-2 border"
-                  calendarClassName="text-gray-800"
-                  format="yyyy/MM/dd HH:mm:ss"
-                  clearIcon={null}
-                  calendarIcon={null}
-                  disableClock
-                  showLeadingZeros={false}
-                />
-              </div>
-            </div>
-        }
-
-      </div>
-    )
-  }
-
   return (
     <div className="mt-6 col-start-1 col-span-4 md:col-span-1 mb-6 md:mb-0">
       <div className=' bg-explorer-dark-gray p-2 rounded-["6px] h-fit rounded'>
@@ -395,7 +213,26 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                   placeholder="---"
                 />
               </div>
-              {renderRangeSection()}
+              <SearchRanges 
+                rangeSelectOptions={rangeSelectOptions} 
+                timeSelectOptions={timeSelectOptions} 
+                rangeSelectKey={rangeSelectKey} 
+                timeUnitSelectKey={timeUnitSelectKey} 
+                toBlock={toBlock} 
+                fromBlock={fromBlock} 
+                startDate={startDate} 
+                endDate={endDate} 
+                lastBlocksValue={lastBlocksValue} 
+                lastTimeUnitValue={lastTimeUnitValue} 
+                setRangeSelectKey={setRangeSelectKey}
+                setTimeUnitSelectKey={setTimeUnitSelectKey}
+                setFromBlock={setFromBlock}
+                setToBlock={setToBlock}
+                setStartDate={setStartDate}
+                setEndDate={setEndDate}
+                setLastBlocksValue={setLastBlocksValue}
+                setLastTimeUnitValue={setLastTimeUnitValue}
+              />
               <div className="flex flex-col  m-2">
                 <label className="mx-2">Key</label>
                 <div className="flex">
@@ -533,7 +370,26 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                   placeholder="---"
                 />
               </div>
-              {renderRangeSection()}
+              <SearchRanges 
+                rangeSelectOptions={rangeSelectOptions} 
+                timeSelectOptions={timeSelectOptions} 
+                rangeSelectKey={rangeSelectKey} 
+                timeUnitSelectKey={timeUnitSelectKey} 
+                toBlock={toBlock} 
+                fromBlock={fromBlock} 
+                startDate={startDate} 
+                endDate={endDate} 
+                lastBlocksValue={lastBlocksValue} 
+                lastTimeUnitValue={lastTimeUnitValue} 
+                setRangeSelectKey={setRangeSelectKey}
+                setTimeUnitSelectKey={setTimeUnitSelectKey}
+                setFromBlock={setFromBlock}
+                setToBlock={setToBlock}
+                setStartDate={setStartDate}
+                setEndDate={setEndDate}
+                setLastBlocksValue={setLastBlocksValue}
+                setLastTimeUnitValue={setLastTimeUnitValue}
+              />
               <div className="flex items-center  m-2">
                 <Button
                   className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]"

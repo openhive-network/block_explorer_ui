@@ -60,6 +60,11 @@ declare module Explorer {
     permlink?: string;
     pageNumber?: number;
   }
+
+  interface SelectOption {
+    name: string;
+    key: string;
+  }
 }
 
 export default Explorer;
