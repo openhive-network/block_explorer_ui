@@ -4,6 +4,8 @@ import useHeadBlockNumber from "@/api/common/useHeadBlockNum";
 import moment from "moment";
 import Explorer from "@/types/Explorer";
 
+const DEFAULT_LAST_BLOCK_VALUE = 1000;
+
 const useSearchRanges = () => {
   const rangeSelectOptions: Explorer.SelectOption[] = [
     {
@@ -43,7 +45,7 @@ const useSearchRanges = () => {
   const [toBlock, setToBlock] = useState<number | undefined>(undefined);
   const [startDate, setStartDate] = useState<Date | undefined>(new Date(config.firstBlockTime));
   const [endDate, setEndDate] = useState<Date | undefined>(new Date (Date.now()));
-  const [lastBlocksValue, setLastBlocksValue] = useState<number | undefined>(undefined);
+  const [lastBlocksValue, setLastBlocksValue] = useState<number | undefined>(DEFAULT_LAST_BLOCK_VALUE);
   const [lastTimeUnitValue, setLastTimeUnitValue] = useState<number | undefined>(undefined);
   const [rangeSelectKey, setRangeSelectKey] = useState<string>("lastBlocks");
   const [timeUnitSelectKey, setTimeUnitSelectKey] = useState<string>("days");
