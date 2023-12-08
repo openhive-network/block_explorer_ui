@@ -11,6 +11,7 @@ import JSONView from "@/components/JSONView";
 import useBlockData from "@/api/blockPage/useBlockData";
 import useBlockOperations from "@/api/common/useBlockOperations";
 import useOperationsTypes from "@/api/common/useOperationsTypes";
+import BlockPageOperationCount from "@/components/block/BlockPageOperationCount";
 
 const FILTERS = "filters";
 const SPLIT = "-";
@@ -117,13 +118,16 @@ export default function Block() {
         blockNumber={blockNumber}
         goToBlock={handleGoToBlock}
         timeStamp={blockDate}
-        virtualOperationLength={virtualOperations?.length}
-        nonVirtualOperationLength={nonVirtualOperations?.length}
         setFilters={handleFilterChange}
         operationTypes={operationsTypes || []}
         selectedOperationIds={blockFilters}
         isLoading={loading}
         blockDetails={blockDetails}
+      />
+      <BlockPageOperationCount 
+        operations={blockOperations} 
+        virtualOperationLength={virtualOperations?.length}
+        nonVirtualOperationLength={nonVirtualOperations?.length}
       />
       <div className="fixed top-[calc(100vh-90px)] md:top-[calc(100vh-100px)] w-full flex flex-col items-end px-3 md:px-12">
         <Button

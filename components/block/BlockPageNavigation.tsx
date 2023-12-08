@@ -18,8 +18,6 @@ interface BlockPageNavigationProps {
   blockNumber: number;
   goToBlock: (blockNumber: string) => void;
   timeStamp: Date;
-  virtualOperationLength?: number;
-  nonVirtualOperationLength?: number;
   setFilters: (filters: number[]) => void;
   operationTypes: Hive.OperationPattern[];
   selectedOperationIds: number[];
@@ -31,8 +29,6 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   blockNumber,
   goToBlock,
   timeStamp,
-  virtualOperationLength,
-  nonVirtualOperationLength,
   setFilters,
   operationTypes,
   selectedOperationIds,
@@ -156,22 +152,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
           </div>
         </div>
         <div className="mt-3 mx-auto">
-          <p className="inline-block">
-            Operations : <span>{!isLoading && nonVirtualOperationLength}</span>
-          </p>
-          <p className="ml-4 inline-block">
-            Virtual Operations :{" "}
-            <span>{!isLoading && virtualOperationLength}</span>
-          </p>
-          <p className="ml-4 inline-block">
-            <OperationTypesDialog
-              operationTypes={operationTypes}
-              setSelectedOperations={setFilters}
-              selectedOperations={selectedOperationIds}
-              colorClass="bg-gray-500"
-              triggerTitle={"Operation Filters"}
-            />
-          </p>
+
         </div>
         <div className="flex items-center gap-x-1 mt-3 px-8 md:px-4 w-full justify-center">
           <p>Produced at: </p>
@@ -192,6 +173,15 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
               height={40}
             />
           </Link>
+          <p className="ml-4 inline-block">
+            <OperationTypesDialog
+              operationTypes={operationTypes}
+              setSelectedOperations={setFilters}
+              selectedOperations={selectedOperationIds}
+              colorClass="bg-gray-500"
+              triggerTitle={"Operation Filters"}
+            />
+          </p>
         </div>
         <div className="flex items-center gap-x-4 mt-3 px-8 md:px-4 w-full justify-center flex-wrap text-sm md:text-base">
           <p>
