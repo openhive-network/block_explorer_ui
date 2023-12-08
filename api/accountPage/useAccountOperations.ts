@@ -4,9 +4,9 @@ import Hive from "@/types/Hive";
 
 const useAccountOperations = (
   accountName: string,
-  operationPage: number,
   operationFilters: number[] | undefined,
-  pageSize: number
+  pageSize: number,
+  operationPage?: number,
 ) => {
   const {
     data: accountOperations,
@@ -22,8 +22,8 @@ const useAccountOperations = (
     queryFn: () =>
       fetchingService.getOpsByAccount(
         accountName,
-        operationPage,
         pageSize,
+        operationPage,
         operationFilters
       ),
     refetchOnWindowFocus: false,

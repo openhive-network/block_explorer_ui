@@ -22,7 +22,7 @@ export default function Account() {
 
   const accountNameFromRoute = router.query.accountName as string;
 
-  const [page, setPage] = useState(1);
+  const [page, setPage] = useState<number | undefined>(undefined);
   const [operationFilters, setOperationFilters] = useState<number[]>([]);
   const [isVotersModalOpen, setIsVotersModalOpen] = useState(false);
   const [isVotesHistoryModalOpen, setIsVotesHistoryModalOpen] = useState(false);
@@ -31,9 +31,9 @@ export default function Account() {
   const { accountOperations, isAccountOperationsLoading } =
     useAccountOperations(
       accountNameFromRoute,
-      page,
       operationFilters.length ? operationFilters : undefined,
-      config.standardPaginationSize
+      config.standardPaginationSize,
+      page
     );
 
   const { accountOperationTypes } =
@@ -64,7 +64,7 @@ export default function Account() {
       <div className="bg-explorer-orange items-center fixed grid grid-flow-row-dense grid-cols-3 top-14 md:top-16 right-0 left-0 p-2 z-10">
         <div className="col-span-3 md:col-span-2 md:justify-self-end justify-self-center z-20 max-w-full">
           <CustomPagination
-            currentPage={page}
+            currentPage={page || 1}
             totalCount={accountOperations?.total_operations || 0}
             pageSize={config.standardPaginationSize}
             onPageChange={(page: number) => setPage(page)}
