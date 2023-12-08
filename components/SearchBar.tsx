@@ -1,13 +1,13 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Search, X, CornerDownLeft as Enter } from "lucide-react";
 import { useDebounce, useOnClickOutside } from "@/utils/Hooks";
 import { capitalizeFirst } from "@/utils/StringUtils";
-import fetchingService from "@/services/FetchingService";
 import { Input } from "./ui/input";
 import Hive from "@/types/Hive";
 import { cn } from "@/lib/utils";
+import useInputType from "@/api/common/useInputType";
 
 const getResultTypeHeader = (result: Hive.InputTypeResponse) => {
   switch (result.input_type) {
@@ -72,20 +72,18 @@ const renderSearchData = (
 
 const SearchBar: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [searchData, setSearchData] = useState<Hive.InputTypeResponse | null>(
-    null
-  );
   const [inputFocus, setInputFocus] = useState(false);
   const [selectedResult, setSelectedResult] = useState(0);
   const searchContainerRef = useRef(null);
+  const [searchInputType, setSearchInputType] = useState<string>("");
 
   useOnClickOutside(searchContainerRef, () => setInputFocus(false));
 
   const router = useRouter();
+  const {inputTypeData} = useInputType(searchInputType);
 
   const updateInput = async (value: string) => {
-    const input = await fetchingService.getInputType(value);
-    setSearchData(input);
+    setSearchInputType(value);
   };
 
   const debouncedSearch = useDebounce(
@@ -101,16 +99,15 @@ const SearchBar: React.FC = () => {
   const resetSearchBar = () => {
     setInputFocus(false);
     setSearchTerm("");
-    setSearchData(null);
     setSelectedResult(0);
   };
 
   useEffect(() => {
     const keyDownEvent = (event: KeyboardEvent) => {
-      if (inputFocus && searchData?.input_value?.length) {
+      if (inputFocus && inputTypeData?.input_value?.length) {
         if (event.code === "ArrowDown") {
           setSelectedResult((selectedResult) =>
-            selectedResult < searchData.input_value.length - 1
+            selectedResult < inputTypeData.input_value.length - 1
               ? selectedResult + 1
               : selectedResult
           );
@@ -121,11 +118,11 @@ const SearchBar: React.FC = () => {
           );
         }
         if (event.code === "Enter") {
-          if (searchData.input_type === "account_name_array") {
-            router.push(`/account/${searchData.input_value[selectedResult]}`);
+          if (inputTypeData.input_type === "account_name_array") {
+            router.push(`/account/${inputTypeData.input_value[selectedResult]}`);
           } else {
             router.push(
-              `/${getResultTypeHeader(searchData)}/${searchData.input_value}`
+              `/${getResultTypeHeader(inputTypeData)}/${inputTypeData.input_value}`
             );
           }
           resetSearchBar();
@@ -139,7 +136,7 @@ const SearchBar: React.FC = () => {
       document.removeEventListener("keydown", keyDownEvent);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputFocus, searchData, selectedResult]);
+  }, [inputFocus, inputTypeData, selectedResult]);
 
   return (
     <div className="w-full md:w-1/3 relative" ref={searchContainerRef}>
@@ -158,9 +155,9 @@ const SearchBar: React.FC = () => {
           <Search />
         )}
       </div>
-      {inputFocus && !!searchData?.input_value && (
+      {inputFocus && !!inputTypeData?.input_value && (
         <div className="absolute bg-explorer-dark-gray w-full max-h-96 overflow-y-auto border border-input border-t-0">
-          {renderSearchData(searchData, resetSearchBar, selectedResult)}
+          {renderSearchData(inputTypeData, resetSearchBar, selectedResult)}
         </div>
       )}
     </div>
