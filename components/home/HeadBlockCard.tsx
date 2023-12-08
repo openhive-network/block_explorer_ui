@@ -58,7 +58,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
         headBlockCardData?.headBlockNumber !== blockDetails?.block_num && (
           <div className="flex gap-x-2 text-explorer-orange">
             <AlertCircle />
-            <p>Data migh not be synchronized</p>
+            <p>Data might not be synchronized</p>
           </div>
         )}
       <div className="text-explorer-turquoise text-2xl my-2">
