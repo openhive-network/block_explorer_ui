@@ -10,7 +10,6 @@ import AccountWitnessVotesCard from "@/components/account/AccountWitnessVotesCar
 import VotersDialog from "@/components/Witnesses/VotersDialog";
 import VotesHistoryDialog from "@/components/Witnesses/VotesHistoryDialog";
 import ScrollTopButton from "@/components/ScrollTopButton";
-import MainModule from "@hive/wax";
 import PageNotFound from "@/components/PageNotFound";
 import useAccountDetails from "@/api/accountPage/useAccountDetails";
 import useAccountOperations from "@/api/accountPage/useAccountOperations";
@@ -44,22 +43,6 @@ export default function Account() {
     accountNameFromRoute,
     !!accountDetails?.is_witness
   );
-
-  const calculateManabar = async () => {
-    const mainModule = await MainModule();
-    const protocolProvider = new mainModule.protocol();
-    const result =
-      // params: const int32_t now, const int32_t max_mana_low, const int32_t max_mana_high, const int32_t current_mana_low, const int32_t current_mana_high, const uint32_t last_update_time
-      protocolProvider.cpp_calculate_current_manabar_value(
-        0, // Current timestamp a number
-        100, // Next two values are taken from API. Use long library to get high and low numbers. Max mana supply. Low first, high second.
-        100,
-        0, // As before, value taken from API, handled with long library. Current mana supply. Low first, high second.
-        0,
-        0 // Last update time from API as number timestamp
-      );
-    console.log("TEST", JSON.stringify(result));
-  };
 
   if (!accountDetails) {
     return "Loading ...";
