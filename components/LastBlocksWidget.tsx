@@ -30,7 +30,8 @@ type ChartBlockData = {
   custom: number;
   transfer: number;
   other: number;
-};
+  virtual: number;
+}
 
 const CustomTooltip = ({
   active,
@@ -77,6 +78,7 @@ const getOpsCount = (lastBlocks: Hive.LastBlocksTypeResponse[]) => {
   const opsCount: ChartBlockData[] = lastBlocks.map((block) => ({
     name: block.block_num.toString(),
     witness: block.witness,
+    virtual: 0,
     other: 0,
     comment: 0,
     custom: 0,
@@ -86,27 +88,25 @@ const getOpsCount = (lastBlocks: Hive.LastBlocksTypeResponse[]) => {
 
   lastBlocks.forEach((block, index) => {
     let other = 0;
+    let virtual = 0;
     block.ops_count.forEach((op) => {
-      switch (op.op_type_id) {
-        case 0:
-          opsCount[index].vote = op.count;
-          break;
-        case 1:
-          opsCount[index].comment = op.count;
-          break;
-        case 2:
-          opsCount[index].transfer = op.count;
-          break;
-        case 18:
-          opsCount[index].custom = op.count;
-          break;
-
-        default:
-          other += op.count;
-          break;
+      const typeId = op.op_type_id;
+      if (typeId === 0) {
+        opsCount[index].vote = op.count;
+      } else if (typeId === 1) {
+        opsCount[index].comment = op.count;
+      } else if (typeId === 2) {
+        opsCount[index].transfer = op.count;
+      } else if (typeId === 18) {
+        opsCount[index].custom = op.count;
+      } else if (typeId >= 50) {
+        virtual += op.count;
+      } else {
+        other += op.count;
       }
     });
     opsCount[index].other = other;
+    opsCount[index].virtual = virtual;
   });
   return opsCount;
 };
@@ -206,6 +206,13 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
             dataKey="other"
             stackId="a"
             fill="#3a86ff"
+            className="cursor-pointer"
+            onClick={(data, _index) => router.push(`/block/${data.name}`)}
+          />
+          <Bar
+            dataKey="virtual"
+            stackId="a"
+            fill="#b010bf"
             className="cursor-pointer"
             onClick={(data, _index) => router.push(`/block/${data.name}`)}
           />
