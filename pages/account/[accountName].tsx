@@ -84,8 +84,9 @@ export default function Account() {
 
 
     const manaTime = await chain.calculateManabarFullRegenerationTimeForAccount(accountNameFromRoute);
-    const manabar = await chain.calculateCurrentManabarValueForAccount(accountNameFromRoute);
-    console.info("BAM", manabar, manaTime);
+    const manabar = await chain.calculateCurrentManabarValueForAccount(accountNameFromRoute, 0);
+    const downvoteManabar = await chain.calculateCurrentManabarValueForAccount(accountNameFromRoute, 1);
+    console.info("BAM", manabar, downvoteManabar);
   }
 
   return (
