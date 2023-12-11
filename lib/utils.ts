@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 import Long from "long";
+import Explorer from "@/types/Explorer";
 
 
  
@@ -19,3 +20,27 @@ export const numToHighLow = (value: number) => {
   return {low: long.low, high: long.high};
 };
 
+/**
+ * Create URL params for given properties and their values.
+ * @param urlParams pairs property-value
+ * @returns end of URL
+ */
+export const getPageUrlParams = (urlParams: Explorer.UrlParam[]) => {
+  let resultString = "?";
+  urlParams.forEach((urlParam, index) => {
+    if (urlParam.paramValue) {
+      console.log('TESTUJEMY', urlParam);
+      if (index > 0) resultString += "&";
+      if (typeof urlParam.paramValue === "string") {
+        resultString += `${urlParam.paramName}=${urlParam.paramValue}`;
+      } else {
+        let arrayProps = ""
+        urlParam.paramValue.forEach((arrayValue, arrayIndex) => {
+          arrayProps += `${arrayIndex !== 0 ? "-" : ""}${arrayValue}`;
+        })
+        resultString += `${urlParam.paramName}=${arrayProps}`;
+      }
+    }
+  })
+  return resultString;
+}

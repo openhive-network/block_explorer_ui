@@ -19,6 +19,7 @@ import useSearchRanges from "../searchRanges/useSearchRanges";
 import SearchRanges from "../searchRanges/SearchRanges";
 import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "../ui/tooltip";
 import useAccountOperations from "@/api/accountPage/useAccountOperations";
+import { getPageUrlParams } from "@/lib/utils";
 
 
 interface BlockSearchSectionProps {};
@@ -177,18 +178,47 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
   }
 
   const getCommentPageLink = () => {
-    const linkAccountName = `accountName=${commentSearchProps?.accountName}`;
-    const linkPermlink = !!commentSearchProps?.permlink ? `&permlink=${commentSearchProps?.permlink}` : "";
-    const linkFromBlock = !!requestFromBlock ? `&fromBlock=${requestFromBlock}` : "";
-    const linkToBlock = !!requestToBlock ? `&toBlock=${requestToBlock}` : "";
-    let linkFilters = "";
-    if (commentSearchProps?.operationTypes) {
-      linkFilters = "&filters="
-      commentSearchProps?.operationTypes.forEach((operationType, index) => {
-        linkFilters += `${index !== 0 ? "-" : ""}${operationType}`;
-      })
-    }
-    return `comments?${linkAccountName}${linkPermlink}${linkFromBlock}${linkToBlock}${linkFilters}`;
+    const urlParams: Explorer.UrlParam[] = [
+      {
+        paramName: "accountName",
+        paramValue: commentSearchProps?.accountName
+      },
+      {
+        paramName: "permlink",
+        paramValue: commentSearchProps?.permlink
+      },
+      {
+        paramName: "fromBlock",
+        paramValue: commentSearchProps?.fromBlock ? String(commentSearchProps?.fromBlock) : undefined
+      },
+      {
+        paramName: "toBlock",
+        paramValue: commentSearchProps?.toBlock ? String(commentSearchProps?.toBlock) : undefined
+      },
+      {
+        paramName: "filters",
+        paramValue: commentSearchProps?.operationTypes?.map((operationType) => String(operationType))
+      },
+    ]
+    return `comments${getPageUrlParams(urlParams)}`;
+  }
+
+  const getAccountPageLink = (accountName: string) => {
+    const urlParams: Explorer.UrlParam[] = [
+      {
+        paramName: "fromBlock",
+        paramValue: accountOperationsSearchProps?.fromBlock ? String(accountOperationsSearchProps?.fromBlock) : undefined
+      },
+      {
+        paramName: "toBlock",
+        paramValue: accountOperationsSearchProps?.toBlock ? String(accountOperationsSearchProps?.toBlock) : undefined
+      },
+      {
+        paramName: "filters",
+        paramValue: accountOperationsSearchProps?.operationTypes?.map((operationType) => String(operationType))
+      },
+    ]
+    return `${accountName}${getPageUrlParams(urlParams)}`;
   }
 
   return (
@@ -497,6 +527,13 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
       )}
       {!!accountOperations.accountOperations?.operations_result && lastSearchKey === "account" && (
         <div>
+          <Link href={getAccountPageLink(previousAccountOperationsSearchProps?.accountName || "")}>
+            <Button 
+              className=" bg-blue-800 hover:bg-blue-600 rounded-[4px] mt-8"
+            >
+              Go to result page
+            </Button>
+          </Link>
           <div className="text-black mt-6">
             <CustomPagination
               currentPage={accountOperationsPage || 1}

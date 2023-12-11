@@ -71,6 +71,11 @@ declare module Explorer {
     accountName: string;
     pageNumber?: number;
   }
+
+  interface UrlParam {
+    paramName: string;
+    paramValue?: string | string[];
+  }
 }
 
 export default Explorer;
