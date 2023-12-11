@@ -1,5 +1,5 @@
 import Explorer from "@/types/Explorer"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 import { Button } from "../ui/button";
@@ -34,7 +34,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
   const [previousCommentSearchProps, setPreviousCommentSearchProps] = useState<Explorer.CommentSearchProps | undefined>(undefined);
   const [previousAccountOperationsSearchProps, setPreviousAccountOperationsSearchProps] = useState<Explorer.AccountSearchOperationsProps | undefined>(undefined);
   const [commentPaginationPage, setCommentPaginationPage] = useState<number>(1);
-  const [accountOperationsPage, setAccountOperationsPage] = useState<number>(1);
+  const [accountOperationsPage, setAccountOperationsPage] = useState<number | undefined>(undefined);
   const [selectedKeys, setSelectedKeys] = useState<string[] | undefined>(undefined);
   const [lastSearchKey, setLastSearchKey] = useState<"block" | "account" | "comment" | undefined>(undefined);
   const [blockSearchProps, setBlockSearchProps] = useState<Explorer.BlockSearchProps | undefined>(undefined);
@@ -50,11 +50,17 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
   const {operationKeysData} = useOperationKeys(singleOperationTypeId);
   const {checkBlockByTime} = useBlockByTime();
   const accountOperations = useAccountOperations(accountOperationsSearchProps);
-  
+
   const searchRanges = useSearchRanges();
   const {
     getRangesValues
   } = searchRanges;
+
+  useEffect(() => {
+    if (!accountOperationsPage && accountOperations) {
+      setAccountOperationsPage(accountOperations?.accountOperations?.total_pages);
+    }
+  }, [accountOperations, accountOperationsPage])
 
   const setKeysForProperty = (index: number | null) => {
     if (index !== null && operationKeysData?.[index]) {
@@ -493,7 +499,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
         <div>
           <div className="text-black mt-6">
             <CustomPagination
-              currentPage={accountOperationsPage}
+              currentPage={accountOperationsPage || 1}
               totalCount={accountOperations.accountOperations?.total_operations}
               pageSize={config.standardPaginationSize}
               onPageChange={changeAccountOperationsPagination}
