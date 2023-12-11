@@ -112,6 +112,8 @@ class FetchingService {
       _filter: accountOperationsProps.operationTypes,
       _page_num: accountOperationsProps.pageNumber,
       _page_size: config.standardPaginationSize,
+      _from: accountOperationsProps.fromBlock,
+      _to: accountOperationsProps.toBlock,
       _date_start: accountOperationsProps.startDate,
       _date_end: accountOperationsProps.endDate,
       _body_limit: config.opsBodyLimit
