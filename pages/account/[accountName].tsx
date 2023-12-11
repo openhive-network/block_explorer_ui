@@ -16,6 +16,9 @@ import useAccountOperations from "@/api/accountPage/useAccountOperations";
 import useWitnessDetails from "@/api/common/useWitnessDetails";
 import useAccountOperationTypes from "@/api/accountPage/useAccountOperationTypes";
 import { config } from "@/Config";
+import { createHiveChain } from "@hive-staging/wax";
+import { Button } from "@/components/ui/button";
+
 
 export default function Account() {
   const router = useRouter();
@@ -70,6 +73,21 @@ export default function Account() {
     setOperationFilters(newFilters);
   }
 
+  const getManabars = async () => {
+    const chain = await createHiveChain();
+
+    const { accounts: [ account ] } = await chain!.api.database_api.find_accounts({
+      accounts: [ accountNameFromRoute ]
+    });
+
+    console.log("ACC", account.downvote_manabar.current_mana, account);
+
+
+    const manaTime = await chain.calculateManabarFullRegenerationTimeForAccount(accountNameFromRoute);
+    const manabar = await chain.calculateCurrentManabarValueForAccount(accountNameFromRoute);
+    console.info("BAM", manabar, manaTime);
+  }
+
   return (
     <>
       <div className="bg-explorer-orange items-center fixed grid grid-flow-row-dense grid-cols-3 top-14 md:top-16 right-0 left-0 p-2 z-10">
@@ -102,6 +120,7 @@ export default function Account() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 text-white mx-8 mt-24 md:mt-14 w-full">
         <div className="mt-2 col-start-1 col-span-1">
+          <Button onClick={getManabars}>Test</Button>
           <AccountMainCard
             accountDetails={accountDetails}
             accountName={accountNameFromRoute}
