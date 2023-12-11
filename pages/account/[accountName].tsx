@@ -29,11 +29,11 @@ export default function Account() {
 
   const { accountDetails } = useAccountDetails(accountNameFromRoute);
   const { accountOperations, isAccountOperationsLoading } =
-    useAccountOperations(
-      accountNameFromRoute,
-      operationFilters.length ? operationFilters : undefined,
-      config.standardPaginationSize,
-      page
+    useAccountOperations({
+      accountName: accountNameFromRoute,
+      pageNumber: page,
+      operationTypes: operationFilters.length ? operationFilters : undefined
+    }
     );
 
   const { accountOperationTypes } =

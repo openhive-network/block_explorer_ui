@@ -85,7 +85,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
         toBlock: payloadToBlock,
         startDate: payloadStartDate,
         endDate: payloadEndDate,
-        operations: selectedCommentSearchOperationTypes.length ? selectedCommentSearchOperationTypes : undefined
+        operationTypes: selectedCommentSearchOperationTypes.length ? selectedCommentSearchOperationTypes : undefined
       };
       setCommentSearchProps(commentSearchProps);
       setPreviousCommentSearchProps(commentSearchProps);
@@ -112,7 +112,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
     const {payloadFromBlock, payloadToBlock, payloadStartDate, payloadEndDate } = await getRangesValues();
     const blockSearchProps: Explorer.BlockSearchProps = {
       accountName,
-      operations: selectedOperationTypes.length ? selectedOperationTypes : operationsTypes?.map((opType) => opType.op_type_id),
+      operationTypes: selectedOperationTypes.length ? selectedOperationTypes : operationsTypes?.map((opType) => opType.op_type_id),
       fromBlock: payloadFromBlock,
       toBlock: payloadToBlock,
       startDate: payloadStartDate,
@@ -161,10 +161,10 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
     const linkFromBlock = !!requestFromBlock ? `&fromBlock=${requestFromBlock}` : "";
     const linkToBlock = !!requestToBlock ? `&toBlock=${requestToBlock}` : "";
     let linkFilters = "";
-    if (commentSearchProps?.operations) {
+    if (commentSearchProps?.operationTypes) {
       linkFilters = "&filters="
-      commentSearchProps?.operations.forEach((operation, index) => {
-        linkFilters += `${index !== 0 ? "-" : ""}${operation}`;
+      commentSearchProps?.operationTypes.forEach((operationType, index) => {
+        linkFilters += `${index !== 0 ? "-" : ""}${operationType}`;
       })
     }
     return `comments?${linkAccountName}${linkPermlink}${linkFromBlock}${linkToBlock}${linkFilters}`;

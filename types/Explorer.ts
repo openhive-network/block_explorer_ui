@@ -40,8 +40,7 @@ declare module Explorer {
   }
 
   interface CommonSearchProps {
-    operations?: number[];
-    accountName?: string;
+    operationTypes?: number[];
     fromBlock?: number;
     toBlock?: number;
     startDate?: Date;
@@ -49,6 +48,7 @@ declare module Explorer {
   }
 
   interface BlockSearchProps extends CommonSearchProps {
+    accountName?: string;
     limit: number;
     deepProps: {
       content?: any;
@@ -57,6 +57,7 @@ declare module Explorer {
   }
 
   interface CommentSearchProps extends CommonSearchProps {
+    accountName: string;
     permlink?: string;
     pageNumber?: number;
   }
@@ -64,6 +65,11 @@ declare module Explorer {
   interface SelectOption {
     name: string;
     key: string;
+  }
+
+  interface AccountSearchOperationsProps extends CommentSearchProps {
+    accountName: string;
+    pageNumber?: number;
   }
 }
 
