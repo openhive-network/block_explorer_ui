@@ -50,28 +50,11 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
   const {operationKeysData} = useOperationKeys(singleOperationTypeId);
   const {checkBlockByTime} = useBlockByTime();
   const accountOperations = useAccountOperations(accountOperationsSearchProps);
-
+  
+  const searchRanges = useSearchRanges();
   const {
-    rangeSelectOptions,
-    timeSelectOptions,
-    fromBlock,
-    toBlock,
-    startDate,
-    endDate,
-    lastBlocksValue,
-    lastTimeUnitValue,
-    rangeSelectKey,
-    timeUnitSelectKey,
-    setFromBlock,
-    setToBlock,
-    setStartDate,
-    setEndDate,
-    setLastBlocksValue,
-    setLastTimeUnitValue,
-    setRangeSelectKey,
-    setTimeUnitSelectKey,
     getRangesValues
-  } = useSearchRanges();
+  } = searchRanges;
 
   const setKeysForProperty = (index: number | null) => {
     if (index !== null && operationKeysData?.[index]) {
@@ -231,24 +214,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                 />
               </div>
               <SearchRanges 
-                rangeSelectOptions={rangeSelectOptions} 
-                timeSelectOptions={timeSelectOptions} 
-                rangeSelectKey={rangeSelectKey} 
-                timeUnitSelectKey={timeUnitSelectKey} 
-                toBlock={toBlock} 
-                fromBlock={fromBlock} 
-                startDate={startDate} 
-                endDate={endDate} 
-                lastBlocksValue={lastBlocksValue} 
-                lastTimeUnitValue={lastTimeUnitValue} 
-                setRangeSelectKey={setRangeSelectKey}
-                setTimeUnitSelectKey={setTimeUnitSelectKey}
-                setFromBlock={setFromBlock}
-                setToBlock={setToBlock}
-                setStartDate={setStartDate}
-                setEndDate={setEndDate}
-                setLastBlocksValue={setLastBlocksValue}
-                setLastTimeUnitValue={setLastTimeUnitValue}
+                rangesProps={searchRanges}
               />
               <div className="flex items-center m-2">
                 <OperationTypesDialog
@@ -379,24 +345,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                 />
               </div>
               <SearchRanges 
-                rangeSelectOptions={rangeSelectOptions} 
-                timeSelectOptions={timeSelectOptions} 
-                rangeSelectKey={rangeSelectKey} 
-                timeUnitSelectKey={timeUnitSelectKey} 
-                toBlock={toBlock} 
-                fromBlock={fromBlock} 
-                startDate={startDate} 
-                endDate={endDate} 
-                lastBlocksValue={lastBlocksValue} 
-                lastTimeUnitValue={lastTimeUnitValue} 
-                setRangeSelectKey={setRangeSelectKey}
-                setTimeUnitSelectKey={setTimeUnitSelectKey}
-                setFromBlock={setFromBlock}
-                setToBlock={setToBlock}
-                setStartDate={setStartDate}
-                setEndDate={setEndDate}
-                setLastBlocksValue={setLastBlocksValue}
-                setLastTimeUnitValue={setLastTimeUnitValue}
+                rangesProps={searchRanges}
               />
               <div className="flex items-center m-2">
                 <OperationTypesDialog
@@ -459,24 +408,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                 />
               </div>
               <SearchRanges 
-                rangeSelectOptions={rangeSelectOptions} 
-                timeSelectOptions={timeSelectOptions} 
-                rangeSelectKey={rangeSelectKey} 
-                timeUnitSelectKey={timeUnitSelectKey} 
-                toBlock={toBlock} 
-                fromBlock={fromBlock} 
-                startDate={startDate} 
-                endDate={endDate} 
-                lastBlocksValue={lastBlocksValue} 
-                lastTimeUnitValue={lastTimeUnitValue} 
-                setRangeSelectKey={setRangeSelectKey}
-                setTimeUnitSelectKey={setTimeUnitSelectKey}
-                setFromBlock={setFromBlock}
-                setToBlock={setToBlock}
-                setStartDate={setStartDate}
-                setEndDate={setEndDate}
-                setLastBlocksValue={setLastBlocksValue}
-                setLastTimeUnitValue={setLastTimeUnitValue}
+                rangesProps={searchRanges}
               />
               <div className="flex items-center m-2">
                 <OperationTypesDialog

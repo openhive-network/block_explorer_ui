@@ -6,6 +6,35 @@ import Explorer from "@/types/Explorer";
 
 const DEFAULT_LAST_BLOCK_VALUE = 1000;
 
+interface RangesValues {
+  payloadFromBlock?: number;
+  payloadToBlock?: number;
+  payloadStartDate?: Date;
+  payloadEndDate?: Date;
+}
+
+export interface SearchRangesResult {
+  rangeSelectOptions: Explorer.SelectOption[];
+  timeSelectOptions: Explorer.SelectOption[];
+  fromBlock?: number;
+  toBlock?: number;
+  startDate?: Date;
+  endDate?: Date;
+  lastBlocksValue?: number;
+  lastTimeUnitValue?: number;
+  rangeSelectKey: string;
+  timeUnitSelectKey: string;
+  setFromBlock: (blockNumber: number | undefined) => void;
+  setToBlock: (blockNumber: number | undefined) => void;
+  setStartDate: (date: Date | undefined) => void;
+  setEndDate: (date: Date | undefined) => void;
+  setLastBlocksValue: (last: number | undefined) => void;
+  setLastTimeUnitValue: (last: number | undefined) => void;
+  setRangeSelectKey: (key: string) => void;
+  setTimeUnitSelectKey: (blockNumber: string) => void;
+  getRangesValues: () => RangesValues;
+}
+
 const useSearchRanges = () => {
   const rangeSelectOptions: Explorer.SelectOption[] = [
     {
@@ -93,7 +122,7 @@ const useSearchRanges = () => {
     setRangeSelectKey,
     setTimeUnitSelectKey,
     getRangesValues
-  }
+  } as SearchRangesResult;
 }
 
 export default useSearchRanges;
