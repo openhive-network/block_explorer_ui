@@ -22,7 +22,7 @@ const range: React.FC<RangeProps> = ({ start, end }) => {
 export const usePagination: React.FC<PaginationProps> = ({
   totalCount,
   pageSize,
-  siblingCount = 1,
+  siblingCount = 2,
   currentPage,
 }) => {
   const paginationRange = useMemo(() => {
@@ -50,7 +50,7 @@ export const usePagination: React.FC<PaginationProps> = ({
       after/before the left/right page count as that would lead to a change if our Pagination
       component size which we do not want
     */
-    const shouldShowLeftDots = leftSiblingIndex > 3;
+    const shouldShowLeftDots = leftSiblingIndex > 2;
     const shouldShowRightDots = rightSiblingIndex < totalPageCount - 2;
 
     const firstPageIndex = 1;
