@@ -4,7 +4,7 @@ import Hive from "@/types/Hive";
 import Explorer from "@/types/Explorer";
 
 const useAccountOperations = (
-  accountOperationsProps: Explorer.AccountSearchOperationsProps
+  accountOperationsProps?: Explorer.AccountSearchOperationsProps
 ) => {
   const {
     data: accountOperations,
@@ -13,20 +13,16 @@ const useAccountOperations = (
   }: UseQueryResult<Hive.AccountOperationsResponse> = useQuery({
     queryKey: [
       "account_operations",
-      accountOperationsProps.accountName,
-      accountOperationsProps.pageNumber,
-      accountOperationsProps.operationTypes,
-      accountOperationsProps.fromBlock,
-      accountOperationsProps.toBlock,
-      accountOperationsProps.startDate,
-      accountOperationsProps.endDate,
+      accountOperationsProps
     ],
-    queryFn: () =>
-      fetchingService.getOpsByAccount(
-        accountOperationsProps
-      ),
+    queryFn: () => fetchAccountOperations(accountOperationsProps),
     refetchOnWindowFocus: false,
   });
+
+  const fetchAccountOperations = async (accountOperationsProps: Explorer.AccountSearchOperationsProps | undefined) => {
+    if (!accountOperationsProps) return null;
+    return await fetchingService.getOpsByAccount(accountOperationsProps);
+  }
 
   return {
     accountOperations,
