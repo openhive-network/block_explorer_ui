@@ -399,7 +399,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                   disabled={!accountName}
                 >
                   <span>Search</span>{" "}
-                  {commentSearch.commentSearchDataLoading && (
+                  {accountOperations.isAccountOperationsLoading && (
                     <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
                   )}
                 </Button>
