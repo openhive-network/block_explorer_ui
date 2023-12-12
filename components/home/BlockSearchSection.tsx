@@ -218,7 +218,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
         paramValue: accountOperationsSearchProps?.operationTypes?.map((operationType) => String(operationType))
       },
     ]
-    return `${accountName}${getPageUrlParams(urlParams)}`;
+    return `account/${accountName}${getPageUrlParams(urlParams)}`;
   }
 
   return (
