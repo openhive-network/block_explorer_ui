@@ -16,9 +16,6 @@ import useAccountOperations from "@/api/accountPage/useAccountOperations";
 import useWitnessDetails from "@/api/common/useWitnessDetails";
 import useAccountOperationTypes from "@/api/accountPage/useAccountOperationTypes";
 import { config } from "@/Config";
-import { createHiveChain } from "@hive-staging/wax";
-import { Button } from "@/components/ui/button";
-import useManabars from "@/api/accountPage/useManabars";
 
 
 export default function Account() {
@@ -39,8 +36,6 @@ export default function Account() {
       operationTypes: operationFilters.length ? operationFilters : undefined
     }
     );
-
-  const {manabarsData} = useManabars(accountNameFromRoute);
 
   const { accountOperationTypes } =
     useAccountOperationTypes(accountNameFromRoute);

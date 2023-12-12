@@ -78,8 +78,9 @@ declare module Explorer {
   }
 
   interface SingleManabar {
-    max: number;
-    current: number;
+    max: string;
+    current: string;
+    percentageValue: number;
   }
 
   interface Manabars {

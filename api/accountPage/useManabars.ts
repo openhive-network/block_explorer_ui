@@ -1,6 +1,5 @@
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
-import Hive from "@/types/Hive";
 import Explorer from "@/types/Explorer";
 
 const useManabars = (accountName: string) => {
@@ -8,27 +7,31 @@ const useManabars = (accountName: string) => {
     data: manabarsData,
     isLoading: manabarsDataLoading,
     isError: manabarsDataError,
-  }: UseQueryResult<Hive.AccountDetailsQueryResponse> = useQuery({
+  }: UseQueryResult<Explorer.Manabars | null> = useQuery({
     queryKey: ["manabars", accountName],
     queryFn: () => getManabars(accountName),
     refetchOnWindowFocus: false,
   });
 
   const getManabars = async (accountName: string): Promise<Explorer.Manabars | null> => {
-    if (!accountName) {return null}
+    if (!accountName) return null;
     const manabars = await fetchingService.getManabars(accountName);
+    if (!manabars) return null;
     const processedManabars: Explorer.Manabars = {
       upvote: {
-        max: manabars.upvote.max.toNumber(),
-        current: manabars.upvote.current.toNumber(),
+        max: manabars.upvote.max.toString(),
+        current: manabars.upvote.current.toString(),
+        percentageValue: manabars.upvote.current.mul(100).div(manabars.upvote.max).toNumber()
       },
       downvote: {
-        max: manabars.downvote.max.toNumber(),
-        current: manabars.downvote.current.toNumber(),
+        max: manabars.downvote.max.toString(),
+        current: manabars.downvote.current.toString(),
+        percentageValue: manabars.downvote.current.mul(100).div(manabars.downvote.max).toNumber()
       },
       rc: {
-        max: manabars.rc.max.toNumber(),
-        current: manabars.rc.current.toNumber(),
+        max: manabars.rc.max.toString(),
+        current: manabars.rc.current.toString(),
+        percentageValue: manabars.rc.current.mul(100).div(manabars.rc.max).toNumber()
       },
     }
     return processedManabars;

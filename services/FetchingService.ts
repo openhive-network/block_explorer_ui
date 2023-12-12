@@ -303,14 +303,21 @@ class FetchingService {
     return await this.makePostRequest(url, requestBody);
   }
 
-  async getManabars(accountName: string): Promise<Hive.Manabars> {
+  async getManabars(accountName: string): Promise<Hive.Manabars | null> {
     const chain = await createHiveChain();
-    const upvotePromise = await chain.calculateCurrentManabarValueForAccount(accountName, 0);
-    const downvotePromise = await chain.calculateCurrentManabarValueForAccount(accountName, 1);
-    const rcPromise = await chain.calculateCurrentManabarValueForAccount(accountName, 2);
-    const manabars = await Promise.all([upvotePromise, downvotePromise, rcPromise]);
-
-    return {upvote: manabars[0], downvote: manabars[1], rc: manabars[2]};
+    try {
+      const upvotePromise = await chain.calculateCurrentManabarValueForAccount(accountName, 0);
+      const downvotePromise = await chain.calculateCurrentManabarValueForAccount(accountName, 1);
+      const rcPromise = await chain.calculateCurrentManabarValueForAccount(accountName, 2);
+      const manabars = await Promise.all([upvotePromise, downvotePromise, rcPromise]);
+      return {upvote: manabars[0], downvote: manabars[1], rc: manabars[2]};
+    } catch (error) {
+      console.error(error);
+      return null;
+    } finally {
+      chain.delete();
+      
+    }
   }
 }
 

@@ -3,6 +3,7 @@ import Image from "next/image";
 import moment from "moment";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import Hive from "@/types/Hive";
+import useManabars from "@/api/accountPage/useManabars";
 
 interface AccountMainCardProps {
   accountDetails: Hive.AccountDetailsQueryResponse;
@@ -17,6 +18,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
   openVotersModal,
   openVotesHistoryModal,
 }) => {
+  const {manabarsData} = useManabars(accountName);
   return (
     <div className='bg-explorer-dark-gray p-2 rounded-["6px] mx-2 md:mx-6 h-fit rounded'>
       <div className="flex justify-between bg-explorer-dark-gray text-explorer-orange text-2xl my-4">
@@ -45,36 +47,36 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
         <div className="text-center">
           <p className="my-2">Voting Power</p>
           <Progress
-            value={53}
-            color="#cecafa"
+            value={manabarsData?.upvote.percentageValue}
+            color="#00c040"
             style={{ background: "#03182c" }}
           />
+          <p className="text-sm text-gray-400">{manabarsData?.upvote.current} / {manabarsData?.upvote.max}</p>
         </div>
 
         <div className="text-center">
           <p className="my-2">Downvote power </p>
           <Progress
-            value={25}
-            color="#cecafa"
+            value={manabarsData?.downvote.percentageValue}
+            color="#c01000"
             style={{ background: "#03182c" }}
           />
+          <p className="text-sm text-gray-400">{manabarsData?.downvote.current} / {manabarsData?.downvote.max}</p>
         </div>
 
         <div className="text-center">
           <p className="my-2">Recourse credits </p>
           <Progress
-            value={75}
+            value={manabarsData?.rc.percentageValue}
             color="#cecafa"
             style={{ background: "#03182c" }}
           />
+          <p className="text-sm text-gray-400">{manabarsData?.rc.current} / {manabarsData?.rc.max}</p>
         </div>
         <div className="flex justify-between p-5 break-all">
           <div className="text-center">
-            <p className="text-xl">Reputation</p>
-            <p className="text-lg">75</p>
-            <p className="text-xs text-gray-500">
-              {accountDetails.post_count} posts
-            </p>
+            <p className="text-xl">Posts</p>
+            <p className="text-lg">{accountDetails.post_count}</p>
           </div>
           <div className="text-center">
             <p className="text-lg">Creation Date</p>
