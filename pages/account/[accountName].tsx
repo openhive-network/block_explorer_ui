@@ -17,6 +17,7 @@ import useWitnessDetails from "@/api/common/useWitnessDetails";
 import useAccountOperationTypes from "@/api/accountPage/useAccountOperationTypes";
 import { config } from "@/Config";
 
+
 export default function Account() {
   const router = useRouter();
 
@@ -69,6 +70,7 @@ export default function Account() {
     setPage(undefined);
     setOperationFilters(newFilters);
   }
+
 
   return (
     <>

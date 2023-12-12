@@ -1,3 +1,5 @@
+import { IManabarData } from "@hive-staging/wax";
+
 declare module Hive {
   interface HiveBlogProps {
     id: number;
@@ -503,6 +505,12 @@ declare module Hive {
   interface CommentOperationResponse extends OperationsCount {
     operations_result: CommentOperation[];
 
+  }
+
+  interface Manabars {
+    upvote: IManabarData;
+    downvote: IManabarData;
+    rc: IManabarData;
   }
 }
 

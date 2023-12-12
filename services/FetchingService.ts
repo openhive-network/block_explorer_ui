@@ -1,6 +1,7 @@
 import Hive from "@/types/Hive";
 import { config } from "@/Config";
 import Explorer from "@/types/Explorer";
+import { createHiveChain } from "@hive-staging/wax";
 
 class FetchingService {
   async makePostRequest<T>(url: string, requestBody: T) {
@@ -300,6 +301,23 @@ class FetchingService {
     const requestBody = {};
     const url = `${config.apiAdress}/rpc/get_hafbe_version`;
     return await this.makePostRequest(url, requestBody);
+  }
+
+  async getManabars(accountName: string): Promise<Hive.Manabars | null> {
+    const chain = await createHiveChain();
+    try {
+      const upvotePromise = await chain.calculateCurrentManabarValueForAccount(accountName, 0);
+      const downvotePromise = await chain.calculateCurrentManabarValueForAccount(accountName, 1);
+      const rcPromise = await chain.calculateCurrentManabarValueForAccount(accountName, 2);
+      const manabars = await Promise.all([upvotePromise, downvotePromise, rcPromise]);
+      return {upvote: manabars[0], downvote: manabars[1], rc: manabars[2]};
+    } catch (error) {
+      console.error(error);
+      return null;
+    } finally {
+      chain.delete();
+      
+    }
   }
 }
 

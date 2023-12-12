@@ -76,6 +76,18 @@ declare module Explorer {
     paramName: string;
     paramValue?: string | string[];
   }
+
+  interface SingleManabar {
+    max: string;
+    current: string;
+    percentageValue: number;
+  }
+
+  interface Manabars {
+    upvote: SingleManabar;
+    downvote: SingleManabar;
+    rc: SingleManabar;
+  }
 }
 
 export default Explorer;
