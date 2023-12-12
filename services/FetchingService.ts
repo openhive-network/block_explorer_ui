@@ -104,18 +104,18 @@ class FetchingService {
   }
 
   async getOpsByAccount(
-    account: string,
-    limit: number,
-    pagerNum?: number,
-    filter?: number[]
+    accountOperationsProps: Explorer.AccountSearchOperationsProps
   ): Promise<Hive.OperationResponse[]> {
     const requestBody: Hive.GetOpsByAccountProps = {
-      _account: account,
-      _filter: filter,
-      _page_num: pagerNum,
-      _page_size: limit,
-      _date_start: null,
-      _date_end: null,
+      _account: accountOperationsProps.accountName,
+      _order_is: "desc",
+      _filter: accountOperationsProps.operationTypes,
+      _page_num: accountOperationsProps.pageNumber,
+      _page_size: config.standardPaginationSize,
+      _from: accountOperationsProps.fromBlock,
+      _to: accountOperationsProps.toBlock,
+      _date_start: accountOperationsProps.startDate,
+      _date_end: accountOperationsProps.endDate,
       _body_limit: config.opsBodyLimit
     };
     const url = `${config.apiAdress}/rpc/get_ops_by_account`;
@@ -232,7 +232,7 @@ class FetchingService {
     blockSearchProps: Explorer.BlockSearchProps
   ): Promise<Hive.BlockByOpResponse[]> {
     const requestBody: Hive.GetBlockByOpProps = {
-      _operations: blockSearchProps.operations || [],
+      _operations: blockSearchProps.operationTypes || [],
       _account: blockSearchProps?.accountName,
       _from: blockSearchProps?.fromBlock,
       _to: blockSearchProps?.toBlock,
@@ -284,7 +284,7 @@ class FetchingService {
       _author: commentSearchProps.accountName || "",
       _permlink: commentSearchProps.permlink,
       _page_num: commentSearchProps.pageNumber,
-      _operation_types: commentSearchProps.operations,
+      _operation_types: commentSearchProps.operationTypes,
       _from: commentSearchProps.fromBlock,
       _to: commentSearchProps.toBlock,
       _start_date: commentSearchProps.startDate,

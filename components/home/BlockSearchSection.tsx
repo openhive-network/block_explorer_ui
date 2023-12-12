@@ -1,5 +1,5 @@
 import Explorer from "@/types/Explorer"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 import { Button } from "../ui/button";
@@ -18,6 +18,8 @@ import useBlockByTime from "@/api/common/useBlockByTime";
 import useSearchRanges from "../searchRanges/useSearchRanges";
 import SearchRanges from "../searchRanges/SearchRanges";
 import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from "../ui/tooltip";
+import useAccountOperations from "@/api/accountPage/useAccountOperations";
+import { getPageUrlParams } from "@/lib/utils";
 
 
 interface BlockSearchSectionProps {};
@@ -31,41 +33,35 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
   const [permlink, setPermlink] = useState<string | undefined>(undefined);
   const [accordionValue, setAccordionValue] = useState<string>("block");
   const [previousCommentSearchProps, setPreviousCommentSearchProps] = useState<Explorer.CommentSearchProps | undefined>(undefined);
+  const [previousAccountOperationsSearchProps, setPreviousAccountOperationsSearchProps] = useState<Explorer.AccountSearchOperationsProps | undefined>(undefined);
   const [commentPaginationPage, setCommentPaginationPage] = useState<number>(1);
+  const [accountOperationsPage, setAccountOperationsPage] = useState<number | undefined>(undefined);
   const [selectedKeys, setSelectedKeys] = useState<string[] | undefined>(undefined);
   const [lastSearchKey, setLastSearchKey] = useState<"block" | "account" | "comment" | undefined>(undefined);
   const [blockSearchProps, setBlockSearchProps] = useState<Explorer.BlockSearchProps | undefined>(undefined);
   const [commentSearchProps, setCommentSearchProps] = useState<Explorer.CommentSearchProps | undefined>(undefined);
+  const [accountOperationsSearchProps, setAccountOperationsSearchProps] = useState<Explorer.AccountSearchOperationsProps | undefined>(undefined);
   const [requestFromBlock, setRequestFromBlock] = useState<number | undefined>(undefined);
   const [requestToBlock, setRequestToBlock] = useState<number | undefined>(undefined);
   const [singleOperationTypeId, setSingleOperationTypeId] = useState<number | undefined>(undefined);
+
   const {operationsTypes} = useOperationTypes() || [];
   const commentSearch = useCommentSearch(commentSearchProps);
   const blockSearch = useBlockSearch(blockSearchProps);
   const {operationKeysData} = useOperationKeys(singleOperationTypeId);
   const {checkBlockByTime} = useBlockByTime();
+  const accountOperations = useAccountOperations(accountOperationsSearchProps);
 
+  const searchRanges = useSearchRanges();
   const {
-    rangeSelectOptions,
-    timeSelectOptions,
-    fromBlock,
-    toBlock,
-    startDate,
-    endDate,
-    lastBlocksValue,
-    lastTimeUnitValue,
-    rangeSelectKey,
-    timeUnitSelectKey,
-    setFromBlock,
-    setToBlock,
-    setStartDate,
-    setEndDate,
-    setLastBlocksValue,
-    setLastTimeUnitValue,
-    setRangeSelectKey,
-    setTimeUnitSelectKey,
     getRangesValues
-  } = useSearchRanges();
+  } = searchRanges;
+
+  useEffect(() => {
+    if (!accountOperationsPage && accountOperations) {
+      setAccountOperationsPage(accountOperations?.accountOperations?.total_pages);
+    }
+  }, [accountOperations, accountOperationsPage])
 
   const setKeysForProperty = (index: number | null) => {
     if (index !== null && operationKeysData?.[index]) {
@@ -85,7 +81,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
         toBlock: payloadToBlock,
         startDate: payloadStartDate,
         endDate: payloadEndDate,
-        operations: selectedCommentSearchOperationTypes.length ? selectedCommentSearchOperationTypes : undefined
+        operationTypes: selectedCommentSearchOperationTypes.length ? selectedCommentSearchOperationTypes : undefined
       };
       setCommentSearchProps(commentSearchProps);
       setPreviousCommentSearchProps(commentSearchProps);
@@ -108,11 +104,29 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
     }
   }
 
+  const startAccountOperationsSearch = async () => {
+    const {payloadFromBlock, payloadToBlock, payloadStartDate, payloadEndDate } = await getRangesValues();
+    if (accountName) {
+      const accountOperationsSearchProps: Explorer.AccountSearchOperationsProps = {
+        accountName,
+        permlink,
+        fromBlock: payloadFromBlock,
+        toBlock: payloadToBlock,
+        startDate: payloadStartDate,
+        endDate: payloadEndDate,
+        operationTypes: selectedOperationTypes.length ? selectedOperationTypes : undefined
+      };
+      setLastSearchKey("account");
+      setAccountOperationsSearchProps(accountOperationsSearchProps);
+      setPreviousAccountOperationsSearchProps(accountOperationsSearchProps);
+    }
+  }
+
   const startBlockSearch = async () => {
     const {payloadFromBlock, payloadToBlock, payloadStartDate, payloadEndDate } = await getRangesValues();
     const blockSearchProps: Explorer.BlockSearchProps = {
       accountName,
-      operations: selectedOperationTypes.length ? selectedOperationTypes : operationsTypes?.map((opType) => opType.op_type_id),
+      operationTypes: selectedOperationTypes.length ? selectedOperationTypes : operationsTypes?.map((opType) => opType.op_type_id),
       fromBlock: payloadFromBlock,
       toBlock: payloadToBlock,
       startDate: payloadStartDate,
@@ -132,6 +146,14 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
       const newSearchProps: Explorer.CommentSearchProps = {...previousCommentSearchProps, pageNumber: newPageNum};
       setCommentSearchProps(newSearchProps);
       setCommentPaginationPage(newPageNum);
+    }
+  }
+
+  const changeAccountOperationsPagination = (newPageNum: number) => {
+    if (previousAccountOperationsSearchProps?.accountName) {
+      const newSearchProps: Explorer.AccountSearchOperationsProps = {...previousAccountOperationsSearchProps, pageNumber: newPageNum};
+      setAccountOperationsSearchProps(newSearchProps);
+      setAccountOperationsPage(newPageNum);
     }
   }
 
@@ -156,18 +178,55 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
   }
 
   const getCommentPageLink = () => {
-    const linkAccountName = `accountName=${commentSearchProps?.accountName}`;
-    const linkPermlink = !!commentSearchProps?.permlink ? `&permlink=${commentSearchProps?.permlink}` : "";
-    const linkFromBlock = !!requestFromBlock ? `&fromBlock=${requestFromBlock}` : "";
-    const linkToBlock = !!requestToBlock ? `&toBlock=${requestToBlock}` : "";
-    let linkFilters = "";
-    if (commentSearchProps?.operations) {
-      linkFilters = "&filters="
-      commentSearchProps?.operations.forEach((operation, index) => {
-        linkFilters += `${index !== 0 ? "-" : ""}${operation}`;
-      })
-    }
-    return `comments?${linkAccountName}${linkPermlink}${linkFromBlock}${linkToBlock}${linkFilters}`;
+    const urlParams: Explorer.UrlParam[] = [
+      {
+        paramName: "accountName",
+        paramValue: commentSearchProps?.accountName
+      },
+      {
+        paramName: "permlink",
+        paramValue: commentSearchProps?.permlink
+      },
+      {
+        paramName: "fromBlock",
+        paramValue: commentSearchProps?.fromBlock ? String(commentSearchProps?.fromBlock) : undefined
+      },
+      {
+        paramName: "toBlock",
+        paramValue: commentSearchProps?.toBlock ? String(commentSearchProps?.toBlock) : undefined
+      },
+      {
+        paramName: "filters",
+        paramValue: commentSearchProps?.operationTypes?.map((operationType) => String(operationType))
+      },
+    ]
+    return `comments${getPageUrlParams(urlParams)}`;
+  }
+
+  const getAccountPageLink = (accountName: string) => {
+    const urlParams: Explorer.UrlParam[] = [
+      {
+        paramName: "fromBlock",
+        paramValue: accountOperationsSearchProps?.fromBlock ? String(accountOperationsSearchProps?.fromBlock) : undefined
+      },
+      {
+        paramName: "toBlock",
+        paramValue: accountOperationsSearchProps?.toBlock ? String(accountOperationsSearchProps?.toBlock) : undefined
+      },
+      {
+        paramName: "startDate",
+        paramValue: accountOperationsSearchProps?.startDate ? String(accountOperationsSearchProps?.startDate) : undefined
+      },
+      {
+        paramName: "endDate",
+        paramValue: accountOperationsSearchProps?.endDate ? String(accountOperationsSearchProps?.endDate) : undefined
+      },
+      {
+        paramName: "filters",
+        paramValue: accountOperationsSearchProps?.operationTypes?.map((operationType) => String(operationType))
+      },
+    ]
+    return `account/${accountName}${getPageUrlParams(urlParams)}`;
   }
 
   return (
@@ -199,24 +258,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                 />
               </div>
               <SearchRanges 
-                rangeSelectOptions={rangeSelectOptions} 
-                timeSelectOptions={timeSelectOptions} 
-                rangeSelectKey={rangeSelectKey} 
-                timeUnitSelectKey={timeUnitSelectKey} 
-                toBlock={toBlock} 
-                fromBlock={fromBlock} 
-                startDate={startDate} 
-                endDate={endDate} 
-                lastBlocksValue={lastBlocksValue} 
-                lastTimeUnitValue={lastTimeUnitValue} 
-                setRangeSelectKey={setRangeSelectKey}
-                setTimeUnitSelectKey={setTimeUnitSelectKey}
-                setFromBlock={setFromBlock}
-                setToBlock={setToBlock}
-                setStartDate={setStartDate}
-                setEndDate={setEndDate}
-                setLastBlocksValue={setLastBlocksValue}
-                setLastTimeUnitValue={setLastTimeUnitValue}
+                rangesProps={searchRanges}
               />
               <div className="flex items-center m-2">
                 <OperationTypesDialog
@@ -332,24 +374,55 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
             <AccordionTrigger>Account search</AccordionTrigger>
             <AccordionContent>
               <p className="ml-2">{"Find account's operations for given properties."}</p>
-              <div className="flex m-2 flex-col">Coming soon</div>
+              <div className="flex flex-col m-2">
+                <label className="mx-2">Account name *</label>
+                <Input
+                  className="w-1/2"
+                  type="text"
+                  value={accountName || ""}
+                  onChange={(e) =>
+                    setAccountName(
+                      e.target.value === "" ? undefined : e.target.value
+                    )
+                  }
+                  placeholder="---"
+                />
+              </div>
+              <SearchRanges 
+                rangesProps={searchRanges}
+              />
+              <div className="flex items-center m-2">
+                <OperationTypesDialog
+                  operationTypes={operationsTypes}
+                  selectedOperations={selectedOperationTypes}
+                  setSelectedOperations={changeSelectedOperationTypes}
+                  colorClass="bg-gray-500"
+                  triggerTitle={getOperationButtonTitle()}
+                />
+              </div>
+              <div className="flex items-center  m-2">
+                <Button
+                  className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]"
+                  onClick={startAccountOperationsSearch}
+                  disabled={!accountName}
+                >
+                  <span>Search</span>{" "}
+                  {accountOperations.isAccountOperationsLoading && (
+                    <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
+                  )}
+                </Button>
+                {!accountName && (
+                  <label className="ml-2 text-muted-foreground">
+                    Set account name
+                  </label>
+                )}
+              </div>
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="comment">
             <AccordionTrigger>Comment search</AccordionTrigger>
             <AccordionContent>
               <p className="ml-2">Find all operations related to comments of given account or for exact permlink.</p>
-              <div className="flex items-center m-2">
-                <OperationTypesDialog
-                  operationTypes={operationsTypes?.filter((opType) =>
-                    config.commentOperationsTypeIds.includes(opType.op_type_id)
-                  )}
-                  selectedOperations={selectedCommentSearchOperationTypes}
-                  setSelectedOperations={setSelectedCommentSearchOperationTypes}
-                  colorClass="bg-gray-500"
-                  triggerTitle={getOperationButtonTitle()}
-                />
-              </div>
               <div className="flex flex-col m-2">
                 <label className="mx-2">Account name *</label>
                 <Input
@@ -379,25 +452,19 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                 />
               </div>
               <SearchRanges 
-                rangeSelectOptions={rangeSelectOptions} 
-                timeSelectOptions={timeSelectOptions} 
-                rangeSelectKey={rangeSelectKey} 
-                timeUnitSelectKey={timeUnitSelectKey} 
-                toBlock={toBlock} 
-                fromBlock={fromBlock} 
-                startDate={startDate} 
-                endDate={endDate} 
-                lastBlocksValue={lastBlocksValue} 
-                lastTimeUnitValue={lastTimeUnitValue} 
-                setRangeSelectKey={setRangeSelectKey}
-                setTimeUnitSelectKey={setTimeUnitSelectKey}
-                setFromBlock={setFromBlock}
-                setToBlock={setToBlock}
-                setStartDate={setStartDate}
-                setEndDate={setEndDate}
-                setLastBlocksValue={setLastBlocksValue}
-                setLastTimeUnitValue={setLastTimeUnitValue}
+                rangesProps={searchRanges}
               />
+              <div className="flex items-center m-2">
+                <OperationTypesDialog
+                  operationTypes={operationsTypes?.filter((opType) =>
+                    config.commentOperationsTypeIds.includes(opType.op_type_id)
+                  )}
+                  selectedOperations={selectedCommentSearchOperationTypes}
+                  setSelectedOperations={setSelectedCommentSearchOperationTypes}
+                  colorClass="bg-gray-500"
+                  triggerTitle={getOperationButtonTitle()}
+                />
+              </div>
               <div className="flex items-center  m-2">
                 <Button
                   className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]"
@@ -462,6 +529,35 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
               key={foundOperation.operation_id}
               blockNumber={foundOperation.block_num}
               date={foundOperation.created_at}
+            />
+          ))}
+        </div>
+      )}
+      {!!accountOperations.accountOperations?.operations_result && lastSearchKey === "account" && (
+        <div>
+          <Link href={getAccountPageLink(previousAccountOperationsSearchProps?.accountName || "")}>
+            <Button 
+              className=" bg-blue-800 hover:bg-blue-600 rounded-[4px] mt-8"
+            >
+              Go to result page
+            </Button>
+          </Link>
+          <div className="text-black mt-6">
+            <CustomPagination
+              currentPage={accountOperationsPage || 1}
+              totalCount={accountOperations.accountOperations?.total_operations}
+              pageSize={config.standardPaginationSize}
+              onPageChange={changeAccountOperationsPagination}
+              shouldScrollToTop={false}
+            />
+          </div>
+          {accountOperations.accountOperations?.operations_result.map((foundOperation) => (
+            <DetailedOperationCard
+              className="my-6"
+              operation={foundOperation.operation}
+              key={foundOperation.operation_id}
+              blockNumber={foundOperation.block_num}
+              date={new Date(foundOperation.timestamp)}
             />
           ))}
         </div>

@@ -6,49 +6,37 @@ import DateTimePicker from "react-datetime-picker";
 import "react-datetime-picker/dist/DateTimePicker.css";
 import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
+import { SearchRangesResult } from "./useSearchRanges";
 
 
 interface SearchRangesProps {
-  rangeSelectOptions: Explorer.SelectOption[];
-  timeSelectOptions: Explorer.SelectOption[];
-  rangeSelectKey: string;
-  timeUnitSelectKey: string;
-  fromBlock: number | undefined;
-  toBlock: number | undefined;
-  startDate: Date | undefined;
-  endDate: Date | undefined;
-  lastBlocksValue:number | undefined;
-  lastTimeUnitValue: number | undefined;
-  setRangeSelectKey: (key: string) => void;
-  setTimeUnitSelectKey: (key: string) => void;
-  setFromBlock: (value: number) => void;
-  setToBlock: (value: number) => void;
-  setStartDate: (value: Date) => void;
-  setEndDate: (value: Date) => void;
-  setLastBlocksValue: (value: number) => void;
-  setLastTimeUnitValue: (value: number) => void;
+  rangesProps: SearchRangesResult;
 }
 
 const SearchRanges: React.FC<SearchRangesProps> = ({
-  rangeSelectOptions, 
-  timeSelectOptions, 
-  rangeSelectKey, 
-  timeUnitSelectKey, 
-  toBlock, 
-  fromBlock, 
-  startDate, 
-  endDate, 
-  lastBlocksValue, 
-  lastTimeUnitValue, 
-  setRangeSelectKey,
-  setTimeUnitSelectKey,
-  setFromBlock,
-  setToBlock,
-  setStartDate,
-  setEndDate,
-  setLastBlocksValue,
-  setLastTimeUnitValue,
+  rangesProps
 }) => {
+
+  const {
+    rangeSelectOptions, 
+    timeSelectOptions, 
+    rangeSelectKey, 
+    timeUnitSelectKey, 
+    toBlock, 
+    fromBlock, 
+    startDate, 
+    endDate, 
+    lastBlocksValue, 
+    lastTimeUnitValue, 
+    setRangeSelectKey,
+    setTimeUnitSelectKey,
+    setFromBlock,
+    setToBlock,
+    setStartDate,
+    setEndDate,
+    setLastBlocksValue,
+    setLastTimeUnitValue
+  } = rangesProps
 
   const setNumericValue = (value: number, fieldSetter: Function) => {
     if (value === 0) {
