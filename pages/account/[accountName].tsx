@@ -11,7 +11,6 @@ import PageNotFound from "@/components/PageNotFound";
 import useAccountDetails from "@/api/accountPage/useAccountDetails";
 import useAccountOperations from "@/api/accountPage/useAccountOperations";
 import useWitnessDetails from "@/api/common/useWitnessDetails";
-import { config } from "@/Config";
 import AccountPagination from "@/components/account/AccountPagination";
 
 export default function Account() {
@@ -26,12 +25,11 @@ export default function Account() {
 
   const { accountDetails } = useAccountDetails(accountNameFromRoute);
   const { accountOperations, isAccountOperationsLoading } =
-    useAccountOperations(
-      accountNameFromRoute,
-      operationFilters.length ? operationFilters : undefined,
-      config.standardPaginationSize,
-      page
-    );
+    useAccountOperations({
+      accountName: accountNameFromRoute,
+      pageNumber: page,
+      operationTypes: operationFilters.length ? operationFilters : undefined,
+    });
 
   const { witnessDetails } = useWitnessDetails(
     accountNameFromRoute,

@@ -48,7 +48,7 @@ const Comments: React.FC = () => {
         permlink: params.permlink,
         fromBlock: params.fromBlock,
         toBlock: params.toBlock,
-        operations: !!params.filters.length ? params.filters : undefined,
+        operationTypes: !!params.filters.length ? params.filters : undefined,
       };
       setCommentSearchProps(commentSearchProps);
       setPreviousCommentSearchProps(commentSearchProps);
