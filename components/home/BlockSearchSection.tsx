@@ -114,7 +114,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
         toBlock: payloadToBlock,
         startDate: payloadStartDate,
         endDate: payloadEndDate,
-        operationTypes: selectedCommentSearchOperationTypes.length ? selectedCommentSearchOperationTypes : undefined
+        operationTypes: selectedOperationTypes.length ? selectedOperationTypes : undefined
       };
       setLastSearchKey("account");
       setAccountOperationsSearchProps(accountOperationsSearchProps);
@@ -212,6 +212,14 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
       {
         paramName: "toBlock",
         paramValue: accountOperationsSearchProps?.toBlock ? String(accountOperationsSearchProps?.toBlock) : undefined
+      },
+      {
+        paramName: "startDate",
+        paramValue: accountOperationsSearchProps?.startDate ? String(accountOperationsSearchProps?.startDate) : undefined
+      },
+      {
+        paramName: "endDate",
+        paramValue: accountOperationsSearchProps?.endDate ? String(accountOperationsSearchProps?.endDate) : undefined
       },
       {
         paramName: "filters",
