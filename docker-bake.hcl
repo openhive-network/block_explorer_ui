@@ -34,7 +34,7 @@ target "ci-build" {
     "type=registry,ref=${CI_REGISTRY_IMAGE}/cache:${TAG}"
   ]
   cache-to = [
-    "type=registry,mode=max,ref=${CI_REGISTRY_IMAGE}/cache:${TAG}"
+    "type=registry,mode=max,image-manifest=true,ref=${CI_REGISTRY_IMAGE}/cache:${TAG}"
   ]
   output = [
     "type=registry"
