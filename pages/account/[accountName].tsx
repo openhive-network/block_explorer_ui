@@ -12,6 +12,28 @@ import useAccountDetails from "@/api/accountPage/useAccountDetails";
 import useAccountOperations from "@/api/accountPage/useAccountOperations";
 import useWitnessDetails from "@/api/common/useWitnessDetails";
 import AccountPagination from "@/components/account/AccountPagination";
+import useAccountOperationTypes from "@/api/accountPage/useAccountOperationTypes";
+import { config } from "@/Config";
+import { useURLParams } from "@/utils/Hooks";
+
+interface AccountSearchParams {
+  accountName?: string;
+  fromBlock: number | undefined;
+  toBlock: number | undefined;
+  startDate: Date | undefined;
+  endDate: Date | undefined;
+  page: number;
+  filters: number[];
+}
+
+const defaultSearchParams: AccountSearchParams = {
+  fromBlock: undefined,
+  toBlock: undefined,
+  startDate: undefined,
+  endDate: undefined,
+  page: 1,
+  filters: []
+}
 
 export default function Account() {
   const router = useRouter();
@@ -35,6 +57,8 @@ export default function Account() {
     accountNameFromRoute,
     !!accountDetails?.is_witness
   );
+
+  const { paramsState, setParams } = useURLParams(defaultSearchParams);
 
   useEffect(() => {
     if (!page && accountOperations) {
