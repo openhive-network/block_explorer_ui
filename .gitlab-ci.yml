@@ -38,7 +38,7 @@ docker-build:
       echo -e "\e[0Ksection_end:$(date +%s):tag\r\e[0K"
       echo -e "\e[0Ksection_start:$(date +%s):build[collapsed=true]\r\e[0KBaking image "$CI_REGISTRY_IMAGE:$TAG"..."
       scripts/build_instance.sh --progress=plain "$CI_PROJECT_DIR"
-      echo "IMAGE_NAME=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHA" > docker-build.env
+      echo "IMAGE_NAME=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" > docker-build.env
       echo -e "\e[0Ksection_end:$(date +%s):build\r\e[0K"
   artifacts:
     reports:
