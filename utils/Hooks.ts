@@ -121,11 +121,11 @@ export const useURLParams = <T>(defaultState: T) => {
   const router = useRouter();
   const [paramsState, setParamsState] = useState<T>(defaultState);
 
-  const setParams = (params: T) => {
+  const setParams = (params: T, omit?: string[]) => {
     let urlParams: ParamObject = {};
     Object.keys(params as ParamObject).forEach((key) => {
       const value = dataToURL(params[key as keyof typeof params]);
-      if (!!value) {
+      if (!!value && !omit?.includes(key)) {
         urlParams[key] = value;
       } else {
         delete urlParams[key];

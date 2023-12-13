@@ -15,7 +15,7 @@ import { useURLParams } from "@/utils/Hooks";
 const FILTERS = "filters";
 const SPLIT = "-";
 
-interface SearchParams {
+interface CommentSearchParams {
   accountName: string | undefined;
   permlink: string | undefined;
   fromBlock: number | undefined;
@@ -24,13 +24,13 @@ interface SearchParams {
   filters: number[];
 }
 
-const defaultSearchParams: SearchParams = {
-  page: 1,
-  filters: [],
+const defaultSearchParams: CommentSearchParams = {
   accountName: undefined,
+  permlink: undefined,
   fromBlock: undefined,
   toBlock: undefined,
-  permlink: undefined,
+  page: 1,
+  filters: [],
 }
 
 const Comments: React.FC = () => {
@@ -56,7 +56,7 @@ const Comments: React.FC = () => {
       config.commentOperationsTypeIds.includes(operation.op_type_id)
     ) || [];
 
-  const startCommentSearch = (params: SearchParams) => {
+  const startCommentSearch = (params: CommentSearchParams) => {
     if (params.accountName) {
       setParams(params);
       if (!initialSearch) {
