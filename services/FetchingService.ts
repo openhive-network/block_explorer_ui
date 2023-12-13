@@ -109,7 +109,6 @@ class FetchingService {
   ): Promise<Hive.OperationResponse[]> {
     const requestBody: Hive.GetOpsByAccountProps = {
       _account: accountOperationsProps.accountName,
-      _order_is: "desc",
       _filter: accountOperationsProps.operationTypes,
       _page_num: accountOperationsProps.pageNumber,
       _page_size: config.standardPaginationSize,
