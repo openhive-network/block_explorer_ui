@@ -14,10 +14,6 @@ const useManabars = (accountName: string) => {
     refetchOnWindowFocus: false,
   });
 
-  const getPercentage = (max: Long, current: Long) => {
-    return max.toNumber() === 0 ? 0 : current.mul(100).div(max).toNumber();
-  }
-
   const getManabars = async (accountName: string): Promise<Explorer.Manabars | null> => {
     if (!accountName) return null;
     const manabars = await fetchingService.getManabars(accountName);
@@ -27,17 +23,17 @@ const useManabars = (accountName: string) => {
       upvote: {
         max: upvote.max.toString(),
         current: upvote.current.toString(),
-        percentageValue: getPercentage(upvote.max, upvote.current)
+        percentageValue: upvote.percent
       },
       downvote: {
         max: downvote.max.toString(),
         current: downvote.current.toString(),
-        percentageValue: getPercentage(downvote.max, downvote.current)
+        percentageValue: downvote.percent
       },
       rc: {
         max: rc.max.toString(),
         current: rc.current.toString(),
-        percentageValue: getPercentage(rc.max, rc.current)
+        percentageValue: rc.percent
       },
     }
     return processedManabars;
