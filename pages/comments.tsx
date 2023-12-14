@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import Explorer from "@/types/Explorer";
 import useOperationTypes from "@/api/common/useOperationsTypes";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
+import JumpToPage from "@/components/JumpToPage";
 
 const FILTERS = "filters";
 const SPLIT = "-";
@@ -24,15 +25,17 @@ const Comments: React.FC = () => {
     filters: number[];
   }>({ page: 1, filters: [] });
   const [initialSearch, setInitialSearch] = useState(false);
-  const [commentSearchProps, setCommentSearchProps] = useState<Explorer.CommentSearchProps | undefined>(undefined);
+  const [commentSearchProps, setCommentSearchProps] = useState<
+    Explorer.CommentSearchProps | undefined
+  >(undefined);
   const [previousCommentSearchProps, setPreviousCommentSearchProps] = useState<
-  Explorer.CommentSearchProps | undefined
+    Explorer.CommentSearchProps | undefined
   >(undefined);
   const router = useRouter();
-  
+
   const commentSearch = useCommentSearch(commentSearchProps);
   const { accountName, permlink, fromBlock, toBlock, page, filters } =
-  searchParams;
+    searchParams;
   const commentSearchRef = useRef(commentSearch);
 
   const operationsTypes =
@@ -198,7 +201,7 @@ const Comments: React.FC = () => {
       </div>
       {commentSearch.commentSearchData && (
         <>
-          <div className="w-full flex justify-center mt-4">
+          <div className="w-full flex justify-center items-center mt-4 ">
             <CustomPagination
               currentPage={page}
               totalCount={commentSearch.commentSearchData?.total_operations}
@@ -206,6 +209,12 @@ const Comments: React.FC = () => {
               onPageChange={changeCommentSearchPagination}
               shouldScrollToTop={false}
             />
+            <div className="justify-self-end">
+              <JumpToPage
+                currentPage={page}
+                onPageChange={changeCommentSearchPagination}
+              />
+            </div>
           </div>
           {commentSearch.commentSearchData?.operations_result?.map(
             (foundOperation) => (

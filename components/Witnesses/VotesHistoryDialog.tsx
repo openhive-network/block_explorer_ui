@@ -22,6 +22,7 @@ import { config } from "@/Config";
 import CustomPagination from "../CustomPagination";
 import { ArrowUpCircleIcon, ArrowDownCircleIcon } from "lucide-react";
 import useWitnessVotesHistory from "@/api/common/useWitnessVotesHistory";
+import JumpToPage from "../JumpToPage";
 
 type VotersDialogProps = {
   accountName: string;
@@ -132,13 +133,19 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
               </div>
             </div>
             {votesHistory && votesHistory?.length > PAGE_SIZE && (
-              <div className="flex justify-center">
+              <div className="flex justify-center items-center">
                 <CustomPagination
                   currentPage={page}
                   totalCount={votesHistory.length}
                   pageSize={PAGE_SIZE}
                   onPageChange={(page: number) => handlePageChange(page)}
                 />
+                <div className="justify-self-end">
+                  <JumpToPage
+                    currentPage={page}
+                    onPageChange={(page: number) => handlePageChange(page)}
+                  />
+                </div>
               </div>
             )}
             <Table className="text-white">

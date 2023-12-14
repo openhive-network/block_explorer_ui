@@ -1,22 +1,17 @@
 import { useEffect, useState } from "react";
 import AccountDetailsCard from "../../components/account/AccountDetailsCard";
 import { useRouter } from "next/router";
-import OperationTypesDialog from "@/components/OperationTypesDialog";
-import CustomPagination from "../../components/CustomPagination";
 import DetailedOperationCard from "@/components/DetailedOperationCard";
 import JSONCard from "@/components/JSONCard";
 import AccountMainCard from "@/components/account/AccountMainCard";
 import AccountWitnessVotesCard from "@/components/account/AccountWitnessVotesCard";
 import VotersDialog from "@/components/Witnesses/VotersDialog";
 import VotesHistoryDialog from "@/components/Witnesses/VotesHistoryDialog";
-import ScrollTopButton from "@/components/ScrollTopButton";
 import PageNotFound from "@/components/PageNotFound";
 import useAccountDetails from "@/api/accountPage/useAccountDetails";
 import useAccountOperations from "@/api/accountPage/useAccountOperations";
 import useWitnessDetails from "@/api/common/useWitnessDetails";
-import useAccountOperationTypes from "@/api/accountPage/useAccountOperationTypes";
-import { config } from "@/Config";
-
+import AccountPagination from "@/components/account/AccountPagination";
 
 export default function Account() {
   const router = useRouter();
@@ -33,12 +28,8 @@ export default function Account() {
     useAccountOperations({
       accountName: accountNameFromRoute,
       pageNumber: page,
-      operationTypes: operationFilters.length ? operationFilters : undefined
-    }
-    );
-
-  const { accountOperationTypes } =
-    useAccountOperationTypes(accountNameFromRoute);
+      operationTypes: operationFilters.length ? operationFilters : undefined,
+    });
 
   const { witnessDetails } = useWitnessDetails(
     accountNameFromRoute,
@@ -49,7 +40,7 @@ export default function Account() {
     if (!page && accountOperations) {
       setPage(accountOperations.total_pages);
     }
-  }, [accountOperations, page])
+  }, [accountOperations, page]);
 
   if (!accountDetails) {
     return "Loading ...";
@@ -66,41 +57,18 @@ export default function Account() {
     setIsVotesHistoryModalOpen(!isVotesHistoryModalOpen);
   };
 
-  const handleFilterChange = (newFilters: number[]) => {
-    setPage(undefined);
-    setOperationFilters(newFilters);
-  }
-
-
   return (
     <>
-      <div className="bg-explorer-orange items-center fixed grid grid-flow-row-dense grid-cols-3 top-14 md:top-16 right-0 left-0 p-2 z-10">
-        <div className="col-span-3 md:col-span-2 md:justify-self-end justify-self-center z-20 max-w-full">
-          {page && 
-            <CustomPagination
-              currentPage={page}
-              totalCount={accountOperations?.total_operations || 0}
-              pageSize={config.standardPaginationSize}
-              onPageChange={(page: number) => setPage(page)}
-            />
-          }
-        </div>
-
-        <div className="justify-self-end col-span-3 md:col-span-1">
-          <div className="grid gap-x-5 grid-flow-row-dense grid-cols-2">
-            <div className="justify-self-end self-center">
-              <ScrollTopButton />
-            </div>
-            <OperationTypesDialog
-              operationTypes={accountOperationTypes}
-              setSelectedOperations={handleFilterChange}
-              selectedOperations={operationFilters}
-              colorClass="bg-explorer-dark-gray"
-              triggerTitle={"Operation Filters"}
-            />
-          </div>
-        </div>
-      </div>
+      {page && accountOperations && (
+        <AccountPagination
+          page={page}
+          setPage={setPage}
+          accountOperations={accountOperations}
+          accountName={accountNameFromRoute}
+          setOperationFilters={setOperationFilters}
+          operationFilters={operationFilters}
+        />
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 text-white mx-8 mt-24 md:mt-14 w-full">
         <div className="mt-2 col-start-1 col-span-1">
