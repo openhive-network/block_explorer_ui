@@ -305,9 +305,9 @@ class FetchingService {
   async getManabars(accountName: string): Promise<Hive.Manabars | null> {
     try {
       const chain = await createHiveChain();
-      const upvotePromise = await chain.calculateCurrentManabarValueForAccount(accountName, 0);
-      const downvotePromise = await chain.calculateCurrentManabarValueForAccount(accountName, 1);
-      const rcPromise = await chain.calculateCurrentManabarValueForAccount(accountName, 2);
+      const upvotePromise = chain.calculateCurrentManabarValueForAccount(accountName, 0);
+      const downvotePromise = chain.calculateCurrentManabarValueForAccount(accountName, 1);
+      const rcPromise = chain.calculateCurrentManabarValueForAccount(accountName, 2);
       const manabars = await Promise.all([upvotePromise, downvotePromise, rcPromise]);
       chain.delete();
       return {upvote: manabars[0], downvote: manabars[1], rc: manabars[2]};

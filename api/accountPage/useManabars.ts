@@ -1,6 +1,7 @@
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 import Explorer from "@/types/Explorer";
+import Long from "long";
 
 const useManabars = (accountName: string) => {
   const {
@@ -13,25 +14,30 @@ const useManabars = (accountName: string) => {
     refetchOnWindowFocus: false,
   });
 
+  const getPercentage = (max: Long, current: Long) => {
+    return max.toNumber() === 0 ? 0 : current.mul(100).div(max).toNumber();
+  }
+
   const getManabars = async (accountName: string): Promise<Explorer.Manabars | null> => {
     if (!accountName) return null;
     const manabars = await fetchingService.getManabars(accountName);
     if (!manabars) return null;
+    const {upvote, downvote, rc} = manabars;
     const processedManabars: Explorer.Manabars = {
       upvote: {
-        max: manabars.upvote.max.toString(),
-        current: manabars.upvote.current.toString(),
-        percentageValue: manabars.upvote.current.mul(100).div(manabars.upvote.max).toNumber()
+        max: upvote.max.toString(),
+        current: upvote.current.toString(),
+        percentageValue: getPercentage(upvote.max, upvote.current)
       },
       downvote: {
-        max: manabars.downvote.max.toString(),
-        current: manabars.downvote.current.toString(),
-        percentageValue: manabars.downvote.current.mul(100).div(manabars.downvote.max).toNumber()
+        max: downvote.max.toString(),
+        current: downvote.current.toString(),
+        percentageValue: getPercentage(downvote.max, downvote.current)
       },
       rc: {
-        max: manabars.rc.max.toString(),
-        current: manabars.rc.current.toString(),
-        percentageValue: manabars.rc.current.mul(100).div(manabars.rc.max).toNumber()
+        max: rc.max.toString(),
+        current: rc.current.toString(),
+        percentageValue: getPercentage(rc.max, rc.current)
       },
     }
     return processedManabars;
