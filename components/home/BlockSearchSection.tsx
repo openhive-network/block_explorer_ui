@@ -656,6 +656,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                 pageSize={config.standardPaginationSize}
                 onPageChange={changeAccountOperationsPagination}
                 shouldScrollToTop={false}
+                isMirrored={true}
               />
             </div>
             <div className="flex justify-end items-center">

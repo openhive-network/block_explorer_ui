@@ -10,6 +10,7 @@ interface PaginationProps {
   pageSize: number;
   className?: string;
   shouldScrollToTop?: boolean;
+  isMirrored?: boolean;
 }
 
 const scrollToTop = () => {
@@ -24,7 +25,8 @@ const CustomPagination: React.FC<PaginationProps> = ({
   currentPage,
   pageSize,
   className,
-  shouldScrollToTop = true
+  shouldScrollToTop = true,
+  isMirrored = false
 }) => {
   const paginationRange: any = usePagination({
     currentPage,
@@ -54,15 +56,20 @@ const CustomPagination: React.FC<PaginationProps> = ({
   const lastPage = paginationRange[paginationRange.length - 1];
   const firstPage = paginationRange[0];
 
+  const getChevrons = (isFirst: boolean) => {
+    if (isFirst) return isMirrored ? <ChevronRight /> : <ChevronLeft />;
+    if (!isFirst) return isMirrored ? <ChevronLeft /> : <ChevronRight />;
+  }
+
   return (
-    <ul className={cn("flex list-none", className)}>
+    <ul className={cn("flex list-none ", className, {"flex-row-reverse": isMirrored})}>
       <li
         className={`p-3 h-8 text-center mx-0 mt-2 md:m-2 text-explorer-dark-gray flex box-border items-center tracking-widest rounded-2xl leading-6 text-sm w-min-[32px] cursor-pointer ${
           currentPage === firstPage && "hidden"
         }`}
         onClick={onPrevious}
       >
-        <ChevronLeft />
+        {getChevrons(true)}
       </li>
       {paginationRange.map((pageNumber: number | string, i: number) => {
         if (pageNumber === DOTS) {
@@ -95,7 +102,7 @@ const CustomPagination: React.FC<PaginationProps> = ({
         }`}
         onClick={onNext}
       >
-        <ChevronRight/>
+        {getChevrons(false)}
       </li>
     </ul>
   );

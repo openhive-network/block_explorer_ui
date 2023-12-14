@@ -28,6 +28,7 @@ const AccountPagination = ({
           totalCount={accountOperations.total_operations || 0}
           pageSize={config.standardPaginationSize}
           onPageChange={(page: number) => setPage(page)}
+          isMirrored={true}
         />
       </div>
 
