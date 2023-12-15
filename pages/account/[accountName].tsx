@@ -22,6 +22,15 @@ import DateTimePicker from "react-datetime-picker";
 import ScrollTopButton from "@/components/ScrollTopButton";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 import Hive from "@/types/Hive";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+} from "@/components/ui/select";
+import useSearchRanges from "@/components/searchRanges/useSearchRanges";
+
+type TimeUnit = "days" | "weeks" | "months";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -30,6 +39,9 @@ interface AccountSearchParams {
   fromDate: Date | undefined;
   toDate: Date | undefined;
   page: number | undefined;
+  lastBlocks: number | undefined;
+  lastTime: number | undefined;
+  timeUnit: TimeUnit | undefined;
   filters: number[];
 }
 
@@ -40,6 +52,9 @@ const defaultSearchParams: AccountSearchParams = {
   fromDate: undefined,
   toDate: undefined,
   page: undefined,
+  lastBlocks: undefined,
+  lastTime: undefined,
+  timeUnit: undefined,
   filters: [],
 };
 
@@ -59,7 +74,7 @@ export default function Account() {
     toBlock: toBlockParam,
     fromDate: fromDateParam,
     toDate: toDateParam,
-    page
+    page,
   } = paramsState;
 
   const [isVotersModalOpen, setIsVotersModalOpen] = useState(false);
@@ -68,8 +83,18 @@ export default function Account() {
   const [toBlock, setToBlock] = useState<number>();
   const [fromDate, setFromDate] = useState<Date>(new Date(0));
   const [toDate, setToDate] = useState<Date>(new Date());
+  const [lastBlocks, setLastBlocks] = useState<number>();
+  const [lastTime, setLastTime] = useState<number>();
+  const [timeUnit, setTimeUnit] = useState<TimeUnit>();
   const [initialSearch, setInitialSearch] = useState<boolean>(false);
 
+  const {
+    timeSelectOptions,
+    setTimeUnitSelectKey,
+    lastTimeUnitValue,
+    setLastTimeUnitValue,
+    timeUnitSelectKey,
+  } = useSearchRanges();
   const { accountDetails } = useAccountDetails(accountNameFromRoute);
   const { accountOperations, isAccountOperationsLoading } =
     useAccountOperations({
@@ -115,7 +140,22 @@ export default function Account() {
       setToBlock(toBlockParam);
       setInitialSearch(true);
     } else {
-      setParams({ ...paramsState, fromBlock, toBlock, fromDate, toDate, page: undefined });
+      setParams({
+        ...paramsState,
+        fromBlock,
+        toBlock,
+        fromDate,
+        toDate,
+        page: undefined,
+      });
+    }
+  };
+
+  const setNumericValue = (value: number, fieldSetter: Function) => {
+    if (value === 0) {
+      fieldSetter(undefined);
+    } else {
+      fieldSetter(value);
     }
   };
 
@@ -264,6 +304,52 @@ export default function Account() {
                     placeholder={"Headblock"}
                   />
                 </div>
+                <div className="flex flex-col w-full">
+                  <label className="mx-2">Last Blocks</label>
+                  <Input
+                    type="number"
+                    value={lastBlocks}
+                    onChange={(e) => setLastBlocks(Number(e.target.value))}
+                    placeholder="Last Blocks"
+                  />
+                </div>
+              </div>
+              <label className="mx-2 ml-4">Last Time</label>
+              <div className="flex items-center justify-center w-full px-2">
+                <div className="flex flex-col w-full">
+                  <Input
+                    type="number"
+                    value={lastTimeUnitValue || ""}
+                    onChange={(e) =>
+                      setNumericValue(
+                        Number(e.target.value),
+                        setLastTimeUnitValue
+                      )
+                    }
+                    placeholder={"Last"}
+                  />
+                </div>
+                <Select onValueChange={setTimeUnitSelectKey}>
+                  <SelectTrigger>
+                    {
+                      timeSelectOptions.find(
+                        (selectOption) => selectOption.key === timeUnitSelectKey
+                      )?.name
+                    }
+                  </SelectTrigger>
+                  <SelectContent className="bg-white text-black rounded-[2px] max-h-[31rem]">
+                    {timeSelectOptions.map((selectOption, index) => (
+                      <SelectItem
+                        className="m-1 text-center"
+                        key={index}
+                        value={selectOption.key}
+                        defaultChecked={false}
+                      >
+                        {selectOption.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="flex items-center justify-between m-2">
                 <Button
