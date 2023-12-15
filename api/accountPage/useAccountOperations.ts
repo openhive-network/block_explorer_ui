@@ -6,6 +6,7 @@ import Explorer from "@/types/Explorer";
 const useAccountOperations = (
   accountOperationsProps?: Explorer.AccountSearchOperationsProps
 ) => {
+  console.log(accountOperationsProps?.pageNumber);
   const {
     data: accountOperations,
     isLoading: isAccountOperationsLoading,

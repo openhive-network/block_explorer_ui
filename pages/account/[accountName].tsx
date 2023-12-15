@@ -59,6 +59,7 @@ export default function Account() {
     toBlock: toBlockParam,
     fromDate: fromDateParam,
     toDate: toDateParam,
+    page
   } = paramsState;
 
   const [isVotersModalOpen, setIsVotersModalOpen] = useState(false);
@@ -274,7 +275,7 @@ export default function Account() {
                 </Button>
               </div>
             </div>
-            {isAccountOperationsLoading ? (
+            {isAccountOperationsLoading || !page ? (
               <div className="flex justify-center text-center items-center">
                 Loading ...
               </div>
