@@ -55,10 +55,10 @@ export default function Account() {
 
   const {
     filters,
-    fromBlock: fromBlockParams,
-    toBlock: toBlockParams,
-    fromDate: fromDateParams,
-    toDate: toDateParams,
+    fromBlock: fromBlockParam,
+    toBlock: toBlockParam,
+    fromDate: fromDateParam,
+    toDate: toDateParam,
   } = paramsState;
 
   const [isVotersModalOpen, setIsVotersModalOpen] = useState(false);
@@ -75,10 +75,10 @@ export default function Account() {
       accountName: accountNameFromRoute,
       operationTypes: filters.length ? filters : undefined,
       pageNumber: paramsState.page,
-      fromBlock: fromBlockParams,
-      toBlock: toBlockParams,
-      startDate: fromDateParams,
-      endDate: toDateParams,
+      fromBlock: fromBlockParam,
+      toBlock: toBlockParam,
+      startDate: fromDateParam,
+      endDate: toDateParam,
     });
 
   const { accountOperationTypes } =
@@ -106,15 +106,15 @@ export default function Account() {
   const handleSearch = () => {
     if (
       !initialSearch &&
-      (fromDateParams || toDateParams || fromBlockParams || toBlockParams)
+      (fromDateParam || toDateParam || fromBlockParam || toBlockParam)
     ) {
-      setFromDate(fromDateParams ?? new Date(0));
-      setToDate(toDateParams ?? new Date());
-      setFromBlock(fromBlockParams);
-      setToBlock(toBlockParams);
+      setFromDate(fromDateParam ?? new Date(0));
+      setToDate(toDateParam ?? new Date());
+      setFromBlock(fromBlockParam);
+      setToBlock(toBlockParam);
       setInitialSearch(true);
     } else {
-      setParams({ ...paramsState, fromBlock, toBlock, fromDate, toDate });
+      setParams({ ...paramsState, fromBlock, toBlock, fromDate, toDate, page: undefined });
     }
   };
 
