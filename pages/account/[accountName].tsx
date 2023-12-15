@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input";
 import DateTimePicker from "react-datetime-picker";
 import ScrollTopButton from "@/components/ScrollTopButton";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
+import Hive from "@/types/Hive";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -72,10 +73,13 @@ export default function Account() {
   const { accountOperations, isAccountOperationsLoading } =
     useAccountOperations({
       accountName: accountNameFromRoute,
-      pageNumber: paramsState.page,
       operationTypes: filters.length ? filters : undefined,
+      pageNumber: paramsState.page,
+      fromBlock: fromBlockParams,
+      toBlock: toBlockParams,
+      startDate: fromDateParams,
+      endDate: toDateParams,
     });
-
 
   const { accountOperationTypes } =
     useAccountOperationTypes(accountNameFromRoute);
@@ -133,15 +137,17 @@ export default function Account() {
       <div className="bg-explorer-orange items-center fixed grid grid-flow-row-dense grid-cols-3 top-14 md:top-16 right-0 left-0 p-2 z-10">
         <div className="col-span-3 md:col-span-2 md:justify-self-end justify-self-center z-20 max-w-full">
           {paramsState.page && accountOperations && (
-          <AccountPagination
-            page={paramsState.page}
-            setPage={(page: number) => setParams({ ...paramsState, page})}
-            accountOperations={accountOperations}
-            accountName={accountNameFromRoute}
-            setOperationFilters={(newFilters: number[]) => setParams({ ...paramsState, filters: newFilters})}
-            operationFilters={filters}
-          />
-        )}
+            <AccountPagination
+              page={paramsState.page}
+              setPage={(page: number) => setParams({ ...paramsState, page })}
+              accountOperations={accountOperations}
+              accountName={accountNameFromRoute}
+              setOperationFilters={(newFilters: number[]) =>
+                setParams({ ...paramsState, filters: newFilters })
+              }
+              operationFilters={filters}
+            />
+          )}
         </div>
 
         <div className="justify-self-end col-span-3 md:col-span-1">
@@ -265,9 +271,6 @@ export default function Account() {
                   disabled={false}
                 >
                   <span>Search</span>{" "}
-                  {/* {commentSearch.commentSearchDataLoading && (
-                    <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
-                  )} */}
                 </Button>
               </div>
             </div>
@@ -276,19 +279,24 @@ export default function Account() {
                 Loading ...
               </div>
             ) : (
-              accountOperations?.operations_result?.map((operation: any) => (
-                <div className="m-2" key={operation.acc_operation_id}>
-                  <DetailedOperationCard
-                    operation={operation.operation}
-                    operationId={operation.operation_id}
-                    date={new Date(operation.timestamp)}
-                    blockNumber={operation.block_num}
-                    transactionId={operation.trx_id}
-                    key={operation.timestamp}
-                    isShortened={operation.is_modified}
-                  />
-                </div>
-              ))
+              accountOperations?.operations_result?.map(
+                (operation: Hive.OperationResponse) => (
+                  <div
+                    className="m-2"
+                    key={`${operation.operation_id}_${operation.timestamp}`}
+                  >
+                    <DetailedOperationCard
+                      operation={operation.operation}
+                      operationId={operation.operation_id}
+                      date={new Date(operation.timestamp)}
+                      blockNumber={operation.block_num}
+                      transactionId={operation.trx_id}
+                      key={operation.timestamp}
+                      isShortened={operation.is_modified}
+                    />
+                  </div>
+                )
+              )
             )}
           </div>
         </div>
