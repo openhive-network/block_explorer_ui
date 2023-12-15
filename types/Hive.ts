@@ -28,9 +28,11 @@ declare module Hive {
     _page_num?: number;
     _page_size: number;
     _filter?: number[];
-    _date_start: Date | null;
-    _date_end: Date | null;
+    _date_start?: Date;
+    _date_end?: Date;
     _body_limit: number;
+    _from?: number;
+    _to?: number;
   }
 
   interface GetAccountOpsCountProps {

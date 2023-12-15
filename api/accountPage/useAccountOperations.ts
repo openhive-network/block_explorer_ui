@@ -7,6 +7,10 @@ const useAccountOperations = (
   operationFilters: number[] | undefined,
   pageSize: number,
   operationPage?: number,
+  fromBlock?: number,
+  toBlock?: number,
+  starDate?: Date,
+  endDate?: Date
 ) => {
   const {
     data: accountOperations,
@@ -18,13 +22,21 @@ const useAccountOperations = (
       accountName,
       operationPage,
       operationFilters,
+      fromBlock,
+      toBlock,
+      starDate,
+      endDate
     ],
     queryFn: () =>
       fetchingService.getOpsByAccount(
         accountName,
         pageSize,
         operationPage,
-        operationFilters
+        operationFilters,
+        starDate,
+        endDate,
+        fromBlock,
+        toBlock
       ),
     refetchOnWindowFocus: false,
   });

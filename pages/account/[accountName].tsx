@@ -21,6 +21,7 @@ import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import DateTimePicker from "react-datetime-picker";
+import Hive from "@/types/Hive";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -74,7 +75,11 @@ export default function Account() {
       accountNameFromRoute,
       filters.length ? filters : undefined,
       config.standardPaginationSize,
-      paramsState.page
+      paramsState.page,
+      fromBlockParams,
+      toBlockParams,
+      fromDateParams,
+      toDateParams
     );
 
   const { accountOperationTypes } =
@@ -265,9 +270,6 @@ export default function Account() {
                   disabled={false}
                 >
                   <span>Search</span>{" "}
-                  {/* {commentSearch.commentSearchDataLoading && (
-                    <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
-                  )} */}
                 </Button>
               </div>
             </div>
@@ -276,8 +278,8 @@ export default function Account() {
                 Loading ...
               </div>
             ) : (
-              accountOperations?.operations_result?.map((operation: any) => (
-                <div className="m-2" key={operation.acc_operation_id}>
+              accountOperations?.operations_result?.map((operation: Hive.OperationResponse) => (
+                <div className="m-2" key={`${operation.operation_id}_${operation.timestamp}`}>
                   <DetailedOperationCard
                     operation={operation.operation}
                     operationId={operation.operation_id}

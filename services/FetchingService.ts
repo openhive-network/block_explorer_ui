@@ -107,16 +107,22 @@ class FetchingService {
     account: string,
     limit: number,
     pagerNum?: number,
-    filter?: number[]
+    filter?: number[],
+    startDate?: Date,
+    endDate?: Date,
+    fromBlock?: number,
+    toBlock?: number 
   ): Promise<Hive.OperationResponse[]> {
     const requestBody: Hive.GetOpsByAccountProps = {
       _account: account,
       _filter: filter,
       _page_num: pagerNum,
       _page_size: limit,
-      _date_start: null,
-      _date_end: null,
-      _body_limit: config.opsBodyLimit
+      _date_start: startDate,
+      _date_end: endDate,
+      _body_limit: config.opsBodyLimit,
+      _from: fromBlock,
+      _to: toBlock
     };
     const url = `${config.apiAdress}/rpc/get_ops_by_account`;
     return await this.makePostRequest(url, requestBody);
