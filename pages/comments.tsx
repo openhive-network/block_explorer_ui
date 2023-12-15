@@ -49,7 +49,6 @@ const Comments: React.FC = () => {
   const router = useRouter();
 
   const commentSearch = useCommentSearch(commentSearchProps);
-
   const { paramsState, setParams } = useURLParams(defaultSearchParams);
 
   const operationsTypes =
