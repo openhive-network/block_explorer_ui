@@ -101,8 +101,8 @@ const Comments: React.FC = () => {
     if (paramsState && !initialSearch) {
       startCommentSearch(paramsState);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.query, paramsState]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paramsState]);
 
   return (
     <div className="w-full md:w-4/5">

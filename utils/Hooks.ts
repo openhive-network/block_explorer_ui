@@ -1,6 +1,7 @@
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
-import { useRef, RefObject, useEffect, useState, useCallback } from "react";
+import { useRef, RefObject, useEffect, useState, useCallback, useMemo } from "react";
+import { toDateNumber } from "./StringUtils";
 
 /**
  * hook for using debounce
@@ -103,7 +104,11 @@ const dataToURL = (value: any) => {
   }
 
   if (value instanceof Date) {
-    return `${value.getDate()}.${value.getMonth() + 1}.${value.getFullYear()}`;
+    return `${value.getFullYear()}.${toDateNumber(
+      value.getMonth() + 1
+    )}.${toDateNumber(value.getDate())}_${toDateNumber(
+      value.getHours()
+    )}.${toDateNumber(value.getMinutes())}.${toDateNumber(value.getSeconds())}`;
   }
 
   return value;
@@ -113,46 +118,64 @@ const URLToData = (value: any) => {
   if (!isNaN(Number(value))) {
     return Number(value);
   }
-  
+
   if (value.at(-1) === URL_ARRAY_END) {
     return value.match(/[\d|,|.|e|E|\+]+/g).map((v: string) => Number(v));
   }
 
-  if (/^(0[1-9]|[1-2][0-9]|3[0-1])\.(0[1-9]|1[0-2])\.\d{4}$/.test(value)) {
-    return new Date(value);
+  if (/^\d{4}\.\d{2}\.\d{2}_\d{2}.\d{2}.\d{2}$/.test(value)) {
+    return new Date(
+      `${value.split("_")[0]} ${value.split("_")[1].replaceAll(".", ":")}`
+    );
   }
 
   return value;
 };
 
-export const useURLParams = <T>(defaultState: T) => {
+export const useURLParams = <T>(defaultState: T, omit?: string[]) => {
   const router = useRouter();
   const [paramsState, setParamsState] = useState<T>(defaultState);
+  const interpolationParams = useMemo(() => {
+    const regex = /\[(.*?)\]/g;
 
-  const setParams = (params: T, omit?: string[]) => {
-    let urlParams: ParamObject = {};
-    Object.keys(params as ParamObject).forEach((key) => {
-      const value = dataToURL(params[key as keyof typeof params]);
-      if (!!value && !omit?.includes(key)) {
-        urlParams[key] = value;
-      } else {
-        delete urlParams[key];
+      let match;
+      const matches = [];
+
+      while ((match = regex.exec(router.pathname)) !== null) {
+        matches.push(match[1]);
       }
-    });
-    router.replace({
-      query: {
-        ...urlParams,
-      },
-    });
+
+      return matches as (keyof T)[];
+  }, [router.pathname]);
+
+  const setParams = (params: T) => {
+    if (interpolationParams.every((param) => !!params[param])) {
+      let urlParams: ParamObject = {};
+      Object.keys(params as ParamObject).forEach((key) => {
+        const value = dataToURL(params[key as keyof typeof params]);
+        if (!!value && !omit?.includes(key)) {
+          urlParams[key] = value;
+        } else {
+          delete urlParams[key];
+        }
+      });
+      router.replace({
+        query: {
+          ...urlParams,
+        },
+      });
+    }
   };
 
   const getParams = () => {
     let queryParams = router.query as T;
+
     Object.keys(queryParams as ParamObject).forEach((key) => {
       queryParams[key as keyof typeof queryParams] = URLToData(
         queryParams[key as keyof typeof queryParams]
       );
     });
+
     setParamsState({ ...defaultState, ...queryParams });
   };
 

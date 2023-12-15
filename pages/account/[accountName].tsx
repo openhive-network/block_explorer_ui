@@ -19,23 +19,26 @@ import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import DateTimePicker from "react-datetime-picker";
+import ScrollTopButton from "@/components/ScrollTopButton";
+import OperationTypesDialog from "@/components/OperationTypesDialog";
 
 interface AccountSearchParams {
-  accountName?: string;
+  accountName?: string | undefined;
   fromBlock: number | undefined;
   toBlock: number | undefined;
-  startDate: Date | undefined;
-  endDate: Date | undefined;
-  page: number;
+  fromDate: Date | undefined;
+  toDate: Date | undefined;
+  page: number | undefined;
   filters: number[];
 }
 
 const defaultSearchParams: AccountSearchParams = {
+  accountName: undefined,
   fromBlock: undefined,
   toBlock: undefined,
-  startDate: undefined,
-  endDate: undefined,
-  page: 1,
+  fromDate: undefined,
+  toDate: undefined,
+  page: undefined,
   filters: [],
 };
 
@@ -44,23 +47,38 @@ export default function Account() {
 
   const accountNameFromRoute = router.query.accountName as string;
 
-  const [operationFilters, setOperationFilters] = useState<number[]>([]);
+  const { paramsState, setParams } = useURLParams({
+    ...defaultSearchParams,
+    accountName: accountNameFromRoute,
+  });
+
+  const {
+    filters,
+    fromBlock: fromBlockParams,
+    toBlock: toBlockParams,
+    fromDate: fromDateParams,
+    toDate: toDateParams,
+  } = paramsState;
+
   const [isVotersModalOpen, setIsVotersModalOpen] = useState(false);
   const [isVotesHistoryModalOpen, setIsVotesHistoryModalOpen] = useState(false);
   const [fromBlock, setFromBlock] = useState<number>();
   const [toBlock, setToBlock] = useState<number>();
-  const [fromDate, setFromDate] = useState<Date>( new Date(0));
+  const [fromDate, setFromDate] = useState<Date>(new Date(0));
   const [toDate, setToDate] = useState<Date>(new Date());
-
-  const { paramsState, setParams } = useURLParams(defaultSearchParams);
+  const [initialSearch, setInitialSearch] = useState<boolean>(false);
 
   const { accountDetails } = useAccountDetails(accountNameFromRoute);
   const { accountOperations, isAccountOperationsLoading } =
     useAccountOperations({
       accountName: accountNameFromRoute,
       pageNumber: paramsState.page,
-      operationTypes: operationFilters.length ? operationFilters : undefined,
+      operationTypes: filters.length ? filters : undefined,
     });
+
+
+  const { accountOperationTypes } =
+    useAccountOperationTypes(accountNameFromRoute);
 
   const { witnessDetails } = useWitnessDetails(
     accountNameFromRoute,
@@ -73,13 +91,6 @@ export default function Account() {
     }
   }, [accountOperations, paramsState, setParams]);
 
-  if (!accountDetails) {
-    return "Loading ...";
-  }
-  if (!accountOperations?.total_operations && !isAccountOperationsLoading) {
-    return <PageNotFound message={`Account not found.`} />;
-  }
-
   const handleOpenVotersModal = () => {
     setIsVotersModalOpen(!isVotersModalOpen);
   };
@@ -88,18 +99,72 @@ export default function Account() {
     setIsVotesHistoryModalOpen(!isVotesHistoryModalOpen);
   };
 
+  const handleSearch = () => {
+    if (
+      !initialSearch &&
+      (fromDateParams || toDateParams || fromBlockParams || toBlockParams)
+    ) {
+      setFromDate(fromDateParams ?? new Date(0));
+      setToDate(toDateParams ?? new Date());
+      setFromBlock(fromBlockParams);
+      setToBlock(toBlockParams);
+      setInitialSearch(true);
+    } else {
+      setParams({ ...paramsState, fromBlock, toBlock, fromDate, toDate });
+    }
+  };
+
+  useEffect(() => {
+    if (paramsState && !initialSearch) {
+      handleSearch();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paramsState]);
+
+  if (!accountDetails) {
+    return "Loading ...";
+  }
+  if (!accountOperations?.total_operations && !isAccountOperationsLoading) {
+    return <PageNotFound message={`Account not found.`} />;
+  }
+
   return (
     <>
-      {paramsState.page && accountOperations && (
-        <AccountPagination
-          page={paramsState.page}
-          setPage={(page: number) => setParams({ ...paramsState, page})}
-          accountOperations={accountOperations}
-          accountName={accountNameFromRoute}
-          setOperationFilters={setOperationFilters}
-          operationFilters={operationFilters}
-        />
-      )}
+      <div className="bg-explorer-orange items-center fixed grid grid-flow-row-dense grid-cols-3 top-14 md:top-16 right-0 left-0 p-2 z-10">
+        <div className="col-span-3 md:col-span-2 md:justify-self-end justify-self-center z-20 max-w-full">
+          {paramsState.page && accountOperations && (
+          <AccountPagination
+            page={paramsState.page}
+            setPage={(page: number) => setParams({ ...paramsState, page})}
+            accountOperations={accountOperations}
+            accountName={accountNameFromRoute}
+            setOperationFilters={(newFilters: number[]) => setParams({ ...paramsState, filters: newFilters})}
+            operationFilters={filters}
+          />
+        )}
+        </div>
+
+        <div className="justify-self-end col-span-3 md:col-span-1">
+          <div className="grid gap-x-5 grid-flow-row-dense grid-cols-2">
+            <div className="justify-self-end self-center">
+              <ScrollTopButton />
+            </div>
+            <OperationTypesDialog
+              operationTypes={accountOperationTypes}
+              setSelectedOperations={(newFilters: number[]) =>
+                setParams({
+                  ...paramsState,
+                  page: undefined,
+                  filters: newFilters,
+                })
+              }
+              selectedOperations={filters}
+              colorClass="bg-explorer-dark-gray"
+              triggerTitle={"Operation Filters"}
+            />
+          </div>
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 text-white mx-8 mt-24 md:mt-14 w-full">
         <div className="mt-2 col-start-1 col-span-1">
@@ -196,7 +261,7 @@ export default function Account() {
               <div className="flex items-center justify-between m-2">
                 <Button
                   className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]"
-                  onClick={() => null}
+                  onClick={handleSearch}
                   disabled={false}
                 >
                   <span>Search</span>{" "}
