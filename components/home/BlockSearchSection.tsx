@@ -353,12 +353,12 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                 />
               </div>
               <div className="flex flex-col  m-2">
-                <div className="flex mb-">
-                  <label className="mx-2">Property</label>
+                <div className="flex items-center">
+                  <label className="ml-2">Property</label>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <HelpCircle />
+                        <HelpCircle className="h-4" />
                       </TooltipTrigger>
                       <TooltipContent>
                         <div className="bg-white text-black p-2">
