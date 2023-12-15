@@ -102,6 +102,10 @@ const dataToURL = (value: any) => {
     }
   }
 
+  if (value instanceof Date) {
+    return `${value.getDate()}.${value.getMonth() + 1}.${value.getFullYear()}`;
+  }
+
   return value;
 };
 
@@ -112,6 +116,10 @@ const URLToData = (value: any) => {
   
   if (value.at(-1) === URL_ARRAY_END) {
     return value.match(/[\d|,|.|e|E|\+]+/g).map((v: string) => Number(v));
+  }
+
+  if (/^(0[1-9]|[1-2][0-9]|3[0-1])\.(0[1-9]|1[0-2])\.\d{4}$/.test(value)) {
+    return new Date(value);
   }
 
   return value;

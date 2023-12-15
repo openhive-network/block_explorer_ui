@@ -15,6 +15,10 @@ import AccountPagination from "@/components/account/AccountPagination";
 import useAccountOperationTypes from "@/api/accountPage/useAccountOperationTypes";
 import { config } from "@/Config";
 import { useURLParams } from "@/utils/Hooks";
+import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import DateTimePicker from "react-datetime-picker";
 
 interface AccountSearchParams {
   accountName?: string;
@@ -32,24 +36,29 @@ const defaultSearchParams: AccountSearchParams = {
   startDate: undefined,
   endDate: undefined,
   page: 1,
-  filters: []
-}
+  filters: [],
+};
 
 export default function Account() {
   const router = useRouter();
 
   const accountNameFromRoute = router.query.accountName as string;
 
-  const [page, setPage] = useState<number | undefined>(undefined);
   const [operationFilters, setOperationFilters] = useState<number[]>([]);
   const [isVotersModalOpen, setIsVotersModalOpen] = useState(false);
   const [isVotesHistoryModalOpen, setIsVotesHistoryModalOpen] = useState(false);
+  const [fromBlock, setFromBlock] = useState<number>();
+  const [toBlock, setToBlock] = useState<number>();
+  const [fromDate, setFromDate] = useState<Date>( new Date(0));
+  const [toDate, setToDate] = useState<Date>(new Date());
+
+  const { paramsState, setParams } = useURLParams(defaultSearchParams);
 
   const { accountDetails } = useAccountDetails(accountNameFromRoute);
   const { accountOperations, isAccountOperationsLoading } =
     useAccountOperations({
       accountName: accountNameFromRoute,
-      pageNumber: page,
+      pageNumber: paramsState.page,
       operationTypes: operationFilters.length ? operationFilters : undefined,
     });
 
@@ -58,13 +67,11 @@ export default function Account() {
     !!accountDetails?.is_witness
   );
 
-  const { paramsState, setParams } = useURLParams(defaultSearchParams);
-
   useEffect(() => {
-    if (!page && accountOperations) {
-      setPage(accountOperations.total_pages);
+    if (!paramsState.page && accountOperations) {
+      setParams({ ...paramsState, page: accountOperations.total_pages });
     }
-  }, [accountOperations, page]);
+  }, [accountOperations, paramsState, setParams]);
 
   if (!accountDetails) {
     return "Loading ...";
@@ -83,10 +90,10 @@ export default function Account() {
 
   return (
     <>
-      {page && accountOperations && (
+      {paramsState.page && accountOperations && (
         <AccountPagination
-          page={page}
-          setPage={setPage}
+          page={paramsState.page}
+          setPage={(page: number) => setParams({ ...paramsState, page})}
           accountOperations={accountOperations}
           accountName={accountNameFromRoute}
           setOperationFilters={setOperationFilters}
@@ -135,16 +142,77 @@ export default function Account() {
 
         <div className="col-start-1 md:col-start-2 col-span-1 md:col-span-3">
           <div>
+            <div className="bg-explorer-dark-gray text-white p-4 rounded-[6px] mx-2">
+              <div className="flex items-center m-2">
+                <div className="flex flex-col w-full">
+                  <label className="mx-2">From date</label>
+                  <DateTimePicker
+                    value={fromDate}
+                    onChange={(date) => setFromDate(date!)}
+                    className="text-explorer-turquoise border border-explorer-turquoise"
+                    calendarClassName="text-gray-800"
+                    format="yyyy/MM/dd HH:mm:ss"
+                    clearIcon={null}
+                    calendarIcon={null}
+                    disableClock
+                    showLeadingZeros={false}
+                  />
+                </div>
+                <div className="flex flex-col w-full">
+                  <label className="mx-2">To date</label>
+                  <DateTimePicker
+                    value={toDate}
+                    onChange={(date) => setToDate(date!)}
+                    className="text-explorer-turquoise border border-explorer-turquoise"
+                    calendarClassName="text-gray-800"
+                    format="yyyy/MM/dd HH:mm:ss"
+                    clearIcon={null}
+                    calendarIcon={null}
+                    disableClock
+                    showLeadingZeros={false}
+                  />
+                </div>
+              </div>
+              <div className="flex items-center m-2">
+                <div className="flex flex-col w-full">
+                  <label className="mx-2">From block</label>
+                  <Input
+                    type="number"
+                    value={fromBlock}
+                    onChange={(e) => setFromBlock(Number(e.target.value))}
+                    placeholder="1"
+                  />
+                </div>
+                <div className="flex flex-col w-full">
+                  <label className="mx-2">To block</label>
+                  <Input
+                    type="number"
+                    value={toBlock}
+                    onChange={(e) => setToBlock(Number(e.target.value))}
+                    placeholder={"Headblock"}
+                  />
+                </div>
+              </div>
+              <div className="flex items-center justify-between m-2">
+                <Button
+                  className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]"
+                  onClick={() => null}
+                  disabled={false}
+                >
+                  <span>Search</span>{" "}
+                  {/* {commentSearch.commentSearchDataLoading && (
+                    <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
+                  )} */}
+                </Button>
+              </div>
+            </div>
             {isAccountOperationsLoading ? (
               <div className="flex justify-center text-center items-center">
                 Loading ...
               </div>
             ) : (
               accountOperations?.operations_result?.map((operation: any) => (
-                <div
-                  className="m-2"
-                  key={operation.acc_operation_id}
-                >
+                <div className="m-2" key={operation.acc_operation_id}>
                   <DetailedOperationCard
                     operation={operation.operation}
                     operationId={operation.operation_id}
