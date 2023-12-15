@@ -201,19 +201,19 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
             </Link>
           </div>
         )}
-
-        {transactionId && !skipTrx && (
           <div className="my-1">
-            Trx{" "}
-            <Link
-              className="text-explorer-turquoise"
-              href={`/transaction/${transactionId}`}
-            >
-              {transactionId.slice(0, 10)}
-            </Link>
+            {transactionId && !skipTrx && (
+              <>
+                Trx{" "}
+                <Link
+                  className="text-explorer-turquoise"
+                  href={`/transaction/${transactionId}`}
+                >
+                  {transactionId.slice(0, 10)}
+                </Link>
+              </>
+            )}
           </div>
-        )}
-
         {!skipDate && (
           <div className="my-1">
             Date:{" "}
