@@ -23,21 +23,22 @@ import { Input } from "@/components/ui/input";
 import DateTimePicker from "react-datetime-picker";
 
 interface AccountSearchParams {
-  accountName?: string;
+  accountName?: string | undefined;
   fromBlock: number | undefined;
   toBlock: number | undefined;
-  startDate: Date | undefined;
-  endDate: Date | undefined;
-  page: number;
+  fromDate: Date | undefined;
+  toDate: Date | undefined;
+  page: number | undefined;
   filters: number[];
 }
 
 const defaultSearchParams: AccountSearchParams = {
+  accountName: undefined,
   fromBlock: undefined,
   toBlock: undefined,
-  startDate: undefined,
-  endDate: undefined,
-  page: 1,
+  fromDate: undefined,
+  toDate: undefined,
+  page: undefined,
   filters: [],
 };
 
@@ -46,21 +47,32 @@ export default function Account() {
 
   const accountNameFromRoute = router.query.accountName as string;
 
-  const [operationFilters, setOperationFilters] = useState<number[]>([]);
+  const { paramsState, setParams } = useURLParams({
+    ...defaultSearchParams,
+    accountName: accountNameFromRoute,
+  });
+
+  const {
+    filters,
+    fromBlock: fromBlockParams,
+    toBlock: toBlockParams,
+    fromDate: fromDateParams,
+    toDate: toDateParams,
+  } = paramsState;
+
   const [isVotersModalOpen, setIsVotersModalOpen] = useState(false);
   const [isVotesHistoryModalOpen, setIsVotesHistoryModalOpen] = useState(false);
   const [fromBlock, setFromBlock] = useState<number>();
   const [toBlock, setToBlock] = useState<number>();
-  const [fromDate, setFromDate] = useState<Date>( new Date(0));
+  const [fromDate, setFromDate] = useState<Date>(new Date(0));
   const [toDate, setToDate] = useState<Date>(new Date());
-
-  const { paramsState, setParams } = useURLParams(defaultSearchParams);
+  const [initialSearch, setInitialSearch] = useState<boolean>(false);
 
   const { accountDetails } = useAccountDetails(accountNameFromRoute);
   const { accountOperations, isAccountOperationsLoading } =
     useAccountOperations(
       accountNameFromRoute,
-      operationFilters.length ? operationFilters : undefined,
+      filters.length ? filters : undefined,
       config.standardPaginationSize,
       paramsState.page
     );
@@ -79,13 +91,6 @@ export default function Account() {
     }
   }, [accountOperations, paramsState, setParams]);
 
-  if (!accountDetails) {
-    return "Loading ...";
-  }
-  if (!accountOperations?.total_operations && !isAccountOperationsLoading) {
-    return <PageNotFound message={`Account not found.`} />;
-  }
-
   const handleOpenVotersModal = () => {
     setIsVotersModalOpen(!isVotersModalOpen);
   };
@@ -94,10 +99,34 @@ export default function Account() {
     setIsVotesHistoryModalOpen(!isVotesHistoryModalOpen);
   };
 
-  const handleFilterChange = (newFilters: number[]) => {
-    // TODO
-    setOperationFilters(newFilters);
+  const handleSearch = () => {
+    if (
+      !initialSearch &&
+      (fromDateParams || toDateParams || fromBlockParams || toBlockParams)
+    ) {
+      setFromDate(fromDateParams ?? new Date(0));
+      setToDate(toDateParams ?? new Date());
+      setFromBlock(fromBlockParams);
+      setToBlock(toBlockParams);
+      setInitialSearch(true);
+    } else {
+      setParams({ ...paramsState, fromBlock, toBlock, fromDate, toDate });
+    }
   };
+
+  useEffect(() => {
+    if (paramsState && !initialSearch) {
+      handleSearch();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paramsState]);
+
+  if (!accountDetails) {
+    return "Loading ...";
+  }
+  if (!accountOperations?.total_operations && !isAccountOperationsLoading) {
+    return <PageNotFound message={`Account not found.`} />;
+  }
 
   return (
     <>
@@ -122,8 +151,14 @@ export default function Account() {
             </div>
             <OperationTypesDialog
               operationTypes={accountOperationTypes}
-              setSelectedOperations={handleFilterChange}
-              selectedOperations={operationFilters}
+              setSelectedOperations={(newFilters: number[]) =>
+                setParams({
+                  ...paramsState,
+                  page: undefined,
+                  filters: newFilters,
+                })
+              }
+              selectedOperations={filters}
               colorClass="bg-explorer-dark-gray"
               triggerTitle={"Operation Filters"}
             />
@@ -226,7 +261,7 @@ export default function Account() {
               <div className="flex items-center justify-between m-2">
                 <Button
                   className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]"
-                  onClick={() => null}
+                  onClick={handleSearch}
                   disabled={false}
                 >
                   <span>Search</span>{" "}

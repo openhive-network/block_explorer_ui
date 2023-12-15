@@ -49,3 +49,11 @@ export const formatJson = (json: { [key: string]: any }) => {
   })
   return formatted
 };
+
+export const toDateNumber = (value: number) => {
+  if (value < 10) {
+    return "0" + value;
+  } else {
+    return value.toString();
+  }
+}
