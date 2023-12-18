@@ -4,6 +4,7 @@ import moment from "moment";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import Hive from "@/types/Hive";
 import useManabars from "@/api/accountPage/useManabars";
+import { Loader2 } from "lucide-react";
 
 interface AccountMainCardProps {
   accountDetails: Hive.AccountDetailsQueryResponse;
@@ -40,11 +41,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
         </span>
       </div>
       <div>
-        <div className="text-center">
-          <p className="text-xl">Vote weight</p>
-          <p className="text-lg">50</p>
-        </div>
-        {!!manabarsData &&
+        {!!manabarsData ?
           <>
             <div className="text-center">
               <p className="my-2">Voting Power</p>
@@ -76,6 +73,10 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
               <p className="text-sm text-gray-400">{manabarsData?.rc.current} / {manabarsData?.rc.max}</p>
             </div>
           </>
+          :
+          <div className="flex justify-center text-center items-center">
+            <Loader2 className="animate-spin mt-1h-12 w-12 ml-3 ..." />
+          </div>
         }
         <div className="flex justify-between p-5 break-all">
           <div className="text-center">
