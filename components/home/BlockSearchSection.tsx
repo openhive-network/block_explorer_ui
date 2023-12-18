@@ -31,6 +31,7 @@ import {
 import useAccountOperations from "@/api/accountPage/useAccountOperations";
 import { getPageUrlParams } from "@/lib/utils";
 import JumpToPage from "../JumpToPage";
+import { dataToURL } from "@/utils/Hooks";
 
 interface BlockSearchSectionProps {}
 
@@ -249,29 +250,23 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
     const urlParams: Explorer.UrlParam[] = [
       {
         paramName: "accountName",
-        paramValue: commentSearchProps?.accountName,
+        paramValue: dataToURL(commentSearchProps?.accountName)
       },
       {
         paramName: "permlink",
-        paramValue: commentSearchProps?.permlink,
+        paramValue: dataToURL(commentSearchProps?.permlink),
       },
       {
         paramName: "fromBlock",
-        paramValue: commentSearchProps?.fromBlock
-          ? String(commentSearchProps?.fromBlock)
-          : undefined,
+        paramValue: dataToURL(commentSearchProps?.fromBlock)
       },
       {
         paramName: "toBlock",
-        paramValue: commentSearchProps?.toBlock
-          ? String(commentSearchProps?.toBlock)
-          : undefined,
+        paramValue: dataToURL(commentSearchProps?.toBlock)
       },
       {
         paramName: "filters",
-        paramValue: commentSearchProps?.operationTypes?.map((operationType) =>
-          String(operationType)
-        ),
+        paramValue: dataToURL(commentSearchProps?.operationTypes)
       },
     ];
     return `comments${getPageUrlParams(urlParams)}`;
@@ -281,33 +276,39 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
     const urlParams: Explorer.UrlParam[] = [
       {
         paramName: "fromBlock",
-        paramValue: accountOperationsSearchProps?.fromBlock
-          ? String(accountOperationsSearchProps?.fromBlock)
-          : undefined,
+        paramValue: dataToURL(accountOperationsSearchProps?.fromBlock)
       },
       {
         paramName: "toBlock",
-        paramValue: accountOperationsSearchProps?.toBlock
-          ? String(accountOperationsSearchProps?.toBlock)
-          : undefined,
+        paramValue: dataToURL(accountOperationsSearchProps?.toBlock)
       },
       {
         paramName: "startDate",
-        paramValue: accountOperationsSearchProps?.startDate
-          ? String(accountOperationsSearchProps?.startDate)
-          : undefined,
+        paramValue: dataToURL(accountOperationsSearchProps?.startDate)
       },
       {
         paramName: "endDate",
-        paramValue: accountOperationsSearchProps?.endDate
-          ? String(accountOperationsSearchProps?.endDate)
-          : undefined,
+        paramValue: dataToURL(accountOperationsSearchProps?.endDate)
       },
       {
         paramName: "filters",
-        paramValue: accountOperationsSearchProps?.operationTypes?.map(
-          (operationType) => String(operationType)
-        ),
+        paramValue: dataToURL(accountOperationsSearchProps?.operationTypes)
+      },
+      {
+        paramName: "rangeSelectKey",
+        paramValue: dataToURL(searchRanges.rangeSelectKey)
+      },
+      {
+        paramName: "lastTime",
+        paramValue: dataToURL(searchRanges.lastTimeUnitValue)
+      },
+      {
+        paramName: "lastBlocks",
+        paramValue: dataToURL(searchRanges.lastBlocksValue)
+      },
+      {
+        paramName: "timeUnit",
+        paramValue: dataToURL(searchRanges.timeUnitSelectKey)
       },
     ];
     return `account/${accountName}${getPageUrlParams(urlParams)}`;

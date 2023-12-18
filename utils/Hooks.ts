@@ -85,7 +85,7 @@ const URL_ARRAY_END = "~";
 
 type ParamObject = { [key: string]: any };
 
-const dataToURL = (value: any) => {
+export const dataToURL = (value: any) => {
   if (!value) {
     return null;
   }
@@ -111,7 +111,7 @@ const dataToURL = (value: any) => {
     )}.${toDateNumber(value.getMinutes())}.${toDateNumber(value.getSeconds())}`;
   }
 
-  return value;
+  return value.toString();
 };
 
 const URLToData = (value: any) => {

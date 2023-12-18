@@ -269,6 +269,9 @@ export default function Account() {
                   onClick={handleSearch}
                 >
                   <span>Search</span>{" "}
+                  {isAccountOperationsLoading && (
+                    <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
+                  )}
                 </Button>
               </div>
             </div>
