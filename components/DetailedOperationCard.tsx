@@ -201,7 +201,7 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
             </Link>
           </div>
         )}
-          <div className="my-1">
+          <div className="my-1 min-w-[80px]">
             {transactionId && !skipTrx && (
               <>
                 Trx{" "}
