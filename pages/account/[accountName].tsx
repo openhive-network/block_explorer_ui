@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import AccountDetailsCard from "../../components/account/AccountDetailsCard";
 import { useRouter } from "next/router";
 import DetailedOperationCard from "@/components/DetailedOperationCard";
@@ -59,6 +59,7 @@ const defaultSearchParams: AccountSearchParams = {
   filters: [],
 };
 
+
 export default function Account() {
   const router = useRouter();
 
@@ -68,6 +69,8 @@ export default function Account() {
     ...defaultSearchParams,
     accountName: accountNameFromRoute,
   });
+
+  const setParamsRef = useRef(setParams);
 
   const {
     filters,
@@ -108,11 +111,8 @@ export default function Account() {
     !!accountDetails?.is_witness
   );
 
-  useEffect(() => {
-    if (!paramsState.page && accountOperations) {
-      setParams({ ...paramsState, page: accountOperations.total_pages });
-    }
-  }, [accountOperations, paramsState, setParams]);
+  
+
 
   const handleOpenVotersModal = () => {
     setIsVotersModalOpen(!isVotersModalOpen);
@@ -166,11 +166,24 @@ export default function Account() {
   };
 
   useEffect(() => {
+    if (!paramsState.page && accountOperations) {
+      setParamsRef.current({ ...paramsState, page: accountOperations.total_pages });
+    }
+  }, [accountOperations, paramsState]);
+
+  useEffect(() => {
     if (paramsState && !initialSearch) {
       handleSearch();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paramsState]);
+
+  if (!accountDetails) {
+    return <Loader2 className="animate-spin mt-1 text-black h-12 w-12 ml-3 ..." />;
+  }
+  if (!accountOperations?.total_operations && !isAccountOperationsLoading) {
+    return <PageNotFound message={`Account not found.`} />;
+  }
 
   if (!accountDetails) {
     return "Loading ...";
@@ -277,7 +290,7 @@ export default function Account() {
             </div>
             {isAccountOperationsLoading || !page ? (
               <div className="flex justify-center text-center items-center">
-                Loading ...
+                <Loader2 className="animate-spin mt-1 text-black h-12 w-12 ml-3 ..." />
               </div>
             ) : (
               accountOperations?.operations_result?.map(
