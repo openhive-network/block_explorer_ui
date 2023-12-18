@@ -182,7 +182,7 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
       <div className="flex justify-between items-center mb-2 flex-wrap">
         <div
           className={cn(
-            "text-explorer-orange font-bold w-full md:w-auto text-center text-sm",
+            "text-explorer-orange font-bold w-full md:w-auto text-sm flex-2 ",
             {
               "flex-grow": skipBlock && skipTrx && skipDate,
             }
@@ -191,7 +191,7 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
           {operation.type}
         </div>
         {!skipBlock && (
-          <div className="my-1">
+          <div className="my-1 flex-1">
             Block{" "}
             <Link
               className="text-explorer-turquoise"
@@ -201,7 +201,7 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
             </Link>
           </div>
         )}
-          <div className="my-1 min-w-[80px]">
+          <div className="my-1 flex-1">
             {transactionId && !skipTrx && (
               <>
                 Trx{" "}
@@ -215,7 +215,7 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
             )}
           </div>
         {!skipDate && (
-          <div className="my-1">
+          <div className="my-1 flex-1">
             Date:{" "}
             <span className="text-explorer-turquoise">
               {moment(date).format(config.baseMomentTimeFormat)}
