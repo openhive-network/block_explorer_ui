@@ -82,7 +82,7 @@ export default function Account() {
   const [isVotesHistoryModalOpen, setIsVotesHistoryModalOpen] = useState(false);
   const [fromBlock, setFromBlock] = useState<number>();
   const [toBlock, setToBlock] = useState<number>();
-  const [fromDate, setFromDate] = useState<Date>(new Date(0));
+  const [fromDate, setFromDate] = useState<Date>(new Date(config.firstBlockTime));
   const [toDate, setToDate] = useState<Date>(new Date());
   const [lastBlocks, setLastBlocks] = useState<number>();
   const [initialSearch, setInitialSearch] = useState<boolean>(false);
