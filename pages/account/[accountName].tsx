@@ -85,7 +85,7 @@ export default function Account() {
   const [isVotersModalOpen, setIsVotersModalOpen] = useState(false);
   const [isVotesHistoryModalOpen, setIsVotesHistoryModalOpen] = useState(false);
   const [initialSearch, setInitialSearch] = useState<boolean>(false);
-  
+
   const searchRanges = useSearchRanges();
 
   const { accountDetails } = useAccountDetails(accountNameFromRoute);
@@ -190,7 +190,11 @@ export default function Account() {
               accountOperations={accountOperations}
               accountName={accountNameFromRoute}
               setOperationFilters={(newFilters: number[]) =>
-                setParams({ ...paramsState, filters: newFilters })
+                setParams({
+                  ...paramsState,
+                  filters: newFilters,
+                  page: undefined,
+                })
               }
               operationFilters={filters}
             />
@@ -204,13 +208,13 @@ export default function Account() {
             </div>
             <OperationTypesDialog
               operationTypes={accountOperationTypes}
-              setSelectedOperations={(newFilters: number[]) =>
+              setSelectedOperations={(newFilters: number[]) => {
                 setParams({
                   ...paramsState,
-                  page: undefined,
                   filters: newFilters,
-                })
-              }
+                  page: undefined,
+                });
+              }}
               selectedOperations={filters}
               colorClass="bg-explorer-dark-gray"
               triggerTitle={"Operation Filters"}

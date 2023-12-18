@@ -81,7 +81,7 @@ export const useMediaQuery = (query: string) => {
 };
 
 const SPLIT = "-";
-const URL_ARRAY_END = "~";
+const URL_ARRAY_END = "_";
 
 type ParamObject = { [key: string]: any };
 
