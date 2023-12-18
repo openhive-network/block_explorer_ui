@@ -30,8 +30,6 @@ import {
 } from "@/components/ui/select";
 import useSearchRanges from "@/components/searchRanges/useSearchRanges";
 
-type TimeUnit = "days" | "weeks" | "months";
-
 interface AccountSearchParams {
   accountName?: string | undefined;
   fromBlock: number | undefined;
@@ -41,7 +39,7 @@ interface AccountSearchParams {
   page: number | undefined;
   lastBlocks: number | undefined;
   lastTime: number | undefined;
-  timeUnit: TimeUnit | undefined;
+  timeUnit: string | undefined;
   filters: number[];
 }
 
@@ -74,6 +72,9 @@ export default function Account() {
     toBlock: toBlockParam,
     fromDate: fromDateParam,
     toDate: toDateParam,
+    lastBlocks: lastBlocksParam,
+    timeUnit: timeUnitParam,
+    lastTime: lastTimeParam,
     page,
   } = paramsState;
 
@@ -84,8 +85,6 @@ export default function Account() {
   const [fromDate, setFromDate] = useState<Date>(new Date(0));
   const [toDate, setToDate] = useState<Date>(new Date());
   const [lastBlocks, setLastBlocks] = useState<number>();
-  const [lastTime, setLastTime] = useState<number>();
-  const [timeUnit, setTimeUnit] = useState<TimeUnit>();
   const [initialSearch, setInitialSearch] = useState<boolean>(false);
 
   const {
@@ -94,7 +93,9 @@ export default function Account() {
     lastTimeUnitValue,
     setLastTimeUnitValue,
     timeUnitSelectKey,
+    getRangesValues,
   } = useSearchRanges();
+
   const { accountDetails } = useAccountDetails(accountNameFromRoute);
   const { accountOperations, isAccountOperationsLoading } =
     useAccountOperations({
@@ -129,23 +130,42 @@ export default function Account() {
     setIsVotesHistoryModalOpen(!isVotesHistoryModalOpen);
   };
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     if (
       !initialSearch &&
-      (fromDateParam || toDateParam || fromBlockParam || toBlockParam)
+      (fromDateParam ||
+        toDateParam ||
+        fromBlockParam ||
+        toBlockParam ||
+        lastBlocksParam ||
+        lastTimeParam ||
+        timeUnitParam)
     ) {
       setFromDate(fromDateParam ?? new Date(0));
       setToDate(toDateParam ?? new Date());
       setFromBlock(fromBlockParam);
       setToBlock(toBlockParam);
+      setLastBlocks(lastBlocksParam);
+      timeUnitParam && setTimeUnitSelectKey(timeUnitParam);
+      lastTimeParam && setLastTimeUnitValue(lastTimeParam);
       setInitialSearch(true);
     } else {
+      const {
+        payloadFromBlock,
+        payloadToBlock,
+        payloadStartDate,
+        payloadEndDate,
+      } = await getRangesValues();
+
       setParams({
         ...paramsState,
-        fromBlock,
-        toBlock,
-        fromDate,
-        toDate,
+        fromBlock: payloadFromBlock || fromBlock,
+        toBlock: payloadToBlock || toBlock,
+        fromDate: payloadStartDate || fromDate,
+        toDate: payloadEndDate || toDate,
+        lastBlocks,
+        lastTime: lastTimeUnitValue,
+        timeUnit: timeUnitSelectKey,
         page: undefined,
       });
     }
@@ -355,7 +375,6 @@ export default function Account() {
                 <Button
                   className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]"
                   onClick={handleSearch}
-                  disabled={false}
                 >
                   <span>Search</span>{" "}
                 </Button>
