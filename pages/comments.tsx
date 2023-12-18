@@ -11,19 +11,34 @@ import Explorer from "@/types/Explorer";
 import useOperationTypes from "@/api/common/useOperationsTypes";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 import JumpToPage from "@/components/JumpToPage";
+import { useURLParams } from "@/utils/Hooks";
 
 const FILTERS = "filters";
 const SPLIT = "-";
 
+interface CommentSearchParams {
+  accountName: string | undefined;
+  permlink: string | undefined;
+  fromBlock: number | undefined;
+  toBlock: number | undefined;
+  page: number;
+  filters: number[];
+}
+
+const defaultSearchParams: CommentSearchParams = {
+  accountName: undefined,
+  permlink: undefined,
+  fromBlock: undefined,
+  toBlock: undefined,
+  page: 1,
+  filters: [],
+}
+
 const Comments: React.FC = () => {
-  const [searchParams, setSearchParams] = useState<{
-    accountName?: string;
-    permlink?: string;
-    fromBlock?: number;
-    toBlock?: number;
-    page: number;
-    filters: number[];
-  }>({ page: 1, filters: [] });
+  const [accountName, setAccountName] = useState<string>(); 
+  const [permlink, setPermlink] = useState<string>();
+  const [fromBlock, setFromBlock] = useState<number>();
+  const [toBlock, setToBlock] = useState<number>();
   const [initialSearch, setInitialSearch] = useState(false);
   const [commentSearchProps, setCommentSearchProps] = useState<
     Explorer.CommentSearchProps | undefined
@@ -34,17 +49,22 @@ const Comments: React.FC = () => {
   const router = useRouter();
 
   const commentSearch = useCommentSearch(commentSearchProps);
-  const { accountName, permlink, fromBlock, toBlock, page, filters } =
-    searchParams;
-  const commentSearchRef = useRef(commentSearch);
+  const { paramsState, setParams } = useURLParams(defaultSearchParams);
 
   const operationsTypes =
     useOperationTypes().operationsTypes?.filter((operation) =>
       config.commentOperationsTypeIds.includes(operation.op_type_id)
     ) || [];
 
-  const startCommentSearch = (params: typeof searchParams) => {
+  const startCommentSearch = (params: CommentSearchParams) => {
     if (params.accountName) {
+      setParams(params);
+      if (!initialSearch) {
+        setAccountName(params.accountName);
+        setPermlink(params.permlink);
+        setFromBlock(params.fromBlock);
+        setToBlock(params.toBlock);
+      }
       setInitialSearch(true);
       const commentSearchProps: Explorer.CommentSearchProps = {
         accountName: params.accountName,
@@ -55,15 +75,7 @@ const Comments: React.FC = () => {
       };
       setCommentSearchProps(commentSearchProps);
       setPreviousCommentSearchProps(commentSearchProps);
-      let urlParams = searchParams;
-      (Object.keys(searchParams) as (keyof typeof searchParams)[]).forEach(
-        (key) => {
-          if (!searchParams[key]) {
-            delete urlParams[key];
-          }
-        }
-      );
-      router.replace({ query: { ...router.query, ...urlParams } });
+      setParams(params);
     }
   };
 
@@ -74,52 +86,22 @@ const Comments: React.FC = () => {
         pageNumber: newPageNum,
       };
       setCommentSearchProps(newSearchProps);
-      setSearchParams({ ...searchParams, page: newPageNum });
-      router.replace({ query: { ...router.query, page: newPageNum } });
+      setParams({ ...paramsState, page: newPageNum });
     }
   };
 
   const handleFiltersChange = (filters: number[]) => {
-    const newSearchParams = { ...searchParams, filters: filters };
-    setSearchParams(newSearchParams);
+    const newSearchParams = { ...paramsState, filters: filters, page: 1 };
     startCommentSearch(newSearchParams);
-    if (!!filters.length) {
-      router.replace({
-        query: { ...router.query, [FILTERS]: filters.join(SPLIT) },
-      });
-    } else {
-      delete router.query[FILTERS];
-      router.replace({
-        query: { ...router.query },
-      });
-    }
+    setParams(newSearchParams);
   };
 
   useEffect(() => {
-    const urlParams = {
-      accountName: accountName || (router.query.accountName as string),
-      permlink: router.query.permlink as string,
-      fromBlock: !isNaN(Number(router.query.fromBlock))
-        ? Number(router.query.fromBlock)
-        : undefined,
-      toBlock: !isNaN(Number(router.query.toBlock))
-        ? Number(router.query.toBlock)
-        : undefined,
-      page: Number(router.query.page) || page,
-      filters: router.query[FILTERS]
-        ? (router.query[FILTERS] as string)
-            ?.split(SPLIT)
-            .map((filter) => Number(filter))
-        : [],
-    };
-
-    setSearchParams(urlParams);
-
-    if (router.query.accountName && !initialSearch) {
-      startCommentSearch(urlParams);
+    if (paramsState && !initialSearch) {
+      startCommentSearch(paramsState);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.query]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paramsState]);
 
   return (
     <div className="w-full md:w-4/5">
@@ -130,9 +112,7 @@ const Comments: React.FC = () => {
             className="w-1/2"
             type="text"
             value={accountName}
-            onChange={(e) =>
-              setSearchParams({ ...searchParams, accountName: e.target.value })
-            }
+            onChange={(e) => setAccountName(!!e.target.value.length ? e.target.value : undefined)}
             placeholder="---"
           />
         </div>
@@ -142,9 +122,7 @@ const Comments: React.FC = () => {
             className="w-full"
             type="text"
             value={permlink}
-            onChange={(e) =>
-              setSearchParams({ ...searchParams, permlink: e.target.value })
-            }
+            onChange={(e) => setPermlink(!!e.target.value.length ? e.target.value : undefined)}
             placeholder="---"
           />
         </div>
@@ -154,12 +132,7 @@ const Comments: React.FC = () => {
             <Input
               type="number"
               value={fromBlock}
-              onChange={(e) =>
-                setSearchParams({
-                  ...searchParams,
-                  fromBlock: Number(e.target.value),
-                })
-              }
+              onChange={(e) => setFromBlock(Number(e.target.value))}
               placeholder="1"
             />
           </div>
@@ -168,21 +141,15 @@ const Comments: React.FC = () => {
             <Input
               type="number"
               value={toBlock}
-              onChange={(e) =>
-                setSearchParams({
-                  ...searchParams,
-                  toBlock: Number(e.target.value),
-                })
-              }
+              onChange={(e) => setToBlock(Number(e.target.value))}
               placeholder={"Headblock"}
             />
           </div>
         </div>
-
         <div className="flex items-center justify-between m-2">
           <Button
             className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]"
-            onClick={() => startCommentSearch(searchParams)}
+            onClick={() => startCommentSearch({...paramsState, accountName, permlink, fromBlock, toBlock})}
             disabled={!accountName?.length}
           >
             <span>Search</span>{" "}
@@ -193,7 +160,7 @@ const Comments: React.FC = () => {
           <OperationTypesDialog
             operationTypes={operationsTypes}
             setSelectedOperations={handleFiltersChange}
-            selectedOperations={filters}
+            selectedOperations={paramsState.filters || []}
             colorClass="bg-gray-500 ml-2"
             triggerTitle={"Operation Filters"}
           />
@@ -203,7 +170,7 @@ const Comments: React.FC = () => {
         <>
           <div className="w-full flex justify-center items-center mt-4 ">
             <CustomPagination
-              currentPage={page}
+              currentPage={paramsState.page}
               totalCount={commentSearch.commentSearchData?.total_operations}
               pageSize={config.standardPaginationSize}
               onPageChange={changeCommentSearchPagination}
@@ -211,7 +178,7 @@ const Comments: React.FC = () => {
             />
             <div className="justify-self-end">
               <JumpToPage
-                currentPage={page}
+                currentPage={paramsState.page}
                 onPageChange={changeCommentSearchPagination}
               />
             </div>
