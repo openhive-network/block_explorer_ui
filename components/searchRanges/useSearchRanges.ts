@@ -89,6 +89,9 @@ const useSearchRanges = () => {
     if (lastBlocksValue && rangeSelectKey === "lastBlocks") {
       const currentHeadBlockNumber = await checkTemporaryHeadBlockNumber();
       payloadFromBlock = Number(currentHeadBlockNumber) - lastBlocksValue;
+      if (payloadFromBlock <= 0 ) {
+        payloadFromBlock = undefined;
+      }
     }
     if (lastTimeUnitValue && rangeSelectKey === "lastTime") {
       const typedTimeUnit = timeUnitSelectKey as "days" | "weeks" | "months";
