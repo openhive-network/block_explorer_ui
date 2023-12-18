@@ -29,6 +29,7 @@ import {
   SelectTrigger,
 } from "@/components/ui/select";
 import useSearchRanges from "@/components/searchRanges/useSearchRanges";
+import SearchRanges from "@/components/searchRanges/SearchRanges";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -40,6 +41,7 @@ interface AccountSearchParams {
   lastBlocks: number | undefined;
   lastTime: number | undefined;
   timeUnit: string | undefined;
+  rangeSelectKey: string | undefined;
   filters: number[];
 }
 
@@ -53,6 +55,7 @@ const defaultSearchParams: AccountSearchParams = {
   lastBlocks: undefined,
   lastTime: undefined,
   timeUnit: undefined,
+  rangeSelectKey: undefined,
   filters: [],
 };
 
@@ -75,26 +78,15 @@ export default function Account() {
     lastBlocks: lastBlocksParam,
     timeUnit: timeUnitParam,
     lastTime: lastTimeParam,
+    rangeSelectKey,
     page,
   } = paramsState;
 
   const [isVotersModalOpen, setIsVotersModalOpen] = useState(false);
   const [isVotesHistoryModalOpen, setIsVotesHistoryModalOpen] = useState(false);
-  const [fromBlock, setFromBlock] = useState<number>();
-  const [toBlock, setToBlock] = useState<number>();
-  const [fromDate, setFromDate] = useState<Date>(new Date(config.firstBlockTime));
-  const [toDate, setToDate] = useState<Date>(new Date());
-  const [lastBlocks, setLastBlocks] = useState<number>();
   const [initialSearch, setInitialSearch] = useState<boolean>(false);
-
-  const {
-    timeSelectOptions,
-    setTimeUnitSelectKey,
-    lastTimeUnitValue,
-    setLastTimeUnitValue,
-    timeUnitSelectKey,
-    getRangesValues,
-  } = useSearchRanges();
+  
+  const searchRanges = useSearchRanges();
 
   const { accountDetails } = useAccountDetails(accountNameFromRoute);
   const { accountOperations, isAccountOperationsLoading } =
@@ -141,13 +133,14 @@ export default function Account() {
         lastTimeParam ||
         timeUnitParam)
     ) {
-      setFromDate(fromDateParam ?? new Date(0));
-      setToDate(toDateParam ?? new Date());
-      setFromBlock(fromBlockParam);
-      setToBlock(toBlockParam);
-      setLastBlocks(lastBlocksParam);
-      timeUnitParam && setTimeUnitSelectKey(timeUnitParam);
-      lastTimeParam && setLastTimeUnitValue(lastTimeParam);
+      fromDateParam && searchRanges.setStartDate(fromDateParam);
+      toDateParam && searchRanges.setEndDate(toDateParam);
+      fromBlockParam && searchRanges.setFromBlock(fromBlockParam);
+      toBlockParam && searchRanges.setToBlock(toBlockParam);
+      lastBlocksParam && searchRanges.setLastBlocksValue(lastBlocksParam);
+      timeUnitParam && searchRanges.setTimeUnitSelectKey(timeUnitParam);
+      lastTimeParam && searchRanges.setLastTimeUnitValue(lastTimeParam);
+      rangeSelectKey && searchRanges.setRangeSelectKey(rangeSelectKey);
       setInitialSearch(true);
     } else {
       const {
@@ -155,27 +148,20 @@ export default function Account() {
         payloadToBlock,
         payloadStartDate,
         payloadEndDate,
-      } = await getRangesValues();
+      } = await searchRanges.getRangesValues();
 
       setParams({
         ...paramsState,
-        fromBlock: payloadFromBlock || fromBlock,
-        toBlock: payloadToBlock || toBlock,
-        fromDate: payloadStartDate || fromDate,
-        toDate: payloadEndDate || toDate,
-        lastBlocks,
-        lastTime: lastTimeUnitValue,
-        timeUnit: timeUnitSelectKey,
+        fromBlock: payloadFromBlock,
+        toBlock: payloadToBlock,
+        fromDate: payloadStartDate,
+        toDate: payloadEndDate,
+        lastBlocks: searchRanges.lastBlocksValue,
+        lastTime: searchRanges.lastTimeUnitValue,
+        timeUnit: searchRanges.timeUnitSelectKey,
+        rangeSelectKey: searchRanges.rangeSelectKey,
         page: undefined,
       });
-    }
-  };
-
-  const setNumericValue = (value: number, fieldSetter: Function) => {
-    if (value === 0) {
-      fieldSetter(undefined);
-    } else {
-      fieldSetter(value);
     }
   };
 
@@ -275,102 +261,8 @@ export default function Account() {
         <div className="col-start-1 md:col-start-2 col-span-1 md:col-span-3">
           <div>
             <div className="bg-explorer-dark-gray text-white p-4 rounded-[6px] mx-2">
-              <div className="flex items-center m-2">
-                <div className="flex flex-col w-full">
-                  <label className="mx-2">From date</label>
-                  <DateTimePicker
-                    value={fromDate}
-                    onChange={(date) => setFromDate(date!)}
-                    className="text-explorer-turquoise border border-explorer-turquoise"
-                    calendarClassName="text-gray-800"
-                    format="yyyy/MM/dd HH:mm:ss"
-                    clearIcon={null}
-                    calendarIcon={null}
-                    disableClock
-                    showLeadingZeros={false}
-                  />
-                </div>
-                <div className="flex flex-col w-full">
-                  <label className="mx-2">To date</label>
-                  <DateTimePicker
-                    value={toDate}
-                    onChange={(date) => setToDate(date!)}
-                    className="text-explorer-turquoise border border-explorer-turquoise"
-                    calendarClassName="text-gray-800"
-                    format="yyyy/MM/dd HH:mm:ss"
-                    clearIcon={null}
-                    calendarIcon={null}
-                    disableClock
-                    showLeadingZeros={false}
-                  />
-                </div>
-              </div>
-              <div className="flex items-center m-2">
-                <div className="flex flex-col w-full">
-                  <label className="mx-2">From block</label>
-                  <Input
-                    type="number"
-                    value={fromBlock}
-                    onChange={(e) => setFromBlock(Number(e.target.value))}
-                    placeholder="1"
-                  />
-                </div>
-                <div className="flex flex-col w-full">
-                  <label className="mx-2">To block</label>
-                  <Input
-                    type="number"
-                    value={toBlock}
-                    onChange={(e) => setToBlock(Number(e.target.value))}
-                    placeholder={"Headblock"}
-                  />
-                </div>
-                <div className="flex flex-col w-full">
-                  <label className="mx-2">Last Blocks</label>
-                  <Input
-                    type="number"
-                    value={lastBlocks}
-                    onChange={(e) => setLastBlocks(Number(e.target.value))}
-                    placeholder="Last Blocks"
-                  />
-                </div>
-              </div>
-              <label className="mx-2 ml-4">Last Time</label>
-              <div className="flex items-center justify-center w-full px-2">
-                <div className="flex flex-col w-full">
-                  <Input
-                    type="number"
-                    value={lastTimeUnitValue || ""}
-                    onChange={(e) =>
-                      setNumericValue(
-                        Number(e.target.value),
-                        setLastTimeUnitValue
-                      )
-                    }
-                    placeholder={"Last"}
-                  />
-                </div>
-                <Select onValueChange={setTimeUnitSelectKey}>
-                  <SelectTrigger>
-                    {
-                      timeSelectOptions.find(
-                        (selectOption) => selectOption.key === timeUnitSelectKey
-                      )?.name
-                    }
-                  </SelectTrigger>
-                  <SelectContent className="bg-white text-black rounded-[2px] max-h-[31rem]">
-                    {timeSelectOptions.map((selectOption, index) => (
-                      <SelectItem
-                        className="m-1 text-center"
-                        key={index}
-                        value={selectOption.key}
-                        defaultChecked={false}
-                      >
-                        {selectOption.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              <div className="ml-2">Search</div>
+              <SearchRanges rangesProps={searchRanges} />
               <div className="flex items-center justify-between m-2">
                 <Button
                   className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]"
