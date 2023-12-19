@@ -1,0 +1,7 @@
+**/node_modules
+.dockerignore
+.gitignore
+.gitlab-ci.yml
+docker-bake.hcl
+Dockerfile
+README.md
