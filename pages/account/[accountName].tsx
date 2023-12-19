@@ -54,11 +54,10 @@ const defaultSearchParams: AccountSearchParams = {
   page: undefined,
   lastBlocks: undefined,
   lastTime: undefined,
-  timeUnit: undefined,
-  rangeSelectKey: undefined,
+  timeUnit: "days",
+  rangeSelectKey: "lastBlocks",
   filters: [],
 };
-
 
 export default function Account() {
   const router = useRouter();
@@ -67,7 +66,6 @@ export default function Account() {
 
   const { paramsState, setParams } = useURLParams({
     ...defaultSearchParams,
-    accountName: accountNameFromRoute,
   });
 
   const setParamsRef = useRef(setParams);
@@ -88,7 +86,7 @@ export default function Account() {
   const [isVotersModalOpen, setIsVotersModalOpen] = useState(false);
   const [isVotesHistoryModalOpen, setIsVotesHistoryModalOpen] = useState(false);
   const [initialSearch, setInitialSearch] = useState<boolean>(false);
-  
+
   const searchRanges = useSearchRanges();
 
   const { accountDetails } = useAccountDetails(accountNameFromRoute);
@@ -110,9 +108,6 @@ export default function Account() {
     accountNameFromRoute,
     !!accountDetails?.is_witness
   );
-
-  
-
 
   const handleOpenVotersModal = () => {
     setIsVotersModalOpen(!isVotersModalOpen);
@@ -167,7 +162,10 @@ export default function Account() {
 
   useEffect(() => {
     if (!paramsState.page && accountOperations) {
-      setParamsRef.current({ ...paramsState, page: accountOperations.total_pages });
+      setParamsRef.current({
+        ...paramsState,
+        page: accountOperations.total_pages,
+      });
     }
   }, [accountOperations, paramsState]);
 
@@ -179,7 +177,9 @@ export default function Account() {
   }, [paramsState]);
 
   if (!accountDetails) {
-    return <Loader2 className="animate-spin mt-1 text-black h-12 w-12 ml-3 ..." />;
+    return (
+      <Loader2 className="animate-spin mt-1 text-black h-12 w-12 ml-3 ..." />
+    );
   }
   if (!accountOperations?.total_operations && !isAccountOperationsLoading) {
     return <PageNotFound message={`Account not found.`} />;
@@ -194,41 +194,15 @@ export default function Account() {
 
   return (
     <>
-      <div className="bg-explorer-orange items-center fixed grid grid-flow-row-dense grid-cols-3 top-14 md:top-16 right-0 left-0 p-2 z-10">
+      <div className="min-h-[64px] bg-explorer-orange items-center fixed grid grid-flow-row-dense grid-cols-3 top-14 md:top-16 right-0 left-0 p-2 z-10">
         <div className="col-span-3 md:col-span-2 md:justify-self-end justify-self-center z-20 max-w-full">
           {paramsState.page && accountOperations && (
             <AccountPagination
               page={paramsState.page}
               setPage={(page: number) => setParams({ ...paramsState, page })}
               accountOperations={accountOperations}
-              accountName={accountNameFromRoute}
-              setOperationFilters={(newFilters: number[]) =>
-                setParams({ ...paramsState, filters: newFilters })
-              }
-              operationFilters={filters}
             />
           )}
-        </div>
-
-        <div className="justify-self-end col-span-3 md:col-span-1">
-          <div className="grid gap-x-5 grid-flow-row-dense grid-cols-2">
-            <div className="justify-self-end self-center">
-              <ScrollTopButton />
-            </div>
-            <OperationTypesDialog
-              operationTypes={accountOperationTypes}
-              setSelectedOperations={(newFilters: number[]) =>
-                setParams({
-                  ...paramsState,
-                  page: undefined,
-                  filters: newFilters,
-                })
-              }
-              selectedOperations={filters}
-              colorClass="bg-explorer-dark-gray"
-              triggerTitle={"Operation Filters"}
-            />
-          </div>
         </div>
       </div>
 
@@ -286,6 +260,19 @@ export default function Account() {
                     <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
                   )}
                 </Button>
+                <OperationTypesDialog
+                  operationTypes={accountOperationTypes}
+                  setSelectedOperations={(newFilters: number[]) =>
+                    setParams({
+                      ...paramsState,
+                      page: undefined,
+                      filters: newFilters,
+                    })
+                  }
+                  selectedOperations={filters}
+                  colorClass="bg-explorer-dark-gray"
+                  triggerTitle={"Operation Filters"}
+                />
               </div>
             </div>
             {isAccountOperationsLoading || !page ? (
