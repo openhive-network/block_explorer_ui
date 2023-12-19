@@ -136,9 +136,13 @@ export default function Account() {
       timeUnitParam && searchRanges.setTimeUnitSelectKey(timeUnitParam);
       rangeSelectKey && searchRanges.setRangeSelectKey(rangeSelectKey);
       searchRanges.setLastTimeUnitValue(lastTimeParam);
-      setFilters(filtersParam)
+      setFilters(filtersParam);
       setInitialSearch(true);
     } else {
+      if (!initialSearch && !isAccountOperationsLoading && accountOperations) {
+        setInitialSearch(true);
+      }
+
       const {
         payloadFromBlock,
         payloadToBlock,
@@ -169,7 +173,7 @@ export default function Account() {
         page: accountOperations.total_pages,
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountOperations, paramsState.page]);
 
   useEffect(() => {
@@ -249,26 +253,27 @@ export default function Account() {
                   onClick={handleSearch}
                 >
                   <span>Search</span>{" "}
-                  {isAccountOperationsLoading && (
-                    <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
-                  )}
                 </Button>
                 <OperationTypesDialog
                   operationTypes={accountOperationTypes}
-                  setSelectedOperations={(newFilters: number[]) => setFilters(newFilters)}
+                  setSelectedOperations={(newFilters: number[]) =>
+                    setFilters(newFilters)
+                  }
                   selectedOperations={filters}
                   colorClass="bg-explorer-dark-gray"
                   triggerTitle={"Operation Filters"}
                 />
               </div>
             </div>
-            {isAccountOperationsLoading ? (
+            {!isAccountOperationsLoading && !accountOperations?.total_operations ? (
+              <div className="w-full my-4 text-black text-center">
+                No operations were found.
+              </div>
+            ) : isAccountOperationsLoading || !page ? (
               <div className="flex justify-center text-center items-center">
                 <Loader2 className="animate-spin mt-1 text-black h-12 w-12 ml-3 ..." />
               </div>
             ) : (
-              !accountOperations?.total_operations ? 
-              <div className="w-full my-4 text-black text-center">No operations were found.</div> : 
               accountOperations?.operations_result?.map(
                 (operation: Hive.OperationResponse) => (
                   <div

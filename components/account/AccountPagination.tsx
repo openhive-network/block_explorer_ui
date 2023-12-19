@@ -27,7 +27,7 @@ const AccountPagination = ({
             currentPage={page}
             onPageChange={(page: number) => setPage(page)}
           />
-          <div className="justify-self-end self-center">
+          <div className="justify-self-end self-center col-span-2">
             <ScrollTopButton />
           </div>
         </div>
