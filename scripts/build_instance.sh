@@ -12,7 +12,7 @@ OPTIONS:
   --registry=URL        Docker registry to assign the image to (default: 'registry.gitlab.syncad.com/hive/block_explorer_ui')
   --tag=TAG             Docker tag to be build (default: 'latest')
   --progress=TYPE       Determines how to display build progress (default: 'auto')
-  -?|--help             Display this help screen and exit
+  --help|-h|-?          Display this help screen and exit
 EOF
 }
 
@@ -34,7 +34,7 @@ while [ $# -gt 0 ]; do
         arg="${1#*=}"
         PROGRESS_DISPLAY="$arg"
         ;;
-    --help|-?)
+    --help|-h|-?)
         print_help
         exit 0
         ;;

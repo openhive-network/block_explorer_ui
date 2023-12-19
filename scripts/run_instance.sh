@@ -13,7 +13,7 @@ OPTIONS:
   --port=PORT           Port to be exposed (default: 5000)
   --name=NAME           Container name to be used (default: block_explorer_ui)
   --detach              Run in detached mode 
-  -?|--help             Display this help screen and exit
+  --help|-h|-?          Display this help screen and exit
 EOF
 }
 
@@ -44,7 +44,7 @@ while [ $# -gt 0 ]; do
     --detach)
         DETACH=true
         ;;    
-    --help|-?)
+    --help|-h|-?)
         print_help
         exit 0
         ;;
