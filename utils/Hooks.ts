@@ -139,6 +139,23 @@ const URLToData = (value: any) => {
   return value;
 };
 
+const paramsShallowEqual = (params1: ParamObject, params2: ParamObject) => {
+  const keys1 = Object.keys(params1);
+  const keys2 = Object.keys(params2);
+
+  if (keys1.length !== keys2.length) {
+    return false;
+  }
+
+  for (let key of keys1) {
+    if (params1[key] !== params2[key]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 export const useURLParams = <T>(defaultState: T, omit?: string[]) => {
   const router = useRouter();
   const [paramsState, setParamsState] = useState<T>(defaultState);
@@ -171,11 +188,13 @@ export const useURLParams = <T>(defaultState: T, omit?: string[]) => {
           delete urlParams[key];
         }
       });
-      router.replace({
-        query: {
-          ...urlParams,
-        },
-      });
+      if (!paramsShallowEqual(router.query, urlParams)) {
+        router.replace({
+          query: {
+            ...urlParams,
+          },
+        });
+      }
     }
   };
 
