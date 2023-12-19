@@ -83,11 +83,60 @@ lint:
     paths:
       - "npm-lint.log"
 
+startup-test:
+  extends: .docker_image_builder_job_template
+  stage: test
+  needs:
+    - docker-build
+  variables:
+    PORT: 5000
+    API_ENDPOINT: http://192.168.4.250:3000
+    HIVE_BLOG_API_ENDPOINT: https://api.hive.blog
+    CONTAINER_NAME: block-explorer-ui
+    MESSAGE: Waiting for container startup...
+  before_script:
+    - |
+      echo -e "\e[0Ksection_start:$(date +%s):login[collapsed=true]\r\e[0KLogging to Docker registry..."
+      docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+      echo -e "\e[0Ksection_end:$(date +%s):login\r\e[0K"
+  script:
+    - |
+      echo -e "\e[0Ksection_start:$(date +%s):startup[collapsed=true]\r\e[0KStarting the test environment..."
+
+      timeout -s INT -k 10 600 scripts/run_instance.sh \
+        --image="$IMAGE_NAME" \
+        --api-endpoint="$API_ENDPOINT" \
+        --hive-blog-api-endpoint="$HIVE_BLOG_API_ENDPOINT" \
+        --port="$PORT" \
+        --name="$CONTAINER_NAME" \
+        --detach
+
+      echo -e "\e[0Ksection_end:$(date +%s):startup\r\e[0K"
+      echo -e "\e[0Ksection_start:$(date +%s):wait[collapsed=true]\r\e[0K$MESSAGE"
+
+      until [[ "healthy" == "$(docker inspect -f '{{ .State.Health.Status }}' "$CONTAINER_NAME")" ]]
+      do 
+        echo "$MESSAGE"
+        sleep 3
+      done
+
+      echo -e "\e[0Ksection_end:$(date +%s):wait\r\e[0K"
+  after_script:
+    - |
+      docker logs --timestamps "$CONTAINER_NAME" > "$CONTAINER_NAME.log"
+      docker stop "$CONTAINER_NAME"
+  artifacts:
+    paths:
+      - "$CONTAINER_NAME.log"
+  tags:
+    - public-runner-docker    
+
 .deploy:
   extends: .job-defaults
   stage: deploy
   needs:
     - docker-build
+    - startup-test
   before_script:
     - |
       echo -e "\e[0Ksection_start:$(date +%s):login[collapsed=true]\r\e[0KLogging to Docker registry..."
@@ -99,8 +148,8 @@ lint:
         --image="$IMAGE_NAME" \
         --api-endpoint="$API_ENDPOINT" \
         --hive-blog-api-endpoint="$HIVE_BLOG_API_ENDPOINT" \
-        --port=$PORT \
-        --name=$CONTAINER_NAME \
+        --port="$PORT" \
+        --name="$CONTAINER_NAME" \
         --detach
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
