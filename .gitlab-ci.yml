@@ -39,6 +39,8 @@ docker-build:
       echo -e "\e[0Ksection_start:$(date +%s):build[collapsed=true]\r\e[0KBaking image "$CI_REGISTRY_IMAGE:$TAG"..."
       scripts/build_instance.sh --progress=plain "$CI_PROJECT_DIR"
       echo "IMAGE_NAME=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" > docker-build.env
+      echo "Unique image tag:"
+      cat docker-build.env
       echo -e "\e[0Ksection_end:$(date +%s):build\r\e[0K"
   artifacts:
     reports:
@@ -96,6 +98,7 @@ lint:
       scripts/run_instance.sh \
         --image="$IMAGE_NAME" \
         --api-endpoint="$API_ENDPOINT" \
+        --hive-blog-api-endpoint="$HIVE_BLOG_API_ENDPOINT" \
         --port=$PORT \
         --name=$CONTAINER_NAME \
         --detach
@@ -111,6 +114,7 @@ staging:deploy:
   variables:
     PORT: 5000
     API_ENDPOINT: http://192.168.4.250:3000
+    HIVE_BLOG_API_ENDPOINT: https://api.hive.blog
     CONTAINER_NAME: block-explorer-ui
   environment:
     name: staging
@@ -122,6 +126,7 @@ test:deploy:
   variables:
     PORT: 5001
     API_ENDPOINT: http://192.168.6.7:3000
+    HIVE_BLOG_API_ENDPOINT: https://api.hive.blog
     CONTAINER_NAME: block-explorer-ui-2
   environment:
     name: test
