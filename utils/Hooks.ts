@@ -163,7 +163,8 @@ export const useURLParams = <T>(defaultState: T, omit?: string[]) => {
         const value = dataToURL(params[paramKey]);
         if (
           !!value &&
-          !omit?.includes(key) && value !== defaultState[paramKey]
+          !omit?.includes(key) &&
+          value !== defaultState[paramKey]
         ) {
           urlParams[key] = value;
         } else {

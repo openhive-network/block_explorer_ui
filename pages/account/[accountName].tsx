@@ -71,7 +71,7 @@ export default function Account() {
   const setParamsRef = useRef(setParams);
 
   const {
-    filters,
+    filters: filtersParam,
     fromBlock: fromBlockParam,
     toBlock: toBlockParam,
     fromDate: fromDateParam,
@@ -86,6 +86,7 @@ export default function Account() {
   const [isVotersModalOpen, setIsVotersModalOpen] = useState(false);
   const [isVotesHistoryModalOpen, setIsVotesHistoryModalOpen] = useState(false);
   const [initialSearch, setInitialSearch] = useState<boolean>(false);
+  const [filters, setFilters] = useState<number[]>([]);
 
   const searchRanges = useSearchRanges();
 
@@ -93,7 +94,7 @@ export default function Account() {
   const { accountOperations, isAccountOperationsLoading } =
     useAccountOperations({
       accountName: accountNameFromRoute,
-      operationTypes: filters.length ? filters : undefined,
+      operationTypes: filtersParam.length ? filtersParam : undefined,
       pageNumber: paramsState.page,
       fromBlock: fromBlockParam,
       toBlock: toBlockParam,
@@ -125,8 +126,7 @@ export default function Account() {
         fromBlockParam ||
         toBlockParam ||
         lastBlocksParam ||
-        lastTimeParam ||
-        timeUnitParam)
+        lastTimeParam)
     ) {
       fromDateParam && searchRanges.setStartDate(fromDateParam);
       toDateParam && searchRanges.setEndDate(toDateParam);
@@ -134,8 +134,9 @@ export default function Account() {
       toBlockParam && searchRanges.setToBlock(toBlockParam);
       lastBlocksParam && searchRanges.setLastBlocksValue(lastBlocksParam);
       timeUnitParam && searchRanges.setTimeUnitSelectKey(timeUnitParam);
-      lastTimeParam && searchRanges.setLastTimeUnitValue(lastTimeParam);
       rangeSelectKey && searchRanges.setRangeSelectKey(rangeSelectKey);
+      searchRanges.setLastTimeUnitValue(lastTimeParam);
+      setFilters(filtersParam)
       setInitialSearch(true);
     } else {
       const {
@@ -147,6 +148,7 @@ export default function Account() {
 
       setParams({
         ...paramsState,
+        filters: filters,
         fromBlock: payloadFromBlock,
         toBlock: payloadToBlock,
         fromDate: payloadStartDate,
@@ -167,7 +169,8 @@ export default function Account() {
         page: accountOperations.total_pages,
       });
     }
-  }, [accountOperations, paramsState]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accountOperations, paramsState.page]);
 
   useEffect(() => {
     if (paramsState && !initialSearch) {
@@ -180,16 +183,6 @@ export default function Account() {
     return (
       <Loader2 className="animate-spin mt-1 text-black h-12 w-12 ml-3 ..." />
     );
-  }
-  if (!accountOperations?.total_operations && !isAccountOperationsLoading) {
-    return <PageNotFound message={`Account not found.`} />;
-  }
-
-  if (!accountDetails) {
-    return "Loading ...";
-  }
-  if (!accountOperations?.total_operations && !isAccountOperationsLoading) {
-    return <PageNotFound message={`Account not found.`} />;
   }
 
   return (
@@ -262,24 +255,20 @@ export default function Account() {
                 </Button>
                 <OperationTypesDialog
                   operationTypes={accountOperationTypes}
-                  setSelectedOperations={(newFilters: number[]) =>
-                    setParams({
-                      ...paramsState,
-                      page: undefined,
-                      filters: newFilters,
-                    })
-                  }
+                  setSelectedOperations={(newFilters: number[]) => setFilters(newFilters)}
                   selectedOperations={filters}
                   colorClass="bg-explorer-dark-gray"
                   triggerTitle={"Operation Filters"}
                 />
               </div>
             </div>
-            {isAccountOperationsLoading || !page ? (
+            {isAccountOperationsLoading ? (
               <div className="flex justify-center text-center items-center">
                 <Loader2 className="animate-spin mt-1 text-black h-12 w-12 ml-3 ..." />
               </div>
             ) : (
+              !accountOperations?.total_operations ? 
+              <div className="w-full my-4 text-black text-center">No operations were found.</div> : 
               accountOperations?.operations_result?.map(
                 (operation: Hive.OperationResponse) => (
                   <div
