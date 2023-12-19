@@ -52,7 +52,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
   };
 
   const handleOnSubmit = () => {
-    setSelectedOperations(selectedOperationsIds);
+    setSelectedOperations(Array.isArray(selectedOperationsIds) ? selectedOperationsIds : [selectedOperationsIds]);
     onOpenChange(false);
   };
 

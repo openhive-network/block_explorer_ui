@@ -1,6 +1,13 @@
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
-import { useRef, RefObject, useEffect, useState, useCallback, useMemo } from "react";
+import {
+  useRef,
+  RefObject,
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+} from "react";
 import { toDateNumber } from "./StringUtils";
 
 /**
@@ -81,7 +88,7 @@ export const useMediaQuery = (query: string) => {
 };
 
 const SPLIT = "-";
-const URL_ARRAY_END = "~";
+const URL_ARRAY_END = "_";
 
 type ParamObject = { [key: string]: any };
 
@@ -132,38 +139,62 @@ const URLToData = (value: any) => {
   return value;
 };
 
+const paramsShallowEqual = (params1: ParamObject, params2: ParamObject) => {
+  const keys1 = Object.keys(params1);
+  const keys2 = Object.keys(params2);
+
+  if (keys1.length !== keys2.length) {
+    return false;
+  }
+
+  for (let key of keys1) {
+    if (params1[key] !== params2[key]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 export const useURLParams = <T>(defaultState: T, omit?: string[]) => {
   const router = useRouter();
   const [paramsState, setParamsState] = useState<T>(defaultState);
   const interpolationParams = useMemo(() => {
     const regex = /\[(.*?)\]/g;
 
-      let match;
-      const matches = [];
+    let match;
+    const matches = [];
 
-      while ((match = regex.exec(router.pathname)) !== null) {
-        matches.push(match[1]);
-      }
+    while ((match = regex.exec(router.pathname)) !== null) {
+      matches.push(match[1]);
+    }
 
-      return matches as (keyof T)[];
+    return matches as (keyof T)[];
   }, [router.pathname]);
 
   const setParams = (params: T) => {
     if (interpolationParams.every((param) => !!params[param])) {
       let urlParams: ParamObject = {};
       Object.keys(params as ParamObject).forEach((key) => {
-        const value = dataToURL(params[key as keyof typeof params]);
-        if (!!value && !omit?.includes(key)) {
+        const paramKey = key as keyof T;
+        const value = dataToURL(params[paramKey]);
+        if (
+          !!value &&
+          !omit?.includes(key) &&
+          value !== defaultState[paramKey]
+        ) {
           urlParams[key] = value;
         } else {
           delete urlParams[key];
         }
       });
-      router.replace({
-        query: {
-          ...urlParams,
-        },
-      });
+      if (!paramsShallowEqual(router.query, urlParams)) {
+        router.replace({
+          query: {
+            ...urlParams,
+          },
+        });
+      }
     }
   };
 
