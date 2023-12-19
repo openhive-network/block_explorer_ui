@@ -18,31 +18,31 @@ class FetchingService {
   }
 
   async getHeadBlockNum(): Promise<number> {
-    const url = `${config.apiAdress}/rpc/get_head_block_num`;
+    const url = `${config.apiAddress}/rpc/get_head_block_num`;
     return await this.makePostRequest(url, {});
   }
 
   async getBlock(blockNumber: number): Promise<Hive.BlockDetails> {
     const requestBody: Hive.GetBlockProps = { _block_num: blockNumber };
-    const url = `${config.apiAdress}/rpc/get_block`;
+    const url = `${config.apiAddress}/rpc/get_block`;
     return await this.makePostRequest(url, requestBody);
   }
 
   async getLastBlocks(limit: number): Promise<Hive.LastBlocksTypeResponse[]> {
     const requestBody: Hive.GetLatestBlocksProps = { _limit: limit };
-    const url = `${config.apiAdress}/rpc/get_latest_blocks `;
+    const url = `${config.apiAddress}/rpc/get_latest_blocks `;
     return await this.makePostRequest(url, requestBody);
   }
 
   async getInputType(input: string): Promise<Hive.InputTypeResponse> {
     const requestBody: Hive.GetInputTypeProps = { _input: input };
-    const url = `${config.apiAdress}/rpc/get_input_type`;
+    const url = `${config.apiAddress}/rpc/get_input_type`;
     return await this.makePostRequest(url, requestBody);
   }
 
   async getBlockOpTypes(blockNumber: number): Promise<Hive.OperationTypes[]> {
     const requestBody: Hive.GetBlockOpTypesProps = { _block_num: blockNumber };
-    const url = `${config.apiAdress}/rpc/get_block_op_types`;
+    const url = `${config.apiAddress}/rpc/get_block_op_types`;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -55,7 +55,7 @@ class FetchingService {
       _filter: filter,
       _body_limit: config.opsBodyLimit
     };
-    const url = `${config.apiAdress}/rpc/get_ops_by_block`;
+    const url = `${config.apiAddress}/rpc/get_ops_by_block`;
     return await this.makePostRequest(url, requestBody);
   }
   async getTransaction(
@@ -64,7 +64,7 @@ class FetchingService {
     const requestBody: Hive.GetTransactionProps = {
       _trx_hash: transactionHash,
     };
-    const url = `${config.apiAdress}/rpc/get_transaction`;
+    const url = `${config.apiAddress}/rpc/get_transaction`;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -74,7 +74,7 @@ class FetchingService {
       method: "database_api.get_reward_funds",
       id: 1,
     };
-    const url = `${config.hiveBlogAdress}`;
+    const url = `${config.hiveBlogAddress}`;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -84,7 +84,7 @@ class FetchingService {
       method: "database_api.get_dynamic_global_properties",
       id: 1,
     };
-    const url = `${config.hiveBlogAdress}`;
+    const url = `${config.hiveBlogAddress}`;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -94,13 +94,13 @@ class FetchingService {
       method: "database_api.get_current_price_feed",
       id: 1,
     };
-    const url = `${config.hiveBlogAdress}`;
+    const url = `${config.hiveBlogAddress}`;
     return await this.makePostRequest(url, requestBody);
   }
 
   async getAccOpTypes(account: string): Promise<unknown> {
     const requestBody: Hive.GetAccOpTypesProps = { _account: account };
-    const url = `${config.apiAdress}/rpc/get_acc_op_types`;
+    const url = `${config.apiAddress}/rpc/get_acc_op_types`;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -118,7 +118,7 @@ class FetchingService {
       _date_end: accountOperationsProps.endDate,
       _body_limit: config.opsBodyLimit
     };
-    const url = `${config.apiAdress}/rpc/get_ops_by_account`;
+    const url = `${config.apiAddress}/rpc/get_ops_by_account`;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -130,13 +130,13 @@ class FetchingService {
       _account: account,
       _operations: operations,
     };
-    const url = `${config.apiAdress}/rpc/get_account_operations_count`;
+    const url = `${config.apiAddress}/rpc/get_account_operations_count`;
     return await this.makePostRequest(url, requestBody);
   }
 
   async getAccount(account: string): Promise<unknown> {
     const requestBody: Hive.GetAccountProps = { _account: account };
-    const url = `${config.apiAdress}/rpc/get_account`;
+    const url = `${config.apiAddress}/rpc/get_account`;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -144,7 +144,7 @@ class FetchingService {
     const requestBody: Hive.GetAccountResourceCreditsProps = {
       _account: account,
     };
-    const url = `${config.apiAdress}/rpc/get_account_resource_credits`;
+    const url = `${config.apiAddress}/rpc/get_account_resource_credits`;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -152,7 +152,7 @@ class FetchingService {
     const requestBody: Hive.GetBtrackerAccountBalanceProps = {
       _account: account,
     };
-    const url = `${config.apiAdress}/rpc/get_btracker_account_balance`;
+    const url = `${config.apiAddress}/rpc/get_btracker_account_balance`;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -168,13 +168,13 @@ class FetchingService {
       _order_by: orderBy,
       _order_is: orderIs,
     };
-    const url = `${config.apiAdress}/rpc/get_witnesses`;
+    const url = `${config.apiAddress}/rpc/get_witnesses`;
     return await this.makePostRequest(url, requestBody);
   }
 
   async getWitnessesVotersNum(witness: string): Promise<unknown> {
     const requestBody: Hive.GetWitnessVotersNumProps = { _witness: witness };
-    const url = `${config.apiAdress}/rpc/get_witness_voters_num`;
+    const url = `${config.apiAddress}/rpc/get_witness_voters_num`;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -190,7 +190,7 @@ class FetchingService {
       _order_is: orderIs,
     };
     if (limit) requestBody._limit = limit;
-    const url = `${config.apiAdress}/rpc/get_witness_voters`;
+    const url = `${config.apiAddress}/rpc/get_witness_voters`;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -200,7 +200,7 @@ class FetchingService {
     const requestBody: Hive.GetOperationTypesProps = {
       _operation_type_pattern: operation_type_pattern,
     };
-    const url = `${config.apiAdress}/rpc/get_matching_operation_types`;
+    const url = `${config.apiAddress}/rpc/get_matching_operation_types`;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -208,7 +208,7 @@ class FetchingService {
     const requestBody: Hive.GetWitnessProps = {
       _account: witnessName,
     };
-    const url = `${config.apiAdress}/rpc/get_witness`;
+    const url = `${config.apiAddress}/rpc/get_witness`;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -216,7 +216,7 @@ class FetchingService {
     const requestBody: Hive.GetBlockByTimeProps = {
       _timestamp: date,
     };
-    const url = `${config.apiAdress}/rpc/get_block_by_time`;
+    const url = `${config.apiAddress}/rpc/get_block_by_time`;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -224,7 +224,7 @@ class FetchingService {
     const requestBody: Hive.GetOperationKeysProps = {
       _op_type_id: operationTypeId,
     }
-    const url = `${config.apiAdress}/rpc/get_operation_keys `;
+    const url = `${config.apiAddress}/rpc/get_operation_keys `;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -243,7 +243,7 @@ class FetchingService {
       _key_content: blockSearchProps.deepProps.content ? [blockSearchProps.deepProps.content] : undefined,
       _setof_keys:  blockSearchProps.deepProps.keys ? [blockSearchProps.deepProps.keys] : undefined
     };
-    const url = `${config.apiAdress}/rpc/get_block_by_op  `;
+    const url = `${config.apiAddress}/rpc/get_block_by_op  `;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -263,7 +263,7 @@ class FetchingService {
       _from_time: fromTime,
       _to_time: toTime,
     };
-    const url = `${config.apiAdress}/rpc/get_witness_votes_history  `;
+    const url = `${config.apiAddress}/rpc/get_witness_votes_history  `;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -273,7 +273,7 @@ class FetchingService {
     const requestBody: Hive.GetOperationProps = {
       _operation_id: operationId
     };
-    const url = `${config.apiAdress}/rpc/get_operation`
+    const url = `${config.apiAddress}/rpc/get_operation`
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -292,13 +292,13 @@ class FetchingService {
       _body_limit: config.opsBodyLimit,
       _page_size: config.standardPaginationSize
     };
-    const url = `${config.apiAdress}/rpc/get_comment_operations`
+    const url = `${config.apiAddress}/rpc/get_comment_operations`
     return await this.makePostRequest(url, requestBody);
   }
 
   async getHafbeVersion(): Promise<string> {
     const requestBody = {};
-    const url = `${config.apiAdress}/rpc/get_hafbe_version`;
+    const url = `${config.apiAddress}/rpc/get_hafbe_version`;
     return await this.makePostRequest(url, requestBody);
   }
 
