@@ -92,26 +92,28 @@ export default function Witnesses() {
                   {singleWitness.witness}
                 </Link>
               </TableCell>
-              <TableCell
-                onClick={() => {
-                  setVoterAccount(singleWitness.witness);
-                  setIsVotesHistoryOpen(true);
-                }}
-              >
-                <span className="flex items-center cursor-pointer">
+              <TableCell >
+                <span className="flex items-center">
                   {formatNumber(singleWitness.vests || 0, true)}
-                  <MenuSquareIcon className="w-4 ml-1" />
+                  <MenuSquareIcon 
+                  className="w-4 ml-1 cursor-pointer"                
+                  onClick={() => {
+                    setVoterAccount(singleWitness.witness);
+                    setIsVotesHistoryOpen(true);
+                    }} 
+                  />
                 </span>
               </TableCell>
-              <TableCell
-                onClick={() => {
-                  setVoterAccount(singleWitness.witness);
-                  setIsVotersOpen(true);
-                }}
-              >
-                <span className="flex items-center cursor-pointer">
+              <TableCell>
+                <span className="flex items-center">
                   {singleWitness.voters_num.toLocaleString()}
-                  <MenuSquareIcon className="w-4 ml-1" />
+                  <MenuSquareIcon 
+                    className="w-4 ml-1 cursor-pointer"                
+                    onClick={() => {
+                      setVoterAccount(singleWitness.witness);
+                      setIsVotersOpen(true);
+                    }} 
+                  />
                 </span>
               </TableCell>
               <TableCell>
