@@ -118,15 +118,15 @@ export default function Account() {
     setIsVotesHistoryModalOpen(!isVotesHistoryModalOpen);
   };
 
-  const handleSearch = async () => {
+  const handleSearch = async (resetPage?: boolean) => {
     if (
       !initialSearch &&
-      (fromDateParam ||
-        toDateParam ||
-        fromBlockParam ||
-        toBlockParam ||
-        lastBlocksParam ||
-        lastTimeParam)
+      (!!fromDateParam ||
+        !!toDateParam ||
+        !!fromBlockParam ||
+        !!toBlockParam ||
+        !!lastBlocksParam ||
+        !!lastTimeParam || !!filtersParam)
     ) {
       fromDateParam && searchRanges.setStartDate(fromDateParam);
       toDateParam && searchRanges.setEndDate(toDateParam);
@@ -149,7 +149,7 @@ export default function Account() {
         payloadStartDate,
         payloadEndDate,
       } = await searchRanges.getRangesValues();
-
+      
       setParams({
         ...paramsState,
         filters: filters,
@@ -161,7 +161,7 @@ export default function Account() {
         lastTime: searchRanges.lastTimeUnitValue,
         timeUnit: searchRanges.timeUnitSelectKey,
         rangeSelectKey: searchRanges.rangeSelectKey,
-        page: undefined,
+        page: resetPage ? undefined : page
       });
     }
   };
@@ -250,7 +250,7 @@ export default function Account() {
               <div className="flex items-center justify-between m-2">
                 <Button
                   className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]"
-                  onClick={handleSearch}
+                  onClick={() => handleSearch(true)}
                 >
                   <span>Search</span>{" "}
                 </Button>
