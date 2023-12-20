@@ -11,7 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Switch } from "../ui/switch";
-import { cn } from "@/lib/utils";
+import { cn, formatNumber } from "@/lib/utils";
 import useWitnessVoters from "@/api/common/useWitnessVoters";
 
 type VotersDialogProps = {
@@ -66,7 +66,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
       onOpenChange={changeVotersDialogue}
     >
       <DialogContent
-        className={`h-3/4 max-w-2xl overflow-auto bg-white ${
+        className={`h-3/4 max-w-3xl overflow-auto bg-white ${
           !witnessVoters && "flex justify-center items-center"
         }`}
       >
@@ -129,18 +129,21 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                       </TableCell>
                       <TableCell>
                         {showHivePower
-                          ? voter.votes_hive_power
-                          : voter.vests.toLocaleString()}{" "}
+                          ? formatNumber(voter.votes_hive_power, false)
+                          : formatNumber(voter.vests, true)
+                        }
                       </TableCell>
                       <TableCell>
                         {showHivePower
-                          ? voter.account_hive_power
-                          : voter.account_vests.toLocaleString()}{" "}
+                          ? formatNumber(voter.account_hive_power, false)
+                          : formatNumber(voter.account_vests, true)
+                        }
                       </TableCell>
                       <TableCell>
                         {showHivePower
-                          ? voter.proxied_hive_power
-                          : voter.proxied_vests.toLocaleString()}{" "}
+                          ? formatNumber(voter.proxied_hive_power, false)
+                          : formatNumber(voter.proxied_vests, true)
+                        }
                       </TableCell>
                     </TableRow>
                   ))}

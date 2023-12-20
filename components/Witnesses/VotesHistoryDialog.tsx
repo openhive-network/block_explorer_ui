@@ -16,7 +16,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Switch } from "../ui/switch";
-import { cn } from "@/lib/utils";
+import { cn, formatNumber } from "@/lib/utils";
 import moment from "moment";
 import { config } from "@/Config";
 import CustomPagination from "../CustomPagination";
@@ -74,6 +74,8 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
       votesHistory?.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1)
     );
   };
+
+  console.log('VOTE HISTORY', votesHistory);
 
   return (
     <Dialog
@@ -195,8 +197,9 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                       </TableCell>
                       <TableCell>
                         {showHivePower
-                          ? vote.vests_hive_power
-                          : vote.vests.toLocaleString()}{" "}
+                          ? formatNumber(vote.vests_hive_power, false)
+                          : formatNumber(vote.vests, true)
+                        }
                       </TableCell>
                     </TableRow>
                   ))}

@@ -14,5 +14,9 @@ export const config = {
     home: 20
   },
   lastBlocksForWidget: 20,
-  firstBlockTime: "2016-03-24T16:05:00"
+  firstBlockTime: "2016-03-24T16:05:00",
+  precisions: {
+    vests: 6,
+    hivePower: 3
+  }
 }

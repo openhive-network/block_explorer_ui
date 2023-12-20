@@ -2,6 +2,7 @@ import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 import Long from "long";
 import Explorer from "@/types/Explorer";
+import { config } from "@/Config";
 
 
  
@@ -42,4 +43,16 @@ export const getPageUrlParams = (urlParams: Explorer.UrlParam[]) => {
     }
   })
   return resultString;
+};
+
+/**
+ * Use precision to properly format number on display. Used for hive power and vests.
+ * @param numberToFormat Raw number
+ * @param isVest 
+ * @returns Formatted string
+ */
+export const formatNumber = (numberToFormat: number, isVest: boolean): string => {
+  const precision = isVest ? config.precisions.vests : config.precisions.hivePower;
+  const vestsFormat = isVest ? {minimumFractionDigits: precision} : undefined;
+  return (numberToFormat / Math.pow(10, precision)).toLocaleString(undefined, vestsFormat);
 }
