@@ -75,8 +75,6 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
     );
   };
 
-  console.log('VOTE HISTORY', votesHistory);
-
   return (
     <Dialog
       open={isVotesHistoryOpen}

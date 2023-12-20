@@ -13,6 +13,7 @@ import VotersDialog from "@/components/Witnesses/VotersDialog";
 import VotesHistoryDialog from "@/components/Witnesses/VotesHistoryDialog";
 import useWitnesses from "@/api/common/useWitnesses";
 import { config } from "@/Config";
+import { formatNumber } from "@/lib/utils";
 
 export default function Witnesses() {
   const [voterAccount, setVoterAccount] = useState<string>("");
@@ -98,7 +99,7 @@ export default function Witnesses() {
                 }}
               >
                 <span className="flex items-center cursor-pointer">
-                  {singleWitness.vests?.toLocaleString()}
+                  {formatNumber(singleWitness.vests || 0, true)}
                   <MenuSquareIcon className="w-4 ml-1" />
                 </span>
               </TableCell>
