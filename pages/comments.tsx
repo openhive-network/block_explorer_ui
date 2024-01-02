@@ -46,10 +46,10 @@ const defaultSearchParams: CommentSearchParams = {
   rangeSelectKey: "lastBlocks",
   page: 1,
   filters: [],
-}
+};
 
 const Comments: React.FC = () => {
-  const [accountName, setAccountName] = useState<string>(); 
+  const [accountName, setAccountName] = useState<string>();
   const [permlink, setPermlink] = useState<string>();
   const [initialSearch, setInitialSearch] = useState(false);
   const [commentSearchProps, setCommentSearchProps] = useState<
@@ -70,9 +70,7 @@ const Comments: React.FC = () => {
 
   const startCommentSearch = async (params: CommentSearchParams) => {
     if (params.accountName) {
-      if (!initialSearch 
-        // && (!!params.fromBlock || !!params.toBlock || !!params.lastBlocks || !!params.lastTime || !!params.startDate)
-      ) {
+      if (!initialSearch) {
         setAccountName(params.accountName);
         setPermlink(params.permlink);
         params.fromBlock && searchRanges.setFromBlock(params.fromBlock);
@@ -81,9 +79,10 @@ const Comments: React.FC = () => {
         params.toDate && searchRanges.setEndDate(params.toDate);
         params.lastBlocks && searchRanges.setLastBlocksValue(params.lastBlocks);
         params.lastTime && searchRanges.setLastTimeUnitValue(params.lastTime);
-        params.rangeSelectKey && searchRanges.setRangeSelectKey(params.rangeSelectKey);
+        params.rangeSelectKey &&
+          searchRanges.setRangeSelectKey(params.rangeSelectKey);
         params.timeUnit && searchRanges.setTimeUnitSelectKey(params.timeUnit);
-        
+
         const commentSearchProps: Explorer.CommentSearchProps = {
           accountName: params.accountName,
           permlink: params.permlink,
@@ -93,11 +92,9 @@ const Comments: React.FC = () => {
           endDate: params.toDate,
           operationTypes: !!params.filters.length ? params.filters : undefined,
         };
-  
+
         setCommentSearchProps(commentSearchProps);
         setPreviousCommentSearchProps(commentSearchProps);
-        // setParams({...params, ...commentSearchProps});
-
         setInitialSearch(true);
       } else {
         const {
@@ -106,7 +103,7 @@ const Comments: React.FC = () => {
           payloadStartDate,
           payloadEndDate,
         } = await searchRanges.getRangesValues();
-        
+
         const commentSearchProps: Explorer.CommentSearchProps = {
           accountName: params.accountName,
           permlink: params.permlink,
@@ -116,16 +113,15 @@ const Comments: React.FC = () => {
           endDate: payloadEndDate,
           operationTypes: !!params.filters.length ? params.filters : undefined,
         };
-        
+
         params.rangeSelectKey = searchRanges.rangeSelectKey;
-        params.timeUnit = searchRanges.timeUnitSelectKey
+        params.timeUnit = searchRanges.timeUnitSelectKey;
         params.lastTime = searchRanges.lastTimeUnitValue;
-  
+
         setCommentSearchProps(commentSearchProps);
         setPreviousCommentSearchProps(commentSearchProps);
-        setParams({...params, ...commentSearchProps});
+        setParams({ ...params, ...commentSearchProps });
       }
-      
     }
   };
 
@@ -150,7 +146,7 @@ const Comments: React.FC = () => {
     if (paramsState && !initialSearch) {
       startCommentSearch(paramsState);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paramsState]);
 
   return (
@@ -162,7 +158,11 @@ const Comments: React.FC = () => {
             className="w-1/2"
             type="text"
             value={accountName}
-            onChange={(e) => setAccountName(!!e.target.value.length ? e.target.value : undefined)}
+            onChange={(e) =>
+              setAccountName(
+                !!e.target.value.length ? e.target.value : undefined
+              )
+            }
             placeholder="---"
           />
         </div>
@@ -172,7 +172,9 @@ const Comments: React.FC = () => {
             className="w-full"
             type="text"
             value={permlink}
-            onChange={(e) => setPermlink(!!e.target.value.length ? e.target.value : undefined)}
+            onChange={(e) =>
+              setPermlink(!!e.target.value.length ? e.target.value : undefined)
+            }
             placeholder="---"
           />
         </div>
@@ -180,7 +182,9 @@ const Comments: React.FC = () => {
         <div className="flex items-center justify-between m-2">
           <Button
             className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]"
-            onClick={() => startCommentSearch({...paramsState, accountName, permlink})}
+            onClick={() =>
+              startCommentSearch({ ...paramsState, accountName, permlink })
+            }
             disabled={!accountName?.length}
           >
             <span>Search</span>{" "}
