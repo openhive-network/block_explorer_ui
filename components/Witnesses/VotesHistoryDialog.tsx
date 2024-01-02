@@ -75,16 +75,23 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
     );
   };
 
+  const buildCustomDialogStyle = () => {
+    const intialDialogStyle = "max-w-2xl bg-white overflow-auto";
+
+    if (!votesHistory) {
+      return `${intialDialogStyle} flex column justify-center items-center`;
+    }
+    if (votesHistory.length < 4) return intialDialogStyle;
+
+    return `h-3/4 ${intialDialogStyle}`;
+  };
+
   return (
     <Dialog
       open={isVotesHistoryOpen}
       onOpenChange={changeVoteHistoryDialogue}
     >
-      <DialogContent
-        className={`h-3/4 max-w-2xl overflow-auto bg-white ${
-          !votesHistory && "flex justify-center items-center"
-        }`}
-      >
+      <DialogContent className={buildCustomDialogStyle()}>
         {votesHistory ? (
           <>
             <div className="flex justify-center items-centertext-center font-semibold">
