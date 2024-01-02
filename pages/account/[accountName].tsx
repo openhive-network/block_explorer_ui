@@ -13,21 +13,11 @@ import useAccountOperations from "@/api/accountPage/useAccountOperations";
 import useWitnessDetails from "@/api/common/useWitnessDetails";
 import AccountPagination from "@/components/account/AccountPagination";
 import useAccountOperationTypes from "@/api/accountPage/useAccountOperationTypes";
-import { config } from "@/Config";
 import { useURLParams } from "@/utils/Hooks";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import DateTimePicker from "react-datetime-picker";
-import ScrollTopButton from "@/components/ScrollTopButton";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 import Hive from "@/types/Hive";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-} from "@/components/ui/select";
 import useSearchRanges from "@/components/searchRanges/useSearchRanges";
 import SearchRanges from "@/components/searchRanges/SearchRanges";
 
@@ -37,11 +27,11 @@ interface AccountSearchParams {
   toBlock: number | undefined;
   fromDate: Date | undefined;
   toDate: Date | undefined;
-  page: number | undefined;
   lastBlocks: number | undefined;
   lastTime: number | undefined;
   timeUnit: string | undefined;
   rangeSelectKey: string | undefined;
+  page: number | undefined;
   filters: number[];
 }
 
@@ -51,11 +41,11 @@ const defaultSearchParams: AccountSearchParams = {
   toBlock: undefined,
   fromDate: undefined,
   toDate: undefined,
-  page: undefined,
   lastBlocks: undefined,
   lastTime: undefined,
   timeUnit: "days",
   rangeSelectKey: "lastBlocks",
+  page: undefined,
   filters: [],
 };
 

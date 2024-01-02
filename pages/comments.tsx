@@ -12,6 +12,8 @@ import useOperationTypes from "@/api/common/useOperationsTypes";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 import JumpToPage from "@/components/JumpToPage";
 import { useURLParams } from "@/utils/Hooks";
+import useSearchRanges from "@/components/searchRanges/useSearchRanges";
+import SearchRanges from "@/components/searchRanges/SearchRanges";
 
 const FILTERS = "filters";
 const SPLIT = "-";
@@ -21,6 +23,12 @@ interface CommentSearchParams {
   permlink: string | undefined;
   fromBlock: number | undefined;
   toBlock: number | undefined;
+  startDate: Date | undefined;
+  toDate: Date | undefined;
+  lastBlocks: number | undefined;
+  lastTime: number | undefined;
+  timeUnit: string | undefined;
+  rangeSelectKey: string | undefined;
   page: number;
   filters: number[];
 }
@@ -30,6 +38,12 @@ const defaultSearchParams: CommentSearchParams = {
   permlink: undefined,
   fromBlock: undefined,
   toBlock: undefined,
+  startDate: undefined,
+  toDate: undefined,
+  lastBlocks: undefined,
+  lastTime: undefined,
+  timeUnit: "days",
+  rangeSelectKey: "lastBlocks",
   page: 1,
   filters: [],
 }
@@ -37,8 +51,6 @@ const defaultSearchParams: CommentSearchParams = {
 const Comments: React.FC = () => {
   const [accountName, setAccountName] = useState<string>(); 
   const [permlink, setPermlink] = useState<string>();
-  const [fromBlock, setFromBlock] = useState<number>();
-  const [toBlock, setToBlock] = useState<number>();
   const [initialSearch, setInitialSearch] = useState(false);
   const [commentSearchProps, setCommentSearchProps] = useState<
     Explorer.CommentSearchProps | undefined
@@ -46,7 +58,7 @@ const Comments: React.FC = () => {
   const [previousCommentSearchProps, setPreviousCommentSearchProps] = useState<
     Explorer.CommentSearchProps | undefined
   >(undefined);
-  const router = useRouter();
+  const searchRanges = useSearchRanges();
 
   const commentSearch = useCommentSearch(commentSearchProps);
   const { paramsState, setParams } = useURLParams(defaultSearchParams);
@@ -56,26 +68,64 @@ const Comments: React.FC = () => {
       config.commentOperationsTypeIds.includes(operation.op_type_id)
     ) || [];
 
-  const startCommentSearch = (params: CommentSearchParams) => {
+  const startCommentSearch = async (params: CommentSearchParams) => {
     if (params.accountName) {
-      setParams(params);
-      if (!initialSearch) {
+      if (!initialSearch 
+        // && (!!params.fromBlock || !!params.toBlock || !!params.lastBlocks || !!params.lastTime || !!params.startDate)
+      ) {
         setAccountName(params.accountName);
         setPermlink(params.permlink);
-        setFromBlock(params.fromBlock);
-        setToBlock(params.toBlock);
+        params.fromBlock && searchRanges.setFromBlock(params.fromBlock);
+        params.toBlock && searchRanges.setToBlock(params.toBlock);
+        params.startDate && searchRanges.setStartDate(params.startDate);
+        params.toDate && searchRanges.setEndDate(params.toDate);
+        params.lastBlocks && searchRanges.setLastBlocksValue(params.lastBlocks);
+        params.lastTime && searchRanges.setLastTimeUnitValue(params.lastTime);
+        params.rangeSelectKey && searchRanges.setRangeSelectKey(params.rangeSelectKey);
+        params.timeUnit && searchRanges.setTimeUnitSelectKey(params.timeUnit);
+        
+        const commentSearchProps: Explorer.CommentSearchProps = {
+          accountName: params.accountName,
+          permlink: params.permlink,
+          fromBlock: params.fromBlock,
+          toBlock: params.toBlock,
+          startDate: params.startDate,
+          endDate: params.toDate,
+          operationTypes: !!params.filters.length ? params.filters : undefined,
+        };
+  
+        setCommentSearchProps(commentSearchProps);
+        setPreviousCommentSearchProps(commentSearchProps);
+        // setParams({...params, ...commentSearchProps});
+
+        setInitialSearch(true);
+      } else {
+        const {
+          payloadFromBlock,
+          payloadToBlock,
+          payloadStartDate,
+          payloadEndDate,
+        } = await searchRanges.getRangesValues();
+        
+        const commentSearchProps: Explorer.CommentSearchProps = {
+          accountName: params.accountName,
+          permlink: params.permlink,
+          fromBlock: payloadFromBlock,
+          toBlock: payloadToBlock,
+          startDate: payloadStartDate,
+          endDate: payloadEndDate,
+          operationTypes: !!params.filters.length ? params.filters : undefined,
+        };
+        
+        params.rangeSelectKey = searchRanges.rangeSelectKey;
+        params.timeUnit = searchRanges.timeUnitSelectKey
+        params.lastTime = searchRanges.lastTimeUnitValue;
+  
+        setCommentSearchProps(commentSearchProps);
+        setPreviousCommentSearchProps(commentSearchProps);
+        setParams({...params, ...commentSearchProps});
       }
-      setInitialSearch(true);
-      const commentSearchProps: Explorer.CommentSearchProps = {
-        accountName: params.accountName,
-        permlink: params.permlink,
-        fromBlock: params.fromBlock,
-        toBlock: params.toBlock,
-        operationTypes: !!params.filters.length ? params.filters : undefined,
-      };
-      setCommentSearchProps(commentSearchProps);
-      setPreviousCommentSearchProps(commentSearchProps);
-      setParams(params);
+      
     }
   };
 
@@ -126,30 +176,11 @@ const Comments: React.FC = () => {
             placeholder="---"
           />
         </div>
-        <div className="flex items-center m-2">
-          <div className="flex flex-col w-full">
-            <label className="mx-2">From block</label>
-            <Input
-              type="number"
-              value={fromBlock}
-              onChange={(e) => setFromBlock(Number(e.target.value))}
-              placeholder="1"
-            />
-          </div>
-          <div className="flex flex-col w-full">
-            <label className="mx-2">To block</label>
-            <Input
-              type="number"
-              value={toBlock}
-              onChange={(e) => setToBlock(Number(e.target.value))}
-              placeholder={"Headblock"}
-            />
-          </div>
-        </div>
+        <SearchRanges rangesProps={searchRanges} />
         <div className="flex items-center justify-between m-2">
           <Button
             className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]"
-            onClick={() => startCommentSearch({...paramsState, accountName, permlink, fromBlock, toBlock})}
+            onClick={() => startCommentSearch({...paramsState, accountName, permlink})}
             disabled={!accountName?.length}
           >
             <span>Search</span>{" "}
