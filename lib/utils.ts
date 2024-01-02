@@ -56,3 +56,12 @@ export const formatNumber = (numberToFormat: number, isVest: boolean): string =>
   const vestsFormat = isVest ? {minimumFractionDigits: precision} : undefined;
   return (numberToFormat / Math.pow(10, precision)).toLocaleString(undefined, vestsFormat);
 }
+
+/**
+ * Properly format percentage values
+ * @param numberToFormat raw percentage from Hive backend.
+ * @returns Formatted string with % at the end
+ */
+export const formatPercent = (numberToFormat: number): string => {
+  return `${(numberToFormat / Math.pow(10, config.precisions.percentage)).toLocaleString()} %`
+}

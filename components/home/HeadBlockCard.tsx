@@ -23,7 +23,6 @@ const cardNameMap = new Map([
   ["totalVestingFundHive", "Pending rewarded vesting hive"],
   ["hbdInterestRate", "Hbd interest rate"],
   ["hbdPrintRate", "Hbd print rate"],
-  ["requiredActionsPartitionPercent", "Required actions partition percent"],
   ["lastIrreversibleBlockNumber", "Last irreversible block num"],
   ["availableAccountSubsidies", "Available account subsidies"],
   ["hbdStopPercent", "Hbd stop percent"],
@@ -51,6 +50,8 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
   transactionCount,
   blockDetails,
 }) => {
+
+  console.log('HEAD BLOCK CARD DATA', headBlockCardData);
   return (
     <div className='col-start-1 col-span-6 md:col-span-1 bg-explorer-dark-gray p-2 rounded-["6px] md:mx-6 h-fit rounded'>
       {headBlockCardData?.headBlockNumber &&

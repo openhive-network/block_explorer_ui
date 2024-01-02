@@ -16,6 +16,7 @@ export const config = {
   firstBlockTime: "2016-03-24T16:05:00",
   precisions: {
     vests: 6,
-    hivePower: 3
+    hivePower: 3,
+    percentage: 2
   }
 }

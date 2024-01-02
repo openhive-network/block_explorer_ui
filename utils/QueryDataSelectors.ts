@@ -3,6 +3,7 @@ import Hive from "@/types/Hive";
 import moment from "moment";
 import { getAndFormatPrecision } from "./Calculations";
 import { config } from "@/Config";
+import { formatPercent } from "@/lib/utils";
 
 /**
  * Get dynamic global block data and adjust it for page display.
@@ -29,7 +30,6 @@ export function adjustDynamicGlobalBlockData(
     pending_rewarded_vesting_hive,
     hbd_interest_rate,
     hbd_print_rate,
-    required_actions_partition_percent,
     last_irreversible_block_num,
     available_account_subsidies,
     hbd_stop_percent,
@@ -79,19 +79,18 @@ export function adjustDynamicGlobalBlockData(
       pending_rewarded_vesting_hive?.amount,
       pending_rewarded_vesting_hive?.precision
     ),
-    hbdInterestRate: `${hbd_interest_rate}%`,
-    hbdPrintRate: `${hbd_print_rate}%`,
-    requiredActionsPartitionPercent: `${required_actions_partition_percent}%`,
+    hbdInterestRate: formatPercent(hbd_interest_rate),
+    hbdPrintRate: formatPercent(hbd_print_rate),
     lastIrreversibleBlockNumber: last_irreversible_block_num,
     availableAccountSubsidies: available_account_subsidies,
-    hbdStopPercent: hbd_stop_percent,
-    hbdStartPercent: hbd_start_percent,
+    hbdStopPercent: `${hbd_stop_percent / Math.pow(10, config.precisions.percentage)}`,
+    hbdStartPercent: formatPercent(hbd_start_percent),
     nextMaintenanceTime: moment(next_maintenance_time).format(config.baseMomentTimeFormat),
     lastBudgetTime: moment(last_budget_time).format(config.baseMomentTimeFormat) ,
     nextDailyMaintenanceTime: moment(next_daily_maintenance_time).format(config.baseMomentTimeFormat) ,
-    contentRewardPercent: content_reward_percent, // Remember to fix all percentage values later
-    vestingRewardPercent: vesting_reward_percent,
-    downvotePoolPercent: downvote_pool_percent,
+    contentRewardPercent: formatPercent(content_reward_percent), // Remember to fix all percentage values later
+    vestingRewardPercent: formatPercent(vesting_reward_percent),
+    downvotePoolPercent: formatPercent(downvote_pool_percent),
     currentRemoveThreshold: current_remove_threshold,
     earlyVotingSeconds: early_voting_seconds,
     midVotingSeconds: mid_voting_seconds,
