@@ -165,7 +165,7 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
   }
 
   useEffect(() => {
-    setSeeDetails(true);
+    setSeeDetails(settings.operationDetails);
   }, [settings.operationDetails]);
 
   // Leave copy feature for later https app
