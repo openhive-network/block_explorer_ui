@@ -15,6 +15,7 @@ declare module Hive {
     _block_num: number;
     _filter: number[];
     _body_limit: number;
+    _limit: number;
   }
 
   interface GetTransactionProps {

@@ -53,7 +53,8 @@ class FetchingService {
     const requestBody: Hive.GetOpsByBlockProps = {
       _block_num: blockNumber,
       _filter: filter,
-      _body_limit: config.opsBodyLimit
+      _body_limit: config.opsBodyLimit,
+      _limit: config.expandedPaginationSize
     };
     const url = `${config.apiAddress}/rpc/get_ops_by_block`;
     return await this.makePostRequest(url, requestBody);
