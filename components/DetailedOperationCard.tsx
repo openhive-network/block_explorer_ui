@@ -139,6 +139,7 @@ const userField = [
   "curator",
   "seller",
   "voter",
+  "publisher"
 ];
 const userAuthField = ["required_posting_auths", "required_auths"];
 
@@ -164,7 +165,7 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
   }
 
   useEffect(() => {
-    setSeeDetails(settings.operationDetails);
+    setSeeDetails(true);
   }, [settings.operationDetails]);
 
   // Leave copy feature for later https app
