@@ -72,6 +72,11 @@ export default function Navbar() {
                   }
                   leftLabel="Raw Json view"
                 />
+                <Toggle
+                  checked={settings.rawJsonView}
+                  onClick={() => null}
+                  leftLabel="Operation details"
+                />
               </div>
             </div>
           </div>
@@ -99,8 +104,16 @@ export default function Navbar() {
                 leftLabel="Raw Json view"
                 className="ml-6"
               />
+              <Toggle
+                  checked={settings.operationDetails}
+                  onClick={() => setSettings({
+                    ...settings,
+                    operationDetails: !settings.operationDetails,
+                  })}
+                  leftLabel="Operation details"
+                  className="ml-6"
+                />
             </div>
-
             <SearchBar />
           </>
         )}

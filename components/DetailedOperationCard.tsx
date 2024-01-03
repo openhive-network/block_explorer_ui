@@ -155,8 +155,8 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
   isShortened,
   forceStyle,
 }) => {
-  const [seeDetails, setSeeDetails] = useState(true);
   const { settings } = useUserSettingsContext();
+  const [seeDetails, setSeeDetails] = useState(true);
 
   let valueAsObject = operation.value;
   if (typeof valueAsObject === "string") {
@@ -252,7 +252,7 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
         )}
       </div>
 
-      {seeDetails &&
+      {(seeDetails && (settings.operationDetails || settings.rawJsonView)) &&
         (settings.rawJsonView || forceStyle === "raw-json" ? (
           <JSONView json={valueAsObject} />
         ) : (
