@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Check, ChevronDown, ChevronUp, ClipboardCopy } from "lucide-react";
 import moment from "moment";
@@ -156,12 +156,16 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
   forceStyle,
 }) => {
   const { settings } = useUserSettingsContext();
-  const [seeDetails, setSeeDetails] = useState(true);
+  const [seeDetails, setSeeDetails] = useState(false);
 
   let valueAsObject = operation.value;
   if (typeof valueAsObject === "string") {
     valueAsObject = { message: valueAsObject };
   }
+
+  useEffect(() => {
+    setSeeDetails(settings.operationDetails);
+  }, [settings.operationDetails]);
 
   // Leave copy feature for later https app
   // const [copied, setCopied] = useState(false);
@@ -229,7 +233,7 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
         </div>
       </div>
 
-      <div className="flex justify-between items-center">
+      {!settings.rawJsonView && <div className="flex justify-between items-center">
         <Button className="p-0" onClick={() => setSeeDetails(!seeDetails)}>
           {seeDetails ? (
             <div className="flex items-center gap-x-1">
@@ -250,9 +254,9 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
             </Button>
           </Link>
         )}
-      </div>
+      </div>}
 
-      {(seeDetails && (settings.operationDetails || settings.rawJsonView)) &&
+      {(seeDetails || settings.rawJsonView) &&
         (settings.rawJsonView || forceStyle === "raw-json" ? (
           <JSONView json={valueAsObject} />
         ) : (

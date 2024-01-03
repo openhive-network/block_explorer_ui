@@ -9,6 +9,7 @@ import { Toggle } from "./ui/toggle";
 import { useUserSettingsContext } from "./contexts/UserSettingsContext";
 import { useAlertContext } from "./contexts/AlertContext";
 import Alert from "./Alert";
+import { Button } from "./ui/button";
 
 export default function Navbar() {
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -72,11 +73,14 @@ export default function Navbar() {
                   }
                   leftLabel="Raw Json view"
                 />
-                <Toggle
-                  checked={settings.rawJsonView}
-                  onClick={() => null}
-                  leftLabel="Operation details"
-                />
+                <Button variant="outline" className="w-full mt-2" onClick={() =>
+                    setSettings({
+                      ...settings,
+                      operationDetails: true,
+                    })
+                  }>
+                  Show operation details
+                </Button>
               </div>
             </div>
           </div>
@@ -104,15 +108,14 @@ export default function Navbar() {
                 leftLabel="Raw Json view"
                 className="ml-6"
               />
-              <Toggle
-                  checked={settings.operationDetails}
-                  onClick={() => setSettings({
+              <Button variant="outline" className="ml-6" onClick={() =>
+                  setSettings({
                     ...settings,
-                    operationDetails: !settings.operationDetails,
-                  })}
-                  leftLabel="Operation details"
-                  className="ml-6"
-                />
+                    operationDetails: true,
+                  })
+                }>
+                Show operation details
+              </Button>
             </div>
             <SearchBar />
           </>
