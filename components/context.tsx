@@ -8,7 +8,6 @@ import { Alert, AlertsContext } from "./contexts/AlertContext";
 const Context: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [userSettings, setUserSettings] = useState<UserSettings>({
     rawJsonView: false,
-    operationDetails: false
   });
   const [alerts, setAlerts] = useState<Alert[]>([]);
 

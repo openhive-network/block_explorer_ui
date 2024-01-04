@@ -2,7 +2,6 @@ import { createContext, useContext } from "react";
 
 export interface UserSettings {
   rawJsonView: boolean;
-  operationDetails: boolean;
 }
 
 export type UserSettingsContextType = {
@@ -11,7 +10,7 @@ export type UserSettingsContextType = {
 };
 
 export const UserSettingsContext = createContext<UserSettingsContextType>({
-  settings: { rawJsonView: false, operationDetails: false },
+  settings: { rawJsonView: false },
   setSettings: () => {},
 });
 

@@ -164,10 +164,6 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
     valueAsObject = { message: valueAsObject };
   }
 
-  useEffect(() => {
-    setSeeDetails(settings.operationDetails);
-  }, [settings.operationDetails]);
-
   // Leave copy feature for later https app
   // const [copied, setCopied] = useState(false);
   /* 

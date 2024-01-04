@@ -73,14 +73,6 @@ export default function Navbar() {
                   }
                   leftLabel="Raw Json view"
                 />
-                <Button variant="outline" className="w-full mt-2" onClick={() =>
-                    setSettings({
-                      ...settings,
-                      operationDetails: true,
-                    })
-                  }>
-                  Show operation details
-                </Button>
               </div>
             </div>
           </div>
@@ -108,14 +100,6 @@ export default function Navbar() {
                 leftLabel="Raw Json view"
                 className="ml-6"
               />
-              <Button variant="outline" className="ml-6" onClick={() =>
-                  setSettings({
-                    ...settings,
-                    operationDetails: true,
-                  })
-                }>
-                Show operation details
-              </Button>
             </div>
             <SearchBar />
           </>
