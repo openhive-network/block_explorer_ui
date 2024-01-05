@@ -1,55 +1,53 @@
+import { useState } from "react";
 import Explorer from "@/types/Explorer";
 import Image from "next/image";
 import Link from "next/link";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import Hive from "@/types/Hive";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Loader2 } from "lucide-react";
+import HeadBlockPropertyCard from "./HeadBlockPropertyCard";
+import {
+  fundAndSupplyParameters,
+  hiveParameters,
+  blockchainDates,
+} from "./headBlockParameters";
 
 interface HeadBlockCardProps {
-  headBlockCardData?: Explorer.HeadBlockCardData;
+  headBlockCardData?: Explorer.HeadBlockCardData | any;
   blockDetails?: Hive.BlockDetails;
   transactionCount?: number;
 }
-
-const cardNameMap = new Map([
-  ["feedPrice", "Feed price"],
-  ["blockchainTime", "Blockchain time"],
-  ["rewardFund", "Rewards fund"],
-  ["currentSupply", "Current Supply"],
-  ["virtualSupply", "Virtual Supply"],
-  ["initHbdSupply", "Init hbd supply"],
-  ["currentHbdSupply", "Current hbd supply"],
-  ["pendingRewardedVestingHive", "Total vesting fund hive"],
-  ["totalVestingFundHive", "Pending rewarded vesting hive"],
-  ["hbdInterestRate", "Hbd interest rate"],
-  ["hbdPrintRate", "Hbd print rate"],
-  ["lastIrreversibleBlockNumber", "Last irreversible block num"],
-  ["availableAccountSubsidies", "Available account subsidies"],
-  ["hbdStopPercent", "Hbd stop percent"],
-  ["hbdStartPercent", "Hbd start percent"],
-  ["nextMaintenanceTime", "Next maintenance time"],
-  ["lastBudgetTime", "Last budget time"],
-  ["nextDailyMaintenanceTime", "Next daily maintenance time"],
-  ["contentRewardPercent", "Content reward percent"],
-  ["vestingRewardPercent", "Vesting reward percent"],
-  ["downvotePoolPercent", "Downvote pool percent"],
-  ["currentRemoveThreshold", "Current remove threshold"],
-  ["earlyVotingSeconds", "Early voting seconds"],
-  ["midVotingSeconds", "Mid voting seconds"],
-  [
-    "maxConvecutiveRecurrentTransferFailures",
-    "Max consecutive recurrent transfer failures",
-  ],
-  ["maxRecurrentTransferEndDate", "Max recurrent transfer end date"],
-  ["minRecurrentTransfersRecurrence", "Min recurrent transfers recurrence"],
-  ["maxOpenRecurrentTransfers", "Max open recurrent transfers"],
-]);
 
 const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
   headBlockCardData,
   transactionCount,
   blockDetails,
 }) => {
+  const [hiddenPropertiesByCard, setHiddenPropertiesByCard] = useState<any>({
+    timeCard: true,
+    supplyCard: true,
+    hiveParamsCard: true,
+  });
+
+  const handleHideBlockchainDates = () => {
+    setHiddenPropertiesByCard({
+      ...hiddenPropertiesByCard,
+      timeCard: !hiddenPropertiesByCard.timeCard,
+    });
+  };
+  const handleHideSupplyParams = () => {
+    setHiddenPropertiesByCard({
+      ...hiddenPropertiesByCard,
+      supplyCard: !hiddenPropertiesByCard.supplyCard,
+    });
+  };
+
+  const handleHideHiveParams = () => {
+    setHiddenPropertiesByCard({
+      ...hiddenPropertiesByCard,
+      hiveParamsCard: !hiddenPropertiesByCard.hiveParamsCard,
+    });
+  };
 
   return (
     <div className='col-start-1 col-span-6 md:col-span-1 bg-explorer-dark-gray p-2 rounded-["6px] md:mx-6 h-fit rounded'>
@@ -87,18 +85,41 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
           />
         </Link>
       </div>
+      <div className="my-2">
+        Feed Price : {headBlockCardData?.headBlockDetails.feedPrice ?? ""}
+      </div>
+      <div className="my-2">
+        Blockchain Time :{" "}
+        {headBlockCardData?.headBlockDetails.blockchainTime ?? ""}
+      </div>
       <div>
-        <div className="text-center mt-8">Properties</div>
-        {Object.entries(headBlockCardData?.headBlockDetails || {}).map(
-          ([key, value]) => (
-            <div
-              key={key}
-              className="border-b border-solid border-gray-700 flex justify-between py-1 flex-col"
-            >
-              <span className="mr-2">{`${cardNameMap.get(key)}: `}</span>
-              <span>{value}</span>
-            </div>
-          )
+        <div className="text-center my-4 text-xl">Properties</div>
+
+        {!headBlockCardData || !headBlockCardData.headBlockDetails ? (
+          <div className="flex justify-center m-2">
+            <Loader2 className="animate-spin mt-1 text-white h-12 w-12 ml-3 ..." />
+          </div>
+        ) : (
+          <>
+            <HeadBlockPropertyCard
+              parameters={fundAndSupplyParameters}
+              header="Fund and Supply"
+              isParamsHidden={hiddenPropertiesByCard.supplyCard}
+              handleHideParams={handleHideSupplyParams}
+            />
+            <HeadBlockPropertyCard
+              parameters={hiveParameters}
+              header="Hive Parameters"
+              isParamsHidden={hiddenPropertiesByCard.hiveParamsCard}
+              handleHideParams={handleHideHiveParams}
+            />
+            <HeadBlockPropertyCard
+              parameters={blockchainDates}
+              header="Blockchain Dates"
+              isParamsHidden={hiddenPropertiesByCard.timeCard}
+              handleHideParams={handleHideBlockchainDates}
+            />
+          </>
         )}
       </div>
     </div>

@@ -83,7 +83,7 @@ export function adjustDynamicGlobalBlockData(
     hbdPrintRate: formatPercent(hbd_print_rate),
     lastIrreversibleBlockNumber: last_irreversible_block_num,
     availableAccountSubsidies: available_account_subsidies,
-    hbdStopPercent: `${hbd_stop_percent / Math.pow(10, config.precisions.percentage)}`,
+    hbdStopPercent: formatPercent(hbd_stop_percent),
     hbdStartPercent: formatPercent(hbd_start_percent),
     nextMaintenanceTime: moment(next_maintenance_time).format(config.baseMomentTimeFormat),
     lastBudgetTime: moment(last_budget_time).format(config.baseMomentTimeFormat) ,
