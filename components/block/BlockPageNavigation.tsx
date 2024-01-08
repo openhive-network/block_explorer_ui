@@ -88,12 +88,17 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
     }
   };
 
-  const handleGoToBlockByTime = async () => {
-    const blockByTime = await checkBlockByTime(moment(blockDate).utc().toDate());
+  const handleGoToBlockByTime = async (date: Date) => {
+    const blockByTime = await checkBlockByTime(moment(date).utc().toDate());
     if (blockByTime) {
       handleBlockChange(blockByTime.toString());
     }
   };
+  
+  useEffect(() => {
+    handleGoToBlockByTime(blockDate);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [blockDate]);
 
   return (
     <section className="w-full flex flex-col items-center text-md px-4 mb-2 md:mb-4">
@@ -141,14 +146,6 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
               disableClock
               showLeadingZeros={false}
             />
-            <Button
-              variant={"outline"}
-              className="px-2 h-[30px]"
-              disabled={timeStamp.getTime() === blockDate.getTime()}
-              onClick={() => handleGoToBlockByTime()}
-            >
-              Go
-            </Button>
           </div>
         </div>
         <div className="mt-3 mx-auto">
