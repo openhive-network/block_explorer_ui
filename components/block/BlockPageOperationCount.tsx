@@ -25,7 +25,7 @@ const BlockPageOperationCount: React.FC<BlockPageOperationCountProps> = ({operat
 
   return (
     <section className="w-full flex flex-col items-center text-md px-4 mb-2 md:mb-4">
-      <div className="w-full md:w-4/6 py-4">
+      <div className="w-full py-4">
         <div className="my-2">Operations: {nonVirtualOperationLength}</div>
         <div className="flex flex-wrap flex-col md:flex-row text-sm">
           {Array.from(nonvirtualOperationCounts).map(([operationName, counter]) => (
