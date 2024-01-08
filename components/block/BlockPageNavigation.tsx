@@ -21,8 +21,6 @@ interface BlockPageNavigationProps {
   setFilters: (filters: number[]) => void;
   operationTypes: Hive.OperationPattern[];
   selectedOperationIds: number[];
-  isLoading: boolean;
-  blockDetails?: Hive.BlockDetails;
 }
 
 const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
@@ -32,28 +30,30 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   setFilters,
   operationTypes,
   selectedOperationIds,
-  isLoading,
-  blockDetails,
 }) => {
   const [block, setBlock] = useState(blockNumber.toString());
   const [blockDate, setBlockDate] = useState(
     new Date(timeStamp.toLocaleDateString("en-US"))
   );
 
-  const {checkBlockByTime} = useBlockByTime();
+  const { checkBlockByTime } = useBlockByTime();
 
-  const datePickerRef = useRef<HTMLDivElement>(null); 
+  const datePickerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (datePickerRef && datePickerRef.current) {
-      datePickerRef.current.addEventListener("contextmenu", e => e.preventDefault());
+      datePickerRef.current.addEventListener("contextmenu", (e) =>
+        e.preventDefault()
+      );
     }
 
     return () => {
       // eslint-disable-next-line react-hooks/exhaustive-deps
-      datePickerRef?.current?.removeEventListener("contextmenu", e => e.preventDefault());
+      datePickerRef?.current?.removeEventListener("contextmenu", (e) =>
+        e.preventDefault()
+      );
     };
-  }, [])
+  }, []);
 
   useEffect(() => {
     setBlockDate(timeStamp);
@@ -88,17 +88,25 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
     }
   };
 
-  const handleGoToBlockByTime = async () => {
-    const blockByTime = await checkBlockByTime(moment(blockDate).utc().toDate());
+  const handleGoToBlockByTime = async (date: Date) => {
+    const blockByTime = await checkBlockByTime(moment(date).utc().toDate());
     if (blockByTime) {
       handleBlockChange(blockByTime.toString());
     }
   };
 
+  useEffect(() => {
+    handleGoToBlockByTime(blockDate);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [blockDate]);
+
   return (
-    <section className="w-full flex flex-col items-center text-md px-4 mb-2 md:mb-4">
-      <div className="w-full md:w-4/6 py-4 bg-explorer-dark-gray text-center text-white rounded-[6px] shadow-xl border border-explorer-bg-start">
-        <div className="w-full flex justify-evenly items-center md:px-8 flex-wrap gap-y-4">
+    <section className="w-full flex flex-col items-center text-md mb-2 md:mb-4">
+      <div className="w-full md:w-4/6 pb-4 bg-explorer-dark-gray text-center text-white rounded-[6px] shadow-xl border border-explorer-bg-start">
+      <div className="text-2xl font-semibold my-2">
+        Search
+      </div>
+        <div className="w-full flex justify-between items-center md:px-8 flex-wrap gap-y-4">
           <div className="flex justify-center items-center flex-wrap">
             <p>Block Number : </p>
             <button
@@ -128,7 +136,10 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
               Go
             </Button>
           </div>
-          <div className="flex flex-wrap items-center justify-center" ref={datePickerRef}>
+          <div
+            className="flex flex-wrap items-center justify-center"
+            ref={datePickerRef}
+          >
             Block Time :{" "}
             <DateTimePicker
               value={blockDate}
@@ -141,57 +152,14 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
               disableClock
               showLeadingZeros={false}
             />
-            <Button
-              variant={"outline"}
-              className="px-2 h-[30px]"
-              disabled={timeStamp.getTime() === blockDate.getTime()}
-              onClick={() => handleGoToBlockByTime()}
-            >
-              Go
-            </Button>
           </div>
-        </div>
-        <div className="mt-3 mx-auto">
-
-        </div>
-        <div className="flex items-center gap-x-1 mt-3 px-8 md:px-4 w-full justify-center">
-          <p>Produced at: </p>
-          <p>{blockDetails?.created_at}</p>
-          <p>by</p>
-          <Link
-            className="flex justif-between items-center"
-            href={`/account/${blockDetails?.producer_account}`}
-          >
-            <span className="text-explorer-turquoise mx-2">
-              {blockDetails?.producer_account}
-            </span>
-            <Image
-              className="rounded-full border-2 border-explorer-turquoise"
-              src={getHiveAvatarUrl(blockDetails?.producer_account)}
-              alt="avatar"
-              width={40}
-              height={40}
-            />
-          </Link>
-          <p className="ml-4 inline-block">
-            <OperationTypesDialog
-              operationTypes={operationTypes}
-              setSelectedOperations={setFilters}
-              selectedOperations={selectedOperationIds}
-              colorClass="bg-gray-500"
-              triggerTitle={"Operation Filters"}
-            />
-          </p>
-        </div>
-        <div className="flex items-center gap-x-4 mt-3 px-8 md:px-4 w-full justify-center flex-wrap text-sm md:text-base">
-          <p>
-            <p className="text-base">Hash</p>
-            {blockDetails?.hash}
-          </p>
-          <p>
-            <p className="text-base">Prev hash</p>
-            {blockDetails?.prev}
-          </p>
+          <OperationTypesDialog
+          operationTypes={operationTypes}
+          setSelectedOperations={setFilters}
+          selectedOperations={selectedOperationIds}
+          colorClass="bg-gray-500"
+          triggerTitle={"Operation Filters"}
+        />
         </div>
       </div>
     </section>

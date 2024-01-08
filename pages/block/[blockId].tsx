@@ -12,6 +12,7 @@ import useBlockData from "@/api/blockPage/useBlockData";
 import useBlockOperations from "@/api/common/useBlockOperations";
 import useOperationsTypes from "@/api/common/useOperationsTypes";
 import BlockPageOperationCount from "@/components/block/BlockPageOperationCount";
+import BlockDetails from "@/components/block/BlockDetails";
 
 const FILTERS = "filters";
 const SPLIT = "-";
@@ -121,13 +122,12 @@ export default function Block() {
         setFilters={handleFilterChange}
         operationTypes={operationsTypes || []}
         selectedOperationIds={blockFilters}
-        isLoading={loading}
-        blockDetails={blockDetails}
       />
-      <BlockPageOperationCount 
+      <BlockDetails 
         operations={blockOperations} 
         virtualOperationLength={virtualOperations?.length}
         nonVirtualOperationLength={nonVirtualOperations?.length}
+        blockDetails={blockDetails}
       />
       <div className="fixed top-[calc(100vh-90px)] md:top-[calc(100vh-100px)] w-full flex flex-col items-end px-3 md:px-12">
         <Button
