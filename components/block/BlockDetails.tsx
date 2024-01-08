@@ -3,6 +3,8 @@ import BlockPageOperationCount from "./BlockPageOperationCount";
 import Link from "next/link";
 import Image from "next/image";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
+import moment from "moment";
+import { config } from "@/Config";
 
 interface BlockDetailsProps {
   operations?: Hive.OperationResponse[];
@@ -24,7 +26,9 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
       </div>
       <div className="flex items-center gap-x-1 mt-3 px-8 md:px-4 w-full justify-center">
         <p>Produced at: </p>
-        <p>{blockDetails?.created_at}</p>
+        <p>{moment(blockDetails?.created_at).format(
+                          config.baseMomentTimeFormat
+                        )}</p>
         <p>by</p>
         <Link
           className="flex justif-between items-center"
