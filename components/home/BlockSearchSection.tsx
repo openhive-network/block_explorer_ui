@@ -130,6 +130,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
           : undefined,
       };
       setCommentSearchProps(commentSearchProps);
+      setCommentPaginationPage(1);
       setPreviousCommentSearchProps(commentSearchProps);
       setLastSearchKey("comment");
     }
@@ -171,6 +172,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
             : undefined,
         };
       setLastSearchKey("account");
+      setAccountOperationsPage(undefined);
       setAccountOperationsSearchProps(accountOperationsSearchProps);
       setPreviousAccountOperationsSearchProps(accountOperationsSearchProps);
     }
