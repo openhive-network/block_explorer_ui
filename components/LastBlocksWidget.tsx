@@ -179,16 +179,13 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
           data={data}
           margin={{
             top: 20,
-            right: 30,
-            left: isMobile ? 10 : 20,
+            right: 55,
+            left: isMobile ? 0 : 10,
             bottom: isMobile ? 90 : 60,
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" stroke="#fff" axisLine={false}>
-          <Label position='bottom' style={{ textAnchor: 'middle' }}>
-              Block
-          </Label>
           </XAxis>
           <YAxis
             stroke="#fff"
@@ -196,9 +193,6 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
             domain={[0, (dataMax: number) => Math.floor(dataMax * 1.2)]}
             allowDataOverflow={true}
           >
-            <Label angle={270} position='insideLeft' style={{ textAnchor: 'middle' }}>
-                Operations
-            </Label>
           </YAxis>
           <Tooltip cursor={{ fill: "#0000002A" }} content={<CustomTooltip />} />
           <Legend wrapperStyle={{ position: "relative" }} align="center" />
