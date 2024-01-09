@@ -21,14 +21,14 @@ export default function Home() {
   const blockOperations = useBlockOperations(headBlockNum || 0, []).blockOperations;
 
   return (
-    <div className="grid grid-cols-4 text-white mx-4 md:mx-8 w-full">
+    <div className="grid grid-cols-3 text-white mx-4 md:mx-8 w-full">
       <HeadBlockCard
         headBlockCardData={dynamicGlobalQueryData}
         transactionCount={blockOperations?.length}
         blockDetails={headBlockData}
       />
       <div className="col-start-1 md:col-start-2 col-span-6 md:col-span-2">
-        <LastBlocksWidget className="mt-6 md:mt-0"/>
+      <LastBlocksWidget className="mt-6 md:mt-0"/>
         <BlockSearchSection />
       </div>
       <div className="col-start-1 md:col-start-4 col-span-6 md:col-span-1 bg-explorer-dark-gray py-2 rounded-[6px] text-xs	overflow-hidden md:mx-6 h-fit">
@@ -62,6 +62,9 @@ export default function Home() {
               ))}
           </TableBody>
         </Table>
+        <div className="flex justify-center align-center text-lg hover:text-explorer-turquoise">
+          <Link href={"/witnesses"}>See More</Link>
+        </div>
       </div>
     </div>
   );
