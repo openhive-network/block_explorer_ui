@@ -64,7 +64,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
             </div>
 
             <div className="text-center">
-              <p className="my-2">Recourse credits </p>
+              <p className="my-2">Resource credits </p>
               <Progress
                 value={manabarsData?.rc.percentageValue}
                 color="#cecafa"
