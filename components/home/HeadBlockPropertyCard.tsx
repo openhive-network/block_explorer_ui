@@ -5,6 +5,7 @@ import {
   hiveParameters,
   blockchainDates,
 } from "./headBlockParameters";
+import { convertUTCDateToLocalDate } from "@/utils/UTCDateToLocalTime";
 
 const cardNameMap = new Map([
   ["feedPrice", "Feed price"],
@@ -74,7 +75,13 @@ const HeadBlockPropertyCard: React.FC<HeadBlockPropertyCardProps> = ({
             className="border-b border-solid border-gray-700 flex justify-between px-3 py-1 flex-col"
           >
             <span className="mr-2">{`${cardNameMap.get(param)}: `}</span>
-            <span>{dynamicGlobalData?.headBlockDetails[param]}</span>
+            <span>
+              {header === "Blockchain Dates"
+                ? convertUTCDateToLocalDate(
+                    dynamicGlobalData?.headBlockDetails[param]
+                  )
+                : dynamicGlobalData?.headBlockDetails[param]}
+            </span>
           </div>
         ))}
       </div>

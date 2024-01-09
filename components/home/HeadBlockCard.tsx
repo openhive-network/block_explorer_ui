@@ -11,6 +11,7 @@ import {
   hiveParameters,
   blockchainDates,
 } from "./headBlockParameters";
+import { convertUTCDateToLocalDate } from "@/utils/UTCDateToLocalTime";
 
 interface HeadBlockCardProps {
   headBlockCardData?: Explorer.HeadBlockCardData | any;
@@ -88,9 +89,11 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
       <div className="my-2">
         Feed Price : {headBlockCardData?.headBlockDetails.feedPrice ?? ""}
       </div>
-      <div className="my-2">
+      <div>
         Blockchain Time :{" "}
-        {headBlockCardData?.headBlockDetails.blockchainTime ?? ""}
+        {convertUTCDateToLocalDate(
+          headBlockCardData?.headBlockDetails.blockchainTime
+        )}
       </div>
       <div>
         <div className="text-center my-4 text-xl">Properties</div>
