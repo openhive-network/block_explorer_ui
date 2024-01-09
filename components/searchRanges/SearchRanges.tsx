@@ -52,7 +52,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
           <SelectTrigger className="mt-2">
             {rangeSelectOptions.find((selectOption) => selectOption.key === rangeSelectKey)?.name}
           </SelectTrigger>
-          <SelectContent className="bg-white text-black rounded-[2px] max-h-[31rem]">
+          <SelectContent className="bg-white text-black rounded-sm max-h-[31rem]">
             {rangeSelectOptions.map((selectOption, index) => (
               <SelectItem                          
                 className="m-1 text-center"
@@ -98,7 +98,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
                 <SelectTrigger>
                   {timeSelectOptions.find((selectOption) => selectOption.key === timeUnitSelectKey)?.name}
                 </SelectTrigger>
-                <SelectContent className="bg-white text-black rounded-[2px] max-h-[31rem]">
+                <SelectContent className="bg-white text-black rounded-sm max-h-[31rem]">
                   {timeSelectOptions.map((selectOption, index) => (
                     <SelectItem                          
                       className="m-1 text-center"

@@ -151,7 +151,7 @@ const Comments: React.FC = () => {
 
   return (
     <div className="w-full md:w-4/5">
-      <div className="bg-explorer-dark-gray text-white p-4 rounded-[6px] w-full">
+      <div className="bg-explorer-dark-gray text-white p-4 rounded w-full">
         <div className="flex flex-col m-2">
           <label className="mx-2">Account name</label>
           <Input
@@ -181,7 +181,7 @@ const Comments: React.FC = () => {
         <SearchRanges rangesProps={searchRanges} />
         <div className="flex items-center justify-between m-2">
           <Button
-            className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]"
+            className=" bg-blue-800 hover:bg-blue-600 rounded"
             onClick={() =>
               startCommentSearch({ ...paramsState, accountName, permlink })
             }

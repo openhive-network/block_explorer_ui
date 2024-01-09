@@ -234,12 +234,12 @@ export default function Account() {
 
         <div className="col-start-1 md:col-start-2 col-span-1 md:col-span-3">
           <div>
-            <div className="bg-explorer-dark-gray text-white p-4 rounded-[6px] mx-2">
+            <div className="bg-explorer-dark-gray text-white p-4 rounded mx-2">
               <div className="ml-2">Operations filters</div>
               <SearchRanges rangesProps={searchRanges} />
               <div className="flex items-center justify-between m-2">
                 <Button
-                  className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]"
+                  className=" bg-blue-800 hover:bg-blue-600 rounded"
                   onClick={() => handleSearch(true)}
                 >
                   <span>Apply filters</span>{" "}

@@ -46,7 +46,7 @@ export default function Transaction() {
     <div className="w-full max-w-5xl px-4 text-white">
       {!trxLoading && !!trxData && (
         <>
-          <div className="w-full bg-explorer-dark-gray px-4 py-2 rounded-[6px] flex flex-col justify-center md:items-center md:text-md">
+          <div className="w-full bg-explorer-dark-gray px-4 py-2 rounded flex flex-col justify-center md:items-center md:text-md">
             <div>
               Transaction{" "}
               <span className="text-explorer-turquoise">
@@ -77,7 +77,7 @@ export default function Transaction() {
           {settings.rawJsonView ? (
             <JSONView
               json={trxData}
-              className="w-full md:w-[992px] mt-6 m-auto py-2 px-4 bg-explorer-dark-gray rounded-[6px] text-white text-xs break-words break-all"
+              className="w-full md:w-[992px] mt-6 m-auto py-2 px-4 bg-explorer-dark-gray rounded text-white text-xs break-words break-all"
             />
           ) : (
             <>
@@ -95,7 +95,7 @@ export default function Transaction() {
                     className="mt-4"
                   />
                 ))}
-              <div className="mt-6 w-full bg-explorer-dark-gray py-2 rounded-[6px] px-2">
+              <div className="mt-6 w-full bg-explorer-dark-gray py-2 rounded px-2">
                 <div className="flex justify-center text-md">
                   Transaction Details
                 </div>

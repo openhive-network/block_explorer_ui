@@ -176,7 +176,7 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
   return (
     <div
       className={cn(
-        "w-full bg-explorer-dark-gray px-4 py-2 rounded-[6px] text-xs	overflow-hidden",
+        "w-full bg-explorer-dark-gray px-4 py-2 rounded text-xs	overflow-hidden",
         className
       )}
     >

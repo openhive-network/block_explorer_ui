@@ -70,7 +70,7 @@ const SingleOperationTypeDialog: React.FC<SingleOperationTypeDialogProps> = ({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => {onOpenChange(open)}}>
       <DialogTrigger asChild>
-        <Button className={ `${colorClass}  text-white hover:bg-gray-700 rounded-[4px]`}>
+        <Button className={ `${colorClass}  text-white hover:bg-gray-700 rounded`}>
           {triggerTitle}
         </Button>
       </DialogTrigger>
