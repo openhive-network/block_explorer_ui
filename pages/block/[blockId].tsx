@@ -137,14 +137,14 @@ export default function Block() {
               behavior: "smooth",
             })
           }
-          className="bg-[#ADA9A9] rounded-[6px] text-white hover:bg-gray-700 w-fit mb-1 md:mb-2"
+          className="bg-[#ADA9A9] rounded text-white hover:bg-gray-700 w-fit mb-1 md:mb-2"
         >
           <p className="hidden md:inline">To Top</p>
           <ArrowUp className="p-0 md:pl-2" />
         </Button>
         <Button
           onClick={() => scrollTo(virtualOpsRef)}
-          className="bg-[#ADA9A9] rounded-[6px] text-white hover:bg-gray-700 w-fit"
+          className="bg-[#ADA9A9] rounded text-white hover:bg-gray-700 w-fit"
         >
           <p className="hidden md:inline">To Virtual Ops</p>
           <p className="md:hidden inline">V Ops</p>
@@ -157,7 +157,7 @@ export default function Block() {
               details: { ...blockDetails },
               operations: { ...blockOperations },
             }}
-            className="w-full md:w-[962px] mt-6 m-auto py-2 px-4 bg-explorer-dark-gray rounded-[6px] text-white text-xs break-words break-all"
+            className="w-full md:w-[962px] mt-6 m-auto py-2 px-4 bg-explorer-dark-gray rounded text-white text-xs break-words break-all"
           />
         ) : (
           <section className="md:px-10 flex items-center justify-center text-white">

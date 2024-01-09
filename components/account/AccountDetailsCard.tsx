@@ -45,7 +45,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
   };
 
   return (
-    <div className="bg-explorer-dark-gray p-2 rounded-[6px] mt-2 mx-2 md:mx-6">
+    <div className="bg-explorer-dark-gray p-2 rounded mt-2 mx-2 md:mx-6">
       <div
         onClick={handlePropertiesVisibility}
         className="h-full flex justify-between align-center p-2 hover:bg-slate-600 cursor-pointer"

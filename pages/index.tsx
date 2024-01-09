@@ -31,7 +31,7 @@ export default function Home() {
       <LastBlocksWidget className="mt-6 md:mt-0"/>
         <BlockSearchSection />
       </div>
-      <div className="col-start-1 md:col-start-4 col-span-6 md:col-span-1 bg-explorer-dark-gray py-2 rounded-[6px] text-xs	overflow-hidden md:mx-6 h-fit">
+      <div className="col-start-1 md:col-start-4 col-span-6 md:col-span-1 bg-explorer-dark-gray py-2 rounded text-xs	overflow-hidden md:mx-6 h-fit">
         <div className="text-lg text-center">Top Witnesses</div>
         <Table>
           <TableBody>

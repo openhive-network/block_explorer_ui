@@ -51,7 +51,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
   };
 
   return (
-    <div className='col-start-1 col-span-6 md:col-span-1 bg-explorer-dark-gray p-2 rounded-["6px] md:mx-6 h-fit rounded'>
+    <div className='col-start-1 col-span-6 md:col-span-1 bg-explorer-dark-gray p-2 rounded md:mx-6 h-fit'>
       {headBlockCardData?.headBlockNumber &&
         blockDetails?.block_num &&
         headBlockCardData?.headBlockNumber !== blockDetails?.block_num && (

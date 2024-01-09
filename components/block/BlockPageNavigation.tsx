@@ -102,7 +102,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
 
   return (
     <section className="w-full flex flex-col items-center text-md mb-2 md:mb-4">
-      <div className="w-full md:w-4/6 pb-4 bg-explorer-dark-gray text-center text-white rounded-[6px] shadow-xl border border-explorer-bg-start">
+      <div className="w-full md:w-4/6 pb-4 bg-explorer-dark-gray text-center text-white rounded shadow-xl border border-explorer-bg-start">
       <div className="text-2xl font-semibold my-2">
         Search
       </div>

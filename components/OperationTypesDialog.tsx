@@ -137,7 +137,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     >
       <DialogTrigger asChild>
         <Button
-          className={`${colorClass}  text-white hover:bg-gray-700 rounded-[4px]`}
+          className={`${colorClass}  text-white hover:bg-gray-700 rounded`}
         >
           {triggerTitle}
         </Button>

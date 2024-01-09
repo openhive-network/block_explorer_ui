@@ -45,7 +45,7 @@ const CustomTooltip = ({
   if (active && payload && payload.length) {
     const totalOperations = payload.reduce((acc, pld) => acc + pld.value, 0);
     return (
-      <div className="bg-explorer-dark-gray p-2 rounded-[6px] border border-explorer-ligh-gray">
+      <div className="bg-explorer-dark-gray p-2 rounded border border-explorer-ligh-gray">
         <p className="font-bold">{`Block ${label}`}</p>
         <div className="my-2">
           <Image
@@ -169,7 +169,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
   return (
     <div
       className={cn(
-        "w-[95%] m-auto md:w-full h-[420px] bg-explorer-dark-gray rounded-[6px] text-white",
+        "w-[95%] m-auto md:w-full h-[420px] bg-explorer-dark-gray rounded text-white",
         className
       )}
     >

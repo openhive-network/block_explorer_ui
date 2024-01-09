@@ -21,7 +21,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
 }) => {
   const {manabarsData} = useManabars(accountName);
   return (
-    <div className='bg-explorer-dark-gray p-2 rounded-["6px] mx-2 md:mx-6 h-fit rounded'>
+    <div className='bg-explorer-dark-gray p-2 mx-2 md:mx-6 h-fit rounded'>
       <div className="flex justify-between bg-explorer-dark-gray text-explorer-orange text-2xl my-4">
         {accountDetails.is_witness ? (
           <div>
@@ -95,13 +95,13 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
         <div className="flex justify-between">
           <button
             onClick={openVotersModal}
-            className="bg-explorer-orange text-explorer-dark-gray rounded-[5px] p-2"
+            className="bg-explorer-orange text-explorer-dark-gray rounded p-2"
           >
             Voters
           </button>
           <button
             onClick={openVotesHistoryModal}
-            className="bg-explorer-orange text-explorer-dark-gray rounded-[5px] p-2"
+            className="bg-explorer-orange text-explorer-dark-gray rounded p-2"
           >
             Votes History
           </button>

@@ -318,7 +318,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
 
   return (
     <div className="mt-6 col-start-1 col-span-4 md:col-span-1 mb-6 md:mb-0">
-      <div className=' bg-explorer-dark-gray p-2 rounded-["6px] h-fit rounded'>
+      <div className=' bg-explorer-dark-gray p-2 h-fit rounded'>
         <div className="text-center text-xl">Block Search</div>
         <Accordion
           type="single"
@@ -401,7 +401,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                         </div>
                       )}
                     </SelectTrigger>
-                    <SelectContent className="bg-white text-black rounded-[2px] max-h-[31rem] overflow-y-scroll">
+                    <SelectContent className="bg-white text-black rounded-sm max-h-[31rem] overflow-y-scroll">
                       {operationKeysData?.map((keys, index) => (
                         <SelectItem
                           className="m-1 text-center"
@@ -450,7 +450,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
               </div>
               <div className="flex items-center  m-2">
                 <Button
-                  className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]"
+                  className=" bg-blue-800 hover:bg-blue-600 rounded"
                   onClick={startBlockSearch}
                 >
                   <span>Search</span>{" "}
@@ -493,7 +493,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
               </div>
               <div className="flex items-center  m-2">
                 <Button
-                  className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]"
+                  className=" bg-blue-800 hover:bg-blue-600 rounded"
                   onClick={startAccountOperationsSearch}
                   disabled={!accountName}
                 >
@@ -559,7 +559,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
               </div>
               <div className="flex items-center  m-2">
                 <Button
-                  className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]"
+                  className=" bg-blue-800 hover:bg-blue-600 rounded"
                   onClick={startCommentSearch}
                   disabled={!accountName}
                 >
@@ -579,7 +579,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
         </Accordion>
       </div>
       {blockSearch.blockSearchData && lastSearchKey === "block" && (
-        <div className=' bg-explorer-dark-gray p-2 rounded-["6px] md:mx-2 h-fit rounded mt-4'>
+        <div className=' bg-explorer-dark-gray p-2 md:mx-2 h-fit rounded mt-4'>
           <div className="text-center">Results:</div>
           <div className="flex flex-wrap">
             {blockSearch.blockSearchData.length > 0 ? (
@@ -603,7 +603,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
         lastSearchKey === "comment" && (
           <div>
             <Link href={getCommentPageLink()}>
-              <Button className=" bg-blue-800 hover:bg-blue-600 rounded-[4px] mt-8">
+              <Button className=" bg-blue-800 hover:bg-blue-600 rounded mt-8">
                 Go to result page
               </Button>
             </Link>
@@ -645,7 +645,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                 previousAccountOperationsSearchProps?.accountName || ""
               )}
             >
-              <Button className=" bg-blue-800 hover:bg-blue-600 rounded-[4px] mt-8">
+              <Button className=" bg-blue-800 hover:bg-blue-600 rounded mt-8">
                 Go to result page
               </Button>
             </Link>
