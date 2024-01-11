@@ -49,7 +49,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
   return (
     <div className="m-2 my-4 border-y border-solid border-gray-600">
         <Select onValueChange={setRangeSelectKey}>
-          <SelectTrigger className="mt-2">
+          <SelectTrigger className="mt-2 bg-gray-700">
             {rangeSelectOptions.find((selectOption) => selectOption.key === rangeSelectKey)?.name}
           </SelectTrigger>
           <SelectContent className="bg-white text-black rounded-sm max-h-[31rem]">
@@ -70,6 +70,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
             <div className="flex items-center  my-2">
               <div className="flex flex-col w-full">
                 <Input
+                  className="bg-gray-700"
                   type="number"
                   value={lastBlocksValue || ""}
                   onChange={(e) =>
@@ -87,6 +88,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
               <div className="flex flex-col w-full ">
                 <Input
                   type="number"
+                  className="bg-gray-700"
                   value={lastTimeUnitValue || ""}
                   onChange={(e) =>
                     setNumericValue(Number(e.target.value), setLastTimeUnitValue)
@@ -95,7 +97,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
                 />
               </div>
               <Select onValueChange={setTimeUnitSelectKey}>
-                <SelectTrigger>
+                <SelectTrigger className="bg-gray-700">
                   {timeSelectOptions.find((selectOption) => selectOption.key === timeUnitSelectKey)?.name}
                 </SelectTrigger>
                 <SelectContent className="bg-white text-black rounded-sm max-h-[31rem]">
@@ -121,6 +123,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
                 <label className="mx-2">From block</label>
                 <Input
                   type="number"
+                  className="bg-gray-700"
                   value={fromBlock || ""}
                   onChange={(e) =>
                     setNumericValue(Number(e.target.value), setFromBlock)
@@ -131,6 +134,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
               <div className="flex flex-col w-full">
                 <label className="mx-2">To block</label>
                 <Input
+                  className="bg-gray-700"
                   type="number"
                   value={toBlock || ""}
                   onChange={(e) =>
@@ -149,7 +153,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
                 <DateTimePicker 
                   value={startDate} 
                   onChange={(date) => setStartDate(date!)}
-                  className="text-white  border"
+                  className="text-white  border bg-gray-700"
                   calendarClassName="text-gray-800"
                   format="yyyy/MM/dd HH:mm:ss"
                   clearIcon={null}
@@ -163,7 +167,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
                 <DateTimePicker 
                   value={endDate} 
                   onChange={(date) => setEndDate(date!)}
-                  className="text-white ml-2 border"
+                  className="text-white ml-2 border bg-gray-700"
                   calendarClassName="text-gray-800"
                   format="yyyy/MM/dd HH:mm:ss"
                   clearIcon={null}

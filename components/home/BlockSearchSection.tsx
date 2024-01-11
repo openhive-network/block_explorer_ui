@@ -333,7 +333,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
               <div className="flex flex-col m-2">
                 <label className="mx-2">Account name</label>
                 <Input
-                  className="w-1/2"
+                  className="w-1/2 md:w-1/3 bg-gray-700"
                   type="text"
                   value={accountName || ""}
                   onChange={(e) =>
@@ -374,7 +374,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                 <div className="flex">
                   <Select onValueChange={onSelect}>
                     <SelectTrigger
-                      className="justify-normal"
+                      className="justify-normal bg-gray-700"
                       disabled={
                         !selectedOperationTypes ||
                         selectedOperationTypes.length !== 1
@@ -437,7 +437,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
               <div className="flex m-2 flex-col">
                 <label className="mx-2">Value</label>
                 <Input
-                  className="w-1/2"
+                  className="w-1/2 bg-gray-700"
                   type="text"
                   value={fieldContent || ""}
                   onChange={(e) => setFieldContent(e.target.value)}
@@ -470,7 +470,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
               <div className="flex flex-col m-2">
                 <label className="mx-2">Account name *</label>
                 <Input
-                  className="w-1/2"
+                  className="w-1/2 md:w-1/3 bg-gray-700"
                   type="text"
                   value={accountName || ""}
                   onChange={(e) =>
@@ -520,7 +520,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
               <div className="flex flex-col m-2">
                 <label className="mx-2">Account name *</label>
                 <Input
-                  className="w-1/2"
+                  className="w-1/2 md:w-1/3 bg-gray-700"
                   type="text"
                   value={accountName || ""}
                   onChange={(e) =>
@@ -534,7 +534,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
               <div className="flex m-2 flex-col">
                 <label className="mx-2">Permlink</label>
                 <Input
-                  className="w-full"
+                  className="w-full bg-gray-700"
                   type="text"
                   value={permlink}
                   onChange={(e) =>
