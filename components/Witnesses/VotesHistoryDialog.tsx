@@ -34,7 +34,7 @@ const tableColums = [
   { key: "timestamp", name: "Date" },
   { key: "voter", name: "Voter" },
   { key: "vote", name: "Vote" },
-  { key: "power", name: "Current voter power" },
+  { key: "power", name: "Current voter power", isRightAligned: true },
 ];
 
 const PAGE_SIZE = 100;
@@ -163,6 +163,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                       key={column.key}
                       className={cn({
                         "sticky md:static left-0": !index,
+                        "flex justify-end items-center": column.isRightAligned
                       })}
                     >
                       <span className="flex ">{column.name}</span>
@@ -200,7 +201,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                           <ArrowDownCircleIcon />
                         )}
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="text-right">
                         {showHivePower
                           ? formatNumber(vote.vests_hive_power, false)
                           : formatNumber(vote.vests, true)

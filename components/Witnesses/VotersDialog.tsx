@@ -22,9 +22,9 @@ type VotersDialogProps = {
 
 const tableColums = [
   { key: "voter", name: "Voter" },
-  { key: "vests", name: "Votes" },
-  { key: "account_vests", name: "Account" },
-  { key: "proxied_vests", name: "Proxy" },
+  { key: "vests", name: "Votes", isRightAligned: true },
+  { key: "account_vests", name: "Account", isRightAligned: true},
+  { key: "proxied_vests", name: "Proxy", isRightAligned: true},
 ];
 
 const VotersDialog: React.FC<VotersDialogProps> = ({
@@ -100,7 +100,9 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                         "sticky md:static left-0": !index,
                       })}
                     >
-                      <span className="flex">
+                      <span className={cn("flex", {
+                        "justify-end": column.isRightAligned
+                      })}>
                         {column.name} {showSorter(column.key)}
                       </span>
                     </TableHead>
@@ -127,19 +129,19 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                           {voter.voter}
                         </Link>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="text-right">
                         {showHivePower
                           ? formatNumber(voter.votes_hive_power, false)
                           : formatNumber(voter.vests, true)
                         }
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="text-right">
                         {showHivePower
                           ? formatNumber(voter.account_hive_power, false)
                           : formatNumber(voter.account_vests, true)
                         }
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="text-right">
                         {showHivePower
                           ? formatNumber(voter.proxied_hive_power, false)
                           : formatNumber(voter.proxied_vests, true)
