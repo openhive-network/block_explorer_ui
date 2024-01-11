@@ -12,7 +12,7 @@ interface ToggleProps {
 const Toggle = React.forwardRef<ToggleProps, ToggleProps>(
   ({ leftLabel, rightLabel, checked, className = "", onClick }) => {
     return (
-      <div className={cn("flex gap-x-2 items-center", className)}>
+      <div className={cn("flex gap-x-2 items-center", className)} data-testid="toggle">
         {leftLabel && <p>{leftLabel}</p>}
         <div
           className={cn(

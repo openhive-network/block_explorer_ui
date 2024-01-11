@@ -18,7 +18,7 @@ export default function Navbar() {
   const { alerts, setAlerts } = useAlertContext();
 
   return (
-    <div className="fixed w-full top-0 z-50">
+    <div className="fixed w-full top-0 z-50" data-testid="navbar">
       <div className="flex p-2 justify-between bg-explorer-dark-gray text-white	items-center relative">
         <div className="absolute top-full left-0 w-full">
           {alerts.map((alert, index) => (
@@ -85,10 +85,11 @@ export default function Navbar() {
                   alt="Hive logo"
                   width={50}
                   height={50}
+                  data-testid="hive-logo"
                 />
-                <div className="ml-4">Hive Block Explorer</div>
+                <div className="ml-4" data-testid="hive-block-explorer">Hive Block Explorer</div>
               </Link>
-              <Link href={"/witnesses"}>Witnesses</Link>
+              <Link href={"/witnesses"} data-testid="navbar-witnesses-link">Witnesses</Link>
               <Toggle
                 checked={settings.rawJsonView}
                 onClick={() =>
