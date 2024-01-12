@@ -117,7 +117,7 @@ export default function Account() {
         !!toBlockParam ||
         !!lastBlocksParam ||
         !!lastTimeParam ||
-        !!filtersParam)
+        !!filtersParam?.length)
     ) {
       fromDateParam && searchRanges.setStartDate(fromDateParam);
       toDateParam && searchRanges.setEndDate(toDateParam);
