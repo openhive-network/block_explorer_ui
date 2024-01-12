@@ -317,7 +317,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
   };
 
   return (
-    <div className="mt-6 col-start-1 col-span-4 md:col-span-1 mb-6 md:mb-0">
+    <div className="mt-6 col-start-1 col-span-4 md:col-span-1 mb-6 md:mb-0" data-testid="block-search-section">
       <div className=' bg-explorer-dark-gray p-2 h-fit rounded'>
         <div className="text-center text-xl">Block Search</div>
         <Accordion

@@ -172,6 +172,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
         "w-[95%] m-auto md:w-full h-[420px] bg-explorer-dark-gray rounded text-white",
         className
       )}
+      data-testid="last-block-widget"
     >
       <p className="w-full text-center pt-2">Last Blocks</p>
       <ResponsiveContainer width="100%" height="100%">
