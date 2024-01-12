@@ -47,15 +47,15 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
   }
 
   return (
-    <div className="m-2 my-4 border-y border-solid border-gray-600">
+    <div className="border-y border-solid border-gray-600 py-2 flex flex-col gap-y-2">
         <Select onValueChange={setRangeSelectKey}>
-          <SelectTrigger className="mt-2 bg-gray-700">
+          <SelectTrigger className="bg-gray-700">
             {rangeSelectOptions.find((selectOption) => selectOption.key === rangeSelectKey)?.name}
           </SelectTrigger>
           <SelectContent className="bg-white text-black rounded-sm max-h-[31rem]">
             {rangeSelectOptions.map((selectOption, index) => (
               <SelectItem                          
-                className="m-1 text-center"
+                className="text-center"
                 key={index}
                 value={selectOption.key}
                 defaultChecked={false}
@@ -67,7 +67,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
         </Select>
         {
           rangeSelectKey === "lastBlocks" &&
-            <div className="flex items-center  my-2">
+            <div className="flex items-center">
               <div className="flex flex-col w-full">
                 <Input
                   className="bg-gray-700"
@@ -84,7 +84,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
         {
           rangeSelectKey === "lastTime" &&
           <>
-            <div className="flex items-center justify-center  my-2">
+            <div className="flex items-center justify-center">
               <div className="flex flex-col w-full ">
                 <Input
                   type="number"
@@ -103,7 +103,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
                 <SelectContent className="bg-white text-black rounded-sm max-h-[31rem]">
                   {timeSelectOptions.map((selectOption, index) => (
                     <SelectItem                          
-                      className="m-1 text-center"
+                      className="text-center"
                       key={index}
                       value={selectOption.key}
                       defaultChecked={false}
@@ -118,9 +118,9 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
         }
         {
           rangeSelectKey === "blockRange" &&
-            <div className="flex items-center  my-2">
+            <div className="flex items-center">
               <div className="flex flex-col w-full">
-                <label className="mx-2">From block</label>
+                <label className="ml-2">From block</label>
                 <Input
                   type="number"
                   className="bg-gray-700"
@@ -132,7 +132,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
                 />
               </div>
               <div className="flex flex-col w-full">
-                <label className="mx-2">To block</label>
+                <label className="ml-2">To block</label>
                 <Input
                   className="bg-gray-700"
                   type="number"
@@ -147,9 +147,9 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
         }
         {
           rangeSelectKey === "timeRange" &&
-            <div className="flex items-center  my-2">
+            <div className="flex items-center">
               <div className="flex flex-col w-full">
-                <label className="mx-2">From date</label>
+                <label className="ml-2">From date</label>
                 <DateTimePicker 
                   value={startDate} 
                   onChange={(date) => setStartDate(date!)}
@@ -163,11 +163,11 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
                 />
               </div>
               <div className="flex flex-col w-full">
-                <label className="mx-2">To date</label>
+                <label className="ml-2">To date</label>
                 <DateTimePicker 
                   value={endDate} 
                   onChange={(date) => setEndDate(date!)}
-                  className="text-white ml-2 border bg-gray-700"
+                  className="text-white border bg-gray-700"
                   calendarClassName="text-gray-800"
                   format="yyyy/MM/dd HH:mm:ss"
                   clearIcon={null}

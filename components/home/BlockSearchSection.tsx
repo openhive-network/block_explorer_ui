@@ -310,9 +310,9 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
   };
 
   return (
-    <div className="mt-6 col-start-1 col-span-4 md:col-span-1 mb-6 md:mb-0" data-testid="block-search-section">
-      <div className=' bg-explorer-dark-gray p-2 h-fit rounded'>
-        <div className="text-center text-xl">Block Search</div>
+    <div className="mt-6 col-start-1 col-span-4 md:col-span-1 mb-6 md:mb-0 flex flex-col gap-y-6"  data-testid="block-search-section">
+      <div className=' bg-explorer-dark-gray p-4 h-fit rounded'>
+        <div className="text-center text-xl">Search</div>
         <Accordion
           type="single"
           className="w-full"
@@ -321,10 +321,10 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
         >
           <AccordionItem value="block">
             <AccordionTrigger>Block Search</AccordionTrigger>
-            <AccordionContent>
+            <AccordionContent className="px-2 flex flex-col gap-y-4">
               <p className="ml-2">Find block numbers for given properties.</p>
-              <div className="flex flex-col m-2">
-                <label className="mx-2">Account name</label>
+              <div className="flex flex-col">
+                <label className="ml-2">Account name</label>
                 <Input
                   className="w-1/2 md:w-1/3 bg-gray-700"
                   type="text"
@@ -338,7 +338,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                 />
               </div>
               <SearchRanges rangesProps={searchRanges} />
-              <div className="flex items-center m-2">
+              <div className="flex items-center">
                 <OperationTypesDialog
                   operationTypes={operationsTypes}
                   selectedOperations={selectedOperationTypes}
@@ -347,7 +347,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                   triggerTitle={getOperationButtonTitle(selectedOperationTypes, operationsTypes)}
                 />
               </div>
-              <div className="flex flex-col  m-2">
+              <div className="flex flex-col ">
                 <div className="flex items-center">
                   <label className="ml-2">Property</label>
                   <TooltipProvider>
@@ -379,7 +379,6 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                             key !== "value" && (
                               <div
                                 key={key}
-                                className={"mx-1"}
                               >
                                 {index !== 1 && "/"} {key}
                               </div>
@@ -427,8 +426,8 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                   )}
                 </div>
               </div>
-              <div className="flex m-2 flex-col">
-                <label className="mx-2">Value</label>
+              <div className="flex flex-col">
+                <label className="ml-2">Value</label>
                 <Input
                   className="w-1/2 bg-gray-700"
                   type="text"
@@ -441,14 +440,14 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                   }
                 />
               </div>
-              <div className="flex items-center  m-2">
+              <div className="flex items-center ">
                 <Button
                   className=" bg-blue-800 hover:bg-blue-600 rounded"
                   onClick={startBlockSearch}
                 >
                   <span>Search</span>{" "}
                   {blockSearch.blockSearchDataLoading && (
-                    <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
+                    <Loader2 className="animate-spin h-4 w-4  ..." />
                   )}
                 </Button>
               </div>
@@ -456,12 +455,12 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
           </AccordionItem>
           <AccordionItem value="account">
             <AccordionTrigger>Account search</AccordionTrigger>
-            <AccordionContent>
+            <AccordionContent className="px-2 flex flex-col gap-y-4">
               <p className="ml-2">
                 {"Find account's operations for given properties."}
               </p>
-              <div className="flex flex-col m-2">
-                <label className="mx-2">Account name *</label>
+              <div className="flex flex-col">
+                <label className="ml-2">Account name *</label>
                 <Input
                   className="w-1/2 md:w-1/3 bg-gray-700"
                   type="text"
@@ -475,7 +474,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                 />
               </div>
               <SearchRanges rangesProps={searchRanges} />
-              <div className="flex items-center m-2">
+              <div className="flex items-center">
                 <OperationTypesDialog
                   operationTypes={operationsTypes}
                   selectedOperations={selectedOperationTypes}
@@ -484,7 +483,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                   triggerTitle={getOperationButtonTitle(selectedOperationTypes, operationsTypes)}
                 />
               </div>
-              <div className="flex items-center  m-2">
+              <div className="flex items-center ">
                 <Button
                   className=" bg-blue-800 hover:bg-blue-600 rounded"
                   onClick={startAccountOperationsSearch}
@@ -492,7 +491,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                 >
                   <span>Search</span>{" "}
                   {accountOperations.isAccountOperationsLoading && (
-                    <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
+                    <Loader2 className="animate-spin h-4 w-4  ..." />
                   )}
                 </Button>
                 {!accountName && (
@@ -505,13 +504,13 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
           </AccordionItem>
           <AccordionItem value="comment">
             <AccordionTrigger>Comment search</AccordionTrigger>
-            <AccordionContent>
+            <AccordionContent className="px-2 flex flex-col gap-y-4">
               <p className="ml-2">
                 Find all operations related to comments of given account or for
                 exact permlink.
               </p>
-              <div className="flex flex-col m-2">
-                <label className="mx-2">Account name *</label>
+              <div className="flex flex-col">
+                <label className="ml-2">Account name *</label>
                 <Input
                   className="w-1/2 md:w-1/3 bg-gray-700"
                   type="text"
@@ -524,8 +523,8 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                   placeholder="---"
                 />
               </div>
-              <div className="flex m-2 flex-col">
-                <label className="mx-2">Permlink</label>
+              <div className="flex flex-col">
+                <label className="ml-2">Permlink</label>
                 <Input
                   className="w-full bg-gray-700"
                   type="text"
@@ -539,7 +538,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                 />
               </div>
               <SearchRanges rangesProps={searchRanges} />
-              <div className="flex items-center m-2">
+              <div className="flex items-center">
                 <OperationTypesDialog
                   operationTypes={operationsTypes?.filter((opType) =>
                     config.commentOperationsTypeIds.includes(opType.op_type_id)
@@ -550,7 +549,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                   triggerTitle={getOperationButtonTitle(selectedOperationTypes, operationsTypes)}
                 />
               </div>
-              <div className="flex items-center  m-2">
+              <div className="flex items-center">
                 <Button
                   className=" bg-blue-800 hover:bg-blue-600 rounded"
                   onClick={startCommentSearch}
@@ -558,11 +557,11 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                 >
                   <span>Search</span>{" "}
                   {commentSearch.commentSearchDataLoading && (
-                    <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
+                    <Loader2 className="animate-spin h-4 w-4  ..." />
                   )}
                 </Button>
                 {!accountName && (
-                  <label className="ml-2 text-muted-foreground">
+                  <label className=" text-muted-foreground">
                     Set account name
                   </label>
                 )}
@@ -572,7 +571,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
         </Accordion>
       </div>
       {blockSearch.blockSearchData && lastSearchKey === "block" && (
-        <div className=' bg-explorer-dark-gray p-2 md:mx-2 h-fit rounded mt-4'>
+        <div className=' bg-explorer-dark-gray p-2 md: h-fit rounded'>
           <div className="text-center">Results:</div>
           <div className="flex flex-wrap">
             {blockSearch.blockSearchData.length > 0 ? (
@@ -585,7 +584,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                 </Link>
               ))
             ) : (
-              <div className="flex justify-center w-full my-2">
+              <div className="flex justify-center w-full">
                 No blocks matching given criteria
               </div>
             )}
@@ -596,12 +595,12 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
         lastSearchKey === "comment" && (
           <div>
             <Link href={getCommentPageLink()}>
-              <Button className=" bg-blue-800 hover:bg-blue-600 rounded mt-8">
+              <Button className=" bg-blue-800 hover:bg-blue-600 rounded">
                 Go to result page
               </Button>
             </Link>
 
-            <div className="flex justify-center items-center text-black mt-6">
+            <div className="flex justify-center items-center text-black">
               <CustomPagination
                 currentPage={commentPaginationPage}
                 totalCount={commentSearch.commentSearchData?.total_operations}
@@ -638,12 +637,12 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                 previousAccountOperationsSearchProps?.accountName || ""
               )}
             >
-              <Button className=" bg-blue-800 hover:bg-blue-600 rounded mt-8">
+              <Button className=" bg-blue-800 hover:bg-blue-600 rounded">
                 Go to result page
               </Button>
             </Link>
 
-            <div className="flex justify-center items-center text-black mt-6">
+            <div className="flex justify-center items-center text-black">
               <CustomPagination
                 currentPage={accountOperationsPage || 1}
                 totalCount={
