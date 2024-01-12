@@ -33,7 +33,7 @@ const AccountTopBar: React.FC<AccountTopBarProps> = ({
         isMirrored={true}
         className="flex-grows"
       />
-      <div className="flex-grow flex justify-between max-w-xl xl:max-w-full">
+      <div className="flex-grow flex justify-between max-w-xl lg:max-w-full">
         <div className="flex">
           <JumpToPage
             currentPage={page}
