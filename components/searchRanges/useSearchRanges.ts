@@ -52,6 +52,10 @@ const useSearchRanges = () => {
     {
       name: "Time range",
       key: "timeRange"
+    },
+    {
+      name: "-",
+      key: "none"
     }
   ];
   
