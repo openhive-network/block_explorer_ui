@@ -65,7 +65,7 @@ scripts/run_instance.sh \
     --detach
 ```
 
-It will start the Block Explorer UI on port 5000.  
+It will start the Block Explorer UI on port 5000.
 The container will delete itself once stopped.
 
 All the options available can be displayed by running `scripts/run_instance.sh --help`.
@@ -77,7 +77,23 @@ pushd docker
 docker compose up --detach
 ```
 
-If you wish to change parameters (like API endpoints or port) when using the [Composefile](docker/docker-compose.yml),  
+If you wish to change parameters (like API endpoints or port) when using the [Composefile](docker/docker-compose.yml),
 edit the accompanying [.env file](docker/.env)
 
 To stop and delete the container use command `docker compose down`.
+
+## Testing
+
+### E2E
+
+The automatic tests are built on Playwright.
+To run tests use one of the following commands:
+
+```bash
+npm run pw:test:local
+npm run pw:test:local:chromium
+npm run pw:test:local:firefox
+npm run pw:test:local:webkit
+```
+
+Running the tests only works locally at this moment.
