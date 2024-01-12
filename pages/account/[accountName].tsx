@@ -148,9 +148,9 @@ export default function Account() {
         toBlock: payloadToBlock,
         fromDate: payloadStartDate,
         toDate: payloadEndDate,
-        lastBlocks: searchRanges.lastBlocksValue,
-        lastTime: searchRanges.lastTimeUnitValue,
-        timeUnit: searchRanges.timeUnitSelectKey,
+        lastBlocks: searchRanges.rangeSelectKey === "lastBlocks" ? searchRanges.lastBlocksValue : undefined,
+        lastTime: searchRanges.rangeSelectKey === "lastTime" ? searchRanges.lastTimeUnitValue : undefined,
+        timeUnit: searchRanges.rangeSelectKey === "lastTime" ? searchRanges.timeUnitSelectKey : undefined,
         rangeSelectKey: searchRanges.rangeSelectKey,
         page: resetPage ? undefined : page,
       });
