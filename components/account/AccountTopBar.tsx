@@ -24,34 +24,31 @@ const AccountTopBar: React.FC<AccountTopBarProps> = ({
   selectedFilters
 }) => {
   return (
-    <div className="bg-explorer-orange items-center grid grid-flow-row-dense grid-cols-3 top-14 md:top-16 right-0 left-0 p-2 z-10">
-      <div className="col-span-3 md:col-span-2 md:justify-self-end justify-self-center z-20 max-w-full">
-        <CustomPagination
-          currentPage={page}
-          totalCount={accountOperations.total_operations || 0}
-          pageSize={config.standardPaginationSize}
-          onPageChange={(page: number) => setPage(page)}
-          isMirrored={true}
-        />
-      </div>
-
-      <div className="justify-self-end col-span-4 md:col-span-1">
-        <div className="grid gap-x-3 grid-flow-row-dense grid-cols-6">
+    <div className="bg-explorer-orange flex w-full items-center justify-center flex-wrap py-2 max-w-6xl">
+      <CustomPagination
+        currentPage={page}
+        totalCount={accountOperations.total_operations || 0}
+        pageSize={config.standardPaginationSize}
+        onPageChange={setPage}
+        isMirrored={true}
+        className="flex-grows"
+      />
+      <div className="flex-grow flex justify-between max-w-xl xl:max-w-full">
+        <div className="flex">
           <JumpToPage
             currentPage={page}
-            onPageChange={(page: number) => setPage(page)}
+            onPageChange={setPage}
+            className="flex-shrink"
           />
-          <div className="justify-self-end self-center col-span-2">
-            <ScrollTopButton />
-          </div>
-          <OperationTypesDialog
-            operationTypes={accountOperationTypes}
-            setSelectedOperations={onOperationsSelect}
-            selectedOperations={selectedFilters}
-            buttonClassName="bg-explorer-dark-gray col-span-3 justify-self-end col-start-4"
-            triggerTitle={getOperationButtonTitle(selectedFilters, accountOperationTypes)}
-          />
+          <ScrollTopButton />
         </div>
+        <OperationTypesDialog
+          operationTypes={accountOperationTypes}
+          setSelectedOperations={onOperationsSelect}
+          selectedOperations={selectedFilters}
+          buttonClassName="bg-explorer-dark-gray"
+          triggerTitle={getOperationButtonTitle(selectedFilters, accountOperationTypes)}
+        />
       </div>
     </div>
   );
