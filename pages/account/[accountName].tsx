@@ -20,6 +20,7 @@ import OperationTypesDialog from "@/components/OperationTypesDialog";
 import Hive from "@/types/Hive";
 import useSearchRanges from "@/components/searchRanges/useSearchRanges";
 import SearchRanges from "@/components/searchRanges/SearchRanges";
+import { getOperationButtonTitle } from "@/utils/UI";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -211,7 +212,7 @@ export default function Account() {
           }
           selectedOperations={filters}
           buttonClassName="bg-explorer-dark-gray flex-shrink-0"
-          triggerTitle={"Operation types"}
+          triggerTitle={getOperationButtonTitle(filters, accountOperationTypes)}
         />
       </div>
 
