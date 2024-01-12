@@ -148,6 +148,7 @@ const SearchBar: React.FC = () => {
           value={searchTerm}
           onChange={(e) => handleInputChange(e.target.value)}
           onFocus={() => setInputFocus(true)}
+          data-testid="search-bar-input"
         />
         {!!searchTerm.length ? (
           <X className="cursor-pointer" onClick={() => resetSearchBar()} />
