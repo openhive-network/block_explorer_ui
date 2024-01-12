@@ -44,7 +44,7 @@ const defaultSearchParams: AccountSearchParams = {
   lastBlocks: undefined,
   lastTime: undefined,
   timeUnit: "days",
-  rangeSelectKey: "lastBlocks",
+  rangeSelectKey: "none",
   page: undefined,
   filters: [],
 };
@@ -91,7 +91,6 @@ export default function Account() {
       startDate: fromDateParam,
       endDate: toDateParam,
     });
-
   const { accountOperationTypes } =
     useAccountOperationTypes(accountNameFromRoute);
 
@@ -116,7 +115,8 @@ export default function Account() {
         !!fromBlockParam ||
         !!toBlockParam ||
         !!lastBlocksParam ||
-        !!lastTimeParam || !!filtersParam)
+        !!lastTimeParam ||
+        !!filtersParam)
     ) {
       fromDateParam && searchRanges.setStartDate(fromDateParam);
       toDateParam && searchRanges.setEndDate(toDateParam);
@@ -139,7 +139,7 @@ export default function Account() {
         payloadStartDate,
         payloadEndDate,
       } = await searchRanges.getRangesValues();
-      
+
       setParams({
         ...paramsState,
         filters: filters,
@@ -151,10 +151,25 @@ export default function Account() {
         lastTime: searchRanges.lastTimeUnitValue,
         timeUnit: searchRanges.timeUnitSelectKey,
         rangeSelectKey: searchRanges.rangeSelectKey,
-        page: resetPage ? undefined : page
+        page: resetPage ? undefined : page,
       });
     }
   };
+
+  const handleFilterClear = () => {
+    const newPage = rangeSelectKey !== "none" ? undefined : page;
+    setParams({
+      ...defaultSearchParams,
+      accountName: accountNameFromRoute,
+      page: newPage,
+    });
+    searchRanges.setRangeSelectKey("none");
+  };
+
+  const handleOperationTypeChange = (newFilters: number[]) => {
+    setFilters(newFilters);
+    setParams({...paramsState, filters: newFilters});
+  }
 
   useEffect(() => {
     if (!paramsState.page && accountOperations) {
@@ -181,19 +196,26 @@ export default function Account() {
 
   return (
     <>
-      <div className="min-h-[64px] bg-explorer-orange items-center fixed grid grid-flow-row-dense grid-cols-3 top-14 md:top-16 right-0 left-0 p-2 z-10">
-        <div className="col-span-3 md:col-span-2 md:justify-self-end justify-self-center z-20 max-w-full">
-          {paramsState.page && accountOperations && (
-            <AccountPagination
-              page={paramsState.page}
-              setPage={(page: number) => setParams({ ...paramsState, page })}
-              accountOperations={accountOperations}
-            />
-          )}
-        </div>
+      <div className="flex items-center justify-end w-full min-h-[64px] bg-explorer-orange -mt-4 px-8 fixed z-20">
+        {paramsState.page && accountOperations && (
+          <AccountPagination
+            page={paramsState.page}
+            setPage={(page: number) => setParams({ ...paramsState, page })}
+            accountOperations={accountOperations}
+          />
+        )}
+        <OperationTypesDialog
+          operationTypes={accountOperationTypes}
+          setSelectedOperations={(newFilters: number[]) =>
+            handleOperationTypeChange(newFilters)
+          }
+          selectedOperations={filters}
+          buttonClassName="bg-explorer-dark-gray flex-shrink-0"
+          triggerTitle={"Operation types"}
+        />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 text-white mx-8 mt-24 md:mt-14 w-full">
+      <div className="grid grid-cols-1 md:grid-cols-3 text-white mx-8 mt-12 md:mt-14 w-full">
         <div className="mt-2 col-start-1 col-span-1">
           <AccountMainCard
             accountDetails={accountDetails}
@@ -235,7 +257,7 @@ export default function Account() {
         <div className="col-start-1 md:col-start-2 col-span-1 md:col-span-3">
           <div>
             <div className="bg-explorer-dark-gray text-white p-4 rounded-[6px] mx-2">
-              <div className="ml-2">Operations filters</div>
+              <div className="ml-2">Ranges</div>
               <SearchRanges rangesProps={searchRanges} />
               <div className="flex items-center justify-between m-2">
                 <Button
@@ -244,18 +266,16 @@ export default function Account() {
                 >
                   <span>Apply filters</span>{" "}
                 </Button>
-                <OperationTypesDialog
-                  operationTypes={accountOperationTypes}
-                  setSelectedOperations={(newFilters: number[]) =>
-                    setFilters(newFilters)
-                  }
-                  selectedOperations={filters}
-                  colorClass="bg-explorer-dark-gray"
-                  triggerTitle={"Operation types"}
-                />
+                <Button
+                  className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]"
+                  onClick={() => handleFilterClear()}
+                >
+                  <span>Clear filters</span>{" "}
+                </Button>
               </div>
             </div>
-            {!isAccountOperationsLoading && !accountOperations?.total_operations ? (
+            {!isAccountOperationsLoading &&
+            !accountOperations?.total_operations ? (
               <div className="w-full my-4 text-black text-center">
                 No operations were found.
               </div>

@@ -157,7 +157,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
           operationTypes={operationTypes}
           setSelectedOperations={setFilters}
           selectedOperations={selectedOperationIds}
-          colorClass="bg-gray-500"
+          buttonClassName="bg-gray-500"
           triggerTitle={"Operation Filters"}
         />
         </div>

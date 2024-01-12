@@ -350,7 +350,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                   operationTypes={operationsTypes}
                   selectedOperations={selectedOperationTypes}
                   setSelectedOperations={changeSelectedOperationTypes}
-                  colorClass="bg-gray-500"
+                  buttonClassName="bg-gray-500"
                   triggerTitle={getOperationButtonTitle()}
                 />
               </div>
@@ -487,7 +487,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                   operationTypes={operationsTypes}
                   selectedOperations={selectedOperationTypes}
                   setSelectedOperations={changeSelectedOperationTypes}
-                  colorClass="bg-gray-500"
+                  buttonClassName="bg-gray-500"
                   triggerTitle={getOperationButtonTitle()}
                 />
               </div>
@@ -553,7 +553,7 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                   )}
                   selectedOperations={selectedCommentSearchOperationTypes}
                   setSelectedOperations={setSelectedCommentSearchOperationTypes}
-                  colorClass="bg-gray-500"
+                  buttonClassName="bg-gray-500"
                   triggerTitle={getOperationButtonTitle()}
                 />
               </div>

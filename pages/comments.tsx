@@ -196,7 +196,7 @@ const Comments: React.FC = () => {
             operationTypes={operationsTypes}
             setSelectedOperations={handleFiltersChange}
             selectedOperations={paramsState.filters || []}
-            colorClass="bg-gray-500 ml-2"
+            buttonClassName="bg-gray-500 ml-2"
             triggerTitle={"Operation Filters"}
           />
         </div>
