@@ -8,7 +8,7 @@ test.describe("Navbar tests", () => {
     navbar = new Navbar(page);
   });
 
-  test("hive block explorer link", async ({ page }) => {
+  test("navbar of block explorer is loaded", async ({ page }) => {
     await navbar.gotoBlockExplorerPage();
     await expect(navbar.navBarElement).toBeVisible();
     await expect(navbar.navBarHiveLogo).toBeVisible();
