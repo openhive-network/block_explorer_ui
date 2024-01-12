@@ -11,7 +11,7 @@ import PageNotFound from "@/components/PageNotFound";
 import useAccountDetails from "@/api/accountPage/useAccountDetails";
 import useAccountOperations from "@/api/accountPage/useAccountOperations";
 import useWitnessDetails from "@/api/common/useWitnessDetails";
-import AccountPagination from "@/components/account/AccountPagination";
+import AccountPagination from "@/components/account/AccountTopBar";
 import useAccountOperationTypes from "@/api/accountPage/useAccountOperationTypes";
 import { useURLParams } from "@/utils/Hooks";
 import { Loader2 } from "lucide-react";
@@ -203,17 +203,11 @@ export default function Account() {
             page={paramsState.page}
             setPage={(page: number) => setParams({ ...paramsState, page })}
             accountOperations={accountOperations}
+            accountOperationTypes={accountOperationTypes || []}
+            onOperationsSelect={handleOperationTypeChange}
+            selectedFilters={filters}
           />
         )}
-        <OperationTypesDialog
-          operationTypes={accountOperationTypes}
-          setSelectedOperations={(newFilters: number[]) =>
-            handleOperationTypeChange(newFilters)
-          }
-          selectedOperations={filters}
-          buttonClassName="bg-explorer-dark-gray flex-shrink-0"
-          triggerTitle={getOperationButtonTitle(filters, accountOperationTypes)}
-        />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 text-white mx-8 mt-12 md:mt-14 w-full">
