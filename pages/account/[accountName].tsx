@@ -165,6 +165,7 @@ export default function Account() {
       page: newPage,
     });
     searchRanges.setRangeSelectKey("none");
+    setFilters([]);
   };
 
   const handleOperationTypeChange = (newFilters: number[]) => {
@@ -197,7 +198,7 @@ export default function Account() {
 
   return (
     <>
-      <div className="flex items-center justify-end w-full min-h-[64px] bg-explorer-orange -mt-4 px-8 fixed z-20">
+      <div className="flex items-center justify-end w-full min-h-[64px] bg-explorer-orange -mt-4 px-2 md:px-8 fixed z-20">
         {paramsState.page && accountOperations && (
           <AccountPagination
             page={paramsState.page}
