@@ -169,8 +169,8 @@ export default function Account() {
 
   const handleOperationTypeChange = (newFilters: number[]) => {
     setFilters(newFilters);
-    setParams({...paramsState, filters: newFilters});
-  }
+    setParams({ ...paramsState, filters: newFilters, page: undefined });
+  };
 
   useEffect(() => {
     if (!paramsState.page && accountOperations) {
