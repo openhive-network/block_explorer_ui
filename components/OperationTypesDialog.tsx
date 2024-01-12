@@ -16,7 +16,7 @@ type OperationTypesDialogProps = {
   operationTypes: Hive.OperationPattern[] | undefined;
   triggerTitle: string;
   selectedOperations: number[];
-  colorClass: string;
+  buttonClassName: string;
   setSelectedOperations: (operationIds: number[]) => void;
 };
 
@@ -24,7 +24,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
   operationTypes,
   triggerTitle,
   selectedOperations,
-  colorClass,
+  buttonClassName,
   setSelectedOperations,
 }) => {
   const [selectedOperationsIds, setSelectedOperationsIds] = useState<number[]>(
@@ -137,7 +137,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     >
       <DialogTrigger asChild>
         <Button
-          className={`${colorClass}  text-white hover:bg-gray-700 rounded`}
+          className={`${buttonClassName} text-white hover:bg-gray-700 rounded-[4px]`}
         >
           {triggerTitle}
         </Button>

@@ -10,7 +10,7 @@ const AccountPagination = ({
   accountOperations,
 }: any) => {
   return (
-    <div className="bg-explorer-orange items-center fixed grid grid-flow-row-dense grid-cols-3 top-14 md:top-16 right-0 left-0 p-2 z-10">
+    <div className="bg-explorer-orange items-center grid grid-flow-row-dense grid-cols-3 top-14 md:top-16 right-0 left-0 p-2 z-10">
       <div className="col-span-3 md:col-span-2 md:justify-self-end justify-self-center z-20 max-w-full">
         <CustomPagination
           currentPage={page}
