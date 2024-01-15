@@ -27,6 +27,7 @@ import JumpToPage from "../JumpToPage";
 import { dataToURL } from "@/utils/Hooks";
 import { getOperationButtonTitle } from "@/utils/UI";
 import BlockSearch from "./searches/BlockSearch";
+import AccountSearch from "./searches/AccountSearch";
 
 interface BlockSearchSectionProps {}
 
@@ -135,31 +136,11 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
     }
   };
 
-  const startAccountOperationsSearch = async () => {
-    const {
-      payloadFromBlock,
-      payloadToBlock,
-      payloadStartDate,
-      payloadEndDate,
-    } = await getRangesValues();
-    if (accountName) {
-      const accountOperationsSearchProps: Explorer.AccountSearchOperationsProps =
-        {
-          accountName,
-          permlink,
-          fromBlock: payloadFromBlock,
-          toBlock: payloadToBlock,
-          startDate: payloadStartDate,
-          endDate: payloadEndDate,
-          operationTypes: selectedOperationTypes.length
-            ? selectedOperationTypes
-            : undefined,
-        };
+  const startAccountOperationsSearch = async (accountOperationsSearchProps: Explorer.AccountSearchOperationsProps) => {
       setLastSearchKey("account");
       setAccountOperationsPage(undefined);
       setAccountOperationsSearchProps(accountOperationsSearchProps);
       setPreviousAccountOperationsSearchProps(accountOperationsSearchProps);
-    }
   };
 
   const startBlockSearch = async (blockSearchProps: Explorer.BlockSearchProps) => {
@@ -282,55 +263,11 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
             operationsTypes={operationsTypes}
             loading={blockSearch.blockSearchDataLoading}
           />
-          <AccordionItem value="account">
-            <AccordionTrigger>Account search</AccordionTrigger>
-            <AccordionContent className="px-2 flex flex-col gap-y-4">
-              <p className="ml-2">
-                {"Find account's operations for given properties."}
-              </p>
-              <div className="flex flex-col">
-                <label className="ml-2">Account name *</label>
-                <Input
-                  className="w-1/2 md:w-1/3 bg-gray-700"
-                  type="text"
-                  value={accountName || ""}
-                  onChange={(e) =>
-                    setAccountName(
-                      e.target.value === "" ? undefined : e.target.value
-                    )
-                  }
-                  placeholder="---"
-                />
-              </div>
-              <SearchRanges rangesProps={searchRanges} />
-              <div className="flex items-center">
-                <OperationTypesDialog
-                  operationTypes={operationsTypes}
-                  selectedOperations={selectedOperationTypes}
-                  setSelectedOperations={changeSelectedOperationTypes}
-                  buttonClassName="bg-gray-500"
-                  triggerTitle={getOperationButtonTitle(selectedOperationTypes, operationsTypes)}
-                />
-              </div>
-              <div className="flex items-center ">
-                <Button
-                  className=" bg-blue-800 hover:bg-blue-600 rounded"
-                  onClick={startAccountOperationsSearch}
-                  disabled={!accountName}
-                >
-                  <span>Search</span>{" "}
-                  {accountOperations.isAccountOperationsLoading && (
-                    <Loader2 className="animate-spin h-4 w-4  ..." />
-                  )}
-                </Button>
-                {!accountName && (
-                  <label className="ml-2 text-muted-foreground">
-                    Set account name
-                  </label>
-                )}
-              </div>
-            </AccordionContent>
-          </AccordionItem>
+          <AccountSearch 
+            startAccountOperationsSearch={startAccountOperationsSearch}
+            operationsTypes={operationsTypes}
+            loading={accountOperations.isAccountOperationsLoading}
+          />
           <AccordionItem value="comment">
             <AccordionTrigger>Comment search</AccordionTrigger>
             <AccordionContent className="px-2 flex flex-col gap-y-4">
