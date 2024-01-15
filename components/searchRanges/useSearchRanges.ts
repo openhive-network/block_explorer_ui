@@ -52,6 +52,10 @@ const useSearchRanges = () => {
     {
       name: "Time range",
       key: "timeRange"
+    },
+    {
+      name: "---",
+      key: "none"
     }
   ];
   
@@ -76,7 +80,7 @@ const useSearchRanges = () => {
   const [endDate, setEndDate] = useState<Date | undefined>(new Date (Date.now()));
   const [lastBlocksValue, setLastBlocksValue] = useState<number | undefined>(DEFAULT_LAST_BLOCK_VALUE);
   const [lastTimeUnitValue, setLastTimeUnitValue] = useState<number | undefined>(undefined);
-  const [rangeSelectKey, setRangeSelectKey] = useState<string>("lastBlocks");
+  const [rangeSelectKey, setRangeSelectKey] = useState<string>("none");
   const [timeUnitSelectKey, setTimeUnitSelectKey] = useState<string>("days");
 
   const {checkTemporaryHeadBlockNumber} = useHeadBlockNumber();

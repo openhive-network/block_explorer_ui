@@ -3,7 +3,7 @@ import { usePagination, DOTS } from "./customHooks/usePagination";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface PaginationProps {
-  onPageChange: (value: any) => void;
+  onPageChange: (value: number) => void;
   totalCount: number;
   siblingCount?: number;
   currentPage: number;
@@ -50,7 +50,7 @@ const CustomPagination: React.FC<PaginationProps> = ({
   };
 
   const handlePageChange = (page: number | string) => {
-    onPageChange(page);
+    onPageChange(Number(page));
     if (shouldScrollToTop) scrollToTop();
   };
   const lastPage = paginationRange[paginationRange.length - 1];

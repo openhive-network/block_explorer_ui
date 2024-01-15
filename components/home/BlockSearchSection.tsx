@@ -32,6 +32,7 @@ import useAccountOperations from "@/api/accountPage/useAccountOperations";
 import { getPageUrlParams } from "@/lib/utils";
 import JumpToPage from "../JumpToPage";
 import { dataToURL } from "@/utils/Hooks";
+import { getOperationButtonTitle } from "@/utils/UI";
 
 interface BlockSearchSectionProps {}
 
@@ -240,14 +241,6 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
     setKeysForProperty(Number(newValue));
   };
 
-  const getOperationButtonTitle = (): string => {
-    if (selectedOperationTypes && selectedOperationTypes.length === 1)
-      return operationsTypes?.[selectedOperationTypes[0]].operation_name || "";
-    if (selectedOperationTypes && selectedOperationTypes.length > 1)
-      return `${selectedOperationTypes.length} operation types`;
-    return "Operation types";
-  };
-
   const getCommentPageLink = () => {
     const urlParams: Explorer.UrlParam[] = [
       {
@@ -350,8 +343,8 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                   operationTypes={operationsTypes}
                   selectedOperations={selectedOperationTypes}
                   setSelectedOperations={changeSelectedOperationTypes}
-                  colorClass="bg-gray-500"
-                  triggerTitle={getOperationButtonTitle()}
+                  buttonClassName="bg-gray-500"
+                  triggerTitle={getOperationButtonTitle(selectedOperationTypes, operationsTypes)}
                 />
               </div>
               <div className="flex flex-col  m-2">
@@ -487,8 +480,8 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                   operationTypes={operationsTypes}
                   selectedOperations={selectedOperationTypes}
                   setSelectedOperations={changeSelectedOperationTypes}
-                  colorClass="bg-gray-500"
-                  triggerTitle={getOperationButtonTitle()}
+                  buttonClassName="bg-gray-500"
+                  triggerTitle={getOperationButtonTitle(selectedOperationTypes, operationsTypes)}
                 />
               </div>
               <div className="flex items-center  m-2">
@@ -553,8 +546,8 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
                   )}
                   selectedOperations={selectedCommentSearchOperationTypes}
                   setSelectedOperations={setSelectedCommentSearchOperationTypes}
-                  colorClass="bg-gray-500"
-                  triggerTitle={getOperationButtonTitle()}
+                  buttonClassName="bg-gray-500"
+                  triggerTitle={getOperationButtonTitle(selectedOperationTypes, operationsTypes)}
                 />
               </div>
               <div className="flex items-center  m-2">

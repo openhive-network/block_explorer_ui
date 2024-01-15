@@ -23,7 +23,6 @@ const JumpToPage = ({ currentPage, onPageChange }: any) => {
   }, [currentPage]);
 
   return (
-    <div className="flex end">
       <form
         className="flex"
         onSubmit={handleJumpToPage}
@@ -32,7 +31,7 @@ const JumpToPage = ({ currentPage, onPageChange }: any) => {
           type="number"
           value={value}
           onChange={onValueChange}
-          className="block w-[100px] p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          className="w-0 min-w-[72px] p-0 pl-2 py-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         />
         <Button
           className="bg-explorer-dark-gray mx-2 text-white hover:bg-gray-700 rounded"
@@ -41,7 +40,6 @@ const JumpToPage = ({ currentPage, onPageChange }: any) => {
           Go
         </Button>
       </form>
-    </div>
   );
 };
 
