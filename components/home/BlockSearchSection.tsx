@@ -1,49 +1,26 @@
 import Explorer from "@/types/Explorer";
 import { useEffect, useState } from "react";
-import { Input } from "../ui/input";
-import OperationTypesDialog from "@/components/OperationTypesDialog";
 import { Button } from "../ui/button";
 import Link from "next/link";
-import { Loader2 } from "lucide-react";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "../ui/accordion";
+import { Accordion } from "../ui/accordion";
 import DetailedOperationCard from "../DetailedOperationCard";
 import { config } from "@/Config";
 import CustomPagination from "../CustomPagination";
 import useCommentSearch from "@/api/common/useCommentSearch";
 import useBlockSearch from "@/api/homePage/useBlockSearch";
-import useOperationKeys from "@/api/homePage/useOperationKeys";
 import useOperationTypes from "@/api/common/useOperationsTypes";
-import useBlockByTime from "@/api/common/useBlockByTime";
 import useSearchRanges from "../searchRanges/useSearchRanges";
-import SearchRanges from "../searchRanges/SearchRanges";
 import useAccountOperations from "@/api/accountPage/useAccountOperations";
 import { getPageUrlParams } from "@/lib/utils";
 import JumpToPage from "../JumpToPage";
 import { dataToURL } from "@/utils/Hooks";
-import { getOperationButtonTitle } from "@/utils/UI";
 import BlockSearch from "./searches/BlockSearch";
 import AccountSearch from "./searches/AccountSearch";
+import CommentsSearch from "./searches/CommentsSearch";
 
 interface BlockSearchSectionProps {}
 
 const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
-  const [accountName, setAccountName] = useState<string | undefined>(undefined);
-  const [selectedOperationTypes, setSelectedOperationTypes] = useState<
-    number[]
-  >([]);
-  const [
-    selectedCommentSearchOperationTypes,
-    setSelectedCommentSearchOperationTypes,
-  ] = useState<number[]>([]);
-  const [fieldContent, setFieldContent] = useState<string | undefined>(
-    undefined
-  );
-  const [permlink, setPermlink] = useState<string | undefined>(undefined);
   const [accordionValue, setAccordionValue] = useState<string>("block");
   const [previousCommentSearchProps, setPreviousCommentSearchProps] = useState<
     Explorer.CommentSearchProps | undefined
@@ -67,25 +44,13 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
   >(undefined);
   const [accountOperationsSearchProps, setAccountOperationsSearchProps] =
     useState<Explorer.AccountSearchOperationsProps | undefined>(undefined);
-  const [requestFromBlock, setRequestFromBlock] = useState<number | undefined>(
-    undefined
-  );
-  const [requestToBlock, setRequestToBlock] = useState<number | undefined>(
-    undefined
-  );
-  const [singleOperationTypeId, setSingleOperationTypeId] = useState<
-    number | undefined
-  >(undefined);
 
   const { operationsTypes } = useOperationTypes() || [];
   const commentSearch = useCommentSearch(commentSearchProps);
   const blockSearch = useBlockSearch(blockSearchProps);
-  const { operationKeysData } = useOperationKeys(singleOperationTypeId);
-  const { checkBlockByTime } = useBlockByTime();
   const accountOperations = useAccountOperations(accountOperationsSearchProps);
 
   const searchRanges = useSearchRanges();
-  const { getRangesValues } = searchRanges;
 
   useEffect(() => {
     if (!accountOperationsPage && accountOperations) {
@@ -95,45 +60,11 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
     }
   }, [accountOperations, accountOperationsPage]);
 
-  const startCommentSearch = async () => {
-    const {
-      payloadFromBlock,
-      payloadToBlock,
-      payloadStartDate,
-      payloadEndDate,
-    } = await getRangesValues();
-    if (accountName) {
-      const commentSearchProps: Explorer.CommentSearchProps = {
-        accountName,
-        permlink,
-        fromBlock: payloadFromBlock,
-        toBlock: payloadToBlock,
-        startDate: payloadStartDate,
-        endDate: payloadEndDate,
-        operationTypes: selectedCommentSearchOperationTypes.length
-          ? selectedCommentSearchOperationTypes
-          : undefined,
-      };
+  const startCommentSearch = async (commentSearchProps: Explorer.CommentSearchProps) => {
       setCommentSearchProps(commentSearchProps);
       setCommentPaginationPage(1);
       setPreviousCommentSearchProps(commentSearchProps);
       setLastSearchKey("comment");
-    }
-
-    if (payloadFromBlock) {
-      setRequestFromBlock(payloadFromBlock);
-    }
-    if (payloadToBlock) {
-      setRequestToBlock(payloadToBlock);
-    }
-    if (payloadStartDate) {
-      const blockByTime = await checkBlockByTime(payloadStartDate);
-      setRequestFromBlock(blockByTime);
-    }
-    if (payloadEndDate) {
-      const blockByTime = await checkBlockByTime(payloadEndDate);
-      setRequestToBlock(blockByTime);
-    }
   };
 
   const startAccountOperationsSearch = async (accountOperationsSearchProps: Explorer.AccountSearchOperationsProps) => {
@@ -168,16 +99,6 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
       setAccountOperationsSearchProps(newSearchProps);
       setAccountOperationsPage(newPageNum);
     }
-  };
-
-  const changeSelectedOperationTypes = (operationTypesIds: number[]) => {
-    if (operationTypesIds.length === 1) {
-      setSingleOperationTypeId(operationTypesIds[0]);
-    } else {
-      setFieldContent(undefined);
-      setSingleOperationTypeId(undefined);
-    }
-    setSelectedOperationTypes(operationTypesIds);
   };
 
   const getCommentPageLink = () => {
@@ -268,72 +189,11 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
             operationsTypes={operationsTypes}
             loading={accountOperations.isAccountOperationsLoading}
           />
-          <AccordionItem value="comment">
-            <AccordionTrigger>Comment search</AccordionTrigger>
-            <AccordionContent className="px-2 flex flex-col gap-y-4">
-              <p className="ml-2">
-                Find all operations related to comments of given account or for
-                exact permlink.
-              </p>
-              <div className="flex flex-col">
-                <label className="ml-2">Account name *</label>
-                <Input
-                  className="w-1/2 md:w-1/3 bg-gray-700"
-                  type="text"
-                  value={accountName || ""}
-                  onChange={(e) =>
-                    setAccountName(
-                      e.target.value === "" ? undefined : e.target.value
-                    )
-                  }
-                  placeholder="---"
-                />
-              </div>
-              <div className="flex flex-col">
-                <label className="ml-2">Permlink</label>
-                <Input
-                  className="w-full bg-gray-700"
-                  type="text"
-                  value={permlink}
-                  onChange={(e) =>
-                    setPermlink(
-                      e.target.value === "" ? undefined : e.target.value
-                    )
-                  }
-                  placeholder="---"
-                />
-              </div>
-              <SearchRanges rangesProps={searchRanges} />
-              <div className="flex items-center">
-                <OperationTypesDialog
-                  operationTypes={operationsTypes?.filter((opType) =>
-                    config.commentOperationsTypeIds.includes(opType.op_type_id)
-                  )}
-                  selectedOperations={selectedCommentSearchOperationTypes}
-                  setSelectedOperations={setSelectedCommentSearchOperationTypes}
-                  buttonClassName="bg-gray-500"
-                  triggerTitle={getOperationButtonTitle(selectedOperationTypes, operationsTypes)}
-                />
-              </div>
-              <div className="flex items-center">
-                <Button
-                  className=" bg-blue-800 hover:bg-blue-600 rounded"
-                  onClick={startCommentSearch}
-                  disabled={!accountName}
-                >
-                  <span>Search</span>{" "}
-                  {commentSearch.commentSearchDataLoading && (
-                    <Loader2 className="animate-spin h-4 w-4  ..." />
-                  )}
-                </Button>
-                {!accountName && (
-                  <label className=" text-muted-foreground">
-                    Set account name
-                  </label>
-                )}
-              </div>
-            </AccordionContent>
-          </AccordionItem>
+          <CommentsSearch
+            startCommentsSearch={startCommentSearch}
+            operationsTypes={operationsTypes}
+            loading={commentSearch.commentSearchDataLoading}
+          />
         </Accordion>
       </div>
       {blockSearch.blockSearchData && lastSearchKey === "block" && (
