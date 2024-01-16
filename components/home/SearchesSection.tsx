@@ -18,9 +18,9 @@ import BlockSearch from "./searches/BlockSearch";
 import AccountSearch from "./searches/AccountSearch";
 import CommentsSearch from "./searches/CommentsSearch";
 
-interface BlockSearchSectionProps {}
+interface SearchesSectionProps {}
 
-const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
+const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
   const [accordionValue, setAccordionValue] = useState<string>("block");
   const [previousCommentSearchProps, setPreviousCommentSearchProps] = useState<
     Explorer.CommentSearchProps | undefined
@@ -304,4 +304,4 @@ const BlockSearchSection: React.FC<BlockSearchSectionProps> = ({}) => {
   );
 };
 
-export default BlockSearchSection;
+export default SearchesSection;
