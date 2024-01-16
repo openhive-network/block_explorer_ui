@@ -99,6 +99,7 @@ const SearchBar: React.FC = () => {
   const resetSearchBar = () => {
     setInputFocus(false);
     setSearchTerm("");
+    updateInput("");
     setSelectedResult(0);
   };
 
