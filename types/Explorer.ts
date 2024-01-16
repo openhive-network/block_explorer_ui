@@ -66,7 +66,7 @@ declare module Explorer {
     key: string;
   }
 
-  interface AccountSearchOperationsProps extends CommentSearchProps {
+  interface AccountSearchOperationsProps extends CommonSearchProps {
     accountName: string;
     pageNumber?: number;
   }

@@ -4,7 +4,7 @@ import Link from "next/link";
 import HeadBlockCard from "@/components/home/HeadBlockCard";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
-import BlockSearchSection from "@/components/home/BlockSearchSection";
+import SearchesSection from "@/components/home/SearchesSection";
 import LastBlocksWidget from "@/components/LastBlocksWidget";
 import useWitnesses from "@/api/common/useWitnesses";
 import useDynamicGlobal from "@/api/homePage/useDynamicGlobal";
@@ -29,7 +29,7 @@ export default function Home() {
       />
       <div className="col-start-1 md:col-start-2 col-span-6 md:col-span-2">
       <LastBlocksWidget className="mt-6 md:mt-0"/>
-        <BlockSearchSection />
+        <SearchesSection />
       </div>
       <div className="col-start-1 md:col-start-4 col-span-6 md:col-span-1 bg-explorer-dark-gray py-2 rounded text-xs	overflow-hidden md:mx-6 h-fit"
            data-testid="top-witnesses-sidebar">
