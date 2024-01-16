@@ -32,9 +32,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   selectedOperationIds,
 }) => {
   const [block, setBlock] = useState(blockNumber.toString());
-  const [blockDate, setBlockDate] = useState(
-    new Date(timeStamp.toLocaleDateString("en-US"))
-  );
+  const [blockDate, setBlockDate] = useState(timeStamp);
 
   const { checkBlockByTime } = useBlockByTime();
 
@@ -61,7 +59,6 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
 
   useEffect(() => {
     setBlock(blockNumber.toString());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [blockNumber]);
 
   useEffect(() => {
@@ -103,9 +100,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   return (
     <section className="w-full flex flex-col items-center text-md mb-2 md:mb-4">
       <div className="w-full md:w-4/6 pb-4 bg-explorer-dark-gray text-center text-white rounded shadow-xl border border-explorer-bg-start">
-      <div className="text-2xl font-semibold my-2">
-        Search
-      </div>
+        <div className="text-2xl font-semibold my-2">Search</div>
         <div className="w-full flex justify-between items-center md:px-8 flex-wrap gap-y-4">
           <div className="flex justify-center items-center flex-wrap">
             <p>Block Number : </p>
@@ -154,12 +149,12 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
             />
           </div>
           <OperationTypesDialog
-          operationTypes={operationTypes}
-          setSelectedOperations={setFilters}
-          selectedOperations={selectedOperationIds}
-          buttonClassName="bg-gray-500"
-          triggerTitle={"Operation Filters"}
-        />
+            operationTypes={operationTypes}
+            setSelectedOperations={setFilters}
+            selectedOperations={selectedOperationIds}
+            buttonClassName="bg-gray-500"
+            triggerTitle={"Operation Filters"}
+          />
         </div>
       </div>
     </section>

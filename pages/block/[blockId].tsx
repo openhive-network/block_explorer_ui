@@ -11,7 +11,6 @@ import JSONView from "@/components/JSONView";
 import useBlockData from "@/api/blockPage/useBlockData";
 import useBlockOperations from "@/api/common/useBlockOperations";
 import useOperationsTypes from "@/api/common/useOperationsTypes";
-import BlockPageOperationCount from "@/components/block/BlockPageOperationCount";
 import BlockDetails from "@/components/block/BlockDetails";
 
 const FILTERS = "filters";
@@ -23,29 +22,19 @@ export default function Block() {
 
   const { blockId, filters } = router.query;
 
-  const [blockNumber, setBlockNumber] = useState(Number(blockId));
   const [blockDate, setBlockDate] = useState<Date>();
   const [blockFilters, setBlockFilters] = useState<number[]>([]);
 
   const { settings } = useUserSettingsContext();
 
-  const { blockDetails, loading } = useBlockData(
-    blockNumber,
+  const { blockDetails, loading } = useBlockData(Number(blockId), blockFilters);
+
+  const { blockError, blockOperations, trxLoading } = useBlockOperations(
+    Number(blockId),
     blockFilters
   );
 
-    const {blockError, blockOperations, trxLoading} = useBlockOperations(
-      blockNumber,
-      blockFilters
-    )
-
   const { operationsTypes } = useOperationsTypes();
-
-  useEffect(() => {
-    if (!!blockId) {
-      setBlockNumber(Number(blockId));
-    }
-  }, [blockId]);
 
   useEffect(() => {
     if (blockDetails && blockDetails.created_at) {
@@ -116,15 +105,15 @@ export default function Block() {
       id="block-page-top"
     >
       <BlockPageNavigation
-        blockNumber={blockNumber}
+        blockNumber={Number(blockId)}
         goToBlock={handleGoToBlock}
         timeStamp={blockDate}
         setFilters={handleFilterChange}
         operationTypes={operationsTypes || []}
         selectedOperationIds={blockFilters}
       />
-      <BlockDetails 
-        operations={blockOperations} 
+      <BlockDetails
+        operations={blockOperations}
         virtualOperationLength={virtualOperations?.length}
         nonVirtualOperationLength={nonVirtualOperations?.length}
         blockDetails={blockDetails}
@@ -183,7 +172,9 @@ export default function Block() {
                 <p className="text-3xl text-black">
                   {!!blockOperations && !blockOperations.length
                     ? "No operations were found"
-                    : !!virtualOperations.length ? "Virtual Operations" : null}
+                    : !!virtualOperations.length
+                    ? "Virtual Operations"
+                    : null}
                 </p>
               </div>
               {virtualOperations?.map((operation, index) => (
