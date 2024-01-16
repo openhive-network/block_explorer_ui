@@ -28,8 +28,8 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
   operationsTypes,
   loading,
 }) => {
-  const [accountName, setAccountName] = useState<string | undefined>(undefined);
-  const [permlink, setPermlink] = useState<string | undefined>(undefined);
+  const [accountName, setAccountName] = useState<string>("");
+  const [permlink, setPermlink] = useState<string>("");
   const [
     selectedCommentSearchOperationTypes,
     setSelectedCommentSearchOperationTypes,
@@ -37,9 +37,9 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
 
   const searchRanges = useSearchRanges();
   const { getRangesValues } = searchRanges;
-
+  
   const onButtonClick = async () => {
-    if (accountName) {
+    if (accountName !== "") {
       const {
         payloadFromBlock,
         payloadToBlock,
@@ -49,7 +49,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
   
       const commentSearchProps: Explorer.CommentSearchProps = {
         accountName,
-        permlink,
+        permlink: permlink !== "" ? permlink : undefined,
         fromBlock: payloadFromBlock,
         toBlock: payloadToBlock,
         startDate: payloadStartDate,
@@ -78,7 +78,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
             type="text"
             value={accountName || ""}
             onChange={(e) =>
-              setAccountName(e.target.value === "" ? undefined : e.target.value)
+              setAccountName(e.target.value)
             }
             placeholder="---"
           />
@@ -90,7 +90,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
             type="text"
             value={permlink}
             onChange={(e) =>
-              setPermlink(e.target.value === "" ? undefined : e.target.value)
+              setPermlink(e.target.value)
             }
             placeholder="---"
           />

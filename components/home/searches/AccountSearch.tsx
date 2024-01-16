@@ -27,7 +27,7 @@ const AccountSearch: React.FC<AccountSearchProps> = ({
   operationsTypes,
   loading,
 }) => {
-  const [accountName, setAccountName] = useState<string | undefined>(undefined);
+  const [accountName, setAccountName] = useState<string>("");
   const [selectedOperationTypes, setSelectedOperationTypes] = useState<
     number[]
   >([]);
@@ -36,7 +36,7 @@ const AccountSearch: React.FC<AccountSearchProps> = ({
   const { getRangesValues } = searchRanges;
 
   const onButtonClick = async () => {
-    if (accountName) {
+    if (accountName !== "") {
       const {
         payloadFromBlock,
         payloadToBlock,
@@ -73,7 +73,7 @@ const AccountSearch: React.FC<AccountSearchProps> = ({
             type="text"
             value={accountName || ""}
             onChange={(e) =>
-              setAccountName(e.target.value === "" ? undefined : e.target.value)
+              setAccountName(e.target.value)
             }
             placeholder="---"
           />

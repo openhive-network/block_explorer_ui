@@ -31,15 +31,15 @@ interface BlockSearchProps {
 
 const BlockSearch: React.FC<BlockSearchProps> = ({startBlockSearch, operationsTypes, loading}) => {
 
-  const [accountName, setAccountName] = useState<string | undefined>(undefined);
+  const [accountName, setAccountName] = useState<string >("");
   const [selectedOperationTypes, setSelectedOperationTypes] = useState<
     number[]
   >([]);
   const [singleOperationTypeId, setSingleOperationTypeId] = useState<
     number | undefined
   >(undefined);
-  const [fieldContent, setFieldContent] = useState<string | undefined>(
-    undefined
+  const [fieldContent, setFieldContent] = useState<string>(
+    ""
   );
   const [selectedKeys, setSelectedKeys] = useState<string[] | undefined>(
     undefined
@@ -61,7 +61,7 @@ const BlockSearch: React.FC<BlockSearchProps> = ({startBlockSearch, operationsTy
     if (operationTypesIds.length === 1) {
       setSingleOperationTypeId(operationTypesIds[0]);
     } else {
-      setFieldContent(undefined);
+      setFieldContent("");
       setSingleOperationTypeId(undefined);
     }
     setSelectedOperationTypes(operationTypesIds);
@@ -79,7 +79,7 @@ const BlockSearch: React.FC<BlockSearchProps> = ({startBlockSearch, operationsTy
       payloadEndDate,
     } = await getRangesValues();
     const blockSearchProps: Explorer.BlockSearchProps = {
-      accountName,
+      accountName: accountName !== "" ? accountName : undefined,
       operationTypes: selectedOperationTypes.length
         ? selectedOperationTypes
         : operationsTypes?.map((opType) => opType.op_type_id),
@@ -90,7 +90,7 @@ const BlockSearch: React.FC<BlockSearchProps> = ({startBlockSearch, operationsTy
       limit: config.standardPaginationSize,
       deepProps: {
         keys: selectedKeys,
-        content: fieldContent,
+        content: fieldContent !== "" ? fieldContent : undefined,
       },
     };
     startBlockSearch(blockSearchProps);
@@ -109,7 +109,7 @@ const BlockSearch: React.FC<BlockSearchProps> = ({startBlockSearch, operationsTy
             value={accountName || ""}
             onChange={(e) =>
               setAccountName(
-                e.target.value === "" ? undefined : e.target.value
+                e.target.value
               )
             }
             placeholder="---"
