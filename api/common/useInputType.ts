@@ -12,7 +12,11 @@ const useInputType = (input: string) => {
     refetchOnWindowFocus: false,
   });
 
-  return { inputTypeData, inputTypeDataLoading, inputTypeDataError };
+  return {
+    inputTypeData: !!input.length ? inputTypeData : null,
+    inputTypeDataLoading,
+    inputTypeDataError,
+  };
 };
 
 export default useInputType;

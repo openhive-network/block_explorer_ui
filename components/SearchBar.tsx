@@ -126,7 +126,7 @@ const SearchBar: React.FC = () => {
             );
           }
           resetSearchBar();
-          setInputFocus(true);
+          setInputFocus(false);
         }
       }
     };
@@ -139,7 +139,7 @@ const SearchBar: React.FC = () => {
   }, [inputFocus, inputTypeData, selectedResult]);
 
   return (
-    <div className="w-full md:w-1/3 relative" ref={searchContainerRef}>
+    <div className="w-full md:w-1/3 relative bg-gray-700" ref={searchContainerRef}>
       <div className="border-input border flex items-center pr-2">
         <Input
           className="border-0"
