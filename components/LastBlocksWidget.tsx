@@ -31,7 +31,7 @@ type ChartBlockData = {
   transfer: number;
   other: number;
   virtual: number;
-}
+};
 
 const CustomTooltip = ({
   active,
@@ -119,8 +119,6 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
 
   const lastBlocks = useLastBlocks();
 
-
-
   useEffect(() => {
     setData(getOpsCount(lastBlocks.lastBlocksData || []).reverse());
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -186,15 +184,18 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" stroke="#fff" axisLine={false}>
-          </XAxis>
+          <XAxis dataKey="name" stroke="#fff" axisLine={false}></XAxis>
           <YAxis
             stroke="#fff"
             axisLine={false}
-            domain={[0, (dataMax: number) => Math.floor(dataMax * 1.2)]}
+            domain={[
+              0,
+              (dataMax: number) => (Math.floor(dataMax / 50) + 1) * 50,
+            ]}
             allowDataOverflow={true}
-          >
-          </YAxis>
+            type="number"
+            interval="preserveStartEnd"
+          />
           <Tooltip cursor={{ fill: "#0000002A" }} content={<CustomTooltip />} />
           <Legend wrapperStyle={{ position: "relative" }} align="center" />
           <Bar
