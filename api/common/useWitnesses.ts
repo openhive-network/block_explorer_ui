@@ -7,7 +7,7 @@ const useWitnesses = (witnessesLimit: number) => {
     isLoading: isWitnessDataLoading,
     isError: isWitnessDataError,
   } = useQuery({
-    queryKey: ["witnesses"],
+    queryKey: ["witnesses", witnessesLimit],
     queryFn: () => fetchingService.getWitnesses(witnessesLimit, 0, "votes", "desc"),
     refetchOnWindowFocus: false,
   });

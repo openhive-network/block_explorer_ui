@@ -92,27 +92,27 @@ export default function Witnesses() {
                   {singleWitness.witness}
                 </Link>
               </TableCell>
-              <TableCell >
+              <TableCell>
                 <span className="flex items-center">
-                  {formatNumber(singleWitness.vests || 0, true)}
-                  <MenuSquareIcon 
-                  className="w-4 ml-1 cursor-pointer"                
-                  onClick={() => {
-                    setVoterAccount(singleWitness.witness);
-                    setIsVotesHistoryOpen(true);
-                    }} 
+                  {formatNumber(singleWitness.vests || 0, true).split(".")[0]}
+                  <MenuSquareIcon
+                    className="w-4 ml-1 cursor-pointer"
+                    onClick={() => {
+                      setVoterAccount(singleWitness.witness);
+                      setIsVotesHistoryOpen(true);
+                    }}
                   />
                 </span>
               </TableCell>
               <TableCell>
                 <span className="flex items-center">
                   {singleWitness.voters_num.toLocaleString()}
-                  <MenuSquareIcon 
-                    className="w-4 ml-1 cursor-pointer"                
+                  <MenuSquareIcon
+                    className="w-4 ml-1 cursor-pointer"
                     onClick={() => {
                       setVoterAccount(singleWitness.witness);
                       setIsVotersOpen(true);
-                    }} 
+                    }}
                   />
                 </span>
               </TableCell>
@@ -127,7 +127,9 @@ export default function Witnesses() {
                   : "--"}
               </TableCell>
               <TableCell>
-                {singleWitness.feed_age ? singleWitness.feed_age : "--"}
+                {singleWitness.feed_age
+                  ? singleWitness.feed_age.split(".")[0]
+                  : "--"}
               </TableCell>
               <TableCell>{singleWitness.version}</TableCell>
             </TableRow>
