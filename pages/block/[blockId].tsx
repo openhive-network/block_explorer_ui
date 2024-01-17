@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { ArrowUp, Loader2 } from "lucide-react";
 import BlockPageNavigation from "@/components/block/BlockPageNavigation";
@@ -12,6 +12,7 @@ import useBlockData from "@/api/blockPage/useBlockData";
 import useBlockOperations from "@/api/common/useBlockOperations";
 import useOperationsTypes from "@/api/common/useOperationsTypes";
 import BlockDetails from "@/components/block/BlockDetails";
+import Hive from "@/types/Hive";
 
 const FILTERS = "filters";
 const SPLIT = "-";
@@ -29,7 +30,10 @@ export default function Block() {
 
   const { blockDetails, loading } = useBlockData(Number(blockId), blockFilters);
 
-  const { blockOperations: totalOperations } = useBlockOperations(Number(blockId), []);
+  const { blockOperations: totalOperations } = useBlockOperations(
+    Number(blockId),
+    []
+  );
 
   const { blockError, blockOperations, trxLoading } = useBlockOperations(
     Number(blockId),
@@ -44,18 +48,28 @@ export default function Block() {
     }
   }, [blockDetails]);
 
-  const { virtualOperations, nonVirtualOperations } = useMemo(() => {
-    if (totalOperations) {
-      return {
-        virtualOperations: totalOperations?.filter(
-          (operation) => operation.virtual_op
-        ),
-        nonVirtualOperations: totalOperations?.filter(
-          (operation) => !operation.virtual_op
-        ),
-      };
-    } else return { virtualOperations: [], nonVirtualOperations: [] };
-  }, [totalOperations]);
+  const getSplitOperations = useCallback(
+    (operations?: Hive.OperationResponse[]) => {
+      if (operations) {
+        return {
+          virtualOperations: operations?.filter(
+            (operation) => operation.virtual_op
+          ),
+          nonVirtualOperations: operations?.filter(
+            (operation) => !operation.virtual_op
+          ),
+        };
+      } else return { virtualOperations: [], nonVirtualOperations: [] };
+    },
+    []
+  );
+
+  const { virtualOperations, nonVirtualOperations } =
+    getSplitOperations(blockOperations);
+  const {
+    virtualOperations: totalVirtualOperations,
+    nonVirtualOperations: totalNonVirtualOperations,
+  } = getSplitOperations(totalOperations);
 
   const handleGoToBlock = (blockNumber: string) => {
     router.push({
@@ -116,8 +130,8 @@ export default function Block() {
       />
       <BlockDetails
         operations={totalOperations}
-        virtualOperationLength={virtualOperations?.length}
-        nonVirtualOperationLength={nonVirtualOperations?.length}
+        virtualOperationLength={totalVirtualOperations?.length}
+        nonVirtualOperationLength={totalNonVirtualOperations?.length}
         blockDetails={blockDetails}
       />
       <div className="fixed top-[calc(100vh-90px)] md:top-[calc(100vh-100px)] w-full flex flex-col items-end px-3 md:px-12">
