@@ -29,6 +29,8 @@ export default function Block() {
 
   const { blockDetails, loading } = useBlockData(Number(blockId), blockFilters);
 
+  const { blockOperations: totalOperations } = useBlockOperations(Number(blockId), []);
+
   const { blockError, blockOperations, trxLoading } = useBlockOperations(
     Number(blockId),
     blockFilters
@@ -43,17 +45,17 @@ export default function Block() {
   }, [blockDetails]);
 
   const { virtualOperations, nonVirtualOperations } = useMemo(() => {
-    if (!blockError && blockOperations) {
+    if (totalOperations) {
       return {
-        virtualOperations: blockOperations?.filter(
+        virtualOperations: totalOperations?.filter(
           (operation) => operation.virtual_op
         ),
-        nonVirtualOperations: blockOperations?.filter(
+        nonVirtualOperations: totalOperations?.filter(
           (operation) => !operation.virtual_op
         ),
       };
     } else return { virtualOperations: [], nonVirtualOperations: [] };
-  }, [blockError, blockOperations]);
+  }, [totalOperations]);
 
   const handleGoToBlock = (blockNumber: string) => {
     router.push({
@@ -113,7 +115,7 @@ export default function Block() {
         selectedOperationIds={blockFilters}
       />
       <BlockDetails
-        operations={blockOperations}
+        operations={totalOperations}
         virtualOperationLength={virtualOperations?.length}
         nonVirtualOperationLength={nonVirtualOperations?.length}
         blockDetails={blockDetails}
