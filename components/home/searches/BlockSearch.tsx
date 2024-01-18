@@ -115,7 +115,7 @@ const BlockSearch: React.FC<BlockSearchProps> = ({startBlockSearch, operationsTy
             placeholder="---"
           />
         </div>
-        <SearchRanges rangesProps={searchRanges} />
+        <SearchRanges rangesProps={searchRanges} safeTimeRangeDisplay/>
         <div className="flex items-center">
           <OperationTypesDialog
             operationTypes={operationsTypes}
