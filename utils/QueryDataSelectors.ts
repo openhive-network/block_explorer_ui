@@ -1,7 +1,6 @@
 import Explorer from "@/types/Explorer";
 import Hive from "@/types/Hive";
 import moment from "moment";
-import { getAndFormatPrecision } from "./Calculations";
 import { config } from "@/Config";
 import { formatPercent } from "@/lib/utils";
 import { IHiveChainInterface } from "@hive/wax/web";
@@ -53,35 +52,16 @@ export function adjustDynamicGlobalBlockData(
     current_witness
   } = dynamicGlobalQuery.result;
   const { reward_balance } = rewardFunds.result.funds[0];
-  const precissionedFeedPrice = hiveChain.waxify`${base}`;
   const headBlockDetails: Explorer.HeadBlockDetails = {
-    feedPrice: getAndFormatPrecision(base?.amount, base?.precision),
+    feedPrice: hiveChain.waxify`${base}`,
     blockchainTime: moment(time).format(config.baseMomentTimeFormat),
-    rewardFund: getAndFormatPrecision(reward_balance?.amount, reward_balance?.precision),
-    currentSupply: getAndFormatPrecision(
-      current_supply?.amount,
-      current_supply?.precision
-    ),
-    virtualSupply: getAndFormatPrecision(
-      virtual_supply?.amount,
-      virtual_supply?.precision
-    ),
-    initHbdSupply: getAndFormatPrecision(
-      init_hbd_supply?.amount,
-      init_hbd_supply?.precision
-    ),
-    currentHbdSupply: getAndFormatPrecision(
-      current_hbd_supply?.amount,
-      current_hbd_supply?.precision
-    ),
-    totalVestingFundHive: getAndFormatPrecision(
-      total_vesting_fund_hive?.amount,
-      total_vesting_fund_hive?.precision
-    ),
-    pendingRewardedVestingHive: getAndFormatPrecision(
-      pending_rewarded_vesting_hive?.amount,
-      pending_rewarded_vesting_hive?.precision
-    ),
+    rewardFund: hiveChain.waxify`${reward_balance}`,
+    currentSupply: hiveChain.waxify`${current_supply}`,
+    virtualSupply: hiveChain.waxify`${virtual_supply}`,
+    initHbdSupply: hiveChain.waxify`${init_hbd_supply}`,
+    currentHbdSupply: hiveChain.waxify`${current_hbd_supply}`,
+    totalVestingFundHive: hiveChain.waxify`${total_vesting_fund_hive}`,
+    pendingRewardedVestingHive: hiveChain.waxify`${pending_rewarded_vesting_hive}`,
     hbdInterestRate: formatPercent(hbd_interest_rate),
     hbdPrintRate: formatPercent(hbd_print_rate),
     lastIrreversibleBlockNumber: last_irreversible_block_num,
