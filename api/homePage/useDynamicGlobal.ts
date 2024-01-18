@@ -1,8 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 import { adjustDynamicGlobalBlockData } from "@/utils/QueryDataSelectors";
+import { useHiveChainContext } from "@/components/contexts/HiveChainContext";
 
 const useDynamicGlobal = () => {
+
+  const {hiveChain} = useHiveChainContext();
 
     function getGlobalBlockData() {
         return Promise.all([
@@ -23,7 +26,8 @@ const useDynamicGlobal = () => {
       adjustDynamicGlobalBlockData(
         dynamicGlobalBlockData[0],
         dynamicGlobalBlockData[1],
-        dynamicGlobalBlockData[2]
+        dynamicGlobalBlockData[2],
+        hiveChain!
       ),
     refetchOnWindowFocus: false,
   });

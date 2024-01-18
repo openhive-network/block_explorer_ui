@@ -4,6 +4,7 @@ import moment from "moment";
 import { getAndFormatPrecision } from "./Calculations";
 import { config } from "@/Config";
 import { formatPercent } from "@/lib/utils";
+import { IHiveChainInterface } from "@hive/wax/web";
 
 /**
  * Get dynamic global block data and adjust it for page display.
@@ -17,7 +18,8 @@ import { formatPercent } from "@/lib/utils";
 export function adjustDynamicGlobalBlockData(
   dynamicGlobalQuery: Hive.DynamicGlobalBlockQuery,
   currentPriceFeed: Hive.PriceFeedQuery,
-  rewardFunds: Hive.RewardFundsQuery
+  rewardFunds: Hive.RewardFundsQuery,
+  hiveChain: IHiveChainInterface
 ): Explorer.HeadBlockCardData {
   const { base } = currentPriceFeed.result;
   const {
@@ -51,6 +53,7 @@ export function adjustDynamicGlobalBlockData(
     current_witness
   } = dynamicGlobalQuery.result;
   const { reward_balance } = rewardFunds.result.funds[0];
+  const precissionedFeedPrice = hiveChain.waxify`${base}`;
   const headBlockDetails: Explorer.HeadBlockDetails = {
     feedPrice: getAndFormatPrecision(base?.amount, base?.precision),
     blockchainTime: moment(time).format(config.baseMomentTimeFormat),
