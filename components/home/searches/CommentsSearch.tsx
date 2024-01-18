@@ -95,7 +95,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
             placeholder="---"
           />
         </div>
-        <SearchRanges rangesProps={searchRanges} />
+        <SearchRanges rangesProps={searchRanges} safeTimeRangeDisplay/>
         <div className="flex items-center">
           <OperationTypesDialog
             operationTypes={operationsTypes?.filter((opType) =>
