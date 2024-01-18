@@ -13,6 +13,7 @@ import OperationTypesDialog from "@/components/OperationTypesDialog";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import useBlockByTime from "@/api/common/useBlockByTime";
 import moment from "moment";
+import { getOperationButtonTitle } from "@/utils/UI";
 
 interface BlockPageNavigationProps {
   blockNumber: number;
@@ -153,7 +154,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
             setSelectedOperations={setFilters}
             selectedOperations={selectedOperationIds}
             buttonClassName="bg-gray-500"
-            triggerTitle={"Operation Filters"}
+            triggerTitle={getOperationButtonTitle(selectedOperationIds, operationTypes)}
           />
         </div>
       </div>
