@@ -7,14 +7,17 @@ import "react-datetime-picker/dist/DateTimePicker.css";
 import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
 import { SearchRangesResult } from "./useSearchRanges";
+import { cn } from "@/lib/utils";
 
 
 interface SearchRangesProps {
   rangesProps: SearchRangesResult;
+  safeTimeRangeDisplay?: boolean;
 }
 
 const SearchRanges: React.FC<SearchRangesProps> = ({
-  rangesProps
+  rangesProps,
+  safeTimeRangeDisplay
 }) => {
 
   const {
@@ -153,8 +156,10 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
                 <DateTimePicker 
                   value={startDate} 
                   onChange={(date) => setStartDate(date!)}
-                  className="text-white  border bg-gray-700"
-                  calendarClassName="text-gray-800"
+                  className="text-white border bg-gray-700"
+                  calendarClassName={cn("text-gray-800", {
+                    "absolute -translate-y-1/2": safeTimeRangeDisplay,
+                  })}
                   format="yyyy/MM/dd HH:mm:ss"
                   clearIcon={null}
                   calendarIcon={null}
@@ -168,7 +173,9 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
                   value={endDate} 
                   onChange={(date) => setEndDate(date!)}
                   className="text-white border bg-gray-700"
-                  calendarClassName="text-gray-800"
+                  calendarClassName={cn("text-gray-800", {
+                    "absolute -translate-y-1/2": safeTimeRangeDisplay,
+                  })}
                   format="yyyy/MM/dd HH:mm:ss"
                   clearIcon={null}
                   calendarIcon={null}
