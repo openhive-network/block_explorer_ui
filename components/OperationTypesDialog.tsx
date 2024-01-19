@@ -142,14 +142,14 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           {triggerTitle}
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[95%] md:max-w-[80%] h-[90%] md:h-[80%] flex-column justify-center align-center  bg-white text-black ">
+      <DialogContent className="max-w-[95%] md:max-w-[80%] max-h-[90%] md:max-h-[80%] flex-column justify-center align-center  bg-white text-black overflow-auto">
         <DialogHeader>
           <DialogTitle className="flex justify-center pt-2">
             Operation Types
           </DialogTitle>
         </DialogHeader>
         <div className="overflow-auto">
-          <ul className="my-4 grid grid-cols-3 gap-4 place-items-stretch text-white ">
+        <ul className="my-4 grid grid-cols-3 gap-4 place-items-stretch text-white ">
             {nonVirtualOperations.map((operation) =>
               renderOperation(operation)
             )}
@@ -160,7 +160,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           </ul>
         </div>
         <DialogFooter>
-          <div className="flex flex-wrap justify-between w-full gap-y-4">
+        <div className="flex flex-wrap justify-between w-full gap-y-4">
             <div className="flex">
               <Button
                 type="button"
