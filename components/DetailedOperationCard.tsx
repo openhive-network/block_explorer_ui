@@ -9,6 +9,7 @@ import { Button } from "./ui/button";
 import JSONView from "./JSONView";
 import { useUserSettingsContext } from "./contexts/UserSettingsContext";
 import { cn } from "@/lib/utils";
+import { getOperationTypeForDisplay } from "@/utils/UI";
 
 interface DetailedOperationCardProps {
   operation: Hive.Operation;
@@ -189,7 +190,7 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
             }
           )}
         >
-          {operation.type}
+          {settings.rawJsonView ? operation.type : getOperationTypeForDisplay(operation.type)}
         </div>
         {!skipBlock && (
           <div className="my-1 flex-1">
