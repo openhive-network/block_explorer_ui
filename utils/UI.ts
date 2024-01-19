@@ -20,5 +20,5 @@ export const getOperationButtonTitle = (
 export const getOperationTypeForDisplay = (operationType: string) => {
   let displayType = operationType.split("_");
   displayType.pop()
-  return capitalizeFirst(displayType.join(" "));
+  return displayType.join("_");
 }
