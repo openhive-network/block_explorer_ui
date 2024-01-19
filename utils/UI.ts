@@ -11,7 +11,7 @@ export const getOperationButtonTitle = (
   operationsTypes?: Hive.OperationPattern[]
 ): string => {
   if (selectedOperationTypes && selectedOperationTypes.length === 1)
-    return operationsTypes?.[selectedOperationTypes[0]]?.operation_name || "";
+    return getOperationTypeForDisplay(operationsTypes?.[selectedOperationTypes[0]]?.operation_name  || "");
   if (selectedOperationTypes && selectedOperationTypes.length > 1)
     return `${selectedOperationTypes.length} operation types`;
   return "Operation types";
