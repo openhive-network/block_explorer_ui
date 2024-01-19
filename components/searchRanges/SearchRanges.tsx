@@ -51,7 +51,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
 
   return (
     <div className="border-y border-solid border-gray-600 py-2 flex flex-col gap-y-2">
-        <Select onValueChange={setRangeSelectKey}>
+        <Select onValueChange={setRangeSelectKey} value={rangeSelectKey}>
           <SelectTrigger className="bg-gray-700">
             {rangeSelectOptions.find((selectOption) => selectOption.key === rangeSelectKey)?.name}
           </SelectTrigger>
