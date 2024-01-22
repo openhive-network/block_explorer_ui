@@ -6,5 +6,6 @@ services:
       PORT:
       REACT_APP_API_ADDRESS:
       REACT_APP_HIVE_BLOG_API_ADDRESS:
+      REACT_APP_API_SUBTYPE:
     ports:
       - "${PORT}:${PORT}"

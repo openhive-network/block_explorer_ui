@@ -21,6 +21,7 @@ EOF
 IMAGE=${IMAGE:-"registry.gitlab.syncad.com/hive/block_explorer_ui:latest"}
 PORT=${PORT:-"5000"}
 API_ENDPOINT=${API_ENDPOINT:-"https://hafbe.openhive.network"}
+API_SUBTYPE=${API_SUBTYPE:-"rpc"}
 HIVE_BLOG_API_ENDPOINT=${HIVE_BLOG_API_ENDPOINT:-"https://api.hive.blog"}
 CONTAINER_NAME=${CONTAINER_NAME:-"block_explorer_ui"}
 DETACH=${DETACH:-false}
@@ -72,6 +73,7 @@ RUN_OPTIONS=(
     "--env" "PORT=$PORT"
     "--env" "REACT_APP_API_ADDRESS=$API_ENDPOINT"
     "--env" "REACT_APP_HIVE_BLOG_API_ADDRESS=$HIVE_BLOG_API_ENDPOINT"
+    "--env" "REACT_APP_API_SUBTYPE=$REACT_APP_API_SUBTYPE"
     "--name" "$CONTAINER_NAME"
 )
 
