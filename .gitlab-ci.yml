@@ -162,7 +162,7 @@ staging:deploy:
   extends: .deploy
   variables:
     PORT: 5000
-    API_ENDPOINT: https://hafbe.openhive.network/hafbe
+    API_ENDPOINT: https://steem-15.syncad.com/hafbe
     HIVE_BLOG_API_ENDPOINT: https://api.hive.blog
     CONTAINER_NAME: block-explorer-ui
   environment:
