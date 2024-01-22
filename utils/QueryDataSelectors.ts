@@ -4,6 +4,7 @@ import moment from "moment";
 import { config } from "@/Config";
 import { formatPercent } from "@/lib/utils";
 import { IHiveChainInterface } from "@hive/wax/web";
+import TestFormatter from "@/lib/Formatter";
 
 /**
  * Get dynamic global block data and adjust it for page display.
@@ -51,6 +52,7 @@ export function adjustDynamicGlobalBlockData(
     head_block_number,
     current_witness
   } = dynamicGlobalQuery.result;
+  const formatter = hiveChain.formatter.extend(TestFormatter); 
   const { reward_balance } = rewardFunds.result.funds[0];
   const headBlockDetails: Explorer.HeadBlockDetails = {
     feedPrice: hiveChain.waxify`${base}`,
