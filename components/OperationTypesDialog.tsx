@@ -11,6 +11,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Hive from "@/types/Hive";
+import { getOperationTypeForDisplay } from "@/utils/UI";
+import { useUserSettingsContext } from "./contexts/UserSettingsContext";
 
 type OperationTypesDialogProps = {
   operationTypes: Hive.OperationPattern[] | undefined;
@@ -31,6 +33,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     []
   );
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { settings } = useUserSettingsContext();
 
   if (!operationTypes || !operationTypes.length) return;
 
@@ -52,7 +55,11 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
   };
 
   const handleOnSubmit = () => {
-    setSelectedOperations(Array.isArray(selectedOperationsIds) ? selectedOperationsIds : [selectedOperationsIds]);
+    setSelectedOperations(
+      Array.isArray(selectedOperationsIds)
+        ? selectedOperationsIds
+        : [selectedOperationsIds]
+    );
     onOpenChange(false);
   };
 
@@ -122,7 +129,9 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           htmlFor="bordered-checkbox-1"
           className="p-2 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300 whitespace-nowrap overflow-hidden text-ellipsis"
         >
-          {operation.operation_name}
+          {settings.rawJsonView
+            ? operation.operation_name
+            : getOperationTypeForDisplay(operation.operation_name)}
         </Label>
       </li>
     );
@@ -149,7 +158,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           </DialogTitle>
         </DialogHeader>
         <div className="overflow-auto">
-        <ul className="my-4 grid grid-cols-3 gap-4 place-items-stretch text-white ">
+          <ul className="my-4 grid grid-cols-3 gap-4 place-items-stretch text-white ">
             {nonVirtualOperations.map((operation) =>
               renderOperation(operation)
             )}
@@ -160,27 +169,15 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           </ul>
         </div>
         <DialogFooter>
-        <div className="flex flex-wrap justify-between w-full gap-y-4">
+          <div className="flex flex-wrap justify-between w-full gap-y-4">
             <div className="flex">
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={selectAll}
-              >
+              <Button type="button" variant="secondary" onClick={selectAll}>
                 Select all
               </Button>
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={selectReal}
-              >
+              <Button type="button" variant="secondary" onClick={selectReal}>
                 Select real
               </Button>
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={selectVirtual}
-              >
+              <Button type="button" variant="secondary" onClick={selectVirtual}>
                 Select virtual
               </Button>
               <Button
@@ -190,11 +187,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
               >
                 Invert
               </Button>
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={handleOnClear}
-              >
+              <Button type="button" variant="secondary" onClick={handleOnClear}>
                 Clear
               </Button>
             </div>

@@ -1,4 +1,5 @@
 import Hive from "@/types/Hive";
+import { getOperationTypeForDisplay } from "@/utils/UI";
 
 
 interface BlockPageOperationCountProps {
@@ -30,7 +31,7 @@ const BlockPageOperationCount: React.FC<BlockPageOperationCountProps> = ({operat
         <div className="flex flex-wrap flex-col md:flex-row text-sm">
           {Array.from(nonvirtualOperationCounts).map(([operationName, counter]) => (
             <div key={operationName} className="flex justify-between p-2 md:w-1/2 border-b border-solid border-gray-700  border-r">
-              <span className="mr-2">{`${operationName}: `}</span>
+              <span className="mr-2">{`${getOperationTypeForDisplay(operationName)}: `}</span>
               <span>{counter}</span>
             </div>
           ))}
@@ -39,7 +40,7 @@ const BlockPageOperationCount: React.FC<BlockPageOperationCountProps> = ({operat
         <div className="flex flex-wrap flex-col md:flex-row text-sm">
           {Array.from(virtualOperationCounts).map(([operationName, counter]) => (
             <div key={operationName} className="flex justify-between p-2 md:w-1/2 border-b border-solid border-gray-700  border-r">
-              <span className="mr-2">{`${operationName}: `}</span>
+              <span className="mr-2">{`${getOperationTypeForDisplay(operationName)}: `}</span>
               <span>{counter}</span>
             </div>
           ))}
