@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
-import { ArrowUp, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import BlockPageNavigation from "@/components/block/BlockPageNavigation";
 import DetailedOperationCard from "@/components/DetailedOperationCard";
 import { scrollTo } from "@/utils/UI";
@@ -13,6 +13,7 @@ import useBlockOperations from "@/api/common/useBlockOperations";
 import useOperationsTypes from "@/api/common/useOperationsTypes";
 import BlockDetails from "@/components/block/BlockDetails";
 import Hive from "@/types/Hive";
+import ScrollTopButton from "@/components/ScrollTopButton";
 
 const FILTERS = "filters";
 const SPLIT = "-";
@@ -135,18 +136,7 @@ export default function Block() {
         blockDetails={blockDetails}
       />
       <div className="fixed top-[calc(100vh-90px)] md:top-[calc(100vh-100px)] w-full flex flex-col items-end px-3 md:px-12">
-        <Button
-          onClick={() =>
-            window.scrollTo({
-              top: 0,
-              behavior: "smooth",
-            })
-          }
-          className="bg-[#ADA9A9] rounded text-white hover:bg-gray-700 w-fit mb-1 md:mb-2"
-        >
-          <p className="hidden md:inline">To Top</p>
-          <ArrowUp className="p-0 md:pl-2" />
-        </Button>
+        <ScrollTopButton />
         <Button
           onClick={() => scrollTo(virtualOpsRef)}
           className="bg-[#ADA9A9] rounded text-white hover:bg-gray-700 w-fit"
