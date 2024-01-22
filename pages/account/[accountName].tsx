@@ -7,7 +7,6 @@ import AccountMainCard from "@/components/account/AccountMainCard";
 import AccountWitnessVotesCard from "@/components/account/AccountWitnessVotesCard";
 import VotersDialog from "@/components/Witnesses/VotersDialog";
 import VotesHistoryDialog from "@/components/Witnesses/VotesHistoryDialog";
-import PageNotFound from "@/components/PageNotFound";
 import useAccountDetails from "@/api/accountPage/useAccountDetails";
 import useAccountOperations from "@/api/accountPage/useAccountOperations";
 import useWitnessDetails from "@/api/common/useWitnessDetails";
@@ -16,11 +15,10 @@ import useAccountOperationTypes from "@/api/accountPage/useAccountOperationTypes
 import { useURLParams } from "@/utils/Hooks";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import OperationTypesDialog from "@/components/OperationTypesDialog";
 import Hive from "@/types/Hive";
 import useSearchRanges from "@/components/searchRanges/useSearchRanges";
 import SearchRanges from "@/components/searchRanges/SearchRanges";
-import { getOperationButtonTitle } from "@/utils/UI";
+import ScrollTopButton from "@/components/ScrollTopButton";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -300,6 +298,9 @@ export default function Account() {
               )
             )}
           </div>
+        </div>
+        <div className="fixed bottom-[10px] w-full flex flex-col items-end px-3 md:px-12">
+          <ScrollTopButton />
         </div>
       </div>
     </>

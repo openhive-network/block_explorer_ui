@@ -1,7 +1,6 @@
 import Hive from "@/types/Hive";
 import CustomPagination from "../CustomPagination";
 import JumpToPage from "../JumpToPage";
-import ScrollTopButton from "../ScrollTopButton";
 import { config } from "@/Config";
 import OperationTypesDialog from "../OperationTypesDialog";
 import { getOperationButtonTitle } from "@/utils/UI";
@@ -21,27 +20,30 @@ const AccountTopBar: React.FC<AccountTopBarProps> = ({
   accountOperations,
   accountOperationTypes,
   onOperationsSelect,
-  selectedFilters
+  selectedFilters,
 }) => {
   return (
-    <div className="bg-explorer-orange flex w-full items-center justify-center flex-wrap py-2 max-w-6xl">
-      <CustomPagination
-        currentPage={page}
-        totalCount={accountOperations.total_operations || 0}
-        pageSize={config.standardPaginationSize}
-        onPageChange={setPage}
-        isMirrored={true}
-        className="flex-grows"
-      />
-      <div className="flex-grow flex justify-between max-w-xl lg:max-w-full">
-        <div className="flex">
-          <JumpToPage
-            currentPage={page}
-            onPageChange={setPage}
-            className="flex-shrink"
-          />
-          <ScrollTopButton />
+    <div className="bg-explorer-orange flex items-stretch justify-center w-full flex-wrap m-2">
+      <div className="flex justify-center">
+        <CustomPagination
+          currentPage={page}
+          totalCount={accountOperations.total_operations || 0}
+          pageSize={config.standardPaginationSize}
+          onPageChange={setPage}
+          isMirrored={true}
+          className="flex-grows"
+        />
+        <div className="flex-grow flex justify-between max-w-xl lg:max-w-full">
+          <div className="flex items-center ">
+            <JumpToPage
+              currentPage={page}
+              onPageChange={setPage}
+              className="flex-shrink"
+            />
+          </div>
         </div>
+      </div>
+      <div className="my-1">
         <OperationTypesDialog
           operationTypes={accountOperationTypes}
           setSelectedOperations={onOperationsSelect}
