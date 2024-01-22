@@ -7,12 +7,15 @@ export class MainPage {
   readonly SearchesSection: Locator;
   readonly topWitnessesSidebar: Locator;
 
+  readonly headBlockCardBlockLink: Locator;
+
   constructor(page: Page) {
     this.page = page;
     this.headBlockCard = page.getByTestId('head-block-card');
     this.lastBlockWidget = page.getByTestId('last-block-widget');
     this.SearchesSection = page.getByTestId('block-search-section');
     this.topWitnessesSidebar = page.getByTestId('top-witnesses-sidebar');
+    this.headBlockCardBlockLink = this.headBlockCard.getByTestId('block-number-link');
   }
 
   async gotoBlockExplorerPage() {

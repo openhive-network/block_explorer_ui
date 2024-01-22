@@ -156,7 +156,7 @@ export default function Block() {
           />
         ) : (
           <section className="md:px-10 flex items-center justify-center text-white">
-            <div className="w-full px-4 md:p-0 md:w-4/5 flex flex-col gap-y-2">
+            <div className="w-full px-4 md:p-0 md:w-4/5 flex flex-col gap-y-2" data-testid="block-page-operation-list">
               {nonVirtualOperations?.map((operation, index) => (
                 <DetailedOperationCard
                   operation={operation.operation}
