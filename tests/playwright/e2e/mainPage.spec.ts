@@ -20,11 +20,20 @@ test.describe("Block Explorer UI tests", () => {
     await mainPage.gotoBlockExplorerPage();
     await mainPage.validateMainPageIsLoaded();
 
-    const blockNumber: string = await mainPage.headBlockCardBlockLink.textContent() || '';
-    console.log('111 ', blockNumber);
+    // Extract number as string from Head Block Card Block Link
+    const block: string = await mainPage.headBlockCardBlockLink.textContent() || '';
+    const foundNumberInBlock: any = block.match(RegExp(/\d+$/gm));
+    const blockNumber: string = foundNumberInBlock[0];
+
+
     await mainPage.headBlockCardBlockLink.click();
     await blockPage.validateBlockPageIsLoaded();
+
+    // Extract number as string from Block Page Details Card
     const blockNumberBlockPage = await blockPage.blockDetailsBlockNumber.textContent();
-    console.log('222 ', blockNumberBlockPage);
+    const foundNumberInBlockDetails: any = block.match(RegExp(/\d+$/gm));
+    const blockNumberDetails: string = foundNumberInBlockDetails[0];
+
+    await blockPage.validateBlockNumber(blockNumber); // against block number in head block card
   });
 });
