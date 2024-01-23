@@ -58,7 +58,7 @@ To run a Docker container, use the following command:
 ```bash
 scripts/run_instance.sh \
     --image="registry.gitlab.syncad.com/hive/block_explorer_ui:latest" \
-    --api-endpoint="https://hafbe.openhive.network" \
+    --api-endpoint="https://hafbe.openhive.network/hafbe" \
     --hive-blog-api-endpoint="https://api.hive.blog" \
     --port="5000" \
     --name="block_explorer_ui" \
