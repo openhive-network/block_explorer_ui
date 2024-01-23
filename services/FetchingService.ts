@@ -1,7 +1,7 @@
 import Hive from "@/types/Hive";
 import { config } from "@/Config";
 import Explorer from "@/types/Explorer";
-import { createHiveChain } from "@hive-staging/wax";
+import { IHiveChainInterface } from "@hive/wax/web";
 
 class FetchingService {
   async makePostRequest<T>(url: string, requestBody: T) {
@@ -303,14 +303,12 @@ class FetchingService {
     return await this.makePostRequest(url, requestBody);
   }
 
-  async getManabars(accountName: string): Promise<Hive.Manabars | null> {
+  async getManabars(accountName: string, hiveChain: IHiveChainInterface): Promise<Hive.Manabars | null> {
     try {
-      const chain = await createHiveChain();
-      const upvotePromise = chain.calculateCurrentManabarValueForAccount(accountName, 0);
-      const downvotePromise = chain.calculateCurrentManabarValueForAccount(accountName, 1);
-      const rcPromise = chain.calculateCurrentManabarValueForAccount(accountName, 2);
+      const upvotePromise = hiveChain.calculateCurrentManabarValueForAccount(accountName, 0);
+      const downvotePromise = hiveChain.calculateCurrentManabarValueForAccount(accountName, 1);
+      const rcPromise = hiveChain.calculateCurrentManabarValueForAccount(accountName, 2);
       const manabars = await Promise.all([upvotePromise, downvotePromise, rcPromise]);
-      chain.delete();
       return {upvote: manabars[0], downvote: manabars[1], rc: manabars[2]};
     } catch (error) {
       console.error(error);

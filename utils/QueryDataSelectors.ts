@@ -1,9 +1,9 @@
 import Explorer from "@/types/Explorer";
 import Hive from "@/types/Hive";
 import moment from "moment";
-import { getAndFormatPrecision } from "./Calculations";
 import { config } from "@/Config";
 import { formatPercent } from "@/lib/utils";
+import { IHiveChainInterface } from "@hive/wax/web";
 
 /**
  * Get dynamic global block data and adjust it for page display.
@@ -17,9 +17,13 @@ import { formatPercent } from "@/lib/utils";
 export function adjustDynamicGlobalBlockData(
   dynamicGlobalQuery: Hive.DynamicGlobalBlockQuery,
   currentPriceFeed: Hive.PriceFeedQuery,
-  rewardFunds: Hive.RewardFundsQuery
+  rewardFunds: Hive.RewardFundsQuery,
+  hiveChain: IHiveChainInterface
 ): Explorer.HeadBlockCardData {
   const { base } = currentPriceFeed.result;
+  const basicFormatter = hiveChain.formatter;
+  const dynamicGlobalBlock = dynamicGlobalQuery.result;
+  const formattedBaseValues: Explorer.DynamicGlobalBlock = basicFormatter.format(dynamicGlobalBlock);
   const {
     time,
     current_supply,
@@ -49,36 +53,18 @@ export function adjustDynamicGlobalBlockData(
     max_open_recurrent_transfers,
     head_block_number,
     current_witness
-  } = dynamicGlobalQuery.result;
-  const { reward_balance } = rewardFunds.result.funds[0];
+  } = formattedBaseValues;
+  const rewardBalance: string = basicFormatter.format(rewardFunds.result.funds[0].reward_balance);
   const headBlockDetails: Explorer.HeadBlockDetails = {
-    feedPrice: getAndFormatPrecision(base?.amount, base?.precision),
+    feedPrice: basicFormatter.format(base),
     blockchainTime: moment(time).format(config.baseMomentTimeFormat),
-    rewardFund: getAndFormatPrecision(reward_balance?.amount, reward_balance?.precision),
-    currentSupply: getAndFormatPrecision(
-      current_supply?.amount,
-      current_supply?.precision
-    ),
-    virtualSupply: getAndFormatPrecision(
-      virtual_supply?.amount,
-      virtual_supply?.precision
-    ),
-    initHbdSupply: getAndFormatPrecision(
-      init_hbd_supply?.amount,
-      init_hbd_supply?.precision
-    ),
-    currentHbdSupply: getAndFormatPrecision(
-      current_hbd_supply?.amount,
-      current_hbd_supply?.precision
-    ),
-    totalVestingFundHive: getAndFormatPrecision(
-      total_vesting_fund_hive?.amount,
-      total_vesting_fund_hive?.precision
-    ),
-    pendingRewardedVestingHive: getAndFormatPrecision(
-      pending_rewarded_vesting_hive?.amount,
-      pending_rewarded_vesting_hive?.precision
-    ),
+    rewardFund: rewardBalance,
+    currentSupply: current_supply,
+    virtualSupply: virtual_supply,
+    initHbdSupply: init_hbd_supply,
+    currentHbdSupply: current_hbd_supply,
+    totalVestingFundHive: total_vesting_fund_hive,
+    pendingRewardedVestingHive: pending_rewarded_vesting_hive,
     hbdInterestRate: formatPercent(hbd_interest_rate),
     hbdPrintRate: formatPercent(hbd_print_rate),
     lastIrreversibleBlockNumber: last_irreversible_block_num,

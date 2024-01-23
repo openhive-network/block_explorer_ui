@@ -2,6 +2,7 @@ import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 import Explorer from "@/types/Explorer";
 import Long from "long";
+import { useHiveChainContext } from "@/components/contexts/HiveChainContext";
 
 const useManabars = (accountName: string) => {
   const {
@@ -14,9 +15,11 @@ const useManabars = (accountName: string) => {
     refetchOnWindowFocus: false,
   });
 
+  const {hiveChain} = useHiveChainContext();
+
   const getManabars = async (accountName: string): Promise<Explorer.Manabars | null> => {
-    if (!accountName) return null;
-    const manabars = await fetchingService.getManabars(accountName);
+    if (!accountName || ! hiveChain) return null;
+    const manabars = await fetchingService.getManabars(accountName, hiveChain);
     if (!manabars) return null;
     const {upvote, downvote, rc} = manabars;
     const processedManabars: Explorer.Manabars = {
