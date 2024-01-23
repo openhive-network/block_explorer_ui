@@ -20,7 +20,7 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
   nonVirtualOperationLength,
 }) => {
   return (
-    <div className="flex flex-col w-full md:w-4/6 mx-auto mb-4 text-white rounded shadow-xl border border-explorer-bg-start bg-explorer-dark-gray text-center" data-testid="block-page-block-dev">
+    <div className="flex flex-col w-full md:w-4/6 mx-auto mb-4 text-white rounded shadow-xl border border-explorer-bg-start bg-explorer-dark-gray text-center" data-testid="block-page-block-details">
       <div className="text-2xl font-semibold mt-2" data-testid="block-number">
         Block {blockDetails?.block_num}
       </div>

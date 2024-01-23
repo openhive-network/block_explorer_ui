@@ -21,4 +21,8 @@ export class BlockPage {
     await expect(this.blockPageBlockDetails).toBeVisible();
     await expect(this.blockPageOperationList).toBeVisible();
   }
+
+  async validateBlockNumber(blockNumber: string){
+    await expect(this.blockDetailsBlockNumber).toContainText(blockNumber);
+  }
 }
