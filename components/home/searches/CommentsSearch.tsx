@@ -4,7 +4,7 @@ import OperationTypesDialog from "@/components/OperationTypesDialog";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import useSearchRanges from "@/components/searchRanges/useSearchRanges";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Hive from "@/types/Hive";
 import { getOperationButtonTitle } from "@/utils/UI";
 import Explorer from "@/types/Explorer";
@@ -12,9 +12,10 @@ import { config } from "@/Config";
 
 interface CommentsSearchProps {
   startCommentsSearch: (
-    accountSearchOperationsProps: Explorer.CommentSearchProps
+    accountSearchOperationsProps: Explorer.CommentSearchParams
   ) => Promise<void>;
   operationsTypes?: Hive.OperationPattern[];
+  data?: Explorer.CommentSearchParams;
   loading?: boolean;
 }
 
@@ -22,6 +23,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
   startCommentsSearch,
   operationsTypes,
   loading,
+  data,
 }) => {
   const [accountName, setAccountName] = useState<string>("");
   const [permlink, setPermlink] = useState<string>("");
@@ -33,6 +35,14 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
   const searchRanges = useSearchRanges();
   const { getRangesValues } = searchRanges;
 
+  const setSearchValues = (data: Explorer.CommentSearchParams) => {
+    data.accountName && setAccountName(data.accountName);
+    data.permlink && setPermlink(data.permlink);
+    data.operationTypes &&
+      setSelectedCommentSearchOperationTypes(data.operationTypes);
+    searchRanges.setRangesValues(data);
+  };
+
   const onButtonClick = async () => {
     if (accountName !== "") {
       const {
@@ -42,7 +52,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
         payloadEndDate,
       } = await getRangesValues();
 
-      const commentSearchProps: Explorer.CommentSearchProps = {
+      const commentSearchProps: Explorer.CommentSearchParams = {
         accountName,
         permlink: permlink !== "" ? permlink : undefined,
         fromBlock: payloadFromBlock,
@@ -52,10 +62,25 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
         operationTypes: selectedCommentSearchOperationTypes.length
           ? selectedCommentSearchOperationTypes
           : undefined,
+        lastBlocks:
+          searchRanges.rangeSelectKey === "lastBlocks"
+            ? searchRanges.lastBlocksValue
+            : undefined,
+        lastTime: searchRanges.lastTimeUnitValue,
+        page: data?.page || 1,
+        rangeSelectKey: searchRanges.rangeSelectKey,
+        timeUnit: searchRanges.timeUnitSelectKey,
       };
       startCommentsSearch(commentSearchProps);
     }
   };
+
+  useEffect(() => {
+    if (!!data) {
+      setSearchValues(data);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
   return (
     <>

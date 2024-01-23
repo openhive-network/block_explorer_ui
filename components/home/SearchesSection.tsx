@@ -217,7 +217,9 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
             <AccordionTrigger>Comment search</AccordionTrigger>
             <AccordionContent className="px-2 flex flex-col gap-y-4">
               <CommentsSearch
-                startCommentsSearch={startCommentSearch}
+                startCommentsSearch={(params: Explorer.CommentSearchParams) =>
+                  startCommentSearch(params as Explorer.CommentSearchProps)
+                }
                 operationsTypes={operationsTypes}
                 loading={commentSearch.commentSearchDataLoading}
               />

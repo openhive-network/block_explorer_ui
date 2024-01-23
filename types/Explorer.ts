@@ -57,6 +57,21 @@ declare module Explorer {
     }
   }
 
+  interface CommentSearchParams {
+    accountName: string | undefined;
+    permlink: string | undefined;
+    fromBlock: number | undefined;
+    toBlock: number | undefined;
+    startDate: Date | undefined;
+    endDate: Date | undefined;
+    lastBlocks: number | undefined;
+    lastTime: number | undefined;
+    timeUnit: string | undefined;
+    rangeSelectKey: string | undefined;
+    page: number;
+    operationTypes: number[] | undefined;
+  }
+
   interface CommentSearchProps extends CommonSearchProps {
     accountName: string;
     permlink?: string;
