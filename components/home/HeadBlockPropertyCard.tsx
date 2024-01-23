@@ -60,7 +60,7 @@ const HeadBlockPropertyCard: React.FC<HeadBlockPropertyCardProps> = ({
   const { dynamicGlobalData } = useDynamicGlobal() as any;
 
   return (
-    <div className="bg-explorer-dark-gray py-1 rounded-[6px]">
+    <div className="bg-explorer-dark-gray py-1 rounded-[6px]" data-testid="expandable-list">
       <div
         onClick={handleHideParams}
         className="h-full flex justify-between align-center py-2 hover:bg-slate-600 cursor-pointer px-2"
@@ -68,7 +68,7 @@ const HeadBlockPropertyCard: React.FC<HeadBlockPropertyCardProps> = ({
         <div className="text-lg">{header}</div>
         {isParamsHidden ? <ArrowDown /> : <ArrowUp />}
       </div>
-      <div hidden={isParamsHidden}>
+      <div hidden={isParamsHidden} data-testid="conntent-expandable-list">
         {parameters.map((param: any) => (
           <div
             key={param}

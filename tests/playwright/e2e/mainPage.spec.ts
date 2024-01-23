@@ -73,7 +73,7 @@ test.describe("Block Explorer UI tests", () => {
     await mainPage.validateMainPageIsLoaded();
 
     const currentWitnessName: string = await mainPage.headBlockCardWitnessName.textContent() || '';
-    console.log('111 ', currentWitnessName);
+
     // Click current witness link
     await mainPage.headBlockCardWitnessLink.click();
     // Validate Account Page is loaded
@@ -82,4 +82,53 @@ test.describe("Block Explorer UI tests", () => {
     await accountPage.validateAccountName(currentWitnessName);
   });
 
+  test("Move to the Account page by clicking current witness link and back to the home page",async ({ page }) => {
+    await mainPage.gotoBlockExplorerPage();
+    await mainPage.validateMainPageIsLoaded();
+
+    const currentWitnessName: string = await mainPage.headBlockCardWitnessName.textContent() || '';
+
+    // Click current witness link
+    await mainPage.headBlockCardWitnessLink.click();
+    // Validate Account Page is loaded
+    await accountPage.validateAccountPageIsLoaded();
+    // Validate Account Name
+    await accountPage.validateAccountName(currentWitnessName);
+    // Back to the home page
+    await navbar.navBarHiveHeaderText.click();
+    await mainPage.validateMainPageIsLoaded();
+  });
+
+  test("Validate that expanding Fund and Supply list displays the data", async ({ page }) => {
+    await mainPage.gotoBlockExplorerPage();
+    await mainPage.validateMainPageIsLoaded();
+
+    await expect(mainPage.contentFundAndSupplyExpandableList).toBeHidden();
+    await mainPage.headBlockCardFundAndSupplyExpandableList.click();
+    await expect(mainPage.contentFundAndSupplyExpandableList).not.toBeHidden();
+    await mainPage.headBlockCardFundAndSupplyExpandableList.click();
+    await expect(mainPage.contentFundAndSupplyExpandableList).toBeHidden();
+  });
+
+  test("Validate that expanding Hive Parameters list displays the data", async ({ page }) => {
+    await mainPage.gotoBlockExplorerPage();
+    await mainPage.validateMainPageIsLoaded();
+
+    await expect(mainPage.contentHiveParametersExpandableList).toBeHidden();
+    await mainPage.headBlockCardHiveParametersExpandableList.click();
+    await expect(mainPage.contentHiveParametersExpandableList).not.toBeHidden();
+    await mainPage.headBlockCardHiveParametersExpandableList.click();
+    await expect(mainPage.contentHiveParametersExpandableList).toBeHidden();
+  });
+
+  test("Validate that expanding Blockchain Dates list displays the data", async ({ page }) => {
+    await mainPage.gotoBlockExplorerPage();
+    await mainPage.validateMainPageIsLoaded();
+
+    await expect(mainPage.contentBlockchainDatesExpandableList).toBeHidden();
+    await mainPage.headBlockCardBlockchainDatesExpandableList.click();
+    await expect(mainPage.contentBlockchainDatesExpandableList).not.toBeHidden();
+    await mainPage.headBlockCardBlockchainDatesExpandableList.click();
+    await expect(mainPage.contentBlockchainDatesExpandableList).toBeHidden();
+  });
 });
