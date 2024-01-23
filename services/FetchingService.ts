@@ -77,7 +77,7 @@ class FetchingService {
       method: "database_api.get_reward_funds",
       id: 1,
     };
-    const url = `${config.hiveBlogAddress}`;
+    const url = `${config.nodeAddress}`;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -87,7 +87,7 @@ class FetchingService {
       method: "database_api.get_dynamic_global_properties",
       id: 1,
     };
-    const url = `${config.hiveBlogAddress}`;
+    const url = `${config.nodeAddress}`;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -97,7 +97,7 @@ class FetchingService {
       method: "database_api.get_current_price_feed",
       id: 1,
     };
-    const url = `${config.hiveBlogAddress}`;
+    const url = `${config.nodeAddress}`;
     return await this.makePostRequest(url, requestBody);
   }
 
