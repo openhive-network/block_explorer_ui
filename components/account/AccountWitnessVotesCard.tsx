@@ -18,7 +18,7 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
   };
 
   return (
-    <div className="bg-explorer-dark-gray p-2 rounded m-2 md:mx-6">
+    <div className="bg-explorer-dark-gray p-2 rounded m-2 md:mx-6" data-testid="witness-votes-dropdown">
       <div
         onClick={handlePropertiesVisibility}
         className="h-full flex justify-between align-center p-2 hover:bg-slate-600 cursor-pointer"
