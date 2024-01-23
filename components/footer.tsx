@@ -1,5 +1,6 @@
 import useHafbeVersion from "@/api/common/useHafbeVersion";
 import { config } from "@/Config";
+import AddressSwitchedDialog from "./AddressSwitchedDialog";
 
 export default function Footer() {
   const { hafbeVersionData } = useHafbeVersion();
@@ -21,14 +22,8 @@ export default function Footer() {
         </p>
       </div>
       <div className="flex flex-row justify-center gap-4">
-        <p data-testid="footer-api-adress">
-          <span>API address: </span>
-          {config.apiAddress}
-        </p>
-        <p data-testid="footer-node-address">
-          <span>Hive node: </span>
-          {config.nodeAddress}
-        </p>
+        <AddressSwitchedDialog addressType="api" />
+        <AddressSwitchedDialog addressType="node" />
       </div>
     </div>
   );
