@@ -1,3 +1,5 @@
+import Hive from "./Hive";
+
 declare module Explorer {
 
   interface HeadBlockDetails {
@@ -86,6 +88,30 @@ declare module Explorer {
     upvote: SingleManabar;
     downvote: SingleManabar;
     rc: SingleManabar;
+  }
+
+  interface DynamicGlobalBlock extends Omit<Hive.DynamicGlobalBlock, 
+    "virtual_supply" |
+    "current_supply" |
+    "init_hbd_supply" |
+    "current_hbd_supply" |
+    "total_vesting_fund_hive" |
+    "total_vesting_shares" |
+    "total_reward_fund_hive" |
+    "pending_rewarded_vesting_shares" |
+    "pending_rewarded_vesting_hive" |
+    "dhf_interval_ledger" 
+  > {
+    virtual_supply: string;
+    current_supply: string;
+    init_hbd_supply: string;
+    current_hbd_supply: string;
+    total_vesting_fund_hive: string;
+    total_vesting_shares: string;
+    total_reward_fund_hive: string;
+    pending_rewarded_vesting_shares: string;
+    pending_rewarded_vesting_hive: string;
+    dhf_interval_ledger: string;
   }
 }
 

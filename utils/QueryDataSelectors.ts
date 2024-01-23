@@ -22,6 +22,8 @@ export function adjustDynamicGlobalBlockData(
   hiveChain: IHiveChainInterface
 ): Explorer.HeadBlockCardData {
   const { base } = currentPriceFeed.result;
+  const basicFormatter = hiveChain.formatter;
+  const formattedBaseValues: Explorer.DynamicGlobalBlock = basicFormatter.format(dynamicGlobalQuery.result);
   const {
     time,
     current_supply,
@@ -51,19 +53,20 @@ export function adjustDynamicGlobalBlockData(
     max_open_recurrent_transfers,
     head_block_number,
     current_witness
-  } = dynamicGlobalQuery.result;
+  } = formattedBaseValues;
   const formatter = hiveChain.formatter.extend(TestFormatter); 
-  const { reward_balance } = rewardFunds.result.funds[0];
+  // const testResults = formatter.format(dynamicGlobalQuery.result);
+  const rewardBalance: string = basicFormatter.format(rewardFunds.result.funds[0].reward_balance);
   const headBlockDetails: Explorer.HeadBlockDetails = {
     feedPrice: hiveChain.waxify`${base}`,
     blockchainTime: moment(time).format(config.baseMomentTimeFormat),
-    rewardFund: hiveChain.waxify`${reward_balance}`,
-    currentSupply: hiveChain.waxify`${current_supply}`,
-    virtualSupply: hiveChain.waxify`${virtual_supply}`,
-    initHbdSupply: hiveChain.waxify`${init_hbd_supply}`,
-    currentHbdSupply: hiveChain.waxify`${current_hbd_supply}`,
-    totalVestingFundHive: hiveChain.waxify`${total_vesting_fund_hive}`,
-    pendingRewardedVestingHive: hiveChain.waxify`${pending_rewarded_vesting_hive}`,
+    rewardFund: rewardBalance,
+    currentSupply: current_supply,
+    virtualSupply: virtual_supply,
+    initHbdSupply: init_hbd_supply,
+    currentHbdSupply: current_hbd_supply,
+    totalVestingFundHive: total_vesting_fund_hive,
+    pendingRewardedVestingHive: pending_rewarded_vesting_hive,
     hbdInterestRate: formatPercent(hbd_interest_rate),
     hbdPrintRate: formatPercent(hbd_print_rate),
     lastIrreversibleBlockNumber: last_irreversible_block_num,
