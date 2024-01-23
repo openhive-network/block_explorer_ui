@@ -4,6 +4,20 @@ import Explorer from "@/types/Explorer";
 import { IHiveChainInterface } from "@hive/wax/web";
 
 class FetchingService {
+
+  private apiURL: string = config.apiAddress;
+  private nodeUrl: string = config.nodeAddress;
+
+
+  public setApiUrl(newUrl: string) {
+    this.apiURL = newUrl;
+  }
+
+  public setNodeUrl(newUrl: string) {
+    this.nodeUrl = newUrl;
+  }
+
+
   async makePostRequest<T>(url: string, requestBody: T) {
     try {
       const response = await fetch(url, {
