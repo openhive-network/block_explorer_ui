@@ -1,10 +1,15 @@
+import { config } from "@/Config";
+import Hive from "@/types/Hive";
 import { WaxFormattable } from "@hive/wax/web";
+import moment from "moment";
 
 
 class TestFormatter {
-    @WaxFormattable() // Match this method as `myCustomProp` custom formatter
-    mid_voting_seconds(value: any) {
-      return value.mid_voting_seconds.toString();
+    // Example formatter
+    @WaxFormattable()
+    time(value: Hive.DynamicGlobalBlock) {
+      const time = moment(value.time).format(config.baseMomentTimeFormat);
+      return {...value, time};
     }
   
   }
