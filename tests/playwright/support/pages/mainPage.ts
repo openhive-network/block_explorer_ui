@@ -8,6 +8,8 @@ export class MainPage {
   readonly topWitnessesSidebar: Locator;
 
   readonly headBlockCardBlockLink: Locator;
+  readonly headBlockCardWitnessLink: Locator;
+  readonly headBlockCardWitnessName: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -16,6 +18,8 @@ export class MainPage {
     this.SearchesSection = page.getByTestId('block-search-section');
     this.topWitnessesSidebar = page.getByTestId('top-witnesses-sidebar');
     this.headBlockCardBlockLink = this.headBlockCard.getByTestId('block-number-link');
+    this.headBlockCardWitnessLink = this.headBlockCard.getByTestId('current-witness-link');
+    this.headBlockCardWitnessName = this.headBlockCard.getByTestId('current-witness-name');
   }
 
   async gotoBlockExplorerPage() {

@@ -23,7 +23,7 @@ const AccountTopBar: React.FC<AccountTopBarProps> = ({
   selectedFilters,
 }) => {
   return (
-    <div className="bg-explorer-orange flex items-stretch justify-center w-full flex-wrap m-2">
+    <div className="bg-explorer-orange flex items-stretch justify-center w-full flex-wrap m-2" data-testid="account-top-bar">
       <div className="flex justify-center">
         <CustomPagination
           currentPage={page}
