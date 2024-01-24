@@ -51,7 +51,7 @@ class FetchingService {
     filter?: number[],
     page?: number
   ): Promise<Hive.OperationResponse[]> {
-    const requestBody: Hive.GetOpsByBlockProps | any = {
+    const requestBody: Hive.GetOpsByBlockProps = {
       _block_num: blockNumber,
       _filter: filter,
       _body_limit: config.opsBodyLimit,

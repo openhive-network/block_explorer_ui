@@ -13,9 +13,9 @@ declare module Hive {
 
   interface GetOpsByBlockProps {
     _block_num: number;
-    _filter: number[];
+    _filter?: number[];
+    _page_size: number;
     _body_limit: number;
-    _limit: number;
     _page_num?: number;
   }
 
