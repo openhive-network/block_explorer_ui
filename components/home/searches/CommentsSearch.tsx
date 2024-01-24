@@ -1,15 +1,10 @@
-import {
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { Input } from "@/components/ui/input";
 import SearchRanges from "@/components/searchRanges/SearchRanges";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import useSearchRanges from "@/components/searchRanges/useSearchRanges";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Hive from "@/types/Hive";
 import { getOperationButtonTitle } from "@/utils/UI";
 import Explorer from "@/types/Explorer";
@@ -17,9 +12,10 @@ import { config } from "@/Config";
 
 interface CommentsSearchProps {
   startCommentsSearch: (
-    accountSearchOperationsProps: Explorer.CommentSearchProps
+    accountSearchOperationsProps: Explorer.CommentSearchParams
   ) => Promise<void>;
   operationsTypes?: Hive.OperationPattern[];
+  data?: Explorer.CommentSearchParams;
   loading?: boolean;
 }
 
@@ -27,6 +23,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
   startCommentsSearch,
   operationsTypes,
   loading,
+  data,
 }) => {
   const [accountName, setAccountName] = useState<string>("");
   const [permlink, setPermlink] = useState<string>("");
@@ -37,7 +34,15 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
 
   const searchRanges = useSearchRanges();
   const { getRangesValues } = searchRanges;
-  
+
+  const setSearchValues = (data: Explorer.CommentSearchParams) => {
+    data.accountName && setAccountName(data.accountName);
+    data.permlink && setPermlink(data.permlink);
+    data.operationTypes &&
+      setSelectedCommentSearchOperationTypes(data.operationTypes);
+    searchRanges.setRangesValues(data);
+  };
+
   const onButtonClick = async () => {
     if (accountName !== "") {
       const {
@@ -46,8 +51,8 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
         payloadStartDate,
         payloadEndDate,
       } = await getRangesValues();
-  
-      const commentSearchProps: Explorer.CommentSearchProps = {
+
+      const commentSearchProps: Explorer.CommentSearchParams = {
         accountName,
         permlink: permlink !== "" ? permlink : undefined,
         fromBlock: payloadFromBlock,
@@ -57,76 +62,81 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
         operationTypes: selectedCommentSearchOperationTypes.length
           ? selectedCommentSearchOperationTypes
           : undefined,
+        lastBlocks:
+          searchRanges.rangeSelectKey === "lastBlocks"
+            ? searchRanges.lastBlocksValue
+            : undefined,
+        lastTime: searchRanges.lastTimeUnitValue,
+        page: data?.page || 1,
+        rangeSelectKey: searchRanges.rangeSelectKey,
+        timeUnit: searchRanges.timeUnitSelectKey,
       };
       startCommentsSearch(commentSearchProps);
     }
   };
 
+  useEffect(() => {
+    if (!!data) {
+      setSearchValues(data);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
   return (
-    <AccordionItem value="comment">
-      <AccordionTrigger>Comment search</AccordionTrigger>
-      <AccordionContent className="px-2 flex flex-col gap-y-4">
-        <p className="ml-2">
-          Find all operations related to comments of given account or for exact
-          permlink.
-        </p>
-        <div className="flex flex-col">
-          <label className="ml-2">Account name *</label>
-          <Input
-            className="w-1/2 md:w-1/3 bg-gray-700"
-            type="text"
-            value={accountName || ""}
-            onChange={(e) =>
-              setAccountName(e.target.value)
-            }
-            placeholder="---"
-          />
-        </div>
-        <div className="flex flex-col">
-          <label className="ml-2">Permlink</label>
-          <Input
-            className="w-full bg-gray-700"
-            type="text"
-            value={permlink}
-            onChange={(e) =>
-              setPermlink(e.target.value)
-            }
-            placeholder="---"
-          />
-        </div>
-        <SearchRanges rangesProps={searchRanges} safeTimeRangeDisplay/>
-        <div className="flex items-center">
-          <OperationTypesDialog
-            operationTypes={operationsTypes?.filter((opType) =>
-              config.commentOperationsTypeIds.includes(opType.op_type_id)
-            )}
-            selectedOperations={selectedCommentSearchOperationTypes}
-            setSelectedOperations={setSelectedCommentSearchOperationTypes}
-            buttonClassName="bg-gray-500"
-            triggerTitle={getOperationButtonTitle(
-              selectedCommentSearchOperationTypes,
-              operationsTypes
-            )}
-          />
-        </div>
-        <div className="flex items-center">
-          <Button
-            className=" bg-blue-800 hover:bg-blue-600 rounded"
-            onClick={onButtonClick}
-            disabled={!accountName}
-          >
-            <span>Search</span>{" "}
-            {loading && (
-              <Loader2 className="animate-spin h-4 w-4  ..." />
-            )}
-          </Button>
-          {!accountName && (
-            <label className=" text-muted-foreground">Set account name</label>
+    <>
+      <p className="ml-2">
+        Find all operations related to comments of given account or for exact
+        permlink.
+      </p>
+      <div className="flex flex-col">
+        <label className="ml-2">Account name *</label>
+        <Input
+          className="w-1/2 md:w-1/3 bg-gray-700"
+          type="text"
+          value={accountName || ""}
+          onChange={(e) => setAccountName(e.target.value)}
+          placeholder="---"
+        />
+      </div>
+      <div className="flex flex-col">
+        <label className="ml-2">Permlink</label>
+        <Input
+          className="w-full bg-gray-700"
+          type="text"
+          value={permlink}
+          onChange={(e) => setPermlink(e.target.value)}
+          placeholder="---"
+        />
+      </div>
+      <SearchRanges rangesProps={searchRanges} safeTimeRangeDisplay />
+      <div className="flex items-center">
+        <OperationTypesDialog
+          operationTypes={operationsTypes?.filter((opType) =>
+            config.commentOperationsTypeIds.includes(opType.op_type_id)
           )}
-        </div>
-      </AccordionContent>
-    </AccordionItem>
+          selectedOperations={selectedCommentSearchOperationTypes}
+          setSelectedOperations={setSelectedCommentSearchOperationTypes}
+          buttonClassName="bg-gray-500"
+          triggerTitle={getOperationButtonTitle(
+            selectedCommentSearchOperationTypes,
+            operationsTypes
+          )}
+        />
+      </div>
+      <div className="flex items-center">
+        <Button
+          className=" bg-blue-800 hover:bg-blue-600 rounded"
+          onClick={onButtonClick}
+          disabled={!accountName}
+        >
+          <span>Search</span>{" "}
+          {loading && <Loader2 className="animate-spin h-4 w-4  ..." />}
+        </Button>
+        {!accountName && (
+          <label className=" text-muted-foreground">Set account name</label>
+        )}
+      </div>
+    </>
   );
 };
 
