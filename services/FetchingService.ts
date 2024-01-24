@@ -5,12 +5,11 @@ import { IHiveChainInterface } from "@hive/wax/web";
 
 class FetchingService {
 
-  private apiURL: string = config.apiAddress;
+  private apiUrl: string = config.apiAddress;
   private nodeUrl: string = config.nodeAddress;
 
-
   public setApiUrl(newUrl: string) {
-    this.apiURL = newUrl;
+    this.apiUrl = newUrl;
   }
 
   public setNodeUrl(newUrl: string) {
@@ -32,31 +31,31 @@ class FetchingService {
   }
 
   async getHeadBlockNum(): Promise<number> {
-    const url = `${config.apiAddress}/get_head_block_num`;
+    const url = `${this.apiUrl}/get_head_block_num`;
     return await this.makePostRequest(url, {});
   }
 
   async getBlock(blockNumber: number): Promise<Hive.BlockDetails> {
     const requestBody: Hive.GetBlockProps = { _block_num: blockNumber };
-    const url = `${config.apiAddress}/get_block`;
+    const url = `${this.apiUrl}/get_block`;
     return await this.makePostRequest(url, requestBody);
   }
 
   async getLastBlocks(limit: number): Promise<Hive.LastBlocksTypeResponse[]> {
     const requestBody: Hive.GetLatestBlocksProps = { _limit: limit };
-    const url = `${config.apiAddress}/get_latest_blocks `;
+    const url = `${this.apiUrl}/get_latest_blocks `;
     return await this.makePostRequest(url, requestBody);
   }
 
   async getInputType(input: string): Promise<Hive.InputTypeResponse> {
     const requestBody: Hive.GetInputTypeProps = { _input: input };
-    const url = `${config.apiAddress}/get_input_type`;
+    const url = `${this.apiUrl}/get_input_type`;
     return await this.makePostRequest(url, requestBody);
   }
 
   async getBlockOpTypes(blockNumber: number): Promise<Hive.OperationTypes[]> {
     const requestBody: Hive.GetBlockOpTypesProps = { _block_num: blockNumber };
-    const url = `${config.apiAddress}/get_block_op_types`;
+    const url = `${this.apiUrl}/get_block_op_types`;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -72,7 +71,7 @@ class FetchingService {
       _page_size: 1000,
       _page_num: page,
     };
-    const url = `${config.apiAddress}/get_ops_by_block_test`;
+    const url = `${this.apiUrl}/get_ops_by_block`;
     return await this.makePostRequest(url, requestBody);
   }
   async getTransaction(
@@ -81,7 +80,7 @@ class FetchingService {
     const requestBody: Hive.GetTransactionProps = {
       _trx_hash: transactionHash,
     };
-    const url = `${config.apiAddress}/get_transaction`;
+    const url = `${this.apiUrl}/get_transaction`;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -91,7 +90,7 @@ class FetchingService {
       method: "database_api.get_reward_funds",
       id: 1,
     };
-    const url = `${config.nodeAddress}`;
+    const url = `${this.nodeUrl}`;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -101,7 +100,7 @@ class FetchingService {
       method: "database_api.get_dynamic_global_properties",
       id: 1,
     };
-    const url = `${config.nodeAddress}`;
+    const url = `${this.nodeUrl}`;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -111,13 +110,13 @@ class FetchingService {
       method: "database_api.get_current_price_feed",
       id: 1,
     };
-    const url = `${config.nodeAddress}`;
+    const url = `${this.nodeUrl}`;
     return await this.makePostRequest(url, requestBody);
   }
 
   async getAccOpTypes(account: string): Promise<unknown> {
     const requestBody: Hive.GetAccOpTypesProps = { _account: account };
-    const url = `${config.apiAddress}/get_acc_op_types`;
+    const url = `${this.apiUrl}/get_acc_op_types`;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -135,7 +134,7 @@ class FetchingService {
       _date_end: accountOperationsProps.endDate,
       _body_limit: config.opsBodyLimit
     };
-    const url = `${config.apiAddress}/get_ops_by_account`;
+    const url = `${this.apiUrl}/get_ops_by_account`;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -147,13 +146,13 @@ class FetchingService {
       _account: account,
       _operations: operations,
     };
-    const url = `${config.apiAddress}/get_account_operations_count`;
+    const url = `${this.apiUrl}/get_account_operations_count`;
     return await this.makePostRequest(url, requestBody);
   }
 
   async getAccount(account: string): Promise<unknown> {
     const requestBody: Hive.GetAccountProps = { _account: account };
-    const url = `${config.apiAddress}/get_account`;
+    const url = `${this.apiUrl}/get_account`;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -161,7 +160,7 @@ class FetchingService {
     const requestBody: Hive.GetAccountResourceCreditsProps = {
       _account: account,
     };
-    const url = `${config.apiAddress}/get_account_resource_credits`;
+    const url = `${this.apiUrl}/get_account_resource_credits`;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -169,7 +168,7 @@ class FetchingService {
     const requestBody: Hive.GetBtrackerAccountBalanceProps = {
       _account: account,
     };
-    const url = `${config.apiAddress}/get_btracker_account_balance`;
+    const url = `${this.apiUrl}/get_btracker_account_balance`;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -185,13 +184,13 @@ class FetchingService {
       _order_by: orderBy,
       _order_is: orderIs,
     };
-    const url = `${config.apiAddress}/get_witnesses`;
+    const url = `${this.apiUrl}/get_witnesses`;
     return await this.makePostRequest(url, requestBody);
   }
 
   async getWitnessesVotersNum(witness: string): Promise<unknown> {
     const requestBody: Hive.GetWitnessVotersNumProps = { _witness: witness };
-    const url = `${config.apiAddress}/get_witness_voters_num`;
+    const url = `${this.apiUrl}/get_witness_voters_num`;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -207,7 +206,7 @@ class FetchingService {
       _order_is: orderIs,
     };
     if (limit) requestBody._limit = limit;
-    const url = `${config.apiAddress}/get_witness_voters`;
+    const url = `${this.apiUrl}/get_witness_voters`;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -217,7 +216,7 @@ class FetchingService {
     const requestBody: Hive.GetOperationTypesProps = {
       _operation_type_pattern: operation_type_pattern,
     };
-    const url = `${config.apiAddress}/get_matching_operation_types`;
+    const url = `${this.apiUrl}/get_matching_operation_types`;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -225,7 +224,7 @@ class FetchingService {
     const requestBody: Hive.GetWitnessProps = {
       _account: witnessName,
     };
-    const url = `${config.apiAddress}/get_witness`;
+    const url = `${this.apiUrl}/get_witness`;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -233,7 +232,7 @@ class FetchingService {
     const requestBody: Hive.GetBlockByTimeProps = {
       _timestamp: date,
     };
-    const url = `${config.apiAddress}/get_block_by_time`;
+    const url = `${this.apiUrl}/get_block_by_time`;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -241,7 +240,7 @@ class FetchingService {
     const requestBody: Hive.GetOperationKeysProps = {
       _op_type_id: operationTypeId,
     }
-    const url = `${config.apiAddress}/get_operation_keys `;
+    const url = `${this.apiUrl}/get_operation_keys `;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -260,7 +259,7 @@ class FetchingService {
       _key_content: blockSearchProps.deepProps.content ? [blockSearchProps.deepProps.content] : undefined,
       _setof_keys:  blockSearchProps.deepProps.keys ? [blockSearchProps.deepProps.keys] : undefined
     };
-    const url = `${config.apiAddress}/get_block_by_op  `;
+    const url = `${this.apiUrl}/get_block_by_op  `;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -280,7 +279,7 @@ class FetchingService {
       _from_time: fromTime,
       _to_time: toTime,
     };
-    const url = `${config.apiAddress}/get_witness_votes_history  `;
+    const url = `${this.apiUrl}/get_witness_votes_history  `;
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -290,7 +289,7 @@ class FetchingService {
     const requestBody: Hive.GetOperationProps = {
       _operation_id: operationId
     };
-    const url = `${config.apiAddress}/get_operation`
+    const url = `${this.apiUrl}/get_operation`
     return await this.makePostRequest(url, requestBody);
   }
 
@@ -309,13 +308,13 @@ class FetchingService {
       _body_limit: config.opsBodyLimit,
       _page_size: config.standardPaginationSize
     };
-    const url = `${config.apiAddress}/get_comment_operations`
+    const url = `${this.apiUrl}/get_comment_operations`
     return await this.makePostRequest(url, requestBody);
   }
 
   async getHafbeVersion(): Promise<string> {
     const requestBody = {};
-    const url = `${config.apiAddress}/get_hafbe_version`;
+    const url = `${this.apiUrl}/get_hafbe_version`;
     return await this.makePostRequest(url, requestBody);
   }
 
