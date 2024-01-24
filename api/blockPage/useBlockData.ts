@@ -2,7 +2,7 @@ import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
 import { UseQueryResult, useQuery } from "@tanstack/react-query";
 
-const useBlockData = (blockNumber: number, blockFilters: number[]) => {
+const useBlockData = (blockNumber: number) => {
   const {
     data: blockDetails,
     isLoading: blockDetailsLoading,
