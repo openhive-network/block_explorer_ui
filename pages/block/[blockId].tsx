@@ -25,8 +25,8 @@ interface BlockSearchParams {
 
 const defaultParams: BlockSearchParams = {
   page: 1,
-  filters: undefined
-}
+  filters: undefined,
+};
 
 export default function Block() {
   const router = useRouter();
@@ -35,16 +35,17 @@ export default function Block() {
   const { blockId } = router.query;
 
   const [blockDate, setBlockDate] = useState<Date>();
-  const { paramsState, setParams } = useURLParams({ ...defaultParams, blockId: blockId });
+  const { paramsState, setParams } = useURLParams({
+    ...defaultParams,
+    blockId: blockId,
+  });
 
   const { settings } = useUserSettingsContext();
 
   const { blockDetails, loading } = useBlockData(Number(blockId));
 
-  const { blockOperations: totalOperations } = useBlockOperations(
-    Number(blockId),
-    undefined
-  );
+  const { blockOperations: totalOperations, trxLoading: totalLoading } =
+    useBlockOperations(Number(blockId), undefined, paramsState.page || 1);
 
   const { blockError, blockOperations, trxLoading } = useBlockOperations(
     Number(blockId),
@@ -138,77 +139,75 @@ export default function Block() {
           <p className="md:hidden inline">V Ops</p>
         </Button>
       </div>
-      {loading === false ? (
-        settings.rawJsonView ? (
-          <JSONView
-            json={{
-              details: { ...blockDetails },
-              operations: { ...blockOperations },
-            }}
-            className="w-full md:w-[962px] mt-6 m-auto py-2 px-4 bg-explorer-dark-gray rounded text-white text-xs break-words break-all"
-          />
-        ) : (
-          <section className="md:px-10 flex flex-col items-center justify-center text-white">
-            {totalOperations?.total_operations &&
-              totalOperations?.total_operations > 1000 && (
-                <CustomPagination
-                  currentPage={paramsState.page}
-                  onPageChange={(newPage: number) =>
-                    setParams({ ...paramsState, page: newPage })
-                  }
-                  pageSize={1000}
-                  totalCount={blockOperations?.total_operations || 0}
-                  className="text-black"
-                />
-              )}
-            <div className="w-full px-4 md:p-0 md:w-4/5 flex flex-col gap-y-2">
-              {nonVirtualOperations?.map((operation, index) => (
-                <DetailedOperationCard
-                  operation={operation.operation}
-                  operationId={operation.operation_id}
-                  date={new Date(operation.timestamp)}
-                  blockNumber={operation.block_num}
-                  transactionId={operation.trx_id}
-                  key={operation.timestamp + index}
-                  skipBlock
-                  skipDate
-                  isShortened={operation.is_modified}
-                />
-              ))}
-              <div
-                className="text-center mt-4"
-                ref={virtualOpsRef}
-                style={{ scrollMargin: "100px" }}
-              >
-                <p className="text-3xl text-black">
-                  {!!blockOperations &&
-                  !blockOperations?.operations_result?.length
-                    ? "No operations were found"
-                    : !!virtualOperations.length
-                    ? "Virtual Operations"
-                    : null}
-                </p>
-              </div>
-              {virtualOperations?.map((operation, index) => (
-                <DetailedOperationCard
-                  operation={operation.operation}
-                  operationId={operation.operation_id}
-                  date={new Date(operation.timestamp)}
-                  blockNumber={operation.block_num}
-                  transactionId={operation.trx_id}
-                  key={operation.timestamp + index}
-                  skipBlock
-                  skipDate
-                  isShortened={operation.is_modified}
-                />
-              ))}
-            </div>
-          </section>
-        )
-      ) : (
+      {loading !== false || trxLoading || totalLoading ? (
         <div className="flex justify-center items-center">
           <Loader2 className="animate-spin mt-1 h-16 w-16 ml-3 ... " />
         </div>
+      ) : settings.rawJsonView ? (
+        <JSONView
+          json={{
+            details: { ...blockDetails },
+            operations: { ...blockOperations },
+          }}
+          className="w-full md:w-[962px] mt-6 m-auto py-2 px-4 bg-explorer-dark-gray rounded text-white text-xs break-words break-all"
+        />
+      ) : (
+        <section className="md:px-10 flex flex-col items-center justify-center text-white">
+          {totalOperations?.total_operations &&
+            totalOperations?.total_operations > 1000 && (
+              <CustomPagination
+                currentPage={paramsState.page}
+                onPageChange={(newPage: number) =>
+                  setParams({ ...paramsState, page: newPage })
+                }
+                pageSize={1000}
+                totalCount={blockOperations?.total_operations || 0}
+                className="text-black"
+              />
+            )}
+          <div className="w-full px-4 md:p-0 md:w-4/5 flex flex-col gap-y-2">
+            {nonVirtualOperations?.map((operation, index) => (
+              <DetailedOperationCard
+                operation={operation.operation}
+                operationId={operation.operation_id}
+                date={new Date(operation.timestamp)}
+                blockNumber={operation.block_num}
+                transactionId={operation.trx_id}
+                key={operation.timestamp + index}
+                skipBlock
+                skipDate
+                isShortened={operation.is_modified}
+              />
+            ))}
+            <div
+              className="text-center mt-4"
+              ref={virtualOpsRef}
+              style={{ scrollMargin: "100px" }}
+            >
+              <p className="text-3xl text-black">
+                {!!blockOperations &&
+                !blockOperations?.operations_result?.length
+                  ? "No operations were found"
+                  : !!virtualOperations.length
+                  ? "Virtual Operations"
+                  : null}
+              </p>
+            </div>
+            {virtualOperations?.map((operation, index) => (
+              <DetailedOperationCard
+                operation={operation.operation}
+                operationId={operation.operation_id}
+                date={new Date(operation.timestamp)}
+                blockNumber={operation.block_num}
+                transactionId={operation.trx_id}
+                key={operation.timestamp + index}
+                skipBlock
+                skipDate
+                isShortened={operation.is_modified}
+              />
+            ))}
+          </div>
+        </section>
       )}
     </div>
   );
