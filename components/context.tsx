@@ -28,7 +28,12 @@ const Context: React.FC<{ children: ReactNode }> = ({ children }) => {
     createHiceChain();
   }, [])
 
-  const {nodeAddressFromLocalStorage, apiAddressFromLocalStorage, writeNodeAddressToLocalStorage, writeApiAddressToLocalStorage} = useApiAddresses();
+  const {
+    nodeAddressFromLocalStorage,
+    apiAddressFromLocalStorage,
+    writeNodeAddressToLocalStorage,
+    writeApiAddressToLocalStorage,
+  } = useApiAddresses();
 
   useEffect(() => {
     if (nodeAddressFromLocalStorage) {
@@ -46,8 +51,15 @@ const Context: React.FC<{ children: ReactNode }> = ({ children }) => {
         value={{ settings: userSettings, setSettings: setUserSettings }}
       >
         <AlertsContext.Provider value={{ alerts, setAlerts }}>
-          <AddressesContext.Provider value={{nodeAddress: config.nodeAddress, setNodeAddress: () => {}, apiAddress: config.apiAddress, setApiAddress: () => {}}}>
-            <HiveChainContext.Provider value={{hiveChain, setHiveChain}}>
+          <AddressesContext.Provider
+            value={{
+              nodeAddress: nodeAddressFromLocalStorage,
+              setNodeAddress: writeNodeAddressToLocalStorage,
+              apiAddress: apiAddressFromLocalStorage,
+              setApiAddress: writeApiAddressToLocalStorage,
+            }}
+          >
+            <HiveChainContext.Provider value={{ hiveChain, setHiveChain }}>
               {children}
             </HiveChainContext.Provider>
           </AddressesContext.Provider>

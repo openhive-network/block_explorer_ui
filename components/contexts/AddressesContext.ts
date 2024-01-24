@@ -1,18 +1,18 @@
 import { createContext, useContext } from "react";
 
 
-export type UserSettingsContextType = {
+export type AddressesContextType = {
   apiAddress: string;
   setApiAddress: (address: string) => void;
   nodeAddress: string;
   setNodeAddress: (address: string) => void;
 };
 
-export const AddressesContext = createContext<UserSettingsContextType>({
+export const AddressesContext = createContext<AddressesContextType>({
   apiAddress: "",
   setApiAddress: () => {},
   nodeAddress: "",
   setNodeAddress: () => {}
 });
 
-export const useUserSettingsContext = () => useContext(AddressesContext);
+export const useAddressesContext = () => useContext(AddressesContext);
