@@ -19,28 +19,25 @@ const Context: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [hiveChain, setHiveChain] = useState<IHiveChainInterface | undefined>(undefined);
 
 
-  const createHiceChain = async () => {
+  const createChain = async () => {
     const chain = await createHiveChain();
     setHiveChain(chain);
   }
 
   useEffect(() => {
-    createHiceChain();
+    createChain();
   }, [])
 
   const {
-    nodeAddressFromLocalStorage,
     apiAddressFromLocalStorage,
-    writeNodeAddressToLocalStorage,
+    nodeAddressFromLocalStorage,
     writeApiAddressToLocalStorage,
+    writeNodeAddressToLocalStorage,
   } = useApiAddresses();
 
   useEffect(() => {
-    if (nodeAddressFromLocalStorage) {
-      fetchingService.setNodeUrl(nodeAddressFromLocalStorage);
-      
-    } 
     if (apiAddressFromLocalStorage) fetchingService.setApiUrl(apiAddressFromLocalStorage);
+    if (nodeAddressFromLocalStorage) fetchingService.setNodeUrl(nodeAddressFromLocalStorage);
   }, [nodeAddressFromLocalStorage, apiAddressFromLocalStorage])
 
 
@@ -53,10 +50,10 @@ const Context: React.FC<{ children: ReactNode }> = ({ children }) => {
         <AlertsContext.Provider value={{ alerts, setAlerts }}>
           <AddressesContext.Provider
             value={{
-              nodeAddress: nodeAddressFromLocalStorage,
-              setNodeAddress: writeNodeAddressToLocalStorage,
               apiAddress: apiAddressFromLocalStorage,
               setApiAddress: writeApiAddressToLocalStorage,
+              nodeAddress: nodeAddressFromLocalStorage,
+              setNodeAddress: writeNodeAddressToLocalStorage,
             }}
           >
             <HiveChainContext.Provider value={{ hiveChain, setHiveChain }}>
