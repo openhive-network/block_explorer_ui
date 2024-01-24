@@ -55,7 +55,7 @@ class FetchingService {
       _block_num: blockNumber,
       _filter: filter,
       _body_limit: config.opsBodyLimit,
-      // _limit: config.expandedPaginationSize,
+      _page_size: 1000,
       _page_num: page,
     };
     const url = `${config.apiAddress}/get_ops_by_block_test`;
