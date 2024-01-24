@@ -38,7 +38,7 @@ export default function Home() {
           <TableBody>
             {wintesses &&
               wintesses.map((witness, index) => (
-                <TableRow className=" text-base" key={index}>
+                <TableRow className=" text-base" key={index} data-testid="witnesses-name">
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>
                     <Link
@@ -64,7 +64,7 @@ export default function Home() {
           </TableBody>
         </Table>
         <div className="flex justify-center align-center text-lg hover:text-explorer-turquoise">
-          <Link href={"/witnesses"}>See More</Link>
+          <Link data-testid="see-more-btn" href={"/witnesses"}>See More</Link>
         </div>
       </div>
     </div>
