@@ -16,6 +16,7 @@ declare module Hive {
     _filter: number[];
     _body_limit: number;
     _limit: number;
+    _page_num?: number;
   }
 
   interface GetTransactionProps {
@@ -275,6 +276,13 @@ declare module Hive {
     is_modified: boolean;
     length: number;
   }
+
+
+    interface TotalOperationsResponse {
+      operations_result: OperationResponse[];
+      total_pages: number;
+      total_operations: number;
+    }
 
   interface AccountOperationsResponse extends OperationsCount {
     operations_result: OperationResponse[];
