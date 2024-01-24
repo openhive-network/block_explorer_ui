@@ -8,6 +8,8 @@ import { HiveChainContext } from "./contexts/HiveChainContext";
 import { IHiveChainInterface, createHiveChain } from "@hive/wax/web";
 import { AddressesContext } from "./contexts/AddressesContext";
 import { config } from "@/Config";
+import useApiAddresses from "@/utils/ApiAddresses";
+import fetchingService from "@/services/FetchingService";
 
 const Context: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [userSettings, setUserSettings] = useState<UserSettings>({
@@ -25,6 +27,16 @@ const Context: React.FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     createHiceChain();
   }, [])
+
+  const {nodeAddressFromLocalStorage, apiAddressFromLocalStorage, writeNodeAddressToLocalStorage, writeApiAddressToLocalStorage} = useApiAddresses();
+
+  useEffect(() => {
+    if (nodeAddressFromLocalStorage) {
+      fetchingService.setNodeUrl(nodeAddressFromLocalStorage);
+      
+    } 
+    if (apiAddressFromLocalStorage) fetchingService.setApiUrl(apiAddressFromLocalStorage);
+  }, [nodeAddressFromLocalStorage, apiAddressFromLocalStorage])
 
 
 
