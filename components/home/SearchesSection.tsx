@@ -2,7 +2,12 @@ import Explorer from "@/types/Explorer";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import Link from "next/link";
-import { Accordion } from "../ui/accordion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../ui/accordion";
 import DetailedOperationCard from "../DetailedOperationCard";
 import { config } from "@/Config";
 import CustomPagination from "../CustomPagination";
@@ -60,21 +65,27 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
     }
   }, [accountOperations, accountOperationsPage]);
 
-  const startCommentSearch = async (commentSearchProps: Explorer.CommentSearchProps) => {
-      setCommentSearchProps(commentSearchProps);
-      setCommentPaginationPage(1);
-      setPreviousCommentSearchProps(commentSearchProps);
-      setLastSearchKey("comment");
+  const startCommentSearch = async (
+    commentSearchProps: Explorer.CommentSearchProps
+  ) => {
+    setCommentSearchProps(commentSearchProps);
+    setCommentPaginationPage(1);
+    setPreviousCommentSearchProps(commentSearchProps);
+    setLastSearchKey("comment");
   };
 
-  const startAccountOperationsSearch = async (accountOperationsSearchProps: Explorer.AccountSearchOperationsProps) => {
-      setLastSearchKey("account");
-      setAccountOperationsPage(undefined);
-      setAccountOperationsSearchProps(accountOperationsSearchProps);
-      setPreviousAccountOperationsSearchProps(accountOperationsSearchProps);
+  const startAccountOperationsSearch = async (
+    accountOperationsSearchProps: Explorer.AccountSearchOperationsProps
+  ) => {
+    setLastSearchKey("account");
+    setAccountOperationsPage(undefined);
+    setAccountOperationsSearchProps(accountOperationsSearchProps);
+    setPreviousAccountOperationsSearchProps(accountOperationsSearchProps);
   };
 
-  const startBlockSearch = async (blockSearchProps: Explorer.BlockSearchProps) => {
+  const startBlockSearch = async (
+    blockSearchProps: Explorer.BlockSearchProps
+  ) => {
     setBlockSearchProps(blockSearchProps);
     setLastSearchKey("block");
   };
@@ -105,7 +116,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
     const urlParams: Explorer.UrlParam[] = [
       {
         paramName: "accountName",
-        paramValue: dataToURL(commentSearchProps?.accountName)
+        paramValue: dataToURL(commentSearchProps?.accountName),
       },
       {
         paramName: "permlink",
@@ -113,15 +124,15 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
       },
       {
         paramName: "fromBlock",
-        paramValue: dataToURL(commentSearchProps?.fromBlock)
+        paramValue: dataToURL(commentSearchProps?.fromBlock),
       },
       {
         paramName: "toBlock",
-        paramValue: dataToURL(commentSearchProps?.toBlock)
+        paramValue: dataToURL(commentSearchProps?.toBlock),
       },
       {
         paramName: "filters",
-        paramValue: dataToURL(commentSearchProps?.operationTypes)
+        paramValue: dataToURL(commentSearchProps?.operationTypes),
       },
     ];
     return `comments${getPageUrlParams(urlParams)}`;
@@ -131,47 +142,50 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
     const urlParams: Explorer.UrlParam[] = [
       {
         paramName: "fromBlock",
-        paramValue: dataToURL(accountOperationsSearchProps?.fromBlock)
+        paramValue: dataToURL(accountOperationsSearchProps?.fromBlock),
       },
       {
         paramName: "toBlock",
-        paramValue: dataToURL(accountOperationsSearchProps?.toBlock)
+        paramValue: dataToURL(accountOperationsSearchProps?.toBlock),
       },
       {
         paramName: "startDate",
-        paramValue: dataToURL(accountOperationsSearchProps?.startDate)
+        paramValue: dataToURL(accountOperationsSearchProps?.startDate),
       },
       {
         paramName: "endDate",
-        paramValue: dataToURL(accountOperationsSearchProps?.endDate)
+        paramValue: dataToURL(accountOperationsSearchProps?.endDate),
       },
       {
         paramName: "filters",
-        paramValue: dataToURL(accountOperationsSearchProps?.operationTypes)
+        paramValue: dataToURL(accountOperationsSearchProps?.operationTypes),
       },
       {
         paramName: "rangeSelectKey",
-        paramValue: dataToURL(searchRanges.rangeSelectKey)
+        paramValue: dataToURL(searchRanges.rangeSelectKey),
       },
       {
         paramName: "lastTime",
-        paramValue: dataToURL(searchRanges.lastTimeUnitValue)
+        paramValue: dataToURL(searchRanges.lastTimeUnitValue),
       },
       {
         paramName: "lastBlocks",
-        paramValue: dataToURL(searchRanges.lastBlocksValue)
+        paramValue: dataToURL(searchRanges.lastBlocksValue),
       },
       {
         paramName: "timeUnit",
-        paramValue: dataToURL(searchRanges.timeUnitSelectKey)
+        paramValue: dataToURL(searchRanges.timeUnitSelectKey),
       },
     ];
     return `account/${accountName}${getPageUrlParams(urlParams)}`;
   };
 
   return (
-    <div className="mt-6 col-start-1 col-span-4 md:col-span-1 mb-6 md:mb-0 flex flex-col gap-y-6"  data-testid="block-search-section">
-      <div className=' bg-explorer-dark-gray p-4 h-fit rounded'>
+    <div
+      className="mt-6 col-start-1 col-span-4 md:col-span-1 mb-6 md:mb-0 flex flex-col gap-y-6"
+      data-testid="block-search-section"
+    >
+      <div className=" bg-explorer-dark-gray p-4 h-fit rounded">
         <div className="text-center text-xl">Search</div>
         <Accordion
           type="single"
@@ -179,33 +193,47 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
           value={accordionValue}
           onValueChange={setAccordionValue}
         >
-          <BlockSearch 
-            startBlockSearch={startBlockSearch}
-            operationsTypes={operationsTypes}
-            loading={blockSearch.blockSearchDataLoading}
-          />
-          <AccountSearch 
-            startAccountOperationsSearch={startAccountOperationsSearch}
-            operationsTypes={operationsTypes}
-            loading={accountOperations.isAccountOperationsLoading}
-          />
-          <CommentsSearch
-            startCommentsSearch={startCommentSearch}
-            operationsTypes={operationsTypes}
-            loading={commentSearch.commentSearchDataLoading}
-          />
+          <AccordionItem value="block">
+            <AccordionTrigger>Block Search</AccordionTrigger>
+            <AccordionContent className="px-2 flex flex-col gap-y-4">
+              <BlockSearch
+                startBlockSearch={startBlockSearch}
+                operationsTypes={operationsTypes}
+                loading={blockSearch.blockSearchDataLoading}
+              />
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="account">
+            <AccordionTrigger>Account search</AccordionTrigger>
+            <AccordionContent className="px-2 flex flex-col gap-y-4">
+              <AccountSearch
+                startAccountOperationsSearch={startAccountOperationsSearch}
+                operationsTypes={operationsTypes}
+                loading={accountOperations.isAccountOperationsLoading}
+              />
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="comment">
+            <AccordionTrigger>Comment search</AccordionTrigger>
+            <AccordionContent className="px-2 flex flex-col gap-y-4">
+              <CommentsSearch
+                startCommentsSearch={(params: Explorer.CommentSearchParams) =>
+                  startCommentSearch(params as Explorer.CommentSearchProps)
+                }
+                operationsTypes={operationsTypes}
+                loading={commentSearch.commentSearchDataLoading}
+              />
+            </AccordionContent>
+          </AccordionItem>
         </Accordion>
       </div>
       {blockSearch.blockSearchData && lastSearchKey === "block" && (
-        <div className=' bg-explorer-dark-gray p-2 md: h-fit rounded'>
+        <div className=" bg-explorer-dark-gray p-2 md: h-fit rounded">
           <div className="text-center">Results:</div>
           <div className="flex flex-wrap">
             {blockSearch.blockSearchData.length > 0 ? (
               blockSearch.blockSearchData.map((blockId) => (
-                <Link
-                  key={blockId}
-                  href={`block/${blockId}`}
-                >
+                <Link key={blockId} href={`block/${blockId}`}>
                   <div className="m-1 border border-solid p-1">{blockId}</div>
                 </Link>
               ))
