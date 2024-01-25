@@ -48,15 +48,17 @@ class FetchingService {
 
   async getOpsByBlock(
     blockNumber: number,
-    filter: number[]
+    filter?: number[],
+    page?: number
   ): Promise<Hive.OperationResponse[]> {
     const requestBody: Hive.GetOpsByBlockProps = {
       _block_num: blockNumber,
       _filter: filter,
       _body_limit: config.opsBodyLimit,
-      _limit: config.expandedPaginationSize
+      _page_size: 1000,
+      _page_num: page,
     };
-    const url = `${config.apiAddress}/get_ops_by_block`;
+    const url = `${config.apiAddress}/get_ops_by_block_test`;
     return await this.makePostRequest(url, requestBody);
   }
   async getTransaction(
