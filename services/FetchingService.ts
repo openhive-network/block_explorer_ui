@@ -83,7 +83,7 @@ class FetchingService {
       _page_size: 1000,
       _page_num: page,
     };
-    return await this.callApi("get_ops_by_block", requestBody);
+    return await this.callApi("get_ops_by_block_paging", requestBody);
   }
   async getTransaction(
     transactionHash: string
