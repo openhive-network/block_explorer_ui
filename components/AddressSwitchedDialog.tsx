@@ -50,11 +50,10 @@ const AddressSwitchedDialog: React.FC<AddressSwitcherDialogProps> = ({addressTyp
           <DialogTitle>{addressType === "api" ? "API Address" : "Node Address"}</DialogTitle>
         </DialogHeader>
         <Input
-          className="bg-gray-700 text-white"
+          className=""
           type="text"
           value={userAddress || ""}
           onChange={(e) => setUserAddress(e.target.value)}
-          placeholder="---"
         />
         <DialogFooter >
           <div className="w-full flex justify-between">
