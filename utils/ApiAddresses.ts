@@ -1,5 +1,6 @@
 import { config } from "@/Config";
 import { useEffect, useState } from "react";
+import fetchingService from "@/services/FetchingService";
 
 
 export interface ApiAddressesResult {
@@ -21,8 +22,10 @@ const useApiAddresses = () => {
     try {
       const readValue = window.localStorage.getItem(NODE_KEY);
       if (readValue) {
+        fetchingService.setNodeUrl(readValue);
         setNodeAddress(readValue);
       } else {
+        fetchingService.setNodeUrl(config.nodeAddress);
         setNodeAddress(config.nodeAddress);
       }
       
@@ -34,9 +37,11 @@ const useApiAddresses = () => {
   const readApiAddressFromLocalStorage = () => {
     try {
       const readValue = window.localStorage.getItem(API_KEY);
-      if (readValue) {
+      if (readValue) { 
+        fetchingService.setApiUrl(readValue);
         setApiAddress(readValue);
       } else {
+        fetchingService.setApiUrl(config.apiAddress);
         setApiAddress(config.apiAddress);
       }
     } catch (error) {
@@ -75,7 +80,7 @@ const useApiAddresses = () => {
   useEffect(() => {
     readNodeAddressFromLocalStorage();
     readApiAddressFromLocalStorage();
-  }, [])
+  }, []);
 
   return {
     nodeAddress,

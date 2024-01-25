@@ -35,13 +35,6 @@ const Context: React.FC<{ children: ReactNode }> = ({ children }) => {
     writeNodeAddressToLocalStorage,
   } = useApiAddresses();
 
-  useEffect(() => {
-    if (apiAddress) fetchingService.setApiUrl(apiAddress);
-    if (nodeAddress) fetchingService.setNodeUrl(nodeAddress);
-  }, [apiAddress, nodeAddress])
-
-
-
   return (
     <>
       <UserSettingsContext.Provider
