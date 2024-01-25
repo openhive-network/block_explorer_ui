@@ -61,10 +61,6 @@ export default function Block() {
     }
   }, [blockDetails]);
 
-  useEffect(() => {
-    fetchingService.setApiUrl("test");
-  }, [])
-
   const getSplitOperations = useCallback(
     (operations?: Hive.TotalOperationsResponse) => {
       if (operations && operations.operations_result) {

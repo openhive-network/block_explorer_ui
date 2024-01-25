@@ -7,13 +7,20 @@ import {
 import Layout from "./layout";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useAlertContext } from "./contexts/AlertContext";
+import { useAddressesContext } from "./contexts/AddressesContext";
 
 const Providers = ({ children }: { children: ReactNode }) => {
   const { setAlerts } = useAlertContext();
+  const { apiAddress, nodeAddress } = useAddressesContext();
 
   const queryClient = useMemo(
     () =>
       new QueryClient({
+        defaultOptions: {
+          queries: {
+            enabled: apiAddress !== null && nodeAddress !== null,
+          }
+        },
         queryCache: new QueryCache({
           onError: (error) => {
             setAlerts([
@@ -22,7 +29,7 @@ const Providers = ({ children }: { children: ReactNode }) => {
           },
         }),
       }),
-    [setAlerts]
+    [setAlerts, apiAddress, nodeAddress]
   );
 
   return (

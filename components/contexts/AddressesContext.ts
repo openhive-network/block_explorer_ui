@@ -2,9 +2,9 @@ import { createContext, useContext } from "react";
 
 
 export type AddressesContextType = {
-  apiAddress: string;
+  apiAddress: string | null;
   setApiAddress: (address: string | null) => void;
-  nodeAddress: string;
+  nodeAddress: string | null;
   setNodeAddress: (address: string | null) => void;
 };
 

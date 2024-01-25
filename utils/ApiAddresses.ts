@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 
 
 export interface ApiAddressesResult {
-  nodeAddress: string;
-  apiAddress: string;
+  nodeAddress: string | null;
+  apiAddress: string | null;
   writeNodeAddressToLocalStorage: (url: string | null) => void;
   writeApiAddressToLocalStorage: (url: string | null) => void;
 }
@@ -14,13 +14,17 @@ const API_KEY = "apiAddress"
 
 const useApiAddresses = () => {
 
-  const [nodeAddress, setNodeAddress] = useState<string>(config.nodeAddress);
-  const [apiAddress, setApiAddress] = useState<string>(config.apiAddress);
+  const [nodeAddress, setNodeAddress] = useState<string | null>(null);
+  const [apiAddress, setApiAddress] = useState<string | null>(null);
 
   const readNodeAddressFromLocalStorage = () => {
     try {
       const readValue = window.localStorage.getItem(NODE_KEY);
-      if (readValue) setNodeAddress(readValue)
+      if (readValue) {
+        setNodeAddress(readValue);
+      } else {
+        setNodeAddress(config.nodeAddress);
+      }
       
     } catch (error) {
       console.log(error);
@@ -30,7 +34,11 @@ const useApiAddresses = () => {
   const readApiAddressFromLocalStorage = () => {
     try {
       const readValue = window.localStorage.getItem(API_KEY);
-      if (readValue) setApiAddress(readValue)
+      if (readValue) {
+        setApiAddress(readValue);
+      } else {
+        setApiAddress(config.apiAddress);
+      }
     } catch (error) {
       console.log(error);
     }
