@@ -1,9 +1,10 @@
+import { config } from "@/Config";
 import { useEffect, useState } from "react";
 
 
 export interface ApiAddressesResult {
-  nodeAddressFromLocalStorage: string;
-  apiAddressFromLocalStorage: string;
+  nodeAddress: string;
+  apiAddress: string;
   writeNodeAddressToLocalStorage: (url: string | null) => void;
   writeApiAddressToLocalStorage: (url: string | null) => void;
 }
@@ -13,13 +14,14 @@ const API_KEY = "apiAddress"
 
 const useApiAddresses = () => {
 
-  const [nodeAddress, setNodeAddress] = useState<string | null>(null);
-  const [apiAddress, setApiAddress] = useState<string | null>(null);
+  const [nodeAddress, setNodeAddress] = useState<string>(config.nodeAddress);
+  const [apiAddress, setApiAddress] = useState<string>(config.apiAddress);
 
   const readNodeAddressFromLocalStorage = () => {
     try {
-      const reeadValue = window.localStorage.getItem(NODE_KEY);
-      setNodeAddress(reeadValue)
+      const readValue = window.localStorage.getItem(NODE_KEY);
+      if (readValue) setNodeAddress(readValue)
+      
     } catch (error) {
       console.log(error);
     }
@@ -27,8 +29,8 @@ const useApiAddresses = () => {
 
   const readApiAddressFromLocalStorage = () => {
     try {
-      const reeadValue = window.localStorage.getItem(API_KEY);
-      setApiAddress(reeadValue)
+      const readValue = window.localStorage.getItem(API_KEY);
+      if (readValue) setApiAddress(readValue)
     } catch (error) {
       console.log(error);
     }
@@ -38,10 +40,11 @@ const useApiAddresses = () => {
     try {
       if (url) {
         window.localStorage.setItem(NODE_KEY, url);
+        setNodeAddress(url);
       } else {
         window.localStorage.removeItem(NODE_KEY);
+        setApiAddress(config.nodeAddress);
       }
-      setNodeAddress(url);
     } catch (error) {
       console.log(error);
     }
@@ -51,10 +54,11 @@ const useApiAddresses = () => {
     try {
       if (url) {
         window.localStorage.setItem(API_KEY, url);
+        setApiAddress(url);
       } else {
         window.localStorage.removeItem(API_KEY);
+        setApiAddress(config.apiAddress);
       }
-      setApiAddress(url);
     } catch (error) {
       console.log(error);
     }
@@ -66,8 +70,8 @@ const useApiAddresses = () => {
   }, [])
 
   return {
-    nodeAddressFromLocalStorage: nodeAddress,
-    apiAddressFromLocalStorage: apiAddress,
+    nodeAddress,
+    apiAddress,
     writeNodeAddressToLocalStorage,
     writeApiAddressToLocalStorage
   } as ApiAddressesResult

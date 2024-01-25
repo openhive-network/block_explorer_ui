@@ -29,16 +29,16 @@ const Context: React.FC<{ children: ReactNode }> = ({ children }) => {
   }, [])
 
   const {
-    apiAddressFromLocalStorage,
-    nodeAddressFromLocalStorage,
+    apiAddress,
+    nodeAddress,
     writeApiAddressToLocalStorage,
     writeNodeAddressToLocalStorage,
   } = useApiAddresses();
 
   useEffect(() => {
-    if (apiAddressFromLocalStorage) fetchingService.setApiUrl(apiAddressFromLocalStorage);
-    if (nodeAddressFromLocalStorage) fetchingService.setNodeUrl(nodeAddressFromLocalStorage);
-  }, [nodeAddressFromLocalStorage, apiAddressFromLocalStorage])
+    if (apiAddress) fetchingService.setApiUrl(apiAddress);
+    if (nodeAddress) fetchingService.setNodeUrl(nodeAddress);
+  }, [apiAddress, nodeAddress])
 
 
 
@@ -50,9 +50,9 @@ const Context: React.FC<{ children: ReactNode }> = ({ children }) => {
         <AlertsContext.Provider value={{ alerts, setAlerts }}>
           <AddressesContext.Provider
             value={{
-              apiAddress: apiAddressFromLocalStorage,
+              apiAddress: apiAddress,
               setApiAddress: writeApiAddressToLocalStorage,
-              nodeAddress: nodeAddressFromLocalStorage,
+              nodeAddress: nodeAddress,
               setNodeAddress: writeNodeAddressToLocalStorage,
             }}
           >
