@@ -44,7 +44,7 @@ const AddressSwitchedDialog: React.FC<AddressSwitcherDialogProps> = ({addressTyp
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger>{currentAddress ? currentAddress : getDefaultApiAddress()}</DialogTrigger>
+      <DialogTrigger><div className=" text-blue-400">{currentAddress ? currentAddress : getDefaultApiAddress()}</div></DialogTrigger>
       <DialogContent className="h-1/4 max-w-3xl overflow-auto bg-white">
         <DialogHeader>
           <DialogTitle>{addressType === "api" ? "API Address" : "Node Address"}</DialogTitle>

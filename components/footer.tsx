@@ -23,7 +23,7 @@ export default function Footer() {
           {hafbeVersionData}
         </p>
       </div>
-      <div className="flex flex-row justify-center gap-4">
+      <div className="flex flex-row justify-center gap-4 mb-2">
         <AddressSwitchedDialog addressType="api" currentAddress={apiAddress} setAddress={setApiAddress} />
         <AddressSwitchedDialog addressType="node" currentAddress={nodeAddress} setAddress={setNodeAddress} />
       </div>
