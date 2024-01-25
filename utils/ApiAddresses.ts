@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 export interface ApiAddressesResult {
   nodeAddressFromLocalStorage: string;
   apiAddressFromLocalStorage: string;
-  writeNodeAddressToLocalStorage: (url: string) => void;
-  writeApiAddressToLocalStorage: (url: string) => void;
+  writeNodeAddressToLocalStorage: (url: string | null) => void;
+  writeApiAddressToLocalStorage: (url: string | null) => void;
 }
 
 const NODE_KEY = "nodeAddress";
@@ -34,18 +34,26 @@ const useApiAddresses = () => {
     }
   }
 
-  const writeNodeAddressToLocalStorage = (url: string) => {
+  const writeNodeAddressToLocalStorage = (url: string | null) => {
     try {
-      window.localStorage.setItem(NODE_KEY, url);
+      if (url) {
+        window.localStorage.setItem(NODE_KEY, url);
+      } else {
+        window.localStorage.removeItem(NODE_KEY);
+      }
       setNodeAddress(url);
     } catch (error) {
       console.log(error);
     }
   }
 
-  const writeApiAddressToLocalStorage = (url: string) => {
+  const writeApiAddressToLocalStorage = (url: string | null) => {
     try {
-      window.localStorage.setItem(API_KEY, url);
+      if (url) {
+        window.localStorage.setItem(API_KEY, url);
+      } else {
+        window.localStorage.removeItem(API_KEY);
+      }
       setApiAddress(url);
     } catch (error) {
       console.log(error);
