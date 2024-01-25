@@ -1,6 +1,7 @@
 import { config } from "@/Config";
 import { useEffect, useState } from "react";
 import fetchingService from "@/services/FetchingService";
+import { useRouter } from 'next/router';
 
 
 export interface ApiAddressesResult {
@@ -17,6 +18,8 @@ const useApiAddresses = () => {
 
   const [nodeAddress, setNodeAddress] = useState<string | null>(null);
   const [apiAddress, setApiAddress] = useState<string | null>(null);
+
+  const router = useRouter();
 
   const readNodeAddressFromLocalStorage = () => {
     try {
@@ -49,13 +52,15 @@ const useApiAddresses = () => {
     }
   }
 
-  const writeNodeAddressToLocalStorage = (url: string | null) => {
+  const writeNodeAddressToLocalStorage = async (url: string | null) => {
     try {
       if (url) {
-        window.localStorage.setItem(NODE_KEY, url);
+        await window.localStorage.setItem(NODE_KEY, url);
+        router.reload();
         setNodeAddress(url);
       } else {
-        window.localStorage.removeItem(NODE_KEY);
+        await window.localStorage.removeItem(NODE_KEY);
+        router.reload();
         setApiAddress(config.nodeAddress);
       }
     } catch (error) {
@@ -63,13 +68,15 @@ const useApiAddresses = () => {
     }
   }
 
-  const writeApiAddressToLocalStorage = (url: string | null) => {
+  const writeApiAddressToLocalStorage = async (url: string | null) => {
     try {
       if (url) {
-        window.localStorage.setItem(API_KEY, url);
+        await window.localStorage.setItem(API_KEY, url);
+        router.reload();
         setApiAddress(url);
       } else {
-        window.localStorage.removeItem(API_KEY);
+        await window.localStorage.removeItem(API_KEY);
+        router.reload();
         setApiAddress(config.apiAddress);
       }
     } catch (error) {
