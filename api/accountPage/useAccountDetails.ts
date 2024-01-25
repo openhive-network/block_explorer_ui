@@ -11,6 +11,7 @@ const useAccountDetails = (accountName: string) => {
     queryKey: ["account_details", accountName],
     queryFn: () => fetchingService.getAccount(accountName),
     refetchOnWindowFocus: false,
+    enabled: !!accountName && !!accountName.length,
   });
 
   return { accountDetails, isAccountDetailsLoading, isAccountDetailsError };
