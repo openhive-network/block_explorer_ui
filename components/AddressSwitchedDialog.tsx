@@ -32,10 +32,12 @@ const AddressSwitchedDialog: React.FC<AddressSwitcherDialogProps> = ({addressTyp
 
   const onSubmitClick = () => {
     setAddress(userAddress);
+    setIsOpen(false);
   }
 
   const onResetClick = () => {
-    setAddress(null)
+    setAddress(null);
+    setIsOpen(false);
   }
 
   useEffect(() => {
@@ -52,7 +54,7 @@ const AddressSwitchedDialog: React.FC<AddressSwitcherDialogProps> = ({addressTyp
         <Input
           className=""
           type="text"
-          value={userAddress || ""}
+          value={userAddress}
           onChange={(e) => setUserAddress(e.target.value)}
         />
         <DialogFooter >

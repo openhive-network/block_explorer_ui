@@ -54,7 +54,7 @@ const useApiAddresses = () => {
 
   const writeNodeAddressToLocalStorage = async (url: string | null) => {
     try {
-      if (url) {
+      if (url && url !== "") {
         await window.localStorage.setItem(NODE_KEY, url);
         router.reload();
         setNodeAddress(url);
@@ -70,7 +70,7 @@ const useApiAddresses = () => {
 
   const writeApiAddressToLocalStorage = async (url: string | null) => {
     try {
-      if (url) {
+      if (url && url !== "") {
         await window.localStorage.setItem(API_KEY, url);
         router.reload();
         setApiAddress(url);
