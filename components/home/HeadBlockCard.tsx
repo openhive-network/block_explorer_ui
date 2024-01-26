@@ -12,6 +12,8 @@ import {
   blockchainDates,
 } from "./headBlockParameters";
 import { convertUTCDateToLocalDate } from "@/utils/UTCDateToLocalTime";
+import { useUserSettingsContext } from "../contexts/UserSettingsContext";
+import { Toggle } from "../ui/toggle";
 
 interface HeadBlockCardProps {
   headBlockCardData?: Explorer.HeadBlockCardData | any;
@@ -29,6 +31,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
     supplyCard: true,
     hiveParamsCard: true,
   });
+  const {settings, setSettings} = useUserSettingsContext();
 
   const handleHideBlockchainDates = () => {
     setHiddenPropertiesByCard({
@@ -52,9 +55,19 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
 
   return (
     <div
-      className="col-start-1 col-span-6 md:col-span-1 bg-explorer-dark-gray p-2 rounded md:mx-6 h-fit min-h-[420px]"
+      className="col-start-1 col-span-6 md:col-span-1 bg-explorer-dark-gray p-2 rounded md:mx-6 h-fit min-h-[440px]"
       data-testid="head-block-card"
     >
+      <Toggle
+        checked={settings.liveData}
+        onClick={() =>
+          setSettings({
+            ...settings,
+            liveData: !settings.liveData,
+          })
+        }
+        leftLabel="Live data"
+      />
       {headBlockCardData?.headBlockNumber &&
         blockDetails?.block_num &&
         headBlockCardData?.headBlockNumber !== blockDetails?.block_num && (

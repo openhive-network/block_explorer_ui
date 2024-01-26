@@ -72,16 +72,6 @@ export default function Navbar() {
                   }
                   leftLabel="Raw Json view"
                 />
-                <Toggle
-                  checked={settings.liveData}
-                  onClick={() =>
-                    setSettings({
-                      ...settings,
-                      liveData: !settings.liveData,
-                    })
-                  }
-                  leftLabel="Live data"
-                />
               </div>
             </div>
           </div>
@@ -115,17 +105,6 @@ export default function Navbar() {
                   })
                 }
                 leftLabel="Raw Json view"
-                className="ml-6"
-              />
-              <Toggle
-                checked={settings.liveData}
-                onClick={() =>
-                  setSettings({
-                    ...settings,
-                    liveData: !settings.liveData,
-                  })
-                }
-                leftLabel="Live data"
                 className="ml-6"
               />
             </div>
