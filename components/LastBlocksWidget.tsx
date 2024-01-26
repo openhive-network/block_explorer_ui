@@ -19,6 +19,7 @@ import { useRouter } from "next/router";
 import useLastBlocks from "@/api/homePage/useLastBlocks";
 
 interface LastBlocksWidgetProps {
+  headBlock?: number;
   className?: string;
 }
 
@@ -112,12 +113,13 @@ const getOpsCount = (lastBlocks: Hive.LastBlocksTypeResponse[]) => {
 };
 
 const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
+  headBlock,
   className = "",
 }) => {
   const [data, setData] = useState<ChartBlockData[]>([]);
   const router = useRouter();
 
-  const lastBlocks = useLastBlocks();
+  const lastBlocks = useLastBlocks(headBlock);
 
   useEffect(() => {
     setData(getOpsCount(lastBlocks.lastBlocksData || []).reverse());
