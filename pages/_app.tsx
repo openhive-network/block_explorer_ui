@@ -6,6 +6,7 @@ import "@/styles/globals.css";
 import ErrorPage from "@/pages/ErrorPage";
 
 export default function App({ Component, pageProps }: AppProps) {
+
   return (
     <ErrorBoundary fallback={<ErrorPage />}>
       <Context>

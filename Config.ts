@@ -1,7 +1,7 @@
 import env from "@beam-australia/react-env"
 
 export const config = {
-  hiveBlogAddress: `${env('HIVE_BLOG_API_ADDRESS') ? env('HIVE_BLOG_API_ADDRESS') : 'https://api.hive.blog'}`,
+  nodeAddress: `${env('HIVE_BLOG_API_ADDRESS') ? env('HIVE_BLOG_API_ADDRESS') : 'https://api.hive.blog'}`,
   apiAddress: `${env('API_ADDRESS') ? env('API_ADDRESS') : 'https://hafbe.openhive.network/hafbe'}`,
   baseMomentTimeFormat: "YYYY/MM/DD hh:mm:ss",
   gitHash: process.env.NEXT_PUBLIC_COMMIT_HASH,
