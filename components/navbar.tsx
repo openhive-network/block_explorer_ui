@@ -9,7 +9,6 @@ import { Toggle } from "./ui/toggle";
 import { useUserSettingsContext } from "./contexts/UserSettingsContext";
 import { useAlertContext } from "./contexts/AlertContext";
 import Alert from "./Alert";
-import { Button } from "./ui/button";
 
 export default function Navbar() {
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -73,13 +72,26 @@ export default function Navbar() {
                   }
                   leftLabel="Raw Json view"
                 />
+                <Toggle
+                  checked={settings.liveData}
+                  onClick={() =>
+                    setSettings({
+                      ...settings,
+                      liveData: !settings.liveData,
+                    })
+                  }
+                  leftLabel="Live data"
+                />
               </div>
             </div>
           </div>
         ) : (
           <>
             <div className="flex items-center pl-12">
-              <Link href={"/"} className="pr-12 flex justify-normal items-center text-explorer-turquoise font-medium">
+              <Link
+                href={"/"}
+                className="pr-12 flex justify-normal items-center text-explorer-turquoise font-medium"
+              >
                 <Image
                   src="/hive-logo.png"
                   alt="Hive logo"
@@ -87,9 +99,13 @@ export default function Navbar() {
                   height={50}
                   data-testid="hive-logo"
                 />
-                <div className="ml-4" data-testid="hive-block-explorer">Hive Block Explorer</div>
+                <div className="ml-4" data-testid="hive-block-explorer">
+                  Hive Block Explorer
+                </div>
               </Link>
-              <Link href={"/witnesses"} data-testid="navbar-witnesses-link">Witnesses</Link>
+              <Link href={"/witnesses"} data-testid="navbar-witnesses-link">
+                Witnesses
+              </Link>
               <Toggle
                 checked={settings.rawJsonView}
                 onClick={() =>
@@ -99,6 +115,17 @@ export default function Navbar() {
                   })
                 }
                 leftLabel="Raw Json view"
+                className="ml-6"
+              />
+              <Toggle
+                checked={settings.liveData}
+                onClick={() =>
+                  setSettings({
+                    ...settings,
+                    liveData: !settings.liveData,
+                  })
+                }
+                leftLabel="Live data"
                 className="ml-6"
               />
             </div>

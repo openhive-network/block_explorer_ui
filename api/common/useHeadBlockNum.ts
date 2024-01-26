@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 
-const useHeadBlockNumber = () => {
+const useHeadBlockNumber = (liveUpdate?: boolean) => {
   const {
     data: headBlockNumberData,
     isLoading: headBlockNumberDataLoading,
@@ -10,6 +10,7 @@ const useHeadBlockNumber = () => {
     queryKey: ["headBlockNum"],
     queryFn: () => fetchingService.getHeadBlockNum(),
     refetchOnWindowFocus: false,
+    refetchInterval: liveUpdate ? 3000 : Infinity
   });
 
   const checkTemporaryHeadBlockNumber = async () => {
