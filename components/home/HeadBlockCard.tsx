@@ -12,6 +12,8 @@ import {
   blockchainDates,
 } from "./headBlockParameters";
 import { convertUTCDateToLocalDate } from "@/utils/UTCDateToLocalTime";
+import { useUserSettingsContext } from "../contexts/UserSettingsContext";
+import { Toggle } from "../ui/toggle";
 
 interface HeadBlockCardProps {
   headBlockCardData?: Explorer.HeadBlockCardData | any;
@@ -29,6 +31,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
     supplyCard: true,
     hiveParamsCard: true,
   });
+  const {settings, setSettings} = useUserSettingsContext();
 
   const handleHideBlockchainDates = () => {
     setHiddenPropertiesByCard({
