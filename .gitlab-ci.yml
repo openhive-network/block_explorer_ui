@@ -1,6 +1,7 @@
 stages:
  - build
  - test
+ - test-report-aggregate
  - deploy
 
 variables:
@@ -115,7 +116,7 @@ startup-test:
       echo -e "\e[0Ksection_start:$(date +%s):wait[collapsed=true]\r\e[0K$MESSAGE"
 
       until [[ "healthy" == "$(docker inspect -f '{{ .State.Health.Status }}' "$CONTAINER_NAME")" ]]
-      do 
+      do
         echo "$MESSAGE"
         sleep 3
       done
@@ -129,7 +130,68 @@ startup-test:
     paths:
       - "$CONTAINER_NAME.log"
   tags:
-    - public-runner-docker    
+    - public-runner-docker
+
+.e2e_tests_template:
+  extends: .node-job
+  image: mcr.microsoft.com/playwright:v1.40.1-jammy
+  parallel:
+    matrix:
+      - PROJECT: ['chromium', 'firefox', 'webkit']
+        SHARD_INDEX: [1, 2, 3, 4, 5]
+        SHARD_TOTAL: 5
+  script:
+    - !reference [.node-job, script]
+    - |
+      echo -e "\e[0Ksection_start:$(date +%s):tests[collapsed=false]\r\e[0KRunning tests..."
+      cd ./
+      npx playwright test --project=$PROJECT --shard=$SHARD_INDEX/$SHARD_TOTAL --update-snapshots
+      echo -e "\e[0Ksection_end:$(date +%s):tests\r\e[0K"
+  artifacts:
+    paths:
+      - ./playwright-report/
+      - ./test-results/
+      - ./junit/
+    reports:
+      junit: ./junit/**/**/results.xml
+
+e2e-tests:
+  extends: .e2e_tests_template
+  needs:
+    - docker-build
+  services:
+    - name: $IMAGE_NAME
+      alias: block-explorer
+      variables:
+        REACT_APP_API_ADDRESS: https://hafbe.openhive.network/rpc
+        REACT_APP_HIVE_BLOG_API_ADDRESS: https://api.hive.blog
+  variables:
+    PORT: 5000
+    BLOCK_EXPLORER_URL: http://block-explorer:$PORT
+
+.e2e_report_aggregate_template:
+  extends: .node-job
+  stage: test-report-aggregate
+  when: always
+  image: mcr.microsoft.com/playwright:v1.40.1-jammy
+  script:
+    - cd ./
+    - npm install playwright-merge-html-reports --dev
+    - npx playwright test tests/playwright/merge-reports/ --config playwright.merge.config.ts
+  artifacts:
+    paths:
+      - ./merged-html-report/
+      - ./junit/
+
+e2e-report-aggregate:
+  extends: .e2e_report_aggregate_template
+  needs:
+    - e2e-tests
+  variables:
+    PROJECTS: '["chromium", "firefox", "webkit"]'
+    SHARD_TOTAL: 5
+    PORT: 5000
+    BLOCK_EXPLORER_URL: http://block-explorer:$PORT
 
 .deploy:
   extends: .job-defaults

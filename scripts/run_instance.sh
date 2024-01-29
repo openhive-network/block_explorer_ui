@@ -13,7 +13,7 @@ OPTIONS:
   --hive-blog-api-endpoint=URL  Hive Blog API endpoint to be used by the new instance (default: 'https://api.hive.blog')
   --port=PORT                   Port to be exposed (default: 5000)
   --name=NAME                   Container name to be used (default: block_explorer_ui)
-  --detach                      Run in detached mode 
+  --detach                      Run in detached mode
   --help|-h|-?                  Display this help screen and exit
 EOF
 }
@@ -49,7 +49,7 @@ while [ $# -gt 0 ]; do
         ;;
     --detach)
         DETACH=true
-        ;;    
+        ;;
     --help|-h|-?)
         print_help
         exit 0

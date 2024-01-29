@@ -152,7 +152,7 @@ export default function Block() {
           className="w-full md:w-[962px] mt-6 m-auto py-2 px-4 bg-explorer-dark-gray rounded text-white text-xs break-words break-all"
         />
       ) : (
-        <section className="md:px-10 flex flex-col items-center justify-center text-white">
+        <section className="md:px-10 flex flex-col items-center justify-center text-white" data-testid="block-page-operation-list">
           {totalOperations?.total_operations &&
             totalOperations?.total_operations > 1000 && (
               <CustomPagination

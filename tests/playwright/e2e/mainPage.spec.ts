@@ -29,18 +29,19 @@ test.describe("Block Explorer UI tests", () => {
     // Extract number as string from Head Block Card Block Link
     const block: string = await mainPage.headBlockCardBlockLink.textContent() || '';
     const foundNumberInBlock: any = block.match(RegExp(/\d+$/gm));
-    const blockNumber: string = foundNumberInBlock[0];
+    const blockNumber: string = await foundNumberInBlock[0];
 
 
     await mainPage.headBlockCardBlockLink.click();
     await blockPage.validateBlockPageIsLoaded();
 
     // Extract number as string from Block Page Details Card
-    const blockNumberBlockPage = await blockPage.blockDetailsBlockNumber.textContent();
-    const foundNumberInBlockDetails: any = block.match(RegExp(/\d+$/gm));
-    const blockNumberDetails: string = foundNumberInBlockDetails[0];
+    const blockNumberBlockPage: string = await blockPage.blockDetailsBlockNumber.textContent() || '';
+    const foundNumberInBlockDetails: any = blockNumberBlockPage.match(RegExp(/\d+$/gm));
+    const blockNumberDetails: string = await foundNumberInBlockDetails[0];
 
     await blockPage.validateBlockNumber(blockNumber); // against block number in head block card
+    await blockPage.validateBlockNumber(blockNumberDetails); // against block number in Block Page Details Card
   });
 
   test("Move to the block page by clicking block link and back to the home page",async ({ page }) => {
@@ -57,11 +58,12 @@ test.describe("Block Explorer UI tests", () => {
     await blockPage.validateBlockPageIsLoaded();
 
     // Extract number as string from Block Page Details Card
-    const blockNumberBlockPage = await blockPage.blockDetailsBlockNumber.textContent();
-    const foundNumberInBlockDetails: any = block.match(RegExp(/\d+$/gm));
+    const blockNumberBlockPage: string = await blockPage.blockDetailsBlockNumber.textContent() || '';
+    const foundNumberInBlockDetails: any = blockNumberBlockPage.match(RegExp(/\d+$/gm));
     const blockNumberDetails: string = foundNumberInBlockDetails[0];
 
     await blockPage.validateBlockNumber(blockNumber); // against block number in head block card
+    await blockPage.validateBlockNumber(blockNumberDetails);
     // Click Hive Block Explorer Link
     await navbar.navBarHiveHeaderText.click();
     // Validate Home Page is loaded
