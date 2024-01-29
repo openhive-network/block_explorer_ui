@@ -151,13 +151,13 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           {triggerTitle}
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[95%] md:max-w-[80%] max-h-[90%] md:max-h-[80%] flex-column justify-center align-center  bg-white text-black overflow-auto">
+      <DialogContent className="max-w-[95%] md:max-w-[80%] max-h-[90%] md:max-h-[80%] flex-column justify-center align-center  bg-white text-black overflow-auto px-0">
         <DialogHeader>
           <DialogTitle className="flex justify-center pt-2">
             Operation Types
           </DialogTitle>
         </DialogHeader>
-        <div className="overflow-auto">
+        <div className="overflow-auto max-h-[500px] md:max-h-[600px]">
           <ul className="my-4 grid grid-cols-3 gap-4 place-items-stretch text-white ">
             {nonVirtualOperations.map((operation) =>
               renderOperation(operation)
