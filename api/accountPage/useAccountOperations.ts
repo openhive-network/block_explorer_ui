@@ -8,7 +8,7 @@ const useAccountOperations = (
 ) => {
   const {
     data: accountOperations,
-    isLoading: isAccountOperationsLoading,
+    isFetching: isAccountOperationsLoading,
     isError: isAccountOperationsError,
   }: UseQueryResult<Hive.AccountOperationsResponse> = useQuery({
     queryKey: ["account_operations", accountOperationsProps],
