@@ -497,7 +497,7 @@ declare module Hive {
   interface LastBlocksTypeResponse {
     block_num: number;
     witness: string;
-    ops_count: OperationsByTypeCount;
+    ops_count: OperationsByTypeCount[];
   }
 
   interface OperationsCount {
