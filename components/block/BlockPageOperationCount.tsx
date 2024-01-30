@@ -1,49 +1,54 @@
+import Explorer from "@/types/Explorer";
 import Hive from "@/types/Hive";
 import { getOperationTypeForDisplay } from "@/utils/UI";
 
-
 interface BlockPageOperationCountProps {
-  operations?: Hive.OperationResponse[];
+  virtualOperationsTypesCounters?: Explorer.OperationCounter[];
+  nonVirtualOperationsTypesCounters?: Explorer.OperationCounter[];
   virtualOperationLength: number;
   nonVirtualOperationLength: number;
 }
 
-const BlockPageOperationCount: React.FC<BlockPageOperationCountProps> = ({operations, virtualOperationLength, nonVirtualOperationLength}) => {
-
-  const nonvirtualOperationCounts: Map<string, number> = new Map(); 
-  const virtualOperationCounts: Map<string, number> = new Map(); 
-  operations?.forEach((operation) => {
-    const operationType = operation.operation.type;
-    const isVirtual = operation.virtual_op;
-    const mapToWrite = isVirtual ? virtualOperationCounts : nonvirtualOperationCounts;
-    const exisitngOperationCount = mapToWrite.get(operationType);
-    if (exisitngOperationCount) {
-      mapToWrite.set(operationType, exisitngOperationCount + 1);
-    } else {
-      mapToWrite.set(operationType, 1);
-    }
-  })
-
+const BlockPageOperationCount: React.FC<BlockPageOperationCountProps> = ({
+  virtualOperationLength,
+  nonVirtualOperationLength,
+  virtualOperationsTypesCounters,
+  nonVirtualOperationsTypesCounters,
+}) => {
   return (
     <section className="w-full flex flex-col items-center text-md px-4 mb-2 md:mb-4">
       <div className="w-full py-4">
         <div className="my-2">Operations: {nonVirtualOperationLength}</div>
         <div className="flex flex-wrap flex-col md:flex-row text-sm">
-          {Array.from(nonvirtualOperationCounts).map(([operationName, counter]) => (
-            <div key={operationName} className="flex justify-between p-2 md:w-1/2 border-b border-solid border-gray-700  border-r">
-              <span className="mr-2">{`${getOperationTypeForDisplay(operationName)}: `}</span>
-              <span>{counter}</span>
-            </div>
-          ))}
+          {nonVirtualOperationsTypesCounters && nonVirtualOperationsTypesCounters.map(
+            ({operationTypeName, counter}) => (
+              <div
+                key={operationTypeName}
+                className="flex justify-between p-2 md:w-1/2 border-b border-solid border-gray-700  border-r"
+              >
+                <span className="mr-2">{`${getOperationTypeForDisplay(
+                  operationTypeName
+                )}: `}</span>
+                <span>{counter}</span>
+              </div>
+            )
+          )}
         </div>
         <div className="my-2">Virtual operations: {virtualOperationLength}</div>
         <div className="flex flex-wrap flex-col md:flex-row text-sm">
-          {Array.from(virtualOperationCounts).map(([operationName, counter]) => (
-            <div key={operationName} className="flex justify-between p-2 md:w-1/2 border-b border-solid border-gray-700  border-r">
-              <span className="mr-2">{`${getOperationTypeForDisplay(operationName)}: `}</span>
-              <span>{counter}</span>
-            </div>
-          ))}
+          {virtualOperationsTypesCounters && virtualOperationsTypesCounters.map(
+            ({operationTypeName, counter}) => (
+              <div
+                key={operationTypeName}
+                className="flex justify-between p-2 md:w-1/2 border-b border-solid border-gray-700  border-r"
+              >
+                <span className="mr-2">{`${getOperationTypeForDisplay(
+                  operationTypeName
+                )}: `}</span>
+                <span>{counter}</span>
+              </div>
+            )
+          )}
         </div>
       </div>
     </section>

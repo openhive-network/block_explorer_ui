@@ -292,7 +292,7 @@ class FetchingService {
     return await this.callApi("get_hafbe_version", requestBody);
   }
 
-  async getOperationsCountInBlock(blockNumber: number): Promise<Hive.OperationsCount[]> {
+  async getOperationsCountInBlock(blockNumber: number): Promise<Hive.OperationsByTypeCount[]> {
     const requestBody: Hive.GetOperationsInBlockProps = {
       _block_num: blockNumber
     };

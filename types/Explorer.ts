@@ -128,6 +128,11 @@ declare module Explorer {
     pending_rewarded_vesting_hive: string;
     dhf_interval_ledger: string;
   }
+
+  interface OperationCounter {
+    operationTypeName: string;
+    counter: number;
+  }
 }
 
 export default Explorer;

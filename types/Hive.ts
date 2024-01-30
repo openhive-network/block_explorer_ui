@@ -149,7 +149,7 @@ declare module Hive {
     nai: string;
   }
 
-  interface OperationsCount {
+  interface OperationsByTypeCount {
     count: number;
     op_type_id: number;
   }
@@ -497,15 +497,13 @@ declare module Hive {
   interface LastBlocksTypeResponse {
     block_num: number;
     witness: string;
-    ops_count: OperationsCount;
+    ops_count: OperationsByTypeCount;
   }
 
   interface OperationsCount {
     total_operations: number;
     total_pages: number;
   }
-
-
 
   interface CommentOperation {
     block_num: number;
