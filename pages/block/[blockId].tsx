@@ -18,6 +18,7 @@ import CustomPagination from "@/components/CustomPagination";
 import { useURLParams } from "@/utils/Hooks";
 import useOperationsCountInBlock from "@/api/blockPage/useOperationsInBlock";
 import Explorer from "@/types/Explorer";
+import { useHiveChainContext } from "@/components/contexts/HiveChainContext";
 
 interface BlockSearchParams {
   blockId?: number;
@@ -35,6 +36,7 @@ export default function Block() {
   const virtualOpsRef = useRef(null);
 
   const { blockId } = router.query;
+  const {hiveChain} = useHiveChainContext();
 
   const [blockDate, setBlockDate] = useState<Date>();
   const { paramsState, setParams } = useURLParams({
@@ -58,6 +60,14 @@ export default function Block() {
   );
 
   const { operationsTypes } = useOperationsTypes();
+
+  const basicFormatter = hiveChain?.formatter;
+  let formattedOperations = blockOperations;
+
+  if (basicFormatter) {
+    formattedOperations = basicFormatter.format(blockOperations);
+  }
+
 
   useEffect(() => {
     if (blockDetails && blockDetails.created_at) {
@@ -128,7 +138,11 @@ export default function Block() {
   } = getOperationsCounts();
 
   const { virtualOperations, nonVirtualOperations } =
-    getSplitOperations(blockOperations);
+    getSplitOperations(formattedOperations);
+  const {
+    virtualOperations: totalVirtualOperations,
+    nonVirtualOperations: totalNonVirtualOperations,
+  } = getSplitOperations(totalOperations);
 
   const handleGoToBlock = (blockNumber: string) => {
     router.push({
