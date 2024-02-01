@@ -19,6 +19,7 @@ import { useURLParams } from "@/utils/Hooks";
 import useOperationsCountInBlock from "@/api/blockPage/useOperationsInBlock";
 import Explorer from "@/types/Explorer";
 import { useHiveChainContext } from "@/components/contexts/HiveChainContext";
+import OperationsFormatter from "@/lib/Formatter";
 
 interface BlockSearchParams {
   blockId?: number;
@@ -61,7 +62,8 @@ export default function Block() {
 
   const { operationsTypes } = useOperationsTypes();
 
-  const basicFormatter = hiveChain?.formatter;
+  let basicFormatter = hiveChain?.formatter;
+  basicFormatter = basicFormatter?.extend(OperationsFormatter);
   let formattedOperations = blockOperations;
 
   if (basicFormatter) {
