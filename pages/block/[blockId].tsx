@@ -19,7 +19,7 @@ import { useURLParams } from "@/utils/Hooks";
 import useOperationsCountInBlock from "@/api/blockPage/useOperationsInBlock";
 import Explorer from "@/types/Explorer";
 import { useHiveChainContext } from "@/components/contexts/HiveChainContext";
-import OperationsFormatter from "@/lib/Formatter";
+import { useOperationsFormatter } from "@/utils/Hooks";
 
 interface BlockSearchParams {
   blockId?: number;
@@ -61,15 +61,7 @@ export default function Block() {
   );
 
   const { operationsTypes } = useOperationsTypes();
-
-  let basicFormatter = hiveChain?.formatter;
-  basicFormatter = basicFormatter?.extend(OperationsFormatter);
-  let formattedOperations = blockOperations;
-
-  if (basicFormatter) {
-    formattedOperations = basicFormatter.format(blockOperations);
-  }
-
+  const formattedOperations = useOperationsFormatter(blockOperations?.operations_result);
 
   useEffect(() => {
     if (blockDetails && blockDetails.created_at) {
@@ -78,13 +70,13 @@ export default function Block() {
   }, [blockDetails]);
 
   const getSplitOperations = useCallback(
-    (operations?: Hive.TotalOperationsResponse) => {
-      if (operations && operations.operations_result) {
+    (operations?: Hive.OperationResponse[]) => {
+      if (operations) {
         return {
-          virtualOperations: operations.operations_result?.filter(
+          virtualOperations: operations?.filter(
             (operation) => operation.virtual_op
           ),
-          nonVirtualOperations: operations.operations_result?.filter(
+          nonVirtualOperations: operations?.filter(
             (operation) => !operation.virtual_op
           ),
         };
@@ -141,10 +133,6 @@ export default function Block() {
 
   const { virtualOperations, nonVirtualOperations } =
     getSplitOperations(formattedOperations);
-  const {
-    virtualOperations: totalVirtualOperations,
-    nonVirtualOperations: totalNonVirtualOperations,
-  } = getSplitOperations(totalOperations);
 
   const handleGoToBlock = (blockNumber: string) => {
     router.push({
