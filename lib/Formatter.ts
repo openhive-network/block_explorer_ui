@@ -8,9 +8,7 @@ class OperationsFormatter {
     // Example formatter
     @WaxFormattable()
     operation({ target }: IFormatFunctionArguments<Hive.OperationResponse>) {
-      const message: string = "Test";
       const previousObject = structuredClone(target);
-      previousObject.operation.message = message;
       return previousObject;
     }
   
