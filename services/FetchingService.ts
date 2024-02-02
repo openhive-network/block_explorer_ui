@@ -4,7 +4,6 @@ import Explorer from "@/types/Explorer";
 import { IHiveChainInterface } from "@hive/wax/web";
 
 class FetchingService {
-
   private apiUrl: string | null = null;
   private nodeUrl: string | null = null;
 
@@ -15,7 +14,6 @@ class FetchingService {
   public setNodeUrl(newUrl: string) {
     this.nodeUrl = newUrl;
   }
-
 
   async makePostRequest<T>(url: string, requestBody: T) {
     try {
@@ -45,10 +43,15 @@ class FetchingService {
     return await this.makePostRequest(url, requestBody);
   }
 
-  async getHeadBlockNum(): Promise<number> {
-    const url = `${this.apiUrl}/get_head_block_num`;
-    
-    return await this.makePostRequest(url, {});
+  async getHeadBlockNum(): Promise<number | undefined> {
+    try {
+      const url = `${this.apiUrl}/get_head_block_num`;
+
+      return await this.makePostRequest(url, {});
+    } catch {
+      window.localStorage.clear();
+      window.location.reload();
+    }
   }
 
   async getBlock(blockNumber: number): Promise<Hive.BlockDetails> {
@@ -123,13 +126,13 @@ class FetchingService {
       _to: accountOperationsProps.toBlock,
       _date_start: accountOperationsProps.startDate,
       _date_end: accountOperationsProps.endDate,
-      _body_limit: config.opsBodyLimit
+      _body_limit: config.opsBodyLimit,
     };
     return await this.callApi("get_ops_by_account", requestBody);
   }
 
   async getAccountOperationsCount(
-    operations: number[], 
+    operations: number[],
     account: string
   ): Promise<number> {
     const requestBody: Hive.GetAccountOpsCountProps = {
@@ -219,7 +222,7 @@ class FetchingService {
   async getOperationKeys(operationTypeId: number): Promise<string[][]> {
     const requestBody: Hive.GetOperationKeysProps = {
       _op_type_id: operationTypeId,
-    }
+    };
     return await this.callApi("get_operation_keys", requestBody);
   }
 
@@ -235,8 +238,12 @@ class FetchingService {
       _end_date: blockSearchProps.endDate,
       _limit: blockSearchProps.limit,
       _order_is: "desc",
-      _key_content: blockSearchProps.deepProps.content ? [blockSearchProps.deepProps.content] : undefined,
-      _setof_keys:  blockSearchProps.deepProps.keys ? [blockSearchProps.deepProps.keys] : undefined
+      _key_content: blockSearchProps.deepProps.content
+        ? [blockSearchProps.deepProps.content]
+        : undefined,
+      _setof_keys: blockSearchProps.deepProps.keys
+        ? [blockSearchProps.deepProps.keys]
+        : undefined,
     };
     return await this.callApi("get_block_by_op", requestBody);
   }
@@ -260,11 +267,9 @@ class FetchingService {
     return await this.callApi("get_witness_votes_history", requestBody);
   }
 
-  async getOperation(
-    operationId: number
-  ): Promise<Hive.OperationResponse> {
+  async getOperation(operationId: number): Promise<Hive.OperationResponse> {
     const requestBody: Hive.GetOperationProps = {
-      _operation_id: operationId
+      _operation_id: operationId,
     };
     return await this.callApi("get_operation", requestBody);
   }
@@ -282,7 +287,7 @@ class FetchingService {
       _start_date: commentSearchProps.startDate,
       _end_date: commentSearchProps.endDate,
       _body_limit: config.opsBodyLimit,
-      _page_size: config.standardPaginationSize
+      _page_size: config.standardPaginationSize,
     };
     return await this.callApi("get_comment_operations", requestBody);
   }
@@ -292,13 +297,29 @@ class FetchingService {
     return await this.callApi("get_hafbe_version", requestBody);
   }
 
-  async getManabars(accountName: string, hiveChain: IHiveChainInterface): Promise<Hive.Manabars | null> {
+  async getManabars(
+    accountName: string,
+    hiveChain: IHiveChainInterface
+  ): Promise<Hive.Manabars | null> {
     try {
-      const upvotePromise = hiveChain.calculateCurrentManabarValueForAccount(accountName, 0);
-      const downvotePromise = hiveChain.calculateCurrentManabarValueForAccount(accountName, 1);
-      const rcPromise = hiveChain.calculateCurrentManabarValueForAccount(accountName, 2);
-      const manabars = await Promise.all([upvotePromise, downvotePromise, rcPromise]);
-      return {upvote: manabars[0], downvote: manabars[1], rc: manabars[2]};
+      const upvotePromise = hiveChain.calculateCurrentManabarValueForAccount(
+        accountName,
+        0
+      );
+      const downvotePromise = hiveChain.calculateCurrentManabarValueForAccount(
+        accountName,
+        1
+      );
+      const rcPromise = hiveChain.calculateCurrentManabarValueForAccount(
+        accountName,
+        2
+      );
+      const manabars = await Promise.all([
+        upvotePromise,
+        downvotePromise,
+        rcPromise,
+      ]);
+      return { upvote: manabars[0], downvote: manabars[1], rc: manabars[2] };
     } catch (error) {
       console.error(error);
       return null;
