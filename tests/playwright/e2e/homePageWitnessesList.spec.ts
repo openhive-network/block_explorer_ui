@@ -28,20 +28,14 @@ test.describe("Home page - witnesses list", () => {
       await expect(page).toHaveURL('/witnesses')
     });
 
-    test("Check if after move mouse on witnesses name background color is changed", async ({ page }) => {
+    test.only("Check if after move mouse on witnesses name background color is changed", async ({ page }) => {
       await mainPage.gotoBlockExplorerPage();
       const witnessesName = await mainPage.witnessesName.first()
-
-
-      // expect(
-      //   await mainPage.getElementCssPropertyValue(witnessesName, 'background-color')
-      // ).toBe('rgb(229, 231, 235)'); 
-
       await witnessesName.hover()
-      await page.waitForTimeout(5000)
-      // expect(
-      //   await mainPage.getElementCssPropertyValue(witnessesName, 'background-color')
-      // ).toBe('rgb(0, 0, 0)');
+      await page.waitForTimeout(2000)
+      expect(
+        await mainPage.getElementCssPropertyValue(witnessesName, 'background-color')
+      ).toBe('rgb(0, 0, 0)');
   
     });
   });
