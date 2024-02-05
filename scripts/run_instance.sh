@@ -9,18 +9,18 @@ Usage: $0 [OPTION[=VALUE]]...
 Run a Block Explorer UI Docker instance
 OPTIONS:
   --image=IMAGE                 Docker image to run (default: 'registry.gitlab.syncad.com/hive/block_explorer_ui:latest')
-  --api-endpoint=URL            API endpoint to be used by the new instance (default: 'https://hafbe.openhive.network/hafbe')
+  --api-endpoint=URL            API endpoint to be used by the new instance (default: 'https://hafbe.openhive.network/rpc')
   --hive-blog-api-endpoint=URL  Hive Blog API endpoint to be used by the new instance (default: 'https://api.hive.blog')
   --port=PORT                   Port to be exposed (default: 5000)
   --name=NAME                   Container name to be used (default: block_explorer_ui)
-  --detach                      Run in detached mode 
+  --detach                      Run in detached mode
   --help|-h|-?                  Display this help screen and exit
 EOF
 }
 
 IMAGE=${IMAGE:-"registry.gitlab.syncad.com/hive/block_explorer_ui:latest"}
 PORT=${PORT:-"5000"}
-API_ENDPOINT=${API_ENDPOINT:-"https://hafbe.openhive.network/hafbe"}
+API_ENDPOINT=${API_ENDPOINT:-"https://hafbe.openhive.network/rpc"}
 HIVE_BLOG_API_ENDPOINT=${HIVE_BLOG_API_ENDPOINT:-"https://api.hive.blog"}
 CONTAINER_NAME=${CONTAINER_NAME:-"block_explorer_ui"}
 DETACH=${DETACH:-false}
@@ -49,7 +49,7 @@ while [ $# -gt 0 ]; do
         ;;
     --detach)
         DETACH=true
-        ;;    
+        ;;
     --help|-h|-?)
         print_help
         exit 0

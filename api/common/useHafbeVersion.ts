@@ -10,6 +10,7 @@ const useHafbeVersion = () => {
     queryKey: ["hafbeVersion"],
     queryFn: () => fetchingService.getHafbeVersion(),
     refetchOnWindowFocus: false,
+    select: (hafbeHash) => hafbeHash.slice(0, 8)
   });
 
   return { hafbeVersionData, hafbeVersionDataLoading, hafbeVersionDataError };

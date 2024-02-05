@@ -21,10 +21,10 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
 }) => {
   const {manabarsData} = useManabars(accountName);
   return (
-    <div className='bg-explorer-dark-gray p-2 mx-2 md:mx-6 h-fit rounded'>
+    <div className='bg-explorer-dark-gray p-2 mx-2 md:mx-6 h-fit rounded' data-testid="account-details">
       <div className="flex justify-between bg-explorer-dark-gray text-explorer-orange text-2xl my-4">
         {accountDetails.is_witness ? (
-          <div>
+          <div data-testid="account-name">
             {accountDetails.name} <span className="text-sm">(witness)</span>
           </div>
         ) : (

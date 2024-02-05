@@ -23,7 +23,7 @@ const JSONCard: React.FC<JSONCardProps> = ({
   const jsonToObj = JSON.parse(json);
 
   return (
-    <div className="bg-explorer-dark-gray p-2 rounded mt-2 mx-2 md:mx-6">
+    <div className="bg-explorer-dark-gray p-2 rounded mt-2 mx-2 md:mx-6" data-testid="account-json-metadata-dropdown">
       <div className="flex-column justify-center  align-center">
         <div
           onClick={handleHideData}

@@ -248,7 +248,7 @@ export default function Account() {
           />
         </div>
 
-        <div className="col-start-1 md:col-start-2 col-span-1 md:col-span-3">
+        <div className="col-start-1 md:col-start-2 col-span-1 md:col-span-3" data-testid="account-operation-list">
           <div>
             <div className="bg-explorer-dark-gray text-white p-4 rounded-[6px] mx-2">
               <div className="ml-2">Ranges</div>

@@ -33,6 +33,7 @@ export interface SearchRangesResult {
   setRangeSelectKey: (key: string) => void;
   setTimeUnitSelectKey: (blockNumber: string) => void;
   getRangesValues: () => RangesValues;
+  setRangesValues: (params: Explorer.CommentSearchParams) => void;
 }
 
 const useSearchRanges = () => {
@@ -85,6 +86,17 @@ const useSearchRanges = () => {
 
   const {checkTemporaryHeadBlockNumber} = useHeadBlockNumber();
 
+  const setRangesValues = (params: Explorer.CommentSearchParams) => {
+    params.fromBlock && setFromBlock(params.fromBlock);
+    params.toBlock && setToBlock(params.toBlock);
+    params.startDate && setStartDate(params.startDate);
+    params.endDate && setEndDate(params.endDate);
+    params.lastBlocks && setLastBlocksValue(params.lastBlocks);
+    params.lastTime && setLastTimeUnitValue(params.lastTime);
+    params.rangeSelectKey && setRangeSelectKey(params.rangeSelectKey);
+    params.timeUnit && setTimeUnitSelectKey(params.timeUnit);
+  }
+
   const getRangesValues = async () => {
     let payloadFromBlock: number | undefined = rangeSelectKey === "blockRange" ? fromBlock : undefined;
     let payloadToBlock: number | undefined = rangeSelectKey === "blockRange" ? toBlock : undefined;
@@ -128,7 +140,8 @@ const useSearchRanges = () => {
     setLastTimeUnitValue,
     setRangeSelectKey,
     setTimeUnitSelectKey,
-    getRangesValues
+    getRangesValues,
+    setRangesValues
   } as SearchRangesResult;
 }
 

@@ -11,6 +11,7 @@ const useAccountOperationTypes = (accountName: string) => {
     queryKey: ["account_operation_types", accountName],
     queryFn: () => fetchingService.getAccOpTypes(accountName),
     refetchOnWindowFocus: false,
+    enabled: !!accountName && !!accountName.length,
   });
 
   return {

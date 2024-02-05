@@ -24,7 +24,7 @@ export default function Home() {
     <div className="grid grid-cols-3 text-white mx-4 md:mx-8 w-full">
       <HeadBlockCard
         headBlockCardData={dynamicGlobalQueryData}
-        transactionCount={blockOperations?.length}
+        transactionCount={blockOperations?.operations_result?.length}
         blockDetails={headBlockData}
       />
       <div className="col-start-1 md:col-start-2 col-span-6 md:col-span-2">

@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.7.15",
-    "@hive/wax": "0.3.8-240119101323",
+    "@hive/wax": "0.3.8-240124105022",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-label": "^2.0.2",
@@ -44,6 +44,7 @@
     "lucide-react": "^0.261.0",
     "moment": "^2.29.4",
     "next": "^13.5.4",
+    "playwright-merge-html-reports": "^0.2.8",
     "postcss": "^8.4.31",
     "react": "18.2.0",
     "react-datetime-picker": "^5.5.1",
@@ -61,6 +62,7 @@
     "@beam-australia/react-env": "^3.1.1",
     "@playwright/test": "^1.40.1",
     "@tanstack/eslint-plugin-query": "^4.29.25",
+    "@types/yazl": "^2.4.5",
     "cross-env": "^7.0.3",
     "shx": "^0.3.4"
   }

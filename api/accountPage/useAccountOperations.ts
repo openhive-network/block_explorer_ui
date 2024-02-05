@@ -8,21 +8,23 @@ const useAccountOperations = (
 ) => {
   const {
     data: accountOperations,
-    isLoading: isAccountOperationsLoading,
+    isFetching: isAccountOperationsLoading,
     isError: isAccountOperationsError,
   }: UseQueryResult<Hive.AccountOperationsResponse> = useQuery({
-    queryKey: [
-      "account_operations",
-      accountOperationsProps
-    ],
+    queryKey: ["account_operations", accountOperationsProps],
     queryFn: () => fetchAccountOperations(accountOperationsProps),
     refetchOnWindowFocus: false,
+    enabled:
+      !!accountOperationsProps?.accountName &&
+      !!accountOperationsProps?.accountName.length,
   });
 
-  const fetchAccountOperations = async (accountOperationsProps: Explorer.AccountSearchOperationsProps | undefined) => {
+  const fetchAccountOperations = async (
+    accountOperationsProps: Explorer.AccountSearchOperationsProps | undefined
+  ) => {
     if (!accountOperationsProps) return null;
     return await fetchingService.getOpsByAccount(accountOperationsProps);
-  }
+  };
 
   return {
     accountOperations,

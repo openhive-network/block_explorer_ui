@@ -61,7 +61,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
           </div>
         )}
       <div className="text-explorer-turquoise text-2xl my-2">
-        <Link href={`/block/${blockDetails?.block_num}`}>
+        <Link href={`/block/${blockDetails?.block_num}`} data-testid="block-number-link">
           Block: {blockDetails?.block_num}
         </Link>
       </div>
@@ -72,9 +72,10 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
         <Link
           className="flex justif-between items-center"
           href={`/account/${blockDetails?.producer_account}`}
+          data-testid="current-witness-link"
         >
           <span>Current witness: </span>{" "}
-          <span className="text-explorer-turquoise mx-2">
+          <span className="text-explorer-turquoise mx-2" data-testid="current-witness-name">
             {blockDetails?.producer_account}
           </span>
           <Image

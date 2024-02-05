@@ -9,6 +9,16 @@ export class MainPage {
   readonly witnessesName: Locator;
   readonly seeMoreBtn: Locator;
 
+  readonly headBlockCardBlockLink: Locator;
+  readonly headBlockCardWitnessLink: Locator;
+  readonly headBlockCardWitnessName: Locator;
+  readonly headBlockCardFundAndSupplyExpandableList: Locator;
+  readonly headBlockCardHiveParametersExpandableList: Locator;
+  readonly headBlockCardBlockchainDatesExpandableList: Locator;
+  readonly contentFundAndSupplyExpandableList: Locator;
+  readonly contentHiveParametersExpandableList: Locator;
+  readonly contentBlockchainDatesExpandableList: Locator;
+
   constructor(page: Page) {
     this.page = page;
     this.headBlockCard = page.getByTestId('head-block-card');
@@ -17,6 +27,15 @@ export class MainPage {
     this.topWitnessesSidebar = page.getByTestId('top-witnesses-sidebar');
     this.witnessesName = page.getByTestId('witnesses-name')
     this.seeMoreBtn = page.getByTestId('see-more-btn')
+    this.headBlockCardBlockLink = this.headBlockCard.getByTestId('block-number-link');
+    this.headBlockCardWitnessLink = this.headBlockCard.getByTestId('current-witness-link');
+    this.headBlockCardWitnessName = this.headBlockCard.getByTestId('current-witness-name');
+    this.headBlockCardFundAndSupplyExpandableList = this.headBlockCard.getByTestId('expandable-list').getByText('Fund and Supply');
+    this.headBlockCardHiveParametersExpandableList = this.headBlockCard.getByTestId('expandable-list').getByText('Hive Parameters');
+    this.headBlockCardBlockchainDatesExpandableList = this.headBlockCard.getByTestId('expandable-list').getByText('Blockchain Dates');
+    this.contentFundAndSupplyExpandableList = this.headBlockCard.getByTestId('conntent-expandable-list').first();
+    this.contentHiveParametersExpandableList = this.headBlockCard.getByTestId('conntent-expandable-list').nth(1);
+    this.contentBlockchainDatesExpandableList = this.headBlockCard.getByTestId('conntent-expandable-list').last();
   }
 
   async gotoBlockExplorerPage() {
