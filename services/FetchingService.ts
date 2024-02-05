@@ -292,6 +292,13 @@ class FetchingService {
     return await this.callApi("get_hafbe_version", requestBody);
   }
 
+  async getOperationsCountInBlock(blockNumber: number): Promise<Hive.OperationsByTypeCount[]> {
+    const requestBody: Hive.GetOperationsInBlockProps = {
+      _block_num: blockNumber
+    };
+    return await this.callApi("get_op_count_in_block", requestBody);
+  }
+
   async getManabars(accountName: string, hiveChain: IHiveChainInterface): Promise<Hive.Manabars | null> {
     try {
       const upvotePromise = hiveChain.calculateCurrentManabarValueForAccount(accountName, 0);
