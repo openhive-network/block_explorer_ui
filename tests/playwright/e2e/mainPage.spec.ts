@@ -91,8 +91,10 @@ test.describe("Block Explorer UI tests", () => {
     const currentWitnessName: string = await mainPage.headBlockCardWitnessName.textContent() || '';
 
     // Click current witness link
+    await mainPage.page.waitForSelector(mainPage.headBlockCardWitnessName['_selector']);
     await mainPage.headBlockCardWitnessLink.click();
     // Validate Account Page is loaded
+    await accountPage.page.waitForSelector(accountPage.accountName['_selector']);
     await accountPage.validateAccountPageIsLoaded();
     // Validate Account Name
     await accountPage.validateAccountName(currentWitnessName);
