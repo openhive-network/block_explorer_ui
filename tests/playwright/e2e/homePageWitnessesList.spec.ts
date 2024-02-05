@@ -28,7 +28,7 @@ test.describe("Home page - witnesses list", () => {
       await expect(page).toHaveURL('/witnesses')
     });
 
-    test.only("Check if after move mouse on witnesses name background color is changed", async ({ page }) => {
+    test("Check if after move mouse on witnesses name background color is changed", async ({ page }) => {
       await mainPage.gotoBlockExplorerPage();
       const witnessesName = await mainPage.witnessesName.first()
       await witnessesName.hover()
