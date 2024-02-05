@@ -6,6 +6,8 @@ export class MainPage {
   readonly lastBlockWidget: Locator;
   readonly SearchesSection: Locator;
   readonly topWitnessesSidebar: Locator;
+  readonly witnessesName: Locator;
+  readonly seeMoreBtn: Locator;
 
   readonly headBlockCardBlockLink: Locator;
   readonly headBlockCardWitnessLink: Locator;
@@ -23,6 +25,8 @@ export class MainPage {
     this.lastBlockWidget = page.getByTestId('last-block-widget');
     this.SearchesSection = page.getByTestId('block-search-section');
     this.topWitnessesSidebar = page.getByTestId('top-witnesses-sidebar');
+    this.witnessesName = page.getByTestId('witnesses-name')
+    this.seeMoreBtn = page.getByTestId('see-more-btn')
     this.headBlockCardBlockLink = this.headBlockCard.getByTestId('block-number-link');
     this.headBlockCardWitnessLink = this.headBlockCard.getByTestId('current-witness-link');
     this.headBlockCardWitnessName = this.headBlockCard.getByTestId('current-witness-name');
@@ -44,5 +48,13 @@ export class MainPage {
     await expect(this.lastBlockWidget).toBeVisible();
     await expect(this.SearchesSection).toBeVisible();
     await expect(this.topWitnessesSidebar).toBeVisible();
+  }
+
+  async getElementCssPropertyValue(element: Locator, cssProperty: string) {
+    const property = await element.evaluate((ele, css) => {
+      return window.getComputedStyle(ele).getPropertyValue(css);
+    }, cssProperty);
+    // return value of element's css property
+    return property;
   }
 }

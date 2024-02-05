@@ -48,7 +48,7 @@ export default function Witnesses() {
         isVotesHistoryOpen={isVotesHistoryOpen}
         changeVoteHistoryDialogue={changeVotesHistoryDialog}
       />
-      <Table className="text-white">
+      <Table className="text-white" data-testid="table-body">
         <TableHeader>
           <TableRow>
             <TableHead className="sticky left-0 "></TableHead>
