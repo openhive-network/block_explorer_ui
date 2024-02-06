@@ -443,6 +443,8 @@ declare module Hive {
     block_size: number;
     signing_key: string;
     version: string;
+    missed_blocks: number;
+    hbd_interest_rate: number;
   }
 
   interface Voter {

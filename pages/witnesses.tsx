@@ -13,7 +13,7 @@ import VotersDialog from "@/components/Witnesses/VotersDialog";
 import VotesHistoryDialog from "@/components/Witnesses/VotesHistoryDialog";
 import useWitnesses from "@/api/common/useWitnesses";
 import { config } from "@/Config";
-import { formatNumber } from "@/lib/utils";
+import { formatNumber, formatPercent } from "@/lib/utils";
 
 export default function Witnesses() {
   const [voterAccount, setVoterAccount] = useState<string>("");
@@ -56,8 +56,10 @@ export default function Witnesses() {
             <TableHead>Votes</TableHead>
             <TableHead>Voters</TableHead>
             <TableHead>Block Size</TableHead>
+            <TableHead>Missed Blocks</TableHead>
             <TableHead>Price Feed</TableHead>
             <TableHead>Feed Age</TableHead>
+            <TableHead>APR</TableHead>
             <TableHead>Version</TableHead>
           </TableRow>
         </TableHeader>
@@ -122,6 +124,11 @@ export default function Witnesses() {
                   : "--"}
               </TableCell>
               <TableCell>
+                {singleWitness.block_size
+                  ? singleWitness.missed_blocks.toLocaleString()
+                  : "--"}
+              </TableCell>
+              <TableCell>
                 {singleWitness.price_feed
                   ? singleWitness.price_feed.toLocaleString()
                   : "--"}
@@ -129,6 +136,11 @@ export default function Witnesses() {
               <TableCell>
                 {singleWitness.feed_age
                   ? singleWitness.feed_age.split(".")[0]
+                  : "--"}
+              </TableCell>
+              <TableCell>
+                {singleWitness.hbd_interest_rate
+                  ? formatPercent(singleWitness.hbd_interest_rate)
                   : "--"}
               </TableCell>
               <TableCell>{singleWitness.version}</TableCell>
