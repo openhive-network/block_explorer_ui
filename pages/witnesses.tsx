@@ -53,12 +53,12 @@ export default function Witnesses() {
           <TableRow>
             <TableHead className="sticky left-0 "></TableHead>
             <TableHead className="sticky left-6">Name</TableHead>
-            <TableHead className="text-right">Votes</TableHead>
-            <TableHead className="text-right">Voters</TableHead>
-            <TableHead className="text-right">Block Size</TableHead>
-            <TableHead className="text-right">Missed Blocks</TableHead>
+            <TableHead className="text-center">Votes</TableHead>
+            <TableHead className="text-center">Voters</TableHead>
+            <TableHead className="text-center">Block Size</TableHead>
+            <TableHead className="text-center">Missed Blocks</TableHead>
             <TableHead className="text-right">APR</TableHead>
-            <TableHead className="text-right">Price Feed</TableHead>
+            <TableHead className="text-center">Price Feed</TableHead>
             <TableHead>Feed Age</TableHead>
             <TableHead>Version</TableHead>
           </TableRow>
