@@ -9,6 +9,11 @@ import {
   useMemo,
 } from "react";
 import { toDateNumber } from "./StringUtils";
+import Explorer from "@/types/Explorer";
+import Hive from "@/types/Hive";
+import useDynamicGlobal from "@/api/homePage/useDynamicGlobal";
+import useHeadBlockNumber from "@/api/common/useHeadBlockNum";
+import useHeadBlock from "@/api/homePage/useHeadBlock";
 
 /**
  * hook for using debounce
@@ -154,7 +159,7 @@ const paramsShallowEqual = (params1: ParamObject, params2: ParamObject) => {
   }
 
   return true;
-}
+};
 
 export const useURLParams = <T>(defaultState: T, omit?: string[]) => {
   const router = useRouter();
@@ -218,5 +223,45 @@ export const useURLParams = <T>(defaultState: T, omit?: string[]) => {
   return {
     paramsState,
     setParams,
+  };
+};
+
+const getSyncInfoData = (
+  globalData?: Explorer.HeadBlockCardData,
+  headBlockData?: Hive.BlockDetails
+) => {
+  const hiveBlockNumber =
+    globalData?.headBlockNumber && globalData?.headBlockNumber;
+  const explorerBlockNumber =
+    headBlockData?.block_num && headBlockData?.block_num;
+  const hiveBlockTime =
+    globalData?.headBlockDetails.blockchainTime &&
+    new Date(globalData?.headBlockDetails.blockchainTime).getTime();
+  const explorerTime =
+    headBlockData?.created_at && new Date(headBlockData?.created_at).getTime();
+
+  return {
+    blockDifference:
+      hiveBlockNumber && explorerBlockNumber
+        ? hiveBlockNumber - explorerBlockNumber
+        : 0,
+    timeDifference:
+      hiveBlockTime && explorerTime && hiveBlockTime - explorerTime,
+  };
+};
+
+export const useBlockchainSyncInfo = () => {
+  const dynamicGlobalQueryData = useDynamicGlobal().dynamicGlobalData;
+  const headBlockNum = useHeadBlockNumber().headBlockNumberData;
+  const headBlockData = useHeadBlock(headBlockNum).headBlockData;
+
+  const { blockDifference, timeDifference } = useMemo(
+    () => getSyncInfoData(dynamicGlobalQueryData, headBlockData),
+    [dynamicGlobalQueryData, headBlockData]
+  );
+
+  return {
+    blockDifference: blockDifference < 0 ? 0 : blockDifference,
+    timeDifference,
   };
 };
