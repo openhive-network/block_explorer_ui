@@ -53,13 +53,13 @@ export default function Witnesses() {
           <TableRow>
             <TableHead className="sticky left-0 "></TableHead>
             <TableHead className="sticky left-6">Name</TableHead>
-            <TableHead>Votes</TableHead>
-            <TableHead>Voters</TableHead>
-            <TableHead>Block Size</TableHead>
-            <TableHead>Missed Blocks</TableHead>
-            <TableHead>Price Feed</TableHead>
+            <TableHead className="text-right">Votes</TableHead>
+            <TableHead className="text-right">Voters</TableHead>
+            <TableHead className="text-right">Block Size</TableHead>
+            <TableHead className="text-right">Missed Blocks</TableHead>
+            <TableHead className="text-right">APR</TableHead>
+            <TableHead className="text-right">Price Feed</TableHead>
             <TableHead>Feed Age</TableHead>
-            <TableHead>APR</TableHead>
             <TableHead>Version</TableHead>
           </TableRow>
         </TableHeader>
@@ -86,7 +86,7 @@ export default function Witnesses() {
                     index % 2 === 0
                       ? "bg-gray-800 md:bg-inherit"
                       : "bg-gray-900 md:bg-inherit"
-                  }` + " text-explorer-turquoise sticky left-6"
+                  }` + " text-explorer-turquoise sticky left-6 "
                 }
               >
                 {" "}
@@ -94,7 +94,7 @@ export default function Witnesses() {
                   {singleWitness.witness}
                 </Link>
               </TableCell>
-              <TableCell>
+              <TableCell className="text-right">
                 <span className="flex items-center">
                   {formatNumber(singleWitness.vests || 0, true).split(".")[0]}
                   <MenuSquareIcon
@@ -106,7 +106,7 @@ export default function Witnesses() {
                   />
                 </span>
               </TableCell>
-              <TableCell>
+              <TableCell className="text-right">
                 <span className="flex items-center">
                   {singleWitness.voters_num.toLocaleString()}
                   <MenuSquareIcon
@@ -118,17 +118,22 @@ export default function Witnesses() {
                   />
                 </span>
               </TableCell>
-              <TableCell>
+              <TableCell className="text-right">
                 {singleWitness.block_size
                   ? singleWitness.block_size.toLocaleString()
                   : "--"}
               </TableCell>
-              <TableCell>
+              <TableCell className="text-right">
                 {singleWitness.block_size
                   ? singleWitness.missed_blocks.toLocaleString()
                   : "--"}
               </TableCell>
-              <TableCell>
+              <TableCell className="text-right">
+                {singleWitness.hbd_interest_rate
+                  ? formatPercent(singleWitness.hbd_interest_rate)
+                  : "--"}
+              </TableCell>
+              <TableCell className="text-right">
                 {singleWitness.price_feed
                   ? singleWitness.price_feed.toLocaleString()
                   : "--"}
@@ -136,11 +141,6 @@ export default function Witnesses() {
               <TableCell>
                 {singleWitness.feed_age
                   ? singleWitness.feed_age.split(".")[0]
-                  : "--"}
-              </TableCell>
-              <TableCell>
-                {singleWitness.hbd_interest_rate
-                  ? formatPercent(singleWitness.hbd_interest_rate)
                   : "--"}
               </TableCell>
               <TableCell>{singleWitness.version}</TableCell>
