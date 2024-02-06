@@ -133,6 +133,20 @@ declare module Explorer {
     operationTypeName: string;
     counter: number;
   }
+
+  interface Witness extends Omit<Hive.Witness,
+  "vests" |
+  "votes_hive_power" |
+  "hbd_interest_rate" |
+  "votes_daily_change_hive_power" |
+  "votes_daily_change"
+  > {
+    vests: string;
+    votes_hive_power: string;
+    hbd_interest_rate: string;
+    votes_daily_change_hive_power: string;
+    votes_daily_change: string;
+  }
 }
 
 export default Explorer;
