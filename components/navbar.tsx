@@ -1,44 +1,14 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import SearchBar from "./SearchBar";
-import { useMediaQuery } from "@/utils/Hooks";
+import { useBlockchainSyncInfo, useMediaQuery } from "@/utils/Hooks";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Toggle } from "./ui/toggle";
 import { useUserSettingsContext } from "./contexts/UserSettingsContext";
 import { useAlertContext } from "./contexts/AlertContext";
 import Alert from "./Alert";
-import useDynamicGlobal from "@/api/homePage/useDynamicGlobal";
-import useHeadBlock from "@/api/homePage/useHeadBlock";
-import useHeadBlockNumber from "@/api/common/useHeadBlockNum";
-import Explorer from "@/types/Explorer";
-import Hive from "@/types/Hive";
-
-const getSyncInfoData = (
-  globalData?: Explorer.HeadBlockCardData,
-  headBlockData?: Hive.BlockDetails
-) => {
-  const hiveBlockNumber =
-    globalData?.headBlockNumber && globalData?.headBlockNumber;
-  const explorerBlockNumber =
-    headBlockData?.block_num && headBlockData?.block_num;
-  const hiveBlockTime =
-    globalData?.headBlockDetails.blockchainTime &&
-    new Date(globalData?.headBlockDetails.blockchainTime).getTime();
-  const explorerTime =
-    headBlockData?.created_at && new Date(headBlockData?.created_at).getTime();
-
-
-  return {
-    blockDifference:
-      (hiveBlockNumber &&
-      explorerBlockNumber) ? 
-      hiveBlockNumber - explorerBlockNumber : 0,
-    timeDifference:
-      hiveBlockTime && explorerTime && hiveBlockTime - explorerTime,
-  };
-};
 
 export default function Navbar() {
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -46,14 +16,7 @@ export default function Navbar() {
   const { settings, setSettings } = useUserSettingsContext();
   const { alerts, setAlerts } = useAlertContext();
 
-  const dynamicGlobalQueryData = useDynamicGlobal().dynamicGlobalData;
-  const headBlockNum = useHeadBlockNumber().headBlockNumberData;
-  const headBlockData = useHeadBlock(headBlockNum).headBlockData;
-
-  const { blockDifference, timeDifference } = useMemo(
-    () => getSyncInfoData(dynamicGlobalQueryData, headBlockData),
-    [dynamicGlobalQueryData, headBlockData]
-  );
+  const { blockDifference, timeDifference } = useBlockchainSyncInfo();
 
   return (
     <div className="fixed w-full top-0 z-50" data-testid="navbar">
@@ -76,13 +39,30 @@ export default function Navbar() {
         </div>
         {isMobile ? (
           <div className="flex items-center justify-between w-full">
-            <Link href={"/"} className="pr-3">
+            <Link href={"/"} className="pr-3 relative">
               <Image
                 src="/hive-logo.png"
                 alt="Hive logo"
                 width={40}
                 height={40}
               />
+              {!isNaN(blockDifference!) && (
+                <div
+                  className={cn(
+                    "absolute border-2 rounded-[6px] mt-px mx-6 px-1 text-[10px] font-bold -top-1 left-1",
+                    {
+                      "border-explorer-ligh-green text-explorer-ligh-green":
+                        blockDifference <= 3,
+                      "border-explorer-orange text-explorer-orange":
+                        blockDifference > 3 && blockDifference <= 20,
+                      "border-explorer-red text-explorer-red":
+                        blockDifference > 20,
+                    }
+                  )}
+                >
+                  {blockDifference}
+                </div>
+              )}
             </Link>
             <div className="flex-grow flex items-center justify-end gap-x-3">
               <SearchBar />
@@ -132,15 +112,30 @@ export default function Navbar() {
                   Hive Block Explorer
                 </div>
               </Link>
-              {!isNaN(blockDifference!) && 
-                <div className={cn("border-2 rounded-[6px] mt-px mx-6 px-1.5 font-bold text-sm", {
-                  "border-explorer-ligh-green text-explorer-ligh-green": blockDifference <= 3,
-                  "border-explorer-orange text-explorer-orange": blockDifference > 3 && blockDifference <= 20,
-                  "border-explorer-red text-explorer-red": blockDifference > 20
-                })}>
-                  {blockDifference}
+              {!isNaN(blockDifference!) && (
+                <div
+                  className={cn(
+                    "flex gap-x-1 border rounded-[6px] mt-px mx-6 px-1.5 py-px text-sm",
+                    {
+                      "border-explorer-ligh-green text-explorer-ligh-green":
+                        blockDifference <= 3,
+                      "border-explorer-orange text-explorer-orange":
+                        blockDifference > 3 && blockDifference <= 20,
+                      "border-explorer-red text-explorer-red":
+                        blockDifference > 20,
+                    }
+                  )}
+                >
+                  {!blockDifference ? (
+                    <p>Synced</p>
+                  ) : (
+                    <>
+                      <p>Blocks out of sync:</p>
+                      <p>{blockDifference}</p>
+                    </>
+                  )}
                 </div>
-              }
+              )}
               <Link href={"/witnesses"} data-testid="navbar-witnesses-link">
                 Witnesses
               </Link>
