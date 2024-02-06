@@ -105,11 +105,12 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
       <div className="flex flex-col">
         <label className="ml-2">Account name</label>
         <Input
-          className="w-1/2 md:w-1/3 bg-gray-700"
+          className="w-1/2 md:w-1/3 bg-gray-700" 
           type="text"
           value={accountName || ""}
           onChange={(e) => setAccountName(e.target.value)}
           placeholder="---"
+          data-testid='account-name-input'
         />
       </div>
       <SearchRanges rangesProps={searchRanges} safeTimeRangeDisplay />
@@ -215,7 +216,7 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
         />
       </div>
       <div className="flex items-center ">
-        <Button
+        <Button data-testid="block-search-btn"
           className=" bg-blue-800 hover:bg-blue-600 rounded"
           onClick={onButtonClick}
         >

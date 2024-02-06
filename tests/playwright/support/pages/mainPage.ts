@@ -18,6 +18,11 @@ export class MainPage {
   readonly contentFundAndSupplyExpandableList: Locator;
   readonly contentHiveParametersExpandableList: Locator;
   readonly contentBlockchainDatesExpandableList: Locator;
+  readonly blockSearchBtn: Locator;
+  readonly blocksearchResultHeader: Locator;
+  readonly blockSearchResultSection: Locator;
+  readonly resultBlock: Locator;
+  readonly accountNameInput: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -36,6 +41,11 @@ export class MainPage {
     this.contentFundAndSupplyExpandableList = this.headBlockCard.getByTestId('conntent-expandable-list').first();
     this.contentHiveParametersExpandableList = this.headBlockCard.getByTestId('conntent-expandable-list').nth(1);
     this.contentBlockchainDatesExpandableList = this.headBlockCard.getByTestId('conntent-expandable-list').last();
+    this.blockSearchBtn = page.getByTestId('block-search-btn');
+    this.blocksearchResultHeader = page.getByTestId('result-section-header');
+    this.blockSearchResultSection = page.getByTestId('result-section');
+    this.resultBlock = page.getByTestId('result-block').first()
+    this.accountNameInput = page.getByTestId('account-name-input')
   }
 
   async gotoBlockExplorerPage() {

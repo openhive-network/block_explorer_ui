@@ -228,12 +228,12 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
         </Accordion>
       </div>
       {blockSearch.blockSearchData && lastSearchKey === "block" && (
-        <div className=" bg-explorer-dark-gray p-2 md: h-fit rounded">
-          <div className="text-center">Results:</div>
+        <div className=" bg-explorer-dark-gray p-2 md: h-fit rounded" data-testid="result-section">
+          <div className="text-center" data-testid="result-section-header">Results:</div>
           <div className="flex flex-wrap">
             {blockSearch.blockSearchData.length > 0 ? (
               blockSearch.blockSearchData.map((blockId) => (
-                <Link key={blockId} href={`block/${blockId}`}>
+                <Link key={blockId} href={`block/${blockId}`} data-testid="result-block">
                   <div className="m-1 border border-solid p-1">{blockId}</div>
                 </Link>
               ))
