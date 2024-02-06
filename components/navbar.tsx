@@ -29,7 +29,6 @@ const getSyncInfoData = (
   const explorerTime =
     headBlockData?.created_at && new Date(headBlockData?.created_at).getTime();
 
-  console.log(hiveBlockNumber, explorerBlockNumber);
 
   return {
     blockDifference:
