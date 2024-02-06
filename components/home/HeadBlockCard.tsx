@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import Hive from "@/types/Hive";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import HeadBlockPropertyCard from "./HeadBlockPropertyCard";
 import {
   fundAndSupplyParameters,
@@ -52,15 +52,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
 
   return (
     <div className='col-start-1 col-span-6 md:col-span-1 bg-explorer-dark-gray p-2 rounded md:mx-6 h-fit' data-testid="head-block-card">
-      {headBlockCardData?.headBlockNumber &&
-        blockDetails?.block_num &&
-        headBlockCardData?.headBlockNumber !== blockDetails?.block_num && (
-          <div className="flex gap-x-2 text-explorer-orange">
-            <AlertCircle />
-            <p>Data might not be synchronized</p>
-          </div>
-        )}
-      <div className="text-explorer-turquoise text-2xl my-2">
+      <div className="text-explorer-turquoise text-2xl">
         <Link href={`/block/${blockDetails?.block_num}`} data-testid="block-number-link">
           Block: {blockDetails?.block_num}
         </Link>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import SearchBar from "./SearchBar";
@@ -9,13 +9,52 @@ import { Toggle } from "./ui/toggle";
 import { useUserSettingsContext } from "./contexts/UserSettingsContext";
 import { useAlertContext } from "./contexts/AlertContext";
 import Alert from "./Alert";
-import { Button } from "./ui/button";
+import useDynamicGlobal from "@/api/homePage/useDynamicGlobal";
+import useHeadBlock from "@/api/homePage/useHeadBlock";
+import useHeadBlockNumber from "@/api/common/useHeadBlockNum";
+import Explorer from "@/types/Explorer";
+import Hive from "@/types/Hive";
+
+const getSyncInfoData = (
+  globalData?: Explorer.HeadBlockCardData,
+  headBlockData?: Hive.BlockDetails
+) => {
+  const hiveBlockNumber =
+    globalData?.headBlockNumber && globalData?.headBlockNumber;
+  const explorerBlockNumber =
+    headBlockData?.block_num && headBlockData?.block_num;
+  const hiveBlockTime =
+    globalData?.headBlockDetails.blockchainTime &&
+    new Date(globalData?.headBlockDetails.blockchainTime).getTime();
+  const explorerTime =
+    headBlockData?.created_at && new Date(headBlockData?.created_at).getTime();
+
+  console.log(hiveBlockNumber, explorerBlockNumber);
+
+  return {
+    blockDifference:
+      (hiveBlockNumber &&
+      explorerBlockNumber) ? 
+      hiveBlockNumber - explorerBlockNumber : 0,
+    timeDifference:
+      hiveBlockTime && explorerTime && hiveBlockTime - explorerTime,
+  };
+};
 
 export default function Navbar() {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [menuOpen, setMenuOpen] = useState(false);
   const { settings, setSettings } = useUserSettingsContext();
   const { alerts, setAlerts } = useAlertContext();
+
+  const dynamicGlobalQueryData = useDynamicGlobal().dynamicGlobalData;
+  const headBlockNum = useHeadBlockNumber().headBlockNumberData;
+  const headBlockData = useHeadBlock(headBlockNum).headBlockData;
+
+  const { blockDifference, timeDifference } = useMemo(
+    () => getSyncInfoData(dynamicGlobalQueryData, headBlockData),
+    [dynamicGlobalQueryData, headBlockData]
+  );
 
   return (
     <div className="fixed w-full top-0 z-50" data-testid="navbar">
@@ -78,8 +117,11 @@ export default function Navbar() {
           </div>
         ) : (
           <>
-            <div className="flex items-center pl-12">
-              <Link href={"/"} className="pr-12 flex justify-normal items-center text-explorer-turquoise font-medium">
+            <div className="flex items-center pl-12 gap-x-4">
+              <Link
+                href={"/"}
+                className="pr-2 flex justify-normal items-center text-explorer-turquoise font-medium"
+              >
                 <Image
                   src="/hive-logo.png"
                   alt="Hive logo"
@@ -87,9 +129,22 @@ export default function Navbar() {
                   height={50}
                   data-testid="hive-logo"
                 />
-                <div className="ml-4" data-testid="hive-block-explorer">Hive Block Explorer</div>
+                <div className="ml-4" data-testid="hive-block-explorer">
+                  Hive Block Explorer
+                </div>
               </Link>
-              <Link href={"/witnesses"} data-testid="navbar-witnesses-link">Witnesses</Link>
+              {!isNaN(blockDifference!) && 
+                <div className={cn("border-2 rounded-[6px] mt-px mx-6 px-1.5 font-bold text-sm", {
+                  "border-explorer-ligh-green text-explorer-ligh-green": blockDifference <= 3,
+                  "border-explorer-orange text-explorer-orange": blockDifference > 3 && blockDifference <= 20,
+                  "border-explorer-red text-explorer-red": blockDifference > 20
+                })}>
+                  {blockDifference}
+                </div>
+              }
+              <Link href={"/witnesses"} data-testid="navbar-witnesses-link">
+                Witnesses
+              </Link>
               <Toggle
                 checked={settings.rawJsonView}
                 onClick={() =>
