@@ -12,6 +12,8 @@ import {
   blockchainDates,
 } from "./headBlockParameters";
 import { convertUTCDateToLocalDate } from "@/utils/UTCDateToLocalTime";
+import { useUserSettingsContext } from "../contexts/UserSettingsContext";
+import { Toggle } from "../ui/toggle";
 
 interface HeadBlockCardProps {
   headBlockCardData?: Explorer.HeadBlockCardData | any;
@@ -29,6 +31,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
     supplyCard: true,
     hiveParamsCard: true,
   });
+  const { settings, setSettings } = useUserSettingsContext();
 
   const handleHideBlockchainDates = () => {
     setHiddenPropertiesByCard({
@@ -51,9 +54,25 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
   };
 
   return (
-    <div className='col-start-1 col-span-6 md:col-span-1 bg-explorer-dark-gray p-2 rounded md:mx-6 h-fit' data-testid="head-block-card">
+    <div
+      className="col-start-1 col-span-6 md:col-span-1 bg-explorer-dark-gray p-2 rounded md:mx-6 h-fit"
+      data-testid="head-block-card"
+    >
+      <Toggle
+        checked={settings.liveData}
+        onClick={() =>
+          setSettings({
+            ...settings,
+            liveData: !settings.liveData,
+          })
+        }
+        leftLabel="Live data"
+      />
       <div className="text-explorer-turquoise text-2xl">
-        <Link href={`/block/${blockDetails?.block_num}`} data-testid="block-number-link">
+        <Link
+          href={`/block/${blockDetails?.block_num}`}
+          data-testid="block-number-link"
+        >
           Block: {blockDetails?.block_num}
         </Link>
       </div>
@@ -62,21 +81,28 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
       </div>
       <div>
         <Link
-          className="flex justif-between items-center"
+          className="flex justif-between items-center min-h-[40px]"
           href={`/account/${blockDetails?.producer_account}`}
           data-testid="current-witness-link"
         >
           <span>Current witness: </span>{" "}
-          <span className="text-explorer-turquoise mx-2" data-testid="current-witness-name">
-            {blockDetails?.producer_account}
-          </span>
-          <Image
-            className="rounded-full border-2 border-explorer-turquoise"
-            src={getHiveAvatarUrl(blockDetails?.producer_account)}
-            alt="avatar"
-            width={40}
-            height={40}
-          />
+          {blockDetails?.producer_account && (
+            <>
+              <span
+                className="text-explorer-turquoise mx-2"
+                data-testid="current-witness-name"
+              >
+                {blockDetails?.producer_account}
+              </span>
+              <Image
+                className="rounded-full border-2 border-explorer-turquoise"
+                src={getHiveAvatarUrl(blockDetails?.producer_account)}
+                alt="avatar"
+                width={40}
+                height={40}
+              />
+            </>
+          )}
         </Link>
       </div>
       <div className="my-2">
@@ -84,9 +110,10 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
       </div>
       <div>
         Blockchain Time :{" "}
-        {convertUTCDateToLocalDate(
-          headBlockCardData?.headBlockDetails.blockchainTime
-        )}
+        {!!headBlockCardData?.headBlockDetails.blockchainTime &&
+          convertUTCDateToLocalDate(
+            headBlockCardData?.headBlockDetails.blockchainTime
+          )}
       </div>
       <div>
         <div className="text-center my-4 text-xl">Properties</div>

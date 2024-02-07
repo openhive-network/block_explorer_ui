@@ -12,13 +12,18 @@ import { config } from "@/Config";
 import useHeadBlockNumber from "@/api/common/useHeadBlockNum";
 import useHeadBlock from "@/api/homePage/useHeadBlock";
 import useBlockOperations from "@/api/common/useBlockOperations";
+import { useUserSettingsContext } from "@/components/contexts/UserSettingsContext";
 
 export default function Home() {
-  const dynamicGlobalQueryData = useDynamicGlobal().dynamicGlobalData;
+  const { settings } = useUserSettingsContext();
   const wintesses = useWitnesses(config.witnessesPerPages.home).witnessData;
-  const headBlockNum = useHeadBlockNumber().headBlockNumberData;
+  const headBlockNum = useHeadBlockNumber(settings.liveData).headBlockNumberData;
+  const dynamicGlobalQueryData = useDynamicGlobal(headBlockNum).dynamicGlobalData;
   const headBlockData = useHeadBlock(headBlockNum).headBlockData;
-  const blockOperations = useBlockOperations(headBlockNum || 0, []).blockOperations;
+  const blockOperations = useBlockOperations(
+    headBlockNum || 0,
+    []
+  ).blockOperations;
 
   return (
     <div className="grid grid-cols-3 text-white mx-4 md:mx-8 w-full">
@@ -28,11 +33,13 @@ export default function Home() {
         blockDetails={headBlockData}
       />
       <div className="col-start-1 md:col-start-2 col-span-6 md:col-span-2">
-      <LastBlocksWidget className="mt-6 md:mt-0"/>
+        <LastBlocksWidget headBlock={headBlockNum} className="mt-6 md:mt-0" />
         <SearchesSection />
       </div>
-      <div className="col-start-1 md:col-start-4 col-span-6 md:col-span-1 bg-explorer-dark-gray py-2 rounded text-xs	overflow-hidden md:mx-6 h-fit"
-           data-testid="top-witnesses-sidebar">
+      <div
+        className="col-start-1 md:col-start-4 col-span-6 md:col-span-1 bg-explorer-dark-gray py-2 rounded text-xs	overflow-hidden md:mx-6 h-fit"
+        data-testid="top-witnesses-sidebar"
+      >
         <div className="text-lg text-center">Top Witnesses</div>
         <Table>
           <TableBody>
