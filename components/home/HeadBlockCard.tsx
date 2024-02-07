@@ -31,7 +31,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
     supplyCard: true,
     hiveParamsCard: true,
   });
-  const {settings, setSettings} = useUserSettingsContext();
+  const { settings, setSettings } = useUserSettingsContext();
 
   const handleHideBlockchainDates = () => {
     setHiddenPropertiesByCard({
@@ -54,9 +54,25 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
   };
 
   return (
-    <div className='col-start-1 col-span-6 md:col-span-1 bg-explorer-dark-gray p-2 rounded md:mx-6 h-fit' data-testid="head-block-card">
+    <div
+      className="col-start-1 col-span-6 md:col-span-1 bg-explorer-dark-gray p-2 rounded md:mx-6 h-fit"
+      data-testid="head-block-card"
+    >
+      <Toggle
+        checked={settings.liveData}
+        onClick={() =>
+          setSettings({
+            ...settings,
+            liveData: !settings.liveData,
+          })
+        }
+        leftLabel="Live data"
+      />
       <div className="text-explorer-turquoise text-2xl">
-        <Link href={`/block/${blockDetails?.block_num}`} data-testid="block-number-link">
+        <Link
+          href={`/block/${blockDetails?.block_num}`}
+          data-testid="block-number-link"
+        >
           Block: {blockDetails?.block_num}
         </Link>
       </div>
