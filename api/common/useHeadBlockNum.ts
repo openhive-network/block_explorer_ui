@@ -10,7 +10,7 @@ const useHeadBlockNumber = (liveUpdate?: boolean) => {
     refetch
   } = useQuery({
     queryKey: ["headBlockNum"],
-    queryFn: () => fetchingService.getHeadBlockNum(),
+    queryFn: () => fetchingService.getHafbeLastSyncedBlock(),
     refetchOnWindowFocus: false,
     refetchInterval: liveUpdate ? 3000 : Infinity
   });
