@@ -26,4 +26,12 @@ test.describe('Home page - searches', () => {
         await mainPage.resultBlock.click()
         await expect(page.getByTestId('account-name')).toContainText('gtg')
     })
+
+    test('Validate searching only by property Last blocks', async ({page}) => {
+        await mainPage.gotoBlockExplorerPage();
+        await mainPage.blockSearchPropertiesFilterBtn.click()
+        await mainPage.getOptionfromDropdownOptions('Last blocks')
+        await mainPage.blockSearchBtn.click()
+        await expect(mainPage.blockSearchResultSection).toBeVisible()
+    })
 })

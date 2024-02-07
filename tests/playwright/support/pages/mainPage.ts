@@ -23,6 +23,8 @@ export class MainPage {
   readonly blockSearchResultSection: Locator;
   readonly resultBlock: Locator;
   readonly accountNameInput: Locator;
+  readonly blockSearchPropertiesFilterBtn: Locator;
+  readonly blockSearchPropertiesOption: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -46,6 +48,8 @@ export class MainPage {
     this.blockSearchResultSection = page.getByTestId('result-section');
     this.resultBlock = page.getByTestId('result-block').first()
     this.accountNameInput = page.getByTestId('account-name-input')
+    this.blockSearchPropertiesFilterBtn = page.locator('.border-y.border-solid.border-gray-600.py-2.flex.flex-col.gap-y-2')
+    this.blockSearchPropertiesOption = page.locator('[role="option"]')
   }
 
   async gotoBlockExplorerPage() {
@@ -66,5 +70,9 @@ export class MainPage {
     }, cssProperty);
     // return value of element's css property
     return property;
+  }
+
+  async getOptionfromDropdownOptions(text: string) {
+    this.blockSearchPropertiesOption.getByText(text).click()
   }
 }
