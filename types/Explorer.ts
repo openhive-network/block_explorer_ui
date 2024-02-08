@@ -86,6 +86,7 @@ declare module Explorer {
   interface AccountSearchOperationsProps extends CommonSearchProps {
     accountName: string;
     pageNumber?: number;
+    pageSize?: number;
   }
 
   interface UrlParam {

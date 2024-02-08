@@ -14,7 +14,8 @@ import fetchingService from "@/services/FetchingService";
 const Context: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [userSettings, setUserSettings] = useState<UserSettings>({
     rawJsonView: false,
-    liveData: false
+    liveBlocksData: false,
+    liveAccountData: false
   });
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [hiveChain, setHiveChain] = useState<IHiveChainInterface | undefined>(undefined);

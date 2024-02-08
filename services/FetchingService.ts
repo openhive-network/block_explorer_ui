@@ -120,7 +120,7 @@ class FetchingService {
       _account: accountOperationsProps.accountName,
       _filter: accountOperationsProps.operationTypes,
       _page_num: accountOperationsProps.pageNumber,
-      _page_size: config.standardPaginationSize,
+      _page_size: accountOperationsProps.pageSize ?? config.standardPaginationSize,
       _from: accountOperationsProps.fromBlock,
       _to: accountOperationsProps.toBlock,
       _date_start: accountOperationsProps.startDate,

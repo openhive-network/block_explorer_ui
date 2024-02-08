@@ -5,6 +5,8 @@ import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import Hive from "@/types/Hive";
 import useManabars from "@/api/accountPage/useManabars";
 import { Loader2 } from "lucide-react";
+import { useUserSettingsContext } from "../contexts/UserSettingsContext";
+import { Toggle } from "../ui/toggle";
 
 interface AccountMainCardProps {
   accountDetails: Hive.AccountDetailsQueryResponse;
@@ -20,8 +22,19 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
   openVotesHistoryModal,
 }) => {
   const {manabarsData} = useManabars(accountName);
+  const { settings, setSettings } = useUserSettingsContext();
   return (
     <div className='bg-explorer-dark-gray p-2 mx-2 md:mx-6 h-fit rounded' data-testid="account-details">
+      <Toggle
+        checked={settings.liveAccountData}
+        onClick={() =>
+          setSettings({
+            ...settings,
+            liveAccountData: !settings.liveAccountData,
+          })
+        }
+        leftLabel="Account live data"
+      />
       <div className="flex justify-between bg-explorer-dark-gray text-explorer-orange text-2xl my-4">
         {accountDetails.is_witness ? (
           <div data-testid="account-name">
