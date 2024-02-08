@@ -16,8 +16,8 @@ import { useUserSettingsContext } from "@/components/contexts/UserSettingsContex
 
 export default function Home() {
   const { settings } = useUserSettingsContext();
-  const wintesses = useWitnesses(config.witnessesPerPages.home).witnessData;
-  const headBlockNum = useHeadBlockNumber(settings.liveBlocksData).headBlockNumberData;
+  const witnesses = useWitnesses(config.witnessesPerPages.home).witnessData;
+  const headBlockNum = useHeadBlockNumber(settings.liveData).headBlockNumberData;
   const dynamicGlobalQueryData = useDynamicGlobal(headBlockNum).dynamicGlobalData;
   const headBlockData = useHeadBlock(headBlockNum).headBlockData;
   const blockOperations = useBlockOperations(
@@ -43,8 +43,8 @@ export default function Home() {
         <div className="text-lg text-center">Top Witnesses</div>
         <Table>
           <TableBody>
-            {wintesses &&
-              wintesses.map((witness, index) => (
+            { witnesses &&
+              witnesses.map((witness, index) => (
                 <TableRow className=" text-base" key={index} data-testid="witnesses-name">
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>
