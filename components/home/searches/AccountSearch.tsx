@@ -27,7 +27,7 @@ const AccountSearch: React.FC<AccountSearchProps> = ({
     number[]
   >([]);
 
-  const searchRanges = useSearchRanges();
+  const searchRanges = useSearchRanges("lastBlocks");
   const { getRangesValues } = searchRanges;
 
   const onButtonClick = async () => {
