@@ -13,6 +13,7 @@ const useAccountOperations = (
     data: accountOperations,
     isFetching: isAccountOperationsLoading,
     isError: isAccountOperationsError,
+    refetch
   }: UseQueryResult<Hive.AccountOperationsResponse> = useQuery({
     queryKey: ["account_operations", accountOperationsProps],
     queryFn: () => fetchAccountOperations(accountOperationsProps),
@@ -30,6 +31,12 @@ const useAccountOperations = (
     if (!accountOperationsProps) return null;
     return await fetchingService.getOpsByAccount(accountOperationsProps);
   };
+
+  useEffect(() => {
+    if(liveUpdate) {
+      refetch();
+    }
+  }, [liveUpdate, refetch]);
 
   return {
     accountOperations,
