@@ -48,7 +48,7 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
     undefined
   );
 
-  const searchRanges = useSearchRanges();
+  const searchRanges = useSearchRanges("lastBlocks");
   const { operationKeysData } = useOperationKeys(singleOperationTypeId);
   const { getRangesValues } = searchRanges;
 
