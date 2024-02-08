@@ -59,11 +59,11 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
       data-testid="head-block-card"
     >
       <Toggle
-        checked={settings.liveData}
+        checked={settings.liveBlocksData}
         onClick={() =>
           setSettings({
             ...settings,
-            liveData: !settings.liveData,
+            liveBlocksData: !settings.liveBlocksData,
           })
         }
         leftLabel="Live data"

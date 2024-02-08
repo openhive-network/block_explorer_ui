@@ -84,15 +84,19 @@ export default function Account() {
 
   const { accountDetails } = useAccountDetails(accountNameFromRoute);
   const { accountOperations, isAccountOperationsLoading } =
-    useAccountOperations({
-      accountName: accountNameFromRoute,
-      operationTypes: filtersParam.length ? filtersParam : undefined,
-      pageNumber: paramsState.page,
-      fromBlock: fromBlockParam,
-      toBlock: toBlockParam,
-      startDate: fromDateParam,
-      endDate: toDateParam,
-    });
+    useAccountOperations(
+      {
+        accountName: accountNameFromRoute,
+        operationTypes: filtersParam.length ? filtersParam : undefined,
+        pageNumber: settings.liveAccountData ? undefined : paramsState.page,
+        fromBlock: fromBlockParam,
+        toBlock: toBlockParam,
+        startDate: fromDateParam,
+        endDate: toDateParam,
+        pageSize: settings.liveAccountData ? 10 : undefined,
+      },
+      settings.liveAccountData
+    );
   const { accountOperationTypes } =
     useAccountOperationTypes(accountNameFromRoute);
 
