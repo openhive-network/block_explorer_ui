@@ -21,6 +21,8 @@ import SearchRanges from "@/components/searchRanges/SearchRanges";
 import ScrollTopButton from "@/components/ScrollTopButton";
 import { useUserSettingsContext } from "@/components/contexts/UserSettingsContext";
 import JSONView from "@/components/JSONView";
+import { cn } from "@/lib/utils";
+import { config } from "@/Config";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -79,6 +81,7 @@ export default function Account() {
   const [isVotesHistoryModalOpen, setIsVotesHistoryModalOpen] = useState(false);
   const [initialSearch, setInitialSearch] = useState<boolean>(false);
   const [filters, setFilters] = useState<number[]>([]);
+  const [followLiveData, setFollowLiveData] = useState(true);
 
   const searchRanges = useSearchRanges();
 
@@ -88,14 +91,17 @@ export default function Account() {
       {
         accountName: accountNameFromRoute,
         operationTypes: filtersParam.length ? filtersParam : undefined,
-        pageNumber: settings.liveAccountData ? undefined : paramsState.page,
+        pageNumber: paramsState.page,
         fromBlock: fromBlockParam,
         toBlock: toBlockParam,
         startDate: fromDateParam,
         endDate: toDateParam,
-        pageSize: settings.liveAccountData ? 10 : undefined,
+        pageSize: settings.liveAccountData
+          ? config.livePaginationSize
+          : undefined,
       },
-      settings.liveAccountData
+      settings.liveAccountData,
+      handleFetchSuccess
     );
   const { accountOperationTypes } =
     useAccountOperationTypes(accountNameFromRoute);
@@ -187,6 +193,23 @@ export default function Account() {
     setParams({ ...paramsState, filters: newFilters, page: undefined });
   };
 
+  const handleSetPage = (page: number) => {
+    setParams({ ...paramsState, page });
+    if (!!accountOperations) {
+      if (page === accountOperations?.total_pages) {
+        setFollowLiveData(true);
+      } else {
+        setFollowLiveData(false);
+      }
+    }
+  };
+
+  function handleFetchSuccess(data: Hive.AccountOperationsResponse) {
+    if (settings.liveAccountData && followLiveData) {
+      handleSetPage(data.total_pages);
+    }
+  }
+
   useEffect(() => {
     if (!paramsState.page && accountOperations) {
       setParamsRef.current({
@@ -216,11 +239,14 @@ export default function Account() {
         {paramsState.page && accountOperations && (
           <AccountPagination
             page={paramsState.page}
-            setPage={(page: number) => setParams({ ...paramsState, page })}
+            setPage={handleSetPage}
             accountOperations={accountOperations}
             accountOperationTypes={accountOperationTypes || []}
             onOperationsSelect={handleOperationTypeChange}
             selectedFilters={filters}
+            pageSize={
+              settings.liveAccountData ? config.livePaginationSize : undefined
+            }
           />
         )}
       </div>
@@ -230,6 +256,7 @@ export default function Account() {
           <AccountMainCard
             accountDetails={accountDetails}
             accountName={accountNameFromRoute}
+            liveDataLoading={isAccountOperationsLoading}
             openVotersModal={handleOpenVotersModal}
             openVotesHistoryModal={handleOpenVotesHistoryModal}
           />
@@ -292,7 +319,8 @@ export default function Account() {
               <div className="w-full my-4 text-black text-center">
                 No operations were found.
               </div>
-            ) : isAccountOperationsLoading || !page ? (
+            ) : !settings.liveAccountData &&
+              (isAccountOperationsLoading || !page) ? (
               <div className="flex justify-center text-center items-center">
                 <Loader2 className="animate-spin mt-1 text-black h-12 w-12 ml-3 ..." />
               </div>
@@ -309,7 +337,11 @@ export default function Account() {
               accountOperations?.operations_result?.map(
                 (operation: Hive.OperationResponse) => (
                   <div
-                    className="m-2"
+                    className={cn("m-2", {
+                      "fade-in-0 animate-in duration-1000":
+                        settings.liveAccountData &&
+                        page === accountOperations.total_pages,
+                    })}
                     key={`${operation.operation_id}_${operation.timestamp}`}
                   >
                     <DetailedOperationCard
