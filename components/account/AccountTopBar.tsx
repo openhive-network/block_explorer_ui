@@ -12,6 +12,7 @@ interface AccountTopBarProps {
   accountOperationTypes: Hive.OperationPattern[];
   onOperationsSelect: (filters: number[]) => void;
   selectedFilters: number[];
+  pageSize?: number;
 }
 
 const AccountTopBar: React.FC<AccountTopBarProps> = ({
@@ -21,6 +22,7 @@ const AccountTopBar: React.FC<AccountTopBarProps> = ({
   accountOperationTypes,
   onOperationsSelect,
   selectedFilters,
+  pageSize = config.standardPaginationSize
 }) => {
   return (
     <div className="bg-explorer-orange flex items-stretch justify-center w-full flex-wrap m-2" data-testid="account-top-bar">
@@ -28,7 +30,7 @@ const AccountTopBar: React.FC<AccountTopBarProps> = ({
         <CustomPagination
           currentPage={page}
           totalCount={accountOperations.total_operations || 0}
-          pageSize={config.standardPaginationSize}
+          pageSize={pageSize}
           onPageChange={setPage}
           isMirrored={true}
           className="flex-grows"

@@ -11,6 +11,7 @@ import { Toggle } from "../ui/toggle";
 interface AccountMainCardProps {
   accountDetails: Hive.AccountDetailsQueryResponse;
   accountName: string;
+  liveDataLoading: boolean;
   openVotersModal: () => void;
   openVotesHistoryModal: () => void;
 }
@@ -18,6 +19,7 @@ interface AccountMainCardProps {
 const AccountMainCard: React.FC<AccountMainCardProps> = ({
   accountDetails,
   accountName,
+  liveDataLoading,
   openVotersModal,
   openVotesHistoryModal,
 }) => {
@@ -25,16 +27,19 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
   const { settings, setSettings } = useUserSettingsContext();
   return (
     <div className='bg-explorer-dark-gray p-2 mx-2 md:mx-6 h-fit rounded' data-testid="account-details">
-      <Toggle
-        checked={settings.liveAccountData}
-        onClick={() =>
-          setSettings({
-            ...settings,
-            liveAccountData: !settings.liveAccountData,
-          })
-        }
-        leftLabel="Account live data"
-      />
+      <div className="flex justify-between items-center">
+        <Toggle
+          checked={settings.liveAccountData}
+          onClick={() =>
+            setSettings({
+              ...settings,
+              liveAccountData: !settings.liveAccountData,
+            })
+          }
+          leftLabel="Account live data"
+        />
+        {settings.liveAccountData && liveDataLoading && <Loader2 className="animate-spin"/>}
+      </div>
       <div className="flex justify-between bg-explorer-dark-gray text-explorer-orange text-2xl my-4">
         {accountDetails.is_witness ? (
           <div data-testid="account-name">
