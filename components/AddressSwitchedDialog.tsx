@@ -22,6 +22,12 @@ const AddressSwitchedDialog: React.FC<AddressSwitcherDialogProps> = ({addressTyp
 
   const [userAddress, setUserAddress] = useState<string>("");
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter' && isOpen) {
+      onSubmitClick();
+    }
+  };
+
   const getDefaultApiAddress = (): string => {
     if (addressType === "api") {
       return config.apiAddress;
@@ -51,7 +57,7 @@ const AddressSwitchedDialog: React.FC<AddressSwitcherDialogProps> = ({addressTyp
         <span className=" text-blue-400 ml-1">{currentAddress ? currentAddress : getDefaultApiAddress()}</span>
         </div>
         </DialogTrigger>
-      <DialogContent className="h-1/4 max-w-3xl overflow-auto bg-white">
+      <DialogContent onKeyDown={handleKeyDown} className="h-1/4 max-w-3xl overflow-auto bg-white">
         <DialogHeader>
           <DialogTitle>{addressType === "api" ? "Database API address" : "Hive node address"}</DialogTitle>
         </DialogHeader>
