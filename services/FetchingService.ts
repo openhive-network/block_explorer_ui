@@ -24,7 +24,9 @@ class FetchingService {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(requestBody),
       });
-      return response.json();
+      const jsonResponse = await response.json();
+      if (typeof jsonResponse === "object" && Object.keys(jsonResponse).length === 0) throw new Error("No data from API")
+      return jsonResponse
     } catch (error) {
       return Promise.reject(error);
     }
