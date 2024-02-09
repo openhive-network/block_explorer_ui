@@ -123,7 +123,7 @@ export const dataToURL = (value: any) => {
     )}.${toDateNumber(value.getMinutes())}.${toDateNumber(value.getSeconds())}`;
   }
 
-  return value.toString();
+  return value;
 };
 
 const URLToData = (value: any) => {
@@ -147,7 +147,7 @@ const URLToData = (value: any) => {
 const paramsShallowEqual = (params1: ParamObject, params2: ParamObject) => {
   const keys1 = Object.keys(params1);
   const keys2 = Object.keys(params2);
-
+  
   if (keys1.length !== keys2.length) {
     return false;
   }
