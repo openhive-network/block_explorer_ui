@@ -16,7 +16,7 @@ import { useUserSettingsContext } from "@/components/contexts/UserSettingsContex
 
 export default function Home() {
   const { settings } = useUserSettingsContext();
-  const wintesses = useWitnesses(config.witnessesPerPages.home).witnessData;
+  const witnesses = useWitnesses(config.witnessesPerPages.home).witnessData;
   const headBlockNum = useHeadBlockNumber(settings.liveBlocksData).headBlockNumberData;
   const dynamicGlobalQueryData = useDynamicGlobal(headBlockNum).dynamicGlobalData;
   const headBlockData = useHeadBlock(headBlockNum).headBlockData;
