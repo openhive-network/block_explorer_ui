@@ -138,7 +138,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
       return (
         <g
           id={`x=${x}, y=${y}`}
-          onClick={() => router.push(`/account/${witness}`)}
+          onClick={() => router.push(`/@${witness}`)}
           className="cursor-pointer"
         >
           <defs>

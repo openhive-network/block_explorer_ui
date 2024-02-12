@@ -36,7 +36,7 @@ const getOneLineDescription = (operation: Hive.Operation) => {
         operation.value.required_posting_auths?.at(0);
       return (
         <>
-          <Link href={`/account/${user}`} className="text-explorer-ligh-green">
+          <Link href={`/@${user}`} className="text-explorer-ligh-green">
             {user}
           </Link>{" "}
           sent custom json
@@ -46,11 +46,11 @@ const getOneLineDescription = (operation: Hive.Operation) => {
     case "transfer_operation":
       return (
         <>
-          <Link href={`/account/${from}`} className="text-explorer-ligh-green">
+          <Link href={`/@${from}`} className="text-explorer-ligh-green">
             {from}
           </Link>
           {` transfered ${(Number(amount?.amount) / 1000).toFixed(3)} HIVE to `}
-          <Link href={`/account/${to}`} className="text-explorer-ligh-green">
+          <Link href={`/@${to}`} className="text-explorer-ligh-green">
             {to}
           </Link>
         </>
@@ -60,12 +60,12 @@ const getOneLineDescription = (operation: Hive.Operation) => {
     case "vote_operation":
       return (
         <>
-          <Link href={`/account/${voter}`} className="text-explorer-ligh-green">
+          <Link href={`/@${voter}`} className="text-explorer-ligh-green">
             {voter}
           </Link>
           {` voted ${weight} on `}
           <Link
-            href={`/account/${author}`}
+            href={`/@${author}`}
             className="text-explorer-ligh-green"
           >
             {author}
@@ -84,14 +84,14 @@ const getOneLineDescription = (operation: Hive.Operation) => {
       return (
         <>
           <Link
-            href={`/account/${author}`}
+            href={`/@${author}`}
             className="text-explorer-ligh-green"
           >
             {author}
           </Link>
           {` commented on `}
           <Link
-            href={`/account/${parent_author}`}
+            href={`/@${parent_author}`}
             className="text-explorer-ligh-green"
           >
             {parent_author}
@@ -119,7 +119,7 @@ const getOneLineDescription = (operation: Hive.Operation) => {
         !(userName instanceof Object) && (
           <>
             <Link
-              href={`/account/${userName}`}
+              href={`/@${userName}`}
               className="text-explorer-ligh-green"
             >
               {userName}
@@ -276,7 +276,7 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
                     <div className="font-bold">{key}:</div>
                     {userField.includes(key) ? (
                       <Link
-                        href={`/account/${property}`}
+                        href={`/@${property}`}
                         className="text-explorer-turquoise"
                       >
                         {value}
@@ -291,7 +291,7 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
                               <p key={account + index}>{account}</p>
                             ) : (
                               <Link
-                                href={`/account/${account}`}
+                                href={`/@${account}`}
                                 className="text-explorer-turquoise"
                                 key={account + index}
                               >

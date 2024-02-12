@@ -21,7 +21,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
     if (["recovery_account", "reset_account"].includes(key)) {
       return (
         <div className="text-blue-400">
-          <Link href={`/account/${userDetails[key]}`}>{userDetails[key]}</Link>{" "}
+          <Link href={`/@${userDetails[key]}`}>{userDetails[key]}</Link>{" "}
         </div>
       );
     }
