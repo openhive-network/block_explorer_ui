@@ -8,7 +8,7 @@ import {
   useCallback,
   useMemo,
 } from "react";
-import { toDateNumber } from "./StringUtils";
+import { buildDecodedURL, toDateNumber } from "./StringUtils";
 import Explorer from "@/types/Explorer";
 import Hive from "@/types/Hive";
 import useDynamicGlobal from "@/api/homePage/useDynamicGlobal";
@@ -194,11 +194,12 @@ export const useURLParams = <T>(defaultState: T, omit?: string[]) => {
         }
       });
       if (!paramsShallowEqual(router.query, urlParams)) {
-        router.replace({
-          query: {
-            ...urlParams,
-          },
+        let path = '';
+        interpolationParams.forEach(param => {
+          path += `/${(urlParams as T)[param]}`;
+          delete (urlParams as T)[param]
         });
+        router.replace(buildDecodedURL(path, urlParams));
       }
     }
   };
