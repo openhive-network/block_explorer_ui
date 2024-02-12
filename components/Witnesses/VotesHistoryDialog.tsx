@@ -186,7 +186,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                         )}
                       </TableCell>
                       <TableCell className="text-explorer-turquoise">
-                        <Link href={`/account/${vote.voter}`}>
+                        <Link href={`/@${vote.voter}`}>
                           {vote.voter}
                         </Link>
                       </TableCell>

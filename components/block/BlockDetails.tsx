@@ -35,7 +35,7 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
         <p>by</p>
         <Link
           className="flex justif-between items-center"
-          href={`/account/${blockDetails?.producer_account}`}
+          href={`/@${blockDetails?.producer_account}`}
         >
           <span className="text-explorer-turquoise mx-2">
             {blockDetails?.producer_account}

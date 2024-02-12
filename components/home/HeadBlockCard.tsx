@@ -82,7 +82,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
       <div>
         <Link
           className="flex justif-between items-center min-h-[40px]"
-          href={`/account/${blockDetails?.producer_account}`}
+          href={`/@${blockDetails?.producer_account}`}
           data-testid="current-witness-link"
         >
           <span>Current witness: </span>{" "}

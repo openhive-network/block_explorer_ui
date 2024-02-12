@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import AccountDetailsCard from "../../components/account/AccountDetailsCard";
 import { useRouter } from "next/router";
 import DetailedOperationCard from "@/components/DetailedOperationCard";
 import JSONCard from "@/components/JSONCard";
@@ -21,6 +20,7 @@ import SearchRanges from "@/components/searchRanges/SearchRanges";
 import ScrollTopButton from "@/components/ScrollTopButton";
 import { useUserSettingsContext } from "@/components/contexts/UserSettingsContext";
 import JSONView from "@/components/JSONView";
+import AccountDetailsCard from "@/components/account/AccountDetailsCard";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -53,7 +53,7 @@ const defaultSearchParams: AccountSearchParams = {
 export default function Account() {
   const router = useRouter();
 
-  const accountNameFromRoute = router.query.accountName as string;
+  const accountNameFromRoute = (router.query.accountName as string)?.slice(1);
   const { settings } = useUserSettingsContext();
 
   const { paramsState, setParams } = useURLParams({
