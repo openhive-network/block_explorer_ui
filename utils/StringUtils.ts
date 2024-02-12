@@ -36,14 +36,16 @@ export const isJson = (item: unknown) => {
  */
 export const formatJson = (json: { [key: string]: any }) => {
   let formatted = structuredClone(json);
-  json && Object.keys(json).forEach(key => {
-    if (typeof json[key] === "object") {
-      formatted[key] = formatJson(json[key]);
-    } else {
-      try {
-        formatted[key] = JSON.parse(json[key]);
-      } catch (error) {
-        formatted[key] = json[key];
+  json &&
+    Object.keys(json).forEach((key) => {
+      if (typeof json[key] === "object") {
+        formatted[key] = formatJson(json[key]);
+      } else {
+        try {
+          formatted[key] = JSON.parse(json[key]);
+        } catch (error) {
+          formatted[key] = json[key];
+        }
       }
     });
   return formatted;
@@ -78,4 +80,4 @@ export const formatAccountName = (accountName: string | string[]) => {
   } else {
     return accountName.replace("@", "");
   }
-}
+};
