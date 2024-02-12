@@ -152,6 +152,16 @@ export default function Account() {
         payloadEndDate,
       } = await searchRanges.getRangesValues();
 
+      let newPage = page;
+
+      if (
+        accountOperations?.total_pages &&
+        page &&
+        page > accountOperations.total_pages
+      ) {
+        newPage = accountOperations.total_pages;
+      }
+
       setParams({
         ...paramsState,
         filters: filters,
@@ -172,7 +182,7 @@ export default function Account() {
             ? searchRanges.timeUnitSelectKey
             : undefined,
         rangeSelectKey: searchRanges.rangeSelectKey,
-        page: resetPage ? undefined : page,
+        page: resetPage ? undefined : newPage,
       });
     }
   };
@@ -205,7 +215,11 @@ export default function Account() {
   };
 
   function handleFetchSuccess(data: Hive.AccountOperationsResponse) {
-    if (settings.liveAccountData && followLiveData) {
+    if (
+      settings.liveAccountData &&
+      followLiveData &&
+      page !== data.total_pages
+    ) {
       handleSetPage(data.total_pages);
     }
   }
@@ -226,6 +240,18 @@ export default function Account() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paramsState]);
+
+  useEffect(() => {
+    if (
+      !settings.liveAccountData &&
+      page &&
+      accountOperations?.total_pages &&
+      page > accountOperations?.total_pages
+    ) {
+      handleSetPage(accountOperations.total_pages)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [settings.liveAccountData, accountOperations?.total_pages]);
 
   if (!accountDetails) {
     return (
