@@ -22,9 +22,17 @@ export class MainPage {
   readonly blocksearchResultHeader: Locator;
   readonly blockSearchResultSection: Locator;
   readonly resultBlock: Locator;
+  readonly firstResultBlock: Locator;
   readonly accountNameInput: Locator;
   readonly blockSearchPropertiesFilterBtn: Locator;
   readonly blockSearchPropertiesOption: Locator;
+  readonly headblockNumber: Locator;
+  readonly datetimePicker: Locator;
+  readonly calendarNavigationLabel: Locator;
+  readonly calendarNavigationNextButton: Locator;
+  readonly monthViewDays: Locator;
+  readonly monthName: Locator;
+  readonly dayName: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -46,10 +54,18 @@ export class MainPage {
     this.blockSearchBtn = page.getByTestId('block-search-btn');
     this.blocksearchResultHeader = page.getByTestId('result-section-header');
     this.blockSearchResultSection = page.getByTestId('result-section');
-    this.resultBlock = page.getByTestId('result-block').first()
-    this.accountNameInput = page.getByTestId('account-name-input')
-    this.blockSearchPropertiesFilterBtn = page.locator('.border-y.border-solid.border-gray-600.py-2.flex.flex-col.gap-y-2')
-    this.blockSearchPropertiesOption = page.locator('[role="option"]')
+    this.firstResultBlock = page.getByTestId('result-block').first();
+    this.accountNameInput = page.getByTestId('account-name-input');
+    this.blockSearchPropertiesFilterBtn = page.locator('.border-y.border-solid.border-gray-600.py-2.flex.flex-col.gap-y-2');
+    this.blockSearchPropertiesOption = page.locator('[role="option"]');
+    this.headblockNumber = page.getByTestId('headblock-number');
+    this.resultBlock = page.getByTestId('result-block');
+    this.datetimePicker = page.locator('.react-datetime-picker__inputGroup__input.react-datetime-picker__inputGroup__year').first();
+    this.calendarNavigationLabel = page.locator('.react-calendar__navigation__label');
+    this.calendarNavigationNextButton = page.locator('.react-calendar__navigation__arrow.react-calendar__navigation__next-button');
+    this.monthViewDays = page.locator('.react-calendar__tile.react-calendar__month-view__days__day').nth(7);
+    this.monthName = page.locator('[name="month"]').first();
+    this.dayName = page.locator('[name="day"]').first();
   }
 
   async gotoBlockExplorerPage() {
@@ -74,5 +90,20 @@ export class MainPage {
 
   async getOptionfromDropdownOptions(text: string) {
     this.blockSearchPropertiesOption.getByText(text).click()
+  }
+
+  async createDate(number: number, month: string) {
+        await this.datetimePicker.click() 
+        await this.calendarNavigationLabel.click()
+        const buttonSelector = this.calendarNavigationNextButton
+        const numberOfClicks = number; 
+
+        for (let i = 0; i < numberOfClicks; i++) {
+    
+        await buttonSelector.click();
+        }
+
+        await this.page.getByText(month).click()
+        await this.monthViewDays.click()
   }
 }

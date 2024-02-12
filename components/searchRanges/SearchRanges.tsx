@@ -138,6 +138,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
                 <label className="ml-2">To block</label>
                 <Input
                   className="bg-gray-700"
+                  data-testid='headblock-number'
                   type="number"
                   value={toBlock || ""}
                   onChange={(e) =>

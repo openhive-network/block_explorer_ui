@@ -24,7 +24,7 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
       <div className="text-2xl font-semibold mt-2" data-testid="block-number">
         Block {blockDetails?.block_num}
       </div>
-      <div className="flex items-center gap-x-1 mt-3 px-8 md:px-4 w-full justify-center">
+      <div className="flex items-center gap-x-1 mt-3 px-8 md:px-4 w-full justify-center" data-testid='produced-data'>
         <p>Produced at: </p>
         <p>{moment(blockDetails?.created_at).format(
                           config.baseMomentTimeFormat
