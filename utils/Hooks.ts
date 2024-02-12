@@ -267,11 +267,11 @@ export const useBlockchainSyncInfo = () => {
     timeDifference,
   };
 };
-export const useOperationsFormatter = (operations?: Hive.OperationResponse[]) => {
+export const useOperationsFormatter = (operations?: any) => {
   const {hiveChain} = useHiveChainContext();
   
   let basicFormatter = hiveChain?.formatter;
-  basicFormatter = basicFormatter?.extend(OperationsFormatter);
+  basicFormatter = basicFormatter?.extend(OperationsFormatter, {transaction: {displayAsId: false}});
 
   let formattedOperations = operations;
   if (basicFormatter) {

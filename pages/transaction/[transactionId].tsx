@@ -9,6 +9,7 @@ import PageNotFound from "@/components/PageNotFound";
 import { useUserSettingsContext } from "@/components/contexts/UserSettingsContext";
 import JSONView from "@/components/JSONView";
 import useTransactionData from "@/api/common/useTransactionData";
+import { useOperationsFormatter } from "@/utils/Hooks";
 
 const displayTransactionData = (
   key: string,
@@ -37,6 +38,8 @@ export default function Transaction() {
   const transactionId = router.query.transactionId as string;
 
   const { trxData, trxLoading, trxError } = useTransactionData(transactionId);
+
+  const formattedTransaction = useOperationsFormatter(trxData) as Hive.TransactionQueryResponse | undefined;
 
   if (trxError) {
     return <PageNotFound message={`Transaction not found.`} />;
@@ -81,8 +84,8 @@ export default function Transaction() {
             />
           ) : (
             <>
-              {trxData.transaction_json.operations &&
-                trxData.transaction_json.operations.map((operation, index) => (
+              {formattedTransaction?.transaction_json.operations &&
+                formattedTransaction.transaction_json.operations.map((operation, index) => (
                   <DetailedOperationCard
                     key={index}
                     operation={operation}
