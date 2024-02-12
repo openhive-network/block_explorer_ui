@@ -65,9 +65,9 @@ export const toDateNumber = (value: number) => {
  * @returns string containing full path with decoded reserved characters
  */
 export const buildDecodedURL = (path: string, query: Object) => {
-  let url = `${path}`;
+  let url = `${path}?`;
   Object.entries(query).forEach(([key, value]) => {
-    url += `?${key}=${value}`;
+    url += `&${key}=${value}`;
   });
   return url;
 };
