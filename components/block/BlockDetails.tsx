@@ -37,7 +37,7 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
           className="flex justif-between items-center" data-testid='account-name'
           href={`/account/${blockDetails?.producer_account}`}
         >
-          <span className="text-explorer-turquoise mx-2">
+          <span className="text-explorer-turquoise mx-2" data-testid="block-producer-name">
             {blockDetails?.producer_account}
           </span>
           <Image

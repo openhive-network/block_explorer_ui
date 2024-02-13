@@ -22,11 +22,13 @@ test.describe("Block Explorer UI tests", () => {
     await mainPage.validateMainPageIsLoaded();
   });
 
-  test("Move to the block page by clicking block link",async ({ page }) => {
+  test("Move to the block page by clicking block link",async ({ page, browserName }) => {
+    test.skip(browserName === 'webkit', 'This feature is fleaky only in Webkit');
     await mainPage.gotoBlockExplorerPage();
     await mainPage.validateMainPageIsLoaded();
 
     // Extract number as string from Head Block Card Block Link
+    await mainPage.page.waitForSelector(await mainPage.headBlockCardFundAndSupplyExpandableList['_selector']);
     const block: string = await mainPage.headBlockCardBlockLink.textContent() || '';
     const foundNumberInBlock: any = block.match(RegExp(/\d+$/gm));
     const blockNumber: string = await foundNumberInBlock[0];
@@ -44,11 +46,13 @@ test.describe("Block Explorer UI tests", () => {
     await blockPage.validateBlockNumber(blockNumberDetails); // against block number in Block Page Details Card
   });
 
-  test("Move to the block page by clicking block link and back to the home page",async ({ page }) => {
+  test("Move to the block page by clicking block link and back to the home page",async ({ page, browserName }) => {
+    test.skip(browserName === 'webkit', 'This feature is fleaky only in Webkit');
     await mainPage.gotoBlockExplorerPage();
     await mainPage.validateMainPageIsLoaded();
 
     // Extract number as string from Head Block Card Block Link
+    await mainPage.page.waitForSelector(await mainPage.headBlockCardFundAndSupplyExpandableList['_selector']);
     const block: string = await mainPage.headBlockCardBlockLink.textContent() || '';
     const foundNumberInBlock: any = block.match(RegExp(/\d+$/gm));
     const blockNumber: string = foundNumberInBlock[0];

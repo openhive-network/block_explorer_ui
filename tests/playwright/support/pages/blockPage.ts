@@ -9,6 +9,7 @@ export class BlockPage {
   readonly producedData: Locator;
   readonly jsonView: Locator;
   readonly operationType: Locator;
+  readonly blockProducer: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -19,6 +20,7 @@ export class BlockPage {
     this.producedData = page.locator("[data-testid='produced-data'] > p:nth-of-type(2)")
     this.jsonView = page.locator('pre')
     this.operationType = page.locator('.text-explorer-orange')
+    this.blockProducer = page.getByTestId('block-producer-name');
   }
 
   async validateBlockPageIsLoaded() {
@@ -30,5 +32,9 @@ export class BlockPage {
 
   async validateBlockNumber(blockNumber: string){
     await expect(this.blockDetailsBlockNumber).toContainText(blockNumber);
+  }
+
+  async validateBlockProducerName(blockProducer: string){
+    await expect(this.blockProducer).toContainText(blockProducer);
   }
 }

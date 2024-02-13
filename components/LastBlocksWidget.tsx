@@ -140,6 +140,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
           id={`x=${x}, y=${y}`}
           onClick={() => router.push(`/account/${witness}`)}
           className="cursor-pointer"
+          data-testid="last-block-widget-user-link"
         >
           <defs>
             <clipPath id={`avatarCircle-${x}-${y}`}>
