@@ -5,17 +5,20 @@ import Image from "next/image";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import moment from "moment";
 import { config } from "@/Config";
+import Explorer from "@/types/Explorer";
 
 interface BlockDetailsProps {
-  operations?: Hive.OperationResponse[];
+  virtualOperationsTypesCounters?: Explorer.OperationCounter[];
+  nonVirtualOperationsTypesCounters?: Explorer.OperationCounter[];
   virtualOperationLength: number;
   nonVirtualOperationLength: number;
   blockDetails?: Hive.BlockDetails;
 }
 
 const BlockDetails: React.FC<BlockDetailsProps> = ({
+  virtualOperationsTypesCounters,
+  nonVirtualOperationsTypesCounters,
   blockDetails,
-  operations,
   virtualOperationLength,
   nonVirtualOperationLength,
 }) => {
@@ -57,9 +60,10 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
         </p>
       </div>
       <BlockPageOperationCount
-        operations={operations}
         virtualOperationLength={virtualOperationLength}
         nonVirtualOperationLength={nonVirtualOperationLength}
+        virtualOperationsTypesCounters={virtualOperationsTypesCounters}
+        nonVirtualOperationsTypesCounters={nonVirtualOperationsTypesCounters}
       />
     </div>
   );

@@ -2,20 +2,21 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import SearchBar from "./SearchBar";
-import { useMediaQuery } from "@/utils/Hooks";
+import { useBlockchainSyncInfo, useMediaQuery } from "@/utils/Hooks";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Toggle } from "./ui/toggle";
 import { useUserSettingsContext } from "./contexts/UserSettingsContext";
 import { useAlertContext } from "./contexts/AlertContext";
 import Alert from "./Alert";
-import { Button } from "./ui/button";
 
 export default function Navbar() {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [menuOpen, setMenuOpen] = useState(false);
   const { settings, setSettings } = useUserSettingsContext();
   const { alerts, setAlerts } = useAlertContext();
+
+  const { blockDifference, timeDifference } = useBlockchainSyncInfo();
 
   return (
     <div className="fixed w-full top-0 z-50" data-testid="navbar">
@@ -38,13 +39,30 @@ export default function Navbar() {
         </div>
         {isMobile ? (
           <div className="flex items-center justify-between w-full">
-            <Link href={"/"} className="pr-3">
+            <Link href={"/"} className="pr-3 relative">
               <Image
                 src="/hive-logo.png"
                 alt="Hive logo"
                 width={40}
                 height={40}
               />
+              {!isNaN(blockDifference!) && (
+                <div
+                  className={cn(
+                    "absolute border-2 rounded-[6px] mt-px mx-6 px-1 text-[10px] font-bold -top-1 left-1",
+                    {
+                      "border-explorer-ligh-green text-explorer-ligh-green":
+                        blockDifference <= 3,
+                      "border-explorer-orange text-explorer-orange":
+                        blockDifference > 3 && blockDifference <= 20,
+                      "border-explorer-red text-explorer-red":
+                        blockDifference > 20,
+                    }
+                  )}
+                >
+                  {blockDifference}
+                </div>
+              )}
             </Link>
             <div className="flex-grow flex items-center justify-end gap-x-3">
               <SearchBar />
@@ -78,8 +96,11 @@ export default function Navbar() {
           </div>
         ) : (
           <>
-            <div className="flex items-center pl-12">
-              <Link href={"/"} className="pr-12 flex justify-normal items-center text-explorer-turquoise font-medium">
+            <div className="flex items-center pl-12 gap-x-4">
+              <Link
+                href={"/"}
+                className="pr-2 flex justify-normal items-center text-explorer-turquoise font-medium"
+              >
                 <Image
                   src="/hive-logo.png"
                   alt="Hive logo"
@@ -87,9 +108,37 @@ export default function Navbar() {
                   height={50}
                   data-testid="hive-logo"
                 />
-                <div className="ml-4" data-testid="hive-block-explorer">Hive Block Explorer</div>
+                <div className="ml-4" data-testid="hive-block-explorer">
+                  Hive Block Explorer
+                </div>
               </Link>
-              <Link href={"/witnesses"} data-testid="navbar-witnesses-link">Witnesses</Link>
+              {!isNaN(blockDifference!) && (
+                <div
+                  className={cn(
+                    "flex gap-x-1 border rounded-[6px] mt-px mx-6 px-1.5 py-px text-sm",
+                    {
+                      "border-explorer-ligh-green text-explorer-ligh-green":
+                        blockDifference <= 3,
+                      "border-explorer-orange text-explorer-orange":
+                        blockDifference > 3 && blockDifference <= 20,
+                      "border-explorer-red text-explorer-red":
+                        blockDifference > 20,
+                    }
+                  )}
+                >
+                  {!blockDifference ? (
+                    <p>Synced</p>
+                  ) : (
+                    <>
+                      <p>Blocks out of sync:</p>
+                      <p>{blockDifference}</p>
+                    </>
+                  )}
+                </div>
+              )}
+              <Link href={"/witnesses"} data-testid="navbar-witnesses-link">
+                Witnesses
+              </Link>
               <Toggle
                 checked={settings.rawJsonView}
                 onClick={() =>

@@ -8,6 +8,8 @@ import useOperationTypes from "@/api/common/useOperationsTypes";
 import JumpToPage from "@/components/JumpToPage";
 import { useURLParams } from "@/utils/Hooks";
 import CommentsSearch from "@/components/home/searches/CommentsSearch";
+import { useUserSettingsContext } from "@/components/contexts/UserSettingsContext";
+import JSONView from "@/components/JSONView";
 
 const defaultSearchParams: Explorer.CommentSearchParams = {
   accountName: undefined,
@@ -32,15 +34,16 @@ const Comments: React.FC = () => {
   const [previousCommentSearchProps, setPreviousCommentSearchProps] = useState<
     Explorer.CommentSearchProps | undefined
   >(undefined);
+  const { settings } = useUserSettingsContext();
 
   const commentSearch = useCommentSearch(commentSearchProps);
   const { paramsState, setParams } = useURLParams(defaultSearchParams);
 
   const operationsTypes =
-  useOperationTypes().operationsTypes?.filter((operation) =>
-    config.commentOperationsTypeIds.includes(operation.op_type_id)
-  ) || [];
-
+    useOperationTypes().operationsTypes?.filter((operation) =>
+      config.commentOperationsTypeIds.includes(operation.op_type_id)
+    ) || [];
+    
   const startCommentSearch = async (props: Explorer.CommentSearchParams) => {
     if (!!props.accountName) {
       setCommentSearchProps(props as Explorer.CommentSearchProps);
@@ -48,7 +51,7 @@ const Comments: React.FC = () => {
       setParams({ ...paramsState, ...props });
       setInitialSearch(true);
     }
-  }
+  };
 
   const changeCommentSearchPagination = (newPageNum: number) => {
     if (previousCommentSearchProps?.accountName) {
@@ -95,15 +98,22 @@ const Comments: React.FC = () => {
               />
             </div>
           </div>
-          {commentSearch.commentSearchData?.operations_result?.map(
-            (foundOperation) => (
-              <DetailedOperationCard
-                className="my-6 text-white"
-                operation={foundOperation.body}
-                key={foundOperation.operation_id}
-                blockNumber={foundOperation.block_num}
-                date={foundOperation.created_at}
-              />
+          {settings.rawJsonView ? (
+            <JSONView
+              json={commentSearch.commentSearchData?.operations_result}
+              className="w-full mt-3 m-auto py-2 px-4 bg-explorer-dark-gray rounded text-white text-xs break-words break-all"
+            />
+          ) : (
+            commentSearch.commentSearchData?.operations_result?.map(
+              (foundOperation) => (
+                <DetailedOperationCard
+                  className="my-6 text-white"
+                  operation={foundOperation.body}
+                  key={foundOperation.operation_id}
+                  blockNumber={foundOperation.block_num}
+                  date={foundOperation.created_at}
+                />
+              )
             )
           )}
         </>

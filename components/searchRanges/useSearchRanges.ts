@@ -36,7 +36,7 @@ export interface SearchRangesResult {
   setRangesValues: (params: Explorer.CommentSearchParams) => void;
 }
 
-const useSearchRanges = () => {
+const useSearchRanges = (defaultSelectKey: string = "none") => {
   const rangeSelectOptions: Explorer.SelectOption[] = [
     {
       name: "Last blocks",
@@ -81,7 +81,7 @@ const useSearchRanges = () => {
   const [endDate, setEndDate] = useState<Date | undefined>(new Date (Date.now()));
   const [lastBlocksValue, setLastBlocksValue] = useState<number | undefined>(DEFAULT_LAST_BLOCK_VALUE);
   const [lastTimeUnitValue, setLastTimeUnitValue] = useState<number | undefined>(undefined);
-  const [rangeSelectKey, setRangeSelectKey] = useState<string>("none");
+  const [rangeSelectKey, setRangeSelectKey] = useState<string>(defaultSelectKey);
   const [timeUnitSelectKey, setTimeUnitSelectKey] = useState<string>("days");
 
   const {checkTemporaryHeadBlockNumber} = useHeadBlockNumber();

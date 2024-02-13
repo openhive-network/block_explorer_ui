@@ -32,7 +32,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
     setSelectedCommentSearchOperationTypes,
   ] = useState<number[]>([]);
 
-  const searchRanges = useSearchRanges();
+  const searchRanges = useSearchRanges("lastBlocks");
   const { getRangesValues } = searchRanges;
 
   const setSearchValues = (data: Explorer.CommentSearchParams) => {

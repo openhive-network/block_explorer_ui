@@ -15,7 +15,7 @@ export class Navbar {
     this.navBarHiveLogo = page.getByTestId('navbar');
     this.navBarHiveHeaderText = page.getByTestId('hive-block-explorer');
     this.navBarWitnessesLink = page.getByTestId('navbar-witnesses-link');
-    this.navBarJsonRowToggle = page.getByTestId('toggle');
+    this.navBarJsonRowToggle = this.navBarElement.getByTestId('toggle');
     this.searchBarInput = page.getByTestId('search-bar-input');
   }
 

@@ -24,7 +24,14 @@ class FetchingService {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(requestBody),
       });
-      return response.json();
+      const jsonResponse = await response.json();
+      if (
+        typeof jsonResponse === "object" &&
+        Object.keys(jsonResponse).length === 0 &&
+        !Array.isArray(jsonResponse)
+      )
+        throw new Error("No data from API");
+      return jsonResponse
     } catch (error) {
       return Promise.reject(error);
     }
@@ -290,6 +297,18 @@ class FetchingService {
   async getHafbeVersion(): Promise<string> {
     const requestBody = {};
     return await this.callApi("get_hafbe_version", requestBody);
+  }
+
+  async getOperationsCountInBlock(blockNumber: number): Promise<Hive.OperationsByTypeCount[]> {
+    const requestBody: Hive.GetOperationsInBlockProps = {
+      _block_num: blockNumber
+    };
+    return await this.callApi("get_op_count_in_block", requestBody);
+  }
+
+  async getHafbeLastSyncedBlock():Promise<number> {
+    const requestBody = {};
+    return await this.callApi("get_hafbe_last_synced_block", requestBody);
   }
 
   async getManabars(accountName: string, hiveChain: IHiveChainInterface): Promise<Hive.Manabars | null> {

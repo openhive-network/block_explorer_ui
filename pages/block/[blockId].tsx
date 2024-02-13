@@ -16,6 +16,8 @@ import Hive from "@/types/Hive";
 import ScrollTopButton from "@/components/ScrollTopButton";
 import CustomPagination from "@/components/CustomPagination";
 import { useURLParams } from "@/utils/Hooks";
+import useOperationsCountInBlock from "@/api/blockPage/useOperationsInBlock";
+import Explorer from "@/types/Explorer";
 
 interface BlockSearchParams {
   blockId?: number;
@@ -41,6 +43,8 @@ export default function Block() {
   });
 
   const { settings } = useUserSettingsContext();
+
+  const { operationsCountInBlock, countLoading } = useOperationsCountInBlock(Number(blockId));
 
   const { blockDetails, loading } = useBlockData(Number(blockId));
 
@@ -77,12 +81,54 @@ export default function Block() {
     []
   );
 
+  const getOperationsCounts = useCallback(() => {
+    if (operationsCountInBlock && !countLoading && operationsTypes) {
+      const virtualOperationsTypesCounters: Explorer.OperationCounter[] = [];
+      const nonVirtualOperationsTypesCounters: Explorer.OperationCounter[] = [];
+      const operationTypesMap = new Map<number, Hive.OperationPattern>();
+      let virtualOperationsCounter = 0;
+      let nonVirtualOperationsCounter = 0;
+      for (const operationType of operationsTypes) {
+        operationTypesMap.set(operationType.op_type_id, operationType);
+      }
+      for (const operationCount of operationsCountInBlock) {
+        const operationType = operationTypesMap.get(operationCount.op_type_id);
+        const countObject: Explorer.OperationCounter = {
+          operationTypeName: operationType?.operation_name || "",
+          counter: operationCount.count,
+        };
+        if (operationType?.is_virtual) {
+          virtualOperationsCounter += operationCount.count;
+          virtualOperationsTypesCounters.push(countObject);
+        } else {
+          nonVirtualOperationsCounter += operationCount.count;
+          nonVirtualOperationsTypesCounters.push(countObject);
+        }
+      }
+      return {
+        virtualOperationsCounter,
+        nonVirtualOperationsCounter,
+        virtualOperationsTypesCounters,
+        nonVirtualOperationsTypesCounters,
+      };
+    } else
+      return {
+        virtualOperationsCounter: 0,
+        nonVirtualOperationsCounter: 0,
+        virtualOperationsTypesCounters: [],
+        nonVirtualOperationsTypesCounters: [],
+      };
+  }, [countLoading, operationsCountInBlock, operationsTypes]);
+
+  const {
+    virtualOperationsCounter,
+    nonVirtualOperationsCounter,
+    virtualOperationsTypesCounters,
+    nonVirtualOperationsTypesCounters,
+  } = getOperationsCounts();
+
   const { virtualOperations, nonVirtualOperations } =
     getSplitOperations(blockOperations);
-  const {
-    virtualOperations: totalVirtualOperations,
-    nonVirtualOperations: totalNonVirtualOperations,
-  } = getSplitOperations(totalOperations);
 
   const handleGoToBlock = (blockNumber: string) => {
     router.push({
@@ -124,9 +170,10 @@ export default function Block() {
         selectedOperationIds={paramsState.filters || []}
       />
       <BlockDetails
-        operations={totalOperations?.operations_result}
-        virtualOperationLength={totalVirtualOperations?.length}
-        nonVirtualOperationLength={totalNonVirtualOperations?.length}
+        virtualOperationLength={virtualOperationsCounter}
+        nonVirtualOperationLength={nonVirtualOperationsCounter}
+        virtualOperationsTypesCounters={virtualOperationsTypesCounters}
+        nonVirtualOperationsTypesCounters={nonVirtualOperationsTypesCounters}
         blockDetails={blockDetails}
       />
       <div className="fixed top-[calc(100vh-90px)] md:top-[calc(100vh-100px)] w-full flex flex-col items-end px-3 md:px-12">

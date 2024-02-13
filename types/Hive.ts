@@ -130,6 +130,10 @@ declare module Hive {
     _page_size: number;
   }
 
+  interface GetOperationsInBlockProps {
+    _block_num: number;
+  }
+
   interface GetWitnessVotesHistory {
     _witness: string;
     _order_is: string;
@@ -143,6 +147,11 @@ declare module Hive {
     amount: string;
     precision: number;
     nai: string;
+  }
+
+  interface OperationsByTypeCount {
+    count: number;
+    op_type_id: number;
   }
 
   interface JsonRpcBasicResponse<T> {
@@ -434,6 +443,8 @@ declare module Hive {
     block_size: number;
     signing_key: string;
     version: string;
+    missed_blocks: number;
+    hbd_interest_rate: number;
   }
 
   interface Voter {
@@ -488,18 +499,13 @@ declare module Hive {
   interface LastBlocksTypeResponse {
     block_num: number;
     witness: string;
-    ops_count: Array<{
-      count: number;
-      op_type_id: number;
-    }>;
+    ops_count: OperationsByTypeCount[];
   }
 
   interface OperationsCount {
     total_operations: number;
     total_pages: number;
   }
-
-
 
   interface CommentOperation {
     block_num: number;
