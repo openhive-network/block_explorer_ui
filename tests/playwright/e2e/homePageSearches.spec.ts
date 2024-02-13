@@ -1,12 +1,14 @@
 import { test, expect } from "@playwright/test";
 import { MainPage } from "../support/pages/mainPage";
+import { BlockPage } from "../support/pages/blockPage";
 
 test.describe('Home page - searches', () => {
     let mainPage: MainPage;
-    
+    let blockPage: BlockPage;
   
     test.beforeEach(async ({ page }) => {
         mainPage = new MainPage(page);
+        blockPage = new BlockPage(page);
     });
 
     test('Validate default searching - Block Search Form with empty inputs', async ({page}) => {
@@ -69,7 +71,7 @@ test.describe('Home page - searches', () => {
         await mainPage.resultBlock.last().click()
 
         await page.waitForLoadState('domcontentloaded')
-        await expect(page.locator("[data-testid='produced-data'] > p:nth-of-type(2)")).toContainText(monthText)
-        await expect(page.locator("[data-testid='produced-data'] > p:nth-of-type(2)")).toContainText(dayText)
+        await expect(blockPage.producedData).toContainText(monthText)
+        await expect(blockPage.producedData).toContainText(dayText)
     })
 })

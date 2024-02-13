@@ -6,6 +6,7 @@ export class BlockPage {
   readonly blockPageBlockDetails: Locator;
   readonly blockPageOperationList: Locator;
   readonly blockDetailsBlockNumber: Locator;
+  readonly producedData: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -13,6 +14,7 @@ export class BlockPage {
     this.blockPageBlockDetails = page.getByTestId('block-page-block-details');
     this.blockPageOperationList = page.getByTestId('block-page-operation-list');
     this.blockDetailsBlockNumber = page.getByTestId('block-number');
+    this.producedData = page.locator("[data-testid='produced-data'] > p:nth-of-type(2)")
   }
 
   async validateBlockPageIsLoaded() {
