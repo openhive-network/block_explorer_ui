@@ -122,14 +122,6 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
   const getCommentPageLink = () => {
     const urlParams: Explorer.UrlParam[] = [
       {
-        paramName: "accountName",
-        paramValue: dataToURL(commentSearchProps?.accountName),
-      },
-      {
-        paramName: "permlink",
-        paramValue: dataToURL(commentSearchProps?.permlink),
-      },
-      {
         paramName: "fromBlock",
         paramValue: dataToURL(commentSearchProps?.fromBlock),
       },
@@ -142,7 +134,19 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
         paramValue: dataToURL(commentSearchProps?.operationTypes),
       },
     ];
-    return `comments${getPageUrlParams(urlParams)}`;
+    if (commentSearchProps?.permlink) {
+      return `/@${dataToURL(commentSearchProps?.accountName)}/${dataToURL(
+        commentSearchProps.permlink
+      )}${getPageUrlParams(urlParams)}`;
+    } else {
+      urlParams.push({
+        paramName: "permlink",
+        paramValue: dataToURL(commentSearchProps?.permlink),
+      });
+      return `comments/@${dataToURL(
+        commentSearchProps?.accountName
+      )}${getPageUrlParams(urlParams)}`;
+    }
   };
 
   const getAccountPageLink = (accountName: string) => {
