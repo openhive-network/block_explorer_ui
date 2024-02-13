@@ -271,11 +271,10 @@ export const useOperationsFormatter = (operations?: any) => {
   const {hiveChain} = useHiveChainContext();
   
   let basicFormatter = hiveChain?.formatter;
-  basicFormatter = basicFormatter?.extend(OperationsFormatter, {transaction: {displayAsId: false}});
+  basicFormatter = basicFormatter?.extend({transaction: {displayAsId: false}});
 
   if (basicFormatter && operations) {
-    const waxified = basicFormatter.waxify`${operations}`;
-    return JSON.parse(waxified);
+    return basicFormatter.format(structuredClone(operations));
   } else {
     return operations
   }
