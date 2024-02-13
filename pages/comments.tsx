@@ -46,6 +46,7 @@ const Comments: React.FC = () => {
     
   const startCommentSearch = async (props: Explorer.CommentSearchParams) => {
     if (!!props.accountName) {
+      props.accountName = props.accountName.replace("@", "");
       setCommentSearchProps(props as Explorer.CommentSearchProps);
       setPreviousCommentSearchProps(props as Explorer.CommentSearchProps);
       setParams({ ...paramsState, ...props });
