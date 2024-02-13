@@ -22,8 +22,6 @@ import { dataToURL } from "@/utils/Hooks";
 import BlockSearch from "./searches/BlockSearch";
 import AccountSearch from "./searches/AccountSearch";
 import CommentsSearch from "./searches/CommentsSearch";
-import { useUserSettingsContext } from "../contexts/UserSettingsContext";
-import JSONView from "../JSONView";
 
 interface SearchesSectionProps {}
 
@@ -52,7 +50,6 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
   const [accountOperationsSearchProps, setAccountOperationsSearchProps] =
     useState<Explorer.AccountSearchOperationsProps | undefined>(undefined);
 
-  const { settings } = useUserSettingsContext();
   const { operationsTypes } = useOperationTypes() || [];
   const commentSearch = useCommentSearch(commentSearchProps);
   const blockSearch = useBlockSearch(blockSearchProps);
@@ -273,22 +270,15 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
               />
             </div>
 
-            {settings.rawJsonView ? (
-              <JSONView
-                json={commentSearch.commentSearchData?.operations_result}
-                className="w-full mt-3 m-auto py-2 px-4 bg-explorer-dark-gray rounded text-white text-xs break-words break-all"
-              />
-            ) : (
-              commentSearch.commentSearchData?.operations_result.map(
-                (foundOperation) => (
-                  <DetailedOperationCard
-                    className="my-6"
-                    operation={foundOperation.body}
-                    key={foundOperation.operation_id}
-                    blockNumber={foundOperation.block_num}
-                    date={foundOperation.created_at}
-                  />
-                )
+            {commentSearch.commentSearchData?.operations_result.map(
+              (foundOperation) => (
+                <DetailedOperationCard
+                  className="my-6"
+                  operation={foundOperation.body}
+                  key={foundOperation.operation_id}
+                  blockNumber={foundOperation.block_num}
+                  date={foundOperation.created_at}
+                />
               )
             )}
           </div>
@@ -325,22 +315,15 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
               />
             </div>
 
-            {settings.rawJsonView ? (
-              <JSONView
-                json={accountOperations.accountOperations?.operations_result}
-                className="w-full mt-3 m-auto py-2 px-4 bg-explorer-dark-gray rounded text-white text-xs break-words break-all"
-              />
-            ) : (
-              accountOperations.accountOperations?.operations_result.map(
-                (foundOperation) => (
-                  <DetailedOperationCard
-                    className="my-6"
-                    operation={foundOperation.operation}
-                    key={foundOperation.operation_id}
-                    blockNumber={foundOperation.block_num}
-                    date={new Date(foundOperation.timestamp)}
-                  />
-                )
+            {accountOperations.accountOperations?.operations_result.map(
+              (foundOperation) => (
+                <DetailedOperationCard
+                  className="my-6"
+                  operation={foundOperation.operation}
+                  key={foundOperation.operation_id}
+                  blockNumber={foundOperation.block_num}
+                  date={new Date(foundOperation.timestamp)}
+                />
               )
             )}
           </div>
