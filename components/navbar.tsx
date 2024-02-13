@@ -139,7 +139,7 @@ export default function Navbar() {
               <Link href={"/witnesses"} data-testid="navbar-witnesses-link">
                 Witnesses
               </Link>
-              <Toggle
+              <Toggle data-testid='toggle'
                 checked={settings.rawJsonView}
                 onClick={() =>
                   setSettings({

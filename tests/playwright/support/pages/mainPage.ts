@@ -33,6 +33,9 @@ export class MainPage {
   readonly monthViewDays: Locator;
   readonly monthName: Locator;
   readonly dayName: Locator;
+  readonly operationsTypesBtn: Locator;
+  readonly RawJsonViewToggle: Locator;
+  readonly operationsTypesWindow: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -56,7 +59,7 @@ export class MainPage {
     this.blockSearchResultSection = page.getByTestId('result-section');
     this.firstResultBlock = page.getByTestId('result-block').first();
     this.accountNameInput = page.getByTestId('account-name-input');
-    this.blockSearchPropertiesFilterBtn = page.locator('.border-y.border-solid.border-gray-600.py-2.flex.flex-col.gap-y-2');
+    this.blockSearchPropertiesFilterBtn = page.locator('[role="combobox"]').first();
     this.blockSearchPropertiesOption = page.locator('[role="option"]');
     this.headblockNumber = page.getByTestId('headblock-number');
     this.resultBlock = page.getByTestId('result-block');
@@ -66,6 +69,9 @@ export class MainPage {
     this.monthViewDays = page.locator('.react-calendar__tile.react-calendar__month-view__days__day').nth(7);
     this.monthName = page.locator('[name="month"]').first();
     this.dayName = page.locator('[name="day"]').first();
+    this.operationsTypesBtn = page.getByTestId('operations-types-btn')
+    this.RawJsonViewToggle = page.getByTestId('toggle').locator('.w-10')
+    this.operationsTypesWindow = page.locator('[role="dialog"]').last()
   }
 
   async gotoBlockExplorerPage() {

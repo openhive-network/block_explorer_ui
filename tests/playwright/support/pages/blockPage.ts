@@ -7,6 +7,7 @@ export class BlockPage {
   readonly blockPageOperationList: Locator;
   readonly blockDetailsBlockNumber: Locator;
   readonly producedData: Locator;
+  readonly jsonView: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -15,6 +16,7 @@ export class BlockPage {
     this.blockPageOperationList = page.getByTestId('block-page-operation-list');
     this.blockDetailsBlockNumber = page.getByTestId('block-number');
     this.producedData = page.locator("[data-testid='produced-data'] > p:nth-of-type(2)")
+    this.jsonView = page.locator('pre')
   }
 
   async validateBlockPageIsLoaded() {

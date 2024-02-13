@@ -191,7 +191,7 @@ export default function Block() {
           <Loader2 className="animate-spin mt-1 h-16 w-16 ml-3 ... " />
         </div>
       ) : settings.rawJsonView ? (
-        <JSONView
+        <JSONView data-testid='json-view'
           json={{
             details: { ...blockDetails },
             operations: { ...blockOperations },
