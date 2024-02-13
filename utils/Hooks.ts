@@ -273,9 +273,10 @@ export const useOperationsFormatter = (operations?: any) => {
   let basicFormatter = hiveChain?.formatter;
   basicFormatter = basicFormatter?.extend(OperationsFormatter, {transaction: {displayAsId: false}});
 
-  let formattedOperations = operations;
-  if (basicFormatter) {
-    formattedOperations = basicFormatter.format(formattedOperations);
+  if (basicFormatter && operations) {
+    const waxified = basicFormatter.waxify`${operations}`;
+    return JSON.parse(waxified);
+  } else {
+    return operations
   }
-  return formattedOperations;
 }
