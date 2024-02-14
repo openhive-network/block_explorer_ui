@@ -12,6 +12,10 @@ const nextConfig = {
         destination: "/comments",
       },
       {
+        source: "/block/:blockId",
+        destination: "/block/:blockId",
+      },
+      {
         source: "/:accountName/:permlink",
         destination: "/comments",
       },
