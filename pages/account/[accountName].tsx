@@ -19,8 +19,6 @@ import Hive from "@/types/Hive";
 import useSearchRanges from "@/components/searchRanges/useSearchRanges";
 import SearchRanges from "@/components/searchRanges/SearchRanges";
 import ScrollTopButton from "@/components/ScrollTopButton";
-import { useUserSettingsContext } from "@/components/contexts/UserSettingsContext";
-import JSONView from "@/components/JSONView";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -54,7 +52,6 @@ export default function Account() {
   const router = useRouter();
 
   const accountNameFromRoute = router.query.accountName as string;
-  const { settings } = useUserSettingsContext();
 
   const { paramsState, setParams } = useURLParams({
     ...defaultSearchParams,
@@ -149,18 +146,9 @@ export default function Account() {
         toBlock: payloadToBlock,
         fromDate: payloadStartDate,
         toDate: payloadEndDate,
-        lastBlocks:
-          searchRanges.rangeSelectKey === "lastBlocks"
-            ? searchRanges.lastBlocksValue
-            : undefined,
-        lastTime:
-          searchRanges.rangeSelectKey === "lastTime"
-            ? searchRanges.lastTimeUnitValue
-            : undefined,
-        timeUnit:
-          searchRanges.rangeSelectKey === "lastTime"
-            ? searchRanges.timeUnitSelectKey
-            : undefined,
+        lastBlocks: searchRanges.rangeSelectKey === "lastBlocks" ? searchRanges.lastBlocksValue : undefined,
+        lastTime: searchRanges.rangeSelectKey === "lastTime" ? searchRanges.lastTimeUnitValue : undefined,
+        timeUnit: searchRanges.rangeSelectKey === "lastTime" ? searchRanges.timeUnitSelectKey : undefined,
         rangeSelectKey: searchRanges.rangeSelectKey,
         page: resetPage ? undefined : page,
       });
@@ -260,10 +248,7 @@ export default function Account() {
           />
         </div>
 
-        <div
-          className="col-start-1 md:col-start-2 col-span-1 md:col-span-3"
-          data-testid="account-operation-list"
-        >
+        <div className="col-start-1 md:col-start-2 col-span-1 md:col-span-3" data-testid="account-operation-list">
           <div>
             <div className="bg-explorer-dark-gray text-white p-4 rounded-[6px] mx-2">
               <div className="ml-2">Ranges</div>
@@ -292,15 +277,6 @@ export default function Account() {
               <div className="flex justify-center text-center items-center">
                 <Loader2 className="animate-spin mt-1 text-black h-12 w-12 ml-3 ..." />
               </div>
-            ) : settings.rawJsonView ? (
-              <section className="w-full px-2">
-                <JSONView
-                  json={{
-                    ...accountOperations?.operations_result,
-                  }}
-                  className="w-full mt-3 m-auto py-2 px-4 bg-explorer-dark-gray rounded text-white text-xs break-words break-all"
-                />
-              </section>
             ) : (
               accountOperations?.operations_result?.map(
                 (operation: Hive.OperationResponse) => (
