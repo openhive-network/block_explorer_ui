@@ -123,19 +123,17 @@ test.describe('Home page - searches', () => {
 
     test('Validate searching for property only one Operation types', async ({page}) => {
         await mainPage.gotoBlockExplorerPage();
-        await mainPage.operationsTypesBtn.click()
-        await expect(mainPage.operationsTypesWindow).toBeVisible()
-        await page.locator('input[type="checkbox"]').first().check()
-        await page.getByRole('button', {name: 'Apply'}).click()
-        await mainPage.blockSearchBtn.click()
-        await expect(mainPage.blockSearchResultSection).toBeVisible()
-        await mainPage.firstResultBlock.click()
-        const operationsType = await page.locator('.text-explorer-orange').all()
+        await mainPage.operationsTypesBtn.click();
+        await expect(mainPage.operationsTypesWindow).toBeVisible();
+        await page.locator('input[type="checkbox"]').first().check();
+        await page.getByRole('button', {name: 'Apply'}).click();
+        await mainPage.blockSearchBtn.click();
+        await expect(mainPage.blockSearchResultSection).toBeVisible();
+        await mainPage.firstResultBlock.click();
 
-        await expect(operationsType).toContain('Vote')
-    
-        //to be continued
-    })
+        await expect(blockPage.operationType.first()).toBeVisible()
+        const operationsType = await blockPage.operationType.allInnerTexts();
+        await expect(operationsType).toContain('vote');
 
-
-})
+    });
+});

@@ -8,6 +8,7 @@ export class BlockPage {
   readonly blockDetailsBlockNumber: Locator;
   readonly producedData: Locator;
   readonly jsonView: Locator;
+  readonly operationType: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -17,6 +18,7 @@ export class BlockPage {
     this.blockDetailsBlockNumber = page.getByTestId('block-number');
     this.producedData = page.locator("[data-testid='produced-data'] > p:nth-of-type(2)")
     this.jsonView = page.locator('pre')
+    this.operationType = page.locator('.text-explorer-orange')
   }
 
   async validateBlockPageIsLoaded() {
