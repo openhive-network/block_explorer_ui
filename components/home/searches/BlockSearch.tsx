@@ -57,6 +57,7 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
       setSelectedKeys(operationKeysData[index]);
     } else {
       setSelectedKeys(undefined);
+      setFieldContent("");
     }
   };
 
@@ -210,7 +211,10 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
           onChange={(e) => setFieldContent(e.target.value)}
           placeholder="---"
           disabled={
-            !selectedOperationTypes || selectedOperationTypes.length !== 1
+            !selectedOperationTypes 
+            || selectedOperationTypes.length !== 1 
+            || !selectedKeys 
+            || !selectedKeys.length
           }
         />
       </div>
