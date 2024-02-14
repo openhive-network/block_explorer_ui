@@ -129,6 +129,22 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
         paramName: "filters",
         paramValue: dataToURL(commentSearchProps?.operationTypes),
       },
+      {
+        paramName: "rangeSelectKey",
+        paramValue: dataToURL(searchRanges.rangeSelectKey),
+      },
+      {
+        paramName: "lastTime",
+        paramValue: dataToURL(searchRanges.lastTimeUnitValue),
+      },
+      {
+        paramName: "lastBlocks",
+        paramValue: dataToURL(searchRanges.lastBlocksValue),
+      },
+      {
+        paramName: "timeUnit",
+        paramValue: dataToURL(searchRanges.timeUnitSelectKey),
+      },
     ];
     if (commentSearchProps?.permlink) {
       return `/@${dataToURL(commentSearchProps?.accountName)}/${dataToURL(
