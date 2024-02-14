@@ -147,7 +147,7 @@ const URLToData = (value: any) => {
 const paramsShallowEqual = (params1: ParamObject, params2: ParamObject) => {
   const keys1 = Object.keys(params1);
   const keys2 = Object.keys(params2);
-  
+
   if (keys1.length !== keys2.length) {
     return false;
   }
@@ -161,7 +161,17 @@ const paramsShallowEqual = (params1: ParamObject, params2: ParamObject) => {
   return true;
 };
 
-export const useURLParams = <T>(defaultState: T, omit?: string[]) => {
+interface PathFragment<T> {
+  path?: string;
+  key?: keyof T;
+  prefix?: string;
+}
+
+export const useURLParams = <T>(
+  defaultState: T,
+  matchPath?: PathFragment<T>[],
+  omit?: string[]
+) => {
   const router = useRouter();
   const [paramsState, setParamsState] = useState<T>(defaultState);
   const interpolationParams = useMemo(() => {
@@ -194,11 +204,24 @@ export const useURLParams = <T>(defaultState: T, omit?: string[]) => {
         }
       });
       if (!paramsShallowEqual(router.query, urlParams)) {
-        let path = '';
-        interpolationParams.forEach(param => {
-          path += `/${(urlParams as T)[param]}`;
-          delete (urlParams as T)[param]
-        });
+        let path = "";
+        if (matchPath) {
+          matchPath.forEach((pathFragment) => {
+            if (!!pathFragment.key) {
+              path += `/${pathFragment.prefix ?? ""}${
+                params[pathFragment.key]
+              }`;
+              delete (urlParams as T)[pathFragment.key];
+            } else {
+              path += `/${pathFragment.path}`;
+            }
+          });
+        } else {
+          interpolationParams.forEach((param) => {
+            path += `/${(urlParams as T)[param]}`;
+            delete (urlParams as T)[param];
+          });
+        }
         router.replace(buildDecodedURL(path, urlParams));
       }
     }

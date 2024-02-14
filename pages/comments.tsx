@@ -10,6 +10,7 @@ import { useURLParams } from "@/utils/Hooks";
 import CommentsSearch from "@/components/home/searches/CommentsSearch";
 import { useUserSettingsContext } from "@/components/contexts/UserSettingsContext";
 import JSONView from "@/components/JSONView";
+import { useRouter } from "next/router";
 
 const defaultSearchParams: Explorer.CommentSearchParams = {
   accountName: undefined,
@@ -36,17 +37,26 @@ const Comments: React.FC = () => {
   >(undefined);
   const { settings } = useUserSettingsContext();
 
+  const router = useRouter();
+
+  const permlinkFromRoute = router.query.permlink;
+
   const commentSearch = useCommentSearch(commentSearchProps);
-  const { paramsState, setParams } = useURLParams(defaultSearchParams);
+  const { paramsState, setParams } = useURLParams(
+    defaultSearchParams,
+    permlinkFromRoute
+      ? [{ key: "accountName", prefix: "@" }, { key: "permlink" }]
+      : [{ path: "comments" }, { key: "accountName", prefix: "@" }]
+  );
 
   const operationsTypes =
     useOperationTypes().operationsTypes?.filter((operation) =>
       config.commentOperationsTypeIds.includes(operation.op_type_id)
     ) || [];
-    
+
   const startCommentSearch = async (props: Explorer.CommentSearchParams) => {
     if (!!props.accountName) {
-      props.accountName = props.accountName.replace("@", "");
+      props = formatAccountName(props);
       setCommentSearchProps(props as Explorer.CommentSearchProps);
       setPreviousCommentSearchProps(props as Explorer.CommentSearchProps);
       setParams({ ...paramsState, ...props });
@@ -65,6 +75,11 @@ const Comments: React.FC = () => {
     }
   };
 
+  const formatAccountName = (params: Explorer.CommentSearchParams) => {
+    params.accountName = params.accountName?.replace("@", "");
+    return params;
+  };
+
   useEffect(() => {
     if (paramsState && !initialSearch) {
       startCommentSearch(paramsState);
@@ -78,7 +93,7 @@ const Comments: React.FC = () => {
         <CommentsSearch
           startCommentsSearch={startCommentSearch}
           operationsTypes={operationsTypes}
-          data={paramsState}
+          data={formatAccountName(paramsState)}
           loading={commentSearch.commentSearchDataLoading}
         />
       </div>
