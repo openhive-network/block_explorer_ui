@@ -24,7 +24,7 @@ const defaultSearchParams: Explorer.CommentSearchParams = {
   timeUnit: "days",
   rangeSelectKey: "none",
   page: 1,
-  operationTypes: [],
+  operationTypes: undefined,
 };
 
 const Comments: React.FC = () => {
