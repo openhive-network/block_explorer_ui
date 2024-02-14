@@ -12,13 +12,14 @@ import useAccountOperations from "@/api/accountPage/useAccountOperations";
 import useWitnessDetails from "@/api/common/useWitnessDetails";
 import AccountPagination from "@/components/account/AccountTopBar";
 import useAccountOperationTypes from "@/api/accountPage/useAccountOperationTypes";
-import { useURLParams } from "@/utils/Hooks";
+import { useOperationsFormatter, useURLParams } from "@/utils/Hooks";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Hive from "@/types/Hive";
 import useSearchRanges from "@/components/searchRanges/useSearchRanges";
 import SearchRanges from "@/components/searchRanges/SearchRanges";
 import ScrollTopButton from "@/components/ScrollTopButton";
+import { useUserSettingsContext } from "@/components/contexts/UserSettingsContext";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -79,6 +80,8 @@ export default function Account() {
 
   const searchRanges = useSearchRanges();
 
+  const { settings } = useUserSettingsContext();
+
   const { accountDetails } = useAccountDetails(accountNameFromRoute);
   const { accountOperations, isAccountOperationsLoading } =
     useAccountOperations({
@@ -101,6 +104,8 @@ export default function Account() {
   const handleOpenVotersModal = () => {
     setIsVotersModalOpen(!isVotersModalOpen);
   };
+
+  const formattedAccountOperations = useOperationsFormatter(accountOperations) as Hive.AccountOperationsResponse;
 
   const handleOpenVotesHistoryModal = () => {
     setIsVotesHistoryModalOpen(!isVotesHistoryModalOpen);
@@ -278,24 +283,43 @@ export default function Account() {
                 <Loader2 className="animate-spin mt-1 text-black h-12 w-12 ml-3 ..." />
               </div>
             ) : (
+              settings.rawJsonView ? 
               accountOperations?.operations_result?.map(
-                (operation: Hive.OperationResponse) => (
-                  <div
-                    className="m-2"
-                    key={`${operation.operation_id}_${operation.timestamp}`}
-                  >
-                    <DetailedOperationCard
-                      operation={operation.operation}
-                      operationId={operation.operation_id}
-                      date={new Date(operation.timestamp)}
-                      blockNumber={operation.block_num}
-                      transactionId={operation.trx_id}
-                      key={operation.timestamp}
-                      isShortened={operation.is_modified}
-                    />
-                  </div>
+                  (operation: Hive.OperationResponse) => (
+                    <div
+                      className="m-2"
+                      key={`${operation.operation_id}_${operation.timestamp}`}
+                    >
+                      <DetailedOperationCard
+                        operation={operation.operation}
+                        operationId={operation.operation_id}
+                        date={new Date(operation.timestamp)}
+                        blockNumber={operation.block_num}
+                        transactionId={operation.trx_id}
+                        key={operation.timestamp}
+                        isShortened={operation.is_modified}
+                      />
+                    </div>
+                  )
+                ) :
+                formattedAccountOperations?.operations_result?.map(
+                  (operation: Hive.OperationResponse) => (
+                    <div
+                      className="m-2"
+                      key={`${operation.operation_id}_${operation.timestamp}`}
+                    >
+                      <DetailedOperationCard
+                        operation={operation.operation}
+                        operationId={operation.operation_id}
+                        date={new Date(operation.timestamp)}
+                        blockNumber={operation.block_num}
+                        transactionId={operation.trx_id}
+                        key={operation.timestamp}
+                        isShortened={operation.is_modified}
+                      />
+                    </div>
+                  )
                 )
-              )
             )}
           </div>
         </div>
