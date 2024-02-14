@@ -18,10 +18,12 @@ import useSearchRanges from "../searchRanges/useSearchRanges";
 import useAccountOperations from "@/api/accountPage/useAccountOperations";
 import { getPageUrlParams } from "@/lib/utils";
 import JumpToPage from "../JumpToPage";
-import { dataToURL } from "@/utils/Hooks";
+import { dataToURL, useOperationsFormatter } from "@/utils/Hooks";
 import BlockSearch from "./searches/BlockSearch";
 import AccountSearch from "./searches/AccountSearch";
 import CommentsSearch from "./searches/CommentsSearch";
+import { useUserSettingsContext } from "../contexts/UserSettingsContext";
+import Hive from "@/types/Hive";
 
 interface SearchesSectionProps {}
 
@@ -56,6 +58,11 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
   const accountOperations = useAccountOperations(accountOperationsSearchProps);
 
   const searchRanges = useSearchRanges();
+
+  const { settings } = useUserSettingsContext();
+
+  const formattedAccountOperations = useOperationsFormatter(accountOperations.accountOperations) as Hive.AccountOperationsResponse;
+  const formattedCommentOperations = useOperationsFormatter(commentSearch.commentSearchData) as Hive.CommentOperationResponse;
 
   useEffect(() => {
     if (!accountOperationsPage && accountOperations) {
@@ -270,7 +277,8 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
               />
             </div>
 
-            {commentSearch.commentSearchData?.operations_result.map(
+            {settings.rawJsonView ? 
+              commentSearch.commentSearchData?.operations_result.map(
               (foundOperation) => (
                 <DetailedOperationCard
                   className="my-6"
@@ -280,7 +288,19 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
                   date={foundOperation.created_at}
                 />
               )
-            )}
+            ) :
+            formattedCommentOperations?.operations_result.map(
+              (foundOperation) => (
+                <DetailedOperationCard
+                  className="my-6"
+                  operation={foundOperation.body}
+                  key={foundOperation.operation_id}
+                  blockNumber={foundOperation.block_num}
+                  date={foundOperation.created_at}
+                />
+              )
+            )
+          }
           </div>
         )}
       {!!accountOperations.accountOperations?.operations_result &&
@@ -315,7 +335,8 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
               />
             </div>
 
-            {accountOperations.accountOperations?.operations_result.map(
+            {settings.rawJsonView ?
+             accountOperations.accountOperations?.operations_result.map(
               (foundOperation) => (
                 <DetailedOperationCard
                   className="my-6"
@@ -325,7 +346,19 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
                   date={new Date(foundOperation.timestamp)}
                 />
               )
-            )}
+            ) :
+            formattedAccountOperations?.operations_result.map(
+              (foundOperation) => (
+                <DetailedOperationCard
+                  className="my-6"
+                  operation={foundOperation.operation}
+                  key={foundOperation.operation_id}
+                  blockNumber={foundOperation.block_num}
+                  date={new Date(foundOperation.timestamp)}
+                />
+              )
+            )
+          }
           </div>
         )}
     </div>
