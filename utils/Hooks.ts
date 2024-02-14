@@ -274,7 +274,7 @@ export const useOperationsFormatter = (operations?: any) => {
   basicFormatter = basicFormatter?.extend({transaction: {displayAsId: false}});
 
   if (basicFormatter && operations) {
-    return basicFormatter.format(structuredClone(operations));
+    return basicFormatter.format(operations);
   } else {
     return operations
   }
