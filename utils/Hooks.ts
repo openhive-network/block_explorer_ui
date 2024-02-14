@@ -168,7 +168,17 @@ const paramsShallowEqual = (params1: ParamObject, params2: ParamObject) => {
   return true;
 };
 
-export const useURLParams = <T>(defaultState: T, omit?: string[]) => {
+interface PathFragment<T> {
+  path?: string;
+  key?: keyof T;
+  prefix?: string;
+}
+
+export const useURLParams = <T>(
+  defaultState: T,
+  matchPath?: PathFragment<T>[],
+  omit?: string[]
+) => {
   const router = useRouter();
   const [paramsState, setParamsState] = useState<T>(defaultState);
   const interpolationParams = useMemo(() => {
