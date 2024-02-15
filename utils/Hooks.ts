@@ -14,6 +14,8 @@ import Hive from "@/types/Hive";
 import useDynamicGlobal from "@/api/homePage/useDynamicGlobal";
 import useHeadBlockNumber from "@/api/common/useHeadBlockNum";
 import useHeadBlock from "@/api/homePage/useHeadBlock";
+import { useHiveChainContext } from "@/components/contexts/HiveChainContext";
+import OperationsFormatter from "@/lib/Formatter";
 
 /**
  * hook for using debounce
@@ -265,3 +267,15 @@ export const useBlockchainSyncInfo = () => {
     timeDifference,
   };
 };
+export const useOperationsFormatter = (operations?: any) => {
+  const {hiveChain} = useHiveChainContext();
+  
+  let basicFormatter = hiveChain?.formatter;
+  basicFormatter = basicFormatter?.extend({transaction: {displayAsId: false}});
+
+  if (basicFormatter && operations) {
+    return basicFormatter.format(operations);
+  } else {
+    return operations
+  }
+}

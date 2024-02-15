@@ -4,15 +4,15 @@ import { IFormatFunctionArguments, WaxFormattable } from "@hive/wax/web";
 import moment from "moment";
 
 
-class TestFormatter {
+class OperationsFormatter {
     // Example formatter
     @WaxFormattable()
-    time({ source }: IFormatFunctionArguments<Hive.DynamicGlobalBlock>) {
-      const time = moment(source.time).format(config.baseMomentTimeFormat);
-      return {...structuredClone(source), time};
+    operation({ target }: IFormatFunctionArguments<Hive.OperationResponse>) {
+      const previousObject = structuredClone(target);
+      return previousObject;
     }
   
   }
 
 
-export default TestFormatter
+export default OperationsFormatter

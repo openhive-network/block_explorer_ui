@@ -35,7 +35,7 @@ export const isJson = (item: unknown) => {
  * @returns formatted and parsed json
  */
 export const formatJson = (json: { [key: string]: any }) => {
-  let formatted = json;
+  let formatted = structuredClone(json);
   json && Object.keys(json).forEach(key => {
     if (typeof json[key] === "object") {
       formatted[key] = formatJson(json[key]);
