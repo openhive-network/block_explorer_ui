@@ -71,3 +71,11 @@ export const buildDecodedURL = (path: string, query: Object) => {
   });
   return url;
 };
+
+export const formatAccountName = (accountName: string | string[]) => {
+  if (Array.isArray(accountName)) {
+    return accountName[0].replace("@", "");
+  } else {
+    return accountName.replace("@", "");
+  }
+}
