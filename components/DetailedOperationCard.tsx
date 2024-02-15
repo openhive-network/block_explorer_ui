@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Check, ChevronDown, ChevronUp, ClipboardCopy } from "lucide-react";
 import moment from "moment";
@@ -8,7 +8,7 @@ import { isJson } from "@/utils/StringUtils";
 import { Button } from "./ui/button";
 import JSONView from "./JSONView";
 import { useUserSettingsContext } from "./contexts/UserSettingsContext";
-import { cn } from "@/lib/utils";
+import { cn, getAccountsFromOperation } from "@/lib/utils";
 import { getOperationTypeForDisplay } from "@/utils/UI";
 
 interface DetailedOperationCardProps {
@@ -160,6 +160,10 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
   const { settings } = useUserSettingsContext();
   const [seeDetails, setSeeDetails] = useState(false);
 
+  const userNames = useMemo(() => {
+    return getAccountsFromOperation(operation.value);
+  }, [operation])
+
   let valueAsObject = operation.value;
   if (typeof valueAsObject === "string") {
     valueAsObject = { message: valueAsObject };
@@ -193,7 +197,6 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
         >
           {settings.rawJsonView ? operation.type : getOperationTypeForDisplay(operation.type)}
         </div>
-        {!skipBlock && (
           <div className="my-1 flex-1">
             Block{" "}
             <Link
@@ -203,7 +206,6 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
               {blockNumber.toLocaleString()}
             </Link>
           </div>
-        )}
           <div className="my-1 flex-1">
             {transactionId && !skipTrx && (
               <>
@@ -217,21 +219,22 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
               </>
             )}
           </div>
-        {!skipDate && (
-          <div className="my-1 flex-1">
-            Date:{" "}
-            <span className="text-explorer-turquoise">
-              {moment(date).format(config.baseMomentTimeFormat)}
-            </span>
-          </div>
-        )}
-      </div>
-      <div className="w-full flex justify-center truncate mb-2">
-        <div className="inline truncate">
-          {getOneLineDescription(operation)}
+        <div className="my-1 flex-1">
+          Date:{" "}
+          <span className="text-explorer-turquoise">
+            {moment(date).format(config.baseMomentTimeFormat)}
+          </span>
+        </div>
+        <div className="my-1 flex-1">
+          Users:{" "}
+          {userNames.map((userName, index) => (
+            <>
+              {index !== 0 && ", "}
+              <span className="text-explorer-turquoise" key={userName}>{userName}</span>
+            </>
+          ))}
         </div>
       </div>
-
       {!settings.rawJsonView && <div className="flex justify-between items-center">
         <Button className="p-0" onClick={() => setSeeDetails(!seeDetails)}>
           {seeDetails ? (
