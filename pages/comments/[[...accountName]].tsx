@@ -11,6 +11,7 @@ import CommentsSearch from "@/components/home/searches/CommentsSearch";
 import { useUserSettingsContext } from "@/components/contexts/UserSettingsContext";
 import JSONView from "@/components/JSONView";
 import { useRouter } from "next/router";
+import { formatAccountName } from "@/utils/StringUtils";
 
 const defaultSearchParams: Explorer.CommentSearchParams = {
   accountName: undefined,
@@ -37,17 +38,8 @@ const Comments: React.FC = () => {
   >(undefined);
   const { settings } = useUserSettingsContext();
 
-  const router = useRouter();
-
-  const permlinkFromRoute = router.query.permlink;
-
-  const commentSearch = useCommentSearch(commentSearchProps);
-  const { paramsState, setParams } = useURLParams(
-    defaultSearchParams,
-    permlinkFromRoute
-      ? [{ key: "accountName", prefix: "@" }, { key: "permlink" }]
-      : [{ path: "comments" }, { key: "accountName", prefix: "@" }]
-  );
+  const commentSearch = useCommentSearch(formatSearchProps(commentSearchProps));
+  const { paramsState, setParams } = useURLParams(defaultSearchParams);
 
   const operationsTypes =
     useOperationTypes().operationsTypes?.filter((operation) =>
@@ -56,13 +48,23 @@ const Comments: React.FC = () => {
 
   const startCommentSearch = async (props: Explorer.CommentSearchParams) => {
     if (!!props.accountName) {
-      props = formatAccountName(props);
       setCommentSearchProps(props as Explorer.CommentSearchProps);
       setPreviousCommentSearchProps(props as Explorer.CommentSearchProps);
       setParams({ ...paramsState, ...props });
       setInitialSearch(true);
     }
   };
+
+  function formatSearchProps(props?: Explorer.CommentSearchProps) {
+    if (props) {
+      if (Array.isArray(props.accountName)) {
+        props.accountName = formatAccountName(props.accountName[0])
+      } else {
+        props.accountName = formatAccountName(props.accountName)
+      }
+    }
+    return props;
+  }
 
   const changeCommentSearchPagination = (newPageNum: number) => {
     if (previousCommentSearchProps?.accountName) {
@@ -73,11 +75,6 @@ const Comments: React.FC = () => {
       setCommentSearchProps(newSearchProps);
       setParams({ ...paramsState, page: newPageNum });
     }
-  };
-
-  const formatAccountName = (params: Explorer.CommentSearchParams) => {
-    params.accountName = params.accountName?.replace("@", "");
-    return params;
   };
 
   useEffect(() => {
@@ -93,7 +90,7 @@ const Comments: React.FC = () => {
         <CommentsSearch
           startCommentsSearch={startCommentSearch}
           operationsTypes={operationsTypes}
-          data={formatAccountName(paramsState)}
+          data={paramsState}
           loading={commentSearch.commentSearchDataLoading}
         />
       </div>

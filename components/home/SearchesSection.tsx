@@ -155,7 +155,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
         paramName: "permlink",
         paramValue: dataToURL(commentSearchProps?.permlink),
       });
-      return `comments/@${dataToURL(
+      return `/comments/@${dataToURL(
         commentSearchProps?.accountName
       )}${getPageUrlParams(urlParams)}`;
     }

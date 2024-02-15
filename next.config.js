@@ -5,22 +5,6 @@ const nextConfig = {
   images: {
     domains: ["images.hive.blog"],
   },
-  async rewrites() {
-    return [
-      {
-        source: "/comments/:accountName",
-        destination: "/comments",
-      },
-      {
-        source: "/block/:blockId",
-        destination: "/block/:blockId",
-      },
-      {
-        source: "/:accountName/:permlink",
-        destination: "/comments",
-      },
-    ];
-  },
 };
 
 module.exports = nextConfig;
