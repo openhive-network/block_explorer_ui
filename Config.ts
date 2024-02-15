@@ -6,7 +6,7 @@ export const config = {
   baseMomentTimeFormat: "YYYY/MM/DD hh:mm:ss",
   gitHash: process.env.NEXT_PUBLIC_COMMIT_HASH,
   opsBodyLimit: 100000,
-  commentOperationsTypeIds: [0, 1, 17, 19, 51, 52, 53, 61, 63, 72, 73],
+  commentOperationsTypeIds: [0, 1, 17, 19, 51, 53, 61, 63, 72, 73],
   standardPaginationSize: 100,
   expandedPaginationSize: 20000,
   witnessesPerPages: {
