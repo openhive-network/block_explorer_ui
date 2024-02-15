@@ -11,7 +11,7 @@ const useOperationKeys = (operationTypeId: number | undefined) => {
     queryKey: ["operationKeys", operationTypeId],
     queryFn: () => fetchOperationKeys(operationTypeId),
     refetchOnWindowFocus: false,
-    enabled: !!operationTypeId
+    enabled: operationTypeId !== undefined
   });
 
   const fetchOperationKeys = async (operationTypeId: number | undefined) => {

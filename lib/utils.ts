@@ -31,7 +31,7 @@ export const getPageUrlParams = (urlParams: Explorer.UrlParam[]) => {
   urlParams.forEach((urlParam, index) => {
     if (urlParam.paramValue) {
       if (index > 0) resultString += "&";
-      if (typeof urlParam.paramValue === "string") {
+      if (typeof urlParam.paramValue === "string" || typeof urlParam.paramValue === "number") {
         resultString += `${urlParam.paramName}=${urlParam.paramValue}`;
       } else {
         let arrayProps = ""
