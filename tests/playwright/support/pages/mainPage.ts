@@ -114,4 +114,8 @@ export class MainPage {
         await this.page.getByText(month).click()
         await this.monthViewDays.click()
   }
+
+  async choosePropertyOption(option: string){
+    this.page.getByLabel(option, { exact: true }).click()
+  }
 }

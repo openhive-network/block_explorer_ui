@@ -144,9 +144,10 @@ test.describe('Home page - searches', () => {
         await page.locator('input[type="checkbox"]').first().check();
         await page.getByRole('button', {name: 'Apply'}).click();
         await mainPage.pickPropertyBtn.click()
-        await page.waitForTimeout(5000)
-        // await mainPage.blockSearchBtn.click();
-        
-
+        await mainPage.choosePropertyOption('voter')
+        await page.locator('div').filter({ hasText: /^Value$/ }).getByPlaceholder('---').fill('roelandp')
+        await mainPage.blockSearchBtn.click();
+        await expect(mainPage.blockSearchResultSection).toBeVisible()
+        await expect(mainPage.firstResultBlock).toBeVisible()
     });
 });
