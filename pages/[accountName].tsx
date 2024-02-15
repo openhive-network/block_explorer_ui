@@ -194,6 +194,11 @@ export default function Account() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paramsState]);
 
+  useEffect(() => {
+    setIsVotersModalOpen(false);
+    setIsVotesHistoryModalOpen(false);
+  }, [accountNameFromRoute]);
+
   if (!accountDetails) {
     return (
       <Loader2 className="animate-spin mt-1 text-black h-12 w-12 ml-3 ..." />
