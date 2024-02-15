@@ -65,3 +65,46 @@ export const formatNumber = (numberToFormat: number, isVest: boolean): string =>
 export const formatPercent = (numberToFormat: number): string => {
   return `${(numberToFormat / Math.pow(10, config.precisions.percentage)).toLocaleString()} %`
 }
+
+export const getAccountsFromOperation = (operation: Record<string, any>): string[] => {
+  let results: string[] = [];
+  const accountKeys = [
+    "voter",
+    "author",
+    "from",
+    "to",
+    "account",
+    "owner",
+    "publisher",
+    "creator",
+    "new_account_name",
+    "witness",
+    "proxy",
+    "worker_account",
+    "required_auths",
+    "required_posting_auths",
+    "from_account",
+    "to_account",
+    "account_to_recover",
+    "recovery_account",
+    "new_recovery_account",
+    "producer",
+    "curator",
+    "benefactor",
+    "receiver",
+    "payer",
+    "proposal_owner",
+    "treasury",
+    "agent"
+  ]
+  const accountKeyNames = Object.keys(operation).filter((operationKey) => accountKeys.find((accountKey) => accountKey === operationKey));
+  accountKeyNames.forEach((accountKeyName) => {
+    const accountNameValue = operation[accountKeyName] as string;
+    if (Array.isArray(accountNameValue)) {
+      results = [...results, ...accountNameValue];
+    } else {
+      results.push(accountNameValue);
+    }
+  })
+  return results;
+}
