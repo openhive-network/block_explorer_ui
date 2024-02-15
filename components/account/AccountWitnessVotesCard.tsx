@@ -41,7 +41,7 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
                 {index + 1}
               </div>
 
-              <Link href={`/account/${voter}`}>{voter}</Link>
+              <Link href={`/@${voter}`}>{voter}</Link>
             </div>
           );
         })}

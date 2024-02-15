@@ -57,3 +57,26 @@ export const toDateNumber = (value: number) => {
     return value.toString();
   }
 }
+
+/**
+ * function to keep path and query string in a URL with decoded reserved charcters
+ *
+ * @param path path including all needed interpolation params
+ * @param query query string as object
+ * @returns string containing full path with decoded reserved characters
+ */
+export const buildDecodedURL = (path: string, query: Object) => {
+  let url = `${path}?`;
+  Object.entries(query).forEach(([key, value]) => {
+    url += `&${key}=${value}`;
+  });
+  return url;
+};
+
+export const formatAccountName = (accountName: string | string[]) => {
+  if (Array.isArray(accountName)) {
+    return accountName[0].replace("@", "");
+  } else {
+    return accountName.replace("@", "");
+  }
+};

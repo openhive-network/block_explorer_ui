@@ -9,6 +9,7 @@ import Hive from "@/types/Hive";
 import { getOperationButtonTitle } from "@/utils/UI";
 import Explorer from "@/types/Explorer";
 import { config } from "@/Config";
+import { formatAccountName } from "@/utils/StringUtils";
 
 interface CommentsSearchProps {
   startCommentsSearch: (
@@ -93,7 +94,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
         <Input
           className="w-1/2 md:w-1/3 bg-gray-700"
           type="text"
-          value={accountName || ""}
+          value={formatAccountName(accountName)}
           onChange={(e) => setAccountName(e.target.value)}
           placeholder="---"
         />

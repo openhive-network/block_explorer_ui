@@ -8,6 +8,10 @@ import useOperationTypes from "@/api/common/useOperationsTypes";
 import JumpToPage from "@/components/JumpToPage";
 import { useURLParams } from "@/utils/Hooks";
 import CommentsSearch from "@/components/home/searches/CommentsSearch";
+import { useUserSettingsContext } from "@/components/contexts/UserSettingsContext";
+import JSONView from "@/components/JSONView";
+import { useRouter } from "next/router";
+import { formatAccountName } from "@/utils/StringUtils";
 
 const defaultSearchParams: Explorer.CommentSearchParams = {
   accountName: undefined,
@@ -21,7 +25,7 @@ const defaultSearchParams: Explorer.CommentSearchParams = {
   timeUnit: "days",
   rangeSelectKey: "none",
   page: 1,
-  operationTypes: [],
+  operationTypes: undefined,
 };
 
 const Comments: React.FC = () => {
@@ -33,13 +37,13 @@ const Comments: React.FC = () => {
     Explorer.CommentSearchProps | undefined
   >(undefined);
 
-  const commentSearch = useCommentSearch(commentSearchProps);
+  const commentSearch = useCommentSearch(formatSearchProps(commentSearchProps));
   const { paramsState, setParams } = useURLParams(defaultSearchParams);
 
   const operationsTypes =
-  useOperationTypes().operationsTypes?.filter((operation) =>
-    config.commentOperationsTypeIds.includes(operation.op_type_id)
-  ) || [];
+    useOperationTypes().operationsTypes?.filter((operation) =>
+      config.commentOperationsTypeIds.includes(operation.op_type_id)
+    ) || [];
 
   const startCommentSearch = async (props: Explorer.CommentSearchParams) => {
     if (!!props.accountName) {
@@ -48,6 +52,17 @@ const Comments: React.FC = () => {
       setParams({ ...paramsState, ...props });
       setInitialSearch(true);
     }
+  }
+
+  function formatSearchProps(props?: Explorer.CommentSearchProps) {
+    if (props) {
+      if (Array.isArray(props.accountName)) {
+        props.accountName = formatAccountName(props.accountName[0])
+      } else {
+        props.accountName = formatAccountName(props.accountName)
+      }
+    }
+    return props;
   }
 
   const changeCommentSearchPagination = (newPageNum: number) => {

@@ -141,8 +141,36 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
         paramName: "filters",
         paramValue: dataToURL(commentSearchProps?.operationTypes),
       },
+      {
+        paramName: "rangeSelectKey",
+        paramValue: dataToURL(searchRanges.rangeSelectKey),
+      },
+      {
+        paramName: "lastTime",
+        paramValue: dataToURL(searchRanges.lastTimeUnitValue),
+      },
+      {
+        paramName: "lastBlocks",
+        paramValue: dataToURL(searchRanges.lastBlocksValue),
+      },
+      {
+        paramName: "timeUnit",
+        paramValue: dataToURL(searchRanges.timeUnitSelectKey),
+      },
     ];
-    return `comments${getPageUrlParams(urlParams)}`;
+    if (commentSearchProps?.permlink) {
+      return `/@${dataToURL(commentSearchProps?.accountName)}/${dataToURL(
+        commentSearchProps.permlink
+      )}${getPageUrlParams(urlParams)}`;
+    } else {
+      urlParams.push({
+        paramName: "permlink",
+        paramValue: dataToURL(commentSearchProps?.permlink),
+      });
+      return `/comments/@${dataToURL(
+        commentSearchProps?.accountName
+      )}${getPageUrlParams(urlParams)}`;
+    }
   };
 
   const getAccountPageLink = (accountName: string) => {
@@ -184,7 +212,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
         paramValue: dataToURL(searchRanges.timeUnitSelectKey),
       },
     ];
-    return `account/${accountName}${getPageUrlParams(urlParams)}`;
+    return `/@${accountName}${getPageUrlParams(urlParams)}`;
   };
 
   return (
