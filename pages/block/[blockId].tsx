@@ -178,7 +178,7 @@ export default function Block() {
         nonVirtualOperationsTypesCounters={nonVirtualOperationsTypesCounters}
         blockDetails={blockDetails}
       />
-      <div className="fixed top-[calc(100vh-90px)] md:top-[calc(100vh-100px)] w-full flex flex-col items-end px-3 md:px-12">
+      <div className="fixed top-[calc(100vh-90px)] md:top-[calc(100vh-100px)] right-0 flex flex-col items-end justify-end px-3 md:px-12">
         <ScrollTopButton />
         <Button
           onClick={() => scrollTo(virtualOpsRef)}
