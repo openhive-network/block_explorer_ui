@@ -136,4 +136,17 @@ test.describe('Home page - searches', () => {
         await expect(operationsType).toContain('vote');
 
     });
+
+    test('Validate searching for property only one Operation types with Property and Value inputs filled', async ({page}) => {
+        await mainPage.gotoBlockExplorerPage();
+        await mainPage.operationsTypesBtn.click();
+        await expect(mainPage.operationsTypesWindow).toBeVisible();
+        await page.locator('input[type="checkbox"]').first().check();
+        await page.getByRole('button', {name: 'Apply'}).click();
+        await mainPage.pickPropertyBtn.click()
+        await page.waitForTimeout(5000)
+        // await mainPage.blockSearchBtn.click();
+        
+
+    });
 });
