@@ -204,7 +204,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
         paramValue: dataToURL(searchRanges.timeUnitSelectKey),
       },
     ];
-    return `account/${accountName}${getPageUrlParams(urlParams)}`;
+    return `/@${accountName}${getPageUrlParams(urlParams)}`;
   };
 
   return (
