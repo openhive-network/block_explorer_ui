@@ -65,6 +65,17 @@ const Comments: React.FC = () => {
     return props;
   }
 
+  function formatSearchProps(props?: Explorer.CommentSearchProps) {
+    if (props) {
+      if (Array.isArray(props.accountName)) {
+        props.accountName = formatAccountName(props.accountName[0])
+      } else {
+        props.accountName = formatAccountName(props.accountName)
+      }
+    }
+    return props;
+  }
+
   const changeCommentSearchPagination = (newPageNum: number) => {
     if (previousCommentSearchProps?.accountName) {
       const newSearchProps: Explorer.CommentSearchProps = {
