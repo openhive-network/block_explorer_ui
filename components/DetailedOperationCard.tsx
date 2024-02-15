@@ -276,7 +276,7 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
                     <div className="font-bold">{key}:</div>
                     {userField.includes(key) ? (
                       <Link
-                        href={`/account/${property}`}
+                        href={`/@${property}`}
                         className="text-explorer-turquoise"
                       >
                         {value}
@@ -291,7 +291,7 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
                               <p key={account + index}>{account}</p>
                             ) : (
                               <Link
-                                href={`/account/${account}`}
+                                href={`/@${account}`}
                                 className="text-explorer-turquoise"
                                 key={account + index}
                               >
