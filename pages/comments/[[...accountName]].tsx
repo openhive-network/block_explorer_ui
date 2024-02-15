@@ -47,12 +47,22 @@ const Comments: React.FC = () => {
 
   const startCommentSearch = async (props: Explorer.CommentSearchParams) => {
     if (!!props.accountName) {
-      props = formatAccountName(props);
       setCommentSearchProps(props as Explorer.CommentSearchProps);
       setPreviousCommentSearchProps(props as Explorer.CommentSearchProps);
       setParams({ ...paramsState, ...props });
       setInitialSearch(true);
     }
+  }
+
+  function formatSearchProps(props?: Explorer.CommentSearchProps) {
+    if (props) {
+      if (Array.isArray(props.accountName)) {
+        props.accountName = formatAccountName(props.accountName[0])
+      } else {
+        props.accountName = formatAccountName(props.accountName)
+      }
+    }
+    return props;
   }
 
   function formatSearchProps(props?: Explorer.CommentSearchProps) {
@@ -77,11 +87,6 @@ const Comments: React.FC = () => {
     }
   };
 
-  const formatAccountName = (params: Explorer.CommentSearchParams) => {
-    params.accountName = params.accountName?.replace("@", "");
-    return params;
-  };
-
   useEffect(() => {
     if (paramsState && !initialSearch) {
       startCommentSearch(paramsState);
@@ -95,7 +100,7 @@ const Comments: React.FC = () => {
         <CommentsSearch
           startCommentsSearch={startCommentSearch}
           operationsTypes={operationsTypes}
-          data={formatAccountName(paramsState)}
+          data={paramsState}
           loading={commentSearch.commentSearchDataLoading}
         />
       </div>
