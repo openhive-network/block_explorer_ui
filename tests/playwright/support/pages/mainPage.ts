@@ -37,6 +37,7 @@ export class MainPage {
   readonly RawJsonViewToggle: Locator;
   readonly operationsTypesWindow: Locator;
   readonly pickPropertyBtn: Locator;
+  readonly pickPropertyBtnBlocked: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -74,6 +75,8 @@ export class MainPage {
     this.RawJsonViewToggle = page.getByTestId('toggle').locator('.w-10')
     this.operationsTypesWindow = page.locator('[role="dialog"]').last()
     this.pickPropertyBtn = page.locator('button').filter({ hasText: 'Pick a property' })
+    this.pickPropertyBtnBlocked = page.locator('.text-blocked')
+    
   }
 
   async gotoBlockExplorerPage() {
