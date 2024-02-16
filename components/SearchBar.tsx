@@ -41,7 +41,7 @@ const renderSearchData = (
             >
               <Link
                 onClick={() => onClick()}
-                href={`/account/${account}`}
+                href={`/@${account}`}
                 className="w-full"
               >
                 User <span className="text-explorer-turquoise">{account}</span>
@@ -120,7 +120,7 @@ const SearchBar: React.FC = () => {
         }
         if (event.code === "Enter") {
           if (inputTypeData.input_type === "account_name_array") {
-            router.push(`/account/${inputTypeData.input_value[selectedResult]}`);
+            router.push(`/@${inputTypeData.input_value[selectedResult]}`);
           } else {
             router.push(
               `/${getResultTypeHeader(inputTypeData)}/${inputTypeData.input_value}`

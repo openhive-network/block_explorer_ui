@@ -8,7 +8,7 @@ import {
   useCallback,
   useMemo,
 } from "react";
-import { toDateNumber } from "./StringUtils";
+import { buildDecodedURL, toDateNumber } from "./StringUtils";
 import Explorer from "@/types/Explorer";
 import Hive from "@/types/Hive";
 import useDynamicGlobal from "@/api/homePage/useDynamicGlobal";
@@ -107,8 +107,13 @@ export const dataToURL = (value: any) => {
   if (Array.isArray(value)) {
     if (!value.length) {
       return null;
+    } else {
+      if (typeof value[0] === "number") {
+        return `${value.join(SPLIT)}${URL_ARRAY_END}`;
+      } else {
+        return value[0];
+      }
     }
-    return `${value.join(SPLIT)}${URL_ARRAY_END}`;
   }
 
   if (typeof value === "string") {
@@ -167,13 +172,13 @@ export const useURLParams = <T>(defaultState: T, omit?: string[]) => {
   const router = useRouter();
   const [paramsState, setParamsState] = useState<T>(defaultState);
   const interpolationParams = useMemo(() => {
-    const regex = /\[(.*?)\]/g;
+    const regex = /(?:\[([^\]]+)\]|\[\[([^\[]+?)\.\.\.\]\])/g;
 
     let match;
     const matches = [];
 
     while ((match = regex.exec(router.pathname)) !== null) {
-      matches.push(match[1]);
+      matches.push(match[1].replace("[...", ""));
     }
 
     return matches as (keyof T)[];
@@ -196,11 +201,24 @@ export const useURLParams = <T>(defaultState: T, omit?: string[]) => {
         }
       });
       if (!paramsShallowEqual(router.query, urlParams)) {
-        router.replace({
-          query: {
-            ...urlParams,
-          },
-        });
+        let path = router.asPath.split("?")[0];
+        const splitPath = router.pathname.split("/");
+        // splitPath.forEach((fragment) => {
+        //   const key = Object.keys(urlParams).find((param) =>
+        //     fragment.includes(param)
+        //   );
+        //   if (key) {
+        //     let prefix = '';
+        //     if (key === "accountName" && urlParams[key][0] !== "@") {
+        //       prefix = "@";
+        //     }
+        //     path += `/${prefix}${urlParams[key]}`;
+        //     delete urlParams[key];
+        //   } else {
+        //     path += `/${fragment}`;
+        //   }
+        // });
+        router.replace(buildDecodedURL(path, urlParams));
       }
     }
   };

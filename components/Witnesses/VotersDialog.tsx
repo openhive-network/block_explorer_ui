@@ -125,7 +125,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                             : "bg-gray-900 md:bg-inherit"
                         }`}
                       >
-                        <Link href={`/account/${voter.voter}`}>
+                        <Link href={`/@${voter.voter}`}>
                           {voter.voter}
                         </Link>
                       </TableCell>

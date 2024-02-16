@@ -49,14 +49,14 @@ export default function Home() {
                   <TableCell>{index + 1}</TableCell>
                   <TableCell>
                     <Link
-                      href={`/account/${witness.witness}`}
+                      href={`/@${witness.witness}`}
                       className="text-explorer-turquoise"
                     >
                       {witness.witness}
                     </Link>
                   </TableCell>
                   <TableCell>
-                    <Link href={`/account/${witness.witness}`}>
+                    <Link href={`/@${witness.witness}`}>
                       <Image
                         className="rounded-full border-2 border-explorer-turquoise"
                         src={getHiveAvatarUrl(witness.witness)}
