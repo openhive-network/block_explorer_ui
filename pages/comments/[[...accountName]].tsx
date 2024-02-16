@@ -6,12 +6,12 @@ import DetailedOperationCard from "@/components/DetailedOperationCard";
 import Explorer from "@/types/Explorer";
 import useOperationTypes from "@/api/common/useOperationsTypes";
 import JumpToPage from "@/components/JumpToPage";
-import { useURLParams } from "@/utils/Hooks";
+import { dataToURL, useURLParams } from "@/utils/Hooks";
 import CommentsSearch from "@/components/home/searches/CommentsSearch";
-import { useUserSettingsContext } from "@/components/contexts/UserSettingsContext";
-import JSONView from "@/components/JSONView";
 import { useRouter } from "next/router";
 import { formatAccountName } from "@/utils/StringUtils";
+import useSearchRanges from "@/components/searchRanges/useSearchRanges";
+import { getPageUrlParams } from "@/lib/utils";
 
 const defaultSearchParams: Explorer.CommentSearchParams = {
   accountName: undefined,
@@ -37,8 +37,14 @@ const Comments: React.FC = () => {
     Explorer.CommentSearchProps | undefined
   >(undefined);
 
+  const router = useRouter();
+  const searchRanges = useSearchRanges();
+
   const commentSearch = useCommentSearch(formatSearchProps(commentSearchProps));
-  const { paramsState, setParams } = useURLParams(defaultSearchParams);
+  const { paramsState, setParams } = useURLParams(defaultSearchParams, [
+    "accountName",
+    "permlink",
+  ]);
 
   const operationsTypes =
     useOperationTypes().operationsTypes?.filter((operation) =>
@@ -52,14 +58,14 @@ const Comments: React.FC = () => {
       setParams({ ...paramsState, ...props });
       setInitialSearch(true);
     }
-  }
+  };
 
   function formatSearchProps(props?: Explorer.CommentSearchProps) {
     if (props) {
       if (Array.isArray(props.accountName)) {
-        props.accountName = formatAccountName(props.accountName[0])
+        props.accountName = formatAccountName(props.accountName[0]);
       } else {
-        props.accountName = formatAccountName(props.accountName)
+        props.accountName = formatAccountName(props.accountName);
       }
     }
     return props;

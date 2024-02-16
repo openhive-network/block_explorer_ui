@@ -201,23 +201,23 @@ export const useURLParams = <T>(defaultState: T, omit?: string[]) => {
         }
       });
       if (!paramsShallowEqual(router.query, urlParams)) {
-        let path = "";
+        let path = router.asPath.split("?")[0];
         const splitPath = router.pathname.split("/");
-        splitPath.forEach((fragment) => {
-          const key = Object.keys(urlParams).find((param) =>
-            fragment.includes(param)
-          );
-          if (key) {
-            let prefix = '';
-            if (key === "accountName" && urlParams[key][0] !== "@") {
-              prefix = "@";
-            }
-            path += `/${prefix}${urlParams[key]}`;
-            delete urlParams[key];
-          } else {
-            path += `/${fragment}`;
-          }
-        });
+        // splitPath.forEach((fragment) => {
+        //   const key = Object.keys(urlParams).find((param) =>
+        //     fragment.includes(param)
+        //   );
+        //   if (key) {
+        //     let prefix = '';
+        //     if (key === "accountName" && urlParams[key][0] !== "@") {
+        //       prefix = "@";
+        //     }
+        //     path += `/${prefix}${urlParams[key]}`;
+        //     delete urlParams[key];
+        //   } else {
+        //     path += `/${fragment}`;
+        //   }
+        // });
         router.replace(buildDecodedURL(path, urlParams));
       }
     }
