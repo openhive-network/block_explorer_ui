@@ -27,6 +27,7 @@ export class AccountPage {
 
   async validateAccountPageIsLoaded() {
     await this.page.waitForLoadState("networkidle");
+    await this.page.waitForSelector(this.accountOperationList['_selector']);
     await expect(this.accountDetails).toBeVisible();
     await expect(this.accountTopBar).toBeVisible();
     await expect(this.accountOperationList).toBeVisible();
