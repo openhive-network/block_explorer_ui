@@ -205,4 +205,22 @@ test.describe('Home page - searches', () => {
         await expect(mainPage.blockSearchResultSection).toBeVisible()
         await expect(mainPage.firstResultBlock).toBeVisible()
     });
+
+    test('Validate searching for property Account Name and two Operation types - Property and Value inputs should be blocked', async ({page}) => {
+        await mainPage.gotoBlockExplorerPage();
+        await mainPage.accountNameInput.fill('roelandp')
+        await mainPage.operationsTypesBtn.click();
+        await expect(mainPage.operationsTypesWindow).toBeVisible();
+        await page.locator('input[type="checkbox"]').first().check();
+        await page.getByLabel('Operation Types').locator('li').filter({ hasText: /^comment$/ }).getByRole('checkbox').check()
+        await page.getByRole('button', {name: 'Apply'}).click();
+        await expect(mainPage.blockSearchBtn).toBeVisible()
+        const pickpropertyText = await mainPage.pickPropertyBtnBlocked.innerText()
+
+        await expect(pickpropertyText).toContain('Select exactly 1 operation to use key-value search')
+        await expect(mainPage.pickPropertyBtnBlocked).toBeDisabled()
+        await mainPage.blockSearchBtn.click()
+        await expect(mainPage.blockSearchResultSection).toBeVisible()
+        await expect(mainPage.firstResultBlock).toBeVisible()
+    });
 });
