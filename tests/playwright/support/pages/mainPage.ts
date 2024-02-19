@@ -38,6 +38,15 @@ export class MainPage {
   readonly operationsTypesWindow: Locator;
   readonly pickPropertyBtn: Locator;
   readonly pickPropertyBtnBlocked: Locator;
+  readonly accountSearchSection: Locator;
+  readonly searchButtonInAccount: Locator;
+  readonly accountNameInputAccountSection: Locator;
+  readonly operationsCardResult: Locator;
+  readonly goToResultPageBtn: Locator;
+  readonly lastBlockBtn: Locator;
+  readonly lastDaysWeeksMonths: Locator;
+  readonly blockRange: Locator;
+  readonly timeRange: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -76,7 +85,15 @@ export class MainPage {
     this.operationsTypesWindow = page.locator('[role="dialog"]').last()
     this.pickPropertyBtn = page.locator('button').filter({ hasText: 'Pick a property' })
     this.pickPropertyBtnBlocked = page.locator('.text-blocked')
-    
+    this.accountSearchSection = page.getByRole('button', { name: 'Account search' })
+    this.searchButtonInAccount = page.getByTestId('search-button')
+    this.accountNameInputAccountSection = page.getByTestId('account-name')
+    this.operationsCardResult = page.getByTestId('operations-card')
+    this.goToResultPageBtn = page.getByTestId('go-to-result-page')
+    this.lastBlockBtn = page.getByTestId('block-search-section').getByText('Last blocks')
+    this.lastDaysWeeksMonths = page.getByText('Last days/weeks/months')
+    this.blockRange = page.getByText('Block range')
+    this.timeRange = page.getByText('Time range')
   }
 
   async gotoBlockExplorerPage() {

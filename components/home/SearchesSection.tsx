@@ -325,13 +325,13 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
         )}
       {!!accountOperations.accountOperations?.operations_result &&
         lastSearchKey === "account" && (
-          <div>
+          <div data-testid='operations-card'>
             <Link
               href={getAccountPageLink(
                 previousAccountOperationsSearchProps?.accountName || ""
               )}
             >
-              <Button className=" bg-blue-800 hover:bg-blue-600 rounded">
+              <Button className=" bg-blue-800 hover:bg-blue-600 rounded" data-testid='go-to-result-page'>
                 Go to result page
               </Button>
             </Link>
