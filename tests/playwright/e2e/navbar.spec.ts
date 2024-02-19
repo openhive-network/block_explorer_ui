@@ -2,6 +2,7 @@ import { test, expect } from "@playwright/test";
 import { Navbar } from "../support/pages/navbar";
 import { BlockPage } from "../support/pages/blockPage";
 import { AccountPage } from "../support/pages/accountPage";
+import { TransactionPage } from "../support/pages/transactionPage";
 
 test.describe("Navbar tests", () => {
   let navbar: Navbar;
@@ -48,7 +49,14 @@ test.describe("Navbar tests", () => {
 
   test("search for the specific transaction number and move to the transaction page", async ({ page }) => {
     // Full hash of the transaction needed
+    const transactionHash: string = 'edbb032c817d3866c575b8e670701ad3943df4d4';
+    let transactionPage = new TransactionPage(page);
 
+    await navbar.gotoBlockExplorerPage();
+    await navbar.searchBarInput.fill(transactionHash);
+    await navbar.navBarSearchConntentLink.first().click();
+    await transactionPage.validateTransactionPageIsLoaded();
+    await transactionPage.validateTransactionNumber(transactionHash);
   });
 
 });

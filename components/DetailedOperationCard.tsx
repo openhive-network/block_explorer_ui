@@ -167,7 +167,7 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
 
   // Leave copy feature for later https app
   // const [copied, setCopied] = useState(false);
-  /* 
+  /*
   const copyToClipboard = () => {
     navigator.clipboard.writeText(JSON.stringify(valueAsObject).replaceAll("\\", ""));
     setCopied(true);
@@ -180,6 +180,7 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
         "w-full bg-explorer-dark-gray px-4 py-2 rounded text-xs	overflow-hidden",
         className
       )}
+      data-testid="detailed-operation-card"
     >
       <div className="flex justify-between items-center mb-2 flex-wrap">
         <div
