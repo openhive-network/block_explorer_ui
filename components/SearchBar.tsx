@@ -54,12 +54,13 @@ const renderSearchData = (
     );
   } else {
     const resultType = getResultTypeHeader(data);
+    const href = resultType === "account" ? `/@${data.input_value}` : `/${resultType}/${data.input_value}`;
     return (
       <div className="px-4 py-2 flex items-center justify-between">
         <Link
           onClick={() => onClick()}
           className="w-full block"
-          href={`/${resultType}/${data.input_value}`}
+          href={href}
         >
           {capitalizeFirst(resultType)}{" "}
           <span className="text-explorer-turquoise">{data.input_value}</span>

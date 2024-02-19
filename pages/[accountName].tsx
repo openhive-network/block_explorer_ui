@@ -57,7 +57,7 @@ export default function Account() {
 
   const { paramsState, setParams } = useURLParams({
     ...defaultSearchParams,
-  });
+  }, ["accountName"]);
 
   const setParamsRef = useRef(setParams);
 
