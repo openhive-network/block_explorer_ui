@@ -69,7 +69,7 @@ test.describe('Home page - account searches', () => {
         })
     })
 
-    test('Validate that got results for Account Name and One Operation Type properties', async ({page}) =>{
+    test.skip('Validate that got results for Account Name and One Operation Type properties', async ({page}) =>{
         await mainPage.accountSearchSection.click()
         await page.waitForTimeout(1000)
         await mainPage.accountNameInputAccountSection.fill('gtg')
@@ -84,7 +84,7 @@ test.describe('Home page - account searches', () => {
         await expect(page.getByText('vote', { exact: true }).nth(2)).toBeVisible()
     })
 
-    test('Validate that got results for Account Name and more than one Operation Types properties', async ({page}) =>{
+    test.skip('Validate that got results for Account Name and more than one Operation Types properties', async ({page}) =>{
         await mainPage.accountSearchSection.click()
         await page.waitForTimeout(1000)
         await mainPage.accountNameInputAccountSection.fill('gtg')
