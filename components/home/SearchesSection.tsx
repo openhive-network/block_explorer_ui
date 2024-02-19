@@ -61,8 +61,12 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
 
   const { settings } = useUserSettingsContext();
 
-  const formattedAccountOperations = useOperationsFormatter(accountOperations.accountOperations) as Hive.AccountOperationsResponse;
-  const formattedCommentOperations = useOperationsFormatter(commentSearch.commentSearchData) as Hive.CommentOperationResponse;
+  const formattedAccountOperations = useOperationsFormatter(
+    accountOperations.accountOperations
+  ) as Hive.AccountOperationsResponse;
+  const formattedCommentOperations = useOperationsFormatter(
+    commentSearch.commentSearchData
+  ) as Hive.CommentOperationResponse;
 
   useEffect(() => {
     if (!accountOperationsPage && accountOperations) {
@@ -149,20 +153,14 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
         paramName: "timeUnit",
         paramValue: dataToURL(searchRanges.timeUnitSelectKey),
       },
-    ];
-    if (commentSearchProps?.permlink) {
-      urlParams.push({
+      {
         paramName: "permlink",
         paramValue: dataToURL(commentSearchProps?.permlink),
-      });
-      return `/@${dataToURL(commentSearchProps?.accountName)}/${dataToURL(
-        commentSearchProps.permlink
-      )}${getPageUrlParams(urlParams)}`;
-    } else {
-      return `/comments/@${dataToURL(
-        commentSearchProps?.accountName
-      )}${getPageUrlParams(urlParams)}`;
-    }
+      },
+    ];
+    return `/comments/@${dataToURL(
+      commentSearchProps?.accountName
+    )}${getPageUrlParams(urlParams)}`;
   };
 
   const getAccountPageLink = (accountName: string) => {
@@ -255,12 +253,21 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
         </Accordion>
       </div>
       {blockSearch.blockSearchData && lastSearchKey === "block" && (
-        <div className=" bg-explorer-dark-gray p-2 md: h-fit rounded" data-testid="result-section">
-          <div className="text-center" data-testid="result-section-header">Results:</div>
+        <div
+          className=" bg-explorer-dark-gray p-2 md: h-fit rounded"
+          data-testid="result-section"
+        >
+          <div className="text-center" data-testid="result-section-header">
+            Results:
+          </div>
           <div className="flex flex-wrap">
             {blockSearch.blockSearchData.length > 0 ? (
               blockSearch.blockSearchData.map((blockId) => (
-                <Link key={blockId} href={`block/${blockId}`} data-testid="result-block">
+                <Link
+                  key={blockId}
+                  href={`block/${blockId}`}
+                  data-testid="result-block"
+                >
                   <div className="m-1 border border-solid p-1">{blockId}</div>
                 </Link>
               ))
@@ -297,30 +304,29 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
               />
             </div>
 
-            {settings.rawJsonView ? 
-              commentSearch.commentSearchData?.operations_result.map(
-              (foundOperation) => (
-                <DetailedOperationCard
-                  className="my-6"
-                  operation={foundOperation.body}
-                  key={foundOperation.operation_id}
-                  blockNumber={foundOperation.block_num}
-                  date={foundOperation.created_at}
-                />
-              )
-            ) :
-            formattedCommentOperations?.operations_result.map(
-              (foundOperation) => (
-                <DetailedOperationCard
-                  className="my-6"
-                  operation={foundOperation.body}
-                  key={foundOperation.operation_id}
-                  blockNumber={foundOperation.block_num}
-                  date={foundOperation.created_at}
-                />
-              )
-            )
-          }
+            {settings.rawJsonView
+              ? commentSearch.commentSearchData?.operations_result.map(
+                  (foundOperation) => (
+                    <DetailedOperationCard
+                      className="my-6"
+                      operation={foundOperation.body}
+                      key={foundOperation.operation_id}
+                      blockNumber={foundOperation.block_num}
+                      date={foundOperation.created_at}
+                    />
+                  )
+                )
+              : formattedCommentOperations?.operations_result.map(
+                  (foundOperation) => (
+                    <DetailedOperationCard
+                      className="my-6"
+                      operation={foundOperation.body}
+                      key={foundOperation.operation_id}
+                      blockNumber={foundOperation.block_num}
+                      date={foundOperation.created_at}
+                    />
+                  )
+                )}
           </div>
         )}
       {!!accountOperations.accountOperations?.operations_result &&
@@ -355,30 +361,29 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
               />
             </div>
 
-            {settings.rawJsonView ?
-             accountOperations.accountOperations?.operations_result.map(
-              (foundOperation) => (
-                <DetailedOperationCard
-                  className="my-6"
-                  operation={foundOperation.operation}
-                  key={foundOperation.operation_id}
-                  blockNumber={foundOperation.block_num}
-                  date={new Date(foundOperation.timestamp)}
-                />
-              )
-            ) :
-            formattedAccountOperations?.operations_result.map(
-              (foundOperation) => (
-                <DetailedOperationCard
-                  className="my-6"
-                  operation={foundOperation.operation}
-                  key={foundOperation.operation_id}
-                  blockNumber={foundOperation.block_num}
-                  date={new Date(foundOperation.timestamp)}
-                />
-              )
-            )
-          }
+            {settings.rawJsonView
+              ? accountOperations.accountOperations?.operations_result.map(
+                  (foundOperation) => (
+                    <DetailedOperationCard
+                      className="my-6"
+                      operation={foundOperation.operation}
+                      key={foundOperation.operation_id}
+                      blockNumber={foundOperation.block_num}
+                      date={new Date(foundOperation.timestamp)}
+                    />
+                  )
+                )
+              : formattedAccountOperations?.operations_result.map(
+                  (foundOperation) => (
+                    <DetailedOperationCard
+                      className="my-6"
+                      operation={foundOperation.operation}
+                      key={foundOperation.operation_id}
+                      blockNumber={foundOperation.block_num}
+                      date={new Date(foundOperation.timestamp)}
+                    />
+                  )
+                )}
           </div>
         )}
     </div>
