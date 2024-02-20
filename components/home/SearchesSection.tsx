@@ -205,8 +205,6 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
     return `/@${accountName}${getPageUrlParams(urlParams)}`;
   };
 
-  console.log(commentSearch.commentSearchData);
-
   return (
     <div
       className="mt-6 col-start-1 col-span-4 md:col-span-1 mb-6 md:mb-0 flex flex-col gap-y-6"
