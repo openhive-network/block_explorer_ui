@@ -200,7 +200,7 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
               className="text-explorer-turquoise"
               href={`/block/${blockNumber}`}
             >
-              {blockNumber}
+              {blockNumber.toLocaleString()}
             </Link>
           </div>
         )}

@@ -25,7 +25,7 @@ const displayTransactionData = (
       >
         <td className="pl-2 py-1">{addSpacesAndCapitalizeFirst(key)}</td>
         <td align="right" className="pr-2">
-          {value}
+          {typeof value === "number" ? value.toLocaleString() : value}
         </td>
       </tr>
     );
