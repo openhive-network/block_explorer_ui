@@ -5,7 +5,7 @@ import { BlockPage } from "../support/pages/blockPage";
 test.describe('Home page - searches', () => {
     let mainPage: MainPage;
     let blockPage: BlockPage;
-  
+
     test.beforeEach(async ({ page }) => {
         mainPage = new MainPage(page);
         blockPage = new BlockPage(page);
@@ -15,6 +15,7 @@ test.describe('Home page - searches', () => {
 
     test('Validate default searching - Block Search Form with empty inputs', async ({page}) => {
         await expect(mainPage.SearchesSection).toBeVisible();
+        await mainPage.page.waitForTimeout(1000);
         await mainPage.blockSearchBtn.click()
         await expect(mainPage.blockSearchResultSection).toBeVisible()
         await expect(mainPage.blocksearchResultHeader).toBeVisible()
@@ -56,13 +57,13 @@ test.describe('Home page - searches', () => {
     test('Validate searching only by Time range', async ({page}) => {
         await mainPage.blockSearchPropertiesFilterBtn.click()
         await mainPage.getOptionfromDropdownOptions('Time range')
-       
+
         await mainPage.createDate(8, 'February')
 
         await expect(mainPage.monthName).toBeVisible()
         const monthText = await (mainPage.monthName).inputValue()
         const dayText = await (mainPage.dayName).inputValue()
-    
+
         await mainPage.blockSearchBtn.click()
         await mainPage.resultBlock.last().click()
 
@@ -94,15 +95,15 @@ test.describe('Home page - searches', () => {
     test('Validate searching for property Account Name and Time range', async ({page}) => {
         await mainPage.accountNameInput.fill('gtg')
         await mainPage.blockSearchPropertiesFilterBtn.click()
-       
+
         await mainPage.getOptionfromDropdownOptions('Time range')
-       
+
         await mainPage.createDate(8, 'February')
 
         await expect(mainPage.monthName).toBeVisible()
         const monthText = await (mainPage.monthName).inputValue()
         const dayText = await (mainPage.dayName).inputValue()
-    
+
         await mainPage.blockSearchBtn.click()
         await mainPage.resultBlock.last().click()
 
