@@ -160,6 +160,7 @@ test.describe('Home page - searches', () => {
     });
 
     test('Validate searching for property only all Operation types - Property and Value inputs should be blocked', async ({page}) => {
+        await mainPage.page.waitForLoadState('networkidle');
         await mainPage.operationsTypesBtn.click();
         await page.getByRole('button', { name: 'Select all' }).click()
         await page.getByRole('button', {name: 'Apply'}).click();
@@ -171,6 +172,7 @@ test.describe('Home page - searches', () => {
     });
 
     test('Validate searching for property Account Name and one Operation types', async ({page}) => {
+        await mainPage.page.waitForLoadState('networkidle');
         await mainPage.accountNameInput.fill('roelandp')
         await mainPage.operationsTypesBtn.click();
         await expect(mainPage.operationsTypesWindow).toBeVisible();
