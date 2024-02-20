@@ -82,6 +82,8 @@ test.describe('Home page - account searches', () => {
         await expect(mainPage.goToResultPageBtn).toBeVisible()
 
         await expect(page.getByText('vote', { exact: true }).nth(2)).toBeVisible()
+
+        // add if
     })
 
     test.skip('Validate that got results for Account Name and more than one Operation Types properties', async ({page}) =>{
@@ -96,6 +98,8 @@ test.describe('Home page - account searches', () => {
         await mainPage.searchButtonInAccount.click()
         await expect(mainPage.operationsCardResult).toBeVisible()
         await expect(mainPage.goToResultPageBtn).toBeVisible()
+
+        // add if
     })
 
     test('Validate that got results for Account Name and all Operation Types properties', async ({page}) =>{

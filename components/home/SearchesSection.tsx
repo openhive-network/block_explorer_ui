@@ -281,9 +281,9 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
       )}
       {!!commentSearch.commentSearchData?.operations_result &&
         lastSearchKey === "comment" && (
-          <div>
+          <div data-testid='operations-card'>
             <Link href={getCommentPageLink()}>
-              <Button className=" bg-blue-800 hover:bg-blue-600 rounded">
+              <Button className=" bg-blue-800 hover:bg-blue-600 rounded" data-testid="go-to-result-page">
                 Go to result page
               </Button>
             </Link>

@@ -47,6 +47,9 @@ export class MainPage {
   readonly lastDaysWeeksMonths: Locator;
   readonly blockRange: Locator;
   readonly timeRange: Locator;
+  readonly commentSearchSection: Locator;
+  readonly searchButtonInComment: Locator;
+  readonly accountNameInputCommentSection: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -94,6 +97,9 @@ export class MainPage {
     this.lastDaysWeeksMonths = page.getByText('Last days/weeks/months')
     this.blockRange = page.getByText('Block range')
     this.timeRange = page.getByText('Time range')
+    this.commentSearchSection = page.getByRole('button', { name: 'Comment search' })
+    this.searchButtonInComment = page.getByTestId('search-button')
+    this.accountNameInputCommentSection = page.getByTestId('account-name')
   }
 
   async gotoBlockExplorerPage() {
