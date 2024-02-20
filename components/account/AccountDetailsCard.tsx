@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { useState } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
+import moment from "moment";
+import { config } from "@/Config";
 
 type AccountDetailsCardProps = {
   header: string;
@@ -37,7 +39,13 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
           </Link>
         </div>
       );
-    } else return userDetails[key];
+    } else if (typeof userDetails[key] === "number") {
+      return userDetails[key].toLocaleString()
+    } else if (Date.parse(userDetails[key])) {
+      return  moment(userDetails[key]).format(config.baseMomentTimeFormat)
+    } else if (typeof userDetails[key] === "string") {
+      return userDetails[key];
+    } else  return JSON.stringify(userDetails[key])
   };
 
   const handlePropertiesVisibility = () => {
@@ -76,11 +84,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
                 {key}
               </div>
               <span className=" overflow-auto">
-                {typeof userDetails[key] != "string" ? (
-                  <pre>{JSON.stringify(userDetails[key])}</pre>
-                ) : (
-                  render_key(key)
-                )}
+                {render_key(key)}
               </span>
             </div>
           );
