@@ -102,6 +102,7 @@ export class MainPage {
   }
 
   async validateMainPageIsLoaded() {
+    await this.page.waitForLoadState("networkidle");
     await expect(this.headBlockCard).toBeVisible();
     await expect(this.lastBlockWidget).toBeVisible();
     await expect(this.SearchesSection).toBeVisible();
@@ -121,13 +122,13 @@ export class MainPage {
   }
 
   async createDate(number: number, month: string) {
-        await this.datetimePicker.click() 
+        await this.datetimePicker.click()
         await this.calendarNavigationLabel.click()
         const buttonSelector = this.calendarNavigationNextButton
-        const numberOfClicks = number; 
+        const numberOfClicks = number;
 
         for (let i = 0; i < numberOfClicks; i++) {
-    
+
         await buttonSelector.click();
         }
 
