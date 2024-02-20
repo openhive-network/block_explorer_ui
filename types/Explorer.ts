@@ -14,8 +14,8 @@ declare module Explorer {
     totalVestingFundHive: string;
     hbdInterestRate: string;
     hbdPrintRate: string;
-    lastIrreversibleBlockNumber: number;
-    availableAccountSubsidies: number;
+    lastIrreversibleBlockNumber: string;
+    availableAccountSubsidies: string;
     hbdStopPercent: string;
     hbdStartPercent: string;
     nextMaintenanceTime: string;
@@ -25,9 +25,9 @@ declare module Explorer {
     vestingRewardPercent: string;
     downvotePoolPercent: string;
     currentRemoveThreshold: number;
-    earlyVotingSeconds: number;
-    midVotingSeconds: number;
-    maxConvecutiveRecurrentTransferFailures: number;
+    earlyVotingSeconds: string;
+    midVotingSeconds: string;
+    maxConvecutiveRecurrentTransferFailures: string;
     maxRecurrentTransferEndDate: number;
     minRecurrentTransfersRecurrence: number;
     maxOpenRecurrentTransfers: number;
