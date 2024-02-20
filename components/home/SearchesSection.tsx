@@ -205,6 +205,8 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
     return `/@${accountName}${getPageUrlParams(urlParams)}`;
   };
 
+  console.log(commentSearch.commentSearchData);
+
   return (
     <div
       className="mt-6 col-start-1 col-span-4 md:col-span-1 mb-6 md:mb-0 flex flex-col gap-y-6"
@@ -279,8 +281,9 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
           </div>
         </div>
       )}
-      {!!commentSearch.commentSearchData?.operations_result &&
-        lastSearchKey === "comment" && (
+      {!!commentSearch.commentSearchData &&
+        lastSearchKey === "comment" &&
+        (!!commentSearch.commentSearchData.total_operations ? (
           <div>
             <Link href={getCommentPageLink()}>
               <Button className=" bg-blue-800 hover:bg-blue-600 rounded">
@@ -328,16 +331,24 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
                   )
                 )}
           </div>
-        )}
-      {!!accountOperations.accountOperations?.operations_result &&
-        lastSearchKey === "account" && (
-          <div data-testid='operations-card'>
+        ) : (
+          <div className="flex justify-center w-full text-black">
+            No operations matching given criteria
+          </div>
+        ))}
+      {!!accountOperations.accountOperations &&
+        lastSearchKey === "account" &&
+        (!!accountOperations.accountOperations.total_operations ? (
+          <div data-testid="operations-card">
             <Link
               href={getAccountPageLink(
                 previousAccountOperationsSearchProps?.accountName || ""
               )}
             >
-              <Button className=" bg-blue-800 hover:bg-blue-600 rounded" data-testid='go-to-result-page'>
+              <Button
+                className=" bg-blue-800 hover:bg-blue-600 rounded"
+                data-testid="go-to-result-page"
+              >
                 Go to result page
               </Button>
             </Link>
@@ -385,7 +396,11 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
                   )
                 )}
           </div>
-        )}
+        ) : (
+          <div className="flex justify-center w-full text-black">
+            No operations matching given criteria
+          </div>
+        ))}
     </div>
   );
 };
