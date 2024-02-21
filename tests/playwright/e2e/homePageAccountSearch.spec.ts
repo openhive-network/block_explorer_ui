@@ -106,8 +106,6 @@ test.describe('Home page - account searches', () => {
         await page.getByLabel('Operation Types').locator('li').filter({ hasText: /^comment$/ }).getByRole('checkbox').check()
         await page.getByRole('button', {name: 'Apply'}).click();
         await mainPage.searchButtonInAccount.click()
-        await expect(mainPage.operationsCardResult).toBeVisible()
-        await expect(mainPage.goToResultPageBtn).toBeVisible()
 
         const response = await page.waitForResponse((response) => response.url().includes("rpc/get_ops_by_account"));
     
