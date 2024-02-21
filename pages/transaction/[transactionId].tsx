@@ -110,28 +110,30 @@ export default function Transaction() {
                   />
                 ) : (
                   <table className="w-full text-xs">
-                    {Object.keys(trxData.transaction_json).map((key) =>
-                      displayTransactionData(
-                        key,
-                        trxData.transaction_json[
-                          key as keyof Omit<
-                            Hive.TransactionDetails,
-                            "operations"
-                          >
-                        ]
-                      )
-                    )}
-                    {Object.keys(trxData).map((key) =>
-                      displayTransactionData(
-                        key,
-                        trxData[
-                          key as keyof Omit<
-                            Hive.TransactionQueryResponse,
-                            "transaction_json"
-                          >
-                        ]
-                      )
-                    )}
+                    <tbody>
+                      {Object.keys(trxData.transaction_json).map((key) =>
+                        displayTransactionData(
+                          key,
+                          trxData.transaction_json[
+                            key as keyof Omit<
+                              Hive.TransactionDetails,
+                              "operations"
+                            >
+                          ]
+                        )
+                      )}
+                      {Object.keys(trxData).map((key) =>
+                        displayTransactionData(
+                          key,
+                          trxData[
+                            key as keyof Omit<
+                              Hive.TransactionQueryResponse,
+                              "transaction_json"
+                            >
+                          ]
+                        )
+                      )}
+                    </tbody>
                   </table>
                 )}
               </div>
