@@ -31,11 +31,11 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
       return (
         <div className="text-blue-400">
           <Link
-            href={userDetails[key]}
+            href={userDetails?.[key] || ""}
             target="_blank"
             rel="noreferrer"
           >
-            {userDetails[key]}
+            {userDetails?.[key]}
           </Link>
         </div>
       );
