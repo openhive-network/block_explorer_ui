@@ -8,7 +8,7 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   return (
-    <main className="flex flex-col min-h-screen justify-between items-center max-w-[100vw] mt-16 md:mt-20">
+    <main className="flex flex-col min-h-screen justify-between items-center min-w-[100vw] max-w-[100vw] mt-16 md:mt-20">
       <Navbar />
       {children}
       <Footer />

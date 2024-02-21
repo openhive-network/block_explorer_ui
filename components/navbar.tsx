@@ -16,14 +16,10 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { settings, setSettings } = useUserSettingsContext();
   const { alerts, setAlerts } = useAlertContext();
-
-  const { explorerBlockNumber, hiveBlockNumber, explorerTime, hiveBlockTime, loading: syncLoading } =
-    useBlockchainSyncInfo();
-
-  const blockDifference = (hiveBlockNumber || 0) - (explorerBlockNumber || 0);
+  const [searchBarOpen, setSearchBarOpen] = useState(false);
 
   return (
-    <div className="fixed w-full top-0 z-50" data-testid="navbar">
+    <div className="fixed w-full top-0 left-0 z-50" data-testid="navbar">
       <div className="flex p-2 justify-between bg-explorer-dark-gray text-white	items-center relative">
         <div className="absolute top-full left-0 w-full">
           {alerts.map((alert, index) => (
@@ -43,18 +39,18 @@ export default function Navbar() {
         </div>
         {isMobile ? (
           <div className="flex items-center justify-between w-full">
-            <Link href={"/"} className="pr-3 relative">
+            <Link href={"/"} className="relative pr-2">
               <Image
                 src="/hive-logo.png"
                 alt="Hive logo"
                 width={40}
                 height={40}
               />
-              <SyncInfo />
             </Link>
+            {!searchBarOpen && <SyncInfo />}
             <div className="flex-grow flex items-center justify-end gap-x-3">
-              <SearchBar />
-              <Menu height={34} width={34} onClick={() => setMenuOpen(true)} />
+              <SearchBar open={searchBarOpen} onChange={setSearchBarOpen}/>
+              <Menu height={34} width={34} onClick={() => setMenuOpen(true)} className="flex-shrink-0"/>
             </div>
             <div
               className={cn(
@@ -117,7 +113,7 @@ export default function Navbar() {
                 className="ml-6"
               />
             </div>
-            <SearchBar />
+            <SearchBar open={true}/>
           </>
         )}
       </div>

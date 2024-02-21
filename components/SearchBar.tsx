@@ -2,12 +2,19 @@ import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { Search, X, CornerDownLeft as Enter } from "lucide-react";
-import { useDebounce, useOnClickOutside } from "@/utils/Hooks";
+import { useDebounce, useMediaQuery, useOnClickOutside } from "@/utils/Hooks";
 import { capitalizeFirst } from "@/utils/StringUtils";
 import { Input } from "./ui/input";
 import Hive from "@/types/Hive";
 import { cn } from "@/lib/utils";
 import useInputType from "@/api/common/useInputType";
+import { Button } from "./ui/button";
+
+interface SearchBarProps {
+  open: boolean;
+  onChange?: (open: boolean) => void;
+  className?: string;
+}
 
 const getResultTypeHeader = (result: Hive.InputTypeResponse) => {
   switch (result.input_type) {
@@ -54,7 +61,10 @@ const renderSearchData = (
     );
   } else {
     const resultType = getResultTypeHeader(data);
-    const href = resultType === "account" ? `/@${data.input_value}` : `/${resultType}/${data.input_value}`;
+    const href =
+      resultType === "account"
+        ? `/@${data.input_value}`
+        : `/${resultType}/${data.input_value}`;
     return (
       <div className="px-4 py-2 flex items-center justify-between">
         <Link
@@ -72,7 +82,7 @@ const renderSearchData = (
   }
 };
 
-const SearchBar: React.FC = () => {
+const SearchBar: React.FC<SearchBarProps> = ({ open, onChange, className }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [inputFocus, setInputFocus] = useState(false);
   const [selectedResult, setSelectedResult] = useState(0);
@@ -81,8 +91,10 @@ const SearchBar: React.FC = () => {
 
   useOnClickOutside(searchContainerRef, () => setInputFocus(false));
 
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
   const router = useRouter();
-  const {inputTypeData} = useInputType(searchInputType);
+  const { inputTypeData } = useInputType(searchInputType);
 
   const updateInput = async (value: string) => {
     setSearchInputType(value);
@@ -125,7 +137,9 @@ const SearchBar: React.FC = () => {
             router.push(`/@${inputTypeData.input_value[selectedResult]}`);
           } else {
             router.push(
-              `/${getResultTypeHeader(inputTypeData)}/${inputTypeData.input_value}`
+              `/${getResultTypeHeader(inputTypeData)}/${
+                inputTypeData.input_value
+              }`
             );
           }
           resetSearchBar();
@@ -142,29 +156,53 @@ const SearchBar: React.FC = () => {
   }, [inputFocus, inputTypeData, selectedResult]);
 
   return (
-    <div className="w-full md:w-1/3 relative bg-gray-700" ref={searchContainerRef}>
-      <div className="border-input border flex items-center pr-2">
-        <Input
-          className="border-0"
-          type="text"
-          placeholder="Search user, block, transaction"
-          value={searchTerm}
-          onChange={(e) => handleInputChange(e.target.value)}
-          onFocus={() => setInputFocus(true)}
-          data-testid="search-bar-input"
-        />
-        {!!searchTerm.length ? (
-          <X className="cursor-pointer" onClick={() => resetSearchBar()} />
-        ) : (
-          <Search />
+    <>
+      <div
+        className={cn(
+          "w-0 hidden md:w-1/3 relative bg-gray-700 overflow-hidden",
+          {
+            "w-full inline": open,
+          },
+          className
+        )}
+        ref={searchContainerRef}
+      >
+        <div className="border-input border flex items-center pr-2">
+          <Input
+            className="border-0"
+            type="text"
+            placeholder="Search user, block, transaction"
+            value={searchTerm}
+            onChange={(e) => handleInputChange(e.target.value)}
+            onFocus={() => setInputFocus(true)}
+            data-testid="search-bar-input"
+          />
+          {isMobile ? (
+            <X
+              className="cursor-pointer"
+              onClick={() => {
+                resetSearchBar();
+                onChange && onChange(false);
+              }}
+            />
+          ) : !!searchTerm.length ? (
+            <X className="cursor-pointer" onClick={() => resetSearchBar()} />
+          ) : (
+            <Search />
+          )}
+        </div>
+        {inputFocus && !!inputTypeData?.input_value && (
+          <div className="absolute bg-explorer-dark-gray w-full max-h-96 overflow-y-auto border border-input border-t-0">
+            {renderSearchData(inputTypeData, resetSearchBar, selectedResult)}
+          </div>
         )}
       </div>
-      {inputFocus && !!inputTypeData?.input_value && (
-        <div className="absolute bg-explorer-dark-gray w-full max-h-96 overflow-y-auto border border-input border-t-0">
-          {renderSearchData(inputTypeData, resetSearchBar, selectedResult)}
-        </div>
+      {!open && (
+        <Button className="px-0" onClick={() => onChange && onChange(true)}>
+          <Search />
+        </Button>
       )}
-    </div>
+    </>
   );
 };
 

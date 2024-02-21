@@ -39,7 +39,7 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
       <DialogTrigger>
         <div
           className={cn(
-            "flex gap-x-1 border rounded-[6px] mt-px mx-6 px-1.5 py-px text-sm cursor-pointer",
+            "flex flex-row gap-x-1 border rounded-[6px] mt-px mx-6 px-1.5 py-px text-sm cursor-pointer",
             {
               "border-explorer-ligh-green":
                 blockDifference <= 3,
