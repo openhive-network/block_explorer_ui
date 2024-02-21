@@ -10,6 +10,7 @@ const useTransactionData = (transactionId: string) => {
     queryKey: [`transaction-${transactionId}`],
     queryFn: () => fetchingService.getTransaction(transactionId),
     refetchOnWindowFocus: false,
+    enabled: !!transactionId
   });
 
   const trxError = (data as { [key: string]: any })?.code || null;
