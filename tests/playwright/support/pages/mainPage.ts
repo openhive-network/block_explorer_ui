@@ -51,6 +51,8 @@ export class MainPage {
   readonly searchButtonInComment: Locator;
   readonly accountNameInputCommentSection: Locator;
   readonly noOperationsMatchingTextSection: string;
+  readonly detailedOperationCard: Locator;
+  readonly commentPermlinkInout: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -102,6 +104,8 @@ export class MainPage {
     this.searchButtonInComment = page.getByTestId('search-button')
     this.accountNameInputCommentSection = page.getByTestId('account-name')
     this.noOperationsMatchingTextSection = '.flex.justify-center.w-full.text-black'
+    this.detailedOperationCard = page.getByTestId('detailed-operation-card')
+    this.commentPermlinkInout = page.getByTestId('permlink-input')
   }
 
   async gotoBlockExplorerPage() {

@@ -103,6 +103,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
       <div className="flex flex-col">
         <label className="ml-2">Permlink</label>
         <Input
+          data-testid="permlink-input"
           className="w-full bg-gray-700"
           type="text"
           value={permlink}

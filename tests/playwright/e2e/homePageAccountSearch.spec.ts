@@ -85,7 +85,6 @@ test.describe('Home page - account searches', () => {
 
         await expect(page.getByText('vote', { exact: true }).nth(2)).toBeVisible()
 
-        // add if
         if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
                 await expect(page.getByText('No operations matching given')).toBeVisible()
               } 
@@ -109,8 +108,6 @@ test.describe('Home page - account searches', () => {
         await mainPage.searchButtonInAccount.click()
         await expect(mainPage.operationsCardResult).toBeVisible()
         await expect(mainPage.goToResultPageBtn).toBeVisible()
-
-        // add if
 
         const response = await page.waitForResponse((response) => response.url().includes("rpc/get_ops_by_account"));
     
