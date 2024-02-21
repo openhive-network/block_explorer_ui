@@ -25,7 +25,7 @@ const displayTransactionData = (
       >
         <td className="pl-2 py-1">{addSpacesAndCapitalizeFirst(key)}</td>
         <td align="right" className="pr-2">
-          {value}
+          {typeof value === "number" ? value.toLocaleString() : value}
         </td>
       </tr>
     );
@@ -49,8 +49,8 @@ export default function Transaction() {
     <div className="w-full max-w-5xl px-4 text-white">
       {!trxLoading && !!trxData && (
         <>
-          <div className="w-full bg-explorer-dark-gray px-4 py-2 rounded flex flex-col justify-center md:items-center md:text-md">
-            <div>
+          <div className="w-full bg-explorer-dark-gray px-4 py-2 rounded flex flex-col justify-center md:items-center md:text-md" data-testid="transaction-header">
+            <div data-testid="transaction-header-hash-trx">
               Transaction{" "}
               <span className="text-explorer-turquoise">
                 {trxData.transaction_json.transaction_id}
@@ -62,11 +62,12 @@ export default function Transaction() {
                 <Link
                   href={`/block/${trxData.transaction_json.block_num}`}
                   className="text-explorer-turquoise"
+                  data-testid="transaction-header-block-number"
                 >
                   {" " + trxData.transaction_json.block_num}
                 </Link>
               </div>
-              <div>
+              <div data-testid="transaction-header-date">
                 Date
                 <span className="text-explorer-turquoise">
                   {" " +
@@ -98,7 +99,7 @@ export default function Transaction() {
                     className="mt-4"
                   />
                 ))}
-              <div className="mt-6 w-full bg-explorer-dark-gray py-2 rounded px-2">
+              <div className="mt-6 w-full bg-explorer-dark-gray py-2 rounded px-2" data-testid="transaction-details">
                 <div className="flex justify-center text-md">
                   Transaction Details
                 </div>

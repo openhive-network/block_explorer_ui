@@ -50,6 +50,7 @@ export class MainPage {
   readonly commentSearchSection: Locator;
   readonly searchButtonInComment: Locator;
   readonly accountNameInputCommentSection: Locator;
+  readonly noOperationsMatchingTextSection: string;
 
   constructor(page: Page) {
     this.page = page;
@@ -100,6 +101,7 @@ export class MainPage {
     this.commentSearchSection = page.getByRole('button', { name: 'Comment search' })
     this.searchButtonInComment = page.getByTestId('search-button')
     this.accountNameInputCommentSection = page.getByTestId('account-name')
+    this.noOperationsMatchingTextSection = '.flex.justify-center.w-full.text-black'
   }
 
   async gotoBlockExplorerPage() {
@@ -108,6 +110,7 @@ export class MainPage {
   }
 
   async validateMainPageIsLoaded() {
+    await this.page.waitForLoadState("networkidle");
     await expect(this.headBlockCard).toBeVisible();
     await expect(this.lastBlockWidget).toBeVisible();
     await expect(this.SearchesSection).toBeVisible();
@@ -127,13 +130,13 @@ export class MainPage {
   }
 
   async createDate(number: number, month: string) {
-        await this.datetimePicker.click() 
+        await this.datetimePicker.click()
         await this.calendarNavigationLabel.click()
         const buttonSelector = this.calendarNavigationNextButton
-        const numberOfClicks = number; 
+        const numberOfClicks = number;
 
         for (let i = 0; i < numberOfClicks; i++) {
-    
+
         await buttonSelector.click();
         }
 

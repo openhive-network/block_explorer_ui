@@ -69,24 +69,35 @@ test.describe('Home page - account searches', () => {
         })
     })
 
-    test.skip('Validate that got results for Account Name and One Operation Type properties', async ({page}) =>{
+    test('Validate that got results for Account Name and One Operation Type properties', async ({page}) =>{
         await mainPage.accountSearchSection.click()
         await page.waitForTimeout(1000)
-        await mainPage.accountNameInputAccountSection.fill('gtg')
+        await mainPage.accountNameInputAccountSection.fill('roelandp')
         await mainPage.operationsTypesBtn.click()
         await expect(mainPage.operationsTypesWindow).toBeVisible();
-        await page.locator('input[type="checkbox"]').first().check();
+        await page.getByLabel('Operation Types').locator('li').filter({ hasText: /^vote$/ }).getByRole('checkbox').check();
         await page.getByRole('button', {name: 'Apply'}).click();
         await mainPage.searchButtonInAccount.click()
-        await expect(mainPage.operationsCardResult).toBeVisible()
-        await expect(mainPage.goToResultPageBtn).toBeVisible()
+    
+        const response = await page.waitForResponse((response) => response.url().includes("rpc/get_ops_by_account"));
+    
+        expect(response.status()).toBe(200);
 
         await expect(page.getByText('vote', { exact: true }).nth(2)).toBeVisible()
 
         // add if
+        if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
+                await expect(page.getByText('No operations matching given')).toBeVisible()
+              } 
+
+              else {
+                await expect(mainPage.operationsCardResult).toBeVisible()
+                await expect(mainPage.goToResultPageBtn).toBeVisible()
+                await expect(page.getByText('vote', { exact: true }).nth(2)).toBeVisible()
+            }
     })
 
-    test.skip('Validate that got results for Account Name and more than one Operation Types properties', async ({page}) =>{
+    test('Validate that got results for Account Name and more than one Operation Types properties', async ({page}) =>{
         await mainPage.accountSearchSection.click()
         await page.waitForTimeout(1000)
         await mainPage.accountNameInputAccountSection.fill('gtg')
@@ -100,6 +111,19 @@ test.describe('Home page - account searches', () => {
         await expect(mainPage.goToResultPageBtn).toBeVisible()
 
         // add if
+
+        const response = await page.waitForResponse((response) => response.url().includes("rpc/get_ops_by_account"));
+    
+        expect(response.status()).toBe(200);
+
+        if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
+                await expect(page.getByText('No operations matching given')).toBeVisible()
+              } 
+
+              else {
+                await expect(mainPage.operationsCardResult).toBeVisible()
+                await expect(mainPage.goToResultPageBtn).toBeVisible()
+            }
     })
 
     test('Validate that got results for Account Name and all Operation Types properties', async ({page}) =>{

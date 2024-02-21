@@ -36,7 +36,7 @@ const renderSearchData = (
               key={index}
               className={cn("px-4 py-2 flex items-center justify-between", {
                 "md:bg-explorer-ligh-gray bg-opacity-50": selected === index,
-                "border-t border-gray-700": !!index, 
+                "border-t border-gray-700": !!index,
               })}
             >
               <Link
@@ -61,6 +61,7 @@ const renderSearchData = (
           onClick={() => onClick()}
           className="w-full block"
           href={href}
+          data-testid="navbar-search-content-link"
         >
           {capitalizeFirst(resultType)}{" "}
           <span className="text-explorer-turquoise">{data.input_value}</span>

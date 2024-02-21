@@ -8,6 +8,7 @@ export class Navbar {
   readonly navBarWitnessesLink: Locator;
   readonly navBarJsonRowToggle: Locator;
   readonly searchBarInput: Locator;
+  readonly navBarSearchConntentLink: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -17,6 +18,7 @@ export class Navbar {
     this.navBarWitnessesLink = page.getByTestId('navbar-witnesses-link');
     this.navBarJsonRowToggle = this.navBarElement.getByTestId('toggle');
     this.searchBarInput = page.getByTestId('search-bar-input');
+    this.navBarSearchConntentLink = page.getByTestId('navbar-search-content-link');
   }
 
   async gotoBlockExplorerPage() {

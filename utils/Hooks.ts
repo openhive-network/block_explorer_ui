@@ -154,7 +154,7 @@ const URLToData = (value: any) => {
 const paramsShallowEqual = (params1: ParamObject, params2: ParamObject) => {
   const keys1 = Object.keys(params1);
   const keys2 = Object.keys(params2);
-  
+
   if (keys1.length !== keys2.length) {
     return false;
   }
@@ -200,25 +200,13 @@ export const useURLParams = <T>(defaultState: T, omit?: string[]) => {
           delete urlParams[key];
         }
       });
-      if (!paramsShallowEqual(router.query, urlParams)) {
-        let path = router.asPath.split("?")[0];
-        const splitPath = router.pathname.split("/");
-        // splitPath.forEach((fragment) => {
-        //   const key = Object.keys(urlParams).find((param) =>
-        //     fragment.includes(param)
-        //   );
-        //   if (key) {
-        //     let prefix = '';
-        //     if (key === "accountName" && urlParams[key][0] !== "@") {
-        //       prefix = "@";
-        //     }
-        //     path += `/${prefix}${urlParams[key]}`;
-        //     delete urlParams[key];
-        //   } else {
-        //     path += `/${fragment}`;
-        //   }
-        // });
-        router.replace(buildDecodedURL(path, urlParams));
+      let path = router.asPath.split("?")[0];
+      const fullPath = buildDecodedURL(path, urlParams);
+      if (
+        !paramsShallowEqual(router.query, urlParams) &&
+        fullPath !== router.asPath
+      ) {
+        router.replace(fullPath);
       }
     }
   };
@@ -286,14 +274,16 @@ export const useBlockchainSyncInfo = () => {
   };
 };
 export const useOperationsFormatter = (operations?: any) => {
-  const {hiveChain} = useHiveChainContext();
-  
+  const { hiveChain } = useHiveChainContext();
+
   let basicFormatter = hiveChain?.formatter;
-  basicFormatter = basicFormatter?.extend({transaction: {displayAsId: false}});
+  basicFormatter = basicFormatter?.extend({
+    transaction: { displayAsId: false },
+  });
 
   if (basicFormatter && operations) {
     return basicFormatter.format(operations);
   } else {
-    return operations
+    return operations;
   }
-}
+};
