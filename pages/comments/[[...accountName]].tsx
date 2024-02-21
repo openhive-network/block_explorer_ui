@@ -90,7 +90,7 @@ const Comments: React.FC = () => {
   }, [paramsState]);
 
   return (
-    <div className="w-full md:w-4/5">
+    <div className="w-full md:w-4/5" data-testid="comments-search-comments-page">
       <div className="bg-explorer-dark-gray text-white p-4 rounded">
         <CommentsSearch
           startCommentsSearch={startCommentSearch}
