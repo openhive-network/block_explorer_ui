@@ -42,7 +42,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
     } else if (typeof userDetails[key] === "number") {
       return userDetails[key].toLocaleString()
     } else if (Date.parse(userDetails[key])) {
-      return  moment(userDetails[key]).format(config.baseMomentTimeFormat)
+      return  moment(new Date(userDetails[key])).format(config.baseMomentTimeFormat)
     } else if (typeof userDetails[key] === "string") {
       return userDetails[key];
     } else  return JSON.stringify(userDetails[key])
