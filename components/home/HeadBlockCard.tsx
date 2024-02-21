@@ -73,7 +73,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
           href={`/block/${blockDetails?.block_num}`}
           data-testid="block-number-link"
         >
-          Block: {blockDetails?.block_num}
+          Block: {blockDetails?.block_num?.toLocaleString()}
         </Link>
       </div>
       <div className="my-2">

@@ -26,12 +26,13 @@ test.describe("Navbar tests", () => {
   test("search for the specific block number and move to the block page", async ({ page }) => {
     // Used in test: Block Number 82856172, Producer gtg
     const blockNumber: string = '82856172';
+    const expectedBlockNumber: string = 'Block 82,856,172'
     const producerName: string = 'gtg';
     await navbar.gotoBlockExplorerPage();
     await navbar.searchBarInput.fill(blockNumber);
     await navbar.navBarSearchConntentLink.first().click();
     await blockPage.validateBlockPageIsLoaded();
-    await blockPage.validateBlockNumber(blockNumber);
+    await blockPage.validateBlockNumber(expectedBlockNumber);
     await blockPage.validateBlockProducerName(producerName);
   });
 

@@ -24,18 +24,18 @@ const useManabars = (accountName: string) => {
     const {upvote, downvote, rc} = manabars;
     const processedManabars: Explorer.Manabars = {
       upvote: {
-        max: upvote.max.toString(),
-        current: upvote.current.toString(),
+        max: hiveChain.formatter.formatNumber(upvote.max),
+        current: hiveChain.formatter.formatNumber(upvote.current),
         percentageValue: upvote.percent
       },
       downvote: {
-        max: downvote.max.toString(),
-        current: downvote.current.toString(),
+        max: hiveChain.formatter.formatNumber(downvote.max),
+        current: hiveChain.formatter.formatNumber(downvote.current),
         percentageValue: downvote.percent
       },
       rc: {
-        max: rc.max.toString(),
-        current: rc.current.toString(),
+        max: hiveChain.formatter.formatNumber(rc.max),
+        current: hiveChain.formatter.formatNumber(rc.current),
         percentageValue: rc.percent
       },
     }
