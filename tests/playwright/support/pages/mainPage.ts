@@ -47,6 +47,7 @@ export class MainPage {
   readonly lastDaysWeeksMonths: Locator;
   readonly blockRange: Locator;
   readonly timeRange: Locator;
+  readonly noOperationsMatchingTextSection: string;
 
   constructor(page: Page) {
     this.page = page;
@@ -94,6 +95,7 @@ export class MainPage {
     this.lastDaysWeeksMonths = page.getByText('Last days/weeks/months')
     this.blockRange = page.getByText('Block range')
     this.timeRange = page.getByText('Time range')
+    this.noOperationsMatchingTextSection = '.flex.justify-center.w-full.text-black'
   }
 
   async gotoBlockExplorerPage() {
