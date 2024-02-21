@@ -9,6 +9,7 @@ import { Toggle } from "./ui/toggle";
 import { useUserSettingsContext } from "./contexts/UserSettingsContext";
 import { useAlertContext } from "./contexts/AlertContext";
 import Alert from "./Alert";
+import SyncInfo from "./home/SyncInfo";
 
 export default function Navbar() {
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -16,7 +17,10 @@ export default function Navbar() {
   const { settings, setSettings } = useUserSettingsContext();
   const { alerts, setAlerts } = useAlertContext();
 
-  const { blockDifference, timeDifference } = useBlockchainSyncInfo();
+  const { explorerBlockNumber, hiveBlockNumber, explorerTime, hiveBlockTime, loading: syncLoading } =
+    useBlockchainSyncInfo();
+
+  const blockDifference = (hiveBlockNumber || 0) - (explorerBlockNumber || 0);
 
   return (
     <div className="fixed w-full top-0 z-50" data-testid="navbar">
@@ -46,23 +50,7 @@ export default function Navbar() {
                 width={40}
                 height={40}
               />
-              {!isNaN(blockDifference!) && (
-                <div
-                  className={cn(
-                    "absolute border-2 rounded-[6px] mt-px mx-6 px-1 text-[10px] font-bold -top-1 left-1",
-                    {
-                      "border-explorer-ligh-green text-explorer-ligh-green":
-                        blockDifference <= 3,
-                      "border-explorer-orange text-explorer-orange":
-                        blockDifference > 3 && blockDifference <= 20,
-                      "border-explorer-red text-explorer-red":
-                        blockDifference > 20,
-                    }
-                  )}
-                >
-                  {blockDifference}
-                </div>
-              )}
+              <SyncInfo />
             </Link>
             <div className="flex-grow flex items-center justify-end gap-x-3">
               <SearchBar />
@@ -112,34 +100,12 @@ export default function Navbar() {
                   Hive Block Explorer
                 </div>
               </Link>
-              {!isNaN(blockDifference!) && (
-                <div
-                  className={cn(
-                    "flex gap-x-1 border rounded-[6px] mt-px mx-6 px-1.5 py-px text-sm",
-                    {
-                      "border-explorer-ligh-green text-explorer-ligh-green":
-                        blockDifference <= 3,
-                      "border-explorer-orange text-explorer-orange":
-                        blockDifference > 3 && blockDifference <= 20,
-                      "border-explorer-red text-explorer-red":
-                        blockDifference > 20,
-                    }
-                  )}
-                >
-                  {!blockDifference ? (
-                    <p>Synced</p>
-                  ) : (
-                    <>
-                      <p>Blocks out of sync:</p>
-                      <p>{blockDifference}</p>
-                    </>
-                  )}
-                </div>
-              )}
+              <SyncInfo />
               <Link href={"/witnesses"} data-testid="navbar-witnesses-link">
                 Witnesses
               </Link>
-              <Toggle data-testid='toggle'
+              <Toggle
+                data-testid="toggle"
                 checked={settings.rawJsonView}
                 onClick={() =>
                   setSettings({
