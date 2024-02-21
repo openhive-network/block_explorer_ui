@@ -159,7 +159,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ open, onChange, className }) => {
     <>
       <div
         className={cn(
-          "w-0 hidden md:w-1/3 relative bg-gray-700 overflow-hidden",
+          "w-0 hidden md:w-1/3 relative bg-gray-700",
           {
             "w-full inline": open,
           },
