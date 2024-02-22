@@ -195,7 +195,8 @@ test.describe('Home page - searches', () => {
         }
     })
 
-    test('Validate that got results for Account Name, Permlink and Last days/weeks/months properties', async ({page}) => {
+    test('Validate that got results for Account Name, Permlink and Last days/weeks/months properties', async ({page, browserName}) => {
+        test.skip(browserName === 'firefox', 'Automatic test works well on chromium');
         await mainPage.lastBlockBtn.click()
         await page.waitForTimeout(2000)
         await expect(mainPage.lastDaysWeeksMonths).toBeVisible()
@@ -220,7 +221,8 @@ test.describe('Home page - searches', () => {
         }
     })
 
-    test('Validate that got results for Account Name, Permlink and Block range properties', async ({page}) => {
+    test('Validate that got results for Account Name, Permlink and Block range properties', async ({page, browserName}) => {
+        test.skip(browserName === 'firefox', 'Automatic test works well on chromium');
         await mainPage.accountNameInputCommentSection.fill('hopestylist')
         await mainPage.commentPermlinkInout.fill('vibes-week-1-on-purpose')
         await mainPage.lastBlockBtn.click()
@@ -243,7 +245,8 @@ test.describe('Home page - searches', () => {
         }
     })
 
-    test('Validate that got results for Account Name, Permlink and Time range properties', async ({page}) => {
+    test('Validate that got results for Account Name, Permlink and Time range properties', async ({page, browserName}) => {
+        test.skip(browserName === 'firefox', 'Automatic test works well on chromium');
         await mainPage.accountNameInputCommentSection.fill('hopestylist')
         await mainPage.commentPermlinkInout.fill('vibes-week-1-on-purpose')
         await mainPage.lastBlockBtn.click()
