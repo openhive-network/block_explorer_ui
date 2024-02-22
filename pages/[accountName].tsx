@@ -19,7 +19,6 @@ import useSearchRanges from "@/components/searchRanges/useSearchRanges";
 import SearchRanges from "@/components/searchRanges/SearchRanges";
 import ScrollTopButton from "@/components/ScrollTopButton";
 import { useUserSettingsContext } from "@/components/contexts/UserSettingsContext";
-import JSONView from "@/components/JSONView";
 import AccountDetailsCard from "@/components/account/AccountDetailsCard";
 
 interface AccountSearchParams {
@@ -55,11 +54,12 @@ export default function Account() {
 
   const accountNameFromRoute = (router.query.accountName as string)?.slice(1);
 
-  const { paramsState, setParams } = useURLParams({
-    ...defaultSearchParams,
-  }, ["accountName"]);
-
-  const setParamsRef = useRef(setParams);
+  const { paramsState, setParams } = useURLParams(
+    {
+      ...defaultSearchParams,
+    },
+    ["accountName"]
+  );
 
   const {
     filters: filtersParam,
@@ -106,7 +106,9 @@ export default function Account() {
     setIsVotersModalOpen(!isVotersModalOpen);
   };
 
-  const formattedAccountOperations = useOperationsFormatter(accountOperations) as Hive.AccountOperationsResponse;
+  const formattedAccountOperations = useOperationsFormatter(
+    accountOperations
+  ) as Hive.AccountOperationsResponse;
 
   const handleOpenVotesHistoryModal = () => {
     setIsVotesHistoryModalOpen(!isVotesHistoryModalOpen);
@@ -152,9 +154,18 @@ export default function Account() {
         toBlock: payloadToBlock,
         fromDate: payloadStartDate,
         toDate: payloadEndDate,
-        lastBlocks: searchRanges.rangeSelectKey === "lastBlocks" ? searchRanges.lastBlocksValue : undefined,
-        lastTime: searchRanges.rangeSelectKey === "lastTime" ? searchRanges.lastTimeUnitValue : undefined,
-        timeUnit: searchRanges.rangeSelectKey === "lastTime" ? searchRanges.timeUnitSelectKey : undefined,
+        lastBlocks:
+          searchRanges.rangeSelectKey === "lastBlocks"
+            ? searchRanges.lastBlocksValue
+            : undefined,
+        lastTime:
+          searchRanges.rangeSelectKey === "lastTime"
+            ? searchRanges.lastTimeUnitValue
+            : undefined,
+        timeUnit:
+          searchRanges.rangeSelectKey === "lastTime"
+            ? searchRanges.timeUnitSelectKey
+            : undefined,
         rangeSelectKey: searchRanges.rangeSelectKey,
         page: resetPage ? undefined : page,
       });
@@ -179,7 +190,7 @@ export default function Account() {
 
   useEffect(() => {
     if (!paramsState.page && accountOperations) {
-      setParamsRef.current({
+      setParams({
         ...paramsState,
         page: accountOperations.total_pages,
       });
@@ -259,7 +270,10 @@ export default function Account() {
           />
         </div>
 
-        <div className="col-start-1 md:col-start-2 col-span-1 md:col-span-3" data-testid="account-operation-list">
+        <div
+          className="col-start-1 md:col-start-2 col-span-1 md:col-span-3"
+          data-testid="account-operation-list"
+        >
           <div>
             <div className="bg-explorer-dark-gray text-white p-4 rounded-[6px] mx-2">
               <div className="ml-2">Ranges</div>
@@ -288,44 +302,44 @@ export default function Account() {
               <div className="flex justify-center text-center items-center">
                 <Loader2 className="animate-spin mt-1 text-black h-12 w-12 ml-3 ..." />
               </div>
-            ) : (
-              settings.rawJsonView ? 
+            ) : settings.rawJsonView ? (
               accountOperations?.operations_result?.map(
-                  (operation: Hive.OperationResponse) => (
-                    <div
-                      className="m-2"
-                      key={`${operation.operation_id}_${operation.timestamp}`}
-                    >
-                      <DetailedOperationCard
-                        operation={operation.operation}
-                        operationId={operation.operation_id}
-                        date={new Date(operation.timestamp)}
-                        blockNumber={operation.block_num}
-                        transactionId={operation.trx_id}
-                        key={operation.timestamp}
-                        isShortened={operation.is_modified}
-                      />
-                    </div>
-                  )
-                ) :
-                formattedAccountOperations?.operations_result?.map(
-                  (operation: Hive.OperationResponse) => (
-                    <div
-                      className="m-2"
-                      key={`${operation.operation_id}_${operation.timestamp}`}
-                    >
-                      <DetailedOperationCard
-                        operation={operation.operation}
-                        operationId={operation.operation_id}
-                        date={new Date(operation.timestamp)}
-                        blockNumber={operation.block_num}
-                        transactionId={operation.trx_id}
-                        key={operation.timestamp}
-                        isShortened={operation.is_modified}
-                      />
-                    </div>
-                  )
+                (operation: Hive.OperationResponse) => (
+                  <div
+                    className="m-2"
+                    key={`${operation.operation_id}_${operation.timestamp}`}
+                  >
+                    <DetailedOperationCard
+                      operation={operation.operation}
+                      operationId={operation.operation_id}
+                      date={new Date(operation.timestamp)}
+                      blockNumber={operation.block_num}
+                      transactionId={operation.trx_id}
+                      key={operation.timestamp}
+                      isShortened={operation.is_modified}
+                    />
+                  </div>
                 )
+              )
+            ) : (
+              formattedAccountOperations?.operations_result?.map(
+                (operation: Hive.OperationResponse) => (
+                  <div
+                    className="m-2"
+                    key={`${operation.operation_id}_${operation.timestamp}`}
+                  >
+                    <DetailedOperationCard
+                      operation={operation.operation}
+                      operationId={operation.operation_id}
+                      date={new Date(operation.timestamp)}
+                      blockNumber={operation.block_num}
+                      transactionId={operation.trx_id}
+                      key={operation.timestamp}
+                      isShortened={operation.is_modified}
+                    />
+                  </div>
+                )
+              )
             )}
           </div>
         </div>

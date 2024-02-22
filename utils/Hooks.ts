@@ -185,7 +185,10 @@ export const useURLParams = <T>(defaultState: T, omit?: string[]) => {
   }, [router.pathname]);
 
   const setParams = (params: T) => {
-    if (interpolationParams.every((param) => !!params[param])) {
+    if (
+      interpolationParams.every((param) => !!params[param]) &&
+      router.isReady
+    ) {
       let urlParams: ParamObject = {};
       Object.keys(params as ParamObject).forEach((key) => {
         const paramKey = key as keyof T;
