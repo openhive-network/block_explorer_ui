@@ -196,12 +196,14 @@ test.describe('Home page - searches', () => {
     })
 
     test('Validate that got results for Account Name, Permlink and Last days/weeks/months properties', async ({page}) => {
-        await mainPage.accountNameInputCommentSection.fill('hopestylist')
-        await mainPage.commentPermlinkInout.fill('vibes-week-1-on-purpose')
         await mainPage.lastBlockBtn.click()
         await page.waitForTimeout(2000)
         await expect(mainPage.lastDaysWeeksMonths).toBeVisible()
         await mainPage.lastDaysWeeksMonths.click()
+
+        await mainPage.accountNameInputCommentSection.fill('hopestylist')
+        await mainPage.commentPermlinkInout.fill('vibes-week-1-on-purpose')
+        
         await mainPage.searchButtonInComment.click()
 
         const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
