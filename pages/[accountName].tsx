@@ -20,6 +20,7 @@ import SearchRanges from "@/components/searchRanges/SearchRanges";
 import ScrollTopButton from "@/components/ScrollTopButton";
 import { useUserSettingsContext } from "@/components/contexts/UserSettingsContext";
 import AccountDetailsCard from "@/components/account/AccountDetailsCard";
+import Head from "next/head";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -218,6 +219,9 @@ export default function Account() {
 
   return (
     <>
+    <Head>
+    <title>@{accountNameFromRoute} - Hive Explorer</title>
+    </Head>
       <div className="flex items-center justify-end w-full min-h-[64px] bg-explorer-orange -mt-4 px-2 md:px-8 fixed z-20">
         {paramsState.page && accountOperations && (
           <AccountPagination

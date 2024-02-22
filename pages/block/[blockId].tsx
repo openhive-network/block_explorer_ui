@@ -19,6 +19,7 @@ import { useURLParams } from "@/utils/Hooks";
 import useOperationsCountInBlock from "@/api/blockPage/useOperationsInBlock";
 import Explorer from "@/types/Explorer";
 import { useOperationsFormatter } from "@/utils/Hooks";
+import Head from "next/head";
 
 interface BlockSearchParams {
   blockId?: number;
@@ -155,109 +156,115 @@ export default function Block() {
     );
   }
 
-  return !blockDate ? (
-    <div>Loading ...</div>
-  ) : (
-    <div
-      className="w-full h-full"
-      style={{ scrollMargin: "100px" }}
-      id="block-page-top"
-    >
-      <BlockPageNavigation
-        blockNumber={Number(blockId)}
-        goToBlock={handleGoToBlock}
-        timeStamp={blockDate}
-        setFilters={handleFilterChange}
-        operationTypes={operationsTypes || []}
-        selectedOperationIds={paramsState.filters || []}
-      />
-      <BlockDetails
-        virtualOperationLength={virtualOperationsCounter}
-        nonVirtualOperationLength={nonVirtualOperationsCounter}
-        virtualOperationsTypesCounters={virtualOperationsTypesCounters}
-        nonVirtualOperationsTypesCounters={nonVirtualOperationsTypesCounters}
-        blockDetails={blockDetails}
-      />
-      <div className="fixed top-[calc(100vh-90px)] md:top-[calc(100vh-100px)] right-0 flex flex-col items-end justify-end px-3 md:px-12">
-        <ScrollTopButton />
-        <Button
-          onClick={() => scrollTo(virtualOpsRef)}
-          className="bg-[#ADA9A9] rounded text-white hover:bg-gray-700 w-fit"
-        >
-          <p className="hidden md:inline">To Virtual Ops</p>
-          <p className="md:hidden inline">V Ops</p>
-        </Button>
-      </div>
-      {loading !== false || trxLoading || totalLoading ? (
-        <div className="flex justify-center items-center">
-          <Loader2 className="animate-spin mt-1 h-16 w-16 ml-3 ... " />
-        </div>
-      ) : settings.rawJsonView ? (
-        <JSONView data-testid='json-view'
-          json={{
-            details: { ...blockDetails },
-            operations: { ...blockOperations },
-          }}
-          className="w-full md:w-[962px] mt-6 m-auto py-2 px-4 bg-explorer-dark-gray rounded text-white text-xs break-words break-all"
-        />
+  return (
+    <>
+    <Head>
+      <title>{blockId} - Hive Explorer</title>
+    </Head>
+        {!blockDate ? (
+        <div>Loading ...</div>
       ) : (
-        <section className="md:px-10 flex flex-col items-center justify-center text-white" data-testid="block-page-operation-list">
-          {totalOperations?.total_operations &&
-            totalOperations?.total_operations > 1000 && (
-              <CustomPagination
-                currentPage={paramsState.page}
-                onPageChange={(newPage: number) =>
-                  setParams({ ...paramsState, page: newPage })
-                }
-                pageSize={1000}
-                totalCount={blockOperations?.total_operations || 0}
-                className="text-black"
-              />
-            )}
-          <div className="w-full px-4 md:p-0 md:w-4/5 flex flex-col gap-y-2">
-            {nonVirtualOperations?.map((operation, index) => (
-              <DetailedOperationCard
-                operation={operation.operation}
-                operationId={operation.operation_id}
-                date={new Date(operation.timestamp)}
-                blockNumber={operation.block_num}
-                transactionId={operation.trx_id}
-                key={operation.timestamp + index}
-                skipBlock
-                skipDate
-                isShortened={operation.is_modified}
-              />
-            ))}
-            <div
-              className="text-center mt-4"
-              ref={virtualOpsRef}
-              style={{ scrollMargin: "100px" }}
+        <div
+          className="w-full h-full"
+          style={{ scrollMargin: "100px" }}
+          id="block-page-top"
+        >
+          <BlockPageNavigation
+            blockNumber={Number(blockId)}
+            goToBlock={handleGoToBlock}
+            timeStamp={blockDate}
+            setFilters={handleFilterChange}
+            operationTypes={operationsTypes || []}
+            selectedOperationIds={paramsState.filters || []}
+          />
+          <BlockDetails
+            virtualOperationLength={virtualOperationsCounter}
+            nonVirtualOperationLength={nonVirtualOperationsCounter}
+            virtualOperationsTypesCounters={virtualOperationsTypesCounters}
+            nonVirtualOperationsTypesCounters={nonVirtualOperationsTypesCounters}
+            blockDetails={blockDetails}
+          />
+          <div className="fixed top-[calc(100vh-90px)] md:top-[calc(100vh-100px)] right-0 flex flex-col items-end justify-end px-3 md:px-12">
+            <ScrollTopButton />
+            <Button
+              onClick={() => scrollTo(virtualOpsRef)}
+              className="bg-[#ADA9A9] rounded text-white hover:bg-gray-700 w-fit"
             >
-              <p className="text-3xl text-black">
-                {!!blockOperations &&
-                !blockOperations?.operations_result?.length
-                  ? "No operations were found"
-                  : !!virtualOperations.length
-                  ? "Virtual Operations"
-                  : null}
-              </p>
-            </div>
-            {virtualOperations?.map((operation, index) => (
-              <DetailedOperationCard
-                operation={operation.operation}
-                operationId={operation.operation_id}
-                date={new Date(operation.timestamp)}
-                blockNumber={operation.block_num}
-                transactionId={operation.trx_id}
-                key={operation.timestamp + index}
-                skipBlock
-                skipDate
-                isShortened={operation.is_modified}
-              />
-            ))}
+              <p className="hidden md:inline">To Virtual Ops</p>
+              <p className="md:hidden inline">V Ops</p>
+            </Button>
           </div>
-        </section>
+          {loading !== false || trxLoading || totalLoading ? (
+            <div className="flex justify-center items-center">
+              <Loader2 className="animate-spin mt-1 h-16 w-16 ml-3 ... " />
+            </div>
+          ) : settings.rawJsonView ? (
+            <JSONView data-testid='json-view'
+              json={{
+                details: { ...blockDetails },
+                operations: { ...blockOperations },
+              }}
+              className="w-full md:w-[962px] mt-6 m-auto py-2 px-4 bg-explorer-dark-gray rounded text-white text-xs break-words break-all"
+            />
+          ) : (
+            <section className="md:px-10 flex flex-col items-center justify-center text-white" data-testid="block-page-operation-list">
+              {totalOperations?.total_operations &&
+                totalOperations?.total_operations > 1000 && (
+                  <CustomPagination
+                    currentPage={paramsState.page}
+                    onPageChange={(newPage: number) =>
+                      setParams({ ...paramsState, page: newPage })
+                    }
+                    pageSize={1000}
+                    totalCount={blockOperations?.total_operations || 0}
+                    className="text-black"
+                  />
+                )}
+              <div className="w-full px-4 md:p-0 md:w-4/5 flex flex-col gap-y-2">
+                {nonVirtualOperations?.map((operation, index) => (
+                  <DetailedOperationCard
+                    operation={operation.operation}
+                    operationId={operation.operation_id}
+                    date={new Date(operation.timestamp)}
+                    blockNumber={operation.block_num}
+                    transactionId={operation.trx_id}
+                    key={operation.timestamp + index}
+                    skipBlock
+                    skipDate
+                    isShortened={operation.is_modified}
+                  />
+                ))}
+                <div
+                  className="text-center mt-4"
+                  ref={virtualOpsRef}
+                  style={{ scrollMargin: "100px" }}
+                >
+                  <p className="text-3xl text-black">
+                    {!!blockOperations &&
+                    !blockOperations?.operations_result?.length
+                      ? "No operations were found"
+                      : !!virtualOperations.length
+                      ? "Virtual Operations"
+                      : null}
+                  </p>
+                </div>
+                {virtualOperations?.map((operation, index) => (
+                  <DetailedOperationCard
+                    operation={operation.operation}
+                    operationId={operation.operation_id}
+                    date={new Date(operation.timestamp)}
+                    blockNumber={operation.block_num}
+                    transactionId={operation.trx_id}
+                    key={operation.timestamp + index}
+                    skipBlock
+                    skipDate
+                    isShortened={operation.is_modified}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
       )}
-    </div>
-  );
+    </>)
 }
