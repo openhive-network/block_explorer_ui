@@ -329,7 +329,7 @@ export default function Account() {
             )}
           </div>
         </div>
-        <div className="fixed bottom-[10px] w-full flex flex-col items-end px-3 md:px-12">
+        <div className="fixed bottom-[10px] right-0 flex flex-col items-end justify-end px-3 md:px-12">
           <ScrollTopButton />
         </div>
       </div>

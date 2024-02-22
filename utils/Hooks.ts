@@ -249,12 +249,10 @@ const getSyncInfoData = (
     headBlockData?.created_at && new Date(headBlockData?.created_at).getTime();
 
   return {
-    blockDifference:
-      hiveBlockNumber && explorerBlockNumber
-        ? hiveBlockNumber - explorerBlockNumber
-        : 0,
-    timeDifference:
-      hiveBlockTime && explorerTime && hiveBlockTime - explorerTime,
+    explorerBlockNumber,
+    hiveBlockNumber,
+    explorerTime,
+    hiveBlockTime,
   };
 };
 
@@ -263,16 +261,25 @@ export const useBlockchainSyncInfo = () => {
   const headBlockNum = useHeadBlockNumber().headBlockNumberData;
   const headBlockData = useHeadBlock(headBlockNum).headBlockData;
 
-  const { blockDifference, timeDifference } = useMemo(
-    () => getSyncInfoData(dynamicGlobalQueryData, headBlockData),
-    [dynamicGlobalQueryData, headBlockData]
-  );
+  const { explorerBlockNumber, hiveBlockNumber, explorerTime, hiveBlockTime } =
+    useMemo(
+      () => getSyncInfoData(dynamicGlobalQueryData, headBlockData),
+      [dynamicGlobalQueryData, headBlockData]
+    );
+
+  const loading =
+    typeof explorerBlockNumber === "undefined" ||
+    typeof hiveBlockNumber === "undefined";
 
   return {
-    blockDifference: blockDifference < 0 ? 0 : blockDifference,
-    timeDifference,
+    explorerBlockNumber,
+    hiveBlockNumber,
+    explorerTime,
+    hiveBlockTime,
+    loading,
   };
 };
+
 export const useOperationsFormatter = (operations?: any) => {
   const { hiveChain } = useHiveChainContext();
 

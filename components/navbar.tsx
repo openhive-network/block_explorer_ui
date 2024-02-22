@@ -9,17 +9,17 @@ import { Toggle } from "./ui/toggle";
 import { useUserSettingsContext } from "./contexts/UserSettingsContext";
 import { useAlertContext } from "./contexts/AlertContext";
 import Alert from "./Alert";
+import SyncInfo from "./home/SyncInfo";
 
 export default function Navbar() {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [menuOpen, setMenuOpen] = useState(false);
   const { settings, setSettings } = useUserSettingsContext();
   const { alerts, setAlerts } = useAlertContext();
-
-  const { blockDifference, timeDifference } = useBlockchainSyncInfo();
+  const [searchBarOpen, setSearchBarOpen] = useState(false);
 
   return (
-    <div className="fixed w-full top-0 z-50" data-testid="navbar">
+    <div className="fixed w-full top-0 left-0 z-50" data-testid="navbar">
       <div className="flex p-2 justify-between bg-explorer-dark-gray text-white	items-center relative">
         <div className="absolute top-full left-0 w-full">
           {alerts.map((alert, index) => (
@@ -39,34 +39,18 @@ export default function Navbar() {
         </div>
         {isMobile ? (
           <div className="flex items-center justify-between w-full">
-            <Link href={"/"} className="pr-3 relative">
+            <Link href={"/"} className="relative pr-2">
               <Image
                 src="/hive-logo.png"
                 alt="Hive logo"
                 width={40}
                 height={40}
               />
-              {!isNaN(blockDifference!) && (
-                <div
-                  className={cn(
-                    "absolute border-2 rounded-[6px] mt-px mx-6 px-1 text-[10px] font-bold -top-1 left-1",
-                    {
-                      "border-explorer-ligh-green text-explorer-ligh-green":
-                        blockDifference <= 3,
-                      "border-explorer-orange text-explorer-orange":
-                        blockDifference > 3 && blockDifference <= 20,
-                      "border-explorer-red text-explorer-red":
-                        blockDifference > 20,
-                    }
-                  )}
-                >
-                  {blockDifference}
-                </div>
-              )}
             </Link>
+            {!searchBarOpen && <SyncInfo />}
             <div className="flex-grow flex items-center justify-end gap-x-3">
-              <SearchBar />
-              <Menu height={34} width={34} onClick={() => setMenuOpen(true)} />
+              <SearchBar open={searchBarOpen} onChange={setSearchBarOpen}/>
+              <Menu height={34} width={34} onClick={() => setMenuOpen(true)} className="flex-shrink-0"/>
             </div>
             <div
               className={cn(
@@ -112,34 +96,12 @@ export default function Navbar() {
                   Hive Block Explorer
                 </div>
               </Link>
-              {!isNaN(blockDifference!) && (
-                <div
-                  className={cn(
-                    "flex gap-x-1 border rounded-[6px] mt-px mx-6 px-1.5 py-px text-sm",
-                    {
-                      "border-explorer-ligh-green text-explorer-ligh-green":
-                        blockDifference <= 3,
-                      "border-explorer-orange text-explorer-orange":
-                        blockDifference > 3 && blockDifference <= 20,
-                      "border-explorer-red text-explorer-red":
-                        blockDifference > 20,
-                    }
-                  )}
-                >
-                  {!blockDifference ? (
-                    <p>Synced</p>
-                  ) : (
-                    <>
-                      <p>Blocks out of sync:</p>
-                      <p>{blockDifference}</p>
-                    </>
-                  )}
-                </div>
-              )}
+              <SyncInfo />
               <Link href={"/witnesses"} data-testid="navbar-witnesses-link">
                 Witnesses
               </Link>
-              <Toggle data-testid='toggle'
+              <Toggle
+                data-testid="toggle"
                 checked={settings.rawJsonView}
                 onClick={() =>
                   setSettings({
@@ -151,7 +113,7 @@ export default function Navbar() {
                 className="ml-6"
               />
             </div>
-            <SearchBar />
+            <SearchBar open={true}/>
           </>
         )}
       </div>

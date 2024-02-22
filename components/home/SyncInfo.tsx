@@ -1,0 +1,98 @@
+import { cn } from "@/lib/utils";
+import { useBlockchainSyncInfo } from "@/utils/Hooks";
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
+import { convertUTCDateToLocalDate } from "@/utils/UTCDateToLocalTime";
+
+interface SyncInfoProps {
+  className?: string;
+}
+
+const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  const {
+    explorerBlockNumber,
+    hiveBlockNumber,
+    explorerTime,
+    hiveBlockTime,
+    loading: syncLoading,
+  } = useBlockchainSyncInfo();
+
+  const blockDifference = (hiveBlockNumber || 0) - (explorerBlockNumber || 0);
+
+  const differenceColorText =
+    blockDifference > 20
+      ? "text-explorer-red"
+      : blockDifference > 3
+      ? "text-explorer-orange"
+      : "text-explorer-light-green";
+
+  return !syncLoading ? (
+    <Dialog open={dialogOpen} onOpenChange={(open) => setDialogOpen(open)}>
+      <DialogTrigger>
+        <div
+          className={cn(
+            "flex flex-row gap-x-1 border rounded-[6px] mt-px mx-6 px-1.5 py-px text-sm cursor-pointer",
+            {
+              "border-explorer-ligh-green":
+                blockDifference <= 3,
+              "border-explorer-orange":
+                blockDifference > 3 && blockDifference <= 20,
+              "border-explorer-red": blockDifference > 20,
+            },
+            differenceColorText,
+            className
+          )}
+          onClick={() => setDialogOpen(true)}
+        >
+          {!blockDifference ? (
+            <p>Explorer synced with blockchain</p>
+          ) : (
+            <>
+              <p>Blocks out of sync:</p>
+              <p>{blockDifference.toLocaleString()}</p>
+            </>
+          )}
+        </div>
+      </DialogTrigger>
+      <DialogContent className="bg-explorer-dark-gray text-white">
+        <DialogHeader>
+          <DialogTitle>Blockchain sync</DialogTitle>
+        </DialogHeader>
+        <section className="flex flex-col">
+          <div className="flex justify-between border-b py-1.5">
+            <div>Blockchain headblock: </div>
+            <div>{hiveBlockNumber?.toLocaleString()}</div>
+          </div>
+          <div className="flex justify-between border-b py-1.5">
+            <div>Hafbe last block: </div>
+            <div>{explorerBlockNumber?.toLocaleString()}</div>
+          </div>
+          <div className={cn("flex justify-between border-b py-1.5", differenceColorText)}>
+            <div>Block difference: </div>
+            <div>{blockDifference.toLocaleString()} blocks</div>
+          </div>
+          <div className={cn("flex justify-between py-1.5", differenceColorText)}>
+            <div>Last synced block at: </div>
+            {explorerTime && (
+              <div>{convertUTCDateToLocalDate(new Date(explorerTime))}</div>
+            )}
+          </div>
+        </section>
+      </DialogContent>
+    </Dialog>
+  ) : (
+    <div className="border rounded-[6px] mt-px mx-6 px-1.5 py-px text-sm border-explorer-yellow text-explorer-yellow">
+      Connecting...
+    </div>
+  );
+};
+
+export default SyncInfo;
