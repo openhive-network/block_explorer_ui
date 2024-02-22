@@ -47,7 +47,12 @@ export class MainPage {
   readonly lastDaysWeeksMonths: Locator;
   readonly blockRange: Locator;
   readonly timeRange: Locator;
+  readonly commentSearchSection: Locator;
+  readonly searchButtonInComment: Locator;
+  readonly accountNameInputCommentSection: Locator;
   readonly noOperationsMatchingTextSection: string;
+  readonly detailedOperationCard: Locator;
+  readonly commentPermlinkInout: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -94,8 +99,13 @@ export class MainPage {
     this.lastBlockBtn = page.getByTestId('block-search-section').getByText('Last blocks')
     this.lastDaysWeeksMonths = page.getByText('Last days/weeks/months')
     this.blockRange = page.getByText('Block range')
-    this.timeRange = page.getByText('Time range')
+    this.timeRange = page.getByLabel('Time range')
+    this.commentSearchSection = page.getByRole('button', { name: 'Comment search' })
+    this.searchButtonInComment = page.getByTestId('search-button')
+    this.accountNameInputCommentSection = page.getByTestId('account-name')
     this.noOperationsMatchingTextSection = '.flex.justify-center.w-full.text-black'
+    this.detailedOperationCard = page.getByTestId('detailed-operation-card')
+    this.commentPermlinkInout = page.getByTestId('permlink-input')
   }
 
   async gotoBlockExplorerPage() {

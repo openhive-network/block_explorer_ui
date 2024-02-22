@@ -284,7 +284,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
         (!!commentSearch.commentSearchData.total_operations ? (
           <div>
             <Link href={getCommentPageLink()}>
-              <Button className=" bg-blue-800 hover:bg-blue-600 rounded">
+              <Button className=" bg-blue-800 hover:bg-blue-600 rounded" data-testid="go-to-result-page">
                 Go to result page
               </Button>
             </Link>

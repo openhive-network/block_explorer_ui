@@ -83,6 +83,8 @@ test.describe('Home page - account searches', () => {
     
         expect(response.status()).toBe(200);
 
+        await expect(page.getByText('vote', { exact: true }).nth(2)).toBeVisible()
+
         if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
                 await expect(page.getByText('No operations matching given')).toBeVisible()
               } 

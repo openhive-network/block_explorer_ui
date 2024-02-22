@@ -92,6 +92,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
       <div className="flex flex-col">
         <label className="ml-2">Account name *</label>
         <Input
+          data-testid="account-name"
           className="w-1/2 md:w-1/3 bg-gray-700"
           type="text"
           value={formatAccountName(accountName)}
@@ -102,6 +103,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
       <div className="flex flex-col">
         <label className="ml-2">Permlink</label>
         <Input
+          data-testid="permlink-input"
           className="w-full bg-gray-700"
           type="text"
           value={permlink}
@@ -126,6 +128,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
       </div>
       <div className="flex items-center">
         <Button
+          data-testid="search-button"
           className=" bg-blue-800 hover:bg-blue-600 rounded"
           onClick={onButtonClick}
           disabled={!accountName}
