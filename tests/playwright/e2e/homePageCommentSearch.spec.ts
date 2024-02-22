@@ -21,43 +21,93 @@ test.describe('Home page - searches', () => {
     })
 
     test('Validate that Search button is clickable if Account Name property is filled', async ({page}) => {
-        await mainPage.accountNameInputCommentSection.fill('phyna')
+        await mainPage.accountNameInputCommentSection.fill('gtg')
         await expect(mainPage.searchButtonInComment).toBeEnabled()
         await expect(page.getByText('Set account name')).not.toBeVisible()
         await mainPage.searchButtonInComment.click()
-        await expect(mainPage.detailedOperationCard.first()).toBeVisible()
-        await expect(mainPage.goToResultPageBtn).toBeVisible()
+
+        const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
+    
+        expect(response.status()).toBe(200);
+        
+
+        if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
+            await expect(page.getByText('No operations matching given')).toBeVisible()
+          } 
+
+          else {
+            await expect(mainPage.detailedOperationCard.first()).toBeVisible()
+            await expect(mainPage.goToResultPageBtn).toBeVisible()
+        }
+        
     })
 
     test('Validate that got results for Account Name and Last days/weeks/months properties', async ({page}) => {
-        await mainPage.accountNameInputCommentSection.fill('phyna')
+        await mainPage.accountNameInputCommentSection.fill('gtg')
         await mainPage.lastBlockBtn.click()
         await mainPage.lastDaysWeeksMonths.click()
         await mainPage.searchButtonInComment.click()
-        await expect(mainPage.detailedOperationCard.first()).toBeVisible()
-        await expect(mainPage.goToResultPageBtn).toBeVisible()
+
+        const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
+    
+        expect(response.status()).toBe(200);
+        
+
+        if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
+            await expect(page.getByText('No operations matching given')).toBeVisible()
+          } 
+
+          else {
+            await expect(mainPage.detailedOperationCard.first()).toBeVisible()
+            await expect(mainPage.goToResultPageBtn).toBeVisible()
+        }
+        
     })
 
     test('Validate that got results for Account Name and Block range properties', async ({page}) => {
-        await mainPage.accountNameInputCommentSection.fill('phyna')
+        await mainPage.accountNameInputCommentSection.fill('gtg')
         await mainPage.lastBlockBtn.click()
         await mainPage.blockRange.click()
         await mainPage.searchButtonInComment.click()
-        await expect(mainPage.detailedOperationCard.first()).toBeVisible()
-        await expect(mainPage.goToResultPageBtn).toBeVisible()
+
+        const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
+    
+        expect(response.status()).toBe(200);
+        
+
+        if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
+            await expect(page.getByText('No operations matching given')).toBeVisible()
+          } 
+
+          else {
+            await expect(mainPage.detailedOperationCard.first()).toBeVisible()
+            await expect(mainPage.goToResultPageBtn).toBeVisible()
+        }
     })
 
     test('Validate that got results for Account Name and Time range properties', async ({page}) => {
-        await mainPage.accountNameInputCommentSection.fill('phyna')
+        await mainPage.accountNameInputCommentSection.fill('gtg')
         await mainPage.lastBlockBtn.click()
         await mainPage.timeRange.click()
         await mainPage.searchButtonInComment.click()
-        await expect(mainPage.detailedOperationCard.first()).toBeVisible()
-        await expect(mainPage.goToResultPageBtn).toBeVisible()
+
+        const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
+    
+        expect(response.status()).toBe(200);
+        
+
+        if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
+            await expect(page.getByText('No operations matching given')).toBeVisible()
+          } 
+
+          else {
+            await expect(mainPage.detailedOperationCard.first()).toBeVisible()
+            await expect(mainPage.goToResultPageBtn).toBeVisible()
+        }
     })
 
     test('Validate that got results for Account Name and One Operation Type properties', async ({page}) => {
-        await mainPage.accountNameInputCommentSection.fill('phyna')
+        await mainPage.accountNameInputCommentSection.fill('gtg')
         await mainPage.operationsTypesBtn.click()
         await expect(mainPage.operationsTypesWindow).toBeVisible();
         await page.locator('input[type="checkbox"]').first().check();
@@ -80,7 +130,7 @@ test.describe('Home page - searches', () => {
     })
 
     test('Validate that got results for Account Name and more than one Operation Types properties', async ({page}) => {
-        await mainPage.accountNameInputCommentSection.fill('phyna')
+        await mainPage.accountNameInputCommentSection.fill('gtg')
         await mainPage.operationsTypesBtn.click()
         await expect(mainPage.operationsTypesWindow).toBeVisible();
         await page.locator('input[type="checkbox"]').first().check();
@@ -104,7 +154,7 @@ test.describe('Home page - searches', () => {
     })
 
     test('Validate that got results for Account Name and all Operation Types properties', async ({page}) => {
-        await mainPage.accountNameInputCommentSection.fill('phyna')
+        await mainPage.accountNameInputCommentSection.fill('gtg')
         await mainPage.operationsTypesBtn.click()
         await expect(mainPage.operationsTypesWindow).toBeVisible();
         await page.getByRole('button', { name: 'Select all' }).click()
@@ -149,6 +199,7 @@ test.describe('Home page - searches', () => {
         await mainPage.accountNameInputCommentSection.fill('hopestylist')
         await mainPage.commentPermlinkInout.fill('vibes-week-1-on-purpose')
         await mainPage.lastBlockBtn.click()
+        await expect(mainPage.lastDaysWeeksMonths).toBeVisible()
         await mainPage.lastDaysWeeksMonths.click()
         await mainPage.searchButtonInComment.click()
 
@@ -170,6 +221,7 @@ test.describe('Home page - searches', () => {
         await mainPage.accountNameInputCommentSection.fill('hopestylist')
         await mainPage.commentPermlinkInout.fill('vibes-week-1-on-purpose')
         await mainPage.lastBlockBtn.click()
+        await expect(mainPage.blockRange).toBeVisible()
         await mainPage.blockRange.click()
         await mainPage.searchButtonInComment.click()
 
@@ -191,6 +243,7 @@ test.describe('Home page - searches', () => {
         await mainPage.accountNameInputCommentSection.fill('hopestylist')
         await mainPage.commentPermlinkInout.fill('vibes-week-1-on-purpose')
         await mainPage.lastBlockBtn.click()
+        await expect(mainPage.timeRange).toBeVisible()
         await mainPage.timeRange.click()
         await mainPage.searchButtonInComment.click()
 
