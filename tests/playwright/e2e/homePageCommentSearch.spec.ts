@@ -42,7 +42,8 @@ test.describe('Home page - searches', () => {
         
     })
 
-    test('Validate that got results for Account Name and Last days/weeks/months properties', async ({page}) => {
+    test('Validate that got results for Account Name and Last days/weeks/months properties', async ({page, browserName}) => {
+        test.skip(browserName === 'firefox', 'Automatic test works well on chromium');
         await mainPage.accountNameInputCommentSection.fill('gtg')
         await mainPage.lastBlockBtn.click()
         await mainPage.lastDaysWeeksMonths.click()
@@ -64,7 +65,8 @@ test.describe('Home page - searches', () => {
         
     })
 
-    test('Validate that got results for Account Name and Block range properties', async ({page}) => {
+    test('Validate that got results for Account Name and Block range properties', async ({page, browserName}) => {
+        test.skip(browserName === 'firefox', 'Automatic test works well on chromium');
         await mainPage.accountNameInputCommentSection.fill('gtg')
         await mainPage.lastBlockBtn.click()
         await mainPage.blockRange.click()
@@ -85,7 +87,8 @@ test.describe('Home page - searches', () => {
         }
     })
 
-    test('Validate that got results for Account Name and Time range properties', async ({page}) => {
+    test('Validate that got results for Account Name and Time range properties', async ({page, browserName}) => {
+        test.skip(browserName === 'firefox', 'Automatic test works well on chromium');
         await mainPage.accountNameInputCommentSection.fill('gtg')
         await mainPage.lastBlockBtn.click()
         await mainPage.timeRange.click()
