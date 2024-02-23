@@ -247,6 +247,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
                 }
                 operationsTypes={operationsTypes}
                 loading={commentSearch.commentSearchDataLoading}
+                searchRanges={searchRanges}
               />
             </AccordionContent>
           </AccordionItem>

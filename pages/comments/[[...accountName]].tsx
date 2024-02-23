@@ -97,6 +97,7 @@ const Comments: React.FC = () => {
           operationsTypes={operationsTypes}
           data={paramsState}
           loading={commentSearch.commentSearchDataLoading}
+          searchRanges={searchRanges}
         />
       </div>
       {commentSearch.commentSearchData && (
