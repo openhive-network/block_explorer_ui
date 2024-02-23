@@ -34,6 +34,13 @@ RUN npm run build:standalone
 
 FROM base AS runner
 
+ARG BUILD_TIME
+ARG GIT_COMMIT_SHA
+ARG GIT_CURRENT_BRANCH
+ARG GIT_LAST_LOG_MESSAGE
+ARG GIT_LAST_COMMITTER
+ARG GIT_LAST_COMMIT_DATE
+
 RUN apk add --no-cache tini
 
 WORKDIR /home/node/app
@@ -59,5 +66,21 @@ ENV PORT 5000
 HEALTHCHECK CMD wget --no-verbose --tries=1 --spider http://$HOSTNAME:$PORT || exit 1
 
 RUN chmod +x /home/node/app/docker-entrypoint.sh
+
+LABEL org.opencontainers.image.created="$BUILD_TIME"
+LABEL org.opencontainers.image.url="https://hive.io/"
+LABEL org.opencontainers.image.documentation="https://gitlab.syncad.com/hive/block_explorer_ui"
+LABEL org.opencontainers.image.source="https://gitlab.syncad.com/hive/block_explorer_ui"
+#LABEL org.opencontainers.image.version="${VERSION}"
+LABEL org.opencontainers.image.revision="$GIT_COMMIT_SHA"
+LABEL org.opencontainers.image.licenses="MIT"
+LABEL org.opencontainers.image.ref.name="HAF Block Explorer UI"
+LABEL org.opencontainers.image.title="HAF Block Explorer UI Image"
+LABEL org.opencontainers.image.description="Runs HAF Block Explorer User Interface application"
+LABEL io.hive.image.branch="$GIT_CURRENT_BRANCH"
+LABEL io.hive.image.commit.log_message="$GIT_LAST_LOG_MESSAGE"
+LABEL io.hive.image.commit.author="$GIT_LAST_COMMITTER"
+LABEL io.hive.image.commit.date="$GIT_LAST_COMMIT_DATE"
+
 ENTRYPOINT ["/sbin/tini", "--", "/home/node/app/docker-entrypoint.sh"]
 CMD ["node", "server.js"]
