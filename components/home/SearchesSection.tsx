@@ -57,7 +57,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
   const blockSearch = useBlockSearch(blockSearchProps);
   const accountOperations = useAccountOperations(accountOperationsSearchProps);
 
-  const searchRanges = useSearchRanges();
+  const searchRanges = useSearchRanges("lastBlocks");
 
   const { settings } = useUserSettingsContext();
 
