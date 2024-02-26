@@ -64,10 +64,7 @@ const getOneLineDescription = (operation: Hive.Operation) => {
             {voter}
           </Link>
           {` voted ${weight} on `}
-          <Link
-            href={`/@${author}`}
-            className="text-explorer-ligh-green"
-          >
+          <Link href={`/@${author}`} className="text-explorer-ligh-green">
             {author}
           </Link>
           {" / "}
@@ -83,10 +80,7 @@ const getOneLineDescription = (operation: Hive.Operation) => {
     case "comment_operation":
       return (
         <>
-          <Link
-            href={`/@${author}`}
-            className="text-explorer-ligh-green"
-          >
+          <Link href={`/@${author}`} className="text-explorer-ligh-green">
             {author}
           </Link>
           {` commented on `}
@@ -118,10 +112,7 @@ const getOneLineDescription = (operation: Hive.Operation) => {
         userName &&
         !(userName instanceof Object) && (
           <>
-            <Link
-              href={`/@${userName}`}
-              className="text-explorer-ligh-green"
-            >
+            <Link href={`/@${userName}`} className="text-explorer-ligh-green">
               {userName}
             </Link>{" "}
             sent {operation.type}
@@ -140,7 +131,7 @@ const userField = [
   "curator",
   "seller",
   "voter",
-  "publisher"
+  "publisher",
 ];
 const userAuthField = ["required_posting_auths", "required_auths"];
 
@@ -159,20 +150,20 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
 }) => {
   const { settings } = useUserSettingsContext();
   const [seeDetails, setSeeDetails] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   let valueAsObject = operation.value;
   if (typeof valueAsObject === "string") {
     valueAsObject = { message: valueAsObject };
   }
 
-  // Leave copy feature for later https app
-  // const [copied, setCopied] = useState(false);
-  /*
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(JSON.stringify(valueAsObject).replaceAll("\\", ""));
+    navigator.clipboard.writeText(
+      JSON.stringify(valueAsObject).replaceAll("\\", "")
+    );
     setCopied(true);
     setTimeout(() => setCopied(false), 1000);
-  }; */
+  };
 
   return (
     <div
@@ -191,7 +182,9 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
             }
           )}
         >
-          {settings.rawJsonView ? operation.type : getOperationTypeForDisplay(operation.type)}
+          {settings.rawJsonView
+            ? operation.type
+            : getOperationTypeForDisplay(operation.type)}
         </div>
         {!skipBlock && (
           <div className="my-1 flex-1">
@@ -204,19 +197,19 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
             </Link>
           </div>
         )}
-          <div className="my-1 flex-1">
-            {transactionId && !skipTrx && (
-              <>
-                Trx{" "}
-                <Link
-                  className="text-explorer-turquoise"
-                  href={`/transaction/${transactionId}`}
-                >
-                  {transactionId.slice(0, 10)}
-                </Link>
-              </>
-            )}
-          </div>
+        <div className="my-1 flex-1">
+          {transactionId && !skipTrx && (
+            <>
+              Trx{" "}
+              <Link
+                className="text-explorer-turquoise"
+                href={`/transaction/${transactionId}`}
+              >
+                {transactionId.slice(0, 10)}
+              </Link>
+            </>
+          )}
+        </div>
         {!skipDate && (
           <div className="my-1 flex-1">
             Date:{" "}
@@ -232,28 +225,45 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
         </div>
       </div>
 
-      {!settings.rawJsonView && <div className="flex justify-between items-center">
-        <Button className="p-0" onClick={() => setSeeDetails(!seeDetails)}>
-          {seeDetails ? (
-            <div className="flex items-center gap-x-1">
-              Hide details
-              <ChevronUp />
+      <div
+        className={cn("flex justify-between items-center", {
+          "flex-row-reverse": settings.rawJsonView,
+        })}
+      >
+        {!settings.rawJsonView && (
+          <Button className="p-0" onClick={() => setSeeDetails(!seeDetails)}>
+            {seeDetails ? (
+              <div className="flex items-center gap-x-1">
+                Hide details
+                <ChevronUp />
+              </div>
+            ) : (
+              <div className="flex items-center gap-x-1">
+                See more details
+                <ChevronDown />
+              </div>
+            )}
+          </Button>
+        )}
+        <Button className="p-0" onClick={copyToClipboard}>
+          {copied ? (
+            <div className="flex gap-x-1 items-center text-explorer-ligh-green opacity-0 transition-opacity duration-500 delay-500">
+              JSON Copied <Check width={16} />
             </div>
           ) : (
-            <div className="flex items-center gap-x-1 ">
-              See more details
-              <ChevronDown />
+            <div className="flex gap-x-1 items-center">
+              Copy to clipboard <ClipboardCopy width={16} />{" "}
             </div>
           )}
         </Button>
-        {isShortened && (
+        {isShortened && !settings.rawJsonView && (
           <Link href={`/longOperation/${operationId}`}>
             <Button className=" text-explorer-turquoise">
               See full operation
             </Button>
           </Link>
         )}
-      </div>}
+      </div>
 
       {(seeDetails || settings.rawJsonView) &&
         (settings.rawJsonView || forceStyle === "raw-json" ? (
