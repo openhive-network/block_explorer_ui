@@ -25,11 +25,7 @@ class FetchingService {
         body: JSON.stringify(requestBody),
       });
       const jsonResponse = await response.json();
-      if (
-        typeof jsonResponse === "object" &&
-        Object.keys(jsonResponse).length === 0 &&
-        !Array.isArray(jsonResponse)
-      )
+      if (!response.ok)
         throw new Error("No data from API");
       return jsonResponse
     } catch (error) {
