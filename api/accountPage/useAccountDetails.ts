@@ -14,7 +14,13 @@ const useAccountDetails = (accountName: string) => {
     enabled: !!accountName && !!accountName.length,
   });
 
-  return { accountDetails, isAccountDetailsLoading, isAccountDetailsError };
+  return {
+    accountDetails,
+    isAccountDetailsLoading,
+    isAccountDetailsError,
+    notFound:
+      !isAccountDetailsLoading && accountDetails && accountDetails.id === null,
+  };
 };
 
 export default useAccountDetails;
