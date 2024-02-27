@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { getOperationTypeForDisplay } from "@/utils/UI";
 
 interface DetailedOperationCardProps {
+  isVirtualOperation: boolean;
   operation: Hive.Operation;
   operationId?: number;
   transactionId?: string;
@@ -140,11 +141,12 @@ const userField = [
   "curator",
   "seller",
   "voter",
-  "publisher"
+  "publisher",
 ];
 const userAuthField = ["required_posting_auths", "required_auths"];
 
 const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
+  isVirtualOperation,
   operation,
   operationId,
   transactionId,
@@ -167,17 +169,37 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
 
   // Leave copy feature for later https app
   // const [copied, setCopied] = useState(false);
-  /* 
+  /*
   const copyToClipboard = () => {
     navigator.clipboard.writeText(JSON.stringify(valueAsObject).replaceAll("\\", ""));
     setCopied(true);
     setTimeout(() => setCopied(false), 1000);
   }; */
 
+  const [isSameOp, setIsSameOp] = useState<boolean | null>(false);
+
+  useEffect(() => {
+    if (!transactionId) return;
+
+    const virtualOperationTrxId = (() => {
+      if (!isVirtualOperation) return null;
+      return transactionId;
+    })();
+
+    const res = virtualOperationTrxId === transactionId;
+
+    setIsSameOp(res);
+  }, [transactionId, isVirtualOperation]);
+
   return (
     <div
       className={cn(
-        "w-full bg-explorer-dark-gray px-4 py-2 rounded text-xs	overflow-hidden",
+        `${
+          isSameOp
+            ? "w-full bg-explorer-dark-gray px-8 rounded z-1 pt-2 mt-[-5px] text-xs border-t-[6px] border-explorer-ligh-gray-600 overflow-hidden"
+            : "w-full bg-explorer-dark-gray px-4 z-0 py-2 mt-2 rounded text-xs	overflow-hidden"
+        }
+      `,
         className
       )}
     >
@@ -190,7 +212,11 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
             }
           )}
         >
-          {settings.rawJsonView ? operation.type : getOperationTypeForDisplay(operation.type)}
+          {isVirtualOperation && <p className="text-lime-400">Virtual</p>}
+
+          {settings.rawJsonView
+            ? operation.type
+            : getOperationTypeForDisplay(operation.type)}
         </div>
         {!skipBlock && (
           <div className="my-1 flex-1">
@@ -203,19 +229,19 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
             </Link>
           </div>
         )}
-          <div className="my-1 flex-1">
-            {transactionId && !skipTrx && (
-              <>
-                Trx{" "}
-                <Link
-                  className="text-explorer-turquoise"
-                  href={`/transaction/${transactionId}`}
-                >
-                  {transactionId.slice(0, 10)}
-                </Link>
-              </>
-            )}
-          </div>
+        <div className="my-1 flex-1">
+          {transactionId && !skipTrx && !isSameOp && (
+            <>
+              Trx{" "}
+              <Link
+                className="text-explorer-turquoise"
+                href={`/transaction/${transactionId}`}
+              >
+                {transactionId.slice(0, 10)}
+              </Link>
+            </>
+          )}
+        </div>
         {!skipDate && (
           <div className="my-1 flex-1">
             Date:{" "}
@@ -233,26 +259,26 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
 
       {!settings.rawJsonView && <div className="flex justify-between items-center">
         <Button className="p-0" onClick={() => setSeeDetails(!seeDetails)}>
-          {seeDetails ? (
-            <div className="flex items-center gap-x-1">
-              Hide details
-              <ChevronUp />
-            </div>
-          ) : (
-            <div className="flex items-center gap-x-1 ">
-              See more details
-              <ChevronDown />
-            </div>
+            {seeDetails ? (
+              <div className="flex items-center gap-x-1">
+                Hide details
+                <ChevronUp />
+              </div>
+            ) : (
+              <div className="flex items-center gap-x-1 ">
+                See more details
+                <ChevronDown />
+              </div>
+            )}
+          </Button>
+          {isShortened && (
+            <Link href={`/longOperation/${operationId}`}>
+              <Button className=" text-explorer-turquoise">
+                See full operation
+              </Button>
+            </Link>
           )}
-        </Button>
-        {isShortened && (
-          <Link href={`/longOperation/${operationId}`}>
-            <Button className=" text-explorer-turquoise">
-              See full operation
-            </Button>
-          </Link>
-        )}
-      </div>}
+        </div>}
 
       {(seeDetails || settings.rawJsonView) &&
         (settings.rawJsonView || forceStyle === "raw-json" ? (

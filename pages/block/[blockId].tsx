@@ -3,9 +3,7 @@ import { useRouter } from "next/router";
 import { Loader2 } from "lucide-react";
 import BlockPageNavigation from "@/components/block/BlockPageNavigation";
 import DetailedOperationCard from "@/components/DetailedOperationCard";
-import { scrollTo } from "@/utils/UI";
 import PageNotFound from "@/components/PageNotFound";
-import { Button } from "@/components/ui/button";
 import { useUserSettingsContext } from "@/components/contexts/UserSettingsContext";
 import JSONView from "@/components/JSONView";
 import useBlockData from "@/api/blockPage/useBlockData";
@@ -30,7 +28,6 @@ const defaultParams: BlockSearchParams = {
 
 export default function Block() {
   const router = useRouter();
-  const virtualOpsRef = useRef(null);
 
   const { blockId } = router.query;
 
@@ -77,8 +74,6 @@ export default function Block() {
     []
   );
 
-  const { virtualOperations, nonVirtualOperations } =
-    getSplitOperations(blockOperations);
   const {
     virtualOperations: totalVirtualOperations,
     nonVirtualOperations: totalNonVirtualOperations,
@@ -131,13 +126,6 @@ export default function Block() {
       />
       <div className="fixed top-[calc(100vh-90px)] md:top-[calc(100vh-100px)] w-full flex flex-col items-end px-3 md:px-12">
         <ScrollTopButton />
-        <Button
-          onClick={() => scrollTo(virtualOpsRef)}
-          className="bg-[#ADA9A9] rounded text-white hover:bg-gray-700 w-fit"
-        >
-          <p className="hidden md:inline">To Virtual Ops</p>
-          <p className="md:hidden inline">V Ops</p>
-        </Button>
       </div>
       {loading !== false || trxLoading || totalLoading ? (
         <div className="flex justify-center items-center">
@@ -165,47 +153,33 @@ export default function Block() {
                 className="text-black"
               />
             )}
-          <div className="w-full px-4 md:p-0 md:w-4/5 flex flex-col gap-y-2">
-            {nonVirtualOperations?.map((operation, index) => (
-              <DetailedOperationCard
-                operation={operation.operation}
-                operationId={operation.operation_id}
-                date={new Date(operation.timestamp)}
-                blockNumber={operation.block_num}
-                transactionId={operation.trx_id}
-                key={operation.timestamp + index}
-                skipBlock
-                skipDate
-                isShortened={operation.is_modified}
-              />
-            ))}
+          <div className="w-full px-4 md:p-0 md:w-4/5 flex flex-col">
+            {blockOperations?.operations_result?.map((operation, index) => {
+              return (
+                <DetailedOperationCard
+                  isVirtualOperation={operation.virtual_op}
+                  operation={operation.operation}
+                  operationId={operation.operation_id}
+                  date={new Date(operation.timestamp)}
+                  blockNumber={operation.block_num}
+                  transactionId={operation.trx_id}
+                  key={operation.timestamp + index}
+                  skipBlock
+                  skipDate
+                  isShortened={operation.is_modified}
+                />
+              );
+            })}
             <div
               className="text-center mt-4"
-              ref={virtualOpsRef}
               style={{ scrollMargin: "100px" }}
             >
               <p className="text-3xl text-black">
                 {!!blockOperations &&
-                !blockOperations?.operations_result?.length
-                  ? "No operations were found"
-                  : !!virtualOperations.length
-                  ? "Virtual Operations"
-                  : null}
+                  !blockOperations?.operations_result?.length &&
+                  "No operations were found"}
               </p>
             </div>
-            {virtualOperations?.map((operation, index) => (
-              <DetailedOperationCard
-                operation={operation.operation}
-                operationId={operation.operation_id}
-                date={new Date(operation.timestamp)}
-                blockNumber={operation.block_num}
-                transactionId={operation.trx_id}
-                key={operation.timestamp + index}
-                skipBlock
-                skipDate
-                isShortened={operation.is_modified}
-              />
-            ))}
           </div>
         </section>
       )}
