@@ -205,6 +205,16 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
     return `/@${accountName}${getPageUrlParams(urlParams)}`;
   };
 
+  const getBlockPageLink = (blockNumber: number) => {
+    const urlParams: Explorer.UrlParam[] = [
+      {
+        paramName: "filters",
+        paramValue: dataToURL(blockSearchProps?.operationTypes),
+      },
+    ];
+    return `/block/${blockNumber}${getPageUrlParams(urlParams)}`
+  };
+
   return (
     <div
       className="mt-6 col-start-1 col-span-4 md:col-span-1 mb-6 md:mb-0 flex flex-col gap-y-6"
@@ -266,7 +276,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
               blockSearch.blockSearchData.map((blockId) => (
                 <Link
                   key={blockId}
-                  href={`block/${blockId}`}
+                  href={getBlockPageLink(blockId)}
                   data-testid="result-block"
                 >
                   <div className="m-1 border border-solid p-1">{blockId}</div>
@@ -285,7 +295,10 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
         (!!commentSearch.commentSearchData.total_operations ? (
           <div>
             <Link href={getCommentPageLink()}>
-              <Button className=" bg-blue-800 hover:bg-blue-600 rounded" data-testid="go-to-result-page">
+              <Button
+                className=" bg-blue-800 hover:bg-blue-600 rounded"
+                data-testid="go-to-result-page"
+              >
                 Go to result page
               </Button>
             </Link>

@@ -215,7 +215,7 @@ export const useURLParams = <T>(defaultState: T, omit?: string[]) => {
   };
 
   const getParams = () => {
-    let queryParams = router.query as T;
+    let queryParams = { ...(router.query as T) };
 
     Object.keys(queryParams as ParamObject).forEach((key) => {
       queryParams[key as keyof typeof queryParams] = URLToData(
