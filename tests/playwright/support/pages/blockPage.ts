@@ -10,6 +10,8 @@ export class BlockPage {
   readonly jsonView: Locator;
   readonly operationType: Locator;
   readonly blockProducer: Locator;
+  readonly hash: Locator;
+  readonly prevHash: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -21,6 +23,8 @@ export class BlockPage {
     this.jsonView = page.locator('pre')
     this.operationType = page.locator('.text-explorer-orange')
     this.blockProducer = page.getByTestId('block-producer-name');
+    this.hash = page.locator('.text-base').first();
+    this.prevHash = page.locator('.text-base').nth(1);
   }
 
   async validateBlockPageIsLoaded() {

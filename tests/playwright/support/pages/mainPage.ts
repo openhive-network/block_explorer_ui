@@ -53,6 +53,7 @@ export class MainPage {
   readonly noOperationsMatchingTextSection: string;
   readonly detailedOperationCard: Locator;
   readonly commentPermlinkInout: Locator;
+  readonly currentWitnessName: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -106,6 +107,7 @@ export class MainPage {
     this.noOperationsMatchingTextSection = '.flex.justify-center.w-full.text-black'
     this.detailedOperationCard = page.getByTestId('detailed-operation-card')
     this.commentPermlinkInout = page.getByTestId('permlink-input')
+    this.currentWitnessName = page.getByTestId('current-witness-name')
   }
 
   async gotoBlockExplorerPage() {
