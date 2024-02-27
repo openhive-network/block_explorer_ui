@@ -26,7 +26,7 @@ class FetchingService {
       });
       const jsonResponse = await response.json();
       if (!response.ok)
-        throw new Error("No data from API");
+        throw new Error(`No data from API endpoint: ${url}`);
       return jsonResponse
     } catch (error) {
       return Promise.reject(error);
