@@ -9,6 +9,10 @@ export class Witnesses {
   readonly witnessesTableFirstRow: Locator;
   readonly witnessesTableLastRow: Locator;
   readonly witnessesTableSecondRow: Locator;
+  readonly witnessVotesButtons: Locator;
+  readonly witnessVotersButtons: Locator;
+  readonly firstWitnessVotesButton: Locator;
+  readonly firstWitnessVotersButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -19,6 +23,10 @@ export class Witnesses {
     this.witnessesTableFirstRow = this.witnessesTableRows.first();
     this.witnessesTableLastRow = this.witnessesTableRows.last();
     this.witnessesTableSecondRow = this.witnessesTableRows.nth(1);
+    this.witnessVotesButtons = page.getByTestId('witness-votes-button');
+    this.witnessVotersButtons = page.getByTestId('witness-voters-button');
+    this.firstWitnessVotesButton = this.witnessVotesButtons.first();
+    this.firstWitnessVotersButton = this.witnessVotersButtons.first();
   }
 
   async gotoWitnessesPage() {

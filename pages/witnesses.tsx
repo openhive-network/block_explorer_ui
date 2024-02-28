@@ -109,6 +109,7 @@ export default function Witnesses() {
                         setVoterAccount(singleWitness.witness);
                         setIsVotesHistoryOpen(true);
                       }}
+                      data-testid="witness-votes-button"
                     />
                   </span>
                 </TableCell>
@@ -121,6 +122,7 @@ export default function Witnesses() {
                         setVoterAccount(singleWitness.witness);
                         setIsVotersOpen(true);
                       }}
+                      data-testid="witness-voters-button"
                     />
                   </span>
                 </TableCell>
