@@ -73,6 +73,7 @@ export default function Witnesses() {
               <TableRow
                 key={index}
                 className={`${index % 2 === 0 ? "bg-gray-800" : "bg-gray-900"}`}
+                data-testid="witnesses-table-row"
               >
                 <TableCell
                   className={
@@ -95,7 +96,7 @@ export default function Witnesses() {
                   }
                 >
                   {" "}
-                  <Link href={`/@${singleWitness.witness}`}>
+                  <Link href={`/@${singleWitness.witness}`} data-testid="witness-name">
                     {singleWitness.witness}
                   </Link>
                 </TableCell>
