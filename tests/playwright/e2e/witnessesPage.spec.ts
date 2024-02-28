@@ -1,6 +1,7 @@
 import { test, Locator, expect } from "@playwright/test";
 import { MainPage } from "../support/pages/mainPage";
 import { Witnesses } from "../support/pages/witnesses";
+import { AccountPage } from "../support/pages/accountPage";
 
 test.describe("Witnesses page", () => {
   let mainPage: MainPage;
@@ -129,4 +130,18 @@ test.describe("Witnesses page", () => {
       )
     ).toBe("rgb(255, 255, 255)");
   });
+
+  test("Check if after click on username you will be redirected to user account page", async ({ page }) => {
+    const accountPage = new AccountPage(page);
+    await mainPage.gotoBlockExplorerPage();
+    // Move to the Witnesses page
+    await witnessesPage.gotoWitnessesPage();
+    await witnessesPage.validateWitnessesPageIsLoaded();
+    const witnessName: string = await witnessesPage.witnessName.first().textContent() || '';
+    // Move to the Account page
+    await witnessesPage.witnessName.first().click();
+    await accountPage.validateAccountPageIsLoaded();
+    await accountPage.validateAccountName(witnessName);
+  });
+
 });
