@@ -69,10 +69,11 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
         className={`h-3/4 max-w-3xl overflow-auto bg-white ${
           !witnessVoters && "flex justify-center items-center"
         }`}
+        data-testid="voters-dialog"
       >
         {witnessVoters ? (
           <>
-            <div className="flex  justify-center  items-centertext-center font-semibold	">
+            <div className="flex  justify-center  items-centertext-center font-semibold	" data-testid="voters-dialog-witness-name">
               {accountName}{" "}
               {isWitnessVotersLoading && (
                 <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
@@ -84,6 +85,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                 className="mx-2"
                 checked={showHivePower}
                 onCheckedChange={setShowHivePower}
+                data-testid="voters-dialog-vests-hivepower-button"
               />
               <label>Hive Power</label>
             </div>
@@ -109,7 +111,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                   ))}
                 </TableRow>
               </TableHeader>
-              <TableBody>
+              <TableBody data-testid="voters-dialog-table-body">
                 {witnessVoters &&
                   witnessVoters.map((voter, index) => (
                     <TableRow
@@ -125,23 +127,23 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                             : "bg-gray-900 md:bg-inherit"
                         }`}
                       >
-                        <Link href={`/@${voter.voter}`}>
+                        <Link href={`/@${voter.voter}`} data-testid="voter-name">
                           {voter.voter}
                         </Link>
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right" data-testid="vote-power">
                         {showHivePower
                           ? formatNumber(voter.votes_hive_power, false)
                           : formatNumber(voter.vests, true)
                         }
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right" data-testid="account-power">
                         {showHivePower
                           ? formatNumber(voter.account_hive_power, false)
                           : formatNumber(voter.account_vests, true)
                         }
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right" data-testid="proxied-power">
                         {showHivePower
                           ? formatNumber(voter.proxied_hive_power, false)
                           : formatNumber(voter.proxied_vests, true)

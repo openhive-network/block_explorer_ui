@@ -28,5 +28,4 @@ export class VotesHistoryDialog {
     this.votesHistoryDialogCurrentVoterPowerColumn = page.getByTestId('current-voter-power');
     this.votesHistoryDialogCloseButton = page.getByTestId('close-dialog-button');
   }
-
 }
