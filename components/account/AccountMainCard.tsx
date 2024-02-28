@@ -78,16 +78,12 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
             <Loader2 className="animate-spin mt-1h-12 w-12 ml-3 ..." />
           </div>
         }
-        <div className="flex justify-between p-5 break-all">
-          <div className="text-center">
-            <p className="text-xl">Posts</p>
-            <p className="text-lg">{accountDetails.post_count}</p>
-          </div>
-          <div className="text-center">
-            <p className="text-lg">Creation Date</p>
-            <p className="text-lg">
+        <div className="flex justify-between p-4">
+          <div className="text-center flex justify-center w-full gap-2">
+            <span className="text-lg">Creation Date:</span>
+            <span className="text-lg">
               {moment(accountDetails.created).format("DD/MM/YYYY")}
-            </p>
+            </span>
           </div>
         </div>
       </div>
