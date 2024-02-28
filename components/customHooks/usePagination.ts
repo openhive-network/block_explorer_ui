@@ -12,18 +12,20 @@ interface PaginationProps {
   pageSize: number;
   siblingCount: number;
   currentPage: number;
+  isMirrored?: boolean;
 }
 
-const range: React.FC<RangeProps> = ({ start, end }) => {
+const range: (props: RangeProps) => number[] = ({ start, end }) => {
   let length = end - start + 1;
   return Array.from({ length }, (_, idx) => idx + start);
 };
 
-export const usePagination: React.FC<PaginationProps> = ({
+export const usePagination: (props: PaginationProps) => (number | string)[] | undefined = ({
   totalCount,
   pageSize,
   siblingCount = 2,
   currentPage,
+  isMirrored
 }) => {
   const paginationRange = useMemo(() => {
     const totalPageCount = Math.ceil(totalCount / pageSize);
@@ -58,14 +60,14 @@ export const usePagination: React.FC<PaginationProps> = ({
 
     if (!shouldShowLeftDots && shouldShowRightDots) {
       let leftItemCount = 3 + 2 * siblingCount;
-      let leftRange: any = range({ start: 1, end: leftItemCount });
+      let leftRange = range({ start: 1, end: leftItemCount });
 
       return [...leftRange, DOTS, totalPageCount];
     }
 
     if (shouldShowLeftDots && !shouldShowRightDots) {
       let rightItemCount = 3 + 2 * siblingCount;
-      let rightRange: any = range({
+      let rightRange = range({
         start: totalPageCount - rightItemCount + 1,
         end: totalPageCount,
       });
@@ -73,7 +75,7 @@ export const usePagination: React.FC<PaginationProps> = ({
     }
 
     if (shouldShowLeftDots && shouldShowRightDots) {
-      let middleRange: any = range({
+      let middleRange = range({
         start: leftSiblingIndex,
         end: rightSiblingIndex,
       });
@@ -81,5 +83,7 @@ export const usePagination: React.FC<PaginationProps> = ({
     }
   }, [totalCount, pageSize, siblingCount, currentPage]);
 
-  return paginationRange;
+
+
+  return isMirrored ? paginationRange?.reverse() : paginationRange;
 };

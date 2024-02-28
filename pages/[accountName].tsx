@@ -23,6 +23,7 @@ import AccountDetailsCard from "@/components/account/AccountDetailsCard";
 import Head from "next/head";
 import OperationsTable from "@/components/OperationsTable";
 import { convertBooleanArrayToIds, convertOperationResultsToTableOperations } from "@/lib/utils";
+import CustomPagination2 from "@/components/Pagination";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
