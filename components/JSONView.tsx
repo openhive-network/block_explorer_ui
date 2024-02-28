@@ -9,7 +9,7 @@ interface JSONViewProps {
 const JSONView: React.FC<JSONViewProps> = ({ json, className }) => {
   return (
     <div className={className}>
-      <pre>{JSON.stringify(formatJson(json), null, 2)}</pre>
+      <pre>{JSON.stringify(json)}</pre>
     </div>
   );
 };

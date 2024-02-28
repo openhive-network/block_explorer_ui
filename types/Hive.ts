@@ -309,6 +309,9 @@ declare module Hive {
     transaction_json: TransactionDetails;
     timestamp: Date;
     age: string;
+    transaction_id: string;
+    block_num: number;
+    transaction_num: number;
   }
 
   interface TransactionDetails {
@@ -318,9 +321,6 @@ declare module Hive {
     expiration: Date;
     operations: Operation[];
     signatures: string[];
-    transaction_id: string;
-    block_num: number;
-    transaction_num: number;
   }
 
   interface AccountDetailsQueryResponse {
