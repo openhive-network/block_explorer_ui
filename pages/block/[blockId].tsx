@@ -222,7 +222,7 @@ export default function Block() {
                 )}
               <div className="w-full px-4 md:p-0 md:w-4/5 flex flex-col gap-y-2">
                 {nonVirtualOperations?.map((operation, index) => (
-                  <DetailedOperationCard
+                  <DetailedOperationCard 
                     operation={operation.operation}
                     operationId={operation.operation_id}
                     date={new Date(operation.timestamp)}

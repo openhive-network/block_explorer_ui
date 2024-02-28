@@ -37,7 +37,7 @@ const getOneLineDescription = (operation: Hive.Operation) => {
       return (
         <>
           <Link href={`/@${user}`} className="text-explorer-ligh-green">
-            {user}
+            {user} 
           </Link>{" "}
           sent custom json
         </>
@@ -184,6 +184,7 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
     >
       <div className="flex justify-between items-center mb-2 flex-wrap">
         <div
+          data-testid="operation-type"
           className={cn(
             "text-explorer-orange font-bold w-full md:w-auto text-sm flex-2 ",
             {

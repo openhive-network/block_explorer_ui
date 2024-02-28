@@ -44,4 +44,28 @@ test.describe('Block page tests', () => {
         await expect(blockPage.hash).toBeVisible()
         await expect(blockPage.prevHash).toBeVisible()
     })
+
+    test('Validate that amount of the operations and virtual operations are displayed correctly', async ({page, request}) =>{
+        await mainPage.headBlockCardBlockLink.click()
+        await expect(blockPage.blockProducer).toBeVisible()
+        await expect(blockPage.operations).toBeVisible()
+        await expect(blockPage.operations).toContainText('Operations')
+
+        await expect(blockPage.virtualOperations).toBeVisible()
+        await expect(blockPage.virtualOperations).toContainText('Virtual operations')
+    })
+
+    test('Validate that See more details is able in the operation list', async ({page, request}) =>{
+        await mainPage.headBlockCardBlockLink.click()
+        await expect(blockPage.blockProducer).toBeVisible()
+        await expect(blockPage.seeMoreDetailsBtn.first()).toBeVisible()
+    })
+
+    test.skip('Validate that you can move to the authors operation page', async ({page}) =>{
+        await mainPage.headBlockCardBlockLink.click()
+        await expect(blockPage.blockProducer).toBeVisible()
+
+        await blockPage.blockProducer.click()
+        await expect(accountPage.accountOperationList).toBeVisible()
+    });  
 });

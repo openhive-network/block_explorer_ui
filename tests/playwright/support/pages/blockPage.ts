@@ -12,6 +12,10 @@ export class BlockPage {
   readonly blockProducer: Locator;
   readonly hash: Locator;
   readonly prevHash: Locator;
+  readonly operations: Locator;
+  readonly virtualOperations: Locator;
+  readonly seeMoreDetailsBtn: Locator;
+  readonly detailedOperationCard: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -23,8 +27,12 @@ export class BlockPage {
     this.jsonView = page.locator('pre')
     this.operationType = page.locator('.text-explorer-orange')
     this.blockProducer = page.getByTestId('block-producer-name');
-    this.hash = page.locator('.text-base').first();
-    this.prevHash = page.locator('.text-base').nth(1);
+    this.hash = page.getByTestId('hash');
+    this.prevHash = page.getByTestId('prev-hash');
+    this.operations = page.locator('.my-2').nth(1);
+    this.virtualOperations = page.locator('.my-2').nth(2);
+    this.seeMoreDetailsBtn = page.getByRole('button', {name: "See more details"})
+    this.detailedOperationCard = page.getByTestId("detailed-operation-card")
   }
 
   async validateBlockPageIsLoaded() {
