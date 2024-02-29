@@ -10,7 +10,6 @@ import {
 } from "../ui/accordion";
 import DetailedOperationCard from "../DetailedOperationCard";
 import { config } from "@/Config";
-import CustomPagination from "../CustomPagination";
 import useCommentSearch from "@/api/common/useCommentSearch";
 import useBlockSearch from "@/api/homePage/useBlockSearch";
 import useOperationTypes from "@/api/common/useOperationsTypes";
@@ -31,6 +30,7 @@ import CommentsSearch from "./searches/CommentsSearch";
 import { useUserSettingsContext } from "../contexts/UserSettingsContext";
 import Hive from "@/types/Hive";
 import OperationsTable from "../OperationsTable";
+import CustomPagination from "../CustomPagination";
 
 interface SearchesSectionProps {}
 
@@ -351,7 +351,6 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
                 totalCount={commentSearch.commentSearchData?.total_operations}
                 pageSize={config.standardPaginationSize}
                 onPageChange={changeCommentSearchPagination}
-                shouldScrollToTop={false}
               />
             </div>
             <div className="flex justify-end items-center">
@@ -411,7 +410,6 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
                 }
                 pageSize={config.standardPaginationSize}
                 onPageChange={changeAccountOperationsPagination}
-                shouldScrollToTop={false}
                 isMirrored={true}
               />
             </div>

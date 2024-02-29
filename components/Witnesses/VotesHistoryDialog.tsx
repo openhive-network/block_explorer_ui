@@ -19,10 +19,10 @@ import { Switch } from "../ui/switch";
 import { cn, formatNumber } from "@/lib/utils";
 import moment from "moment";
 import { config } from "@/Config";
-import CustomPagination from "../CustomPagination";
 import { ArrowUpCircleIcon, ArrowDownCircleIcon } from "lucide-react";
 import useWitnessVotesHistory from "@/api/common/useWitnessVotesHistory";
 import JumpToPage from "../JumpToPage";
+import CustomPagination from "../CustomPagination";
 
 type VotersDialogProps = {
   accountName: string;

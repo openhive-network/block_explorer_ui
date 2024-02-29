@@ -1,11 +1,10 @@
 import Hive from "@/types/Hive";
-import CustomPagination from "../CustomPagination";
 import JumpToPage from "../JumpToPage";
 import { config } from "@/Config";
 import OperationTypesDialog from "../OperationTypesDialog";
 import { getOperationButtonTitle } from "@/utils/UI";
 import { convertBooleanArrayToIds, convertIdsToBooleanArray } from "@/lib/utils";
-import CustomPagination2 from "../Pagination";
+import CustomPagination from "../CustomPagination";
 
 interface AccountTopBarProps {
   page: number;
@@ -34,7 +33,7 @@ const AccountTopBar: React.FC<AccountTopBarProps> = ({
       data-testid="account-top-bar"
     >
       <div className="flex justify-center items-center">
-        <CustomPagination2
+        <CustomPagination
           currentPage={page}
           totalCount={accountOperations.total_operations || 0}
           pageSize={config.standardPaginationSize}

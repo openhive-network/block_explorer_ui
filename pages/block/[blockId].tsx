@@ -14,7 +14,6 @@ import useOperationsTypes from "@/api/common/useOperationsTypes";
 import BlockDetails from "@/components/block/BlockDetails";
 import Hive from "@/types/Hive";
 import ScrollTopButton from "@/components/ScrollTopButton";
-import CustomPagination from "@/components/CustomPagination";
 import { useURLParams } from "@/utils/Hooks";
 import useOperationsCountInBlock from "@/api/blockPage/useOperationsInBlock";
 import Explorer from "@/types/Explorer";
@@ -27,6 +26,7 @@ import {
   convertBooleanArrayToIds,
   convertOperationResultsToTableOperations,
 } from "@/lib/utils";
+import CustomPagination from "@/components/CustomPagination";
 
 interface BlockSearchParams {
   blockId?: number;
