@@ -34,14 +34,6 @@ const AccountTopBar: React.FC<AccountTopBarProps> = ({
       data-testid="account-top-bar"
     >
       <div className="flex justify-center items-center">
-        {/* <CustomPagination
-            currentPage={page}
-            totalCount={accountOperations.total_operations || 0}
-            pageSize={config.standardPaginationSize}
-            onPageChange={setPage}
-            isMirrored={true}
-            className="flex-grows"
-          /> */}
         <CustomPagination2
           currentPage={page}
           totalCount={accountOperations.total_operations || 0}

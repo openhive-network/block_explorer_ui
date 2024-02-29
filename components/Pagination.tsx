@@ -25,7 +25,7 @@ const CustomPagination2: React.FC<CustomPaginationProps> = ({
   siblingCount = 1,
   pageSize,
   onPageChange,
-  isMirrored
+  isMirrored,
 }) => {
   const paginationRange = usePagination({
     currentPage,
@@ -49,42 +49,48 @@ const CustomPagination2: React.FC<CustomPaginationProps> = ({
   return (
     <Pagination>
       <PaginationContent className="md:gap-x-4">
-        <PaginationItem onClick={onPrevious} className="cursor-pointer">
+        <PaginationItem
+          onClick={isMirrored ? onNext : onPrevious}
+          className="cursor-pointer"
+        >
           <PaginationPrevious />
         </PaginationItem>
-
-        {paginationRange?.map((pageNumber: number | string, i: number) => {
-          if (pageNumber === DOTS) {
-            return (
-              <PaginationItem key={i}>
-                <PaginationEllipsis />
-              </PaginationItem>
-            );
-          } else {
-            return (
-              <PaginationItem
-                key={i}
-                className={cn(
-                  "px-1 md:px-3 md:py-1.5 rounded-full cursor-pointer hover:bg-white",
-                  {
-                    "bg-white font-bold": currentPage === pageNumber,
-                  }
-                )}
-                onClick={() => onPageChange(Number(pageNumber))}
-              >
-                <PaginationLink
-                  className={cn("h-fit", {
-                    "font-bold": currentPage === pageNumber,
-                  })}
+        {(isMirrored ? paginationRange.reverse() : paginationRange)?.map(
+          (pageNumber: number | string, i: number) => {
+            if (pageNumber === DOTS) {
+              return (
+                <PaginationItem key={i}>
+                  <PaginationEllipsis />
+                </PaginationItem>
+              );
+            } else {
+              return (
+                <PaginationItem
+                  key={i}
+                  className={cn(
+                    "px-1 md:px-3 md:py-1.5 rounded-full cursor-pointer hover:bg-white",
+                    {
+                      "bg-white font-bold": currentPage === pageNumber,
+                    }
+                  )}
+                  onClick={() => onPageChange(Number(pageNumber))}
                 >
-                  {pageNumber}
-                </PaginationLink>
-              </PaginationItem>
-            );
+                  <PaginationLink
+                    className={cn("h-fit", {
+                      "font-bold": currentPage === pageNumber,
+                    })}
+                  >
+                    {pageNumber}
+                  </PaginationLink>
+                </PaginationItem>
+              );
+            }
           }
-        })}
-
-        <PaginationItem onClick={onNext} className="cursor-pointer">
+        )}
+        <PaginationItem
+          onClick={isMirrored ? onPrevious : onNext}
+          className="cursor-pointer"
+        >
           <PaginationNext />
         </PaginationItem>
       </PaginationContent>
