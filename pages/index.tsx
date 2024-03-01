@@ -14,12 +14,16 @@ import useHeadBlock from "@/api/homePage/useHeadBlock";
 import useBlockOperations from "@/api/common/useBlockOperations";
 import { useUserSettingsContext } from "@/components/contexts/UserSettingsContext";
 import Head from "next/head";
+import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function Home() {
   const { settings } = useUserSettingsContext();
   const witnesses = useWitnesses(config.witnessesPerPages.home).witnessData;
-  const headBlockNum = useHeadBlockNumber(settings.liveData).headBlockNumberData;
-  const dynamicGlobalQueryData = useDynamicGlobal(headBlockNum).dynamicGlobalData;
+  const headBlockNum = useHeadBlockNumber(
+    settings.liveData
+  ).headBlockNumberData;
+  const dynamicGlobalQueryData =
+    useDynamicGlobal(headBlockNum).dynamicGlobalData;
   const headBlockData = useHeadBlock(headBlockNum).headBlockData;
   const blockOperations = useBlockOperations(
     headBlockNum || 0,
@@ -28,10 +32,10 @@ export default function Home() {
 
   return (
     <>
-    <Head>
-      <title>Hive Explorer</title>
-    </Head>
-      <div className="grid grid-cols-3 text-white mx-4 md:mx-8 w-full">
+      <Head>
+        <title>Hive Explorer</title>
+      </Head>
+      <div className="grid grid-cols-3 text-white mx-4 w-full gap-6 px-6">
         <HeadBlockCard
           headBlockCardData={dynamicGlobalQueryData}
           transactionCount={blockOperations?.operations_result?.length}
@@ -41,16 +45,22 @@ export default function Home() {
           <LastBlocksWidget headBlock={headBlockNum} className="mt-6 md:mt-0" />
           <SearchesSection />
         </div>
-        <div
-          className="col-start-1 md:col-start-4 col-span-6 md:col-span-1 bg-explorer-dark-gray py-2 rounded text-xs	overflow-hidden md:mx-6 h-fit"
+        <Card
+          className="col-start-1 md:col-start-4 col-span-6 md:col-span-1"
           data-testid="top-witnesses-sidebar"
         >
-          <div className="text-lg text-center">Top Witnesses</div>
+          <CardHeader>
+            <CardTitle>Top Witnesses</CardTitle>
+          </CardHeader>
           <Table>
             <TableBody>
-              { witnesses &&
+              {witnesses &&
                 witnesses.map((witness, index) => (
-                  <TableRow className=" text-base" key={index} data-testid="witnesses-name">
+                  <TableRow
+                    className=" text-base"
+                    key={index}
+                    data-testid="witnesses-name"
+                  >
                     <TableCell>{index + 1}</TableCell>
                     <TableCell>
                       <Link
@@ -75,10 +85,14 @@ export default function Home() {
                 ))}
             </TableBody>
           </Table>
-          <div className="flex justify-center align-center text-lg hover:text-explorer-turquoise">
-            <Link data-testid="see-more-btn" href={"/witnesses"}>See More</Link>
-          </div>
-        </div>
+          <CardFooter>
+            <div className="w-full flex justify-center align-center text-lg hover:text-explorer-turquoise">
+              <Link data-testid="see-more-btn" href={"/witnesses"}>
+                See More
+              </Link>
+            </div>
+          </CardFooter>
+        </Card>
       </div>
     </>
   );

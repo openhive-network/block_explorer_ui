@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/utils/Hooks";
 import { useRouter } from "next/router";
 import useLastBlocks from "@/api/homePage/useLastBlocks";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 interface LastBlocksWidgetProps {
   headBlock?: number;
@@ -168,85 +169,92 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
   );
 
   return (
-    <div
+    <Card
       className={cn(
-        "w-[95%] m-auto md:w-full h-[420px] bg-explorer-dark-gray rounded text-white",
+        "w-[95%] md:w-full h-[460px]",
         className
       )}
       data-testid="last-block-widget"
     >
-      <p className="w-full text-center pt-2">Last Blocks</p>
-      <ResponsiveContainer width="100%" height="100%">
-        <BarChart
-          data={data}
-          margin={{
-            top: 20,
-            right: 55,
-            left: isMobile ? 0 : 10,
-            bottom: isMobile ? 90 : 60,
-          }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" stroke="#fff" axisLine={false}></XAxis>
-          <YAxis
-            stroke="#fff"
-            axisLine={false}
-            domain={[
-              0,
-              (dataMax: number) => (Math.floor(dataMax / 50) + 1) * 50,
-            ]}
-            allowDataOverflow={true}
-            type="number"
-            interval="preserveStartEnd"
-          />
-          <Tooltip cursor={{ fill: "#0000002A" }} content={<CustomTooltip />} />
-          <Legend wrapperStyle={{ position: "relative" }} align="center" />
-          <Bar
-            dataKey="other"
-            stackId="a"
-            fill="#3a86ff"
-            className="cursor-pointer"
-            onClick={(data, _index) => router.push(`/block/${data.name}`)}
-          />
-          <Bar
-            dataKey="virtual"
-            stackId="a"
-            fill="#b010bf"
-            className="cursor-pointer"
-            onClick={(data, _index) => router.push(`/block/${data.name}`)}
-          />
-          <Bar
-            dataKey="comment"
-            stackId="a"
-            fill="#ffbe0b"
-            className="cursor-pointer"
-            onClick={(data, _index) => router.push(`/block/${data.name}`)}
-          />
-          <Bar
-            dataKey="custom"
-            stackId="a"
-            fill="#ff006e"
-            className="cursor-pointer"
-            onClick={(data, _index) => router.push(`/block/${data.name}`)}
-          />
-          <Bar
-            dataKey="vote"
-            stackId="a"
-            fill="#fb5607"
-            className="cursor-pointer"
-            onClick={(data, _index) => router.push(`/block/${data.name}`)}
-          />
-          <Bar
-            dataKey="transfer"
-            stackId="a"
-            fill="#8338ec"
-            label={<CustomBarLabel />}
-            className="cursor-pointer"
-            onClick={(data, _index) => router.push(`/block/${data.name}`)}
-          />
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
+      <CardHeader>
+        <CardTitle>Last Blocks</CardTitle>
+      </CardHeader>
+      <CardContent className="w-full h-full">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            data={data}
+            margin={{
+              top: 20,
+              right: 55,
+              left: isMobile ? 0 : 10,
+              bottom: isMobile ? 90 : 60,
+            }}
+          >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" stroke="#fff" axisLine={false}></XAxis>
+            <YAxis
+              stroke="#fff"
+              axisLine={false}
+              domain={[
+                0,
+                (dataMax: number) => (Math.floor(dataMax / 50) + 1) * 50,
+              ]}
+              allowDataOverflow={true}
+              type="number"
+              interval="preserveStartEnd"
+            />
+            <Tooltip
+              cursor={{ fill: "#0000002A" }}
+              content={<CustomTooltip />}
+            />
+            <Legend wrapperStyle={{ position: "relative" }} align="center" />
+            <Bar
+              dataKey="other"
+              stackId="a"
+              fill="#3a86ff"
+              className="cursor-pointer"
+              onClick={(data, _index) => router.push(`/block/${data.name}`)}
+            />
+            <Bar
+              dataKey="virtual"
+              stackId="a"
+              fill="#b010bf"
+              className="cursor-pointer"
+              onClick={(data, _index) => router.push(`/block/${data.name}`)}
+            />
+            <Bar
+              dataKey="comment"
+              stackId="a"
+              fill="#ffbe0b"
+              className="cursor-pointer"
+              onClick={(data, _index) => router.push(`/block/${data.name}`)}
+            />
+            <Bar
+              dataKey="custom"
+              stackId="a"
+              fill="#ff006e"
+              className="cursor-pointer"
+              onClick={(data, _index) => router.push(`/block/${data.name}`)}
+            />
+            <Bar
+              dataKey="vote"
+              stackId="a"
+              fill="#fb5607"
+              className="cursor-pointer"
+              onClick={(data, _index) => router.push(`/block/${data.name}`)}
+            />
+            <Bar
+              dataKey="transfer"
+              stackId="a"
+              fill="#8338ec"
+              label={<CustomBarLabel />}
+              className="cursor-pointer"
+              onClick={(data, _index) => router.push(`/block/${data.name}`)}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      </CardContent>
+    </Card>
   );
 };
 
