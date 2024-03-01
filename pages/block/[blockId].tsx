@@ -165,7 +165,7 @@ export default function Block() {
         <div>Loading ...</div>
       ) : (
         <div
-          className="w-full h-full"
+          className="w-full h-full flex flex-col justify-center items-center gap-y-3"
           style={{ scrollMargin: "100px" }}
           id="block-page-top"
         >
@@ -207,7 +207,7 @@ export default function Block() {
               className="w-full md:w-[962px] mt-6 m-auto py-2 px-4 bg-explorer-dark-gray rounded text-white text-xs break-words break-all"
             />
           ) : (
-            <section className="md:px-10 flex flex-col items-center justify-center text-white" data-testid="block-page-operation-list">
+            <section className="w-full md:w-[962px] md:px-10 flex flex-col items-center justify-center text-white" data-testid="block-page-operation-list">
               {totalOperations?.total_operations &&
                 totalOperations?.total_operations > 1000 && (
                   <CustomPagination
@@ -220,7 +220,7 @@ export default function Block() {
                     className="text-black"
                   />
                 )}
-              <div className="w-full px-4 md:p-0 md:w-4/5 flex flex-col gap-y-2">
+              <div className="w-full flex flex-col gap-y-2">
                 {nonVirtualOperations?.map((operation, index) => (
                   <DetailedOperationCard
                     operation={operation.operation}
