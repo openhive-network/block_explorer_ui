@@ -230,7 +230,10 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
           {userNames.map((userName, index) => (
             <>
               {index !== 0 && ", "}
-              <span className="text-explorer-turquoise" key={userName}>{userName}</span>
+              <Link href={`/@${userName}`}>
+
+                <span className="text-explorer-turquoise" key={userName}>{userName}</span>
+              </Link>
             </>
           ))}
         </div>
