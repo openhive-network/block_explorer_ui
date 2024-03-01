@@ -24,22 +24,18 @@ interface DetailedOperationCardProps {
   isShortened?: boolean;
   forceStyle?: "raw-json" | "table";
 }
-
 const getOneLineDescription = (operation: Hive.Operation) => {
   const { value } = operation;
   const { from, to, amount, voter, weight, author, permlink, parent_author } =
     value;
-  switch (operation.type) {
-    case "custom_json_operation":
+    switch (operation.type) {
+      case "custom_json_operation":
       const user =
         operation.value.required_auths?.at(0) ||
         operation.value.required_posting_auths?.at(0);
       return (
         <>
-          <Link href={`/@${user}`} className="text-explorer-ligh-green">
-            {user}
-          </Link>{" "}
-          sent custom json
+          {!!operation.value && typeof operation.value === "string" && operation.value}
         </>
       );
 
@@ -236,6 +232,11 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
               </Link>
             </>
           ))}
+        </div>
+      </div>
+      <div className="w-full flex justify-center truncate mb-2">
+        <div className="inline truncate">
+          {getOneLineDescription(operation)}
         </div>
       </div>
       {!settings.rawJsonView && <div className="flex justify-between items-center">
