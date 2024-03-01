@@ -108,8 +108,8 @@ export default function Account() {
   };
 
   const formattedAccountOperations = useOperationsFormatter(
-    accountOperations
-  ) as Hive.AccountOperationsResponse;
+    accountOperations?.operations_result
+  ) as Hive.OperationResponse[];
 
   const handleOpenVotesHistoryModal = () => {
     setIsVotesHistoryModalOpen(!isVotesHistoryModalOpen);
@@ -326,7 +326,7 @@ export default function Account() {
                 )
               )
             ) : (
-              formattedAccountOperations?.operations_result?.map(
+              formattedAccountOperations?.map(
                 (operation: Hive.OperationResponse) => (
                   <div
                     className="m-2"
