@@ -12,6 +12,7 @@ import { useRouter } from "next/router";
 import { formatAccountName } from "@/utils/StringUtils";
 import useSearchRanges from "@/components/searchRanges/useSearchRanges";
 import { getPageUrlParams } from "@/lib/utils";
+import { Card, CardContent } from "@/components/ui/card";
 
 const defaultSearchParams: Explorer.CommentSearchParams = {
   accountName: undefined,
@@ -91,14 +92,16 @@ const Comments: React.FC = () => {
 
   return (
     <div className="w-full md:w-4/5" data-testid="comments-search-comments-page">
-      <div className="bg-explorer-dark-gray text-white p-4 rounded">
-        <CommentsSearch
-          startCommentsSearch={startCommentSearch}
-          operationsTypes={operationsTypes}
-          data={paramsState}
-          loading={commentSearch.commentSearchDataLoading}
-        />
-      </div>
+      <Card>
+        <CardContent className="py-2">
+          <CommentsSearch
+            startCommentsSearch={startCommentSearch}
+            operationsTypes={operationsTypes}
+            data={paramsState}
+            loading={commentSearch.commentSearchDataLoading}
+          />
+        </CardContent>
+      </Card>
       {commentSearch.commentSearchData && (
         <>
           <div className="w-full flex justify-center items-center mt-4">
