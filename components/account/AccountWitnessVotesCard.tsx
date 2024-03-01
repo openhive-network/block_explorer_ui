@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import Link from "next/link";
+import { Card, CardContent, CardHeader } from "../ui/card";
 
 type AccountWitnessVotesCardProps = {
   voters: string[];
@@ -18,19 +19,18 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
   };
 
   return (
-    <div className="bg-explorer-dark-gray p-2 rounded m-2 md:mx-6" data-testid="witness-votes-dropdown">
-      <div
-        onClick={handlePropertiesVisibility}
-        className="h-full flex justify-between align-center p-2 hover:bg-slate-600 cursor-pointer"
-      >
-        <div className="text-lg">Witness Votes</div>
+    <Card className="mx-2" data-testid="witness-votes-dropdown">
+      <CardHeader className="px-2 hover:bg-slate-600 cursor-pointer rounded">
+        <div
+          onClick={handlePropertiesVisibility}
+          className="h-full flex justify-between align-center p-2 "
+        >
+          <div className="text-lg">Witness Votes</div>
 
-        {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
-      </div>
-      <div
-        hidden={isPropertiesHidden}
-        className="flex-column"
-      >
+          {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
+        </div>
+      </CardHeader>
+      <CardContent className="px-2" hidden={isPropertiesHidden}>
         {voters?.map((voter: any, index: any) => {
           return (
             <div
@@ -45,8 +45,8 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
             </div>
           );
         })}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 

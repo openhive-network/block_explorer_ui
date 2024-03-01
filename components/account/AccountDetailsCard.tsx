@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import moment from "moment";
 import { config } from "@/Config";
+import { Card, CardContent, CardHeader } from "../ui/card";
 
 type AccountDetailsCardProps = {
   header: string;
@@ -40,12 +41,14 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
         </div>
       );
     } else if (typeof userDetails[key] === "number") {
-      return userDetails[key].toLocaleString()
+      return userDetails[key].toLocaleString();
     } else if (Date.parse(userDetails[key])) {
-      return  moment(new Date(userDetails[key])).format(config.baseMomentTimeFormat)
+      return moment(new Date(userDetails[key])).format(
+        config.baseMomentTimeFormat
+      );
     } else if (typeof userDetails[key] === "string") {
       return userDetails[key];
-    } else  return JSON.stringify(userDetails[key])
+    } else return JSON.stringify(userDetails[key]);
   };
 
   const handlePropertiesVisibility = () => {
@@ -53,44 +56,41 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
   };
 
   return (
-    <div className="bg-explorer-dark-gray p-2 rounded mt-2 mx-2 md:mx-6" data-testid="properties-dropdown">
-      <div
-        onClick={handlePropertiesVisibility}
-        className="h-full flex justify-between align-center p-2 hover:bg-slate-600 cursor-pointer"
-      >
-        <div className="text-lg">{header}</div>
-        {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
-      </div>
-      <div
-        hidden={isPropertiesHidden}
-        className="flex-column"
-      >
-        {keys.map((key: string, index: number) => {
-          if (
-            [
-              "json_metadata",
-              "posting_json_metadata",
-              "witness_votes",
-              "profile_image",
-            ].includes(key)
-          )
-            return null;
-          return (
-            <div
-              key={index}
-              className="flex justify-between m-1 whitespace-pre-line"
-            >
-              <div className="border-b border-solid border-gray-700 flex justify-between py-1 mr-4">
-                {key}
+    <Card className="mx-2" data-testid="properties-dropdown">
+      <CardHeader className="px-2 hover:bg-slate-600 cursor-pointer rounded">
+        <div
+          onClick={handlePropertiesVisibility}
+          className="h-full flex justify-between align-center p-2 "
+        >
+          <div className="text-lg">{header}</div>
+          {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
+        </div>
+      </CardHeader>
+      <CardContent hidden={isPropertiesHidden} className="px-2">
+          {keys.map((key: string, index: number) => {
+            if (
+              [
+                "json_metadata",
+                "posting_json_metadata",
+                "witness_votes",
+                "profile_image",
+              ].includes(key)
+            )
+              return null;
+            return (
+              <div
+                key={index}
+                className="flex justify-between m-1 whitespace-pre-line"
+              >
+                <div className="border-b border-solid border-gray-700 flex justify-between py-1 mr-4">
+                  {key}
+                </div>
+                <span className=" overflow-auto">{render_key(key)}</span>
               </div>
-              <span className=" overflow-auto">
-                {render_key(key)}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-    </div>
+            );
+          })}
+      </CardContent>
+    </Card>
   );
 };
 export default AccountDetailsCard;

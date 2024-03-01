@@ -21,6 +21,7 @@ import ScrollTopButton from "@/components/ScrollTopButton";
 import { useUserSettingsContext } from "@/components/contexts/UserSettingsContext";
 import AccountDetailsCard from "@/components/account/AccountDetailsCard";
 import Head from "next/head";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -219,9 +220,9 @@ export default function Account() {
 
   return (
     <>
-    <Head>
-    <title>@{accountNameFromRoute} - Hive Explorer</title>
-    </Head>
+      <Head>
+        <title>@{accountNameFromRoute} - Hive Explorer</title>
+      </Head>
       <div className="flex items-center justify-end w-full min-h-[64px] bg-explorer-orange -mt-4 px-2 md:px-8 fixed z-20">
         {paramsState.page && accountOperations && (
           <AccountPagination
@@ -236,7 +237,7 @@ export default function Account() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 text-white mx-8 mt-12 md:mt-14 w-full">
-        <div className="mt-2 col-start-1 col-span-1">
+        <div className="col-start-1 col-span-1 flex flex-col gap-y-1">
           <AccountMainCard
             accountDetails={accountDetails}
             accountName={accountNameFromRoute}
@@ -279,24 +280,28 @@ export default function Account() {
           data-testid="account-operation-list"
         >
           <div>
-            <div className="bg-explorer-dark-gray text-white p-4 rounded-[6px] mx-2">
-              <div className="ml-2">Ranges</div>
-              <SearchRanges rangesProps={searchRanges} />
-              <div className="flex items-center justify-between m-2">
-                <Button
-                  className=" bg-blue-800 hover:bg-blue-600 rounded"
-                  onClick={() => handleSearch(true)}
-                >
-                  <span>Apply filters</span>{" "}
-                </Button>
-                <Button
-                  className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]"
-                  onClick={() => handleFilterClear()}
-                >
-                  <span>Clear filters</span>{" "}
-                </Button>
-              </div>
-            </div>
+            <Card className="mx-2">
+              <CardHeader>
+                <CardTitle>Ranges</CardTitle>
+              </CardHeader>
+              <CardContent className="mt-4">
+                <SearchRanges rangesProps={searchRanges} />
+                <div className="flex items-center justify-between my-2">
+                  <Button
+                    className=" bg-blue-800 hover:bg-blue-600 rounded"
+                    onClick={() => handleSearch(true)}
+                  >
+                    <span>Apply filters</span>{" "}
+                  </Button>
+                  <Button
+                    className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]"
+                    onClick={() => handleFilterClear()}
+                  >
+                    <span>Clear filters</span>{" "}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
             {!isAccountOperationsLoading &&
             !accountOperations?.total_operations ? (
               <div className="w-full my-4 text-black text-center">

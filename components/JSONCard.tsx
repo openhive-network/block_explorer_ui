@@ -1,6 +1,7 @@
 import { useState } from "react";
 import JSONView from "./JSONView";
 import { ArrowDown, ArrowUp } from "lucide-react";
+import { Card, CardContent, CardHeader } from "./ui/card";
 
 interface JSONCardProps {
   header: string;
@@ -23,11 +24,11 @@ const JSONCard: React.FC<JSONCardProps> = ({
   const jsonToObj = JSON.parse(json);
 
   return (
-    <div className="bg-explorer-dark-gray p-2 rounded mt-2 mx-2 md:mx-6" data-testid="account-json-metadata-dropdown">
-      <div className="flex-column justify-center  align-center">
+    <Card className="mx-2" data-testid="account-json-metadata-dropdown">
+      <CardHeader className="px-2 hover:bg-slate-600 cursor-pointer rounded">
         <div
           onClick={handleHideData}
-          className="flex justify-between p-2 hover:bg-slate-600 cursor-pointer"
+          className="flex justify-between p-2"
         >
           <div className="text-lg">{header}</div>
           {showCollapseButton ? (
@@ -38,14 +39,11 @@ const JSONCard: React.FC<JSONCardProps> = ({
             )
           ) : null}
         </div>
-        <div
-          className="mt-4"
-          hidden={isDataHidden && showCollapseButton}
-        >
-          <JSONView json={jsonToObj} />
-        </div>
-      </div>
-    </div>
+      </CardHeader>
+      <CardContent className="px-2" hidden={isDataHidden && showCollapseButton}>
+        <JSONView json={jsonToObj} />
+      </CardContent>
+    </Card>
   );
 };
 
