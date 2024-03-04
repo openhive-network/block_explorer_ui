@@ -49,7 +49,7 @@ export default function Transaction() {
   return (
     <>
     <Head>
-      <title>{trxData?.transaction_json.transaction_id.slice(0, 10)} - Hive Explorer</title>
+      <title>{trxData?.transaction_json?.transaction_id?.slice(0, 10)} - Hive Explorer</title>
     </Head>
       <div className="w-full max-w-5xl px-4 text-white">
         {!trxLoading && !!trxData && (
