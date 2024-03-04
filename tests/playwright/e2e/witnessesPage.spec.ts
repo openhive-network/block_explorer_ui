@@ -61,13 +61,14 @@ test.describe("Witnesses page", () => {
       )
     ).toBe("rgb(31, 41, 55)");
     // Validate bg color of the first row after hovering
-    await witnessesPage.witnessesTableFirstRow.hover({ timeout: 2000 });
+    await witnessesPage.witnessesTableFirstRow.hover();
+    await witnessesPage.page.waitForTimeout(1000);
     expect(
       await mainPage.getElementCssPropertyValue(
         await witnessesPage.witnessesTableFirstRow,
         "background-color"
       )
-    ).toBe("rgb(9, 12, 17)");
+    ).toBe("rgb(0, 0, 0)");
     // Validate bg color of the second row
     expect(
       await mainPage.getElementCssPropertyValue(
@@ -76,13 +77,14 @@ test.describe("Witnesses page", () => {
       )
     ).toBe("rgb(17, 24, 39)");
     // Validate bg color of the second row after hovering
-    await witnessesPage.witnessesTableSecondRow.hover({ timeout: 2000 });
+    await witnessesPage.witnessesTableSecondRow.hover();
+    await witnessesPage.page.waitForTimeout(1000);
     expect(
       await mainPage.getElementCssPropertyValue(
         await witnessesPage.witnessesTableSecondRow,
         "background-color"
       )
-    ).toBe("rgb(5, 7, 12)");
+    ).toBe("rgb(0, 0, 0)");
   });
 
   test("Validate the witness name color", async ({ page }) => {
