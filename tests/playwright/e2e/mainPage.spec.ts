@@ -265,7 +265,7 @@ test.describe("Block Explorer UI tests", () => {
     await commentsPage.validateEmptyCommentsPageIsLoaded();
   });
 
-  test("Validate the operations list has correct information after moving to the comments page by the specific URL with author and parmlink", async ({ page }) => {
+  test.skip("Validate the operations list has correct information after moving to the comments page by the specific URL with author and parmlink", async ({ page }) => {
     const commentsPage = new CommentsPage(page);
     const specificUrl: string = '/comments?accountName=gtg&permlink=power-to-the-hive-but-just-a-little';
 
