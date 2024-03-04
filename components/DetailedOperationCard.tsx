@@ -59,25 +59,9 @@ const getOneLineDescription = (operation: Hive.Operation) => {
 
     case "vote_operation":
       return (
-        <>
-          <Link href={`/@${voter}`} className="text-explorer-ligh-green">
-            {voter}
-          </Link>
-          {` voted ${weight} on `}
-          <Link
-            href={`/@${author}`}
-            className="text-explorer-ligh-green"
-          >
-            {author}
-          </Link>
-          {" / "}
-          <Link
-            href={`https://hive.blog/@${author}/${permlink}`}
-            className="text-explorer-yellow"
-          >
-            {permlink}
-          </Link>
-        </>
+        <div>
+          {typeof value === "string" && value}
+        </div>
       );
 
     case "comment_operation":
