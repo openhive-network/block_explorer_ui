@@ -61,11 +61,19 @@ test.describe('Block page tests', () => {
         await expect(blockPage.seeMoreDetailsBtn.first()).toBeVisible()
     })
 
-    test.skip('Validate that you can move to the authors operation page', async ({page}) =>{
+    test('Validate that you can move to the authors operation page', async ({page}) =>{
         await mainPage.headBlockCardBlockLink.click()
         await expect(blockPage.blockProducer).toBeVisible()
-
+        await page.waitForTimeout(2000)
         await blockPage.blockProducer.click()
         await expect(accountPage.accountOperationList).toBeVisible()
+    });  
+
+    test('Validate that you can move to the authors operation page after clicking link hidden in See more details', async ({page}) =>{
+        await mainPage.headBlockCardBlockLink.click()
+        await expect(blockPage.blockProducer).toBeVisible()
+        // await page.waitForTimeout(2000)
+        // await blockPage.blockProducer.click()
+        // await expect(accountPage.accountOperationList).toBeVisible()
     });  
 });
