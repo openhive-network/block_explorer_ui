@@ -90,8 +90,8 @@ export default function Transaction() {
               />
             ) : (
               <>
-                {formattedTransaction?.transaction_json.operations &&
-                  formattedTransaction.transaction_json.operations.map((operation, index) => (
+                {formattedTransaction?.transaction_json?.operations &&
+                  formattedTransaction.transaction_json?.operations.map((operation, index) => (
                     <DetailedOperationCard
                       key={index}
                       operation={operation}

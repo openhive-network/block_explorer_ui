@@ -98,7 +98,7 @@ class FetchingService {
     const requestBody: Hive.GetTransactionProps = {
       _trx_hash: transactionHash,
     };
-    return await this.callApi("get_transaction_test", requestBody);
+    return await this.callApi("get_transaction", requestBody);
   }
 
   async getRewardFunds(): Promise<Hive.RewardFundsQuery> {
