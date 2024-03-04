@@ -2,41 +2,22 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import SearchBar from "./SearchBar";
-import { useBlockchainSyncInfo, useMediaQuery } from "@/utils/Hooks";
+import { useMediaQuery } from "@/utils/Hooks";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Toggle } from "./ui/toggle";
 import { useUserSettingsContext } from "./contexts/UserSettingsContext";
-import { useAlertContext } from "./contexts/AlertContext";
-import Alert from "./Alert";
 import SyncInfo from "./home/SyncInfo";
 
 export default function Navbar() {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [menuOpen, setMenuOpen] = useState(false);
   const { settings, setSettings } = useUserSettingsContext();
-  const { alerts, setAlerts } = useAlertContext();
   const [searchBarOpen, setSearchBarOpen] = useState(false);
 
   return (
     <div className="fixed w-full top-0 left-0 z-50" data-testid="navbar">
       <div className="flex p-2 justify-between bg-explorer-dark-gray text-white	items-center relative">
-        <div className="absolute top-full left-0 w-full">
-          {alerts.map((alert, index) => (
-            <Alert
-              key={index.toString() + alert.message}
-              alert={alert}
-              onClose={() =>
-                setAlerts(
-                  alerts.filter(
-                    (prevAlert, prevIndex) =>
-                      index !== prevIndex && alert.message !== prevAlert.message
-                  )
-                )
-              }
-            />
-          ))}
-        </div>
         {isMobile ? (
           <div className="flex items-center justify-between w-full">
             <Link href={"/"} className="relative pr-2">
@@ -49,8 +30,13 @@ export default function Navbar() {
             </Link>
             {!searchBarOpen && <SyncInfo />}
             <div className="flex-grow flex items-center justify-end gap-x-3">
-              <SearchBar open={searchBarOpen} onChange={setSearchBarOpen}/>
-              <Menu height={34} width={34} onClick={() => setMenuOpen(true)} className="flex-shrink-0"/>
+              <SearchBar open={searchBarOpen} onChange={setSearchBarOpen} />
+              <Menu
+                height={34}
+                width={34}
+                onClick={() => setMenuOpen(true)}
+                className="flex-shrink-0"
+              />
             </div>
             <div
               className={cn(
@@ -113,7 +99,7 @@ export default function Navbar() {
                 className="ml-6"
               />
             </div>
-            <SearchBar open={true}/>
+            <SearchBar open={true} />
           </>
         )}
       </div>

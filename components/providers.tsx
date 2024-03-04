@@ -6,11 +6,10 @@ import {
 } from "@tanstack/react-query";
 import Layout from "./layout";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { useAlertContext } from "./contexts/AlertContext";
 import { useAddressesContext } from "./contexts/AddressesContext";
+import { toast } from "sonner";
 
 const Providers = ({ children }: { children: ReactNode }) => {
-  const { setAlerts } = useAlertContext();
   const { apiAddress, nodeAddress } = useAddressesContext();
 
   const queryClient = useMemo(
@@ -19,17 +18,17 @@ const Providers = ({ children }: { children: ReactNode }) => {
         defaultOptions: {
           queries: {
             enabled: apiAddress !== null && nodeAddress !== null,
-          }
+          },
         },
         queryCache: new QueryCache({
           onError: (error) => {
-            setAlerts([
-              { type: "error", message: `Error: ${(error as Error).message}` },
-            ]);
+            toast.error("Error occured", {
+              description: `${(error as Error).message}`,
+            });
           },
         }),
       }),
-    [setAlerts, apiAddress, nodeAddress]
+    [apiAddress, nodeAddress]
   );
 
   return (

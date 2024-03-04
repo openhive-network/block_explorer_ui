@@ -44,6 +44,7 @@
     "lucide-react": "^0.261.0",
     "moment": "^2.29.4",
     "next": "^13.5.4",
+    "next-themes": "^0.2.1",
     "playwright-merge-html-reports": "^0.2.8",
     "postcss": "^8.4.31",
     "react": "18.2.0",
@@ -52,6 +53,7 @@
     "react-error-boundary": "^4.0.11",
     "recharts": "^2.9.2",
     "sharp": "^0.32.4",
+    "sonner": "^1.4.3",
     "stable": "^0.1.8",
     "tailwind-merge": "^1.14.0",
     "tailwindcss": "3.3.3",
@@ -66,7 +68,7 @@
     "cross-env": "^7.0.3",
     "shx": "^0.3.4"
   },
-  "engines" : { 
-    "node" : ">=18.0.0"
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

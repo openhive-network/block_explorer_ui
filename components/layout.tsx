@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Footer from "./footer";
 import Navbar from "./navbar";
+import { Toaster } from "sonner";
 
 interface LayoutProps {
   children: ReactNode;
@@ -12,6 +13,7 @@ export default function Layout({ children }: LayoutProps) {
       <Navbar />
       {children}
       <Footer />
+      <Toaster richColors/>
     </main>
   );
 }
