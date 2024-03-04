@@ -20,6 +20,7 @@ import useOperationsCountInBlock from "@/api/blockPage/useOperationsInBlock";
 import Explorer from "@/types/Explorer";
 import { useOperationsFormatter } from "@/utils/Hooks";
 import Head from "next/head";
+import useBlockRawData from "@/api/blockPage/useBlockRawData";
 
 interface BlockSearchParams {
   blockId?: number;
@@ -49,6 +50,8 @@ export default function Block() {
   const { operationsCountInBlock, countLoading } = useOperationsCountInBlock(Number(blockId));
 
   const { blockDetails, loading } = useBlockData(Number(blockId));
+
+  const { rawBlockdata } = useBlockRawData(Number(blockId));
 
   const { blockOperations: totalOperations, trxLoading: totalLoading } =
     useBlockOperations(Number(blockId), undefined, paramsState.page || 1);
@@ -200,10 +203,7 @@ export default function Block() {
             </div>
           ) : settings.rawJsonView ? (
             <JSONView data-testid='json-view'
-              json={{
-                details: { ...blockDetails },
-                operations: { ...blockOperations },
-              }}
+              json={rawBlockdata || {}}
               className="w-full md:w-[962px] mt-6 m-auto py-2 px-4 bg-explorer-dark-gray rounded text-white text-xs break-words break-all"
             />
           ) : (

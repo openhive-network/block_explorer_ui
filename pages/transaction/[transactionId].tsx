@@ -49,7 +49,7 @@ export default function Transaction() {
   return (
     <>
     <Head>
-      <title>{trxData?.transaction_json?.transaction_id?.slice(0, 10)} - Hive Explorer</title>
+      <title>{trxData?.transaction_id?.slice(0, 10)} - Hive Explorer</title>
     </Head>
       <div className="w-full max-w-5xl px-4 text-white">
         {!trxLoading && !!trxData && (
@@ -58,18 +58,18 @@ export default function Transaction() {
               <div data-testid="transaction-header-hash-trx">
                 Transaction{" "}
                 <span className="text-explorer-turquoise">
-                  {trxData.transaction_json.transaction_id}
+                  {trxData?.transaction_id}
                 </span>
               </div>
               <div className="w-full flex justify-evenly">
                 <div>
                   Block
                   <Link
-                    href={`/block/${trxData.transaction_json.block_num}`}
+                    href={`/block/${trxData?.block_num}`}
                     className="text-explorer-turquoise"
                     data-testid="transaction-header-block-number"
                   >
-                    {" " + trxData.transaction_json.block_num}
+                    {" " + trxData?.block_num}
                   </Link>
                 </div>
                 <div data-testid="transaction-header-date">
@@ -85,19 +85,19 @@ export default function Transaction() {
             </div>
             {settings.rawJsonView ? (
               <JSONView
-                json={trxData}
+                json={trxData.transaction_json}
                 className="w-full md:w-[992px] mt-6 m-auto py-2 px-4 bg-explorer-dark-gray rounded text-white text-xs break-words break-all"
               />
             ) : (
               <>
-                {formattedTransaction?.transaction_json.operations &&
-                  formattedTransaction.transaction_json.operations.map((operation, index) => (
+                {formattedTransaction?.transaction_json?.operations &&
+                  formattedTransaction.transaction_json?.operations.map((operation, index) => (
                     <DetailedOperationCard
                       key={index}
                       operation={operation}
                       date={new Date(trxData.timestamp)}
-                      blockNumber={trxData.transaction_json.block_num}
-                      transactionId={trxData.transaction_json.transaction_id}
+                      blockNumber={trxData?.block_num}
+                      transactionId={trxData?.transaction_id}
                       skipBlock
                       skipTrx
                       skipDate
