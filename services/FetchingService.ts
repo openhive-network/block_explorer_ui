@@ -311,6 +311,13 @@ class FetchingService {
     return await this.callApi("get_hafbe_last_synced_block", requestBody);
   }
 
+  async getBlockRaw(blockNumber: number): Promise<Hive.RawBlockData> {
+    const requestBody: Hive.GetBlockRawProps = {
+      _block_num: blockNumber
+    };
+    return await this.callApi("get_block_raw", requestBody);
+  }
+
   async getManabars(accountName: string, hiveChain: IHiveChainInterface): Promise<Hive.Manabars | null> {
     try {
       const upvotePromise = hiveChain.calculateCurrentManabarValueForAccount(accountName, 0);

@@ -115,8 +115,13 @@ export class MainPage {
     await this.page.waitForLoadState("networkidle");
   }
 
-  async validateMainPageIsLoaded() {
+  async gotoToThePage(url: string) {
+    await this.page.goto(url);
     await this.page.waitForLoadState("networkidle");
+  }
+
+  async validateMainPageIsLoaded() {
+    // await this.page.waitForLoadState("networkidle");
     await expect(this.headBlockCard).toBeVisible();
     await expect(this.lastBlockWidget).toBeVisible();
     await expect(this.SearchesSection).toBeVisible();

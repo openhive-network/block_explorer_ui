@@ -52,32 +52,35 @@ const AddressSwitchedDialog: React.FC<AddressSwitcherDialogProps> = ({addressTyp
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger><div >
+      <DialogTrigger data-testid="api-address-link"><div >
         <span>{addressType === "api" ? "Database API:" : "Hive node:"}</span>
         <span className=" text-blue-400 ml-1">{currentAddress ? currentAddress : getDefaultApiAddress()}</span>
         </div>
         </DialogTrigger>
-      <DialogContent onKeyDown={handleKeyDown} className="h-1/4 max-w-3xl overflow-auto bg-white">
+      <DialogContent onKeyDown={handleKeyDown} className="h-1/4 max-w-3xl overflow-auto bg-white" data-testid="api-address-dialog">
         <DialogHeader>
-          <DialogTitle>{addressType === "api" ? "Database API address" : "Hive node address"}</DialogTitle>
+          <DialogTitle data-testid="api-address-header-title">{addressType === "api" ? "Database API address" : "Hive node address"}</DialogTitle>
         </DialogHeader>
         <Input
           className=""
           type="text"
+          data-testid="api-address-input"
           value={userAddress}
           onChange={(e) => setUserAddress(e.target.value)}
         />
         <DialogFooter >
           <div className="w-full flex justify-between">
             <Button
-              type="button" 
+              type="button"
               variant="secondary"
+              data-testid="api-address-reset-button"
               onClick={onResetClick}
             >
               Reset to default
             </Button>
             <Button
               className="text-white bg-blue-800 hover:bg-blue-600 rounded"
+              data-testid="api-address-submit-button"
               onClick={onSubmitClick}
             >
               Submit

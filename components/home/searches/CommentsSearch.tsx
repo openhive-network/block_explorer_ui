@@ -3,7 +3,7 @@ import SearchRanges from "@/components/searchRanges/SearchRanges";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import useSearchRanges from "@/components/searchRanges/useSearchRanges";
+import useSearchRanges, { SearchRangesResult } from "@/components/searchRanges/useSearchRanges";
 import { useEffect, useState } from "react";
 import Hive from "@/types/Hive";
 import { getOperationButtonTitle } from "@/utils/UI";
@@ -18,6 +18,7 @@ interface CommentsSearchProps {
   operationsTypes?: Hive.OperationPattern[];
   data?: Explorer.CommentSearchParams;
   loading?: boolean;
+  searchRanges: SearchRangesResult
 }
 
 const CommentsSearch: React.FC<CommentsSearchProps> = ({
@@ -25,6 +26,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
   operationsTypes,
   loading,
   data,
+  searchRanges
 }) => {
   const [accountName, setAccountName] = useState<string>("");
   const [permlink, setPermlink] = useState<string>("");
@@ -33,7 +35,6 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
     setSelectedCommentSearchOperationTypes,
   ] = useState<number[]>([]);
 
-  const searchRanges = useSearchRanges("lastBlocks");
   const { getRangesValues } = searchRanges;
 
   const setSearchValues = (data: Explorer.CommentSearchParams) => {
