@@ -229,8 +229,6 @@ export default function Block() {
                     blockNumber={operation.block_num}
                     transactionId={operation.trx_id}
                     key={operation.timestamp + index}
-                    skipBlock
-                    skipDate
                     isShortened={operation.is_modified}
                   />
                 ))}

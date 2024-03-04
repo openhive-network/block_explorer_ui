@@ -5,8 +5,9 @@ import moment from "moment";
 
 class OperationsFormatter {
   @WaxFormattable({matchProperty: "type", matchValue: "vote_operation"})
-  formatVote({ source: { value: op } }: IFormatFunctionArguments<{ value: vote }>) {
-    return `${op.voter} voted on "@${op.author}/${op.permlink}"`;
+  formatVote({ source: { value: op }, target }: IFormatFunctionArguments<{ value: vote }>) {
+    const message = `${op.voter} voted on "@${op.author}/${op.permlink}"`;
+    return {...target, value: message};
   }
 }
 
