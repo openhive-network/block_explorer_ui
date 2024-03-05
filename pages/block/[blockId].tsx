@@ -47,7 +47,9 @@ export default function Block() {
 
   const { settings } = useUserSettingsContext();
 
-  const { operationsCountInBlock, countLoading } = useOperationsCountInBlock(Number(blockId));
+  const { operationsCountInBlock, countLoading } = useOperationsCountInBlock(
+    Number(blockId)
+  );
 
   const { blockDetails, loading } = useBlockData(Number(blockId));
 
@@ -63,7 +65,9 @@ export default function Block() {
   );
 
   const { operationsTypes } = useOperationsTypes();
-  const formattedOperations = useOperationsFormatter(blockOperations?.operations_result) as Hive.OperationResponse[];
+  const formattedOperations = useOperationsFormatter(
+    blockOperations?.operations_result
+  ) as Hive.OperationResponse[];
 
   useEffect(() => {
     if (blockDetails && blockDetails.created_at) {
@@ -161,10 +165,10 @@ export default function Block() {
 
   return (
     <>
-    <Head>
-      <title>{blockId} - Hive Explorer</title>
-    </Head>
-        {!blockDate ? (
+      <Head>
+        <title>{blockId} - Hive Explorer</title>
+      </Head>
+      {!blockDate ? (
         <div>Loading ...</div>
       ) : (
         <div
@@ -184,7 +188,9 @@ export default function Block() {
             virtualOperationLength={virtualOperationsCounter}
             nonVirtualOperationLength={nonVirtualOperationsCounter}
             virtualOperationsTypesCounters={virtualOperationsTypesCounters}
-            nonVirtualOperationsTypesCounters={nonVirtualOperationsTypesCounters}
+            nonVirtualOperationsTypesCounters={
+              nonVirtualOperationsTypesCounters
+            }
             blockDetails={blockDetails}
           />
           <div className="fixed top-[calc(100vh-90px)] md:top-[calc(100vh-100px)] right-0 flex flex-col items-end justify-end px-3 md:px-12">
@@ -202,13 +208,17 @@ export default function Block() {
               <Loader2 className="animate-spin mt-1 h-16 w-16 ml-3 ... " />
             </div>
           ) : settings.rawJsonView ? (
-            <JSONView data-testid='json-view'
+            <JSONView
+              data-testid="json-view"
               json={rawBlockdata || {}}
               className="w-full md:w-[962px] mt-6 m-auto py-2 px-4 bg-explorer-dark-gray rounded text-white text-xs break-words break-all"
             />
           ) : (
-            <section className="md:px-10 flex flex-col items-center justify-center text-white" data-testid="block-page-operation-list">
-              {totalOperations?.total_operations &&
+            <section
+              className="md:px-10 flex flex-col items-center justify-center text-white"
+              data-testid="block-page-operation-list"
+            >
+              {!!totalOperations?.total_operations &&
                 totalOperations?.total_operations > 1000 && (
                   <CustomPagination
                     currentPage={paramsState.page}
@@ -266,5 +276,6 @@ export default function Block() {
           )}
         </div>
       )}
-    </>)
+    </>
+  );
 }
