@@ -14,6 +14,19 @@ interface SyncInfoProps {
   className?: string;
 }
 
+const getBlockDifference = (
+  hiveBlockNumber: number | undefined,
+  explorerBlockNumber: number | undefined
+) => {
+  const difference = (hiveBlockNumber || 0) - (explorerBlockNumber || 0);
+
+  if (difference < 0) {
+    return 0;
+  } else {
+    return difference;
+  }
+};
+
 const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -25,7 +38,10 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
     loading: syncLoading,
   } = useBlockchainSyncInfo();
 
-  const blockDifference = (hiveBlockNumber || 0) - (explorerBlockNumber || 0);
+  const blockDifference = getBlockDifference(
+    hiveBlockNumber,
+    explorerBlockNumber
+  );
 
   const differenceColorText =
     blockDifference > 20
@@ -41,8 +57,7 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
           className={cn(
             "flex flex-row gap-x-1 border rounded-[6px] mt-px mx-6 px-1.5 py-px text-sm cursor-pointer",
             {
-              "border-explorer-ligh-green":
-                blockDifference <= 3,
+              "border-explorer-ligh-green": blockDifference <= 3,
               "border-explorer-orange":
                 blockDifference > 3 && blockDifference <= 20,
               "border-explorer-red": blockDifference > 20,
@@ -53,7 +68,9 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
           onClick={() => setDialogOpen(true)}
         >
           {!blockDifference ? (
-            <p>Explorer synced with blockchain</p>
+            <p className="text-explorer-ligh-green">
+              Explorer synced with blockchain
+            </p>
           ) : (
             <>
               <p>Blocks out of sync:</p>
@@ -75,11 +92,18 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
             <div>Hafbe last block: </div>
             <div>{explorerBlockNumber?.toLocaleString()}</div>
           </div>
-          <div className={cn("flex justify-between border-b py-1.5", differenceColorText)}>
+          <div
+            className={cn(
+              "flex justify-between border-b py-1.5",
+              differenceColorText
+            )}
+          >
             <div>Block difference: </div>
             <div>{blockDifference.toLocaleString()} blocks</div>
           </div>
-          <div className={cn("flex justify-between py-1.5", differenceColorText)}>
+          <div
+            className={cn("flex justify-between py-1.5", differenceColorText)}
+          >
             <div>Last synced block at: </div>
             {explorerTime && (
               <div>{convertUTCDateToLocalDate(new Date(explorerTime))}</div>

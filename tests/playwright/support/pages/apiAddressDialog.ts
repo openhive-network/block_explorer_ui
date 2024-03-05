@@ -37,7 +37,7 @@ export class ApiAddressDialog {
 
   async validateDatabaseApiDialogIsLoaded() {
     await expect(this.apiAddressDialog).toBeVisible();
-    await expect(this.apiAddressHeaderTitle).toHaveText('Database API address');
+    await expect(this.apiAddressHeaderTitle).toHaveText('Block Explorer backend API address');
     await expect(this.apiAddressInput).toBeVisible();
     await expect(this.apiAddressResetButton).toBeEnabled();
     await expect(this.apiAddressSubmitButton).toBeEnabled();

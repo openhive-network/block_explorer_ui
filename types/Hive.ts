@@ -134,6 +134,10 @@ declare module Hive {
     _block_num: number;
   }
 
+  interface GetBlockRawProps {
+    _block_num: number;
+  }
+
   interface GetWitnessVotesHistory {
     _witness: string;
     _order_is: string;
@@ -309,6 +313,9 @@ declare module Hive {
     transaction_json: TransactionDetails;
     timestamp: Date;
     age: string;
+    transaction_id: string;
+    block_num: number;
+    transaction_num: number;
   }
 
   interface TransactionDetails {
@@ -318,9 +325,6 @@ declare module Hive {
     expiration: Date;
     operations: Operation[];
     signatures: string[];
-    transaction_id: string;
-    block_num: number;
-    transaction_num: number;
   }
 
   interface AccountDetailsQueryResponse {
@@ -525,6 +529,19 @@ declare module Hive {
     upvote: IManabarData;
     downvote: IManabarData;
     rc: IManabarData;
+  }
+
+  interface RawBlockData {
+    block_id: string;
+    extensions: unknown[];
+    previous: string;
+    signing_key: string;
+    timestamp: Date;
+    transaction_ids: string[];
+    transaction_merkle_root: string;
+    transactions: TransactionDetails[];
+    witness: string;
+    witness_signature: string;
   }
 }
 

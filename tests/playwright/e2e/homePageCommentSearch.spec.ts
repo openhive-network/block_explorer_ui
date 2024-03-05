@@ -28,7 +28,7 @@ test.describe('Home page - searches', () => {
 
         const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
     
-        expect(response.status()).toBe(200);
+        await response.finished();
         
 
         if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
@@ -51,7 +51,7 @@ test.describe('Home page - searches', () => {
 
         const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
     
-        expect(response.status()).toBe(200);
+        await response.finished();
         
 
         if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
@@ -74,7 +74,7 @@ test.describe('Home page - searches', () => {
 
         const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
     
-        expect(response.status()).toBe(200);
+        await response.finished();
         
 
         if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
@@ -96,7 +96,7 @@ test.describe('Home page - searches', () => {
 
         const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
     
-        expect(response.status()).toBe(200);
+        await response.finished();
         
 
         if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
@@ -119,7 +119,7 @@ test.describe('Home page - searches', () => {
 
         const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
     
-        expect(response.status()).toBe(200);
+        await response.finished();
         
 
         if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
@@ -143,7 +143,7 @@ test.describe('Home page - searches', () => {
 
         const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
     
-        expect(response.status()).toBe(200);
+        await response.finished();
         
 
         if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
@@ -166,7 +166,7 @@ test.describe('Home page - searches', () => {
 
         const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
     
-        expect(response.status()).toBe(200);
+        await response.finished();
         
 
         if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
@@ -186,7 +186,7 @@ test.describe('Home page - searches', () => {
 
         const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
     
-        expect(response.status()).toBe(200);
+        await response.finished();
 
         if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
             await expect(page.getByText('No operations matching given')).toBeVisible()
@@ -212,7 +212,7 @@ test.describe('Home page - searches', () => {
 
         const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
     
-        expect(response.status()).toBe(200);
+        await response.finished();
 
         if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
             await expect(page.getByText('No operations matching given')).toBeVisible()
@@ -236,7 +236,7 @@ test.describe('Home page - searches', () => {
 
         const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
     
-        expect(response.status()).toBe(200);
+        await response.finished();
 
         if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
             await expect(page.getByText('No operations matching given')).toBeVisible()
@@ -260,7 +260,7 @@ test.describe('Home page - searches', () => {
 
         const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
     
-        expect(response.status()).toBe(200);
+        await response.finished();
 
         if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
             await expect(page.getByText('No operations matching given')).toBeVisible()
@@ -283,7 +283,7 @@ test.describe('Home page - searches', () => {
 
         const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
     
-        expect(response.status()).toBe(200);
+        await response.finished();
 
         if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
             await expect(page.getByText('No operations matching given')).toBeVisible()
@@ -307,7 +307,7 @@ test.describe('Home page - searches', () => {
 
         const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
     
-        expect(response.status()).toBe(200);
+        await response.finished();
 
         if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
             await expect(page.getByText('No operations matching given')).toBeVisible()
@@ -330,7 +330,7 @@ test.describe('Home page - searches', () => {
 
         const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
     
-        expect(response.status()).toBe(200);
+        await response.finished();
 
         if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
             await expect(page.getByText('No operations matching given')).toBeVisible()

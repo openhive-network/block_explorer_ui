@@ -53,13 +53,13 @@ const AddressSwitchedDialog: React.FC<AddressSwitcherDialogProps> = ({addressTyp
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger data-testid="api-address-link"><div >
-        <span>{addressType === "api" ? "Database API:" : "Hive node:"}</span>
+        <span>{addressType === "api" ? "Explorer backend API:" : "Hive node:"}</span>
         <span className=" text-blue-400 ml-1">{currentAddress ? currentAddress : getDefaultApiAddress()}</span>
         </div>
         </DialogTrigger>
       <DialogContent onKeyDown={handleKeyDown} className="h-1/4 max-w-3xl overflow-auto bg-white" data-testid="api-address-dialog">
         <DialogHeader>
-          <DialogTitle data-testid="api-address-header-title">{addressType === "api" ? "Database API address" : "Hive node address"}</DialogTitle>
+          <DialogTitle data-testid="api-address-header-title">{addressType === "api" ? "Block Explorer backend API address" : "Hive node address"}</DialogTitle>
         </DialogHeader>
         <Input
           className=""

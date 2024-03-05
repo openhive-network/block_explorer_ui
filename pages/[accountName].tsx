@@ -84,7 +84,7 @@ export default function Account() {
 
   const { settings } = useUserSettingsContext();
 
-  const { accountDetails } = useAccountDetails(accountNameFromRoute);
+  const { accountDetails, notFound } = useAccountDetails(accountNameFromRoute);
   const { accountOperations, isAccountOperationsLoading } =
     useAccountOperations({
       accountName: accountNameFromRoute,
@@ -217,11 +217,15 @@ export default function Account() {
     );
   }
 
+  if (notFound) {
+    return <div>Account not found</div>
+  }
+
   return (
     <>
-    <Head>
-    <title>@{accountNameFromRoute} - Hive Explorer</title>
-    </Head>
+      <Head>
+        <title>@{accountNameFromRoute} - Hive Explorer</title>
+      </Head>
       <div className="flex items-center justify-end w-full min-h-[64px] bg-explorer-orange -mt-4 px-2 md:px-8 fixed z-20">
         {paramsState.page && accountOperations && (
           <AccountPagination
