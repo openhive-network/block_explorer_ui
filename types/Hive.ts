@@ -543,6 +543,13 @@ declare module Hive {
     witness: string;
     witness_signature: string;
   }
+
+  interface TransferOperation {
+      from: string;
+      to: string;
+      amount: Supply | undefined;
+      memo: string;
+  }
 }
 
 export default Hive;
