@@ -21,6 +21,7 @@ import Explorer from "@/types/Explorer";
 import { useOperationsFormatter } from "@/utils/Hooks";
 import Head from "next/head";
 import useBlockRawData from "@/api/blockPage/useBlockRawData";
+import useHeadBlockNumber from "@/api/common/useHeadBlockNum";
 
 interface BlockSearchParams {
   blockId?: number;
@@ -39,11 +40,18 @@ export default function Block() {
 
   const { blockId } = router.query;
 
+  const { headBlockNumberData: headBlockNum, refetch } =
+    useHeadBlockNumber();
+
   const [blockDate, setBlockDate] = useState<Date>();
   const { paramsState, setParams } = useURLParams({
     ...defaultParams,
     blockId: blockId,
   });
+
+  useEffect(() => {
+    refetch();
+  }, [blockId, refetch]);
 
   const { settings } = useUserSettingsContext();
 
@@ -168,9 +176,9 @@ export default function Block() {
       <Head>
         <title>{blockId} - Hive Explorer</title>
       </Head>
-      {!blockDate ? (
+      {!blockDate || !headBlockNum ? (
         <div>Loading ...</div>
-      ) : (
+      ) : Number(blockId) <= headBlockNum ? (
         <div
           className="w-full h-full"
           style={{ scrollMargin: "100px" }}
@@ -274,6 +282,13 @@ export default function Block() {
               </div>
             </section>
           )}
+        </div>
+      ) : (
+        <div>
+          <div className="mt-9 mb-6">Block not found</div>
+          <Button variant="outline" onClick={() => router.reload()}>
+            Reload page
+          </Button>
         </div>
       )}
     </>

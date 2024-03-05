@@ -7,25 +7,31 @@ const useHeadBlockNumber = (liveUpdate?: boolean) => {
     data: headBlockNumberData,
     isLoading: headBlockNumberDataLoading,
     isError: headBlockNumberDataError,
-    refetch
+    refetch,
   } = useQuery({
     queryKey: ["headBlockNum"],
     queryFn: () => fetchingService.getHafbeLastSyncedBlock(),
     refetchOnWindowFocus: false,
-    refetchInterval: liveUpdate ? 3000 : Infinity
+    refetchInterval: liveUpdate ? 3000 : Infinity,
   });
 
   useEffect(() => {
-    if(liveUpdate) {
+    if (liveUpdate) {
       refetch();
     }
   }, [liveUpdate, refetch]);
 
   const checkTemporaryHeadBlockNumber = async () => {
     return await fetchingService.getHeadBlockNum();
-  }
+  };
 
-  return { headBlockNumberData, headBlockNumberDataLoading, headBlockNumberDataError, checkTemporaryHeadBlockNumber };
+  return {
+    headBlockNumberData,
+    headBlockNumberDataLoading,
+    headBlockNumberDataError,
+    checkTemporaryHeadBlockNumber,
+    refetch,
+  };
 };
 
 export default useHeadBlockNumber;
