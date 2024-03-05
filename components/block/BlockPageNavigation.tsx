@@ -1,11 +1,6 @@
-import { Dispatch, SetStateAction, useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { ChevronRight, ChevronLeft } from "lucide-react";
-import Link from "next/link";
-import Image from "next/image";
-import "react-datetime-picker/dist/DateTimePicker.css";
-import "react-calendar/dist/Calendar.css";
-import "react-clock/dist/Clock.css";
-import DateTimePicker from "react-datetime-picker";
+import DateTimePicker from "../DateTimePicker";
 import Hive from "@/types/Hive";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
@@ -136,18 +131,13 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
             className="flex flex-wrap items-center justify-center"
             ref={datePickerRef}
           >
-            Block Time :{" "}
-            <DateTimePicker
-              value={blockDate}
-              onChange={(date) => setBlockDate(date!)}
-              className="text-explorer-turquoise ml-2 md:ml-4 border border-explorer-turquoise"
-              calendarClassName="text-gray-800"
-              format="yyyy/MM/dd HH:mm:ss"
-              clearIcon={null}
-              calendarIcon={null}
-              disableClock
-              showLeadingZeros={false}
-            />
+            <p> Block Time : </p>
+            <div className="ml-2">
+              <DateTimePicker
+                date={blockDate}
+                setDate={setBlockDate}
+              />
+            </div>
           </div>
           <OperationTypesDialog
             operationTypes={operationTypes}

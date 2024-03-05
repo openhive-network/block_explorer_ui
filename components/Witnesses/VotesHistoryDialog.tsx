@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
-import DateTimePicker from "react-datetime-picker";
-import "react-datetime-picker/dist/DateTimePicker.css";
-import "react-calendar/dist/Calendar.css";
-import "react-clock/dist/Clock.css";
+import DateTimePicker  from "../DateTimePicker";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import Hive from "@/types/Hive";
 import {
@@ -113,29 +110,15 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
               <div>
                 From:{" "}
                 <DateTimePicker
-                  value={fromDate}
-                  onChange={(date) => setFromDate(date!)}
-                  className="text-explorer-turquoise"
-                  calendarClassName="text-gray-800"
-                  format="yyyy/MM/dd HH:mm:ss"
-                  clearIcon={null}
-                  calendarIcon={null}
-                  disableClock
-                  showLeadingZeros={false}
+                  date={fromDate}
+                  setDate={setFromDate}
                 />
               </div>
               <div>
                 To:{" "}
                 <DateTimePicker
-                  value={toDate}
-                  onChange={(date) => setToDate(date!)}
-                  className="text-explorer-turquoise"
-                  calendarClassName="text-gray-800"
-                  format="yyyy/MM/dd HH:mm:ss"
-                  clearIcon={null}
-                  calendarIcon={null}
-                  disableClock
-                  showLeadingZeros={false}
+                  date={toDate}
+                  setDate={setToDate}
                 />
               </div>
             </div>
@@ -186,7 +169,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                         )}
                       </TableCell>
                       <TableCell className="text-explorer-turquoise">
-                        <Link href={`/@${vote.voter}`}>
+                      <Link href={`/@${vote.voter}`}>
                           {vote.voter}
                         </Link>
                       </TableCell>
@@ -202,7 +185,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                         )}
                       </TableCell>
                       <TableCell className="text-right">
-                        {showHivePower
+                      {showHivePower
                           ? formatNumber(vote.vests_hive_power, false)
                           : formatNumber(vote.vests, true)
                         }
