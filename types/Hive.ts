@@ -550,6 +550,19 @@ declare module Hive {
       amount: Supply | undefined;
       memo: string;
   }
+
+  interface EscrowDisputeOperation {
+    from: string;
+    to: string;
+    agent: string;
+    who: string;
+    escrow_id: number;
+  }
+
+  interface CancelTransferOperation {
+    request_id: number;
+    from: string;
+  }
 }
 
 export default Hive;
