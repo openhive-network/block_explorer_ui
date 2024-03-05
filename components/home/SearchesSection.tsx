@@ -189,19 +189,26 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
         paramName: "rangeSelectKey",
         paramValue: dataToURL(searchRanges.rangeSelectKey),
       },
-      {
+    ];
+
+    if (searchRanges.rangeSelectKey === "lastTime") {
+      urlParams.push({
         paramName: "lastTime",
         paramValue: dataToURL(searchRanges.lastTimeUnitValue),
-      },
-      {
-        paramName: "lastBlocks",
-        paramValue: dataToURL(searchRanges.lastBlocksValue),
-      },
-      {
+      });
+      urlParams.push({
         paramName: "timeUnit",
         paramValue: dataToURL(searchRanges.timeUnitSelectKey),
-      },
-    ];
+      });
+    }
+
+    if (searchRanges.rangeSelectKey === "lastBlocks") {
+      urlParams.push({
+        paramName: "lastBlocks",
+        paramValue: dataToURL(searchRanges.lastBlocksValue),
+      });
+    }
+
     return `/@${accountName}${getPageUrlParams(urlParams)}`;
   };
 
@@ -212,7 +219,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
         paramValue: dataToURL(blockSearchProps?.operationTypes),
       },
     ];
-    return `/block/${blockNumber}${getPageUrlParams(urlParams)}`
+    return `/block/${blockNumber}${getPageUrlParams(urlParams)}`;
   };
 
   return (
@@ -245,6 +252,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
                 startAccountOperationsSearch={startAccountOperationsSearch}
                 operationsTypes={operationsTypes}
                 loading={accountOperations.isAccountOperationsLoading}
+                searchRanges={searchRanges}
               />
             </AccordionContent>
           </AccordionItem>
