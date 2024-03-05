@@ -1,4 +1,4 @@
-import { IManabarData } from "@hive/wax/web";
+import { IManabarData } from "@hive/wax";
 
 declare module Hive {
   interface HiveBlogProps {
