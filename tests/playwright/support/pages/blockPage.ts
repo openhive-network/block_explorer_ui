@@ -16,6 +16,10 @@ export class BlockPage {
   readonly virtualOperations: Locator;
   readonly seeMoreDetailsBtn: Locator;
   readonly detailedOperationCard: Locator;
+  readonly operationTypeTitle: Locator;
+  readonly firstTransactionLink: Locator;
+  readonly usernameInOperationDetails: Locator;
+  readonly voteOperationPostLink: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -31,8 +35,12 @@ export class BlockPage {
     this.prevHash = page.getByTestId('prev-hash');
     this.operations = page.locator('.my-2').nth(1);
     this.virtualOperations = page.locator('.my-2').nth(2);
-    this.seeMoreDetailsBtn = page.getByRole('button', {name: "See more details"})
+    this.seeMoreDetailsBtn = page.getByRole('button', {name: "See more details"});
     this.detailedOperationCard = page.getByTestId("detailed-operation-card")
+    this.operationTypeTitle = page.getByTestId("operation-type");
+    this.firstTransactionLink = page.locator('.my-1.flex-1').getByRole('link').first();
+    this.usernameInOperationDetails = page.locator('a.text-explorer-ligh-green').first();
+    this.voteOperationPostLink = page.locator('a.text-explorer-yellow').first();
   }
 
   async validateBlockPageIsLoaded() {
