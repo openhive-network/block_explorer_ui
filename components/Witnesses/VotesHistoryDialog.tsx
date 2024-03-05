@@ -87,10 +87,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
   };
 
   return (
-    <Dialog
-      open={isVotesHistoryOpen}
-      onOpenChange={changeVoteHistoryDialogue}
-    >
+    <Dialog open={isVotesHistoryOpen} onOpenChange={changeVoteHistoryDialogue}>
       <DialogContent className={buildCustomDialogStyle()}>
         {votesHistory ? (
           <>
@@ -139,78 +136,82 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                 />
               </div>
             </div>
-            {votesHistory && votesHistory?.length > PAGE_SIZE && (
-              <div className="flex justify-center items-center">
-                <CustomPagination
-                  currentPage={page}
-                  totalCount={votesHistory.length}
-                  pageSize={PAGE_SIZE}
-                  onPageChange={(page: number) => handlePageChange(page)}
-                />
-                <div className="justify-self-end">
-                  <JumpToPage
-                    currentPage={page}
-                    onPageChange={(page: number) => handlePageChange(page)}
-                  />
-                </div>
-              </div>
-            )}
-            <Table className="text-white">
-              <TableHeader>
-                <TableRow>
-                  {tableColums.map((column, index) => (
-                    <TableHead
-                      key={column.key}
-                      className={cn({
-                        "sticky md:static left-0": !index,
-                        "flex justify-end items-center": column.isRightAligned
-                      })}
-                    >
-                      <span className="flex ">{column.name}</span>
-                    </TableHead>
-                  ))}
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {displayData &&
-                  displayData?.map((vote, index) => (
-                    <TableRow
-                      key={index}
-                      className={`${
-                        index % 2 === 0 ? "bg-gray-800" : "bg-gray-900"
-                      }`}
-                    >
-                      <TableCell className="sticky left-0">
-                        {moment(vote.timestamp).format(
-                          config.baseMomentTimeFormat
-                        )}
-                      </TableCell>
-                      <TableCell className="text-explorer-turquoise">
-                        <Link href={`/@${vote.voter}`}>
-                          {vote.voter}
-                        </Link>
-                      </TableCell>
-                      <TableCell
-                        className={`${
-                          vote.approve ? "text-green-400" : "text-red-400"
-                        }`}
-                      >
-                        {vote.approve ? (
-                          <ArrowUpCircleIcon />
-                        ) : (
-                          <ArrowDownCircleIcon />
-                        )}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {showHivePower
-                          ? formatNumber(vote.vests_hive_power, false)
-                          : formatNumber(vote.vests, true)
-                        }
-                      </TableCell>
+            {!!votesHistory.length ? (
+              <>
+                {votesHistory && votesHistory?.length > PAGE_SIZE && (
+                  <div className="flex justify-center items-center">
+                    <CustomPagination
+                      currentPage={page}
+                      totalCount={votesHistory.length}
+                      pageSize={PAGE_SIZE}
+                      onPageChange={(page: number) => handlePageChange(page)}
+                    />
+                    <div className="justify-self-end">
+                      <JumpToPage
+                        currentPage={page}
+                        onPageChange={(page: number) => handlePageChange(page)}
+                      />
+                    </div>
+                  </div>
+                )}
+                <Table className="text-white">
+                  <TableHeader>
+                    <TableRow>
+                      {tableColums.map((column, index) => (
+                        <TableHead
+                          key={column.key}
+                          className={cn({
+                            "sticky md:static left-0": !index,
+                            "flex justify-end items-center":
+                              column.isRightAligned,
+                          })}
+                        >
+                          <span className="flex ">{column.name}</span>
+                        </TableHead>
+                      ))}
                     </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {displayData &&
+                      displayData?.map((vote, index) => (
+                        <TableRow
+                          key={index}
+                          className={`${
+                            index % 2 === 0 ? "bg-gray-800" : "bg-gray-900"
+                          }`}
+                        >
+                          <TableCell className="sticky left-0">
+                            {moment(vote.timestamp).format(
+                              config.baseMomentTimeFormat
+                            )}
+                          </TableCell>
+                          <TableCell className="text-explorer-turquoise">
+                            <Link href={`/@${vote.voter}`}>{vote.voter}</Link>
+                          </TableCell>
+                          <TableCell
+                            className={`${
+                              vote.approve ? "text-green-400" : "text-red-400"
+                            }`}
+                          >
+                            {vote.approve ? (
+                              <ArrowUpCircleIcon />
+                            ) : (
+                              <ArrowDownCircleIcon />
+                            )}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {showHivePower
+                              ? formatNumber(vote.vests_hive_power, false)
+                              : formatNumber(vote.vests, true)}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                  </TableBody>
+                </Table>
+              </>
+            ) : (
+              <div className="w-full text-center h-72">No votes were found</div>
+            )}
           </>
         ) : (
           <Loader2 className="animate-spin mt-1 h-8 w-8 ml-3 ..." />
