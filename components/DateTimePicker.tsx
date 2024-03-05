@@ -16,7 +16,7 @@ interface DateTimePickerProps {
   setDate: (date: Date) => void;
 }
 
-export function DateTimePicker({ date, setDate }: DateTimePickerProps) {
+const DateTimePicker = ({ date, setDate }: DateTimePickerProps) => {
   const [selectedDateTime, setSelectedDateTime] = React.useState<any>(
     DateTime.fromJSDate(date)
   );
@@ -91,4 +91,6 @@ export function DateTimePicker({ date, setDate }: DateTimePickerProps) {
       </PopoverContent>
     </Popover>
   );
-}
+};
+
+export default DateTimePicker;
