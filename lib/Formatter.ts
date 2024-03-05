@@ -1,6 +1,6 @@
 import { config } from "@/Config";
 import Hive from "@/types/Hive";
-import { IFormatFunctionArguments, WaxFormattable, comment, vote } from "@hive/wax/web";
+import { IFormatFunctionArguments, WaxFormattable, comment, vote } from "@hive/wax";
 import moment from "moment";
 
 class OperationsFormatter {

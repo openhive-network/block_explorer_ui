@@ -4,7 +4,7 @@ import {
   UserSettingsContext,
 } from "./contexts/UserSettingsContext";
 import { HiveChainContext } from "./contexts/HiveChainContext";
-import { IHiveChainInterface, createHiveChain } from "@hive/wax/web";
+import { IHiveChainInterface, createHiveChain } from "@hive/wax";
 import { AddressesContext } from "./contexts/AddressesContext";
 import useApiAddresses from "@/utils/ApiAddresses";
 
