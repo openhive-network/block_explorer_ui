@@ -549,6 +549,7 @@ declare module Hive {
       to: string;
       amount: Supply | undefined;
       memo: string;
+      request_id?: number;
   }
 
   interface EscrowDisputeOperation {

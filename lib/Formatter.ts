@@ -1,6 +1,7 @@
 import { config } from "@/Config";
 import Hive from "@/types/Hive";
 import {
+  DeepReadonly,
   IFormatFunctionArguments,
   IWaxBaseInterface,
   IWaxCustomFormatter,
@@ -11,34 +12,60 @@ import {
   account_update2,
   account_witness_proxy,
   account_witness_vote,
+  author_reward,
   cancel_transfer_from_savings,
   change_recovery_account,
   claim_account,
   claim_reward_balance,
+  clear_null_account_balance,
+  collateralized_convert,
   comment,
+  comment_benefactor_reward,
   comment_options,
+  comment_payout_update,
+  comment_reward,
+  consolidate_treasury_balance,
   convert,
   create_claimed_account,
+  create_proposal,
+  curation_reward,
   custom,
   decline_voting_rights,
+  delayed_voting,
   delegate_vesting_shares,
   delete_comment,
+  dhf_funding,
   escrow_dispute,
   escrow_transfer,
   feed_publish,
+  fill_convert_request,
+  fill_order,
+  fill_transfer_from_savings,
+  fill_vesting_withdraw,
+  hardfork,
+  hardfork_hive_restore,
+  interest,
   limit_order_cancel,
   limit_order_create,
   limit_order_create2,
+  liquidity_reward,
   pow,
   pow2,
   producer_missed,
   producer_reward,
+  proposal_pay,
   recover_account,
+  recurrent_transfer,
+  remove_proposal,
   request_account_recovery,
+  return_vesting_delegation,
   set_withdraw_vesting_route,
+  shutdown_witness,
   transfer,
   transfer_from_savings,
   transfer_to_vesting,
+  update_proposal,
+  update_proposal_votes,
   vote,
   withdraw_vesting,
   witness_block_approve,
@@ -54,14 +81,27 @@ class OperationsFormatter implements IWaxCustomFormatter {
     private readonly wax: IWaxBaseInterface
   ) {}
 
-  private formatAmount (supply: Hive.Supply | undefined): string {
+  private getFormattedAmount (supply: Hive.Supply | undefined): string {
     return(this.wax.formatter.format(supply));
   }
 
   private getTransferMessage(transfer: Hive.TransferOperation): string {
     const withMemo = transfer.memo !== "" ? `with memo ${transfer.memo}` : "";
-    let message = `${transfer.from} transfered ${this.formatAmount(transfer.amount)} to ${transfer.to} ${withMemo}`;
+    let message = `${transfer.from} transfered ${this.getFormattedAmount(transfer.amount)} to ${transfer.to} ${withMemo}`;
     return message;
+  }
+
+  private getFormattedDate(time: Date | string) : string {
+    return moment(time).format(config.baseMomentTimeFormat);
+  }
+
+  private getFormattedMultipleAssets(assets: DeepReadonly<Hive.Supply[]>): string {
+    let assetsMessage = "";
+    assets.forEach((asset, index) => {
+
+      assetsMessage += `${index !== 0 ? ", " : ""}${this.getFormattedAmount(asset)}`;
+    })
+    return assetsMessage;
   }
 
   @WaxFormattable({matchProperty: "type", matchValue: "vote_operation"})
@@ -89,13 +129,13 @@ class OperationsFormatter implements IWaxCustomFormatter {
 
   @WaxFormattable({matchProperty: "type", matchValue: "transfer_to_vesting_operation"})
   formatTransferToVestingOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: Hive.TransferOperation }>) {
-    let message = `${op.from} transfered ${this.formatAmount(op.amount)} to vesting`;
+    let message = `${op.from} transfered ${this.getFormattedAmount(op.amount)} to vesting`;
     return {...target, value: message};
   }
 
   @WaxFormattable({matchProperty: "type", matchValue: "withdraw_vesting_operation"})
   formatWithdrawVestingOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: withdraw_vesting }>) {
-    let message = `${op.account} withdrawed ${this.formatAmount(op.vesting_shares)}`;
+    let message = `${op.account} withdrawed ${this.getFormattedAmount(op.vesting_shares)}`;
     return {...target, value: message};
   }
 
@@ -103,8 +143,8 @@ class OperationsFormatter implements IWaxCustomFormatter {
 
   @WaxFormattable({matchProperty: "type", matchValue: "limit_order_create_operation"})
   formatLimitOrderCreateOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: limit_order_create }>) {
-    const expiration = op.fill_or_kill ? "" : `, expiration: ${moment(op.expiration).format(config.baseMomentTimeFormat)}`;
-    let message = `${op.owner} created limit order (id: ${op.orderid}) to sell: ${this.formatAmount(op.amount_to_sell)} for: ${this.formatAmount(op.min_to_receive)}${expiration}`;
+    const expiration = op.fill_or_kill ? "" : `, expiration: ${this.getFormattedDate(op.expiration)}`;
+    let message = `${op.owner} created limit order (id: ${op.orderid}) to sell: ${this.getFormattedAmount(op.amount_to_sell)} for: ${this.getFormattedAmount(op.min_to_receive)}${expiration}`;
     return {...target, value: message};
   }
 
@@ -116,20 +156,20 @@ class OperationsFormatter implements IWaxCustomFormatter {
 
   @WaxFormattable({matchProperty: "type", matchValue: "feed_publish_operation"})
   formatFeedPublishOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: feed_publish }>) {
-    let message = `${op.publisher} published the exchange rate: ${this.formatAmount(op.exchange_rate?.base)} for ${this.formatAmount(op.exchange_rate?.quote)}`;
+    let message = `${op.publisher} published the exchange rate: ${this.getFormattedAmount(op.exchange_rate?.base)} for ${this.getFormattedAmount(op.exchange_rate?.quote)}`;
     return {...target, value: message};
   }
 
 
   @WaxFormattable({matchProperty: "type", matchValue: "convert_operation"})
   formatConvertOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: convert }>) {
-    let message = `${op.owner} starts convert operation: ${op.requestid} with amount:  ${this.formatAmount(op.amount)}`;
+    let message = `${op.owner} starts convert operation: ${op.requestid} with amount:  ${this.getFormattedAmount(op.amount)}`;
     return {...target, value: message};
   }
 
   @WaxFormattable({matchProperty: "type", matchValue: "account_create_operation"})
   formatAccountCreateOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: account_create }>) {
-    let message = `${op.creator} created new account: ${op.new_account_name} with ${this.formatAmount(op.fee)} fee, memo key: ${op.memo_key}`;
+    let message = `${op.creator} created new account: ${op.new_account_name} with ${this.getFormattedAmount(op.fee)} fee, memo key: ${op.memo_key}`;
     return {...target, value: message};
   }
 
@@ -144,7 +184,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
   formatWitnessUpdateOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: witness_update }>) {
     let message = "";
     if (op.block_signing_key) {
-      message = `${op.owner} with page URL: ${op.url} proposed himself as witness - HBD interest rate: ${formatPercent(op.props?.hbd_interest_rate || 0)}, maximum block size: ${op.props?.maximum_block_size}, account creation fee: ${this.formatAmount(op.props?.account_creation_fee)}`;
+      message = `${op.owner} with page URL: ${op.url} proposed himself as witness - HBD interest rate: ${formatPercent(op.props?.hbd_interest_rate || 0)}, maximum block size: ${op.props?.maximum_block_size}, account creation fee: ${this.getFormattedAmount(op.props?.account_creation_fee)}`;
     } else {
       message = `${op.owner} resigned from being witness`
     }
@@ -197,7 +237,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
 
   @WaxFormattable({matchProperty: "type", matchValue: "comment_options_operation"})
   formatcommentOptionOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: comment_options }>) {
-    let message = `${op.author} set comments options for ${op.permlink}: ${op.allow_curation_rewards ? "allow rewards, " : ""} ${op.allow_votes ? "allow votes, " : ""} max payout: ${this.formatAmount(op.max_accepted_payout)}, percent HBD: ${formatPercent(op.percent_hbd)}`;
+    let message = `${op.author} set comments options for ${op.permlink}: ${op.allow_curation_rewards ? "allow rewards, " : ""} ${op.allow_votes ? "allow votes, " : ""} max payout: ${this.getFormattedAmount(op.max_accepted_payout)}, percent HBD: ${formatPercent(op.percent_hbd)}`;
     return {...target, value: message};
   }
 
@@ -209,14 +249,14 @@ class OperationsFormatter implements IWaxCustomFormatter {
 
   @WaxFormattable({matchProperty: "type", matchValue: "limit_order_create2_operation"})
   formatLimitOrderCreate2Operation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: limit_order_create2 }>) {
-    const expiration = op.fill_or_kill ? "" : `, expiration: ${moment(op.expiration).format(config.baseMomentTimeFormat)}`;
-    let message = `${op.owner} created limit order (id: ${op.orderid}) to sell: ${this.formatAmount(op.amount_to_sell)} with exchange rate: ${this.formatAmount(op.exchange_rate?.base)} to ${this.formatAmount(op.exchange_rate?.quote)}${expiration}`;
+    const expiration = op.fill_or_kill ? "" : `, expiration: ${this.getFormattedDate(op.expiration)}`;
+    let message = `${op.owner} created limit order (id: ${op.orderid}) to sell: ${this.getFormattedAmount(op.amount_to_sell)} with exchange rate: ${this.getFormattedAmount(op.exchange_rate?.base)} to ${this.getFormattedAmount(op.exchange_rate?.quote)}${expiration}`;
     return {...target, value: message};
   }
 
   @WaxFormattable({matchProperty: "type", matchValue: "claim_account_operation"})
   formatClaimAccountOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: claim_account }>) {
-    let message = `${op.creator} claimed an account creation with ${this.formatAmount(op.fee)}`;
+    let message = `${op.creator} claimed an account creation with ${this.getFormattedAmount(op.fee)}`;
     return {...target, value: message};
   }
 
@@ -256,7 +296,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
 
   @WaxFormattable({matchProperty: "type", matchValue: "pow2_operation"})
   formatPow2Operation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: pow2}>) {
-    let message = `Prove of Work 2, account creation fee: ${this.formatAmount(op.props?.account_creation_fee)}, HBD interest rate: ${formatPercent(op.props?.hbd_interest_rate || 0)}, maximum block size: ${op.props?.maximum_block_size}`;
+    let message = `Prove of Work 2, account creation fee: ${this.getFormattedAmount(op.props?.account_creation_fee)}, HBD interest rate: ${formatPercent(op.props?.hbd_interest_rate || 0)}, maximum block size: ${op.props?.maximum_block_size}`;
     return {...target, value: message};
   }
 
@@ -303,32 +343,202 @@ class OperationsFormatter implements IWaxCustomFormatter {
 
   @WaxFormattable({matchProperty: "type", matchValue: "claim_reward_balance_operation"})
   formatClaimRewardBalanceOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: claim_reward_balance }>) {
-    let message = `${op.account} claimed rewards: ${this.formatAmount(op.reward_hbd)}, ${this.formatAmount(op.reward_hive)}, ${this.formatAmount(op.reward_vests)}`;
+    let message = `${op.account} claimed rewards: ${this.getFormattedAmount(op.reward_hbd)}, ${this.getFormattedAmount(op.reward_hive)}, ${this.getFormattedAmount(op.reward_vests)}`;
     return {...target, value: message};
   }
 
   @WaxFormattable({matchProperty: "type", matchValue: "delegate_vesting_shares_operation"})
   formatDelegateVestingSharesOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: delegate_vesting_shares }>) {
-    let message = `${op.delegator} delegated vesting shares: ${this.formatAmount(op.vesting_shares)} to ${op.delegatee}`;
+    let message = `${op.delegator} delegated vesting shares: ${this.getFormattedAmount(op.vesting_shares)} to ${op.delegatee}`;
     return {...target, value: message};
   }
 
   @WaxFormattable({matchProperty: "type", matchValue: "account_create_with_delegation_operation"})
   formatAccountCreateWithDelegationOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: account_create_with_delegation }>) {
-    let message = `${op.creator} created new account: ${op.new_account_name} with delegation: ${this.formatAmount(op.delegation)} and fee: ${this.formatAmount(op.fee)}`;
+    let message = `${op.creator} created new account: ${op.new_account_name} with delegation: ${this.getFormattedAmount(op.delegation)} and fee: ${this.getFormattedAmount(op.fee)}`;
     return {...target, value: message};
   }
 
-  //Witness set properties
+    //Witness set properties
 
-  // Virtual
+  // Talk about more detailed update
+  @WaxFormattable({matchProperty: "type", matchValue: "account_update2_operation"})
+  formatAccountUpdate2Operation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: account_update2 }>) {
+    let message = `${op.account} updated an account`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "create_proposal_operation"})
+  formatCreateProposalOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: create_proposal }>) {
+    let message = `${op.creator} created a proposal to daily pay ${this.getFormattedAmount(op.daily_pay)} to ${op.receiver} from ${this.getFormattedDate(op.start_date)} to ${this.getFormattedDate(op.end_date)}. Details in post: ${op.permlink}`;
+    return {...target , value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "update_proposal_votes_operation"})
+  formatUpdateProposalVotesOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: update_proposal_votes }>) {
+    let message = "";
+    if (op.approve) {
+      message = `${op.voter} approved proposal ${op.proposal_ids}`;
+    } else {
+      message = `${op.voter} removed approval for proposal ${op.proposal_ids}`;
+    }
+    return {...target , value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "remove_proposal_operation"})
+  formatRemoveProposalOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: remove_proposal }>) {
+    let message = `${op.proposal_owner} removed proposal ${op.proposal_ids}`;
+    return {...target , value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "update_proposal_operation"})
+  formatUpdateProposalOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: update_proposal }>) {
+    let message = `${op.creator} updated proposal ${op.proposal_id}. Daily pay: ${this.getFormattedAmount(op.daily_pay)}, permlink: ${op.permlink}`;
+    return {...target , value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "collateralized_convert_operation"})
+  formatCollateralizedConvertOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: collateralized_convert }>) {
+    let message = `${op.owner} collateralized convert ${this.getFormattedAmount(op.amount)} with request ID: ${op.requestid}`;
+    return {...target , value: message};
+  }
+
+  // Recurrent transfer
+
+  // === VIRTUAL ===
+
+  @WaxFormattable({matchProperty: "type", matchValue: "fill_convert_request_operation"})
+  formatFillConverRequest({ source: { value: op }, target }: IFormatFunctionArguments<{ value: fill_convert_request }>) {
+    let message = `${op.owner} converted ${this.getFormattedAmount(op.amount_in)} to ${this.getFormattedAmount(op.amount_out)} for request ID: ${op.requestid}`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "author_reward_operation"})
+  formatAuthorRewardOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: author_reward }>) {
+    const mustBeClaimed = op.payout_must_be_claimed ? "" : ", doesn't have to be claimed";
+    let message = `${op.author} got a reward for comment: ${op.permlink} curators payout: ${this.getFormattedAmount(op.curators_vesting_payout)}, payouts: ${this.getFormattedAmount(op.vesting_payout)}, ${this.getFormattedAmount(op.hive_payout)}, ${this.getFormattedAmount(op.hbd_payout)}${mustBeClaimed}`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "curation_reward_operation"})
+  formatCurationRewardOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: curation_reward }>) {
+    const mustBeClaimed = op.payout_must_be_claimed ? "" : ", doesn't have to be claimed";
+    let message = `${op.curator} got a curation reward: ${this.getFormattedAmount(op.reward)} for comment: ${op.permlink} made by ${op.author}${mustBeClaimed}`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "comment_reward_operation"})
+  formatCommentReward({ source: { value: op }, target }: IFormatFunctionArguments<{ value: comment_reward }>) {
+    let message = `${op.permlink} by ${op.author} got rewards: ${this.getFormattedAmount(op.payout)}`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "liquidity_reward_operation"})
+  formatLiquidityRewardOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: liquidity_reward }>) {
+    let message = `${op.owner} got liquidity reward ${this.getFormattedAmount(op.payout)}`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "interest_operation"})
+  formatInterestOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: interest }>) {
+    const wasLiquidModified = op.is_saved_into_hbd_balance ? ", liquid balance modified" : "";
+    let message = `${op.owner} got interest paid ${this.getFormattedAmount(op.interest)}${wasLiquidModified}`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "fill_vesting_withdraw_operation"})
+  formatFillVestingWithdrawOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: fill_vesting_withdraw }>) {
+    let message = `${op.from_account} withdrawed ${this.getFormattedAmount(op.withdrawn)} and ${op.to_account} deposited ${this.getFormattedAmount(op.deposited)}`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "fill_order_operation"})
+  formatFillOrderOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: fill_order }>) {
+    let message = `${op.current_owner} paid ${this.getFormattedAmount(op.current_pays)} for ${op.open_owner} and received ${this.getFormattedAmount(op.open_pays)} (IDs: ${op.current_orderid} -> ${op.open_orderid})`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "shutdown_witness_operation"})
+  formatShutdownWitnessOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: shutdown_witness }>) {
+    let message = `Witness ${op.owner} was shutted down`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "fill_transfer_from_savings_operation"})
+  formatFillTransferFromSavings({ source: { value: op }, target }: IFormatFunctionArguments<{ value: Hive.TransferOperation }>) {
+    const memo = op.memo !== "" ? `, memo: ${op.memo}` : "";
+    let message = `${this.getFormattedAmount(op.amount)} was transfered from savings of ${op.from} to ${op.to}, request ID: ${op.request_id}${memo}`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "hardfork_operation"})
+  formatHardforkOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: hardfork }>) {
+    let message = `Hardfork ${op.hardfork_id}`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "comment_payout_update_operation"})
+  formatCommentPayoutUpdateOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: comment_payout_update }>) {
+    let message = `Payout update for ${op.author} comment: ${op.permlink}`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "return_vesting_delegation_operation"})
+  formatReturnVestingDelegationOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: return_vesting_delegation }>) {
+    let message = `${op.account} received ${this.getFormattedAmount(op.vesting_shares)}`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "comment_benefactor_reward_operation"})
+  formatCommentBenefactorRewardOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: comment_benefactor_reward }>) {
+    const mustBeClaimed = op.payout_must_be_claimed ? "" : ", doesn't have to be claimed";
+    let message = `${op.benefactor} received ${this.getFormattedAmount(op.vesting_payout)}, ${this.getFormattedAmount(op.hbd_payout)}, ${this.getFormattedAmount(op.hbd_payout)} for comment ${op.permlink} by ${op.author}${mustBeClaimed}`;
+    return {...target, value: message};
+  }
 
   @WaxFormattable({matchProperty: "type", matchValue: "producer_reward_operation"})
   formatProducerReward({ source: { value: op }, target }: IFormatFunctionArguments<{ value: producer_reward }>) {
-    let message = `${op.producer} got ${this.formatAmount(op.vesting_shares)} reward`;
+    let message = `${op.producer} got ${this.getFormattedAmount(op.vesting_shares)} reward`;
     return {...target, value: message};
   }
 
+  @WaxFormattable({matchProperty: "type", matchValue: "clear_null_account_balance_operation"})
+  formatClearNullAccountBalanceOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: clear_null_account_balance }>) {
+    let message = `Totally cleared: ${this.getFormattedMultipleAssets(op.total_cleared)}`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "proposal_pay_operation"})
+  formatProposalPayOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: proposal_pay }>) {
+    let message = `${op.receiver} was paid ${this.getFormattedAmount(op.payment)} for his proposal ${op.proposal_id} by ${op.payer}`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "dhf_funding_operation"})
+  formatDhfFundingOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: dhf_funding }>) {
+    let message = `${op.treasury} got ${this.getFormattedAmount(op.additional_funds)}`;
+    return {...target, value: message};
+  }
+
+  // Hardfork Hive
+
+  @WaxFormattable({matchProperty: "type", matchValue: "hardfork_hive_restore_operation"})
+  formatHardforkHiveRestoreOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: hardfork_hive_restore }>) {
+    let message = `${op.account} received ${this.getFormattedAmount(op.hive_transferred)} and ${this.getFormattedAmount(op.hbd_transferred)} from ${op.treasury}`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "delayed_voting_operation"})
+  formatDelayedVotingOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: delayed_voting }>) {
+    let message = `${op.voter} has ${op.votes} vote power`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "consolidate_treasury_balance_operation"})
+  formatConsolidateTrasuryBalanceOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: consolidate_treasury_balance }>) {
+    let message = `${this.getFormattedMultipleAssets(op.total_moved)} was consolidated into treasury`;
+    return {...target, value: message};
+  }
   
 }
 
