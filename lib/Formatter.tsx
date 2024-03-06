@@ -93,6 +93,7 @@ import {
 } from "@hive/wax";
 import moment from "moment";
 import { formatPercent } from "./utils";
+import Link from "next/link";
 
 class OperationsFormatter implements IWaxCustomFormatter {
   
@@ -123,9 +124,17 @@ class OperationsFormatter implements IWaxCustomFormatter {
     return assetsMessage;
   }
 
+  private getUserLink(user: string): React.JSX.Element {
+    return <Link href={`/@${user}`}><span className="text-explorer-turquoise">@{user}</span></Link>
+  }
+
+  private getPermlink(author: string, permlink: string): React.JSX.Element {
+    return <Link href={`https://hive.blog/@${author}/${permlink}`}><span className="text-explorer-ligh-green">{permlink.slice(0, 20)}...</span></Link>
+  }
+
   @WaxFormattable({matchProperty: "type", matchValue: "vote_operation"})
   formatVote({ source: { value: op }, target }: IFormatFunctionArguments<{ value: vote }>) {
-    const message = <div>{`${op.voter} voted on "@${op.author}/${op.permlink}"`}</div>;
+    const message = <div>{this.getUserLink(op.voter)}{` voted on `} {this.getUserLink(op.author)} {"/"} {this.getPermlink(op.author, op.permlink)} {` with ${op.weight} power`}</div>;
     return {...target, value: message};
   }
 
