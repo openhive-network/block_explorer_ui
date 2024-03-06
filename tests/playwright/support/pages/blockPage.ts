@@ -20,6 +20,12 @@ export class BlockPage {
   readonly firstTransactionLink: Locator;
   readonly usernameInOperationDetails: Locator;
   readonly voteOperationPostLink: Locator;
+  readonly operationsJsonFormat: Locator;
+  readonly blockNumber: Locator;
+  readonly nextBlockBtn: Locator;
+  readonly dataTimePicker: Locator;
+  readonly firstDayInDataPicker: Locator;
+  
 
   constructor(page: Page) {
     this.page = page;
@@ -41,6 +47,11 @@ export class BlockPage {
     this.firstTransactionLink = page.locator('.my-1.flex-1').getByRole('link').first();
     this.usernameInOperationDetails = page.locator('a.text-explorer-ligh-green').first();
     this.voteOperationPostLink = page.locator('a.text-explorer-yellow').first();
+    this.operationsJsonFormat = page.locator('pre');
+    this.blockNumber = page.getByTestId('block-number-search');
+    this.nextBlockBtn = page.getByTestId('next-block-btn');
+    this.dataTimePicker = page.getByTestId("date-time-picker");
+    this.firstDayInDataPicker = page.locator('.react-calendar__tile.react-calendar__month-view__days__day').first()
   }
 
   async validateBlockPageIsLoaded() {

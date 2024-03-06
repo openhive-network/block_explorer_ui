@@ -116,8 +116,10 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
               value={block}
               onChange={(e) => setBlock(e.target.value)}
               type="number"
+              data-testid="block-number-search"
             />
             <button
+              data-testid="next-block-btn"
               onClick={() => handleBlockChange((blockNumber + 1).toString())}
               className="text-white bg-transparent text-sm border border-white h-[30px] md:px-1"
             >
@@ -138,6 +140,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
           >
             Block Time :{" "}
             <DateTimePicker
+              data-testid="date-time-picker"
               value={blockDate}
               onChange={(date) => setBlockDate(date!)}
               className="text-explorer-turquoise ml-2 md:ml-4 border border-explorer-turquoise"

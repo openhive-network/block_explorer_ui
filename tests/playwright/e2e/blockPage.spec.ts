@@ -123,4 +123,50 @@ test.describe('Block page tests', () => {
             console.log("element is not visible")
         }
     });  
+
+    test('Validate that after click JSON Metadata button the list is displayed as JSON format', async ({page}) =>{
+        await mainPage.headBlockCardBlockLink.click()
+        await expect(blockPage.blockProducer).toBeVisible()
+        await expect(blockPage.detailedOperationCard.first()).toBeVisible()
+        await mainPage.RawJsonViewToggle.click()
+        await expect(blockPage.operationsJsonFormat).toBeVisible()
+    });  
+
+    test('Validate that user can move to the next block', async ({page}) =>{
+        await mainPage.headBlockCardBlockLink.click()
+        await expect(blockPage.blockProducer).toBeVisible()
+        await expect(blockPage.blockNumber.first()).toBeVisible()
+       
+        const blockNumberOnBlockPage = await (blockPage.blockNumber).inputValue()
+        
+        await page.waitForTimeout(1000)
+        await blockPage.nextBlockBtn.click({force:true})
+        await expect(blockPage.detailedOperationCard.first()).toBeVisible()
+    
+        const nextBlockNumber = await (blockPage.blockNumber).inputValue() 
+    
+        await expect(parseInt(nextBlockNumber)).toEqual(parseInt(blockNumberOnBlockPage)+1)
+    }); 
+
+    test('Validate that user can change the Block Time', async ({page}) =>{
+        await mainPage.headBlockCardBlockLink.click()
+        await expect(blockPage.blockProducer).toBeVisible()
+
+        const blockNumberOnBlockPage = await (blockPage.blockNumber).inputValue()
+        console.log(blockNumberOnBlockPage)
+        await blockPage.dataTimePicker.click()
+        await blockPage.firstDayInDataPicker.click()
+        await page.waitForTimeout(2000)
+
+        const blockNumberChangedDate = await (blockPage.blockNumber).inputValue()
+
+        await expect(parseInt(blockNumberChangedDate)).not.toEqual(parseInt(blockNumberOnBlockPage))
+
+    });  
+
+    test('Validate that user can move to the Virtual ops by clicking button', async ({page}) =>{
+        await mainPage.headBlockCardBlockLink.click()
+        await expect(blockPage.blockProducer).toBeVisible()
+        // to be continue
+    });  
 });
