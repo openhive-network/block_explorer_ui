@@ -63,5 +63,5 @@ export const formatNumber = (numberToFormat: number, isVest: boolean): string =>
  * @returns Formatted string with % at the end
  */
 export const formatPercent = (numberToFormat: number): string => {
-  return `${(numberToFormat / Math.pow(10, config.precisions.percentage)).toLocaleString()} %`
+  return `${(numberToFormat / Math.pow(10, config.precisions.percentage)).toLocaleString()}%`
 }
