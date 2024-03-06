@@ -8,6 +8,7 @@ import {
   WaxFormattable,
   account_create,
   account_create_with_delegation,
+  account_created,
   account_update,
   account_update2,
   account_witness_proxy,
@@ -15,10 +16,12 @@ import {
   author_reward,
   cancel_transfer_from_savings,
   change_recovery_account,
+  changed_recovery_account,
   claim_account,
   claim_reward_balance,
   clear_null_account_balance,
   collateralized_convert,
+  collateralized_convert_immediate_conversion,
   comment,
   comment_benefactor_reward,
   comment_options,
@@ -31,29 +34,42 @@ import {
   curation_reward,
   custom,
   decline_voting_rights,
+  declined_voting_rights,
   delayed_voting,
   delegate_vesting_shares,
   delete_comment,
+  dhf_conversion,
   dhf_funding,
+  effective_comment_vote,
+  escrow_approve,
+  escrow_approved,
   escrow_dispute,
   escrow_transfer,
+  expired_account_notification,
+  failed_recurrent_transfer,
   feed_publish,
+  fill_collateralized_convert_request,
   fill_convert_request,
   fill_order,
+  fill_recurrent_transfer,
   fill_transfer_from_savings,
   fill_vesting_withdraw,
   hardfork,
   hardfork_hive_restore,
   interest,
   limit_order_cancel,
+  limit_order_cancelled,
   limit_order_create,
   limit_order_create2,
   liquidity_reward,
   pow,
   pow2,
+  pow_reward,
   producer_missed,
   producer_reward,
+  proposal_fee,
   proposal_pay,
+  proxy_cleared,
   recover_account,
   recurrent_transfer,
   remove_proposal,
@@ -64,8 +80,10 @@ import {
   transfer,
   transfer_from_savings,
   transfer_to_vesting,
+  transfer_to_vesting_completed,
   update_proposal,
   update_proposal_votes,
+  vesting_shares_split,
   vote,
   withdraw_vesting,
   witness_block_approve,
@@ -86,7 +104,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }
 
   private getTransferMessage(transfer: Hive.TransferOperation): string {
-    const withMemo = transfer.memo !== "" ? `with memo ${transfer.memo}` : "";
+    const withMemo = transfer.memo !== "" ? `with memo "${transfer.memo}"` : "";
     let message = `${transfer.from} transfered ${this.getFormattedAmount(transfer.amount)} to ${transfer.to} ${withMemo}`;
     return message;
   }
@@ -466,7 +484,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
 
   @WaxFormattable({matchProperty: "type", matchValue: "fill_transfer_from_savings_operation"})
   formatFillTransferFromSavings({ source: { value: op }, target }: IFormatFunctionArguments<{ value: Hive.TransferOperation }>) {
-    const memo = op.memo !== "" ? `, memo: ${op.memo}` : "";
+    const memo = op.memo !== "" ? `, memo: "${op.memo}"` : "";
     let message = `${this.getFormattedAmount(op.amount)} was transfered from savings of ${op.from} to ${op.to}, request ID: ${op.request_id}${memo}`;
     return {...target, value: message};
   }
@@ -537,6 +555,127 @@ class OperationsFormatter implements IWaxCustomFormatter {
   @WaxFormattable({matchProperty: "type", matchValue: "consolidate_treasury_balance_operation"})
   formatConsolidateTrasuryBalanceOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: consolidate_treasury_balance }>) {
     let message = `${this.getFormattedMultipleAssets(op.total_moved)} was consolidated into treasury`;
+    return {...target, value: message};
+  }
+
+  //Remember to ask about the rest of properties
+  @WaxFormattable({matchProperty: "type", matchValue: "effective_comment_vote_operation"})
+  formatEffectiveCommentVoteOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: effective_comment_vote }>) {
+    let message = `${op.voter} voted for ${op.permlink} by ${op.author} and generated ${this.getFormattedAmount(op.pending_payout)} pending payout`;
+    return {...target, value: message};
+  }
+
+  // Inefective delete comment
+
+  @WaxFormattable({matchProperty: "type", matchValue: "dhf_conversion_operation"})
+  formatDhfConversionOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: dhf_conversion }>) {
+    let message = `${op.treasury} got ${this.getFormattedAmount(op.hive_amount_in)} converted to ${this.getFormattedAmount(op.hbd_amount_out)}`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "expired_account_notification_operation"})
+  formatExpiredAccountNotificationOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: expired_account_notification }>) {
+    let message = `${op.account} vote was nullified`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "changed_recovery_account_operation"})
+  formatChangedRecoveryAccountOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: changed_recovery_account }>) {
+    let message = `${op.account} changed recovery account from ${op.old_recovery_account} to ${op.new_recovery_account}`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "transfer_to_vesting_completed_operation"})
+  formatTransferToVestingCompletedOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: transfer_to_vesting_completed }>) {
+    let message = `Vesting transfer from ${op.from_account} to ${op.to_account} was completed with ${this.getFormattedAmount(op.hive_vested)} -> ${this.getFormattedAmount(op.vesting_shares_received)}`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "pow_reward_operation"})
+  formatPowRewardOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: pow_reward }>) {
+    let message = `${op.worker} got ${this.getFormattedAmount(op.reward)} reward`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "vesting_shares_split_operation"})
+  formatVestingSharesSplitOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: vesting_shares_split }>) {
+    let message = `${op.owner} splited vests ${this.getFormattedAmount(op.vesting_shares_before_split)} -> ${this.getFormattedAmount(op.vesting_shares_after_split)}`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "account_created_operation"})
+  formatAccountCreatedOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: account_created }>) {
+    let message = `${op.new_account_name} was created by ${op.creator} with initials: vesting shares ${this.getFormattedAmount(op.initial_vesting_shares)} and delegations ${this.getFormattedAmount(op.initial_delegation)}`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "fill_collateralized_convert_request_operation"})
+  formatFillCollateralizedConvertRequestOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: fill_collateralized_convert_request }>) {
+    let message = `Collateralized convert reuqest of ${op.owner} (ID: ${op.requestid}) was filled with ${this.getFormattedAmount(op.amount_in)} -> ${this.getFormattedAmount(op.amount_out)} and ${this.getFormattedAmount(op.excess_collateral)} excess`;
+    return {...target, value: message};
+  }
+
+  // System warning
+
+  @WaxFormattable({matchProperty: "type", matchValue: "fill_recurrent_transfer_operation"})
+  formatFillRecurrentTransferOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: Hive.TransferOperation }>) {
+    let message = `Recurrent transfer from ${op.from} to ${op.to} with amount: ${this.getFormattedAmount(op.amount)}, memo: "${op.memo}" and ${op.remaining_executions} remaining executions`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "failed_recurrent_transfer_operation"})
+  formatFailedRecurrentTransferOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: Hive.TransferOperation }>) {
+    const deleted = op.deleted ? " and was deleted" : "";
+    let message = `Recurrent transfer from ${op.from} to ${op.to} with amount: ${this.getFormattedAmount(op.amount)}, memo: "${op.memo}" and ${op.remaining_executions} remaining executions failed for ${op.consecutive_failures} times${deleted}`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "limit_order_cancelled_operation"})
+  formatLimitOrderCancelledOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: limit_order_cancelled }>) {
+    let message = `Transfer ${op.orderid} by ${op.seller} was cancelled and ${this.getFormattedAmount(op.amount_back)} was sent back`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "producer_missed_operation"})
+  formatProducerMissedOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: producer_missed }>) {
+    let message = `${op.producer} missed block`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "proposal_fee_operation"})
+  formatProposalFeeOperations({ source: { value: op }, target }: IFormatFunctionArguments<{ value: proposal_fee }>) {
+    let message = `${op.creator} got proposal fee ${this.getFormattedAmount(op.fee)} ID: ${op.proposal_id} from ${op.treasury}`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "collateralized_convert_immediate_conversion_operation"})
+  formatCollateralizedConvertImmediateConversionOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: collateralized_convert_immediate_conversion }>) {
+    let message = `${op.owner} got ${this.getFormattedAmount(op.hbd_out)} for conversion ID: ${op.requestid}`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "escrow_approved_operation"})
+  formatEscrowApprovedOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: Hive.EscrowDisputeOperation }>) {
+    let message = `Escrow from ${op.from} to ${op.to} by agent ${op.agent} with fee: ${this.getFormattedAmount(op.fee)}, ID: ${op.escrow_id}`;
+    return {...target, value: message};
+  }
+
+  // Cutted numbers
+  @WaxFormattable({matchProperty: "type", matchValue: "escrow_rejected_operation"})
+  formatEscrowRejectedOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: Hive.EscrowDisputeOperation }>) {
+    let message = `Escrow from ${op.from} to ${op.to} by agent ${op.agent} was rejected`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "proxy_cleared_operation"})
+  formatProxyClearedOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: proxy_cleared }>) {
+    let message = `${op.account} cleared proxy ${op.proxy}`;
+    return {...target, value: message};
+  }
+
+  @WaxFormattable({matchProperty: "type", matchValue: "declined_voting_rights_operation"})
+  formatDeclinedVotingRightsOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: declined_voting_rights }>) {
+    let message = `${op.account} voting's rights were declined`;
     return {...target, value: message};
   }
   
