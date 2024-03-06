@@ -28,6 +28,7 @@ interface DetailedOperationCardProps {
 const getOneLineDescription = (operation: Hive.Operation) => {
   const { value } = operation;
   if (typeof value === "string" || React.isValidElement(value)) return value;
+  if (operation.type === "custom_json_operation") return value.message;
   return null;
 };
 

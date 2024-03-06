@@ -34,6 +34,7 @@ import {
   create_proposal,
   curation_reward,
   custom,
+  custom_json,
   decline_voting_rights,
   declined_voting_rights,
   delayed_voting,
@@ -105,11 +106,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
     return(this.wax.formatter.format(supply));
   }
 
-  private getTransferMessage(transfer: Hive.TransferOperation): string {
-    const withMemo = transfer.memo !== "" ? `with memo "${transfer.memo}"` : "";
-    let message = `${transfer.from} transfered ${this.getFormattedAmount(transfer.amount)} to ${transfer.to} ${withMemo}`;
-    return message;
-  }
+
 
   private getFormattedDate(time: Date | string) : string {
     return moment(time).format(config.baseMomentTimeFormat);
@@ -124,7 +121,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
     return assetsMessage;
   }
 
-  private getUserLink(user: string): React.JSX.Element {
+  private getAccountLink(user: string): React.JSX.Element {
     return <Link href={`/@${user}`}><span className="text-explorer-turquoise">@{user}</span></Link>
   }
 
@@ -132,19 +129,39 @@ class OperationsFormatter implements IWaxCustomFormatter {
     return <Link href={`https://hive.blog/@${author}/${permlink}`}><span className="text-explorer-ligh-green">{permlink.slice(0, 20)}...</span></Link>
   }
 
+  private generateReactLink(elements: Array<string | React.JSX.Element>): React.JSX.Element {
+    return (
+      <div>
+        {elements.map((element) => (
+          <>
+            {element}{" "}
+          </>
+          )
+        )}
+      </div>
+    )
+  }
+
+  private getTransferMessage(transfer: Hive.TransferOperation): React.JSX.Element {
+    const withMemo = transfer.memo !== "" ? `with memo "${transfer.memo}"` : "";
+    let message = this.generateReactLink([this.getAccountLink(transfer.from), "transfered", this.getFormattedAmount(transfer.amount), "to", this.getAccountLink(transfer.to), withMemo]);
+    return message;
+  }
+
   @WaxFormattable({matchProperty: "type", matchValue: "vote_operation"})
   formatVote({ source: { value: op }, target }: IFormatFunctionArguments<{ value: vote }>) {
-    const message = <div>{this.getUserLink(op.voter)}{` voted on `} {this.getUserLink(op.author)} {"/"} {this.getPermlink(op.author, op.permlink)} {` with ${op.weight} power`}</div>;
+    const message = this.generateReactLink([this.getAccountLink(op.voter), "voted on", this.getAccountLink(op.author), "/", this.getPermlink(op.author, op.permlink), ` with ${op.weight} power`])
     return {...target, value: message};
   }
 
   @WaxFormattable({matchProperty: "type", matchValue: "comment_operation"})
   formatComment({ source: { value: op }, target }: IFormatFunctionArguments<{ value: comment }>) {
-    let message = "";
+    let message: string | React.JSX.Element = "";
     if (op.parent_author === "") {
-      message = `${op.author} created new post: ${op.permlink}`;
+      message = this.generateReactLink([this.getAccountLink(op.author), "created new comment:", this.getPermlink(op.author, op.permlink)])
     } else {
       message = `${op.author} commented on post: ${op.parent_permlink} of ${op.parent_author}`;
+      message = this.generateReactLink([this.getAccountLink(op.author), "commented on:", this.getPermlink(op.parent_author, op.parent_permlink), "new comment:",  this.getPermlink(op.author, op.permlink)])
     }
     return {...target, value: message};
   }
@@ -166,8 +183,6 @@ class OperationsFormatter implements IWaxCustomFormatter {
     let message = `${op.account} withdrawed ${this.getFormattedAmount(op.vesting_shares)}`;
     return {...target, value: message};
   }
-
-  // Limit order create
 
   @WaxFormattable({matchProperty: "type", matchValue: "limit_order_create_operation"})
   formatLimitOrderCreateOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: limit_order_create }>) {
@@ -262,6 +277,12 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }
 
   // Wait for custom JSON
+
+  @WaxFormattable({matchProperty: "type", matchValue: "custom_json_operation"})
+  formatCustomJsonOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: custom_json }>) {
+    let message = `Custom JSON ID: ${op.id}`
+    return {...target, value: {message, json: op.json}};
+  }
 
   @WaxFormattable({matchProperty: "type", matchValue: "comment_options_operation"})
   formatcommentOptionOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: comment_options }>) {
@@ -387,7 +408,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
     return {...target, value: message};
   }
 
-    //Witness set properties
+  //Witness set properties
 
   // Talk about more detailed update
   @WaxFormattable({matchProperty: "type", matchValue: "account_update2_operation"})
