@@ -1,3 +1,4 @@
+import React from "react";
 import { config } from "@/Config";
 import Hive from "@/types/Hive";
 import {
@@ -124,7 +125,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
 
   @WaxFormattable({matchProperty: "type", matchValue: "vote_operation"})
   formatVote({ source: { value: op }, target }: IFormatFunctionArguments<{ value: vote }>) {
-    const message = `${op.voter} voted on "@${op.author}/${op.permlink}"`;
+    const message = <div>{`${op.voter} voted on "@${op.author}/${op.permlink}"`}</div>;
     return {...target, value: message};
   }
 
@@ -675,7 +676,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
 
   @WaxFormattable({matchProperty: "type", matchValue: "declined_voting_rights_operation"})
   formatDeclinedVotingRightsOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: declined_voting_rights }>) {
-    let message = `${op.account} voting's rights were declined`;
+    let message = `${op.account} voting's rights were`;
     return {...target, value: message};
   }
   
