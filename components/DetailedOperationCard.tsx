@@ -27,7 +27,8 @@ interface DetailedOperationCardProps {
 
 const getOneLineDescription = (operation: Hive.Operation) => {
   const { value } = operation;
-  return value;
+  if (typeof value === "string" || React.isValidElement(value)) return value;
+  return null;
 };
 
 const userField = [
