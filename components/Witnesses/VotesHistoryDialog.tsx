@@ -106,19 +106,21 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
               />
               <label>Hive Power</label>
             </div>
-            <div className="flex justify-around items-center bg-gray-800 rounded text-white p-2">
+            <div className="flex justify-around items-center bg-gray-800 rounded text-white p-3">
               <div>
-                From:{" "}
+                <p>From: </p>
                 <DateTimePicker
                   date={fromDate}
                   setDate={setFromDate}
+                  side="left"
                 />
               </div>
               <div>
-                To:{" "}
+                <p>To: </p>
                 <DateTimePicker
                   date={toDate}
                   setDate={setToDate}
+                  side="right"
                 />
               </div>
             </div>
@@ -185,7 +187,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                         )}
                       </TableCell>
                       <TableCell className="text-right">
-                      {showHivePower
+                        {showHivePower
                           ? formatNumber(vote.vests_hive_power, false)
                           : formatNumber(vote.vests, true)
                         }

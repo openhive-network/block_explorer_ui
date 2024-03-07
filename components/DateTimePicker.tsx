@@ -14,9 +14,10 @@ import { useDebounce } from "@/utils/Hooks";
 interface DateTimePickerProps {
   date: Date | any;
   setDate: (date: Date) => void;
+  side?: "left" | "top" | "right" | "bottom" | undefined;
 }
 
-const DateTimePicker = ({ date, setDate }: DateTimePickerProps) => {
+const DateTimePicker = ({ date, setDate, side }: DateTimePickerProps) => {
   const [selectedDateTime, setSelectedDateTime] = React.useState<any>(
     DateTime.fromJSDate(date)
   );
@@ -80,7 +81,10 @@ const DateTimePicker = ({ date, setDate }: DateTimePickerProps) => {
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0 text-white bg-explorer-dark-gray">
+      <PopoverContent
+        side={side}
+        className="w-auto p-0 text-white bg-explorer-dark-gray"
+      >
         <Calendar
           mode="single"
           selected={selectedDateTime.toFormat("DDD HH:mm")}
