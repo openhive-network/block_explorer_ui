@@ -46,6 +46,8 @@ import {
   escrow_approve,
   escrow_approved,
   escrow_dispute,
+  escrow_rejected,
+  escrow_release,
   escrow_transfer,
   expired_account_notification,
   failed_recurrent_transfer,
@@ -121,8 +123,14 @@ class OperationsFormatter implements IWaxCustomFormatter {
     return assetsMessage;
   }
 
-  private getAccountLink(user: string): React.JSX.Element {
-    return <Link href={`/@${user}`}><span className="text-explorer-turquoise">@{user}</span></Link>
+  private getAccountLink(account: string): React.JSX.Element {
+    return <Link href={`/@${account}`}><span className="text-explorer-turquoise">@{account}</span></Link>
+  }
+
+  private getMultipleAccountsListLink(accounts: DeepReadonly<string[]>) {
+    return <>{accounts.map((account) =>  (
+      <>{this.getAccountLink(account)}{" "}</>
+      ))}</>
   }
 
   private getPermlink(author: string, permlink: string): React.JSX.Element {
@@ -148,10 +156,16 @@ class OperationsFormatter implements IWaxCustomFormatter {
    * @returns 
    */
   private getTransferMessage(transfer: Hive.TransferOperation): React.JSX.Element {
-    const withMemo = transfer.memo !== "" ? `with memo "${transfer.memo}"` : "";
-    let message = this.generateReactLink([this.getAccountLink(transfer.from), "transfered", this.getFormattedAmount(transfer.amount), "to", this.getAccountLink(transfer.to), withMemo]);
+    let message = this.generateReactLink([this.getAccountLink(transfer.from), "transfered", this.getFormattedAmount(transfer.amount), "to", this.getAccountLink(transfer.to)]);
     return message;
   }
+
+  private getEscrowMessage(initialMessage: string, escrow: Hive.EscrowOperation, amounts?: {hbd_amount?: Hive.Supply, hive_amount?: Hive.Supply}): React.JSX.Element {
+    const amountMessage = amounts ? `sent: ${this.getFormattedAmount(amounts.hbd_amount)} and ${this.getFormattedAmount(amounts.hive_amount)}` : "";
+    return this.generateReactLink([initialMessage, this.getAccountLink(escrow.from), "to", this.getAccountLink(escrow.to), "by agent", this.getAccountLink(escrow.agent), amountMessage] );
+  }
+
+  // Formatters
 
   @WaxFormattable({matchProperty: "type", matchValue: "vote_operation"})
   formatVote({ source: { value: op }, target }: IFormatFunctionArguments<{ value: vote }>) {
@@ -165,8 +179,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
     if (op.parent_author === "") {
       message = this.generateReactLink([this.getAccountLink(op.author), "created new comment:", this.getPermlink(op.author, op.permlink)])
     } else {
-      message = `${op.author} commented on post: ${op.parent_permlink} of ${op.parent_author}`;
-      message = this.generateReactLink([this.getAccountLink(op.author), "commented on:", this.getPermlink(op.parent_author, op.parent_permlink), "new comment:",  this.getPermlink(op.author, op.permlink)])
+      message = this.generateReactLink([this.getAccountLink(op.author), "wrote a comment", this.getPermlink(op.author, op.permlink), "for a post:", this.getPermlink(op.parent_author, op.parent_permlink)]);
     }
     return {...target, value: message};
   }
@@ -179,7 +192,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
 
   @WaxFormattable({matchProperty: "type", matchValue: "transfer_to_vesting_operation"})
   formatTransferToVestingOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: Hive.TransferOperation }>) {
-    let message = this.generateReactLink([this.getAccountLink(op.from), "transfered", this.getFormattedAmount(op.amount), " to vesting"]);
+    let message = this.generateReactLink([this.getAccountLink(op.from), "transfered", this.getFormattedAmount(op.amount), "to vesting"]);
     return {...target, value: message};
   }
 
@@ -224,6 +237,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
   // Check for better message
   @WaxFormattable({matchProperty: "type", matchValue: "account_update_operation"})
   formatAccountUpdateOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: account_update }>) {
+    console.log("OP", op);
     let message = this.generateReactLink([this.getAccountLink(op.account), `updated account with memo key: ${op.memo_key}`]);
     return {...target, value: message};
   }
@@ -232,7 +246,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
   formatWitnessUpdateOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: witness_update }>) {
     let message: string | React.JSX.Element = "";
     if (op.block_signing_key) {
-      message = this.generateReactLink([this.getAccountLink(op.owner), `proposed himself as witness - HBD interest rate: ${formatPercent(op.props?.hbd_interest_rate || 0)}, maximum block size: ${op.props?.maximum_block_size}, account creation fee: ${this.getFormattedAmount(op.props?.account_creation_fee)}`])
+      message = this.generateReactLink([this.getAccountLink(op.owner), `updated witness data - HBD interest rate: ${formatPercent(op.props?.hbd_interest_rate || 0)}, max block size: ${op.props?.maximum_block_size}, account fee: ${this.getFormattedAmount(op.props?.account_creation_fee)}`])
     } else {
       message = this.generateReactLink([this.getAccountLink(op.owner), "resigned from being witness"])
     }
@@ -263,13 +277,13 @@ class OperationsFormatter implements IWaxCustomFormatter {
 
   @WaxFormattable({matchProperty: "type", matchValue: "pow_operation"})
   formatPowOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: pow }>) {
-    let message = `${op.worker_account} made a prove of work`
+    let message =this.generateReactLink([this.getAccountLink(op.worker_account), "made a prove of work"]);
     return {...target, value: message};
   }
 
   @WaxFormattable({matchProperty: "type", matchValue: "custom_operation"})
   formatcustomOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: custom }>) {
-    let message = `${op.required_auths} made custom operation`
+    let message =this.generateReactLink([this.getMultipleAccountsListLink(op.required_auths), "made custom operation"]);
     return {...target, value: message};
   }
 
@@ -277,84 +291,98 @@ class OperationsFormatter implements IWaxCustomFormatter {
 
   @WaxFormattable({matchProperty: "type", matchValue: "delete_comment_operation"})
   formatDeleteCommentOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: delete_comment }>) {
-    let message = `${op.author} deleted comment: ${op.permlink}`
+    let message =this.generateReactLink([this.getAccountLink(op.author), "deleted comment:", this.getPermlink(op.author, op.permlink)]);
     return {...target, value: message};
   }
 
   @WaxFormattable({matchProperty: "type", matchValue: "custom_json_operation"})
   formatCustomJsonOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: custom_json }>) {
-    let message = `Custom JSON ID: ${op.id}`
+    let message = this.generateReactLink([this.getMultipleAccountsListLink(op.required_auths), this.getMultipleAccountsListLink(op.required_posting_auths), "made custom JSON"]);
     return {...target, value: {message, json: op.json}};
   }
 
   @WaxFormattable({matchProperty: "type", matchValue: "comment_options_operation"})
   formatcommentOptionOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: comment_options }>) {
-    let message = `${op.author} set comments options for ${op.permlink}: ${op.allow_curation_rewards ? "allow rewards, " : ""} ${op.allow_votes ? "allow votes, " : ""} max payout: ${this.getFormattedAmount(op.max_accepted_payout)}, percent HBD: ${formatPercent(op.percent_hbd)}`;
+    console.log("OP", op);
+    const allowCurrationReward = !op.allow_curation_rewards ? "disallow rewards, " : "";
+    const allowVotes = !op.allow_votes ? "disallow votes, " : "";
+    const maxPayout = op.max_accepted_payout?.amount !== "1000000000" ? `max payout: ${this.getFormattedAmount(op.max_accepted_payout)}` : "";
+    const percentHbd = op.percent_hbd !== 5000 ? `percent HBD: ${formatPercent(op.percent_hbd)}` : ""
+    let message =this.generateReactLink([this.getAccountLink(op.author), "set options:",  `${allowCurrationReward} ${allowVotes} ${maxPayout} ${percentHbd} for:`, this.getPermlink(op.author, op.permlink),]);
     return {...target, value: message};
   }
 
   @WaxFormattable({matchProperty: "type", matchValue: "set_withdraw_vesting_route_operation"})
   formatSetWithdrawVestingRouteOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: set_withdraw_vesting_route }>) {
-    let message = `${op.from_account} set withdraw vesting route to ${op.to_account} with ${formatPercent(op.percent)}${op.auto_vest ? ", convert to HP" : ""}`;
+    const autoVests = op.auto_vest ? ", convert to HP" : "";
+    let message =this.generateReactLink([this.getAccountLink(op.from_account), "set withdraw vesting route to", this.getAccountLink(op.from_account), ` with ${formatPercent(op.percent)}${autoVests}`]);
     return {...target, value: message};
   }
 
   @WaxFormattable({matchProperty: "type", matchValue: "limit_order_create2_operation"})
   formatLimitOrderCreate2Operation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: limit_order_create2 }>) {
     const expiration = op.fill_or_kill ? "" : `, expiration: ${this.getFormattedDate(op.expiration)}`;
-    let message = `${op.owner} created limit order (id: ${op.orderid}) to sell: ${this.getFormattedAmount(op.amount_to_sell)} with exchange rate: ${this.getFormattedAmount(op.exchange_rate?.base)} to ${this.getFormattedAmount(op.exchange_rate?.quote)}${expiration}`;
+    let message =this.generateReactLink([this.getAccountLink(op.owner), `created limit order (id: ${op.orderid}) to sell: ${this.getFormattedAmount(op.amount_to_sell)}, exchange rate: ${this.getFormattedAmount(op.exchange_rate?.base)} to ${this.getFormattedAmount(op.exchange_rate?.quote)}${expiration}`]);
     return {...target, value: message};
   }
 
   @WaxFormattable({matchProperty: "type", matchValue: "claim_account_operation"})
   formatClaimAccountOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: claim_account }>) {
-    let message = `${op.creator} claimed an account creation with ${this.getFormattedAmount(op.fee)}`;
+    let message = this.generateReactLink([this.getAccountLink(op.creator), `claimed an account with ${this.getFormattedAmount(op.fee)}`]);
     return {...target, value: message};
   }
 
   @WaxFormattable({matchProperty: "type", matchValue: "create_claimed_account_operation"})
   formatCreateClaimedAccountOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: create_claimed_account }>) {
-    let message = `${op.creator} created claimed account: ${op.new_account_name} with memo key: ${op.memo_key}`;
+    let message = this.generateReactLink([this.getAccountLink(op.creator), "created claimed account:", this.getAccountLink(op.new_account_name)]);
     return {...target, value: message};
   }
 
   @WaxFormattable({matchProperty: "type", matchValue: "request_account_recovery_operation"})
   formatRequestAccountRecovery({ source: { value: op }, target }: IFormatFunctionArguments<{ value: request_account_recovery }>) {
-    let message = `${op.recovery_account} requested account recovery to account: ${op.account_to_recover}`;
+    let message = this.generateReactLink([this.getAccountLink(op.recovery_account), "requested account recovery to account:", this.getAccountLink(op.account_to_recover)]);
     return {...target, value: message};
   }
 
   @WaxFormattable({matchProperty: "type", matchValue: "recover_account_operation"})
   formatRecoverAccountOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: recover_account }>) {
-    let message = `${op.account_to_recover} account was recovered`;
+    let message = this.generateReactLink([this.getAccountLink(op.account_to_recover), "account was recovered"]);
     return {...target, value: message};
   }
 
   @WaxFormattable({matchProperty: "type", matchValue: "change_recovery_account_operation"})
   formatChangeRecoveryAccount({ source: { value: op }, target }: IFormatFunctionArguments<{ value: change_recovery_account }>) {
-    let message = `${op.account_to_recover} changed recovery account to: ${op.new_recovery_account}`;
+    let message = this.generateReactLink([this.getAccountLink(op.account_to_recover), "changed recovery account to:", this.getAccountLink(op.new_recovery_account)]);
     return {...target, value: message};
   }
 
-  //Wait for escrow_transfer
+  @WaxFormattable({matchProperty: "type", matchValue: "escrow_transfer_operation"})
+  formatEscrowTransferOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: Hive.EscrowOperation }>) {
+    let message = this.getEscrowMessage("Escrow transfer from", op, {hbd_amount: op.hbd_amount, hive_amount: op.hive_amount});
+    return {...target, value: message};
+  }
 
   @WaxFormattable({matchProperty: "type", matchValue: "escrow_dispute_operation"})
-  formatEscrowDispute({ source: { value: op }, target }: IFormatFunctionArguments<{ value: Hive.EscrowDisputeOperation }>) {
-    let message = `Escrow dispute from ${op.from}, to ${op.to}, agent: ${op.agent}, who: ${op.who}, escrow ID: ${op.escrow_id}`;
+  formatEscrowDispute({ source: { value: op }, target }: IFormatFunctionArguments<{ value: Hive.EscrowOperation }>) {
+    let message = this.getEscrowMessage("Escrow dispute from", op);
     return {...target, value: message};
   }
 
-  // Escrow release
+  @WaxFormattable({matchProperty: "type", matchValue: "escrow_release_operation"})
+  formatEscrowReleaseOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: Hive.EscrowOperation }>) {
+    let message = this.getEscrowMessage("Escrow release from", op, {hbd_amount: op.hbd_amount, hive_amount: op.hive_amount});
+    return {...target, value: message};
+  }
 
   @WaxFormattable({matchProperty: "type", matchValue: "pow2_operation"})
   formatPow2Operation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: pow2}>) {
-    let message = `Prove of Work 2, account creation fee: ${this.getFormattedAmount(op.props?.account_creation_fee)}, HBD interest rate: ${formatPercent(op.props?.hbd_interest_rate || 0)}, maximum block size: ${op.props?.maximum_block_size}`;
+    let message = this.generateReactLink([`Prove of Work 2, account creation fee: ${this.getFormattedAmount(op.props?.account_creation_fee)}, HBD interest rate: ${formatPercent(op.props?.hbd_interest_rate || 0)}, maximum block size: ${op.props?.maximum_block_size}`]);
     return {...target, value: message};
   }
 
   @WaxFormattable({matchProperty: "type", matchValue: "escrow_approve_operation"})
-  formatEscroweApproveOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: Hive.EscrowDisputeOperation }>) {
-    let message = `Escrow approve from ${op.from}, to ${op.to}, agent: ${op.agent}, who: ${op.who}, escrow ID: ${op.escrow_id}`;
+  formatEscroweApproveOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: Hive.EscrowOperation }>) {
+    let message = this.getEscrowMessage("Escrow approve from", op);
     return {...target, value: message};
   }
 
@@ -372,90 +400,101 @@ class OperationsFormatter implements IWaxCustomFormatter {
 
   @WaxFormattable({matchProperty: "type", matchValue: "cancel_transfer_from_savings_operation"})
   formatCancelTransferFromSavingsOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: Hive.CancelTransferOperation }>) {
-    let message = `${op.from} cancelled transfer with id: ${op.request_id}`
+    let message = this.generateReactLink([this.getAccountLink(op.from), `cancelled transfer with id: ${op.request_id}`]);
     return {...target, value: message};
   }
 
-  // Custom binary
+  // Skip custom binary
 
   @WaxFormattable({matchProperty: "type", matchValue: "decline_voting_rights_operation"})
   formatDeclineVotingRightsOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: decline_voting_rights }>) {
-    let message = "";
+    let message: string | React.JSX.Element = "";
     if (op.decline) {
-      message = `${op.account} declined voting rights`;
+      message = this.generateReactLink([this.getAccountLink(op.account), "declined voting rights"]);
     } else {
-      message = `${op.account} cancelled declined voting rights`;
+      message = this.generateReactLink([this.getAccountLink(op.account), "cancelled declining of voting rights"]);
     }
     return {...target, value: message};
   }
 
-  // Reset account
+  // Skip reset account
 
-  // Set reset Account
+  // Skip set reset account
 
   @WaxFormattable({matchProperty: "type", matchValue: "claim_reward_balance_operation"})
   formatClaimRewardBalanceOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: claim_reward_balance }>) {
-    let message = `${op.account} claimed rewards: ${this.getFormattedAmount(op.reward_hbd)}, ${this.getFormattedAmount(op.reward_hive)}, ${this.getFormattedAmount(op.reward_vests)}`;
+    let message = this.generateReactLink([this.getAccountLink(op.account), `claimed rewards: ${this.getFormattedAmount(op.reward_hbd)}, ${this.getFormattedAmount(op.reward_hive)}, ${this.getFormattedAmount(op.reward_vests)}`]);
     return {...target, value: message};
   }
 
   @WaxFormattable({matchProperty: "type", matchValue: "delegate_vesting_shares_operation"})
   formatDelegateVestingSharesOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: delegate_vesting_shares }>) {
-    let message = `${op.delegator} delegated vesting shares: ${this.getFormattedAmount(op.vesting_shares)} to ${op.delegatee}`;
+    let message = this.generateReactLink([this.getAccountLink(op.delegator), `delegated ${this.getFormattedAmount(op.vesting_shares)} to`, this.getAccountLink(op.delegatee)]);
     return {...target, value: message};
   }
 
   @WaxFormattable({matchProperty: "type", matchValue: "account_create_with_delegation_operation"})
   formatAccountCreateWithDelegationOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: account_create_with_delegation }>) {
-    let message = `${op.creator} created new account: ${op.new_account_name} with delegation: ${this.getFormattedAmount(op.delegation)} and fee: ${this.getFormattedAmount(op.fee)}`;
+    let message = this.generateReactLink([this.getAccountLink(op.creator), "created new account:", this.getAccountLink(op.new_account_name),  `with delegation: ${this.getFormattedAmount(op.delegation)} and fee: ${this.getFormattedAmount(op.fee)}`]);
     return {...target, value: message};
   }
 
-  //Witness set properties
+  // Leave it with simple message, props are too complicated to handle now
+  @WaxFormattable({matchProperty: "type", matchValue: "witness_set_properties_operation"})
+  formatWitnessSetPropertiesOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: witness_set_properties }>) {
+    let message = this.generateReactLink([this.getAccountLink(op.owner), "updated witness properties"]);
+    return {...target, value: message};
+  }
 
   // Talk about more detailed update
   @WaxFormattable({matchProperty: "type", matchValue: "account_update2_operation"})
   formatAccountUpdate2Operation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: account_update2 }>) {
-    let message = `${op.account} updated an account`;
+    let message = this.generateReactLink([this.getAccountLink(op.account), "updated an account"]);
     return {...target, value: message};
   }
 
   @WaxFormattable({matchProperty: "type", matchValue: "create_proposal_operation"})
   formatCreateProposalOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: create_proposal }>) {
-    let message = `${op.creator} created a proposal to daily pay ${this.getFormattedAmount(op.daily_pay)} to ${op.receiver} from ${this.getFormattedDate(op.start_date)} to ${this.getFormattedDate(op.end_date)}. Details in post: ${op.permlink}`;
+    let message = this.generateReactLink([this.getAccountLink(op.creator), `created a proposal for ${this.getFormattedAmount(op.daily_pay)} daily to`, this.getAccountLink(op.receiver), `, details:`, this.getPermlink(op.creator, op.permlink), `since ${this.getFormattedDate(op.start_date)} to ${this.getFormattedDate(op.end_date)}`]);
     return {...target , value: message};
   }
 
   @WaxFormattable({matchProperty: "type", matchValue: "update_proposal_votes_operation"})
   formatUpdateProposalVotesOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: update_proposal_votes }>) {
-    let message = "";
+    let message: string | React.JSX.Element = "";
     if (op.approve) {
-      message = `${op.voter} approved proposal ${op.proposal_ids}`;
+      message = this.generateReactLink([this.getAccountLink(op.voter), `approved proposal ${op.proposal_ids}`]);
     } else {
-      message = `${op.voter} removed approval for proposal ${op.proposal_ids}`;
+      message = this.generateReactLink([this.getAccountLink(op.voter), `removed approval for proposal ${op.proposal_ids}`]);
     }
     return {...target , value: message};
   }
 
   @WaxFormattable({matchProperty: "type", matchValue: "remove_proposal_operation"})
   formatRemoveProposalOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: remove_proposal }>) {
-    let message = `${op.proposal_owner} removed proposal ${op.proposal_ids}`;
+    let message = this.generateReactLink([this.getAccountLink(op.proposal_owner),`removed proposal ${op.proposal_ids}`]);
     return {...target , value: message};
   }
 
+  // Not sure about all properties here
   @WaxFormattable({matchProperty: "type", matchValue: "update_proposal_operation"})
   formatUpdateProposalOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: update_proposal }>) {
-    let message = `${op.creator} updated proposal ${op.proposal_id}. Daily pay: ${this.getFormattedAmount(op.daily_pay)}, permlink: ${op.permlink}`;
+    let message = this.generateReactLink([this.getAccountLink(op.creator), `updated proposal ${op.proposal_id} for ${this.getFormattedAmount(op.daily_pay)} daily, details:`, this.getPermlink(op.creator, op.permlink)]);
     return {...target , value: message};
   }
 
   @WaxFormattable({matchProperty: "type", matchValue: "collateralized_convert_operation"})
   formatCollateralizedConvertOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: collateralized_convert }>) {
-    let message = `${op.owner} collateralized convert ${this.getFormattedAmount(op.amount)} with request ID: ${op.requestid}`;
+    let message = this.generateReactLink([this.getAccountLink(op.owner), `collateralized convert ${this.getFormattedAmount(op.amount)} with request ID: ${op.requestid}`]);
     return {...target , value: message};
   }
 
-  // Recurrent transfer
+  @WaxFormattable({matchProperty: "type", matchValue: "recurrent_transfer_operation"})
+  formatRecurrentTransferOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: Hive.RecurrentTransferOperation }>) {
+    console.log("OP", op);
+    let message = this.generateReactLink([this.getAccountLink(op.from), `transfered recurrently ${op.executions} of ${op.recurrence} times ${this.getFormattedAmount(op.amount)} to`, this.getAccountLink(op.to)]);
+    return {...target , value: message};
+  }
 
   // === VIRTUAL ===
 
@@ -689,14 +728,14 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }
 
   @WaxFormattable({matchProperty: "type", matchValue: "escrow_approved_operation"})
-  formatEscrowApprovedOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: Hive.EscrowDisputeOperation }>) {
+  formatEscrowApprovedOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: Hive.EscrowOperation }>) {
     let message = `Escrow from ${op.from} to ${op.to} by agent ${op.agent} with fee: ${this.getFormattedAmount(op.fee)}, ID: ${op.escrow_id}`;
     return {...target, value: message};
   }
 
   // Cutted numbers
   @WaxFormattable({matchProperty: "type", matchValue: "escrow_rejected_operation"})
-  formatEscrowRejectedOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: Hive.EscrowDisputeOperation }>) {
+  formatEscrowRejectedOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: Hive.EscrowOperation }>) {
     let message = `Escrow from ${op.from} to ${op.to} by agent ${op.agent} was rejected`;
     return {...target, value: message};
   }
