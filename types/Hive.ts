@@ -555,7 +555,12 @@ declare module Hive {
       deleted?: boolean;
   }
 
-  interface EscrowDisputeOperation {
+  interface RecurrentTransferOperation extends TransferOperation {
+    executions: number;
+    recurrence: number;
+  }
+
+  interface EscrowOperation {
     from: string;
     to: string;
     agent: string;
@@ -564,6 +569,9 @@ declare module Hive {
     fee?: Supply;
     hive_amount?: Supply;
     hbd_amount?: Supply;
+    ratification_deadline?: string;
+    escrow_expiration?: string;
+    json_meta?: string;
   }
 
   interface CancelTransferOperation {
