@@ -241,7 +241,8 @@ declare module Hive {
     | "vote_operation"
     | "comment_operation"
     | "custom_json_operation"
-    | "transfer_operation";
+    | "transfer_operation"
+    | "hardfork_operation";
 
   interface Operation {
     type: OperationType;
