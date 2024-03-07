@@ -167,6 +167,47 @@ test.describe('Block page tests', () => {
     test('Validate that user can move to the Virtual ops by clicking button', async ({page}) =>{
         await mainPage.headBlockCardBlockLink.click()
         await expect(blockPage.blockProducer).toBeVisible()
-        // to be continue
+        
+        if(await blockPage.virtualOperationsHeader.isVisible()){
+            await expect(blockPage.virtualOperationsHeader).toBeVisible()
+            const virtualOperationsBefore = await blockPage.virtualOperationsHeader.boundingBox();
+
+             let virtualOperationsBeforeY = virtualOperationsBefore?.y
+
+             await blockPage.toVirtualOpsBtn.click()
+
+            const virtualOperationsAfter = await blockPage.virtualOperationsHeader.boundingBox();
+    
+            let virtualOperationsAfterY = virtualOperationsAfter?.y
+
+            await expect(virtualOperationsAfterY).not.toEqual(virtualOperationsBeforeY)
+            await expect(blockPage.toTopBtn).toBeVisible()
+
+            await blockPage.toTopBtn.click()
+            await page.waitForTimeout(2000)
+            const virtualOperationsPosition = await blockPage.virtualOperationsHeader.boundingBox();
+            let virtualOperationsPositionClickBtn = virtualOperationsPosition?.y
+
+            await expect(virtualOperationsPositionClickBtn).toEqual(virtualOperationsBeforeY)
+        }
+
+        else{ 
+            console.log('There is no virtual operations')
+        }
     });  
+
+    test('Validate the buttons To Top and To Virtual Ops do not work in Raw Json view option', async ({page}) =>{
+        await mainPage.headBlockCardBlockLink.click()
+        await expect(blockPage.blockProducer).toBeVisible()
+        const blockProducerBounding = await blockPage.blockProducer.boundingBox()
+        const blockProducerPosition = blockProducerBounding?.y
+
+        await mainPage.RawJsonViewToggle.click()
+        await blockPage.toVirtualOpsBtn.click()
+
+        const blockProducerBoundingAfter = await blockPage.blockProducer.boundingBox()
+        const blockProducerPositionAfter = blockProducerBoundingAfter?.y
+
+        expect(blockProducerPositionAfter).toEqual(blockProducerPosition)
+    }); 
 });

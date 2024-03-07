@@ -25,6 +25,9 @@ export class BlockPage {
   readonly nextBlockBtn: Locator;
   readonly dataTimePicker: Locator;
   readonly firstDayInDataPicker: Locator;
+  readonly toVirtualOpsBtn: Locator;
+  readonly virtualOperationsHeader: Locator;
+  readonly toTopBtn: Locator;
   
 
   constructor(page: Page) {
@@ -51,7 +54,10 @@ export class BlockPage {
     this.blockNumber = page.getByTestId('block-number-search');
     this.nextBlockBtn = page.getByTestId('next-block-btn');
     this.dataTimePicker = page.getByTestId("date-time-picker");
-    this.firstDayInDataPicker = page.locator('.react-calendar__tile.react-calendar__month-view__days__day').first()
+    this.firstDayInDataPicker = page.locator('.react-calendar__tile.react-calendar__month-view__days__day').first();
+    this.toVirtualOpsBtn = page.getByRole('button', { name: 'To Virtual Ops' });
+    this.virtualOperationsHeader = page.getByTestId('block-page-operation-list').getByText('Virtual Operations');
+    this.toTopBtn = page.getByRole('button', { name: 'To Top' });
   }
 
   async validateBlockPageIsLoaded() {
