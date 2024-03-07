@@ -10,14 +10,13 @@ export default function LongOperation() {
 
 
 
-
   return (
 
     <div
       className="w-full h-full text-white flex justify-center items-center px-4 md:p-0 md:w-4/5 flex-col gap-y-2"
       id="block-page-top"
     >
-      {(operationData && operationDataIsFetched && operationId ) ? (
+      {(operationData?.operation && operationDataIsFetched && operationId ) ? (
         <DetailedOperationCard
           operation={operationData.operation}
           operationId={operationData.operation_id}
