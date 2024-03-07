@@ -150,7 +150,7 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
               .sort(([key, _property]) => (key === "json" ? 1 : -1))
               .map(([key, property]) => {
                 const value =
-                  isJson(property) || isJson(JSON.stringify(property))
+                  isJson(property)
                     ? JSON.stringify(property).replaceAll("\\", "")
                     : property.toString() === ""
                     ? "-"
