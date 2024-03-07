@@ -11,6 +11,8 @@ import JSONView from "@/components/JSONView";
 import useTransactionData from "@/api/common/useTransactionData";
 import { useOperationsFormatter } from "@/utils/Hooks";
 import Head from "next/head";
+import OperationsTable from "@/components/OperationsTable";
+import { convertTransactionResponseToTableOperations } from "@/lib/utils";
 
 const displayTransactionData = (
   key: string,
@@ -54,7 +56,7 @@ export default function Transaction() {
       <div className="w-full max-w-5xl px-4 text-white">
         {!trxLoading && !!trxData && (
           <>
-            <div className="w-full bg-explorer-dark-gray px-4 py-2 rounded flex flex-col justify-center md:items-center md:text-md" data-testid="transaction-header">
+            <div className="w-full bg-explorer-dark-gray px-4 py-2 rounded flex flex-col justify-center md:items-center md:text-md mb-4" data-testid="transaction-header">
               <div data-testid="transaction-header-hash-trx">
                 Transaction{" "}
                 <span className="text-explorer-turquoise">
@@ -91,19 +93,10 @@ export default function Transaction() {
             ) : (
               <>
                 {formattedTransaction?.transaction_json?.operations &&
-                  formattedTransaction.transaction_json?.operations.map((operation, index) => (
-                    <DetailedOperationCard
-                      key={index}
-                      operation={operation}
-                      date={new Date(trxData.timestamp)}
-                      blockNumber={trxData?.block_num}
-                      transactionId={trxData?.transaction_id}
-                      skipBlock
-                      skipTrx
-                      skipDate
-                      className="mt-4"
-                    />
-                  ))}
+                <OperationsTable 
+                  operations={convertTransactionResponseToTableOperations(formattedTransaction)}
+                />
+                }
                 <div className="mt-6 w-full bg-explorer-dark-gray py-2 rounded px-2" data-testid="transaction-details">
                   <div className="flex justify-center text-md">
                     Transaction Details

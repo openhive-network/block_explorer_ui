@@ -22,6 +22,7 @@ import { useUserSettingsContext } from "@/components/contexts/UserSettingsContex
 import AccountDetailsCard from "@/components/account/AccountDetailsCard";
 import Head from "next/head";
 import OperationsTable from "@/components/OperationsTable";
+import { convertOperationResultsToTableOperations } from "@/lib/utils";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -333,7 +334,7 @@ export default function Account() {
             ) : (
               <div className="px-2 mt-2">
                 <OperationsTable
-                  operations={formattedAccountOperations?.operations_result}
+                  operations={convertOperationResultsToTableOperations(formattedAccountOperations?.operations_result)}
                 />
               </div>
             )}

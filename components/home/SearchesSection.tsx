@@ -16,7 +16,7 @@ import useBlockSearch from "@/api/homePage/useBlockSearch";
 import useOperationTypes from "@/api/common/useOperationsTypes";
 import useSearchRanges from "../searchRanges/useSearchRanges";
 import useAccountOperations from "@/api/accountPage/useAccountOperations";
-import { getPageUrlParams } from "@/lib/utils";
+import { convertCommentsOperationResultToTableOperations, convertOperationResultsToTableOperations, getPageUrlParams } from "@/lib/utils";
 import JumpToPage from "../JumpToPage";
 import { dataToURL, useOperationsFormatter } from "@/utils/Hooks";
 import BlockSearch from "./searches/BlockSearch";
@@ -340,17 +340,11 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
                     />
                   )
                 )
-              : formattedCommentOperations?.operations_result.map(
-                  (foundOperation) => (
-                    <DetailedOperationCard
-                      className="my-6"
-                      operation={foundOperation.body}
-                      key={foundOperation.operation_id}
-                      blockNumber={foundOperation.block_num}
-                      date={foundOperation.created_at}
-                    />
-                  )
-                )}
+              : 
+              <OperationsTable
+                operations={convertCommentsOperationResultToTableOperations(formattedCommentOperations?.operations_result)}
+              />
+                }
           </div>
         ) : (
           <div className="flex justify-center w-full text-black">
@@ -407,7 +401,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
               )
             ) : (
               <OperationsTable
-                operations={formattedAccountOperations?.operations_result}
+                operations={convertOperationResultsToTableOperations(formattedAccountOperations?.operations_result)}
               />
             )}
           </div>

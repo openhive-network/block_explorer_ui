@@ -23,6 +23,7 @@ import Head from "next/head";
 import useBlockRawData from "@/api/blockPage/useBlockRawData";
 import useHeadBlockNumber from "@/api/common/useHeadBlockNum";
 import OperationsTable from "@/components/OperationsTable";
+import { convertOperationResultsToTableOperations } from "@/lib/utils";
 
 interface BlockSearchParams {
   blockId?: number;
@@ -88,12 +89,12 @@ export default function Block() {
     (operations?: Hive.OperationResponse[]) => {
       if (operations) {
         return {
-          virtualOperations: operations?.filter(
+          virtualOperations: convertOperationResultsToTableOperations(operations?.filter(
             (operation) => operation.virtual_op
-          ),
-          nonVirtualOperations: operations?.filter(
+          )),
+          nonVirtualOperations: convertOperationResultsToTableOperations(operations?.filter(
             (operation) => !operation.virtual_op
-          ),
+          )),
         };
       } else return { virtualOperations: [], nonVirtualOperations: [] };
     },

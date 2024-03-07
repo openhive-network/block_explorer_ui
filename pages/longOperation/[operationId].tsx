@@ -8,8 +8,6 @@ export default function LongOperation() {
   const { operationId } = router.query;
   const {operationData, operationDataIsFetched} = useOperation(Number(operationId));
 
-
-
   return (
 
     <div
