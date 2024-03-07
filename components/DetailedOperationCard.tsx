@@ -41,7 +41,7 @@ const userField = [
   "curator",
   "seller",
   "voter",
-  "publisher"
+  "publisher",
 ];
 const userAuthField = ["required_posting_auths", "required_auths"];
 
@@ -83,19 +83,9 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
       )}
       data-testid="detailed-operation-card"
     >
-      <div className="flex justify-between items-center mb-2 flex-wrap">
-        <div
-          className={cn(
-            "text-explorer-orange font-bold w-full md:w-auto text-sm flex-2 ",
-            {
-              "flex-grow": skipBlock && skipTrx && skipDate,
-            }
-          )}
-        >
-          {settings.rawJsonView ? operation.type : getOperationTypeForDisplay(operation.type)}
-        </div>
+      <div className="flex justify-start items-center gap-x-4">
         {!skipBlock && (
-          <div className="my-1 flex-1">
+          <div className="flex-shrink-0">
             Block{" "}
             <Link
               className="text-explorer-turquoise"
@@ -105,56 +95,51 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
             </Link>
           </div>
         )}
-          <div className="my-1 flex-1">
-            {transactionId && !skipTrx && (
-              <>
-                Trx{" "}
-                <Link
-                  className="text-explorer-turquoise"
-                  href={`/transaction/${transactionId}`}
-                >
-                  {transactionId.slice(0, 10)}
-                </Link>
-              </>
-            )}
-          </div>
-        {!skipDate && (
-          <div className="my-1 flex-1">
-            Date:{" "}
-            <span className="text-explorer-turquoise">
-              {moment(date).format(config.baseMomentTimeFormat)}
-            </span>
+        {transactionId && !skipTrx && (
+          <div className="flex-shrink-0">
+            Trx{" "}
+            <Link
+              className="text-explorer-turquoise"
+              href={`/transaction/${transactionId}`}
+            >
+              {transactionId.slice(0, 10)}
+            </Link>
           </div>
         )}
-      </div>
-      <div className="w-full flex justify-center truncate mb-2">
+        <div className="text-explorer-orange font-bold text-sm">
+          {settings.rawJsonView
+            ? operation.type
+            : getOperationTypeForDisplay(operation.type)}
+        </div>
         <div className="inline truncate">
           {getOneLineDescription(operation)}
         </div>
       </div>
 
-      {!settings.rawJsonView && <div className="flex justify-between items-center">
-        <Button className="p-0" onClick={() => setSeeDetails(!seeDetails)}>
-          {seeDetails ? (
-            <div className="flex items-center gap-x-1">
-              Hide details
-              <ChevronUp />
-            </div>
-          ) : (
-            <div className="flex items-center gap-x-1 ">
-              See more details
-              <ChevronDown />
-            </div>
+      {!settings.rawJsonView && operation.type === "custom_json_operation" && (
+        <div className="flex justify-between items-center">
+          <Button className="p-0" onClick={() => setSeeDetails(!seeDetails)}>
+            {seeDetails ? (
+              <div className="flex items-center gap-x-1">
+                Hide details
+                <ChevronUp />
+              </div>
+            ) : (
+              <div className="flex items-center gap-x-1 ">
+                See more details
+                <ChevronDown />
+              </div>
+            )}
+          </Button>
+          {isShortened && (
+            <Link href={`/longOperation/${operationId}`}>
+              <Button className=" text-explorer-turquoise">
+                See full operation
+              </Button>
+            </Link>
           )}
-        </Button>
-        {isShortened && (
-          <Link href={`/longOperation/${operationId}`}>
-            <Button className=" text-explorer-turquoise">
-              See full operation
-            </Button>
-          </Link>
-        )}
-      </div>}
+        </div>
+      )}
 
       {(seeDetails || settings.rawJsonView) &&
         (settings.rawJsonView || forceStyle === "raw-json" ? (
