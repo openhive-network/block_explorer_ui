@@ -21,6 +21,8 @@ import ScrollTopButton from "@/components/ScrollTopButton";
 import { useUserSettingsContext } from "@/components/contexts/UserSettingsContext";
 import AccountDetailsCard from "@/components/account/AccountDetailsCard";
 import Head from "next/head";
+import OperationsTable from "@/components/OperationsTable";
+import { convertOperationResultsToTableOperations } from "@/lib/utils";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -218,7 +220,7 @@ export default function Account() {
   }
 
   if (notFound) {
-    return <div>Account not found</div>
+    return <div>Account not found</div>;
   }
 
   return (
@@ -330,24 +332,11 @@ export default function Account() {
                 )
               )
             ) : (
-              formattedAccountOperations?.operations_result?.map(
-                (operation: Hive.OperationResponse) => (
-                  <div
-                    className="m-2"
-                    key={`${operation.operation_id}_${operation.timestamp}`}
-                  >
-                    <DetailedOperationCard
-                      operation={operation.operation}
-                      operationId={operation.operation_id}
-                      date={new Date(operation.timestamp)}
-                      blockNumber={operation.block_num}
-                      transactionId={operation.trx_id}
-                      key={operation.timestamp}
-                      isShortened={operation.is_modified}
-                    />
-                  </div>
-                )
-              )
+              <div className="px-2 mt-2">
+                <OperationsTable
+                  operations={convertOperationResultsToTableOperations(formattedAccountOperations?.operations_result)}
+                />
+              </div>
             )}
           </div>
         </div>

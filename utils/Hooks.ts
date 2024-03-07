@@ -287,7 +287,7 @@ export const useOperationsFormatter = (operations?: any) => {
   const { hiveChain } = useHiveChainContext();
 
   let basicFormatter = hiveChain?.formatter;
-  basicFormatter = basicFormatter?.extend({
+  basicFormatter = basicFormatter?.extend(OperationsFormatter, {
     transaction: { displayAsId: false },
   });
 

@@ -1,7 +1,7 @@
 import Hive from "@/types/Hive";
 import { config } from "@/Config";
 import Explorer from "@/types/Explorer";
-import { IHiveChainInterface } from "@hive/wax/web";
+import { IHiveChainInterface } from "@hive/wax";
 
 class FetchingService {
 

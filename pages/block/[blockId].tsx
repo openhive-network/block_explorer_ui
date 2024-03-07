@@ -22,6 +22,8 @@ import { useOperationsFormatter } from "@/utils/Hooks";
 import Head from "next/head";
 import useBlockRawData from "@/api/blockPage/useBlockRawData";
 import useHeadBlockNumber from "@/api/common/useHeadBlockNum";
+import OperationsTable from "@/components/OperationsTable";
+import { convertOperationResultsToTableOperations } from "@/lib/utils";
 
 interface BlockSearchParams {
   blockId?: number;
@@ -87,12 +89,12 @@ export default function Block() {
     (operations?: Hive.OperationResponse[]) => {
       if (operations) {
         return {
-          virtualOperations: operations?.filter(
+          virtualOperations: convertOperationResultsToTableOperations(operations?.filter(
             (operation) => operation.virtual_op
-          ),
-          nonVirtualOperations: operations?.filter(
+          )),
+          nonVirtualOperations: convertOperationResultsToTableOperations(operations?.filter(
             (operation) => !operation.virtual_op
-          ),
+          )),
         };
       } else return { virtualOperations: [], nonVirtualOperations: [] };
     },
@@ -239,19 +241,7 @@ export default function Block() {
                   />
                 )}
               <div className="w-full px-4 md:p-0 md:w-4/5 flex flex-col gap-y-2">
-                {nonVirtualOperations?.map((operation, index) => (
-                  <DetailedOperationCard
-                    operation={operation.operation}
-                    operationId={operation.operation_id}
-                    date={new Date(operation.timestamp)}
-                    blockNumber={operation.block_num}
-                    transactionId={operation.trx_id}
-                    key={operation.timestamp + index}
-                    skipBlock
-                    skipDate
-                    isShortened={operation.is_modified}
-                  />
-                ))}
+                <OperationsTable operations={nonVirtualOperations} />
                 <div
                   className="text-center mt-4"
                   ref={virtualOpsRef}
@@ -266,19 +256,7 @@ export default function Block() {
                       : null}
                   </p>
                 </div>
-                {virtualOperations?.map((operation, index) => (
-                  <DetailedOperationCard
-                    operation={operation.operation}
-                    operationId={operation.operation_id}
-                    date={new Date(operation.timestamp)}
-                    blockNumber={operation.block_num}
-                    transactionId={operation.trx_id}
-                    key={operation.timestamp + index}
-                    skipBlock
-                    skipDate
-                    isShortened={operation.is_modified}
-                  />
-                ))}
+                <OperationsTable operations={virtualOperations} />
               </div>
             </section>
           )}
