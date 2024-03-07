@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 
 interface OperationsTableProps {
   operations: Hive.OperationResponse[];
+  className?: string;
 }
 
 const getOneLineDescription = (operation: Hive.OperationResponse) => {
@@ -36,9 +37,9 @@ const getOneLineDescription = (operation: Hive.OperationResponse) => {
   return null;
 };
 
-const OperationsTable: React.FC<OperationsTableProps> = ({ operations }) => {
+const OperationsTable: React.FC<OperationsTableProps> = ({ operations, className }) => {
   return (
-    <Table className="rounded-[6px] overflow-hidden max-w-[100%] text-xs">
+    <Table className={cn("rounded-[6px] overflow-hidden max-w-[100%] text-xs", className)}>
       <TableHeader>
         <TableRow>
           <TableHead>Block</TableHead>

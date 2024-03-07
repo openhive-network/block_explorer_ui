@@ -24,6 +24,7 @@ import AccountSearch from "./searches/AccountSearch";
 import CommentsSearch from "./searches/CommentsSearch";
 import { useUserSettingsContext } from "../contexts/UserSettingsContext";
 import Hive from "@/types/Hive";
+import OperationsTable from "../OperationsTable";
 
 interface SearchesSectionProps {}
 
@@ -392,29 +393,23 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
               />
             </div>
 
-            {settings.rawJsonView
-              ? accountOperations.accountOperations?.operations_result.map(
-                  (foundOperation) => (
-                    <DetailedOperationCard
-                      className="my-6"
-                      operation={foundOperation.operation}
-                      key={foundOperation.operation_id}
-                      blockNumber={foundOperation.block_num}
-                      date={new Date(foundOperation.timestamp)}
-                    />
-                  )
+            {settings.rawJsonView ? (
+              accountOperations.accountOperations?.operations_result.map(
+                (foundOperation) => (
+                  <DetailedOperationCard
+                    className="my-6"
+                    operation={foundOperation.operation}
+                    key={foundOperation.operation_id}
+                    blockNumber={foundOperation.block_num}
+                    date={new Date(foundOperation.timestamp)}
+                  />
                 )
-              : formattedAccountOperations?.operations_result.map(
-                  (foundOperation) => (
-                    <DetailedOperationCard
-                      className="my-6"
-                      operation={foundOperation.operation}
-                      key={foundOperation.operation_id}
-                      blockNumber={foundOperation.block_num}
-                      date={new Date(foundOperation.timestamp)}
-                    />
-                  )
-                )}
+              )
+            ) : (
+              <OperationsTable
+                operations={formattedAccountOperations?.operations_result}
+              />
+            )}
           </div>
         ) : (
           <div className="flex justify-center w-full text-black">
