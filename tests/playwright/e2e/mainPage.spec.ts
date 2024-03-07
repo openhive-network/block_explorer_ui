@@ -210,8 +210,8 @@ test.describe("Block Explorer UI tests", () => {
 
   test("Change database api address and back to the default one", async ({ page }) => {
     const newDatabaseApiAddress: string = 'http://steem-10.syncad.com:3000/rpc';
-    const assertNewDatabeseApiAddress: string = 'Database API:http://steem-10.syncad.com:3000/rpc';
-    const assertDefaultDatabaseApiAddress: string = 'Database API:https://hafbe.openhive.network/rpc';
+    const assertNewDatabeseApiAddress: string = 'Explorer backend API:http://steem-10.syncad.com:3000/rpc';
+    const assertDefaultDatabaseApiAddress: string = 'Explorer backend API:https://hafbe.openhive.network/rpc';
     const apiAddressDialog = new ApiAddressDialog(page);
 
     await mainPage.gotoBlockExplorerPage();
