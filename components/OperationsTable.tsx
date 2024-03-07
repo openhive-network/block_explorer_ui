@@ -9,6 +9,7 @@ import {
 } from "./ui/table";
 import Link from "next/link";
 import React from "react";
+import { cn } from "@/lib/utils";
 
 interface OperationsTableProps {
   operations: Hive.OperationResponse[];
@@ -37,7 +38,7 @@ const getOneLineDescription = (operation: Hive.OperationResponse) => {
 
 const OperationsTable: React.FC<OperationsTableProps> = ({ operations }) => {
   return (
-    <Table className="rounded-[6px] overflow-hidden max-w-[100%]">
+    <Table className="rounded-[6px] overflow-hidden max-w-[100%] text-xs">
       <TableHeader>
         <TableRow>
           <TableHead>Block</TableHead>
@@ -47,8 +48,13 @@ const OperationsTable: React.FC<OperationsTableProps> = ({ operations }) => {
         </TableRow>
       </TableHeader>
       <TableBody className="max-w-[100%]">
-        {operations.map((operation) => (
-          <TableRow key={operation.operation_id} className="max-w-[100%]">
+        {operations.map((operation, index) => (
+          <TableRow
+            key={operation.operation_id}
+            className={cn({
+              "border-t border-gray-700": !!index,
+            })}
+          >
             <TableCell>
               <Link
                 className="text-explorer-turquoise"
@@ -67,9 +73,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({ operations }) => {
             </TableCell>
             <TableCell>{operation.operation.type}</TableCell>
             <TableCell className="max-w-0 w-full">
-              <div className="truncate">
-                {getOneLineDescription(operation)}
-              </div>
+              <div className="truncate">{getOneLineDescription(operation)}</div>
             </TableCell>
           </TableRow>
         ))}
