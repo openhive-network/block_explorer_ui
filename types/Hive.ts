@@ -514,11 +514,12 @@ declare module Hive {
 
   interface CommentOperation {
     block_num: number;
-    body: Operation;
+    operation: Operation;
     is_modified: boolean;
     operation_id: number;
     permlink: string;
     created_at: Date;
+    trx_hash: string;
   }
 
   interface CommentOperationResponse extends OperationsCount {

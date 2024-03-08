@@ -38,7 +38,7 @@ export class BlockPage {
     this.blockDetailsBlockNumber = page.getByTestId('block-number');
     this.producedData = page.locator("[data-testid='produced-data'] > p:nth-of-type(2)")
     this.jsonView = page.locator('pre')
-    this.operationType = page.locator('.text-explorer-orange')
+    this.operationType = page.getByTestId('operation-type')
     this.blockProducer = page.getByTestId('block-producer-name');
     this.hash = page.getByTestId('hash');
     this.prevHash = page.getByTestId('prev-hash');

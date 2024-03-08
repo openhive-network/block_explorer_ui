@@ -121,12 +121,12 @@ test.describe('Home page - searches', () => {
         await page.locator('input[type="checkbox"]').first().check();
         await page.getByRole('button', {name: 'Apply'}).click();
         await mainPage.blockSearchBtn.click();
-        await expect(mainPage.blockSearchResultSection).toBeVisible();
+        await expect(mainPage.firstResultBlock).toBeVisible();
         await mainPage.firstResultBlock.click();
 
         await expect(blockPage.operationType.first()).toBeVisible()
         const operationsType = await blockPage.operationType.allInnerTexts();
-        await expect(operationsType).toContain('vote');
+        await expect(operationsType).toContain('vote_operation');
 
     });
 

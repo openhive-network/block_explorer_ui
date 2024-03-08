@@ -121,7 +121,7 @@ const Comments: React.FC = () => {
             (foundOperation) => (
               <DetailedOperationCard
                 className="my-6 text-white"
-                operation={foundOperation.body}
+                operation={foundOperation.operation}
                 key={foundOperation.operation_id}
                 blockNumber={foundOperation.block_num}
                 date={foundOperation.created_at}
