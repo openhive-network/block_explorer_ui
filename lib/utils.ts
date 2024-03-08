@@ -3,9 +3,8 @@ import { twMerge } from "tailwind-merge"
 import Long from "long";
 import Explorer from "@/types/Explorer";
 import { config } from "@/Config";
+import Hive from "@/types/Hive";
 
-
- 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
@@ -63,5 +62,33 @@ export const formatNumber = (numberToFormat: number, isVest: boolean): string =>
  * @returns Formatted string with % at the end
  */
 export const formatPercent = (numberToFormat: number): string => {
-  return `${(numberToFormat / Math.pow(10, config.precisions.percentage)).toLocaleString()} %`
+  return `${(numberToFormat / Math.pow(10, config.precisions.percentage)).toLocaleString()}%`
+}
+
+export const convertOperationResultsToTableOperations = (operations: Hive.OperationResponse[]): Explorer.OperationForTable[] => {
+  return operations.map((operation) => ({
+    operation: operation.operation,
+    blockNumber: operation.block_num,
+    trxId: operation.trx_id,
+    operatiopnId: operation.operation_id
+  }))
+}
+
+export const convertCommentsOperationResultToTableOperations = (operations: Hive.CommentOperation[]): Explorer.OperationForTable[] => {
+  return operations.map((operation) => ({
+    operation: operation.operation,
+    blockNumber: operation.block_num,
+    operatiopnId: operation.operation_id,
+    trxId: operation.trx_hash
+  }))
+}
+
+
+
+export const convertTransactionResponseToTableOperations = (transaction: Hive.TransactionQueryResponse): Explorer.OperationForTable[] => {
+  return transaction.transaction_json.operations.map((operation) => ({
+    operation: operation,
+    blockNumber: transaction.block_num,
+    trxId: transaction.transaction_id
+  }))
 }

@@ -83,7 +83,7 @@ test.describe('Home page - account searches', () => {
     
         expect(response.status()).toBe(200);
 
-        await expect(page.getByText('vote', { exact: true }).nth(2)).toBeVisible()
+        await expect(page.getByText('vote_operation', { exact: true }).nth(2)).toBeVisible()
 
         if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
                 await expect(page.getByText('No operations matching given')).toBeVisible()
@@ -92,7 +92,7 @@ test.describe('Home page - account searches', () => {
               else {
                 await expect(mainPage.operationsCardResult).toBeVisible()
                 await expect(mainPage.goToResultPageBtn).toBeVisible()
-                await expect(page.getByText('vote', { exact: true }).nth(2)).toBeVisible()
+                await expect(page.getByText('vote_operation', { exact: true }).nth(2)).toBeVisible()
             }
     })
 

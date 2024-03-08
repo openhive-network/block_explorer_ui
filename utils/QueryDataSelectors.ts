@@ -3,7 +3,7 @@ import Hive from "@/types/Hive";
 import moment from "moment";
 import { config } from "@/Config";
 import { formatPercent } from "@/lib/utils";
-import { IHiveChainInterface } from "@hive/wax/web";
+import { IHiveChainInterface } from "@hive/wax";
 
 /**
  * Get dynamic global block data and adjust it for page display.

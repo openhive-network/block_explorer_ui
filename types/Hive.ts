@@ -1,4 +1,4 @@
-import { IManabarData } from "@hive/wax/web";
+import { IManabarData } from "@hive/wax";
 
 declare module Hive {
   interface HiveBlogProps {
@@ -241,7 +241,8 @@ declare module Hive {
     | "vote_operation"
     | "comment_operation"
     | "custom_json_operation"
-    | "transfer_operation";
+    | "transfer_operation"
+    | "hardfork_operation";
 
   interface Operation {
     type: OperationType;
@@ -513,11 +514,12 @@ declare module Hive {
 
   interface CommentOperation {
     block_num: number;
-    body: Operation;
+    operation: Operation;
     is_modified: boolean;
     operation_id: number;
     permlink: string;
     created_at: Date;
+    trx_hash: string;
   }
 
   interface CommentOperationResponse extends OperationsCount {
@@ -542,6 +544,41 @@ declare module Hive {
     transactions: TransactionDetails[];
     witness: string;
     witness_signature: string;
+  }
+
+  interface TransferOperation {
+      from: string;
+      to: string;
+      amount: Supply | undefined;
+      memo: string;
+      request_id?: number;
+      remaining_executions?: number;
+      consecutive_failures?: number;
+      deleted?: boolean;
+  }
+
+  interface RecurrentTransferOperation extends TransferOperation {
+    executions: number;
+    recurrence: number;
+  }
+
+  interface EscrowOperation {
+    from: string;
+    to: string;
+    agent: string;
+    who?: string;
+    escrow_id: number;
+    fee?: Supply;
+    hive_amount?: Supply;
+    hbd_amount?: Supply;
+    ratification_deadline?: string;
+    escrow_expiration?: string;
+    json_meta?: string;
+  }
+
+  interface CancelTransferOperation {
+    request_id: number;
+    from: string;
   }
 }
 
