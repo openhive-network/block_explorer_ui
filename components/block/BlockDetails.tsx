@@ -23,21 +23,31 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
   nonVirtualOperationLength,
 }) => {
   return (
-    <div className="flex flex-col w-full md:w-4/6 mx-auto mb-4 text-white rounded shadow-xl border border-explorer-bg-start bg-explorer-dark-gray text-center" data-testid="block-page-block-details">
+    <div
+      className="flex flex-col w-full md:w-4/6 mx-auto mb-4 text-white rounded shadow-xl border border-explorer-bg-start bg-explorer-dark-gray text-center"
+      data-testid="block-page-block-details"
+    >
       <div className="text-2xl font-semibold mt-2" data-testid="block-number">
-        Block {blockDetails?.block_num.toLocaleString()}
+        Block {blockDetails?.block_num?.toLocaleString()}
       </div>
-      <div className="flex items-center gap-x-1 mt-3 px-8 md:px-4 w-full justify-center" data-testid='produced-data'>
+      <div
+        className="flex items-center gap-x-1 mt-3 px-8 md:px-4 w-full justify-center"
+        data-testid="produced-data"
+      >
         <p>Produced at: </p>
-        <p>{moment(blockDetails?.created_at).format(
-                          config.baseMomentTimeFormat
-                        )}</p>
+        <p>
+          {moment(blockDetails?.created_at).format(config.baseMomentTimeFormat)}
+        </p>
         <p>by</p>
         <Link
-          className="flex justif-between items-center" data-testid='account-name'
+          className="flex justif-between items-center"
+          data-testid="account-name"
           href={`/@${blockDetails?.producer_account}`}
         >
-          <span className="text-explorer-turquoise mx-2" data-testid="block-producer-name">
+          <span
+            className="text-explorer-turquoise mx-2"
+            data-testid="block-producer-name"
+          >
             {blockDetails?.producer_account}
           </span>
           <Image
@@ -51,11 +61,11 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
       </div>
       <div className="flex items-center gap-x-4 mt-3 px-8 md:px-4 w-full justify-center flex-wrap text-sm md:text-base">
         <p>
-          <span className="text-base" data-testid="hash">Hash</span>
+          <span className="text-base">Hash: </span>
           {blockDetails?.hash}
         </p>
         <p>
-          <span className="text-base" data-testid="prev-hash">Prev hash</span>
+          <span className="text-base">Prev hash: </span>
           {blockDetails?.prev}
         </p>
       </div>

@@ -1,7 +1,7 @@
 import Hive from "@/types/Hive";
 import { config } from "@/Config";
 import Explorer from "@/types/Explorer";
-import { IHiveChainInterface } from "@hive/wax/web";
+import { IHiveChainInterface } from "@hive/wax";
 
 class FetchingService {
 
@@ -25,12 +25,8 @@ class FetchingService {
         body: JSON.stringify(requestBody),
       });
       const jsonResponse = await response.json();
-      if (
-        typeof jsonResponse === "object" &&
-        Object.keys(jsonResponse).length === 0 &&
-        !Array.isArray(jsonResponse)
-      )
-        throw new Error("No data from API");
+      if (!response.ok)
+        throw new Error(`No data from API endpoint: ${url}`);
       return jsonResponse
     } catch (error) {
       return Promise.reject(error);

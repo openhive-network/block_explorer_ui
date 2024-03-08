@@ -147,6 +147,13 @@ declare module Explorer {
     votes_daily_change_hive_power: string;
     votes_daily_change: string;
   }
+
+  interface OperationForTable {
+    operation: Hive.Operation;
+    blockNumber?: number;
+    trxId?: string;
+    operatiopnId?: number;
+  }
 }
 
 export default Explorer;

@@ -16,7 +16,7 @@ import useBlockSearch from "@/api/homePage/useBlockSearch";
 import useOperationTypes from "@/api/common/useOperationsTypes";
 import useSearchRanges from "../searchRanges/useSearchRanges";
 import useAccountOperations from "@/api/accountPage/useAccountOperations";
-import { getPageUrlParams } from "@/lib/utils";
+import { convertCommentsOperationResultToTableOperations, convertOperationResultsToTableOperations, getPageUrlParams } from "@/lib/utils";
 import JumpToPage from "../JumpToPage";
 import { dataToURL, useOperationsFormatter } from "@/utils/Hooks";
 import BlockSearch from "./searches/BlockSearch";
@@ -24,6 +24,7 @@ import AccountSearch from "./searches/AccountSearch";
 import CommentsSearch from "./searches/CommentsSearch";
 import { useUserSettingsContext } from "../contexts/UserSettingsContext";
 import Hive from "@/types/Hive";
+import OperationsTable from "../OperationsTable";
 
 interface SearchesSectionProps {}
 
@@ -189,19 +190,26 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
         paramName: "rangeSelectKey",
         paramValue: dataToURL(searchRanges.rangeSelectKey),
       },
-      {
+    ];
+
+    if (searchRanges.rangeSelectKey === "lastTime") {
+      urlParams.push({
         paramName: "lastTime",
         paramValue: dataToURL(searchRanges.lastTimeUnitValue),
-      },
-      {
-        paramName: "lastBlocks",
-        paramValue: dataToURL(searchRanges.lastBlocksValue),
-      },
-      {
+      });
+      urlParams.push({
         paramName: "timeUnit",
         paramValue: dataToURL(searchRanges.timeUnitSelectKey),
-      },
-    ];
+      });
+    }
+
+    if (searchRanges.rangeSelectKey === "lastBlocks") {
+      urlParams.push({
+        paramName: "lastBlocks",
+        paramValue: dataToURL(searchRanges.lastBlocksValue),
+      });
+    }
+
     return `/@${accountName}${getPageUrlParams(urlParams)}`;
   };
 
@@ -212,7 +220,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
         paramValue: dataToURL(blockSearchProps?.operationTypes),
       },
     ];
-    return `/block/${blockNumber}${getPageUrlParams(urlParams)}`
+    return `/block/${blockNumber}${getPageUrlParams(urlParams)}`;
   };
 
   return (
@@ -245,6 +253,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
                 startAccountOperationsSearch={startAccountOperationsSearch}
                 operationsTypes={operationsTypes}
                 loading={accountOperations.isAccountOperationsLoading}
+                searchRanges={searchRanges}
               />
             </AccordionContent>
           </AccordionItem>
@@ -331,17 +340,11 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
                     />
                   )
                 )
-              : formattedCommentOperations?.operations_result.map(
-                  (foundOperation) => (
-                    <DetailedOperationCard
-                      className="my-6"
-                      operation={foundOperation.body}
-                      key={foundOperation.operation_id}
-                      blockNumber={foundOperation.block_num}
-                      date={foundOperation.created_at}
-                    />
-                  )
-                )}
+              : 
+              <OperationsTable
+                operations={convertCommentsOperationResultToTableOperations(formattedCommentOperations?.operations_result)}
+              />
+                }
           </div>
         ) : (
           <div className="flex justify-center w-full text-black">
@@ -384,29 +387,23 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
               />
             </div>
 
-            {settings.rawJsonView
-              ? accountOperations.accountOperations?.operations_result.map(
-                  (foundOperation) => (
-                    <DetailedOperationCard
-                      className="my-6"
-                      operation={foundOperation.operation}
-                      key={foundOperation.operation_id}
-                      blockNumber={foundOperation.block_num}
-                      date={new Date(foundOperation.timestamp)}
-                    />
-                  )
+            {settings.rawJsonView ? (
+              accountOperations.accountOperations?.operations_result.map(
+                (foundOperation) => (
+                  <DetailedOperationCard
+                    className="my-6"
+                    operation={foundOperation.operation}
+                    key={foundOperation.operation_id}
+                    blockNumber={foundOperation.block_num}
+                    date={new Date(foundOperation.timestamp)}
+                  />
                 )
-              : formattedAccountOperations?.operations_result.map(
-                  (foundOperation) => (
-                    <DetailedOperationCard
-                      className="my-6"
-                      operation={foundOperation.operation}
-                      key={foundOperation.operation_id}
-                      blockNumber={foundOperation.block_num}
-                      date={new Date(foundOperation.timestamp)}
-                    />
-                  )
-                )}
+              )
+            ) : (
+              <OperationsTable
+                operations={convertOperationResultsToTableOperations(formattedAccountOperations?.operations_result)}
+              />
+            )}
           </div>
         ) : (
           <div className="flex justify-center w-full text-black">

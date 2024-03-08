@@ -21,6 +21,9 @@ import Explorer from "@/types/Explorer";
 import { useOperationsFormatter } from "@/utils/Hooks";
 import Head from "next/head";
 import useBlockRawData from "@/api/blockPage/useBlockRawData";
+import useHeadBlockNumber from "@/api/common/useHeadBlockNum";
+import OperationsTable from "@/components/OperationsTable";
+import { convertOperationResultsToTableOperations } from "@/lib/utils";
 
 interface BlockSearchParams {
   blockId?: number;
@@ -39,15 +42,24 @@ export default function Block() {
 
   const { blockId } = router.query;
 
+  const { headBlockNumberData: headBlockNum, refetch } =
+    useHeadBlockNumber();
+
   const [blockDate, setBlockDate] = useState<Date>();
   const { paramsState, setParams } = useURLParams({
     ...defaultParams,
     blockId: blockId,
   });
 
+  useEffect(() => {
+    refetch();
+  }, [blockId, refetch]);
+
   const { settings } = useUserSettingsContext();
 
-  const { operationsCountInBlock, countLoading } = useOperationsCountInBlock(Number(blockId));
+  const { operationsCountInBlock, countLoading } = useOperationsCountInBlock(
+    Number(blockId)
+  );
 
   const { blockDetails, loading } = useBlockData(Number(blockId));
 
@@ -63,7 +75,9 @@ export default function Block() {
   );
 
   const { operationsTypes } = useOperationsTypes();
-  const formattedOperations = useOperationsFormatter(blockOperations?.operations_result) as Hive.OperationResponse[];
+  const formattedOperations = useOperationsFormatter(
+    blockOperations?.operations_result
+  ) as Hive.OperationResponse[];
 
   useEffect(() => {
     if (blockDetails && blockDetails.created_at) {
@@ -75,12 +89,12 @@ export default function Block() {
     (operations?: Hive.OperationResponse[]) => {
       if (operations) {
         return {
-          virtualOperations: operations?.filter(
+          virtualOperations: convertOperationResultsToTableOperations(operations?.filter(
             (operation) => operation.virtual_op
-          ),
-          nonVirtualOperations: operations?.filter(
+          )),
+          nonVirtualOperations: convertOperationResultsToTableOperations(operations?.filter(
             (operation) => !operation.virtual_op
-          ),
+          )),
         };
       } else return { virtualOperations: [], nonVirtualOperations: [] };
     },
@@ -161,12 +175,12 @@ export default function Block() {
 
   return (
     <>
-    <Head>
-      <title>{blockId} - Hive Explorer</title>
-    </Head>
-        {!blockDate ? (
+      <Head>
+        <title>{blockId} - Hive Explorer</title>
+      </Head>
+      {!blockDate || !headBlockNum ? (
         <div>Loading ...</div>
-      ) : (
+      ) : Number(blockId) <= headBlockNum ? (
         <div
           className="w-full h-full"
           style={{ scrollMargin: "100px" }}
@@ -184,7 +198,9 @@ export default function Block() {
             virtualOperationLength={virtualOperationsCounter}
             nonVirtualOperationLength={nonVirtualOperationsCounter}
             virtualOperationsTypesCounters={virtualOperationsTypesCounters}
-            nonVirtualOperationsTypesCounters={nonVirtualOperationsTypesCounters}
+            nonVirtualOperationsTypesCounters={
+              nonVirtualOperationsTypesCounters
+            }
             blockDetails={blockDetails}
           />
           <div className="fixed top-[calc(100vh-90px)] md:top-[calc(100vh-100px)] right-0 flex flex-col items-end justify-end px-3 md:px-12">
@@ -202,13 +218,17 @@ export default function Block() {
               <Loader2 className="animate-spin mt-1 h-16 w-16 ml-3 ... " />
             </div>
           ) : settings.rawJsonView ? (
-            <JSONView data-testid='json-view'
+            <JSONView
+              data-testid="json-view"
               json={rawBlockdata || {}}
               className="w-full md:w-[962px] mt-6 m-auto py-2 px-4 bg-explorer-dark-gray rounded text-white text-xs break-words break-all"
             />
           ) : (
-            <section className="md:px-10 flex flex-col items-center justify-center text-white" data-testid="block-page-operation-list">
-              {totalOperations?.total_operations &&
+            <section
+              className="md:px-10 flex flex-col items-center justify-center text-white"
+              data-testid="block-page-operation-list"
+            >
+              {!!totalOperations?.total_operations &&
                 totalOperations?.total_operations > 1000 && (
                   <CustomPagination
                     currentPage={paramsState.page}
@@ -221,19 +241,7 @@ export default function Block() {
                   />
                 )}
               <div className="w-full px-4 md:p-0 md:w-4/5 flex flex-col gap-y-2">
-                {nonVirtualOperations?.map((operation, index) => (
-                  <DetailedOperationCard 
-                    operation={operation.operation}
-                    operationId={operation.operation_id}
-                    date={new Date(operation.timestamp)}
-                    blockNumber={operation.block_num}
-                    transactionId={operation.trx_id}
-                    key={operation.timestamp + index}
-                    skipBlock
-                    skipDate
-                    isShortened={operation.is_modified}
-                  />
-                ))}
+                <OperationsTable operations={nonVirtualOperations} />
                 <div
                   className="text-center mt-4"
                   ref={virtualOpsRef}
@@ -248,23 +256,19 @@ export default function Block() {
                       : null}
                   </p>
                 </div>
-                {virtualOperations?.map((operation, index) => (
-                  <DetailedOperationCard
-                    operation={operation.operation}
-                    operationId={operation.operation_id}
-                    date={new Date(operation.timestamp)}
-                    blockNumber={operation.block_num}
-                    transactionId={operation.trx_id}
-                    key={operation.timestamp + index}
-                    skipBlock
-                    skipDate
-                    isShortened={operation.is_modified}
-                  />
-                ))}
+                <OperationsTable operations={virtualOperations} />
               </div>
             </section>
           )}
         </div>
+      ) : (
+        <div>
+          <div className="mt-9 mb-6">Block not found</div>
+          <Button variant="outline" onClick={() => router.reload()}>
+            Reload page
+          </Button>
+        </div>
       )}
-    </>)
+    </>
+  );
 }

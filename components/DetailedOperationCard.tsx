@@ -27,108 +27,9 @@ interface DetailedOperationCardProps {
 
 const getOneLineDescription = (operation: Hive.Operation) => {
   const { value } = operation;
-  const { from, to, amount, voter, weight, author, permlink, parent_author } =
-    value;
-  switch (operation.type) {
-    case "custom_json_operation":
-      const user =
-        operation.value.required_auths?.at(0) ||
-        operation.value.required_posting_auths?.at(0);
-      return (
-        <>
-          <Link href={`/@${user}`} className="text-explorer-ligh-green">
-            {user} 
-          </Link>{" "}
-          sent custom json
-        </>
-      );
-
-    case "transfer_operation":
-      return (
-        <>
-          <Link href={`/@${from}`} className="text-explorer-ligh-green">
-            {from}
-          </Link>
-          {` transfered ${(Number(amount?.amount) / 1000).toFixed(3)} HIVE to `}
-          <Link href={`/@${to}`} className="text-explorer-ligh-green">
-            {to}
-          </Link>
-        </>
-      );
-      break;
-
-    case "vote_operation":
-      return (
-        <>
-          <Link href={`/@${voter}`} className="text-explorer-ligh-green">
-            {voter}
-          </Link>
-          {` voted ${weight} on `}
-          <Link
-            href={`/@${author}`}
-            className="text-explorer-ligh-green"
-          >
-            {author}
-          </Link>
-          {" / "}
-          <Link
-            href={`https://hive.blog/@${author}/${permlink}`}
-            className="text-explorer-yellow"
-          >
-            {permlink}
-          </Link>
-        </>
-      );
-
-    case "comment_operation":
-      return (
-        <>
-          <Link
-            href={`/@${author}`}
-            className="text-explorer-ligh-green"
-          >
-            {author}
-          </Link>
-          {` commented on `}
-          <Link
-            href={`/@${parent_author}`}
-            className="text-explorer-ligh-green"
-          >
-            {parent_author}
-          </Link>
-          {" / "}
-          <Link
-            href={`https://hive.blog/@${author}/${permlink}`}
-            className="text-explorer-yellow"
-          >
-            {permlink}
-          </Link>
-        </>
-      );
-
-    default:
-      const userName =
-        value.author ||
-        value.owner ||
-        value.account ||
-        value.producer ||
-        value.curator ||
-        value.seller;
-      return (
-        userName &&
-        !(userName instanceof Object) && (
-          <>
-            <Link
-              href={`/@${userName}`}
-              className="text-explorer-ligh-green"
-            >
-              {userName}
-            </Link>{" "}
-            sent {operation.type}
-          </>
-        )
-      );
-  }
+  if (typeof value === "string" || React.isValidElement(value)) return value;
+  if (operation.type === "custom_json_operation") return value.message;
+  return null;
 };
 
 const userField = [
@@ -140,7 +41,7 @@ const userField = [
   "curator",
   "seller",
   "voter",
-  "publisher"
+  "publisher",
 ];
 const userAuthField = ["required_posting_auths", "required_auths"];
 
@@ -182,20 +83,9 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
       )}
       data-testid="detailed-operation-card"
     >
-      <div className="flex justify-between items-center mb-2 flex-wrap">
-        <div
-          data-testid="operation-type"
-          className={cn(
-            "text-explorer-orange font-bold w-full md:w-auto text-sm flex-2 ",
-            {
-              "flex-grow": skipBlock && skipTrx && skipDate,
-            }
-          )}
-        >
-          {settings.rawJsonView ? operation.type : getOperationTypeForDisplay(operation.type)}
-        </div>
+      <div className="flex justify-start items-center gap-x-4">
         {!skipBlock && (
-          <div className="my-1 flex-1">
+          <div className="flex-shrink-0">
             Block{" "}
             <Link
               className="text-explorer-turquoise"
@@ -205,56 +95,51 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
             </Link>
           </div>
         )}
-          <div className="my-1 flex-1">
-            {transactionId && !skipTrx && (
-              <>
-                Trx{" "}
-                <Link
-                  className="text-explorer-turquoise"
-                  href={`/transaction/${transactionId}`}
-                >
-                  {transactionId.slice(0, 10)}
-                </Link>
-              </>
-            )}
-          </div>
-        {!skipDate && (
-          <div className="my-1 flex-1">
-            Date:{" "}
-            <span className="text-explorer-turquoise">
-              {moment(date).format(config.baseMomentTimeFormat)}
-            </span>
+        {transactionId && !skipTrx && (
+          <div className="flex-shrink-0">
+            Trx{" "}
+            <Link
+              className="text-explorer-turquoise"
+              href={`/transaction/${transactionId}`}
+            >
+              {transactionId.slice(0, 10)}
+            </Link>
           </div>
         )}
-      </div>
-      <div className="w-full flex justify-center truncate mb-2">
+        <div className="text-explorer-orange font-bold text-sm">
+          {settings.rawJsonView
+            ? operation.type
+            : getOperationTypeForDisplay(operation.type)}
+        </div>
         <div className="inline truncate">
           {getOneLineDescription(operation)}
         </div>
       </div>
 
-      {!settings.rawJsonView && <div className="flex justify-between items-center">
-        <Button className="p-0" onClick={() => setSeeDetails(!seeDetails)}>
-          {seeDetails ? (
-            <div className="flex items-center gap-x-1">
-              Hide details
-              <ChevronUp />
-            </div>
-          ) : (
-            <div className="flex items-center gap-x-1 ">
-              See more details
-              <ChevronDown />
-            </div>
+      {!settings.rawJsonView && operation.type === "custom_json_operation" && (
+        <div className="flex justify-between items-center">
+          <Button className="p-0" onClick={() => setSeeDetails(!seeDetails)}>
+            {seeDetails ? (
+              <div className="flex items-center gap-x-1">
+                Hide details
+                <ChevronUp />
+              </div>
+            ) : (
+              <div className="flex items-center gap-x-1 ">
+                See more details
+                <ChevronDown />
+              </div>
+            )}
+          </Button>
+          {isShortened && (
+            <Link href={`/longOperation/${operationId}`}>
+              <Button className=" text-explorer-turquoise">
+                See full operation
+              </Button>
+            </Link>
           )}
-        </Button>
-        {isShortened && (
-          <Link href={`/longOperation/${operationId}`}>
-            <Button className=" text-explorer-turquoise">
-              See full operation
-            </Button>
-          </Link>
-        )}
-      </div>}
+        </div>
+      )}
 
       {(seeDetails || settings.rawJsonView) &&
         (settings.rawJsonView || forceStyle === "raw-json" ? (
@@ -265,7 +150,7 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
               .sort(([key, _property]) => (key === "json" ? 1 : -1))
               .map(([key, property]) => {
                 const value =
-                  isJson(property) || isJson(JSON.stringify(property))
+                  isJson(property)
                     ? JSON.stringify(property).replaceAll("\\", "")
                     : property.toString() === ""
                     ? "-"
