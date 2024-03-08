@@ -40,10 +40,9 @@ export default function Block() {
   const router = useRouter();
   const virtualOpsRef = useRef(null);
 
-  const { blockId } = router.query;
+  const blockId = (router.query.blockId as string)?.replaceAll(",", "");
 
-  const { headBlockNumberData: headBlockNum, refetch } =
-    useHeadBlockNumber();
+  const { headBlockNumberData: headBlockNum, refetch } = useHeadBlockNumber();
 
   const [blockDate, setBlockDate] = useState<Date>();
   const { paramsState, setParams } = useURLParams({
@@ -89,12 +88,12 @@ export default function Block() {
     (operations?: Hive.OperationResponse[]) => {
       if (operations) {
         return {
-          virtualOperations: convertOperationResultsToTableOperations(operations?.filter(
-            (operation) => operation.virtual_op
-          )),
-          nonVirtualOperations: convertOperationResultsToTableOperations(operations?.filter(
-            (operation) => !operation.virtual_op
-          )),
+          virtualOperations: convertOperationResultsToTableOperations(
+            operations?.filter((operation) => operation.virtual_op)
+          ),
+          nonVirtualOperations: convertOperationResultsToTableOperations(
+            operations?.filter((operation) => !operation.virtual_op)
+          ),
         };
       } else return { virtualOperations: [], nonVirtualOperations: [] };
     },
@@ -241,7 +240,9 @@ export default function Block() {
                   />
                 )}
               <div className="w-full px-4 md:p-0 md:w-4/5 flex flex-col gap-y-2">
-                <OperationsTable operations={nonVirtualOperations} />
+                {!!nonVirtualOperations.length && (
+                  <OperationsTable operations={nonVirtualOperations} />
+                )}
                 <div
                   className="text-center mt-4"
                   ref={virtualOpsRef}
@@ -256,7 +257,9 @@ export default function Block() {
                       : null}
                   </p>
                 </div>
-                <OperationsTable operations={virtualOperations} />
+                {!!virtualOperations.length && (
+                  <OperationsTable operations={virtualOperations} />
+                )}
               </div>
             </section>
           )}
