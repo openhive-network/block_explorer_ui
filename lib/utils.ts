@@ -76,9 +76,10 @@ export const convertOperationResultsToTableOperations = (operations: Hive.Operat
 
 export const convertCommentsOperationResultToTableOperations = (operations: Hive.CommentOperation[]): Explorer.OperationForTable[] => {
   return operations.map((operation) => ({
-    operation: operation.body,
+    operation: operation.operation,
     blockNumber: operation.block_num,
-    operatiopnId: operation.operation_id
+    operatiopnId: operation.operation_id,
+    trxId: operation.trx_hash
   }))
 }
 

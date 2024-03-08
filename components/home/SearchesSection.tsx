@@ -333,7 +333,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
                   (foundOperation) => (
                     <DetailedOperationCard
                       className="my-6"
-                      operation={foundOperation.body}
+                      operation={foundOperation.operation}
                       key={foundOperation.operation_id}
                       blockNumber={foundOperation.block_num}
                       date={foundOperation.created_at}
