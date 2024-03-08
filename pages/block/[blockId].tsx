@@ -43,7 +43,7 @@ export default function Block() {
   const router = useRouter();
   const virtualOpsRef = useRef(null);
 
-  const { blockId } = router.query;
+  const blockId = (router.query.blockId as string)?.replaceAll(",", "");
 
   const { headBlockNumberData: headBlockNum, refetch } = useHeadBlockNumber();
 
@@ -246,8 +246,10 @@ export default function Block() {
                     className="text-black"
                   />
                 )}
-              <div className="w-full px-2 md:p-0 md:w-4/5 flex flex-col gap-y-2">
-                <OperationsTable operations={nonVirtualOperations} />
+              <div className="w-full px-4 md:p-0 md:w-4/5 flex flex-col gap-y-2">
+                {!!nonVirtualOperations.length && (
+                  <OperationsTable operations={nonVirtualOperations} />
+                )}
                 <div
                   className="text-center mt-4"
                   ref={virtualOpsRef}
@@ -262,7 +264,9 @@ export default function Block() {
                       : null}
                   </p>
                 </div>
-                <OperationsTable operations={virtualOperations} />
+                {!!virtualOperations.length && (
+                  <OperationsTable operations={virtualOperations} />
+                )}
               </div>
             </section>
           )}
