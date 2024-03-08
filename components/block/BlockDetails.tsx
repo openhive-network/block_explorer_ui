@@ -61,11 +61,11 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
       </div>
       <div className="flex items-center gap-x-4 mt-3 px-8 md:px-4 w-full justify-center flex-wrap text-sm md:text-base">
         <p>
-          <span className="text-base">Hash: </span>
+          <span data-testid="hash" className="text-base">Hash: </span>
           {blockDetails?.hash}
         </p>
         <p>
-          <span className="text-base">Prev hash: </span>
+          <span data-testid="prev-hash" className="text-base">Prev hash: </span>
           {blockDetails?.prev}
         </p>
       </div>
