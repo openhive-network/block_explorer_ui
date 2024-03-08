@@ -51,7 +51,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({ operations, className
       </TableHeader>
       <TableBody className="max-w-[100%]">
         {operations.map((operation, index) => (
-          <TableRow
+          <TableRow data-testid="detailed-operation-card"
             key={index}
             className={cn({
               "border-t border-gray-700": !!index,
@@ -73,8 +73,8 @@ const OperationsTable: React.FC<OperationsTableProps> = ({ operations, className
                 {operation.trxId?.slice(0, 10)}
               </Link>
             </TableCell>
-            <TableCell>{operation.operation.type}</TableCell>
-            <TableCell className="max-w-0 w-full">
+            <TableCell data-testid="operation-type">{operation.operation.type}</TableCell>
+            <TableCell data-testid="content" className="max-w-0 w-full">
               <div className="truncate">{getOneLineDescription(operation)}</div>
             </TableCell>
           </TableRow>
