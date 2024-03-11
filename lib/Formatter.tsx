@@ -85,6 +85,7 @@ import {
 import moment from "moment";
 import { formatPercent } from "./utils";
 import Link from "next/link";
+import HiveAppsVisitor from "./HiveAppsVisitor";
 
 class OperationsFormatter implements IWaxCustomFormatter {
   
@@ -285,7 +286,9 @@ class OperationsFormatter implements IWaxCustomFormatter {
 
   @WaxFormattable({matchProperty: "type", matchValue: "custom_json_operation"})
   formatCustomJsonOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: custom_json }>) {
-    const message = this.generateReactLink([this.getMultipleAccountsListLink(op.required_auths), this.getMultipleAccountsListLink(op.required_posting_auths), "made custom JSON"]);
+    const specialJsonMessage = this.wax.formatter.visitHiveAppsOperation({ custom_json: op as custom_json }, new HiveAppsVisitor(this.generateReactLink, this.getAccountLink, this.getPermlink, this.getMultipleAccountsListLink));
+    const message = specialJsonMessage ? specialJsonMessage 
+      : this.generateReactLink([this.getMultipleAccountsListLink(op.required_auths), this.getMultipleAccountsListLink(op.required_posting_auths), "made custom JSON"]);
     return {...target, value: {message, json: op.json}};
   }
 
