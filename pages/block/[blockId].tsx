@@ -42,8 +42,7 @@ export default function Block() {
 
   const { blockId } = router.query;
 
-  const { headBlockNumberData: headBlockNum, refetch } =
-    useHeadBlockNumber();
+  const { headBlockNumberData: headBlockNum, refetch } = useHeadBlockNumber();
 
   const [blockDate, setBlockDate] = useState<Date>();
   const { paramsState, setParams } = useURLParams({
@@ -89,12 +88,12 @@ export default function Block() {
     (operations?: Hive.OperationResponse[]) => {
       if (operations) {
         return {
-          virtualOperations: convertOperationResultsToTableOperations(operations?.filter(
-            (operation) => operation.virtual_op
-          )),
-          nonVirtualOperations: convertOperationResultsToTableOperations(operations?.filter(
-            (operation) => !operation.virtual_op
-          )),
+          virtualOperations: convertOperationResultsToTableOperations(
+            operations?.filter((operation) => operation.virtual_op)
+          ),
+          nonVirtualOperations: convertOperationResultsToTableOperations(
+            operations?.filter((operation) => !operation.virtual_op)
+          ),
         };
       } else return { virtualOperations: [], nonVirtualOperations: [] };
     },
@@ -241,22 +240,10 @@ export default function Block() {
                   />
                 )}
               <div className="w-full px-4 md:p-0 md:w-4/5 flex flex-col gap-y-2">
-                <OperationsTable operations={nonVirtualOperations} />
-                <div
-                  className="text-center mt-4"
-                  ref={virtualOpsRef}
-                  style={{ scrollMargin: "100px" }}
-                >
-                  <p className="text-3xl text-black">
-                    {!!blockOperations &&
-                    !blockOperations?.operations_result?.length
-                      ? "No operations were found"
-                      : !!virtualOperations.length
-                      ? "Virtual Operations"
-                      : null}
-                  </p>
-                </div>
-                <OperationsTable operations={virtualOperations} />
+                <OperationsTable
+                  operations={[...nonVirtualOperations, ...virtualOperations]}
+                  aggregate
+                />
               </div>
             </section>
           )}

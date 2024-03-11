@@ -11,13 +11,13 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import Explorer from "@/types/Explorer";
-import { isJson } from "@/utils/StringUtils";
 import { Button } from "./ui/button";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import JSONView from "./JSONView";
 
 interface OperationsTableProps {
   operations: Explorer.OperationForTable[];
+  aggregate?: boolean;
   className?: string;
 }
 
@@ -50,12 +50,9 @@ const getOperationValues = (operation: Hive.Operation) => {
   return valueAsObject;
 };
 
-const getCustomJson = (operation: Hive.Operation) => {
-  const valuesAsObject = getOperationValues(operation);
-};
-
 const OperationsTable: React.FC<OperationsTableProps> = ({
   operations,
+  aggregate,
   className,
 }) => {
   const [expanded, setExpanded] = useState<number[]>([]);
@@ -79,10 +76,12 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
       <TableBody className="max-w-[100%]">
         {operations.map((operation, index) => (
           <>
-            <TableRow data-testid='detailed-operation-card'
+            <TableRow
+              data-testid="detailed-operation-card"
               key={index}
               className={cn({
-                "border-t border-gray-700": !!index,
+                "!border-t border-gray-700":
+                  !!index || index === operations.length - 1,
               })}
             >
               <TableCell>
@@ -103,7 +102,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                         ])
                       }
                     >
-                      <ChevronUp width={20} height={20} className="mt-1"/>
+                      <ChevronUp width={20} height={20} className="mt-1" />
                     </Button>
                   ) : (
                     <Button
@@ -115,7 +114,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                         ])
                       }
                     >
-                      <ChevronDown width={20} height={20} className="mt-1"/>
+                      <ChevronDown width={20} height={20} className="mt-1" />
                     </Button>
                   )}
                 </div>
@@ -136,13 +135,36 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                   {operation.trxId?.slice(0, 10)}
                 </Link>
               </TableCell>
-              <TableCell data-testid='operation-type'>{operation.operation.type}</TableCell>
+              <TableCell data-testid="operation-type">
+                {operation.operation.type}
+              </TableCell>
               <TableCell className="max-w-0 w-full">
                 <div className="truncate">
                   {getOneLineDescription(operation)}
                 </div>
               </TableCell>
             </TableRow>
+            {aggregate &&
+              !!operation.trxId &&
+              operations
+                .filter(
+                  (op) => op.trxId === operation.trxId && op !== operation
+                )
+                .map((op) => (
+                  <TableRow key={op.operatiopnId}>
+                    <TableCell></TableCell>
+                    <TableCell></TableCell>
+                    <TableCell>Virtual</TableCell>
+                    <TableCell data-testid="operation-type-virtual">
+                      {op.operation.type}
+                    </TableCell>
+                    <TableCell className="max-w-0 w-full">
+                      <div className="truncate">
+                        {getOneLineDescription(op)}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
             {operation.operation.type === "custom_json_operation" &&
               expanded.includes(operation.operatiopnId || 0) && (
                 <TableRow>
