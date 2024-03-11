@@ -431,7 +431,12 @@ class OperationsFormatter implements IWaxCustomFormatter {
   // Leave it with simple message, props are too complicated to handle now
   @WaxFormattable({matchProperty: "type", matchValue: "witness_set_properties_operation"})
   formatWitnessSetPropertiesOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: witness_set_properties }>) {
-    const message = this.generateReactLink([this.getAccountLink(op.owner), "updated witness properties"]);
+    let updatedProperties = "";
+    const props = op.props as unknown as [string, string][];
+    props.forEach((element, index) => {
+      updatedProperties += `${index !== 0 ? ", " : ""}${element[0]}`;
+    })
+    const message = this.generateReactLink([this.getAccountLink(op.owner), "updated witness properties:", updatedProperties]);
     return {...target, value: message};
   }
 
