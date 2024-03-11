@@ -3,6 +3,7 @@ import { config } from "@/Config";
 import Hive from "@/types/Hive";
 import {
   DeepReadonly,
+  HiveAppsOperationVisitor,
   IFormatFunctionArguments,
   IWaxBaseInterface,
   IWaxCustomFormatter,
@@ -58,6 +59,7 @@ import {
   limit_order_create,
   limit_order_create2,
   liquidity_reward,
+  operation,
   pow,
   pow2,
   pow_reward,
@@ -85,6 +87,7 @@ import {
 import moment from "moment";
 import { formatPercent } from "./utils";
 import Link from "next/link";
+import HiveAppsVisitor from "./HiveAppsVisitor";
 
 class OperationsFormatter implements IWaxCustomFormatter {
   
@@ -95,8 +98,6 @@ class OperationsFormatter implements IWaxCustomFormatter {
   private getFormattedAmount (supply: Hive.Supply | undefined): string {
     return(this.wax.formatter.format(supply));
   }
-
-
 
   private getFormattedDate(time: Date | string) : string {
     return moment(time).format(config.baseMomentTimeFormat);
@@ -121,7 +122,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
       ))}</>
   }
 
-  private getPermlink(author: string, permlink: string): React.JSX.Element {
+  getPermlink(author: string, permlink: string): React.JSX.Element {
     return <Link rel="noopener noreferrer" target="_blank" href={`https://hive.blog/@${author}/${permlink}`}><span className="text-explorer-ligh-green">{permlink.slice(0, 20)}{permlink.length > 20 ? "..." : ""}</span></Link>
   }
 
@@ -225,7 +226,6 @@ class OperationsFormatter implements IWaxCustomFormatter {
   // Check for better message
   @WaxFormattable({matchProperty: "type", matchValue: "account_update_operation"})
   formatAccountUpdateOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: account_update }>) {
-    console.log("OP", op);
     const message = this.generateReactLink([this.getAccountLink(op.account), `updated account with memo key: ${op.memo_key}`]);
     return {...target, value: message};
   }
@@ -285,13 +285,14 @@ class OperationsFormatter implements IWaxCustomFormatter {
 
   @WaxFormattable({matchProperty: "type", matchValue: "custom_json_operation"})
   formatCustomJsonOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: custom_json }>) {
-    const message = this.generateReactLink([this.getMultipleAccountsListLink(op.required_auths), this.getMultipleAccountsListLink(op.required_posting_auths), "made custom JSON"]);
+    const specialJsonMessage = this.wax.formatter.visitHiveAppsOperation({ custom_json: op as custom_json }, new HiveAppsVisitor(this.generateReactLink, this.getAccountLink, this.getPermlink, this.getMultipleAccountsListLink));
+    const message = specialJsonMessage ? specialJsonMessage 
+      : this.generateReactLink([this.getMultipleAccountsListLink(op.required_auths), this.getMultipleAccountsListLink(op.required_posting_auths), "made custom JSON"]);
     return {...target, value: {message, json: op.json}};
   }
 
   @WaxFormattable({matchProperty: "type", matchValue: "comment_options_operation"})
   formatcommentOptionOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: comment_options }>) {
-    console.log("OP", op);
     const allowCurrationReward = !op.allow_curation_rewards ? "disallow rewards, " : "";
     const allowVotes = !op.allow_votes ? "disallow votes, " : "";
     const maxPayout = op.max_accepted_payout?.amount !== "1000000000" ? `max payout: ${this.getFormattedAmount(op.max_accepted_payout)}` : "";
@@ -479,7 +480,6 @@ class OperationsFormatter implements IWaxCustomFormatter {
 
   @WaxFormattable({matchProperty: "type", matchValue: "recurrent_transfer_operation"})
   formatRecurrentTransferOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: Hive.RecurrentTransferOperation }>) {
-    console.log("OP", op);
     const message = this.generateReactLink([this.getAccountLink(op.from), `transfered recurrently ${op.executions} of ${op.recurrence} times ${this.getFormattedAmount(op.amount)} to`, this.getAccountLink(op.to)]);
     return {...target , value: message};
   }
