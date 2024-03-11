@@ -2,6 +2,8 @@ import { test, Locator, expect } from "@playwright/test";
 import { MainPage } from "../support/pages/mainPage";
 import { Witnesses } from "../support/pages/witnesses";
 import { AccountPage } from "../support/pages/accountPage";
+import { VotesHistoryDialog } from "../support/pages/votesHistoryDialog";
+import { VotersDialog } from "../support/pages/votersDialog";
 
 test.describe("Witnesses page", () => {
   let mainPage: MainPage;
@@ -146,4 +148,145 @@ test.describe("Witnesses page", () => {
     await accountPage.validateAccountName(witnessName);
   });
 
+  test("Check if after click details button in votes modal with details is displayed correctly", async ({ page }) => {
+    const votesHistoryDialog = new VotesHistoryDialog(page);
+    await mainPage.gotoBlockExplorerPage();
+    // Move to the Witnesses page
+    await witnessesPage.gotoWitnessesPage();
+    await witnessesPage.validateWitnessesPageIsLoaded();
+    const witnessName: string = await witnessesPage.witnessName.first().textContent() || '';
+    // Move to the votes history dialog
+    await witnessesPage.witnessVotesButtons.first().click();
+    await votesHistoryDialog.validateVotesHistoryDialogIsLoaded();
+    await votesHistoryDialog.validateWitnessName(witnessName);
+    // Close the votes history dialog
+    await votesHistoryDialog.votesHistoryDialogCloseButton.click();
+  });
+
+  test("Check if after click details button in Voter modal with details is displayed correctly", async ({ page }) => {
+    const votersDialog = new VotersDialog(page);
+
+    await mainPage.gotoBlockExplorerPage();
+    // Move to the Witnesses page
+    await witnessesPage.gotoWitnessesPage();
+    await witnessesPage.validateWitnessesPageIsLoaded();
+    const witnessName: string = await witnessesPage.witnessName.first().textContent() || '';
+    // Move to the voter dialog
+    await witnessesPage.witnessVotersButtons.first().click();
+    await votersDialog.validateVotersDialogIsLoaded()
+    await votersDialog.validateWitnessName(witnessName);
+    // Close the votes history dialog
+    await votersDialog.votersDialogCloseButton.click();
+  });
+
+  test("Check if after click toggle button category is correctly change to Hive Power in the voters dialog", async ({ page }) => {
+    const votersDialog = new VotersDialog(page);
+    await mainPage.gotoBlockExplorerPage();
+    // Move to the Witnesses page
+    await witnessesPage.gotoWitnessesPage();
+    await witnessesPage.validateWitnessesPageIsLoaded();
+    const witnessName: string = await witnessesPage.witnessName.first().textContent() || '';
+    // Move to the voters dialog
+    await witnessesPage.witnessVotersButtons.first().click();
+    await votersDialog.validateVotersDialogIsLoaded();
+    await votersDialog.validateWitnessName(witnessName);
+    // Get first voter votes value in vests
+    const currentVoterPower: string = await votersDialog.votersDialogVotesValue.first().textContent() || '';
+    // Set toggle button to Hive Power
+    await votersDialog.votersDialogVestsHivePowerButton.click();
+    await expect(votersDialog.votersDialogVestsHivePowerButton).toHaveAttribute('data-state', 'checked');
+    // Get first voter votes value in Hive Power
+    const currentVoterHivePower: string = await votersDialog.votersDialogVotesValue.first().textContent() || '';
+    // Compare vests and hive power
+    await expect(currentVoterPower).not.toMatch(currentVoterHivePower);
+    // Close the votes history dialog
+    await votersDialog.votersDialogCloseButton.click();
+  });
+
+  test("Check if after click toggle button category is correctly change to Hive Power in the votes history dialog", async ({ page }) => {
+    const votesHistoryDialog = new VotesHistoryDialog(page);
+    await mainPage.gotoBlockExplorerPage();
+    // Move to the Witnesses page
+    await witnessesPage.gotoWitnessesPage();
+    await witnessesPage.validateWitnessesPageIsLoaded();
+    const witnessName: string = await witnessesPage.witnessName.first().textContent() || '';
+    // Move to the votes history dialog
+    await witnessesPage.witnessVotesButtons.first().click();
+    await votesHistoryDialog.validateVotesHistoryDialogIsLoaded();
+    await votesHistoryDialog.validateWitnessName(witnessName);
+    // Get first voter vests
+    const currentVoterPower: string = await votesHistoryDialog.votesHistoryDialogCurrentVoterPowerColumn.first().textContent() || '';
+    // Set toggle button to Hive Power
+    await votesHistoryDialog.votesHistoryDialogVestsHivePowerButton.click();
+    await expect(votesHistoryDialog.votesHistoryDialogVestsHivePowerButton).toHaveAttribute('data-state', 'checked');
+    // Get first voter Hive Power
+    const currentVoterHivePower: string = await votesHistoryDialog.votesHistoryDialogCurrentVoterPowerColumn.first().textContent() || '';
+    // Compare vests and hive power
+    await expect(currentVoterPower).not.toMatch(currentVoterHivePower);
+    // Close the votes history dialog
+    await votesHistoryDialog.votesHistoryDialogCloseButton.click();
+  });
+
+  test("Check if after click arrow button ascending and descending filters work correctly by the voter name and votes", async ({ page }) => {
+    const votersDialog = new VotersDialog(page);
+    await mainPage.gotoBlockExplorerPage();
+    // Move to the Witnesses page
+    await witnessesPage.gotoWitnessesPage();
+    await witnessesPage.validateWitnessesPageIsLoaded();
+    const witnessName: string = await witnessesPage.witnessName.first().textContent() || '';
+    // Move to the voters dialog
+    await witnessesPage.witnessVotersButtons.first().click();
+    await votersDialog.validateVotersDialogIsLoaded();
+    await votersDialog.validateWitnessName(witnessName);
+    // Get first voter votes value in vests and voter name
+    const currentVoterPower: string = await votersDialog.votersDialogVotesValue.first().textContent() || '';
+    const firstVoterName: string = await votersDialog.votersDialogVoterName.first().textContent() || '';
+    // Filter by votes value
+    await votersDialog.votersDialogHeaderVotesButton.click();
+    await page.waitForTimeout(2000);
+    const descendingVoterPower: string = await votersDialog.votersDialogVotesValue.first().textContent() || '';
+    const firstDescendingVoterName: string = await votersDialog.votersDialogVoterName.first().textContent() || '';
+    await expect(currentVoterPower).not.toMatch(descendingVoterPower);
+    await expect(firstVoterName).not.toMatch(firstDescendingVoterName);
+    // Filter by voter name
+    await votersDialog.votersDialogHeaderVoterButton.click();
+    await page.waitForTimeout(2000);
+    const voterName: string = await votersDialog.votersDialogVoterName.first().textContent() || '';
+    await votersDialog.votersDialogHeaderVoterButton.click();
+    await page.waitForTimeout(2000);
+    const filteredVoterName: string = await votersDialog.votersDialogVoterName.first().textContent() || '';
+    await expect(voterName).not.toMatch(filteredVoterName);
+    // Close the votes history dialog
+    await votersDialog.votersDialogCloseButton.click();
+  });
+
+  test("Check if after click arrow button ascending and descending filters work correctly by the account and proxy", async ({ page }) => {
+    const votersDialog = new VotersDialog(page);
+    await mainPage.gotoBlockExplorerPage();
+    // Move to the Witnesses page
+    await witnessesPage.gotoWitnessesPage();
+    await witnessesPage.validateWitnessesPageIsLoaded();
+    const witnessName: string = await witnessesPage.witnessName.first().textContent() || '';
+    // Move to the voters dialog
+    await witnessesPage.witnessVotersButtons.first().click();
+    await votersDialog.validateVotersDialogIsLoaded();
+    await votersDialog.validateWitnessName(witnessName);
+    // Get first voter votes value in vests and voter name
+    const accountValue: string = await votersDialog.votersDialogAccountValue.first().textContent() || '';
+    // Filter by account value
+    await votersDialog.votersDialogHeaderAccountButton.click();
+    await page.waitForTimeout(2000);
+    const filteredAccountValue: string = await votersDialog.votersDialogVotesValue.first().textContent() || '';
+    await expect(accountValue).not.toMatch(filteredAccountValue);
+    // Filter by proxy
+    await votersDialog.votersDialogHeaderProxyButton.click();
+    await page.waitForTimeout(2000);
+    const proxiedPowerValue: string = await votersDialog.votersDialogProxiedValue.first().textContent() || '';
+    await votersDialog.votersDialogHeaderProxyButton.click();
+    await page.waitForTimeout(2000);
+    const filteredProxiedPowerValue: string = await votersDialog.votersDialogProxiedValue.first().textContent() || '';
+    await expect(proxiedPowerValue).not.toMatch(filteredProxiedPowerValue);
+    // Close the votes history dialog
+    await votersDialog.votersDialogCloseButton.click();
+  });
 });

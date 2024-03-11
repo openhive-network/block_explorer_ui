@@ -28,4 +28,17 @@ export class VotesHistoryDialog {
     this.votesHistoryDialogCurrentVoterPowerColumn = page.getByTestId('current-voter-power');
     this.votesHistoryDialogCloseButton = page.getByTestId('close-dialog-button');
   }
+
+  async validateVotesHistoryDialogIsLoaded() {
+    await expect(this.votesHistoryDialog).toBeVisible();
+    await expect(this.votesHistoryDialogWitnessName).toBeVisible();
+    await expect(this.votesHistoryDialogVestsHivePowerButton).toHaveAttribute('data-state', 'unchecked');
+    await expect(this.votesHistoryDialogFromDatepicker).toBeVisible();
+    await expect(this.votesHistoryDialogToDatepicker).toBeVisible();
+    await expect(this.votesHistoryDialogTableBody).toBeVisible();
+  }
+
+  async validateWitnessName(witnessName: string) {
+    await expect(this.votesHistoryDialogWitnessName).toHaveText(witnessName);
+  }
 }

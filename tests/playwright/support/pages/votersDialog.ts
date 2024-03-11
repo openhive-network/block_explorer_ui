@@ -27,9 +27,19 @@ export class VotersDialog {
     this.votersDialogAccountValue = page.getByTestId('account-power');
     this.votersDialogProxiedValue = page.getByTestId('proxied-power');
     this.votersDialogCloseButton = page.getByTestId('close-dialog-button');
-    this.votersDialogHeaderVoterButton = this.votersDialog.getByText('Voter');
-    this.votersDialogHeaderVotesButton = this.votersDialog.getByText('Votes');
-    this.votersDialogHeaderAccountButton = this.votersDialog.getByText('Account');
-    this.votersDialogHeaderProxyButton = this.votersDialog.getByText('Proxy');
+    this.votersDialogHeaderVoterButton = this.votersDialog.locator('thead').getByText('Voter');
+    this.votersDialogHeaderVotesButton = this.votersDialog.locator('thead').getByText('Votes');
+    this.votersDialogHeaderAccountButton = this.votersDialog.locator('thead').getByText('Account');
+    this.votersDialogHeaderProxyButton = this.votersDialog.locator('thead').getByText('Proxy');
+  }
+
+  async validateVotersDialogIsLoaded() {
+    await expect(this.votersDialog).toBeVisible();
+    await expect(this.votersDialogVestsHivePowerButton).toBeVisible();
+    await expect(this.votersDialogTableBody).toBeVisible();
+  }
+
+  async validateWitnessName(witnessName: string) {
+    await expect(this.votersDialogWitnessName).toHaveText(witnessName);
   }
 }
