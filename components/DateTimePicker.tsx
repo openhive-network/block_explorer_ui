@@ -39,7 +39,13 @@ const DateTimePicker = ({ date, setDate, side }: DateTimePickerProps) => {
     const { value } = e.target;
     const hours = Number.parseInt(value.split(":")[0] || "00", 10);
     const minutes = Number.parseInt(value.split(":")[1] || "00", 10);
-    const modifiedDay = selectedDateTime.set({ hour: hours, minute: minutes });
+    const seconds = Number.parseInt(value.split(":")[2] || "00", 10);
+
+    const modifiedDay = selectedDateTime.set({
+      hour: hours,
+      minute: minutes,
+      second: seconds,
+    });
 
     setSelectedDateTime(modifiedDay);
     debounceDateChange(modifiedDay.toJSDate());
@@ -52,7 +58,7 @@ const DateTimePicker = ({ date, setDate, side }: DateTimePickerProps) => {
         <Input
           type="time"
           onChange={handleTimeChange}
-          value={selectedDateTime.toFormat("HH:mm")}
+          value={selectedDateTime.toFormat("HH:mm:ss")}
           pattern="[0-9]+([\.][0-9]{1,2})?"
         />
       </div>
@@ -75,7 +81,7 @@ const DateTimePicker = ({ date, setDate, side }: DateTimePickerProps) => {
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
           {date ? (
-            selectedDateTime.toFormat("DDD HH:mm")
+            selectedDateTime.toFormat("DDD HH:mm:ss")
           ) : (
             <span>Pick a date</span>
           )}
