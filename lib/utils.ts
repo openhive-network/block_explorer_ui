@@ -103,19 +103,27 @@ export const parseUrlFlagsIntoBooleanArray = (urlHexCollection: string): boolean
   const parts = urlHexCollection.split("-");
   let finalValues: boolean[] = [];
   parts.forEach(part => {
-      let parsedHexValue = BigInt(parseInt(part, 16));
-      let convertedBooleans: boolean[] = new Array(32).fill(false);
-      let index = 0;
-      while (parsedHexValue > 0) {
-          convertedBooleans[index] = (parsedHexValue % BigInt(2) === BigInt(1));
-          parsedHexValue = parsedHexValue >> BigInt(1);
-          ++index;
-      }
-      finalValues = [...finalValues, ...convertedBooleans];
+    let parsedHexValue = BigInt(parseInt(part, 16));
+    let convertedBooleans: boolean[] = new Array(32).fill(false);
+    let index = 0;
+    while (parsedHexValue > 0) {
+      convertedBooleans[index] = (parsedHexValue % BigInt(2) === BigInt(1));
+      parsedHexValue = parsedHexValue >> BigInt(1);
+      ++index;
+    }
+    finalValues = [...finalValues, ...convertedBooleans];
   });
   return finalValues;
 }
 
 export const convertBooleanArrayIntoHexadecimals = (booleanArray: boolean[]): string => {
+  const stringBinaryRepresentations: string[] = [];
+  let testBinary: string = "";
+  booleanArray.forEach((bit, index) => {
+    const representation = bit ? "1" : "0";
+    testBinary += representation;
+  });
+  const parsedNumber = parseInt(testBinary, 2);
+  const parsedHexValue = parsedNumber.toString(16);
   return "";
 }
