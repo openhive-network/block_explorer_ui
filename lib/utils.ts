@@ -91,4 +91,31 @@ export const convertTransactionResponseToTableOperations = (transaction: Hive.Tr
     blockNumber: transaction.block_num,
     trxId: transaction.transaction_id
   }))
+
+}
+
+/**
+ * Change 32 bit flag from URL into array of boolean.
+ * @param urlHexCollection like "0044fad0-33440000-aabbff12"
+ * @returns array of on-off booleans for filters
+ */
+export const parseUrlFlagsIntoBooleanArray = (urlHexCollection: string): boolean[] => {
+  const parts = urlHexCollection.split("-");
+  let finalValues: boolean[] = [];
+  parts.forEach(part => {
+      let parsedHexValue = BigInt(parseInt(part, 16));
+      let convertedBooleans: boolean[] = new Array(32).fill(false);
+      let index = 0;
+      while (parsedHexValue > 0) {
+          convertedBooleans[index] = (parsedHexValue % BigInt(2) === BigInt(1));
+          parsedHexValue = parsedHexValue >> BigInt(1);
+          ++index;
+      }
+      finalValues = [...finalValues, ...convertedBooleans];
+  });
+  return finalValues;
+}
+
+export const convertBooleanArrayIntoHexadecimals = (booleanArray: boolean[]): string => {
+  return "";
 }
