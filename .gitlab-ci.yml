@@ -3,10 +3,11 @@ stages:
  - test
  - test-report-aggregate
  - deploy
+ - publish
 
 variables:
   # Variables required by Common CI jobs
-  CI_COMMON_JOB_VERSION: "5c42c8019dd329000fd036668b22eb3eb99a743a"
+  CI_COMMON_JOB_VERSION: "7ea99b10bbf0f9b1fbb88f52a78ead4c82f15d75"
   DOCKER_BUILDER_TAG: "$CI_COMMON_JOB_VERSION"
   DOCKER_DIND_TAG: "$CI_COMMON_JOB_VERSION"
   IMAGE_REMOVER_TAG: "$CI_COMMON_JOB_VERSION"
@@ -14,7 +15,7 @@ variables:
 include:
   - template: Workflows/Branch-Pipelines.gitlab-ci.yml
   - project: 'hive/common-ci-configuration'
-    ref: 5c42c8019dd329000fd036668b22eb3eb99a743a # develop
+    ref: 7ea99b10bbf0f9b1fbb88f52a78ead4c82f15d75 # develop
     file: '/templates/docker_image_jobs.gitlab-ci.yml'
 
 docker-build:
@@ -280,3 +281,11 @@ test:stop:
   environment:
     name: test
     action: stop
+
+build_and_publish_image:
+  stage: publish
+  extends: .publish_docker_image_template
+  script:
+    - scripts/ci-helpers/build_and_publish_instance.sh
+  tags:
+    - public-runner-docker

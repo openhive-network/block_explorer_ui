@@ -88,10 +88,10 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
       open={isVotesHistoryOpen}
       onOpenChange={changeVoteHistoryDialogue}
     >
-      <DialogContent className={buildCustomDialogStyle()}>
+      <DialogContent className={buildCustomDialogStyle()} data-testid="votes-history-dialog">
         {votesHistory ? (
           <>
-            <div className="flex justify-center items-centertext-center font-semibold">
+            <div className="flex justify-center items-centertext-center font-semibold" data-testid="votes-history-dialog-witness-name">
               {accountName}{" "}
               {isVotesHistoryLoading && (
                 <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
@@ -103,6 +103,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                 className="mx-2"
                 checked={showHivePower}
                 onCheckedChange={setShowHivePower}
+                data-testid="votes-history-dialog-vests-hivepower-button"
               />
               <label>Hive Power</label>
             </div>
@@ -156,7 +157,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                   ))}
                 </TableRow>
               </TableHeader>
-              <TableBody>
+              <TableBody data-testid="votes-history-dialog-table-body">
                 {displayData &&
                   displayData?.map((vote, index) => (
                     <TableRow
@@ -165,7 +166,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                         index % 2 === 0 ? "bg-gray-800" : "bg-gray-900"
                       }`}
                     >
-                      <TableCell className="sticky left-0">
+                      <TableCell className="sticky left-0" data-testid="date-format">
                         {moment(vote.timestamp).format(
                           config.baseMomentTimeFormat
                         )}
@@ -179,6 +180,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                         className={`${
                           vote.approve ? "text-green-400" : "text-red-400"
                         }`}
+                        data-testid="vote-arrow"
                       >
                         {vote.approve ? (
                           <ArrowUpCircleIcon />
@@ -186,7 +188,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                           <ArrowDownCircleIcon />
                         )}
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right" data-testid="current-voter-power">
                         {showHivePower
                           ? formatNumber(vote.vests_hive_power, false)
                           : formatNumber(vote.vests, true)
