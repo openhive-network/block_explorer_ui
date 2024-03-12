@@ -116,14 +116,28 @@ export const parseUrlFlagsIntoBooleanArray = (urlHexCollection: string): boolean
   return finalValues;
 }
 
+/**
+ * Convert boolean into hexadecimals formatted for URL
+ * @param booleanArray 
+ * @returns like "aaffbb00-ffffffff-12345678"
+ */
 export const convertBooleanArrayIntoHexadecimals = (booleanArray: boolean[]): string => {
-  const stringBinaryRepresentations: string[] = [];
-  let testBinary: string = "";
-  booleanArray.forEach((bit, index) => {
-    const representation = bit ? "1" : "0";
-    testBinary += representation;
+    let binaryString: string = "";
+    booleanArray.forEach((bit) => {
+        binaryString += bit ? "1" : "0";
   });
-  const parsedNumber = parseInt(testBinary, 2);
-  const parsedHexValue = parsedNumber.toString(16);
-  return "";
+  const slicedBinaryRepresentation: string[] = [];
+  for (let stringIndex = 0; stringIndex < binaryString.length; stringIndex += 32) {
+      const slicedRepresentation = binaryString.slice(stringIndex, stringIndex + 32);
+      const reversedSlicedRepresentation = slicedRepresentation.split("").reverse().join("");
+      slicedBinaryRepresentation.push(reversedSlicedRepresentation);
+  }
+  let finalString = "";
+  slicedBinaryRepresentation.forEach((singleRepresentation, index) => {
+      const parsedNumber = parseInt(singleRepresentation, 2);
+      const parsedHexValue = parsedNumber.toString(16).padStart(8, "0");
+      if (index !== 0) finalString += "-";
+      finalString += parsedHexValue;
+  })
+  return finalString;
 }
