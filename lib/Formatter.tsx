@@ -288,7 +288,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
   formatCustomJsonOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: custom_json }>) {
     const specialJsonMessage = this.wax.formatter.visitHiveAppsOperation({ custom_json: op as custom_json }, new HiveAppsVisitor(this.generateReactLink, this.getAccountLink, this.getPermlink, this.getMultipleAccountsListLink));
     const message = specialJsonMessage ? specialJsonMessage 
-      : this.generateReactLink([this.getMultipleAccountsListLink(op.required_auths), this.getMultipleAccountsListLink(op.required_posting_auths), "made custom JSON"]);
+      : this.generateReactLink([this.getMultipleAccountsListLink(op.required_auths), this.getMultipleAccountsListLink(op.required_posting_auths), `made custom JSON (${op.id})`]);
     return {...target, value: {message, json: op.json}};
   }
 
