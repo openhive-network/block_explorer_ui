@@ -117,8 +117,8 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }
 
   private getMultipleAccountsListLink(accounts: DeepReadonly<string[]>) {
-    return <>{accounts.map((account) =>  (
-      <>{this.getAccountLink(account)}{" "}</>
+    return <>{accounts.map((account, index) =>  (
+      <React.Fragment key={index}>{this.getAccountLink(account)}{" "}</React.Fragment>
       ))}</>
   }
 
