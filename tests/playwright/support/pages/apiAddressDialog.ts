@@ -18,7 +18,7 @@ export class ApiAddressDialog {
     this.apiAddressInput = page.getByTestId('api-address-input');
     this.apiAddressResetButton = page.getByTestId('api-address-reset-button');
     this.apiAddressSubmitButton = page.getByTestId('api-address-submit-button');
-    this.closeDialog = page.getByTestId('close-dialog');
+    this.closeDialog = page.getByTestId('close-dialog-button');
     this.databaseApiLink = page.getByTestId('api-address-link').first();
     this.nodeApiLink = page.getByTestId('api-address-link').last();
   }
