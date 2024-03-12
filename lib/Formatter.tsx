@@ -128,7 +128,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
 
   private generateReactLink(elements: Array<string | React.JSX.Element>): React.JSX.Element {
     return (
-      <div>
+      <div className="truncate">
         {elements.map((element, index) => (
           <React.Fragment key={index}>
             {element}{" "}

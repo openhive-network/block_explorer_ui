@@ -76,7 +76,8 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
       <TableBody className="max-w-[100%]">
         {operations.map((operation, index) => (
           <React.Fragment key={index}>
-            <TableRow data-testid='detailed-operation-card'
+            <TableRow
+              data-testid="detailed-operation-card"
               key={index}
               className={cn({
                 "!border-t border-gray-700":
@@ -176,7 +177,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                   </TableCell>
                 </TableRow>
               )}
-          </ React.Fragment>
+          </React.Fragment>
         ))}
       </TableBody>
     </Table>
