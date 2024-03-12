@@ -226,7 +226,6 @@ class OperationsFormatter implements IWaxCustomFormatter {
   // Check for better message
   @WaxFormattable({matchProperty: "type", matchValue: "account_update_operation"})
   formatAccountUpdateOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: account_update }>) {
-    console.log("OP", op);
     const message = this.generateReactLink([this.getAccountLink(op.account), `updated account with memo key: ${op.memo_key}`]);
     return {...target, value: message};
   }
@@ -294,7 +293,6 @@ class OperationsFormatter implements IWaxCustomFormatter {
 
   @WaxFormattable({matchProperty: "type", matchValue: "comment_options_operation"})
   formatcommentOptionOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: comment_options }>) {
-    console.log("OP", op);
     const allowCurrationReward = !op.allow_curation_rewards ? "disallow rewards, " : "";
     const allowVotes = !op.allow_votes ? "disallow votes, " : "";
     const maxPayout = op.max_accepted_payout?.amount !== "1000000000" ? `max payout: ${this.getFormattedAmount(op.max_accepted_payout)}` : "";
@@ -482,7 +480,6 @@ class OperationsFormatter implements IWaxCustomFormatter {
 
   @WaxFormattable({matchProperty: "type", matchValue: "recurrent_transfer_operation"})
   formatRecurrentTransferOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: Hive.RecurrentTransferOperation }>) {
-    console.log("OP", op);
     const message = this.generateReactLink([this.getAccountLink(op.from), `transfered recurrently ${op.executions} of ${op.recurrence} times ${this.getFormattedAmount(op.amount)} to`, this.getAccountLink(op.to)]);
     return {...target , value: message};
   }
