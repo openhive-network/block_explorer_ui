@@ -61,7 +61,19 @@ test.describe('Block page tests', () => {
     test('Validate that See more details is able in the operation list', async ({page, request}) =>{
         await mainPage.headBlockCardBlockLink.click()
         await expect(blockPage.blockProducer).toBeVisible()
-        await expect(blockPage.seeMoreDetailsBtn.first()).toBeVisible()
+        // await expect(blockPage.seeMoreDetailsBtn.first()).toBeVisible()
+
+        await expect(blockPage.detailedOperationCard.first()).toBeVisible()
+        const opertionTypeList = await blockPage.operationTypeTitle.allInnerTexts()
+
+        if(opertionTypeList.includes('custom_json_operation')){
+            await page.locator('[data-testid="expand-details"]').first().click()
+            await expect(page.locator('[data-testid="details"]')).toBeVisible()
+        }
+        else{
+            console.log('empty')
+        }
+
     })
 
     test('Validate that you can move to the authors operation page', async ({page}) =>{

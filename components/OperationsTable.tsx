@@ -93,7 +93,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                   })}
                 >
                   {expanded.includes(operation.operatiopnId || 0) ? (
-                    <Button
+                    <Button 
                       className="p-0 h-fit"
                       onClick={() =>
                         setExpanded((prevExpanded) => [
@@ -107,6 +107,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                     </Button>
                   ) : (
                     <Button
+                      data-testid="expand-details"
                       className="p-0 h-fit"
                       onClick={() =>
                         setExpanded((prevExpanded) => [
@@ -146,7 +147,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
             {operation.operation.type === "custom_json_operation" &&
               expanded.includes(operation.operatiopnId || 0) && (
                 <TableRow>
-                  <TableCell colSpan={5}>
+                  <TableCell data-testid="details" colSpan={5}>
                     <JSONView
                       json={JSON.parse(
                         getOperationValues(operation.operation).json || ""
