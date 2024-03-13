@@ -61,14 +61,13 @@ test.describe('Block page tests', () => {
     test('Validate that See more details is able in the operation list', async ({page, request}) =>{
         await mainPage.headBlockCardBlockLink.click()
         await expect(blockPage.blockProducer).toBeVisible()
-        // await expect(blockPage.seeMoreDetailsBtn.first()).toBeVisible()
-
+        await page.waitForTimeout(2000)
         await expect(blockPage.detailedOperationCard.first()).toBeVisible()
         const opertionTypeList = await blockPage.operationTypeTitle.allInnerTexts()
 
         if(opertionTypeList.includes('custom_json_operation')){
-            await page.locator('[data-testid="expand-details"]').first().click()
-            await expect(page.locator('[data-testid="details"]')).toBeVisible()
+            await blockPage.expandDetailsBtn.first().click()
+            await expect(blockPage.operationDetails).toBeVisible()
         }
         else{
             console.log('empty')
@@ -84,32 +83,6 @@ test.describe('Block page tests', () => {
         await expect(accountPage.accountOperationList).toBeVisible()
     });  
 
-    test.skip('Validate that you can move to the authors operation page after clicking link hidden in See more details', async ({page}) =>{
-        await mainPage.headBlockCardBlockLink.click()
-        await expect(blockPage.detailedOperationCard.first()).toBeVisible()
-
-        // const operationType = await blockPage.operationTypeTitle.allInnerTexts()
-        // const operationInCard = await blockPage.detailedOperationCard.filter({hasText: 'comment'})
-        // console.log(operationType)
-
-        // if(operationInCard){
-        //     await page.getByRole('button', {name: 'See more details'}).first().click()
-        // }
-        // await page.waitForTimeout(2000)
-        // await blockPage.blockProducer.click()
-        // await expect(accountPage.accountOperationList).toBeVisible()
-
-
-        const operationType = await blockPage.detailedOperationCard.allTextContents()
- 
-        console.log(operationType)
-           
-        if(operationType.includes('vote')){
-            await page.locator('.w-full > div > div:nth-child(3) > .inline-flex').click()
-            await expect(page.locator('.flex.flex-col.justify-center.mt-2')).toBeVisible()
-          }
-    });
-
     test('Validate that you can move to the transaction page of the operation', async ({page}) =>{
         await mainPage.headBlockCardBlockLink.click()
         await expect(blockPage.blockProducer).toBeVisible()
@@ -122,9 +95,9 @@ test.describe('Block page tests', () => {
     test('Validate that operation properties have correct colors', async ({page}) =>{
         await mainPage.headBlockCardBlockLink.click()
         await expect(blockPage.blockProducer).toBeVisible()
-        await expect(blockPage.operationType.first()).toHaveCSS('color', 'rgb(255, 172, 51)')
+        await expect(blockPage.operationType.first()).toHaveCSS('color', 'rgb(255, 255, 255)')
         await expect(blockPage.firstTransactionLink).toHaveCSS('color', 'rgb(0, 217, 255)')
-        await expect(blockPage.usernameInOperationDetails).toHaveCSS('color', 'rgb(100, 255, 170)')
+        await expect(blockPage.usernameInOperationDetails).toHaveCSS('color', 'rgb(0, 217, 255)')
 
         const voteOperationPostLink = await blockPage.voteOperationPostLink
         

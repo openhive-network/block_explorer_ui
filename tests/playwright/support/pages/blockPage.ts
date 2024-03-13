@@ -28,6 +28,8 @@ export class BlockPage {
   readonly toVirtualOpsBtn: Locator;
   readonly virtualOperationsHeader: Locator;
   readonly toTopBtn: Locator;
+  readonly expandDetailsBtn: Locator;
+  readonly operationDetails: Locator;
   
 
   constructor(page: Page) {
@@ -47,8 +49,8 @@ export class BlockPage {
     this.seeMoreDetailsBtn = page.getByRole('button', {name: "See more details"});
     this.detailedOperationCard = page.getByTestId("detailed-operation-card")
     this.operationTypeTitle = page.getByTestId("operation-type");
-    this.firstTransactionLink = page.locator('.my-1.flex-1').getByRole('link').first();
-    this.usernameInOperationDetails = page.locator('a.text-explorer-ligh-green').first();
+    this.firstTransactionLink = page.locator('a.text-explorer-turquoise').nth(2);
+    this.usernameInOperationDetails = page.locator('span.text-explorer-turquoise').nth(1);
     this.voteOperationPostLink = page.locator('a.text-explorer-yellow').first();
     this.operationsJsonFormat = page.locator('pre');
     this.blockNumber = page.getByTestId('block-number-search');
@@ -58,6 +60,8 @@ export class BlockPage {
     this.toVirtualOpsBtn = page.getByRole('button', { name: 'To Virtual Ops' });
     this.virtualOperationsHeader = page.getByTestId('block-page-operation-list').getByText('Virtual Operations');
     this.toTopBtn = page.getByRole('button', { name: 'To Top' });
+    this.expandDetailsBtn = page.locator('[data-testid="expand-details"]');
+    this.operationDetails = page.locator('[data-testid="details"]');
   }
 
   async validateBlockPageIsLoaded() {
