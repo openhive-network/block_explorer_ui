@@ -22,7 +22,7 @@ import { useUserSettingsContext } from "@/components/contexts/UserSettingsContex
 import AccountDetailsCard from "@/components/account/AccountDetailsCard";
 import Head from "next/head";
 import OperationsTable from "@/components/OperationsTable";
-import { convertOperationResultsToTableOperations } from "@/lib/utils";
+import { convertBooleanArrayToIds, convertOperationResultsToTableOperations } from "@/lib/utils";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -35,7 +35,7 @@ interface AccountSearchParams {
   timeUnit: string | undefined;
   rangeSelectKey: string | undefined;
   page: number | undefined;
-  filters: number[];
+  filters: boolean[];
 }
 
 const defaultSearchParams: AccountSearchParams = {
@@ -80,7 +80,7 @@ export default function Account() {
   const [isVotersModalOpen, setIsVotersModalOpen] = useState(false);
   const [isVotesHistoryModalOpen, setIsVotesHistoryModalOpen] = useState(false);
   const [initialSearch, setInitialSearch] = useState<boolean>(false);
-  const [filters, setFilters] = useState<number[]>([]);
+  const [filters, setFilters] = useState<boolean[]>([]);
 
   const searchRanges = useSearchRanges();
 
@@ -90,7 +90,7 @@ export default function Account() {
   const { accountOperations, isAccountOperationsLoading } =
     useAccountOperations({
       accountName: accountNameFromRoute,
-      operationTypes: filtersParam.length ? filtersParam : undefined,
+      operationTypes: filtersParam.length ? convertBooleanArrayToIds(filtersParam) : undefined,
       pageNumber: paramsState.page,
       fromBlock: fromBlockParam,
       toBlock: toBlockParam,
@@ -186,7 +186,7 @@ export default function Account() {
     setFilters([]);
   };
 
-  const handleOperationTypeChange = (newFilters: number[]) => {
+  const handleOperationTypeChange = (newFilters: boolean[]) => {
     setFilters(newFilters);
     setParams({ ...paramsState, filters: newFilters, page: undefined });
   };

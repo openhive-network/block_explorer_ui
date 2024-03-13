@@ -98,7 +98,6 @@ export const useMediaQuery = (query: string) => {
   return matches;
 };
 
-const SPLIT = "-";
 const URL_ARRAY_END = "_";
 
 type ParamObject = { [key: string]: any };
@@ -143,7 +142,6 @@ const URLToData = (value: any) => {
   }
 
   if (value.at(-1) === URL_ARRAY_END) {
-    // return value.match(/[\d|,|.|e|E|\+]+/g).map((v: string) => Number(v));
     return parseUrlFlagsIntoBooleanArray(value.slice(0, -1));
   }
 
