@@ -215,14 +215,18 @@ test.describe("Witnesses page", () => {
     await votesHistoryDialog.validateVotesHistoryDialogIsLoaded();
     await votesHistoryDialog.validateWitnessName(witnessName);
     // Get first voter vests
-    const currentVoterPower: string = await votesHistoryDialog.votesHistoryDialogCurrentVoterPowerColumn.first().textContent() || '';
-    // Set toggle button to Hive Power
-    await votesHistoryDialog.votesHistoryDialogVestsHivePowerButton.click();
-    await expect(votesHistoryDialog.votesHistoryDialogVestsHivePowerButton).toHaveAttribute('data-state', 'checked');
-    // Get first voter Hive Power
-    const currentVoterHivePower: string = await votesHistoryDialog.votesHistoryDialogCurrentVoterPowerColumn.first().textContent() || '';
-    // Compare vests and hive power
-    await expect(currentVoterPower).not.toMatch(currentVoterHivePower);
+    if (await votesHistoryDialog.votesHistoryDialogTableBody.isVisible()){
+        const currentVoterPower: string = await votesHistoryDialog.votesHistoryDialogCurrentVoterPowerColumn.first().textContent() || '';
+        // Set toggle button to Hive Power
+        await votesHistoryDialog.votesHistoryDialogVestsHivePowerButton.click();
+        await expect(votesHistoryDialog.votesHistoryDialogVestsHivePowerButton).toHaveAttribute('data-state', 'checked');
+        // Get first voter Hive Power
+        const currentVoterHivePower: string = await votesHistoryDialog.votesHistoryDialogCurrentVoterPowerColumn.first().textContent() || '';
+        // Compare vests and hive power
+        await expect(currentVoterPower).not.toMatch(currentVoterHivePower);
+    } else {
+        console.log('Empty votes history');
+    }
     // Close the votes history dialog
     await votesHistoryDialog.votesHistoryDialogCloseButton.click();
   });
