@@ -11,7 +11,7 @@ import CommentsSearch from "@/components/home/searches/CommentsSearch";
 import { useRouter } from "next/router";
 import { formatAccountName } from "@/utils/StringUtils";
 import useSearchRanges from "@/components/searchRanges/useSearchRanges";
-import { getPageUrlParams } from "@/lib/utils";
+import { convertBooleanArrayToIds } from "@/lib/utils";
 
 const defaultSearchParams: Explorer.CommentSearchParams = {
   accountName: undefined,
@@ -37,7 +37,6 @@ const Comments: React.FC = () => {
     Explorer.CommentSearchProps | undefined
   >(undefined);
 
-  const router = useRouter();
   const searchRanges = useSearchRanges();
 
   const commentSearch = useCommentSearch(formatSearchProps(commentSearchProps));
@@ -53,8 +52,12 @@ const Comments: React.FC = () => {
 
   const startCommentSearch = async (props: Explorer.CommentSearchParams) => {
     if (!!props.accountName) {
-      setCommentSearchProps(props as Explorer.CommentSearchProps);
-      setPreviousCommentSearchProps(props as Explorer.CommentSearchProps);
+      const searchProps = {
+        ...(props as Explorer.CommentSearchProps),
+        operationTypes: convertBooleanArrayToIds(props.operationTypes || []),
+      };
+      setCommentSearchProps(searchProps);
+      setPreviousCommentSearchProps(searchProps);
       setParams({ ...paramsState, ...props });
       setInitialSearch(true);
     }
@@ -90,7 +93,10 @@ const Comments: React.FC = () => {
   }, [paramsState]);
 
   return (
-    <div className="w-full md:w-4/5" data-testid="comments-search-comments-page">
+    <div
+      className="w-full md:w-4/5"
+      data-testid="comments-search-comments-page"
+    >
       <div className="bg-explorer-dark-gray text-white p-4 rounded">
         <CommentsSearch
           startCommentsSearch={startCommentSearch}
