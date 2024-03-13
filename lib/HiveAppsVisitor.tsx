@@ -46,58 +46,23 @@ class HiveAppsVisitor extends HiveAppsOperationVisitor<React.JSX.Element> {
   }
 
   follow(op: FormattedFollowOperation): JSX.Element {
-    let action = "";
-    switch(op.action) {
-      case EFollowActions.BLACKLIST:
-        action = "blacklisted";
-        break;
-      case EFollowActions.FOLLOW:
-        action = "followed";
-        break;
-      case EFollowActions.FOLLOW_BLACKLIST:
-        action = "followed blacklist of";
-        break;
-      case EFollowActions.FOLLOW_MUTED:
-        action = "followed muted list of";
-        break;
-      case EFollowActions.MUTE:
-        action = "muted";
-        break;
-      case EFollowActions.RESET_ALL_LISTS:
-        action = "reset all lists of";
-        break;
-      case EFollowActions.RESET_BLACKLIST:
-        action = "reset blacklist of";
-        break;
-      case EFollowActions.RESET_FOLLOWING_LIST:
-        action = "reset following list of";
-        break;
-      case EFollowActions.RESET_FOLLOW_BLACKLIST:
-        action = "stopped following blacklist of";
-        break;
-      case EFollowActions.RESET_FOLLOW_MUTED_LIST:
-        action = "stopped following muted list of";
-        break;
-      case EFollowActions.RESET_MUTED_LIST:
-        action = "reset muted list of";
-        break;
-      case EFollowActions.UNBLACKLIST:
-        action = "unblacklisted";
-        break;
-      case EFollowActions.UNFOLLOW:
-        action = "unfollowed";
-        break;
-      case EFollowActions.UNFOLLOW_BLACKLIST:
-        action = "unfollowed blacklist of";
-        break;
-      case EFollowActions.UNFOLLOW_MUTED:
-        action = "unfollowed muted list of";
-        break;
-      default:
-        action = "";
-        break;
-    }
-    const message = this.generateReactLink([this.getAccountLink(op.follower), action, this.getMultipleAccountsListLink(op.following)]);
+    const actionsMap = new Map<string, string>();
+    actionsMap.set("blog", "followed");
+    actionsMap.set("", "unfollowed");
+    actionsMap.set("ignore", "muted");
+    actionsMap.set("reset_blacklist", "reset blacklist of");
+    actionsMap.set("reset_follow_blacklist", "stopped following blacklist of");
+    actionsMap.set("blacklist", "blacklisted");
+    actionsMap.set("follow_blacklist", "followed blacklist of");
+    actionsMap.set("unblacklist", "unblacklisted");
+    actionsMap.set("unfollow_blacklist", "unfollowed blacklist of");
+    actionsMap.set("reset_follow_muted_list", "stopped following muted list of");
+    actionsMap.set("follow_muted", "followed muted list of");
+    actionsMap.set("unfollow_muted", "unfollowed muted list of");
+    actionsMap.set("reset_all_lists", "reset all lists of");
+    actionsMap.set("reset_following_list", "reset following list of");
+    actionsMap.set("reset_muted_list", "reset muted list of");
+    const message = this.generateReactLink([this.getAccountLink(op.follower), `${actionsMap.get(op?.action) || ""}`, this.getMultipleAccountsListLink(op.following)]);
     return message;
   }
 

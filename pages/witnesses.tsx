@@ -21,13 +21,13 @@ export default function Witnesses() {
   const [isVotersOpen, setIsVotersOpen] = useState<boolean>(false);
   const [isVotesHistoryOpen, setIsVotesHistoryOpen] = useState<boolean>(false);
 
-  const { witnessData, isWitnessDataLoading } = useWitnesses(config.witnessesPerPages.witnesses);
+  const { witnessesData, isWitnessDataLoading } = useWitnesses(config.witnessesPerPages.witnesses);
 
   if (isWitnessDataLoading) {
     return <Loader2 className="animate-spin mt-1 h-8 w-8 ml-3 ..." />;
   }
 
-  if (!witnessData || !witnessData.length) return;
+  if (!witnessesData || !witnessesData.length) return;
 
   const changeVotersDialogue = (isOpen: boolean) => {
     setIsVotersOpen(isOpen);
@@ -69,7 +69,7 @@ export default function Witnesses() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {witnessData.map((singleWitness, index) => (
+            {witnessesData.map((singleWitness, index) => (
               <TableRow
                 key={index}
                 className={`${index % 2 === 0 ? "bg-gray-800" : "bg-gray-900"}`}
