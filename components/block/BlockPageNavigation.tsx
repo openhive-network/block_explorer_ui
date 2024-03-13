@@ -1,7 +1,5 @@
-import { Dispatch, SetStateAction, useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { ChevronRight, ChevronLeft } from "lucide-react";
-import Link from "next/link";
-import Image from "next/image";
 import "react-datetime-picker/dist/DateTimePicker.css";
 import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
@@ -10,18 +8,18 @@ import Hive from "@/types/Hive";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import useBlockByTime from "@/api/common/useBlockByTime";
 import moment from "moment";
 import { getOperationButtonTitle } from "@/utils/UI";
+import { convertBooleanArrayToIds, convertIdsToBooleanArray } from "@/lib/utils";
 
 interface BlockPageNavigationProps {
   blockNumber: number;
   goToBlock: (blockNumber: string) => void;
   timeStamp: Date;
-  setFilters: (filters: number[]) => void;
+  setFilters: (filters: boolean[]) => void;
   operationTypes: Hive.OperationPattern[];
-  selectedOperationIds: number[];
+  selectedOperationIds: boolean[];
 }
 
 const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
@@ -76,6 +74,12 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [block]);
 
+  
+  useEffect(() => {
+    handleGoToBlockByTime(blockDate);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [blockDate]);
+  
   const handleBlockChange = (blockNumber: string) => {
     if (Number(blockNumber) > 0) {
       if (blockNumber === block) {
@@ -93,10 +97,9 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
     }
   };
 
-  useEffect(() => {
-    handleGoToBlockByTime(blockDate);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [blockDate]);
+  const handleSetFilters = (filters: number[]) => {
+    setFilters(convertIdsToBooleanArray(filters));
+  }
 
   return (
     <section className="w-full flex flex-col items-center text-md mb-2 md:mb-4">
@@ -154,10 +157,10 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
           </div>
           <OperationTypesDialog
             operationTypes={operationTypes}
-            setSelectedOperations={setFilters}
-            selectedOperations={selectedOperationIds}
+            setSelectedOperations={handleSetFilters}
+            selectedOperations={convertBooleanArrayToIds(selectedOperationIds)}
             buttonClassName="bg-gray-500"
-            triggerTitle={getOperationButtonTitle(selectedOperationIds, operationTypes)}
+            triggerTitle={getOperationButtonTitle(convertBooleanArrayToIds(selectedOperationIds), operationTypes)}
           />
         </div>
       </div>
