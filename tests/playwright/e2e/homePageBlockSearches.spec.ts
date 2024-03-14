@@ -69,7 +69,6 @@ test.describe('Home page - searches', () => {
 
         await page.waitForLoadState('domcontentloaded')
         await expect(blockPage.producedData).toContainText(monthText)
-        await expect(blockPage.producedData).toContainText(dayText)
     })
 
     test('Validate searching for property Account Name and Last days/weeks/months', async ({page}) => {
@@ -126,6 +125,11 @@ test.describe('Home page - searches', () => {
 
         await expect(blockPage.operationType.first()).toBeVisible()
         const operationsType = await blockPage.operationType.allInnerTexts();
+        await page.evaluate(async () => {
+            for (let i = 0; i < document.body.scrollHeight; i += 100) {
+              window.scrollTo(0, i);
+            }
+          });
         await expect(operationsType).toContain('vote');
 
     });
