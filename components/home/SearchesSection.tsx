@@ -243,10 +243,14 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
     const urlParams: Explorer.UrlParam[] = [];
 
     if (blockSearchProps?.operationTypes) {
+      const booleanTypesArray = convertIdsToBooleanArray(blockSearchProps?.operationTypes);
+      const isFull = !!(booleanTypesArray.length && booleanTypesArray.findIndex((element) => !element) === -1);
       urlParams.push({
         paramName: "filters",
         paramValue: dataToURL(
-          convertIdsToBooleanArray(blockSearchProps?.operationTypes)
+          !isFull ?
+          booleanTypesArray
+          : []
         ),
       });
     }
