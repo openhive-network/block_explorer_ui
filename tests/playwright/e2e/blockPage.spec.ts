@@ -66,7 +66,7 @@ test.describe('Block page tests', () => {
         const opertionTypeList = await blockPage.operationTypeTitle.allInnerTexts()
 
         if(opertionTypeList.includes('custom_json_operation')){
-            await blockPage.expandDetailsBtn.first().click()
+            await blockPage.expandDetailsBtn.first().click({force:true})
             await expect(blockPage.operationDetails).toBeVisible()
         }
         else{
