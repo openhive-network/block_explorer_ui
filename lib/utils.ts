@@ -184,7 +184,8 @@ export const convertIdsToBooleanArray = (
   filters: number[],
   numOfTypes?: number
 ) => {
-  const booleanArray = new Array(numOfTypes ?? Math.max(...filters)).fill(
+  if (filters.length === 0) return [];
+  const booleanArray = new Array(numOfTypes ?? Math.max(...filters) ).fill(
     false
   );
   filters.forEach((filter) => (booleanArray[filter] = true));
