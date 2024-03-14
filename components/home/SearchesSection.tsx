@@ -16,7 +16,13 @@ import useBlockSearch from "@/api/homePage/useBlockSearch";
 import useOperationTypes from "@/api/common/useOperationsTypes";
 import useSearchRanges from "../searchRanges/useSearchRanges";
 import useAccountOperations from "@/api/accountPage/useAccountOperations";
-import { convertCommentsOperationResultToTableOperations, convertOperationResultsToTableOperations, getPageUrlParams } from "@/lib/utils";
+import {
+  convertBooleanArrayToIds,
+  convertCommentsOperationResultToTableOperations,
+  convertIdsToBooleanArray,
+  convertOperationResultsToTableOperations,
+  getPageUrlParams,
+} from "@/lib/utils";
 import JumpToPage from "../JumpToPage";
 import { dataToURL, useOperationsFormatter } from "@/utils/Hooks";
 import BlockSearch from "./searches/BlockSearch";
@@ -78,11 +84,17 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
   }, [accountOperations, accountOperationsPage]);
 
   const startCommentSearch = async (
-    commentSearchProps: Explorer.CommentSearchProps
+    commentSearchProps: Explorer.CommentSearchParams
   ) => {
-    setCommentSearchProps(commentSearchProps);
+    const { filters, ...params } = commentSearchProps;
+    const props: Explorer.CommentSearchProps = {
+      ...params,
+      accountName: params.accountName || "",
+      operationTypes: convertBooleanArrayToIds(filters || []),
+    };
+    setCommentSearchProps(props);
     setCommentPaginationPage(1);
-    setPreviousCommentSearchProps(commentSearchProps);
+    setPreviousCommentSearchProps(props);
     setLastSearchKey("comment");
   };
 
@@ -136,7 +148,9 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
       },
       {
         paramName: "filters",
-        paramValue: dataToURL(commentSearchProps?.operationTypes),
+        paramValue: dataToURL(
+          convertIdsToBooleanArray(commentSearchProps?.operationTypes || [])
+        ),
       },
       {
         paramName: "rangeSelectKey",
@@ -261,9 +275,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
             <AccordionTrigger>Comment search</AccordionTrigger>
             <AccordionContent className="px-2 flex flex-col gap-y-4">
               <CommentsSearch
-                startCommentsSearch={(params: Explorer.CommentSearchParams) =>
-                  startCommentSearch(params as Explorer.CommentSearchProps)
-                }
+                startCommentsSearch={(params) => startCommentSearch(params)}
                 operationsTypes={operationsTypes}
                 loading={commentSearch.commentSearchDataLoading}
                 searchRanges={searchRanges}
@@ -328,23 +340,25 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
               />
             </div>
 
-            {settings.rawJsonView
-              ? commentSearch.commentSearchData?.operations_result.map(
-                  (foundOperation) => (
-                    <DetailedOperationCard
-                      className="my-6"
-                      operation={foundOperation.operation}
-                      key={foundOperation.operation_id}
-                      blockNumber={foundOperation.block_num}
-                      date={foundOperation.created_at}
-                    />
-                  )
+            {settings.rawJsonView ? (
+              commentSearch.commentSearchData?.operations_result.map(
+                (foundOperation) => (
+                  <DetailedOperationCard
+                    className="my-6"
+                    operation={foundOperation.operation}
+                    key={foundOperation.operation_id}
+                    blockNumber={foundOperation.block_num}
+                    date={foundOperation.created_at}
+                  />
                 )
-              : 
+              )
+            ) : (
               <OperationsTable
-                operations={convertCommentsOperationResultToTableOperations(formattedCommentOperations?.operations_result)}
+                operations={convertCommentsOperationResultToTableOperations(
+                  formattedCommentOperations?.operations_result
+                )}
               />
-                }
+            )}
           </div>
         ) : (
           <div className="flex justify-center w-full text-black">
@@ -401,7 +415,9 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
               )
             ) : (
               <OperationsTable
-                operations={convertOperationResultsToTableOperations(formattedAccountOperations?.operations_result)}
+                operations={convertOperationResultsToTableOperations(
+                  formattedAccountOperations?.operations_result
+                )}
               />
             )}
           </div>

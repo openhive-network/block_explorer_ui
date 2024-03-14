@@ -41,8 +41,8 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
   const setSearchValues = (data: Explorer.CommentSearchParams) => {
     data.accountName && setAccountName(data.accountName);
     data.permlink && setPermlink(data.permlink);
-    data.operationTypes &&
-      setSelectedCommentSearchOperationTypes(convertBooleanArrayToIds(data.operationTypes));
+    data.filters &&
+      setSelectedCommentSearchOperationTypes(convertBooleanArrayToIds(data.filters));
     searchRanges.setRangesValues(data);
   };
 
@@ -62,7 +62,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
         toBlock: payloadToBlock,
         startDate: payloadStartDate,
         endDate: payloadEndDate,
-        operationTypes: selectedCommentSearchOperationTypes.length
+        filters: selectedCommentSearchOperationTypes.length
           ? convertIdsToBooleanArray(selectedCommentSearchOperationTypes)
           : undefined,
         lastBlocks:

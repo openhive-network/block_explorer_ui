@@ -25,7 +25,7 @@ const defaultSearchParams: Explorer.CommentSearchParams = {
   timeUnit: "days",
   rangeSelectKey: "none",
   page: 1,
-  operationTypes: undefined,
+  filters: undefined,
 };
 
 const Comments: React.FC = () => {
@@ -54,7 +54,7 @@ const Comments: React.FC = () => {
     if (!!props.accountName) {
       const searchProps = {
         ...(props as Explorer.CommentSearchProps),
-        operationTypes: convertBooleanArrayToIds(props.operationTypes || []),
+        operationTypes: convertBooleanArrayToIds(props.filters || []),
       };
       setCommentSearchProps(searchProps);
       setPreviousCommentSearchProps(searchProps);
