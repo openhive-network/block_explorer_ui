@@ -179,6 +179,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
   };
 
   const getAccountPageLink = (accountName: string) => {
+
     const urlParams: Explorer.UrlParam[] = [
       {
         paramName: "fromBlock",
@@ -198,7 +199,9 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
       },
       {
         paramName: "filters",
-        paramValue: dataToURL(accountOperationsSearchProps?.operationTypes),
+        paramValue: dataToURL(
+          convertIdsToBooleanArray(accountOperationsSearchProps?.operationTypes || [])
+        ),
       },
       {
         paramName: "rangeSelectKey",
