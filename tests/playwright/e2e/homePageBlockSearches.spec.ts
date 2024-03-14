@@ -126,7 +126,7 @@ test.describe('Home page - searches', () => {
 
         await expect(blockPage.operationType.first()).toBeVisible()
         const operationsType = await blockPage.operationType.allInnerTexts();
-        await expect(operationsType).toContain('vote_operation');
+        await expect(operationsType).toContain('vote');
 
     });
 
