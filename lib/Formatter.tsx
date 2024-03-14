@@ -6,6 +6,7 @@ import {
   IFormatFunctionArguments,
   IWaxBaseInterface,
   IWaxCustomFormatter,
+  ResourceCreditsOperation,
   WaxFormattable,
   account_create,
   account_create_with_delegation,
@@ -58,6 +59,7 @@ import {
   limit_order_create,
   limit_order_create2,
   liquidity_reward,
+  operation,
   pow,
   pow2,
   pow_reward,
@@ -85,7 +87,6 @@ import {
 import moment from "moment";
 import { formatPercent } from "./utils";
 import Link from "next/link";
-import HiveAppsVisitor from "./HiveAppsVisitor";
 
 class OperationsFormatter implements IWaxCustomFormatter {
   
@@ -285,11 +286,20 @@ class OperationsFormatter implements IWaxCustomFormatter {
 
   @WaxFormattable({matchProperty: "type", matchValue: "custom_json_operation"})
   formatCustomJsonOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: custom_json }>) {
-    const specialJsonMessage = this.wax.formatter.visitHiveAppsOperation({ custom_json: op as custom_json }, new HiveAppsVisitor(this.generateReactLink, this.getAccountLink, this.getPermlink, this.getMultipleAccountsListLink));
-    const message = specialJsonMessage ? specialJsonMessage 
-      : this.generateReactLink([this.getMultipleAccountsListLink(op.required_auths), this.getMultipleAccountsListLink(op.required_posting_auths), `made custom JSON (${op.id})`]);
+    const message = this.generateReactLink([this.getMultipleAccountsListLink(op.required_auths), this.getMultipleAccountsListLink(op.required_posting_auths), `made custom JSON (${op.id})`]);
     return {...target, value: {message, json: op.json}};
   }
+
+  @WaxFormattable({matchInstanceOf: ResourceCreditsOperation}) 
+  formatResourceCreditsOperation({target}: IFormatFunctionArguments<operation, {value: ResourceCreditsOperation}>) {
+    const {value: op} = target;
+    if (op.rc.amount === "0") {
+      return this.generateReactLink([this.getAccountLink(op.from), `removed delegation for`, this.getMultipleAccountsListLink(op.delegatees)]);
+    } 
+    const message = this.generateReactLink([this.getAccountLink(op.from), `delegated ${this.getFormattedAmount(op.rc)} for`, this.getMultipleAccountsListLink(op.delegatees)]);
+    return message;
+  }
+
 
   @WaxFormattable({matchProperty: "type", matchValue: "comment_options_operation"})
   formatcommentOptionOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: comment_options }>) {
@@ -631,7 +641,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
   @WaxFormattable({matchProperty: "type", matchValue: "effective_comment_vote_operation"})
   formatEffectiveCommentVoteOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: effective_comment_vote }>) {
     const message = this.generateReactLink([this.getAccountLink(op.voter), "voted for", this.getPermlink(op.author, op.permlink), `and generated ${this.getFormattedAmount(op.pending_payout)} pending payout`]);
-    return {...target, value: message};
+    return {...target, value: ""};
   }
 
   @WaxFormattable({matchProperty: "type", matchValue: "ineffective_delete_comment_operation"})
