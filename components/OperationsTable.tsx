@@ -15,6 +15,7 @@ import { isJson } from "@/utils/StringUtils";
 import { Button } from "./ui/button";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import JSONView from "./JSONView";
+import { getOperationTypeForDisplay } from "@/utils/UI";
 
 interface OperationsTableProps {
   operations: Explorer.OperationForTable[];
@@ -136,9 +137,9 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                   {operation.trxId?.slice(0, 10)}
                 </Link>
               </TableCell>
-              <TableCell data-testid='operation-type'>{operation.operation.type}</TableCell>
+              <TableCell data-testid='operation-type'>{getOperationTypeForDisplay(operation.operation.type)}</TableCell>
               <TableCell className="max-w-0 w-full">
-                <div className="truncate">
+                <div className="line-clamp-1">
                   {getOneLineDescription(operation)}
                 </div>
               </TableCell>

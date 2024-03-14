@@ -17,7 +17,7 @@ import Head from "next/head";
 
 export default function Home() {
   const { settings } = useUserSettingsContext();
-  const witnesses = useWitnesses(config.witnessesPerPages.home).witnessData;
+  const witnesses = useWitnesses(config.witnessesPerPages.home).witnessesData;
   const headBlockNum = useHeadBlockNumber(settings.liveData).headBlockNumberData;
   const dynamicGlobalQueryData = useDynamicGlobal(headBlockNum).dynamicGlobalData;
   const headBlockData = useHeadBlock(headBlockNum).headBlockData;

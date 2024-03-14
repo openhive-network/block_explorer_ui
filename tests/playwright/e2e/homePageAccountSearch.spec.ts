@@ -7,7 +7,7 @@ test.describe('Home page - account searches', () => {
     let mainPage: MainPage;
     let blockPage: BlockPage;
     let accountPage: AccountPage;
-  
+
     test.beforeEach(async ({ page }) => {
         mainPage = new MainPage(page);
         blockPage = new BlockPage(page);
@@ -78,21 +78,21 @@ test.describe('Home page - account searches', () => {
         await page.getByLabel('Operation Types').locator('li').filter({ hasText: /^vote$/ }).getByRole('checkbox').check();
         await page.getByRole('button', {name: 'Apply'}).click();
         await mainPage.searchButtonInAccount.click()
-    
+
         const response = await page.waitForResponse((response) => response.url().includes("rpc/get_ops_by_account"));
-    
+
         expect(response.status()).toBe(200);
 
-        await expect(page.getByText('vote_operation', { exact: true }).nth(2)).toBeVisible()
+        await expect(page.getByText('vote', { exact: true }).nth(2)).toBeVisible()
 
         if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
                 await expect(page.getByText('No operations matching given')).toBeVisible()
-              } 
+              }
 
               else {
                 await expect(mainPage.operationsCardResult).toBeVisible()
                 await expect(mainPage.goToResultPageBtn).toBeVisible()
-                await expect(page.getByText('vote_operation', { exact: true }).nth(2)).toBeVisible()
+                await expect(page.getByText('vote', { exact: true }).nth(2)).toBeVisible()
             }
     })
 
@@ -108,12 +108,12 @@ test.describe('Home page - account searches', () => {
         await mainPage.searchButtonInAccount.click()
 
         const response = await page.waitForResponse((response) => response.url().includes("rpc/get_ops_by_account"));
-    
+
         expect(response.status()).toBe(200);
 
         if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
                 await expect(page.getByText('No operations matching given')).toBeVisible()
-              } 
+              }
 
               else {
                 await expect(mainPage.operationsCardResult).toBeVisible()

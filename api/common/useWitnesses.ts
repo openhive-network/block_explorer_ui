@@ -3,7 +3,7 @@ import fetchingService from "@/services/FetchingService";
 
 const useWitnesses = (witnessesLimit: number) => {
   const {
-    data: witnessData,
+    data: witnessesData,
     isLoading: isWitnessDataLoading,
     isError: isWitnessDataError,
   } = useQuery({
@@ -12,7 +12,7 @@ const useWitnesses = (witnessesLimit: number) => {
     refetchOnWindowFocus: false,
   });
 
-  return { witnessData, isWitnessDataLoading, isWitnessDataError };
+  return { witnessesData, isWitnessDataLoading, isWitnessDataError };
 };
 
 export default useWitnesses;
