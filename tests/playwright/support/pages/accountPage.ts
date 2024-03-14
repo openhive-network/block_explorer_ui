@@ -17,7 +17,7 @@ export class AccountPage {
     this.accountDetails = page.getByTestId('account-details');
     this.accountName = page.getByTestId('account-name');
     this.accountTopBar = page.getByTestId('account-top-bar');
-    this.accountOperationList = page.getByTestId('block-page-operation-list');
+    this.accountOperationList = page.getByTestId('account-operation-list');
     this.accountPropertiesDropdown = page.getByTestId('properties-dropdown').first();
     this.accountJsonMetadataDropdown = page.getByTestId('account-json-metadata-dropdown').first();
     this.accountPostingJsonMetadataDropdown = page.getByTestId('account-json-metadata-dropdown').last();
