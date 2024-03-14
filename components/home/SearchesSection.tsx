@@ -90,7 +90,10 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
     const props: Explorer.CommentSearchProps = {
       ...params,
       accountName: params.accountName || "",
-      operationTypes: convertBooleanArrayToIds(filters || []),
+      operationTypes:
+        filters && filters.length
+          ? convertBooleanArrayToIds(filters)
+          : undefined,
     };
     setCommentSearchProps(props);
     setCommentPaginationPage(1);
@@ -147,12 +150,6 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
         paramValue: dataToURL(commentSearchProps?.toBlock),
       },
       {
-        paramName: "filters",
-        paramValue: dataToURL(
-          convertIdsToBooleanArray(commentSearchProps?.operationTypes || [])
-        ),
-      },
-      {
         paramName: "rangeSelectKey",
         paramValue: dataToURL(searchRanges.rangeSelectKey),
       },
@@ -173,6 +170,16 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
         paramValue: dataToURL(commentSearchProps?.permlink),
       },
     ];
+
+    if (commentSearchProps?.operationTypes) {
+      urlParams.push({
+        paramName: "filters",
+        paramValue: dataToURL(
+          convertIdsToBooleanArray(commentSearchProps?.operationTypes)
+        ),
+      });
+    }
+
     return `/comments/@${dataToURL(
       commentSearchProps?.accountName
     )}${getPageUrlParams(urlParams)}`;
@@ -197,18 +204,19 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
         paramValue: dataToURL(accountOperationsSearchProps?.endDate),
       },
       {
-        paramName: "filters",
-        paramValue: dataToURL(
-          convertIdsToBooleanArray(
-            accountOperationsSearchProps?.operationTypes || []
-          )
-        ),
-      },
-      {
         paramName: "rangeSelectKey",
         paramValue: dataToURL(searchRanges.rangeSelectKey),
       },
     ];
+
+    if (!!accountOperationsSearchProps?.operationTypes) {
+      urlParams.push({
+        paramName: "filters",
+        paramValue: dataToURL(
+          convertIdsToBooleanArray(accountOperationsSearchProps?.operationTypes)
+        ),
+      });
+    }
 
     if (searchRanges.rangeSelectKey === "lastTime") {
       urlParams.push({
@@ -232,14 +240,17 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
   };
 
   const getBlockPageLink = (blockNumber: number) => {
-    const urlParams: Explorer.UrlParam[] = [
-      {
+    const urlParams: Explorer.UrlParam[] = [];
+
+    if (blockSearchProps?.operationTypes) {
+      urlParams.push({
         paramName: "filters",
         paramValue: dataToURL(
-          convertIdsToBooleanArray(blockSearchProps?.operationTypes || [])
+          convertIdsToBooleanArray(blockSearchProps?.operationTypes)
         ),
-      },
-    ];
+      });
+    }
+
     return `/block/${blockNumber}${getPageUrlParams(urlParams)}`;
   };
 

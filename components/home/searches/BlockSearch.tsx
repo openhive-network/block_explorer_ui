@@ -75,6 +75,8 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
     setKeysForProperty(Number(newValue));
   };
 
+  console.log(selectedOperationTypes)
+
   const onButtonClick = async () => {
     const {
       payloadFromBlock,
