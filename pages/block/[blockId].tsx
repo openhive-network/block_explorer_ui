@@ -23,12 +23,15 @@ import Head from "next/head";
 import useBlockRawData from "@/api/blockPage/useBlockRawData";
 import useHeadBlockNumber from "@/api/common/useHeadBlockNum";
 import OperationsTable from "@/components/OperationsTable";
-import { convertOperationResultsToTableOperations } from "@/lib/utils";
+import {
+  convertBooleanArrayToIds,
+  convertOperationResultsToTableOperations,
+} from "@/lib/utils";
 
 interface BlockSearchParams {
   blockId?: number;
   page: number;
-  filters?: number[];
+  filters?: boolean[];
 }
 
 const defaultParams: BlockSearchParams = {
@@ -42,8 +45,7 @@ export default function Block() {
 
   const { blockId } = router.query;
 
-  const { headBlockNumberData: headBlockNum, refetch } =
-    useHeadBlockNumber();
+  const { headBlockNumberData: headBlockNum, refetch } = useHeadBlockNumber();
 
   const [blockDate, setBlockDate] = useState<Date>();
   const { paramsState, setParams } = useURLParams({
@@ -70,7 +72,9 @@ export default function Block() {
 
   const { blockError, blockOperations, trxLoading } = useBlockOperations(
     Number(blockId),
-    paramsState.filters,
+    paramsState.filters
+      ? convertBooleanArrayToIds(paramsState.filters)
+      : undefined,
     paramsState.page || 1
   );
 
@@ -89,12 +93,12 @@ export default function Block() {
     (operations?: Hive.OperationResponse[]) => {
       if (operations) {
         return {
-          virtualOperations: convertOperationResultsToTableOperations(operations?.filter(
-            (operation) => operation.virtual_op
-          )),
-          nonVirtualOperations: convertOperationResultsToTableOperations(operations?.filter(
-            (operation) => !operation.virtual_op
-          )),
+          virtualOperations: convertOperationResultsToTableOperations(
+            operations?.filter((operation) => operation.virtual_op)
+          ),
+          nonVirtualOperations: convertOperationResultsToTableOperations(
+            operations?.filter((operation) => !operation.virtual_op)
+          ),
         };
       } else return { virtualOperations: [], nonVirtualOperations: [] };
     },
@@ -157,7 +161,7 @@ export default function Block() {
     });
   };
 
-  const handleFilterChange = (filters: number[]) => {
+  const handleFilterChange = (filters: boolean[]) => {
     setParams({ ...paramsState, page: 1, filters: filters });
   };
 

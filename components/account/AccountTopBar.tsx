@@ -4,14 +4,15 @@ import JumpToPage from "../JumpToPage";
 import { config } from "@/Config";
 import OperationTypesDialog from "../OperationTypesDialog";
 import { getOperationButtonTitle } from "@/utils/UI";
+import { convertBooleanArrayToIds, convertIdsToBooleanArray } from "@/lib/utils";
 
 interface AccountTopBarProps {
   page: number;
   setPage: (page: number) => void;
   accountOperations: Hive.OperationsCount;
   accountOperationTypes: Hive.OperationPattern[];
-  onOperationsSelect: (filters: number[]) => void;
-  selectedFilters: number[];
+  onOperationsSelect: (filters: boolean[]) => void;
+  selectedFilters: boolean[];
 }
 
 const AccountTopBar: React.FC<AccountTopBarProps> = ({
@@ -22,6 +23,10 @@ const AccountTopBar: React.FC<AccountTopBarProps> = ({
   onOperationsSelect,
   selectedFilters,
 }) => {
+  const handleOperationSelect = (filters: number[]) => {
+    onOperationsSelect(convertIdsToBooleanArray(filters))
+  }
+
   return (
     <div className="bg-explorer-orange flex items-stretch justify-center w-full flex-wrap m-2" data-testid="account-top-bar">
       <div className="flex justify-center">
@@ -46,10 +51,10 @@ const AccountTopBar: React.FC<AccountTopBarProps> = ({
       <div className="my-1">
         <OperationTypesDialog
           operationTypes={accountOperationTypes}
-          setSelectedOperations={onOperationsSelect}
-          selectedOperations={selectedFilters}
+          setSelectedOperations={handleOperationSelect}
+          selectedOperations={convertBooleanArrayToIds(selectedFilters)}
           buttonClassName="bg-explorer-dark-gray"
-          triggerTitle={getOperationButtonTitle(selectedFilters, accountOperationTypes)}
+          triggerTitle={getOperationButtonTitle(convertBooleanArrayToIds(selectedFilters), accountOperationTypes)}
         />
       </div>
     </div>

@@ -16,6 +16,10 @@ import useHeadBlockNumber from "@/api/common/useHeadBlockNum";
 import useHeadBlock from "@/api/homePage/useHeadBlock";
 import { useHiveChainContext } from "@/components/contexts/HiveChainContext";
 import OperationsFormatter from "@/lib/Formatter";
+import {
+  convertBooleanArrayIntoHexadecimals,
+  parseUrlFlagsIntoBooleanArray,
+} from "@/lib/utils";
 
 /**
  * hook for using debounce
@@ -94,7 +98,6 @@ export const useMediaQuery = (query: string) => {
   return matches;
 };
 
-const SPLIT = "-";
 const URL_ARRAY_END = "_";
 
 type ParamObject = { [key: string]: any };
@@ -108,8 +111,8 @@ export const dataToURL = (value: any) => {
     if (!value.length) {
       return null;
     } else {
-      if (typeof value[0] === "number") {
-        return `${value.join(SPLIT)}${URL_ARRAY_END}`;
+      if (typeof value[0] === "boolean") {
+        return `${convertBooleanArrayIntoHexadecimals(value)}${URL_ARRAY_END}`;
       } else {
         return value[0];
       }
@@ -139,7 +142,7 @@ const URLToData = (value: any) => {
   }
 
   if (value.at(-1) === URL_ARRAY_END) {
-    return value.match(/[\d|,|.|e|E|\+]+/g).map((v: string) => Number(v));
+    return parseUrlFlagsIntoBooleanArray(value.slice(0, -1));
   }
 
   if (/^\d{4}\.\d{2}\.\d{2}_\d{2}.\d{2}.\d{2}$/.test(value)) {

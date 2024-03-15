@@ -69,7 +69,7 @@ declare module Explorer {
     timeUnit: string | undefined;
     rangeSelectKey: string | undefined;
     page: number;
-    operationTypes: number[] | undefined;
+    filters: boolean[] | undefined;
   }
 
   interface CommentSearchProps extends CommonSearchProps {

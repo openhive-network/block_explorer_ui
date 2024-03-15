@@ -12,8 +12,8 @@ export default function Layout({ children }: LayoutProps) {
     <main className="flex flex-col min-h-screen justify-between items-center max-w-[100vw] mt-16 md:mt-20">
       <Navbar />
       {children}
-      <Footer />
       <Toaster richColors/>
+      <Footer />
     </main>
   );
 }

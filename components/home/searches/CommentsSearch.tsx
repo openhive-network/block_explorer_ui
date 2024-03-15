@@ -10,6 +10,7 @@ import { getOperationButtonTitle } from "@/utils/UI";
 import Explorer from "@/types/Explorer";
 import { config } from "@/Config";
 import { formatAccountName } from "@/utils/StringUtils";
+import { convertBooleanArrayToIds, convertIdsToBooleanArray } from "@/lib/utils";
 
 interface CommentsSearchProps {
   startCommentsSearch: (
@@ -40,8 +41,8 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
   const setSearchValues = (data: Explorer.CommentSearchParams) => {
     data.accountName && setAccountName(data.accountName);
     data.permlink && setPermlink(data.permlink);
-    data.operationTypes &&
-      setSelectedCommentSearchOperationTypes(data.operationTypes);
+    data.filters &&
+      setSelectedCommentSearchOperationTypes(convertBooleanArrayToIds(data.filters));
     searchRanges.setRangesValues(data);
   };
 
@@ -61,8 +62,8 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
         toBlock: payloadToBlock,
         startDate: payloadStartDate,
         endDate: payloadEndDate,
-        operationTypes: selectedCommentSearchOperationTypes.length
-          ? selectedCommentSearchOperationTypes
+        filters: selectedCommentSearchOperationTypes.length
+          ? convertIdsToBooleanArray(selectedCommentSearchOperationTypes)
           : undefined,
         lastBlocks:
           searchRanges.rangeSelectKey === "lastBlocks"

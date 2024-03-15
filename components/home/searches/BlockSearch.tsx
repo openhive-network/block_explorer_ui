@@ -65,9 +65,10 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
     if (operationTypesIds.length === 1) {
       setSingleOperationTypeId(operationTypesIds[0]);
     } else {
-      setFieldContent("");
       setSingleOperationTypeId(undefined);
     }
+    setSelectedKeys(undefined);
+    setFieldContent("");
     setSelectedOperationTypes(operationTypesIds);
   };
 
