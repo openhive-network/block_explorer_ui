@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { config } from "@/Config";
 import useCommentSearch from "@/api/common/useCommentSearch";
 import CustomPagination from "@/components/CustomPagination";
+import DetailedOperationCard from "@/components/DetailedOperationCard";
 import Explorer from "@/types/Explorer";
 import useOperationTypes from "@/api/common/useOperationsTypes";
 import JumpToPage from "@/components/JumpToPage";
@@ -12,6 +13,7 @@ import useSearchRanges from "@/components/searchRanges/useSearchRanges";
 import { convertBooleanArrayToIds, convertCommentsOperationResultToTableOperations } from "@/lib/utils";
 import OperationsTable from "@/components/OperationsTable";
 import Hive from "@/types/Hive";
+import { getPageUrlParams } from "@/lib/utils";
 
 const defaultSearchParams: Explorer.CommentSearchParams = {
   accountName: undefined,
@@ -118,7 +120,6 @@ const Comments: React.FC = () => {
               totalCount={commentSearch.commentSearchData?.total_operations}
               pageSize={config.standardPaginationSize}
               onPageChange={changeCommentSearchPagination}
-              shouldScrollToTop={false}
             />
             <div className="justify-self-end">
               <JumpToPage
