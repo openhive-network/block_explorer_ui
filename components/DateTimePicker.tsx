@@ -1,77 +1,41 @@
 import * as React from "react";
-import { DateTime } from "luxon";
 import { Calendar as CalendarIcon } from "lucide-react";
 
 import { Button } from "./ui/button";
 import { Calendar } from "./ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { cn } from "@/lib/utils";
-import { SelectSingleEventHandler } from "react-day-picker";
-import { Label } from "./ui/label";
-import { Input } from "./ui/input";
-import { useDebounce } from "@/utils/Hooks";
+import TimePicker from "./TimePicker";
+import { numberToTimeString } from "@/utils/StringUtils";
 
 interface DateTimePickerProps {
-  date: Date | any;
+  date: Date;
   setDate: (date: Date) => void;
-  side?: "left" | "top" | "right" | "bottom" | undefined;
+  side?: "left" | "top" | "right" | "bottom";
 }
 
-const DateTimePicker = ({ date, setDate, side }: DateTimePickerProps) => {
-  const [selectedDateTime, setSelectedDateTime] = React.useState<any>(
-    DateTime.fromJSDate(date)
-  );
-
-  const handleSelect: SelectSingleEventHandler = (day, selected) => {
-    const selectedDay = DateTime.fromJSDate(selected);
-    const modifiedDay = selectedDay.set({
-      hour: selectedDateTime.hour,
-      minute: selectedDateTime.minute,
-    });
-
-    setSelectedDateTime(modifiedDay);
-    setDate(modifiedDay.toJSDate());
+const DateTimePicker: React.FC<DateTimePickerProps> = ({
+  date,
+  setDate,
+  side,
+}) => {
+  const handleSelect = (date: Date | undefined) => {
+    if (date) {
+      setDate(new Date(date));
+    }
   };
 
-  const debounceDateChange = useDebounce((value: any) => setDate(value), 1000);
-
-  const handleTimeChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-    const { value } = e.target;
-    const hours = Number.parseInt(value.split(":")[0] || "00", 10);
-    const minutes = Number.parseInt(value.split(":")[1] || "00", 10);
-    const seconds = Number.parseInt(value.split(":")[2] || "00", 10);
-
-    const modifiedDay = selectedDateTime.set({
-      hour: hours,
-      minute: minutes,
-      second: seconds,
-    });
-
-    setSelectedDateTime(modifiedDay);
-    debounceDateChange(modifiedDay.toJSDate());
+  const displayDate = (date: Date) => {
+    return `${date.toDateString()} ${numberToTimeString(
+      date.getHours()
+    )}:${numberToTimeString(date.getMinutes())}:${numberToTimeString(
+      date.getSeconds()
+    )}`;
   };
-
-  const footer = (
-    <>
-      <div className="px-4 pt-0 pb-4">
-        <Label>Time</Label>
-        <Input
-          type="time"
-          onChange={handleTimeChange}
-          value={selectedDateTime.toFormat("HH:mm:ss")}
-          pattern="[0-9]+([\.][0-9]{1,2})?"
-        />
-      </div>
-      {!selectedDateTime && <p>Please pick a day.</p>}
-    </>
-  );
 
   return (
     <Popover>
-      <PopoverTrigger
-        asChild
-        className="z-10"
-      >
+      <PopoverTrigger asChild className="z-10">
         <Button
           variant={"outline"}
           className={cn(
@@ -80,11 +44,7 @@ const DateTimePicker = ({ date, setDate, side }: DateTimePickerProps) => {
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? (
-            selectedDateTime.toFormat("DDD HH:mm:ss")
-          ) : (
-            <span>Pick a date</span>
-          )}
+          {date ? displayDate(date) : <span>Pick a date</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent
@@ -93,11 +53,13 @@ const DateTimePicker = ({ date, setDate, side }: DateTimePickerProps) => {
       >
         <Calendar
           mode="single"
-          selected={selectedDateTime.toFormat("DDD HH:mm")}
+          selected={date}
           onSelect={handleSelect}
           initialFocus
         />
-        {footer}
+        <div className="flex justify-center items-center mb-4">
+          <TimePicker date={date} onSelect={handleSelect} />
+        </div>
       </PopoverContent>
     </Popover>
   );

@@ -9,11 +9,7 @@ interface SearchRangesProps {
   safeTimeRangeDisplay?: boolean;
 }
 
-const SearchRanges: React.FC<SearchRangesProps> = ({
-  rangesProps,
-  safeTimeRangeDisplay,
-}) => {
-
+const SearchRanges: React.FC<SearchRangesProps> = ({ rangesProps }) => {
   const {
     rangeSelectOptions,
     timeSelectOptions,
@@ -32,8 +28,8 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
     setStartDate,
     setEndDate,
     setLastBlocksValue,
-    setLastTimeUnitValue
-  } = rangesProps
+    setLastTimeUnitValue,
+  } = rangesProps;
 
   const setNumericValue = (value: number, fieldSetter: Function) => {
     if (value === 0) {
@@ -41,13 +37,17 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
     } else {
       fieldSetter(value);
     }
-  }
+  };
 
   return (
     <div className="border-y border-solid border-gray-600 py-2 flex flex-col gap-y-2">
       <Select onValueChange={setRangeSelectKey} value={rangeSelectKey}>
         <SelectTrigger className="bg-gray-700">
-        {rangeSelectOptions.find((selectOption) => selectOption.key === rangeSelectKey)?.name}
+          {
+            rangeSelectOptions.find(
+              (selectOption) => selectOption.key === rangeSelectKey
+            )?.name
+          }
         </SelectTrigger>
         <SelectContent className="bg-white text-black rounded-sm max-h-[31rem]">
           {rangeSelectOptions.map((selectOption, index) => (
@@ -62,8 +62,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
           ))}
         </SelectContent>
       </Select>
-      {
-        rangeSelectKey === "lastBlocks" && 
+      {rangeSelectKey === "lastBlocks" && (
         <div className="flex items-center">
           <div className="flex flex-col w-full">
             <Input
@@ -77,9 +76,8 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
             />
           </div>
         </div>
-      }
-      {
-        rangeSelectKey === "lastTime" && 
+      )}
+      {rangeSelectKey === "lastTime" && (
         <>
           <div className="flex items-center justify-center">
             <div className="flex flex-col w-full ">
@@ -95,7 +93,11 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
             </div>
             <Select onValueChange={setTimeUnitSelectKey}>
               <SelectTrigger className="bg-gray-700">
-              {timeSelectOptions.find((selectOption) => selectOption.key === timeUnitSelectKey)?.name}
+                {
+                  timeSelectOptions.find(
+                    (selectOption) => selectOption.key === timeUnitSelectKey
+                  )?.name
+                }
               </SelectTrigger>
               <SelectContent className="bg-white text-black rounded-sm max-h-[31rem]">
                 {timeSelectOptions.map((selectOption, index) => (
@@ -112,9 +114,8 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
             </Select>
           </div>
         </>
-      }
-      {
-        rangeSelectKey === "blockRange" && 
+      )}
+      {rangeSelectKey === "blockRange" && (
         <div className="flex items-center">
           <div className="flex flex-col w-full">
             <label className="ml-2">From block</label>
@@ -132,7 +133,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
             <label className="ml-2">To block</label>
             <Input
               className="bg-gray-700"
-              data-testid='headblock-number'
+              data-testid="headblock-number"
               type="number"
               value={toBlock || ""}
               onChange={(e) =>
@@ -142,29 +143,24 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
             />
           </div>
         </div>
-      }
-      {
-        rangeSelectKey === "timeRange" && 
+      )}
+      {rangeSelectKey === "timeRange" && (
         <div className="flex items-center">
           <div className="flex flex-col w-full">
             <label className="ml-2">From date</label>
             <DateTimePicker
-              date={startDate}
+              date={startDate || new Date()}
               setDate={setStartDate}
             />
           </div>
           <div className="flex flex-col w-full">
             <label className="ml-2">To date</label>
-            <DateTimePicker
-              date={endDate}
-              setDate={setEndDate}
-            />
+            <DateTimePicker date={endDate || new Date()} setDate={setEndDate} />
           </div>
         </div>
-      }
-
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default SearchRanges
+export default SearchRanges;

@@ -80,3 +80,11 @@ export const formatAccountName = (accountName: string | string[]) => {
     return accountName.replace("@", "");
   }
 };
+
+export const numberToTimeString = (num: number) => {
+  if (num < 10) {
+    return `0${num.toString()}`;
+  } else {
+    return num.toString();
+  }
+};
