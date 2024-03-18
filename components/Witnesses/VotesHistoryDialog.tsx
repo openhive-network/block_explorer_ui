@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
-import DateTimePicker from "react-datetime-picker";
-import "react-datetime-picker/dist/DateTimePicker.css";
-import "react-calendar/dist/Calendar.css";
-import "react-clock/dist/Clock.css";
+
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import Hive from "@/types/Hive";
 import {
@@ -23,6 +20,7 @@ import { ArrowUpCircleIcon, ArrowDownCircleIcon } from "lucide-react";
 import useWitnessVotesHistory from "@/api/common/useWitnessVotesHistory";
 import JumpToPage from "../JumpToPage";
 import CustomPagination from "../CustomPagination";
+import DateTimePicker from "../DateTimePicker";
 
 type VotersDialogProps = {
   accountName: string;
@@ -87,14 +85,17 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
   };
 
   return (
-    <Dialog
-      open={isVotesHistoryOpen}
-      onOpenChange={changeVoteHistoryDialogue}
-    >
-      <DialogContent className={buildCustomDialogStyle()} data-testid="votes-history-dialog">
+    <Dialog open={isVotesHistoryOpen} onOpenChange={changeVoteHistoryDialogue}>
+      <DialogContent
+        className={buildCustomDialogStyle()}
+        data-testid="votes-history-dialog"
+      >
         {votesHistory ? (
           <>
-            <div className="flex justify-center items-centertext-center font-semibold" data-testid="votes-history-dialog-witness-name">
+            <div
+              className="flex justify-center items-centertext-center font-semibold"
+              data-testid="votes-history-dialog-witness-name"
+            >
               {accountName}{" "}
               {isVotesHistoryLoading && (
                 <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
@@ -112,33 +113,19 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
             </div>
             <div className="flex justify-around items-center bg-gray-800 rounded text-white p-2">
               <div>
-                From:{" "}
+                <p>From: </p>
                 <DateTimePicker
-                  value={fromDate}
-                  onChange={(date) => setFromDate(date!)}
-                  className="text-explorer-turquoise"
-                  calendarClassName="text-gray-800"
-                  format="yyyy/MM/dd HH:mm:ss"
-                  clearIcon={null}
-                  calendarIcon={null}
-                  disableClock
-                  showLeadingZeros={false}
-                  data-testid="votes-history-dialog-from-datepicker"
+                  date={fromDate}
+                  setDate={setFromDate}
+                  side="left"
                 />
               </div>
               <div>
-                To:{" "}
+                <p>To: </p>
                 <DateTimePicker
-                  value={toDate}
-                  onChange={(date) => setToDate(date!)}
-                  className="text-explorer-turquoise"
-                  calendarClassName="text-gray-800"
-                  format="yyyy/MM/dd HH:mm:ss"
-                  clearIcon={null}
-                  calendarIcon={null}
-                  disableClock
-                  showLeadingZeros={false}
-                  data-testid="votes-history-dialog-to-datepicker"
+                  date={toDate}
+                  setDate={setToDate}
+                  side="right"
                 />
               </div>
             </div>
@@ -166,7 +153,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                       key={column.key}
                       className={cn({
                         "sticky md:static left-0": !index,
-                        "flex justify-end items-center": column.isRightAligned
+                        "flex justify-end items-center": column.isRightAligned,
                       })}
                     >
                       <span className="flex ">{column.name}</span>
@@ -183,15 +170,19 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                         index % 2 === 0 ? "bg-gray-800" : "bg-gray-900"
                       }`}
                     >
-                      <TableCell className="sticky left-0" data-testid="date-format">
+                      <TableCell
+                        className="sticky left-0"
+                        data-testid="date-format"
+                      >
                         {moment(vote.timestamp).format(
                           config.baseMomentTimeFormat
                         )}
                       </TableCell>
-                      <TableCell className="text-explorer-turquoise" data-testid="voter">
-                        <Link href={`/@${vote.voter}`}>
-                          {vote.voter}
-                        </Link>
+                      <TableCell
+                        className="text-explorer-turquoise"
+                        data-testid="voter"
+                      >
+                        <Link href={`/@${vote.voter}`}>{vote.voter}</Link>
                       </TableCell>
                       <TableCell
                         className={`${
@@ -205,11 +196,13 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                           <ArrowDownCircleIcon />
                         )}
                       </TableCell>
-                      <TableCell className="text-right" data-testid="current-voter-power">
+                      <TableCell
+                        className="text-right"
+                        data-testid="current-voter-power"
+                      >
                         {showHivePower
                           ? formatNumber(vote.vests_hive_power, false)
-                          : formatNumber(vote.vests, true)
-                        }
+                          : formatNumber(vote.vests, true)}
                       </TableCell>
                     </TableRow>
                   ))}

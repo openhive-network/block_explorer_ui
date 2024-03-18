@@ -36,18 +36,19 @@ export const isJson = (item: unknown) => {
  */
 export const formatJson = (json: { [key: string]: any }) => {
   let formatted = structuredClone(json);
-  json && Object.keys(json).forEach(key => {
-    if (typeof json[key] === "object") {
-      formatted[key] = formatJson(json[key]);
-    } else {
-      try {
-        formatted[key] = JSON.parse(json[key]);
-      } catch (error) {
-        formatted[key] = json[key];
+  json &&
+    Object.keys(json).forEach((key) => {
+      if (typeof json[key] === "object") {
+        formatted[key] = formatJson(json[key]);
+      } else {
+        try {
+          formatted[key] = JSON.parse(json[key]);
+        } catch (error) {
+          formatted[key] = json[key];
+        }
       }
-    }
-  })
-  return formatted
+    });
+  return formatted;
 };
 
 export const toDateNumber = (value: number) => {
@@ -56,7 +57,7 @@ export const toDateNumber = (value: number) => {
   } else {
     return value.toString();
   }
-}
+};
 
 /**
  * function to keep path and query string in a URL with decoded reserved charcters
@@ -78,5 +79,13 @@ export const formatAccountName = (accountName: string | string[]) => {
     return accountName[0].replace("@", "");
   } else {
     return accountName.replace("@", "");
+  }
+};
+
+export const numberToTimeString = (num: number) => {
+  if (num < 10) {
+    return `0${num.toString()}`;
+  } else {
+    return num.toString();
   }
 };
