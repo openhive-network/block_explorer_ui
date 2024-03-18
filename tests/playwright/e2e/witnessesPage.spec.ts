@@ -48,6 +48,42 @@ test.describe("Witnesses page", () => {
     );
   });
 
+  test("Compare the first three witnesses from witnesses page and api", async ({
+    page,
+  }) => {
+    const apiHelper = new ApiHelper(page);
+    await mainPage.gotoBlockExplorerPage();
+
+    // Move to the Witnesses page
+    await witnessesPage.gotoWitnessesPage();
+    await witnessesPage.validateWitnessesPageIsLoaded();
+
+    // Get the first three witnesses names by condenser api
+    const apiWitnessesRespons = await apiHelper.getWitnessesByVote();
+    const apiTheFirstThreeWitnesses: string[] = [];
+
+    let i = 0;
+    while(i < 3){
+      await apiTheFirstThreeWitnesses.push(apiWitnessesRespons.result[i].owner);
+      i++;
+    }
+
+    // Get the first three witnesses names by ui
+    const witnessesNamesArray: string [] = await witnessesPage.witnessName.allTextContents();
+    const theFirstThreeWitnesses: string [] = [];
+
+    let j = 0;
+    while(j < 3){
+      await theFirstThreeWitnesses.push(witnessesNamesArray[j]);
+      j++;
+    }
+
+    // Compare the first three witnesses names in api and ui
+    await expect(apiTheFirstThreeWitnesses).toEqual(
+      expect.arrayContaining(theFirstThreeWitnesses)
+    );
+  });
+
   test("Check if after move mouse on witnesses name background color is changed", async ({
     page,
   }) => {
