@@ -268,6 +268,72 @@ test.describe("Witnesses page", () => {
     await votesHistoryDialog.votesHistoryDialogCloseButton.click();
   });
 
+  test("validate values of the votes history dialog in specific dates", async ({ page }) => {
+    const fromDate: string = '2024-03-16T07:00';
+    const toDate: string = '2024-03-17T12:00';
+    const expectedVoterName: string = 'faniaviera';
+    const arrowUp: string = 'lucide lucide-arrow-up-circle';
+    const arrowDown: string = 'lucide lucide-arrow-down-circle';
+    const expectedVoterCurrentPower: string = '2,014,602.905570'.trim().replace(/[,]/g,'');
+    const expectedVoterCurrentPowerNumber: number = parseFloat(expectedVoterCurrentPower);
+    // console.log('expectedVoterCurrentPower ', expectedVoterCurrentPower);
+    // console.log('expectedVoterCurrentPowerNumber ', expectedVoterCurrentPowerNumber);
+
+    const votesHistoryDialog = new VotesHistoryDialog(page);
+
+    await mainPage.gotoBlockExplorerPage();
+    // Move to the Witnesses page
+    await witnessesPage.gotoWitnessesPage();
+    await witnessesPage.validateWitnessesPageIsLoaded();
+    const witnessName: string = await witnessesPage.witnessName.first().textContent() || '';
+    // Move to the votes history dialog
+    await witnessesPage.witnessVotesButtons.first().click();
+    await votesHistoryDialog.validateVotesHistoryDialogIsLoaded();
+    await votesHistoryDialog.validateWitnessName(witnessName);
+
+    // Validate votes history dialog
+    if (await votesHistoryDialog.votesHistoryDialogTableBody.isVisible()){
+      if(witnessName=='arcange'){
+        await votesHistoryDialog.votesHistoryDialogFromDatepicker.locator('input').first().fill(fromDate, {force: true});
+        await votesHistoryDialog.votesHistoryDialogToDatepicker.locator('input').first().fill(toDate, {force: true});
+
+        expect(await votesHistoryDialog.votesHistoryDialogVoterColumn.locator('a').first().textContent()).toBe(expectedVoterName);
+        // console.log('first voter: ', await votesHistoryDialog.votesHistoryDialogVoterColumn.locator('a').first().textContent())
+
+        expect(await votesHistoryDialog.votesHistoryDialogVoteArrowColumn.locator('svg').first().getAttribute('class')).toBe(arrowUp);
+        // console.log('first voter arrow: ', await votesHistoryDialog.votesHistoryDialogVoteArrowColumn.locator('svg').first().getAttribute('class'))
+
+        const expectedVoterCurrentPowerUi: string = await votesHistoryDialog.votesHistoryDialogCurrentVoterPowerColumn.first().textContent() || '';
+        const expectedVoterCurrentPowerUiFormated: string = expectedVoterCurrentPowerUi.trim().replace(/[,]/g,'');
+        const expectedVoterCurrentPowerUiNumber: number = await parseFloat(expectedVoterCurrentPowerUiFormated);
+        await expect(expectedVoterCurrentPowerUiNumber).toBeGreaterThan(expectedVoterCurrentPowerNumber);
+        // console.log('first voter power: ', await votesHistoryDialog.votesHistoryDialogCurrentVoterPowerColumn.first().textContent())
+
+        expect(await votesHistoryDialog.votesHistoryDialogVoterColumn.locator('a').nth(1).textContent()).toBe(expectedVoterName);
+        // console.log('second voter: ', await votesHistoryDialog.votesHistoryDialogVoterColumn.locator('a').nth(1).textContent())
+
+        expect(await votesHistoryDialog.votesHistoryDialogVoteArrowColumn.locator('svg').nth(1).getAttribute('class')).toBe(arrowDown);
+        // console.log('second voter arrow: ', await votesHistoryDialog.votesHistoryDialogVoteArrowColumn.locator('svg').nth(1).getAttribute('class'))
+
+        const expectedSecondVoterCurrentPowerUi: string = await votesHistoryDialog.votesHistoryDialogCurrentVoterPowerColumn.nth(1).textContent() || '';
+        const expectedSecondVoterCurrentPowerUiFormated: string = expectedSecondVoterCurrentPowerUi.trim().replace(/[,]/g,'');
+        const expectedSecondVoterCurrentPowerUiNumber: number = await parseFloat(expectedSecondVoterCurrentPowerUiFormated);
+        await expect(expectedSecondVoterCurrentPowerUiNumber).toBeGreaterThan(expectedVoterCurrentPowerNumber);
+        // console.log('second voter power: ', await votesHistoryDialog.votesHistoryDialogCurrentVoterPowerColumn.nth(1).textContent())
+
+        // await page.waitForTimeout(4000);
+      }
+      else {
+        console.log("The first Witness is different than arcange")
+      }
+    } else {
+        console.log('Empty votes history');
+    }
+    // Close the votes history dialog
+    await votesHistoryDialog.votesHistoryDialogCloseButton.click();
+  });
+
+
   test("Check if after click arrow button ascending and descending filters work correctly by the voter name and votes", async ({ page }) => {
     const votersDialog = new VotersDialog(page);
     await mainPage.gotoBlockExplorerPage();
