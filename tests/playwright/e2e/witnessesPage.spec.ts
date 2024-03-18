@@ -4,6 +4,7 @@ import { Witnesses } from "../support/pages/witnesses";
 import { AccountPage } from "../support/pages/accountPage";
 import { VotesHistoryDialog } from "../support/pages/votesHistoryDialog";
 import { VotersDialog } from "../support/pages/votersDialog";
+import { ApiHelper } from "../support/apiHelper";
 
 test.describe("Witnesses page", () => {
   let mainPage: MainPage;
@@ -293,4 +294,26 @@ test.describe("Witnesses page", () => {
     // Close the votes history dialog
     await votersDialog.votersDialogCloseButton.click();
   });
+
+  // Only to show votes number by different ways
+  test.skip("Display votes of arcange ", async ({ page }) => {
+    const apiHelper = new ApiHelper(page);
+
+    const response = await apiHelper.getWitnessesByVote();
+    console.log('Witnesses by vote: ', await response.result[0]);
+
+    const response1 = await apiHelper.getWitnessesByAccount("arcange");
+    console.log('Witnesses by account: ', await response1.result.votes);
+
+    const res2 = await apiHelper.getWitnessesByHafbe();
+    console.log('Witnesses by Hafbe: ', await res2[0]);
+
+    const res3 = await apiHelper.getWitnessesDatabaseApi("arcange");
+    console.log('Witnesses by datatest api: ', await res3.result.witnesses[0]);
+
+    console.log('     getWitnessesByVote : ', await response.result[0].votes);
+    console.log('  getWitnessesByAccount : ', await response1.result.votes);
+    console.log('getWitnessesDatabaseApi : ', await res3.result.witnesses[0].votes);
+    console.log('    getWitnessesByHafbe : ', await res2[0].vests);
+  })
 });
