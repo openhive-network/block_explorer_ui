@@ -27,9 +27,9 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
 
   const displayDate = (date: Date) => {
     return `${date.toDateString()} ${numberToTimeString(
-      date.getHours()
-    )}:${numberToTimeString(date.getMinutes())}:${numberToTimeString(
-      date.getSeconds()
+      date.getUTCHours()
+    )}:${numberToTimeString(date.getUTCMinutes())}:${numberToTimeString(
+      date.getUTCSeconds()
     )}`;
   };
 

@@ -57,19 +57,25 @@ const TimePicker: React.FC<TimePickerProps> = ({
   onSelect,
   className,
 }) => {
-  const [hours, setHours] = useState(date.getHours());
-  const [minutes, setMinutes] = useState(date.getMinutes());
-  const [seconds, setSeconds] = useState(date.getSeconds());
+  const [hours, setHours] = useState(date.getUTCHours());
+  const [minutes, setMinutes] = useState(date.getUTCMinutes());
+  const [seconds, setSeconds] = useState(date.getUTCSeconds());
   const timePickerRef = useRef(null);
 
   useOnClickOutside(timePickerRef, () => handleTimeSelect());
 
   const handleTimeSelect = () => {
-    let newDate = date;
-    newDate.setHours(hours);
-    newDate.setMinutes(minutes);
-    newDate.setSeconds(seconds);
-    onSelect(newDate);
+    if (
+      hours !== date.getUTCHours() ||
+      minutes !== date.getUTCMinutes() ||
+      seconds !== date.getUTCSeconds()
+    ) {
+      let newDate = date;
+      newDate.setHours(hours);
+      newDate.setMinutes(minutes);
+      newDate.setSeconds(seconds);
+      onSelect(new Date(newDate.toString() + "z"));
+    }
   };
 
   return (
@@ -80,18 +86,18 @@ const TimePicker: React.FC<TimePickerProps> = ({
       <TimeInput
         className="text-right"
         max={23}
-        initialValue={numberToTimeString(date.getHours())}
+        initialValue={numberToTimeString(hours)}
         onChange={setHours}
       />
       {" : "}
       <TimeInput
         className="text-right"
-        initialValue={numberToTimeString(date.getMinutes())}
+        initialValue={numberToTimeString(minutes)}
         onChange={setMinutes}
       />
       {" : "}
       <TimeInput
-        initialValue={numberToTimeString(date.getSeconds())}
+        initialValue={numberToTimeString(seconds)}
         onChange={setSeconds}
       />
     </section>
