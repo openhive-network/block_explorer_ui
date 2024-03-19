@@ -9,7 +9,7 @@ test.describe('Block page tests', () => {
     let blockPage: BlockPage;
     let accountPage: AccountPage;
     let transactionPage: TransactionPage;
-  
+
     test.beforeEach(async ({ page }) => {
         mainPage = new MainPage(page);
         blockPage = new BlockPage(page);
@@ -17,7 +17,7 @@ test.describe('Block page tests', () => {
         transactionPage = new TransactionPage(page);
 
         await mainPage.gotoBlockExplorerPage();
-        
+
     });
 
     test('Validate that block number is the same as in link you clicked', async ({page}) =>{
@@ -81,16 +81,17 @@ test.describe('Block page tests', () => {
         await page.waitForTimeout(2000)
         await blockPage.blockProducer.click()
         await expect(accountPage.accountOperationList).toBeVisible()
-    });  
+    });
 
     test('Validate that you can move to the transaction page of the operation', async ({page}) =>{
         await mainPage.headBlockCardBlockLink.click()
         await expect(blockPage.blockProducer).toBeVisible()
         await blockPage.firstTransactionLink.click()
+        await blockPage.page.waitForSelector(transactionPage.transactionDetails['_selector'])
         await expect(transactionPage.transactionHeader).toBeVisible()
         await expect(transactionPage.transactionDetails).toBeVisible()
         await expect(page.url()).toContain('transaction')
-    });  
+    });
 
     test('Validate that operation properties have correct colors', async ({page}) =>{
         await mainPage.headBlockCardBlockLink.click()
@@ -100,14 +101,14 @@ test.describe('Block page tests', () => {
         await expect(blockPage.usernameInOperationDetails).toHaveCSS('color', 'rgb(0, 217, 255)')
 
         const voteOperationPostLink = await blockPage.voteOperationPostLink
-        
+
         if(await voteOperationPostLink.isVisible()){
             await expect(blockPage.voteOperationPostLink).toHaveCSS('color', 'rgb(255, 243, 81)')
         }
         else{
             console.log("element is not visible")
         }
-    });  
+    });
 
     test('Validate that after click JSON Metadata button the list is displayed as JSON format', async ({page}) =>{
         await mainPage.headBlockCardBlockLink.click()
@@ -115,23 +116,23 @@ test.describe('Block page tests', () => {
         await expect(blockPage.detailedOperationCard.first()).toBeVisible()
         await mainPage.RawJsonViewToggle.click()
         await expect(blockPage.operationsJsonFormat).toBeVisible()
-    });  
+    });
 
     test('Validate that user can move to the next block', async ({page}) =>{
         await mainPage.headBlockCardBlockLink.click()
         await expect(blockPage.blockProducer).toBeVisible()
         await expect(blockPage.blockNumber.first()).toBeVisible()
-       
+
         const blockNumberOnBlockPage = await (blockPage.blockNumber).inputValue()
-        
+
         await page.waitForTimeout(1000)
         await blockPage.nextBlockBtn.click({force:true})
         await expect(blockPage.detailedOperationCard.first()).toBeVisible()
-    
-        const nextBlockNumber = await (blockPage.blockNumber).inputValue() 
-    
+
+        const nextBlockNumber = await (blockPage.blockNumber).inputValue()
+
         await expect(parseInt(nextBlockNumber)).toEqual(parseInt(blockNumberOnBlockPage)+1)
-    }); 
+    });
 
     test('Validate that user can change the Block Time', async ({page}) =>{
         await mainPage.headBlockCardBlockLink.click()
@@ -147,12 +148,12 @@ test.describe('Block page tests', () => {
 
         await expect(parseInt(blockNumberChangedDate)).not.toEqual(parseInt(blockNumberOnBlockPage))
 
-    });  
+    });
 
     test('Validate that user can move to the Virtual ops by clicking button', async ({page}) =>{
         await mainPage.headBlockCardBlockLink.click()
         await expect(blockPage.blockProducer).toBeVisible()
-        
+
         if(await blockPage.virtualOperationsHeader.isVisible()){
             await expect(blockPage.virtualOperationsHeader).toBeVisible()
             const virtualOperationsBefore = await blockPage.virtualOperationsHeader.boundingBox();
@@ -162,7 +163,7 @@ test.describe('Block page tests', () => {
              await blockPage.toVirtualOpsBtn.click()
 
             const virtualOperationsAfter = await blockPage.virtualOperationsHeader.boundingBox();
-    
+
             let virtualOperationsAfterY = virtualOperationsAfter?.y
 
             await expect(virtualOperationsAfterY).not.toEqual(virtualOperationsBeforeY)
@@ -176,10 +177,10 @@ test.describe('Block page tests', () => {
             await expect(virtualOperationsPositionClickBtn).toEqual(virtualOperationsBeforeY)
         }
 
-        else{ 
+        else{
             console.log('There is no virtual operations')
         }
-    });  
+    });
 
     test('Validate the buttons To Top and To Virtual Ops do not work in Raw Json view option', async ({page}) =>{
         await mainPage.headBlockCardBlockLink.click()
@@ -194,5 +195,5 @@ test.describe('Block page tests', () => {
         const blockProducerPositionAfter = blockProducerBoundingAfter?.y
 
         expect(blockProducerPositionAfter).toEqual(blockProducerPosition)
-    }); 
+    });
 });

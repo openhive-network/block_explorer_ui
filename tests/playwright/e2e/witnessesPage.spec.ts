@@ -4,6 +4,7 @@ import { Witnesses } from "../support/pages/witnesses";
 import { AccountPage } from "../support/pages/accountPage";
 import { VotesHistoryDialog } from "../support/pages/votesHistoryDialog";
 import { VotersDialog } from "../support/pages/votersDialog";
+import { ApiHelper } from "../support/apiHelper";
 
 test.describe("Witnesses page", () => {
   let mainPage: MainPage;
@@ -44,6 +45,42 @@ test.describe("Witnesses page", () => {
 
     await expect(witnessesNames).toEqual(
       expect.arrayContaining(topWitnessesNames)
+    );
+  });
+
+  test("Compare the first three witnesses from witnesses page and api", async ({
+    page,
+  }) => {
+    const apiHelper = new ApiHelper(page);
+    await mainPage.gotoBlockExplorerPage();
+
+    // Move to the Witnesses page
+    await witnessesPage.gotoWitnessesPage();
+    await witnessesPage.validateWitnessesPageIsLoaded();
+
+    // Get the first three witnesses names by condenser api
+    const apiWitnessesRespons = await apiHelper.getWitnessesByVote();
+    const apiTheFirstThreeWitnesses: string[] = [];
+
+    let i = 0;
+    while(i < 3){
+      await apiTheFirstThreeWitnesses.push(apiWitnessesRespons.result[i].owner);
+      i++;
+    }
+
+    // Get the first three witnesses names by ui
+    const witnessesNamesArray: string [] = await witnessesPage.witnessName.allTextContents();
+    const theFirstThreeWitnesses: string [] = [];
+
+    let j = 0;
+    while(j < 3){
+      await theFirstThreeWitnesses.push(witnessesNamesArray[j]);
+      j++;
+    }
+
+    // Compare the first three witnesses names in api and ui
+    await expect(apiTheFirstThreeWitnesses).toEqual(
+      expect.arrayContaining(theFirstThreeWitnesses)
     );
   });
 
@@ -144,6 +181,7 @@ test.describe("Witnesses page", () => {
     const witnessName: string = await witnessesPage.witnessName.first().textContent() || '';
     // Move to the Account page
     await witnessesPage.witnessName.first().click();
+    await witnessesPage.page.waitForTimeout(1000);
     await accountPage.validateAccountPageIsLoaded();
     await accountPage.validateAccountName(witnessName);
   });
@@ -212,6 +250,7 @@ test.describe("Witnesses page", () => {
     const witnessName: string = await witnessesPage.witnessName.first().textContent() || '';
     // Move to the votes history dialog
     await witnessesPage.witnessVotesButtons.first().click();
+    await witnessesPage.page.waitForTimeout(3000);
     await votesHistoryDialog.validateVotesHistoryDialogIsLoaded();
     await votesHistoryDialog.validateWitnessName(witnessName);
     // Get first voter vests
@@ -219,17 +258,86 @@ test.describe("Witnesses page", () => {
         const currentVoterPower: string = await votesHistoryDialog.votesHistoryDialogCurrentVoterPowerColumn.first().textContent() || '';
         // Set toggle button to Hive Power
         await votesHistoryDialog.votesHistoryDialogVestsHivePowerButton.click();
+        await witnessesPage.page.waitForTimeout(3000);
         await expect(votesHistoryDialog.votesHistoryDialogVestsHivePowerButton).toHaveAttribute('data-state', 'checked');
         // Get first voter Hive Power
         const currentVoterHivePower: string = await votesHistoryDialog.votesHistoryDialogCurrentVoterPowerColumn.first().textContent() || '';
         // Compare vests and hive power
-        await expect(currentVoterPower).not.toMatch(currentVoterHivePower);
+        await expect(currentVoterPower).not.toBe(currentVoterHivePower);
     } else {
         console.log('Empty votes history');
     }
     // Close the votes history dialog
     await votesHistoryDialog.votesHistoryDialogCloseButton.click();
   });
+
+  test("validate values of the votes history dialog in specific dates", async ({ page }) => {
+    const fromDate: string = '2024-03-16T07:00';
+    const toDate: string = '2024-03-17T11:20';
+    const expectedVoterName: string = 'faniaviera';
+    const arrowUp: string = 'lucide lucide-arrow-up-circle';
+    const arrowDown: string = 'lucide lucide-arrow-down-circle';
+    const expectedVoterCurrentPower: string = '2,014,602.905570'.trim().replace(/[,]/g,'');
+    const expectedVoterCurrentPowerNumber: number = parseFloat(expectedVoterCurrentPower);
+    // console.log('expectedVoterCurrentPower ', expectedVoterCurrentPower);
+    // console.log('expectedVoterCurrentPowerNumber ', expectedVoterCurrentPowerNumber);
+
+    const votesHistoryDialog = new VotesHistoryDialog(page);
+
+    await mainPage.gotoBlockExplorerPage();
+    // Move to the Witnesses page
+    await witnessesPage.gotoWitnessesPage();
+    await witnessesPage.validateWitnessesPageIsLoaded();
+    const witnessName: string = await witnessesPage.witnessName.first().textContent() || '';
+    // Move to the votes history dialog
+    await witnessesPage.witnessVotesButtons.first().click();
+    await witnessesPage.page.waitForTimeout(3000);
+    await votesHistoryDialog.validateVotesHistoryDialogIsLoaded();
+    await votesHistoryDialog.validateWitnessName(witnessName);
+
+    // Validate votes history dialog
+    if (await votesHistoryDialog.votesHistoryDialogTableBody.isVisible()){
+      if(witnessName=='arcange'){
+        await votesHistoryDialog.votesHistoryDialogFromDatepicker.locator('input').first().fill(fromDate, {force: true});
+        await votesHistoryDialog.votesHistoryDialogToDatepicker.locator('input').first().fill(toDate, {force: true});
+        await witnessesPage.page.waitForTimeout(3000);
+
+        expect(await votesHistoryDialog.votesHistoryDialogVoterColumn.locator('a').first().textContent()).toBe(expectedVoterName);
+        // console.log('first voter: ', await votesHistoryDialog.votesHistoryDialogVoterColumn.locator('a').first().textContent())
+
+        expect(await votesHistoryDialog.votesHistoryDialogVoteArrowColumn.locator('svg').first().getAttribute('class')).toBe(arrowUp);
+        // console.log('first voter arrow: ', await votesHistoryDialog.votesHistoryDialogVoteArrowColumn.locator('svg').first().getAttribute('class'))
+
+        const expectedVoterCurrentPowerUi: string = await votesHistoryDialog.votesHistoryDialogCurrentVoterPowerColumn.first().textContent() || '';
+        const expectedVoterCurrentPowerUiFormated: string = expectedVoterCurrentPowerUi.trim().replace(/[,]/g,'');
+        const expectedVoterCurrentPowerUiNumber: number = await parseFloat(expectedVoterCurrentPowerUiFormated);
+        await expect(expectedVoterCurrentPowerUiNumber).toBeGreaterThan(expectedVoterCurrentPowerNumber);
+        // console.log('first voter power: ', await votesHistoryDialog.votesHistoryDialogCurrentVoterPowerColumn.first().textContent())
+
+        expect(await votesHistoryDialog.votesHistoryDialogVoterColumn.locator('a').nth(1).textContent()).toBe(expectedVoterName);
+        // console.log('second voter: ', await votesHistoryDialog.votesHistoryDialogVoterColumn.locator('a').nth(1).textContent())
+
+        expect(await votesHistoryDialog.votesHistoryDialogVoteArrowColumn.locator('svg').nth(1).getAttribute('class')).toBe(arrowDown);
+        // console.log('second voter arrow: ', await votesHistoryDialog.votesHistoryDialogVoteArrowColumn.locator('svg').nth(1).getAttribute('class'))
+
+        const expectedSecondVoterCurrentPowerUi: string = await votesHistoryDialog.votesHistoryDialogCurrentVoterPowerColumn.nth(1).textContent() || '';
+        const expectedSecondVoterCurrentPowerUiFormated: string = expectedSecondVoterCurrentPowerUi.trim().replace(/[,]/g,'');
+        const expectedSecondVoterCurrentPowerUiNumber: number = await parseFloat(expectedSecondVoterCurrentPowerUiFormated);
+        await expect(expectedSecondVoterCurrentPowerUiNumber).toBeGreaterThan(expectedVoterCurrentPowerNumber);
+        // console.log('second voter power: ', await votesHistoryDialog.votesHistoryDialogCurrentVoterPowerColumn.nth(1).textContent())
+
+        // await page.waitForTimeout(4000);
+      }
+      else {
+        console.log("The first Witness is different than arcange")
+      }
+    } else {
+        console.log('Empty votes history');
+    }
+    // Close the votes history dialog
+    await votesHistoryDialog.votesHistoryDialogCloseButton.click();
+  });
+
 
   test("Check if after click arrow button ascending and descending filters work correctly by the voter name and votes", async ({ page }) => {
     const votersDialog = new VotersDialog(page);
@@ -293,4 +401,26 @@ test.describe("Witnesses page", () => {
     // Close the votes history dialog
     await votersDialog.votersDialogCloseButton.click();
   });
+
+  // Only to show votes number by different ways
+  test.skip("Display votes of arcange ", async ({ page }) => {
+    const apiHelper = new ApiHelper(page);
+
+    const response = await apiHelper.getWitnessesByVote();
+    console.log('Witnesses by vote: ', await response.result[0]);
+
+    const response1 = await apiHelper.getWitnessesByAccount("arcange");
+    console.log('Witnesses by account: ', await response1.result.votes);
+
+    const res2 = await apiHelper.getWitnessesByHafbe();
+    console.log('Witnesses by Hafbe: ', await res2[0]);
+
+    const res3 = await apiHelper.getWitnessesDatabaseApi("arcange");
+    console.log('Witnesses by datatest api: ', await res3.result.witnesses[0]);
+
+    console.log('     getWitnessesByVote : ', await response.result[0].votes);
+    console.log('  getWitnessesByAccount : ', await response1.result.votes);
+    console.log('getWitnessesDatabaseApi : ', await res3.result.witnesses[0].votes);
+    console.log('    getWitnessesByHafbe : ', await res2[0].vests);
+  })
 });
