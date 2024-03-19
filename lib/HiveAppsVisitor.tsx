@@ -41,7 +41,7 @@ class HiveAppsVisitor extends HiveAppsOperationVisitor<React.JSX.Element> {
     if (op.rc === "0.00000 VESTS") {
       return this.generateReactLink([this.getAccountLink(op.from), `removed delegation for`, this.getMultipleAccountsListLink(op.delegatees)]);
     } 
-    const message = this.generateReactLink([this.getAccountLink(op.from), `delegated ${op.rc} for`, this.getMultipleAccountsListLink(op.delegatees)]);
+    const message = this.generateReactLink([this.getAccountLink(op.from), `delegated ${op.rc} of RC for`, this.getMultipleAccountsListLink(op.delegatees)]);
     return message;
   }
 
