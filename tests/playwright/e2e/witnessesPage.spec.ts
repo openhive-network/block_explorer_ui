@@ -270,7 +270,7 @@ test.describe("Witnesses page", () => {
 
   test("validate values of the votes history dialog in specific dates", async ({ page }) => {
     const fromDate: string = '2024-03-16T07:00';
-    const toDate: string = '2024-03-17T11:59';
+    const toDate: string = '2024-03-17T11:20';
     const expectedVoterName: string = 'faniaviera';
     const arrowUp: string = 'lucide lucide-arrow-up-circle';
     const arrowDown: string = 'lucide lucide-arrow-down-circle';
