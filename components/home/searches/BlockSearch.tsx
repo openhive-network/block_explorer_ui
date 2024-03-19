@@ -140,7 +140,7 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
                 <HelpCircle className="h-4" />
               </TooltipTrigger>
               <TooltipContent>
-                <div className="bg-white text-black p-2">
+                <div className="bg-white text-black dark:bg-explorer-dark-gray dark:text-white p-2">
                   Pick property from body of operation and its value. You can
                   use that only for single operation.
                 </div>

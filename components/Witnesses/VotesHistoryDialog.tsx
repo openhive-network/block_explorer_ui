@@ -75,7 +75,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
   };
 
   const buildCustomDialogStyle = () => {
-    const intialDialogStyle = "max-w-2xl bg-white overflow-auto";
+    const intialDialogStyle = "max-w-2xl bg-white dark:bg-explorer-dark-gray overflow-auto";
 
     if (!votesHistory) {
       return `${intialDialogStyle} flex column justify-center items-center`;

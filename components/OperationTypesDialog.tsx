@@ -151,7 +151,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           {triggerTitle}
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[95%] md:max-w-[80%] max-h-[90%] md:max-h-[80%] flex-column justify-center align-center  bg-white text-black overflow-auto px-0">
+      <DialogContent className="max-w-[95%] md:max-w-[80%] max-h-[90%] md:max-h-[80%] flex-column justify-center align-center  bg-white text-black dark:bg-explorer-dark-gray dark:text-white overflow-auto px-0">
         <DialogHeader>
           <DialogTitle className="flex justify-center pt-2">
             Operation Types
