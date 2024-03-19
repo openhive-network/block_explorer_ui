@@ -5,9 +5,10 @@ import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import Hive from "@/types/Hive";
 import useManabars from "@/api/accountPage/useManabars";
 import { Loader2 } from "lucide-react";
+import Explorer from "@/types/Explorer";
 
 interface AccountMainCardProps {
-  accountDetails: Hive.AccountDetailsQueryResponse;
+  accountDetails: Explorer.FormattedAccountDetails;
   accountName: string;
   openVotersModal: () => void;
   openVotesHistoryModal: () => void;
