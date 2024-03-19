@@ -28,5 +28,15 @@ test.describe('Transaction page - tests', () => {
         await expect(transactionPage.transactionHeaderHash).toBeVisible()
         await expect(transactionPage.transactionHeaderHashBlock).toBeVisible()
         await expect(transactionPage.transactionDetails).toBeVisible()
-    })
+    });
+
+    test('Validate that transaction details and the list of operations are displayed as JSON format after clicking Raw JSON view toggle', async ({page}) =>{
+        await mainPage.headBlockCardBlockLink.click()
+        await page.locator('[href*="transaction"]').first().click()
+        await expect(transactionPage.transactionHeader).toBeVisible()
+        await expect(transactionPage.transactionDetails).toBeVisible()
+        await expect(blockPage.operationTypeTitle).toBeVisible()
+        await mainPage.RawJsonViewToggle.click()
+        await expect(blockPage.operationsJsonFormat).toBeVisible()
+    });
 });
