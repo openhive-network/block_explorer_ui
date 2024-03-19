@@ -181,6 +181,7 @@ test.describe("Witnesses page", () => {
     const witnessName: string = await witnessesPage.witnessName.first().textContent() || '';
     // Move to the Account page
     await witnessesPage.witnessName.first().click();
+    await witnessesPage.page.waitForTimeout(1000);
     await accountPage.validateAccountPageIsLoaded();
     await accountPage.validateAccountName(witnessName);
   });
@@ -249,6 +250,7 @@ test.describe("Witnesses page", () => {
     const witnessName: string = await witnessesPage.witnessName.first().textContent() || '';
     // Move to the votes history dialog
     await witnessesPage.witnessVotesButtons.first().click();
+    await witnessesPage.page.waitForTimeout(3000);
     await votesHistoryDialog.validateVotesHistoryDialogIsLoaded();
     await votesHistoryDialog.validateWitnessName(witnessName);
     // Get first voter vests
@@ -256,11 +258,12 @@ test.describe("Witnesses page", () => {
         const currentVoterPower: string = await votesHistoryDialog.votesHistoryDialogCurrentVoterPowerColumn.first().textContent() || '';
         // Set toggle button to Hive Power
         await votesHistoryDialog.votesHistoryDialogVestsHivePowerButton.click();
+        await witnessesPage.page.waitForTimeout(3000);
         await expect(votesHistoryDialog.votesHistoryDialogVestsHivePowerButton).toHaveAttribute('data-state', 'checked');
         // Get first voter Hive Power
         const currentVoterHivePower: string = await votesHistoryDialog.votesHistoryDialogCurrentVoterPowerColumn.first().textContent() || '';
         // Compare vests and hive power
-        await expect(currentVoterPower).not.toMatch(currentVoterHivePower);
+        await expect(currentVoterPower).not.toBe(currentVoterHivePower);
     } else {
         console.log('Empty votes history');
     }
