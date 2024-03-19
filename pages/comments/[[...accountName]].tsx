@@ -1,4 +1,4 @@
-import React, { use, useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { config } from "@/Config";
 import useCommentSearch from "@/api/common/useCommentSearch";
 import CustomPagination from "@/components/CustomPagination";
@@ -6,12 +6,14 @@ import DetailedOperationCard from "@/components/DetailedOperationCard";
 import Explorer from "@/types/Explorer";
 import useOperationTypes from "@/api/common/useOperationsTypes";
 import JumpToPage from "@/components/JumpToPage";
-import { dataToURL, useURLParams } from "@/utils/Hooks";
+import { useOperationsFormatter, useURLParams } from "@/utils/Hooks";
 import CommentsSearch from "@/components/home/searches/CommentsSearch";
-import { useRouter } from "next/router";
 import { formatAccountName } from "@/utils/StringUtils";
 import useSearchRanges from "@/components/searchRanges/useSearchRanges";
-import { convertBooleanArrayToIds } from "@/lib/utils";
+import { convertBooleanArrayToIds, convertCommentsOperationResultToTableOperations } from "@/lib/utils";
+import OperationsTable from "@/components/OperationsTable";
+import Hive from "@/types/Hive";
+import { getPageUrlParams } from "@/lib/utils";
 
 const defaultSearchParams: Explorer.CommentSearchParams = {
   accountName: undefined,
@@ -45,6 +47,10 @@ const Comments: React.FC = () => {
     "permlink",
   ]);
 
+  const formattedOperations = useOperationsFormatter(
+    commentSearch?.commentSearchData
+  ) as Hive.CommentOperationResponse;
+
   const operationsTypes =
     useOperationTypes().operationsTypes?.filter((operation) =>
       config.commentOperationsTypeIds.includes(operation.op_type_id)
@@ -54,7 +60,7 @@ const Comments: React.FC = () => {
     if (!!props.accountName) {
       const searchProps = {
         ...(props as Explorer.CommentSearchProps),
-        operationTypes: convertBooleanArrayToIds(props.filters || []),
+        operationTypes: props.filters ? convertBooleanArrayToIds(props.filters) : undefined,
       };
       setCommentSearchProps(searchProps);
       setPreviousCommentSearchProps(searchProps);
@@ -114,7 +120,6 @@ const Comments: React.FC = () => {
               totalCount={commentSearch.commentSearchData?.total_operations}
               pageSize={config.standardPaginationSize}
               onPageChange={changeCommentSearchPagination}
-              shouldScrollToTop={false}
             />
             <div className="justify-self-end">
               <JumpToPage
@@ -123,17 +128,14 @@ const Comments: React.FC = () => {
               />
             </div>
           </div>
-          {commentSearch.commentSearchData?.operations_result?.map(
-            (foundOperation) => (
-              <DetailedOperationCard
-                className="my-6 text-white"
-                operation={foundOperation.operation}
-                key={foundOperation.operation_id}
-                blockNumber={foundOperation.block_num}
-                date={foundOperation.created_at}
-              />
-            )
-          )}
+          {
+            formattedOperations?.operations_result ?
+            <OperationsTable operations={convertCommentsOperationResultToTableOperations(formattedOperations?.operations_result)} className="text-white" />
+            :
+            <div className="flex justify-center w-full text-black">
+              No operations matching given criteria
+            </div>
+          }
         </>
       )}
     </div>
