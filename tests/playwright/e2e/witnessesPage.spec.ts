@@ -288,6 +288,7 @@ test.describe("Witnesses page", () => {
     const witnessName: string = await witnessesPage.witnessName.first().textContent() || '';
     // Move to the votes history dialog
     await witnessesPage.witnessVotesButtons.first().click();
+    await witnessesPage.page.waitForTimeout(3000);
     await votesHistoryDialog.validateVotesHistoryDialogIsLoaded();
     await votesHistoryDialog.validateWitnessName(witnessName);
 
@@ -296,6 +297,7 @@ test.describe("Witnesses page", () => {
       if(witnessName=='arcange'){
         await votesHistoryDialog.votesHistoryDialogFromDatepicker.locator('input').first().fill(fromDate, {force: true});
         await votesHistoryDialog.votesHistoryDialogToDatepicker.locator('input').first().fill(toDate, {force: true});
+        await witnessesPage.page.waitForTimeout(3000);
 
         expect(await votesHistoryDialog.votesHistoryDialogVoterColumn.locator('a').first().textContent()).toBe(expectedVoterName);
         // console.log('first voter: ', await votesHistoryDialog.votesHistoryDialogVoterColumn.locator('a').first().textContent())
