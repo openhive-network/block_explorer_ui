@@ -22,8 +22,10 @@ import { useUserSettingsContext } from "@/components/contexts/UserSettingsContex
 import AccountDetailsCard from "@/components/account/AccountDetailsCard";
 import Head from "next/head";
 import OperationsTable from "@/components/OperationsTable";
-import { convertBooleanArrayToIds, convertOperationResultsToTableOperations } from "@/lib/utils";
-import CustomPagination from "@/components/CustomPagination";
+import {
+  convertBooleanArrayToIds,
+  convertOperationResultsToTableOperations,
+} from "@/lib/utils";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -91,7 +93,9 @@ export default function Account() {
   const { accountOperations, isAccountOperationsLoading } =
     useAccountOperations({
       accountName: accountNameFromRoute,
-      operationTypes: filtersParam.length ? convertBooleanArrayToIds(filtersParam) : undefined,
+      operationTypes: filtersParam.length
+        ? convertBooleanArrayToIds(filtersParam)
+        : undefined,
       pageNumber: paramsState.page,
       fromBlock: fromBlockParam,
       toBlock: toBlockParam,
@@ -339,7 +343,9 @@ export default function Account() {
             ) : (
               <div className="px-2 mt-2">
                 <OperationsTable
-                  operations={convertOperationResultsToTableOperations(formattedAccountOperations?.operations_result)}
+                  operations={convertOperationResultsToTableOperations(
+                    formattedAccountOperations?.operations_result
+                  )}
                 />
               </div>
             )}

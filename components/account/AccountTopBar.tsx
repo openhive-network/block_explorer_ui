@@ -3,7 +3,10 @@ import JumpToPage from "../JumpToPage";
 import { config } from "@/Config";
 import OperationTypesDialog from "../OperationTypesDialog";
 import { getOperationButtonTitle } from "@/utils/UI";
-import { convertBooleanArrayToIds, convertIdsToBooleanArray } from "@/lib/utils";
+import {
+  convertBooleanArrayToIds,
+  convertIdsToBooleanArray,
+} from "@/lib/utils";
 import CustomPagination from "../CustomPagination";
 
 interface AccountTopBarProps {
@@ -24,30 +27,32 @@ const AccountTopBar: React.FC<AccountTopBarProps> = ({
   selectedFilters,
 }) => {
   const handleOperationSelect = (filters: number[]) => {
-    onOperationsSelect(convertIdsToBooleanArray(filters))
-  }
+    onOperationsSelect(convertIdsToBooleanArray(filters));
+  };
 
   return (
     <div
       className="bg-explorer-orange flex items-stretch justify-center w-full flex-wrap mb-2 mt-3"
       data-testid="account-top-bar"
     >
-      <div className="flex justify-center items-center">
+      <div className="flex justify-center items-center mx-4">
         <CustomPagination
           currentPage={page}
           totalCount={accountOperations.total_operations || 0}
           pageSize={config.standardPaginationSize}
           onPageChange={setPage}
-          isMirrored={true}
         />
       </div>
       <div className="my-1 flex gap-x-2">
-      <OperationTypesDialog
+        <OperationTypesDialog
           operationTypes={accountOperationTypes}
           setSelectedOperations={handleOperationSelect}
           selectedOperations={convertBooleanArrayToIds(selectedFilters)}
           buttonClassName="bg-explorer-dark-gray"
-          triggerTitle={getOperationButtonTitle(convertBooleanArrayToIds(selectedFilters), accountOperationTypes)}
+          triggerTitle={getOperationButtonTitle(
+            convertBooleanArrayToIds(selectedFilters),
+            accountOperationTypes
+          )}
         />
         <div className="flex-grow flex justify-between max-w-xl lg:max-w-full">
           <div className="flex items-center ">
