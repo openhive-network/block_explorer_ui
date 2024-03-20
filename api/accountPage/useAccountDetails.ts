@@ -3,6 +3,8 @@ import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
 import Explorer from "@/types/Explorer";
 import { useHiveChainContext } from "@/components/contexts/HiveChainContext";
+import moment from "moment";
+import { config } from "@/Config";
 
 const useAccountDetails = (accountName: string) => {
   const {
@@ -38,6 +40,9 @@ const useAccountDetails = (accountName: string) => {
       posting_rewards: hiveChain?.vests(data.posting_rewards),
       curation_rewards: hiveChain?.vests(data.curation_rewards),
       vesting_balance: hiveChain?.vests(data.vesting_balance),
+      last_account_recovery: moment(new Date(data.last_account_recovery)).format(config.baseMomentTimeFormat),
+      created: moment(new Date(data.created)).format(config.baseMomentTimeFormat),
+      last_vote_time: moment(new Date(data.last_vote_time)).format(config.baseMomentTimeFormat),
     };
 
     
