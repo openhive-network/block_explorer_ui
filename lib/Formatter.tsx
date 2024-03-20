@@ -291,13 +291,12 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }
 
   @WaxFormattable({matchInstanceOf: ResourceCreditsOperation}) 
-  formatResourceCreditsOperation({target}: IFormatFunctionArguments<operation, {value: ResourceCreditsOperation}>) {
+  formatResourceCreditsOperation({target}: IFormatFunctionArguments<{ value: custom_json }, {value: ResourceCreditsOperation}>) {
     const {value: op} = target;
-    if (op.rc.amount === "0") {
-      return this.generateReactLink([this.getAccountLink(op.from), `removed delegation for`, this.getMultipleAccountsListLink(op.delegatees)]);
-    } 
-    const message = this.generateReactLink([this.getAccountLink(op.from), `delegated ${this.getFormattedAmount(op.rc)} for`, this.getMultipleAccountsListLink(op.delegatees)]);
-    return message;
+    if (op.rc.amount === "0")
+      return { ...target, value: this.generateReactLink([this.getAccountLink(op.from), `removed delegation for`, this.getMultipleAccountsListLink(op.delegatees)]) };
+
+    return { ...target, value: this.generateReactLink([this.getAccountLink(op.from), `delegated ${this.getFormattedAmount(op.rc)} to`, this.getMultipleAccountsListLink(op.delegatees)]) };
   }
 
 
