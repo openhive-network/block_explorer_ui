@@ -142,7 +142,7 @@ class FetchingService {
     return await this.callApi("get_account_operations_count", requestBody);
   }
 
-  async getAccount(account: string): Promise<unknown> {
+  async getAccount(account: string): Promise<Hive.AccountDetailsQueryResponse> {
     const requestBody: Hive.GetAccountProps = { _account: account };
     return await this.callApi("get_account", requestBody);
   }

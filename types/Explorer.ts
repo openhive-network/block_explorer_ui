@@ -154,6 +154,47 @@ declare module Explorer {
     trxId?: string;
     operatiopnId?: number;
   }
+
+  interface FormattedAccountDetails extends Omit<Hive.AccountDetailsQueryResponse, 
+    "last_post" | 
+    "last_root_post" | 
+    "post_count" | 
+    "balance" | 
+    "saving_balance" | 
+    "hbd_balance" | 
+    "hbd_saving_balance" | 
+    "reward_hbd_balance" | 
+    "reward_vesting_balance" | 
+    "reward_vesting_hive" |
+    "reward_hive_balance" |
+    "vesting_withdraw_rate" |
+    "vesting_shares" | 
+    "delegated_vesting_shares" | 
+    "received_vesting_shares" | 
+    "post_voting_power" | 
+    "posting_rewards" | 
+    "curation_rewards" | 
+    "vesting_balance"> {
+    balance: string;
+    saving_balance: string;
+    hbd_balance: string;
+    hbd_saving_balance: string;
+    reward_hbd_balance: string;
+    reward_vesting_balance: string;
+    reward_vesting_hive: string;
+    reward_hive_balance: string;
+    vesting_withdraw_rate: string;
+    vesting_shares: string;
+    delegated_vesting_shares: string;
+    received_vesting_shares: string;
+    post_voting_power: string;
+    posting_rewards: string;
+    curation_rewards: string;
+    vesting_balance: string;
+    last_post?: number;
+    last_root_post?: number;
+    post_count?: number;
+  }
 }
 
 export default Explorer;

@@ -22,8 +22,10 @@ import { useUserSettingsContext } from "@/components/contexts/UserSettingsContex
 import AccountDetailsCard from "@/components/account/AccountDetailsCard";
 import Head from "next/head";
 import OperationsTable from "@/components/OperationsTable";
-import { convertBooleanArrayToIds, convertOperationResultsToTableOperations } from "@/lib/utils";
-import CustomPagination from "@/components/CustomPagination";
+import {
+  convertBooleanArrayToIds,
+  convertOperationResultsToTableOperations,
+} from "@/lib/utils";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -91,7 +93,9 @@ export default function Account() {
   const { accountOperations, isAccountOperationsLoading } =
     useAccountOperations({
       accountName: accountNameFromRoute,
-      operationTypes: filtersParam.length ? convertBooleanArrayToIds(filtersParam) : undefined,
+      operationTypes: filtersParam.length
+        ? convertBooleanArrayToIds(filtersParam)
+        : undefined,
       pageNumber: paramsState.page,
       fromBlock: fromBlockParam,
       toBlock: toBlockParam,
@@ -101,7 +105,7 @@ export default function Account() {
   const { accountOperationTypes } =
     useAccountOperationTypes(accountNameFromRoute);
 
-  const { witnessDetails } = useWitnessDetails(
+  const { witnessDetails, isWitnessDetailsLoading, isWitnessDetailsError } = useWitnessDetails(
     accountNameFromRoute,
     !!accountDetails?.is_witness
   );
@@ -249,6 +253,8 @@ export default function Account() {
             accountName={accountNameFromRoute}
             openVotersModal={handleOpenVotersModal}
             openVotesHistoryModal={handleOpenVotesHistoryModal}
+            isWitnessError={isWitnessDetailsError}
+            isWitnessLoading={isWitnessDetailsLoading}
           />
           <AccountDetailsCard
             header="Properties"
@@ -264,10 +270,12 @@ export default function Account() {
             json={accountDetails.posting_json_metadata}
             showCollapseButton={true}
           />
-          <AccountDetailsCard
-            header="Witness Properties"
-            userDetails={witnessDetails}
-          />
+          {!isWitnessDetailsError && (
+            <AccountDetailsCard
+              header="Witness Properties"
+              userDetails={witnessDetails}
+            />
+          )}
           <AccountWitnessVotesCard voters={accountDetails.witness_votes} />
           <VotersDialog
             accountName={accountNameFromRoute}
@@ -335,7 +343,9 @@ export default function Account() {
             ) : (
               <div className="px-2 mt-2">
                 <OperationsTable
-                  operations={convertOperationResultsToTableOperations(formattedAccountOperations?.operations_result)}
+                  operations={convertOperationResultsToTableOperations(
+                    formattedAccountOperations?.operations_result
+                  )}
                 />
               </div>
             )}

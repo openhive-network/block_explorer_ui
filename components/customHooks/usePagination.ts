@@ -12,6 +12,7 @@ interface PaginationProps {
   pageSize: number;
   siblingCount: number;
   currentPage: number;
+  isMirrored?: boolean;
 }
 
 const range: (props: RangeProps) => number[] = ({ start, end }) => {
@@ -19,11 +20,14 @@ const range: (props: RangeProps) => number[] = ({ start, end }) => {
   return Array.from({ length }, (_, idx) => idx + start);
 };
 
-export const usePagination: (props: PaginationProps) => (number | string)[] | undefined = ({
+export const usePagination: (
+  props: PaginationProps
+) => (number | string)[] | undefined = ({
   totalCount,
   pageSize,
   siblingCount = 2,
   currentPage,
+  isMirrored = true,
 }) => {
   const paginationRange = useMemo(() => {
     const totalPageCount = Math.ceil(totalCount / pageSize);
@@ -81,7 +85,5 @@ export const usePagination: (props: PaginationProps) => (number | string)[] | un
     }
   }, [totalCount, pageSize, siblingCount, currentPage]);
 
-
-
-  return paginationRange;
+  return isMirrored ? paginationRange?.reverse() : paginationRange;
 };

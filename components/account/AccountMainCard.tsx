@@ -5,10 +5,13 @@ import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import Hive from "@/types/Hive";
 import useManabars from "@/api/accountPage/useManabars";
 import { Loader2 } from "lucide-react";
+import Explorer from "@/types/Explorer";
 
 interface AccountMainCardProps {
-  accountDetails: Hive.AccountDetailsQueryResponse;
+  accountDetails: Explorer.FormattedAccountDetails;
   accountName: string;
+  isWitnessError?: boolean;
+  isWitnessLoading?: boolean;
   openVotersModal: () => void;
   openVotesHistoryModal: () => void;
 }
@@ -16,6 +19,8 @@ interface AccountMainCardProps {
 const AccountMainCard: React.FC<AccountMainCardProps> = ({
   accountDetails,
   accountName,
+  isWitnessError,
+  isWitnessLoading,
   openVotersModal,
   openVotesHistoryModal,
 }) => {
@@ -87,7 +92,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
           </div>
         </div>
       </div>
-      {accountDetails.is_witness && (
+      {(!isWitnessError && !isWitnessLoading) && (
         <div className="flex justify-between">
           <button
             onClick={openVotersModal}
