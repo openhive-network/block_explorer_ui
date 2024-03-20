@@ -101,7 +101,7 @@ export default function Account() {
   const { accountOperationTypes } =
     useAccountOperationTypes(accountNameFromRoute);
 
-  const { witnessDetails } = useWitnessDetails(
+  const { witnessDetails, isWitnessDetailsLoading, isWitnessDetailsError } = useWitnessDetails(
     accountNameFromRoute,
     !!accountDetails?.is_witness
   );
@@ -249,6 +249,8 @@ export default function Account() {
             accountName={accountNameFromRoute}
             openVotersModal={handleOpenVotersModal}
             openVotesHistoryModal={handleOpenVotesHistoryModal}
+            isWitnessError={isWitnessDetailsError}
+            isWitnessLoading={isWitnessDetailsLoading}
           />
           <AccountDetailsCard
             header="Properties"
@@ -264,10 +266,12 @@ export default function Account() {
             json={accountDetails.posting_json_metadata}
             showCollapseButton={true}
           />
-          <AccountDetailsCard
-            header="Witness Properties"
-            userDetails={witnessDetails}
-          />
+          {!isWitnessDetailsError && (
+            <AccountDetailsCard
+              header="Witness Properties"
+              userDetails={witnessDetails}
+            />
+          )}
           <AccountWitnessVotesCard voters={accountDetails.witness_votes} />
           <VotersDialog
             accountName={accountNameFromRoute}

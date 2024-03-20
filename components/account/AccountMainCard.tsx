@@ -10,6 +10,8 @@ import Explorer from "@/types/Explorer";
 interface AccountMainCardProps {
   accountDetails: Explorer.FormattedAccountDetails;
   accountName: string;
+  isWitnessError?: boolean;
+  isWitnessLoading?: boolean;
   openVotersModal: () => void;
   openVotesHistoryModal: () => void;
 }
@@ -17,6 +19,8 @@ interface AccountMainCardProps {
 const AccountMainCard: React.FC<AccountMainCardProps> = ({
   accountDetails,
   accountName,
+  isWitnessError,
+  isWitnessLoading,
   openVotersModal,
   openVotesHistoryModal,
 }) => {
@@ -88,7 +92,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
           </div>
         </div>
       </div>
-      {accountDetails.is_witness && (
+      {(!isWitnessError && !isWitnessLoading) && (
         <div className="flex justify-between">
           <button
             onClick={openVotersModal}
