@@ -123,7 +123,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }
 
   private getPermlink(author: string, permlink: string): React.JSX.Element {
-    return <Link rel="noopener noreferrer" target="_blank" href={`https://hive.blog/@${author}/${permlink}`}><span className="text-explorer-ligh-green">{permlink.slice(0, 20)}{permlink.length > 20 ? "..." : ""}</span></Link>
+    return <Link rel="noopener noreferrer" target="_blank" href={`https://hive.blog/@${author}/${permlink}`}><span className="text-explorer-ligh-green">{permlink}</span></Link>
   }
 
   private generateReactLink(elements: Array<string | React.JSX.Element>): React.JSX.Element {

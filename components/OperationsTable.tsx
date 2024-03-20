@@ -140,7 +140,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
               </TableCell>
               <TableCell data-testid='operation-type'>{getOperationTypeForDisplay(operation.operation.type)}</TableCell>
               <TableCell className="max-w-0 w-full">
-                <div className="line-clamp-1">
+                <div>
                   {getOneLineDescription(operation)}
                 </div>
               </TableCell>
