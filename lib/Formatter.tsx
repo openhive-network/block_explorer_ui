@@ -2,10 +2,13 @@ import React from "react";
 import { config } from "@/Config";
 import Hive from "@/types/Hive";
 import {
+  CommunityOperation,
   DeepReadonly,
+  FollowOperation,
   IFormatFunctionArguments,
   IWaxBaseInterface,
   IWaxCustomFormatter,
+  ReblogOperation,
   ResourceCreditsOperation,
   WaxFormattable,
   account_create,
@@ -286,17 +289,50 @@ class OperationsFormatter implements IWaxCustomFormatter {
 
   @WaxFormattable({matchProperty: "type", matchValue: "custom_json_operation"})
   formatCustomJsonOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: custom_json }>) {
-    console.log('SOURCE OP', op, target);
     const message = this.generateReactLink([this.getMultipleAccountsListLink(op.required_auths), this.getMultipleAccountsListLink(op.required_posting_auths), `made custom JSON (${op.id})`]);
     return {...target, value: {message, json: op.json}};
   }
 
   @WaxFormattable({matchInstanceOf: ResourceCreditsOperation}) 
-  formatResourceCreditsOperation({target}: IFormatFunctionArguments<{ value: custom_json }, {value: ResourceCreditsOperation}>) {
+  formatResourceCreditsOperation({target, source}: IFormatFunctionArguments<{ value: custom_json }, {value: ResourceCreditsOperation}>) {
     const {value: op} = target;
     if (op.rc.amount === "0")
       return { ...target, value: {message: this.generateReactLink([this.getAccountLink(op.from), `removed delegation for`, this.getMultipleAccountsListLink(op.delegatees)]), json: JSON.stringify(target.value)} };
-    return { ...target, value: {message: this.generateReactLink([this.getAccountLink(op.from), `delegated ${this.getFormattedAmount(op.rc)} to`, this.getMultipleAccountsListLink(op.delegatees)]), json: JSON.stringify(target.value)} };
+    return { ...target, value: {message: this.generateReactLink([this.getAccountLink(op.from), `delegated ${this.getFormattedAmount(op.rc)} of RC for`, this.getMultipleAccountsListLink(op.delegatees), `(${source.value.id})`]), json: JSON.stringify(target.value)} };
+  }
+
+  @WaxFormattable({matchInstanceOf: FollowOperation}) 
+  formatFollowOperation({target, source}: IFormatFunctionArguments<{ value: custom_json }, {value: FollowOperation}>) {
+    const {value: op} = target;
+    const actionsMap = new Map<string, string>();
+    actionsMap.set("blog", "followed");
+    actionsMap.set("", "unfollowed");
+    actionsMap.set("ignore", "muted");
+    actionsMap.set("reset_blacklist", "reset blacklist of");
+    actionsMap.set("reset_follow_blacklist", "stopped following blacklist of");
+    actionsMap.set("blacklist", "blacklisted");
+    actionsMap.set("follow_blacklist", "followed blacklist of");
+    actionsMap.set("unblacklist", "unblacklisted");
+    actionsMap.set("unfollow_blacklist", "unfollowed blacklist of");
+    actionsMap.set("reset_follow_muted_list", "stopped following muted list of");
+    actionsMap.set("follow_muted", "followed muted list of");
+    actionsMap.set("unfollow_muted", "unfollowed muted list of");
+    actionsMap.set("reset_all_lists", "reset all lists of");
+    actionsMap.set("reset_following_list", "reset following list of");
+    actionsMap.set("reset_muted_list", "reset muted list of");
+    return { ...target, value: {message: this.generateReactLink([this.getAccountLink(op.follower), `${actionsMap.get(op?.action) || ""}`, this.getMultipleAccountsListLink(op.following), `(${source.value.id})`]), json: JSON.stringify(target.value)}};
+  }
+
+  @WaxFormattable({matchInstanceOf: ReblogOperation}) 
+  formatReblogOperation({target, source}: IFormatFunctionArguments<{ value: custom_json }, {value: ReblogOperation}>) {
+    const {value: op} = target;
+    return {...target, value: {message: this.generateReactLink([this.getAccountLink(op.account), `reblogged`, this.getPermlink(op.author, op.permlink), `(${source.value.id})`]), json: JSON.stringify(target.value)}};
+  }
+
+  @WaxFormattable({matchInstanceOf: CommunityOperation}) 
+  formatCommunityOperation({target, source}: IFormatFunctionArguments<{ value: custom_json }, {value: CommunityOperation}>) {
+    const {value: op} = target;
+    return {...target, value: {message: this.generateReactLink([this.getMultipleAccountsListLink(op.accounts), `${op.data.action} to ${op.community}`, `(${source.value.id})`]), json: JSON.stringify(target.value)}};
   }
 
 
