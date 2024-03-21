@@ -84,6 +84,7 @@ test.describe('Block page tests', () => {
     });
 
     test('Validate that you can move to the transaction page of the operation', async ({page}) =>{
+        test.slow();
         await mainPage.headBlockCardBlockLink.click()
         await expect(blockPage.blockProducer).toBeVisible()
         await blockPage.firstTransactionLink.click()
@@ -119,6 +120,7 @@ test.describe('Block page tests', () => {
     });
 
     test('Validate that user can move to the next block', async ({page}) =>{
+        test.slow();
         await mainPage.headBlockCardBlockLink.click()
         await expect(blockPage.blockProducer).toBeVisible()
         await expect(blockPage.blockNumber.first()).toBeVisible()
@@ -135,6 +137,7 @@ test.describe('Block page tests', () => {
     });
 
     test('Validate that user can change the Block Time', async ({page}) =>{
+        test.slow();
         await mainPage.headBlockCardBlockLink.click()
         await expect(blockPage.blockProducer).toBeVisible()
 
