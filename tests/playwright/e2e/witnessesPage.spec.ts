@@ -362,10 +362,10 @@ test.describe("Witnesses page", () => {
     await expect(firstVoterName).not.toMatch(firstDescendingVoterName);
     // Filter by voter name
     await votersDialog.votersDialogHeaderVoterButton.click();
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(4000);
     const voterName: string = await votersDialog.votersDialogVoterName.first().textContent() || '';
     await votersDialog.votersDialogHeaderVoterButton.click();
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(4000);
     const filteredVoterName: string = await votersDialog.votersDialogVoterName.first().textContent() || '';
     await expect(voterName).not.toMatch(filteredVoterName);
     // Close the votes history dialog

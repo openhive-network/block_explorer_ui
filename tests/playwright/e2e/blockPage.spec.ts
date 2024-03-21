@@ -142,10 +142,10 @@ test.describe('Block page tests', () => {
         console.log(blockNumberOnBlockPage)
         await blockPage.dataTimePicker.click()
         await blockPage.firstDayInDataPicker.click()
-        await page.waitForTimeout(2000)
+        await page.waitForTimeout(4000)
 
         const blockNumberChangedDate = await (blockPage.blockNumber).inputValue()
-
+        await page.waitForTimeout(2000)
         await expect(parseInt(blockNumberChangedDate)).not.toEqual(parseInt(blockNumberOnBlockPage))
 
     });
