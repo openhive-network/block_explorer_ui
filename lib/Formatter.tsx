@@ -286,6 +286,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
 
   @WaxFormattable({matchProperty: "type", matchValue: "custom_json_operation"})
   formatCustomJsonOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: custom_json }>) {
+    console.log('SOURCE OP', op, target);
     const message = this.generateReactLink([this.getMultipleAccountsListLink(op.required_auths), this.getMultipleAccountsListLink(op.required_posting_auths), `made custom JSON (${op.id})`]);
     return {...target, value: {message, json: op.json}};
   }
@@ -294,9 +295,8 @@ class OperationsFormatter implements IWaxCustomFormatter {
   formatResourceCreditsOperation({target}: IFormatFunctionArguments<{ value: custom_json }, {value: ResourceCreditsOperation}>) {
     const {value: op} = target;
     if (op.rc.amount === "0")
-      return { ...target, value: this.generateReactLink([this.getAccountLink(op.from), `removed delegation for`, this.getMultipleAccountsListLink(op.delegatees)]) };
-
-    return { ...target, value: this.generateReactLink([this.getAccountLink(op.from), `delegated ${this.getFormattedAmount(op.rc)} to`, this.getMultipleAccountsListLink(op.delegatees)]) };
+      return { ...target, value: {message: this.generateReactLink([this.getAccountLink(op.from), `removed delegation for`, this.getMultipleAccountsListLink(op.delegatees)]), json: JSON.stringify(target.value)} };
+    return { ...target, value: {message: this.generateReactLink([this.getAccountLink(op.from), `delegated ${this.getFormattedAmount(op.rc)} to`, this.getMultipleAccountsListLink(op.delegatees)]), json: JSON.stringify(target.value)} };
   }
 
 
