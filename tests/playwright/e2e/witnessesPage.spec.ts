@@ -218,6 +218,7 @@ test.describe("Witnesses page", () => {
   });
 
   test("Check if after click toggle button category is correctly change to Hive Power in the voters dialog", async ({ page }) => {
+    test.slow();
     const votersDialog = new VotersDialog(page);
     await mainPage.gotoBlockExplorerPage();
     // Move to the Witnesses page

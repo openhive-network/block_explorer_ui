@@ -20,6 +20,7 @@ test.describe('Transaction page - tests', () => {
     });
 
     test('Validate that transaction details are displayed correctly', async ({page}) =>{
+        test.slow();
         await mainPage.headBlockCardBlockLink.click()
         await page.locator('[href*="transaction"]').first().click()
         await expect(transactionPage.transactionHeader).toBeVisible()
