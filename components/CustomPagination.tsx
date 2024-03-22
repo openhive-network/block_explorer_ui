@@ -49,13 +49,16 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
     onPageChange(currentPage - 1);
   };
 
+  const maxPage = Math.max(
+    Number(paginationRange[0]),
+    Number(paginationRange.at(-1))
+  );
+
   return (
     <Pagination className={className}>
       <PaginationContent className="md:gap-x-4">
         {paginationRange.length > 1 &&
-          (isMirrored
-            ? currentPage !== paginationRange[0]
-            : currentPage !== 1) && (
+          (isMirrored ? currentPage !== maxPage : currentPage !== 1) && (
             <PaginationItem
               onClick={isMirrored ? onNext : onPrevious}
               className="cursor-pointer"
@@ -94,9 +97,7 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
           }
         })}
         {paginationRange.length > 1 &&
-          (isMirrored
-            ? currentPage !== 1
-            : currentPage !== paginationRange[0]) && (
+          (isMirrored ? currentPage !== 1 : currentPage !== maxPage) && (
             <PaginationItem
               onClick={isMirrored ? onPrevious : onNext}
               className="cursor-pointer"
