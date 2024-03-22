@@ -11,6 +11,7 @@ export class AccountPage {
   readonly accountPostingJsonMetadataDropdown: Locator;
   readonly accountWitnessPropertiesDropdown: Locator;
   readonly accountWitnessVotesDropdown: Locator;
+  readonly userAvatar: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -23,6 +24,7 @@ export class AccountPage {
     this.accountPostingJsonMetadataDropdown = page.getByTestId('account-json-metadata-dropdown').last();
     this.accountWitnessPropertiesDropdown = page.getByTestId('properties-dropdown').last();
     this.accountWitnessVotesDropdown = page.getByTestId('witness-votes-dropdown');
+    this.userAvatar = page.getByRole('img', { name: 'avatar' });
   }
 
   async validateAccountPageIsLoaded() {
