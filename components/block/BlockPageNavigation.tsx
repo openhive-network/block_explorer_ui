@@ -16,7 +16,7 @@ import { convertBooleanArrayToIds, convertIdsToBooleanArray } from "@/lib/utils"
 interface BlockPageNavigationProps {
   blockNumber: number;
   goToBlock: (blockNumber: string) => void;
-  timeStamp: Date;
+  timeStamp: Date | undefined;
   setFilters: (filters: boolean[]) => void;
   operationTypes: Hive.OperationPattern[];
   selectedOperationIds: boolean[];
@@ -90,7 +90,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
     }
   };
 
-  const handleGoToBlockByTime = async (date: Date) => {
+  const handleGoToBlockByTime = async (date: Date | undefined) => {
     const blockByTime = await checkBlockByTime(moment(date).utc().toDate());
     if (blockByTime) {
       handleBlockChange(blockByTime.toString());
