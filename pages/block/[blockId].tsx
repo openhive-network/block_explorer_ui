@@ -182,9 +182,9 @@ export default function Block() {
       <Head>
         <title>{blockId} - Hive Explorer</title>
       </Head>
-      {!blockDate || !headBlockNum ? (
+      {!headBlockNum ? (
         <div>Loading ...</div>
-      ) : Number(blockId) <= headBlockNum ? (
+      ) : blockDetails?.block_num ? (
         <div
           className="w-full h-full"
           style={{ scrollMargin: "100px" }}
