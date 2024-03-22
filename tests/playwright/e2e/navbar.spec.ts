@@ -37,6 +37,7 @@ test.describe("Navbar tests", () => {
   });
 
   test("search for the specific user name and move to the account page", async ({ page }) => {
+    test.slow();
     // search for gtg user
     let accountPage = new AccountPage(page);
     const userName: string = 'gtg';

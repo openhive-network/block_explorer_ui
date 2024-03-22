@@ -1,3 +1,4 @@
+/*
 import Hive from "@/types/Hive";
 import {
   DeepReadonly,
@@ -73,3 +74,4 @@ class HiveAppsVisitor extends HiveAppsOperationVisitor<React.JSX.Element> {
 }
 
 export default HiveAppsVisitor;
+*/
