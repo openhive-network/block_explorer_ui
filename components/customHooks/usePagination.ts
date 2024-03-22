@@ -85,5 +85,5 @@ export const usePagination: (
     }
   }, [totalCount, pageSize, siblingCount, currentPage]);
 
-  return isMirrored ? paginationRange?.reverse() : paginationRange;
+  return isMirrored ? [...(paginationRange || [])].reverse() : paginationRange;
 };
