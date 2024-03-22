@@ -47,16 +47,18 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
   const [selectedKeys, setSelectedKeys] = useState<string[] | undefined>(
     undefined
   );
+  const [selectedIndex, setSelectedIndex] = useState<string>("");
 
   const searchRanges = useSearchRanges("lastBlocks");
   const { operationKeysData } = useOperationKeys(singleOperationTypeId);
   const { getRangesValues } = searchRanges;
 
-  const setKeysForProperty = (index: number | null) => {
-    if (index !== null && operationKeysData?.[index]) {
+  const setKeysForProperty = (index: number | undefined) => {
+    if (index !== undefined && operationKeysData?.[index]) {
       setSelectedKeys(operationKeysData[index]);
     } else {
       setSelectedKeys(undefined);
+      setSelectedIndex("");
       setFieldContent("");
     }
   };
@@ -73,6 +75,7 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
   };
 
   const onSelect = (newValue: string) => {
+    setSelectedIndex(newValue);
     setKeysForProperty(Number(newValue));
   };
 
@@ -146,7 +149,7 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
           </TooltipProvider>
         </div>
         <div className="flex">
-          <Select onValueChange={onSelect}>
+          <Select onValueChange={onSelect} value={selectedIndex}>
             <SelectTrigger
               className="justify-normal bg-gray-700"
               disabled={
@@ -196,7 +199,7 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
           {selectedKeys && !!selectedKeys.length && (
             <Button
               onClick={() => {
-                setKeysForProperty(null);
+                setKeysForProperty(undefined);
               }}
             >
               Clear
