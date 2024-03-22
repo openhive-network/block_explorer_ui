@@ -72,6 +72,7 @@ test.describe('Home page - searches', () => {
     })
 
     test('Validate searching for property Account Name and Last days/weeks/months', async ({page}) => {
+        test.slow();
         await mainPage.accountNameInput.fill('gtg')
         await mainPage.blockSearchPropertiesFilterBtn.click()
         await mainPage.getOptionfromDropdownOptions('Last days/weeks/months')

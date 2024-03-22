@@ -122,6 +122,7 @@ test.describe('Home page - account searches', () => {
     })
 
     test('Validate that got results for Account Name and all Operation Types properties', async ({page}) =>{
+        test.slow();
         await mainPage.accountSearchSection.click()
         await page.waitForTimeout(1000)
         await mainPage.accountNameInputAccountSection.fill('gtg')

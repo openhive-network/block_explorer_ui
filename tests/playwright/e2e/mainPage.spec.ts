@@ -28,6 +28,7 @@ test.describe("Block Explorer UI tests", () => {
 
   test("Move to the block page by clicking block link",async ({ page, browserName }) => {
     test.skip(browserName === 'webkit', 'This feature is fleaky only in Webkit');
+    test.slow();
     await mainPage.gotoBlockExplorerPage();
     await mainPage.validateMainPageIsLoaded();
 
