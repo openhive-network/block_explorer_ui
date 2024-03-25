@@ -286,10 +286,13 @@ test:stop:
 build_and_publish_image:
   stage: publish
   extends: .publish_docker_image_template
+  before_script:
+    - !reference [.publish_docker_image_template, before_script]
   script:
     - scripts/ci-helpers/build_and_publish_instance.sh
   tags:
     - public-runner-docker
+    - hived-for-tests
 
 buildkit_cache_cleanup:
   stage: cleanup
