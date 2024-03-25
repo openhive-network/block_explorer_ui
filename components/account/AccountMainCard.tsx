@@ -54,6 +54,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                 value={manabarsData?.upvote.percentageValue}
                 color="#00c040"
                 style={{ background: "#03182c" }}
+                data-testid='voting-power'
               />
               <p className="text-sm text-gray-400">{manabarsData?.upvote.current} / {manabarsData?.upvote.max}</p>
             </div>
@@ -64,6 +65,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                 value={manabarsData?.downvote.percentageValue}
                 color="#c01000"
                 style={{ background: "#03182c" }}
+                data-testid='downvote-power'
               />
               <p className="text-sm text-gray-400">{manabarsData?.downvote.current} / {manabarsData?.downvote.max}</p>
             </div>
@@ -74,6 +76,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                 value={manabarsData?.rc.percentageValue}
                 color="#cecafa"
                 style={{ background: "#03182c" }}
+                data-testid='resources-credits'
               />
               <p className="text-sm text-gray-400">{manabarsData?.rc.current} / {manabarsData?.rc.max}</p>
             </div>
@@ -86,7 +89,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
         <div className="flex justify-between p-4">
           <div className="text-center flex justify-center w-full gap-2">
             <span className="text-lg">Creation Date:</span>
-            <span className="text-lg">
+            <span className="text-lg" data-testid='creation-date'>
               {moment(accountDetails.created).format("DD/MM/YYYY")}
             </span>
           </div>

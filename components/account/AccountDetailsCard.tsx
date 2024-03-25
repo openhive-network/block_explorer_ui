@@ -78,7 +78,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
               key={index}
               className="flex justify-between m-1 whitespace-pre-line"
             >
-              <div className="border-b border-solid border-gray-700 flex justify-between py-1 mr-4">
+              <div className="border-b border-solid border-gray-700 flex justify-between py-1 mr-4" data-testid="properties-item">
                 {key}
               </div>
               <span className=" overflow-auto">

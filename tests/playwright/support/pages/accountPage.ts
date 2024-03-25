@@ -12,6 +12,10 @@ export class AccountPage {
   readonly accountWitnessPropertiesDropdown: Locator;
   readonly accountWitnessVotesDropdown: Locator;
   readonly userAvatar: Locator;
+  readonly votingPower: Locator;
+  readonly downvotePower: Locator;
+  readonly resourceCredits: Locator;
+  readonly creationDate: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -25,6 +29,10 @@ export class AccountPage {
     this.accountWitnessPropertiesDropdown = page.getByTestId('properties-dropdown').last();
     this.accountWitnessVotesDropdown = page.getByTestId('witness-votes-dropdown');
     this.userAvatar = page.getByRole('img', { name: 'avatar' });
+    this.votingPower = page.getByTestId('voting-power');
+    this.downvotePower = page.getByTestId('downvote-power');
+    this.resourceCredits = page.getByTestId('resources-credits');
+    this.creationDate = page.getByTestId('creation-date');
   }
 
   async validateAccountPageIsLoaded() {
