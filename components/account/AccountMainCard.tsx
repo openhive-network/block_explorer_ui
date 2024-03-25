@@ -6,6 +6,7 @@ import Hive from "@/types/Hive";
 import useManabars from "@/api/accountPage/useManabars";
 import { Loader2 } from "lucide-react";
 import Explorer from "@/types/Explorer";
+import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 
 interface AccountMainCardProps {
   accountDetails: Explorer.FormattedAccountDetails;
@@ -87,7 +88,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
           <div className="text-center flex justify-center w-full gap-2">
             <span className="text-lg">Creation Date:</span>
             <span className="text-lg">
-              {moment(accountDetails.created).format("DD/MM/YYYY")}
+              {formatAndDelocalizeTime(accountDetails.created)}
             </span>
           </div>
         </div>

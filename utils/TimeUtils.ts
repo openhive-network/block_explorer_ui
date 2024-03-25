@@ -6,9 +6,10 @@ export const convertUTCDateToLocalDate = (date: string | Date) => {
 
   const newDate = new Date(d.getTime() - d.getTimezoneOffset() * 60 * 1000);
 
-  return moment(newDate).format("YYYY/MM/DD HH:mm:ss");
+  return formatAndDelocalizeTime(date);;
 };
 
-export const formatAndDelocalizeTime = (date: string | Date) => {
+export const formatAndDelocalizeTime = (date?: string | Date): string => {
+  if (!date) return "";
   return moment(date).utc().format(config.baseMomentTimeFormat);
 }
