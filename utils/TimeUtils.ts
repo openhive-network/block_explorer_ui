@@ -6,10 +6,10 @@ export const convertUTCDateToLocalDate = (date: string | Date) => {
 
   const newDate = new Date(d.getTime() - d.getTimezoneOffset() * 60 * 1000);
 
-  return formatAndDelocalizeTime(date);;
+  return formatAndDelocalizeTime(newDate);
 };
 
 export const formatAndDelocalizeTime = (date?: string | Date): string => {
   if (!date) return "";
-  return moment(date).utc().format(config.baseMomentTimeFormat);
+  return moment(date).format(config.baseMomentTimeFormat);
 }
