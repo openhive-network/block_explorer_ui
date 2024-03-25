@@ -13,6 +13,7 @@ interface TimeInputProps {
   value: number;
   max?: number;
   min?: number;
+  increment: number;
   onChange: (value: number) => void;
   className?: string;
 }
@@ -23,24 +24,47 @@ const TimeInput: React.FC<TimeInputProps> = ({
   value,
   max = 59,
   min = 0,
+  increment,
   onChange,
   className,
 }) => {
   const [currentValue, setCurrentValue] = useState(numberToTimeString(value));
+  const [focused, setFocused] = useState(false);
 
-  const handleValueChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!/\D/.test(e.target.value)) {
-      let v = Number(e.target.value);
-      onChange(v);
-      if (max && Number(e.target.value) > max) {
+  const handleValueChange = (value: string) => {
+    if (!/\D/.test(value)) {
+      let v = Number(value);
+      if (max && Number(value) > max) {
         v = max;
       }
-      if (min && Number(e.target.value) < min) {
+      if (min && Number(value) < min) {
         v = min;
       }
+      onChange(v);
       setCurrentValue(numberToTimeString(v));
     }
   };
+
+  useEffect(() => {
+    const keyDownEvent = (event: KeyboardEvent) => {
+      if (focused) {
+        if (event.code === "ArrowUp") {
+          event.preventDefault();
+          handleValueChange((Number(currentValue) + increment).toString());
+        }
+        if (event.code === "ArrowDown") {
+          event.preventDefault();
+          handleValueChange((Number(currentValue) - increment).toString());
+        }
+      }
+    };
+
+    document.addEventListener("keydown", keyDownEvent);
+    return () => {
+      document.removeEventListener("keydown", keyDownEvent);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentValue, focused, increment]);
 
   useEffect(() => {
     setCurrentValue(numberToTimeString(value));
@@ -49,11 +73,13 @@ const TimeInput: React.FC<TimeInputProps> = ({
   return (
     <input
       value={currentValue}
-      onChange={handleValueChange}
+      onChange={(e) => handleValueChange(e.target.value)}
       className={cn(
         "outline-none bg-explorer-dark-gray text-white w-5 mx-1",
         className
       )}
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
     />
   );
 };
@@ -84,34 +110,6 @@ const TimePicker: React.FC<TimePickerProps> = ({
     }
   };
 
-  useEffect(() => {
-    const incrementSeconds = (interval: number) => {
-      let newTime = new Date();
-      newTime.setHours(hours);
-      newTime.setMinutes(minutes);
-      newTime.setSeconds(seconds + interval);
-      setHours(newTime.getHours());
-      setMinutes(newTime.getMinutes());
-      setSeconds(newTime.getSeconds());
-    };
-
-    const keyDownEvent = (event: KeyboardEvent) => {
-      if (event.code === "ArrowDown") {
-        event.preventDefault();
-        incrementSeconds(-S_INTERVAL);
-      }
-      if (event.code === "ArrowUp") {
-        event.preventDefault();
-        incrementSeconds(S_INTERVAL);
-      }
-    };
-
-    document.addEventListener("keydown", keyDownEvent);
-    return () => {
-      document.removeEventListener("keydown", keyDownEvent);
-    };
-  }, [hours, minutes, seconds]);
-
   return (
     <section
       className={cn("flex border border-white w-fit", className)}
@@ -119,14 +117,20 @@ const TimePicker: React.FC<TimePickerProps> = ({
     >
       <TimeInput
         value={hours}
+        increment={1}
         className="text-right"
         max={23}
         onChange={setHours}
       />
       {" : "}
-      <TimeInput value={minutes} className="text-right" onChange={setMinutes} />
+      <TimeInput
+        value={minutes}
+        increment={1}
+        className="text-right"
+        onChange={setMinutes}
+      />
       {" : "}
-      <TimeInput value={seconds} onChange={setSeconds} />
+      <TimeInput value={seconds} increment={S_INTERVAL} onChange={setSeconds} />
     </section>
   );
 };
