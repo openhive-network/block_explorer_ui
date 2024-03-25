@@ -39,7 +39,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
         <Button
           variant={"outline"}
           className={cn(
-            "w-[280px] justify-start text-left font-normal",
+            "w-full justify-start text-left font-normal",
             !date && "text-muted-foreground"
           )}
         >
@@ -51,12 +51,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
         side={side}
         className="w-auto p-0 text-white bg-explorer-dark-gray"
       >
-        <Calendar
-          mode="single"
-          selected={date}
-          onSelect={handleSelect}
-          initialFocus
-        />
+        <Calendar mode="single" selected={date} onSelect={handleSelect} />
         <div className="flex justify-center items-center mb-4">
           <TimePicker date={date} onSelect={handleSelect} />
         </div>

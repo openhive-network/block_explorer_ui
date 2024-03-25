@@ -10,21 +10,23 @@ interface TimePickerProps {
 }
 
 interface TimeInputProps {
+  value: number;
   max?: number;
   min?: number;
-  initialValue?: string;
   onChange: (value: number) => void;
   className?: string;
 }
 
+const S_INTERVAL = 3;
+
 const TimeInput: React.FC<TimeInputProps> = ({
+  value,
   max = 59,
   min = 0,
-  initialValue,
   onChange,
   className,
 }) => {
-  const [value, setValue] = useState(initialValue ?? "00");
+  const [currentValue, setCurrentValue] = useState(numberToTimeString(value));
 
   const handleValueChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (!/\D/.test(e.target.value)) {
@@ -36,13 +38,17 @@ const TimeInput: React.FC<TimeInputProps> = ({
       if (min && Number(e.target.value) < min) {
         v = min;
       }
-      setValue(numberToTimeString(v));
+      setCurrentValue(numberToTimeString(v));
     }
   };
 
+  useEffect(() => {
+    setCurrentValue(numberToTimeString(value));
+  }, [value]);
+
   return (
     <input
-      value={value}
+      value={currentValue}
       onChange={handleValueChange}
       className={cn(
         "outline-none bg-explorer-dark-gray text-white w-5 mx-1",
@@ -78,28 +84,49 @@ const TimePicker: React.FC<TimePickerProps> = ({
     }
   };
 
+  useEffect(() => {
+    const incrementSeconds = (interval: number) => {
+      let newTime = new Date();
+      newTime.setHours(hours);
+      newTime.setMinutes(minutes);
+      newTime.setSeconds(seconds + interval);
+      setHours(newTime.getHours());
+      setMinutes(newTime.getMinutes());
+      setSeconds(newTime.getSeconds());
+    };
+
+    const keyDownEvent = (event: KeyboardEvent) => {
+      if (event.code === "ArrowDown") {
+        event.preventDefault();
+        incrementSeconds(-S_INTERVAL);
+      }
+      if (event.code === "ArrowUp") {
+        event.preventDefault();
+        incrementSeconds(S_INTERVAL);
+      }
+    };
+
+    document.addEventListener("keydown", keyDownEvent);
+    return () => {
+      document.removeEventListener("keydown", keyDownEvent);
+    };
+  }, [hours, minutes, seconds]);
+
   return (
     <section
       className={cn("flex border border-white w-fit", className)}
       ref={timePickerRef}
     >
       <TimeInput
+        value={hours}
         className="text-right"
         max={23}
-        initialValue={numberToTimeString(hours)}
         onChange={setHours}
       />
       {" : "}
-      <TimeInput
-        className="text-right"
-        initialValue={numberToTimeString(minutes)}
-        onChange={setMinutes}
-      />
+      <TimeInput value={minutes} className="text-right" onChange={setMinutes} />
       {" : "}
-      <TimeInput
-        initialValue={numberToTimeString(seconds)}
-        onChange={setSeconds}
-      />
+      <TimeInput value={seconds} onChange={setSeconds} />
     </section>
   );
 };
