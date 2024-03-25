@@ -145,7 +145,10 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
           >
             <p> Block Time : </p>
             <div className="ml-2">
-              <DateTimePicker date={blockDate} setDate={setBlockDate} />
+              <DateTimePicker
+                date={blockDate || new Date()}
+                setDate={setBlockDate}
+              />
             </div>
           </div>
           <OperationTypesDialog

@@ -19,6 +19,7 @@ interface TimeInputProps {
 }
 
 const S_INTERVAL = 3;
+const HM_INTERVAL = 1;
 
 const TimeInput: React.FC<TimeInputProps> = ({
   value,
@@ -110,34 +111,6 @@ const TimePicker: React.FC<TimePickerProps> = ({
     }
   };
 
-  useEffect(() => {
-    const incrementSeconds = (interval: number) => {
-      let newTime = new Date();
-      newTime.setHours(hours);
-      newTime.setMinutes(minutes);
-      newTime.setSeconds(seconds + interval);
-      setHours(newTime.getHours());
-      setMinutes(newTime.getMinutes());
-      setSeconds(newTime.getSeconds());
-    };
-
-    const keyDownEvent = (event: KeyboardEvent) => {
-      if (event.code === "ArrowDown") {
-        event.preventDefault();
-        incrementSeconds(-S_INTERVAL);
-      }
-      if (event.code === "ArrowUp") {
-        event.preventDefault();
-        incrementSeconds(S_INTERVAL);
-      }
-    };
-
-    document.addEventListener("keydown", keyDownEvent);
-    return () => {
-      document.removeEventListener("keydown", keyDownEvent);
-    };
-  }, [hours, minutes, seconds]);
-
   return (
     <section
       className={cn("flex border border-white w-fit", className)}
@@ -145,7 +118,7 @@ const TimePicker: React.FC<TimePickerProps> = ({
     >
       <TimeInput
         value={hours}
-        increment={1}
+        increment={HM_INTERVAL}
         className="text-right"
         max={23}
         onChange={setHours}
@@ -153,7 +126,7 @@ const TimePicker: React.FC<TimePickerProps> = ({
       {" : "}
       <TimeInput
         value={minutes}
-        increment={1}
+        increment={HM_INTERVAL}
         className="text-right"
         onChange={setMinutes}
       />
