@@ -298,7 +298,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
   formatResourceCreditsOperation({target, source}: IFormatFunctionArguments<{ value: custom_json }, {value: ResourceCreditsOperation}>) {
     const {value: op} = target;
     if (op.rc.amount === "0")
-      return { ...target, value: {message: this.generateReactLink([this.getAccountLink(op.from), `removed delegation for`, this.getMultipleAccountsListLink(op.delegatees)]), json: JSON.stringify(target.value)} };
+      return { ...target, value: {message: this.generateReactLink([this.getAccountLink(op.from), `removed delegation for`, this.getMultipleAccountsListLink(op.delegatees), `(${source.value.id})`]), json: JSON.stringify(target.value)} };
     return { ...target, value: {message: this.generateReactLink([this.getAccountLink(op.from), `delegated ${this.getFormattedAmount(op.rc)} of RC for`, this.getMultipleAccountsListLink(op.delegatees), `(${source.value.id})`]), json: JSON.stringify(target.value)} };
   }
 
