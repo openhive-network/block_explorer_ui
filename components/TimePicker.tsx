@@ -57,7 +57,7 @@ const TimePicker: React.FC<TimePickerProps> = ({
   onSelect,
   className,
 }) => {
-  const [hours, setHours] = useState(date.getHours());
+  const [hours, setHours] = useState(date.getUTCHours());
   const [minutes, setMinutes] = useState(date.getMinutes());
   const [seconds, setSeconds] = useState(date.getSeconds());
   const timePickerRef = useRef(null);
@@ -66,7 +66,7 @@ const TimePicker: React.FC<TimePickerProps> = ({
 
   const handleTimeSelect = () => {
     let newDate = date;
-    newDate.setHours(hours);
+    newDate.setUTCHours(hours);
     newDate.setMinutes(minutes);
     newDate.setSeconds(seconds);
     onSelect(newDate);
@@ -80,7 +80,7 @@ const TimePicker: React.FC<TimePickerProps> = ({
       <TimeInput
         className="text-right"
         max={23}
-        initialValue={numberToTimeString(date.getHours())}
+        initialValue={numberToTimeString(date.getUTCHours())}
         onChange={setHours}
       />
       {" : "}
