@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { convertUTCDateToLocalDate } from "@/utils/UTCDateToLocalTime";
+import { convertUTCDateToLocalDate } from "@/utils/TimeUtils";
 
 interface SyncInfoProps {
   className?: string;

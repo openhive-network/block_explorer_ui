@@ -11,7 +11,7 @@ import {
   hiveParameters,
   blockchainDates,
 } from "./headBlockParameters";
-import { convertUTCDateToLocalDate } from "@/utils/UTCDateToLocalTime";
+import { convertUTCDateToLocalDate } from "@/utils/TimeUtils";
 import { useUserSettingsContext } from "../contexts/UserSettingsContext";
 import { Toggle } from "../ui/toggle";
 

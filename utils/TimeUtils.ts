@@ -1,3 +1,4 @@
+import { config } from "@/Config";
 import moment from "moment";
 
 export const convertUTCDateToLocalDate = (date: string | Date) => {
@@ -7,3 +8,7 @@ export const convertUTCDateToLocalDate = (date: string | Date) => {
 
   return moment(newDate).format("YYYY/MM/DD HH:mm:ss");
 };
+
+export const formatAndDelocalizeTime = (date: string | Date) => {
+  return moment(date).utc().format(config.baseMomentTimeFormat);
+}

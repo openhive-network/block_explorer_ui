@@ -5,7 +5,7 @@ import {
   hiveParameters,
   blockchainDates,
 } from "./headBlockParameters";
-import { convertUTCDateToLocalDate } from "@/utils/UTCDateToLocalTime";
+import { convertUTCDateToLocalDate } from "@/utils/TimeUtils";
 
 const cardNameMap = new Map([
   ["feedPrice", "Feed price"],
