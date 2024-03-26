@@ -196,11 +196,11 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
         paramValue: dataToURL(accountOperationsSearchProps?.toBlock),
       },
       {
-        paramName: "startDate",
+        paramName: "fromDate",
         paramValue: dataToURL(accountOperationsSearchProps?.startDate),
       },
       {
-        paramName: "endDate",
+        paramName: "toDate",
         paramValue: dataToURL(accountOperationsSearchProps?.endDate),
       },
       {

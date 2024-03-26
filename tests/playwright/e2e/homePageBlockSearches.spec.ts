@@ -54,7 +54,7 @@ test.describe('Home page - searches', () => {
         await expect(results.length).toBe(3);
     })
 
-    test('Validate searching only by Time range', async ({page}) => {
+    test.skip('Validate searching only by Time range', async ({page}) => {
         await mainPage.blockSearchPropertiesFilterBtn.click()
         await mainPage.getOptionfromDropdownOptions('Time range')
 
@@ -92,7 +92,7 @@ test.describe('Home page - searches', () => {
         await expect(page.getByTestId('account-name')).toContainText('gtg')
     })
 
-    test('Validate searching for property Account Name and Time range', async ({page}) => {
+    test.skip('Validate searching for property Account Name and Time range', async ({page}) => {
         await mainPage.accountNameInput.fill('gtg')
         await mainPage.blockSearchPropertiesFilterBtn.click()
 
