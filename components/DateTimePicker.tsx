@@ -30,7 +30,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
       date.getUTCHours()
     )}:${numberToTimeString(date.getUTCMinutes())}:${numberToTimeString(
       date.getUTCSeconds()
-    )}`;
+    )} UTC`;
   };
 
   return (
