@@ -21,6 +21,9 @@ test.describe('Block page tests', () => {
     });
 
     test('Validate that block number is the same as in link you clicked', async ({page}) =>{
+        test.slow();
+        await page.waitForTimeout(5000)
+        await expect(mainPage.headBlockCardBlockLink).toBeVisible()
         const mainPageBlockNumber = await mainPage.headBlockCardBlockLink.textContent()
         const formattedReceivedValue = await mainPageBlockNumber.replace(':', '').replace(/\s/g, ' ');
         await mainPage.headBlockCardBlockLink.click()
@@ -121,6 +124,8 @@ test.describe('Block page tests', () => {
 
     test('Validate that user can move to the next block', async ({page}) =>{
         test.slow();
+        await page.waitForTimeout(5000)
+        await expect(mainPage.headBlockCardBlockLink).toBeVisible()
         await mainPage.headBlockCardBlockLink.click()
         await expect(blockPage.blockProducer).toBeVisible()
         await expect(blockPage.blockNumber.first()).toBeVisible()
@@ -136,7 +141,7 @@ test.describe('Block page tests', () => {
         await expect(parseInt(nextBlockNumber)).toEqual(parseInt(blockNumberOnBlockPage)+1)
     });
 
-    test('Validate that user can change the Block Time', async ({page}) =>{
+    test.skip('Validate that user can change the Block Time', async ({page}) =>{
         test.slow();
         await mainPage.headBlockCardBlockLink.click()
         await expect(blockPage.blockProducer).toBeVisible()

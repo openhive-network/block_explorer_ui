@@ -1,9 +1,5 @@
 import { useEffect, useState, useRef } from "react";
 import { ChevronRight, ChevronLeft } from "lucide-react";
-import "react-datetime-picker/dist/DateTimePicker.css";
-import "react-calendar/dist/Calendar.css";
-import "react-clock/dist/Clock.css";
-import DateTimePicker from "react-datetime-picker";
 import Hive from "@/types/Hive";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
@@ -11,7 +7,11 @@ import OperationTypesDialog from "@/components/OperationTypesDialog";
 import useBlockByTime from "@/api/common/useBlockByTime";
 import moment from "moment";
 import { getOperationButtonTitle } from "@/utils/UI";
-import { convertBooleanArrayToIds, convertIdsToBooleanArray } from "@/lib/utils";
+import {
+  convertBooleanArrayToIds,
+  convertIdsToBooleanArray,
+} from "@/lib/utils";
+import DateTimePicker from "../DateTimePicker";
 
 interface BlockPageNavigationProps {
   blockNumber: number;
@@ -74,12 +74,11 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [block]);
 
-  
   useEffect(() => {
     handleGoToBlockByTime(blockDate);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [blockDate]);
-  
+
   const handleBlockChange = (blockNumber: string) => {
     if (Number(blockNumber) > 0) {
       if (blockNumber === block) {
@@ -99,11 +98,14 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
 
   const handleSetFilters = (filters: number[]) => {
     setFilters(convertIdsToBooleanArray(filters));
-  }
+  };
 
   return (
     <section className="w-full flex flex-col items-center text-md mb-2 md:mb-4">
-      <div className="w-full md:w-4/6 pb-4 bg-explorer-dark-gray text-center text-white rounded shadow-xl border border-explorer-bg-start" data-testid="block-page-search">
+      <div
+        className="w-full md:w-4/6 pb-4 bg-explorer-dark-gray text-center text-white rounded shadow-xl border border-explorer-bg-start"
+        data-testid="block-page-search"
+      >
         <div className="text-2xl font-semibold my-2">Search</div>
         <div className="w-full flex justify-between items-center md:px-8 flex-wrap gap-y-4">
           <div className="flex justify-center items-center flex-wrap">
@@ -141,26 +143,23 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
             className="flex flex-wrap items-center justify-center"
             ref={datePickerRef}
           >
-            Block Time :{" "}
-            <DateTimePicker
-              data-testid="date-time-picker"
-              value={blockDate}
-              onChange={(date) => setBlockDate(date!)}
-              className="text-explorer-turquoise ml-2 md:ml-4 border border-explorer-turquoise"
-              calendarClassName="text-gray-800"
-              format="yyyy/MM/dd HH:mm:ss"
-              clearIcon={null}
-              calendarIcon={null}
-              disableClock
-              showLeadingZeros={false}
-            />
+            <p> Block Time : </p>
+            <div className="ml-2">
+              <DateTimePicker
+                date={blockDate || new Date()}
+                setDate={setBlockDate}
+              />
+            </div>
           </div>
           <OperationTypesDialog
             operationTypes={operationTypes}
             setSelectedOperations={handleSetFilters}
             selectedOperations={convertBooleanArrayToIds(selectedOperationIds)}
             buttonClassName="bg-gray-500"
-            triggerTitle={getOperationButtonTitle(convertBooleanArrayToIds(selectedOperationIds), operationTypes)}
+            triggerTitle={getOperationButtonTitle(
+              convertBooleanArrayToIds(selectedOperationIds),
+              operationTypes
+            )}
           />
         </div>
       </div>
