@@ -6,6 +6,7 @@ import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import moment from "moment";
 import { config } from "@/Config";
 import Explorer from "@/types/Explorer";
+import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 
 interface BlockDetailsProps {
   virtualOperationsTypesCounters?: Explorer.OperationCounter[];
@@ -36,7 +37,7 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
       >
         <p>Produced at: </p>
         <p>
-          {moment(blockDetails?.created_at).format(config.baseMomentTimeFormat)}
+          {formatAndDelocalizeTime(blockDetails?.created_at)}
         </p>
         <p>by</p>
         <Link

@@ -21,6 +21,7 @@ import useWitnessVotesHistory from "@/api/common/useWitnessVotesHistory";
 import JumpToPage from "../JumpToPage";
 import CustomPagination from "../CustomPagination";
 import DateTimePicker from "../DateTimePicker";
+import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 
 type VotersDialogProps = {
   accountName: string;
@@ -170,13 +171,8 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                         index % 2 === 0 ? "bg-gray-800" : "bg-gray-900"
                       }`}
                     >
-                      <TableCell
-                        className="sticky left-0"
-                        data-testid="date-format"
-                      >
-                        {moment(vote.timestamp).format(
-                          config.baseMomentTimeFormat
-                        )}
+                      <TableCell className="sticky left-0" data-testid="date-format">
+                        {formatAndDelocalizeTime(vote.timestamp)}
                       </TableCell>
                       <TableCell
                         className="text-explorer-turquoise"

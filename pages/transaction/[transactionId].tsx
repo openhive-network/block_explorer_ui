@@ -13,6 +13,7 @@ import { useOperationsFormatter } from "@/utils/Hooks";
 import Head from "next/head";
 import OperationsTable from "@/components/OperationsTable";
 import { convertTransactionResponseToTableOperations } from "@/lib/utils";
+import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 
 const displayTransactionData = (
   key: string,
@@ -77,10 +78,7 @@ export default function Transaction() {
                 <div data-testid="transaction-header-date">
                   Date
                   <span className="text-explorer-turquoise">
-                    {" " +
-                      moment(trxData.timestamp).format(
-                        config.baseMomentTimeFormat
-                      )}
+                    {" " + formatAndDelocalizeTime(trxData.timestamp)}
                   </span>
                 </div>
               </div>
