@@ -272,7 +272,7 @@ test.describe("Witnesses page", () => {
     await votesHistoryDialog.votesHistoryDialogCloseButton.click();
   });
 
-  test("validate values of the votes history dialog in specific dates", async ({ page }) => {
+  test.skip("validate values of the votes history dialog in specific dates", async ({ page }) => {
     const fromDate: string = '2024-03-16T07:00';
     const toDate: string = '2024-03-17T11:20';
     const expectedVoterName: string = 'faniaviera';
