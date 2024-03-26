@@ -36,7 +36,7 @@ const TimeInput: React.FC<TimeInputProps> = ({
     if (!/\D/.test(value)) {
       let v = Number(value);
       if (max && Number(value) > max) {
-        v = max;
+        v = min;
       }
       if (min && Number(value) < min) {
         v = min;
