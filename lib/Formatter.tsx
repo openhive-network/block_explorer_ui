@@ -90,6 +90,7 @@ import {
 import moment from "moment";
 import { formatPercent } from "./utils";
 import Link from "next/link";
+import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 
 class OperationsFormatter implements IWaxCustomFormatter {
   
@@ -104,7 +105,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
 
 
   private getFormattedDate(time: Date | string) : string {
-    return moment(time).format(config.baseMomentTimeFormat);
+    return formatAndDelocalizeTime(time);
   }
 
   private getFormattedMultipleAssets(assets: DeepReadonly<Hive.Supply[]>): string {

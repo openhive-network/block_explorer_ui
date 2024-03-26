@@ -11,7 +11,6 @@ import {
   hiveParameters,
   blockchainDates,
 } from "./headBlockParameters";
-import { convertUTCDateToLocalDate } from "@/utils/UTCDateToLocalTime";
 import { useUserSettingsContext } from "../contexts/UserSettingsContext";
 import { Toggle } from "../ui/toggle";
 
@@ -111,9 +110,8 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
       <div>
         Blockchain Time :{" "}
         {!!headBlockCardData?.headBlockDetails.blockchainTime &&
-          convertUTCDateToLocalDate(
-            headBlockCardData?.headBlockDetails.blockchainTime
-          )}
+          headBlockCardData?.headBlockDetails.blockchainTime
+        }
       </div>
       <div>
         <div className="text-center my-4 text-xl">Properties</div>

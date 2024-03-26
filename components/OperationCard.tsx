@@ -1,5 +1,6 @@
 import { config } from "@/Config";
 import Hive from "@/types/Hive";
+import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import moment from "moment";
 import Link from "next/link";
 
@@ -49,7 +50,7 @@ const OperationCard: React.FC<OperationCardProps> = ({
           <div className="my-1">
             Date:{" "}
             <span className="text-explorer-turquoise">
-              {moment(date).format(config.baseMomentTimeFormat)}
+              {formatAndDelocalizeTime(date)}
             </span>
           </div>
         </div>
