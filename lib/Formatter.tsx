@@ -199,7 +199,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
   @WaxFormattable({matchProperty: "type", matchValue: "limit_order_create_operation"})
   formatLimitOrderCreateOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: limit_order_create }>) {
     const expiration = op.fill_or_kill ? "" : `, expiration: ${this.getFormattedDate(op.expiration)}`;
-    const message = this.generateReactLink([this.getAccountLink(op.owner), "created limit order to sell", this.getFormattedAmount(op.amount_to_sell), "for", this.getFormattedAmount(op.min_to_receive), expiration])
+    const message = this.generateReactLink([this.getAccountLink(op.owner), "wants to sell", this.getFormattedAmount(op.amount_to_sell), "for at least", this.getFormattedAmount(op.min_to_receive), `, ID: ${op.orderid}`, expiration])
     return {...target, value: message};
   }
 
@@ -580,7 +580,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
 
   @WaxFormattable({matchProperty: "type", matchValue: "fill_order_operation"})
   formatFillOrderOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: fill_order }>) {
-    const message = this.generateReactLink([this.getAccountLink(op.current_owner), `paid ${this.getFormattedAmount(op.current_pays)} for`, this.getAccountLink(op.open_owner), ` and received ${this.getFormattedAmount(op.open_pays)} (IDs: ${op.current_orderid} -> ${op.open_orderid})`]);
+    const message = this.generateReactLink([this.getAccountLink(op.current_owner), `paid ${this.getFormattedAmount(op.current_pays)} for ${this.getFormattedAmount(op.open_pays)} from`, this.getAccountLink(op.open_owner), `(IDs: ${op.current_orderid} -> ${op.open_orderid})`]);
     return {...target, value: message};
   }
 
@@ -760,7 +760,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
 
   @WaxFormattable({matchProperty: "type", matchValue: "limit_order_cancelled_operation"})
   formatLimitOrderCancelledOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: limit_order_cancelled }>) {
-    const message = this.generateReactLink([`Transfer ${op.orderid} by`, this.getAccountLink(op.seller), ` was cancelled and ${this.getFormattedAmount(op.amount_back)} were sent back`]);
+    const message = this.generateReactLink([`Order ${op.orderid} by`, this.getAccountLink(op.seller), ` was cancelled and ${this.getFormattedAmount(op.amount_back)} was sent back`]);
     return {...target, value: message};
   }
 
