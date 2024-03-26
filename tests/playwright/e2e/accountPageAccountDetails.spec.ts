@@ -83,16 +83,13 @@ test.describe('Account page - account details tests', () => {
         await expect(creationDate).toEqual(formattedDate)
     })
 
-    // test('Check if after click Properties button the list is expanded and have correct information', async ({page}) =>{
-    //     await expect(mainPage.headBlockCardWitnessLink).toBeVisible()
-    //     await expect(mainPage.headBlockCardWitnessName).toBeVisible()
-    //     await expect(mainPage.headBlockCardWitnessName).toBeEnabled()
-    //     await mainPage.headBlockCardWitnessLink.click()
-        
-    //     await accountPage.accountPropertiesDropdown.click()
-    //     await expect(page.getByTestId('[data-testid="properties-item"]').first()).toBeVisible()
-    //     const propertiesrItemsText = await page.getByTestId('[data-testid="properties-item"]').allInnerTexts()
-
-    //     console.log(propertiesrItemsText)
-    // })
+    test('Check if after click Properties button the list is expanded and have correct information', async ({page}) =>{
+        await expect(mainPage.headBlockCardWitnessLink).toBeVisible()
+        await expect(mainPage.headBlockCardWitnessName).toBeVisible()
+        await expect(mainPage.headBlockCardWitnessName).toBeEnabled()
+        await mainPage.headBlockCardWitnessLink.click()
+        await expect(page.locator('.flex-column').first()).toBeHidden()
+        await accountPage.accountPropertiesDropdown.click()
+        await expect(page.locator('.flex-column').first()).toBeInViewport()
+    })
 });
