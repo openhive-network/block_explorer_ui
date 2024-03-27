@@ -2,10 +2,7 @@ import { config } from "@/Config";
 import moment from "moment";
 
 export const convertUTCDateToLocalDate = (date: string | Date) => {
-  const d = new Date(date);
-
-  const newDate = new Date(d.getTime() - d.getTimezoneOffset() * 60 * 1000);
-
+  const newDate = new Date(date);
   return formatAndDelocalizeTime(newDate);
 };
 
