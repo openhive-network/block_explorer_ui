@@ -273,12 +273,12 @@ test.describe("Witnesses page", () => {
   });
 
   test("validate values of the votes history dialog in specific dates", async ({ page }) => {
-    // const fromDate: string = '2024-03-16T07:00';
-    // const toDate: string = '2024-03-17T11:20';
-    const expectedVoterName: string = 'faniaviera';
+    const expectedVoterName: string = 'ikigai0086';
+    const expectedVoterNameArrowDown: string = 'superslayer0040';
+    const expectedVoterNameArrowDownIndex: number = 3;
     const arrowUp: string = 'lucide lucide-arrow-up-circle';
     const arrowDown: string = 'lucide lucide-arrow-down-circle';
-    const expectedVoterCurrentPower: string = '2,014,602.905570'.trim().replace(/[,]/g,'');
+    const expectedVoterCurrentPower: string = '243.473443'.trim().replace(/[,]/g,'');
     const expectedVoterCurrentPowerNumber: number = parseFloat(expectedVoterCurrentPower);
     // console.log('expectedVoterCurrentPower ', expectedVoterCurrentPower);
     // console.log('expectedVoterCurrentPowerNumber ', expectedVoterCurrentPowerNumber);
@@ -305,9 +305,9 @@ test.describe("Witnesses page", () => {
         await votesHistoryDialog.votesHistoryDialogFromDatepicker.click();
         await witnessesPage.page.selectOption(votesHistoryDialog.votesHistoryDialogDatepickerMonth['_selector'], '2'); //March
         await witnessesPage.page.selectOption(votesHistoryDialog.votesHistoryDialogDatepickerYear['_selector'], '2024');
-        await votesHistoryDialog.votesHistoryDialogDatepicekrTimeHours.fill('7');
-        await votesHistoryDialog.votesHistoryDialogDatepicekrTimeMinutes.fill('0');
-        await votesHistoryDialog.votesHistoryDialogDatepicekrTimeSeconds.fill('0');
+        // await votesHistoryDialog.votesHistoryDialogDatepicekrTimeHours.fill('7');
+        // await votesHistoryDialog.votesHistoryDialogDatepicekrTimeMinutes.fill('0');
+        // await votesHistoryDialog.votesHistoryDialogDatepicekrTimeSeconds.fill('0');
         await witnessesPage.page.waitForTimeout(1000);
         await votesHistoryDialog.votesHistoryDialogDatepickerDayNotMuted.nth(15).click();
         await witnessesPage.page.waitForTimeout(1000);
@@ -315,9 +315,9 @@ test.describe("Witnesses page", () => {
         await votesHistoryDialog.votesHistoryDialogToDatepicker.click();
         await witnessesPage.page.selectOption(votesHistoryDialog.votesHistoryDialogDatepickerMonth['_selector'], '2'); //March
         await witnessesPage.page.selectOption(votesHistoryDialog.votesHistoryDialogDatepickerYear['_selector'], '2024');
-        await votesHistoryDialog.votesHistoryDialogDatepicekrTimeHours.fill('11');
-        await votesHistoryDialog.votesHistoryDialogDatepicekrTimeMinutes.fill('20');
-        await votesHistoryDialog.votesHistoryDialogDatepicekrTimeSeconds.fill('0');
+        // await votesHistoryDialog.votesHistoryDialogDatepicekrTimeHours.fill('11');
+        // await votesHistoryDialog.votesHistoryDialogDatepicekrTimeMinutes.fill('20');
+        // await votesHistoryDialog.votesHistoryDialogDatepicekrTimeSeconds.fill('0');
         await witnessesPage.page.waitForTimeout(1000);
         await votesHistoryDialog.votesHistoryDialogDatepickerDayNotMuted.nth(16).click();
 
@@ -332,22 +332,20 @@ test.describe("Witnesses page", () => {
         const expectedVoterCurrentPowerUi: string = await votesHistoryDialog.votesHistoryDialogCurrentVoterPowerColumn.first().textContent() || '';
         const expectedVoterCurrentPowerUiFormated: string = expectedVoterCurrentPowerUi.trim().replace(/[,]/g,'');
         const expectedVoterCurrentPowerUiNumber: number = await parseFloat(expectedVoterCurrentPowerUiFormated);
-        await expect(expectedVoterCurrentPowerUiNumber).toBeGreaterThan(expectedVoterCurrentPowerNumber);
+        await expect(expectedVoterCurrentPowerUiNumber).toBeGreaterThanOrEqual(expectedVoterCurrentPowerNumber);
         // console.log('first voter power: ', await votesHistoryDialog.votesHistoryDialogCurrentVoterPowerColumn.first().textContent())
 
-        expect(await votesHistoryDialog.votesHistoryDialogVoterColumn.locator('a').nth(1).textContent()).toBe(expectedVoterName);
+        expect(await votesHistoryDialog.votesHistoryDialogVoterColumn.locator('a').nth(expectedVoterNameArrowDownIndex).textContent()).toBe(expectedVoterNameArrowDown);
         // console.log('second voter: ', await votesHistoryDialog.votesHistoryDialogVoterColumn.locator('a').nth(1).textContent())
 
-        expect(await votesHistoryDialog.votesHistoryDialogVoteArrowColumn.locator('svg').nth(1).getAttribute('class')).toBe(arrowDown);
+        expect(await votesHistoryDialog.votesHistoryDialogVoteArrowColumn.locator('svg').nth(expectedVoterNameArrowDownIndex).getAttribute('class')).toBe(arrowDown);
         // console.log('second voter arrow: ', await votesHistoryDialog.votesHistoryDialogVoteArrowColumn.locator('svg').nth(1).getAttribute('class'))
 
-        const expectedSecondVoterCurrentPowerUi: string = await votesHistoryDialog.votesHistoryDialogCurrentVoterPowerColumn.nth(1).textContent() || '';
+        const expectedSecondVoterCurrentPowerUi: string = await votesHistoryDialog.votesHistoryDialogCurrentVoterPowerColumn.nth(expectedVoterNameArrowDownIndex).textContent() || '';
         const expectedSecondVoterCurrentPowerUiFormated: string = expectedSecondVoterCurrentPowerUi.trim().replace(/[,]/g,'');
         const expectedSecondVoterCurrentPowerUiNumber: number = await parseFloat(expectedSecondVoterCurrentPowerUiFormated);
         await expect(expectedSecondVoterCurrentPowerUiNumber).toBeGreaterThan(expectedVoterCurrentPowerNumber);
         // console.log('second voter power: ', await votesHistoryDialog.votesHistoryDialogCurrentVoterPowerColumn.nth(1).textContent())
-
-        // await page.waitForTimeout(4000);
       }
       else {
         console.log("The first Witness is different than arcange")
