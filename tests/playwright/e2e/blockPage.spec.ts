@@ -152,7 +152,7 @@ test.describe('Block page tests', () => {
         console.log(blockNumberOnBlockPage)
         await blockPage.dataTimePicker.click()
 
-        const datePickerDayNotMuted = page.locator('[data-testid="calender"] button:not([class*="text-muted-foreground"])').nth(10);
+        const datePickerDayNotMuted = page.locator('[data-testid="datepicker-calender"] button:not([class*="text-muted-foreground"])').nth(10);
         await datePickerDayNotMuted.click();
       
         await page.waitForTimeout(4000)
