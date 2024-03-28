@@ -55,7 +55,7 @@ export class BlockPage {
     this.operationsJsonFormat = page.locator('pre');
     this.blockNumber = page.getByTestId('block-number-search');
     this.nextBlockBtn = page.getByTestId('next-block-btn');
-    this.dataTimePicker = page.getByTestId("date-time-picker");
+    this.dataTimePicker = page.getByTestId("date-picker-trigger");
     this.firstDayInDataPicker = page.locator('.react-calendar__tile.react-calendar__month-view__days__day').first();
     this.toVirtualOpsBtn = page.getByRole('button', { name: 'To Virtual Ops' });
     this.virtualOperationsHeader = page.getByTestId('block-page-operation-list').getByText('Virtual Operations');

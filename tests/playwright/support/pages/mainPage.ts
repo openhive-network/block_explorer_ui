@@ -54,6 +54,8 @@ export class MainPage {
   readonly detailedOperationCard: Locator;
   readonly commentPermlinkInout: Locator;
   readonly currentWitnessName: Locator;
+  readonly datePickerTriggerFromDate: Locator;
+  readonly datePickerTriggerToDate: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -108,6 +110,8 @@ export class MainPage {
     this.detailedOperationCard = page.getByTestId('detailed-operation-card')
     this.commentPermlinkInout = page.getByTestId('permlink-input')
     this.currentWitnessName = page.getByTestId('current-witness-name')
+    this.datePickerTriggerFromDate = page.locator('[data-testid="date-picker-trigger"]').first();
+    this.datePickerTriggerToDate = page.locator('[data-testid="date-picker-trigger"]').last();
   }
 
   async gotoBlockExplorerPage() {
@@ -138,21 +142,6 @@ export class MainPage {
 
   async getOptionfromDropdownOptions(text: string) {
     this.blockSearchPropertiesOption.getByText(text).click()
-  }
-
-  async createDate(number: number, month: string) {
-        await this.datetimePicker.click()
-        await this.calendarNavigationLabel.click()
-        const buttonSelector = this.calendarNavigationNextButton
-        const numberOfClicks = number;
-
-        for (let i = 0; i < numberOfClicks; i++) {
-
-        await buttonSelector.click();
-        }
-
-        await this.page.getByText(month).click()
-        await this.monthViewDays.click()
   }
 
   async choosePropertyOption(option: string){
