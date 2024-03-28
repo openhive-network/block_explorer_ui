@@ -10,7 +10,10 @@ import { useOperationsFormatter, useURLParams } from "@/utils/Hooks";
 import CommentsSearch from "@/components/home/searches/CommentsSearch";
 import { formatAccountName } from "@/utils/StringUtils";
 import useSearchRanges from "@/components/searchRanges/useSearchRanges";
-import { convertBooleanArrayToIds, convertCommentsOperationResultToTableOperations } from "@/lib/utils";
+import {
+  convertBooleanArrayToIds,
+  convertCommentsOperationResultToTableOperations,
+} from "@/lib/utils";
 import OperationsTable from "@/components/OperationsTable";
 import Hive from "@/types/Hive";
 import { getPageUrlParams } from "@/lib/utils";
@@ -60,7 +63,9 @@ const Comments: React.FC = () => {
     if (!!props.accountName) {
       const searchProps = {
         ...(props as Explorer.CommentSearchProps),
-        operationTypes: props.filters ? convertBooleanArrayToIds(props.filters) : undefined,
+        operationTypes: props.filters
+          ? convertBooleanArrayToIds(props.filters)
+          : undefined,
       };
       setCommentSearchProps(searchProps);
       setPreviousCommentSearchProps(searchProps);
@@ -103,18 +108,20 @@ const Comments: React.FC = () => {
       className="w-full md:w-4/5"
       data-testid="comments-search-comments-page"
     >
-      <div className="bg-explorer-dark-gray text-white p-4 rounded">
-        <CommentsSearch
-          startCommentsSearch={startCommentSearch}
-          operationsTypes={operationsTypes}
-          data={paramsState}
-          loading={commentSearch.commentSearchDataLoading}
-          searchRanges={searchRanges}
-        />
+      <div className="px-2 md:px-0">
+        <div className="bg-explorer-dark-gray text-white p-4 rounded">
+          <CommentsSearch
+            startCommentsSearch={startCommentSearch}
+            operationsTypes={operationsTypes}
+            data={paramsState}
+            loading={commentSearch.commentSearchDataLoading}
+            searchRanges={searchRanges}
+          />
+        </div>
       </div>
       {commentSearch.commentSearchData && (
         <>
-          <div className="w-full flex justify-center items-center mt-4">
+          <div className="w-full flex justify-center items-center mt-4 mb-2">
             <CustomPagination
               currentPage={paramsState.page}
               totalCount={commentSearch.commentSearchData?.total_operations}
@@ -128,14 +135,20 @@ const Comments: React.FC = () => {
               />
             </div>
           </div>
-          {
-            formattedOperations?.operations_result ?
-            <OperationsTable operations={convertCommentsOperationResultToTableOperations(formattedOperations?.operations_result)} className="text-white" />
-            :
+          {formattedOperations?.operations_result ? (
+            <div className="px-2 md:px-0">
+              <OperationsTable
+                operations={convertCommentsOperationResultToTableOperations(
+                  formattedOperations?.operations_result
+                )}
+                className="text-white"
+              />
+            </div>
+          ) : (
             <div className="flex justify-center w-full text-black">
               No operations matching given criteria
             </div>
-          }
+          )}
         </>
       )}
     </div>
