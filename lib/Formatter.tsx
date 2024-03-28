@@ -677,7 +677,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
   @WaxFormattable({matchProperty: "type", matchValue: "effective_comment_vote_operation"})
   formatEffectiveCommentVoteOperation({ source: { value: op }, target }: IFormatFunctionArguments<{ value: effective_comment_vote }>) {
     const message = this.generateReactLink([this.getAccountLink(op.voter), "voted for", this.getPermlink(op.author, op.permlink), `and generated ${this.getFormattedAmount(op.pending_payout)} pending payout`]);
-    return {...target, value: ""};
+    return {...target, value: message};
   }
 
   @WaxFormattable({matchProperty: "type", matchValue: "ineffective_delete_comment_operation"})
