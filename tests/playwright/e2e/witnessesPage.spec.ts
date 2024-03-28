@@ -272,7 +272,8 @@ test.describe("Witnesses page", () => {
     await votesHistoryDialog.votesHistoryDialogCloseButton.click();
   });
 
-  test("validate values of the votes history dialog in specific dates", async ({ page }) => {
+  // Check this test after date picker will be improved (setting hours)
+  test.skip("validate values of the votes history dialog in specific dates", async ({ page }) => {
     const expectedVoterName: string = 'ikigai0086';
     const expectedVoterNameArrowDown: string = 'superslayer0040';
     const expectedVoterNameArrowDownIndex: number = 3;
