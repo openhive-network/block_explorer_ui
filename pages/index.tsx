@@ -18,8 +18,11 @@ import Head from "next/head";
 export default function Home() {
   const { settings } = useUserSettingsContext();
   const witnesses = useWitnesses(config.witnessesPerPages.home).witnessesData;
-  const headBlockNum = useHeadBlockNumber(settings.liveData).headBlockNumberData;
-  const dynamicGlobalQueryData = useDynamicGlobal(headBlockNum).dynamicGlobalData;
+  const headBlockNum = useHeadBlockNumber(
+    settings.liveData
+  ).headBlockNumberData;
+  const dynamicGlobalQueryData =
+    useDynamicGlobal(headBlockNum).dynamicGlobalData;
   const headBlockData = useHeadBlock(headBlockNum).headBlockData;
   const blockOperations = useBlockOperations(
     headBlockNum || 0,
@@ -28,10 +31,10 @@ export default function Home() {
 
   return (
     <>
-    <Head>
-      <title>Hive Explorer</title>
-    </Head>
-      <div className="grid grid-cols-3 text-white mx-4 md:mx-8 w-full">
+      <Head>
+        <title>Hive Explorer</title>
+      </Head>
+      <div className="grid grid-cols-3 text-white px-2 md:mx-8 w-full">
         <HeadBlockCard
           headBlockCardData={dynamicGlobalQueryData}
           transactionCount={blockOperations?.operations_result?.length}
@@ -48,9 +51,13 @@ export default function Home() {
           <div className="text-lg text-center">Top Witnesses</div>
           <Table>
             <TableBody>
-              { witnesses &&
+              {witnesses &&
                 witnesses.map((witness, index) => (
-                  <TableRow className=" text-base" key={index} data-testid="witnesses-name">
+                  <TableRow
+                    className=" text-base"
+                    key={index}
+                    data-testid="witnesses-name"
+                  >
                     <TableCell>{index + 1}</TableCell>
                     <TableCell>
                       <Link
@@ -76,7 +83,9 @@ export default function Home() {
             </TableBody>
           </Table>
           <div className="flex justify-center align-center text-lg hover:text-explorer-turquoise">
-            <Link data-testid="see-more-btn" href={"/witnesses"}>See More</Link>
+            <Link data-testid="see-more-btn" href={"/witnesses"}>
+              See More
+            </Link>
           </div>
         </div>
       </div>

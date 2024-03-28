@@ -222,11 +222,13 @@ export default function Block() {
               <Loader2 className="animate-spin mt-1 h-16 w-16 ml-3 ... " />
             </div>
           ) : settings.rawJsonView ? (
-            <JSONView
-              data-testid="json-view"
-              json={rawBlockdata || {}}
-              className="w-full md:w-[962px] mt-6 m-auto py-2 px-4 bg-explorer-dark-gray rounded text-white text-xs break-words break-all"
-            />
+            <div className="px-2">
+              <JSONView
+                data-testid="json-view"
+                json={rawBlockdata || {}}
+                className="w-full md:w-[962px] mt-6 m-auto py-2 px-4 bg-explorer-dark-gray rounded text-white text-xs break-words break-all"
+              />
+            </div>
           ) : (
             <section
               className="md:px-10 flex flex-col items-center justify-center text-white"
@@ -244,7 +246,7 @@ export default function Block() {
                     className="text-black"
                   />
                 )}
-              <div className="w-full px-4 md:p-0 md:w-4/5 flex flex-col gap-y-2">
+              <div className="w-full px-2 md:p-0 md:w-4/5 flex flex-col gap-y-2">
                 <OperationsTable operations={nonVirtualOperations} />
                 <div
                   className="text-center mt-4"

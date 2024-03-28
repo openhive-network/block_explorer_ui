@@ -170,7 +170,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
   return (
     <div
       className={cn(
-        "w-[95%] m-auto md:w-full h-[420px] bg-explorer-dark-gray rounded text-white",
+        "w-full h-[420px] bg-explorer-dark-gray rounded text-white",
         className
       )}
       data-testid="last-block-widget"
