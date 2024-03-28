@@ -59,6 +59,8 @@ const renderSearchData = (
         })}
       </div>
     );
+  } else if (data.input_type === "invalid_input") {
+    return <div className="px-4 py-2">Invalid search input: {data.input_value}</div>
   } else {
     const resultType = getResultTypeHeader(data);
     const href =
