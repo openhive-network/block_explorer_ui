@@ -105,10 +105,8 @@ export default function Account() {
   const { accountOperationTypes } =
     useAccountOperationTypes(accountNameFromRoute);
 
-  const { witnessDetails, isWitnessDetailsLoading, isWitnessDetailsError } = useWitnessDetails(
-    accountNameFromRoute,
-    !!accountDetails?.is_witness
-  );
+  const { witnessDetails, isWitnessDetailsLoading, isWitnessDetailsError } =
+    useWitnessDetails(accountNameFromRoute, !!accountDetails?.is_witness);
 
   const handleOpenVotersModal = () => {
     setIsVotersModalOpen(!isVotersModalOpen);

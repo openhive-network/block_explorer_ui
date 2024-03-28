@@ -25,9 +25,12 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
   openVotersModal,
   openVotesHistoryModal,
 }) => {
-  const {manabarsData} = useManabars(accountName);
+  const { manabarsData } = useManabars(accountName);
   return (
-    <div className='bg-explorer-dark-gray p-2 mx-2 md:mx-6 h-fit rounded' data-testid="account-details">
+    <div
+      className="bg-explorer-dark-gray p-2 mx-2 md:mx-6 h-fit rounded mt-10 md:mt-0"
+      data-testid="account-details"
+    >
       <div className="flex justify-between bg-explorer-dark-gray text-explorer-orange text-2xl my-4">
         {accountDetails.is_witness ? (
           <div data-testid="account-name">
@@ -47,7 +50,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
         </span>
       </div>
       <div>
-        {!!manabarsData ?
+        {!!manabarsData ? (
           <>
             <div className="text-center">
               <p className="my-2">Voting Power</p>
@@ -57,7 +60,9 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                 style={{ background: "#03182c" }}
                 data-testid='voting-power'
               />
-              <p className="text-sm text-gray-400">{manabarsData?.upvote.current} / {manabarsData?.upvote.max}</p>
+              <p className="text-sm text-gray-400">
+                {manabarsData?.upvote.current} / {manabarsData?.upvote.max}
+              </p>
             </div>
 
             <div className="text-center">
@@ -68,7 +73,9 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                 style={{ background: "#03182c" }}
                 data-testid='downvote-power'
               />
-              <p className="text-sm text-gray-400">{manabarsData?.downvote.current} / {manabarsData?.downvote.max}</p>
+              <p className="text-sm text-gray-400">
+                {manabarsData?.downvote.current} / {manabarsData?.downvote.max}
+              </p>
             </div>
 
             <div className="text-center">
@@ -79,14 +86,16 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                 style={{ background: "#03182c" }}
                 data-testid='resources-credits'
               />
-              <p className="text-sm text-gray-400">{manabarsData?.rc.current} / {manabarsData?.rc.max}</p>
+              <p className="text-sm text-gray-400">
+                {manabarsData?.rc.current} / {manabarsData?.rc.max}
+              </p>
             </div>
           </>
-          :
+        ) : (
           <div className="flex justify-center text-center items-center">
             <Loader2 className="animate-spin mt-1h-12 w-12 ml-3 ..." />
           </div>
-        }
+        )}
         <div className="flex justify-between p-4">
           <div className="text-center flex justify-center w-full gap-2">
             <span className="text-lg">Creation Date:</span>
@@ -96,7 +105,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
           </div>
         </div>
       </div>
-      {(!isWitnessError && !isWitnessLoading) && (
+      {!isWitnessError && !isWitnessLoading && (
         <div className="flex justify-between">
           <button
             onClick={openVotersModal}

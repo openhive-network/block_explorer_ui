@@ -32,13 +32,11 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
         Block {blockDetails?.block_num?.toLocaleString()}
       </div>
       <div
-        className="flex items-center gap-x-1 mt-3 px-8 md:px-4 w-full justify-center"
+        className="flex items-center gap-x-1 mt-3 px-8 md:px-4 w-full justify-center flex-wrap gap-y-2"
         data-testid="produced-data"
       >
         <p>Produced at: </p>
-        <p>
-          {formatAndDelocalizeTime(blockDetails?.created_at)}
-        </p>
+        <p>{formatAndDelocalizeTime(blockDetails?.created_at)}</p>
         <p>by</p>
         <Link
           className="flex justif-between items-center"
@@ -62,11 +60,15 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
       </div>
       <div className="flex items-center gap-x-4 mt-3 px-8 md:px-4 w-full justify-center flex-wrap text-sm md:text-base">
         <p>
-          <span data-testid="hash" className="text-base">Hash: </span>
+          <span data-testid="hash" className="text-base">
+            Hash:{" "}
+          </span>
           {blockDetails?.hash}
         </p>
         <p>
-          <span data-testid="prev-hash" className="text-base">Prev hash: </span>
+          <span data-testid="prev-hash" className="text-base">
+            Prev hash:{" "}
+          </span>
           {blockDetails?.prev}
         </p>
       </div>
