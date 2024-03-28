@@ -426,7 +426,8 @@ declare module Hive {
     | "account_name"
     | "account_name_array"
     | "block_num"
-    | "transaction_hash";
+    | "transaction_hash"
+    | "invalid_input";
 
   interface InputTypeResponse {
     input_type: InputTypes;
