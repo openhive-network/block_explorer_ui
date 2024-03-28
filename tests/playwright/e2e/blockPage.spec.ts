@@ -204,4 +204,26 @@ test.describe('Block page tests', () => {
 
         expect(blockProducerPositionAfter).toEqual(blockProducerPosition)
     });
+
+    test('Change day in the datepicker in the block page', async ({page}) =>{
+        await expect(mainPage.headBlockCardBlockLink).toBeVisible()
+        const mainPageBlockNumber = await mainPage.headBlockCardBlockLink.textContent()
+        const formattedReceivedValue = await mainPageBlockNumber.replace(':', '').replace(/\s/g, ' ');
+        await mainPage.headBlockCardBlockLink.click()
+
+        const blockNumber = await blockPage.blockDetailsBlockNumber.textContent()
+        await expect(formattedReceivedValue).toEqual(blockNumber)
+
+        await page.waitForTimeout(2000);
+
+        const datePickerTrigger = page.locator('[data-testid="date-picker-trigger"]');
+        const datePickerCalender = page.locator('[data-testid="calender"]');
+        // const datePickerDay = datePickerCalender.locator('button', {hasText: /^1$/});
+        const datePickerDayNotMuted = page.locator('[data-testid="calender"] button:not([class*="text-muted-foreground"])').nth(10);
+
+        await datePickerTrigger.click();
+        // await datePickerDay.click();
+        await datePickerDayNotMuted.click();
+        await page.waitForTimeout(5000);
+    })
 });
