@@ -123,11 +123,13 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           checked={selectedOperationsIds.includes(operation.op_type_id)}
           name="bordered-checkbox"
           className=" w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 "
+          {...{"data-testid": `operation-type-checkbox-${operation.operation_name}`}}
           onChange={() => onFiltersSelect(operation.op_type_id)}
         />
         <Label
           htmlFor="bordered-checkbox-1"
           className="p-2 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300 whitespace-nowrap overflow-hidden text-ellipsis"
+          {...{"data-testid": `operation-type-label-${operation.operation_name}`}}
         >
           {settings.rawJsonView
             ? operation.operation_name
@@ -151,7 +153,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           {triggerTitle}
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[95%] md:max-w-[80%] max-h-[90%] md:max-h-[80%] flex-column justify-center align-center  bg-white text-black overflow-auto px-0">
+      <DialogContent className="max-w-[95%] md:max-w-[80%] max-h-[90%] md:max-h-[80%] flex-column justify-center align-center  bg-white text-black overflow-auto px-0" data-testid="operation-types-dialog">
         <DialogHeader>
           <DialogTitle className="flex justify-center pt-2">
             Operation Types
@@ -169,7 +171,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           </ul>
         </div>
         <DialogFooter>
-          <div className="flex flex-wrap justify-between w-full gap-y-4">
+          <div className="flex flex-wrap justify-between w-full gap-y-4" data-testid="operation-types-dialog-footer">
             <div className="flex">
               <Button type="button" variant="secondary" onClick={selectAll}>
                 Select all

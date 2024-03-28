@@ -42,6 +42,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
             "w-full justify-start text-left font-normal",
             !date && "text-muted-foreground"
           )}
+          data-testid="datepicker-trigger"
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
           {date ? displayDate(date) : <span>Pick a date</span>}
@@ -51,7 +52,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
         side={side}
         className="w-auto p-0 text-white bg-explorer-dark-gray"
       >
-        <Calendar mode="single" selected={date} onSelect={handleSelect} />
+        <Calendar mode="single" selected={date} onSelect={handleSelect} data-testid="datepicker-calender"/>
         <div className="flex justify-center items-center mb-4">
           <TimePicker date={date} onSelect={handleSelect} />
         </div>

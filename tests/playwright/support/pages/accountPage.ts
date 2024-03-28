@@ -17,6 +17,19 @@ export class AccountPage {
   readonly resourceCredits: Locator;
   readonly creationDate: Locator;
 
+  readonly accountOperationTableBlockNumber: Locator;
+  readonly accountOperationTableTransactionNumber: Locator;
+  readonly accountOperationTableOperationType: Locator;
+  readonly accountOperationTableOperationContent: Locator;
+
+  readonly accountOperationTypesButton: Locator;
+  readonly operationTypesDialog: Locator;
+  readonly operationTypeVoteCheckbox: Locator;
+  readonly operationTypeCommentCheckbox: Locator;
+  readonly operationTypesDialogFooter: Locator;
+  readonly operationTypesDialogApplyButton: Locator;
+  readonly operationTypesDialogCancelButton: Locator;
+
   constructor(page: Page) {
     this.page = page;
     this.accountDetails = page.getByTestId('account-details');
@@ -28,11 +41,19 @@ export class AccountPage {
     this.accountPostingJsonMetadataDropdown = page.getByTestId('account-json-metadata-dropdown').last();
     this.accountWitnessPropertiesDropdown = page.getByTestId('properties-dropdown').last();
     this.accountWitnessVotesDropdown = page.getByTestId('witness-votes-dropdown');
-    this.userAvatar = page.getByRole('img', { name: 'avatar' });
-    this.votingPower = page.getByTestId('voting-power');
-    this.downvotePower = page.getByTestId('downvote-power');
-    this.resourceCredits = page.getByTestId('resources-credits');
-    this.creationDate = page.getByTestId('creation-date');
+
+    this.accountOperationTableBlockNumber = page.getByTestId('block-number-operation-table');
+    this.accountOperationTableTransactionNumber = page.getByTestId('transaction-number');
+    this.accountOperationTableOperationType = page.getByTestId('operation-type');
+    this.accountOperationTableOperationContent = page.getByTestId('operation-content');
+
+    this.accountOperationTypesButton = page.getByTestId('operations-types-btn');
+    this.operationTypesDialog = page.getByTestId('operation-types-dialog');
+    this.operationTypeVoteCheckbox = page.getByTestId('operation-type-checkbox-vote_operation');
+    this.operationTypeCommentCheckbox = page.getByTestId('operation-type-checkbox-comment_operation');
+    this.operationTypesDialogFooter = page.getByTestId('operation-types-dialog-footer');
+    this.operationTypesDialogApplyButton = this.operationTypesDialogFooter.getByText('Apply');
+    this.operationTypesDialogCancelButton = this.operationTypesDialogFooter.getByText('Cancel');
   }
 
   async validateAccountPageIsLoaded() {
@@ -48,4 +69,25 @@ export class AccountPage {
   async validateAccountName(accountName: string){
     await expect(this.accountName).toContainText(accountName);
   }
+
+  async validateOperationTypesDialogIsLoaded(){
+    await expect(this.operationTypesDialog).toContainText('Operation Types');
+    await expect(this.operationTypeVoteCheckbox).toBeEnabled();
+    await expect(this.operationTypeCommentCheckbox).toBeEnabled();
+    await expect(this.operationTypesDialog).toContainText('Virtual operations');
+    await expect(this.operationTypesDialogFooter).toBeVisible();
+    await expect(this.operationTypesDialogApplyButton).toBeVisible();
+    await expect(this.operationTypesDialogCancelButton).toBeVisible();
+  }
+
+  async gotoTheSpecificOperationPageOfSpecificUser(userName: string, operationPage: string){
+    await this.page.goto(`/@${userName}?&page=${operationPage}`);
+    await this.page.waitForLoadState("networkidle");
+  }
+
+  async gotoTheSpecificUserPage(userName: string){
+    await this.page.goto(`/@${userName}`);
+    await this.page.waitForLoadState("networkidle");
+  }
+
 }
