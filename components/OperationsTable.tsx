@@ -80,7 +80,8 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
       <TableBody className="max-w-[100%]">
         {operations.map((operation, index) => (
           <React.Fragment key={index}>
-            <TableRow data-testid='detailed-operation-card'
+            <TableRow
+              data-testid="detailed-operation-card"
               key={index}
               className={cn({
                 "border-t border-gray-700": !!index,
@@ -94,7 +95,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                   })}
                 >
                   {expanded.includes(operation.operatiopnId || 0) ? (
-                    <Button 
+                    <Button
                       className="p-0 h-fit"
                       onClick={() =>
                         setExpanded((prevExpanded) => [
@@ -104,7 +105,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                         ])
                       }
                     >
-                      <ChevronUp width={20} height={20} className="mt-1"/>
+                      <ChevronUp width={20} height={20} className="mt-1" />
                     </Button>
                   ) : (
                     <Button
@@ -117,7 +118,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                         ])
                       }
                     >
-                      <ChevronDown width={20} height={20} className="mt-1"/>
+                      <ChevronDown width={20} height={20} className="mt-1" />
                     </Button>
                   )}
                 </div>
@@ -138,11 +139,11 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                   {operation.trxId?.slice(0, 10)}
                 </Link>
               </TableCell>
-              <TableCell data-testid='operation-type'>{getOperationTypeForDisplay(operation.operation.type)}</TableCell>
-              <TableCell className="max-w-0 w-full">
-                <div>
-                  {getOneLineDescription(operation)}
-                </div>
+              <TableCell data-testid="operation-type">
+                {getOperationTypeForDisplay(operation.operation.type)}
+              </TableCell>
+              <TableCell className="md:max-w-0 w-full">
+                <div>{getOneLineDescription(operation)}</div>
               </TableCell>
             </TableRow>
             {operation.operation.type === "custom_json_operation" &&
@@ -157,7 +158,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                   </TableCell>
                 </TableRow>
               )}
-          </ React.Fragment>
+          </React.Fragment>
         ))}
       </TableBody>
     </Table>
