@@ -193,7 +193,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
             axisLine={false}
             domain={[
               0,
-              (dataMax: number) => (Math.floor(dataMax / 50) + 1) * 50,
+              (dataMax: number) => (Math.floor((dataMax + 10) / 50) + 1) * 50,
             ]}
             allowDataOverflow={true}
             type="number"

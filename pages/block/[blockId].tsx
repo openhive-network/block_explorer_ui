@@ -182,7 +182,7 @@ export default function Block() {
       <Head>
         <title>{blockId} - Hive Explorer</title>
       </Head>
-      {!headBlockNum ? (
+      {loading ? (
         <div>Loading ...</div>
       ) : blockDetails?.block_num ? (
         <div
