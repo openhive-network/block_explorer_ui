@@ -61,16 +61,16 @@ test.describe('Home page - searches', () => {
         await mainPage.getOptionfromDropdownOptions('Time range')
 
         const datePickerTriggerFromDate = await mainPage.datePickerTriggerFromDate
-        const datePickerDayNotMuted = page.locator('[data-testid="calender"] button:not([class*="text-muted-foreground"])').nth(10);
+        const datePickerDayNotMuted = page.locator('[data-testid="datepicker-calender"] button:not([class*="text-muted-foreground"])').nth(10);
 
         await datePickerTriggerFromDate.click();
 
-        const dayText = await page.locator('[data-testid="calender"] button:not([class*="text-muted-foreground"])').nth(10).innerText()
+        const dayText = await page.locator('[data-testid="datepicker-calender"] button:not([class*="text-muted-foreground"])').nth(10).innerText()
         await datePickerDayNotMuted.click();
         await page.waitForTimeout(2000);
 
         const datePickerTriggerToDate = await mainPage.datePickerTriggerToDate
-        const datePickerDayNotMutedToDate = page.locator('[data-testid="calender"] button:not([class*="text-muted-foreground"])').nth(11);
+        const datePickerDayNotMutedToDate = page.locator('[data-testid="datepicker-calender"] button:not([class*="text-muted-foreground"])').nth(11);
         await datePickerTriggerToDate.click();
         await datePickerDayNotMutedToDate.click();
         await page.waitForTimeout(2000);
@@ -113,16 +113,16 @@ test.describe('Home page - searches', () => {
         await mainPage.getOptionfromDropdownOptions('Time range')
 
         const datePickerTriggerFromDate = await mainPage.datePickerTriggerFromDate
-        const datePickerDayNotMuted = page.locator('[data-testid="calender"] button:not([class*="text-muted-foreground"])').nth(10);
+        const datePickerDayNotMuted = page.locator('[data-testid="datepicker-calender"] button:not([class*="text-muted-foreground"])').nth(10);
         
         await datePickerTriggerFromDate.click();
 
-        const dayText = await page.locator('[data-testid="calender"] button:not([class*="text-muted-foreground"])').nth(10).innerText()
+        const dayText = await page.locator('[data-testid="datepicker-calender"] button:not([class*="text-muted-foreground"])').nth(10).innerText()
         await datePickerDayNotMuted.click();
         await page.waitForTimeout(2000);
 
         const datePickerTriggerToDate = await mainPage.datePickerTriggerToDate
-        const datePickerDayNotMutedToDate = page.locator('[data-testid="calender"] button:not([class*="text-muted-foreground"])').nth(11);
+        const datePickerDayNotMutedToDate = page.locator('[data-testid="datepicker-calender"] button:not([class*="text-muted-foreground"])').nth(11);
         await datePickerTriggerToDate.click();
         await datePickerDayNotMutedToDate.click();
         await page.waitForTimeout(2000);

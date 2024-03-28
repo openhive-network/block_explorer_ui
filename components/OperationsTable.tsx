@@ -123,7 +123,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                   )}
                 </div>
               </TableCell>
-              <TableCell className="pl-2">
+              <TableCell className="pl-2" data-testid="block-number-operation-table">
                 <Link
                   className="text-explorer-turquoise"
                   href={`/block/${operation.blockNumber}`}
@@ -131,7 +131,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                   {operation.blockNumber?.toLocaleString()}
                 </Link>
               </TableCell>
-              <TableCell>
+              <TableCell data-testid="transaction-number">
                 <Link
                   className="text-explorer-turquoise"
                   href={`/transaction/${operation.trxId}`}
@@ -142,7 +142,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
               <TableCell data-testid="operation-type">
                 {getOperationTypeForDisplay(operation.operation.type)}
               </TableCell>
-              <TableCell className="md:max-w-0 w-full">
+              <TableCell className="md:max-w-0 w-full" data-testid="operation-content">
                 <div>{getOneLineDescription(operation)}</div>
               </TableCell>
             </TableRow>

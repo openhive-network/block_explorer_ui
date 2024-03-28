@@ -16,6 +16,7 @@ function Calendar({
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
+      defaultMonth={props.selected as Date}
       captionLayout="dropdown"
       fromYear={2016}
       toYear={new Date().getFullYear()}

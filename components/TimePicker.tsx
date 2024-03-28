@@ -115,6 +115,7 @@ const TimePicker: React.FC<TimePickerProps> = ({
     <section
       className={cn("flex border border-white w-fit", className)}
       ref={timePickerRef}
+      data-testid="datepicker-time"
     >
       <TimeInput
         value={hours}
