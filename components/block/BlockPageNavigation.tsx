@@ -109,7 +109,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
         data-testid="block-page-search"
       >
         <div className="text-2xl font-semibold my-2">Search</div>
-        <div className="w-full flex justify-between items-center md:px-8 flex-wrap gap-y-4">
+        <div className="w-full flex justify-between items-center px-2 md:px-8 flex-wrap gap-y-4">
           <div className="flex justify-center items-center flex-wrap">
             <p>Block Number : </p>
             <button
