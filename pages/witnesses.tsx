@@ -21,7 +21,9 @@ export default function Witnesses() {
   const [isVotersOpen, setIsVotersOpen] = useState<boolean>(false);
   const [isVotesHistoryOpen, setIsVotesHistoryOpen] = useState<boolean>(false);
 
-  const { witnessesData, isWitnessDataLoading } = useWitnesses(config.witnessesPerPages.witnesses);
+  const { witnessesData, isWitnessDataLoading } = useWitnesses(
+    config.witnessesPerPages.witnesses
+  );
 
   if (isWitnessDataLoading) {
     return <Loader2 className="animate-spin mt-1 h-8 w-8 ml-3 ..." />;
@@ -39,10 +41,10 @@ export default function Witnesses() {
 
   return (
     <>
-    <Head>
-      <title>Witnesses - Hive Explorer</title>
-    </Head>
-      <div className="mt-16 md:m-8 max-w-[100vw]">
+      <Head>
+        <title>Witnesses - Hive Explorer</title>
+      </Head>
+      <div className="md:m-8 max-w-[100vw]">
         <VotersDialog
           accountName={voterAccount}
           isVotersOpen={isVotersOpen}
@@ -96,7 +98,10 @@ export default function Witnesses() {
                   }
                 >
                   {" "}
-                  <Link href={`/@${singleWitness.witness}`} data-testid="witness-name">
+                  <Link
+                    href={`/@${singleWitness.witness}`}
+                    data-testid="witness-name"
+                  >
                     {singleWitness.witness}
                   </Link>
                 </TableCell>

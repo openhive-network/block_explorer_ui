@@ -43,7 +43,9 @@ export default function Transaction() {
 
   const { trxData, trxLoading, trxError } = useTransactionData(transactionId);
 
-  const formattedTransaction = useOperationsFormatter(trxData) as Hive.TransactionQueryResponse | undefined;
+  const formattedTransaction = useOperationsFormatter(trxData) as
+    | Hive.TransactionQueryResponse
+    | undefined;
 
   if (trxError) {
     return <PageNotFound message={`Transaction not found.`} />;
@@ -51,13 +53,16 @@ export default function Transaction() {
 
   return (
     <>
-    <Head>
-      <title>{trxData?.transaction_id?.slice(0, 10)} - Hive Explorer</title>
-    </Head>
-      <div className="w-full max-w-5xl px-4 text-white">
+      <Head>
+        <title>{trxData?.transaction_id?.slice(0, 10)} - Hive Explorer</title>
+      </Head>
+      <div className="w-full max-w-5xl px-2 md:px-4 text-white">
         {!trxLoading && !!trxData && (
           <>
-            <div className="w-full bg-explorer-dark-gray px-4 py-2 rounded flex flex-col justify-center md:items-center md:text-md mb-4" data-testid="transaction-header">
+            <div
+              className="w-full bg-explorer-dark-gray px-4 py-2 rounded flex flex-col justify-center md:items-center md:text-md mb-4"
+              data-testid="transaction-header"
+            >
               <div data-testid="transaction-header-hash-trx">
                 Transaction{" "}
                 <span className="text-explorer-turquoise">
@@ -90,12 +95,17 @@ export default function Transaction() {
               />
             ) : (
               <>
-                {formattedTransaction?.transaction_json?.operations &&
-                <OperationsTable 
-                  operations={convertTransactionResponseToTableOperations(formattedTransaction)}
-                />
-                }
-                <div className="mt-6 w-full bg-explorer-dark-gray py-2 rounded px-2" data-testid="transaction-details">
+                {formattedTransaction?.transaction_json?.operations && (
+                  <OperationsTable
+                    operations={convertTransactionResponseToTableOperations(
+                      formattedTransaction
+                    )}
+                  />
+                )}
+                <div
+                  className="mt-6 w-full bg-explorer-dark-gray py-2 rounded px-2"
+                  data-testid="transaction-details"
+                >
                   <div className="flex justify-center text-md">
                     Transaction Details
                   </div>
