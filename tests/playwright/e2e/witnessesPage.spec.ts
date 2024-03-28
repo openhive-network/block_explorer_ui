@@ -273,8 +273,8 @@ test.describe("Witnesses page", () => {
   });
 
   test("validate values of the votes history dialog in specific dates", async ({ page }) => {
-    const fromDate: string = '2024-03-16T07:00';
-    const toDate: string = '2024-03-17T11:20';
+    // const fromDate: string = '2024-03-16T07:00';
+    // const toDate: string = '2024-03-17T11:20';
     const expectedVoterName: string = 'faniaviera';
     const arrowUp: string = 'lucide lucide-arrow-up-circle';
     const arrowDown: string = 'lucide lucide-arrow-down-circle';
@@ -299,8 +299,28 @@ test.describe("Witnesses page", () => {
     // Validate votes history dialog
     if (await votesHistoryDialog.votesHistoryDialogTableBody.isVisible()){
       if(witnessName=='arcange'){
-        await votesHistoryDialog.votesHistoryDialogFromDatepicker.locator('input').first().fill(fromDate, {force: true});
-        await votesHistoryDialog.votesHistoryDialogToDatepicker.locator('input').first().fill(toDate, {force: true});
+        // await votesHistoryDialog.votesHistoryDialogFromDatepicker.locator('input').first().fill(fromDate, {force: true});
+        // await votesHistoryDialog.votesHistoryDialogToDatepicker.locator('input').first().fill(toDate, {force: true});
+        // From
+        await votesHistoryDialog.votesHistoryDialogFromDatepicker.click();
+        await witnessesPage.page.selectOption(votesHistoryDialog.votesHistoryDialogDatepickerMonth['_selector'], '2'); //March
+        await witnessesPage.page.selectOption(votesHistoryDialog.votesHistoryDialogDatepickerYear['_selector'], '2024');
+        await votesHistoryDialog.votesHistoryDialogDatepicekrTimeHours.fill('7');
+        await votesHistoryDialog.votesHistoryDialogDatepicekrTimeMinutes.fill('0');
+        await votesHistoryDialog.votesHistoryDialogDatepicekrTimeSeconds.fill('0');
+        await witnessesPage.page.waitForTimeout(1000);
+        await votesHistoryDialog.votesHistoryDialogDatepickerDayNotMuted.nth(15).click();
+        await witnessesPage.page.waitForTimeout(1000);
+        // To
+        await votesHistoryDialog.votesHistoryDialogToDatepicker.click();
+        await witnessesPage.page.selectOption(votesHistoryDialog.votesHistoryDialogDatepickerMonth['_selector'], '2'); //March
+        await witnessesPage.page.selectOption(votesHistoryDialog.votesHistoryDialogDatepickerYear['_selector'], '2024');
+        await votesHistoryDialog.votesHistoryDialogDatepicekrTimeHours.fill('11');
+        await votesHistoryDialog.votesHistoryDialogDatepicekrTimeMinutes.fill('20');
+        await votesHistoryDialog.votesHistoryDialogDatepicekrTimeSeconds.fill('0');
+        await witnessesPage.page.waitForTimeout(1000);
+        await votesHistoryDialog.votesHistoryDialogDatepickerDayNotMuted.nth(16).click();
+
         await witnessesPage.page.waitForTimeout(3000);
 
         expect(await votesHistoryDialog.votesHistoryDialogVoterColumn.locator('a').first().textContent()).toBe(expectedVoterName);
