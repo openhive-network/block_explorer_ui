@@ -64,6 +64,7 @@ test.describe('Home page - searches', () => {
         const datePickerDayNotMuted = page.locator('[data-testid="calender"] button:not([class*="text-muted-foreground"])').nth(10);
 
         await datePickerTriggerFromDate.click();
+        await page.locator('[name="years"]').selectOption('2024')
 
         const dayText = await page.locator('[data-testid="calender"] button:not([class*="text-muted-foreground"])').nth(10).innerText()
         await datePickerDayNotMuted.click();
@@ -116,6 +117,7 @@ test.describe('Home page - searches', () => {
         const datePickerDayNotMuted = page.locator('[data-testid="calender"] button:not([class*="text-muted-foreground"])').nth(10);
         
         await datePickerTriggerFromDate.click();
+        await page.locator('[name="years"]').selectOption('2024')
 
         const dayText = await page.locator('[data-testid="calender"] button:not([class*="text-muted-foreground"])').nth(10).innerText()
         await datePickerDayNotMuted.click();
