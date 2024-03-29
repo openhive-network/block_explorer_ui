@@ -25,6 +25,9 @@ export class AccountPage {
   readonly operationTypesDialogApplyButton: Locator;
   readonly operationTypesDialogCancelButton: Locator;
 
+  readonly gotoPageInput: Locator;
+  readonly gotoPageButton: Locator;
+
   constructor(page: Page) {
     this.page = page;
     this.accountDetails = page.getByTestId('account-details');
@@ -49,6 +52,9 @@ export class AccountPage {
     this.operationTypesDialogFooter = page.getByTestId('operation-types-dialog-footer');
     this.operationTypesDialogApplyButton = this.operationTypesDialogFooter.getByText('Apply');
     this.operationTypesDialogCancelButton = this.operationTypesDialogFooter.getByText('Cancel');
+
+    this.gotoPageInput = page.getByTestId('input-goto-page');
+    this.gotoPageButton = page.getByTestId('button-goto-page');
   }
 
   async validateAccountPageIsLoaded() {
@@ -83,6 +89,11 @@ export class AccountPage {
   async gotoTheSpecificUserPage(userName: string){
     await this.page.goto(`/@${userName}`);
     await this.page.waitForLoadState("networkidle");
+  }
+
+  async validateSpecificPageUrl(userName: string, pageNumber: string){
+    await expect(this.page.url()).toContain(userName);
+    await expect(this.page.url()).toContain('page='+ pageNumber);
   }
 
 }

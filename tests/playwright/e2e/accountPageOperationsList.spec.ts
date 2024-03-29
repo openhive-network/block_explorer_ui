@@ -4,8 +4,10 @@ import { AccountPage } from "../support/pages/accountPage";
 
 test.describe("Account page - Operations List", () => {
   let accountPage: AccountPage;
-  let accountName: string = "arcange";
-  let operationPaginationNumber: string = "68002";
+  const accountName: string = "arcange";
+  const operationPaginationNumber: string = "68002";
+  const operationPaginationNumber2: string =  "68091";
+  const operationPaginationNumber3: string =  "68050";
 
   test.beforeEach(async ({ page }) => {
     accountPage = new AccountPage(page);
@@ -18,6 +20,19 @@ test.describe("Account page - Operations List", () => {
     );
     await accountPage.validateAccountPageIsLoaded();
     await accountPage.validateAccountName(accountName);
+  });
+
+  test("Validate user can change pagination page of arctange by type value and click button ", async ({ page }) => {
+    await accountPage.gotoTheSpecificOperationPageOfSpecificUser(
+      accountName,
+      operationPaginationNumber2
+    );
+    await accountPage.validateAccountPageIsLoaded();
+    await accountPage.validateAccountName(accountName);
+    await accountPage.validateSpecificPageUrl(accountName,operationPaginationNumber2);
+    await accountPage.gotoPageInput.fill(operationPaginationNumber3);
+    await accountPage.gotoPageButton.click();
+    await accountPage.validateSpecificPageUrl(accountName, operationPaginationNumber3);
   });
 
   test("Click Operations type button and check if modal with operation types is displayed correctly", async ({ page }) => {

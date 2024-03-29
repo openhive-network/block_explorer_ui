@@ -32,10 +32,12 @@ const JumpToPage = ({ currentPage, onPageChange }: any) => {
           value={value}
           onChange={onValueChange}
           className="w-0 min-w-[72px] p-0 pl-2 py-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          data-testid="input-goto-page"
         />
         <Button
           className="bg-explorer-dark-gray mx-2 text-white hover:bg-gray-700 rounded"
           type="submit"
+          data-testid="button-goto-page"
         >
           Go
         </Button>
