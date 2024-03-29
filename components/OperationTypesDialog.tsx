@@ -160,13 +160,13 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           </DialogTitle>
         </DialogHeader>
         <div className="overflow-auto max-h-[500px] md:max-h-[600px]">
-          <ul className="my-4 grid grid-cols-3 gap-4 place-items-stretch text-white ">
+          <ul className="my-4 grid grid-cols-3 gap-4 place-items-stretch text-white " data-testid="non-virtual-operations-list">
             {nonVirtualOperations.map((operation) =>
               renderOperation(operation)
             )}
           </ul>
           <div className="text-center mt-8">Virtual operations</div>
-          <ul className="my-4 grid grid-cols-3 gap-4 place-items-stretch text-white ">
+          <ul className="my-4 grid grid-cols-3 gap-4 place-items-stretch text-white " data-testid="virtual-operations-list">
             {virtualOperations.map((operation) => renderOperation(operation))}
           </ul>
         </div>
