@@ -75,7 +75,7 @@ export class AccountPage {
     this.operationsTypeSelectRealButton = page.getByText('Select real');
     this.operationsTypeSelectVirtualButton = page.getByText('Select virtual');
     this.operationsTypeInvertButton = page.getByText('Invert');
-    this.operationsTypeClearButton = page.getByText('Clear');
+    this.operationsTypeClearButton = page.getByTestId('operation-types-dialog-footer').getByText('Clear');
 
     this.operationTypeVoteCheckbox = page.getByTestId('operation-type-checkbox-vote_operation');
     this.operationTypeCommentCheckbox = page.getByTestId('operation-type-checkbox-comment_operation');

@@ -168,4 +168,46 @@ test.describe("Account page - Operations List", () => {
     await expect(accountPage.virtualOpTypeEffectiveCommentVote).toBeChecked();
   });
 
+  test("Click Operations type button then click e.g Select Real option then click clear and check if checkboxes will be unchecked", async ({ page }) => {
+    await accountPage.gotoTheSpecificUserPage(accountName);
+    await accountPage.validateAccountPageIsLoaded();
+    await accountPage.validateAccountName(accountName);
+
+    await accountPage.accountOperationTypesButton.click();
+    await accountPage.validateOperationTypesDialogIsLoaded();
+    // Validate unchecked operations
+    await expect(accountPage.operationTypeVoteCheckbox).not.toBeChecked();
+    await expect(accountPage.operationTypeCommentCheckbox).not.toBeChecked();
+    await expect(accountPage.operationTypeTransferCheckbox).not.toBeChecked();
+    await expect(accountPage.operationTypeRecurrentTransfer).not.toBeChecked();
+    // Validate uncheckied virtual operations
+    await expect(accountPage.virtualOpTypeFillConvertRequest).not.toBeChecked();
+    await expect(accountPage.virtualOpTypeAuthorReward).not.toBeChecked();
+    await expect(accountPage.virtualOpTypeCurationReward).not.toBeChecked();
+    await expect(accountPage.virtualOpTypeEffectiveCommentVote).not.toBeChecked();
+    // Click select real
+    await accountPage.operationsTypeSelectRealButton.click();
+    // Validate checked operations
+    await expect(accountPage.operationTypeVoteCheckbox).toBeChecked();
+    await expect(accountPage.operationTypeCommentCheckbox).toBeChecked();
+    await expect(accountPage.operationTypeTransferCheckbox).toBeChecked();
+    await expect(accountPage.operationTypeRecurrentTransfer).toBeChecked();
+    // Validate checkied virtual operations
+    await expect(accountPage.virtualOpTypeFillConvertRequest).not.toBeChecked();
+    await expect(accountPage.virtualOpTypeAuthorReward).not.toBeChecked();
+    await expect(accountPage.virtualOpTypeCurationReward).not.toBeChecked();
+    await expect(accountPage.virtualOpTypeEffectiveCommentVote).not.toBeChecked();
+    // Click clear
+    await accountPage.operationsTypeClearButton.click();
+    // Validate unchecked operations
+    await expect(accountPage.operationTypeVoteCheckbox).not.toBeChecked();
+    await expect(accountPage.operationTypeCommentCheckbox).not.toBeChecked();
+    await expect(accountPage.operationTypeTransferCheckbox).not.toBeChecked();
+    await expect(accountPage.operationTypeRecurrentTransfer).not.toBeChecked();
+    // Validate uncheckied virtual operations
+    await expect(accountPage.virtualOpTypeFillConvertRequest).not.toBeChecked();
+    await expect(accountPage.virtualOpTypeAuthorReward).not.toBeChecked();
+    await expect(accountPage.virtualOpTypeCurationReward).not.toBeChecked();
+    await expect(accountPage.virtualOpTypeEffectiveCommentVote).not.toBeChecked();
+  });
 });
