@@ -21,9 +21,9 @@ test.describe('Transaction page - tests', () => {
 
     test('Validate that transaction details are displayed correctly', async ({page}) =>{
         test.slow();
-        await page.waitForTimeout(5000);
+        await page.waitForTimeout(2000);
         await mainPage.headBlockCardBlockLink.click()
-        await page.waitForSelector(transactionPage.transactionNumber.first()['_selector'], {timeout: 20000});
+        await page.waitForSelector(transactionPage.transactionNumber.first()['_selector']);
         await transactionPage.transactionNumber.first().scrollIntoViewIfNeeded();
         await transactionPage.transactionNumber.first().click()
         await expect(transactionPage.transactionHeader).toBeVisible()
@@ -36,9 +36,9 @@ test.describe('Transaction page - tests', () => {
 
     test('Validate that transaction details and the list of operations are displayed as JSON format after clicking Raw JSON view toggle', async ({page}) =>{
         test.slow();
-        await page.waitForTimeout(5000);
+        await page.waitForTimeout(2000);
         await mainPage.headBlockCardBlockLink.click()
-        await page.waitForSelector(transactionPage.transactionNumber.first()['_selector'], {timeout: 20000});
+        await page.waitForSelector(transactionPage.transactionNumber.first()['_selector']);
         await transactionPage.transactionNumber.first().scrollIntoViewIfNeeded();
         await transactionPage.transactionNumber.first().click();
         await expect(transactionPage.transactionHeader).toBeVisible()
