@@ -240,6 +240,7 @@ test.describe("Account page - Operations List", () => {
   });
 
   test("From operation types list choose two operation types click apply button and check if filters are working correctly", async ({ page }) => {
+    test.slow();
     await accountPage.gotoTheSpecificUserPage(accountName);
     await accountPage.validateAccountPageIsLoaded();
     await accountPage.validateAccountName(accountName);
@@ -266,10 +267,65 @@ test.describe("Account page - Operations List", () => {
     await accountPage.operationTypesDialogApplyButton.click();
     // Wait for opeartion type selector
     await accountPage.page.waitForSelector(accountPage.accountOperationTableOperationType.first()['_selector'], {timeout: 30000});
+    await accountPage.page.waitForTimeout(5000);
     // Assert vote operation and producer reward virtual operation in the list of operations
     const listOfOperationTypes = await accountPage.accountOperationTableOperationType.allTextContents();
     await expect(listOfOperationTypes).toContain('vote');
     await expect(listOfOperationTypes).toContain('producer_reward');
+  });
+
+  test("From operation types list choose vote operation click apply button then click Clear filters button and check if filter is removed", async ({ page }) => {
+    test.slow();
+    await accountPage.gotoTheSpecificUserPage(accountName);
+    await accountPage.validateAccountPageIsLoaded();
+    await accountPage.validateAccountName(accountName);
+
+    await accountPage.accountOperationTypesButton.click();
+    await accountPage.validateOperationTypesDialogIsLoaded();
+    // Validate unchecked operations
+    await expect(accountPage.operationTypeVoteCheckbox).not.toBeChecked();
+    await expect(accountPage.operationTypeCommentCheckbox).not.toBeChecked();
+    await expect(accountPage.operationTypeTransferCheckbox).not.toBeChecked();
+    await expect(accountPage.operationTypeRecurrentTransfer).not.toBeChecked();
+    // Validate uncheckied virtual operations
+    await expect(accountPage.virtualOpTypeFillConvertRequest).not.toBeChecked();
+    await expect(accountPage.virtualOpTypeAuthorReward).not.toBeChecked();
+    await expect(accountPage.virtualOpTypeCurationReward).not.toBeChecked();
+    await expect(accountPage.virtualOpTypeEffectiveCommentVote).not.toBeChecked();
+    // Click vote operation checkbox
+    await accountPage.operationTypeVoteCheckbox.check();
+    await expect(accountPage.operationTypeVoteCheckbox).toBeChecked();
+    // Click Apply button
+    await accountPage.operationTypesDialogApplyButton.click();
+    // Wait for opeartion type selector
+    await accountPage.page.waitForSelector(accountPage.accountOperationTableOperationType.first()['_selector'], {timeout: 30000});
+    await accountPage.page.waitForTimeout(5000);
+    // Assert vote operation and producer reward virtual operation in the list of operations
+    const listOfOperationTypes = await accountPage.accountOperationTableOperationType.allTextContents();
+    await expect(listOfOperationTypes).toContain('vote');
+    // Click Clear in operation types
+    await accountPage.accountOperationTypesButton.click();
+    await accountPage.validateOperationTypesDialogIsLoaded();
+    await accountPage.operationsTypeClearButton.click();
+    // Validate unchecked operations
+    await expect(accountPage.operationTypeVoteCheckbox).not.toBeChecked();
+    await expect(accountPage.operationTypeCommentCheckbox).not.toBeChecked();
+    await expect(accountPage.operationTypeTransferCheckbox).not.toBeChecked();
+    await expect(accountPage.operationTypeRecurrentTransfer).not.toBeChecked();
+    // Validate uncheckied virtual operations
+    await expect(accountPage.virtualOpTypeFillConvertRequest).not.toBeChecked();
+    await expect(accountPage.virtualOpTypeAuthorReward).not.toBeChecked();
+    await expect(accountPage.virtualOpTypeCurationReward).not.toBeChecked();
+    await expect(accountPage.virtualOpTypeEffectiveCommentVote).not.toBeChecked();
+    // Click Apply button
+    await accountPage.operationTypesDialogApplyButton.click();
+    // Wait for opeartion type selector
+    await accountPage.page.waitForSelector(accountPage.accountOperationTableOperationType.first()['_selector'], {timeout: 30000});
+    await accountPage.page.waitForTimeout(5000);
+    // Assert vote operation and producer reward virtual operation in the list of operations
+    const listOfOperationTypesAfterClear = await accountPage.accountOperationTableOperationType.allTextContents();
+    await expect(listOfOperationTypesAfterClear).toContain('vote');
+    await expect(listOfOperationTypesAfterClear).toContain('producer_reward');
   });
 
 });
