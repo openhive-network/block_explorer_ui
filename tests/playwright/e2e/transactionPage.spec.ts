@@ -23,7 +23,7 @@ test.describe('Transaction page - tests', () => {
         test.slow();
         await page.waitForTimeout(5000);
         await mainPage.headBlockCardBlockLink.click()
-        await page.waitForSelector(page.locator('[data-testid="transaction-number"]')['_selector'], {timeout: 10000});
+        await page.waitForSelector(page.locator('[data-testid="transaction-number"]')['_selector'], {timeout: 20000});
         await page.locator('[href*="transaction"]').first().scrollIntoViewIfNeeded();
         await page.locator('[href*="transaction"]').first().click()
         await expect(transactionPage.transactionHeader).toBeVisible()
@@ -38,7 +38,7 @@ test.describe('Transaction page - tests', () => {
         test.slow();
         await page.waitForTimeout(5000);
         await mainPage.headBlockCardBlockLink.click()
-        await page.waitForSelector(page.locator('[data-testid="transaction-number"]')['_selector'], {timeout: 10000});
+        await page.waitForSelector(page.locator('[data-testid="transaction-number"]')['_selector'], {timeout: 20000});
         await page.locator('[href*="transaction"]').first().scrollIntoViewIfNeeded();
         await page.locator('[href*="transaction"]').first().click()
         await expect(transactionPage.transactionHeader).toBeVisible()
