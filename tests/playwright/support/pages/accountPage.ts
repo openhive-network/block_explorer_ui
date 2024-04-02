@@ -28,6 +28,7 @@ export class AccountPage {
   readonly virtualOpTypeAuthorReward: Locator;
   readonly virtualOpTypeCurationReward: Locator;
   readonly virtualOpTypeEffectiveCommentVote: Locator;
+  readonly virtualOpTypeProducerReward: Locator;
 
   readonly operationTypesDialogFooter: Locator;
   readonly operationTypesDialogApplyButton: Locator;
@@ -86,6 +87,7 @@ export class AccountPage {
     this.virtualOpTypeAuthorReward = page.getByTestId('operation-type-checkbox-author_reward_operation');
     this.virtualOpTypeCurationReward = page.getByTestId('operation-type-checkbox-curation_reward_operation');
     this.virtualOpTypeEffectiveCommentVote = page.getByTestId('operation-type-checkbox-effective_comment_vote_operation');
+    this.virtualOpTypeProducerReward = page.getByTestId('operation-type-checkbox-producer_reward_operation');
 
     this.gotoPageInput = page.getByTestId('input-goto-page');
     this.gotoPageButton = page.getByTestId('button-goto-page');
