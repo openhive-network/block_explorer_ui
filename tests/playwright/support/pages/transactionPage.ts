@@ -7,9 +7,8 @@ export class TransactionPage {
   readonly transactionHeaderHash: Locator;
   readonly transactionHeaderBlockNumber: Locator;
   readonly transactionHeaderDate: Locator;
-
   readonly transactionDetails: Locator;
-
+  readonly transactionNumber: Locator;
   readonly detailedOperationCard: Locator;
 
   constructor(page: Page) {
@@ -20,6 +19,7 @@ export class TransactionPage {
     this.transactionHeaderBlockNumber = this.transactionHeader.getByTestId('transaction-header-block-number');
     this.transactionHeaderDate = this.transactionHeader.getByTestId('transaction-header-date');
     this.transactionDetails = page.getByTestId('transaction-details');
+    this.transactionNumber = page.getByTestId('transaction-number');
     this.detailedOperationCard = page.getByTestId('detailed-operation-card');
   }
 
