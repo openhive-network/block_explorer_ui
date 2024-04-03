@@ -152,13 +152,14 @@ test.describe('Block page tests', () => {
         console.log(blockNumberOnBlockPage)
         await blockPage.dataTimePicker.click()
 
-        const datePickerDayNotMuted = page.locator('[data-testid="datepicker-calender"] button:not([class*="text-muted-foreground"])').nth(10);
+        const datePickerDayNotMuted = await page.locator('[data-testid="datepicker-calender"] button:not([class*="text-muted-foreground"])').nth(10);
+        await blockPage.monthsDropdown.selectOption({ index: (new Date().getMonth() - 1) % 12 })
         await datePickerDayNotMuted.click();
       
         await page.waitForTimeout(4000)
 
         const blockNumberChangedDate = await (blockPage.blockNumber).inputValue()
-        await page.waitForTimeout(2000)
+        await page.waitForTimeout(4000)
         await expect(parseInt(blockNumberChangedDate)).not.toEqual(parseInt(blockNumberOnBlockPage))
     });
 

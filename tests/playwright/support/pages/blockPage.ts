@@ -30,6 +30,7 @@ export class BlockPage {
   readonly toTopBtn: Locator;
   readonly expandDetailsBtn: Locator;
   readonly operationDetails: Locator;
+  readonly monthsDropdown: Locator;
   
 
   constructor(page: Page) {
@@ -62,6 +63,7 @@ export class BlockPage {
     this.toTopBtn = page.getByRole('button', { name: 'To Top' });
     this.expandDetailsBtn = page.locator('[data-testid="expand-details"]');
     this.operationDetails = page.locator('[data-testid="details"]');
+    this.monthsDropdown = page.locator('[name="months"]');
   }
 
   async validateBlockPageIsLoaded() {
