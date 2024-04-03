@@ -26,9 +26,30 @@ export class AccountPage {
   readonly operationTypesDialog: Locator;
   readonly operationTypeVoteCheckbox: Locator;
   readonly operationTypeCommentCheckbox: Locator;
+  readonly operationTypeTransferCheckbox: Locator;
+  readonly operationTypeRecurrentTransfer: Locator;
+
+  readonly virtualOpTypeFillConvertRequest: Locator;
+  readonly virtualOpTypeAuthorReward: Locator;
+  readonly virtualOpTypeCurationReward: Locator;
+  readonly virtualOpTypeEffectiveCommentVote: Locator;
+  readonly virtualOpTypeProducerReward: Locator;
+
   readonly operationTypesDialogFooter: Locator;
   readonly operationTypesDialogApplyButton: Locator;
   readonly operationTypesDialogCancelButton: Locator;
+
+  readonly nonVirtualOperationsTypeList: Locator;
+  readonly virtualOperationsTypeList: Locator;
+
+  readonly operationsTypeSelectAllButton: Locator;
+  readonly operationsTypeSelectRealButton: Locator;
+  readonly operationsTypeSelectVirtualButton: Locator;
+  readonly operationsTypeInvertButton: Locator;
+  readonly operationsTypeClearButton: Locator;
+
+  readonly gotoPageInput: Locator;
+  readonly gotoPageButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -49,11 +70,32 @@ export class AccountPage {
 
     this.accountOperationTypesButton = page.getByTestId('operations-types-btn');
     this.operationTypesDialog = page.getByTestId('operation-types-dialog');
-    this.operationTypeVoteCheckbox = page.getByTestId('operation-type-checkbox-vote_operation');
-    this.operationTypeCommentCheckbox = page.getByTestId('operation-type-checkbox-comment_operation');
     this.operationTypesDialogFooter = page.getByTestId('operation-types-dialog-footer');
     this.operationTypesDialogApplyButton = this.operationTypesDialogFooter.getByText('Apply');
     this.operationTypesDialogCancelButton = this.operationTypesDialogFooter.getByText('Cancel');
+
+    this.nonVirtualOperationsTypeList = page.getByTestId('non-virtual-operations-list');
+    this.virtualOperationsTypeList = page.getByTestId('virtual-operations-list');
+
+    this.operationsTypeSelectAllButton = page.getByText('Select all');
+    this.operationsTypeSelectRealButton = page.getByText('Select real');
+    this.operationsTypeSelectVirtualButton = page.getByText('Select virtual');
+    this.operationsTypeInvertButton = page.getByText('Invert');
+    this.operationsTypeClearButton = page.getByTestId('operation-types-dialog-footer').getByText('Clear');
+
+    this.operationTypeVoteCheckbox = page.getByTestId('operation-type-checkbox-vote_operation');
+    this.operationTypeCommentCheckbox = page.getByTestId('operation-type-checkbox-comment_operation');
+    this.operationTypeTransferCheckbox = page.getByTestId('operation-type-checkbox-transfer_operation');
+    this.operationTypeRecurrentTransfer = page.getByTestId('operation-type-checkbox-recurrent_transfer_operation');
+
+    this.virtualOpTypeFillConvertRequest = page.getByTestId('operation-type-checkbox-fill_convert_request_operation');
+    this.virtualOpTypeAuthorReward = page.getByTestId('operation-type-checkbox-author_reward_operation');
+    this.virtualOpTypeCurationReward = page.getByTestId('operation-type-checkbox-curation_reward_operation');
+    this.virtualOpTypeEffectiveCommentVote = page.getByTestId('operation-type-checkbox-effective_comment_vote_operation');
+    this.virtualOpTypeProducerReward = page.getByTestId('operation-type-checkbox-producer_reward_operation');
+
+    this.gotoPageInput = page.getByTestId('input-goto-page');
+    this.gotoPageButton = page.getByTestId('button-goto-page');
   }
 
   async validateAccountPageIsLoaded() {
@@ -88,6 +130,11 @@ export class AccountPage {
   async gotoTheSpecificUserPage(userName: string){
     await this.page.goto(`/@${userName}`);
     await this.page.waitForLoadState("networkidle");
+  }
+
+  async validateSpecificPageUrl(userName: string, pageNumber: string){
+    await expect(this.page.url()).toContain(userName);
+    await expect(this.page.url()).toContain('page='+ pageNumber);
   }
 
 }
