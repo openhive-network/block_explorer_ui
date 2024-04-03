@@ -54,21 +54,35 @@ test.describe('Home page - searches', () => {
         await expect(results.length).toBe(3);
     })
 
-    test.skip('Validate searching only by Time range', async ({page}) => {
+    test('Validate searching only by Time range', async ({page,browserName}) => {
+        test.skip(browserName === 'webkit', 'Automatic test works well on chromium');
+        test.skip(browserName === 'firefox', 'Automatic test works well on chromium');
         await mainPage.blockSearchPropertiesFilterBtn.click()
         await mainPage.getOptionfromDropdownOptions('Time range')
+        await page.waitForTimeout(2000)
 
-        await mainPage.createDate(8, 'February')
+        const datePickerTriggerFromDate = await mainPage.datePickerTriggerFromDate
+        const datePickerDayNotMuted = page.locator('[data-testid="datepicker-calender"] button:not([class*="text-muted-foreground"])').nth(10);
 
-        await expect(mainPage.monthName).toBeVisible()
-        const monthText = await (mainPage.monthName).inputValue()
-        const dayText = await (mainPage.dayName).inputValue()
+        await datePickerTriggerFromDate.click();
+        await page.locator('[name="years"]').selectOption('2024')
+
+        const dayText = await page.locator('[data-testid="datepicker-calender"] button:not([class*="text-muted-foreground"])').nth(10).innerText()
+        await datePickerDayNotMuted.click();
+        await page.waitForTimeout(2000);
+
+        const datePickerTriggerToDate = await mainPage.datePickerTriggerToDate
+        const datePickerDayNotMutedToDate = page.locator('[data-testid="datepicker-calender"] button:not([class*="text-muted-foreground"])').nth(11);
+        await datePickerTriggerToDate.click();
+        await datePickerDayNotMutedToDate.click();
+        await page.waitForTimeout(2000);
 
         await mainPage.blockSearchBtn.click()
         await mainPage.resultBlock.last().click()
 
         await page.waitForLoadState('domcontentloaded')
-        await expect(blockPage.producedData).toContainText(monthText)
+        const producerData = await blockPage.producedData.innerText()
+        expect(producerData).toContain(dayText)
     })
 
     test('Validate searching for property Account Name and Last days/weeks/months', async ({page}) => {
@@ -92,24 +106,37 @@ test.describe('Home page - searches', () => {
         await expect(page.getByTestId('account-name')).toContainText('gtg')
     })
 
-    test.skip('Validate searching for property Account Name and Time range', async ({page}) => {
+    test('Validate searching for property Account Name and Time range', async ({page, browserName}) => {
+        test.skip(browserName === 'webkit', 'Automatic test works well on chromium');
+        test.skip(browserName === 'firefox', 'Automatic test works well on chromium');
         await mainPage.accountNameInput.fill('gtg')
         await mainPage.blockSearchPropertiesFilterBtn.click()
 
         await mainPage.getOptionfromDropdownOptions('Time range')
 
-        await mainPage.createDate(8, 'February')
+        const datePickerTriggerFromDate = await mainPage.datePickerTriggerFromDate
+        const datePickerDayNotMuted = page.locator('[data-testid="datepicker-calender"] button:not([class*="text-muted-foreground"])').nth(10);
+        
+        await datePickerTriggerFromDate.click();
+        await page.locator('[name="years"]').selectOption('2024')
 
-        await expect(mainPage.monthName).toBeVisible()
-        const monthText = await (mainPage.monthName).inputValue()
-        const dayText = await (mainPage.dayName).inputValue()
+        const dayText = await page.locator('[data-testid="datepicker-calender"] button:not([class*="text-muted-foreground"])').nth(10).innerText()
+        await datePickerDayNotMuted.click();
+        await page.waitForTimeout(2000);
+
+        const datePickerTriggerToDate = await mainPage.datePickerTriggerToDate
+        const datePickerDayNotMutedToDate = page.locator('[data-testid="datepicker-calender"] button:not([class*="text-muted-foreground"])').nth(11);
+        await datePickerTriggerToDate.click();
+        await datePickerDayNotMutedToDate.click();
+        await page.waitForTimeout(2000);
 
         await mainPage.blockSearchBtn.click()
         await mainPage.resultBlock.last().click()
 
         await page.waitForLoadState('domcontentloaded')
-        await expect(blockPage.producedData).toContainText(monthText)
-        await expect(blockPage.producedData).toContainText(dayText)
+
+        const producerData = await blockPage.producedData.innerText()
+        expect(producerData).toContain(dayText)
         await mainPage.RawJsonViewToggle.click()
         await expect(blockPage.jsonView).toBeVisible()
         await expect((blockPage.jsonView)).toContainText('gtg')

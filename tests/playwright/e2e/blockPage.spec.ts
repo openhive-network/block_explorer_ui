@@ -141,7 +141,9 @@ test.describe('Block page tests', () => {
         await expect(parseInt(nextBlockNumber)).toEqual(parseInt(blockNumberOnBlockPage)+1)
     });
 
-    test.skip('Validate that user can change the Block Time', async ({page}) =>{
+    test('Validate that user can change the Block Time', async ({page,browserName}) =>{
+        test.skip(browserName === 'firefox', 'Automatic test works well on chromium');
+        test.skip(browserName === 'webkit', 'Automatic test works well on chromium');
         test.slow();
         await mainPage.headBlockCardBlockLink.click()
         await expect(blockPage.blockProducer).toBeVisible()
@@ -149,13 +151,16 @@ test.describe('Block page tests', () => {
         const blockNumberOnBlockPage = await (blockPage.blockNumber).inputValue()
         console.log(blockNumberOnBlockPage)
         await blockPage.dataTimePicker.click()
-        await blockPage.firstDayInDataPicker.click()
+
+        const datePickerDayNotMuted = await page.locator('[data-testid="datepicker-calender"] button:not([class*="text-muted-foreground"])').nth(10);
+        await blockPage.monthsDropdown.selectOption({ index: (new Date().getMonth() - 1) % 12 })
+        await datePickerDayNotMuted.click();
+      
         await page.waitForTimeout(4000)
 
         const blockNumberChangedDate = await (blockPage.blockNumber).inputValue()
-        await page.waitForTimeout(2000)
+        await page.waitForTimeout(4000)
         await expect(parseInt(blockNumberChangedDate)).not.toEqual(parseInt(blockNumberOnBlockPage))
-
     });
 
     test('Validate that user can move to the Virtual ops by clicking button', async ({page}) =>{
