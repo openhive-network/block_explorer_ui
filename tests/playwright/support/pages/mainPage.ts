@@ -110,8 +110,8 @@ export class MainPage {
     this.detailedOperationCard = page.getByTestId('detailed-operation-card')
     this.commentPermlinkInout = page.getByTestId('permlink-input')
     this.currentWitnessName = page.getByTestId('current-witness-name')
-    this.datePickerTriggerFromDate = page.locator('[data-testid="date-picker-trigger"]').first();
-    this.datePickerTriggerToDate = page.locator('[data-testid="date-picker-trigger"]').last();
+    this.datePickerTriggerFromDate = page.locator('[data-testid="datepicker-trigger"]').first();
+    this.datePickerTriggerToDate = page.locator('[data-testid="datepicker-trigger"]').last();
   }
 
   async gotoBlockExplorerPage() {
