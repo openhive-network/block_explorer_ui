@@ -1,5 +1,5 @@
 import React from "react";
-import { formatJson } from "@/utils/StringUtils";
+import CopyJSON from "./CopyJSON";
 
 interface JSONViewProps {
   json: object;
@@ -9,6 +9,9 @@ interface JSONViewProps {
 const JSONView: React.FC<JSONViewProps> = ({ json, className }) => {
   return (
     <div className={className}>
+      <div className="w-full flex justify-end">
+        <CopyJSON value={json} />
+      </div>
       <pre>{JSON.stringify(json)}</pre>
     </div>
   );

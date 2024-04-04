@@ -13,12 +13,14 @@ import { cn } from "@/lib/utils";
 import Explorer from "@/types/Explorer";
 import { isJson } from "@/utils/StringUtils";
 import { Button } from "./ui/button";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Copy } from "lucide-react";
 import JSONView from "./JSONView";
 import { getOperationTypeForDisplay } from "@/utils/UI";
+import CopyJSON from "./CopyJSON";
 
 interface OperationsTableProps {
   operations: Explorer.OperationForTable[];
+  unformattedOperations?: Explorer.OperationForTable[];
   className?: string;
 }
 
@@ -51,15 +53,19 @@ const getOperationValues = (operation: Hive.Operation) => {
   return valueAsObject;
 };
 
-const getCustomJson = (operation: Hive.Operation) => {
-  const valuesAsObject = getOperationValues(operation);
-};
-
 const OperationsTable: React.FC<OperationsTableProps> = ({
   operations,
+  unformattedOperations,
   className,
 }) => {
   const [expanded, setExpanded] = useState<number[]>([]);
+
+  const getUnformattedValue = (operation: Explorer.OperationForTable) => {
+    const unformattedOperation = unformattedOperations?.find(
+      (op) => op.operatiopnId === operation.operatiopnId
+    )?.operation;
+    return unformattedOperation ? getOperationValues(unformattedOperation) : {};
+  };
 
   return (
     <Table
@@ -70,6 +76,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
     >
       <TableHeader>
         <TableRow>
+          <TableHead></TableHead>
           <TableHead></TableHead>
           <TableHead className="pl-2">Block</TableHead>
           <TableHead>Transaction</TableHead>
@@ -123,7 +130,13 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                   )}
                 </div>
               </TableCell>
-              <TableCell className="pl-2" data-testid="block-number-operation-table">
+              <TableCell>
+                <CopyJSON value={getUnformattedValue(operation)} />
+              </TableCell>
+              <TableCell
+                className="pl-2"
+                data-testid="block-number-operation-table"
+              >
                 <Link
                   className="text-explorer-turquoise"
                   href={`/block/${operation.blockNumber}`}
@@ -142,7 +155,10 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
               <TableCell data-testid="operation-type">
                 {getOperationTypeForDisplay(operation.operation.type)}
               </TableCell>
-              <TableCell className="md:max-w-0 w-full" data-testid="operation-content">
+              <TableCell
+                className="md:max-w-0 w-full"
+                data-testid="operation-content"
+              >
                 <div>{getOneLineDescription(operation)}</div>
               </TableCell>
             </TableRow>
