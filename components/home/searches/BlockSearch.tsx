@@ -140,7 +140,7 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
                 <HelpCircle className="h-4" />
               </TooltipTrigger>
               <TooltipContent>
-                <div className="bg-white text-black p-2">
+                <div className="bg-white text-black dark:bg-explorer-dark-gray dark:text-white p-2">
                   Pick property from body of operation and its value. You can
                   use that only for single operation.
                 </div>
@@ -174,10 +174,10 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
                 </div>
               )}
             </SelectTrigger>
-            <SelectContent className="bg-white text-black rounded-sm max-h-[31rem] overflow-y-scroll">
+            <SelectContent className="bg-white text-black dark:bg-explorer-dark-gray dark:text-white rounded-sm max-h-[31rem] overflow-y-scroll">
               {operationKeysData?.map((keys, index) => (
                 <SelectItem
-                  className="m-1 text-center"
+                  className="m-1 text-center hover:bg-explorer-dark-gray hover:text-white hover:dark:bg-white hover:dark:text-black hover:cursor-pointer"
                   key={index}
                   value={index.toFixed(0)}
                   defaultChecked={false}

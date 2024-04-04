@@ -54,10 +54,10 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
             )?.name
           }
         </SelectTrigger>
-        <SelectContent className="bg-white text-black rounded-sm max-h-[31rem]">
+        <SelectContent className="bg-white text-black rounded-sm max-h-[31rem] dark:bg-explorer-dark-gray dark:text-white">
           {rangeSelectOptions.map((selectOption, index) => (
             <SelectItem
-              className="text-center"
+              className="text-center hover:dark:bg-white hover:dark:text-black"
               key={index}
               value={selectOption.key}
               defaultChecked={false}
@@ -104,10 +104,10 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
                   )?.name
                 }
               </SelectTrigger>
-              <SelectContent className="bg-white text-black rounded-sm max-h-[31rem]">
+              <SelectContent className="bg-white text-black rounded-sm max-h-[31rem] dark:bg-explorer-dark-gray dark:text-white">
                 {timeSelectOptions.map((selectOption, index) => (
                   <SelectItem
-                    className="text-center"
+                    className="text-center hover:dark:bg-white hover:dark:text-black"
                     key={index}
                     value={selectOption.key}
                     defaultChecked={false}
