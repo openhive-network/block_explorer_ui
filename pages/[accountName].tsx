@@ -301,12 +301,14 @@ export default function Account() {
                 <Button
                   className=" bg-blue-800 hover:bg-blue-600 rounded"
                   onClick={() => handleSearch(true)}
+                  data-testid="apply-filters"
                 >
                   <span>Apply filters</span>{" "}
                 </Button>
                 <Button
                   className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]"
                   onClick={() => handleFilterClear()}
+                  data-testid="clear-filters"
                 >
                   <span>Clear filters</span>{" "}
                 </Button>

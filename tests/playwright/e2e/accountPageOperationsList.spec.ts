@@ -1,6 +1,7 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, chromium } from "@playwright/test";
 import { MainPage } from "../support/pages/mainPage";
 import { AccountPage } from "../support/pages/accountPage";
+import { AccountPageFilter } from "../support/pages/accountPageFilter";
 
 test.describe("Account page - Operations List", () => {
   let accountPage: AccountPage;
@@ -326,6 +327,193 @@ test.describe("Account page - Operations List", () => {
     const listOfOperationTypesAfterClear = await accountPage.accountOperationTableOperationType.allTextContents();
     await expect(listOfOperationTypesAfterClear).toContain('vote');
     await expect(listOfOperationTypesAfterClear).toContain('producer_reward');
+  });
+
+  test("From filters dropdown list choose - Last blocks and click apply filters and check if filter is working correctly", async ({ page }) => {
+    const accountFilter = new AccountPageFilter(page);
+
+    await accountPage.gotoTheSpecificUserPage(accountName);
+    await accountPage.validateAccountPageIsLoaded();
+    await accountPage.validateAccountName(accountName);
+
+    await accountFilter.filterDropdownList.click();
+    await accountFilter.searchSelectOptLastBlocks.click();
+    await accountFilter.applyFiltersBtn.click();
+    await page.waitForTimeout(7000);
+    await expect(await accountPage.accountDetailedOperationCard.first()).toBeVisible();
+  });
+
+  test("From filters dropdown list choose - Last days/weeks/months and check option for days, click apply filters and check if filter is working correctly", async ({ page }) => {
+    const accountFilter = new AccountPageFilter(page);
+
+    await accountPage.gotoTheSpecificUserPage(accountName);
+    await accountPage.validateAccountPageIsLoaded();
+    await accountPage.validateAccountName(accountName);
+
+    await accountFilter.filterDropdownList.click();
+    await accountFilter.searchSelectOptLastDaysWeeksMonths.click();
+    await accountFilter.applyFiltersBtn.click();
+    await page.waitForTimeout(7000);
+    await expect(await accountPage.accountDetailedOperationCard.first()).toBeVisible();
+  });
+
+  test("From filters dropdown list choose - Last days/weeks/months and check option for weeks, click apply filters and check if filter is working correctly", async ({ page }) => {
+    const accountFilter = new AccountPageFilter(page);
+
+    await accountPage.gotoTheSpecificUserPage(accountName);
+    await accountPage.validateAccountPageIsLoaded();
+    await accountPage.validateAccountName(accountName);
+
+    await accountFilter.filterDropdownList.click();
+    await accountFilter.searchSelectOptLastDaysWeeksMonths.click();
+    await accountFilter.searchSelectOptionsListTimesUnits.click();
+    await accountFilter.selectOptionWeeksInLastTimesUnits.click();
+    await accountFilter.applyFiltersBtn.click();
+    await page.waitForTimeout(7000);
+    await expect(await accountPage.accountDetailedOperationCard.first()).toBeVisible();
+  });
+
+  test("From filters dropdown list choose - Last days/weeks/months and check option for months, click apply filters and check if filter is working correctly", async ({ page }) => {
+    const accountFilter = new AccountPageFilter(page);
+
+    await accountPage.gotoTheSpecificUserPage(accountName);
+    await accountPage.validateAccountPageIsLoaded();
+    await accountPage.validateAccountName(accountName);
+
+    await accountFilter.filterDropdownList.click();
+    await accountFilter.searchSelectOptLastDaysWeeksMonths.click();
+    await accountFilter.searchSelectOptionsListTimesUnits.click();
+    await accountFilter.selectOptionMonthsInLastTimesUnits.click();
+    await accountFilter.applyFiltersBtn.click();
+    await page.waitForTimeout(7000);
+    await expect(await accountPage.accountDetailedOperationCard.first()).toBeVisible();
+  });
+
+  test("From filters dropdown list choose - Block range and check if filter is working correctly", async ({ page }) => {
+    const accountFilter = new AccountPageFilter(page);
+
+    await accountPage.gotoTheSpecificUserPage(accountName);
+    await accountPage.validateAccountPageIsLoaded();
+    await accountPage.validateAccountName(accountName);
+
+    await accountFilter.filterDropdownList.click();
+    await accountFilter.searchSelectOptBlockRange.click();
+    await accountFilter.fromBlockInput.fill('84237380');
+    await accountFilter.toBlockInput.fill('84237451');
+    await accountFilter.applyFiltersBtn.click();
+    await page.waitForTimeout(5000);
+    expect(await accountPage.accountOperationTableBlockNumber.first().textContent()).toBe('84,237,451');
+    expect(await accountPage.accountOperationTableBlockNumber.last().textContent()).toBe('84,237,380');
+  });
+
+  test("From filters dropdown choose Block range, click apply filters then click clear filters and check if filter is removed", async ({ page }) => {
+    const accountFilter = new AccountPageFilter(page);
+
+    await accountPage.gotoTheSpecificUserPage(accountName);
+    await accountPage.validateAccountPageIsLoaded();
+    await accountPage.validateAccountName(accountName);
+
+    await accountFilter.filterDropdownList.click();
+    await accountFilter.searchSelectOptBlockRange.click();
+    await accountFilter.fromBlockInput.fill('84237380');
+    await accountFilter.toBlockInput.fill('84237451');
+    await accountFilter.applyFiltersBtn.click();
+    await page.waitForTimeout(5000);
+    expect(await accountPage.accountOperationTableBlockNumber.first().textContent()).toBe('84,237,451');
+    expect(await accountPage.accountOperationTableBlockNumber.last().textContent()).toBe('84,237,380');
+
+    await accountFilter.clearFiltersBtn.click();
+    await page.waitForTimeout(5000);
+    if (await accountPage.accountOperationTableBlockNumber.first().isVisible()){
+      expect(await accountPage.accountOperationTableBlockNumber.first().textContent()).not.toBe('84,237,451');
+    }
+  });
+
+  test("From filters dropdown choose Block range, click apply filters, click clear filters and then again choose the same filter - Block range", async ({ page }) => {
+    const accountFilter = new AccountPageFilter(page);
+
+    await accountPage.gotoTheSpecificUserPage(accountName);
+    await accountPage.validateAccountPageIsLoaded();
+    await accountPage.validateAccountName(accountName);
+
+    await accountFilter.filterDropdownList.click();
+    await accountFilter.searchSelectOptBlockRange.click();
+    await accountFilter.fromBlockInput.fill('84237380');
+    await accountFilter.toBlockInput.fill('84237451');
+    await accountFilter.applyFiltersBtn.click();
+    await page.waitForTimeout(5000);
+    expect(await accountPage.accountOperationTableBlockNumber.first().textContent()).toBe('84,237,451');
+    expect(await accountPage.accountOperationTableBlockNumber.last().textContent()).toBe('84,237,380');
+
+    await accountFilter.clearFiltersBtn.click();
+    await page.waitForTimeout(5000);
+    if (await accountPage.accountOperationTableBlockNumber.first().isVisible()){
+      expect(await accountPage.accountOperationTableBlockNumber.first().textContent()).not.toBe('84,237,451');
+    }
+
+    await accountFilter.filterDropdownList.click();
+    await accountFilter.searchSelectOptBlockRange.click();
+    await accountFilter.applyFiltersBtn.click();
+    await page.waitForTimeout(5000);
+    expect(await accountPage.accountOperationTableBlockNumber.first().textContent()).toBe('84,237,451');
+    expect(await accountPage.accountOperationTableBlockNumber.last().textContent()).toBe('84,237,380');
+  });
+
+  // Set bigger viewport to fit the calender in the browser window
+  test.use({
+    viewport: { width: 1600, height: 1200 },
+  });
+
+  test("From filters dropdown list choose - time range and check if filter is working correctly", async ({ browserName, page }) => {
+    test.skip(browserName === 'webkit', 'Automatic test works well on chromium');
+    test.skip(browserName === 'firefox', 'Automatic test works well on chromium');
+
+    const accountFilter = new AccountPageFilter(page);
+    const expectedFirstBlockNumber: string = '84,207,952';
+    const expectedLastBlockNumber: string = '84,206,775';
+
+    await accountPage.gotoTheSpecificUserPage(accountName);
+    await accountPage.validateAccountPageIsLoaded();
+    await accountPage.validateAccountName(accountName);
+
+    await accountFilter.filterDropdownList.click();
+    await accountFilter.searchSelectOptTimeRange.click();
+    await page.waitForTimeout(3000);
+    await accountFilter.datePickerTriggerFromDate.click();
+    await accountFilter.setDateTime('2024', 'April', '3', '10', '00', '00', accountFilter.datePickerTriggerFromDate);
+    await accountFilter.datePickerTriggerToDate.click();
+    await accountFilter.setDateTime('2024', 'April', '3', '11', '00', '00', accountFilter.datePickerTriggerToDate);
+    await accountFilter.applyFiltersBtn.click();
+    await page.waitForTimeout(5000);
+    expect(await accountPage.accountOperationTableBlockNumber.first().textContent()).toBe(expectedFirstBlockNumber);
+    expect(await accountPage.accountOperationTableBlockNumber.last().textContent()).toBe(expectedLastBlockNumber);
+  });
+
+  test("From filters dropdown list choose - Block range and operation types as custom json check if filter is working correctly", async ({ page }) => {
+    const accountFilter = new AccountPageFilter(page);
+
+    await accountPage.gotoTheSpecificUserPage(accountName);
+    await accountPage.validateAccountPageIsLoaded();
+    await accountPage.validateAccountName(accountName);
+
+    await accountPage.accountOperationTypesButton.click();
+    await accountPage.validateOperationTypesDialogIsLoaded();
+    await accountPage.operationTypeCustomJsonCheckbox.check();
+    await expect(accountPage.operationTypeCustomJsonCheckbox).toBeChecked();
+    await accountPage.operationTypesDialogApplyButton.click();
+
+    await accountFilter.filterDropdownList.click();
+    await accountFilter.searchSelectOptBlockRange.click();
+    await accountFilter.fromBlockInput.fill('84181162');
+    await accountFilter.toBlockInput.fill('84239571');
+    await accountFilter.applyFiltersBtn.click();
+    await page.waitForTimeout(10000);
+    expect(await accountPage.accountOperationTableBlockNumber.first().textContent()).toBe('84,239,571');
+    expect(await accountPage.accountOperationTableBlockNumber.last().textContent()).toBe('84,181,162');
+
+    await accountPage.expandDetailsButton.first().click();
+    await expect(accountPage.detailsRow.first()).toBeVisible();
+    await expect(accountPage.detailsRow.first()).toContainText('arcange');
   });
 
 });

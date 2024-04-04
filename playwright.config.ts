@@ -60,7 +60,10 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        // devices property was skipped to allow maximize the browser window in some tests
+        ...devices['Desktop Chrome']
+      },
     },
 
     {

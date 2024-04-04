@@ -61,6 +61,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
               key={index}
               value={selectOption.key}
               defaultChecked={false}
+              data-testid="search-select-option"
             >
               {selectOption.name}
             </SelectItem>
@@ -104,7 +105,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
                   )?.name
                 }
               </SelectTrigger>
-              <SelectContent className="bg-white text-black rounded-sm max-h-[31rem] dark:bg-explorer-dark-gray dark:text-white">
+              <SelectContent className="bg-white text-black rounded-sm max-h-[31rem] dark:bg-explorer-dark-gray dark:text-white" data-testid="select-time-option-units">
                 {timeSelectOptions.map((selectOption, index) => (
                   <SelectItem
                     className="text-center hover:dark:bg-white hover:dark:text-black"
@@ -127,6 +128,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
             <Input
               type="number"
               className="bg-gray-700"
+              data-testid="from-block-input"
               value={fromBlock || ""}
               onChange={(e) =>
                 setNumericValue(Number(e.target.value), setFromBlock)

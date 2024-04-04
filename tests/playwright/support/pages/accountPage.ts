@@ -6,6 +6,7 @@ export class AccountPage {
   readonly accountName: Locator;
   readonly accountTopBar: Locator;
   readonly accountOperationList: Locator;
+  readonly accountDetailedOperationCard: Locator;
   readonly accountPropertiesDropdown: Locator;
   readonly accountJsonMetadataDropdown: Locator;
   readonly accountPostingJsonMetadataDropdown: Locator;
@@ -23,6 +24,7 @@ export class AccountPage {
   readonly operationTypeCommentCheckbox: Locator;
   readonly operationTypeTransferCheckbox: Locator;
   readonly operationTypeRecurrentTransfer: Locator;
+  readonly operationTypeCustomJsonCheckbox: Locator;
 
   readonly virtualOpTypeFillConvertRequest: Locator;
   readonly virtualOpTypeAuthorReward: Locator;
@@ -46,12 +48,16 @@ export class AccountPage {
   readonly gotoPageInput: Locator;
   readonly gotoPageButton: Locator;
 
+  readonly expandDetailsButton: Locator;
+  readonly detailsRow: Locator;
+
   constructor(page: Page) {
     this.page = page;
     this.accountDetails = page.getByTestId('account-details');
     this.accountName = page.getByTestId('account-name');
     this.accountTopBar = page.getByTestId('account-top-bar');
     this.accountOperationList = page.getByTestId('account-operation-list');
+    this.accountDetailedOperationCard = page.getByTestId('detailed-operation-card');
     this.accountPropertiesDropdown = page.getByTestId('properties-dropdown').first();
     this.accountJsonMetadataDropdown = page.getByTestId('account-json-metadata-dropdown').first();
     this.accountPostingJsonMetadataDropdown = page.getByTestId('account-json-metadata-dropdown').last();
@@ -82,6 +88,7 @@ export class AccountPage {
     this.operationTypeCommentCheckbox = page.getByTestId('operation-type-checkbox-comment_operation');
     this.operationTypeTransferCheckbox = page.getByTestId('operation-type-checkbox-transfer_operation');
     this.operationTypeRecurrentTransfer = page.getByTestId('operation-type-checkbox-recurrent_transfer_operation');
+    this.operationTypeCustomJsonCheckbox = page.getByTestId('operation-type-checkbox-custom_json_operation');
 
     this.virtualOpTypeFillConvertRequest = page.getByTestId('operation-type-checkbox-fill_convert_request_operation');
     this.virtualOpTypeAuthorReward = page.getByTestId('operation-type-checkbox-author_reward_operation');
@@ -91,6 +98,9 @@ export class AccountPage {
 
     this.gotoPageInput = page.getByTestId('input-goto-page');
     this.gotoPageButton = page.getByTestId('button-goto-page');
+
+    this.expandDetailsButton = page.getByTestId('expand-details');
+    this.detailsRow = page.getByTestId('details');
   }
 
   async validateAccountPageIsLoaded() {
