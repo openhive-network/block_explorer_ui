@@ -51,40 +51,6 @@ export class AccountPage {
   readonly gotoPageInput: Locator;
   readonly gotoPageButton: Locator;
 
-  readonly accountOperationTableBlockNumber: Locator;
-  readonly accountOperationTableTransactionNumber: Locator;
-  readonly accountOperationTableOperationType: Locator;
-  readonly accountOperationTableOperationContent: Locator;
-
-  readonly accountOperationTypesButton: Locator;
-  readonly operationTypesDialog: Locator;
-  readonly operationTypeVoteCheckbox: Locator;
-  readonly operationTypeCommentCheckbox: Locator;
-  readonly operationTypeTransferCheckbox: Locator;
-  readonly operationTypeRecurrentTransfer: Locator;
-
-  readonly virtualOpTypeFillConvertRequest: Locator;
-  readonly virtualOpTypeAuthorReward: Locator;
-  readonly virtualOpTypeCurationReward: Locator;
-  readonly virtualOpTypeEffectiveCommentVote: Locator;
-  readonly virtualOpTypeProducerReward: Locator;
-
-  readonly operationTypesDialogFooter: Locator;
-  readonly operationTypesDialogApplyButton: Locator;
-  readonly operationTypesDialogCancelButton: Locator;
-
-  readonly nonVirtualOperationsTypeList: Locator;
-  readonly virtualOperationsTypeList: Locator;
-
-  readonly operationsTypeSelectAllButton: Locator;
-  readonly operationsTypeSelectRealButton: Locator;
-  readonly operationsTypeSelectVirtualButton: Locator;
-  readonly operationsTypeInvertButton: Locator;
-  readonly operationsTypeClearButton: Locator;
-
-  readonly gotoPageInput: Locator;
-  readonly gotoPageButton: Locator;
-
   constructor(page: Page) {
     this.page = page;
     this.accountDetails = page.getByTestId('account-details');
@@ -130,6 +96,11 @@ export class AccountPage {
 
     this.gotoPageInput = page.getByTestId('input-goto-page');
     this.gotoPageButton = page.getByTestId('button-goto-page');
+    this.creationDate = page.getByTestId('creation-date');
+    this.userAvatar = page.getByTestId('user-avatar');
+    this.votingPower = page.getByTestId('voting-power');
+    this.downvotePower = page.getByTestId('downvote-power');
+    this.resourceCredits = page.getByTestId('resources-credits');
   }
 
   async validateAccountPageIsLoaded() {

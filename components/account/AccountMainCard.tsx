@@ -41,6 +41,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
         )}
         <span>
           <Image
+            data-testid="user-avatar"
             className="rounded-full border-2 border-explorer-orange"
             src={getHiveAvatarUrl(accountName)}
             alt="avatar"
@@ -99,7 +100,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
         <div className="flex justify-between p-4">
           <div className="text-center flex justify-center w-full gap-2">
             <span className="text-lg">Creation Date:</span>
-            <span className="text-lg">
+            <span className="text-lg" data-testid='creation-date'>
               {formatAndDelocalizeTime(accountDetails.created)}
             </span>
           </div>

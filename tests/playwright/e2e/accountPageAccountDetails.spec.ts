@@ -46,6 +46,7 @@ test.describe('Account page - account details tests', () => {
         await expect(mainPage.headBlockCardWitnessName).toBeVisible()
         await expect(mainPage.headBlockCardWitnessName).toBeEnabled()
         await mainPage.headBlockCardWitnessLink.click()
+        await page.waitForTimeout(3000)
         await expect(accountPage.votingPower).toBeVisible()
         await expect(page.locator('.h-full.w-full.flex-1.bg-primary.transition-all').first()).toHaveCSS('background-color', 'rgb(0, 192, 64)')
 
@@ -68,19 +69,15 @@ test.describe('Account page - account details tests', () => {
         await expect(response.status()).toBe(200)
 
         const originalDate = await responseBody.created;
-        const parsedDate = new Date(originalDate);
-
-        const addLeadingZero = (number) => (number < 10 ? '0' + number : number);
-
-        const formattedDate = `${addLeadingZero(parsedDate.getDate())}/${addLeadingZero(parsedDate.getMonth() + 1)}/${parsedDate.getFullYear()}`;
-        
-        console.log(formattedDate)
-        
+        console.log(originalDate)
+      
         await expect(accountPage.creationDate).toBeVisible()
 
         const creationDate = await accountPage.creationDate.innerText()
+        const expectedDatePart = originalDate.split('T')[0];
+        const receivedDatePart = creationDate.split(' ')[0].replace(/\//g, '-');
 
-        await expect(creationDate).toEqual(formattedDate)
+        expect(expectedDatePart).toEqual(receivedDatePart);
     })
 
     test('Check if after click Properties button the list is expanded and have correct information', async ({page}) =>{
