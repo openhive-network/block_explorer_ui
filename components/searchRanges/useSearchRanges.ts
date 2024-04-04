@@ -62,6 +62,10 @@ const useSearchRanges = (defaultSelectKey: string = "none") => {
   
   const timeSelectOptions: Explorer.SelectOption[] = [
     {
+      name: "Hours",
+      key: "hours"
+    },
+    {
       name: "Days",
       key: "days"
     },
@@ -110,7 +114,7 @@ const useSearchRanges = (defaultSelectKey: string = "none") => {
       }
     }
     if (lastTimeUnitValue && rangeSelectKey === "lastTime") {
-      const typedTimeUnit = timeUnitSelectKey as "days" | "weeks" | "months";
+      const typedTimeUnit = timeUnitSelectKey as "days" | "weeks" | "months" | "hours";
       payloadStartDate = moment().subtract(lastTimeUnitValue, typedTimeUnit).milliseconds(0).toDate();
     }
     return {
