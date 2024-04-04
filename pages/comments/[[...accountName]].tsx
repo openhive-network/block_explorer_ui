@@ -141,6 +141,9 @@ const Comments: React.FC = () => {
                 operations={convertCommentsOperationResultToTableOperations(
                   formattedOperations?.operations_result
                 )}
+                unformattedOperations={
+                  commentSearch.commentSearchData.operations_result
+                }
                 className="text-white"
               />
             </div>

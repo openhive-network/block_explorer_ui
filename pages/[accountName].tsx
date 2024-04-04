@@ -344,6 +344,7 @@ export default function Account() {
                   operations={convertOperationResultsToTableOperations(
                     formattedAccountOperations?.operations_result
                   )}
+                  unformattedOperations={accountOperations?.operations_result}
                 />
               </div>
             )}
