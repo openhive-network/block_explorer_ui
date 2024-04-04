@@ -378,9 +378,9 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
                 operations={convertCommentsOperationResultToTableOperations(
                   formattedCommentOperations?.operations_result
                 )}
-                unformattedOperations={
+                unformattedOperations={convertCommentsOperationResultToTableOperations(
                   commentSearch.commentSearchData.operations_result
-                }
+                )}
               />
             )}
           </div>
@@ -441,9 +441,9 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
                 operations={convertOperationResultsToTableOperations(
                   formattedAccountOperations?.operations_result
                 )}
-                unformattedOperations={
+                unformattedOperations={convertOperationResultsToTableOperations(
                   accountOperations.accountOperations.operations_result
-                }
+                )}
               />
             )}
           </div>
