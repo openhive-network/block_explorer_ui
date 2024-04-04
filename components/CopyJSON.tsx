@@ -2,6 +2,12 @@ import { Check, ClipboardCopy } from "lucide-react";
 import { Button } from "./ui/button";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
 
 interface CopyJSONProps {
   value: Object;
@@ -27,7 +33,16 @@ const CopyJSON: React.FC<CopyJSONProps> = ({ value, className }) => {
       {copied ? (
         <Check className="text-explorer-ligh-green w-5 h-5" />
       ) : (
-        <ClipboardCopy className="w-5 h-5" />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <ClipboardCopy className="w-5 h-5" />
+            </TooltipTrigger>
+            <TooltipContent className="bg-white text-black dark:bg-explorer-dark-gray dark:text-white">
+              Copy JSON to clipboard.
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       )}
     </Button>
   );
