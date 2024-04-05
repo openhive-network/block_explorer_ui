@@ -31,6 +31,7 @@ import { useUserSettingsContext } from "../contexts/UserSettingsContext";
 import Hive from "@/types/Hive";
 import OperationsTable from "../OperationsTable";
 import CustomPagination from "../CustomPagination";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 
 interface SearchesSectionProps {}
 
@@ -260,12 +261,11 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
   };
 
   return (
-    <div
-      className="mt-6 col-start-1 col-span-4 md:col-span-1 mb-6 md:mb-0 flex flex-col gap-y-6"
-      data-testid="block-search-section"
-    >
-      <div className=" bg-explorer-dark-gray p-4 h-fit rounded">
-        <div className="text-center text-xl">Search</div>
+    <Card className="mt-4" data-testid="block-search-section">
+      <CardHeader>
+        <CardTitle>Search</CardTitle>
+      </CardHeader>
+      <CardContent>
         <Accordion
           type="single"
           className="w-full"
@@ -305,7 +305,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
             </AccordionContent>
           </AccordionItem>
         </Accordion>
-      </div>
+      </CardContent>
       {blockSearch.blockSearchData && lastSearchKey === "block" && (
         <div
           className=" bg-explorer-dark-gray p-2 md: h-fit rounded"
@@ -450,7 +450,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
             No operations matching given criteria
           </div>
         ))}
-    </div>
+    </Card>
   );
 };
 

@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/utils/Hooks";
 import { useRouter } from "next/router";
 import useLastBlocks from "@/api/homePage/useLastBlocks";
+import { Card, CardHeader, CardTitle } from "./ui/card";
 
 interface LastBlocksWidgetProps {
   headBlock?: number;
@@ -168,14 +169,17 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
   );
 
   return (
-    <div
+    <Card
       className={cn(
-        "w-full h-[420px] bg-explorer-dark-gray rounded text-white",
+        "w-[95%] m-auto md:w-full h-[420px] bg-explorer-dark-gray rounded text-white",
+        "w-[95%] md:w-full h-[460px]",
         className
       )}
       data-testid="last-block-widget"
     >
-      <p className="w-full text-center pt-2">Last Blocks</p>
+      <CardHeader>
+        <CardTitle>Last Blocks</CardTitle>
+      </CardHeader>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={data}
@@ -183,7 +187,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
             top: 20,
             right: 55,
             left: isMobile ? 0 : 10,
-            bottom: isMobile ? 90 : 60,
+            bottom: isMobile ? 120 : 90,
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
@@ -246,7 +250,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
           />
         </BarChart>
       </ResponsiveContainer>
-    </div>
+    </Card>
   );
 };
 
