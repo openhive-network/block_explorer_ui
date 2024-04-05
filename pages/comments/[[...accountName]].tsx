@@ -17,6 +17,7 @@ import {
 import OperationsTable from "@/components/OperationsTable";
 import Hive from "@/types/Hive";
 import { getPageUrlParams } from "@/lib/utils";
+import { Card, CardContent } from "@/components/ui/card";
 
 const defaultSearchParams: Explorer.CommentSearchParams = {
   accountName: undefined,
@@ -108,8 +109,8 @@ const Comments: React.FC = () => {
       className="w-full md:w-4/5"
       data-testid="comments-search-comments-page"
     >
-      <div className="px-2 md:px-0">
-        <div className="bg-explorer-dark-gray text-white p-4 rounded">
+      <Card>
+        <CardContent className="pt-2">
           <CommentsSearch
             startCommentsSearch={startCommentSearch}
             operationsTypes={operationsTypes}
@@ -117,8 +118,8 @@ const Comments: React.FC = () => {
             loading={commentSearch.commentSearchDataLoading}
             searchRanges={searchRanges}
           />
-        </div>
-      </div>
+        </CardContent>
+      </Card>
       {commentSearch.commentSearchData && (
         <>
           <div className="w-full flex justify-center items-center mt-4 mb-2">
