@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import moment from "moment";
 import { config } from "@/Config";
+import { Card, CardContent, CardHeader } from "../ui/card";
 
 type AccountDetailsCardProps = {
   header: string;
@@ -40,10 +41,10 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
         </div>
       );
     } else if (typeof userDetails[key] === "number") {
-      return userDetails[key].toLocaleString()
+      return userDetails[key].toLocaleString();
     } else if (typeof userDetails[key] === "string") {
       return userDetails[key];
-    } else  return JSON.stringify(userDetails[key])
+    } else return JSON.stringify(userDetails[key]);
   };
 
   const handlePropertiesVisibility = () => {
@@ -51,18 +52,17 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
   };
 
   return (
-    <div className="bg-explorer-dark-gray p-2 rounded mt-2 mx-2 md:mx-6" data-testid="properties-dropdown">
-      <div
-        onClick={handlePropertiesVisibility}
-        className="h-full flex justify-between align-center p-2 hover:bg-slate-600 cursor-pointer"
-      >
-        <div className="text-lg">{header}</div>
-        {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
-      </div>
-      <div
-        hidden={isPropertiesHidden}
-        className="flex-column"
-      >
+    <Card data-testid="properties-dropdown" className="overflow-hidden pb-0">
+      <CardHeader className="p-0">
+        <div
+          onClick={handlePropertiesVisibility}
+          className="flex justify-between align-center p-2 hover:bg-slate-600 cursor-pointer px-4"
+        >
+          <div className="text-lg">{header}</div>
+          {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
+        </div>
+      </CardHeader>
+      <CardContent hidden={isPropertiesHidden}>
         {keys.map((key: string, index: number) => {
           if (
             [
@@ -81,14 +81,12 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
               <div className="border-b border-solid border-gray-700 flex justify-between py-1 mr-4">
                 {key}
               </div>
-              <span className=" overflow-auto">
-                {render_key(key)}
-              </span>
+              <span className=" overflow-auto">{render_key(key)}</span>
             </div>
           );
         })}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 export default AccountDetailsCard;

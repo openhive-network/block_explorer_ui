@@ -45,8 +45,8 @@ export class BlockPage {
     this.blockProducer = page.getByTestId('block-producer-name');
     this.hash = page.getByTestId('hash');
     this.prevHash = page.getByTestId('prev-hash');
-    this.operations = page.locator('.my-2').nth(1);
-    this.virtualOperations = page.locator('.my-2').nth(2);
+    this.operations = page.locator('.my-2').first();
+    this.virtualOperations = page.locator('.my-2').nth(1);
     this.seeMoreDetailsBtn = page.getByRole('button', {name: "See more details"});
     this.detailedOperationCard = page.getByTestId("detailed-operation-card")
     this.operationTypeTitle = page.getByTestId("operation-type");

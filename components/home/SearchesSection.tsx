@@ -31,6 +31,7 @@ import { useUserSettingsContext } from "../contexts/UserSettingsContext";
 import Hive from "@/types/Hive";
 import OperationsTable from "../OperationsTable";
 import CustomPagination from "../CustomPagination";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 
 interface SearchesSectionProps {}
 
@@ -260,52 +261,53 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
   };
 
   return (
-    <div
-      className="mt-6 col-start-1 col-span-4 md:col-span-1 mb-6 md:mb-0 flex flex-col gap-y-6"
-      data-testid="block-search-section"
-    >
-      <div className=" bg-explorer-dark-gray p-4 h-fit rounded">
-        <div className="text-center text-xl">Search</div>
-        <Accordion
-          type="single"
-          className="w-full"
-          value={accordionValue}
-          onValueChange={setAccordionValue}
-        >
-          <AccordionItem value="block">
-            <AccordionTrigger>Block Search</AccordionTrigger>
-            <AccordionContent className="px-2 flex flex-col gap-y-4">
-              <BlockSearch
-                startBlockSearch={startBlockSearch}
-                operationsTypes={operationsTypes}
-                loading={blockSearch.blockSearchDataLoading}
-              />
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="account">
-            <AccordionTrigger>Account search</AccordionTrigger>
-            <AccordionContent className="px-2 flex flex-col gap-y-4">
-              <AccountSearch
-                startAccountOperationsSearch={startAccountOperationsSearch}
-                operationsTypes={operationsTypes}
-                loading={accountOperations.isAccountOperationsLoading}
-                searchRanges={searchRanges}
-              />
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="comment">
-            <AccordionTrigger>Comment search</AccordionTrigger>
-            <AccordionContent className="px-2 flex flex-col gap-y-4">
-              <CommentsSearch
-                startCommentsSearch={(params) => startCommentSearch(params)}
-                operationsTypes={operationsTypes}
-                loading={commentSearch.commentSearchDataLoading}
-                searchRanges={searchRanges}
-              />
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </div>
+    <>
+      <Card className="mt-4" data-testid="block-search-section">
+        <CardHeader>
+          <CardTitle>Search</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Accordion
+            type="single"
+            className="w-full"
+            value={accordionValue}
+            onValueChange={setAccordionValue}
+          >
+            <AccordionItem value="block">
+              <AccordionTrigger>Block Search</AccordionTrigger>
+              <AccordionContent className="px-2 flex flex-col gap-y-4">
+                <BlockSearch
+                  startBlockSearch={startBlockSearch}
+                  operationsTypes={operationsTypes}
+                  loading={blockSearch.blockSearchDataLoading}
+                />
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="account">
+              <AccordionTrigger>Account search</AccordionTrigger>
+              <AccordionContent className="px-2 flex flex-col gap-y-4">
+                <AccountSearch
+                  startAccountOperationsSearch={startAccountOperationsSearch}
+                  operationsTypes={operationsTypes}
+                  loading={accountOperations.isAccountOperationsLoading}
+                  searchRanges={searchRanges}
+                />
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="comment">
+              <AccordionTrigger>Comment search</AccordionTrigger>
+              <AccordionContent className="px-2 flex flex-col gap-y-4">
+                <CommentsSearch
+                  startCommentsSearch={(params) => startCommentSearch(params)}
+                  operationsTypes={operationsTypes}
+                  loading={commentSearch.commentSearchDataLoading}
+                  searchRanges={searchRanges}
+                />
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </CardContent>
+      </Card>
       {blockSearch.blockSearchData && lastSearchKey === "block" && (
         <div
           className=" bg-explorer-dark-gray p-2 md: h-fit rounded"
@@ -450,7 +452,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
             No operations matching given criteria
           </div>
         ))}
-    </div>
+    </>
   );
 };
 
