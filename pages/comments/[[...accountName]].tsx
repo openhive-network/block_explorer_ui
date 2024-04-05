@@ -106,7 +106,7 @@ const Comments: React.FC = () => {
 
   return (
     <div
-      className="w-full md:w-4/5"
+      className="w-full md:w-4/5 px-2 md:px-0"
       data-testid="comments-search-comments-page"
     >
       <Card>
@@ -137,17 +137,15 @@ const Comments: React.FC = () => {
             </div>
           </div>
           {formattedOperations?.operations_result ? (
-            <div className="px-2 md:px-0">
-              <OperationsTable
-                operations={convertCommentsOperationResultToTableOperations(
-                  formattedOperations?.operations_result
-                )}
-                unformattedOperations={convertCommentsOperationResultToTableOperations(
-                  commentSearch.commentSearchData.operations_result
-                )}
-                className="text-white"
-              />
-            </div>
+            <OperationsTable
+              operations={convertCommentsOperationResultToTableOperations(
+                formattedOperations?.operations_result
+              )}
+              unformattedOperations={convertCommentsOperationResultToTableOperations(
+                commentSearch.commentSearchData.operations_result
+              )}
+              className="text-white"
+            />
           ) : (
             <div className="flex justify-center w-full text-black">
               No operations matching given criteria

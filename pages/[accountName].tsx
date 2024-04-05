@@ -245,7 +245,7 @@ export default function Account() {
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 text-white mx-8 mt-12 md:mt-16 w-full gap-4 px-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 text-white mx-8 mt-[100px] md:mt-16 w-full gap-4 px-2 md:px-4">
         <div className="col-start-1 col-span-1 flex flex-col gap-y-2">
           <AccountMainCard
             accountDetails={accountDetails}

@@ -41,14 +41,14 @@ export default function Home() {
       <Head>
         <title>Hive Explorer</title>
       </Head>
-      <div className="grid grid-cols-3 text-white px-2 md:mx-8 w-full gap-x-4">
+      <div className="grid grid-cols-3 text-white px-2 md:mx-8 w-full gap-4">
         <HeadBlockCard
           headBlockCardData={dynamicGlobalQueryData}
           transactionCount={blockOperations?.operations_result?.length}
           blockDetails={headBlockData}
         />
         <div className="col-start-1 md:col-start-2 col-span-6 md:col-span-2">
-          <LastBlocksWidget headBlock={headBlockNum} className="mt-6 md:mt-0" />
+          <LastBlocksWidget headBlock={headBlockNum} />
           <SearchesSection />
         </div>
         <Card

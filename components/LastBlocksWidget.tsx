@@ -170,11 +170,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
 
   return (
     <Card
-      className={cn(
-        "w-[95%] m-auto md:w-full h-[420px] bg-explorer-dark-gray rounded text-white",
-        "w-[95%] md:w-full h-[460px]",
-        className
-      )}
+      className={cn("w-full h-[460px]", className)}
       data-testid="last-block-widget"
     >
       <CardHeader>

@@ -191,7 +191,7 @@ export default function Block() {
         <div>Loading ...</div>
       ) : blockDetails?.block_num ? (
         <div
-          className="w-full h-full flex flex-col gap-y-4"
+          className="w-full h-full flex flex-col gap-y-4 px-2 md:px-0"
           style={{ scrollMargin: "100px" }}
           id="block-page-top"
         >
@@ -251,7 +251,7 @@ export default function Block() {
                     className="text-black"
                   />
                 )}
-              <div className="w-full px-2 md:p-0 md:w-4/5 flex flex-col gap-y-2">
+              <div className="w-full md:w-4/5 flex flex-col gap-y-2">
                 <OperationsTable
                   operations={nonVirtualOperations}
                   unformattedOperations={unformattedNonVirtual}
