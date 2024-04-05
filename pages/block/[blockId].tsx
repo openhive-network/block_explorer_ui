@@ -154,6 +154,11 @@ export default function Block() {
   const { virtualOperations, nonVirtualOperations } =
     getSplitOperations(formattedOperations);
 
+  const {
+    virtualOperations: unformattedVirtual,
+    nonVirtualOperations: unformattedNonVirtual,
+  } = getSplitOperations(blockOperations?.operations_result);
+
   const handleGoToBlock = (blockNumber: string) => {
     router.push({
       pathname: "[blockId]",
@@ -246,10 +251,11 @@ export default function Block() {
                     className="text-black"
                   />
                 )}
-              <div className="w-full px-4 md:p-0 md:w-4/5 flex flex-col gap-y-2">
-                {!!nonVirtualOperations.length && (
-                  <OperationsTable operations={nonVirtualOperations} />
-                )}
+              <div className="w-full px-2 md:p-0 md:w-4/5 flex flex-col gap-y-2">
+                <OperationsTable
+                  operations={nonVirtualOperations}
+                  unformattedOperations={unformattedNonVirtual}
+                />
                 <div
                   className="text-center mt-4"
                   ref={virtualOpsRef}
@@ -264,9 +270,10 @@ export default function Block() {
                       : null}
                   </p>
                 </div>
-                {!!virtualOperations.length && (
-                  <OperationsTable operations={virtualOperations} />
-                )}
+                <OperationsTable
+                  operations={virtualOperations}
+                  unformattedOperations={unformattedVirtual}
+                />
               </div>
             </section>
           )}

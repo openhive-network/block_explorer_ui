@@ -100,6 +100,9 @@ export default function Transaction() {
                     operations={convertTransactionResponseToTableOperations(
                       formattedTransaction
                     )}
+                    unformattedOperations={convertTransactionResponseToTableOperations(
+                      trxData
+                    )}
                   />
                 )}
                 <div
