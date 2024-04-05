@@ -26,6 +26,7 @@ import {
   convertBooleanArrayToIds,
   convertOperationResultsToTableOperations,
 } from "@/lib/utils";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -244,8 +245,8 @@ export default function Account() {
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 text-white mx-8 mt-12 md:mt-14 w-full">
-        <div className="mt-2 col-start-1 col-span-1">
+      <div className="grid grid-cols-1 md:grid-cols-3 text-white mx-8 mt-12 md:mt-16 w-full gap-4 px-4">
+        <div className="col-start-1 col-span-1 flex flex-col gap-y-2">
           <AccountMainCard
             accountDetails={accountDetails}
             accountName={accountNameFromRoute}
@@ -286,14 +287,15 @@ export default function Account() {
             changeVoteHistoryDialogue={handleOpenVotesHistoryModal}
           />
         </div>
-
         <div
           className="col-start-1 md:col-start-2 col-span-1 md:col-span-3"
           data-testid="account-operation-list"
         >
-          <div>
-            <div className="bg-explorer-dark-gray text-white p-4 rounded-[6px] mx-2">
-              <div className="ml-2">Ranges</div>
+          <Card className="mb-4">
+            <CardHeader>
+              <CardTitle>Ranges</CardTitle>
+            </CardHeader>
+            <CardContent>
               <SearchRanges rangesProps={searchRanges} />
               <div className="flex items-center justify-between m-2">
                 <Button
@@ -309,47 +311,45 @@ export default function Account() {
                   <span>Clear filters</span>{" "}
                 </Button>
               </div>
+            </CardContent>
+          </Card>
+          {!isAccountOperationsLoading &&
+          !accountOperations?.total_operations ? (
+            <div className="w-full my-4 text-black text-center">
+              No operations were found.
             </div>
-            {!isAccountOperationsLoading &&
-            !accountOperations?.total_operations ? (
-              <div className="w-full my-4 text-black text-center">
-                No operations were found.
-              </div>
-            ) : isAccountOperationsLoading || !page ? (
-              <div className="flex justify-center text-center items-center">
-                <Loader2 className="animate-spin mt-1 text-black h-12 w-12 ml-3 ..." />
-              </div>
-            ) : settings.rawJsonView ? (
-              accountOperations?.operations_result?.map(
-                (operation: Hive.OperationResponse) => (
-                  <div
-                    className="m-2"
-                    key={`${operation.operation_id}_${operation.timestamp}`}
-                  >
-                    <DetailedOperationCard
-                      operation={operation.operation}
-                      operationId={operation.operation_id}
-                      blockNumber={operation.block_num}
-                      transactionId={operation.trx_id}
-                      key={operation.timestamp}
-                      isShortened={operation.is_modified}
-                    />
-                  </div>
-                )
+          ) : isAccountOperationsLoading || !page ? (
+            <div className="flex justify-center text-center items-center">
+              <Loader2 className="animate-spin mt-1 text-black h-12 w-12 ml-3 ..." />
+            </div>
+          ) : settings.rawJsonView ? (
+            accountOperations?.operations_result?.map(
+              (operation: Hive.OperationResponse) => (
+                <div
+                  className="m-2"
+                  key={`${operation.operation_id}_${operation.timestamp}`}
+                >
+                  <DetailedOperationCard
+                    operation={operation.operation}
+                    operationId={operation.operation_id}
+                    blockNumber={operation.block_num}
+                    transactionId={operation.trx_id}
+                    key={operation.timestamp}
+                    isShortened={operation.is_modified}
+                  />
+                </div>
               )
-            ) : (
-              <div className="px-2 mt-2">
-                <OperationsTable
-                  operations={convertOperationResultsToTableOperations(
-                    formattedAccountOperations?.operations_result
-                  )}
-                  unformattedOperations={convertOperationResultsToTableOperations(
-                    accountOperations?.operations_result || []
-                  )}
-                />
-              </div>
-            )}
-          </div>
+            )
+          ) : (
+            <OperationsTable
+              operations={convertOperationResultsToTableOperations(
+                formattedAccountOperations?.operations_result
+              )}
+              unformattedOperations={convertOperationResultsToTableOperations(
+                accountOperations?.operations_result || []
+              )}
+            />
+          )}
         </div>
         <div className="fixed bottom-[10px] right-0 flex flex-col items-end justify-end px-3 md:px-12">
           <ScrollTopButton />
