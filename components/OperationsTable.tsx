@@ -165,11 +165,12 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
             {operation.operation.type === "custom_json_operation" &&
               expanded.includes(operation.operatiopnId || 0) && (
                 <TableRow>
-                  <TableCell data-testid="details" colSpan={5}>
+                  <TableCell data-testid="details" colSpan={6}>
                     <JSONView
                       json={JSON.parse(
                         getOperationValues(operation.operation).json || ""
                       )}
+                      skipCopy
                     />
                   </TableCell>
                 </TableRow>
