@@ -89,4 +89,14 @@ test.describe('Account page - account details tests', () => {
         await accountPage.accountPropertiesDropdown.click()
         await expect(page.locator('.flex-column').first()).toBeInViewport()
     })
+
+    test('Check if after click JSON Metadata button the list is expanded and have correct information and JSON format', async ({page}) =>{
+        await expect(mainPage.headBlockCardWitnessLink).toBeVisible()
+        await mainPage.RawJsonViewToggle.click()
+        await expect(mainPage.headBlockCardWitnessName).toBeVisible()
+        await expect(mainPage.headBlockCardWitnessName).toBeEnabled()
+        await mainPage.headBlockCardWitnessLink.click()
+        // await expect(accountPage.accountOperationTableBlockNumber.first()).toBeVisible()
+        await expect(accountPage.jsonFotmat.first()).toBeVisible()
+    })
 });

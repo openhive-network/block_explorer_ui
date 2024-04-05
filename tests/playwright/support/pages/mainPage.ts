@@ -90,7 +90,7 @@ export class MainPage {
     this.monthName = page.locator('[name="month"]').first();
     this.dayName = page.locator('[name="day"]').first();
     this.operationsTypesBtn = page.getByTestId('operations-types-btn')
-    this.RawJsonViewToggle = page.getByTestId('toggle').locator('.w-10')
+    this.RawJsonViewToggle = page.getByTestId('navbar').getByTestId('toggle').locator('div').first();
     this.operationsTypesWindow = page.locator('[role="dialog"]').last()
     this.pickPropertyBtn = page.locator('button').filter({ hasText: 'Pick a property' })
     this.pickPropertyBtnBlocked = page.locator('.text-blocked')

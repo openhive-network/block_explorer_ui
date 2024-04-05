@@ -50,6 +50,7 @@ export class AccountPage {
 
   readonly gotoPageInput: Locator;
   readonly gotoPageButton: Locator;
+  readonly jsonFotmat: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -101,6 +102,7 @@ export class AccountPage {
     this.votingPower = page.getByTestId('voting-power');
     this.downvotePower = page.getByTestId('downvote-power');
     this.resourceCredits = page.getByTestId('resources-credits');
+    this.jsonFotmat = page.locator('div:nth-child(2) > pre');
   }
 
   async validateAccountPageIsLoaded() {
