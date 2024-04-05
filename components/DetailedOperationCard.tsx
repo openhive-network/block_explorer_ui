@@ -17,10 +17,8 @@ interface DetailedOperationCardProps {
   operationId?: number;
   transactionId?: string;
   blockNumber: number;
-  date?: Date;
   skipBlock?: boolean;
   skipTrx?: boolean;
-  skipDate?: boolean;
   className?: string;
   isShortened?: boolean;
   forceStyle?: "raw-json" | "table";
@@ -51,10 +49,8 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
   operationId,
   transactionId,
   blockNumber,
-  date,
   skipBlock = false,
   skipTrx = false,
-  skipDate = false,
   className,
   isShortened,
   forceStyle,
@@ -138,7 +134,7 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
 
       {(seeDetails || settings.rawJsonView) &&
         (settings.rawJsonView || forceStyle === "raw-json" ? (
-          <JSONView json={valueAsObject} />
+          <JSONView json={valueAsObject} skipCopy />
         ) : (
           <div className="flex flex-col justify-center mt-2">
             {Object.entries(valueAsObject)

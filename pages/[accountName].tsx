@@ -329,7 +329,6 @@ export default function Account() {
                     <DetailedOperationCard
                       operation={operation.operation}
                       operationId={operation.operation_id}
-                      date={new Date(operation.timestamp)}
                       blockNumber={operation.block_num}
                       transactionId={operation.trx_id}
                       key={operation.timestamp}

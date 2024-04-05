@@ -369,7 +369,6 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
                     operation={foundOperation.operation}
                     key={foundOperation.operation_id}
                     blockNumber={foundOperation.block_num}
-                    date={foundOperation.created_at}
                   />
                 )
               )
@@ -432,7 +431,6 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
                     operation={foundOperation.operation}
                     key={foundOperation.operation_id}
                     blockNumber={foundOperation.block_num}
-                    date={new Date(foundOperation.timestamp)}
                   />
                 )
               )
