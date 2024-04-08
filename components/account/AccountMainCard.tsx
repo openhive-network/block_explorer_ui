@@ -27,6 +27,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
   openVotesHistoryModal,
 }) => {
   const { manabarsData } = useManabars(accountName);
+  console.log(manabarsData);
   return (
     <Card data-testid="account-details">
       <CardHeader>

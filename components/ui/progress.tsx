@@ -16,6 +16,9 @@ const Progress = React.forwardRef<
       )}
       {...props}
     >
+      <div className="absolute z-50 text-xs left-1/2 -translate-x-1/2 font-bold drop-shadow-[0_2px_2px_rgba(0,0,0,1)]">
+        {`${value}%`}
+      </div>
       <ProgressPrimitive.Indicator
         className={`h-full w-full flex-1 bg-primary transition-all`}
         style={{
