@@ -10,16 +10,15 @@ import JSONView from "./JSONView";
 import { useUserSettingsContext } from "./contexts/UserSettingsContext";
 import { cn } from "@/lib/utils";
 import { getOperationTypeForDisplay } from "@/utils/UI";
+import CopyJSON from "./CopyJSON";
 
 interface DetailedOperationCardProps {
   operation: Hive.Operation;
   operationId?: number;
   transactionId?: string;
   blockNumber: number;
-  date?: Date;
   skipBlock?: boolean;
   skipTrx?: boolean;
-  skipDate?: boolean;
   className?: string;
   isShortened?: boolean;
   forceStyle?: "raw-json" | "table";
@@ -50,10 +49,8 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
   operationId,
   transactionId,
   blockNumber,
-  date,
   skipBlock = false,
   skipTrx = false,
-  skipDate = false,
   className,
   isShortened,
   forceStyle,
@@ -66,15 +63,6 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
     valueAsObject = { message: valueAsObject };
   }
 
-  // Leave copy feature for later https app
-  // const [copied, setCopied] = useState(false);
-  /*
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(JSON.stringify(valueAsObject).replaceAll("\\", ""));
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1000);
-  }; */
-
   return (
     <div
       className={cn(
@@ -83,37 +71,40 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
       )}
       data-testid="detailed-operation-card"
     >
-      <div className="flex justify-start items-center gap-x-4">
-        {!skipBlock && (
-          <div className="flex-shrink-0">
-            Block{" "}
-            <Link
-              className="text-explorer-turquoise"
-              href={`/block/${blockNumber}`}
-            >
-              {blockNumber.toLocaleString()}
-            </Link>
+      <div className="flex justify-between items-center">
+        <div className="flex justify-start items-center gap-x-4">
+          {!skipBlock && (
+            <div className="flex-shrink-0">
+              Block{" "}
+              <Link
+                className="text-explorer-turquoise"
+                href={`/block/${blockNumber}`}
+              >
+                {blockNumber.toLocaleString()}
+              </Link>
+            </div>
+          )}
+          {transactionId && !skipTrx && (
+            <div className="flex-shrink-0">
+              Trx{" "}
+              <Link
+                className="text-explorer-turquoise"
+                href={`/transaction/${transactionId}`}
+              >
+                {transactionId.slice(0, 10)}
+              </Link>
+            </div>
+          )}
+          <div className="text-explorer-orange font-bold text-sm">
+            {settings.rawJsonView
+              ? operation.type
+              : getOperationTypeForDisplay(operation.type)}
           </div>
-        )}
-        {transactionId && !skipTrx && (
-          <div className="flex-shrink-0">
-            Trx{" "}
-            <Link
-              className="text-explorer-turquoise"
-              href={`/transaction/${transactionId}`}
-            >
-              {transactionId.slice(0, 10)}
-            </Link>
+          <div className="inline truncate">
+            {getOneLineDescription(operation)}
           </div>
-        )}
-        <div className="text-explorer-orange font-bold text-sm">
-          {settings.rawJsonView
-            ? operation.type
-            : getOperationTypeForDisplay(operation.type)}
         </div>
-        <div className="inline truncate">
-          {getOneLineDescription(operation)}
-        </div>
+        <CopyJSON value={valueAsObject} />
       </div>
 
       {!settings.rawJsonView && operation.type === "custom_json_operation" && (
@@ -143,18 +134,17 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
 
       {(seeDetails || settings.rawJsonView) &&
         (settings.rawJsonView || forceStyle === "raw-json" ? (
-          <JSONView json={valueAsObject} />
+          <JSONView json={valueAsObject} skipCopy />
         ) : (
           <div className="flex flex-col justify-center mt-2">
             {Object.entries(valueAsObject)
               .sort(([key, _property]) => (key === "json" ? 1 : -1))
               .map(([key, property]) => {
-                const value =
-                  isJson(property)
-                    ? JSON.stringify(property).replaceAll("\\", "")
-                    : property.toString() === ""
-                    ? "-"
-                    : property.toString();
+                const value = isJson(property)
+                  ? JSON.stringify(property).replaceAll("\\", "")
+                  : property.toString() === ""
+                  ? "-"
+                  : property.toString();
                 return (
                   <div
                     key={key}

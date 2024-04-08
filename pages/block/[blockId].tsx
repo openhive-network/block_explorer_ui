@@ -43,7 +43,7 @@ export default function Block() {
   const router = useRouter();
   const virtualOpsRef = useRef(null);
 
-  const { blockId } = router.query;
+  const blockId = (router.query.blockId as string)?.replaceAll(",", "");
 
   const { headBlockNumberData: headBlockNum, refetch } = useHeadBlockNumber();
 
@@ -154,6 +154,11 @@ export default function Block() {
   const { virtualOperations, nonVirtualOperations } =
     getSplitOperations(formattedOperations);
 
+  const {
+    virtualOperations: unformattedVirtual,
+    nonVirtualOperations: unformattedNonVirtual,
+  } = getSplitOperations(blockOperations?.operations_result);
+
   const handleGoToBlock = (blockNumber: string) => {
     router.push({
       pathname: "[blockId]",
@@ -186,7 +191,7 @@ export default function Block() {
         <div>Loading ...</div>
       ) : blockDetails?.block_num ? (
         <div
-          className="w-full h-full"
+          className="w-full h-full flex flex-col gap-y-4 px-2 md:px-0"
           style={{ scrollMargin: "100px" }}
           id="block-page-top"
         >
@@ -246,8 +251,11 @@ export default function Block() {
                     className="text-black"
                   />
                 )}
-              <div className="w-full px-2 md:p-0 md:w-4/5 flex flex-col gap-y-2">
-                <OperationsTable operations={nonVirtualOperations} />
+              <div className="w-full md:w-4/5 flex flex-col gap-y-2">
+                <OperationsTable
+                  operations={nonVirtualOperations}
+                  unformattedOperations={unformattedNonVirtual}
+                />
                 <div
                   className="text-center mt-4"
                   ref={virtualOpsRef}
@@ -262,7 +270,10 @@ export default function Block() {
                       : null}
                   </p>
                 </div>
-                <OperationsTable operations={virtualOperations} />
+                <OperationsTable
+                  operations={virtualOperations}
+                  unformattedOperations={unformattedVirtual}
+                />
               </div>
             </section>
           )}

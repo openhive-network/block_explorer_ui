@@ -7,6 +7,7 @@ import useManabars from "@/api/accountPage/useManabars";
 import { Loader2 } from "lucide-react";
 import Explorer from "@/types/Explorer";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
+import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
 
 interface AccountMainCardProps {
   accountDetails: Explorer.FormattedAccountDetails;
@@ -27,30 +28,28 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
 }) => {
   const { manabarsData } = useManabars(accountName);
   return (
-    <div
-      className="bg-explorer-dark-gray p-2 mx-2 md:mx-6 h-fit rounded mt-10 md:mt-0"
-      data-testid="account-details"
-    >
-      <div className="flex justify-between bg-explorer-dark-gray text-explorer-orange text-2xl my-4">
-        {accountDetails.is_witness ? (
-          <div data-testid="account-name">
-            {accountDetails.name} <span className="text-sm">(witness)</span>
-          </div>
-        ) : (
-          <div>{accountDetails.name}</div>
-        )}
-        <span>
-          <Image
-            data-testid="user-avatar"
-            className="rounded-full border-2 border-explorer-orange"
-            src={getHiveAvatarUrl(accountName)}
-            alt="avatar"
-            width={50}
-            height={50}
-          />
-        </span>
-      </div>
-      <div>
+    <Card data-testid="account-details">
+      <CardHeader>
+        <div className="flex justify-between bg-explorer-dark-gray text-explorer-orange text-2xl my-4">
+          {accountDetails.is_witness ? (
+            <div data-testid="account-name">
+              {accountDetails.name} <span className="text-sm">(witness)</span>
+            </div>
+          ) : (
+            <div>{accountDetails.name}</div>
+          )}
+          <span>
+            <Image
+              className="rounded-full border-2 border-explorer-orange"
+              src={getHiveAvatarUrl(accountName)}
+              alt="avatar"
+              width={50}
+              height={50}
+            />
+          </span>
+        </div>
+      </CardHeader>
+      <CardContent>
         {!!manabarsData ? (
           <>
             <div className="text-center">
@@ -105,24 +104,26 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
             </span>
           </div>
         </div>
-      </div>
+      </CardContent>
       {!isWitnessError && !isWitnessLoading && (
-        <div className="flex justify-between">
-          <button
-            onClick={openVotersModal}
-            className="bg-explorer-orange text-explorer-dark-gray rounded p-2"
-          >
-            Voters
-          </button>
-          <button
-            onClick={openVotesHistoryModal}
-            className="bg-explorer-orange text-explorer-dark-gray rounded p-2"
-          >
-            Votes History
-          </button>
-        </div>
+        <CardFooter>
+          <div className="w-full flex justify-between">
+            <button
+              onClick={openVotersModal}
+              className="bg-explorer-orange text-explorer-dark-gray rounded p-2"
+            >
+              Voters
+            </button>
+            <button
+              onClick={openVotesHistoryModal}
+              className="bg-explorer-orange text-explorer-dark-gray rounded p-2"
+            >
+              Votes History
+            </button>
+          </div>
+        </CardFooter>
       )}
-    </div>
+    </Card>
   );
 };
 

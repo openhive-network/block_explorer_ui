@@ -12,6 +12,7 @@ import {
   convertIdsToBooleanArray,
 } from "@/lib/utils";
 import DateTimePicker from "../DateTimePicker";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 
 interface BlockPageNavigationProps {
   blockNumber: number;
@@ -103,12 +104,11 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   };
 
   return (
-    <section className="w-full flex flex-col items-center text-md mb-2 md:mb-4">
-      <div
-        className="w-full md:w-4/6 pb-4 bg-explorer-dark-gray text-center text-white rounded shadow-xl border border-explorer-bg-start"
-        data-testid="block-page-search"
-      >
-        <div className="text-2xl font-semibold my-2">Search</div>
+    <Card className="w-full md:w-4/6 m-auto" data-testid="block-page-search">
+      <CardHeader>
+        <CardTitle>Search</CardTitle>
+      </CardHeader>
+      <CardContent>
         <div className="w-full flex justify-between items-center px-2 md:px-8 flex-wrap gap-y-4">
           <div className="flex justify-center items-center flex-wrap">
             <p>Block Number : </p>
@@ -164,8 +164,8 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
             )}
           />
         </div>
-      </div>
-    </section>
+      </CardContent>
+    </Card>
   );
 };
 
