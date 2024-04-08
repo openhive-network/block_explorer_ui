@@ -14,13 +14,12 @@ const JSONView: React.FC<JSONViewProps> = ({
 }) => {
   return (
     <div className={className}>
-      <pre data-testid="json-format">{JSON.stringify(json)}</pre>
       {!skipCopy && (
         <div className="w-full flex justify-end">
           <CopyJSON value={json} />
         </div>
       )}
-      <pre>{JSON.stringify(json)}</pre>
+      <pre data-testid="json-format">{JSON.stringify(json)}</pre>
     </div>
   );
 };

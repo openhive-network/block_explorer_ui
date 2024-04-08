@@ -85,9 +85,9 @@ test.describe('Account page - account details tests', () => {
         await expect(mainPage.headBlockCardWitnessName).toBeVisible()
         await expect(mainPage.headBlockCardWitnessName).toBeEnabled()
         await mainPage.headBlockCardWitnessLink.click()
-        await expect(page.getByTestId('card-content').first()).toBeHidden()
+        await expect(accountPage.propertiesCardContent).toBeHidden()
         await accountPage.accountPropertiesDropdown.click()
-        await expect(page.getByTestId('card-content').first()).toBeInViewport()
+        await expect(accountPage.propertiesCardContent).toBeInViewport()
     })
 
     test('Check if after click JSON Metadata button the list is expanded and have correct information and JSON format', async ({page}) =>{
@@ -98,5 +98,36 @@ test.describe('Account page - account details tests', () => {
         await mainPage.headBlockCardWitnessLink.click()
         // await expect(accountPage.accountOperationTableBlockNumber.first()).toBeVisible()
         await expect(accountPage.jsonFotmat.first()).toBeVisible()
+    })
+
+    test('Check if after click JPosting JSON Metadata button the list is expanded and have correct information and JSON format', async ({page}) =>{
+        await expect(mainPage.headBlockCardWitnessLink).toBeVisible()
+        await expect(mainPage.headBlockCardWitnessName).toBeVisible()
+        await expect(mainPage.headBlockCardWitnessName).toBeEnabled()
+        await mainPage.headBlockCardWitnessLink.click()
+        await expect(page.getByTestId('json-format').nth(1)).toBeHidden()
+        await page.getByText('Posting JSON Metadata').click()
+        await expect(page.getByTestId('json-format').nth(1)).toBeInViewport()
+    })
+
+    test('Check if after click Witness Properties button the list is expanded and have correct information and JSON format', async ({page}) =>{
+        await expect(mainPage.headBlockCardWitnessLink).toBeVisible()
+        await expect(mainPage.headBlockCardWitnessName).toBeVisible()
+        await expect(mainPage.headBlockCardWitnessName).toBeEnabled()
+        await mainPage.headBlockCardWitnessLink.click()
+        await expect(accountPage.witnessCardContent).toBeHidden()
+        await page.getByText('Witness Properties', { exact: true }).click()
+        await expect(accountPage.witnessCardContent).toBeInViewport()
+    })
+
+    test('Check if after click Witness Votes button the list is expanded and have correct information', async ({page}) =>{
+        await expect(mainPage.headBlockCardWitnessLink).toBeVisible()
+        await expect(mainPage.headBlockCardWitnessName).toBeVisible()
+        await expect(mainPage.headBlockCardWitnessName).toBeEnabled()
+        await mainPage.headBlockCardWitnessLink.click()
+        await expect(accountPage.witnessVotesCard).toBeHidden()
+        await page.getByText('Witness Votes', { exact: true }).click()
+        await accountPage.witnessVotesCard.scrollIntoViewIfNeeded()
+        await expect(accountPage.witnessVotesCard).toBeInViewport()
     })
 });

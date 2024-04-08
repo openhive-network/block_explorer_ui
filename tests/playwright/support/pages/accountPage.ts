@@ -51,6 +51,9 @@ export class AccountPage {
   readonly gotoPageInput: Locator;
   readonly gotoPageButton: Locator;
   readonly jsonFotmat: Locator;
+  readonly propertiesCardContent: Locator;
+  readonly witnessCardContent: Locator;
+  readonly witnessVotesCard: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -103,6 +106,9 @@ export class AccountPage {
     this.downvotePower = page.getByTestId('downvote-power');
     this.resourceCredits = page.getByTestId('resources-credits');
     this.jsonFotmat = page.locator('div:nth-child(2) > pre');
+    this.propertiesCardContent = page.getByTestId('card-content').first();
+    this.witnessCardContent = page.getByTestId('card-content').nth(1)
+    this.witnessVotesCard = page.locator('.p-4.pt-0.pb-2').nth(5)
   }
 
   async validateAccountPageIsLoaded() {
