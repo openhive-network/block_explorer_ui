@@ -68,8 +68,8 @@ export default function Home() {
                       key={index}
                       data-testid="witnesses-name"
                     >
-                      <TableCell>{index + 1}</TableCell>
-                      <TableCell>
+                      <TableCell className="py-4">{index + 1}</TableCell>
+                      <TableCell className="py-4">
                         <Link
                           href={`/@${witness.witness}`}
                           className="text-explorer-turquoise"
@@ -77,7 +77,7 @@ export default function Home() {
                           {witness.witness}
                         </Link>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="py-4">
                         <Link href={`/@${witness.witness}`}>
                           <Image
                             className="rounded-full border-2 border-explorer-turquoise"

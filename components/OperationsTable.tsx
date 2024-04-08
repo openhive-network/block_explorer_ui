@@ -165,7 +165,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
             {operation.operation.type === "custom_json_operation" &&
               expanded.includes(operation.operatiopnId || 0) && (
                 <TableRow>
-                  <TableCell data-testid="details" colSpan={6}>
+                  <TableCell data-testid="details" colSpan={6} className="py-2">
                     <JSONView
                       json={JSON.parse(
                         getOperationValues(operation.operation).json || ""
