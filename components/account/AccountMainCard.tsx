@@ -45,6 +45,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
               alt="avatar"
               width={50}
               height={50}
+              data-testid="user-avatar"
             />
           </span>
         </div>

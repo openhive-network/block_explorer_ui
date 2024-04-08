@@ -62,7 +62,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
           {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
         </div>
       </CardHeader>
-      <CardContent hidden={isPropertiesHidden}>
+      <CardContent data-testid="card-content" hidden={isPropertiesHidden}>
         {keys.map((key: string, index: number) => {
           if (
             [

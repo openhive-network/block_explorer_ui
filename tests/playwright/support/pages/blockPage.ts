@@ -40,7 +40,7 @@ export class BlockPage {
     this.blockPageOperationList = page.getByTestId('block-page-operation-list');
     this.blockDetailsBlockNumber = page.getByTestId('block-number');
     this.producedData = page.locator("[data-testid='produced-data'] > p:nth-of-type(2)")
-    this.jsonView = page.locator('pre')
+    this.jsonView = page.getByTestId('json-format');
     this.operationType = page.getByTestId('operation-type')
     this.blockProducer = page.getByTestId('block-producer-name');
     this.hash = page.getByTestId('hash');
@@ -53,7 +53,7 @@ export class BlockPage {
     this.firstTransactionLink = page.locator('a.text-explorer-turquoise').nth(2);
     this.usernameInOperationDetails = page.locator('span.text-explorer-turquoise').nth(1);
     this.voteOperationPostLink = page.locator('a.text-explorer-yellow').first();
-    this.operationsJsonFormat = page.locator('pre');
+    this.operationsJsonFormat = page.getByTestId('json-format');
     this.blockNumber = page.getByTestId('block-number-search');
     this.nextBlockBtn = page.getByTestId('next-block-btn');
     this.dataTimePicker = page.getByTestId("datepicker-trigger");

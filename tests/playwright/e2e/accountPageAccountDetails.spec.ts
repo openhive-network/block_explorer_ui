@@ -85,9 +85,9 @@ test.describe('Account page - account details tests', () => {
         await expect(mainPage.headBlockCardWitnessName).toBeVisible()
         await expect(mainPage.headBlockCardWitnessName).toBeEnabled()
         await mainPage.headBlockCardWitnessLink.click()
-        await expect(page.locator('.flex-column').first()).toBeHidden()
+        await expect(page.getByTestId('card-content').first()).toBeHidden()
         await accountPage.accountPropertiesDropdown.click()
-        await expect(page.locator('.flex-column').first()).toBeInViewport()
+        await expect(page.getByTestId('card-content').first()).toBeInViewport()
     })
 
     test('Check if after click JSON Metadata button the list is expanded and have correct information and JSON format', async ({page}) =>{
