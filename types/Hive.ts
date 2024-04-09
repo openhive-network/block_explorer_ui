@@ -17,6 +17,9 @@ declare module Hive {
     _page_size: number;
     _body_limit: number;
     _page_num?: number;
+    _account?: string;
+    _key_content?: string[];
+    _setof_keys?: string[][];
   }
 
   interface GetTransactionProps {
@@ -41,7 +44,7 @@ declare module Hive {
 
   interface GetAccountOpsCountProps {
     _account: string;
-    _operations: number[]
+    _operations: number[];
   }
 
   interface GetAccountProps {
@@ -111,7 +114,7 @@ declare module Hive {
   }
 
   interface GetLatestBlocksProps {
-    _limit: number;  
+    _limit: number;
   }
   interface GetOperationProps {
     _operation_id: number;
@@ -291,12 +294,11 @@ declare module Hive {
     length: number;
   }
 
-
-    interface TotalOperationsResponse {
-      operations_result: OperationResponse[];
-      total_pages: number;
-      total_operations: number;
-    }
+  interface TotalOperationsResponse {
+    operations_result: OperationResponse[];
+    total_pages: number;
+    total_operations: number;
+  }
 
   interface AccountOperationsResponse extends OperationsCount {
     operations_result: OperationResponse[];
@@ -399,7 +401,6 @@ declare module Hive {
     ops_count: number;
     is_witness: boolean;
   }
-
 
   interface GetBlockByTimeResponse {
     age: string;
@@ -525,7 +526,6 @@ declare module Hive {
 
   interface CommentOperationResponse extends OperationsCount {
     operations_result: CommentOperation[];
-
   }
 
   interface Manabars {
@@ -548,14 +548,14 @@ declare module Hive {
   }
 
   interface TransferOperation {
-      from: string;
-      to: string;
-      amount: Supply | undefined;
-      memo: string;
-      request_id?: number;
-      remaining_executions?: number;
-      consecutive_failures?: number;
-      deleted?: boolean;
+    from: string;
+    to: string;
+    amount: Supply | undefined;
+    memo: string;
+    request_id?: number;
+    remaining_executions?: number;
+    consecutive_failures?: number;
+    deleted?: boolean;
   }
 
   interface RecurrentTransferOperation extends TransferOperation {

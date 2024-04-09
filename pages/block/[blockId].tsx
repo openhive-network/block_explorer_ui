@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { Loader2 } from "lucide-react";
 import BlockPageNavigation from "@/components/block/BlockPageNavigation";
-import DetailedOperationCard from "@/components/DetailedOperationCard";
 import { scrollTo } from "@/utils/UI";
 import PageNotFound from "@/components/PageNotFound";
 import { Button } from "@/components/ui/button";
@@ -32,11 +31,17 @@ interface BlockSearchParams {
   blockId?: number;
   page: number;
   filters?: boolean[];
+  accountName?: string;
+  keyContent?: string[];
+  setOfKeys?: string[];
 }
 
 const defaultParams: BlockSearchParams = {
   page: 1,
   filters: undefined,
+  accountName: undefined,
+  keyContent: undefined,
+  setOfKeys: undefined,
 };
 
 export default function Block() {
@@ -45,7 +50,7 @@ export default function Block() {
 
   const blockId = (router.query.blockId as string)?.replaceAll(",", "");
 
-  const { headBlockNumberData: headBlockNum, refetch } = useHeadBlockNumber();
+  const { refetch } = useHeadBlockNumber();
 
   const [blockDate, setBlockDate] = useState<Date>();
   const { paramsState, setParams } = useURLParams({
@@ -75,7 +80,10 @@ export default function Block() {
     paramsState.filters
       ? convertBooleanArrayToIds(paramsState.filters)
       : undefined,
-    paramsState.page || 1
+    paramsState.page || 1,
+    paramsState.accountName,
+    paramsState.keyContent,
+    paramsState.setOfKeys
   );
 
   const { operationsTypes } = useOperationsTypes();
@@ -170,6 +178,15 @@ export default function Block() {
     setParams({ ...paramsState, page: 1, filters: filters });
   };
 
+  const handleClearParams = () => {
+    setParams({
+      ...paramsState,
+      accountName: undefined,
+      keyContent: undefined,
+      setOfKeys: undefined,
+    });
+  };
+
   if ((trxLoading === false && !blockOperations) || blockError) {
     return (
       <PageNotFound
@@ -202,6 +219,10 @@ export default function Block() {
             setFilters={handleFilterChange}
             operationTypes={operationsTypes || []}
             selectedOperationIds={paramsState.filters || []}
+            accountName={paramsState.accountName}
+            keyContent={paramsState.keyContent}
+            setOfKeys={paramsState.setOfKeys}
+            onClearParams={() => handleClearParams()}
           />
           <BlockDetails
             virtualOperationLength={virtualOperationsCounter}
