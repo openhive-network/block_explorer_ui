@@ -191,7 +191,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
         />
         <Label
           htmlFor="bordered-checkbox-1"
-          className="p-2 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300 whitespace-nowrap overflow-hidden text-ellipsis"
+          className="p-1 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300 whitespace-nowrap overflow-hidden text-ellipsis"
           {...{"data-testid": `operation-type-label-${operation.operation_name}`}}
         >
           {settings.rawJsonView
@@ -206,7 +206,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     const operations = operationsNames.map((name) => operationTypes?.find((operationType) => operationType.operation_name === name)) as Hive.OperationPattern[]
     const sortedOperations = operations.sort((a, b) => a?.operation_name.localeCompare(b?.operation_name));
     return (
-      <div className=" border-t">
+      <div className=" border-t px-2">
         <div className="flex justify-between">
           <div className="flex items-center justify-center">{sectionName}</div>
           <div>
@@ -214,7 +214,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
             <Button onClick={() => clearCategory(operations)}>Clear</Button>
           </div>
         </div>
-        <ul className="my-4 grid grid-cols-3 gap-4 place-items-stretch text-white " data-testid="virtual-operations-list">
+        <ul className="my-4 grid grid-cols-4 gap-4 place-items-stretch text-white " data-testid="virtual-operations-list">
           {sortedOperations.map((operation) => (
             !!operation && renderOperation(operation)
           ))}
@@ -240,7 +240,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
       <DialogContent className="max-w-[95%] md:max-w-[80%] max-h-[90%] md:max-h-[80%] flex-column justify-center align-center  bg-white text-black dark:bg-explorer-dark-gray dark:text-white overflow-auto px-0" data-testid="operation-types-dialog">
         <DialogHeader>
           <DialogTitle className="flex justify-center pt-2">
-            Operation Types
+            Operation types filters
           </DialogTitle>
         </DialogHeader>
         <div className="overflow-auto max-h-[500px] md:max-h-[600px]">
@@ -249,7 +249,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           ))}
         </div>
         <DialogFooter>
-          <div className="flex flex-wrap justify-between w-full gap-y-4" data-testid="operation-types-dialog-footer">
+          <div className="flex flex-wrap justify-between w-full gap-y-4 border-t pt-1" data-testid="operation-types-dialog-footer">
             <div className="flex">
               <Button type="button" variant="secondary" onClick={selectAll}>
                 Select all
