@@ -19,7 +19,7 @@ const JSONView: React.FC<JSONViewProps> = ({
           <CopyJSON value={json} />
         </div>
       )}
-      <pre>{JSON.stringify(json)}</pre>
+      <pre data-testid='json-format-view'>{JSON.stringify(json)}</pre>
     </div>
   );
 };

@@ -45,6 +45,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
               alt="avatar"
               width={50}
               height={50}
+              data-testid="user-avatar"
             />
           </span>
         </div>
@@ -53,7 +54,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
         {!!manabarsData ? (
           <>
             <div className="text-center">
-              <p className="my-2">Voting Power</p>
+              <p className="my-2" data-testid='voting-power'>Voting Power</p>
               <Progress
                 value={manabarsData?.upvote.percentageValue}
                 color="#00c040"
@@ -65,7 +66,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
             </div>
 
             <div className="text-center">
-              <p className="my-2">Downvote power </p>
+              <p className="my-2" data-testid='downvote-power'>Downvote power </p>
               <Progress
                 value={manabarsData?.downvote.percentageValue}
                 color="#c01000"
@@ -77,7 +78,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
             </div>
 
             <div className="text-center">
-              <p className="my-2">Resource credits </p>
+              <p className="my-2" data-testid='resources-credits'>Resource credits </p>
               <Progress
                 value={manabarsData?.rc.percentageValue}
                 color="#cecafa"
@@ -96,7 +97,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
         <div className="flex justify-between p-4">
           <div className="text-center flex justify-center w-full gap-2">
             <span className="text-lg">Creation Date:</span>
-            <span className="text-lg">
+            <span className="text-lg" data-testid="creation-date">
               {formatAndDelocalizeTime(accountDetails.created)}
             </span>
           </div>
