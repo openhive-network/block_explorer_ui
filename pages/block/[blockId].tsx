@@ -194,6 +194,15 @@ export default function Block() {
     });
   };
 
+  const handleClearParams = () => {
+    setParams({
+      ...paramsState,
+      accountName: undefined,
+      keyContent: undefined,
+      setOfKeys: undefined,
+    });
+  };
+
   if ((trxLoading === false && !blockOperations) || blockError) {
     return (
       <PageNotFound
