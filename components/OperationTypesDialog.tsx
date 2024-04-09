@@ -206,7 +206,11 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
   };
 
   const renderSection = (sectionName: string, operationsNames: string[]) => {
-    const operations = operationsNames.map((name) => operationTypes?.find((operationType) => operationType.operation_name === name)) as Hive.OperationPattern[]
+    const operations = operationsNames.map((name) => operationTypes?.find((operationType) => operationType.operation_name === name))
+      .filter((operationType) => operationType) as Hive.OperationPattern[];
+    if (!operations.length) {
+      return null;
+    }
     const sortedOperations = operations.sort((a, b) => a?.operation_name.localeCompare(b?.operation_name));
     return (
       <div className=" border-t px-2">
