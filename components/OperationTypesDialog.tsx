@@ -146,11 +146,20 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     setSelectedOperationsIds(finaList);
   };
 
-  const selectAllOfTypes = (operationTypes: Hive.OperationPattern[]) => {
+  const selectAllOfCategory = (operationTypes: Hive.OperationPattern[]) => {
     const operationsIds = operationTypes.map((operationType) => operationType.op_type_id);
     let finaList = [...operationsIds, ...selectedOperationsIds];
     finaList = finaList.filter((id, index) => finaList.indexOf(id) === index);
     setSelectedOperationsIds(finaList);
+  }
+
+
+  const clearCategory = (operationTypes: Hive.OperationPattern[]) => {
+    const operationsIds = operationTypes.map((operationType) => operationType.op_type_id);
+    const finalOperations = [...selectedOperationsIds].filter((selectedOperationId) => (
+      !operationsIds.includes(selectedOperationId)
+    ));
+    setSelectedOperationsIds(finalOperations);
   }
 
   const invertSelection = () => {
@@ -197,8 +206,14 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     const operations = operationsNames.map((name) => operationTypes?.find((operationType) => operationType.operation_name === name)) as Hive.OperationPattern[]
     const sortedOperations = operations.sort((a, b) => a?.operation_name.localeCompare(b?.operation_name));
     return (
-      <div>
-        <div className="flex justify-between"><span>{sectionName}</span><Button onClick={() => selectAllOfTypes(operations)}>Select all from type</Button></div>
+      <div className=" border-t">
+        <div className="flex justify-between">
+          <div className="flex items-center justify-center">{sectionName}</div>
+          <div>
+            <Button onClick={() => selectAllOfCategory(operations)}>Select</Button>
+            <Button onClick={() => clearCategory(operations)}>Clear</Button>
+          </div>
+        </div>
         <ul className="my-4 grid grid-cols-3 gap-4 place-items-stretch text-white " data-testid="virtual-operations-list">
           {sortedOperations.map((operation) => (
             !!operation && renderOperation(operation)
