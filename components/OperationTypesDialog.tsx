@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import Hive from "@/types/Hive";
 import { getOperationTypeForDisplay } from "@/utils/UI";
 import { useUserSettingsContext } from "./contexts/UserSettingsContext";
+import { cn } from "@/lib/utils";
 
 type OperationTypesDialogProps = {
   operationTypes: Hive.OperationPattern[] | undefined;
@@ -191,7 +192,9 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
         />
         <Label
           htmlFor="bordered-checkbox-1"
-          className="p-1 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300 whitespace-nowrap overflow-hidden text-ellipsis"
+          className={cn("p-1 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300 whitespace-nowrap overflow-hidden text-ellipsis", {
+            "text-sky-900 dark:text-sky-200": operation.is_virtual
+          })}
           {...{"data-testid": `operation-type-label-${operation.operation_name}`}}
         >
           {settings.rawJsonView
