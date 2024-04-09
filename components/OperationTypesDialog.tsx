@@ -45,11 +45,11 @@ const categorizedTypes = [
   },
   {
     name: "Account management",
-    types: ["account_create_operation", "claim_account_operation", "create_claimed_account_operation", "account_create_with_delegation_operation", "account_created_operation", "account_update_operation", "account_update2_operation", "request_account_recovery_operation", "recover_account_operation", "change_recovery_account_operation", "changed_recovery_account_operation"] 
+    types: ["account_create_operation", "claim_account_operation", "create_claimed_account_operation", "account_create_with_delegation_operation", "account_created_operation", "account_update_operation", "account_update2_operation", "request_account_recovery_operation", "recover_account_operation", "change_recovery_account_operation", "changed_recovery_account_operation", "set_reset_account_operation", "reset_account_operation"] 
   },
   {
     name: "Witness management",
-    types: ["feed_publish_operation", "witness_update_operation", "witness_set_properties_operation", "shutdown_witness_operation", "producer_reward_operation", "pow_operation", "pow2_operation", "pow_reward_operation", "producer_missed_operation"] 
+    types: ["feed_publish_operation", "witness_update_operation", "witness_set_properties_operation", "shutdown_witness_operation", "producer_reward_operation", "pow_operation", "pow2_operation", "pow_reward_operation", "producer_missed_operation", "witness_block_approve_operation"] 
   },
   {
     name: "Witness voting",
@@ -146,6 +146,13 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     setSelectedOperationsIds(finaList);
   };
 
+  const selectAllOfTypes = (operationTypes: Hive.OperationPattern[]) => {
+    const operationsIds = operationTypes.map((operationType) => operationType.op_type_id);
+    let finaList = [...operationsIds, ...selectedOperationsIds];
+    finaList = finaList.filter((id, index) => finaList.indexOf(id) === index);
+    setSelectedOperationsIds(finaList);
+  }
+
   const invertSelection = () => {
     const allIds = operationTypes.map(
       (operationType) => operationType.op_type_id
@@ -187,12 +194,13 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
   };
 
   const renderSection = (sectionName: string, operationsNames: string[]) => {
-    const operations = operationsNames.map((name) => operationTypes?.find((operationType) => operationType.operation_name === name));
+    const operations = operationsNames.map((name) => operationTypes?.find((operationType) => operationType.operation_name === name)) as Hive.OperationPattern[]
+    const sortedOperations = operations.sort((a, b) => a?.operation_name.localeCompare(b?.operation_name));
     return (
       <div>
-        <div>{sectionName}</div>
+        <div className="flex justify-between"><span>{sectionName}</span><Button onClick={() => selectAllOfTypes(operations)}>Select all from type</Button></div>
         <ul className="my-4 grid grid-cols-3 gap-4 place-items-stretch text-white " data-testid="virtual-operations-list">
-          {operations.map((operation) => (
+          {sortedOperations.map((operation) => (
             !!operation && renderOperation(operation)
           ))}
         </ul>
