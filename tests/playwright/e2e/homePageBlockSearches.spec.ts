@@ -232,7 +232,7 @@ test.describe('Home page - searches', () => {
         await mainPage.accountNameInput.fill('roelandp')
         await mainPage.operationsTypesBtn.click();
         await expect(mainPage.operationsTypesWindow).toBeVisible();
-        await page.locator('input[type="checkbox"]').first().check();
+        await page.getByTestId('operation-types-dialog').locator('li').filter({ hasText: /^vote$/ }).click()
         await page.getByLabel('Operation Types').locator('li').filter({ hasText: /^comment$/ }).getByRole('checkbox').check()
         await page.getByRole('button', {name: 'Apply'}).click();
         await expect(mainPage.blockSearchBtn).toBeVisible()
