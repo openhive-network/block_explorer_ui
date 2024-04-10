@@ -32,7 +32,7 @@ interface BlockSearchParams {
   page: number;
   filters?: boolean[];
   accountName?: string;
-  keyContent?: string[];
+  keyContent?: string;
   setOfKeys?: string[];
 }
 
@@ -82,7 +82,7 @@ export default function Block() {
       : undefined,
     paramsState.page || 1,
     paramsState.accountName,
-    paramsState.keyContent,
+    paramsState.keyContent ? [paramsState.keyContent] : undefined,
     paramsState.setOfKeys
   );
 
@@ -175,7 +175,14 @@ export default function Block() {
   };
 
   const handleFilterChange = (filters: boolean[]) => {
-    setParams({ ...paramsState, page: 1, filters: filters });
+    setParams({
+      ...paramsState,
+      page: 1,
+      filters: filters,
+      accountName: undefined,
+      keyContent: undefined,
+      setOfKeys: undefined,
+    });
   };
 
   const handleClearParams = () => {
