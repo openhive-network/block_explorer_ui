@@ -53,10 +53,13 @@ export default function Block() {
   const { refetch } = useHeadBlockNumber();
 
   const [blockDate, setBlockDate] = useState<Date>();
-  const { paramsState, setParams } = useURLParams({
-    ...defaultParams,
-    blockId: blockId,
-  });
+  const { paramsState, setParams } = useURLParams(
+    {
+      ...defaultParams,
+      blockId: blockId,
+    },
+    ["blockId"]
+  );
 
   useEffect(() => {
     refetch();
