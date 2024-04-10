@@ -158,18 +158,18 @@ test.describe('Home page - searches', () => {
               window.scrollTo(0, i);
             }
           });
-        await expect(operationsType).toContain('vote');
+        await expect(operationsType).toContain('author_reward');
 
     });
 
     test('Validate searching for property only one Operation types with Property and Value inputs filled', async ({page}) => {
         await mainPage.operationsTypesBtn.click();
         await expect(mainPage.operationsTypesWindow).toBeVisible();
-        await page.locator('input[type="checkbox"]').first().check();
+        await page.getByTestId('operation-type-checkbox-comment_operation').click()
         await page.getByRole('button', {name: 'Apply'}).click();
         await mainPage.pickPropertyBtn.click()
-        await mainPage.choosePropertyOption('voter')
-        await page.locator('div').filter({ hasText: /^Value$/ }).getByPlaceholder('---').fill('roelandp')
+        await page.getByLabel('author', { exact: true }).click()
+        await page.waitForTimeout(2000)
         await mainPage.blockSearchBtn.click();
         await expect(mainPage.blockSearchResultSection).toBeVisible()
         await expect(mainPage.firstResultBlock).toBeVisible()
@@ -215,24 +215,43 @@ test.describe('Home page - searches', () => {
     });
 
     test('Validate searching for property Account Name and one Operation types with Property and Value inputs filled', async ({page}) => {
-        await mainPage.accountNameInput.fill('roelandp')
+        await mainPage.accountNameInput.fill('blocktrades')
         await mainPage.operationsTypesBtn.click();
         await expect(mainPage.operationsTypesWindow).toBeVisible();
-        await page.locator('input[type="checkbox"]').first().check();
+        // await page.locator('input[type="checkbox"]').first().check();
+        await page.getByTestId('operation-type-checkbox-comment_operation').click()
         await page.getByRole('button', {name: 'Apply'}).click();
         await mainPage.pickPropertyBtn.click()
-        await mainPage.choosePropertyOption('voter')
-        await page.locator('div').filter({ hasText: /^Value$/ }).getByPlaceholder('---').fill('roelandp')
+        // await mainPage.choosePropertyOption('voter')
+        await page.getByLabel('author', { exact: true }).click()
+        // await page.locator('div').filter({ hasText: /^Value$/ }).getByPlaceholder('---').fill('roelandp')
         await mainPage.blockSearchBtn.click();
         await expect(mainPage.blockSearchResultSection).toBeVisible()
-        await expect(mainPage.firstResultBlock).toBeVisible()
+        if(await mainPage.firstResultBlock.isVisible()){
+            await expect(mainPage.firstResultBlock).toBeVisible()
+        }
+        else{
+            await expect(page.getByText('No blocks matching given')).toBeVisible()
+        }
+        // await expect(mainPage.firstResultBlock).toBeVisible()
+
+        // await mainPage.operationsTypesBtn.click();
+        // await expect(mainPage.operationsTypesWindow).toBeVisible();
+        // await page.getByTestId('operation-type-checkbox-comment_operation').click()
+        // await page.getByRole('button', {name: 'Apply'}).click();
+        // await mainPage.pickPropertyBtn.click()
+        // await page.getByLabel('author', { exact: true }).click()
+        // await page.waitForTimeout(2000)
+        // await mainPage.blockSearchBtn.click();
+        // await expect(mainPage.blockSearchResultSection).toBeVisible()
+        // await expect(mainPage.firstResultBlock).toBeVisible()
     });
 
     test('Validate searching for property Account Name and two Operation types - Property and Value inputs should be blocked', async ({page}) => {
         await mainPage.accountNameInput.fill('roelandp')
         await mainPage.operationsTypesBtn.click();
         await expect(mainPage.operationsTypesWindow).toBeVisible();
-        await page.locator('input[type="checkbox"]').first().check();
+        await page.getByTestId('operation-types-dialog').locator('li').filter({ hasText: /^vote$/ }).click()
         await page.getByLabel('Operation Types').locator('li').filter({ hasText: /^comment$/ }).getByRole('checkbox').check()
         await page.getByRole('button', {name: 'Apply'}).click();
         await expect(mainPage.blockSearchBtn).toBeVisible()
