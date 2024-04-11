@@ -141,11 +141,9 @@ const SearchBar: React.FC<SearchBarProps> = ({ open, onChange, className }) => {
           if (inputTypeData.input_type === "account_name_array") {
             router.push(`/@${inputTypeData.input_value[selectedResult]}`);
           } else {
-            router.push(
-              `/${getResultTypeHeader(inputTypeData)}/${
-                inputTypeData.input_value
-              }`
-            );
+            if (inputTypeData.input_type === "account_name") {
+              router.push(`/@${inputTypeData.input_value}`);
+            }
           }
           resetSearchBar();
           setInputFocus(false);
