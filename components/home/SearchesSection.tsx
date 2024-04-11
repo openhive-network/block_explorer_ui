@@ -241,7 +241,20 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
   };
 
   const getBlockPageLink = (blockNumber: number) => {
-    const urlParams: Explorer.UrlParam[] = [];
+    const urlParams: Explorer.UrlParam[] = [
+      {
+        paramName: "accountName",
+        paramValue: dataToURL(blockSearchProps?.accountName),
+      },
+      {
+        paramName: "keyContent",
+        paramValue: dataToURL(blockSearchProps?.deepProps.content),
+      },
+      {
+        paramName: "setOfKeys",
+        paramValue: dataToURL(blockSearchProps?.deepProps.keys),
+      },
+    ];
 
     if (blockSearchProps?.operationTypes) {
       const booleanTypesArray = convertIdsToBooleanArray(

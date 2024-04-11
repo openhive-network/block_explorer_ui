@@ -21,6 +21,10 @@ interface BlockPageNavigationProps {
   setFilters: (filters: boolean[]) => void;
   operationTypes: Hive.OperationPattern[];
   selectedOperationIds: boolean[];
+  accountName?: string;
+  keyContent?: string;
+  setOfKeys?: string[];
+  onClearParams: () => void;
 }
 
 const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
@@ -30,6 +34,10 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   setFilters,
   operationTypes,
   selectedOperationIds,
+  accountName,
+  keyContent,
+  setOfKeys,
+  onClearParams,
 }) => {
   const [block, setBlock] = useState(blockNumber.toString());
   const [blockDate, setBlockDate] = useState(timeStamp);
@@ -164,6 +172,18 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
             )}
           />
         </div>
+        {(!!accountName || !!keyContent || !!setOfKeys) && (
+          <div className="w-full flex justify-between items-center px-2 md:px-8 flex-wrap gap-y-4 mt-4">
+            <div className="flex gap-x-6">
+              {!!keyContent && <div>Key content: {keyContent}</div>}
+              {!!setOfKeys && <div>Set of keys: {setOfKeys.join(", ")}</div>}
+              {!!accountName && <div>Account: {accountName}</div>}
+            </div>
+            <Button onClick={onClearParams} variant="outline">
+              Clear params
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

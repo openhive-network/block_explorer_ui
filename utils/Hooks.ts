@@ -98,7 +98,9 @@ export const useMediaQuery = (query: string) => {
   return matches;
 };
 
-const URL_ARRAY_END = "_";
+const URL_ARRAY_HEX = "_h";
+const URL_ARRAY_STRING = "_s";
+const SPLIT = "-";
 
 type ParamObject = { [key: string]: any };
 
@@ -112,9 +114,13 @@ export const dataToURL = (value: any) => {
       return null;
     } else {
       if (typeof value[0] === "boolean") {
-        return `${convertBooleanArrayIntoHexadecimals(value)}${URL_ARRAY_END}`;
+        return `${convertBooleanArrayIntoHexadecimals(value)}${URL_ARRAY_HEX}`;
       } else {
-        return value[0];
+        if (typeof value[0] === "string") {
+          return `${value.join(SPLIT)}${URL_ARRAY_STRING}`;
+        } else {
+          return value[0];
+        }
       }
     }
   }
@@ -141,8 +147,12 @@ const URLToData = (value: any) => {
     return Number(value);
   }
 
-  if (value.at(-1) === URL_ARRAY_END) {
+  if (value.slice(-2) === URL_ARRAY_HEX) {
     return parseUrlFlagsIntoBooleanArray(value.slice(0, -1));
+  }
+
+  if (value.slice(-2) === URL_ARRAY_STRING) {
+    return value.slice(0, -2).split(SPLIT);
   }
 
   if (/^\d{4}\.\d{2}\.\d{2}_\d{2}.\d{2}.\d{2}$/.test(value)) {
