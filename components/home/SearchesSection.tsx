@@ -361,7 +361,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
               </Button>
             </Link>
 
-            <div className="flex justify-center items-center text-black">
+            <div className="flex justify-center items-center text-black dark:text-white">
               <CustomPagination
                 currentPage={commentPaginationPage}
                 totalCount={commentSearch.commentSearchData?.total_operations}
@@ -399,7 +399,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
             )}
           </div>
         ) : (
-          <div className="flex justify-center w-full text-black">
+          <div className="flex justify-center w-full text-black dark:text-white">
             No operations matching given criteria
           </div>
         ))}
@@ -420,7 +420,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
               </Button>
             </Link>
 
-            <div className="flex justify-center items-center text-black">
+            <div className="flex justify-center items-center text-black dark:text-white">
               <CustomPagination
                 currentPage={accountOperationsPage || 1}
                 totalCount={
@@ -461,7 +461,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
             )}
           </div>
         ) : (
-          <div className="flex justify-center w-full text-black">
+          <div className="flex justify-center w-full text-black dark:text-white">
             No operations matching given criteria
           </div>
         ))}
