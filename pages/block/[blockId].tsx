@@ -279,7 +279,7 @@ export default function Block() {
                     }
                     pageSize={1000}
                     totalCount={blockOperations?.total_operations || 0}
-                    className="text-black"
+                    className="text-black dark:text-white"
                   />
                 )}
               <div className="w-full md:w-4/5 flex flex-col gap-y-2">
@@ -292,7 +292,7 @@ export default function Block() {
                   ref={virtualOpsRef}
                   style={{ scrollMargin: "100px" }}
                 >
-                  <p className="text-3xl text-black">
+                  <p className="text-3xl text-black dark:text-white">
                     {!!blockOperations &&
                     !blockOperations?.operations_result?.length
                       ? "No operations were found"
