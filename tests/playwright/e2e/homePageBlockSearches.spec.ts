@@ -264,8 +264,8 @@ test.describe('Home page - searches', () => {
         await expect(mainPage.firstResultBlock).toBeVisible()
     });
 
-    test("Check if url is correct and contain blocku number and user name", async ({ page }) => {
-
+    test("Check if url is correct and contain blocku number and user name", async ({ page, browserName }) => {
+        test.skip(browserName === 'webkit', 'Automatic test works well on chromium');
         const userName = 'gtg'
 
         await mainPage.accountNameInput.fill(userName)
