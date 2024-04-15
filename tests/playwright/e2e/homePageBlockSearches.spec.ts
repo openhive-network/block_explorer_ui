@@ -263,4 +263,22 @@ test.describe('Home page - searches', () => {
         await expect(mainPage.blockSearchResultSection).toBeVisible()
         await expect(mainPage.firstResultBlock).toBeVisible()
     });
+
+    test("Check if url is correct and contain blocku number and user name", async ({ page, browserName }) => {
+        test.skip(browserName === 'webkit', 'Automatic test works well on chromium');
+        const userName = 'gtg'
+
+        await mainPage.accountNameInput.fill(userName)
+        await mainPage.blockSearchBtn.click()
+        await expect(mainPage.firstResultBlock).toBeVisible()
+
+        const firstBlockNumber = await mainPage.firstResultBlock.innerText()
+
+        await mainPage.firstResultBlock.click()
+        await expect(blockPage.producedData).toBeVisible()
+        
+        const url = await page.url()
+        await expect(url).toContain(firstBlockNumber)
+        await expect(url).toContain(`accountName=${userName}`)
+    })
 });
