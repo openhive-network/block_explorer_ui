@@ -25,6 +25,9 @@ class FetchingService {
 
   public setHiveChain(hiveChain: IHiveChainInterface | null) {
     this.extendedHiveChain = hiveChain?.extend<ExplorerNodeApi>();
+    if (this.extendedHiveChain && this.nodeUrl) {
+      this.extendedHiveChain.endpointUrl = this.nodeUrl;
+    }
   }
 
   async makePostRequest<T>(url: string, requestBody: T) {
