@@ -1,3 +1,4 @@
+import { GetDynamicGlobalPropertiesResponse } from "@hive/wax";
 import Hive from "./Hive";
 
 declare module Explorer {
@@ -105,7 +106,7 @@ declare module Explorer {
     rc: SingleManabar;
   }
 
-  interface DynamicGlobalBlock extends Omit<Hive.DynamicGlobalBlock, 
+  interface DynamicGlobalBlock extends Omit<GetDynamicGlobalPropertiesResponse, 
     "virtual_supply" |
     "current_supply" |
     "init_hbd_supply" |
