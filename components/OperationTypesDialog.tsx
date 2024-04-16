@@ -213,7 +213,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     }
     const sortedOperations = operations.sort((a, b) => a?.operation_name.localeCompare(b?.operation_name));
     return (
-      <div className=" border-t px-2">
+      <div className=" border-t px-2" key={sectionName}>
         <div className="flex justify-between">
           <div className="flex items-center justify-center">{sectionName}</div>
           <div>
