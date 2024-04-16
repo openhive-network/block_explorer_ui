@@ -1,9 +1,7 @@
 import Explorer from "@/types/Explorer";
 import Hive from "@/types/Hive";
-import moment from "moment";
-import { config } from "@/Config";
 import { formatPercent } from "@/lib/utils";
-import { IHiveChainInterface } from "@hive/wax";
+import { GetDynamicGlobalPropertiesResponse, IHiveChainInterface } from "@hive/wax";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 
 /**
@@ -16,15 +14,14 @@ import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
  * @returns {Explorer.HeadBlockDetails}
  */
 export function adjustDynamicGlobalBlockData(
-  dynamicGlobalQuery: Hive.DynamicGlobalBlockQuery,
-  currentPriceFeed: Hive.PriceFeedQuery,
-  rewardFunds: Hive.RewardFundsQuery,
+  dynamicGlobalQuery: GetDynamicGlobalPropertiesResponse,
+  currentPriceFeed: Hive.PriceFeed,
+  rewardFunds: Hive.RewardFunds[],
   hiveChain: IHiveChainInterface
 ): Explorer.HeadBlockCardData {
-  const { base } = currentPriceFeed.result;
+  const { base } = currentPriceFeed;
   const basicFormatter = hiveChain.formatter;
-  const dynamicGlobalBlock = dynamicGlobalQuery.result;
-  const formattedBaseValues: Explorer.DynamicGlobalBlock = basicFormatter.format(dynamicGlobalBlock);
+  const formattedBaseValues: Explorer.DynamicGlobalBlock = basicFormatter.format(dynamicGlobalQuery);
   const {
     time,
     current_supply,
@@ -55,7 +52,7 @@ export function adjustDynamicGlobalBlockData(
     head_block_number,
     current_witness
   } = formattedBaseValues;
-  const rewardBalance: string = basicFormatter.format(rewardFunds.result.funds[0].reward_balance);
+  const rewardBalance: string = basicFormatter.format(rewardFunds[0].reward_balance);
   const headBlockDetails: Explorer.HeadBlockDetails = {
     feedPrice: basicFormatter.format(base),
     blockchainTime: formatAndDelocalizeTime(time),

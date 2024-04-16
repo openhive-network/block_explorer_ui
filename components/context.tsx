@@ -7,6 +7,7 @@ import { HiveChainContext } from "./contexts/HiveChainContext";
 import { IHiveChainInterface, createHiveChain } from "@hive/wax";
 import { AddressesContext } from "./contexts/AddressesContext";
 import useApiAddresses from "@/utils/ApiAddresses";
+import fetchingService from "@/services/FetchingService";
 
 const Context: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [userSettings, setUserSettings] = useState<UserSettings>({
@@ -18,6 +19,7 @@ const Context: React.FC<{ children: ReactNode }> = ({ children }) => {
   const createChain = async () => {
     const chain = await createHiveChain();
     setHiveChain(chain);
+    fetchingService.setHiveChain(chain);
   }
 
   useEffect(() => {
