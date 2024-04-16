@@ -8,9 +8,9 @@ import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
  * Get dynamic global block data and adjust it for page display.
  *
  * @export
- * @param {Hive.DynamicGlobalBlockQuery} dynamicGlobalQuery
- * @param {Hive.PriceFeedQuery} currentPriceFeed
- * @param {Hive.RewardFundsQuery} rewardFunds
+ * @param {GetDynamicGlobalPropertiesResponse} dynamicGlobalQuery
+ * @param {Hive.PriceFeed} currentPriceFeed
+ * @param {Hive.RewardFunds[]} rewardFunds
  * @returns {Explorer.HeadBlockDetails}
  */
 export function adjustDynamicGlobalBlockData(

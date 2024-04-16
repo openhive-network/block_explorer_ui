@@ -161,12 +161,6 @@ declare module Hive {
     op_type_id: number;
   }
 
-  interface JsonRpcBasicResponse<T> {
-    id: number;
-    jsonrpc: string;
-    result: T;
-  }
-
   interface DynamicGlobalBlock {
     id: number;
     head_block_number: number;
@@ -216,14 +210,10 @@ declare module Hive {
     max_open_recurrent_transfers: number;
   }
 
-  type DynamicGlobalBlockQuery = JsonRpcBasicResponse<DynamicGlobalBlock>;
-
   interface PriceFeed {
     base: Supply;
     quote: Supply;
   }
-
-  type PriceFeedQuery = JsonRpcBasicResponse<PriceFeed>;
 
   interface RewardFunds {
     id: number;
@@ -237,8 +227,6 @@ declare module Hive {
     author_reward_curve: string;
     curation_reward_curve: string;
   }
-
-  type RewardFundsQuery = JsonRpcBasicResponse<{ funds: RewardFunds[] }>;
 
   type OperationType =
     | "vote_operation"
