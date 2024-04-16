@@ -256,7 +256,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           ))}
         </div>
         <DialogFooter>
-          <div className="flex flex-wrap justify-between w-full gap-y-4 border-t pt-1" data-testid="operation-types-dialog-footer">
+          <div className="flex flex-wrap justify-between w-full gap-y-4 border-t pt-1 px-2" data-testid="operation-types-dialog-footer">
             <div className="flex">
               <Button type="button" variant="secondary" onClick={selectAll}>
                 Select all
