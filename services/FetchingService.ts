@@ -1,11 +1,19 @@
 import Hive from "@/types/Hive";
 import { config } from "@/Config";
 import Explorer from "@/types/Explorer";
-import { IHiveChainInterface } from "@hive/wax";
+import { GetDynamicGlobalPropertiesResponse, IHiveChainInterface, TWaxApiRequest, TWaxExtended } from "@hive/wax";
+
+type ExplorerNodeApi = {
+  database_api: {
+    get_reward_funds: TWaxApiRequest<{}, { funds: Hive.RewardFunds[] }>
+    get_current_price_feed: TWaxApiRequest<{}, Hive.PriceFeed>
+  }
+}
 
 class FetchingService {
   private apiUrl: string | null = null;
   private nodeUrl: string | null = null;
+  private extendedHiveChain: TWaxExtended<ExplorerNodeApi> | undefined = undefined;
 
   public setApiUrl(newUrl: string) {
     this.apiUrl = newUrl;
@@ -13,6 +21,13 @@ class FetchingService {
 
   public setNodeUrl(newUrl: string) {
     this.nodeUrl = newUrl;
+  }
+
+  public setHiveChain(hiveChain: IHiveChainInterface | null) {
+    this.extendedHiveChain = hiveChain?.extend<ExplorerNodeApi>();
+    if (this.extendedHiveChain && this.nodeUrl) {
+      this.extendedHiveChain.endpointUrl = this.nodeUrl;
+    }
   }
 
   async makePostRequest<T>(url: string, requestBody: T) {
@@ -100,16 +115,16 @@ class FetchingService {
     return await this.callApi("get_transaction", requestBody);
   }
 
-  async getRewardFunds(): Promise<Hive.RewardFundsQuery> {
-    return await this.callNode("database_api.get_reward_funds");
+  async getRewardFunds(): Promise<{ funds: Hive.RewardFunds[] }> {
+    return await this.extendedHiveChain!.api.database_api.get_reward_funds({});
   }
 
-  async getDynamicGlobalProperties(): Promise<Hive.DynamicGlobalBlockQuery> {
-    return await this.callNode("database_api.get_dynamic_global_properties");
+  async getDynamicGlobalProperties(): Promise<GetDynamicGlobalPropertiesResponse> {
+    return await this.extendedHiveChain!.api.database_api.get_dynamic_global_properties({});
   }
 
-  async getCurrentPriceFeed(): Promise<Hive.PriceFeedQuery> {
-    return await this.callNode("database_api.get_current_price_feed");
+  async getCurrentPriceFeed(): Promise<Hive.PriceFeed> {
+    return await this.extendedHiveChain!.api.database_api.get_current_price_feed({});
   }
 
   async getAccOpTypes(account: string): Promise<unknown> {

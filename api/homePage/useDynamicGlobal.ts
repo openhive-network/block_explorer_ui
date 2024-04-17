@@ -26,7 +26,7 @@ const useDynamicGlobal = (headBlockNum?: number) => {
       adjustDynamicGlobalBlockData(
         dynamicGlobalBlockData[0],
         dynamicGlobalBlockData[1],
-        dynamicGlobalBlockData[2],
+        dynamicGlobalBlockData[2].funds,
         hiveChain!
       ),
     refetchOnWindowFocus: false,
