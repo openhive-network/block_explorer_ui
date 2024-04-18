@@ -245,9 +245,9 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
         Operation types
       </Button>
       {triggerTitle !== "" &&
-        <Label className=" bg-slate-500 px-2 ml-2 flex justify-center items-center rounded rounded-r-lg	overflow-hidden">
-          <span className="mr-2">{triggerTitle}</span>
-          <XCircle className=" bg-slate-500 cursor-pointer" onClick={() => clearAllOperationsTypes()} />
+        <Label className=" bg-gray-600 px-2 ml-2 flex justify-center items-center rounded rounded-r-lg text-white">
+          <span className="mr-2 ">{triggerTitle}</span>
+          <XCircle className=" bg-gray-600 cursor-pointer" onClick={() => clearAllOperationsTypes()} />
         </Label>
       }
     </div>
