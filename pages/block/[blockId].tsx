@@ -45,12 +45,15 @@ const defaultParams: BlockSearchParams = {
 };
 
 export default function Block() {
-  const router = useRouter();
+  const router = useRouter() as any;
   const virtualOpsRef = useRef(null);
 
   const blockId = (router.query.blockId as string)?.replaceAll(",", "");
 
   const { refetch } = useHeadBlockNumber();
+
+  const transactionIdFromRoute: string | undefined =
+    router.asPath.split("#")[1];
 
   const [blockDate, setBlockDate] = useState<Date>();
   const { paramsState, setParams } = useURLParams(
@@ -99,6 +102,26 @@ export default function Block() {
       setBlockDate(new Date(blockDetails.created_at + "Z"));
     }
   }, [blockDetails]);
+
+  // this is required if block page wasn't loaded before
+  useEffect(() => {
+    if (!transactionIdFromRoute || totalLoading) return;
+
+    const element = document.getElementById(transactionIdFromRoute);
+    if (!element) return;
+
+    const headerOffset = 50;
+    const elementPosition = element.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.scrollY - headerOffset;
+
+    window.scrollTo({
+      top: offsetPosition,
+    });
+
+    return () => {
+      window.scrollTo(undefined);
+    };
+  }, [transactionIdFromRoute, totalLoading]);
 
   const getSplitOperations = useCallback(
     (operations?: Hive.OperationResponse[]) => {

@@ -9,11 +9,11 @@ import {
 } from "./ui/table";
 import Link from "next/link";
 import React, { useState } from "react";
+import { useRouter } from "next/router";
 import { cn } from "@/lib/utils";
 import Explorer from "@/types/Explorer";
-import { isJson } from "@/utils/StringUtils";
 import { Button } from "./ui/button";
-import { ChevronDown, ChevronUp, Copy } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import JSONView from "./JSONView";
 import { getOperationTypeForDisplay } from "@/utils/UI";
 import CopyJSON from "./CopyJSON";
@@ -53,12 +53,32 @@ const getOperationValues = (operation: Hive.Operation) => {
   return valueAsObject;
 };
 
+const buildTransactionLinkHref = (
+  isTransactionPage: boolean,
+  blockNumber: number,
+  transactionId: string
+) => {
+  let transactionLinkHref: string = "";
+
+  if (isTransactionPage) {
+    transactionLinkHref = `/block/${blockNumber}#${transactionId}`;
+  } else {
+    transactionLinkHref = `/transaction/${transactionId}`;
+  }
+
+  return transactionLinkHref;
+};
+
 const OperationsTable: React.FC<OperationsTableProps> = ({
   operations,
   unformattedOperations,
   className,
 }) => {
+  const router = useRouter();
+
   const [expanded, setExpanded] = useState<number[]>([]);
+
+  const isTransactionPage = !!router.query.transactionId;
 
   const getUnformattedValue = (operation: Explorer.OperationForTable) => {
     const unformattedOperation = unformattedOperations?.find(
@@ -88,6 +108,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
         {operations.map((operation, index) => (
           <React.Fragment key={index}>
             <TableRow
+              id={operation.trxId}
               data-testid="detailed-operation-card"
               key={index}
               className={cn({
@@ -147,7 +168,11 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
               <TableCell data-testid="transaction-number">
                 <Link
                   className="text-explorer-turquoise"
-                  href={`/transaction/${operation.trxId}`}
+                  href={buildTransactionLinkHref(
+                    isTransactionPage,
+                    operation.blockNumber ?? 0,
+                    operation.trxId ?? ""
+                  )}
                 >
                   {operation.trxId?.slice(0, 10)}
                 </Link>
@@ -164,8 +189,8 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
             </TableRow>
             {operation.operation.type === "custom_json_operation" &&
               expanded.includes(operation.operatiopnId || 0) && (
-                <TableRow>
-                  <TableCell data-testid="details" colSpan={6} className="py-2">
+                <TableRow id={operation.trxId}>
+                   <TableCell data-testid="details" colSpan={6} className="py-2">
                     <JSONView
                       json={JSON.parse(
                         getOperationValues(operation.operation).json || ""

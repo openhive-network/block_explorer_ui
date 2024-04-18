@@ -1,10 +1,7 @@
 import { useRouter } from "next/router";
 import Hive from "@/types/Hive";
 import { addSpacesAndCapitalizeFirst } from "@/utils/StringUtils";
-import DetailedOperationCard from "@/components/DetailedOperationCard";
 import Link from "next/link";
-import moment from "moment";
-import { config } from "@/Config";
 import PageNotFound from "@/components/PageNotFound";
 import { useUserSettingsContext } from "@/components/contexts/UserSettingsContext";
 import JSONView from "@/components/JSONView";
@@ -66,10 +63,7 @@ export default function Transaction() {
                   data-testid="transaction-header-hash-trx"
                   className="w-full text-center"
                 >
-                  Transaction{" "}
-                  <span className="text-explorer-turquoise">
-                    {trxData?.transaction_id}
-                  </span>
+                  <p>Transaction {trxData?.transaction_id}</p>
                 </div>
                 <div className="w-full flex justify-evenly">
                   <div>
