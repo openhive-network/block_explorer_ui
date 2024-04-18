@@ -338,7 +338,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
           </Accordion>
         </CardContent>
       </Card>
-      <div className="pt-4" ref={searchesRef}>
+      <div className="pt-4 scroll-mt-16" ref={searchesRef}>
         {blockSearch.blockSearchData && lastSearchKey === "block" && (
           <div
             className=" bg-explorer-dark-gray p-2 md: h-fit rounded"
