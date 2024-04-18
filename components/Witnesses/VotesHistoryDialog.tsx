@@ -74,21 +74,13 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
     );
   };
 
-  const buildCustomDialogStyle = () => {
-    const intialDialogStyle = "max-w-2xl bg-white dark:bg-explorer-dark-gray overflow-auto";
-
-    if (!votesHistory) {
-      return `${intialDialogStyle} flex column justify-center items-center`;
-    }
-    if (votesHistory.length < 4) return intialDialogStyle;
-
-    return `h-3/4 ${intialDialogStyle}`;
-  };
-
   return (
     <Dialog open={isVotesHistoryOpen} onOpenChange={changeVoteHistoryDialogue}>
       <DialogContent
-        className={buildCustomDialogStyle()}
+        className={cn("max-w-2xl max-h-[700px]  bg-white dark:bg-explorer-dark-gray overflow-auto", {
+          "flex column justify-center items-center": !votesHistory,
+          "h-3/4": votesHistory?.length >=16
+        })}
         data-testid="votes-history-dialog"
       >
         {votesHistory ? (
