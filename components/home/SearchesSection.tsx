@@ -1,5 +1,5 @@
 import Explorer from "@/types/Explorer";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import {
@@ -59,6 +59,9 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
   >(undefined);
   const [accountOperationsSearchProps, setAccountOperationsSearchProps] =
     useState<Explorer.AccountSearchOperationsProps | undefined>(undefined);
+  const [isAllSearchLoading, setIsAllSearchLoading] = useState<boolean>(false);
+
+  const searchesRef = useRef<HTMLDivElement | null>(null);
 
   const { operationsTypes } = useOperationTypes() || [];
   const commentSearch = useCommentSearch(commentSearchProps);
@@ -84,6 +87,17 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
     }
   }, [accountOperations, accountOperationsPage]);
 
+  useEffect(() => {
+    const wasActualized = 
+      (accountOperations && !accountOperations.isAccountOperationsLoading && lastSearchKey === "account") ||
+      (blockSearch && !blockSearch.blockSearchDataLoading && lastSearchKey === "block") ||
+      (commentSearch && !commentSearch.commentSearchDataLoading && lastSearchKey === "comment");
+    if (isAllSearchLoading && wasActualized) {
+        searchesRef.current?.scrollIntoView({behavior: "smooth", block: "start"});
+        setIsAllSearchLoading(false)
+    }
+  }, [accountOperations, lastSearchKey, blockSearch, commentSearch, isAllSearchLoading])
+
   const startCommentSearch = async (
     commentSearchProps: Explorer.CommentSearchParams
   ) => {
@@ -96,6 +110,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
           ? convertBooleanArrayToIds(filters)
           : undefined,
     };
+    setIsAllSearchLoading(true);
     setCommentSearchProps(props);
     setCommentPaginationPage(1);
     setPreviousCommentSearchProps(props);
@@ -105,6 +120,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
   const startAccountOperationsSearch = async (
     accountOperationsSearchProps: Explorer.AccountSearchOperationsProps
   ) => {
+    setIsAllSearchLoading(true);
     setLastSearchKey("account");
     setAccountOperationsPage(undefined);
     setAccountOperationsSearchProps(accountOperationsSearchProps);
@@ -114,6 +130,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
   const startBlockSearch = async (
     blockSearchProps: Explorer.BlockSearchProps
   ) => {
+    setIsAllSearchLoading(true);
     setBlockSearchProps(blockSearchProps);
     setLastSearchKey("block");
   };
@@ -321,150 +338,152 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
           </Accordion>
         </CardContent>
       </Card>
-      {blockSearch.blockSearchData && lastSearchKey === "block" && (
-        <div
-          className=" bg-explorer-dark-gray p-2 md: h-fit rounded"
-          data-testid="result-section"
-        >
-          <div className="text-center" data-testid="result-section-header">
-            Results:
-          </div>
-          <div className="flex flex-wrap">
-            {blockSearch.blockSearchData.length > 0 ? (
-              blockSearch.blockSearchData.map((blockId) => (
-                <Link
-                  key={blockId}
-                  href={getBlockPageLink(blockId)}
-                  data-testid="result-block"
-                >
-                  <div className="m-1 border border-solid p-1">{blockId}</div>
-                </Link>
-              ))
-            ) : (
-              <div className="flex justify-center w-full">
-                No blocks matching given criteria
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-      {!!commentSearch.commentSearchData &&
-        lastSearchKey === "comment" &&
-        (!!commentSearch.commentSearchData.total_operations ? (
-          <div>
-            <Link href={getCommentPageLink()}>
-              <Button
-                className=" bg-blue-800 hover:bg-blue-600 rounded"
-                data-testid="go-to-result-page"
-              >
-                Go to result page
-              </Button>
-            </Link>
-
-            <div className="flex justify-center items-center text-black dark:text-white">
-              <CustomPagination
-                currentPage={commentPaginationPage}
-                totalCount={commentSearch.commentSearchData?.total_operations}
-                pageSize={config.standardPaginationSize}
-                onPageChange={changeCommentSearchPagination}
-              />
+      <div className="pt-4 scroll-mt-16" ref={searchesRef}>
+        {blockSearch.blockSearchData && lastSearchKey === "block" && (
+          <div
+            className=" bg-explorer-dark-gray p-2 md: h-fit rounded"
+            data-testid="result-section"
+          >
+            <div className="text-center" data-testid="result-section-header">
+              Results:
             </div>
-            <div className="flex justify-end items-center">
-              <JumpToPage
-                currentPage={commentPaginationPage}
-                onPageChange={changeCommentSearchPagination}
-              />
-            </div>
-
-            {settings.rawJsonView ? (
-              commentSearch.commentSearchData?.operations_result.map(
-                (foundOperation) => (
-                  <DetailedOperationCard
-                    className="my-6"
-                    operation={foundOperation.operation}
-                    key={foundOperation.operation_id}
-                    blockNumber={foundOperation.block_num}
-                  />
-                )
-              )
-            ) : (
-              <OperationsTable
-                operations={convertCommentsOperationResultToTableOperations(
-                  formattedCommentOperations?.operations_result
-                )}
-                unformattedOperations={convertCommentsOperationResultToTableOperations(
-                  commentSearch.commentSearchData.operations_result
-                )}
-              />
-            )}
-          </div>
-        ) : (
-          <div className="flex justify-center w-full text-black dark:text-white">
-            No operations matching given criteria
-          </div>
-        ))}
-      {!!accountOperations.accountOperations &&
-        lastSearchKey === "account" &&
-        (!!accountOperations.accountOperations.total_operations ? (
-          <div data-testid="operations-card">
-            <Link
-              href={getAccountPageLink(
-                previousAccountOperationsSearchProps?.accountName || ""
+            <div className="flex flex-wrap">
+              {blockSearch.blockSearchData.length > 0 ? (
+                blockSearch.blockSearchData.map((blockId) => (
+                  <Link
+                    key={blockId}
+                    href={getBlockPageLink(blockId)}
+                    data-testid="result-block"
+                  >
+                    <div className="m-1 border border-solid p-1">{blockId}</div>
+                  </Link>
+                ))
+              ) : (
+                <div className="flex justify-center w-full">
+                  No blocks matching given criteria
+                </div>
               )}
-            >
-              <Button
-                className=" bg-blue-800 hover:bg-blue-600 rounded"
-                data-testid="go-to-result-page"
-              >
-                Go to result page
-              </Button>
-            </Link>
-
-            <div className="flex justify-center items-center text-black dark:text-white">
-              <CustomPagination
-                currentPage={accountOperationsPage || 1}
-                totalCount={
-                  accountOperations.accountOperations?.total_operations
-                }
-                pageSize={config.standardPaginationSize}
-                onPageChange={changeAccountOperationsPagination}
-                isMirrored={true}
-              />
             </div>
-            <div className="flex justify-end items-center">
-              <JumpToPage
-                currentPage={accountOperationsPage || 1}
-                onPageChange={changeAccountOperationsPagination}
-              />
-            </div>
+          </div>
+        )}
+        {!!commentSearch.commentSearchData &&
+          lastSearchKey === "comment" &&
+          (!!commentSearch.commentSearchData.total_operations ? (
+            <div>
+              <Link href={getCommentPageLink()}>
+                <Button
+                  className=" bg-blue-800 hover:bg-blue-600 rounded"
+                  data-testid="go-to-result-page"
+                >
+                  Go to result page
+                </Button>
+              </Link>
 
-            {settings.rawJsonView ? (
-              accountOperations.accountOperations?.operations_result.map(
-                (foundOperation) => (
-                  <DetailedOperationCard
-                    className="my-6"
-                    operation={foundOperation.operation}
-                    key={foundOperation.operation_id}
-                    blockNumber={foundOperation.block_num}
-                  />
+              <div className="flex justify-center items-center text-black dark:text-white">
+                <CustomPagination
+                  currentPage={commentPaginationPage}
+                  totalCount={commentSearch.commentSearchData?.total_operations}
+                  pageSize={config.standardPaginationSize}
+                  onPageChange={changeCommentSearchPagination}
+                />
+              </div>
+              <div className="flex justify-end items-center">
+                <JumpToPage
+                  currentPage={commentPaginationPage}
+                  onPageChange={changeCommentSearchPagination}
+                />
+              </div>
+
+              {settings.rawJsonView ? (
+                commentSearch.commentSearchData?.operations_result.map(
+                  (foundOperation) => (
+                    <DetailedOperationCard
+                      className="my-6"
+                      operation={foundOperation.operation}
+                      key={foundOperation.operation_id}
+                      blockNumber={foundOperation.block_num}
+                    />
+                  )
                 )
-              )
-            ) : (
-              <OperationsTable
-                operations={convertOperationResultsToTableOperations(
-                  formattedAccountOperations?.operations_result
+              ) : (
+                <OperationsTable
+                  operations={convertCommentsOperationResultToTableOperations(
+                    formattedCommentOperations?.operations_result
+                  )}
+                  unformattedOperations={convertCommentsOperationResultToTableOperations(
+                    commentSearch.commentSearchData.operations_result
+                  )}
+                />
+              )}
+            </div>
+          ) : (
+            <div className="flex justify-center w-full text-black dark:text-white">
+              No operations matching given criteria
+            </div>
+          ))}
+        {!!accountOperations.accountOperations &&
+          lastSearchKey === "account" &&
+          (!!accountOperations.accountOperations.total_operations ? (
+            <div data-testid="operations-card">
+              <Link
+                href={getAccountPageLink(
+                  previousAccountOperationsSearchProps?.accountName || ""
                 )}
-                unformattedOperations={convertOperationResultsToTableOperations(
-                  accountOperations.accountOperations.operations_result
-                )}
-              />
-            )}
-          </div>
-        ) : (
-          <div className="flex justify-center w-full text-black dark:text-white">
-            No operations matching given criteria
-          </div>
-        ))}
+              >
+                <Button
+                  className=" bg-blue-800 hover:bg-blue-600 rounded"
+                  data-testid="go-to-result-page"
+                >
+                  Go to result page
+                </Button>
+              </Link>
+
+              <div className="flex justify-center items-center text-black dark:text-white">
+                <CustomPagination
+                  currentPage={accountOperationsPage || 1}
+                  totalCount={
+                    accountOperations.accountOperations?.total_operations
+                  }
+                  pageSize={config.standardPaginationSize}
+                  onPageChange={changeAccountOperationsPagination}
+                  isMirrored={true}
+                />
+              </div>
+              <div className="flex justify-end items-center">
+                <JumpToPage
+                  currentPage={accountOperationsPage || 1}
+                  onPageChange={changeAccountOperationsPagination}
+                />
+              </div>
+
+              {settings.rawJsonView ? (
+                accountOperations.accountOperations?.operations_result.map(
+                  (foundOperation) => (
+                    <DetailedOperationCard
+                      className="my-6"
+                      operation={foundOperation.operation}
+                      key={foundOperation.operation_id}
+                      blockNumber={foundOperation.block_num}
+                    />
+                  )
+                )
+              ) : (
+                <OperationsTable
+                  operations={convertOperationResultsToTableOperations(
+                    formattedAccountOperations?.operations_result
+                  )}
+                  unformattedOperations={convertOperationResultsToTableOperations(
+                    accountOperations.accountOperations.operations_result
+                  )}
+                />
+              )}
+            </div>
+          ) : (
+            <div className="flex justify-center w-full text-black dark:text-white">
+              No operations matching given criteria
+            </div>
+          ))}
+      </div>
     </>
   );
 };

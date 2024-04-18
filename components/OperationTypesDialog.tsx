@@ -213,7 +213,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     }
     const sortedOperations = operations.sort((a, b) => a?.operation_name.localeCompare(b?.operation_name));
     return (
-      <div className=" border-t px-2">
+      <div className=" border-t px-2" key={sectionName}>
         <div className="flex justify-between">
           <div className="flex items-center justify-center">{sectionName}</div>
           <div>
@@ -256,7 +256,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           ))}
         </div>
         <DialogFooter>
-          <div className="flex flex-wrap justify-between w-full gap-y-4 border-t pt-1" data-testid="operation-types-dialog-footer">
+          <div className="flex flex-wrap justify-between w-full gap-y-4 border-t pt-1 px-2" data-testid="operation-types-dialog-footer">
             <div className="flex">
               <Button type="button" variant="secondary" onClick={selectAll}>
                 Select all
