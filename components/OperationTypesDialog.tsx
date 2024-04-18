@@ -14,6 +14,7 @@ import Hive from "@/types/Hive";
 import { getOperationTypeForDisplay } from "@/utils/UI";
 import { useUserSettingsContext } from "./contexts/UserSettingsContext";
 import { cn } from "@/lib/utils";
+import { XCircle } from 'lucide-react';
 
 type OperationTypesDialogProps = {
   operationTypes: Hive.OperationPattern[] | undefined;
@@ -114,6 +115,10 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
   const handleOnClear = () => {
     setSelectedOperationsIds([]);
   };
+
+  const clearAllOperationsTypes = () => {
+    setSelectedOperations([]);
+  }
 
   const onOpenChange = (open: boolean) => {
     if (open) {
@@ -231,76 +236,85 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
   }
 
   return (
-    <Dialog
-      open={isOpen}
-      onOpenChange={(open) => {
-        onOpenChange(open);
-      }}
-    >
-      <DialogTrigger asChild>
-        <Button data-testid='operations-types-btn'
-          className={`${buttonClassName} text-white hover:bg-gray-700 rounded-[4px]`}
-        >
-          {triggerTitle}
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="max-w-[95%] md:max-w-[80%] max-h-[90%] md:max-h-[80%] flex-column justify-center align-center  bg-white text-black dark:bg-explorer-dark-gray dark:text-white overflow-auto px-0" data-testid="operation-types-dialog">
-        <DialogHeader>
-          <DialogTitle className="flex justify-center pt-2">
-            Operation types filters
-          </DialogTitle>
-        </DialogHeader>
-        <div className="overflow-auto max-h-[500px] md:max-h-[600px]">
-          {categorizedTypes.map((categorizedType) => (
-            renderSection(categorizedType.name, categorizedType.types)
-          ))}
-        </div>
-        <DialogFooter>
-          <div className="flex flex-wrap justify-between w-full gap-y-4 border-t pt-1 px-2" data-testid="operation-types-dialog-footer">
-            <div className="flex">
-              <Button type="button" variant="secondary" onClick={selectAll}>
-                Select all
-              </Button>
-              <Button type="button" variant="secondary" onClick={selectReal}>
-                Select real
-              </Button>
-              <Button type="button" variant="secondary" onClick={selectVirtual}>
-                Select virtual
-              </Button>
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={invertSelection}
-              >
-                Invert
-              </Button>
-              <Button type="button" variant="secondary" onClick={handleOnClear}>
-                Clear
-              </Button>
-            </div>
-            <div className="flex w-full md:w-auto justify-center">
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={() => {
-                  onOpenChange(false);
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                className="bg-blue-800 hover:bg-blue-600 text-white rounded"
-                type="submit"
-                variant="default"
-                onClick={handleOnSubmit}
-              >
-                Apply
-              </Button>
-            </div>
+    <>
+    <div className="flex">
+      <Button data-testid='operations-types-btn'
+        className={`${buttonClassName} text-white hover:bg-gray-700 rounded-[4px]`}
+        onClick={() => setIsOpen(true)}
+      >
+        Operation types
+      </Button>
+      {triggerTitle !== "" &&
+        <Label className=" bg-slate-500 px-2 ml-2 flex justify-center items-center rounded rounded-r-lg	overflow-hidden">
+          <span className="mr-2">{triggerTitle}</span>
+          <XCircle className=" bg-slate-500 cursor-pointer" onClick={() => clearAllOperationsTypes()} />
+        </Label>
+      }
+    </div>
+      <Dialog
+        open={isOpen}
+        onOpenChange={(open) => {
+          onOpenChange(open);
+        }}
+      >
+        <DialogContent className="max-w-[95%] md:max-w-[80%] max-h-[90%] md:max-h-[80%] flex-column justify-center align-center  bg-white text-black dark:bg-explorer-dark-gray dark:text-white overflow-auto px-0" data-testid="operation-types-dialog">
+          <DialogHeader>
+            <DialogTitle className="flex justify-center pt-2">
+              Operation types filters
+            </DialogTitle>
+          </DialogHeader>
+          <div className="overflow-auto max-h-[500px] md:max-h-[600px]">
+            {categorizedTypes.map((categorizedType) => (
+              renderSection(categorizedType.name, categorizedType.types)
+            ))}
           </div>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+          <DialogFooter>
+            <div className="flex flex-wrap justify-between w-full gap-y-4 border-t pt-1 px-2" data-testid="operation-types-dialog-footer">
+              <div className="flex">
+                <Button type="button" variant="secondary" onClick={selectAll}>
+                  Select all
+                </Button>
+                <Button type="button" variant="secondary" onClick={selectReal}>
+                  Select real
+                </Button>
+                <Button type="button" variant="secondary" onClick={selectVirtual}>
+                  Select virtual
+                </Button>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={invertSelection}
+                >
+                  Invert
+                </Button>
+                <Button type="button" variant="secondary" onClick={handleOnClear}>
+                  Clear
+                </Button>
+              </div>
+              <div className="flex w-full md:w-auto justify-center">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => {
+                    onOpenChange(false);
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  className="bg-blue-800 hover:bg-blue-600 text-white rounded"
+                  type="submit"
+                  variant="default"
+                  onClick={handleOnSubmit}
+                >
+                  Apply
+                </Button>
+              </div>
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 

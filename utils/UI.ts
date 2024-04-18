@@ -17,7 +17,7 @@ export const getOperationButtonTitle = (
   }
   if (selectedOperationTypes && selectedOperationTypes.length > 1)
     return `${selectedOperationTypes.length} operation types`;
-  return "Operation types";
+  return "";
 };
 
 export const getOperationTypeForDisplay = (operationType: string) => {
