@@ -326,8 +326,8 @@ test.describe("Witnesses page", () => {
         await votesHistoryDialog.votesHistoryDialogDatepickerDayNotMuted.nth(16).click();
 
         await witnessesPage.page.waitForTimeout(3000);
-
-        expect(await votesHistoryDialog.votesHistoryDialogVoterColumn.locator('a').first().textContent()).toBe(expectedVoterName);
+        await expect(await votesHistoryDialog.votesHistoryDialogVoterColumn.locator('a').first()).toBeVisible()
+        expect(await votesHistoryDialog.votesHistoryDialogVoterColumn.locator('a').first().textContent()).toBe(await expectedVoterName);
         // console.log('first voter: ', await votesHistoryDialog.votesHistoryDialogVoterColumn.locator('a').first().textContent())
 
         expect(await votesHistoryDialog.votesHistoryDialogVoteArrowColumn.locator('svg').first().getAttribute('class')).toBe(arrowUp);
