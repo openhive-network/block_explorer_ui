@@ -9,10 +9,14 @@ import { ApiHelper } from "../support/apiHelper";
 test.describe("Witnesses page", () => {
   let mainPage: MainPage;
   let witnessesPage: Witnesses;
+  let votesHistoryDialog: VotesHistoryDialog;
+  let apiHelper: ApiHelper;
 
   test.beforeEach(async ({ page }) => {
     mainPage = new MainPage(page);
     witnessesPage = new Witnesses(page);
+    votesHistoryDialog = new VotesHistoryDialog(page);
+    apiHelper = new ApiHelper(page)
   });
 
   test("Compare top witnesses from home page with first 20 witnesses on Witnesses page", async ({
@@ -273,7 +277,8 @@ test.describe("Witnesses page", () => {
   });
 
   // Check this test after date picker will be improved (setting hours)
-  test.skip("validate values of the votes history dialog in specific dates", async ({ page }) => {
+  test("validate values of the votes history dialog in specific dates", async ({ page,browserName }) => {
+    test.skip(browserName === 'webkit', 'Automatic test works well on chromium');
     const expectedVoterName: string = 'ikigai0086';
     const expectedVoterNameArrowDown: string = 'superslayer0040';
     const expectedVoterNameArrowDownIndex: number = 3;
@@ -283,8 +288,6 @@ test.describe("Witnesses page", () => {
     const expectedVoterCurrentPowerNumber: number = parseFloat(expectedVoterCurrentPower);
     // console.log('expectedVoterCurrentPower ', expectedVoterCurrentPower);
     // console.log('expectedVoterCurrentPowerNumber ', expectedVoterCurrentPowerNumber);
-
-    const votesHistoryDialog = new VotesHistoryDialog(page);
 
     await mainPage.gotoBlockExplorerPage();
     // Move to the Witnesses page
@@ -423,9 +426,8 @@ test.describe("Witnesses page", () => {
   });
 
   // Only to show votes number by different ways
-  test.skip("Display votes of arcange ", async ({ page }) => {
-    const apiHelper = new ApiHelper(page);
-
+  test("Display votes of arcange ", async ({ page }) => {
+  
     const response = await apiHelper.getWitnessesByVote();
     console.log('Witnesses by vote: ', await response.result[0]);
 

@@ -13,12 +13,14 @@ test.describe("Block Explorer UI tests", () => {
   let navbar: Navbar;
   let accountPage: AccountPage;
   let witnessesPage: Witnesses;
+  let commentsPage: CommentsPage;
 
   test.beforeEach(async ({ page }) => {
     mainPage = new MainPage(page);
     blockPage = new BlockPage(page);
     navbar = new Navbar(page);
     accountPage = new AccountPage(page);
+    commentsPage = new CommentsPage(page)
   });
 
   test("Home page of block explorer is loaded", async ({ page }) => {
@@ -266,8 +268,10 @@ test.describe("Block Explorer UI tests", () => {
     await commentsPage.validateEmptyCommentsPageIsLoaded();
   });
 
-  test.skip("Validate the operations list has correct information after moving to the comments page by the specific URL with author and parmlink", async ({ page }) => {
-    const commentsPage = new CommentsPage(page);
+  test("Validate the operations list has correct information after moving to the comments page by the specific URL with author and parmlink", async ({ page, browserName }) => {
+    test.skip(browserName === 'firefox', 'Automatic test works well on chromium');
+    test.skip(browserName === 'webkit', 'Automatic test works well on chromium');
+
     const specificUrl: string = '/comments?accountName=gtg&permlink=power-to-the-hive-but-just-a-little';
 
     await commentsPage.gotoSpecificCommentsPage(specificUrl);
