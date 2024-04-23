@@ -3,7 +3,7 @@ import SearchRanges from "@/components/searchRanges/SearchRanges";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import useSearchRanges, { SearchRangesResult } from "@/components/searchRanges/useSearchRanges";
+import { SearchRangesResult } from "@/components/searchRanges/useSearchRanges";
 import { useEffect, useState } from "react";
 import Hive from "@/types/Hive";
 import { getOperationButtonTitle } from "@/utils/UI";
@@ -19,7 +19,7 @@ interface CommentsSearchProps {
   operationsTypes?: Hive.OperationPattern[];
   data?: Explorer.CommentSearchParams;
   loading?: boolean;
-  searchRanges: SearchRangesResult
+  searchRanges: SearchRangesResult;
 }
 
 const CommentsSearch: React.FC<CommentsSearchProps> = ({
@@ -27,7 +27,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
   operationsTypes,
   loading,
   data,
-  searchRanges
+  searchRanges,
 }) => {
   const [accountName, setAccountName] = useState<string>("");
   const [permlink, setPermlink] = useState<string>("");
@@ -42,7 +42,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
     data.accountName && setAccountName(data.accountName);
     data.permlink && setPermlink(data.permlink);
     data.filters &&
-      setSelectedCommentSearchOperationTypes(convertBooleanArrayToIds(data.filters));
+    setSelectedCommentSearchOperationTypes(convertBooleanArrayToIds(data.filters));
     searchRanges.setRangesValues(data);
   };
 
@@ -135,8 +135,8 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
           onClick={onButtonClick}
           disabled={!accountName}
         >
-          <span>Search</span>{" "}
-          {loading && <Loader2 className="animate-spin h-4 w-4  ..." />}
+          Search
+          {loading && <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />}
         </Button>
         {!accountName && (
           <label className=" text-muted-foreground">Set account name</label>

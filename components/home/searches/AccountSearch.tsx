@@ -3,7 +3,7 @@ import SearchRanges from "@/components/searchRanges/SearchRanges";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import useSearchRanges, { SearchRangesResult } from "@/components/searchRanges/useSearchRanges";
+import { SearchRangesResult } from "@/components/searchRanges/useSearchRanges";
 import { useState } from "react";
 import Hive from "@/types/Hive";
 import { getOperationButtonTitle } from "@/utils/UI";
@@ -15,14 +15,14 @@ interface AccountSearchProps {
   ) => Promise<void>;
   operationsTypes?: Hive.OperationPattern[];
   loading?: boolean;
-  searchRanges: SearchRangesResult
+  searchRanges: SearchRangesResult;
 }
 
 const AccountSearch: React.FC<AccountSearchProps> = ({
   startAccountOperationsSearch,
   operationsTypes,
   loading,
-  searchRanges
+  searchRanges,
 }) => {
   const [accountName, setAccountName] = useState<string>("");
   const [selectedOperationTypes, setSelectedOperationTypes] = useState<
@@ -62,8 +62,8 @@ const AccountSearch: React.FC<AccountSearchProps> = ({
       </p>
       <div className="flex flex-col">
         <label className="ml-2">Account name *</label>
-        <Input 
-          data-testid='account-name'
+        <Input
+          data-testid="account-name"
           className="w-1/2 md:w-1/3 bg-gray-700"
           type="text"
           value={accountName || ""}
@@ -86,13 +86,13 @@ const AccountSearch: React.FC<AccountSearchProps> = ({
       </div>
       <div className="flex items-center ">
         <Button
-          data-testid='search-button'
+          data-testid="search-button"
           className=" bg-blue-800 hover:bg-blue-600 rounded"
           onClick={onButtonClick}
           disabled={!accountName}
         >
-          <span>Search</span>{" "}
-          {loading && <Loader2 className="animate-spin h-4 w-4  ..." />}
+          Search
+          {loading && <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />}
         </Button>
         {!accountName && (
           <label className="ml-2 text-muted-foreground">Set account name</label>

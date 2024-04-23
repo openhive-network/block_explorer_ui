@@ -88,15 +88,15 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
   }, [accountOperations, accountOperationsPage]);
 
   useEffect(() => {
-    const wasActualized = 
-      (accountOperations && !accountOperations.isAccountOperationsLoading && lastSearchKey === "account") ||
-      (blockSearch && !blockSearch.blockSearchDataLoading && lastSearchKey === "block") ||
-      (commentSearch && !commentSearch.commentSearchDataLoading && lastSearchKey === "comment");
-    if (isAllSearchLoading && wasActualized) {
-        searchesRef.current?.scrollIntoView({behavior: "smooth", block: "start"});
-        setIsAllSearchLoading(false)
-    }
-  }, [accountOperations, lastSearchKey, blockSearch, commentSearch, isAllSearchLoading])
+    const wasActualized =
+    (accountOperations && !accountOperations.isAccountOperationsLoading && lastSearchKey === "account") ||
+    (blockSearch && !blockSearch.blockSearchDataLoading && lastSearchKey === "block") ||
+    (commentSearch && !commentSearch.commentSearchDataLoading && lastSearchKey === "comment");
+  if (isAllSearchLoading && wasActualized) {
+      searchesRef.current?.scrollIntoView({behavior: "smooth", block: "start"});
+      setIsAllSearchLoading(false)
+  }
+}, [accountOperations, lastSearchKey, blockSearch, commentSearch, isAllSearchLoading])
 
   const startCommentSearch = async (
     commentSearchProps: Explorer.CommentSearchParams
@@ -292,7 +292,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
 
   return (
     <>
-      <Card className="mt-4" data-testid="block-search-section">
+       <Card className="mt-4" data-testid="block-search-section">
         <CardHeader>
           <CardTitle>Search</CardTitle>
         </CardHeader>
@@ -387,7 +387,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
                   onPageChange={changeCommentSearchPagination}
                 />
               </div>
-              <div className="flex justify-end items-center">
+              <div className="flex justify-end items-center mb-4">
                 <JumpToPage
                   currentPage={commentPaginationPage}
                   onPageChange={changeCommentSearchPagination}
@@ -449,7 +449,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
                   isMirrored={true}
                 />
               </div>
-              <div className="flex justify-end items-center">
+              <div className="flex justify-end items-center mb-4">
                 <JumpToPage
                   currentPage={accountOperationsPage || 1}
                   onPageChange={changeAccountOperationsPagination}
