@@ -64,7 +64,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
     const unformattedOperation = unformattedOperations?.find(
       (op) => op.operatiopnId === operation.operatiopnId
     )?.operation;
-    return unformattedOperation ? getOperationValues(unformattedOperation) : {};
+    return unformattedOperation ? JSON.stringify(unformattedOperation) : {};
   };
 
   return (

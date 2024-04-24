@@ -104,7 +104,7 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
             {getOneLineDescription(operation)}
           </div>
         </div>
-        <CopyJSON value={valueAsObject} />
+        <CopyJSON value={JSON.stringify(valueAsObject)} />
       </div>
 
       {!settings.rawJsonView && operation.type === "custom_json_operation" && (

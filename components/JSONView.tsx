@@ -12,7 +12,6 @@ const JSONView: React.FC<JSONViewProps> = ({
   skipCopy = false,
   className,
 }) => {
-  console.log('SHOW ME', JSON.stringify(json));
   return (
     <div className={className}>
       {!skipCopy && (
