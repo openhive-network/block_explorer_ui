@@ -41,10 +41,13 @@ const renderSearchData = (
           return (
             <div
               key={index}
-              className={cn("px-4 py-2 flex items-center justify-between", {
-                "md:bg-explorer-ligh-gray bg-opacity-50": selected === index,
-                "border-t border-gray-700": !!index,
-              })}
+              className={cn(
+                "px-4 py-2 hover:bg-explorer-ligh-gray flex items-center justify-between",
+                {
+                  "md:bg-explorer-ligh-gray bg-opacity-50": selected === index,
+                  "border-t border-gray-700": !!index,
+                }
+              )}
             >
               <Link
                 onClick={() => onClick()}
@@ -162,7 +165,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ open, onChange, className }) => {
     <>
       <div
         className={cn(
-          "w-0 hidden md:w-1/3 relative bg-gray-700",
+          "w-0 hidden md:w-1/4 relative bg-explorer-dark-gray",
           {
             "w-full inline": open,
           },
@@ -170,7 +173,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ open, onChange, className }) => {
         )}
         ref={searchContainerRef}
       >
-        <div className="border-input border flex items-center pr-2">
+        <div className="border-input border-b-2 flex items-center pr-2">
           <Input
             className="border-0"
             type="text"
@@ -189,7 +192,10 @@ const SearchBar: React.FC<SearchBarProps> = ({ open, onChange, className }) => {
               }}
             />
           ) : !!searchTerm.length ? (
-            <X className="cursor-pointer" onClick={() => resetSearchBar()} />
+            <X
+              className="cursor-pointer"
+              onClick={() => resetSearchBar()}
+            />
           ) : (
             <Search />
           )}
@@ -201,7 +207,10 @@ const SearchBar: React.FC<SearchBarProps> = ({ open, onChange, className }) => {
         )}
       </div>
       {!open && (
-        <Button className="px-0" onClick={() => onChange && onChange(true)}>
+        <Button
+          className="px-0"
+          onClick={() => onChange && onChange(true)}
+        >
           <Search />
         </Button>
       )}
