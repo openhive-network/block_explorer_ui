@@ -10,7 +10,10 @@ import { getOperationButtonTitle } from "@/utils/UI";
 import Explorer from "@/types/Explorer";
 import { config } from "@/Config";
 import { formatAccountName } from "@/utils/StringUtils";
-import { convertBooleanArrayToIds, convertIdsToBooleanArray } from "@/lib/utils";
+import {
+  convertBooleanArrayToIds,
+  convertIdsToBooleanArray,
+} from "@/lib/utils";
 
 interface CommentsSearchProps {
   startCommentsSearch: (
@@ -42,7 +45,9 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
     data.accountName && setAccountName(data.accountName);
     data.permlink && setPermlink(data.permlink);
     data.filters &&
-    setSelectedCommentSearchOperationTypes(convertBooleanArrayToIds(data.filters));
+      setSelectedCommentSearchOperationTypes(
+        convertBooleanArrayToIds(data.filters)
+      );
     searchRanges.setRangesValues(data);
   };
 
@@ -92,28 +97,32 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
         permlink.
       </p>
       <div className="flex flex-col">
-        <label className="ml-2">Author *</label>
+        {/* <label className="ml-2">Author *</label> */}
         <Input
           data-testid="account-name"
-          className="w-1/2 md:w-1/3 bg-gray-700"
+          className="w-1/2 bg-explorer-dark-gray border-0 border-b-2"
           type="text"
           value={formatAccountName(accountName)}
           onChange={(e) => setAccountName(e.target.value)}
-          placeholder="---"
+          placeholder="Author *"
+          required
         />
       </div>
       <div className="flex flex-col">
-        <label className="ml-2">Permlink</label>
+        {/* <label className="ml-2">Permlink</label> */}
         <Input
           data-testid="permlink-input"
-          className="w-full bg-gray-700"
+          className="w-1/2 bg-explorer-dark-gray border-0 border-b-2"
           type="text"
           value={permlink}
           onChange={(e) => setPermlink(e.target.value)}
-          placeholder="---"
+          placeholder="Permlink"
         />
       </div>
-      <SearchRanges rangesProps={searchRanges} safeTimeRangeDisplay />
+      <SearchRanges
+        rangesProps={searchRanges}
+        safeTimeRangeDisplay
+      />
       <div className="flex items-center">
         <OperationTypesDialog
           operationTypes={operationsTypes?.filter((opType) =>
@@ -131,7 +140,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
       <div className="flex items-center">
         <Button
           data-testid="search-button"
-          className=" bg-blue-800 hover:bg-blue-600 rounded"
+          className=" bg-blue-800 hover:bg-blue-600 rounded mr-2"
           onClick={onButtonClick}
           disabled={!accountName}
         >
@@ -139,7 +148,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
           {loading && <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />}
         </Button>
         {!accountName && (
-          <label className=" text-muted-foreground">Set account name</label>
+          <label className="text-muted-foreground">Set author name</label>
         )}
       </div>
     </>

@@ -57,21 +57,25 @@ const AccountSearch: React.FC<AccountSearchProps> = ({
 
   return (
     <>
-      <p className="ml-2">
+      {/* <p className="ml-2">
         {"Find account's operations for given properties."}
-      </p>
+      </p> */}
       <div className="flex flex-col">
-        <label className="ml-2">Account name *</label>
+        {/* <label className="ml-2">Account name *</label> */}
         <Input
           data-testid="account-name"
-          className="w-1/2 md:w-1/3 bg-gray-700"
+          className="w-1/2 bg-explorer-dark-gray border-0 border-b-2"
           type="text"
           value={accountName || ""}
           onChange={(e) => setAccountName(e.target.value)}
-          placeholder="---"
+          placeholder="Account name *"
+          required
         />
       </div>
-      <SearchRanges rangesProps={searchRanges} safeTimeRangeDisplay />
+      <SearchRanges
+        rangesProps={searchRanges}
+        safeTimeRangeDisplay
+      />
       <div className="flex items-center">
         <OperationTypesDialog
           operationTypes={operationsTypes}

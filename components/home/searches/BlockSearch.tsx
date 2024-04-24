@@ -106,19 +106,23 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
 
   return (
     <>
-      <p className="ml-2">Find block numbers for given properties.</p>
+      {/* <p className="ml-2">Find block numbers for given properties.</p> */}
       <div className="flex flex-col">
-        <label className="ml-2">Account name</label>
+        {/* <label className="ml-2">Account name</label> */}
         <Input
-          className="w-1/2 md:w-1/3 bg-gray-700"
+          className="w-1/2 bg-explorer-dark-gray border-0 border-b-2"
           type="text"
+          placeholder="Account name"
           value={accountName || ""}
           onChange={(e) => setAccountName(e.target.value)}
-          placeholder="---"
+          // placeholder="---"
           data-testid="account-name-input"
         />
       </div>
-      <SearchRanges rangesProps={searchRanges} safeTimeRangeDisplay />
+      <SearchRanges
+        rangesProps={searchRanges}
+        safeTimeRangeDisplay
+      />
       <div className="flex items-center">
         <OperationTypesDialog
           operationTypes={operationsTypes}
@@ -132,8 +136,8 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
         />
       </div>
       <div className="flex flex-col ">
-        <div className="flex items-center">
-          <label className="ml-2">Property</label>
+        <div className="flex mb-4 items-center">
+          <label>Property</label>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -149,9 +153,12 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
           </TooltipProvider>
         </div>
         <div className="flex">
-        <Select onValueChange={onSelect} value={selectedIndex}>
+          <Select
+            onValueChange={onSelect}
+            value={selectedIndex}
+          >
             <SelectTrigger
-              className="justify-normal bg-gray-700"
+              className="w-1/2 justify-normal bg-exolorer-dark-gray border-0 border-b-2 "
               disabled={
                 !selectedOperationTypes || selectedOperationTypes.length !== 1
               }
@@ -208,13 +215,13 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
         </div>
       </div>
       <div className="flex flex-col">
-        <label className="ml-2">Value</label>
+        {/* <label className="ml-2">Value</label> */}
         <Input
-          className="w-1/2 bg-gray-700"
+          className="w-1/2 border-0 border-b-2 bg-explorer-dark-gray"
           type="text"
           value={fieldContent || ""}
           onChange={(e) => setFieldContent(e.target.value)}
-          placeholder="---"
+          placeholder="Value"
           disabled={
             !selectedOperationTypes ||
             selectedOperationTypes.length !== 1 ||
