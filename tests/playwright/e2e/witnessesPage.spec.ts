@@ -277,7 +277,7 @@ test.describe("Witnesses page", () => {
   });
 
   // Check this test after date picker will be improved (setting hours)
-  test.only("validate values of the votes history dialog in specific dates", async ({ page,browserName }) => {
+  test("validate values of the votes history dialog in specific dates", async ({ page,browserName }) => {
     test.skip(browserName === 'webkit', 'Automatic test works well on chromium');
     const expectedVoterName: string = 'ikigai0086';
     const expectedVoterNameArrowDown: string = 'superslayer0040';
