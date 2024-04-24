@@ -27,7 +27,7 @@ export default function LongOperation() {
         />
       ) : (
         <div className="text-black flex justify-center flex-col items-center">
-          <Loader2 className="animate-spin mt-1 h-16 w-16 ml-3 ..." />
+          <Loader2 className="animate-spin mt-1 h-16 w-16 ml-3 dark:text-white ..." />
           <p>Your operation is loading. It may take some time.</p>
         </div>
       )}

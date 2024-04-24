@@ -219,7 +219,7 @@ export default function Account() {
 
   if (!accountDetails) {
     return (
-      <Loader2 className="animate-spin mt-1 text-black h-12 w-12 ml-3 ..." />
+      <Loader2 className="animate-spin mt-1 text-black dark:text-white h-12 w-12 ml-3 ..." />
     );
   }
 

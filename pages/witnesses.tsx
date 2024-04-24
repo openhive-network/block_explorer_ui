@@ -26,7 +26,7 @@ export default function Witnesses() {
   );
 
   if (isWitnessDataLoading) {
-    return <Loader2 className="animate-spin mt-1 h-8 w-8 ml-3 ..." />;
+    return <Loader2 className="dark:text-white animate-spin mt-1 h-8 w-8 ml-3 ..." />;
   }
 
   if (!witnessesData || !witnessesData.length) return;

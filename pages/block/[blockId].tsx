@@ -255,7 +255,7 @@ export default function Block() {
           </div>
           {loading !== false || trxLoading || totalLoading ? (
             <div className="flex justify-center items-center">
-              <Loader2 className="animate-spin mt-1 h-16 w-16 ml-3 ... " />
+              <Loader2 className="animate-spin dark:text-white mt-1 h-16 w-16 ml-3 ... " />
             </div>
           ) : settings.rawJsonView ? (
             <div className="px-2">
