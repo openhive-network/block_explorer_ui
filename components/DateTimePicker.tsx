@@ -35,7 +35,10 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
 
   return (
     <Popover>
-      <PopoverTrigger asChild className="z-10">
+      <PopoverTrigger
+        asChild
+        className="z-10 border-0 border-b-2"
+      >
         <Button
           variant={"outline"}
           className={cn(
@@ -52,9 +55,17 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
         side={side}
         className="w-auto p-0 text-white bg-explorer-dark-gray"
       >
-        <Calendar mode="single" selected={date} onSelect={handleSelect} data-testid="datepicker-calender"/>
+        <Calendar
+          mode="single"
+          selected={date}
+          onSelect={handleSelect}
+          data-testid="datepicker-calender"
+        />
         <div className="flex justify-center items-center mb-4">
-          <TimePicker date={date} onSelect={handleSelect} />
+          <TimePicker
+            date={date}
+            onSelect={handleSelect}
+          />
         </div>
       </PopoverContent>
     </Popover>
