@@ -97,7 +97,6 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
         permlink.
       </p>
       <div className="flex flex-col">
-        {/* <label className="ml-2">Author *</label> */}
         <Input
           data-testid="account-name"
           className="w-1/2 bg-explorer-dark-gray border-0 border-b-2"
@@ -109,7 +108,6 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
         />
       </div>
       <div className="flex flex-col">
-        {/* <label className="ml-2">Permlink</label> */}
         <Input
           data-testid="permlink-input"
           className="w-1/2 bg-explorer-dark-gray border-0 border-b-2"

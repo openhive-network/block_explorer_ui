@@ -106,16 +106,13 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
 
   return (
     <>
-      {/* <p className="ml-2">Find block numbers for given properties.</p> */}
       <div className="flex flex-col">
-        {/* <label className="ml-2">Account name</label> */}
         <Input
           className="w-1/2 bg-explorer-dark-gray border-0 border-b-2"
           type="text"
           placeholder="Account name"
           value={accountName || ""}
           onChange={(e) => setAccountName(e.target.value)}
-          // placeholder="---"
           data-testid="account-name-input"
         />
       </div>
@@ -215,7 +212,6 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
         </div>
       </div>
       <div className="flex flex-col">
-        {/* <label className="ml-2">Value</label> */}
         <Input
           className="w-1/2 border-0 border-b-2 bg-explorer-dark-gray"
           type="text"

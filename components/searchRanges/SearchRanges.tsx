@@ -1,9 +1,7 @@
 import React from "react";
-import Explorer from "@/types/Explorer";
 import { Select, SelectContent, SelectTrigger, SelectItem } from "../ui/select";
 import { Input } from "../ui/input";
 import { SearchRangesResult } from "./useSearchRanges";
-import { cn } from "@/lib/utils";
 import DateTimePicker from "../DateTimePicker";
 
 interface SearchRangesProps {
@@ -132,7 +130,6 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
       {rangeSelectKey === "blockRange" && (
         <div className="flex items-center">
           <div className="flex flex-col w-full mr-2">
-            {/* <label className="ml-2">From block</label> */}
             <Input
               type="number"
               className="bg-explorer-dark-gray border-0 border-b-2"
@@ -146,7 +143,6 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
             />
           </div>
           <div className="flex flex-col w-full">
-            {/* <label className="ml-2">To block</label> */}
             <Input
               className="bg-explorer-dark-gray border-0 border-b-2"
               data-testid="headblock-number"
@@ -179,13 +175,6 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
               />
             </div>
           </div>
-          {/* <div className="flex flex-col w-1/2">
-            <label className="ml-2 my-2">To date</label>
-            <DateTimePicker
-              date={endDate || new Date()}
-              setDate={setEndDate}
-            />
-          </div> */}
         </div>
       )}
     </div>

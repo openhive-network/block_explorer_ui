@@ -294,8 +294,11 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
       );
       let isFull = !!blockSearchProps?.operationTypes;
       operationsTypes?.forEach((operationType) => {
-        if (!blockSearchProps?.operationTypes?.includes(operationType.op_type_id)) isFull = false;
-      })
+        if (
+          !blockSearchProps?.operationTypes?.includes(operationType.op_type_id)
+        )
+          isFull = false;
+      });
       urlParams.push({
         paramName: "filters",
         paramValue: dataToURL(!isFull ? booleanTypesArray : []),
@@ -322,7 +325,9 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
             onValueChange={setAccordionValue}
           >
             <AccordionItem value="block">
-              <AccordionTrigger className="p-3">Block Search</AccordionTrigger>
+              <AccordionTrigger className="p-3 mb-2">
+                Block Search
+              </AccordionTrigger>
               <AccordionContent className="px-2 flex flex-col gap-y-4">
                 <BlockSearch
                   startBlockSearch={startBlockSearch}
@@ -332,7 +337,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="account">
-              <AccordionTrigger className="p-3">
+              <AccordionTrigger className="p-3 mb-2">
                 Account search
               </AccordionTrigger>
               <AccordionContent className="px-2 flex flex-col gap-y-4">
@@ -345,7 +350,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="comment">
-              <AccordionTrigger className="p-3">
+              <AccordionTrigger className="p-3 mb-2">
                 Comment search
               </AccordionTrigger>
               <AccordionContent className="px-2 flex flex-col gap-y-4">

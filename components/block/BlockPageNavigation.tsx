@@ -130,7 +130,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
               <ChevronLeft />
             </button>
             <Input
-              className="max-w-[100px] py-0 mx-2 h-[30px] border-0 border-b-2 text-explorer-turquoise  text-md [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="max-w-[110px] py-0 mx-2 h-[30px] border-0 border-b-2 text-explorer-turquoise  text-md [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               value={block}
               onChange={(e) => setBlock(e.target.value)}
               type="number"

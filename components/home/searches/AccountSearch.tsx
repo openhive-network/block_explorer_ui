@@ -57,11 +57,7 @@ const AccountSearch: React.FC<AccountSearchProps> = ({
 
   return (
     <>
-      {/* <p className="ml-2">
-        {"Find account's operations for given properties."}
-      </p> */}
       <div className="flex flex-col">
-        {/* <label className="ml-2">Account name *</label> */}
         <Input
           data-testid="account-name"
           className="w-1/2 bg-explorer-dark-gray border-0 border-b-2"
