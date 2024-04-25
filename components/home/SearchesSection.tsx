@@ -277,10 +277,10 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
       const booleanTypesArray = convertIdsToBooleanArray(
         blockSearchProps?.operationTypes
       );
-      const isFull = !!(
-        booleanTypesArray.length &&
-        booleanTypesArray.findIndex((element) => !element) === -1
-      );
+      let isFull = !!blockSearchProps?.operationTypes;
+      operationsTypes?.forEach((operationType) => {
+        if (!blockSearchProps?.operationTypes?.includes(operationType.op_type_id)) isFull = false;
+      })
       urlParams.push({
         paramName: "filters",
         paramValue: dataToURL(!isFull ? booleanTypesArray : []),
