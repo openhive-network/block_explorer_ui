@@ -112,7 +112,10 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   };
 
   return (
-    <Card className="w-full md:w-4/6 m-auto" data-testid="block-page-search">
+    <Card
+      className="w-full md:w-4/6 m-auto"
+      data-testid="block-page-search"
+    >
       <CardHeader>
         <CardTitle>Search</CardTitle>
       </CardHeader>
@@ -122,32 +125,25 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
             <p>Block Number : </p>
             <button
               onClick={() => handleBlockChange((blockNumber - 1).toString())}
-              className="text-white bg-transparent ml-2 md:ml-4 text-sm border border-white h-[30px] md:px-1"
+              className="text-white bg-transparent text-sm border-0 h-[30px] md:px-1 hover:bg-gray-700 ml-2"
             >
               <ChevronLeft />
             </button>
             <Input
-              className="max-w-[100px] py-0 h-[30px] md:max-w-[112px] text-explorer-turquoise text-md [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="max-w-[110px] py-0 mx-2 h-[30px] border-0 border-b-2 text-explorer-turquoise  text-md [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               value={block}
               onChange={(e) => setBlock(e.target.value)}
               type="number"
+              min="0"
               data-testid="block-number-search"
             />
             <button
               data-testid="next-block-btn"
               onClick={() => handleBlockChange((blockNumber + 1).toString())}
-              className="text-white bg-transparent text-sm border border-white h-[30px] md:px-1"
+              className="text-white bg-transparent text-sm border-0 h-[30px] md:px-1 hover:bg-gray-700 "
             >
               <ChevronRight />
             </button>
-            <Button
-              variant={"outline"}
-              className="px-2 h-[30px]"
-              disabled={Number(block) === blockNumber}
-              onClick={() => handleBlockChange(block)}
-            >
-              Go
-            </Button>
           </div>
           <div
             className="flex flex-wrap items-center justify-center"
@@ -179,7 +175,10 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
               {!!setOfKeys && <div>Set of keys: {setOfKeys.join(", ")}</div>}
               {!!accountName && <div>Account: {accountName}</div>}
             </div>
-            <Button onClick={onClearParams} variant="outline">
+            <Button
+              onClick={onClearParams}
+              variant="outline"
+            >
               Clear params
             </Button>
           </div>

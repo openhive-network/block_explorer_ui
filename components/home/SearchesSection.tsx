@@ -88,15 +88,30 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
   }, [accountOperations, accountOperationsPage]);
 
   useEffect(() => {
-    const wasActualized = 
-      (accountOperations && !accountOperations.isAccountOperationsLoading && lastSearchKey === "account") ||
-      (blockSearch && !blockSearch.blockSearchDataLoading && lastSearchKey === "block") ||
-      (commentSearch && !commentSearch.commentSearchDataLoading && lastSearchKey === "comment");
+    const wasActualized =
+      (accountOperations &&
+        !accountOperations.isAccountOperationsLoading &&
+        lastSearchKey === "account") ||
+      (blockSearch &&
+        !blockSearch.blockSearchDataLoading &&
+        lastSearchKey === "block") ||
+      (commentSearch &&
+        !commentSearch.commentSearchDataLoading &&
+        lastSearchKey === "comment");
     if (isAllSearchLoading && wasActualized) {
-        searchesRef.current?.scrollIntoView({behavior: "smooth", block: "start"});
-        setIsAllSearchLoading(false)
+      searchesRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+      setIsAllSearchLoading(false);
     }
-  }, [accountOperations, lastSearchKey, blockSearch, commentSearch, isAllSearchLoading])
+  }, [
+    accountOperations,
+    lastSearchKey,
+    blockSearch,
+    commentSearch,
+    isAllSearchLoading,
+  ]);
 
   const startCommentSearch = async (
     commentSearchProps: Explorer.CommentSearchParams
@@ -279,8 +294,11 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
       );
       let isFull = !!blockSearchProps?.operationTypes;
       operationsTypes?.forEach((operationType) => {
-        if (!blockSearchProps?.operationTypes?.includes(operationType.op_type_id)) isFull = false;
-      })
+        if (
+          !blockSearchProps?.operationTypes?.includes(operationType.op_type_id)
+        )
+          isFull = false;
+      });
       urlParams.push({
         paramName: "filters",
         paramValue: dataToURL(!isFull ? booleanTypesArray : []),
@@ -292,7 +310,10 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
 
   return (
     <>
-      <Card className="mt-4" data-testid="block-search-section">
+      <Card
+        className="mt-4"
+        data-testid="block-search-section"
+      >
         <CardHeader>
           <CardTitle>Search</CardTitle>
         </CardHeader>
@@ -304,7 +325,9 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
             onValueChange={setAccordionValue}
           >
             <AccordionItem value="block">
-              <AccordionTrigger>Block Search</AccordionTrigger>
+              <AccordionTrigger className="p-3 mb-2">
+                Block Search
+              </AccordionTrigger>
               <AccordionContent className="px-2 flex flex-col gap-y-4">
                 <BlockSearch
                   startBlockSearch={startBlockSearch}
@@ -314,7 +337,9 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="account">
-              <AccordionTrigger>Account search</AccordionTrigger>
+              <AccordionTrigger className="p-3 mb-2">
+                Account search
+              </AccordionTrigger>
               <AccordionContent className="px-2 flex flex-col gap-y-4">
                 <AccountSearch
                   startAccountOperationsSearch={startAccountOperationsSearch}
@@ -325,7 +350,9 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="comment">
-              <AccordionTrigger>Comment search</AccordionTrigger>
+              <AccordionTrigger className="p-3 mb-2">
+                Comment search
+              </AccordionTrigger>
               <AccordionContent className="px-2 flex flex-col gap-y-4">
                 <CommentsSearch
                   startCommentsSearch={(params) => startCommentSearch(params)}
@@ -338,13 +365,19 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
           </Accordion>
         </CardContent>
       </Card>
-      <div className="pt-4 scroll-mt-16" ref={searchesRef}>
+      <div
+        className="pt-4 scroll-mt-16"
+        ref={searchesRef}
+      >
         {blockSearch.blockSearchData && lastSearchKey === "block" && (
           <div
             className=" bg-explorer-dark-gray p-2 md: h-fit rounded"
             data-testid="result-section"
           >
-            <div className="text-center" data-testid="result-section-header">
+            <div
+              className="text-center"
+              data-testid="result-section-header"
+            >
               Results:
             </div>
             <div className="flex flex-wrap">
@@ -387,7 +420,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
                   onPageChange={changeCommentSearchPagination}
                 />
               </div>
-              <div className="flex justify-end items-center">
+              <div className="flex justify-end items-center mb-4">
                 <JumpToPage
                   currentPage={commentPaginationPage}
                   onPageChange={changeCommentSearchPagination}
@@ -449,7 +482,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
                   isMirrored={true}
                 />
               </div>
-              <div className="flex justify-end items-center">
+              <div className="flex justify-end items-center mb-4">
                 <JumpToPage
                   currentPage={accountOperationsPage || 1}
                   onPageChange={changeAccountOperationsPagination}

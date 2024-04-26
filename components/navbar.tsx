@@ -16,11 +16,17 @@ export default function Navbar() {
   const [searchBarOpen, setSearchBarOpen] = useState(false);
 
   return (
-    <div className="fixed w-full top-0 left-0 z-50" data-testid="navbar">
+    <div
+      className="fixed w-full top-0 left-0 z-50"
+      data-testid="navbar"
+    >
       <div className="flex p-2 justify-between bg-explorer-dark-gray text-white	items-center relative">
         {isMobile ? (
           <div className="flex items-center justify-between w-full">
-            <Link href={"/"} className="relative pr-2">
+            <Link
+              href={"/"}
+              className="relative pr-2"
+            >
               <Image
                 src="/hive-logo.png"
                 alt="Hive logo"
@@ -30,7 +36,10 @@ export default function Navbar() {
             </Link>
             {!searchBarOpen && <SyncInfo />}
             <div className="flex-grow flex items-center justify-end gap-x-3">
-              <SearchBar open={searchBarOpen} onChange={setSearchBarOpen} />
+              <SearchBar
+                open={searchBarOpen}
+                onChange={setSearchBarOpen}
+              />
               <Menu
                 height={34}
                 width={34}
@@ -45,10 +54,17 @@ export default function Navbar() {
               )}
             >
               <div className="w-full flex items-center justify-end py-3 px-2">
-                <X onClick={() => setMenuOpen(false)} height={40} width={40} />
+                <X
+                  onClick={() => setMenuOpen(false)}
+                  height={40}
+                  width={40}
+                />
               </div>
               <div className="flex flex-col px-4 text-2xl gap-y-2">
-                <Link href={"/witnesses"} onClick={() => setMenuOpen(false)}>
+                <Link
+                  href={"/witnesses"}
+                  onClick={() => setMenuOpen(false)}
+                >
                   Witnesses
                 </Link>
                 <Toggle
@@ -78,12 +94,18 @@ export default function Navbar() {
                   height={50}
                   data-testid="hive-logo"
                 />
-                <div className="ml-4" data-testid="hive-block-explorer">
+                <div
+                  className="ml-4"
+                  data-testid="hive-block-explorer"
+                >
                   Hive Block Explorer
                 </div>
               </Link>
               <SyncInfo />
-              <Link href={"/witnesses"} data-testid="navbar-witnesses-link">
+              <Link
+                href={"/witnesses"}
+                data-testid="navbar-witnesses-link"
+              >
                 Witnesses
               </Link>
               <Toggle

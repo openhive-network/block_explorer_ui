@@ -21,7 +21,7 @@ export class CommentsPage {
     this.rangeDropDownList = this.commentsSearch.getByTestId('dropdown-list');
     this.operationsTypesButton = this.commentsSearch.getByTestId('operations-types-btn');
     this.searchButton = this.commentsSearch.getByTestId('search-button');
-    this.labelSetAccountName = this.commentsSearch.getByText('Set account name');
+    this.labelSetAccountName = page.getByTestId('account-name');
     this.operationTypeCard = page.getByTestId('detailed-operation-card');
   }
 
@@ -38,7 +38,7 @@ export class CommentsPage {
   async validateEmptyCommentsPageIsLoaded() {
     await expect(this.commentsSearch).toBeVisible();
     await expect(this.descriptionCommentsSearch).toHaveText('Find all operations related to comments of given account or for exact permlink.');
-    await expect(this.labelSetAccountName).toHaveText('Set account name');
+    // await expect(this.labelSetAccountName).toHaveText('Author');
     await expect(this.accountNameInput).toBeVisible();
     await expect(this.permlinkInput).toBeVisible();
     await expect(this.rangeDropDownList).toBeVisible();

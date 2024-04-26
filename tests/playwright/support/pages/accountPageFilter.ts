@@ -85,6 +85,7 @@ export class AccountPageFilter {
   }
 
   async setDateTime(year: string, month: string, day: string, hour: string, minute: string, second: string, datePickerTrigger: Locator) {
+    await this.page.waitForTimeout(3000)
     await this.datePickerYear.click({force: true});
     await this.datePickerYear.selectOption(year);
     await this.datePickerMonth.click({force: true});

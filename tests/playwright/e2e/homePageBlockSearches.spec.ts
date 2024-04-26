@@ -198,7 +198,7 @@ test.describe('Home page - searches', () => {
         await page.getByRole('button', {name: 'Apply'}).click();
         await expect(mainPage.SearchesSection).toBeVisible()
         await expect(mainPage.pickPropertyBtnBlocked).toBeDisabled()
-        await expect(page.locator('div').filter({ hasText: /^Value$/ }).getByPlaceholder('---')).toBeDisabled()
+        await expect(page.getByPlaceholder('Value')).toBeDisabled()
         await mainPage.blockSearchBtn.click()
         await expect(mainPage.blockSearchResultSection).toBeVisible()
     });

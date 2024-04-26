@@ -17,7 +17,7 @@ test.describe('Home page - searches', () => {
 
     test('Validate that Comment Search is impossible without Account Name - Search button is not clickable', async ({page}) => {
        await expect(mainPage.searchButtonInComment).toBeDisabled()
-       await expect(page.getByText('Set account name')).toBeVisible()
+       await expect(mainPage.accountNameInputAccountSection).toBeVisible()
     })
 
     test('Validate that Search button is clickable if Account Name property is filled', async ({page}) => {
