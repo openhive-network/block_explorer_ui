@@ -11,12 +11,19 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import Explorer from "@/types/Explorer";
-import { isJson } from "@/utils/StringUtils";
 import { Button } from "./ui/button";
-import { ChevronDown, ChevronUp, Copy } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import JSONView from "./JSONView";
 import { getOperationTypeForDisplay } from "@/utils/UI";
 import CopyJSON from "./CopyJSON";
+import TimeAgo from "timeago-react";
+import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
 
 interface OperationsTableProps {
   operations: Explorer.OperationForTable[];
@@ -81,7 +88,8 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
           <TableHead className="pl-2">Block</TableHead>
           <TableHead>Transaction</TableHead>
           <TableHead>Operation</TableHead>
-          <TableHead className="w-full">Content</TableHead>
+          <TableHead>Content</TableHead>
+          <TableHead className="w-full">Time</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody className="max-w-[100%]">
@@ -112,7 +120,11 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                         ])
                       }
                     >
-                      <ChevronUp width={20} height={20} className="mt-1" />
+                      <ChevronUp
+                        width={20}
+                        height={20}
+                        className="mt-1"
+                      />
                     </Button>
                   ) : (
                     <Button
@@ -125,7 +137,11 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                         ])
                       }
                     >
-                      <ChevronDown width={20} height={20} className="mt-1" />
+                      <ChevronDown
+                        width={20}
+                        height={20}
+                        className="mt-1"
+                      />
                     </Button>
                   )}
                 </div>
@@ -156,16 +172,36 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                 {getOperationTypeForDisplay(operation.operation.type)}
               </TableCell>
               <TableCell
-                className="md:max-w-0 w-full"
+                className="md:max-w-0 w-1/2"
                 data-testid="operation-content"
               >
                 <div>{getOneLineDescription(operation)}</div>
               </TableCell>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <TableCell className="md:max-w-0 w-1/2">
+                      <TimeAgo
+                        datetime={
+                          new Date(formatAndDelocalizeTime(operation.timestamp))
+                        }
+                      />
+                    </TableCell>
+                  </TooltipTrigger>
+                  <TooltipContent className="bg-black text-white">
+                    {formatAndDelocalizeTime(operation.timestamp)}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </TableRow>
             {operation.operation.type === "custom_json_operation" &&
               expanded.includes(operation.operatiopnId || 0) && (
                 <TableRow>
-                  <TableCell data-testid="details" colSpan={6} className="py-2">
+                  <TableCell
+                    data-testid="details"
+                    colSpan={6}
+                    className="py-2"
+                  >
                     <JSONView
                       json={JSON.parse(
                         getOperationValues(operation.operation).json || ""

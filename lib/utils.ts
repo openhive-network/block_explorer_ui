@@ -86,6 +86,7 @@ export const convertOperationResultsToTableOperations = (
     blockNumber: operation.block_num,
     trxId: operation.trx_id,
     operatiopnId: operation.operation_id,
+    timestamp: operation.timestamp,
   }));
 };
 

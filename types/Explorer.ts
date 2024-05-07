@@ -2,7 +2,6 @@ import { GetDynamicGlobalPropertiesResponse } from "@hive/wax";
 import Hive from "./Hive";
 
 declare module Explorer {
-
   interface HeadBlockDetails {
     feedPrice: string;
     blockchainTime: string;
@@ -34,9 +33,8 @@ declare module Explorer {
     maxOpenRecurrentTransfers: number;
   }
 
-
   interface HeadBlockCardData {
-    headBlockDetails: HeadBlockDetails,
+    headBlockDetails: HeadBlockDetails;
     witnessName: string;
     headBlockNumber: number;
   }
@@ -55,7 +53,7 @@ declare module Explorer {
     deepProps: {
       content?: any;
       keys?: string[];
-    }
+    };
   }
 
   interface CommentSearchParams {
@@ -106,18 +104,20 @@ declare module Explorer {
     rc: SingleManabar;
   }
 
-  interface DynamicGlobalBlock extends Omit<GetDynamicGlobalPropertiesResponse, 
-    "virtual_supply" |
-    "current_supply" |
-    "init_hbd_supply" |
-    "current_hbd_supply" |
-    "total_vesting_fund_hive" |
-    "total_vesting_shares" |
-    "total_reward_fund_hive" |
-    "pending_rewarded_vesting_shares" |
-    "pending_rewarded_vesting_hive" |
-    "dhf_interval_ledger" 
-  > {
+  interface DynamicGlobalBlock
+    extends Omit<
+      GetDynamicGlobalPropertiesResponse,
+      | "virtual_supply"
+      | "current_supply"
+      | "init_hbd_supply"
+      | "current_hbd_supply"
+      | "total_vesting_fund_hive"
+      | "total_vesting_shares"
+      | "total_reward_fund_hive"
+      | "pending_rewarded_vesting_shares"
+      | "pending_rewarded_vesting_hive"
+      | "dhf_interval_ledger"
+    > {
     virtual_supply: string;
     current_supply: string;
     init_hbd_supply: string;
@@ -135,13 +135,15 @@ declare module Explorer {
     counter: number;
   }
 
-  interface Witness extends Omit<Hive.Witness,
-  "vests" |
-  "votes_hive_power" |
-  "hbd_interest_rate" |
-  "votes_daily_change_hive_power" |
-  "votes_daily_change"
-  > {
+  interface Witness
+    extends Omit<
+      Hive.Witness,
+      | "vests"
+      | "votes_hive_power"
+      | "hbd_interest_rate"
+      | "votes_daily_change_hive_power"
+      | "votes_daily_change"
+    > {
     vests: string;
     votes_hive_power: string;
     hbd_interest_rate: string;
@@ -154,28 +156,32 @@ declare module Explorer {
     blockNumber?: number;
     trxId?: string;
     operatiopnId?: number;
+    timestamp?: string;
   }
 
-  interface FormattedAccountDetails extends Omit<Hive.AccountDetailsQueryResponse, 
-    "last_post" | 
-    "last_root_post" | 
-    "post_count" | 
-    "balance" | 
-    "saving_balance" | 
-    "hbd_balance" | 
-    "hbd_saving_balance" | 
-    "reward_hbd_balance" | 
-    "reward_vesting_balance" | 
-    "reward_vesting_hive" |
-    "reward_hive_balance" |
-    "vesting_withdraw_rate" |
-    "vesting_shares" | 
-    "delegated_vesting_shares" | 
-    "received_vesting_shares" | 
-    "post_voting_power" | 
-    "posting_rewards" | 
-    "curation_rewards" | 
-    "vesting_balance"> {
+  interface FormattedAccountDetails
+    extends Omit<
+      Hive.AccountDetailsQueryResponse,
+      | "last_post"
+      | "last_root_post"
+      | "post_count"
+      | "balance"
+      | "saving_balance"
+      | "hbd_balance"
+      | "hbd_saving_balance"
+      | "reward_hbd_balance"
+      | "reward_vesting_balance"
+      | "reward_vesting_hive"
+      | "reward_hive_balance"
+      | "vesting_withdraw_rate"
+      | "vesting_shares"
+      | "delegated_vesting_shares"
+      | "received_vesting_shares"
+      | "post_voting_power"
+      | "posting_rewards"
+      | "curation_rewards"
+      | "vesting_balance"
+    > {
     balance: string;
     saving_balance: string;
     hbd_balance: string;
