@@ -336,6 +336,13 @@ class FetchingService {
     return await this.callApi("get_block_raw", requestBody);
   }
 
+  async getAccountAuthorizations(accountName: string): Promise<unknown> {
+    const requestBody = {
+      _account: accountName,
+    };
+    return await this.callApi("get_account_authorizations", requestBody);
+  }
+
   async getManabars(
     accountName: string,
     hiveChain: IHiveChainInterface
