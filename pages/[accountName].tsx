@@ -26,6 +26,7 @@ import {
   convertOperationResultsToTableOperations,
 } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import useAccountAuthorizations from "@/api/accountPage/useAccountAuthorizations";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -110,6 +111,7 @@ export default function Account() {
     setIsVotersModalOpen(!isVotersModalOpen);
   };
 
+  const {accountAuthorizationsData} = useAccountAuthorizations(accountNameFromRoute)
   const formattedAccountOperations = useOperationsFormatter(
     accountOperations
   ) as Hive.AccountOperationsResponse;

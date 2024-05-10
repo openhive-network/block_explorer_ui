@@ -4,10 +4,10 @@ import Hive from "@/types/Hive";
 
 const useAccountAuthorizations = (accountName: string) => {
   const {
-    data: accountOperationTypes,
-    isLoading: isAccountOperationTypesLoading,
-    isError: isAccountOperationTypesError,
-  }: UseQueryResult<unknown> = useQuery({
+    data: accountAuthorizationsData,
+    isLoading: accountAuthorizationsDataLoading,
+    isError: accountAuthorizationsDataError,
+  }: UseQueryResult<Hive.AccountAuthorizationsData> = useQuery({
     queryKey: ["account_authorization", accountName],
     queryFn: () => fetchingService.getAccountAuthorizations(accountName),
     refetchOnWindowFocus: false,
@@ -15,9 +15,9 @@ const useAccountAuthorizations = (accountName: string) => {
   });
 
   return {
-    accountOperationTypes,
-    isAccountOperationTypesLoading,
-    isAccountOperationTypesError,
+    accountAuthorizationsData,
+    accountAuthorizationsDataLoading,
+    accountAuthorizationsDataError,
   };
 };
 
