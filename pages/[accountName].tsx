@@ -27,6 +27,7 @@ import {
 } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import useAccountAuthorizations from "@/api/accountPage/useAccountAuthorizations";
+import AccountAuthorizationsCard from "@/components/account/AccountAuthorizationsCard";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -111,7 +112,6 @@ export default function Account() {
     setIsVotersModalOpen(!isVotersModalOpen);
   };
 
-  const {accountAuthorizationsData} = useAccountAuthorizations(accountNameFromRoute)
   const formattedAccountOperations = useOperationsFormatter(
     accountOperations
   ) as Hive.AccountOperationsResponse;
@@ -267,6 +267,9 @@ export default function Account() {
             header="Posting JSON Metadata"
             json={accountDetails.posting_json_metadata}
             showCollapseButton={true}
+          />
+          <AccountAuthorizationsCard
+            accountName={accountNameFromRoute}
           />
           {!isWitnessDetailsError && (
             <AccountDetailsCard
