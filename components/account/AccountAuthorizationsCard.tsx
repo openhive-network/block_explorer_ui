@@ -9,6 +9,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
 import Hive from "@/types/Hive";
 import useAccountAuthorizations from "@/api/accountPage/useAccountAuthorizations";
 import { useState } from "react";
+import Link from "next/link";
 
 interface AccountMainCardProps {
   accountName: string;
@@ -28,9 +29,9 @@ const AccountAuthorizationsCard: React.FC<AccountMainCardProps> = ({
 
   const renderAuthority = (content: string, weight: string, isAccount: boolean) => {
     return (
-      <div>
-        <div>
-          {content}
+      <div className="flex text-wrap flex-col">
+        <div className="text-wrap">
+          {isAccount ? <Link className=" text-blue-500" href={`/@${content}`}>{content}</Link> : content}
         </div>
         <div>
           {weight}
@@ -45,13 +46,13 @@ const AccountAuthorizationsCard: React.FC<AccountMainCardProps> = ({
       <div>
       <div>{title}</div>
       {authorities?.account_auth.map((singleAuthorization) => renderAuthority(singleAuthorization[0] || "", singleAuthorization[1] || "", true))}
-      {authorities?.key_auth.map((singleAuthorization) => renderAuthority(singleAuthorization[0] || "", singleAuthorization[1] || "", true))}
+      {authorities?.key_auth.map((singleAuthorization) => renderAuthority(singleAuthorization[0] || "", singleAuthorization[1] || "", false))}
     </div>
     )
   }
 
   return (
-    <Card data-testid="account-details">
+    <Card data-testid="authorities" className="overflow-hidden pb-0 w-full">
       <CardHeader className="p-0">
         <div
           onClick={handlePropertiesVisibility}
@@ -62,12 +63,12 @@ const AccountAuthorizationsCard: React.FC<AccountMainCardProps> = ({
           {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
         </div>
       </CardHeader>
-      <CardContent hidden={isPropertiesHidden}>
+      <CardContent hidden={isPropertiesHidden} className="flex flex-col text-wrap">
         <div>{accountAuthorizationsData?.memo}</div>
         <div>{accountAuthorizationsData?.witness_signing}</div>
-        {renderCollectionOfAuthorities(accountAuthorizationsData?.posting[0], "Posting")}
         {renderCollectionOfAuthorities(accountAuthorizationsData?.owner[0], "Owner")}
         {renderCollectionOfAuthorities(accountAuthorizationsData?.active[0], "Active")}
+        {renderCollectionOfAuthorities(accountAuthorizationsData?.posting[0], "Posting")}
       </CardContent>
     </Card>
   );
