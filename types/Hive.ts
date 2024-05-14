@@ -523,14 +523,14 @@ declare module Hive {
   }
 
   interface AuthKeys {
-    key_auth: [string | undefined, string | undefined];
-    account_auth: [string | undefined, string | undefined];
+    key_auth: [string | undefined, string | undefined][];
+    account_auth: [string | undefined, string | undefined][];
   }
 
   interface AccountAuthorizationsData {
-    owner: AuthKeys[];
-    active: AuthKeys[];
-    posting: AuthKeys[];
+    owner: [AuthKeys];
+    active: [AuthKeys];
+    posting: [AuthKeys];
     memo: string;
     witness_signing: string;
   }

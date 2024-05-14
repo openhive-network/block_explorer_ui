@@ -20,12 +20,35 @@ const AccountAuthorizationsCard: React.FC<AccountMainCardProps> = ({
 
   const {accountAuthorizationsData} = useAccountAuthorizations(accountName);
 
-
   const [isPropertiesHidden, setIsPropertiesHidden] = useState<boolean>(true);
 
   const handlePropertiesVisibility = () => {
     setIsPropertiesHidden(!isPropertiesHidden);
   };
+
+  const renderAuthority = (content: string, weight: string, isAccount: boolean) => {
+    return (
+      <div>
+        <div>
+          {content}
+        </div>
+        <div>
+          {weight}
+        </div>
+      </div>
+    )
+  }
+  const test = accountAuthorizationsData?.posting[0];
+
+  const renderCollectionOfAuthorities = (authorities?: Hive.AuthKeys, title?: string) => {
+    return (
+      <div>
+      <div>{title}</div>
+      {authorities?.account_auth.map((singleAuthorization) => renderAuthority(singleAuthorization[0] || "", singleAuthorization[1] || "", true))}
+      {authorities?.key_auth.map((singleAuthorization) => renderAuthority(singleAuthorization[0] || "", singleAuthorization[1] || "", true))}
+    </div>
+    )
+  }
 
   return (
     <Card data-testid="account-details">
@@ -34,11 +57,18 @@ const AccountAuthorizationsCard: React.FC<AccountMainCardProps> = ({
           onClick={handlePropertiesVisibility}
           className="h-full flex justify-between align-center p-2 hover:bg-slate-600 cursor-pointer px-4"
         >
-          <div className="text-lg">Authorizations</div>
+          <div className="text-lg">Authorities</div>
 
           {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
         </div>
       </CardHeader>
+      <CardContent hidden={isPropertiesHidden}>
+        <div>{accountAuthorizationsData?.memo}</div>
+        <div>{accountAuthorizationsData?.witness_signing}</div>
+        {renderCollectionOfAuthorities(accountAuthorizationsData?.posting[0], "Posting")}
+        {renderCollectionOfAuthorities(accountAuthorizationsData?.owner[0], "Owner")}
+        {renderCollectionOfAuthorities(accountAuthorizationsData?.active[0], "Active")}
+      </CardContent>
     </Card>
   );
 };
