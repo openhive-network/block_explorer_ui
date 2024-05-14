@@ -340,7 +340,7 @@ class FetchingService {
     const requestBody = {
       _account: accountName,
     };
-    return await this.callApi("get_account_authorizations", requestBody);
+    return await this.callApi("get_account_authority", requestBody);
   }
 
   async getManabars(
