@@ -23,7 +23,7 @@ type OperationTypesDialogProps = {
   setSelectedOperations: (operationIds: number[]) => void;
 };
 
-const categorizedTypes = [
+export const categorizedTypes = [
   {
     name: "Posting",
     types: ["comment_operation", "delete_comment_operation", "comment_options_operation", "ineffective_delete_comment_operation", "author_reward_operation", "comment_reward_operation", "comment_payout_update_operation", "comment_benefactor_reward_operation"] 
