@@ -29,8 +29,8 @@ const AccountAuthorizationsCard: React.FC<AccountMainCardProps> = ({
 
   const renderAuthority = (content: string, weight: string, isAccount: boolean) => {
     return (
-      <div className="flex text-wrap flex-col">
-        <div className="text-wrap">
+      <div className="flex text-sm">
+        <div className="text-wrap w-full">
           {isAccount ? <Link className=" text-blue-500" href={`/@${content}`}>{content}</Link> : content}
         </div>
         <div>
@@ -43,7 +43,7 @@ const AccountAuthorizationsCard: React.FC<AccountMainCardProps> = ({
 
   const renderCollectionOfAuthorities = (authorities?: Hive.AuthKeys, title?: string) => {
     return (
-      <div>
+      <div className="border-t border-solid border-gray-700">
       <div>{title}</div>
       {authorities?.account_auth.map((singleAuthorization) => renderAuthority(singleAuthorization[0] || "", singleAuthorization[1] || "", true))}
       {authorities?.key_auth.map((singleAuthorization) => renderAuthority(singleAuthorization[0] || "", singleAuthorization[1] || "", false))}
@@ -63,9 +63,11 @@ const AccountAuthorizationsCard: React.FC<AccountMainCardProps> = ({
           {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
         </div>
       </CardHeader>
-      <CardContent hidden={isPropertiesHidden} className="flex flex-col text-wrap">
-        <div>{accountAuthorizationsData?.memo}</div>
-        <div>{accountAuthorizationsData?.witness_signing}</div>
+      <CardContent hidden={isPropertiesHidden} className="break-all">
+        <div><div>Memo:</div><div>{accountAuthorizationsData?.memo}</div></div>
+        {accountAuthorizationsData?.witness_signing && 
+          <div><div>Witness signing:</div><div>{accountAuthorizationsData?.witness_signing}</div></div>
+        }
         {renderCollectionOfAuthorities(accountAuthorizationsData?.owner[0], "Owner")}
         {renderCollectionOfAuthorities(accountAuthorizationsData?.active[0], "Active")}
         {renderCollectionOfAuthorities(accountAuthorizationsData?.posting[0], "Posting")}
