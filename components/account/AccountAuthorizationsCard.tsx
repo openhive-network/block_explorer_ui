@@ -2,7 +2,7 @@ import { Progress } from "@/components/ui/progress";
 import Image from "next/image";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import useManabars from "@/api/accountPage/useManabars";
-import { ArrowDown, ArrowUp, Loader2 } from "lucide-react";
+import { ArrowDown, ArrowUp, ClipboardCopy, Loader2 } from "lucide-react";
 import Explorer from "@/types/Explorer";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
@@ -27,11 +27,31 @@ const AccountAuthorizationsCard: React.FC<AccountMainCardProps> = ({
     setIsPropertiesHidden(!isPropertiesHidden);
   };
 
+  const cutPublicKey = (publicKey?: string): string => {
+    if (!publicKey) return "";
+    return (`${publicKey.slice(0, 8)}...${publicKey.slice(publicKey.length - 5)}`)
+  }
+
+  const copyToClipboard = (key?: string) => {
+    if (key) {
+      navigator.clipboard.writeText(key);
+    }
+  };
+
+  const renderKeyToCopy = (key?: string) => {
+    return (
+      <div className="flex hover:bg-slate-600 rounded" onClick={() => copyToClipboard(key)}><ClipboardCopy className="w-4 mr-2" /> {cutPublicKey(key)} </div>
+    )
+  }
+
   const renderAuthority = (content: string, weight: string, isAccount: boolean) => {
     return (
-      <div className="flex text-sm">
-        <div className="text-wrap w-full">
-          {isAccount ? <Link className=" text-blue-500" href={`/@${content}`}>{content}</Link> : content}
+      <div className="flex my-1">
+        <div className="mr-4">
+          {isAccount ? 
+            <Link className=" text-explorer-turquoise" href={`/@${content}`}>{content}</Link> : 
+            renderKeyToCopy(content)
+          }
         </div>
         <div>
           {weight}
@@ -44,7 +64,7 @@ const AccountAuthorizationsCard: React.FC<AccountMainCardProps> = ({
   const renderCollectionOfAuthorities = (authorities?: Hive.AuthKeys, title?: string) => {
     return (
       <div className="border-t border-solid border-gray-700">
-      <div>{title}</div>
+      <div className=" text-lg mb-4">{title}</div>
       {authorities?.account_auth.map((singleAuthorization) => renderAuthority(singleAuthorization[0] || "", singleAuthorization[1] || "", true))}
       {authorities?.key_auth.map((singleAuthorization) => renderAuthority(singleAuthorization[0] || "", singleAuthorization[1] || "", false))}
     </div>
@@ -64,13 +84,13 @@ const AccountAuthorizationsCard: React.FC<AccountMainCardProps> = ({
         </div>
       </CardHeader>
       <CardContent hidden={isPropertiesHidden} className="break-all">
-        <div><div>Memo:</div><div>{accountAuthorizationsData?.memo}</div></div>
         {accountAuthorizationsData?.witness_signing && 
           <div><div>Witness signing:</div><div>{accountAuthorizationsData?.witness_signing}</div></div>
         }
         {renderCollectionOfAuthorities(accountAuthorizationsData?.owner[0], "Owner")}
         {renderCollectionOfAuthorities(accountAuthorizationsData?.active[0], "Active")}
         {renderCollectionOfAuthorities(accountAuthorizationsData?.posting[0], "Posting")}
+        <div><div>Memo:</div>{renderKeyToCopy(accountAuthorizationsData?.memo)}</div>
       </CardContent>
     </Card>
   );
