@@ -10,6 +10,7 @@ import Hive from "@/types/Hive";
 import useAccountAuthorizations from "@/api/accountPage/useAccountAuthorizations";
 import { useState } from "react";
 import Link from "next/link";
+import CopyToKeyboard from "../CopyToKeyboard";
 
 interface AccountMainCardProps {
   accountName: string;
@@ -50,7 +51,10 @@ const AccountAuthorizationsCard: React.FC<AccountMainCardProps> = ({
         <div className="mr-4">
           {isAccount ? 
             <Link className=" text-explorer-turquoise" href={`/@${content}`}>{content}</Link> : 
-            renderKeyToCopy(content)
+            <CopyToKeyboard 
+              value={content} 
+              displayValue={cutPublicKey(content)}
+            />
           }
         </div>
         <div>
@@ -64,7 +68,7 @@ const AccountAuthorizationsCard: React.FC<AccountMainCardProps> = ({
   const renderCollectionOfAuthorities = (authorities?: Hive.AuthKeys, title?: string) => {
     return (
       <div className="border-t border-solid border-gray-700">
-      <div className=" text-lg mb-4">{title}</div>
+      <div className=" text-lg mb-2">{title}</div>
       {authorities?.account_auth.map((singleAuthorization) => renderAuthority(singleAuthorization[0] || "", singleAuthorization[1] || "", true))}
       {authorities?.key_auth.map((singleAuthorization) => renderAuthority(singleAuthorization[0] || "", singleAuthorization[1] || "", false))}
     </div>
@@ -84,13 +88,25 @@ const AccountAuthorizationsCard: React.FC<AccountMainCardProps> = ({
         </div>
       </CardHeader>
       <CardContent hidden={isPropertiesHidden} className="break-all">
-        {accountAuthorizationsData?.witness_signing && 
-          <div><div>Witness signing:</div><div>{accountAuthorizationsData?.witness_signing}</div></div>
-        }
         {renderCollectionOfAuthorities(accountAuthorizationsData?.owner[0], "Owner")}
         {renderCollectionOfAuthorities(accountAuthorizationsData?.active[0], "Active")}
         {renderCollectionOfAuthorities(accountAuthorizationsData?.posting[0], "Posting")}
-        <div><div>Memo:</div>{renderKeyToCopy(accountAuthorizationsData?.memo)}</div>
+        <div className="border-t border-solid border-gray-700">
+          <div  className=" text-lg mb-2">Memo:</div>
+          <CopyToKeyboard 
+            value={accountAuthorizationsData?.memo} 
+            displayValue={cutPublicKey(accountAuthorizationsData?.memo)}
+            />
+        </div>
+        {accountAuthorizationsData?.witness_signing && 
+          <div className="border-t border-solid border-gray-700">
+            <div  className=" text-lg mb-2">Witness signing:</div>
+            <CopyToKeyboard 
+              value={accountAuthorizationsData?.witness_signing} 
+              displayValue={cutPublicKey(accountAuthorizationsData?.witness_signing)}
+            />
+          </div>
+        }
       </CardContent>
     </Card>
   );
