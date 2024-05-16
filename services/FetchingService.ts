@@ -336,7 +336,7 @@ class FetchingService {
     return await this.callApi("get_block_raw", requestBody);
   }
 
-  async getAccountAuthorizations(accountName: string): Promise<Hive.AccountAuthorizationsData> {
+  async getAccountAuthorities(accountName: string): Promise<Hive.AccountAuthoritiesData> {
     const requestBody = {
       _account: accountName,
     };

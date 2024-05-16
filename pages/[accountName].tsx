@@ -26,8 +26,7 @@ import {
   convertOperationResultsToTableOperations,
 } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import useAccountAuthorizations from "@/api/accountPage/useAccountAuthorizations";
-import AccountAuthorizationsCard from "@/components/account/AccountAuthorizationsCard";
+import AccountAuthoritiesCard from "@/components/account/AccountAuthoritiesCard";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -268,7 +267,7 @@ export default function Account() {
             json={accountDetails.posting_json_metadata}
             showCollapseButton={true}
           />
-          <AccountAuthorizationsCard
+          <AccountAuthoritiesCard
             accountName={accountNameFromRoute}
           />
           {!isWitnessDetailsError && (

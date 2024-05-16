@@ -527,7 +527,7 @@ declare module Hive {
     account_auth: [string | undefined, string | undefined][];
   }
 
-  interface AccountAuthorizationsData {
+  interface AccountAuthoritiesData {
     owner: [AuthKeys];
     active: [AuthKeys];
     posting: [AuthKeys];
