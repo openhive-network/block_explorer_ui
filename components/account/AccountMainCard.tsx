@@ -95,10 +95,16 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
           </div>
         )}
         <div className="flex justify-between p-4">
-          <div className="text-center flex justify-center w-full gap-2">
+          <div className="text-center flex flex-col justify-center w-full gap-2">
             <span className="text-lg">Creation Date:</span>
             <span className="text-lg" data-testid="creation-date">
               {formatAndDelocalizeTime(accountDetails.created)}
+            </span>
+          </div>
+          <div className="text-center flex flex-col justify-center w-full gap-2">
+            <span className="text-lg">Reputation:</span>
+            <span className="text-lg" data-testid="creation-date">
+              {accountDetails.reputation}
             </span>
           </div>
         </div>
