@@ -54,6 +54,12 @@ export default defineConfig({
       snapshots: !process.env.CI,
       sources: true
     },
+
+    /* Disable CORS for tests */
+    bypassCSP: true,
+    launchOptions: {
+      args: ['--disable-web-security']
+    }
   },
 
   /* Configure projects for major browsers */
