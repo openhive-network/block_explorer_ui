@@ -367,6 +367,7 @@ declare module Hive {
     | "account_name_array"
     | "block_num"
     | "transaction_hash"
+    | "block_hash"
     | "invalid_input";
 
   interface InputTypeResponse {

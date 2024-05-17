@@ -24,6 +24,9 @@ const getResultTypeHeader = (result: Hive.InputTypeResponse) => {
     case "transaction_hash":
       return "transaction";
 
+    case "block_hash":
+      return "block";
+
     default:
       return "account";
   }
