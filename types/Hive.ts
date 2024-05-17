@@ -525,6 +525,7 @@ declare module Hive {
   interface AuthKeys {
     key_auth: [string | undefined, string | undefined][];
     account_auth: [string | undefined, string | undefined][];
+    weight_threshold: number;
   }
 
   interface AccountAuthoritiesData {
