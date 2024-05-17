@@ -29,8 +29,8 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
 
   const renderAuthority = (content: string, weight: string, isAccount: boolean) => {
     return (
-      <div className="flex my-1">
-        <div className="mr-4">
+      <div className="flex m-1">
+        <div className="mr-2">
           {isAccount ? 
             <Link className=" text-explorer-turquoise" href={`/@${content}`}>{content}</Link> : 
             <CopyToKeyboard 
@@ -49,7 +49,8 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
   const renderCollectionOfAuthorities = (authorities?: Hive.AuthKeys, title?: string) => {
     return (
       <div className="border-t border-solid border-gray-700">
-      <div className=" text-lg mb-2">{title}</div>
+      <div className=" text-lg mt-2">{title}</div>
+      <div className="my-1"><span className="font-semibold mr-1">Threshold</span> <span>{authorities?.weight_threshold}</span></div>
       {authorities?.account_auth.map((singleAuthority) => renderAuthority(singleAuthority[0] || "", singleAuthority[1] || "", true))}
       {authorities?.key_auth.map((singleAuthority) => renderAuthority(singleAuthority[0] || "", singleAuthority[1] || "", false))}
     </div>
@@ -69,11 +70,11 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
         </div>
       </CardHeader>
       <CardContent hidden={isPropertiesHidden} className="break-all">
-        {renderCollectionOfAuthorities(accountAuthoritiesData?.owner[0], "Owner")}
-        {renderCollectionOfAuthorities(accountAuthoritiesData?.active[0], "Active")}
-        {renderCollectionOfAuthorities(accountAuthoritiesData?.posting[0], "Posting")}
+        {renderCollectionOfAuthorities(accountAuthoritiesData?.owner, "Owner")}
+        {renderCollectionOfAuthorities(accountAuthoritiesData?.active, "Active")}
+        {renderCollectionOfAuthorities(accountAuthoritiesData?.posting, "Posting")}
         <div className="border-t border-solid border-gray-700">
-          <div  className=" text-lg mb-2">Memo:</div>
+          <div  className=" text-lg mt-2">Memo:</div>
           <CopyToKeyboard 
             value={accountAuthoritiesData?.memo} 
             displayValue={cutPublicKey(accountAuthoritiesData?.memo)}
@@ -81,7 +82,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
         </div>
         {accountAuthoritiesData?.witness_signing && 
           <div className="border-t border-solid border-gray-700">
-            <div  className=" text-lg mb-2">Witness signing:</div>
+            <div  className=" text-lg mt-2">Witness signing:</div>
             <CopyToKeyboard 
               value={accountAuthoritiesData?.witness_signing} 
               displayValue={cutPublicKey(accountAuthoritiesData?.witness_signing)}

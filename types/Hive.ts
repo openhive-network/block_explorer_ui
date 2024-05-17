@@ -529,9 +529,9 @@ declare module Hive {
   }
 
   interface AccountAuthoritiesData {
-    owner: [AuthKeys];
-    active: [AuthKeys];
-    posting: [AuthKeys];
+    owner: AuthKeys;
+    active: AuthKeys;
+    posting: AuthKeys;
     memo: string;
     witness_signing: string;
   }
