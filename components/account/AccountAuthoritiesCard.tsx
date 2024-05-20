@@ -85,7 +85,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
         <div className="border-t border-solid border-gray-700">
           <div  className=" text-lg mt-2">Memo:</div>
           <Table>
-            <TableRow>
+            <TableRow className="bg-gray-700">
               <TableCell>
                 <CopyToKeyboard 
                   value={accountAuthoritiesData?.memo} 
@@ -98,7 +98,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
             <>
               <div  className=" text-lg mt-2">Witness signing:</div>
               <Table>
-                <TableRow>
+                <TableRow className="bg-gray-700">
                   <TableCell>
                     <CopyToKeyboard 
                       value={accountAuthoritiesData?.witness_signing} 
