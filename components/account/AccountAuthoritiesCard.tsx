@@ -53,7 +53,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
   const renderCollectionOfAuthorities = (authorities?: Hive.AuthKeys, title?: string) => {
     const shouldMarkThreshold = !!((authorities?.account_auth.length || 0 + (authorities?.account_auth.length || 0)) % 2 === 1) 
     return (
-      <div className="border-t border-solid border-gray-700">
+      <div>
       <div className=" text-lg mt-2">{title}</div>
       <Table>
         {authorities?.account_auth.map((singleAuthority, index) => renderAuthority(singleAuthority[0] || "", singleAuthority[1] || "", true, index))}
@@ -82,7 +82,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
         {renderCollectionOfAuthorities(accountAuthoritiesData?.owner, "Owner")}
         {renderCollectionOfAuthorities(accountAuthoritiesData?.active, "Active")}
         {renderCollectionOfAuthorities(accountAuthoritiesData?.posting, "Posting")}
-        <div className="border-t border-solid border-gray-700">
+        <div>
           <div  className=" text-lg mt-2">Memo:</div>
           <Table>
             <TableRow className="bg-gray-700">
