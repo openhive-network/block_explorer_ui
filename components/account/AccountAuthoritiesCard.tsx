@@ -1,10 +1,12 @@
-import { ArrowDown, ArrowUp } from "lucide-react";
+import { ArrowDown, ArrowUp, User } from "lucide-react";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import Hive from "@/types/Hive";
 import useAccountAuthorities from "@/api/accountPage/useAccountAuthorities";
 import { useState } from "react";
 import Link from "next/link";
 import CopyToKeyboard from "../CopyToKeyboard";
+import { Table, TableCell, TableRow } from "../ui/table";
+import { cn } from "@/lib/utils";
 
 interface AccountMainCardProps {
   accountName: string;
@@ -27,32 +29,39 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
     return (`${publicKey.slice(0, 8)}...${publicKey.slice(publicKey.length - 5)}`)
   }
 
-  const renderAuthority = (content: string, weight: string, isAccount: boolean) => {
+  const renderAuthority = (content: string, weight: string, isAccount: boolean, index: number) => {
     return (
-      <div className="flex m-1">
-        <div className="mr-2">
+      <TableRow className={cn({
+        "bg-gray-700": index % 2 === 0,
+      })}>
+        <TableCell>
           {isAccount ? 
-            <Link className=" text-explorer-turquoise" href={`/@${content}`}>{content}</Link> : 
+            <Link className=" text-explorer-turquoise flex" href={`/@${content}`}><User className="w-4 mr-2" /><span>{content}</span></Link> : 
             <CopyToKeyboard 
               value={content} 
               displayValue={cutPublicKey(content)}
             />
           }
-        </div>
-        <div>
+        </TableCell>
+        <TableCell className="w-1/5">
           {weight}
-        </div>
-      </div>
+        </TableCell>
+      </TableRow>
     )
   }
 
   const renderCollectionOfAuthorities = (authorities?: Hive.AuthKeys, title?: string) => {
+    const shouldMarkThreshold = !!((authorities?.account_auth.length || 0 + (authorities?.account_auth.length || 0)) % 2 === 1) 
     return (
       <div className="border-t border-solid border-gray-700">
       <div className=" text-lg mt-2">{title}</div>
-      <div className="my-1"><span className="font-semibold mr-1">Threshold</span> <span>{authorities?.weight_threshold}</span></div>
-      {authorities?.account_auth.map((singleAuthority) => renderAuthority(singleAuthority[0] || "", singleAuthority[1] || "", true))}
-      {authorities?.key_auth.map((singleAuthority) => renderAuthority(singleAuthority[0] || "", singleAuthority[1] || "", false))}
+      <Table>
+        {authorities?.account_auth.map((singleAuthority, index) => renderAuthority(singleAuthority[0] || "", singleAuthority[1] || "", true, index))}
+        {authorities?.key_auth.map((singleAuthority, index) => renderAuthority(singleAuthority[0] || "", singleAuthority[1] || "", false, index + authorities?.account_auth.length))}
+        <TableRow className={cn("font-semibold", {"bg-gray-700": shouldMarkThreshold})}>
+          <TableCell >Threshold</TableCell><TableCell>{authorities?.weight_threshold}</TableCell>
+        </TableRow>
+      </Table>
     </div>
     )
   }
@@ -75,20 +84,32 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
         {renderCollectionOfAuthorities(accountAuthoritiesData?.posting, "Posting")}
         <div className="border-t border-solid border-gray-700">
           <div  className=" text-lg mt-2">Memo:</div>
-          <CopyToKeyboard 
-            value={accountAuthoritiesData?.memo} 
-            displayValue={cutPublicKey(accountAuthoritiesData?.memo)}
-            />
+          <Table>
+            <TableRow>
+              <TableCell>
+                <CopyToKeyboard 
+                  value={accountAuthoritiesData?.memo} 
+                  displayValue={cutPublicKey(accountAuthoritiesData?.memo)}
+                />
+              </TableCell>
+            </TableRow>
+          </Table>
+          {accountAuthoritiesData?.witness_signing && 
+            <>
+              <div  className=" text-lg mt-2">Witness signing:</div>
+              <Table>
+                <TableRow>
+                  <TableCell>
+                    <CopyToKeyboard 
+                      value={accountAuthoritiesData?.witness_signing} 
+                      displayValue={cutPublicKey(accountAuthoritiesData?.witness_signing)}
+                    />
+                  </TableCell>
+                </TableRow>
+              </Table>
+            </>
+          }
         </div>
-        {accountAuthoritiesData?.witness_signing && 
-          <div className="border-t border-solid border-gray-700">
-            <div  className=" text-lg mt-2">Witness signing:</div>
-            <CopyToKeyboard 
-              value={accountAuthoritiesData?.witness_signing} 
-              displayValue={cutPublicKey(accountAuthoritiesData?.witness_signing)}
-            />
-          </div>
-        }
       </CardContent>
     </Card>
   );
