@@ -57,7 +57,6 @@ const useAccountDetails = (accountName: string) => {
   });
 
   const accountDetailsSelector = (data: Hive.AccountDetailsQueryResponse): Explorer.FormattedAccountDetails => {
-    console.log('SHOW ME SELECTOR', data, accountName);
     const accountDetails = {
       ...data,
       balance: hiveChain?.hive(data.balance),
