@@ -73,7 +73,7 @@ const useAccountDetails = (accountName: string) => {
       received_vesting_shares: hiveChain?.vests(data.received_vesting_shares),
       posting_rewards: hiveChain?.vests(data.posting_rewards),
       curation_rewards: hiveChain?.vests(data.curation_rewards),
-      vesting_balance: hiveChain?.vests(data.vesting_balance),
+      vesting_balance: hiveChain?.hive(data.vesting_balance),
       last_account_recovery: formatAndDelocalizeTime(data.last_account_recovery),
       created: formatAndDelocalizeTime(data.created),
       last_vote_time: formatAndDelocalizeTime(data.last_vote_time),
