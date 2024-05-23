@@ -91,7 +91,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   const handleBlockChange = (blockNumber: string) => {
     if (Number(blockNumber) > 0) {
       if (blockNumber === block) {
-        setBlockDate(timeStamp);
+        if (timeStamp) setBlockDate(timeStamp);
       }
       goToBlock(blockNumber);
       setBlock(blockNumber);
