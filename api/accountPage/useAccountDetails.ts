@@ -65,7 +65,7 @@ const useAccountDetails = (accountName: string) => {
       hbd_saving_balance: hiveChain?.hbd(data.hbd_saving_balance),
       reward_hbd_balance: hiveChain?.hbd(data.reward_hbd_balance),
       reward_vesting_balance: hiveChain?.vests(data.reward_vesting_balance),
-      reward_vesting_hive: hiveChain?.vests(data.reward_vesting_hive),
+      reward_vesting_hive: hiveChain?.hive(data.reward_vesting_hive),
       reward_hive_balance: hiveChain?.hive(data.reward_hive_balance),
       vesting_withdraw_rate: hiveChain?.vests(data.vesting_withdraw_rate),
       vesting_shares: hiveChain?.vests(data.vesting_shares),
