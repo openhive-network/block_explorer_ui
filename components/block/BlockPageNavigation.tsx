@@ -71,7 +71,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
 
   useEffect(() => {
     const keyDownEvent = (event: KeyboardEvent) => {
-      if (event.code === "Enter") {
+      if (event.code === "Enter" && Number(block) !== blockNumber) {
         handleBlockChange(block);
       }
     };
