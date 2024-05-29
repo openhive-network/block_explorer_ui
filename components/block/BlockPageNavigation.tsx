@@ -71,7 +71,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
 
   useEffect(() => {
     const keyDownEvent = (event: KeyboardEvent) => {
-      if (event.code === "Enter") {
+      if (event.code === "Enter" && Number(block) !== blockNumber) {
         handleBlockChange(block);
       }
     };
@@ -91,7 +91,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   const handleBlockChange = (blockNumber: string) => {
     if (Number(blockNumber) > 0) {
       if (blockNumber === block) {
-        setBlockDate(timeStamp);
+        if (timeStamp) setBlockDate(timeStamp);
       }
       goToBlock(blockNumber);
       setBlock(blockNumber);
@@ -99,7 +99,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   };
 
   const handleGoToBlockByTime = async (date: Date | undefined) => {
-    if (date?.getTime() !== timeStamp?.getTime()) {
+    if (date && date?.getTime() !== timeStamp?.getTime()) {
       const blockByTime = await checkBlockByTime(moment(date).utc().toDate());
       if (blockByTime) {
         handleBlockChange(blockByTime.toString());
