@@ -21,30 +21,23 @@ export const numToHighLow = (value: number) => {
 };
 
 /**
- * Create URL params for given properties and their values.
- * @param urlParams pairs property-value
- * @returns end of URL
+ * Build URL query for given properties and their values.
+ * @param initialUrl initial start of route
+ * @param params initial and future possible url params as an object
+ * @returns full url query
  */
-export const getPageUrlParams = (urlParams: Explorer.UrlParam[]) => {
-  let resultString = "?";
-  urlParams.forEach((urlParam, index) => {
-    if (urlParam.paramValue) {
-      if (index > 0) resultString += "&";
-      if (
-        typeof urlParam.paramValue === "string" ||
-        typeof urlParam.paramValue === "number"
-      ) {
-        resultString += `${urlParam.paramName}=${urlParam.paramValue}`;
-      } else {
-        let arrayProps = "";
-        urlParam.paramValue.forEach((arrayValue, arrayIndex) => {
-          arrayProps += `${arrayIndex !== 0 ? "-" : ""}${arrayValue}`;
-        });
-        resultString += `${urlParam.paramName}=${arrayProps}`;
-      }
-    }
-  });
-  return resultString;
+
+export const buildUrlQuery = (initialUrl: string, params: object) => {
+  // If initial params are null or undefined, do not include them in url
+  const removeEmptyParams = Object.fromEntries(
+    Object.entries(params).filter(
+      ([key, value]) => value !== null && value !== undefined
+    )
+  );
+
+  const urlParams = new URLSearchParams(removeEmptyParams);
+
+  return `${initialUrl}?${urlParams.toString()}`;
 };
 
 /**
@@ -185,7 +178,7 @@ export const convertIdsToBooleanArray = (
   numOfTypes?: number
 ) => {
   if (filters.length === 0) return [];
-  const booleanArray = new Array(numOfTypes ?? Math.max(...filters) ).fill(
+  const booleanArray = new Array(numOfTypes ?? Math.max(...filters)).fill(
     false
   );
   filters.forEach((filter) => (booleanArray[filter] = true));
