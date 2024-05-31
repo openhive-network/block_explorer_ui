@@ -20,7 +20,7 @@ import {
   convertCommentsOperationResultToTableOperations,
   convertIdsToBooleanArray,
   convertOperationResultsToTableOperations,
-  getPageUrlParams,
+  buildUrlQuery,
 } from "@/lib/utils";
 import JumpToPage from "../JumpToPage";
 import { dataToURL, useOperationsFormatter } from "@/utils/Hooks";
@@ -171,141 +171,56 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
       setAccountOperationsPage(newPageNum);
     }
   };
-
   const getCommentPageLink = () => {
-    const urlParams: Explorer.UrlParam[] = [
-      {
-        paramName: "fromBlock",
-        paramValue: dataToURL(commentSearchProps?.fromBlock),
-      },
-      {
-        paramName: "toBlock",
-        paramValue: dataToURL(commentSearchProps?.toBlock),
-      },
-      {
-        paramName: "rangeSelectKey",
-        paramValue: dataToURL(searchRanges.rangeSelectKey),
-      },
-      {
-        paramName: "lastTime",
-        paramValue: dataToURL(searchRanges.lastTimeUnitValue),
-      },
-      {
-        paramName: "lastBlocks",
-        paramValue: dataToURL(searchRanges.lastBlocksValue),
-      },
-      {
-        paramName: "timeUnit",
-        paramValue: dataToURL(searchRanges.timeUnitSelectKey),
-      },
-      {
-        paramName: "permlink",
-        paramValue: dataToURL(commentSearchProps?.permlink),
-      },
-    ];
+    const initialUrl = `/comments/@${commentSearchProps?.accountName}`;
 
-    if (commentSearchProps?.operationTypes) {
-      urlParams.push({
-        paramName: "filters",
-        paramValue: dataToURL(
-          convertIdsToBooleanArray(commentSearchProps?.operationTypes)
-        ),
-      });
-    }
+    const initialUrlParams = {
+      fromBlock: dataToURL(commentSearchProps?.fromBlock),
+      toBlock: dataToURL(commentSearchProps?.toBlock),
+      rangeSelectKey: dataToURL(searchRanges.rangeSelectKey),
+      lastTime: dataToURL(searchRanges.lastTimeUnitValue),
+      lastBlocks: dataToURL(searchRanges.lastBlocksValue),
+      timeUnit: dataToURL(searchRanges.timeUnitSelectKey),
+      permlink: dataToURL(commentSearchProps?.permlink),
+      filters: dataToURL(
+        convertIdsToBooleanArray(commentSearchProps?.operationTypes ?? [])
+      ),
+    };
 
-    return `/comments/@${dataToURL(
-      commentSearchProps?.accountName
-    )}${getPageUrlParams(urlParams)}`;
+    return buildUrlQuery(initialUrl, initialUrlParams);
   };
-
   const getAccountPageLink = (accountName: string) => {
-    const urlParams: Explorer.UrlParam[] = [
-      {
-        paramName: "fromBlock",
-        paramValue: dataToURL(accountOperationsSearchProps?.fromBlock),
-      },
-      {
-        paramName: "toBlock",
-        paramValue: dataToURL(accountOperationsSearchProps?.toBlock),
-      },
-      {
-        paramName: "fromDate",
-        paramValue: dataToURL(accountOperationsSearchProps?.startDate),
-      },
-      {
-        paramName: "toDate",
-        paramValue: dataToURL(accountOperationsSearchProps?.endDate),
-      },
-      {
-        paramName: "rangeSelectKey",
-        paramValue: dataToURL(searchRanges.rangeSelectKey),
-      },
-    ];
+    const initialUrl = `/@${accountName}`;
 
-    if (!!accountOperationsSearchProps?.operationTypes) {
-      urlParams.push({
-        paramName: "filters",
-        paramValue: dataToURL(
-          convertIdsToBooleanArray(accountOperationsSearchProps?.operationTypes)
-        ),
-      });
-    }
-
-    if (searchRanges.rangeSelectKey === "lastTime") {
-      urlParams.push({
-        paramName: "lastTime",
-        paramValue: dataToURL(searchRanges.lastTimeUnitValue),
-      });
-      urlParams.push({
-        paramName: "timeUnit",
-        paramValue: dataToURL(searchRanges.timeUnitSelectKey),
-      });
-    }
-
-    if (searchRanges.rangeSelectKey === "lastBlocks") {
-      urlParams.push({
-        paramName: "lastBlocks",
-        paramValue: dataToURL(searchRanges.lastBlocksValue),
-      });
-    }
-
-    return `/@${accountName}${getPageUrlParams(urlParams)}`;
-  };
-
-  const getBlockPageLink = (blockNumber: number) => {
-    const urlParams: Explorer.UrlParam[] = [
-      {
-        paramName: "accountName",
-        paramValue: dataToURL(blockSearchProps?.accountName),
-      },
-      {
-        paramName: "keyContent",
-        paramValue: dataToURL(blockSearchProps?.deepProps.content),
-      },
-      {
-        paramName: "setOfKeys",
-        paramValue: dataToURL(blockSearchProps?.deepProps.keys),
-      },
-    ];
-
-    if (blockSearchProps?.operationTypes) {
-      const booleanTypesArray = convertIdsToBooleanArray(
-        blockSearchProps?.operationTypes
-      );
-      let isFull = !!blockSearchProps?.operationTypes;
-      operationsTypes?.forEach((operationType) => {
-        if (
-          !blockSearchProps?.operationTypes?.includes(operationType.op_type_id)
+    const initialUrlParams = {
+      fromBlock: dataToURL(accountOperationsSearchProps?.fromBlock),
+      toBlock: dataToURL(accountOperationsSearchProps?.toBlock),
+      fromDate: dataToURL(accountOperationsSearchProps?.startDate),
+      toDate: dataToURL(accountOperationsSearchProps?.endDate),
+      filters: dataToURL(
+        convertIdsToBooleanArray(
+          accountOperationsSearchProps?.operationTypes ?? []
         )
-          isFull = false;
-      });
-      urlParams.push({
-        paramName: "filters",
-        paramValue: dataToURL(!isFull ? booleanTypesArray : []),
-      });
-    }
+      ),
+      lastTime: searchRanges.lastTimeUnitValue,
+      timeUnit: searchRanges.timeUnitSelectKey,
+    };
 
-    return `/block/${blockNumber}${getPageUrlParams(urlParams)}`;
+    return buildUrlQuery(initialUrl, initialUrlParams);
+  };
+  const getBlockPageLink = (blockNumber: number) => {
+    const initialUrl = `/block/${blockNumber}`;
+
+    const initialUrlParams = {
+      accountName: blockSearchProps?.accountName,
+      keyContent: dataToURL(blockSearchProps?.deepProps?.content),
+      setOfKeys: dataToURL(blockSearchProps?.deepProps?.keys),
+      filters: dataToURL(
+        convertIdsToBooleanArray(blockSearchProps?.operationTypes ?? [])
+      ),
+    };
+
+    return buildUrlQuery(initialUrl, initialUrlParams);
   };
 
   return (
