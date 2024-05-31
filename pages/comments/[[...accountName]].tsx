@@ -16,7 +16,6 @@ import {
 } from "@/lib/utils";
 import OperationsTable from "@/components/OperationsTable";
 import Hive from "@/types/Hive";
-import { getPageUrlParams } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 
 const defaultSearchParams: Explorer.CommentSearchParams = {
