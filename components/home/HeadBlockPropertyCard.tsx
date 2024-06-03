@@ -1,11 +1,14 @@
-import useDynamicGlobal from "@/api/homePage/useDynamicGlobal";
+import { Fragment } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
+import useDynamicGlobal from "@/api/homePage/useDynamicGlobal";
 import {
   fundAndSupplyParameters,
   hiveParameters,
   blockchainDates,
 } from "./headBlockParameters";
+import { Table, TableBody, TableRow, TableCell } from "../ui/table";
 import { convertUTCDateToLocalDate } from "@/utils/TimeUtils";
+import { cn } from "@/lib/utils";
 
 const cardNameMap = new Map([
   ["feedPrice", "Feed price"],
@@ -16,7 +19,7 @@ const cardNameMap = new Map([
   ["initHbdSupply", "Init hbd supply"],
   ["currentHbdSupply", "Current hbd supply"],
   ["pendingRewardedVestingHive", "Pending rewarded vesting hive"],
-  ["totalVestingFundHive",  "Total vesting fund hive"],
+  ["totalVestingFundHive", "Total vesting fund hive"],
   ["hbdInterestRate", "Hbd interest rate"],
   ["hbdPrintRate", "Hbd print rate"],
   ["lastIrreversibleBlockNumber", "Last irreversible block num"],
@@ -51,6 +54,34 @@ interface HeadBlockPropertyCardProps {
   handleHideParams: () => void;
 }
 
+const buildTableBody = (
+  parameters: string[],
+  header: string,
+  dynamicGlobalData: any
+) => {
+  return parameters.map((param: string, index: number) => (
+    <Fragment key={index}>
+      <TableRow
+        className={cn(
+          {
+            "border-t border-gray-700": !!index,
+          },
+          "hover:bg-inherit"
+        )}
+      >
+        <TableCell>{cardNameMap.get(param)}</TableCell>
+        <TableCell>
+          {header === "Blockchain Dates"
+            ? convertUTCDateToLocalDate(
+                dynamicGlobalData?.headBlockDetails[param]
+              )
+            : dynamicGlobalData?.headBlockDetails[param]}
+        </TableCell>
+      </TableRow>
+    </Fragment>
+  ));
+};
+
 const HeadBlockPropertyCard: React.FC<HeadBlockPropertyCardProps> = ({
   parameters,
   header,
@@ -60,7 +91,10 @@ const HeadBlockPropertyCard: React.FC<HeadBlockPropertyCardProps> = ({
   const { dynamicGlobalData } = useDynamicGlobal() as any;
 
   return (
-    <div className="bg-explorer-dark-gray py-1 rounded-[6px]" data-testid="expandable-list">
+    <div
+      className="bg-explorer-dark-gray py-1 rounded-[6px]"
+      data-testid="expandable-list"
+    >
       <div
         onClick={handleHideParams}
         className="h-full flex justify-between align-center py-2 hover:bg-slate-600 cursor-pointer px-2"
@@ -68,22 +102,15 @@ const HeadBlockPropertyCard: React.FC<HeadBlockPropertyCardProps> = ({
         <div className="text-lg">{header}</div>
         {isParamsHidden ? <ArrowDown /> : <ArrowUp />}
       </div>
-      <div hidden={isParamsHidden} data-testid="conntent-expandable-list">
-        {parameters.map((param: any) => (
-          <div
-            key={param}
-            className="border-b border-solid border-gray-700 flex justify-between px-3 py-1 flex-col"
-          >
-            <span className="mr-2">{`${cardNameMap.get(param)}: `}</span>
-            <span>
-              {header === "Blockchain Dates"
-                ? convertUTCDateToLocalDate(
-                    dynamicGlobalData?.headBlockDetails[param]
-                  )
-                : dynamicGlobalData?.headBlockDetails[param]}
-            </span>
-          </div>
-        ))}
+      <div
+        hidden={isParamsHidden}
+        data-testid="conntent-expandable-list"
+      >
+        <Table>
+          <TableBody>
+            {buildTableBody(parameters, header, dynamicGlobalData)}
+          </TableBody>
+        </Table>
       </div>
     </div>
   );
