@@ -14,6 +14,7 @@ import Hive from "@/types/Hive";
 import { getOperationTypeForDisplay } from "@/utils/UI";
 import { useUserSettingsContext } from "./contexts/UserSettingsContext";
 import { cn } from "@/lib/utils";
+import Chip from "./Chip";
 
 type OperationTypesDialogProps = {
   operationTypes: Hive.OperationPattern[] | undefined;
@@ -380,14 +381,11 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
         </Button>
       </DialogTrigger>
       {selectedOperations.length ? (
-        <Button
-          onClick={handleClearOperationsFilter}
-          onMouseEnter={() => setIsOperationFilterHover(true)}
-          onMouseLeave={() => setIsOperationFilterHover(false)}
-          className={`${buttonClassName} text-white text-ellipsis overflow-hidden w-[150px] ml-2 hover:bg-red-700 rounded-[4px]`}
-        >
-          {!isOperationFilterHover ? triggerTitle : "Clear Filters"}
-        </Button>
+        <Chip
+          className={buttonClassName}
+          text={triggerTitle}
+          clearSelection={handleClearOperationsFilter}
+        />
       ) : null}
       <DialogContent
         className="max-w-[95%] md:max-w-[80%] max-h-[90%] md:max-h-[80%] flex-column justify-center align-center  bg-white text-black dark:bg-explorer-dark-gray dark:text-white overflow-auto px-0"
