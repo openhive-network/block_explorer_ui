@@ -63,7 +63,7 @@ test.describe('Account page - account details tests', () => {
         await expect(mainPage.headBlockCardWitnessName).toBeEnabled()
         await mainPage.headBlockCardWitnessLink.click() 
 
-        const response = await page.waitForResponse((response) => response.url().includes("rpc/get_account"));
+        const response = await page.waitForResponse((response) => response.url().includes("/get_account"));
         const responseBody = await response.json()
 
         await expect(response.status()).toBe(200)
