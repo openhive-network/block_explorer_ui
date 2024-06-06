@@ -120,7 +120,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
         <CardTitle>Search</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="w-full flex justify-between items-center px-2 md:px-8 flex-wrap gap-y-4">
+        <div className="w-full flex justify-around items-center flex-wrap gap-y-4">
           <div className="flex justify-center items-center flex-wrap">
             <p>Block Number : </p>
             <button
@@ -157,17 +157,22 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
               />
             </div>
           </div>
-          <OperationTypesDialog
-            operationTypes={operationTypes}
-            setSelectedOperations={handleSetFilters}
-            selectedOperations={convertBooleanArrayToIds(selectedOperationIds)}
-            buttonClassName="bg-gray-500"
-            triggerTitle={getOperationButtonTitle(
-              convertBooleanArrayToIds(selectedOperationIds),
-              operationTypes
-            )}
-          />
+          <div className="flex">
+            <OperationTypesDialog
+              operationTypes={operationTypes}
+              setSelectedOperations={handleSetFilters}
+              selectedOperations={convertBooleanArrayToIds(
+                selectedOperationIds
+              )}
+              buttonClassName="bg-gray-500"
+              triggerTitle={getOperationButtonTitle(
+                convertBooleanArrayToIds(selectedOperationIds),
+                operationTypes
+              )}
+            />
+          </div>
         </div>
+
         {(!!accountName || !!keyContent || !!setOfKeys) && (
           <div className="w-full flex justify-between items-center px-2 md:px-8 flex-wrap gap-y-4 mt-4">
             <div className="flex gap-x-6">
