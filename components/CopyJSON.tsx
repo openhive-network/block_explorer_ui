@@ -10,17 +10,19 @@ import {
 } from "./ui/tooltip";
 
 interface CopyJSONProps {
-  value: Object;
+  value: string | object;
   className?: string;
 }
 
 const CopyJSON: React.FC<CopyJSONProps> = ({ value, className }) => {
   const [copied, setCopied] = useState(false);
 
-  const copyToClipboard = (valueAsObject: Object) => {
-    navigator.clipboard.writeText(
-      JSON.stringify(valueAsObject).replaceAll("\\", "")
-    );
+  const copyToClipboard = (valueAsObject: string | object) => {
+    if (typeof valueAsObject === "string") {
+      navigator.clipboard.writeText(
+        valueAsObject
+      );
+    }
     setCopied(true);
     setTimeout(() => setCopied(false), 1000);
   };
