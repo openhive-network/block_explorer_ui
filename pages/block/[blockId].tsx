@@ -283,10 +283,13 @@ export default function Block() {
                   />
                 )}
               <div className="w-full md:w-4/5 flex flex-col gap-y-2">
+                {
+                  nonVirtualOperations.length && 
                 <OperationsTable
                   operations={nonVirtualOperations}
                   unformattedOperations={unformattedNonVirtual}
                 />
+                }
                 <div
                   className="text-center mt-4"
                   ref={virtualOpsRef}
@@ -301,10 +304,13 @@ export default function Block() {
                       : null}
                   </p>
                 </div>
-                <OperationsTable
-                  operations={virtualOperations}
-                  unformattedOperations={unformattedVirtual}
-                />
+                {
+                  virtualOperations.length && 
+                  <OperationsTable
+                    operations={virtualOperations}
+                    unformattedOperations={unformattedVirtual}
+                  />
+                }
               </div>
             </section>
           )}
