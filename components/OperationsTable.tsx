@@ -17,7 +17,7 @@ import JSONView from "./JSONView";
 import { getOperationTypeForDisplay } from "@/utils/UI";
 import CopyJSON from "./CopyJSON";
 import { useUserSettingsContext } from "./contexts/UserSettingsContext";
-//
+
 interface OperationsTableProps {
   operations: Explorer.OperationForTable[];
   unformattedOperations?: Explorer.OperationForTable[];
