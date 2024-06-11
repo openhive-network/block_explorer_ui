@@ -142,9 +142,6 @@ const Comments: React.FC = () => {
               unformattedOperations={convertCommentsOperationResultToTableOperations(
                 commentSearch.commentSearchData.operations_result
               )}
-              operationsForJsonView={
-                commentSearch?.commentSearchData?.operations_result
-              }
               className="text-white"
             />
           ) : (

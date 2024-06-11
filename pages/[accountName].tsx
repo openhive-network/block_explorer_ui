@@ -329,7 +329,6 @@ export default function Account() {
               unformattedOperations={convertOperationResultsToTableOperations(
                 accountOperations?.operations_result || []
               )}
-              operationsForJsonView={accountOperations?.operations_result}
             />
           )}
         </div>

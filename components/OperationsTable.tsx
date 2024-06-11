@@ -21,7 +21,6 @@ import { useUserSettingsContext } from "./contexts/UserSettingsContext";
 interface OperationsTableProps {
   operations: Explorer.OperationForTable[];
   unformattedOperations?: Explorer.OperationForTable[];
-  operationsForJsonView?: Hive.OperationResponse[] | Hive.CommentOperation[];
   className?: string;
 }
 
@@ -57,7 +56,6 @@ const getOperationValues = (operation: Hive.Operation) => {
 const OperationsTable: React.FC<OperationsTableProps> = ({
   operations,
   unformattedOperations,
-  operationsForJsonView,
   className,
 }) => {
   const {
@@ -73,14 +71,11 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
     return unformattedOperation ? JSON.stringify(unformattedOperation) : {};
   };
 
-  const renderJsonViewOperation = (normalOperationId: number) => {
-    if (!operationsForJsonView?.length) return;
-
-    const jsonViewOperation = operationsForJsonView.find(
-      (op) => op.operation_id === normalOperationId
-    );
-
-    return JSON.stringify(jsonViewOperation);
+  const renderJsonViewOperation = (operation: Explorer.OperationForTable) => {
+    const unformattedOperation = unformattedOperations?.find(
+      (op) => op.operationId === operation.operationId
+    )?.operation;
+    return unformattedOperation ? JSON.stringify(unformattedOperation) : null;
   };
 
   return (
@@ -185,7 +180,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
               >
                 {rawJsonView ? (
                   <pre>
-                    {renderJsonViewOperation(operation?.operationId || 0)}
+                    {renderJsonViewOperation(operation)}
                   </pre>
                 ) : (
                   <div>{getOneLineDescription(operation)}</div>
