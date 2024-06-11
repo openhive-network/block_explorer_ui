@@ -85,7 +85,7 @@ export const convertOperationResultsToTableOperations = (
     operation: operation.operation,
     blockNumber: operation.block_num,
     trxId: operation.trx_id,
-    operatiopnId: operation.operation_id,
+    operationId: operation.operation_id,
   }));
 };
 
@@ -95,7 +95,7 @@ export const convertCommentsOperationResultToTableOperations = (
   return operations.map((operation) => ({
     operation: operation.operation,
     blockNumber: operation.block_num,
-    operatiopnId: operation.operation_id,
+    operationId: operation.operation_id,
     trxId: operation.trx_hash,
   }));
 };
@@ -185,7 +185,7 @@ export const convertIdsToBooleanArray = (
   numOfTypes?: number
 ) => {
   if (filters.length === 0) return [];
-  const booleanArray = new Array(numOfTypes ?? Math.max(...filters) ).fill(
+  const booleanArray = new Array(numOfTypes ?? Math.max(...filters)).fill(
     false
   );
   filters.forEach((filter) => (booleanArray[filter] = true));
