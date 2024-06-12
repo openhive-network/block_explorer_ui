@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { Search, X, CornerDownLeft as Enter } from "lucide-react";
 import { useDebounce, useMediaQuery, useOnClickOutside } from "@/utils/Hooks";
-import { capitalizeFirst } from "@/utils/StringUtils";
+import { capitalizeFirst, trimAccountName } from "@/utils/StringUtils";
 import { Input } from "./ui/input";
 import Hive from "@/types/Hive";
 import { cn } from "@/lib/utils";
@@ -112,7 +112,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ open, onChange, className }) => {
   };
 
   const debouncedSearch = useDebounce(
-    (value: string) => updateInput(value.trim()),
+    (value: string) => updateInput(trimAccountName(value)),
     1000
   );
 
