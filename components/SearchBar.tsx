@@ -112,7 +112,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ open, onChange, className }) => {
   };
 
   const debouncedSearch = useDebounce(
-    (value: string) => updateInput(value),
+    (value: string) => updateInput(value.trim()),
     1000
   );
 
