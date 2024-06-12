@@ -22,6 +22,7 @@ import { getOperationButtonTitle } from "@/utils/UI";
 import useOperationKeys from "@/api/homePage/useOperationKeys";
 import Explorer from "@/types/Explorer";
 import { config } from "@/Config";
+import { trimAccountName } from "@/utils/StringUtils";
 
 interface BlockSearchProps {
   startBlockSearch: (
@@ -87,7 +88,8 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
       payloadEndDate,
     } = await getRangesValues();
     const blockSearchProps: Explorer.BlockSearchProps = {
-      accountName: accountName !== "" ? accountName : undefined,
+      accountName:
+        accountName !== "" ? trimAccountName(accountName) : undefined,
       operationTypes: selectedOperationTypes.length
         ? selectedOperationTypes
         : operationsTypes?.map((opType) => opType.op_type_id),
