@@ -26,6 +26,7 @@ import {
   convertOperationResultsToTableOperations,
 } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import AccountAuthoritiesCard from "@/components/account/AccountAuthoritiesCard";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -265,6 +266,9 @@ export default function Account() {
             header="Posting JSON Metadata"
             json={accountDetails.posting_json_metadata}
             showCollapseButton={true}
+          />
+          <AccountAuthoritiesCard
+            accountName={accountNameFromRoute}
           />
           {!isWitnessDetailsError && (
             <AccountDetailsCard

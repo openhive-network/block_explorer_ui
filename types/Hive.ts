@@ -521,6 +521,20 @@ declare module Hive {
     request_id: number;
     from: string;
   }
+
+  interface AuthKeys {
+    key_auth: [string | undefined, string | undefined][];
+    account_auth: [string | undefined, string | undefined][];
+    weight_threshold: number;
+  }
+
+  interface AccountAuthoritiesData {
+    owner: AuthKeys;
+    active: AuthKeys;
+    posting: AuthKeys;
+    memo: string;
+    witness_signing: string;
+  }
 }
 
 export default Hive;
