@@ -4,6 +4,7 @@ import { ArrowDown, ArrowUp } from "lucide-react";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table";
 import { cn } from "@/lib/utils";
+import CopyToKeyboard from "../CopyToKeyboard";
 
 type AccountDetailsCardProps = {
   header: string;
@@ -19,6 +20,7 @@ const EXCLUDE_KEYS = [
 
 const LINK_KEYS = ["recovery_account", "reset_account"];
 const URL_KEYS = ["url"];
+const COPY_KEYS = ["signing_key"]
 
 const buildTableBody = (
   keys: string[],
@@ -64,6 +66,13 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
           <Link href={`/@${userDetails[key]}`}>{userDetails[key]}</Link>{" "}
         </div>
       );
+    }
+    if (COPY_KEYS.includes(key)) {
+      let shortenedKey: string = "";
+      shortenedKey = `${userDetails[key].slice(0, 8)}...${userDetails[key].slice(userDetails[key].length - 5)}`
+      return (
+        <CopyToKeyboard value={userDetails[key]} displayValue={shortenedKey} />
+      )
     }
     if (URL_KEYS.includes(key)) {
       return (
