@@ -67,13 +67,13 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
             <span data-testid="hash" className="text-base">
               Hash:{" "}
             </span>
-            {blockDetails?.hash}
+            {blockDetails?.hash.slice(2)}
           </p>
           <p>
             <span data-testid="prev-hash" className="text-base">
               Prev hash:{" "}
             </span>
-            {blockDetails?.prev}
+            {blockDetails?.prev.slice(2)}
           </p>
         </div>
         <BlockPageOperationCount

@@ -62,6 +62,7 @@ const AddressSwitchedDialog: React.FC<AddressSwitcherDialogProps> = ({addressTyp
           <DialogTitle data-testid="api-address-header-title">{addressType === "api" ? "Block Explorer backend API address" : "Hive node address"}</DialogTitle>
         </DialogHeader>
         <Input
+          autoFocus={true}
           className="focus:bg-white dark:focus:bg-gray-700"
           type="text"
           data-testid="api-address-input"

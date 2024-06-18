@@ -8,6 +8,7 @@ import { useState } from "react";
 import Hive from "@/types/Hive";
 import { getOperationButtonTitle } from "@/utils/UI";
 import Explorer from "@/types/Explorer";
+import { trimAccountName } from "@/utils/StringUtils";
 
 interface AccountSearchProps {
   startAccountOperationsSearch: (
@@ -42,7 +43,7 @@ const AccountSearch: React.FC<AccountSearchProps> = ({
 
       const accountOperationsSearchProps: Explorer.AccountSearchOperationsProps =
         {
-          accountName,
+          accountName: trimAccountName(accountName),
           fromBlock: payloadFromBlock,
           toBlock: payloadToBlock,
           startDate: payloadStartDate,

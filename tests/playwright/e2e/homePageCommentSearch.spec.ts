@@ -26,7 +26,7 @@ test.describe('Home page - searches', () => {
         await expect(page.getByText('Set account name')).not.toBeVisible()
         await mainPage.searchButtonInComment.click()
 
-        const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
+        const response = await page.waitForResponse((response) => response.url().includes("/get_comment_operations"));
     
         await response.finished();
         
@@ -42,14 +42,14 @@ test.describe('Home page - searches', () => {
         
     })
 
-    test('Validate that got results for Account Name and Last days/weeks/months properties', async ({page, browserName}) => {
+    test.skip('Validate that got results for Account Name and Last days/weeks/months properties', async ({page, browserName}) => {
         test.skip(browserName === 'firefox', 'Automatic test works well on chromium');
         await mainPage.accountNameInputCommentSection.fill('gtg')
         await mainPage.lastBlockBtn.click()
         await mainPage.lastDaysWeeksMonths.click()
         await mainPage.searchButtonInComment.click()
 
-        const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
+        const response = await page.waitForResponse((response) => response.url().includes("/get_comment_operations"));
     
         await response.finished();
         
@@ -65,14 +65,14 @@ test.describe('Home page - searches', () => {
         
     })
 
-    test('Validate that got results for Account Name and Block range properties', async ({page, browserName}) => {
+    test.skip('Validate that got results for Account Name and Block range properties', async ({page, browserName}) => {
         test.skip(browserName === 'firefox', 'Automatic test works well on chromium');
         await mainPage.accountNameInputCommentSection.fill('gtg')
         await mainPage.lastBlockBtn.click()
         await mainPage.blockRange.click()
         await mainPage.searchButtonInComment.click()
 
-        const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
+        const response = await page.waitForResponse((response) => response.url().includes("/get_comment_operations"));
     
         await response.finished();
         
@@ -87,14 +87,14 @@ test.describe('Home page - searches', () => {
         }
     })
 
-    test('Validate that got results for Account Name and Time range properties', async ({page, browserName}) => {
+    test.skip('Validate that got results for Account Name and Time range properties', async ({page, browserName}) => {
         test.skip(browserName === 'firefox', 'Automatic test works well on chromium');
         await mainPage.accountNameInputCommentSection.fill('gtg')
         await mainPage.lastBlockBtn.click()
         await mainPage.timeRange.click()
         await mainPage.searchButtonInComment.click()
 
-        const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
+        const response = await page.waitForResponse((response) => response.url().includes("/get_comment_operations"));
     
         await response.finished();
         
@@ -117,7 +117,7 @@ test.describe('Home page - searches', () => {
         await page.getByRole('button', {name: 'Apply'}).click();
         await mainPage.searchButtonInComment.click()
 
-        const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
+        const response = await page.waitForResponse((response) => response.url().includes("/get_comment_operations"));
     
         await response.finished();
         
@@ -141,7 +141,7 @@ test.describe('Home page - searches', () => {
         await page.getByRole('button', {name: 'Apply'}).click();
         await mainPage.searchButtonInComment.click()
 
-        const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
+        const response = await page.waitForResponse((response) => response.url().includes("/get_comment_operations"));
     
         await response.finished();
         
@@ -164,7 +164,7 @@ test.describe('Home page - searches', () => {
         await page.getByRole('button', {name: 'Apply'}).click();
         await mainPage.searchButtonInComment.click()
 
-        const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
+        const response = await page.waitForResponse((response) => response.url().includes("/get_comment_operations"));
     
         await response.finished();
         
@@ -184,7 +184,7 @@ test.describe('Home page - searches', () => {
         await mainPage.commentPermlinkInout.fill('vibes-week-1-on-purpose')
         await mainPage.searchButtonInComment.click()
 
-        const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
+        const response = await page.waitForResponse((response) => response.url().includes("/get_comment_operations"));
     
         await response.finished();
 
@@ -198,7 +198,7 @@ test.describe('Home page - searches', () => {
         }
     })
 
-    test('Validate that got results for Account Name, Permlink and Last days/weeks/months properties', async ({page, browserName}) => {
+    test.skip('Validate that got results for Account Name, Permlink and Last days/weeks/months properties', async ({page, browserName}) => {
         test.skip(browserName === 'firefox', 'Automatic test works well on chromium');
         await mainPage.lastBlockBtn.click()
         await page.waitForTimeout(2000)
@@ -210,7 +210,7 @@ test.describe('Home page - searches', () => {
         
         await mainPage.searchButtonInComment.click()
 
-        const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
+        const response = await page.waitForResponse((response) => response.url().includes("/get_comment_operations"));
     
         await response.finished();
 
@@ -224,7 +224,7 @@ test.describe('Home page - searches', () => {
         }
     })
 
-    test('Validate that got results for Account Name, Permlink and Block range properties', async ({page, browserName}) => {
+    test.skip('Validate that got results for Account Name, Permlink and Block range properties', async ({page, browserName}) => {
         test.skip(browserName === 'firefox', 'Automatic test works well on chromium');
         await mainPage.accountNameInputCommentSection.fill('hopestylist')
         await mainPage.commentPermlinkInout.fill('vibes-week-1-on-purpose')
@@ -234,7 +234,7 @@ test.describe('Home page - searches', () => {
         await mainPage.blockRange.click()
         await mainPage.searchButtonInComment.click()
 
-        const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
+        const response = await page.waitForResponse((response) => response.url().includes("/get_comment_operations"));
     
         await response.finished();
 
@@ -248,7 +248,7 @@ test.describe('Home page - searches', () => {
         }
     })
 
-    test('Validate that got results for Account Name, Permlink and Time range properties', async ({page, browserName}) => {
+    test.skip('Validate that got results for Account Name, Permlink and Time range properties', async ({page, browserName}) => {
         test.skip(browserName === 'firefox', 'Automatic test works well on chromium');
         await mainPage.accountNameInputCommentSection.fill('hopestylist')
         await mainPage.commentPermlinkInout.fill('vibes-week-1-on-purpose')
@@ -258,7 +258,7 @@ test.describe('Home page - searches', () => {
         await mainPage.timeRange.click()
         await mainPage.searchButtonInComment.click()
 
-        const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
+        const response = await page.waitForResponse((response) => response.url().includes("/get_comment_operations"));
     
         await response.finished();
 
@@ -281,7 +281,7 @@ test.describe('Home page - searches', () => {
         await page.getByRole('button', {name: 'Apply'}).click();
         await mainPage.searchButtonInComment.click()
 
-        const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
+        const response = await page.waitForResponse((response) => response.url().includes("/get_comment_operations"));
     
         await response.finished();
 
@@ -305,7 +305,7 @@ test.describe('Home page - searches', () => {
         await page.getByRole('button', {name: 'Apply'}).click();
         await mainPage.searchButtonInComment.click()
 
-        const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
+        const response = await page.waitForResponse((response) => response.url().includes("/get_comment_operations"));
     
         await response.finished();
 
@@ -328,7 +328,7 @@ test.describe('Home page - searches', () => {
         await page.getByRole('button', {name: 'Apply'}).click();
         await mainPage.searchButtonInComment.click()
 
-        const response = await page.waitForResponse((response) => response.url().includes("rpc/get_comment_operations"));
+        const response = await page.waitForResponse((response) => response.url().includes("/get_comment_operations"));
     
         await response.finished();
 

@@ -71,7 +71,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
 
   useEffect(() => {
     const keyDownEvent = (event: KeyboardEvent) => {
-      if (event.code === "Enter") {
+      if (event.code === "Enter" && Number(block) !== blockNumber) {
         handleBlockChange(block);
       }
     };
@@ -91,7 +91,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   const handleBlockChange = (blockNumber: string) => {
     if (Number(blockNumber) > 0) {
       if (blockNumber === block) {
-        setBlockDate(timeStamp);
+        if (timeStamp) setBlockDate(timeStamp);
       }
       goToBlock(blockNumber);
       setBlock(blockNumber);
@@ -99,7 +99,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   };
 
   const handleGoToBlockByTime = async (date: Date | undefined) => {
-    if (date?.getTime() !== timeStamp?.getTime()) {
+    if (date && date?.getTime() !== timeStamp?.getTime()) {
       const blockByTime = await checkBlockByTime(moment(date).utc().toDate());
       if (blockByTime) {
         handleBlockChange(blockByTime.toString());
@@ -120,7 +120,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
         <CardTitle>Search</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="w-full flex justify-between items-center px-2 md:px-8 flex-wrap gap-y-4">
+        <div className="w-full flex justify-around items-center flex-wrap gap-y-4">
           <div className="flex justify-center items-center flex-wrap">
             <p>Block Number : </p>
             <button
@@ -157,17 +157,22 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
               />
             </div>
           </div>
-          <OperationTypesDialog
-            operationTypes={operationTypes}
-            setSelectedOperations={handleSetFilters}
-            selectedOperations={convertBooleanArrayToIds(selectedOperationIds)}
-            buttonClassName="bg-gray-500"
-            triggerTitle={getOperationButtonTitle(
-              convertBooleanArrayToIds(selectedOperationIds),
-              operationTypes
-            )}
-          />
+          <div className="flex">
+            <OperationTypesDialog
+              operationTypes={operationTypes}
+              setSelectedOperations={handleSetFilters}
+              selectedOperations={convertBooleanArrayToIds(
+                selectedOperationIds
+              )}
+              buttonClassName="bg-gray-500"
+              triggerTitle={getOperationButtonTitle(
+                convertBooleanArrayToIds(selectedOperationIds),
+                operationTypes
+              )}
+            />
+          </div>
         </div>
+
         {(!!accountName || !!keyContent || !!setOfKeys) && (
           <div className="w-full flex justify-between items-center px-2 md:px-8 flex-wrap gap-y-4 mt-4">
             <div className="flex gap-x-6">

@@ -67,7 +67,7 @@ test.describe('Home page - searches', () => {
         await datePickerTriggerFromDate.click();
         await page.locator('[name="years"]').selectOption('2024')
 
-        const dayText = await page.locator('[data-testid="datepicker-calender"] button:not([class*="text-muted-foreground"])').nth(10).innerText()
+        const dayText = await page.locator('[data-testid="datepicker-calender"] button:not([class*="text-muted-foreground"])').nth(18).innerText()
         await datePickerDayNotMuted.click();
         await page.waitForTimeout(2000);
 

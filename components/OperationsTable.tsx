@@ -11,13 +11,13 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import Explorer from "@/types/Explorer";
-import { isJson } from "@/utils/StringUtils";
 import { Button } from "./ui/button";
 import { ChevronDown, ChevronUp, Copy } from "lucide-react";
 import JSONView from "./JSONView";
 import { getOperationTypeForDisplay } from "@/utils/UI";
 import CopyJSON from "./CopyJSON";
 import { categorizedTypes } from "./OperationTypesDialog";
+import { useUserSettingsContext } from "./contexts/UserSettingsContext";
 
 interface OperationsTableProps {
   operations: Explorer.OperationForTable[];
@@ -56,7 +56,7 @@ const getOneLineDescription = (operation: Explorer.OperationForTable) => {
       return (
         <Link
           className="text-explorer-turquoise"
-          href={`/longOperation/${operation?.operatiopnId}`}
+          href={`/longOperation/${operation?.operationId}`}
         >
           {value}
         </Link>
@@ -83,13 +83,24 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
   unformattedOperations,
   className,
 }) => {
+  const {
+    settings: { rawJsonView },
+  } = useUserSettingsContext();
+
   const [expanded, setExpanded] = useState<number[]>([]);
 
   const getUnformattedValue = (operation: Explorer.OperationForTable) => {
     const unformattedOperation = unformattedOperations?.find(
-      (op) => op.operatiopnId === operation.operatiopnId
+      (op) => op.operationId === operation.operationId
     )?.operation;
     return unformattedOperation ? JSON.stringify(unformattedOperation) : {};
+  };
+
+  const renderJsonViewOperation = (operation: Explorer.OperationForTable) => {
+    const unformattedOperation = unformattedOperations?.find(
+      (op) => op.operationId === operation.operationId
+    )?.operation;
+    return unformattedOperation ? JSON.stringify(unformattedOperation) : null;
   };
 
   return (
@@ -127,13 +138,13 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                         operation.operation.type !== "custom_json_operation",
                     })}
                   >
-                    {expanded.includes(operation.operatiopnId || 0) ? (
+                    {expanded.includes(operation.operationId || 0) ? (
                       <Button
                         className="p-0 h-fit"
                         onClick={() =>
                           setExpanded((prevExpanded) => [
                             ...prevExpanded.filter(
-                              (id) => id !== operation.operatiopnId
+                              (id) => id !== operation.operationId
                             ),
                           ])
                         }
@@ -151,7 +162,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                         onClick={() =>
                           setExpanded((prevExpanded) => [
                             ...prevExpanded,
-                            operation.operatiopnId || 0,
+                            operation.operationId || 0,
                           ])
                         }
                       >
@@ -193,11 +204,15 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                   className="md:max-w-0 w-full"
                   data-testid="operation-content"
                 >
-                  <div>{getOneLineDescription(operation)}</div>
+                  {rawJsonView ? (
+                    <pre>{renderJsonViewOperation(operation)}</pre>
+                  ) : (
+                    <div>{getOneLineDescription(operation)}</div>
+                  )}
                 </TableCell>
               </TableRow>
               {operation.operation.type === "custom_json_operation" &&
-                expanded.includes(operation.operatiopnId || 0) && (
+                expanded.includes(operation.operationId || 0) && (
                   <TableRow>
                     <TableCell
                       data-testid="details"

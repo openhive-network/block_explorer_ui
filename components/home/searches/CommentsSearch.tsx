@@ -9,7 +9,7 @@ import Hive from "@/types/Hive";
 import { getOperationButtonTitle } from "@/utils/UI";
 import Explorer from "@/types/Explorer";
 import { config } from "@/Config";
-import { formatAccountName } from "@/utils/StringUtils";
+import { trimAccountName } from "@/utils/StringUtils";
 import {
   convertBooleanArrayToIds,
   convertIdsToBooleanArray,
@@ -61,7 +61,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
       } = await getRangesValues();
 
       const commentSearchProps: Explorer.CommentSearchParams = {
-        accountName,
+        accountName: trimAccountName(accountName),
         permlink: permlink !== "" ? permlink : undefined,
         fromBlock: payloadFromBlock,
         toBlock: payloadToBlock,
@@ -101,7 +101,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
           data-testid="account-name"
           className="w-1/2 bg-explorer-dark-gray border-0 border-b-2"
           type="text"
-          value={formatAccountName(accountName)}
+          value={accountName}
           onChange={(e) => setAccountName(e.target.value)}
           placeholder="Author *"
           required

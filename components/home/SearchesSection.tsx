@@ -8,7 +8,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
-import DetailedOperationCard from "../DetailedOperationCard";
 import { config } from "@/Config";
 import useCommentSearch from "@/api/common/useCommentSearch";
 import useBlockSearch from "@/api/homePage/useBlockSearch";
@@ -69,8 +68,6 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
   const accountOperations = useAccountOperations(accountOperationsSearchProps);
 
   const searchRanges = useSearchRanges("lastBlocks");
-
-  const { settings } = useUserSettingsContext();
 
   const formattedAccountOperations = useOperationsFormatter(
     accountOperations.accountOperations
@@ -427,27 +424,14 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
                 />
               </div>
 
-              {settings.rawJsonView ? (
-                commentSearch.commentSearchData?.operations_result.map(
-                  (foundOperation) => (
-                    <DetailedOperationCard
-                      className="my-6"
-                      operation={foundOperation.operation}
-                      key={foundOperation.operation_id}
-                      blockNumber={foundOperation.block_num}
-                    />
-                  )
-                )
-              ) : (
-                <OperationsTable
-                  operations={convertCommentsOperationResultToTableOperations(
-                    formattedCommentOperations?.operations_result
-                  )}
-                  unformattedOperations={convertCommentsOperationResultToTableOperations(
-                    commentSearch.commentSearchData.operations_result
-                  )}
-                />
-              )}
+              <OperationsTable
+                operations={convertCommentsOperationResultToTableOperations(
+                  formattedCommentOperations?.operations_result
+                )}
+                unformattedOperations={convertCommentsOperationResultToTableOperations(
+                  commentSearch.commentSearchData.operations_result
+                )}
+              />
             </div>
           ) : (
             <div className="flex justify-center w-full text-black dark:text-white">
@@ -489,27 +473,14 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
                 />
               </div>
 
-              {settings.rawJsonView ? (
-                accountOperations.accountOperations?.operations_result.map(
-                  (foundOperation) => (
-                    <DetailedOperationCard
-                      className="my-6"
-                      operation={foundOperation.operation}
-                      key={foundOperation.operation_id}
-                      blockNumber={foundOperation.block_num}
-                    />
-                  )
-                )
-              ) : (
-                <OperationsTable
-                  operations={convertOperationResultsToTableOperations(
-                    formattedAccountOperations?.operations_result
-                  )}
-                  unformattedOperations={convertOperationResultsToTableOperations(
-                    accountOperations.accountOperations.operations_result
-                  )}
-                />
-              )}
+              <OperationsTable
+                operations={convertOperationResultsToTableOperations(
+                  formattedAccountOperations?.operations_result
+                )}
+                unformattedOperations={convertOperationResultsToTableOperations(
+                  accountOperations.accountOperations.operations_result
+                )}
+              />
             </div>
           ) : (
             <div className="flex justify-center w-full text-black dark:text-white">
