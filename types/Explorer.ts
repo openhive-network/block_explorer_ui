@@ -1,4 +1,4 @@
-import { GetDynamicGlobalPropertiesResponse } from "@hive/wax";
+import { GetDynamicGlobalPropertiesResponse } from "@hiveio/wax";
 import Hive from "./Hive";
 
 declare module Explorer {

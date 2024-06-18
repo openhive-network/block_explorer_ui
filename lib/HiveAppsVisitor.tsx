@@ -8,7 +8,7 @@ import {
   FormattedRcOperation,
   FormattedReblogOperation,
   HiveAppsOperationVisitor,
-} from "@hive/wax";
+} from "@hiveio/wax";
 import { JSX } from "react";
 
 class HiveAppsVisitor extends HiveAppsOperationVisitor<React.JSX.Element> {

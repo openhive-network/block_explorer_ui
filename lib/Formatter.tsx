@@ -86,7 +86,7 @@ import {
   withdraw_vesting,
   witness_set_properties,
   witness_update,
-} from "@hive/wax";
+} from "@hiveio/wax";
 import moment from "moment";
 import { formatPercent } from "./utils";
 import Link from "next/link";
