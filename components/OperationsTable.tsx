@@ -116,7 +116,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
           <TableHead></TableHead>
           <TableHead className="pl-2">Block</TableHead>
           <TableHead>Transaction</TableHead>
-          <TableHead>Operation</TableHead>
+          <TableHead className="text-center">Operation</TableHead>
           <TableHead className="w-full">Content</TableHead>
         </TableRow>
       </TableHeader>
@@ -129,7 +129,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
               <TableRow
                 data-testid="detailed-operation-card"
                 key={index}
-                className={`${operationBgColor} border-b border-gray-700`}
+                className="border-b border-gray-700"
               >
                 <TableCell>
                   <div
@@ -198,7 +198,11 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                   </Link>
                 </TableCell>
                 <TableCell data-testid="operation-type">
-                  {getOperationTypeForDisplay(operation.operation.type)}
+                  <div
+                    className={`${operationBgColor} flex justify-center p-1`}
+                  >
+                    {getOperationTypeForDisplay(operation.operation.type)}
+                  </div>
                 </TableCell>
                 <TableCell
                   className="md:max-w-0 w-full"
