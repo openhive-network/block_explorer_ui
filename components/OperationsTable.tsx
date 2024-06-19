@@ -12,7 +12,7 @@ import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import Explorer from "@/types/Explorer";
 import { Button } from "./ui/button";
-import { ChevronDown, ChevronUp, Copy } from "lucide-react";
+import { ChevronDown, ChevronUp, Copy, Circle } from "lucide-react";
 import JSONView from "./JSONView";
 import { getOperationTypeForDisplay } from "@/utils/UI";
 import CopyJSON from "./CopyJSON";
@@ -116,7 +116,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
           <TableHead></TableHead>
           <TableHead className="pl-2">Block</TableHead>
           <TableHead>Transaction</TableHead>
-          <TableHead className="text-center">Operation</TableHead>
+          <TableHead>Operation</TableHead>
           <TableHead className="w-full">Content</TableHead>
         </TableRow>
       </TableHeader>
@@ -199,9 +199,11 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                 </TableCell>
                 <TableCell data-testid="operation-type">
                   <div
-                    className={`${operationBgColor} flex justify-center p-1`}
+                    className={`flex justify-stretch p-1 rounded `}
                   >
-                    {getOperationTypeForDisplay(operation.operation.type)}
+                    <span className={`rounded w-4 mr-2 ${operationBgColor}`}></span>
+                    <span>{getOperationTypeForDisplay(operation.operation.type)}</span>
+                    
                   </div>
                 </TableCell>
                 <TableCell
