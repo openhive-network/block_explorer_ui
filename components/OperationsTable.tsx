@@ -16,7 +16,7 @@ import { ChevronDown, ChevronUp, Copy } from "lucide-react";
 import JSONView from "./JSONView";
 import { getOperationTypeForDisplay } from "@/utils/UI";
 import CopyJSON from "./CopyJSON";
-import { categorizedTypes } from "./OperationTypesDialog";
+import categorizedOperationTypes from "@/utils/CategorizedOperationTypes";
 import { useUserSettingsContext } from "./contexts/UserSettingsContext";
 
 interface OperationsTableProps {
@@ -26,21 +26,21 @@ interface OperationsTableProps {
 }
 
 const colorByOperationCategory: any = {
-  Posting: "bg-red-500",
-  Curation: "bg-red-950",
-  Transfer: "bg-orange-500",
-  Market: "bg-orange-800",
-  Vesting: "bg-amber-500",
-  "Account management": "bg-amber-800",
-  "Witness management": "bg-yellow-800",
-  "Witness voting": "bg-lime-600",
-  Proposals: "bg-green-600",
-  Custom: "bg-teal-700",
-  Other: "bg-sky-800",
+  Posting: "bg-explorer-posting-operations",
+  Curation: "bg-explorer-curation-operations",
+  Transfer: "bg-explorer-transfer-operations",
+  Market: "bg-explorer-market-operations",
+  Vesting: "bg-explorer-vesting-operations",
+  "Account management": "bg-explorer-account-management-operations",
+  "Witness management": "bg-explorer-witness-management-operations",
+  "Witness voting": "bg-explorer-witness-voting-operations",
+  Proposals: "bg-explorer-proposal-operations",
+  Custom: "bg-explorer-custom-operations",
+  Other: "bg-explorer-other-operations",
 };
 
 const getOperationColor = (operationType: string) => {
-  const operationTypeCategories: any = categorizedTypes.find((category) =>
+  const operationTypeCategories: any = categorizedOperationTypes.find((category) =>
     category.types.includes(operationType)
   );
 

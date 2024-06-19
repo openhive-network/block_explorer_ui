@@ -32,6 +32,20 @@ module.exports = {
         "switch-on": "rgb(100, 100, 100)",
         "switch-button": "rgb(20, 20, 20)",
         "blocked": "rgba(255, 255, 255, 0.7)",
+
+        "explorer-posting-operations": "#d09000",
+        "explorer-curation-operations": "#eb4600",
+        "explorer-transfer-operations": "#8338ec",
+        "explorer-market-operations": "#9a3412",
+        "explorer-vesting-operations": "#780028",
+        "explorer-account-management-operations": "#b010bf",
+        "explorer-witness-management-operations": "#008080",
+        "explorer-witness-voting-operations": "#008050",
+        "explorer-proposal-operations": "#78c814",
+        "explorer-custom-operations": "#d00060",
+        "explorer-other-operations": "#3a86ff",
+        
+
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
