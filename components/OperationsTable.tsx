@@ -75,7 +75,9 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
     const unformattedOperation = unformattedOperations?.find(
       (op) => op.operationId === operation.operationId
     )?.operation;
-    return unformattedOperation ? JSON.stringify(unformattedOperation) : null;
+    return unformattedOperation
+      ? JSON.stringify(unformattedOperation, null, 2)
+      : null;
   };
 
   return (
@@ -179,9 +181,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                 data-testid="operation-content"
               >
                 {rawJsonView ? (
-                  <pre>
-                    {renderJsonViewOperation(operation)}
-                  </pre>
+                  <pre>{renderJsonViewOperation(operation)}</pre>
                 ) : (
                   <div>{getOneLineDescription(operation)}</div>
                 )}
