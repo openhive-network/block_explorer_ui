@@ -149,16 +149,3 @@ export const categorizedOperationTypes = [
     },
   ];
 
-export const colorByOperationCategory: Record<string, string> = {
-  Posting: "bg-explorer-posting-operations",
-  Curation: "bg-explorer-curation-operations",
-  Transfer: "bg-explorer-transfer-operations",
-  Market: "bg-explorer-market-operations",
-  Vesting: "bg-explorer-vesting-operations",
-  "Account management": "bg-explorer-account-management-operations",
-  "Witness management": "bg-explorer-witness-management-operations",
-  "Witness voting": "bg-explorer-witness-voting-operations",
-  Proposals: "bg-explorer-proposal-operations",
-  Custom: "bg-explorer-custom-operations",
-  Other: "bg-explorer-other-operations",
-};

@@ -16,7 +16,8 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import JSONView from "./JSONView";
 import { getOperationTypeForDisplay } from "@/utils/UI";
 import CopyJSON from "./CopyJSON";
-import {categorizedOperationTypes, colorByOperationCategory} from "@/utils/CategorizedOperationTypes";
+import {categorizedOperationTypes} from "@/utils/CategorizedOperationTypes";
+import { colorByOperationCategory } from "./OperationTypesDialog";
 import { useUserSettingsContext } from "./contexts/UserSettingsContext";
 
 interface OperationsTableProps {
@@ -25,12 +26,14 @@ interface OperationsTableProps {
   className?: string;
 }
 
+const localColors = colorByOperationCategory;
+
 const getOperationColor = (operationType: string) => {
   const operationTypeCategories: any = categorizedOperationTypes.find((category) =>
     category.types.includes(operationType)
   );
 
-  const color = colorByOperationCategory[operationTypeCategories.name];
+  const color = localColors[operationTypeCategories.name];
 
   return color;
 };
