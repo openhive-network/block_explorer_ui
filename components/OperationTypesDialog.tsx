@@ -15,7 +15,7 @@ import { getOperationTypeForDisplay } from "@/utils/UI";
 import { useUserSettingsContext } from "./contexts/UserSettingsContext";
 import { cn } from "@/lib/utils";
 import Chip from "./Chip";
-import categorizedOperationTypes from "@/utils/CategorizedOperationTypes";
+import {categorizedOperationTypes, colorByOperationCategory} from "@/utils/CategorizedOperationTypes";
 
 type OperationTypesDialogProps = {
   operationTypes: Hive.OperationPattern[] | undefined;
@@ -191,7 +191,10 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
         key={sectionName}
       >
         <div className="flex justify-between">
-          <div className="flex items-center justify-center">{sectionName}</div>
+          <div className="flex items-center justify-center">
+            <span className={`rounded w-4 h-4 mr-2 ${colorByOperationCategory[sectionName]}`}></span>
+            <span>{sectionName}</span>
+          </div>
           <div>
             <Button onClick={() => selectAllOfCategory(operations)}>
               Select
