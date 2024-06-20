@@ -12,10 +12,11 @@ import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import Explorer from "@/types/Explorer";
 import { Button } from "./ui/button";
-import { ChevronDown, ChevronUp, Copy } from "lucide-react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import JSONView from "./JSONView";
 import { getOperationTypeForDisplay } from "@/utils/UI";
 import CopyJSON from "./CopyJSON";
+import {categorizedOperationTypes, colorByOperationCategory} from "@/utils/CategorizedOperationTypes";
 import { useUserSettingsContext } from "./contexts/UserSettingsContext";
 
 interface OperationsTableProps {
@@ -23,6 +24,16 @@ interface OperationsTableProps {
   unformattedOperations?: Explorer.OperationForTable[];
   className?: string;
 }
+
+const getOperationColor = (operationType: string) => {
+  const operationTypeCategories: any = categorizedOperationTypes.find((category) =>
+    category.types.includes(operationType)
+  );
+
+  const color = colorByOperationCategory[operationTypeCategories.name];
+
+  return color;
+};
 
 const getOneLineDescription = (operation: Explorer.OperationForTable) => {
   const { value } = operation?.operation;
@@ -96,116 +107,122 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
         </TableRow>
       </TableHeader>
       <TableBody className="max-w-[100%]">
-        {operations.map((operation, index) => (
-          <React.Fragment key={index}>
-            <TableRow
-              data-testid="detailed-operation-card"
-              key={index}
-              className={cn({
-                "border-t border-gray-700": !!index,
-              })}
-            >
-              <TableCell>
-                <div
-                  className={cn({
-                    invisible:
-                      operation.operation.type !== "custom_json_operation",
-                  })}
-                >
-                  {expanded.includes(operation.operationId || 0) ? (
-                    <Button
-                      className="p-0 h-fit"
-                      onClick={() =>
-                        setExpanded((prevExpanded) => [
-                          ...prevExpanded.filter(
-                            (id) => id !== operation.operationId
-                          ),
-                        ])
-                      }
-                    >
-                      <ChevronUp
-                        width={20}
-                        height={20}
-                        className="mt-1"
-                      />
-                    </Button>
-                  ) : (
-                    <Button
-                      data-testid="expand-details"
-                      className="p-0 h-fit"
-                      onClick={() =>
-                        setExpanded((prevExpanded) => [
-                          ...prevExpanded,
-                          operation.operationId || 0,
-                        ])
-                      }
-                    >
-                      <ChevronDown
-                        width={20}
-                        height={20}
-                        className="mt-1"
-                      />
-                    </Button>
-                  )}
-                </div>
-              </TableCell>
-              <TableCell>
-                <CopyJSON value={getUnformattedValue(operation)} />
-              </TableCell>
-              <TableCell
-                className="pl-2"
-                data-testid="block-number-operation-table"
+        {operations.map((operation, index) => {
+          const operationBgColor = getOperationColor(operation.operation.type);
+
+          return (
+            <React.Fragment key={index}>
+              <TableRow
+                data-testid="detailed-operation-card"
+                key={index}
+                className="border-b border-gray-700"
               >
-                <Link
-                  className="text-explorer-turquoise"
-                  href={`/block/${operation.blockNumber}`}
-                >
-                  {operation.blockNumber?.toLocaleString()}
-                </Link>
-              </TableCell>
-              <TableCell data-testid="transaction-number">
-                <Link
-                  className="text-explorer-turquoise"
-                  href={`/transaction/${operation.trxId}`}
-                >
-                  {operation.trxId?.slice(0, 10)}
-                </Link>
-              </TableCell>
-              <TableCell data-testid="operation-type">
-                {getOperationTypeForDisplay(operation.operation.type)}
-              </TableCell>
-              <TableCell
-                className="md:max-w-0 w-full"
-                data-testid="operation-content"
-              >
-                {rawJsonView ? (
-                  <pre>
-                    {renderJsonViewOperation(operation)}
-                  </pre>
-                ) : (
-                  <div>{getOneLineDescription(operation)}</div>
-                )}
-              </TableCell>
-            </TableRow>
-            {operation.operation.type === "custom_json_operation" &&
-              expanded.includes(operation.operationId || 0) && (
-                <TableRow>
-                  <TableCell
-                    data-testid="details"
-                    colSpan={6}
-                    className="py-2"
+                <TableCell>
+                  <div
+                    className={cn({
+                      invisible:
+                        operation.operation.type !== "custom_json_operation",
+                    })}
                   >
-                    <JSONView
-                      json={JSON.parse(
-                        getOperationValues(operation.operation).json || ""
-                      )}
-                      skipCopy
-                    />
-                  </TableCell>
-                </TableRow>
-              )}
-          </React.Fragment>
-        ))}
+                    {expanded.includes(operation.operationId || 0) ? (
+                      <Button
+                        className="p-0 h-fit"
+                        onClick={() =>
+                          setExpanded((prevExpanded) => [
+                            ...prevExpanded.filter(
+                              (id) => id !== operation.operationId
+                            ),
+                          ])
+                        }
+                      >
+                        <ChevronUp
+                          width={20}
+                          height={20}
+                          className="mt-1"
+                        />
+                      </Button>
+                    ) : (
+                      <Button
+                        data-testid="expand-details"
+                        className="p-0 h-fit"
+                        onClick={() =>
+                          setExpanded((prevExpanded) => [
+                            ...prevExpanded,
+                            operation.operationId || 0,
+                          ])
+                        }
+                      >
+                        <ChevronDown
+                          width={20}
+                          height={20}
+                          className="mt-1"
+                        />
+                      </Button>
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <CopyJSON value={getUnformattedValue(operation)} />
+                </TableCell>
+                <TableCell
+                  className="pl-2"
+                  data-testid="block-number-operation-table"
+                >
+                  <Link
+                    className="text-explorer-turquoise"
+                    href={`/block/${operation.blockNumber}`}
+                  >
+                    {operation.blockNumber?.toLocaleString()}
+                  </Link>
+                </TableCell>
+                <TableCell data-testid="transaction-number">
+                  <Link
+                    className="text-explorer-turquoise"
+                    href={`/transaction/${operation.trxId}`}
+                  >
+                    {operation.trxId?.slice(0, 10)}
+                  </Link>
+                </TableCell>
+                <TableCell data-testid="operation-type">
+                  <div
+                    className={`flex justify-stretch p-1 rounded `}
+                  >
+                    <span className={`rounded w-4 mr-2 ${operationBgColor}`}></span>
+                    <span>{getOperationTypeForDisplay(operation.operation.type)}</span>
+                    
+                  </div>
+                </TableCell>
+                <TableCell
+                  className="md:max-w-0 w-full"
+                  data-testid="operation-content"
+                >
+                  {rawJsonView ? (
+                    <pre>{renderJsonViewOperation(operation)}</pre>
+                  ) : (
+                    <div>{getOneLineDescription(operation)}</div>
+                  )}
+                </TableCell>
+              </TableRow>
+              {operation.operation.type === "custom_json_operation" &&
+                expanded.includes(operation.operationId || 0) && (
+                  <TableRow>
+                    <TableCell
+                      data-testid="details"
+                      colSpan={6}
+                      className="py-2"
+                    >
+                      <JSONView
+                        json={JSON.parse(
+                          getOperationValues(operation.operation).json || ""
+                        )}
+                        skipCopy
+                      />
+                    </TableCell>
+                  </TableRow>
+                )}
+            </React.Fragment>
+          );
+        })}
       </TableBody>
     </Table>
   );

@@ -71,9 +71,9 @@ test.describe('Account page - account details tests', () => {
         const originalDate = await responseBody.created;
         console.log(originalDate)
       
-        await expect(accountPage.creationDate).toBeVisible()
+        await expect(accountPage.creationDate.first()).toBeVisible()
 
-        const creationDate = await accountPage.creationDate.innerText()
+        const creationDate = await accountPage.creationDate.first().innerText()
         const expectedDatePart = originalDate.split('T')[0];
         const receivedDatePart = creationDate.split(' ')[0].replace(/\//g, '-');
 
@@ -130,7 +130,7 @@ test.describe('Account page - account details tests', () => {
         await mainPage.headBlockCardWitnessLink.click()
         await expect(accountPage.witnessVotesCard).toBeHidden()
         await page.getByText('Witness Votes', { exact: true }).click()
-        await accountPage.witnessVotesCard.scrollIntoViewIfNeeded()
-        await expect(accountPage.witnessVotesCard).toBeInViewport()
+        await accountPage.accountWitnessVotesDropdown.scrollIntoViewIfNeeded()
+        await expect(accountPage.accountWitnessVotesDropdown).toBeInViewport()
     })
 });
