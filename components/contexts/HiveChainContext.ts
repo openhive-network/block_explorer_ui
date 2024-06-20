@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import { IHiveChainInterface } from "@hive/wax";
+import { IHiveChainInterface } from "@hiveio/wax";
 
 
 export type HiveChainContextType = {
