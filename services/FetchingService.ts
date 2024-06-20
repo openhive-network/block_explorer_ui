@@ -1,7 +1,7 @@
 import Hive from "@/types/Hive";
 import { config } from "@/Config";
 import Explorer from "@/types/Explorer";
-import { GetDynamicGlobalPropertiesResponse, IHiveChainInterface, TWaxApiRequest, TWaxExtended } from "@hive/wax";
+import { GetDynamicGlobalPropertiesResponse, IHiveChainInterface, TWaxApiRequest, TWaxExtended } from "@hiveio/wax";
 
 type ExplorerNodeApi = {
   database_api: {
@@ -334,6 +334,13 @@ class FetchingService {
       _block_num: blockNumber,
     };
     return await this.callApi("get_block_raw", requestBody);
+  }
+
+  async getAccountAuthorities(accountName: string): Promise<Hive.AccountAuthoritiesData> {
+    const requestBody = {
+      _account: accountName,
+    };
+    return await this.callApi("get_account_authority", requestBody);
   }
 
   async getManabars(

@@ -1,10 +1,39 @@
-import { useState } from "react";
+import { useState, Fragment } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader } from "../ui/card";
+import { Table, TableBody, TableRow, TableCell } from "../ui/table";
+import { cn } from "@/lib/utils";
 
 type AccountWitnessVotesCardProps = {
   voters: string[];
+};
+
+const buildTableBody = (voters: string[]) => {
+  return voters.map((voter: string, index: number) => {
+    return (
+      <Fragment key={index}>
+        <TableRow
+          className={cn(
+            {
+              "border-t border-gray-700": !!index,
+            },
+            "hover:bg-inherit"
+          )}
+        >
+          <TableCell>{index + 1}</TableCell>
+          <TableCell className="text-right">
+            <Link
+              className="text-blue-400"
+              href={`/@${voter}`}
+            >
+              {voter}
+            </Link>
+          </TableCell>
+        </TableRow>
+      </Fragment>
+    );
+  });
 };
 
 const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
@@ -19,7 +48,10 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
   };
 
   return (
-    <Card data-testid="witness-votes-dropdown" className="overflow-hidden">
+    <Card
+      data-testid="witness-votes-dropdown"
+      className="overflow-hidden"
+    >
       <CardHeader className="p-0">
         <div
           onClick={handlePropertiesVisibility}
@@ -31,20 +63,9 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
         </div>
       </CardHeader>
       <CardContent hidden={isPropertiesHidden}>
-        {voters?.map((voter: any, index: any) => {
-          return (
-            <div
-              key={index}
-              className="flex justify-between m-1 whitespace-pre-line"
-            >
-              <div className="border-b border-solid border-gray-700 flex justify-between py-1 mr-4">
-                {index + 1}
-              </div>
-
-              <Link href={`/@${voter}`}>{voter}</Link>
-            </div>
-          );
-        })}
+        <Table>
+          <TableBody>{buildTableBody(voters)}</TableBody>
+        </Table>
       </CardContent>
     </Card>
   );

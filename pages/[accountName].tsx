@@ -1,6 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import DetailedOperationCard from "@/components/DetailedOperationCard";
 import JSONCard from "@/components/JSONCard";
 import AccountMainCard from "@/components/account/AccountMainCard";
 import AccountWitnessVotesCard from "@/components/account/AccountWitnessVotesCard";
@@ -27,6 +26,7 @@ import {
   convertOperationResultsToTableOperations,
 } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import AccountAuthoritiesCard from "@/components/account/AccountAuthoritiesCard";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -87,8 +87,6 @@ export default function Account() {
   const [filters, setFilters] = useState<boolean[]>([]);
 
   const searchRanges = useSearchRanges();
-
-  const { settings } = useUserSettingsContext();
 
   const { accountDetails, notFound } = useAccountDetails(accountNameFromRoute);
   const { accountOperations, isAccountOperationsLoading } =
@@ -269,6 +267,9 @@ export default function Account() {
             json={accountDetails.posting_json_metadata}
             showCollapseButton={true}
           />
+          <AccountAuthoritiesCard
+            accountName={accountNameFromRoute}
+          />
           {!isWitnessDetailsError && (
             <AccountDetailsCard
               header="Witness Properties"
@@ -324,24 +325,6 @@ export default function Account() {
             <div className="flex justify-center text-center items-center">
               <Loader2 className="animate-spin mt-1 text-black h-12 w-12 ml-3 ..." />
             </div>
-          ) : settings.rawJsonView ? (
-            accountOperations?.operations_result?.map(
-              (operation: Hive.OperationResponse) => (
-                <div
-                  className="m-2"
-                  key={`${operation.operation_id}_${operation.timestamp}`}
-                >
-                  <DetailedOperationCard
-                    operation={operation.operation}
-                    operationId={operation.operation_id}
-                    blockNumber={operation.block_num}
-                    transactionId={operation.trx_id}
-                    key={operation.timestamp}
-                    isShortened={operation.is_modified}
-                  />
-                </div>
-              )
-            )
           ) : (
             <OperationsTable
               operations={convertOperationResultsToTableOperations(

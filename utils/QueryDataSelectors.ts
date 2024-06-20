@@ -1,7 +1,7 @@
 import Explorer from "@/types/Explorer";
 import Hive from "@/types/Hive";
 import { formatPercent } from "@/lib/utils";
-import { GetDynamicGlobalPropertiesResponse, IHiveChainInterface } from "@hive/wax";
+import { GetDynamicGlobalPropertiesResponse, IHiveChainInterface } from "@hiveio/wax";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 
 /**

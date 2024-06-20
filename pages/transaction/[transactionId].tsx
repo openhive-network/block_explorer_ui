@@ -66,14 +66,14 @@ export default function Transaction() {
                   data-testid="transaction-header-hash-trx"
                   className="w-full text-center"
                 >
-                  Transaction{" "}
-                  <span className="text-explorer-turquoise">
+                  Transaction:{" "}
+                  <span>
                     {trxData?.transaction_id}
                   </span>
                 </div>
                 <div className="w-full flex justify-evenly">
                   <div>
-                    Block
+                    Block:
                     <Link
                       href={`/block/${trxData?.block_num}`}
                       className="text-explorer-turquoise"
@@ -83,8 +83,8 @@ export default function Transaction() {
                     </Link>
                   </div>
                   <div data-testid="transaction-header-date">
-                    Date
-                    <span className="text-explorer-turquoise">
+                    Date:
+                    <span>
                       {" " + formatAndDelocalizeTime(trxData.timestamp)}
                     </span>
                   </div>

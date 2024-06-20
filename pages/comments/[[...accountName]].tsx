@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { config } from "@/Config";
 import useCommentSearch from "@/api/common/useCommentSearch";
 import CustomPagination from "@/components/CustomPagination";
-import DetailedOperationCard from "@/components/DetailedOperationCard";
 import Explorer from "@/types/Explorer";
 import useOperationTypes from "@/api/common/useOperationsTypes";
 import JumpToPage from "@/components/JumpToPage";
@@ -16,7 +15,6 @@ import {
 } from "@/lib/utils";
 import OperationsTable from "@/components/OperationsTable";
 import Hive from "@/types/Hive";
-import { getPageUrlParams } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 
 const defaultSearchParams: Explorer.CommentSearchParams = {

@@ -89,3 +89,12 @@ export const numberToTimeString = (num: number) => {
     return num.toString();
   }
 };
+
+export const trimAccountName = (accountName: string) => {
+  const trimmedName = accountName.trim();
+
+  if (trimmedName[0] === "@") {
+    return trimmedName.slice(1, accountName.length);
+  }
+  return trimmedName;
+};

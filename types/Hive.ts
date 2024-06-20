@@ -1,4 +1,4 @@
-import { IManabarData } from "@hive/wax";
+import { IManabarData } from "@hiveio/wax";
 
 declare module Hive {
   interface HiveBlogProps {
@@ -367,6 +367,7 @@ declare module Hive {
     | "account_name_array"
     | "block_num"
     | "transaction_hash"
+    | "block_hash"
     | "invalid_input";
 
   interface InputTypeResponse {
@@ -519,6 +520,20 @@ declare module Hive {
   interface CancelTransferOperation {
     request_id: number;
     from: string;
+  }
+
+  interface AuthKeys {
+    key_auth: [string | undefined, string | undefined][];
+    account_auth: [string | undefined, string | undefined][];
+    weight_threshold: number;
+  }
+
+  interface AccountAuthoritiesData {
+    owner: AuthKeys;
+    active: AuthKeys;
+    posting: AuthKeys;
+    memo: string;
+    witness_signing: string;
   }
 }
 

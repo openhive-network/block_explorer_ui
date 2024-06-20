@@ -1,13 +1,52 @@
 import Link from "next/link";
-import { useState } from "react";
+import { ReactNode, useState, Fragment } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
-import moment from "moment";
-import { config } from "@/Config";
 import { Card, CardContent, CardHeader } from "../ui/card";
+import { Table, TableBody, TableCell, TableRow } from "../ui/table";
+import { cn } from "@/lib/utils";
+import CopyToKeyboard from "../CopyToKeyboard";
 
 type AccountDetailsCardProps = {
   header: string;
   userDetails: any;
+};
+
+const EXCLUDE_KEYS = [
+  "json_metadata",
+  "posting_json_metadata",
+  "witness_votes",
+  "profile_image",
+];
+
+const LINK_KEYS = ["recovery_account", "reset_account"];
+const URL_KEYS = ["url"];
+const COPY_KEYS = ["signing_key"]
+
+const buildTableBody = (
+  keys: string[],
+  render_key: (key: string) => ReactNode
+) => {
+  return keys.map((key: string, index: number) => {
+    if (EXCLUDE_KEYS.includes(key)) {
+      return null;
+    } else {
+      return (
+        <Fragment key={index}>
+          <TableRow
+            className={cn(
+              {
+                "border-t border-gray-700": !!index,
+              },
+              "hover:bg-inherit"
+            )}
+          >
+            <TableCell>{key}</TableCell>
+            <TableCell>{render_key(key)}</TableCell>
+          </TableRow>
+        </Fragment>
+      );
+    }
+  });
 };
 
 const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
@@ -21,14 +60,21 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
   const keys = Object.keys(userDetails);
 
   const render_key = (key: string) => {
-    if (["recovery_account", "reset_account"].includes(key)) {
+    if (LINK_KEYS.includes(key)) {
       return (
         <div className="text-blue-400">
           <Link href={`/@${userDetails[key]}`}>{userDetails[key]}</Link>{" "}
         </div>
       );
     }
-    if (["url"].includes(key)) {
+    if (COPY_KEYS.includes(key)) {
+      let shortenedKey: string = "";
+      shortenedKey = `${userDetails[key].slice(0, 8)}...${userDetails[key].slice(userDetails[key].length - 5)}`
+      return (
+        <CopyToKeyboard value={userDetails[key]} displayValue={shortenedKey} />
+      )
+    }
+    if (URL_KEYS.includes(key)) {
       return (
         <div className="text-blue-400">
           <Link
@@ -52,7 +98,10 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
   };
 
   return (
-    <Card data-testid="properties-dropdown" className="overflow-hidden pb-0">
+    <Card
+      data-testid="properties-dropdown"
+      className="overflow-hidden pb-0"
+    >
       <CardHeader className="p-0">
         <div
           onClick={handlePropertiesVisibility}
@@ -62,29 +111,13 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
           {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
         </div>
       </CardHeader>
-      <CardContent data-testid="card-content" hidden={isPropertiesHidden}>
-        {keys.map((key: string, index: number) => {
-          if (
-            [
-              "json_metadata",
-              "posting_json_metadata",
-              "witness_votes",
-              "profile_image",
-            ].includes(key)
-          )
-            return null;
-          return (
-            <div
-              key={index}
-              className="flex justify-between m-1 whitespace-pre-line"
-            >
-              <div className="border-b border-solid border-gray-700 flex justify-between py-1 mr-4">
-                {key}
-              </div>
-              <span className=" overflow-auto">{render_key(key)}</span>
-            </div>
-          );
-        })}
+      <CardContent
+        data-testid="card-content"
+        hidden={isPropertiesHidden}
+      >
+        <Table>
+          <TableBody>{buildTableBody(keys, render_key)}</TableBody>
+        </Table>
       </CardContent>
     </Card>
   );

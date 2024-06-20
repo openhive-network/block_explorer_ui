@@ -1,4 +1,4 @@
-import { GetDynamicGlobalPropertiesResponse } from "@hive/wax";
+import { GetDynamicGlobalPropertiesResponse } from "@hiveio/wax";
 import Hive from "./Hive";
 
 declare module Explorer {
@@ -155,8 +155,8 @@ declare module Explorer {
     operation: Hive.Operation;
     blockNumber?: number;
     trxId?: string;
-    operatiopnId?: number;
     timestamp?: string;
+    operationId?: number;
   }
 
   interface FormattedAccountDetails
