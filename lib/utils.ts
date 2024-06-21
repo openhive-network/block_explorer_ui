@@ -85,6 +85,7 @@ export const convertOperationResultsToTableOperations = (
     operation: operation.operation,
     blockNumber: operation.block_num,
     trxId: operation.trx_id,
+    timestamp: operation.timestamp,
     operationId: operation.operation_id,
   }));
 };
@@ -107,6 +108,7 @@ export const convertTransactionResponseToTableOperations = (
     operation: operation,
     blockNumber: transaction.block_num,
     trxId: transaction.transaction_id,
+    timestamp: transaction?.timestamp?.toString() || Date.now().toString()
   }));
 };
 

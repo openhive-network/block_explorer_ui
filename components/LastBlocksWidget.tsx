@@ -225,7 +225,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
           <Bar
             dataKey="custom"
             stackId="a"
-            fill="#ff006e"
+            fill="#80003e"
             className="cursor-pointer"
             onClick={(data, _index) => router.push(`/block/${data.name}`)}
           />
