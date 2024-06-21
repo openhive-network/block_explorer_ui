@@ -16,9 +16,17 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import JSONView from "./JSONView";
 import { getOperationTypeForDisplay } from "@/utils/UI";
 import CopyJSON from "./CopyJSON";
-import {categorizedOperationTypes} from "@/utils/CategorizedOperationTypes";
+import { categorizedOperationTypes } from "@/utils/CategorizedOperationTypes";
 import { colorByOperationCategory } from "./OperationTypesDialog";
 import { useUserSettingsContext } from "./contexts/UserSettingsContext";
+import TimeAgo from "timeago-react";
+import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
 
 interface OperationsTableProps {
   operations: Explorer.OperationForTable[];
@@ -29,8 +37,8 @@ interface OperationsTableProps {
 const localColors = colorByOperationCategory;
 
 const getOperationColor = (operationType: string) => {
-  const operationTypeCategories: any = categorizedOperationTypes.find((category) =>
-    category.types.includes(operationType)
+  const operationTypeCategories: any = categorizedOperationTypes.find(
+    (category) => category.types.includes(operationType)
   );
 
   const color = localColors[operationTypeCategories.name];
@@ -105,8 +113,9 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
           <TableHead></TableHead>
           <TableHead className="pl-2">Block</TableHead>
           <TableHead>Transaction</TableHead>
+          <TableHead>Time</TableHead>
           <TableHead>Operation</TableHead>
-          <TableHead className="w-full">Content</TableHead>
+          <TableHead>Content</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody className="max-w-[100%]">
@@ -186,17 +195,27 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                     {operation.trxId?.slice(0, 10)}
                   </Link>
                 </TableCell>
+                <TableCell>
+                  <TimeAgo
+                    datetime={
+                      new Date(
+                        formatAndDelocalizeTime(operation.timestamp)
+                      )
+                    }
+                  />
+                </TableCell>
                 <TableCell data-testid="operation-type">
-                  <div
-                    className={`flex justify-stretch p-1 rounded `}
-                  >
-                    <span className={`rounded w-4 mr-2 ${operationBgColor}`}></span>
-                    <span>{getOperationTypeForDisplay(operation.operation.type)}</span>
-                    
+                  <div className={`flex justify-stretch p-1 rounded `}>
+                    <span
+                      className={`rounded w-4 mr-2 ${operationBgColor}`}
+                    ></span>
+                    <span>
+                      {getOperationTypeForDisplay(operation.operation.type)}
+                    </span>
                   </div>
                 </TableCell>
                 <TableCell
-                  className="md:max-w-0 w-full"
+                  className="md:max-w-0 w-1/2"
                   data-testid="operation-content"
                 >
                   {rawJsonView ? (

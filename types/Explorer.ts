@@ -155,6 +155,7 @@ declare module Explorer {
     operation: Hive.Operation;
     blockNumber?: number;
     trxId?: string;
+    timestamp?: string;
     operationId?: number;
   }
 
