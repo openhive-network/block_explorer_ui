@@ -108,6 +108,7 @@ export const convertTransactionResponseToTableOperations = (
     operation: operation,
     blockNumber: transaction.block_num,
     trxId: transaction.transaction_id,
+    timestamp: transaction?.timestamp?.toString() || Date.now().toString()
   }));
 };
 

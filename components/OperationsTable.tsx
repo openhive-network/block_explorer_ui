@@ -113,9 +113,9 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
           <TableHead></TableHead>
           <TableHead className="pl-2">Block</TableHead>
           <TableHead>Transaction</TableHead>
+          <TableHead>Time</TableHead>
           <TableHead>Operation</TableHead>
           <TableHead>Content</TableHead>
-          <TableHead className="w-full">Time</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody className="max-w-[100%]">
@@ -195,6 +195,15 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                     {operation.trxId?.slice(0, 10)}
                   </Link>
                 </TableCell>
+                <TableCell>
+                  <TimeAgo
+                    datetime={
+                      new Date(
+                        formatAndDelocalizeTime(operation.timestamp)
+                      )
+                    }
+                  />
+                </TableCell>
                 <TableCell data-testid="operation-type">
                   <div className={`flex justify-stretch p-1 rounded `}>
                     <span
@@ -215,24 +224,6 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                     <div>{getOneLineDescription(operation)}</div>
                   )}
                 </TableCell>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <TableCell className="md:max-w-0 w-1/2">
-                        <TimeAgo
-                          datetime={
-                            new Date(
-                              formatAndDelocalizeTime(operation.timestamp)
-                            )
-                          }
-                        />
-                      </TableCell>
-                    </TooltipTrigger>
-                    <TooltipContent className="bg-black text-white">
-                      {formatAndDelocalizeTime(operation.timestamp)}
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
               </TableRow>
               {operation.operation.type === "custom_json_operation" &&
                 expanded.includes(operation.operationId || 0) && (
