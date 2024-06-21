@@ -1,5 +1,6 @@
 import React from "react";
 import CopyJSON from "./CopyJSON";
+import { useUserSettingsContext } from "./contexts/UserSettingsContext";
 
 interface JSONViewProps {
   json: object;
@@ -12,14 +13,26 @@ const JSONView: React.FC<JSONViewProps> = ({
   skipCopy = false,
   className,
 }) => {
+  const {
+    settings: { rawJsonView, prettyJsonView },
+  } = useUserSettingsContext();
+
+  const renderJsonView = (() => {
+    if (rawJsonView && !prettyJsonView) {
+      return JSON.stringify(json);
+    } else {
+      return JSON.stringify(json, null, 2);
+    }
+  })();
+
   return (
     <div className={className}>
       {!skipCopy && (
         <div className="w-full flex justify-end">
-          <CopyJSON value={JSON.stringify(json, null, 2)} />
+          <CopyJSON value={renderJsonView} />
         </div>
       )}
-      <pre data-testid="json-format-view">{JSON.stringify(json, null, 2)}</pre>
+      <pre data-testid="json-format-view">{renderJsonView}</pre>
     </div>
   );
 };

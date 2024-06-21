@@ -5,9 +5,9 @@ import SearchBar from "./SearchBar";
 import { useMediaQuery } from "@/utils/Hooks";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Toggle } from "./ui/toggle";
 import { useUserSettingsContext } from "./contexts/UserSettingsContext";
 import SyncInfo from "./home/SyncInfo";
+import ViewPopover from "./ViewPopover";
 
 export default function Navbar() {
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -67,16 +67,9 @@ export default function Navbar() {
                 >
                   Witnesses
                 </Link>
-                <Toggle
-                  checked={settings.rawJsonView}
-                  onClick={() =>
-                    setSettings({
-                      ...settings,
-                      rawJsonView: !settings.rawJsonView,
-                    })
-                  }
-                  leftLabel="Raw Json view"
-                />
+                <div>
+                  <ViewPopover isMobile={isMobile} />
+                </div>
               </div>
             </div>
           </div>
@@ -108,18 +101,7 @@ export default function Navbar() {
               >
                 Witnesses
               </Link>
-              <Toggle
-                data-testid="toggle"
-                checked={settings.rawJsonView}
-                onClick={() =>
-                  setSettings({
-                    ...settings,
-                    rawJsonView: !settings.rawJsonView,
-                  })
-                }
-                leftLabel="Raw Json view"
-                className="ml-6"
-              />
+              <ViewPopover />
             </div>
             <SearchBar open={true} />
           </>
