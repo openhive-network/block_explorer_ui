@@ -85,6 +85,7 @@ export default function Account() {
   const [isVotesHistoryModalOpen, setIsVotesHistoryModalOpen] = useState(false);
   const [initialSearch, setInitialSearch] = useState<boolean>(false);
   const [filters, setFilters] = useState<boolean[]>([]);
+  const [lastPage, setLastPage] = useState<number | undefined>(undefined);
 
   const searchRanges = useSearchRanges();
 
@@ -195,10 +196,7 @@ export default function Account() {
 
   useEffect(() => {
     if (!paramsState.page && accountOperations) {
-      setParams({
-        ...paramsState,
-        page: accountOperations.total_pages,
-      });
+      setLastPage(accountOperations.total_pages);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountOperations, paramsState.page]);
@@ -231,9 +229,9 @@ export default function Account() {
         <title>@{accountNameFromRoute} - Hive Explorer</title>
       </Head>
       <div className="flex items-center justify-end w-full min-h-[64px] bg-explorer-orange -mt-4 px-2 md:px-8 fixed z-20">
-        {paramsState.page && accountOperations && (
+        {accountOperations && (paramsState.page || lastPage) &&  (
           <AccountPagination
-            page={paramsState.page}
+            page={paramsState.page ? paramsState.page : lastPage || 0}
             setPage={(page: number) => setParams({ ...paramsState, page })}
             accountOperations={accountOperations}
             accountOperationTypes={accountOperationTypes || []}
@@ -321,7 +319,7 @@ export default function Account() {
             <div className="w-full my-4 text-black text-center">
               No operations were found.
             </div>
-          ) : isAccountOperationsLoading || !page ? (
+          ) : isAccountOperationsLoading ? (
             <div className="flex justify-center text-center items-center">
               <Loader2 className="animate-spin mt-1 text-black h-12 w-12 ml-3 ..." />
             </div>
