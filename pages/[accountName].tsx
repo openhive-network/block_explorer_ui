@@ -232,7 +232,8 @@ export default function Account() {
         {accountOperations && (paramsState.page || lastPage) &&  (
           <AccountPagination
             page={paramsState.page ? paramsState.page : lastPage || 0}
-            setPage={(page: number) => setParams({ ...paramsState, page })}
+            setPage={(page: number | undefined) => setParams({ ...paramsState, page })}
+            isLastPage={!paramsState.page}
             accountOperations={accountOperations}
             accountOperationTypes={accountOperationTypes || []}
             onOperationsSelect={handleOperationTypeChange}

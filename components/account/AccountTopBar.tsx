@@ -4,14 +4,17 @@ import { config } from "@/Config";
 import OperationTypesDialog from "../OperationTypesDialog";
 import { getOperationButtonTitle } from "@/utils/UI";
 import {
+  cn,
   convertBooleanArrayToIds,
   convertIdsToBooleanArray,
 } from "@/lib/utils";
 import CustomPagination from "../CustomPagination";
+import { Button } from "../ui/button";
 
 interface AccountTopBarProps {
   page: number;
-  setPage: (page: number) => void;
+  setPage: (page: number | undefined) => void;
+  isLastPage: boolean;
   accountOperations: Hive.OperationsCount;
   accountOperationTypes: Hive.OperationPattern[];
   onOperationsSelect: (filters: boolean[]) => void;
@@ -21,6 +24,7 @@ interface AccountTopBarProps {
 const AccountTopBar: React.FC<AccountTopBarProps> = ({
   page,
   setPage,
+  isLastPage,
   accountOperations,
   accountOperationTypes,
   onOperationsSelect,
@@ -30,11 +34,20 @@ const AccountTopBar: React.FC<AccountTopBarProps> = ({
     onOperationsSelect(convertIdsToBooleanArray(filters));
   };
 
+  const onLatestButtonClick = () => {
+    setPage(undefined);
+  }
+
   return (
     <div
       className="bg-explorer-orange flex items-stretch justify-center w-full flex-wrap mb-2 mt-3"
       data-testid="account-top-bar"
     >
+      <div className="flex justify-center items-center mx-4">
+        <Button className={cn("rounded", {"bg-white": isLastPage})} onClick={onLatestButtonClick}>
+          Latest
+        </Button>
+      </div>
       <div className="flex justify-center items-center mx-4">
         <CustomPagination
           currentPage={page}
