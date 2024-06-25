@@ -4,11 +4,15 @@ import { HealthChecker } from "@hiveio/wax";
 import { useEffect, useState } from "react";
 
 interface HealthCheckerComponentProps {
-  hiveChain?: IHiveChainInterface
+  hiveChain?: IHiveChainInterface;
+  currentAddress: string | null;
+  changeNodeAddress?: (url: string | undefined) => void;
 }
 
 const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
-  hiveChain
+  hiveChain,
+  currentAddress,
+  changeNodeAddress
 }) => {
 
   const [chainInitialized, setChainIntialized] = useState<boolean>(false);
@@ -47,6 +51,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     <div>
       {scoredEndpoints.map((scoredEndpoint) => (
         <div className={cn({"text-red-800": scoredEndpoint.score <= 0})}>
+          {scoredEndpoint.endpointUrl === currentAddress ? ">" : ""}
           {scoredEndpoint.endpointUrl}
         </div>
       ))}
