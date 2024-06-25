@@ -21,12 +21,6 @@ import { colorByOperationCategory } from "./OperationTypesDialog";
 import { useUserSettingsContext } from "./contexts/UserSettingsContext";
 import TimeAgo from "timeago-react";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "./ui/tooltip";
 
 interface OperationsTableProps {
   operations: Explorer.OperationForTable[];
@@ -110,12 +104,12 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
       <TableHeader>
         <TableRow>
           <TableHead></TableHead>
-          <TableHead></TableHead>
           <TableHead className="pl-2">Block</TableHead>
           <TableHead>Transaction</TableHead>
           <TableHead>Time</TableHead>
           <TableHead>Operation</TableHead>
           <TableHead>Content</TableHead>
+          <TableHead></TableHead>
         </TableRow>
       </TableHeader>
       <TableBody className="max-w-[100%]">
@@ -129,6 +123,55 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                 key={index}
                 className="border-b border-gray-700"
               >
+                <TableCell>
+                  <CopyJSON value={getUnformattedValue(operation)} />
+                </TableCell>
+                <TableCell
+                  className="pl-2"
+                  data-testid="block-number-operation-table"
+                >
+                  <Link
+                    className="text-explorer-turquoise"
+                    href={`/block/${operation.blockNumber}`}
+                  >
+                    {operation.blockNumber?.toLocaleString()}
+                  </Link>
+                </TableCell>
+                <TableCell data-testid="transaction-number">
+                  <Link
+                    className="text-explorer-turquoise"
+                    href={`/transaction/${operation.trxId}`}
+                  >
+                    {operation.trxId?.slice(0, 10)}
+                  </Link>
+                </TableCell>
+                <TableCell>
+                  <TimeAgo
+                    datetime={
+                      new Date(formatAndDelocalizeTime(operation.timestamp))
+                    }
+                  />
+                </TableCell>
+                <TableCell data-testid="operation-type">
+                  <div className={`flex justify-stretch p-1 rounded `}>
+                    <span
+                      className={`rounded w-4 mr-2 ${operationBgColor}`}
+                    ></span>
+                    <span>
+                      {getOperationTypeForDisplay(operation.operation.type)}
+                    </span>
+                  </div>
+                </TableCell>
+                <TableCell
+                  className="md:max-w-0 w-1/2"
+                  data-testid="operation-content"
+                >
+                  {rawJsonView ? (
+                    <pre>{renderJsonViewOperation(operation)}</pre>
+                  ) : (
+                    <div>{getOneLineDescription(operation)}</div>
+                  )}
+                </TableCell>
                 <TableCell>
                   <div
                     className={cn({
@@ -173,64 +216,13 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                     )}
                   </div>
                 </TableCell>
-                <TableCell>
-                  <CopyJSON value={getUnformattedValue(operation)} />
-                </TableCell>
-                <TableCell
-                  className="pl-2"
-                  data-testid="block-number-operation-table"
-                >
-                  <Link
-                    className="text-explorer-turquoise"
-                    href={`/block/${operation.blockNumber}`}
-                  >
-                    {operation.blockNumber?.toLocaleString()}
-                  </Link>
-                </TableCell>
-                <TableCell data-testid="transaction-number">
-                  <Link
-                    className="text-explorer-turquoise"
-                    href={`/transaction/${operation.trxId}`}
-                  >
-                    {operation.trxId?.slice(0, 10)}
-                  </Link>
-                </TableCell>
-                <TableCell>
-                  <TimeAgo
-                    datetime={
-                      new Date(
-                        formatAndDelocalizeTime(operation.timestamp)
-                      )
-                    }
-                  />
-                </TableCell>
-                <TableCell data-testid="operation-type">
-                  <div className={`flex justify-stretch p-1 rounded `}>
-                    <span
-                      className={`rounded w-4 mr-2 ${operationBgColor}`}
-                    ></span>
-                    <span>
-                      {getOperationTypeForDisplay(operation.operation.type)}
-                    </span>
-                  </div>
-                </TableCell>
-                <TableCell
-                  className="md:max-w-0 w-1/2"
-                  data-testid="operation-content"
-                >
-                  {rawJsonView ? (
-                    <pre>{renderJsonViewOperation(operation)}</pre>
-                  ) : (
-                    <div>{getOneLineDescription(operation)}</div>
-                  )}
-                </TableCell>
               </TableRow>
               {operation.operation.type === "custom_json_operation" &&
                 expanded.includes(operation.operationId || 0) && (
                   <TableRow>
                     <TableCell
                       data-testid="details"
-                      colSpan={6}
+                      colSpan={7}
                       className="py-2"
                     >
                       <JSONView
