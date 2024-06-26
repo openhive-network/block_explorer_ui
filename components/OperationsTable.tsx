@@ -75,7 +75,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
   className,
 }) => {
   const {
-    settings: { rawJsonView },
+    settings: { rawJsonView, prettyJsonView },
   } = useUserSettingsContext();
 
   const [expanded, setExpanded] = useState<number[]>([]);
@@ -87,11 +87,23 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
     return unformattedOperation ? JSON.stringify(unformattedOperation) : {};
   };
 
-  const renderJsonViewOperation = (operation: Explorer.OperationForTable) => {
+  const renderOperationContent = (
+    rawJsonView: boolean,
+    prettyJsonView: boolean,
+    operation: Explorer.OperationForTable
+  ) => {
+    if (!rawJsonView && !prettyJsonView) {
+      return <div>{getOneLineDescription(operation)}</div>;
+    }
     const unformattedOperation = unformattedOperations?.find(
       (op) => op.operationId === operation.operationId
     )?.operation;
-    return unformattedOperation ? JSON.stringify(unformattedOperation) : null;
+
+    if (prettyJsonView) {
+      return <pre>{JSON.stringify(unformattedOperation, null, 2)}</pre>;
+    } else {
+      return <div>{JSON.stringify(unformattedOperation)}</div>;
+    }
   };
 
   return (
@@ -166,10 +178,10 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                   className="md:max-w-0 w-1/2"
                   data-testid="operation-content"
                 >
-                  {rawJsonView ? (
-                    <pre>{renderJsonViewOperation(operation)}</pre>
-                  ) : (
-                    <div>{getOneLineDescription(operation)}</div>
+                  {renderOperationContent(
+                    rawJsonView,
+                    prettyJsonView,
+                    operation
                   )}
                 </TableCell>
                 <TableCell>
