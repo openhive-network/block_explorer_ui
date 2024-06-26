@@ -2,11 +2,12 @@ import { cn } from "@/lib/utils";
 import { IHiveChainInterface, IScoredEndpoint } from "@hiveio/wax";
 import { HealthChecker } from "@hiveio/wax";
 import { useEffect, useState } from "react";
+import { Button } from "./ui/button";
 
 interface HealthCheckerComponentProps {
   hiveChain?: IHiveChainInterface;
   currentAddress: string | null;
-  changeNodeAddress?: (url: string | undefined) => void;
+  changeNodeAddress: (url: string | null) => void;
 }
 
 const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
@@ -50,9 +51,12 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   return (
     <div>
       {scoredEndpoints.map((scoredEndpoint) => (
-        <div className={cn({"text-red-800": scoredEndpoint.score <= 0})}>
-          {scoredEndpoint.endpointUrl === currentAddress ? ">" : ""}
-          {scoredEndpoint.endpointUrl}
+        <div className={cn("flex items-center", {"text-red-800": scoredEndpoint.score <= 0})}>
+          <div>
+            {scoredEndpoint.endpointUrl === currentAddress ? ">" : ""}
+            {scoredEndpoint.endpointUrl}
+          </div>
+          <Button onClick={() => {changeNodeAddress(scoredEndpoint.endpointUrl)}}>Switch</Button>
         </div>
       ))}
     </div>

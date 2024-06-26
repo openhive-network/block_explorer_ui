@@ -2,6 +2,7 @@ import useHafbeVersion from "@/api/common/useHafbeVersion";
 import { config } from "@/Config";
 import AddressSwitchedDialog from "./AddressSwitchedDialog";
 import { useAddressesContext } from "../contexts/AddressesContext";
+import Link from "next/link";
 
 export default function Footer() {
   const { hafbeVersionData } = useHafbeVersion();
@@ -37,6 +38,7 @@ export default function Footer() {
           currentAddress={nodeAddress}
           setAddress={setNodeAddress}
         />
+        <Link href={"/healthchecker"}>Healthchecker</Link>
       </div>
     </div>
   );
