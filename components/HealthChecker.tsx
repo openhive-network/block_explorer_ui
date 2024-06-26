@@ -3,6 +3,7 @@ import { IHiveChainInterface, IScoredEndpoint } from "@hiveio/wax";
 import { HealthChecker } from "@hiveio/wax";
 import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
+import { Loader2 } from "lucide-react";
 
 interface HealthCheckerComponentProps {
   hiveChain?: IHiveChainInterface;
@@ -47,7 +48,9 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
       setChainIntialized(true);
     }
   }, [hiveChain])
-
+  if (!scoredEndpoints.length) {
+    return <Loader2 className="ml-2 animate-spin h-16 w-16  ..." />
+  }
   return (
     <div>
       {scoredEndpoints.map((scoredEndpoint) => (
