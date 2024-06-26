@@ -157,7 +157,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                     {operation.trxId?.slice(0, 10)}
                   </Link>
                 </TableCell>
-                <TableCell>
+                <TableCell className="w-1/5">
                   <TimeAgo
                     datetime={
                       new Date(formatAndDelocalizeTime(operation.timestamp))
