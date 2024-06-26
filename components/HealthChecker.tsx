@@ -8,12 +8,14 @@ import { Loader2 } from "lucide-react";
 interface HealthCheckerComponentProps {
   hiveChain?: IHiveChainInterface;
   currentAddress: string | null;
+  customApiList?: string[];
   changeNodeAddress: (url: string | null) => void;
 }
 
 const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   hiveChain,
   currentAddress,
+  customApiList,
   changeNodeAddress
 }) => {
 
@@ -21,7 +23,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
 
   const [scoredEndpoints, setScoredEndpoints] = useState<IScoredEndpoint[]>([]);
 
-  const apiList = [
+  const apiList = customApiList ? customApiList : [
     "https://api.hive.blog",
     "https://api.openhive.network",
     "https://anyx.io",
