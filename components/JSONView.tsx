@@ -6,19 +6,17 @@ interface JSONViewProps {
   json: object;
   skipCopy?: boolean;
   className?: string;
+  isPrettyView?: boolean;
 }
 
 const JSONView: React.FC<JSONViewProps> = ({
   json,
   skipCopy = false,
   className,
+  isPrettyView,
 }) => {
-  const {
-    settings: { rawJsonView, prettyJsonView },
-  } = useUserSettingsContext();
-
   const renderJsonView = (() => {
-    if (rawJsonView && !prettyJsonView) {
+    if (!isPrettyView) {
       return JSON.stringify(json);
     } else {
       return JSON.stringify(json, null, 2);

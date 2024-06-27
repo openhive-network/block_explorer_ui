@@ -257,12 +257,13 @@ export default function Block() {
             <div className="flex justify-center items-center">
               <Loader2 className="animate-spin dark:text-white mt-1 h-16 w-16 ml-3 ... " />
             </div>
-          ) : settings.rawJsonView ? (
+          ) : settings.rawJsonView || settings.prettyJsonView ? (
             <div className="px-2">
               <JSONView
                 data-testid="json-view"
                 json={rawBlockdata || {}}
                 className="w-full md:w-[962px] mt-6 m-auto py-2 px-4 bg-explorer-dark-gray rounded text-white text-xs break-words break-all"
+                isPrettyView={settings.prettyJsonView}
               />
             </div>
           ) : (
@@ -283,13 +284,12 @@ export default function Block() {
                   />
                 )}
               <div className="w-full md:w-4/5 flex flex-col gap-y-2">
-                {
-                  nonVirtualOperations.length && 
-                <OperationsTable
-                  operations={nonVirtualOperations}
-                  unformattedOperations={unformattedNonVirtual}
-                />
-                }
+                {nonVirtualOperations.length && (
+                  <OperationsTable
+                    operations={nonVirtualOperations}
+                    unformattedOperations={unformattedNonVirtual}
+                  />
+                )}
                 <div
                   className="text-center mt-4"
                   ref={virtualOpsRef}
@@ -304,13 +304,12 @@ export default function Block() {
                       : null}
                   </p>
                 </div>
-                {
-                  virtualOperations.length && 
+                {virtualOperations.length && (
                   <OperationsTable
                     operations={virtualOperations}
                     unformattedOperations={unformattedVirtual}
                   />
-                }
+                )}
               </div>
             </section>
           )}
@@ -318,7 +317,10 @@ export default function Block() {
       ) : (
         <div>
           <div className="mt-9 mb-6">Block not found</div>
-          <Button variant="outline" onClick={() => router.reload()}>
+          <Button
+            variant="outline"
+            onClick={() => router.reload()}
+          >
             Reload page
           </Button>
         </div>
