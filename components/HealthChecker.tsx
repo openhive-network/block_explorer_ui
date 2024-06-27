@@ -58,11 +58,11 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   return (
     <div className={cn([className, "divide-y-2 divide-gray-600"])}>
       {scoredEndpoints.map((scoredEndpoint) => (
-        <div className={cn("flex justify-between items-center my-1", {"text-red-800": scoredEndpoint.score <= 0, "font-semibold": scoredEndpoint.endpointUrl === currentAddress})}>
-          <div>
+        <div className={cn("flex justify-between items-center my-1", { "font-semibold": scoredEndpoint.endpointUrl === currentAddress})}>
+          <div className={cn({"text-red-800": scoredEndpoint.score <= 0})}>
             {scoredEndpoint.endpointUrl}
           </div>
-          <Button onClick={() => {changeNodeAddress(scoredEndpoint.endpointUrl)}}>Switch</Button>
+          <Button disabled={scoredEndpoint.score <= 0} className="hover:bg-slate-400 rounded" onClick={() => {changeNodeAddress(scoredEndpoint.endpointUrl)}}>Switch</Button>
         </div>
       ))}
     </div>
