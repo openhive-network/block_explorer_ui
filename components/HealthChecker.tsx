@@ -9,14 +9,16 @@ interface HealthCheckerComponentProps {
   hiveChain?: IHiveChainInterface;
   currentAddress: string | null;
   customApiList?: string[];
-  changeNodeAddress: (url: string | null) => void;
+  changeNodeAddress: (url: string | null) => void; 
+  className?: string;
 }
 
 const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   hiveChain,
   currentAddress,
   customApiList,
-  changeNodeAddress
+  changeNodeAddress,
+  className
 }) => {
 
   const [chainInitialized, setChainIntialized] = useState<boolean>(false);
@@ -54,11 +56,10 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     return <Loader2 className="ml-2 animate-spin h-16 w-16  ..." />
   }
   return (
-    <div>
+    <div className={cn([className, "divide-y-2 divide-gray-600"])}>
       {scoredEndpoints.map((scoredEndpoint) => (
-        <div className={cn("flex items-center", {"text-red-800": scoredEndpoint.score <= 0})}>
+        <div className={cn("flex justify-between items-center my-1", {"text-red-800": scoredEndpoint.score <= 0, "font-semibold": scoredEndpoint.endpointUrl === currentAddress})}>
           <div>
-            {scoredEndpoint.endpointUrl === currentAddress ? ">" : ""}
             {scoredEndpoint.endpointUrl}
           </div>
           <Button onClick={() => {changeNodeAddress(scoredEndpoint.endpointUrl)}}>Switch</Button>
