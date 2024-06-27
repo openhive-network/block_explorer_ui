@@ -16,7 +16,7 @@ export default function HealthcheckerPage() {
         <title>Healthchecker</title>
       </Head>
       <div className="md:m-8 max-w-[100vw]">
-        <HealthCheckerComponent hiveChain={hiveChain} currentAddress={nodeAddress} changeNodeAddress={setNodeAddress}/>
+        <HealthCheckerComponent hiveChain={hiveChain} currentAddress={nodeAddress ? nodeAddress : undefined} changeNodeAddress={setNodeAddress}/>
       </div>
     </>
   );

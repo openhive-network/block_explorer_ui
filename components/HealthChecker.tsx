@@ -6,11 +6,11 @@ import { Button } from "./ui/button";
 import { Loader2 } from "lucide-react";
 
 interface HealthCheckerComponentProps {
+  className?: string;
   hiveChain?: IHiveChainInterface;
-  currentAddress: string | null;
+  currentAddress?: string;
   customApiList?: string[];
   changeNodeAddress: (url: string | null) => void; 
-  className?: string;
 }
 
 const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
