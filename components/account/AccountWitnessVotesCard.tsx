@@ -39,12 +39,14 @@ const buildTableBody = (voters: string[]) => {
 };
 
 const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
-  voters,
+  voters: initialVoters,
 }) => {
   const [isPropertiesHidden, setIsPropertiesHidden] = useState(true);
-
+  const voters = [...initialVoters];
   if (!voters || !voters.length) return null;
-
+  voters.sort((a, b) =>
+    a.toLowerCase().localeCompare(b.toLowerCase())  // Changed: Sorting logic to ensure alphabetical order
+  );
   const handlePropertiesVisibility = () => {
     setIsPropertiesHidden(!isPropertiesHidden);
   };
