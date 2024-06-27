@@ -11,12 +11,14 @@ type AccountWitnessVotesCardProps = {
 
 const buildTableBody = (voters: string[]) => {
   return voters.map((voter: string, index: number) => {
+    const isLast = index === voters.length - 1;
     return (
       <Fragment key={index}>
         <TableRow
           className={cn(
             {
-              "border-t border-gray-700": !!index,
+              "border-t border-gray-700": index !==0,
+              "border-b border-gray-700": !isLast,
             },
             "hover:bg-inherit"
           )}
