@@ -1,10 +1,7 @@
 import { useRouter } from "next/router";
 import Hive from "@/types/Hive";
 import { addSpacesAndCapitalizeFirst } from "@/utils/StringUtils";
-import DetailedOperationCard from "@/components/DetailedOperationCard";
 import Link from "next/link";
-import moment from "moment";
-import { config } from "@/Config";
 import PageNotFound from "@/components/PageNotFound";
 import { useUserSettingsContext } from "@/components/contexts/UserSettingsContext";
 import JSONView from "@/components/JSONView";
@@ -29,7 +26,10 @@ const displayTransactionData = (
         className="border-b border-solid border-gray-700 max-w-full overflow-hidden flex flex-col md:table-row"
       >
         <td className="pl-2 py-1">{addSpacesAndCapitalizeFirst(key)}</td>
-        <td align="right" className="pr-2">
+        <td
+          align="right"
+          className="pr-2"
+        >
           {typeof value === "number" ? value.toLocaleString() : value}
         </td>
       </tr>
@@ -66,10 +66,7 @@ export default function Transaction() {
                   data-testid="transaction-header-hash-trx"
                   className="w-full text-center"
                 >
-                  Transaction:{" "}
-                  <span>
-                    {trxData?.transaction_id}
-                  </span>
+                  Transaction: <span>{trxData?.transaction_id}</span>
                 </div>
                 <div className="w-full flex justify-evenly">
                   <div>
@@ -91,10 +88,11 @@ export default function Transaction() {
                 </div>
               </CardContent>
             </Card>
-            {settings.rawJsonView ? (
+            {settings.rawJsonView || settings.prettyJsonView ? (
               <JSONView
                 json={trxData.transaction_json}
                 className="w-full md:w-[992px] m-auto py-2 px-4 bg-explorer-dark-gray rounded text-white text-xs break-words break-all"
+                isPrettyView={settings.prettyJsonView}
               />
             ) : (
               <>
