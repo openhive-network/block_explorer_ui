@@ -19,7 +19,7 @@ test.describe("Navbar tests", () => {
     await expect(navbar.navBarHiveLogo).toBeVisible();
     await expect(navbar.navBarHiveHeaderText).toHaveText("Hive Block Explorer");
     await expect(navbar.navBarWitnessesLink).toHaveText("Witnesses");
-    await expect(navbar.navBarJsonRowToggle).toHaveText("Raw Json view");
+    await expect(blockPage.viewBtn).toHaveText("View");
     await expect(navbar.searchBarInput).toHaveAttribute("placeholder", "Search user, block, transaction");
   });
 

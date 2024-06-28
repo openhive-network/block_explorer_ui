@@ -44,7 +44,8 @@ test.describe('Transaction page - tests', () => {
         await expect(transactionPage.transactionHeader).toBeVisible()
         await expect(transactionPage.transactionDetails).toBeVisible()
         await expect(blockPage.operationTypeTitle).toBeVisible()
-        await mainPage.RawJsonViewToggle.click()
+        await blockPage.viewBtn.click()
+        await blockPage.jsonRawRadioBtn.click()
         await expect(blockPage.operationsJsonFormat).toBeVisible()
     });
 });

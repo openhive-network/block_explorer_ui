@@ -118,7 +118,9 @@ test.describe('Block page tests', () => {
         await mainPage.headBlockCardBlockLink.click()
         await expect(blockPage.blockProducer).toBeVisible()
         await expect(blockPage.detailedOperationCard.first()).toBeVisible()
-        await mainPage.RawJsonViewToggle.click()
+        await blockPage.viewBtn.click()
+        await blockPage.jsonRawRadioBtn.click()
+        
         await expect(blockPage.operationsJsonFormat).toBeVisible()
     });
 
@@ -201,7 +203,9 @@ test.describe('Block page tests', () => {
         const blockProducerBounding = await blockPage.blockProducer.boundingBox()
         const blockProducerPosition = blockProducerBounding?.y
 
-        await mainPage.RawJsonViewToggle.click()
+        // await mainPage.RawJsonViewToggle.click()
+        await blockPage.viewBtn.click()
+        await blockPage.jsonRawRadioBtn.click()
         await blockPage.toVirtualOpsBtn.click()
 
         const blockProducerBoundingAfter = await blockPage.blockProducer.boundingBox()

@@ -31,6 +31,8 @@ export class BlockPage {
   readonly expandDetailsBtn: Locator;
   readonly operationDetails: Locator;
   readonly monthsDropdown: Locator;
+  readonly viewBtn: Locator;
+  readonly jsonRawRadioBtn: Locator;
   
 
   constructor(page: Page) {
@@ -64,6 +66,8 @@ export class BlockPage {
     this.expandDetailsBtn = page.locator('[data-testid="expand-details"]');
     this.operationDetails = page.locator('[data-testid="details"]');
     this.monthsDropdown = page.locator('[name="months"]');
+    this.viewBtn = page.getByRole('button', { name: 'View' });
+    this.jsonRawRadioBtn = page.locator('[role="radio"]').nth(1);
   }
 
   async validateBlockPageIsLoaded() {

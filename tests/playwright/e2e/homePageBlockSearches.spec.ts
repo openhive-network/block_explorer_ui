@@ -137,7 +137,9 @@ test.describe('Home page - searches', () => {
 
         const producerData = await blockPage.producedData.innerText()
         expect(producerData).toContain(dayText)
-        await mainPage.RawJsonViewToggle.click()
+        // await mainPage.RawJsonViewToggle.click()
+        await blockPage.viewBtn.click()
+        await blockPage.jsonRawRadioBtn.click()
         await expect(blockPage.jsonView).toBeVisible()
         await expect((blockPage.jsonView)).toContainText('gtg')
     })
