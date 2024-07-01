@@ -64,6 +64,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
           switchToProvider={changeNodeAddress}
           disabled={scoredEndpoint.score <= 0}
           isSelected={scoredEndpoint.endpointUrl === currentAddress}
+          apiList={["Block Api", "Database Api"]}
         />
       ))}
     </div>
