@@ -4,6 +4,7 @@ import { HealthChecker } from "@hiveio/wax";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
+import ProviderCard from "./ProviderCard";
 
 interface HealthCheckerComponentProps {
   className?: string;
@@ -58,12 +59,12 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   return (
     <div className={cn([className, "divide-y-2 divide-gray-600"])}>
       {scoredEndpoints.map((scoredEndpoint) => (
-        <div className={cn("flex justify-between items-center my-1", { "font-semibold": scoredEndpoint.endpointUrl === currentAddress})}>
-          <div className={cn({"text-red-800": scoredEndpoint.score <= 0})}>
-            {scoredEndpoint.endpointUrl}
-          </div>
-          <Button disabled={scoredEndpoint.score <= 0} className="hover:bg-slate-400 rounded" onClick={() => {changeNodeAddress(scoredEndpoint.endpointUrl)}}>Switch</Button>
-        </div>
+        <ProviderCard 
+          providerLink={scoredEndpoint.endpointUrl}
+          switchToProvider={changeNodeAddress}
+          disabled={scoredEndpoint.score <= 0}
+          isSelected={scoredEndpoint.endpointUrl === currentAddress}
+        />
       ))}
     </div>
   );
