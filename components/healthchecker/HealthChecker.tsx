@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { IHiveChainInterface, IScoredEndpoint } from "@hiveio/wax";
 import { HealthChecker } from "@hiveio/wax";
 import { useEffect, useState } from "react";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
 
 interface HealthCheckerComponentProps {

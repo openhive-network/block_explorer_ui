@@ -1,4 +1,4 @@
-import HealthCheckerComponent from "@/components/HealthChecker";
+import HealthCheckerComponent from "@/components/healthchecker/HealthChecker";
 import Head from "next/head";
 import { useHiveChainContext } from "@/components/contexts/HiveChainContext";
 import { useAddressesContext } from "@/components/contexts/AddressesContext";
