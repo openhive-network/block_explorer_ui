@@ -32,7 +32,6 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     "https://anyx.io",
     "https://rpc.ausbit.dev",
     "https://rpc.mahdiyari.info",
-    "https://api.hive.blue",
     "https://techcoderx.com",
     "https://hive.roelandp.nl",
     "https://hived.emre.sh",
@@ -57,7 +56,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     return <Loader2 className="ml-2 animate-spin h-16 w-16  ..." />
   }
   return (
-    <div className={cn([className, "divide-y-2 divide-gray-600"])}>
+    <div className={cn([className])}>
       {scoredEndpoints.map((scoredEndpoint) => (
         <ProviderCard 
           providerLink={scoredEndpoint.endpointUrl}
