@@ -175,34 +175,8 @@ class FetchingService {
     return await this.callRestApi(`accounts/${accountOperationsProps.accountName}/operations`, requestParams);
   }
 
-  async getAccountOperationsCount(
-    operations: number[],
-    account: string
-  ): Promise<number> {
-    const requestBody: Hive.GetAccountOpsCountProps = {
-      _account: account,
-      _operations: operations,
-    };
-    return await this.callApi("get_account_operations_count", requestBody);
-  }
-
   async getAccount(account: string): Promise<Hive.AccountDetailsQueryResponse> {
-    const requestBody: Hive.GetAccountProps = { _account: account };
-    return await this.callApi("get_account", requestBody);
-  }
-
-  async getAccountResourceCredits(account: string): Promise<unknown> {
-    const requestBody: Hive.GetAccountResourceCreditsProps = {
-      _account: account,
-    };
-    return await this.callApi("get_account_resource_credits", requestBody);
-  }
-
-  async getBtrackerAccountBalance(account: string): Promise<unknown> {
-    const requestBody: Hive.GetBtrackerAccountBalanceProps = {
-      _account: account,
-    };
-    return await this.callApi("get_btracker_account_balance", requestBody);
+    return await this.callRestApi(`accounts/${account}`);
   }
 
   async getWitnesses(
@@ -220,33 +194,22 @@ class FetchingService {
     return await this.callRestApi("witnesses", requestParams);
   }
 
-  async getWitnessesVotersNum(witness: string): Promise<unknown> {
-    const requestBody: Hive.GetWitnessVotersNumProps = { _witness: witness };
-    return await this.callApi("get_witness_voters_num", requestBody);
-  }
-
   async getWitnessVoters(
     witness: string,
-    orderBy: string,
-    orderIs: string,
+    sort: string,
+    direction: "asc" | "desc",
     limit?: number
   ): Promise<Hive.Voter[]> {
-    const requestBody: Hive.GetWitnessVotersProps = {
-      _witness: witness,
-      _order_by: orderBy,
-      _order_is: orderIs,
-    };
-    if (limit) requestBody._limit = limit;
-    return await this.callApi("get_witness_voters", requestBody);
+    const requestParams: Hive.RestGetWitnessesVotersParams = {
+      sort,
+      direction,
+      limit
+    }
+    return await this.callRestApi(`witnesses/${witness}/voters`, requestParams);
   }
 
-  async getOperationTypes(
-    operation_type_pattern: string | null
-  ): Promise<Hive.OperationPattern[]> {
-    const requestBody: Hive.GetOperationTypesProps = {
-      _operation_type_pattern: operation_type_pattern,
-    };
-    return await this.callApi("get_matching_operation_types", requestBody);
+  async getOperationTypes(): Promise<Hive.OperationPattern[]> {
+    return await this.callRestApi("operation-types");
   }
 
   async getWitness(witnessName: string): Promise<Hive.Witness> {
