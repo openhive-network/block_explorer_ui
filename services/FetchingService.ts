@@ -65,6 +65,25 @@ class FetchingService {
     return await this.makePostRequest(url, requestBody);
   }
 
+  async makeGetRequest(url: string) {
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      })
+      const jsonResponse = await response.json();
+      if (!response.ok) throw new Error(`No data from API endpoint: ${url}`);
+      return jsonResponse;
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
+  async callRestApi(methodName: string, params: Record<string, any>) {
+    const url = `${this.testApiAddress}/${methodName}?${new URLSearchParams(params)}`;
+    return await this.makeGetRequest(url);
+  }
+
   async getHeadBlockNum(): Promise<number> {
     const url = `${this.apiUrl}/get_head_block_num`;
 
