@@ -13,6 +13,28 @@ declare module Hive {
     limit: number;
   }
 
+  interface RestGetOpsByBlockParams {
+    "operation-types"?: number[];
+    "account-name"?: string;
+    page?: number;
+    "page-size"?: number;
+    "set-of-keys"?: string[];
+    "key-content"?: string;
+    direction?: "asc" | "desc";
+    "data-size-limit"?: number;
+  }
+
+  interface RestGetOpsByAccountParams {
+    "operation-types"?: number[];
+    page?: number;
+    "page-size"?: number;
+    "data-size-limit"?: number;
+    "from-block"?: number;
+    "to-block"?: number;
+    "start-date"?: Date;
+    "end-date"?: Date;
+  }
+
   interface HiveBlogProps {
     id: number;
     method: string;
