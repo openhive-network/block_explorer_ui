@@ -102,10 +102,8 @@ class FetchingService {
     return await this.callRestApi("block-numbers/headblock");
   }
 
-  // To be decided
   async getBlock(blockNumber: number): Promise<Hive.BlockDetails> {
-    const requestBody: Hive.GetBlockProps = { _block_num: blockNumber };
-    return await this.callApi("get_block", requestBody);
+    return await this.callRestApi(`blocks/${blockNumber}`);
   }
 
   async getLastBlocks(limit: number): Promise<Hive.LastBlocksTypeResponse[]> {
@@ -117,7 +115,6 @@ class FetchingService {
     return await this.callRestApi(`input-type/${input}`);
   }
 
-  // Later
   async getOpsByBlock(
     blockNumber: number,
     filter?: number[],
@@ -126,7 +123,7 @@ class FetchingService {
     keyContent?: string,
     setOfKeys?: string[]
   ): Promise<Hive.OperationResponse[]> {
-    const requestParams = {
+    const requestParams: Hive.RestGetOpsByBlockParams = {
       "operation-types": filter,
       "account-name": accountName,
       page,
@@ -165,18 +162,17 @@ class FetchingService {
   async getOpsByAccount(
     accountOperationsProps: Explorer.AccountSearchOperationsProps
   ): Promise<Hive.OperationResponse[]> {
-    const requestBody: Hive.GetOpsByAccountProps = {
-      _account: accountOperationsProps.accountName,
-      _filter: accountOperationsProps.operationTypes,
-      _page_num: accountOperationsProps.pageNumber,
-      _page_size: config.standardPaginationSize,
-      _from: accountOperationsProps.fromBlock,
-      _to: accountOperationsProps.toBlock,
-      _date_start: accountOperationsProps.startDate,
-      _date_end: accountOperationsProps.endDate,
-      _body_limit: config.opsBodyLimit,
-    };
-    return await this.callApi("get_ops_by_account", requestBody);
+    const requestParams: Hive.RestGetOpsByAccountParams = {
+      "operation-types": accountOperationsProps.operationTypes,
+      page: accountOperationsProps.pageNumber,
+      "page-size": config.standardPaginationSize,
+      "data-size-limit": config.opsBodyLimit,
+      "from-block": accountOperationsProps.fromBlock,
+      "to-block": accountOperationsProps.toBlock,
+      "start-date": accountOperationsProps.startDate,
+      "end-date": accountOperationsProps.endDate
+    }
+    return await this.callRestApi(`accounts/${accountOperationsProps.accountName}/operations`, requestParams);
   }
 
   async getAccountOperationsCount(
