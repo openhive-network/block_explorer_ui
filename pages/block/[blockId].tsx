@@ -105,7 +105,7 @@ export default function Block() {
       : undefined,
     paramsState.page || 1,
     paramsState.accountName,
-    paramsState.keyContent ? [paramsState.keyContent] : undefined,
+    paramsState.keyContent ? paramsState.keyContent : undefined,
     paramsState.setOfKeys
   );
 
