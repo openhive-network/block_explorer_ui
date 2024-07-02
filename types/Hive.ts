@@ -2,11 +2,13 @@ import { IManabarData } from "@hiveio/wax";
 
 declare module Hive {
 
+  type Direction = "asc" | "desc";
+
   interface RestGetWitnessesParams {
     limit: number;
     offset: number;
     sort: string;
-    direction: "asc" | "desc";
+    direction: Direction;
   }
 
   interface RestGetLastBlocksParams {
@@ -20,7 +22,7 @@ declare module Hive {
     "page-size"?: number;
     "set-of-keys"?: string[];
     "key-content"?: string;
-    direction?: "asc" | "desc";
+    direction?: Direction;
     "data-size-limit"?: number;
   }
 
@@ -33,6 +35,12 @@ declare module Hive {
     "to-block"?: number;
     "start-date"?: Date;
     "end-date"?: Date;
+  }
+
+  interface RestGetWitnessesVotersParams {
+    sort?: string;
+    direction?: Direction;
+    limit?: number;
   }
 
   interface HiveBlogProps {
@@ -78,14 +86,6 @@ declare module Hive {
   }
 
   interface GetAccountProps {
-    _account: string;
-  }
-
-  interface GetAccountResourceCreditsProps {
-    _account: string;
-  }
-
-  interface GetBtrackerAccountBalanceProps {
     _account: string;
   }
 

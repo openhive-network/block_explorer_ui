@@ -9,7 +9,7 @@ const useOperationsTypes = () => {
     error: operationsTypesError,
   }: UseQueryResult<Hive.OperationPattern[]> = useQuery({
     queryKey: ["operation_types"],
-    queryFn: () => fetchingService.getOperationTypes(""),
+    queryFn: () => fetchingService.getOperationTypes(),
     refetchOnWindowFocus: false,
   });
 
