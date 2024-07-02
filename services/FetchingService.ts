@@ -80,19 +80,21 @@ class FetchingService {
   }
 
   async callRestApi(methodName: string, params?: Record<string, any>) {
-    const urlParams = new URLSearchParams();
-
-    for (const key in params) {
-      const value = params[key];
-      if (value) {
-        if (Array.isArray(value)) {
-          urlParams.set(key, value.map(item => item.toString()).join(','));
-        } else {
-          urlParams.set(key, value.toString());
-        }
-      }
+    let queryString = "";
+    if (params) {
+      queryString = "?" + Object.keys(params)
+        .map((key) => {
+          const value = params[key];
+          if (!value) return undefined;
+          if (Array.isArray(value)) {
+            return `${encodeURIComponent(key)}=${value.map(item => encodeURIComponent(item)).join(',')}`;
+          }
+          return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+        })
+        .filter((element) => element)
+        .join('&');
     }
-    const url = `${this.testApiAddress}/${methodName}${urlParams}`;
+    const url = `${this.testApiAddress}/${methodName}${queryString}`;
     return await this.makeGetRequest(url);
   }
 
