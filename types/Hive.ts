@@ -1,6 +1,14 @@
 import { IManabarData } from "@hiveio/wax";
 
 declare module Hive {
+
+  interface RestGetWitnessesParams {
+    limit: number;
+    offset: number;
+    sort: string;
+    direction: "asc" | "desc";
+  }
+
   interface HiveBlogProps {
     id: number;
     method: string;
