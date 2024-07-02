@@ -206,16 +206,16 @@ class FetchingService {
   async getWitnesses(
     limit: number,
     offset: number,
-    orderBy: string,
-    orderIs: string
+    sort: string,
+    direction: "asc" | "desc"
   ): Promise<Hive.Witness[]> {
-    const requestBody: Hive.GetWitnessesProps = {
-      _limit: limit,
-      _offset: offset,
-      _order_by: orderBy,
-      _order_is: orderIs,
-    };
-    return await this.callApi("get_witnesses", requestBody);
+    const requestParams: Hive.RestGetWitnessesParams = {
+      limit,
+      offset,
+      sort,
+      direction
+    }
+    return await this.callRestApi("witnesses", requestParams);
   }
 
   async getWitnessesVotersNum(witness: string): Promise<unknown> {
