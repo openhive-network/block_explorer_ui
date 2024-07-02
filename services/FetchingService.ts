@@ -18,6 +18,7 @@ class FetchingService {
   private apiUrl: string | null = null;
   private nodeUrl: string | null = null;
   private extendedHiveChain: TWaxExtended<ExplorerNodeApi> | undefined = undefined;
+  private testApiAddress: string = "https://local.bc.fqdn.pl/hafbe";
 
   public setApiUrl(newUrl: string) {
     this.apiUrl = newUrl;
