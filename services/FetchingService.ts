@@ -79,64 +79,69 @@ class FetchingService {
     }
   }
 
-  async callRestApi(methodName: string, params: Record<string, any>) {
-    const url = `${this.testApiAddress}/${methodName}?${new URLSearchParams(params)}`;
+  async callRestApi(methodName: string, params?: Record<string, any>) {
+    const urlParams = new URLSearchParams();
+
+    for (const key in params) {
+      const value = params[key];
+      if (value) {
+        if (Array.isArray(value)) {
+          urlParams.set(key, value.map(item => item.toString()).join(','));
+        } else {
+          urlParams.set(key, value.toString());
+        }
+      }
+    }
+    const url = `${this.testApiAddress}/${methodName}${urlParams}`;
     return await this.makeGetRequest(url);
   }
 
   async getHeadBlockNum(): Promise<number> {
-    const url = `${this.apiUrl}/get_head_block_num`;
-
-    return await this.makePostRequest(url, {});
+    return await this.callRestApi("block-numbers/headblock");
   }
 
+  // To be decided
   async getBlock(blockNumber: number): Promise<Hive.BlockDetails> {
     const requestBody: Hive.GetBlockProps = { _block_num: blockNumber };
     return await this.callApi("get_block", requestBody);
   }
 
   async getLastBlocks(limit: number): Promise<Hive.LastBlocksTypeResponse[]> {
-    const requestBody: Hive.GetLatestBlocksProps = { _limit: limit };
-    return await this.callApi("get_latest_blocks", requestBody);
+    const requestParams: Hive.RestGetLastBlocksParams = {limit};
+    return await this.callRestApi("blocks", requestParams);
   }
 
   async getInputType(input: string): Promise<Hive.InputTypeResponse> {
-    const requestBody: Hive.GetInputTypeProps = { _input: input };
-    return await this.callApi("get_input_type", requestBody);
+    return await this.callRestApi(`input-type/${input}`);
   }
 
-  async getBlockOpTypes(blockNumber: number): Promise<Hive.OperationTypes[]> {
-    const requestBody: Hive.GetBlockOpTypesProps = { _block_num: blockNumber };
-    return await this.callApi("get_block_op_types", requestBody);
-  }
-
+  // Later
   async getOpsByBlock(
     blockNumber: number,
     filter?: number[],
     page?: number,
-    account?: string,
-    keyContent?: string[],
+    accountName?: string,
+    keyContent?: string,
     setOfKeys?: string[]
   ): Promise<Hive.OperationResponse[]> {
-    const requestBody: Hive.GetOpsByBlockProps = {
-      _block_num: blockNumber,
-      _filter: filter,
-      _body_limit: config.opsBodyLimit,
-      _page_size: config.blockPagePaginationSize,
-      _page_num: page,
-      _account: account,
-      _key_content: keyContent,
-      _setof_keys: setOfKeys ? [setOfKeys] : undefined,
-    };
-    return await this.callApi("get_ops_by_block_paging", requestBody);
+    const requestParams = {
+      "operation-types": filter,
+      "account-name": accountName,
+      page,
+      "page-size": 1000,
+      "set-of-keys": setOfKeys,
+      "key-content": keyContent,
+      direction: "desc",
+      "data-size-limit": config.opsBodyLimit
+    }
+    return await this.callRestApi(`blocks/${blockNumber}/operations`, requestParams);
   }
+
+
   async getTransaction(
     transactionHash: string
   ): Promise<Hive.TransactionQueryResponse> {
-    const requestBody: Hive.GetTransactionProps = {
-      _trx_hash: transactionHash,
-    };
-    return await this.callApi("get_transaction", requestBody);
+    return await this.callRestApi(`transactions/${transactionHash}`);
   }
 
   async getRewardFunds(): Promise<{ funds: Hive.RewardFunds[] }> {
@@ -151,9 +156,8 @@ class FetchingService {
     return await this.extendedHiveChain!.api.database_api.get_current_price_feed({});
   }
 
-  async getAccOpTypes(account: string): Promise<unknown> {
-    const requestBody: Hive.GetAccOpTypesProps = { _account: account };
-    return await this.callApi("get_acc_op_types", requestBody);
+  async getAccOpTypes(accountName: string): Promise<unknown> {
+    return await this.callRestApi(`accounts/${accountName}/operations/types`);
   }
 
   async getOpsByAccount(

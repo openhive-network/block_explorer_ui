@@ -9,14 +9,14 @@ declare module Hive {
     direction: "asc" | "desc";
   }
 
+  interface RestGetLastBlocksParams {
+    limit: number;
+  }
+
   interface HiveBlogProps {
     id: number;
     method: string;
     jsonrpc: string;
-  }
-
-  interface GetBlockOpTypesProps {
-    _block_num: number;
   }
 
   interface GetOpsByBlockProps {
