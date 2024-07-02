@@ -7,7 +7,7 @@ const useBlockOperations = (
   blockFilters?: number[],
   page?: number,
   account?: string,
-  keyContent?: string[],
+  keyContent?: string,
   setOfKeys?: string[]
 ) => {
   const {
