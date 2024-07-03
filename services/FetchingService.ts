@@ -251,7 +251,7 @@ class FetchingService {
   async getBlockByOp(
     blockSearchProps: Explorer.BlockSearchProps
   ): Promise<Hive.BlockByOpResponse[]> {
-    const requestParams = {
+    const requestParams: Hive.RestBlockSearchParams = {
       operationTypes: blockSearchProps.operationTypes || [],
       "account-name": blockSearchProps?.accountName,
       "set-of-keys": blockSearchProps.deepProps.keys,
@@ -259,11 +259,11 @@ class FetchingService {
       direction: "desc",
       "from-block": blockSearchProps.fromBlock,
       "to-block": blockSearchProps.toBlock,
-      "start-date": blockSearchProps.startDate?.toDateString(),
-      "end-date": blockSearchProps.endDate?.toDateString(),
+      "start-date": blockSearchProps.startDate,
+      "end-date": blockSearchProps.endDate,
       limit: blockSearchProps.limit
     }
-    return await this.callRestApi("block-numbers");
+    return await this.callRestApi("block-numbers", requestParams);
   }
 
   async getWitnessVotesHistory(
@@ -291,7 +291,7 @@ class FetchingService {
   async getCommentOperation(
     commentSearchProps: Explorer.CommentSearchProps
   ): Promise<Hive.CommentOperationResponse> {
-    const requestParams = {
+    const requestParams: Hive.RestCommentsParams = {
       operationTypes: commentSearchProps.operationTypes,
       page: commentSearchProps.pageNumber,
       permlink: commentSearchProps.permlink,
@@ -302,7 +302,7 @@ class FetchingService {
       "start-date": commentSearchProps.startDate,
       "end-date": commentSearchProps.endDate
     }
-    return await this.callRestApi(`accounts/${commentSearchProps.accountName}/operations/comments`);
+    return await this.callRestApi(`accounts/${commentSearchProps.accountName}/operations/comments`, requestParams);
 
   }
 
