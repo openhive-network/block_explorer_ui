@@ -37,6 +37,34 @@ declare module Hive {
     "end-date"?: Date;
   }
 
+  interface RestCommentsParams {
+    operationTypes?: number[];
+    page?: number;
+    permlink?: string;
+    "page-size"?: number;
+    "data-size-limit"?: number;
+    "from-block"?: number;
+    "to-block"?: number;
+    "start-date"?: Date;
+    "end-date"?: Date;
+  }
+
+  interface RestBlockSearchParams {
+    operationTypes?: number[];
+    page?: number;
+    limit?: number;
+    direction: Direction;
+    "account-name"?: string;
+    "set-of-keys"?: string[];
+    "key-content"?: string;
+    "page-size"?: number;
+    "data-size-limit"?: number;
+    "from-block"?: number;
+    "to-block"?: number;
+    "start-date"?: Date;
+    "end-date"?: Date;
+  }
+
   interface RestGetWitnessesVotersParams {
     sort?: string;
     direction?: Direction;
