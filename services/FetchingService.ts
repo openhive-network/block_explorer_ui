@@ -286,19 +286,19 @@ class FetchingService {
   async getCommentOperation(
     commentSearchProps: Explorer.CommentSearchProps
   ): Promise<Hive.CommentOperationResponse> {
-    const requestBody: Hive.GetCommentOperationProps = {
-      _author: commentSearchProps.accountName || "",
-      _permlink: commentSearchProps.permlink,
-      _page_num: commentSearchProps.pageNumber,
-      _operation_types: commentSearchProps.operationTypes,
-      _from: commentSearchProps.fromBlock,
-      _to: commentSearchProps.toBlock,
-      _start_date: commentSearchProps.startDate,
-      _end_date: commentSearchProps.endDate,
-      _body_limit: config.opsBodyLimit,
-      _page_size: config.standardPaginationSize,
-    };
-    return await this.callApi("get_comment_operations", requestBody);
+    const requestParams = {
+      operationTypes: commentSearchProps.operationTypes,
+      page: commentSearchProps.pageNumber,
+      permlink: commentSearchProps.permlink,
+      "page-size": config.standardPaginationSize,
+      "data-size-limit": config.opsBodyLimit,
+      "from-block": commentSearchProps.fromBlock,
+      "to-block": commentSearchProps.toBlock,
+      "start-date": commentSearchProps.startDate,
+      "end-date": commentSearchProps.endDate
+    }
+    return await this.callRestApi(`accounts/${commentSearchProps.accountName}/operations/comments`);
+
   }
 
   async getHafbeVersion(): Promise<string> {
