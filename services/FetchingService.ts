@@ -208,15 +208,17 @@ class FetchingService {
     return await this.callRestApi(`witnesses/${witness}/voters`, requestParams);
   }
 
-  async getOperationTypes(): Promise<Hive.OperationPattern[]> {
-    return await this.callRestApi("operation-types");
+  // Temporary untill I will find a way to solve cors.
+  async getOperationTypes(
+  ): Promise<Hive.OperationPattern[]> {
+    const requestBody: Hive.GetOperationTypesProps = {
+      _operation_type_pattern: "",
+    };
+    return await this.callApi("get_matching_operation_types", requestBody);
   }
 
   async getWitness(witnessName: string): Promise<Hive.Witness> {
-    const requestBody: Hive.GetWitnessProps = {
-      _account: witnessName,
-    };
-    return await this.callApi("get_witness", requestBody);
+    return await this.callRestApi(`witnesses/${witnessName}`);
   }
 
   async getVestingDelegations(delegatorAccount: string): Promise<Hive.VestingDelegations[]> {
@@ -236,62 +238,54 @@ class FetchingService {
     const requestBody: Hive.GetBlockByTimeProps = {
       _timestamp: date,
     };
-    return await this.callApi("get_block_by_time", requestBody);
+    return await this.callRestApi(`block-numbers/by-creation-date/${date.toDateString()}`);
   }
 
   async getOperationKeys(operationTypeId: number): Promise<string[][]> {
     const requestBody: Hive.GetOperationKeysProps = {
       _op_type_id: operationTypeId,
     };
-    return await this.callApi("get_operation_keys", requestBody);
+    return await this.callRestApi(`operation-keys/${operationTypeId}`);
   }
 
   async getBlockByOp(
     blockSearchProps: Explorer.BlockSearchProps
   ): Promise<Hive.BlockByOpResponse[]> {
-    const requestBody: Hive.GetBlockByOpProps = {
-      _operations: blockSearchProps.operationTypes || [],
-      _account: blockSearchProps?.accountName,
-      _from: blockSearchProps?.fromBlock,
-      _to: blockSearchProps?.toBlock,
-      _start_date: blockSearchProps.startDate,
-      _end_date: blockSearchProps.endDate,
-      _limit: blockSearchProps.limit,
-      _order_is: "desc",
-      _key_content: blockSearchProps.deepProps.content
-        ? [blockSearchProps.deepProps.content]
-        : undefined,
-      _setof_keys: blockSearchProps.deepProps.keys
-        ? [blockSearchProps.deepProps.keys]
-        : undefined,
-    };
-    return await this.callApi("get_block_by_op", requestBody);
+    const requestParams = {
+      operationTypes: blockSearchProps.operationTypes || [],
+      "account-name": blockSearchProps?.accountName,
+      "set-of-keys": blockSearchProps.deepProps.keys,
+      "key-content": blockSearchProps.deepProps.content,
+      direction: "desc",
+      "from-block": blockSearchProps.fromBlock,
+      "to-block": blockSearchProps.toBlock,
+      "start-date": blockSearchProps.startDate?.toDateString(),
+      "end-date": blockSearchProps.endDate?.toDateString(),
+      limit: blockSearchProps.limit
+    }
+    return await this.callRestApi("block-numbers");
   }
 
   async getWitnessVotesHistory(
-    witness: string,
-    orderIs: string,
-    orderBy: string,
+    witnessName: string,
+    direction: "asc" | "desc",
+    sort: string,
     limit: number | null,
     fromTime?: Date,
     toTime?: Date
   ): Promise<Hive.WitnessVotesHistory[]> {
-    const requestBody: Hive.GetWitnessVotesHistory = {
-      _witness: witness,
-      _order_is: orderIs,
-      _order_by: orderBy,
-      _limit: limit,
-      _from_time: fromTime,
-      _to_time: toTime,
-    };
-    return await this.callApi("get_witness_votes_history", requestBody);
+    const witnessVotesHistoryParams = {
+      sort,
+      direction,
+      limit,
+      from_time: fromTime?.toDateString(),
+      to_time: toTime?.toDateString()
+    }
+    return await this.callRestApi(`witnesses/${witnessName}/votes/history`, witnessVotesHistoryParams)
   }
 
   async getOperation(operationId: number): Promise<Hive.OperationResponse> {
-    const requestBody: Hive.GetOperationProps = {
-      _operation_id: operationId,
-    };
-    return await this.callApi("get_operation", requestBody);
+    return await this.callRestApi(`operations/${operationId}`);
   }
 
   async getCommentOperation(
@@ -313,36 +307,25 @@ class FetchingService {
   }
 
   async getHafbeVersion(): Promise<string> {
-    const requestBody = {};
-    return await this.callApi("get_hafbe_version", requestBody);
+    return await this.callRestApi("hafbe-version");
   }
 
   async getOperationsCountInBlock(
     blockNumber: number
   ): Promise<Hive.OperationsByTypeCount[]> {
-    const requestBody: Hive.GetOperationsInBlockProps = {
-      _block_num: blockNumber,
-    };
-    return await this.callApi("get_op_count_in_block", requestBody);
+    return await this.callRestApi(`blocks/${blockNumber}/operations/count`);
   }
 
   async getHafbeLastSyncedBlock(): Promise<number> {
-    const requestBody = {};
-    return await this.callApi("get_hafbe_last_synced_block", requestBody);
+    return await this.callRestApi("/block-numbers/headblock");
   }
 
   async getBlockRaw(blockNumber: number): Promise<Hive.RawBlockData> {
-    const requestBody: Hive.GetBlockRawProps = {
-      _block_num: blockNumber,
-    };
-    return await this.callApi("get_block_raw", requestBody);
+    return await this.callRestApi(`blocks/${blockNumber}/raw-details`);
   }
 
   async getAccountAuthorities(accountName: string): Promise<Hive.AccountAuthoritiesData> {
-    const requestBody = {
-      _account: accountName,
-    };
-    return await this.callApi("get_account_authority", requestBody);
+    return await this.callRestApi(`accounts/${accountName}/authority`);
   }
 
   async getManabars(
