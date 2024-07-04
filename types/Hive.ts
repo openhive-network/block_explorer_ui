@@ -38,7 +38,7 @@ declare module Hive {
   }
 
   interface RestCommentsParams {
-    operationTypes?: number[];
+    "operation-types"?: number[];
     page?: number;
     permlink?: string;
     "page-size"?: number;
@@ -50,7 +50,7 @@ declare module Hive {
   }
 
   interface RestBlockSearchParams {
-    operationTypes?: number[];
+    "operation-types"?: number[];
     page?: number;
     limit?: number;
     direction: Direction;

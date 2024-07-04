@@ -249,7 +249,7 @@ class FetchingService {
     blockSearchProps: Explorer.BlockSearchProps
   ): Promise<Hive.BlockByOpResponse[]> {
     const requestParams: Hive.RestBlockSearchParams = {
-      operationTypes: blockSearchProps.operationTypes || [],
+      "operation-types": blockSearchProps.operationTypes || [],
       "account-name": blockSearchProps?.accountName,
       "set-of-keys": blockSearchProps.deepProps.keys,
       "key-content": blockSearchProps.deepProps.content,
@@ -289,7 +289,7 @@ class FetchingService {
     commentSearchProps: Explorer.CommentSearchProps
   ): Promise<Hive.CommentOperationResponse> {
     const requestParams: Hive.RestCommentsParams = {
-      operationTypes: commentSearchProps.operationTypes,
+      "operation-types": commentSearchProps.operationTypes,
       page: commentSearchProps.pageNumber,
       permlink: commentSearchProps.permlink,
       "page-size": config.standardPaginationSize,
