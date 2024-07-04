@@ -211,10 +211,7 @@ class FetchingService {
   // Temporary untill I will find a way to solve cors.
   async getOperationTypes(
   ): Promise<Hive.OperationPattern[]> {
-    const requestBody: Hive.GetOperationTypesProps = {
-      _operation_type_pattern: "",
-    };
-    return await this.callApi("get_matching_operation_types", requestBody);
+    return await this.callRestApi("operation-types/");
   }
 
   async getWitness(witnessName: string): Promise<Hive.Witness> {
