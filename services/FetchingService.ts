@@ -89,6 +89,7 @@ class FetchingService {
           if (Array.isArray(value)) {
             return `${encodeURIComponent(key)}=${value.map(item => encodeURIComponent(item)).join(',')}`;
           }
+          if (value instanceof Date) return `${encodeURIComponent(key)}=${encodeURIComponent(value.toString())}`;
           return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
         })
         .filter((element) => element)
