@@ -9,6 +9,7 @@ const useInputType = (input: string) => {
   } = useQuery({
     queryKey: ["inputType", input],
     queryFn: () => fetchingService.getInputType(input),
+    enabled: !!input && input !== "",
     refetchOnWindowFocus: false,
   });
 
