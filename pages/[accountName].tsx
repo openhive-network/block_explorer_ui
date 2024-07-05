@@ -228,11 +228,13 @@ export default function Account() {
       <Head>
         <title>@{accountNameFromRoute} - Hive Explorer</title>
       </Head>
-      <div className="flex items-center justify-end w-full min-h-[64px] bg-explorer-orange -mt-4 px-2 md:px-8 fixed z-20">
-        {accountOperations && (paramsState.page || lastPage) &&  (
+      <div className="flex items-center justify-end w-full min-h-[64px] bg-explorer-orange -mt-4 px-2 md:mb-4 md:px-8 fixed z-20">
+        {accountOperations && (paramsState.page || lastPage) && (
           <AccountPagination
             page={paramsState.page ? paramsState.page : lastPage || 0}
-            setPage={(page: number | undefined) => setParams({ ...paramsState, page })}
+            setPage={(page: number | undefined) =>
+              setParams({ ...paramsState, page })
+            }
             isLastPage={!paramsState.page}
             accountOperations={accountOperations}
             accountOperationTypes={accountOperationTypes || []}
@@ -242,7 +244,7 @@ export default function Account() {
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 text-white mx-8 mt-[100px] md:mt-16 w-full gap-4 px-2 md:px-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 text-white mx-8 mt-24 lg:mt-16 w-full gap-4 px-2 md:px-4">
         <div className="col-start-1 col-span-1 flex flex-col gap-y-2">
           <AccountMainCard
             accountDetails={accountDetails}
@@ -266,9 +268,7 @@ export default function Account() {
             json={accountDetails.posting_json_metadata}
             showCollapseButton={true}
           />
-          <AccountAuthoritiesCard
-            accountName={accountNameFromRoute}
-          />
+          <AccountAuthoritiesCard accountName={accountNameFromRoute} />
           {!isWitnessDetailsError && (
             <AccountDetailsCard
               header="Witness Properties"
