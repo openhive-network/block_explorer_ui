@@ -102,7 +102,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
     if (prettyJsonView) {
       return <pre>{JSON.stringify(unformattedOperation, null, 2)}</pre>;
     } else {
-      return <div>{JSON.stringify(unformattedOperation)}</div>;
+      return <pre>{JSON.stringify(unformattedOperation)}</pre>;
     }
   };
 
@@ -115,8 +115,10 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
     >
       <TableHeader>
         <TableRow>
-          <TableHead></TableHead>
-          <TableHead className="pl-2">Block</TableHead>
+          <TableHead className="sticky left-0 bg-explorer-dark-gray"></TableHead>
+          <TableHead className="pl-2 sticky left-12 bg-explorer-dark-gray">
+            Block
+          </TableHead>
           <TableHead>Transaction</TableHead>
           <TableHead>Time</TableHead>
           <TableHead>Operation</TableHead>
@@ -135,11 +137,11 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                 key={index}
                 className="border-b border-gray-700"
               >
-                <TableCell>
+                <TableCell className="sticky left-0 bg-explorer-dark-gray">
                   <CopyJSON value={getUnformattedValue(operation)} />
                 </TableCell>
                 <TableCell
-                  className="pl-2"
+                  className="pl-2 sticky left-12 bg-explorer-dark-gray"
                   data-testid="block-number-operation-table"
                 >
                   <Link
@@ -175,7 +177,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                   </div>
                 </TableCell>
                 <TableCell
-                  className="md:max-w-0 w-1/2"
+                  className="min-w-[200px] md:max-w-0 w-1/2 py-2"
                   data-testid="operation-content"
                 >
                   {renderOperationContent(
