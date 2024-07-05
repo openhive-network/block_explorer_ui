@@ -157,7 +157,7 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
             value={selectedIndex}
           >
             <SelectTrigger
-              className="w-1/2 justify-normal bg-exolorer-dark-gray border-0 border-b-2 "
+              className="w-1/2 pb-6 justify-normal bg-exolorer-dark-gray border-0 border-b-2 "
               disabled={
                 !selectedOperationTypes || selectedOperationTypes.length !== 1
               }
