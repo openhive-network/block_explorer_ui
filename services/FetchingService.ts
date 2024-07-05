@@ -272,14 +272,14 @@ class FetchingService {
     fromTime?: Date,
     toTime?: Date
   ): Promise<Hive.WitnessVotesHistory[]> {
-    const witnessVotesHistoryParams = {
+    const requestParams: Hive.RestWitnessVotesHistoryParams = {
       sort,
       direction,
       limit,
-      from_time: fromTime?.toDateString(),
-      to_time: toTime?.toDateString()
+      from_time: fromTime,
+      to_time: toTime
     }
-    return await this.callRestApi(`witnesses/${witnessName}/votes/history`, witnessVotesHistoryParams)
+    return await this.callRestApi(`witnesses/${witnessName}/votes/history`, requestParams)
   }
 
   async getOperation(operationId: number): Promise<Hive.OperationResponse> {
