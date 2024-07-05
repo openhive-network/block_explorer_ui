@@ -228,16 +228,10 @@ class FetchingService {
   }
 
   async getBlockByTime(date: Date): Promise<number> {
-    const requestBody: Hive.GetBlockByTimeProps = {
-      _timestamp: date,
-    };
     return await this.callRestApi(`block-numbers/by-creation-date/${date.toDateString()}`);
   }
 
   async getOperationKeys(operationTypeId: number): Promise<string[][]> {
-    const requestBody: Hive.GetOperationKeysProps = {
-      _op_type_id: operationTypeId,
-    };
     return await this.callRestApi(`operation-keys/${operationTypeId}`);
   }
 
