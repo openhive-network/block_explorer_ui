@@ -26,7 +26,9 @@ export default function Witnesses() {
   );
 
   if (isWitnessDataLoading) {
-    return <Loader2 className="dark:text-white animate-spin mt-1 h-8 w-8 ml-3 ..." />;
+    return (
+      <Loader2 className="dark:text-white animate-spin mt-1 h-8 w-8 ml-3 ..." />
+    );
   }
 
   if (!witnessesData || !witnessesData.length) return;
@@ -55,11 +57,14 @@ export default function Witnesses() {
           isVotesHistoryOpen={isVotesHistoryOpen}
           changeVoteHistoryDialogue={changeVotesHistoryDialog}
         />
-        <Table className="text-white" data-testid="table-body">
+        <Table
+          className="text-white"
+          data-testid="table-body"
+        >
           <TableHeader>
             <TableRow>
-              <TableHead className="sticky left-0 "></TableHead>
-              <TableHead className="sticky left-6">Name</TableHead>
+              <TableHead className="sticky left-0"></TableHead>
+              <TableHead className="sticky left-11">Name</TableHead>
               <TableHead className="text-center">Votes</TableHead>
               <TableHead className="text-center">Voters</TableHead>
               <TableHead className="text-center">Block Size</TableHead>
@@ -83,7 +88,7 @@ export default function Witnesses() {
                       index % 2 === 0
                         ? "bg-gray-800 md:bg-inherit"
                         : "bg-gray-900 md:bg-inherit"
-                    }` + " sticky left-0"
+                    }` + " sticky left-0 min-w-[20px]"
                   }
                 >
                   {index + 1}
@@ -94,7 +99,7 @@ export default function Witnesses() {
                       index % 2 === 0
                         ? "bg-gray-800 md:bg-inherit"
                         : "bg-gray-900 md:bg-inherit"
-                    }` + " text-explorer-turquoise sticky left-6 "
+                    }` + " text-explorer-turquoise sticky left-11"
                   }
                 >
                   {" "}
