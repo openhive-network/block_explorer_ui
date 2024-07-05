@@ -41,18 +41,18 @@ export default function Home() {
       <Head>
         <title>Hive Explorer</title>
       </Head>
-      <div className="grid grid-cols-3 text-white px-2 md:mx-8 w-full gap-4">
+      <div className="grid grid-cols-4 text-white px-2 w-full gap-3">
         <HeadBlockCard
           headBlockCardData={dynamicGlobalQueryData}
           transactionCount={blockOperations?.operations_result?.length}
           blockDetails={headBlockData}
         />
-        <div className="col-start-1 md:col-start-2 col-span-6 md:col-span-2">
+        <div className="col-span-4 md:col-span-3 lg:col-span-2">
           <LastBlocksWidget headBlock={headBlockNum} />
           <SearchesSection />
         </div>
         <Card
-          className="col-start-1 md:col-start-4 col-span-6 md:col-span-1"
+          className="col-span-4 md:col-span-4 lg:col-span-1"
           data-testid="top-witnesses-sidebar"
         >
           <CardHeader>
@@ -79,13 +79,15 @@ export default function Home() {
                       </TableCell>
                       <TableCell className="py-4">
                         <Link href={`/@${witness.witness}`}>
-                          <Image
-                            className="rounded-full border-2 border-explorer-turquoise"
-                            src={getHiveAvatarUrl(witness.witness)}
-                            alt="avatar"
-                            width={40}
-                            height={40}
-                          />
+                          <div className="min-w-[30px]">
+                            <Image
+                              className="rounded-full border-2 border-explorer-turquoise"
+                              src={getHiveAvatarUrl(witness.witness)}
+                              alt="avatar"
+                              width={40}
+                              height={40}
+                            />
+                          </div>
                         </Link>{" "}
                       </TableCell>
                     </TableRow>
