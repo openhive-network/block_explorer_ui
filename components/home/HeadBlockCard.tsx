@@ -55,7 +55,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
 
   return (
     <Card
-      className="col-start-1 col-span-6 md:col-span-1"
+      className="col-span-4 md:col-span-1"
       data-testid="head-block-card"
     >
       <CardHeader>
@@ -79,36 +79,36 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
           </Link>
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="my-2">
-          Operations per block: {!!transactionCount && transactionCount}
-        </div>
-        <div>
-          <Link
-            className="flex justif-between items-center min-h-[40px]"
-            href={`/@${blockDetails?.producer_account}`}
-            data-testid="current-witness-link"
-          >
-            <span>Current witness: </span>{" "}
-            {blockDetails?.producer_account && (
-              <>
-                <span
+      <CardContent className="p-2">
+        <div className="my-2">Operations per block: {transactionCount}</div>
+        {blockDetails?.producer_account && (
+          <div className="flex">
+            <p>Current witness: </p>
+            <Link
+              className="flex justify-between items-center min-h-[40px]"
+              href={`/@${blockDetails?.producer_account}`}
+              data-testid="current-witness-link"
+            >
+              <div className="flex">
+                <p
                   className="text-explorer-turquoise mx-2"
                   data-testid="current-witness-name"
                 >
                   {blockDetails?.producer_account}
-                </span>
-                <Image
-                  className="rounded-full border-2 border-explorer-turquoise"
-                  src={getHiveAvatarUrl(blockDetails?.producer_account)}
-                  alt="avatar"
-                  width={40}
-                  height={40}
-                />
-              </>
-            )}
-          </Link>
-        </div>
+                </p>
+                <div className="min-w-[30px]">
+                  <Image
+                    className="rounded-full border-2 border-explorer-turquoise"
+                    src={getHiveAvatarUrl(blockDetails?.producer_account)}
+                    alt="avatar"
+                    width={40}
+                    height={40}
+                  />
+                </div>
+              </div>
+            </Link>
+          </div>
+        )}
         <div className="my-2">
           Feed Price : {headBlockCardData?.headBlockDetails.feedPrice ?? ""}
         </div>

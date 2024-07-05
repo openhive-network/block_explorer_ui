@@ -9,6 +9,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "./ui/pagination";
+import { useMediaQuery } from "@/utils/Hooks";
 
 interface CustomPaginationProps {
   currentPage: number;
@@ -29,6 +30,8 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
   isMirrored = true,
   className,
 }) => {
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
   const paginationRange = usePagination({
     currentPage,
     totalCount,
@@ -54,10 +57,16 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
     Number(paginationRange.at(-1))
   );
 
+  const mobilePaginationRange = [currentPage, "...", 1];
+
+  const newPaginationRange = !isMobile
+    ? paginationRange
+    : mobilePaginationRange;
+
   return (
     <Pagination className={className}>
       <PaginationContent className="md:gap-x-4">
-        {paginationRange.length > 1 &&
+        {newPaginationRange.length > 1 &&
           (isMirrored ? currentPage !== maxPage : currentPage !== 1) && (
             <PaginationItem
               onClick={isMirrored ? onNext : onPrevious}
@@ -66,7 +75,7 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
               <PaginationPrevious />
             </PaginationItem>
           )}
-        {paginationRange.map((pageNumber: number | string, i: number) => {
+        {newPaginationRange.map((pageNumber: number | string, i: number) => {
           if (pageNumber === DOTS) {
             return (
               <PaginationItem key={i}>
@@ -80,7 +89,8 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
                 className={cn(
                   "px-1 md:px-3 md:py-1.5 rounded-full cursor-pointer hover:bg-white dark:hover:bg-explorer-dark-gray",
                   {
-                    "bg-white font-bold dark:bg-explorer-dark-gray": currentPage === pageNumber,
+                    "bg-white font-bold dark:bg-explorer-dark-gray":
+                      currentPage === pageNumber,
                   }
                 )}
                 onClick={() => onPageChange(Number(pageNumber))}
@@ -96,7 +106,7 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
             );
           }
         })}
-        {paginationRange.length > 1 &&
+        {newPaginationRange.length > 1 &&
           (isMirrored ? currentPage !== 1 : currentPage !== maxPage) && (
             <PaginationItem
               onClick={isMirrored ? onPrevious : onNext}
