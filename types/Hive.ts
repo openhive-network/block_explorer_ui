@@ -71,6 +71,14 @@ declare module Hive {
     limit?: number;
   }
 
+  interface RestWitnessVotesHistoryParams {
+    sort?: string;
+    direction?: Direction;
+    limit: number | null;
+    from_time?: Date;
+    to_time?: Date;
+  }
+
   interface HiveBlogProps {
     id: number;
     method: string;
