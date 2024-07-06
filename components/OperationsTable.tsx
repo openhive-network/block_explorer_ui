@@ -21,6 +21,13 @@ import { colorByOperationCategory } from "./OperationTypesDialog";
 import { useUserSettingsContext } from "./contexts/UserSettingsContext";
 import TimeAgo from "timeago-react";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
+
 
 interface OperationsTableProps {
   operations: Explorer.OperationForTable[];
@@ -160,11 +167,22 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                   </Link>
                 </TableCell>
                 <TableCell className="w-1/5">
-                  <TimeAgo
-                    datetime={
-                      new Date(formatAndDelocalizeTime(operation.timestamp))
-                    }
-                  />
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div>
+                          <TimeAgo
+                            datetime={
+                              new Date(formatAndDelocalizeTime(operation.timestamp))
+                            }
+                          />
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent className="bg-white text-black dark:bg-explorer-dark-gray dark:text-white">
+                        {formatAndDelocalizeTime(operation.timestamp)}
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </TableCell>
                 <TableCell data-testid="operation-type">
                   <div className={`flex justify-stretch p-1 rounded `}>
