@@ -144,11 +144,11 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                 key={index}
                 className="border-b border-gray-700"
               >
-                <TableCell className="sticky left-0 bg-explorer-dark-gray">
+                <TableCell className="sticky left-0">
                   <CopyJSON value={getUnformattedValue(operation)} />
                 </TableCell>
                 <TableCell
-                  className="pl-2 sticky left-12 bg-explorer-dark-gray"
+                  className="pl-2 sticky left-12"
                   data-testid="block-number-operation-table"
                 >
                   <Link
