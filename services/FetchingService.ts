@@ -270,8 +270,8 @@ class FetchingService {
       sort,
       direction,
       limit,
-      from_time: fromTime,
-      to_time: toTime
+      "start-date": fromTime,
+      "end-date": toTime
     }
     return await this.callRestApi(`witnesses/${witnessName}/votes/history`, requestParams)
   }

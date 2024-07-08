@@ -75,8 +75,8 @@ declare module Hive {
     sort?: string;
     direction?: Direction;
     limit: number | null;
-    from_time?: Date;
-    to_time?: Date;
+    "start-date"?: Date;
+    "end-date"?: Date;
   }
 
   interface HiveBlogProps {
