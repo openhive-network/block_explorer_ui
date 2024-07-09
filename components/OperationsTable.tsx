@@ -41,29 +41,26 @@ const getOperationColor = (operationType: string) => {
     (category) => category.types.includes(operationType)
   );
 
-  const color = localColors[operationTypeCategories.name];
+  const color = localColors[operationTypeCategories?.name];
 
   return color;
 };
 
 const getOneLineDescription = (operation: Explorer.OperationForTable) => {
   const { value } = operation?.operation;
-  if (typeof value === "string" || React.isValidElement(value)) {
-    if (operation.operation.type === "hardfork_operation") {
-      return (
-        <Link
-          className="text-explorer-turquoise"
-          href={`/longOperation/${operation?.operationId}`}
-        >
-          {value}
-        </Link>
-      );
-    } else {
-      return value;
-    }
-  }
+  if (typeof value === "string" || React.isValidElement(value))
+    return value;
   if (operation.operation.type === "custom_json_operation")
     return value.message;
+  if (operation.operation.type === "body_placeholder_operation") {
+    return (
+      <div className="text-explorer-turquoise">
+        <Link href={`/longOperation/${operation.operation.value?.["org-op-id"]}`} >
+          See full operation
+        </Link>
+      </div>  
+    )
+  }
   return null;
 };
 
