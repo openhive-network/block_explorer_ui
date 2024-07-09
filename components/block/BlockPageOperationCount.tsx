@@ -1,6 +1,6 @@
 import Explorer from "@/types/Explorer";
-import Hive from "@/types/Hive";
 import { getOperationTypeForDisplay } from "@/utils/UI";
+import { getOperationColor } from "../OperationsTable";
 
 interface BlockPageOperationCountProps {
   virtualOperationsTypesCounters?: Explorer.OperationCounter[];
@@ -19,36 +19,48 @@ const BlockPageOperationCount: React.FC<BlockPageOperationCountProps> = ({
     <section className="w-full flex flex-col items-center text-md px-4 mb-2 md:mb-4">
       <div className="w-full py-4">
         <div className="my-2">Operations: {nonVirtualOperationLength}</div>
-        <div className="flex flex-wrap flex-col md:flex-row text-sm">
-          {nonVirtualOperationsTypesCounters && nonVirtualOperationsTypesCounters.map(
-            ({operationTypeName, counter}) => (
-              <div
-                key={operationTypeName}
-                className="flex justify-between p-2 md:w-1/2 border-b border-solid border-gray-700  border-r"
-              >
-                <span className="mr-2">{`${getOperationTypeForDisplay(
-                  operationTypeName
-                )}: `}</span>
-                <span>{counter}</span>
-              </div>
-            )
-          )}
+        <div className="flex flex-wrap justify-center text-sm">
+          {nonVirtualOperationsTypesCounters &&
+            nonVirtualOperationsTypesCounters.map(
+              ({ operationTypeName, counter }) => (
+                <div
+                  key={operationTypeName}
+                  className="flex p-2"
+                >
+                  <span
+                    className={`rounded w-4 h-4 mr-2 mt-[2px] ${getOperationColor(
+                      operationTypeName
+                    )}`}
+                  ></span>
+                  <span className="mr-2">{`${getOperationTypeForDisplay(
+                    operationTypeName
+                  )}: `}</span>
+                  <span>{counter}</span>
+                </div>
+              )
+            )}
         </div>
         <div className="my-2">Virtual operations: {virtualOperationLength}</div>
-        <div className="flex flex-wrap flex-col md:flex-row text-sm">
-          {virtualOperationsTypesCounters && virtualOperationsTypesCounters.map(
-            ({operationTypeName, counter}) => (
-              <div
-                key={operationTypeName}
-                className="flex justify-between p-2 md:w-1/2 border-b border-solid border-gray-700  border-r"
-              >
-                <span className="mr-2">{`${getOperationTypeForDisplay(
-                  operationTypeName
-                )}: `}</span>
-                <span>{counter}</span>
-              </div>
-            )
-          )}
+        <div className="flex flex-wrap justify-center text-sm">
+          {virtualOperationsTypesCounters &&
+            virtualOperationsTypesCounters.map(
+              ({ operationTypeName, counter }) => (
+                <div
+                  key={operationTypeName}
+                  className="flex p-2"
+                >
+                  <span
+                    className={`rounded w-4 h-4 mr-2 mt-[2px] ${getOperationColor(
+                      operationTypeName
+                    )}`}
+                  ></span>
+                  <span className="mr-2">{`${getOperationTypeForDisplay(
+                    operationTypeName
+                  )}: `}</span>
+                  <span>{counter}</span>
+                </div>
+              )
+            )}
         </div>
       </div>
     </section>
