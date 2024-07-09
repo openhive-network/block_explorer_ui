@@ -179,15 +179,8 @@ declare module Hive {
     curation_reward_curve: string;
   }
 
-  type OperationType =
-    | "vote_operation"
-    | "comment_operation"
-    | "custom_json_operation"
-    | "transfer_operation"
-    | "hardfork_operation";
-
   interface Operation {
-    type: OperationType;
+    type: string;
     value: {
       author?: string;
       owner?: string | Object;
@@ -216,6 +209,7 @@ declare module Hive {
       from?: string;
       to?: string;
       message?: string;
+      "org-op-id"?: number;
     };
   }
 
