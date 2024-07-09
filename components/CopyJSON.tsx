@@ -7,6 +7,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
+  TooltipPortal,
 } from "./ui/tooltip";
 
 interface CopyJSONProps {
@@ -19,9 +20,7 @@ const CopyJSON: React.FC<CopyJSONProps> = ({ value, className }) => {
 
   const copyToClipboard = (valueAsObject: string | object) => {
     if (typeof valueAsObject === "string") {
-      navigator.clipboard.writeText(
-        valueAsObject
-      );
+      navigator.clipboard.writeText(valueAsObject);
     }
     setCopied(true);
     setTimeout(() => setCopied(false), 1000);
@@ -40,9 +39,11 @@ const CopyJSON: React.FC<CopyJSONProps> = ({ value, className }) => {
             <TooltipTrigger asChild>
               <ClipboardCopy className="w-5 h-5" />
             </TooltipTrigger>
-            <TooltipContent className="bg-white text-black dark:bg-explorer-dark-gray dark:text-white">
-              Copy JSON to clipboard.
-            </TooltipContent>
+            <TooltipPortal>
+              <TooltipContent className="bg-white text-black dark:bg-explorer-dark-gray dark:text-white z-[9999]">
+                Copy JSON to clipboard.
+              </TooltipContent>
+            </TooltipPortal>
           </Tooltip>
         </TooltipProvider>
       )}
