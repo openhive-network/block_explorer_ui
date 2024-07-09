@@ -28,7 +28,6 @@ import {
   TooltipTrigger,
 } from "./ui/tooltip";
 
-
 interface OperationsTableProps {
   operations: Explorer.OperationForTable[];
   unformattedOperations?: Explorer.OperationForTable[];
@@ -141,11 +140,11 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                 key={index}
                 className="border-b border-gray-700"
               >
-                <TableCell className="sticky left-0">
+                <TableCell className="sticky left-0 bg-explorer-dark-gray xl:bg-inherit">
                   <CopyJSON value={getUnformattedValue(operation)} />
                 </TableCell>
                 <TableCell
-                  className="pl-2 sticky left-12"
+                  className="pl-2 sticky left-12 bg-explorer-dark-gray xl:bg-inherit"
                   data-testid="block-number-operation-table"
                 >
                   <Link
@@ -170,7 +169,9 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                         <div>
                           <TimeAgo
                             datetime={
-                              new Date(formatAndDelocalizeTime(operation.timestamp))
+                              new Date(
+                                formatAndDelocalizeTime(operation.timestamp)
+                              )
                             }
                           />
                         </div>
