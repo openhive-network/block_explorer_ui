@@ -40,7 +40,7 @@ const CopyJSON: React.FC<CopyJSONProps> = ({ value, className }) => {
               <ClipboardCopy className="w-5 h-5" />
             </TooltipTrigger>
             <TooltipPortal>
-              <TooltipContent className="bg-white text-black dark:bg-explorer-dark-gray dark:text-white z-[9999]">
+              <TooltipContent className="bg-white text-black dark:bg-explorer-dark-gray dark:text-white">
                 Copy JSON to clipboard.
               </TooltipContent>
             </TooltipPortal>
