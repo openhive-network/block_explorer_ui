@@ -36,7 +36,7 @@ interface OperationsTableProps {
 
 const localColors = colorByOperationCategory;
 
-const getOperationColor = (operationType: string) => {
+export const getOperationColor = (operationType: string) => {
   const operationTypeCategories: any = categorizedOperationTypes.find(
     (category) => category.types.includes(operationType)
   );
@@ -48,18 +48,19 @@ const getOperationColor = (operationType: string) => {
 
 const getOneLineDescription = (operation: Explorer.OperationForTable) => {
   const { value } = operation?.operation;
-  if (typeof value === "string" || React.isValidElement(value))
-    return value;
+  if (typeof value === "string" || React.isValidElement(value)) return value;
   if (operation.operation.type === "custom_json_operation")
     return value.message;
   if (operation.operation.type === "body_placeholder_operation") {
     return (
       <div className="text-explorer-turquoise">
-        <Link href={`/longOperation/${operation.operation.value?.["org-op-id"]}`} >
+        <Link
+          href={`/longOperation/${operation.operation.value?.["org-op-id"]}`}
+        >
           See full operation
         </Link>
-      </div>  
-    )
+      </div>
+    );
   }
   return null;
 };
