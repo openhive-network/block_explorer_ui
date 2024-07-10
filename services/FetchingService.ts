@@ -277,7 +277,7 @@ class FetchingService {
   }
 
   async getOperation(operationId: number): Promise<Hive.OperationResponse> {
-    return await this.callRestApi(`operations/${operationId}`);
+    return await this.callRestApi(`operations/${operationId}/`);
   }
 
   async getCommentOperation(
