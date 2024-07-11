@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
 import { Badge } from "../ui/badge";
+import { Pencil } from 'lucide-react';
 
 
 interface ProviderCardProps {
@@ -9,7 +10,7 @@ interface ProviderCardProps {
   disabled: boolean;
   isSelected: boolean;
   apiList: string[];
-  switchToProvider: (providerLink: string |null) => void;
+  switchToProvider: (providerLink: string | null) => void;
 }
 
 const ProviderCard: React.FC<ProviderCardProps> = ({
@@ -19,15 +20,19 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
   apiList,
   switchToProvider
 }) => {
+
+  const clickEdit = () => {
+
+  }
+
   return (
-    <Card className="flex flex-col my-1 p-2">
-      <div className="flex justify-between items-center">
-        <div className={cn({"text-red-600": disabled, "font-semibold": isSelected})}>
+    <Card className="grid grid-cols-4 grid-rows-2 my-1 p-2">
+        <div className={cn("row-start-1 flex items-center", {"text-red-600": disabled, "font-semibold": isSelected})}>
           {providerLink}
         </div>
-        <Button disabled={disabled} className="hover:bg-slate-400 rounded" onClick={() => {switchToProvider(providerLink)}}>Switch to API</Button>
-      </div>
-      <div>
+        <Button disabled={disabled} className="hover:bg-slate-400 rounded col-start-4 justify-self-end" onClick={() => {switchToProvider(providerLink)}}>Switch to API</Button>
+        <Button disabled={disabled} className="hover:bg-slate-400 rounded col-start-4 justify-self-end row-start-2 w-1/2"><Pencil /></Button>
+      <div className="row-start-2 flex items-center">
         {apiList.map((api) => 
           <Badge variant={"outline"}>{api}</Badge>
         )}
