@@ -128,7 +128,7 @@ class FetchingService {
       "operation-types": filter,
       "account-name": accountName,
       page,
-      "page-size": 1000,
+      "page-size": config.blockPagePaginationSize,
       "set-of-keys": setOfKeys,
       "key-content": keyContent,
       direction: "desc",
