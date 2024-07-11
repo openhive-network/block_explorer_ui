@@ -98,7 +98,7 @@ class FetchingService {
       _block_num: blockNumber,
       _filter: filter,
       _body_limit: config.opsBodyLimit,
-      _page_size: 1000,
+      _page_size: config.blockPagePaginationSize,
       _page_num: page,
       _account: account,
       _key_content: keyContent,
