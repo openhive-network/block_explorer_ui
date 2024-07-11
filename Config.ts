@@ -9,6 +9,7 @@ export const config = {
   commentOperationsTypeIds: [0, 1, 17, 19, 51, 53, 61, 63, 72, 73],
   standardPaginationSize: 100,
   expandedPaginationSize: 20000,
+  blockPagePaginationSize: 2000, // Temporary 2000 until cache problem solved
   witnessesPerPages: {
     witnesses: 200,
     home: 20
