@@ -209,7 +209,7 @@ declare module Hive {
       from?: string;
       to?: string;
       message?: string;
-      "org-op-id"?: number;
+      "org-op-id"?: string;
     };
   }
 
