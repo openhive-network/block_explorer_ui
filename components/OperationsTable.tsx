@@ -21,6 +21,12 @@ import { colorByOperationCategory } from "./OperationTypesDialog";
 import { useUserSettingsContext } from "./contexts/UserSettingsContext";
 import TimeAgo from "timeago-react";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
 
 interface OperationsTableProps {
   operations: Explorer.OperationForTable[];
@@ -30,34 +36,32 @@ interface OperationsTableProps {
 
 const localColors = colorByOperationCategory;
 
-const getOperationColor = (operationType: string) => {
+export const getOperationColor = (operationType: string) => {
   const operationTypeCategories: any = categorizedOperationTypes.find(
     (category) => category.types.includes(operationType)
   );
 
-  const color = localColors[operationTypeCategories.name];
+  const color = localColors[operationTypeCategories?.name];
 
   return color;
 };
 
 const getOneLineDescription = (operation: Explorer.OperationForTable) => {
   const { value } = operation?.operation;
-  if (typeof value === "string" || React.isValidElement(value)) {
-    if (operation.operation.type === "hardfork_operation") {
-      return (
-        <Link
-          className="text-explorer-turquoise"
-          href={`/longOperation/${operation?.operationId}`}
-        >
-          {value}
-        </Link>
-      );
-    } else {
-      return value;
-    }
-  }
+  if (typeof value === "string" || React.isValidElement(value)) return value;
   if (operation.operation.type === "custom_json_operation")
     return value.message;
+  if (operation.operation.type === "body_placeholder_operation") {
+    return (
+      <div className="text-explorer-turquoise">
+        <Link
+          href={`/longOperation/${operation.operation.value?.["org-op-id"]}`}
+        >
+          See full operation
+        </Link>
+      </div>
+    );
+  }
   return null;
 };
 
@@ -137,11 +141,11 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                 key={index}
                 className="border-b border-gray-700"
               >
-                <TableCell className="sticky left-0 bg-explorer-dark-gray">
+                <TableCell className="sticky left-0 bg-explorer-dark-gray xl:bg-inherit">
                   <CopyJSON value={getUnformattedValue(operation)} />
                 </TableCell>
                 <TableCell
-                  className="pl-2 sticky left-12 bg-explorer-dark-gray"
+                  className="pl-2 sticky left-12 bg-explorer-dark-gray xl:bg-inherit"
                   data-testid="block-number-operation-table"
                 >
                   <Link
@@ -160,11 +164,24 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                   </Link>
                 </TableCell>
                 <TableCell className="w-1/5">
-                  <TimeAgo
-                    datetime={
-                      new Date(formatAndDelocalizeTime(operation.timestamp))
-                    }
-                  />
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div>
+                          <TimeAgo
+                            datetime={
+                              new Date(
+                                formatAndDelocalizeTime(operation.timestamp)
+                              )
+                            }
+                          />
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent className="bg-white text-black dark:bg-explorer-dark-gray dark:text-white">
+                        {formatAndDelocalizeTime(operation.timestamp)}
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </TableCell>
                 <TableCell data-testid="operation-type">
                   <div className={`flex justify-stretch p-1 rounded `}>

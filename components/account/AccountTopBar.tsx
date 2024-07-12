@@ -36,7 +36,7 @@ const AccountTopBar: React.FC<AccountTopBarProps> = ({
 
   const onLatestButtonClick = () => {
     setPage(undefined);
-  }
+  };
 
   return (
     <div
@@ -44,7 +44,10 @@ const AccountTopBar: React.FC<AccountTopBarProps> = ({
       data-testid="account-top-bar"
     >
       <div className="flex justify-center items-center mx-4">
-        <Button className={cn("rounded", {"bg-white": isLastPage})} onClick={onLatestButtonClick}>
+        <Button
+          className="rounded bg-explorer-dark-gray text-white hover:bg-gray-700"
+          onClick={onLatestButtonClick}
+        >
           Latest
         </Button>
       </div>
