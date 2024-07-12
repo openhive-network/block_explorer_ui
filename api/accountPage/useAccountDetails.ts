@@ -8,19 +8,9 @@ import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 const useAccountDetails = (accountName: string) => {
   const { hiveChain } = useHiveChainContext();
 
-  const {
-    data: accountDetails,
-    isLoading: isAccountDetailsLoading,
-    isError: isAccountDetailsError,
-  }: UseQueryResult<Explorer.FormattedAccountDetails> = useQuery({
-    queryKey: ["account_details", accountName],
-    queryFn: () => fetchingService.getAccount(accountName),
-    refetchOnWindowFocus: false,
-    select: (data) => accountDetailsSelector(data),
-    enabled: !!accountName && !!accountName.length,
-  });
-
-  const accountDetailsSelector = (data: Hive.AccountDetailsQueryResponse): Explorer.FormattedAccountDetails => {
+  const accountDetailsSelector = (
+    data: Hive.AccountDetailsQueryResponse
+  ): Explorer.FormattedAccountDetails => {
     const accountDetails = {
       ...data,
       balance: hiveChain?.hive(data.balance),
@@ -38,19 +28,33 @@ const useAccountDetails = (accountName: string) => {
       posting_rewards: hiveChain?.vests(data.posting_rewards),
       curation_rewards: hiveChain?.vests(data.curation_rewards),
       vesting_balance: hiveChain?.hive(data.vesting_balance),
-      last_account_recovery: formatAndDelocalizeTime(data.last_account_recovery),
+      last_account_recovery: formatAndDelocalizeTime(
+        data.last_account_recovery
+      ),
       created: formatAndDelocalizeTime(data.created),
       last_vote_time: formatAndDelocalizeTime(data.last_vote_time),
     };
 
-    
-    
-    const formattedAccountDetails = hiveChain?.formatter.format(accountDetails) as Explorer.FormattedAccountDetails;
+    const formattedAccountDetails = hiveChain?.formatter.format(
+      accountDetails
+    ) as Explorer.FormattedAccountDetails;
     delete formattedAccountDetails.last_post;
     delete formattedAccountDetails.last_root_post;
     delete formattedAccountDetails.post_count;
     return formattedAccountDetails;
-  }
+  };
+
+  const {
+    data: accountDetails,
+    isLoading: isAccountDetailsLoading,
+    isError: isAccountDetailsError,
+  }: UseQueryResult<Explorer.FormattedAccountDetails> = useQuery({
+    queryKey: ["account_details", accountName],
+    queryFn: () => fetchingService.getAccount(accountName),
+    refetchOnWindowFocus: false,
+    select: (data) => accountDetailsSelector(data),
+    enabled: !!accountName && !!accountName.length,
+  });
 
   return {
     accountDetails,
