@@ -57,8 +57,9 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   }
   return (
     <div className={cn([className])}>
-      {scoredEndpoints.map((scoredEndpoint) => (
+      {scoredEndpoints.map((scoredEndpoint, index) => (
         <ProviderCard 
+          index={index}
           providerLink={scoredEndpoint.endpointUrl}
           switchToProvider={changeNodeAddress}
           disabled={scoredEndpoint.score <= 0}
