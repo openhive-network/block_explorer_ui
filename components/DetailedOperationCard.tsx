@@ -14,7 +14,7 @@ import CopyJSON from "./CopyJSON";
 
 interface DetailedOperationCardProps {
   operation: Hive.Operation;
-  operationId?: number;
+  operationId?: string;
   transactionId?: string;
   blockNumber: number;
   skipBlock?: boolean;

@@ -21,6 +21,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import BlockDetails from "@/components/block/BlockDetails"; 
 
 export default function Home() {
   const { settings } = useUserSettingsContext();
@@ -31,11 +32,11 @@ export default function Home() {
   const dynamicGlobalQueryData =
     useDynamicGlobal(headBlockNum).dynamicGlobalData;
   const headBlockData = useHeadBlock(headBlockNum).headBlockData;
-  const blockOperations = useBlockOperations(
+  const { blockOperations } = useBlockOperations(
     headBlockNum || 0,
-    []
-  ).blockOperations;
-
+);
+  const opcount = blockOperations?.operations_result?.length || 0;
+  
   return (
     <>
       <Head>
@@ -46,11 +47,13 @@ export default function Home() {
           headBlockCardData={dynamicGlobalQueryData}
           transactionCount={blockOperations?.operations_result?.length}
           blockDetails={headBlockData}
+          opcount={opcount}
         />
         <div className="col-span-4 md:col-span-3 lg:col-span-2">
           <LastBlocksWidget headBlock={headBlockNum} />
           <SearchesSection />
         </div>
+        
         <Card
           className="col-span-4 md:col-span-4 lg:col-span-1"
           data-testid="top-witnesses-sidebar"

@@ -209,7 +209,7 @@ declare module Hive {
       from?: string;
       to?: string;
       message?: string;
-      "org-op-id"?: number;
+      "org-op-id"?: string;
     };
   }
 
@@ -217,7 +217,7 @@ declare module Hive {
     age: string;
     block_num: number;
     op_in_trx: number;
-    operation_id: number;
+    operation_id: string;
     operation: Operation;
     timestamp: string;
     trx_id: string;

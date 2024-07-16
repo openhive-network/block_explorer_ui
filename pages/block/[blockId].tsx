@@ -26,6 +26,7 @@ import {
   convertOperationResultsToTableOperations,
 } from "@/lib/utils";
 import CustomPagination from "@/components/CustomPagination";
+import { config } from "@/Config";
 
 interface BlockSearchParams {
   blockId?: number;
@@ -278,7 +279,7 @@ export default function Block() {
                     onPageChange={(newPage: number) =>
                       setParams({ ...paramsState, page: newPage })
                     }
-                    pageSize={1000}
+                    pageSize={config.blockPagePaginationSize}
                     totalCount={blockOperations?.total_operations || 0}
                     className="text-black dark:text-white"
                   />

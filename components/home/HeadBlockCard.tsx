@@ -19,12 +19,14 @@ interface HeadBlockCardProps {
   headBlockCardData?: Explorer.HeadBlockCardData | any;
   blockDetails?: Hive.BlockDetails;
   transactionCount?: number;
+  opcount?: number;
 }
 
 const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
   headBlockCardData,
   transactionCount,
   blockDetails,
+  opcount: opcount = 0,
 }) => {
   const [hiddenPropertiesByCard, setHiddenPropertiesByCard] = useState<any>({
     timeCard: true,
@@ -79,8 +81,9 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
           </Link>
         </div>
       </CardHeader>
+
       <CardContent className="p-2">
-        <div className="my-2">Operations per block: {transactionCount}</div>
+        <div className="my-2">Operations per block: {opcount} </div>
         {blockDetails?.producer_account && (
           <div className="flex">
             <p>Current witness: </p>
