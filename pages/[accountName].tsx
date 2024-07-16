@@ -1,32 +1,29 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import JSONCard from "@/components/JSONCard";
-import AccountMainCard from "@/components/account/AccountMainCard";
-import AccountWitnessVotesCard from "@/components/account/AccountWitnessVotesCard";
-import VotersDialog from "@/components/Witnesses/VotersDialog";
-import VotesHistoryDialog from "@/components/Witnesses/VotesHistoryDialog";
 import useAccountDetails from "@/api/accountPage/useAccountDetails";
 import useAccountOperations from "@/api/accountPage/useAccountOperations";
-import useWitnessDetails from "@/api/common/useWitnessDetails";
 import AccountPagination from "@/components/account/AccountTopBar";
 import useAccountOperationTypes from "@/api/accountPage/useAccountOperationTypes";
-import { useOperationsFormatter, useURLParams } from "@/utils/Hooks";
-import { Loader2 } from "lucide-react";
+import {
+  useMediaQuery,
+  useOperationsFormatter,
+  useURLParams,
+} from "@/utils/Hooks";
+import { Loader2, ArrowBigRightDash, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Hive from "@/types/Hive";
 import useSearchRanges from "@/components/searchRanges/useSearchRanges";
 import SearchRanges from "@/components/searchRanges/SearchRanges";
 import ScrollTopButton from "@/components/ScrollTopButton";
-import { useUserSettingsContext } from "@/components/contexts/UserSettingsContext";
-import AccountDetailsCard from "@/components/account/AccountDetailsCard";
 import Head from "next/head";
 import OperationsTable from "@/components/OperationsTable";
 import {
+  cn,
   convertBooleanArrayToIds,
   convertOperationResultsToTableOperations,
 } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import AccountAuthoritiesCard from "@/components/account/AccountAuthoritiesCard";
+import AccountDetailsSection from "@/components/account/AccountDetailsSection";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -58,7 +55,7 @@ const defaultSearchParams: AccountSearchParams = {
 
 export default function Account() {
   const router = useRouter();
-
+  const isMobile = useMediaQuery("(max-width: 768px)");
   const accountNameFromRoute = (router.query.accountName as string)?.slice(1);
 
   const { paramsState, setParams } = useURLParams(
@@ -81,11 +78,11 @@ export default function Account() {
     page,
   } = paramsState;
 
-  const [isVotersModalOpen, setIsVotersModalOpen] = useState(false);
-  const [isVotesHistoryModalOpen, setIsVotesHistoryModalOpen] = useState(false);
   const [initialSearch, setInitialSearch] = useState<boolean>(false);
   const [filters, setFilters] = useState<boolean[]>([]);
   const [lastPage, setLastPage] = useState<number | undefined>(undefined);
+  const [showMobileAccountDetails, setShowMobileAccountDetails] =
+    useState(false);
 
   const searchRanges = useSearchRanges();
 
@@ -105,20 +102,9 @@ export default function Account() {
   const { accountOperationTypes } =
     useAccountOperationTypes(accountNameFromRoute);
 
-  const { witnessDetails, isWitnessDetailsLoading, isWitnessDetailsError } =
-    useWitnessDetails(accountNameFromRoute, !!accountDetails?.is_witness);
-
-  const handleOpenVotersModal = () => {
-    setIsVotersModalOpen(!isVotersModalOpen);
-  };
-
   const formattedAccountOperations = useOperationsFormatter(
     accountOperations
   ) as Hive.AccountOperationsResponse;
-
-  const handleOpenVotesHistoryModal = () => {
-    setIsVotesHistoryModalOpen(!isVotesHistoryModalOpen);
-  };
 
   const handleSearch = async (resetPage?: boolean) => {
     if (
@@ -208,10 +194,45 @@ export default function Account() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paramsState]);
 
-  useEffect(() => {
-    setIsVotersModalOpen(false);
-    setIsVotesHistoryModalOpen(false);
-  }, [accountNameFromRoute]);
+  const renderAccountDetailsView = () => {
+    if (isMobile) {
+      return (
+        <>
+          <div className="fixed pl-0 left-0 top-[50%] z-50">
+            <Button
+              className="flex justify-center bg-explorer-orange h-[100px] w-[40px] hover:bg-orange-300 align-center [writing-mode:vertical-lr] text-explorer-dark-gray rounded-r"
+              onClick={() => setShowMobileAccountDetails(true)}
+            >
+              <ArrowBigRightDash size={30} />
+            </Button>
+          </div>
+
+          <div
+            className={cn(
+              "fixed top-0 left-0 p-5 bg-explorer-dark-gray w-full h-full -translate-x-full duration-500 z-50 overflow-auto",
+              { "-translate-x-0": showMobileAccountDetails }
+            )}
+          >
+            <div className="w-full flex items-center justify-end">
+              <X
+                onClick={() => setShowMobileAccountDetails(false)}
+                height={40}
+                width={40}
+                className="cursor-pointer"
+              />
+            </div>
+            <AccountDetailsSection accountName={accountNameFromRoute} />
+          </div>
+        </>
+      );
+    } else {
+      return (
+        <div className="col-start-1 col-span-1 flex flex-col gap-y-2">
+          <AccountDetailsSection accountName={accountNameFromRoute} />
+        </div>
+      );
+    }
+  };
 
   if (!accountDetails) {
     return (
@@ -245,48 +266,7 @@ export default function Account() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 text-white mx-8 mt-24 lg:mt-16 w-full gap-4 px-2 md:px-4">
-        <div className="col-start-1 col-span-1 flex flex-col gap-y-2">
-          <AccountMainCard
-            accountDetails={accountDetails}
-            accountName={accountNameFromRoute}
-            openVotersModal={handleOpenVotersModal}
-            openVotesHistoryModal={handleOpenVotesHistoryModal}
-            isWitnessError={isWitnessDetailsError}
-            isWitnessLoading={isWitnessDetailsLoading}
-          />
-          <AccountDetailsCard
-            header="Properties"
-            userDetails={accountDetails}
-          />
-          <JSONCard
-            header="JSON Metadata"
-            json={accountDetails.json_metadata}
-            showCollapseButton={true}
-          />
-          <JSONCard
-            header="Posting JSON Metadata"
-            json={accountDetails.posting_json_metadata}
-            showCollapseButton={true}
-          />
-          <AccountAuthoritiesCard accountName={accountNameFromRoute} />
-          {!isWitnessDetailsError && (
-            <AccountDetailsCard
-              header="Witness Properties"
-              userDetails={witnessDetails}
-            />
-          )}
-          <AccountWitnessVotesCard voters={accountDetails.witness_votes} />
-          <VotersDialog
-            accountName={accountNameFromRoute}
-            isVotersOpen={isVotersModalOpen}
-            changeVotersDialogue={handleOpenVotersModal}
-          />
-          <VotesHistoryDialog
-            accountName={accountNameFromRoute}
-            isVotesHistoryOpen={isVotesHistoryModalOpen}
-            changeVoteHistoryDialogue={handleOpenVotesHistoryModal}
-          />
-        </div>
+        {renderAccountDetailsView()}
         <div
           className="col-start-1 md:col-start-2 col-span-1 md:col-span-3"
           data-testid="account-operation-list"
