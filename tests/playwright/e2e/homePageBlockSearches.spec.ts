@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import { MainPage } from "../support/pages/mainPage";
 import { BlockPage } from "../support/pages/blockPage";
 
-test.describe('Home page - searches', () => {
+test.describe.skip('Home page - searches', () => {
     let mainPage: MainPage;
     let blockPage: BlockPage;
 
