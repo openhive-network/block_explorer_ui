@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { DOTS, usePagination } from "./customHooks/usePagination";
+import { usePagination } from "./customHooks/usePagination";
 import {
   Pagination,
   PaginationContent,
@@ -8,8 +8,9 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
+  PaginationLatest,
+  PaginationFirst,
 } from "./ui/pagination";
-import { useMediaQuery } from "@/utils/Hooks";
 
 interface CustomPaginationProps {
   currentPage: number;
@@ -19,6 +20,7 @@ interface CustomPaginationProps {
   onPageChange: (value: number) => void;
   isMirrored?: boolean;
   className?: string;
+  handleLatestPage?: () => void;
 }
 
 const CustomPagination: React.FC<CustomPaginationProps> = ({
@@ -29,9 +31,8 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
   onPageChange,
   isMirrored = true,
   className,
+  handleLatestPage,
 }) => {
-  const isMobile = useMediaQuery("(max-width: 768px)");
-
   const paginationRange = usePagination({
     currentPage,
     totalCount,
@@ -52,37 +53,47 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
     onPageChange(currentPage - 1);
   };
 
+  const onFirstPage = () => {
+    onPageChange(1);
+  };
+
   const maxPage = Math.max(
     Number(paginationRange[0]),
     Number(paginationRange.at(-1))
   );
 
-  const mobilePaginationRange = [currentPage, "...", 1];
-
-  const newPaginationRange = !isMobile
-    ? paginationRange
-    : mobilePaginationRange;
-
   return (
     <Pagination className={className}>
       <PaginationContent className="md:gap-x-4">
-        {newPaginationRange.length > 1 &&
+        {paginationRange.length > 1 &&
           (isMirrored ? currentPage !== maxPage : currentPage !== 1) && (
-            <PaginationItem
-              onClick={isMirrored ? onNext : onPrevious}
-              className="cursor-pointer"
-            >
-              <PaginationPrevious />
-            </PaginationItem>
-          )}
-        {newPaginationRange.map((pageNumber: number | string, i: number) => {
-          if (pageNumber === DOTS) {
-            return (
-              <PaginationItem key={i}>
-                <PaginationEllipsis />
+            <>
+              <PaginationItem
+                onClick={handleLatestPage}
+                className="cursor-pointer"
+              >
+                <PaginationLatest />
               </PaginationItem>
-            );
-          } else {
+
+              <PaginationItem
+                onClick={isMirrored ? onNext : onPrevious}
+                className="cursor-pointer"
+              >
+                <PaginationPrevious />
+              </PaginationItem>
+            </>
+          )}
+        {paginationRange.map(
+          (pageNumber: number | string, i: number) => {
+            // Comment out only DOTS if we need them in future
+
+            // if (pageNumber === DOTS) {
+            //   return (
+            //     <PaginationItem key={i}>
+            //       <PaginationEllipsis />
+            //     </PaginationItem>
+            //   );
+            // } else {
             return (
               <PaginationItem
                 key={i}
@@ -105,15 +116,24 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
               </PaginationItem>
             );
           }
-        })}
-        {newPaginationRange.length > 1 &&
+          // }
+        )}
+        {paginationRange.length > 1 &&
           (isMirrored ? currentPage !== 1 : currentPage !== maxPage) && (
-            <PaginationItem
-              onClick={isMirrored ? onPrevious : onNext}
-              className="cursor-pointer"
-            >
-              <PaginationNext />
-            </PaginationItem>
+            <>
+              <PaginationItem
+                onClick={isMirrored ? onPrevious : onNext}
+                className="cursor-pointer"
+              >
+                <PaginationNext />
+              </PaginationItem>
+              <PaginationItem
+                onClick={onFirstPage}
+                className="cursor-pointer"
+              >
+                <PaginationFirst />
+              </PaginationItem>
+            </>
           )}
       </PaginationContent>
     </Pagination>
