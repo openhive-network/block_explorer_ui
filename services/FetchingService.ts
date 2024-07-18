@@ -212,7 +212,7 @@ class FetchingService {
   // Temporary untill I will find a way to solve cors.
   async getOperationTypes(
   ): Promise<Hive.OperationPattern[]> {
-    return await this.callRestApi("operation-types/");
+    return await this.callRestApi("operations/types/");
   }
 
   async getWitness(witnessName: string): Promise<Hive.Witness> {
@@ -232,7 +232,7 @@ class FetchingService {
   }
 
   async getOperationKeys(operationTypeId: number): Promise<string[][]> {
-    return await this.callRestApi(`operation-keys/${operationTypeId}`);
+    return await this.callRestApi(`operations/types/${operationTypeId}/keys`);
   }
 
   async getBlockByOp(
@@ -272,7 +272,7 @@ class FetchingService {
   }
 
   async getOperation(operationId: number): Promise<Hive.OperationResponse> {
-    return await this.callRestApi(`operations/${operationId}/`);
+    return await this.callRestApi(`operations/body/${operationId}/`);
   }
 
   async getCommentOperation(
