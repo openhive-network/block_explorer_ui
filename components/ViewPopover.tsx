@@ -45,7 +45,7 @@ const ViewPopover: React.FC<ViewPopoverProps> = ({ isMobile }) => {
               value="visualised-data"
               id="r1"
             />
-            <Label htmlFor="r1">Visualised Data</Label>
+            <Label className="cursor-pointer" htmlFor="r1">Visualised Data</Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem
@@ -59,7 +59,7 @@ const ViewPopover: React.FC<ViewPopoverProps> = ({ isMobile }) => {
               value="raw-json"
               id="r2"
             />
-            <Label htmlFor="r2">Raw JSON</Label>
+            <Label className="cursor-pointer" htmlFor="r2">Raw JSON</Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem
@@ -73,7 +73,7 @@ const ViewPopover: React.FC<ViewPopoverProps> = ({ isMobile }) => {
               value="pretty-json"
               id="r3"
             />
-            <Label htmlFor="r3">Pretty JSON</Label>
+            <Label className="cursor-pointer" htmlFor="r3">Pretty JSON</Label>
           </div>
         </RadioGroup>
       </PopoverContent>
