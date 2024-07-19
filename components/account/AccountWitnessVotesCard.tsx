@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableRow, TableCell } from "../ui/table";
 import { cn } from "@/lib/utils";
+import { config } from "@/Config";
 
 type AccountWitnessVotesCardProps = {
   voters: string[];
@@ -61,7 +62,7 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
           onClick={handlePropertiesVisibility}
           className="h-full flex justify-between align-center p-2 hover:bg-slate-600 cursor-pointer px-4"
         >
-          <div className="text-lg">Witness Votes</div>
+          <div className="text-lg">Witness Votes ({voters.length} / {config.maxWitnessVotes})</div>
 
           {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
         </div>
