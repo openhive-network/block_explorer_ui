@@ -14,6 +14,8 @@ import {
 import { useUserSettingsContext } from "../contexts/UserSettingsContext";
 import { Toggle } from "../ui/toggle";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { useBlockchainSyncInfo } from "@/utils/Hooks";
+import { getBlockDifference } from "./SyncInfo";
 
 interface HeadBlockCardProps {
   headBlockCardData?: Explorer.HeadBlockCardData | any;
@@ -26,7 +28,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
   headBlockCardData,
   transactionCount,
   blockDetails,
-  opcount: opcount = 0,
+  opcount = 0,
 }) => {
   const [hiddenPropertiesByCard, setHiddenPropertiesByCard] = useState<any>({
     timeCard: true,
@@ -55,6 +57,19 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
     });
   };
 
+  const {
+    explorerBlockNumber,
+    hiveBlockNumber,
+    loading: isLoading,
+  } = useBlockchainSyncInfo();
+
+  const blockDifference = getBlockDifference(
+    hiveBlockNumber,
+    explorerBlockNumber
+  );
+
+  const isLiveDataToggleDisabled = blockDifference > 3 || isLoading;
+
   return (
     <Card
       className="col-span-4 md:col-span-1"
@@ -62,6 +77,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
     >
       <CardHeader>
         <Toggle
+          disabled={isLiveDataToggleDisabled}
           checked={settings.liveData}
           onClick={() =>
             setSettings({

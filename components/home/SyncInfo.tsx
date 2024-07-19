@@ -14,7 +14,7 @@ interface SyncInfoProps {
   className?: string;
 }
 
-const getBlockDifference = (
+export const getBlockDifference = (
   hiveBlockNumber: number | undefined,
   explorerBlockNumber: number | undefined
 ) => {
