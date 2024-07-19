@@ -13,7 +13,7 @@ import VotersDialog from "@/components/Witnesses/VotersDialog";
 import VotesHistoryDialog from "@/components/Witnesses/VotesHistoryDialog";
 import useWitnesses from "@/api/common/useWitnesses";
 import { config } from "@/Config";
-import { formatNumber, formatPercent } from "@/lib/utils";
+import { cn, formatNumber, formatPercent } from "@/lib/utils";
 import Head from "next/head";
 
 export default function Witnesses() {
@@ -79,7 +79,10 @@ export default function Witnesses() {
             {witnessesData.map((singleWitness, index) => (
               <TableRow
                 key={index}
-                className={`${index % 2 === 0 ? "bg-gray-800" : "bg-gray-900"}`}
+                className={cn(index % 2 === 0 ? "bg-gray-800" : "bg-gray-900", {
+                  "line-through":
+                    singleWitness.signing_key === config.inactiveWitnessKey,
+                })}
                 data-testid="witnesses-table-row"
               >
                 <TableCell
@@ -102,7 +105,6 @@ export default function Witnesses() {
                     }` + " text-explorer-turquoise sticky left-11"
                   }
                 >
-                  {" "}
                   <Link
                     href={`/@${singleWitness.witness}`}
                     data-testid="witness-name"
