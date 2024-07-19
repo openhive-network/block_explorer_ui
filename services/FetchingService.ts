@@ -230,6 +230,16 @@ class FetchingService {
     return await this.callApi("get_witness", requestBody);
   }
 
+  async getVestingDelegations(delegatorAccount: string, startAccount: string | null, limit: number): Promise<any> {
+    const requestBody = {
+      jsonrpc: "2.0",
+      method: "condenser_api.get_vesting_delegations",
+      params: [delegatorAccount, startAccount, limit],
+      id: 1
+    };
+    return await this.makePostRequest(this.nodeUrl!, requestBody);
+  }
+
   async getBlockByTime(date: Date): Promise<number> {
     const requestBody: Hive.GetBlockByTimeProps = {
       _timestamp: date,
