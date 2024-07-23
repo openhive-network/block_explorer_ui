@@ -79,7 +79,7 @@ export default function Witnesses() {
             {witnessesData.map((singleWitness, index) => (
               <TableRow
                 key={index}
-                className={`${index % 2 === 0 ? "bg-gray-800" : "bg-gray-900"}`}
+                className={cn(`${index % 2 === 0 ? "bg-gray-800" : "bg-gray-900"}`,{"line-through": singleWitness.signing_key === config.inactiveWitnessKey})}
                 data-testid="witnesses-table-row"
               >
                 <TableCell
@@ -94,7 +94,7 @@ export default function Witnesses() {
                   className={cn("text-explorer-turquoise sticky left-11", {
                     "bg-gray-800 md:bg-inherit": index % 2 === 0,
                     "bg-gray-900 md:bg-inherit": index % 2 !== 0,
-                    "line-through": singleWitness.signing_key === config.inactiveWitnessKey,
+                    
 
                   })}
                 >
