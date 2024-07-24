@@ -60,7 +60,10 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
 
   useEffect(() => { 
     if (hc && hiveChain && !chainInitialized) {
-      hc.register(hiveChain?.api.block_api.get_block, {block_num: 1}, data => data.block?.previous === "0000000000000000000000000000000000000000", apiList);
+      const checks = checksMap.get("Block API");
+      if (checks) {
+        hc.register(checks.method, checks.params, checks.validatorFunction, apiList);
+      }
       hc.on("data", (data: Array<IScoredEndpoint>) => { console.log(JSON.stringify(data)); setScoredEndpoints(data) });
       setChainIntialized(true);
     }
