@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { IHiveChainInterface, IScoredEndpoint } from "@hiveio/wax";
+import { ApiBlock, IHiveChainInterface, IScoredEndpoint } from "@hiveio/wax";
 import { HealthChecker } from "@hiveio/wax";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
@@ -12,6 +12,12 @@ interface HealthCheckerComponentProps {
   currentAddress?: string;
   customApiList?: string[];
   changeNodeAddress: (url: string | null) => void; 
+}
+
+interface Checker {
+  method: any;
+  params: any;
+  validatorFunction: (data: any) => boolean;
 }
 
 const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
@@ -41,6 +47,13 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     "https://hive-api.3speak.tv",
     "https://hiveapi.actifit.io"
   ];
+
+  const providersByApi = new Map<string, string>();
+
+  const checksMap = new Map<string, Checker>().set("Block API", {
+    method: hiveChain?.api.block_api.get_block, 
+    params: {block_num: 1}, 
+    validatorFunction: data => data.block?.previous === "0000000000000000000000000000000000000000"});
 
   const hc = new HealthChecker();
 
