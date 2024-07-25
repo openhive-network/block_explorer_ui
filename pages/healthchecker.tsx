@@ -15,12 +15,18 @@ export default function HealthcheckerPage() {
     params: {block_num: 1}, 
     validatorFunction: data => data.block?.previous === "0000000000000000000000000000000000000000"
   })
-    .set("find_account", {
-      title: "Find Account",
-      method: hiveChain?.api.database_api.find_accounts,
-      params: {accounts: ["gtg"]},
-      validatorFunction: (data) => !!data
-    });
+  .set("find_account", {
+    title: "Find Account",
+    method: hiveChain?.api.database_api.find_accounts,
+    params: {accounts: ["hiveio"]},
+    validatorFunction: (data) => !!data
+  })
+  .set("account_by_key", {
+    title: "Account by key",
+    method: hiveChain?.api.account_by_key_api.get_key_references,
+    params: {accounts: ["hiveio"]},
+    validatorFunction: (data) => !!data
+  });
 
 
   return (
