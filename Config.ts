@@ -23,5 +23,6 @@ export const config = {
     vests: 6,
     hivePower: 3,
     percentage: 2
-  }
+  },
+  liveblockSecurityDifference: 10
 }
