@@ -240,6 +240,16 @@ class FetchingService {
     return await this.makePostRequest(this.nodeUrl!, requestBody);
   }
 
+  async getRcDelegations (delegatorAccount: string, limit: number): Promise<any> {
+    const requestBody ={
+      jsonrpc: "2.0",
+      method: "condenser_api.list_rc_direct_delegations",
+      params: [[delegatorAccount, ""], limit],
+      id: 1
+    };
+    return await this.makePostRequest(this.nodeUrl!, requestBody);
+  }
+
   async getBlockByTime(date: Date): Promise<number> {
     const requestBody: Hive.GetBlockByTimeProps = {
       _timestamp: date,
