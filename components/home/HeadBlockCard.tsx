@@ -16,6 +16,7 @@ import { Toggle } from "../ui/toggle";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { useBlockchainSyncInfo } from "@/utils/Hooks";
 import { getBlockDifference } from "./SyncInfo";
+import { config } from "@/Config";
 
 interface HeadBlockCardProps {
   headBlockCardData?: Explorer.HeadBlockCardData | any;
@@ -68,7 +69,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
     explorerBlockNumber
   );
 
-  const isLiveDataToggleDisabled = blockDifference > 3 || isLoading;
+  const isLiveDataToggleDisabled = blockDifference > config.liveblockSecurityDifference || isLoading;
 
   return (
     <Card
