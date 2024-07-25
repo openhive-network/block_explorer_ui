@@ -6,18 +6,21 @@ import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
 import ProviderCard from "./ProviderCard";
 
+
+export interface ApiChecker {
+  title: string;
+  method: any;
+  params: any;
+  validatorFunction: (data: any) => boolean;
+}
+
 interface HealthCheckerComponentProps {
   className?: string;
   hiveChain?: IHiveChainInterface;
   currentAddress?: string;
   customApiList?: string[];
+  customApiCheckers?: Map<string, ApiChecker>;
   changeNodeAddress: (url: string | null) => void; 
-}
-
-interface Checker {
-  method: any;
-  params: any;
-  validatorFunction: (data: any) => boolean;
 }
 
 const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
@@ -25,12 +28,15 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   currentAddress,
   customApiList,
   changeNodeAddress,
+  customApiCheckers,
   className
 }) => {
 
   const [chainInitialized, setChainIntialized] = useState<boolean>(false);
 
   const [scoredEndpoints, setScoredEndpoints] = useState<IScoredEndpoint[]>([]);
+
+  const [apiCheckByProvider, setApiCheckByProvider] = useState<Map<string, string[]>>(new Map());
 
   const apiList = customApiList ? customApiList : [
     "https://api.hive.blog",
@@ -50,20 +56,14 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
 
   const providersByApi = new Map<string, string>();
 
-  const checksMap = new Map<string, Checker>().set("Block API", {
-    method: hiveChain?.api.block_api.get_block, 
-    params: {block_num: 1}, 
-    validatorFunction: data => data.block?.previous === "0000000000000000000000000000000000000000"});
-
   const hc = new HealthChecker();
-
 
   useEffect(() => { 
     if (hc && hiveChain && !chainInitialized) {
-      const checks = checksMap.get("Block API");
-      if (checks) {
-        hc.register(checks.method, checks.params, checks.validatorFunction, apiList);
-      }
+      const checks = customApiCheckers?.get("find_account");
+      Array.from(customApiCheckers?.entries() || []).forEach(([key, checker]) => {
+        hc.register(checker.method, checker.params, checker.validatorFunction, apiList);
+      })
       hc.on("data", (data: Array<IScoredEndpoint>) => { console.log(JSON.stringify(data)); setScoredEndpoints(data) });
       setChainIntialized(true);
     }
@@ -80,7 +80,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
           switchToProvider={changeNodeAddress}
           disabled={scoredEndpoint.score <= 0}
           isSelected={scoredEndpoint.endpointUrl === currentAddress}
-          apiList={["Block Api", "Database Api", "Test Api"]}
+          apiList={Array.from(customApiCheckers?.values() || []).map((checker) => checker.title)}
         />
       ))}
     </div>
