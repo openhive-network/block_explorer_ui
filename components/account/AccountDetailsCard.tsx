@@ -67,7 +67,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
         </div>
       );
     }
-    if (COPY_KEYS.includes(key)) {
+    if (userDetails[key] && COPY_KEYS.includes(key)) {
       let shortenedKey: string = "";
       shortenedKey = `${userDetails[key].slice(0, 8)}...${userDetails[key].slice(userDetails[key].length - 5)}`
       return (
