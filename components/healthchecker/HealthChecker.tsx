@@ -36,7 +36,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
 
   const [scoredEndpoints, setScoredEndpoints] = useState<IScoredEndpoint[]>([]);
 
-  const [apiCheckByProvider, setApiCheckByProvider] = useState<Map<string, string[]>>(new Map());
+  const [apiChecksByProvider, setApiChecksByProvider] = useState<Map<string, string[]>>(new Map());
 
   const apiList = customApiList ? customApiList : [
     "https://api.hive.blog",
@@ -54,8 +54,6 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     "https://hiveapi.actifit.io"
   ];
 
-  const providersByApi = new Map<string, string>();
-
   const hc = new HealthChecker();
 
   useEffect(() => { 
@@ -68,21 +66,39 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
       setChainIntialized(true);
     }
   }, [hiveChain])
+
+  useEffect(() => {
+    if (apiChecksByProvider.size === 0) {
+      const initialApiChecksByProviders = new Map<string, string[]>();
+      apiList.forEach((api) => {
+        initialApiChecksByProviders.set(api, Array.from(customApiCheckers?.keys() || []));
+      })
+      setApiChecksByProvider(initialApiChecksByProviders);
+    }
+  }, [customApiCheckers, apiChecksByProvider])
+
+  const renderProvider = (scoredEndpoint: IScoredEndpoint, index: number) => {
+    const {endpointUrl, score} = scoredEndpoint;
+    const apiList = apiChecksByProvider.get(endpointUrl)?.map((apiCheck) => customApiCheckers?.get(apiCheck)?.title || "");
+    return (
+      <ProviderCard 
+        index={index}
+        providerLink={endpointUrl}
+        switchToProvider={changeNodeAddress}
+        disabled={score <= 0}
+        isSelected={endpointUrl === currentAddress}
+        apiList={apiList || []}
+      />
+    )       
+  }
+
   if (!scoredEndpoints.length) {
     return <Loader2 className="ml-2 animate-spin h-16 w-16  ..." />
   }
   return (
     <div className={cn([className])}>
-      {scoredEndpoints.map((scoredEndpoint, index) => (
-        <ProviderCard 
-          index={index}
-          providerLink={scoredEndpoint.endpointUrl}
-          switchToProvider={changeNodeAddress}
-          disabled={scoredEndpoint.score <= 0}
-          isSelected={scoredEndpoint.endpointUrl === currentAddress}
-          apiList={Array.from(customApiCheckers?.values() || []).map((checker) => checker.title)}
-        />
-      ))}
+      {scoredEndpoints.map((scoredEndpoint, index) => renderProvider(scoredEndpoint, index)
+      )}
     </div>
   );
 };
