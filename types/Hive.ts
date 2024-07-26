@@ -381,6 +381,7 @@ declare module Hive {
     price_feed: number;
     bias: number;
     feed_age: string;
+    feed_updated_at: Date;
     block_size: number;
     signing_key: string;
     version: string;

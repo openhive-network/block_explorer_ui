@@ -15,6 +15,7 @@ import useWitnesses from "@/api/common/useWitnesses";
 import { config } from "@/Config";
 import { cn, formatNumber, formatPercent } from "@/lib/utils";
 import Head from "next/head";
+import moment from "moment";
 
 export default function Witnesses() {
   const [voterAccount, setVoterAccount] = useState<string>("");
@@ -152,8 +153,8 @@ export default function Witnesses() {
                     : "--"}
                 </TableCell>
                 <TableCell>
-                  {singleWitness.feed_age
-                    ? singleWitness.feed_age.split(".")[0]
+                  {singleWitness.feed_updated_at
+                    ? moment(singleWitness.feed_updated_at).fromNow()
                     : "--"}
                 </TableCell>
                 <TableCell>{singleWitness.version}</TableCell>
