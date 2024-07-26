@@ -69,7 +69,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
     }
     if (COPY_KEYS.includes(key)) {
       let shortenedKey: string = "";
-      shortenedKey = `${userDetails[key].slice(0, 8)}...${userDetails[key].slice(userDetails[key].length - 5)}`
+      shortenedKey = `${userDetails?.[key]?.slice(0, 8)}...${userDetails?.[key]?.slice(userDetails[key].length - 5)}`
       return (
         <CopyToKeyboard value={userDetails[key]} displayValue={shortenedKey} />
       )
