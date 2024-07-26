@@ -15,6 +15,7 @@ import useWitnesses from "@/api/common/useWitnesses";
 import { config } from "@/Config";
 import { cn, formatNumber, formatPercent } from "@/lib/utils";
 import Head from "next/head";
+import { formatFeedAge, isFeedAgeBeyondThreshold} from "@/utils/TimeUtils";
 
 export default function Witnesses() {
   const [voterAccount, setVoterAccount] = useState<string>("");
@@ -151,9 +152,9 @@ export default function Witnesses() {
                     ? singleWitness.price_feed.toLocaleString()
                     : "--"}
                 </TableCell>
-                <TableCell>
-                  {singleWitness.feed_age
-                    ? singleWitness.feed_age.split(".")[0]
+                <TableCell className={
+                    isFeedAgeBeyondThreshold(singleWitness.feed_age, 3)? "text-red-500": ""}>
+                  {singleWitness.feed_age ? formatFeedAge(singleWitness.feed_age)
                     : "--"}
                 </TableCell>
                 <TableCell>{singleWitness.version}</TableCell>
