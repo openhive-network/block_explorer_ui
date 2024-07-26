@@ -12,6 +12,7 @@ interface ProviderCardProps {
   isSelected: boolean;
   apiList: string[];
   switchToProvider: (providerLink: string | null) => void;
+  onDialogOpenChange: (isOpened: boolean, provider?: string) => void;
 }
 
 const ProviderCard: React.FC<ProviderCardProps> = ({
@@ -20,7 +21,8 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
   disabled,
   isSelected,
   apiList,
-  switchToProvider
+  switchToProvider,
+  onDialogOpenChange
 }) => {
 
   const clickEdit = () => {
@@ -34,7 +36,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
         {providerLink}
       </div>
       <Button disabled={disabled} className="hover:bg-slate-400 rounded col-start-7 col-span-2 justify-self-end" onClick={() => {switchToProvider(providerLink)}}>Switch to API</Button>
-      <Button disabled={disabled} className="hover:bg-slate-400 rounded col-start-7 col-span-2 justify-self-end row-start-2"><Pencil /></Button>
+      <Button disabled={disabled} className="hover:bg-slate-400 rounded col-start-7 col-span-2 justify-self-end row-start-2" onClick={() => {onDialogOpenChange(true, providerLink)}}><Pencil /></Button>
       <div className="row-start-2 flex items-center col-start-2 col-span-3">
         {apiList.map((api) => 
           <Badge variant={"outline"}>{api}</Badge>

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
 import ProviderCard from "./ProviderCard";
+import ApiCheckDialog from "./ApiCheckDialog";
 
 
 export interface ApiChecker {
@@ -33,10 +34,10 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
 }) => {
 
   const [chainInitialized, setChainIntialized] = useState<boolean>(false);
-
   const [scoredEndpoints, setScoredEndpoints] = useState<IScoredEndpoint[]>([]);
-
   const [apiChecksByProvider, setApiChecksByProvider] = useState<Map<string, string[]>>(new Map());
+  const [isDialogOpened, setIsDialogOpened] = useState<boolean>(false);
+  const [openedProvider, setOpenedProvider] = useState<string | undefined>(undefined);
 
   const apiList = customApiList ? customApiList : [
     "https://api.hive.blog",
@@ -55,6 +56,13 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   ];
 
   const hc = new HealthChecker();
+
+  const onDialogOpenChange = (isOpened: boolean, provider?: string) => {
+    if (isOpened) {
+      setOpenedProvider(provider);
+    }
+    setIsDialogOpened(isOpened);
+  }
 
   useEffect(() => { 
     if (hc && hiveChain && !chainInitialized) {
@@ -88,6 +96,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         disabled={score <= 0}
         isSelected={endpointUrl === currentAddress}
         apiList={apiList || []}
+        onDialogOpenChange={onDialogOpenChange}
       />
     )       
   }
@@ -99,6 +108,12 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     <div className={cn([className])}>
       {scoredEndpoints.map((scoredEndpoint, index) => renderProvider(scoredEndpoint, index)
       )}
+      <ApiCheckDialog 
+        isOpened={isDialogOpened}
+        onDialogOpenChange={onDialogOpenChange}
+        openedProvider={openedProvider}
+        changeChecks={(data) => {}}
+      />
     </div>
   );
 };
