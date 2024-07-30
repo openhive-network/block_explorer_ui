@@ -55,13 +55,17 @@ export const getPageUrlParams = (urlParams: Explorer.UrlParam[]) => {
  */
 export const formatNumber = (
   numberToFormat: number,
-  isVest: boolean
+  isVest: boolean,
+  skipPrecision: boolean = false
 ): string => {
   const precision = isVest
     ? config.precisions.vests
     : config.precisions.hivePower;
   const vestsFormat = isVest ? { minimumFractionDigits: precision } : undefined;
-  return (numberToFormat / Math.pow(10, precision)).toLocaleString(
+  return skipPrecision?numberToFormat.toLocaleString(
+    undefined,
+    vestsFormat
+  ):(numberToFormat / Math.pow(10, precision)).toLocaleString(
     undefined,
     vestsFormat
   );
