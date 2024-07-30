@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableRow, TableCell } from "../ui/table";
 import { cn } from "@/lib/utils";
 import useVestingDelegations from "@/api/common/useVestingDelegations";
+import { formatNumber } from "@/lib/utils";
 
 type VestingDelegation = {
   delegatee: string;
@@ -37,7 +38,7 @@ const buildTableBody = (delegations: VestingDelegation[]) => {
               {delegation.delegatee}
             </Link>
           </TableCell>
-          <TableCell className="text-right">{delegation.vesting_shares}</TableCell>
+          <TableCell className="text-right">{formatNumber(parseFloat(delegation.vesting_shares),true, true)}</TableCell>
         </TableRow>
       </Fragment>
     );
