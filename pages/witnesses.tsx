@@ -1,6 +1,12 @@
 import { useState } from "react";
 import Link from "next/link";
-import { Loader2, MenuSquareIcon } from "lucide-react";
+import {
+  Loader2,
+  MenuSquareIcon,
+  MoveVertical,
+  MoveUp,
+  MoveDown,
+} from "lucide-react";
 import {
   Table,
   TableBody,
@@ -17,14 +23,84 @@ import { cn, formatNumber, formatPercent } from "@/lib/utils";
 import Head from "next/head";
 import moment from "moment";
 
+const TABLE_CELLS = [
+  "Rank",
+  "Name",
+  "Votes",
+  "Voters",
+  "Block Size",
+  "Missed Blocks",
+  "APR",
+  "Price Feed",
+  "Feed Age",
+  "Version",
+];
+
+const sortKeyByCell: { [objectKey: string]: string } = {
+  rank: "rank",
+  name: "witness",
+  votes: "votes",
+  voters: "voters_num",
+  "block size": "block_size",
+  "missed blocks": "missed_blocks",
+  apr: "hbd_interest_rate",
+  "price feed": "price_feed",
+  "feed age": "feed_age",
+  version: "version",
+};
+
+const renderSortArrow = (
+  cell: string,
+  orderBy: string,
+  isOrderAscending: boolean
+) => {
+  // Remove this code block when sorting by `missed_blocks` and `hbd_interest_rate` will be available
+  const hideSort = cell === "missed blocks" || cell === "apr";
+  if (hideSort) return;
+  //
+
+  if (sortKeyByCell[cell] !== orderBy) {
+    return (
+      <MoveVertical
+        size={13}
+        className="min-w-[13px]  ml-1"
+      />
+    );
+  } else {
+    return isOrderAscending ? (
+      <MoveDown
+        size={13}
+        className="min-w-[13px] ml-1"
+      />
+    ) : (
+      <MoveUp
+        size={13}
+        className="min-w-[13px] ml-1"
+      />
+    );
+  }
+};
+
 export default function Witnesses() {
   const [voterAccount, setVoterAccount] = useState<string>("");
   const [isVotersOpen, setIsVotersOpen] = useState<boolean>(false);
   const [isVotesHistoryOpen, setIsVotesHistoryOpen] = useState<boolean>(false);
-
+  const [sort, setSort] = useState<any>({
+    orderBy: "rank",
+    isOrderAscending: true,
+  });
   const { witnessesData, isWitnessDataLoading } = useWitnesses(
-    config.witnessesPerPages.witnesses
+    config.witnessesPerPages.witnesses,
+    sort.orderBy,
+    sort.isOrderAscending ? "asc" : "desc"
   );
+
+  const handleSortBy = (tableCell: string) => {
+    setSort({
+      orderBy: sortKeyByCell[tableCell],
+      isOrderAscending: !sort.isOrderAscending,
+    });
+  };
 
   if (isWitnessDataLoading) {
     return (
@@ -40,6 +116,29 @@ export default function Witnesses() {
 
   const changeVotesHistoryDialog = (isOpen: boolean) => {
     setIsVotesHistoryOpen(isOpen);
+  };
+
+  const buildTableHeader = () => {
+    return TABLE_CELLS.map((cell) => {
+      const toLowerCase = cell.toLocaleLowerCase();
+      const className =
+        "first:sticky first:left-0 [&:nth-child(2)]:sticky [&:nth-child(2)]:left-16 text-center";
+
+      return (
+        <TableHead
+          key={cell}
+          className={className}
+        >
+          <button
+            className="flex items-center"
+            onClick={() => handleSortBy(toLowerCase)}
+          >
+            {cell}
+            {renderSortArrow(toLowerCase, sort.orderBy, sort.isOrderAscending)}
+          </button>
+        </TableHead>
+      );
+    });
   };
 
   return (
@@ -59,44 +158,37 @@ export default function Witnesses() {
           changeVoteHistoryDialogue={changeVotesHistoryDialog}
         />
         <Table
-          className="text-white"
+          className="text-white min-w-[80vw]"
           data-testid="table-body"
         >
           <TableHeader>
-            <TableRow>
-              <TableHead className="sticky left-0"></TableHead>
-              <TableHead className="sticky left-11">Name</TableHead>
-              <TableHead className="text-center">Votes</TableHead>
-              <TableHead className="text-center">Voters</TableHead>
-              <TableHead className="text-center">Block Size</TableHead>
-              <TableHead className="text-center">Missed Blocks</TableHead>
-              <TableHead className="text-right">APR</TableHead>
-              <TableHead className="text-center">Price Feed</TableHead>
-              <TableHead>Feed Age</TableHead>
-              <TableHead>Version</TableHead>
-            </TableRow>
+            <TableRow>{buildTableHeader()}</TableRow>
           </TableHeader>
           <TableBody>
-            {witnessesData.map((singleWitness, index) => (
+            {witnessesData.map((singleWitness: any, index: any) => (
               <TableRow
                 key={index}
-                className={cn(`${index % 2 === 0 ? "bg-gray-800" : "bg-gray-900"}`,{"line-through": singleWitness.signing_key === config.inactiveWitnessKey})}
+                className={cn(
+                  `${index % 2 === 0 ? "bg-gray-800" : "bg-gray-900"}`,
+                  {
+                    "line-through":
+                      singleWitness.signing_key === config.inactiveWitnessKey,
+                  }
+                )}
                 data-testid="witnesses-table-row"
               >
                 <TableCell
                   className={cn("sticky left-0 min-w-[20px]", {
                     "bg-gray-800 md:bg-inherit": index % 2 === 0,
-                    "bg-gray-900 md:bg-inherit": index % 2 !== 0
+                    "bg-gray-900 md:bg-inherit": index % 2 !== 0,
                   })}
                 >
-                  {index + 1}
+                  {singleWitness.rank}
                 </TableCell>
                 <TableCell
-                  className={cn("text-explorer-turquoise sticky left-11", {
+                  className={cn("text-explorer-turquoise sticky left-16", {
                     "bg-gray-800 md:bg-inherit": index % 2 === 0,
                     "bg-gray-900 md:bg-inherit": index % 2 !== 0,
-                    
-
                   })}
                 >
                   <Link
