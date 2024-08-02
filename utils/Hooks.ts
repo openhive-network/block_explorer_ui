@@ -272,6 +272,18 @@ const getSyncInfoData = (
   };
 };
 
+export const convertVestsToHP = (vests:string) => {
+  const dynamicGlobalData = useDynamicGlobal().dynamicGlobalData;
+  return dynamicGlobalData?.headBlockDetails? parseFloat(vests.replace(/,/g, '').split(" ")[0]) * parseFloat(dynamicGlobalData?.headBlockDetails?.totalVestingFundHive?.replace(/,/g, '').split(" ")[0]) / parseFloat(dynamicGlobalData?.headBlockDetails?.totalVestingShares?.replace(/,/g, '').split(" ")[0]):0;
+};
+
+export const convertHiveToUSD = (hiveAmount: number) =>{
+  const dynamicGlobalData = useDynamicGlobal().dynamicGlobalData;
+  console.log(dynamicGlobalData);
+  const hivePrice = dynamicGlobalData?.headBlockDetails?.feedPrice?.split(" ")[0];
+  return hiveAmount * parseFloat(hivePrice ?? "0");//default to 0 if no matching price is found
+};
+
 export const useBlockchainSyncInfo = () => {
   const dynamicGlobalQueryData = useDynamicGlobal().dynamicGlobalData;
   const headBlockNum = useHeadBlockNumber().headBlockNumberData;

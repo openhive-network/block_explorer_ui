@@ -12,6 +12,7 @@ declare module Explorer {
     currentHbdSupply: string;
     pendingRewardedVestingHive: string;
     totalVestingFundHive: string;
+    totalVestingShares: string;
     hbdInterestRate: string;
     hbdPrintRate: string;
     lastIrreversibleBlockNumber: string;
