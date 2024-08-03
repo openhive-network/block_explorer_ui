@@ -400,6 +400,20 @@ declare module Hive {
     timestamp: Date;
   }
 
+  interface VestingDelegations {
+    delegatee: string;
+    delegator: string;
+    id: number;
+    min_delegation_time: string;
+    vesting_shares: string;
+  }
+
+  interface RCDelegations {
+    delegated_rc: number;
+    from: string;
+    to: string;
+  }
+
   interface WitnessVotesHistory {
     voter: string;
     approve: boolean;

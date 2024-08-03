@@ -61,12 +61,8 @@ const AccountRcDelegationsCard: React.FC<AccountRcDelegationsCardProps> = ({
     return <div></div>;
   }
 
-  const delegations = rcDelegationsData?.result || [];
-  if (!delegations.length) return <div className="text-black"></div>;
-
-  delegations.sort((a: RcDelegation, b: RcDelegation) =>
-    a.to.toLowerCase().localeCompare(b.to.toLowerCase())
-  );
+  const delegations = rcDelegationsData;
+  if (!delegations?.length) return <div className="text-black"></div>;
 
   const handlePropertiesVisibility = () => {
     setIsPropertiesHidden(!isPropertiesHidden);

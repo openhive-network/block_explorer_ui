@@ -7,6 +7,10 @@ type ExplorerNodeApi = {
   database_api: {
     get_reward_funds: TWaxApiRequest<{}, { funds: Hive.RewardFunds[] }>
     get_current_price_feed: TWaxApiRequest<{}, Hive.PriceFeed>
+  },
+  condenser_api: {
+    get_vesting_delegations: TWaxApiRequest<[string, string | null, number], any>
+    list_rc_direct_delegations: TWaxApiRequest<[[string, ""], number], any>
   }
 }
 
@@ -230,24 +234,12 @@ class FetchingService {
     return await this.callApi("get_witness", requestBody);
   }
 
-  async getVestingDelegations(delegatorAccount: string, startAccount: string | null, limit: number): Promise<any> {
-    const requestBody = {
-      jsonrpc: "2.0",
-      method: "condenser_api.get_vesting_delegations",
-      params: [delegatorAccount, startAccount, limit],
-      id: 1
-    };
-    return await this.makePostRequest(this.nodeUrl!, requestBody);
+  async getVestingDelegations(delegatorAccount: string, startAccount: string | null, limit: number): Promise<Hive.VestingDelegations[]> {
+    return await this.extendedHiveChain!.api.condenser_api.get_vesting_delegations([delegatorAccount, startAccount, limit]);
   }
 
-  async getRcDelegations (delegatorAccount: string, limit: number): Promise<any> {
-    const requestBody ={
-      jsonrpc: "2.0",
-      method: "condenser_api.list_rc_direct_delegations",
-      params: [[delegatorAccount, ""], limit],
-      id: 1
-    };
-    return await this.makePostRequest(this.nodeUrl!, requestBody);
+  async getRcDelegations (delegatorAccount: string, limit: number): Promise<Hive.RCDelegations[]> {
+    return await this.extendedHiveChain!.api.condenser_api.list_rc_direct_delegations([[delegatorAccount, ""], limit]);
   }
 
   async getBlockByTime(date: Date): Promise<number> {

@@ -63,13 +63,8 @@ const AccountVestingDelegationsCard: React.FC<AccountVestingDelegationsCardProps
     return <div></div>;
   }
 
-  const delegations = vestingDelegationsData?.result || [];
-  {console.log(delegations)}
-  if (!delegations.length) return <div className="text-black"></div>;
-
-  delegations.sort((a: VestingDelegation, b: VestingDelegation) =>
-    a.delegatee.toLowerCase().localeCompare(b.delegatee.toLowerCase())
-  );
+  const delegations = vestingDelegationsData;
+  if (!delegations?.length) return <div className="text-black"></div>;
 
   const handlePropertiesVisibility = () => {
     setIsPropertiesHidden(!isPropertiesHidden);
