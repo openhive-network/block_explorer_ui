@@ -25,7 +25,8 @@ import BlockDetails from "@/components/block/BlockDetails";
 
 export default function Home() {
   const { settings } = useUserSettingsContext();
-  const witnesses = useWitnesses(config.witnessesPerPages.home).witnessesData;
+
+  const witnesses = useWitnesses(config.witnessesPerPages.home, "rank", "asc").witnessesData;
   const headBlockNum = useHeadBlockNumber(
     settings.liveData
   ).headBlockNumberData;
