@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table";
 import { cn, formatNumber } from "@/lib/utils";
 import { convertVestsToHP, convertHiveToUSD } from "@/utils/Hooks";
-import { render } from "react-dom";
 
 type AccountBalanceCardProps = {
   header: string;
