@@ -5,7 +5,7 @@ import fetchingService from "@/services/FetchingService";
 const useWitnesses = (
   witnessesLimit: number,
   orderBy: string,
-  orderIs: string
+  orderIs: "asc" | "desc"
 ) => {
   const {
     data: witnessesData,
