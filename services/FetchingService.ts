@@ -18,7 +18,7 @@ class FetchingService {
   private apiUrl: string | null = null;
   private nodeUrl: string | null = null;
   private extendedHiveChain: TWaxExtended<ExplorerNodeApi> | undefined = undefined;
-  private testApiAddress: string = "https://local.bc.fqdn.pl/hafbe";
+  private testApiAddress: string = "https://api.syncad.com/hafbe";
 
   public setApiUrl(newUrl: string) {
     this.apiUrl = newUrl;
@@ -107,6 +107,10 @@ class FetchingService {
     return await this.callRestApi(`blocks/${blockNumber}`);
   }
 
+  async getBlockGlobalState(blockNumber: number): Promise<Hive.BlockDetails> {
+    return await this.callRestApi(`blocks/${blockNumber}/headers`)
+  }
+
   async getLastBlocks(limit: number): Promise<Hive.LastBlocksTypeResponse[]> {
     const requestParams: Hive.RestGetLastBlocksParams = {limit};
     return await this.callRestApi("blocks", requestParams);
@@ -131,7 +135,7 @@ class FetchingService {
       "page-size": config.blockPagePaginationSize,
       "set-of-keys": setOfKeys,
       "key-content": keyContent,
-      direction: "desc",
+      "page-order": "desc",
       "data-size-limit": config.opsBodyLimit
     }
     return await this.callRestApi(`blocks/${blockNumber}/operations`, requestParams);
