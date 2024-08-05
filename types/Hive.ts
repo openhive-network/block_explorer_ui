@@ -22,7 +22,7 @@ declare module Hive {
     "page-size"?: number;
     "set-of-keys"?: string[];
     "key-content"?: string;
-    direction?: Direction;
+    "page-order"?: Direction;
     "data-size-limit"?: number;
   }
 
