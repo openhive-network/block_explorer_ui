@@ -94,26 +94,23 @@ export default function Block() {
   const { blockDetails, loading } = useBlockData(Number(blockId));
 
   const { rawBlockdata } = useBlockRawData(Number(blockId));
-
   const { blockOperations: totalOperations, trxLoading: totalLoading } =
-    useBlockOperations(Number(blockId), undefined, paramsState.page || 1);
+  useBlockOperations(Number(blockId), undefined, paramsState.page || 1);
 
   const { blockError, blockOperations, trxLoading } = useBlockOperations(
     Number(blockId),
     paramsState.filters
-      ? convertBooleanArrayToIds(paramsState.filters)
-      : undefined,
+    ? convertBooleanArrayToIds(paramsState.filters)
+    : undefined,
     paramsState.page || 1,
     paramsState.accountName,
     paramsState.keyContent ? paramsState.keyContent : undefined,
     paramsState.setOfKeys
-  );
-
-  const { operationsTypes } = useOperationsTypes();
-  const formattedOperations = useOperationsFormatter(
-    blockOperations?.operations_result
-  ) as Hive.OperationResponse[];
-
+    );
+    const { operationsTypes } = useOperationsTypes();
+    const formattedOperations = useOperationsFormatter(
+      blockOperations?.operations_result
+      ) as Hive.OperationResponse[];
   useEffect(() => {
     if (blockDetails && blockDetails.created_at) {
       setBlockDate(new Date(blockDetails.created_at + "Z"));
@@ -283,7 +280,7 @@ export default function Block() {
               <p className="md:hidden inline">V Ops</p>
             </Button>
           </div>
-          {loading !== false || trxLoading || totalLoading ? (
+          {loading || trxLoading || totalLoading ? (
             <div className="flex justify-center items-center">
               <Loader2 className="animate-spin dark:text-white mt-1 h-16 w-16 ml-3 ... " />
             </div>
