@@ -44,7 +44,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
             "bg-gray-700": index % 2 === 0,
           })}
         >
-          <TableCell>
+          <TableCell className="cursor-pointer">
             {isAccount ? (
               <Link
                 className=" text-explorer-turquoise flex"
@@ -144,7 +144,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
           <Table>
             <TableBody>
               <TableRow className="bg-gray-700">
-                <TableCell>
+                <TableCell className="cursor-pointer">
                   <CopyToKeyboard
                     value={accountAuthoritiesData?.memo}
                     displayValue={cutPublicKey(accountAuthoritiesData?.memo)}
@@ -159,7 +159,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
               <Table>
                 <TableBody>
                   <TableRow className="bg-gray-700">
-                    <TableCell>
+                    <TableCell className="cursor-pointer">
                       <CopyToKeyboard
                         value={accountAuthoritiesData?.witness_signing}
                         displayValue={cutPublicKey(
