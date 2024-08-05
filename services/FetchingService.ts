@@ -299,7 +299,7 @@ class FetchingService {
   }
 
   async getHafbeVersion(): Promise<string> {
-    return await this.callRestApi("hafbe-version");
+    return await this.callRestApi("version");
   }
 
   async getOperationsCountInBlock(
