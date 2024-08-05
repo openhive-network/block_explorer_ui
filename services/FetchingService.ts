@@ -18,7 +18,7 @@ class FetchingService {
   private apiUrl: string | null = null;
   private nodeUrl: string | null = null;
   private extendedHiveChain: TWaxExtended<ExplorerNodeApi> | undefined = undefined;
-  private testApiAddress: string = "https://api.syncad.com/hafbe";
+  private testApiAddress: string = "https://local.bc.fqdn.pl";
 
   public setApiUrl(newUrl: string) {
     this.apiUrl = newUrl;
@@ -79,7 +79,7 @@ class FetchingService {
     }
   }
 
-  async callRestApi(methodName: string, params?: Record<string, any>) {
+  async callRestApi(apiName: string, methodName: string, params?: Record<string, any>) {
     let queryString = "";
     if (params) {
       queryString = "?" + Object.keys(params)
@@ -95,29 +95,29 @@ class FetchingService {
         .filter((element) => element)
         .join('&');
     }
-    const url = `${this.testApiAddress}/${methodName}${queryString}`;
+    const url = `${this.testApiAddress}/${apiName}/${methodName}${queryString}`;
     return await this.makeGetRequest(url);
   }
 
   async getHeadBlockNum(): Promise<number> {
-    return await this.callRestApi("block-numbers/headblock");
+    return await this.callRestApi("hafbe", "block-numbers/headblock");
   }
 
   async getBlock(blockNumber: number): Promise<Hive.BlockDetails> {
-    return await this.callRestApi(`blocks/${blockNumber}`);
+    return await this.callRestApi("hafah", `blocks/${blockNumber}/`);
   }
 
   async getBlockGlobalState(blockNumber: number): Promise<Hive.BlockDetails> {
-    return await this.callRestApi(`blocks/${blockNumber}/headers`)
+    return await this.callRestApi("hafbe", `blocks/${blockNumber}/global-state/`)
   }
 
   async getLastBlocks(limit: number): Promise<Hive.LastBlocksTypeResponse[]> {
     const requestParams: Hive.RestGetLastBlocksParams = {limit};
-    return await this.callRestApi("blocks", requestParams);
+    return await this.callRestApi("hafbe", "operation-types/count", requestParams);
   }
 
   async getInputType(input: string): Promise<Hive.InputTypeResponse> {
-    return await this.callRestApi(`input-type/${input}`);
+    return await this.callRestApi("hafbe", `input-type/${input}`);
   }
 
   async getOpsByBlock(
@@ -138,14 +138,14 @@ class FetchingService {
       "page-order": "desc",
       "data-size-limit": config.opsBodyLimit
     }
-    return await this.callRestApi(`blocks/${blockNumber}/operations`, requestParams);
+    return await this.callRestApi("hafbe", `blocks/${blockNumber}/operations`, requestParams);
   }
 
 
   async getTransaction(
     transactionHash: string
   ): Promise<Hive.TransactionQueryResponse> {
-    return await this.callRestApi(`transactions/${transactionHash}`);
+    return await this.callRestApi("hafbe", `transactions/${transactionHash}`);
   }
 
   async getRewardFunds(): Promise<{ funds: Hive.RewardFunds[] }> {
@@ -161,7 +161,7 @@ class FetchingService {
   }
 
   async getAccOpTypes(accountName: string): Promise<unknown> {
-    return await this.callRestApi(`accounts/${accountName}/operations/types`);
+    return await this.callRestApi("hafbe", `accounts/${accountName}/operations/types`);
   }
 
   async getOpsByAccount(
@@ -177,11 +177,11 @@ class FetchingService {
       "start-date": accountOperationsProps.startDate,
       "end-date": accountOperationsProps.endDate
     }
-    return await this.callRestApi(`accounts/${accountOperationsProps.accountName}/operations`, requestParams);
+    return await this.callRestApi("hafbe", `accounts/${accountOperationsProps.accountName}/operations`, requestParams);
   }
 
   async getAccount(account: string): Promise<Hive.AccountDetailsQueryResponse> {
-    return await this.callRestApi(`accounts/${account}`);
+    return await this.callRestApi("hafbe", `accounts/${account}`);
   }
 
   async getWitnesses(
@@ -196,7 +196,7 @@ class FetchingService {
       sort,
       direction
     }
-    return await this.callRestApi("witnesses", requestParams);
+    return await this.callRestApi("hafbe", "witnesses", requestParams);
   }
 
   async getWitnessVoters(
@@ -210,17 +210,17 @@ class FetchingService {
       direction,
       limit
     }
-    return await this.callRestApi(`witnesses/${witness}/voters`, requestParams);
+    return await this.callRestApi("hafbe", `witnesses/${witness}/voters`, requestParams);
   }
 
   // Temporary untill I will find a way to solve cors.
   async getOperationTypes(
   ): Promise<Hive.OperationPattern[]> {
-    return await this.callRestApi("operations/types/");
+    return await this.callRestApi("hafbe", "operations/types/");
   }
 
   async getWitness(witnessName: string): Promise<Hive.Witness> {
-    return await this.callRestApi(`witnesses/${witnessName}`);
+    return await this.callRestApi("hafbe", `witnesses/${witnessName}`);
   }
 
   async getVestingDelegations(delegatorAccount: string, startAccount: string | null, limit: number): Promise<Hive.VestingDelegations[]> {
@@ -232,11 +232,11 @@ class FetchingService {
   }
 
   async getBlockByTime(date: Date): Promise<number> {
-    return await this.callRestApi(`block-numbers/by-creation-date/${date.toDateString()}`);
+    return await this.callRestApi("hafbe", `block-numbers/by-creation-date/${date.toDateString()}`);
   }
 
   async getOperationKeys(operationTypeId: number): Promise<string[][]> {
-    return await this.callRestApi(`operations/types/${operationTypeId}/keys`);
+    return await this.callRestApi("hafbe", `operations/types/${operationTypeId}/keys`);
   }
 
   async getBlockByOp(
@@ -254,7 +254,7 @@ class FetchingService {
       "end-date": blockSearchProps.endDate,
       limit: blockSearchProps.limit
     }
-    return await this.callRestApi("block-numbers", requestParams);
+    return await this.callRestApi("hafbe", "block-numbers", requestParams);
   }
 
   async getWitnessVotesHistory(
@@ -272,11 +272,11 @@ class FetchingService {
       "start-date": fromTime,
       "end-date": toTime
     }
-    return await this.callRestApi(`witnesses/${witnessName}/votes/history`, requestParams)
+    return await this.callRestApi("hafbe", `witnesses/${witnessName}/votes/history`, requestParams)
   }
 
   async getOperation(operationId: number): Promise<Hive.OperationResponse> {
-    return await this.callRestApi(`operations/body/${operationId}/`);
+    return await this.callRestApi("hafbe", `operations/body/${operationId}/`);
   }
 
   async getCommentOperation(
@@ -293,30 +293,30 @@ class FetchingService {
       "start-date": commentSearchProps.startDate,
       "end-date": commentSearchProps.endDate
     }
-    return await this.callRestApi(`accounts/${commentSearchProps.accountName}/operations/comments`, requestParams);
+    return await this.callRestApi("hafbe", `accounts/${commentSearchProps.accountName}/operations/comments`, requestParams);
 
   }
 
   async getHafbeVersion(): Promise<string> {
-    return await this.callRestApi("version");
+    return await this.callRestApi("hafbe", "version");
   }
 
   async getOperationsCountInBlock(
     blockNumber: number
   ): Promise<Hive.OperationsByTypeCount[]> {
-    return await this.callRestApi(`blocks/${blockNumber}/operations/count`);
+    return await this.callRestApi("hafbe", `blocks/${blockNumber}/operation-types/count`);
   }
 
   async getHafbeLastSyncedBlock(): Promise<number> {
-    return await this.callRestApi("/block-numbers/headblock");
+    return await this.callRestApi("hafbe", "/block-numbers/headblock");
   }
 
   async getBlockRaw(blockNumber: number): Promise<Hive.RawBlockData> {
-    return await this.callRestApi(`blocks/${blockNumber}/raw-details`);
+    return await this.callRestApi("hafah", `blocks/${blockNumber}`);
   }
 
   async getAccountAuthorities(accountName: string): Promise<Hive.AccountAuthoritiesData> {
-    return await this.callRestApi(`accounts/${accountName}/authority`);
+    return await this.callRestApi("hafbe", `accounts/${accountName}/authority`);
   }
 
   async getManabars(
