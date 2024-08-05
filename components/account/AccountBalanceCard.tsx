@@ -32,29 +32,6 @@ const buildTableBody = (
   render_key: (key: string) => ReactNode,
   convert_usd: (key:string) => ReactNode
 ) => {
-  /*return cardNameMap.forEach((value, key, map) => {
-    //console.log(key);
-    //console.log(parameters);
-    //if (parameters.includes(key)){
-      return (
-        <Fragment key={key}>
-          <TableRow
-            className={cn(
-              {
-                "border-t border-gray-700": true,
-              },
-              "hover:bg-inherit"
-            )}
-          >
-            <TableCell>{value}</TableCell>
-            <TableCell>
-                {render_key(key)}
-            </TableCell>
-          </TableRow>
-        </Fragment>
-      )
-    //}
-  });*/
   return parameters.map((param: string, index: number) => {
     if (cardNameMap.has(param)) {
       return (
@@ -68,8 +45,8 @@ const buildTableBody = (
             )}
           >
             <TableCell>{cardNameMap.get(param)}</TableCell>
-            <TableCell>{render_key(param)}</TableCell>
-            <TableCell>{convert_usd(param)}</TableCell>
+            <TableCell className="text-right">{render_key(param)}</TableCell>
+            <TableCell className="text-right">{convert_usd(param)}</TableCell>
           </TableRow>
         </Fragment>
       )}
@@ -85,11 +62,10 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
 
   const keys = Object.keys(userDetails);
 
-  //console.log(keys);
-
   const render_key = (key: string) => {
     if (vestsParams.includes(key)){
-      return parseFloat(convertVestsToHP(userDetails[key]).toString()).toFixed(3) + " HP";
+      return parseFloat(formatNumber(parseFloat(
+        convertVestsToHP(userDetails[key]).toString()),false, true)).toFixed(3) + " HP";
     }
     return userDetails[key];
   }
@@ -103,7 +79,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
     }else{
       displVal = convertHiveToUSD(userDetails[key].replace(/,/g, '').split(" ")[0]).toFixed(2);
     }
-    return '$ ' + displVal;
+    return '$ ' + formatNumber(parseFloat(displVal), false, true);
   }
 
   return (
