@@ -145,7 +145,7 @@ class FetchingService {
   async getTransaction(
     transactionHash: string
   ): Promise<Hive.TransactionQueryResponse> {
-    return await this.callRestApi("hafbe", `transactions/${transactionHash}`);
+    return await this.callRestApi("hafah", `transactions/${transactionHash}`);
   }
 
   async getRewardFunds(): Promise<{ funds: Hive.RewardFunds[] }> {
@@ -161,7 +161,7 @@ class FetchingService {
   }
 
   async getAccOpTypes(accountName: string): Promise<unknown> {
-    return await this.callRestApi("hafbe", `accounts/${accountName}/operations/types`);
+    return await this.callRestApi("hafah", `accounts/${accountName}/operation-types`);
   }
 
   async getOpsByAccount(
@@ -281,7 +281,7 @@ class FetchingService {
   }
 
   async getOperation(operationId: number): Promise<Hive.OperationResponse> {
-    return await this.callRestApi("hafbe", `operations/body/${operationId}/`);
+    return await this.callRestApi("hafah", `operations/${operationId}/`);
   }
 
   async getCommentOperation(
