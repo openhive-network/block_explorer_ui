@@ -48,6 +48,7 @@ const useAccountDetails = (accountName: string) => {
     data: accountDetails,
     isLoading: isAccountDetailsLoading,
     isError: isAccountDetailsError,
+    refetch: refetchAccountDetails
   }: UseQueryResult<Explorer.FormattedAccountDetails> = useQuery({
     queryKey: ["account_details", accountName],
     queryFn: () => fetchingService.getAccount(accountName),
@@ -62,6 +63,7 @@ const useAccountDetails = (accountName: string) => {
     isAccountDetailsError,
     notFound:
       !isAccountDetailsLoading && accountDetails && accountDetails.id === null,
+    refetchAccountDetails
   };
 };
 

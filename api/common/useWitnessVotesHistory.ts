@@ -21,6 +21,7 @@ const useWitnessVotesHistory = (
     data: votesHistory,
     isLoading: isVotesHistoryLoading,
     isError: isVotesHistoryError,
+    refetch: refetchVotesHistory, 
   }: any = useQuery({
     queryKey: [
       "witness_votes_history",
@@ -34,7 +35,7 @@ const useWitnessVotesHistory = (
     refetchOnWindowFocus: false,
   });
 
-  return { votesHistory, isVotesHistoryLoading, isVotesHistoryError };
+  return { votesHistory, isVotesHistoryLoading, isVotesHistoryError, refetchVotesHistory };
 };
 
 export default useWitnessVotesHistory;
