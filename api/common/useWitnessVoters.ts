@@ -17,6 +17,7 @@ const useWitnessVoters = (
     data: witnessVoters,
     isLoading: isWitnessVotersLoading,
     isError: isWitnessVotersError,
+    refetch: refetchWitnessVoters,
   }: UseQueryResult<Hive.Voter[]> = useQuery({
     queryKey: ["witness_voters", accountName, isModalOpen, isAsc, sortKey],
     queryFn: () =>
@@ -29,6 +30,7 @@ const useWitnessVoters = (
     witnessVoters,
     isWitnessVotersLoading,
     isWitnessVotersError,
+    refetchWitnessVoters,
   };
 };
 
