@@ -1,7 +1,8 @@
 import Hive from "@/types/Hive";
 import { config } from "@/Config";
 import Explorer from "@/types/Explorer";
-import { GetDynamicGlobalPropertiesResponse, IHiveChainInterface, TWaxApiRequest, TWaxExtended } from "@hiveio/wax";
+import { GetDynamicGlobalPropertiesResponse, IHiveChainInterface, TWaxRestExtended, TWaxApiRequest, TWaxExtended } from "@hiveio/wax";
+import { RestGetWitnessParamsReq, RestGetWitnessesParamsReq, Witness } from "@/types/Rest";
 
 type ExplorerNodeApi = {
   database_api: {
@@ -14,10 +15,49 @@ type ExplorerNodeApi = {
   }
 }
 
+class A {}
+class B {}
+
+
+const extendedRest = { hafbe: {
+  "block-numbers": {
+    headblock: {
+      params: undefined,
+      result: Number,
+    }
+  },
+  witnesses: {
+    params: RestGetWitnessesParamsReq,
+    result: Witness,
+    responseArray: true,
+  },
+  singleWitness: {
+    params: RestGetWitnessParamsReq,
+    result: Witness,
+    urlPath: "{accountName}",
+  },
+  voters: {
+    params: A,
+    result: B,
+    urlPath: "{accountName}/voters",
+  },
+  votersCount: {
+    params: A,
+    result: B,
+    urlPath: "{accountName}/voters/count",
+  },
+  votesHistory: {
+    params: A,
+    result: B,
+    urlPath: "{accountName}/votes/history",
+  }
+}}
+
 class FetchingService {
   private apiUrl: string | null = null;
   private nodeUrl: string | null = null;
   private extendedHiveChain: TWaxExtended<ExplorerNodeApi> | undefined = undefined;
+  private extendedRestChain: TWaxRestExtended<typeof extendedRest> | undefined = undefined;
   private testApiAddress: string = "https://local.bc.fqdn.pl";
 
   public setApiUrl(newUrl: string) {
@@ -30,10 +70,15 @@ class FetchingService {
 
   public setHiveChain(hiveChain: IHiveChainInterface | null) {
     this.extendedHiveChain = hiveChain?.extend<ExplorerNodeApi>();
+    this.extendedRestChain = hiveChain?.extendRest(extendedRest);
+    if (this.extendedRestChain) {
+      this.extendedRestChain.endpointUrl = this.testApiAddress;
+    }
     if (this.extendedHiveChain && this.nodeUrl) {
       this.extendedHiveChain.endpointUrl = this.nodeUrl;
     }
   }
+
 
   async makePostRequest<T>(url: string, requestBody: T) {
     try {
@@ -189,14 +234,15 @@ class FetchingService {
     offset: number,
     sort: string,
     direction: "asc" | "desc"
-  ): Promise<Hive.Witness[]> {
+  ): Promise<Witness[]> {
     const requestParams: Hive.RestGetWitnessesParams = {
       limit,
       offset,
       sort,
       direction
     }
-    return await this.callRestApi("hafbe", "witnesses", requestParams);
+    return await this.extendedRestChain!.restApi.hafbe.witnesses({limit, offset, sort, direction})
+    // return await this.callRestApi("hafbe", "witnesses", requestParams);
   }
 
   async getWitnessVoters(
@@ -220,6 +266,8 @@ class FetchingService {
   }
 
   async getWitness(witnessName: string): Promise<Hive.Witness> {
+    console.log('GET WITNESS');
+    return await this.extendedRestChain!.restApi.hafbe.singleWitness({accountName: witnessName});
     return await this.callRestApi("hafbe", `witnesses/${witnessName}`);
   }
 
@@ -313,7 +361,10 @@ class FetchingService {
   }
 
   async getHafbeLastSyncedBlock(): Promise<number> {
-    return await this.callRestApi("hafbe", "/block-numbers/headblock");
+    const result = await this.extendedRestChain!.restApi.hafbe["block-numbers"].headblock();
+    console.log('TYPEOF', typeof result, result);
+    return result.valueOf();
+    // return await this.callRestApi("hafbe", "/block-numbers/headblock");
   }
 
   async getBlockRaw(blockNumber: number): Promise<Hive.RawBlockData> {
