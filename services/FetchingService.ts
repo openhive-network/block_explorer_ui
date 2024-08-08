@@ -357,8 +357,7 @@ class FetchingService {
 
   async getHafbeLastSyncedBlock(): Promise<number> {
     const result = await this.extendedRestChain!.restApi.hafbe["block-numbers"].headblock();
-    console.log('TYPEOF', typeof result, result);
-    return result.valueOf();
+    return result;
     // return await this.callRestApi("hafbe", "/block-numbers/headblock");
   }
 
