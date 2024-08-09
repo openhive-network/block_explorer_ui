@@ -56,8 +56,7 @@ const extendedRest = { hafbe: {
 class FetchingService {
   private apiUrl: string | null = null;
   private nodeUrl: string | null = null;
-  private extendedHiveChain: TWaxExtended<ExplorerNodeApi> | undefined = undefined;
-  private extendedRestChain: TWaxRestExtended<typeof extendedRest> | undefined = undefined;
+  private extendedHiveChain: TWaxExtended<ExplorerNodeApi, TWaxRestExtended<typeof extendedRest>> | undefined = undefined;
   private testApiAddress: string = "https://local.bc.fqdn.pl";
 
   public setApiUrl(newUrl: string) {
@@ -69,11 +68,7 @@ class FetchingService {
   }
 
   public setHiveChain(hiveChain: IHiveChainInterface | null) {
-    this.extendedHiveChain = hiveChain?.extend<ExplorerNodeApi>();
-    this.extendedRestChain = hiveChain?.extendRest(extendedRest);
-    if (this.extendedRestChain) {
-      this.extendedRestChain.endpointUrl = this.testApiAddress;
-    }
+    this.extendedHiveChain = hiveChain?.extend<ExplorerNodeApi>().extendRest(extendedRest);
     if (this.extendedHiveChain && this.nodeUrl) {
       this.extendedHiveChain.endpointUrl = this.nodeUrl;
     }
@@ -241,7 +236,7 @@ class FetchingService {
       sort,
       direction
     }
-    return await this.extendedRestChain!.restApi.hafbe.witnesses({limit, offset, sort, direction})
+    return await this.extendedHiveChain!.restApi.hafbe.witnesses({limit, offset, sort, direction})
     // return await this.callRestApi("hafbe", "witnesses", requestParams);
   }
 
@@ -266,8 +261,7 @@ class FetchingService {
   }
 
   async getWitness(witnessName: string): Promise<Hive.Witness> {
-    console.log('GET WITNESS');
-    return await this.extendedRestChain!.restApi.hafbe.singleWitness({accountName: witnessName});
+    return await this.extendedHiveChain!.restApi.hafbe.singleWitness({accountName: witnessName});
     return await this.callRestApi("hafbe", `witnesses/${witnessName}`);
   }
 
@@ -361,7 +355,7 @@ class FetchingService {
   }
 
   async getHafbeLastSyncedBlock(): Promise<number> {
-    const result = await this.extendedRestChain!.restApi.hafbe["block-numbers"].headblock();
+    const result = await this.extendedHiveChain!.restApi.hafbe["block-numbers"].headblock();
     return result;
     // return await this.callRestApi("hafbe", "/block-numbers/headblock");
   }
