@@ -50,6 +50,10 @@ const extendedRest = { hafbe: {
     params: A,
     result: B,
     urlPath: "{accountName}/votes/history",
+  },
+  version: {
+    params: undefined,
+    result: String
   }
 }}
 
@@ -341,7 +345,7 @@ class FetchingService {
   }
 
   async getHafbeVersion(): Promise<string> {
-    return await this.callRestApi("hafbe", "version");
+    return (await this.extendedHiveChain!.restApi.hafbe.version()).toString();
   }
 
   async getOperationsCountInBlock(
