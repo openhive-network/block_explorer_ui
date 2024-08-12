@@ -19,7 +19,6 @@ import Explorer from "@/types/Explorer";
 import { useOperationsFormatter } from "@/utils/Hooks";
 import Head from "next/head";
 import useBlockRawData from "@/api/blockPage/useBlockRawData";
-import useHeadBlockNumber from "@/api/common/useHeadBlockNum";
 import OperationsTable from "@/components/OperationsTable";
 import {
   convertBooleanArrayToIds,
@@ -27,6 +26,7 @@ import {
 } from "@/lib/utils";
 import CustomPagination from "@/components/CustomPagination";
 import { config } from "@/Config";
+import { useHeadBlockNumber } from "@/components/contexts/HeadBlockContext";
 
 interface BlockSearchParams {
   blockId?: number;
