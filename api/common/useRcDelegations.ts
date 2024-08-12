@@ -7,7 +7,6 @@ const useRcDelegations = (delegatorAccount: string, limit: number) => {
     data: rcDelegationsData,
     isLoading: isRcDelegationsLoading,
     isError: isRcDelegationsError,
-    refetch: refetchRcDelegations,
   } = useQuery({
     queryKey: ["RcDelegations", delegatorAccount, limit],
     queryFn: () => fetchingService.getRcDelegations(delegatorAccount, limit),
@@ -19,7 +18,11 @@ const useRcDelegations = (delegatorAccount: string, limit: number) => {
     refetchOnWindowFocus: false,
   });
 
-  return { rcDelegationsData, isRcDelegationsLoading, isRcDelegationsError, refetchRcDelegations };
+  return {
+    rcDelegationsData,
+    isRcDelegationsLoading,
+    isRcDelegationsError,
+  };
 };
 
 export default useRcDelegations;

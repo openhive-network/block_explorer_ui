@@ -9,7 +9,6 @@ const useManabars = (accountName: string) => {
     data: manabarsData,
     isLoading: manabarsDataLoading,
     isError: manabarsDataError,
-    refetch: refetchManabars,
   }: UseQueryResult<Explorer.Manabars | null> = useQuery({
     queryKey: ["manabars", accountName],
     queryFn: () => getManabars(accountName),
@@ -49,7 +48,6 @@ const useManabars = (accountName: string) => {
     manabarsData,
     manabarsDataLoading,
     manabarsDataError,
-    refetchManabars,
   };
 };
 
