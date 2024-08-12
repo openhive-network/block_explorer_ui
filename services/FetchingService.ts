@@ -2,7 +2,7 @@ import Hive from "@/types/Hive";
 import { config } from "@/Config";
 import Explorer from "@/types/Explorer";
 import { GetDynamicGlobalPropertiesResponse, IHiveChainInterface, TWaxRestExtended, TWaxApiRequest, TWaxExtended } from "@hiveio/wax";
-import { RestGetWitnessParamsReq, RestGetWitnessesParamsReq, Witness } from "@/types/Rest";
+import { RestGetVotersParamsReq, RestGetVotesHistoryParamsReq, RestGetWitnessParamsReq, RestGetWitnessesParamsReq, Voter, Witness, WitnessVotesHistory } from "@/types/Rest";
 
 type ExplorerNodeApi = {
   database_api: {
@@ -14,10 +14,6 @@ type ExplorerNodeApi = {
     list_rc_direct_delegations: TWaxApiRequest<[[string, ""], number], any>
   }
 }
-
-class A {}
-class B {}
-
 
 const extendedRest = { hafbe: {
   "block-numbers": {
@@ -37,19 +33,16 @@ const extendedRest = { hafbe: {
     urlPath: "{accountName}",
   },
   voters: {
-    params: A,
-    result: B,
+    params: RestGetVotersParamsReq,
+    result: Voter,
     urlPath: "{accountName}/voters",
-  },
-  votersCount: {
-    params: A,
-    result: B,
-    urlPath: "{accountName}/voters/count",
+    responseArray: true,
   },
   votesHistory: {
-    params: A,
-    result: B,
+    params: RestGetVotesHistoryParamsReq,
+    result: WitnessVotesHistory,
     urlPath: "{accountName}/votes/history",
+    responseArray: true,
   },
   version: {
     params: undefined,
@@ -241,7 +234,7 @@ class FetchingService {
       sort,
       direction
     }
-    return await this.extendedHiveChain!.restApi.hafbe.witnesses({limit, offset, sort, direction})
+    return await this.extendedHiveChain!.restApi.hafbe.witnesses({limit, offset, sort, direction});
     // return await this.callRestApi("hafbe", "witnesses", requestParams);
   }
 
@@ -256,7 +249,7 @@ class FetchingService {
       direction,
       limit
     }
-    return await this.callRestApi("hafbe", `witnesses/${witness}/voters`, requestParams);
+    return await this.extendedHiveChain!.restApi.hafbe.voters({accountName: witness, sort, direction, limit});
   }
 
   // Temporary untill I will find a way to solve cors.
@@ -312,14 +305,7 @@ class FetchingService {
     fromTime?: Date,
     toTime?: Date
   ): Promise<Hive.WitnessVotesHistory[]> {
-    const requestParams: Hive.RestWitnessVotesHistoryParams = {
-      sort,
-      direction,
-      limit,
-      "start-date": fromTime,
-      "end-date": toTime
-    }
-    return await this.callRestApi("hafbe", `witnesses/${witnessName}/votes/history`, requestParams)
+    return await this.extendedHiveChain!.restApi.hafbe.votesHistory({accountName: witnessName, direction, sort, limit, "start-date": fromTime, "end-date": toTime});
   }
 
   async getOperation(operationId: number): Promise<Hive.OperationResponse> {
@@ -355,8 +341,7 @@ class FetchingService {
   }
 
   async getHafbeLastSyncedBlock(): Promise<number> {
-    const result = await this.extendedHiveChain!.restApi.hafbe["block-numbers"].headblock();
-    return result;
+    return await this.extendedHiveChain!.restApi.hafbe["block-numbers"].headblock();
     // return await this.callRestApi("hafbe", "/block-numbers/headblock");
   }
 
