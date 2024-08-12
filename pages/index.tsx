@@ -9,7 +9,6 @@ import LastBlocksWidget from "@/components/LastBlocksWidget";
 import useWitnesses from "@/api/common/useWitnesses";
 import useDynamicGlobal from "@/api/homePage/useDynamicGlobal";
 import { config } from "@/Config";
-import useHeadBlockNumber from "@/api/common/useHeadBlockNum";
 import useHeadBlock from "@/api/homePage/useHeadBlock";
 import useBlockOperations from "@/api/common/useBlockOperations";
 import { useUserSettingsContext } from "@/components/contexts/UserSettingsContext";
@@ -21,23 +20,23 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import BlockDetails from "@/components/block/BlockDetails"; 
+import { useHeadBlockNumber } from "@/components/contexts/HeadBlockContext";
 
 export default function Home() {
   const { settings } = useUserSettingsContext();
 
-  const witnesses = useWitnesses(config.witnessesPerPages.home, "rank", "asc").witnessesData;
-  const headBlockNum = useHeadBlockNumber(
-    settings.liveData
-  ).headBlockNumberData;
+  const witnesses = useWitnesses(
+    config.witnessesPerPages.home,
+    "rank",
+    "asc"
+  ).witnessesData;
+  const headBlockNum = useHeadBlockNumber().headBlockNumberData;
   const dynamicGlobalQueryData =
     useDynamicGlobal(headBlockNum).dynamicGlobalData;
   const headBlockData = useHeadBlock(headBlockNum).headBlockData;
-  const { blockOperations } = useBlockOperations(
-    headBlockNum || 0,
-);
+  const { blockOperations } = useBlockOperations(headBlockNum || 0);
   const opcount = blockOperations?.operations_result?.length || 0;
-  
+
   return (
     <>
       <Head>
@@ -54,7 +53,7 @@ export default function Home() {
           <LastBlocksWidget headBlock={headBlockNum} />
           <SearchesSection />
         </div>
-        
+
         <Card
           className="col-span-4 md:col-span-4 lg:col-span-1"
           data-testid="top-witnesses-sidebar"

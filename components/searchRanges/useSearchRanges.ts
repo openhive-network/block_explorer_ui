@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { config } from "@/Config"; 
-import useHeadBlockNumber from "@/api/common/useHeadBlockNum";
+import { config } from "@/Config";
 import moment from "moment";
 import Explorer from "@/types/Explorer";
+import { useHeadBlockNumber } from "../contexts/HeadBlockContext";
 
 const DEFAULT_LAST_BLOCK_VALUE = 1000;
 
