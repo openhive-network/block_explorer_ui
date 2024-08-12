@@ -493,7 +493,6 @@ declare module Hive {
   }
 
   interface BlockDetails {
-    age: string;
     block_num: number;
     created_at: string;
     current_hbd_supply: number;
