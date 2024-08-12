@@ -1,8 +1,10 @@
+import Hive from "./Hive";
+
 export class RestGetWitnessesParamsReq {
   limit!: number;
   offset!: number;
   sort!: string;
-  direction!: "asc" | "desc";
+  direction!: Hive.Direction;
 }
 
 export class Witness {
@@ -28,4 +30,43 @@ export class Witness {
 
 export class RestGetWitnessParamsReq {
   accountName!: string;
+}
+
+export class Voter {
+  voter!: string;
+  vests!: number;
+  votes_hive_power!: number;
+  account_vests!: number;
+  account_hive_power!: number;
+  proxied_vests!: number;
+  proxied_hive_power!: number;
+  timestamp!: Date;
+}
+
+export class RestGetVotersParamsReq {
+  accountName!: string;
+  sort?: string;
+  direction?: Hive.Direction;
+  limit?: number;
+}
+
+export class WitnessVotesHistory {
+  voter!: string;
+  approve!: boolean;
+  vests!: number;
+  vests_hive_power!: number;
+  account_vests!: number;
+  account_hive_power!: number;
+  proxied_vests!: number;
+  proxied_hive_power!: number;
+  timestamp!: Date;
+}
+
+export class RestGetVotesHistoryParamsReq {
+  accountName!: string;
+  sort?: string;
+  direction?: Hive.Direction;
+  limit!: number | null;
+  "start-date"?: Date;
+  "end-date"?: Date;
 }
