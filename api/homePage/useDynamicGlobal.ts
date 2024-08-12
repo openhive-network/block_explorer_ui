@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 import { adjustDynamicGlobalBlockData } from "@/utils/QueryDataSelectors";
-import { useHiveChainContext } from "@/components/contexts/HiveChainContext";
+import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { useRouter } from "next/router";
 
 const useDynamicGlobal = (headBlockNum?: number) => {

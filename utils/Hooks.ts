@@ -13,13 +13,13 @@ import Explorer from "@/types/Explorer";
 import Hive from "@/types/Hive";
 import useDynamicGlobal from "@/api/homePage/useDynamicGlobal";
 import useHeadBlock from "@/api/homePage/useHeadBlock";
-import { useHiveChainContext } from "@/components/contexts/HiveChainContext";
+import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import OperationsFormatter from "@/lib/Formatter";
 import {
   convertBooleanArrayIntoHexadecimals,
   parseUrlFlagsIntoBooleanArray,
 } from "@/lib/utils";
-import { useHeadBlockNumber } from "@/components/contexts/HeadBlockContext";
+import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
 
 /**
  * hook for using debounce

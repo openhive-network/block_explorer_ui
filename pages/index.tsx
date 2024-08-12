@@ -11,7 +11,7 @@ import useDynamicGlobal from "@/api/homePage/useDynamicGlobal";
 import { config } from "@/Config";
 import useHeadBlock from "@/api/homePage/useHeadBlock";
 import useBlockOperations from "@/api/common/useBlockOperations";
-import { useUserSettingsContext } from "@/components/contexts/UserSettingsContext";
+import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
 import Head from "next/head";
 import {
   Card,
@@ -20,7 +20,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useHeadBlockNumber } from "@/components/contexts/HeadBlockContext";
+import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
 
 export default function Home() {
   const { settings } = useUserSettingsContext();

@@ -7,7 +7,7 @@ import Hive from "@/types/Hive";
 import { isJson } from "@/utils/StringUtils";
 import { Button } from "./ui/button";
 import JSONView from "./JSONView";
-import { useUserSettingsContext } from "./contexts/UserSettingsContext";
+import { useUserSettingsContext } from "../contexts/UserSettingsContext";
 import { cn } from "@/lib/utils";
 import { getOperationTypeForDisplay } from "@/utils/UI";
 import CopyJSON from "./CopyJSON";
@@ -109,7 +109,10 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
 
       {!settings.rawJsonView && operation.type === "custom_json_operation" && (
         <div className="flex justify-between items-center">
-          <Button className="p-0" onClick={() => setSeeDetails(!seeDetails)}>
+          <Button
+            className="p-0"
+            onClick={() => setSeeDetails(!seeDetails)}
+          >
             {seeDetails ? (
               <div className="flex items-center gap-x-1">
                 Hide details
@@ -134,7 +137,10 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
 
       {(seeDetails || settings.rawJsonView) &&
         (settings.rawJsonView || forceStyle === "raw-json" ? (
-          <JSONView json={valueAsObject} skipCopy />
+          <JSONView
+            json={valueAsObject}
+            skipCopy
+          />
         ) : (
           <div className="flex flex-col justify-center mt-2">
             {Object.entries(valueAsObject)

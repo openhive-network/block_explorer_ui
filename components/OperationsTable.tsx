@@ -18,7 +18,7 @@ import { getOperationTypeForDisplay } from "@/utils/UI";
 import CopyJSON from "./CopyJSON";
 import { categorizedOperationTypes } from "@/utils/CategorizedOperationTypes";
 import { colorByOperationCategory } from "./OperationTypesDialog";
-import { useUserSettingsContext } from "./contexts/UserSettingsContext";
+import { useUserSettingsContext } from "../contexts/UserSettingsContext";
 import TimeAgo from "timeago-react";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import {

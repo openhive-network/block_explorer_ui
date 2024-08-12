@@ -2,7 +2,7 @@ import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
 import Explorer from "@/types/Explorer";
-import { useHiveChainContext } from "@/components/contexts/HiveChainContext";
+import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 
 const useAccountDetails = (accountName: string) => {
@@ -48,7 +48,7 @@ const useAccountDetails = (accountName: string) => {
     data: accountDetails,
     isLoading: isAccountDetailsLoading,
     isError: isAccountDetailsError,
-    refetch: refetchAccountDetails
+    refetch: refetchAccountDetails,
   }: UseQueryResult<Explorer.FormattedAccountDetails> = useQuery({
     queryKey: ["account_details", accountName],
     queryFn: () => fetchingService.getAccount(accountName),
@@ -63,7 +63,7 @@ const useAccountDetails = (accountName: string) => {
     isAccountDetailsError,
     notFound:
       !isAccountDetailsLoading && accountDetails && accountDetails.id === null,
-    refetchAccountDetails
+    refetchAccountDetails,
   };
 };
 

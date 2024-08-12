@@ -2,10 +2,10 @@ import React, { ReactNode, useEffect, useState, useMemo } from "react";
 import {
   UserSettings,
   UserSettingsContext,
-} from "./contexts/UserSettingsContext";
-import { HiveChainContext } from "./contexts/HiveChainContext";
+} from "../contexts/UserSettingsContext";
+import { HiveChainContext } from "../contexts/HiveChainContext";
 import { IHiveChainInterface, createHiveChain } from "@hiveio/wax";
-import { AddressesContext } from "./contexts/AddressesContext";
+import { AddressesContext } from "../contexts/AddressesContext";
 import useApiAddresses from "@/utils/ApiAddresses";
 import fetchingService from "@/services/FetchingService";
 import {
@@ -16,7 +16,7 @@ import {
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { toast } from "sonner";
 import Layout from "./layout";
-import { HeadBlockContextProvider } from "@/components/contexts/HeadBlockContext";
+import { HeadBlockContextProvider } from "@/contexts/HeadBlockContext";
 
 const Context: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [userSettings, setUserSettings] = useState<UserSettings>({
