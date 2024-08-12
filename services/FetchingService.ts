@@ -2,7 +2,7 @@ import Hive from "@/types/Hive";
 import { config } from "@/Config";
 import Explorer from "@/types/Explorer";
 import { GetDynamicGlobalPropertiesResponse, IHiveChainInterface, TWaxRestExtended, TWaxApiRequest, TWaxExtended } from "@hiveio/wax";
-import { RestGetVotersParamsReq, RestGetVotesHistoryParamsReq, RestGetWitnessParamsReq, RestGetWitnessesParamsReq, Voter, Witness, WitnessVotesHistory } from "@/types/Rest";
+import { RestGetBlockDetailsParamsReq, RestGetVotersParamsReq, RestGetVotesHistoryParamsReq, RestGetWitnessParamsReq, RestGetWitnessesParamsReq, Voter, Witness, WitnessVotesHistory, BlockDetails, RestGetBlockGlobalStateParamsReq } from "@/types/Rest";
 
 type ExplorerNodeApi = {
   database_api: {
@@ -15,40 +15,55 @@ type ExplorerNodeApi = {
   }
 }
 
-const extendedRest = { hafbe: {
-  "block-numbers": {
-    headblock: {
+const extendedRest = { 
+  hafbe: {
+    "block-numbers": {
+      headblock: {
+        params: undefined,
+        result: Number,
+      }
+    },
+    "global-state": {
+      params: RestGetBlockGlobalStateParamsReq,
+      result: BlockDetails
+    },
+    witnesses: {
+      params: RestGetWitnessesParamsReq,
+      result: Witness,
+      responseArray: true,
+    },
+    singleWitness: {
+      params: RestGetWitnessParamsReq,
+      result: Witness,
+      urlPath: "{accountName}",
+    },
+    voters: {
+      params: RestGetVotersParamsReq,
+      result: Voter,
+      urlPath: "{accountName}/voters",
+      responseArray: true,
+    },
+    votesHistory: {
+      params: RestGetVotesHistoryParamsReq,
+      result: WitnessVotesHistory,
+      urlPath: "{accountName}/votes/history",
+      responseArray: true,
+    },
+    version: {
       params: undefined,
-      result: Number,
+      result: String
     }
   },
-  witnesses: {
-    params: RestGetWitnessesParamsReq,
-    result: Witness,
-    responseArray: true,
-  },
-  singleWitness: {
-    params: RestGetWitnessParamsReq,
-    result: Witness,
-    urlPath: "{accountName}",
-  },
-  voters: {
-    params: RestGetVotersParamsReq,
-    result: Voter,
-    urlPath: "{accountName}/voters",
-    responseArray: true,
-  },
-  votesHistory: {
-    params: RestGetVotesHistoryParamsReq,
-    result: WitnessVotesHistory,
-    urlPath: "{accountName}/votes/history",
-    responseArray: true,
-  },
-  version: {
-    params: undefined,
-    result: String
+  hafah: {
+    blocks: {
+      block: {
+        params: RestGetBlockDetailsParamsReq,
+        result: BlockDetails,
+        urlPath: "{blockNumber}"
+      }
+    } 
   }
-}}
+}
 
 class FetchingService {
   private apiUrl: string | null = null;
@@ -138,14 +153,15 @@ class FetchingService {
   }
 
   async getHeadBlockNum(): Promise<number> {
-    return await this.callRestApi("hafbe", "block-numbers/headblock");
+    return await this.extendedHiveChain!.restApi.hafbe["block-numbers"].headblock();
   }
 
   async getBlock(blockNumber: number): Promise<Hive.BlockDetails> {
-    return await this.callRestApi("hafah", `blocks/${blockNumber}/`);
+    return await this.extendedHiveChain!.restApi.hafah.blocks.block({blockNumber});
   }
 
   async getBlockGlobalState(blockNumber: number): Promise<Hive.BlockDetails> {
+    // return await this.extendedHiveChain!.restApi.hafbe["global-state"]({blockNumber});
     return await this.callRestApi("hafbe", `blocks/${blockNumber}/global-state/`)
   }
 
@@ -338,11 +354,6 @@ class FetchingService {
     blockNumber: number
   ): Promise<Hive.OperationsByTypeCount[]> {
     return await this.callRestApi("hafbe", `blocks/${blockNumber}/operation-types/count`);
-  }
-
-  async getHafbeLastSyncedBlock(): Promise<number> {
-    return await this.extendedHiveChain!.restApi.hafbe["block-numbers"].headblock();
-    // return await this.callRestApi("hafbe", "/block-numbers/headblock");
   }
 
   async getBlockRaw(blockNumber: number): Promise<Hive.RawBlockData> {
