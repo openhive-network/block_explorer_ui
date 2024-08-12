@@ -6,7 +6,7 @@ import {
 import { Button } from "./ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useUserSettingsContext } from "./contexts/UserSettingsContext";
+import { useUserSettingsContext } from "../contexts/UserSettingsContext";
 
 interface ViewPopoverProps {
   isMobile?: boolean;
@@ -45,7 +45,12 @@ const ViewPopover: React.FC<ViewPopoverProps> = ({ isMobile }) => {
               value="visualised-data"
               id="r1"
             />
-            <Label className="cursor-pointer" htmlFor="r1">Visualised Data</Label>
+            <Label
+              className="cursor-pointer"
+              htmlFor="r1"
+            >
+              Visualised Data
+            </Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem
@@ -59,7 +64,12 @@ const ViewPopover: React.FC<ViewPopoverProps> = ({ isMobile }) => {
               value="raw-json"
               id="r2"
             />
-            <Label className="cursor-pointer" htmlFor="r2">Raw JSON</Label>
+            <Label
+              className="cursor-pointer"
+              htmlFor="r2"
+            >
+              Raw JSON
+            </Label>
           </div>
           <div className="flex items-center space-x-2">
             <RadioGroupItem
@@ -73,7 +83,12 @@ const ViewPopover: React.FC<ViewPopoverProps> = ({ isMobile }) => {
               value="pretty-json"
               id="r3"
             />
-            <Label className="cursor-pointer" htmlFor="r3">Pretty JSON</Label>
+            <Label
+              className="cursor-pointer"
+              htmlFor="r3"
+            >
+              Pretty JSON
+            </Label>
           </div>
         </RadioGroup>
       </PopoverContent>

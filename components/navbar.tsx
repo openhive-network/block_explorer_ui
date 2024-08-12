@@ -5,7 +5,7 @@ import SearchBar from "./SearchBar";
 import { useMediaQuery } from "@/utils/Hooks";
 import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useUserSettingsContext } from "./contexts/UserSettingsContext";
+import { useUserSettingsContext } from "../contexts/UserSettingsContext";
 import SyncInfo from "./home/SyncInfo";
 import ViewPopover from "./ViewPopover";
 

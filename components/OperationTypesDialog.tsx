@@ -12,10 +12,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Hive from "@/types/Hive";
 import { getOperationTypeForDisplay } from "@/utils/UI";
-import { useUserSettingsContext } from "./contexts/UserSettingsContext";
+import { useUserSettingsContext } from "../contexts/UserSettingsContext";
 import { cn } from "@/lib/utils";
 import Chip from "./Chip";
-import {categorizedOperationTypes} from "@/utils/CategorizedOperationTypes";
+import { categorizedOperationTypes } from "@/utils/CategorizedOperationTypes";
 
 type OperationTypesDialogProps = {
   operationTypes: Hive.OperationPattern[] | undefined;
@@ -206,7 +206,9 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
       >
         <div className="flex justify-between">
           <div className="flex items-center justify-center">
-            <span className={`rounded w-4 h-4 mr-2 ${colorByOperationCategory[sectionName]}`}></span>
+            <span
+              className={`rounded w-4 h-4 mr-2 ${colorByOperationCategory[sectionName]}`}
+            ></span>
             <span>{sectionName}</span>
           </div>
           <div>
@@ -265,7 +267,10 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
         </DialogHeader>
         <div className="overflow-auto max-h-[500px] md:max-h-[600px]">
           {categorizedOperationTypes.map((categorizedOperationType) =>
-            renderSection(categorizedOperationType.name, categorizedOperationType.types)
+            renderSection(
+              categorizedOperationType.name,
+              categorizedOperationType.types
+            )
           )}
         </div>
         <DialogFooter>

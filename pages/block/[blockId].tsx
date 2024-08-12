@@ -5,7 +5,7 @@ import BlockPageNavigation from "@/components/block/BlockPageNavigation";
 import { scrollTo } from "@/utils/UI";
 import PageNotFound from "@/components/PageNotFound";
 import { Button } from "@/components/ui/button";
-import { useUserSettingsContext } from "@/components/contexts/UserSettingsContext";
+import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
 import JSONView from "@/components/JSONView";
 import useBlockData from "@/api/blockPage/useBlockData";
 import useBlockOperations from "@/api/common/useBlockOperations";
@@ -26,7 +26,7 @@ import {
 } from "@/lib/utils";
 import CustomPagination from "@/components/CustomPagination";
 import { config } from "@/Config";
-import { useHeadBlockNumber } from "@/components/contexts/HeadBlockContext";
+import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
 
 interface BlockSearchParams {
   blockId?: number;
