@@ -10,7 +10,6 @@ const useAccountOperations = (
     data: accountOperations,
     isFetching: isAccountOperationsLoading,
     isError: isAccountOperationsError,
-    refetch: refetchAccountOperations,
   }: UseQueryResult<Hive.AccountOperationsResponse> = useQuery({
     queryKey: ["account_operations", accountOperationsProps],
     queryFn: () => fetchAccountOperations(accountOperationsProps),
@@ -31,7 +30,6 @@ const useAccountOperations = (
     accountOperations,
     isAccountOperationsLoading,
     isAccountOperationsError,
-    refetchAccountOperations,
   };
 };
 

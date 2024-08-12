@@ -83,13 +83,11 @@ export default function Account() {
   const [lastPage, setLastPage] = useState<number | undefined>(undefined);
   const [showMobileAccountDetails, setShowMobileAccountDetails] =
     useState(false);
-  const [liveDataOperations, setLiveDataOperations] = useState(false);
-
 
   const searchRanges = useSearchRanges();
 
   const { accountDetails, notFound } = useAccountDetails(accountNameFromRoute);
-  const { accountOperations, isAccountOperationsLoading, refetchAccountOperations } =
+  const { accountOperations, isAccountOperationsLoading } =
     useAccountOperations({
       accountName: accountNameFromRoute,
       operationTypes: filtersParam.length
@@ -223,14 +221,14 @@ export default function Account() {
                 className="cursor-pointer"
               />
             </div>
-            <AccountDetailsSection accountName={accountNameFromRoute}  liveDataOperations = {liveDataOperations} setLiveDataOperations = {setLiveDataOperations} refetchAccountOperations = {refetchAccountOperations}/>
+            <AccountDetailsSection accountName={accountNameFromRoute} />
           </div>
         </>
       );
     } else {
       return (
         <div className="col-start-1 col-span-1 flex flex-col gap-y-2">
-          <AccountDetailsSection accountName={accountNameFromRoute} liveDataOperations = {liveDataOperations} setLiveDataOperations={setLiveDataOperations} refetchAccountOperations={refetchAccountOperations}/>
+          <AccountDetailsSection accountName={accountNameFromRoute} />
         </div>
       );
     }

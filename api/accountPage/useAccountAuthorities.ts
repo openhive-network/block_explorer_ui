@@ -7,7 +7,6 @@ const useAccountAuthorities = (accountName: string) => {
     data: accountAuthoritiesData,
     isLoading: accountAuthoritiesDataLoading,
     isError: accountAuthoritiesDataError,
-    refetch: refetchAccountAuthorities
   }: UseQueryResult<Hive.AccountAuthoritiesData> = useQuery({
     queryKey: ["account_authorities", accountName],
     queryFn: () => fetchingService.getAccountAuthorities(accountName),
@@ -19,7 +18,6 @@ const useAccountAuthorities = (accountName: string) => {
     accountAuthoritiesData,
     accountAuthoritiesDataLoading,
     accountAuthoritiesDataError,
-    refetchAccountAuthorities
   };
 };
 
