@@ -81,6 +81,12 @@ const renderSortArrow = (
   }
 };
 
+// Remove this code block when sorting by `missed_blocks` and `hbd_interest_rate` will be available
+const isCellUnsortable = (cell: string) => {
+  return cell === "APR" || cell === "Missed Blocks";
+};
+//
+
 export default function Witnesses() {
   const [voterAccount, setVoterAccount] = useState<string>("");
   const [isVotersOpen, setIsVotersOpen] = useState<boolean>(false);
@@ -130,6 +136,7 @@ export default function Witnesses() {
           className={className}
         >
           <button
+            disabled={isCellUnsortable(cell)}
             className="flex items-center"
             onClick={() => handleSortBy(toLowerCase)}
           >
