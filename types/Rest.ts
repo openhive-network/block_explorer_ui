@@ -220,7 +220,19 @@ export class AccountDetails {
   witnesses_voted_for!: number;
   ops_count!: number;
   is_witness!: boolean;
-} 
+}
+
+export class RestGetAccountAuthorities {
+  accountName!: string;
+}
+
+export class AccountAuthoritiesData {
+  owner!: Hive.AuthKeys;
+  active!: Hive.AuthKeys;
+  posting!: Hive.AuthKeys;
+  memo!: string;
+  witness_signing!: string;
+}
 
 export const extendedRest = { 
   hafbe: {
@@ -284,6 +296,11 @@ export const extendedRest = {
         params: RestGetAccountDetailsParamsReq,
         result: AccountDetails,
         urlPath: "{accountName}"
+      },
+      authorities: {
+        params: RestGetAccountAuthorities,
+        result: AccountAuthoritiesData,
+        urlPath: "{accountName}/authority"
       }
     }
   },
