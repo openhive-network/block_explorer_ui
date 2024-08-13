@@ -6,6 +6,7 @@ import {
   MoveVertical,
   MoveUp,
   MoveDown,
+  Link as LinkIcon,
 } from "lucide-react";
 import {
   Table,
@@ -22,7 +23,6 @@ import { config } from "@/Config";
 import { cn, formatNumber, formatPercent } from "@/lib/utils";
 import Head from "next/head";
 import moment from "moment";
-import { Link as LinkIcon } from "lucide-react";
 
 const TABLE_CELLS = [
   "Rank",
@@ -208,7 +208,7 @@ export default function Witnesses() {
                       {singleWitness.witness}
                     </Link>
                     <Link
-                      href={singleWitness.url}
+                      href={singleWitness.url ?? ""}
                       target="_blank"
                       data-testid="witness-link"
                     >
