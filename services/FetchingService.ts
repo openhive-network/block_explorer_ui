@@ -3,23 +3,7 @@ import { config } from "@/Config";
 import Explorer from "@/types/Explorer";
 import { GetDynamicGlobalPropertiesResponse, IHiveChainInterface, TWaxRestExtended, TWaxApiRequest, TWaxExtended } from "@hiveio/wax";
 import {
-  RestGetBlockDetailsParamsReq,
-  RestGetVotersParamsReq,
-  RestGetVotesHistoryParamsReq,
-  RestGetWitnessParamsReq,
-  RestGetWitnessesParamsReq,
-  Voter,
-  Witness,
-  WitnessVotesHistory,
-  BlockDetails,
-  RestGetBlockGlobalStateParamsReq,
-  RestGetInputTypeParamsReq,
-  InputTypeResponse,
-  RestGetTransactionParamsReq,
-  TransactionResponse,
-  OperationPattern,
-  RestGetBlockByTimeParamsReq,
-  RestGetOperationKeysParamsReq,
+  extendedRest
 } from "@/types/Rest";
 
 type ExplorerNodeApi = {
@@ -30,89 +14,6 @@ type ExplorerNodeApi = {
   },
   rc_api: {
     list_rc_direct_delegations: TWaxApiRequest<{ start: [string, string], limit: number }, { rc_direct_delegations: Hive.RCDelegations[] }>
-  }
-}
-
-const extendedRest = { 
-  hafbe: {
-    "block-numbers": {
-      headblock: {
-        params: undefined,
-        result: Number,
-      },
-      "by-creation-date": {
-        byTime: {
-          params: RestGetBlockByTimeParamsReq,
-          result: Number,
-          urlPath: "{timestamp}"
-        }
-      }
-    },
-    "global-state": {
-      params: RestGetBlockGlobalStateParamsReq,
-      result: BlockDetails
-    },
-    witnesses: {
-      params: RestGetWitnessesParamsReq,
-      result: Witness,
-      responseArray: true,
-    },
-    singleWitness: {
-      params: RestGetWitnessParamsReq,
-      result: Witness,
-      urlPath: "{accountName}",
-    },
-    voters: {
-      params: RestGetVotersParamsReq,
-      result: Voter,
-      urlPath: "{accountName}/voters",
-      responseArray: true,
-    },
-    votesHistory: {
-      params: RestGetVotesHistoryParamsReq,
-      result: WitnessVotesHistory,
-      urlPath: "{accountName}/votes/history",
-      responseArray: true,
-    },
-    version: {
-      params: undefined,
-      result: String
-    },
-    "input-type": {
-      inputType: {
-        params: RestGetInputTypeParamsReq,
-        result: InputTypeResponse,
-        urlPath: "{inputType}"
-      }
-
-    }
-  },
-  hafah: {
-    blocks: {
-      block: {
-        params: RestGetBlockDetailsParamsReq,
-        result: BlockDetails,
-        urlPath: "{blockNumber}"
-      }
-    },
-    transactions: {
-      transaction: {
-        params: RestGetTransactionParamsReq,
-        result: TransactionResponse,
-        urlPath: "{transactionId}"
-      }
-    },
-    "operation-types": {
-      params: undefined,
-      result: OperationPattern,
-      responseArray: true,
-    },
-    operationKeys: {
-      params: RestGetOperationKeysParamsReq,
-      result: {},
-      responseArray: true,
-      urlPath: "{operationTypeId}/keys"
-    }
   }
 }
 
@@ -217,8 +118,7 @@ class FetchingService {
   }
 
   async getLastBlocks(limit: number): Promise<Hive.LastBlocksTypeResponse[]> {
-    const requestParams: Hive.RestGetLastBlocksParams = {limit};
-    return await this.callRestApi("hafbe", "operation-types/count", requestParams);
+    return await this.extendedHiveChain!.restApi.hafbe["operation-type-counts"]({"result-limit": limit});
   }
 
   async getInputType(input: string): Promise<Hive.InputTypeResponse> {
@@ -294,7 +194,7 @@ class FetchingService {
     offset: number,
     sort: string,
     direction: "asc" | "desc"
-  ): Promise<Witness[]> {
+  ): Promise<Hive.Witness[]> {
     const requestParams: Hive.RestGetWitnessesParams = {
       limit,
       offset,
@@ -321,7 +221,7 @@ class FetchingService {
 
   async getOperationTypes(
   ): Promise<Hive.OperationPattern[]> {
-    return await this.extendedHiveChain!.restApi.hafah["operation-types"]();
+    return await this.extendedHiveChain!.restApi.hafah["operation-types"].types();
   }
 
   async getWitness(witnessName: string): Promise<Hive.Witness> {
@@ -346,7 +246,7 @@ class FetchingService {
   }
 
   async getOperationKeys(operationTypeId: number): Promise<string[][]> {
-    return await this.callRestApi("hafbe", `operations/types/${operationTypeId}/keys`);
+    return await this.extendedHiveChain!.restApi.hafah["operation-types"].operationKeys({operationTypeId});
   }
 
   async getBlockByOp(
@@ -401,7 +301,7 @@ class FetchingService {
   }
 
   async getHafbeVersion(): Promise<string> {
-    return (await this.extendedHiveChain!.restApi.hafbe.version()).toString();
+    return (await this.extendedHiveChain!.restApi.hafbe.version());
   }
 
   async getOperationsCountInBlock(
