@@ -166,13 +166,14 @@ class FetchingService {
   }
 
   async getAccOpTypes(accountName: string): Promise<unknown> {
-    return await this.callRestApi("hafah", `accounts/${accountName}/operation-types`);
+    return await this.extendedHiveChain!.restApi.hafah.accounts.operationTypes({accountName});
   }
 
   async getOpsByAccount(
     accountOperationsProps: Explorer.AccountSearchOperationsProps
   ): Promise<Hive.OperationResponse[]> {
     const requestParams: Hive.RestGetOpsByAccountParams = {
+      accountName: accountOperationsProps.accountName,
       "operation-types": accountOperationsProps.operationTypes,
       page: accountOperationsProps.pageNumber,
       "page-size": config.standardPaginationSize,
@@ -182,11 +183,11 @@ class FetchingService {
       "start-date": accountOperationsProps.startDate,
       "end-date": accountOperationsProps.endDate
     }
-    return await this.callRestApi("hafbe", `accounts/${accountOperationsProps.accountName}/operations`, requestParams);
+    return await this.extendedHiveChain!.restApi.hafah.accounts.operations(requestParams);
   }
 
-  async getAccount(account: string): Promise<Hive.AccountDetailsQueryResponse> {
-    return await this.callRestApi("hafbe", `accounts/${account}`);
+  async getAccount(accountName: string): Promise<Hive.AccountDetailsQueryResponse> {
+    return await this.extendedHiveChain!.restApi.hafbe.accounts.account({accountName});
   }
 
   async getWitnesses(
@@ -202,7 +203,6 @@ class FetchingService {
       direction
     }
     return await this.extendedHiveChain!.restApi.hafbe.witnesses({limit, offset, sort, direction});
-    // return await this.callRestApi("hafbe", "witnesses", requestParams);
   }
 
   async getWitnessVoters(
@@ -274,7 +274,7 @@ class FetchingService {
   }
 
   async getOperation(operationId: number): Promise<Hive.OperationResponse> {
-    return await this.callRestApi("hafah", `operations/${operationId}/`);
+    return await this.extendedHiveChain!.restApi.hafah.operations.byId({operationId});
   }
 
   async getCommentOperation(
