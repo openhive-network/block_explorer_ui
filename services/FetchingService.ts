@@ -15,6 +15,11 @@ import {
   RestGetBlockGlobalStateParamsReq,
   RestGetInputTypeParamsReq,
   InputTypeResponse,
+  RestGetTransactionParamsReq,
+  TransactionResponse,
+  OperationPattern,
+  RestGetBlockByTimeParamsReq,
+  RestGetOperationKeysParamsReq,
 } from "@/types/Rest";
 
 type ExplorerNodeApi = {
@@ -34,6 +39,13 @@ const extendedRest = {
       headblock: {
         params: undefined,
         result: Number,
+      },
+      "by-creation-date": {
+        byTime: {
+          params: RestGetBlockByTimeParamsReq,
+          result: Number,
+          urlPath: "{timestamp}"
+        }
       }
     },
     "global-state": {
@@ -82,7 +94,25 @@ const extendedRest = {
         result: BlockDetails,
         urlPath: "{blockNumber}"
       }
-    } 
+    },
+    transactions: {
+      transaction: {
+        params: RestGetTransactionParamsReq,
+        result: TransactionResponse,
+        urlPath: "{transactionId}"
+      }
+    },
+    "operation-types": {
+      params: undefined,
+      result: OperationPattern,
+      responseArray: true,
+    },
+    operationKeys: {
+      params: RestGetOperationKeysParamsReq,
+      result: {},
+      responseArray: true,
+      urlPath: "{operationTypeId}/keys"
+    }
   }
 }
 
@@ -220,7 +250,7 @@ class FetchingService {
   async getTransaction(
     transactionHash: string
   ): Promise<Hive.TransactionQueryResponse> {
-    return await this.callRestApi("hafah", `transactions/${transactionHash}`);
+    return await this.extendedHiveChain!.restApi.hafah.transactions.transaction({transactionId: transactionHash});
   }
 
   async getRewardFunds(): Promise<{ funds: Hive.RewardFunds[] }> {
@@ -289,15 +319,13 @@ class FetchingService {
     return await this.extendedHiveChain!.restApi.hafbe.voters({accountName: witness, sort, direction, limit});
   }
 
-  // Temporary untill I will find a way to solve cors.
   async getOperationTypes(
   ): Promise<Hive.OperationPattern[]> {
-    return await this.callRestApi("hafbe", "operations/types/");
+    return await this.extendedHiveChain!.restApi.hafah["operation-types"]();
   }
 
   async getWitness(witnessName: string): Promise<Hive.Witness> {
     return await this.extendedHiveChain!.restApi.hafbe.singleWitness({accountName: witnessName});
-    return await this.callRestApi("hafbe", `witnesses/${witnessName}`);
   }
 
   async getVestingDelegations(delegatorAccount: string, startAccount: string | null, limit: number): Promise<Hive.VestingDelegations[]> {
@@ -309,7 +337,7 @@ class FetchingService {
   }
 
   async getBlockByTime(date: Date): Promise<number> {
-    return await this.callRestApi("hafbe", `block-numbers/by-creation-date/${date.toDateString()}`);
+    return await this.extendedHiveChain!.restApi.hafbe["block-numbers"]["by-creation-date"].byTime({date});
   }
 
   async getOperationKeys(operationTypeId: number): Promise<string[][]> {
