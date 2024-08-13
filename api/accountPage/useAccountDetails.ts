@@ -32,7 +32,6 @@ const useAccountDetails = (accountName: string) => {
         data.last_account_recovery
       ),
       created: formatAndDelocalizeTime(data.created),
-      last_vote_time: formatAndDelocalizeTime(data.last_vote_time),
     };
 
     const formattedAccountDetails = hiveChain?.formatter.format(

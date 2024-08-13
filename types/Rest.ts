@@ -145,6 +145,83 @@ export class RestGetLastOperationTypeCountsParamsReq {
   "result-limit"!: number;
 }
 
+export class RestGetOperationParamsReq {
+  operationId!: number;
+}
+
+export class RestGetOpsByAccountParamsReq {
+  accountName!: string;
+  "operation-types"?: number[];
+  page?: number;
+  "page-size"?: number;
+  "data-size-limit"?: number;
+  "from-block"?: number;
+  "to-block"?: number;
+  "start-date"?: Date;
+  "end-date"?: Date;
+}
+
+export class RestGetAccountDetailsParamsReq {
+  accountName!: string;
+}
+
+export class OperationResponse {
+  block_num!: number;
+  op_in_trx!: number;
+  operation_id!: string;
+  operation!: Hive.Operation;
+  timestamp!: string;
+  trx_id!: string;
+  trx_in_block!: number;
+  virtual_op!: boolean;
+  is_modified!: boolean;
+  length!: number;
+}
+
+export class RestGetAccountOperationTypes {
+  accountName!: string;
+}
+
+export class AccountDetails {
+  id!: number;
+  name!: string;
+  can_vote!: true;
+  mined!: true;
+  proxy!: string;
+  recovery_account!: string;
+  last_account_recovery!: Date;
+  created!: Date;
+  reputation!: number;
+  json_metadata!: string;
+  posting_json_metadata!: string;
+  profile_image!: string;
+  hbd_balance!: number;
+  balance!: number;
+  vesting_shares!: string;
+  vesting_balance!: number;
+  hbd_saving_balance!: number;
+  savings_balance!: number;
+  savings_withdraw_requests!: number;
+  reward_hbd_balance!: number;
+  reward_hive_balance!: number;
+  reward_vesting_balance!: string;
+  reward_vesting_hive!: number;
+  posting_rewards!: string;
+  curation_rewards!: string;
+  delegated_vesting_shares!: string;
+  received_vesting_shares!: string;
+  proxied_vsf_votes!: number[];
+  withdrawn!: string;
+  vesting_withdraw_rate!: string;
+  to_withdraw!: string;
+  withdraw_routes!: number;
+  delayed_vests!: string;
+  witness_votes!: string[];
+  witnesses_voted_for!: number;
+  ops_count!: number;
+  is_witness!: boolean;
+} 
+
 export const extendedRest = { 
   hafbe: {
     "block-numbers": {
@@ -201,6 +278,13 @@ export const extendedRest = {
       params: RestGetLastOperationTypeCountsParamsReq,
       result: LastBlocksTypeResponse,
       responseArray: true,
+    },
+    accounts: {
+      account: {
+        params: RestGetAccountDetailsParamsReq,
+        result: AccountDetails,
+        urlPath: "{accountName}"
+      }
     }
   },
   hafah: {
@@ -230,6 +314,27 @@ export const extendedRest = {
         result: Array<string>,
         responseArray: true,
         urlPath: "{operationTypeId}/keys"
+      }
+    },
+    operations: {
+      byId: {
+        params: RestGetOperationParamsReq,
+        result: OperationResponse,
+        urlPath: "{operationId}/"
+      }
+    },
+    accounts: {
+      operationTypes: {
+        params: RestGetAccountOperationTypes,
+        result: Number,
+        responseArray: true,
+        urlPath: "{accountName}/operation-types"
+      },
+      operations: {
+        params: RestGetOpsByAccountParamsReq,
+        result: OperationResponse,
+        responseArray: true,
+        urlPath: "{accountName}/operations"
       }
     }
   }
