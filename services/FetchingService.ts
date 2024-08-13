@@ -2,7 +2,20 @@ import Hive from "@/types/Hive";
 import { config } from "@/Config";
 import Explorer from "@/types/Explorer";
 import { GetDynamicGlobalPropertiesResponse, IHiveChainInterface, TWaxRestExtended, TWaxApiRequest, TWaxExtended } from "@hiveio/wax";
-import { RestGetBlockDetailsParamsReq, RestGetVotersParamsReq, RestGetVotesHistoryParamsReq, RestGetWitnessParamsReq, RestGetWitnessesParamsReq, Voter, Witness, WitnessVotesHistory, BlockDetails, RestGetBlockGlobalStateParamsReq } from "@/types/Rest";
+import {
+  RestGetBlockDetailsParamsReq,
+  RestGetVotersParamsReq,
+  RestGetVotesHistoryParamsReq,
+  RestGetWitnessParamsReq,
+  RestGetWitnessesParamsReq,
+  Voter,
+  Witness,
+  WitnessVotesHistory,
+  BlockDetails,
+  RestGetBlockGlobalStateParamsReq,
+  RestGetInputTypeParamsReq,
+  InputTypeResponse,
+} from "@/types/Rest";
 
 type ExplorerNodeApi = {
   database_api: {
@@ -52,6 +65,14 @@ const extendedRest = {
     version: {
       params: undefined,
       result: String
+    },
+    "input-type": {
+      inputType: {
+        params: RestGetInputTypeParamsReq,
+        result: InputTypeResponse,
+        urlPath: "{inputType}"
+      }
+
     }
   },
   hafah: {
@@ -171,7 +192,7 @@ class FetchingService {
   }
 
   async getInputType(input: string): Promise<Hive.InputTypeResponse> {
-    return await this.callRestApi("hafbe", `input-type/${input}`);
+    return await this.extendedHiveChain!.restApi.hafbe["input-type"].inputType({inputType: input});
   }
 
   async getOpsByBlock(

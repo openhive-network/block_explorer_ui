@@ -7,6 +7,10 @@ export class RestGetWitnessesParamsReq {
   direction!: Hive.Direction;
 }
 
+export class RestGetWitnessParamsReq {
+  accountName!: string;
+}
+
 export class Witness {
   witness!: string;
   rank!: number;
@@ -28,8 +32,11 @@ export class Witness {
   hbd_interest_rate!: number;
 }
 
-export class RestGetWitnessParamsReq {
+export class RestGetVotersParamsReq {
   accountName!: string;
+  sort?: string;
+  direction?: Hive.Direction;
+  limit?: number;
 }
 
 export class Voter {
@@ -43,11 +50,14 @@ export class Voter {
   timestamp!: Date;
 }
 
-export class RestGetVotersParamsReq {
+
+export class RestGetVotesHistoryParamsReq {
   accountName!: string;
   sort?: string;
   direction?: Hive.Direction;
-  limit?: number;
+  limit!: number | null;
+  "start-date"?: Date;
+  "end-date"?: Date;
 }
 
 export class WitnessVotesHistory {
@@ -62,13 +72,8 @@ export class WitnessVotesHistory {
   timestamp!: Date;
 }
 
-export class RestGetVotesHistoryParamsReq {
-  accountName!: string;
-  sort?: string;
-  direction?: Hive.Direction;
-  limit!: number | null;
-  "start-date"?: Date;
-  "end-date"?: Date;
+export class RestGetBlockDetailsParamsReq {
+  blockNumber!: number;
 }
 
 export class BlockDetails {
@@ -91,10 +96,15 @@ export class BlockDetails {
   witness_signature!: string;
 }
 
-export class RestGetBlockDetailsParamsReq {
+export class RestGetBlockGlobalStateParamsReq {
   blockNumber!: number;
 }
 
-export class RestGetBlockGlobalStateParamsReq {
-  blockNumber!: number;
+export class RestGetInputTypeParamsReq {
+  inputType!: string;
+}
+
+export class InputTypeResponse {
+  input_type!: Hive.InputTypes;
+  input_value!: string | string[];
 }
