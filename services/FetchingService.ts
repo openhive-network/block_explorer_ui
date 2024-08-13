@@ -314,8 +314,8 @@ class FetchingService {
     return await this.callRestApi("hafah", `blocks/${blockNumber}`);
   }
 
-  async getAccountAuthorities(accountName: string): Promise<Hive.AccountAuthoritiesData> {
-    return await this.callRestApi("hafbe", `accounts/${accountName}/authority`);
+  async getAccountAuthorities(accountName: string): Promise<Hive.AccountAuthoritiesData | undefined> {
+    return await this.extendedHiveChain?.restApi.hafbe.accounts.authorities({accountName});
   }
 
   async getManabars(
