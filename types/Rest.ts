@@ -108,3 +108,29 @@ export class InputTypeResponse {
   input_type!: Hive.InputTypes;
   input_value!: string | string[];
 }
+
+export class RestGetTransactionParamsReq {
+  transactionId!: string;
+}
+
+export class TransactionResponse {
+  transaction_json!: Hive.TransactionDetails;
+  timestamp!: Date;
+  transaction_id!: string;
+  block_num!: number;
+  transaction_num!: number;
+}
+
+export class OperationPattern {
+  op_type_id!: number;
+  operation_name!: string;
+  is_virtual!: boolean;
+}
+
+export class RestGetBlockByTimeParamsReq {
+  date!: Date;
+}
+
+export class RestGetOperationKeysParamsReq{
+  operationTypeId!: number;
+}
