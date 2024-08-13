@@ -134,3 +134,103 @@ export class RestGetBlockByTimeParamsReq {
 export class RestGetOperationKeysParamsReq{
   operationTypeId!: number;
 }
+
+export class LastBlocksTypeResponse {
+  block_num!: number;
+  witness!: string;
+  ops_count!: Hive.OperationsByTypeCount[];
+}
+
+export class RestGetLastOperationTypeCountsParamsReq {
+  "result-limit"!: number;
+}
+
+export const extendedRest = { 
+  hafbe: {
+    "block-numbers": {
+      headblock: {
+        params: undefined,
+        result: Number,
+      },
+      "by-creation-date": {
+        byTime: {
+          params: RestGetBlockByTimeParamsReq,
+          result: Number,
+          urlPath: "{timestamp}"
+        }
+      }
+    },
+    "global-state": {
+      params: RestGetBlockGlobalStateParamsReq,
+      result: BlockDetails
+    },
+    witnesses: {
+      params: RestGetWitnessesParamsReq,
+      result: Witness,
+      responseArray: true,
+    },
+    singleWitness: {
+      params: RestGetWitnessParamsReq,
+      result: Witness,
+      urlPath: "{accountName}",
+    },
+    voters: {
+      params: RestGetVotersParamsReq,
+      result: Voter,
+      urlPath: "{accountName}/voters",
+      responseArray: true,
+    },
+    votesHistory: {
+      params: RestGetVotesHistoryParamsReq,
+      result: WitnessVotesHistory,
+      urlPath: "{accountName}/votes/history",
+      responseArray: true,
+    },
+    version: {
+      params: undefined,
+      result: String
+    },
+    "input-type": {
+      inputType: {
+        params: RestGetInputTypeParamsReq,
+        result: InputTypeResponse,
+        urlPath: "{inputType}"
+      }
+    },
+    "operation-type-counts": {
+      params: RestGetLastOperationTypeCountsParamsReq,
+      result: LastBlocksTypeResponse,
+      responseArray: true,
+    }
+  },
+  hafah: {
+    blocks: {
+      block: {
+        params: RestGetBlockDetailsParamsReq,
+        result: BlockDetails,
+        urlPath: "{blockNumber}"
+      }
+    },
+    transactions: {
+      transaction: {
+        params: RestGetTransactionParamsReq,
+        result: TransactionResponse,
+        urlPath: "{transactionId}"
+      }
+    },
+    "operation-types": {
+      types: {
+        params: undefined,
+        result: OperationPattern,
+        responseArray: true,
+        urlPath: ""
+      },
+      operationKeys: {
+        params: RestGetOperationKeysParamsReq,
+        result: Array<string>,
+        responseArray: true,
+        urlPath: "{operationTypeId}/keys"
+      }
+    }
+  }
+}
