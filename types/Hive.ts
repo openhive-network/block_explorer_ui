@@ -27,6 +27,7 @@ declare module Hive {
   }
 
   interface RestGetOpsByAccountParams {
+    accountName: string;
     "operation-types"?: number[];
     page?: number;
     "page-size"?: number;
@@ -280,7 +281,6 @@ declare module Hive {
   }
 
   interface OperationResponse {
-    age: string;
     block_num: number;
     op_in_trx: number;
     operation_id: string;
@@ -331,71 +331,39 @@ declare module Hive {
   interface AccountDetailsQueryResponse {
     id: number;
     name: string;
-    owner: {
-      weight_threshold: number;
-      account_auths: string[];
-      key_auths: [string, number][];
-    };
-    active: {
-      weight_threshold: number;
-      account_auths: string[];
-      key_auths: [string, number][];
-    };
-    posting: {
-      weight_threshold: number;
-      account_auths: string[];
-      key_auths: [string, number][];
-    };
-    memo_key: string;
-    profile_image: string;
+    can_vote: true;
+    mined: true;
+    proxy: string;
+    recovery_account: string;
+    last_account_recovery: Date;
+    created: Date;
+    reputation: number;
     json_metadata: string;
     posting_json_metadata: string;
-    last_owner_update: string;
-    last_account_update: string;
-    created: Date;
-    mined: string | boolean;
-    recovery_account: string;
-    post_count: number;
-    can_vote: string | boolean;
-    voting_manabar: {
-      current_mana: string | number;
-      last_update_time: number;
-    };
-    downvote_manabar: {
-      current_mana: string | number;
-      last_update_time: number;
-    };
-    voting_power: string;
-    balance: number;
-    savings_balance: number;
+    profile_image: string;
     hbd_balance: number;
+    balance: number;
+    vesting_shares: string;
+    vesting_balance: number;
     hbd_saving_balance: number;
+    savings_balance: number;
     savings_withdraw_requests: number;
     reward_hbd_balance: number;
     reward_hive_balance: number;
-    reward_vesting_balance: number;
+    reward_vesting_balance: string;
     reward_vesting_hive: number;
-    vesting_shares: number;
-    delegated_vesting_shares: number;
-    received_vesting_shares: number;
-    vesting_withdraw_rate: number;
-    to_withdraw: number;
-    withdrawn: number;
+    posting_rewards: string;
+    curation_rewards: string;
+    delegated_vesting_shares: string;
+    received_vesting_shares: string;
+    proxied_vsf_votes: number[];
+    withdrawn: string;
+    vesting_withdraw_rate: string;
+    to_withdraw: string;
     withdraw_routes: number;
-    post_voting_power: number;
-    posting_rewards: number;
-    curation_rewards: number;
-    proxied_vsf_votes: [string, number, number, number] | any;
-    witnesses_voted_for: string | number;
-    last_post: string | Date;
-    last_root_post: string | Date;
-    last_vote_time: string | Date;
-    vesting_balance: number;
-    reputation: string | number;
+    delayed_vests: string;
     witness_votes: string[];
-    proxy: string;
-    last_account_recovery: Date;
-    delayed_vests: number;
+    witnesses_voted_for: number;
     ops_count: number;
     is_witness: boolean;
   }

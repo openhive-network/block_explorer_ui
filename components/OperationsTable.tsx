@@ -136,7 +136,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
       </TableHeader>
       <TableBody className="max-w-[100%]">
         {operations.map((operation, index) => {
-          const operationBgColor = getOperationColor(operation.operation.type);
+          const operationBgColor = getOperationColor(operation.operation?.type);
 
           return (
             <React.Fragment key={index}>
@@ -199,7 +199,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                       className={`rounded w-4 mr-2 ${operationBgColor}`}
                     ></span>
                     <span>
-                      {getOperationTypeForDisplay(operation.operation.type)}
+                      {getOperationTypeForDisplay(operation.operation?.type)}
                     </span>
                   </div>
                 </TableCell>
