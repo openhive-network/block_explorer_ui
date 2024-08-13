@@ -314,7 +314,6 @@ declare module Hive {
   interface TransactionQueryResponse {
     transaction_json: TransactionDetails;
     timestamp: Date;
-    age: string;
     transaction_id: string;
     block_num: number;
     transaction_num: number;
