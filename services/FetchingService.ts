@@ -21,7 +21,7 @@ class FetchingService {
   private apiUrl: string | null = null;
   private nodeUrl: string | null = null;
   private extendedHiveChain: TWaxExtended<ExplorerNodeApi, TWaxRestExtended<typeof extendedRest>> | undefined = undefined;
-  private testApiAddress: string = "https://local.bc.fqdn.pl";
+  private testApiAddress: string = "https://api.syncad.com";
 
   public setApiUrl(newUrl: string) {
     this.apiUrl = newUrl;
@@ -114,7 +114,6 @@ class FetchingService {
 
   async getBlockGlobalState(blockNumber: number): Promise<Hive.BlockDetails> {
     return await this.extendedHiveChain!.restApi.hafah["global-state"]({"block-num": blockNumber});
-    //return await this.callRestApi("hafbe", `blocks/${blockNumber}/global-state/`)
   }
 
   async getLastBlocks(limit: number): Promise<Hive.LastBlocksTypeResponse[]> {
@@ -132,18 +131,17 @@ class FetchingService {
     accountName?: string,
     keyContent?: string,
     setOfKeys?: string[]
-  ): Promise<Hive.OperationResponse[]> {
+  ): Promise<Hive.TotalOperationsResponse> {
     const requestParams: Hive.RestGetOpsByBlockParams = {
+      blockNumber,
       "operation-types": filter,
       "account-name": accountName,
       page,
       "page-size": config.blockPagePaginationSize,
-      "set-of-keys": setOfKeys,
-      "key-content": keyContent,
       "page-order": "desc",
       "data-size-limit": config.opsBodyLimit
     }
-    return await this.callRestApi("hafbe", `blocks/${blockNumber}/operations`, requestParams);
+    return await this.extendedHiveChain!.restApi.hafah.blocks.operations(requestParams)
   }
 
 
@@ -237,7 +235,7 @@ class FetchingService {
   }
 
   async getBlockByTime(date: Date): Promise<number> {
-    return await this.extendedHiveChain!.restApi.hafbe["block-numbers"]["by-creation-date"].byTime({date});
+    return await this.extendedHiveChain!.restApi.hafah["block-number-by-date"].byTime({date});
   }
 
   async getOperationKeys(operationTypeId: number): Promise<string[][]> {
@@ -259,7 +257,7 @@ class FetchingService {
       "end-date": blockSearchProps.endDate,
       limit: blockSearchProps.limit
     }
-    return await this.callRestApi("hafbe", "block-numbers", requestParams);
+    return await this.extendedHiveChain!.restApi.hafbe["block-numbers"](requestParams);
   }
 
   async getWitnessVotesHistory(
@@ -281,6 +279,7 @@ class FetchingService {
     commentSearchProps: Explorer.CommentSearchProps
   ): Promise<Hive.CommentOperationResponse> {
     const requestParams: Hive.RestCommentsParams = {
+      accountName: commentSearchProps.accountName,
       "operation-types": commentSearchProps.operationTypes,
       page: commentSearchProps.pageNumber,
       permlink: commentSearchProps.permlink,
@@ -291,8 +290,7 @@ class FetchingService {
       "start-date": commentSearchProps.startDate,
       "end-date": commentSearchProps.endDate
     }
-    return await this.callRestApi("hafbe", `accounts/${commentSearchProps.accountName}/operations/comments`, requestParams);
-
+    return await this.extendedHiveChain!.restApi.hafbe.accounts.commentOperations(requestParams);
   }
 
   async getHafbeVersion(): Promise<string> {
@@ -301,7 +299,7 @@ class FetchingService {
 
   async getOperationsCountInBlock(
     blockNumber: number
-  ): Promise<Hive.OperationsByTypeCount[]> {
+  ): Promise<Hive.LastBlocksTypeResponse[]> {
     return await this.callRestApi("hafbe", `blocks/${blockNumber}/operation-types/count`);
   }
 
