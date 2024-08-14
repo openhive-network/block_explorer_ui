@@ -142,6 +142,7 @@ export class LastBlocksTypeResponse {
 }
 
 export class RestGetLastOperationTypeCountsParamsReq {
+  "blokck-num"?: number;
   "result-limit"!: number;
 }
 
@@ -234,20 +235,69 @@ export class AccountAuthoritiesData {
   witness_signing!: string;
 }
 
+export class RestGetCommentOperationsParamsReq {
+  accountName!: string;
+  "operation-types"?: number[];
+  page?: number;
+  permlink?: string;
+  "page-size"?: number;
+  "data-size-limit"?: number;
+  "from-block"?: number;
+  "to-block"?: number;
+  "start-date"?: Date;
+  "end-date"?: Date;
+}
+
+export class CommentOperationResponse {
+  operations_result!: Hive.CommentOperation[];
+  total_operations!: number;
+  total_pages!: number;
+}
+
+export class RestBlockSearchParamsReq {
+  "operation-types"?: number[];
+  page?: number;
+  limit?: number;
+  direction!: Hive.Direction;
+  "account-name"?: string;
+  "set-of-keys"?: string[];
+  "key-content"?: string;
+  "page-size"?: number;
+  "data-size-limit"?: number;
+  "from-block"?: number;
+  "to-block"?: number;
+  "start-date"?: Date;
+  "end-date"?: Date;
+}
+
+export class BlockByOpResponse {
+  block_num!: number;
+  op_type_id!: number[];
+}
+
+export class RestGetOperationsByBlockParamsReq {
+  blockNumber!: number;
+  "operation-types"?: number[];
+  "account-name"?: string;
+  page?: number;
+  "page-size"?: number;
+  "page-order"?: Hive.Direction;
+  "data-size-limit"?: number;
+  "path-filter"?: string;
+}
+
+export class TotalOperationsResponse {
+  operations_result!: Hive.OperationResponse[];
+  total_pages!: number;
+  total_operations!: number;
+}    
+
 export const extendedRest = { 
   hafbe: {
     "block-numbers": {
-      headblock: {
-        params: undefined,
-        result: Number,
-      },
-      "by-creation-date": {
-        byTime: {
-          params: RestGetBlockByTimeParamsReq,
-          result: Number,
-          urlPath: "{timestamp}"
-        }
-      }
+      params: RestBlockSearchParamsReq,
+      result: BlockByOpResponse,
+      responseArray: true
     },
     witnesses: {
       params: RestGetWitnessesParamsReq,
@@ -297,7 +347,12 @@ export const extendedRest = {
         params: RestGetAccountAuthorities,
         result: AccountAuthoritiesData,
         urlPath: "{accountName}/authority"
-      }
+      },
+      commentOperations: {
+        params: RestGetCommentOperationsParamsReq,
+        result: CommentOperationResponse,
+        urlPath: "{accountName}/comment-operations"
+      },
     }
   },
   hafah: {
@@ -306,6 +361,11 @@ export const extendedRest = {
         params: RestGetBlockDetailsParamsReq,
         result: BlockDetails,
         urlPath: "{blockNumber}"
+      },
+      operations: {
+        params: RestGetOperationsByBlockParamsReq,
+        result: TotalOperationsResponse,
+        urlPath: "{blockNumber}/operations"
       }
     },
     transactions: {
@@ -348,7 +408,7 @@ export const extendedRest = {
         result: OperationResponse,
         responseArray: true,
         urlPath: "{accountName}/operations"
-      }
+      },
     },
     headblock: {
       params: undefined,
@@ -358,5 +418,12 @@ export const extendedRest = {
       params: RestGetBlockGlobalStateParamsReq,
       result: BlockDetails
     },
+    "block-number-by-date": {
+      byTime: {
+        params: RestGetBlockByTimeParamsReq,
+        result: Number,
+        urlPath: "{timestamp}"
+      }
+    }
   }
 }

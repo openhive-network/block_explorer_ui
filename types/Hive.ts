@@ -16,6 +16,7 @@ declare module Hive {
   }
 
   interface RestGetOpsByBlockParams {
+    blockNumber: number;
     "operation-types"?: number[];
     "account-name"?: string;
     page?: number;
@@ -39,6 +40,7 @@ declare module Hive {
   }
 
   interface RestCommentsParams {
+    accountName: string;
     "operation-types"?: number[];
     page?: number;
     permlink?: string;
