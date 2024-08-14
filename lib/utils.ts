@@ -197,3 +197,11 @@ export const convertIdsToBooleanArray = (
   filters.forEach((filter) => (booleanArray[filter] = true));
   return booleanArray;
 };
+
+export const createPathFilterString = (keyContent?: string, setOfKeys?: string[]): string | undefined => {
+  if (keyContent && setOfKeys) {
+    const path = setOfKeys.join(".");
+    return `${path}=${keyContent}`;
+  }
+  return undefined;
+}
