@@ -260,14 +260,13 @@ export class RestBlockSearchParamsReq {
   limit?: number;
   direction!: Hive.Direction;
   "account-name"?: string;
-  "set-of-keys"?: string[];
-  "key-content"?: string;
   "page-size"?: number;
   "data-size-limit"?: number;
   "from-block"?: number;
   "to-block"?: number;
   "start-date"?: Date;
   "end-date"?: Date;
+  "path-filter"?: string;
 }
 
 export class BlockByOpResponse {

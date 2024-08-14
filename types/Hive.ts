@@ -24,6 +24,7 @@ declare module Hive {
     "set-of-keys"?: string[];
     "key-content"?: string;
     "page-order"?: Direction;
+    "path-filter"?: string;
     "data-size-limit"?: number;
   }
 
@@ -65,6 +66,7 @@ declare module Hive {
     "from-block"?: number;
     "to-block"?: number;
     "start-date"?: Date;
+    "path-filter"?: string;
     "end-date"?: Date;
   }
 
