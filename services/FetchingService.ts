@@ -35,7 +35,7 @@ class FetchingService {
     this.extendedHiveChain = hiveChain?.extend<ExplorerNodeApi>().extendRest(extendedRest);
     if (this.extendedHiveChain && this.nodeUrl) {
       this.extendedHiveChain.endpointUrl = this.nodeUrl;
-      this.extendedHiveChain.restApi.endpointUrl = this.testApiAddress;
+      // this.extendedHiveChain.restApi.endpointUrl = this.testApiAddress;
     }
   }
 
@@ -105,7 +105,7 @@ class FetchingService {
   }
 
   async getHeadBlockNum(): Promise<number> {
-    return await this.extendedHiveChain!.restApi.hafbe["block-numbers"].headblock();
+    return await this.extendedHiveChain!.restApi.hafah.headblock();
   }
 
   async getBlock(blockNumber: number): Promise<Hive.BlockDetails> {
@@ -113,8 +113,8 @@ class FetchingService {
   }
 
   async getBlockGlobalState(blockNumber: number): Promise<Hive.BlockDetails> {
-    // return await this.extendedHiveChain!.restApi.hafbe["global-state"]({blockNumber});
-    return await this.callRestApi("hafbe", `blocks/${blockNumber}/global-state/`)
+    return await this.extendedHiveChain!.restApi.hafah["global-state"]({"block-num": blockNumber});
+    //return await this.callRestApi("hafbe", `blocks/${blockNumber}/global-state/`)
   }
 
   async getLastBlocks(limit: number): Promise<Hive.LastBlocksTypeResponse[]> {

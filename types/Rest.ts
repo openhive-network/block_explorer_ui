@@ -97,7 +97,7 @@ export class BlockDetails {
 }
 
 export class RestGetBlockGlobalStateParamsReq {
-  blockNumber!: number;
+  "block-num"!: number;
 }
 
 export class RestGetInputTypeParamsReq {
@@ -249,10 +249,6 @@ export const extendedRest = {
         }
       }
     },
-    "global-state": {
-      params: RestGetBlockGlobalStateParamsReq,
-      result: BlockDetails
-    },
     witnesses: {
       params: RestGetWitnessesParamsReq,
       result: Witness,
@@ -353,6 +349,14 @@ export const extendedRest = {
         responseArray: true,
         urlPath: "{accountName}/operations"
       }
-    }
+    },
+    headblock: {
+      params: undefined,
+      result: Number,
+    },
+    "global-state": {
+      params: RestGetBlockGlobalStateParamsReq,
+      result: BlockDetails
+    },
   }
 }
