@@ -5,6 +5,7 @@ import { GetDynamicGlobalPropertiesResponse, IHiveChainInterface, TWaxRestExtend
 import {
   extendedRest
 } from "@/types/Rest";
+import { createPathFilterString } from "@/lib/utils";
 
 type ExplorerNodeApi = {
   database_api: {
@@ -139,7 +140,8 @@ class FetchingService {
       page,
       "page-size": config.blockPagePaginationSize,
       "page-order": "desc",
-      "data-size-limit": config.opsBodyLimit
+      "data-size-limit": config.opsBodyLimit,
+      "path-filter": createPathFilterString(keyContent, setOfKeys)
     }
     return await this.extendedHiveChain!.restApi.hafah.blocks.operations(requestParams)
   }
@@ -255,7 +257,8 @@ class FetchingService {
       "to-block": blockSearchProps.toBlock,
       "start-date": blockSearchProps.startDate,
       "end-date": blockSearchProps.endDate,
-      limit: blockSearchProps.limit
+      limit: blockSearchProps.limit,
+      "path-filter": createPathFilterString(blockSearchProps.deepProps.content, blockSearchProps.deepProps.keys)
     }
     return await this.extendedHiveChain!.restApi.hafbe["block-numbers"](requestParams);
   }
