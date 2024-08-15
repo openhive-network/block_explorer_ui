@@ -9,7 +9,8 @@ const useWitnessVoters = (
   accountName: string,
   isModalOpen: boolean,
   isAsc: boolean,
-  sortKey: string
+  sortKey: string,
+  refetchInterval?: number|false
 ) => {
   const sortDirection = isAsc ? SORT_ASC : SORT_DESC;
 
@@ -22,6 +23,7 @@ const useWitnessVoters = (
     queryFn: () =>
       fetchingService.getWitnessVoters(accountName, sortKey, sortDirection),
     enabled: !!accountName && isModalOpen,
+    refetchInterval,
     refetchOnWindowFocus: false,
   });
 

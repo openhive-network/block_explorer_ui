@@ -87,8 +87,7 @@ export default function Account() {
   const searchRanges = useSearchRanges();
 
   const { accountDetails, notFound } = useAccountDetails(accountNameFromRoute);
-  const { accountOperations, isAccountOperationsLoading } =
-    useAccountOperations({
+  const accountOperationsProps = {
       accountName: accountNameFromRoute,
       operationTypes: filtersParam.length
         ? convertBooleanArrayToIds(filtersParam)
@@ -98,7 +97,9 @@ export default function Account() {
       toBlock: toBlockParam,
       startDate: fromDateParam,
       endDate: toDateParam,
-    });
+  }
+  const { accountOperations, isAccountOperationsLoading, refetchAccountOperations } =
+    useAccountOperations(accountOperationsProps);
   const { accountOperationTypes } =
     useAccountOperationTypes(accountNameFromRoute);
 
@@ -221,14 +222,14 @@ export default function Account() {
                 className="cursor-pointer"
               />
             </div>
-            <AccountDetailsSection accountName={accountNameFromRoute} />
+            <AccountDetailsSection accountName={accountNameFromRoute} refetchAccountOperations={refetchAccountOperations}/>
           </div>
         </>
       );
     } else {
       return (
         <div className="col-start-1 col-span-1 flex flex-col gap-y-2">
-          <AccountDetailsSection accountName={accountNameFromRoute} />
+          <AccountDetailsSection accountName={accountNameFromRoute} refetchAccountOperations={refetchAccountOperations}/>
         </div>
       );
     }

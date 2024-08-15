@@ -5,7 +5,8 @@ const useWitnessVotesHistory = (
   accountName: string,
   isModalOpen: boolean,
   fromDate: Date,
-  toDate: Date
+  toDate: Date,
+  refetchInterval?: number|false
 ) => {
   const fetchVotesHist = async () =>
     await fetchingService.getWitnessVotesHistory(
@@ -32,6 +33,7 @@ const useWitnessVotesHistory = (
     queryFn: fetchVotesHist,
     enabled: !!accountName && isModalOpen,
     refetchOnWindowFocus: false,
+    refetchInterval,
   });
 
   return { votesHistory, isVotesHistoryLoading, isVotesHistoryError };

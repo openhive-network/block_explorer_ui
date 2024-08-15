@@ -4,7 +4,7 @@ import Explorer from "@/types/Explorer";
 import Long from "long";
 import { useHiveChainContext } from "@/components/contexts/HiveChainContext";
 
-const useManabars = (accountName: string) => {
+const useManabars = (accountName: string, refetchInterval?: number|false) => {
   const {
     data: manabarsData,
     isLoading: manabarsDataLoading,
@@ -12,6 +12,7 @@ const useManabars = (accountName: string) => {
   }: UseQueryResult<Explorer.Manabars | null> = useQuery({
     queryKey: ["manabars", accountName],
     queryFn: () => getManabars(accountName),
+    refetchInterval,
     refetchOnWindowFocus: false,
   });
 

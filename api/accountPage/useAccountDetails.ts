@@ -5,7 +5,7 @@ import Explorer from "@/types/Explorer";
 import { useHiveChainContext } from "@/components/contexts/HiveChainContext";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 
-const useAccountDetails = (accountName: string) => {
+const useAccountDetails = (accountName: string, refetchInterval?:number|false) => {
   const { hiveChain } = useHiveChainContext();
 
   const accountDetailsSelector = (
@@ -51,6 +51,7 @@ const useAccountDetails = (accountName: string) => {
   }: UseQueryResult<Explorer.FormattedAccountDetails> = useQuery({
     queryKey: ["account_details", accountName],
     queryFn: () => fetchingService.getAccount(accountName),
+    refetchInterval,
     refetchOnWindowFocus: false,
     select: (data) => accountDetailsSelector(data),
     enabled: !!accountName && !!accountName.length,

@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 import { useEffect } from "react";
+import { config } from "@/Config";
 
-const useHeadBlockNumber = (liveUpdate?: boolean) => {
+const useHeadBlockNumber = (liveUpdate?: boolean,) => {
   const {
     data: headBlockNumberData,
     isLoading: headBlockNumberDataLoading,
@@ -12,7 +13,7 @@ const useHeadBlockNumber = (liveUpdate?: boolean) => {
     queryKey: ["headBlockNum"],
     queryFn: () => fetchingService.getHafbeLastSyncedBlock(),
     refetchOnWindowFocus: false,
-    refetchInterval: liveUpdate ? 3000 : Infinity,
+    refetchInterval: liveUpdate ? config.mainRefreshInterval : Infinity,
   });
 
   useEffect(() => {
