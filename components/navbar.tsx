@@ -95,14 +95,14 @@ export default function Navbar() {
                   Hive Block Explorer
                 </div>
               </Link>
+              <ViewPopover />
               <SyncInfo />
               <Link
                 href={"/witnesses"}
-                data-testid="navbar-witnesses-link"
+                data-testid="navbar-witnesses-link "
               >
                 Witnesses
               </Link>
-              <ViewPopover />
             </div>
             <SearchBar open={true} />
           </>
