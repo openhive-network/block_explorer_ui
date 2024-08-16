@@ -18,7 +18,11 @@ const useRcDelegations = (delegatorAccount: string, limit: number) => {
     refetchOnWindowFocus: false,
   });
 
-  return { rcDelegationsData, isRcDelegationsLoading, isRcDelegationsError };
+  return {
+    rcDelegationsData,
+    isRcDelegationsLoading,
+    isRcDelegationsError,
+  };
 };
 
 export default useRcDelegations;

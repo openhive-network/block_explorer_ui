@@ -11,7 +11,7 @@ import {
   hiveParameters,
   blockchainDates,
 } from "./headBlockParameters";
-import { useUserSettingsContext } from "../contexts/UserSettingsContext";
+import { useUserSettingsContext } from "../../contexts/UserSettingsContext";
 import { Toggle } from "../ui/toggle";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { useBlockchainSyncInfo } from "@/utils/Hooks";
@@ -69,7 +69,8 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
     explorerBlockNumber
   );
 
-  const isLiveDataToggleDisabled = blockDifference > config.liveblockSecurityDifference || isLoading;
+  const isLiveDataToggleDisabled =
+    blockDifference > config.liveblockSecurityDifference || isLoading;
 
   return (
     <Card

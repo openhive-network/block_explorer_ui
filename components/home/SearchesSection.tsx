@@ -26,7 +26,7 @@ import { dataToURL, useOperationsFormatter } from "@/utils/Hooks";
 import BlockSearch from "./searches/BlockSearch";
 import AccountSearch from "./searches/AccountSearch";
 import CommentsSearch from "./searches/CommentsSearch";
-import { useUserSettingsContext } from "../contexts/UserSettingsContext";
+import { useUserSettingsContext } from "../../contexts/UserSettingsContext";
 import Hive from "@/types/Hive";
 import OperationsTable from "../OperationsTable";
 import CustomPagination from "../CustomPagination";

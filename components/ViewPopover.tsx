@@ -5,7 +5,7 @@ import {
 } from "@/components/ui/popover";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useUserSettingsContext } from "./contexts/UserSettingsContext";
+import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
 import { cn } from "@/lib/utils";
 
 interface ViewPopoverProps {

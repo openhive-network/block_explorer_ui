@@ -2,7 +2,7 @@ import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
 import Explorer from "@/types/Explorer";
-import { useHiveChainContext } from "@/components/contexts/HiveChainContext";
+import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 
 const useAccountDetails = (accountName: string) => {

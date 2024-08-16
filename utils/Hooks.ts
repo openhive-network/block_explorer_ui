@@ -12,14 +12,14 @@ import { buildDecodedURL, toDateNumber } from "./StringUtils";
 import Explorer from "@/types/Explorer";
 import Hive from "@/types/Hive";
 import useDynamicGlobal from "@/api/homePage/useDynamicGlobal";
-import useHeadBlockNumber from "@/api/common/useHeadBlockNum";
 import useHeadBlock from "@/api/homePage/useHeadBlock";
-import { useHiveChainContext } from "@/components/contexts/HiveChainContext";
+import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import OperationsFormatter from "@/lib/Formatter";
 import {
   convertBooleanArrayIntoHexadecimals,
   parseUrlFlagsIntoBooleanArray,
 } from "@/lib/utils";
+import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
 
 /**
  * hook for using debounce
@@ -272,16 +272,28 @@ const getSyncInfoData = (
   };
 };
 
-export const convertVestsToHP = (vests:string) => {
+export const convertVestsToHP = (vests: string) => {
   const dynamicGlobalData = useDynamicGlobal().dynamicGlobalData;
-  return dynamicGlobalData?.headBlockDetails? parseFloat(vests.replace(/,/g, '').split(" ")[0]) * parseFloat(dynamicGlobalData?.headBlockDetails?.totalVestingFundHive?.replace(/,/g, '').split(" ")[0]) / parseFloat(dynamicGlobalData?.headBlockDetails?.totalVestingShares?.replace(/,/g, '').split(" ")[0]):0;
+  return dynamicGlobalData?.headBlockDetails
+    ? (parseFloat(vests.replace(/,/g, "").split(" ")[0]) *
+        parseFloat(
+          dynamicGlobalData?.headBlockDetails?.totalVestingFundHive
+            ?.replace(/,/g, "")
+            .split(" ")[0]
+        )) /
+        parseFloat(
+          dynamicGlobalData?.headBlockDetails?.totalVestingShares
+            ?.replace(/,/g, "")
+            .split(" ")[0]
+        )
+    : 0;
 };
 
-export const convertHiveToUSD = (hiveAmount: number) =>{
+export const convertHiveToUSD = (hiveAmount: number) => {
   const dynamicGlobalData = useDynamicGlobal().dynamicGlobalData;
-  console.log(dynamicGlobalData);
-  const hivePrice = dynamicGlobalData?.headBlockDetails?.feedPrice?.split(" ")[0];
-  return hiveAmount * parseFloat(hivePrice ?? "0");//default to 0 if no matching price is found
+  const hivePrice =
+    dynamicGlobalData?.headBlockDetails?.feedPrice?.split(" ")[0];
+  return hiveAmount * parseFloat(hivePrice ?? "0"); //default to 0 if no matching price is found
 };
 
 export const useBlockchainSyncInfo = () => {

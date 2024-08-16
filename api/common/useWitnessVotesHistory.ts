@@ -34,7 +34,11 @@ const useWitnessVotesHistory = (
     refetchOnWindowFocus: false,
   });
 
-  return { votesHistory, isVotesHistoryLoading, isVotesHistoryError };
+  return {
+    votesHistory,
+    isVotesHistoryLoading,
+    isVotesHistoryError,
+  };
 };
 
 export default useWitnessVotesHistory;

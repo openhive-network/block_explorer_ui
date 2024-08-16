@@ -76,10 +76,10 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
       )}
       <AccountWitnessVotesCard voters={accountDetails.witness_votes} />
       <AccountVestingDelegationsCard
-            delegatorAccount={accountName}
-            startAccount={null}
-            limit={config.maxDelegatorsCount}
-          />
+        delegatorAccount={accountName}
+        startAccount={null}
+        limit={config.maxDelegatorsCount}
+      />
       <AccountRcDelegationsCard
         delegatorAccount={accountName}
         limit={config.maxDelegatorsCount}

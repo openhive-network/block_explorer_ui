@@ -1,6 +1,6 @@
 import React from "react";
 import CopyJSON from "./CopyJSON";
-import { useUserSettingsContext } from "./contexts/UserSettingsContext";
+import { useUserSettingsContext } from "../contexts/UserSettingsContext";
 
 interface JSONViewProps {
   json: object;

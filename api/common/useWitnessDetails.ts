@@ -3,25 +3,28 @@ import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
 import Explorer from "@/types/Explorer";
 import { formatPercent } from "@/lib/utils";
-import { useHiveChainContext } from "@/components/contexts/HiveChainContext";
+import { useHiveChainContext } from "@/contexts/HiveChainContext";
 
 const useWitnessDetails = (accountName: string, isWitness: boolean) => {
-
-  const {hiveChain} = useHiveChainContext();
+  const { hiveChain } = useHiveChainContext();
 
   const selectFunction = (witnessData: Hive.Witness) => {
-
-    const witness = {...witnessData, 
+    const witness = {
+      ...witnessData,
       vests: hiveChain?.vests(witnessData.vests),
       votes_hive_power: hiveChain?.hive(witnessData.votes_hive_power),
       hbd_interest_rate: formatPercent(witnessData.hbd_interest_rate),
       votes_daily_change: hiveChain?.vests(witnessData.votes_daily_change),
-      votes_daily_change_hive_power: hiveChain?.hive(witnessData.votes_daily_change_hive_power),
-    }
-    const formattedWitness = hiveChain?.formatter.format(witness) as Explorer.Witness
+      votes_daily_change_hive_power: hiveChain?.hive(
+        witnessData.votes_daily_change_hive_power
+      ),
+    };
+    const formattedWitness = hiveChain?.formatter.format(
+      witness
+    ) as Explorer.Witness;
 
     return formattedWitness;
-  }
+  };
 
   const {
     data: witnessDetails,

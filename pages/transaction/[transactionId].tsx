@@ -3,7 +3,7 @@ import Hive from "@/types/Hive";
 import { addSpacesAndCapitalizeFirst } from "@/utils/StringUtils";
 import Link from "next/link";
 import PageNotFound from "@/components/PageNotFound";
-import { useUserSettingsContext } from "@/components/contexts/UserSettingsContext";
+import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
 import JSONView from "@/components/JSONView";
 import useTransactionData from "@/api/common/useTransactionData";
 import { useOperationsFormatter } from "@/utils/Hooks";

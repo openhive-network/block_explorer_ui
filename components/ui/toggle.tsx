@@ -40,7 +40,7 @@ const Toggle: React.FC<ToggleProps> = ({
         <div
           className={cn(
             "w-3.5 h-3.5 bg-white rounded-full absolute top-px left-px transition duration-300 ease-in-out",
-            {
+          {
               "translate-x-[20px]": checked,
               "bg-gray-700": disabled && !checked,
               "bg-white": !disabled,
