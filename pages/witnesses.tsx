@@ -24,6 +24,8 @@ import {
 } from "@/components/ui/table";
 import VotersDialog from "@/components/Witnesses/VotersDialog";
 import VotesHistoryDialog from "@/components/Witnesses/VotesHistoryDialog";
+import { Toggle } from "@/components/ui/toggle";
+
 
 const TABLE_CELLS = [
   "Rank",
@@ -94,6 +96,8 @@ export default function Witnesses() {
   const [voterAccount, setVoterAccount] = useState<string>("");
   const [isVotersOpen, setIsVotersOpen] = useState<boolean>(false);
   const [isVotesHistoryOpen, setIsVotesHistoryOpen] = useState<boolean>(false);
+  const [hideInactiveWitnesses, setHideInactiveWitnesses] = useState<boolean>(false);
+
   const [sort, setSort] = useState<any>({
     orderBy: "rank",
     isOrderAscending: true,
@@ -118,6 +122,12 @@ export default function Witnesses() {
   }
 
   if (!witnessesData || !witnessesData.length) return;
+
+  const filteredWitnessesData = hideInactiveWitnesses
+  ? witnessesData.filter(
+      (singleWitness: any) => singleWitness.signing_key !== config.inactiveWitnessKey
+    )
+  : witnessesData;
 
   const changeVotersDialogue = (isOpen: boolean) => {
     setIsVotersOpen(isOpen);
@@ -157,6 +167,15 @@ export default function Witnesses() {
         <title>Witnesses - Hive Explorer</title>
       </Head>
       <div className="md:m-8 max-w-[100vw]">
+        <div className="flex justify-between items-center mb-4">
+            <h1 className="text-xl">Witnesses - Hive Explorer</h1>
+            <Toggle
+              leftLabel="Hide Inactive Witnesses"
+              checked={hideInactiveWitnesses}
+              onClick={() => setHideInactiveWitnesses(!hideInactiveWitnesses)}
+              className="ml-4"
+            />
+        </div>
         <VotersDialog
           accountName={voterAccount}
           isVotersOpen={isVotersOpen}
@@ -177,18 +196,18 @@ export default function Witnesses() {
             <TableRow>{buildTableHeader()}</TableRow>
           </TableHeader>
           <TableBody>
-            {witnessesData.map((singleWitness: any, index: any) => (
-              <TableRow
-                key={index}
-                className={cn(
-                  `${index % 2 === 0 ? "bg-gray-800" : "bg-gray-900"}`,
+              {filteredWitnessesData.map((singleWitness: any, index: any) => (
+                <TableRow
+                  key={index}
+                  className={cn(
+              `   ${index % 2 === 0 ? "bg-gray-800" : "bg-gray-900"}`,
                   {
                     "line-through":
-                      singleWitness.signing_key === config.inactiveWitnessKey,
+                    singleWitness.signing_key === config.inactiveWitnessKey,
                   }
-                )}
-                data-testid="witnesses-table-row"
-              >
+                  )}
+                  data-testid="witnesses-table-row"
+                >
                 <TableCell
                   className={cn("sticky left-0 min-w-[20px]", {
                     "bg-gray-800 md:bg-inherit": index % 2 === 0,
