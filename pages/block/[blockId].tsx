@@ -143,7 +143,7 @@ export default function Block() {
       for (const operationType of operationsTypes) {
         operationTypesMap.set(operationType.op_type_id, operationType);
       }
-      for (const operationCount of operationsCountInBlock) {
+      for (const operationCount of operationsCountInBlock.ops_count) {
         const operationType = operationTypesMap.get(operationCount.op_type_id);
         const countObject: Explorer.OperationCounter = {
           operationTypeName: operationType?.operation_name || "",
