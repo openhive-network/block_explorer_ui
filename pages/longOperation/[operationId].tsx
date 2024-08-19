@@ -15,14 +15,14 @@ export default function LongOperation() {
       className="w-full h-full text-white flex justify-center items-center px-4 md:p-0 md:w-4/5 flex-col gap-y-2"
       id="block-page-top"
     >
-      {operationData?.operation && operationDataIsFetched && operationId ? (
+      {operationData?.op && operationDataIsFetched && operationId ? (
         <DetailedOperationCard
-          operation={operationData.operation}
+          operation={operationData.op}
           operationId={operationData.operation_id}
-          blockNumber={operationData.block_num}
+          blockNumber={operationData.block}
           transactionId={operationData.trx_id}
           key={operationData.timestamp}
-          isShortened={operationData.is_modified}
+
           forceStyle="raw-json"
         />
       ) : (

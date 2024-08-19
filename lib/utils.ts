@@ -86,8 +86,8 @@ export const convertOperationResultsToTableOperations = (
   operations: Hive.OperationResponse[]
 ): Explorer.OperationForTable[] => {
   return operations.map((operation) => ({
-    operation: operation.operation,
-    blockNumber: operation.block_num,
+    operation: operation.op,
+    blockNumber: operation.block,
     trxId: operation.trx_id,
     timestamp: operation.timestamp,
     operationId: Number(operation.operation_id),
