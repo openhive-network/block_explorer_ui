@@ -128,7 +128,7 @@ export class OperationPattern {
 }
 
 export class RestGetBlockByTimeParamsReq {
-  date!: Date;
+  date!: string;
 }
 
 export class RestGetOperationKeysParamsReq{
@@ -424,7 +424,7 @@ export const extendedRest = {
       byTime: {
         params: RestGetBlockByTimeParamsReq,
         result: Number,
-        urlPath: "{timestamp}"
+        urlPath: "{date}"
       }
     }
   }

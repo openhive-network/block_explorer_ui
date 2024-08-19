@@ -241,7 +241,7 @@ class FetchingService {
   }
 
   async getBlockByTime(date: Date): Promise<number> {
-    return await this.extendedHiveChain!.restApi.hafah["block-number-by-date"].byTime({date});
+    return await this.extendedHiveChain!.restApi.hafah["block-number-by-date"].byTime({date: date.toISOString()});
   }
 
   async getOperationKeys(operationTypeId: number): Promise<string[][]> {
