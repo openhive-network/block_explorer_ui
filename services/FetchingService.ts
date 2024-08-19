@@ -306,8 +306,8 @@ class FetchingService {
 
   async getOperationsCountInBlock(
     blockNumber: number
-  ): Promise<Hive.LastBlocksTypeResponse[]> {
-    return await this.callRestApi("hafbe", `blocks/${blockNumber}/operation-types/count`);
+  ): Promise<Hive.LastBlocksTypeResponse> {
+    return (await this.extendedHiveChain!.restApi.hafbe["operation-type-counts"]({"result-limit": 1, "block-num": blockNumber}))[0];
   }
 
   async getBlockRaw(blockNumber: number): Promise<Hive.RawBlockData> {
