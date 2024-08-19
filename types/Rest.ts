@@ -293,6 +293,10 @@ export class TotalOperationsResponse {
 
 export const extendedRest = { 
   hafbe: {
+    "last-synced-block": {
+      params: undefined,
+      result: Number
+    },
     "block-numbers": {
       params: RestBlockSearchParamsReq,
       result: BlockByOpResponse,

@@ -109,6 +109,10 @@ class FetchingService {
     return await this.extendedHiveChain!.restApi.hafah.headblock();
   }
 
+  async getHafbeLastSyncedBlock(): Promise<number> {
+    return await this.extendedHiveChain!.restApi.hafbe["last-synced-block"]();
+  }
+
   async getBlock(blockNumber: number): Promise<Hive.BlockDetails> {
     return await this.extendedHiveChain!.restApi.hafah.blocks.block({blockNumber});
   }
