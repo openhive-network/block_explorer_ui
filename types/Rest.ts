@@ -309,7 +309,7 @@ export const extendedRest = {
     singleWitness: {
       params: RestGetWitnessParamsReq,
       result: Witness,
-      urlPath: "{accountName}",
+      urlPath: "witnesses/{accountName}",
     },
     voters: {
       params: RestGetVotersParamsReq,
