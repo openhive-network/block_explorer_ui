@@ -142,7 +142,7 @@ export class LastBlocksTypeResponse {
 }
 
 export class RestGetLastOperationTypeCountsParamsReq {
-  "blokck-num"?: number;
+  "block-num"?: number;
   "result-limit"!: number;
 }
 
