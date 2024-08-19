@@ -169,7 +169,7 @@ class FetchingService {
     return await this.extendedHiveChain!.api.database_api.get_current_price_feed({});
   }
 
-  async getAccOpTypes(accountName: string): Promise<unknown> {
+  async getAccOpTypes(accountName: string): Promise<number[]> {
     return await this.extendedHiveChain!.restApi.hafah.accounts.operationTypes({accountName});
   }
 
