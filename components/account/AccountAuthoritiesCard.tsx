@@ -71,8 +71,8 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
     title?: string
   ) => {
     const shouldMarkThreshold = !!(
-      (authorities?.account_auth.length ||
-        0 + (authorities?.account_auth.length || 0)) %
+      (authorities?.account_auths?.length ||
+        0 + (authorities?.account_auths?.length || 0)) %
         2 ===
       1
     );
@@ -81,7 +81,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
         <div className=" text-lg mt-2">{title}</div>
         <Table>
           <TableBody>
-            {authorities?.account_auth.map((singleAuthority, index) =>
+            {authorities?.account_auths?.map((singleAuthority, index) =>
               renderAuthority(
                 singleAuthority[0] || "",
                 singleAuthority[1] || "",
@@ -89,12 +89,12 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
                 index
               )
             )}
-            {authorities?.key_auth.map((singleAuthority, index) =>
+            {authorities?.key_auths?.map((singleAuthority, index) =>
               renderAuthority(
                 singleAuthority[0] || "",
                 singleAuthority[1] || "",
                 false,
-                index + authorities?.account_auth.length
+                index + authorities?.account_auths.length
               )
             )}
             <TableRow
