@@ -12,17 +12,17 @@ const useWitnessDetails = (accountName: string, isWitness: boolean) => {
     const witness = {
       ...witnessData,
       vests: hiveChain?.vests(witnessData.vests),
-      votes_hive_power: hiveChain?.hive(witnessData.votes_hive_power),
+      votes_hive_power: hiveChain?.hive(witnessData.vests_hive_power),
       hbd_interest_rate: formatPercent(witnessData.hbd_interest_rate),
       votes_daily_change: hiveChain?.vests(witnessData.votes_daily_change),
       votes_daily_change_hive_power: hiveChain?.hive(
         witnessData.votes_daily_change_hive_power
-      ),
-    };
-    const formattedWitness = hiveChain?.formatter.format(
-      witness
-    ) as Explorer.Witness;
-
+        ),
+      };
+      const formattedWitness = hiveChain?.formatter.format(
+        witness
+        ) as Explorer.Witness;
+        
     return formattedWitness;
   };
 
