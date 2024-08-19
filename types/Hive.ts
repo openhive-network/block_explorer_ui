@@ -285,16 +285,15 @@ declare module Hive {
   }
 
   interface OperationResponse {
-    block_num: number;
-    op_in_trx: number;
+    block: number;
+    op_pos: number;
     operation_id: string;
-    operation: Operation;
+    op: Operation;
     timestamp: string;
     trx_id: string;
     trx_in_block: number;
     virtual_op: boolean;
-    is_modified: boolean;
-    length: number;
+    op_type_id: number;
   }
 
   interface TotalOperationsResponse {

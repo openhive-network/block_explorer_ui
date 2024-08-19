@@ -20,7 +20,6 @@ interface DetailedOperationCardProps {
   skipBlock?: boolean;
   skipTrx?: boolean;
   className?: string;
-  isShortened?: boolean;
   forceStyle?: "raw-json" | "table";
 }
 
@@ -52,7 +51,6 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
   skipBlock = false,
   skipTrx = false,
   className,
-  isShortened,
   forceStyle,
 }) => {
   const { settings } = useUserSettingsContext();
@@ -125,13 +123,11 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
               </div>
             )}
           </Button>
-          {isShortened && (
-            <Link href={`/longOperation/${operationId}`}>
-              <Button className=" text-explorer-turquoise">
-                See full operation
-              </Button>
-            </Link>
-          )}
+          <Link href={`/longOperation/${operationId}`}>
+            <Button className=" text-explorer-turquoise">
+              See full operation
+            </Button>
+          </Link>
         </div>
       )}
 
