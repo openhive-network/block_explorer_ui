@@ -284,11 +284,29 @@ export class RestGetOperationsByBlockParamsReq {
   "path-filter"?: string;
 }
 
+export class RestGetRawBlockParamsReq {
+  "from-block"!: number;
+  "to-block"!: number;
+}
+
 export class TotalOperationsResponse {
   operations_result!: Hive.OperationResponse[];
   total_pages!: number;
   total_operations!: number;
 }    
+
+export class RawBlockData {
+  block_id!: string;
+  extensions!: unknown[];
+  previous!: string;
+  signing_key!: string;
+  timestamp!: Date;
+  transaction_ids!: string[];
+  transaction_merkle_root!: string;
+  transactions!: Hive.TransactionDetails[];
+  witness!: string;
+  witness_signature!: string;
+}
 
 export const extendedRest = { 
   hafbe: {
@@ -358,17 +376,21 @@ export const extendedRest = {
     }
   },
   hafah: {
-    blocks: {
-      block: {
-        params: RestGetBlockDetailsParamsReq,
-        result: BlockDetails,
-        urlPath: "{blockNumber}"
-      },
-      operations: {
-        params: RestGetOperationsByBlockParamsReq,
-        result: TotalOperationsResponse,
-        urlPath: "{blockNumber}/operations"
-      }
+    block: {
+      params: RestGetBlockDetailsParamsReq,
+      result: BlockDetails,
+      urlPath: "blocks/{blockNumber}"
+    },
+    blockOperations: {
+      params: RestGetOperationsByBlockParamsReq,
+      result: TotalOperationsResponse,
+      urlPath: "blocks/{blockNumber}/operations"
+    },
+    rawBlock: {
+      params: RestGetRawBlockParamsReq,
+      result: RawBlockData,
+      responseArray: true,
+      urlPath: "blocks"
     },
     transactions: {
       transaction: {
