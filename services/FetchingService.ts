@@ -220,7 +220,7 @@ class FetchingService {
       direction,
       limit
     }
-    return await this.extendedHiveChain!.restApi.hafbe.voters({accountName: witness, sort, direction, limit});
+    return await this.extendedHiveChain!.restApi.hafbe.voters({accountName: witness, sort, direction, "result-limit": limit});
   }
 
   async getOperationTypes(
@@ -261,7 +261,7 @@ class FetchingService {
       "to-block": blockSearchProps.toBlock,
       "start-date": blockSearchProps.startDate,
       "end-date": blockSearchProps.endDate,
-      limit: blockSearchProps.limit,
+      "result-limit": blockSearchProps.limit,
       "path-filter": createPathFilterString(blockSearchProps.deepProps.content, blockSearchProps.deepProps.keys)
     }
     return await this.extendedHiveChain!.restApi.hafbe["block-numbers"](requestParams);
@@ -275,7 +275,7 @@ class FetchingService {
     fromTime?: Date,
     toTime?: Date
   ): Promise<Hive.WitnessVotesHistory[]> {
-    return await this.extendedHiveChain!.restApi.hafbe.votesHistory({accountName: witnessName, direction, sort, limit, "start-date": fromTime, "end-date": toTime});
+    return await this.extendedHiveChain!.restApi.hafbe.votesHistory({accountName: witnessName, direction, sort, "result-limit": limit, "start-date": fromTime, "end-date": toTime});
   }
 
   async getOperation(operationId: number): Promise<Hive.OperationResponse> {
