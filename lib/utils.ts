@@ -106,7 +106,7 @@ export const convertCommentsOperationResultToTableOperations = (
 };
 
 export const convertTransactionResponseToTableOperations = (
-  transaction: Hive.TransactionQueryResponse
+  transaction: Hive.TransactionResponse
 ): Explorer.OperationForTable[] => {
   return transaction.transaction_json.operations.map((operation) => ({
     operation: operation,

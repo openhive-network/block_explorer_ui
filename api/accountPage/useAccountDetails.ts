@@ -11,7 +11,7 @@ const useAccountDetails = (accountName: string, liveDataEnabled: boolean) => {
   const { hiveChain } = useHiveChainContext();
 
   const accountDetailsSelector = (
-    data: Hive.AccountDetailsQueryResponse
+    data: Hive.AccountDetails
   ): Explorer.FormattedAccountDetails => {
     const accountDetails = {
       ...data,
