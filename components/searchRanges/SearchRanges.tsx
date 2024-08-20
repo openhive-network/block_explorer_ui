@@ -158,24 +158,22 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
         </div>
       )}
       {rangeSelectKey === "timeRange" && (
-        <div className="flex items-center flex-wrap mt-5">
-          <div className="flex w-full justify-around">
-            <div className="flex-col w-full mr-2">
+        <div className="flex flex-col mt-5">
+          <div className="flex flex-col w-full mb-4">
               <label className="ml-2 my-2">From date</label>
               <DateTimePicker
                 date={startDate || new Date()}
                 setDate={setStartDate}
               />
             </div>
-            <div className="flex-col w-full">
-              <label className="ml-2 my-2">To date</label>
+            <div className="flex flex-col w-full">
+              <label className="ml-2 mb-2">To date</label>
               <DateTimePicker
                 date={endDate || new Date()}
                 setDate={setEndDate}
               />
             </div>
           </div>
-        </div>
       )}
     </div>
   );
