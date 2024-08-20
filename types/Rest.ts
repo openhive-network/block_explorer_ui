@@ -121,8 +121,7 @@ export const extendedRest = {
       },
       operations: {
         params: Hive.RestGetOpsByAccountParamsReq,
-        result: Hive.OperationResponse,
-        responseArray: true,
+        result: Hive.AccountOperationsResponse,
         urlPath: "{accountName}/operations"
       },
     },
