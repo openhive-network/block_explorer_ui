@@ -2,6 +2,118 @@ import { IManabarData } from "@hiveio/wax";
 namespace Hive {
   
   export type Direction = "asc" | "desc";
+  export type OperationTypes = [number, string, boolean];
+  export type InputTypes =
+  | "account_name"
+  | "account_name_array"
+  | "block_num"
+  | "transaction_hash"
+  | "block_hash"
+  | "invalid_input";
+
+  export interface OperationsByTypeCount {
+    count: number;
+    op_type_id: number;
+  }
+
+  export interface Operation {
+    type: string;
+    value: {
+      author?: string;
+      owner?: string | Object;
+      account?: string;
+      producer?: string;
+      curator?: string;
+      seller?: string;
+      permlink?: string;
+      voter?: string;
+      weight?: number;
+      body?: string;
+      json_metadata?: string;
+      parent_author?: string;
+      parent_permlink?: string;
+      title?: string;
+      required_posting_auths?: string[];
+      required_auths?: string[];
+      id?: string;
+      json?: string;
+      amount?: {
+        nai: string;
+        amount: string;
+        precision: number;
+      };
+      memo?: string;
+      from?: string;
+      to?: string;
+      message?: string;
+      "org-op-id"?: string;
+    };
+  }
+
+  export interface TransactionDetails {
+    ref_block_num: number;
+    ref_block_prefix: number;
+    extensions: any[];
+    expiration: Date;
+    operations: Operation[];
+    signatures: string[];
+  }
+
+  export interface OperationsCount {
+    total_operations: number;
+    total_pages: number;
+  }
+
+  export interface CommentOperation {
+    block_num: number;
+    operation: Operation;
+    is_modified: boolean;
+    operation_id: number;
+    permlink: string;
+    created_at: Date;
+    trx_hash: string;
+  }
+
+  export interface TransferOperation {
+    from: string;
+    to: string;
+    amount: Supply | undefined;
+    memo: string;
+    request_id?: number;
+    remaining_executions?: number;
+    consecutive_failures?: number;
+    deleted?: boolean;
+  }
+
+  export interface RecurrentTransferOperation extends TransferOperation {
+    executions: number;
+    recurrence: number;
+  }
+
+  export interface EscrowOperation {
+    from: string;
+    to: string;
+    agent: string;
+    who?: string;
+    escrow_id: number;
+    fee?: Supply;
+    hive_amount?: Supply;
+    hbd_amount?: Supply;
+    ratification_deadline?: string;
+    escrow_expiration?: string;
+    json_meta?: string;
+  }
+
+  export interface CancelTransferOperation {
+    request_id: number;
+    from: string;
+  }
+
+  export interface AuthKeys {
+    key_auths: [string | undefined, string | undefined][];
+    account_auths: [string | undefined, string | undefined][];
+    weight_threshold: number;
+  }
 
   export class AccountOperationTypes {
     total_operations!: number;
@@ -316,108 +428,52 @@ namespace Hive {
     witness_signature!: string;
   }
 
-  export interface HiveBlogProps {
-    id: number;
-    method: string;
-    jsonrpc: string;
+  export class HiveBlogProps {
+    id!: number;
+    method!: string;
+    jsonrpc!: string;
   }
 
-  export interface Supply {
-    amount: string;
-    precision: number;
-    nai: string;
+  export class Supply {
+    amount!: string;
+    precision!: number;
+    nai!: string;
   }
 
-  export interface OperationsByTypeCount {
-    count: number;
-    op_type_id: number;
+  export class PriceFeed {
+    base!: Supply;
+    quote!: Supply;
   }
 
-  export interface PriceFeed {
-    base: Supply;
-    quote: Supply;
-  }
-
-  export interface RewardFunds {
-    id: number;
-    name: string;
-    reward_balance: Supply;
-    recent_claims: string;
-    last_update: Date;
-    content_constant: string;
-    percent_curation_rewards: number;
-    percent_content_rewards: number;
-    author_reward_curve: string;
-    curation_reward_curve: string;
-  }
-
-  export interface Operation {
-    type: string;
-    value: {
-      author?: string;
-      owner?: string | Object;
-      account?: string;
-      producer?: string;
-      curator?: string;
-      seller?: string;
-      permlink?: string;
-      voter?: string;
-      weight?: number;
-      body?: string;
-      json_metadata?: string;
-      parent_author?: string;
-      parent_permlink?: string;
-      title?: string;
-      required_posting_auths?: string[];
-      required_auths?: string[];
-      id?: string;
-      json?: string;
-      amount?: {
-        nai: string;
-        amount: string;
-        precision: number;
-      };
-      memo?: string;
-      from?: string;
-      to?: string;
-      message?: string;
-      "org-op-id"?: string;
-    };
+  export class RewardFunds {
+    id!: number;
+    name!: string;
+    reward_balance!: Supply;
+    recent_claims!: string;
+    last_update!: Date;
+    content_constant!: string;
+    percent_curation_rewards!: number;
+    percent_content_rewards!: number;
+    author_reward_curve!: string;
+    curation_reward_curve!: string;
   }
 
   export class AccountOperationsResponse extends AccountOperationTypes {
     operations_result!: OperationResponse[];
   }
 
-
-  export type OperationTypes = [number, string, boolean];
-
-  export interface TransactionDetails {
-    ref_block_num: number;
-    ref_block_prefix: number;
-    extensions: any[];
-    expiration: Date;
-    operations: Operation[];
-    signatures: string[];
+  export class VestingDelegations {
+    delegatee!: string;
+    delegator!: string;
+    id!: number;
+    min_delegation_time!: string;
+    vesting_shares!: Supply;
   }
 
-  export type InputTypes =
-    | "account_name"
-    | "account_name_array"
-    | "block_num"
-    | "transaction_hash"
-    | "block_hash"
-    | "invalid_input";
-
-  export interface Voter {
-    voter: string;
-    vests: number;
-    votes_hive_power: number;
-    account_vests: number;
-    account_hive_power: number;
-    proxied_vests: number;
-    proxied_hive_power: number;
-    timestamp: Date;
+  export class RCDelegations {
+    delegated_rc!: number;
+    from!: string;
+    to!: string;
   }
 
   export interface VestingDelegations {
