@@ -2,14 +2,14 @@ import React from "react";
 import { config } from "@/Config";
 import Hive from "@/types/Hive";
 import {
-  CommunityOperation,
+  CommunityOperationData,
   DeepReadonly,
-  FollowOperation,
+  FollowOperationData,
   IFormatFunctionArguments,
   IWaxBaseInterface,
   IWaxCustomFormatter,
-  ReblogOperation,
-  ResourceCreditsOperation,
+  ReblogOperationData,
+  ResourceCreditsOperationData,
   WaxFormattable,
   account_create,
   account_create_with_delegation,
@@ -294,16 +294,16 @@ class OperationsFormatter implements IWaxCustomFormatter {
     return {...target, value: {message, json: op.json}};
   }
 
-  @WaxFormattable({matchInstanceOf: ResourceCreditsOperation}) 
-  formatResourceCreditsOperation({target, source}: IFormatFunctionArguments<{ value: custom_json }, {value: ResourceCreditsOperation}>) {
+  @WaxFormattable({matchInstanceOf: ResourceCreditsOperationData}) 
+  formatResourceCreditsOperation({target, source}: IFormatFunctionArguments<{ value: custom_json }, {value: ResourceCreditsOperationData}>) {
     const {value: op} = target;
     if (op.rc.amount === "0")
       return { ...target, value: {message: this.generateReactLink([this.getAccountLink(op.from), `removed delegation for`, this.getMultipleAccountsListLink(op.delegatees), `(${source.value.id})`]), json: JSON.stringify(target.value)} };
     return { ...target, value: {message: this.generateReactLink([this.getAccountLink(op.from), `delegated ${this.getFormattedAmount(op.rc)} of RC for`, this.getMultipleAccountsListLink(op.delegatees), `(${source.value.id})`]), json: JSON.stringify(target.value)} };
   }
 
-  @WaxFormattable({matchInstanceOf: FollowOperation}) 
-  formatFollowOperation({target, source}: IFormatFunctionArguments<{ value: custom_json }, {value: FollowOperation}>) {
+  @WaxFormattable({matchInstanceOf: FollowOperationData}) 
+  formatFollowOperation({target, source}: IFormatFunctionArguments<{ value: custom_json }, {value: FollowOperationData}>) {
     const {value: op} = target;
     const actionsMap = new Map<string, string>();
     actionsMap.set("blog", "followed");
@@ -324,14 +324,14 @@ class OperationsFormatter implements IWaxCustomFormatter {
     return { ...target, value: {message: this.generateReactLink([this.getAccountLink(op.follower), `${actionsMap.get(op?.action) || ""}`, this.getMultipleAccountsListLink(op.following), `(${source.value.id})`]), json: JSON.stringify(target.value)}};
   }
 
-  @WaxFormattable({matchInstanceOf: ReblogOperation}) 
-  formatReblogOperation({target, source}: IFormatFunctionArguments<{ value: custom_json }, {value: ReblogOperation}>) {
+  @WaxFormattable({matchInstanceOf: ReblogOperationData}) 
+  formatReblogOperation({target, source}: IFormatFunctionArguments<{ value: custom_json }, {value: ReblogOperationData}>) {
     const {value: op} = target;
     return {...target, value: {message: this.generateReactLink([this.getAccountLink(op.account), `reblogged`, this.getPermlink(op.author, op.permlink), `(${source.value.id})`]), json: JSON.stringify(target.value)}};
   }
 
-  @WaxFormattable({matchInstanceOf: CommunityOperation}) 
-  formatCommunityOperation({target, source}: IFormatFunctionArguments<{ value: custom_json }, {value: CommunityOperation}>) {
+  @WaxFormattable({matchInstanceOf: CommunityOperationData}) 
+  formatCommunityOperation({target, source}: IFormatFunctionArguments<{ value: custom_json }, {value: CommunityOperationData}>) {
     const {value: op} = target;
     return {...target, value: {message: this.generateReactLink([this.getMultipleAccountsListLink(op.accounts), `${op.data.action} to ${op.community}`, `(${source.value.id})`]), json: JSON.stringify(target.value)}};
   }
