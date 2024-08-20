@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useState, useMemo } from "react";
 import {
   UserSettings,
   UserSettingsContext,
@@ -6,15 +6,20 @@ import {
 import { HiveChainContext } from "../contexts/HiveChainContext";
 import { IHiveChainInterface, createHiveChain } from "@hiveio/wax";
 import { AddressesContext } from "../contexts/AddressesContext";
-import { ApiAddressesResult } from "@/utils/ApiAddresses";
+import useApiAddresses from "@/utils/ApiAddresses";
 import fetchingService from "@/services/FetchingService";
+import {
+  QueryClient,
+  QueryCache,
+  QueryClientProvider,
+} from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { toast } from "sonner";
 import Layout from "./layout";
 import { HeadBlockContextProvider } from "@/contexts/HeadBlockContext";
-import { OperationTypesContext } from "@/contexts/OperationsTypesContext";
-import useOperationsTypes from "@/api/common/useOperationsTypes";
+import { OperationTypesContextProvider } from "@/contexts/OperationsTypesContext";
 
-const Context: React.FC<{ children: ReactNode, apiAddresses: ApiAddressesResult }> = ({ children, apiAddresses }) => {
+const Context: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [userSettings, setUserSettings] = useState<UserSettings>({
     rawJsonView: false,
     liveData: false,
@@ -30,36 +35,62 @@ const Context: React.FC<{ children: ReactNode, apiAddresses: ApiAddressesResult 
     fetchingService.setHiveChain(chain);
   };
 
-  const {operationsTypes} = useOperationsTypes();
-
   useEffect(() => {
     createChain();
   }, []);
 
+  const {
+    apiAddress,
+    nodeAddress,
+    writeApiAddressToLocalStorage,
+    writeNodeAddressToLocalStorage,
+  } = useApiAddresses();
+
+  const queryClient = useMemo(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            enabled: apiAddress !== null && nodeAddress !== null,
+          },
+        },
+        queryCache: new QueryCache({
+          onError: (error) => {
+            toast.error("Error occured", {
+              description: `${(error as Error).message}`,
+            });
+          },
+        }),
+      }),
+    [apiAddress, nodeAddress]
+  );
+
   return (
-    <UserSettingsContext.Provider
-      value={{ settings: userSettings, setSettings: setUserSettings }}
-    >
-      <OperationTypesContext.Provider
-        value={{operationsTypes: operationsTypes}}
-      >
-        <HeadBlockContextProvider>
-          <AddressesContext.Provider
-            value={{
-              apiAddress: apiAddresses.apiAddress,
-              setApiAddress: apiAddresses.writeApiAddressToLocalStorage,
-              nodeAddress: apiAddresses.nodeAddress,
-              setNodeAddress: apiAddresses.writeNodeAddressToLocalStorage,
-            }}
-          >
-            <HiveChainContext.Provider value={{ hiveChain, setHiveChain }}>
-              <Layout>{children}</Layout>
-              <ReactQueryDevtools initialIsOpen={false} />
-            </HiveChainContext.Provider>
-          </AddressesContext.Provider>
-        </HeadBlockContextProvider>
-      </OperationTypesContext.Provider>
-    </UserSettingsContext.Provider>
+    <>
+      <QueryClientProvider client={queryClient}>
+        <UserSettingsContext.Provider
+          value={{ settings: userSettings, setSettings: setUserSettings }}
+        >
+          <HeadBlockContextProvider>
+            <OperationTypesContextProvider>
+              <AddressesContext.Provider
+                value={{
+                  apiAddress: apiAddress,
+                  setApiAddress: writeApiAddressToLocalStorage,
+                  nodeAddress: nodeAddress,
+                  setNodeAddress: writeNodeAddressToLocalStorage,
+                }}
+              >
+                <HiveChainContext.Provider value={{ hiveChain, setHiveChain }}>
+                  <Layout>{children}</Layout>
+                  <ReactQueryDevtools initialIsOpen={false} />
+                </HiveChainContext.Provider>
+              </AddressesContext.Provider>
+            </OperationTypesContextProvider>
+          </HeadBlockContextProvider>
+        </UserSettingsContext.Provider>
+      </QueryClientProvider>
+    </>
   );
 };
 
