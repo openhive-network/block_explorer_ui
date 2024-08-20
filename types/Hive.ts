@@ -3,6 +3,11 @@ namespace Hive {
   
   export type Direction = "asc" | "desc";
 
+  export class AccountOperationTypes {
+    total_operations!: number;
+    total_pages!: number;
+  }
+
   export class RestGetWitnessesParamsReq {
     limit!: number;
     offset!: number;
@@ -380,21 +385,10 @@ namespace Hive {
     };
   }
 
-  export interface OperationResponse {
-    block: number;
-    op_pos: number;
-    operation_id: string;
-    op: Operation;
-    timestamp: string;
-    trx_id: string;
-    trx_in_block: number;
-    virtual_op: boolean;
-    op_type_id: number;
+  export class AccountOperationsResponse extends AccountOperationTypes {
+    operations_result!: OperationResponse[];
   }
 
-  export interface AccountOperationsResponse extends OperationsCount {
-    operations_result: OperationResponse[];
-  }
 
   export type OperationTypes = [number, string, boolean];
 
@@ -472,9 +466,6 @@ namespace Hive {
     trx_hash: string;
   }
 
-  export interface CommentOperationResponse extends OperationsCount {
-    operations_result: CommentOperation[];
-  }
 
   export interface Manabars {
     upvote: IManabarData;
