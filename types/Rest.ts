@@ -36,7 +36,7 @@ export class RestGetVotersParamsReq {
   accountName!: string;
   sort?: string;
   direction?: Hive.Direction;
-  limit?: number;
+  "result-limit"?: number;
 }
 
 export class Voter {
@@ -55,7 +55,7 @@ export class RestGetVotesHistoryParamsReq {
   accountName!: string;
   sort?: string;
   direction?: Hive.Direction;
-  limit!: number | null;
+  "result-limit"!: number | null;
   "start-date"?: Date;
   "end-date"?: Date;
 }
@@ -256,7 +256,7 @@ export class CommentOperationResponse {
 export class RestBlockSearchParamsReq {
   "operation-types"?: number[];
   page?: number;
-  limit?: number;
+  "result-limit"?: number;
   direction!: Hive.Direction;
   "account-name"?: string;
   "page-size"?: number;
@@ -314,13 +314,13 @@ export const extendedRest = {
     voters: {
       params: RestGetVotersParamsReq,
       result: Voter,
-      urlPath: "{accountName}/voters",
+      urlPath: "witnesses/{accountName}/voters",
       responseArray: true,
     },
     votesHistory: {
       params: RestGetVotesHistoryParamsReq,
       result: WitnessVotesHistory,
-      urlPath: "{accountName}/votes/history",
+      urlPath: "witnesses/{accountName}/votes/history",
       responseArray: true,
     },
     version: {

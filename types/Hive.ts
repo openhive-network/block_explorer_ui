@@ -56,7 +56,7 @@ declare module Hive {
   interface RestBlockSearchParams {
     "operation-types"?: number[];
     page?: number;
-    limit?: number;
+    "result-limit"?: number;
     direction: Direction;
     "account-name"?: string;
     "set-of-keys"?: string[];
