@@ -155,7 +155,7 @@ class FetchingService {
 
   async getOpsByAccount(
     accountOperationsProps: Explorer.AccountSearchOperationsProps
-  ): Promise<Hive.OperationResponse[]> {
+  ): Promise<Hive.AccountOperationsResponse> {
     const requestParams: Hive.RestGetOpsByAccountParamsReq = {
       accountName: accountOperationsProps.accountName,
       "operation-types": accountOperationsProps.operationTypes,
