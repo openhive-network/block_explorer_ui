@@ -114,7 +114,7 @@ class FetchingService {
   }
 
   async getBlock(blockNumber: number): Promise<Hive.BlockDetails> {
-    return await this.extendedHiveChain!.restApi.hafah.blocks.block({blockNumber});
+    return await this.extendedHiveChain!.restApi.hafah.block({blockNumber});
   }
 
   async getBlockGlobalState(blockNumber: number): Promise<Hive.BlockDetails> {
@@ -147,7 +147,7 @@ class FetchingService {
       "data-size-limit": config.opsBodyLimit,
       "path-filter": createPathFilterString(keyContent, setOfKeys)
     }
-    return await this.extendedHiveChain!.restApi.hafah.blocks.operations(requestParams)
+    return await this.extendedHiveChain!.restApi.hafah.blockOperations(requestParams)
   }
 
 
@@ -311,7 +311,7 @@ class FetchingService {
   }
 
   async getBlockRaw(blockNumber: number): Promise<Hive.RawBlockData> {
-    return await this.callRestApi("hafah", `blocks/${blockNumber}`);
+    return (await this.extendedHiveChain!.restApi.hafah.rawBlock({"from-block": blockNumber, "to-block": blockNumber}))[0];
   }
 
   async getAccountAuthorities(accountName: string): Promise<Hive.AccountAuthoritiesData | undefined> {
