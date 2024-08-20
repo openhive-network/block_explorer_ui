@@ -1,21 +1,328 @@
 import { IManabarData } from "@hiveio/wax";
+namespace Hive {
+  
+  export type Direction = "asc" | "desc";
 
-declare module Hive {
+  export class RestGetWitnessesParamsReq {
+    limit!: number;
+    offset!: number;
+    sort!: string;
+    direction!: Hive.Direction;
+  }
+  
+  export class RestGetWitnessParamsReq {
+    accountName!: string;
+  }
+  
+  export class Witness {
+    witness!: string;
+    rank!: number;
+    url!: string;
+    vests!: string;
+    votes_daily_change!: number;
+    votes_daily_change_hive_power!: number;
+    voters_num!: number;
+    voters_num_daily_change!: number;
+    price_feed!: number;
+    bias!: number;
+    feed_updated_at!: Date;
+    block_size!: number;
+    signing_key!: string;
+    version!: string;
+    missed_blocks!: number;
+    hbd_interest_rate!: number;
+    vests_hive_power!: number;
+  
+  }
+  
+  export class RestGetVotersParamsReq {
+    accountName!: string;
+    sort?: string;
+    direction?: Hive.Direction;
+    "result-limit"?: number;
+  }
+  
+  export class Voter {
+    voter!: string;
+    vests!: number;
+    votes_hive_power!: number;
+    account_vests!: number;
+    account_hive_power!: number;
+    proxied_vests!: number;
+    proxied_hive_power!: number;
+    timestamp!: Date;
+  }
+  
+  
+  export class RestGetVotesHistoryParamsReq {
+    accountName!: string;
+    sort?: string;
+    direction?: Hive.Direction;
+    "result-limit"!: number | null;
+    "start-date"?: Date;
+    "end-date"?: Date;
+  }
+  
+  export class WitnessVotesHistory {
+    voter!: string;
+    approve!: boolean;
+    vests!: number;
+    vests_hive_power!: number;
+    account_vests!: number;
+    account_hive_power!: number;
+    proxied_vests!: number;
+    proxied_hive_power!: number;
+    timestamp!: Date;
+  }
+  
+  export class RestGetBlockDetailsParamsReq {
+    blockNumber!: number;
+  }
+  
+  export class BlockDetails {
+    block_num!: number;
+    created_at!: string;
+    current_hbd_supply!: number;
+    current_supply!: number;
+    dhf_interval_ledger!: number;
+    extensions!: null;
+    hash!: string;
+    hbd_interest_rate!: number;
+    prev!: string;
+    producer_account!: string;
+    signing_key!: string;
+    total_reward_fund_hive!: number;
+    total_vesting_fund_hive!: number;
+    total_vesting_shares!: string;
+    transaction_merkle_root!: string;
+    virtual_supply!: number;
+    witness_signature!: string;
+  }
+  
+  export class RestGetBlockGlobalStateParamsReq {
+    "block-num"!: number;
+  }
+  
+  export class RestGetInputTypeParamsReq {
+    inputType!: string;
+  }
+  
+  export class InputTypeResponse {
+    input_type!: Hive.InputTypes;
+    input_value!: string | string[];
+  }
+  
+  export class RestGetTransactionParamsReq {
+    transactionId!: string;
+  }
+  
+  export class TransactionResponse {
+    transaction_json!: Hive.TransactionDetails;
+    timestamp!: Date;
+    transaction_id!: string;
+    block_num!: number;
+    transaction_num!: number;
+  }
+  
+  export class OperationPattern {
+    op_type_id!: number;
+    operation_name!: string;
+    is_virtual!: boolean;
+  }
+  
+  export class RestGetBlockByTimeParamsReq {
+    date!: string;
+  }
+  
+  export class RestGetOperationKeysParamsReq{
+    operationTypeId!: number;
+  }
+  
+  export class LastBlocksTypeResponse {
+    block_num!: number;
+    witness!: string;
+    ops_count!: Hive.OperationsByTypeCount[];
+  }
+  
+  export class RestGetLastOperationTypeCountsParamsReq {
+    "block-num"?: number;
+    "result-limit"!: number;
+  }
+  
+  export class RestGetOperationParamsReq {
+    operationId!: number;
+  }
+  
+  export class RestGetOpsByAccountParamsReq {
+    accountName!: string;
+    "operation-types"?: number[];
+    page?: number;
+    "page-size"?: number;
+    "data-size-limit"?: number;
+    "from-block"?: number;
+    "to-block"?: number;
+    "start-date"?: Date;
+    "end-date"?: Date;
+  }
+  
+  export class RestGetAccountDetailsParamsReq {
+    accountName!: string;
+  }
+  
+  export class OperationResponse {
+    block!: number;
+    op_pos!: number;
+    operation_id!: string;
+    op!: Hive.Operation;
+    timestamp!: string;
+    trx_id!: string;
+    trx_in_block!: number;
+    virtual_op!: boolean;
+    op_type_id!: number;
+  }
+  
+  export class RestGetAccountOperationTypes {
+    accountName!: string;
+  }
+  
+  export class AccountDetails {
+    id!: number;
+    name!: string;
+    can_vote!: true;
+    mined!: true;
+    proxy!: string;
+    recovery_account!: string;
+    last_account_recovery!: Date;
+    created!: Date;
+    reputation!: number;
+    json_metadata!: string;
+    posting_json_metadata!: string;
+    profile_image!: string;
+    hbd_balance!: number;
+    balance!: number;
+    vesting_shares!: string;
+    vesting_balance!: number;
+    hbd_saving_balance!: number;
+    savings_balance!: number;
+    savings_withdraw_requests!: number;
+    reward_hbd_balance!: number;
+    reward_hive_balance!: number;
+    reward_vesting_balance!: string;
+    reward_vesting_hive!: number;
+    posting_rewards!: string;
+    curation_rewards!: string;
+    delegated_vesting_shares!: string;
+    received_vesting_shares!: string;
+    proxied_vsf_votes!: number[];
+    withdrawn!: string;
+    vesting_withdraw_rate!: string;
+    to_withdraw!: string;
+    withdraw_routes!: number;
+    delayed_vests!: string;
+    witness_votes!: string[];
+    witnesses_voted_for!: number;
+    ops_count!: number;
+    is_witness!: boolean;
+  }
+  
+  export class RestGetAccountAuthorities {
+    accountName!: string;
+  }
+  
+  export class AccountAuthoritiesData {
+    owner!: Hive.AuthKeys;
+    active!: Hive.AuthKeys;
+    posting!: Hive.AuthKeys;
+    memo!: string;
+    witness_signing!: string;
+  }
+  
+  export class RestGetCommentOperationsParamsReq {
+    accountName!: string;
+    "operation-types"?: number[];
+    page?: number;
+    permlink?: string;
+    "page-size"?: number;
+    "data-size-limit"?: number;
+    "from-block"?: number;
+    "to-block"?: number;
+    "start-date"?: Date;
+    "end-date"?: Date;
+  }
+  
+  export class CommentOperationResponse {
+    operations_result!: Hive.CommentOperation[];
+    total_operations!: number;
+    total_pages!: number;
+  }
+  
+  export class RestBlockSearchParamsReq {
+    "operation-types"?: number[];
+    page?: number;
+    "result-limit"?: number;
+    direction!: Hive.Direction;
+    "account-name"?: string;
+    "page-size"?: number;
+    "data-size-limit"?: number;
+    "from-block"?: number;
+    "to-block"?: number;
+    "start-date"?: Date;
+    "end-date"?: Date;
+    "path-filter"?: string;
+  }
+  
+  export class BlockByOpResponse {
+    block_num!: number;
+    op_type_id!: number[];
+  }
+  
+  export class RestGetOperationsByBlockParamsReq {
+    blockNumber!: number;
+    "operation-types"?: number[];
+    "account-name"?: string;
+    page?: number;
+    "page-size"?: number;
+    "page-order"?: Hive.Direction;
+    "data-size-limit"?: number;
+    "path-filter"?: string;
+  }
+  
+  export class RestGetRawBlockParamsReq {
+    "from-block"!: number;
+    "to-block"!: number;
+  }
+  
+  export class TotalOperationsResponse {
+    operations_result!: Hive.OperationResponse[];
+    total_pages!: number;
+    total_operations!: number;
+  }    
+  
+  export class RawBlockData {
+    block_id!: string;
+    extensions!: unknown[];
+    previous!: string;
+    signing_key!: string;
+    timestamp!: Date;
+    transaction_ids!: string[];
+    transaction_merkle_root!: string;
+    transactions!: Hive.TransactionDetails[];
+    witness!: string;
+    witness_signature!: string;
+  }
 
-  type Direction = "asc" | "desc";
-
-  interface RestGetWitnessesParams {
+  export interface RestGetWitnessesParams {
     limit: number;
     offset: number;
     sort: string;
     direction: Direction;
   }
 
-  interface RestGetLastBlocksParams {
+  export interface RestGetLastBlocksParams {
     limit: number;
   }
 
-  interface RestGetOpsByBlockParams {
+  export interface RestGetOpsByBlockParams {
     blockNumber: number;
     "operation-types"?: number[];
     "account-name"?: string;
@@ -28,7 +335,7 @@ declare module Hive {
     "data-size-limit"?: number;
   }
 
-  interface RestGetOpsByAccountParams {
+  export interface RestGetOpsByAccountParams {
     accountName: string;
     "operation-types"?: number[];
     page?: number;
@@ -40,7 +347,7 @@ declare module Hive {
     "end-date"?: Date;
   }
 
-  interface RestCommentsParams {
+  export interface RestCommentsParams {
     accountName: string;
     "operation-types"?: number[];
     page?: number;
@@ -53,7 +360,7 @@ declare module Hive {
     "end-date"?: Date;
   }
 
-  interface RestBlockSearchParams {
+  export interface RestBlockSearchParams {
     "operation-types"?: number[];
     page?: number;
     "result-limit"?: number;
@@ -70,13 +377,13 @@ declare module Hive {
     "end-date"?: Date;
   }
 
-  interface RestGetWitnessesVotersParams {
+  export interface RestGetWitnessesVotersParams {
     sort?: string;
     direction?: Direction;
     limit?: number;
   }
 
-  interface RestWitnessVotesHistoryParams {
+  export interface RestWitnessVotesHistoryParams {
     sort?: string;
     direction?: Direction;
     limit: number | null;
@@ -84,13 +391,13 @@ declare module Hive {
     "end-date"?: Date;
   }
 
-  interface HiveBlogProps {
+  export interface HiveBlogProps {
     id: number;
     method: string;
     jsonrpc: string;
   }
 
-  interface GetOpsByBlockProps {
+  export interface GetOpsByBlockProps {
     _block_num: number;
     _filter?: number[];
     _page_size: number;
@@ -101,15 +408,15 @@ declare module Hive {
     _setof_keys?: string[][];
   }
 
-  interface GetTransactionProps {
+  export interface GetTransactionProps {
     _trx_hash: string;
   }
 
-  interface GetAccOpTypesProps {
+  export interface GetAccOpTypesProps {
     _account: string;
   }
 
-  interface GetOpsByAccountProps {
+  export interface GetOpsByAccountProps {
     _account: string;
     _page_num?: number;
     _page_size: number;
@@ -121,49 +428,49 @@ declare module Hive {
     _to?: number;
   }
 
-  interface GetAccountOpsCountProps {
+  export interface GetAccountOpsCountProps {
     _account: string;
     _operations: number[];
   }
 
-  interface GetAccountProps {
+  export interface GetAccountProps {
     _account: string;
   }
 
-  interface GetWitnessesProps {
+  export interface GetWitnessesProps {
     _limit: number;
     _offset: number;
     _order_by: string;
     _order_is: string;
   }
 
-  interface GetWitnessVotersNumProps {
+  export interface GetWitnessVotersNumProps {
     _witness: string;
   }
 
-  interface GetWitnessVotersProps {
+  export interface GetWitnessVotersProps {
     _witness: string;
     _order_by: string;
     _order_is: string;
     _limit?: number;
   }
-  interface GetOperationTypesProps {
+  export interface GetOperationTypesProps {
     _operation_type_pattern: string | null;
   }
 
-  interface GetWitnessProps {
+  export interface GetWitnessProps {
     _account: string;
   }
 
-  interface GetBlockByTimeProps {
+  export interface GetBlockByTimeProps {
     _timestamp: Date;
   }
 
-  interface GetOperationKeysProps {
+  export interface GetOperationKeysProps {
     _op_type_id: number;
   }
 
-  interface GetBlockByOpProps {
+  export interface GetBlockByOpProps {
     _operations: number[];
     _account?: string;
     _from?: number;
@@ -176,22 +483,22 @@ declare module Hive {
     _end_date?: Date;
   }
 
-  interface GetBlockProps {
+  export interface GetBlockProps {
     _block_num: number;
   }
 
-  interface GetInputTypeProps {
+  export interface GetInputTypeProps {
     _input: string;
   }
 
-  interface GetLatestBlocksProps {
+  export interface GetLatestBlocksProps {
     _limit: number;
   }
-  interface GetOperationProps {
+  export interface GetOperationProps {
     _operation_id: number;
   }
 
-  interface GetCommentOperationProps {
+  export interface GetCommentOperationProps {
     _author: string;
     _permlink?: string;
     _page_num?: number;
@@ -204,15 +511,15 @@ declare module Hive {
     _page_size: number;
   }
 
-  interface GetOperationsInBlockProps {
+  export interface GetOperationsInBlockProps {
     _block_num: number;
   }
 
-  interface GetBlockRawProps {
+  export interface GetBlockRawProps {
     _block_num: number;
   }
 
-  interface GetWitnessVotesHistory {
+  export interface GetWitnessVotesHistory {
     _witness: string;
     _order_is: string;
     _order_by: string;
@@ -221,23 +528,23 @@ declare module Hive {
     _to_time?: Date;
   }
 
-  interface Supply {
+  export interface Supply {
     amount: string;
     precision: number;
     nai: string;
   }
 
-  interface OperationsByTypeCount {
+  export interface OperationsByTypeCount {
     count: number;
     op_type_id: number;
   }
 
-  interface PriceFeed {
+  export interface PriceFeed {
     base: Supply;
     quote: Supply;
   }
 
-  interface RewardFunds {
+  export interface RewardFunds {
     id: number;
     name: string;
     reward_balance: Supply;
@@ -250,7 +557,7 @@ declare module Hive {
     curation_reward_curve: string;
   }
 
-  interface Operation {
+  export interface Operation {
     type: string;
     value: {
       author?: string;
@@ -284,7 +591,7 @@ declare module Hive {
     };
   }
 
-  interface OperationResponse {
+  export interface OperationResponse {
     block: number;
     op_pos: number;
     operation_id: string;
@@ -296,25 +603,25 @@ declare module Hive {
     op_type_id: number;
   }
 
-  interface TotalOperationsResponse {
+  export interface TotalOperationsResponse {
     operations_result: OperationResponse[];
     total_pages: number;
     total_operations: number;
   }
 
-  interface AccountOperationsResponse extends OperationsCount {
+  export interface AccountOperationsResponse extends OperationsCount {
     operations_result: OperationResponse[];
   }
 
-  type OperationTypes = [number, string, boolean];
+  export type OperationTypes = [number, string, boolean];
 
-  interface OperationPattern {
+  export interface OperationPattern {
     op_type_id: number;
     operation_name: string;
     is_virtual: boolean;
   }
 
-  interface TransactionQueryResponse {
+  export interface TransactionQueryResponse {
     transaction_json: TransactionDetails;
     timestamp: Date;
     transaction_id: string;
@@ -322,7 +629,7 @@ declare module Hive {
     transaction_num: number;
   }
 
-  interface TransactionDetails {
+  export interface TransactionDetails {
     ref_block_num: number;
     ref_block_prefix: number;
     extensions: any[];
@@ -331,7 +638,7 @@ declare module Hive {
     signatures: string[];
   }
 
-  interface AccountDetailsQueryResponse {
+  export interface AccountDetailsQueryResponse {
     id: number;
     name: string;
     can_vote: true;
@@ -371,7 +678,7 @@ declare module Hive {
     is_witness: boolean;
   }
 
-  interface GetBlockByTimeResponse {
+  export interface GetBlockByTimeResponse {
     age: string;
     created_at: string;
     current_hbd_supply: number;
@@ -392,7 +699,7 @@ declare module Hive {
     witness_signature: string;
   }
 
-  type InputTypes =
+  export type InputTypes =
     | "account_name"
     | "account_name_array"
     | "block_num"
@@ -400,11 +707,11 @@ declare module Hive {
     | "block_hash"
     | "invalid_input";
 
-  interface InputTypeResponse {
+  export interface InputTypeResponse {
     input_type: InputTypes;
     input_value: string | string[];
   }
-  interface Witness {
+  export interface Witness {
     witness: string;
     rank: number;
     url: string;
@@ -424,7 +731,7 @@ declare module Hive {
     vests_hive_power: number,
   }
 
-  interface Voter {
+  export interface Voter {
     voter: string;
     vests: number;
     votes_hive_power: number;
@@ -435,7 +742,7 @@ declare module Hive {
     timestamp: Date;
   }
 
-  interface VestingDelegations {
+  export interface VestingDelegations {
     delegatee: string;
     delegator: string;
     id: number;
@@ -443,13 +750,13 @@ declare module Hive {
     vesting_shares: string;
   }
 
-  interface RCDelegations {
+  export interface RCDelegations {
     delegated_rc: number;
     from: string;
     to: string;
   }
 
-  interface WitnessVotesHistory {
+  export interface WitnessVotesHistory {
     voter: string;
     approve: boolean;
     vests: number;
@@ -461,7 +768,7 @@ declare module Hive {
     timestamp: Date;
   }
 
-  interface BlockDetails {
+  export interface BlockDetails {
     block_num: number;
     created_at: string;
     current_hbd_supply: number;
@@ -481,23 +788,23 @@ declare module Hive {
     witness_signature: string;
   }
 
-  interface BlockByOpResponse {
+  export interface BlockByOpResponse {
     block_num: number;
     op_type_id: number[];
   }
 
-  interface LastBlocksTypeResponse {
+  export interface LastBlocksTypeResponse {
     block_num: number;
     witness: string;
     ops_count: OperationsByTypeCount[];
   }
 
-  interface OperationsCount {
+  export interface OperationsCount {
     total_operations: number;
     total_pages: number;
   }
 
-  interface CommentOperation {
+  export interface CommentOperation {
     block_num: number;
     operation: Operation;
     is_modified: boolean;
@@ -507,17 +814,17 @@ declare module Hive {
     trx_hash: string;
   }
 
-  interface CommentOperationResponse extends OperationsCount {
+  export interface CommentOperationResponse extends OperationsCount {
     operations_result: CommentOperation[];
   }
 
-  interface Manabars {
+  export interface Manabars {
     upvote: IManabarData;
     downvote: IManabarData;
     rc: IManabarData;
   }
 
-  interface RawBlockData {
+  export interface RawBlockData {
     block_id: string;
     extensions: unknown[];
     previous: string;
@@ -530,7 +837,7 @@ declare module Hive {
     witness_signature: string;
   }
 
-  interface TransferOperation {
+  export interface TransferOperation {
     from: string;
     to: string;
     amount: Supply | undefined;
@@ -541,12 +848,12 @@ declare module Hive {
     deleted?: boolean;
   }
 
-  interface RecurrentTransferOperation extends TransferOperation {
+  export interface RecurrentTransferOperation extends TransferOperation {
     executions: number;
     recurrence: number;
   }
 
-  interface EscrowOperation {
+  export interface EscrowOperation {
     from: string;
     to: string;
     agent: string;
@@ -560,18 +867,18 @@ declare module Hive {
     json_meta?: string;
   }
 
-  interface CancelTransferOperation {
+  export interface CancelTransferOperation {
     request_id: number;
     from: string;
   }
 
-  interface AuthKeys {
+  export interface AuthKeys {
     key_auths: [string | undefined, string | undefined][];
     account_auths: [string | undefined, string | undefined][];
     weight_threshold: number;
   }
 
-  interface AccountAuthoritiesData {
+  export interface AccountAuthoritiesData {
     owner: AuthKeys;
     active: AuthKeys;
     posting: AuthKeys;
