@@ -85,26 +85,6 @@ class FetchingService {
     }
   }
 
-  async callRestApi(apiName: string, methodName: string, params?: Record<string, any>) {
-    let queryString = "";
-    if (params) {
-      queryString = "?" + Object.keys(params)
-        .map((key) => {
-          const value = params[key];
-          if (!value) return undefined;
-          if (Array.isArray(value)) {
-            return `${encodeURIComponent(key)}=${value.map(item => encodeURIComponent(item)).join(',')}`;
-          }
-          if (value instanceof Date) return `${encodeURIComponent(key)}=${encodeURIComponent(value.toDateString())}`;
-          return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
-        })
-        .filter((element) => element)
-        .join('&');
-    }
-    const url = `${this.testApiAddress}/${apiName}/${methodName}${queryString}`;
-    return await this.makeGetRequest(url);
-  }
-
   async getHeadBlockNum(): Promise<number> {
     return await this.extendedHiveChain!.restApi.hafah.headblock();
   }
@@ -153,7 +133,7 @@ class FetchingService {
 
   async getTransaction(
     transactionHash: string
-  ): Promise<Hive.TransactionQueryResponse> {
+  ): Promise<Hive.TransactionResponse> {
     return await this.extendedHiveChain!.restApi.hafah.transactions.transaction({transactionId: transactionHash});
   }
 
@@ -190,7 +170,7 @@ class FetchingService {
     return await this.extendedHiveChain!.restApi.hafah.accounts.operations(requestParams);
   }
 
-  async getAccount(accountName: string): Promise<Hive.AccountDetailsQueryResponse> {
+  async getAccount(accountName: string): Promise<Hive.AccountDetails> {
     return await this.extendedHiveChain!.restApi.hafbe.accounts.account({accountName});
   }
 

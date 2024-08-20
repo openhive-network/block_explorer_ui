@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 
 const useTransactionData = (transactionId: string) => {
   const { data, isLoading, error } = useQuery<
-    Hive.TransactionQueryResponse,
+    Hive.TransactionResponse,
     Error
   >({
     queryKey: [`transaction-${transactionId}`],
