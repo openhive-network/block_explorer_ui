@@ -2,7 +2,7 @@ import { ReactNode, useState, Fragment } from "react";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table";
 import { cn, formatNumber } from "@/lib/utils";
-import { convertVestsToHP, convertHPtoUSD } from "@/utils/Calculations";
+import { convertVestsToHP, convertHiveToUSD } from "@/utils/Calculations";
 import useDynamicGlobal from "@/api/homePage/useDynamicGlobal";
 
 type AccountBalanceCardProps = {
@@ -94,7 +94,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
 
     let displVal = "";
     if (vestsParams.includes(key)) {
-      displVal = convertHPtoUSD(
+      displVal = convertHiveToUSD(
         parseFloat(
           convertVestsToHP(
             userDetails[key],
@@ -110,7 +110,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
         userDetails[key].replace(/,/g, "").split(" ")[0]
       ).toFixed(2);
     } else {
-      displVal = convertHPtoUSD(
+      displVal = convertHiveToUSD(
         userDetails[key].replace(/,/g, "").split(" ")[0],
         dynamicGlobalData.headBlockDetails.feedPrice
       ).toFixed(2);
