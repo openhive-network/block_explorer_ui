@@ -1,7 +1,5 @@
 import Hive from "./Hive";
 
-
-
 export const extendedRest = { 
   hafbe: {
     "last-synced-block": {

@@ -137,7 +137,7 @@ class FetchingService {
     keyContent?: string,
     setOfKeys?: string[]
   ): Promise<Hive.TotalOperationsResponse> {
-    const requestParams: Hive.RestGetOpsByBlockParams = {
+    const requestParams: Hive.RestGetOperationsByBlockParamsReq = {
       blockNumber,
       "operation-types": filter,
       "account-name": accountName,
@@ -176,7 +176,7 @@ class FetchingService {
   async getOpsByAccount(
     accountOperationsProps: Explorer.AccountSearchOperationsProps
   ): Promise<Hive.OperationResponse[]> {
-    const requestParams: Hive.RestGetOpsByAccountParams = {
+    const requestParams: Hive.RestGetOpsByAccountParamsReq = {
       accountName: accountOperationsProps.accountName,
       "operation-types": accountOperationsProps.operationTypes,
       page: accountOperationsProps.pageNumber,
@@ -200,7 +200,7 @@ class FetchingService {
     sort: string,
     direction: "asc" | "desc"
   ): Promise<Hive.Witness[]> {
-    const requestParams: Hive.RestGetWitnessesParams = {
+    const requestParams: Hive.RestGetWitnessesParamsReq = {
       limit,
       offset,
       sort,
@@ -215,11 +215,6 @@ class FetchingService {
     direction: "asc" | "desc",
     limit?: number
   ): Promise<Hive.Voter[]> {
-    const requestParams: Hive.RestGetWitnessesVotersParams = {
-      sort,
-      direction,
-      limit
-    }
     return await this.extendedHiveChain!.restApi.hafbe.voters({accountName: witness, sort, direction, "result-limit": limit});
   }
 
@@ -256,11 +251,9 @@ class FetchingService {
   async getBlockByOp(
     blockSearchProps: Explorer.BlockSearchProps
   ): Promise<Hive.BlockByOpResponse[]> {
-    const requestParams: Hive.RestBlockSearchParams = {
+    const requestParams: Hive.RestBlockSearchParamsReq = {
       "operation-types": blockSearchProps.operationTypes || [],
       "account-name": blockSearchProps?.accountName,
-      "set-of-keys": blockSearchProps.deepProps.keys,
-      "key-content": blockSearchProps.deepProps.content,
       direction: "desc",
       "from-block": blockSearchProps.fromBlock,
       "to-block": blockSearchProps.toBlock,
@@ -290,7 +283,7 @@ class FetchingService {
   async getCommentOperation(
     commentSearchProps: Explorer.CommentSearchProps
   ): Promise<Hive.CommentOperationResponse> {
-    const requestParams: Hive.RestCommentsParams = {
+    const requestParams: Hive.RestGetCommentOperationsParamsReq = {
       accountName: commentSearchProps.accountName,
       "operation-types": commentSearchProps.operationTypes,
       page: commentSearchProps.pageNumber,
