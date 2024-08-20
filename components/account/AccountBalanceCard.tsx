@@ -2,13 +2,13 @@ import { ReactNode, useState, Fragment } from "react";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table";
 import { cn, formatNumber } from "@/lib/utils";
-import { convertVestsToHP, convertHiveToUSD } from "@/utils/Hooks";
+import { convertVestsToHP, convertHPtoUSD } from "@/utils/Calculations";
+import useDynamicGlobal from "@/api/homePage/useDynamicGlobal";
 
 type AccountBalanceCardProps = {
   header: string;
   userDetails: any;
 };
-
 
 const cardNameMap = new Map([
   ["hbd_balance", "HBD Liquid"],
@@ -21,16 +21,19 @@ const cardNameMap = new Map([
   ["reward_vesting_hive", "HP Unclaimed"],
   ["received_vesting_shares", "Received HP"],
   ["delegated_vesting_shares", "Delegated HP"],
-  ["vesting_withdraw_rate", "Powering down HP"]
+  ["vesting_withdraw_rate", "Powering down HP"],
 ]);
 
-const vestsParams = ['received_vesting_shares', 'delegated_vesting_shares', 'vesting_withdraw_rate'];
-
+const vestsParams = [
+  "received_vesting_shares",
+  "delegated_vesting_shares",
+  "vesting_withdraw_rate",
+];
 
 const buildTableBody = (
   parameters: string[],
   render_key: (key: string) => ReactNode,
-  convert_usd: (key:string) => ReactNode
+  convert_usd: (key: string) => ReactNode
 ) => {
   return parameters.map((param: string, index: number) => {
     if (cardNameMap.has(param)) {
@@ -49,7 +52,8 @@ const buildTableBody = (
             <TableCell className="text-right">{convert_usd(param)}</TableCell>
           </TableRow>
         </Fragment>
-      )}
+      );
+    }
   });
 };
 
@@ -57,30 +61,62 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
   header,
   userDetails,
 }) => {
-
+  const { dynamicGlobalData } = useDynamicGlobal();
   if (!userDetails) return null;
 
   const keys = Object.keys(userDetails);
 
   const render_key = (key: string) => {
-    if (vestsParams.includes(key)){
-      return parseFloat(formatNumber(parseFloat(
-        convertVestsToHP(userDetails[key]).toString()),false, true)).toFixed(3) + " HP";
+    if (!dynamicGlobalData) return;
+
+    if (vestsParams.includes(key)) {
+      return (
+        parseFloat(
+          formatNumber(
+            parseFloat(
+              convertVestsToHP(
+                userDetails[key],
+                dynamicGlobalData.headBlockDetails.totalVestingFundHive,
+                dynamicGlobalData.headBlockDetails.totalVestingShares
+              ).toString()
+            ),
+            false,
+            true
+          )
+        ).toFixed(3) + " HP"
+      );
     }
     return userDetails[key];
-  }
+  };
 
   const convert_usd = (key: string) => {
+    if (!dynamicGlobalData) return;
+
     let displVal = "";
-    if (vestsParams.includes(key)){
-      displVal = convertHiveToUSD(parseFloat(convertVestsToHP(userDetails[key]).toString())).toFixed(2);
-    }else if (key.includes('hbd')){//considering hbd as stable coin = 1$
-      displVal = parseFloat(userDetails[key].replace(/,/g, '').split(" ")[0]).toFixed(2);;
-    }else{
-      displVal = convertHiveToUSD(userDetails[key].replace(/,/g, '').split(" ")[0]).toFixed(2);
+    if (vestsParams.includes(key)) {
+      displVal = convertHPtoUSD(
+        parseFloat(
+          convertVestsToHP(
+            userDetails[key],
+            dynamicGlobalData.headBlockDetails.totalVestingFundHive,
+            dynamicGlobalData.headBlockDetails.totalVestingShares
+          ).toString()
+        ),
+        dynamicGlobalData.headBlockDetails.feedPrice
+      ).toFixed(2);
+    } else if (key.includes("hbd")) {
+      //considering hbd as stable coin = 1$
+      displVal = parseFloat(
+        userDetails[key].replace(/,/g, "").split(" ")[0]
+      ).toFixed(2);
+    } else {
+      displVal = convertHPtoUSD(
+        userDetails[key].replace(/,/g, "").split(" ")[0],
+        dynamicGlobalData.headBlockDetails.feedPrice
+      ).toFixed(2);
     }
-    return '$ ' + formatNumber(parseFloat(displVal), false, true);
-  }
+    return "$ " + formatNumber(parseFloat(displVal), false, true);
+  };
 
   return (
     <Card
@@ -88,19 +124,13 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
       className="overflow-hidden pb-0"
     >
       <CardHeader className="p-0">
-        <div
-          className="flex justify-between align-center p-2 hover:bg-slate-600 cursor-pointer px-4"
-        >
+        <div className="flex justify-between align-center p-2 hover:bg-slate-600 cursor-pointer px-4">
           <div className="text-lg">{header}</div>
         </div>
       </CardHeader>
-      <CardContent
-        data-testid="card-content"
-      >
+      <CardContent data-testid="card-content">
         <Table>
-          <TableBody>
-          {buildTableBody(keys, render_key, convert_usd)}
-          </TableBody>
+          <TableBody>{buildTableBody(keys, render_key, convert_usd)}</TableBody>
         </Table>
       </CardContent>
     </Card>
