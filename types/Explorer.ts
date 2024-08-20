@@ -162,7 +162,7 @@ declare module Explorer {
 
   interface FormattedAccountDetails
     extends Omit<
-      Hive.AccountDetailsQueryResponse,
+      Hive.AccountDetails,
       | "last_post"
       | "last_root_post"
       | "post_count"

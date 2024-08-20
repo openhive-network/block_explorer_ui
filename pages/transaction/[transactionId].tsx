@@ -45,7 +45,7 @@ export default function Transaction() {
   const { trxData, trxLoading, trxError } = useTransactionData(transactionId);
 
   const formattedTransaction = useOperationsFormatter(trxData) as
-    | Hive.TransactionQueryResponse
+    | Hive.TransactionResponse
     | undefined;
 
   if (trxError) {
@@ -129,7 +129,7 @@ export default function Transaction() {
                             key,
                             trxData[
                               key as keyof Omit<
-                                Hive.TransactionQueryResponse,
+                                Hive.TransactionResponse,
                                 "transaction_json"
                               >
                             ]
