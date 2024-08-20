@@ -65,6 +65,8 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
     headBlockDetails: { totalVestingFundHive, totalVestingShares, feedPrice },
   } = dynamicGlobalData;
 
+  if (!userDetails) return null;
+
   const keys = Object.keys(userDetails);
 
   const render_key = (key: string) => {
@@ -82,6 +84,8 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
   };
 
   const convert_usd = (key: string) => {
+    if (!dynamicGlobalData) return;
+
     let displVal = "";
     if (vestsParams.includes(key)) {
       const formattedHP = convertVestsToHP(
