@@ -36,7 +36,9 @@ class FetchingService {
     this.extendedHiveChain = hiveChain?.extend<ExplorerNodeApi>().extendRest(extendedRest);
     if (this.extendedHiveChain && this.nodeUrl) {
       this.extendedHiveChain.endpointUrl = this.nodeUrl;
-      // this.extendedHiveChain.restApi.endpointUrl = this.testApiAddress;
+    }
+    if (this.extendedHiveChain && this.apiUrl) {
+      this.extendedHiveChain.restApi.endpointUrl = this.apiUrl;
     }
   }
 
