@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
 import { cn } from "@/lib/utils";
+import { ChevronDown } from "lucide-react";
 
 interface ViewPopoverProps {
   isMobile?: boolean;
@@ -27,11 +28,12 @@ const ViewPopover: React.FC<ViewPopoverProps> = ({ isMobile }) => {
       <PopoverTrigger asChild>
         <div
           className={cn(
-            "rounded-[6px] text-sm text-center cursor-pointer flex jusitfy-center items-center p-1 ml-3 py-0 border border-2 border-explorer-ligh-blue",
+            "rounded-[6px] text-sm text-center cursor-pointer flex jusitfy-center items-center p-1 ml-3 py-0 border-2 border-explorer-ligh-blue",
             { "p-0 m-0 border-none text-2xl": isMobile }
           )}
         >
-          Data View
+          <span>Data View</span>
+          <ChevronDown className="w-4" />
         </div>
       </PopoverTrigger>
       <PopoverContent
