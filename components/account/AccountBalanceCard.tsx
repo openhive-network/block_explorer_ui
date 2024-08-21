@@ -64,8 +64,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
 
   const render_key = (key: string) => {
     if (vestsParams.includes(key)){
-      return parseFloat(formatNumber(parseFloat(
-        convertVestsToHP(userDetails[key]).toString()),false, true)).toFixed(3) + " HP";
+      return formatNumber(parseFloat(convertVestsToHP(userDetails[key]).toString()), false, true) + " HP";
     }
     return userDetails[key];
   }

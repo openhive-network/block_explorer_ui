@@ -43,3 +43,4 @@ public/__ENV.js
 /blob-report/
 /playwright/.cache/
 .vscode/settings.json
+services/block_explorer_ui.code-workspace
