@@ -22,7 +22,6 @@ class FetchingService {
   private apiUrl: string | null = null;
   private nodeUrl: string | null = null;
   private extendedHiveChain: TWaxExtended<ExplorerNodeApi, TWaxRestExtended<typeof extendedRest>> | undefined = undefined;
-  private testApiAddress: string = "https://api.syncad.com";
 
   public setApiUrl(newUrl: string) {
     this.apiUrl = newUrl;
@@ -39,51 +38,6 @@ class FetchingService {
     }
     if (this.extendedHiveChain && this.apiUrl) {
       this.extendedHiveChain.restApi.endpointUrl = this.apiUrl;
-    }
-  }
-
-
-  async makePostRequest<T>(url: string, requestBody: T) {
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestBody),
-      });
-      const jsonResponse = await response.json();
-      if (!response.ok) throw new Error(`No data from API endpoint: ${url}`);
-      return jsonResponse;
-    } catch (error) {
-      return Promise.reject(error);
-    }
-  }
-
-  async callApi<T>(methodName: string, requestBody: T) {
-    const url = `${this.apiUrl}/${methodName}`;
-    return await this.makePostRequest(url, requestBody);
-  }
-
-  async callNode<T>(methodName: string) {
-    const url = `${this.nodeUrl}`;
-    const requestBody: Hive.HiveBlogProps = {
-      jsonrpc: "2.0",
-      method: methodName,
-      id: 1,
-    };
-    return await this.makePostRequest(url, requestBody);
-  }
-
-  async makeGetRequest(url: string) {
-    try {
-      const response = await fetch(url, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      })
-      const jsonResponse = await response.json();
-      if (!response.ok) throw new Error(`No data from API endpoint: ${url}`);
-      return jsonResponse;
-    } catch (error) {
-      return Promise.reject(error);
     }
   }
 
