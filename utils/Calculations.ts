@@ -1,6 +1,8 @@
+import { splitStringValue } from "./StringUtils";
+import { IHiveChainInterface } from "@hiveio/wax";
 /**
  * Function converting vests to hive power
- *
+ * @param  hivechain response from HiveChainContext.ts as type IHiveChainInterface | undefined,
  * @param vests amount of VESTS as string, not trimmed, with keyword `VESTS` in it
  * @param totalVestingFundHive amount of total_vesting_fund_hive as string, received from useGlobalDataHook() as dynamicGlobalData.headBlockDetails.totalVestingFundHive
  * @param totalVestingShares amount of total_vesting_shares as string, received from useGlobalDataHook() as dynamicGlobalData.headBlockDetails.totalVestingShares
@@ -8,22 +10,37 @@
  */
 
 export const convertVestsToHP = (
+  hivechain: IHiveChainInterface,
   vests: string,
   totalVestingFundHive: string,
   totalVestingShares: string
-): number => {
-  const vestsToNumber = Number(vests.replace(/,/g, "").split(" ")[0]);
-  const totalVestingFundHiveToNumber = Number(
-    totalVestingFundHive?.replace(/,/g, "").split(" ")[0]
-  );
-  const totalVestingSharesToNumber = Number(
-    totalVestingShares?.replace(/,/g, "").split(" ")[0]
+) => {
+  if (!hivechain || !vests || !totalVestingFundHive || !totalVestingShares)
+    return;
+
+  const formattedVests = splitStringValue(vests, "VESTS");
+  const formattedTotalVestingFundHive = splitStringValue(
+    totalVestingFundHive,
+    "HIVE"
   );
 
-  const result =
-    vestsToNumber * (totalVestingFundHiveToNumber / totalVestingSharesToNumber);
+  const formattedTotalVestingShares = splitStringValue(
+    totalVestingShares,
+    "VESTS"
+  );
 
-  return result || 0;
+  const convertedHp = hivechain.vestsToHp(
+    formattedVests,
+    formattedTotalVestingFundHive,
+    formattedTotalVestingShares
+  );
+
+  //Replace original value of `HIVE` with `HP`
+  const formattedHP = hivechain.formatter
+    .format(convertedHp)
+    .replace("HIVE", "HP");
+
+  return formattedHP;
 };
 
 /**
