@@ -1,7 +1,7 @@
 import HealthCheckerComponent, { ApiChecker } from "@/components/healthchecker/HealthChecker";
 import Head from "next/head";
-import { useHiveChainContext } from "@/components/contexts/HiveChainContext";
-import { useAddressesContext } from "@/components/contexts/AddressesContext";
+import { useHiveChainContext } from "@/contexts/HiveChainContext";
+import { useAddressesContext } from "@/contexts/AddressesContext";
 
 export default function HealthcheckerPage() {
 

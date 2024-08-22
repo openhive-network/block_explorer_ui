@@ -64,6 +64,12 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     setIsDialogOpened(isOpened);
   }
 
+  const changeChecksForProvider = (provider: string, newCheckers: string[]) => {
+    const newApiChecks = structuredClone(apiChecksByProvider);
+    newApiChecks.set(provider, newCheckers);
+    setApiChecksByProvider(newApiChecks);
+  }
+
   useEffect(() => { 
     if (hc && hiveChain && !chainInitialized) {
       const checks = customApiCheckers?.get("find_account");
@@ -114,7 +120,8 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         onDialogOpenChange={onDialogOpenChange}
         checksList={customApiCheckers}
         openedProvider={openedProvider}
-        changeChecks={(data) => {}}
+        changeChecks={changeChecksForProvider}
+        activeChecksKeys={apiChecksByProvider?.get(openedProvider || "") || []}
       />
     </div>
   );
