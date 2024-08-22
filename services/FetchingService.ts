@@ -7,10 +7,10 @@ type ExplorerNodeApi = {
   database_api: {
     get_reward_funds: TWaxApiRequest<{}, { funds: Hive.RewardFunds[] }>
     get_current_price_feed: TWaxApiRequest<{}, Hive.PriceFeed>
+    find_vesting_delegations: TWaxApiRequest<{ account: string }, { delegations: Hive.VestingDelegations[] }>;
   },
-  condenser_api: {
-    get_vesting_delegations: TWaxApiRequest<[string, string | null, number], any>
-    list_rc_direct_delegations: TWaxApiRequest<[[string, ""], number], any>
+  rc_api: {
+    list_rc_direct_delegations: TWaxApiRequest<{ start: [string, string], limit: number }, { rc_direct_delegations: Hive.RCDelegations[] }>
   }
 }
 
@@ -234,12 +234,17 @@ class FetchingService {
     return await this.callApi("get_witness", requestBody);
   }
 
-  async getVestingDelegations(delegatorAccount: string, startAccount: string | null, limit: number): Promise<Hive.VestingDelegations[]> {
-    return await this.extendedHiveChain!.api.condenser_api.get_vesting_delegations([delegatorAccount, startAccount, limit]);
+  async getVestingDelegations(delegatorAccount: string): Promise<Hive.VestingDelegations[]> {
+    return await this.extendedHiveChain!.api.database_api.find_vesting_delegations({
+      account: delegatorAccount
+    }).then(response => response.delegations);
   }
 
   async getRcDelegations (delegatorAccount: string, limit: number): Promise<Hive.RCDelegations[]> {
-    return await this.extendedHiveChain!.api.condenser_api.list_rc_direct_delegations([[delegatorAccount, ""], limit]);
+    return await this.extendedHiveChain!.api.rc_api.list_rc_direct_delegations({
+      start: [delegatorAccount, ""],
+      limit: limit,
+    }).then(response => response.rc_direct_delegations);
   }
 
   async getBlockByTime(date: Date): Promise<number> {

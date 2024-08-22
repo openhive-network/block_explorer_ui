@@ -9,7 +9,11 @@ import { formatNumber } from "@/lib/utils";
 
 type VestingDelegation = {
   delegatee: string;
-  vesting_shares: string;
+  vesting_shares: {
+    amount: string;
+    precision: number;
+    nai: string;
+  };
 };
 
 type AccountVestingDelegationsCardProps = {
@@ -38,7 +42,7 @@ const buildTableBody = (delegations: VestingDelegation[]) => {
               {delegation.delegatee}
             </Link>
           </TableCell>
-          <TableCell className="text-right">{formatNumber(parseFloat(delegation.vesting_shares),true, true)}</TableCell>
+          <TableCell className="text-right">{formatNumber(parseFloat(delegation.vesting_shares.amount)/ Math.pow(10,delegation.vesting_shares.precision),true, true)}</TableCell>
         </TableRow>
       </Fragment>
     );
@@ -54,7 +58,7 @@ const AccountVestingDelegationsCard: React.FC<AccountVestingDelegationsCardProps
     vestingDelegationsData,
     isVestingDelegationsLoading,
     isVestingDelegationsError,
-  } = useVestingDelegations(delegatorAccount, startAccount, limit);
+  } = useVestingDelegations(delegatorAccount);
 
   if (isVestingDelegationsLoading) {
     return <div></div>;

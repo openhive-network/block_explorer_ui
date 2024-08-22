@@ -405,7 +405,11 @@ declare module Hive {
     delegator: string;
     id: number;
     min_delegation_time: string;
-    vesting_shares: string;
+    vesting_shares: {
+      amount: string;
+      precision: number;
+      nai: string;
+    };
   }
 
   interface RCDelegations {
