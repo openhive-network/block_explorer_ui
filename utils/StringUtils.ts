@@ -98,3 +98,15 @@ export const trimAccountName = (accountName: string) => {
   }
   return trimmedName;
 };
+
+/**
+ * Returns only numbers as string type and trims last word such as `HIVE` or `VESTS`
+ *
+ * @param value string value that needs to be trimmed
+ * @param keyword string keyword of what we want to split from our string
+ * @returns trimmed string without keyword
+ */
+
+export const splitStringValue = (value: string, keyword: string) => {
+  return value.split(keyword)[0];
+};
