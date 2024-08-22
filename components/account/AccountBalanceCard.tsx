@@ -1,9 +1,11 @@
-import { ReactNode, useState, Fragment } from "react";
+import { ReactNode, Fragment } from "react";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table";
 import { cn, formatNumber } from "@/lib/utils";
 import { convertVestsToHP, convertHiveToUSD } from "@/utils/Calculations";
 import useDynamicGlobal from "@/api/homePage/useDynamicGlobal";
+import { useHiveChainContext } from "@/contexts/HiveChainContext";
+import { splitStringValue } from "@/utils/StringUtils";
 
 type AccountBalanceCardProps = {
   header: string;
@@ -62,57 +64,52 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
   userDetails,
 }) => {
   const { dynamicGlobalData } = useDynamicGlobal();
-  if (!userDetails) return null;
+  const { hiveChain } = useHiveChainContext();
+
+  if (!dynamicGlobalData || !hiveChain) return;
+
+  const {
+    headBlockDetails: { totalVestingFundHive, totalVestingShares, feedPrice },
+  } = dynamicGlobalData;
 
   const keys = Object.keys(userDetails);
 
   const render_key = (key: string) => {
-    if (!dynamicGlobalData) return;
-
     if (vestsParams.includes(key)) {
-      return (
-        parseFloat(
-          formatNumber(
-            parseFloat(
-              convertVestsToHP(
-                userDetails[key],
-                dynamicGlobalData.headBlockDetails.totalVestingFundHive,
-                dynamicGlobalData.headBlockDetails.totalVestingShares
-              ).toString()
-            ),
-            false,
-            true
-          )
-        ).toFixed(3) + " HP"
+      const formattedHp = convertVestsToHP(
+        hiveChain,
+        userDetails[key],
+        totalVestingFundHive,
+        totalVestingShares
       );
+
+      return formattedHp;
     }
     return userDetails[key];
   };
 
   const convert_usd = (key: string) => {
-    if (!dynamicGlobalData) return;
-
     let displVal = "";
     if (vestsParams.includes(key)) {
+      const formattedHP = convertVestsToHP(
+        hiveChain,
+        userDetails[key],
+        totalVestingFundHive,
+        totalVestingShares
+      );
       displVal = convertHiveToUSD(
-        parseFloat(
-          convertVestsToHP(
-            userDetails[key],
-            dynamicGlobalData.headBlockDetails.totalVestingFundHive,
-            dynamicGlobalData.headBlockDetails.totalVestingShares
-          ).toString()
-        ),
-        dynamicGlobalData.headBlockDetails.feedPrice
+        Number(splitStringValue(formattedHP, "HP").replace(",", "")),
+        feedPrice
       ).toFixed(2);
     } else if (key.includes("hbd")) {
       //considering hbd as stable coin = 1$
-      displVal = parseFloat(
+      displVal = Number(
         userDetails[key].replace(/,/g, "").split(" ")[0]
       ).toFixed(2);
     } else {
       displVal = convertHiveToUSD(
         userDetails[key].replace(/,/g, "").split(" ")[0],
-        dynamicGlobalData.headBlockDetails.feedPrice
+        feedPrice
       ).toFixed(2);
     }
     return "$ " + formatNumber(parseFloat(displVal), false, true);

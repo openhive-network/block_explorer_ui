@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import CopyToKeyboard from "../CopyToKeyboard";
 import { convertVestsToHP } from "@/utils/Calculations";
 import useDynamicGlobal from "@/api/homePage/useDynamicGlobal";
+import { useHiveChainContext } from "@/contexts/HiveChainContext";
 
 type AccountDetailsCardProps = {
   header: string;
@@ -56,24 +57,27 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
   userDetails,
 }) => {
   const { dynamicGlobalData } = useDynamicGlobal();
+  const { hiveChain } = useHiveChainContext();
 
   const [isPropertiesHidden, setIsPropertiesHidden] = useState(true);
 
-  if (!userDetails) return null;
+  if (!userDetails || !dynamicGlobalData || !hiveChain) return;
 
+  const {
+    headBlockDetails: { totalVestingFundHive, totalVestingShares },
+  } = dynamicGlobalData;
   const keys = Object.keys(userDetails);
 
   const renderConvertedHP = (userKey: string, objectKey: string) => {
-    if (!dynamicGlobalData) return;
-
     if (userKey.includes("VESTS") && objectKey !== "vests") {
-      const HP = convertVestsToHP(
+      const formattedHP = convertVestsToHP(
+        hiveChain,
         userKey,
-        dynamicGlobalData.headBlockDetails.totalVestingFundHive,
-        dynamicGlobalData.headBlockDetails.totalVestingShares
+        totalVestingFundHive,
+        totalVestingShares
       );
 
-      return `${HP.toFixed(3)} HP`;
+      return formattedHP;
     } else {
       return userKey;
     }
