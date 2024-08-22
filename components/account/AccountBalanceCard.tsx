@@ -84,8 +84,6 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
   };
 
   const convert_usd = (key: string) => {
-    if (!dynamicGlobalData) return;
-
     let displVal = "";
     if (vestsParams.includes(key)) {
       const formattedHP = convertVestsToHP(
