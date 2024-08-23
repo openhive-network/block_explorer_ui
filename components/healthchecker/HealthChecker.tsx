@@ -68,6 +68,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     const newApiChecks = structuredClone(apiChecksByProvider);
     newApiChecks.set(provider, newCheckers);
     setApiChecksByProvider(newApiChecks);
+    setIsDialogOpened(false);
   }
 
   useEffect(() => { 
