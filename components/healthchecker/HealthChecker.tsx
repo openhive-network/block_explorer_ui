@@ -118,14 +118,14 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   }
   return (
     <div className={cn([className])}>
-      <Card className="grid grid-cols-2 grid-rows-2 my-1 p-2">
-        <div className="row-start-1 col-span-2 flex justify-center">Block Explorer node's healthchecker</div>
+      <Card className="grid grid-cols-3 grid-rows-2 my-1 p-2 ">
+        <div className="row-start-1 col-start-1 col-span-2">Block Explorer node's healthchecker</div>
         <div className="row-start-2">
           {Array.from(customApiCheckers?.entries() || []).map(([key, apiChecker]) => (
             <Badge variant={"outline"}>{apiChecker.title}</Badge>
           ))}
         </div>
-        <Button onClick={() => {initializeDefaultChecks()}}>Restore default</Button>
+        <Button className="row-start-1 row-span-2 col-end-4 items-center justify-center" onClick={() => {initializeDefaultChecks()}}>Restore default</Button>
       </Card>
       {scoredEndpoints.map(
         (scoredEndpoint, index) => renderProvider(scoredEndpoint, index)
