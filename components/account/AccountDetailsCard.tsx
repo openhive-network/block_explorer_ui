@@ -5,6 +5,9 @@ import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table";
 import { cn } from "@/lib/utils";
 import CopyToKeyboard from "../CopyToKeyboard";
+import { convertVestsToHP } from "@/utils/Calculations";
+import useDynamicGlobal from "@/api/homePage/useDynamicGlobal";
+import { useHiveChainContext } from "@/contexts/HiveChainContext";
 
 type AccountDetailsCardProps = {
   header: string;
@@ -20,7 +23,7 @@ const EXCLUDE_KEYS = [
 
 const LINK_KEYS = ["recovery_account", "reset_account"];
 const URL_KEYS = ["url"];
-const COPY_KEYS = ["signing_key"]
+const COPY_KEYS = ["signing_key"];
 
 const buildTableBody = (
   keys: string[],
@@ -53,11 +56,32 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
   header,
   userDetails,
 }) => {
+  const { dynamicGlobalData } = useDynamicGlobal();
+  const { hiveChain } = useHiveChainContext();
+
   const [isPropertiesHidden, setIsPropertiesHidden] = useState(true);
 
-  if (!userDetails) return null;
+  if (!userDetails || !dynamicGlobalData || !hiveChain) return;
 
+  const {
+    headBlockDetails: { totalVestingFundHive, totalVestingShares },
+  } = dynamicGlobalData;
   const keys = Object.keys(userDetails);
+
+  const renderConvertedHP = (userKey: string, objectKey: string) => {
+    if (userKey.includes("VESTS") && objectKey !== "vests") {
+      const formattedHP = convertVestsToHP(
+        hiveChain,
+        userKey,
+        totalVestingFundHive,
+        totalVestingShares
+      );
+
+      return formattedHP;
+    } else {
+      return userKey;
+    }
+  };
 
   const render_key = (key: string) => {
     if (LINK_KEYS.includes(key)) {
@@ -69,10 +93,15 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
     }
     if (COPY_KEYS.includes(key)) {
       let shortenedKey: string = "";
-      shortenedKey = `${userDetails?.[key]?.slice(0, 8)}...${userDetails?.[key]?.slice(userDetails[key].length - 5)}`
+      shortenedKey = `${userDetails?.[key]?.slice(0, 8)}...${userDetails?.[
+        key
+      ]?.slice(userDetails[key].length - 5)}`;
       return (
-        <CopyToKeyboard value={userDetails[key]} displayValue={shortenedKey} />
-      )
+        <CopyToKeyboard
+          value={userDetails[key]}
+          displayValue={shortenedKey}
+        />
+      );
     }
     if (URL_KEYS.includes(key)) {
       return (
@@ -89,7 +118,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
     } else if (typeof userDetails[key] === "number") {
       return userDetails[key].toLocaleString();
     } else if (typeof userDetails[key] === "string") {
-      return userDetails[key];
+      return renderConvertedHP(userDetails[key], key);
     } else return JSON.stringify(userDetails[key]);
   };
 

@@ -1,4 +1,21 @@
-import { useSearchParams } from "next/navigation";
+// //////////////////////////////////////////////////////////////////////////////
+// TODO:
+// - This hooks file either should be renamed or cleaned, because hooks
+//  should start with `use` keyword and have seperate file for each hook.
+//  This file contains a lot of helper functions, and not hooks, which is misleading,
+// because inside real hook you can call another hook, and here you can't because
+// it's a simple function. Also hooks should be .tsx
+
+// - Keep it clean, document every existing and new functions as in example:
+/**
+ * hook for using debounce
+ *
+ * @param func function to be called after wait
+ * @param wait wait in ms
+ * @returns callable debounce function
+ */
+// //////////////////////////////////////////////////////////////////////////////
+
 import { useRouter } from "next/router";
 import {
   useRef,
@@ -270,30 +287,6 @@ const getSyncInfoData = (
     explorerTime,
     hiveBlockTime,
   };
-};
-
-export const convertVestsToHP = (vests: string) => {
-  const dynamicGlobalData = useDynamicGlobal().dynamicGlobalData;
-  return dynamicGlobalData?.headBlockDetails
-    ? (parseFloat(vests.replace(/,/g, "").split(" ")[0]) *
-        parseFloat(
-          dynamicGlobalData?.headBlockDetails?.totalVestingFundHive
-            ?.replace(/,/g, "")
-            .split(" ")[0]
-        )) /
-        parseFloat(
-          dynamicGlobalData?.headBlockDetails?.totalVestingShares
-            ?.replace(/,/g, "")
-            .split(" ")[0]
-        )
-    : 0;
-};
-
-export const convertHiveToUSD = (hiveAmount: number) => {
-  const dynamicGlobalData = useDynamicGlobal().dynamicGlobalData;
-  const hivePrice =
-    dynamicGlobalData?.headBlockDetails?.feedPrice?.split(" ")[0];
-  return hiveAmount * parseFloat(hivePrice ?? "0"); //default to 0 if no matching price is found
 };
 
 export const useBlockchainSyncInfo = () => {

@@ -2,7 +2,7 @@ import { ArrowDown, ArrowUp, User } from "lucide-react";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import Hive from "@/types/Hive";
 import useAccountAuthorities from "@/api/accountPage/useAccountAuthorities";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import Link from "next/link";
 import CopyToKeyboard from "../CopyToKeyboard";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table";
@@ -81,22 +81,26 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
         <div className=" text-lg mt-2">{title}</div>
         <Table>
           <TableBody>
-            {authorities?.account_auth.map((singleAuthority, index) =>
-              renderAuthority(
-                singleAuthority[0] || "",
-                singleAuthority[1] || "",
-                true,
-                index
-              )
-            )}
-            {authorities?.key_auth.map((singleAuthority, index) =>
-              renderAuthority(
-                singleAuthority[0] || "",
-                singleAuthority[1] || "",
-                false,
-                index + authorities?.account_auth.length
-              )
-            )}
+            {authorities?.account_auth.map((singleAuthority, index) => (
+              <Fragment key={index}>
+                {renderAuthority(
+                  singleAuthority[0] || "",
+                  singleAuthority[1] || "",
+                  true,
+                  index
+                )}
+              </Fragment>
+            ))}
+            {authorities?.key_auth.map((singleAuthority, index) => (
+              <Fragment key={index}>
+                {renderAuthority(
+                  singleAuthority[0] || "",
+                  singleAuthority[1] || "",
+                  false,
+                  index + authorities?.account_auth.length
+                )}
+              </Fragment>
+            ))}
             <TableRow
               className={cn("font-semibold", {
                 "bg-gray-700": shouldMarkThreshold,
