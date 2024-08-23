@@ -6,6 +6,8 @@ import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
 import ProviderCard from "./ProviderCard";
 import ApiCheckDialog from "./ApiCheckDialog";
+import { Card } from "../ui/card";
+import { Badge } from "../ui/badge";
 
 
 export interface ApiChecker {
@@ -71,9 +73,16 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     setIsDialogOpened(false);
   }
 
+  const initializeDefaultChecks = () => {
+    const initialApiChecksByProviders = new Map<string, string[]>();
+    apiList.forEach((api) => {
+      initialApiChecksByProviders.set(api, Array.from(customApiCheckers?.keys() || []));
+    })
+    setApiChecksByProvider(initialApiChecksByProviders);
+  }
+
   useEffect(() => { 
     if (hc && hiveChain && !chainInitialized) {
-      const checks = customApiCheckers?.get("find_account");
       Array.from(customApiCheckers?.entries() || []).forEach(([key, checker]) => {
         hc.register(checker.method, checker.params, checker.validatorFunction, apiList);
       })
@@ -84,11 +93,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
 
   useEffect(() => {
     if (apiChecksByProvider.size === 0) {
-      const initialApiChecksByProviders = new Map<string, string[]>();
-      apiList.forEach((api) => {
-        initialApiChecksByProviders.set(api, Array.from(customApiCheckers?.keys() || []));
-      })
-      setApiChecksByProvider(initialApiChecksByProviders);
+      initializeDefaultChecks();
     }
   }, [customApiCheckers, apiChecksByProvider])
 
@@ -113,7 +118,17 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   }
   return (
     <div className={cn([className])}>
-      {scoredEndpoints.map((scoredEndpoint, index) => renderProvider(scoredEndpoint, index)
+      <Card className="grid grid-cols-2 grid-rows-2 my-1 p-2">
+        <div className="row-start-1 col-span-2 flex justify-center">Block Explorer node's healthchecker</div>
+        <div className="row-start-2">
+          {Array.from(customApiCheckers?.entries() || []).map(([key, apiChecker]) => (
+            <Badge variant={"outline"}>{apiChecker.title}</Badge>
+          ))}
+        </div>
+        <Button onClick={() => {initializeDefaultChecks()}}>Restore default</Button>
+      </Card>
+      {scoredEndpoints.map(
+        (scoredEndpoint, index) => renderProvider(scoredEndpoint, index)
       )}
       <ApiCheckDialog 
         className="bg-white"
