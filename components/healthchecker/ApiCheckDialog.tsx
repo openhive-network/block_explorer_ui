@@ -66,9 +66,9 @@ const ApiCheckDialog: React.FC<ApiCheckDialogProps> = ({
         <DialogHeader><DialogTitle>{openedProvider}</DialogTitle></DialogHeader>
         <div>
           {Array.from(checksList?.entries() || []).map(([key, check]) => (
-            <div className="flex">
-              <div>{check.title}</div>
-              <Toggle checked={localChecks[key]} onClick={() => {changeToggle(key)}}  />
+            <div className="flex mb-2 items-center">
+              <Toggle className="bg-black rounded-full" checked={localChecks[key]} onClick={() => {changeToggle(key)}}  />
+              <div className="ml-2">{check.title}</div>
             </div>
           ))}
           <Button onClick={confirm}>Confirm</Button>
