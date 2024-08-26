@@ -18,7 +18,7 @@ export const convertVestsToHP = (
   if (!hivechain || !vests || !totalVestingFundHive || !totalVestingShares)
     return;
 
-  const formattedVests = splitStringValue(vests, "VESTS");
+  const formattedVests = splitStringValue(vests.replace(/,/g, ""), "VESTS");
   const formattedTotalVestingFundHive = splitStringValue(
     totalVestingFundHive,
     "HIVE"
