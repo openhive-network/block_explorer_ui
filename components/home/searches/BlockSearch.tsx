@@ -92,7 +92,7 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
         accountName !== "" ? trimAccountName(accountName) : undefined,
       operationTypes: selectedOperationTypes.length
         ? selectedOperationTypes
-        : operationsTypes?.map((opType) => opType.op_type_id),
+        : undefined,
       fromBlock: payloadFromBlock,
       toBlock: payloadToBlock,
       startDate: payloadStartDate,

@@ -75,7 +75,7 @@ class FetchingService {
   ): Promise<Hive.TotalOperationsResponse> {
     const requestParams: Hive.RestGetOperationsByBlockParamsReq = {
       blockNumber,
-      "operation-types": filter,
+      "operation-types": filter?.join(","),
       "account-name": accountName,
       page,
       "page-size": config.blockPagePaginationSize,
@@ -114,7 +114,7 @@ class FetchingService {
   ): Promise<Hive.AccountOperationsResponse> {
     const requestParams: Hive.RestGetOpsByAccountParamsReq = {
       accountName: accountOperationsProps.accountName,
-      "operation-types": accountOperationsProps.operationTypes,
+      "operation-types": accountOperationsProps.operationTypes?.join(","),
       page: accountOperationsProps.pageNumber,
       "page-size": config.standardPaginationSize,
       "data-size-limit": config.opsBodyLimit,
@@ -188,7 +188,7 @@ class FetchingService {
     blockSearchProps: Explorer.BlockSearchProps
   ): Promise<Hive.BlockByOpResponse[]> {
     const requestParams: Hive.RestBlockSearchParamsReq = {
-      "operation-types": blockSearchProps.operationTypes || [],
+      "operation-types": blockSearchProps.operationTypes?.join(','),
       "account-name": blockSearchProps?.accountName,
       direction: "desc",
       "from-block": blockSearchProps.fromBlock,
@@ -221,7 +221,7 @@ class FetchingService {
   ): Promise<Hive.CommentOperationResponse> {
     const requestParams: Hive.RestGetCommentOperationsParamsReq = {
       accountName: commentSearchProps.accountName,
-      "operation-types": commentSearchProps.operationTypes,
+      "operation-types": commentSearchProps.operationTypes?.join(","),
       page: commentSearchProps.pageNumber,
       permlink: commentSearchProps.permlink,
       "page-size": config.standardPaginationSize,
