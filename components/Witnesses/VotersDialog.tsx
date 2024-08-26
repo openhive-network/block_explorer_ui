@@ -18,6 +18,7 @@ type VotersDialogProps = {
   accountName: string;
   isVotersOpen: boolean;
   changeVotersDialogue: (isOpen: boolean) => void;
+  liveDataEnabled: boolean;
 };
 
 const tableColums = [
@@ -31,6 +32,8 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
   accountName,
   isVotersOpen,
   changeVotersDialogue,
+  liveDataEnabled,
+  
 }) => {
   const [showHivePower, setShowHivePower] = useState<boolean>(false);
   const [sortKey, setSortKey] = useState<string>("vests");
@@ -40,7 +43,8 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
     accountName,
     isVotersOpen,
     isAsc,
-    sortKey
+    sortKey,
+    liveDataEnabled,
   );
   const changeSorter = (newIsAsc: boolean, newSortKey: string) => {
     const isAscForChange = newSortKey === sortKey ? newIsAsc : false;

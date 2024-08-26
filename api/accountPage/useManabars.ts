@@ -3,8 +3,9 @@ import fetchingService from "@/services/FetchingService";
 import Explorer from "@/types/Explorer";
 import Long from "long";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
+import { config } from "@/Config";
 
-const useManabars = (accountName: string) => {
+const useManabars = (accountName: string, liveDataEnabled: boolean) => {
   const {
     data: manabarsData,
     isLoading: manabarsDataLoading,
@@ -12,6 +13,7 @@ const useManabars = (accountName: string) => {
   }: UseQueryResult<Explorer.Manabars | null> = useQuery({
     queryKey: ["manabars", accountName],
     queryFn: () => getManabars(accountName),
+    refetchInterval: liveDataEnabled ? config.accountRefreshInterval : false,
     refetchOnWindowFocus: false,
   });
 

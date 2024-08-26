@@ -1,9 +1,13 @@
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
+import { config } from "@/Config";
 
 const useVestingDelegations = (
-  delegatorAccount: string
+  delegatorAccount: string,
+  startAccount: string | null,
+  limit: number,
+  liveDataEnabled: boolean
 ) => {
   const {
     data: vestingDelegationsData,
@@ -23,6 +27,7 @@ const useVestingDelegations = (
       );
       return sortedData;
     },
+    
     refetchOnWindowFocus: false,
   });
 
