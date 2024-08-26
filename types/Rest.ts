@@ -1,5 +1,12 @@
 import Hive from "./Hive";
 
+
+/**
+ * Tree-like structure of data to fetched, used by Wax to connect with REST API.
+ * Params and results are typed as classes.
+ * If responseArray = true, the response is in array format.
+ * {} in URL are dynamic params. The name is important and should be synchronized with params types.
+ */
 export const extendedRest = { 
   hafbe: {
     "last-synced-block": {
