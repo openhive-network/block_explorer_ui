@@ -272,7 +272,7 @@ namespace Hive {
   
   export class RestGetOpsByAccountParamsReq {
     accountName!: string;
-    "operation-types"?: number[];
+    "operation-types"?: string;
     page?: number;
     "page-size"?: number;
     "data-size-limit"?: number;
@@ -356,7 +356,7 @@ namespace Hive {
   
   export class RestGetCommentOperationsParamsReq {
     accountName!: string;
-    "operation-types"?: number[];
+    "operation-types"?: string;
     page?: number;
     permlink?: string;
     "page-size"?: number;
@@ -374,7 +374,7 @@ namespace Hive {
   }
   
   export class RestBlockSearchParamsReq {
-    "operation-types"?: number[];
+    "operation-types"?: string;
     page?: number;
     "result-limit"?: number;
     direction!: Hive.Direction;
@@ -395,7 +395,7 @@ namespace Hive {
   
   export class RestGetOperationsByBlockParamsReq {
     blockNumber!: number;
-    "operation-types"?: number[];
+    "operation-types"?: string;
     "account-name"?: string;
     page?: number;
     "page-size"?: number;
