@@ -67,6 +67,7 @@ const Context: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   return (
     <>
+    {!!hiveChain &&
       <QueryClientProvider client={queryClient}>
         <UserSettingsContext.Provider
           value={{ settings: userSettings, setSettings: setUserSettings }}
@@ -81,7 +82,7 @@ const Context: React.FC<{ children: ReactNode }> = ({ children }) => {
                   setNodeAddress: writeNodeAddressToLocalStorage,
                 }}
               >
-                <HiveChainContext.Provider value={{ hiveChain, setHiveChain }}>
+                <HiveChainContext.Provider value={{ hiveChain }}>
                   <Layout>{children}</Layout>
                   <ReactQueryDevtools initialIsOpen={false} />
                 </HiveChainContext.Provider>
@@ -90,6 +91,7 @@ const Context: React.FC<{ children: ReactNode }> = ({ children }) => {
           </HeadBlockContextProvider>
         </UserSettingsContext.Provider>
       </QueryClientProvider>
+    }
     </>
   );
 };
