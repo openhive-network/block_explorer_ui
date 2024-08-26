@@ -39,32 +39,30 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
     index: number
   ) => {
     return (
-      <>
-        <TableRow
-          key={index}
-          className={cn({
-            "bg-gray-700": index % 2 === 0,
-          })}
-        >
-          <TableCell className="cursor-pointer">
-            {isAccount ? (
-              <Link
-                className=" text-explorer-turquoise flex"
-                href={`/@${content}`}
-              >
-                <User className="w-4 mr-2" />
-                <span>{content}</span>
-              </Link>
-            ) : (
-              <CopyToKeyboard
-                value={content}
-                displayValue={cutPublicKey(content)}
-              />
-            )}
-          </TableCell>
-          <TableCell className="w-1/5">{weight}</TableCell>
-        </TableRow>
-      </>
+      <TableRow
+        key={index}
+        className={cn({
+          "bg-gray-700": index % 2 === 0,
+        })}
+      >
+        <TableCell className="cursor-pointer">
+          {isAccount ? (
+            <Link
+              className=" text-explorer-turquoise flex"
+              href={`/@${content}`}
+            >
+              <User className="w-4 mr-2" />
+              <span>{content}</span>
+            </Link>
+          ) : (
+            <CopyToKeyboard
+              value={content}
+              displayValue={cutPublicKey(content)}
+            />
+          )}
+        </TableCell>
+        <TableCell className="w-1/5">{weight}</TableCell>
+      </TableRow>
     );
   };
 
