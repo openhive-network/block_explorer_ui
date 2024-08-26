@@ -27,6 +27,7 @@ type VotersDialogProps = {
   accountName: string;
   isVotesHistoryOpen: boolean;
   changeVoteHistoryDialogue: (isOpen: boolean) => void;
+  liveDataEnabled: boolean;
 };
 
 const tableColums = [
@@ -42,6 +43,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
   accountName,
   isVotesHistoryOpen,
   changeVoteHistoryDialogue,
+  liveDataEnabled,
 }) => {
   const [showHivePower, setShowHivePower] = useState<boolean>(false);
   const [page, setPage] = useState(1);
@@ -55,7 +57,8 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
     accountName,
     isVotesHistoryOpen,
     fromDate,
-    toDate
+    toDate,
+    liveDataEnabled,
   );
 
   useEffect(() => {

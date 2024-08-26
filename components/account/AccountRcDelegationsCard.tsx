@@ -14,6 +14,7 @@ type RcDelegation = {
 type AccountRcDelegationsCardProps = {
   delegatorAccount: string;
   limit: number;
+  liveDataEnabled: boolean;
 };
 
 const buildTableBody = (delegations: RcDelegation[]) => {
@@ -46,13 +47,14 @@ const buildTableBody = (delegations: RcDelegation[]) => {
 const AccountRcDelegationsCard: React.FC<AccountRcDelegationsCardProps> = ({
   delegatorAccount,
   limit,
+  liveDataEnabled,
 }) => {
   const [isPropertiesHidden, setIsPropertiesHidden] = useState(true);
   const {
     rcDelegationsData,
     isRcDelegationsLoading,
     isRcDelegationsError,
-  } = useRcDelegations(delegatorAccount, limit);
+  } = useRcDelegations(delegatorAccount, limit, liveDataEnabled);
 
   if (isRcDelegationsLoading) {
     return <div></div>;

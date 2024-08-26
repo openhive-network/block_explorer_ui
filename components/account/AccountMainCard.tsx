@@ -6,6 +6,7 @@ import { Loader2 } from "lucide-react";
 import Explorer from "@/types/Explorer";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
+import { Toggle } from "../ui/toggle";
 
 interface AccountMainCardProps {
   accountDetails: Explorer.FormattedAccountDetails;
@@ -14,6 +15,8 @@ interface AccountMainCardProps {
   isWitnessLoading?: boolean;
   openVotersModal: () => void;
   openVotesHistoryModal: () => void;
+  liveDataEnabled: boolean;
+  changeLiveRefresh: () => void;
 }
 
 const AccountMainCard: React.FC<AccountMainCardProps> = ({
@@ -23,9 +26,11 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
   isWitnessLoading,
   openVotersModal,
   openVotesHistoryModal,
+  liveDataEnabled,
+  changeLiveRefresh,
 }) => {
 
-  const { manabarsData } = useManabars(accountName);
+  const { manabarsData } = useManabars(accountName, liveDataEnabled);
 
   return (
     <Card data-testid="account-details">
@@ -49,6 +54,12 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
             />
           </span>
         </div>
+        <Toggle
+          checked={liveDataEnabled}
+          onClick={changeLiveRefresh}
+          className="text-base"
+          leftLabel="Live Data"
+        />
       </CardHeader>
       <CardContent>
         {!!manabarsData ? (

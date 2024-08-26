@@ -10,12 +10,14 @@ import { cn } from "@/lib/utils";
 
 interface AccountMainCardProps {
   accountName: string;
+  liveDataEnabled: boolean;
 }
 
 const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
   accountName,
+  liveDataEnabled,
 }) => {
-  const { accountAuthoritiesData } = useAccountAuthorities(accountName);
+  const { accountAuthoritiesData } = useAccountAuthorities(accountName, liveDataEnabled);
 
   const [isPropertiesHidden, setIsPropertiesHidden] = useState<boolean>(true);
 

@@ -1,11 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
+import { config } from "@/Config";
 
 const useVestingDelegations = (
   delegatorAccount: string,
   startAccount: string | null,
-  limit: number
+  limit: number,
+  liveDataEnabled: boolean
 ) => {
   const {
     data: vestingDelegationsData,
@@ -25,6 +27,7 @@ const useVestingDelegations = (
           a.delegatee.toLowerCase().localeCompare(b.delegatee.toLowerCase())
       );
     },
+    
     refetchOnWindowFocus: false,
   });
 

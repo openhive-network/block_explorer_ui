@@ -12,16 +12,21 @@ import useWitnessDetails from "@/api/common/useWitnessDetails";
 import AccountVestingDelegationsCard from "./AccountVestingDelegationsCard";
 import AccountRcDelegationsCard from "./AccountRcDelegationsCard";
 import AccountBalanceCard from "./AccountBalanceCard";
+import { QueryObserverResult } from "@tanstack/react-query";
+import Hive from "@/types/Hive"; 
 import { config } from "@/Config";
 
 interface AccountDetailsSectionProps {
   accountName: string;
+  refetchAccountOperations: QueryObserverResult<Hive.AccountOperationsResponse>["refetch"]
+  liveDataEnabled: boolean;
+  changeLiveRefresh: () => void;
 }
 
 const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
-  accountName,
+  accountName, refetchAccountOperations, liveDataEnabled, changeLiveRefresh,
 }) => {
-  const { accountDetails } = useAccountDetails(accountName);
+  const { accountDetails } = useAccountDetails(accountName, liveDataEnabled);
   const { witnessDetails, isWitnessDetailsLoading, isWitnessDetailsError } =
     useWitnessDetails(accountName, !!accountDetails?.is_witness);
 
@@ -48,6 +53,8 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
         openVotesHistoryModal={handleOpenVotesHistoryModal}
         isWitnessError={isWitnessDetailsError}
         isWitnessLoading={isWitnessDetailsLoading}
+        liveDataEnabled={liveDataEnabled}
+        changeLiveRefresh={changeLiveRefresh}
       />
       <AccountBalanceCard
         header="Wallet"
@@ -67,7 +74,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
         json={accountDetails.posting_json_metadata}
         showCollapseButton={true}
       />
-      <AccountAuthoritiesCard accountName={accountName} />
+      <AccountAuthoritiesCard accountName={accountName} liveDataEnabled={liveDataEnabled}/>
       {!isWitnessDetailsError && (
         <AccountDetailsCard
           header="Witness Properties"
@@ -79,20 +86,24 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
         delegatorAccount={accountName}
         startAccount={null}
         limit={config.maxDelegatorsCount}
+        liveDataEnabled={liveDataEnabled}
       />
       <AccountRcDelegationsCard
         delegatorAccount={accountName}
         limit={config.maxDelegatorsCount}
+        liveDataEnabled={liveDataEnabled}
       />
       <VotersDialog
         accountName={accountName}
         isVotersOpen={isVotersModalOpen}
         changeVotersDialogue={handleOpenVotersModal}
+        liveDataEnabled={liveDataEnabled}
       />
       <VotesHistoryDialog
         accountName={accountName}
         isVotesHistoryOpen={isVotesHistoryModalOpen}
         changeVoteHistoryDialogue={handleOpenVotesHistoryModal}
+        liveDataEnabled={liveDataEnabled}
       />
     </>
   );
