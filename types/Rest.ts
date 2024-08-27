@@ -9,14 +9,16 @@ import Hive from "./Hive";
  */
 export const extendedRest = { 
   hafbe: {
-    "last-synced-block": {
+    lastSyncedBlock: {
       params: undefined,
-      result: Number
+      result: Number,
+      urlPath: "last-synced-block"
     },
-    "block-numbers": {
+    blockNumbers: {
       params: Hive.RestBlockSearchParamsReq,
       result: Hive.BlockByOpResponse,
-      responseArray: true
+      responseArray: true,
+      urlPath: "block-numbers"
     },
     witnesses: {
       params: Hive.RestGetWitnessesParamsReq,
@@ -44,17 +46,16 @@ export const extendedRest = {
       params: undefined,
       result: String
     },
-    "input-type": {
-      inputType: {
-        params: Hive.RestGetInputTypeParamsReq,
-        result: Hive.InputTypeResponse,
-        urlPath: "{inputType}"
-      }
+    inputType: {
+      params: Hive.RestGetInputTypeParamsReq,
+      result: Hive.InputTypeResponse,
+      urlPath: "input-type/{inputType}"
     },
-    "operation-type-counts": {
+    operationTypeCounts: {
       params: Hive.RestGetLastOperationTypeCountsParamsReq,
       result: Hive.LastBlocksTypeResponse,
       responseArray: true,
+      urlPath: "operation-type-counts"
     },
     accounts: {
       account: {
@@ -98,19 +99,17 @@ export const extendedRest = {
         urlPath: "{transactionId}"
       }
     },
-    "operation-types": {
-      types: {
-        params: undefined,
-        result: Hive.OperationPattern,
-        responseArray: true,
-        urlPath: ""
-      },
-      operationKeys: {
-        params: Hive.RestGetOperationKeysParamsReq,
-        result: Array<string>,
-        responseArray: true,
-        urlPath: "{operationTypeId}/keys"
-      }
+    operationTypes: {
+      params: undefined,
+      result: Hive.OperationPattern,
+      responseArray: true,
+      urlPath: "operation-types"
+    },
+    operationTypesKeys: {
+      params: Hive.RestGetOperationKeysParamsReq,
+      result: Array<string>,
+      responseArray: true,
+      urlPath: "operation-types/{operationTypeId}/keys"
     },
     operations: {
       byId: {
@@ -136,15 +135,16 @@ export const extendedRest = {
       params: undefined,
       result: Number,
     },
-    "global-state": {
+    globalState: {
       params: Hive.RestGetBlockGlobalStateParamsReq,
-      result: Hive.BlockDetails
+      result: Hive.BlockDetails,
+      urlPath: "global-state"
     },
-    "block-number-by-date": {
+    blockNumberByDate: {
       byTime: {
         params: Hive.RestGetBlockByTimeParamsReq,
         result: Number,
-        urlPath: "{date}"
+        urlPath: "block-number-by-date/{date}"
       }
     }
   }
