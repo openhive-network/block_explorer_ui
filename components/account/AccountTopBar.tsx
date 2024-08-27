@@ -10,23 +10,22 @@ import {
 } from "@/lib/utils";
 import CustomPagination from "../CustomPagination";
 import { Button } from "../ui/button";
+import useAccountOperationTypes from "@/api/accountPage/useAccountOperationTypes";
 
 interface AccountTopBarProps {
+  accountName: string;
   page: number;
   setPage: (page: number | undefined) => void;
-  isLastPage: boolean;
   accountOperations: Hive.OperationsCount;
-  accountOperationTypes: Hive.OperationPattern[];
   onOperationsSelect: (filters: boolean[]) => void;
   selectedFilters: boolean[];
 }
 
 const AccountTopBar: React.FC<AccountTopBarProps> = ({
+  accountName,
   page,
   setPage,
-  isLastPage,
   accountOperations,
-  accountOperationTypes,
   onOperationsSelect,
   selectedFilters,
 }) => {
@@ -37,6 +36,9 @@ const AccountTopBar: React.FC<AccountTopBarProps> = ({
   const onLatestButtonClick = () => {
     setPage(undefined);
   };
+
+  const { accountOperationTypes } =
+    useAccountOperationTypes(accountName);
 
   return (
     <div

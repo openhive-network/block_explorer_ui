@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import useAccountDetails from "@/api/accountPage/useAccountDetails";
 import useAccountOperations from "@/api/accountPage/useAccountOperations";
-import AccountPagination from "@/components/account/AccountTopBar";
+import AccountTopBar from "@/components/account/AccountTopBar";
 import useAccountOperationTypes from "@/api/accountPage/useAccountOperationTypes";
 import {
   useMediaQuery,
@@ -106,8 +106,6 @@ export default function Account() {
   }
   const { accountOperations, isAccountOperationsLoading, refetchAccountOperations } =
     useAccountOperations(accountOperationsProps, liveDataEnabled);
-  const { accountOperationTypes } =
-  useAccountOperationTypes(accountNameFromRoute);
 
   const formattedAccountOperations = useOperationsFormatter(
     accountOperations
@@ -260,14 +258,13 @@ export default function Account() {
       </Head>
       <div className="flex items-center justify-end w-full min-h-[64px] bg-explorer-orange -mt-4 px-2 md:mb-4 md:px-8 fixed z-20">
         {accountOperations && (paramsState.page || lastPage) && (
-          <AccountPagination
+          <AccountTopBar
+          accountName={accountNameFromRoute}
             page={paramsState.page ? paramsState.page : lastPage || 0}
             setPage={(page: number | undefined) =>
               setParams({ ...paramsState, page })
             }
-            isLastPage={!paramsState.page}
             accountOperations={accountOperations}
-            accountOperationTypes={accountOperationTypes || []}
             onOperationsSelect={handleOperationTypeChange}
             selectedFilters={filters}
           />
