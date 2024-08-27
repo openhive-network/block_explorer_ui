@@ -11,6 +11,7 @@ import {
 import CustomPagination from "../CustomPagination";
 import { Button } from "../ui/button";
 import useAccountOperationTypes from "@/api/accountPage/useAccountOperationTypes";
+import useOperationsTypes from "@/api/common/useOperationsTypes";
 
 interface AccountTopBarProps {
   accountName: string;

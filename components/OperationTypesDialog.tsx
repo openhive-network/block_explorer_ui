@@ -16,9 +16,10 @@ import { useUserSettingsContext } from "../contexts/UserSettingsContext";
 import { cn } from "@/lib/utils";
 import Chip from "./Chip";
 import { categorizedOperationTypes } from "@/utils/CategorizedOperationTypes";
+import Explorer from "@/types/Explorer";
 
 type OperationTypesDialogProps = {
-  operationTypes: Hive.OperationPattern[] | undefined;
+  operationTypes?: Explorer.ExtendedOperationTypePattern[];
   triggerTitle: string;
   selectedOperations: number[];
   buttonClassName: string;
@@ -55,10 +56,12 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
 
   if (!operationTypes || !operationTypes.length) return;
 
-  const virtualOperations = operationTypes.filter(
+  const nonDisabledOperationTypes = operationTypes.filter(operationType => !operationType.isDisabled);
+
+  const virtualOperations = nonDisabledOperationTypes.filter(
     (operationType) => operationType.is_virtual
   );
-  const nonVirtualOperations = operationTypes.filter(
+  const nonVirtualOperations = nonDisabledOperationTypes.filter(
     (operationType) => !operationType.is_virtual
   );
 
@@ -93,7 +96,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
   };
 
   const selectAll = () => {
-    const allIds = operationTypes.map(
+    const allIds = nonDisabledOperationTypes.map(
       (operationType) => operationType.op_type_id
     );
     setSelectedOperationsIds(allIds);
@@ -117,8 +120,9 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     setSelectedOperationsIds(finaList);
   };
 
-  const selectAllOfCategory = (operationTypes: Hive.OperationPattern[]) => {
-    const operationsIds = operationTypes.map(
+  const selectAllOfCategory = (operationTypes: Explorer.ExtendedOperationTypePattern[]) => {
+    const nonDisabledOperationTypesForCategory = operationTypes.filter(operationType => !operationType.isDisabled);
+    const operationsIds = nonDisabledOperationTypesForCategory.map(
       (operationType) => operationType.op_type_id
     );
     let finaList = [...operationsIds, ...selectedOperationsIds];
@@ -126,7 +130,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     setSelectedOperationsIds(finaList);
   };
 
-  const clearCategory = (operationTypes: Hive.OperationPattern[]) => {
+  const clearCategory = (operationTypes: Explorer.ExtendedOperationTypePattern[]) => {
     const operationsIds = operationTypes.map(
       (operationType) => operationType.op_type_id
     );
@@ -137,7 +141,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
   };
 
   const invertSelection = () => {
-    const allIds = operationTypes.map(
+    const allIds = nonDisabledOperationTypes.map(
       (operationType) => operationType.op_type_id
     );
     const finaList = allIds.filter(
@@ -148,38 +152,40 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     setSelectedOperationsIds(finaList);
   };
 
-  const renderOperation = (operation: Hive.OperationPattern) => {
+  const renderOperationType = (operationType: Explorer.ExtendedOperationTypePattern) => {
     return (
       <li
-        onClick={() => onFiltersSelect(operation.op_type_id)}
-        key={operation.op_type_id}
+        onClick={() => onFiltersSelect(operationType.op_type_id)}
+        key={operationType.op_type_id}
         className="col-span-3 pl-2 md:col-span-1 flex items-center font-bold text-base rounded-lg bg-inherit hover:border-2-gray group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white "
       >
         <Input
           type="checkbox"
-          checked={selectedOperationsIds.includes(operation.op_type_id)}
+          checked={selectedOperationsIds.includes(operationType.op_type_id)}
           name="bordered-checkbox"
           className=" w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 "
           {...{
-            "data-testid": `operation-type-checkbox-${operation.operation_name}`,
+            "data-testid": `operation-type-checkbox-${operationType.operation_name}`,
           }}
-          onChange={() => onFiltersSelect(operation.op_type_id)}
+          onChange={() => onFiltersSelect(operationType.op_type_id)}
+          disabled={operationType.isDisabled}
         />
         <Label
           htmlFor="bordered-checkbox-1"
           className={cn(
             "p-1 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300 whitespace-nowrap overflow-hidden text-ellipsis",
             {
-              "text-sky-900 dark:text-sky-200": operation.is_virtual,
+              "text-sky-900 dark:text-sky-200": operationType.is_virtual,
+              "opacity-50": operationType.isDisabled
             }
           )}
           {...{
-            "data-testid": `operation-type-label-${operation.operation_name}`,
+            "data-testid": `operation-type-label-${operationType.operation_name}`,
           }}
         >
           {settings.rawJsonView
-            ? operation.operation_name
-            : getOperationTypeForDisplay(operation.operation_name)}
+            ? operationType.operation_name
+            : getOperationTypeForDisplay(operationType.operation_name)}
         </Label>
       </li>
     );
@@ -192,13 +198,11 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           (operationType) => operationType.operation_name === name
         )
       )
-      .filter((operationType) => operationType) as Hive.OperationPattern[];
-    if (!operations.length) {
-      return null;
-    }
+      .filter((operationType) => operationType) as Explorer.ExtendedOperationTypePattern[];
     const sortedOperations = operations.sort((a, b) =>
       a?.operation_name.localeCompare(b?.operation_name)
     );
+    const nonDisabledOperationTypesForSection = operations.filter((operationType => !operationType.isDisabled));
     return (
       <div
         className=" border-t px-2"
@@ -212,10 +216,10 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
             <span>{sectionName}</span>
           </div>
           <div>
-            <Button onClick={() => selectAllOfCategory(operations)}>
+            <Button disabled={!nonDisabledOperationTypesForSection.length} onClick={() => selectAllOfCategory(operations)}>
               Select
             </Button>
-            <Button onClick={() => clearCategory(operations)}>Clear</Button>
+            <Button disabled={!nonDisabledOperationTypesForSection.length} onClick={() => clearCategory(operations)}>Clear</Button>
           </div>
         </div>
         <ul
@@ -223,7 +227,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           data-testid="virtual-operations-list"
         >
           {sortedOperations.map(
-            (operation) => !!operation && renderOperation(operation)
+            (operation) => !!operation && renderOperationType(operation)
           )}
         </ul>
       </div>
