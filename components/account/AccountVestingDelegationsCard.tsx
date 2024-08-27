@@ -1,11 +1,13 @@
-import { useState, Fragment } from "react";
+import { useState, Fragment, ReactNode } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableRow, TableCell } from "../ui/table";
 import { cn } from "@/lib/utils";
 import useVestingDelegations from "@/api/common/useVestingDelegations";
-import { formatNumber } from "@/lib/utils";
+import { convertVestsToHP } from "@/utils/Calculations";
+import { useHiveChainContext } from "@/contexts/HiveChainContext";
+import useDynamicGlobal from "@/api/homePage/useDynamicGlobal";
 
 type VestingDelegation = {
   delegatee: string;
@@ -18,9 +20,13 @@ type AccountVestingDelegationsCardProps = {
   limit: number;
 };
 
-const buildTableBody = (delegations: VestingDelegation[]) => {
+const buildTableBody = (
+  delegations: VestingDelegation[],
+  formatHP: (vests: string) => ReactNode
+) => {
   return delegations.map((delegation: VestingDelegation, index: number) => {
     const isLast = index === delegations.length - 1;
+
     return (
       <Fragment key={index}>
         <TableRow
@@ -34,57 +40,73 @@ const buildTableBody = (delegations: VestingDelegation[]) => {
         >
           <TableCell>{index + 1}</TableCell>
           <TableCell className="text-right">
-            <Link className="text-blue-400" href={`/@${delegation.delegatee}`}>
+            <Link
+              className="text-blue-400"
+              href={`/@${delegation.delegatee}`}
+            >
               {delegation.delegatee}
             </Link>
           </TableCell>
-          <TableCell className="text-right">{formatNumber(parseFloat(delegation.vesting_shares),true, true)}</TableCell>
+          <TableCell className="text-right">
+            {formatHP(delegation.vesting_shares)}
+          </TableCell>
         </TableRow>
       </Fragment>
     );
   });
 };
-const AccountVestingDelegationsCard: React.FC<AccountVestingDelegationsCardProps> = ({
-  delegatorAccount,
-  startAccount,
-  limit,
-}) => {
+const AccountVestingDelegationsCard: React.FC<
+  AccountVestingDelegationsCardProps
+> = ({ delegatorAccount, startAccount, limit }) => {
   const [isPropertiesHidden, setIsPropertiesHidden] = useState(true);
+  const { hiveChain } = useHiveChainContext();
+  const { dynamicGlobalData } = useDynamicGlobal();
+
+  const { vestingDelegationsData: delegations } = useVestingDelegations(
+    delegatorAccount,
+    startAccount,
+    limit
+  );
+
+  if (!hiveChain || !dynamicGlobalData || !delegations || !delegations.length)
+    return;
+
   const {
-    vestingDelegationsData,
-    isVestingDelegationsLoading,
-    isVestingDelegationsError,
-  } = useVestingDelegations(delegatorAccount, startAccount, limit);
-
-  if (isVestingDelegationsLoading) {
-    return <div></div>;
-  }
-
-  if (isVestingDelegationsError) {
-    return <div></div>;
-  }
-
-  const delegations = vestingDelegationsData;
-  if (!delegations?.length) return <div className="text-black"></div>;
+    headBlockDetails: { totalVestingFundHive, totalVestingShares },
+  } = dynamicGlobalData;
 
   const handlePropertiesVisibility = () => {
     setIsPropertiesHidden(!isPropertiesHidden);
   };
 
+  const formatHP = (vests: string) => {
+    const formattedHP = convertVestsToHP(
+      hiveChain,
+      vests,
+      totalVestingFundHive,
+      totalVestingShares
+    );
+
+    return formattedHP;
+  };
+
   return (
-    <Card data-testid="vesting-delegations-dropdown" className="overflow-hidden">
+    <Card
+      data-testid="vesting-delegations-dropdown"
+      className="overflow-hidden"
+    >
       <CardHeader className="p-0">
         <div
           onClick={handlePropertiesVisibility}
           className="h-full flex justify-between align-center p-2 hover:bg-slate-600 cursor-pointer px-4"
         >
-          <div className="text-lg">Vesting Delegations</div>
+          <div className="text-lg">HP Delegations</div>
           {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
         </div>
       </CardHeader>
       <CardContent hidden={isPropertiesHidden}>
         <Table>
-          <TableBody>{buildTableBody(delegations)}</TableBody>
+          <TableBody>{buildTableBody(delegations, formatHP)}</TableBody>
         </Table>
       </CardContent>
     </Card>
