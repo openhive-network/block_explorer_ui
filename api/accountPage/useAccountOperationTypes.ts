@@ -1,25 +1,26 @@
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
-import Hive from "@/types/Hive";
 import { useOperationTypesContext } from "@/contexts/OperationsTypesContext";
+import Explorer from "@/types/Explorer";
 
 const useAccountOperationTypes = (accountName: string) => {
   const {operationsTypes} = useOperationTypesContext();
 
-  const selectFunction = (selectedTypes: number[]): Hive.OperationPattern[] => {
+  const selectFunction = (selectedTypes: number[]): Explorer.ExtendedOperationTypePattern[] => {
     if (!operationsTypes) return [];
-    const operationTypesMap = new Map<number, Hive.OperationPattern>();
-    operationsTypes.forEach((type) => {
-      operationTypesMap.set(type.op_type_id, type);
-    })
-    return selectedTypes.map((selectedType) => operationTypesMap.get(selectedType)) as Hive.OperationPattern[];
+    const extendedOperationTypes = operationsTypes.map((operationType) =>
+      selectedTypes.includes(operationType.op_type_id)
+        ? {...operationType}
+        : { ...operationType, isDisabled: true }
+    );
+    return extendedOperationTypes;
   }
 
   const {
     data: accountOperationTypes,
     isLoading: isAccountOperationTypesLoading,
     isError: isAccountOperationTypesError,
-  }: UseQueryResult<Hive.OperationPattern[]> = useQuery({
+  }: UseQueryResult<Explorer.ExtendedOperationTypePattern[]> = useQuery({
     queryKey: ["account_operation_types", accountName],
     queryFn: () => fetchingService.getAccOpTypes(accountName),
     refetchOnWindowFocus: false,
