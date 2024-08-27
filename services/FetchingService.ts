@@ -46,7 +46,7 @@ class FetchingService {
   }
 
   async getHafbeLastSyncedBlock(): Promise<number> {
-    return await this.extendedHiveChain!.restApi.hafbe["last-synced-block"]();
+    return await this.extendedHiveChain!.restApi.hafbe.lastSyncedBlock();
   }
 
   async getBlock(blockNumber: number): Promise<Hive.BlockDetails> {
@@ -54,15 +54,15 @@ class FetchingService {
   }
 
   async getBlockGlobalState(blockNumber: number): Promise<Hive.BlockDetails> {
-    return await this.extendedHiveChain!.restApi.hafah["global-state"]({"block-num": blockNumber});
+    return await this.extendedHiveChain!.restApi.hafah.globalState({"block-num": blockNumber});
   }
 
   async getLastBlocks(limit: number): Promise<Hive.LastBlocksTypeResponse[]> {
-    return await this.extendedHiveChain!.restApi.hafbe["operation-type-counts"]({"result-limit": limit});
+    return await this.extendedHiveChain!.restApi.hafbe.operationTypeCounts({"result-limit": limit});
   }
 
   async getInputType(input: string): Promise<Hive.InputTypeResponse> {
-    return await this.extendedHiveChain!.restApi.hafbe["input-type"].inputType({inputType: input});
+    return await this.extendedHiveChain!.restApi.hafbe.inputType({inputType: input});
   }
 
   async getOpsByBlock(
@@ -156,7 +156,7 @@ class FetchingService {
 
   async getOperationTypes(
   ): Promise<Hive.OperationPattern[]> {
-    return await this.extendedHiveChain!.restApi.hafah["operation-types"].types();
+    return await this.extendedHiveChain!.restApi.hafah.operationTypes();
   }
 
   async getWitness(witnessName: string): Promise<Hive.Witness> {
@@ -172,11 +172,11 @@ class FetchingService {
   }
 
   async getBlockByTime(date: Date): Promise<number> {
-    return await this.extendedHiveChain!.restApi.hafah["block-number-by-date"].byTime({date: date.toISOString()});
+    return await this.extendedHiveChain!.restApi.hafah.blockNumberByDate.byTime({date: date.toISOString()});
   }
 
   async getOperationKeys(operationTypeId: number): Promise<string[][]> {
-    return await this.extendedHiveChain!.restApi.hafah["operation-types"].operationKeys({operationTypeId});
+    return await this.extendedHiveChain!.restApi.hafah.operationTypesKeys({operationTypeId});
   }
 
   async getBlockByOp(
@@ -193,7 +193,7 @@ class FetchingService {
       "result-limit": blockSearchProps.limit,
       "path-filter": createPathFilterString(blockSearchProps.deepProps.content, blockSearchProps.deepProps.keys)
     }
-    return await this.extendedHiveChain!.restApi.hafbe["block-numbers"](requestParams);
+    return await this.extendedHiveChain!.restApi.hafbe.blockNumbers(requestParams);
   }
 
   async getWitnessVotesHistory(
@@ -236,7 +236,7 @@ class FetchingService {
   async getOperationsCountInBlock(
     blockNumber: number
   ): Promise<Hive.LastBlocksTypeResponse> {
-    return (await this.extendedHiveChain!.restApi.hafbe["operation-type-counts"]({"result-limit": 1, "block-num": blockNumber}))[0];
+    return (await this.extendedHiveChain!.restApi.hafbe.operationTypeCounts({"result-limit": 1, "block-num": blockNumber}))[0];
   }
 
   async getBlockRaw(blockNumber: number): Promise<Hive.RawBlockData> {
