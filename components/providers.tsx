@@ -15,6 +15,7 @@ import { HeadBlockContextProvider } from "@/contexts/HeadBlockContext";
 import Layout from "./layout";
 import useApiAddresses from "@/utils/ApiAddresses";
 import ErrorPage from "@/pages/ErrorPage";
+import { OperationTypesContextProvider } from "@/contexts/OperationsTypesContext";
 
 const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { apiAddress, nodeAddress } = useApiAddresses();
@@ -37,23 +38,24 @@ const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
       }),
     [apiAddress, nodeAddress]
   );
+
   return (
-    <>
-      <QueryClientProvider client={queryClient}>
-        <ErrorBoundary fallback={<ErrorPage />}>
-          <UserSettingsContextProvider>
-            <HeadBlockContextProvider>
+    <QueryClientProvider client={queryClient}>
+      <ErrorBoundary fallback={<ErrorPage />}>
+        <UserSettingsContextProvider>
+          <HeadBlockContextProvider>
+            <OperationTypesContextProvider>
               <AddressesContextProvider>
                 <HiveChainContextProvider>
                   <Layout>{children}</Layout>
                   <ReactQueryDevtools initialIsOpen={false} />
                 </HiveChainContextProvider>
               </AddressesContextProvider>
-            </HeadBlockContextProvider>
-          </UserSettingsContextProvider>
-        </ErrorBoundary>
-      </QueryClientProvider>
-    </>
+            </OperationTypesContextProvider>
+          </HeadBlockContextProvider>
+        </UserSettingsContextProvider>
+      </ErrorBoundary>
+    </QueryClientProvider>
   );
 };
 
