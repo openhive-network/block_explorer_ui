@@ -45,11 +45,30 @@ const defaultParams: BlockSearchParams = {
   setOfKeys: undefined,
 };
 
+const scrollToTrxSection = (trxId: string) => {
+  const element = document.getElementById(trxId);
+  if (!element) return;
+
+  const headerOffset = 60;
+  const elementPosition = element.getBoundingClientRect().top;
+  const offsetPosition = elementPosition + window.scrollY - headerOffset;
+
+  window.scrollTo({
+    top: offsetPosition,
+    behavior: "smooth",
+  });
+
+  return () => {
+    window.scrollTo(undefined);
+  };
+};
+
 export default function Block() {
   const router = useRouter();
   const virtualOpsRef = useRef(null);
 
   const blockId = (router.query.blockId as string)?.replaceAll(",", "");
+  const trxId = router.asPath.split("#")[1];
 
   const { refetch } = useHeadBlockNumber();
 
@@ -197,6 +216,16 @@ export default function Block() {
       setOfKeys: undefined,
     });
   };
+
+  useEffect(() => {
+    if (!blockOperations || !blockOperations?.operations_result?.length) return;
+
+    const timeout = setTimeout(() => {
+      scrollToTrxSection(trxId);
+    });
+
+    return () => clearTimeout(timeout);
+  }, [trxId, blockOperations]);
 
   if ((trxLoading === false && !blockOperations) || blockError) {
     return (
