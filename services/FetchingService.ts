@@ -73,7 +73,7 @@ class FetchingService {
     keyContent?: string,
     setOfKeys?: string[]
   ): Promise<Hive.TotalOperationsResponse> {
-    const requestParams: Hive.RestGetOperationsByBlockParamsReq = {
+    const requestParams: Hive.GetOperationsByBlockParams = {
       blockNumber,
       "operation-types": filter?.join(","),
       "account-name": accountName,
@@ -112,7 +112,7 @@ class FetchingService {
   async getOpsByAccount(
     accountOperationsProps: Explorer.AccountSearchOperationsProps
   ): Promise<Hive.AccountOperationsResponse> {
-    const requestParams: Hive.RestGetOpsByAccountParamsReq = {
+    const requestParams: Hive.GetOpsByAccountParams = {
       accountName: accountOperationsProps.accountName,
       "operation-types": accountOperationsProps.operationTypes?.join(","),
       page: accountOperationsProps.pageNumber,
@@ -136,7 +136,7 @@ class FetchingService {
     sort: string,
     direction: "asc" | "desc"
   ): Promise<Hive.Witness[]> {
-    const requestParams: Hive.RestGetWitnessesParamsReq = {
+    const requestParams: Hive.GetWitnessesParams = {
       limit,
       offset,
       sort,
@@ -187,7 +187,7 @@ class FetchingService {
   async getBlockByOp(
     blockSearchProps: Explorer.BlockSearchProps
   ): Promise<Hive.BlockByOpResponse[]> {
-    const requestParams: Hive.RestBlockSearchParamsReq = {
+    const requestParams: Hive.BlockSearchParams = {
       "operation-types": blockSearchProps.operationTypes?.join(','),
       "account-name": blockSearchProps?.accountName,
       direction: "desc",
@@ -219,7 +219,7 @@ class FetchingService {
   async getCommentOperation(
     commentSearchProps: Explorer.CommentSearchProps
   ): Promise<Hive.CommentOperationResponse> {
-    const requestParams: Hive.RestGetCommentOperationsParamsReq = {
+    const requestParams: Hive.GetCommentOperationsParams = {
       accountName: commentSearchProps.accountName,
       "operation-types": commentSearchProps.operationTypes?.join(","),
       page: commentSearchProps.pageNumber,
