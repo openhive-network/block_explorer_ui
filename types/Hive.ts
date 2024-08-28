@@ -120,14 +120,14 @@ namespace Hive {
     total_pages!: number;
   }
 
-  export class RestGetWitnessesParamsReq {
+  export class GetWitnessesParams {
     limit!: number;
     offset!: number;
     sort!: string;
     direction!: Hive.Direction;
   }
   
-  export class RestGetWitnessParamsReq {
+  export class GetWitnessParams {
     accountName!: string;
   }
   
@@ -152,7 +152,7 @@ namespace Hive {
   
   }
   
-  export class RestGetVotersParamsReq {
+  export class GetVotersParams {
     accountName!: string;
     sort?: string;
     direction?: Hive.Direction;
@@ -171,7 +171,7 @@ namespace Hive {
   }
   
   
-  export class RestGetVotesHistoryParamsReq {
+  export class GetVotesHistoryParams {
     accountName!: string;
     sort?: string;
     direction?: Hive.Direction;
@@ -192,7 +192,7 @@ namespace Hive {
     timestamp!: Date;
   }
   
-  export class RestGetBlockDetailsParamsReq {
+  export class GetBlockDetailsParams {
     blockNumber!: number;
   }
   
@@ -216,11 +216,11 @@ namespace Hive {
     witness_signature!: string;
   }
   
-  export class RestGetBlockGlobalStateParamsReq {
+  export class GetBlockGlobalStateParams {
     "block-num"!: number;
   }
   
-  export class RestGetInputTypeParamsReq {
+  export class GetInputTypeParams {
     inputType!: string;
   }
   
@@ -229,7 +229,7 @@ namespace Hive {
     input_value!: string | string[];
   }
   
-  export class RestGetTransactionParamsReq {
+  export class GetTransactionParams {
     transactionId!: string;
   }
   
@@ -247,11 +247,11 @@ namespace Hive {
     is_virtual!: boolean;
   }
   
-  export class RestGetBlockByTimeParamsReq {
+  export class GetBlockByTimeParams {
     date!: string;
   }
   
-  export class RestGetOperationKeysParamsReq{
+  export class GetOperationKeysParams{
     operationTypeId!: number;
   }
   
@@ -261,16 +261,16 @@ namespace Hive {
     ops_count!: Hive.OperationsByTypeCount[];
   }
   
-  export class RestGetLastOperationTypeCountsParamsReq {
+  export class GetLastOperationTypeCountsParams {
     "block-num"?: number;
     "result-limit"!: number;
   }
   
-  export class RestGetOperationParamsReq {
+  export class GetOperationParams {
     operationId!: number;
   }
   
-  export class RestGetOpsByAccountParamsReq {
+  export class GetOpsByAccountParams {
     accountName!: string;
     "operation-types"?: string;
     page?: number;
@@ -282,7 +282,7 @@ namespace Hive {
     "end-date"?: Date;
   }
   
-  export class RestGetAccountDetailsParamsReq {
+  export class GetAccountDetailsParams {
     accountName!: string;
   }
   
@@ -298,7 +298,7 @@ namespace Hive {
     op_type_id!: number;
   }
   
-  export class RestGetAccountOperationTypes {
+  export class GetAccountOperationTypesParams {
     accountName!: string;
   }
   
@@ -342,7 +342,7 @@ namespace Hive {
     is_witness!: boolean;
   }
   
-  export class RestGetAccountAuthorities {
+  export class GetAccountAuthoritiesParams {
     accountName!: string;
   }
   
@@ -354,7 +354,7 @@ namespace Hive {
     witness_signing!: string;
   }
   
-  export class RestGetCommentOperationsParamsReq {
+  export class GetCommentOperationsParams {
     accountName!: string;
     "operation-types"?: string;
     page?: number;
@@ -373,7 +373,7 @@ namespace Hive {
     total_pages!: number;
   }
   
-  export class RestBlockSearchParamsReq {
+  export class BlockSearchParams {
     "operation-types"?: string;
     page?: number;
     "result-limit"?: number;
@@ -393,7 +393,7 @@ namespace Hive {
     op_type_id!: number[];
   }
   
-  export class RestGetOperationsByBlockParamsReq {
+  export class GetOperationsByBlockParams {
     blockNumber!: number;
     "operation-types"?: string;
     "account-name"?: string;
@@ -404,7 +404,7 @@ namespace Hive {
     "path-filter"?: string;
   }
   
-  export class RestGetRawBlockParamsReq {
+  export class GetRawBlockParams {
     "from-block"!: number;
     "to-block"!: number;
   }
