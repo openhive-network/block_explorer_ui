@@ -27,6 +27,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip";
+import { useRouter } from "next/router";
 
 interface OperationsTableProps {
   operations: Explorer.OperationForTable[];
@@ -78,9 +79,12 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
   unformattedOperations,
   className,
 }) => {
+  const router = useRouter();
   const {
     settings: { rawJsonView, prettyJsonView },
   } = useUserSettingsContext();
+
+  const trxIdFromRoute = router.asPath.split("#")[1] || "";
 
   const [expanded, setExpanded] = useState<number[]>([]);
 
@@ -137,6 +141,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
           return (
             <React.Fragment key={index}>
               <TableRow
+                id={operation.trxId}
                 data-testid="detailed-operation-card"
                 key={index}
                 className="border-b border-gray-700"
@@ -150,14 +155,19 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                 >
                   <Link
                     className="text-explorer-turquoise"
-                    href={`/block/${operation.blockNumber}`}
+                    href={`/block/${operation.blockNumber}${
+                      operation.trxId ? "#" + operation.trxId : ""
+                    }`}
                   >
                     {operation.blockNumber?.toLocaleString()}
                   </Link>
                 </TableCell>
                 <TableCell data-testid="transaction-number">
                   <Link
-                    className="text-explorer-turquoise"
+                    className={cn("text-explorer-turquoise", {
+                      "bg-explorer-ligh-green py-2 px-1 ":
+                        trxIdFromRoute === operation.trxId,
+                    })}
                     href={`/transaction/${operation.trxId}`}
                   >
                     {operation.trxId?.slice(0, 10)}
