@@ -4,12 +4,10 @@ import fetchingService from "@/services/FetchingService";
 
 type HiveChainContextType = {
   hiveChain: IHiveChainInterface | undefined;
-  setHiveChain: (hiveChain: IHiveChainInterface) => void;
 };
 
 export const HiveChainContext = createContext<HiveChainContextType>({
   hiveChain: undefined,
-  setHiveChain: () => {},
 });
 
 export const useHiveChainContext = () => {
@@ -40,7 +38,7 @@ export const HiveChainContextProvider: React.FC<{
   }, []);
 
   return (
-    <HiveChainContext.Provider value={{ hiveChain, setHiveChain }}>
+    <HiveChainContext.Provider value={{ hiveChain }}>
       {children}
     </HiveChainContext.Provider>
   );
