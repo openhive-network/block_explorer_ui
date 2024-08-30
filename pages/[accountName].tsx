@@ -24,6 +24,7 @@ import {
 } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import AccountDetailsSection from "@/components/account/AccountDetailsSection";
+import MobileAccountNameCard from "@/components/account/MobileAccountNameCard";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -266,6 +267,10 @@ export default function Account() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 text-white mx-8 mt-24 lg:mt-16 w-full gap-4 px-2 md:px-4">
+        {isMobile && (
+          <MobileAccountNameCard accountName={accountNameFromRoute} />
+        )}
+
         {renderAccountDetailsView()}
         <div
           className="col-start-1 md:col-start-2 col-span-1 md:col-span-3"
