@@ -267,7 +267,7 @@ namespace Hive {
   }
   
   export class GetOperationParams {
-    operationId!: number;
+    operationId!: string;
   }
   
   export class GetOpsByAccountParams {

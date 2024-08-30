@@ -212,7 +212,7 @@ class FetchingService {
     return await this.extendedHiveChain!.restApi.hafbe.votesHistory({accountName: witnessName, direction, sort, "result-limit": limit, "start-date": fromTime, "end-date": toTime});
   }
 
-  async getOperation(operationId: number): Promise<Hive.OperationResponse> {
+  async getOperation(operationId: string): Promise<Hive.OperationResponse> {
     return await this.extendedHiveChain!.restApi.hafah.operations.byId({operationId});
   }
 

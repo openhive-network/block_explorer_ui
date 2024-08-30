@@ -7,7 +7,7 @@ export default function LongOperation() {
   const router = useRouter();
   const { operationId } = router.query;
   const { operationData, operationDataIsFetched } = useOperation(
-    Number(operationId)
+    String(operationId)
   );
 
   return (
