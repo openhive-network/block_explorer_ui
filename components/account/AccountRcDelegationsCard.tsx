@@ -3,7 +3,6 @@ import { ArrowDown, ArrowUp } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableRow, TableCell } from "../ui/table";
-import { cn } from "@/lib/utils";
 import useRcDelegations from "@/api/common/useRcDelegations";
 import { formatNumber } from "@/lib/utils";
 type RcDelegation = {
@@ -21,22 +20,19 @@ const buildTableBody = (delegations: RcDelegation[]) => {
     const isLast = index === delegations.length - 1;
     return (
       <Fragment key={index}>
-        <TableRow
-          className={cn(
-            {
-              "border-t border-gray-700": index !== 0,
-              "border-b border-gray-700": !isLast,
-            },
-            "hover:bg-inherit"
-          )}
-        >
+        <TableRow className={"border-b border-gray-700 hover:bg-inherit"}>
           <TableCell>{index + 1}</TableCell>
           <TableCell className="text-right">
-            <Link className="text-blue-400" href={`/@${delegation.to}`}>
+            <Link
+              className="text-blue-400"
+              href={`/@${delegation.to}`}
+            >
               {delegation.to}
             </Link>
           </TableCell>
-          <TableCell className="text-right">{formatNumber(delegation.delegated_rc, false, true)}</TableCell>
+          <TableCell className="text-right">
+            {formatNumber(delegation.delegated_rc, false, true)}
+          </TableCell>
         </TableRow>
       </Fragment>
     );
@@ -48,11 +44,8 @@ const AccountRcDelegationsCard: React.FC<AccountRcDelegationsCardProps> = ({
   limit,
 }) => {
   const [isPropertiesHidden, setIsPropertiesHidden] = useState(true);
-  const {
-    rcDelegationsData,
-    isRcDelegationsLoading,
-    isRcDelegationsError,
-  } = useRcDelegations(delegatorAccount, limit);
+  const { rcDelegationsData, isRcDelegationsLoading, isRcDelegationsError } =
+    useRcDelegations(delegatorAccount, limit);
 
   if (isRcDelegationsLoading) {
     return <div></div>;
@@ -70,7 +63,10 @@ const AccountRcDelegationsCard: React.FC<AccountRcDelegationsCardProps> = ({
   };
 
   return (
-    <Card data-testid="rc-delegations-dropdown" className="overflow-hidden">
+    <Card
+      data-testid="rc-delegations-dropdown"
+      className="overflow-hidden"
+    >
       <CardHeader className="p-0">
         <div
           onClick={handlePropertiesVisibility}

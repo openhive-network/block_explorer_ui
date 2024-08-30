@@ -1,7 +1,7 @@
 import { ReactNode, Fragment } from "react";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table";
-import { cn, formatNumber } from "@/lib/utils";
+import { formatNumber } from "@/lib/utils";
 import { convertVestsToHP, convertHiveToUSD } from "@/utils/Calculations";
 import useDynamicGlobal from "@/api/homePage/useDynamicGlobal";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
@@ -41,14 +41,7 @@ const buildTableBody = (
     if (cardNameMap.has(param)) {
       return (
         <Fragment key={index}>
-          <TableRow
-            className={cn(
-              {
-                "border-t border-gray-700": !!index,
-              },
-              "hover:bg-inherit"
-            )}
-          >
+          <TableRow className="border-b border-gray-700 hover:bg-inherit">
             <TableCell>{cardNameMap.get(param)}</TableCell>
             <TableCell className="text-right">{render_key(param)}</TableCell>
             <TableCell className="text-right">{convert_usd(param)}</TableCell>

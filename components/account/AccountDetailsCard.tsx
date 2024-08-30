@@ -3,7 +3,6 @@ import { ReactNode, useState, Fragment } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table";
-import { cn } from "@/lib/utils";
 import CopyToKeyboard from "../CopyToKeyboard";
 import { convertVestsToHP } from "@/utils/Calculations";
 import useDynamicGlobal from "@/api/homePage/useDynamicGlobal";
@@ -35,14 +34,7 @@ const buildTableBody = (
     } else {
       return (
         <Fragment key={index}>
-          <TableRow
-            className={cn(
-              {
-                "border-t border-gray-700": !!index,
-              },
-              "hover:bg-inherit"
-            )}
-          >
+          <TableRow className={"border-b border-gray-700 hover:bg-inherit"}>
             <TableCell>{key}</TableCell>
             <TableCell>{render_key(key)}</TableCell>
           </TableRow>
