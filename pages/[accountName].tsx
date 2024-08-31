@@ -276,7 +276,7 @@ export default function Account() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 text-white mx-8 mt-24 lg:mt-16 w-full gap-4 px-2 md:px-4">
         {isMobile && (
-          <MobileAccountNameCard accountName={accountNameFromRoute} />
+          <MobileAccountNameCard accountName={accountNameFromRoute} liveDataEnabled={liveDataEnabled} />
         )}
 
         {renderAccountDetailsView()}

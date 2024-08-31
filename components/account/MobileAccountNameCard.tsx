@@ -6,12 +6,14 @@ import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 
 interface MobileAccountNameCardProps {
   accountName: string;
+  liveDataEnabled: boolean;
 }
 
 const MobileAccountNameCard: React.FC<MobileAccountNameCardProps> = ({
   accountName,
+  liveDataEnabled
 }) => {
-  const { accountDetails } = useAccountDetails(accountName);
+  const { accountDetails } = useAccountDetails(accountName, liveDataEnabled);
   if (!accountDetails) return;
 
   return (
