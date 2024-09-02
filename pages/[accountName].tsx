@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import useAccountDetails from "@/api/accountPage/useAccountDetails";
 import useAccountOperations from "@/api/accountPage/useAccountOperations";
 import AccountTopBar from "@/components/account/AccountTopBar";
-import useAccountOperationTypes from "@/api/accountPage/useAccountOperationTypes";
 import {
   useMediaQuery,
   useOperationsFormatter,
