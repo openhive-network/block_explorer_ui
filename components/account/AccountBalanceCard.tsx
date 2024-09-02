@@ -65,8 +65,6 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
     headBlockDetails: { totalVestingFundHive, totalVestingShares, feedPrice },
   } = dynamicGlobalData;
 
-  if (!userDetails) return null;
-
   const keys = Object.keys(userDetails);
 
   const render_key = (key: string) => {
