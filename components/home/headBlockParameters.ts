@@ -12,6 +12,7 @@ export const fundAndSupplyParameters = [
   "currentHbdSupply",
   "pendingRewardedVestingHive",
   "totalVestingFundHive",
+  "totalVestingShares",
 ];
 
 export const hiveParameters = [
