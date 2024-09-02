@@ -1,10 +1,12 @@
-import { useState, Fragment } from "react";
+import { useState, Fragment, ReactNode } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableRow, TableCell } from "../ui/table";
 import useVestingDelegations from "@/api/common/useVestingDelegations";
-import { formatNumber } from "@/lib/utils";
+import { convertVestsToHP } from "@/utils/Calculations";
+import { useHiveChainContext } from "@/contexts/HiveChainContext";
+import useDynamicGlobal from "@/api/homePage/useDynamicGlobal";
 
 type VestingDelegation = {
   delegatee: string;
@@ -22,9 +24,13 @@ type AccountVestingDelegationsCardProps = {
   liveDataEnabled: boolean;
 };
 
-const buildTableBody = (delegations: VestingDelegation[]) => {
+const buildTableBody = (
+  delegations: VestingDelegation[],
+  formatHP: (vests: string) => ReactNode
+) => {
   return delegations.map((delegation: VestingDelegation, index: number) => {
     const isLast = index === delegations.length - 1;
+
     return (
       <Fragment key={index}>
         <TableRow className={"border-b border-gray-700 hover:bg-inherit"}>
@@ -37,38 +43,48 @@ const buildTableBody = (delegations: VestingDelegation[]) => {
               {delegation.delegatee}
             </Link>
           </TableCell>
-          <TableCell className="text-right">{formatNumber(parseFloat(delegation.vesting_shares.amount)/ Math.pow(10,delegation.vesting_shares.precision),true, true)}</TableCell>
+          <TableCell className="text-right">
+            {formatHP(delegation.vesting_shares.amount)}
+          </TableCell>
         </TableRow>
       </Fragment>
     );
   });
 };
-const AccountVestingDelegationsCard: React.FC<AccountVestingDelegationsCardProps> = ({
-  delegatorAccount,
-  startAccount,
-  limit,
-  liveDataEnabled,
-}) => {
+const AccountVestingDelegationsCard: React.FC<
+  AccountVestingDelegationsCardProps
+> = ({ delegatorAccount, startAccount, limit, liveDataEnabled }) => {
   const [isPropertiesHidden, setIsPropertiesHidden] = useState(true);
+  const { hiveChain } = useHiveChainContext();
+  const { dynamicGlobalData } = useDynamicGlobal();
+
+  const { vestingDelegationsData: delegations } = useVestingDelegations(
+    delegatorAccount,
+    startAccount,
+    limit,
+    liveDataEnabled
+  );
+
+  if (!hiveChain || !dynamicGlobalData || !delegations || !delegations.length)
+    return;
+
   const {
-    vestingDelegationsData,
-    isVestingDelegationsLoading,
-    isVestingDelegationsError,
-  } = useVestingDelegations(delegatorAccount, startAccount, limit, liveDataEnabled);
-
-  if (isVestingDelegationsLoading) {
-    return <div></div>;
-  }
-
-  if (isVestingDelegationsError) {
-    return <div></div>;
-  }
-
-  const delegations = vestingDelegationsData;
-  if (!delegations?.length) return <div className="text-black"></div>;
+    headBlockDetails: { totalVestingFundHive, totalVestingShares },
+  } = dynamicGlobalData;
 
   const handlePropertiesVisibility = () => {
     setIsPropertiesHidden(!isPropertiesHidden);
+  };
+
+  const formatHP = (vests: string) => {
+    const formattedHP = convertVestsToHP(
+      hiveChain,
+      vests,
+      totalVestingFundHive,
+      totalVestingShares
+    );
+
+    return formattedHP;
   };
 
   return (
@@ -81,13 +97,13 @@ const AccountVestingDelegationsCard: React.FC<AccountVestingDelegationsCardProps
           onClick={handlePropertiesVisibility}
           className="h-full flex justify-between align-center p-2 hover:bg-slate-600 cursor-pointer px-4"
         >
-          <div className="text-lg">Vesting Delegations</div>
+          <div className="text-lg">HP Delegations</div>
           {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
         </div>
       </CardHeader>
       <CardContent hidden={isPropertiesHidden}>
         <Table>
-          <TableBody>{buildTableBody(delegations)}</TableBody>
+          <TableBody>{buildTableBody(delegations, formatHP)}</TableBody>
         </Table>
       </CardContent>
     </Card>
