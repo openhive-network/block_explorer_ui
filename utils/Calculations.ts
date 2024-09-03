@@ -1,5 +1,6 @@
 import { splitStringValue } from "./StringUtils";
 import { IHiveChainInterface } from "@hiveio/wax";
+import Hive from "@/types/Hive";
 /**
  * Function converting vests to hive power
  * @param  hivechain response from HiveChainContext.ts as type IHiveChainInterface | undefined,
@@ -54,4 +55,16 @@ export const convertVestsToHP = (
 export const convertHiveToUSD = (hp: number, feedPrice: string) => {
   const hivePrice = feedPrice?.split(" ")[0];
   return hp * parseFloat(hivePrice ?? "0"); //default to 0 if no matching price is found
+};
+
+export const getVestsToHiveRatio = (
+  blockDetails: Hive.BlockDetails | undefined
+) => {
+  if (!blockDetails) return;
+
+  const { total_vesting_fund_hive, total_vesting_shares } = blockDetails;
+
+  const result = (total_vesting_shares / total_vesting_fund_hive).toFixed(3);
+
+  return result;
 };
