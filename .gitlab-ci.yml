@@ -234,6 +234,10 @@ staging:deploy:
     name: staging
     action: start
     on_stop: staging:stop
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+      when: manual
+      allow_failure: true
 
 test:deploy:
   extends: .deploy
