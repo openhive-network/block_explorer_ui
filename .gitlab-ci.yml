@@ -275,6 +275,10 @@ staging:stop:
   environment:
     name: staging
     action: stop
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+      when: manual
+      allow_failure: true
 
 test:stop:
   extends: .stop
