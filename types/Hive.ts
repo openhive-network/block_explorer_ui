@@ -184,7 +184,7 @@ namespace Hive {
     voter!: string;
     approve!: boolean;
     vests!: number;
-    vests_hive_power!: number;
+    votes_hive_power!: number;
     account_vests!: number;
     account_hive_power!: number;
     proxied_vests!: number;
@@ -494,17 +494,6 @@ namespace Hive {
     to: string;
   }
 
-  export interface WitnessVotesHistory {
-    voter: string;
-    approve: boolean;
-    vests: number;
-    vests_hive_power: number;
-    account_vests: number;
-    account_hive_power: number;
-    proxied_vests: number;
-    proxied_hive_power: number;
-    timestamp: Date;
-  }
 
   export interface BlockByOpResponse {
     block_num: number;

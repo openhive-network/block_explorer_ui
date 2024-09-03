@@ -192,7 +192,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                         data-testid="current-voter-power"
                       >
                         {showHivePower
-                          ? formatNumber(vote.vests_hive_power, false)
+                          ? formatNumber(vote.votes_hive_power, false)
                           : formatNumber(vote.vests, true)}
                       </TableCell>
                     </TableRow>
