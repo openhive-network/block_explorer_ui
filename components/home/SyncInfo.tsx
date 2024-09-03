@@ -57,7 +57,7 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
           className={cn(
             "flex flex-row gap-x-1 border rounded-[6px] mt-px mx-6 px-1.5 py-px text-sm cursor-pointer",
             {
-              "border-explorer-ligh-green": blockDifference <= 3,
+              "border-explorer-ligh-green": blockDifference <= 10,
               "border-explorer-orange":
                 blockDifference > 3 && blockDifference <= 20,
               "border-explorer-red": blockDifference > 20,
@@ -67,14 +67,14 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
           )}
           onClick={() => setDialogOpen(true)}
         >
-          {!blockDifference ? (
+          {blockDifference < 10 ? (
             <p className="text-explorer-ligh-green">
               Explorer synced with blockchain
             </p>
           ) : (
             <>
               <p>Blocks out of sync:</p>
-              <p>{blockDifference.toLocaleString()}</p>
+              <p>{ blockDifference.toLocaleString()}</p>
             </>
           )}
         </div>
