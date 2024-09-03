@@ -91,7 +91,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
         totalVestingShares
       );
       displVal = convertHiveToUSD(
-        Number(splitStringValue(formattedHP, "HP").replace(",", "")),
+        Number(splitStringValue(formattedHP, "HP").replace(/,/g, "")),
         feedPrice
       ).toFixed(2);
     } else if (key.includes("hbd")) {
