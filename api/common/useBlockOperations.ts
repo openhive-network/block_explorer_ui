@@ -7,7 +7,7 @@ const useBlockOperations = (
   blockFilters?: number[],
   page?: number,
   account?: string,
-  keyContent?: string[],
+  keyContent?: string,
   setOfKeys?: string[]
 ) => {
   const {
@@ -34,6 +34,7 @@ const useBlockOperations = (
         setOfKeys
       ),
     refetchOnWindowFocus: false,
+    enabled: !!blockNumber,
   });
 
   const blockError = (blockOperations as { [key: string]: any })?.code || null;

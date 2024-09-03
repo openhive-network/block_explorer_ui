@@ -1,185 +1,22 @@
 import { IManabarData } from "@hiveio/wax";
+namespace Hive {
+  
+  export type Direction = "asc" | "desc";
+  export type OperationTypes = [number, string, boolean];
+  export type InputTypes =
+  | "account_name"
+  | "account_name_array"
+  | "block_num"
+  | "transaction_hash"
+  | "block_hash"
+  | "invalid_input";
 
-declare module Hive {
-  interface HiveBlogProps {
-    id: number;
-    method: string;
-    jsonrpc: string;
-  }
-
-  interface GetBlockOpTypesProps {
-    _block_num: number;
-  }
-
-  interface GetOpsByBlockProps {
-    _block_num: number;
-    _filter?: number[];
-    _page_size: number;
-    _body_limit: number;
-    _page_num?: number;
-    _account?: string;
-    _key_content?: string[];
-    _setof_keys?: string[][];
-  }
-
-  interface GetTransactionProps {
-    _trx_hash: string;
-  }
-
-  interface GetAccOpTypesProps {
-    _account: string;
-  }
-
-  interface GetOpsByAccountProps {
-    _account: string;
-    _page_num?: number;
-    _page_size: number;
-    _filter?: number[];
-    _date_start?: Date;
-    _date_end?: Date;
-    _body_limit: number;
-    _from?: number;
-    _to?: number;
-  }
-
-  interface GetAccountOpsCountProps {
-    _account: string;
-    _operations: number[];
-  }
-
-  interface GetAccountProps {
-    _account: string;
-  }
-
-  interface GetAccountResourceCreditsProps {
-    _account: string;
-  }
-
-  interface GetBtrackerAccountBalanceProps {
-    _account: string;
-  }
-
-  interface GetWitnessesProps {
-    _limit: number;
-    _offset: number;
-    _order_by: string;
-    _order_is: string;
-  }
-
-  interface GetWitnessVotersNumProps {
-    _witness: string;
-  }
-
-  interface GetWitnessVotersProps {
-    _witness: string;
-    _order_by: string;
-    _order_is: string;
-    _limit?: number;
-  }
-  interface GetOperationTypesProps {
-    _operation_type_pattern: string | null;
-  }
-
-  interface GetWitnessProps {
-    _account: string;
-  }
-
-  interface GetBlockByTimeProps {
-    _timestamp: Date;
-  }
-
-  interface GetOperationKeysProps {
-    _op_type_id: number;
-  }
-
-  interface GetBlockByOpProps {
-    _operations: number[];
-    _account?: string;
-    _from?: number;
-    _to?: number;
-    _limit: number;
-    _order_is: "asc" | "desc";
-    _key_content?: string[] | null;
-    _setof_keys?: string[][] | null;
-    _start_date?: Date;
-    _end_date?: Date;
-  }
-
-  interface GetBlockProps {
-    _block_num: number;
-  }
-
-  interface GetInputTypeProps {
-    _input: string;
-  }
-
-  interface GetLatestBlocksProps {
-    _limit: number;
-  }
-  interface GetOperationProps {
-    _operation_id: number;
-  }
-
-  interface GetCommentOperationProps {
-    _author: string;
-    _permlink?: string;
-    _page_num?: number;
-    _operation_types?: number[];
-    _from?: number;
-    _to?: number;
-    _start_date?: Date;
-    _end_date?: Date;
-    _body_limit: number;
-    _page_size: number;
-  }
-
-  interface GetOperationsInBlockProps {
-    _block_num: number;
-  }
-
-  interface GetBlockRawProps {
-    _block_num: number;
-  }
-
-  interface GetWitnessVotesHistory {
-    _witness: string;
-    _order_is: string;
-    _order_by: string;
-    _limit: number | null;
-    _from_time?: Date;
-    _to_time?: Date;
-  }
-
-  interface Supply {
-    amount: string;
-    precision: number;
-    nai: string;
-  }
-
-  interface OperationsByTypeCount {
+  export interface OperationsByTypeCount {
     count: number;
     op_type_id: number;
   }
 
-  interface PriceFeed {
-    base: Supply;
-    quote: Supply;
-  }
-
-  interface RewardFunds {
-    id: number;
-    name: string;
-    reward_balance: Supply;
-    recent_claims: string;
-    last_update: Date;
-    content_constant: string;
-    percent_curation_rewards: number;
-    percent_content_rewards: number;
-    author_reward_curve: string;
-    curation_reward_curve: string;
-  }
-
-  interface Operation {
+  export interface Operation {
     type: string;
     value: {
       author?: string;
@@ -213,48 +50,7 @@ declare module Hive {
     };
   }
 
-  interface OperationResponse {
-    age: string;
-    block_num: number;
-    op_in_trx: number;
-    operation_id: string;
-    operation: Operation;
-    timestamp: string;
-    trx_id: string;
-    trx_in_block: number;
-    virtual_op: boolean;
-    is_modified: boolean;
-    length: number;
-  }
-
-  interface TotalOperationsResponse {
-    operations_result: OperationResponse[];
-    total_pages: number;
-    total_operations: number;
-  }
-
-  interface AccountOperationsResponse extends OperationsCount {
-    operations_result: OperationResponse[];
-  }
-
-  type OperationTypes = [number, string, boolean];
-
-  interface OperationPattern {
-    op_type_id: number;
-    operation_name: string;
-    is_virtual: boolean;
-  }
-
-  interface TransactionQueryResponse {
-    transaction_json: TransactionDetails;
-    timestamp: Date;
-    age: string;
-    transaction_id: string;
-    block_num: number;
-    transaction_num: number;
-  }
-
-  interface TransactionDetails {
+  export interface TransactionDetails {
     ref_block_num: number;
     ref_block_prefix: number;
     extensions: any[];
@@ -263,211 +59,12 @@ declare module Hive {
     signatures: string[];
   }
 
-  interface AccountDetailsQueryResponse {
-    id: number;
-    name: string;
-    owner: {
-      weight_threshold: number;
-      account_auths: string[];
-      key_auths: [string, number][];
-    };
-    active: {
-      weight_threshold: number;
-      account_auths: string[];
-      key_auths: [string, number][];
-    };
-    posting: {
-      weight_threshold: number;
-      account_auths: string[];
-      key_auths: [string, number][];
-    };
-    memo_key: string;
-    profile_image: string;
-    json_metadata: string;
-    posting_json_metadata: string;
-    last_owner_update: string;
-    last_account_update: string;
-    created: Date;
-    mined: string | boolean;
-    recovery_account: string;
-    post_count: number;
-    can_vote: string | boolean;
-    voting_manabar: {
-      current_mana: string | number;
-      last_update_time: number;
-    };
-    downvote_manabar: {
-      current_mana: string | number;
-      last_update_time: number;
-    };
-    voting_power: string;
-    balance: number;
-    savings_balance: number;
-    hbd_balance: number;
-    hbd_saving_balance: number;
-    savings_withdraw_requests: number;
-    reward_hbd_balance: number;
-    reward_hive_balance: number;
-    reward_vesting_balance: number;
-    reward_vesting_hive: number;
-    vesting_shares: number;
-    delegated_vesting_shares: number;
-    received_vesting_shares: number;
-    vesting_withdraw_rate: number;
-    to_withdraw: number;
-    withdrawn: number;
-    withdraw_routes: number;
-    post_voting_power: number;
-    posting_rewards: number;
-    curation_rewards: number;
-    proxied_vsf_votes: [string, number, number, number] | any;
-    witnesses_voted_for: string | number;
-    last_post: string | Date;
-    last_root_post: string | Date;
-    last_vote_time: string | Date;
-    vesting_balance: number;
-    reputation: string | number;
-    witness_votes: string[];
-    proxy: string;
-    last_account_recovery: Date;
-    delayed_vests: number;
-    ops_count: number;
-    is_witness: boolean;
-  }
-
-  interface GetBlockByTimeResponse {
-    age: string;
-    created_at: string;
-    current_hbd_supply: number;
-    current_supply: number;
-    dhf_interval_ledger: number;
-    extensions: null | any;
-    hash: string;
-    hbd_interest_rate: number;
-    num: number;
-    prev: string;
-    producer_account_id: number;
-    signing_key: string;
-    total_reward_fund_hive: number;
-    total_vesting_fund_hive: number;
-    total_vesting_shares: number;
-    transaction_merkle_root: string;
-    virtual_supply: number;
-    witness_signature: string;
-  }
-
-  type InputTypes =
-    | "account_name"
-    | "account_name_array"
-    | "block_num"
-    | "transaction_hash"
-    | "block_hash"
-    | "invalid_input";
-
-  interface InputTypeResponse {
-    input_type: InputTypes;
-    input_value: string | string[];
-  }
-  interface Witness {
-    witness: string;
-    rank: number;
-    url: string;
-    vests: number;
-    votes_hive_power: number;
-    votes_daily_change: number;
-    votes_daily_change_hive_power: number;
-    voters_num: number;
-    voters_num_daily_change: number;
-    price_feed: number;
-    bias: number;
-    feed_age: string;
-    feed_updated_at: Date;
-    block_size: number;
-    signing_key: string;
-    version: string;
-    missed_blocks: number;
-    hbd_interest_rate: number;
-  }
-
-  interface Voter {
-    voter: string;
-    vests: number;
-    votes_hive_power: number;
-    account_vests: number;
-    account_hive_power: number;
-    proxied_vests: number;
-    proxied_hive_power: number;
-    timestamp: Date;
-  }
-
-  interface VestingDelegations {
-    delegatee: string;
-    delegator: string;
-    id: number;
-    min_delegation_time: string;
-    vesting_shares: {
-      amount: string;
-      precision: number;
-      nai: string;
-    };
-  }
-
-  interface RCDelegations {
-    delegated_rc: number;
-    from: string;
-    to: string;
-  }
-
-  interface WitnessVotesHistory {
-    voter: string;
-    approve: boolean;
-    vests: number;
-    vests_hive_power: number;
-    account_vests: number;
-    account_hive_power: number;
-    proxied_vests: number;
-    proxied_hive_power: number;
-    timestamp: Date;
-  }
-
-  interface BlockDetails {
-    age: string;
-    block_num: number;
-    created_at: string;
-    current_hbd_supply: number;
-    current_supply: number;
-    dhf_interval_ledger: number;
-    extensions: null;
-    hash: string;
-    hbd_interest_rate: number;
-    prev: string;
-    producer_account: string;
-    signing_key: string;
-    total_reward_fund_hive: number;
-    total_vesting_fund_hive: number;
-    total_vesting_shares: string;
-    transaction_merkle_root: string;
-    virtual_supply: number;
-    witness_signature: string;
-  }
-
-  interface BlockByOpResponse {
-    block_num: number;
-    op_type_id: number[];
-  }
-
-  interface LastBlocksTypeResponse {
-    block_num: number;
-    witness: string;
-    ops_count: OperationsByTypeCount[];
-  }
-
-  interface OperationsCount {
+  export interface OperationsCount {
     total_operations: number;
     total_pages: number;
   }
 
-  interface CommentOperation {
+  export interface CommentOperation {
     block_num: number;
     operation: Operation;
     is_modified: boolean;
@@ -477,30 +74,7 @@ declare module Hive {
     trx_hash: string;
   }
 
-  interface CommentOperationResponse extends OperationsCount {
-    operations_result: CommentOperation[];
-  }
-
-  interface Manabars {
-    upvote: IManabarData;
-    downvote: IManabarData;
-    rc: IManabarData;
-  }
-
-  interface RawBlockData {
-    block_id: string;
-    extensions: unknown[];
-    previous: string;
-    signing_key: string;
-    timestamp: Date;
-    transaction_ids: string[];
-    transaction_merkle_root: string;
-    transactions: TransactionDetails[];
-    witness: string;
-    witness_signature: string;
-  }
-
-  interface TransferOperation {
+  export interface TransferOperation {
     from: string;
     to: string;
     amount: Supply | undefined;
@@ -511,12 +85,12 @@ declare module Hive {
     deleted?: boolean;
   }
 
-  interface RecurrentTransferOperation extends TransferOperation {
+  export interface RecurrentTransferOperation extends TransferOperation {
     executions: number;
     recurrence: number;
   }
 
-  interface EscrowOperation {
+  export interface EscrowOperation {
     from: string;
     to: string;
     agent: string;
@@ -530,18 +104,490 @@ declare module Hive {
     json_meta?: string;
   }
 
-  interface CancelTransferOperation {
+  export interface CancelTransferOperation {
     request_id: number;
     from: string;
   }
 
-  interface AuthKeys {
-    key_auth: [string | undefined, string | undefined][];
-    account_auth: [string | undefined, string | undefined][];
+  export interface AuthKeys {
+    key_auths: [string | undefined, string | undefined][];
+    account_auths: [string | undefined, string | undefined][];
     weight_threshold: number;
   }
 
-  interface AccountAuthoritiesData {
+  export class AccountOperationTypes {
+    total_operations!: number;
+    total_pages!: number;
+  }
+
+  export class GetWitnessesParams {
+    limit!: number;
+    offset!: number;
+    sort!: string;
+    direction!: Hive.Direction;
+  }
+  
+  export class GetWitnessParams {
+    accountName!: string;
+  }
+  
+  export class Witness {
+    witness!: string;
+    rank!: number;
+    url!: string;
+    vests!: string;
+    votes_daily_change!: number;
+    votes_daily_change_hive_power!: number;
+    voters_num!: number;
+    voters_num_daily_change!: number;
+    price_feed!: number;
+    bias!: number;
+    feed_updated_at!: Date;
+    block_size!: number;
+    signing_key!: string;
+    version!: string;
+    missed_blocks!: number;
+    hbd_interest_rate!: number;
+    vests_hive_power!: number;
+  
+  }
+  
+  export class GetVotersParams {
+    accountName!: string;
+    sort?: string;
+    direction?: Hive.Direction;
+    "result-limit"?: number;
+  }
+  
+  export class Voter {
+    voter!: string;
+    vests!: number;
+    votes_hive_power!: number;
+    account_vests!: number;
+    account_hive_power!: number;
+    proxied_vests!: number;
+    proxied_hive_power!: number;
+    timestamp!: Date;
+  }
+  
+  
+  export class GetVotesHistoryParams {
+    accountName!: string;
+    sort?: string;
+    direction?: Hive.Direction;
+    "result-limit"!: number | null;
+    "start-date"?: Date;
+    "end-date"?: Date;
+  }
+  
+  export class WitnessVotesHistory {
+    voter!: string;
+    approve!: boolean;
+    vests!: number;
+    vests_hive_power!: number;
+    account_vests!: number;
+    account_hive_power!: number;
+    proxied_vests!: number;
+    proxied_hive_power!: number;
+    timestamp!: Date;
+  }
+  
+  export class GetBlockDetailsParams {
+    blockNumber!: number;
+  }
+  
+  export class BlockDetails {
+    block_num!: number;
+    created_at!: string;
+    current_hbd_supply!: number;
+    current_supply!: number;
+    dhf_interval_ledger!: number;
+    extensions!: null;
+    hash!: string;
+    hbd_interest_rate!: number;
+    prev!: string;
+    producer_account!: string;
+    signing_key!: string;
+    total_reward_fund_hive!: number;
+    total_vesting_fund_hive!: number;
+    total_vesting_shares!: string;
+    transaction_merkle_root!: string;
+    virtual_supply!: number;
+    witness_signature!: string;
+  }
+  
+  export class GetBlockGlobalStateParams {
+    "block-num"!: number;
+  }
+  
+  export class GetInputTypeParams {
+    inputType!: string;
+  }
+  
+  export class InputTypeResponse {
+    input_type!: Hive.InputTypes;
+    input_value!: string | string[];
+  }
+  
+  export class GetTransactionParams {
+    transactionId!: string;
+  }
+  
+  export class TransactionResponse {
+    transaction_json!: Hive.TransactionDetails;
+    timestamp!: Date;
+    transaction_id!: string;
+    block_num!: number;
+    transaction_num!: number;
+  }
+  
+  export class OperationPattern {
+    op_type_id!: number;
+    operation_name!: string;
+    is_virtual!: boolean;
+  }
+  
+  export class GetBlockByTimeParams {
+    date!: string;
+  }
+  
+  export class GetOperationKeysParams{
+    operationTypeId!: number;
+  }
+  
+  export class LastBlocksTypeResponse {
+    block_num!: number;
+    witness!: string;
+    ops_count!: Hive.OperationsByTypeCount[];
+  }
+  
+  export class GetLastOperationTypeCountsParams {
+    "block-num"?: number;
+    "result-limit"!: number;
+  }
+  
+  export class GetOperationParams {
+    operationId!: string;
+  }
+  
+  export class GetOpsByAccountParams {
+    accountName!: string;
+    "operation-types"?: string;
+    page?: number;
+    "page-size"?: number;
+    "data-size-limit"?: number;
+    "from-block"?: number;
+    "to-block"?: number;
+    "start-date"?: Date;
+    "end-date"?: Date;
+  }
+  
+  export class GetAccountDetailsParams {
+    accountName!: string;
+  }
+  
+  export class OperationResponse {
+    block!: number;
+    op_pos!: number;
+    operation_id!: string;
+    op!: Hive.Operation;
+    timestamp!: string;
+    trx_id!: string;
+    trx_in_block!: number;
+    virtual_op!: boolean;
+    op_type_id!: number;
+  }
+  
+  export class GetAccountOperationTypesParams {
+    accountName!: string;
+  }
+  
+  export class AccountDetails {
+    id!: number;
+    name!: string;
+    can_vote!: true;
+    mined!: true;
+    proxy!: string;
+    recovery_account!: string;
+    last_account_recovery!: Date;
+    created!: Date;
+    reputation!: number;
+    json_metadata!: string;
+    posting_json_metadata!: string;
+    profile_image!: string;
+    hbd_balance!: number;
+    balance!: number;
+    vesting_shares!: string;
+    vesting_balance!: number;
+    hbd_saving_balance!: number;
+    savings_balance!: number;
+    savings_withdraw_requests!: number;
+    reward_hbd_balance!: number;
+    reward_hive_balance!: number;
+    reward_vesting_balance!: string;
+    reward_vesting_hive!: number;
+    posting_rewards!: string;
+    curation_rewards!: string;
+    delegated_vesting_shares!: string;
+    received_vesting_shares!: string;
+    proxied_vsf_votes!: number[];
+    withdrawn!: string;
+    vesting_withdraw_rate!: string;
+    to_withdraw!: string;
+    withdraw_routes!: number;
+    delayed_vests!: string;
+    witness_votes!: string[];
+    witnesses_voted_for!: number;
+    ops_count!: number;
+    is_witness!: boolean;
+  }
+  
+  export class GetAccountAuthoritiesParams {
+    accountName!: string;
+  }
+  
+  export class AccountAuthoritiesData {
+    owner!: Hive.AuthKeys;
+    active!: Hive.AuthKeys;
+    posting!: Hive.AuthKeys;
+    memo!: string;
+    witness_signing!: string;
+  }
+  
+  export class GetCommentOperationsParams {
+    accountName!: string;
+    "operation-types"?: string;
+    page?: number;
+    permlink?: string;
+    "page-size"?: number;
+    "data-size-limit"?: number;
+    "from-block"?: number;
+    "to-block"?: number;
+    "start-date"?: Date;
+    "end-date"?: Date;
+  }
+  
+  export class CommentOperationResponse {
+    operations_result!: Hive.CommentOperation[];
+    total_operations!: number;
+    total_pages!: number;
+  }
+  
+  export class BlockSearchParams {
+    "operation-types"?: string;
+    page?: number;
+    "result-limit"?: number;
+    direction!: Hive.Direction;
+    "account-name"?: string;
+    "page-size"?: number;
+    "data-size-limit"?: number;
+    "from-block"?: number;
+    "to-block"?: number;
+    "start-date"?: Date;
+    "end-date"?: Date;
+    "path-filter"?: string;
+  }
+  
+  export class BlockByOpResponse {
+    block_num!: number;
+    op_type_id!: number[];
+  }
+  
+  export class GetOperationsByBlockParams {
+    blockNumber!: number;
+    "operation-types"?: string;
+    "account-name"?: string;
+    page?: number;
+    "page-size"?: number;
+    "page-order"?: Hive.Direction;
+    "data-size-limit"?: number;
+    "path-filter"?: string;
+  }
+  
+  export class GetRawBlockParams {
+    "from-block"!: number;
+    "to-block"!: number;
+  }
+  
+  export class TotalOperationsResponse {
+    operations_result!: Hive.OperationResponse[];
+    total_pages!: number;
+    total_operations!: number;
+  }    
+  
+  export class RawBlockData {
+    block_id!: string;
+    extensions!: unknown[];
+    previous!: string;
+    signing_key!: string;
+    timestamp!: Date;
+    transaction_ids!: string[];
+    transaction_merkle_root!: string;
+    transactions!: Hive.TransactionDetails[];
+    witness!: string;
+    witness_signature!: string;
+  }
+
+  export class HiveBlogProps {
+    id!: number;
+    method!: string;
+    jsonrpc!: string;
+  }
+
+  export class Supply {
+    amount!: string;
+    precision!: number;
+    nai!: string;
+  }
+
+  export class PriceFeed {
+    base!: Supply;
+    quote!: Supply;
+  }
+
+  export class RewardFunds {
+    id!: number;
+    name!: string;
+    reward_balance!: Supply;
+    recent_claims!: string;
+    last_update!: Date;
+    content_constant!: string;
+    percent_curation_rewards!: number;
+    percent_content_rewards!: number;
+    author_reward_curve!: string;
+    curation_reward_curve!: string;
+  }
+
+  export class AccountOperationsResponse extends AccountOperationTypes {
+    operations_result!: OperationResponse[];
+  }
+
+  export class VestingDelegations {
+    delegatee!: string;
+    delegator!: string;
+    id!: number;
+    min_delegation_time!: string;
+    vesting_shares!: Supply;
+  }
+
+  export class RCDelegations {
+    delegated_rc!: number;
+    from!: string;
+    to!: string;
+  }
+
+  export interface VestingDelegations {
+    delegatee: string;
+    delegator: string;
+    id: number;
+    min_delegation_time: string;
+    vesting_shares: {
+      amount: string;
+      precision: number;
+      nai: string;
+    };
+  }
+
+  export interface RCDelegations {
+    delegated_rc: number;
+    from: string;
+    to: string;
+  }
+
+  export interface WitnessVotesHistory {
+    voter: string;
+    approve: boolean;
+    vests: number;
+    vests_hive_power: number;
+    account_vests: number;
+    account_hive_power: number;
+    proxied_vests: number;
+    proxied_hive_power: number;
+    timestamp: Date;
+  }
+
+  export interface BlockByOpResponse {
+    block_num: number;
+    op_type_id: number[];
+  }
+
+  export interface OperationsCount {
+    total_operations: number;
+    total_pages: number;
+  }
+
+  export interface CommentOperation {
+    block_num: number;
+    operation: Operation;
+    is_modified: boolean;
+    operation_id: number;
+    permlink: string;
+    created_at: Date;
+    trx_hash: string;
+  }
+
+
+  export interface Manabars {
+    upvote: IManabarData;
+    downvote: IManabarData;
+    rc: IManabarData;
+  }
+
+  export interface RawBlockData {
+    block_id: string;
+    extensions: unknown[];
+    previous: string;
+    signing_key: string;
+    timestamp: Date;
+    transaction_ids: string[];
+    transaction_merkle_root: string;
+    transactions: TransactionDetails[];
+    witness: string;
+    witness_signature: string;
+  }
+
+  export interface TransferOperation {
+    from: string;
+    to: string;
+    amount: Supply | undefined;
+    memo: string;
+    request_id?: number;
+    remaining_executions?: number;
+    consecutive_failures?: number;
+    deleted?: boolean;
+  }
+
+  export interface RecurrentTransferOperation extends TransferOperation {
+    executions: number;
+    recurrence: number;
+  }
+
+  export interface EscrowOperation {
+    from: string;
+    to: string;
+    agent: string;
+    who?: string;
+    escrow_id: number;
+    fee?: Supply;
+    hive_amount?: Supply;
+    hbd_amount?: Supply;
+    ratification_deadline?: string;
+    escrow_expiration?: string;
+    json_meta?: string;
+  }
+
+  export interface CancelTransferOperation {
+    request_id: number;
+    from: string;
+  }
+
+  export interface AuthKeys {
+    key_auths: [string | undefined, string | undefined][];
+    account_auths: [string | undefined, string | undefined][];
+    weight_threshold: number;
+  }
+
+  export interface AccountAuthoritiesData {
     owner: AuthKeys;
     active: AuthKeys;
     posting: AuthKeys;

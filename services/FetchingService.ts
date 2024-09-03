@@ -1,7 +1,11 @@
 import Hive from "@/types/Hive";
 import { config } from "@/Config";
 import Explorer from "@/types/Explorer";
-import { GetDynamicGlobalPropertiesResponse, IHiveChainInterface, TWaxApiRequest, TWaxExtended } from "@hiveio/wax";
+import { GetDynamicGlobalPropertiesResponse, IHiveChainInterface, TWaxRestExtended, TWaxApiRequest, TWaxExtended } from "@hiveio/wax";
+import {
+  extendedRest
+} from "@/types/Rest";
+import { createPathFilterString } from "@/lib/utils";
 
 type ExplorerNodeApi = {
   database_api: {
@@ -17,7 +21,7 @@ type ExplorerNodeApi = {
 class FetchingService {
   private apiUrl: string | null = null;
   private nodeUrl: string | null = null;
-  private extendedHiveChain: TWaxExtended<ExplorerNodeApi> | undefined = undefined;
+  private extendedHiveChain: TWaxExtended<ExplorerNodeApi, TWaxRestExtended<typeof extendedRest>> | undefined = undefined;
 
   public setApiUrl(newUrl: string) {
     this.apiUrl = newUrl;
@@ -28,95 +32,65 @@ class FetchingService {
   }
 
   public setHiveChain(hiveChain: IHiveChainInterface | null) {
-    this.extendedHiveChain = hiveChain?.extend<ExplorerNodeApi>();
+    this.extendedHiveChain = hiveChain?.extend<ExplorerNodeApi>().extendRest(extendedRest);
     if (this.extendedHiveChain && this.nodeUrl) {
       this.extendedHiveChain.endpointUrl = this.nodeUrl;
     }
-  }
-
-  async makePostRequest<T>(url: string, requestBody: T) {
-    try {
-      const response = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestBody),
-      });
-      const jsonResponse = await response.json();
-      if (!response.ok) throw new Error(`No data from API endpoint: ${url}`);
-      return jsonResponse;
-    } catch (error) {
-      return Promise.reject(error);
+    if (this.extendedHiveChain && this.apiUrl) {
+      this.extendedHiveChain.restApi.endpointUrl = this.apiUrl;
     }
   }
 
-  async callApi<T>(methodName: string, requestBody: T) {
-    const url = `${this.apiUrl}/${methodName}`;
-    return await this.makePostRequest(url, requestBody);
-  }
-
-  async callNode<T>(methodName: string) {
-    const url = `${this.nodeUrl}`;
-    const requestBody: Hive.HiveBlogProps = {
-      jsonrpc: "2.0",
-      method: methodName,
-      id: 1,
-    };
-    return await this.makePostRequest(url, requestBody);
-  }
-
   async getHeadBlockNum(): Promise<number> {
-    const url = `${this.apiUrl}/get_head_block_num`;
+    return await this.extendedHiveChain!.restApi.hafah.headblock();
+  }
 
-    return await this.makePostRequest(url, {});
+  async getHafbeLastSyncedBlock(): Promise<number> {
+    return await this.extendedHiveChain!.restApi.hafbe.lastSyncedBlock();
   }
 
   async getBlock(blockNumber: number): Promise<Hive.BlockDetails> {
-    const requestBody: Hive.GetBlockProps = { _block_num: blockNumber };
-    return await this.callApi("get_block", requestBody);
+    return await this.extendedHiveChain!.restApi.hafah.block({blockNumber});
+  }
+
+  async getBlockGlobalState(blockNumber: number): Promise<Hive.BlockDetails> {
+    return await this.extendedHiveChain!.restApi.hafah.globalState({"block-num": blockNumber});
   }
 
   async getLastBlocks(limit: number): Promise<Hive.LastBlocksTypeResponse[]> {
-    const requestBody: Hive.GetLatestBlocksProps = { _limit: limit };
-    return await this.callApi("get_latest_blocks", requestBody);
+    return await this.extendedHiveChain!.restApi.hafbe.operationTypeCounts({"result-limit": limit});
   }
 
   async getInputType(input: string): Promise<Hive.InputTypeResponse> {
-    const requestBody: Hive.GetInputTypeProps = { _input: input };
-    return await this.callApi("get_input_type", requestBody);
-  }
-
-  async getBlockOpTypes(blockNumber: number): Promise<Hive.OperationTypes[]> {
-    const requestBody: Hive.GetBlockOpTypesProps = { _block_num: blockNumber };
-    return await this.callApi("get_block_op_types", requestBody);
+    return await this.extendedHiveChain!.restApi.hafbe.inputType({inputType: input});
   }
 
   async getOpsByBlock(
     blockNumber: number,
     filter?: number[],
     page?: number,
-    account?: string,
-    keyContent?: string[],
+    accountName?: string,
+    keyContent?: string,
     setOfKeys?: string[]
-  ): Promise<Hive.OperationResponse[]> {
-    const requestBody: Hive.GetOpsByBlockProps = {
-      _block_num: blockNumber,
-      _filter: filter,
-      _body_limit: config.opsBodyLimit,
-      _page_size: config.blockPagePaginationSize,
-      _page_num: page,
-      _account: account,
-      _key_content: keyContent,
-      _setof_keys: setOfKeys ? [setOfKeys] : undefined,
-    };
-    return await this.callApi("get_ops_by_block_paging", requestBody);
+  ): Promise<Hive.TotalOperationsResponse> {
+    const requestParams: Hive.GetOperationsByBlockParams = {
+      blockNumber,
+      "operation-types": filter?.join(","),
+      "account-name": accountName,
+      page,
+      "page-size": config.blockPagePaginationSize,
+      "page-order": "desc",
+      "data-size-limit": config.opsBodyLimit,
+      "path-filter": createPathFilterString(keyContent, setOfKeys)
+    }
+    return await this.extendedHiveChain!.restApi.hafah.blockOperations(requestParams)
   }
+
+
   async getTransaction(
     transactionHash: string
-  ): Promise<Hive.TransactionQueryResponse> {
-    const requestBody: Hive.GetTransactionProps = {
-      _trx_hash: transactionHash,
-    };
-    return await this.callApi("get_transaction", requestBody);
+  ): Promise<Hive.TransactionResponse> {
+    return await this.extendedHiveChain!.restApi.hafah.transactions.transaction({transactionId: transactionHash});
   }
 
   async getRewardFunds(): Promise<{ funds: Hive.RewardFunds[] }> {
@@ -131,107 +105,62 @@ class FetchingService {
     return await this.extendedHiveChain!.api.database_api.get_current_price_feed({});
   }
 
-  async getAccOpTypes(account: string): Promise<unknown> {
-    const requestBody: Hive.GetAccOpTypesProps = { _account: account };
-    return await this.callApi("get_acc_op_types", requestBody);
+  async getAccOpTypes(accountName: string): Promise<number[]> {
+    return await this.extendedHiveChain!.restApi.hafah.accounts.operationTypes({accountName});
   }
 
   async getOpsByAccount(
     accountOperationsProps: Explorer.AccountSearchOperationsProps
-  ): Promise<Hive.OperationResponse[]> {
-    const requestBody: Hive.GetOpsByAccountProps = {
-      _account: accountOperationsProps.accountName,
-      _filter: accountOperationsProps.operationTypes,
-      _page_num: accountOperationsProps.pageNumber,
-      _page_size: config.standardPaginationSize,
-      _from: accountOperationsProps.fromBlock,
-      _to: accountOperationsProps.toBlock,
-      _date_start: accountOperationsProps.startDate,
-      _date_end: accountOperationsProps.endDate,
-      _body_limit: config.opsBodyLimit,
-    };
-    return await this.callApi("get_ops_by_account", requestBody);
+  ): Promise<Hive.AccountOperationsResponse> {
+    const requestParams: Hive.GetOpsByAccountParams = {
+      accountName: accountOperationsProps.accountName,
+      "operation-types": accountOperationsProps.operationTypes?.join(","),
+      page: accountOperationsProps.pageNumber,
+      "page-size": config.standardPaginationSize,
+      "data-size-limit": config.opsBodyLimit,
+      "from-block": accountOperationsProps.fromBlock,
+      "to-block": accountOperationsProps.toBlock,
+      "start-date": accountOperationsProps.startDate,
+      "end-date": accountOperationsProps.endDate
+    }
+    return await this.extendedHiveChain!.restApi.hafah.accounts.operations(requestParams);
   }
 
-  async getAccountOperationsCount(
-    operations: number[],
-    account: string
-  ): Promise<number> {
-    const requestBody: Hive.GetAccountOpsCountProps = {
-      _account: account,
-      _operations: operations,
-    };
-    return await this.callApi("get_account_operations_count", requestBody);
-  }
-
-  async getAccount(account: string): Promise<Hive.AccountDetailsQueryResponse> {
-    const requestBody: Hive.GetAccountProps = { _account: account };
-    return await this.callApi("get_account", requestBody);
-  }
-
-  async getAccountResourceCredits(account: string): Promise<unknown> {
-    const requestBody: Hive.GetAccountResourceCreditsProps = {
-      _account: account,
-    };
-    return await this.callApi("get_account_resource_credits", requestBody);
-  }
-
-  async getBtrackerAccountBalance(account: string): Promise<unknown> {
-    const requestBody: Hive.GetBtrackerAccountBalanceProps = {
-      _account: account,
-    };
-    return await this.callApi("get_btracker_account_balance", requestBody);
+  async getAccount(accountName: string): Promise<Hive.AccountDetails> {
+    return await this.extendedHiveChain!.restApi.hafbe.accounts.account({accountName});
   }
 
   async getWitnesses(
     limit: number,
     offset: number,
-    orderBy: string,
-    orderIs: string
+    sort: string,
+    direction: "asc" | "desc"
   ): Promise<Hive.Witness[]> {
-    const requestBody: Hive.GetWitnessesProps = {
-      _limit: limit,
-      _offset: offset,
-      _order_by: orderBy,
-      _order_is: orderIs,
-    };
-    return await this.callApi("get_witnesses", requestBody);
-  }
-
-  async getWitnessesVotersNum(witness: string): Promise<unknown> {
-    const requestBody: Hive.GetWitnessVotersNumProps = { _witness: witness };
-    return await this.callApi("get_witness_voters_num", requestBody);
+    const requestParams: Hive.GetWitnessesParams = {
+      limit,
+      offset,
+      sort,
+      direction
+    }
+    return await this.extendedHiveChain!.restApi.hafbe.witnesses({limit, offset, sort, direction});
   }
 
   async getWitnessVoters(
     witness: string,
-    orderBy: string,
-    orderIs: string,
+    sort: string,
+    direction: "asc" | "desc",
     limit?: number
   ): Promise<Hive.Voter[]> {
-    const requestBody: Hive.GetWitnessVotersProps = {
-      _witness: witness,
-      _order_by: orderBy,
-      _order_is: orderIs,
-    };
-    if (limit) requestBody._limit = limit;
-    return await this.callApi("get_witness_voters", requestBody);
+    return await this.extendedHiveChain!.restApi.hafbe.voters({accountName: witness, sort, direction, "result-limit": limit});
   }
 
   async getOperationTypes(
-    operation_type_pattern: string | null
   ): Promise<Hive.OperationPattern[]> {
-    const requestBody: Hive.GetOperationTypesProps = {
-      _operation_type_pattern: operation_type_pattern,
-    };
-    return await this.callApi("get_matching_operation_types", requestBody);
+    return await this.extendedHiveChain!.restApi.hafah.operationTypes();
   }
 
   async getWitness(witnessName: string): Promise<Hive.Witness> {
-    const requestBody: Hive.GetWitnessProps = {
-      _account: witnessName,
-    };
-    return await this.callApi("get_witness", requestBody);
+    return await this.extendedHiveChain!.restApi.hafbe.singleWitness({accountName: witnessName});
   }
 
   async getVestingDelegations(delegatorAccount: string): Promise<Hive.VestingDelegations[]> {
@@ -248,116 +177,79 @@ class FetchingService {
   }
 
   async getBlockByTime(date: Date): Promise<number> {
-    const requestBody: Hive.GetBlockByTimeProps = {
-      _timestamp: date,
-    };
-    return await this.callApi("get_block_by_time", requestBody);
+    return await this.extendedHiveChain!.restApi.hafah.blockNumberByDate.byTime({date: date.toISOString()});
   }
 
   async getOperationKeys(operationTypeId: number): Promise<string[][]> {
-    const requestBody: Hive.GetOperationKeysProps = {
-      _op_type_id: operationTypeId,
-    };
-    return await this.callApi("get_operation_keys", requestBody);
+    return await this.extendedHiveChain!.restApi.hafah.operationTypesKeys({operationTypeId});
   }
 
   async getBlockByOp(
     blockSearchProps: Explorer.BlockSearchProps
   ): Promise<Hive.BlockByOpResponse[]> {
-    const requestBody: Hive.GetBlockByOpProps = {
-      _operations: blockSearchProps.operationTypes || [],
-      _account: blockSearchProps?.accountName,
-      _from: blockSearchProps?.fromBlock,
-      _to: blockSearchProps?.toBlock,
-      _start_date: blockSearchProps.startDate,
-      _end_date: blockSearchProps.endDate,
-      _limit: blockSearchProps.limit,
-      _order_is: "desc",
-      _key_content: blockSearchProps.deepProps.content
-        ? [blockSearchProps.deepProps.content]
-        : undefined,
-      _setof_keys: blockSearchProps.deepProps.keys
-        ? [blockSearchProps.deepProps.keys]
-        : undefined,
-    };
-    return await this.callApi("get_block_by_op", requestBody);
+    const requestParams: Hive.BlockSearchParams = {
+      "operation-types": blockSearchProps.operationTypes?.join(','),
+      "account-name": blockSearchProps?.accountName,
+      direction: "desc",
+      "from-block": blockSearchProps.fromBlock,
+      "to-block": blockSearchProps.toBlock,
+      "start-date": blockSearchProps.startDate,
+      "end-date": blockSearchProps.endDate,
+      "result-limit": blockSearchProps.limit,
+      "path-filter": createPathFilterString(blockSearchProps.deepProps.content, blockSearchProps.deepProps.keys)
+    }
+    return await this.extendedHiveChain!.restApi.hafbe.blockNumbers(requestParams);
   }
 
   async getWitnessVotesHistory(
-    witness: string,
-    orderIs: string,
-    orderBy: string,
+    witnessName: string,
+    direction: "asc" | "desc",
+    sort: string,
     limit: number | null,
     fromTime?: Date,
     toTime?: Date
   ): Promise<Hive.WitnessVotesHistory[]> {
-    const requestBody: Hive.GetWitnessVotesHistory = {
-      _witness: witness,
-      _order_is: orderIs,
-      _order_by: orderBy,
-      _limit: limit,
-      _from_time: fromTime,
-      _to_time: toTime,
-    };
-    return await this.callApi("get_witness_votes_history", requestBody);
+    return await this.extendedHiveChain!.restApi.hafbe.votesHistory({accountName: witnessName, direction, sort, "result-limit": limit, "start-date": fromTime, "end-date": toTime});
   }
 
-  async getOperation(operationId: number): Promise<Hive.OperationResponse> {
-    const requestBody: Hive.GetOperationProps = {
-      _operation_id: operationId,
-    };
-    return await this.callApi("get_operation", requestBody);
+  async getOperation(operationId: string): Promise<Hive.OperationResponse> {
+    return await this.extendedHiveChain!.restApi.hafah.operations.byId({operationId});
   }
 
   async getCommentOperation(
     commentSearchProps: Explorer.CommentSearchProps
   ): Promise<Hive.CommentOperationResponse> {
-    const requestBody: Hive.GetCommentOperationProps = {
-      _author: commentSearchProps.accountName || "",
-      _permlink: commentSearchProps.permlink,
-      _page_num: commentSearchProps.pageNumber,
-      _operation_types: commentSearchProps.operationTypes,
-      _from: commentSearchProps.fromBlock,
-      _to: commentSearchProps.toBlock,
-      _start_date: commentSearchProps.startDate,
-      _end_date: commentSearchProps.endDate,
-      _body_limit: config.opsBodyLimit,
-      _page_size: config.standardPaginationSize,
-    };
-    return await this.callApi("get_comment_operations", requestBody);
+    const requestParams: Hive.GetCommentOperationsParams = {
+      accountName: commentSearchProps.accountName,
+      "operation-types": commentSearchProps.operationTypes?.join(","),
+      page: commentSearchProps.pageNumber,
+      permlink: commentSearchProps.permlink,
+      "page-size": config.standardPaginationSize,
+      "data-size-limit": config.opsBodyLimit,
+      "from-block": commentSearchProps.fromBlock,
+      "to-block": commentSearchProps.toBlock,
+      "start-date": commentSearchProps.startDate,
+      "end-date": commentSearchProps.endDate
+    }
+    return await this.extendedHiveChain!.restApi.hafbe.accounts.commentOperations(requestParams);
   }
 
   async getHafbeVersion(): Promise<string> {
-    const requestBody = {};
-    return await this.callApi("get_hafbe_version", requestBody);
+    return (await this.extendedHiveChain!.restApi.hafbe.version());
   }
 
   async getOperationsCountInBlock(
     blockNumber: number
-  ): Promise<Hive.OperationsByTypeCount[]> {
-    const requestBody: Hive.GetOperationsInBlockProps = {
-      _block_num: blockNumber,
-    };
-    return await this.callApi("get_op_count_in_block", requestBody);
-  }
-
-  async getHafbeLastSyncedBlock(): Promise<number> {
-    const requestBody = {};
-    return await this.callApi("get_hafbe_last_synced_block", requestBody);
+  ): Promise<Hive.LastBlocksTypeResponse> {
+    return (await this.extendedHiveChain!.restApi.hafbe.operationTypeCounts({"result-limit": 1, "block-num": blockNumber}))[0];
   }
 
   async getBlockRaw(blockNumber: number): Promise<Hive.RawBlockData> {
-    const requestBody: Hive.GetBlockRawProps = {
-      _block_num: blockNumber,
-    };
-    return await this.callApi("get_block_raw", requestBody);
+    return (await this.extendedHiveChain!.restApi.hafah.rawBlock({"from-block": blockNumber, "to-block": blockNumber}))[0];
   }
 
-  async getAccountAuthorities(accountName: string): Promise<Hive.AccountAuthoritiesData> {
-    const requestBody = {
-      _account: accountName,
-    };
-    return await this.callApi("get_account_authority", requestBody);
+  async getAccountAuthorities(accountName: string): Promise<Hive.AccountAuthoritiesData | undefined> {
+    return await this.extendedHiveChain?.restApi.hafbe.accounts.authorities({accountName});
   }
 
   async getManabars(

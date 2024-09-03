@@ -9,7 +9,8 @@ const useBlockData = (blockNumber: number) => {
     error: blockDetailsError,
   }: UseQueryResult<Hive.BlockDetails> = useQuery({
     queryKey: ["block_details", blockNumber],
-    queryFn: () => fetchingService.getBlock(blockNumber),
+    queryFn: () => fetchingService.getBlockGlobalState(blockNumber),
+    enabled: !!blockNumber,
     refetchOnWindowFocus: false,
   });
 

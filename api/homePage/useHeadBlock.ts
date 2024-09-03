@@ -8,7 +8,7 @@ const useHeadBlock = (headBlockNum?: number) => {
     isError: headBlockDataError,
   } = useQuery({
     queryKey: ["headBlockData", headBlockNum],
-    queryFn: () => fetchingService.getBlock(headBlockNum || 0),
+    queryFn: () => fetchingService.getBlockGlobalState(headBlockNum || 0),
     refetchOnWindowFocus: false,
   });
 

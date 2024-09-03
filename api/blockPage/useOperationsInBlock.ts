@@ -7,9 +7,10 @@ const useOperationsCountInBlock = (blockNumber: number) => {
     data: operationsCountInBlock,
     isLoading: operationsCountInBlockLoading,
     error: operationsCountInBlockError,
-  }: UseQueryResult<Hive.OperationsByTypeCount[]> = useQuery({
+  }: UseQueryResult<Hive.LastBlocksTypeResponse> = useQuery({
     queryKey: ["operations_by_blocks", blockNumber],
     queryFn: () => fetchingService.getOperationsCountInBlock(blockNumber),
+    enabled: !!blockNumber,
     refetchOnWindowFocus: false,
   });
 

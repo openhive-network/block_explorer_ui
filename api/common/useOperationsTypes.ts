@@ -1,5 +1,5 @@
 import fetchingService from "@/services/FetchingService";
-import Hive from "@/types/Hive";
+import Explorer from "@/types/Explorer";
 import { UseQueryResult, useQuery } from "@tanstack/react-query";
 
 const useOperationsTypes = () => {
@@ -7,9 +7,9 @@ const useOperationsTypes = () => {
     data: operationsTypes,
     isLoading: operationsTypesLoading,
     error: operationsTypesError,
-  }: UseQueryResult<Hive.OperationPattern[]> = useQuery({
+  }: UseQueryResult<Explorer.ExtendedOperationTypePattern[]> = useQuery({
     queryKey: ["operation_types"],
-    queryFn: () => fetchingService.getOperationTypes(""),
+    queryFn: () => fetchingService.getOperationTypes(),
     refetchOnWindowFocus: false,
   });
 

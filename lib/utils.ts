@@ -86,8 +86,8 @@ export const convertOperationResultsToTableOperations = (
   operations: Hive.OperationResponse[]
 ): Explorer.OperationForTable[] => {
   return operations.map((operation) => ({
-    operation: operation.operation,
-    blockNumber: operation.block_num,
+    operation: operation.op,
+    blockNumber: operation.block,
     trxId: operation.trx_id,
     timestamp: operation.timestamp,
     operationId: Number(operation.operation_id),
@@ -106,7 +106,7 @@ export const convertCommentsOperationResultToTableOperations = (
 };
 
 export const convertTransactionResponseToTableOperations = (
-  transaction: Hive.TransactionQueryResponse
+  transaction: Hive.TransactionResponse
 ): Explorer.OperationForTable[] => {
   return transaction.transaction_json.operations.map((operation) => ({
     operation: operation,
@@ -197,3 +197,11 @@ export const convertIdsToBooleanArray = (
   filters.forEach((filter) => (booleanArray[filter] = true));
   return booleanArray;
 };
+
+export const createPathFilterString = (keyContent?: string, setOfKeys?: string[]): string | undefined => {
+  if (keyContent && setOfKeys) {
+    const path = setOfKeys.join(".");
+    return `${path}=${keyContent}`;
+  }
+  return undefined;
+}

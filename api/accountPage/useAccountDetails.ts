@@ -11,7 +11,7 @@ const useAccountDetails = (accountName: string, liveDataEnabled: boolean) => {
   const { hiveChain } = useHiveChainContext();
 
   const accountDetailsSelector = (
-    data: Hive.AccountDetailsQueryResponse
+    data: Hive.AccountDetails
   ): Explorer.FormattedAccountDetails => {
     const accountDetails = {
       ...data,
@@ -34,7 +34,6 @@ const useAccountDetails = (accountName: string, liveDataEnabled: boolean) => {
         data.last_account_recovery
       ),
       created: formatAndDelocalizeTime(data.created),
-      last_vote_time: formatAndDelocalizeTime(data.last_vote_time),
     };
 
     const formattedAccountDetails = hiveChain?.formatter.format(

@@ -160,9 +160,13 @@ declare module Explorer {
     operationId?: number;
   }
 
+  class ExtendedOperationTypePattern extends Hive.OperationPattern {
+    isDisabled?: boolean;
+  }
+
   interface FormattedAccountDetails
     extends Omit<
-      Hive.AccountDetailsQueryResponse,
+      Hive.AccountDetails,
       | "last_post"
       | "last_root_post"
       | "post_count"
