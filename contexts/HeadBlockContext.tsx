@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect } from "react";
 import { config } from "@/Config";
 import { useRouter } from "next/router";
 import { useUserSettingsContext } from "./UserSettingsContext";
+import { useHiveChainContext } from "./HiveChainContext";
 
 interface IHeadBlockContext {
   headBlockNumberData: any;
@@ -33,6 +34,8 @@ export const HeadBlockContextProvider: React.FC<{
   } = useUserSettingsContext();
   const router = useRouter();
 
+  const {hiveChain} = useHiveChainContext()
+
   const {
     data: headBlockNumberData,
     isLoading: headBlockNumberDataLoading,
@@ -43,6 +46,7 @@ export const HeadBlockContextProvider: React.FC<{
     queryFn: () => fetchingService.getHafbeLastSyncedBlock(),
     refetchOnWindowFocus: false,
     refetchInterval: liveData ? config.mainRefreshInterval : Infinity,
+    enabled: !!hiveChain
   });
 
   useEffect(() => {
