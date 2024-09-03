@@ -311,7 +311,7 @@ export default function Block() {
                   />
                 )}
               <div className="w-full md:w-4/5 flex flex-col gap-y-2">
-                {nonVirtualOperations.length && (
+                {!!nonVirtualOperations.length && (
                   <OperationsTable
                     operations={nonVirtualOperations}
                     unformattedOperations={unformattedNonVirtual}
@@ -331,7 +331,7 @@ export default function Block() {
                       : null}
                   </p>
                 </div>
-                {virtualOperations.length && (
+                {!!virtualOperations.length && (
                   <OperationsTable
                     operations={virtualOperations}
                     unformattedOperations={unformattedVirtual}
