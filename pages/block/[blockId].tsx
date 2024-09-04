@@ -35,6 +35,7 @@ interface BlockSearchParams {
   accountName?: string;
   keyContent?: string;
   setOfKeys?: string[];
+  trxId?: string;
 }
 
 const defaultParams: BlockSearchParams = {
@@ -43,9 +44,11 @@ const defaultParams: BlockSearchParams = {
   accountName: undefined,
   keyContent: undefined,
   setOfKeys: undefined,
+  trxId: undefined,
 };
 
-const scrollToTrxSection = (trxId: string) => {
+const scrollToTrxSection = (trxId?: string) => {
+  if (!trxId) return;
   const element = document.getElementById(trxId);
   if (!element) return;
 
@@ -68,7 +71,6 @@ export default function Block() {
   const virtualOpsRef = useRef(null);
 
   const blockId = (router.query.blockId as string)?.replaceAll(",", "");
-  const trxId = router.asPath.split("#")[1];
 
   const { refetch } = useHeadBlockNumber();
 
@@ -202,6 +204,7 @@ export default function Block() {
       accountName: undefined,
       keyContent: undefined,
       setOfKeys: undefined,
+      trxId: undefined,
     });
   };
 
@@ -218,11 +221,11 @@ export default function Block() {
     if (!blockOperations || !blockOperations?.operations_result?.length) return;
 
     const timeout = setTimeout(() => {
-      scrollToTrxSection(trxId);
+      scrollToTrxSection(paramsState.trxId);
     });
 
     return () => clearTimeout(timeout);
-  }, [trxId, blockOperations]);
+  }, [paramsState.trxId, blockOperations]);
 
   if ((trxLoading === false && !blockOperations) || blockError) {
     return (
@@ -315,6 +318,7 @@ export default function Block() {
                   <OperationsTable
                     operations={nonVirtualOperations}
                     unformattedOperations={unformattedNonVirtual}
+                    markedTrxId={paramsState.trxId}
                   />
                 )}
                 <div
@@ -335,6 +339,7 @@ export default function Block() {
                   <OperationsTable
                     operations={virtualOperations}
                     unformattedOperations={unformattedVirtual}
+                    markedTrxId={paramsState.trxId}
                   />
                 )}
               </div>
