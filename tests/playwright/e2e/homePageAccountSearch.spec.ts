@@ -79,7 +79,7 @@ test.describe('Home page - account searches', () => {
         await page.getByRole('button', {name: 'Apply'}).click();
         await mainPage.searchButtonInAccount.click()
 
-        const response = await page.waitForResponse((response) => response.url().includes("/get_ops_by_account"));
+        const response = await page.waitForResponse((response) => response.url().includes("/operations?operation-types=0"));
 
         expect(response.status()).toBe(200);
 
