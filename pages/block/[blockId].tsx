@@ -84,8 +84,6 @@ export default function Block() {
     ["blockId"]
   );
 
-  console.log("PARAMS STATE", paramsState);
-
   useEffect(() => {
     refetch();
   }, [blockId, refetch]);
