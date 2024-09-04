@@ -172,18 +172,20 @@ test.describe("Witnesses page", () => {
     ).toBe("rgb(255, 255, 255)");
   });
 
-  test("Check if after click on username you will be redirected to user account page", async ({ page }) => {
+  test("Check if after click on username you will be redirected to user account page", async ({ page, context }) => {
     const accountPage = new AccountPage(page);
     await mainPage.gotoBlockExplorerPage();
     // Move to the Witnesses page
     await witnessesPage.gotoWitnessesPage();
     await witnessesPage.validateWitnessesPageIsLoaded();
     const witnessName: string = await witnessesPage.witnessName.first().textContent() || '';
-    // Move to the Account page
+    // Move to the Account page in the new tab of the browser if you move from the witnesses page
     await witnessesPage.witnessName.first().click();
     await witnessesPage.page.waitForTimeout(1000);
-    await accountPage.validateAccountPageIsLoaded();
-    await accountPage.validateAccountName(witnessName);
+    let pages = await context.pages();
+    const accountPageNew = new AccountPage(pages[1]);
+    await accountPageNew.validateAccountPageIsLoaded();
+    await accountPageNew.validateAccountName(witnessName);
   });
 
   test("Check if after click details button in votes modal with details is displayed correctly", async ({ page }) => {
