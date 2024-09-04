@@ -33,7 +33,7 @@ export class BlockPage {
   readonly monthsDropdown: Locator;
   readonly viewBtn: Locator;
   readonly jsonRawRadioBtn: Locator;
-  
+
 
   constructor(page: Page) {
     this.page = page;
@@ -66,7 +66,7 @@ export class BlockPage {
     this.expandDetailsBtn = page.locator('[data-testid="expand-details"]');
     this.operationDetails = page.locator('[data-testid="details"]');
     this.monthsDropdown = page.locator('[name="months"]');
-    this.viewBtn = page.getByRole('button', { name: 'View' });
+    this.viewBtn = page.getByTestId('data-view-dropdown');
     this.jsonRawRadioBtn = page.locator('[role="radio"]').nth(1);
   }
 
