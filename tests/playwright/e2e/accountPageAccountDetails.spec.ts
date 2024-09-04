@@ -130,7 +130,7 @@ test.describe('Account page - account details tests', () => {
         await expect(mainPage.headBlockCardWitnessName).toBeEnabled()
         await mainPage.headBlockCardWitnessLink.click()
         await expect(accountPage.witnessVotesCard).toBeHidden()
-        await page.getByText('Witness Votes', { exact: true }).click()
+        await page.getByText(/Witness Votes/, { exact: true }).click()
         await accountPage.accountWitnessVotesDropdown.scrollIntoViewIfNeeded()
         await expect(accountPage.accountWitnessVotesDropdown).toBeInViewport()
     })
