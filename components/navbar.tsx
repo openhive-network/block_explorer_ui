@@ -99,7 +99,7 @@ export default function Navbar() {
               <SyncInfo />
               <Link
                 href={"/witnesses"}
-                data-testid="navbar-witnesses-link "
+                data-testid="navbar-witnesses-link"
               >
                 Witnesses
               </Link>
