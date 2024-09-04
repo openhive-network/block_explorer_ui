@@ -48,23 +48,22 @@ const defaultParams: BlockSearchParams = {
 };
 
 const scrollToTrxSection = (trxId?: string) => {
-  if (trxId) {
-    const element = document.getElementById(trxId);
-    if (!element) return;
-  
-    const headerOffset = 60;
-    const elementPosition = element.getBoundingClientRect().top;
-    const offsetPosition = elementPosition + window.scrollY - headerOffset;
-  
-    window.scrollTo({
-      top: offsetPosition,
-      behavior: "smooth",
-    });
-  
-    return () => {
-      window.scrollTo(undefined);
-    };
-  }
+  if (!trxId) return;
+  const element = document.getElementById(trxId);
+  if (!element) return;
+
+  const headerOffset = 60;
+  const elementPosition = element.getBoundingClientRect().top;
+  const offsetPosition = elementPosition + window.scrollY - headerOffset;
+
+  window.scrollTo({
+    top: offsetPosition,
+    behavior: "smooth",
+  });
+
+  return () => {
+    window.scrollTo(undefined);
+  };
 };
 
 export default function Block() {
