@@ -35,6 +35,7 @@ interface BlockSearchParams {
   accountName?: string;
   keyContent?: string;
   setOfKeys?: string[];
+  trxId?: string;
 }
 
 const defaultParams: BlockSearchParams = {
@@ -43,24 +44,27 @@ const defaultParams: BlockSearchParams = {
   accountName: undefined,
   keyContent: undefined,
   setOfKeys: undefined,
+  trxId: undefined,
 };
 
-const scrollToTrxSection = (trxId: string) => {
-  const element = document.getElementById(trxId);
-  if (!element) return;
-
-  const headerOffset = 60;
-  const elementPosition = element.getBoundingClientRect().top;
-  const offsetPosition = elementPosition + window.scrollY - headerOffset;
-
-  window.scrollTo({
-    top: offsetPosition,
-    behavior: "smooth",
-  });
-
-  return () => {
-    window.scrollTo(undefined);
-  };
+const scrollToTrxSection = (trxId?: string) => {
+  if (trxId) {
+    const element = document.getElementById(trxId);
+    if (!element) return;
+  
+    const headerOffset = 60;
+    const elementPosition = element.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.scrollY - headerOffset;
+  
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: "smooth",
+    });
+  
+    return () => {
+      window.scrollTo(undefined);
+    };
+  }
 };
 
 export default function Block() {
@@ -68,7 +72,6 @@ export default function Block() {
   const virtualOpsRef = useRef(null);
 
   const blockId = (router.query.blockId as string)?.replaceAll(",", "");
-  const trxId = router.asPath.split("#")[1];
 
   const { refetch } = useHeadBlockNumber();
 
@@ -80,6 +83,8 @@ export default function Block() {
     },
     ["blockId"]
   );
+
+  console.log("PARAMS STATE", paramsState);
 
   useEffect(() => {
     refetch();
@@ -202,6 +207,7 @@ export default function Block() {
       accountName: undefined,
       keyContent: undefined,
       setOfKeys: undefined,
+      trxId: undefined,
     });
   };
 
@@ -218,11 +224,11 @@ export default function Block() {
     if (!blockOperations || !blockOperations?.operations_result?.length) return;
 
     const timeout = setTimeout(() => {
-      scrollToTrxSection(trxId);
+      scrollToTrxSection(paramsState.trxId);
     });
 
     return () => clearTimeout(timeout);
-  }, [trxId, blockOperations]);
+  }, [paramsState.trxId, blockOperations]);
 
   if ((trxLoading === false && !blockOperations) || blockError) {
     return (
@@ -315,6 +321,7 @@ export default function Block() {
                   <OperationsTable
                     operations={nonVirtualOperations}
                     unformattedOperations={unformattedNonVirtual}
+                    markedTrxId={paramsState.trxId}
                   />
                 )}
                 <div
@@ -335,6 +342,7 @@ export default function Block() {
                   <OperationsTable
                     operations={virtualOperations}
                     unformattedOperations={unformattedVirtual}
+                    markedTrxId={paramsState.trxId}
                   />
                 )}
               </div>

@@ -32,6 +32,7 @@ import { useRouter } from "next/router";
 interface OperationsTableProps {
   operations: Explorer.OperationForTable[];
   unformattedOperations?: Explorer.OperationForTable[];
+  markedTrxId?: string;
   className?: string;
 }
 
@@ -77,14 +78,13 @@ const getOperationValues = (operation: Hive.Operation) => {
 const OperationsTable: React.FC<OperationsTableProps> = ({
   operations,
   unformattedOperations,
+  markedTrxId,
   className,
 }) => {
   const router = useRouter();
   const {
     settings: { rawJsonView, prettyJsonView },
   } = useUserSettingsContext();
-
-  const trxIdFromRoute = router.asPath.split("#")[1] || "";
 
   const [expanded, setExpanded] = useState<number[]>([]);
 
@@ -156,7 +156,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                   <Link
                     className="text-explorer-turquoise"
                     href={`/block/${operation.blockNumber}${
-                      operation.trxId ? "#" + operation.trxId : ""
+                      operation.trxId ? `?trxId=${operation.trxId}` : ""
                     }`}
                   >
                     {operation.blockNumber?.toLocaleString()}
@@ -166,7 +166,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                   <Link
                     className={cn("text-explorer-turquoise", {
                       "bg-explorer-ligh-green py-2 px-1 ":
-                        trxIdFromRoute === operation.trxId,
+                        markedTrxId === operation.trxId,
                     })}
                     href={`/transaction/${operation.trxId}`}
                   >
