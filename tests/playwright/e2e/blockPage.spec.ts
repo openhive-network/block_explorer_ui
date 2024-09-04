@@ -120,7 +120,7 @@ test.describe('Block page tests', () => {
         await expect(blockPage.detailedOperationCard.first()).toBeVisible()
         await blockPage.viewBtn.click()
         await blockPage.jsonRawRadioBtn.click()
-        
+
         await expect(blockPage.operationsJsonFormat).toBeVisible()
     });
 
@@ -157,7 +157,7 @@ test.describe('Block page tests', () => {
         const datePickerDayNotMuted = await page.locator('[data-testid="datepicker-calender"] button:not([class*="text-muted-foreground"])').nth(10);
         await blockPage.monthsDropdown.selectOption({ index: (new Date().getMonth() - 1) % 12 })
         await datePickerDayNotMuted.click();
-      
+
         await page.waitForTimeout(4000)
 
         const blockNumberChangedDate = await (blockPage.blockNumber).inputValue()

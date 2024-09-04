@@ -117,7 +117,7 @@ export class AccountPage {
     this.creationDate = page.getByTestId('creation-date');
     this.propertiesCardContent = page.getByTestId('card-content').first();
     this.jsonView = page.getByTestId('json-format-view');
-    this.witnessCardContent = page.getByTestId('card-content').nth(1);
+    this.witnessCardContent = page.getByTestId('card-content').nth(2);
     this.witnessVotesCard = page.locator('.p-4.pt-0.pb-2').nth(5);
   }
 

@@ -61,16 +61,17 @@ test.describe('Account page - account details tests', () => {
         await expect(mainPage.headBlockCardWitnessLink).toBeVisible()
         await expect(mainPage.headBlockCardWitnessName).toBeVisible()
         await expect(mainPage.headBlockCardWitnessName).toBeEnabled()
-        await mainPage.headBlockCardWitnessLink.click() 
+        const currentWitnessName = await mainPage.currentWitnessName.textContent();
+        await mainPage.headBlockCardWitnessLink.click()
 
-        const response = await page.waitForResponse((response) => response.url().includes("/get_account"));
+        const response = await page.waitForResponse((response) => response.url().includes(`hafbe/accounts/${currentWitnessName}`));
         const responseBody = await response.json()
 
         await expect(response.status()).toBe(200)
 
         const originalDate = await responseBody.created;
         console.log(originalDate)
-      
+
         await expect(accountPage.creationDate.first()).toBeVisible()
 
         const creationDate = await accountPage.creationDate.first().innerText()
@@ -129,7 +130,7 @@ test.describe('Account page - account details tests', () => {
         await expect(mainPage.headBlockCardWitnessName).toBeEnabled()
         await mainPage.headBlockCardWitnessLink.click()
         await expect(accountPage.witnessVotesCard).toBeHidden()
-        await page.getByText('Witness Votes', { exact: true }).click()
+        await page.getByText(/Witness Votes/, { exact: true }).click()
         await accountPage.accountWitnessVotesDropdown.scrollIntoViewIfNeeded()
         await expect(accountPage.accountWitnessVotesDropdown).toBeInViewport()
     })
