@@ -18,6 +18,7 @@ test.describe("Home Page last blocks widget", () => {
   });
 
   test("Should move to the account page of the witness by clicking picutre above the bar", async ({ page }) => {
+    test.slow();
     await homePage.gotoBlockExplorerPage();
     await homePage.validateMainPageIsLoaded();
 
@@ -38,6 +39,7 @@ test.describe("Home Page last blocks widget", () => {
   });
 
   test("Should move to the block page by clicking the bar of the latest block", async ({ page }) => {
+    test.slow();
     await homePage.gotoBlockExplorerPage();
     await homePage.validateMainPageIsLoaded();
 
