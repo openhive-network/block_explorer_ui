@@ -141,11 +141,9 @@ export const extendedRest = {
       urlPath: "global-state"
     },
     blockNumberByDate: {
-      byTime: {
-        params: Hive.GetBlockByTimeParams,
-        result: Number,
-        urlPath: "block-number-by-date/{date}"
-      }
+      params: Hive.GetBlockByTimeParams,
+      result: Number,
+      urlPath: "block-number-by-date/{date}"
     }
   }
 }
