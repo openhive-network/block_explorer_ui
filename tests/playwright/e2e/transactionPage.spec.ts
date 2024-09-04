@@ -43,7 +43,7 @@ test.describe('Transaction page - tests', () => {
         await transactionPage.transactionNumber.first().click();
         await expect(transactionPage.transactionHeader).toBeVisible()
         await expect(transactionPage.transactionDetails).toBeVisible()
-        await expect(blockPage.operationTypeTitle).toBeVisible()
+        await expect(blockPage.operationTypeTitle.first()).toBeVisible()
         await blockPage.viewBtn.click()
         await blockPage.jsonRawRadioBtn.click()
         await expect(blockPage.operationsJsonFormat).toBeVisible()
