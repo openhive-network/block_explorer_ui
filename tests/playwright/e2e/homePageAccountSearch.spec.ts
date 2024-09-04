@@ -79,14 +79,14 @@ test.describe('Home page - account searches', () => {
         await page.getByRole('button', {name: 'Apply'}).click();
         await mainPage.searchButtonInAccount.click()
 
-        const response = await page.waitForResponse((response) => response.url().includes("/operations?operation-types=0"));
+        const response = await page.waitForResponse((response) => response.url().includes("/operations?operation-types"));
 
         expect(response.status()).toBe(200);
 
         await expect(page.getByText('vote', { exact: true }).nth(2)).toBeVisible()
 
         if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
-                await expect(page.getByText('No operations matching given')).toBeVisible()
+                await expect(page.getByText('No operations matching given criteria')).toBeVisible()
               }
 
               else {
@@ -107,12 +107,12 @@ test.describe('Home page - account searches', () => {
         await page.getByRole('button', {name: 'Apply'}).click();
         await mainPage.searchButtonInAccount.click()
 
-        const response = await page.waitForResponse((response) => response.url().includes("/get_ops_by_account"));
+        const response = await page.waitForResponse((response) => response.url().includes("/operations?operation-types"));
 
         expect(response.status()).toBe(200);
 
         if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
-                await expect(page.getByText('No operations matching given')).toBeVisible()
+                await expect(page.getByText('No operations matching given criteria')).toBeVisible()
               }
 
               else {
