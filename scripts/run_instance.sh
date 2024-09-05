@@ -9,7 +9,7 @@ Usage: $0 [OPTION[=VALUE]]...
 Run a Block Explorer UI Docker instance
 OPTIONS:
   --image=IMAGE                 Docker image to run (default: 'registry.gitlab.syncad.com/hive/block_explorer_ui:latest')
-  --api-endpoint=URL            API endpoint to be used by the new instance (default: 'https://api.syncad.com')
+  --api-endpoint=URL            API endpoint to be used by the new instance (default: 'https://hafbe.openhive.network')
   --hive-blog-api-endpoint=URL  Hive Blog API endpoint to be used by the new instance (default: 'https://api.hive.blog')
   --port=PORT                   Port to be exposed (default: 5000)
   --name=NAME                   Container name to be used (default: block_explorer_ui)
@@ -20,7 +20,7 @@ EOF
 
 IMAGE=${IMAGE:-"registry.gitlab.syncad.com/hive/block_explorer_ui:latest"}
 PORT=${PORT:-"5000"}
-API_ENDPOINT=${API_ENDPOINT:-"https://api.syncad.com"}
+API_ENDPOINT=${API_ENDPOINT:-"https://hafbe.openhive.network"}
 HIVE_BLOG_API_ENDPOINT=${HIVE_BLOG_API_ENDPOINT:-"https://api.hive.blog"}
 CONTAINER_NAME=${CONTAINER_NAME:-"block_explorer_ui"}
 DETACH=${DETACH:-false}
