@@ -10,3 +10,8 @@ export const formatAndDelocalizeTime = (date?: string | Date): string => {
   if (!date) return "";
   return moment(date).format(config.baseMomentTimeFormat);
 }
+
+export const formatAndDelocalizeFromTime = (date?: string | Date): string => {
+  if (!date) return "";
+  return moment.utc(date).fromNow();
+}

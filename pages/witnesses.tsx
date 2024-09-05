@@ -23,7 +23,7 @@ import { config } from "@/Config";
 import { cn, formatNumber, formatPercent } from "@/lib/utils";
 import Head from "next/head";
 import moment from "moment";
-import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
+import { formatAndDelocalizeFromTime } from "@/utils/TimeUtils";
 
 const TABLE_CELLS = [
   "Rank",
@@ -267,7 +267,7 @@ export default function Witnesses() {
                 </TableCell>
                 <TableCell>
                   {singleWitness.feed_updated_at
-                    ? moment(formatAndDelocalizeTime(singleWitness.feed_updated_at)).fromNow()
+                    ? formatAndDelocalizeFromTime(singleWitness.feed_updated_at)
                     : "--"}
                 </TableCell>
                 <TableCell>{singleWitness.version}</TableCell>
