@@ -57,7 +57,7 @@ const renderSortArrow = (
   isOrderAscending: boolean
 ) => {
   // Remove this code block when sorting by `missed_blocks` and `hbd_interest_rate` will be available
-  const hideSort = cell === "missed blocks" || cell === "apr";
+  const hideSort = cell === "missed blocks" || cell === "apr" || cell === "version";
   if (hideSort) return;
   //
 
@@ -85,7 +85,8 @@ const renderSortArrow = (
 
 // Remove this code block when sorting by `missed_blocks` and `hbd_interest_rate` will be available
 const isCellUnsortable = (cell: string) => {
-  return cell === "APR" || cell === "Missed Blocks";
+  console.log('CELL', cell)
+  return cell === "APR" || cell === "Missed Blocks" || cell === "Version";
 };
 //
 
