@@ -265,7 +265,7 @@ export default function Witnesses() {
                     ? singleWitness.price_feed.toLocaleString()
                     : "--"}
                 </TableCell>
-                <TableCell>
+                <TableCell className="text-right">
                   {singleWitness.feed_updated_at
                     ? formatAndDelocalizeFromTime(singleWitness.feed_updated_at)
                     : "--"}
