@@ -1,20 +1,22 @@
 import React, { useEffect, useState } from "react";
+
 import { config } from "@/Config";
-import useCommentSearch from "@/api/common/useCommentSearch";
-import CustomPagination from "@/components/CustomPagination";
+import Hive from "@/types/Hive";
 import Explorer from "@/types/Explorer";
-import useOperationTypes from "@/api/common/useOperationsTypes";
-import JumpToPage from "@/components/JumpToPage";
-import { useOperationsFormatter, useURLParams } from "@/utils/Hooks";
-import CommentsSearch from "@/components/home/searches/CommentsSearch";
 import { formatAccountName } from "@/utils/StringUtils";
-import useSearchRanges from "@/components/searchRanges/useSearchRanges";
 import {
   convertBooleanArrayToIds,
   convertCommentsOperationResultToTableOperations,
 } from "@/lib/utils";
+import useCommentSearch from "@/hooks/common/useCommentSearch";
+import useOperationTypes from "@/hooks/common/useOperationsTypes";
+import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
+import useURLParams from "@/hooks/common/useURLParams";
+import useSearchRanges from "@/hooks/common/useSearchRanges";
+import CustomPagination from "@/components/CustomPagination";
+import JumpToPage from "@/components/JumpToPage";
+import CommentsSearch from "@/components/home/searches/CommentsSearch";
 import OperationsTable from "@/components/OperationsTable";
-import Hive from "@/types/Hive";
 import { Card, CardContent } from "@/components/ui/card";
 
 const defaultSearchParams: Explorer.CommentSearchParams = {

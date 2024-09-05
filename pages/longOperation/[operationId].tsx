@@ -1,7 +1,8 @@
-import { useRouter } from "next/router";
-import DetailedOperationCard from "@/components/DetailedOperationCard";
 import { Loader2 } from "lucide-react";
-import useOperation from "@/api/common/useOperation";
+import { useRouter } from "next/router";
+
+import useOperation from "@/hooks/common/useOperation";
+import DetailedOperationCard from "@/components/DetailedOperationCard";
 
 export default function LongOperation() {
   const router = useRouter();
@@ -22,7 +23,6 @@ export default function LongOperation() {
           blockNumber={operationData.block}
           transactionId={operationData.trx_id}
           key={operationData.timestamp}
-
           forceStyle="raw-json"
         />
       ) : (

@@ -6,11 +6,11 @@ import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import SearchesSection from "@/components/home/SearchesSection";
 import LastBlocksWidget from "@/components/LastBlocksWidget";
-import useWitnesses from "@/api/common/useWitnesses";
-import useDynamicGlobal from "@/api/homePage/useDynamicGlobal";
+import useWitnesses from "@/hooks/common/useWitnesses";
+import useDynamicGlobal from "@/hooks/homePage/useDynamicGlobal";
 import { config } from "@/Config";
-import useHeadBlock from "@/api/homePage/useHeadBlock";
-import useBlockOperations from "@/api/common/useBlockOperations";
+import useHeadBlock from "@/hooks/homePage/useHeadBlock";
+import useBlockOperations from "@/hooks/common/useBlockOperations";
 import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
 import Head from "next/head";
 import {

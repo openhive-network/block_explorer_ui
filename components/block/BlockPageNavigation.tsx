@@ -1,18 +1,20 @@
 import { useEffect, useState, useRef } from "react";
 import { ChevronRight, ChevronLeft } from "lucide-react";
-import Hive from "@/types/Hive";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import OperationTypesDialog from "@/components/OperationTypesDialog";
-import useBlockByTime from "@/api/common/useBlockByTime";
 import moment from "moment";
+
+import Hive from "@/types/Hive";
 import { getOperationButtonTitle } from "@/utils/UI";
 import {
   convertBooleanArrayToIds,
   convertIdsToBooleanArray,
 } from "@/lib/utils";
+import OperationTypesDialog from "@/components/OperationTypesDialog";
+import useBlockByTime from "@/hooks/common/useBlockByTime";
+
 import DateTimePicker from "../DateTimePicker";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 
 interface BlockPageNavigationProps {
   blockNumber: number;

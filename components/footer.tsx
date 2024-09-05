@@ -1,7 +1,7 @@
-import useHafbeVersion from "@/api/common/useHafbeVersion";
 import { config } from "@/Config";
-import AddressSwitchedDialog from "./AddressSwitchedDialog";
 import { useAddressesContext } from "../contexts/AddressesContext";
+import useHafbeVersion from "@/hooks/common/useHafbeVersion";
+import AddressSwitchedDialog from "./AddressSwitchedDialog";
 
 export default function Footer() {
   const { hafbeVersionData } = useHafbeVersion();

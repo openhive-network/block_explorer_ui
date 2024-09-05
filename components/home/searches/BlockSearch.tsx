@@ -1,4 +1,12 @@
-import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { Loader2, HelpCircle } from "lucide-react";
+
+import { config } from "@/Config";
+import Hive from "@/types/Hive";
+import Explorer from "@/types/Explorer";
+import { getOperationButtonTitle } from "@/utils/UI";
+import useSearchRanges from "@/hooks/common/useSearchRanges";
+import useOperationKeys from "@/hooks/homePage/useOperationKeys";
 import SearchRanges from "@/components/searchRanges/SearchRanges";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 import {
@@ -7,21 +15,15 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/tooltip";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectTrigger,
   SelectItem,
 } from "@/components/ui/select";
-import { Loader2, HelpCircle } from "lucide-react";
-import useSearchRanges from "@/components/searchRanges/useSearchRanges";
-import { useState } from "react";
-import Hive from "@/types/Hive";
-import { getOperationButtonTitle } from "@/utils/UI";
-import useOperationKeys from "@/api/homePage/useOperationKeys";
-import Explorer from "@/types/Explorer";
-import { config } from "@/Config";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+
 import { trimAccountName } from "@/utils/StringUtils";
 
 interface BlockSearchProps {

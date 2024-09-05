@@ -1,14 +1,15 @@
 import { Fragment } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
-import useDynamicGlobal from "@/api/homePage/useDynamicGlobal";
+
+import { convertUTCDateToLocalDate } from "@/utils/TimeUtils";
+import { cn } from "@/lib/utils";
+import useDynamicGlobal from "@/hooks/homePage/useDynamicGlobal";
+import { Table, TableBody, TableRow, TableCell } from "../ui/table";
 import {
   fundAndSupplyParameters,
   hiveParameters,
   blockchainDates,
 } from "./headBlockParameters";
-import { Table, TableBody, TableRow, TableCell } from "../ui/table";
-import { convertUTCDateToLocalDate } from "@/utils/TimeUtils";
-import { cn } from "@/lib/utils";
 
 const cardNameMap = new Map([
   ["feedPrice", "Feed price"],

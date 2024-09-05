@@ -1,12 +1,13 @@
+import { useState } from "react";
 import { ArrowDown, ArrowUp, User } from "lucide-react";
-import { Card, CardContent, CardHeader } from "../ui/card";
-import Hive from "@/types/Hive";
-import useAccountAuthorities from "@/api/accountPage/useAccountAuthorities";
-import { Fragment, useState } from "react";
 import Link from "next/link";
-import CopyToKeyboard from "../CopyToKeyboard";
-import { Table, TableBody, TableCell, TableRow } from "../ui/table";
+
+import Hive from "@/types/Hive";
 import { cn } from "@/lib/utils";
+import useAccountAuthorities from "@/hooks/accountPage/useAccountAuthorities";
+import { Table, TableBody, TableCell, TableRow } from "../ui/table";
+import { Card, CardContent, CardHeader } from "../ui/card";
+import CopyToKeyboard from "../CopyToKeyboard";
 
 interface AccountMainCardProps {
   accountName: string;
@@ -17,7 +18,10 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
   accountName,
   liveDataEnabled,
 }) => {
-  const { accountAuthoritiesData } = useAccountAuthorities(accountName, liveDataEnabled);
+  const { accountAuthoritiesData } = useAccountAuthorities(
+    accountName,
+    liveDataEnabled
+  );
 
   const [isPropertiesHidden, setIsPropertiesHidden] = useState<boolean>(true);
 

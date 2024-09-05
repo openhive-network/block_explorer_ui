@@ -3,20 +3,20 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
-  Label,
   Legend,
   ResponsiveContainer,
   Tooltip,
   XAxis,
   YAxis,
 } from "recharts";
+import Image from "next/image";
+import { useRouter } from "next/router";
+
 import Hive from "@/types/Hive";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { useMediaQuery } from "@/utils/Hooks";
-import { useRouter } from "next/router";
-import useLastBlocks from "@/api/homePage/useLastBlocks";
+import useMediaQuery from "@/hooks/common/useMediaQuery";
+import useLastBlocks from "@/hooks/homePage/useLastBlocks";
 import { Card, CardHeader, CardTitle } from "./ui/card";
 
 interface LastBlocksWidgetProps {
@@ -62,7 +62,10 @@ const CustomTooltip = ({
         <div>operations: {totalOperations}</div>
         <div>
           {payload.map((pld, index) => (
-            <div key={index} style={{ color: pld.fill }}>
+            <div
+              key={index}
+              style={{ color: pld.fill }}
+            >
               <div>
                 {pld.dataKey} {pld.value}
               </div>
@@ -176,7 +179,10 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
       <CardHeader>
         <CardTitle>Last Blocks</CardTitle>
       </CardHeader>
-      <ResponsiveContainer width="100%" height="100%">
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+      >
         <BarChart
           data={data}
           margin={{
@@ -187,7 +193,11 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" stroke="#fff" axisLine={false}></XAxis>
+          <XAxis
+            dataKey="name"
+            stroke="#fff"
+            axisLine={false}
+          ></XAxis>
           <YAxis
             stroke="#fff"
             axisLine={false}
@@ -199,8 +209,14 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
             type="number"
             interval="preserveStartEnd"
           />
-          <Tooltip cursor={{ fill: "#0000002A" }} content={<CustomTooltip />} />
-          <Legend wrapperStyle={{ position: "relative" }} align="center" />
+          <Tooltip
+            cursor={{ fill: "#0000002A" }}
+            content={<CustomTooltip />}
+          />
+          <Legend
+            wrapperStyle={{ position: "relative" }}
+            align="center"
+          />
           <Bar
             dataKey="other"
             stackId="a"

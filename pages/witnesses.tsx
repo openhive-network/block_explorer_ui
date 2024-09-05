@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Link from "next/link";
 import {
   Loader2,
   MenuSquareIcon,
@@ -8,6 +7,13 @@ import {
   MoveDown,
   Link as LinkIcon,
 } from "lucide-react";
+import Link from "next/link";
+import Head from "next/head";
+
+import { config } from "@/Config";
+import { cn, formatNumber, formatPercent } from "@/lib/utils";
+import { formatAndDelocalizeFromTime } from "@/utils/TimeUtils";
+import useWitnesses from "@/hooks/common/useWitnesses";
 import {
   Table,
   TableBody,
@@ -18,12 +24,6 @@ import {
 } from "@/components/ui/table";
 import VotersDialog from "@/components/Witnesses/VotersDialog";
 import VotesHistoryDialog from "@/components/Witnesses/VotesHistoryDialog";
-import useWitnesses from "@/api/common/useWitnesses";
-import { config } from "@/Config";
-import { cn, formatNumber, formatPercent } from "@/lib/utils";
-import Head from "next/head";
-import moment from "moment";
-import { formatAndDelocalizeFromTime } from "@/utils/TimeUtils";
 
 const TABLE_CELLS = [
   "Rank",
@@ -57,7 +57,8 @@ const renderSortArrow = (
   isOrderAscending: boolean
 ) => {
   // Remove this code block when sorting by `missed_blocks` and `hbd_interest_rate` will be available
-  const hideSort = cell === "missed blocks" || cell === "apr" || cell === "version";
+  const hideSort =
+    cell === "missed blocks" || cell === "apr" || cell === "version";
   if (hideSort) return;
   //
 
@@ -85,7 +86,7 @@ const renderSortArrow = (
 
 // Remove this code block when sorting by `missed_blocks` and `hbd_interest_rate` will be available
 const isCellUnsortable = (cell: string) => {
-  console.log('CELL', cell)
+  console.log("CELL", cell);
   return cell === "APR" || cell === "Missed Blocks" || cell === "Version";
 };
 //
