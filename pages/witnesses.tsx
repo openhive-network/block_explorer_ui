@@ -23,6 +23,7 @@ import { config } from "@/Config";
 import { cn, formatNumber, formatPercent } from "@/lib/utils";
 import Head from "next/head";
 import moment from "moment";
+import { formatAndDelocalizeFromTime } from "@/utils/TimeUtils";
 
 const TABLE_CELLS = [
   "Rank",
@@ -46,7 +47,7 @@ const sortKeyByCell: { [objectKey: string]: string } = {
   "missed blocks": "missed_blocks",
   apr: "hbd_interest_rate",
   "price feed": "price_feed",
-  "feed age": "feed_age",
+  "feed age": "feed_updated_at",
   version: "version",
 };
 
@@ -56,7 +57,7 @@ const renderSortArrow = (
   isOrderAscending: boolean
 ) => {
   // Remove this code block when sorting by `missed_blocks` and `hbd_interest_rate` will be available
-  const hideSort = cell === "missed blocks" || cell === "apr";
+  const hideSort = cell === "missed blocks" || cell === "apr" || cell === "version";
   if (hideSort) return;
   //
 
@@ -84,7 +85,8 @@ const renderSortArrow = (
 
 // Remove this code block when sorting by `missed_blocks` and `hbd_interest_rate` will be available
 const isCellUnsortable = (cell: string) => {
-  return cell === "APR" || cell === "Missed Blocks";
+  console.log('CELL', cell)
+  return cell === "APR" || cell === "Missed Blocks" || cell === "Version";
 };
 //
 
@@ -264,9 +266,9 @@ export default function Witnesses() {
                     ? singleWitness.price_feed.toLocaleString()
                     : "--"}
                 </TableCell>
-                <TableCell>
+                <TableCell className="text-right">
                   {singleWitness.feed_updated_at
-                    ? moment(singleWitness.feed_updated_at).fromNow()
+                    ? formatAndDelocalizeFromTime(singleWitness.feed_updated_at)
                     : "--"}
                 </TableCell>
                 <TableCell>{singleWitness.version}</TableCell>
