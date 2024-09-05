@@ -46,7 +46,7 @@ const sortKeyByCell: { [objectKey: string]: string } = {
   "missed blocks": "missed_blocks",
   apr: "hbd_interest_rate",
   "price feed": "price_feed",
-  "feed age": "feed_age",
+  "feed age": "feed_updated_at",
   version: "version",
 };
 
