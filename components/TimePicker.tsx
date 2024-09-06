@@ -1,7 +1,8 @@
+import { useEffect, useRef, useState } from "react";
+
 import { cn } from "@/lib/utils";
-import { useOnClickOutside } from "@/utils/Hooks";
 import { numberToTimeString } from "@/utils/StringUtils";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import useOnClickOutside from "@/hooks/common/useOnClickOutside";
 
 interface TimePickerProps {
   date: Date;
@@ -132,7 +133,11 @@ const TimePicker: React.FC<TimePickerProps> = ({
         onChange={setMinutes}
       />
       {" : "}
-      <TimeInput value={seconds} increment={S_INTERVAL} onChange={setSeconds} />
+      <TimeInput
+        value={seconds}
+        increment={S_INTERVAL}
+        onChange={setSeconds}
+      />
     </section>
   );
 };

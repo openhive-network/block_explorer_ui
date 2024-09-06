@@ -1,18 +1,17 @@
 import { useState } from "react";
+import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import SearchBar from "./SearchBar";
-import { useMediaQuery } from "@/utils/Hooks";
-import { Menu, X } from "lucide-react";
+
 import { cn } from "@/lib/utils";
-import { useUserSettingsContext } from "../contexts/UserSettingsContext";
+import useMediaQuery from "@/hooks/common/useMediaQuery";
+import SearchBar from "./SearchBar";
 import SyncInfo from "./home/SyncInfo";
 import ViewPopover from "./ViewPopover";
 
 export default function Navbar() {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [menuOpen, setMenuOpen] = useState(false);
-  const { settings, setSettings } = useUserSettingsContext();
   const [searchBarOpen, setSearchBarOpen] = useState(false);
 
   return (

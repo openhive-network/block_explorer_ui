@@ -1,6 +1,9 @@
 import { useState } from "react";
 import Link from "next/link";
 import { MoveDown, MoveUp, Loader2 } from "lucide-react";
+
+import { cn, formatNumber } from "@/lib/utils";
+import useWitnessVoters from "@/hooks/api/common/useWitnessVoters";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
   Table,
@@ -11,8 +14,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Switch } from "../ui/switch";
-import { cn, formatNumber } from "@/lib/utils";
-import useWitnessVoters from "@/api/common/useWitnessVoters";
 
 type VotersDialogProps = {
   accountName: string;
@@ -24,8 +25,8 @@ type VotersDialogProps = {
 const tableColums = [
   { key: "voter", name: "Voter" },
   { key: "vests", name: "Votes", isRightAligned: true },
-  { key: "account_vests", name: "Account", isRightAligned: true},
-  { key: "proxied_vests", name: "Proxy", isRightAligned: true},
+  { key: "account_vests", name: "Account", isRightAligned: true },
+  { key: "proxied_vests", name: "Proxy", isRightAligned: true },
 ];
 
 const VotersDialog: React.FC<VotersDialogProps> = ({
@@ -33,7 +34,6 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
   isVotersOpen,
   changeVotersDialogue,
   liveDataEnabled,
-  
 }) => {
   const [showHivePower, setShowHivePower] = useState<boolean>(false);
   const [sortKey, setSortKey] = useState<string>("vests");
@@ -44,7 +44,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
     isVotersOpen,
     isAsc,
     sortKey,
-    liveDataEnabled,
+    liveDataEnabled
   );
   const changeSorter = (newIsAsc: boolean, newSortKey: string) => {
     const isAscForChange = newSortKey === sortKey ? newIsAsc : false;
@@ -77,7 +77,10 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
       >
         {witnessVoters ? (
           <>
-            <div className="flex  justify-center  items-centertext-center font-semibold	" data-testid="voters-dialog-witness-name">
+            <div
+              className="flex  justify-center  items-centertext-center font-semibold	"
+              data-testid="voters-dialog-witness-name"
+            >
               {accountName}{" "}
               {isWitnessVotersLoading && (
                 <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
@@ -106,9 +109,11 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                         "sticky md:static left-0": !index,
                       })}
                     >
-                      <span className={cn("flex", {
-                        "justify-end": column.isRightAligned
-                      })}>
+                      <span
+                        className={cn("flex", {
+                          "justify-end": column.isRightAligned,
+                        })}
+                      >
                         {column.name} {showSorter(column.key)}
                       </span>
                     </TableHead>
@@ -131,27 +136,36 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                             : "bg-gray-900 md:bg-inherit"
                         }`}
                       >
-                        <Link href={`/@${voter.voter}`} data-testid="voter-name">
+                        <Link
+                          href={`/@${voter.voter}`}
+                          data-testid="voter-name"
+                        >
                           {voter.voter}
                         </Link>
                       </TableCell>
-                      <TableCell className="text-right" data-testid="vote-power">
+                      <TableCell
+                        className="text-right"
+                        data-testid="vote-power"
+                      >
                         {showHivePower
                           ? formatNumber(voter.votes_hive_power, false)
-                          : formatNumber(voter.vests, true)
-                        }
+                          : formatNumber(voter.vests, true)}
                       </TableCell>
-                      <TableCell className="text-right" data-testid="account-power">
+                      <TableCell
+                        className="text-right"
+                        data-testid="account-power"
+                      >
                         {showHivePower
                           ? formatNumber(voter.account_hive_power, false)
-                          : formatNumber(voter.account_vests, true)
-                        }
+                          : formatNumber(voter.account_vests, true)}
                       </TableCell>
-                      <TableCell className="text-right" data-testid="proxied-power">
+                      <TableCell
+                        className="text-right"
+                        data-testid="proxied-power"
+                      >
                         {showHivePower
                           ? formatNumber(voter.proxied_hive_power, false)
-                          : formatNumber(voter.proxied_vests, true)
-                        }
+                          : formatNumber(voter.proxied_vests, true)}
                       </TableCell>
                     </TableRow>
                   ))}

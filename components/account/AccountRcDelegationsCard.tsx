@@ -1,10 +1,11 @@
 import React, { useState, Fragment } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import Link from "next/link";
+
+import { formatNumber } from "@/lib/utils";
+import useRcDelegations from "@/hooks/api/common/useRcDelegations";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableRow, TableCell } from "../ui/table";
-import useRcDelegations from "@/api/common/useRcDelegations";
-import { formatNumber } from "@/lib/utils";
 type RcDelegation = {
   to: string;
   delegated_rc: number;
@@ -46,11 +47,8 @@ const AccountRcDelegationsCard: React.FC<AccountRcDelegationsCardProps> = ({
   liveDataEnabled,
 }) => {
   const [isPropertiesHidden, setIsPropertiesHidden] = useState(true);
-  const {
-    rcDelegationsData,
-    isRcDelegationsLoading,
-    isRcDelegationsError,
-  } = useRcDelegations(delegatorAccount, limit, liveDataEnabled);
+  const { rcDelegationsData, isRcDelegationsLoading, isRcDelegationsError } =
+    useRcDelegations(delegatorAccount, limit, liveDataEnabled);
 
   if (isRcDelegationsLoading) {
     return <div></div>;

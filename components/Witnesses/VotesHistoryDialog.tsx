@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
+import { ArrowUpCircleIcon, ArrowDownCircleIcon } from "lucide-react";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
+import moment from "moment";
 
-import { Dialog, DialogContent } from "@/components/ui/dialog";
 import Hive from "@/types/Hive";
+import { cn, formatNumber } from "@/lib/utils";
+import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
+import useWitnessVotesHistory from "@/hooks/api/common/useWitnessVotesHistory";
 import {
   Table,
   TableBody,
@@ -12,16 +16,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Switch } from "../ui/switch";
-import { cn, formatNumber } from "@/lib/utils";
-import moment from "moment";
-import { config } from "@/Config";
-import { ArrowUpCircleIcon, ArrowDownCircleIcon } from "lucide-react";
-import useWitnessVotesHistory from "@/api/common/useWitnessVotesHistory";
 import JumpToPage from "../JumpToPage";
 import CustomPagination from "../CustomPagination";
 import DateTimePicker from "../DateTimePicker";
-import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 
 type VotersDialogProps = {
   accountName: string;
@@ -58,7 +57,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
     isVotesHistoryOpen,
     fromDate,
     toDate,
-    liveDataEnabled,
+    liveDataEnabled
   );
 
   useEffect(() => {
@@ -78,12 +77,18 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
   };
 
   return (
-    <Dialog open={isVotesHistoryOpen} onOpenChange={changeVoteHistoryDialogue}>
+    <Dialog
+      open={isVotesHistoryOpen}
+      onOpenChange={changeVoteHistoryDialogue}
+    >
       <DialogContent
-        className={cn("max-w-2xl max-h-[700px]  bg-white dark:bg-explorer-dark-gray overflow-auto", {
-          "flex column justify-center items-center": !votesHistory,
-          "h-3/4": votesHistory?.length >=16
-        })}
+        className={cn(
+          "max-w-2xl max-h-[700px]  bg-white dark:bg-explorer-dark-gray overflow-auto",
+          {
+            "flex column justify-center items-center": !votesHistory,
+            "h-3/4": votesHistory?.length >= 16,
+          }
+        )}
         data-testid="votes-history-dialog"
       >
         {votesHistory ? (
@@ -166,7 +171,10 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                         index % 2 === 0 ? "bg-gray-800" : "bg-gray-900"
                       }`}
                     >
-                      <TableCell className="sticky left-0" data-testid="date-format">
+                      <TableCell
+                        className="sticky left-0"
+                        data-testid="date-format"
+                      >
                         {formatAndDelocalizeTime(vote.timestamp)}
                       </TableCell>
                       <TableCell

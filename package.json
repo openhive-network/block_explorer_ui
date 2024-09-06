@@ -45,7 +45,7 @@
     "long": "^5.2.3",
     "lucide-react": "^0.261.0",
     "moment": "^2.29.4",
-    "next": "^13.5.4",
+    "next": "^14.2.8",
     "next-themes": "^0.2.1",
     "playwright-merge-html-reports": "^0.2.8",
     "postcss": "^8.4.31",
@@ -65,7 +65,7 @@
   },
   "devDependencies": {
     "@beam-australia/react-env": "^3.1.1",
-    "@playwright/test": "^1.40.1",
+    "@playwright/test": "^1.47.0",
     "@tanstack/eslint-plugin-query": "^4.29.25",
     "@types/yazl": "^2.4.5",
     "cross-env": "^7.0.3",

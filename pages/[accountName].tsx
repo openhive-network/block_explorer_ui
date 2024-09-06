@@ -1,29 +1,28 @@
 import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import useAccountDetails from "@/api/accountPage/useAccountDetails";
-import useAccountOperations from "@/api/accountPage/useAccountOperations";
-import AccountTopBar from "@/components/account/AccountTopBar";
-import {
-  useMediaQuery,
-  useOperationsFormatter,
-  useURLParams,
-} from "@/utils/Hooks";
 import { Loader2, ArrowBigRightDash, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import Hive from "@/types/Hive";
-import useSearchRanges from "@/components/searchRanges/useSearchRanges";
-import SearchRanges from "@/components/searchRanges/SearchRanges";
-import ScrollTopButton from "@/components/ScrollTopButton";
+import { useRouter } from "next/router";
 import Head from "next/head";
-import OperationsTable from "@/components/OperationsTable";
+
+import Hive from "@/types/Hive";
 import {
   cn,
   convertBooleanArrayToIds,
   convertOperationResultsToTableOperations,
 } from "@/lib/utils";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import useAccountDetails from "@/hooks/api/accountPage/useAccountDetails";
+import useAccountOperations from "@/hooks/api/accountPage/useAccountOperations";
+import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
+import useMediaQuery from "@/hooks/common/useMediaQuery";
+import useSearchRanges from "@/hooks/common/useSearchRanges";
+import useURLParams from "@/hooks/common/useURLParams";
+import AccountTopBar from "@/components/account/AccountTopBar";
+import SearchRanges from "@/components/searchRanges/SearchRanges";
+import ScrollTopButton from "@/components/ScrollTopButton";
+import OperationsTable from "@/components/OperationsTable";
 import AccountDetailsSection from "@/components/account/AccountDetailsSection";
 import MobileAccountNameCard from "@/components/account/MobileAccountNameCard";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -91,20 +90,26 @@ export default function Account() {
 
   const searchRanges = useSearchRanges();
 
-  const { accountDetails, notFound } = useAccountDetails(accountNameFromRoute, liveDataEnabled);
+  const { accountDetails, notFound } = useAccountDetails(
+    accountNameFromRoute,
+    liveDataEnabled
+  );
   const accountOperationsProps = {
-      accountName: accountNameFromRoute,
-      operationTypes: filtersParam.length
-        ? convertBooleanArrayToIds(filtersParam)
-        : undefined,
-      pageNumber: paramsState.page,
-      fromBlock: fromBlockParam,
-      toBlock: toBlockParam,
-      startDate: fromDateParam,
-      endDate: toDateParam,
-  }
-  const { accountOperations, isAccountOperationsLoading, refetchAccountOperations } =
-    useAccountOperations(accountOperationsProps, liveDataEnabled);
+    accountName: accountNameFromRoute,
+    operationTypes: filtersParam.length
+      ? convertBooleanArrayToIds(filtersParam)
+      : undefined,
+    pageNumber: paramsState.page,
+    fromBlock: fromBlockParam,
+    toBlock: toBlockParam,
+    startDate: fromDateParam,
+    endDate: toDateParam,
+  };
+  const {
+    accountOperations,
+    isAccountOperationsLoading,
+    refetchAccountOperations,
+  } = useAccountOperations(accountOperationsProps, liveDataEnabled);
 
   const formattedAccountOperations = useOperationsFormatter(
     accountOperations
@@ -225,16 +230,24 @@ export default function Account() {
                 className="cursor-pointer"
               />
             </div>
-            <AccountDetailsSection accountName={accountNameFromRoute} refetchAccountOperations={refetchAccountOperations} liveDataEnabled={liveDataEnabled}
-  changeLiveRefresh={changeLiveRefresh}/>
+            <AccountDetailsSection
+              accountName={accountNameFromRoute}
+              refetchAccountOperations={refetchAccountOperations}
+              liveDataEnabled={liveDataEnabled}
+              changeLiveRefresh={changeLiveRefresh}
+            />
           </div>
         </>
       );
     } else {
       return (
         <div className="col-start-1 col-span-1 flex flex-col gap-y-2">
-          <AccountDetailsSection accountName={accountNameFromRoute} refetchAccountOperations={refetchAccountOperations} liveDataEnabled={liveDataEnabled}
-  changeLiveRefresh={changeLiveRefresh}/>
+          <AccountDetailsSection
+            accountName={accountNameFromRoute}
+            refetchAccountOperations={refetchAccountOperations}
+            liveDataEnabled={liveDataEnabled}
+            changeLiveRefresh={changeLiveRefresh}
+          />
         </div>
       );
     }
@@ -258,7 +271,7 @@ export default function Account() {
       <div className="flex items-center justify-end w-full min-h-[64px] bg-explorer-orange -mt-4 px-2 md:mb-4 md:px-8 fixed z-20">
         {accountOperations && (paramsState.page || lastPage) && (
           <AccountTopBar
-          accountName={accountNameFromRoute}
+            accountName={accountNameFromRoute}
             page={paramsState.page ? paramsState.page : lastPage || 0}
             setPage={(page: number | undefined) =>
               setParams({ ...paramsState, page })
@@ -272,7 +285,10 @@ export default function Account() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 text-white mx-8 mt-24 lg:mt-16 w-full gap-4 px-2 md:px-4">
         {isMobile && (
-          <MobileAccountNameCard accountName={accountNameFromRoute} liveDataEnabled={liveDataEnabled} />
+          <MobileAccountNameCard
+            accountName={accountNameFromRoute}
+            liveDataEnabled={liveDataEnabled}
+          />
         )}
 
         {renderAccountDetailsView()}

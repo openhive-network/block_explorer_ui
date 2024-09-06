@@ -1,23 +1,24 @@
 import { useState } from "react";
-import Explorer from "@/types/Explorer";
+import { Loader2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
+
+import { config } from "@/Config";
+import Explorer from "@/types/Explorer";
 import Hive from "@/types/Hive";
-import { Loader2 } from "lucide-react";
+import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
+import { getVestsToHiveRatio } from "@/utils/Calculations";
+import { useUserSettingsContext } from "../../contexts/UserSettingsContext";
+import useBlockchainSyncInfo from "@/hooks/common/useBlockchainSyncInfo";
 import HeadBlockPropertyCard from "./HeadBlockPropertyCard";
 import {
   fundAndSupplyParameters,
   hiveParameters,
   blockchainDates,
 } from "./headBlockParameters";
-import { useUserSettingsContext } from "../../contexts/UserSettingsContext";
+import { getBlockDifference } from "./SyncInfo";
 import { Toggle } from "../ui/toggle";
 import { Card, CardContent, CardHeader } from "../ui/card";
-import { useBlockchainSyncInfo } from "@/utils/Hooks";
-import { getBlockDifference } from "./SyncInfo";
-import { config } from "@/Config";
-import { getVestsToHiveRatio } from "@/utils/Calculations";
 
 interface HeadBlockCardProps {
   headBlockCardData?: Explorer.HeadBlockCardData | any;

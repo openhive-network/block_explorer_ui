@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { usePagination } from "./customHooks/usePagination";
+import { usePagination } from "../hooks/common/usePagination";
 import {
   Pagination,
   PaginationContent,
