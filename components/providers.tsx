@@ -16,6 +16,7 @@ import Layout from "./layout";
 import useApiAddresses from "@/utils/ApiAddresses";
 import ErrorPage from "@/pages/ErrorPage";
 import { OperationTypesContextProvider } from "@/contexts/OperationsTypesContext";
+import { TooltipProvider } from "@/contexts/TooltipContext";
 
 const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { apiAddress, nodeAddress } = useApiAddresses();
@@ -47,7 +48,9 @@ const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
             <HeadBlockContextProvider>
               <OperationTypesContextProvider>
                 <AddressesContextProvider>
-                  <Layout>{children}</Layout>
+                  <Layout>
+                    <TooltipProvider>{children}</TooltipProvider>
+                  </Layout>
                   <ReactQueryDevtools initialIsOpen={false} />
                 </AddressesContextProvider>
               </OperationTypesContextProvider>
