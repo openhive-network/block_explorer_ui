@@ -55,7 +55,7 @@ docker-build:
 .node-job:
   extends: .job-defaults
   image:
-    name: node:18.15-alpine3.17
+    name: node:18.20-alpine3.20
     entrypoint: []
   stage: test
   script:

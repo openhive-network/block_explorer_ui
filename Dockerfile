@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.5
 # Build with: docker buildx bake --progress=plain local-build
 
-FROM node:18.15-alpine3.17 AS base
+FROM node:18.20-alpine3.20 AS base
 
 FROM base AS deps
 
