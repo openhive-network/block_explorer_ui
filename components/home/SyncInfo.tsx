@@ -1,6 +1,8 @@
-import { cn } from "@/lib/utils";
-import { useBlockchainSyncInfo } from "@/utils/Hooks";
 import { useState } from "react";
+
+import { cn } from "@/lib/utils";
+import { convertUTCDateToLocalDate } from "@/utils/TimeUtils";
+import useBlockchainSyncInfo from "@/hooks/common/useBlockchainSyncInfo";
 import {
   Dialog,
   DialogContent,
@@ -8,7 +10,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { convertUTCDateToLocalDate } from "@/utils/TimeUtils";
 
 interface SyncInfoProps {
   className?: string;
@@ -51,7 +52,10 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
       : "text-explorer-light-green";
 
   return !syncLoading ? (
-    <Dialog open={dialogOpen} onOpenChange={(open) => setDialogOpen(open)}>
+    <Dialog
+      open={dialogOpen}
+      onOpenChange={(open) => setDialogOpen(open)}
+    >
       <DialogTrigger>
         <div
           className={cn(
@@ -74,7 +78,7 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
           ) : (
             <>
               <p>Blocks out of sync:</p>
-              <p>{ blockDifference.toLocaleString()}</p>
+              <p>{blockDifference.toLocaleString()}</p>
             </>
           )}
         </div>

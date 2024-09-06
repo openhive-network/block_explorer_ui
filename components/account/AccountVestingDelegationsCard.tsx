@@ -1,12 +1,13 @@
 import { useState, Fragment, ReactNode } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import Link from "next/link";
-import { Card, CardContent, CardHeader } from "../ui/card";
-import { Table, TableBody, TableRow, TableCell } from "../ui/table";
-import useVestingDelegations from "@/api/common/useVestingDelegations";
+
 import { convertVestsToHP } from "@/utils/Calculations";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
-import useDynamicGlobal from "@/api/homePage/useDynamicGlobal";
+import useVestingDelegations from "@/hooks/api/common/useVestingDelegations";
+import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
+import { Card, CardContent, CardHeader } from "../ui/card";
+import { Table, TableBody, TableRow, TableCell } from "../ui/table";
 
 type VestingDelegation = {
   delegatee: string;

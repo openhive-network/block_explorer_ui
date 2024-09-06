@@ -1,13 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
+import { Search, X, CornerDownLeft as Enter } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Search, X, CornerDownLeft as Enter } from "lucide-react";
-import { useDebounce, useMediaQuery, useOnClickOutside } from "@/utils/Hooks";
-import { capitalizeFirst, trimAccountName } from "@/utils/StringUtils";
-import { Input } from "./ui/input";
+
 import Hive from "@/types/Hive";
 import { cn } from "@/lib/utils";
-import useInputType from "@/api/common/useInputType";
+import { capitalizeFirst, trimAccountName } from "@/utils/StringUtils";
+import useMediaQuery from "@/hooks/common/useMediaQuery";
+import useDebounce from "@/hooks/common/useDebounce";
+import useOnClickOutside from "@/hooks/common/useOnClickOutside";
+import useInputType from "@/hooks/api/common/useInputType";
+import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 
 interface SearchBarProps {

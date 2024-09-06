@@ -1,8 +1,8 @@
 import Image from "next/image";
 
-import useAccountDetails from "@/api/accountPage/useAccountDetails";
-import { Card, CardHeader } from "../ui/card";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
+import useAccountDetails from "@/hooks/api/accountPage/useAccountDetails";
+import { Card, CardHeader } from "../ui/card";
 
 interface MobileAccountNameCardProps {
   accountName: string;
@@ -11,7 +11,7 @@ interface MobileAccountNameCardProps {
 
 const MobileAccountNameCard: React.FC<MobileAccountNameCardProps> = ({
   accountName,
-  liveDataEnabled
+  liveDataEnabled,
 }) => {
   const { accountDetails } = useAccountDetails(accountName, liveDataEnabled);
   if (!accountDetails) return;

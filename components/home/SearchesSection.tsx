@@ -1,19 +1,9 @@
-import Explorer from "@/types/Explorer";
 import { useEffect, useState, useRef } from "react";
-import { Button } from "../ui/button";
 import Link from "next/link";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "../ui/accordion";
+
 import { config } from "@/Config";
-import useCommentSearch from "@/api/common/useCommentSearch";
-import useBlockSearch from "@/api/homePage/useBlockSearch";
-import useOperationTypes from "@/api/common/useOperationsTypes";
-import useSearchRanges from "../searchRanges/useSearchRanges";
-import useAccountOperations from "@/api/accountPage/useAccountOperations";
+import Hive from "@/types/Hive";
+import Explorer from "@/types/Explorer";
 import {
   convertBooleanArrayToIds,
   convertCommentsOperationResultToTableOperations,
@@ -21,16 +11,27 @@ import {
   convertOperationResultsToTableOperations,
   getPageUrlParams,
 } from "@/lib/utils";
+import { dataToURL } from "@/utils/URLutils";
+import useCommentSearch from "@/hooks/api/common/useCommentSearch";
+import useBlockSearch from "@/hooks/api/homePage/useBlockSearch";
+import useOperationTypes from "@/hooks/api/common/useOperationsTypes";
+import useSearchRanges from "../../hooks/common/useSearchRanges";
+import useAccountOperations from "@/hooks/api/accountPage/useAccountOperations";
+import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
 import JumpToPage from "../JumpToPage";
-import { dataToURL, useOperationsFormatter } from "@/utils/Hooks";
 import BlockSearch from "./searches/BlockSearch";
 import AccountSearch from "./searches/AccountSearch";
 import CommentsSearch from "./searches/CommentsSearch";
-import { useUserSettingsContext } from "../../contexts/UserSettingsContext";
-import Hive from "@/types/Hive";
 import OperationsTable from "../OperationsTable";
 import CustomPagination from "../CustomPagination";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Button } from "../ui/button";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "../ui/accordion";
 
 interface SearchesSectionProps {}
 

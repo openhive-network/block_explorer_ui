@@ -1,14 +1,14 @@
-import Hive from "@/types/Hive";
-import JumpToPage from "../JumpToPage";
 import { config } from "@/Config";
-import OperationTypesDialog from "../OperationTypesDialog";
+import Hive from "@/types/Hive";
 import { getOperationButtonTitle } from "@/utils/UI";
 import {
   convertBooleanArrayToIds,
   convertIdsToBooleanArray,
 } from "@/lib/utils";
+import useAccountOperationTypes from "@/hooks/api/accountPage/useAccountOperationTypes";
+import JumpToPage from "../JumpToPage";
+import OperationTypesDialog from "../OperationTypesDialog";
 import CustomPagination from "../CustomPagination";
-import useAccountOperationTypes from "@/api/accountPage/useAccountOperationTypes";
 
 interface AccountTopBarProps {
   accountName: string;
@@ -35,8 +35,7 @@ const AccountTopBar: React.FC<AccountTopBarProps> = ({
     setPage(undefined);
   };
 
-  const { accountOperationTypes } =
-    useAccountOperationTypes(accountName);
+  const { accountOperationTypes } = useAccountOperationTypes(accountName);
 
   return (
     <div

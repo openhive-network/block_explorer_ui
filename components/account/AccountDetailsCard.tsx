@@ -1,12 +1,13 @@
 import Link from "next/link";
 import { ReactNode, useState, Fragment } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
+
+import { convertVestsToHP } from "@/utils/Calculations";
+import { useHiveChainContext } from "@/contexts/HiveChainContext";
+import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table";
 import CopyToKeyboard from "../CopyToKeyboard";
-import { convertVestsToHP } from "@/utils/Calculations";
-import useDynamicGlobal from "@/api/homePage/useDynamicGlobal";
-import { useHiveChainContext } from "@/contexts/HiveChainContext";
 
 type AccountDetailsCardProps = {
   header: string;

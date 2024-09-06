@@ -1,32 +1,33 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useRouter } from "next/router";
 import { Loader2 } from "lucide-react";
-import BlockPageNavigation from "@/components/block/BlockPageNavigation";
-import { scrollTo } from "@/utils/UI";
-import PageNotFound from "@/components/PageNotFound";
-import { Button } from "@/components/ui/button";
-import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
-import JSONView from "@/components/JSONView";
-import useBlockData from "@/api/blockPage/useBlockData";
-import useBlockOperations from "@/api/common/useBlockOperations";
-import useOperationsTypes from "@/api/common/useOperationsTypes";
-import BlockDetails from "@/components/block/BlockDetails";
-import Hive from "@/types/Hive";
-import ScrollTopButton from "@/components/ScrollTopButton";
-import { useURLParams } from "@/utils/Hooks";
-import useOperationsCountInBlock from "@/api/blockPage/useOperationsInBlock";
-import Explorer from "@/types/Explorer";
-import { useOperationsFormatter } from "@/utils/Hooks";
+import { useRouter } from "next/router";
 import Head from "next/head";
-import useBlockRawData from "@/api/blockPage/useBlockRawData";
-import OperationsTable from "@/components/OperationsTable";
+
+import { config } from "@/Config";
+import Hive from "@/types/Hive";
+import Explorer from "@/types/Explorer";
+import { scrollTo } from "@/utils/UI";
 import {
   convertBooleanArrayToIds,
   convertOperationResultsToTableOperations,
 } from "@/lib/utils";
-import CustomPagination from "@/components/CustomPagination";
-import { config } from "@/Config";
+import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
 import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
+import useBlockData from "@/hooks/api/blockPage/useBlockData";
+import useBlockOperations from "@/hooks/api/common/useBlockOperations";
+import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
+import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
+import useURLParams from "@/hooks/common/useURLParams";
+import useBlockRawData from "@/hooks/api/blockPage/useBlockRawData";
+import useOperationsCountInBlock from "@/hooks/api/blockPage/useOperationsInBlock";
+import BlockPageNavigation from "@/components/block/BlockPageNavigation";
+import PageNotFound from "@/components/PageNotFound";
+import { Button } from "@/components/ui/button";
+import JSONView from "@/components/JSONView";
+import BlockDetails from "@/components/block/BlockDetails";
+import ScrollTopButton from "@/components/ScrollTopButton";
+import OperationsTable from "@/components/OperationsTable";
+import CustomPagination from "@/components/CustomPagination";
 
 interface BlockSearchParams {
   blockId?: number;
@@ -97,22 +98,22 @@ export default function Block() {
 
   const { rawBlockdata } = useBlockRawData(Number(blockId));
   const { blockOperations: totalOperations, trxLoading: totalLoading } =
-  useBlockOperations(Number(blockId), undefined, paramsState.page || 1);
+    useBlockOperations(Number(blockId), undefined, paramsState.page || 1);
 
   const { blockError, blockOperations, trxLoading } = useBlockOperations(
     Number(blockId),
     paramsState.filters
-    ? convertBooleanArrayToIds(paramsState.filters)
-    : undefined,
+      ? convertBooleanArrayToIds(paramsState.filters)
+      : undefined,
     paramsState.page || 1,
     paramsState.accountName,
     paramsState.keyContent ? paramsState.keyContent : undefined,
     paramsState.setOfKeys
-    );
-    const { operationsTypes } = useOperationsTypes();
-    const formattedOperations = useOperationsFormatter(
-      blockOperations?.operations_result
-      ) as Hive.OperationResponse[];
+  );
+  const { operationsTypes } = useOperationsTypes();
+  const formattedOperations = useOperationsFormatter(
+    blockOperations?.operations_result
+  ) as Hive.OperationResponse[];
   useEffect(() => {
     if (blockDetails && blockDetails.created_at) {
       setBlockDate(new Date(blockDetails.created_at + "Z"));

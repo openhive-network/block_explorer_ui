@@ -1,19 +1,20 @@
-import { Input } from "@/components/ui/input";
-import SearchRanges from "@/components/searchRanges/SearchRanges";
-import OperationTypesDialog from "@/components/OperationTypesDialog";
-import { Button } from "@/components/ui/button";
-import { Loader2 } from "lucide-react";
-import { SearchRangesResult } from "@/components/searchRanges/useSearchRanges";
 import { useEffect, useState } from "react";
-import Hive from "@/types/Hive";
-import { getOperationButtonTitle } from "@/utils/UI";
-import Explorer from "@/types/Explorer";
+import { Loader2 } from "lucide-react";
+
 import { config } from "@/Config";
+import Hive from "@/types/Hive";
+import Explorer from "@/types/Explorer";
+import { getOperationButtonTitle } from "@/utils/UI";
 import { trimAccountName } from "@/utils/StringUtils";
 import {
   convertBooleanArrayToIds,
   convertIdsToBooleanArray,
 } from "@/lib/utils";
+import { SearchRangesResult } from "@/hooks/common/useSearchRanges";
+import { Input } from "@/components/ui/input";
+import SearchRanges from "@/components/searchRanges/SearchRanges";
+import OperationTypesDialog from "@/components/OperationTypesDialog";
+import { Button } from "@/components/ui/button";
 
 interface CommentsSearchProps {
   startCommentsSearch: (

@@ -1,16 +1,17 @@
 import { useRouter } from "next/router";
-import Hive from "@/types/Hive";
-import { addSpacesAndCapitalizeFirst } from "@/utils/StringUtils";
 import Link from "next/link";
-import PageNotFound from "@/components/PageNotFound";
-import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
-import JSONView from "@/components/JSONView";
-import useTransactionData from "@/api/common/useTransactionData";
-import { useOperationsFormatter } from "@/utils/Hooks";
 import Head from "next/head";
-import OperationsTable from "@/components/OperationsTable";
+
+import Hive from "@/types/Hive";
+import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
 import { convertTransactionResponseToTableOperations } from "@/lib/utils";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
+import { addSpacesAndCapitalizeFirst } from "@/utils/StringUtils";
+import useTransactionData from "@/hooks/api/common/useTransactionData";
+import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
+import PageNotFound from "@/components/PageNotFound";
+import JSONView from "@/components/JSONView";
+import OperationsTable from "@/components/OperationsTable";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const displayTransactionData = (
