@@ -1,7 +1,7 @@
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/router";
 
-import useOperation from "@/hooks/common/useOperation";
+import useOperation from "@/hooks/api/common/useOperation";
 import DetailedOperationCard from "@/components/DetailedOperationCard";
 
 export default function LongOperation() {

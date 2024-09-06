@@ -4,7 +4,7 @@ import Link from "next/link";
 
 import Hive from "@/types/Hive";
 import { cn } from "@/lib/utils";
-import useAccountAuthorities from "@/hooks/accountPage/useAccountAuthorities";
+import useAccountAuthorities from "@/hooks/api/accountPage/useAccountAuthorities";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import CopyToKeyboard from "../CopyToKeyboard";

@@ -13,7 +13,7 @@ import Head from "next/head";
 import { config } from "@/Config";
 import { cn, formatNumber, formatPercent } from "@/lib/utils";
 import { formatAndDelocalizeFromTime } from "@/utils/TimeUtils";
-import useWitnesses from "@/hooks/common/useWitnesses";
+import useWitnesses from "@/hooks/api/common/useWitnesses";
 import {
   Table,
   TableBody,

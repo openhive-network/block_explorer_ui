@@ -3,7 +3,7 @@ import Link from "next/link";
 import { MoveDown, MoveUp, Loader2 } from "lucide-react";
 
 import { cn, formatNumber } from "@/lib/utils";
-import useWitnessVoters from "@/hooks/common/useWitnessVoters";
+import useWitnessVoters from "@/hooks/api/common/useWitnessVoters";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
   Table,

@@ -13,13 +13,13 @@ import {
 } from "@/lib/utils";
 import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
 import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
-import useBlockData from "@/hooks/blockPage/useBlockData";
-import useBlockOperations from "@/hooks/common/useBlockOperations";
-import useOperationsTypes from "@/hooks/common/useOperationsTypes";
+import useBlockData from "@/hooks/api/blockPage/useBlockData";
+import useBlockOperations from "@/hooks/api/common/useBlockOperations";
+import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
 import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
 import useURLParams from "@/hooks/common/useURLParams";
-import useBlockRawData from "@/hooks/blockPage/useBlockRawData";
-import useOperationsCountInBlock from "@/hooks/blockPage/useOperationsInBlock";
+import useBlockRawData from "@/hooks/api/blockPage/useBlockRawData";
+import useOperationsCountInBlock from "@/hooks/api/blockPage/useOperationsInBlock";
 import BlockPageNavigation from "@/components/block/BlockPageNavigation";
 import PageNotFound from "@/components/PageNotFound";
 import { Button } from "@/components/ui/button";

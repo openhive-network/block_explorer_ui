@@ -4,7 +4,7 @@ import { formatNumber } from "@/lib/utils";
 import { splitStringValue } from "@/utils/StringUtils";
 import { convertVestsToHP, convertHiveToUSD } from "@/utils/Calculations";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
-import useDynamicGlobal from "@/hooks/homePage/useDynamicGlobal";
+import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table";
 

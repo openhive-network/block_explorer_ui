@@ -7,7 +7,7 @@ import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
 import { convertTransactionResponseToTableOperations } from "@/lib/utils";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import { addSpacesAndCapitalizeFirst } from "@/utils/StringUtils";
-import useTransactionData from "@/hooks/common/useTransactionData";
+import useTransactionData from "@/hooks/api/common/useTransactionData";
 import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
 import PageNotFound from "@/components/PageNotFound";
 import JSONView from "@/components/JSONView";

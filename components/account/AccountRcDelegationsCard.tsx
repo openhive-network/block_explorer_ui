@@ -3,7 +3,7 @@ import { ArrowDown, ArrowUp } from "lucide-react";
 import Link from "next/link";
 
 import { formatNumber } from "@/lib/utils";
-import useRcDelegations from "@/hooks/common/useRcDelegations";
+import useRcDelegations from "@/hooks/api/common/useRcDelegations";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableRow, TableCell } from "../ui/table";
 type RcDelegation = {

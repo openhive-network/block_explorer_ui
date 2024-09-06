@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
 
 import Hive from "@/types/Hive";
-import useOperationsTypes from "@/hooks/common/useOperationsTypes";
+import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
 
 export type OperationTypesContextType = {
   operationsTypes: Hive.OperationPattern[] | undefined;

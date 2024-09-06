@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
-import useAccountDetails from "@/hooks/accountPage/useAccountDetails";
+import useAccountDetails from "@/hooks/api/accountPage/useAccountDetails";
 import { Card, CardHeader } from "../ui/card";
 
 interface MobileAccountNameCardProps {

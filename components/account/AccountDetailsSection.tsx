@@ -3,8 +3,8 @@ import { QueryObserverResult } from "@tanstack/react-query";
 
 import { config } from "@/Config";
 import Hive from "@/types/Hive";
-import useAccountDetails from "@/hooks/accountPage/useAccountDetails";
-import useWitnessDetails from "@/hooks/common/useWitnessDetails";
+import useAccountDetails from "@/hooks/api/accountPage/useAccountDetails";
+import useWitnessDetails from "@/hooks/api/common/useWitnessDetails";
 import AccountMainCard from "./AccountMainCard";
 import AccountDetailsCard from "./AccountDetailsCard";
 import JSONCard from "../JSONCard";

@@ -16,7 +16,7 @@ import Hive from "@/types/Hive";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { cn } from "@/lib/utils";
 import useMediaQuery from "@/hooks/common/useMediaQuery";
-import useLastBlocks from "@/hooks/homePage/useLastBlocks";
+import useLastBlocks from "@/hooks/api/homePage/useLastBlocks";
 import { Card, CardHeader, CardTitle } from "./ui/card";
 
 interface LastBlocksWidgetProps {

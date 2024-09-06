@@ -3,7 +3,7 @@ import { ArrowDown, ArrowUp } from "lucide-react";
 
 import { convertUTCDateToLocalDate } from "@/utils/TimeUtils";
 import { cn } from "@/lib/utils";
-import useDynamicGlobal from "@/hooks/homePage/useDynamicGlobal";
+import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { Table, TableBody, TableRow, TableCell } from "../ui/table";
 import {
   fundAndSupplyParameters,

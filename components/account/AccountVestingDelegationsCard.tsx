@@ -4,8 +4,8 @@ import Link from "next/link";
 
 import { convertVestsToHP } from "@/utils/Calculations";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
-import useVestingDelegations from "@/hooks/common/useVestingDelegations";
-import useDynamicGlobal from "@/hooks/homePage/useDynamicGlobal";
+import useVestingDelegations from "@/hooks/api/common/useVestingDelegations";
+import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableRow, TableCell } from "../ui/table";
 

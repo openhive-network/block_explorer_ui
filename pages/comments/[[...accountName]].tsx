@@ -8,8 +8,8 @@ import {
   convertBooleanArrayToIds,
   convertCommentsOperationResultToTableOperations,
 } from "@/lib/utils";
-import useCommentSearch from "@/hooks/common/useCommentSearch";
-import useOperationTypes from "@/hooks/common/useOperationsTypes";
+import useCommentSearch from "@/hooks/api/common/useCommentSearch";
+import useOperationTypes from "@/hooks/api/common/useOperationsTypes";
 import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
 import useURLParams from "@/hooks/common/useURLParams";
 import useSearchRanges from "@/hooks/common/useSearchRanges";

@@ -3,8 +3,8 @@ import { useMemo } from "react";
 import Explorer from "@/types/Explorer";
 import Hive from "@/types/Hive";
 import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
-import useDynamicGlobal from "../homePage/useDynamicGlobal";
-import useHeadBlock from "../homePage/useHeadBlock";
+import useDynamicGlobal from "../api/homePage/useDynamicGlobal";
+import useHeadBlock from "../api/homePage/useHeadBlock";
 
 const useBlockchainSyncInfo = () => {
   const dynamicGlobalQueryData = useDynamicGlobal().dynamicGlobalData;

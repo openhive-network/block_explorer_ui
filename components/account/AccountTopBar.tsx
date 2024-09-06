@@ -5,7 +5,7 @@ import {
   convertBooleanArrayToIds,
   convertIdsToBooleanArray,
 } from "@/lib/utils";
-import useAccountOperationTypes from "@/hooks/accountPage/useAccountOperationTypes";
+import useAccountOperationTypes from "@/hooks/api/accountPage/useAccountOperationTypes";
 import JumpToPage from "../JumpToPage";
 import OperationTypesDialog from "../OperationTypesDialog";
 import CustomPagination from "../CustomPagination";

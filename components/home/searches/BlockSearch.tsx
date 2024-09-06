@@ -6,7 +6,7 @@ import Hive from "@/types/Hive";
 import Explorer from "@/types/Explorer";
 import { getOperationButtonTitle } from "@/utils/UI";
 import useSearchRanges from "@/hooks/common/useSearchRanges";
-import useOperationKeys from "@/hooks/homePage/useOperationKeys";
+import useOperationKeys from "@/hooks/api/homePage/useOperationKeys";
 import SearchRanges from "@/components/searchRanges/SearchRanges";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 import {

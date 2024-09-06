@@ -12,11 +12,11 @@ import {
   getPageUrlParams,
 } from "@/lib/utils";
 import { dataToURL } from "@/utils/URLutils";
-import useCommentSearch from "@/hooks/common/useCommentSearch";
-import useBlockSearch from "@/hooks/homePage/useBlockSearch";
-import useOperationTypes from "@/hooks/common/useOperationsTypes";
+import useCommentSearch from "@/hooks/api/common/useCommentSearch";
+import useBlockSearch from "@/hooks/api/homePage/useBlockSearch";
+import useOperationTypes from "@/hooks/api/common/useOperationsTypes";
 import useSearchRanges from "../../hooks/common/useSearchRanges";
-import useAccountOperations from "@/hooks/accountPage/useAccountOperations";
+import useAccountOperations from "@/hooks/api/accountPage/useAccountOperations";
 import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
 import JumpToPage from "../JumpToPage";
 import BlockSearch from "./searches/BlockSearch";

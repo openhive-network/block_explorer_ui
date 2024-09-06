@@ -9,7 +9,7 @@ import { capitalizeFirst, trimAccountName } from "@/utils/StringUtils";
 import useMediaQuery from "@/hooks/common/useMediaQuery";
 import useDebounce from "@/hooks/common/useDebounce";
 import useOnClickOutside from "@/hooks/common/useOnClickOutside";
-import useInputType from "@/hooks/common/useInputType";
+import useInputType from "@/hooks/api/common/useInputType";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 

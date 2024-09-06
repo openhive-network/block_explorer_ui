@@ -4,7 +4,7 @@ import Image from "next/image";
 import Explorer from "@/types/Explorer";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
-import useManabars from "@/hooks/accountPage/useManabars";
+import useManabars from "@/hooks/api/accountPage/useManabars";
 import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
 import { Toggle } from "../ui/toggle";
 import { Progress } from "@/components/ui/progress";

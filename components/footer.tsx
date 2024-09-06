@@ -1,6 +1,6 @@
 import { config } from "@/Config";
 import { useAddressesContext } from "../contexts/AddressesContext";
-import useHafbeVersion from "@/hooks/common/useHafbeVersion";
+import useHafbeVersion from "@/hooks/api/common/useHafbeVersion";
 import AddressSwitchedDialog from "./AddressSwitchedDialog";
 
 export default function Footer() {

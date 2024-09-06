@@ -7,7 +7,7 @@ import moment from "moment";
 import Hive from "@/types/Hive";
 import { cn, formatNumber } from "@/lib/utils";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
-import useWitnessVotesHistory from "@/hooks/common/useWitnessVotesHistory";
+import useWitnessVotesHistory from "@/hooks/api/common/useWitnessVotesHistory";
 import {
   Table,
   TableBody,

@@ -9,8 +9,8 @@ import {
   convertBooleanArrayToIds,
   convertOperationResultsToTableOperations,
 } from "@/lib/utils";
-import useAccountDetails from "@/hooks/accountPage/useAccountDetails";
-import useAccountOperations from "@/hooks/accountPage/useAccountOperations";
+import useAccountDetails from "@/hooks/api/accountPage/useAccountDetails";
+import useAccountOperations from "@/hooks/api/accountPage/useAccountOperations";
 import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
 import useMediaQuery from "@/hooks/common/useMediaQuery";
 import useSearchRanges from "@/hooks/common/useSearchRanges";
