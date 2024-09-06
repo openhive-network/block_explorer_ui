@@ -86,7 +86,6 @@ const renderSortArrow = (
 
 // Remove this code block when sorting by `missed_blocks` and `hbd_interest_rate` will be available
 const isCellUnsortable = (cell: string) => {
-  console.log("CELL", cell);
   return cell === "APR" || cell === "Missed Blocks" || cell === "Version";
 };
 //
