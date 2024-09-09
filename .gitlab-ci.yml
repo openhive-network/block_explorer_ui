@@ -55,7 +55,7 @@ docker-build:
 .node-job:
   extends: .job-defaults
   image:
-    name: node:18.15-alpine3.17
+    name: node:18.20-alpine3.20
     entrypoint: []
   stage: test
   script:
@@ -137,7 +137,7 @@ startup-test:
 
 .e2e_tests_template:
   extends: .node-job
-  image: mcr.microsoft.com/playwright:v1.40.1-jammy
+  image: mcr.microsoft.com/playwright:v1.47.0-jammy
   parallel:
     matrix:
       - PROJECT: ['chromium', 'firefox', 'webkit']
@@ -176,7 +176,7 @@ e2e-tests:
   extends: .node-job
   stage: test-report-aggregate
   when: always
-  image: mcr.microsoft.com/playwright:v1.40.1-jammy
+  image: mcr.microsoft.com/playwright:v1.47.0-jammy
   script:
     - cd ./
     - npm install playwright-merge-html-reports --dev

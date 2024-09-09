@@ -2,7 +2,6 @@ import { Fragment } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 
 import { convertUTCDateToLocalDate } from "@/utils/TimeUtils";
-import { cn } from "@/lib/utils";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { Table, TableBody, TableRow, TableCell } from "../ui/table";
 import {
@@ -21,6 +20,7 @@ const cardNameMap = new Map([
   ["currentHbdSupply", "Current hbd supply"],
   ["pendingRewardedVestingHive", "Pending rewarded vesting hive"],
   ["totalVestingFundHive", "Total vesting fund hive"],
+  ["totalVestingShares", "Total vesting shares"],
   ["hbdInterestRate", "Hbd interest rate"],
   ["hbdPrintRate", "Hbd print rate"],
   ["lastIrreversibleBlockNumber", "Last irreversible block num"],
@@ -62,14 +62,7 @@ const buildTableBody = (
 ) => {
   return parameters.map((param: string, index: number) => (
     <Fragment key={index}>
-      <TableRow
-        className={cn(
-          {
-            "border-t border-gray-700": !!index,
-          },
-          "hover:bg-inherit"
-        )}
-      >
+      <TableRow className={"border-b border-gray-700  hover:bg-inherit"}>
         <TableCell>{cardNameMap.get(param)}</TableCell>
         <TableCell>
           {header === "Blockchain Dates"

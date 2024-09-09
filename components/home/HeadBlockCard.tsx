@@ -7,6 +7,7 @@ import { config } from "@/Config";
 import Explorer from "@/types/Explorer";
 import Hive from "@/types/Hive";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
+import { getVestsToHiveRatio } from "@/utils/Calculations";
 import { useUserSettingsContext } from "../../contexts/UserSettingsContext";
 import useBlockchainSyncInfo from "@/hooks/common/useBlockchainSyncInfo";
 import HeadBlockPropertyCard from "./HeadBlockPropertyCard";
@@ -38,6 +39,8 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
     hiveParamsCard: true,
   });
   const { settings, setSettings } = useUserSettingsContext();
+
+  const vestsToHiveRatio = getVestsToHiveRatio(blockDetails);
 
   const handleHideBlockchainDates = () => {
     setHiddenPropertiesByCard({
@@ -102,10 +105,10 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
       </CardHeader>
 
       <CardContent className="p-2">
-        <div className="my-2">Operations per block: {opcount} </div>
+        <div className="my-2">Operations per block : {opcount} </div>
         {blockDetails?.producer_account && (
           <div className="flex">
-            <p>Current witness: </p>
+            <p>Current witness : </p>
             <Link
               className="flex justify-between items-center min-h-[40px]"
               href={`/@${blockDetails?.producer_account}`}
@@ -133,6 +136,9 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
         )}
         <div className="my-2">
           Feed Price : {headBlockCardData?.headBlockDetails.feedPrice ?? ""}
+        </div>
+        <div className="my-2">
+          Vests To Hive Ratio : {vestsToHiveRatio} VESTS
         </div>
         <div>
           Blockchain Time :{" "}

@@ -1,15 +1,14 @@
 import { IManabarData } from "@hiveio/wax";
 namespace Hive {
-  
   export type Direction = "asc" | "desc";
   export type OperationTypes = [number, string, boolean];
   export type InputTypes =
-  | "account_name"
-  | "account_name_array"
-  | "block_num"
-  | "transaction_hash"
-  | "block_hash"
-  | "invalid_input";
+    | "account_name"
+    | "account_name_array"
+    | "block_num"
+    | "transaction_hash"
+    | "block_hash"
+    | "invalid_input";
 
   export interface OperationsByTypeCount {
     count: number;
@@ -126,11 +125,11 @@ namespace Hive {
     sort!: string;
     direction!: Hive.Direction;
   }
-  
+
   export class GetWitnessParams {
     accountName!: string;
   }
-  
+
   export class Witness {
     witness!: string;
     rank!: number;
@@ -149,16 +148,15 @@ namespace Hive {
     missed_blocks!: number;
     hbd_interest_rate!: number;
     vests_hive_power!: number;
-  
   }
-  
+
   export class GetVotersParams {
     accountName!: string;
     sort?: string;
     direction?: Hive.Direction;
     "result-limit"?: number;
   }
-  
+
   export class Voter {
     voter!: string;
     vests!: number;
@@ -169,8 +167,7 @@ namespace Hive {
     proxied_hive_power!: number;
     timestamp!: Date;
   }
-  
-  
+
   export class GetVotesHistoryParams {
     accountName!: string;
     sort?: string;
@@ -179,7 +176,7 @@ namespace Hive {
     "start-date"?: Date;
     "end-date"?: Date;
   }
-  
+
   export class WitnessVotesHistory {
     voter!: string;
     approve!: boolean;
@@ -191,11 +188,11 @@ namespace Hive {
     proxied_hive_power!: number;
     timestamp!: Date;
   }
-  
+
   export class GetBlockDetailsParams {
     blockNumber!: number;
   }
-  
+
   export class BlockDetails {
     block_num!: number;
     created_at!: string;
@@ -210,29 +207,29 @@ namespace Hive {
     signing_key!: string;
     total_reward_fund_hive!: number;
     total_vesting_fund_hive!: number;
-    total_vesting_shares!: string;
+    total_vesting_shares!: number;
     transaction_merkle_root!: string;
     virtual_supply!: number;
     witness_signature!: string;
   }
-  
+
   export class GetBlockGlobalStateParams {
     "block-num"!: number;
   }
-  
+
   export class GetInputTypeParams {
     inputType!: string;
   }
-  
+
   export class InputTypeResponse {
     input_type!: Hive.InputTypes;
     input_value!: string | string[];
   }
-  
+
   export class GetTransactionParams {
     transactionId!: string;
   }
-  
+
   export class TransactionResponse {
     transaction_json!: Hive.TransactionDetails;
     timestamp!: Date;
@@ -240,36 +237,36 @@ namespace Hive {
     block_num!: number;
     transaction_num!: number;
   }
-  
+
   export class OperationPattern {
     op_type_id!: number;
     operation_name!: string;
     is_virtual!: boolean;
   }
-  
+
   export class GetBlockByTimeParams {
     date!: string;
   }
-  
-  export class GetOperationKeysParams{
+
+  export class GetOperationKeysParams {
     operationTypeId!: number;
   }
-  
+
   export class LastBlocksTypeResponse {
     block_num!: number;
     witness!: string;
     ops_count!: Hive.OperationsByTypeCount[];
   }
-  
+
   export class GetLastOperationTypeCountsParams {
     "block-num"?: number;
     "result-limit"!: number;
   }
-  
+
   export class GetOperationParams {
     operationId!: string;
   }
-  
+
   export class GetOpsByAccountParams {
     accountName!: string;
     "operation-types"?: string;
@@ -281,11 +278,11 @@ namespace Hive {
     "start-date"?: Date;
     "end-date"?: Date;
   }
-  
+
   export class GetAccountDetailsParams {
     accountName!: string;
   }
-  
+
   export class OperationResponse {
     block!: number;
     op_pos!: number;
@@ -297,11 +294,11 @@ namespace Hive {
     virtual_op!: boolean;
     op_type_id!: number;
   }
-  
+
   export class GetAccountOperationTypesParams {
     accountName!: string;
   }
-  
+
   export class AccountDetails {
     id!: number;
     name!: string;
@@ -341,11 +338,11 @@ namespace Hive {
     ops_count!: number;
     is_witness!: boolean;
   }
-  
+
   export class GetAccountAuthoritiesParams {
     accountName!: string;
   }
-  
+
   export class AccountAuthoritiesData {
     owner!: Hive.AuthKeys;
     active!: Hive.AuthKeys;
@@ -353,7 +350,7 @@ namespace Hive {
     memo!: string;
     witness_signing!: string;
   }
-  
+
   export class GetCommentOperationsParams {
     accountName!: string;
     "operation-types"?: string;
@@ -366,13 +363,13 @@ namespace Hive {
     "start-date"?: Date;
     "end-date"?: Date;
   }
-  
+
   export class CommentOperationResponse {
     operations_result!: Hive.CommentOperation[];
     total_operations!: number;
     total_pages!: number;
   }
-  
+
   export class BlockSearchParams {
     "operation-types"?: string;
     page?: number;
@@ -387,12 +384,12 @@ namespace Hive {
     "end-date"?: Date;
     "path-filter"?: string;
   }
-  
+
   export class BlockByOpResponse {
     block_num!: number;
     op_type_id!: number[];
   }
-  
+
   export class GetOperationsByBlockParams {
     blockNumber!: number;
     "operation-types"?: string;
@@ -403,18 +400,18 @@ namespace Hive {
     "data-size-limit"?: number;
     "path-filter"?: string;
   }
-  
+
   export class GetRawBlockParams {
     "from-block"!: number;
     "to-block"!: number;
   }
-  
+
   export class TotalOperationsResponse {
     operations_result!: Hive.OperationResponse[];
     total_pages!: number;
     total_operations!: number;
-  }    
-  
+  }
+
   export class RawBlockData {
     block_id!: string;
     extensions!: unknown[];
@@ -514,7 +511,6 @@ namespace Hive {
     created_at: Date;
     trx_hash: string;
   }
-
 
   export interface Manabars {
     upvote: IManabarData;
