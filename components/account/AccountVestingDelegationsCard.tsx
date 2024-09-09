@@ -2,12 +2,14 @@ import { useState, Fragment, ReactNode } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import Link from "next/link";
 
+import { formatNumber } from "@/lib/utils";
 import { convertVestsToHP } from "@/utils/Calculations";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import useVestingDelegations from "@/hooks/api/common/useVestingDelegations";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableRow, TableCell } from "../ui/table";
+import VestsTooltip from "../VestsTooltip";
 
 type VestingDelegation = {
   delegatee: string;
@@ -85,7 +87,14 @@ const AccountVestingDelegationsCard: React.FC<
       totalVestingShares
     );
 
-    return formattedHP;
+    const formatVests = `${formatNumber(Number(vests), true)} VESTS`;
+
+    return (
+      <VestsTooltip
+        tooltipTrigger={formattedHP}
+        tooltipContent={formatVests}
+      />
+    );
   };
 
   return (
