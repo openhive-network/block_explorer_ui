@@ -13,7 +13,7 @@ const useAccountAuthorities = (
     isLoading: accountAuthoritiesDataLoading,
     isError: accountAuthoritiesDataError,
   }: UseQueryResult<Hive.AccountAuthoritiesData> = useQuery({
-    queryKey: ["account_authorities", accountName],
+    queryKey: ["account_authorities", accountName, liveDataEnabled],
     queryFn: () => fetchingService.getAccountAuthorities(accountName),
     refetchInterval: liveDataEnabled ? config.accountRefreshInterval : false,
     refetchOnWindowFocus: false,

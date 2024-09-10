@@ -21,7 +21,14 @@ const useWitnessVoters = (
     isLoading: isWitnessVotersLoading,
     isError: isWitnessVotersError,
   }: UseQueryResult<Hive.Voter[]> = useQuery({
-    queryKey: ["witness_voters", accountName, isModalOpen, isAsc, sortKey],
+    queryKey: [
+      "witness_voters",
+      accountName,
+      isModalOpen,
+      isAsc,
+      sortKey,
+      liveDataEnabled,
+    ],
     queryFn: () =>
       fetchingService.getWitnessVoters(accountName, sortKey, sortDirection),
     enabled: !!accountName && isModalOpen,
