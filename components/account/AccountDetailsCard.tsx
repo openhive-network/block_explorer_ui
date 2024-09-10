@@ -58,7 +58,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
   if (!userDetails || !dynamicGlobalData || !hiveChain) return;
 
   const {
-    headBlockDetails: { totalVestingFundHive, totalVestingShares },
+    headBlockDetails: { rawTotalVestingFundHive, rawTotalVestingShares },
   } = dynamicGlobalData;
   const keys = Object.keys(userDetails);
 
@@ -67,8 +67,8 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
       const formattedHP = convertVestsToHP(
         hiveChain,
         userKey,
-        totalVestingFundHive,
-        totalVestingShares
+        rawTotalVestingFundHive,
+        rawTotalVestingShares
       );
 
       return (

@@ -20,6 +20,7 @@ export function adjustDynamicGlobalBlockData(
   hiveChain: IHiveChainInterface
 ): Explorer.HeadBlockCardData {
   const { base } = currentPriceFeed;
+  const { total_vesting_fund_hive: rawTotalVestingFundHive, total_vesting_shares: rawTotalVestingShares } = dynamicGlobalQuery;
   const basicFormatter = hiveChain.formatter;
   const formattedBaseValues: Explorer.DynamicGlobalBlock = basicFormatter.format(dynamicGlobalQuery);
   const {
@@ -83,8 +84,9 @@ export function adjustDynamicGlobalBlockData(
     maxConvecutiveRecurrentTransferFailures: max_consecutive_recurrent_transfer_failures.toLocaleString(),
     maxRecurrentTransferEndDate: max_recurrent_transfer_end_date,
     minRecurrentTransfersRecurrence: min_recurrent_transfers_recurrence,
-    maxOpenRecurrentTransfers: max_open_recurrent_transfers
-
+    maxOpenRecurrentTransfers: max_open_recurrent_transfers,
+    rawTotalVestingFundHive,
+    rawTotalVestingShares
   };
   return {headBlockDetails, headBlockNumber: head_block_number, witnessName: current_witness};
 }

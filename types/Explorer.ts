@@ -32,6 +32,8 @@ declare module Explorer {
     maxRecurrentTransferEndDate: number;
     minRecurrentTransfersRecurrence: number;
     maxOpenRecurrentTransfers: number;
+    rawTotalVestingFundHive: Hive.Supply;
+    rawTotalVestingShares: Hive.Supply;
   }
 
   interface HeadBlockCardData {

@@ -13,34 +13,23 @@ import Hive from "@/types/Hive";
 export const convertVestsToHP = (
   hivechain: IHiveChainInterface,
   vests: string,
-  totalVestingFundHive: string,
-  totalVestingShares: string
+  totalVestingFundHive: Hive.Supply,
+  totalVestingShares: Hive.Supply
 ) => {
   if (!hivechain || !vests || !totalVestingFundHive || !totalVestingShares)
     return;
 
   const formattedVests = splitStringValue(vests.replace(/,/g, ""), "VESTS");
-  const formattedTotalVestingFundHive = splitStringValue(
-    totalVestingFundHive,
-    "HIVE"
-  );
-
-  const formattedTotalVestingShares = splitStringValue(
-    totalVestingShares,
-    "VESTS"
-  );
 
   const convertedHp = hivechain.vestsToHp(
     formattedVests,
-    formattedTotalVestingFundHive,
-    formattedTotalVestingShares
-  );
-
-  //Replace original value of `HIVE` with `HP`
-  const formattedHP = hivechain.formatter
+    totalVestingFundHive,
+    totalVestingShares
+    );
+    //Replace original value of `HIVE` with `HP`
+    const formattedHP = hivechain.formatter
     .format(convertedHp)
     .replace("HIVE", "HP");
-
   return formattedHP;
 };
 

@@ -72,7 +72,7 @@ const AccountVestingDelegationsCard: React.FC<
     return;
 
   const {
-    headBlockDetails: { totalVestingFundHive, totalVestingShares },
+    headBlockDetails: { rawTotalVestingFundHive, rawTotalVestingShares },
   } = dynamicGlobalData;
 
   const handlePropertiesVisibility = () => {
@@ -83,8 +83,8 @@ const AccountVestingDelegationsCard: React.FC<
     const formattedHP = convertVestsToHP(
       hiveChain,
       vests,
-      totalVestingFundHive,
-      totalVestingShares
+      rawTotalVestingFundHive,
+      rawTotalVestingShares
     );
 
     const formatVests = `${formatNumber(Number(vests), true)} VESTS`;

@@ -64,7 +64,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
   if (!dynamicGlobalData || !hiveChain) return;
 
   const {
-    headBlockDetails: { totalVestingFundHive, totalVestingShares, feedPrice },
+    headBlockDetails: { feedPrice, rawTotalVestingFundHive, rawTotalVestingShares },
   } = dynamicGlobalData;
 
   const keys = Object.keys(userDetails);
@@ -74,8 +74,8 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
       const formattedHp = convertVestsToHP(
         hiveChain,
         userDetails[key],
-        totalVestingFundHive,
-        totalVestingShares
+        rawTotalVestingFundHive,
+        rawTotalVestingShares
       );
 
       return (
@@ -94,8 +94,8 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
       const formattedHP = convertVestsToHP(
         hiveChain,
         userDetails[key],
-        totalVestingFundHive,
-        totalVestingShares
+        rawTotalVestingFundHive,
+        rawTotalVestingShares
       );
       displVal = convertHiveToUSD(
         Number(splitStringValue(formattedHP, "HP").replace(/,/g, "")),
