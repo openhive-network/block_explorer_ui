@@ -7,6 +7,7 @@ import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table";
+import VestsTooltip from "../VestsTooltip";
 
 type AccountBalanceCardProps = {
   header: string;
@@ -77,7 +78,12 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
         totalVestingShares
       );
 
-      return formattedHp;
+      return (
+        <VestsTooltip
+          tooltipTrigger={formattedHp}
+          tooltipContent={userDetails[key]}
+        />
+      );
     }
     return userDetails[key];
   };

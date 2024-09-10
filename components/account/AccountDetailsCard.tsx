@@ -8,6 +8,7 @@ import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table";
 import CopyToKeyboard from "../CopyToKeyboard";
+import VestsTooltip from "../VestsTooltip";
 
 type AccountDetailsCardProps = {
   header: string;
@@ -70,7 +71,12 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
         totalVestingShares
       );
 
-      return formattedHP;
+      return (
+        <VestsTooltip
+          tooltipTrigger={formattedHP}
+          tooltipContent={userKey}
+        />
+      );
     } else {
       return userKey;
     }
