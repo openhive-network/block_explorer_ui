@@ -50,7 +50,7 @@ const useAccountDetails = (accountName: string, liveDataEnabled: boolean) => {
     isLoading: isAccountDetailsLoading,
     isError: isAccountDetailsError,
   }: UseQueryResult<Explorer.FormattedAccountDetails> = useQuery({
-    queryKey: ["account_details", accountName],
+    queryKey: ["account_details", accountName, liveDataEnabled],
     queryFn: () => fetchingService.getAccount(accountName),
     refetchInterval: liveDataEnabled ? config.accountRefreshInterval : false,
     refetchOnWindowFocus: false,

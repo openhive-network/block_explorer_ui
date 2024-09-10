@@ -31,6 +31,7 @@ const useWitnessVotesHistory = (
       isModalOpen,
       fromDate,
       toDate,
+      liveDataEnabled,
     ],
     queryFn: fetchVotesHist,
     enabled: !!accountName && isModalOpen,
