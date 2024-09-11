@@ -3,7 +3,6 @@ import { QueryObserverResult } from "@tanstack/react-query";
 
 import { config } from "@/Config";
 import Hive from "@/types/Hive";
-import useAccountDetails from "@/hooks/api/accountPage/useAccountDetails";
 import useWitnessDetails from "@/hooks/api/common/useWitnessDetails";
 import AccountMainCard from "./AccountMainCard";
 import AccountDetailsCard from "./AccountDetailsCard";
@@ -15,12 +14,14 @@ import VotesHistoryDialog from "../Witnesses/VotesHistoryDialog";
 import AccountVestingDelegationsCard from "./AccountVestingDelegationsCard";
 import AccountRcDelegationsCard from "./AccountRcDelegationsCard";
 import AccountBalanceCard from "./AccountBalanceCard";
+import Explorer from "@/types/Explorer";
 
 interface AccountDetailsSectionProps {
   accountName: string;
   refetchAccountOperations: QueryObserverResult<Hive.AccountOperationsResponse>["refetch"];
   liveDataEnabled: boolean;
   changeLiveRefresh: () => void;
+  accountDetails?: Explorer.FormattedAccountDetails;
 }
 
 const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
@@ -28,8 +29,8 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
   refetchAccountOperations,
   liveDataEnabled,
   changeLiveRefresh,
+  accountDetails
 }) => {
-  const { accountDetails } = useAccountDetails(accountName, liveDataEnabled);
   const { witnessDetails, isWitnessDetailsLoading, isWitnessDetailsError } =
     useWitnessDetails(accountName, !!accountDetails?.is_witness);
 

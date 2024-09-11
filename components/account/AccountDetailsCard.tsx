@@ -2,14 +2,12 @@ import Link from "next/link";
 import { ReactNode, useState, Fragment } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 
-import { convertVestsToHP } from "@/utils/Calculations";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table";
 import CopyToKeyboard from "../CopyToKeyboard";
 import VestsTooltip from "../VestsTooltip";
-import Hive from "@/types/Hive";
 
 type AccountDetailsCardProps = {
   header: string;
@@ -29,16 +27,6 @@ const EXCLUDE_KEYS = [
   "rawPostingRewards",
   "rawCurationRewards",
 ];
-
-const vestsParameters: Record<string, string> = {
-  received_vesting_shares: "rawReceivedVestingShares",
-  delegated_vesting_shares: "rawDelegatedVestingshares",
-  vesting_withdraw_rate: "rawVestingWithdrawRate",
-  vesting_shares: "rawVestingShares",
-  reward_vesting_balance: "rawRewardVestingBalance",
-  posting_rewards: "rawPostingRewards",
-  curation_rewards: "rawCurationRewards",
-};
 
 const LINK_KEYS = ["recovery_account", "reset_account"];
 const URL_KEYS = ["url"];
@@ -80,24 +68,6 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
   } = dynamicGlobalData;
   const keys = Object.keys(userDetails);
 
-  const renderConvertedHP = (userKey: string, objectKey: string) => {
-    if (Object.keys(vestsParameters).includes(objectKey)) {
-      const rawParam = userDetails[vestsParameters[objectKey]] as Hive.Supply;
-      const formattedHP = convertVestsToHP(
-        hiveChain,
-        rawParam,
-        rawTotalVestingFundHive,
-        rawTotalVestingShares
-      );
-  
-      return (
-        <VestsTooltip
-          tooltipTrigger={formattedHP}
-          tooltipContent={userKey}
-        />
-      );
-    }
-  };
 
   const render_key = (key: string) => {
     if (LINK_KEYS.includes(key)) {
@@ -135,8 +105,6 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
       return userDetails[key].toLocaleString();
     } else if (typeof userDetails[key] === "string") {
       if (userDetails[key].includes("VESTS") && key !== "vests") {
-        return renderConvertedHP(userDetails[key], key);
-      } else {
         return userDetails[key];
       }
     } else return JSON.stringify(userDetails[key]);

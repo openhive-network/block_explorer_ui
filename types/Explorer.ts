@@ -208,14 +208,20 @@ declare module Explorer {
     last_post?: number;
     last_root_post?: number;
     post_count?: number;
-    rawReceivedVestingShares: Hive.Supply;
-    rawDelegatedVestingshares: Hive.Supply;
-    rawVestingWithdrawRate: Hive.Supply;
-    rawVestingShares: Hive.Supply;
-    rawRewardVestingBalance: Hive.Supply;
-    rawPostingRewards: Hive.Supply;
-    rawCurationRewards: Hive.Supply;
+    /*
+    hbd_balance_dollars: string;
+    hbd_saving_balance_dollars: string; 
+    reward_hbd_balance_dollars: string; 
+    balance_dollars: string; 
+    savings_balance_dollars: string; 
+    reward_hive_balance_dollars: string;
+    vesting_balance_dollars: string;
+    reward_vesting_hive_dollars: string;
+    rawReceivedVestingShares_dollars: string;
+    rawDelegatedVestingshares_dollars: string;
+    rawVestingWithdrawRate_dollars: string;
+    */
   }
 }
 
-export default Explorer;
+export default Explorer; 

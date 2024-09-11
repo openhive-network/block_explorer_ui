@@ -65,12 +65,11 @@ const useAccountDetails = (accountName: string, liveDataEnabled: boolean) => {
     data: accountDetails,
     isLoading: isAccountDetailsLoading,
     isError: isAccountDetailsError,
-  }: UseQueryResult<Explorer.FormattedAccountDetails> = useQuery({
+  }: UseQueryResult<Hive.AccountDetails> = useQuery({
     queryKey: ["account_details", accountName],
     queryFn: () => fetchingService.getAccount(accountName),
     refetchInterval: liveDataEnabled ? config.accountRefreshInterval : false,
     refetchOnWindowFocus: false,
-    select: (data) => accountDetailsSelector(data),
     enabled: !!accountName && !!accountName.length,
   });
 

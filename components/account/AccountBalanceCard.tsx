@@ -1,8 +1,7 @@
 import { ReactNode, Fragment } from "react";
 
 import { formatNumber } from "@/lib/utils";
-import { splitStringValue } from "@/utils/StringUtils";
-import { convertVestsToHP, convertHiveToUSD } from "@/utils/Calculations";
+import { convertHiveToUSD } from "@/utils/Calculations";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { Card, CardContent, CardHeader } from "../ui/card";
@@ -23,16 +22,10 @@ const cardNameMap = new Map([
   ["reward_hive_balance", "HIVE Unclaimed"],
   ["vesting_balance", "Owned HP"],
   ["reward_vesting_hive", "HP Unclaimed"],
-  ["rawReceivedVestingShares", "Received HP"],
-  ["rawDelegatedVestingshares", "Delegated HP"],
-  ["rawVestingWithdrawRate", "Powering down HP"],
+  ["received_vesting_shares", "Received HP"],
+  ["delegated_vesting_shares", "Delegated HP"],
+  ["vesting_withdraw_rate", "Powering down HP"],
 ]);
-
-const vestsParams = [
-  "rawReceivedVestingShares",
-  "rawDelegatedVestingshares",
-  "rawVestingWithdrawRate",
-];
 
 const buildTableBody = (
   parameters: string[],
@@ -70,38 +63,12 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
   const keys = Object.keys(userDetails);
 
   const render_key = (key: string) => {
-    if (vestsParams.includes(key)) {
-      const formattedHp = convertVestsToHP(
-        hiveChain,
-        userDetails[key],
-        rawTotalVestingFundHive,
-        rawTotalVestingShares
-      );
-
-      return (
-        <VestsTooltip
-          tooltipTrigger={formattedHp}
-          tooltipContent={userDetails[key]}
-        />
-      );
-    }
     return userDetails[key];
   };
 
   const convert_usd = (key: string) => {
     let displVal = "";
-    if (vestsParams.includes(key)) {
-      const formattedHP = convertVestsToHP(
-        hiveChain,
-        userDetails[key],
-        rawTotalVestingFundHive,
-        rawTotalVestingShares
-      );
-      displVal = convertHiveToUSD(
-        Number(splitStringValue(formattedHP, "HP").replace(/,/g, "")),
-        feedPrice
-      ).toFixed(2);
-    } else if (key.includes("hbd")) {
+    if (key.includes("hbd")) {
       //considering hbd as stable coin = 1$
       displVal = Number(
         userDetails[key].replace(/,/g, "").split(" ")[0]
@@ -110,7 +77,8 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
       displVal = convertHiveToUSD(
         userDetails[key].replace(/,/g, "").split(" ")[0],
         feedPrice
-      ).toFixed(2);
+        ).toFixed(2);
+      console.log('ANOTHER WITHOPUT HP', displVal);
     }
     return "$ " + formatNumber(parseFloat(displVal), false, true);
   };

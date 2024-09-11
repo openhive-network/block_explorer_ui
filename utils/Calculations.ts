@@ -40,8 +40,8 @@ export const convertVestsToHP = (
  */
 
 export const convertHiveToUSD = (hp: number, feedPrice: string) => {
+  console.log("DAWAJ DAWAJ", hp, feedPrice);
   const hivePrice = feedPrice?.split(" ")[0];
-  console.log('TEST', hp * parseFloat(hivePrice ?? "0"), hivePrice, hp);
   return hp * parseFloat(hivePrice ?? "0"); //default to 0 if no matching price is found
 };
 
@@ -49,7 +49,6 @@ export const getVestsToHiveRatio = (
   blockDetails: Hive.BlockDetails | undefined
 ) => {
   if (!blockDetails) return;
-
   const { total_vesting_fund_hive, total_vesting_shares } = blockDetails;
 
   const result = (total_vesting_shares / total_vesting_fund_hive).toFixed(3);
