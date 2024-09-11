@@ -19,7 +19,7 @@ export const convertVestsToHP = (
   if (!hivechain || !vests || !totalVestingFundHive || !totalVestingShares)
     return;
 
-  const formattedVests = splitStringValue(vests.replace(/,/g, ""), "VESTS");
+  const formattedVests = splitStringValue(vests.replace(/[.,]/g, ""), " VESTS");
 
   const convertedHp = hivechain.vestsToHp(
     formattedVests,
