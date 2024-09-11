@@ -23,15 +23,15 @@ const cardNameMap = new Map([
   ["reward_hive_balance", "HIVE Unclaimed"],
   ["vesting_balance", "Owned HP"],
   ["reward_vesting_hive", "HP Unclaimed"],
-  ["received_vesting_shares", "Received HP"],
-  ["delegated_vesting_shares", "Delegated HP"],
-  ["vesting_withdraw_rate", "Powering down HP"],
+  ["rawReceivedVestingShares", "Received HP"],
+  ["rawDelegatedVestingshares", "Delegated HP"],
+  ["rawVestingWithdrawRate", "Powering down HP"],
 ]);
 
 const vestsParams = [
-  "received_vesting_shares",
-  "delegated_vesting_shares",
-  "vesting_withdraw_rate",
+  "rawReceivedVestingShares",
+  "rawDelegatedVestingshares",
+  "rawVestingWithdrawRate",
 ];
 
 const buildTableBody = (

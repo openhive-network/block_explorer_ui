@@ -12,17 +12,15 @@ import Hive from "@/types/Hive";
 
 export const convertVestsToHP = (
   hivechain: IHiveChainInterface,
-  vests: string,
+  vests: Hive.Supply,
   totalVestingFundHive: Hive.Supply,
   totalVestingShares: Hive.Supply
 ) => {
   if (!hivechain || !vests || !totalVestingFundHive || !totalVestingShares)
     return;
 
-  const formattedVests = splitStringValue(vests.replace(/,/g, ""), "VESTS");
-
   const convertedHp = hivechain.vestsToHp(
-    formattedVests,
+    vests,
     totalVestingFundHive,
     totalVestingShares
     );
@@ -43,6 +41,7 @@ export const convertVestsToHP = (
 
 export const convertHiveToUSD = (hp: number, feedPrice: string) => {
   const hivePrice = feedPrice?.split(" ")[0];
+  console.log('TEST', hp * parseFloat(hivePrice ?? "0"), hivePrice, hp);
   return hp * parseFloat(hivePrice ?? "0"); //default to 0 if no matching price is found
 };
 

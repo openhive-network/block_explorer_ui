@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table";
 import CopyToKeyboard from "../CopyToKeyboard";
 import VestsTooltip from "../VestsTooltip";
+import Hive from "@/types/Hive";
 
 type AccountDetailsCardProps = {
   header: string;
@@ -20,7 +21,24 @@ const EXCLUDE_KEYS = [
   "posting_json_metadata",
   "witness_votes",
   "profile_image",
+  "rawReceivedVestingShares",
+  "rawDelegatedVestingshares",
+  "rawVestingWithdrawRate",
+  "rawVestingShares",
+  "rawRewardVestingBalance",
+  "rawPostingRewards",
+  "rawCurationRewards",
 ];
+
+const vestsParameters: Record<string, string> = {
+  received_vesting_shares: "rawReceivedVestingShares",
+  delegated_vesting_shares: "rawDelegatedVestingshares",
+  vesting_withdraw_rate: "rawVestingWithdrawRate",
+  vesting_shares: "rawVestingShares",
+  reward_vesting_balance: "rawRewardVestingBalance",
+  posting_rewards: "rawPostingRewards",
+  curation_rewards: "rawCurationRewards",
+};
 
 const LINK_KEYS = ["recovery_account", "reset_account"];
 const URL_KEYS = ["url"];
@@ -63,22 +81,21 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
   const keys = Object.keys(userDetails);
 
   const renderConvertedHP = (userKey: string, objectKey: string) => {
-    if (userKey.includes("VESTS") && objectKey !== "vests") {
+    if (Object.keys(vestsParameters).includes(objectKey)) {
+      const rawParam = userDetails[vestsParameters[objectKey]] as Hive.Supply;
       const formattedHP = convertVestsToHP(
         hiveChain,
-        userKey,
+        rawParam,
         rawTotalVestingFundHive,
         rawTotalVestingShares
       );
-
+  
       return (
         <VestsTooltip
           tooltipTrigger={formattedHP}
           tooltipContent={userKey}
         />
       );
-    } else {
-      return userKey;
     }
   };
 
@@ -117,7 +134,11 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
     } else if (typeof userDetails[key] === "number") {
       return userDetails[key].toLocaleString();
     } else if (typeof userDetails[key] === "string") {
-      return renderConvertedHP(userDetails[key], key);
+      if (userDetails[key].includes("VESTS") && key !== "vests") {
+        return renderConvertedHP(userDetails[key], key);
+      } else {
+        return userDetails[key];
+      }
     } else return JSON.stringify(userDetails[key]);
   };
 

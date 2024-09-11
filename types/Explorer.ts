@@ -208,6 +208,13 @@ declare module Explorer {
     last_post?: number;
     last_root_post?: number;
     post_count?: number;
+    rawReceivedVestingShares: Hive.Supply;
+    rawDelegatedVestingshares: Hive.Supply;
+    rawVestingWithdrawRate: Hive.Supply;
+    rawVestingShares: Hive.Supply;
+    rawRewardVestingBalance: Hive.Supply;
+    rawPostingRewards: Hive.Supply;
+    rawCurationRewards: Hive.Supply;
   }
 }
 

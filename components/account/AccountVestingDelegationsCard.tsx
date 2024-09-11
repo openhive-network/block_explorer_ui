@@ -10,6 +10,7 @@ import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableRow, TableCell } from "../ui/table";
 import VestsTooltip from "../VestsTooltip";
+import Hive from "@/types/Hive";
 
 type VestingDelegation = {
   delegatee: string;
@@ -29,7 +30,7 @@ type AccountVestingDelegationsCardProps = {
 
 const buildTableBody = (
   delegations: VestingDelegation[],
-  formatHP: (vests: string) => ReactNode
+  formatHP: (vests: Hive.Supply) => ReactNode
 ) => {
   return delegations.map((delegation: VestingDelegation, index: number) => {
     const isLast = index === delegations.length - 1;
@@ -47,7 +48,7 @@ const buildTableBody = (
             </Link>
           </TableCell>
           <TableCell className="text-right">
-            {formatHP(delegation.vesting_shares.amount)}
+            {formatHP(delegation.vesting_shares)}
           </TableCell>
         </TableRow>
       </Fragment>
@@ -79,7 +80,7 @@ const AccountVestingDelegationsCard: React.FC<
     setIsPropertiesHidden(!isPropertiesHidden);
   };
 
-  const formatHP = (vests: string) => {
+  const formatHP = (vests: Hive.Supply) => {
     const formattedHP = convertVestsToHP(
       hiveChain,
       vests,

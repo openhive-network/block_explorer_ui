@@ -35,10 +35,26 @@ const useAccountDetails = (accountName: string, liveDataEnabled: boolean) => {
       ),
       created: formatAndDelocalizeTime(data.created),
     };
+    const {received_vesting_shares: rawReceivedVestingShares, 
+      delegated_vesting_shares: rawDelegatedVestingshares, 
+      vesting_withdraw_rate: rawVestingWithdrawRate,
+      vesting_shares: rawVestingShares,
+      reward_vesting_balance: rawRewardVestingBalance,
+      posting_rewards: rawPostingRewards,
+      curation_rewards: rawCurationRewards,
+    } = accountDetails;
 
-    const formattedAccountDetails = hiveChain?.formatter.format(
+    const formattedAccountDetails = {...hiveChain?.formatter.format(
       accountDetails
-    ) as Explorer.FormattedAccountDetails;
+      ), 
+      rawReceivedVestingShares, 
+      rawDelegatedVestingshares, 
+      rawVestingWithdrawRate,
+      rawVestingShares,
+      rawRewardVestingBalance,
+      rawPostingRewards,
+      rawCurationRewards,
+    } as Explorer.FormattedAccountDetails;
     delete formattedAccountDetails.last_post;
     delete formattedAccountDetails.last_root_post;
     delete formattedAccountDetails.post_count;
