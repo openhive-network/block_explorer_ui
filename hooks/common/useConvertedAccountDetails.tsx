@@ -13,6 +13,7 @@ export const VEST_HP_KEYS_MAP: Record<string, string> = {
   received_vesting_shares: "vest_received_vesting_shares",
   posting_rewards: "vest_posting_rewards",
   curation_rewards: "vest_curation_rewards",
+  vesting_balance: "vest_vesting_balance"
 }
 
 const useConvertedAccountDetails = (accountName: string, liveDataEnabled: boolean) => {
@@ -31,6 +32,7 @@ const useConvertedAccountDetails = (accountName: string, liveDataEnabled: boolea
     vest_received_vesting_shares: hiveChain.vests(accountDetails.delegated_vesting_shares),
     vest_posting_rewards: hiveChain.vests(accountDetails.posting_rewards),
     vest_curation_rewards: hiveChain.vests(accountDetails.curation_rewards),
+    vest_vesting_balance: hiveChain.vests(accountDetails.vesting_balance)
   }
   const accountDetailsForFormat = {
     ...accountDetails,
@@ -49,7 +51,7 @@ const useConvertedAccountDetails = (accountName: string, liveDataEnabled: boolea
     received_vesting_shares: convertVestsToHP(hiveChain, vests.vest_received_vesting_shares, rawTotalVestingFundHive, rawTotalVestingShares),
     posting_rewards: convertVestsToHP(hiveChain, vests.vest_posting_rewards, rawTotalVestingFundHive, rawTotalVestingShares),
     curation_rewards: convertVestsToHP(hiveChain, vests.vest_curation_rewards, rawTotalVestingFundHive, rawTotalVestingShares),
-    vesting_balance: hiveChain.hive(accountDetails.vesting_balance),
+    vesting_balance: convertVestsToHP(hiveChain, vests.vest_vesting_balance, rawTotalVestingFundHive, rawTotalVestingShares),
     last_account_recovery: formatAndDelocalizeTime(
       accountDetails.last_account_recovery
     ),

@@ -18,13 +18,7 @@ const EXCLUDE_KEYS = [
   "posting_json_metadata",
   "witness_votes",
   "profile_image",
-  "vest_reward_vesting_balance",
-  "vest_vesting_withdraw_rate",
-  "vest_vesting_shares",
-  "vest_delegated_vesting_shares",
-  "vest_received_vesting_shares",
-  "vest_posting_rewards",
-  "vest_curation_rewards",
+  ...Object.values(VEST_HP_KEYS_MAP)
 ];
 
 const LINK_KEYS = ["recovery_account", "reset_account"];

@@ -1,15 +1,14 @@
 import { ReactNode, Fragment } from "react";
 
-import { formatNumber } from "@/lib/utils";
-import { convertHiveToUSD } from "@/utils/Calculations";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table";
 import { VEST_HP_KEYS_MAP } from "@/hooks/common/useConvertedAccountDetails";
 import VestsTooltip from "../VestsTooltip";
+import Explorer from "@/types/Explorer";
 
 type AccountBalanceCardProps = {
   header: string;
-  userDetails: any;
+  userDetails: Explorer.FormattedAccountDetails;
 };
 
 const cardNameMap = new Map([
@@ -28,17 +27,16 @@ const cardNameMap = new Map([
 
 const buildTableBody = (
   parameters: string[],
-  render_key: (key: string) => ReactNode,
-  convert_usd: (key: string) => ReactNode
+  renderKey: (key: keyof Explorer.FormattedAccountDetails) => ReactNode,
 ) => {
-  return parameters.map((param: string, index: number) => {
+  return parameters.map((param, index: number) => {
     if (cardNameMap.has(param)) {
       return (
         <Fragment key={index}>
           <TableRow className="border-b border-gray-700 hover:bg-inherit">
             <TableCell>{cardNameMap.get(param)}</TableCell>
-            <TableCell className="text-right">{render_key(param)}</TableCell>
-            <TableCell className="text-right">{convert_usd(param)}</TableCell>
+            <TableCell className="text-right">{renderKey(param as keyof Explorer.FormattedAccountDetails)}</TableCell>
+            <TableCell className="text-right">$</TableCell>
           </TableRow>
         </Fragment>
       );
@@ -53,28 +51,13 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
 
   const keys = Object.keys(userDetails);
 
-  const render_key = (key: string) => {
+  const renderKey = (key: keyof Explorer.FormattedAccountDetails) => {
     if (Object.keys(VEST_HP_KEYS_MAP).includes(key)) {
-      return <VestsTooltip tooltipTrigger={userDetails[key]} tooltipContent={userDetails[VEST_HP_KEYS_MAP[key]]} />
+      return <VestsTooltip tooltipTrigger={userDetails[key] as string} tooltipContent={userDetails[VEST_HP_KEYS_MAP[key] as keyof Explorer.FormattedAccountDetails] as string } />
     }
     return userDetails[key];
   };
 
-  const convert_usd = (key: string) => {
-    let displVal = "";
-    if (key.includes("hbd")) {
-      //considering hbd as stable coin = 1$
-      displVal = Number(
-        userDetails[key].replace(/,/g, "").split(" ")[0]
-      ).toFixed(2);
-    } else {
-      displVal = convertHiveToUSD(
-        userDetails[key].replace(/,/g, "").split(" ")[0],
-        ""
-        ).toFixed(2);
-    }
-    return "$ " + formatNumber(parseFloat(displVal), false, true);
-  };
 
   return (
     <Card
@@ -88,7 +71,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
       </CardHeader>
       <CardContent data-testid="card-content">
         <Table>
-          <TableBody>{buildTableBody(keys, render_key, convert_usd)}</TableBody>
+          <TableBody>{buildTableBody(keys, renderKey)}</TableBody>
         </Table>
       </CardContent>
     </Card>

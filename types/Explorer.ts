@@ -188,6 +188,8 @@ declare module Explorer {
       | "posting_rewards"
       | "curation_rewards"
       | "vesting_balance"
+      | "last_account_recovery"
+      | "created"
     > {
     balance: string;
     saving_balance: string;
@@ -215,6 +217,9 @@ declare module Explorer {
     vest_received_vesting_shares: string;
     vest_posting_rewards: string;
     vest_curation_rewards: string;
+    vest_vesting_balance: string;
+    last_account_recovery: string;
+    created: string;
     /*
     hbd_balance_dollars: string;
     hbd_saving_balance_dollars: string; 
