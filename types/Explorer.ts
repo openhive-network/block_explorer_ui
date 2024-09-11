@@ -208,6 +208,13 @@ declare module Explorer {
     last_post?: number;
     last_root_post?: number;
     post_count?: number;
+    vest_reward_vesting_balance: string;
+    vest_vesting_withdraw_rate: string;
+    vest_vesting_shares: string;
+    vest_delegated_vesting_shares: string;
+    vest_received_vesting_shares: string;
+    vest_posting_rewards: string;
+    vest_curation_rewards: string;
     /*
     hbd_balance_dollars: string;
     hbd_saving_balance_dollars: string; 

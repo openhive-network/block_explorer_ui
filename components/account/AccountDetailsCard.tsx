@@ -2,12 +2,11 @@ import Link from "next/link";
 import { ReactNode, useState, Fragment } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 
-import { useHiveChainContext } from "@/contexts/HiveChainContext";
-import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table";
 import CopyToKeyboard from "../CopyToKeyboard";
 import VestsTooltip from "../VestsTooltip";
+import { VEST_HP_KEYS_MAP } from "@/hooks/common/useConvertedAccountDetails";
 
 type AccountDetailsCardProps = {
   header: string;
@@ -19,13 +18,13 @@ const EXCLUDE_KEYS = [
   "posting_json_metadata",
   "witness_votes",
   "profile_image",
-  "rawReceivedVestingShares",
-  "rawDelegatedVestingshares",
-  "rawVestingWithdrawRate",
-  "rawVestingShares",
-  "rawRewardVestingBalance",
-  "rawPostingRewards",
-  "rawCurationRewards",
+  "vest_reward_vesting_balance",
+  "vest_vesting_withdraw_rate",
+  "vest_vesting_shares",
+  "vest_delegated_vesting_shares",
+  "vest_received_vesting_shares",
+  "vest_posting_rewards",
+  "vest_curation_rewards",
 ];
 
 const LINK_KEYS = ["recovery_account", "reset_account"];
@@ -56,16 +55,9 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
   header,
   userDetails,
 }) => {
-  const { dynamicGlobalData } = useDynamicGlobal();
-  const { hiveChain } = useHiveChainContext();
 
   const [isPropertiesHidden, setIsPropertiesHidden] = useState(true);
 
-  if (!userDetails || !dynamicGlobalData || !hiveChain) return;
-
-  const {
-    headBlockDetails: { rawTotalVestingFundHive, rawTotalVestingShares },
-  } = dynamicGlobalData;
   const keys = Object.keys(userDetails);
 
 
@@ -89,6 +81,9 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
         />
       );
     }
+    if (Object.keys(VEST_HP_KEYS_MAP).includes(key)) {
+      return <VestsTooltip tooltipTrigger={userDetails[key]} tooltipContent={userDetails[VEST_HP_KEYS_MAP[key]]} />
+    }
     if (URL_KEYS.includes(key)) {
       return (
         <div className="text-blue-400">
@@ -104,9 +99,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
     } else if (typeof userDetails[key] === "number") {
       return userDetails[key].toLocaleString();
     } else if (typeof userDetails[key] === "string") {
-      if (userDetails[key].includes("VESTS") && key !== "vests") {
-        return userDetails[key];
-      }
+      return userDetails[key];
     } else return JSON.stringify(userDetails[key]);
   };
 

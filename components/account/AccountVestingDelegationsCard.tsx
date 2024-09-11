@@ -87,8 +87,7 @@ const AccountVestingDelegationsCard: React.FC<
       rawTotalVestingFundHive,
       rawTotalVestingShares
     );
-
-    const formatVests = `${formatNumber(Number(vests), true)} VESTS`;
+    const formatVests = hiveChain?.formatter.format(vests);
 
     return (
       <VestsTooltip

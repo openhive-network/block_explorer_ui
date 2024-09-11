@@ -82,7 +82,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
         accountName={accountName}
         liveDataEnabled={liveDataEnabled}
       />
-      {!isWitnessDetailsError && (
+      {!isWitnessDetailsError && !!witnessDetails && (
         <AccountDetailsCard
           header="Witness Properties"
           userDetails={witnessDetails}

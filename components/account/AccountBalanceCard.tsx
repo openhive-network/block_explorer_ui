@@ -2,10 +2,9 @@ import { ReactNode, Fragment } from "react";
 
 import { formatNumber } from "@/lib/utils";
 import { convertHiveToUSD } from "@/utils/Calculations";
-import { useHiveChainContext } from "@/contexts/HiveChainContext";
-import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table";
+import { VEST_HP_KEYS_MAP } from "@/hooks/common/useConvertedAccountDetails";
 import VestsTooltip from "../VestsTooltip";
 
 type AccountBalanceCardProps = {
@@ -51,18 +50,13 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
   header,
   userDetails,
 }) => {
-  const { dynamicGlobalData } = useDynamicGlobal();
-  const { hiveChain } = useHiveChainContext();
-
-  if (!dynamicGlobalData || !hiveChain) return;
-
-  const {
-    headBlockDetails: { feedPrice, rawTotalVestingFundHive, rawTotalVestingShares },
-  } = dynamicGlobalData;
 
   const keys = Object.keys(userDetails);
 
   const render_key = (key: string) => {
+    if (Object.keys(VEST_HP_KEYS_MAP).includes(key)) {
+      return <VestsTooltip tooltipTrigger={userDetails[key]} tooltipContent={userDetails[VEST_HP_KEYS_MAP[key]]} />
+    }
     return userDetails[key];
   };
 
@@ -76,9 +70,8 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
     } else {
       displVal = convertHiveToUSD(
         userDetails[key].replace(/,/g, "").split(" ")[0],
-        feedPrice
+        ""
         ).toFixed(2);
-      console.log('ANOTHER WITHOPUT HP', displVal);
     }
     return "$ " + formatNumber(parseFloat(displVal), false, true);
   };

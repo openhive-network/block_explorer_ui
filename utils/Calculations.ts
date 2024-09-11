@@ -40,7 +40,6 @@ export const convertVestsToHP = (
  */
 
 export const convertHiveToUSD = (hp: number, feedPrice: string) => {
-  console.log("DAWAJ DAWAJ", hp, feedPrice);
   const hivePrice = feedPrice?.split(" ")[0];
   return hp * parseFloat(hivePrice ?? "0"); //default to 0 if no matching price is found
 };
