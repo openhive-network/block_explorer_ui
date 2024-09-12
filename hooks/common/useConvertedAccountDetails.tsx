@@ -16,8 +16,7 @@ export const VEST_HP_KEYS_MAP: Record<string, string> = {
   vesting_balance: "vest_vesting_balance"
 }
 
-const useConvertedAccountDetails = (accountName: string, liveDataEnabled: boolean) => {
-  const { dynamicGlobalData } = useDynamicGlobal();
+const useConvertedAccountDetails = (accountName: string, liveDataEnabled: boolean, dynamicGlobalData?: Explorer.HeadBlockCardData) => {
   const { hiveChain } = useHiveChainContext();
   const {accountDetails, notFound}= useAccountDetails(accountName, liveDataEnabled);
   if (!dynamicGlobalData || !hiveChain || !accountDetails) return {formattedAccountDetails: undefined, notFound: undefined};

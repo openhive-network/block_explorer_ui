@@ -22,6 +22,7 @@ interface AccountDetailsSectionProps {
   liveDataEnabled: boolean;
   changeLiveRefresh: () => void;
   accountDetails?: Explorer.FormattedAccountDetails;
+  dynamicGlobalData?: Explorer.HeadBlockCardData;
 }
 
 const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
@@ -29,7 +30,8 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
   refetchAccountOperations,
   liveDataEnabled,
   changeLiveRefresh,
-  accountDetails
+  accountDetails,
+  dynamicGlobalData
 }) => {
   const { witnessDetails, isWitnessDetailsLoading, isWitnessDetailsError } =
     useWitnessDetails(accountName, !!accountDetails?.is_witness);
@@ -91,9 +93,8 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
       <AccountWitnessVotesCard voters={accountDetails.witness_votes} />
       <AccountVestingDelegationsCard
         delegatorAccount={accountName}
-        startAccount={null}
-        limit={config.maxDelegatorsCount}
         liveDataEnabled={liveDataEnabled}
+        dynamicGlobalData={dynamicGlobalData}
       />
       <AccountRcDelegationsCard
         delegatorAccount={accountName}

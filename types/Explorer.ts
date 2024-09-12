@@ -34,6 +34,8 @@ declare module Explorer {
     maxOpenRecurrentTransfers: number;
     rawTotalVestingFundHive: Hive.Supply;
     rawTotalVestingShares: Hive.Supply;
+    rawFeedPrice: Hive.Supply;
+    rawQuote: Hive.Supply;
   }
 
   interface HeadBlockCardData {
@@ -164,6 +166,10 @@ declare module Explorer {
 
   class ExtendedOperationTypePattern extends Hive.OperationPattern {
     isDisabled?: boolean;
+  }
+
+  interface VestingDelegation extends Omit<Hive.VestingDelegations, "vesting_shares"> {
+    vesting_shares: string;
   }
 
   interface FormattedAccountDetails
