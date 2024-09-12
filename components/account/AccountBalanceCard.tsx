@@ -5,6 +5,7 @@ import { Table, TableBody, TableCell, TableRow } from "../ui/table";
 import { VEST_HP_KEYS_MAP } from "@/hooks/common/useConvertedAccountDetails";
 import VestsTooltip from "../VestsTooltip";
 import Explorer from "@/types/Explorer";
+import { changeHBDToDollarsDisplay } from "@/utils/StringUtils";
 
 type AccountBalanceCardProps = {
   header: string;
@@ -25,24 +26,7 @@ const cardNameMap = new Map([
   ["vesting_withdraw_rate", "Powering down HP"],
 ]);
 
-const buildTableBody = (
-  parameters: string[],
-  renderKey: (key: keyof Explorer.FormattedAccountDetails) => ReactNode,
-) => {
-  return parameters.map((param, index: number) => {
-    if (cardNameMap.has(param)) {
-      return (
-        <Fragment key={index}>
-          <TableRow className="border-b border-gray-700 hover:bg-inherit">
-            <TableCell>{cardNameMap.get(param)}</TableCell>
-            <TableCell className="text-right">{renderKey(param as keyof Explorer.FormattedAccountDetails)}</TableCell>
-            <TableCell className="text-right">$</TableCell>
-          </TableRow>
-        </Fragment>
-      );
-    }
-  });
-};
+
 
 const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
   header,
@@ -56,6 +40,25 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
       return <VestsTooltip tooltipTrigger={userDetails[key] as string} tooltipContent={userDetails[VEST_HP_KEYS_MAP[key] as keyof Explorer.FormattedAccountDetails] as string } />
     }
     return userDetails[key];
+  };
+
+  const buildTableBody = (
+    parameters: string[],
+    renderKey: (key: keyof Explorer.FormattedAccountDetails) => ReactNode,
+  ) => {
+    return parameters.map((param, index: number) => {
+      if (cardNameMap.has(param)) {
+        return (
+          <Fragment key={index}>
+            <TableRow className="border-b border-gray-700 hover:bg-inherit">
+              <TableCell>{cardNameMap.get(param)}</TableCell>
+              <TableCell className="text-right">{renderKey(param as keyof Explorer.FormattedAccountDetails)}</TableCell>
+              <TableCell className="text-right">{changeHBDToDollarsDisplay(userDetails.dollars[param])}</TableCell>
+            </TableRow>
+          </Fragment>
+        );
+      }
+    });
   };
 
 

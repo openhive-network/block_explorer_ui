@@ -226,19 +226,16 @@ declare module Explorer {
     vest_vesting_balance: string;
     last_account_recovery: string;
     created: string;
-    /*
-    hbd_balance_dollars: string;
-    hbd_saving_balance_dollars: string; 
-    reward_hbd_balance_dollars: string; 
-    balance_dollars: string; 
-    savings_balance_dollars: string; 
-    reward_hive_balance_dollars: string;
-    vesting_balance_dollars: string;
-    reward_vesting_hive_dollars: string;
-    rawReceivedVestingShares_dollars: string;
-    rawDelegatedVestingshares_dollars: string;
-    rawVestingWithdrawRate_dollars: string;
-    */
+    dollars: {
+      hbd_balance: string;
+      hbd_saving_balance: string;
+      reward_hbd_balance: string;
+      balance: string;
+      savings_balance: string;
+      reward_hive_balance: string;
+      vesting_balance: string;
+      reward_vesting_hive: string;
+    }
   }
 }
 

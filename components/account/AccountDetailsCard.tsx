@@ -18,6 +18,7 @@ const EXCLUDE_KEYS = [
   "posting_json_metadata",
   "witness_votes",
   "profile_image",
+  "dollars",
   ...Object.values(VEST_HP_KEYS_MAP)
 ];
 

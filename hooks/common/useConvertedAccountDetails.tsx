@@ -21,7 +21,7 @@ const useConvertedAccountDetails = (accountName: string, liveDataEnabled: boolea
   const {accountDetails, notFound}= useAccountDetails(accountName, liveDataEnabled);
   if (!dynamicGlobalData || !hiveChain || !accountDetails) return {formattedAccountDetails: undefined, notFound: undefined};
   const {
-    headBlockDetails: { feedPrice, rawTotalVestingFundHive, rawTotalVestingShares },
+    headBlockDetails: { rawFeedPrice, rawQuote, rawTotalVestingFundHive, rawTotalVestingShares },
   } = dynamicGlobalData;
   const vests = {
     vest_reward_vesting_balance: hiveChain.vests(accountDetails.reward_vesting_balance),
@@ -33,6 +33,7 @@ const useConvertedAccountDetails = (accountName: string, liveDataEnabled: boolea
     vest_curation_rewards: hiveChain.vests(accountDetails.curation_rewards),
     vest_vesting_balance: hiveChain.vests(accountDetails.vesting_balance)
   }
+  console.log("")
   const accountDetailsForFormat = {
     ...accountDetails,
     ...vests,
@@ -57,10 +58,25 @@ const useConvertedAccountDetails = (accountName: string, liveDataEnabled: boolea
     created: formatAndDelocalizeTime(accountDetails.created),
   };
 
+  const dollars = {
+    hbd_balance: accountDetailsForFormat.hbd_balance,
+    hbd_saving_balance: accountDetailsForFormat.hbd_saving_balance,
+    reward_hbd_balance: accountDetailsForFormat.reward_hbd_balance,
+    balance: hiveChain.hiveToHbd(accountDetailsForFormat.balance, rawFeedPrice, rawQuote),
+    savings_balance: hiveChain.hiveToHbd(accountDetailsForFormat.savings_balance, rawFeedPrice, rawQuote),
+    reward_hive_balance: hiveChain.hiveToHbd(accountDetailsForFormat.reward_hive_balance, rawFeedPrice, rawQuote),
+    vesting_balance: hiveChain.hiveToHbd(accountDetailsForFormat.vesting_balance, rawFeedPrice, rawQuote),
+    reward_vesting_hive: hiveChain.hiveToHbd(accountDetailsForFormat.reward_vesting_hive, rawFeedPrice, rawQuote),
+    received_vesting_shares: hiveChain.hiveToHbd(accountDetailsForFormat.received_vesting_shares, rawFeedPrice, rawQuote),
+    delegated_vesting_shares: hiveChain.hiveToHbd(accountDetailsForFormat.delegated_vesting_shares, rawFeedPrice, rawQuote),
+    vesting_withdraw_rate: hiveChain.hiveToHbd(accountDetailsForFormat.vesting_withdraw_rate, rawFeedPrice, rawQuote)
+  }
+
   const formattedAccountDetails = {...hiveChain?.formatter.format(
-    accountDetailsForFormat
+    {...accountDetailsForFormat, dollars}
     )
   } as Explorer.FormattedAccountDetails;
+  console.log('FORMATTED ACCOUNT DETAILS', formattedAccountDetails);
   delete formattedAccountDetails.last_post;
   delete formattedAccountDetails.last_root_post;
   delete formattedAccountDetails.post_count;
