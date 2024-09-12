@@ -56,7 +56,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
         />
       );
     }
-    if (Object.keys(userDetails.vests).includes(key)) {
+    if (userDetails.vests && Object.keys(userDetails?.vests).includes(key)) {
       const vestValue = userDetails.vests[key]
       return <VestsTooltip tooltipTrigger={userDetails[key] as string} tooltipContent={vestValue} />
     }
