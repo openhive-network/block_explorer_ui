@@ -31,7 +31,8 @@ const useConvertedAccountDetails = (accountName: string, liveDataEnabled: boolea
     vest_received_vesting_shares: hiveChain.vests(accountDetails.delegated_vesting_shares),
     vest_posting_rewards: hiveChain.vests(accountDetails.posting_rewards),
     vest_curation_rewards: hiveChain.vests(accountDetails.curation_rewards),
-    vest_vesting_balance: hiveChain.vests(accountDetails.vesting_balance)
+    vest_vesting_balance: hiveChain.vests(accountDetails.vesting_balance),
+    vest_reward_vesting_hive: hiveChain.vests(accountDetails.reward_vesting_hive),
   }
   console.log("")
   const accountDetailsForFormat = {
@@ -42,7 +43,7 @@ const useConvertedAccountDetails = (accountName: string, liveDataEnabled: boolea
     hbd_balance: hiveChain.hbd(accountDetails.hbd_balance),
     hbd_saving_balance: hiveChain.hbd(accountDetails.hbd_saving_balance),
     reward_hbd_balance: hiveChain.hbd(accountDetails.reward_hbd_balance),
-    reward_vesting_hive: hiveChain.hive(accountDetails.reward_vesting_hive),
+    reward_vesting_hive: convertVestsToHP(hiveChain, vests.vest_reward_vesting_hive, rawTotalVestingFundHive, rawTotalVestingShares),
     reward_hive_balance: hiveChain.hive(accountDetails.reward_hive_balance),
     reward_vesting_balance: convertVestsToHP(hiveChain, vests.vest_reward_vesting_balance, rawTotalVestingFundHive, rawTotalVestingShares),
     vesting_withdraw_rate: convertVestsToHP(hiveChain, vests.vest_vesting_withdraw_rate, rawTotalVestingFundHive, rawTotalVestingShares),

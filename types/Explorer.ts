@@ -224,6 +224,7 @@ declare module Explorer {
     vest_posting_rewards: string;
     vest_curation_rewards: string;
     vest_vesting_balance: string;
+    vest_reward_vesting_hive: string;
     last_account_recovery: string;
     created: string;
     dollars: {
