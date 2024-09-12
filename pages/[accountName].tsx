@@ -9,7 +9,6 @@ import {
   convertBooleanArrayToIds,
   convertOperationResultsToTableOperations,
 } from "@/lib/utils";
-import useAccountDetails from "@/hooks/api/accountPage/useAccountDetails";
 import useAccountOperations from "@/hooks/api/accountPage/useAccountOperations";
 import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
 import useMediaQuery from "@/hooks/common/useMediaQuery";
@@ -23,6 +22,8 @@ import AccountDetailsSection from "@/components/account/AccountDetailsSection";
 import MobileAccountNameCard from "@/components/account/MobileAccountNameCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import useConvertedAccountDetails from "@/hooks/common/useConvertedAccountDetails";
+import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -90,10 +91,8 @@ export default function Account() {
 
   const searchRanges = useSearchRanges();
 
-  const { accountDetails, notFound } = useAccountDetails(
-    accountNameFromRoute,
-    liveDataEnabled
-  );
+  const { dynamicGlobalData } = useDynamicGlobal();
+  const {formattedAccountDetails: accountDetails, notFound}  = useConvertedAccountDetails(accountNameFromRoute, liveDataEnabled, dynamicGlobalData);
   const accountOperationsProps = {
     accountName: accountNameFromRoute,
     operationTypes: filtersParam.length
@@ -235,6 +234,8 @@ export default function Account() {
               refetchAccountOperations={refetchAccountOperations}
               liveDataEnabled={liveDataEnabled}
               changeLiveRefresh={changeLiveRefresh}
+              accountDetails={accountDetails}
+              dynamicGlobalData={dynamicGlobalData}
             />
           </div>
         </>
@@ -247,6 +248,8 @@ export default function Account() {
             refetchAccountOperations={refetchAccountOperations}
             liveDataEnabled={liveDataEnabled}
             changeLiveRefresh={changeLiveRefresh}
+            accountDetails={accountDetails}
+            dynamicGlobalData={dynamicGlobalData}
           />
         </div>
       );
@@ -288,6 +291,7 @@ export default function Account() {
           <MobileAccountNameCard
             accountName={accountNameFromRoute}
             liveDataEnabled={liveDataEnabled}
+            accountDetails={accountDetails}
           />
         )}
 

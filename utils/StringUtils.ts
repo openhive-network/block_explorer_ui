@@ -110,3 +110,13 @@ export const trimAccountName = (accountName: string) => {
 export const splitStringValue = (value: string, keyword: string) => {
   return value.split(keyword)[0];
 };
+
+/**
+ * Use this to change 123.123 HBD into 123.123 $
+ * @param hbd Formatted HBD
+ */
+export const changeHBDToDollarsDisplay = (hbd: string): string => {
+  const numericValue = hbd.split(" ")[0].slice(0, -1);
+
+  return `${numericValue} $`
+}

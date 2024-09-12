@@ -1,37 +1,24 @@
-import { useState, Fragment, ReactNode } from "react";
+import { useState, Fragment } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import Link from "next/link";
 
-import { formatNumber } from "@/lib/utils";
-import { convertVestsToHP } from "@/utils/Calculations";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
-import useVestingDelegations from "@/hooks/api/common/useVestingDelegations";
-import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableRow, TableCell } from "../ui/table";
-import VestsTooltip from "../VestsTooltip";
+import Explorer from "@/types/Explorer";
+import useConvertedVestingShares from "@/hooks/common/useConvertedVestingShares";
 
-type VestingDelegation = {
-  delegatee: string;
-  vesting_shares: {
-    amount: string;
-    precision: number;
-    nai: string;
-  };
-};
 
 type AccountVestingDelegationsCardProps = {
   delegatorAccount: string;
-  startAccount: string | null;
-  limit: number;
   liveDataEnabled: boolean;
+  dynamicGlobalData?: Explorer.HeadBlockCardData
 };
 
 const buildTableBody = (
-  delegations: VestingDelegation[],
-  formatHP: (vests: string) => ReactNode
+  delegations: Explorer.VestingDelegation[]
 ) => {
-  return delegations.map((delegation: VestingDelegation, index: number) => {
+  return delegations.map((delegation, index: number) => {
     const isLast = index === delegations.length - 1;
 
     return (
@@ -47,7 +34,7 @@ const buildTableBody = (
             </Link>
           </TableCell>
           <TableCell className="text-right">
-            {formatHP(delegation.vesting_shares.amount)}
+            {delegation.vesting_shares}
           </TableCell>
         </TableRow>
       </Fragment>
@@ -56,45 +43,20 @@ const buildTableBody = (
 };
 const AccountVestingDelegationsCard: React.FC<
   AccountVestingDelegationsCardProps
-> = ({ delegatorAccount, startAccount, limit, liveDataEnabled }) => {
+> = ({ delegatorAccount, liveDataEnabled, dynamicGlobalData }) => {
   const [isPropertiesHidden, setIsPropertiesHidden] = useState(true);
   const { hiveChain } = useHiveChainContext();
-  const { dynamicGlobalData } = useDynamicGlobal();
-
-  const { vestingDelegationsData: delegations } = useVestingDelegations(
+  const delegations  = useConvertedVestingShares(
     delegatorAccount,
-    startAccount,
-    limit,
-    liveDataEnabled
+    liveDataEnabled,
+    dynamicGlobalData
   );
 
   if (!hiveChain || !dynamicGlobalData || !delegations || !delegations.length)
     return;
 
-  const {
-    headBlockDetails: { rawTotalVestingFundHive, rawTotalVestingShares },
-  } = dynamicGlobalData;
-
   const handlePropertiesVisibility = () => {
     setIsPropertiesHidden(!isPropertiesHidden);
-  };
-
-  const formatHP = (vests: string) => {
-    const formattedHP = convertVestsToHP(
-      hiveChain,
-      vests,
-      rawTotalVestingFundHive,
-      rawTotalVestingShares
-    );
-
-    const formatVests = `${formatNumber(Number(vests), true)} VESTS`;
-
-    return (
-      <VestsTooltip
-        tooltipTrigger={formattedHP}
-        tooltipContent={formatVests}
-      />
-    );
   };
 
   return (
@@ -113,7 +75,7 @@ const AccountVestingDelegationsCard: React.FC<
       </CardHeader>
       <CardContent hidden={isPropertiesHidden}>
         <Table>
-          <TableBody>{buildTableBody(delegations, formatHP)}</TableBody>
+          <TableBody>{buildTableBody(delegations)}</TableBody>
         </Table>
       </CardContent>
     </Card>
