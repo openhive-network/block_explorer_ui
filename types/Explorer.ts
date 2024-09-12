@@ -172,6 +172,30 @@ declare module Explorer {
     vesting_shares: string;
   }
 
+  interface AccountDetailsVests {
+    reward_vesting_balance: string;
+    vesting_withdraw_rate: string;
+    vesting_shares: string;
+    delegated_vesting_shares: string;
+    received_vesting_shares: string;
+    posting_rewards: string;
+    curation_rewards: string;
+    vesting_balance: string;
+    reward_vesting_hive: string;
+  }
+
+  interface AccountDetailsDollars {
+    reward_vesting_balance: string;
+    vesting_withdraw_rate: string;
+    vesting_shares: string;
+    delegated_vesting_shares: string;
+    received_vesting_shares: string;
+    posting_rewards: string;
+    curation_rewards: string;
+    vesting_balance: string;
+    reward_vesting_hive: string;
+  }
+
   interface FormattedAccountDetails
     extends Omit<
       Hive.AccountDetails,
@@ -216,27 +240,10 @@ declare module Explorer {
     last_post?: number;
     last_root_post?: number;
     post_count?: number;
-    vest_reward_vesting_balance: string;
-    vest_vesting_withdraw_rate: string;
-    vest_vesting_shares: string;
-    vest_delegated_vesting_shares: string;
-    vest_received_vesting_shares: string;
-    vest_posting_rewards: string;
-    vest_curation_rewards: string;
-    vest_vesting_balance: string;
-    vest_reward_vesting_hive: string;
     last_account_recovery: string;
     created: string;
-    dollars: {
-      hbd_balance: string;
-      hbd_saving_balance: string;
-      reward_hbd_balance: string;
-      balance: string;
-      savings_balance: string;
-      reward_hive_balance: string;
-      vesting_balance: string;
-      reward_vesting_hive: string;
-    }
+    vests: AccountDetailsVests;
+    dollars: AccountDetailsDollars;
   }
 }
 

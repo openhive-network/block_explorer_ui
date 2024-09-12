@@ -24,15 +24,15 @@ const useConvertedAccountDetails = (accountName: string, liveDataEnabled: boolea
     headBlockDetails: { rawFeedPrice, rawQuote, rawTotalVestingFundHive, rawTotalVestingShares },
   } = dynamicGlobalData;
   const vests = {
-    vest_reward_vesting_balance: hiveChain.vests(accountDetails.reward_vesting_balance),
-    vest_vesting_withdraw_rate: hiveChain.vests(accountDetails.vesting_withdraw_rate),
-    vest_vesting_shares: hiveChain.vests(accountDetails.vesting_shares),
-    vest_delegated_vesting_shares: hiveChain.vests(accountDetails.delegated_vesting_shares),
-    vest_received_vesting_shares: hiveChain.vests(accountDetails.delegated_vesting_shares),
-    vest_posting_rewards: hiveChain.vests(accountDetails.posting_rewards),
-    vest_curation_rewards: hiveChain.vests(accountDetails.curation_rewards),
-    vest_vesting_balance: hiveChain.vests(accountDetails.vesting_balance),
-    vest_reward_vesting_hive: hiveChain.vests(accountDetails.reward_vesting_hive),
+    reward_vesting_balance: hiveChain.vests(accountDetails.reward_vesting_balance),
+    vesting_withdraw_rate: hiveChain.vests(accountDetails.vesting_withdraw_rate),
+    vesting_shares: hiveChain.vests(accountDetails.vesting_shares),
+    delegated_vesting_shares: hiveChain.vests(accountDetails.delegated_vesting_shares),
+    received_vesting_shares: hiveChain.vests(accountDetails.delegated_vesting_shares),
+    posting_rewards: hiveChain.vests(accountDetails.posting_rewards),
+    curation_rewards: hiveChain.vests(accountDetails.curation_rewards),
+    vesting_balance: hiveChain.vests(accountDetails.vesting_balance),
+    reward_vesting_hive: hiveChain.vests(accountDetails.reward_vesting_hive),
   }
   console.log("")
   const accountDetailsForFormat = {
@@ -43,16 +43,16 @@ const useConvertedAccountDetails = (accountName: string, liveDataEnabled: boolea
     hbd_balance: hiveChain.hbd(accountDetails.hbd_balance),
     hbd_saving_balance: hiveChain.hbd(accountDetails.hbd_saving_balance),
     reward_hbd_balance: hiveChain.hbd(accountDetails.reward_hbd_balance),
-    reward_vesting_hive: convertVestsToHP(hiveChain, vests.vest_reward_vesting_hive, rawTotalVestingFundHive, rawTotalVestingShares),
+    reward_vesting_hive: convertVestsToHP(hiveChain, vests.reward_vesting_hive, rawTotalVestingFundHive, rawTotalVestingShares),
     reward_hive_balance: hiveChain.hive(accountDetails.reward_hive_balance),
-    reward_vesting_balance: convertVestsToHP(hiveChain, vests.vest_reward_vesting_balance, rawTotalVestingFundHive, rawTotalVestingShares),
-    vesting_withdraw_rate: convertVestsToHP(hiveChain, vests.vest_vesting_withdraw_rate, rawTotalVestingFundHive, rawTotalVestingShares),
-    vesting_shares: convertVestsToHP(hiveChain, vests.vest_vesting_shares, rawTotalVestingFundHive, rawTotalVestingShares),
-    delegated_vesting_shares: convertVestsToHP(hiveChain, vests.vest_delegated_vesting_shares, rawTotalVestingFundHive, rawTotalVestingShares),
-    received_vesting_shares: convertVestsToHP(hiveChain, vests.vest_received_vesting_shares, rawTotalVestingFundHive, rawTotalVestingShares),
-    posting_rewards: convertVestsToHP(hiveChain, vests.vest_posting_rewards, rawTotalVestingFundHive, rawTotalVestingShares),
-    curation_rewards: convertVestsToHP(hiveChain, vests.vest_curation_rewards, rawTotalVestingFundHive, rawTotalVestingShares),
-    vesting_balance: convertVestsToHP(hiveChain, vests.vest_vesting_balance, rawTotalVestingFundHive, rawTotalVestingShares),
+    reward_vesting_balance: convertVestsToHP(hiveChain, vests.reward_vesting_balance, rawTotalVestingFundHive, rawTotalVestingShares),
+    vesting_withdraw_rate: convertVestsToHP(hiveChain, vests.vesting_withdraw_rate, rawTotalVestingFundHive, rawTotalVestingShares),
+    vesting_shares: convertVestsToHP(hiveChain, vests.vesting_shares, rawTotalVestingFundHive, rawTotalVestingShares),
+    delegated_vesting_shares: convertVestsToHP(hiveChain, vests.delegated_vesting_shares, rawTotalVestingFundHive, rawTotalVestingShares),
+    received_vesting_shares: convertVestsToHP(hiveChain, vests.received_vesting_shares, rawTotalVestingFundHive, rawTotalVestingShares),
+    posting_rewards: convertVestsToHP(hiveChain, vests.posting_rewards, rawTotalVestingFundHive, rawTotalVestingShares),
+    curation_rewards: convertVestsToHP(hiveChain, vests.curation_rewards, rawTotalVestingFundHive, rawTotalVestingShares),
+    vesting_balance: convertVestsToHP(hiveChain, vests.vesting_balance, rawTotalVestingFundHive, rawTotalVestingShares),
     last_account_recovery: formatAndDelocalizeTime(
       accountDetails.last_account_recovery
     ),
@@ -74,7 +74,7 @@ const useConvertedAccountDetails = (accountName: string, liveDataEnabled: boolea
   }
 
   const formattedAccountDetails = {...hiveChain?.formatter.format(
-    {...accountDetailsForFormat, dollars}
+    {...accountDetailsForFormat, dollars, vests}
     )
   } as Explorer.FormattedAccountDetails;
   console.log('FORMATTED ACCOUNT DETAILS', formattedAccountDetails);

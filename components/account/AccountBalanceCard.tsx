@@ -33,20 +33,19 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
   userDetails,
 }) => {
 
-  const keys = Object.keys(userDetails);
+  const keys = Object.keys(userDetails) as (keyof Explorer.AccountDetailsDollars)[];
 
   const renderKey = (key: keyof Explorer.FormattedAccountDetails) => {
     if (Object.keys(VEST_HP_KEYS_MAP).includes(key)) {
       return <VestsTooltip tooltipTrigger={userDetails[key] as string} tooltipContent={userDetails[VEST_HP_KEYS_MAP[key] as keyof Explorer.FormattedAccountDetails] as string } />
     }
-    return userDetails[key];
+    return <>{userDetails[key]}</>;
   };
 
   const buildTableBody = (
-    parameters: string[],
-    renderKey: (key: keyof Explorer.FormattedAccountDetails) => ReactNode,
+    parameters: (keyof Explorer.AccountDetailsDollars)[],
   ) => {
-    return parameters.map((param, index: number) => {
+    return parameters.map((param: keyof Explorer.AccountDetailsDollars, index: number) => {
       if (cardNameMap.has(param)) {
         return (
           <Fragment key={index}>
@@ -74,7 +73,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
       </CardHeader>
       <CardContent data-testid="card-content">
         <Table>
-          <TableBody>{buildTableBody(keys, renderKey)}</TableBody>
+          <TableBody>{buildTableBody(keys)}</TableBody>
         </Table>
       </CardContent>
     </Card>

@@ -6,11 +6,11 @@ import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table";
 import CopyToKeyboard from "../CopyToKeyboard";
 import VestsTooltip from "../VestsTooltip";
-import { VEST_HP_KEYS_MAP } from "@/hooks/common/useConvertedAccountDetails";
+import Explorer from "@/types/Explorer";
 
 type AccountDetailsCardProps = {
   header: string;
-  userDetails: any;
+  userDetails: Record<string, any>;
 };
 
 const EXCLUDE_KEYS = [
@@ -19,32 +19,13 @@ const EXCLUDE_KEYS = [
   "witness_votes",
   "profile_image",
   "dollars",
-  ...Object.values(VEST_HP_KEYS_MAP)
+  "vests",
 ];
 
 const LINK_KEYS = ["recovery_account", "reset_account"];
 const URL_KEYS = ["url"];
 const COPY_KEYS = ["signing_key"];
 
-const buildTableBody = (
-  keys: string[],
-  render_key: (key: string) => ReactNode
-) => {
-  return keys.map((key: string, index: number) => {
-    if (EXCLUDE_KEYS.includes(key)) {
-      return null;
-    } else {
-      return (
-        <Fragment key={index}>
-          <TableRow className={"border-b border-gray-700 hover:bg-inherit"}>
-            <TableCell>{key}</TableCell>
-            <TableCell>{render_key(key)}</TableCell>
-          </TableRow>
-        </Fragment>
-      );
-    }
-  });
-};
 
 const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
   header,
@@ -56,46 +37,67 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
   const keys = Object.keys(userDetails);
 
 
-  const render_key = (key: string) => {
+  const renderKey = (key: keyof Record<string, any>): ReactNode => {
     if (LINK_KEYS.includes(key)) {
       return (
         <div className="text-blue-400">
-          <Link href={`/@${userDetails[key]}`}>{userDetails[key]}</Link>{" "}
+          <Link href={`/@${userDetails[key]}`}>{userDetails[key] as string}</Link>{" "}
         </div>
       );
     }
     if (COPY_KEYS.includes(key)) {
+      const stringProperty = userDetails[key] as string;
       let shortenedKey: string = "";
-      shortenedKey = `${userDetails?.[key]?.slice(0, 8)}...${userDetails?.[
-        key
-      ]?.slice(userDetails[key].length - 5)}`;
+      shortenedKey = `${stringProperty?.slice(0, 8)}...${stringProperty?.slice(stringProperty.length - 5)}`;
       return (
         <CopyToKeyboard
-          value={userDetails[key]}
+          value={stringProperty}
           displayValue={shortenedKey}
         />
       );
     }
-    if (Object.keys(VEST_HP_KEYS_MAP).includes(key)) {
-      return <VestsTooltip tooltipTrigger={userDetails[key]} tooltipContent={userDetails[VEST_HP_KEYS_MAP[key]]} />
+    if (Object.keys(userDetails.vests).includes(key)) {
+      const vestValue = userDetails.vests[key]
+      return <VestsTooltip tooltipTrigger={userDetails[key] as string} tooltipContent={vestValue} />
     }
     if (URL_KEYS.includes(key)) {
+      const stringProperty = userDetails[key] as string;
       return (
         <div className="text-blue-400">
           <Link
-            href={userDetails?.[key] || ""}
+            href={stringProperty || ""}
             target="_blank"
             rel="noreferrer"
           >
-            {userDetails?.[key]}
+            {stringProperty}
           </Link>
         </div>
       );
     } else if (typeof userDetails[key] === "number") {
-      return userDetails[key].toLocaleString();
+      const numberProperty = userDetails[key] as number;
+      return numberProperty.toLocaleString();
     } else if (typeof userDetails[key] === "string") {
-      return userDetails[key];
+      return <>{userDetails[key]}</>;
     } else return JSON.stringify(userDetails[key]);
+  };
+
+  const buildTableBody = (
+    keys: string[],
+  ) => {
+    return keys.map((key, index) => {
+      if (EXCLUDE_KEYS.includes(key)) {
+        return null;
+      } else {
+        return (
+          <Fragment key={index}>
+            <TableRow className={"border-b border-gray-700 hover:bg-inherit"}>
+              <TableCell>{key}</TableCell>
+              <TableCell>{renderKey(key)}</TableCell>
+            </TableRow>
+          </Fragment>
+        );
+      }
+    });
   };
 
   const handlePropertiesVisibility = () => {
@@ -121,7 +123,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
         hidden={isPropertiesHidden}
       >
         <Table>
-          <TableBody>{buildTableBody(keys, render_key)}</TableBody>
+          <TableBody>{buildTableBody(keys)}</TableBody>
         </Table>
       </CardContent>
     </Card>
