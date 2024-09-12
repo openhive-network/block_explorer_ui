@@ -36,8 +36,10 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
   const keys = Object.keys(userDetails) as (keyof Explorer.AccountDetailsDollars)[];
 
   const renderKey = (key: keyof Explorer.FormattedAccountDetails) => {
-    if (Object.keys(VEST_HP_KEYS_MAP).includes(key)) {
-      return <VestsTooltip tooltipTrigger={userDetails[key] as string} tooltipContent={userDetails[VEST_HP_KEYS_MAP[key] as keyof Explorer.FormattedAccountDetails] as string } />
+    if (Object.keys(userDetails.vests).includes(key)) {
+      const vestKey = key as keyof Explorer.AccountDetailsVests
+      const vestValue = userDetails.vests[vestKey]
+      return <VestsTooltip tooltipTrigger={userDetails[key] as string} tooltipContent={vestValue } />
     }
     return <>{userDetails[key]}</>;
   };
