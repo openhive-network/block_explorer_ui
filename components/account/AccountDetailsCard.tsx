@@ -20,6 +20,7 @@ const EXCLUDE_KEYS = [
   "profile_image",
   "dollars",
   "vests",
+  "vesting_balance"
 ];
 
 const LINK_KEYS = ["recovery_account", "reset_account"];
