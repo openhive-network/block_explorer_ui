@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
-import { createContext, useContext, useEffect } from "react";
+import { createContext, useCallback, useContext, useEffect } from "react";
 import { config } from "@/Config";
 import { useRouter } from "next/router";
 import { useUserSettingsContext } from "./UserSettingsContext";
@@ -34,7 +34,13 @@ export const HeadBlockContextProvider: React.FC<{
   } = useUserSettingsContext();
   const router = useRouter();
 
-  const {hiveChain} = useHiveChainContext()
+  const { hiveChain } = useHiveChainContext();
+
+  const refreshConditions = useCallback(() => {
+    if (liveData) return config.mainRefreshInterval;
+    if (router.pathname === "/schedule") return 1000;
+    else return false;
+  }, [liveData, router]);
 
   const {
     data: headBlockNumberData,
@@ -45,15 +51,16 @@ export const HeadBlockContextProvider: React.FC<{
     queryKey: ["headBlockNum", router],
     queryFn: () => fetchingService.getHafbeLastSyncedBlock(),
     refetchOnWindowFocus: false,
-    refetchInterval: liveData ? config.mainRefreshInterval : Infinity,
-    enabled: !!hiveChain
+    refetchInterval: refreshConditions(),
+    refetchIntervalInBackground: true,
+    enabled: !!hiveChain,
   });
 
   useEffect(() => {
-    if (liveData) {
+    if (refreshConditions()) {
       refetch();
     }
-  }, [liveData, refetch]);
+  }, [refreshConditions, refetch]);
 
   const checkTemporaryHeadBlockNumber = async () => {
     return await fetchingService.getHeadBlockNum();
