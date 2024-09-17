@@ -14,7 +14,7 @@ const useRcDelegations = (
     isLoading: isRcDelegationsLoading,
     isError: isRcDelegationsError,
   }: UseQueryResult<Hive.RCDelegations[]> = useQuery({
-    queryKey: ["RcDelegations", delegatorAccount, limit],
+    queryKey: ["RcDelegations", delegatorAccount, limit, liveDataEnabled],
     queryFn: () => fetchingService.getRcDelegations(delegatorAccount, limit),
     refetchInterval: liveDataEnabled ? config.accountRefreshInterval : false,
     select: (data) => {

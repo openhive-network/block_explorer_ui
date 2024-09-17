@@ -14,7 +14,7 @@ const useVestingDelegations = (
     isLoading: isVestingDelegationsLoading,
     isError: isVestingDelegationsError,
   }: UseQueryResult<Hive.VestingDelegations[]> = useQuery({
-    queryKey: ["vestingDelegations", delegatorAccount],
+    queryKey: ["vestingDelegations", delegatorAccount, liveDataEnabled],
     queryFn: () => fetchingService.getVestingDelegations(delegatorAccount),
     enabled: !!delegatorAccount,
     select: (data) => {

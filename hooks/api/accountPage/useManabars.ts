@@ -11,7 +11,7 @@ const useManabars = (accountName: string, liveDataEnabled: boolean) => {
     isLoading: manabarsDataLoading,
     isError: manabarsDataError,
   }: UseQueryResult<Explorer.Manabars | null> = useQuery({
-    queryKey: ["manabars", accountName],
+    queryKey: ["manabars", accountName, liveDataEnabled],
     queryFn: () => getManabars(accountName),
     refetchInterval: liveDataEnabled ? config.accountRefreshInterval : false,
     refetchOnWindowFocus: false,
