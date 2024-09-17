@@ -34,6 +34,8 @@ declare module Explorer {
     maxOpenRecurrentTransfers: number;
     rawTotalVestingFundHive: Hive.Supply;
     rawTotalVestingShares: Hive.Supply;
+    rawFeedPrice: Hive.Supply;
+    rawQuote: Hive.Supply;
   }
 
   interface HeadBlockCardData {
@@ -166,6 +168,34 @@ declare module Explorer {
     isDisabled?: boolean;
   }
 
+  interface VestingDelegation extends Omit<Hive.VestingDelegations, "vesting_shares"> {
+    vesting_shares: string;
+  }
+
+  interface AccountDetailsVests {
+    reward_vesting_balance: string;
+    vesting_withdraw_rate: string;
+    vesting_shares: string;
+    delegated_vesting_shares: string;
+    received_vesting_shares: string;
+    posting_rewards: string;
+    curation_rewards: string;
+    vesting_balance: string;
+    reward_vesting_hive: string;
+  }
+
+  interface AccountDetailsDollars {
+    reward_vesting_balance: string;
+    vesting_withdraw_rate: string;
+    vesting_shares: string;
+    delegated_vesting_shares: string;
+    received_vesting_shares: string;
+    posting_rewards: string;
+    curation_rewards: string;
+    vesting_balance: string;
+    reward_vesting_hive: string;
+  }
+
   interface FormattedAccountDetails
     extends Omit<
       Hive.AccountDetails,
@@ -188,6 +218,8 @@ declare module Explorer {
       | "posting_rewards"
       | "curation_rewards"
       | "vesting_balance"
+      | "last_account_recovery"
+      | "created"
     > {
     balance: string;
     saving_balance: string;
@@ -208,7 +240,11 @@ declare module Explorer {
     last_post?: number;
     last_root_post?: number;
     post_count?: number;
+    last_account_recovery: string;
+    created: string;
+    vests: AccountDetailsVests;
+    dollars: AccountDetailsDollars;
   }
 }
 
-export default Explorer;
+export default Explorer; 

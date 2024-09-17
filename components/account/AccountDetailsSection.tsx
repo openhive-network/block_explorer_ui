@@ -3,7 +3,6 @@ import { QueryObserverResult } from "@tanstack/react-query";
 
 import { config } from "@/Config";
 import Hive from "@/types/Hive";
-import useAccountDetails from "@/hooks/api/accountPage/useAccountDetails";
 import useWitnessDetails from "@/hooks/api/common/useWitnessDetails";
 import AccountMainCard from "./AccountMainCard";
 import AccountDetailsCard from "./AccountDetailsCard";
@@ -15,12 +14,15 @@ import VotesHistoryDialog from "../Witnesses/VotesHistoryDialog";
 import AccountVestingDelegationsCard from "./AccountVestingDelegationsCard";
 import AccountRcDelegationsCard from "./AccountRcDelegationsCard";
 import AccountBalanceCard from "./AccountBalanceCard";
+import Explorer from "@/types/Explorer";
 
 interface AccountDetailsSectionProps {
   accountName: string;
   refetchAccountOperations: QueryObserverResult<Hive.AccountOperationsResponse>["refetch"];
   liveDataEnabled: boolean;
   changeLiveRefresh: () => void;
+  accountDetails?: Explorer.FormattedAccountDetails;
+  dynamicGlobalData?: Explorer.HeadBlockCardData;
 }
 
 const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
@@ -28,8 +30,9 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
   refetchAccountOperations,
   liveDataEnabled,
   changeLiveRefresh,
+  accountDetails,
+  dynamicGlobalData
 }) => {
-  const { accountDetails } = useAccountDetails(accountName, liveDataEnabled);
   const { witnessDetails, isWitnessDetailsLoading, isWitnessDetailsError } =
     useWitnessDetails(accountName, !!accountDetails?.is_witness);
 
@@ -81,7 +84,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
         accountName={accountName}
         liveDataEnabled={liveDataEnabled}
       />
-      {!isWitnessDetailsError && (
+      {!isWitnessDetailsError && !!witnessDetails && (
         <AccountDetailsCard
           header="Witness Properties"
           userDetails={witnessDetails}
@@ -90,9 +93,8 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
       <AccountWitnessVotesCard voters={accountDetails.witness_votes} />
       <AccountVestingDelegationsCard
         delegatorAccount={accountName}
-        startAccount={null}
-        limit={config.maxDelegatorsCount}
         liveDataEnabled={liveDataEnabled}
+        dynamicGlobalData={dynamicGlobalData}
       />
       <AccountRcDelegationsCard
         delegatorAccount={accountName}

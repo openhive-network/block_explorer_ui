@@ -1,17 +1,15 @@
 import { ReactNode, Fragment } from "react";
 
-import { formatNumber } from "@/lib/utils";
-import { splitStringValue } from "@/utils/StringUtils";
-import { convertVestsToHP, convertHiveToUSD } from "@/utils/Calculations";
-import { useHiveChainContext } from "@/contexts/HiveChainContext";
-import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table";
+import { VEST_HP_KEYS_MAP } from "@/hooks/common/useConvertedAccountDetails";
 import VestsTooltip from "../VestsTooltip";
+import Explorer from "@/types/Explorer";
+import { changeHBDToDollarsDisplay } from "@/utils/StringUtils";
 
 type AccountBalanceCardProps = {
   header: string;
-  userDetails: any;
+  userDetails: Explorer.FormattedAccountDetails;
 };
 
 const cardNameMap = new Map([
@@ -21,99 +19,49 @@ const cardNameMap = new Map([
   ["balance", "HIVE Liquid"],
   ["savings_balance", "HIVE Savings"],
   ["reward_hive_balance", "HIVE Unclaimed"],
-  ["vesting_balance", "Owned HP"],
-  ["reward_vesting_hive", "HP Unclaimed"],
+  ["vesting_shares", "Owned HP"],
+  ["reward_vesting_balance", "HP Unclaimed"],
   ["received_vesting_shares", "Received HP"],
   ["delegated_vesting_shares", "Delegated HP"],
   ["vesting_withdraw_rate", "Powering down HP"],
 ]);
 
-const vestsParams = [
-  "received_vesting_shares",
-  "delegated_vesting_shares",
-  "vesting_withdraw_rate",
-];
 
-const buildTableBody = (
-  parameters: string[],
-  render_key: (key: string) => ReactNode,
-  convert_usd: (key: string) => ReactNode
-) => {
-  return parameters.map((param: string, index: number) => {
-    if (cardNameMap.has(param)) {
-      return (
-        <Fragment key={index}>
-          <TableRow className="border-b border-gray-700 hover:bg-inherit">
-            <TableCell>{cardNameMap.get(param)}</TableCell>
-            <TableCell className="text-right">{render_key(param)}</TableCell>
-            <TableCell className="text-right">{convert_usd(param)}</TableCell>
-          </TableRow>
-        </Fragment>
-      );
-    }
-  });
-};
 
 const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
   header,
   userDetails,
 }) => {
-  const { dynamicGlobalData } = useDynamicGlobal();
-  const { hiveChain } = useHiveChainContext();
 
-  if (!dynamicGlobalData || !hiveChain) return;
+  const keys = Object.keys(userDetails) as (keyof Explorer.AccountDetailsDollars)[];
 
-  const {
-    headBlockDetails: { feedPrice, rawTotalVestingFundHive, rawTotalVestingShares },
-  } = dynamicGlobalData;
-
-  const keys = Object.keys(userDetails);
-
-  const render_key = (key: string) => {
-    if (vestsParams.includes(key)) {
-      const formattedHp = convertVestsToHP(
-        hiveChain,
-        userDetails[key],
-        rawTotalVestingFundHive,
-        rawTotalVestingShares
-      );
-
-      return (
-        <VestsTooltip
-          tooltipTrigger={formattedHp}
-          tooltipContent={userDetails[key]}
-        />
-      );
+  const renderKey = (key: keyof Explorer.FormattedAccountDetails) => {
+    if (Object.keys(userDetails.vests).includes(key)) {
+      const vestKey = key as keyof Explorer.AccountDetailsVests
+      const vestValue = userDetails.vests[vestKey]
+      return <VestsTooltip tooltipTrigger={userDetails[key] as string} tooltipContent={vestValue } />
     }
-    return userDetails[key];
+    return <>{userDetails[key]}</>;
   };
 
-  const convert_usd = (key: string) => {
-    let displVal = "";
-    if (vestsParams.includes(key)) {
-      const formattedHP = convertVestsToHP(
-        hiveChain,
-        userDetails[key],
-        rawTotalVestingFundHive,
-        rawTotalVestingShares
-      );
-      displVal = convertHiveToUSD(
-        Number(splitStringValue(formattedHP, "HP").replace(/,/g, "")),
-        feedPrice
-      ).toFixed(2);
-    } else if (key.includes("hbd")) {
-      //considering hbd as stable coin = 1$
-      displVal = Number(
-        userDetails[key].replace(/,/g, "").split(" ")[0]
-      ).toFixed(2);
-    } else {
-      displVal = convertHiveToUSD(
-        userDetails[key].replace(/,/g, "").split(" ")[0],
-        feedPrice
-      ).toFixed(2);
-    }
-    return "$ " + formatNumber(parseFloat(displVal), false, true);
+  const buildTableBody = (
+    parameters: (keyof Explorer.AccountDetailsDollars)[],
+  ) => {
+    return parameters.map((param: keyof Explorer.AccountDetailsDollars, index: number) => {
+      if (cardNameMap.has(param)) {
+        return (
+          <Fragment key={index}>
+            <TableRow className="border-b border-gray-700 hover:bg-inherit">
+              <TableCell>{cardNameMap.get(param)}</TableCell>
+              <TableCell className="text-right">{renderKey(param as keyof Explorer.FormattedAccountDetails)}</TableCell>
+              <TableCell className="text-right">{changeHBDToDollarsDisplay(userDetails.dollars[param])}</TableCell>
+            </TableRow>
+          </Fragment>
+        );
+      }
+    });
   };
+
 
   return (
     <Card
@@ -127,7 +75,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
       </CardHeader>
       <CardContent data-testid="card-content">
         <Table>
-          <TableBody>{buildTableBody(keys, render_key, convert_usd)}</TableBody>
+          <TableBody>{buildTableBody(keys)}</TableBody>
         </Table>
       </CardContent>
     </Card>

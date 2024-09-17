@@ -2,17 +2,15 @@ import Link from "next/link";
 import { ReactNode, useState, Fragment } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 
-import { convertVestsToHP } from "@/utils/Calculations";
-import { useHiveChainContext } from "@/contexts/HiveChainContext";
-import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table";
 import CopyToKeyboard from "../CopyToKeyboard";
 import VestsTooltip from "../VestsTooltip";
+import Explorer from "@/types/Explorer";
 
 type AccountDetailsCardProps = {
   header: string;
-  userDetails: any;
+  userDetails: Record<string, any>;
 };
 
 const EXCLUDE_KEYS = [
@@ -20,105 +18,87 @@ const EXCLUDE_KEYS = [
   "posting_json_metadata",
   "witness_votes",
   "profile_image",
+  "dollars",
+  "vests",
+  "vesting_balance"
 ];
 
 const LINK_KEYS = ["recovery_account", "reset_account"];
 const URL_KEYS = ["url"];
 const COPY_KEYS = ["signing_key"];
 
-const buildTableBody = (
-  keys: string[],
-  render_key: (key: string) => ReactNode
-) => {
-  return keys.map((key: string, index: number) => {
-    if (EXCLUDE_KEYS.includes(key)) {
-      return null;
-    } else {
-      return (
-        <Fragment key={index}>
-          <TableRow className={"border-b border-gray-700 hover:bg-inherit"}>
-            <TableCell>{key}</TableCell>
-            <TableCell>{render_key(key)}</TableCell>
-          </TableRow>
-        </Fragment>
-      );
-    }
-  });
-};
 
 const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
   header,
   userDetails,
 }) => {
-  const { dynamicGlobalData } = useDynamicGlobal();
-  const { hiveChain } = useHiveChainContext();
 
   const [isPropertiesHidden, setIsPropertiesHidden] = useState(true);
 
-  if (!userDetails || !dynamicGlobalData || !hiveChain) return;
-
-  const {
-    headBlockDetails: { rawTotalVestingFundHive, rawTotalVestingShares },
-  } = dynamicGlobalData;
   const keys = Object.keys(userDetails);
 
-  const renderConvertedHP = (userKey: string, objectKey: string) => {
-    if (userKey.includes("VESTS") && objectKey !== "vests") {
-      const formattedHP = convertVestsToHP(
-        hiveChain,
-        userKey,
-        rawTotalVestingFundHive,
-        rawTotalVestingShares
-      );
 
-      return (
-        <VestsTooltip
-          tooltipTrigger={formattedHP}
-          tooltipContent={userKey}
-        />
-      );
-    } else {
-      return userKey;
-    }
-  };
-
-  const render_key = (key: string) => {
+  const renderKey = (key: keyof Record<string, any>): ReactNode => {
     if (LINK_KEYS.includes(key)) {
       return (
         <div className="text-blue-400">
-          <Link href={`/@${userDetails[key]}`}>{userDetails[key]}</Link>{" "}
+          <Link href={`/@${userDetails[key]}`}>{userDetails[key] as string}</Link>{" "}
         </div>
       );
     }
     if (COPY_KEYS.includes(key)) {
+      const stringProperty = userDetails[key] as string;
       let shortenedKey: string = "";
-      shortenedKey = `${userDetails?.[key]?.slice(0, 8)}...${userDetails?.[
-        key
-      ]?.slice(userDetails[key].length - 5)}`;
+      shortenedKey = `${stringProperty?.slice(0, 8)}...${stringProperty?.slice(stringProperty.length - 5)}`;
       return (
         <CopyToKeyboard
-          value={userDetails[key]}
+          value={stringProperty}
           displayValue={shortenedKey}
         />
       );
     }
+    if (userDetails.vests && Object.keys(userDetails?.vests).includes(key)) {
+      const vestValue = userDetails.vests[key];
+      return <VestsTooltip tooltipTrigger={userDetails[key] as string} tooltipContent={vestValue} />
+    }
     if (URL_KEYS.includes(key)) {
+      const stringProperty = userDetails[key] as string;
       return (
         <div className="text-blue-400">
           <Link
-            href={userDetails?.[key] || ""}
+            href={stringProperty || ""}
             target="_blank"
             rel="noreferrer"
           >
-            {userDetails?.[key]}
+            {stringProperty}
           </Link>
         </div>
       );
     } else if (typeof userDetails[key] === "number") {
-      return userDetails[key].toLocaleString();
+      const numberProperty = userDetails[key] as number;
+      return numberProperty.toLocaleString();
     } else if (typeof userDetails[key] === "string") {
-      return renderConvertedHP(userDetails[key], key);
+      return <>{userDetails[key]}</>;
     } else return JSON.stringify(userDetails[key]);
+  };
+
+  const buildTableBody = (
+    keys: string[],
+  ) => {
+    return keys.map((key, index) => {
+      if (EXCLUDE_KEYS.includes(key)) {
+        return null;
+      } else {
+        return (
+          <Fragment key={index}>
+            <TableRow className={"border-b border-gray-700 hover:bg-inherit"}>
+              <TableCell>{key}</TableCell>
+              <TableCell>{renderKey(key)}</TableCell>
+            </TableRow>
+          </Fragment>
+        );
+      }
+    });
   };
 
   const handlePropertiesVisibility = () => {
@@ -144,7 +124,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
         hidden={isPropertiesHidden}
       >
         <Table>
-          <TableBody>{buildTableBody(keys, render_key)}</TableBody>
+          <TableBody>{buildTableBody(keys)}</TableBody>
         </Table>
       </CardContent>
     </Card>
