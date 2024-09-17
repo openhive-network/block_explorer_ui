@@ -1,17 +1,16 @@
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 
-import fetchingService from "@/services/FetchingService";
+import Explorer from "@/types/Explorer";
 import { config } from "@/Config";
-import Hive from "@/types/Hive";
+import fetchingService from "@/services/FetchingService";
 
 const useAccountDetails = (accountName: string, liveDataEnabled: boolean) => {
-
   const {
     data: accountDetails,
     isLoading: isAccountDetailsLoading,
     isError: isAccountDetailsError,
-  }: UseQueryResult<Hive.AccountDetails> = useQuery({
-    queryKey: ["account_details", accountName],
+  }: UseQueryResult<Explorer.FormattedAccountDetails> = useQuery({
+    queryKey: ["account_details", accountName, liveDataEnabled],
     queryFn: () => fetchingService.getAccount(accountName),
     refetchInterval: liveDataEnabled ? config.accountRefreshInterval : false,
     refetchOnWindowFocus: false,
