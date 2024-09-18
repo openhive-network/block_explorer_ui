@@ -45,7 +45,7 @@
     "long": "^5.2.3",
     "lucide-react": "^0.261.0",
     "moment": "^2.29.4",
-    "next": "^14.2.8",
+    "next": "^14.2.12",
     "next-themes": "^0.2.1",
     "playwright-merge-html-reports": "^0.2.8",
     "postcss": "^8.4.31",
