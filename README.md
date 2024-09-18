@@ -4,7 +4,7 @@ This project is a GUI for the Block Explorer. You can use it to go through block
 
 ## Getting Started
 
-To run the application you have to install Node JS (16.14.2 or higher is preferable). Then after getting the repo use:
+To run the application you have to install Node JS (18.20.0 or higher is preferable). Then after getting the repo use:
 
 ```bash
 npm install
@@ -28,16 +28,25 @@ Right now the application is using:
 * Shadcn UI for generic presentational components.
 * React Query for managing data from API.
 * Typescript.
+* Wax as a helping library to handle blockchain issues in applications, like formatting, assets and communication with servers
 
-## Ongoing state
-
-The Block Explorer recrated the old functionalities of previous GUI. We are in the moment when we start working on the new functionalities. The project is dockerize, so you can see CI deployment there: [Link](http://hive-staging.pl.syncad.com:5000/).
 
 ## Git workflow
 
 * For your issue, task or changes you want to make, create a branch. The custom branch name is `USER_NAME/BRANCH_NAME`
 * After finishing work open PR for `develop` branch. If you made a lot of changes, squash the commits.
 * If you're local branch is outdated, use `rebase` to get the newest develop.
+* The maintener of Block Explorer will later merge `develop` into `master`.
+* `master` branch is our production, `develop` is development staging branch.
+
+## Deployment
+
+The Block Explorer has two instances of deployment.
+
+* [https://testexplore.openhive.network](https://testexplore.openhive.network) – staging made from `develop` branch.
+* [https://explore.openhive.network](https://testexplore.openhive.network) – production made from `master` branch.
+
+The deployment is done manually in pipelines.
 
 ## Dockerisation
 
@@ -97,3 +106,10 @@ npm run pw:test:local:webkit
 ```
 
 Running the tests only works locally at this moment.
+
+## About Wax usage
+
+There are two big part of Block Explorer that are handled by Wax library:
+
+1. The communication with servers. See `services/FetchingService.ts` and `types/Rest.ts`. In the `Rest.ts` file the structure of REST API is definied both properties and responses. Every call to backend, both Hive Node and Explorer API (HAF and HAFBE) is done through Wax.
+2. Formatters. Assets are changed from NAI form into formatted string. Every operation displayed in UI is formatted by our custom formatters using Wax. 
