@@ -120,13 +120,13 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                 <p>Last updated : {witnessDetails.votes_updated_at}</p>
               )}
             </div>
-            <div className="flex justify-around items-center bg-gray-800 rounded text-white p-2">
+            <div className="justify-around items-center bg-gray-800 rounded text-white p-2">
               <div>
                 <p>From: </p>
                 <DateTimePicker
                   date={fromDate}
                   setDate={setFromDate}
-                  side="left"
+                  side="bottom"
                 />
               </div>
               <div>
@@ -134,7 +134,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                 <DateTimePicker
                   date={toDate}
                   setDate={setToDate}
-                  side="right"
+                  side="bottom"
                 />
               </div>
             </div>
@@ -180,7 +180,11 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                       }`}
                     >
                       <TableCell
-                        className="sticky left-0"
+                        className={`sticky left-0"md:static left-0 ${
+                          index % 2 === 0
+                            ? "bg-gray-800 md:bg-inherit"
+                            : "bg-gray-900 md:bg-inherit"
+                        }`}
                         data-testid="date-format"
                       >
                         {formatAndDelocalizeTime(vote.timestamp)}
