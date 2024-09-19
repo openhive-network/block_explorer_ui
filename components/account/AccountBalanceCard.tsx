@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableRow } from "../ui/table";
 import VestsTooltip from "../VestsTooltip";
 import Explorer from "@/types/Explorer";
 import { changeHBDToDollarsDisplay } from "@/utils/StringUtils";
+import { cn } from "@/lib/utils";
 
 type AccountBalanceCardProps = {
   header: string;
@@ -24,6 +25,12 @@ const cardNameMap = new Map([
   ["received_vesting_shares", "Received HP"],
   ["delegated_vesting_shares", "Delegated HP"],
   ["vesting_withdraw_rate", "Powering down HP"],
+]);
+
+const unclaimedRecourses = new Map([
+  ["reward_hbd_balance", "HBD Unclaimed"],
+  ["reward_hive_balance", "HIVE Unclaimed"],
+  ["reward_vesting_balance", "HP Unclaimed"],
 ]);
 
 const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
@@ -57,9 +64,17 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
     return parameters.map(
       (param: keyof Explorer.AccountDetailsDollars, index: number) => {
         if (cardNameMap.has(param)) {
+          const hasUnclaimedResources =
+            unclaimedRecourses.has(param) &&
+            Number(userDetails[param].split(" ")[0]);
+
           return (
             <Fragment key={index}>
-              <TableRow className="border-b border-gray-700 hover:bg-inherit">
+              <TableRow
+                className={cn("border-b border-gray-700 hover:bg-inherit", {
+                  "bg-explorer-orange": hasUnclaimedResources,
+                })}
+              >
                 <TableCell>{cardNameMap.get(param)}</TableCell>
                 <TableCell className="text-right">
                   {renderKey(param as keyof Explorer.FormattedAccountDetails)}
