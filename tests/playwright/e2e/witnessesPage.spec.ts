@@ -195,10 +195,11 @@ test.describe("Witnesses page", () => {
     await witnessesPage.gotoWitnessesPage();
     await witnessesPage.validateWitnessesPageIsLoaded();
     const witnessName: string = await witnessesPage.witnessName.first().textContent() || '';
+    const witnessNameVotesHistory: string = witnessName.toUpperCase() + " - Votes History";
     // Move to the votes history dialog
     await witnessesPage.witnessVotesButtons.first().click();
     await votesHistoryDialog.validateVotesHistoryDialogIsLoaded();
-    await votesHistoryDialog.validateWitnessName(witnessName);
+    await votesHistoryDialog.validateWitnessName(witnessNameVotesHistory);
     // Close the votes history dialog
     await votesHistoryDialog.votesHistoryDialogCloseButton.click();
   });
@@ -211,10 +212,11 @@ test.describe("Witnesses page", () => {
     await witnessesPage.gotoWitnessesPage();
     await witnessesPage.validateWitnessesPageIsLoaded();
     const witnessName: string = await witnessesPage.witnessName.first().textContent() || '';
+    const witnessNameVotesHistory: string = witnessName.toUpperCase() + " - Voters";
     // Move to the voter dialog
     await witnessesPage.witnessVotersButtons.first().click();
     await votersDialog.validateVotersDialogIsLoaded()
-    await votersDialog.validateWitnessName(witnessName);
+    await votersDialog.validateWitnessName(witnessNameVotesHistory);
     // Close the votes history dialog
     await votersDialog.votersDialogCloseButton.click();
   });
@@ -227,10 +229,11 @@ test.describe("Witnesses page", () => {
     await witnessesPage.gotoWitnessesPage();
     await witnessesPage.validateWitnessesPageIsLoaded();
     const witnessName: string = await witnessesPage.witnessName.first().textContent() || '';
+    const witnessNameVotesHistory: string = witnessName.toUpperCase() + " - Voters";
     // Move to the voters dialog
     await witnessesPage.witnessVotersButtons.first().click();
     await votersDialog.validateVotersDialogIsLoaded();
-    await votersDialog.validateWitnessName(witnessName);
+    await votersDialog.validateWitnessName(witnessNameVotesHistory);
     // Get first voter votes value in vests
     const currentVoterPower: string = await votersDialog.votersDialogVotesValue.first().textContent() || '';
     // Set toggle button to Hive Power
@@ -251,11 +254,12 @@ test.describe("Witnesses page", () => {
     await witnessesPage.gotoWitnessesPage();
     await witnessesPage.validateWitnessesPageIsLoaded();
     const witnessName: string = await witnessesPage.witnessName.first().textContent() || '';
+    const witnessNameVotesHistory: string = witnessName.toUpperCase() + " - Votes History";
     // Move to the votes history dialog
     await witnessesPage.witnessVotesButtons.first().click();
     await witnessesPage.page.waitForTimeout(3000);
     await votesHistoryDialog.validateVotesHistoryDialogIsLoaded();
-    await votesHistoryDialog.validateWitnessName(witnessName);
+    await votesHistoryDialog.validateWitnessName(witnessNameVotesHistory);
     // Get first voter vests
     if (await votesHistoryDialog.votesHistoryDialogTableBody.isVisible()){
         const currentVoterPower: string = await votesHistoryDialog.votesHistoryDialogCurrentVoterPowerColumn.first().textContent() || '';
@@ -368,10 +372,11 @@ test.describe("Witnesses page", () => {
     await witnessesPage.gotoWitnessesPage();
     await witnessesPage.validateWitnessesPageIsLoaded();
     const witnessName: string = await witnessesPage.witnessName.first().textContent() || '';
+    const witnessNameVotesHistory: string = witnessName.toUpperCase() + " - Voters";
     // Move to the voters dialog
     await witnessesPage.witnessVotersButtons.first().click();
     await votersDialog.validateVotersDialogIsLoaded();
-    await votersDialog.validateWitnessName(witnessName);
+    await votersDialog.validateWitnessName(witnessNameVotesHistory);
     // Get first voter votes value in vests and voter name
     const currentVoterPower: string = await votersDialog.votersDialogVotesValue.first().textContent() || '';
     const firstVoterName: string = await votersDialog.votersDialogVoterName.first().textContent() || '';
@@ -401,10 +406,11 @@ test.describe("Witnesses page", () => {
     await witnessesPage.gotoWitnessesPage();
     await witnessesPage.validateWitnessesPageIsLoaded();
     const witnessName: string = await witnessesPage.witnessName.first().textContent() || '';
+    const witnessNameVotesHistory: string = witnessName.toUpperCase() + " - Voters";
     // Move to the voters dialog
     await witnessesPage.witnessVotersButtons.first().click();
     await votersDialog.validateVotersDialogIsLoaded();
-    await votersDialog.validateWitnessName(witnessName);
+    await votersDialog.validateWitnessName(witnessNameVotesHistory);
     // Get first voter votes value in vests and voter name
     const accountValue: string = await votersDialog.votersDialogAccountValue.first().textContent() || '';
     // Filter by account value
