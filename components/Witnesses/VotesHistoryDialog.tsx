@@ -97,7 +97,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
               className="flex justify-center items-centertext-center font-semibold"
               data-testid="votes-history-dialog-witness-name"
             >
-              {accountName}{" "}
+              {accountName.toUpperCase()} - Votes History
               {isVotesHistoryLoading && (
                 <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
               )}
