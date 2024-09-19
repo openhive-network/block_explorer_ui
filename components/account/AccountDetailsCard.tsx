@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table";
 import CopyToKeyboard from "../CopyToKeyboard";
 import VestsTooltip from "../VestsTooltip";
-import Explorer from "@/types/Explorer";
 
 type AccountDetailsCardProps = {
   header: string;
@@ -86,7 +85,9 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
     keys: string[],
   ) => {
     return keys.map((key, index) => {
-      if (EXCLUDE_KEYS.includes(key)) {
+      const isZeroValue = userDetails[key] === 0 || userDetails[key] === "0";
+
+      if (EXCLUDE_KEYS.includes(key) || isZeroValue) {
         return null;
       } else {
         return (
