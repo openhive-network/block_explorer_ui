@@ -19,7 +19,18 @@ const EXCLUDE_KEYS = [
   "profile_image",
   "dollars",
   "vests",
-  "vesting_balance"
+  "vesting_balance",
+  "hbd_balance",
+  "hbd_saving_balance",
+  "reward_hbd_balance",
+  "balance",
+  "savings_balance",
+  "reward_hive_balance",
+  "vesting_shares",
+  "reward_vesting_balance",
+  "received_vesting_shares",
+  "delegated_vesting_shares",
+  "vesting_withdraw_rate",
 ];
 
 const LINK_KEYS = ["recovery_account", "reset_account"];
