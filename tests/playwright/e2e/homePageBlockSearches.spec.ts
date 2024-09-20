@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import { MainPage } from "../support/pages/mainPage";
 import { BlockPage } from "../support/pages/blockPage";
 
-test.describe.skip('Home page - searches', () => {
+test.describe('Home page - searches', () => {
     let mainPage: MainPage;
     let blockPage: BlockPage;
 
@@ -125,13 +125,13 @@ test.describe.skip('Home page - searches', () => {
         await page.waitForTimeout(2000);
 
         const datePickerTriggerToDate = await mainPage.datePickerTriggerToDate
-        const datePickerDayNotMutedToDate = page.locator('[data-testid="datepicker-calender"] button:not([class*="text-muted-foreground"])').nth(11);
+        const datePickerDayNotMutedToDate = page.locator('[data-testid="datepicker-calender"] button:not([class*="text-muted-foreground"])').nth(10);
         await datePickerTriggerToDate.click();
         await datePickerDayNotMutedToDate.click();
         await page.waitForTimeout(2000);
 
         await mainPage.blockSearchBtn.click()
-        await mainPage.resultBlock.last().click()
+        await mainPage.resultBlock.first().click()
 
         await page.waitForLoadState('domcontentloaded')
 
