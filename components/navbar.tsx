@@ -67,6 +67,12 @@ export default function Navbar() {
                 >
                   Witnesses
                 </Link>
+                <Link
+                  href={"/schedule"}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Schedule
+                </Link>
                 <div>
                   <ViewPopover isMobile={isMobile} />
                 </div>
@@ -101,7 +107,13 @@ export default function Navbar() {
                 data-testid="navbar-witnesses-link"
               >
                 Witnesses
-              </Link>
+                </Link>
+                <Link
+                  href={"/schedule"}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Schedule
+                </Link>
             </div>
             <SearchBar open={true} />
           </>
