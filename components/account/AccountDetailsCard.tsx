@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table";
 import CopyToKeyboard from "../CopyToKeyboard";
 import VestsTooltip from "../VestsTooltip";
-import Explorer from "@/types/Explorer";
 
 type AccountDetailsCardProps = {
   header: string;
@@ -20,7 +19,18 @@ const EXCLUDE_KEYS = [
   "profile_image",
   "dollars",
   "vests",
-  "vesting_balance"
+  "vesting_balance",
+  "hbd_balance",
+  "hbd_saving_balance",
+  "reward_hbd_balance",
+  "balance",
+  "savings_balance",
+  "reward_hive_balance",
+  "vesting_shares",
+  "reward_vesting_balance",
+  "received_vesting_shares",
+  "delegated_vesting_shares",
+  "vesting_withdraw_rate",
 ];
 
 const LINK_KEYS = ["recovery_account", "reset_account"];
@@ -86,7 +96,9 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
     keys: string[],
   ) => {
     return keys.map((key, index) => {
-      if (EXCLUDE_KEYS.includes(key)) {
+      const isZeroValue = userDetails[key] === 0 || userDetails[key] === "0";
+
+      if (EXCLUDE_KEYS.includes(key) || isZeroValue) {
         return null;
       } else {
         return (
