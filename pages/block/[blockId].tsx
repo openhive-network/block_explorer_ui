@@ -120,21 +120,16 @@ export default function Block() {
     }
   }, [blockDetails]);
 
-  const getSplitOperations = useCallback(
+  const getConvertedOperations = useCallback(
     (operations?: Hive.OperationResponse[]) => {
       if (operations) {
-        return {
-          virtualOperations: convertOperationResultsToTableOperations(
-            operations?.filter((operation) => operation.virtual_op)
-          ),
-          nonVirtualOperations: convertOperationResultsToTableOperations(
-            operations?.filter((operation) => !operation.virtual_op)
-          ),
-        };
-      } else return { virtualOperations: [], nonVirtualOperations: [] };
+        return convertOperationResultsToTableOperations(operations);
+      } else {
+        return [];
+      }
     },
     []
-  );
+  )
 
   const getOperationsCounts = useCallback(() => {
     if (operationsCountInBlock && !countLoading && operationsTypes) {
@@ -182,13 +177,7 @@ export default function Block() {
     nonVirtualOperationsTypesCounters,
   } = getOperationsCounts();
 
-  const { virtualOperations, nonVirtualOperations } =
-    getSplitOperations(formattedOperations);
-
-  const {
-    virtualOperations: unformattedVirtual,
-    nonVirtualOperations: unformattedNonVirtual,
-  } = getSplitOperations(blockOperations?.operations_result);
+  const convertedTotalOperations = getConvertedOperations(formattedOperations);
 
   const handleGoToBlock = (blockNumber: string) => {
     router.push({
@@ -315,31 +304,10 @@ export default function Block() {
                   />
                 )}
               <div className="w-full md:w-4/5 flex flex-col gap-y-2">
-                {!!nonVirtualOperations.length && (
+                {!!convertedTotalOperations.length && (
                   <OperationsTable
-                    operations={nonVirtualOperations}
-                    unformattedOperations={unformattedNonVirtual}
-                    markedTrxId={paramsState.trxId}
-                  />
-                )}
-                <div
-                  className="text-center mt-4"
-                  ref={virtualOpsRef}
-                  style={{ scrollMargin: "100px" }}
-                >
-                  <p className="text-3xl text-black dark:text-white">
-                    {!!blockOperations &&
-                    !blockOperations?.operations_result?.length
-                      ? "No operations were found"
-                      : !!virtualOperations.length
-                      ? "Virtual Operations"
-                      : null}
-                  </p>
-                </div>
-                {!!virtualOperations.length && (
-                  <OperationsTable
-                    operations={virtualOperations}
-                    unformattedOperations={unformattedVirtual}
+                    operations={convertedTotalOperations}
+    
                     markedTrxId={paramsState.trxId}
                   />
                 )}
