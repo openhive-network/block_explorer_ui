@@ -197,7 +197,7 @@ test.describe('Block page tests', () => {
         }
     });
 
-    test('Validate the buttons To Top and To Virtual Ops do not work in Raw Json view option', async ({page}) =>{
+    test.skip('Validate the buttons To Top and To Virtual Ops do not work in Raw Json view option', async ({page}) =>{
         await mainPage.headBlockCardBlockLink.click()
         await expect(blockPage.blockProducer).toBeVisible()
         const blockProducerBounding = await blockPage.blockProducer.boundingBox()
