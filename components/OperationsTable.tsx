@@ -135,7 +135,8 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
         </TableRow>
       </TableHeader>
       <TableBody className="max-w-[100%]">
-        {operations.map((operation, index) => {
+        {operations.map((operation, index, allOperations) => {
+          const nextTransactionId: string | undefined = allOperations[index + 1]?.trxId;
           const operationBgColor = getOperationColor(operation.operation?.type);
 
           return (
@@ -144,7 +145,11 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                 id={operation.trxId}
                 data-testid="detailed-operation-card"
                 key={index}
-                className="border-b border-gray-700"
+                className={cn(
+                  "border-b border-gray-700", {
+                    "border-b-0": nextTransactionId === operation.trxId && !!operation.trxId 
+                  }
+                )}
               >
                 <TableCell className="sticky left-0 bg-explorer-dark-gray xl:bg-inherit">
                   <CopyJSON value={getUnformattedValue(operation)} />
