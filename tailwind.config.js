@@ -1,12 +1,12 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: ["media","class"],
+  darkMode: "selector",
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
-	],
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
   theme: {
     container: {
       center: true,
@@ -31,7 +31,7 @@ module.exports = {
         "switch-off": "rgb(200, 200, 200)",
         "switch-on": "rgb(100, 100, 100)",
         "switch-button": "rgb(20, 20, 20)",
-        "blocked": "rgba(255, 255, 255, 0.7)",
+        blocked: "rgba(255, 255, 255, 0.7)",
         "explorer-posting-operations": "#ffbe0b",
         "explorer-curation-operations": "#fb5607",
         "explorer-transfer-operations": "#8338ec",
@@ -97,9 +97,9 @@ module.exports = {
         "accordion-up": "accordion-up 0.2s ease-out",
       },
       flex: {
-        "2": "2 2 0%",
-      }
+        2: "2 2 0%",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
+};
