@@ -16,6 +16,7 @@ import Layout from "./layout";
 import useApiAddresses from "@/utils/ApiAddresses";
 import ErrorPage from "@/pages/ErrorPage";
 import { OperationTypesContextProvider } from "@/contexts/OperationsTypesContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 
 const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { apiAddress, nodeAddress } = useApiAddresses();
@@ -42,18 +43,20 @@ const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <QueryClientProvider client={queryClient}>
       <ErrorBoundary fallback={<ErrorPage />}>
-        <HiveChainContextProvider>
-          <UserSettingsContextProvider>
-            <HeadBlockContextProvider>
-              <OperationTypesContextProvider>
-                <AddressesContextProvider>
-                  <Layout>{children}</Layout>
-                  <ReactQueryDevtools initialIsOpen={false} />
-                </AddressesContextProvider>
-              </OperationTypesContextProvider>
-            </HeadBlockContextProvider>
-          </UserSettingsContextProvider>
-        </HiveChainContextProvider>
+        <ThemeProvider>
+          <HiveChainContextProvider>
+            <UserSettingsContextProvider>
+              <HeadBlockContextProvider>
+                <OperationTypesContextProvider>
+                  <AddressesContextProvider>
+                    <Layout>{children}</Layout>
+                    <ReactQueryDevtools initialIsOpen={false} />
+                  </AddressesContextProvider>
+                </OperationTypesContextProvider>
+              </HeadBlockContextProvider>
+            </UserSettingsContextProvider>
+          </HiveChainContextProvider>
+        </ThemeProvider>
       </ErrorBoundary>
     </QueryClientProvider>
   );
