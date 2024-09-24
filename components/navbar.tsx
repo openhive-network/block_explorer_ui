@@ -8,6 +8,7 @@ import useMediaQuery from "@/hooks/common/useMediaQuery";
 import SearchBar from "./SearchBar";
 import SyncInfo from "./home/SyncInfo";
 import ViewPopover from "./ViewPopover";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar() {
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -61,18 +62,14 @@ export default function Navbar() {
                 />
               </div>
               <div className="flex flex-col text-2xl gap-y-2">
+                <ThemeToggle />
                 <Link
                   href={"/witnesses"}
                   onClick={() => setMenuOpen(false)}
                 >
                   Witnesses
                 </Link>
-                <Link
-                  href={"/schedule"}
-                  onClick={() => setMenuOpen(false)}
-                >
-                  Schedule
-                </Link>
+
                 <div>
                   <ViewPopover isMobile={isMobile} />
                 </div>
@@ -107,13 +104,8 @@ export default function Navbar() {
                 data-testid="navbar-witnesses-link"
               >
                 Witnesses
-                </Link>
-                <Link
-                  href={"/schedule"}
-                  onClick={() => setMenuOpen(false)}
-                >
-                  Schedule
-                </Link>
+              </Link>
+              <ThemeToggle />
             </div>
             <SearchBar open={true} />
           </>
