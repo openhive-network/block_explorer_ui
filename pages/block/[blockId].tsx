@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/router";
 import Head from "next/head";
@@ -6,7 +6,6 @@ import Head from "next/head";
 import { config } from "@/Config";
 import Hive from "@/types/Hive";
 import Explorer from "@/types/Explorer";
-import { scrollTo } from "@/utils/UI";
 import {
   convertBooleanArrayToIds,
   convertOperationResultsToTableOperations,
@@ -69,7 +68,6 @@ const scrollToTrxSection = (trxId?: string) => {
 
 export default function Block() {
   const router = useRouter();
-  const virtualOpsRef = useRef(null);
 
   const blockId = (router.query.blockId as string)?.replaceAll(",", "");
 
@@ -263,15 +261,8 @@ export default function Block() {
             }
             blockDetails={blockDetails}
           />
-          <div className="fixed top-[calc(100vh-90px)] md:top-[calc(100vh-100px)] right-0 flex flex-col items-end justify-end px-3 md:px-12">
+          <div className="fixed top-[calc(100vh-90px)] md:top-[calc(100vh-60px)] right-0 flex flex-col items-end justify-end px-3 md:px-12">
             <ScrollTopButton />
-            <Button
-              onClick={() => scrollTo(virtualOpsRef)}
-              className="bg-[#ADA9A9] rounded text-white hover:bg-gray-700 w-fit"
-            >
-              <p className="hidden md:inline">To Virtual Ops</p>
-              <p className="md:hidden inline">V Ops</p>
-            </Button>
           </div>
           {loading || trxLoading || totalLoading ? (
             <div className="flex justify-center items-center">
@@ -307,7 +298,6 @@ export default function Block() {
                 {!!convertedTotalOperations.length && (
                   <OperationsTable
                     operations={convertedTotalOperations}
-    
                     markedTrxId={paramsState.trxId}
                   />
                 )}
