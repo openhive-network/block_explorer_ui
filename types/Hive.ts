@@ -120,7 +120,7 @@ namespace Hive {
   }
 
   export class GetWitnessesParams {
-    limit!: number;
+    "result-limit"!: number;
     offset!: number;
     sort!: string;
     direction!: Hive.Direction;
@@ -131,7 +131,7 @@ namespace Hive {
   }
 
   export class Witness {
-    witness!: string;
+    witness_name!: string;
     rank!: number;
     url!: string;
     vests!: string;
@@ -148,6 +148,21 @@ namespace Hive {
     missed_blocks!: number;
     hbd_interest_rate!: number;
     vests_hive_power!: number;
+  }
+
+  export class WitnessesResponse {
+    witnesses!: Witness[];
+    votes_updated_at!: Date;
+  }
+
+  export class SingleWitnessResponse {
+    witness!: Witness;
+    votes_updated_at!: Date;
+  }
+
+  export class WitnessVotersResponse {
+    voters!: Voter[];
+    votes_updated_at!: Date;
   }
 
   export class WitnessesSchedule {
@@ -209,7 +224,7 @@ namespace Hive {
   }
 
   export class Voter {
-    voter!: string;
+    voter_name!: string;
     vests!: number;
     votes_hive_power!: number;
     account_vests!: number;
@@ -229,7 +244,7 @@ namespace Hive {
   }
 
   export class WitnessVotesHistory {
-    voter!: string;
+    voter_name!: string;
     approve!: boolean;
     vests!: number;
     votes_hive_power!: number;
@@ -238,6 +253,11 @@ namespace Hive {
     proxied_vests!: number;
     proxied_hive_power!: number;
     timestamp!: Date;
+  }
+
+  export class WitnessesVotesHistoryResponse {
+    votes_updated_at!: Date;
+    votes_history!: WitnessVotesHistory[];
   }
 
   export class GetBlockDetailsParams {

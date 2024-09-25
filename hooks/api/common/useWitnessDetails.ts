@@ -9,15 +9,15 @@ import fetchingService from "@/services/FetchingService";
 const useWitnessDetails = (accountName: string, isWitness: boolean) => {
   const { hiveChain } = useHiveChainContext();
 
-  const selectFunction = (witnessData: Hive.Witness) => {
+  const selectFunction = (witnessData: Hive.SingleWitnessResponse) => {
     const witness = {
       ...witnessData,
-      vests: hiveChain?.vests(witnessData.vests),
-      votes_hive_power: hiveChain?.hive(witnessData.vests_hive_power),
-      hbd_interest_rate: formatPercent(witnessData.hbd_interest_rate),
-      votes_daily_change: hiveChain?.vests(witnessData.votes_daily_change),
+      vests: hiveChain?.vests(witnessData.witness.vests),
+      votes_hive_power: hiveChain?.hive(witnessData.witness.vests_hive_power),
+      hbd_interest_rate: formatPercent(witnessData.witness.hbd_interest_rate),
+      votes_daily_change: hiveChain?.vests(witnessData.witness.votes_daily_change),
       votes_daily_change_hive_power: hiveChain?.hive(
-        witnessData.votes_daily_change_hive_power
+        witnessData.witness.votes_daily_change_hive_power
       ),
     };
     const formattedWitness = hiveChain?.formatter.format(

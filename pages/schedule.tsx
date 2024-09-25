@@ -112,7 +112,7 @@ const Schedule = () => {
 
     const initialUsersArray = shuffledWitnesses.map((userName: string) => {
       const rank =
-        witnessesData?.find((data) => data.witness === userName)?.rank || null;
+        witnessesData?.witnesses?.find((data) => data.witness_name === userName)?.rank || null;
 
       return {
         producerRank: rank,

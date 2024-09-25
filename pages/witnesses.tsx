@@ -117,7 +117,7 @@ export default function Witnesses() {
     );
   }
 
-  if (!witnessesData || !witnessesData.length) return;
+  if (!witnessesData || !witnessesData.witnesses.length) return;
 
   const changeVotersDialogue = (isOpen: boolean) => {
     setIsVotersOpen(isOpen);
@@ -189,7 +189,7 @@ export default function Witnesses() {
             <TableRow>{buildTableHeader()}</TableRow>
           </TableHeader>
           <TableBody>
-            {witnessesData.map((singleWitness: any, index: any) => (
+            {witnessesData.witnesses.map((singleWitness: any, index: any) => (
               <TableRow
                 key={index}
                 className={cn(
@@ -217,11 +217,11 @@ export default function Witnesses() {
                 >
                   <div className="flex justify-between">
                     <Link
-                      href={`/@${singleWitness.witness}`}
+                      href={`/@${singleWitness.witness_name}`}
                       target="_blank"
                       data-testid="witness-name"
                     >
-                      {singleWitness.witness}
+                      {singleWitness.witness_name}
                     </Link>
                     <Link
                       href={singleWitness.url ?? ""}
@@ -238,7 +238,7 @@ export default function Witnesses() {
                     <MenuSquareIcon
                       className="w-4 ml-1 cursor-pointer"
                       onClick={() => {
-                        setVoterAccount(singleWitness.witness);
+                        setVoterAccount(singleWitness.witness_name);
                         setIsVotesHistoryOpen(true);
                       }}
                       data-testid="witness-votes-button"
@@ -251,7 +251,7 @@ export default function Witnesses() {
                     <MenuSquareIcon
                       className="w-4 ml-1 cursor-pointer"
                       onClick={() => {
-                        setVoterAccount(singleWitness.witness);
+                        setVoterAccount(singleWitness.witness_name);
                         setIsVotersOpen(true);
                       }}
                       data-testid="witness-voters-button"

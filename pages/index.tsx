@@ -65,7 +65,7 @@ export default function Home() {
             <Table>
               <TableBody>
                 {witnesses &&
-                  witnesses.map((witness, index) => (
+                  witnesses.witnesses.map((witness, index) => (
                     <TableRow
                       className=" text-base"
                       key={index}
@@ -74,18 +74,18 @@ export default function Home() {
                       <TableCell className="py-4">{index + 1}</TableCell>
                       <TableCell className="py-4">
                         <Link
-                          href={`/@${witness.witness}`}
+                          href={`/@${witness.witness_name}`}
                           className="text-explorer-turquoise"
                         >
-                          {witness.witness}
+                          {witness.witness_name}
                         </Link>
                       </TableCell>
                       <TableCell className="py-4">
-                        <Link href={`/@${witness.witness}`}>
+                        <Link href={`/@${witness.witness_name}`}>
                           <div className="min-w-[30px]">
                             <Image
                               className="rounded-full border-2 border-explorer-turquoise"
-                              src={getHiveAvatarUrl(witness.witness)}
+                              src={getHiveAvatarUrl(witness.witness_name)}
                               alt="avatar"
                               width={40}
                               height={40}

@@ -60,31 +60,31 @@ class FetchingService {
   }
 
   async getHeadBlockNum(): Promise<number> {
-    return await this.extendedHiveChain!.restApi.hafah.headblock();
+    return await this.extendedHiveChain!.restApi["hafah-api"].headblock();
   }
 
   async getHafbeLastSyncedBlock(): Promise<number> {
-    return await this.extendedHiveChain!.restApi.hafbe.lastSyncedBlock();
+    return await this.extendedHiveChain!.restApi["hafbe-api"].lastSyncedBlock();
   }
 
   async getBlock(blockNumber: number): Promise<Hive.BlockDetails> {
-    return await this.extendedHiveChain!.restApi.hafah.block({ blockNumber });
+    return await this.extendedHiveChain!.restApi["hafah-api"].block({ blockNumber });
   }
 
   async getBlockGlobalState(blockNumber: number): Promise<Hive.BlockDetails> {
-    return await this.extendedHiveChain!.restApi.hafah.globalState({
+    return await this.extendedHiveChain!.restApi["hafah-api"].globalState({
       "block-num": blockNumber,
     });
   }
 
   async getLastBlocks(limit: number): Promise<Hive.LastBlocksTypeResponse[]> {
-    return await this.extendedHiveChain!.restApi.hafbe.operationTypeCounts({
+    return await this.extendedHiveChain!.restApi["hafbe-api"].operationTypeCounts({
       "result-limit": limit,
     });
   }
 
   async getInputType(input: string): Promise<Hive.InputTypeResponse> {
-    return await this.extendedHiveChain!.restApi.hafbe.inputType({
+    return await this.extendedHiveChain!.restApi["hafbe-api"].inputType({
       inputType: input,
     });
   }
@@ -107,7 +107,7 @@ class FetchingService {
       "data-size-limit": config.opsBodyLimit,
       "path-filter": createPathFilterString(keyContent, setOfKeys),
     };
-    return await this.extendedHiveChain!.restApi.hafah.blockOperations(
+    return await this.extendedHiveChain!.restApi["hafah-api"].blockOperations(
       requestParams
     );
   }
@@ -115,7 +115,7 @@ class FetchingService {
   async getTransaction(
     transactionHash: string
   ): Promise<Hive.TransactionResponse> {
-    return await this.extendedHiveChain!.restApi.hafah.transactions.transaction(
+    return await this.extendedHiveChain!.restApi["hafah-api"].transactions.transaction(
       { transactionId: transactionHash }
     );
   }
@@ -137,7 +137,7 @@ class FetchingService {
   }
 
   async getAccOpTypes(accountName: string): Promise<number[]> {
-    return await this.extendedHiveChain!.restApi.hafah.accounts.operationTypes({
+    return await this.extendedHiveChain!.restApi["hafah-api"].accounts.operationTypes({
       accountName,
     });
   }
@@ -156,13 +156,13 @@ class FetchingService {
       "start-date": accountOperationsProps.startDate,
       "end-date": accountOperationsProps.endDate,
     };
-    return await this.extendedHiveChain!.restApi.hafah.accounts.operations(
+    return await this.extendedHiveChain!.restApi["hafah-api"].accounts.operations(
       requestParams
     );
   }
 
   async getAccount(accountName: string): Promise<Hive.AccountDetails> {
-    return await this.extendedHiveChain!.restApi.hafbe.accounts.account({
+    return await this.extendedHiveChain!.restApi["hafbe-api"].accounts.account({
       accountName,
     });
   }
@@ -172,15 +172,9 @@ class FetchingService {
     offset: number,
     sort: string,
     direction: "asc" | "desc"
-  ): Promise<Hive.Witness[]> {
-    const requestParams: Hive.GetWitnessesParams = {
-      limit,
-      offset,
-      sort,
-      direction,
-    };
-    return await this.extendedHiveChain!.restApi.hafbe.witnesses({
-      limit,
+  ): Promise<Hive.WitnessesResponse> {
+    return await this.extendedHiveChain!.restApi["hafbe-api"].witnesses({
+      "result-limit": limit,
       offset,
       sort,
       direction,
@@ -192,8 +186,8 @@ class FetchingService {
     sort: string,
     direction: "asc" | "desc",
     limit?: number
-  ): Promise<Hive.Voter[]> {
-    return await this.extendedHiveChain!.restApi.hafbe.voters({
+  ): Promise<Hive.WitnessVotersResponse> {
+    return await this.extendedHiveChain!.restApi["hafbe-api"].voters({
       accountName: witness,
       sort,
       direction,
@@ -210,11 +204,11 @@ class FetchingService {
   }
 
   async getOperationTypes(): Promise<Hive.OperationPattern[]> {
-    return await this.extendedHiveChain!.restApi.hafah.operationTypes();
+    return await this.extendedHiveChain!.restApi["hafah-api"].operationTypes();
   }
 
-  async getWitness(witnessName: string): Promise<Hive.Witness> {
-    return await this.extendedHiveChain!.restApi.hafbe.singleWitness({
+  async getWitness(witnessName: string): Promise<Hive.SingleWitnessResponse> {
+    return await this.extendedHiveChain!.restApi["hafbe-api"].singleWitness({
       accountName: witnessName,
     });
   }
@@ -240,13 +234,13 @@ class FetchingService {
   }
 
   async getBlockByTime(date: Date): Promise<number> {
-    return await this.extendedHiveChain!.restApi.hafah.blockNumberByDate({
+    return await this.extendedHiveChain!.restApi["hafah-api"].blockNumberByDate({
       date: date.toISOString(),
     });
   }
 
   async getOperationKeys(operationTypeId: number): Promise<string[][]> {
-    return await this.extendedHiveChain!.restApi.hafah.operationTypesKeys({
+    return await this.extendedHiveChain!.restApi["hafah-api"].operationTypesKeys({
       operationTypeId,
     });
   }
@@ -268,7 +262,7 @@ class FetchingService {
         blockSearchProps.deepProps.keys
       ),
     };
-    return await this.extendedHiveChain!.restApi.hafbe.blockNumbers(
+    return await this.extendedHiveChain!.restApi["hafbe-api"].blockNumbers(
       requestParams
     );
   }
@@ -280,8 +274,8 @@ class FetchingService {
     limit: number | null,
     fromTime?: Date,
     toTime?: Date
-  ): Promise<Hive.WitnessVotesHistory[]> {
-    return await this.extendedHiveChain!.restApi.hafbe.votesHistory({
+  ): Promise<Hive.WitnessesVotesHistoryResponse> {
+    return await this.extendedHiveChain!.restApi["hafbe-api"].votesHistory({
       accountName: witnessName,
       direction,
       sort,
@@ -292,7 +286,7 @@ class FetchingService {
   }
 
   async getOperation(operationId: string): Promise<Hive.OperationResponse> {
-    return await this.extendedHiveChain!.restApi.hafah.operations.byId({
+    return await this.extendedHiveChain!.restApi["hafah-api"].operations.byId({
       operationId,
     });
   }
@@ -312,20 +306,20 @@ class FetchingService {
       "start-date": commentSearchProps.startDate,
       "end-date": commentSearchProps.endDate,
     };
-    return await this.extendedHiveChain!.restApi.hafbe.accounts.commentOperations(
+    return await this.extendedHiveChain!.restApi["hafbe-api"].accounts.commentOperations(
       requestParams
     );
   }
 
   async getHafbeVersion(): Promise<string> {
-    return await this.extendedHiveChain!.restApi.hafbe.version();
+    return await this.extendedHiveChain!.restApi["hafbe-api"].version();
   }
 
   async getOperationsCountInBlock(
     blockNumber: number
   ): Promise<Hive.LastBlocksTypeResponse> {
     return (
-      await this.extendedHiveChain!.restApi.hafbe.operationTypeCounts({
+      await this.extendedHiveChain!.restApi["hafbe-api"].operationTypeCounts({
         "result-limit": 1,
         "block-num": blockNumber,
       })
@@ -334,7 +328,7 @@ class FetchingService {
 
   async getBlockRaw(blockNumber: number): Promise<Hive.RawBlockData> {
     return (
-      await this.extendedHiveChain!.restApi.hafah.rawBlock({
+      await this.extendedHiveChain!.restApi["hafah-api"].rawBlock({
         "from-block": blockNumber,
         "to-block": blockNumber,
       })
@@ -344,7 +338,7 @@ class FetchingService {
   async getAccountAuthorities(
     accountName: string
   ): Promise<Hive.AccountAuthoritiesData | undefined> {
-    return await this.extendedHiveChain?.restApi.hafbe.accounts.authorities({
+    return await this.extendedHiveChain?.restApi["hafbe-api"].accounts.authorities({
       accountName,
     });
   }
