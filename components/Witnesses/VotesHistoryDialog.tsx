@@ -46,7 +46,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
 }) => {
   const [showHivePower, setShowHivePower] = useState<boolean>(false);
   const [page, setPage] = useState(1);
-  const [displayData, setDisplayData] = useState<Hive.WitnessVotesHistory[]>();
+  const [displayData, setDisplayData] = useState<Hive.WitnessesVotesHistoryResponse>();
   const [fromDate, setFromDate] = useState<Date>(
     moment().subtract(7, "days").toDate()
   );
@@ -163,8 +163,8 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                 </TableRow>
               </TableHeader>
               <TableBody data-testid="votes-history-dialog-table-body">
-                {displayData &&
-                  displayData?.map((vote, index) => (
+                {displayData?.votes_history &&
+                  displayData?.votes_history.map((vote, index) => (
                     <TableRow
                       key={index}
                       className={`${
@@ -181,7 +181,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                         className="text-explorer-turquoise"
                         data-testid="voter"
                       >
-                        <Link href={`/@${vote.voter}`}>{vote.voter}</Link>
+                        <Link href={`/@${vote.voter_name}`}>{vote.voter_name}</Link>
                       </TableCell>
                       <TableCell
                         className={`${

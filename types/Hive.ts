@@ -239,7 +239,7 @@ namespace Hive {
   }
 
   export class WitnessVotesHistory {
-    voter!: string;
+    voter_name!: string;
     approve!: boolean;
     vests!: number;
     votes_hive_power!: number;
@@ -248,6 +248,11 @@ namespace Hive {
     proxied_vests!: number;
     proxied_hive_power!: number;
     timestamp!: Date;
+  }
+
+  export class WitnessesVotesHistoryResponse {
+    votes_updated_at!: Date;
+    votes_history!: WitnessVotesHistory[];
   }
 
   export class GetBlockDetailsParams {

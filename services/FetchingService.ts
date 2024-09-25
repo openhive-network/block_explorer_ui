@@ -274,7 +274,7 @@ class FetchingService {
     limit: number | null,
     fromTime?: Date,
     toTime?: Date
-  ): Promise<Hive.WitnessVotesHistory[]> {
+  ): Promise<Hive.WitnessesVotesHistoryResponse> {
     return await this.extendedHiveChain!.restApi["hafbe-api"].votesHistory({
       accountName: witnessName,
       direction,

@@ -36,9 +36,8 @@ export const extendedRest = {
     },
     votesHistory: {
       params: Hive.GetVotesHistoryParams,
-      result: Hive.WitnessVotesHistory,
+      result: Hive.WitnessesVotesHistoryResponse,
       urlPath: "witnesses/{accountName}/votes/history",
-      responseArray: true,
     },
     version: {
       params: undefined,
