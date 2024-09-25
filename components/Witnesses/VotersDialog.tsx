@@ -122,7 +122,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
               </TableHeader>
               <TableBody data-testid="voters-dialog-table-body">
                 {witnessVoters &&
-                  witnessVoters.map((voter, index) => (
+                  witnessVoters.voters.map((voter, index) => (
                     <TableRow
                       key={index}
                       className={`${
@@ -137,10 +137,10 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                         }`}
                       >
                         <Link
-                          href={`/@${voter.voter}`}
+                          href={`/@${voter.voter_name}`}
                           data-testid="voter-name"
                         >
-                          {voter.voter}
+                          {voter.voter_name}
                         </Link>
                       </TableCell>
                       <TableCell

@@ -155,6 +155,11 @@ namespace Hive {
     votes_updated_at!: Date;
   }
 
+  export class WitnessVotersResponse {
+    voters!: Voter[];
+    votes_updated_at!: Date;
+  }
+
   export class WitnessesSchedule {
     account_subsidy_rd!: {
       budget_per_time_unit: number;
@@ -214,7 +219,7 @@ namespace Hive {
   }
 
   export class Voter {
-    voter!: string;
+    voter_name!: string;
     vests!: number;
     votes_hive_power!: number;
     account_vests!: number;

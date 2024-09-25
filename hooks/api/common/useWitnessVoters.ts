@@ -20,7 +20,7 @@ const useWitnessVoters = (
     data: witnessVoters,
     isLoading: isWitnessVotersLoading,
     isError: isWitnessVotersError,
-  }: UseQueryResult<Hive.Voter[]> = useQuery({
+  }: UseQueryResult<Hive.WitnessVotersResponse> = useQuery({
     queryKey: [
       "witness_voters",
       accountName,
