@@ -120,7 +120,7 @@ namespace Hive {
   }
 
   export class GetWitnessesParams {
-    limit!: number;
+    "result-limit"!: number;
     offset!: number;
     sort!: string;
     direction!: Hive.Direction;

@@ -173,14 +173,8 @@ class FetchingService {
     sort: string,
     direction: "asc" | "desc"
   ): Promise<Hive.WitnessesResponse> {
-    const requestParams: Hive.GetWitnessesParams = {
-      limit,
-      offset,
-      sort,
-      direction,
-    };
     return await this.extendedHiveChain!.restApi["hafbe-api"].witnesses({
-      limit,
+      "result-limit": limit,
       offset,
       sort,
       direction,
