@@ -26,7 +26,7 @@ export const extendedRest = {
     },
     singleWitness: {
       params: Hive.GetWitnessParams,
-      result: Hive.Witness,
+      result: Hive.SingleWitnessResponse,
       urlPath: "witnesses/{accountName}",
     },
     voters: {

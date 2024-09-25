@@ -207,7 +207,7 @@ class FetchingService {
     return await this.extendedHiveChain!.restApi["hafah-api"].operationTypes();
   }
 
-  async getWitness(witnessName: string): Promise<Hive.Witness> {
+  async getWitness(witnessName: string): Promise<Hive.SingleWitnessResponse> {
     return await this.extendedHiveChain!.restApi["hafbe-api"].singleWitness({
       accountName: witnessName,
     });

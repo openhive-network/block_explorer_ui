@@ -155,6 +155,11 @@ namespace Hive {
     votes_updated_at!: Date;
   }
 
+  export class SingleWitnessResponse {
+    witness!: Witness;
+    votes_updated_at!: Date;
+  }
+
   export class WitnessVotersResponse {
     voters!: Voter[];
     votes_updated_at!: Date;
