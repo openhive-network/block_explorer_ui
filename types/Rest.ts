@@ -22,8 +22,7 @@ export const extendedRest = {
     },
     witnesses: {
       params: Hive.GetWitnessesParams,
-      result: Hive.Witness,
-      responseArray: true,
+      result: Hive.WitnessesResponse,
     },
     singleWitness: {
       params: Hive.GetWitnessParams,

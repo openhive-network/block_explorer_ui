@@ -172,7 +172,7 @@ class FetchingService {
     offset: number,
     sort: string,
     direction: "asc" | "desc"
-  ): Promise<Hive.Witness[]> {
+  ): Promise<Hive.WitnessesResponse> {
     const requestParams: Hive.GetWitnessesParams = {
       limit,
       offset,

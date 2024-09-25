@@ -131,7 +131,7 @@ namespace Hive {
   }
 
   export class Witness {
-    witness!: string;
+    witness_name!: string;
     rank!: number;
     url!: string;
     vests!: string;
@@ -148,6 +148,11 @@ namespace Hive {
     missed_blocks!: number;
     hbd_interest_rate!: number;
     vests_hive_power!: number;
+  }
+
+  export class WitnessesResponse {
+    witnesses!: Witness[];
+    votes_updated_at!: Date;
   }
 
   export class WitnessesSchedule {
