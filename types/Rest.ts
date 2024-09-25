@@ -8,7 +8,7 @@ import Hive from "./Hive";
  * {} in URL are dynamic params. The name is important and should be synchronized with params types.
  */
 export const extendedRest = { 
-  hafbe: {
+  "hafbe-api": {
     lastSyncedBlock: {
       params: undefined,
       result: Number,
@@ -75,7 +75,7 @@ export const extendedRest = {
       },
     }
   },
-  hafah: {
+  "hafah-api": {
     block: {
       params: Hive.GetBlockDetailsParams,
       result: Hive.BlockDetails,
