@@ -176,6 +176,7 @@ export default function Block() {
   } = getOperationsCounts();
 
   const convertedTotalOperations = getConvertedOperations(formattedOperations);
+  const unformattedOperations = getConvertedOperations(blockOperations?.operations_result);
 
   const handleGoToBlock = (blockNumber: string) => {
     router.push({
@@ -299,6 +300,7 @@ export default function Block() {
                   <OperationsTable
                     operations={convertedTotalOperations}
                     markedTrxId={paramsState.trxId}
+                    unformattedOperations={unformattedOperations}
                   />
                 )}
               </div>
