@@ -154,6 +154,7 @@ declare module Explorer {
     hbd_interest_rate: string;
     votes_daily_change_hive_power: string;
     votes_daily_change: string;
+    votes_updated_at: string;
   }
 
   interface OperationForTable {
@@ -168,7 +169,8 @@ declare module Explorer {
     isDisabled?: boolean;
   }
 
-  interface VestingDelegation extends Omit<Hive.VestingDelegations, "vesting_shares"> {
+  interface VestingDelegation
+    extends Omit<Hive.VestingDelegations, "vesting_shares"> {
     vesting_shares: string;
   }
 
@@ -247,4 +249,4 @@ declare module Explorer {
   }
 }
 
-export default Explorer; 
+export default Explorer;

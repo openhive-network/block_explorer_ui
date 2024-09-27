@@ -14,6 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Switch } from "../ui/switch";
+import useWitnessDetails from "@/hooks/api/common/useWitnessDetails";
 
 type VotersDialogProps = {
   accountName: string;
@@ -39,6 +40,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
   const [sortKey, setSortKey] = useState<string>("vests");
   const [isAsc, setIsAsc] = useState<boolean>(false);
 
+  const { witnessDetails } = useWitnessDetails(accountName, true);
   const { witnessVoters, isWitnessVotersLoading } = useWitnessVoters(
     accountName,
     isVotersOpen,
@@ -86,16 +88,22 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                 <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
               )}
             </div>
-            <div className="flex">
-              <label>Vests</label>
-              <Switch
-                className="mx-2"
-                checked={showHivePower}
-                onCheckedChange={setShowHivePower}
-                data-testid="voters-dialog-vests-hivepower-button"
-              />
-              <label>Hive Power</label>
+            <div className="flex justify-between">
+              <div className="flex">
+                <label>Vests</label>
+                <Switch
+                  className="mx-2"
+                  checked={showHivePower}
+                  onCheckedChange={setShowHivePower}
+                  data-testid="voters-dialog-vests-hivepower-button"
+                />
+                <label>Hive Power</label>
+              </div>
+              {witnessDetails && (
+                <p>Last updated : {witnessDetails.votes_updated_at}</p>
+              )}
             </div>
+
             <Table className="text-white">
               <TableHeader>
                 <TableRow>
