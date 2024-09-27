@@ -237,7 +237,7 @@ export default function Block() {
         <div>Loading ...</div>
       ) : blockDetails?.block_num ? (
         <div
-          className="w-full h-full flex flex-col gap-y-4 px-2 md:px-0"
+          className="w-full h-full flex flex-col gap-y-4 px-2"
           style={{ scrollMargin: "100px" }}
           id="block-page-top"
         >
@@ -280,7 +280,7 @@ export default function Block() {
             </div>
           ) : (
             <section
-              className="md:px-10 flex flex-col items-center justify-center text-white"
+              className="flex flex-col items-center justify-center text-white"
               data-testid="block-page-operation-list"
             >
               {!!totalOperations?.total_operations &&
@@ -295,7 +295,7 @@ export default function Block() {
                     className="text-black dark:text-white"
                   />
                 )}
-              <div className="w-full md:w-4/5 flex flex-col gap-y-2">
+              <div className="w-full max-w-screen-2xl flex flex-col gap-y-2">
                 {!!convertedTotalOperations.length && (
                   <OperationsTable
                     operations={convertedTotalOperations}

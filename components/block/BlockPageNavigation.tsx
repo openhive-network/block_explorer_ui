@@ -115,7 +115,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
 
   return (
     <Card
-      className="w-full md:w-4/6 m-auto"
+      className="w-full md:max-w-screen-2xl md:px-2 m-auto"
       data-testid="block-page-search"
     >
       <CardHeader>

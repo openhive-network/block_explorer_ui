@@ -26,7 +26,7 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
 }) => {
   return (
     <Card
-      className="flex flex-col w-full md:w-4/6 m-auto"
+      className="flex flex-col w-full md:max-w-screen-2xl m-auto"
       data-testid="block-page-block-details"
     >
       <CardHeader>
@@ -36,7 +36,7 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
       </CardHeader>
       <CardContent>
         <div
-          className="flex items-center gap-x-1 mt-3 px-8 md:px-4 w-full justify-center flex-wrap gap-y-2"
+          className="flex items-center gap-x-1 mt-3 px-8 w-full justify-center flex-wrap gap-y-2"
           data-testid="produced-data"
         >
           <p>Produced at: </p>
