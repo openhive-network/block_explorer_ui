@@ -157,18 +157,25 @@ export default function Witnesses() {
         <title>Witnesses - Hive Explorer</title>
       </Head>
       <div className="md:m-8 max-w-[100vw]">
-        <div className="text-start my-5">
+        <div className="flex justify-between my-5">
+          <div className="text-start">
+            <p>
+              Check{" "}
+              <Link
+                className="text-explorer-blue"
+                href="/schedule"
+                data-testid="witness-shedule-link"
+              >
+                Witnesses Schedule
+              </Link>
+            </p>
+          </div>
           <p>
-            Check{" "}
-            <Link
-              className="text-explorer-blue"
-              href="/schedule"
-              data-testid="witness-shedule-link"
-            >
-              Witnesses Schedule
-            </Link>
+            Last updated :{" "}
+            {formatAndDelocalizeFromTime(witnessesData.votes_updated_at)}
           </p>
         </div>
+
         <VotersDialog
           accountName={voterAccount}
           isVotersOpen={isVotersOpen}

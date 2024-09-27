@@ -21,6 +21,7 @@ import { Switch } from "../ui/switch";
 import JumpToPage from "../JumpToPage";
 import CustomPagination from "../CustomPagination";
 import DateTimePicker from "../DateTimePicker";
+import useWitnessDetails from "@/hooks/api/common/useWitnessDetails";
 
 type VotersDialogProps = {
   accountName: string;
@@ -46,12 +47,14 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
 }) => {
   const [showHivePower, setShowHivePower] = useState<boolean>(false);
   const [page, setPage] = useState(1);
-  const [displayData, setDisplayData] = useState<Hive.WitnessesVotesHistoryResponse>();
+  const [displayData, setDisplayData] =
+    useState<Hive.WitnessesVotesHistoryResponse>();
   const [fromDate, setFromDate] = useState<Date>(
     moment().subtract(7, "days").toDate()
   );
   const [toDate, setToDate] = useState<Date>(moment().toDate());
 
+  const { witnessDetails } = useWitnessDetails(accountName, true) as any;
   const { votesHistory, isVotesHistoryLoading } = useWitnessVotesHistory(
     accountName,
     isVotesHistoryOpen,
@@ -102,15 +105,20 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                 <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
               )}
             </div>
-            <div className="flex">
-              <label>Vests</label>
-              <Switch
-                className="mx-2"
-                checked={showHivePower}
-                onCheckedChange={setShowHivePower}
-                data-testid="votes-history-dialog-vests-hivepower-button"
-              />
-              <label>Hive Power</label>
+            <div className="flex justify-between">
+              <div className="flex">
+                <label>Vests</label>
+                <Switch
+                  className="mx-2"
+                  checked={showHivePower}
+                  onCheckedChange={setShowHivePower}
+                  data-testid="votes-history-dialog-vests-hivepower-button"
+                />
+                <label>Hive Power</label>
+              </div>
+              {witnessDetails && (
+                <p>Last updated : {witnessDetails.votes_updated_at}</p>
+              )}
             </div>
             <div className="flex justify-around items-center bg-gray-800 rounded text-white p-2">
               <div>
@@ -181,7 +189,9 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                         className="text-explorer-turquoise"
                         data-testid="voter"
                       >
-                        <Link href={`/@${vote.voter_name}`}>{vote.voter_name}</Link>
+                        <Link href={`/@${vote.voter_name}`}>
+                          {vote.voter_name}
+                        </Link>
                       </TableCell>
                       <TableCell
                         className={`${
