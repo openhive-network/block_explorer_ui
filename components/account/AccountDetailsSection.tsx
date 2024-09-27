@@ -90,7 +90,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
           userDetails={witnessDetails}
         />
       )}
-      <AccountWitnessVotesCard voters={accountDetails.witness_votes} />
+      <AccountWitnessVotesCard voters={accountDetails.witness_votes} accountName={accountName} proxy={accountDetails.proxy} />
       <AccountVestingDelegationsCard
         delegatorAccount={accountName}
         liveDataEnabled={liveDataEnabled}
