@@ -92,6 +92,7 @@ export default function Navbar() {
                   Hive Block Explorer
                 </div>
               </Link>
+              <ThemeToggle />
               <SyncInfo />
               <Link
                 href={"/witnesses"}
@@ -99,7 +100,6 @@ export default function Navbar() {
               >
                 Witnesses
               </Link>
-              <ThemeToggle />
             </div>
             <SearchBar open={true} />
           </>
