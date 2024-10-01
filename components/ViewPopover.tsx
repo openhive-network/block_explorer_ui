@@ -23,6 +23,8 @@ const ViewPopover: React.FC<ViewPopoverProps> = ({ isMobile }) => {
     else return "raw-json";
   })();
 
+  const viewName = settings.rawJsonView ? "Raw JSON" : (settings.prettyJsonView ? "Pretty JSON" : "Visualised");
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -33,7 +35,7 @@ const ViewPopover: React.FC<ViewPopoverProps> = ({ isMobile }) => {
           )}
           data-testid="data-view-dropdown"
         >
-          <span>Data View</span>
+          <span>{viewName}</span>
           <ChevronDown className="w-4" />
         </div>
       </PopoverTrigger>
