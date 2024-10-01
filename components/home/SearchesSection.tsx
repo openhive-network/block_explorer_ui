@@ -369,7 +369,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
       >
         {blockSearch.blockSearchData && lastSearchKey === "block" && (
           <div
-            className=" bg-explorer-dark-gray p-2 md: h-fit rounded"
+            className=" bg-explorer-gray-light dark:bg-explorer-gray-dark p-2 md: h-fit rounded"
             data-testid="result-section"
           >
             <div
@@ -402,10 +402,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
           (!!commentSearch.commentSearchData.total_operations ? (
             <div>
               <Link href={getCommentPageLink()}>
-                <Button
-                  className=" bg-blue-800 hover:bg-blue-600 rounded"
-                  data-testid="go-to-result-page"
-                >
+                <Button data-testid="go-to-result-page">
                   Go to result page
                 </Button>
               </Link>
@@ -448,10 +445,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
                   previousAccountOperationsSearchProps?.accountName || ""
                 )}
               >
-                <Button
-                  className=" bg-blue-800 hover:bg-blue-600 rounded"
-                  data-testid="go-to-result-page"
-                >
+                <Button data-testid="go-to-result-page">
                   Go to result page
                 </Button>
               </Link>

@@ -17,6 +17,30 @@ module.exports = {
     },
     extend: {
       colors: {
+        /// This block is for new block explorer colors for different theme.
+        "explorer-gray": {
+          dark: "#292F3D",
+          light: "#7683a3",
+        },
+        "witness-row": {
+          "dark-odd": "#333b4c",
+          "dark-even": "#48526b",
+          "light-odd": "#5c6a89",
+          "light-even": "#949fb7",
+        },
+        table: {
+          "row-hover-dark": "#5c6a89",
+          "row-hover-light": "#333b4c",
+        },
+        button: {
+          dark: "#5c6a89",
+          light: "#5c6a89",
+          "text-dark": "#FFF",
+          "text-light": "#FFF",
+          "hover-dark": "#48526b",
+          "hover-light": "#48526b",
+        },
+        ////////////////////////////////
         "explorer-dark-gray": "#292F3D",
         "explorer-yellow": "#FFF351",
         "explorer-ligh-blue": "#6AF5FF",

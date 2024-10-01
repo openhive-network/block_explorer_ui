@@ -20,7 +20,7 @@ export default function Navbar() {
       className="fixed w-full top-0 left-0 z-50"
       data-testid="navbar"
     >
-      <div className="flex p-2 justify-between bg-explorer-dark-gray text-white	items-center relative">
+      <div className="flex p-2 justify-between bg-explorer-gray-light dark:bg-explorer-gray-dark text-white	items-center relative">
         {isMobile ? (
           <div className="flex items-center justify-between w-full">
             <Link
@@ -49,7 +49,7 @@ export default function Navbar() {
             </div>
             <div
               className={cn(
-                "fixed top-0 right-0 p-5 bg-explorer-dark-gray w-full h-full translate-x-full duration-500 z-50",
+                "fixed top-0 right-0 p-5 bg-explorer-gray-light dark:bg-explorer-gray-dark w-full h-full translate-x-full duration-500 z-50",
                 { "translate-x-0": menuOpen }
               )}
             >

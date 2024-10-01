@@ -72,7 +72,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
       onOpenChange={changeVotersDialogue}
     >
       <DialogContent
-        className={`h-3/4 max-w-4xl bg-white dark:bg-explorer-dark-gray ${
+        className={`h-3/4 max-w-4xl bg-white dark:bg-explorer-gray-dark ${
           !witnessVoters && "flex justify-center items-center"
         }`}
         data-testid="voters-dialog"

@@ -83,7 +83,7 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
           )}
         </div>
       </DialogTrigger>
-      <DialogContent className="bg-explorer-dark-gray text-white">
+      <DialogContent className="bg-explorer-gray-light dark:bg-explorer-gray-dark text-white">
         <DialogHeader>
           <DialogTitle>Blockchain sync</DialogTitle>
         </DialogHeader>

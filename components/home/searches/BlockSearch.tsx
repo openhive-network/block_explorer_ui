@@ -112,7 +112,7 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
     <>
       <div className="flex flex-col">
         <Input
-          className="w-1/2 bg-explorer-dark-gray border-0 border-b-2"
+          className="w-1/2 bg-explorer-gray-light dark:bg-explorer-gray-dark border-0 border-b-2"
           type="text"
           placeholder="Account name"
           value={accountName || ""}
@@ -145,7 +145,7 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
                 <HelpCircle className="h-4" />
               </TooltipTrigger>
               <TooltipContent>
-                <div className="bg-white text-black dark:bg-explorer-dark-gray dark:text-white p-2">
+                <div className="bg-white text-black  dark:bg-explorer-gray-dark dark:text-white p-2">
                   Pick property from body of operation and its value. You can
                   use that only for single operation.
                 </div>
@@ -182,10 +182,10 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
                 </div>
               )}
             </SelectTrigger>
-            <SelectContent className="bg-white text-black dark:bg-explorer-dark-gray dark:text-white rounded-sm max-h-[31rem] overflow-y-scroll">
+            <SelectContent className="bg-white text-black  dark:bg-explorer-gray-dark dark:text-white rounded-sm max-h-[31rem] overflow-y-scroll">
               {operationKeysData?.map((keys, index) => (
                 <SelectItem
-                  className="m-1 text-center hover:bg-explorer-dark-gray hover:text-white hover:dark:bg-white hover:dark:text-black hover:cursor-pointer"
+                  className="m-1 text-center hover:bg-explorer-gray-light dark:bg-explorer-gray-dark hover:text-white hover:dark:bg-white hover:dark:text-black hover:cursor-pointer"
                   key={index}
                   value={index.toFixed(0)}
                   defaultChecked={false}
@@ -217,7 +217,7 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
       </div>
       <div className="flex flex-col">
         <Input
-          className="w-1/2 border-0 border-b-2 bg-explorer-dark-gray"
+          className="w-1/2 border-0 border-b-2 bg-explorer-gray-light dark:bg-explorer-gray-dark"
           type="text"
           value={fieldContent || ""}
           onChange={(e) => setFieldContent(e.target.value)}
@@ -233,7 +233,6 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
       <div className="flex items-center ">
         <Button
           data-testid="block-search-btn"
-          className=" bg-blue-800 hover:bg-blue-600 rounded"
           onClick={onButtonClick}
         >
           Search

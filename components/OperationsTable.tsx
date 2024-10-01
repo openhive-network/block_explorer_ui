@@ -123,8 +123,8 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
     >
       <TableHeader>
         <TableRow>
-          <TableHead className="sticky left-0 bg-explorer-dark-gray"></TableHead>
-          <TableHead className="pl-2 sticky left-12 bg-explorer-dark-gray">
+          <TableHead className="sticky left-0 bg-explorer-gray-light dark:bg-explorer-gray-dark"></TableHead>
+          <TableHead className="pl-2 sticky left-12 bg-explorer-gray-light dark:bg-explorer-gray-dark">
             Block
           </TableHead>
           <TableHead>Transaction</TableHead>
@@ -136,7 +136,8 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
       </TableHeader>
       <TableBody className="max-w-[100%]">
         {operations.map((operation, index, allOperations) => {
-          const nextTransactionId: string | undefined = allOperations[index + 1]?.trxId;
+          const nextTransactionId: string | undefined =
+            allOperations[index + 1]?.trxId;
           const operationBgColor = getOperationColor(operation.operation?.type);
 
           return (
@@ -145,17 +146,16 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                 id={operation.trxId}
                 data-testid="detailed-operation-card"
                 key={index}
-                className={cn(
-                  "border-b border-gray-700", {
-                    "border-b-0": nextTransactionId === operation.trxId && !!operation.trxId 
-                  }
-                )}
+                className={cn("border-b border-gray-700", {
+                  "border-b-0":
+                    nextTransactionId === operation.trxId && !!operation.trxId,
+                })}
               >
-                <TableCell className="sticky left-0 bg-explorer-dark-gray xl:bg-inherit">
+                <TableCell className="sticky left-0 bg-explorer-gray-light dark:bg-explorer-gray-dark xl:bg-inherit">
                   <CopyJSON value={getUnformattedValue(operation)} />
                 </TableCell>
                 <TableCell
-                  className="pl-2 sticky left-12 bg-explorer-dark-gray xl:bg-inherit"
+                  className="pl-2 sticky left-12 bg-explorer-gray-light dark:bg-explorer-gray-dark xl:bg-inherit"
                   data-testid="block-number-operation-table"
                 >
                   <Link
@@ -192,7 +192,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                           />
                         </div>
                       </TooltipTrigger>
-                      <TooltipContent className="bg-white text-black dark:bg-explorer-dark-gray dark:text-white">
+                      <TooltipContent className="bg-white text-black dark:bg-explorer-gray-dark dark:text-white">
                         {formatAndDelocalizeTime(operation.timestamp)}
                       </TooltipContent>
                     </Tooltip>
@@ -245,7 +245,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                     ) : (
                       <Button
                         data-testid="expand-details"
-                        className="p-0 h-fit"
+                        className="p-0 h-fit bg-inherit"
                         onClick={() =>
                           setExpanded((prevExpanded) => [
                             ...prevExpanded,

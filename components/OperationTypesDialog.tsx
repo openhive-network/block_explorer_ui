@@ -56,7 +56,9 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
 
   if (!operationTypes || !operationTypes.length) return;
 
-  const nonDisabledOperationTypes = operationTypes.filter(operationType => !operationType.isDisabled);
+  const nonDisabledOperationTypes = operationTypes.filter(
+    (operationType) => !operationType.isDisabled
+  );
 
   const virtualOperations = nonDisabledOperationTypes.filter(
     (operationType) => operationType.is_virtual
@@ -120,8 +122,12 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     setSelectedOperationsIds(finaList);
   };
 
-  const selectAllOfCategory = (operationTypes: Explorer.ExtendedOperationTypePattern[]) => {
-    const nonDisabledOperationTypesForCategory = operationTypes.filter(operationType => !operationType.isDisabled);
+  const selectAllOfCategory = (
+    operationTypes: Explorer.ExtendedOperationTypePattern[]
+  ) => {
+    const nonDisabledOperationTypesForCategory = operationTypes.filter(
+      (operationType) => !operationType.isDisabled
+    );
     const operationsIds = nonDisabledOperationTypesForCategory.map(
       (operationType) => operationType.op_type_id
     );
@@ -130,7 +136,9 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     setSelectedOperationsIds(finaList);
   };
 
-  const clearCategory = (operationTypes: Explorer.ExtendedOperationTypePattern[]) => {
+  const clearCategory = (
+    operationTypes: Explorer.ExtendedOperationTypePattern[]
+  ) => {
     const operationsIds = operationTypes.map(
       (operationType) => operationType.op_type_id
     );
@@ -152,12 +160,14 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     setSelectedOperationsIds(finaList);
   };
 
-  const renderOperationType = (operationType: Explorer.ExtendedOperationTypePattern) => {
+  const renderOperationType = (
+    operationType: Explorer.ExtendedOperationTypePattern
+  ) => {
     return (
       <li
         onClick={() => onFiltersSelect(operationType.op_type_id)}
         key={operationType.op_type_id}
-        className="col-span-3 pl-2 md:col-span-1 flex items-center font-bold text-base rounded-lg bg-inherit hover:border-2-gray group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white "
+        className="col-span-3 pl-2 md:col-span-1 flex items-center font-bold text-base rounded-lg bg-inherit hover:border-2-gray group hover:shadow dark:bg-inherit dark:hover:bg-gray-500 dark:text-white "
       >
         <Input
           type="checkbox"
@@ -176,7 +186,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
             "p-1 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300 whitespace-nowrap overflow-hidden text-ellipsis",
             {
               "text-sky-900 dark:text-sky-200": operationType.is_virtual,
-              "opacity-50": operationType.isDisabled
+              "opacity-50": operationType.isDisabled,
             }
           )}
           {...{
@@ -198,11 +208,15 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           (operationType) => operationType.operation_name === name
         )
       )
-      .filter((operationType) => operationType) as Explorer.ExtendedOperationTypePattern[];
+      .filter(
+        (operationType) => operationType
+      ) as Explorer.ExtendedOperationTypePattern[];
     const sortedOperations = operations.sort((a, b) =>
       a?.operation_name.localeCompare(b?.operation_name)
     );
-    const nonDisabledOperationTypesForSection = operations.filter((operationType => !operationType.isDisabled));
+    const nonDisabledOperationTypesForSection = operations.filter(
+      (operationType) => !operationType.isDisabled
+    );
     return (
       <div
         className=" border-t px-2"
@@ -216,10 +230,20 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
             <span>{sectionName}</span>
           </div>
           <div>
-            <Button disabled={!nonDisabledOperationTypesForSection.length} onClick={() => selectAllOfCategory(operations)}>
+            <Button
+              className="bg-inherit text-black dark:text-white"
+              disabled={!nonDisabledOperationTypesForSection.length}
+              onClick={() => selectAllOfCategory(operations)}
+            >
               Select
             </Button>
-            <Button disabled={!nonDisabledOperationTypesForSection.length} onClick={() => clearCategory(operations)}>Clear</Button>
+            <Button
+              className="bg-inherit text-black dark:text-white"
+              disabled={!nonDisabledOperationTypesForSection.length}
+              onClick={() => clearCategory(operations)}
+            >
+              Clear
+            </Button>
           </div>
         </div>
         <ul
@@ -246,12 +270,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
       }}
     >
       <DialogTrigger asChild>
-        <Button
-          data-testid="operations-types-btn"
-          className={`${buttonClassName} text-white hover:bg-gray-700 rounded-[4px]`}
-        >
-          Operation Types
-        </Button>
+        <Button data-testid="operations-types-btn">Operation Types</Button>
       </DialogTrigger>
       {selectedOperations.length ? (
         <Chip
@@ -261,7 +280,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
         />
       ) : null}
       <DialogContent
-        className="max-w-[95%] md:max-w-[80%] max-h-[90%] md:max-h-[80%] flex-column justify-center align-center  bg-white text-black dark:bg-explorer-dark-gray dark:text-white overflow-auto px-0"
+        className="max-w-[95%] md:max-w-[80%] max-h-[90%] md:max-h-[80%] flex-column justify-center align-center  bg-white text-black dark:bg-explorer-gray-dark dark:text-white overflow-auto px-0"
         data-testid="operation-types-dialog"
       >
         <DialogHeader>
@@ -279,41 +298,41 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
         </div>
         <DialogFooter>
           <div
-            className="flex flex-wrap justify-between w-full gap-y-4 border-t pt-1 px-2"
+            className="flex flex-wrap justify-between w-full gap-y-4 border-t pt-4 px-2"
             data-testid="operation-types-dialog-footer"
           >
             <div className="flex">
               <Button
                 type="button"
-                variant="secondary"
+                className="bg-inherit text-black dark:text-white"
                 onClick={selectAll}
               >
                 Select all
               </Button>
               <Button
                 type="button"
-                variant="secondary"
+                className="bg-inherit text-black dark:text-white"
                 onClick={selectReal}
               >
                 Select real
               </Button>
               <Button
                 type="button"
-                variant="secondary"
+                className="bg-inherit text-black dark:text-white"
                 onClick={selectVirtual}
               >
                 Select virtual
               </Button>
               <Button
                 type="button"
-                variant="secondary"
+                className="bg-inherit text-black dark:text-white"
                 onClick={invertSelection}
               >
                 Invert
               </Button>
               <Button
                 type="button"
-                variant="secondary"
+                className="bg-inherit text-black dark:text-white"
                 onClick={handleOnClear}
               >
                 Clear
@@ -322,7 +341,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
             <div className="flex w-full md:w-auto justify-center">
               <Button
                 type="button"
-                variant="secondary"
+                className="bg-inherit text-black dark:text-white mx-2"
                 onClick={() => {
                   onOpenChange(false);
                 }}
@@ -330,9 +349,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
                 Cancel
               </Button>
               <Button
-                className="bg-blue-800 hover:bg-blue-600 text-white rounded"
                 type="submit"
-                variant="default"
                 onClick={handleOnSubmit}
               >
                 Apply

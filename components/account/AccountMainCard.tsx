@@ -35,7 +35,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
   return (
     <Card data-testid="account-details">
       <CardHeader>
-        <div className="flex justify-between bg-explorer-dark-gray text-explorer-orange text-2xl my-4">
+        <div className="flex justify-between bg-explorer-gray-light dark:bg-explorer-gray-dark text-explorer-orange text-2xl my-4">
           {accountDetails.is_witness ? (
             <div data-testid="account-name">
               {accountDetails.name} <span className="text-sm">(witness)</span>
@@ -146,13 +146,13 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
           <div className="w-full flex justify-between">
             <button
               onClick={openVotersModal}
-              className="bg-explorer-orange text-explorer-dark-gray rounded p-2"
+              className="bg-explorer-orange text-explorer-gray-light dark:explorer-gray-dark rounded p-2"
             >
               Voters
             </button>
             <button
               onClick={openVotesHistoryModal}
-              className="bg-explorer-orange text-explorer-dark-gray rounded p-2"
+              className="bg-explorer-orange text-explorer-gray-light dark:explorer-gray-dark rounded p-2"
             >
               Votes History
             </button>

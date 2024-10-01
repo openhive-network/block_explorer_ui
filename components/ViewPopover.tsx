@@ -38,7 +38,7 @@ const ViewPopover: React.FC<ViewPopoverProps> = ({ isMobile }) => {
         </div>
       </PopoverTrigger>
       <PopoverContent
-        className={`w-60 bg-explorer-dark-gray text-white rounded-[8px] border  ${
+        className={`w-60 bg-explorer-gray-light dark:bg-explorer-gray-dark text-white rounded-[8px] border  ${
           isMobile && "ml-[30px]"
         }`}
       >

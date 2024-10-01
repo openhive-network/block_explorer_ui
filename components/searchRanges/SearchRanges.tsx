@@ -49,14 +49,14 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
         onValueChange={setRangeSelectKey}
         value={rangeSelectKey}
       >
-        <SelectTrigger className="w-1/2 border-0 border-b-2 bg-explorer-dark-gray ">
+        <SelectTrigger className="w-1/2 border-0 border-b-2 bg-explorer-gray-light dark:bg-explorer-gray-dark ">
           {
             rangeSelectOptions.find(
               (selectOption) => selectOption.key === rangeSelectKey
             )?.name
           }
         </SelectTrigger>
-        <SelectContent className="bg-white text-black rounded-sm max-h-[31rem] dark:bg-explorer-dark-gray dark:text-white">
+        <SelectContent className="bg-white text-black rounded-sm max-h-[31rem] dark:bg-explorer-gray-dark dark:text-white">
           {rangeSelectOptions.map((selectOption, index) => (
             <SelectItem
               className="text-center hover:dark:bg-white hover:dark:text-black"
@@ -74,7 +74,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
         <div className="flex items-center">
           <div className="flex flex-col w-full">
             <Input
-              className="w-1/2 border-0 border-b-2 bg-explorer-dark-gray"
+              className="w-1/2 border-0 border-b-2 bg-explorer-gray-light dark:bg-explorer-gray-dark"
               type="number"
               value={lastBlocksValue || ""}
               onChange={(e) =>
@@ -92,7 +92,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
             <div className="flex flex-col w-full mr-2">
               <Input
                 type="number"
-                className="bg-explorer-dark-gray border-0 border-b-2 text-white"
+                className="bg-explorer-gray-light dark:bg-explorer-gray-dark border-0 border-b-2 text-white"
                 value={lastTimeUnitValue || ""}
                 onChange={(e) =>
                   setNumericValue(Number(e.target.value), setLastTimeUnitValue)
@@ -102,7 +102,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
               />
             </div>
             <Select onValueChange={setTimeUnitSelectKey}>
-              <SelectTrigger className="pl-2 bg-explorer-dark-gray border-0 border-b-2 text-white">
+              <SelectTrigger className="pl-2 bg-explorer-gray-light dark:bg-explorer-gray-dark border-0 border-b-2 text-white">
                 {
                   timeSelectOptions.find(
                     (selectOption) => selectOption.key === timeUnitSelectKey
@@ -110,7 +110,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
                 }
               </SelectTrigger>
               <SelectContent
-                className="bg-white text-black rounded-sm max-h-[31rem] dark:bg-explorer-dark-gray dark:text-white"
+                className="bg-white text-black rounded-sm max-h-[31rem] dark:bg-explorer-gray-dark dark:text-white"
                 data-testid="select-time-option-units"
               >
                 {timeSelectOptions.map((selectOption, index) => (
@@ -133,7 +133,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
           <div className="flex flex-col w-full mr-2">
             <Input
               type="number"
-              className="bg-explorer-dark-gray border-0 border-b-2"
+              className="bg-explorer-gray-light dark:bg-explorer-gray-dark border-0 border-b-2"
               data-testid="from-block-input"
               value={fromBlock || ""}
               onChange={(e) =>
@@ -145,7 +145,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
           </div>
           <div className="flex flex-col w-full">
             <Input
-              className="bg-explorer-dark-gray border-0 border-b-2"
+              className="bg-explorer-gray-light dark:bg-explorer-gray-dark border-0 border-b-2"
               data-testid="headblock-number"
               type="number"
               value={toBlock || ""}

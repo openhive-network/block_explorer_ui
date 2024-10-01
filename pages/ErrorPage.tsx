@@ -11,9 +11,7 @@ const ErrorPage: React.FC = () => {
     <div className="w-full h-screen flex flex-col justify-between items-center">
       <div></div>
       <div className="flex justify-center flex-col">
-        <div className="flex justify-center">
-          An error occured
-        </div>
+        <div className="flex justify-center">An error occured</div>
         <div className="flex mt-10 gap-x-8">
           <Button
             variant={"outline"}
@@ -24,15 +22,17 @@ const ErrorPage: React.FC = () => {
           </Button>
           <Button
             variant={"outline"}
-            className="bg-explorer-yellow hover:bg-explorer-bg-start"
-            onClick={() => {router.push("/").then(() => location.reload())}}
+            className="bg-explorer-yellow hover:bg-explorer-bg-star dark:text-black"
+            onClick={() => {
+              router.push("/").then(() => location.reload());
+            }}
           >
             Go To Home Page
           </Button>
         </div>
       </div>
-      <div className="flex justify-center gap-x-8 bg-explorer-dark-gray w-full mt-12 text-white text-sm">
-        {!!apiAdresses.apiAddress  && (
+      <div className="flex justify-center gap-x-8 bg-explorer-gray-light dark:bg-explorer-gray-dark w-full mt-12 text-white text-sm">
+        {!!apiAdresses.apiAddress && (
           <AddressSwitchedDialog
             addressType="api"
             currentAddress={apiAdresses.apiAddress}

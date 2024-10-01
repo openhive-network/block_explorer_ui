@@ -20,7 +20,7 @@ const OperationCard: React.FC<OperationCardProps> = ({
   isVirtual,
 }) => {
   return (
-    <div className="mt-6 w-full bg-explorer-dark-gray px-4 py-2 rounded text-xs	overflow-hidden">
+    <div className="mt-6 w-full bg-explorer-gray-light dark:bg-explorer-gray-dark px-4 py-2 rounded text-xs	overflow-hidden">
       <div className="flex justify-center text-xl text-explorer-orange mb-4">
         {operation.type}
       </div>

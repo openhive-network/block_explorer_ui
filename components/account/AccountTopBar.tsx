@@ -56,7 +56,7 @@ const AccountTopBar: React.FC<AccountTopBarProps> = ({
           operationTypes={accountOperationTypes}
           setSelectedOperations={handleOperationSelect}
           selectedOperations={convertBooleanArrayToIds(selectedFilters)}
-          buttonClassName="bg-explorer-dark-gray"
+          buttonClassName="bg-explorer-gray-light dark:bg-explorer-gray-dark"
           triggerTitle={getOperationButtonTitle(
             convertBooleanArrayToIds(selectedFilters),
             accountOperationTypes

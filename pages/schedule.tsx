@@ -57,14 +57,18 @@ const buildTableBody = (
             <TableCell className="">{producerRank}</TableCell>
             <TableCell
               className={cn("text-left", {
-                "text-gray-500": !!blockNumber,
+                "text-gray-700 dark:text-gray-500":
+                  !!blockNumber && producerName !== currentProducer,
                 "text-explorer-ligh-green": producerName === currentProducer,
               })}
             >
               {producerName}
             </TableCell>
             <TableCell
-              className={cn({ "text-gray-500": blockNumber !== currentBlock })}
+              className={cn({
+                "text-gray-700 dark:text-gray-500":
+                  blockNumber !== currentBlock,
+              })}
             >
               {blockNumber}
             </TableCell>
@@ -112,7 +116,8 @@ const Schedule = () => {
 
     const initialUsersArray = shuffledWitnesses.map((userName: string) => {
       const rank =
-        witnessesData?.witnesses?.find((data) => data.witness_name === userName)?.rank || null;
+        witnessesData?.witnesses?.find((data) => data.witness_name === userName)
+          ?.rank || null;
 
       return {
         producerRank: rank,
@@ -149,7 +154,7 @@ const Schedule = () => {
   ) : (
     <>
       <div className="flex justify-center items-center w-full h-full overflow-auto">
-        <div className="text-white min-w-[50%] bg-explorer-dark-gray">
+        <div className="text-white min-w-[50%] bg-explorer-gray-light dark:bg-explorer-gray-dark">
           <Table data-testid="table-body">
             <TableHeader>
               <TableRow>{buildTableHeader()}</TableRow>

@@ -17,13 +17,17 @@ type AddressSwitcherDialogProps = {
   currentAddress: string | null;
 };
 
-const AddressSwitchedDialog: React.FC<AddressSwitcherDialogProps> = ({addressType, setAddress, currentAddress}) => {
+const AddressSwitchedDialog: React.FC<AddressSwitcherDialogProps> = ({
+  addressType,
+  setAddress,
+  currentAddress,
+}) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const [userAddress, setUserAddress] = useState<string>("");
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter' && isOpen) {
+    if (event.key === "Enter" && isOpen) {
       onSubmitClick();
     }
   };
@@ -34,32 +38,48 @@ const AddressSwitchedDialog: React.FC<AddressSwitcherDialogProps> = ({addressTyp
     } else {
       return config.nodeAddress;
     }
-  }
+  };
 
   const onSubmitClick = () => {
     setAddress(userAddress);
     setIsOpen(false);
-  }
+  };
 
   const onResetClick = () => {
     setAddress(null);
     setIsOpen(false);
-  }
+  };
 
   useEffect(() => {
     setUserAddress(currentAddress || "");
-  }, [currentAddress])
+  }, [currentAddress]);
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger data-testid="api-address-link"><div >
-        <span>{addressType === "api" ? "Explorer backend API:" : "Hive node:"}</span>
-        <span className=" text-blue-400 ml-1">{currentAddress ? currentAddress : getDefaultApiAddress()}</span>
+    <Dialog
+      open={isOpen}
+      onOpenChange={setIsOpen}
+    >
+      <DialogTrigger data-testid="api-address-link">
+        <div>
+          <span>
+            {addressType === "api" ? "Explorer backend API:" : "Hive node:"}
+          </span>
+          <span className=" text-blue-400 ml-1">
+            {currentAddress ? currentAddress : getDefaultApiAddress()}
+          </span>
         </div>
-        </DialogTrigger>
-      <DialogContent onKeyDown={handleKeyDown} className="h-1/4 max-w-3xl overflow-auto bg-white dark:bg-explorer-dark-gray dark:text-white" data-testid="api-address-dialog">
+      </DialogTrigger>
+      <DialogContent
+        onKeyDown={handleKeyDown}
+        className="h-1/4 max-w-3xl overflow-auto bg-white  dark:bg-explorer-gray-dark dark:text-white"
+        data-testid="api-address-dialog"
+      >
         <DialogHeader>
-          <DialogTitle data-testid="api-address-header-title">{addressType === "api" ? "Block Explorer backend API address" : "Hive node address"}</DialogTitle>
+          <DialogTitle data-testid="api-address-header-title">
+            {addressType === "api"
+              ? "Block Explorer backend API address"
+              : "Hive node address"}
+          </DialogTitle>
         </DialogHeader>
         <Input
           autoFocus={true}
@@ -69,18 +89,19 @@ const AddressSwitchedDialog: React.FC<AddressSwitcherDialogProps> = ({addressTyp
           value={userAddress}
           onChange={(e) => setUserAddress(e.target.value)}
         />
-        <DialogFooter >
+        <DialogFooter>
           <div className="w-full flex justify-between">
             <Button
               type="button"
-              variant="secondary"
+              // variant="secondary"
+              // className="rounded"
               data-testid="api-address-reset-button"
               onClick={onResetClick}
             >
               Reset to default
             </Button>
             <Button
-              className="text-white bg-blue-800 hover:bg-blue-600 rounded"
+              // className="rounded"
               data-testid="api-address-submit-button"
               onClick={onSubmitClick}
             >

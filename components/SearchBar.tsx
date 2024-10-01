@@ -171,7 +171,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ open, onChange, className }) => {
     <>
       <div
         className={cn(
-          "w-0 hidden md:w-1/4 relative bg-explorer-dark-gray",
+          "w-0 hidden md:w-1/4 relative bg-explorer-gray-light dark:bg-explorer-gray-dark",
           {
             "w-full inline": open,
           },
@@ -207,14 +207,14 @@ const SearchBar: React.FC<SearchBarProps> = ({ open, onChange, className }) => {
           )}
         </div>
         {inputFocus && !!inputTypeData?.input_value && (
-          <div className="absolute bg-explorer-dark-gray w-full max-h-96 overflow-y-auto border border-input border-t-0">
+          <div className="absolute bg-explorer-gray-light dark:bg-explorer-gray-dark w-full max-h-96 overflow-y-auto border border-input border-t-0">
             {renderSearchData(inputTypeData, resetSearchBar, selectedResult)}
           </div>
         )}
       </div>
       {!open && (
         <Button
-          className="px-0"
+          className="px-0 bg-inherit"
           onClick={() => onChange && onChange(true)}
         >
           <Search />

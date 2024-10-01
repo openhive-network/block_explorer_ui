@@ -86,7 +86,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
     >
       <DialogContent
         className={cn(
-          "max-w-2xl max-h-[700px]  bg-white dark:bg-explorer-dark-gray overflow-auto",
+          "max-w-2xl max-h-[700px]  bg-white dark:bg-explorer-gray-dark overflow-auto",
           {
             "flex column justify-center items-center": !votesHistory,
             "h-3/4": votesHistory?.length >= 16,

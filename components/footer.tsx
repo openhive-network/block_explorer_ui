@@ -10,7 +10,7 @@ export default function Footer() {
     useAddressesContext();
   return (
     <div
-      className="flex flex-col justify-center items-center bg-explorer-dark-gray w-full mt-12 text-white text-sm"
+      className="flex flex-col justify-center items-center bg-explorer-gray-light dark:bg-explorer-gray-dark w-full mt-12 text-white text-sm"
       data-testid="footer"
     >
       <div className="flex flex-col md:flex-row justify-center gap-4 mt-4 md:mt-0">

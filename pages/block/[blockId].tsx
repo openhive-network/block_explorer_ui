@@ -127,7 +127,7 @@ export default function Block() {
       }
     },
     []
-  )
+  );
 
   const getOperationsCounts = useCallback(() => {
     if (operationsCountInBlock && !countLoading && operationsTypes) {
@@ -176,7 +176,9 @@ export default function Block() {
   } = getOperationsCounts();
 
   const convertedTotalOperations = getConvertedOperations(formattedOperations);
-  const unformattedOperations = getConvertedOperations(blockOperations?.operations_result);
+  const unformattedOperations = getConvertedOperations(
+    blockOperations?.operations_result
+  );
 
   const handleGoToBlock = (blockNumber: string) => {
     router.push({
@@ -274,7 +276,7 @@ export default function Block() {
               <JSONView
                 data-testid="json-view"
                 json={rawBlockdata || {}}
-                className="w-full md:w-[962px] mt-6 m-auto py-2 px-4 bg-explorer-dark-gray rounded text-white text-xs break-words break-all"
+                className="w-full md:w-[962px] mt-6 m-auto py-2 px-4 bg-explorer-gray-light dark:bg-explorer-gray-dark rounded text-white text-xs break-words break-all"
                 isPrettyView={settings.prettyJsonView}
               />
             </div>
