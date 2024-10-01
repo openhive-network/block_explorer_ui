@@ -32,6 +32,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
+import ViewPopover from "../ViewPopover";
 
 interface SearchesSectionProps {}
 
@@ -423,6 +424,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
                   currentPage={commentPaginationPage}
                   onPageChange={changeCommentSearchPagination}
                 />
+                <ViewPopover />
               </div>
 
               <OperationsTable
@@ -472,6 +474,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
                   currentPage={accountOperationsPage || 1}
                   onPageChange={changeAccountOperationsPagination}
                 />
+                <ViewPopover />
               </div>
 
               <OperationsTable

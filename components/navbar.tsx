@@ -7,7 +7,6 @@ import { cn } from "@/lib/utils";
 import useMediaQuery from "@/hooks/common/useMediaQuery";
 import SearchBar from "./SearchBar";
 import SyncInfo from "./home/SyncInfo";
-import ViewPopover from "./ViewPopover";
 import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar() {
@@ -69,10 +68,6 @@ export default function Navbar() {
                 >
                   Witnesses
                 </Link>
-
-                <div>
-                  <ViewPopover isMobile={isMobile} />
-                </div>
               </div>
             </div>
           </div>
@@ -97,7 +92,6 @@ export default function Navbar() {
                   Hive Block Explorer
                 </div>
               </Link>
-              <ViewPopover />
               <SyncInfo />
               <Link
                 href={"/witnesses"}

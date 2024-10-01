@@ -13,6 +13,7 @@ import PageNotFound from "@/components/PageNotFound";
 import JSONView from "@/components/JSONView";
 import OperationsTable from "@/components/OperationsTable";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import ViewPopover from "@/components/ViewPopover";
 
 const displayTransactionData = (
   key: string,
@@ -86,6 +87,7 @@ export default function Transaction() {
                       {" " + formatAndDelocalizeTime(trxData.timestamp)}
                     </span>
                   </div>
+                  <ViewPopover />
                 </div>
               </CardContent>
             </Card>

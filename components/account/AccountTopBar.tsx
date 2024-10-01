@@ -9,6 +9,7 @@ import useAccountOperationTypes from "@/hooks/api/accountPage/useAccountOperatio
 import JumpToPage from "../JumpToPage";
 import OperationTypesDialog from "../OperationTypesDialog";
 import CustomPagination from "../CustomPagination";
+import ViewPopover from "../ViewPopover";
 
 interface AccountTopBarProps {
   accountName: string;
@@ -71,6 +72,7 @@ const AccountTopBar: React.FC<AccountTopBarProps> = ({
             />
           </div>
         </div>
+        <ViewPopover />
       </div>
     </div>
   );

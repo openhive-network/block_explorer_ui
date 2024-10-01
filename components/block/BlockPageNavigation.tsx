@@ -15,6 +15,7 @@ import DateTimePicker from "../DateTimePicker";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import ViewPopover from "../ViewPopover";
 
 interface BlockPageNavigationProps {
   blockNumber: number;
@@ -119,7 +120,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
       data-testid="block-page-search"
     >
       <CardHeader>
-        <CardTitle>Search</CardTitle>
+        <CardTitle>Navigation and view</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="w-full flex justify-around items-center flex-wrap gap-y-4">
@@ -173,6 +174,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
               )}
             />
           </div>
+          <ViewPopover />
         </div>
 
         {(!!accountName || !!keyContent || !!setOfKeys) && (
