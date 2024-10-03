@@ -1,0 +1,107 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+/* Light theme */
+:root {
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+  --color-text: #000;
+  --color-background: #7683A3;
+  --color-row-even: #949fb7;
+  --color-row-odd: #5c6a89;
+  --color-row-hover: #333b4c;
+  --color-button: #5c6a89;
+  --color-button-text: #FFF;
+  --color-button-hover: #48526b;
+  --color-switch-button: rgb(200, 200, 200);
+  --color-switch-off: rgb(100, 100, 100);
+  --color-switch-on: rgb(20, 20, 20);
+  --color-blocked: rgba(255, 255, 255, 0.7);
+  --color-operation-account-management: #b010bf;
+  --color-operation-witness-management: #008080;
+  --color-operation-witness-voting: #008050;
+  --color-operation-posting: #ffbe0b;
+  --color-operation-curation: #fb5607;
+  --color-operation-transfer: #8338ec;
+  --color-operation-market: #FF69B4;
+  --color-operation-vesting: #780028;
+  --color-operation-proposal: #78c814;
+  --color-operation-custom: #80003e;
+  --color-operation-other: #3a86ff;
+
+  --color-yellow: #FFF351;
+  --color-light-blue: #6AF5FF;
+  --color-dark-blue: #160855;
+  --color-blue: #0041F3;
+  --color-turquoise: #00D9FF;
+  --color-red: #FF0000;
+  --color-orange: #FFAC33;
+  --color-light-green: #64FFAA;
+  --color-light-gray: #ADA9A9DC;
+}
+
+/* Dark theme */
+.dark {
+  --background-start-rgb: 40, 40, 40;
+  --background-end-rgb: 60, 60, 60;
+  --color-text: #FFF;
+  --color-background: #292F3D;
+  --color-row-even: #48526b;
+  --color-row-odd: #333b4c;
+  --color-row-hover: #5c6a89;
+  --color-button: #5c6a89;
+  --color-button-text: #FFF;
+  --color-button-hover: #48526b;
+  --color-switch-button: rgb(200, 200, 200);
+  --color-switch-off: rgb(100, 100, 100);
+  --color-switch-on: rgb(20, 20, 20);
+  --color-blocked: rgba(255, 255, 255, 0.7);
+  --color-operation-account-management: #b010bf;
+  --color-operation-witness-management: #008080;
+  --color-operation-witness-voting: #008050;
+  --color-operation-posting: #ffbe0b;
+  --color-operation-curation: #fb5607;
+  --color-operation-transfer: #8338ec;
+  --color-operation-market: #FF69B4;
+  --color-operation-vesting: #780028;
+  --color-operation-proposal: #78c814;
+  --color-operation-custom: #80003e;
+  --color-operation-other: #3a86ff;
+
+  --color-yellow: #FFF351;
+  --color-light-blue: #6AF5FF;
+  --color-dark-blue: #160855;
+  --color-blue: #0041F3;
+  --color-turquoise: #00D9FF;
+  --color-red: #FF0000;
+  --color-orange: #FFAC33;
+  --color-light-green: #64FFAA;
+  --color-light-gray: #ADA9A9DC;
+}
+
+
+body {
+  color: var(--color-text);
+  background: linear-gradient(to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
+}
+
+pre {
+  white-space: pre-wrap;
+  /* Since CSS 2.1 */
+  white-space: -moz-pre-wrap;
+  /* Mozilla, since 1999 */
+  white-space: -pre-wrap;
+  /* Opera 4-6 */
+  white-space: -o-pre-wrap;
+  /* Opera 7 */
+  word-wrap: break-word;
+  /* Internet Explorer 5.5+ */
+}
+
+.rdp-dropdown {
+  color: black;
+}
