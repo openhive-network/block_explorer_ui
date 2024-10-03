@@ -28,7 +28,7 @@ const ViewPopover: React.FC<ViewPopoverProps> = ({ isMobile }) => {
       <PopoverTrigger asChild>
         <div
           className={cn(
-            "rounded-[6px] text-sm text-center cursor-pointer flex jusitfy-center items-center p-1 ml-3 py-0 border-2 border-explorer-ligh-blue",
+            "rounded-[6px] text-sm text-center cursor-pointer flex jusitfy-center items-center p-1 ml-3 py-0 border-2 border-explorer-light-blue",
             { "p-0 m-0 border-none text-2xl": isMobile }
           )}
           data-testid="data-view-dropdown"
@@ -38,7 +38,7 @@ const ViewPopover: React.FC<ViewPopoverProps> = ({ isMobile }) => {
         </div>
       </PopoverTrigger>
       <PopoverContent
-        className={`w-60 bg-explorer-gray-light dark:bg-explorer-gray-dark text-white rounded-[8px] border  ${
+        className={`w-60 bg-theme dark:bg-theme text-white rounded-[8px] border  ${
           isMobile && "ml-[30px]"
         }`}
       >

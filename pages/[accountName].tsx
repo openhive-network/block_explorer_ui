@@ -222,7 +222,7 @@ export default function Account() {
 
           <div
             className={cn(
-              "fixed top-0 left-0 p-5 bg-explorer-gray-light dark:bg-explorer-gray-dark w-full h-full -translate-x-full duration-500 z-50 overflow-auto",
+              "fixed top-0 left-0 p-5 bg-theme dark:bg-theme w-full h-full -translate-x-full duration-500 z-50 overflow-auto",
               { "-translate-x-0": showMobileAccountDetails }
             )}
           >

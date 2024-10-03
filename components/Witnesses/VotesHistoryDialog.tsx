@@ -86,7 +86,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
     >
       <DialogContent
         className={cn(
-          "max-w-2xl max-h-[700px]  bg-white dark:bg-explorer-gray-dark overflow-auto",
+          "max-w-2xl max-h-[700px] bg-explorer-bg-start overflow-auto",
           {
             "flex column justify-center items-center": !votesHistory,
             "h-3/4": votesHistory?.length >= 16,
@@ -120,7 +120,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                 <p>Last updated : {witnessDetails.votes_updated_at}</p>
               )}
             </div>
-            <div className="flex justify-around items-center bg-gray-800 rounded text-white p-2">
+            <div className="flex justify-around items-center bg-explorer-bg-start rounded text-text p-2">
               <div>
                 <p>From: </p>
                 <DateTimePicker
@@ -176,11 +176,15 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                     <TableRow
                       key={index}
                       className={`${
-                        index % 2 === 0 ? "bg-gray-800" : "bg-gray-900"
+                        index % 2 === 0 ? "bg-rowEven" : "bg-rowOdd"
                       }`}
                     >
                       <TableCell
-                        className="sticky left-0"
+                        className={`sticky md:static left-0 ${
+                          index % 2 === 0
+                            ? "bg-rowEven md:bg-inherit"
+                            : "bg-rowOdd md:bg-inherit"
+                        }`}
                         data-testid="date-format"
                       >
                         {formatAndDelocalizeTime(vote.timestamp)}
@@ -195,7 +199,9 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                       </TableCell>
                       <TableCell
                         className={`${
-                          vote.approve ? "text-green-400" : "text-red-400"
+                          vote.approve
+                            ? "text-explorer-light-green"
+                            : "text-explorer-red"
                         }`}
                         data-testid="vote-arrow"
                       >

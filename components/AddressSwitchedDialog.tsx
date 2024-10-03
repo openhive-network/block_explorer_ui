@@ -71,7 +71,7 @@ const AddressSwitchedDialog: React.FC<AddressSwitcherDialogProps> = ({
       </DialogTrigger>
       <DialogContent
         onKeyDown={handleKeyDown}
-        className="h-1/4 max-w-3xl overflow-auto bg-white  dark:bg-explorer-gray-dark dark:text-white"
+        className="h-1/4 max-w-3xl overflow-auto bg-white  dark:bg-theme dark:text-white"
         data-testid="api-address-dialog"
       >
         <DialogHeader>

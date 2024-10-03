@@ -47,7 +47,7 @@ const CustomTooltip = ({
   if (active && payload && payload.length) {
     const totalOperations = payload.reduce((acc, pld) => acc + pld.value, 0);
     return (
-      <div className="bg-explorer-gray-light dark:bg-explorer-gray-dark p-2 rounded border border-explorer-ligh-gray">
+      <div className="bg-theme dark:bg-theme p-2 rounded border border-explorer-light-gray">
         <p className="font-bold">{`Block ${label}`}</p>
         <div className="my-2">
           <Image

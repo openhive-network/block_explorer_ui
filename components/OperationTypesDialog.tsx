@@ -27,17 +27,17 @@ type OperationTypesDialogProps = {
 };
 
 export const colorByOperationCategory: Record<string, string> = {
-  Posting: "bg-explorer-posting-operations",
-  Curation: "bg-explorer-curation-operations",
-  Transfer: "bg-explorer-transfer-operations",
-  Market: "bg-explorer-market-operations",
-  Vesting: "bg-explorer-vesting-operations",
-  "Account management": "bg-explorer-account-management-operations",
-  "Witness management": "bg-explorer-witness-management-operations",
-  "Witness voting": "bg-explorer-witness-voting-operations",
-  Proposals: "bg-explorer-proposal-operations",
-  Custom: "bg-explorer-custom-operations",
-  Other: "bg-explorer-other-operations",
+  Posting: "bg-explorer-operations-posting",
+  Curation: "bg-explorer-operations-curation",
+  Transfer: "bg-explorer-operations-transfer",
+  Market: "bg-explorer-operations-market",
+  Vesting: "bg-explorer-operations-vesting",
+  "Account management": "bg-explorer-operations-account-management",
+  "Witness management": "bg-explorer-operations-witness-management",
+  "Witness voting": "bg-explorer-operations-witness-voting",
+  Proposals: "bg-explorer-operations-proposal",
+  Custom: "bg-explorer-operations-custom",
+  Other: "bg-explorer-operations-other",
 };
 
 const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
@@ -280,7 +280,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
         />
       ) : null}
       <DialogContent
-        className="max-w-[95%] md:max-w-[80%] max-h-[90%] md:max-h-[80%] flex-column justify-center align-center  bg-white text-black dark:bg-explorer-gray-dark dark:text-white overflow-auto px-0"
+        className="max-w-[95%] md:max-w-[80%] max-h-[90%] md:max-h-[80%] flex-column justify-center align-center  bg-white text-black dark:bg-theme dark:text-white overflow-auto px-0"
         data-testid="operation-types-dialog"
       >
         <DialogHeader>

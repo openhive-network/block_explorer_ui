@@ -86,7 +86,7 @@ const HeadBlockPropertyCard: React.FC<HeadBlockPropertyCardProps> = ({
 
   return (
     <div
-      className="bg-explorer-gray-light dark:bg-explorer-gray-dark py-1 rounded-[6px]"
+      className="bg-theme dark:bg-theme py-1 rounded-[6px]"
       data-testid="expandable-list"
     >
       <div

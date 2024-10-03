@@ -276,7 +276,7 @@ export default function Block() {
               <JSONView
                 data-testid="json-view"
                 json={rawBlockdata || {}}
-                className="w-full md:w-[962px] mt-6 m-auto py-2 px-4 bg-explorer-gray-light dark:bg-explorer-gray-dark rounded text-white text-xs break-words break-all"
+                className="w-full md:w-[962px] mt-6 m-auto py-2 px-4 bg-theme dark:bg-theme rounded text-white text-xs break-words break-all"
                 isPrettyView={settings.prettyJsonView}
               />
             </div>

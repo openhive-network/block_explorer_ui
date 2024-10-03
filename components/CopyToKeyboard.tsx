@@ -8,7 +8,11 @@ interface CopyToKeyboardProps {
   className?: string;
 }
 
-const CopyToKeyboard: React.FC<CopyToKeyboardProps> = ({ value, displayValue, className }) => {
+const CopyToKeyboard: React.FC<CopyToKeyboardProps> = ({
+  value,
+  displayValue,
+  className,
+}) => {
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = (key?: string) => {
@@ -20,12 +24,16 @@ const CopyToKeyboard: React.FC<CopyToKeyboardProps> = ({ value, displayValue, cl
   };
 
   return (
-    <div className={cn(className, "flex hover:bg-slate-600 rounded")} onClick={() => copyToClipboard(value)}>
-      {copied ? 
-        <Check className="text-explorer-ligh-green w-5 h-5" /> :
-        <ClipboardCopy className="w-4 mr-2" /> 
-      }
-      {displayValue} 
+    <div
+      className={cn(className, "flex hover:bg-slate-600 rounded")}
+      onClick={() => copyToClipboard(value)}
+    >
+      {copied ? (
+        <Check className="text-explorer-light-green w-5 h-5" />
+      ) : (
+        <ClipboardCopy className="w-4 mr-2" />
+      )}
+      {displayValue}
     </div>
   );
 };

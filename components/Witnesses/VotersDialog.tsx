@@ -72,7 +72,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
       onOpenChange={changeVotersDialogue}
     >
       <DialogContent
-        className={`h-3/4 max-w-4xl bg-white dark:bg-explorer-gray-dark ${
+        className={`h-3/4 max-w-4xl bg-explorer-bg-start ${
           !witnessVoters && "flex justify-center items-center"
         }`}
         data-testid="voters-dialog"
@@ -80,7 +80,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
         {witnessVoters ? (
           <>
             <div
-              className="flex  justify-center  items-centertext-center font-semibold	"
+              className="flex justify-center  items-centertext-center font-semibold	"
               data-testid="voters-dialog-witness-name"
             >
               {accountName.toUpperCase()} - Voters
@@ -134,14 +134,14 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                     <TableRow
                       key={index}
                       className={`${
-                        index % 2 === 0 ? "bg-gray-800" : "bg-gray-900"
+                        index % 2 === 0 ? "bg-rowEven" : "bg-rowOdd"
                       }`}
                     >
                       <TableCell
                         className={`text-explorer-turquoise sticky md:static left-0 ${
                           index % 2 === 0
-                            ? "bg-gray-800 md:bg-inherit"
-                            : "bg-gray-900 md:bg-inherit"
+                            ? "bg-rowEven md:bg-inherit"
+                            : "bg-rowOdd md:bg-inherit"
                         }`}
                       >
                         <Link

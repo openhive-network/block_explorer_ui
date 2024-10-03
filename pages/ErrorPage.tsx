@@ -31,7 +31,7 @@ const ErrorPage: React.FC = () => {
           </Button>
         </div>
       </div>
-      <div className="flex justify-center gap-x-8 bg-explorer-gray-light dark:bg-explorer-gray-dark w-full mt-12 text-white text-sm">
+      <div className="flex justify-center gap-x-8 bg-theme dark:bg-theme w-full mt-12 text-white text-sm">
         {!!apiAdresses.apiAddress && (
           <AddressSwitchedDialog
             addressType="api"

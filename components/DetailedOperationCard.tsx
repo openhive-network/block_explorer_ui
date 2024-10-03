@@ -64,7 +64,7 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
   return (
     <div
       className={cn(
-        "w-full bg-explorer-gray-light dark:bg-explorer-gray-dark px-4 py-2 rounded text-xs	overflow-hidden",
+        "w-full bg-theme dark:bg-theme px-4 py-2 rounded text-xs	overflow-hidden",
         className
       )}
       data-testid="detailed-operation-card"

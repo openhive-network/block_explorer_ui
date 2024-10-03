@@ -92,7 +92,7 @@ export default function Transaction() {
             {settings.rawJsonView || settings.prettyJsonView ? (
               <JSONView
                 json={trxData.transaction_json}
-                className="w-full md:w-[992px] m-auto py-2 px-4 bg-explorer-gray-light dark:bg-explorer-gray-dark rounded text-white text-xs break-words break-all"
+                className="w-full md:w-[992px] m-auto py-2 px-4 bg-theme dark:bg-theme rounded text-white text-xs break-words break-all"
                 isPrettyView={settings.prettyJsonView}
               />
             ) : (

@@ -48,9 +48,9 @@ const renderSearchData = (
             <div
               key={index}
               className={cn(
-                "px-4 py-2 hover:bg-explorer-ligh-gray flex items-center justify-between",
+                "px-4 py-2 hover:bg-explorer-light-gray flex items-center justify-between",
                 {
-                  "md:bg-explorer-ligh-gray bg-opacity-50": selected === index,
+                  "md:bg-explorer-light-gray bg-opacity-50": selected === index,
                   "border-t border-gray-700": !!index,
                 }
               )}
@@ -171,7 +171,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ open, onChange, className }) => {
     <>
       <div
         className={cn(
-          "w-0 hidden md:w-1/4 relative bg-explorer-gray-light dark:bg-explorer-gray-dark",
+          "w-0 hidden md:w-1/4 relative bg-theme dark:bg-theme",
           {
             "w-full inline": open,
           },
@@ -207,7 +207,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ open, onChange, className }) => {
           )}
         </div>
         {inputFocus && !!inputTypeData?.input_value && (
-          <div className="absolute bg-explorer-gray-light dark:bg-explorer-gray-dark w-full max-h-96 overflow-y-auto border border-input border-t-0">
+          <div className="absolute bg-theme dark:bg-theme w-full max-h-96 overflow-y-auto border border-input border-t-0">
             {renderSearchData(inputTypeData, resetSearchBar, selectedResult)}
           </div>
         )}

@@ -203,8 +203,8 @@ export default function Witnesses() {
                   // `${index % 2 === 0 ? "bg-gray-800" : "bg-gray-900"}`,
                   `${
                     index % 2 === 0
-                      ? "bg-witness-row-light-even dark:bg-witness-row-dark-even"
-                      : "bg-witness-row-light-odd dark:bg-witness-row-dark-odd"
+                      ? "bg-rowEven dark:bg-rowEven"
+                      : "bg-rowOdd dark:bg-rowOdd"
                   }`,
                   {
                     "line-through":

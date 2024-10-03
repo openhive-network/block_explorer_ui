@@ -123,8 +123,8 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
     >
       <TableHeader>
         <TableRow>
-          <TableHead className="sticky left-0 bg-explorer-gray-light dark:bg-explorer-gray-dark"></TableHead>
-          <TableHead className="pl-2 sticky left-12 bg-explorer-gray-light dark:bg-explorer-gray-dark">
+          <TableHead className="sticky left-0 bg-theme dark:bg-theme"></TableHead>
+          <TableHead className="pl-2 sticky left-12 bg-theme dark:bg-theme">
             Block
           </TableHead>
           <TableHead>Transaction</TableHead>
@@ -151,11 +151,11 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                     nextTransactionId === operation.trxId && !!operation.trxId,
                 })}
               >
-                <TableCell className="sticky left-0 bg-explorer-gray-light dark:bg-explorer-gray-dark xl:bg-inherit">
+                <TableCell className="sticky left-0 bg-theme dark:bg-theme xl:bg-inherit">
                   <CopyJSON value={getUnformattedValue(operation)} />
                 </TableCell>
                 <TableCell
-                  className="pl-2 sticky left-12 bg-explorer-gray-light dark:bg-explorer-gray-dark xl:bg-inherit"
+                  className="pl-2 sticky left-12 bg-theme dark:bg-theme xl:bg-inherit"
                   data-testid="block-number-operation-table"
                 >
                   <Link
@@ -170,7 +170,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                 <TableCell data-testid="transaction-number">
                   <Link
                     className={cn("text-explorer-turquoise", {
-                      "bg-explorer-ligh-green py-2 px-1 ":
+                      "bg-explorer-light-green py-2 px-1 ":
                         markedTrxId === operation.trxId,
                     })}
                     href={`/transaction/${operation.trxId}`}
@@ -192,7 +192,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                           />
                         </div>
                       </TooltipTrigger>
-                      <TooltipContent className="bg-white text-black dark:bg-explorer-gray-dark dark:text-white">
+                      <TooltipContent className="bg-white text-black dark:bg-theme dark:text-white">
                         {formatAndDelocalizeTime(operation.timestamp)}
                       </TooltipContent>
                     </Tooltip>

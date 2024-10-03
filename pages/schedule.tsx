@@ -59,7 +59,7 @@ const buildTableBody = (
               className={cn("text-left", {
                 "text-gray-700 dark:text-gray-500":
                   !!blockNumber && producerName !== currentProducer,
-                "text-explorer-ligh-green": producerName === currentProducer,
+                "text-explorer-light-green": producerName === currentProducer,
               })}
             >
               {producerName}
@@ -154,7 +154,7 @@ const Schedule = () => {
   ) : (
     <>
       <div className="flex justify-center items-center w-full h-full overflow-auto">
-        <div className="text-white min-w-[50%] bg-explorer-gray-light dark:bg-explorer-gray-dark">
+        <div className="text-white min-w-[50%] bg-theme dark:bg-theme">
           <Table data-testid="table-body">
             <TableHeader>
               <TableRow>{buildTableHeader()}</TableRow>

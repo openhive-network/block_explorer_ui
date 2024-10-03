@@ -53,7 +53,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
       </PopoverTrigger>
       <PopoverContent
         side={side}
-        className="w-auto p-0 text-white bg-explorer-gray-light dark:bg-explorer-gray-dark"
+        className="w-auto p-0 text-white bg-theme dark:bg-theme"
       >
         <Calendar
           mode="single"

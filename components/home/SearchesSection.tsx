@@ -369,7 +369,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
       >
         {blockSearch.blockSearchData && lastSearchKey === "block" && (
           <div
-            className=" bg-explorer-gray-light dark:bg-explorer-gray-dark p-2 md: h-fit rounded"
+            className=" bg-theme dark:bg-theme p-2 md: h-fit rounded"
             data-testid="result-section"
           >
             <div

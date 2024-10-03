@@ -1,5 +1,5 @@
 import Link from "next/link";
-import "@/styles/globals.css";
+import "@/styles/theme.css";
 
 export default function NotFound() {
   return (
@@ -14,9 +14,7 @@ export default function NotFound() {
         </div>
       </div>
       <div className="flex mt-10 gap-x-8">
-        <Link href="/">
-          Go To Home Page
-        </Link>
+        <Link href="/">Go To Home Page</Link>
       </div>
     </div>
   );
