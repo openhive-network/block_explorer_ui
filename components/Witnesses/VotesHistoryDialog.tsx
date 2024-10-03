@@ -126,7 +126,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                 <DateTimePicker
                   date={fromDate}
                   setDate={setFromDate}
-                  side="left"
+                  side="bottom"
                 />
               </div>
               <div>
@@ -134,7 +134,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                 <DateTimePicker
                   date={toDate}
                   setDate={setToDate}
-                  side="right"
+                  side="bottom"
                 />
               </div>
             </div>
