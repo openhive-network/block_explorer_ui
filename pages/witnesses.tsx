@@ -156,7 +156,7 @@ export default function Witnesses() {
       <Head>
         <title>Witnesses - Hive Explorer</title>
       </Head>
-      <div className="md:m-8 max-w-[100vw]">
+      <div className="md:m-8 max-w-[100vw] px-4">
         <div className="flex justify-between my-5">
           <div className="text-start">
             <p>
