@@ -120,7 +120,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                 <p>Last updated : {witnessDetails.votes_updated_at}</p>
               )}
             </div>
-            <div className="flex justify-around items-center bg-explorer-bg-start rounded text-text p-2">
+            <div className="justify-around items-center bg-explorer-bg-start rounded text-text p-2">
               <div>
                 <p>From: </p>
                 <DateTimePicker
