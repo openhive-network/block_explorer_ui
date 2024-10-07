@@ -55,6 +55,7 @@ module.exports = {
         "explorer-orange": "var(--color-orange)",
         "explorer-light-green": "var(--color-light-green)",
         "explorer-light-gray": "var(--color-light-gray)",
+        "explorer-dark-gray": "var(--color-dark-gray)",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
