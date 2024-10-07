@@ -160,7 +160,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                   {tableColums.map((column, index) => (
                     <TableHead
                       key={column.key}
-                      className={cn({
+                      className={cn("min-h-12 h-auto p-3", {
                         "sticky md:static left-0": !index,
                         "flex justify-end items-center": column.isRightAligned,
                       })}

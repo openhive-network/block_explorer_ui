@@ -42,7 +42,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
         <Button
           variant={"outline"}
           className={cn(
-            "w-full justify-start text-left font-normal",
+            "w-full justify-start text-left font-normal h-auto",
             !date && "text-muted-foreground"
           )}
           data-testid="datepicker-trigger"
