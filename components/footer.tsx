@@ -45,6 +45,7 @@ export default function Footer() {
           currentAddress={nodeAddress}
           setAddress={setNodeAddress}
         />
+        <Link href={"/healthchecker"}>Healthchecker</Link>
       </div>
     </div>
   );
