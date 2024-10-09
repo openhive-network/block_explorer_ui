@@ -80,6 +80,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
       initialApiChecksByProviders.set(api, Array.from(customApiCheckers?.keys() || []));
     })
     setApiChecksByProvider(initialApiChecksByProviders);
+    restartCheckerAfterChange(initialApiChecksByProviders)
   }
 
   const restartCheckerAfterChange = (newCheckers: Map<string, string[]>) => {
