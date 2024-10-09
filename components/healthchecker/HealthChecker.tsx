@@ -110,13 +110,13 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
       hc.on("data", (data: Array<IScoredEndpoint>) => { console.log(JSON.stringify(data)); setScoredEndpoints(data) });
       setChainIntialized(true);
     }
-  }, [hiveChain])
+  }, [hiveChain, chainInitialized, customApiCheckers, apiList, hc])
 
   useEffect(() => {
     if (apiChecksByProvider.size === 0) {
       initializeDefaultChecks();
     }
-  }, [customApiCheckers, apiChecksByProvider])
+  }, [customApiCheckers, apiChecksByProvider, initializeDefaultChecks])
 
   const renderProvider = (scoredEndpoint: IScoredEndpoint, index: number) => {
     const {endpointUrl, score} = scoredEndpoint;
@@ -140,10 +140,10 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   return (
     <div className={cn([className])}>
       <Card className="grid grid-cols-3 grid-rows-2 my-1 p-2 ">
-        <div className="row-start-1 col-start-1 col-span-2">Block Explorer node's healthchecker</div>
+        <div className="row-start-1 col-start-1 col-span-2">Block Explorer healthchecker for nodes</div>
         <div className="row-start-2">
           {Array.from(customApiCheckers?.entries() || []).map(([key, apiChecker]) => (
-            <Badge variant={"outline"}>{apiChecker.title}</Badge>
+            <Badge key={key} variant={"outline"}>{apiChecker.title}</Badge>
           ))}
         </div>
         <Button className="row-start-1 row-span-2 col-end-4 items-center justify-center" onClick={() => {initializeDefaultChecks()}}>Restore default</Button>
