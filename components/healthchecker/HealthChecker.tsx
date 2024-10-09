@@ -71,6 +71,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     newApiChecks.set(provider, newCheckers);
     setApiChecksByProvider(newApiChecks);
     setIsDialogOpened(false);
+    restartCheckerAfterChange(newApiChecks);
   }
 
   const initializeDefaultChecks = () => {
@@ -79,6 +80,25 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
       initialApiChecksByProviders.set(api, Array.from(customApiCheckers?.keys() || []));
     })
     setApiChecksByProvider(initialApiChecksByProviders);
+  }
+
+  const restartCheckerAfterChange = (newCheckers: Map<string, string[]>) => {
+    const providersByChecks = new Map<string, string[]>();
+    for (const [providerKey, checkers] of newCheckers) {
+      checkers.forEach((check) => {
+        if (providersByChecks.has(check)) {
+          const previousProviders = providersByChecks.get(check) as string[];
+          providersByChecks.set(check, [...previousProviders, providerKey]);
+        } else {
+          providersByChecks.set(check, [providerKey]);
+        }
+      })
+    }
+    hc.unregisterAll();
+    for (const [checkerKey, providers] of providersByChecks) {
+      const checker = customApiCheckers?.get(checkerKey);
+      hc.register(checker!.method, checker!.params, checker!.validatorFunction, providers);
+    }
   }
 
   useEffect(() => { 
