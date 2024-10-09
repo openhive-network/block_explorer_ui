@@ -25,10 +25,6 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
   onDialogOpenChange
 }) => {
 
-  const clickEdit = () => {
-
-  }
-
   return (
     <Card className="grid grid-cols-8 grid-rows-2 my-1 p-2">
       <div className="col-start-1 row-start-1 col-span-1 row-span-2 flex justify-center items-center">{index + 1}</div>
