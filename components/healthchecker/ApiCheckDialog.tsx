@@ -62,7 +62,7 @@ const ApiCheckDialog: React.FC<ApiCheckDialogProps> = ({
 
   return (
     <Dialog open={isOpened} onOpenChange={onDialogOpenChange}>
-      <DialogContent className={cn(className)}>
+      <DialogContent className={cn(className, "bg-explorer-bg-start")}>
         <DialogHeader><DialogTitle>{openedProvider}</DialogTitle></DialogHeader>
         <div>
           {Array.from(checksList?.entries() || []).map(([key, check]) => (
