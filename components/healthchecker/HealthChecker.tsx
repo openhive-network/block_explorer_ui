@@ -102,10 +102,10 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   }
 
   useEffect(() => { 
-    if (hc && hiveChain && !chainInitialized) {
-      Array.from(customApiCheckers?.entries() || []).forEach(([key, checker]) => {
+    if (hc && hiveChain && !chainInitialized && !!customApiCheckers) {
+      for (const [key, checker] of customApiCheckers) {
         hc.register(checker.method, checker.params, checker.validatorFunction, apiList);
-      })
+      }
       hc.on("data", (data: Array<IScoredEndpoint>) => { console.log(JSON.stringify(data)); setScoredEndpoints(data) });
       setChainIntialized(true);
     }
