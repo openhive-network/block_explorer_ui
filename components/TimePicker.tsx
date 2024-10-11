@@ -114,14 +114,14 @@ const TimePicker: React.FC<TimePickerProps> = ({
 
   return (
     <section
-      className={cn("flex border border-white w-fit", className)}
+      className={cn("flex border border-text w-fit", className)}
       ref={timePickerRef}
       data-testid="datepicker-time"
     >
       <TimeInput
         value={hours}
         increment={HM_INTERVAL}
-        className="text-right"
+        className="text-right text-text"
         max={23}
         onChange={setHours}
       />
@@ -129,13 +129,14 @@ const TimePicker: React.FC<TimePickerProps> = ({
       <TimeInput
         value={minutes}
         increment={HM_INTERVAL}
-        className="text-right"
+        className="text-right text-text"
         onChange={setMinutes}
       />
       {" : "}
       <TimeInput
         value={seconds}
         increment={S_INTERVAL}
+        className="text-text"
         onChange={setSeconds}
       />
     </section>

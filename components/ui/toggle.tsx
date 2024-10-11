@@ -32,7 +32,7 @@ const Toggle: React.FC<ToggleProps> = ({
             "bg-green-600": checked,
             "bg-transparent": !checked,
             "border-gray-700": disabled && !checked,
-            "border-white": !disabled,
+            "border-black dark:border-white": !disabled,
           }
         )}
         onClick={!disabled ? onClick : undefined}
@@ -40,10 +40,10 @@ const Toggle: React.FC<ToggleProps> = ({
         <div
           className={cn(
             "w-3.5 h-3.5 bg-white rounded-full absolute top-px left-px transition duration-300 ease-in-out",
-          {
+            {
               "translate-x-[20px]": checked,
               "bg-gray-700": disabled && !checked,
-              "bg-white": !disabled,
+              "bg-black dark:bg-white": !disabled,
             }
           )}
         ></div>
