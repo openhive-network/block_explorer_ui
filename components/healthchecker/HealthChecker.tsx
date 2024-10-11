@@ -104,19 +104,16 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
 
   useEffect(() => { 
     if (hc && hiveChain && !chainInitialized && !!customApiCheckers) {
+      if (apiChecksByProvider.size === 0) {
+        initializeDefaultChecks();
+      }
       for (const [key, checker] of customApiCheckers) {
         hc.register(checker.method, checker.params, checker.validatorFunction, apiList);
       }
       hc.on("data", (data: Array<IScoredEndpoint>) => { console.log(JSON.stringify(data)); setScoredEndpoints(data) });
       setChainIntialized(true);
     }
-  }, [hiveChain, chainInitialized, customApiCheckers, apiList, hc])
-
-  useEffect(() => {
-    if (apiChecksByProvider.size === 0) {
-      initializeDefaultChecks();
-    }
-  }, [customApiCheckers, apiChecksByProvider, initializeDefaultChecks])
+  }, [hiveChain, chainInitialized, customApiCheckers, apiList, hc, apiChecksByProvider])
 
   const renderProvider = (scoredEndpoint: IScoredEndpoint, index: number) => {
     const {endpointUrl, score} = scoredEndpoint;
