@@ -5,8 +5,8 @@
 
 /* Light theme */
 :root {
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --background-start-rgb: rgb(214, 219, 220);
+  --background-end-rgb: rgb(255, 255, 255);
   --color-text: #000;
   --color-background: #FFF;
   --color-row-even: #949fb7;
@@ -46,8 +46,8 @@
 
 /* Dark theme */
 .dark {
-  --background-start-rgb: 40, 40, 40;
-  --background-end-rgb: 60, 60, 60;
+  --background-start-rgb: rgb(40, 40, 40);
+  --background-end-rgb: rgb(60, 60, 60);
   --color-text: #FFF;
   --color-background: #292F3D;
   --color-row-even: #48526b;
@@ -82,7 +82,7 @@
   --color-orange: #FFAC33;
   --color-light-green: #64FFAA;
   --color-light-gray: #ADA9A9DC;
-  --color-dark-gray: #292F3D;
+  --color-dark-gray: #444c5e;
 }
 
 * {
@@ -90,9 +90,7 @@
 }
 
 body {
-  background: linear-gradient(to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
+  background-color: var(--background-start-rgb)
 }
 
 

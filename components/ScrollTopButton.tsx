@@ -32,7 +32,7 @@ const ScrollTopButton = () => {
       {visible && (
         <Button
           onClick={scrollToTop}
-          className="hover:bg-gray-700 w-fit mb-1 md:mb-2"
+          className="w-fit mb-1 md:mb-2"
         >
           <p className="hidden md:inline">To Top</p>
           <ArrowUp className="p-0 md:pl-2" />

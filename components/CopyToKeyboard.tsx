@@ -25,7 +25,7 @@ const CopyToKeyboard: React.FC<CopyToKeyboardProps> = ({
 
   return (
     <div
-      className={cn(className, "flex hover:bg-slate-600 rounded")}
+      className={cn(className, "flex hover:bg-rowHover rounded")}
       onClick={() => copyToClipboard(value)}
     >
       {copied ? (

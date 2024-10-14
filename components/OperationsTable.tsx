@@ -55,7 +55,7 @@ const getOneLineDescription = (operation: Explorer.OperationForTable) => {
     return value.message;
   if (operation.operation.type === "body_placeholder_operation") {
     return (
-      <div className="text-explorer-turquoise">
+      <div className="text-link">
         <Link
           href={`/longOperation/${operation.operation.value?.["org-op-id"]}`}
         >
@@ -151,15 +151,15 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                     nextTransactionId === operation.trxId && !!operation.trxId,
                 })}
               >
-                <TableCell className="sticky left-0 bg-theme dark:bg-theme xl:bg-inherit">
+                <TableCell className="sticky left-0 bg-theme xl:bg-inherit">
                   <CopyJSON value={getUnformattedValue(operation)} />
                 </TableCell>
                 <TableCell
-                  className="pl-2 sticky left-12 bg-theme dark:bg-theme xl:bg-inherit"
+                  className="pl-2 sticky left-12 bg-theme xl:bg-inherit"
                   data-testid="block-number-operation-table"
                 >
                   <Link
-                    className="text-explorer-turquoise"
+                    className="text-link"
                     href={`/block/${operation.blockNumber}${
                       operation.trxId ? `?trxId=${operation.trxId}` : ""
                     }`}
@@ -169,7 +169,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                 </TableCell>
                 <TableCell data-testid="transaction-number">
                   <Link
-                    className={cn("text-explorer-turquoise", {
+                    className={cn("text-link", {
                       "bg-explorer-light-green py-2 px-1 ":
                         markedTrxId === operation.trxId,
                     })}
@@ -192,7 +192,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                           />
                         </div>
                       </TooltipTrigger>
-                      <TooltipContent className="bg-white text-black dark:bg-theme dark:text-white">
+                      <TooltipContent className="bg-theme text-text">
                         {formatAndDelocalizeTime(operation.timestamp)}
                       </TooltipContent>
                     </Tooltip>

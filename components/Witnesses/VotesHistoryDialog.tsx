@@ -154,7 +154,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                 </div>
               </div>
             )}
-            <Table className="text-white">
+            <Table className="text-text">
               <TableHeader>
                 <TableRow>
                   {tableColums.map((column, index) => (

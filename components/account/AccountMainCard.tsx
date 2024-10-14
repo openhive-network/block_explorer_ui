@@ -74,7 +74,6 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
               <Progress
                 value={manabarsData?.upvote.percentageValue}
                 color="#00c040"
-                style={{ background: "#03182c", zIndex: 0 }}
               />
               <p className="text-sm text-gray-400">
                 {manabarsData?.upvote.current} / {manabarsData?.upvote.max}
@@ -91,7 +90,6 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
               <Progress
                 value={manabarsData?.downvote.percentageValue}
                 color="#c01000"
-                style={{ background: "#03182c", zIndex: 0 }}
               />
               <p className="text-sm text-gray-400">
                 {manabarsData?.downvote.current} / {manabarsData?.downvote.max}
@@ -108,7 +106,6 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
               <Progress
                 value={manabarsData?.rc.percentageValue}
                 color="#cecafa"
-                style={{ background: "#03182c", zIndex: 0 }}
               />
               <p className="text-sm text-gray-400">
                 {manabarsData?.rc.current} / {manabarsData?.rc.max}
