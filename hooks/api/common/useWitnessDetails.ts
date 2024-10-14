@@ -16,13 +16,9 @@ const useWitnessDetails = (accountName: string, isWitness: boolean) => {
         witnessData.votes_updated_at
       ),
       vests: hiveChain?.vests(witnessData.witness.vests),
-      votes_hive_power: hiveChain?.hive(witnessData.witness.vests_hive_power),
       hbd_interest_rate: formatPercent(witnessData.witness.hbd_interest_rate),
       votes_daily_change: hiveChain?.vests(
         witnessData.witness.votes_daily_change
-      ),
-      votes_daily_change_hive_power: hiveChain?.hive(
-        witnessData.witness.votes_daily_change_hive_power
       ),
     };
     const formattedWitness = hiveChain?.formatter.format(
@@ -43,6 +39,8 @@ const useWitnessDetails = (accountName: string, isWitness: boolean) => {
     select: selectFunction,
     refetchOnWindowFocus: false,
   });
+
+  console.log("WITNESS DETAILS", witnessDetails);
 
   return {
     witnessDetails,
