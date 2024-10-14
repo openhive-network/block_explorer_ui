@@ -133,5 +133,5 @@ test.describe('Account page - account details tests', () => {
         await page.getByText(/Witness Votes/, { exact: true }).click()
         await accountPage.accountWitnessVotesDropdown.scrollIntoViewIfNeeded()
         await expect(accountPage.accountWitnessVotesDropdown).toBeInViewport()
-    })
+    }) // 
 });
