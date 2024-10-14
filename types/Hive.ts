@@ -256,7 +256,7 @@ namespace Hive {
   }
 
   export class GetBlockDetailsParams {
-    blockNumber!: number;
+    blockNumber!: number | Date;
   }
 
   export class BlockDetails {
@@ -280,7 +280,7 @@ namespace Hive {
   }
 
   export class GetBlockGlobalStateParams {
-    "block-num"!: number;
+    "block-num"!: number | Date;
   }
 
   export class GetInputTypeParams {
@@ -451,7 +451,7 @@ namespace Hive {
   }
 
   export class GetOperationsByBlockParams {
-    blockNumber!: number;
+    blockNumber!: number | Date;
     "operation-types"?: string;
     "account-name"?: string;
     page?: number;
@@ -462,8 +462,8 @@ namespace Hive {
   }
 
   export class GetRawBlockParams {
-    "from-block"!: number;
-    "to-block"!: number;
+    "from-block"!: number | Date;
+    "to-block"!: number | Date;
   }
 
   export class TotalOperationsResponse {

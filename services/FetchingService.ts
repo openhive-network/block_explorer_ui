@@ -67,11 +67,11 @@ class FetchingService {
     return await this.extendedHiveChain!.restApi["hafbe-api"].lastSyncedBlock();
   }
 
-  async getBlock(blockNumber: number): Promise<Hive.BlockDetails> {
+  async getBlock(blockNumber: number | Date): Promise<Hive.BlockDetails> {
     return await this.extendedHiveChain!.restApi["hafah-api"].block({ blockNumber });
   }
 
-  async getBlockGlobalState(blockNumber: number): Promise<Hive.BlockDetails> {
+  async getBlockGlobalState(blockNumber: number | Date): Promise<Hive.BlockDetails> {
     return await this.extendedHiveChain!.restApi["hafah-api"].globalState({
       "block-num": blockNumber,
     });
@@ -90,7 +90,7 @@ class FetchingService {
   }
 
   async getOpsByBlock(
-    blockNumber: number,
+    blockNumber: number | Date,
     filter?: number[],
     page?: number,
     accountName?: string,
@@ -322,7 +322,7 @@ class FetchingService {
     )[0];
   }
 
-  async getBlockRaw(blockNumber: number): Promise<Hive.RawBlockData> {
+  async getBlockRaw(blockNumber: number | Date): Promise<Hive.RawBlockData> {
     return (
       await this.extendedHiveChain!.restApi["hafah-api"].rawBlock({
         "from-block": blockNumber,
