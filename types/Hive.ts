@@ -238,7 +238,7 @@ namespace Hive {
     accountName!: string;
     sort?: string;
     direction?: Hive.Direction;
-    "page-size"!: number | null;
+    "result-limit"!: number | null;
     "from-block"?: number | Date;
     "to-block"?: number | Date;
   }

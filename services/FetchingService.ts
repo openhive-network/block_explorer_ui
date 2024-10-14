@@ -275,7 +275,7 @@ class FetchingService {
       accountName: witnessName,
       direction,
       sort,
-      "page-size": limit,
+      "result-limit": limit,
       "from-block": fromTime,
       "to-block": toTime,
     });
