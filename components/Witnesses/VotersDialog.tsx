@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/table";
 import { Switch } from "../ui/switch";
 import useWitnessDetails from "@/hooks/api/common/useWitnessDetails";
+import CustomPagination from "../CustomPagination";
+import { config } from "@/Config";
 
 type VotersDialogProps = {
   accountName: string;
@@ -39,6 +41,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
   const [showHivePower, setShowHivePower] = useState<boolean>(false);
   const [sortKey, setSortKey] = useState<string>("vests");
   const [isAsc, setIsAsc] = useState<boolean>(false);
+  const [pageNum, setPageNum] = useState<number>(1);
 
   const { witnessDetails } = useWitnessDetails(accountName, true);
   const { witnessVoters, isWitnessVotersLoading } = useWitnessVoters(
@@ -46,7 +49,8 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
     isVotersOpen,
     isAsc,
     sortKey,
-    liveDataEnabled
+    liveDataEnabled,
+    pageNum
   );
   const changeSorter = (newIsAsc: boolean, newSortKey: string) => {
     const isAscForChange = newSortKey === sortKey ? newIsAsc : false;
@@ -103,6 +107,15 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                 <p>Last updated : {witnessDetails.votes_updated_at}</p>
               )}
             </div>
+
+            <CustomPagination 
+              currentPage={pageNum}
+              onPageChange={(newPage: number) => {setPageNum(newPage)}}
+              pageSize={config.standardPaginationSize}
+              totalCount={witnessVoters.total_operations}
+              className="text-black dark:text-white"
+              isMirrored={false}
+            />
 
             <Table className="text-white">
               <TableHeader>

@@ -161,6 +161,8 @@ namespace Hive {
   }
 
   export class WitnessVotersResponse {
+    total_operations!: number;
+    total_pages!: number;
     voters!: Voter[];
     votes_updated_at!: Date;
   }
@@ -221,6 +223,7 @@ namespace Hive {
     sort?: string;
     direction?: Hive.Direction;
     "page-size"?: number;
+    "page"?: number;
   }
 
   export class Voter {

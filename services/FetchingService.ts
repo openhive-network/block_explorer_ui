@@ -183,12 +183,14 @@ class FetchingService {
     witness: string,
     sort: string,
     direction: "asc" | "desc",
-    limit?: number
+    page: number,
+    limit?: number,
   ): Promise<Hive.WitnessVotersResponse> {
     return await this.extendedHiveChain!.restApi["hafbe-api"].voters({
       accountName: witness,
       sort,
       direction,
+      page,
       "page-size": limit,
     });
   }
