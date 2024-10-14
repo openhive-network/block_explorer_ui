@@ -40,8 +40,6 @@ const useWitnessDetails = (accountName: string, isWitness: boolean) => {
     refetchOnWindowFocus: false,
   });
 
-  console.log("WITNESS DETAILS", witnessDetails);
-
   return {
     witnessDetails,
     isWitnessDetailsLoading,

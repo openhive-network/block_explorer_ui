@@ -227,11 +227,8 @@ namespace Hive {
   export class Voter {
     voter_name!: string;
     vests!: number;
-    votes_hive_power!: number;
     account_vests!: number;
-    account_hive_power!: number;
     proxied_vests!: number;
-    proxied_hive_power!: number;
     timestamp!: Date;
   }
 
@@ -248,11 +245,8 @@ namespace Hive {
     voter_name!: string;
     approve!: boolean;
     vests!: number;
-    votes_hive_power!: number;
     account_vests!: number;
-    account_hive_power!: number;
     proxied_vests!: number;
-    proxied_hive_power!: number;
     timestamp!: Date;
   }
 

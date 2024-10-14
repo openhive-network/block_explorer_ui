@@ -38,7 +38,6 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
   changeVotersDialogue,
   liveDataEnabled,
 }) => {
-  const [showHivePower, setShowHivePower] = useState<boolean>(false);
   const [sortKey, setSortKey] = useState<string>("vests");
   const [isAsc, setIsAsc] = useState<boolean>(false);
   const [pageNum, setPageNum] = useState<number>(1);
@@ -93,16 +92,6 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
               )}
             </div>
             <div className="flex justify-between">
-              <div className="flex">
-                <label>Vests</label>
-                <Switch
-                  className="mx-2"
-                  checked={showHivePower}
-                  onCheckedChange={setShowHivePower}
-                  data-testid="voters-dialog-vests-hivepower-button"
-                />
-                <label>Hive Power</label>
-              </div>
               {witnessDetails && (
                 <p>Last updated : {witnessDetails.votes_updated_at}</p>
               )}
@@ -168,25 +157,19 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                         className="text-right"
                         data-testid="vote-power"
                       >
-                        {showHivePower
-                          ? formatNumber(voter.votes_hive_power, false)
-                          : formatNumber(voter.vests, true)}
+                        {formatNumber(voter.vests, true)}
                       </TableCell>
                       <TableCell
                         className="text-right"
                         data-testid="account-power"
                       >
-                        {showHivePower
-                          ? formatNumber(voter.account_hive_power, false)
-                          : formatNumber(voter.account_vests, true)}
+                        {formatNumber(voter.account_vests, true)}
                       </TableCell>
                       <TableCell
                         className="text-right"
                         data-testid="proxied-power"
                       >
-                        {showHivePower
-                          ? formatNumber(voter.proxied_hive_power, false)
-                          : formatNumber(voter.proxied_vests, true)}
+                        {formatNumber(voter.proxied_vests, true)}
                       </TableCell>
                     </TableRow>
                   ))}
