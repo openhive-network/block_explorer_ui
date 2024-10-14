@@ -28,9 +28,9 @@ const cardNameMap = new Map([
 ]);
 
 const unclaimedRecourses = new Map([
-  ["reward_hbd_balance", "HBD Unclaimed"],
-  ["reward_hive_balance", "HIVE Unclaimed"],
-  ["reward_vesting_balance", "HP Unclaimed"],
+  ["reward_hbd_balance", "has_hbd_reward"],
+  ["reward_hive_balance", "has_hive_reward"],
+  ["reward_vesting_balance", "has_vesting_reward"],
 ]);
 
 /* list of fields to be skipped when calculating account value */
@@ -45,6 +45,13 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
   const keys = Object.keys(
     userDetails
   ) as (keyof Explorer.AccountDetailsDollars)[];
+
+  const checkForMarkedRender = (param: keyof Explorer.AccountDetailsDollars): boolean => {
+    if (!unclaimedRecourses.has(param)) return false;
+    const rewardParamName = unclaimedRecourses.get(param) as keyof Explorer.FormattedAccountDetails;
+    if (rewardParamName && userDetails[rewardParamName]) return true;
+    return false;
+  }
 
   const renderKey = (key: keyof Explorer.FormattedAccountDetails) => {
     if (Object.keys(userDetails.vests).includes(key)) {
@@ -101,34 +108,27 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
     parameters: (keyof Explorer.AccountDetailsDollars)[]
   ) => {
     return parameters.map(
-      (param: keyof Explorer.AccountDetailsDollars, index: number) => {
-        if (cardNameMap.has(param)) {
-          const hasUnclaimedResources =
-            unclaimedRecourses.has(param) &&
-            Number(userDetails[param].split(" ")[0]);
-
-          return (
-            <Fragment key={index}>
-              <TableRow
-                className={cn(
-                  "border-b border-gray-700 hover:bg-inherit dark:hover:bg-inherit",
-                  {
-                    "bg-explorer-orange": hasUnclaimedResources,
-                  }
-                )}
-              >
-                <TableCell>{cardNameMap.get(param)}</TableCell>
-                <TableCell className="text-right">
-                  {renderKey(param as keyof Explorer.FormattedAccountDetails)}
-                </TableCell>
-                <TableCell className="text-right">
-                  {changeHBDToDollarsDisplay(userDetails.dollars[param])}
-                </TableCell>
-              </TableRow>
-            </Fragment>
-          );
-        }
-      }
+      (param: keyof Explorer.AccountDetailsDollars, index: number) => 
+        <Fragment key={index}>
+          {cardNameMap.has(param) && 
+            <TableRow
+              className={cn(
+                "border-b border-gray-700 hover:bg-inherit dark:hover:bg-inherit", 
+                {
+                  "bg-explorer-orange": checkForMarkedRender(param),
+                }
+              )}
+            >
+              <TableCell>{cardNameMap.get(param)}</TableCell>
+              <TableCell className="text-right">
+                {renderKey(param as keyof Explorer.FormattedAccountDetails)}
+              </TableCell>
+              <TableCell className="text-right">
+                {changeHBDToDollarsDisplay(userDetails.dollars[param])}
+              </TableCell>
+            </TableRow>
+          }
+        </Fragment>
     );
   };
 

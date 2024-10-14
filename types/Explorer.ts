@@ -229,8 +229,11 @@ declare module Explorer {
     hbd_saving_balance: string;
     reward_hbd_balance: string;
     reward_vesting_balance: string;
-    reward_vesting_hive: string;
     reward_hive_balance: string;
+    has_hbd_reward: boolean;
+    has_vesting_reward: boolean;
+    has_hive_reward: boolean;
+    reward_vesting_hive: string;
     vesting_withdraw_rate: string;
     vesting_shares: string;
     delegated_vesting_shares: string;

@@ -61,8 +61,8 @@ const useConvertedAccountDetails = (accountName: string, liveDataEnabled: boolea
     hbd_saving_balance: hiveChain.hbd(accountDetails.hbd_saving_balance),
     reward_hbd_balance: hiveChain.hbd(accountDetails.reward_hbd_balance),
     reward_hive_balance: hiveChain.hive(accountDetails.reward_hive_balance),
-    reward_vesting_hive: hiveChain.hive(accountDetails.reward_vesting_hive),
     reward_vesting_balance: formatRawHP(hiveChain, reward_vesting_balance),
+    reward_vesting_hive: hiveChain.hive(accountDetails.reward_vesting_hive),
     vesting_withdraw_rate: formatRawHP(hiveChain, vesting_withdraw_rate),
     delegated_vesting_shares: formatRawHP(hiveChain, delegated_vesting_shares),
     received_vesting_shares: formatRawHP(hiveChain, received_vesting_shares),
@@ -90,9 +90,16 @@ const useConvertedAccountDetails = (accountName: string, liveDataEnabled: boolea
     vesting_withdraw_rate: hiveChain.hiveToHbd(vesting_withdraw_rate, rawFeedPrice, rawQuote)
   }
 
-  const formattedAccountDetails = {...hiveChain?.formatter.format(
-    {...accountDetailsForFormat, dollars, vests}
-    ),
+
+
+  const formattedAccountDetails = {...hiveChain?.formatter.format({
+      ...accountDetailsForFormat, 
+      dollars, 
+      vests,
+      has_hbd_reward: !!accountDetails.reward_hbd_balance,
+      has_vesting_reward: !!Number(accountDetails.reward_vesting_balance),
+      has_hive_reward: !!accountDetails.reward_hive_balance
+    }),
   } as Explorer.FormattedAccountDetails;
   delete formattedAccountDetails.last_post;
   delete formattedAccountDetails.last_root_post;
