@@ -35,7 +35,7 @@ test.describe("Home page - witnesses list", () => {
       await page.waitForTimeout(2000)
       expect(
         await mainPage.getElementCssPropertyValue(witnessesName, 'background-color')
-      ).toBe('rgb(0, 0, 0)');
+      ).toBe('rgb(51, 59, 76)');
   
     });
   });

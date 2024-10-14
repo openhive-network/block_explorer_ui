@@ -64,7 +64,7 @@ test.describe('Account page - account details tests', () => {
         const currentWitnessName = await mainPage.currentWitnessName.textContent();
         await mainPage.headBlockCardWitnessLink.click()
 
-        const response = await page.waitForResponse((response) => response.url().includes(`hafbe/accounts/${currentWitnessName}`));
+        const response = await page.waitForResponse((response) => response.url().includes(`/accounts/${currentWitnessName}`));
         const responseBody = await response.json()
 
         await expect(response.status()).toBe(200)
@@ -75,8 +75,8 @@ test.describe('Account page - account details tests', () => {
         await expect(accountPage.creationDate.first()).toBeVisible()
 
         const creationDate = await accountPage.creationDate.first().innerText()
-        const expectedDatePart = originalDate.split('T')[0];
-        const receivedDatePart = creationDate.split(' ')[0].replace(/\//g, '-');
+        const expectedDatePart = await originalDate.split('T')[0];
+        const receivedDatePart = await creationDate.split(' ')[0].replace(/\//g, '-');
 
         expect(expectedDatePart).toEqual(receivedDatePart);
     })
