@@ -174,7 +174,7 @@ class FetchingService {
     direction: "asc" | "desc"
   ): Promise<Hive.WitnessesResponse> {
     return await this.extendedHiveChain!.restApi["hafbe-api"].witnesses({
-      "result-limit": limit,
+      "page-size": limit,
       offset,
       sort,
       direction,
@@ -191,7 +191,7 @@ class FetchingService {
       accountName: witness,
       sort,
       direction,
-      "result-limit": limit,
+      "page-size": limit,
     });
   }
 
@@ -279,7 +279,7 @@ class FetchingService {
       accountName: witnessName,
       direction,
       sort,
-      "result-limit": limit,
+      "page-size": limit,
       "start-date": fromTime,
       "end-date": toTime,
     });

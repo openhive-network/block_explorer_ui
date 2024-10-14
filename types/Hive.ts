@@ -120,7 +120,7 @@ namespace Hive {
   }
 
   export class GetWitnessesParams {
-    "result-limit"!: number;
+    "page-size"!: number;
     offset!: number;
     sort!: string;
     direction!: Hive.Direction;
@@ -220,7 +220,7 @@ namespace Hive {
     accountName!: string;
     sort?: string;
     direction?: Hive.Direction;
-    "result-limit"?: number;
+    "page-size"?: number;
   }
 
   export class Voter {
@@ -238,7 +238,7 @@ namespace Hive {
     accountName!: string;
     sort?: string;
     direction?: Hive.Direction;
-    "result-limit"!: number | null;
+    "page-size"!: number | null;
     "start-date"?: Date;
     "end-date"?: Date;
   }
