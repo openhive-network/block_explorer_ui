@@ -239,8 +239,8 @@ namespace Hive {
     sort?: string;
     direction?: Hive.Direction;
     "page-size"!: number | null;
-    "start-date"?: Date;
-    "end-date"?: Date;
+    "from-block"?: number | Date;
+    "to-block"?: number | Date;
   }
 
   export class WitnessVotesHistory {
@@ -344,10 +344,8 @@ namespace Hive {
     page?: number;
     "page-size"?: number;
     "data-size-limit"?: number;
-    "from-block"?: number;
-    "to-block"?: number;
-    "start-date"?: Date;
-    "end-date"?: Date;
+    "from-block"?: number | Date;
+    "to-block"?: number | Date;
   }
 
   export class GetAccountDetailsParams {
@@ -429,10 +427,8 @@ namespace Hive {
     permlink?: string;
     "page-size"?: number;
     "data-size-limit"?: number;
-    "from-block"?: number;
-    "to-block"?: number;
-    "start-date"?: Date;
-    "end-date"?: Date;
+    "from-block"?: number | Date;
+    "to-block"?: number | Date;
   }
 
   export class CommentOperationResponse {
@@ -449,10 +445,8 @@ namespace Hive {
     "account-name"?: string;
     "page-size"?: number;
     "data-size-limit"?: number;
-    "from-block"?: number;
-    "to-block"?: number;
-    "start-date"?: Date;
-    "end-date"?: Date;
+    "from-block"?: number | Date;
+    "to-block"?: number | Date;
     "path-filter"?: string;
   }
 
