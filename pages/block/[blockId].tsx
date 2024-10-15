@@ -87,19 +87,18 @@ export default function Block() {
   }, [blockId, refetch]);
 
   const { settings } = useUserSettingsContext();
-
   const { operationsCountInBlock, countLoading } = useOperationsCountInBlock(
-    Number(blockId)
+    Number.isNaN(Number(blockId)) ? blockId : Number(blockId)
   );
 
-  const { blockDetails, loading } = useBlockData(Number(blockId));
+  const { blockDetails, loading } = useBlockData(Number.isNaN(Number(blockId)) ? blockId : Number(blockId));
 
-  const { rawBlockdata } = useBlockRawData(Number(blockId));
+  const { rawBlockdata } = useBlockRawData(Number.isNaN(Number(blockId)) ? blockId : Number(blockId));
   const { blockOperations: totalOperations, trxLoading: totalLoading } =
-    useBlockOperations(Number(blockId), undefined, paramsState.page || 1);
+    useBlockOperations(Number.isNaN(Number(blockId)) ? blockId : Number(blockId), undefined, paramsState.page || 1);
 
   const { blockError, blockOperations, trxLoading } = useBlockOperations(
-    Number(blockId),
+    Number.isNaN(Number(blockId)) ? blockId : Number(blockId),
     paramsState.filters
       ? convertBooleanArrayToIds(paramsState.filters)
       : undefined,
@@ -244,7 +243,7 @@ export default function Block() {
           id="block-page-top"
         >
           <BlockPageNavigation
-            blockNumber={Number(blockId)}
+            blockNumber={blockDetails.block_num}
             goToBlock={handleGoToBlock}
             timeStamp={blockDate}
             setFilters={handleFilterChange}

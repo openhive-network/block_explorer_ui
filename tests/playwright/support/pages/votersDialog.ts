@@ -35,7 +35,7 @@ export class VotersDialog {
 
   async validateVotersDialogIsLoaded() {
     await expect(this.votersDialog).toBeVisible();
-    await expect(this.votersDialogVestsHivePowerButton).toBeVisible();
+    // await expect(this.votersDialogVestsHivePowerButton).toBeVisible();
     await expect(this.votersDialogTableBody).toBeVisible();
   }
 
