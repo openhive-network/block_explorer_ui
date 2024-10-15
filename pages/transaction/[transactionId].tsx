@@ -71,13 +71,13 @@ export default function Transaction() {
                 </div>
                 <div className="w-full flex justify-evenly">
                   <div>
-                    Block:
+                    Block:{" "}
                     <Link
                       href={`/block/${trxData?.block_num}`}
                       className="text-explorer-turquoise"
                       data-testid="transaction-header-block-number"
                     >
-                      {" " + trxData?.block_num}
+                      <span className="text-link">{trxData?.block_num}</span>
                     </Link>
                   </div>
                   <div data-testid="transaction-header-date">
