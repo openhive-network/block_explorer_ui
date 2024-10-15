@@ -3,7 +3,7 @@ import { UseQueryResult, useQuery } from "@tanstack/react-query";
 import Hive from "@/types/Hive";
 import fetchingService from "@/services/FetchingService";
 
-const useOperationsCountInBlock = (blockNumber: number) => {
+const useOperationsCountInBlock = (blockNumber: number | string) => {
   const {
     data: operationsCountInBlock,
     isLoading: operationsCountInBlockLoading,

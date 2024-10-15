@@ -4,7 +4,7 @@ import Hive from "@/types/Hive";
 import fetchingService from "@/services/FetchingService";
 
 const useBlockOperations = (
-  blockNumber: number | Date,
+  blockNumber: number | string,
   blockFilters?: number[],
   page?: number,
   account?: string,
