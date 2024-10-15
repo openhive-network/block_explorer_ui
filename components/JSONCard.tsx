@@ -31,7 +31,7 @@ const JSONCard: React.FC<JSONCardProps> = ({
       <CardHeader className="p-0">
         <div
           onClick={handleHideData}
-          className="flex justify-between p-2 hover:bg-slate-600 cursor-pointer px-4"
+          className="flex justify-between p-2 hover:bg-rowHover cursor-pointer px-4"
         >
           <div className="text-lg">{header}</div>
           {showCollapseButton ? (

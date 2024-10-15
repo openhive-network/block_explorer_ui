@@ -35,7 +35,7 @@ const JumpToPage = ({ currentPage, onPageChange }: any) => {
         data-testid="input-goto-page"
       />
       <Button
-        className="mx-2 hover:bg-gray-700"
+        className="mx-2 hover:bg-buttonHover"
         type="submit"
         data-testid="button-goto-page"
       >

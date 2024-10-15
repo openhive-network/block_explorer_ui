@@ -64,7 +64,7 @@ const AddressSwitchedDialog: React.FC<AddressSwitcherDialogProps> = ({
           <span>
             {addressType === "api" ? "Explorer backend API:" : "Hive node:"}
           </span>
-          <span className=" text-blue-400 ml-1">
+          <span className="text-link ml-1">
             {currentAddress ? currentAddress : getDefaultApiAddress()}
           </span>
         </div>

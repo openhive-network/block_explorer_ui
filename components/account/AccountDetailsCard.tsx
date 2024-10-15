@@ -37,29 +37,30 @@ const LINK_KEYS = ["recovery_account", "reset_account"];
 const URL_KEYS = ["url"];
 const COPY_KEYS = ["signing_key"];
 
-
 const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
   header,
   userDetails,
 }) => {
-
   const [isPropertiesHidden, setIsPropertiesHidden] = useState(true);
 
   const keys = Object.keys(userDetails);
 
-
   const renderKey = (key: keyof Record<string, any>): ReactNode => {
     if (LINK_KEYS.includes(key)) {
       return (
-        <div className="text-blue-400">
-          <Link href={`/@${userDetails[key]}`}>{userDetails[key] as string}</Link>{" "}
+        <div className="text-link">
+          <Link href={`/@${userDetails[key]}`}>
+            {userDetails[key] as string}
+          </Link>{" "}
         </div>
       );
     }
     if (COPY_KEYS.includes(key)) {
       const stringProperty = userDetails[key] as string;
       let shortenedKey: string = "";
-      shortenedKey = `${stringProperty?.slice(0, 8)}...${stringProperty?.slice(stringProperty.length - 5)}`;
+      shortenedKey = `${stringProperty?.slice(0, 8)}...${stringProperty?.slice(
+        stringProperty.length - 5
+      )}`;
       return (
         <CopyToKeyboard
           value={stringProperty}
@@ -69,12 +70,17 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
     }
     if (userDetails.vests && Object.keys(userDetails?.vests).includes(key)) {
       const vestValue = userDetails.vests[key];
-      return <VestsTooltip tooltipTrigger={userDetails[key] as string} tooltipContent={vestValue} />
+      return (
+        <VestsTooltip
+          tooltipTrigger={userDetails[key] as string}
+          tooltipContent={vestValue}
+        />
+      );
     }
     if (URL_KEYS.includes(key)) {
       const stringProperty = userDetails[key] as string;
       return (
-        <div className="text-blue-400">
+        <div className="text-link">
           <Link
             href={stringProperty || ""}
             target="_blank"
@@ -92,9 +98,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
     } else return JSON.stringify(userDetails[key]);
   };
 
-  const buildTableBody = (
-    keys: string[],
-  ) => {
+  const buildTableBody = (keys: string[]) => {
     return keys.map((key, index) => {
       const isZeroValue = userDetails[key] === 0 || userDetails[key] === "0";
 
@@ -103,7 +107,11 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
       } else {
         return (
           <Fragment key={index}>
-            <TableRow className={"border-b border-gray-700 hover:bg-inherit"}>
+            <TableRow
+              className={
+                "border-b border-gray-700 hover:bg-inherit dark:hover:bg-inherit"
+              }
+            >
               <TableCell>{key}</TableCell>
               <TableCell>{renderKey(key)}</TableCell>
             </TableRow>
@@ -125,7 +133,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
       <CardHeader className="p-0">
         <div
           onClick={handlePropertiesVisibility}
-          className="flex justify-between align-center p-2 hover:bg-slate-600 cursor-pointer px-4"
+          className="flex justify-between align-center p-2 hover:bg-rowHover cursor-pointer px-4"
         >
           <div className="text-lg">{header}</div>
           {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}

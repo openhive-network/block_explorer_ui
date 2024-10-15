@@ -268,7 +268,7 @@ export default function Block() {
           </div>
           {loading || trxLoading || totalLoading ? (
             <div className="flex justify-center items-center">
-              <Loader2 className="animate-spin dark:text-white mt-1 h-16 w-16 ml-3 ... " />
+              <Loader2 className="animate-spin text-text mt-1 h-16 w-16 ml-3 ... " />
             </div>
           ) : settings.rawJsonView || settings.prettyJsonView ? (
             <div className="px-2">
@@ -281,7 +281,7 @@ export default function Block() {
             </div>
           ) : (
             <section
-              className="flex flex-col items-center justify-center text-white"
+              className="flex flex-col items-center justify-center text-text"
               data-testid="block-page-operation-list"
             >
               {!!totalOperations?.total_operations &&
@@ -293,7 +293,7 @@ export default function Block() {
                     }
                     pageSize={config.blockPagePaginationSize}
                     totalCount={blockOperations?.total_operations || 0}
-                    className="text-black dark:text-white"
+                    className="text-text"
                   />
                 )}
               <div className="w-full max-w-screen-2xl flex flex-col gap-y-2">

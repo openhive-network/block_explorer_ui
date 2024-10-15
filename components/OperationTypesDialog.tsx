@@ -167,7 +167,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
       <li
         onClick={() => onFiltersSelect(operationType.op_type_id)}
         key={operationType.op_type_id}
-        className="col-span-3 pl-2 md:col-span-1 flex items-center font-bold text-base rounded-lg bg-inherit hover:border-2-gray group hover:shadow dark:bg-inherit dark:hover:bg-gray-500 dark:text-white "
+        className="col-span-3 pl-2 md:col-span-1 flex items-center font-bold text-text rounded-lg bg-inherit hover:bg-rowHover"
       >
         <Input
           type="checkbox"
@@ -183,9 +183,9 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
         <Label
           htmlFor="bordered-checkbox-1"
           className={cn(
-            "p-1 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300 whitespace-nowrap overflow-hidden text-ellipsis",
+            "p-1 ml-2 text-sm font-medium text-text whitespace-nowrap overflow-hidden text-ellipsis",
             {
-              "text-sky-900 dark:text-sky-200": operationType.is_virtual,
+              "text-sky-500 dark:text-sky-200": operationType.is_virtual,
               "opacity-50": operationType.isDisabled,
             }
           )}
@@ -231,14 +231,14 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           </div>
           <div>
             <Button
-              className="bg-inherit text-black dark:text-white"
+              className="bg-inherit text-text"
               disabled={!nonDisabledOperationTypesForSection.length}
               onClick={() => selectAllOfCategory(operations)}
             >
               Select
             </Button>
             <Button
-              className="bg-inherit text-black dark:text-white"
+              className="bg-inherit text-text"
               disabled={!nonDisabledOperationTypesForSection.length}
               onClick={() => clearCategory(operations)}
             >
@@ -247,7 +247,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           </div>
         </div>
         <ul
-          className="my-4 grid grid-cols-4 gap-4 place-items-stretch text-white "
+          className="my-4 grid grid-cols-4 gap-4 place-items-stretch text-text "
           data-testid="virtual-operations-list"
         >
           {sortedOperations.map(
@@ -274,7 +274,6 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
       </DialogTrigger>
       {selectedOperations.length ? (
         <Chip
-          className={buttonClassName}
           text={triggerTitle}
           clearSelection={handleClearOperationsFilter}
         />

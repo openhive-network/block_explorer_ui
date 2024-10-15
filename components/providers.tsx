@@ -33,6 +33,9 @@ const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
           onError: (error: any) => {
             toast.error("Error occured", {
               description: `${(error as Error).message}`,
+              style: {
+                background: "red",
+              },
             });
           },
         }),

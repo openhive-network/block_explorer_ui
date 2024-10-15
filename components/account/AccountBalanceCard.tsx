@@ -71,9 +71,12 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
           return (
             <Fragment key={index}>
               <TableRow
-                className={cn("border-b border-gray-700 hover:bg-inherit", {
-                  "bg-explorer-orange": hasUnclaimedResources,
-                })}
+                className={cn(
+                  "border-b border-gray-700 hover:bg-inherit dark:hover:bg-inherit",
+                  {
+                    "bg-explorer-orange": hasUnclaimedResources,
+                  }
+                )}
               >
                 <TableCell>{cardNameMap.get(param)}</TableCell>
                 <TableCell className="text-right">
@@ -102,7 +105,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
       <CardHeader className="p-0">
         <div
           onClick={handleBalancesVisibility}
-          className="flex justify-between align-center p-2 hover:bg-slate-600 cursor-pointer px-4"
+          className="flex justify-between align-center p-2 hover:bg-rowHover cursor-pointer px-4"
         >
           <div className="text-lg">{header}</div>
           {isBalancesHidden ? <ArrowDown /> : <ArrowUp />}

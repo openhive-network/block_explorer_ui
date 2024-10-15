@@ -16,7 +16,7 @@ module.exports = {
       },
     },
     extend: {
-      // Modify colors @tstyles/theme.css
+      // Modify colors @styles/theme.css
       colors: {
         theme: "var(--color-background)",
         rowOdd: "var(--color-row-odd)",
@@ -25,6 +25,8 @@ module.exports = {
         buttonBg: "var(--color-button)",
         buttonText: "var(--color-button-text)",
         buttonHover: "var(--color-button-hover)",
+        text: "var(--color-text)",
+        link: "var(--color-link)",
 
         switch: {
           button: "var(--color-switch-button)",
@@ -45,7 +47,7 @@ module.exports = {
           custom: "var(--color-operation-custom)",
           other: "var(--color-operation-other)",
         },
-        "explorer-bg-start": "rgb(var(--background-start-rgb))",
+        "explorer-bg-start": "var(--background-start-rgb)",
         "explorer-yellow": "var(--color-yellow)",
         "explorer-light-blue": "var(--color-light-blue)",
         "explorer-dark-blue": "var(--color-dark-blue)",

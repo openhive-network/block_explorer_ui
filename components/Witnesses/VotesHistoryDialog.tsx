@@ -143,7 +143,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                 </div>
               </div>
             )}
-            <Table className="text-white">
+            <Table className="text-text">
               <TableHeader>
                 <TableRow>
                   {tableColums.map((column, index) => (
@@ -179,7 +179,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                         {formatAndDelocalizeTime(vote.timestamp)}
                       </TableCell>
                       <TableCell
-                        className="text-explorer-turquoise"
+                        className="text-link"
                         data-testid="voter"
                       >
                         <Link href={`/@${vote.voter_name}`}>
@@ -195,9 +195,9 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                         data-testid="vote-arrow"
                       >
                         {vote.approve ? (
-                          <ArrowUpCircleIcon />
+                          <ArrowUpCircleIcon color="#17e405" />
                         ) : (
-                          <ArrowDownCircleIcon />
+                          <ArrowDownCircleIcon color="#f71b1b" />
                         )}
                       </TableCell>
                       <TableCell

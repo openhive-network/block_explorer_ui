@@ -118,7 +118,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
   private getAccountLink(account: string): React.JSX.Element {
     return (
       <Link href={`/@${account}`}>
-        <span className="text-explorer-turquoise">@{account}</span>
+        <span className="text-link">@{account}</span>
       </Link>
     );
   }

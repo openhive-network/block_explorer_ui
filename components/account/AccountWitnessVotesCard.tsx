@@ -20,7 +20,7 @@ const buildTableBody = (voters: string[]) => {
         <TableRow
           className={cn(
             {
-              "border-t border-gray-700": index !==0,
+              "border-t border-gray-700": index !== 0,
               "border-b border-gray-700": !isLast,
             },
             "hover:bg-inherit"
@@ -53,7 +53,7 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
     setIsPropertiesHidden(!isPropertiesHidden);
   };
 
-  if (proxy!=null && proxy.length>0){
+  if (proxy != null && proxy.length > 0) {
     return (
       <Card
         data-testid="witness-votes-dropdown"
@@ -62,32 +62,36 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
         <CardHeader className="p-0">
           <div
             onClick={handlePropertiesVisibility}
-            className="h-full flex justify-between align-center p-2 hover:bg-slate-600 cursor-pointer px-4"
+            className="h-full flex justify-between align-center p-2 hover:bg-rowHover cursor-pointer px-4"
           >
             <div className="text-lg">Witness Votes (proxy)</div>
-  
+
             {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
           </div>
         </CardHeader>
         <CardContent hidden={isPropertiesHidden}>
-          <div><Link
-              className="text-blue-400"
+          <div>
+            <Link
+              className="text-link"
               href={`/@${accountName}`}
-            >@{accountName}
+            >
+              @{accountName}
             </Link>
             <span> uses </span>
             <Link
-              className="text-blue-400"
+              className="text-link"
               href={`/@${proxy}`}
-            >@{proxy}</Link>
-            <span> as a voting proxy</span></div>
+            >
+              @{proxy}
+            </Link>
+            <span> as a voting proxy</span>
+          </div>
         </CardContent>
       </Card>
     );
-  }
-  else if (!voters || !voters.length) return null;
-  voters.sort((a, b) =>
-    a.toLowerCase().localeCompare(b.toLowerCase())  // Changed: Sorting logic to ensure alphabetical order
+  } else if (!voters || !voters.length) return null;
+  voters.sort(
+    (a, b) => a.toLowerCase().localeCompare(b.toLowerCase()) // Changed: Sorting logic to ensure alphabetical order
   );
 
   return (
@@ -98,9 +102,11 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
       <CardHeader className="p-0">
         <div
           onClick={handlePropertiesVisibility}
-          className="h-full flex justify-between align-center p-2 hover:bg-slate-600 cursor-pointer px-4"
+          className="h-full flex justify-between align-center p-2 hover:bg-rowHover cursor-pointer px-4"
         >
-          <div className="text-lg">Witness Votes ({voters.length} / {config.maxWitnessVotes})</div>
+          <div className="text-lg">
+            Witness Votes ({voters.length} / {config.maxWitnessVotes})
+          </div>
 
           {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
         </div>
