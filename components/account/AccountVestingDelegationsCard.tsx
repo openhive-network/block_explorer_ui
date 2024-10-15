@@ -69,7 +69,7 @@ const AccountVestingDelegationsCard: React.FC<
           onClick={handlePropertiesVisibility}
           className="h-full flex justify-between align-center p-2 hover:bg-slate-600 cursor-pointer px-4"
         >
-          <div className="text-lg">HP Delegations</div>
+          <div className="text-lg">HP Delegations ({delegations.length})</div>
           {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
         </div>
       </CardHeader>
