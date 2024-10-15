@@ -45,7 +45,6 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
   changeVoteHistoryDialogue,
   liveDataEnabled,
 }) => {
-  const [showHivePower, setShowHivePower] = useState<boolean>(false);
   const [page, setPage] = useState(1);
   const [displayData, setDisplayData] =
     useState<Hive.WitnessesVotesHistoryResponse>();
@@ -106,16 +105,6 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
               )}
             </div>
             <div className="flex justify-between">
-              <div className="flex">
-                <label>Vests</label>
-                <Switch
-                  className="mx-2"
-                  checked={showHivePower}
-                  onCheckedChange={setShowHivePower}
-                  data-testid="votes-history-dialog-vests-hivepower-button"
-                />
-                <label>Hive Power</label>
-              </div>
               {witnessDetails && (
                 <p>Last updated : {witnessDetails.votes_updated_at}</p>
               )}
@@ -215,9 +204,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                         className="text-right"
                         data-testid="current-voter-power"
                       >
-                        {showHivePower
-                          ? formatNumber(vote.votes_hive_power, false)
-                          : formatNumber(vote.vests, true)}
+                        {formatNumber(vote.vests, true)}
                       </TableCell>
                     </TableRow>
                   ))}

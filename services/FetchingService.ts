@@ -151,10 +151,8 @@ class FetchingService {
       page: accountOperationsProps.pageNumber,
       "page-size": config.standardPaginationSize,
       "data-size-limit": config.opsBodyLimit,
-      "from-block": accountOperationsProps.fromBlock,
-      "to-block": accountOperationsProps.toBlock,
-      "start-date": accountOperationsProps.startDate,
-      "end-date": accountOperationsProps.endDate,
+      "from-block": accountOperationsProps.fromBlock || accountOperationsProps.startDate,
+      "to-block": accountOperationsProps.toBlock || accountOperationsProps.endDate,
     };
     return await this.extendedHiveChain!.restApi["hafah-api"].accounts.operations(
       requestParams
@@ -174,7 +172,7 @@ class FetchingService {
     direction: "asc" | "desc"
   ): Promise<Hive.WitnessesResponse> {
     return await this.extendedHiveChain!.restApi["hafbe-api"].witnesses({
-      "result-limit": limit,
+      "page-size": limit,
       offset,
       sort,
       direction,
@@ -185,13 +183,15 @@ class FetchingService {
     witness: string,
     sort: string,
     direction: "asc" | "desc",
-    limit?: number
+    page: number,
+    limit?: number,
   ): Promise<Hive.WitnessVotersResponse> {
     return await this.extendedHiveChain!.restApi["hafbe-api"].voters({
       accountName: witness,
       sort,
       direction,
-      "result-limit": limit,
+      page,
+      "page-size": limit,
     });
   }
 
@@ -252,10 +252,8 @@ class FetchingService {
       "operation-types": blockSearchProps.operationTypes?.join(","),
       "account-name": blockSearchProps?.accountName,
       direction: "desc",
-      "from-block": blockSearchProps.fromBlock,
-      "to-block": blockSearchProps.toBlock,
-      "start-date": blockSearchProps.startDate,
-      "end-date": blockSearchProps.endDate,
+      "from-block": blockSearchProps.fromBlock || blockSearchProps.startDate,
+      "to-block": blockSearchProps.toBlock || blockSearchProps.endDate,
       "result-limit": blockSearchProps.limit,
       "path-filter": createPathFilterString(
         blockSearchProps.deepProps.content,
@@ -280,8 +278,8 @@ class FetchingService {
       direction,
       sort,
       "result-limit": limit,
-      "start-date": fromTime,
-      "end-date": toTime,
+      "from-block": fromTime,
+      "to-block": toTime,
     });
   }
 
@@ -301,10 +299,8 @@ class FetchingService {
       permlink: commentSearchProps.permlink,
       "page-size": config.standardPaginationSize,
       "data-size-limit": config.opsBodyLimit,
-      "from-block": commentSearchProps.fromBlock,
-      "to-block": commentSearchProps.toBlock,
-      "start-date": commentSearchProps.startDate,
-      "end-date": commentSearchProps.endDate,
+      "from-block": commentSearchProps.fromBlock || commentSearchProps.startDate,
+      "to-block": commentSearchProps.toBlock || commentSearchProps.endDate,
     };
     return await this.extendedHiveChain!.restApi["hafbe-api"].accounts.commentOperations(
       requestParams

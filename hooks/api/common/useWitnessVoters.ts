@@ -12,7 +12,8 @@ const useWitnessVoters = (
   isModalOpen: boolean,
   isAsc: boolean,
   sortKey: string,
-  liveDataEnabled: boolean
+  liveDataEnabled: boolean,
+  pageNum: number
 ) => {
   const sortDirection = isAsc ? SORT_ASC : SORT_DESC;
 
@@ -28,9 +29,10 @@ const useWitnessVoters = (
       isAsc,
       sortKey,
       liveDataEnabled,
+      pageNum
     ],
     queryFn: () =>
-      fetchingService.getWitnessVoters(accountName, sortKey, sortDirection),
+      fetchingService.getWitnessVoters(accountName, sortKey, sortDirection, pageNum),
     enabled: !!accountName && isModalOpen,
     refetchInterval: liveDataEnabled ? config.accountRefreshInterval : false,
     refetchOnWindowFocus: false,

@@ -120,7 +120,7 @@ namespace Hive {
   }
 
   export class GetWitnessesParams {
-    "result-limit"!: number;
+    "page-size"!: number;
     offset!: number;
     sort!: string;
     direction!: Hive.Direction;
@@ -136,7 +136,6 @@ namespace Hive {
     url!: string;
     vests!: string;
     votes_daily_change!: number;
-    votes_daily_change_hive_power!: number;
     voters_num!: number;
     voters_num_daily_change!: number;
     price_feed!: number;
@@ -147,7 +146,6 @@ namespace Hive {
     version!: string;
     missed_blocks!: number;
     hbd_interest_rate!: number;
-    vests_hive_power!: number;
   }
 
   export class WitnessesResponse {
@@ -161,6 +159,8 @@ namespace Hive {
   }
 
   export class WitnessVotersResponse {
+    total_operations!: number;
+    total_pages!: number;
     voters!: Voter[];
     votes_updated_at!: Date;
   }
@@ -220,17 +220,15 @@ namespace Hive {
     accountName!: string;
     sort?: string;
     direction?: Hive.Direction;
-    "result-limit"?: number;
+    "page-size"?: number;
+    "page"?: number;
   }
 
   export class Voter {
     voter_name!: string;
     vests!: number;
-    votes_hive_power!: number;
     account_vests!: number;
-    account_hive_power!: number;
     proxied_vests!: number;
-    proxied_hive_power!: number;
     timestamp!: Date;
   }
 
@@ -239,19 +237,16 @@ namespace Hive {
     sort?: string;
     direction?: Hive.Direction;
     "result-limit"!: number | null;
-    "start-date"?: Date;
-    "end-date"?: Date;
+    "from-block"?: number | Date;
+    "to-block"?: number | Date;
   }
 
   export class WitnessVotesHistory {
     voter_name!: string;
     approve!: boolean;
     vests!: number;
-    votes_hive_power!: number;
     account_vests!: number;
-    account_hive_power!: number;
     proxied_vests!: number;
-    proxied_hive_power!: number;
     timestamp!: Date;
   }
 
@@ -344,10 +339,8 @@ namespace Hive {
     page?: number;
     "page-size"?: number;
     "data-size-limit"?: number;
-    "from-block"?: number;
-    "to-block"?: number;
-    "start-date"?: Date;
-    "end-date"?: Date;
+    "from-block"?: number | Date;
+    "to-block"?: number | Date;
   }
 
   export class GetAccountDetailsParams {
@@ -429,10 +422,8 @@ namespace Hive {
     permlink?: string;
     "page-size"?: number;
     "data-size-limit"?: number;
-    "from-block"?: number;
-    "to-block"?: number;
-    "start-date"?: Date;
-    "end-date"?: Date;
+    "from-block"?: number | Date;
+    "to-block"?: number | Date;
   }
 
   export class CommentOperationResponse {
@@ -449,10 +440,8 @@ namespace Hive {
     "account-name"?: string;
     "page-size"?: number;
     "data-size-limit"?: number;
-    "from-block"?: number;
-    "to-block"?: number;
-    "start-date"?: Date;
-    "end-date"?: Date;
+    "from-block"?: number | Date;
+    "to-block"?: number | Date;
     "path-filter"?: string;
   }
 
