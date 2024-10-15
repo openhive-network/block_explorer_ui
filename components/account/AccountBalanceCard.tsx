@@ -1,12 +1,12 @@
-import { Fragment, useState } from "react";
+import { Fragment, useState, useEffect } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table";
 import VestsTooltip from "../VestsTooltip";
 import Explorer from "@/types/Explorer";
-import { changeHBDToDollarsDisplay } from "@/utils/StringUtils";
-import { cn } from "@/lib/utils";
+import { changeHBDToDollarsDisplay, grabNumericValue } from "@/utils/StringUtils";
+import { cn, formatNumber } from "@/lib/utils";
 
 type AccountBalanceCardProps = {
   header: string;
@@ -33,6 +33,11 @@ const unclaimedRecourses = new Map([
   ["reward_vesting_balance", "HP Unclaimed"],
 ]);
 
+/* list of fields to be skipped when calculating account value */
+const skipCalculation = 
+  ["delegated_vesting_shares",
+  "received_vesting_shares"];
+
 const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
   header,
   userDetails,
@@ -57,6 +62,40 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
   };
 
   const [isBalancesHidden, setIsBalancesHidden] = useState(false);
+
+  const [totalBalance, setTotalBalance] = useState(0);
+
+
+  useEffect(() => {
+    const newBalance = keys.reduce((acc, param) => {
+      if (cardNameMap.has(param) && !skipCalculation.includes(param)) {
+        const value = grabNumericValue(userDetails.dollars[param]);
+        if (typeof value === 'number' && !isNaN(value)) {
+          return acc + value;
+        } else {
+          console.error('Value is not a number:', value);
+          return acc;
+        }
+      }
+      return acc;
+    }, 0);
+
+    setTotalBalance(newBalance);
+  }, [keys, userDetails, cardNameMap, grabNumericValue]);
+
+
+
+  const renderBalance = (
+  ) => {
+    return (
+      
+        <TableRow className="border-b border-gray-700 hover:bg-inherit font-bold">
+          <TableCell className="">Account Value</TableCell>
+          <TableCell className="text-right" colSpan={2}>{formatNumber(totalBalance, false, true)} $</TableCell>
+        </TableRow>
+      
+    );
+  }
 
   const buildTableBody = (
     parameters: (keyof Explorer.AccountDetailsDollars)[]
@@ -116,7 +155,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
         data-testid="card-content"
       >
         <Table>
-          <TableBody>{buildTableBody(keys)}</TableBody>
+          <TableBody>{buildTableBody(keys)}{renderBalance()}</TableBody>
         </Table>
       </CardContent>
     </Card>
