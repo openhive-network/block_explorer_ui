@@ -123,10 +123,8 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
     >
       <TableHeader>
         <TableRow>
-          <TableHead className="sticky left-0 bg-theme dark:bg-theme"></TableHead>
-          <TableHead className="pl-2 sticky left-12 bg-theme dark:bg-theme">
-            Block
-          </TableHead>
+          <TableHead className="sticky left-0 bg-theme "></TableHead>
+          <TableHead className="pl-2 sticky left-12 bg-theme ">Block</TableHead>
           <TableHead>Transaction</TableHead>
           <TableHead>Time</TableHead>
           <TableHead>Operation</TableHead>

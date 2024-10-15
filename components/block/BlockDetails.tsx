@@ -3,8 +3,6 @@ import BlockPageOperationCount from "./BlockPageOperationCount";
 import Link from "next/link";
 import Image from "next/image";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
-import moment from "moment";
-import { config } from "@/Config";
 import Explorer from "@/types/Explorer";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
@@ -48,13 +46,13 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
             href={`/@${blockDetails?.producer_account}`}
           >
             <span
-              className="text-explorer-turquoise mx-2"
+              className="text-link mx-2"
               data-testid="block-producer-name"
             >
               {blockDetails?.producer_account}
             </span>
             <Image
-              className="rounded-full border-2 border-explorer-turquoise"
+              className="rounded-full border-2 border-link"
               src={getHiveAvatarUrl(blockDetails?.producer_account)}
               alt="avatar"
               width={40}
