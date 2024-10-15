@@ -44,7 +44,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
   };
 
   return (
-    <div className="border-y border-solid border-gray-600 py-2 flex flex-col gap-y-2">
+    <div className="py-2 flex flex-col gap-y-2">
       <Select
         onValueChange={setRangeSelectKey}
         value={rangeSelectKey}
