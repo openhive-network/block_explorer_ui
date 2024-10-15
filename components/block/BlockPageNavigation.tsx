@@ -102,7 +102,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
 
   const handleGoToBlockByTime = async (date: Date | undefined) => {
     if (date && date?.getTime() !== timeStamp?.getTime()) {
-      goToBlock(date.toDateString());
+      goToBlock(date.toISOString());
     }
   };
 
