@@ -122,14 +122,14 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
         rangesProps={searchRanges}
         safeTimeRangeDisplay
       />
-      <div className="flex items-center">
+      <div className="flex items-center my-2">
         <OperationTypesDialog
           operationTypes={operationsTypes?.filter((opType) =>
             config.commentOperationsTypeIds.includes(opType.op_type_id)
           )}
           selectedOperations={selectedCommentSearchOperationTypes}
           setSelectedOperations={setSelectedCommentSearchOperationTypes}
-          buttonClassName="bg-gray-500"
+          buttonClassName="bg-buttonBg"
           triggerTitle={getOperationButtonTitle(
             selectedCommentSearchOperationTypes,
             operationsTypes
@@ -139,7 +139,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
       <div className="flex items-center">
         <Button
           data-testid="search-button"
-          className="mr-2"
+          className="mr-2 my-2"
           onClick={onButtonClick}
           disabled={!accountName}
         >
@@ -147,7 +147,9 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
           {loading && <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />}
         </Button>
         {!accountName && (
-          <label className="text-muted-foreground">Set author name</label>
+          <label className="text-gray-300 dark:text-gray-500 ">
+            Set author name
+          </label>
         )}
       </div>
     </>
