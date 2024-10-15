@@ -142,7 +142,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                       }`}
                     >
                       <TableCell
-                        className={`text-explorer-turquoise sticky md:static left-0 ${
+                        className={`text-link sticky md:static left-0 ${
                           index % 2 === 0
                             ? "bg-rowEven md:bg-inherit"
                             : "bg-rowOdd md:bg-inherit"
