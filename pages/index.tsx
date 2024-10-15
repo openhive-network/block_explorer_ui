@@ -91,7 +91,7 @@ export default function Home() {
                         <Link href={`/@${witness.witness_name}`}>
                           <div className="min-w-[30px]">
                             <Image
-                              className="rounded-full border-2 border-explorer-turquoise"
+                              className="rounded-full border-2 border-link"
                               src={getHiveAvatarUrl(witness.witness_name)}
                               alt="avatar"
                               width={40}
