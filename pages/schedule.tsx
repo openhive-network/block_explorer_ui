@@ -57,7 +57,7 @@ const buildTableBody = (
             <TableCell className="">{producerRank}</TableCell>
             <TableCell
               className={cn("text-left", {
-                "text-gray-700 dark:text-gray-500":
+                "text-gray-300 dark:text-gray-500":
                   !!blockNumber && producerName !== currentProducer,
                 "text-explorer-light-green": producerName === currentProducer,
               })}
@@ -66,7 +66,7 @@ const buildTableBody = (
             </TableCell>
             <TableCell
               className={cn({
-                "text-gray-700 dark:text-gray-500":
+                "text-gray-300 dark:text-gray-500":
                   blockNumber !== currentBlock,
               })}
             >
