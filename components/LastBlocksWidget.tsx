@@ -22,6 +22,7 @@ import { Card, CardHeader, CardTitle } from "./ui/card";
 interface LastBlocksWidgetProps {
   headBlock?: number;
   className?: string;
+  strokeColor: string;
 }
 
 type ChartBlockData = {
@@ -47,7 +48,7 @@ const CustomTooltip = ({
   if (active && payload && payload.length) {
     const totalOperations = payload.reduce((acc, pld) => acc + pld.value, 0);
     return (
-      <div className="bg-explorer-dark-gray p-2 rounded border border-explorer-ligh-gray">
+      <div className="bg-theme dark:bg-theme p-2 rounded border border-explorer-light-gray">
         <p className="font-bold">{`Block ${label}`}</p>
         <div className="my-2">
           <Image
@@ -119,6 +120,7 @@ const getOpsCount = (lastBlocks: Hive.LastBlocksTypeResponse[]) => {
 const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
   headBlock,
   className = "",
+  strokeColor,
 }) => {
   const [data, setData] = useState<ChartBlockData[]>([]);
   const router = useRouter();
@@ -195,11 +197,11 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey="name"
-            stroke="#fff"
+            stroke={strokeColor}
             axisLine={false}
           ></XAxis>
           <YAxis
-            stroke="#fff"
+            stroke={strokeColor}
             axisLine={false}
             domain={[
               0,

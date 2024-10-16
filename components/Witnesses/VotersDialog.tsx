@@ -14,6 +14,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Switch } from "../ui/switch";
+import useWitnessDetails from "@/hooks/api/common/useWitnessDetails";
+import CustomPagination from "../CustomPagination";
+import { config } from "@/Config";
 
 type VotersDialogProps = {
   accountName: string;
@@ -35,16 +38,18 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
   changeVotersDialogue,
   liveDataEnabled,
 }) => {
-  const [showHivePower, setShowHivePower] = useState<boolean>(false);
   const [sortKey, setSortKey] = useState<string>("vests");
   const [isAsc, setIsAsc] = useState<boolean>(false);
+  const [pageNum, setPageNum] = useState<number>(1);
 
+  const { witnessDetails } = useWitnessDetails(accountName, true);
   const { witnessVoters, isWitnessVotersLoading } = useWitnessVoters(
     accountName,
     isVotersOpen,
     isAsc,
     sortKey,
-    liveDataEnabled
+    liveDataEnabled,
+    pageNum
   );
   const changeSorter = (newIsAsc: boolean, newSortKey: string) => {
     const isAscForChange = newSortKey === sortKey ? newIsAsc : false;
@@ -70,7 +75,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
       onOpenChange={changeVotersDialogue}
     >
       <DialogContent
-        className={`h-3/4 max-w-4xl bg-white dark:bg-explorer-dark-gray ${
+        className={`h-3/4 max-w-4xl bg-explorer-bg-start ${
           !witnessVoters && "flex justify-center items-center"
         }`}
         data-testid="voters-dialog"
@@ -78,7 +83,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
         {witnessVoters ? (
           <>
             <div
-              className="flex  justify-center  items-centertext-center font-semibold	"
+              className="flex justify-center  items-centertext-center font-semibold	"
               data-testid="voters-dialog-witness-name"
             >
               {accountName.toUpperCase()} - Voters
@@ -86,16 +91,23 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                 <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
               )}
             </div>
-            <div className="flex">
-              <label>Vests</label>
-              <Switch
-                className="mx-2"
-                checked={showHivePower}
-                onCheckedChange={setShowHivePower}
-                data-testid="voters-dialog-vests-hivepower-button"
-              />
-              <label>Hive Power</label>
+            <div className="flex justify-between">
+              {witnessDetails && (
+                <p>Last updated : {witnessDetails.votes_updated_at}</p>
+              )}
             </div>
+
+            <CustomPagination
+              currentPage={pageNum}
+              onPageChange={(newPage: number) => {
+                setPageNum(newPage);
+              }}
+              pageSize={config.standardPaginationSize}
+              totalCount={witnessVoters.total_operations}
+              className="text-black dark:text-white"
+              isMirrored={false}
+            />
+
             <Table className="text-white">
               <TableHeader>
                 <TableRow>
@@ -122,50 +134,44 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
               </TableHeader>
               <TableBody data-testid="voters-dialog-table-body">
                 {witnessVoters &&
-                  witnessVoters.map((voter, index) => (
+                  witnessVoters.voters.map((voter, index) => (
                     <TableRow
                       key={index}
                       className={`${
-                        index % 2 === 0 ? "bg-gray-800" : "bg-gray-900"
+                        index % 2 === 0 ? "bg-rowEven" : "bg-rowOdd"
                       }`}
                     >
                       <TableCell
-                        className={`text-explorer-turquoise sticky md:static left-0 ${
+                        className={`text-link sticky md:static left-0 ${
                           index % 2 === 0
-                            ? "bg-gray-800 md:bg-inherit"
-                            : "bg-gray-900 md:bg-inherit"
+                            ? "bg-rowEven md:bg-inherit"
+                            : "bg-rowOdd md:bg-inherit"
                         }`}
                       >
                         <Link
-                          href={`/@${voter.voter}`}
+                          href={`/@${voter.voter_name}`}
                           data-testid="voter-name"
                         >
-                          {voter.voter}
+                          {voter.voter_name}
                         </Link>
                       </TableCell>
                       <TableCell
                         className="text-right"
                         data-testid="vote-power"
                       >
-                        {showHivePower
-                          ? formatNumber(voter.votes_hive_power, false)
-                          : formatNumber(voter.vests, true)}
+                        {formatNumber(voter.vests, true)}
                       </TableCell>
                       <TableCell
                         className="text-right"
                         data-testid="account-power"
                       >
-                        {showHivePower
-                          ? formatNumber(voter.account_hive_power, false)
-                          : formatNumber(voter.account_vests, true)}
+                        {formatNumber(voter.account_vests, true)}
                       </TableCell>
                       <TableCell
                         className="text-right"
                         data-testid="proxied-power"
                       >
-                        {showHivePower
-                          ? formatNumber(voter.proxied_hive_power, false)
-                          : formatNumber(voter.proxied_vests, true)}
+                        {formatNumber(voter.proxied_vests, true)}
                       </TableCell>
                     </TableRow>
                   ))}

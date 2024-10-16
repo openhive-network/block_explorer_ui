@@ -24,6 +24,7 @@ test.describe('Home page - account searches', () => {
 
         await test.step('Validate that Search button is clickable if Account Name property is filled', async () =>{
         await mainPage.accountNameInputAccountSection.fill('gtg')
+        await page.waitForTimeout(1000)
         await expect(mainPage.searchButtonInAccount).toBeEnabled()
         await expect(page.getByText('Set account name')).not.toBeVisible()
         })
@@ -102,7 +103,7 @@ test.describe('Home page - account searches', () => {
         await mainPage.accountNameInputAccountSection.fill('gtg')
         await mainPage.operationsTypesBtn.click()
         await expect(mainPage.operationsTypesWindow).toBeVisible();
-        await page.locator('input[type="checkbox"]').first().check();
+        await page.getByTestId('operation-type-checkbox-author_reward_operation').first().check({force:true});
         await page.getByLabel('Operation Types').locator('li').filter({ hasText: /^comment$/ }).getByRole('checkbox').check()
         await page.getByRole('button', {name: 'Apply'}).click();
         await mainPage.searchButtonInAccount.click()

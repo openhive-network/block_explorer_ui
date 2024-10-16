@@ -55,7 +55,7 @@ const getOneLineDescription = (operation: Explorer.OperationForTable) => {
     return value.message;
   if (operation.operation.type === "body_placeholder_operation") {
     return (
-      <div className="text-explorer-turquoise">
+      <div className="text-link">
         <Link
           href={`/longOperation/${operation.operation.value?.["org-op-id"]}`}
         >
@@ -123,10 +123,8 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
     >
       <TableHeader>
         <TableRow>
-          <TableHead className="sticky left-0 bg-explorer-dark-gray"></TableHead>
-          <TableHead className="pl-2 sticky left-12 bg-explorer-dark-gray">
-            Block
-          </TableHead>
+          <TableHead className="sticky left-0 bg-theme "></TableHead>
+          <TableHead className="pl-2 sticky left-12 bg-theme ">Block</TableHead>
           <TableHead>Transaction</TableHead>
           <TableHead>Time</TableHead>
           <TableHead>Operation</TableHead>
@@ -135,7 +133,9 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
         </TableRow>
       </TableHeader>
       <TableBody className="max-w-[100%]">
-        {operations.map((operation, index) => {
+        {operations.map((operation, index, allOperations) => {
+          const nextTransactionId: string | undefined =
+            allOperations[index + 1]?.trxId;
           const operationBgColor = getOperationColor(operation.operation?.type);
 
           return (
@@ -144,17 +144,20 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                 id={operation.trxId}
                 data-testid="detailed-operation-card"
                 key={index}
-                className="border-b border-gray-700"
+                className={cn("border-b border-gray-700", {
+                  "border-b-0":
+                    nextTransactionId === operation.trxId && !!operation.trxId,
+                })}
               >
-                <TableCell className="sticky left-0 bg-explorer-dark-gray xl:bg-inherit">
+                <TableCell className="sticky left-0 bg-theme xl:bg-inherit">
                   <CopyJSON value={getUnformattedValue(operation)} />
                 </TableCell>
                 <TableCell
-                  className="pl-2 sticky left-12 bg-explorer-dark-gray xl:bg-inherit"
+                  className="pl-2 sticky left-12 bg-theme xl:bg-inherit"
                   data-testid="block-number-operation-table"
                 >
                   <Link
-                    className="text-explorer-turquoise"
+                    className="text-link"
                     href={`/block/${operation.blockNumber}${
                       operation.trxId ? `?trxId=${operation.trxId}` : ""
                     }`}
@@ -164,8 +167,8 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                 </TableCell>
                 <TableCell data-testid="transaction-number">
                   <Link
-                    className={cn("text-explorer-turquoise", {
-                      "bg-explorer-ligh-green py-2 px-1 ":
+                    className={cn("text-link", {
+                      "bg-explorer-light-green py-2 px-1 ":
                         markedTrxId === operation.trxId,
                     })}
                     href={`/transaction/${operation.trxId}`}
@@ -187,7 +190,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                           />
                         </div>
                       </TooltipTrigger>
-                      <TooltipContent className="bg-white text-black dark:bg-explorer-dark-gray dark:text-white">
+                      <TooltipContent className="bg-theme text-text">
                         {formatAndDelocalizeTime(operation.timestamp)}
                       </TooltipContent>
                     </Tooltip>
@@ -240,7 +243,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                     ) : (
                       <Button
                         data-testid="expand-details"
-                        className="p-0 h-fit"
+                        className="p-0 h-fit bg-inherit"
                         onClick={() =>
                           setExpanded((prevExpanded) => [
                             ...prevExpanded,

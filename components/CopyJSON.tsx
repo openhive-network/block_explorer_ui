@@ -28,11 +28,11 @@ const CopyJSON: React.FC<CopyJSONProps> = ({ value, className }) => {
 
   return (
     <Button
-      className={cn("p-0", className)}
+      className={cn("p-0 bg-inherit", className)}
       onClick={() => copyToClipboard(value)}
     >
       {copied ? (
-        <Check className="text-explorer-ligh-green w-5 h-5" />
+        <Check className="text-explorer-light-green w-5 h-5" />
       ) : (
         <TooltipProvider>
           <Tooltip>
@@ -40,7 +40,7 @@ const CopyJSON: React.FC<CopyJSONProps> = ({ value, className }) => {
               <ClipboardCopy className="w-5 h-5" />
             </TooltipTrigger>
             <TooltipPortal>
-              <TooltipContent className="bg-white text-black dark:bg-explorer-dark-gray dark:text-white">
+              <TooltipContent className="bg-white text-black dark:bg-theme dark:text-white">
                 Copy JSON to clipboard.
               </TooltipContent>
             </TooltipPortal>

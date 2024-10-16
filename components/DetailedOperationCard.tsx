@@ -64,7 +64,7 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
   return (
     <div
       className={cn(
-        "w-full bg-explorer-dark-gray px-4 py-2 rounded text-xs	overflow-hidden",
+        "w-full bg-theme dark:bg-theme px-4 py-2 rounded text-xs	overflow-hidden",
         className
       )}
       data-testid="detailed-operation-card"
@@ -124,7 +124,7 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
             )}
           </Button>
           <Link href={`/longOperation/${operationId}`}>
-            <Button className=" text-explorer-turquoise">
+            <Button className="text-explorer-turquoise">
               See full operation
             </Button>
           </Link>

@@ -44,22 +44,22 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
   };
 
   return (
-    <div className="border-y border-solid border-gray-600 py-2 flex flex-col gap-y-2">
+    <div className="py-2 flex flex-col gap-y-2">
       <Select
         onValueChange={setRangeSelectKey}
         value={rangeSelectKey}
       >
-        <SelectTrigger className="w-1/2 border-0 border-b-2 bg-explorer-dark-gray ">
+        <SelectTrigger className="w-1/2 border-0 border-b-2 bg-theme text-text">
           {
             rangeSelectOptions.find(
               (selectOption) => selectOption.key === rangeSelectKey
             )?.name
           }
         </SelectTrigger>
-        <SelectContent className="bg-white text-black rounded-sm max-h-[31rem] dark:bg-explorer-dark-gray dark:text-white">
+        <SelectContent className="bg-theme text-text rounded-sm max-h-[31rem]">
           {rangeSelectOptions.map((selectOption, index) => (
             <SelectItem
-              className="text-center hover:dark:bg-white hover:dark:text-black"
+              className="text-center"
               key={index}
               value={selectOption.key}
               defaultChecked={false}
@@ -74,7 +74,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
         <div className="flex items-center">
           <div className="flex flex-col w-full">
             <Input
-              className="w-1/2 border-0 border-b-2 bg-explorer-dark-gray"
+              className="w-1/2 border-0 border-b-2 bg-theme"
               type="number"
               value={lastBlocksValue || ""}
               onChange={(e) =>
@@ -92,7 +92,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
             <div className="flex flex-col w-full mr-2">
               <Input
                 type="number"
-                className="bg-explorer-dark-gray border-0 border-b-2 text-white"
+                className="bg-theme border-0 border-b-2 text-text"
                 value={lastTimeUnitValue || ""}
                 onChange={(e) =>
                   setNumericValue(Number(e.target.value), setLastTimeUnitValue)
@@ -102,7 +102,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
               />
             </div>
             <Select onValueChange={setTimeUnitSelectKey}>
-              <SelectTrigger className="pl-2 bg-explorer-dark-gray border-0 border-b-2 text-white">
+              <SelectTrigger className="pl-2 bg-theme border-0 border-b-2 text-text">
                 {
                   timeSelectOptions.find(
                     (selectOption) => selectOption.key === timeUnitSelectKey
@@ -110,12 +110,12 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
                 }
               </SelectTrigger>
               <SelectContent
-                className="bg-white text-black rounded-sm max-h-[31rem] dark:bg-explorer-dark-gray dark:text-white"
+                className="bg-theme text-text rounded-sm max-h-[31rem]"
                 data-testid="select-time-option-units"
               >
                 {timeSelectOptions.map((selectOption, index) => (
                   <SelectItem
-                    className="text-center hover:dark:bg-white hover:dark:text-black"
+                    className="text-center"
                     key={index}
                     value={selectOption.key}
                     defaultChecked={false}
@@ -133,7 +133,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
           <div className="flex flex-col w-full mr-2">
             <Input
               type="number"
-              className="bg-explorer-dark-gray border-0 border-b-2"
+              className="bg-theme border-0 border-b-2"
               data-testid="from-block-input"
               value={fromBlock || ""}
               onChange={(e) =>
@@ -145,7 +145,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
           </div>
           <div className="flex flex-col w-full">
             <Input
-              className="bg-explorer-dark-gray border-0 border-b-2"
+              className="bg-theme border-0 border-b-2"
               data-testid="headblock-number"
               type="number"
               value={toBlock || ""}

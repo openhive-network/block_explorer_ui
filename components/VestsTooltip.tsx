@@ -20,7 +20,7 @@ const VestsTooltip: React.FC<VestsTooltipProps> = ({
         <TooltipTrigger asChild>
           <p>{tooltipTrigger}</p>
         </TooltipTrigger>
-        <TooltipContent className="bg-white text-explorer-dark-gray border-0">
+        <TooltipContent className="bg-theme text-text border-0">
           <p>{tooltipContent}</p>
         </TooltipContent>
       </Tooltip>

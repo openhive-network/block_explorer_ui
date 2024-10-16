@@ -120,3 +120,13 @@ export const changeHBDToDollarsDisplay = (hbd: string): string => {
 
   return `${numericValue} $`
 }
+
+/**
+ * 
+ * @param hbd grab pure numeric value without any unit or commas
+ * @returns 
+ */
+export const grabNumericValue = (hbd: string): number => {
+  const numericValue = Number(hbd.split(" ")[0].slice(0, -1).replaceAll(",", ""));
+  return numericValue;
+}

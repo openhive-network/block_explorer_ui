@@ -13,14 +13,14 @@ interface MobileAccountNameCardProps {
 const MobileAccountNameCard: React.FC<MobileAccountNameCardProps> = ({
   accountName,
   liveDataEnabled,
-  accountDetails
+  accountDetails,
 }) => {
   if (!accountDetails) return;
 
   return (
     <Card>
       <CardHeader>
-        <div className="flex justify-between bg-explorer-dark-gray text-explorer-orange text-2xl my-4">
+        <div className="flex justify-between bg-theme dark:bg-theme text-explorer-orange text-2xl my-4">
           {accountDetails.is_witness ? (
             <div data-testid="account-name">
               {accountDetails.name} <span className="text-sm">(witness)</span>

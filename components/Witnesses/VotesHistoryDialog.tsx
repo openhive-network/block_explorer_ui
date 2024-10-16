@@ -21,6 +21,7 @@ import { Switch } from "../ui/switch";
 import JumpToPage from "../JumpToPage";
 import CustomPagination from "../CustomPagination";
 import DateTimePicker from "../DateTimePicker";
+import useWitnessDetails from "@/hooks/api/common/useWitnessDetails";
 
 type VotersDialogProps = {
   accountName: string;
@@ -44,14 +45,15 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
   changeVoteHistoryDialogue,
   liveDataEnabled,
 }) => {
-  const [showHivePower, setShowHivePower] = useState<boolean>(false);
   const [page, setPage] = useState(1);
-  const [displayData, setDisplayData] = useState<Hive.WitnessVotesHistory[]>();
+  const [displayData, setDisplayData] =
+    useState<Hive.WitnessesVotesHistoryResponse>();
   const [fromDate, setFromDate] = useState<Date>(
     moment().subtract(7, "days").toDate()
   );
   const [toDate, setToDate] = useState<Date>(moment().toDate());
 
+  const { witnessDetails } = useWitnessDetails(accountName, true) as any;
   const { votesHistory, isVotesHistoryLoading } = useWitnessVotesHistory(
     accountName,
     isVotesHistoryOpen,
@@ -83,7 +85,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
     >
       <DialogContent
         className={cn(
-          "max-w-2xl max-h-[700px]  bg-white dark:bg-explorer-dark-gray overflow-auto",
+          "max-w-2xl max-h-[700px] bg-explorer-bg-start overflow-auto",
           {
             "flex column justify-center items-center": !votesHistory,
             "h-3/4": votesHistory?.length >= 16,
@@ -102,23 +104,18 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                 <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
               )}
             </div>
-            <div className="flex">
-              <label>Vests</label>
-              <Switch
-                className="mx-2"
-                checked={showHivePower}
-                onCheckedChange={setShowHivePower}
-                data-testid="votes-history-dialog-vests-hivepower-button"
-              />
-              <label>Hive Power</label>
+            <div className="flex justify-between">
+              {witnessDetails && (
+                <p>Last updated : {witnessDetails.votes_updated_at}</p>
+              )}
             </div>
-            <div className="flex justify-around items-center bg-gray-800 rounded text-white p-2">
+            <div className="flex justify-around items-center bg-explorer-bg-start rounded text-text p-2">
               <div>
                 <p>From: </p>
                 <DateTimePicker
                   date={fromDate}
                   setDate={setFromDate}
-                  side="left"
+                  side="bottom"
                 />
               </div>
               <div>
@@ -126,7 +123,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                 <DateTimePicker
                   date={toDate}
                   setDate={setToDate}
-                  side="right"
+                  side="bottom"
                 />
               </div>
             </div>
@@ -146,13 +143,13 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                 </div>
               </div>
             )}
-            <Table className="text-white">
+            <Table className="text-text">
               <TableHeader>
                 <TableRow>
                   {tableColums.map((column, index) => (
                     <TableHead
                       key={column.key}
-                      className={cn({
+                      className={cn("min-h-12 h-auto p-3", {
                         "sticky md:static left-0": !index,
                         "flex justify-end items-center": column.isRightAligned,
                       })}
@@ -163,45 +160,51 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                 </TableRow>
               </TableHeader>
               <TableBody data-testid="votes-history-dialog-table-body">
-                {displayData &&
-                  displayData?.map((vote, index) => (
+                {displayData?.votes_history &&
+                  displayData?.votes_history.map((vote, index) => (
                     <TableRow
                       key={index}
                       className={`${
-                        index % 2 === 0 ? "bg-gray-800" : "bg-gray-900"
+                        index % 2 === 0 ? "bg-rowEven" : "bg-rowOdd"
                       }`}
                     >
                       <TableCell
-                        className="sticky left-0"
+                        className={`sticky md:static left-0 ${
+                          index % 2 === 0
+                            ? "bg-rowEven md:bg-inherit"
+                            : "bg-rowOdd md:bg-inherit"
+                        }`}
                         data-testid="date-format"
                       >
                         {formatAndDelocalizeTime(vote.timestamp)}
                       </TableCell>
                       <TableCell
-                        className="text-explorer-turquoise"
+                        className="text-link"
                         data-testid="voter"
                       >
-                        <Link href={`/@${vote.voter}`}>{vote.voter}</Link>
+                        <Link href={`/@${vote.voter_name}`}>
+                          {vote.voter_name}
+                        </Link>
                       </TableCell>
                       <TableCell
                         className={`${
-                          vote.approve ? "text-green-400" : "text-red-400"
+                          vote.approve
+                            ? "text-explorer-light-green"
+                            : "text-explorer-red"
                         }`}
                         data-testid="vote-arrow"
                       >
                         {vote.approve ? (
-                          <ArrowUpCircleIcon />
+                          <ArrowUpCircleIcon color="#17e405" />
                         ) : (
-                          <ArrowDownCircleIcon />
+                          <ArrowDownCircleIcon color="#f71b1b" />
                         )}
                       </TableCell>
                       <TableCell
                         className="text-right"
                         data-testid="current-voter-power"
                       >
-                        {showHivePower
-                          ? formatNumber(vote.votes_hive_power, false)
-                          : formatNumber(vote.vests, true)}
+                        {formatNumber(vote.vests, true)}
                       </TableCell>
                     </TableRow>
                   ))}

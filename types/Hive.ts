@@ -120,7 +120,7 @@ namespace Hive {
   }
 
   export class GetWitnessesParams {
-    limit!: number;
+    "page-size"!: number;
     offset!: number;
     sort!: string;
     direction!: Hive.Direction;
@@ -131,12 +131,11 @@ namespace Hive {
   }
 
   export class Witness {
-    witness!: string;
+    witness_name!: string;
     rank!: number;
     url!: string;
     vests!: string;
     votes_daily_change!: number;
-    votes_daily_change_hive_power!: number;
     voters_num!: number;
     voters_num_daily_change!: number;
     price_feed!: number;
@@ -147,24 +146,89 @@ namespace Hive {
     version!: string;
     missed_blocks!: number;
     hbd_interest_rate!: number;
-    vests_hive_power!: number;
+  }
+
+  export class WitnessesResponse {
+    witnesses!: Witness[];
+    votes_updated_at!: Date;
+  }
+
+  export class SingleWitnessResponse {
+    witness!: Witness;
+    votes_updated_at!: Date;
+  }
+
+  export class WitnessVotersResponse {
+    total_operations!: number;
+    total_pages!: number;
+    voters!: Voter[];
+    votes_updated_at!: Date;
+  }
+
+  export class WitnessesSchedule {
+    account_subsidy_rd!: {
+      budget_per_time_unit: number;
+      decay_params: {
+        decay_per_time_unit: number;
+        decay_per_time_unit_denom_shift: number;
+      };
+      max_pool_size: number;
+      min_decay: number;
+      pool_eq: number;
+      resource_unit: number;
+    };
+    account_subsidy_witness_rd!: {
+      budget_per_time_unit: number;
+      decay_params: {
+        decay_per_time_unit: number;
+        decay_per_time_unit_denom_shift: number;
+      };
+      max_pool_size: number;
+      min_decay: number;
+      pool_eq: number;
+      resource_unit: number;
+    };
+    current_shuffled_witnesses!: string[];
+    current_virtual_time!: number | string;
+    elected_weight!: number;
+    hardfork_required_witnesses!: number;
+    id!: number;
+    majority_version!: string;
+    max_miner_witnesses!: number;
+    max_runner_witnesses!: number;
+    max_voted_witnesses!: number;
+    median_props!: {
+      account_creation_fee: {
+        amount: string | number;
+        nai: string;
+        precision: number;
+      };
+      account_subsidy_budget: number;
+      account_subsidy_decay: number;
+      hbd_interest_rate: number;
+      maximum_block_size: number;
+    };
+    min_witness_account_subsidy_decay!: number;
+    miner_weight!: number;
+    next_shuffle_block_num!: number;
+    num_scheduled_witnesses!: number;
+    timeshare_weight!: number;
+    witness_pay_normalization_factor!: number;
   }
 
   export class GetVotersParams {
     accountName!: string;
     sort?: string;
     direction?: Hive.Direction;
-    "result-limit"?: number;
+    "page-size"?: number;
+    "page"?: number;
   }
 
   export class Voter {
-    voter!: string;
+    voter_name!: string;
     vests!: number;
-    votes_hive_power!: number;
     account_vests!: number;
-    account_hive_power!: number;
     proxied_vests!: number;
-    proxied_hive_power!: number;
     timestamp!: Date;
   }
 
@@ -173,24 +237,26 @@ namespace Hive {
     sort?: string;
     direction?: Hive.Direction;
     "result-limit"!: number | null;
-    "start-date"?: Date;
-    "end-date"?: Date;
+    "from-block"?: number | Date;
+    "to-block"?: number | Date;
   }
 
   export class WitnessVotesHistory {
-    voter!: string;
+    voter_name!: string;
     approve!: boolean;
     vests!: number;
-    votes_hive_power!: number;
     account_vests!: number;
-    account_hive_power!: number;
     proxied_vests!: number;
-    proxied_hive_power!: number;
     timestamp!: Date;
   }
 
+  export class WitnessesVotesHistoryResponse {
+    votes_updated_at!: Date;
+    votes_history!: WitnessVotesHistory[];
+  }
+
   export class GetBlockDetailsParams {
-    blockNumber!: number;
+    blockNumber!: number | Date;
   }
 
   export class BlockDetails {
@@ -214,7 +280,7 @@ namespace Hive {
   }
 
   export class GetBlockGlobalStateParams {
-    "block-num"!: number;
+    "block-num"!: number | string;
   }
 
   export class GetInputTypeParams {
@@ -259,7 +325,7 @@ namespace Hive {
   }
 
   export class GetLastOperationTypeCountsParams {
-    "block-num"?: number;
+    "block-num"?: number | string;
     "result-limit"!: number;
   }
 
@@ -273,10 +339,8 @@ namespace Hive {
     page?: number;
     "page-size"?: number;
     "data-size-limit"?: number;
-    "from-block"?: number;
-    "to-block"?: number;
-    "start-date"?: Date;
-    "end-date"?: Date;
+    "from-block"?: number | Date;
+    "to-block"?: number | Date;
   }
 
   export class GetAccountDetailsParams {
@@ -358,10 +422,8 @@ namespace Hive {
     permlink?: string;
     "page-size"?: number;
     "data-size-limit"?: number;
-    "from-block"?: number;
-    "to-block"?: number;
-    "start-date"?: Date;
-    "end-date"?: Date;
+    "from-block"?: number | Date;
+    "to-block"?: number | Date;
   }
 
   export class CommentOperationResponse {
@@ -378,10 +440,8 @@ namespace Hive {
     "account-name"?: string;
     "page-size"?: number;
     "data-size-limit"?: number;
-    "from-block"?: number;
-    "to-block"?: number;
-    "start-date"?: Date;
-    "end-date"?: Date;
+    "from-block"?: number | Date;
+    "to-block"?: number | Date;
     "path-filter"?: string;
   }
 
@@ -391,7 +451,7 @@ namespace Hive {
   }
 
   export class GetOperationsByBlockParams {
-    blockNumber!: number;
+    blockNumber!: number | string;
     "operation-types"?: string;
     "account-name"?: string;
     page?: number;
@@ -402,8 +462,8 @@ namespace Hive {
   }
 
   export class GetRawBlockParams {
-    "from-block"!: number;
-    "to-block"!: number;
+    "from-block"!: number | string;
+    "to-block"!: number | string;
   }
 
   export class TotalOperationsResponse {
@@ -490,7 +550,6 @@ namespace Hive {
     from: string;
     to: string;
   }
-
 
   export interface BlockByOpResponse {
     block_num: number;

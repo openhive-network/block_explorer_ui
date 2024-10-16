@@ -48,7 +48,7 @@ export class VotesHistoryDialog {
   async validateVotesHistoryDialogIsLoaded() {
     await expect(this.votesHistoryDialog).toBeVisible();
     await expect(this.votesHistoryDialogWitnessName).toBeVisible();
-    await expect(this.votesHistoryDialogVestsHivePowerButton).toHaveAttribute('data-state', 'unchecked');
+    // await expect(this.votesHistoryDialogVestsHivePowerButton).toHaveAttribute('data-state', 'unchecked');
     await expect(this.votesHistoryDialogFromDatepicker).toBeVisible();
     await expect(this.votesHistoryDialogToDatepicker).toBeVisible();
   }

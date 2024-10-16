@@ -98,9 +98,9 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
               <PaginationItem
                 key={i}
                 className={cn(
-                  "px-1 md:px-3 md:py-1.5 rounded-full cursor-pointer hover:bg-white dark:hover:bg-explorer-dark-gray",
+                  "px-1 md:px-3 md:py-1.5 rounded-full cursor-pointer hover:bg-white dark:hover:bg-theme",
                   {
-                    "bg-white font-bold dark:bg-explorer-dark-gray":
+                    "font-bold bg-white dark:bg-theme":
                       currentPage === pageNumber,
                   }
                 )}

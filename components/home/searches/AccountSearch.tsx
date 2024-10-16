@@ -62,7 +62,7 @@ const AccountSearch: React.FC<AccountSearchProps> = ({
       <div className="flex flex-col">
         <Input
           data-testid="account-name"
-          className="w-1/2 bg-explorer-dark-gray border-0 border-b-2"
+          className="w-1/2 bg-theme dark:bg-theme border-0 border-b-2"
           type="text"
           value={accountName || ""}
           onChange={(e) => setAccountName(e.target.value)}
@@ -89,7 +89,6 @@ const AccountSearch: React.FC<AccountSearchProps> = ({
       <div className="flex items-center ">
         <Button
           data-testid="search-button"
-          className=" bg-blue-800 hover:bg-blue-600 rounded"
           onClick={onButtonClick}
           disabled={!accountName}
         >

@@ -8,7 +8,7 @@ import Hive from "./Hive";
  * {} in URL are dynamic params. The name is important and should be synchronized with params types.
  */
 export const extendedRest = { 
-  hafbe: {
+  "hafbe-api": {
     lastSyncedBlock: {
       params: undefined,
       result: Number,
@@ -22,25 +22,22 @@ export const extendedRest = {
     },
     witnesses: {
       params: Hive.GetWitnessesParams,
-      result: Hive.Witness,
-      responseArray: true,
+      result: Hive.WitnessesResponse,
     },
     singleWitness: {
       params: Hive.GetWitnessParams,
-      result: Hive.Witness,
+      result: Hive.SingleWitnessResponse,
       urlPath: "witnesses/{accountName}",
     },
     voters: {
       params: Hive.GetVotersParams,
-      result: Hive.Voter,
+      result: Hive.WitnessVotersResponse,
       urlPath: "witnesses/{accountName}/voters",
-      responseArray: true,
     },
     votesHistory: {
       params: Hive.GetVotesHistoryParams,
-      result: Hive.WitnessVotesHistory,
+      result: Hive.WitnessesVotesHistoryResponse,
       urlPath: "witnesses/{accountName}/votes/history",
-      responseArray: true,
     },
     version: {
       params: undefined,
@@ -75,7 +72,7 @@ export const extendedRest = {
       },
     }
   },
-  hafah: {
+  "hafah-api": {
     block: {
       params: Hive.GetBlockDetailsParams,
       result: Hive.BlockDetails,

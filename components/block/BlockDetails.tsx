@@ -3,8 +3,6 @@ import BlockPageOperationCount from "./BlockPageOperationCount";
 import Link from "next/link";
 import Image from "next/image";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
-import moment from "moment";
-import { config } from "@/Config";
 import Explorer from "@/types/Explorer";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
@@ -26,7 +24,7 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
 }) => {
   return (
     <Card
-      className="flex flex-col w-full md:w-4/6 m-auto"
+      className="flex flex-col w-full md:max-w-screen-2xl m-auto"
       data-testid="block-page-block-details"
     >
       <CardHeader>
@@ -36,7 +34,7 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
       </CardHeader>
       <CardContent>
         <div
-          className="flex items-center gap-x-1 mt-3 px-8 md:px-4 w-full justify-center flex-wrap gap-y-2"
+          className="flex items-center gap-x-1 mt-3 px-8 w-full justify-center flex-wrap gap-y-2"
           data-testid="produced-data"
         >
           <p>Produced at: </p>
@@ -48,13 +46,13 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
             href={`/@${blockDetails?.producer_account}`}
           >
             <span
-              className="text-explorer-turquoise mx-2"
+              className="text-link mx-2"
               data-testid="block-producer-name"
             >
               {blockDetails?.producer_account}
             </span>
             <Image
-              className="rounded-full border-2 border-explorer-turquoise"
+              className="rounded-full border-2 border-link"
               src={getHiveAvatarUrl(blockDetails?.producer_account)}
               alt="avatar"
               width={40}
@@ -64,13 +62,19 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
         </div>
         <div className="flex items-center gap-x-4 mt-3 px-8 md:px-4 w-full justify-center flex-wrap text-sm md:text-base">
           <p>
-            <span data-testid="hash" className="text-base">
+            <span
+              data-testid="hash"
+              className="text-base"
+            >
               Hash:{" "}
             </span>
             {blockDetails?.hash.slice(2)}
           </p>
           <p>
-            <span data-testid="prev-hash" className="text-base">
+            <span
+              data-testid="prev-hash"
+              className="text-base"
+            >
               Prev hash:{" "}
             </span>
             {blockDetails?.prev.slice(2)}

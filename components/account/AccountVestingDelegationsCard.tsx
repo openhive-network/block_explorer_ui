@@ -8,16 +8,13 @@ import { Table, TableBody, TableRow, TableCell } from "../ui/table";
 import Explorer from "@/types/Explorer";
 import useConvertedVestingShares from "@/hooks/common/useConvertedVestingShares";
 
-
 type AccountVestingDelegationsCardProps = {
   delegatorAccount: string;
   liveDataEnabled: boolean;
-  dynamicGlobalData?: Explorer.HeadBlockCardData
+  dynamicGlobalData?: Explorer.HeadBlockCardData;
 };
 
-const buildTableBody = (
-  delegations: Explorer.VestingDelegation[]
-) => {
+const buildTableBody = (delegations: Explorer.VestingDelegation[]) => {
   return delegations.map((delegation, index: number) => {
     const isLast = index === delegations.length - 1;
 
@@ -46,7 +43,7 @@ const AccountVestingDelegationsCard: React.FC<
 > = ({ delegatorAccount, liveDataEnabled, dynamicGlobalData }) => {
   const [isPropertiesHidden, setIsPropertiesHidden] = useState(true);
   const { hiveChain } = useHiveChainContext();
-  const delegations  = useConvertedVestingShares(
+  const delegations = useConvertedVestingShares(
     delegatorAccount,
     liveDataEnabled,
     dynamicGlobalData
@@ -67,9 +64,9 @@ const AccountVestingDelegationsCard: React.FC<
       <CardHeader className="p-0">
         <div
           onClick={handlePropertiesVisibility}
-          className="h-full flex justify-between align-center p-2 hover:bg-slate-600 cursor-pointer px-4"
+          className="h-full flex justify-between align-center p-2 hover:bg-rowHover cursor-pointer px-4"
         >
-          <div className="text-lg">HP Delegations</div>
+          <div className="text-lg">HP Delegations ({delegations.length})</div>
           {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
         </div>
       </CardHeader>

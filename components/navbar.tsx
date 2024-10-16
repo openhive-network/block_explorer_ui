@@ -8,6 +8,7 @@ import useMediaQuery from "@/hooks/common/useMediaQuery";
 import SearchBar from "./SearchBar";
 import SyncInfo from "./home/SyncInfo";
 import ViewPopover from "./ViewPopover";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar() {
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -19,7 +20,7 @@ export default function Navbar() {
       className="fixed w-full top-0 left-0 z-50"
       data-testid="navbar"
     >
-      <div className="flex p-2 justify-between bg-explorer-dark-gray text-white	items-center relative">
+      <div className="flex p-2 justify-between bg-theme dark:bg-theme text-white	items-center relative">
         {isMobile ? (
           <div className="flex items-center justify-between w-full">
             <Link
@@ -48,7 +49,7 @@ export default function Navbar() {
             </div>
             <div
               className={cn(
-                "fixed top-0 right-0 p-5 bg-explorer-dark-gray w-full h-full translate-x-full duration-500 z-50",
+                "fixed top-0 right-0 p-5 bg-theme dark:bg-theme w-full h-full translate-x-full duration-500 z-50",
                 { "translate-x-0": menuOpen }
               )}
             >
@@ -61,12 +62,14 @@ export default function Navbar() {
                 />
               </div>
               <div className="flex flex-col text-2xl gap-y-2">
+                <ThemeToggle />
                 <Link
                   href={"/witnesses"}
                   onClick={() => setMenuOpen(false)}
                 >
                   Witnesses
                 </Link>
+
                 <div>
                   <ViewPopover isMobile={isMobile} />
                 </div>
@@ -102,6 +105,7 @@ export default function Navbar() {
               >
                 Witnesses
               </Link>
+              <ThemeToggle />
             </div>
             <SearchBar open={true} />
           </>

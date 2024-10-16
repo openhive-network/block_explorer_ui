@@ -46,17 +46,17 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
       <TableRow
         key={index}
         className={cn({
-          "bg-gray-700": index % 2 === 0,
+          "bg-rowEven": index % 2 === 0,
         })}
       >
         <TableCell className="cursor-pointer">
           {isAccount ? (
             <Link
-              className=" text-explorer-turquoise flex"
+              className="text-link flex"
               href={`/@${content}`}
             >
               <User className="w-4 mr-2" />
-              <span>{content}</span>
+              <span>{content} </span>
             </Link>
           ) : (
             <CopyToKeyboard
@@ -82,7 +82,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
     );
     return (
       <div>
-        <div className=" text-lg mt-2">{title}</div>
+        <div className="text-lg mt-2">{title}</div>
         <Table>
           <TableBody>
             {authorities?.account_auths?.map((singleAuthority, index) =>
@@ -103,7 +103,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
             )}
             <TableRow
               className={cn("font-semibold", {
-                "bg-gray-700": shouldMarkThreshold,
+                "bg-rowEven ": shouldMarkThreshold,
               })}
             >
               <TableCell>Threshold</TableCell>
@@ -123,7 +123,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
       <CardHeader className="p-0">
         <div
           onClick={handlePropertiesVisibility}
-          className="h-full flex justify-between align-center p-2 hover:bg-slate-600 cursor-pointer px-4"
+          className="h-full flex justify-between align-center p-2 hover:bg-rowHover cursor-pointer px-4"
         >
           <div className="text-lg">Authorities</div>
 
@@ -147,7 +147,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
           <div className=" text-lg mt-2">Memo:</div>
           <Table>
             <TableBody>
-              <TableRow className="bg-gray-700">
+              <TableRow className="bg-rowEven">
                 <TableCell className="cursor-pointer">
                   <CopyToKeyboard
                     value={accountAuthoritiesData?.memo}
@@ -162,7 +162,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
               <div className=" text-lg mt-2">Witness signing:</div>
               <Table>
                 <TableBody>
-                  <TableRow className="bg-gray-700">
+                  <TableRow className="bg-rowEven">
                     <TableCell className="cursor-pointer">
                       <CopyToKeyboard
                         value={accountAuthoritiesData?.witness_signing}

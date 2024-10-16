@@ -21,9 +21,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
+import { useTheme } from "@/contexts/ThemeContext";
 
 export default function Home() {
   const { settings } = useUserSettingsContext();
+  const { theme } = useTheme();
 
   const witnesses = useWitnesses(
     config.witnessesPerPages.home,
@@ -36,6 +38,8 @@ export default function Home() {
   const headBlockData = useHeadBlock(headBlockNum).headBlockData;
   const { blockOperations } = useBlockOperations(headBlockNum || 0);
   const opcount = blockOperations?.operations_result?.length || 0;
+
+  const strokeColor = theme === "dark" ? "#FFF" : "#000";
 
   return (
     <>
@@ -50,7 +54,10 @@ export default function Home() {
           opcount={opcount}
         />
         <div className="col-span-4 md:col-span-3 lg:col-span-2">
-          <LastBlocksWidget headBlock={headBlockNum} />
+          <LastBlocksWidget
+            headBlock={headBlockNum}
+            strokeColor={strokeColor}
+          />
           <SearchesSection />
         </div>
 
@@ -65,7 +72,7 @@ export default function Home() {
             <Table>
               <TableBody>
                 {witnesses &&
-                  witnesses.map((witness, index) => (
+                  witnesses.witnesses.map((witness, index) => (
                     <TableRow
                       className=" text-base"
                       key={index}
@@ -74,18 +81,18 @@ export default function Home() {
                       <TableCell className="py-4">{index + 1}</TableCell>
                       <TableCell className="py-4">
                         <Link
-                          href={`/@${witness.witness}`}
-                          className="text-explorer-turquoise"
+                          href={`/@${witness.witness_name}`}
+                          className="text-link"
                         >
-                          {witness.witness}
+                          {witness.witness_name}
                         </Link>
                       </TableCell>
                       <TableCell className="py-4">
-                        <Link href={`/@${witness.witness}`}>
+                        <Link href={`/@${witness.witness_name}`}>
                           <div className="min-w-[30px]">
                             <Image
-                              className="rounded-full border-2 border-explorer-turquoise"
-                              src={getHiveAvatarUrl(witness.witness)}
+                              className="rounded-full border-2 border-link"
+                              src={getHiveAvatarUrl(witness.witness_name)}
                               alt="avatar"
                               width={40}
                               height={40}

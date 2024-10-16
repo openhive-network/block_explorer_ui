@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/router";
 import Head from "next/head";
@@ -6,7 +6,6 @@ import Head from "next/head";
 import { config } from "@/Config";
 import Hive from "@/types/Hive";
 import Explorer from "@/types/Explorer";
-import { scrollTo } from "@/utils/UI";
 import {
   convertBooleanArrayToIds,
   convertOperationResultsToTableOperations,
@@ -69,7 +68,6 @@ const scrollToTrxSection = (trxId?: string) => {
 
 export default function Block() {
   const router = useRouter();
-  const virtualOpsRef = useRef(null);
 
   const blockId = (router.query.blockId as string)?.replaceAll(",", "");
 
@@ -89,19 +87,18 @@ export default function Block() {
   }, [blockId, refetch]);
 
   const { settings } = useUserSettingsContext();
-
   const { operationsCountInBlock, countLoading } = useOperationsCountInBlock(
-    Number(blockId)
+    Number.isNaN(Number(blockId)) ? blockId : Number(blockId)
   );
 
-  const { blockDetails, loading } = useBlockData(Number(blockId));
+  const { blockDetails, loading } = useBlockData(Number.isNaN(Number(blockId)) ? blockId : Number(blockId));
 
-  const { rawBlockdata } = useBlockRawData(Number(blockId));
+  const { rawBlockdata } = useBlockRawData(Number.isNaN(Number(blockId)) ? blockId : Number(blockId));
   const { blockOperations: totalOperations, trxLoading: totalLoading } =
-    useBlockOperations(Number(blockId), undefined, paramsState.page || 1);
+    useBlockOperations(Number.isNaN(Number(blockId)) ? blockId : Number(blockId), undefined, paramsState.page || 1);
 
   const { blockError, blockOperations, trxLoading } = useBlockOperations(
-    Number(blockId),
+    Number.isNaN(Number(blockId)) ? blockId : Number(blockId),
     paramsState.filters
       ? convertBooleanArrayToIds(paramsState.filters)
       : undefined,
@@ -120,18 +117,13 @@ export default function Block() {
     }
   }, [blockDetails]);
 
-  const getSplitOperations = useCallback(
+  const getConvertedOperations = useCallback(
     (operations?: Hive.OperationResponse[]) => {
       if (operations) {
-        return {
-          virtualOperations: convertOperationResultsToTableOperations(
-            operations?.filter((operation) => operation.virtual_op)
-          ),
-          nonVirtualOperations: convertOperationResultsToTableOperations(
-            operations?.filter((operation) => !operation.virtual_op)
-          ),
-        };
-      } else return { virtualOperations: [], nonVirtualOperations: [] };
+        return convertOperationResultsToTableOperations(operations);
+      } else {
+        return [];
+      }
     },
     []
   );
@@ -182,13 +174,10 @@ export default function Block() {
     nonVirtualOperationsTypesCounters,
   } = getOperationsCounts();
 
-  const { virtualOperations, nonVirtualOperations } =
-    getSplitOperations(formattedOperations);
-
-  const {
-    virtualOperations: unformattedVirtual,
-    nonVirtualOperations: unformattedNonVirtual,
-  } = getSplitOperations(blockOperations?.operations_result);
+  const convertedTotalOperations = getConvertedOperations(formattedOperations);
+  const unformattedOperations = getConvertedOperations(
+    blockOperations?.operations_result
+  );
 
   const handleGoToBlock = (blockNumber: string) => {
     router.push({
@@ -249,12 +238,12 @@ export default function Block() {
         <div>Loading ...</div>
       ) : blockDetails?.block_num ? (
         <div
-          className="w-full h-full flex flex-col gap-y-4 px-2 md:px-0"
+          className="w-full h-full flex flex-col gap-y-4 px-2"
           style={{ scrollMargin: "100px" }}
           id="block-page-top"
         >
           <BlockPageNavigation
-            blockNumber={Number(blockId)}
+            blockNumber={blockDetails.block_num}
             goToBlock={handleGoToBlock}
             timeStamp={blockDate}
             setFilters={handleFilterChange}
@@ -274,32 +263,25 @@ export default function Block() {
             }
             blockDetails={blockDetails}
           />
-          <div className="fixed top-[calc(100vh-90px)] md:top-[calc(100vh-100px)] right-0 flex flex-col items-end justify-end px-3 md:px-12">
+          <div className="fixed top-[calc(100vh-90px)] md:top-[calc(100vh-60px)] right-0 flex flex-col items-end justify-end px-3 md:px-12">
             <ScrollTopButton />
-            <Button
-              onClick={() => scrollTo(virtualOpsRef)}
-              className="bg-[#ADA9A9] rounded text-white hover:bg-gray-700 w-fit"
-            >
-              <p className="hidden md:inline">To Virtual Ops</p>
-              <p className="md:hidden inline">V Ops</p>
-            </Button>
           </div>
           {loading || trxLoading || totalLoading ? (
             <div className="flex justify-center items-center">
-              <Loader2 className="animate-spin dark:text-white mt-1 h-16 w-16 ml-3 ... " />
+              <Loader2 className="animate-spin text-text mt-1 h-16 w-16 ml-3 ... " />
             </div>
           ) : settings.rawJsonView || settings.prettyJsonView ? (
             <div className="px-2">
               <JSONView
                 data-testid="json-view"
                 json={rawBlockdata || {}}
-                className="w-full md:w-[962px] mt-6 m-auto py-2 px-4 bg-explorer-dark-gray rounded text-white text-xs break-words break-all"
+                className="w-full md:w-[962px] mt-6 m-auto py-2 px-4 bg-theme dark:bg-theme rounded text-white text-xs break-words break-all"
                 isPrettyView={settings.prettyJsonView}
               />
             </div>
           ) : (
             <section
-              className="md:px-10 flex flex-col items-center justify-center text-white"
+              className="flex flex-col items-center justify-center text-text"
               data-testid="block-page-operation-list"
             >
               {!!totalOperations?.total_operations &&
@@ -311,36 +293,15 @@ export default function Block() {
                     }
                     pageSize={config.blockPagePaginationSize}
                     totalCount={blockOperations?.total_operations || 0}
-                    className="text-black dark:text-white"
+                    className="text-text"
                   />
                 )}
-              <div className="w-full md:w-4/5 flex flex-col gap-y-2">
-                {!!nonVirtualOperations.length && (
+              <div className="w-full max-w-screen-2xl flex flex-col gap-y-2">
+                {!!convertedTotalOperations.length && (
                   <OperationsTable
-                    operations={nonVirtualOperations}
-                    unformattedOperations={unformattedNonVirtual}
+                    operations={convertedTotalOperations}
                     markedTrxId={paramsState.trxId}
-                  />
-                )}
-                <div
-                  className="text-center mt-4"
-                  ref={virtualOpsRef}
-                  style={{ scrollMargin: "100px" }}
-                >
-                  <p className="text-3xl text-black dark:text-white">
-                    {!!blockOperations &&
-                    !blockOperations?.operations_result?.length
-                      ? "No operations were found"
-                      : !!virtualOperations.length
-                      ? "Virtual Operations"
-                      : null}
-                  </p>
-                </div>
-                {!!virtualOperations.length && (
-                  <OperationsTable
-                    operations={virtualOperations}
-                    unformattedOperations={unformattedVirtual}
-                    markedTrxId={paramsState.trxId}
+                    unformattedOperations={unformattedOperations}
                   />
                 )}
               </div>

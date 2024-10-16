@@ -12,7 +12,8 @@ const useWitnessVoters = (
   isModalOpen: boolean,
   isAsc: boolean,
   sortKey: string,
-  liveDataEnabled: boolean
+  liveDataEnabled: boolean,
+  pageNum: number
 ) => {
   const sortDirection = isAsc ? SORT_ASC : SORT_DESC;
 
@@ -20,7 +21,7 @@ const useWitnessVoters = (
     data: witnessVoters,
     isLoading: isWitnessVotersLoading,
     isError: isWitnessVotersError,
-  }: UseQueryResult<Hive.Voter[]> = useQuery({
+  }: UseQueryResult<Hive.WitnessVotersResponse> = useQuery({
     queryKey: [
       "witness_voters",
       accountName,
@@ -28,9 +29,10 @@ const useWitnessVoters = (
       isAsc,
       sortKey,
       liveDataEnabled,
+      pageNum
     ],
     queryFn: () =>
-      fetchingService.getWitnessVoters(accountName, sortKey, sortDirection),
+      fetchingService.getWitnessVoters(accountName, sortKey, sortDirection, pageNum),
     enabled: !!accountName && isModalOpen,
     refetchInterval: liveDataEnabled ? config.accountRefreshInterval : false,
     refetchOnWindowFocus: false,

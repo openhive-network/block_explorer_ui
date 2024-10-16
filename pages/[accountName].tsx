@@ -92,7 +92,12 @@ export default function Account() {
   const searchRanges = useSearchRanges();
 
   const { dynamicGlobalData } = useDynamicGlobal();
-  const {formattedAccountDetails: accountDetails, notFound}  = useConvertedAccountDetails(accountNameFromRoute, liveDataEnabled, dynamicGlobalData);
+  const { formattedAccountDetails: accountDetails, notFound } =
+    useConvertedAccountDetails(
+      accountNameFromRoute,
+      liveDataEnabled,
+      dynamicGlobalData
+    );
   const accountOperationsProps = {
     accountName: accountNameFromRoute,
     operationTypes: filtersParam.length
@@ -208,7 +213,7 @@ export default function Account() {
         <>
           <div className="fixed pl-0 left-0 top-[50%] z-50">
             <Button
-              className="flex justify-center bg-explorer-orange h-[100px] w-[40px] hover:bg-orange-300 align-center [writing-mode:vertical-lr] text-explorer-dark-gray rounded-r"
+              className="flex justify-center bg-explorer-orange h-[100px] w-[40px] hover:bg-orange-300 align-center [writing-mode:vertical-lr] text-explorer-gray-dark rounded-r"
               onClick={() => setShowMobileAccountDetails(true)}
             >
               <ArrowBigRightDash size={30} />
@@ -217,7 +222,7 @@ export default function Account() {
 
           <div
             className={cn(
-              "fixed top-0 left-0 p-5 bg-explorer-dark-gray w-full h-full -translate-x-full duration-500 z-50 overflow-auto",
+              "fixed top-0 left-0 p-5 bg-theme dark:bg-theme w-full h-full -translate-x-full duration-500 z-50 overflow-auto",
               { "-translate-x-0": showMobileAccountDetails }
             )}
           >
@@ -308,14 +313,12 @@ export default function Account() {
               <SearchRanges rangesProps={searchRanges} />
               <div className="flex items-center justify-between m-2">
                 <Button
-                  className=" bg-blue-800 hover:bg-blue-600 rounded"
                   onClick={() => handleSearch(true)}
                   data-testid="apply-filters"
                 >
                   <span>Apply filters</span>{" "}
                 </Button>
                 <Button
-                  className=" bg-blue-800 hover:bg-blue-600 rounded-[4px]"
                   onClick={() => handleFilterClear()}
                   data-testid="clear-filters"
                 >

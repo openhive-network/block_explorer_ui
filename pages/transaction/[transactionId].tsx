@@ -71,13 +71,13 @@ export default function Transaction() {
                 </div>
                 <div className="w-full flex justify-evenly">
                   <div>
-                    Block:
+                    Block:{" "}
                     <Link
                       href={`/block/${trxData?.block_num}`}
                       className="text-explorer-turquoise"
                       data-testid="transaction-header-block-number"
                     >
-                      {" " + trxData?.block_num}
+                      <span className="text-link">{trxData?.block_num}</span>
                     </Link>
                   </div>
                   <div data-testid="transaction-header-date">
@@ -92,7 +92,7 @@ export default function Transaction() {
             {settings.rawJsonView || settings.prettyJsonView ? (
               <JSONView
                 json={trxData.transaction_json}
-                className="w-full md:w-[992px] m-auto py-2 px-4 bg-explorer-dark-gray rounded text-white text-xs break-words break-all"
+                className="w-full md:w-[992px] m-auto py-2 px-4 bg-theme dark:bg-theme rounded text-white text-xs break-words break-all"
                 isPrettyView={settings.prettyJsonView}
               />
             ) : (

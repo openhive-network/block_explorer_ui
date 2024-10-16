@@ -86,12 +86,12 @@ const HeadBlockPropertyCard: React.FC<HeadBlockPropertyCardProps> = ({
 
   return (
     <div
-      className="bg-explorer-dark-gray py-1 rounded-[6px]"
+      className="bg-theme py-1 rounded-[6px]"
       data-testid="expandable-list"
     >
       <div
         onClick={handleHideParams}
-        className="h-full flex justify-between align-center py-2 hover:bg-slate-600 cursor-pointer px-2"
+        className="h-full flex justify-between align-center py-2 hover:bg-rowHover cursor-pointer px-2"
       >
         <div className="text-lg">{header}</div>
         {isParamsHidden ? <ArrowDown /> : <ArrowUp />}

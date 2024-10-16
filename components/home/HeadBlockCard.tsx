@@ -96,6 +96,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
         />
         <div className="text-explorer-turquoise text-2xl text-left">
           <Link
+            className="text-link"
             href={`/block/${blockDetails?.block_num}`}
             data-testid="block-number-link"
           >
@@ -116,14 +117,14 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
             >
               <div className="flex">
                 <p
-                  className="text-explorer-turquoise mx-2"
+                  className="text-link mx-2"
                   data-testid="current-witness-name"
                 >
                   {blockDetails?.producer_account}
                 </p>
                 <div className="min-w-[30px]">
                   <Image
-                    className="rounded-full border-2 border-explorer-turquoise"
+                    className="rounded-full border-2 border-link"
                     src={getHiveAvatarUrl(blockDetails?.producer_account)}
                     alt="avatar"
                     width={40}

@@ -102,10 +102,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
 
   const handleGoToBlockByTime = async (date: Date | undefined) => {
     if (date && date?.getTime() !== timeStamp?.getTime()) {
-      const blockByTime = await checkBlockByTime(moment(date).utc().toDate());
-      if (blockByTime) {
-        handleBlockChange(blockByTime.toString());
-      }
+      goToBlock(date.toISOString());
     }
   };
 
@@ -115,7 +112,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
 
   return (
     <Card
-      className="w-full md:w-4/6 m-auto"
+      className="w-full md:max-w-screen-2xl md:px-2 m-auto"
       data-testid="block-page-search"
     >
       <CardHeader>
@@ -127,12 +124,12 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
             <p>Block Number : </p>
             <button
               onClick={() => handleBlockChange((blockNumber - 1).toString())}
-              className="text-white bg-transparent text-sm border-0 h-[30px] md:px-1 hover:bg-gray-700 ml-2"
+              className="text-text bg-transparent text-sm border-0 h-[30px] md:px-1 hover:bg-buttonHover ml-2"
             >
               <ChevronLeft />
             </button>
             <Input
-              className="max-w-[110px] py-0 mx-2 h-[30px] border-0 border-b-2 text-explorer-turquoise  text-md [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="max-w-[110px] py-0 mx-2 h-[30px] border-0 border-b-2 text-link  text-md [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               value={block}
               onChange={(e) => setBlock(e.target.value)}
               type="number"
@@ -142,7 +139,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
             <button
               data-testid="next-block-btn"
               onClick={() => handleBlockChange((blockNumber + 1).toString())}
-              className="text-white bg-transparent text-sm border-0 h-[30px] md:px-1 hover:bg-gray-700 "
+              className="text-text bg-transparent text-sm border-0 h-[30px] md:px-1 hover:bg-buttonHover"
             >
               <ChevronRight />
             </button>
@@ -166,7 +163,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
               selectedOperations={convertBooleanArrayToIds(
                 selectedOperationIds
               )}
-              buttonClassName="bg-gray-500"
+              buttonClassName="bg-buttonBg"
               triggerTitle={getOperationButtonTitle(
                 convertBooleanArrayToIds(selectedOperationIds),
                 operationTypes

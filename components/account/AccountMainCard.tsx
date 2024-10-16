@@ -35,7 +35,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
   return (
     <Card data-testid="account-details">
       <CardHeader>
-        <div className="flex justify-between bg-explorer-dark-gray text-explorer-orange text-2xl my-4">
+        <div className="flex justify-between bg-theme dark:bg-theme text-explorer-orange text-2xl my-4">
           {accountDetails.is_witness ? (
             <div data-testid="account-name">
               {accountDetails.name} <span className="text-sm">(witness)</span>
@@ -74,7 +74,6 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
               <Progress
                 value={manabarsData?.upvote.percentageValue}
                 color="#00c040"
-                style={{ background: "#03182c", zIndex: 0 }}
               />
               <p className="text-sm text-gray-400">
                 {manabarsData?.upvote.current} / {manabarsData?.upvote.max}
@@ -91,7 +90,6 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
               <Progress
                 value={manabarsData?.downvote.percentageValue}
                 color="#c01000"
-                style={{ background: "#03182c", zIndex: 0 }}
               />
               <p className="text-sm text-gray-400">
                 {manabarsData?.downvote.current} / {manabarsData?.downvote.max}
@@ -108,7 +106,6 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
               <Progress
                 value={manabarsData?.rc.percentageValue}
                 color="#cecafa"
-                style={{ background: "#03182c", zIndex: 0 }}
               />
               <p className="text-sm text-gray-400">
                 {manabarsData?.rc.current} / {manabarsData?.rc.max}
@@ -146,13 +143,13 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
           <div className="w-full flex justify-between">
             <button
               onClick={openVotersModal}
-              className="bg-explorer-orange text-explorer-dark-gray rounded p-2"
+              className="bg-explorer-orange text-explorer-gray-light dark:explorer-gray-dark rounded p-2"
             >
               Voters
             </button>
             <button
               onClick={openVotesHistoryModal}
-              className="bg-explorer-orange text-explorer-dark-gray rounded p-2"
+              className="bg-explorer-orange text-explorer-gray-light dark:explorer-gray-dark rounded p-2"
             >
               Votes History
             </button>

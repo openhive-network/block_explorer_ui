@@ -112,7 +112,7 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
     <>
       <div className="flex flex-col">
         <Input
-          className="w-1/2 bg-explorer-dark-gray border-0 border-b-2"
+          className="w-1/2 bg-theme dark:bg-theme border-0 border-b-2"
           type="text"
           placeholder="Account name"
           value={accountName || ""}
@@ -145,7 +145,7 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
                 <HelpCircle className="h-4" />
               </TooltipTrigger>
               <TooltipContent>
-                <div className="bg-white text-black dark:bg-explorer-dark-gray dark:text-white p-2">
+                <div className="bg-theme text-text p-2">
                   Pick property from body of operation and its value. You can
                   use that only for single operation.
                 </div>
@@ -159,7 +159,7 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
             value={selectedIndex}
           >
             <SelectTrigger
-              className="w-1/2 pb-6 justify-normal bg-exolorer-dark-gray border-0 border-b-2 "
+              className="w-1/2 pb-6 justify-normal bg-theme border-0 border-b-2 "
               disabled={
                 !selectedOperationTypes || selectedOperationTypes.length !== 1
               }
@@ -174,7 +174,7 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
                     )
                 )
               ) : (
-                <div className="text-blocked">
+                <div className="text-text">
                   {!selectedOperationTypes ||
                   selectedOperationTypes.length !== 1
                     ? "Select exactly 1 operation to use key-value search"
@@ -182,10 +182,10 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
                 </div>
               )}
             </SelectTrigger>
-            <SelectContent className="bg-white text-black dark:bg-explorer-dark-gray dark:text-white rounded-sm max-h-[31rem] overflow-y-scroll">
+            <SelectContent className="rounded-sm max-h-[31rem] overflow-y-scroll">
               {operationKeysData?.map((keys, index) => (
                 <SelectItem
-                  className="m-1 text-center hover:bg-explorer-dark-gray hover:text-white hover:dark:bg-white hover:dark:text-black hover:cursor-pointer"
+                  className="m-1 text-center"
                   key={index}
                   value={index.toFixed(0)}
                   defaultChecked={false}
@@ -217,7 +217,7 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
       </div>
       <div className="flex flex-col">
         <Input
-          className="w-1/2 border-0 border-b-2 bg-explorer-dark-gray"
+          className="w-1/2 border-0 border-b-2 bg-theme text-text"
           type="text"
           value={fieldContent || ""}
           onChange={(e) => setFieldContent(e.target.value)}
@@ -233,7 +233,6 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
       <div className="flex items-center ">
         <Button
           data-testid="block-search-btn"
-          className=" bg-blue-800 hover:bg-blue-600 rounded"
           onClick={onButtonClick}
         >
           Search

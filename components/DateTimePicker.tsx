@@ -42,7 +42,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
         <Button
           variant={"outline"}
           className={cn(
-            "w-full justify-start text-left font-normal",
+            "w-full justify-start text-left font-normal h-auto",
             !date && "text-muted-foreground"
           )}
           data-testid="datepicker-trigger"
@@ -53,7 +53,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
       </PopoverTrigger>
       <PopoverContent
         side={side}
-        className="w-auto p-0 text-white bg-explorer-dark-gray"
+        className="w-auto p-0 text-text bg-theme"
       >
         <Calendar
           mode="single"
