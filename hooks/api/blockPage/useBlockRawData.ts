@@ -10,7 +10,7 @@ const useBlockRawData = (blockNumber: number | string) => {
     error: rawBlockdataError,
   }: UseQueryResult<Hive.BlockDetails> = useQuery({
     queryKey: ["raw_block", blockNumber],
-    queryFn: () => fetchingService.getBlockRaw(blockNumber),
+    queryFn: () => fetchingService.getBlock(blockNumber),
     enabled: !!blockNumber,
     refetchOnWindowFocus: false,
   });

@@ -256,7 +256,7 @@ namespace Hive {
   }
 
   export class GetBlockDetailsParams {
-    blockNumber!: number | Date;
+    blockNumber!: number | string;
   }
 
   export class BlockDetails {

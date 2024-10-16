@@ -83,12 +83,6 @@ export const extendedRest = {
       result: Hive.TotalOperationsResponse,
       urlPath: "blocks/{blockNumber}/operations"
     },
-    rawBlock: {
-      params: Hive.GetRawBlockParams,
-      result: Hive.RawBlockData,
-      responseArray: true,
-      urlPath: "blocks"
-    },
     transactions: {
       transaction: {
         params: Hive.GetTransactionParams,
