@@ -2,6 +2,9 @@ import { config } from "@/Config";
 import { useAddressesContext } from "../contexts/AddressesContext";
 import useHafbeVersion from "@/hooks/api/common/useHafbeVersion";
 import AddressSwitchedDialog from "./AddressSwitchedDialog";
+import Link from "next/link";
+
+const { lastCommitHashRepoUrl, gitHash } = config;
 
 export default function Footer() {
   const { hafbeVersionData } = useHafbeVersion();
@@ -19,7 +22,12 @@ export default function Footer() {
         </p>
         <p data-testid="footer-last-commit-hash">
           <span>Last commit hash: </span>
-          {config.gitHash}
+          <Link
+            target="_blank"
+            href={lastCommitHashRepoUrl}
+          >
+            <span className="text-link">{gitHash}</span>
+          </Link>
         </p>
         <p data-testid="footer-hafbe-version-hash">
           <span>Hafbe version hash: </span>

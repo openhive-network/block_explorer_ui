@@ -5,6 +5,7 @@ export const config = {
   apiAddress: `${env('API_ADDRESS') ? env('API_ADDRESS') : 'https://hafbe.openhive.network'}`,
   baseMomentTimeFormat: "YYYY/MM/DD HH:mm:ss UTC",
   gitHash: process.env.NEXT_PUBLIC_COMMIT_HASH,
+  get lastCommitHashRepoUrl () { return `https://gitlab.syncad.com/hive/block_explorer_ui/-/commit/${this.gitHash}`}, 
   opsBodyLimit: 100000,
   commentOperationsTypeIds: [0, 1, 17, 19, 51, 53, 61, 63, 72, 73],
   standardPaginationSize: 100,
