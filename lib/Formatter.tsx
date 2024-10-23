@@ -1119,11 +1119,15 @@ class OperationsFormatter implements IWaxCustomFormatter {
     source: { value: op },
     target,
   }: IFormatFunctionArguments<{ value: Hive.RecurrentTransferOperation }>) {
+    const formattedText = op.amount!.amount != "0" ?
+      `defined a recurrent transfer of ${this.getFormattedAmount(op.amount)}, having ${op.executions} executions, once per ${op.recurrence} hours to`
+      :
+      `cancelled a recurrent transfer having ${op.executions} executions, once per ${op.recurrence} hours to`
+      ;
+
     const message = this.generateReactLink([
       this.getAccountLink(op.from),
-      `set recurrent transfer of ${this.getFormattedAmount(op.amount)}, ${
-        op.executions
-      } executions every ${op.recurrence} hours to`,
+      formattedText,
       this.getAccountLink(op.to),
     ]);
     return { ...target, value: message };
