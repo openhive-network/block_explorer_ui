@@ -4,9 +4,16 @@ import Link from "next/link";
 
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { Card, CardContent, CardHeader } from "../ui/card";
-import { Table, TableBody, TableRow, TableCell } from "../ui/table";
+import {
+  Table,
+  TableBody,
+  TableRow,
+  TableCell,
+  TableHeader,
+} from "../ui/table";
 import Explorer from "@/types/Explorer";
 import useConvertedVestingShares from "@/hooks/common/useConvertedVestingShares";
+import { buildTableHead, handleSortDelegations } from "@/utils/DelegationsSort";
 
 type AccountVestingDelegationsCardProps = {
   delegatorAccount: string;
@@ -16,8 +23,6 @@ type AccountVestingDelegationsCardProps = {
 
 const buildTableBody = (delegations: Explorer.VestingDelegation[]) => {
   return delegations.map((delegation, index: number) => {
-    const isLast = index === delegations.length - 1;
-
     return (
       <Fragment key={index}>
         <TableRow className={"border-b border-gray-700 hover:bg-inherit"}>
@@ -48,6 +53,15 @@ const AccountVestingDelegationsCard: React.FC<
     liveDataEnabled,
     dynamicGlobalData
   );
+  const [sortConfig, setSortConfig] = useState<{
+    key: string;
+    isAscending: boolean;
+  }>({
+    key: "recipient",
+    isAscending: true,
+  });
+
+  const { key, isAscending } = sortConfig;
 
   if (!hiveChain || !dynamicGlobalData || !delegations || !delegations.length)
     return;
@@ -55,6 +69,18 @@ const AccountVestingDelegationsCard: React.FC<
   const handlePropertiesVisibility = () => {
     setIsPropertiesHidden(!isPropertiesHidden);
   };
+
+  const sortBy = (key: string) => {
+    setSortConfig({ key, isAscending: !isAscending });
+  };
+
+  const sortedDelegations = handleSortDelegations({
+    delegations,
+    key,
+    isAscending,
+    recipient: "delegatee",
+    amount: "vesting_shares",
+  }) as Explorer.VestingDelegation[];
 
   return (
     <Card
@@ -72,7 +98,10 @@ const AccountVestingDelegationsCard: React.FC<
       </CardHeader>
       <CardContent hidden={isPropertiesHidden}>
         <Table>
-          <TableBody>{buildTableBody(delegations)}</TableBody>
+          <TableHeader>
+            <TableRow>{buildTableHead(sortBy, key, isAscending)}</TableRow>
+          </TableHeader>
+          <TableBody>{buildTableBody(sortedDelegations)}</TableBody>
         </Table>
       </CardContent>
     </Card>
