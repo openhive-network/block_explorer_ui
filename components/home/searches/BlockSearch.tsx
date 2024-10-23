@@ -168,7 +168,7 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
                 selectedKeys.map(
                   (key, index) =>
                     key !== "value" && (
-                      <div key={key}>
+                      <div key={`key ${index}`}>
                         {index !== 1 && "/"} {key}
                       </div>
                     )
@@ -194,7 +194,7 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
                     {keys.map(
                       (key, index) =>
                         key !== "value" && (
-                          <div key={key}>
+                          <div key={`key ${index}`}>
                             {index !== 1 && "/"} {key}{" "}
                           </div>
                         )
