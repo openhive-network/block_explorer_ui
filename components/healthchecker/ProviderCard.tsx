@@ -33,7 +33,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
       </div>
       <Button disabled={disabled} className="hover:bg-slate-400 rounded col-start-7 col-span-2 justify-self-end" onClick={() => {switchToProvider(providerLink)}}>Switch to API</Button>
       <Button className="hover:bg-slate-400 rounded col-start-7 col-span-2 justify-self-end row-start-2" onClick={() => {onDialogOpenChange(true, providerLink)}}><Pencil /></Button>
-      <div className="row-start-2 flex items-center col-start-2 col-span-6">
+      <div className="row-start-2 flex items-center col-start-2 col-span-6 flex-wrap">
         {apiList.map((api) => 
           <Badge key={api} variant={"outline"}>{api}</Badge>
         )}
