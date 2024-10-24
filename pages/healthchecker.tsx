@@ -3,29 +3,53 @@ import Head from "next/head";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { useAddressesContext } from "@/contexts/AddressesContext";
 
+import { ExplorerNodeApi } from "@/types/Node";
+
 export default function HealthcheckerPage() {
 
   const {hiveChain} = useHiveChainContext();
   const { nodeAddress, apiAddress, setNodeAddress, setApiAddress } =
     useAddressesContext();
 
-  const checksMap = new Map<string, ApiChecker>().set("block_api", {
-    title: "Block API",
-    method: hiveChain?.api.block_api.get_block, 
-    params: {block_num: 1}, 
-    validatorFunction: data => data.block?.previous === "0000000000000000000000000000000000000000"
+  const extendedHiveChain = hiveChain
+    ?.extend<ExplorerNodeApi>();
+
+  const checksMap = new Map<string, ApiChecker>()
+  .set("reward_funds", {
+    title: "Reward Funds",
+    method: extendedHiveChain?.api.database_api.get_reward_funds,
+    params: {}, 
+    validatorFunction: data => !!data
   })
-  .set("find_account", {
-    title: "Find Account",
-    method: hiveChain?.api.database_api.find_accounts,
-    params: {accounts: ["hiveio"]},
-    validatorFunction: (data) => !!data
+  .set("dynamic_global_properties", {
+    title: "Dynamic Global",
+    method: extendedHiveChain?.api.database_api.get_dynamic_global_properties,
+    params: {}, 
+    validatorFunction: data => !!data
   })
-  .set("account_by_key", {
-    title: "Account by key",
-    method: hiveChain?.api.account_by_key_api.get_key_references,
-    params: {accounts: ["hiveio"]},
-    validatorFunction: (data) => !!data
+  .set("current_price_feed", {
+    title: "Price Feed",
+    method: extendedHiveChain?.api.database_api.get_current_price_feed,
+    params: {}, 
+    validatorFunction: data => !!data
+  })
+  .set("witness_schedule", {
+    title: "Witness Schedule",
+    method: extendedHiveChain?.api.database_api.get_witness_schedule,
+    params: { id: 1 }, 
+    validatorFunction: data => !!data
+  })
+  .set("vesting_delegations", {
+    title: "Vesting Delegations",
+    method: extendedHiveChain?.api.database_api.find_vesting_delegations,
+    params: { account: "hiveio" }, 
+    validatorFunction: data => !!data
+  })
+  .set("rc_direct_delegations", {
+    title: "RC Direct Delegations",
+    method: extendedHiveChain?.api.rc_api.list_rc_direct_delegations,
+    params: { start: ["hiveio", ""], limit: 1000 }, 
+    validatorFunction: data => !!data
   });
 
 

@@ -11,26 +11,7 @@ import {
 import { extendedRest } from "@/types/Rest";
 import { createPathFilterString } from "@/lib/utils";
 
-type ExplorerNodeApi = {
-  database_api: {
-    get_reward_funds: TWaxApiRequest<{}, { funds: Hive.RewardFunds[] }>;
-    get_current_price_feed: TWaxApiRequest<{}, Hive.PriceFeed>;
-    find_vesting_delegations: TWaxApiRequest<
-      { account: string },
-      { delegations: Hive.VestingDelegations[] }
-    >;
-    get_witness_schedule: TWaxApiRequest<
-      { id: number },
-      Hive.WitnessesSchedule
-    >;
-  };
-  rc_api: {
-    list_rc_direct_delegations: TWaxApiRequest<
-      { start: [string, string]; limit: number },
-      { rc_direct_delegations: Hive.RCDelegations[] }
-    >;
-  };
-};
+import { ExplorerNodeApi } from "@/types/Node";
 
 class FetchingService {
   private apiUrl: string | null = null;
@@ -58,6 +39,54 @@ class FetchingService {
       this.extendedHiveChain.restApi.endpointUrl = this.apiUrl;
     }
   }
+
+  // Node calls:
+
+  async getRewardFunds(): Promise<{ funds: Hive.RewardFunds[] }> {
+    return await this.extendedHiveChain!.api.database_api.get_reward_funds({});
+  }
+
+  async getDynamicGlobalProperties(): Promise<GetDynamicGlobalPropertiesResponse> {
+    return await this.extendedHiveChain!.api.database_api.get_dynamic_global_properties(
+      {}
+    );
+  }
+
+  async getCurrentPriceFeed(): Promise<Hive.PriceFeed> {
+    return await this.extendedHiveChain!.api.database_api.get_current_price_feed(
+      {}
+    );
+  }
+
+  async getWitnessSchedule(): Promise<Hive.WitnessesSchedule> {
+    const params = { id: 1 };
+
+    return await this.extendedHiveChain!.api.database_api.get_witness_schedule(
+      params
+    );
+  }
+
+  async getVestingDelegations(
+    delegatorAccount: string
+  ): Promise<Hive.VestingDelegations[]> {
+    return await this.extendedHiveChain!.api.database_api.find_vesting_delegations(
+      {
+        account: delegatorAccount,
+      }
+    ).then((response) => response.delegations);
+  }
+
+  async getRcDelegations(
+    delegatorAccount: string,
+    limit: number
+  ): Promise<Hive.RCDelegations[]> {
+    return await this.extendedHiveChain!.api.rc_api.list_rc_direct_delegations({
+      start: [delegatorAccount, ""],
+      limit: limit,
+    }).then((response) => response.rc_direct_delegations);
+  }
+
+  // Rest API calls:
 
   async getHeadBlockNum(): Promise<number> {
     return await this.extendedHiveChain!.restApi["hafah-api"].headblock();
@@ -120,21 +149,7 @@ class FetchingService {
     );
   }
 
-  async getRewardFunds(): Promise<{ funds: Hive.RewardFunds[] }> {
-    return await this.extendedHiveChain!.api.database_api.get_reward_funds({});
-  }
 
-  async getDynamicGlobalProperties(): Promise<GetDynamicGlobalPropertiesResponse> {
-    return await this.extendedHiveChain!.api.database_api.get_dynamic_global_properties(
-      {}
-    );
-  }
-
-  async getCurrentPriceFeed(): Promise<Hive.PriceFeed> {
-    return await this.extendedHiveChain!.api.database_api.get_current_price_feed(
-      {}
-    );
-  }
 
   async getAccOpTypes(accountName: string): Promise<number[]> {
     return await this.extendedHiveChain!.restApi["hafah-api"].accounts.operationTypes({
@@ -195,14 +210,6 @@ class FetchingService {
     });
   }
 
-  async getWitnessSchedule(): Promise<Hive.WitnessesSchedule> {
-    const params = { id: 1 };
-
-    return await this.extendedHiveChain!.api.database_api.get_witness_schedule(
-      params
-    );
-  }
-
   async getOperationTypes(): Promise<Hive.OperationPattern[]> {
     return await this.extendedHiveChain!.restApi["hafah-api"].operationTypes();
   }
@@ -211,26 +218,6 @@ class FetchingService {
     return await this.extendedHiveChain!.restApi["hafbe-api"].singleWitness({
       accountName: witnessName,
     });
-  }
-
-  async getVestingDelegations(
-    delegatorAccount: string
-  ): Promise<Hive.VestingDelegations[]> {
-    return await this.extendedHiveChain!.api.database_api.find_vesting_delegations(
-      {
-        account: delegatorAccount,
-      }
-    ).then((response) => response.delegations);
-  }
-
-  async getRcDelegations(
-    delegatorAccount: string,
-    limit: number
-  ): Promise<Hive.RCDelegations[]> {
-    return await this.extendedHiveChain!.api.rc_api.list_rc_direct_delegations({
-      start: [delegatorAccount, ""],
-      limit: limit,
-    }).then((response) => response.rc_direct_delegations);
   }
 
   async getBlockByTime(date: Date): Promise<number> {
