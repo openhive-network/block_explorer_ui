@@ -14,6 +14,7 @@ export interface ApiChecker {
   title: string;
   method: any;
   params: any;
+  currentProvider: string;
   validatorFunction: (data: any) => boolean;
 }
 
@@ -24,6 +25,7 @@ interface HealthCheckerComponentProps {
   customApiList?: string[];
   customApiCheckers?: Map<string, ApiChecker>;
   changeNodeAddress: (url: string | null) => void; 
+  changeEndpointAddress: (checker: ApiChecker) => void;
 }
 
 const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
