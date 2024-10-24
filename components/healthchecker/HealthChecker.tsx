@@ -138,7 +138,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     <div className={cn([className])}>
       <Card className="grid grid-cols-3 grid-rows-3 gap-y-1 my-1 p-2 ">
         <div className="row-start-1 col-start-1 col-span-3 flex justify-center">Block Explorer healthchecker for nodes</div>
-        <div className="col-start-1 row-start-2 row-span-2">
+        <div className="col-start-1 row-start-2 row-span-2 col-span-3">
           <div>Api checks:</div>
           {Array.from(customApiCheckers?.entries() || []).map(([key, apiChecker]) => (
             <Badge key={key} variant={"outline"}>{apiChecker.title}</Badge>
