@@ -17,6 +17,7 @@ interface ApiCheckDialogProps {
   checksList: Map<string, ApiChecker> | undefined;
   activeChecksKeys: string[];
   changeChecks: (provider: string, newChecksList: string[]) => void;
+  changeEndpointAddress: (checker: ApiChecker) => void;
   onDialogOpenChange: (isOpened: boolean, provider?: string) => void;
 }
 
@@ -27,6 +28,7 @@ const ApiCheckDialog: React.FC<ApiCheckDialogProps> = ({
   checksList,
   activeChecksKeys,
   changeChecks,
+  changeEndpointAddress,
   onDialogOpenChange
 }) => {
 
@@ -66,7 +68,8 @@ const ApiCheckDialog: React.FC<ApiCheckDialogProps> = ({
           {Array.from(checksList?.entries() || []).map(([key, check]) => (
             <div key={key} className="flex mb-2 items-center">
               <Toggle className="bg-black rounded-full" checked={localChecks[key]} onClick={() => {changeToggle(key)}}  />
-              <div className="ml-2">{check.title}</div>
+              <div className="mx-2">{check.title}</div>
+              <Button onClick={() => {changeEndpointAddress(check)}}>Use endpoint</Button>
             </div>
           ))}
           <Button onClick={confirm}>Confirm</Button>

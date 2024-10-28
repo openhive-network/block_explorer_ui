@@ -33,6 +33,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   currentAddress,
   customApiList,
   changeNodeAddress,
+  changeEndpointAddress,
   customApiCheckers,
   className
 }) => {
@@ -161,6 +162,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         checksList={customApiCheckers}
         openedProvider={openedProvider}
         changeChecks={changeChecksForProvider}
+        changeEndpointAddress={changeEndpointAddress}
         activeChecksKeys={apiChecksByProvider?.get(openedProvider || "") || []}
       />
     </div>
