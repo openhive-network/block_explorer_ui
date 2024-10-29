@@ -94,9 +94,6 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
       if (apiChecksByProvider.size === 0) {
         initializeDefaultChecks();
       }
-      for (const [key, checker] of customApiCheckers) {
-        hc.register(checker.method, checker.params, checker.validatorFunction, customApiList);
-      }
       hc.on("data", (data: Array<IScoredEndpoint>) => { console.log(JSON.stringify(data)); setScoredEndpoints(data) });
       setChainIntialized(true);
     }
