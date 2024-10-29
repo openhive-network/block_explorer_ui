@@ -44,22 +44,6 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   const [isDialogOpened, setIsDialogOpened] = useState<boolean>(false);
   const [openedProvider, setOpenedProvider] = useState<string | undefined>(undefined);
 
-  const apiList = customApiList ? customApiList : [
-    "https://api.hive.blog",
-    "https://api.openhive.network",
-    "https://anyx.io",
-    "https://rpc.ausbit.dev",
-    "https://rpc.mahdiyari.info",
-    "https://techcoderx.com",
-    "https://hive.roelandp.nl",
-    "https://hived.emre.sh",
-    "https://api.deathwing.me",
-    "https://api.c0ff33a.uk",
-    "https://hive-api.arcange.eu",
-    "https://hive-api.3speak.tv",
-    "https://hiveapi.actifit.io"
-  ];
-
   const hc = new HealthChecker();
 
   const onDialogOpenChange = (isOpened: boolean, provider?: string) => {
@@ -79,7 +63,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
 
   const initializeDefaultChecks = () => {
     const initialApiChecksByProviders = new Map<string, string[]>();
-    apiList.forEach((api) => {
+    customApiList?.forEach((api) => {
       initialApiChecksByProviders.set(api, Array.from(customApiCheckers?.keys() || []));
     })
     setApiChecksByProvider(initialApiChecksByProviders);
@@ -111,12 +95,12 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         initializeDefaultChecks();
       }
       for (const [key, checker] of customApiCheckers) {
-        hc.register(checker.method, checker.params, checker.validatorFunction, apiList);
+        hc.register(checker.method, checker.params, checker.validatorFunction, customApiList);
       }
       hc.on("data", (data: Array<IScoredEndpoint>) => { console.log(JSON.stringify(data)); setScoredEndpoints(data) });
       setChainIntialized(true);
     }
-  }, [hiveChain, chainInitialized, customApiCheckers, apiList, hc, apiChecksByProvider])
+  }, [hiveChain, chainInitialized, customApiCheckers, customApiList, hc, apiChecksByProvider])
 
   const renderProvider = (scoredEndpoint: IScoredEndpoint, index: number) => {
     const {endpointUrl, score} = scoredEndpoint;
