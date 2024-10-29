@@ -127,9 +127,11 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         <div className="row-start-1 col-start-1 col-span-3 flex justify-center">Block Explorer healthchecker for nodes</div>
         <div className="col-start-1 row-start-2 row-span-2 col-span-3">
           <div>Api checks:</div>
-          {Array.from(customApiCheckers?.entries() || []).map(([key, apiChecker]) => (
-            <Badge key={key} variant={"outline"}>{apiChecker.title}</Badge>
-          ))}
+          <div className="flex flex-wrap">
+            {Array.from(customApiCheckers?.entries() || []).map(([key, apiChecker]) => (
+              <Badge key={key} variant={"outline"}>{apiChecker.title}</Badge>
+            ))}
+          </div>
         </div>
         <div className="row-start-2 row-span-2 col-end-4 flex items-center justify-end">
           <Button onClick={() => {initializeDefaultChecks()}}>Restore default</Button>
