@@ -99,8 +99,10 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   }, [hiveChain, chainInitialized, customApiCheckers, customApiList, healthChecker, apiChecksByProvider])
 
   useEffect(() => {
-    setHealthChecker(new HealthChecker());
-  }, [])
+    if (!healthChecker) {
+      setHealthChecker(new HealthChecker());
+    }
+  }, [healthChecker])
 
   const renderProvider = (scoredEndpoint: IScoredEndpoint, index: number) => {
     const {endpointUrl, score} = scoredEndpoint;
