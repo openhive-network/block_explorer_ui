@@ -43,8 +43,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   const [apiChecksByProvider, setApiChecksByProvider] = useState<Map<string, string[]>>(new Map());
   const [isDialogOpened, setIsDialogOpened] = useState<boolean>(false);
   const [openedProvider, setOpenedProvider] = useState<string | undefined>(undefined);
-
-  const hc = new HealthChecker();
+  const [healthChecker, setHealthChecker] = useState<HealthChecker | undefined>(undefined);
 
   const onDialogOpenChange = (isOpened: boolean, provider?: string) => {
     if (isOpened) {
@@ -82,22 +81,26 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         }
       })
     }
-    hc.unregisterAll();
+    healthChecker?.unregisterAll();
     for (const [checkerKey, providers] of providersByChecks) {
       const checker = customApiCheckers?.get(checkerKey);
-      hc.register(checker!.method, checker!.params, checker!.validatorFunction, providers);
+      healthChecker?.register(checker!.method, checker!.params, checker!.validatorFunction, providers);
     }
   }
 
   useEffect(() => { 
-    if (hc && hiveChain && !chainInitialized && !!customApiCheckers) {
+    if (healthChecker && hiveChain && !chainInitialized && !!customApiCheckers) {
       if (apiChecksByProvider.size === 0) {
         initializeDefaultChecks();
       }
-      hc.on("data", (data: Array<IScoredEndpoint>) => { console.log(JSON.stringify(data)); setScoredEndpoints(data) });
+      healthChecker.on("data", (data: Array<IScoredEndpoint>) => { console.log(JSON.stringify(data)); setScoredEndpoints(data) });
       setChainIntialized(true);
     }
-  }, [hiveChain, chainInitialized, customApiCheckers, customApiList, hc, apiChecksByProvider])
+  }, [hiveChain, chainInitialized, customApiCheckers, customApiList, healthChecker, apiChecksByProvider])
+
+  useEffect(() => {
+    setHealthChecker(new HealthChecker());
+  }, [])
 
   const renderProvider = (scoredEndpoint: IScoredEndpoint, index: number) => {
     const {endpointUrl, score} = scoredEndpoint;
