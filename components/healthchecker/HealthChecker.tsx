@@ -106,7 +106,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
 
   const renderProvider = (scoredEndpoint: IScoredEndpoint, index: number) => {
     const {endpointUrl, score} = scoredEndpoint;
-    const apiList = apiChecksByProvider.get(endpointUrl)?.map((apiCheck) => customApiCheckers?.get(apiCheck)?.title || "");
+    const apiList = apiChecksByProvider.get(endpointUrl)?.map((apiCheck) => customApiCheckers?.get(apiCheck)) as ApiChecker[];
     return (
       <ProviderCard 
         index={index}

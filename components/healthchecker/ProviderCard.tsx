@@ -3,6 +3,7 @@ import { Button } from "../ui/button";
 import { Card } from "../ui/card";
 import { Badge } from "../ui/badge";
 import { Pencil } from 'lucide-react';
+import { ApiChecker } from "./HealthChecker";
 
 
 interface ProviderCardProps {
@@ -10,7 +11,7 @@ interface ProviderCardProps {
   providerLink: string;
   disabled: boolean;
   isSelected: boolean;
-  apiList: string[];
+  apiList: ApiChecker[];
   switchToProvider: (providerLink: string | null) => void;
   onDialogOpenChange: (isOpened: boolean, provider?: string) => void;
 }
@@ -35,7 +36,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
       <Button className="hover:bg-slate-400 rounded col-start-7 col-span-2 justify-self-end row-start-2" onClick={() => {onDialogOpenChange(true, providerLink)}}><Pencil /></Button>
       <div className="row-start-2 flex items-center col-start-2 col-span-6 flex-wrap">
         {apiList.map((api) => 
-          <Badge key={api} variant={"outline"}>{api}</Badge>
+          <Badge key={api.title} variant={"outline"} className={cn({"font-normal": api.currentProvider !== providerLink})}>{api.title}</Badge>
         )}
       </div>
     </Card>
