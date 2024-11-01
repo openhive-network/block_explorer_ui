@@ -1,6 +1,8 @@
-import { splitStringValue } from "./StringUtils";
+import { grabNumericValue, splitStringValue } from "./StringUtils";
 import { IHiveChainInterface } from "@hiveio/wax";
 import Hive from "@/types/Hive";
+import Explorer from "@/types/Explorer";
+import { formatNumber } from "@/lib/utils";
 /**
  * Function converting vests to hive power
  * @param  hivechain response from HiveChainContext.ts as type IHiveChainInterface | undefined,
@@ -32,12 +34,12 @@ export const convertVestsToHP = (
 };
 
 export const getVestsToHiveRatio = (
-  blockDetails: Hive.BlockDetails | undefined
+  headBlockCardData: Explorer.HeadBlockCardData | undefined
 ) => {
-  if (!blockDetails) return;
-  const { total_vesting_fund_hive, total_vesting_shares } = blockDetails;
-
-  const result = (total_vesting_shares / total_vesting_fund_hive).toFixed(3);
+  if (!headBlockCardData) return;
+  const headBlockDetails = headBlockCardData.headBlockDetails;
+  const { totalVestingFundHive, totalVestingShares } = headBlockDetails;
+  const result = formatNumber( (grabNumericValue(totalVestingShares) / grabNumericValue(totalVestingFundHive)),false,true);
 
   return result;
 };
