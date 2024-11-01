@@ -5,11 +5,18 @@ import Link from "next/link";
 import { formatNumber } from "@/lib/utils";
 import useRcDelegations from "@/hooks/api/common/useRcDelegations";
 import { Card, CardContent, CardHeader } from "../ui/card";
-import { Table, TableBody, TableRow, TableCell } from "../ui/table";
-type RcDelegation = {
-  to: string;
-  delegated_rc: number;
-};
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableCell,
+} from "../ui/table";
+import {
+  RcDelegation,
+  buildTableHead,
+  handleSortDelegations,
+} from "@/utils/DelegationsSort";
 
 type AccountRcDelegationsCardProps = {
   delegatorAccount: string;
@@ -49,6 +56,15 @@ const AccountRcDelegationsCard: React.FC<AccountRcDelegationsCardProps> = ({
   const [isPropertiesHidden, setIsPropertiesHidden] = useState(true);
   const { rcDelegationsData, isRcDelegationsLoading, isRcDelegationsError } =
     useRcDelegations(delegatorAccount, limit, liveDataEnabled);
+  const [sortConfig, setSortConfig] = useState<{
+    key: string;
+    isAscending: boolean;
+  }>({
+    key: "recipient",
+    isAscending: true,
+  });
+
+  const { key, isAscending } = sortConfig;
 
   if (isRcDelegationsLoading) {
     return <div></div>;
@@ -64,6 +80,17 @@ const AccountRcDelegationsCard: React.FC<AccountRcDelegationsCardProps> = ({
   const handlePropertiesVisibility = () => {
     setIsPropertiesHidden(!isPropertiesHidden);
   };
+  const sortBy = (key: string) => {
+    setSortConfig({ key, isAscending: !isAscending });
+  };
+
+  const sortedDelegations = handleSortDelegations({
+    delegations,
+    key,
+    isAscending,
+    recipient: "to",
+    amount: "delegated_rc",
+  }) as RcDelegation[];
 
   return (
     <Card
@@ -81,7 +108,10 @@ const AccountRcDelegationsCard: React.FC<AccountRcDelegationsCardProps> = ({
       </CardHeader>
       <CardContent hidden={isPropertiesHidden}>
         <Table>
-          <TableBody>{buildTableBody(delegations)}</TableBody>
+          <TableHeader>
+            <TableRow>{buildTableHead(sortBy, key, isAscending)}</TableRow>
+          </TableHeader>
+          <TableBody>{buildTableBody(sortedDelegations)}</TableBody>
         </Table>
       </CardContent>
     </Card>
