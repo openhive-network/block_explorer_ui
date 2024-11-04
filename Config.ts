@@ -1,11 +1,19 @@
-import env from "@beam-australia/react-env"
+import env from "@beam-australia/react-env";
 
 export const config = {
-  nodeAddress: `${env('HIVE_BLOG_API_ADDRESS') ? env('HIVE_BLOG_API_ADDRESS') : 'https://api.hive.blog'}`,
-  apiAddress: `${env('API_ADDRESS') ? env('API_ADDRESS') : 'https://hafbe.openhive.network'}`,
+  nodeAddress: `${
+    env("HIVE_BLOG_API_ADDRESS")
+      ? env("HIVE_BLOG_API_ADDRESS")
+      : "https://api.hive.blog"
+  }`,
+  apiAddress: `${
+    env("API_ADDRESS") ? env("API_ADDRESS") : "https://hafbe.openhive.network"
+  }`,
   baseMomentTimeFormat: "YYYY/MM/DD HH:mm:ss UTC",
   gitHash: process.env.NEXT_PUBLIC_COMMIT_HASH,
-  get lastCommitHashRepoUrl () { return `https://gitlab.syncad.com/hive/block_explorer_ui/-/commit/${this.gitHash}`}, 
+  get lastCommitHashRepoUrl() {
+    return `https://gitlab.syncad.com/hive/block_explorer_ui/-/commit/${this.gitHash}`;
+  },
   opsBodyLimit: 100000,
   commentOperationsTypeIds: [0, 1, 17, 19, 51, 53, 61, 63, 72, 73],
   standardPaginationSize: 100,
@@ -13,10 +21,10 @@ export const config = {
   blockPagePaginationSize: 2000, // Temporary 2000 until cache problem solved
   witnessesPerPages: {
     witnesses: 200,
-    home: 20
+    home: 20,
   },
   maxWitnessVotes: 30,
-  inactiveWitnessKey:'STM1111111111111111111111111111111114T1Anm',
+  inactiveWitnessKey: "STM1111111111111111111111111111111114T1Anm",
   maxDelegatorsCount: 1000,
   mainRefreshInterval: 3000,
   accountRefreshInterval: 20000,
@@ -25,7 +33,11 @@ export const config = {
   precisions: {
     vests: 6,
     hivePower: 3,
-    percentage: 2
+    percentage: 2,
   },
-  liveblockSecurityDifference: 10
-}
+  liveblockSecurityDifference: 10,
+  operationPerspective: {
+    incoming: "incoming",
+    outgoing: "outgoing",
+  },
+};
