@@ -40,7 +40,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
   });
   const { settings, setSettings } = useUserSettingsContext();
 
-  const vestsToHiveRatio = getVestsToHiveRatio(blockDetails);
+  const vestsToHiveRatio = getVestsToHiveRatio(headBlockCardData);
 
   const handleHideBlockchainDates = () => {
     setHiddenPropertiesByCard({
