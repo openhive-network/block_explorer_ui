@@ -46,6 +46,7 @@ namespace Hive {
       to?: string;
       message?: string;
       "org-op-id"?: string;
+      perspective?: "incoming" | "outgoing";
     };
   }
 
