@@ -87,7 +87,6 @@ import {
   witness_set_properties,
   witness_update,
 } from "@hiveio/wax";
-import moment from "moment";
 import { formatPercent } from "./utils";
 import Link from "next/link";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
@@ -197,6 +196,32 @@ class OperationsFormatter implements IWaxCustomFormatter {
       amountMessage,
     ]);
   }
+  /**
+   * if null - operation perspective always equal to `outgoing` ;
+   * @param observer relates to point of view of operation perspectice. Operations done by observer are `outgoing` , rest are `incoming`;
+   * @returns operation perspective from observer point of view, either `incoming` or `outgoing`;
+   */
+  private getOperationPerspective(observer: string | null) {
+    const isAccountPage = window.location.pathname.startsWith("/@");
+
+    //Return null if it's not account page
+    if (!isAccountPage) return null;
+
+    const {
+      operationPerspective: { incoming, outgoing },
+    } = config;
+
+    if (!observer) {
+      return { perspective: outgoing };
+    }
+
+    const isObserserSameAsAccountName =
+      window.location.pathname === `/@${observer}`;
+
+    return {
+      perspective: isObserserSameAsAccountName ? outgoing : incoming,
+    };
+  }
 
   // Formatters
 
@@ -213,7 +238,11 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getPermlink(op.author, op.permlink),
       ` with ${formatPercent(op.weight)}`,
     ]);
-    return { ...target, value: message };
+
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.voter) },
+    };
   }
 
   @WaxFormattable({ matchProperty: "type", matchValue: "comment_operation" })
@@ -237,7 +266,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
         this.getPermlink(op.parent_author, op.parent_permlink),
       ]);
     }
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.author) },
+    };
   }
 
   @WaxFormattable({ matchProperty: "type", matchValue: "transfer_operation" })
@@ -246,7 +278,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
     target,
   }: IFormatFunctionArguments<{ value: Hive.TransferOperation }>) {
     const message = this.getTransferMessage(op);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.from) },
+    };
   }
 
   @WaxFormattable({
@@ -263,7 +298,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getFormattedAmount(op.amount),
       "to vesting",
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.from) },
+    };
   }
 
   @WaxFormattable({
@@ -279,7 +317,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       "withdrawed",
       this.getFormattedAmount(op.vesting_shares),
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.account) },
+    };
   }
 
   @WaxFormattable({
@@ -302,7 +343,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       `, ID: ${op.orderid}`,
       expiration,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.owner) },
+    };
   }
 
   @WaxFormattable({
@@ -317,7 +361,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getAccountLink(op.owner),
       `cancelled limit order: ${op.orderid}`,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.owner) },
+    };
   }
 
   @WaxFormattable({
@@ -335,7 +382,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       "for",
       this.getFormattedAmount(op.exchange_rate?.quote),
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.publisher) },
+    };
   }
 
   @WaxFormattable({ matchProperty: "type", matchValue: "convert_operation" })
@@ -348,7 +398,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       `starts convert operation: ${op.requestid} with amount:`,
       this.getFormattedAmount(op.amount),
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.owner) },
+    };
   }
 
   @WaxFormattable({
@@ -364,7 +417,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       "created new account:",
       this.getAccountLink(op.new_account_name),
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.creator) },
+    };
   }
 
   // Check for better message
@@ -380,7 +436,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getAccountLink(op.account),
       `updated account with memo key: ${op.memo_key}`,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.account) },
+    };
   }
 
   @WaxFormattable({
@@ -409,7 +468,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
         "resigned from being witness",
       ]);
     }
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.owner) },
+    };
   }
 
   @WaxFormattable({
@@ -434,7 +496,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
         this.getAccountLink(op.witness),
       ]);
     }
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.account) },
+    };
   }
 
   @WaxFormattable({
@@ -458,7 +523,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
         "removed a proxy",
       ]);
     }
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.account) },
+    };
   }
 
   @WaxFormattable({ matchProperty: "type", matchValue: "pow_operation" })
@@ -470,7 +538,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getAccountLink(op.worker_account),
       "made a prove of work",
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.worker_account) },
+    };
   }
 
   @WaxFormattable({ matchProperty: "type", matchValue: "custom_operation" })
@@ -482,7 +553,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getMultipleAccountsListLink(op.required_auths),
       "made custom operation",
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(null) },
+    };
   }
 
   // Skip witness block approve
@@ -500,7 +574,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       "deleted comment:",
       this.getPermlink(op.author, op.permlink),
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.author) },
+    };
   }
 
   @WaxFormattable({
@@ -516,7 +593,14 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getMultipleAccountsListLink(op.required_posting_auths),
       `made custom JSON (${op.id})`,
     ]);
-    return { ...target, value: { message, json: op.json } };
+    return {
+      ...target,
+      value: {
+        message,
+        json: op.json,
+        ...this.getOperationPerspective(null),
+      },
+    };
   }
 
   @WaxFormattable({ matchInstanceOf: ResourceCreditsOperationData })
@@ -539,6 +623,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
             `(${source.value.id})`,
           ]),
           json: JSON.stringify(target.value),
+          ...this.getOperationPerspective(op.from),
         },
       };
     return {
@@ -551,6 +636,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
           `(${source.value.id})`,
         ]),
         json: JSON.stringify(target.value),
+        ...this.getOperationPerspective(op.from),
       },
     };
   }
@@ -593,6 +679,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
           `(${source.value.id})`,
         ]),
         json: JSON.stringify(target.value),
+        ...this.getOperationPerspective(op.follower),
       },
     };
   }
@@ -616,6 +703,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
           `(${source.value.id})`,
         ]),
         json: JSON.stringify(target.value),
+        ...this.getOperationPerspective(op.account),
       },
     };
   }
@@ -638,6 +726,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
           `(${source.value.id})`,
         ]),
         json: JSON.stringify(target.value),
+        ...this.getOperationPerspective(null),
       },
     };
   }
@@ -668,7 +757,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       `${allowCurrationReward} ${allowVotes} ${maxPayout} ${percentHbd} for:`,
       this.getPermlink(op.author, op.permlink),
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.author) },
+    };
   }
 
   @WaxFormattable({
@@ -683,10 +775,13 @@ class OperationsFormatter implements IWaxCustomFormatter {
     const message = this.generateReactLink([
       this.getAccountLink(op.from_account),
       "set withdraw vesting route to",
-      this.getAccountLink(op.from_account),
+      this.getAccountLink(op.to_account),
       ` with ${formatPercent(op.percent)}${autoVests}`,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.from_account) },
+    };
   }
 
   @WaxFormattable({
@@ -710,7 +805,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
         op.exchange_rate?.base
       )} to ${this.getFormattedAmount(op.exchange_rate?.quote)}${expiration}`,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.owner) },
+    };
   }
 
   @WaxFormattable({
@@ -725,7 +823,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getAccountLink(op.creator),
       `claimed an account with ${this.getFormattedAmount(op.fee)}`,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.creator) },
+    };
   }
 
   @WaxFormattable({
@@ -741,7 +842,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       "created claimed account:",
       this.getAccountLink(op.new_account_name),
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.creator) },
+    };
   }
 
   @WaxFormattable({
@@ -757,7 +861,13 @@ class OperationsFormatter implements IWaxCustomFormatter {
       "requested account recovery to account:",
       this.getAccountLink(op.account_to_recover),
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: {
+        ...message,
+        ...this.getOperationPerspective(op.recovery_account),
+      },
+    };
   }
 
   @WaxFormattable({
@@ -772,7 +882,13 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getAccountLink(op.account_to_recover),
       "account was recovered",
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: {
+        ...message,
+        ...this.getOperationPerspective(op.account_to_recover),
+      },
+    };
   }
 
   @WaxFormattable({
@@ -788,7 +904,13 @@ class OperationsFormatter implements IWaxCustomFormatter {
       "changed recovery account to:",
       this.getAccountLink(op.new_recovery_account),
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: {
+        ...message,
+        ...this.getOperationPerspective(op.account_to_recover),
+      },
+    };
   }
 
   @WaxFormattable({
@@ -803,7 +925,13 @@ class OperationsFormatter implements IWaxCustomFormatter {
       hbd_amount: op.hbd_amount,
       hive_amount: op.hive_amount,
     });
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: {
+        ...message,
+        ...this.getOperationPerspective(op.from),
+      },
+    };
   }
 
   @WaxFormattable({
@@ -815,7 +943,13 @@ class OperationsFormatter implements IWaxCustomFormatter {
     target,
   }: IFormatFunctionArguments<{ value: Hive.EscrowOperation }>) {
     const message = this.getEscrowMessage("Escrow dispute from", op);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: {
+        ...message,
+        ...this.getOperationPerspective(op.from),
+      },
+    };
   }
 
   @WaxFormattable({
@@ -830,7 +964,13 @@ class OperationsFormatter implements IWaxCustomFormatter {
       hbd_amount: op.hbd_amount,
       hive_amount: op.hive_amount,
     });
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: {
+        ...message,
+        ...this.getOperationPerspective(op.from),
+      },
+    };
   }
 
   @WaxFormattable({ matchProperty: "type", matchValue: "pow2_operation" })
@@ -845,7 +985,13 @@ class OperationsFormatter implements IWaxCustomFormatter {
         op.props?.hbd_interest_rate || 0
       )}, maximum block size: ${op.props?.maximum_block_size}`,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: {
+        ...message,
+        ...this.getOperationPerspective(null),
+      },
+    };
   }
 
   @WaxFormattable({
@@ -857,7 +1003,13 @@ class OperationsFormatter implements IWaxCustomFormatter {
     target,
   }: IFormatFunctionArguments<{ value: Hive.EscrowOperation }>) {
     const message = this.getEscrowMessage("Escrow approve from", op);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: {
+        ...message,
+        ...this.getOperationPerspective(op.from),
+      },
+    };
   }
 
   @WaxFormattable({
@@ -869,7 +1021,13 @@ class OperationsFormatter implements IWaxCustomFormatter {
     target,
   }: IFormatFunctionArguments<{ value: Hive.TransferOperation }>) {
     const message = this.getTransferMessage(op);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: {
+        ...message,
+        ...this.getOperationPerspective(op.from),
+      },
+    };
   }
 
   @WaxFormattable({
@@ -881,7 +1039,13 @@ class OperationsFormatter implements IWaxCustomFormatter {
     target,
   }: IFormatFunctionArguments<{ value: Hive.TransferOperation }>) {
     const message = this.getTransferMessage(op);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: {
+        ...message,
+        ...this.getOperationPerspective(op.from),
+      },
+    };
   }
 
   @WaxFormattable({
@@ -896,7 +1060,13 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getAccountLink(op.from),
       `cancelled transfer with id: ${op.request_id}`,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: {
+        ...message,
+        ...this.getOperationPerspective(op.from),
+      },
+    };
   }
 
   // Skip custom binary
@@ -921,7 +1091,13 @@ class OperationsFormatter implements IWaxCustomFormatter {
         "cancelled declining of voting rights",
       ]);
     }
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: {
+        ...message,
+        ...this.getOperationPerspective(op.account),
+      },
+    };
   }
 
   // Skip reset account
@@ -944,7 +1120,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
         op.reward_vests
       )}`,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.account) },
+    };
   }
 
   @WaxFormattable({
@@ -960,7 +1139,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       `delegated ${this.getFormattedAmount(op.vesting_shares)} to`,
       this.getAccountLink(op.delegatee),
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.delegator) },
+    };
   }
 
   @WaxFormattable({
@@ -979,7 +1161,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
         op.delegation
       )} and fee: ${this.getFormattedAmount(op.fee)}`,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.creator) },
+    };
   }
 
   // Leave it with simple message, props are too complicated to handle now
@@ -995,7 +1180,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getAccountLink(op.owner),
       "updated witness properties",
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.owner) },
+    };
   }
 
   // Talk about more detailed update
@@ -1011,7 +1199,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getAccountLink(op.account),
       "updated an account",
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.account) },
+    };
   }
 
   @WaxFormattable({
@@ -1034,7 +1225,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
         op.end_date
       )}`,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.creator) },
+    };
   }
 
   @WaxFormattable({
@@ -1057,7 +1251,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
         `removed approval for proposal ${op.proposal_ids}`,
       ]);
     }
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.voter) },
+    };
   }
 
   @WaxFormattable({
@@ -1072,7 +1269,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getAccountLink(op.proposal_owner),
       `removed proposal ${op.proposal_ids}`,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.proposal_owner) },
+    };
   }
 
   // Not sure about all properties here
@@ -1091,7 +1291,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       )} daily, details:`,
       this.getPermlink(op.creator, op.permlink),
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.creator) },
+    };
   }
 
   @WaxFormattable({
@@ -1108,7 +1311,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
         op.amount
       )} with request ID: ${op.requestid}`,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.owner) },
+    };
   }
 
   @WaxFormattable({
@@ -1126,7 +1332,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       } executions every ${op.recurrence} hours to`,
       this.getAccountLink(op.to),
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.from) },
+    };
   }
 
   // === VIRTUAL ===
@@ -1147,7 +1356,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
         op.requestid
       }`,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.owner) },
+    };
   }
 
   @WaxFormattable({
@@ -1173,7 +1385,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
         op.hbd_payout
       )}${mustBeClaimed}`,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.author) },
+    };
   }
 
   @WaxFormattable({
@@ -1193,7 +1408,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getPermlink(op.author, op.permlink),
       mustBeClaimed,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.curator) },
+    };
   }
 
   // Detailed properties were skiped
@@ -1210,7 +1428,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       `got a comment reward ${this.getFormattedAmount(op.payout)} for`,
       this.getPermlink(op.author, op.permlink),
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.author) },
+    };
   }
 
   @WaxFormattable({
@@ -1225,7 +1446,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getAccountLink(op.owner),
       `got a liquidity reward ${this.getFormattedAmount(op.payout)}`,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.owner) },
+    };
   }
 
   @WaxFormattable({ matchProperty: "type", matchValue: "interest_operation" })
@@ -1241,7 +1465,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       `got interest paid ${this.getFormattedAmount(op.interest)}`,
       wasLiquidModified,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.owner) },
+    };
   }
 
   @WaxFormattable({
@@ -1258,7 +1485,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getAccountLink(op.to_account),
       `deposited ${this.getFormattedAmount(op.deposited)}`,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.from_account) },
+    };
   }
 
   @WaxFormattable({ matchProperty: "type", matchValue: "fill_order_operation" })
@@ -1274,7 +1504,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getAccountLink(op.open_owner),
       `(IDs: ${op.current_orderid} -> ${op.open_orderid})`,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.current_owner) },
+    };
   }
 
   @WaxFormattable({
@@ -1290,7 +1523,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getAccountLink(op.owner),
       "was shutted down",
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.owner) },
+    };
   }
 
   @WaxFormattable({
@@ -1310,7 +1546,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       `request ID: ${op.request_id}${memo}`,
     ]);
 
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.from) },
+    };
   }
 
   // Only id
@@ -1320,7 +1559,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
     target,
   }: IFormatFunctionArguments<{ value: hardfork }>) {
     const message = this.generateReactLink([`Hardfork ${op.hardfork_id}`]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(null) },
+    };
   }
 
   @WaxFormattable({
@@ -1336,7 +1578,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       "got payout update for",
       this.getPermlink(op.author, op.permlink),
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.author) },
+    };
   }
 
   @WaxFormattable({
@@ -1351,7 +1596,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getAccountLink(op.account),
       `received ${this.getFormattedAmount(op.vesting_shares)}`,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.account) },
+    };
   }
 
   @WaxFormattable({
@@ -1375,7 +1623,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getPermlink(op.author, op.permlink),
       mustBeClaimed,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.benefactor) },
+    };
   }
 
   @WaxFormattable({
@@ -1390,7 +1641,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getAccountLink(op.producer),
       `received ${this.getFormattedAmount(op.vesting_shares)} reward`,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.producer) },
+    };
   }
 
   @WaxFormattable({
@@ -1404,7 +1658,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
     const message = this.generateReactLink([
       `Totally cleared: ${this.getFormattedMultipleAssets(op.total_cleared)}`,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(null) },
+    };
   }
 
   @WaxFormattable({
@@ -1422,7 +1679,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       } by`,
       this.getAccountLink(op.payer),
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.receiver) },
+    };
   }
 
   @WaxFormattable({
@@ -1437,7 +1697,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getAccountLink(op.treasury),
       `received ${this.getFormattedAmount(op.additional_funds)}`,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.treasury) },
+    };
   }
 
   @WaxFormattable({
@@ -1459,7 +1722,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       )}, ${this.getFormattedAmount(op.vests_converted)} went to`,
       this.getAccountLink(op.treasury),
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.account) },
+    };
   }
 
   @WaxFormattable({
@@ -1477,7 +1743,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       )} and ${this.getFormattedAmount(op.hbd_transferred)} from`,
       this.getAccountLink(op.treasury),
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.account) },
+    };
   }
 
   @WaxFormattable({
@@ -1492,7 +1761,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getAccountLink(op.voter),
       `has ${op.votes} vote power`,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.voter) },
+    };
   }
 
   @WaxFormattable({
@@ -1509,7 +1781,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       )} was consolidated into treasury`,
     ]);
 
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(null) },
+    };
   }
 
   //Not sure where to put rest of properties
@@ -1529,7 +1804,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
         op.pending_payout
       )} pending payout`,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.voter) },
+    };
   }
 
   @WaxFormattable({
@@ -1545,7 +1823,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       "ineffectively deleted",
       this.getPermlink(op.author, op.permlink),
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.author) },
+    };
   }
 
   @WaxFormattable({
@@ -1563,7 +1844,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       )} to ${this.getFormattedAmount(op.hbd_amount_out)}`,
     ]);
 
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.treasury) },
+    };
   }
 
   @WaxFormattable({
@@ -1579,7 +1863,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       "vote was nullified",
     ]);
 
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.account) },
+    };
   }
 
   @WaxFormattable({
@@ -1598,7 +1885,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getAccountLink(op.new_recovery_account),
     ]);
 
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.account) },
+    };
   }
 
   @WaxFormattable({
@@ -1618,7 +1908,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
         op.hive_vested
       )} -> ${this.getFormattedAmount(op.vesting_shares_received)}`,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.from_account) },
+    };
   }
 
   @WaxFormattable({ matchProperty: "type", matchValue: "pow_reward_operation" })
@@ -1630,7 +1923,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getAccountLink(op.worker),
       `received ${this.getFormattedAmount(op.reward)} reward`,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.worker) },
+    };
   }
 
   @WaxFormattable({
@@ -1647,7 +1943,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
         op.vesting_shares_before_split
       )} -> ${this.getFormattedAmount(op.vesting_shares_after_split)}`,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.owner) },
+    };
   }
 
   @WaxFormattable({
@@ -1666,7 +1965,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
         op.initial_vesting_shares
       )} and delegations ${this.getFormattedAmount(op.initial_delegation)}`,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.creator) },
+    };
   }
 
   @WaxFormattable({
@@ -1686,7 +1988,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
         op.amount_out
       )} and ${this.getFormattedAmount(op.excess_collateral)} excess`,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.owner) },
+    };
   }
 
   // Trimmed by component
@@ -1699,7 +2004,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
     target,
   }: IFormatFunctionArguments<{ value: system_warning }>) {
     const message = this.generateReactLink([`${op.message}`]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(null) },
+    };
   }
 
   // Cut memo
@@ -1720,7 +2028,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
         op.remaining_executions
       } remaining executions`,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.from) },
+    };
   }
 
   @WaxFormattable({
@@ -1742,7 +2053,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       } remaining executions failed for ${op.consecutive_failures} times`,
       deleted,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.from) },
+    };
   }
 
   @WaxFormattable({
@@ -1760,7 +2074,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
         op.amount_back
       )} was sent back`,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.seller) },
+    };
   }
 
   @WaxFormattable({
@@ -1775,7 +2092,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getAccountLink(op.producer),
       "missed block",
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.producer) },
+    };
   }
 
   @WaxFormattable({
@@ -1793,7 +2113,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       } from`,
       this.getAccountLink(op.treasury),
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.creator) },
+    };
   }
 
   @WaxFormattable({
@@ -1813,7 +2136,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       }`,
     ]);
 
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.owner) },
+    };
   }
 
   @WaxFormattable({
@@ -1835,7 +2161,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
         op.escrow_id
       } was approved`,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.from) },
+    };
   }
 
   // Cutted numbers
@@ -1858,7 +2187,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
         op.escrow_id
       } was rejected`,
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.from) },
+    };
   }
 
   @WaxFormattable({
@@ -1874,7 +2206,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       "cleared proxy",
       this.getAccountLink(op.proxy),
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.account) },
+    };
   }
 
   @WaxFormattable({
@@ -1889,7 +2224,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getAccountLink(op.account),
       "votes rights were declined",
     ]);
-    return { ...target, value: message };
+    return {
+      ...target,
+      value: { ...message, ...this.getOperationPerspective(op.account) },
+    };
   }
 }
 
