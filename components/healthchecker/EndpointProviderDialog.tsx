@@ -12,12 +12,14 @@ import { Button } from "../ui/button";
 
 interface EndpointProviderDialogProps {
   className?: string;
+  checkTitle: string;
   isOpened: boolean;
   onDialogOpenChange: (isOpened: boolean, provider?: string) => void;
 }
 
 const EndpointProviderDialog: React.FC<EndpointProviderDialogProps> = ({
   className,
+  checkTitle,
   isOpened,
   onDialogOpenChange
 }) => {

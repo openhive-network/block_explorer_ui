@@ -8,6 +8,7 @@ import ProviderCard from "./ProviderCard";
 import ApiCheckDialog from "./ApiCheckDialog";
 import { Card } from "../ui/card";
 import { Badge } from "../ui/badge";
+import EndpointProviderDialog from "./EndpointProviderDialog";
 
 
 export interface ApiChecker {
@@ -41,22 +42,23 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   const [chainInitialized, setChainIntialized] = useState<boolean>(false);
   const [scoredEndpoints, setScoredEndpoints] = useState<IScoredEndpoint[]>([]);
   const [apiChecksByProvider, setApiChecksByProvider] = useState<Map<string, string[]>>(new Map());
-  const [isDialogOpened, setIsDialogOpened] = useState<boolean>(false);
+  const [isApiCheckDialogOpened, setIsApiCheckDialogOpened] = useState<boolean>(false);
+  const [isEndpointProviderDialogOpened, setIsEndpointProviderDialogOpened] = useState<boolean>(false);
   const [openedProvider, setOpenedProvider] = useState<string | undefined>(undefined);
   const [healthChecker, setHealthChecker] = useState<HealthChecker | undefined>(undefined);
 
-  const onDialogOpenChange = (isOpened: boolean, provider?: string) => {
+  const onApiCheckDialogChange = (isOpened: boolean, provider?: string) => {
     if (isOpened) {
       setOpenedProvider(provider);
     }
-    setIsDialogOpened(isOpened);
+    setIsApiCheckDialogOpened(isOpened);
   }
 
   const changeChecksForProvider = (provider: string, newCheckers: string[]) => {
     const newApiChecks = structuredClone(apiChecksByProvider);
     newApiChecks.set(provider, newCheckers);
     setApiChecksByProvider(newApiChecks);
-    setIsDialogOpened(false);
+    setIsApiCheckDialogOpened(false);
     restartCheckerAfterChange(newApiChecks);
   }
 
@@ -115,7 +117,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         disabled={score <= 0}
         isSelected={endpointUrl === currentAddress}
         apiList={apiList || []}
-        onDialogOpenChange={onDialogOpenChange}
+        onDialogOpenChange={onApiCheckDialogChange}
       />
     )       
   }
@@ -145,13 +147,18 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
       )}
       <ApiCheckDialog 
         className="bg-white"
-        isOpened={isDialogOpened}
-        onDialogOpenChange={onDialogOpenChange}
+        isOpened={isApiCheckDialogOpened}
+        onDialogOpenChange={onApiCheckDialogChange}
         checksList={customApiCheckers}
         openedProvider={openedProvider}
         changeChecks={changeChecksForProvider}
         changeEndpointAddress={changeEndpointAddress}
         activeChecksKeys={apiChecksByProvider?.get(openedProvider || "") || []}
+      />
+      <EndpointProviderDialog
+        isOpened={isEndpointProviderDialogOpened}
+        checkTitle="test"
+        onDialogOpenChange={() => {}}
       />
     </div>
   );
