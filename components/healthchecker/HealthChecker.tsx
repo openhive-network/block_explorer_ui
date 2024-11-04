@@ -102,7 +102,9 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
 
   useEffect(() => {
     if (!healthChecker) {
-      setHealthChecker(new HealthChecker());
+      const hc = new HealthChecker();
+      hc.on('error', error => console.error(error.message));
+      setHealthChecker(hc);
     }
   }, [healthChecker])
 
