@@ -27,6 +27,8 @@ module.exports = {
         buttonHover: "var(--color-button-hover)",
         text: "var(--color-text)",
         link: "var(--color-link)",
+        operationPerspectiveIncoming:
+          "var(--color-operation-perspective-incoming)",
 
         switch: {
           button: "var(--color-switch-button)",
