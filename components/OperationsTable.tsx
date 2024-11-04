@@ -137,6 +137,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
           const nextTransactionId: string | undefined =
             allOperations[index + 1]?.trxId;
           const operationBgColor = getOperationColor(operation.operation?.type);
+          const operationPerspective = operation.operation?.value?.perspective;
 
           return (
             <React.Fragment key={index}>
@@ -147,6 +148,8 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                 className={cn("border-b border-gray-700", {
                   "border-b-0":
                     nextTransactionId === operation.trxId && !!operation.trxId,
+                  "bg-operationPerspectiveIncoming":
+                    operationPerspective === "incoming",
                 })}
               >
                 <TableCell className="sticky left-0 bg-theme xl:bg-inherit">
