@@ -27,5 +27,6 @@ export const config = {
     hivePower: 3,
     percentage: 2
   },
-  liveblockSecurityDifference: 10
+  liveblockSecurityDifference: 10,
+  maxProxyDepth: 3
 }
