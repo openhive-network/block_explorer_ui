@@ -45,6 +45,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   const [isApiCheckDialogOpened, setIsApiCheckDialogOpened] = useState<boolean>(false);
   const [isEndpointProviderDialogOpened, setIsEndpointProviderDialogOpened] = useState<boolean>(false);
   const [openedProvider, setOpenedProvider] = useState<string | undefined>(undefined);
+  const [openedEndpoint, setOpenedEndpoint] = useState<string | undefined>(undefined);
   const [healthChecker, setHealthChecker] = useState<HealthChecker | undefined>(undefined);
 
   const onApiCheckDialogChange = (isOpened: boolean, provider?: string) => {
@@ -54,7 +55,10 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     setIsApiCheckDialogOpened(isOpened);
   }
 
-  const onEndpointProviderDialogChange = (isOpened: boolean) => {
+  const onEndpointProviderDialogChange = (isOpened: boolean, endpoint?: string) => {
+    if (isOpened) {
+      setOpenedEndpoint(endpoint)
+    }
     setIsEndpointProviderDialogOpened(isOpened);
   }
 
@@ -139,7 +143,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
           <div>Api checks:</div>
           <div className="flex flex-wrap">
             {Array.from(customApiCheckers?.entries() || []).map(([key, apiChecker]) => (
-              <Badge key={key} variant={"outline"} onClick={() => {onEndpointProviderDialogChange(true)}}>{apiChecker.title}</Badge>
+              <Badge key={key} variant={"outline"} onClick={() => {onEndpointProviderDialogChange(true, key)}}>{apiChecker.title}</Badge>
             ))}
           </div>
         </div>
@@ -163,7 +167,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
       />
       <EndpointProviderDialog
         isOpened={isEndpointProviderDialogOpened}
-        checkTitle="test"
+        checkTitle={openedEndpoint}
         onDialogOpenChange={onEndpointProviderDialogChange}
       />
     </div>

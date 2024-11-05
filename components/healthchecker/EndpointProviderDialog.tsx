@@ -12,7 +12,7 @@ import { Button } from "../ui/button";
 
 interface EndpointProviderDialogProps {
   className?: string;
-  checkTitle: string;
+  checkTitle?: string;
   isOpened: boolean;
   onDialogOpenChange: (isOpened: boolean, provider?: string) => void;
 }
@@ -30,7 +30,7 @@ const EndpointProviderDialog: React.FC<EndpointProviderDialogProps> = ({
       <DialogContent className={cn(className, "bg-explorer-bg-start")}>
         <DialogHeader><DialogTitle>Endpoint link</DialogTitle></DialogHeader>
         <div>
-
+          {checkTitle}
         </div>
       </DialogContent>
     </Dialog>
