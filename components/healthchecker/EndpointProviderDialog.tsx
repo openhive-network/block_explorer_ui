@@ -5,13 +5,11 @@ import {
     DialogTitle,
   } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
-import { ApiChecker } from "./HealthChecker";
-import { Toggle } from "../ui/toggle";
-import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 
 interface EndpointProviderDialogProps {
   className?: string;
+  checkKey?: string;
   checkTitle?: string;
   isOpened: boolean;
   providers?: string[];
@@ -21,6 +19,7 @@ interface EndpointProviderDialogProps {
 
 const EndpointProviderDialog: React.FC<EndpointProviderDialogProps> = ({
   className,
+  checkKey,
   checkTitle,
   isOpened,
   providers,
@@ -28,18 +27,19 @@ const EndpointProviderDialog: React.FC<EndpointProviderDialogProps> = ({
   changeProviderForEndpoint
 }) => {
 
-
+  if (!checkKey) return null;
   return (
     <Dialog open={isOpened} onOpenChange={onDialogOpenChange}>
       <DialogContent className={cn(className, "bg-explorer-bg-start")}>
-        <DialogHeader><DialogTitle>Endpoint link</DialogTitle></DialogHeader>
+        <DialogHeader><DialogTitle>{checkTitle}</DialogTitle></DialogHeader>
         <div>
           {providers?.map((provider) => 
-            <div>
+            <div className="flex my-2 items-center">
+              <Button className="mr-2" onClick={() => {changeProviderForEndpoint(checkKey, provider)}}>Switch to Provider</Button>
               {provider}
             </div>
           )}
-          {checkTitle}
+          
         </div>
       </DialogContent>
     </Dialog>

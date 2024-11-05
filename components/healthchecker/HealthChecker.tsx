@@ -73,6 +73,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   const changeEndpointProvider = (endpointKey: string, newProvider: string) => {
     const checker = customApiCheckers?.get(endpointKey);
     if (checker) changeEndpointAddress(checker, newProvider);
+    setIsEndpointProviderDialogOpened(false);
   }
 
   const initializeDefaultChecks = () => {
@@ -171,7 +172,8 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
       />
       <EndpointProviderDialog
         isOpened={isEndpointProviderDialogOpened}
-        checkTitle={openedEndpoint}
+        checkKey={openedEndpoint}
+        checkTitle={customApiCheckers?.get(openedEndpoint || "")?.title || ""}
         onDialogOpenChange={onEndpointProviderDialogChange}
         providers={customApiList}
         changeProviderForEndpoint={changeEndpointProvider}
