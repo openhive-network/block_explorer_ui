@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.7.15",
-    "@hiveio/wax": "1.27.6-rc5-241104114923",
+    "@hiveio/wax": "1.27.6-rc5-241104145700",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-label": "^2.0.2",
