@@ -5,7 +5,6 @@ import {
   GetDynamicGlobalPropertiesResponse,
   IHiveChainInterface,
   TWaxRestExtended,
-  TWaxApiRequest,
   TWaxExtended,
 } from "@hiveio/wax";
 import { extendedRest } from "@/types/Rest";
