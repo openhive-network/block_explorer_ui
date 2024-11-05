@@ -87,7 +87,7 @@ export default function HealthcheckerPage() {
           changeNodeAddress={setNodeAddress} 
           customApiCheckers={checksMap}
           customApiList={apiList}
-          changeEndpointAddress={(checker: ApiChecker) => {}} 
+          changeEndpointAddress={(checker: ApiChecker, newProvider: string) => {}} 
         />
       </div>
     </>

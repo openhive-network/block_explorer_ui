@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { IHiveChainInterface, IScoredEndpoint } from "@hiveio/wax";
+import { IHiveChainInterface, IScoredEndpoint, TWaxRestApiRequest } from "@hiveio/wax";
 import { HealthChecker } from "@hiveio/wax";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
@@ -26,7 +26,7 @@ interface HealthCheckerComponentProps {
   customApiList?: string[];
   customApiCheckers?: Map<string, ApiChecker>;
   changeNodeAddress: (url: string | null) => void; 
-  changeEndpointAddress: (checker: ApiChecker) => void;
+  changeEndpointAddress: (checker: ApiChecker, newProvider: string) => void;
 }
 
 const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
@@ -71,7 +71,8 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   }
 
   const changeEndpointProvider = (endpointKey: string, newProvider: string) => {
-    // TO BE FILLED
+    const checker = customApiCheckers?.get(endpointKey);
+    if (checker) changeEndpointAddress(checker, newProvider);
   }
 
   const initializeDefaultChecks = () => {
@@ -166,7 +167,6 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         checksList={customApiCheckers}
         openedProvider={openedProvider}
         changeChecks={changeChecksForProvider}
-        changeEndpointAddress={changeEndpointAddress}
         activeChecksKeys={apiChecksByProvider?.get(openedProvider || "") || []}
       />
       <EndpointProviderDialog
