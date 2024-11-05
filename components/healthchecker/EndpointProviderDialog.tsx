@@ -14,14 +14,18 @@ interface EndpointProviderDialogProps {
   className?: string;
   checkTitle?: string;
   isOpened: boolean;
+  providers?: string[];
   onDialogOpenChange: (isOpened: boolean, provider?: string) => void;
+  changeProviderForEndpoint: (endpointKey: string, newProvider: string) => void;
 }
 
 const EndpointProviderDialog: React.FC<EndpointProviderDialogProps> = ({
   className,
   checkTitle,
   isOpened,
-  onDialogOpenChange
+  providers,
+  onDialogOpenChange,
+  changeProviderForEndpoint
 }) => {
 
 
@@ -30,6 +34,11 @@ const EndpointProviderDialog: React.FC<EndpointProviderDialogProps> = ({
       <DialogContent className={cn(className, "bg-explorer-bg-start")}>
         <DialogHeader><DialogTitle>Endpoint link</DialogTitle></DialogHeader>
         <div>
+          {providers?.map((provider) => 
+            <div>
+              {provider}
+            </div>
+          )}
           {checkTitle}
         </div>
       </DialogContent>
