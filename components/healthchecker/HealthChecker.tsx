@@ -54,6 +54,10 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     setIsApiCheckDialogOpened(isOpened);
   }
 
+  const onEndpointProviderDialogChange = (isOpened: boolean) => {
+    setIsEndpointProviderDialogOpened(isOpened);
+  }
+
   const changeChecksForProvider = (provider: string, newCheckers: string[]) => {
     const newApiChecks = structuredClone(apiChecksByProvider);
     newApiChecks.set(provider, newCheckers);
@@ -135,7 +139,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
           <div>Api checks:</div>
           <div className="flex flex-wrap">
             {Array.from(customApiCheckers?.entries() || []).map(([key, apiChecker]) => (
-              <Badge key={key} variant={"outline"}>{apiChecker.title}</Badge>
+              <Badge key={key} variant={"outline"} onClick={() => {onEndpointProviderDialogChange(true)}}>{apiChecker.title}</Badge>
             ))}
           </div>
         </div>
@@ -160,7 +164,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
       <EndpointProviderDialog
         isOpened={isEndpointProviderDialogOpened}
         checkTitle="test"
-        onDialogOpenChange={() => {}}
+        onDialogOpenChange={onEndpointProviderDialogChange}
       />
     </div>
   );
