@@ -11,9 +11,11 @@ interface ProviderCardProps {
   providerLink: string;
   disabled: boolean;
   isSelected: boolean;
-  apiList: ApiChecker[];
+  apiList: string[];
+  customApiCheckers?: Map<string, ApiChecker>;
   switchToProvider: (providerLink: string | null) => void;
   onDialogOpenChange: (isOpened: boolean, provider?: string) => void;
+  onEndpointProviderDialogChange: (isOpened: boolean, endpoint?: string) => void;
 }
 
 const ProviderCard: React.FC<ProviderCardProps> = ({
@@ -22,8 +24,10 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
   disabled,
   isSelected,
   apiList,
+  customApiCheckers,
   switchToProvider,
-  onDialogOpenChange
+  onDialogOpenChange,
+  onEndpointProviderDialogChange,
 }) => {
 
   return (
@@ -35,8 +39,14 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
       <Button disabled={disabled} className="hover:bg-slate-400 rounded col-start-7 col-span-2 justify-self-end" onClick={() => {switchToProvider(providerLink)}}>Switch to API</Button>
       <Button className="hover:bg-slate-400 rounded col-start-7 col-span-2 justify-self-end row-start-2" onClick={() => {onDialogOpenChange(true, providerLink)}}><Pencil /></Button>
       <div className="row-start-2 flex items-center col-start-2 col-span-6 flex-wrap">
-        {apiList.map((api) => 
-          <Badge key={api.title} variant={"outline"} className={cn({"font-normal": api.currentProvider !== providerLink})}>{api.title}</Badge>
+        {apiList.map((apiKey) => 
+          <Badge 
+            key={customApiCheckers?.get(apiKey)?.title} 
+            variant={"outline"} 
+            className={cn({"font-normal": customApiCheckers?.get(apiKey)?.currentProvider !== providerLink})}
+            onClick={() => {onEndpointProviderDialogChange(true, apiKey)}}>
+              {customApiCheckers?.get(apiKey)?.title}
+          </Badge>
         )}
       </div>
     </Card>

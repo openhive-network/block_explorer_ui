@@ -13,6 +13,7 @@ interface EndpointProviderDialogProps {
   checkTitle?: string;
   isOpened: boolean;
   providers?: string[];
+  currentProvider?: string;
   onDialogOpenChange: (isOpened: boolean, provider?: string) => void;
   changeProviderForEndpoint: (endpointKey: string, newProvider: string) => void;
 }
@@ -23,6 +24,7 @@ const EndpointProviderDialog: React.FC<EndpointProviderDialogProps> = ({
   checkTitle,
   isOpened,
   providers,
+  currentProvider,
   onDialogOpenChange,
   changeProviderForEndpoint
 }) => {
@@ -34,7 +36,7 @@ const EndpointProviderDialog: React.FC<EndpointProviderDialogProps> = ({
         <DialogHeader><DialogTitle>{checkTitle}</DialogTitle></DialogHeader>
         <div>
           {providers?.map((provider) => 
-            <div className="flex my-2 items-center">
+            <div className={cn("flex my-2 items-center", {"font-semibold": provider === currentProvider})}>
               <Button className="mr-2" onClick={() => {changeProviderForEndpoint(checkKey, provider)}}>Switch to Provider</Button>
               {provider}
             </div>

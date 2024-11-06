@@ -124,7 +124,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
 
   const renderProvider = (scoredEndpoint: IScoredEndpoint, index: number) => {
     const {endpointUrl, score} = scoredEndpoint;
-    const apiList = apiChecksByProvider.get(endpointUrl)?.map((apiCheck) => customApiCheckers?.get(apiCheck)) as ApiChecker[];
+    const apiList = apiChecksByProvider.get(endpointUrl);
     return (
       <ProviderCard 
         index={index}
@@ -133,7 +133,9 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         disabled={score <= 0}
         isSelected={endpointUrl === currentAddress}
         apiList={apiList || []}
+        customApiCheckers={customApiCheckers}
         onDialogOpenChange={onApiCheckDialogChange}
+        onEndpointProviderDialogChange={onEndpointProviderDialogChange}
       />
     )       
   }
@@ -174,6 +176,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         isOpened={isEndpointProviderDialogOpened}
         checkKey={openedEndpoint}
         checkTitle={customApiCheckers?.get(openedEndpoint || "")?.title || ""}
+        currentProvider={customApiCheckers?.get(openedEndpoint || "")?.currentProvider}
         onDialogOpenChange={onEndpointProviderDialogChange}
         providers={customApiList}
         changeProviderForEndpoint={changeEndpointProvider}
