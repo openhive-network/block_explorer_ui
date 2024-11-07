@@ -68,11 +68,15 @@ export default function HealthcheckerPage() {
     validatorFunction: data => !!data,
   });
 
-  const endpointProviders = new Map<string, string>();
+  let endpointProviders = new Map<string, string>();
 
   const changeEndpointAddress = (endpoint: string, newProvider: string) => {
     endpointProviders.set(endpoint, newProvider);
     console.log("ENDPOIN PROVCIDERS", endpointProviders);
+  }
+
+  const resetEndpoints = () => {
+    endpointProviders = new Map<string, string>();
   }
 
 
@@ -90,6 +94,7 @@ export default function HealthcheckerPage() {
           customApiList={apiList}
           providersForEndpoints={endpointProviders}
           changeEndpointAddress={changeEndpointAddress} 
+          resetEndpoints={resetEndpoints}
         />
       </div>
     </>

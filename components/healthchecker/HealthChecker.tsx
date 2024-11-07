@@ -27,6 +27,7 @@ interface HealthCheckerComponentProps {
   providersForEndpoints: Map<string, string>;
   changeNodeAddress: (url: string | null) => void; 
   changeEndpointAddress: (endpoint: string, newProvider: string) => void;
+  resetEndpoints: () => void;
 }
 
 const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
@@ -35,6 +36,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   customApiList,
   changeNodeAddress,
   changeEndpointAddress,
+  resetEndpoints,
   customApiCheckers,
   className,
   providersForEndpoints
@@ -137,6 +139,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         providersForEndpoints={providersForEndpoints}
         onDialogOpenChange={onApiCheckDialogChange}
         onEndpointProviderDialogChange={onEndpointProviderDialogChange}
+        resetEndpoints={resetEndpoints}
       />
     )       
   }
