@@ -13,6 +13,7 @@ interface ProviderCardProps {
   isSelected: boolean;
   apiList: string[];
   customApiCheckers?: Map<string, ApiChecker>;
+  providersForEndpoints: Map<string, string>;
   switchToProvider: (providerLink: string | null) => void;
   onDialogOpenChange: (isOpened: boolean, provider?: string) => void;
   onEndpointProviderDialogChange: (isOpened: boolean, endpoint?: string) => void;
@@ -25,6 +26,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
   isSelected,
   apiList,
   customApiCheckers,
+  providersForEndpoints,
   switchToProvider,
   onDialogOpenChange,
   onEndpointProviderDialogChange,
@@ -43,7 +45,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
           <Badge 
             key={customApiCheckers?.get(apiKey)?.title} 
             variant={"outline"} 
-            className={cn({"font-normal": customApiCheckers?.get(apiKey)?.currentProvider !== providerLink})}
+            className={cn({"text-green-400": providersForEndpoints?.get(apiKey) === providerLink})}
             onClick={() => {onEndpointProviderDialogChange(true, apiKey)}}>
               {customApiCheckers?.get(apiKey)?.title}
           </Badge>

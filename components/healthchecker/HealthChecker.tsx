@@ -15,7 +15,6 @@ export interface ApiChecker {
   title: string;
   method: any;
   params: any;
-  currentProvider: string;
   validatorFunction: (data: any) => boolean;
 }
 
@@ -25,6 +24,7 @@ interface HealthCheckerComponentProps {
   currentAddress?: string;
   customApiList?: string[];
   customApiCheckers?: Map<string, ApiChecker>;
+  providersForEndpoints: Map<string, string>;
   changeNodeAddress: (url: string | null) => void; 
   changeEndpointAddress: (endpoint: string, newProvider: string) => void;
 }
@@ -36,7 +36,8 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   changeNodeAddress,
   changeEndpointAddress,
   customApiCheckers,
-  className
+  className,
+  providersForEndpoints
 }) => {
 
   const [chainInitialized, setChainIntialized] = useState<boolean>(false);
@@ -133,6 +134,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         isSelected={endpointUrl === currentAddress}
         apiList={apiList || []}
         customApiCheckers={customApiCheckers}
+        providersForEndpoints={providersForEndpoints}
         onDialogOpenChange={onApiCheckDialogChange}
         onEndpointProviderDialogChange={onEndpointProviderDialogChange}
       />
@@ -175,7 +177,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         isOpened={isEndpointProviderDialogOpened}
         checkKey={openedEndpoint}
         checkTitle={customApiCheckers?.get(openedEndpoint || "")?.title || ""}
-        currentProvider={customApiCheckers?.get(openedEndpoint || "")?.currentProvider}
+        currentProvider={providersForEndpoints.get(openedEndpoint || "") || currentAddress}
         onDialogOpenChange={onEndpointProviderDialogChange}
         providers={customApiList}
         changeProviderForEndpoint={changeEndpointProvider}
