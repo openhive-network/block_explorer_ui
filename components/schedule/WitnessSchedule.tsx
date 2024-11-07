@@ -9,21 +9,21 @@ import {
 } from "../ui/table";
 import { cn } from "@/lib/utils";
 
-interface TableData {
+export interface Witness {
   producerRank: number | null;
   producerName: string;
   blockNumber: number;
 }
 
 interface WitnessSchedule {
-  data: TableData[];
+  data: Witness[];
   currentProducer: string | undefined;
   currentBlock: number | undefined;
   nextShuffleBlockNumber: number | string;
   blocksLeftBeforeRefetch: number | string;
 }
 
-const TABLE_CELLS = ["Witness Rank", "Witness", "Block"];
+const TABLE_CELLS = ["Rank", "Witness", "Block"];
 
 const buildTableHeader = () => {
   return TABLE_CELLS.map((cell, index) => {
@@ -39,7 +39,7 @@ const buildTableHeader = () => {
 };
 
 const buildTableBody = (
-  data: TableData[],
+  data: Witness[],
   currentProducer: string | undefined,
   currentBlock: number | undefined
 ) => {
@@ -83,9 +83,11 @@ const WitnessSchedule: React.FC<WitnessSchedule> = ({
   blocksLeftBeforeRefetch,
 }) => {
   return (
-    <>
-      <div className="flex justify-center items-center w-full h-full overflow-auto">
-        <div className="text-white min-w-[50%] bg-theme dark:bg-theme">
+    <div>
+      <div className="flex w-full overflow-auto">
+        <div className="text-text w-[100%] bg-theme dark:bg-theme p-5">
+          <p className="text-center text-3xl my-2">Witness schedule</p>
+
           <Table data-testid="table-body">
             <TableHeader>
               <TableRow>{buildTableHeader()}</TableRow>
@@ -102,7 +104,7 @@ const WitnessSchedule: React.FC<WitnessSchedule> = ({
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
