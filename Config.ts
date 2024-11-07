@@ -40,4 +40,5 @@ export const config = {
     incoming: "incoming",
     outgoing: "outgoing",
   },
+  maxProxyDepth: 3,
 };
