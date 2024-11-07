@@ -200,7 +200,6 @@ export default function Witnesses() {
               <TableRow
                 key={index}
                 className={cn(
-                  // `${index % 2 === 0 ? "bg-gray-800" : "bg-gray-900"}`,
                   `${
                     index % 2 === 0
                       ? "bg-rowEven dark:bg-rowEven"
@@ -209,6 +208,7 @@ export default function Witnesses() {
                   {
                     "line-through":
                       singleWitness.signing_key === config.inactiveWitnessKey,
+                    "font-black": index < 20,
                   }
                 )}
                 data-testid="witnesses-table-row"
