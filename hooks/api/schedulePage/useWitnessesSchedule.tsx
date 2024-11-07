@@ -20,8 +20,8 @@ const useWitnessesSchedule = (
 ) => {
   const {
     data,
-    isLoading,
-    isError,
+    isLoading: isWitnessScheduleLoading,
+    isError: isWitnessScheduleError,
     refetch: refetchWitnessSchedule,
   } = useQuery({
     queryKey: ["witness_schedule"],
@@ -75,8 +75,8 @@ const useWitnessesSchedule = (
     refetchWitnessSchedule,
     nextShuffleBlockNumber,
     blocksLeftBeforeRefetch,
-    isLoading,
-    isError,
+    isWitnessScheduleLoading,
+    isWitnessScheduleError,
   };
 };
 
