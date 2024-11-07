@@ -192,6 +192,7 @@ namespace Hive {
     current_shuffled_witnesses!: string[];
     current_virtual_time!: number | string;
     elected_weight!: number;
+    future_shuffled_witnesses!: string[];
     hardfork_required_witnesses!: number;
     id!: number;
     majority_version!: string;
@@ -204,6 +205,53 @@ namespace Hive {
         nai: string;
         precision: number;
       };
+      account_subsidy_budget: number;
+      account_subsidy_decay: number;
+      hbd_interest_rate: number;
+      maximum_block_size: number;
+    };
+    min_witness_account_subsidy_decay!: number;
+    miner_weight!: number;
+    next_shuffle_block_num!: number;
+    num_scheduled_witnesses!: number;
+    timeshare_weight!: number;
+    witness_pay_normalization_factor!: number;
+  }
+
+  export class WitnessesByVote {
+    account_subsidy_rd!: {
+      budget_per_time_unit: number;
+      decay_params: {
+        decay_per_time_unit: number;
+        decay_per_time_unit_denom_shift: number;
+      };
+      max_pool_size: number;
+      min_decay: number;
+      pool_eq: number;
+      resource_unit: number;
+    };
+    account_subsidy_witness_rd!: {
+      budget_per_time_unit: number;
+      decay_params: {
+        decay_per_time_unit: number;
+        decay_per_time_unit_denom_shift: number;
+      };
+      max_pool_size: number;
+      min_decay: number;
+      pool_eq: number;
+      resource_unit: number;
+    };
+    current_shuffled_witnesses!: string[];
+    current_virtual_time!: string;
+    elected_weight!: number;
+    hardfork_required_witnesses!: number;
+    id!: number;
+    majority_version!: string;
+    max_miner_witnesses!: number;
+    max_runner_witnesses!: number;
+    max_voted_witnesses!: number;
+    median_props!: {
+      account_creation_fee: string;
       account_subsidy_budget: number;
       account_subsidy_decay: number;
       hbd_interest_rate: number;
