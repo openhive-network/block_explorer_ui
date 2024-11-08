@@ -149,8 +149,8 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   }
   return (
     <div className={cn([className])}>
-      <Card className="grid grid-cols-3 grid-rows-3 gap-y-1 my-1 p-2 ">
-        <div className="row-start-1 col-start-1 col-span-3 flex justify-center">Block Explorer healthchecker for nodes</div>
+      <Card className="grid grid-cols-4 grid-rows-3 gap-y-1 my-1 p-2 ">
+        <div className="row-start-1 col-start-1 col-span-4 flex justify-center">Block Explorer healthchecker for nodes</div>
         <div className="col-start-1 row-start-2 row-span-2 col-span-3">
           <div>Api checks:</div>
           <div className="flex flex-wrap">
@@ -159,7 +159,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
             ))}
           </div>
         </div>
-        <div className="row-start-2 row-span-2 col-end-4 flex items-center justify-end">
+        <div className="row-start-2 row-span-2 col-end-5 flex items-center justify-end">
           <Button onClick={() => {initializeDefaultChecks()}}>Restore default</Button>
         </div>
 
