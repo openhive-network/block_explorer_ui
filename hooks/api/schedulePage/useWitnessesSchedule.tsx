@@ -26,6 +26,7 @@ const useWitnessesSchedule = (
   } = useQuery({
     queryKey: ["witness_schedule"],
     queryFn: () => fetchingService.getWitnessSchedule(),
+    refetchOnWindowFocus: false,
   });
 
   const { headBlockData } = useHeadBlock(headBlockNumberData);
