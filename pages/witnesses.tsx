@@ -36,6 +36,7 @@ const TABLE_CELLS = [
   "Price Feed",
   "Feed Age",
   "Version",
+  "Last Block Produced"
 ];
 
 const sortKeyByCell: { [objectKey: string]: string } = {
@@ -49,6 +50,7 @@ const sortKeyByCell: { [objectKey: string]: string } = {
   "price feed": "price_feed",
   "feed age": "feed_updated_at",
   version: "version",
+  "last block produced": "last_confirmed_block_num",  
 };
 
 const renderSortArrow = (
@@ -56,9 +58,9 @@ const renderSortArrow = (
   orderBy: string,
   isOrderAscending: boolean
 ) => {
-  // Remove this code block when sorting by `missed_blocks` and `hbd_interest_rate` will be available
+  // Remove this code block when sorting by `missed_blocks` and `hbd_interest_rate` and `last_confirmed_block_num` will be available
   const hideSort =
-    cell === "missed blocks" || cell === "apr" || cell === "version";
+    cell === "missed blocks" || cell === "apr" || cell === "version" || cell==="last block produced";
   if (hideSort) return;
   //
 
@@ -84,9 +86,9 @@ const renderSortArrow = (
   }
 };
 
-// Remove this code block when sorting by `missed_blocks` and `hbd_interest_rate` will be available
+// Remove this code block when sorting by `missed_blocks` and `hbd_interest_rate`  and `last_confirmed_block_num` will be available
 const isCellUnsortable = (cell: string) => {
-  return cell === "APR" || cell === "Missed Blocks" || cell === "Version";
+  return cell === "APR" || cell === "Missed Blocks" || cell === "Version" || cell==="Last Block Produced";
 };
 //
 
@@ -296,6 +298,18 @@ export default function Witnesses() {
                     : "--"}
                 </TableCell>
                 <TableCell>{singleWitness.version}</TableCell>
+                <TableCell className="text-right">
+                  {singleWitness.last_confirmed_block_num ? 
+                    <Link
+                      className="text-link"
+                      href={`/block/${singleWitness.last_confirmed_block_num}${
+                        singleWitness.trxId ? `?trxId=${singleWitness.trxId}` : ""
+                      }`}
+                    >
+                    {singleWitness.last_confirmed_block_num.toLocaleString()} 
+                    </Link>
+                    : "--"}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
