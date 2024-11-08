@@ -113,3 +113,47 @@ There are two big part of Block Explorer that are handled by Wax library:
 
 1. The communication with servers. See `services/FetchingService.ts` and `types/Rest.ts`. In the `Rest.ts` file the structure of REST API is definied both properties and responses. Every call to backend, both Hive Node and Explorer API (HAF and HAFBE) is done through Wax.
 2. Formatters. Assets are changed from NAI form into formatted string. Every operation displayed in UI is formatted by our custom formatters using Wax. 
+
+
+## Steps to Configure New Theme Colors for Rebranding 
+1. In the root directory of the project, edit the file named .env. This file will store the environment variables needed by the application.
+
+2. Add Required Environment Variables For Theme Colors, the application supports both light and dark theme colors. Define colors for each theme using these variables. Each color variable can be specified as an RGB value (e.g., rgb(255, 255, 255)), hex code (e.g., #FFFFFF), or named color (e.g., blue).
+
+3. For the Light Theme Variables, set:
+
+    REACT_APP_COLOR_BACKGROUND_START_RGB_LIGHT - Start gradient color for the background
+    REACT_APP_COLOR_BACKGROUND_END_RGB_LIGHT - End gradient color for the background
+    REACT_APP_COLOR_TEXT_LIGHT - Text color
+    REACT_APP_COLOR_BACKGROUND_LIGHT - General background color
+    REACT_APP_COLOR_ROW_EVEN_LIGHT - Color for even rows
+    REACT_APP_COLOR_ROW_ODD_LIGHT - Color for odd rows
+    REACT_APP_COLOR_ROW_HOVER_LIGHT - Row hover color
+    REACT_APP_COLOR_BUTTON_LIGHT - Button color
+    REACT_APP_COLOR_BUTTON_TEXT_LIGHT - Button text color
+    REACT_APP_COLOR_BUTTON_HOVER_LIGHT - Button hover color
+    REACT_APP_COLOR_SWITCH_BUTTON_LIGHT - Switch button color
+    REACT_APP_COLOR_SWITCH_OFF_LIGHT - Switch color when off
+    REACT_APP_COLOR_SWITCH_ON_LIGHT - Switch color when on
+
+4. For the Dark Theme Variables, set:
+
+    REACT_APP_COLOR_BACKGROUND_START_RGB_DARK - Start gradient color for the background in dark mode
+    REACT_APP_COLOR_BACKGROUND_END_RGB_DARK - End gradient color for the background in dark mode
+    REACT_APP_COLOR_TEXT_DARK - Text color in dark mode
+    REACT_APP_COLOR_BACKGROUND_DARK - General background color in dark mode
+    REACT_APP_COLOR_ROW_EVEN_DARK - Color for even rows in dark mode
+    REACT_APP_COLOR_ROW_ODD_DARK - Color for odd rows in dark mode
+    REACT_APP_COLOR_ROW_HOVER_DARK - Row hover color in dark mode
+    REACT_APP_COLOR_BUTTON_DARK - Button color in dark mode
+    REACT_APP_COLOR_BUTTON_TEXT_DARK - Button text color in dark mode
+    REACT_APP_COLOR_BUTTON_HOVER_DARK - Button hover color in dark mode
+    REACT_APP_COLOR_SWITCH_BUTTON_DARK - Switch button color in dark mode
+    REACT_APP_COLOR_SWITCH_OFF_DARK - Switch color when off in dark mode
+    REACT_APP_COLOR_SWITCH_ON_DARK - Switch color when on in dark mode
+
+5. Restart the Application
+    After adding or updating values in the .env file, restart the application to apply the changes.
+
+**Notes**
+Do not commit your .env file to version control to avoid exposing sensitive information. You can customize the color values to suit your design needs, but be sure to follow the naming pattern provided for easy reference.
