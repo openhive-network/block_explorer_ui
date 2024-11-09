@@ -1,13 +1,9 @@
 /* From Uiverse.io by jubayer-10 */
 import { useTheme } from "@/contexts/ThemeContext";
 import { useEffect } from 'react';
-import {setCSSVariables} from '../utils/CSSVariables';
+
 const ThemeToggle = () => {
   const { theme, toggleTheme } = useTheme();
-  useEffect(() => {
-    // Apply the CSS variables when the component is mounted
-    setCSSVariables();
-  }, [theme]); // Only run when theme is toggled
   return (
     <div className="flex items-center">
       <label className="inline-flex items-center cursor-pointer relative">
