@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
+import { setCssVariablesFromEnv } from "@/utils/EnvCssVariables";
 
 type ThemeContextType = {
   theme: string;
@@ -27,6 +28,11 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, []);
 
+  useEffect(() => {
+    // Apply the CSS variables when the component is mounted
+    setCssVariablesFromEnv();
+  }, [theme]);
+  
   const toggleTheme = () => {
     const newTheme = theme === "dark" ? "light" : "dark";
     setTheme(newTheme);
