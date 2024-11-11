@@ -51,7 +51,7 @@ declare module Explorer {
     startDate?: Date;
     endDate?: Date;
   }
-
+  // TODO: Investigate do we really need deepProps
   interface BlockSearchProps extends CommonSearchProps {
     accountName?: string;
     limit: number;

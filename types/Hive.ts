@@ -468,20 +468,25 @@ namespace Hive {
 
   export class BlockSearchParams {
     "operation-types"?: string;
+    "account-name"?: string;
     page?: number;
+    "page-size"?: number;
     "result-limit"?: number;
     direction!: Hive.Direction;
-    "account-name"?: string;
-    "page-size"?: number;
-    "data-size-limit"?: number;
     "from-block"?: number | Date;
     "to-block"?: number | Date;
     "path-filter"?: string;
   }
 
-  export class BlockByOpResponse {
+  export class BlocksResult {
     block_num!: number;
-    op_type_id!: number[];
+    op_type_ids!: number[];
+  }
+
+  export class BlockByOpResponse {
+    total_blocks!: number;
+    total_pages!: number;
+    blocks_result!: BlocksResult[];
   }
 
   export class GetOperationsByBlockParams {
