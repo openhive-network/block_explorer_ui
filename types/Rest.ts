@@ -1,24 +1,22 @@
 import Hive from "./Hive";
 
-
 /**
  * Tree-like structure of data to fetched, used by Wax to connect with REST API.
  * Params and results are typed as classes.
  * If responseArray = true, the response is in array format.
  * {} in URL are dynamic params. The name is important and should be synchronized with params types.
  */
-export const extendedRest = { 
+export const extendedRest = {
   "hafbe-api": {
     lastSyncedBlock: {
       params: undefined,
       result: Number,
-      urlPath: "last-synced-block"
+      urlPath: "last-synced-block",
     },
     blockNumbers: {
       params: Hive.BlockSearchParams,
       result: Hive.BlockByOpResponse,
-      responseArray: true,
-      urlPath: "block-numbers"
+      urlPath: "block-numbers",
     },
     witnesses: {
       params: Hive.GetWitnessesParams,
@@ -41,85 +39,85 @@ export const extendedRest = {
     },
     version: {
       params: undefined,
-      result: String
+      result: String,
     },
     inputType: {
       params: Hive.GetInputTypeParams,
       result: Hive.InputTypeResponse,
-      urlPath: "input-type/{inputType}"
+      urlPath: "input-type/{inputType}",
     },
     operationTypeCounts: {
       params: Hive.GetLastOperationTypeCountsParams,
       result: Hive.LastBlocksTypeResponse,
       responseArray: true,
-      urlPath: "operation-type-counts"
+      urlPath: "operation-type-counts",
     },
     accounts: {
       account: {
         params: Hive.GetAccountDetailsParams,
         result: Hive.AccountDetails,
-        urlPath: "{accountName}"
+        urlPath: "{accountName}",
       },
       authorities: {
         params: Hive.GetAccountAuthoritiesParams,
         result: Hive.AccountAuthoritiesData,
-        urlPath: "{accountName}/authority"
+        urlPath: "{accountName}/authority",
       },
       commentOperations: {
         params: Hive.GetCommentOperationsParams,
         result: Hive.CommentOperationResponse,
-        urlPath: "{accountName}/comment-operations"
+        urlPath: "{accountName}/comment-operations",
       },
-    }
+    },
   },
   "hafah-api": {
     block: {
       params: Hive.GetBlockDetailsParams,
       result: Hive.BlockDetails,
-      urlPath: "blocks/{blockNumber}"
+      urlPath: "blocks/{blockNumber}",
     },
     blockOperations: {
       params: Hive.GetOperationsByBlockParams,
       result: Hive.TotalOperationsResponse,
-      urlPath: "blocks/{blockNumber}/operations"
+      urlPath: "blocks/{blockNumber}/operations",
     },
     transactions: {
       transaction: {
         params: Hive.GetTransactionParams,
         result: Hive.TransactionResponse,
-        urlPath: "{transactionId}"
-      }
+        urlPath: "{transactionId}",
+      },
     },
     operationTypes: {
       params: undefined,
       result: Hive.OperationPattern,
       responseArray: true,
-      urlPath: "operation-types"
+      urlPath: "operation-types",
     },
     operationTypesKeys: {
       params: Hive.GetOperationKeysParams,
       result: Array<string>,
       responseArray: true,
-      urlPath: "operation-types/{operationTypeId}/keys"
+      urlPath: "operation-types/{operationTypeId}/keys",
     },
     operations: {
       byId: {
         params: Hive.GetOperationParams,
         result: Hive.OperationResponse,
-        urlPath: "{operationId}/"
-      }
+        urlPath: "{operationId}/",
+      },
     },
     accounts: {
       operationTypes: {
         params: Hive.GetAccountOperationTypesParams,
         result: Number,
         responseArray: true,
-        urlPath: "{accountName}/operation-types"
+        urlPath: "{accountName}/operation-types",
       },
       operations: {
         params: Hive.GetOpsByAccountParams,
         result: Hive.AccountOperationsResponse,
-        urlPath: "{accountName}/operations"
+        urlPath: "{accountName}/operations",
       },
     },
     headblock: {
@@ -129,12 +127,12 @@ export const extendedRest = {
     globalState: {
       params: Hive.GetBlockGlobalStateParams,
       result: Hive.BlockDetails,
-      urlPath: "global-state"
+      urlPath: "global-state",
     },
     blockNumberByDate: {
       params: Hive.GetBlockByTimeParams,
       result: Number,
-      urlPath: "block-number-by-date/{date}"
-    }
-  }
-}
+      urlPath: "block-number-by-date/{date}",
+    },
+  },
+};
