@@ -65,7 +65,9 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
 
   const { operationsTypes } = useOperationTypes() || [];
   const commentSearch = useCommentSearch(commentSearchProps);
-  const blockSearch = useBlockSearch(blockSearchProps);
+  const { blockSearchData, blockSearchDataLoading } =
+    useBlockSearch(blockSearchProps);
+
   const accountOperations = useAccountOperations(accountOperationsSearchProps);
 
   const searchRanges = useSearchRanges("lastBlocks");
@@ -90,9 +92,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
       (accountOperations &&
         !accountOperations.isAccountOperationsLoading &&
         lastSearchKey === "account") ||
-      (blockSearch &&
-        !blockSearch.blockSearchDataLoading &&
-        lastSearchKey === "block") ||
+      (!blockSearchDataLoading && lastSearchKey === "block") ||
       (commentSearch &&
         !commentSearch.commentSearchDataLoading &&
         lastSearchKey === "comment");
@@ -106,7 +106,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
   }, [
     accountOperations,
     lastSearchKey,
-    blockSearch,
+    blockSearchDataLoading,
     commentSearch,
     isAllSearchLoading,
   ]);
@@ -330,7 +330,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
                 <BlockSearch
                   startBlockSearch={startBlockSearch}
                   operationsTypes={operationsTypes}
-                  loading={blockSearch.blockSearchDataLoading}
+                  loading={blockSearchDataLoading}
                 />
               </AccordionContent>
             </AccordionItem>
@@ -367,7 +367,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
         className="pt-4 scroll-mt-16"
         ref={searchesRef}
       >
-        {blockSearch.blockSearchData && lastSearchKey === "block" && (
+        {blockSearchData && lastSearchKey === "block" && (
           <div
             className=" bg-theme dark:bg-theme p-2 md: h-fit rounded"
             data-testid="result-section"
@@ -379,14 +379,16 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
               Results:
             </div>
             <div className="flex flex-wrap">
-              {blockSearch.blockSearchData.length > 0 ? (
-                blockSearch.blockSearchData.map((blockId) => (
+              {blockSearchData.blocks_result.length > 0 ? (
+                blockSearchData.blocks_result.map(({ block_num }) => (
                   <Link
-                    key={blockId}
-                    href={getBlockPageLink(blockId)}
+                    key={block_num}
+                    href={getBlockPageLink(block_num)}
                     data-testid="result-block"
                   >
-                    <div className="m-1 border border-solid p-1">{blockId}</div>
+                    <div className="m-1 border border-solid p-1">
+                      {block_num}
+                    </div>
                   </Link>
                 ))
               ) : (
