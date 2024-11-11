@@ -274,18 +274,15 @@ class FetchingService {
 
   async getBlockByOp(
     blockSearchProps: Explorer.BlockSearchProps
-  ): Promise<Hive.BlockByOpResponse[]> {
+  ): Promise<Hive.BlockByOpResponse> {
     const requestParams: Hive.BlockSearchParams = {
       "operation-types": blockSearchProps.operationTypes?.join(","),
       "account-name": blockSearchProps?.accountName,
+      page: 1,
+      "page-size": 100,
       direction: "desc",
       "from-block": blockSearchProps.fromBlock || blockSearchProps.startDate,
       "to-block": blockSearchProps.toBlock || blockSearchProps.endDate,
-      "result-limit": blockSearchProps.limit,
-      "path-filter": createPathFilterString(
-        blockSearchProps.deepProps.content,
-        blockSearchProps.deepProps.keys
-      ),
     };
     return await this.extendedHiveChain!.restApi["hafbe-api"].blockNumbers(
       requestParams
