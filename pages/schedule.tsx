@@ -41,7 +41,7 @@ const Schedule = () => {
   const producerAccount = headBlockData?.producer_account;
 
   useEffect(() => {
-    if (blocksLeftBeforeRefetch <= 0) {
+    if (blocksLeftBeforeRefetch < 0) {
       setBlockSchedule({});
       refetchWitnessSchedule();
       refetchBackupWitnessSchedule();

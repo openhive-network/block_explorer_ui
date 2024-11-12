@@ -1,9 +1,9 @@
 /* From Uiverse.io by jubayer-10 */
 import { useTheme } from "@/contexts/ThemeContext";
+import { useEffect } from 'react';
 
 const ThemeToggle = () => {
   const { theme, toggleTheme } = useTheme();
-
   return (
     <div className="flex items-center">
       <label className="inline-flex items-center cursor-pointer relative">
