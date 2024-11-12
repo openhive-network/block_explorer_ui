@@ -318,18 +318,32 @@ class FetchingService {
   ): Promise<Hive.CommentOperationResponse> {
     const requestParams: Hive.GetCommentOperationsParams = {
       accountName: commentSearchProps.accountName,
+      permlink: commentSearchProps.permlink,
       "operation-types": commentSearchProps.operationTypes?.join(","),
       page: commentSearchProps.pageNumber,
-      permlink: commentSearchProps.permlink,
       "page-size": config.standardPaginationSize,
+      direction: "desc",
       "data-size-limit": config.opsBodyLimit,
-      "from-block":
-        commentSearchProps.fromBlock || commentSearchProps.startDate,
-      "to-block": commentSearchProps.toBlock || commentSearchProps.endDate,
     };
     return await this.extendedHiveChain!.restApi[
       "hafbe-api"
     ].accounts.commentOperations(requestParams);
+  }
+
+  async getAccountPermlinks(
+    permlinkSearchProps: Explorer.PermlinkSearchProps
+  ): Promise<Hive.CommentPermlinksResponse> {
+    const requestParams: Hive.GetCommentPermlinksParams = {
+      accountName: permlinkSearchProps.accountName,
+      page: 1,
+      "page-size": 100,
+      "from-block":
+        permlinkSearchProps.fromBlock || permlinkSearchProps.startDate,
+      "to-block": permlinkSearchProps.toBlock || permlinkSearchProps.endDate,
+    };
+    return await this.extendedHiveChain!.restApi[
+      "hafbe-api"
+    ].accounts.commentPermlinks(requestParams);
   }
 
   async getHafbeVersion(): Promise<string> {
