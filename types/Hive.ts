@@ -65,13 +65,15 @@ namespace Hive {
   }
 
   export interface CommentOperation {
-    block_num: number;
-    operation: Operation;
-    is_modified: boolean;
+    block: number;
+    op: Operation;
+    op_pos: number;
+    op_type_id: number;
     operation_id: number;
-    permlink: string;
-    created_at: Date;
-    trx_hash: string;
+    timestamp: string;
+    trx_id: string;
+    trx_in_block: number;
+    virtual_op: boolean;
   }
 
   export interface TransferOperation {
@@ -451,11 +453,22 @@ namespace Hive {
 
   export class GetCommentOperationsParams {
     accountName!: string;
+    permlink!: string;
     "operation-types"?: string;
     page?: number;
-    permlink?: string;
     "page-size"?: number;
+    direction?: "asc" | "desc";
     "data-size-limit"?: number;
+    // "from-block"?: number | Date;
+    // "to-block"?: number | Date;
+  }
+
+  export class GetCommentPermlinksParams {
+    accountName!: string;
+    "comment-type"?: "post" | "comment" | "all";
+    "operation-types"?: string;
+    page?: number;
+    "page-size"?: number;
     "from-block"?: number | Date;
     "to-block"?: number | Date;
   }
@@ -464,6 +477,20 @@ namespace Hive {
     operations_result!: Hive.CommentOperation[];
     total_operations!: number;
     total_pages!: number;
+  }
+
+  export class Permlink {
+    block!: number;
+    operation_id!: string;
+    permlink!: string;
+    timestamp!: string;
+    trx_id!: string;
+  }
+
+  export class CommentPermlinksResponse {
+    total_permlinks!: number;
+    total_pages!: number;
+    permlinks_result!: Permlink[];
   }
 
   export class BlockSearchParams {

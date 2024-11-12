@@ -66,7 +66,12 @@ export const extendedRest = {
       commentOperations: {
         params: Hive.GetCommentOperationsParams,
         result: Hive.CommentOperationResponse,
-        urlPath: "{accountName}/comment-operations",
+        urlPath: "{accountName}/operations/comments/{permlink}",
+      },
+      commentPermlinks: {
+        params: Hive.GetCommentPermlinksParams,
+        result: Hive.CommentPermlinksResponse,
+        urlPath: "{accountName}/comment-permlinks",
       },
     },
   },
