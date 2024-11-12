@@ -218,8 +218,7 @@ export default function Witnesses() {
                   {
                     "line-through":
                       singleWitness.signing_key === config.inactiveWitnessKey,
-                    "font-black":
-                      singleWitness.rank && singleWitness.rank <= 20,
+                    "font-bold": singleWitness.rank && singleWitness.rank <= 20,
                   }
                 )}
                 data-testid="witnesses-table-row"
