@@ -63,7 +63,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
 
       const commentSearchProps: Explorer.CommentSearchParams = {
         accountName: trimAccountName(accountName),
-        permlink: permlink !== "" ? permlink : undefined,
+        permlink,
         fromBlock: payloadFromBlock,
         toBlock: payloadToBlock,
         startDate: payloadStartDate,
@@ -115,13 +115,10 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
           type="text"
           value={permlink}
           onChange={(e) => setPermlink(e.target.value)}
-          placeholder="Permlink"
+          placeholder="Permlink *"
+          required
         />
       </div>
-      <SearchRanges
-        rangesProps={searchRanges}
-        safeTimeRangeDisplay
-      />
       <div className="flex items-center my-2">
         <OperationTypesDialog
           operationTypes={operationsTypes?.filter((opType) =>
@@ -141,14 +138,14 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
           data-testid="search-button"
           className="mr-2 my-2"
           onClick={onButtonClick}
-          disabled={!accountName}
+          disabled={!accountName || !permlink}
         >
           Search
           {loading && <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />}
         </Button>
         {!accountName && (
           <label className="text-gray-300 dark:text-gray-500 ">
-            Set author name
+            Set author name and permlink
           </label>
         )}
       </div>
