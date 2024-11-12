@@ -39,6 +39,12 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
     resetEndpoints();
   }
 
+  const checkProvider = (apiKey: string): boolean => {
+    if (providersForEndpoints?.get(apiKey) === providerLink) return true;
+    if (isSelected && !providersForEndpoints?.get(apiKey)) return true;
+    return false
+  }
+
   return (
     <Card className="grid grid-cols-8 grid-rows-2 gap-y-1 my-1 p-2">
       <div className="col-start-1 row-start-1 col-span-1 row-span-2 flex justify-center items-center">{index + 1}</div>
@@ -52,7 +58,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
           <Badge 
             key={customApiCheckers?.get(apiKey)?.title} 
             variant={"outline"} 
-            className={cn({"text-green-400": providersForEndpoints?.get(apiKey) === providerLink})}
+            className={cn({"text-green-400": checkProvider(apiKey)})}
             onClick={() => {onEndpointProviderDialogChange(true, apiKey)}}>
               {customApiCheckers?.get(apiKey)?.title}
           </Badge>
