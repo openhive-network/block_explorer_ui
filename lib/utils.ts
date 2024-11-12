@@ -62,13 +62,12 @@ export const formatNumber = (
     ? config.precisions.vests
     : config.precisions.hivePower;
   const vestsFormat = isVest ? { minimumFractionDigits: precision } : undefined;
-  return skipPrecision?numberToFormat.toLocaleString(
-    undefined,
-    vestsFormat
-  ):(numberToFormat / Math.pow(10, precision)).toLocaleString(
-    undefined,
-    vestsFormat
-  );
+  return skipPrecision
+    ? numberToFormat.toLocaleString(undefined, vestsFormat)
+    : (numberToFormat / Math.pow(10, precision)).toLocaleString(
+        undefined,
+        vestsFormat
+      );
 };
 
 /**
@@ -97,11 +96,11 @@ export const convertOperationResultsToTableOperations = (
 export const convertCommentsOperationResultToTableOperations = (
   operations: Hive.CommentOperation[]
 ): Explorer.OperationForTable[] => {
-  return operations.map((operation) => ({
-    operation: operation.operation,
-    blockNumber: operation.block_num,
-    operationId: operation.operation_id,
-    trxId: operation.trx_hash,
+  return operations?.map((operation) => ({
+    operation: operation.op,
+    blockNumber: operation.block,
+    operationId: Number(operation.operation_id),
+    trxId: operation.trx_id,
   }));
 };
 
@@ -112,7 +111,7 @@ export const convertTransactionResponseToTableOperations = (
     operation: operation,
     blockNumber: transaction.block_num,
     trxId: transaction.transaction_id,
-    timestamp: transaction?.timestamp?.toString() || Date.now().toString()
+    timestamp: transaction?.timestamp?.toString() || Date.now().toString(),
   }));
 };
 
@@ -198,10 +197,13 @@ export const convertIdsToBooleanArray = (
   return booleanArray;
 };
 
-export const createPathFilterString = (keyContent?: string, setOfKeys?: string[]): string | undefined => {
+export const createPathFilterString = (
+  keyContent?: string,
+  setOfKeys?: string[]
+): string | undefined => {
   if (keyContent && setOfKeys) {
     const path = setOfKeys.join(".");
     return `${path}=${keyContent}`;
   }
   return undefined;
-}
+};
