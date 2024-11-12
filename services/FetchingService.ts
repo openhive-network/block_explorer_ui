@@ -330,7 +330,7 @@ class FetchingService {
     ].accounts.commentOperations(requestParams);
   }
 
-  async getAccountPermlinks(
+  async getCommentPermlinks(
     permlinkSearchProps: Explorer.PermlinkSearchProps
   ): Promise<Hive.CommentPermlinksResponse> {
     const requestParams: Hive.GetCommentPermlinksParams = {

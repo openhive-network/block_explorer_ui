@@ -12,15 +12,15 @@ const usePermlinkSearch = (
     isError: permlinkSearchDataError,
   } = useQuery({
     queryKey: ["permlinkSearch", permlinkSearchProps],
-    queryFn: () => fetchCommentOperations(permlinkSearchProps),
+    queryFn: () => fetchCommentPermlinks(permlinkSearchProps),
     refetchOnWindowFocus: false,
   });
 
-  const fetchCommentOperations = async (
+  const fetchCommentPermlinks = async (
     permlinkSearchProps: Explorer.PermlinkSearchProps | undefined
   ) => {
     if (!permlinkSearchProps) return null;
-    return await fetchingService.getAccountPermlinks(permlinkSearchProps);
+    return await fetchingService.getCommentPermlinks(permlinkSearchProps);
   };
 
   return {
