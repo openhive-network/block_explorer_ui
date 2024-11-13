@@ -20,7 +20,6 @@ export interface ApiChecker {
 
 interface HealthCheckerComponentProps {
   className?: string;
-  hiveChain?: IHiveChainInterface;
   currentAddress?: string;
   customApiList?: string[];
   customApiCheckers?: Map<string, ApiChecker>;
@@ -31,7 +30,6 @@ interface HealthCheckerComponentProps {
 }
 
 const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
-  hiveChain,
   currentAddress,
   customApiList,
   changeNodeAddress,
@@ -107,14 +105,14 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   }
 
   useEffect(() => { 
-    if (healthChecker && hiveChain && !chainInitialized && !!customApiCheckers) {
+    if (healthChecker && !chainInitialized && !!customApiCheckers) {
       if (apiChecksByProvider.size === 0) {
         initializeDefaultChecks();
       }
       healthChecker.on("data", (data: Array<IScoredEndpoint>) => { console.log(JSON.stringify(data)); setScoredEndpoints(data) });
       setChainIntialized(true);
     }
-  }, [hiveChain, chainInitialized, customApiCheckers, customApiList, healthChecker, apiChecksByProvider])
+  }, [chainInitialized, customApiCheckers, customApiList, healthChecker, apiChecksByProvider])
 
   useEffect(() => {
     if (!healthChecker) {

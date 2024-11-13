@@ -87,7 +87,6 @@ export default function HealthcheckerPage() {
       </Head>
       <div className="md:m-8 max-w-[100vw]">
         <HealthCheckerComponent 
-          hiveChain={hiveChain} 
           currentAddress={nodeAddress ? nodeAddress : undefined} 
           changeNodeAddress={setNodeAddress} 
           customApiCheckers={checksMap}
