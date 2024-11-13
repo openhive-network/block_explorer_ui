@@ -1,54 +1,33 @@
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
-
-import { config } from "@/Config";
-import Hive from "@/types/Hive";
 import Explorer from "@/types/Explorer";
-import { getOperationButtonTitle } from "@/utils/UI";
 import { trimAccountName } from "@/utils/StringUtils";
-import {
-  convertBooleanArrayToIds,
-  convertIdsToBooleanArray,
-} from "@/lib/utils";
 import { SearchRangesResult } from "@/hooks/common/useSearchRanges";
 import { Input } from "@/components/ui/input";
 import SearchRanges from "@/components/searchRanges/SearchRanges";
-import OperationTypesDialog from "@/components/OperationTypesDialog";
 import { Button } from "@/components/ui/button";
 
-interface CommentsSearchProps {
-  startCommentsSearch: (
-    accountSearchOperationsProps: Explorer.CommentSearchParams
+interface CommentsPermlinkSearchProps {
+  startCommentPermlinkSearch: (
+    accountSearchOperationsProps: Explorer.CommentPermlinSearchParams
   ) => Promise<void>;
-  operationsTypes?: Hive.OperationPattern[];
-  data?: Explorer.CommentSearchParams;
+  data?: Explorer.PermlinkSearchProps;
   loading?: boolean;
   searchRanges: SearchRangesResult;
 }
 
-const CommentsSearch: React.FC<CommentsSearchProps> = ({
-  startCommentsSearch,
-  operationsTypes,
+const CommentsPermlinkSearch: React.FC<CommentsPermlinkSearchProps> = ({
+  startCommentPermlinkSearch,
   loading,
   data,
   searchRanges,
 }) => {
   const [accountName, setAccountName] = useState<string>("");
-  const [permlink, setPermlink] = useState<string>("");
-  const [
-    selectedCommentSearchOperationTypes,
-    setSelectedCommentSearchOperationTypes,
-  ] = useState<number[]>([]);
 
   const { getRangesValues } = searchRanges;
 
-  const setSearchValues = (data: Explorer.CommentSearchParams) => {
+  const setSearchValues = (data: Explorer.PermlinkSearchProps | any) => {
     data.accountName && setAccountName(data.accountName);
-    data.permlink && setPermlink(data.permlink);
-    data.filters &&
-      setSelectedCommentSearchOperationTypes(
-        convertBooleanArrayToIds(data.filters)
-      );
     searchRanges.setRangesValues(data);
   };
 
@@ -61,16 +40,12 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
         payloadEndDate,
       } = await getRangesValues();
 
-      const commentSearchProps: Explorer.CommentSearchParams = {
+      const commentPermlinksSearchProps: Explorer.PermlinkSearchProps | any = {
         accountName: trimAccountName(accountName),
-        permlink,
         fromBlock: payloadFromBlock,
         toBlock: payloadToBlock,
         startDate: payloadStartDate,
         endDate: payloadEndDate,
-        filters: selectedCommentSearchOperationTypes.length
-          ? convertIdsToBooleanArray(selectedCommentSearchOperationTypes)
-          : undefined,
         lastBlocks:
           searchRanges.rangeSelectKey === "lastBlocks"
             ? searchRanges.lastBlocksValue
@@ -80,7 +55,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
         rangeSelectKey: searchRanges.rangeSelectKey,
         timeUnit: searchRanges.timeUnitSelectKey,
       };
-      startCommentsSearch(commentSearchProps);
+      startCommentPermlinkSearch(commentPermlinksSearchProps);
     }
   };
 
@@ -93,10 +68,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
 
   return (
     <>
-      <p className="ml-2">
-        Find all operations related to comments of given account or for exact
-        permlink.
-      </p>
+      <p className="ml-2">Find comments permlinks by account name</p>
       <div className="flex flex-col">
         <Input
           data-testid="account-name"
@@ -108,44 +80,23 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
           required
         />
       </div>
-      <div className="flex flex-col">
-        <Input
-          data-testid="permlink-input"
-          className="w-1/2 bg-theme dark:bg-theme border-0 border-b-2"
-          type="text"
-          value={permlink}
-          onChange={(e) => setPermlink(e.target.value)}
-          placeholder="Permlink *"
-          required
-        />
-      </div>
-      <div className="flex items-center my-2">
-        <OperationTypesDialog
-          operationTypes={operationsTypes?.filter((opType) =>
-            config.commentOperationsTypeIds.includes(opType.op_type_id)
-          )}
-          selectedOperations={selectedCommentSearchOperationTypes}
-          setSelectedOperations={setSelectedCommentSearchOperationTypes}
-          buttonClassName="bg-buttonBg"
-          triggerTitle={getOperationButtonTitle(
-            selectedCommentSearchOperationTypes,
-            operationsTypes
-          )}
-        />
-      </div>
+      <SearchRanges
+        rangesProps={searchRanges}
+        safeTimeRangeDisplay
+      />
       <div className="flex items-center">
         <Button
           data-testid="search-button"
           className="mr-2 my-2"
           onClick={onButtonClick}
-          disabled={!accountName || !permlink}
+          disabled={!accountName}
         >
           Search
           {loading && <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />}
         </Button>
         {!accountName && (
           <label className="text-gray-300 dark:text-gray-500 ">
-            Set author name and permlink
+            Set author name
           </label>
         )}
       </div>
@@ -153,4 +104,4 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
   );
 };
 
-export default CommentsSearch;
+export default CommentsPermlinkSearch;

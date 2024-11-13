@@ -51,7 +51,7 @@ declare module Explorer {
     startDate?: Date;
     endDate?: Date;
   }
-
+  // TODO: Investigate do we really need deepProps
   interface BlockSearchProps extends CommonSearchProps {
     accountName?: string;
     limit: number;
@@ -62,8 +62,8 @@ declare module Explorer {
   }
 
   interface CommentSearchParams {
-    accountName: string | undefined;
-    permlink: string | undefined;
+    accountName: string;
+    permlink: string;
     fromBlock: number | undefined;
     toBlock: number | undefined;
     startDate: Date | undefined;
@@ -76,10 +76,33 @@ declare module Explorer {
     filters: boolean[] | undefined;
   }
 
+  interface CommentPermlinSearchParams {
+    accountName: string;
+    fromBlock: number | undefined;
+    toBlock: number | undefined;
+    startDate: Date | undefined;
+    endDate: Date | undefined;
+    lastBlocks: number | undefined;
+    lastTime: string | undefined;
+    page: number;
+    rangeSelectKey: string | undefined;
+    timeUnit: string | undefined;
+  }
+
   interface CommentSearchProps extends CommonSearchProps {
     accountName: string;
-    permlink?: string;
+    permlink: string;
     pageNumber?: number;
+    pageSize?: number;
+    direction?: "asc" | "desc";
+    dataSizeLimit?: number;
+  }
+
+  interface PermlinkSearchProps extends CommonSearchProps {
+    accountName: string;
+    commentType?: "post" | "comment" | "all";
+    page?: number;
+    pageSize?: number;
   }
 
   interface SelectOption {

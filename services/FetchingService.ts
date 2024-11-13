@@ -274,18 +274,15 @@ class FetchingService {
 
   async getBlockByOp(
     blockSearchProps: Explorer.BlockSearchProps
-  ): Promise<Hive.BlockByOpResponse[]> {
+  ): Promise<Hive.BlockByOpResponse> {
     const requestParams: Hive.BlockSearchParams = {
       "operation-types": blockSearchProps.operationTypes?.join(","),
       "account-name": blockSearchProps?.accountName,
+      page: 1,
+      "page-size": 100,
       direction: "desc",
       "from-block": blockSearchProps.fromBlock || blockSearchProps.startDate,
       "to-block": blockSearchProps.toBlock || blockSearchProps.endDate,
-      "result-limit": blockSearchProps.limit,
-      "path-filter": createPathFilterString(
-        blockSearchProps.deepProps.content,
-        blockSearchProps.deepProps.keys
-      ),
     };
     return await this.extendedHiveChain!.restApi["hafbe-api"].blockNumbers(
       requestParams
@@ -321,18 +318,32 @@ class FetchingService {
   ): Promise<Hive.CommentOperationResponse> {
     const requestParams: Hive.GetCommentOperationsParams = {
       accountName: commentSearchProps.accountName,
+      permlink: commentSearchProps.permlink,
       "operation-types": commentSearchProps.operationTypes?.join(","),
       page: commentSearchProps.pageNumber,
-      permlink: commentSearchProps.permlink,
       "page-size": config.standardPaginationSize,
+      direction: "desc",
       "data-size-limit": config.opsBodyLimit,
-      "from-block":
-        commentSearchProps.fromBlock || commentSearchProps.startDate,
-      "to-block": commentSearchProps.toBlock || commentSearchProps.endDate,
     };
     return await this.extendedHiveChain!.restApi[
       "hafbe-api"
     ].accounts.commentOperations(requestParams);
+  }
+
+  async getCommentPermlinks(
+    permlinkSearchProps: Explorer.PermlinkSearchProps
+  ): Promise<Hive.CommentPermlinksResponse> {
+    const requestParams: Hive.GetCommentPermlinksParams = {
+      accountName: permlinkSearchProps.accountName,
+      page: 1,
+      "page-size": 100,
+      "from-block":
+        permlinkSearchProps.fromBlock || permlinkSearchProps.startDate,
+      "to-block": permlinkSearchProps.toBlock || permlinkSearchProps.endDate,
+    };
+    return await this.extendedHiveChain!.restApi[
+      "hafbe-api"
+    ].accounts.commentPermlinks(requestParams);
   }
 
   async getHafbeVersion(): Promise<string> {

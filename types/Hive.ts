@@ -65,13 +65,15 @@ namespace Hive {
   }
 
   export interface CommentOperation {
-    block_num: number;
-    operation: Operation;
-    is_modified: boolean;
+    block: number;
+    op: Operation;
+    op_pos: number;
+    op_type_id: number;
     operation_id: number;
-    permlink: string;
-    created_at: Date;
-    trx_hash: string;
+    timestamp: string;
+    trx_id: string;
+    trx_in_block: number;
+    virtual_op: boolean;
   }
 
   export interface TransferOperation {
@@ -451,11 +453,22 @@ namespace Hive {
 
   export class GetCommentOperationsParams {
     accountName!: string;
+    permlink!: string;
     "operation-types"?: string;
     page?: number;
-    permlink?: string;
     "page-size"?: number;
+    direction?: "asc" | "desc";
     "data-size-limit"?: number;
+    // "from-block"?: number | Date;
+    // "to-block"?: number | Date;
+  }
+
+  export class GetCommentPermlinksParams {
+    accountName!: string;
+    "comment-type"?: "post" | "comment" | "all";
+    "operation-types"?: string;
+    page?: number;
+    "page-size"?: number;
     "from-block"?: number | Date;
     "to-block"?: number | Date;
   }
@@ -466,22 +479,41 @@ namespace Hive {
     total_pages!: number;
   }
 
+  export class Permlink {
+    block!: number;
+    operation_id!: string;
+    permlink!: string;
+    timestamp!: string;
+    trx_id!: string;
+  }
+
+  export class CommentPermlinksResponse {
+    total_permlinks!: number;
+    total_pages!: number;
+    permlinks_result!: Permlink[];
+  }
+
   export class BlockSearchParams {
     "operation-types"?: string;
+    "account-name"?: string;
     page?: number;
+    "page-size"?: number;
     "result-limit"?: number;
     direction!: Hive.Direction;
-    "account-name"?: string;
-    "page-size"?: number;
-    "data-size-limit"?: number;
     "from-block"?: number | Date;
     "to-block"?: number | Date;
     "path-filter"?: string;
   }
 
-  export class BlockByOpResponse {
+  export class BlocksResult {
     block_num!: number;
-    op_type_id!: number[];
+    op_type_ids!: number[];
+  }
+
+  export class BlockByOpResponse {
+    total_blocks!: number;
+    total_pages!: number;
+    blocks_result!: BlocksResult[];
   }
 
   export class GetOperationsByBlockParams {
