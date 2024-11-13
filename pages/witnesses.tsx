@@ -218,24 +218,23 @@ export default function Witnesses() {
                   {
                     "line-through":
                       singleWitness.signing_key === config.inactiveWitnessKey,
-                    "font-black":
-                      singleWitness.rank && singleWitness.rank <= 20,
+                    "font-bold": singleWitness.rank && singleWitness.rank <= 20,
                   }
                 )}
                 data-testid="witnesses-table-row"
               >
                 <TableCell
                   className={cn("sticky left-0 min-w-[20px]", {
-                    "bg-gray-800 md:bg-inherit": index % 2 === 0,
-                    "bg-gray-900 md:bg-inherit": index % 2 !== 0,
+                    "bg-rowEven dark:bg-rowEven md:bg-inherit": index % 2 === 0,
+                    "bg-rowOdd dark:bg-rowOdd md:bg-inherit": index % 2 !== 0,
                   })}
                 >
                   {singleWitness.rank}
                 </TableCell>
                 <TableCell
                   className={cn("text-explorer-turquoise sticky left-16", {
-                    "bg-gray-800 md:bg-inherit": index % 2 === 0,
-                    "bg-gray-900 md:bg-inherit": index % 2 !== 0,
+                    "bg-rowEven dark:bg-rowEven md:bg-inherit": index % 2 === 0,
+                    "bg-rowOdd dark:bg-rowOdd md:bg-inherit": index % 2 !== 0,
                   })}
                 >
                   <div className="flex justify-between">

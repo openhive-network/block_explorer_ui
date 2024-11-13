@@ -29,7 +29,7 @@ const buildTableHeader = () => {
   return TABLE_CELLS.map((cell, index) => {
     return (
       <TableHead
-        className="text-left text-[1.5rem]"
+        className="text-left text-[1.5rem] "
         key={index}
       >
         {cell}
@@ -50,7 +50,12 @@ const buildTableBody = (
       return (
         <React.Fragment key={index}>
           <TableRow className="border-b border-gray-700 hover:bg-inherit p-[10px]">
-            <TableCell className="">{producerRank}</TableCell>
+          <TableCell>
+            <span 
+                className="font-mono grid grid-cols-[repeat(auto-fill,_minmax(1ch,_1fr))] justify-items-end ml-2.5">
+              {producerRank}
+            </span>
+          </TableCell>
             <TableCell
               className={cn("text-left", {
                 "text-gray-300 dark:text-gray-500":
@@ -86,7 +91,7 @@ const WitnessSchedule: React.FC<WitnessSchedule> = ({
     <div>
       <div className="flex w-full overflow-auto">
         <div className="text-text w-[100%] bg-theme dark:bg-theme p-5">
-          <p className="text-center text-3xl my-2">Witness schedule</p>
+          <p className="text-center text-3xl my-2">Witness Schedule</p>
 
           <Table data-testid="table-body">
             <TableHeader>
