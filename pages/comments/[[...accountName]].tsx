@@ -20,8 +20,8 @@ import OperationsTable from "@/components/OperationsTable";
 import { Card, CardContent } from "@/components/ui/card";
 
 const defaultSearchParams: Explorer.CommentSearchParams = {
-  accountName: undefined,
-  permlink: undefined,
+  accountName: "",
+  permlink: "",
   fromBlock: undefined,
   toBlock: undefined,
   startDate: undefined,
