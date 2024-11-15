@@ -1,12 +1,15 @@
 import React from "react";
 import CopyJSON from "./CopyJSON";
 import { useUserSettingsContext } from "../contexts/UserSettingsContext";
+import { Toggle } from "./ui/toggle";
 
 interface JSONViewProps {
   json: object;
   skipCopy?: boolean;
   className?: string;
   isPrettyView?: boolean;
+  enableRawVirtualOperations: boolean;
+  handleEnableVirtualOperations: () => void;
 }
 
 const JSONView: React.FC<JSONViewProps> = ({
@@ -14,6 +17,8 @@ const JSONView: React.FC<JSONViewProps> = ({
   skipCopy = false,
   className,
   isPrettyView,
+  enableRawVirtualOperations,
+  handleEnableVirtualOperations,
 }) => {
   const renderJsonView = (() => {
     if (!isPrettyView) {
@@ -26,7 +31,16 @@ const JSONView: React.FC<JSONViewProps> = ({
   return (
     <div className={className}>
       {!skipCopy && (
-        <div className="w-full flex justify-end">
+        <div className="w-full flex justify-between">
+          <div className="flex justify-center items-center">
+            Virtual Operations{" "}
+            <span className="ml-2">
+              <Toggle
+                checked={enableRawVirtualOperations}
+                onClick={handleEnableVirtualOperations}
+              />
+            </span>
+          </div>
           <CopyJSON value={renderJsonView} />
         </div>
       )}

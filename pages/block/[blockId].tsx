@@ -74,6 +74,8 @@ export default function Block() {
   const { refetch } = useHeadBlockNumber();
 
   const [blockDate, setBlockDate] = useState<Date>();
+  const [enableRawVirtualOperations, setEnableRawVirtualOperations] =
+    useState(false);
   const { paramsState, setParams } = useURLParams(
     {
       ...defaultParams,
@@ -91,11 +93,20 @@ export default function Block() {
     Number.isNaN(Number(blockId)) ? blockId : Number(blockId)
   );
 
-  const { blockDetails, loading } = useBlockData(Number.isNaN(Number(blockId)) ? blockId : Number(blockId));
+  const { blockDetails, loading } = useBlockData(
+    Number.isNaN(Number(blockId)) ? blockId : Number(blockId)
+  );
 
-  const { rawBlockdata } = useBlockRawData(Number.isNaN(Number(blockId)) ? blockId : Number(blockId));
+  const { rawBlockdata } = useBlockRawData(
+    Number.isNaN(Number(blockId)) ? blockId : Number(blockId),
+    enableRawVirtualOperations
+  );
   const { blockOperations: totalOperations, trxLoading: totalLoading } =
-    useBlockOperations(Number.isNaN(Number(blockId)) ? blockId : Number(blockId), undefined, paramsState.page || 1);
+    useBlockOperations(
+      Number.isNaN(Number(blockId)) ? blockId : Number(blockId),
+      undefined,
+      paramsState.page || 1
+    );
 
   const { blockError, blockOperations, trxLoading } = useBlockOperations(
     Number.isNaN(Number(blockId)) ? blockId : Number(blockId),
@@ -206,7 +217,9 @@ export default function Block() {
       setOfKeys: undefined,
     });
   };
-
+  const handleEnableVirtualOperations = () => {
+    setEnableRawVirtualOperations(!enableRawVirtualOperations);
+  };
   useEffect(() => {
     if (!blockOperations || !blockOperations?.operations_result?.length) return;
 
@@ -277,6 +290,8 @@ export default function Block() {
                 json={rawBlockdata || {}}
                 className="w-full md:w-[962px] mt-6 m-auto py-2 px-4 bg-theme dark:bg-theme rounded text-white text-xs break-words break-all"
                 isPrettyView={settings.prettyJsonView}
+                enableRawVirtualOperations={enableRawVirtualOperations}
+                handleEnableVirtualOperations={handleEnableVirtualOperations}
               />
             </div>
           ) : (
