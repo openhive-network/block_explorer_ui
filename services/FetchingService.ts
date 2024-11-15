@@ -70,9 +70,13 @@ class FetchingService {
     return await this.extendedHiveChain!.restApi["hafbe-api"].lastSyncedBlock();
   }
 
-  async getBlock(blockNumber: number | string): Promise<Hive.BlockDetails> {
+  async getBlock(
+    blockNumber: number | string,
+    includeVirtual: boolean
+  ): Promise<Hive.BlockDetails> {
     return await this.extendedHiveChain!.restApi["hafah-api"].block({
       blockNumber,
+      includeVirtual,
     });
   }
 
