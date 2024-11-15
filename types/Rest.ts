@@ -79,7 +79,7 @@ export const extendedRest = {
     block: {
       params: Hive.GetBlockDetailsParams,
       result: Hive.BlockDetails,
-      urlPath: "blocks/{blockNumber}",
+      urlPath: "blocks/{blockNumber}?include-virtual={includeVirtual}",
     },
     blockOperations: {
       params: Hive.GetOperationsByBlockParams,

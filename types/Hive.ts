@@ -293,6 +293,7 @@ namespace Hive {
 
   export class GetBlockDetailsParams {
     blockNumber!: number | string;
+    includeVirtual?: boolean;
   }
 
   export class BlockDetails {
