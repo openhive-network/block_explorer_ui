@@ -13,10 +13,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Switch } from "../ui/switch";
 import useWitnessDetails from "@/hooks/api/common/useWitnessDetails";
 import CustomPagination from "../CustomPagination";
 import { config } from "@/Config";
+import LastUpdatedTooltip from "../LastUpdatedTooltip";
 
 type VotersDialogProps = {
   accountName: string;
@@ -91,9 +91,11 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                 <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
               )}
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-end">
               {witnessDetails && (
-                <p>Last updated : {witnessDetails.votes_updated_at}</p>
+                <LastUpdatedTooltip
+                  lastUpdatedAt={witnessDetails.votes_updated_at}
+                />
               )}
             </div>
 

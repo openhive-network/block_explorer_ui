@@ -22,6 +22,7 @@ import JumpToPage from "../JumpToPage";
 import CustomPagination from "../CustomPagination";
 import DateTimePicker from "../DateTimePicker";
 import useWitnessDetails from "@/hooks/api/common/useWitnessDetails";
+import LastUpdatedTooltip from "../LastUpdatedTooltip";
 
 type VotersDialogProps = {
   accountName: string;
@@ -84,13 +85,9 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
       onOpenChange={changeVoteHistoryDialogue}
     >
       <DialogContent
-        className={cn(
-          "max-w-2xl max-h-[700px] bg-explorer-bg-start overflow-auto",
-          {
-            "flex column justify-center items-center": !votesHistory,
-            "h-3/4": votesHistory?.length >= 16,
-          }
-        )}
+        className={cn("h-3/4 max-w-4xl bg-explorer-bg-start", {
+          "flex justify-center items-center": !votesHistory,
+        })}
         data-testid="votes-history-dialog"
       >
         {votesHistory ? (
@@ -104,9 +101,11 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                 <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
               )}
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-end">
               {witnessDetails && (
-                <p>Last updated : {witnessDetails.votes_updated_at}</p>
+                <LastUpdatedTooltip
+                  lastUpdatedAt={witnessDetails.votes_updated_at}
+                />
               )}
             </div>
             <div className="flex justify-around items-center bg-explorer-bg-start rounded text-text p-2">
