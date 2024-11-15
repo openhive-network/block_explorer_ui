@@ -10,7 +10,7 @@ import { faClock } from "@fortawesome/free-solid-svg-icons";
 import moment from "moment";
 
 type LastUpdatedProps = {
-  lastUpdatedAt: string | Date; // Allow both string and Date types
+  lastUpdatedAt: string | Date;
 };
 
 const calculateTimeDiff = (date: string | Date) => {
@@ -19,10 +19,14 @@ const calculateTimeDiff = (date: string | Date) => {
   return Math.abs(timeDiff);
 };
 
-const LastUpdatedWitnessIcon: React.FC<LastUpdatedProps> = ({
-  lastUpdatedAt,
-}) => {
-  const timeDiff = calculateTimeDiff(lastUpdatedAt);
+const LastUpdatedTooltip: React.FC<LastUpdatedProps> = ({ lastUpdatedAt }) => {
+  const hasTimeDiff =
+    typeof lastUpdatedAt === "string" &&
+    lastUpdatedAt.split(" ").includes("ago");
+
+  const timeDiff = hasTimeDiff
+    ? Number(lastUpdatedAt.split(" ")[0])
+    : calculateTimeDiff(lastUpdatedAt);
   const iconRef = useRef<SVGSVGElement | null>(null);
 
   const getIconColor = (timeDiff: number) => {
@@ -96,4 +100,4 @@ const LastUpdatedWitnessIcon: React.FC<LastUpdatedProps> = ({
   );
 };
 
-export default LastUpdatedWitnessIcon;
+export default LastUpdatedTooltip;
