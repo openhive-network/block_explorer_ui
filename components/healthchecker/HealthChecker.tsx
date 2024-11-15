@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { IHiveChainInterface, IScoredEndpoint, TWaxRestApiRequest } from "@hiveio/wax";
+import { IScoredEndpoint } from "@hiveio/wax";
 import { HealthChecker } from "@hiveio/wax";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
