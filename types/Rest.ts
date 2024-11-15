@@ -90,7 +90,7 @@ export const extendedRest = {
       transaction: {
         params: Hive.GetTransactionParams,
         result: Hive.TransactionResponse,
-        urlPath: "{transactionId}",
+        urlPath: "{transactionId}?include-virtual={includeVirtual}",
       },
     },
     operationTypes: {

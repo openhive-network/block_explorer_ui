@@ -331,6 +331,7 @@ namespace Hive {
 
   export class GetTransactionParams {
     transactionId!: string;
+    includeVirtual?: boolean;
   }
 
   export class TransactionResponse {
