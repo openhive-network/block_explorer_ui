@@ -58,7 +58,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
           <Badge 
             key={customApiCheckers?.get(apiKey)?.title} 
             variant={"outline"} 
-            className={cn({"text-green-400": checkProvider(apiKey)})}
+            className={cn("cursor-pointer", {"text-green-400": checkProvider(apiKey)})}
             onClick={() => {onEndpointProviderDialogChange(true, apiKey)}}>
               {customApiCheckers?.get(apiKey)?.title}
           </Badge>

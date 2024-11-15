@@ -153,7 +153,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
           <div>Api checks:</div>
           <div className="flex flex-wrap">
             {Array.from(customApiCheckers?.entries() || []).map(([key, apiChecker]) => (
-              <Badge key={key} variant={"outline"} onClick={() => {onEndpointProviderDialogChange(true, key)}}>{apiChecker.title}</Badge>
+              <Badge className="cursor-pointer" key={key} variant={"outline"} onClick={() => {onEndpointProviderDialogChange(true, key)}}>{apiChecker.title}</Badge>
             ))}
           </div>
         </div>
