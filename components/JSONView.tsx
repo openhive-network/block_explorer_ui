@@ -10,8 +10,8 @@ interface JSONViewProps {
   skipCopy?: boolean;
   className?: string;
   isPrettyView?: boolean;
-  enableRawVirtualOperations: boolean;
-  handleEnableVirtualOperations: () => void;
+  enableRawVirtualOperations?: boolean;
+  handleEnableVirtualOperations?: () => void;
 }
 
 const JSONView: React.FC<JSONViewProps> = ({
@@ -19,8 +19,8 @@ const JSONView: React.FC<JSONViewProps> = ({
   skipCopy = false,
   className,
   isPrettyView,
-  enableRawVirtualOperations,
-  handleEnableVirtualOperations,
+  enableRawVirtualOperations = false,
+  handleEnableVirtualOperations = () => {},
 }) => {
   const router = useRouter();
   const isBlockPage = router.pathname.startsWith("/block");

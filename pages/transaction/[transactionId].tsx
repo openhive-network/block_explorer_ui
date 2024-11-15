@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Head from "next/head";
@@ -13,6 +14,7 @@ import PageNotFound from "@/components/PageNotFound";
 import JSONView from "@/components/JSONView";
 import OperationsTable from "@/components/OperationsTable";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Toggle } from "@/components/ui/toggle";
 
 const displayTransactionData = (
   key: string,
@@ -42,12 +44,20 @@ export default function Transaction() {
   const router = useRouter();
   const { settings } = useUserSettingsContext();
   const transactionId = router.query.transactionId as string;
+  const [includeVirtual, setIncludeVirtual] = useState(false);
 
-  const { trxData, trxLoading, trxError } = useTransactionData(transactionId);
+  const { trxData, trxLoading, trxError } = useTransactionData(
+    transactionId,
+    includeVirtual
+  );
 
   const formattedTransaction = useOperationsFormatter(trxData) as
     | Hive.TransactionResponse
     | undefined;
+
+  const handleToggleIncludeVirtual = () => {
+    setIncludeVirtual(!includeVirtual);
+  };
 
   if (trxError) {
     return <PageNotFound message={`Transaction not found.`} />;
@@ -61,6 +71,15 @@ export default function Transaction() {
       <div className="w-full max-w-5xl px-2 md:px-4 text-white flex flex-col gap-y-4">
         {!trxLoading && !!trxData && (
           <>
+            <div className="flex justify-end items-center">
+              Include Virtual Operation :
+              <span className="ml-2">
+                <Toggle
+                  checked={includeVirtual}
+                  onClick={handleToggleIncludeVirtual}
+                />
+              </span>
+            </div>
             <Card data-testid="transaction-header">
               <CardContent>
                 <div
