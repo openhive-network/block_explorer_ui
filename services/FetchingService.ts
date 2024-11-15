@@ -126,11 +126,15 @@ class FetchingService {
   }
 
   async getTransaction(
-    transactionHash: string
+    transactionHash: string,
+    includeVirtual: boolean
   ): Promise<Hive.TransactionResponse> {
     return await this.extendedHiveChain!.restApi[
       "hafah-api"
-    ].transactions.transaction({ transactionId: transactionHash });
+    ].transactions.transaction({
+      transactionId: transactionHash,
+      includeVirtual,
+    });
   }
 
   async getRewardFunds(): Promise<{ funds: Hive.RewardFunds[] }> {
