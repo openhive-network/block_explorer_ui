@@ -3,14 +3,17 @@ import { UseQueryResult, useQuery } from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
 
-const useBlockRawData = (blockNumber: number | string) => {
+const useBlockRawData = (
+  blockNumber: number | string,
+  includeVirtual: boolean
+) => {
   const {
     data: rawBlockdata,
     isLoading: rawBlockdataLoading,
     error: rawBlockdataError,
   }: UseQueryResult<Hive.BlockDetails> = useQuery({
-    queryKey: ["raw_block", blockNumber],
-    queryFn: () => fetchingService.getBlock(blockNumber),
+    queryKey: ["raw_block", blockNumber, includeVirtual],
+    queryFn: () => fetchingService.getBlock(blockNumber, includeVirtual),
     enabled: !!blockNumber,
     refetchOnWindowFocus: false,
   });
