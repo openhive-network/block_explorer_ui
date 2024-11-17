@@ -22,6 +22,9 @@ import JumpToPage from "../JumpToPage";
 import CustomPagination from "../CustomPagination";
 import DateTimePicker from "../DateTimePicker";
 import useWitnessDetails from "@/hooks/api/common/useWitnessDetails";
+import { useHiveChainContext } from "@/contexts/HiveChainContext";
+import { convertVestsToHP } from "@/utils/Calculations";
+import fetchingService from "@/services/FetchingService";
 
 type VotersDialogProps = {
   accountName: string;
@@ -34,7 +37,7 @@ const tableColums = [
   { key: "timestamp", name: "Date" },
   { key: "voter", name: "Voter" },
   { key: "vote", name: "Vote" },
-  { key: "power", name: "Current voter power", isRightAligned: true },
+  { key: "power", name: "Current Voter Power", isRightAligned: true },
 ];
 
 const PAGE_SIZE = 100;
@@ -52,6 +55,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
     moment().subtract(7, "days").toDate()
   );
   const [toDate, setToDate] = useState<Date>(moment().toDate());
+  const [isHP, setIsHP] = useState<boolean>(true); // Toggle state
 
   const { witnessDetails } = useWitnessDetails(accountName, true) as any;
   const { votesHistory, isVotesHistoryLoading } = useWitnessVotesHistory(
@@ -78,6 +82,47 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
     );
   };
 
+
+  interface Supply {
+    amount: string;
+    nai: string;
+    precision: number;
+  }
+
+  const [totalVestingShares, setTotalVestingShares] = useState<Supply>({
+    amount: "0",
+    nai: "",
+    precision: 0,
+  });
+  const [totalVestingFundHive, setTotalVestingFundHive] = useState<Supply>({
+    amount: "0",
+    nai: "",
+    precision: 0,
+  });
+  const { hiveChain } = useHiveChainContext();
+
+  useEffect(() => {
+    const fetchDynamicGlobalProperties = async () => {
+
+    const dynamicGlobalProperties = await fetchingService.getDynamicGlobalProperties();
+    const _totalVestingfundHive = dynamicGlobalProperties.total_vesting_fund_hive;
+    const _totalVestingShares = dynamicGlobalProperties.total_vesting_shares;
+
+    setTotalVestingFundHive(_totalVestingfundHive);
+    setTotalVestingShares(_totalVestingShares);
+    }
+
+    fetchDynamicGlobalProperties();
+
+  }, []); 
+
+  const fetchHivePower = (value: string, isHP: boolean): string => {    
+      if (isHP) {
+        if (!hiveChain) return "";
+        return convertVestsToHP(hiveChain,value,totalVestingFundHive,totalVestingShares);
+    }
+    return formatNumber(parseInt(value),true,false)+ " Vests"; // Return raw vests if not toggled to HP
+  };
   return (
     <Dialog
       open={isVotesHistoryOpen}
@@ -108,6 +153,15 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
               {witnessDetails && (
                 <p>Last updated : {witnessDetails.votes_updated_at}</p>
               )}
+              <div className="flex items-center">
+                <label>Vests</label>
+                  <Switch
+                    checked={isHP}
+                    onCheckedChange={() => setIsHP((prev) => !prev)}
+                    className="mx-1"
+                  />
+                <label>HP</label>
+              </div>
             </div>
             <div className="flex justify-around items-center bg-explorer-bg-start rounded text-text p-2">
               <div>
@@ -203,8 +257,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                       <TableCell
                         className="text-right"
                         data-testid="current-voter-power"
-                      >
-                        {formatNumber(vote.vests, true)}
+                      > {fetchHivePower(vote.vests.toString(), isHP)}
                       </TableCell>
                     </TableRow>
                   ))}
