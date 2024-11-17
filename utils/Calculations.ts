@@ -14,7 +14,7 @@ import { formatNumber } from "@/lib/utils";
 
 export const convertVestsToHP = (
   hivechain: IHiveChainInterface,
-  vests: Hive.Supply,
+  vests: Hive.Supply |string,
   totalVestingFundHive: Hive.Supply,
   totalVestingShares: Hive.Supply
 ) => {
