@@ -424,7 +424,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
       >
         {blockSearchData && lastSearchKey === "block" && (
           <div
-            className=" bg-theme dark:bg-theme p-2 md: h-fit rounded"
+            className="bg-theme dark:bg-theme p-2 md: h-fit rounded"
             data-testid="result-section"
           >
             <div
@@ -466,6 +466,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
               {permlinkSearchData.total_permlinks > 0 ? (
                 <CommentPermlinkResultTable
                   data={permlinkSearchData.permlinks_result}
+                  accountName={permlinkSearchProps?.accountName}
                 />
               ) : (
                 <div className="flex justify-center w-full">
