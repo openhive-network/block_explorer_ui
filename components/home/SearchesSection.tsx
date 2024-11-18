@@ -377,7 +377,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
             </AccordionItem>
             <AccordionItem value="account">
               <AccordionTrigger className="p-3 mb-2">
-                Account search
+                Account Search
               </AccordionTrigger>
               <AccordionContent className="px-2 flex flex-col gap-y-4">
                 <AccountSearch
@@ -390,7 +390,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
             </AccordionItem>
             <AccordionItem value="comment-permlink">
               <AccordionTrigger className="p-3 mb-2">
-                Comment permlink search
+                Permalink Search
               </AccordionTrigger>
               <AccordionContent className="px-2 flex flex-col gap-y-4">
                 <CommentsPermlinkSearch
@@ -404,7 +404,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
             </AccordionItem>
             <AccordionItem value="comment">
               <AccordionTrigger className="p-3 mb-2">
-                Comment search
+                Comment Search
               </AccordionTrigger>
               <AccordionContent className="px-2 flex flex-col gap-y-4">
                 <CommentsSearch
