@@ -54,7 +54,7 @@ const buildTableBody = (
             <TableCell className="text-left text-text">
               {operation_id}
             </TableCell>
-            <TableCell className="text-right text-link">
+            <TableCell className="text-center text-link">
               <Link href={`/comments/@${accountName}?&permlink=${permlink}`}>
                 {permlink}
               </Link>

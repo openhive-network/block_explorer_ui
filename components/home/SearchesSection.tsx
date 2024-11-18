@@ -44,8 +44,20 @@ import {
 } from "../ui/accordion";
 import usePermlinkSearch from "@/hooks/api/common/usePermlinkSearch";
 import CommentPermlinkResultTable from "./searches/CommentPermlinkResultTable";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectGroup,
+  SelectContent,
+  SelectItem,
+} from "../ui/select";
+import { capitalizeFirst } from "@/utils/StringUtils";
 
 interface SearchesSectionProps {}
+
+type CommentType = "all" | "post" | "comment";
+const COMMENT_TYPES = ["all", "post", "comment"];
 
 const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
   const [accordionValue, setAccordionValue] = useState<string>("block");
@@ -75,6 +87,9 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
   const [accountOperationsSearchProps, setAccountOperationsSearchProps] =
     useState<Explorer.AccountSearchOperationsProps | undefined>(undefined);
   const [isAllSearchLoading, setIsAllSearchLoading] = useState<boolean>(false);
+  const [commentType, setCommentType] = useState<CommentType | undefined>(
+    undefined
+  );
 
   const searchesRef = useRef<HTMLDivElement | null>(null);
 
@@ -168,6 +183,7 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
     setIsAllSearchLoading(true);
     setPermlinkSearchProps(props);
     setCommentPaginationPage(1);
+    setCommentType(undefined);
     setLastSearchKey("comment-permlink");
   };
 
@@ -347,6 +363,16 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
     return `/block/${blockNumber}${getPageUrlParams(urlParams)}`;
   };
 
+  const handleChangeCommentType = (e: CommentType) => {
+    setCommentType(e);
+    setPermlinkSearchProps((prev: any) => {
+      return {
+        ...prev,
+        commentType: e,
+      };
+    });
+  };
+
   return (
     <>
       <Card
@@ -456,11 +482,27 @@ const SearchesSection: React.FC<SearchesSectionProps> = ({}) => {
         )}
         {permlinkSearchData && lastSearchKey === "comment-permlink" && (
           <div>
-            <div
-              className="text-center my-5"
-              data-testid="result-section-header"
-            >
-              Results:
+            <div className="flex justify-end my-4">
+              <Select
+                onValueChange={handleChangeCommentType}
+                value={commentType}
+              >
+                <SelectTrigger className="w-[180px] border-0">
+                  <SelectValue placeholder="Comment Type" />
+                </SelectTrigger>
+                <SelectContent className="border-0">
+                  <SelectGroup>
+                    {COMMENT_TYPES.map((type, index) => (
+                      <SelectItem
+                        key={index}
+                        value={`${type}`}
+                      >
+                        {capitalizeFirst(type)}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
             </div>
             <div className="flex flex-wrap">
               {permlinkSearchData.total_permlinks > 0 ? (
