@@ -79,7 +79,7 @@ export const extendedRest = {
     block: {
       params: Hive.GetBlockDetailsParams,
       result: Hive.BlockDetails,
-      urlPath: "blocks/{blockNumber}?include-virtual={includeVirtual}",
+      urlPath: "blocks/{blockNumber}",
     },
     blockOperations: {
       params: Hive.GetOperationsByBlockParams,
@@ -90,7 +90,7 @@ export const extendedRest = {
       transaction: {
         params: Hive.GetTransactionParams,
         result: Hive.TransactionResponse,
-        urlPath: "{transactionId}?include-virtual={includeVirtual}",
+        urlPath: "{transactionId}",
       },
     },
     operationTypes: {

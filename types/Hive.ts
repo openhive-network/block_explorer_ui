@@ -293,7 +293,7 @@ namespace Hive {
 
   export class GetBlockDetailsParams {
     blockNumber!: number | string;
-    includeVirtual?: boolean;
+    "include-virtual"?: boolean;
   }
 
   export class BlockDetails {
@@ -331,7 +331,7 @@ namespace Hive {
 
   export class GetTransactionParams {
     transactionId!: string;
-    includeVirtual?: boolean;
+    "include-virtual"?: boolean;
   }
 
   export class TransactionResponse {
