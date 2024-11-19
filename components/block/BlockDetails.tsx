@@ -13,6 +13,8 @@ interface BlockDetailsProps {
   virtualOperationLength: number;
   nonVirtualOperationLength: number;
   blockDetails?: Hive.BlockDetails;
+  enableRawVirtualOperations: boolean;
+  handleEnableVirtualOperations: () => void;
 }
 
 const BlockDetails: React.FC<BlockDetailsProps> = ({
@@ -21,6 +23,8 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
   blockDetails,
   virtualOperationLength,
   nonVirtualOperationLength,
+  enableRawVirtualOperations,
+  handleEnableVirtualOperations,
 }) => {
   return (
     <Card
@@ -85,6 +89,8 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
           nonVirtualOperationLength={nonVirtualOperationLength}
           virtualOperationsTypesCounters={virtualOperationsTypesCounters}
           nonVirtualOperationsTypesCounters={nonVirtualOperationsTypesCounters}
+          enableRawVirtualOperations={enableRawVirtualOperations}
+          handleEnableVirtualOperations={handleEnableVirtualOperations}
         />
       </CardContent>
     </Card>
