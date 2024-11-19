@@ -27,6 +27,7 @@ import BlockDetails from "@/components/block/BlockDetails";
 import ScrollTopButton from "@/components/ScrollTopButton";
 import OperationsTable from "@/components/OperationsTable";
 import CustomPagination from "@/components/CustomPagination";
+import useBlockId from "@/hooks/common/useBlockId";
 
 interface BlockSearchParams {
   blockId?: number;
@@ -68,9 +69,7 @@ const scrollToTrxSection = (trxId?: string) => {
 
 export default function Block() {
   const router = useRouter();
-
-  const blockId = (router.query.blockId as string)?.replaceAll(",", "");
-
+  const { blockId } = useBlockId();
   const { refetch } = useHeadBlockNumber();
 
   const [blockDate, setBlockDate] = useState<Date>();
@@ -89,27 +88,16 @@ export default function Block() {
   }, [blockId, refetch]);
 
   const { settings } = useUserSettingsContext();
-  const { operationsCountInBlock, countLoading } = useOperationsCountInBlock(
-    Number.isNaN(Number(blockId)) ? blockId : Number(blockId)
-  );
+  const { operationsCountInBlock, countLoading } =
+    useOperationsCountInBlock(blockId);
+  const { blockDetails, loading } = useBlockData(blockId);
 
-  const { blockDetails, loading } = useBlockData(
-    Number.isNaN(Number(blockId)) ? blockId : Number(blockId)
-  );
-
-  const { rawBlockdata } = useBlockRawData(
-    Number.isNaN(Number(blockId)) ? blockId : Number(blockId),
-    enableRawVirtualOperations
-  );
+  const { rawBlockdata } = useBlockRawData(blockId, enableRawVirtualOperations);
   const { blockOperations: totalOperations, trxLoading: totalLoading } =
-    useBlockOperations(
-      Number.isNaN(Number(blockId)) ? blockId : Number(blockId),
-      undefined,
-      paramsState.page || 1
-    );
+    useBlockOperations(blockId, undefined, paramsState.page || 1);
 
   const { blockError, blockOperations, trxLoading } = useBlockOperations(
-    Number.isNaN(Number(blockId)) ? blockId : Number(blockId),
+    blockId,
     paramsState.filters
       ? convertBooleanArrayToIds(paramsState.filters)
       : undefined,
@@ -275,6 +263,8 @@ export default function Block() {
               nonVirtualOperationsTypesCounters
             }
             blockDetails={blockDetails}
+            enableRawVirtualOperations={enableRawVirtualOperations}
+            handleEnableVirtualOperations={handleEnableVirtualOperations}
           />
           <div className="fixed top-[calc(100vh-90px)] md:top-[calc(100vh-60px)] right-0 flex flex-col items-end justify-end px-3 md:px-12">
             <ScrollTopButton />
@@ -290,8 +280,6 @@ export default function Block() {
                 json={rawBlockdata || {}}
                 className="w-full md:w-[962px] mt-6 m-auto py-2 px-4 bg-theme dark:bg-theme rounded text-white text-xs break-words break-all"
                 isPrettyView={settings.prettyJsonView}
-                enableRawVirtualOperations={enableRawVirtualOperations}
-                handleEnableVirtualOperations={handleEnableVirtualOperations}
               />
             </div>
           ) : (
