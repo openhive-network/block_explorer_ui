@@ -1,4 +1,4 @@
-import { useState, useEffect, Fragment } from "react";
+import { useState, useEffect, useCallback, Fragment } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent, CardHeader } from "../ui/card";
@@ -56,27 +56,26 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
     setIsPropertiesHidden(!isPropertiesHidden);
   };
   
-  const fetchWitnessVotes = async (
-    proxy: string,
-    currentDepth: number,
-    maxDepth: number,
-    proxiesList: string[],
-  ): Promise<any[]> => {
-    if (currentDepth > maxDepth || (!proxy)) return [];
-    
-    const result = await fetchingService.getAccount(proxy);
-    // Add the current proxy to the proxies list
-    proxiesList.push(proxy);
-
-    // If there's another proxy, go deeper if within maxDepth
-    if (result.proxy && currentDepth < maxDepth) {
-      const nestedVotes = await fetchWitnessVotes(result.proxy, currentDepth + 1, maxDepth, proxiesList);
-      return [...result.witness_votes, ...nestedVotes];
-    }
-    
-    return result.witness_votes?.slice().sort(
-      (a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))  || [];
-  };
+  const fetchWitnessVotes = useCallback(
+    async (proxy: string, currentDepth: number, maxDepth: number, proxiesList: string[]): Promise<any[]> => {
+      if (currentDepth > maxDepth || !proxy) return [];
+  
+      const result = await fetchingService.getAccount(proxy);
+  
+      // Add the current proxy to the proxies list
+      proxiesList.push(proxy);
+  
+      // If there's another proxy, go deeper if within maxDepth
+      if (result.proxy && currentDepth < maxDepth) {
+        const nestedVotes = await fetchWitnessVotes(result.proxy, currentDepth + 1, maxDepth, proxiesList);
+        return [...result.witness_votes, ...nestedVotes];
+      }
+  
+      return result.witness_votes?.slice().sort(
+        (a, b) => a.toLowerCase().localeCompare(b.toLowerCase())) || [];
+    },
+    [] 
+  );
 
   
   useEffect(() => {  
@@ -88,7 +87,7 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
       setAllProxies(proxiesList);  // Update state with the complete list of proxies
     };
     getVotersForProxy();
-  }, [proxy]);
+  }, [proxy,fetchWitnessVotes]);
 
   if (proxy != null && proxy.length > 0) {     
     return (

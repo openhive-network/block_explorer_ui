@@ -8,9 +8,12 @@ import {
   TableBody,
 } from "@/components/ui/table";
 import Hive from "@/types/Hive";
+import Link from "next/link";
+import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 
 interface CommentPermlinkResultTableProps {
   data: Hive.Permlink[];
+  accountName: string | undefined;
 }
 
 const TABLE_CELLS = [
@@ -34,21 +37,34 @@ const buildTableHeader = () => {
   });
 };
 
-const buildTableBody = (data: Hive.Permlink[]) => {
-  if (!data || !data.length) return;
+const buildTableBody = (
+  data: Hive.Permlink[],
+  accountName: string | undefined
+) => {
+  if (!data || !data.length || !accountName) return;
 
   return data.map(
     ({ block, operation_id, permlink, timestamp, trx_id }: any) => {
       return (
         <React.Fragment key={trx_id}>
           <TableRow className="border-b border-gray-700 hover:bg-inherit p-[10px]">
-            <TableCell className="text-left text-text">{block}</TableCell>
+            <TableCell className="text-left text-link">
+              <Link href={`/block/${block}`}>{block}</Link>
+            </TableCell>
             <TableCell className="text-left text-text">
               {operation_id}
             </TableCell>
-            <TableCell className="text-right">{permlink}</TableCell>
-            <TableCell className="text-left text-text">{timestamp}</TableCell>
-            <TableCell className="text-left text-text">{trx_id}</TableCell>
+            <TableCell className="text-center text-link">
+              <Link href={`/comments/@${accountName}?&permlink=${permlink}`}>
+                {permlink}
+              </Link>
+            </TableCell>
+            <TableCell className="text-left text-text">
+              {formatAndDelocalizeTime(timestamp)}
+            </TableCell>
+            <TableCell className="text-left text-link">
+              <Link href={`/transaction/${trx_id}`}> {trx_id}</Link>
+            </TableCell>
           </TableRow>
         </React.Fragment>
       );
@@ -58,6 +74,7 @@ const buildTableBody = (data: Hive.Permlink[]) => {
 
 const CommentPermlinkResultTable = ({
   data,
+  accountName,
 }: CommentPermlinkResultTableProps) => {
   return (
     <>
@@ -67,7 +84,7 @@ const CommentPermlinkResultTable = ({
             <TableHeader>
               <TableRow>{buildTableHeader()}</TableRow>
             </TableHeader>
-            <TableBody>{buildTableBody(data)}</TableBody>
+            <TableBody>{buildTableBody(data, accountName)}</TableBody>
           </Table>
         </div>
       </div>

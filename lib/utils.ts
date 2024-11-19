@@ -101,6 +101,7 @@ export const convertCommentsOperationResultToTableOperations = (
     blockNumber: operation.block,
     operationId: Number(operation.operation_id),
     trxId: operation.trx_id,
+    timestamp: operation.timestamp,
   }));
 };
 

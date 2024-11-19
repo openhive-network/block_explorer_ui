@@ -22,6 +22,10 @@ import JumpToPage from "../JumpToPage";
 import CustomPagination from "../CustomPagination";
 import DateTimePicker from "../DateTimePicker";
 import useWitnessDetails from "@/hooks/api/common/useWitnessDetails";
+import LastUpdatedTooltip from "../LastUpdatedTooltip";
+import { useHiveChainContext } from "@/contexts/HiveChainContext";
+import { convertVestsToHP } from "@/utils/Calculations";
+import fetchingService from "@/services/FetchingService";
 
 type VotersDialogProps = {
   accountName: string;
@@ -52,6 +56,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
     moment().subtract(7, "days").toDate()
   );
   const [toDate, setToDate] = useState<Date>(moment().toDate());
+  const [isHP, setIsHP] = useState<boolean>(true); // Toggle state
 
   const { witnessDetails } = useWitnessDetails(accountName, true) as any;
   const { votesHistory, isVotesHistoryLoading } = useWitnessVotesHistory(
@@ -77,6 +82,46 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
       votesHistory?.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1)
     );
   };
+  interface Supply {
+    amount: string;
+    nai: string;
+    precision: number;
+  }
+
+  const [totalVestingShares, setTotalVestingShares] = useState<Supply>({
+    amount: "0",
+    nai: "",
+    precision: 0,
+  });
+  const [totalVestingFundHive, setTotalVestingFundHive] = useState<Supply>({
+    amount: "0",
+    nai: "",
+    precision: 0,
+  });
+  const { hiveChain } = useHiveChainContext();
+
+  useEffect(() => {
+    const fetchDynamicGlobalProperties = async () => {
+
+    const dynamicGlobalProperties = await fetchingService.getDynamicGlobalProperties();
+    const _totalVestingfundHive = dynamicGlobalProperties.total_vesting_fund_hive;
+    const _totalVestingShares = dynamicGlobalProperties.total_vesting_shares;
+
+    setTotalVestingFundHive(_totalVestingfundHive);
+    setTotalVestingShares(_totalVestingShares);
+    }
+
+    fetchDynamicGlobalProperties();
+
+  }, []); 
+
+  const fetchHivePower = (value: string, isHP: boolean): string => {    
+      if (isHP) {
+        if (!hiveChain) return "";
+        return convertVestsToHP(hiveChain,value,totalVestingFundHive,totalVestingShares);
+    }
+    return formatNumber(parseInt(value),true,false)+ " Vests"; // Return raw vests if not toggled to HP
+  };
 
   return (
     <Dialog
@@ -84,13 +129,9 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
       onOpenChange={changeVoteHistoryDialogue}
     >
       <DialogContent
-        className={cn(
-          "max-w-2xl max-h-[700px] bg-explorer-bg-start overflow-auto",
-          {
-            "flex column justify-center items-center": !votesHistory,
-            "h-3/4": votesHistory?.length >= 16,
-          }
-        )}
+        className={cn("h-3/4 max-w-4xl bg-explorer-bg-start", {
+          "flex justify-center items-center": !votesHistory,
+        })}
         data-testid="votes-history-dialog"
       >
         {votesHistory ? (
@@ -104,11 +145,25 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                 <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
               )}
             </div>
-            <div className="flex justify-between">
-              {witnessDetails && (
-                <p>Last updated : {witnessDetails.votes_updated_at}</p>
-              )}
-            </div>
+            <div className="flex justify-between items-center w-full">
+              <div className="flex items-center">
+                {witnessDetails && (
+                  <LastUpdatedTooltip
+                    lastUpdatedAt={witnessDetails.votes_updated_at}
+                  />
+                )}
+              </div>
+
+              <div className="flex items-center">
+                <label className="mr-2">Vests</label>
+                <Switch
+                  checked={isHP}
+                  onCheckedChange={() => setIsHP((prev) => !prev)}
+                  className="mx-1"
+                />
+                <label>HP</label>
+              </div>
+            </div>          
             <div className="flex justify-around items-center bg-explorer-bg-start rounded text-text p-2">
               <div>
                 <p>From: </p>
@@ -203,8 +258,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                       <TableCell
                         className="text-right"
                         data-testid="current-voter-power"
-                      >
-                        {formatNumber(vote.vests, true)}
+                      > {fetchHivePower(vote.vests.toString(), isHP)}
                       </TableCell>
                     </TableRow>
                   ))}

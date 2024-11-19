@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState ,useEffect } from "react";
 import Link from "next/link";
 import { MoveDown, MoveUp, Loader2 } from "lucide-react";
-
+import { Switch } from "../ui/switch";
 import { cn, formatNumber } from "@/lib/utils";
 import useWitnessVoters from "@/hooks/api/common/useWitnessVoters";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -13,10 +13,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Switch } from "../ui/switch";
 import useWitnessDetails from "@/hooks/api/common/useWitnessDetails";
 import CustomPagination from "../CustomPagination";
 import { config } from "@/Config";
+import LastUpdatedTooltip from "../LastUpdatedTooltip";
+import { convertVestsToHP } from "@/utils/Calculations";
+import fetchingService from "@/services/FetchingService";
+import { useHiveChainContext } from "@/contexts/HiveChainContext";
 
 type VotersDialogProps = {
   accountName: string;
@@ -41,6 +44,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
   const [sortKey, setSortKey] = useState<string>("vests");
   const [isAsc, setIsAsc] = useState<boolean>(false);
   const [pageNum, setPageNum] = useState<number>(1);
+  const [isHP, setIsHP] = useState<boolean>(true); // Toggle state
 
   const { witnessDetails } = useWitnessDetails(accountName, true);
   const { witnessVoters, isWitnessVotersLoading } = useWitnessVoters(
@@ -69,6 +73,51 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
     } else return null;
   };
 
+  interface Supply {
+    amount: string;
+    nai: string;
+    precision: number;
+  }
+
+  const [totalVestingShares, setTotalVestingShares] = useState<Supply>({
+    amount: "0",
+    nai: "",
+    precision: 0,
+  });
+
+  const [totalVestingFundHive, setTotalVestingFundHive] = useState<Supply>({
+    amount: "0",
+    nai: "",
+    precision: 0,
+  });
+  
+  const { hiveChain } = useHiveChainContext();
+  
+  useEffect(() => {
+    const fetchDynamicGlobalProperties = async () => {
+
+    const dynamicGlobalProperties = await fetchingService.getDynamicGlobalProperties();
+    const _totalVestingfundHive = dynamicGlobalProperties.total_vesting_fund_hive;
+    const _totalVestingShares = dynamicGlobalProperties.total_vesting_shares;
+
+    setTotalVestingFundHive(_totalVestingfundHive);
+    setTotalVestingShares(_totalVestingShares);
+    }
+
+    fetchDynamicGlobalProperties();
+
+  }, []); 
+
+  const fetchHivePower = (value: string, isHP: boolean): string => {
+    
+      if (isHP) {
+        if (!hiveChain) return "";
+        return convertVestsToHP(hiveChain,value,totalVestingFundHive,totalVestingShares);
+  
+    }
+    return formatNumber(parseInt(value),true,false)+ " Vests"; // Return raw vests if not toggled to HP
+  };
+
   return (
     <Dialog
       open={isVotersOpen}
@@ -91,13 +140,26 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                 <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
               )}
             </div>
-            <div className="flex justify-between">
-              {witnessDetails && (
-                <p>Last updated : {witnessDetails.votes_updated_at}</p>
-              )}
-            </div>
+            <div className="flex justify-between items-center w-full">
+              <div className="flex items-center">
+                {witnessDetails && (
+                  <LastUpdatedTooltip
+                    lastUpdatedAt={witnessDetails.votes_updated_at}
+                  />
+                )}
+              </div>
 
-            <CustomPagination
+              <div className="flex items-center">
+                <label className="mr-2">Vests</label>
+                <Switch
+                  checked={isHP}
+                  onCheckedChange={() => setIsHP((prev) => !prev)}
+                  className="mx-1"
+                />
+                <label>HP</label>
+              </div>
+            </div>
+              <CustomPagination
               currentPage={pageNum}
               onPageChange={(newPage: number) => {
                 setPageNum(newPage);
@@ -159,19 +221,19 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                         className="text-right"
                         data-testid="vote-power"
                       >
-                        {formatNumber(voter.vests, true)}
+                        {fetchHivePower(voter.vests.toString(), isHP)}
                       </TableCell>
                       <TableCell
                         className="text-right"
                         data-testid="account-power"
                       >
-                        {formatNumber(voter.account_vests, true)}
+                        {fetchHivePower(voter.account_vests.toString(), isHP)}
                       </TableCell>
                       <TableCell
                         className="text-right"
                         data-testid="proxied-power"
                       >
-                        {formatNumber(voter.proxied_vests, true)}
+                        {fetchHivePower(voter.proxied_vests.toString(), isHP)}
                       </TableCell>
                     </TableRow>
                   ))}

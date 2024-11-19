@@ -88,7 +88,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
     }, 0);
 
     setTotalBalance(newBalance);
-  }, [keys, userDetails, cardNameMap, grabNumericValue]);
+  }, [keys, userDetails]);
 
 
 

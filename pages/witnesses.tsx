@@ -25,7 +25,7 @@ import {
 import VotersDialog from "@/components/Witnesses/VotersDialog";
 import VotesHistoryDialog from "@/components/Witnesses/VotesHistoryDialog";
 import WitnessScheduleIcon from "@/components/WitnessScheduleIcon";
-import LastUpdatedWitnessIcon from "@/components/LastUpdatedWitnessIcon";
+import LastUpdatedTooltip from "@/components/LastUpdatedTooltip";
 
 const TABLE_CELLS = [
   "Rank",
@@ -170,8 +170,8 @@ export default function Witnesses() {
       </Head>
       <div className="md:m-8 max-w-[100vw] px-4">
         <div className="flex justify-between mt-1 mx-1">
-          <WitnessScheduleIcon/>          
-          <LastUpdatedWitnessIcon lastUpdatedAt={witnessesData.votes_updated_at} />        
+          <WitnessScheduleIcon />
+          <LastUpdatedTooltip lastUpdatedAt={witnessesData.votes_updated_at} />
         </div>
 
         <VotersDialog

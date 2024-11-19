@@ -343,6 +343,7 @@ class FetchingService {
   ): Promise<Hive.CommentPermlinksResponse> {
     const requestParams: Hive.GetCommentPermlinksParams = {
       accountName: permlinkSearchProps.accountName,
+      "comment-type": permlinkSearchProps.commentType,
       page: 1,
       "page-size": 100,
       "from-block":

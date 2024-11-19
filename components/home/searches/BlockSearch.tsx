@@ -136,8 +136,9 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
           )}
         />
       </div>
-      <div className="flex flex-col ">
-        <div className="flex mb-4 items-center">
+      {/*TODO: Hide this for now, NOT REMOVE IT. It will be moved to search operation seaction when BE is done */}
+      {/* <div className="flex flex-col "> */}
+      {/* <div className="flex mb-4 items-center">
           <label>Property</label>
           <TooltipProvider>
             <Tooltip>
@@ -152,8 +153,8 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-        </div>
-        <div className="flex">
+        </div> */}
+      {/* <div className="flex">
           <Select
             onValueChange={onSelect}
             value={selectedIndex}
@@ -214,8 +215,8 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
             </Button>
           )}
         </div>
-      </div>
-      <div className="flex flex-col">
+      </div> */}
+      {/* <div className="flex flex-col">
         <Input
           className="w-1/2 border-0 border-b-2 bg-theme text-text"
           type="text"
@@ -229,7 +230,7 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
             !selectedKeys.length
           }
         />
-      </div>
+      </div> */}
       <div className="flex items-center ">
         <Button
           data-testid="block-search-btn"
