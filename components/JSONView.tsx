@@ -1,9 +1,5 @@
 import React from "react";
 import CopyJSON from "./CopyJSON";
-import { useUserSettingsContext } from "../contexts/UserSettingsContext";
-import { Toggle } from "./ui/toggle";
-import { useRouter } from "next/router";
-import { cn } from "@/lib/utils";
 
 interface JSONViewProps {
   json: object;
@@ -19,12 +15,7 @@ const JSONView: React.FC<JSONViewProps> = ({
   skipCopy = false,
   className,
   isPrettyView,
-  enableRawVirtualOperations = false,
-  handleEnableVirtualOperations = () => {},
 }) => {
-  const router = useRouter();
-  const isBlockPage = router.pathname.startsWith("/block");
-
   const renderJsonView = (() => {
     if (!isPrettyView) {
       return JSON.stringify(json);
@@ -36,22 +27,7 @@ const JSONView: React.FC<JSONViewProps> = ({
   return (
     <div className={className}>
       {!skipCopy && (
-        <div
-          className={cn("w-full flex justify-end ", {
-            "justify-between": isBlockPage,
-          })}
-        >
-          {isBlockPage && (
-            <div className="flex justify-center items-center">
-              Virtual Operations{" "}
-              <span className="ml-2">
-                <Toggle
-                  checked={enableRawVirtualOperations}
-                  onClick={handleEnableVirtualOperations}
-                />
-              </span>
-            </div>
-          )}
+        <div className="w-full flex justify-end">
           <CopyJSON value={renderJsonView} />
         </div>
       )}
