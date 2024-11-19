@@ -76,7 +76,7 @@ class FetchingService {
   ): Promise<Hive.BlockDetails> {
     return await this.extendedHiveChain!.restApi["hafah-api"].block({
       blockNumber,
-      includeVirtual,
+      "include-virtual": includeVirtual,
     });
   }
 
@@ -133,7 +133,7 @@ class FetchingService {
       "hafah-api"
     ].transactions.transaction({
       transactionId: transactionHash,
-      includeVirtual,
+      "include-virtual": includeVirtual,
     });
   }
 
