@@ -233,13 +233,15 @@ export default function Witnesses() {
                     >
                       {singleWitness.witness_name}
                     </Link>
-                    <Link
-                      href={singleWitness.url ?? ""}
-                      target="_blank"
-                      data-testid="witness-link"
-                    >
-                      <LinkIcon size={15} />
-                    </Link>
+                    {singleWitness.url && (
+                      <Link
+                        href={singleWitness.url}
+                        target="_blank"
+                        data-testid="witness-link"
+                      >
+                        <LinkIcon size={15} />
+                      </Link>
+                    )}
                   </div>
                 </TableCell>
                 <TableCell className="text-right">
