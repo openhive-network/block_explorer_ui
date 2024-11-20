@@ -21,6 +21,7 @@ interface CustomPaginationProps {
   isMirrored?: boolean;
   className?: string;
   handleLatestPage?: () => void;
+  handleFirstPage?:()=>void;
 }
 
 const CustomPagination: React.FC<CustomPaginationProps> = ({
@@ -29,9 +30,10 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
   siblingCount = 1,
   pageSize,
   onPageChange,
-  isMirrored = true,
+  isMirrored = false,
   className,
   handleLatestPage,
+  handleFirstPage
 }) => {
   const paginationRange = usePagination({
     currentPage,
@@ -54,13 +56,26 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
   };
 
   const onFirstPage = () => {
-    onPageChange(1);
-  };
+    if (handleFirstPage) {
+      handleFirstPage(); // Use the custom handler if provided
+    } else {
+      onPageChange(1); // Default behavior: go to the last page
+    }
+  }
 
   const maxPage = Math.max(
     Number(paginationRange[0]),
     Number(paginationRange.at(-1))
   );
+
+  const lastPage = Math.ceil(totalCount / pageSize);
+  const onLastPage = () => {
+    if (handleLatestPage) {
+      handleLatestPage(); // Use the custom handler if provided
+    } else { 
+      onPageChange(lastPage); // Default behavior: go to the last page
+    }
+  }
 
   return (
     <Pagination className={className}>
@@ -69,7 +84,7 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
           (isMirrored ? currentPage !== maxPage : currentPage !== 1) && (
             <>
               <PaginationItem
-                onClick={handleLatestPage}
+                onClick={isMirrored ? onLastPage : onFirstPage}
                 className="cursor-pointer"
               >
                 <PaginationLatest />
@@ -128,7 +143,7 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
                 <PaginationNext />
               </PaginationItem>
               <PaginationItem
-                onClick={onFirstPage}
+                onClick={isMirrored ? onFirstPage : onLastPage}
                 className="cursor-pointer"
               >
                 <PaginationFirst />
