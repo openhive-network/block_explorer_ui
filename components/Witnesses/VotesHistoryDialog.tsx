@@ -171,6 +171,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                   date={fromDate}
                   setDate={setFromDate}
                   side="bottom"
+                  disableFutureDates={true}
                 />
               </div>
               <div>
