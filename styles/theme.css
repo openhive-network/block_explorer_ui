@@ -109,6 +109,11 @@ pre {
   /* Internet Explorer 5.5+ */
 }
 
-.rdp-dropdown {
-  color: black;
+.rdp-dropdown{
+  background-color: rgb(255, 255, 255) !important;
+  color: rgb(0, 0, 0) !important; 
+}
+.rdp-dropdown option {
+  background-color: rgb(255, 255, 255) !important;
+  color: rgb(0, 0, 0) !important; 
 }
