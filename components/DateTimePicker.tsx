@@ -12,12 +12,14 @@ interface DateTimePickerProps {
   date: Date;
   setDate: (date: Date) => void;
   side?: "left" | "top" | "right" | "bottom";
+  disableFutureDates?: boolean;
 }
 
 const DateTimePicker: React.FC<DateTimePickerProps> = ({
   date,
   setDate,
   side,
+  disableFutureDates = false,
 }) => {
   const handleSelect = (date: Date | undefined) => {
     if (date) {
@@ -33,6 +35,8 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
     )} UTC`;
   };
 
+  const disableFuture = (date: Date) =>
+    (disableFutureDates && date > new Date()) || date < new Date("1900-01-01");
   return (
     <Popover>
       <PopoverTrigger
@@ -60,6 +64,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
           selected={date}
           onSelect={handleSelect}
           data-testid="datepicker-calender"
+          disabled={disableFuture}
         />
         <div className="flex justify-center items-center mb-4">
           <TimePicker

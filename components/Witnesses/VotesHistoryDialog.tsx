@@ -38,7 +38,7 @@ const tableColums = [
   { key: "timestamp", name: "Date" },
   { key: "voter", name: "Voter" },
   { key: "vote", name: "Vote" },
-  { key: "power", name: "Current voter power", isRightAligned: true },
+  { key: "power", name: "Current Voter Power", isRightAligned: true },
 ];
 
 const PAGE_SIZE = 100;
@@ -171,6 +171,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                   date={fromDate}
                   setDate={setFromDate}
                   side="bottom"
+                  disableFutureDates={true}
                 />
               </div>
               <div>

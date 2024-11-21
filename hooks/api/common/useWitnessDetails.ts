@@ -12,9 +12,7 @@ const useWitnessDetails = (accountName: string, isWitness: boolean) => {
   const selectFunction = (witnessData: Hive.SingleWitnessResponse) => {
     const witness = {
       ...witnessData,
-      votes_updated_at: formatAndDelocalizeFromTime(
-        witnessData.votes_updated_at
-      ),
+      votes_updated_at: witnessData.votes_updated_at,
       vests: hiveChain?.vests(witnessData.witness.vests),
       hbd_interest_rate: formatPercent(witnessData.witness.hbd_interest_rate),
       votes_daily_change: hiveChain?.vests(

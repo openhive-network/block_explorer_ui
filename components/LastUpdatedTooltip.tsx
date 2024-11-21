@@ -8,6 +8,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClock } from "@fortawesome/free-solid-svg-icons";
 import moment from "moment";
+import { formatAndDelocalizeFromTime } from "@/utils/TimeUtils";
 
 type LastUpdatedProps = {
   lastUpdatedAt: string | Date;
@@ -28,6 +29,7 @@ const LastUpdatedTooltip: React.FC<LastUpdatedProps> = ({ lastUpdatedAt }) => {
     ? Number(lastUpdatedAt.split(" ")[0])
     : calculateTimeDiff(lastUpdatedAt);
   const iconRef = useRef<SVGSVGElement | null>(null);
+  const formattedTime = formatAndDelocalizeFromTime(lastUpdatedAt); // Get the human-readable time.
 
   const getIconColor = (timeDiff: number) => {
     let colorClass = "";
@@ -61,9 +63,7 @@ const LastUpdatedTooltip: React.FC<LastUpdatedProps> = ({ lastUpdatedAt }) => {
   }, [timeDiff]);
 
   const { colorClass } = getIconColor(timeDiff);
-  const tooltipMessage = `Last Updated - ${timeDiff} ${
-    timeDiff === 1 ? "min" : "mins"
-  } ago`;
+  const tooltipMessage = `Last Updated - ${formattedTime}`;
 
   return (
     <div className="flex items-center space-x-2">
@@ -78,9 +78,7 @@ const LastUpdatedTooltip: React.FC<LastUpdatedProps> = ({ lastUpdatedAt }) => {
                 ref={iconRef}
                 className={colorClass}
               />
-              <span className={`${colorClass} font-bold ml-2`}>{`${timeDiff} ${
-                timeDiff === 1 ? "min" : "mins"
-              } ago`}</span>
+              <span className={`${colorClass} font-bold ml-2`}>{formattedTime}</span>
             </span>
           </TooltipTrigger>
           <TooltipContent
