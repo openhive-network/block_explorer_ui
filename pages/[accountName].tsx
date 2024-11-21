@@ -207,6 +207,22 @@ export default function Account() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paramsState]);
 
+  useEffect(() => {
+    if (
+      router.query.page &&
+      accountOperations &&
+      (Number(router.query.page) <= 0 ||
+        Number(router.query.page) > accountOperations.total_pages)
+    ) {
+      router.replace({
+        query: {
+          ...router.query,
+          page: accountOperations.total_pages,
+        },
+      });
+    }
+  }, [router, accountOperations]);
+
   const renderAccountDetailsView = () => {
     if (isMobile) {
       return (
@@ -339,7 +355,7 @@ export default function Account() {
           ) : (
             <OperationsTable
               operations={convertOperationResultsToTableOperations(
-                formattedAccountOperations?.operations_result
+                formattedAccountOperations?.operations_result || []
               )}
               unformattedOperations={convertOperationResultsToTableOperations(
                 accountOperations?.operations_result || []
