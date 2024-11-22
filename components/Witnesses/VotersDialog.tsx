@@ -117,7 +117,6 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
     }
     return formatNumber(parseInt(value),true,false)+ " Vests"; // Return raw vests if not toggled to HP
   };
-
   return (
     <Dialog
       open={isVotersOpen}
@@ -131,32 +130,34 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
       >
         {witnessVoters ? (
           <>
-            <div
-              className="flex justify-center  items-centertext-center font-semibold	"
-              data-testid="voters-dialog-witness-name"
-            >
-              {accountName.toUpperCase()} - Voters
-              {isWitnessVotersLoading && (
-                <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
-              )}
-            </div>
-            <div className="flex justify-between items-center w-full">
-              <div className="flex items-center">
-                {witnessDetails && (
-                  <LastUpdatedTooltip
-                    lastUpdatedAt={witnessDetails.votes_updated_at}
-                  />
+            <div>
+              <div
+                className="flex justify-center  items-centertext-center font-semibold	"
+                data-testid="voters-dialog-witness-name"
+              >
+                {accountName.toUpperCase()} - Voters
+                {isWitnessVotersLoading && (
+                  <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
                 )}
               </div>
+              <div className="flex justify-between items-center w-full pt-4 pb-4">
+                <div className="flex items-center">
+                  {witnessDetails && (
+                    <LastUpdatedTooltip
+                      lastUpdatedAt={witnessDetails.votes_updated_at}
+                    />
+                  )}
+                </div>
 
-              <div className="flex items-center">
-                <label className="mr-2">Vests</label>
-                <Switch
-                  checked={isHP}
-                  onCheckedChange={() => setIsHP((prev) => !prev)}
-                  className="mx-1"
-                />
-                <label>HP</label>
+                <div className="flex items-center">
+                  <label className="mr-2">Vests</label>
+                  <Switch
+                    checked={isHP}
+                    onCheckedChange={() => setIsHP((prev) => !prev)}
+                    className="mx-1"
+                  />
+                  <label>HP</label>
+                </div>
               </div>
             </div>
               <CustomPagination
@@ -169,80 +170,87 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
               className="text-black dark:text-white"
               isMirrored={false}
             />
-
-            <Table className="text-white">
-              <TableHeader>
-                <TableRow>
-                  {tableColums.map((column, index) => (
-                    <TableHead
-                      onClick={() => {
-                        onHeaderClick(column.key);
-                      }}
-                      key={column.key}
-                      className={cn({
-                        "sticky md:static left-0": !index,
-                      })}
-                    >
-                      <span
-                        className={cn("flex", {
-                          "justify-end": column.isRightAligned,
+            {witnessVoters?.voters?.length === 0 && !isWitnessVotersLoading ? (
+                <div className="flex justify-center w-full">
+                  No results matching given criteria
+                </div>
+              ) : (
+              <>
+              <Table className="text-white">
+                <TableHeader>
+                  <TableRow>
+                    {tableColums.map((column, index) => (
+                      <TableHead
+                        onClick={() => {
+                          onHeaderClick(column.key);
+                        }}
+                        key={column.key}
+                        className={cn({
+                          "sticky md:static left-0": !index,
                         })}
                       >
-                        {column.name} {showSorter(column.key)}
-                      </span>
-                    </TableHead>
-                  ))}
-                </TableRow>
-              </TableHeader>
-              <TableBody data-testid="voters-dialog-table-body">
-                {witnessVoters &&
-                  witnessVoters.voters.map((voter, index) => (
-                    <TableRow
-                      key={index}
-                      className={`${
-                        index % 2 === 0 ? "bg-rowEven" : "bg-rowOdd"
-                      }`}
-                    >
-                      <TableCell
-                        className={`text-link sticky md:static left-0 ${
-                          index % 2 === 0
-                            ? "bg-rowEven md:bg-inherit"
-                            : "bg-rowOdd md:bg-inherit"
+                        <span
+                          className={cn("flex", {
+                            "justify-end": column.isRightAligned,
+                          })}
+                        >
+                          {column.name} {showSorter(column.key)}
+                        </span>
+                      </TableHead>
+                    ))}
+                  </TableRow>
+                </TableHeader>
+                <TableBody data-testid="voters-dialog-table-body">
+                  {witnessVoters &&
+                    witnessVoters.voters.map((voter, index) => (
+                      <TableRow
+                        key={index}
+                        className={`${
+                          index % 2 === 0 ? "bg-rowEven" : "bg-rowOdd"
                         }`}
                       >
-                        <Link
-                          href={`/@${voter.voter_name}`}
-                          data-testid="voter-name"
+                        <TableCell
+                          className={`text-link sticky md:static left-0 ${
+                            index % 2 === 0
+                              ? "bg-rowEven md:bg-inherit"
+                              : "bg-rowOdd md:bg-inherit"
+                          }`}
                         >
-                          {voter.voter_name}
-                        </Link>
-                      </TableCell>
-                      <TableCell
-                        className="text-right"
-                        data-testid="vote-power"
-                      >
-                        {fetchHivePower(voter.vests.toString(), isHP)}
-                      </TableCell>
-                      <TableCell
-                        className="text-right"
-                        data-testid="account-power"
-                      >
-                        {fetchHivePower(voter.account_vests.toString(), isHP)}
-                      </TableCell>
-                      <TableCell
-                        className="text-right"
-                        data-testid="proxied-power"
-                      >
-                        {fetchHivePower(voter.proxied_vests.toString(), isHP)}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-          </>
-        ) : (
-          <Loader2 className="animate-spin mt-1 h-8 w-8 ml-3 ..." />
-        )}
+                          <Link
+                            href={`/@${voter.voter_name}`}
+                            data-testid="voter-name"
+                          >
+                            {voter.voter_name}
+                          </Link>
+                        </TableCell>
+                        <TableCell
+                          className="text-right"
+                          data-testid="vote-power"
+                        >
+                          {fetchHivePower(voter.vests.toString(), isHP)}
+                        </TableCell>
+                        <TableCell
+                          className="text-right"
+                          data-testid="account-power"
+                        >
+                          {fetchHivePower(voter.account_vests.toString(), isHP)}
+                        </TableCell>
+                        <TableCell
+                          className="text-right"
+                          data-testid="proxied-power"
+                        >
+                          {fetchHivePower(voter.proxied_vests.toString(), isHP)}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+              </>
+            )}             
+            </>
+          ) : (
+            <Loader2 className="animate-spin mt-1 h-8 w-8 ml-3 ..." />
+          )}
       </DialogContent>
     </Dialog>
   );
