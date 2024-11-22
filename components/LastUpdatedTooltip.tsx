@@ -78,7 +78,7 @@ const LastUpdatedTooltip: React.FC<LastUpdatedProps> = ({ lastUpdatedAt }) => {
                 ref={iconRef}
                 className={colorClass}
               />
-              <span className={`${colorClass} font-bold ml-2`}>{formattedTime}</span>
+              <span className={`${colorClass} ml-2`}>{formattedTime}</span>
             </span>
           </TooltipTrigger>
           <TooltipContent
