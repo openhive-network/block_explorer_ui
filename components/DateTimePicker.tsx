@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Calendar as CalendarIcon } from "lucide-react";
-
+import { Matcher } from "react-day-picker";
 import { Button } from "./ui/button";
 import { Calendar } from "./ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
@@ -13,13 +13,15 @@ interface DateTimePickerProps {
   setDate: (date: Date) => void;
   side?: "left" | "top" | "right" | "bottom";
   disableFutureDates?: boolean;
+  endDate?: Date;
 }
 
 const DateTimePicker: React.FC<DateTimePickerProps> = ({
   date,
   setDate,
   side,
-  disableFutureDates = false,
+  disableFutureDates = true,
+  endDate,
 }) => {
   const handleSelect = (date: Date | undefined) => {
     if (date) {
@@ -35,8 +37,14 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
     )} UTC`;
   };
 
-  const disableFuture = (date: Date) =>
-    (disableFutureDates && date > new Date()) || date < new Date("1900-01-01");
+  const disableFuture: Matcher | Matcher[] | undefined | any = (date: Date) => {
+    if (disableFutureDates) {
+      if (endDate) {
+        return date > endDate || date < new Date("1900-01-01");
+      }
+      return date > new Date() || date < new Date("1900-01-01");
+    }
+  };
   return (
     <Popover>
       <PopoverTrigger
