@@ -102,26 +102,40 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
 
   useEffect(() => {
     const fetchDynamicGlobalProperties = async () => {
+      const dynamicGlobalProperties =
+        await fetchingService.getDynamicGlobalProperties();
+      const _totalVestingfundHive =
+        dynamicGlobalProperties.total_vesting_fund_hive;
+      const _totalVestingShares = dynamicGlobalProperties.total_vesting_shares;
 
-    const dynamicGlobalProperties = await fetchingService.getDynamicGlobalProperties();
-    const _totalVestingfundHive = dynamicGlobalProperties.total_vesting_fund_hive;
-    const _totalVestingShares = dynamicGlobalProperties.total_vesting_shares;
-
-    setTotalVestingFundHive(_totalVestingfundHive);
-    setTotalVestingShares(_totalVestingShares);
-    }
+      setTotalVestingFundHive(_totalVestingfundHive);
+      setTotalVestingShares(_totalVestingShares);
+    };
 
     fetchDynamicGlobalProperties();
+  }, []);
 
-  }, []); 
-
-  const fetchHivePower = (value: string, isHP: boolean): string => {    
-      if (isHP) {
-        if (!hiveChain) return "";
-        return convertVestsToHP(hiveChain,value,totalVestingFundHive,totalVestingShares);
+  const fetchHivePower = (value: string, isHP: boolean): string => {
+    if (isHP) {
+      if (!hiveChain) return "";
+      return convertVestsToHP(
+        hiveChain,
+        value,
+        totalVestingFundHive,
+        totalVestingShares
+      );
     }
-    return formatNumber(parseInt(value),true,false)+ " Vests"; // Return raw vests if not toggled to HP
+    return formatNumber(parseInt(value), true, false) + " Vests"; // Return raw vests if not toggled to HP
   };
+
+  useEffect(() => {
+    if (fromDate >= toDate) {
+      const date = new Date(toDate);
+      date.setHours(date.getHours() - 1);
+      setFromDate(date);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fromDate, toDate]);
 
   return (
     <Dialog
@@ -163,7 +177,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                 />
                 <label>HP</label>
               </div>
-            </div>          
+            </div>
             <div className="flex justify-around items-center bg-explorer-bg-start rounded text-text p-2">
               <div>
                 <p>From: </p>
@@ -171,7 +185,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                   date={fromDate}
                   setDate={setFromDate}
                   side="bottom"
-                  disableFutureDates={true}
+                  endDate={toDate}
                 />
               </div>
               <div>
