@@ -175,7 +175,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
             <DateTimePicker
               date={startDate || new Date()}
               setDate={setStartDate}
-              endDate={endDate}
+              lastDate={endDate}
             />
           </div>
           <div className="flex flex-col w-full">
@@ -183,6 +183,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
             <DateTimePicker
               date={endDate || new Date()}
               setDate={setEndDate}
+              firstDate={startDate}
             />
           </div>
         </div>

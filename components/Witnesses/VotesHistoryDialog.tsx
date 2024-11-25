@@ -185,7 +185,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                   date={fromDate}
                   setDate={setFromDate}
                   side="bottom"
-                  endDate={toDate}
+                  lastDate={toDate}
                 />
               </div>
               <div>
@@ -194,6 +194,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                   date={toDate}
                   setDate={setToDate}
                   side="bottom"
+                  firstDate={fromDate}
                 />
               </div>
             </div>
@@ -273,7 +274,9 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                       <TableCell
                         className="text-right"
                         data-testid="current-voter-power"
-                      > {fetchHivePower(vote.vests.toString(), isHP)}
+                      >
+                        {" "}
+                        {fetchHivePower(vote.vests.toString(), isHP)}
                       </TableCell>
                     </TableRow>
                   ))}

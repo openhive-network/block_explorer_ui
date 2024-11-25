@@ -13,7 +13,8 @@ interface DateTimePickerProps {
   setDate: (date: Date) => void;
   side?: "left" | "top" | "right" | "bottom";
   disableFutureDates?: boolean;
-  endDate?: Date;
+  lastDate?: Date;
+  firstDate?: Date;
 }
 
 const DateTimePicker: React.FC<DateTimePickerProps> = ({
@@ -21,7 +22,8 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
   setDate,
   side,
   disableFutureDates = true,
-  endDate,
+  lastDate,
+  firstDate,
 }) => {
   const handleSelect = (date: Date | undefined) => {
     if (date) {
@@ -39,8 +41,11 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
 
   const disableFuture: Matcher | Matcher[] | undefined | any = (date: Date) => {
     if (disableFutureDates) {
-      if (endDate) {
-        return date > endDate || date < new Date("1900-01-01");
+      if (firstDate) {
+        return date < firstDate || date < new Date("1900-01-01");
+      }
+      if (lastDate) {
+        return date > lastDate || date < new Date("1900-01-01");
       }
       return date > new Date() || date < new Date("1900-01-01");
     }
