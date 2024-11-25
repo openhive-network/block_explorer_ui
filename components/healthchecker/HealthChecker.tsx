@@ -101,23 +101,27 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     for (const [checkerKey, providers] of providersByChecks) {
       const checker = customApiCheckers?.get(checkerKey);
       healthChecker?.register(checker!.method, checker!.params, checker!.validatorFunction, providers);
+      console.log('AFTER REGISTER');
+      console.time("test");
     }
   }
-
+  
   useEffect(() => { 
     if (healthChecker && !chainInitialized && !!customApiCheckers) {
       if (apiChecksByProvider.size === 0) {
         initializeDefaultChecks();
       }
-      healthChecker.on("data", (data: Array<IScoredEndpoint>) => { console.log(JSON.stringify(data)); setScoredEndpoints(data) });
       setChainIntialized(true);
     }
   }, [chainInitialized, customApiCheckers, customApiList, healthChecker, apiChecksByProvider])
-
+  
   useEffect(() => {
     if (!healthChecker) {
       const hc = new HealthChecker();
+      const initialEndpoints: IScoredEndpoint[] | undefined = customApiList?.map((api) => ({endpointUrl: api, score: 1, down: false}))
+      if (initialEndpoints) setScoredEndpoints(initialEndpoints);
       hc.on('error', error => console.error(error.message));
+      hc.on("data", (data: Array<IScoredEndpoint>) => { console.log(JSON.stringify(data)); console.time("on"); setScoredEndpoints(data) });
       setHealthChecker(hc);
     }
   }, [healthChecker])
