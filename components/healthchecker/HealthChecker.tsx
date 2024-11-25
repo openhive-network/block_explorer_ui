@@ -101,8 +101,6 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     for (const [checkerKey, providers] of providersByChecks) {
       const checker = customApiCheckers?.get(checkerKey);
       healthChecker?.register(checker!.method, checker!.params, checker!.validatorFunction, providers);
-      console.log('AFTER REGISTER');
-      console.time("test");
     }
   }
   
