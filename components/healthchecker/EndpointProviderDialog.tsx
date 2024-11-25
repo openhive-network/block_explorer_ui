@@ -36,7 +36,7 @@ const EndpointProviderDialog: React.FC<EndpointProviderDialogProps> = ({
         <DialogHeader><DialogTitle>{checkTitle}</DialogTitle></DialogHeader>
         <div>
           {providers?.map((provider) => 
-            <div className={cn("flex my-2 items-center", {"font-semibold": provider === currentProvider})}>
+            <div key={provider} className={cn("flex my-2 items-center", {"font-semibold": provider === currentProvider})}>
               <Button className="mr-2" onClick={() => {changeProviderForEndpoint(checkKey, provider)}}>Switch to Provider</Button>
               {provider}
             </div>
