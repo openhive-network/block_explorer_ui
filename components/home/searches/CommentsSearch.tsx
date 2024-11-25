@@ -43,7 +43,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
   const { getRangesValues } = searchRanges;
 
   const setSearchValues = (data: Explorer.CommentSearchParams) => {
-    data.accountName && setAccountName(data.accountName);
+    data.accountName && setAccountName(Array.isArray(data.accountName) ? data.accountName[0] : data.accountName);
     data.permlink && setPermlink(data.permlink);
     data.filters &&
       setSelectedCommentSearchOperationTypes(
