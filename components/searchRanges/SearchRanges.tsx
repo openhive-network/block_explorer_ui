@@ -43,16 +43,6 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
     }
   };
 
-  useEffect(() => {
-    if (!startDate || !endDate) return;
-    if (startDate >= endDate) {
-      const date = new Date(endDate);
-      date.setHours(date.getHours() - 1);
-      setStartDate(date);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startDate, endDate]);
-
   return (
     <div className="py-2 flex flex-col gap-y-2">
       <Select

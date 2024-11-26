@@ -42,12 +42,12 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
   const disableFuture: Matcher | Matcher[] | undefined | any = (date: Date) => {
     if (disableFutureDates) {
       if (firstDate) {
-        return date < firstDate || date < new Date("1900-01-01");
+        return date <= firstDate || date < new Date("1900-01-01");
       }
       if (lastDate) {
-        return date > lastDate || date < new Date("1900-01-01");
+        return date >= lastDate || date < new Date("1900-01-01");
       }
-      return date > new Date() || date < new Date("1900-01-01");
+      return date >= new Date() || date < new Date("1900-01-01");
     }
   };
   return (

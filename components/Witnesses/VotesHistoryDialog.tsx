@@ -128,15 +128,6 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
     return formatNumber(parseInt(value), true, false) + " Vests"; // Return raw vests if not toggled to HP
   };
 
-  useEffect(() => {
-    if (fromDate >= toDate) {
-      const date = new Date(toDate);
-      date.setHours(date.getHours() - 1);
-      setFromDate(date);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fromDate, toDate]);
-
   return (
     <Dialog
       open={isVotesHistoryOpen}
