@@ -6,7 +6,7 @@ import { SearchRangesResult } from "@/hooks/common/useSearchRanges";
 import { Input } from "@/components/ui/input";
 import SearchRanges from "@/components/searchRanges/SearchRanges";
 import { Button } from "@/components/ui/button";
-
+import AutocompleteInput from "@/components/ui/AutoCompleteInput";
 interface CommentsPermlinkSearchProps {
   startCommentPermlinkSearch: (
     accountSearchOperationsProps: Explorer.CommentPermlinSearchParams
@@ -70,13 +70,12 @@ const CommentsPermlinkSearch: React.FC<CommentsPermlinkSearchProps> = ({
     <>
       <p className="ml-2">Find comments permlinks by account name</p>
       <div className="flex flex-col">
-        <Input
-          data-testid="account-name"
-          className="w-1/2 bg-theme dark:bg-theme border-0 border-b-2"
-          type="text"
+         <AutocompleteInput
           value={accountName}
-          onChange={(e) => setAccountName(e.target.value)}
-          placeholder="Author *"
+          onChange={setAccountName}
+          placeholder="Author"
+          inputType="account_name"
+          className="w-1/2 bg-theme dark:bg-theme border-0 border-b-2"
           required
         />
       </div>

@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import SearchRanges from "@/components/searchRanges/SearchRanges";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 import { Button } from "@/components/ui/button";
-
+import AutocompleteInput from "@/components/ui/AutoCompleteInput";
 interface CommentsSearchProps {
   startCommentsSearch: (
     accountSearchOperationsProps: Explorer.CommentSearchParams
@@ -98,13 +98,12 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
         permlink.
       </p>
       <div className="flex flex-col">
-        <Input
-          data-testid="account-name"
-          className="w-1/2 bg-theme dark:bg-theme border-0 border-b-2"
-          type="text"
+      <AutocompleteInput
           value={accountName}
-          onChange={(e) => setAccountName(e.target.value)}
-          placeholder="Author *"
+          onChange={setAccountName}
+          placeholder="Author"
+          inputType="account_name"
+          className="w-1/2 bg-theme dark:bg-theme border-0 border-b-2"
           required
         />
       </div>
