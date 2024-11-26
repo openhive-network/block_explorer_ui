@@ -32,6 +32,8 @@ type ExplorerNodeApi = {
   };
   condenser_api: {
     get_witnesses_by_vote: TWaxApiRequest<unknown[], Hive.WitnessesByVote>;
+    get_content: TWaxApiRequest<unknown[], Hive.Content>;
+    get_content_replies: TWaxApiRequest<unknown[], Hive.Content>;
   };
 };
 
@@ -232,6 +234,25 @@ class FetchingService {
     return await this.extendedHiveChain!.api.condenser_api.get_witnesses_by_vote(
       params
     );
+  }
+  async getContent(
+    accountName: string,
+    permlink: string
+  ): Promise<Hive.Content> {
+    return await this.extendedHiveChain!.api.condenser_api.get_content([
+      accountName,
+      permlink,
+    ]);
+  }
+
+  async getContentReplies(
+    accountName: string,
+    permlink: string
+  ): Promise<Hive.Content> {
+    return await this.extendedHiveChain!.api.condenser_api.get_content_replies([
+      accountName,
+      permlink,
+    ]);
   }
 
   async getOperationTypes(): Promise<Hive.OperationPattern[]> {
