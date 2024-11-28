@@ -16,7 +16,7 @@ export class CommentsPage {
     this.page = page;
     this.commentsSearch = page.getByTestId('comments-search-comments-page');
     this.descriptionCommentsSearch = this.commentsSearch.locator('div > p');
-    this.accountNameInput = this.commentsSearch.getByTestId('account-name');
+    this.accountNameInput = this.commentsSearch.getByPlaceholder('Author *');
     this.permlinkInput = this.commentsSearch.getByTestId('permlink-input');
     this.rangeDropDownList = this.commentsSearch.getByTestId('dropdown-list');
     this.operationsTypesButton = this.commentsSearch.getByTestId('operations-types-btn');
