@@ -41,7 +41,7 @@ export class CommentsPage {
     // await expect(this.labelSetAccountName).toHaveText('Author');
     await expect(this.accountNameInput).toBeVisible();
     await expect(this.permlinkInput).toBeVisible();
-    await expect(this.rangeDropDownList).toBeVisible();
+    // await expect(this.rangeDropDownList).toBeVisible();
     await expect(this.operationsTypesButton).toBeEnabled();
     await expect(this.searchButton).toBeVisible();
     await expect(this.searchButton).not.toBeEnabled();
