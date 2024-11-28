@@ -5,12 +5,12 @@ import { Witnesses } from "../support/pages/witnesses";
 test.describe("Home page - witnesses list", () => {
     let mainPage: MainPage;
     let witnessesPage: Witnesses;
-  
+
     test.beforeEach(async ({ page }) => {
         mainPage = new MainPage(page);
         witnessesPage = new Witnesses(page);
     });
-  
+
     test("Top Witnesses - Check if list is displayed correctly", async ({ page }) => {
 
       await mainPage.gotoBlockExplorerPage();
@@ -35,8 +35,7 @@ test.describe("Home page - witnesses list", () => {
       await page.waitForTimeout(2000)
       expect(
         await mainPage.getElementCssPropertyValue(witnessesName, 'background-color')
-      ).toBe('rgb(51, 59, 76)');
-  
+      ).toBe('rgb(229, 234, 243)');
+
     });
   });
-  
