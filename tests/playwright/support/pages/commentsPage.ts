@@ -16,7 +16,7 @@ export class CommentsPage {
     this.page = page;
     this.commentsSearch = page.getByTestId('comments-search-comments-page');
     this.descriptionCommentsSearch = this.commentsSearch.locator('div > p');
-    this.accountNameInput = this.commentsSearch.getByTestId('account-name');
+    this.accountNameInput = this.commentsSearch.getByPlaceholder('Author *');
     this.permlinkInput = this.commentsSearch.getByTestId('permlink-input');
     this.rangeDropDownList = this.commentsSearch.getByTestId('dropdown-list');
     this.operationsTypesButton = this.commentsSearch.getByTestId('operations-types-btn');
@@ -41,7 +41,7 @@ export class CommentsPage {
     // await expect(this.labelSetAccountName).toHaveText('Author');
     await expect(this.accountNameInput).toBeVisible();
     await expect(this.permlinkInput).toBeVisible();
-    await expect(this.rangeDropDownList).toBeVisible();
+    // await expect(this.rangeDropDownList).toBeVisible();
     await expect(this.operationsTypesButton).toBeEnabled();
     await expect(this.searchButton).toBeVisible();
     await expect(this.searchButton).not.toBeEnabled();

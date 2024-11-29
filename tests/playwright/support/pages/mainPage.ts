@@ -96,7 +96,7 @@ export class MainPage {
     this.pickPropertyBtnBlocked = page.locator('.text-blocked')
     this.accountSearchSection = page.getByRole('button', { name: 'Account search' })
     this.searchButtonInAccount = page.getByTestId('search-button')
-    this.accountNameInputAccountSection = page.getByTestId('account-name')
+    this.accountNameInputAccountSection = page.getByPlaceholder('Account name *')
     this.operationsCardResult = page.getByTestId('operations-card')
     this.goToResultPageBtn = page.getByTestId('go-to-result-page')
     this.lastBlockBtn = page.getByTestId('block-search-section').getByText('Last blocks')

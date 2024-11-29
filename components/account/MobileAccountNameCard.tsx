@@ -43,7 +43,7 @@ const MobileAccountNameCard: React.FC<MobileAccountNameCardProps> = ({
               data-testid="user-avatar"
             />
             <div>
-              <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-white" data-testid="account-name">
                 {accountDetails.name}
               </h2>
               {accountDetails.is_witness && (

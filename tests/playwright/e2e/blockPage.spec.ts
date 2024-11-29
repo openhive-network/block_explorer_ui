@@ -100,9 +100,9 @@ test.describe('Block page tests', () => {
     test('Validate that operation properties have correct colors', async ({page}) =>{
         await mainPage.headBlockCardBlockLink.click()
         await expect(blockPage.blockProducer).toBeVisible()
-        await expect(blockPage.operationType.first()).toHaveCSS('color', 'rgb(255, 255, 255)')
-        await expect(blockPage.firstTransactionLink).toHaveCSS('color', 'rgb(0, 217, 255)')
-        await expect(blockPage.usernameInOperationDetails).toHaveCSS('color', 'rgb(0, 217, 255)')
+        await expect(blockPage.operationType.first()).toHaveCSS('color', 'rgb(0, 0, 0)')
+        await expect(blockPage.firstTransactionLink).toHaveCSS('color', 'rgb(30, 79, 156)')
+        await expect(blockPage.usernameInOperationDetails).toHaveCSS('color', 'rgb(30, 79, 156)')
 
         const voteOperationPostLink = await blockPage.voteOperationPostLink
 
