@@ -63,7 +63,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
               data-testid="user-avatar"
             />
             <div>
-              <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-white" data-testid="account-name">
                 {accountDetails.name}
               </h2>
               {accountDetails.is_witness && (
@@ -192,7 +192,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
           <div className="text-center flex flex-col justify-space-between w-full gap-2">
             <span className="text">Creation Date:</span>
             <span
-              className="text" 
+              className="text"
               data-testid="creation-date"
             >
               {formatAndDelocalizeTime(accountDetails.created)}
@@ -201,7 +201,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
           <div className="text-center flex flex-col justify-space-between w-full gap-2">
             <span className="text">Reputation:</span>
             <span
-              className="text" 
+              className="text"
               data-testid="creation-date"
             >
               {accountDetails.reputation}
