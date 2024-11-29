@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Popover,
   PopoverContent,
@@ -15,6 +16,7 @@ interface ViewPopoverProps {
 
 const ViewPopover: React.FC<ViewPopoverProps> = ({ isMobile }) => {
   const { settings, setSettings } = useUserSettingsContext();
+  const [popoverOpen, setPopoverOpen] = useState(false);
 
   const popupDefaultValue = (() => {
     const { prettyJsonView, rawJsonView } = settings;
@@ -23,13 +25,24 @@ const ViewPopover: React.FC<ViewPopoverProps> = ({ isMobile }) => {
     else return "raw-json";
   })();
 
+  const handleSelect = (value: string) => {
+    if (value === "visualised-data") {
+      setSettings({ ...settings, prettyJsonView: false, rawJsonView: false });
+    } else if (value === "raw-json") {
+      setSettings({ ...settings, prettyJsonView: false, rawJsonView: true });
+    } else if (value === "pretty-json") {
+      setSettings({ ...settings, prettyJsonView: true, rawJsonView: false });
+    }
+    setPopoverOpen(false); // Close the popover
+  };
+
   return (
-    <Popover>
+    <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
       <PopoverTrigger asChild>
         <div
           className={cn(
             "rounded-[6px] text-sm text-center cursor-pointer flex jusitfy-center items-center p-1 ml-3 py-0 border-2 border-explorer-blue dark:border-explorer-turquoise",
-            { "p-0 m-0 border-none text-2xl": isMobile }
+            { "p-0 m-0 border-none text-base justify-normal": isMobile }
           )}
           data-testid="data-view-dropdown"
         >
@@ -42,7 +55,7 @@ const ViewPopover: React.FC<ViewPopoverProps> = ({ isMobile }) => {
           isMobile && "ml-[30px]"
         }`}
       >
-        <RadioGroup defaultValue={popupDefaultValue}>
+        <RadioGroup defaultValue={popupDefaultValue} onValueChange={handleSelect}>
           <div className="flex items-center space-x-2">
             <RadioGroupItem
               onClick={() =>

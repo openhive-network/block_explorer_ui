@@ -178,6 +178,25 @@ declare module Explorer {
     votes_daily_change_hive_power: string;
     votes_daily_change: string;
     votes_updated_at: string;
+    witness: {
+      account_creation_fee: number;
+      bias: number;
+      block_size: number;
+      feed_updated_at: string;
+      hbd_interest_rate: number;
+      last_confirmed_block_num: number;
+      missed_blocks: number;
+      price_feed: number;
+      rank: number;
+      signing_key: string;
+      url: string;
+      version: string; 
+      vests: string;
+      voters_num: number;
+      voters_num_daily_change: number;
+      votes_daily_change: string;
+      witness_name: string;
+      }; 
   }
 
   interface OperationForTable {
