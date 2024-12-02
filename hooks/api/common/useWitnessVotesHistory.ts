@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import moment from "moment";
 
 import { config } from "@/Config";
 import fetchingService from "@/services/FetchingService";
@@ -10,6 +11,9 @@ const useWitnessVotesHistory = (
   toDate: Date,
   liveDataEnabled: boolean
 ) => {
+  const isDatesCorrect =
+    !moment(fromDate).isSame(toDate) && !moment(fromDate).isAfter(toDate);
+
   const fetchVotesHist = async () =>
     await fetchingService.getWitnessVotesHistory(
       accountName,
@@ -34,7 +38,7 @@ const useWitnessVotesHistory = (
       liveDataEnabled,
     ],
     queryFn: fetchVotesHist,
-    enabled: !!accountName && isModalOpen,
+    enabled: !!accountName && isModalOpen && isDatesCorrect,
     refetchInterval: liveDataEnabled ? config.accountRefreshInterval : false,
     refetchOnWindowFocus: false,
   });

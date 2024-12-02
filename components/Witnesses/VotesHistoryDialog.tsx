@@ -27,6 +27,12 @@ import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { convertVestsToHP } from "@/utils/Calculations";
 import fetchingService from "@/services/FetchingService";
 
+interface Supply {
+  amount: string;
+  nai: string;
+  precision: number;
+}
+
 type VotersDialogProps = {
   accountName: string;
   isVotesHistoryOpen: boolean;
@@ -57,37 +63,6 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
   );
   const [toDate, setToDate] = useState<Date>(moment().toDate());
   const [isHP, setIsHP] = useState<boolean>(true); // Toggle state
-
-  const { witnessDetails } = useWitnessDetails(accountName, true) as any;
-  const { votesHistory, isVotesHistoryLoading } = useWitnessVotesHistory(
-    accountName,
-    isVotesHistoryOpen,
-    fromDate,
-    toDate,
-    liveDataEnabled
-  );
-
-  useEffect(() => {
-    setPage(1);
-    if (votesHistory && votesHistory?.length > PAGE_SIZE) {
-      setDisplayData(votesHistory.slice(0, PAGE_SIZE - 1));
-    } else {
-      setDisplayData(votesHistory);
-    }
-  }, [votesHistory]);
-
-  const handlePageChange = (page: number) => {
-    setPage(page);
-    setDisplayData(
-      votesHistory?.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1)
-    );
-  };
-  interface Supply {
-    amount: string;
-    nai: string;
-    precision: number;
-  }
-
   const [totalVestingShares, setTotalVestingShares] = useState<Supply>({
     amount: "0",
     nai: "",
@@ -98,7 +73,42 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
     nai: "",
     precision: 0,
   });
+
   const { hiveChain } = useHiveChainContext();
+  const { witnessDetails } = useWitnessDetails(accountName, true) as any;
+
+  const { votesHistory, isVotesHistoryLoading } = useWitnessVotesHistory(
+    accountName,
+    isVotesHistoryOpen,
+    fromDate,
+    toDate,
+    liveDataEnabled
+  );
+
+  const handlePageChange = (page: number) => {
+    setPage(page);
+    setDisplayData(
+      votesHistory?.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1)
+    );
+  };
+
+  const fetchHivePower = (value: string, isHP: boolean): string => {
+    if (isHP) {
+      if (!hiveChain) return "";
+      return convertVestsToHP(
+        hiveChain,
+        value,
+        totalVestingFundHive,
+        totalVestingShares
+      );
+    }
+    return formatNumber(parseInt(value), true, false) + " Vests"; // Return raw vests if not toggled to HP
+  };
+  useEffect(() => {
+    if (moment(fromDate).isSame(toDate) || moment(fromDate).isAfter(toDate)) {
+      setFromDate(moment(fromDate).subtract(1, "hours").toDate());
+    }
+  }, [fromDate, toDate]);
 
   useEffect(() => {
     const fetchDynamicGlobalProperties = async () => {
@@ -115,18 +125,14 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
     fetchDynamicGlobalProperties();
   }, []);
 
-  const fetchHivePower = (value: string, isHP: boolean): string => {
-    if (isHP) {
-      if (!hiveChain) return "";
-      return convertVestsToHP(
-        hiveChain,
-        value,
-        totalVestingFundHive,
-        totalVestingShares
-      );
+  useEffect(() => {
+    setPage(1);
+    if (votesHistory && votesHistory?.length > PAGE_SIZE) {
+      setDisplayData(votesHistory.slice(0, PAGE_SIZE - 1));
+    } else {
+      setDisplayData(votesHistory);
     }
-    return formatNumber(parseInt(value), true, false) + " Vests"; // Return raw vests if not toggled to HP
-  };
+  }, [votesHistory]);
 
   return (
     <Dialog
