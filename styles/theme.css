@@ -43,6 +43,10 @@
   --color-light-green: #15a017;
   --color-light-gray: #ADA9A9DC;
   --color-dark-gray: #292F3D;
+
+  --scroll-icon-bg: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+  --scroll-icon-color: #000;
+  --scroll-icon-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Dark theme */
@@ -85,6 +89,11 @@
   --color-light-green: #64FFAA;
   --color-light-gray: #ADA9A9DC;
   --color-dark-gray: #444c5e;
+
+  --scroll-icon-bg: linear-gradient(135deg, #444, #555);
+  --scroll-icon-color: #ffffff;
+  --scroll-icon-shadow: 0 4px 8px rgba(255, 255, 255, 0.1);
+  --scroll-icon-hover-bg: linear-gradient(135deg, #555, #666);
 }
 
 * {
@@ -116,4 +125,51 @@ pre {
 .rdp-dropdown option {
   background-color: rgb(255, 255, 255) !important;
   color: rgb(0, 0, 0) !important; 
+}
+
+/* Styles for the scroll icons */
+.scroll-icon-left,
+.scroll-icon-right {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  padding: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 32px;
+  height: 32px;
+  opacity: 0.7;
+  z-index: 10;
+  cursor: pointer;
+  
+}
+
+.scroll-icon-left {
+  left: 5%;
+}
+
+.scroll-icon-right {
+  right: 5%;
+}
+
+.scroll-icon-left:hover,
+.scroll-icon-right:hover {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .scroll-icon-left,
+  .scroll-icon-right {
+    display: block; 
+  }
+}
+
+@media (min-width: 769px) {
+  .scroll-icon-left,
+  .scroll-icon-right {
+    display: none;
+  }
 }

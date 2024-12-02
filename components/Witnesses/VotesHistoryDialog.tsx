@@ -220,7 +220,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
               </div>
             ) : (
               <>
-                <Table className="text-text">
+                <Table className="text-text" mobileScrollIcons={true}>
                   <TableHeader>
                     <TableRow>
                       {tableColums.map((column, index) => (

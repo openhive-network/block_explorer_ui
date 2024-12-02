@@ -176,7 +176,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                 </div>
               ) : (
               <>
-              <Table className="text-white">
+              <Table className="text-white" mobileScrollIcons={true}>
                 <TableHeader>
                   <TableRow>
                     {tableColums.map((column, index) => (

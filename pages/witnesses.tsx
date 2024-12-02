@@ -189,6 +189,7 @@ export default function Witnesses() {
         <Table
           className="text-white min-w-[80vw]"
           data-testid="table-body"
+          mobileScrollIcons={true}
         >
           <TableHeader>
             <TableRow>{buildTableHeader()}</TableRow>
