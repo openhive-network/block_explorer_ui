@@ -43,7 +43,9 @@ export const HiveChainContextProvider: React.FC<{
 
   const createHealthChecker = async () => {
     const healthChecker = new HealthChecker();
-    setHealthChecker(healthChecker)
+    setHealthChecker(healthChecker);
+    healthChecker?.on('error', error => console.error(error.message));
+    healthChecker?.on("data", (data: Array<IScoredEndpoint>) => { console.log(JSON.stringify(data)); data.length ?setScoredEndpoints(data) : null });
   }
 
   useEffect(() => {

@@ -88,10 +88,8 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
       initialApiChecksByProviders.set(api, Array.from(customApiCheckers?.keys() || []));
     })
     setApiChecksByProvider(initialApiChecksByProviders);
-    console.log('HC ON DATA AND ERROR');
     restartCheckerAfterChange(initialApiChecksByProviders)
-    healthChecker?.on('error', error => console.error(error.message));
-    healthChecker?.on("data", (data: Array<IScoredEndpoint>) => { console.log(JSON.stringify(data)); setScoredEndpoints(data) });
+
   }
 
   const restartCheckerAfterChange = (newCheckers: Map<string, string[]>) => {
