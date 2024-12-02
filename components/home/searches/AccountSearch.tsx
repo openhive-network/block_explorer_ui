@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import SearchRanges from "@/components/searchRanges/SearchRanges";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 import { Button } from "@/components/ui/button";
-
+import AutocompleteInput from "@/components/ui/AutoCompleteInput";
 interface AccountSearchProps {
   startAccountOperationsSearch: (
     accountSearchOperationsProps: Explorer.AccountSearchOperationsProps
@@ -60,15 +60,15 @@ const AccountSearch: React.FC<AccountSearchProps> = ({
   return (
     <>
       <div className="flex flex-col">
-        <Input
-          data-testid="account-name"
+        <AutocompleteInput
+          value={accountName}
+          onChange={setAccountName}
+          placeholder="Account name"
+          inputType="account_name"
           className="w-1/2 bg-theme dark:bg-theme border-0 border-b-2"
-          type="text"
-          value={accountName || ""}
-          onChange={(e) => setAccountName(e.target.value)}
-          placeholder="Account name *"
-          required
-        />
+          required={true}
+          />
+           
       </div>
       <SearchRanges
         rangesProps={searchRanges}

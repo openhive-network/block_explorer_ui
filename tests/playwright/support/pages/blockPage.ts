@@ -52,8 +52,8 @@ export class BlockPage {
     this.seeMoreDetailsBtn = page.getByRole('button', {name: "See more details"});
     this.detailedOperationCard = page.getByTestId("detailed-operation-card")
     this.operationTypeTitle = page.getByTestId("operation-type");
-    this.firstTransactionLink = page.locator('a.text-explorer-turquoise').nth(2);
-    this.usernameInOperationDetails = page.locator('span.text-explorer-turquoise').nth(1);
+    this.firstTransactionLink = page.getByTestId('transaction-number').locator('a[class="text-link"]').first();
+    this.usernameInOperationDetails = page.getByTestId('operation-content').locator('a > span[class="text-link"]').first();
     this.voteOperationPostLink = page.locator('a.text-explorer-yellow').first();
     this.operationsJsonFormat = page.locator('pre');
     this.blockNumber = page.getByTestId('block-number-search');

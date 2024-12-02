@@ -25,7 +25,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 import { trimAccountName } from "@/utils/StringUtils";
-
+import AutocompleteInput from "@/components/ui/AutoCompleteInput";
 interface BlockSearchProps {
   startBlockSearch: (
     blockSearchProps: Explorer.BlockSearchProps
@@ -111,13 +111,12 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
   return (
     <>
       <div className="flex flex-col">
-        <Input
-          className="w-1/2 bg-theme dark:bg-theme border-0 border-b-2"
-          type="text"
+       <AutocompleteInput
+          value={accountName}
+          onChange={setAccountName}
           placeholder="Account name"
-          value={accountName || ""}
-          onChange={(e) => setAccountName(e.target.value)}
-          data-testid="account-name-input"
+          inputType="account_name"
+          className="w-1/2 bg-theme dark:bg-theme border-0 border-b-2"
         />
       </div>
       <SearchRanges
