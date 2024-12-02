@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import moment from "moment";
 
 import { SearchRangesResult } from "../../hooks/common/useSearchRanges";
 import { Select, SelectContent, SelectTrigger, SelectItem } from "../ui/select";
@@ -42,6 +43,16 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
       fieldSetter(value);
     }
   };
+
+  useEffect(() => {
+    if (
+      moment(startDate).isSame(endDate) ||
+      moment(startDate).isAfter(endDate)
+    ) {
+      setStartDate(moment(startDate).subtract(1, "hours").toDate());
+    }
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startDate, endDate]);
 
   return (
     <div className="py-2 flex flex-col gap-y-2">
@@ -163,7 +174,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
           <div className="flex flex-col w-full mb-4">
             <label className="ml-2 my-2">From date</label>
             <DateTimePicker
-              date={startDate || new Date()}
+              date={startDate ?? new Date()}
               setDate={setStartDate}
               lastDate={endDate}
             />
@@ -171,7 +182,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
           <div className="flex flex-col w-full">
             <label className="ml-2 mb-2">To date</label>
             <DateTimePicker
-              date={endDate || new Date()}
+              date={endDate ?? new Date()}
               setDate={setEndDate}
               firstDate={startDate}
             />
