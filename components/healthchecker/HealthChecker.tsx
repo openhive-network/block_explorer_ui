@@ -119,7 +119,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
       const initialEndpoints: IScoredEndpoint[] | undefined = customApiList?.map((api) => ({endpointUrl: api, score: 1, down: false}))
       if (initialEndpoints) setScoredEndpoints(initialEndpoints);
       hc.on('error', error => console.error(error.message));
-      hc.on("data", (data: Array<IScoredEndpoint>) => { console.log(JSON.stringify(data)); console.time("on"); setScoredEndpoints(data) });
+      hc.on("data", (data: Array<IScoredEndpoint>) => { console.log(JSON.stringify(data)); setScoredEndpoints(data) });
       setHealthChecker(hc);
     }
   }, [healthChecker])
