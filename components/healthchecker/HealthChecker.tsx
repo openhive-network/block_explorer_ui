@@ -24,9 +24,12 @@ interface HealthCheckerComponentProps {
   customApiList?: string[];
   customApiCheckers?: Map<string, ApiChecker>;
   providersForEndpoints: Map<string, string>;
+  healthChecker?: HealthChecker;
+  scoredEndpoints?: IScoredEndpoint[];
   changeNodeAddress: (url: string | null) => void; 
   changeEndpointAddress: (endpoint: string, newProvider: string) => void;
   resetEndpoints: () => void;
+  setScoredEndpoints: (scoredEndpoints: IScoredEndpoint[] | undefined ) => void;
 }
 
 const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
@@ -35,19 +38,20 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   changeNodeAddress,
   changeEndpointAddress,
   resetEndpoints,
+  setScoredEndpoints,
   customApiCheckers,
   className,
-  providersForEndpoints
+  providersForEndpoints,
+  healthChecker,
+  scoredEndpoints,
 }) => {
 
   const [chainInitialized, setChainIntialized] = useState<boolean>(false);
-  const [scoredEndpoints, setScoredEndpoints] = useState<IScoredEndpoint[]>([]);
   const [apiChecksByProvider, setApiChecksByProvider] = useState<Map<string, string[]>>(new Map());
   const [isApiCheckDialogOpened, setIsApiCheckDialogOpened] = useState<boolean>(false);
   const [isEndpointProviderDialogOpened, setIsEndpointProviderDialogOpened] = useState<boolean>(false);
   const [openedProvider, setOpenedProvider] = useState<string | undefined>(undefined);
   const [openedEndpoint, setOpenedEndpoint] = useState<string | undefined>(undefined);
-  const [healthChecker, setHealthChecker] = useState<HealthChecker | undefined>(undefined);
 
   const onApiCheckDialogChange = (isOpened: boolean, provider?: string) => {
     if (isOpened) {
@@ -77,12 +81,17 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   }
 
   const initializeDefaultChecks = () => {
+    const initialEndpoints: IScoredEndpoint[] | undefined = customApiList?.map((api) => ({endpointUrl: api, score: 1, down: false}))
+    if (initialEndpoints) setScoredEndpoints(initialEndpoints);
     const initialApiChecksByProviders = new Map<string, string[]>();
     customApiList?.forEach((api) => {
       initialApiChecksByProviders.set(api, Array.from(customApiCheckers?.keys() || []));
     })
     setApiChecksByProvider(initialApiChecksByProviders);
+    console.log('HC ON DATA AND ERROR');
     restartCheckerAfterChange(initialApiChecksByProviders)
+    healthChecker?.on('error', error => console.error(error.message));
+    healthChecker?.on("data", (data: Array<IScoredEndpoint>) => { console.log(JSON.stringify(data)); setScoredEndpoints(data) });
   }
 
   const restartCheckerAfterChange = (newCheckers: Map<string, string[]>) => {
@@ -112,17 +121,6 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
       setChainIntialized(true);
     }
   }, [chainInitialized, customApiCheckers, customApiList, healthChecker, apiChecksByProvider])
-  
-  useEffect(() => {
-    if (!healthChecker) {
-      const hc = new HealthChecker();
-      const initialEndpoints: IScoredEndpoint[] | undefined = customApiList?.map((api) => ({endpointUrl: api, score: 1, down: false}))
-      if (initialEndpoints) setScoredEndpoints(initialEndpoints);
-      hc.on('error', error => console.error(error.message));
-      hc.on("data", (data: Array<IScoredEndpoint>) => { console.log(JSON.stringify(data)); setScoredEndpoints(data) });
-      setHealthChecker(hc);
-    }
-  }, [healthChecker])
 
   const renderProvider = (scoredEndpoint: IScoredEndpoint, index: number) => {
     const {endpointUrl, score} = scoredEndpoint;
@@ -144,7 +142,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     )       
   }
 
-  if (!scoredEndpoints.length) {
+  if (!scoredEndpoints?.length) {
     return <Loader2 className="ml-2 animate-spin h-16 w-16  ..." />
   }
   return (

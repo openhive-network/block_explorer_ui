@@ -7,7 +7,7 @@ import { ExplorerNodeApi } from "@/types/Node";
 
 export default function HealthcheckerPage() {
 
-  const {hiveChain} = useHiveChainContext();
+  const {hiveChain, healthChecker, scoredEndpoints, setScoredEndpoints} = useHiveChainContext();
   const { nodeAddress, apiAddress, setNodeAddress, setApiAddress } =
     useAddressesContext();
 
@@ -92,8 +92,11 @@ export default function HealthcheckerPage() {
           customApiCheckers={checksMap}
           customApiList={apiList}
           providersForEndpoints={endpointProviders}
+          healthChecker={healthChecker}
           changeEndpointAddress={changeEndpointAddress} 
           resetEndpoints={resetEndpoints}
+          setScoredEndpoints={setScoredEndpoints}
+          scoredEndpoints={scoredEndpoints}
         />
       </div>
     </>
