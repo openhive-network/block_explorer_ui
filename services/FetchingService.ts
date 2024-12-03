@@ -68,21 +68,25 @@ class FetchingService {
   async getVestingDelegations(
     delegatorAccount: string
   ): Promise<Hive.VestingDelegations[]> {
-    return await this.extendedHiveChain!.api.database_api.find_vesting_delegations(
+    const result = await this.extendedHiveChain!.api.database_api.find_vesting_delegations(
       {
         account: delegatorAccount,
       }
-    ).then((response) => response.delegations);
+    );
+    return result.delegations;
+    //.then((response) => response.delegations);
   }
 
   async getRcDelegations(
     delegatorAccount: string,
     limit: number
   ): Promise<Hive.RCDelegations[]> {
-    return await this.extendedHiveChain!.api.rc_api.list_rc_direct_delegations({
+    const result = await this.extendedHiveChain!.api.rc_api.list_rc_direct_delegations({
       start: [delegatorAccount, ""],
       limit: limit,
-    }).then((response) => response.rc_direct_delegations);
+    });
+    return result.rc_direct_delegations;
+    //.then((response) => response.rc_direct_delegations);
   }
 
   // Rest API calls:
