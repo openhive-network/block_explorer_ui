@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { IScoredEndpoint, HealthChecker } from "@hiveio/wax";
+import { TScoredEndpoint, HealthChecker } from "@hiveio/wax";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
@@ -24,11 +24,11 @@ interface HealthCheckerComponentProps {
   customApiCheckers?: Map<string, ApiChecker>;
   providersForEndpoints: Map<string, string>;
   healthChecker?: HealthChecker;
-  scoredEndpoints?: IScoredEndpoint[];
+  scoredEndpoints?: TScoredEndpoint[];
   changeNodeAddress: (url: string | null) => void; 
   changeEndpointAddress: (endpoint: string, newProvider: string) => void;
   resetEndpoints: () => void;
-  setScoredEndpoints: (scoredEndpoints: IScoredEndpoint[] | undefined ) => void;
+  setScoredEndpoints: (scoredEndpoints: TScoredEndpoint[] | undefined ) => void;
 }
 
 const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
@@ -80,7 +80,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   }
 
   const initializeDefaultChecks = () => {
-    const initialEndpoints: IScoredEndpoint[] | undefined = customApiList?.map((api) => ({endpointUrl: api, score: 1, down: false}))
+    const initialEndpoints: TScoredEndpoint[] | undefined = customApiList?.map((api) => ({endpointUrl: api, score: 1, up: true, lastLatency: 0}))
     if (initialEndpoints) setScoredEndpoints(initialEndpoints);
     const initialApiChecksByProviders = new Map<string, string[]>();
     customApiList?.forEach((api) => {
@@ -119,7 +119,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     }
   }, [chainInitialized, customApiCheckers, customApiList, healthChecker, apiChecksByProvider])
 
-  const renderProvider = (scoredEndpoint: IScoredEndpoint, index: number) => {
+  const renderProvider = (scoredEndpoint: TScoredEndpoint, index: number) => {
     const {endpointUrl, score} = scoredEndpoint;
     const apiList = apiChecksByProvider.get(endpointUrl);
     return (

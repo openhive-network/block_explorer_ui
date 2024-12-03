@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { createHiveChain, HealthChecker, IHiveChainInterface, IScoredEndpoint } from "@hiveio/wax";
+import { createHiveChain, HealthChecker, IHiveChainInterface, TScoredEndpoint } from "@hiveio/wax";
 import fetchingService from "@/services/FetchingService";
 
 type HiveChainContextType = {
   hiveChain: IHiveChainInterface | undefined;
   healthChecker: HealthChecker | undefined;
-  scoredEndpoints: IScoredEndpoint[] | undefined;
-  setScoredEndpoints: (scoredEndpoints: IScoredEndpoint[] | undefined ) => void;
+  scoredEndpoints: TScoredEndpoint[] | undefined;
+  setScoredEndpoints: (scoredEndpoints: TScoredEndpoint[] | undefined ) => void;
 };
 
 export const HiveChainContext = createContext<HiveChainContextType>({
@@ -33,7 +33,7 @@ export const HiveChainContextProvider: React.FC<{
     undefined
   );
   const [healthChecker, setHealthChecker] = useState<HealthChecker | undefined>(undefined);
-  const [scoredEndpoints, setScoredEndpoints] = useState<IScoredEndpoint[] | undefined>(undefined);
+  const [scoredEndpoints, setScoredEndpoints] = useState<TScoredEndpoint[] | undefined>(undefined);
 
   const createChain = async () => {
     const chain = await createHiveChain();
@@ -45,7 +45,7 @@ export const HiveChainContextProvider: React.FC<{
     const healthChecker = new HealthChecker();
     setHealthChecker(healthChecker);
     healthChecker?.on('error', error => console.error(error.message));
-    healthChecker?.on("data", (data: Array<IScoredEndpoint>) => { console.log(JSON.stringify(data)); data.length ?setScoredEndpoints(data) : null });
+    healthChecker?.on("data", (data: Array<TScoredEndpoint>) => { console.log(JSON.stringify(data)); data.length ?setScoredEndpoints(data) : null });
   }
 
   useEffect(() => {
