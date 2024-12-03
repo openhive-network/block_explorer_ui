@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
-import { IScoredEndpoint } from "@hiveio/wax";
-import { HealthChecker } from "@hiveio/wax";
+import { IScoredEndpoint, HealthChecker } from "@hiveio/wax";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
