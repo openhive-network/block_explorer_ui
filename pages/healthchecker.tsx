@@ -53,7 +53,7 @@ export default function HealthcheckerPage() {
     title: "Witness Schedule",
     method: extendedHiveChain?.api.database_api.get_witness_schedule,
     params: { id: 1 }, 
-    validatorFunction: data => !!data.result,
+    validatorFunction: data => !!data,
   })
   .set("vesting_delegations", {
     title: "Vesting Delegations",
