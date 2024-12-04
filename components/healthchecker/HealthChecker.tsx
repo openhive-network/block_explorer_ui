@@ -122,12 +122,17 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   const renderProvider = (scoredEndpoint: TScoredEndpoint, index: number) => {
     const {endpointUrl, score} = scoredEndpoint;
     const apiList = apiChecksByProvider.get(endpointUrl);
+    let lastLatency: number | null = null;
+    if (scoredEndpoint.up ) {
+      lastLatency = scoredEndpoint.lastLatency;
+    }
     return (
       <ProviderCard 
         index={index}
         providerLink={endpointUrl}
         switchToProvider={changeNodeAddress}
         disabled={score <= 0}
+        latency={lastLatency}
         isSelected={endpointUrl === currentAddress}
         apiList={apiList || []}
         customApiCheckers={customApiCheckers}

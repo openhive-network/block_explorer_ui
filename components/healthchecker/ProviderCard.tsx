@@ -12,6 +12,7 @@ interface ProviderCardProps {
   disabled: boolean;
   isSelected: boolean;
   apiList: string[];
+  latency: number | null;
   customApiCheckers?: Map<string, ApiChecker>;
   providersForEndpoints: Map<string, string>;
   switchToProvider: (providerLink: string | null) => void;
@@ -26,6 +27,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
   disabled,
   isSelected,
   apiList,
+  latency,
   customApiCheckers,
   providersForEndpoints,
   switchToProvider,
@@ -49,7 +51,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
     <Card className="grid grid-cols-8 grid-rows-2 gap-y-1 my-1 p-2">
       <div className="col-start-1 row-start-1 col-span-1 row-span-2 flex justify-center items-center">{index + 1}</div>
       <div className={cn("row-start-1 col-start-2 col-span-5 flex items-center", {"text-red-600": disabled})}>
-        {providerLink}
+        {providerLink} ({latency})
       </div>
       <Button disabled={disabled} className="hover:bg-slate-400 rounded col-start-7 col-span-2 justify-self-end" onClick={() => {onProviderChange(providerLink)}}>Switch to API</Button>
       <Button className="hover:bg-slate-400 rounded col-start-7 col-span-2 justify-self-end row-start-2" onClick={() => {onDialogOpenChange(true, providerLink)}}><Pencil /></Button>
