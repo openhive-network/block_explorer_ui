@@ -124,7 +124,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     const apiList = apiChecksByProvider.get(endpointUrl);
     let lastLatency: number | null = null;
     if (scoredEndpoint.up ) {
-      lastLatency = scoredEndpoint.lastLatency;
+      lastLatency = scoredEndpoint.lastLatency || null;
     }
     return (
       <ProviderCard 
