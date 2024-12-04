@@ -123,8 +123,8 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
     >
       <TableHeader>
         <TableRow>
-          <TableHead className="sticky left-0 bg-theme "></TableHead>
-          <TableHead className="pl-2 sticky left-12 bg-theme ">Block</TableHead>
+          <TableHead className="sticky left-0"></TableHead>
+          <TableHead className="pl-2 sticky left-12">Block</TableHead>
           <TableHead>Transaction</TableHead>
           <TableHead>Time</TableHead>
           <TableHead>Operation</TableHead>
@@ -152,11 +152,11 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                     operationPerspective === "incoming",
                 })}
               >
-                <TableCell className="sticky left-0 bg-theme xl:bg-inherit">
+                <TableCell className="sticky left-0 xl:bg-inherit">
                   <CopyJSON value={getUnformattedValue(operation)} />
                 </TableCell>
                 <TableCell
-                  className="pl-2 sticky left-12 bg-theme xl:bg-inherit"
+                  className="pl-2 sticky left-12 xl:bg-inherit"
                   data-testid="block-number-operation-table"
                 >
                   <Link
