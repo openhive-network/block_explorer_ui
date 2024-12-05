@@ -62,6 +62,10 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
     return true;
   };
 
+  const handleCloseDateTimePicker = () => {
+    setIsCalendarOpen(false);
+  };
+
   return (
     <Popover
       open={isCalendarOpen}
@@ -91,6 +95,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
           value={date}
           onChange={handleSelect}
           open={isCalendarOpen}
+          onClose={handleCloseDateTimePicker}
           isValidDate={isValidDate}
         />
       </PopoverContent>

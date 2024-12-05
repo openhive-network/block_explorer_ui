@@ -18,6 +18,7 @@ interface CustomDateTimePickerProps {
   value: Date;
   onChange: (date: Date) => void;
   open: boolean;
+  onClose: () => void;
   isValidDate: (day: Date) => boolean;
 }
 
@@ -42,6 +43,7 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
   value,
   onChange,
   open,
+  onClose,
   isValidDate,
 }) => {
   const [internalValue, setInternalValue] = useState(value || new Date());
@@ -115,6 +117,7 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
   const handleConfirm = () => {
     onChange(internalValue);
     setShowYearMonthPicker(false);
+    onClose();
   };
 
   const renderDays = () => {
@@ -268,6 +271,7 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
               <div className="actions">
                 <button
                   onClick={() => {
+                    onClose();
                     setShowYearMonthPicker(false);
                   }}
                 >
