@@ -1,0 +1,195 @@
+.datetime-popover {
+    position: relative;
+    z-index: 9999 !important;
+    background: var(--color-background);
+    color: var(--color-text);
+    min-width: 255px;
+    padding: 8px;
+
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+
+}
+
+.month-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px
+}
+
+.month-button:hover {
+    background: var(--color-button-hover);
+
+}
+
+.month-label {
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.calendar-day-names {
+    display: flex;
+    background: var(--color-row-even);
+}
+
+
+.calendar-body {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-row-even);
+}
+
+.calendar-row {
+    display: flex;
+}
+
+
+.day-name,
+.calendar-day {
+    flex: 1;
+    text-align: center;
+    margin: 2px 0;
+    font-size: 12px;
+    background: var(--color-row-odd)
+}
+
+.calendar-day {
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 4px 0;
+    transition: background 0.2s;
+}
+
+.calendar-day:not(.not-same-month) {
+    color: #000;
+}
+
+.calendar-day.not-same-month {
+    color: #aaa;
+}
+
+.calendar-day:hover:not(.selected-day):not(.not-same-month) {
+    background: var(--color-row-hover)
+}
+
+.selected-day {
+    background: var(--color-turquoise);
+}
+
+.time-section {
+    margin-top: 8px;
+    padding: 8px 0;
+    border-top: 1px solid #ccc;
+}
+
+.time-inputs {
+    display: flex;
+    justify-content: space-around;
+}
+
+.time-field {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+
+.time-field label {
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+
+.time-field input {
+    width: 50px;
+    text-align: center;
+    padding: 4px;
+    border: solid var(--color-text) 1px;
+    border-radius: 4px;
+    background: var(--color-background);
+    color: var(--color-text)
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+}
+
+.actions button {
+    margin-left: 8px;
+    padding: 4px 8px;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    background: var(--color-button);
+}
+
+.actions button:hover {
+    background: var(--color-button-hover)
+}
+
+.year-month-picker {
+    display: flex;
+    flex-direction: column;
+    padding: 8px;
+    max-width: 250px;
+}
+
+.year-input-section {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    justify-content: center;
+
+}
+
+.year-input-section label {
+    margin-right: 8px;
+
+}
+
+.year-input-section input {
+    background: var(--color-background);
+    color: var(--color-text);
+    border: solid var(--color-text) 1px;
+    border-radius: 4px;
+    padding: 4px;
+}
+
+.month-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 8px;
+
+}
+
+.month-cell {
+    width: 40%;
+    text-align: center;
+    padding: 8px;
+    margin: 4px;
+    background: var(--color-button);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s;
+    color: var(--color-text)
+}
+
+.month-cell:hover {
+    background: var(--color-button-hover);
+}
+
+.disabled-day {
+    background: var(--color-row-even);
+    pointer-events: none;
+    cursor: default;
+}
