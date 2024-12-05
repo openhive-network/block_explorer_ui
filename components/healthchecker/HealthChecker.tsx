@@ -71,7 +71,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     newApiChecks.set(provider, newCheckers);
     setApiChecksByProvider(newApiChecks);
     setIsApiCheckDialogOpened(false);
-    restartCheckerAfterChange(newApiChecks);
+    subscribeToCheckers(newApiChecks);
   }
 
   const changeEndpointProvider = (endpointKey: string, newProvider: string) => {
@@ -81,17 +81,17 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
 
   const initializeDefaultChecks = () => {
     const initialEndpoints: TScoredEndpoint[] | undefined = customApiList?.map((api) => ({endpointUrl: api, score: 1, up: true, lastLatency: 0}))
-    if (initialEndpoints) setScoredEndpoints(initialEndpoints);
+    if (!!initialEndpoints && !scoredEndpoints) setScoredEndpoints(initialEndpoints);
     const initialApiChecksByProviders = new Map<string, string[]>();
     customApiList?.forEach((api) => {
       initialApiChecksByProviders.set(api, Array.from(customApiCheckers?.keys() || []));
     })
     setApiChecksByProvider(initialApiChecksByProviders);
-    restartCheckerAfterChange(initialApiChecksByProviders)
+    subscribeToCheckers(initialApiChecksByProviders)
 
   }
 
-  const restartCheckerAfterChange = (newCheckers: Map<string, string[]>) => {
+  const subscribeToCheckers = (newCheckers: Map<string, string[]>) => {
     const providersByChecks = new Map<string, string[]>();
     for (const [providerKey, checkers] of newCheckers) {
       checkers.forEach((check) => {
@@ -117,7 +117,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
       }
       setChainIntialized(true);
     }
-  }, [chainInitialized, customApiCheckers, customApiList, healthChecker, apiChecksByProvider])
+  }, [chainInitialized, customApiCheckers, healthChecker, apiChecksByProvider])
 
   const renderProvider = (scoredEndpoint: TScoredEndpoint, index: number) => {
     const {endpointUrl, score} = scoredEndpoint;
