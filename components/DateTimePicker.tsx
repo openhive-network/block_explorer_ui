@@ -1,12 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { Calendar as CalendarIcon } from "lucide-react";
-import { Matcher } from "react-day-picker";
+import moment from "moment";
+
 import { Button } from "./ui/button";
-import { Calendar } from "./ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { cn } from "@/lib/utils";
-import TimePicker from "./TimePicker";
 import { numberToTimeString } from "@/utils/StringUtils";
+import CustomDateTimePicker from "./customDateTime/CustomDateTImePicker";
 
 interface DateTimePickerProps {
   date: Date;
@@ -17,6 +17,17 @@ interface DateTimePickerProps {
   firstDate?: Date;
 }
 
+const displayDate = (d: Date) => {
+  return `${d.toDateString()} ${numberToTimeString(
+    d.getUTCHours()
+  )}:${numberToTimeString(d.getUTCMinutes())}:${numberToTimeString(
+    d.getUTCSeconds()
+  )} UTC`;
+};
+
+const normalizeToMidnight = (d: Date) => {
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+};
 const DateTimePicker: React.FC<DateTimePickerProps> = ({
   date,
   setDate,
@@ -25,34 +36,37 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
   lastDate,
   firstDate,
 }) => {
-  const handleSelect = (date: Date | undefined) => {
-    if (date) {
-      setDate(new Date(date));
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const handleSelect = (d: Date | undefined) => {
+    if (d) {
+      setDate(moment(d).toDate());
     }
   };
 
-  const displayDate = (date: Date) => {
-    return `${date.toDateString()} ${numberToTimeString(
-      date.getUTCHours()
-    )}:${numberToTimeString(date.getUTCMinutes())}:${numberToTimeString(
-      date.getUTCSeconds()
-    )} UTC`;
-  };
+  const isValidDate = (d: Date) => {
+    const nd = normalizeToMidnight(d);
 
-  const disableFuture: Matcher | Matcher[] | undefined | any = (date: Date) => {
     if (disableFutureDates) {
       if (firstDate) {
-        return date < firstDate || date < new Date("1900-01-01");
+        const nf = normalizeToMidnight(firstDate);
+        const now = normalizeToMidnight(new Date());
+        return nd >= nf && nd <= now;
       }
       if (lastDate) {
-        return date > lastDate || date < new Date("1900-01-01");
+        const nl = normalizeToMidnight(lastDate);
+        return nd <= nl;
       }
-      return date > new Date() || date < new Date("1900-01-01");
+      return nd < new Date();
     }
+
+    return true;
   };
 
   return (
-    <Popover>
+    <Popover
+      open={isCalendarOpen}
+      onOpenChange={() => setIsCalendarOpen(!isCalendarOpen)}
+    >
       <PopoverTrigger
         asChild
         className="z-10 border-0 border-b-2"
@@ -60,7 +74,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
         <Button
           variant={"outline"}
           className={cn(
-            "w-full justify-start text-left font-normal h-auto",
+            "w-full justify-start text-left font-normal h-auto cursor-pointer",
             !date && "text-muted-foreground"
           )}
           data-testid="datepicker-trigger"
@@ -73,19 +87,12 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({
         side={side}
         className="w-auto p-0 text-text bg-theme"
       >
-        <Calendar
-          mode="single"
-          selected={date}
-          onSelect={handleSelect}
-          data-testid="datepicker-calender"
-          disabled={disableFuture}
+        <CustomDateTimePicker
+          value={date}
+          onChange={handleSelect}
+          open={isCalendarOpen}
+          isValidDate={isValidDate}
         />
-        <div className="flex justify-center items-center mb-4">
-          <TimePicker
-            date={date}
-            onSelect={handleSelect}
-          />
-        </div>
       </PopoverContent>
     </Popover>
   );
