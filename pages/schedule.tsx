@@ -63,7 +63,7 @@ const Schedule = () => {
       <Loader2 className="animate-spin mt-1 h-12 w-12 ml-3 ..." />
     </div>
   ) : (
-    <div className="w-full grid lg:grid-cols-2 gap-4 content-start px-[2rem] md:px-[5rem] ">
+    <div className="w-full grid lg:grid-cols-2 gap-4 content-start px-[1rem] md:px-[5rem] ">
       <WitnessSchedule
         data={scheduledWitnessesData}
         currentProducer={producerAccount}

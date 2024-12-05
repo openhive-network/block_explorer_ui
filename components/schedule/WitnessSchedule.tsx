@@ -88,9 +88,8 @@ const WitnessSchedule: React.FC<WitnessSchedule> = ({
   blocksLeftBeforeRefetch,
 }) => {
   return (
-    <div>
       <div className="flex w-full overflow-auto">
-        <div className="text-text w-[100%] bg-theme dark:bg-theme p-5">
+        <div className="text-text w-[100%] bg-theme dark:bg-theme p-4">
           <p className="text-center text-3xl my-2">Witness Schedule</p>
 
           <Table data-testid="table-body">
@@ -109,7 +108,6 @@ const WitnessSchedule: React.FC<WitnessSchedule> = ({
           </div>
         </div>
       </div>
-    </div>
   );
 };
 

@@ -49,6 +49,7 @@ const AccountTopBar: React.FC<AccountTopBarProps> = ({
           totalCount={accountOperations.total_operations || 0}
           pageSize={config.standardPaginationSize}
           onPageChange={setPage}
+          isMirrored={true}
         />
       </div>
       <div className="my-1 flex gap-x-2">
