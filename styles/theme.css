@@ -117,3 +117,74 @@ pre {
   background-color: rgb(255, 255, 255) !important;
   color: rgb(0, 0, 0) !important; 
 }
+/*AutoCompleteInput Styles*/
+.scrollbar-autocomplete {
+  max-height: 18rem; 
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-bg) var(--scrollbar-thumb);
+}
+
+.scrollbar-autocomplete::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollbar-autocomplete::-webkit-scrollbar-track {
+  background: var(--scrollbar-bg);
+}
+
+.scrollbar-autocomplete::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+  border-radius: 10px;
+  border: 3px solid var(--scrollbar-bg);
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.autocomplete-result-container {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--theme-bg);
+  box-shadow: var(--theme-shadow);
+  border-radius: 0.5rem;
+  margin-top: 0.25rem;
+  max-height: 24rem;
+  overflow-y: auto;
+}
+
+.autocomplete-result-item {
+  padding: 0.5rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  display: flex;
+  align-items: left;
+  text-align: left;
+  border-radius: 0.5rem;
+  transition: background-color 0.3s ease;
+}
+
+.autocomplete-result-item:hover {
+  background-color: var(--explorer-light-gray);
+}
+
+.autocomplete-result-item {
+  border-top: 1px solid var(--gray-200);
+  text-align: left;
+
+}
+
+.autocomplete-result-link {
+  color: var(--color-link);
+  text-decoration: none;
+}
+
+.autocomplete-result-label {
+  color: var(--explorer-dark-gray);
+}
+
+.autocomplete-result-highlight {
+  color: var(--explorer-turquoise);
+}
+/*End AutoCompleteInput Styles*/
