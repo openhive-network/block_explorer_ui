@@ -107,15 +107,15 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
     // If input_value is an array, we iterate over the array of accounts
     if (Array.isArray(inputValue)) {
       return (
-        <div className="flex flex-col bg-white shadow-lg rounded-lg mt-1">
+        <div className="flex flex-col bg-theme text-text shadow-lg rounded-lg mt-1">
           {inputValue.map((account, index) => (
             <div
               key={index}
               ref={selectedResult === index ? selectedResultRef : null}
               className={cn(
-                "px-2 py-2 text-sm cursor-pointer hover:bg-gray-100 flex items-center justify-between rounded-md",
+                "px-2 py-2 text-sm cursor-pointer hover:bg-buttonHover flex items-center justify-between rounded-md",
                 {
-                  "bg-gray-100": selectedResult === index,
+                  "bg-buttonBg": selectedResult === index,
                   "border-t border-gray-200": index > 0,
                 }
               )}
@@ -127,12 +127,15 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
               }}
             >
               {linkResult ? (
-                <Link href={`/@${account}`} className="w-full">
-                  <span className="text-blue-600">{account}</span>
+                <Link
+                  href={`/@${account}`}
+                  className="w-full"
+                >
+                  <span className="text-link">{account}</span>
                 </Link>
               ) : (
                 <div className="w-full">
-                  <span className="text-blue-600">{account}</span>
+                  <span className="text-link">{account}</span>
                 </div>
               )}
               {selectedResult === index && (
@@ -146,7 +149,10 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
   };
 
   return (
-    <div ref={searchContainerRef} className={cn("relative", className)}>
+    <div
+      ref={searchContainerRef}
+      className={cn("relative", className)}
+    >
       <div className="flex items-center pr-2 z-50">
         <Input
           ref={inputRef} // Attach ref to input field
@@ -159,7 +165,10 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
           onKeyDown={handleKeyDown} // Handle keyboard events
         />
         {!!value.length ? (
-          <X className="cursor-pointer" onClick={() => resetSearchBar()} />
+          <X
+            className="cursor-pointer"
+            onClick={() => resetSearchBar()}
+          />
         ) : linkResult ? (
           <Search />
         ) : null}
