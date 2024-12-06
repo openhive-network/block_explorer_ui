@@ -99,7 +99,7 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
     return () => {
       router.events.off("routeChangeStart", handleRouteChange);
     };
-  }, [router.events]);
+  }, [router.events, resetSearchBar]);
 
   
   //Handle keyboard events
