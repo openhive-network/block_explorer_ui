@@ -1,224 +1,54 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Search, X, CornerDownLeft as Enter } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/router";
-
-import Hive from "@/types/Hive";
+import React, { useState, useRef } from "react";
 import { cn } from "@/lib/utils";
-import { capitalizeFirst, trimAccountName } from "@/utils/StringUtils";
-import useMediaQuery from "@/hooks/common/useMediaQuery";
-import useDebounce from "@/hooks/common/useDebounce";
-import useOnClickOutside from "@/hooks/common/useOnClickOutside";
-import useInputType from "@/hooks/api/common/useInputType";
-import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-
+import AutocompleteInput from "./ui/AutoCompleteInput";
+import { Search } from "lucide-react";
+import { X } from "lucide-react";
 interface SearchBarProps {
   open: boolean;
   onChange?: (open: boolean) => void;
   className?: string;
 }
 
-const getResultTypeHeader = (result: Hive.InputTypeResponse) => {
-  switch (result.input_type) {
-    case "block_num":
-      return "block";
-
-    case "transaction_hash":
-      return "transaction";
-
-    case "block_hash":
-      return "block";
-
-    default:
-      return "account";
-  }
-};
-
-const renderSearchData = (
-  data: Hive.InputTypeResponse,
-  onClick: Function,
-  selected: number
-) => {
-  if (data.input_type === "account_name_array") {
-    return (
-      <div className="flex flex-col">
-        {(data.input_value as string[]).map((account, index) => {
-          return (
-            <div
-              key={index}
-              className={cn(
-                "px-4 py-2 hover:bg-explorer-light-gray flex items-center justify-between",
-                {
-                  "md:bg-explorer-light-gray bg-opacity-50": selected === index,
-                  "border-t border-gray-700": !!index,
-                }
-              )}
-            >
-              <Link
-                onClick={() => onClick()}
-                href={`/@${account}`}
-                className="w-full"
-              >
-                User <span className="text-explorer-turquoise">{account}</span>
-              </Link>
-              {selected === index && <Enter className="hidden md:inline" />}
-            </div>
-          );
-        })}
-      </div>
-    );
-  } else if (data.input_type === "invalid_input") {
-    // TODO: handle empty data for block num and transaction
-    return (
-      <div className="px-4 py-2">Account not found: {data.input_value}</div>
-    );
-  } else {
-    const resultType = getResultTypeHeader(data);
-    const href =
-      resultType === "account"
-        ? `/@${data.input_value}`
-        : `/${resultType}/${data.input_value}`;
-    return (
-      <div className="px-4 py-2 flex items-center justify-between">
-        <Link
-          onClick={() => onClick()}
-          className="w-full block"
-          href={href}
-          data-testid="navbar-search-content-link"
-        >
-          {capitalizeFirst(resultType)}{" "}
-          <span className="text-explorer-turquoise">{data.input_value}</span>
-        </Link>
-        <Enter className="hidden md:inline" />
-      </div>
-    );
-  }
-};
-
 const SearchBar: React.FC<SearchBarProps> = ({ open, onChange, className }) => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [inputFocus, setInputFocus] = useState(false);
-  const [selectedResult, setSelectedResult] = useState(0);
+  const [isAutocompleteVisible, setAutocompleteVisible] = useState(open);
   const searchContainerRef = useRef(null);
-  const [searchInputType, setSearchInputType] = useState<string>("");
 
-  useOnClickOutside(searchContainerRef, () => setInputFocus(false));
-
-  const isMobile = useMediaQuery("(max-width: 768px)");
-
-  const router = useRouter();
-  const { inputTypeData } = useInputType(searchInputType);
-
-  const updateInput = async (value: string) => {
-    setSearchInputType(value);
+  const handleToggle = () => {
+    setAutocompleteVisible(!isAutocompleteVisible);
+    if (onChange) onChange(!isAutocompleteVisible);
   };
-
-  const debouncedSearch = useDebounce(
-    (value: string) => updateInput(trimAccountName(value)),
-    1000
-  );
-
-  const handleInputChange = (value: string) => {
-    setSearchTerm(value);
-    debouncedSearch(value);
-  };
-
-  const resetSearchBar = () => {
-    setInputFocus(false);
-    setSearchTerm("");
-    updateInput("");
-    setSelectedResult(0);
-  };
-
-  useEffect(() => {
-    const keyDownEvent = (event: KeyboardEvent) => {
-      if (inputFocus && inputTypeData?.input_value?.length) {
-        if (event.code === "ArrowDown") {
-          setSelectedResult((selectedResult) =>
-            selectedResult < inputTypeData.input_value.length - 1
-              ? selectedResult + 1
-              : selectedResult
-          );
-        }
-        if (event.code === "ArrowUp") {
-          setSelectedResult((selectedResult) =>
-            selectedResult > 0 ? selectedResult - 1 : selectedResult
-          );
-        }
-        if (event.code === "Enter") {
-          if (inputTypeData.input_type === "account_name_array") {
-            router.push(`/@${inputTypeData.input_value[selectedResult]}`);
-          } else {
-            if (inputTypeData.input_type === "account_name") {
-              router.push(`/@${inputTypeData.input_value}`);
-            }
-          }
-          resetSearchBar();
-          setInputFocus(false);
-        }
-      }
-    };
-
-    document.addEventListener("keydown", keyDownEvent);
-    return () => {
-      document.removeEventListener("keydown", keyDownEvent);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [inputFocus, inputTypeData, selectedResult]);
 
   return (
     <>
-      <div
-        className={cn(
-          "w-0 hidden md:w-1/4 relative bg-theme dark:bg-theme",
-          {
-            "w-full inline": open,
-          },
-          className
-        )}
-        ref={searchContainerRef}
-      >
-        <div className="border-input border-b-2 flex items-center pr-2">
-          <Input
-            className="border-0"
-            type="text"
-            placeholder="Search user, block, transaction"
-            value={searchTerm}
-            onChange={(e) => handleInputChange(e.target.value)}
-            onFocus={() => setInputFocus(true)}
-            data-testid="search-bar-input"
-          />
-          {isMobile ? (
-            <X
-              className="cursor-pointer"
-              onClick={() => {
-                resetSearchBar();
-                onChange && onChange(false);
-              }}
-            />
-          ) : !!searchTerm.length ? (
-            <X
-              className="cursor-pointer"
-              onClick={() => resetSearchBar()}
-            />
-          ) : (
-            <Search />
+      {isAutocompleteVisible && (
+        <AutocompleteInput
+          value={searchTerm}
+          onChange={setSearchTerm}
+          placeholder="Search user, block, transaction"
+          inputType={['block_num', 'transaction_hash', 'block_hash', 'account_name']}
+          className={cn(
+            "w-full md:w-1/4 bg-theme dark:bg-theme border-0 border-b-2 width rowHover",
+            className
           )}
-        </div>
-        {inputFocus && !!inputTypeData?.input_value && (
-          <div className="absolute bg-theme dark:bg-theme w-full max-h-96 overflow-y-auto border border-input border-t-0">
-            {renderSearchData(inputTypeData, resetSearchBar, selectedResult)}
-          </div>
-        )}
-      </div>
-      {!open && (
+          linkResult={true}
+          addLabel={true}
+        />
+      )}
+      {!isAutocompleteVisible && (
         <Button
-          className="px-0 bg-inherit"
-          onClick={() => onChange && onChange(true)}
+          onClick={handleToggle}
+          className="md:hidden"
         >
           <Search />
         </Button>
+      )}
+      {isAutocompleteVisible && (
+         <X
+          onClick={handleToggle}
+          className="md:hidden"
+        />
       )}
     </>
   );
