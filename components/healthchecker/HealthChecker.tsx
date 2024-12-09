@@ -128,6 +128,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     }
     return (
       <ProviderCard 
+        key={index}
         index={index}
         providerLink={endpointUrl}
         switchToProvider={changeNodeAddress}
@@ -144,11 +145,8 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     )       
   }
 
-  if (!scoredEndpoints?.length) {
-    return <Loader2 className="ml-2 animate-spin h-16 w-16  ..." />
-  }
   return (
-    <div className={cn([className])}>
+    <div className={cn(className)}>
       <Card className="grid grid-cols-4 grid-rows-3 gap-y-1 my-1 p-2 ">
         <div className="row-start-1 col-start-1 col-span-4 flex justify-center">Block Explorer healthchecker for nodes</div>
         <div className="col-start-1 row-start-2 row-span-2 col-span-3">
@@ -164,7 +162,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         </div>
 
       </Card>
-      {scoredEndpoints.map(
+      {scoredEndpoints?.map(
         (scoredEndpoint, index) => renderProvider(scoredEndpoint, index)
       )}
       <ApiCheckDialog 
