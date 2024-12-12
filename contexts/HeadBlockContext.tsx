@@ -20,7 +20,7 @@ export const HeadBlockContext = createContext<IHeadBlockContext | undefined>(
 export const useHeadBlockNumber = () => {
   const context = useContext(HeadBlockContext);
   if (context === undefined) {
-    throw new Error("hook must be used inside it`s context");
+    throw new Error("useHeadBlockNumber must be used inside it`s context");
   }
 
   return context;

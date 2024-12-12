@@ -14,7 +14,7 @@ export const useHiveChainContext = () => {
   const context = useContext(HiveChainContext);
 
   if (context === undefined) {
-    throw new Error("hook must be used inside it`s context");
+    throw new Error("useHiveChainContext must be used inside it`s context");
   }
 
   return context;

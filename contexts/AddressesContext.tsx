@@ -19,7 +19,7 @@ export const useAddressesContext = () => {
   const context = useContext(AddressesContext);
 
   if (context === undefined) {
-    throw new Error("hook must be used inside it`s context");
+    throw new Error("useAddressesContext must be used inside it`s context");
   }
 
   return context;

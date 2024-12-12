@@ -20,7 +20,7 @@ export const useUserSettingsContext = () => {
   const context = useContext(UserSettingsContext);
 
   if (context === undefined) {
-    throw new Error("hook must be used inside it`s context");
+    throw new Error("useUserSettingsContext must be used inside it`s context");
   }
 
   return context;

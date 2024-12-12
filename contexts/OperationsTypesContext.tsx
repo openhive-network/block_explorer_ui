@@ -11,7 +11,17 @@ export const OperationTypesContext = createContext<OperationTypesContextType>({
   operationsTypes: undefined,
 });
 
-export const useOperationTypesContext = () => useContext(OperationTypesContext);
+export const useOperationTypesContext = () => {
+  const context = useContext(OperationTypesContext);
+
+  if (context === undefined) {
+    throw new Error(
+      "useOperationTypesContext must be used inside it`s context"
+    );
+  }
+
+  return context;
+};
 
 export const OperationTypesContextProvider: React.FC<{
   children: React.ReactNode;
