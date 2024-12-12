@@ -1,35 +1,30 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import Explorer from "@/types/Explorer";
 import { trimAccountName } from "@/utils/StringUtils";
-import { SearchRangesResult } from "@/hooks/common/useSearchRanges";
-import { Input } from "@/components/ui/input";
+
 import SearchRanges from "@/components/searchRanges/SearchRanges";
 import { Button } from "@/components/ui/button";
 import AutocompleteInput from "@/components/ui/AutoCompleteInput";
-interface CommentsPermlinkSearchProps {
-  startCommentPermlinkSearch: (
-    accountSearchOperationsProps: Explorer.CommentPermlinSearchParams
-  ) => Promise<void>;
-  data?: Explorer.PermlinkSearchProps;
-  loading?: boolean;
-  searchRanges: SearchRangesResult;
-}
+import { useSearchesContext } from "@/contexts/SearchesContext";
+import usePermlinkSearch from "@/hooks/api/common/usePermlinkSearch";
+import { startCommentPermlinkSearch } from "./utils/commentPermlinkSearchHelpers";
 
-const CommentsPermlinkSearch: React.FC<CommentsPermlinkSearchProps> = ({
-  startCommentPermlinkSearch,
-  loading,
-  data,
-  searchRanges,
-}) => {
+const CommentsPermlinkSearch = () => {
+  const {
+    permlinkSearchProps,
+    setPermlinkSearchProps,
+    setCommentPaginationPage,
+    setCommentType,
+    setLastSearchKey,
+    searchRanges,
+  } = useSearchesContext();
+
+  const { permlinkSearchDataLoading } = usePermlinkSearch(permlinkSearchProps);
+
   const [accountName, setAccountName] = useState<string>("");
 
   const { getRangesValues } = searchRanges;
-
-  const setSearchValues = (data: Explorer.PermlinkSearchProps | any) => {
-    data.accountName && setAccountName(data.accountName);
-    searchRanges.setRangesValues(data);
-  };
 
   const onButtonClick = async () => {
     if (accountName !== "") {
@@ -51,26 +46,24 @@ const CommentsPermlinkSearch: React.FC<CommentsPermlinkSearchProps> = ({
             ? searchRanges.lastBlocksValue
             : undefined,
         lastTime: searchRanges.lastTimeUnitValue,
-        page: data?.page || 1,
         rangeSelectKey: searchRanges.rangeSelectKey,
         timeUnit: searchRanges.timeUnitSelectKey,
       };
-      startCommentPermlinkSearch(commentPermlinksSearchProps);
+      startCommentPermlinkSearch(
+        commentPermlinksSearchProps,
+        setPermlinkSearchProps,
+        setCommentPaginationPage,
+        setCommentType,
+        (val: "comment-permlink") => setLastSearchKey(val)
+      );
     }
   };
-
-  useEffect(() => {
-    if (!!data) {
-      setSearchValues(data);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
 
   return (
     <>
       <p className="ml-2">Find comments permlinks by account name</p>
       <div className="flex flex-col">
-         <AutocompleteInput
+        <AutocompleteInput
           value={accountName}
           onChange={setAccountName}
           placeholder="Author"
@@ -91,7 +84,9 @@ const CommentsPermlinkSearch: React.FC<CommentsPermlinkSearchProps> = ({
           disabled={!accountName}
         >
           Search
-          {loading && <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />}
+          {permlinkSearchDataLoading && (
+            <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />
+          )}
         </Button>
         {!accountName && (
           <label className="text-gray-300 dark:text-gray-500 ">

@@ -1,38 +1,35 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Loader2 } from "lucide-react";
 
 import { config } from "@/Config";
-import Hive from "@/types/Hive";
 import Explorer from "@/types/Explorer";
 import { getOperationButtonTitle } from "@/utils/UI";
 import { trimAccountName } from "@/utils/StringUtils";
-import {
-  convertBooleanArrayToIds,
-  convertIdsToBooleanArray,
-} from "@/lib/utils";
-import { SearchRangesResult } from "@/hooks/common/useSearchRanges";
+import { convertIdsToBooleanArray } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
-import SearchRanges from "@/components/searchRanges/SearchRanges";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 import { Button } from "@/components/ui/button";
 import AutocompleteInput from "@/components/ui/AutoCompleteInput";
-interface CommentsSearchProps {
-  startCommentsSearch: (
-    accountSearchOperationsProps: Explorer.CommentSearchParams
-  ) => Promise<void>;
-  operationsTypes?: Hive.OperationPattern[];
-  data?: Explorer.CommentSearchParams;
-  loading?: boolean;
-  searchRanges: SearchRangesResult;
-}
+import { startCommentSearch } from "./utils/commentSearchHelpers";
+import { useSearchesContext } from "@/contexts/SearchesContext";
+import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
+import useCommentSearch from "@/hooks/api/common/useCommentSearch";
 
-const CommentsSearch: React.FC<CommentsSearchProps> = ({
-  startCommentsSearch,
-  operationsTypes,
-  loading,
-  data,
-  searchRanges,
-}) => {
+const CommentsSearch = () => {
+  const {
+    setCommentSearchProps,
+    commentSearchProps,
+    setCommentPaginationPage,
+    commentPaginationPage,
+    setPreviousCommentSearchProps,
+    setLastSearchKey,
+    searchRanges,
+  } = useSearchesContext();
+
+  const { commentSearchDataLoading } = useCommentSearch(commentSearchProps);
+
+  const { operationsTypes } = useOperationsTypes();
+
   const [accountName, setAccountName] = useState<string>("");
   const [permlink, setPermlink] = useState<string>("");
   const [
@@ -41,16 +38,6 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
   ] = useState<number[]>([]);
 
   const { getRangesValues } = searchRanges;
-
-  const setSearchValues = (data: Explorer.CommentSearchParams) => {
-    data.accountName && setAccountName(Array.isArray(data.accountName) ? data.accountName[0] : data.accountName);
-    data.permlink && setPermlink(data.permlink);
-    data.filters &&
-      setSelectedCommentSearchOperationTypes(
-        convertBooleanArrayToIds(data.filters)
-      );
-    searchRanges.setRangesValues(data);
-  };
 
   const onButtonClick = async () => {
     if (accountName !== "") {
@@ -76,20 +63,19 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
             ? searchRanges.lastBlocksValue
             : undefined,
         lastTime: searchRanges.lastTimeUnitValue,
-        page: data?.page || 1,
+        page: commentPaginationPage,
         rangeSelectKey: searchRanges.rangeSelectKey,
         timeUnit: searchRanges.timeUnitSelectKey,
       };
-      startCommentsSearch(commentSearchProps);
+      startCommentSearch(
+        commentSearchProps,
+        setCommentSearchProps,
+        setCommentPaginationPage,
+        setPreviousCommentSearchProps,
+        (val: "comment") => setLastSearchKey(val)
+      );
     }
   };
-
-  useEffect(() => {
-    if (!!data) {
-      setSearchValues(data);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
 
   return (
     <>
@@ -98,7 +84,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
         permlink.
       </p>
       <div className="flex flex-col">
-      <AutocompleteInput
+        <AutocompleteInput
           value={accountName}
           onChange={setAccountName}
           placeholder="Author"
@@ -140,7 +126,9 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
           disabled={!accountName || !permlink}
         >
           Search
-          {loading && <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />}
+          {commentSearchDataLoading && (
+            <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />
+          )}
         </Button>
         {!accountName && (
           <label className="text-gray-300 dark:text-gray-500 ">

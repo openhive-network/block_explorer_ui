@@ -1,31 +1,33 @@
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 
-import Hive from "@/types/Hive";
 import Explorer from "@/types/Explorer";
 import { getOperationButtonTitle } from "@/utils/UI";
 import { trimAccountName } from "@/utils/StringUtils";
-import { SearchRangesResult } from "@/hooks/common/useSearchRanges";
-import { Input } from "@/components/ui/input";
 import SearchRanges from "@/components/searchRanges/SearchRanges";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 import { Button } from "@/components/ui/button";
 import AutocompleteInput from "@/components/ui/AutoCompleteInput";
-interface AccountSearchProps {
-  startAccountOperationsSearch: (
-    accountSearchOperationsProps: Explorer.AccountSearchOperationsProps
-  ) => Promise<void>;
-  operationsTypes?: Hive.OperationPattern[];
-  loading?: boolean;
-  searchRanges: SearchRangesResult;
-}
+import { startAccountOperationsSearch } from "./utils/accountSearchHelpers";
+import { useSearchesContext } from "@/contexts/SearchesContext";
+import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
+import useAccountOperations from "@/hooks/api/accountPage/useAccountOperations";
 
-const AccountSearch: React.FC<AccountSearchProps> = ({
-  startAccountOperationsSearch,
-  operationsTypes,
-  loading,
-  searchRanges,
-}) => {
+const AccountSearch = () => {
+  const {
+    setLastSearchKey,
+    setAccountOperationsPage,
+    accountOperationsSearchProps,
+    setAccountOperationsSearchProps,
+    setPreviousAccountOperationsSearchProps,
+    searchRanges,
+  } = useSearchesContext();
+
+  const { isAccountOperationsLoading } = useAccountOperations(
+    accountOperationsSearchProps
+  );
+  const { operationsTypes } = useOperationsTypes();
+
   const [accountName, setAccountName] = useState<string>("");
   const [selectedOperationTypes, setSelectedOperationTypes] = useState<
     number[]
@@ -53,7 +55,13 @@ const AccountSearch: React.FC<AccountSearchProps> = ({
             ? selectedOperationTypes
             : undefined,
         };
-      startAccountOperationsSearch(accountOperationsSearchProps);
+      startAccountOperationsSearch(
+        accountOperationsSearchProps,
+        (val: "account") => setLastSearchKey(val),
+        setAccountOperationsPage,
+        setAccountOperationsSearchProps,
+        setPreviousAccountOperationsSearchProps
+      );
     }
   };
 
@@ -67,8 +75,7 @@ const AccountSearch: React.FC<AccountSearchProps> = ({
           inputType="account_name"
           className="w-1/2 bg-theme dark:bg-theme border-0 border-b-2"
           required={true}
-          />
-           
+        />
       </div>
       <SearchRanges
         rangesProps={searchRanges}
@@ -93,7 +100,9 @@ const AccountSearch: React.FC<AccountSearchProps> = ({
           disabled={!accountName}
         >
           Search
-          {loading && <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />}
+          {isAccountOperationsLoading && (
+            <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />
+          )}
         </Button>
         {!accountName && (
           <label className="ml-2 text-muted-foreground">Set account name</label>

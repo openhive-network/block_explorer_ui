@@ -1,11 +1,9 @@
 import { useState } from "react";
-import { Loader2, HelpCircle } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 import { config } from "@/Config";
-import Hive from "@/types/Hive";
 import Explorer from "@/types/Explorer";
 import { getOperationButtonTitle } from "@/utils/UI";
-import useSearchRanges from "@/hooks/common/useSearchRanges";
 import useOperationKeys from "@/hooks/api/homePage/useOperationKeys";
 import SearchRanges from "@/components/searchRanges/SearchRanges";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
@@ -22,23 +20,26 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
 import { trimAccountName } from "@/utils/StringUtils";
 import AutocompleteInput from "@/components/ui/AutoCompleteInput";
-interface BlockSearchProps {
-  startBlockSearch: (
-    blockSearchProps: Explorer.BlockSearchProps
-  ) => Promise<void>;
-  operationsTypes?: Hive.OperationPattern[];
-  loading?: boolean;
-}
+import { useSearchesContext } from "@/contexts/SearchesContext";
 
-const BlockSearch: React.FC<BlockSearchProps> = ({
-  startBlockSearch,
-  operationsTypes,
-  loading,
-}) => {
+import useBlockSearch from "@/hooks/api/homePage/useBlockSearch";
+import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
+import { startBlockSearch } from "./utils/blockSearchHelpers";
+
+const BlockSearch = () => {
+  const {
+    blockSearchProps,
+    setBlockSearchProps,
+    setLastSearchKey,
+    searchRanges,
+  } = useSearchesContext();
+  const { operationsTypes } = useOperationsTypes();
+
+  const { blockSearchDataLoading } = useBlockSearch(blockSearchProps);
+
   const [accountName, setAccountName] = useState<string>("");
   const [selectedOperationTypes, setSelectedOperationTypes] = useState<
     number[]
@@ -52,7 +53,6 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
   );
   const [selectedIndex, setSelectedIndex] = useState<string>("");
 
-  const searchRanges = useSearchRanges("lastBlocks");
   const { operationKeysData } = useOperationKeys(singleOperationTypeId);
   const { getRangesValues } = searchRanges;
 
@@ -82,7 +82,7 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
     setKeysForProperty(Number(newValue));
   };
 
-  const onButtonClick = async () => {
+  const handleStartBlockSearch = async () => {
     const {
       payloadFromBlock,
       payloadToBlock,
@@ -105,18 +105,21 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
         content: fieldContent !== "" ? fieldContent : undefined,
       },
     };
-    startBlockSearch(blockSearchProps);
+
+    startBlockSearch(blockSearchProps, setBlockSearchProps, (val: "block") =>
+      setLastSearchKey(val)
+    );
   };
 
   return (
     <>
       <div className="flex flex-col">
-       <AutocompleteInput
+        <AutocompleteInput
           value={accountName}
           onChange={setAccountName}
           placeholder="Account name"
           inputType="account_name"
-          className="w-1/2 bg-theme dark:bg-theme border-0 border-b-2"
+          className="w-1/2 bg-theme border-0 border-b-2"
         />
       </div>
       <SearchRanges
@@ -233,10 +236,12 @@ const BlockSearch: React.FC<BlockSearchProps> = ({
       <div className="flex items-center ">
         <Button
           data-testid="block-search-btn"
-          onClick={onButtonClick}
+          onClick={handleStartBlockSearch}
         >
           Search
-          {loading && <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />}
+          {blockSearchDataLoading && (
+            <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />
+          )}
         </Button>
       </div>
     </>
