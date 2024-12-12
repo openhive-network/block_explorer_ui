@@ -84,6 +84,11 @@ export default function HealthcheckerPage() {
     setProviders(newProvidersList);
   }
 
+  const deleteProvider = (provider: string) => {
+    const newProviders = [...providers].filter((previousProvider) => provider !== previousProvider);
+    setProviders(newProviders);
+  }
+
 
   return (
     <>
