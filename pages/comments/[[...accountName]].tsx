@@ -9,10 +9,8 @@ import {
   convertCommentsOperationResultToTableOperations,
 } from "@/lib/utils";
 import useCommentSearch from "@/hooks/api/common/useCommentSearch";
-import useOperationTypes from "@/hooks/api/common/useOperationsTypes";
 import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
 import useURLParams from "@/hooks/common/useURLParams";
-import useSearchRanges from "@/hooks/common/useSearchRanges";
 import CustomPagination from "@/components/CustomPagination";
 import JumpToPage from "@/components/JumpToPage";
 import CommentsSearch from "@/components/home/searches/CommentsSearch";
@@ -43,8 +41,6 @@ const Comments: React.FC = () => {
     Explorer.CommentSearchProps | undefined
   >(undefined);
 
-  const searchRanges = useSearchRanges();
-
   const commentSearch = useCommentSearch(formatSearchProps(commentSearchProps));
   const { paramsState, setParams } = useURLParams(defaultSearchParams, [
     "accountName",
@@ -54,11 +50,6 @@ const Comments: React.FC = () => {
   const formattedOperations = useOperationsFormatter(
     commentSearch?.commentSearchData
   ) as Hive.CommentOperationResponse;
-
-  const operationsTypes =
-    useOperationTypes().operationsTypes?.filter((operation) =>
-      config.commentOperationsTypeIds.includes(operation.op_type_id)
-    ) || [];
 
   const startCommentSearch = async (props: Explorer.CommentSearchParams) => {
     if (!!props.accountName) {
@@ -111,13 +102,7 @@ const Comments: React.FC = () => {
     >
       <Card>
         <CardContent className="pt-2">
-          <CommentsSearch
-            startCommentsSearch={startCommentSearch}
-            operationsTypes={operationsTypes}
-            data={paramsState}
-            loading={commentSearch.commentSearchDataLoading}
-            searchRanges={searchRanges}
-          />
+          <CommentsSearch />
         </CardContent>
       </Card>
       {commentSearch.commentSearchData && (
