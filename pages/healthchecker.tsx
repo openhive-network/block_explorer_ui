@@ -4,31 +4,32 @@ import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { useAddressesContext } from "@/contexts/AddressesContext";
 
 import { ExplorerNodeApi } from "@/types/Node";
+import { useState } from "react";
 
 export default function HealthcheckerPage() {
 
   const {hiveChain, healthChecker, scoredEndpoints, setScoredEndpoints} = useHiveChainContext();
   const { nodeAddress, setNodeAddress } =
     useAddressesContext();
+  const [providers, setProviders] = useState<string[]>([
+    "https://api.hive.blog",
+    "https://api.openhive.network",
+    "https://anyx.io",
+    "https://rpc.ausbit.dev",
+    "https://rpc.mahdiyari.info",
+    "https://techcoderx.com",
+    "https://hive.roelandp.nl",
+    "https://hived.emre.sh",
+    "https://api.deathwing.me",
+    "https://api.c0ff33a.uk",
+    "https://hive-api.arcange.eu",
+    "https://hive-api.3speak.tv",
+    "https://hiveapi.actifit.io"
+  ]);
 
   const extendedHiveChain = hiveChain
     ?.extend<ExplorerNodeApi>();
 
-    const apiList = [
-      "https://api.hive.blog",
-      "https://api.openhive.network",
-      "https://anyx.io",
-      "https://rpc.ausbit.dev",
-      "https://rpc.mahdiyari.info",
-      "https://techcoderx.com",
-      "https://hive.roelandp.nl",
-      "https://hived.emre.sh",
-      "https://api.deathwing.me",
-      "https://api.c0ff33a.uk",
-      "https://hive-api.arcange.eu",
-      "https://hive-api.3speak.tv",
-      "https://hiveapi.actifit.io"
-    ];
 
   const checksMap = new Map<string, ApiChecker>()
   .set("reward_funds", {
@@ -78,6 +79,11 @@ export default function HealthcheckerPage() {
     endpointProviders = new Map<string, string>();
   }
 
+  const addNewProvider = (provider: string) => {
+    const newProvidersList = [...providers, provider];
+    setProviders(newProvidersList);
+  }
+
 
   return (
     <>
@@ -89,12 +95,13 @@ export default function HealthcheckerPage() {
           currentAddress={nodeAddress ? nodeAddress : undefined} 
           changeNodeAddress={setNodeAddress} 
           customApiCheckers={checksMap}
-          customApiList={apiList}
+          customApiList={providers}
           providersForEndpoints={endpointProviders}
           healthChecker={healthChecker}
           changeEndpointAddress={changeEndpointAddress} 
           resetEndpoints={resetEndpoints}
           setScoredEndpoints={setScoredEndpoints}
+          addNewProvider={addNewProvider}
           scoredEndpoints={scoredEndpoints}
         />
       </div>
