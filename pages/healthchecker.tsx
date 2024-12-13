@@ -86,6 +86,7 @@ export default function HealthcheckerPage() {
 
   const deleteProvider = (provider: string) => {
     const newProviders = [...providers].filter((previousProvider) => provider !== previousProvider);
+    console.log('NEW PROVIDERS', newProviders);
     setProviders(newProviders);
   }
 
@@ -107,6 +108,7 @@ export default function HealthcheckerPage() {
           resetEndpoints={resetEndpoints}
           setScoredEndpoints={setScoredEndpoints}
           addNewProvider={addNewProvider}
+          deleteProvider={deleteProvider}
           scoredEndpoints={scoredEndpoints}
         />
       </div>

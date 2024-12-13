@@ -30,6 +30,7 @@ interface HealthCheckerComponentProps {
   resetEndpoints: () => void;
   setScoredEndpoints: (scoredEndpoints: TScoredEndpoint[] | undefined ) => void;
   addNewProvider: (provider: string) => void;
+  deleteProvider: (provider: string) => void;
 }
 
 const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
@@ -40,6 +41,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   resetEndpoints,
   setScoredEndpoints,
   addNewProvider,
+  deleteProvider,
   customApiCheckers,
   className,
   providersForEndpoints,
@@ -111,6 +113,11 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
       healthChecker?.register(checker!.method, checker!.params, checker!.validatorFunction, providers);
     }
   }
+
+  const handleDeletionOfProvider = (provider: string) => {
+    deleteProvider(provider);
+    changeChecksForProvider(provider, []);
+  }
   
   useEffect(() => { 
     if (healthChecker && !chainInitialized && !!customApiCheckers) {
@@ -143,6 +150,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         onDialogOpenChange={onApiCheckDialogChange}
         onEndpointProviderDialogChange={onEndpointProviderDialogChange}
         resetEndpoints={resetEndpoints}
+        deleteProvider={handleDeletionOfProvider}
       />
     )       
   }

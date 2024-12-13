@@ -19,6 +19,7 @@ interface ProviderCardProps {
   onDialogOpenChange: (isOpened: boolean, provider?: string) => void;
   onEndpointProviderDialogChange: (isOpened: boolean, endpoint?: string) => void;
   resetEndpoints: () => void;
+  deleteProvider: (provider: string) => void;
 }
 
 const ProviderCard: React.FC<ProviderCardProps> = ({
@@ -33,7 +34,8 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
   switchToProvider,
   onDialogOpenChange,
   onEndpointProviderDialogChange,
-  resetEndpoints
+  resetEndpoints,
+  deleteProvider
 }) => {
 
   const onProviderChange = (providerLink: string) => {
@@ -55,7 +57,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
          
       </div>
       <div className="col-start-7 row-start-1 col-span-2 row-span-2 flex flex-col">
-        <Button className="hover:bg-slate-400 bg-transparent rounded justify-end" onClick={() => {}}><X /></Button>
+        <Button className="hover:bg-slate-400 bg-transparent rounded self-end w-fit" onClick={() => {deleteProvider(providerLink)}}><X /></Button>
         <div className="flex justify-center items-center gap-2">
           <Button className="hover:bg-slate-400 rounded" onClick={() => {onDialogOpenChange(true, providerLink)}}><Pencil /></Button>
           <Button disabled={disabled} className="hover:bg-slate-400 rounded" onClick={() => {onProviderChange(providerLink)}}>Switch to API</Button>
