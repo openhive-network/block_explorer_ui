@@ -2,12 +2,13 @@ import { cn } from "@/lib/utils";
 import { TScoredEndpoint, HealthChecker } from "@hiveio/wax";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
-import { Loader2 } from "lucide-react";
+import { Plus } from "lucide-react";
 import ProviderCard from "./ProviderCard";
 import ApiCheckDialog from "./ApiCheckDialog";
 import { Card } from "../ui/card";
 import { Badge } from "../ui/badge";
 import EndpointProviderDialog from "./EndpointProviderDialog";
+import ProviderAdditionDialog from "./ProviderAdditionDialog";
 
 
 export interface ApiChecker {
@@ -55,6 +56,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   const [isEndpointProviderDialogOpened, setIsEndpointProviderDialogOpened] = useState<boolean>(false);
   const [openedProvider, setOpenedProvider] = useState<string | undefined>(undefined);
   const [openedEndpoint, setOpenedEndpoint] = useState<string | undefined>(undefined);
+  const [isProviderAdditionDialogOpened, setIsProviderAdditionDialogOpened] = useState<boolean>(false);
 
   const onApiCheckDialogChange = (isOpened: boolean, provider?: string) => {
     if (isOpened) {
@@ -116,8 +118,11 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
 
   const handleDeletionOfProvider = (provider: string) => {
     deleteProvider(provider);
-    changeChecksForProvider(provider, []);
-  }
+    const newApiChecks = structuredClone(apiChecksByProvider);
+    newApiChecks.delete(provider);
+    setApiChecksByProvider(newApiChecks);
+    subscribeToCheckers(newApiChecks);
+    }
   
   useEffect(() => { 
     if (healthChecker && !chainInitialized && !!customApiCheckers) {
@@ -193,6 +198,10 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         onDialogOpenChange={onEndpointProviderDialogChange}
         providers={customApiList}
         changeProviderForEndpoint={changeEndpointProvider}
+      />
+      <ProviderAdditionDialog 
+        isOpened={isProviderAdditionDialogOpened}
+        onDialogOpenChange={setIsProviderAdditionDialogOpened}
       />
     </div>
   );
