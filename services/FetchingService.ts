@@ -408,6 +408,27 @@ class FetchingService {
       return null;
     }
   }
+
+  async geAccounttBalanceHistory(
+    accountName : string,
+    coinType: string ,
+    page: number | undefined,
+    pageSize : number | undefined,
+    direction: "asc" | "desc",
+    fromBlock?: Date | number | undefined,
+    toBlock?:  Date | number | undefined,
+  ): Promise<Hive.AccountBalanceHistoryResponse> {
+    return await this.extendedHiveChain!.restApi["balance-api"].balanceHistory({
+      accountName,
+      "coin-type":coinType,
+      "direction" :direction,
+      "page" :page,     
+      "page-size": pageSize,
+      "from-block": fromBlock,
+      "to-block": toBlock,
+    });
+
+  }
 }
 
 const fetchingService = new FetchingService();
