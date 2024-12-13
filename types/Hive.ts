@@ -706,6 +706,30 @@ namespace Hive {
     memo: string;
     witness_signing: string;
   }
+
+  export class AccountBalanceHistory {
+    block_num!: number;
+    operation_id!: number;
+    op_type_id!: number;
+    balance!: number;
+    prev_balance!: number;
+    balance_change!:number;
+    timestamp!: string;
+  }
+  export class GetAccountBalanceHistoryParams {
+    "accountName": string;
+    "coin-type": string ;
+    direction?: Hive.Direction;
+    "page"!: number | undefined;
+    "page-size"!: number | undefined;
+    "from-block"?: Date | number | undefined;
+    "to-block"?: Date | number | undefined;
+  }
+  export class AccountBalanceHistoryResponse {
+    total_operations!: number;
+    total_pages!: number;
+    operations_result!: AccountBalanceHistory[];
+  }
 }
 
 export default Hive;
