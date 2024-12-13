@@ -7,7 +7,10 @@ import VestsTooltip from "../VestsTooltip";
 import Explorer from "@/types/Explorer";
 import { changeHBDToDollarsDisplay, grabNumericValue } from "@/utils/StringUtils";
 import { cn, formatNumber } from "@/lib/utils";
-
+import Link from "next/link";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHistory } from "@fortawesome/free-solid-svg-icons";
+import { Tooltip,TooltipProvider,TooltipTrigger,TooltipContent } from "@radix-ui/react-tooltip";
 type AccountBalanceCardProps = {
   header: string;
   userDetails: Explorer.FormattedAccountDetails;
@@ -146,7 +149,40 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
           onClick={handleBalancesVisibility}
           className="flex justify-between align-center p-2 hover:bg-rowHover cursor-pointer px-4"
         >
-          <div className="text-lg">{header}</div>
+          <div className="text-lg">
+            {header} /
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link
+                    href={`/balanceHistory/@${userDetails.name}`}
+                    data-testid="balance-history-link"
+                    className="text-link mr-2 font-light text-sm text-pretty underline"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <FontAwesomeIcon
+                      icon={faHistory}
+                      size="sm"
+                      className="mr-1 ml-2"
+                    />
+
+                    <span>Balance History</span>
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent
+                  side="top"
+                  align="start"
+                  sideOffset={5}
+                  alignOffset={10}
+                  className="border-0"
+                >
+                  <div className="bg-theme text-text p-2 ml-3 text-sm">
+                    <p>Click Here for Balance History</p>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
           {isBalancesHidden ? <ArrowDown /> : <ArrowUp />}
         </div>
       </CardHeader>
@@ -155,7 +191,10 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
         data-testid="card-content"
       >
         <Table>
-          <TableBody>{buildTableBody(keys)}{renderBalance()}</TableBody>
+          <TableBody>
+            {buildTableBody(keys)}
+            {renderBalance()}
+          </TableBody>
         </Table>
       </CardContent>
     </Card>
