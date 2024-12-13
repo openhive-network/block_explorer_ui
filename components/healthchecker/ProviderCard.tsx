@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
 import { Badge } from "../ui/badge";
-import { Pencil } from 'lucide-react';
+import { Pencil, X } from 'lucide-react';
 import { ApiChecker } from "./HealthChecker";
 
 
@@ -54,8 +54,13 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
         <span className={cn({"text-red-600": disabled})}>{providerLink}</span>{latency ? <span>Latency: {latency}</span> : null}
          
       </div>
-      <Button disabled={disabled} className="hover:bg-slate-400 rounded col-start-7 col-span-2 justify-self-end" onClick={() => {onProviderChange(providerLink)}}>Switch to API</Button>
-      <Button className="hover:bg-slate-400 rounded col-start-7 col-span-2 justify-self-end row-start-2" onClick={() => {onDialogOpenChange(true, providerLink)}}><Pencil /></Button>
+      <div className="col-start-7 row-start-1 col-span-2 row-span-2 flex flex-col">
+        <Button className="hover:bg-slate-400 bg-transparent rounded justify-end" onClick={() => {}}><X /></Button>
+        <div className="flex justify-center items-center gap-2">
+          <Button className="hover:bg-slate-400 rounded" onClick={() => {onDialogOpenChange(true, providerLink)}}><Pencil /></Button>
+          <Button disabled={disabled} className="hover:bg-slate-400 rounded" onClick={() => {onProviderChange(providerLink)}}>Switch to API</Button>
+        </div>
+      </div>
       <div className="row-start-2 flex items-center col-start-2 col-span-6 flex-wrap">
         {apiList.map((apiKey) => 
           <Badge 
