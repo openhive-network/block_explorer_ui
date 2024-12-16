@@ -180,7 +180,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
       {scoredEndpoints?.map(
         (scoredEndpoint, index) => renderProvider(scoredEndpoint, index)
       )}
-      <Button className="w-full"><Plus /></Button>
+      <Button onClick={() => {setIsProviderAdditionDialogOpened(true)}} className="w-full"><Plus /></Button>
       <ApiCheckDialog 
         className="bg-white"
         isOpened={isApiCheckDialogOpened}
@@ -202,6 +202,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
       <ProviderAdditionDialog 
         isOpened={isProviderAdditionDialogOpened}
         onDialogOpenChange={setIsProviderAdditionDialogOpened}
+        onProviderSubmit={addNewProvider}
       />
     </div>
   );
