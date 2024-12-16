@@ -63,7 +63,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
           <Button disabled={disabled} className="hover:bg-slate-400 rounded" onClick={() => {onProviderChange(providerLink)}}>Switch to API</Button>
         </div>
       </div>
-      <div className="row-start-2 flex items-center col-start-2 col-span-6 flex-wrap">
+      <div className="row-start-2 flex items-center col-start-2 col-span-5 flex-wrap">
         {apiList.map((apiKey) => 
           <Badge 
             key={customApiCheckers?.get(apiKey)?.title} 
