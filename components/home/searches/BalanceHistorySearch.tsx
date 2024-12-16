@@ -167,11 +167,10 @@ const BalanceHistorySearch = () => {
         </CardHeader>
         <CardContent>
           <div className="flex items-center mb-3">
-            <div className="w-auto bg-theme dark:bg-theme border-0 border-b-2">
               <select
                 value={coinType}
                 onChange={(e) => handleCoinTypeChange(e.target.value)}
-                className="w-[180px] border border-gray-300 p-2 rounded"
+                className="w-[180px] border border-gray-300 p-2 rounded bg-theme dark:bg-theme"
               >
                 {COIN_TYPES.map((type) => (
                   <option key={type} value={type}>
@@ -179,7 +178,7 @@ const BalanceHistorySearch = () => {
                   </option>
                 ))}
               </select>
-            </div>
+            
           </div>
           <SearchRanges rangesProps={searchRanges} />
           <div className="flex items-center justify-between m-2">

@@ -5,28 +5,28 @@ import fetchingService from "@/services/FetchingService";
 
 const useBalanceHistory = (
   accountName: string,
-  coinType:string,
+  coinType: string,
   page: number | undefined,
-  pageSize : number | undefined,
+  pageSize: number | undefined,
   direction: "asc" | "desc",
   fromDate?: Date | number | undefined,
-  toDate?: Date| number |undefined,
-  
+  toDate?: Date | number | undefined
 ) => {
+  const fetchBalanceHist = async () => {
+    if (fromDate && toDate && moment(fromDate).isAfter(moment(toDate))) {
+      return [];
+    }
 
-  /*const isDatesCorrect =
-    !moment(fromDate).isSame(toDate) && !moment(fromDate).isAfter(toDate);*/
-    const isDatesCorrect =true;
-  const fetchBalanceHist = async () =>
-    await fetchingService.geAccounttBalanceHistory(
+    return await fetchingService.geAccounttBalanceHistory(
       accountName,
       coinType,
-      page?page:1,
+      page ? page : 1,
       pageSize,
       direction,
-      fromDate?fromDate:undefined,
-      toDate?toDate:undefined,
+      fromDate ? fromDate : undefined,
+      toDate ? toDate : undefined
     );
+  };
 
   const {
     data: accountBalanceHistory,
@@ -44,15 +44,15 @@ const useBalanceHistory = (
       toDate,
     ],
     queryFn: fetchBalanceHist,
-    enabled: !!accountName && isDatesCorrect,
+    enabled: !!accountName,
     refetchOnWindowFocus: false,
   });
+
   return {
     accountBalanceHistory,
     isAccountBalanceHistoryLoading,
     isAccountBalanceHistoryError,
   };
-  
 };
 
 export default useBalanceHistory;

@@ -9,6 +9,7 @@ import { Loader2 } from "lucide-react";
 
 import useBalanceHistory from "@/hooks/api/balanceHistory/useBalanceHistory";
 import useURLParams from "@/hooks/common/useURLParams";
+import useAccountDetails from "@/hooks/api/accountPage/useAccountDetails";
 
 import { convertBalanceHistoryResultsToTableOperations } from "@/lib/utils";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
@@ -20,6 +21,9 @@ import { Card, CardHeader } from "@/components/ui/card";
 export default function BalanceHistory() {
   const router = useRouter();
   const accountNameFromRoute = (router.query.accountName as string)?.slice(1);
+
+  // Fetch account details
+  const { accountDetails, isAccountDetailsLoading, isAccountDetailsError ,notFound } = useAccountDetails(accountNameFromRoute, false);
 
   interface BalanceHistorySearchParams {
     accountName?: string;
@@ -97,64 +101,75 @@ export default function BalanceHistory() {
         <title>@{accountNameFromRoute} - Hive Explorer</title>
       </Head>
 
-      <div className="w-[95%] overflow-auto">
-        <Card data-testid="account-details">
-          <CardHeader>
-            <div className="flex flex-wrap items-center justify-between gap-4 bg-theme dark:bg-theme">
-              {/* Avatar and Name */}
-              <div className="flex items-center gap-4">
-                <Image
-                  className="rounded-full border-2 border-explorer-orange"
-                  src={getHiveAvatarUrl(accountNameFromRoute)}
-                  alt="avatar"
-                  width={60}
-                  height={60}
-                  data-testid="user-avatar"
-                />
-                <div>
-                  <h2
-                    className="text-lg font-semibold text-gray-800 dark:text-white"
-                    data-testid="account-name"
-                  >
-                    <Link
-                      className="text-link"
-                      href={`/@${accountNameFromRoute}`}
-                    >
-                      {" "}
-                      {accountNameFromRoute}
-                    </Link>
-                    / <span className="text-text">Balance History</span>
-                  </h2>
+      {/* Loading state for account details */}
+      {isAccountDetailsLoading ? (
+        <div className="flex justify-center text-center items-center">
+          <Loader2 className="animate-spin mt-1 text-black h-12 w-12 ml-3" />
+        </div>
+      ) : notFound ? (
+        <div>Account not found</div>
+      ) : (
+        accountNameFromRoute && (
+          <div className="w-[95%]">
+            <Card data-testid="account-details">
+              <CardHeader>
+                <div className="flex flex-wrap items-center justify-between gap-4 bg-theme dark:bg-theme">
+                  {/* Avatar and Name */}
+                  <div className="flex items-center gap-4">
+                    <Image
+                      className="rounded-full border-2 border-explorer-orange"
+                      src={getHiveAvatarUrl(accountNameFromRoute)}
+                      alt="avatar"
+                      width={60}
+                      height={60}
+                      data-testid="user-avatar"
+                    />
+                    <div>
+                      <h2
+                        className="text-lg font-semibold text-gray-800 dark:text-white"
+                        data-testid="account-name"
+                      >
+                        <Link
+                          className="text-link"
+                          href={`/@${accountNameFromRoute}`}
+                        >
+                          {" "}
+                          {accountNameFromRoute}
+                        </Link>
+                        / <span className="text-text">Balance History</span>
+                      </h2>
+                    </div>
+                  </div>
                 </div>
+              </CardHeader>
+            </Card>
+
+            {/* Filter Options (Always visible) */}
+            <BalanceHistorySearch />
+
+            {/* Show Error Message if No Balance History and No Loading State */}
+            {!isAccountBalanceHistoryLoading && !accountBalanceHistory?.total_operations ? (
+              <div className="w-full my-4 text-black text-center">
+                No operations were found.
               </div>
-            </div>
-          </CardHeader>
-        </Card>
-
-        {/* Filter Options (Always visible) */}
-        <BalanceHistorySearch />
-
-        {/* Show Error Message if No Balance History and No Loading State */}
-        {!isAccountBalanceHistoryLoading && !accountBalanceHistory?.total_operations ? (
-          <div className="w-full my-4 text-black text-center">
-            No operations were found.
-          </div>
-        ) : isAccountBalanceHistoryLoading ? (
-          <div className="flex justify-center text-center items-center">
-            <Loader2 className="animate-spin mt-1 text-black h-12 w-12 ml-3" />
-          </div>
-        ) : (
-          // Show the table when balance history exists
-          <BalanceHistoryTable
-            operations={convertBalanceHistoryResultsToTableOperations(
-              accountBalanceHistory
+            ) : isAccountBalanceHistoryLoading ? (
+              <div className="flex justify-center text-center items-center">
+                <Loader2 className="animate-spin mt-1 text-black h-12 w-12 ml-3" />
+              </div>
+            ) : (
+              // Show the table when balance history exists
+              <BalanceHistoryTable
+                operations={convertBalanceHistoryResultsToTableOperations(
+                  accountBalanceHistory
+                )}
+                total_operations={accountBalanceHistory.total_operations}
+                total_pages={accountBalanceHistory.total_pages}
+                current_page={paramsState.page}
+              />
             )}
-            total_operations={accountBalanceHistory.total_operations}
-            total_pages={accountBalanceHistory.total_pages}
-            current_page={paramsState.page}
-          />
-        )}
-      </div>
+          </div>
+        )
+      )}
     </>
   );
 }
