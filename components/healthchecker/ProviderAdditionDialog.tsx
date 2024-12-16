@@ -5,6 +5,8 @@ import {
     DialogTitle,
   } from "@/components/ui/dialog";
 import { Input } from "../ui/input";
+import { useState } from "react";
+import { Button } from "../ui/button";
 
 interface ProviderAdditionDialogProps {
   isOpened: boolean;
@@ -18,17 +20,21 @@ const ProviderAdditionDialog: React.FC<ProviderAdditionDialogProps> = ({
   onProviderSubmit
 }) => {
 
+  const [providerValue, setProviderValue] = useState<string>("");
+
   return (
     <Dialog open={isOpened} onOpenChange={onDialogOpenChange}>
       <DialogContent>
         <DialogHeader><DialogTitle>Add new provider's address</DialogTitle></DialogHeader>
         <Input
+          value={providerValue}
           autoFocus={true}
           className="focus:bg-white dark:focus:bg-gray-700"
           type="text"
           data-testid="api-address-input"
-          onChange={() => {}}
+          onChange={(e) => setProviderValue(e.target.value)}
         />
+        <Button onClick={() => {onProviderSubmit(providerValue)}}>Submit</Button>
       </DialogContent>
     </Dialog>
   )
