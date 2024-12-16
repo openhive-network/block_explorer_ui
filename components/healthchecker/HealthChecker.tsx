@@ -122,7 +122,13 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     newApiChecks.delete(provider);
     setApiChecksByProvider(newApiChecks);
     subscribeToCheckers(newApiChecks);
-    }
+  }
+
+  const handleAdditionOfProvider = (provider: string) => {
+    addNewProvider(provider);
+    setIsProviderAdditionDialogOpened(false);
+    // initializeDefaultChecks();
+  }
   
   useEffect(() => { 
     if (healthChecker && !chainInitialized && !!customApiCheckers) {
@@ -202,7 +208,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
       <ProviderAdditionDialog 
         isOpened={isProviderAdditionDialogOpened}
         onDialogOpenChange={setIsProviderAdditionDialogOpened}
-        onProviderSubmit={addNewProvider}
+        onProviderSubmit={handleAdditionOfProvider}
       />
     </div>
   );
