@@ -127,7 +127,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   const handleAdditionOfProvider = (provider: string) => {
     addNewProvider(provider);
     setIsProviderAdditionDialogOpened(false);
-    // initializeDefaultChecks();
+    changeChecksForProvider(provider, Array.from(customApiCheckers?.keys() || []));
   }
   
   useEffect(() => { 
