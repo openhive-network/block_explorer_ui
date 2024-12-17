@@ -7,7 +7,6 @@ import { ApiChecker } from "./HealthChecker";
 
 
 interface ProviderCardProps {
-  index: number;
   providerLink: string;
   disabled: boolean;
   isSelected: boolean;
@@ -23,7 +22,6 @@ interface ProviderCardProps {
 }
 
 const ProviderCard: React.FC<ProviderCardProps> = ({
-  index,
   providerLink,
   disabled,
   isSelected,
@@ -51,8 +49,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
 
   return (
     <Card className="grid grid-cols-8 grid-rows-2 gap-y-1 my-1 p-2">
-      <div className="col-start-1 row-start-1 col-span-1 row-span-2 flex justify-center items-center">{index + 1}</div>
-      <div className="row-start-1 col-start-2 col-span-5 flex items-center justify-between" >
+      <div className="row-start-1 col-start-1 col-span-6 flex items-center justify-between" >
         <span className={cn({"text-red-600": disabled})}>{providerLink}</span>{latency ? <span>Latency: {latency}</span> : null}
          
       </div>
@@ -63,7 +60,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
           <Button disabled={disabled} className="hover:bg-slate-400 rounded" onClick={() => {onProviderChange(providerLink)}}>Switch to API</Button>
         </div>
       </div>
-      <div className="row-start-2 flex items-center col-start-2 col-span-5 flex-wrap">
+      <div className="row-start-2 flex items-center col-start-1 col-span-6 flex-wrap">
         {apiList.map((apiKey) => 
           <Badge 
             key={customApiCheckers?.get(apiKey)?.title} 

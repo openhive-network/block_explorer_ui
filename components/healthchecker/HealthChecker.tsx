@@ -139,7 +139,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     }
   }, [chainInitialized, customApiCheckers, healthChecker, apiChecksByProvider])
 
-  const renderProvider = (scoredEndpoint: TScoredEndpoint, index: number) => {
+  const renderProvider = (scoredEndpoint: TScoredEndpoint) => {
     const {endpointUrl, score, up,} = scoredEndpoint;
     const apiList = apiChecksByProvider.get(endpointUrl);
     let lastLatency: number | null = null;
@@ -151,8 +151,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     }
     return (
       <ProviderCard 
-        key={index}
-        index={index}
+        key={endpointUrl}
         providerLink={endpointUrl}
         switchToProvider={changeNodeAddress}
         disabled={score <= 0}
@@ -187,7 +186,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
 
       </Card>
       {scoredEndpoints?.map(
-        (scoredEndpoint, index) => renderProvider(scoredEndpoint, index)
+        (scoredEndpoint) => renderProvider(scoredEndpoint)
       )}
       <Button onClick={() => {setIsProviderAdditionDialogOpened(true)}} className="w-full"><Plus /></Button>
       <ApiCheckDialog 
