@@ -15,7 +15,7 @@ export interface ApiChecker {
   title: string;
   method: any;
   params: any;
-  validatorFunction: (data: any) => boolean;
+  validatorFunction: (data: any) => string | true;
 }
 
 interface HealthCheckerComponentProps {
