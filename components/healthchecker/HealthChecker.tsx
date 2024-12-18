@@ -170,7 +170,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
 
   return (
     <div className={cn(className)}>
-      <Card className="grid grid-cols-4 grid-rows-3 gap-y-1 my-1 p-2 ">
+      <Card className="grid grid-cols-4 grid-rows-3 gap-y-1 my-1 p-2 mb-4">
         <div className="row-start-1 col-start-1 col-span-4 flex justify-center">Block Explorer healthchecker for nodes</div>
         <div className="col-start-1 row-start-2 row-span-2 col-span-3">
           <div>Api checks:</div>
