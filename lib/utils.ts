@@ -217,7 +217,7 @@ export const convertBalanceHistoryResultsToTableOperations = (
     return [];
   }
   return response.operations_result.map((operation) => ({
-    operationId: Number(operation.operation_id),
+    operationId: operation.operation_id,
     blockNumber: operation.block_num,
     timestamp: operation.timestamp,
     opTypeId: operation.op_type_id,
