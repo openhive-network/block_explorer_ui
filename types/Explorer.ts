@@ -294,7 +294,7 @@ declare module Explorer {
   }
 
   interface BalanceHistoryForTable {
-    operationId?: number;
+    operationId:number;
     blockNumber?: number;
     timestamp?: string;
     opTypeId: number;
