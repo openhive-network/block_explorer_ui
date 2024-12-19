@@ -200,6 +200,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         changeChecks={changeChecksForProvider}
         activeChecksKeys={apiChecksByProvider?.get(openedProvider || "") || []}
         switchToProvider={changeNodeAddress}
+        registerFallback={registerFallback}
       />
       <EndpointProviderDialog
         isOpened={isEndpointProviderDialogOpened}

@@ -19,6 +19,7 @@ interface ApiCheckDialogProps {
   changeChecks: (provider: string, newChecksList: string[]) => void;
   onDialogOpenChange: (isOpened: boolean, provider?: string) => void;
   switchToProvider: (providerLink: string | null) => void;
+  registerFallback: (provider: string) => void;
 }
 
 const ApiCheckDialog: React.FC<ApiCheckDialogProps> = ({
@@ -29,7 +30,8 @@ const ApiCheckDialog: React.FC<ApiCheckDialogProps> = ({
   activeChecksKeys,
   changeChecks,
   onDialogOpenChange,
-  switchToProvider
+  switchToProvider,
+  registerFallback
 }) => {
 
   const [localChecks, setLocalChecks] = useState<Record<string, boolean>>({});
@@ -71,8 +73,9 @@ const ApiCheckDialog: React.FC<ApiCheckDialogProps> = ({
               <div className="mx-2">{check.title}</div>
             </div>
           ))}
-          <div className="flex justify-between">
-            <Button onClick={confirm}>Confirm</Button>
+          <Button onClick={confirm}>Confirm</Button>
+          <div className="flex justify-between mt-4">
+            <Button className="hover:bg-slate-400 rounded" onClick={() => {registerFallback(openedProvider || "")}}>Set fallback</Button>
             <Button className="hover:bg-slate-400 rounded" onClick={() => {switchToProvider(openedProvider || null)}}>Switch to API</Button>
           </div>
         </div>
