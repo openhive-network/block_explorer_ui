@@ -1,6 +1,6 @@
-import { convertIdsToBooleanArray, getPageUrlParams } from "@/lib/utils";
 import Explorer from "@/types/Explorer";
-import { dataToURL } from "@/utils/URLutils";
+import { convertIdsToBooleanArray } from "@/lib/utils";
+import { setParamIfPositive } from "./globalSearchHelpers";
 
 export function startBlockSearch(
   blockSearchProps: Explorer.BlockSearchProps,
@@ -13,43 +13,36 @@ export function startBlockSearch(
 
 export function getBlockPageLink(
   blockSearchProps: Explorer.BlockSearchProps | undefined,
-  operationsTypes: any
+  operationsTypes: Explorer.ExtendedOperationTypePattern[] | undefined
 ): (blockNumber: number) => string {
   return (blockNumber: number) => {
     if (!blockSearchProps) return "#";
 
-    const urlParams: Explorer.UrlParam[] = [
-      {
-        paramName: "accountName",
-        paramValue: dataToURL(blockSearchProps.accountName),
-      },
-      {
-        paramName: "keyContent",
-        paramValue: dataToURL(blockSearchProps.deepProps.content),
-      },
-      {
-        paramName: "setOfKeys",
-        paramValue: dataToURL(blockSearchProps.deepProps.keys),
-      },
-    ];
+    const { accountName, operationTypes } = blockSearchProps;
 
-    if (blockSearchProps.operationTypes) {
-      const booleanTypesArray = convertIdsToBooleanArray(
-        blockSearchProps.operationTypes
-      );
-      let isFull = !!blockSearchProps.operationTypes;
+    const searchParams = new URLSearchParams();
+
+    setParamIfPositive(searchParams, "accountName", accountName);
+
+    if (operationTypes) {
+      const booleanTypesArray = convertIdsToBooleanArray(operationTypes);
+      let isFull = !!operationTypes;
+
       operationsTypes?.forEach((operationType: any) => {
-        if (
-          !blockSearchProps.operationTypes?.includes(operationType.op_type_id)
-        )
+        if (!operationTypes.includes(operationType.op_type_id)) {
           isFull = false;
+        }
       });
-      urlParams.push({
-        paramName: "filters",
-        paramValue: dataToURL(!isFull ? booleanTypesArray : []),
-      });
+
+      const filtersValue = !isFull ? booleanTypesArray : [];
+      setParamIfPositive(searchParams, "filters", filtersValue);
     }
 
-    return `/block/${blockNumber}${getPageUrlParams(urlParams)}`;
+    const queryString = searchParams.toString();
+    const urlPath = `/block/${blockNumber}${
+      queryString ? `?${queryString}` : ""
+    }`;
+
+    return urlPath;
   };
 }
