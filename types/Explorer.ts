@@ -96,7 +96,7 @@ declare module Explorer {
     pageSize?: number;
     direction?: "asc" | "desc";
     dataSizeLimit?: number;
-    rangeSelectKey: string | undefined;
+    rangeSelectKey?: string | undefined;
     lastTimeUnitValue?: Date | string;
     lastBlocksValue?: string | number;
     timeUnitSelectKey?: number | string;
