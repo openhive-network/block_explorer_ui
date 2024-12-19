@@ -16,6 +16,7 @@ const CommentsPermlinkSearch = () => {
     setPermlinkSearchProps,
     setCommentPaginationPage,
     setCommentType,
+    commentType,
     setLastSearchKey,
     searchRanges,
   } = useSearchesContext();
@@ -48,6 +49,7 @@ const CommentsPermlinkSearch = () => {
         lastTime: searchRanges.lastTimeUnitValue,
         rangeSelectKey: searchRanges.rangeSelectKey,
         timeUnit: searchRanges.timeUnitSelectKey,
+        commentType,
       };
       startCommentPermlinkSearch(
         commentPermlinksSearchProps,
