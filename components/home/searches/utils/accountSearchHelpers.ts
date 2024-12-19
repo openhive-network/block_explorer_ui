@@ -1,7 +1,6 @@
-import { convertIdsToBooleanArray, getPageUrlParams } from "@/lib/utils";
-import { dataToURL } from "@/utils/URLutils";
-
 import Explorer from "@/types/Explorer";
+import { convertIdsToBooleanArray } from "@/lib/utils";
+import { setParamIfPositive } from "./globalSearchHelpers";
 
 export function startAccountOperationsSearch(
   accountOperationsSearchProps: Explorer.AccountSearchOperationsProps,
@@ -29,57 +28,47 @@ export function getAccountPageLink(
 ): string {
   if (!accountOperationsSearchProps) return "#";
 
-  const urlParams: Explorer.UrlParam[] = [
-    {
-      paramName: "fromBlock",
-      paramValue: dataToURL(accountOperationsSearchProps.fromBlock),
-    },
-    {
-      paramName: "toBlock",
-      paramValue: dataToURL(accountOperationsSearchProps.toBlock),
-    },
-    {
-      paramName: "fromDate",
-      paramValue: dataToURL(accountOperationsSearchProps.startDate),
-    },
-    {
-      paramName: "toDate",
-      paramValue: dataToURL(accountOperationsSearchProps.endDate),
-    },
-    {
-      paramName: "rangeSelectKey",
-      paramValue: dataToURL(searchRanges.rangeSelectKey),
-    },
-  ];
+  const {
+    fromBlock,
+    toBlock,
+    startDate,
+    endDate,
+    operationTypes,
+    accountName,
+  } = accountOperationsSearchProps;
 
-  if (accountOperationsSearchProps.operationTypes) {
-    urlParams.push({
-      paramName: "filters",
-      paramValue: dataToURL(
-        convertIdsToBooleanArray(accountOperationsSearchProps.operationTypes)
-      ),
-    });
+  const {
+    rangeSelectKey,
+    lastTimeUnitValue,
+    timeUnitSelectKey,
+    lastBlocksValue,
+  } = searchRanges;
+
+  const searchParams = new URLSearchParams();
+
+  setParamIfPositive(searchParams, "fromBlock", fromBlock);
+  setParamIfPositive(searchParams, "toBlock", toBlock);
+  setParamIfPositive(searchParams, "fromDate", startDate);
+  setParamIfPositive(searchParams, "toDate", endDate);
+  setParamIfPositive(searchParams, "rangeSelectKey", rangeSelectKey);
+
+  if (operationTypes) {
+    setParamIfPositive(
+      searchParams,
+      "filters",
+      convertIdsToBooleanArray(operationTypes)
+    );
   }
 
-  if (searchRanges.rangeSelectKey === "lastTime") {
-    urlParams.push({
-      paramName: "lastTime",
-      paramValue: dataToURL(searchRanges.lastTimeUnitValue),
-    });
-    urlParams.push({
-      paramName: "timeUnit",
-      paramValue: dataToURL(searchRanges.timeUnitSelectKey),
-    });
+  if (rangeSelectKey === "lastTime") {
+    setParamIfPositive(searchParams, "lastTime", lastTimeUnitValue);
+    setParamIfPositive(searchParams, "timeUnit", timeUnitSelectKey);
+  } else if (rangeSelectKey === "lastBlocks") {
+    setParamIfPositive(searchParams, "lastBlocks", lastBlocksValue);
   }
 
-  if (searchRanges.rangeSelectKey === "lastBlocks") {
-    urlParams.push({
-      paramName: "lastBlocks",
-      paramValue: dataToURL(searchRanges.lastBlocksValue),
-    });
-  }
+  const queryString = searchParams.toString();
+  const urlPath = `/@${accountName}${queryString ? `?${queryString}` : ""}`;
 
-  return `/@${accountOperationsSearchProps.accountName}${getPageUrlParams(
-    urlParams
-  )}`;
+  return urlPath;
 }
