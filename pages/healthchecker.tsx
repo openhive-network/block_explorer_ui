@@ -109,6 +109,7 @@ export default function HealthcheckerPage() {
           setScoredEndpoints={setScoredEndpoints}
           addNewProvider={addNewProvider}
           deleteProvider={deleteProvider}
+          registerFallback={() => {}}
           scoredEndpoints={scoredEndpoints}
         />
       </div>

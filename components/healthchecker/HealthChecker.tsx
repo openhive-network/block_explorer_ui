@@ -32,6 +32,7 @@ interface HealthCheckerComponentProps {
   setScoredEndpoints: (scoredEndpoints: TScoredEndpoint[] | undefined ) => void;
   addNewProvider: (provider: string) => void;
   deleteProvider: (provider: string) => void;
+  registerFallback: (provider: string) => void;
 }
 
 const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
@@ -43,6 +44,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   setScoredEndpoints,
   addNewProvider,
   deleteProvider,
+  registerFallback,
   customApiCheckers,
   className,
   providersForEndpoints,
