@@ -144,22 +144,11 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
         inputRef.current?.focus();
         linkResult ? "" : closeSearchBar();
       }
-    }
-  };
-
-  useEffect(() => {
-    const keyDownEvent = (event: KeyboardEvent) => {
       if (event.key === "Backspace") {
         setInputFocus(true); // Reopen the suggestions on backspace
       }
-    };
-
-    document.addEventListener("keydown", keyDownEvent);
-    return () => {
-      document.removeEventListener("keydown", keyDownEvent);
-    };
-  }, []);
-
+    }
+  };
   // Ensure the selected result is visible in the scrollable container
   useEffect(() => {
     if (selectedResultRef.current) {

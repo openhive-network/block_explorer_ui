@@ -296,6 +296,18 @@ declare module Explorer {
     vests: AccountDetailsVests;
     dollars: AccountDetailsDollars;
   }
+
+  interface BalanceHistoryForTable {
+    operationId?: number;
+    blockNumber?: number;
+    timestamp?: string;
+    opTypeId: number;
+    balance: number;
+    prev_balance: number;
+    balanceChange: number;
+
+  }
+
 }
 
 export default Explorer;

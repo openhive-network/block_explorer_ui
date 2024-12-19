@@ -208,3 +208,21 @@ export const createPathFilterString = (
   }
   return undefined;
 };
+
+export const convertBalanceHistoryResultsToTableOperations = (
+  response: Hive.AccountBalanceHistoryResponse
+): Explorer.BalanceHistoryForTable[] => {
+
+  if (!response || !response.operations_result) {
+    return [];
+  }
+  return response.operations_result.map((operation) => ({
+    operationId: Number(operation.operation_id),
+    blockNumber: operation.block_num,
+    timestamp: operation.timestamp,
+    opTypeId: operation.op_type_id,
+    balance: operation.balance,
+    prev_balance: operation.prev_balance,
+    balanceChange: operation.balance_change,
+  }));
+};

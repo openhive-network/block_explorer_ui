@@ -37,10 +37,10 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
   } = rangesProps;
 
   const setNumericValue = (value: number, fieldSetter: Function) => {
-    if (value === 0) {
-      fieldSetter(undefined);
-    } else {
+    if (!Number.isNaN(value) && value > 0) {
       fieldSetter(value);
+    } else {
+      fieldSetter(undefined);
     }
   };
 

@@ -251,6 +251,53 @@ namespace Hive {
     virtual_scheduled_time!: string;
     votes!: string;
   }
+  export class Content {
+    id!: number;
+    author!: string;
+    permlink!: string;
+    category!: string;
+    parent_author!: string;
+    parent_permlink!: string;
+    title!: string;
+    body!: string;
+    json_metadata!: string;
+    last_update!: string;
+    created!: string;
+    active!: string;
+    last_payout!: string;
+    depth!: number;
+    children!: number;
+    net_rshares!: number;
+    abs_rshares!: number;
+    vote_rshares!: number;
+    children_abs_rshares!: number;
+    cashout_time!: string;
+    max_cashout_time!: string;
+    total_vote_weight!: number;
+    reward_weight!: number;
+    total_payout_value!: string;
+    curator_payout_value!: string;
+    author_rewards!: number;
+    net_votes!: number;
+    root_author!: string;
+    root_permlink!: string;
+    max_accepted_payout!: string;
+    percent_hbd!: number;
+    allow_replies!: boolean;
+    allow_votes!: boolean;
+    allow_curation_rewards!: boolean;
+    beneficiaries!: string[] | number[];
+    url!: string;
+    root_title!: string;
+    pending_payout_value!: string;
+    total_pending_payout_value!: string;
+    active_votes!: string[] | number[];
+    replies!: string[] | number[];
+    author_reputation!: number;
+    promoted!: string;
+    body_length!: number;
+    reblogged_by!: string[] | number[];
+  }
 
   export class GetVotersParams {
     accountName!: string;
@@ -705,6 +752,30 @@ namespace Hive {
     posting: AuthKeys;
     memo: string;
     witness_signing: string;
+  }
+
+  export class AccountBalanceHistory {
+    block_num!: number;
+    operation_id!: number;
+    op_type_id!: number;
+    balance!: number;
+    prev_balance!: number;
+    balance_change!:number;
+    timestamp!: string;
+  }
+  export class GetAccountBalanceHistoryParams {
+    "accountName": string;
+    "coin-type": string ;
+    direction?: Hive.Direction;
+    "page"!: number | undefined;
+    "page-size"!: number | undefined;
+    "from-block"?: Date | number | undefined;
+    "to-block"?: Date | number | undefined;
+  }
+  export class AccountBalanceHistoryResponse {
+    total_operations!: number;
+    total_pages!: number;
+    operations_result!: AccountBalanceHistory[];
   }
 }
 
