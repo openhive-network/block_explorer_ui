@@ -1,19 +1,27 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
-
 import { config } from "@/Config";
 import Explorer from "@/types/Explorer";
 import { getOperationButtonTitle } from "@/utils/UI";
 import { trimAccountName } from "@/utils/StringUtils";
-import { convertIdsToBooleanArray } from "@/lib/utils";
+import {
+  convertBooleanArrayToIds,
+  convertIdsToBooleanArray,
+  parseUrlFlagsIntoBooleanArray,
+} from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 import { Button } from "@/components/ui/button";
 import AutocompleteInput from "@/components/ui/AutoCompleteInput";
-import { startCommentSearch } from "./utils/commentSearchHelpers";
+import {
+  getCommentPageLink,
+  startCommentSearch,
+} from "./utils/commentSearchHelpers";
 import { useSearchesContext } from "@/contexts/SearchesContext";
 import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
 import useCommentSearch from "@/hooks/api/common/useCommentSearch";
+import { usePathname } from "next/navigation";
+import { useRouter } from "next/router";
 
 const CommentsSearch = () => {
   const {
@@ -24,23 +32,26 @@ const CommentsSearch = () => {
     setPreviousCommentSearchProps,
     setLastSearchKey,
     searchRanges,
+    commentsSearchAccountName,
+    setCommentsSearchAccountName,
+    commentsSearchPermlink,
+    setCommentsSearchPermlink,
+    selectedCommentSearchOperationTypes,
+    setSelectedCommentSearchOperationTypes,
   } = useSearchesContext();
+
+  const pathname = usePathname();
+  const router = useRouter();
 
   const { commentSearchDataLoading } = useCommentSearch(commentSearchProps);
 
   const { operationsTypes } = useOperationsTypes();
 
-  const [accountName, setAccountName] = useState<string>("");
-  const [permlink, setPermlink] = useState<string>("");
-  const [
-    selectedCommentSearchOperationTypes,
-    setSelectedCommentSearchOperationTypes,
-  ] = useState<number[]>([]);
-
   const { getRangesValues } = searchRanges;
+  const isCommentsPage = pathname?.includes("/comments") ?? false;
 
-  const onButtonClick = async () => {
-    if (accountName !== "") {
+  const handleStartCommentSearch = async () => {
+    if (commentsSearchAccountName !== "") {
       const {
         payloadFromBlock,
         payloadToBlock,
@@ -48,9 +59,9 @@ const CommentsSearch = () => {
         payloadEndDate,
       } = await getRangesValues();
 
-      const commentSearchProps: Explorer.CommentSearchParams = {
-        accountName: trimAccountName(accountName),
-        permlink,
+      const searchProps: Explorer.CommentSearchParams = {
+        accountName: trimAccountName(commentsSearchAccountName as string),
+        permlink: commentsSearchPermlink as string,
         fromBlock: payloadFromBlock,
         toBlock: payloadToBlock,
         startDate: payloadStartDate,
@@ -67,15 +78,49 @@ const CommentsSearch = () => {
         rangeSelectKey: searchRanges.rangeSelectKey,
         timeUnit: searchRanges.timeUnitSelectKey,
       };
+
       startCommentSearch(
-        commentSearchProps,
+        searchProps,
         setCommentSearchProps,
         setCommentPaginationPage,
         setPreviousCommentSearchProps,
         (val: "comment") => setLastSearchKey(val)
       );
+      // change url on comments page when filters are applied
+      if (isCommentsPage) {
+        const commentPageLink = getCommentPageLink({
+          ...searchProps,
+          ...searchRanges,
+          operationTypes: searchProps?.filters?.length
+            ? convertBooleanArrayToIds(searchProps.filters)
+            : undefined,
+        });
+
+        router.replace(commentPageLink);
+      }
     }
   };
+
+  //Set parameters for inputs and selected operation types from url (if there are any) on initial load
+  useEffect(() => {
+    if (isCommentsPage) {
+      const accountNameFromRoute = trimAccountName(
+        (router.query.accountName?.[0] as string) ?? ""
+      );
+      const permlinkFromRoute = router.query.permlink ?? "";
+      const filtersFromRoute = router.query.filters ?? "";
+
+      setCommentsSearchAccountName(accountNameFromRoute);
+      setCommentsSearchPermlink(permlinkFromRoute);
+
+      if (!!filtersFromRoute) {
+        const convertedFilters = convertBooleanArrayToIds(
+          parseUrlFlagsIntoBooleanArray(filtersFromRoute as string)
+        );
+        setSelectedCommentSearchOperationTypes(convertedFilters);
+      }
+    }
+  }, [isCommentsPage, router.query]);
 
   return (
     <>
@@ -85,8 +130,8 @@ const CommentsSearch = () => {
       </p>
       <div className="flex flex-col">
         <AutocompleteInput
-          value={accountName}
-          onChange={setAccountName}
+          value={commentsSearchAccountName as string}
+          onChange={setCommentsSearchAccountName}
           placeholder="Author"
           inputType="account_name"
           className="w-1/2 bg-theme dark:bg-theme border-0 border-b-2"
@@ -98,8 +143,8 @@ const CommentsSearch = () => {
           data-testid="permlink-input"
           className="w-1/2 bg-theme dark:bg-theme border-0 border-b-2"
           type="text"
-          value={permlink}
-          onChange={(e) => setPermlink(e.target.value)}
+          value={commentsSearchPermlink}
+          onChange={(e) => setCommentsSearchPermlink(e.target.value)}
           placeholder="Permlink *"
           required
         />
@@ -121,16 +166,16 @@ const CommentsSearch = () => {
       <div className="flex items-center">
         <Button
           data-testid="search-button"
+          onClick={handleStartCommentSearch}
           className="mr-2 my-2"
-          onClick={onButtonClick}
-          disabled={!accountName || !permlink}
+          disabled={!commentsSearchAccountName || !commentsSearchPermlink}
         >
           Search
           {commentSearchDataLoading && (
             <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />
           )}
         </Button>
-        {!accountName && (
+        {!commentsSearchAccountName && (
           <label className="text-gray-300 dark:text-gray-500 ">
             Set author name and permlink
           </label>
