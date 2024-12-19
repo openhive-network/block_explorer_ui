@@ -49,18 +49,17 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
 
   return (
     <Card className="grid grid-cols-8 grid-rows-2 gap-y-1 my-1 p-2">
-      <div className="row-start-1 col-start-1 col-span-6 flex items-center justify-between" >
+      <div className="row-start-1 col-start-1 col-span-7 flex items-center justify-between" >
         <span className={cn({"text-red-600": disabled})}>{providerLink}</span>{latency ? <span>Latency: {latency}</span> : null}
          
       </div>
-      <div className="col-start-7 row-start-1 col-span-2 row-span-2 flex flex-col">
+      <div className="col-start-8 row-start-1 col-span-1 row-span-2 flex flex-col">
         <Button className="hover:bg-slate-400 bg-transparent rounded self-end w-fit" onClick={() => {deleteProvider(providerLink)}}><X /></Button>
         <div className="flex justify-end items-center gap-2">
           <Button className="hover:bg-slate-400 rounded" onClick={() => {onDialogOpenChange(true, providerLink)}}><Pencil /></Button>
-          <Button disabled={disabled} className="hover:bg-slate-400 rounded" onClick={() => {onProviderChange(providerLink)}}>Switch to API</Button>
         </div>
       </div>
-      <div className="row-start-2 flex items-center col-start-1 col-span-6 flex-wrap">
+      <div className="row-start-2 flex items-center col-start-1 col-span-7 flex-wrap">
         {apiList.map((apiKey) => 
           <Badge 
             key={customApiCheckers?.get(apiKey)?.title} 
