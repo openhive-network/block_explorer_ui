@@ -26,6 +26,7 @@ export default function HealthcheckerPage() {
     "https://hive-api.3speak.tv",
     "https://hiveapi.actifit.io"
   ]);
+  const [fallbacks, setFallbacks] = useState<string[]>([]);
 
   const extendedHiveChain = hiveChain
     ?.extend<ExplorerNodeApi>();
@@ -111,6 +112,7 @@ export default function HealthcheckerPage() {
           deleteProvider={deleteProvider}
           registerFallback={() => {}}
           scoredEndpoints={scoredEndpoints}
+          fallbacks={fallbacks}
         />
       </div>
     </>

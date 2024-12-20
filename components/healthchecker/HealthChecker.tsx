@@ -26,6 +26,7 @@ interface HealthCheckerComponentProps {
   providersForEndpoints: Map<string, string>;
   healthChecker?: HealthChecker;
   scoredEndpoints?: TScoredEndpoint[];
+  fallbacks: string[];
   changeNodeAddress: (url: string | null) => void; 
   changeEndpointAddress: (endpoint: string, newProvider: string) => void;
   resetEndpoints: () => void;
@@ -50,6 +51,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   providersForEndpoints,
   healthChecker,
   scoredEndpoints,
+  fallbacks
 }) => {
 
   const [chainInitialized, setChainIntialized] = useState<boolean>(false);
