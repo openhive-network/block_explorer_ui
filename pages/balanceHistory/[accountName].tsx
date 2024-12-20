@@ -149,12 +149,12 @@ export default function BalanceHistory() {
 
             {/* Show Error Message if No Balance History and No Loading State */}
             {!isAccountBalanceHistoryLoading && !accountBalanceHistory?.total_operations ? (
-              <div className="w-full my-4 text-black text-center">
+              <div className="w-full my-4 text-center">
                 No operations were found.
               </div>
             ) : isAccountBalanceHistoryLoading ? (
               <div className="flex justify-center text-center items-center">
-                <Loader2 className="animate-spin mt-1 text-black h-12 w-12 ml-3" />
+                <Loader2 className="animate-spin mt-1 h-12 w-12 ml-3" />
               </div>
             ) : (
               // Show the table when balance history exists
