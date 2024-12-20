@@ -247,11 +247,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                           }`}
                         >
                           <TableCell
-                            className={`sticky md:static left-0 ${
-                              index % 2 === 0
-                                ? "bg-rowEven md:bg-inherit"
-                                : "bg-rowOdd md:bg-inherit"
-                            }`}
+                            className="sticky md:static left-0 bg-inherit"
                             data-testid="date-format"
                           >
                             {formatAndDelocalizeTime(vote.timestamp)}
