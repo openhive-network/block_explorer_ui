@@ -198,11 +198,7 @@ export default function Witnesses() {
               <TableRow
                 key={index}
                 className={cn(
-                  `${
-                    index % 2 === 0
-                      ? "bg-rowEven dark:bg-rowEven"
-                      : "bg-rowOdd dark:bg-rowOdd"
-                  }`,
+                  `${index % 2 === 0 ? "bg-rowEven" : "bg-rowOdd"}`,
                   {
                     "line-through":
                       singleWitness.signing_key === config.inactiveWitnessKey,
@@ -211,20 +207,10 @@ export default function Witnesses() {
                 )}
                 data-testid="witnesses-table-row"
               >
-                <TableCell
-                  className={cn("sticky left-0 min-w-[20px]", {
-                    "bg-rowEven dark:bg-rowEven md:bg-inherit": index % 2 === 0,
-                    "bg-rowOdd dark:bg-rowOdd md:bg-inherit": index % 2 !== 0,
-                  })}
-                >
+                <TableCell className="sticky left-0 min-w-[20px] bg-inherit">
                   {singleWitness.rank}
                 </TableCell>
-                <TableCell
-                  className={cn("text-explorer-turquoise sticky left-16", {
-                    "bg-rowEven dark:bg-rowEven md:bg-inherit": index % 2 === 0,
-                    "bg-rowOdd dark:bg-rowOdd md:bg-inherit": index % 2 !== 0,
-                  })}
-                >
+                <TableCell className="text-explorer-turquoise sticky left-16 bg-inherit">
                   <div className="flex justify-between">
                     <Link
                       href={`/@${singleWitness.witness_name}`}
