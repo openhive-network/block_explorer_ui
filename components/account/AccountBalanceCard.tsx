@@ -1,16 +1,24 @@
-import { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table";
 import VestsTooltip from "../VestsTooltip";
 import Explorer from "@/types/Explorer";
-import { changeHBDToDollarsDisplay, grabNumericValue } from "@/utils/StringUtils";
+import {
+  changeHBDToDollarsDisplay,
+  grabNumericValue,
+} from "@/utils/StringUtils";
 import { cn, formatNumber } from "@/lib/utils";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHistory } from "@fortawesome/free-solid-svg-icons";
-import { Tooltip,TooltipProvider,TooltipTrigger,TooltipContent } from "@radix-ui/react-tooltip";
+import {
+  Tooltip,
+  TooltipProvider,
+  TooltipTrigger,
+  TooltipContent,
+} from "@radix-ui/react-tooltip";
 type AccountBalanceCardProps = {
   header: string;
   userDetails: Explorer.FormattedAccountDetails;
@@ -37,9 +45,7 @@ const unclaimedRecourses = new Map([
 ]);
 
 /* list of fields to be skipped when calculating account value */
-const skipCalculation = 
-  ["delegated_vesting_shares",
-  "received_vesting_shares"];
+const skipCalculation = ["delegated_vesting_shares", "received_vesting_shares"];
 
 const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
   header,
@@ -49,41 +55,57 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
     userDetails
   ) as (keyof Explorer.AccountDetailsDollars)[];
 
-  const checkForMarkedRender = (param: keyof Explorer.AccountDetailsDollars): boolean => {
+  const checkForMarkedRender = (
+    param: keyof Explorer.AccountDetailsDollars
+  ): boolean => {
     if (!unclaimedRecourses.has(param)) return false;
-    const rewardParamName = unclaimedRecourses.get(param) as keyof Explorer.FormattedAccountDetails;
+    const rewardParamName = unclaimedRecourses.get(
+      param
+    ) as keyof Explorer.FormattedAccountDetails;
     if (rewardParamName && userDetails[rewardParamName]) return true;
     return false;
-  }
+  };
 
-  const renderKey = (key: keyof Explorer.FormattedAccountDetails) => {
+  const renderKey = (
+    key: keyof Explorer.FormattedAccountDetails
+  ): React.ReactNode => {
     if (Object.keys(userDetails.vests).includes(key)) {
       const vestKey = key as keyof Explorer.AccountDetailsVests;
       const vestValue = userDetails.vests[vestKey];
 
       return (
         <VestsTooltip
-          tooltipTrigger={userDetails[key] as string}
-          tooltipContent={vestValue}
+          tooltipTrigger={String(userDetails[key])}
+          tooltipContent={String(vestValue)}
         />
       );
     }
-    return <>{userDetails[key]} </>;
+
+    const value = userDetails[key];
+
+    if (
+      typeof value === "object" &&
+      value !== null &&
+      !React.isValidElement(value)
+    ) {
+      return JSON.stringify(value);
+    }
+
+    return value;
   };
 
   const [isBalancesHidden, setIsBalancesHidden] = useState(false);
 
   const [totalBalance, setTotalBalance] = useState(0);
 
-
   useEffect(() => {
     const newBalance = keys.reduce((acc, param) => {
       if (cardNameMap.has(param) && !skipCalculation.includes(param)) {
         const value = grabNumericValue(userDetails.dollars[param]);
-        if (typeof value === 'number' && !isNaN(value)) {
+        if (typeof value === "number" && !isNaN(value)) {
           return acc + value;
         } else {
-          console.error('Value is not a number:', value);
+          console.error("Value is not a number:", value);
           return acc;
         }
       }
@@ -93,45 +115,44 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
     setTotalBalance(newBalance);
   }, [keys, userDetails]);
 
-
-
-  const renderBalance = (
-  ) => {
+  const renderBalance = () => {
     return (
-      
-        <TableRow className="border-b border-gray-700 hover:bg-inherit font-bold">
-          <TableCell className="">Account Value</TableCell>
-          <TableCell className="text-right" colSpan={2}>{formatNumber(totalBalance, false, true)} $</TableCell>
-        </TableRow>
-      
+      <TableRow className="border-b border-gray-700 hover:bg-inherit font-bold">
+        <TableCell className="">Account Value</TableCell>
+        <TableCell
+          className="text-right"
+          colSpan={2}
+        >
+          {formatNumber(totalBalance, false, true)} $
+        </TableCell>
+      </TableRow>
     );
-  }
+  };
 
   const buildTableBody = (
     parameters: (keyof Explorer.AccountDetailsDollars)[]
   ) => {
     return parameters.map(
-      (param: keyof Explorer.AccountDetailsDollars, index: number) => 
+      (param: keyof Explorer.AccountDetailsDollars, index: number) => (
         <Fragment key={index}>
-          {cardNameMap.has(param) && 
+          {cardNameMap.has(param) && (
             <TableRow
               className={cn(
-                "border-b border-gray-700 hover:bg-inherit dark:hover:bg-inherit", 
+                "border-b border-gray-700 hover:bg-inherit dark:hover:bg-inherit",
                 {
                   "bg-explorer-orange": checkForMarkedRender(param),
                 }
               )}
             >
               <TableCell>{cardNameMap.get(param)}</TableCell>
-              <TableCell className="text-right">
-                {renderKey(param as keyof Explorer.FormattedAccountDetails)}
-              </TableCell>
+              <TableCell className="text-right">{renderKey(param)}</TableCell>
               <TableCell className="text-right">
                 {changeHBDToDollarsDisplay(userDetails.dollars[param])}
               </TableCell>
             </TableRow>
-          }
+          )}
         </Fragment>
+      )
     );
   };
 
