@@ -139,11 +139,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
                   className="bg-red-400 p-[1.2px]"
                 />
               )}
-              {` ${formatNumber(
-                balanceChange,
-                selectedCoinType === "VESTS",
-                false
-              )}`}
+              {` ${formatNumber(balanceChange, selectedCoinType === "VESTS", false)}`}
             </div>
             <div>{`Balance: ${formatNumber(
               actualBalance,
@@ -245,9 +241,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
               const { dataKey } = event;
               const isHidden = hiddenDataKeys.includes(dataKey);
               if (isHidden) {
-                setHiddenDataKeys(
-                  hiddenDataKeys.filter((key) => key !== dataKey)
-                );
+                setHiddenDataKeys(hiddenDataKeys.filter((key) => key !== dataKey));
               } else {
                 setHiddenDataKeys([...hiddenDataKeys, dataKey]);
               }
