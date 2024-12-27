@@ -2,7 +2,8 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-
+import React from "react";
+import moment from "moment";
 import { config } from "@/Config";
 
 import { Loader2 } from "lucide-react";
@@ -17,13 +18,66 @@ import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import BalanceHistoryTable from "@/components/balanceHistory/BalanceHistoryTable";
 import BalanceHistorySearch from "@/components/home/searches/BalanceHistorySearch";
 import { Card, CardHeader } from "@/components/ui/card";
+import BalanceHistoryChart from "@/components/balanceHistory/BalanceHistoryChart";
+
+interface Operation {
+  timestamp: number;  // Timestamp in seconds
+  balance: number;    // Balance associated with the operation
+}
+
+const prepareData = (operations: Operation[]) => {
+  if (!operations || operations.length === 0) return [];
+
+  // Create a map to store the balance and balance change for each day
+  const dailyData = new Map<string, { balance: number; balance_change: number }>();
+
+  operations.forEach((operation: any) => {  // Adjusted the type to match the structure of the data you provided
+    let date;
+    if (typeof operation.timestamp === 'string') {
+      date = new Date(operation.timestamp);
+    } else if (typeof operation.timestamp === 'number') {
+      date = new Date(operation.timestamp * 1000);
+    } else {
+      return;  // Skip this operation if the timestamp is invalid
+    }
+
+    if (!isNaN(date.getTime())) {
+      const dateString = date.toISOString().split('T')[0]; // Get date in YYYY-MM-DD format
+
+      let balance_change = parseInt(operation.balance_change, 10);
+      let balance = parseInt(operation.balance, 10);
+
+      // Update the map with the latest balance and balance change for the day
+      if (dailyData.has(dateString)) {
+        dailyData.get(dateString)!.balance_change += balance_change; // Accumulate balance changes for the same day
+        dailyData.get(dateString)!.balance = balance;  // Update the balance for the day
+      } else {
+        dailyData.set(dateString, { balance, balance_change });
+      }
+    }
+  });
+
+  // Convert the map to an array of objects with the required fields
+  const preparedData = Array.from(dailyData.entries()).map(([date, data]) => ({
+    timestamp: date,      // Use the date string directly
+    balance: data.balance,
+    balance_change: data.balance_change, // The sum of balance changes for the day
+  }));
+
+  return preparedData;
+};
 
 export default function BalanceHistory() {
   const router = useRouter();
   const accountNameFromRoute = (router.query.accountName as string)?.slice(1);
 
   // Fetch account details
-  const { accountDetails, isAccountDetailsLoading, isAccountDetailsError ,notFound } = useAccountDetails(accountNameFromRoute, false);
+  const {
+    accountDetails,
+    isAccountDetailsLoading,
+    isAccountDetailsError,
+    notFound,
+  } = useAccountDetails(accountNameFromRoute, false);
 
   interface BalanceHistorySearchParams {
     accountName?: string;
@@ -70,7 +124,8 @@ export default function BalanceHistory() {
     page,
   } = paramsState;
 
-  let effectiveFromBlock = paramsState.fromBlock || fromDateParam;
+  const defaultFromDate = React.useMemo(() => moment().subtract(1, "month").toDate(), []);
+  let effectiveFromBlock = paramsState.fromBlock || fromDateParam || defaultFromDate;
   let effectiveToBlock = paramsState.toBlock || toDateParam;
 
   if (
@@ -95,13 +150,39 @@ export default function BalanceHistory() {
     effectiveToBlock
   );
 
+
+  const defaultChartSize = 6000;
+
+  const chartPageSize = (accountBalanceHistory?.total_operations !== undefined && accountBalanceHistory.total_operations !== 0 && accountBalanceHistory.total_operations < defaultChartSize)
+    ? accountBalanceHistory.total_operations
+    : defaultChartSize;
+  const chartData = useBalanceHistory(
+    accountNameFromRoute,
+    paramsState.coinType,
+    undefined,
+    chartPageSize,
+    "asc",
+    effectiveFromBlock,
+    effectiveToBlock
+  );
+
+  const preparedData = chartData.accountBalanceHistory
+    ? prepareData(chartData.accountBalanceHistory.operations_result)
+    : [];
+  // Determine the message to display based on the filters
+  let message = "";
+  if (effectiveFromBlock === defaultFromDate && !fromBlockParam && !toBlockParam) {
+    message = "Showing Results for the last month.";
+  } else {
+    message = "Showing Results with applied filters.";
+  }
+
   return (
     <>
       <Head>
         <title>@{accountNameFromRoute} - Hive Explorer</title>
       </Head>
 
-      {/* Loading state for account details */}
       {isAccountDetailsLoading ? (
         <div className="flex justify-center text-center items-center">
           <Loader2 className="animate-spin mt-1 text-black h-12 w-12 ml-3" />
@@ -114,7 +195,6 @@ export default function BalanceHistory() {
             <Card data-testid="account-details">
               <CardHeader>
                 <div className="flex flex-wrap items-center justify-between gap-4 bg-theme dark:bg-theme">
-                  {/* Avatar and Name */}
                   <div className="flex items-center gap-4">
                     <Image
                       className="rounded-full border-2 border-explorer-orange"
@@ -125,15 +205,8 @@ export default function BalanceHistory() {
                       data-testid="user-avatar"
                     />
                     <div>
-                      <h2
-                        className="text-lg font-semibold text-gray-800 dark:text-white"
-                        data-testid="account-name"
-                      >
-                        <Link
-                          className="text-link"
-                          href={`/@${accountNameFromRoute}`}
-                        >
-                          {" "}
+                      <h2 className="text-lg font-semibold text-gray-800 dark:text-white" data-testid="account-name">
+                        <Link className="text-link" href={`/@${accountNameFromRoute}`}>
                           {accountNameFromRoute}
                         </Link>
                         / <span className="text-text">Balance History</span>
@@ -144,10 +217,8 @@ export default function BalanceHistory() {
               </CardHeader>
             </Card>
 
-            {/* Filter Options (Always visible) */}
             <BalanceHistorySearch />
 
-            {/* Show Error Message if No Balance History and No Loading State */}
             {!isAccountBalanceHistoryLoading && !accountBalanceHistory?.total_operations ? (
               <div className="w-full my-4 text-center">
                 No operations were found.
@@ -157,15 +228,34 @@ export default function BalanceHistory() {
                 <Loader2 className="animate-spin mt-1 h-12 w-12 ml-3" />
               </div>
             ) : (
-              // Show the table when balance history exists
-              <BalanceHistoryTable
-                operations={convertBalanceHistoryResultsToTableOperations(
-                  accountBalanceHistory
+              <>
+                
+                <Card data-testid="account-details">
+                  {/* Display the message */}
+                  {message && (
+                  <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg mb-4 text-center text-sm text-gray-500">
+                    {message}<br/>
+                    Results are limited to {defaultChartSize} records and grouped by day.<br/>
+  
+                  </div>
                 )}
-                total_operations={accountBalanceHistory.total_operations}
-                total_pages={accountBalanceHistory.total_pages}
-                current_page={paramsState.page}
-              />
+
+                  <BalanceHistoryChart
+                    hiveBalanceHistoryData={(!paramsState.coinType || paramsState.coinType === "HIVE") ? preparedData : undefined}
+                    vestsBalanceHistoryData={paramsState.coinType === "VESTS" ? preparedData : undefined}
+                    hbdBalanceHistoryData={paramsState.coinType === "HBD" ? preparedData : undefined}
+                    quickView={false}
+                    className="h-[450px] mb-10 mr-0 pr-1 pb-6"
+                  />
+                </Card>
+
+                <BalanceHistoryTable
+                  operations={convertBalanceHistoryResultsToTableOperations(accountBalanceHistory)}
+                  total_operations={accountBalanceHistory.total_operations}
+                  total_pages={accountBalanceHistory.total_pages}
+                  current_page={paramsState.page}
+                />
+              </>
             )}
           </div>
         )
