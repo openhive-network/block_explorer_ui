@@ -28,40 +28,37 @@ interface Operation {
 const prepareData = (operations: Operation[]) => {
   if (!operations || operations.length === 0) return [];
 
-  // Create a map to store the balance and balance change for each day
   const dailyData = new Map<string, { balance: number; balance_change: number }>();
 
-  operations.forEach((operation: any) => {  // Adjusted the type to match the structure of the data you provided
+  operations.forEach((operation: any) => {
     let date;
     if (typeof operation.timestamp === 'string') {
       date = new Date(operation.timestamp);
     } else if (typeof operation.timestamp === 'number') {
       date = new Date(operation.timestamp * 1000);
     } else {
-      return;  // Skip this operation if the timestamp is invalid
+      return;
     }
 
     if (!isNaN(date.getTime())) {
-      const dateString = date.toISOString().split('T')[0]; // Get date in YYYY-MM-DD format
+      const dateString = date.toISOString().split('T')[0];
 
       let balance_change = parseInt(operation.balance_change, 10);
       let balance = parseInt(operation.balance, 10);
 
-      // Update the map with the latest balance and balance change for the day
       if (dailyData.has(dateString)) {
-        dailyData.get(dateString)!.balance_change += balance_change; // Accumulate balance changes for the same day
-        dailyData.get(dateString)!.balance = balance;  // Update the balance for the day
+        dailyData.get(dateString)!.balance_change += balance_change;
+        dailyData.get(dateString)!.balance = balance;
       } else {
         dailyData.set(dateString, { balance, balance_change });
       }
     }
   });
 
-  // Convert the map to an array of objects with the required fields
   const preparedData = Array.from(dailyData.entries()).map(([date, data]) => ({
-    timestamp: date,      // Use the date string directly
+    timestamp: date,
     balance: data.balance,
-    balance_change: data.balance_change, // The sum of balance changes for the day
+    balance_change: data.balance_change,
   }));
 
   return preparedData;
@@ -71,7 +68,6 @@ export default function BalanceHistory() {
   const router = useRouter();
   const accountNameFromRoute = (router.query.accountName as string)?.slice(1);
 
-  // Fetch account details
   const {
     accountDetails,
     isAccountDetailsLoading,
@@ -128,11 +124,7 @@ export default function BalanceHistory() {
   let effectiveFromBlock = paramsState.fromBlock || fromDateParam || defaultFromDate;
   let effectiveToBlock = paramsState.toBlock || toDateParam;
 
-  if (
-    rangeSelectKey === "lastBlocks" &&
-    typeof effectiveFromBlock === "number" &&
-    paramsState.lastBlocks
-  ) {
+  if (rangeSelectKey === "lastBlocks" && typeof effectiveFromBlock === "number" && paramsState.lastBlocks) {
     effectiveToBlock = effectiveFromBlock + paramsState.lastBlocks;
   }
 
@@ -150,26 +142,23 @@ export default function BalanceHistory() {
     effectiveToBlock
   );
 
-
-  const defaultChartSize = 6000;
-
-  const chartPageSize = (accountBalanceHistory?.total_operations !== undefined && accountBalanceHistory.total_operations !== 0 && accountBalanceHistory.total_operations < defaultChartSize)
-    ? accountBalanceHistory.total_operations
-    : defaultChartSize;
-  const chartData = useBalanceHistory(
+  // Update chartData to return loading, error, and data
+  const {
+    accountBalanceHistory: chartData,
+    isAccountBalanceHistoryLoading: isChartDataLoading,
+    isAccountBalanceHistoryError: isChartDataError,
+  } = useBalanceHistory(
     accountNameFromRoute,
     paramsState.coinType,
     undefined,
-    chartPageSize,
+    5000, // Default size for chart data
     "asc",
     effectiveFromBlock,
     effectiveToBlock
   );
 
-  const preparedData = chartData.accountBalanceHistory
-    ? prepareData(chartData.accountBalanceHistory.operations_result)
-    : [];
-  // Determine the message to display based on the filters
+  const preparedData = chartData ? prepareData(chartData.operations_result) : [];
+
   let message = "";
   if (effectiveFromBlock === defaultFromDate && !fromBlockParam && !toBlockParam) {
     message = "Showing Results for the last month.";
@@ -229,24 +218,29 @@ export default function BalanceHistory() {
               </div>
             ) : (
               <>
-                
                 <Card data-testid="account-details">
-                  {/* Display the message */}
                   {message && (
-                  <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg mb-4 text-center text-sm text-gray-500">
-                    {message}<br/>
-                    Results are limited to {defaultChartSize} records and grouped by day.<br/>
-  
-                  </div>
-                )}
+                    <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg mb-4 text-center text-sm text-gray-500">
+                      {message}<br />
+                      Results are limited to 5000 records and grouped by day.<br />
+                    </div>
+                  )}
 
-                  <BalanceHistoryChart
-                    hiveBalanceHistoryData={(!paramsState.coinType || paramsState.coinType === "HIVE") ? preparedData : undefined}
-                    vestsBalanceHistoryData={paramsState.coinType === "VESTS" ? preparedData : undefined}
-                    hbdBalanceHistoryData={paramsState.coinType === "HBD" ? preparedData : undefined}
-                    quickView={false}
-                    className="h-[450px] mb-10 mr-0 pr-1 pb-6"
-                  />
+                  {isChartDataLoading ? (
+                    <div className="flex justify-center text-center items-center">
+                      <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />
+                    </div>
+                  ) : !isChartDataError ? (
+                    <BalanceHistoryChart
+                      hiveBalanceHistoryData={(!paramsState.coinType || paramsState.coinType === "HIVE") ? preparedData : undefined}
+                      vestsBalanceHistoryData={paramsState.coinType === "VESTS" ? preparedData : undefined}
+                      hbdBalanceHistoryData={paramsState.coinType === "HBD" ? preparedData : undefined}
+                      quickView={false}
+                      className="h-[450px] mb-10 mr-0 pr-1 pb-6"
+                    />
+                  ) : (
+                    <div>Error loading chart data</div>
+                  )}
                 </Card>
 
                 <BalanceHistoryTable

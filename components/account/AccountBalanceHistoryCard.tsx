@@ -13,7 +13,7 @@ import useBalanceHistory from "@/hooks/api/balanceHistory/useBalanceHistory";
 import BalanceHistoryChart from "../balanceHistory/BalanceHistoryChart";
 import moment from "moment";
 import { useRouter } from "next/router";
-
+import { Loader2 } from "lucide-react";
 // Define the type for balance operation data
 
 type AccountBalanceHistoryCardProps = {
@@ -26,7 +26,7 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
   userDetails,
 }) => {
   const [isBalancesHidden, setIsBalancesHidden] = useState(false);
-  const defaultFromDate = React.useMemo(
+  const defaultFromDate = useMemo(
     () => moment().subtract(1, "month").toDate(),
     []
   );
@@ -72,16 +72,22 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
     defaultFromDate
   );
 
-  const staticData = [
-    { timestamp: "2023-01-01", balance: 100 },
-    { timestamp: "2023-02-01", balance: 110 },
-    { timestamp: "2023-03-01", balance: 120 },
-  ];
-
-
   const handleBalancesVisibility = () => {
     setIsBalancesHidden(!isBalancesHidden);
   };
+
+  const isLoading =
+    hiveBalanceHistoryLoading ||
+    vestsBalanceHistoryLoading ||
+    hbdBalanceHistoryLoading;
+  const hasData =
+    hiveBalanceHistory?.operations_result?.length > 0 ||
+    vestsBalanceHistory?.operations_result?.length > 0 ||
+    hbdBalanceHistory?.operations_result?.length > 0;
+  const hasError =
+    hiveBalanceHistoryError ||
+    vestsBalanceHistoryError ||
+    hbdBalanceHistoryError;
 
   return (
     <Card data-testid="properties-dropdown" className="overflow-hidden pb-0">
@@ -105,7 +111,7 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
                   </Link>
                 </TooltipTrigger>
                 <TooltipContent
-                  side="top"
+                  side="left"
                   align="start"
                   sideOffset={5}
                   alignOffset={10}
@@ -121,15 +127,34 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
           </div>
         </div>
       </CardHeader>
-      <CardContent hidden={isBalancesHidden} data-testid="balance-history-content">
-        <BalanceHistoryChart
-          hiveBalanceHistoryData={hiveBalanceHistory?.operations_result || []}
-          vestsBalanceHistoryData={vestsBalanceHistory?.operations_result || []}
-          hbdBalanceHistoryData={hbdBalanceHistory?.operations_result || []}
-          quickView={true}
- className="h-[340px]"
-        />
-       
+      <CardContent
+        hidden={isBalancesHidden}
+        data-testid="balance-history-content"
+      >
+        {isLoading && (
+          <div className="flex justify-center items-center">
+            <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />
+          </div>
+        )}
+        {!isLoading && hasError && (
+          <p className="text-sm text-center">
+            Error loading balance information.
+          </p>
+        )}
+        {!isLoading && !hasData && (
+          <p className="text-sm text-center">No balance information found.</p>
+        )}
+        {!isLoading && hasData && (
+          <BalanceHistoryChart
+            hiveBalanceHistoryData={hiveBalanceHistory?.operations_result || []}
+            vestsBalanceHistoryData={
+              vestsBalanceHistory?.operations_result || []
+            }
+            hbdBalanceHistoryData={hbdBalanceHistory?.operations_result || []}
+            quickView={true}
+            className="h-[340px]"
+          />
+        )}
       </CardContent>
     </Card>
   );
