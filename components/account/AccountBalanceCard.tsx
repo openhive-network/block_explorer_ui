@@ -10,6 +10,15 @@ import {
   grabNumericValue,
 } from "@/utils/StringUtils";
 import { cn, formatNumber } from "@/lib/utils";
+import Link from "next/link";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faHistory } from "@fortawesome/free-solid-svg-icons";
+import {
+  Tooltip,
+  TooltipProvider,
+  TooltipTrigger,
+  TooltipContent,
+} from "@radix-ui/react-tooltip";
 type AccountBalanceCardProps = {
   header: string;
   userDetails: Explorer.FormattedAccountDetails;
@@ -162,8 +171,8 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
           className="flex justify-between items-center p-2 hover:bg-rowHover cursor-pointer px-4"
         >
           <div className="text-lg">{header}</div>
-
-        </div>
+            <span> {isBalancesHidden ? <ArrowDown /> : <ArrowUp />}</span>
+          </div>
       </CardHeader>
       <CardContent
         hidden={isBalancesHidden}
