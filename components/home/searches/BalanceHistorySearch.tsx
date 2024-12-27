@@ -6,6 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import useSearchRanges from "@/hooks/common/useSearchRanges";
 import useURLParams from "@/hooks/common/useURLParams";
+import OperationTypesDialog from "@/components/OperationTypesDialog";
+import useAccountOperationTypes from "@/hooks/api/accountPage/useAccountOperationTypes";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -19,7 +21,7 @@ interface AccountSearchParams {
   rangeSelectKey: string | undefined;
   page: number | undefined;
   filters: boolean[];
-  coinType?: string; 
+  coinType?: string;
 }
 
 const defaultSearchParams: AccountSearchParams = {
@@ -42,6 +44,30 @@ const BalanceHistorySearch = () => {
   const COIN_TYPES = ["HIVE", "VESTS", "HBD"];
   const router = useRouter();
   const accountNameFromRoute = (router.query.accountName as string)?.slice(1);
+  const { accountOperationTypes } =
+    useAccountOperationTypes(accountNameFromRoute);
+  const [selectedOperationTypes, setSelectedOperationTypes] = useState<
+    number[]
+  >([]);
+  const [singleOperationTypeId, setSingleOperationTypeId] = useState<
+    number | undefined
+  >(undefined);
+  const [fieldContent, setFieldContent] = useState<string>("");
+  const [selectedKeys, setSelectedKeys] = useState<string[] | undefined>(
+    undefined
+  );
+  const [selectedIndex, setSelectedIndex] = useState<string>("");
+
+  const changeSelectedOperationTypes = (operationTypesIds: number[]) => {
+    if (operationTypesIds.length === 1) {
+      setSingleOperationTypeId(operationTypesIds[0]);
+    } else {
+      setSingleOperationTypeId(undefined);
+    }
+    setSelectedKeys(undefined);
+    setFieldContent("");
+    setSelectedOperationTypes(operationTypesIds);
+  };
 
   const { paramsState, setParams } = useURLParams(
     {
@@ -65,7 +91,6 @@ const BalanceHistorySearch = () => {
 
   const [initialSearch, setInitialSearch] = useState<boolean>(false);
   const [filters, setFilters] = useState<boolean[]>([]);
- 
 
   const searchRanges = useSearchRanges();
 
@@ -129,8 +154,11 @@ const BalanceHistorySearch = () => {
 
   const handleCoinTypeChange = (newCoinType: string) => {
     setCoinType(newCoinType);
-    setParams({ ...paramsState, coinType: newCoinType });
-    
+    setParams({
+      ...paramsState,
+      coinType: newCoinType,
+      page: undefined, // Reset the page when the coin type changes
+    });
   };
 
   const handleFilterClear = () => {
@@ -144,48 +172,66 @@ const BalanceHistorySearch = () => {
     setFilters([]);
   };
 
-    useEffect(() => {
+  useEffect(() => {
     if (paramsState.coinType) {
       setCoinType(paramsState.coinType);
-      }
+    }
     if (paramsState && !initialSearch) {
       handleSearch();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paramsState]);
 
-
   return (
     <>
       <p className="m-2 mb-6 mt-6">
         Find balance history of given account by coin and range.
       </p>
-     
+
       <Card className="mb-4">
         <CardHeader>
-          <CardTitle>Filters</CardTitle>
+          <CardTitle className="">Filters</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center mb-3">
-              <select
-                value={coinType}
-                onChange={(e) => handleCoinTypeChange(e.target.value)}
-                className="w-[180px] border border-gray-300 p-2 rounded bg-theme dark:bg-theme"
-              >
-                {COIN_TYPES.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </select>
-            
+            <select
+              value={coinType}
+              onChange={(e) => handleCoinTypeChange(e.target.value)}
+              className="w-[180px] border border-gray-300 p-2 rounded bg-theme dark:bg-theme"
+            >
+              {COIN_TYPES.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
           </div>
           <SearchRanges rangesProps={searchRanges} />
-          <div className="flex items-center justify-between m-2">
-            <Button onClick={() => handleSearch(true)} data-testid="apply-filters">
+          {/* Operations Types commented for now
+          <div className="flex items-center mb-10 mt-2">
+        <OperationTypesDialog
+          operationTypes={accountOperationTypes}
+          selectedOperations={selectedOperationTypes}
+          setSelectedOperations={/*changeSelectedOperationTypes}
+          buttonClassName="bg-gray-500"
+          triggerTitle={/*getOperationButtonTitle(
+            selectedOperationTypes,
+            accountOperationTypes
+          )}
+        /> 
+      </div> */}
+          <div>
+            <Button
+              onClick={() => handleSearch(true)}
+              data-testid="apply-filters"
+            >
               <span>Apply filters</span>
             </Button>
-            <Button onClick={() => handleFilterClear()} data-testid="clear-filters">
+            <Button
+              onClick={() => handleFilterClear()}
+              data-testid="clear-filters"
+              className="ml-2"
+            >
               <span>Clear filters</span>
             </Button>
           </div>
