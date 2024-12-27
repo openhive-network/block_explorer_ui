@@ -34,14 +34,14 @@ import { faChevronUp, faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
 import { convertOperationResultsToTableOperations } from "@/lib/utils";
-interface OperationsTableProps {
+interface BalanceHistoryTableProps {
   operations: Explorer.BalanceHistoryForTable[];
   total_operations: number;
   total_pages: number;
   current_page: number;
 }
 
-const BalanceHistoryTable: React.FC<OperationsTableProps> = ({
+const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
   operations,
   total_operations,
   total_pages,
@@ -56,7 +56,7 @@ const BalanceHistoryTable: React.FC<OperationsTableProps> = ({
   const operationsTypes = useOperationsTypes().operationsTypes || [];
 
   const formatRawCoin = (coinValue: number) =>
-    formatNumber(coinValue, false, false);
+    router.query.coinType === 'VESTS' ? formatNumber(coinValue, true, false) : formatNumber(coinValue, false, false);
 
   const getOperationColor = (op_type_id: number) => {
     const operation = operationsTypes.find(
