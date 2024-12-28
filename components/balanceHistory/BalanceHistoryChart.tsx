@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Line, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, Brush } from "recharts";
+import {
+  Line,
+  LineChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  Brush,
+} from "recharts";
 import { formatNumber } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import moment from "moment";
@@ -7,9 +17,21 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowDown, faArrowUp } from "@fortawesome/free-solid-svg-icons";
 
 interface BalanceHistoryChartProps {
-  hiveBalanceHistoryData?: { timestamp: string; balance_change: number; balance: number }[];
-  vestsBalanceHistoryData?: { timestamp: string; balance_change: number; balance: number }[];
-  hbdBalanceHistoryData?: { timestamp: string; balance_change: number; balance: number }[];
+  hiveBalanceHistoryData?: {
+    timestamp: string;
+    balance_change: number;
+    balance: number;
+  }[];
+  vestsBalanceHistoryData?: {
+    timestamp: string;
+    balance_change: number;
+    balance: number;
+  }[];
+  hbdBalanceHistoryData?: {
+    timestamp: string;
+    balance_change: number;
+    balance: number;
+  }[];
   className?: string;
   quickView?: boolean;
 }
@@ -30,9 +52,12 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
 
   useEffect(() => {
     const newAvailableCoins: string[] = [];
-    if (hiveBalanceHistoryData && hiveBalanceHistoryData.length > 0) newAvailableCoins.push("HIVE");
-    if (vestsBalanceHistoryData && vestsBalanceHistoryData.length > 0) newAvailableCoins.push("VESTS");
-    if (hbdBalanceHistoryData && hbdBalanceHistoryData.length > 0) newAvailableCoins.push("HBD");
+    if (hiveBalanceHistoryData && hiveBalanceHistoryData.length > 0)
+      newAvailableCoins.push("HIVE");
+    if (vestsBalanceHistoryData && vestsBalanceHistoryData.length > 0)
+      newAvailableCoins.push("VESTS");
+    if (hbdBalanceHistoryData && hbdBalanceHistoryData.length > 0)
+      newAvailableCoins.push("HBD");
 
     setAvailableCoins(newAvailableCoins);
   }, [hiveBalanceHistoryData, vestsBalanceHistoryData, hbdBalanceHistoryData]);
@@ -40,7 +65,10 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
   useEffect(() => {
     if (availableCoins.length === 1) {
       setSelectedCoinType(availableCoins[0]);
-    } else if (availableCoins.length > 1 && !availableCoins.includes(selectedCoinType)) {
+    } else if (
+      availableCoins.length > 1 &&
+      !availableCoins.includes(selectedCoinType)
+    ) {
       setSelectedCoinType(availableCoins[0]);
     }
   }, [availableCoins, selectedCoinType]);
@@ -55,12 +83,15 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
   }, []);
 
   const colorMap: Record<string, string> = {
-    "HIVE": "#8884d8",
-    "VESTS": "#82ca9d",
-    "HBD": "#ff7300",
+    HIVE: "#8884d8",
+    VESTS: "#82ca9d",
+    HBD: "#ff7300",
   };
 
-  const dataMap: Record<string, { timestamp: string; balance_change: number; balance: number }[]> = {
+  const dataMap: Record<
+    string,
+    { timestamp: string; balance_change: number; balance: number }[]
+  > = {
     HIVE: hiveBalanceHistoryData || [],
     VESTS: vestsBalanceHistoryData || [],
     HBD: hbdBalanceHistoryData || [],
@@ -81,9 +112,9 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
   }) => {
     if (quickView || !active || !payload || payload.length === 0) return null;
 
-    const actualBalance = dataMap[selectedCoinType]?.find(
-      (item) => item.timestamp === label
-    )?.balance ?? 0;
+    const actualBalance =
+      dataMap[selectedCoinType]?.find((item) => item.timestamp === label)
+        ?.balance ?? 0;
     const balanceChange = payload[0]?.payload.balance_change ?? 0;
 
     const isPositiveChange = balanceChange > 0;
@@ -108,9 +139,17 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
                   className="bg-red-400 p-[1.2px]"
                 />
               )}
-              {` ${formatNumber(balanceChange, selectedCoinType === "VESTS", false)}`}
+              {` ${formatNumber(
+                balanceChange,
+                selectedCoinType === "VESTS",
+                false
+              )}`}
             </div>
-            <div>{`Balance: ${formatNumber(actualBalance, selectedCoinType === "VESTS", false)}`}</div>
+            <div>{`Balance: ${formatNumber(
+              actualBalance,
+              selectedCoinType === "VESTS",
+              false
+            )}`}</div>
           </div>
         ))}
       </div>
@@ -135,7 +174,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
   };
 
   const getMinMax = (data: { balance: number }[]) => {
-    const balance = data.map(item => item.balance);
+    const balance = data.map((item) => item.balance);
     const minValue = Math.min(...balance);
     const maxValue = Math.max(...balance);
     return [minValue, maxValue];
@@ -143,15 +182,13 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
 
   const [minValue, maxValue] = getMinMax(dataMap[selectedCoinType]);
 
-  const tickInterval = Math.ceil(dataMap[selectedCoinType].length / 15);
-
   return (
     <div className={cn("w-full", className)}>
       {availableCoins.length > 1 && (
         <div className="flex justify-end mb-4">{renderCoinButtons()}</div>
       )}
 
-      <ResponsiveContainer width="100%" height="100%">
+      <ResponsiveContainer width="100%" height="100%" className='mb-5'>
         <LineChart
           data={dataMap[selectedCoinType] || []}
           margin={{ top: 20, right: 30, left: 20, bottom: isMobile ? 100 : 60 }}
@@ -159,9 +196,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey="timestamp"
-            tick={quickView ? false : true}
-            interval={tickInterval}
-            tickCount={12}
+            tickCount={quickView ? 5 : 14}
             tickFormatter={(value) => moment(value).format("MMM D")}
             style={{ fontSize: "10px" }}
             angle={isMobile ? -90 : 0}
@@ -192,17 +227,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             dot={false}
             hide={hiddenDataKeys.includes("balance")}
           />
-          <Legend
-            onClick={(event) => {
-              const { dataKey } = event;
-              const isHidden = hiddenDataKeys.includes(dataKey);
-              if (isHidden) {
-                setHiddenDataKeys(hiddenDataKeys.filter((key) => key !== dataKey));
-              } else {
-                setHiddenDataKeys([...hiddenDataKeys, dataKey]);
-              }
-            }}
-          />
+          
           {!quickView && (
             <Brush
               dataKey="timestamp"
@@ -215,6 +240,19 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
               className="text-xs"
             />
           )}
+          <Legend
+            onClick={(event) => {
+              const { dataKey } = event;
+              const isHidden = hiddenDataKeys.includes(dataKey);
+              if (isHidden) {
+                setHiddenDataKeys(
+                  hiddenDataKeys.filter((key) => key !== dataKey)
+                );
+              } else {
+                setHiddenDataKeys([...hiddenDataKeys, dataKey]);
+              }
+            }}
+          />
         </LineChart>
       </ResponsiveContainer>
     </div>
