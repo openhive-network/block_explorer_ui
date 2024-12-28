@@ -139,7 +139,11 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
                   className="bg-red-400 p-[1.2px]"
                 />
               )}
-              {` ${formatNumber(balanceChange, selectedCoinType === "VESTS", false)}`}
+              {` ${formatNumber(
+                balanceChange,
+                selectedCoinType === "VESTS",
+                false
+              )}`}
             </div>
             <div>{`Balance: ${formatNumber(
               actualBalance,
