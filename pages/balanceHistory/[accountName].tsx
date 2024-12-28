@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useMemo } from "react";
 import moment from "moment";
 import { config } from "@/Config";
 
@@ -19,6 +19,9 @@ import BalanceHistoryTable from "@/components/balanceHistory/BalanceHistoryTable
 import BalanceHistorySearch from "@/components/home/searches/BalanceHistorySearch";
 import { Card, CardHeader } from "@/components/ui/card";
 import BalanceHistoryChart from "@/components/balanceHistory/BalanceHistoryChart";
+
+// Memoizing the BalanceHistoryChart component to avoid unnecessary re-renders
+const MemoizedBalanceHistoryChart = React.memo(BalanceHistoryChart);
 
 interface Operation {
   timestamp: number;  // Timestamp in seconds
@@ -157,7 +160,10 @@ export default function BalanceHistory() {
     effectiveToBlock
   );
 
-  const preparedData = chartData ? prepareData(chartData.operations_result) : [];
+  // Use useMemo to memoize the prepared data so it only recalculates when chartData changes
+  const preparedData = useMemo(() => {
+     return chartData ? prepareData(chartData.operations_result) : [];
+  }, [chartData]); // This will only recompute when chartData changes
 
   let message = "";
   if (effectiveFromBlock === defaultFromDate && !fromBlockParam && !toBlockParam) {
@@ -231,7 +237,7 @@ export default function BalanceHistory() {
                       <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />
                     </div>
                   ) : !isChartDataError ? (
-                    <BalanceHistoryChart
+                    <MemoizedBalanceHistoryChart
                       hiveBalanceHistoryData={(!paramsState.coinType || paramsState.coinType === "HIVE") ? preparedData : undefined}
                       vestsBalanceHistoryData={paramsState.coinType === "VESTS" ? preparedData : undefined}
                       hbdBalanceHistoryData={paramsState.coinType === "HBD" ? preparedData : undefined}
