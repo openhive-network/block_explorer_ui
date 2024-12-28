@@ -145,18 +145,22 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                 id={operation.trxId}
                 data-testid="detailed-operation-card"
                 key={index}
-                className={cn("border-b border-gray-700", {
-                  "border-b-0":
-                    nextTransactionId === operation.trxId && !!operation.trxId,
-                  "bg-operationPerspectiveIncoming":
-                    operationPerspective === "incoming",
-                })}
+                className={cn(
+                  "border-b bg-theme hover:bg-rowHover border-gray-700",
+                  {
+                    "border-b-0":
+                      nextTransactionId === operation.trxId &&
+                      !!operation.trxId,
+                    "bg-operationPerspectiveIncoming":
+                      operationPerspective === "incoming",
+                  }
+                )}
               >
-                <TableCell className="sticky left-0 xl:bg-inherit">
+                <TableCell className="sticky left-0 bg-inherit">
                   <CopyJSON value={getUnformattedValue(operation)} />
                 </TableCell>
                 <TableCell
-                  className="pl-2 sticky left-12 xl:bg-inherit"
+                  className="pl-2 sticky left-12 bg-inherit"
                   data-testid="block-number-operation-table"
                 >
                   <Link

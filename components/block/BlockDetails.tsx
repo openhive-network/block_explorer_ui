@@ -26,6 +26,8 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
   enableRawVirtualOperations,
   handleEnableVirtualOperations,
 }) => {
+  if (!blockDetails) return;
+
   return (
     <Card
       className="flex flex-col w-full md:max-w-screen-2xl m-auto"
@@ -33,7 +35,7 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
     >
       <CardHeader>
         <CardTitle data-testid="block-number">
-          Block {blockDetails?.block_num?.toLocaleString()}
+          Block {blockDetails.block_num.toLocaleString()}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -42,22 +44,22 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
           data-testid="produced-data"
         >
           <p>Produced at: </p>
-          <p>{formatAndDelocalizeTime(blockDetails?.created_at)}</p>
+          <p>{formatAndDelocalizeTime(blockDetails.created_at)}</p>
           <p>by</p>
           <Link
             className="flex justif-between items-center"
             data-testid="account-name"
-            href={`/@${blockDetails?.producer_account}`}
+            href={`/@${blockDetails.producer_account}`}
           >
             <span
               className="text-link mx-2"
               data-testid="block-producer-name"
             >
-              {blockDetails?.producer_account}
+              {blockDetails.producer_account}
             </span>
             <Image
               className="rounded-full border-2 border-link"
-              src={getHiveAvatarUrl(blockDetails?.producer_account)}
+              src={getHiveAvatarUrl(blockDetails.producer_account)}
               alt="avatar"
               width={40}
               height={40}
@@ -72,7 +74,7 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
             >
               Hash:{" "}
             </span>
-            {blockDetails?.hash.slice(2)}
+            {blockDetails.hash}
           </p>
           <p>
             <span
@@ -81,7 +83,7 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
             >
               Prev hash:{" "}
             </span>
-            {blockDetails?.prev.slice(2)}
+            {blockDetails.prev}
           </p>
         </div>
         <BlockPageOperationCount

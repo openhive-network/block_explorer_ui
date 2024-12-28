@@ -1,4 +1,4 @@
-import { useState ,useEffect } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { MoveDown, MoveUp, Loader2 } from "lucide-react";
 import { Switch } from "../ui/switch";
@@ -90,32 +90,35 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
     nai: "",
     precision: 0,
   });
-  
+
   const { hiveChain } = useHiveChainContext();
-  
+
   useEffect(() => {
     const fetchDynamicGlobalProperties = async () => {
+      const dynamicGlobalProperties =
+        await fetchingService.getDynamicGlobalProperties();
+      const _totalVestingfundHive =
+        dynamicGlobalProperties.total_vesting_fund_hive;
+      const _totalVestingShares = dynamicGlobalProperties.total_vesting_shares;
 
-    const dynamicGlobalProperties = await fetchingService.getDynamicGlobalProperties();
-    const _totalVestingfundHive = dynamicGlobalProperties.total_vesting_fund_hive;
-    const _totalVestingShares = dynamicGlobalProperties.total_vesting_shares;
-
-    setTotalVestingFundHive(_totalVestingfundHive);
-    setTotalVestingShares(_totalVestingShares);
-    }
+      setTotalVestingFundHive(_totalVestingfundHive);
+      setTotalVestingShares(_totalVestingShares);
+    };
 
     fetchDynamicGlobalProperties();
-
-  }, []); 
+  }, []);
 
   const fetchHivePower = (value: string, isHP: boolean): string => {
-    
-      if (isHP) {
-        if (!hiveChain) return "";
-        return convertVestsToHP(hiveChain,value,totalVestingFundHive,totalVestingShares);
-  
+    if (isHP) {
+      if (!hiveChain) return "";
+      return convertVestsToHP(
+        hiveChain,
+        value,
+        totalVestingFundHive,
+        totalVestingShares
+      );
     }
-    return formatNumber(parseInt(value),true,false)+ " Vests"; // Return raw vests if not toggled to HP
+    return formatNumber(parseInt(value), true, false) + " Vests"; // Return raw vests if not toggled to HP
   };
   return (
     <Dialog
@@ -160,7 +163,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                 </div>
               </div>
             </div>
-              <CustomPagination
+            <CustomPagination
               currentPage={pageNum}
               onPageChange={(newPage: number) => {
                 setPageNum(newPage);
@@ -171,86 +174,86 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
               isMirrored={false}
             />
             {witnessVoters?.voters?.length === 0 && !isWitnessVotersLoading ? (
-                <div className="flex justify-center w-full">
-                  No results matching given criteria
-                </div>
-              ) : (
+              <div className="flex justify-center w-full">
+                No results matching given criteria
+              </div>
+            ) : (
               <>
-              <Table className="text-white">
-                <TableHeader>
-                  <TableRow>
-                    {tableColums.map((column, index) => (
-                      <TableHead
-                        onClick={() => {
-                          onHeaderClick(column.key);
-                        }}
-                        key={column.key}
-                        className={cn({
-                          "sticky md:static left-0": !index,
-                        })}
-                      >
-                        <span
-                          className={cn("flex", {
-                            "justify-end": column.isRightAligned,
+                <Table className="text-white">
+                  <TableHeader>
+                    <TableRow>
+                      {tableColums.map((column, index) => (
+                        <TableHead
+                          onClick={() => {
+                            onHeaderClick(column.key);
+                          }}
+                          key={column.key}
+                          className={cn({
+                            "sticky md:static left-0": !index,
                           })}
                         >
-                          {column.name} {showSorter(column.key)}
-                        </span>
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                </TableHeader>
-                <TableBody data-testid="voters-dialog-table-body">
-                  {witnessVoters &&
-                    witnessVoters.voters.map((voter, index) => (
-                      <TableRow
-                        key={index}
-                        className={`${
-                          index % 2 === 0 ? "bg-rowEven" : "bg-rowOdd"
-                        }`}
-                      >
-                        <TableCell
-                          className={`text-link sticky md:static left-0 ${
-                            index % 2 === 0
-                              ? "bg-rowEven md:bg-inherit"
-                              : "bg-rowOdd md:bg-inherit"
+                          <span
+                            className={cn("flex", {
+                              "justify-end": column.isRightAligned,
+                            })}
+                          >
+                            {column.name} {showSorter(column.key)}
+                          </span>
+                        </TableHead>
+                      ))}
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody data-testid="voters-dialog-table-body">
+                    {witnessVoters &&
+                      witnessVoters.voters.map((voter, index) => (
+                        <TableRow
+                          key={index}
+                          className={`${
+                            index % 2 === 0 ? "bg-rowEven" : "bg-rowOdd"
                           }`}
                         >
-                          <Link
-                            href={`/@${voter.voter_name}`}
-                            data-testid="voter-name"
+                          <TableCell className="text-link sticky md:static left-0 bg-inherit">
+                            <Link
+                              href={`/@${voter.voter_name}`}
+                              data-testid="voter-name"
+                            >
+                              {voter.voter_name}
+                            </Link>
+                          </TableCell>
+                          <TableCell
+                            className="text-right"
+                            data-testid="vote-power"
                           >
-                            {voter.voter_name}
-                          </Link>
-                        </TableCell>
-                        <TableCell
-                          className="text-right"
-                          data-testid="vote-power"
-                        >
-                          {fetchHivePower(voter.vests.toString(), isHP)}
-                        </TableCell>
-                        <TableCell
-                          className="text-right"
-                          data-testid="account-power"
-                        >
-                          {fetchHivePower(voter.account_vests.toString(), isHP)}
-                        </TableCell>
-                        <TableCell
-                          className="text-right"
-                          data-testid="proxied-power"
-                        >
-                          {fetchHivePower(voter.proxied_vests.toString(), isHP)}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                </TableBody>
-              </Table>
+                            {fetchHivePower(voter.vests.toString(), isHP)}
+                          </TableCell>
+                          <TableCell
+                            className="text-right"
+                            data-testid="account-power"
+                          >
+                            {fetchHivePower(
+                              voter.account_vests.toString(),
+                              isHP
+                            )}
+                          </TableCell>
+                          <TableCell
+                            className="text-right"
+                            data-testid="proxied-power"
+                          >
+                            {fetchHivePower(
+                              voter.proxied_vests.toString(),
+                              isHP
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                  </TableBody>
+                </Table>
               </>
-            )}             
-            </>
-          ) : (
-            <Loader2 className="animate-spin mt-1 h-8 w-8 ml-3 ..." />
-          )}
+            )}
+          </>
+        ) : (
+          <Loader2 className="animate-spin mt-1 h-8 w-8 ml-3 ..." />
+        )}
       </DialogContent>
     </Dialog>
   );
