@@ -14,8 +14,8 @@ import BalanceHistoryChart from "../balanceHistory/BalanceHistoryChart";
 import moment from "moment";
 import { useRouter } from "next/router";
 import { Loader2 } from "lucide-react";
-// Define the type for balance operation data
 
+// Define the type for balance operation data
 type AccountBalanceHistoryCardProps = {
   header: string;
   userDetails: Explorer.FormattedAccountDetails;
@@ -42,7 +42,7 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
     "HIVE",
     undefined,
     undefined,
-    "asc",
+    "desc",
     defaultFromDate
   );
 
@@ -55,7 +55,7 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
     "VESTS",
     undefined,
     undefined,
-    "asc",
+    "desc",
     defaultFromDate
   );
 
@@ -68,7 +68,7 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
     "HBD",
     undefined,
     undefined,
-    "asc",
+    "desc",
     defaultFromDate
   );
 
@@ -88,6 +88,27 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
     hiveBalanceHistoryError ||
     vestsBalanceHistoryError ||
     hbdBalanceHistoryError;
+
+  // Reverse the vestsBalanceHistory data with useMemo
+  const reversedVestsBalanceHistory = useMemo(() => {
+    return Array.isArray(vestsBalanceHistory?.operations_result)
+      ? [...vestsBalanceHistory.operations_result].reverse()
+      : [];
+  }, [vestsBalanceHistory?.operations_result]);
+
+  // Reverse the hiveBalanceHistory data with useMemo
+  const reversedHiveBalanceHistory = useMemo(() => {
+    return Array.isArray(hiveBalanceHistory?.operations_result)
+      ? [...hiveBalanceHistory.operations_result].reverse()
+      : [];
+  }, [hiveBalanceHistory?.operations_result]);
+
+  // Reverse the hbdBalanceHistory data with useMemo
+  const reversedHbdBalanceHistory = useMemo(() => {
+    return Array.isArray(hbdBalanceHistory?.operations_result)
+      ? [...hbdBalanceHistory.operations_result].reverse()
+      : [];
+  }, [hbdBalanceHistory?.operations_result]);
 
   return (
     <Card data-testid="properties-dropdown" className="overflow-hidden pb-0">
@@ -146,11 +167,9 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
         )}
         {!isLoading && hasData && (
           <BalanceHistoryChart
-            hiveBalanceHistoryData={hiveBalanceHistory?.operations_result || []}
-            vestsBalanceHistoryData={
-              vestsBalanceHistory?.operations_result || []
-            }
-            hbdBalanceHistoryData={hbdBalanceHistory?.operations_result || []}
+            hiveBalanceHistoryData={reversedHiveBalanceHistory}
+            vestsBalanceHistoryData={reversedVestsBalanceHistory}
+            hbdBalanceHistoryData={reversedHbdBalanceHistory}
             quickView={true}
             className="h-[340px]"
           />
