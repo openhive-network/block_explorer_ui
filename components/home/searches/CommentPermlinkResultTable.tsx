@@ -14,6 +14,7 @@ import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 interface CommentPermlinkResultTableProps {
   data: Hive.Permlink[];
   accountName: string | undefined;
+  buildLink: (accountName: string, permlink: string) => {};
 }
 
 const TABLE_CELLS = [
@@ -39,12 +40,15 @@ const buildTableHeader = () => {
 
 const buildTableBody = (
   data: Hive.Permlink[],
-  accountName: string | undefined
+  accountName: string | undefined,
+  buildLink: (accountName: string, permlink: string) => {}
 ) => {
   if (!data || !data.length || !accountName) return;
 
   return data.map(
     ({ block, operation_id, permlink, timestamp, trx_id }: any) => {
+      const linkToCommentsPage = buildLink(accountName, permlink);
+
       return (
         <React.Fragment key={trx_id}>
           <TableRow className="border-b border-gray-700 hover:bg-inherit p-[10px]">
@@ -55,9 +59,7 @@ const buildTableBody = (
               {operation_id}
             </TableCell>
             <TableCell className="text-center text-link">
-              <Link href={`/comments/@${accountName}?&permlink=${permlink}`}>
-                {permlink}
-              </Link>
+              <Link href={linkToCommentsPage}>{permlink}</Link>
             </TableCell>
             <TableCell className="text-left text-text">
               {formatAndDelocalizeTime(timestamp)}
@@ -73,6 +75,7 @@ const buildTableBody = (
 };
 
 const CommentPermlinkResultTable = ({
+  buildLink,
   data,
   accountName,
 }: CommentPermlinkResultTableProps) => {
@@ -84,7 +87,9 @@ const CommentPermlinkResultTable = ({
             <TableHeader>
               <TableRow>{buildTableHeader()}</TableRow>
             </TableHeader>
-            <TableBody>{buildTableBody(data, accountName)}</TableBody>
+            <TableBody>
+              {buildTableBody(data, accountName, buildLink)}
+            </TableBody>
           </Table>
         </div>
       </div>

@@ -55,8 +55,18 @@ export interface SearchesContextType {
     SetStateAction<Explorer.AccountSearchOperationsProps | undefined>
   >;
 
-  commentType: CommentType | undefined;
-  setCommentType: Dispatch<SetStateAction<CommentType | undefined>>;
+  commentType: CommentType;
+  setCommentType: Dispatch<SetStateAction<CommentType>>;
+  commentsSearchAccountName: string | string[] | undefined;
+  setCommentsSearchAccountName: Dispatch<
+    SetStateAction<string | string[] | undefined>
+  >;
+  commentsSearchPermlink: string | string[] | undefined;
+  setCommentsSearchPermlink: Dispatch<
+    SetStateAction<string | string[] | undefined>
+  >;
+  selectedCommentSearchOperationTypes: number[];
+  setSelectedCommentSearchOperationTypes: Dispatch<SetStateAction<number[]>>;
   searchRanges: any;
 }
 
@@ -111,10 +121,18 @@ export const SearchesContextProvider: React.FC<{
   const [accountOperationsSearchProps, setAccountOperationsSearchProps] =
     useState<Explorer.AccountSearchOperationsProps | undefined>(undefined);
 
-  const [commentType, setCommentType] = useState<CommentType | undefined>(
-    undefined
-  );
-
+  //  comment_type: post is default by backend
+  const [commentType, setCommentType] = useState<CommentType>("post");
+  const [commentsSearchAccountName, setCommentsSearchAccountName] = useState<
+    string | string[] | undefined
+  >("");
+  const [commentsSearchPermlink, setCommentsSearchPermlink] = useState<
+    string | string[] | undefined
+  >("");
+  const [
+    selectedCommentSearchOperationTypes,
+    setSelectedCommentSearchOperationTypes,
+  ] = useState<number[]>([]);
   const searchRanges = useSearchRanges("lastBlocks");
 
   return (
@@ -122,6 +140,12 @@ export const SearchesContextProvider: React.FC<{
       value={{
         previousCommentSearchProps,
         setPreviousCommentSearchProps,
+        commentsSearchAccountName,
+        setCommentsSearchAccountName,
+        commentsSearchPermlink,
+        setCommentsSearchPermlink,
+        selectedCommentSearchOperationTypes,
+        setSelectedCommentSearchOperationTypes,
         previousAccountOperationsSearchProps,
         setPreviousAccountOperationsSearchProps,
         commentPaginationPage,

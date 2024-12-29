@@ -1,23 +1,24 @@
 import Link from "next/link";
 
 import { config } from "@/Config";
-import Explorer from "@/types/Explorer";
 import { Button } from "@/components//ui/button";
 import CustomPagination from "@/components//CustomPagination";
 import JumpToPage from "@/components//JumpToPage";
 import OperationsTable from "@/components//OperationsTable";
-import { convertCommentsOperationResultToTableOperations } from "@/lib/utils";
+import {
+  cn,
+  convertCommentsOperationResultToTableOperations,
+} from "@/lib/utils";
 import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
 import useCommentSearch from "@/hooks/api/common/useCommentSearch";
 import { useSearchesContext } from "@/contexts/SearchesContext";
 import { getCommentPageLink } from "../utils/commentSearchHelpers";
+import { usePathname } from "next/navigation";
 
 const CommentSearchResults = () => {
   const {
     commentSearchProps,
-    lastSearchKey,
     commentPaginationPage,
-    previousCommentSearchProps,
     setCommentSearchProps,
     setCommentPaginationPage,
     searchRanges,
@@ -25,6 +26,9 @@ const CommentSearchResults = () => {
 
   const { commentSearchData } = useCommentSearch(commentSearchProps);
   const formattedCommentOperations = useOperationsFormatter(commentSearchData);
+  const pathname = usePathname();
+
+  const isCommentsPage = pathname?.includes("/comments") ?? false;
 
   if (!commentSearchData) return;
 
@@ -35,28 +39,38 @@ const CommentSearchResults = () => {
   const unformattedOperations = convertCommentsOperationResultToTableOperations(
     commentSearchData.operations_result
   );
-  const commentPageLink = getCommentPageLink(commentSearchProps, searchRanges);
+  const commentPageLink = getCommentPageLink({
+    ...commentSearchProps,
+    ...searchRanges,
+  });
 
   const changeCommentSearchPagination = (newPageNum: number) => {
-    if (previousCommentSearchProps?.accountName) {
-      const newSearchProps: Explorer.CommentSearchProps = {
-        ...previousCommentSearchProps,
-        pageNumber: newPageNum,
-      };
-      setCommentSearchProps(newSearchProps);
-      setCommentPaginationPage(newPageNum);
-    }
+    const newSearchProps: any = {
+      ...commentSearchProps,
+      pageNumber: newPageNum,
+    };
+    setCommentSearchProps(newSearchProps);
+    setCommentPaginationPage(newPageNum);
   };
 
   return (
     <>
       {commentSearchData.operations_result.length ? (
         <div>
-          <Link href={commentPageLink}>
-            <Button data-testid="go-to-result-page">Go to result page</Button>
-          </Link>
+          {!isCommentsPage && (
+            <Link href={commentPageLink}>
+              <Button data-testid="go-to-result-page">Go to result page</Button>
+            </Link>
+          )}
 
-          <div className="flex justify-center items-center text-black dark:text-white">
+          <div
+            className={cn(
+              "flex justify-center items-center text-black dark:text-white",
+              {
+                "mt-10": isCommentsPage,
+              }
+            )}
+          >
             <CustomPagination
               currentPage={commentPaginationPage}
               totalCount={commentSearchData.total_operations}
