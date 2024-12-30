@@ -96,6 +96,10 @@ declare module Explorer {
     pageSize?: number;
     direction?: "asc" | "desc";
     dataSizeLimit?: number;
+    rangeSelectKey?: string | undefined;
+    lastTimeUnitValue?: Date | string;
+    lastBlocksValue?: string | number;
+    timeUnitSelectKey?: number | string;
   }
 
   interface PermlinkSearchProps extends CommonSearchProps {
@@ -190,13 +194,13 @@ declare module Explorer {
       rank: number;
       signing_key: string;
       url: string;
-      version: string; 
+      version: string;
       vests: string;
       voters_num: number;
       voters_num_daily_change: number;
       votes_daily_change: string;
       witness_name: string;
-      }; 
+    };
   }
 
   interface OperationForTable {

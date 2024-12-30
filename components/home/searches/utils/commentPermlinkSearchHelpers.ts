@@ -4,7 +4,7 @@ export function startCommentPermlinkSearch(
   commentPermlinkSearchProps: Explorer.CommentPermlinSearchParams,
   setPermlinkSearchProps: (props: Explorer.PermlinkSearchProps) => void,
   setCommentPaginationPage: (val: number) => void,
-  setCommentType: (val: "all" | "post" | "comment" | undefined) => void,
+  setCommentType: (val: "all" | "post" | "comment") => void,
   setLastSearchKey: (val: "comment-permlink") => void
 ) {
   const { ...params } = commentPermlinkSearchProps;
@@ -14,6 +14,6 @@ export function startCommentPermlinkSearch(
   };
   setPermlinkSearchProps(props);
   setCommentPaginationPage(1);
-  setCommentType(undefined);
+  setCommentType("post");
   setLastSearchKey("comment-permlink");
 }

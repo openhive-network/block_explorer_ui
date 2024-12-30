@@ -1,6 +1,7 @@
 import usePermlinkSearch from "@/hooks/api/common/usePermlinkSearch";
 import CommentPermlinkResultTable from "../CommentPermlinkResultTable";
 import { useSearchesContext } from "@/contexts/SearchesContext";
+import { getCommentPageLink } from "../utils/commentSearchHelpers";
 
 const COMMENT_TYPES = ["all", "post", "comment"];
 
@@ -10,7 +11,7 @@ const CommentPermlinkSearchResults = () => {
     commentType,
     setCommentType,
     setPermlinkSearchProps,
-    lastSearchKey,
+    searchRanges,
   } = useSearchesContext();
 
   const { permlinkSearchData } = usePermlinkSearch(permlinkSearchProps);
@@ -28,6 +29,15 @@ const CommentPermlinkSearchResults = () => {
         ...prev,
         commentType: value,
       };
+    });
+  };
+
+  const buildLink = (accountName: string, permlink: string) => {
+    return getCommentPageLink({
+      ...permlinkSearchProps,
+      ...searchRanges,
+      accountName,
+      permlink,
     });
   };
 
@@ -56,6 +66,7 @@ const CommentPermlinkSearchResults = () => {
 
           <div className="flex flex-wrap">
             <CommentPermlinkResultTable
+              buildLink={buildLink}
               data={permlinkSearchData.permlinks_result}
               accountName={accountName}
             />

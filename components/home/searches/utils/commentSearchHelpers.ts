@@ -1,10 +1,10 @@
 import {
   convertBooleanArrayToIds,
   convertIdsToBooleanArray,
-  getPageUrlParams,
 } from "@/lib/utils";
 import { dataToURL } from "@/utils/URLutils";
 import Explorer from "@/types/Explorer";
+import { setParamIfPositive } from "./globalSearchHelpers";
 
 export async function startCommentSearch(
   commentSearchParams: Explorer.CommentSearchParams,
@@ -27,48 +27,48 @@ export async function startCommentSearch(
 }
 
 export function getCommentPageLink(
-  commentSearchProps: Explorer.CommentSearchProps | undefined,
-  searchRanges: any
+  commentSearchProps: Explorer.CommentSearchProps | undefined
 ): string {
   if (!commentSearchProps) return "#";
-  const urlParams: Explorer.UrlParam[] = [
-    {
-      paramName: "fromBlock",
-      paramValue: dataToURL(commentSearchProps.fromBlock),
-    },
-    { paramName: "toBlock", paramValue: dataToURL(commentSearchProps.toBlock) },
-    {
-      paramName: "rangeSelectKey",
-      paramValue: dataToURL(searchRanges.rangeSelectKey),
-    },
-    {
-      paramName: "lastTime",
-      paramValue: dataToURL(searchRanges.lastTimeUnitValue),
-    },
-    {
-      paramName: "lastBlocks",
-      paramValue: dataToURL(searchRanges.lastBlocksValue),
-    },
-    {
-      paramName: "timeUnit",
-      paramValue: dataToURL(searchRanges.timeUnitSelectKey),
-    },
-    {
-      paramName: "permlink",
-      paramValue: dataToURL(commentSearchProps.permlink),
-    },
-  ];
 
-  if (commentSearchProps.operationTypes) {
-    urlParams.push({
-      paramName: "filters",
-      paramValue: dataToURL(
-        convertIdsToBooleanArray(commentSearchProps.operationTypes)
-      ),
-    });
+  const {
+    fromBlock,
+    toBlock,
+    permlink,
+    operationTypes,
+    accountName,
+    rangeSelectKey,
+    lastTimeUnitValue,
+    lastBlocksValue,
+    timeUnitSelectKey,
+  } = commentSearchProps;
+
+  const searchParams = new URLSearchParams();
+
+  setParamIfPositive(searchParams, "fromBlock", fromBlock);
+  setParamIfPositive(searchParams, "toBlock", toBlock);
+  setParamIfPositive(searchParams, "rangeSelectKey", rangeSelectKey);
+  setParamIfPositive(searchParams, "permlink", permlink);
+
+  if (operationTypes) {
+    setParamIfPositive(
+      searchParams,
+      "filters",
+      convertIdsToBooleanArray(operationTypes)
+    );
   }
 
-  return `/comments/@${dataToURL(
-    commentSearchProps.accountName
-  )}${getPageUrlParams(urlParams)}`;
+  if (rangeSelectKey === "lastTime") {
+    setParamIfPositive(searchParams, "lastTime", lastTimeUnitValue);
+    setParamIfPositive(searchParams, "timeUnit", timeUnitSelectKey);
+  } else if (rangeSelectKey === "lastBlocks") {
+    setParamIfPositive(searchParams, "lastBlocks", lastBlocksValue);
+  }
+
+  const queryString = searchParams.toString();
+  const urlPath = `/comments/@${dataToURL(accountName)}${
+    queryString ? `?${queryString}` : ""
+  }`;
+
+  return urlPath;
 }
