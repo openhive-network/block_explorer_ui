@@ -165,7 +165,7 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
 
   return (
     <Card data-testid="properties-dropdown" className="overflow-hidden pb-0">
-      <CardHeader className="p-0">
+      <CardHeader className="p-0 mb-2">
         <div
           onClick={handleBalancesVisibility}
           className="flex justify-between items-center p-2 hover:bg-rowHover cursor-pointer px-4"
@@ -176,7 +176,14 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
             <span>{isBalancesHidden ? <ArrowDown /> : <ArrowUp />}</span>
           </div>
           
-       
+          <div className="flex justify-end items-end w-full">
+    <button
+      onClick={handleButtonClick}
+      className="bg-explorer-orange text-explorer-gray-light dark:explorer-gray-dark rounded p-2 mr-4"
+    >
+      Full Chart
+    </button>
+  </div>
         
       </CardHeader>
       <CardContent
@@ -202,17 +209,9 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
             vestsBalanceHistoryData={reversedVestsBalanceHistory}
             hbdBalanceHistoryData={reversedHbdBalanceHistory}
             quickView={true}
-            className="h-[340px]"
+            className="h-[320px]"
           />
         )}
-        <div className="flex">
-        <button
-            onClick={handleButtonClick}
-            className="bg-explorer-orange text-explorer-gray-light dark:explorer-gray-dark rounded p-2 ml-4"
-          >
-            Full Chart
-          </button>
-          </div>
       </CardContent>
     </Card>
   );
