@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 
 import usePostContent from "@/hooks/api/postPage/usePostContent";
 import PostContentCard from "./PostContentCard";
+import PostPropertiesTable from "./PostPropertiesTable";
 
 const HIVE_BLOG_URL = "https://hive.blog";
 const PEAKD_URL = "https://peakd.com";
@@ -16,6 +18,10 @@ const PostPageContent = () => {
   const path = router.asPath;
 
   const { data } = usePostContent(accountName, permlink);
+
+  const [isPropertiesOpen, setIsPropertiesOpen] = useState(false);
+
+  const handlePropertiesToggle = () => setIsPropertiesOpen(!isPropertiesOpen);
 
   if (!data) return;
 
@@ -55,7 +61,15 @@ const PostPageContent = () => {
         </div>
       </div>
 
-      <PostContentCard data={data} />
+      <PostContentCard
+        isPropertiesOpen={isPropertiesOpen}
+        handlePropertiesToggle={handlePropertiesToggle}
+        data={data}
+      />
+      <PostPropertiesTable
+        isPropertiesOpen={isPropertiesOpen}
+        data={data}
+      />
     </div>
   );
 };
