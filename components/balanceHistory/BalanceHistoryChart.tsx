@@ -188,10 +188,19 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
         <div className="flex justify-end mb-4">{renderCoinButtons()}</div>
       )}
 
-      <ResponsiveContainer width="100%" height="100%" className='mb-5'>
+      <ResponsiveContainer
+        width="100%"
+        height="100%"
+        className="mb-5 items-start"
+      >
         <LineChart
           data={dataMap[selectedCoinType] || []}
-          margin={{ top: 20, right: 30, left: 20, bottom: isMobile ? 100 : 60 }}
+          margin={{
+            top: 20,
+            right: isMobile ? 0 : 20,
+            left: isMobile ? 0 : 10,
+            bottom: isMobile ? 100 : 60,
+          }}
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
@@ -227,7 +236,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             dot={false}
             hide={hiddenDataKeys.includes("balance")}
           />
-          
+
           {!quickView && (
             <Brush
               dataKey="timestamp"
@@ -237,6 +246,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
               travellerWidth={10}
               tickFormatter={(value) => moment(value).format("MMM D")}
               y={380}
+              x={80}
               className="text-xs"
             />
           )}
