@@ -5,6 +5,7 @@ import Link from "next/link";
 import usePostContent from "@/hooks/api/postPage/usePostContent";
 import PostContentCard from "./PostContentCard";
 import PostPropertiesTable from "./PostPropertiesTable";
+import VoteDetailsTable from "./VoteDetailsTable";
 
 const HIVE_BLOG_URL = "https://hive.blog";
 const PEAKD_URL = "https://peakd.com";
@@ -20,12 +21,15 @@ const PostPageContent = () => {
   const { data } = usePostContent(accountName, permlink);
 
   const [isPropertiesOpen, setIsPropertiesOpen] = useState(false);
+  const [isVoteDetailsOpen, setIsVoteDetailsOpen] = useState(false);
 
   const handlePropertiesToggle = () => setIsPropertiesOpen(!isPropertiesOpen);
+  const handleVoteDetailsToggle = () =>
+    setIsVoteDetailsOpen(!isVoteDetailsOpen);
 
   if (!data) return;
 
-  const { title, author } = data;
+  const { title, author, active_votes } = data;
 
   return (
     <div className="w-full h-full p-10">
@@ -63,12 +67,18 @@ const PostPageContent = () => {
 
       <PostContentCard
         isPropertiesOpen={isPropertiesOpen}
+        isVoteDetailsOpen={isVoteDetailsOpen}
         handlePropertiesToggle={handlePropertiesToggle}
+        handleVoteDetailsToggle={handleVoteDetailsToggle}
         data={data}
       />
       <PostPropertiesTable
         isPropertiesOpen={isPropertiesOpen}
         data={data}
+      />
+      <VoteDetailsTable
+        isVoteDetailsOpen={isVoteDetailsOpen}
+        voteDetails={active_votes}
       />
     </div>
   );

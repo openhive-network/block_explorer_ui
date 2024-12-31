@@ -29,7 +29,13 @@ const PROPERTY_KEYS = [
 ];
 
 const renderParam = (
-  value: string | number | boolean | string[] | number[]
+  value:
+    | string
+    | number
+    | boolean
+    | string[]
+    | number[]
+    | Hive.PostPageVoteDetails[]
 ) => {
   if (typeof value === "string") {
     return value.toString();

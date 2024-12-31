@@ -8,13 +8,17 @@ import Hive from "@/types/Hive";
 
 interface PostContentCardProps {
   isPropertiesOpen: boolean;
+  isVoteDetailsOpen: boolean;
   handlePropertiesToggle: () => void;
+  handleVoteDetailsToggle: () => void;
   data: Hive.Content;
 }
 
 const PostContentCard: React.FC<PostContentCardProps> = ({
   isPropertiesOpen,
+  isVoteDetailsOpen,
   handlePropertiesToggle,
+  handleVoteDetailsToggle,
   data,
 }) => {
   if (!data) return;
@@ -47,13 +51,24 @@ const PostContentCard: React.FC<PostContentCardProps> = ({
       </CardContent>
 
       <CardFooter className="p-0">
-        <div className="flex w-full py-2 px-4 border-t-[1px] border-slate-400">
+        <div className="flex w-full py-1 px-4 border-t-[1px] border-slate-400">
           <button
             onClick={handlePropertiesToggle}
-            className="flex items-center text-xs p-2 hover:bg-buttonHover"
+            className="flex items-center text-xs px-2 hover:bg-buttonHover"
           >
             Properties
             {isPropertiesOpen ? (
+              <ChevronUp className="w-4 ml-1" />
+            ) : (
+              <ChevronDown className="w-4  ml-1" />
+            )}
+          </button>
+          <button
+            onClick={handleVoteDetailsToggle}
+            className="flex items-center text-xs px-2 hover:bg-buttonHover"
+          >
+            Vote Details
+            {isVoteDetailsOpen ? (
               <ChevronUp className="w-4 ml-1" />
             ) : (
               <ChevronDown className="w-4  ml-1" />
