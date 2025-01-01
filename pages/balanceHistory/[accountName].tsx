@@ -162,7 +162,7 @@ export default function BalanceHistory() {
 
   // Use useMemo to memoize the prepared data so it only recalculates when chartData changes
   const preparedData = useMemo(() => {
-      return chartData ? prepareData(chartData.operations_result.slice().reverse()) : [];
+      return chartData ? prepareData(chartData.operations_result?.slice().reverse()) : [];
   }, [chartData]); // This will only recompute when chartData changes
 
   let message = "";
