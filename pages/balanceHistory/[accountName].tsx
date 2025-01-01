@@ -30,7 +30,7 @@ interface Operation {
 
 const prepareData = (operations: Operation[]) => {
   if (!operations || operations.length === 0) return [];
-
+  
   const dailyData = new Map<string, { balance: number; balance_change: number }>();
 
   operations.forEach((operation: any) => {
@@ -155,14 +155,14 @@ export default function BalanceHistory() {
     paramsState.coinType,
     undefined,
     5000, // Default size for chart data
-    "asc",
+    "desc",
     effectiveFromBlock,
     effectiveToBlock
   );
 
   // Use useMemo to memoize the prepared data so it only recalculates when chartData changes
   const preparedData = useMemo(() => {
-     return chartData ? prepareData(chartData.operations_result) : [];
+      return chartData ? prepareData(chartData.operations_result.slice().reverse()) : [];
   }, [chartData]); // This will only recompute when chartData changes
 
   let message = "";
