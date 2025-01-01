@@ -1,14 +1,8 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo,MouseEvent } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import Explorer from "@/types/Explorer";
 import Link from "next/link";
-import {
-  Tooltip,
-  TooltipProvider,
-  TooltipTrigger,
-  TooltipContent,
-} from "@radix-ui/react-tooltip";
 import useBalanceHistory from "@/hooks/api/balanceHistory/useBalanceHistory";
 import BalanceHistoryChart from "../balanceHistory/BalanceHistoryChart";
 import moment from "moment";
@@ -89,64 +83,108 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
     vestsBalanceHistoryError ||
     hbdBalanceHistoryError;
 
-  // Reverse the vestsBalanceHistory data with useMemo
-  const reversedVestsBalanceHistory = useMemo(() => {
-    return Array.isArray(vestsBalanceHistory?.operations_result)
-      ? [...vestsBalanceHistory.operations_result].reverse()
-      : [];
-  }, [vestsBalanceHistory?.operations_result]);
+    const prepareData = (
+      operations: { timestamp: string; balance: number }[]
+    ) => {
+      if (!operations || operations.length === 0) return []
+      
+      const dailyData = new Map<string, { balance: number; balance_change: number }>
 
-  // Reverse the hiveBalanceHistory data with useMemo
-  const reversedHiveBalanceHistory = useMemo(() => {
-    return Array.isArray(hiveBalanceHistory?.operations_result)
-      ? [...hiveBalanceHistory.operations_result].reverse()
-      : [];
-  }, [hiveBalanceHistory?.operations_result]);
+      operations.forEach((operation: any) => {
+        let date;
+        if (typeof operation.timestamp === 'string') {
+          date = new Date(operation.timestamp);
+        } else if (typeof operation.timestamp === 'number') {
+          date = new Date(operation.timestamp * 1000);
+        } else {
+          return;
+        }
+    
+        if (!isNaN(date.getTime())) {
+          const dateString = date.toISOString().split('T')[0];
+    
+          let balance_change = parseInt(operation.balance_change, 10);
+          let balance = parseInt(operation.balance, 10);
+    
+          if (dailyData.has(dateString)) {
+            dailyData.get(dateString)!.balance_change += balance_change;
+            dailyData.get(dateString)!.balance = balance;
+          } else {
+            dailyData.set(dateString, { balance, balance_change });
+          }
+        }
+      });
+    
+      const preparedData = Array.from(dailyData.entries()).map(([date, data]) => ({
+        timestamp: date,
+        balance: data.balance,
+        balance_change: data.balance_change,
+      }));
+    
+      return preparedData;
+    };
 
-  // Reverse the hbdBalanceHistory data with useMemo
-  const reversedHbdBalanceHistory = useMemo(() => {
-    return Array.isArray(hbdBalanceHistory?.operations_result)
-      ? [...hbdBalanceHistory.operations_result].reverse()
-      : [];
-  }, [hbdBalanceHistory?.operations_result]);
+
+
+  // Reverse and prepare data with useMemo
+  const reversedHiveBalanceHistory = useMemo(
+    () =>
+      prepareData(
+        Array.isArray(hiveBalanceHistory?.operations_result)
+          ? [...hiveBalanceHistory.operations_result].reverse()
+          : []
+      ),
+    [hiveBalanceHistory?.operations_result]
+  );
+
+  const reversedVestsBalanceHistory = useMemo(
+    () =>
+      prepareData(
+        Array.isArray(vestsBalanceHistory?.operations_result)
+          ? [...vestsBalanceHistory.operations_result].reverse()
+          : []
+      ),
+    [vestsBalanceHistory?.operations_result]
+  );
+
+  const reversedHbdBalanceHistory = useMemo(
+    () =>
+      prepareData(
+        Array.isArray(hbdBalanceHistory?.operations_result)
+          ? [...hbdBalanceHistory.operations_result].reverse()
+          : []
+      ),
+    [hbdBalanceHistory?.operations_result]
+  );
+
+
+  const handleButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation(); // Prevents the event from bubbling up
+    router.push(`/balanceHistory/@${userDetails.name}`); // Navigate programmatically
+  };
 
   return (
     <Card data-testid="properties-dropdown" className="overflow-hidden pb-0">
-      <CardHeader className="p-0">
+      <CardHeader className="p-0 mb-2">
         <div
           onClick={handleBalancesVisibility}
           className="flex justify-between items-center p-2 hover:bg-rowHover cursor-pointer px-4"
         >
           <div className="text-lg">{header}</div>
-          <div className="flex">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Link
-                    href={`/balanceHistory/@${userDetails.name}`}
-                    data-testid="balance-history-link"
-                    className="text-link text-sm underline"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <span>Details</span>
-                  </Link>
-                </TooltipTrigger>
-                <TooltipContent
-                  side="left"
-                  align="start"
-                  sideOffset={5}
-                  alignOffset={10}
-                  className="border-0"
-                >
-                  <div className="bg-theme text-text p-2 text-sm">
-                    <p>Click Here for Balance History</p>
-                  </div>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+         
+         
             <span>{isBalancesHidden ? <ArrowDown /> : <ArrowUp />}</span>
           </div>
-        </div>
+          
+          <div className="flex justify-end items-end w-full">
+    <button
+      onClick={handleButtonClick}
+      className="bg-explorer-orange text-explorer-gray-light dark:explorer-gray-dark rounded p-2 mr-4"
+    >
+      Full Chart
+    </button>
+  </div>
+        
       </CardHeader>
       <CardContent
         hidden={isBalancesHidden}
@@ -171,7 +209,7 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
             vestsBalanceHistoryData={reversedVestsBalanceHistory}
             hbdBalanceHistoryData={reversedHbdBalanceHistory}
             quickView={true}
-            className="h-[340px]"
+            className="h-[320px]"
           />
         )}
       </CardContent>
