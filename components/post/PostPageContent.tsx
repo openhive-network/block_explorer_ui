@@ -70,6 +70,7 @@ const PostPageContent = () => {
         isVoteDetailsOpen={isVoteDetailsOpen}
         handlePropertiesToggle={handlePropertiesToggle}
         handleVoteDetailsToggle={handleVoteDetailsToggle}
+        voteDetailsLength={active_votes.length ?? 0}
         data={data}
       />
       <PostPropertiesTable

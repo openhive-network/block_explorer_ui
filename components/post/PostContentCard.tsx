@@ -11,6 +11,7 @@ interface PostContentCardProps {
   isVoteDetailsOpen: boolean;
   handlePropertiesToggle: () => void;
   handleVoteDetailsToggle: () => void;
+  voteDetailsLength: number;
   data: Hive.Content;
 }
 
@@ -19,6 +20,7 @@ const PostContentCard: React.FC<PostContentCardProps> = ({
   isVoteDetailsOpen,
   handlePropertiesToggle,
   handleVoteDetailsToggle,
+  voteDetailsLength,
   data,
 }) => {
   if (!data) return;
@@ -67,7 +69,7 @@ const PostContentCard: React.FC<PostContentCardProps> = ({
             onClick={handleVoteDetailsToggle}
             className="flex items-center text-xs px-2 hover:bg-buttonHover"
           >
-            Vote Details
+            {`Vote Details (${voteDetailsLength})`}
             {isVoteDetailsOpen ? (
               <ChevronUp className="w-4 ml-1" />
             ) : (

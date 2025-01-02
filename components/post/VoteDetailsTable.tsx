@@ -1,4 +1,5 @@
 import { Fragment } from "react";
+import Link from "next/link";
 
 import {
   Table,
@@ -18,7 +19,7 @@ const buildTableHeader = () => {
   return TABLE_CELLS.map((cell, index) => {
     return (
       <TableHead
-        className="text-left text-[1rem]"
+        className="text-center text-[1rem]"
         key={index}
       >
         {cell}
@@ -34,11 +35,23 @@ const buildTableBody = (voteDetails: Hive.PostPageVoteDetails[]) => {
     return (
       <Fragment key={index}>
         <TableRow className="border-b border-gray-700 hover:bg-inherit dark:hover:bg-inherit">
-          <TableCell>{voter}</TableCell>
-          <TableCell>{formatNumber(weight, false, true)}</TableCell>
+          <TableCell>
+            <Link
+              target="_blank"
+              className="text-link"
+              href={`/@${voter}`}
+            >
+              {voter}
+            </Link>
+          </TableCell>
+          <TableCell className="text-right">
+            {formatNumber(weight, false, true)}
+          </TableCell>
           {/* Add wht % if needed*/}
-          <TableCell>{formatNumber(rshares, false, true)}</TableCell>
-          <TableCell>{formatPercent(percent)}</TableCell>
+          <TableCell className="text-right">
+            {formatNumber(rshares, false, true)}
+          </TableCell>
+          <TableCell className="text-right">{formatPercent(percent)}</TableCell>
           <TableCell>{formatAndDelocalizeTime(time)}</TableCell>
         </TableRow>
       </Fragment>
