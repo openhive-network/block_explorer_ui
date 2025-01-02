@@ -36,11 +36,34 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
     setLastTimeUnitValue,
   } = rangesProps;
 
-  const setNumericValue = (value: number, fieldSetter: Function) => {
-    if (!Number.isNaN(value) && value > 0) {
-      fieldSetter(value);
-    } else {
+  // Validate and update numeric values
+  const handleNumericInput = (
+    value: string,
+    fieldSetter: Function,
+    allowDecimal: boolean = false
+  ) => {
+    // If decimals are allowed, preserve the decimal point in the input value
+    let cleanedValue = allowDecimal
+      ? value.replace(/[^0-9.]/g, "") // Allow numbers and decimal point
+      : value.replace(/[^0-9]/g, ""); // Only allow numbers
+
+   // If the decimal is allowed, ensure there is only one decimal point
+    if (allowDecimal && cleanedValue.split(".").length > 2) {
+      // Remove extra decimals, keeping only the first one
+      cleanedValue = cleanedValue.slice(0, cleanedValue.indexOf(".") + 1) + 
+      cleanedValue.split(".").slice(1).join(""); // Remove all decimals after the first one
+    }
+
+    // Limit the value to a maximum of 15 digits
+    if (cleanedValue.length > 15) {
+      cleanedValue = cleanedValue.slice(0, 15);
+    }
+
+    // If the cleaned value is empty, set it to undefined
+    if (cleanedValue === "") {
       fieldSetter(undefined);
+    } else {
+      fieldSetter(cleanedValue); // Invalid input, set to undefined
     }
   };
 
@@ -81,35 +104,35 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
           ))}
         </SelectContent>
       </Select>
+
       {rangeSelectKey === "lastBlocks" && (
         <div className="flex items-center">
           <div className="flex flex-col w-full">
             <Input
               className="w-1/2 border-0 border-b-2 bg-theme"
-              type="number"
+              type="text" // Use type="text" to allow custom validation
               value={lastBlocksValue || ""}
               onChange={(e) =>
-                setNumericValue(Number(e.target.value), setLastBlocksValue)
+                handleNumericInput(e.target.value,setLastBlocksValue)
               }
               placeholder={"Last"}
-              min="0"
             />
           </div>
         </div>
       )}
+
       {rangeSelectKey === "lastTime" && (
         <>
           <div className="flex items-center justify-center">
             <div className="flex flex-col w-full mr-2">
               <Input
-                type="number"
+                type="text"
                 className="bg-theme border-0 border-b-2 text-text"
                 value={lastTimeUnitValue || ""}
                 onChange={(e) =>
-                  setNumericValue(Number(e.target.value), setLastTimeUnitValue)
+                  handleNumericInput(e.target.value,setLastTimeUnitValue,true)
                 }
                 placeholder={"Last"}
-                min="0"
               />
             </div>
             <Select onValueChange={setTimeUnitSelectKey}>
@@ -139,36 +162,36 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
           </div>
         </>
       )}
+
       {rangeSelectKey === "blockRange" && (
         <div className="flex items-center">
           <div className="flex flex-col w-full mr-2">
             <Input
-              type="number"
+              type="text"
               className="bg-theme border-0 border-b-2"
               data-testid="from-block-input"
               value={fromBlock || ""}
               onChange={(e) =>
-                setNumericValue(Number(e.target.value), setFromBlock)
+                handleNumericInput(e.target.value,setFromBlock)
               }
               placeholder="From"
-              min="0"
             />
           </div>
           <div className="flex flex-col w-full">
             <Input
               className="bg-theme border-0 border-b-2"
               data-testid="headblock-number"
-              type="number"
+              type="text"
               value={toBlock || ""}
               onChange={(e) =>
-                setNumericValue(Number(e.target.value), setToBlock)
+                handleNumericInput(e.target.value,setToBlock)
               }
               placeholder={"To"}
-              min={0}
             />
           </div>
         </div>
       )}
+
       {rangeSelectKey === "timeRange" && (
         <div className="flex flex-col mt-5">
           <div className="flex flex-col w-full mb-4">

@@ -291,12 +291,21 @@ namespace Hive {
     root_title!: string;
     pending_payout_value!: string;
     total_pending_payout_value!: string;
-    active_votes!: string[] | number[];
+    active_votes!: PostPageVoteDetails[];
     replies!: string[] | number[];
     author_reputation!: number;
     promoted!: string;
     body_length!: number;
     reblogged_by!: string[] | number[];
+  }
+
+  export class PostPageVoteDetails {
+    percent!: number;
+    reputation!: number;
+    rshares!: number;
+    time!: Date;
+    voter!: string;
+    weight!: number;
   }
 
   export class GetVotersParams {
@@ -760,12 +769,12 @@ namespace Hive {
     op_type_id!: number;
     balance!: number;
     prev_balance!: number;
-    balance_change!:number;
+    balance_change!: number;
     timestamp!: string;
   }
   export class GetAccountBalanceHistoryParams {
     "accountName": string;
-    "coin-type": string ;
+    "coin-type": string;
     direction?: Hive.Direction;
     "page"!: number | undefined;
     "page-size"!: number | undefined;
