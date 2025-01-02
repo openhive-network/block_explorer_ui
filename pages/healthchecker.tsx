@@ -91,6 +91,10 @@ export default function HealthcheckerPage() {
     setProviders(newProviders);
   }
 
+  const registerFallback = (provider: string) => {
+    setFallbacks((fallbacks) => [...fallbacks, provider]);
+  }
+
 
   return (
     <>
@@ -110,7 +114,7 @@ export default function HealthcheckerPage() {
           setScoredEndpoints={setScoredEndpoints}
           addNewProvider={addNewProvider}
           deleteProvider={deleteProvider}
-          registerFallback={() => {}}
+          registerFallback={registerFallback}
           scoredEndpoints={scoredEndpoints}
           fallbacks={fallbacks}
         />
