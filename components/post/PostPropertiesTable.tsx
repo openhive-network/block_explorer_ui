@@ -47,7 +47,7 @@ const buildTableBody = (data: Hive.Content) => {
     <Fragment key={index}>
       <TableRow className="border-b border-gray-700 hover:bg-inherit dark:hover:bg-inherit">
         <TableCell>{key}</TableCell>
-        <TableCell className="text-left">
+        <TableCell className="text-left break-all">
           {renderParam(data[key as keyof Hive.Content])}
         </TableCell>
       </TableRow>
