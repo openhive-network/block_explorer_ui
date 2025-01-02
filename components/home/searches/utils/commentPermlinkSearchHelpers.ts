@@ -14,6 +14,6 @@ export function startCommentPermlinkSearch(
   };
   setPermlinkSearchProps(props);
   setCommentPaginationPage(1);
-  setCommentType("post");
+  setCommentType(params.commentType);
   setLastSearchKey("comment-permlink");
 }

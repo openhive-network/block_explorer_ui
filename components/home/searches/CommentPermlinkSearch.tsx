@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, ChangeEvent } from "react";
 import { Loader2 } from "lucide-react";
 import Explorer from "@/types/Explorer";
 import { trimAccountName } from "@/utils/StringUtils";
@@ -9,6 +9,7 @@ import AutocompleteInput from "@/components/ui/AutoCompleteInput";
 import { useSearchesContext } from "@/contexts/SearchesContext";
 import usePermlinkSearch from "@/hooks/api/common/usePermlinkSearch";
 import { startCommentPermlinkSearch } from "./utils/commentPermlinkSearchHelpers";
+import PostTypeSelector from "./PostTypeSelector";
 
 const CommentsPermlinkSearch = () => {
   const {
@@ -16,7 +17,6 @@ const CommentsPermlinkSearch = () => {
     setPermlinkSearchProps,
     setCommentPaginationPage,
     setCommentType,
-    commentType,
     setLastSearchKey,
     searchRanges,
   } = useSearchesContext();
@@ -24,6 +24,8 @@ const CommentsPermlinkSearch = () => {
   const { permlinkSearchDataLoading } = usePermlinkSearch(permlinkSearchProps);
 
   const [accountName, setAccountName] = useState<string>("");
+  const [localCommentType, setLocalCommentType] =
+    useState<Explorer.CommentType>("post");
 
   const { getRangesValues } = searchRanges;
 
@@ -49,8 +51,9 @@ const CommentsPermlinkSearch = () => {
         lastTime: searchRanges.lastTimeUnitValue,
         rangeSelectKey: searchRanges.rangeSelectKey,
         timeUnit: searchRanges.timeUnitSelectKey,
-        commentType,
+        commentType: localCommentType,
       };
+
       startCommentPermlinkSearch(
         commentPermlinksSearchProps,
         setPermlinkSearchProps,
@@ -59,6 +62,14 @@ const CommentsPermlinkSearch = () => {
         (val: "comment-permlink") => setLastSearchKey(val)
       );
     }
+  };
+
+  const handleChangeCommentType = (e: ChangeEvent<HTMLSelectElement>) => {
+    const {
+      target: { value },
+    } = e;
+
+    setLocalCommentType(value as Explorer.CommentType);
   };
 
   return (
@@ -78,6 +89,14 @@ const CommentsPermlinkSearch = () => {
         rangesProps={searchRanges}
         safeTimeRangeDisplay
       />
+
+      <div className="flex justify-start">
+        <PostTypeSelector
+          showLabel
+          handleChange={handleChangeCommentType}
+          commentType={localCommentType}
+        />
+      </div>
       <div className="flex items-center">
         <Button
           data-testid="search-button"

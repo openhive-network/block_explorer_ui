@@ -2,8 +2,7 @@ import usePermlinkSearch from "@/hooks/api/common/usePermlinkSearch";
 import CommentPermlinkResultTable from "../CommentPermlinkResultTable";
 import { useSearchesContext } from "@/contexts/SearchesContext";
 import { getCommentPageLink } from "../utils/commentSearchHelpers";
-
-const COMMENT_TYPES = ["all", "post", "comment"];
+import PostTypeSelector from "../PostTypeSelector";
 
 const CommentPermlinkSearchResults = () => {
   const {
@@ -48,20 +47,10 @@ const CommentPermlinkSearchResults = () => {
       {permlinkSearchData.total_permlinks ? (
         <div>
           <div className="flex justify-end my-4">
-            <select
-              onChange={handleChangeCommentType}
-              value={commentType}
-              className="border p-2 rounded bg-theme text-text"
-            >
-              {COMMENT_TYPES.map((type, index) => (
-                <option
-                  key={index}
-                  value={type}
-                >
-                  {type.charAt(0).toUpperCase() + type.slice(1)}
-                </option>
-              ))}
-            </select>
+            <PostTypeSelector
+              handleChange={handleChangeCommentType}
+              commentType={commentType}
+            />
           </div>
 
           <div className="flex flex-wrap">
