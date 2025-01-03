@@ -76,6 +76,8 @@ declare module Explorer {
     filters: boolean[] | undefined;
   }
 
+  type CommentType = "all" | "post" | "comment";
+
   interface CommentPermlinSearchParams {
     accountName: string;
     fromBlock: number | undefined;
@@ -87,6 +89,7 @@ declare module Explorer {
     page: number;
     rangeSelectKey: string | undefined;
     timeUnit: string | undefined;
+    commentType: CommentType;
   }
 
   interface CommentSearchProps extends CommonSearchProps {
@@ -104,7 +107,7 @@ declare module Explorer {
 
   interface PermlinkSearchProps extends CommonSearchProps {
     accountName: string;
-    commentType?: "post" | "comment" | "all";
+    commentType?: CommentType;
     page?: number;
     pageSize?: number;
   }
@@ -298,16 +301,14 @@ declare module Explorer {
   }
 
   interface BalanceHistoryForTable {
-    operationId:number;
+    operationId: number;
     blockNumber?: number;
     timestamp?: string;
     opTypeId: number;
     balance: number;
     prev_balance: number;
     balanceChange: number;
-
   }
-
 }
 
 export default Explorer;

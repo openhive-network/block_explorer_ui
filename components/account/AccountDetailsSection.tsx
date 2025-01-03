@@ -15,7 +15,7 @@ import AccountVestingDelegationsCard from "./AccountVestingDelegationsCard";
 import AccountRcDelegationsCard from "./AccountRcDelegationsCard";
 import AccountBalanceCard from "./AccountBalanceCard";
 import Explorer from "@/types/Explorer";
-
+import AccountBalanceHistoryCard from "./AccountBalanceHistoryCard";
 interface AccountDetailsSectionProps {
   accountName: string;
   refetchAccountOperations: QueryObserverResult<Hive.AccountOperationsResponse>["refetch"];
@@ -66,6 +66,11 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
         header="Wallet"
         userDetails={accountDetails}
       />
+      <AccountBalanceHistoryCard
+        header="Balance History"
+        userDetails={accountDetails}
+      />
+
       <AccountDetailsCard
         header="Properties"
         userDetails={accountDetails}

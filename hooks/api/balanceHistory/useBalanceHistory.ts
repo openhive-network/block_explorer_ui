@@ -20,7 +20,7 @@ const useBalanceHistory = (
     return await fetchingService.geAccounttBalanceHistory(
       accountName,
       coinType,
-      page ? page : 1,
+      page,
       pageSize,
       direction,
       fromDate ? fromDate : undefined,

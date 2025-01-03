@@ -171,41 +171,8 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
           className="flex justify-between items-center p-2 hover:bg-rowHover cursor-pointer px-4"
         >
           <div className="text-lg">{header}</div>
-
-          <div className="flex">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Link
-                    href={`/balanceHistory/@${userDetails.name}`}
-                    data-testid="balance-history-link"
-                    className="text-link text-sm mr-1 "
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <FontAwesomeIcon
-                      icon={faHistory}
-                      size="sm"
-                      className="mr-1"
-                    />
-                    <span>Balance History</span>
-                  </Link>
-                </TooltipTrigger>
-                <TooltipContent
-                  side="top"
-                  align="start"
-                  sideOffset={5}
-                  alignOffset={10}
-                  className="border-0"
-                >
-                  <div className="bg-theme text-text p-2 text-sm">
-                    <p>Click Here for Balance History</p>
-                  </div>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
             <span> {isBalancesHidden ? <ArrowDown /> : <ArrowUp />}</span>
           </div>
-        </div>
       </CardHeader>
       <CardContent
         hidden={isBalancesHidden}

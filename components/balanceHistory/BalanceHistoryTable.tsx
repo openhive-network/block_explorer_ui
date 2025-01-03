@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Hive from "@/types/Hive";
 import {
   Table,
@@ -33,15 +33,14 @@ import { config } from "@/Config";
 import { faChevronUp, faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
-import { convertOperationResultsToTableOperations } from "@/lib/utils";
-interface OperationsTableProps {
+interface BalanceHistoryTableProps {
   operations: Explorer.BalanceHistoryForTable[];
   total_operations: number;
   total_pages: number;
   current_page: number;
 }
 
-const BalanceHistoryTable: React.FC<OperationsTableProps> = ({
+const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
   operations,
   total_operations,
   total_pages,
@@ -55,8 +54,28 @@ const BalanceHistoryTable: React.FC<OperationsTableProps> = ({
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
   const operationsTypes = useOperationsTypes().operationsTypes || [];
 
+  // Create refs to store row and detail div elements
+  const rowRefs = useRef<Map<number, HTMLTableRowElement>>(new Map());
+  const detailRefs = useRef<Map<number, HTMLDivElement>>(new Map());
+  
+  // Track screen size for mobile responsiveness
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Set screen size check for mobile view
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768); // Adjust breakpoint as needed
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => {
+      window.removeEventListener("resize", checkMobile);
+    };
+  }, []);
+
   const formatRawCoin = (coinValue: number) =>
-    formatNumber(coinValue, false, false);
+    router.query.coinType === 'VESTS' ? formatNumber(coinValue, true, false) : formatNumber(coinValue, false, false);
 
   const getOperationColor = (op_type_id: number) => {
     const operation = operationsTypes.find(
@@ -109,6 +128,7 @@ const BalanceHistoryTable: React.FC<OperationsTableProps> = ({
 
     return <p>Loading operation details...</p>;
   };
+
   const getOneLineDescription = (operation: any) => {
     const value = operation.op.value;
     // Check if 'value' is a string or a valid React element
@@ -134,6 +154,19 @@ const BalanceHistoryTable: React.FC<OperationsTableProps> = ({
     }
 
     return null;
+  };
+
+  const handleRowClick = (operationId: number) => {
+    setExpandedRow((prev) => (prev === operationId ? null : operationId));
+
+    // Scroll the corresponding row and details into view with additional margin for visibility
+    const rowElement = rowRefs.current.get(operationId);
+    const detailElement = detailRefs.current.get(operationId);
+
+    if (rowElement && detailElement) {
+      // Ensure smooth scrolling for both row and details
+      rowElement.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   };
 
   return (
@@ -177,7 +210,10 @@ const BalanceHistoryTable: React.FC<OperationsTableProps> = ({
 
               return (
                 <React.Fragment key={index}>
-                  <TableRow key={operation.operationId}>
+                  <TableRow
+                    ref={(el) => el && rowRefs.current.set(operation.operationId, el)}
+                    className={isExpanded ? "bg-rowOdd" : ""}
+                  >
                     <TableCell data-testid="operation-type">
                       <div className="flex justify-stretch p-1 rounded">
                         <span
@@ -194,11 +230,9 @@ const BalanceHistoryTable: React.FC<OperationsTableProps> = ({
                           <TooltipTrigger asChild>
                             <div>
                               <TimeAgo
-                                datetime={
-                                  new Date(
-                                    formatAndDelocalizeTime(operation.timestamp)
-                                  )
-                                }
+                                datetime={new Date(
+                                  formatAndDelocalizeTime(operation.timestamp)
+                                )}
                               />
                             </div>
                           </TooltipTrigger>
@@ -227,11 +261,7 @@ const BalanceHistoryTable: React.FC<OperationsTableProps> = ({
                     </TableCell>
                     <TableCell>
                       <button
-                        onClick={() =>
-                          setExpandedRow(
-                            isExpanded ? null : operation.operationId
-                          )
-                        }
+                        onClick={() => handleRowClick(operation.operationId)}
                         className="text-link"
                       >
                         <FontAwesomeIcon
@@ -243,7 +273,9 @@ const BalanceHistoryTable: React.FC<OperationsTableProps> = ({
                     </TableCell>
                   </TableRow>
                   {isExpanded && (
-                    <TableRow>
+                    <TableRow
+                      ref={(el) => el && detailRefs.current.set(operation.operationId, el)}
+                    >
                       <TableCell colSpan={7} className="p-4">
                         <div className="border rounded-2xl p-4">
                           <h3 className="text-lg font-bold">
