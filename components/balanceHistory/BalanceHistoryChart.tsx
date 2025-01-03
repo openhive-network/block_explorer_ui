@@ -246,7 +246,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
               travellerWidth={10}
               tickFormatter={(value) => moment(value).format("MMM D")}
               y={380}
-              x={80}
+              x={50}
               className="text-xs"
             />
           )}
