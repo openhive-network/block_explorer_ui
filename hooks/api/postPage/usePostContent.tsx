@@ -5,7 +5,7 @@ const usePostContent = (accountName: string, permlink: string) => {
   const trimAccount = accountName.replace("@", "");
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["blockSearch", trimAccount, permlink],
+    queryKey: ["post content", trimAccount, permlink],
     queryFn: () => fetchPostContent(trimAccount, permlink),
     refetchOnWindowFocus: false,
   });
