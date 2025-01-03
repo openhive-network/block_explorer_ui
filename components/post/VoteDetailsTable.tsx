@@ -9,7 +9,7 @@ import {
   TableCell,
   TableBody,
 } from "../ui/table";
-import { formatNumber, formatPercent } from "@/lib/utils";
+import { cn, formatNumber, formatPercent } from "@/lib/utils";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import Hive from "@/types/Hive";
 
@@ -19,7 +19,9 @@ const buildTableHeader = () => {
   return TABLE_CELLS.map((cell, index) => {
     return (
       <TableHead
-        className="text-center text-[1rem]"
+        className={cn("text-right text-[1rem]", {
+          "text-left": index === 0 || index === TABLE_CELLS.length - 1,
+        })}
         key={index}
       >
         {cell}
