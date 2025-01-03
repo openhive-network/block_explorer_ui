@@ -188,3 +188,59 @@ pre {
   color: var(--explorer-turquoise);
 }
 /*End AutoCompleteInput Styles*/
+
+/* Light and Dark Theme Error Component Styling */
+.error-message {
+  background: var(--error-bg);
+  color: var(--error-text);
+  padding: 8px 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(112, 109, 109, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  margin-top: 10px;
+  margin-left: 2px;
+  position: relative;
+  max-width: 250px;
+}
+
+/* Close button styling */
+.error-message .close-btn {
+  background: none;
+  border: none;
+  font-size: medium;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 10px;
+  transition: transform 0.3s ease;
+}
+
+.error-message .close-btn:hover {
+  transform: rotate(90deg);
+}
+
+.error-message.hide {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+/* Light Theme Error Background Gradient */
+:root {
+  --error-bg-light: linear-gradient(135deg, rgba(247, 255, 255, 0.8), rgba(248, 247, 247, 0.8));
+  /* Light gray gradient */
+  --error-bg: var(--error-bg-light);
+}
+
+/* Dark Theme Error Background Gradient */
+.dark {
+  --error-bg-dark: linear-gradient(135deg, rgba(159, 149, 149, 0.8), rgba(104, 100, 100, 0.8));
+  /* Dark gray gradient */
+  --error-bg: var(--error-bg-dark);
+}
+
+/* Apply the color scheme dynamically */
+body.dark {
+  background-color: var(--background-start-rgb);
+}
