@@ -10,15 +10,6 @@ import {
   grabNumericValue,
 } from "@/utils/StringUtils";
 import { cn, formatNumber } from "@/lib/utils";
-import Link from "next/link";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHistory } from "@fortawesome/free-solid-svg-icons";
-import {
-  Tooltip,
-  TooltipProvider,
-  TooltipTrigger,
-  TooltipContent,
-} from "@radix-ui/react-tooltip";
 type AccountBalanceCardProps = {
   header: string;
   userDetails: Explorer.FormattedAccountDetails;
