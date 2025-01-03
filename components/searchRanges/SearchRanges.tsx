@@ -1,10 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect , useState } from "react";
 import moment from "moment";
 
 import { SearchRangesResult } from "../../hooks/common/useSearchRanges";
 import { Select, SelectContent, SelectTrigger, SelectItem } from "../ui/select";
 import { Input } from "../ui/input";
 import DateTimePicker from "../DateTimePicker";
+import ErrorMessage from "../ErrorMessage";// Import the ErrorMessage component
 
 interface SearchRangesProps {
   rangesProps: SearchRangesResult;
@@ -76,6 +77,8 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
     }
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startDate, endDate]);
+
+  const [blockRangeError, setBlockRangeError] = useState<string | null>(null); // Error state for block range validation
 
   return (
     <div className="py-2 flex flex-col gap-y-2">
@@ -184,12 +187,28 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
               type="text"
               value={toBlock || ""}
               onChange={(e) =>
-                handleNumericInput(e.target.value,setToBlock)
+                handleNumericInput(e.target.value, setToBlock)
               }
               placeholder={"To"}
+              onBlur={() => {
+                // Validate if 'toBlock' is greater than 'fromBlock'
+                if (toBlock && fromBlock && toBlock < fromBlock) {
+                  setBlockRangeError("To block must be greater than From block");
+                  setToBlock(undefined); // Clear the 'toBlock' field
+                } else {
+                  setBlockRangeError(null); // Clear the error message immediately if 'toBlock' is valid
+                }
+              }}
             />
           </div>
         </div>
+      )}
+      {blockRangeError && (
+        <ErrorMessage
+          message={blockRangeError}
+          onClose={() => setBlockRangeError(null)} // Close the error message
+          timeout={3000}
+        />
       )}
 
       {rangeSelectKey === "timeRange" && (
