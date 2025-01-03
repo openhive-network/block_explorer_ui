@@ -92,7 +92,12 @@ export default function HealthcheckerPage() {
   }
 
   const registerFallback = (provider: string) => {
-    setFallbacks((fallbacks) => [...fallbacks, provider]);
+    setFallbacks((fallbacks) => {
+      if (!fallbacks.includes(provider)) {
+        return [...fallbacks, provider]
+      }
+      return fallbacks;
+    } );
   }
 
 
