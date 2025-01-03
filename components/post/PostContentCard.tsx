@@ -5,6 +5,7 @@ import { formatAndDelocalizeFromTime } from "@/utils/TimeUtils";
 import { Card, CardHeader, CardContent, CardFooter } from "../ui/card";
 import { changeHBDToDollarsDisplay } from "@/utils/StringUtils";
 import Hive from "@/types/Hive";
+import { cn } from "@/lib/utils";
 
 interface PostContentCardProps {
   isPropertiesOpen: boolean;
@@ -12,6 +13,7 @@ interface PostContentCardProps {
   handlePropertiesToggle: () => void;
   handleVoteDetailsToggle: () => void;
   voteDetailsLength: number;
+  voters: string[];
   data: Hive.Content;
 }
 
@@ -21,6 +23,7 @@ const PostContentCard: React.FC<PostContentCardProps> = ({
   handlePropertiesToggle,
   handleVoteDetailsToggle,
   voteDetailsLength,
+  voters,
   data,
 }) => {
   if (!data) return;
@@ -41,14 +44,36 @@ const PostContentCard: React.FC<PostContentCardProps> = ({
         </div>
         <div>{changeHBDToDollarsDisplay(total_payout_value)}</div>
       </div>
-      <CardHeader className="p-0">
-        <div className="flex justify-between font-semibold py-2 px-4 border-b-[1px] border-slate-400">
-          {title}
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div>
-          <pre className="text-sm">{body}</pre>
+      {title && (
+        <CardHeader className="p-0">
+          <div className="flex justify-between font-semibold p-2 px-4 border-b-[1px] border-slate-400">
+            {title}
+          </div>
+        </CardHeader>
+      )}
+
+      <CardContent className="p-0">
+        <div
+          className={cn("w-full text-left", {
+            "pt-2": !title,
+          })}
+        >
+          <div className="px-4">
+            <pre className="text-sm">{body}</pre>
+          </div>
+
+          <div className="mt-2 border-t-[1px] border-slate-400">
+            <div className="p-2 flex gap-1 flex-wrap">
+              {voters.map((voter) => (
+                <div
+                  key={voter}
+                  className="text-link bg-buttonBg hover:bg-buttonHover cursor-pointer py-1 px-3 m-2 break-word whitespace-nowrap rounded-full"
+                >
+                  <Link href={`/@${voter}`}>{voter}</Link>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </CardContent>
 
