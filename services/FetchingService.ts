@@ -33,7 +33,7 @@ type ExplorerNodeApi = {
   condenser_api: {
     get_witnesses_by_vote: TWaxApiRequest<unknown[], Hive.WitnessesByVote>;
     get_content: TWaxApiRequest<unknown[], Hive.Content>;
-    get_content_replies: TWaxApiRequest<unknown[], Hive.Content>;
+    get_content_replies: TWaxApiRequest<unknown[], Hive.Content[]>;
   };
 };
 
@@ -248,7 +248,7 @@ class FetchingService {
   async getContentReplies(
     accountName: string,
     permlink: string
-  ): Promise<Hive.Content> {
+  ): Promise<Hive.Content[]> {
     return await this.extendedHiveChain!.api.condenser_api.get_content_replies([
       accountName,
       permlink,
@@ -431,24 +431,23 @@ class FetchingService {
   }
 
   async geAccounttBalanceHistory(
-    accountName : string,
-    coinType: string ,
+    accountName: string,
+    coinType: string,
     page: number | undefined,
-    pageSize : number | undefined,
+    pageSize: number | undefined,
     direction: "asc" | "desc",
     fromBlock?: Date | number | undefined,
-    toBlock?:  Date | number | undefined,
+    toBlock?: Date | number | undefined
   ): Promise<Hive.AccountBalanceHistoryResponse> {
     return await this.extendedHiveChain!.restApi["balance-api"].balanceHistory({
       accountName,
-      "coin-type":coinType,
-      "direction" :direction,
-      "page" :page,     
+      "coin-type": coinType,
+      direction: direction,
+      page: page,
       "page-size": pageSize,
       "from-block": fromBlock,
       "to-block": toBlock,
     });
-
   }
 }
 
