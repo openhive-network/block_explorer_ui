@@ -35,12 +35,12 @@ const PostContent: React.FC<PostContentProps> = ({ active_votes, data }) => {
         isPropertiesOpen={isPropertiesOpen}
         data={data}
       />
-      {active_votes.length && (
+      {active_votes.length ? (
         <VoteDetailsTable
           isVoteDetailsOpen={isVoteDetailsOpen}
           voteDetails={active_votes}
         />
-      )}
+      ) : null}
     </>
   );
 };

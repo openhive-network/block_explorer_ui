@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, ThumbsUp } from "lucide-react";
 
 import { formatAndDelocalizeFromTime } from "@/utils/TimeUtils";
 import { Card, CardHeader, CardContent, CardFooter } from "../ui/card";
@@ -58,22 +58,31 @@ const PostContentCard: React.FC<PostContentCardProps> = ({
             "pt-2": !title,
           })}
         >
-          <div className="px-4">
+          <div className="px-4 py-2">
             <pre className="text-sm">{body}</pre>
           </div>
-
-          <div className="mt-2 border-t-[1px] border-slate-400">
-            <div className="p-2 flex gap-1 flex-wrap">
-              {voters.map((voter) => (
-                <div
-                  key={voter}
-                  className="text-link bg-buttonBg hover:bg-buttonHover cursor-pointer py-1 px-3 m-2 break-word whitespace-nowrap rounded-full"
-                >
-                  <Link href={`/@${voter}`}>{voter}</Link>
-                </div>
-              ))}
+          {voters.length ? (
+            <div className="mt-2 border-t-[1px] border-slate-400">
+              <div className="p-2 flex items-center gap-1 flex-wrap">
+                <ThumbsUp />
+                {voters.map((voter, index) => {
+                  if (index < 5) {
+                    return (
+                      <div
+                        key={voter}
+                        className="text-link bg-buttonBg hover:bg-buttonHover cursor-pointer py-1 px-3 m-2 break-word whitespace-nowrap rounded-full"
+                      >
+                        <Link href={`/@${voter}`}>{voter}</Link>
+                      </div>
+                    );
+                  }
+                })}
+                {voters.length > 5 ? (
+                  <p> and {voters.length - 5} others</p>
+                ) : null}
+              </div>
             </div>
-          </div>
+          ) : null}
         </div>
       </CardContent>
 
@@ -90,17 +99,19 @@ const PostContentCard: React.FC<PostContentCardProps> = ({
               <ChevronDown className="w-4  ml-1" />
             )}
           </button>
-          <button
-            onClick={handleVoteDetailsToggle}
-            className="flex items-center text-xs px-2 hover:bg-buttonHover"
-          >
-            {`Vote Details (${voteDetailsLength})`}
-            {isVoteDetailsOpen ? (
-              <ChevronUp className="w-4 ml-1" />
-            ) : (
-              <ChevronDown className="w-4  ml-1" />
-            )}
-          </button>
+          {voteDetailsLength ? (
+            <button
+              onClick={handleVoteDetailsToggle}
+              className="flex items-center text-xs px-2 hover:bg-buttonHover"
+            >
+              {`Vote Details (${voteDetailsLength})`}
+              {isVoteDetailsOpen ? (
+                <ChevronUp className="w-4 ml-1" />
+              ) : (
+                <ChevronDown className="w-4  ml-1" />
+              )}
+            </button>
+          ) : null}
         </div>
       </CardFooter>
     </Card>
