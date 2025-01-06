@@ -24,7 +24,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import useConvertedAccountDetails from "@/hooks/common/useConvertedAccountDetails";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
-
+import ErrorPage from "./ErrorPage";
 interface AccountSearchParams {
   accountName?: string | undefined;
   fromBlock: number | undefined;
@@ -98,6 +98,7 @@ export default function Account() {
       liveDataEnabled,
       dynamicGlobalData
     );
+
   const accountOperationsProps = {
     accountName: accountNameFromRoute,
     operationTypes: filtersParam.length
@@ -277,6 +278,15 @@ export default function Account() {
     }
   };
 
+  // get the accountName and treat it as a string
+  const routeAccountName = Array.isArray(router.query.accountName)
+    ? router.query.accountName[0] // If it's an array, get the first element
+    : router.query.accountName; // Otherwise, treat it as a string directly
+
+  if(routeAccountName  && !routeAccountName.startsWith("@") || !accountNameFromRoute) 
+  {
+    return <ErrorPage />;
+  }
   if (!accountDetails) {
     return (
       <Loader2 className="animate-spin mt-1 text-black dark:text-white h-12 w-12 ml-3 ..." />
