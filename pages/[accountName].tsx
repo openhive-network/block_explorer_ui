@@ -283,10 +283,11 @@ export default function Account() {
     ? router.query.accountName[0] // If it's an array, get the first element
     : router.query.accountName; // Otherwise, treat it as a string directly
 
-  if(routeAccountName  && !routeAccountName.startsWith("@") || !accountNameFromRoute) 
+  if(routeAccountName  && !routeAccountName.startsWith("@")) 
   {
     return <ErrorPage />;
   }
+  
   if (!accountDetails) {
     return (
       <Loader2 className="animate-spin mt-1 text-black dark:text-white h-12 w-12 ml-3 ..." />
