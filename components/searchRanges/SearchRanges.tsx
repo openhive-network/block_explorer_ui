@@ -191,9 +191,21 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
               }
               placeholder={"To"}
               onBlur={() => {
-                // Validate if 'toBlock' is greater than 'fromBlock'
-                if (toBlock && fromBlock && toBlock < fromBlock) {
-                  setBlockRangeError("To block must be greater than From block");
+                if (
+                  Number(toBlock) &&
+                  Number(fromBlock) &&
+                  !isNaN(Number(toBlock)) &&
+                  !isNaN(Number(fromBlock)) &&
+                  Number(toBlock) < Number(fromBlock)
+                ) {
+                  setBlockRangeError(
+                    "To block must be greater than From block"
+                  );
+                  setToBlock(undefined); // Clear the 'toBlock' field
+                } else if (Number(toBlock) <= 0 && Number(fromBlock)) {
+                  setBlockRangeError(
+                    "To block must be greater than From block"
+                  );
                   setToBlock(undefined); // Clear the 'toBlock' field
                 } else {
                   setBlockRangeError(null); // Clear the error message immediately if 'toBlock' is valid
