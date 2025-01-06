@@ -20,6 +20,7 @@ import BalanceHistorySearch from "@/components/home/searches/BalanceHistorySearc
 import { Card, CardHeader } from "@/components/ui/card";
 import BalanceHistoryChart from "@/components/balanceHistory/BalanceHistoryChart";
 
+import ErrorPage from "../ErrorPage";
 // Memoizing the BalanceHistoryChart component to avoid unnecessary re-renders
 const MemoizedBalanceHistoryChart = React.memo(BalanceHistoryChart);
 
@@ -172,6 +173,16 @@ export default function BalanceHistory() {
     message = "Showing Results with applied filters.";
   }
 
+   // get the accountName
+   const routeAccountName = Array.isArray(router.query.accountName)
+   ? router.query.accountName[0] // If it's an array, get the first element
+   : router.query.accountName; // Otherwise, treat it as a string directly
+
+  if(routeAccountName  && !routeAccountName.startsWith("@") || !accountNameFromRoute) 
+  {
+    return <ErrorPage />;
+  }
+  
   return (
     <>
       <Head>
