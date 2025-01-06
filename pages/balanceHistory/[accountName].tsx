@@ -178,7 +178,7 @@ export default function BalanceHistory() {
    ? router.query.accountName[0] // If it's an array, get the first element
    : router.query.accountName; // Otherwise, treat it as a string directly
 
-  if(routeAccountName  && !routeAccountName.startsWith("@") || !accountNameFromRoute) 
+  if(routeAccountName  && !routeAccountName.startsWith("@"))
   {
     return <ErrorPage />;
   }
