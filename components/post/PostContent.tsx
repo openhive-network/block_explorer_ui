@@ -6,11 +6,16 @@ import PostPropertiesTable from "./PostPropertiesTable";
 import VoteDetailsTable from "./VoteDetailsTable";
 
 interface PostContentProps {
+  isComment?: boolean;
   active_votes: Hive.PostPageVoteDetails[];
   data: Hive.Content;
 }
 
-const PostContent: React.FC<PostContentProps> = ({ active_votes, data }) => {
+const PostContent: React.FC<PostContentProps> = ({
+  isComment = false,
+  active_votes,
+  data,
+}) => {
   const [isPropertiesOpen, setIsPropertiesOpen] = useState(false);
   const [isVoteDetailsOpen, setIsVoteDetailsOpen] = useState(false);
 
@@ -23,6 +28,7 @@ const PostContent: React.FC<PostContentProps> = ({ active_votes, data }) => {
   return (
     <>
       <PostContentCard
+        isComment={isComment}
         isPropertiesOpen={isPropertiesOpen}
         isVoteDetailsOpen={isVoteDetailsOpen}
         handlePropertiesToggle={handlePropertiesToggle}

@@ -8,6 +8,7 @@ import Hive from "@/types/Hive";
 import { cn } from "@/lib/utils";
 
 interface PostContentCardProps {
+  isComment?: boolean;
   isPropertiesOpen: boolean;
   isVoteDetailsOpen: boolean;
   handlePropertiesToggle: () => void;
@@ -18,6 +19,7 @@ interface PostContentCardProps {
 }
 
 const PostContentCard: React.FC<PostContentCardProps> = ({
+  isComment,
   isPropertiesOpen,
   isVoteDetailsOpen,
   handlePropertiesToggle,
@@ -33,7 +35,7 @@ const PostContentCard: React.FC<PostContentCardProps> = ({
     <Card className="overflow-hidden pb-0 w-[100%]">
       <div className="flex text-sm justify-between items-center py-1 px-4 border-b-[1px] border-slate-400 bg-rowHover">
         <div className="flex gap-2">
-          <p>{category}</p>-
+          {!isComment ? <p>{category} - </p> : ""}
           <Link
             className="text-link"
             href={`/@${author}`}

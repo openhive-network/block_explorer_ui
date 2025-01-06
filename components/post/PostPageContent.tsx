@@ -2,7 +2,6 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 
 import usePostContent from "@/hooks/api/postPage/usePostContent";
-import usePostContentReplies from "@/hooks/api/postPage/usePostContentReplies";
 import PostContent from "./PostContent";
 import PostComments from "./PostComments";
 
@@ -18,7 +17,6 @@ const PostPageContent = () => {
   const path = router.asPath;
 
   const { data } = usePostContent(accountName, permlink);
-  const { data: postReplies } = usePostContentReplies(accountName, permlink);
 
   if (!data) return;
 
@@ -61,9 +59,7 @@ const PostPageContent = () => {
         active_votes={active_votes}
         data={data}
       />
-      {postReplies && postReplies.length && (
-        <PostComments comments={postReplies} />
-      )}
+      <PostComments />
     </div>
   );
 };
