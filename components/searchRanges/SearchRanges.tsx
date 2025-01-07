@@ -188,11 +188,11 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
               data-testid="headblock-number"
               type="text"
               defaultValue={toBlock || ""}
-              onChange={(e) => handleNumericInput(e)} // Keep cleaning logic here on change
+              onChange={(e) => handleNumericInput(e)}
               placeholder={"To"}
               onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
                 const value = e.target.value;
-                const numericValue = value ? Number(value) : undefined; // Default to NaN if empty string
+                const numericValue = value ? Number(value) : undefined;
                   if (
                     numericValue &&
                     fromBlock &&
@@ -201,13 +201,13 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
                     numericValue < Number(fromBlock)
                   ) {
                     setBlockRangeError("To block must be greater than From block");
-                    e.target.value = ""; // Clear the 'toBlock' field if validation fails
+                    e.target.value = "";
                   } else if (numericValue !=undefined && numericValue <= 0 && fromBlock) {
                     setBlockRangeError("To block must be greater than From block");
-                    e.target.value = ""; // Clear the 'toBlock' field if validation fails
+                    e.target.value = "";
                   } else {
-                    setToBlock(numericValue); // Set the state only when validation passes
-                    setBlockRangeError(null); // Clear error if valid
+                    setToBlock(numericValue);
+                    setBlockRangeError(null);
                   }
                 }
               }
