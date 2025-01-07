@@ -8,7 +8,7 @@ import { useState } from "react";
 
 export default function HealthcheckerPage() {
 
-  const {hiveChain, healthChecker, scoredEndpoints, setScoredEndpoints} = useHiveChainContext();
+  const {hiveChain, healthChecker, scoredEndpoints, setScoredEndpoints, fallbacks, setFallbacks} = useHiveChainContext();
   const { nodeAddress, setNodeAddress } =
     useAddressesContext();
   const [providers, setProviders] = useState<string[]>([
@@ -26,7 +26,6 @@ export default function HealthcheckerPage() {
     "https://hive-api.3speak.tv",
     "https://hiveapi.actifit.io"
   ]);
-  const [fallbacks, setFallbacks] = useState<string[]>([]);
 
   const extendedHiveChain = hiveChain
     ?.extend<ExplorerNodeApi>();
@@ -87,17 +86,13 @@ export default function HealthcheckerPage() {
 
   const deleteProvider = (provider: string) => {
     const newProviders = [...providers].filter((previousProvider) => provider !== previousProvider);
-    console.log('NEW PROVIDERS', newProviders);
     setProviders(newProviders);
   }
 
   const registerFallback = (provider: string) => {
-    setFallbacks((fallbacks) => {
-      if (!fallbacks.includes(provider)) {
-        return [...fallbacks, provider]
-      }
-      return fallbacks;
-    } );
+    if (!fallbacks.includes(provider)) {
+      setFallbacks([...fallbacks, provider])
+    }
   }
 
 

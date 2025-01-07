@@ -7,6 +7,8 @@ type HiveChainContextType = {
   healthChecker: HealthChecker | undefined;
   scoredEndpoints: TScoredEndpoint[] | undefined;
   setScoredEndpoints: (scoredEndpoints: TScoredEndpoint[] | undefined ) => void;
+  fallbacks: string[];
+  setFallbacks: (fallbacks: string[]) => void;
 };
 
 export const HiveChainContext = createContext<HiveChainContextType>({
@@ -14,6 +16,8 @@ export const HiveChainContext = createContext<HiveChainContextType>({
   healthChecker: undefined,
   scoredEndpoints: undefined,
   setScoredEndpoints: () => {},
+  fallbacks: [],
+  setFallbacks: () => {}
 });
 
 export const useHiveChainContext = () => {
@@ -34,6 +38,7 @@ export const HiveChainContextProvider: React.FC<{
   );
   const [healthChecker, setHealthChecker] = useState<HealthChecker | undefined>(undefined);
   const [scoredEndpoints, setScoredEndpoints] = useState<TScoredEndpoint[] | undefined>(undefined);
+  const [fallbacks, setFallbacks] = useState<string[]>([]);
 
   const createChain = async () => {
     const chain = await createHiveChain();
@@ -54,7 +59,7 @@ export const HiveChainContextProvider: React.FC<{
   }, []);
 
   return (
-    <HiveChainContext.Provider value={{ hiveChain, healthChecker, scoredEndpoints, setScoredEndpoints }}>
+    <HiveChainContext.Provider value={{ hiveChain, healthChecker, scoredEndpoints, setScoredEndpoints, fallbacks, setFallbacks }}>
       {children}
     </HiveChainContext.Provider>
   );
