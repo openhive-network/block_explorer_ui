@@ -39,33 +39,26 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
 
   // Validate and update numeric values
   const handleNumericInput = (
-    value: string,
-    fieldSetter: Function,
+    e: React.ChangeEvent<HTMLInputElement>,
     allowDecimal: boolean = false
   ) => {
-    // If decimals are allowed, preserve the decimal point in the input value
-    let cleanedValue = allowDecimal
-      ? value.replace(/[^0-9.]/g, "") // Allow numbers and decimal point
-      : value.replace(/[^0-9]/g, ""); // Only allow numbers
-
-   // If the decimal is allowed, ensure there is only one decimal point
+    let cleanedValue = e.target.value;
+  
+    // Clean the value based on the logic
+    cleanedValue = allowDecimal
+      ? cleanedValue.replace(/[^0-9.]/g, "") // Allow numbers and decimal point
+      : cleanedValue.replace(/[^0-9]/g, ""); // Only allow numbers
+  
     if (allowDecimal && cleanedValue.split(".").length > 2) {
-      // Remove extra decimals, keeping only the first one
       cleanedValue = cleanedValue.slice(0, cleanedValue.indexOf(".") + 1) + 
-      cleanedValue.split(".").slice(1).join(""); // Remove all decimals after the first one
+      cleanedValue.split(".").slice(1).join(""); // Remove extra decimals
     }
-
-    // Limit the value to a maximum of 15 digits
+  
     if (cleanedValue.length > 15) {
-      cleanedValue = cleanedValue.slice(0, 15);
+      cleanedValue = cleanedValue.slice(0, 15); // Limit to 15 digits
     }
 
-    // If the cleaned value is empty, set it to undefined
-    if (cleanedValue === "") {
-      fieldSetter(undefined);
-    } else {
-      fieldSetter(cleanedValue); // Invalid input, set to undefined
-    }
+    e.target.value = cleanedValue;
   };
 
   useEffect(() => {
@@ -114,10 +107,13 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
             <Input
               className="w-1/2 border-0 border-b-2 bg-theme"
               type="text" // Use type="text" to allow custom validation
-              value={lastBlocksValue || ""}
-              onChange={(e) =>
-                handleNumericInput(e.target.value,setLastBlocksValue)
-              }
+              defaultValue={lastBlocksValue || ""}
+              onChange={(e) => handleNumericInput(e)}
+              onBlur={(e) => {
+                const value = e.target.value;
+                const numericValue = value ? Number(value) : undefined; 
+                setLastBlocksValue(numericValue);
+              }}
               placeholder={"Last"}
             />
           </div>
@@ -131,10 +127,13 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
               <Input
                 type="text"
                 className="bg-theme border-0 border-b-2 text-text"
-                value={lastTimeUnitValue || ""}
-                onChange={(e) =>
-                  handleNumericInput(e.target.value,setLastTimeUnitValue,true)
-                }
+                defaultValue={lastTimeUnitValue || ""}
+                onChange={(e) => handleNumericInput(e,true)}
+                onBlur={(e) => {
+                  const value = e.target.value;
+                  const numericValue = value ? Number(value) : undefined;
+                  setLastTimeUnitValue(numericValue);
+                }}
                 placeholder={"Last"}
               />
             </div>
@@ -173,10 +172,13 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
               type="text"
               className="bg-theme border-0 border-b-2"
               data-testid="from-block-input"
-              value={fromBlock || ""}
-              onChange={(e) =>
-                handleNumericInput(e.target.value,setFromBlock)
-              }
+              defaultValue={fromBlock || ""}
+              onChange={(e) => handleNumericInput(e)}
+              onBlur={(e) => {
+                const value = e.target.value;
+                const numericValue = value ? Number(value) : undefined;
+                setFromBlock(numericValue);
+              }}
               placeholder="From"
             />
           </div>
@@ -185,32 +187,30 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
               className="bg-theme border-0 border-b-2"
               data-testid="headblock-number"
               type="text"
-              value={toBlock || ""}
-              onChange={(e) =>
-                handleNumericInput(e.target.value, setToBlock)
-              }
+              defaultValue={toBlock || ""}
+              onChange={(e) => handleNumericInput(e)} // Keep cleaning logic here on change
               placeholder={"To"}
-              onBlur={() => {
-                if (
-                  Number(toBlock) &&
-                  Number(fromBlock) &&
-                  !isNaN(Number(toBlock)) &&
-                  !isNaN(Number(fromBlock)) &&
-                  Number(toBlock) < Number(fromBlock)
-                ) {
-                  setBlockRangeError(
-                    "To block must be greater than From block"
-                  );
-                  setToBlock(undefined); // Clear the 'toBlock' field
-                } else if (Number(toBlock) <= 0 && Number(fromBlock)) {
-                  setBlockRangeError(
-                    "To block must be greater than From block"
-                  );
-                  setToBlock(undefined); // Clear the 'toBlock' field
-                } else {
-                  setBlockRangeError(null); // Clear the error message immediately if 'toBlock' is valid
+              onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
+                const value = e.target.value;
+                const numericValue = value ? Number(value) : undefined; // Default to NaN if empty string
+                  if (
+                    numericValue &&
+                    fromBlock &&
+                    !isNaN(numericValue) &&
+                    !isNaN(Number(fromBlock)) &&
+                    numericValue < Number(fromBlock)
+                  ) {
+                    setBlockRangeError("To block must be greater than From block");
+                    e.target.value = ""; // Clear the 'toBlock' field if validation fails
+                  } else if (numericValue !=undefined && numericValue <= 0 && fromBlock) {
+                    setBlockRangeError("To block must be greater than From block");
+                    e.target.value = ""; // Clear the 'toBlock' field if validation fails
+                  } else {
+                    setToBlock(numericValue); // Set the state only when validation passes
+                    setBlockRangeError(null); // Clear error if valid
+                  }
                 }
-              }}
+              }
             />
           </div>
         </div>
