@@ -105,7 +105,7 @@ const AccountSearch = () => {
           )}
         </Button>
         {!accountName && (
-          <label className="ml-2 text-muted-foreground">Set account name</label>
+          <label className="ml-2 text-gray-300 dark:text-gray-500 ">Set account name</label>
         )}
       </div>
     </>
