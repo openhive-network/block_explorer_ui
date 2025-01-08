@@ -41,7 +41,7 @@ export const HiveChainContextProvider: React.FC<{
   const [scoredEndpoints, setScoredEndpoints] = useState<TScoredEndpoint[] | undefined>(undefined);
   const [fallbacks, setFallbacks] = useState<string[]>([]);
 
-  const {nodeAddress} = useAddressesContext();
+  const {nodeAddress, setNodeAddress} = useAddressesContext();
 
   const fallbacksRef = useRef(fallbacks);
   const nodeAddressRef = useRef(nodeAddress);
@@ -57,7 +57,17 @@ export const HiveChainContextProvider: React.FC<{
     const healthChecker = new HealthChecker();
     setHealthChecker(healthChecker);
     healthChecker?.on('error', error => console.error(error.message));
-    healthChecker?.on("data", (data: Array<TScoredEndpoint>) => { console.log(JSON.stringify(data)); data.length ?setScoredEndpoints(data) : null });
+    healthChecker?.on("data", (data: Array<TScoredEndpoint>) => { console.log(JSON.stringify(data)); checkForFallbacks(data); data.length ?setScoredEndpoints(data) : null });
+  }
+
+  const checkForFallbacks = (scoredEndpoints: TScoredEndpoint[]) => {
+    const currentScoredEndpoint = scoredEndpoints.find((scoredEdnpoint) => scoredEdnpoint.endpointUrl === nodeAddressRef.current);
+    if (currentScoredEndpoint && !currentScoredEndpoint.up) {
+      fallbacksRef.current.forEach((fallback) => {
+        const fallbackScoredEndpoint = scoredEndpoints.find((scoredEdnpoint) => scoredEdnpoint.endpointUrl === fallback);
+        if (fallbackScoredEndpoint && fallbackScoredEndpoint.up) setNodeAddress(fallback);
+      })
+    }
   }
 
   useEffect(() => {
