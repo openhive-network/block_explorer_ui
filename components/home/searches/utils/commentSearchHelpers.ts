@@ -8,7 +8,9 @@ import { setParamIfPositive } from "./globalSearchHelpers";
 
 export async function startCommentSearch(
   commentSearchParams: Explorer.CommentSearchParams,
-  setCommentSearchProps: (props: Explorer.CommentSearchProps) => void,
+  setCommentSearchProps: (
+    props: Explorer.CommentSearchProps | undefined
+  ) => void,
   setCommentPaginationPage: (page: number) => void,
   setPreviousCommentSearchProps: (props: Explorer.CommentSearchProps) => void,
   setLastSearchKey: (key: "comment") => void

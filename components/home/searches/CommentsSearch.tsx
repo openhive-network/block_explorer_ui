@@ -5,6 +5,7 @@ import Explorer from "@/types/Explorer";
 import { getOperationButtonTitle } from "@/utils/UI";
 import { trimAccountName } from "@/utils/StringUtils";
 import {
+  cn,
   convertBooleanArrayToIds,
   convertIdsToBooleanArray,
   parseUrlFlagsIntoBooleanArray,
@@ -23,7 +24,13 @@ import useCommentSearch from "@/hooks/api/common/useCommentSearch";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/router";
 
-const CommentsSearch = () => {
+interface CommentsSearchProps {
+  isAccountPage: boolean;
+}
+
+const CommentsSearch: React.FC<CommentsSearchProps> = ({
+  isAccountPage = false,
+}) => {
   const {
     setCommentSearchProps,
     commentSearchProps,
@@ -48,7 +55,7 @@ const CommentsSearch = () => {
   const { operationsTypes } = useOperationsTypes();
 
   const { getRangesValues } = searchRanges;
-  const isCommentsPage = pathname?.includes("/comments") ?? false;
+  const isCommentsPage = pathname?.startsWith("/comments") ?? false;
 
   const handleStartCommentSearch = async () => {
     if (commentsSearchAccountName !== "") {
@@ -120,25 +127,44 @@ const CommentsSearch = () => {
         setSelectedCommentSearchOperationTypes(convertedFilters);
       }
     }
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isCommentsPage, router.query]);
+
+  const handleClearCommentSearch = () => {
+    setCommentSearchProps(undefined);
+    setCommentsSearchPermlink("");
+    setSelectedCommentSearchOperationTypes([]);
+  };
+
+  const infoText = isAccountPage
+    ? "Find all operations related to comments for exact permlink."
+    : "Find all operations related to comments of given account or for exact permlink.";
+
+  const buttonLabel = isAccountPage
+    ? "Set permlink"
+    : "Set author name and permlink";
 
   return (
     <>
-      <p className="ml-2">
-        Find all operations related to comments of given account or for exact
-        permlink.
-      </p>
-      <div className="flex flex-col">
-        <AutocompleteInput
-          value={commentsSearchAccountName as string}
-          onChange={setCommentsSearchAccountName}
-          placeholder="Author"
-          inputType="account_name"
-          className="w-1/2 bg-theme dark:bg-theme border-0 border-b-2"
-          required
-        />
-      </div>
-      <div className="flex flex-col">
+      <p className="ml-2">{infoText}</p>
+      {!isAccountPage ? (
+        <div className="flex flex-col">
+          <AutocompleteInput
+            value={commentsSearchAccountName as string}
+            onChange={setCommentsSearchAccountName}
+            placeholder="Author"
+            inputType="account_name"
+            className="w-1/2 bg-theme dark:bg-theme border-0 border-b-2"
+            required
+          />
+        </div>
+      ) : null}
+
+      <div
+        className={cn("flex flex-col", {
+          "my-5": isAccountPage,
+        })}
+      >
         <Input
           data-testid="permlink-input"
           className="w-1/2 bg-theme dark:bg-theme border-0 border-b-2"
@@ -163,23 +189,28 @@ const CommentsSearch = () => {
           )}
         />
       </div>
-      <div className="flex items-center">
-        <Button
-          data-testid="search-button"
-          onClick={handleStartCommentSearch}
-          className="mr-2 my-2"
-          disabled={!commentsSearchAccountName || !commentsSearchPermlink}
-        >
-          Search
-          {commentSearchDataLoading && (
-            <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />
+      <div className="flex items-center justify-between">
+        <div>
+          <Button
+            data-testid="search-button"
+            onClick={handleStartCommentSearch}
+            className="mr-2 my-2"
+            disabled={!commentsSearchAccountName || !commentsSearchPermlink}
+          >
+            Search
+            {commentSearchDataLoading && (
+              <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />
+            )}
+          </Button>
+          {(!commentsSearchAccountName || !commentsSearchPermlink) && (
+            <label className="text-gray-300 dark:text-gray-500 ">
+              {buttonLabel}
+            </label>
           )}
-        </Button>
-        {!commentsSearchAccountName && (
-          <label className="text-gray-300 dark:text-gray-500 ">
-            Set author name and permlink
-          </label>
-        )}
+        </div>
+        {isAccountPage ? (
+          <Button onClick={handleClearCommentSearch}>Clear</Button>
+        ) : null}
       </div>
     </>
   );

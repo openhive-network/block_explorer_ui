@@ -1,3 +1,5 @@
+// TODO: This component could be simplified and unnecessary logic should be removed
+
 import { useEffect, useState } from "react";
 import { Loader2, ArrowBigRightDash, X } from "lucide-react";
 import { useRouter } from "next/router";
@@ -25,6 +27,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import useConvertedAccountDetails from "@/hooks/common/useConvertedAccountDetails";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import ErrorPage from "./ErrorPage";
+import { useSearchesContext } from "@/contexts/SearchesContext";
+import useCommentSearch from "@/hooks/api/common/useCommentSearch";
+import CommentsSearch from "@/components/home/searches/CommentsSearch";
+import CommentSearchResults from "@/components/home/searches/searchesResults/CommentSearchResults";
+
 interface AccountSearchParams {
   accountName?: string | undefined;
   fromBlock: number | undefined;
@@ -56,7 +63,15 @@ const defaultSearchParams: AccountSearchParams = {
 export default function Account() {
   const router = useRouter();
   const isMobile = useMediaQuery("(max-width: 768px)");
-  const accountNameFromRoute = (router.query.accountName as string)?.slice(1);
+  const { setCommentsSearchAccountName, commentSearchProps } =
+    useSearchesContext();
+  const { commentSearchData, commentSearchDataLoading } =
+    useCommentSearch(commentSearchProps);
+
+  const accountNameFromRoute = (router.query.accountName as string)?.replace(
+    "@",
+    ""
+  );
   const [liveDataEnabled, setLiveDataEnabled] = useState(false);
 
   const changeLiveRefresh = () => {
@@ -209,6 +224,14 @@ export default function Account() {
   }, [paramsState]);
 
   useEffect(() => {
+    setCommentsSearchAccountName(accountNameFromRoute);
+
+    return () => setCommentsSearchAccountName("");
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [accountNameFromRoute]);
+
+  useEffect(() => {
     if (
       router.query.page &&
       accountOperations &&
@@ -283,11 +306,10 @@ export default function Account() {
     ? router.query.accountName[0] // If it's an array, get the first element
     : router.query.accountName; // Otherwise, treat it as a string directly
 
-  if(routeAccountName  && !routeAccountName.startsWith("@")) 
-  {
+  if (routeAccountName && !routeAccountName.startsWith("@")) {
     return <ErrorPage />;
   }
-  
+
   if (!accountDetails) {
     return (
       <Loader2 className="animate-spin mt-1 text-black dark:text-white h-12 w-12 ml-3 ..." />
@@ -297,6 +319,38 @@ export default function Account() {
   if (notFound) {
     return <div>Account not found</div>;
   }
+
+  const buildOperationView = () => {
+    if (commentSearchData?.operations_result.length) {
+      return <CommentSearchResults />;
+    } else if (
+      !isAccountOperationsLoading &&
+      !accountOperations?.total_operations
+    ) {
+      return (
+        <div className="w-full my-4 text-black text-center">
+          No operations were found.
+        </div>
+      );
+    } else if (isAccountOperationsLoading || commentSearchDataLoading) {
+      return (
+        <div className="flex justify-center text-center items-center">
+          <Loader2 className="animate-spin mt-1 text-black h-12 w-12 ml-3 ..." />
+        </div>
+      );
+    } else {
+      return (
+        <OperationsTable
+          operations={convertOperationResultsToTableOperations(
+            formattedAccountOperations?.operations_result || []
+          )}
+          unformattedOperations={convertOperationResultsToTableOperations(
+            accountOperations?.operations_result || []
+          )}
+        />
+      );
+    }
+  };
 
   return (
     <>
@@ -354,25 +408,15 @@ export default function Account() {
               </div>
             </CardContent>
           </Card>
-          {!isAccountOperationsLoading &&
-          !accountOperations?.total_operations ? (
-            <div className="w-full my-4 text-black text-center">
-              No operations were found.
-            </div>
-          ) : isAccountOperationsLoading ? (
-            <div className="flex justify-center text-center items-center">
-              <Loader2 className="animate-spin mt-1 text-black h-12 w-12 ml-3 ..." />
-            </div>
-          ) : (
-            <OperationsTable
-              operations={convertOperationResultsToTableOperations(
-                formattedAccountOperations?.operations_result || []
-              )}
-              unformattedOperations={convertOperationResultsToTableOperations(
-                accountOperations?.operations_result || []
-              )}
-            />
-          )}
+          <Card className="mb-4">
+            <CardHeader>
+              <CardTitle>Comment Search</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CommentsSearch isAccountPage={true} />
+            </CardContent>
+          </Card>
+          {buildOperationView()}
         </div>
         <div className="fixed bottom-[10px] right-0 flex flex-col items-end justify-end px-3 md:px-12">
           <ScrollTopButton />
