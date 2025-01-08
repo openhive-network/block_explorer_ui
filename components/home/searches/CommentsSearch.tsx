@@ -25,7 +25,7 @@ import { usePathname } from "next/navigation";
 import { useRouter } from "next/router";
 
 interface CommentsSearchProps {
-  isAccountPage: boolean;
+  isAccountPage?: boolean;
 }
 
 const CommentsSearch: React.FC<CommentsSearchProps> = ({
