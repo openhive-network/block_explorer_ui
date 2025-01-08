@@ -90,7 +90,7 @@ export default function HealthcheckerPage() {
   }
 
   const registerFallback = (provider: string) => {
-    if (!fallbacks.includes(provider)) {
+    if (!fallbacks.includes(provider) && fallbacks.length < 3) {
       setFallbacks([...fallbacks, provider])
     }
   }

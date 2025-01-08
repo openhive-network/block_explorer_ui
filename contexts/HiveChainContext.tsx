@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useRef } from "react";
 import { createHiveChain, HealthChecker, IHiveChainInterface, TScoredEndpoint } from "@hiveio/wax";
 import fetchingService from "@/services/FetchingService";
+import { useAddressesContext } from "./AddressesContext";
 
 type HiveChainContextType = {
   hiveChain: IHiveChainInterface | undefined;
@@ -40,6 +41,12 @@ export const HiveChainContextProvider: React.FC<{
   const [scoredEndpoints, setScoredEndpoints] = useState<TScoredEndpoint[] | undefined>(undefined);
   const [fallbacks, setFallbacks] = useState<string[]>([]);
 
+  const {nodeAddress} = useAddressesContext();
+
+  const fallbacksRef = useRef(fallbacks);
+  const nodeAddressRef = useRef(nodeAddress);
+
+
   const createChain = async () => {
     const chain = await createHiveChain();
     setHiveChain(chain);
@@ -57,6 +64,14 @@ export const HiveChainContextProvider: React.FC<{
     createChain();
     createHealthChecker();
   }, []);
+
+  useEffect(() => {
+    fallbacksRef.current = fallbacks;
+  }, [fallbacks]);
+
+  useEffect(() => {
+    nodeAddressRef.current = nodeAddress;
+  }, [nodeAddress])
 
   return (
     <HiveChainContext.Provider value={{ hiveChain, healthChecker, scoredEndpoints, setScoredEndpoints, fallbacks, setFallbacks }}>
