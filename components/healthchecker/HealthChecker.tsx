@@ -191,7 +191,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         </div>
         <div className="row-start-4">
           {fallbacks.map((fallback) => (
-            <div className="flex gap-1">{fallback}<X className="cursor-pointer" onClick={() => {removeFallback(fallback)}} /></div>
+            <div key={fallback} className="flex gap-1">{fallback}<X className="cursor-pointer" onClick={() => {removeFallback(fallback)}} /></div>
           ))}
         </div>
       </Card>
