@@ -25,7 +25,7 @@ const ProviderAdditionDialog: React.FC<ProviderAdditionDialogProps> = ({
   return (
     <Dialog open={isOpened} onOpenChange={onDialogOpenChange}>
       <DialogContent>
-        <DialogHeader><DialogTitle>Add new provider's address</DialogTitle></DialogHeader>
+        <DialogHeader><DialogTitle>Add new address of provider</DialogTitle></DialogHeader>
         <Input
           value={providerValue}
           autoFocus={true}

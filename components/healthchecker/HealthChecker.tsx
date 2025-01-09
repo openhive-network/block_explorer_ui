@@ -143,7 +143,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
       }
       setChainIntialized(true);
     }
-  }, [chainInitialized, customApiCheckers, healthChecker, apiChecksByProvider])
+  }, [chainInitialized, customApiCheckers, healthChecker, initializeDefaultChecks, apiChecksByProvider])
 
   const renderProvider = (scoredEndpoint: TScoredEndpoint) => {
     const {endpointUrl, score, up,} = scoredEndpoint;
