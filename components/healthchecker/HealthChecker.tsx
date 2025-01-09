@@ -34,6 +34,7 @@ interface HealthCheckerComponentProps {
   addNewProvider: (provider: string) => void;
   deleteProvider: (provider: string) => void;
   registerFallback: (provider: string) => void;
+  removeFallback: (provider: string) => void;
 }
 
 const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
@@ -46,6 +47,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   addNewProvider,
   deleteProvider,
   registerFallback,
+  removeFallback,
   customApiCheckers,
   className,
   providersForEndpoints,

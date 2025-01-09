@@ -95,6 +95,10 @@ export default function HealthcheckerPage() {
     }
   }
 
+  const removeFallback = (provider: string) => {
+    setFallbacks(fallbacks.filter((fallback) => fallback !== provider));
+  }
+
 
   return (
     <>
@@ -117,6 +121,7 @@ export default function HealthcheckerPage() {
           registerFallback={registerFallback}
           scoredEndpoints={scoredEndpoints}
           fallbacks={fallbacks}
+          removeFallback={removeFallback}
         />
       </div>
     </>
