@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { TScoredEndpoint, HealthChecker } from "@hiveio/wax";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
-import { Plus } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import ProviderCard from "./ProviderCard";
 import ApiCheckDialog from "./ApiCheckDialog";
 import { Card } from "../ui/card";
@@ -191,7 +191,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         </div>
         <div className="row-start-4">
           {fallbacks.map((fallback) => (
-            <div>{fallback}</div>
+            <div className="flex gap-1">{fallback}<X className="cursor-pointer" onClick={() => {removeFallback(fallback)}} /></div>
           ))}
         </div>
       </Card>
