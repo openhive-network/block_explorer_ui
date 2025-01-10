@@ -10,7 +10,7 @@ import JumpToPage from "../JumpToPage";
 import OperationTypesDialog from "../OperationTypesDialog";
 import CustomPagination from "../CustomPagination";
 
-interface AccountTopBarProps {
+interface AccountPaginationProps {
   accountName: string;
   page: number;
   setPage: (page: number | undefined) => void;
@@ -19,7 +19,7 @@ interface AccountTopBarProps {
   selectedFilters: boolean[];
 }
 
-const AccountTopBar: React.FC<AccountTopBarProps> = ({
+const AccountPagination: React.FC<AccountPaginationProps> = ({
   accountName,
   page,
   setPage,
@@ -38,43 +38,43 @@ const AccountTopBar: React.FC<AccountTopBarProps> = ({
   const { accountOperationTypes } = useAccountOperationTypes(accountName);
 
   return (
-    <div
-      className="bg-explorer-orange flex items-stretch justify-center w-full flex-wrap mb-2 mt-3"
-      data-testid="account-top-bar"
-    >
-      <div className="flex justify-center items-center mx-4">
-        <CustomPagination
-          handleLatestPage={onLatestButtonClick}
-          currentPage={page}
-          totalCount={accountOperations.total_operations || 0}
-          pageSize={config.standardPaginationSize}
-          onPageChange={setPage}
-          isMirrored={true}
-        />
-      </div>
-      <div className="my-1 flex gap-x-2">
+    <div className="flex-col w-full">
+      <div className="flex justify-end w-full flex-wrap">
         <OperationTypesDialog
           operationTypes={accountOperationTypes}
           setSelectedOperations={handleOperationSelect}
           selectedOperations={convertBooleanArrayToIds(selectedFilters)}
-          buttonClassName="bg-theme dark:bg-theme"
+          buttonClassName="bg-theme"
           triggerTitle={getOperationButtonTitle(
             convertBooleanArrayToIds(selectedFilters),
             accountOperationTypes
           )}
         />
-        <div className="flex-grow flex justify-between max-w-xl lg:max-w-full">
-          <div className="flex items-center ">
-            <JumpToPage
-              currentPage={page}
-              onPageChange={setPage}
-              className="flex-shrink"
-            />
-          </div>
+      </div>
+      <div
+        className="flex w-full justify-center flex-wrap my-4"
+        data-testid="account-top-bar"
+      >
+        <div className="items-center mx-4">
+          <CustomPagination
+            handleLatestPage={onLatestButtonClick}
+            currentPage={page}
+            totalCount={accountOperations.total_operations || 0}
+            pageSize={config.standardPaginationSize}
+            onPageChange={setPage}
+            isMirrored={true}
+          />
+        </div>
+        <div className="flex items-center ">
+          <JumpToPage
+            currentPage={page}
+            onPageChange={setPage}
+            className="flex-shrink"
+          />
         </div>
       </div>
     </div>
   );
 };
 
-export default AccountTopBar;
+export default AccountPagination;
