@@ -1,36 +1,20 @@
-// TODO: This component could be simplified and unnecessary logic should be removed
-
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Loader2, ArrowBigRightDash, X } from "lucide-react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 
-import Hive from "@/types/Hive";
-import {
-  cn,
-  convertBooleanArrayToIds,
-  convertOperationResultsToTableOperations,
-} from "@/lib/utils";
+import ErrorPage from "./ErrorPage";
+import { cn, convertBooleanArrayToIds } from "@/lib/utils";
 import useAccountOperations from "@/hooks/api/accountPage/useAccountOperations";
-import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
 import useMediaQuery from "@/hooks/common/useMediaQuery";
-import useSearchRanges from "@/hooks/common/useSearchRanges";
 import useURLParams from "@/hooks/common/useURLParams";
-import AccountTopBar from "@/components/account/AccountTopBar";
-import SearchRanges from "@/components/searchRanges/SearchRanges";
+import useConvertedAccountDetails from "@/hooks/common/useConvertedAccountDetails";
+import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import ScrollTopButton from "@/components/ScrollTopButton";
-import OperationsTable from "@/components/OperationsTable";
 import AccountDetailsSection from "@/components/account/AccountDetailsSection";
 import MobileAccountNameCard from "@/components/account/MobileAccountNameCard";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import useConvertedAccountDetails from "@/hooks/common/useConvertedAccountDetails";
-import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
-import ErrorPage from "./ErrorPage";
-import { useSearchesContext } from "@/contexts/SearchesContext";
-import useCommentSearch from "@/hooks/api/common/useCommentSearch";
-import CommentsSearch from "@/components/home/searches/CommentsSearch";
-import CommentSearchResults from "@/components/home/searches/searchesResults/CommentSearchResults";
+import AccountOperationViewTabs from "@/components/account/tabs/AccountOperationViewTabs";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -46,7 +30,7 @@ interface AccountSearchParams {
   filters: boolean[];
 }
 
-const defaultSearchParams: AccountSearchParams = {
+export const defaultSearchParams: AccountSearchParams = {
   accountName: undefined,
   fromBlock: undefined,
   toBlock: undefined,
@@ -63,22 +47,19 @@ const defaultSearchParams: AccountSearchParams = {
 export default function Account() {
   const router = useRouter();
   const isMobile = useMediaQuery("(max-width: 768px)");
-  const { setCommentsSearchAccountName, commentSearchProps } =
-    useSearchesContext();
-  const { commentSearchData, commentSearchDataLoading } =
-    useCommentSearch(commentSearchProps);
 
   const accountNameFromRoute = (router.query.accountName as string)?.replace(
     "@",
     ""
   );
+
   const [liveDataEnabled, setLiveDataEnabled] = useState(false);
 
   const changeLiveRefresh = () => {
     setLiveDataEnabled((prev) => !prev);
   };
 
-  const { paramsState, setParams } = useURLParams(
+  const { paramsState } = useURLParams(
     {
       ...defaultSearchParams,
     },
@@ -91,20 +72,10 @@ export default function Account() {
     toBlock: toBlockParam,
     fromDate: fromDateParam,
     toDate: toDateParam,
-    lastBlocks: lastBlocksParam,
-    timeUnit: timeUnitParam,
-    lastTime: lastTimeParam,
-    rangeSelectKey,
-    page,
   } = paramsState;
 
-  const [initialSearch, setInitialSearch] = useState<boolean>(false);
-  const [filters, setFilters] = useState<boolean[]>([]);
-  const [lastPage, setLastPage] = useState<number | undefined>(undefined);
   const [showMobileAccountDetails, setShowMobileAccountDetails] =
     useState(false);
-
-  const searchRanges = useSearchRanges();
 
   const { dynamicGlobalData } = useDynamicGlobal();
   const { formattedAccountDetails: accountDetails, notFound } =
@@ -125,127 +96,10 @@ export default function Account() {
     startDate: fromDateParam,
     endDate: toDateParam,
   };
-  const {
-    accountOperations,
-    isAccountOperationsLoading,
-    refetchAccountOperations,
-  } = useAccountOperations(accountOperationsProps, liveDataEnabled);
-
-  const formattedAccountOperations = useOperationsFormatter(
-    accountOperations
-  ) as Hive.AccountOperationsResponse;
-
-  const handleSearch = async (resetPage?: boolean) => {
-    if (
-      !initialSearch &&
-      (!!fromDateParam ||
-        !!toDateParam ||
-        !!fromBlockParam ||
-        !!toBlockParam ||
-        !!lastBlocksParam ||
-        !!lastTimeParam ||
-        !!filtersParam?.length)
-    ) {
-      fromDateParam && searchRanges.setStartDate(fromDateParam);
-      toDateParam && searchRanges.setEndDate(toDateParam);
-      fromBlockParam && searchRanges.setFromBlock(fromBlockParam);
-      toBlockParam && searchRanges.setToBlock(toBlockParam);
-      lastBlocksParam && searchRanges.setLastBlocksValue(lastBlocksParam);
-      timeUnitParam && searchRanges.setTimeUnitSelectKey(timeUnitParam);
-      rangeSelectKey && searchRanges.setRangeSelectKey(rangeSelectKey);
-      searchRanges.setLastTimeUnitValue(lastTimeParam);
-      setFilters(filtersParam);
-      setInitialSearch(true);
-    } else {
-      if (!initialSearch && !isAccountOperationsLoading && accountOperations) {
-        setInitialSearch(true);
-      }
-
-      const {
-        payloadFromBlock,
-        payloadToBlock,
-        payloadStartDate,
-        payloadEndDate,
-      } = await searchRanges.getRangesValues();
-
-      setParams({
-        ...paramsState,
-        filters: filters,
-        fromBlock: payloadFromBlock,
-        toBlock: payloadToBlock,
-        fromDate: payloadStartDate,
-        toDate: payloadEndDate,
-        lastBlocks:
-          searchRanges.rangeSelectKey === "lastBlocks"
-            ? searchRanges.lastBlocksValue
-            : undefined,
-        lastTime:
-          searchRanges.rangeSelectKey === "lastTime"
-            ? searchRanges.lastTimeUnitValue
-            : undefined,
-        timeUnit:
-          searchRanges.rangeSelectKey === "lastTime"
-            ? searchRanges.timeUnitSelectKey
-            : undefined,
-        rangeSelectKey: searchRanges.rangeSelectKey,
-        page: resetPage ? undefined : page,
-      });
-    }
-  };
-
-  const handleFilterClear = () => {
-    const newPage = rangeSelectKey !== "none" ? undefined : page;
-    setParams({
-      ...defaultSearchParams,
-      accountName: accountNameFromRoute,
-      page: newPage,
-    });
-    searchRanges.setRangeSelectKey("none");
-    setFilters([]);
-  };
-
-  const handleOperationTypeChange = (newFilters: boolean[]) => {
-    setFilters(newFilters);
-    setParams({ ...paramsState, filters: newFilters, page: undefined });
-  };
-
-  useEffect(() => {
-    if (!paramsState.page && accountOperations) {
-      setLastPage(accountOperations.total_pages);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accountOperations, paramsState.page]);
-
-  useEffect(() => {
-    if (paramsState && !initialSearch) {
-      handleSearch();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paramsState]);
-
-  useEffect(() => {
-    setCommentsSearchAccountName(accountNameFromRoute);
-
-    return () => setCommentsSearchAccountName("");
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accountNameFromRoute]);
-
-  useEffect(() => {
-    if (
-      router.query.page &&
-      accountOperations &&
-      (Number(router.query.page) <= 0 ||
-        Number(router.query.page) > accountOperations.total_pages)
-    ) {
-      router.replace({
-        query: {
-          ...router.query,
-          page: accountOperations.total_pages,
-        },
-      });
-    }
-  }, [router, accountOperations]);
+  const { refetchAccountOperations } = useAccountOperations(
+    accountOperationsProps,
+    liveDataEnabled
+  );
 
   const renderAccountDetailsView = () => {
     if (isMobile) {
@@ -320,59 +174,12 @@ export default function Account() {
     return <div>Account not found</div>;
   }
 
-  const buildOperationView = () => {
-    if (commentSearchData?.operations_result.length) {
-      return <CommentSearchResults />;
-    } else if (
-      !isAccountOperationsLoading &&
-      !accountOperations?.total_operations
-    ) {
-      return (
-        <div className="w-full my-4 text-black text-center">
-          No operations were found.
-        </div>
-      );
-    } else if (isAccountOperationsLoading || commentSearchDataLoading) {
-      return (
-        <div className="flex justify-center text-center items-center">
-          <Loader2 className="animate-spin mt-1 text-black h-12 w-12 ml-3 ..." />
-        </div>
-      );
-    } else {
-      return (
-        <OperationsTable
-          operations={convertOperationResultsToTableOperations(
-            formattedAccountOperations?.operations_result || []
-          )}
-          unformattedOperations={convertOperationResultsToTableOperations(
-            accountOperations?.operations_result || []
-          )}
-        />
-      );
-    }
-  };
-
   return (
     <>
       <Head>
         <title>@{accountNameFromRoute} - Hive Explorer</title>
       </Head>
-      <div className="flex items-center justify-end w-full min-h-[64px] bg-explorer-orange -mt-4 px-2 md:mb-4 md:px-8 fixed z-20">
-        {accountOperations && (paramsState.page || lastPage) && (
-          <AccountTopBar
-            accountName={accountNameFromRoute}
-            page={paramsState.page ? paramsState.page : lastPage || 0}
-            setPage={(page: number | undefined) =>
-              setParams({ ...paramsState, page })
-            }
-            accountOperations={accountOperations}
-            onOperationsSelect={handleOperationTypeChange}
-            selectedFilters={filters}
-          />
-        )}
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 text-white mx-8 mt-24 lg:mt-16 w-full gap-4 px-2 md:px-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 text-white mx-8  w-full gap-4 px-2 md:px-4">
         {isMobile && (
           <MobileAccountNameCard
             accountName={accountNameFromRoute}
@@ -386,37 +193,7 @@ export default function Account() {
           className="col-start-1 md:col-start-2 col-span-1 md:col-span-3"
           data-testid="account-operation-list"
         >
-          <Card className="mb-4">
-            <CardHeader>
-              <CardTitle>Ranges</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <SearchRanges rangesProps={searchRanges} />
-              <div className="flex items-center justify-between m-2">
-                <Button
-                  onClick={() => handleSearch(true)}
-                  data-testid="apply-filters"
-                >
-                  <span>Apply filters</span>{" "}
-                </Button>
-                <Button
-                  onClick={() => handleFilterClear()}
-                  data-testid="clear-filters"
-                >
-                  <span>Clear filters</span>{" "}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="mb-4">
-            <CardHeader>
-              <CardTitle>Comment Search</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CommentsSearch isAccountPage={true} />
-            </CardContent>
-          </Card>
-          {buildOperationView()}
+          <AccountOperationViewTabs liveDataEnabled={liveDataEnabled} />
         </div>
         <div className="fixed bottom-[10px] right-0 flex flex-col items-end justify-end px-3 md:px-12">
           <ScrollTopButton />
