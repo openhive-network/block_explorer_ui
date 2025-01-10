@@ -8,7 +8,7 @@ const useCommentSearch = (
 ) => {
   const {
     data: commentSearchData,
-    isFetching: commentSearchDataLoading,
+    isLoading: isCommentSearchDataLoading,
     isError: commentSearchDataError,
   } = useQuery({
     queryKey: ["commentSearch", commentSearchProps],
@@ -25,7 +25,7 @@ const useCommentSearch = (
 
   return {
     commentSearchData,
-    commentSearchDataLoading,
+    isCommentSearchDataLoading,
     commentSearchDataError,
   };
 };

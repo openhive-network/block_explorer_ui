@@ -50,7 +50,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
   const pathname = usePathname();
   const router = useRouter();
 
-  const { commentSearchDataLoading } = useCommentSearch(commentSearchProps);
+  const { isCommentSearchDataLoading } = useCommentSearch(commentSearchProps);
 
   const { operationsTypes } = useOperationsTypes();
 
@@ -198,7 +198,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
             disabled={!commentsSearchAccountName || !commentsSearchPermlink}
           >
             Search
-            {commentSearchDataLoading && (
+            {isCommentSearchDataLoading && (
               <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />
             )}
           </Button>
