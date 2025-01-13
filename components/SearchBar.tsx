@@ -1,9 +1,10 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import AutocompleteInput from "./ui/AutoCompleteInput";
 import { Search } from "lucide-react";
 import { X } from "lucide-react";
+import useMediaQuery from "@/hooks/common/useMediaQuery";
 interface SearchBarProps {
   open: boolean;
   onChange?: (open: boolean) => void;
@@ -13,25 +14,37 @@ interface SearchBarProps {
 const SearchBar: React.FC<SearchBarProps> = ({ open, onChange, className }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isAutocompleteVisible, setAutocompleteVisible] = useState(open);
-  const searchContainerRef = useRef(null);
+  const [isClicked, setIsClicked] = useState(false);
+  const isMobile = useMediaQuery("(max-width: 768px)");
+
 
   const handleToggle = () => {
     setAutocompleteVisible(!isAutocompleteVisible);
     if (onChange) onChange(!isAutocompleteVisible);
   };
 
+  const handleClick = (event: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
+    setIsClicked(true);
+  };
+
+  const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {   
+    setIsClicked(false);
+  };
   return (
     <>
       {isAutocompleteVisible && (
         <AutocompleteInput
           value={searchTerm}
           onChange={setSearchTerm}
-          placeholder="Search user, block, transaction"
+          placeholder="User, Block, Trx #"
           inputType={['block_num', 'transaction_hash', 'block_hash', 'account_name']}
           className={cn(
-            "w-full md:w-1/4 bg-theme dark:bg-theme border-0 border-b-2 width rowHover",
+            "bg-theme dark:bg-theme border-b transition-width duration-300 ease-in-out",
+            (isClicked&& !isMobile) ? "w-3/5" : "w-[full]",
             className
           )}
+          onClick={handleClick}
+          onBlur={handleBlur}
           linkResult={true}
           addLabel={true}
         />
@@ -39,7 +52,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ open, onChange, className }) => {
       {!isAutocompleteVisible && (
         <Button
           onClick={handleToggle}
-          className="md:hidden"
+          className="md:hidden px-2 py-1 h-[36px]"
         >
           <Search />
         </Button>
