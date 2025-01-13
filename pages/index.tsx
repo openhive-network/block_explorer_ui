@@ -22,6 +22,8 @@ import {
 } from "@/components/ui/card";
 import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowRightLong } from '@fortawesome/free-solid-svg-icons'
 
 export default function Home() {
   const { settings } = useUserSettingsContext();
@@ -60,64 +62,77 @@ export default function Home() {
           />
           <SearchesSection />
         </div>
-
-        <Card
-          className="col-span-4 md:col-span-4 lg:col-span-1"
-          data-testid="top-witnesses-sidebar"
-        >
-          <CardHeader>
-            <CardTitle>Top Witnesses</CardTitle>
-          </CardHeader>
-          <CardContent className="px-0">
-            <Table>
-              <TableBody>
-                {witnesses &&
-                  witnesses.witnesses.map((witness, index) => (
-                    <TableRow
-                      className=" text-base"
-                      key={index}
-                      data-testid="witnesses-name"
-                    >
-                      <TableCell className="py-4">{index + 1}</TableCell>
-                      <TableCell className="py-4">
-                        <Link
-                          href={`/@${witness.witness_name}`}
-                          className="text-link"
-                        >
-                          {witness.witness_name}
-                        </Link>
-                      </TableCell>
-                      <TableCell className="py-4">
-                        <Link href={`/@${witness.witness_name}`}>
-                          <div className="min-w-[30px]">
-                            <Image
-                              className="rounded-full border-2 border-link"
-                              src={getHiveAvatarUrl(witness.witness_name)}
-                              alt="avatar"
-                              width={40}
-                              height={40}
-                            />
-                          </div>
-                        </Link>{" "}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-          <CardFooter>
-            <div className="w-full flex justify-center align-center text-lg hover:text-explorer-turquoise">
+       
+          <Card
+            className="col-span-4 md:col-span-4 lg:col-span-1 overflow-hidden"
+            data-testid="top-witnesses-sidebar"
+          >
+            <CardHeader className="flex justify-between items-center border-b px-1 py-3">
+              <CardTitle>Top Witnesses</CardTitle>
               <Link
-                data-testid="see-more-btn"
-                href={"/witnesses"}
-                className="hover:text-explorer-turquoise"
+                href="/witnesses"
+                className="text-sm flex items-center space-x-1"
+                data-testid="see-witnesses-link"
               >
-                See More
+                <span>See All</span>
+                <FontAwesomeIcon
+                  icon={faArrowRightLong}
+                  size="lg"
+                  width={16}
+                  className=" opacity-70 hover:opacity-100 transition-opacity"
+                />
               </Link>
-            </div>
-          </CardFooter>
-        </Card>
-      </div>
+            </CardHeader>
+            <CardContent className="px-4 py-2">
+              <Table>
+                <TableBody>
+                  {witnesses &&
+                    witnesses.witnesses.map((witness, index) => (
+                      <TableRow
+                        className="text-base"
+                        key={index}
+                        data-testid="witnesses-name"
+                      >
+                        <TableCell className="py-2">{index + 1}</TableCell>
+                        <TableCell className="py-2">
+                          <Link
+                            href={`/@${witness.witness_name}`}
+                            className="text-link"
+                          >
+                            {witness.witness_name}
+                          </Link>
+                        </TableCell>
+                        <TableCell className="py-2">
+                          <Link href={`/@${witness.witness_name}`}>
+                            <div className="min-w-[30px]">
+                              <Image
+                                className="rounded-full border-2 border-link transition-all transform hover:scale-110"
+                                src={getHiveAvatarUrl(witness.witness_name)}
+                                alt="avatar"
+                                width={40}
+                                height={40}
+                              />
+                            </div>
+                          </Link>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+            <CardFooter className="py-4 px-4 bg-explorer-extra-light-gray">
+              <div className="w-full flex justify-center">
+                <Link
+                  data-testid="see-more-btn"
+                  href="/witnesses"
+                  className="text-link"
+                >
+                  See More
+                </Link>
+              </div>
+            </CardFooter>
+          </Card>
+        </div>
     </>
   );
 }
