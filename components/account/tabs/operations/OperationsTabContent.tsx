@@ -17,11 +17,15 @@ import { defaultSearchParams } from "@/pages/[accountName]";
 import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
 import {
   convertBooleanArrayToIds,
+  convertIdsToBooleanArray,
   convertOperationResultsToTableOperations,
 } from "@/lib/utils";
 import Hive from "@/types/Hive";
 import AccountPagination from "../../AccountPagination";
 import useAccountOperations from "@/hooks/api/accountPage/useAccountOperations";
+import useAccountOperationTypes from "@/hooks/api/accountPage/useAccountOperationTypes";
+import OperationTypesDialog from "@/components/OperationTypesDialog";
+import { getOperationButtonTitle } from "@/utils/UI";
 
 interface OpeationTabContentProps {
   liveDataEnabled: boolean;
@@ -90,7 +94,11 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     setFilters([]);
   };
 
-  const handleOperationTypeChange = (newFilters: boolean[]) => {
+  const { accountOperationTypes } =
+    useAccountOperationTypes(accountNameFromRoute);
+
+  const handleOperationSelect = (filters: number[]) => {
+    const newFilters = convertIdsToBooleanArray(filters);
     setFilters(newFilters);
     setParams({ ...paramsState, filters: newFilters, page: undefined });
   };
@@ -118,14 +126,11 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
           >
             {accountOperations && (page || lastPage) && (
               <AccountPagination
-                accountName={accountNameFromRoute}
                 page={page ? page : lastPage || 0}
                 setPage={(page: number | undefined) =>
                   setParams({ ...paramsState, page })
                 }
                 accountOperations={accountOperations}
-                onOperationsSelect={handleOperationTypeChange}
-                selectedFilters={filters}
               />
             )}
           </div>
@@ -240,18 +245,32 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
         <CardContent>
           <SearchRanges rangesProps={searchRanges} />
           <div className="flex items-center justify-between m-2">
-            <Button
-              onClick={() => handleSearch(true)}
-              data-testid="apply-filters"
-            >
-              <span>Apply filters</span>{" "}
-            </Button>
-            <Button
-              onClick={handleFilterClear}
-              data-testid="clear-filters"
-            >
-              <span>Clear filters</span>{" "}
-            </Button>
+            <div className="flex min-w-[120px] gap-2">
+              <Button
+                onClick={() => handleSearch(true)}
+                data-testid="apply-filters"
+              >
+                <span>Apply filters</span>{" "}
+              </Button>
+            </div>
+            <div className="flex w-full justify-end flex-wrap gap-2">
+              <OperationTypesDialog
+                operationTypes={accountOperationTypes}
+                setSelectedOperations={handleOperationSelect}
+                selectedOperations={convertBooleanArrayToIds(filters)}
+                buttonClassName="bg-theme"
+                triggerTitle={getOperationButtonTitle(
+                  convertBooleanArrayToIds(filters),
+                  accountOperationTypes
+                )}
+              />
+              <Button
+                onClick={handleFilterClear}
+                data-testid="clear-filters"
+              >
+                <span>Clear filters</span>{" "}
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
