@@ -41,22 +41,26 @@ const ViewPopover: React.FC<ViewPopoverProps> = ({ isMobile }) => {
       <PopoverTrigger asChild>
         <div
           className={cn(
-            "rounded-[6px] text-sm text-center cursor-pointer flex jusitfy-center items-center p-1 ml-3 py-0 border-2 border-explorer-blue dark:border-explorer-turquoise",
-            { "p-0 m-0 border-none text-base justify-normal": isMobile }
+            "  h-[35px] rounded-[6px] text-sm text-center cursor-pointer flex justify-center items-center p-2 bg-navbar hover:bg-navbar-hover border-navbar-border border-[1px] transition-colors duration-200",
+            { "p-1 m-0 text-sm justify-normal": isMobile }
           )}
           data-testid="data-view-dropdown"
         >
-          <span>Data View</span>
-          <ChevronDown className="w-4" />
+          <span className="font-semibold">Data View</span>
+          <ChevronDown className="w-4 ml-1" />
         </div>
       </PopoverTrigger>
       <PopoverContent
-        className={`w-60 bg-theme dark:bg-theme text-white rounded-[8px] border  ${
-          isMobile && "ml-[30px]"
-        }`}
+        className={`w-56 
+          bg-theme dark:bg-theme text-white rounded-lg shadow-lg border border-gray-300 dark:border-gray-700 ${
+            isMobile ? "ml-[20px]" : ""
+          }`}
       >
-        <RadioGroup defaultValue={popupDefaultValue} onValueChange={handleSelect}>
-          <div className="flex items-center space-x-2">
+        <RadioGroup
+          defaultValue={popupDefaultValue}
+          onValueChange={handleSelect}
+        >
+          <div className="flex items-center space-x-2 p-2 hover:bg-navbar-listHover rounded-md transition-colors duration-200">
             <RadioGroupItem
               onClick={() =>
                 setSettings({
@@ -75,7 +79,7 @@ const ViewPopover: React.FC<ViewPopoverProps> = ({ isMobile }) => {
               Visualised Data
             </Label>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 p-2 hover:bg-navbar-listHover rounded-md transition-colors duration-200">
             <RadioGroupItem
               onClick={() =>
                 setSettings({
@@ -94,7 +98,7 @@ const ViewPopover: React.FC<ViewPopoverProps> = ({ isMobile }) => {
               Raw JSON
             </Label>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 p-2 hover:bg-navbar-listHover rounded-md transition-colors duration-200">
             <RadioGroupItem
               onClick={() =>
                 setSettings({
