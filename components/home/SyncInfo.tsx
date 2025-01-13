@@ -10,6 +10,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
+import { Tooltip , TooltipTrigger , TooltipProvider ,TooltipContent } from "../ui/tooltip";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCube, faCubes, faExclamationCircle, faClock } from '@fortawesome/free-solid-svg-icons';
+import { RefreshCcw, RefreshCwOff } from "lucide-react";
 
 interface SyncInfoProps {
   className?: string;
@@ -20,12 +24,7 @@ export const getBlockDifference = (
   explorerBlockNumber: number | undefined
 ) => {
   const difference = (hiveBlockNumber || 0) - (explorerBlockNumber || 0);
-
-  if (difference < 0) {
-    return 0;
-  } else {
-    return difference;
-  }
+  return difference < 0 ? 0 : difference;
 };
 
 const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
@@ -43,7 +42,7 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
     hiveBlockNumber,
     explorerBlockNumber
   );
-
+  
   const differenceColorText =
     blockDifference > 20
       ? "text-explorer-red"
@@ -51,15 +50,22 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
       ? "text-explorer-orange"
       : "text-explorer-light-green";
 
+  const iconColor =
+    blockDifference > 20
+      ? "red"
+      : blockDifference > 3
+      ? "orange"
+      : "green";
+  
   return !syncLoading ? (
     <Dialog
       open={dialogOpen}
       onOpenChange={(open) => setDialogOpen(open)}
     >
-      <DialogTrigger>
+      <DialogTrigger asChild={true} style={{ width: "32px"}}>
         <div
           className={cn(
-            "flex flex-row gap-x-1 border rounded-[6px] mt-px mx-6 px-1.5 py-px text-sm cursor-pointer",
+            "bg-navbar hover:bg-navbar-hover border rounded-[6px] py-px cursor-pointer",
             {
               "border-explorer-light-green": blockDifference <= 10,
               "border-explorer-orange":
@@ -71,54 +77,124 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
           )}
           onClick={() => setDialogOpen(true)}
         >
-          {blockDifference < 10 ? (
-            <p className="text-explorer-light-green">
-              Explorer synced with blockchain
-            </p>
-          ) : (
-            <>
-              <p>Blocks out of sync:</p>
-              <p>{blockDifference.toLocaleString()}</p>
-            </>
-          )}
+          <div className=" h-[30px] w-[30px] relative p-1 flex items-center justify-center">
+            {blockDifference < 10 ? (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <RefreshCcw 
+                      color={iconColor} 
+                      size={18} 
+                      strokeWidth={2} />
+                  </TooltipTrigger>
+                  <TooltipContent className="bg-theme text-text">
+                    Explorer synced with blockchain
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ) : (
+              <div className="relative">
+                <TooltipProvider delayDuration={0}>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <RefreshCwOff
+                        color={iconColor}
+                        size={18}
+                        strokeWidth={2}
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent className="bg-theme text-text">
+                      <p>
+                        {blockDifference.toLocaleString()} Blocks out of sync
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+
+                <span
+                className={cn(
+                  "absolute top-[-17px] sm:top-[-17px] text-xs font-semibold text-white bg-red-600 rounded-full px-1 py-1 z-20",
+                  {
+                    "right-[-17px]": blockDifference >= 100,
+                    "right-[-14px]": blockDifference < 100,
+                  }
+                )}
+              >
+                {blockDifference > 999 ? "999+" : blockDifference.toLocaleString()}
+              </span>
+
+              </div>
+            )}
+          </div>
         </div>
       </DialogTrigger>
-      <DialogContent className="bg-theme dark:bg-theme text-white">
-        <DialogHeader>
-          <DialogTitle>Blockchain sync</DialogTitle>
+
+      <DialogContent className="dialog-content p-6 max-w-lg ">
+        <DialogHeader className="dialog-header">
+          <DialogTitle className="dialog-title">Blockchain Sync</DialogTitle>
         </DialogHeader>
-        <section className="flex flex-col">
-          <div className="flex justify-between border-b py-1.5">
-            <div>Blockchain headblock: </div>
-            <div>{hiveBlockNumber?.toLocaleString()}</div>
+        <section className="dialog-section">
+          <div className="dialog-item">
+            <div className="dialog-item-text">
+              <FontAwesomeIcon icon={faCubes} className="text-sm" />
+              <div>Blockchain Headblock:</div>
+            </div>
+            <div className="dialog-item-value">
+              {hiveBlockNumber?.toLocaleString()}
+            </div>
           </div>
-          <div className="flex justify-between border-b py-1.5">
-            <div>Hafbe last block: </div>
-            <div>{explorerBlockNumber?.toLocaleString()}</div>
+          <div className="dialog-item">
+            <div className="dialog-item-text">
+              <FontAwesomeIcon icon={faCube} className="text-sm" />
+              <div>Hafbe Last Block:</div>
+            </div>
+            <div className="dialog-item-value">
+              {explorerBlockNumber?.toLocaleString()}
+            </div>
           </div>
-          <div
-            className={cn(
-              "flex justify-between border-b py-1.5",
-              differenceColorText
-            )}
-          >
-            <div>Block difference: </div>
-            <div>{blockDifference.toLocaleString()} blocks</div>
+          <div className={cn("dialog-item", differenceColorText)}>
+            <div className="dialog-item-text">
+              <FontAwesomeIcon icon={faExclamationCircle} className="text-sm" />
+              <div>Block Difference:</div>
+            </div>
+            <div className="dialog-item-value">
+              {blockDifference.toLocaleString()} blocks
+            </div>
           </div>
-          <div
-            className={cn("flex justify-between py-1.5", differenceColorText)}
-          >
-            <div>Last synced block at: </div>
+          <div className={cn("dialog-item", differenceColorText)}>
+            <div className="dialog-item-text">
+              <FontAwesomeIcon icon={faClock} className="text-sm" />
+              <div>Last Synced Block At:</div>
+            </div>
             {explorerTime && (
-              <div>{convertUTCDateToLocalDate(new Date(explorerTime))}</div>
+              <div className="dialog-item-value">
+                {convertUTCDateToLocalDate(new Date(explorerTime))}
+              </div>
             )}
           </div>
         </section>
       </DialogContent>
     </Dialog>
   ) : (
-    <div className="border rounded-[6px] mt-px mx-6 px-1.5 py-px text-sm border-explorer-yellow text-explorer-yellow">
-      Connecting...
+    <div
+      className="h-[34px] w-[32px] bg-navbar hover:bg-navbar-hover items-center justify-center 
+            flex flex-row border rounded-[6px] cursor-pointer border-explorer-orange text-explorer-orange"
+    >
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <RefreshCcw
+              color="orange"
+              size={18}
+              strokeWidth={2}
+              style={{ animation: "spin 2s linear infinite" }}
+            />
+          </TooltipTrigger>
+          <TooltipContent className="bg-theme text-text">
+            Connecting
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     </div>
   );
 };
