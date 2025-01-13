@@ -166,6 +166,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         apiList={apiList || []}
         customApiCheckers={customApiCheckers}
         providersForEndpoints={providersForEndpoints}
+        isFallback={!!fallbacks.includes(endpointUrl)}
         onDialogOpenChange={onApiCheckDialogChange}
         onEndpointProviderDialogChange={onEndpointProviderDialogChange}
         resetEndpoints={resetEndpoints}

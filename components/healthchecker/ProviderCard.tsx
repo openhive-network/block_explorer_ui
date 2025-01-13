@@ -14,6 +14,7 @@ interface ProviderCardProps {
   latency: number | null;
   customApiCheckers?: Map<string, ApiChecker>;
   providersForEndpoints: Map<string, string>;
+  isFallback: boolean;
   switchToProvider: (providerLink: string | null) => void;
   onDialogOpenChange: (isOpened: boolean, provider?: string) => void;
   onEndpointProviderDialogChange: (isOpened: boolean, endpoint?: string) => void;
@@ -29,6 +30,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
   latency,
   customApiCheckers,
   providersForEndpoints,
+  isFallback,
   switchToProvider,
   onDialogOpenChange,
   onEndpointProviderDialogChange,
@@ -50,8 +52,8 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
   return (
     <Card className="grid grid-cols-8 grid-rows-2 gap-y-1 my-1 p-2">
       <div className="row-start-1 col-start-1 col-span-7 flex items-center justify-between" >
-        <span className={cn({"text-red-600": disabled})}>{providerLink}</span>{latency ? <span>Latency: {latency}</span> : null}
-         
+        <span className={cn({"text-red-600": disabled})}>{providerLink} {isFallback ? "- fallback" : null}</span>
+        {latency ? <span>Latency: {latency}</span> : null}
       </div>
       <div className="col-start-8 row-start-1 col-span-1 row-span-2 flex flex-col">
         <Button className="hover:bg-slate-400 bg-transparent rounded self-end w-fit" onClick={() => {deleteProvider(providerLink)}}><X /></Button>
