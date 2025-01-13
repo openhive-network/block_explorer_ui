@@ -10,9 +10,12 @@ import { trimAccountName } from "@/utils/StringUtils";
 import Hive from "@/types/Hive";
 import { capitalizeFirst } from "@/utils/StringUtils";
 import Router, { useRouter } from "next/router";
+
 interface AutocompleteInputProps {
   value: string | null;
   onChange: (value: string) => void;
+  onClick?: (event: React.MouseEvent<HTMLInputElement, MouseEvent>) => void;
+  onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
   placeholder: string;
   inputType: string | string[]; // The input type (e.g., 'account_name', 'block', 'transaction')
   className?: string; // Optional custom className for styling
@@ -24,6 +27,8 @@ interface AutocompleteInputProps {
 const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
   value,
   onChange,
+  onClick,
+  onBlur,
   placeholder,
   inputType,
   className,
@@ -42,9 +47,10 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
   const router = useRouter();
   const [isItemSelected, setIsItemSelected] = useState(false);
 
-  
+  // Used to track if the user clicks inside the results container or input field
+  const resultsContainerRef = useRef<HTMLDivElement>(null);
+
   const updateInput = async (value: string) => {
-    
     setSearchInputType(value);
   };
 
@@ -62,34 +68,35 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
   };
   
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputFocus(true);
     onChange(e.target.value);
     setSearchTerm(e.target.value);
-   if(!isNumeric(e.target.value) && !isHash(e.target.value))
-   {
-    debouncedSearch(e.target.value + encodeURI("%"));
-   }else
-   {
-    debouncedSearch(e.target.value);
-  }
+    if (!isNumeric(e.target.value) && !isHash(e.target.value)) {
+      debouncedSearch(e.target.value + encodeURI("%"));
+    } else {
+      debouncedSearch(e.target.value);
+    }
   };
 
   // Close the search when clicking outside of the container
   useOnClickOutside(searchContainerRef, () => closeSearchBar());
 
-  //Reset Search Bar
   const resetSearchBar = () => {
     setInputFocus(false);
     onChange(""); // Clear the input field
     setSearchInputType("");
     setSelectedResult(0);
     setIsItemSelected(false);
+    if (onBlur) {
+      onBlur({} as React.FocusEvent<HTMLInputElement>);
+    }
   };
 
   const closeSearchBar = () => {
     setInputFocus(false);
   };
-
-  //Ensure cleaning the searchbar when navigating away
+  
+  // Ensure cleaning the searchbar when navigating away
   useEffect(() => {
     const handleRouteChange = () => {
       resetSearchBar();
@@ -101,7 +108,6 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
     };
   }, [router.events, resetSearchBar]);
 
-  
   //Handle keyboard events
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (inputFocus && inputTypeData?.input_value) {
@@ -159,7 +165,18 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
     }
   }, [selectedResult]);
 
-  // Render search results based on input type
+  // Handle onBlur event
+  const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+    if (
+      resultsContainerRef.current &&
+      (resultsContainerRef.current.contains(event.relatedTarget) || inputRef.current?.contains(event.relatedTarget))
+    ) {
+      event.stopPropagation(); // Prevent the blur event from triggering if focus is inside results container or input
+    } else {
+      if (onBlur) onBlur(event);
+    }
+  };
+
   const getResultTypeHeader = (result: Hive.InputTypeResponse) => {
     switch (result.input_type) {
       case "block_num":
@@ -173,7 +190,6 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
     }
   };
 
-  // Render search results based on input type
   const renderSearchData = (
     data: Hive.InputTypeResponse,
     linkResult: boolean
@@ -195,15 +211,18 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
         Array.isArray(inputValue)
       ) {
         return (
-          <div className="autocomplete-result-container scrollbar-autocomplete">
+          <div
+            ref={resultsContainerRef}
+            className="autocomplete-result-container scrollbar-autocomplete"
+          >
             {inputValue.map((account, index) => (
               <div
                 key={index}
                 ref={selectedResult === index ? selectedResultRef : null}
                 className={cn(
-                  "autocomplete-result-item hover:bg-explorer-light-gray",
+                  "autocomplete-result-item",
                   {
-                    "bg-explorer-light-gray": selectedResult === index,
+                    "bg-navbar-listHover": selectedResult === index,
                     "autocomplete-result-item": index > 0,
                   }
                 )}
@@ -251,7 +270,10 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
             ? `/@${data.input_value}`
             : `/${resultType}/${data.input_value}`;
         return (
-          <div className="autocomplete-result-container scrollbar-autocomplete">
+          <div
+            ref={resultsContainerRef}
+            className="autocomplete-result-container scrollbar-autocomplete"
+          >
             <div className="autocomplete-result-item">
               {linkResult ? (
                 <>
@@ -262,7 +284,7 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
                   )}
                   <Link href={href} data-testid="">
                     <span className="autocomplete-result-link">
-                      {data.input_value}
+                    {data.input_type === "transaction_hash" ? data.input_value.slice(0, 10) : data.input_value}
                     </span>
                   </Link>
                 </>
@@ -292,11 +314,13 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
       <div className="flex items-center pr-2 z-50">
         <Input
           ref={inputRef}
-          className="border-0 w-full text-sm"
+          className={cn("autocomplete_input")}
           type="text"
           placeholder={required ? `${placeholder} *` : placeholder} // Add asterisk if required
           value={value || ""}
           onChange={handleInputChange}
+          onClick={onClick}
+          onBlur={handleBlur}
           onFocus={() => setInputFocus(true)}
           onKeyDown={handleKeyDown}
         />
