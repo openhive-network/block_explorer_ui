@@ -43,6 +43,17 @@
   --color-light-green: #15a017;
   --color-light-gray: #ADA9A9DC;
   --color-dark-gray: #292F3D;
+  --color-extra-light-gray : #F9FAFB;
+
+  --error-bg-light: linear-gradient(135deg, rgba(247, 255, 255, 0.8), rgba(248, 247, 247, 0.8));
+  --error-bg: var(--error-bg-light);
+
+  --color-navbar-icon: #d9e0e8;
+  --color-navbar-icon-hover:#cbd5e1;
+  --color-navbar-icon-border: #6b7280;
+  --color-navbar-icon-list-hover : #eff2f4;
+
+
 }
 
 /* Dark theme */
@@ -85,6 +96,16 @@
   --color-light-green: #64FFAA;
   --color-light-gray: #ADA9A9DC;
   --color-dark-gray: #444c5e;
+  --color-extra-light-gray : #34373ed4;
+
+  --error-bg-dark: linear-gradient(135deg, rgba(159, 149, 149, 0.8), rgba(104, 100, 100, 0.8));
+  --error-bg: var(--error-bg-dark);
+
+  --color-navbar-icon:#292F3D;
+  --color-navbar-icon-hover: #34373ed4;
+  --color-navbar-icon-border: #6b7280;
+  --color-navbar-icon-list-hover : #374151;
+
 }
 
 * {
@@ -143,6 +164,26 @@ pre {
   overflow: hidden;
 }
 
+.autocomplete_input {
+  padding: 0.5rem 0.75rem;
+  font-size: 1rem;
+  background-color: transparent;
+  border: none;
+  transition: border-bottom-color 0.3s ease, background-color 0.3s ease;
+  outline: none;
+}
+
+.autocomplete_input:focus {
+  border-bottom-color: var(--color-navbar-icon-border);
+  background-color: var(--color-extra-light-gray);
+}
+
+.autocomplete_input::placeholder {
+  opacity: 1; /* Ensures placeholder is fully opaque */
+  transition: color 0.3s ease;
+}
+
+
 .autocomplete-result-container {
   display: flex;
   flex-direction: column;
@@ -152,28 +193,28 @@ pre {
   margin-top: 0.25rem;
   max-height: 24rem;
   overflow-y: auto;
+
+  
 }
 
 .autocomplete-result-item {
-  padding: 0.5rem;
-  font-size: 0.875rem;
-  cursor: pointer;
+  padding: 6px 12px; 
+  margin: 4px 8px;
+  border-radius: 4px;
+  color: var(--text-color);
   display: flex;
-  align-items: left;
-  text-align: left;
-  border-radius: 0.5rem;
-  transition: background-color 0.3s ease;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  font-size: 14px;
 }
 
 .autocomplete-result-item:hover {
-  background-color: var(--explorer-light-gray);
+  background-color: var(--color-navbar-icon-list-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
-.autocomplete-result-item {
-  border-top: 1px solid var(--gray-200);
-  text-align: left;
-
-}
 
 .autocomplete-result-link {
   color: var(--color-link);
@@ -189,7 +230,7 @@ pre {
 }
 /*End AutoCompleteInput Styles*/
 
-/* Light and Dark Theme Error Component Styling */
+/*Error Component Styling*/
 .error-message {
   background: var(--error-bg);
   color: var(--error-text);
@@ -225,22 +266,57 @@ pre {
   opacity: 0;
   transform: translateY(-20px);
 }
+/*Error Component Styling*/
 
-/* Light Theme Error Background Gradient */
-:root {
-  --error-bg-light: linear-gradient(135deg, rgba(247, 255, 255, 0.8), rgba(248, 247, 247, 0.8));
-  /* Light gray gradient */
-  --error-bg: var(--error-bg-light);
+/* Sync Dialog Styles */
+.dialog-content {
+  background: linear-gradient(to right, var(--background-start-rgb), var(--background-end-rgb));
+  color: var(--color-text);
+  backdrop-filter: blur(10px);
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 15px var(--color-background);
+  transition: all 0.5s ease;
+  
+}
+.dialog-header {
+  border-bottom: 1px solid var(--color-row-odd);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
 }
 
-/* Dark Theme Error Background Gradient */
-.dark {
-  --error-bg-dark: linear-gradient(135deg, rgba(159, 149, 149, 0.8), rgba(104, 100, 100, 0.8));
-  /* Dark gray gradient */
-  --error-bg: var(--error-bg-dark);
+.dialog-title {
+  font-size: 1.25rem;
+  font-weight: 500;
 }
 
-/* Apply the color scheme dynamically */
-body.dark {
-  background-color: var(--background-start-rgb);
+.dialog-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
+
+.dialog-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--color-row-odd);
+  padding: 0.5rem 0;
+  transition: background-color 0.3s ease;
+}
+.dialog-item:hover {
+  background-color: var(--color-row-hover);
+}
+
+.dialog-item-text {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+}
+
+.dialog-item-value {
+  font-weight: 400;
+  font-size: 1rem;
+}
+
+/*End Sync Dialog Styles*/
