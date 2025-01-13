@@ -60,6 +60,7 @@ module.exports = {
         "explorer-light-green": "var(--color-light-green)",
         "explorer-light-gray": "var(--color-light-gray)",
         "explorer-dark-gray": "var(--color-dark-gray)",
+        "explorer-extra-light-gray": "var(--color-extra-light-gray)",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -92,6 +93,13 @@ module.exports = {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+        },
+
+        navbar: {
+          DEFAULT: "var(--color-navbar-icon)",
+          hover: "var(--color-navbar-icon-hover)",
+          border: "var(--color-navbar-icon-border)",
+          listHover: "var(--color-navbar-icon-list-hover)",
         },
       },
       borderRadius: {
