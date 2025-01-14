@@ -16,8 +16,8 @@ interface ProviderCardProps {
   providersForEndpoints: Map<string, string>;
   isFallback: boolean;
   switchToProvider: (providerLink: string | null) => void;
-  onDialogOpenChange: (isOpened: boolean, provider?: string) => void;
   deleteProvider: (provider: string) => void;
+  registerFallback: (provider: string) => void;
 }
 
 const ProviderCard: React.FC<ProviderCardProps> = ({
@@ -29,8 +29,9 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
   customApiCheckers,
   providersForEndpoints,
   isFallback,
-  onDialogOpenChange,
-  deleteProvider
+  deleteProvider,
+  switchToProvider,
+  registerFallback
 }) => {
 
   const checkProvider = (apiKey: string): boolean => {
@@ -45,10 +46,11 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
         <span className={cn({"text-red-600": disabled})}>{providerLink} {isFallback ? "- fallback" : null}</span>
         {latency ? <span>Latency: {latency}</span> : null}
       </div>
-      <div className="col-start-8 row-start-1 col-span-1 row-span-2 flex flex-col">
+      <div className="col-start-7 row-start-1 col-span-2 row-span-2 flex flex-col">
         <Button className="hover:bg-slate-400 bg-transparent rounded self-end w-fit" onClick={() => {deleteProvider(providerLink)}}><X /></Button>
         <div className="flex justify-end items-center gap-2">
-          <Button className="hover:bg-slate-400 rounded" onClick={() => {onDialogOpenChange(true, providerLink)}}><Pencil /></Button>
+          <Button className="hover:bg-slate-400 rounded" onClick={() => {switchToProvider(providerLink)}}>Switch to provider</Button>
+          <Button className="hover:bg-slate-400 rounded" onClick={() => {registerFallback(providerLink)}}>Set fallback</Button>
         </div>
       </div>
       <div className="row-start-2 flex items-center col-start-1 col-span-7 flex-wrap">

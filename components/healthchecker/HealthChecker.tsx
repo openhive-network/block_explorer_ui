@@ -54,22 +54,13 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
 
   const [chainInitialized, setChainIntialized] = useState<boolean>(false);
   const [apiChecksByProvider, setApiChecksByProvider] = useState<Map<string, string[]>>(new Map());
-  const [isApiCheckDialogOpened, setIsApiCheckDialogOpened] = useState<boolean>(false);
-  const [openedProvider, setOpenedProvider] = useState<string | undefined>(undefined);
   const [isProviderAdditionDialogOpened, setIsProviderAdditionDialogOpened] = useState<boolean>(false);
 
-  const onApiCheckDialogChange = (isOpened: boolean, provider?: string) => {
-    if (isOpened) {
-      setOpenedProvider(provider);
-    }
-    setIsApiCheckDialogOpened(isOpened);
-  }
 
   const changeChecksForProvider = (provider: string, newCheckers: string[]) => {
     const newApiChecks = structuredClone(apiChecksByProvider);
     newApiChecks.set(provider, newCheckers);
     setApiChecksByProvider(newApiChecks);
-    setIsApiCheckDialogOpened(false);
     subscribeToCheckers(newApiChecks);
   }
 
@@ -149,8 +140,8 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         customApiCheckers={customApiCheckers}
         providersForEndpoints={providersForEndpoints}
         isFallback={!!fallbacks.includes(endpointUrl)}
-        onDialogOpenChange={onApiCheckDialogChange}
         deleteProvider={handleDeletionOfProvider}
+        registerFallback={registerFallback}
       />
     )       
   }
@@ -180,17 +171,6 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         (scoredEndpoint) => renderProvider(scoredEndpoint)
       )}
       <Button onClick={() => {setIsProviderAdditionDialogOpened(true)}} className="w-full"><Plus /></Button>
-      <ApiCheckDialog 
-        className="bg-white"
-        isOpened={isApiCheckDialogOpened}
-        onDialogOpenChange={onApiCheckDialogChange}
-        checksList={customApiCheckers}
-        openedProvider={openedProvider}
-        changeChecks={changeChecksForProvider}
-        activeChecksKeys={apiChecksByProvider?.get(openedProvider || "") || []}
-        switchToProvider={changeNodeAddress}
-        registerFallback={registerFallback}
-      />
       <ProviderAdditionDialog 
         isOpened={isProviderAdditionDialogOpened}
         onDialogOpenChange={setIsProviderAdditionDialogOpened}
