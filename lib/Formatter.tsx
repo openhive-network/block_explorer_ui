@@ -128,9 +128,12 @@ class OperationsFormatter implements IWaxCustomFormatter {
     if (!memo) return "";
 
     return (
-      <span className="text-wrap bg-gray-200 dark:bg-gray-700 text-red-500 px-1">
-        {memo}
-      </span>
+      <p className="break-words">
+        with memo
+        <span className="bg-gray-200 dark:bg-gray-700 text-red-500 px-1">
+          {memo}
+        </span>
+      </p>
     );
   }
 
