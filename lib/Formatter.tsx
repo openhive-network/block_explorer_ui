@@ -122,6 +122,18 @@ class OperationsFormatter implements IWaxCustomFormatter {
     );
   }
 
+  private getOperationMemo(
+    memo: string | undefined
+  ): React.JSX.Element | string {
+    if (!memo) return "";
+
+    return (
+      <span className="text-wrap bg-gray-200 dark:bg-gray-700 text-red-500 px-1">
+        {memo}
+      </span>
+    );
+  }
+
   private getMultipleAccountsListLink(accounts: DeepReadonly<string[]>) {
     return (
       <>
@@ -172,6 +184,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getFormattedAmount(transfer.amount),
       "to",
       this.getAccountLink(transfer.to),
+      this.getOperationMemo(transfer.memo),
     ]);
     return message;
   }
@@ -1331,6 +1344,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
         op.executions
       } executions every ${op.recurrence} hours to`,
       this.getAccountLink(op.to),
+      this.getOperationMemo(op.memo),
     ]);
     return {
       ...target,
@@ -1537,13 +1551,13 @@ class OperationsFormatter implements IWaxCustomFormatter {
     source: { value: op },
     target,
   }: IFormatFunctionArguments<{ value: Hive.TransferOperation }>) {
-    const memo = op.memo !== "" ? `, memo: "${op.memo}"` : "";
     const message = this.generateReactLink([
       `${this.getFormattedAmount(op.amount)} was transfered from`,
       this.getAccountLink(op.from),
       "to",
       this.getAccountLink(op.to),
-      `request ID: ${op.request_id}${memo}`,
+      `request ID: ${op.request_id}`,
+      this.getOperationMemo(op.memo),
     ]);
 
     return {
@@ -2027,6 +2041,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
       `with amount: ${this.getFormattedAmount(op.amount)} and ${
         op.remaining_executions
       } remaining executions`,
+      this.getOperationMemo(op.memo),
     ]);
     return {
       ...target,
@@ -2052,6 +2067,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
         op.remaining_executions
       } remaining executions failed for ${op.consecutive_failures} times`,
       deleted,
+      this.getOperationMemo(op.memo),
     ]);
     return {
       ...target,
