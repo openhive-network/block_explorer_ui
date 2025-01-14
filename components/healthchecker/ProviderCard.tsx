@@ -17,7 +17,6 @@ interface ProviderCardProps {
   isFallback: boolean;
   switchToProvider: (providerLink: string | null) => void;
   onDialogOpenChange: (isOpened: boolean, provider?: string) => void;
-  resetEndpoints: () => void;
   deleteProvider: (provider: string) => void;
 }
 
@@ -30,16 +29,9 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
   customApiCheckers,
   providersForEndpoints,
   isFallback,
-  switchToProvider,
   onDialogOpenChange,
-  resetEndpoints,
   deleteProvider
 }) => {
-
-  const onProviderChange = (providerLink: string) => {
-    switchToProvider(providerLink);
-    resetEndpoints();
-  }
 
   const checkProvider = (apiKey: string): boolean => {
     if (providersForEndpoints?.get(apiKey) === providerLink) return true;

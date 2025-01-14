@@ -28,7 +28,6 @@ interface HealthCheckerComponentProps {
   scoredEndpoints?: TScoredEndpoint[];
   fallbacks: string[];
   changeNodeAddress: (url: string | null) => void; 
-  resetEndpoints: () => void;
   setScoredEndpoints: (scoredEndpoints: TScoredEndpoint[] | undefined ) => void;
   addNewProvider: (provider: string) => void;
   deleteProvider: (provider: string) => void;
@@ -40,7 +39,6 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   currentAddress,
   customApiList,
   changeNodeAddress,
-  resetEndpoints,
   setScoredEndpoints,
   addNewProvider,
   deleteProvider,
@@ -152,7 +150,6 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         providersForEndpoints={providersForEndpoints}
         isFallback={!!fallbacks.includes(endpointUrl)}
         onDialogOpenChange={onApiCheckDialogChange}
-        resetEndpoints={resetEndpoints}
         deleteProvider={handleDeletionOfProvider}
       />
     )       

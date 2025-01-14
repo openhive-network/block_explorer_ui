@@ -71,14 +71,6 @@ export default function HealthcheckerPage() {
 
   let endpointProviders = new Map<string, string>();
 
-  const changeEndpointAddress = (endpoint: string, newProvider: string) => {
-    endpointProviders.set(endpoint, newProvider);
-  }
-
-  const resetEndpoints = () => {
-    endpointProviders = new Map<string, string>();
-  }
-
   const addNewProvider = (provider: string) => {
     const newProvidersList = [...providers, provider];
     setProviders(newProvidersList);
@@ -113,7 +105,6 @@ export default function HealthcheckerPage() {
           customApiList={providers}
           providersForEndpoints={endpointProviders}
           healthChecker={healthChecker}
-          resetEndpoints={resetEndpoints}
           setScoredEndpoints={setScoredEndpoints}
           addNewProvider={addNewProvider}
           deleteProvider={deleteProvider}
