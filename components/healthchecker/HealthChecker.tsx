@@ -28,7 +28,6 @@ interface HealthCheckerComponentProps {
   scoredEndpoints?: TScoredEndpoint[];
   fallbacks: string[];
   changeNodeAddress: (url: string | null) => void; 
-  changeEndpointAddress: (endpoint: string, newProvider: string) => void;
   resetEndpoints: () => void;
   setScoredEndpoints: (scoredEndpoints: TScoredEndpoint[] | undefined ) => void;
   addNewProvider: (provider: string) => void;
@@ -41,7 +40,6 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   currentAddress,
   customApiList,
   changeNodeAddress,
-  changeEndpointAddress,
   resetEndpoints,
   setScoredEndpoints,
   addNewProvider,
@@ -59,9 +57,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   const [chainInitialized, setChainIntialized] = useState<boolean>(false);
   const [apiChecksByProvider, setApiChecksByProvider] = useState<Map<string, string[]>>(new Map());
   const [isApiCheckDialogOpened, setIsApiCheckDialogOpened] = useState<boolean>(false);
-  const [isEndpointProviderDialogOpened, setIsEndpointProviderDialogOpened] = useState<boolean>(false);
   const [openedProvider, setOpenedProvider] = useState<string | undefined>(undefined);
-  const [openedEndpoint, setOpenedEndpoint] = useState<string | undefined>(undefined);
   const [isProviderAdditionDialogOpened, setIsProviderAdditionDialogOpened] = useState<boolean>(false);
 
   const onApiCheckDialogChange = (isOpened: boolean, provider?: string) => {
@@ -71,24 +67,12 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     setIsApiCheckDialogOpened(isOpened);
   }
 
-  const onEndpointProviderDialogChange = (isOpened: boolean, endpoint?: string) => {
-    if (isOpened) {
-      setOpenedEndpoint(endpoint)
-    }
-    setIsEndpointProviderDialogOpened(isOpened);
-  }
-
   const changeChecksForProvider = (provider: string, newCheckers: string[]) => {
     const newApiChecks = structuredClone(apiChecksByProvider);
     newApiChecks.set(provider, newCheckers);
     setApiChecksByProvider(newApiChecks);
     setIsApiCheckDialogOpened(false);
     subscribeToCheckers(newApiChecks);
-  }
-
-  const changeEndpointProvider = (endpointKey: string, newProvider: string) => {
-    changeEndpointAddress(endpointKey, newProvider);
-    setIsEndpointProviderDialogOpened(false);
   }
 
   const initializeDefaultChecks = () => {
@@ -168,7 +152,6 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         providersForEndpoints={providersForEndpoints}
         isFallback={!!fallbacks.includes(endpointUrl)}
         onDialogOpenChange={onApiCheckDialogChange}
-        onEndpointProviderDialogChange={onEndpointProviderDialogChange}
         resetEndpoints={resetEndpoints}
         deleteProvider={handleDeletionOfProvider}
       />
@@ -183,7 +166,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
           <div>Api checks:</div>
           <div className="flex flex-wrap">
             {Array.from(customApiCheckers?.entries() || []).map(([key, apiChecker]) => (
-              <Badge className="cursor-pointer" key={key} variant={"outline"} onClick={() => {onEndpointProviderDialogChange(true, key)}}>{apiChecker.title}</Badge>
+              <Badge key={key} variant={"outline"}>{apiChecker.title}</Badge>
             ))}
           </div>
         </div>
@@ -210,15 +193,6 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         activeChecksKeys={apiChecksByProvider?.get(openedProvider || "") || []}
         switchToProvider={changeNodeAddress}
         registerFallback={registerFallback}
-      />
-      <EndpointProviderDialog
-        isOpened={isEndpointProviderDialogOpened}
-        checkKey={openedEndpoint}
-        checkTitle={customApiCheckers?.get(openedEndpoint || "")?.title || ""}
-        currentProvider={providersForEndpoints.get(openedEndpoint || "") || currentAddress}
-        onDialogOpenChange={onEndpointProviderDialogChange}
-        providers={customApiList}
-        changeProviderForEndpoint={changeEndpointProvider}
       />
       <ProviderAdditionDialog 
         isOpened={isProviderAdditionDialogOpened}

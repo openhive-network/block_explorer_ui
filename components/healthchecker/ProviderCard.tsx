@@ -17,7 +17,6 @@ interface ProviderCardProps {
   isFallback: boolean;
   switchToProvider: (providerLink: string | null) => void;
   onDialogOpenChange: (isOpened: boolean, provider?: string) => void;
-  onEndpointProviderDialogChange: (isOpened: boolean, endpoint?: string) => void;
   resetEndpoints: () => void;
   deleteProvider: (provider: string) => void;
 }
@@ -33,7 +32,6 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
   isFallback,
   switchToProvider,
   onDialogOpenChange,
-  onEndpointProviderDialogChange,
   resetEndpoints,
   deleteProvider
 }) => {
@@ -66,8 +64,8 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
           <Badge 
             key={customApiCheckers?.get(apiKey)?.title} 
             variant={"outline"} 
-            className={cn("cursor-pointer", {"text-green-400": checkProvider(apiKey)})}
-            onClick={() => {onEndpointProviderDialogChange(true, apiKey)}}>
+            className={cn({"text-green-400": checkProvider(apiKey)})}
+          >
               {customApiCheckers?.get(apiKey)?.title}
           </Badge>
         )}

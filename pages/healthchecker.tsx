@@ -113,7 +113,6 @@ export default function HealthcheckerPage() {
           customApiList={providers}
           providersForEndpoints={endpointProviders}
           healthChecker={healthChecker}
-          changeEndpointAddress={changeEndpointAddress} 
           resetEndpoints={resetEndpoints}
           setScoredEndpoints={setScoredEndpoints}
           addNewProvider={addNewProvider}
