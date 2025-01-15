@@ -148,7 +148,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
 
   return (
     <div className={cn(className)}>
-      <Card className="grid grid-cols-4 grid-rows-4 gap-y-1 my-1 p-2 mb-4">
+      <Card className="grid grid-cols-4 grid-rows-3 gap-y-1 my-1 p-2 mb-4">
         <div className="row-start-1 col-start-1 col-span-4 flex justify-center">Block Explorer healthchecker for nodes</div>
         <div className="col-start-1 row-start-2 row-span-2 col-span-3">
           <div>Api checks:</div>
@@ -160,11 +160,6 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         </div>
         <div className="row-start-2 row-span-2 col-end-5 flex items-center justify-end">
           <Button onClick={() => {initializeDefaultChecks()}}>Restore default</Button>
-        </div>
-        <div className="row-start-4">
-          {fallbacks.map((fallback) => (
-            <div key={fallback} className="flex gap-1">{fallback}<X className="cursor-pointer" onClick={() => {removeFallback(fallback)}} /></div>
-          ))}
         </div>
       </Card>
       {scoredEndpoints?.map(
