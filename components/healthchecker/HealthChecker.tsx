@@ -58,12 +58,8 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   const initializeDefaultChecks = () => {
     const initialEndpoints: TScoredEndpoint[] | undefined = customProviders?.map((customProvider) => ({endpointUrl: customProvider, score: 1, up: true, lastLatency: 0}))
     if (!!initialEndpoints && !scoredEndpoints) setScoredEndpoints(initialEndpoints);
-    const initialApiChecksByProviders = new Map<string, string[]>();
-    customProviders?.forEach((api) => {
-      initialApiChecksByProviders.set(api, Array.from(customApiCheckers?.keys() || []));
-    })
     subscribeToCheckers(customProviders || []);
-
+    setChainIntialized(true);
   }
 
   const subscribeToCheckers = (newProviders: string[]) => {
@@ -90,7 +86,6 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   useEffect(() => { 
     if (healthChecker && !chainInitialized && !!customApiCheckers) {
       initializeDefaultChecks();
-      setChainIntialized(true);
     }
   }, [chainInitialized, customApiCheckers, healthChecker, initializeDefaultChecks])
 
