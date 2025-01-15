@@ -41,7 +41,7 @@ export const HiveChainContextProvider: React.FC<{
   const [scoredEndpoints, setScoredEndpoints] = useState<TScoredEndpoint[] | undefined>(undefined);
   const [fallbacks, setFallbacks] = useState<string[]>([]);
 
-  const {nodeAddress, setNodeAddress} = useAddressesContext();
+  const {nodeAddress, setNodeAddress, backupNodes, setBackupNodes} = useAddressesContext();
 
   const fallbacksRef = useRef(fallbacks);
   const nodeAddressRef = useRef(nodeAddress);

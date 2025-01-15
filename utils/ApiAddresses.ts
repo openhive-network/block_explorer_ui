@@ -4,20 +4,24 @@ import fetchingService from "@/services/FetchingService";
 import { useRouter } from 'next/router';
 
 
-export interface ApiAddressesResult {
+export interface ApiAddresses {
   nodeAddress: string | null;
   apiAddress: string | null;
+  backupNodes?: string[];
   writeNodeAddressToLocalStorage: (url: string | null) => void;
   writeApiAddressToLocalStorage: (url: string | null) => void;
+  writeBackupNodesToLocalStorage: (nodes: string[]) => void;
 }
 
 const NODE_KEY = "nodeAddress";
-const API_KEY = "apiAddress"
+const API_KEY = "apiAddress";
+const BACKUP_NODES_KEY = "backupNodes";
 
 const useApiAddresses = () => {
 
   const [nodeAddress, setNodeAddress] = useState<string | null>(null);
   const [apiAddress, setApiAddress] = useState<string | null>(null);
+  const [backupNodes, setBackupNodes] = useState<string[] | undefined>(undefined);
 
   const router = useRouter();
 
@@ -47,6 +51,17 @@ const useApiAddresses = () => {
         fetchingService.setApiUrl(config.apiAddress);
         setApiAddress(config.apiAddress);
       }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const readBackupNodesFromLocalStorage = () => {
+    try {
+      const readValue = window.localStorage.getItem(BACKUP_NODES_KEY);
+      if (readValue) { 
+        setBackupNodes(JSON.parse(readValue));
+      } 
     } catch (error) {
       console.log(error);
     }
@@ -84,17 +99,37 @@ const useApiAddresses = () => {
     }
   }
 
+  const writeBackupNodesToLocalStorage = async (nodes: string[]) => {
+    try {
+      if (nodes && nodes.length > 0) {
+        await window.localStorage.setItem(BACKUP_NODES_KEY, JSON.stringify(nodes));
+        router.reload();
+        setBackupNodes(nodes);
+      } else {
+        await window.localStorage.removeItem(BACKUP_NODES_KEY);
+        router.reload();
+        setBackupNodes(undefined);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   useEffect(() => {
     readNodeAddressFromLocalStorage();
     readApiAddressFromLocalStorage();
+    readBackupNodesFromLocalStorage();
   }, []);
 
   return {
     nodeAddress,
     apiAddress,
+    backupNodes,
     writeNodeAddressToLocalStorage,
-    writeApiAddressToLocalStorage
-  } as ApiAddressesResult
+    writeApiAddressToLocalStorage,
+    writeBackupNodesToLocalStorage
+
+  } as ApiAddresses
   
 }
 

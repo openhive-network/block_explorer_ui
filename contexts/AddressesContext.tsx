@@ -6,6 +6,8 @@ export type AddressesContextType = {
   setApiAddress: (address: string | null) => void;
   nodeAddress: string | null;
   setNodeAddress: (address: string | null) => void;
+  backupNodes?: string[];
+  setBackupNodes: (nodes: string[]) => void;
 };
 
 export const AddressesContext = createContext<AddressesContextType>({
@@ -13,6 +15,8 @@ export const AddressesContext = createContext<AddressesContextType>({
   setApiAddress: () => {},
   nodeAddress: "",
   setNodeAddress: () => {},
+  backupNodes: undefined,
+  setBackupNodes: () => {},
 });
 
 export const useAddressesContext = () => {
@@ -31,17 +35,21 @@ export const AddressesContextProvider: React.FC<{
   const {
     apiAddress,
     nodeAddress,
+    backupNodes,
     writeApiAddressToLocalStorage,
     writeNodeAddressToLocalStorage,
+    writeBackupNodesToLocalStorage,
   } = useApiAddresses();
 
   return (
     <AddressesContext.Provider
       value={{
-        apiAddress: apiAddress,
+        apiAddress,
         setApiAddress: writeApiAddressToLocalStorage,
-        nodeAddress: nodeAddress,
+        nodeAddress,
         setNodeAddress: writeNodeAddressToLocalStorage,
+        backupNodes,
+        setBackupNodes: writeBackupNodesToLocalStorage
       }}
     >
       {children}
