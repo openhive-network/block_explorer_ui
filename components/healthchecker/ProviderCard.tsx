@@ -18,6 +18,7 @@ interface ProviderCardProps {
   switchToProvider: (providerLink: string | null) => void;
   deleteProvider: (provider: string) => void;
   registerFallback: (provider: string) => void;
+  removeFallback: (provider: string) => void;
 }
 
 const ProviderCard: React.FC<ProviderCardProps> = ({
@@ -31,7 +32,8 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
   isFallback,
   deleteProvider,
   switchToProvider,
-  registerFallback
+  registerFallback,
+  removeFallback
 }) => {
 
   const checkProvider = (apiKey: string): boolean => {
@@ -50,7 +52,11 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
         <Button className="hover:bg-slate-400 bg-transparent rounded self-end w-fit" onClick={() => {deleteProvider(providerLink)}}><X /></Button>
         <div className="flex justify-end items-center gap-2">
           <Button className="hover:bg-slate-400 rounded" onClick={() => {switchToProvider(providerLink)}}>Switch to provider</Button>
-          <Button className="hover:bg-slate-400 rounded" onClick={() => {registerFallback(providerLink)}}>Set fallback</Button>
+          {isFallback ?
+            <Button className="hover:bg-slate-400 rounded" onClick={() => {removeFallback(providerLink)}}>Remove fallback</Button>
+            :
+            <Button className="hover:bg-slate-400 rounded" onClick={() => {registerFallback(providerLink)}}>Set fallback</Button>
+          }
         </div>
       </div>
       <div className="row-start-2 flex items-center col-start-1 col-span-7 flex-wrap">

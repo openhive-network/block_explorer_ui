@@ -142,6 +142,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         isFallback={!!fallbacks.includes(endpointUrl)}
         deleteProvider={handleDeletionOfProvider}
         registerFallback={registerFallback}
+        removeFallback={removeFallback}
       />
     )       
   }
