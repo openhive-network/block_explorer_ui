@@ -23,7 +23,7 @@ interface HealthCheckerComponentProps {
   currentAddress?: string;
   customProviders?: string[];
   customApiCheckers?: Map<string, ApiChecker>;
-  providersForEndpoints: Map<string, string>;
+  usersProviders?: string[];
   healthChecker?: HealthChecker;
   scoredEndpoints?: TScoredEndpoint[];
   fallbacks: string[];
@@ -46,10 +46,10 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   removeFallback,
   customApiCheckers,
   className,
-  providersForEndpoints,
   healthChecker,
   scoredEndpoints,
-  fallbacks
+  fallbacks,
+  usersProviders
 }) => {
 
   const [chainInitialized, setChainIntialized] = useState<boolean>(false);
@@ -63,7 +63,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   }
 
   const subscribeToCheckers = (newProviders: string[]) => {
-
+    console.log("SUB!", newProviders);
     healthChecker?.unregisterAll();
     for (const [key, checker] of customApiCheckers || new Map<string, ApiChecker>()) {
       healthChecker?.register(checker!.method, checker!.params, checker!.validatorFunction, newProviders);
@@ -79,7 +79,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   const handleAdditionOfProvider = (provider: string) => {
     addNewProvider(provider);
     setIsProviderAdditionDialogOpened(false);
-    const newProviders = [...customProviders || [], provider];
+    const newProviders = [...usersProviders || [], provider];
     subscribeToCheckers(newProviders);
   }
   
@@ -108,7 +108,6 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         isSelected={endpointUrl === currentAddress}
         checkerNamesList={Array.from(customApiCheckers?.keys() || [])}
         customApiCheckers={customApiCheckers}
-        providersForEndpoints={providersForEndpoints}
         isFallback={!!fallbacks.includes(endpointUrl)}
         deleteProvider={handleDeletionOfProvider}
         registerFallback={registerFallback}

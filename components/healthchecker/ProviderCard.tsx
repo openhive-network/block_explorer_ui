@@ -13,7 +13,6 @@ interface ProviderCardProps {
   checkerNamesList: string[];
   latency: number | null;
   customApiCheckers?: Map<string, ApiChecker>;
-  providersForEndpoints: Map<string, string>;
   isFallback: boolean;
   switchToProvider: (providerLink: string | null) => void;
   deleteProvider: (provider: string) => void;
@@ -28,7 +27,6 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
   checkerNamesList,
   latency,
   customApiCheckers,
-  providersForEndpoints,
   isFallback,
   deleteProvider,
   switchToProvider,
@@ -36,11 +34,6 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
   removeFallback
 }) => {
 
-  const checkProvider = (apiKey: string): boolean => {
-    if (providersForEndpoints?.get(apiKey) === providerLink) return true;
-    if (isSelected && !providersForEndpoints?.get(apiKey)) return true;
-    return false
-  }
 
   return (
     <Card className="grid grid-cols-8 grid-rows-2 gap-y-1 my-1 p-2">
@@ -64,7 +57,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
           <Badge 
             key={customApiCheckers?.get(checkerName)?.title} 
             variant={"outline"} 
-            className={cn({"text-green-400": checkProvider(checkerName)})}
+            className={cn({"text-green-400": isSelected})}
           >
               {customApiCheckers?.get(checkerName)?.title}
           </Badge>

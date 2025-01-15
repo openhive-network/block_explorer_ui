@@ -4,12 +4,12 @@ import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { useAddressesContext } from "@/contexts/AddressesContext";
 
 import { ExplorerNodeApi } from "@/types/Node";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function HealthcheckerPage() {
 
   const {hiveChain, healthChecker, scoredEndpoints, setScoredEndpoints, fallbacks, setFallbacks} = useHiveChainContext();
-  const { nodeAddress, setNodeAddress } =
+  const { nodeAddress, setNodeAddress, backupNodes, setBackupNodes } =
     useAddressesContext();
   const [providers, setProviders] = useState<string[]>([
     "https://api.hive.blog",
@@ -69,16 +69,13 @@ export default function HealthcheckerPage() {
     validatorFunction: data => !!data ? true : data,
   });
 
-  let endpointProviders = new Map<string, string>();
-
   const addNewProvider = (provider: string) => {
-    const newProvidersList = [...providers, provider];
-    setProviders(newProvidersList);
+    setBackupNodes([...(backupNodes || []), provider]);
   }
 
   const deleteProvider = (provider: string) => {
-    const newProviders = [...providers].filter((previousProvider) => provider !== previousProvider);
-    setProviders(newProviders);
+    const newBackupNodes = backupNodes?.filter((node) => node !== provider) || [];
+    setBackupNodes(newBackupNodes);
   }
 
   const registerFallback = (provider: string) => {
@@ -91,6 +88,11 @@ export default function HealthcheckerPage() {
     setFallbacks(fallbacks.filter((fallback) => fallback !== provider));
   }
 
+  useEffect(() => {
+    console.log('SHOW ME!', backupNodes);
+    setProviders((providers) => [...providers, ...(backupNodes || [])]);
+  }, [backupNodes])
+
 
   return (
     <>
@@ -102,8 +104,7 @@ export default function HealthcheckerPage() {
           currentAddress={nodeAddress ? nodeAddress : undefined} 
           changeNodeAddress={setNodeAddress} 
           customApiCheckers={checksMap}
-          customProviders={providers}
-          providersForEndpoints={endpointProviders}
+          customProviders={[...providers]}
           healthChecker={healthChecker}
           setScoredEndpoints={setScoredEndpoints}
           addNewProvider={addNewProvider}
