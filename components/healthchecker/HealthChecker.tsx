@@ -21,7 +21,7 @@ export interface ApiChecker {
 interface HealthCheckerComponentProps {
   className?: string;
   currentAddress?: string;
-  customApiList?: string[];
+  customProviders?: string[];
   customApiCheckers?: Map<string, ApiChecker>;
   providersForEndpoints: Map<string, string>;
   healthChecker?: HealthChecker;
@@ -37,7 +37,7 @@ interface HealthCheckerComponentProps {
 
 const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   currentAddress,
-  customApiList,
+  customProviders,
   changeNodeAddress,
   setScoredEndpoints,
   addNewProvider,
@@ -53,79 +53,54 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
 }) => {
 
   const [chainInitialized, setChainIntialized] = useState<boolean>(false);
-  const [apiChecksByProvider, setApiChecksByProvider] = useState<Map<string, string[]>>(new Map());
   const [isProviderAdditionDialogOpened, setIsProviderAdditionDialogOpened] = useState<boolean>(false);
 
-
-  const changeChecksForProvider = (provider: string, newCheckers: string[]) => {
-    const newApiChecks = structuredClone(apiChecksByProvider);
-    newApiChecks.set(provider, newCheckers);
-    setApiChecksByProvider(newApiChecks);
-    subscribeToCheckers(newApiChecks);
-  }
-
   const initializeDefaultChecks = () => {
-    const initialEndpoints: TScoredEndpoint[] | undefined = customApiList?.map((api) => ({endpointUrl: api, score: 1, up: true, lastLatency: 0}))
+    const initialEndpoints: TScoredEndpoint[] | undefined = customProviders?.map((customProvider) => ({endpointUrl: customProvider, score: 1, up: true, lastLatency: 0}))
     if (!!initialEndpoints && !scoredEndpoints) setScoredEndpoints(initialEndpoints);
     const initialApiChecksByProviders = new Map<string, string[]>();
-    customApiList?.forEach((api) => {
+    customProviders?.forEach((api) => {
       initialApiChecksByProviders.set(api, Array.from(customApiCheckers?.keys() || []));
     })
-    setApiChecksByProvider(initialApiChecksByProviders);
-    subscribeToCheckers(initialApiChecksByProviders)
+    subscribeToCheckers(customProviders || []);
 
   }
 
-  const subscribeToCheckers = (newCheckers: Map<string, string[]>) => {
-    const providersByChecks = new Map<string, string[]>();
-    for (const [providerKey, checkers] of newCheckers) {
-      checkers.forEach((check) => {
-        if (providersByChecks.has(check)) {
-          const previousProviders = providersByChecks.get(check) as string[];
-          providersByChecks.set(check, [...previousProviders, providerKey]);
-        } else {
-          providersByChecks.set(check, [providerKey]);
-        }
-      })
-    }
+  const subscribeToCheckers = (newProviders: string[]) => {
+
     healthChecker?.unregisterAll();
-    for (const [checkerKey, providers] of providersByChecks) {
-      const checker = customApiCheckers?.get(checkerKey);
-      healthChecker?.register(checker!.method, checker!.params, checker!.validatorFunction, providers);
+    for (const [key, checker] of customApiCheckers || new Map<string, ApiChecker>()) {
+      healthChecker?.register(checker!.method, checker!.params, checker!.validatorFunction, newProviders);
     }
   }
 
   const handleDeletionOfProvider = (provider: string) => {
     deleteProvider(provider);
-    const newApiChecks = structuredClone(apiChecksByProvider);
-    newApiChecks.delete(provider);
-    setApiChecksByProvider(newApiChecks);
-    subscribeToCheckers(newApiChecks);
+    const newProviders = structuredClone(customProviders)?.filter((customProvider) => customProvider !== provider);
+    subscribeToCheckers(newProviders || []);
   }
 
   const handleAdditionOfProvider = (provider: string) => {
     addNewProvider(provider);
     setIsProviderAdditionDialogOpened(false);
-    changeChecksForProvider(provider, Array.from(customApiCheckers?.keys() || []));
+    const newProviders = [...customProviders || [], provider];
+    subscribeToCheckers(newProviders);
   }
   
   useEffect(() => { 
     if (healthChecker && !chainInitialized && !!customApiCheckers) {
-      if (apiChecksByProvider.size === 0) {
-        initializeDefaultChecks();
-      }
+      initializeDefaultChecks();
       setChainIntialized(true);
     }
-  }, [chainInitialized, customApiCheckers, healthChecker, initializeDefaultChecks, apiChecksByProvider])
+  }, [chainInitialized, customApiCheckers, healthChecker, initializeDefaultChecks])
 
   const renderProvider = (scoredEndpoint: TScoredEndpoint) => {
     const {endpointUrl, score, up,} = scoredEndpoint;
-    const apiList = apiChecksByProvider.get(endpointUrl);
     let lastLatency: number | null = null;
     if (up) {
       lastLatency = scoredEndpoint.lastLatency || null;
     }
-    if (!customApiList?.find((customApi) => customApi === endpointUrl)) {
+    if (!customProviders?.find((customProvider) => customProvider === endpointUrl)) {
       return null;
     }
     return (
@@ -136,7 +111,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         disabled={score <= 0}
         latency={lastLatency}
         isSelected={endpointUrl === currentAddress}
-        apiList={apiList || []}
+        checkerNamesList={Array.from(customApiCheckers?.keys() || [])}
         customApiCheckers={customApiCheckers}
         providersForEndpoints={providersForEndpoints}
         isFallback={!!fallbacks.includes(endpointUrl)}

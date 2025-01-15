@@ -10,7 +10,7 @@ interface ProviderCardProps {
   providerLink: string;
   disabled: boolean;
   isSelected: boolean;
-  apiList: string[];
+  checkerNamesList: string[];
   latency: number | null;
   customApiCheckers?: Map<string, ApiChecker>;
   providersForEndpoints: Map<string, string>;
@@ -25,7 +25,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
   providerLink,
   disabled,
   isSelected,
-  apiList,
+  checkerNamesList,
   latency,
   customApiCheckers,
   providersForEndpoints,
@@ -60,13 +60,13 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
         </div>
       </div>
       <div className="row-start-2 flex items-center col-start-1 col-span-7 flex-wrap">
-        {apiList.map((apiKey) => 
+        {checkerNamesList.map((checkerName) => 
           <Badge 
-            key={customApiCheckers?.get(apiKey)?.title} 
+            key={customApiCheckers?.get(checkerName)?.title} 
             variant={"outline"} 
-            className={cn({"text-green-400": checkProvider(apiKey)})}
+            className={cn({"text-green-400": checkProvider(checkerName)})}
           >
-              {customApiCheckers?.get(apiKey)?.title}
+              {customApiCheckers?.get(checkerName)?.title}
           </Badge>
         )}
       </div>
