@@ -61,7 +61,6 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   }
 
   const subscribeToCheckers = (newProviders: string[]) => {
-    console.log("SUB!", newProviders);
     healthChecker?.unregisterAll();
     for (const [key, checker] of customApiCheckers || new Map<string, ApiChecker>()) {
       healthChecker?.register(checker!.method, checker!.params, checker!.validatorFunction, newProviders);

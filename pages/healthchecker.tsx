@@ -19,8 +19,6 @@ export default function HealthcheckerPage() {
   const extendedHiveChain = hiveChain
     ?.extend<ExplorerNodeApi>();
 
-  console.log('TESTOWANKO SRANKO', healthChecker, scoredEndpoints);
-
 
   const checksMap = new Map<string, ApiChecker>()
   .set("reward_funds", {
