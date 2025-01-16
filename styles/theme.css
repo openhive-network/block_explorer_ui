@@ -320,3 +320,31 @@ pre {
 }
 
 /*End Sync Dialog Styles*/
+
+/* Data Box Styling */
+.data-box {
+  background-color: var(--color-extra-light-gray);
+  border-radius: 12px;
+  padding: 10px;
+  margin: 6px 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: var(--color-text);
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border: 1px solid var(--color-light-gray); /* Fine border */
+  transition: all 0.3s ease-in-out;
+  flex-direction: column; /* Stack elements vertically */
+}
+
+.data-box:hover {
+  background-color: var(--color-row-hover);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15); /* Elevated shadow */
+  transform: translateY(-3px); /* Slight lift on hover */
+}
+
+.data-box span {
+  font-weight: bold;
+  font-size: 14px;
+}
