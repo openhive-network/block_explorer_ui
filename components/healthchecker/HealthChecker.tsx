@@ -23,7 +23,6 @@ interface HealthCheckerComponentProps {
   currentAddress?: string;
   customProviders?: string[];
   customApiCheckers?: Map<string, ApiChecker>;
-  usersProviders?: string[];
   healthChecker?: HealthChecker;
   scoredEndpoints?: TScoredEndpoint[];
   fallbacks: string[];
@@ -49,7 +48,6 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   healthChecker,
   scoredEndpoints,
   fallbacks,
-  usersProviders
 }) => {
 
   const [chainInitialized, setChainIntialized] = useState<boolean>(false);
@@ -79,7 +77,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   const handleAdditionOfProvider = (provider: string) => {
     addNewProvider(provider);
     setIsProviderAdditionDialogOpened(false);
-    const newProviders = [...usersProviders || [], provider];
+    const newProviders = [...(customProviders || []), provider];
     subscribeToCheckers(newProviders);
   }
   

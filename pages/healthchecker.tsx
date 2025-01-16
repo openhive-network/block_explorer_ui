@@ -4,18 +4,22 @@ import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { useAddressesContext } from "@/contexts/AddressesContext";
 
 import { ExplorerNodeApi } from "@/types/Node";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { config } from "@/Config";
+import { useHealthCheckerContext } from "@/contexts/HealthCheckerContext";
 
 export default function HealthcheckerPage() {
 
-  const {hiveChain, healthChecker, scoredEndpoints, setScoredEndpoints, fallbacks, setFallbacks} = useHiveChainContext();
+  const {hiveChain} = useHiveChainContext();
+  const {healthChecker, scoredEndpoints, setScoredEndpoints, fallbacks, setFallbacks} = useHealthCheckerContext();
   const { nodeAddress, setNodeAddress, localProviders, setLocalProviders } =
     useAddressesContext();
   const [providers, setProviders] = useState<string[]>(localProviders || config.defaultProviders);
 
   const extendedHiveChain = hiveChain
     ?.extend<ExplorerNodeApi>();
+
+  console.log('TESTOWANKO SRANKO', healthChecker, scoredEndpoints);
 
 
   const checksMap = new Map<string, ApiChecker>()
@@ -83,12 +87,6 @@ export default function HealthcheckerPage() {
   const removeFallback = (provider: string) => {
     setFallbacks(fallbacks.filter((fallback) => fallback !== provider));
   }
-
-  useEffect(() => {
-    console.log('SHOW ME!', localProviders);
-    setProviders((providers) => [...providers, ...(localProviders || [])]);
-  }, [localProviders])
-
 
   return (
     <>
