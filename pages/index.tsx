@@ -39,6 +39,11 @@ export default function Home() {
     useDynamicGlobal(headBlockNum).dynamicGlobalData;
   const headBlockData = useHeadBlock(headBlockNum).headBlockData;
   const { blockOperations } = useBlockOperations(headBlockNum || 0);
+
+
+  // Filter operations that have a trx_id
+  const trxOperations = blockOperations?.operations_result.filter((operation) => operation.trx_id);
+
   const opcount = blockOperations?.operations_result?.length || 0;
 
   const strokeColor = theme === "dark" ? "#FFF" : "#000";
@@ -51,7 +56,7 @@ export default function Home() {
       <div className="grid grid-cols-4 text-white px-2 w-full gap-3">
         <HeadBlockCard
           headBlockCardData={dynamicGlobalQueryData}
-          transactionCount={blockOperations?.operations_result?.length}
+          transactionCount={ trxOperations?.length}
           blockDetails={headBlockData}
           opcount={opcount}
         />
