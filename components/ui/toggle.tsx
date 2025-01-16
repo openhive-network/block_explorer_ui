@@ -26,13 +26,13 @@ const Toggle: React.FC<ToggleProps> = ({
       {leftLabel && <p>{leftLabel}</p>}
       <div
         className={cn(
-          "w-10 h-5 rounded-3xl border-2 invalid border-white relative",
+          "w-10 h-5 rounded-3xl border-2 invalid relative border-black dark:border-white",
           {
             "cursor-pointer": !disabled,
             "bg-green-600": checked,
             "bg-transparent": !checked,
             "border-gray-700": disabled && !checked,
-            "border-black dark:border-white": !disabled,
+//"border-black dark:border-white": !disabled,
           }
         )}
         onClick={!disabled ? onClick : undefined}
