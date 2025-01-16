@@ -5,27 +5,14 @@ import { useAddressesContext } from "@/contexts/AddressesContext";
 
 import { ExplorerNodeApi } from "@/types/Node";
 import { useEffect, useState } from "react";
+import { config } from "@/Config";
 
 export default function HealthcheckerPage() {
 
   const {hiveChain, healthChecker, scoredEndpoints, setScoredEndpoints, fallbacks, setFallbacks} = useHiveChainContext();
-  const { nodeAddress, setNodeAddress, backupNodes, setBackupNodes } =
+  const { nodeAddress, setNodeAddress, localProviders, setLocalProviders } =
     useAddressesContext();
-  const [providers, setProviders] = useState<string[]>([
-    "https://api.hive.blog",
-    "https://api.openhive.network",
-    "https://anyx.io",
-    "https://rpc.ausbit.dev",
-    "https://rpc.mahdiyari.info",
-    "https://techcoderx.com",
-    "https://hive.roelandp.nl",
-    "https://hived.emre.sh",
-    "https://api.deathwing.me",
-    "https://api.c0ff33a.uk",
-    "https://hive-api.arcange.eu",
-    "https://hive-api.3speak.tv",
-    "https://hiveapi.actifit.io"
-  ]);
+  const [providers, setProviders] = useState<string[]>(config.defaultProviders);
 
   const extendedHiveChain = hiveChain
     ?.extend<ExplorerNodeApi>();
@@ -70,12 +57,12 @@ export default function HealthcheckerPage() {
   });
 
   const addNewProvider = (provider: string) => {
-    setBackupNodes([...(backupNodes || []), provider]);
+    setLocalProviders([...(localProviders || []), provider]);
   }
 
   const deleteProvider = (provider: string) => {
-    const newBackupNodes = backupNodes?.filter((node) => node !== provider) || [];
-    setBackupNodes(newBackupNodes);
+    const newLocalProviders = localProviders?.filter((node) => node !== provider) || [];
+    setLocalProviders(newLocalProviders);
   }
 
   const registerFallback = (provider: string) => {
@@ -89,9 +76,9 @@ export default function HealthcheckerPage() {
   }
 
   useEffect(() => {
-    console.log('SHOW ME!', backupNodes);
-    setProviders((providers) => [...providers, ...(backupNodes || [])]);
-  }, [backupNodes])
+    console.log('SHOW ME!', localProviders);
+    setProviders((providers) => [...providers, ...(localProviders || [])]);
+  }, [localProviders])
 
 
   return (

@@ -7,21 +7,21 @@ import { useRouter } from 'next/router';
 export interface ApiAddresses {
   nodeAddress: string | null;
   apiAddress: string | null;
-  backupNodes?: string[];
+  localProviders?: string[];
   writeNodeAddressToLocalStorage: (url: string | null) => void;
   writeApiAddressToLocalStorage: (url: string | null) => void;
-  writeBackupNodesToLocalStorage: (nodes: string[]) => void;
+  writeLocalProvidersToLocalStorage: (nodes: string[]) => void;
 }
 
 const NODE_KEY = "nodeAddress";
 const API_KEY = "apiAddress";
-const BACKUP_NODES_KEY = "backupNodes";
+const LOCAL_PROVIDERS = "localProviders";
 
 const useApiAddresses = () => {
 
   const [nodeAddress, setNodeAddress] = useState<string | null>(null);
   const [apiAddress, setApiAddress] = useState<string | null>(null);
-  const [backupNodes, setBackupNodes] = useState<string[] | undefined>(undefined);
+  const [localProviders, setLocalProviders] = useState<string[] | undefined>(undefined);
 
   const router = useRouter();
 
@@ -56,11 +56,11 @@ const useApiAddresses = () => {
     }
   }
 
-  const readBackupNodesFromLocalStorage = () => {
+  const readLocalProvidersFromLocalStorage = () => {
     try {
-      const readValue = window.localStorage.getItem(BACKUP_NODES_KEY);
+      const readValue = window.localStorage.getItem(LOCAL_PROVIDERS);
       if (readValue) { 
-        setBackupNodes(JSON.parse(readValue));
+        setLocalProviders(JSON.parse(readValue));
       } 
     } catch (error) {
       console.log(error);
@@ -99,16 +99,16 @@ const useApiAddresses = () => {
     }
   }
 
-  const writeBackupNodesToLocalStorage = async (nodes: string[]) => {
+  const writeLocalProvidersToLocalStorage = async (nodes: string[]) => {
     try {
       if (nodes && nodes.length > 0) {
-        await window.localStorage.setItem(BACKUP_NODES_KEY, JSON.stringify(nodes));
+        await window.localStorage.setItem(LOCAL_PROVIDERS, JSON.stringify(nodes));
         router.reload();
-        setBackupNodes(nodes);
+        setLocalProviders(nodes);
       } else {
-        await window.localStorage.removeItem(BACKUP_NODES_KEY);
+        await window.localStorage.removeItem(LOCAL_PROVIDERS);
         router.reload();
-        setBackupNodes(undefined);
+        setLocalProviders(undefined);
       }
     } catch (error) {
       console.log(error);
@@ -118,16 +118,16 @@ const useApiAddresses = () => {
   useEffect(() => {
     readNodeAddressFromLocalStorage();
     readApiAddressFromLocalStorage();
-    readBackupNodesFromLocalStorage();
+    readLocalProvidersFromLocalStorage();
   }, []);
 
   return {
     nodeAddress,
     apiAddress,
-    backupNodes,
+    localProviders,
     writeNodeAddressToLocalStorage,
     writeApiAddressToLocalStorage,
-    writeBackupNodesToLocalStorage
+    writeLocalProvidersToLocalStorage
 
   } as ApiAddresses
   
