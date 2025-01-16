@@ -70,6 +70,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   const handleDeletionOfProvider = (provider: string) => {
     deleteProvider(provider);
     const newProviders = structuredClone(customProviders)?.filter((customProvider) => customProvider !== provider);
+    setScoredEndpoints(scoredEndpoints?.filter((endpoint) => endpoint.endpointUrl !== provider));
     subscribeToCheckers(newProviders || []);
   }
 

@@ -103,11 +103,9 @@ const useApiAddresses = () => {
     try {
       if (nodes && nodes.length > 0) {
         await window.localStorage.setItem(LOCAL_PROVIDERS, JSON.stringify(nodes));
-        router.reload();
         setLocalProviders(nodes);
       } else {
         await window.localStorage.removeItem(LOCAL_PROVIDERS);
-        router.reload();
         setLocalProviders(undefined);
       }
     } catch (error) {
