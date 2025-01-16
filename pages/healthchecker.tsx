@@ -12,7 +12,7 @@ export default function HealthcheckerPage() {
   const {hiveChain, healthChecker, scoredEndpoints, setScoredEndpoints, fallbacks, setFallbacks} = useHiveChainContext();
   const { nodeAddress, setNodeAddress, localProviders, setLocalProviders } =
     useAddressesContext();
-  const [providers, setProviders] = useState<string[]>(config.defaultProviders);
+  const [providers, setProviders] = useState<string[]>(localProviders || config.defaultProviders);
 
   const extendedHiveChain = hiveChain
     ?.extend<ExplorerNodeApi>();
@@ -57,12 +57,21 @@ export default function HealthcheckerPage() {
   });
 
   const addNewProvider = (provider: string) => {
-    setLocalProviders([...(localProviders || []), provider]);
+    if (localProviders) {
+      setLocalProviders([...(localProviders || []), provider]);
+    } else {
+      setLocalProviders([...config.defaultProviders, provider]);
+    }
   }
 
   const deleteProvider = (provider: string) => {
-    const newLocalProviders = localProviders?.filter((node) => node !== provider) || [];
-    setLocalProviders(newLocalProviders);
+    if (localProviders) {
+      const newLocalProviders = localProviders?.filter((node) => node !== provider);
+      setLocalProviders(newLocalProviders);
+    } else {
+      const newLocalProviders = config.defaultProviders?.filter((node) => node !== provider);
+      setLocalProviders(newLocalProviders);
+    }
   }
 
   const registerFallback = (provider: string) => {
