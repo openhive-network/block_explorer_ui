@@ -8,6 +8,8 @@ export type AddressesContextType = {
   setNodeAddress: (address: string | null) => void;
   localProviders?: string[];
   setLocalProviders: (nodes: string[]) => void;
+  fallbacks?: string[];
+  setFallbacks: (fallbacks: string[]) => void;
 };
 
 export const AddressesContext = createContext<AddressesContextType>({
@@ -17,6 +19,8 @@ export const AddressesContext = createContext<AddressesContextType>({
   setNodeAddress: () => {},
   localProviders: undefined,
   setLocalProviders: () => {},
+  fallbacks: undefined,
+  setFallbacks: () => {},
 });
 
 export const useAddressesContext = () => {
@@ -36,9 +40,11 @@ export const AddressesContextProvider: React.FC<{
     apiAddress,
     nodeAddress,
     localProviders,
+    fallbacks,
     writeApiAddressToLocalStorage,
     writeNodeAddressToLocalStorage,
     writeLocalProvidersToLocalStorage,
+    writeFallbacksToLocalStorage,
   } = useApiAddresses();
 
   return (
@@ -49,7 +55,9 @@ export const AddressesContextProvider: React.FC<{
         nodeAddress,
         setNodeAddress: writeNodeAddressToLocalStorage,
         localProviders,
-        setLocalProviders: writeLocalProvidersToLocalStorage
+        setLocalProviders: writeLocalProvidersToLocalStorage,
+        fallbacks,
+        setFallbacks: writeFallbacksToLocalStorage
       }}
     >
       {children}

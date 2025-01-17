@@ -7,7 +7,7 @@ type HealthCheckerContextType = {
   healthChecker: HealthChecker | undefined;
   scoredEndpoints: TScoredEndpoint[] | undefined;
   setScoredEndpoints: (scoredEndpoints: TScoredEndpoint[] | undefined ) => void;
-  fallbacks: string[];
+  fallbacks?: string[];
   setFallbacks: (fallbacks: string[]) => void;
 };
 
@@ -36,9 +36,8 @@ export const HealthCheckerContextProvider: React.FC<{
 
   const [healthChecker, setHealthChecker] = useState<HealthChecker | undefined>(undefined);
   const [scoredEndpoints, setScoredEndpoints] = useState<TScoredEndpoint[] | undefined>(undefined);
-  const [fallbacks, setFallbacks] = useState<string[]>([]);
 
-  const {nodeAddress, setNodeAddress, localProviders, setLocalProviders} = useAddressesContext();
+  const {nodeAddress, setNodeAddress, localProviders, setLocalProviders, fallbacks, setFallbacks} = useAddressesContext();
 
   const fallbacksRef = useRef(fallbacks);
   const nodeAddressRef = useRef(nodeAddress);
@@ -53,7 +52,7 @@ export const HealthCheckerContextProvider: React.FC<{
   const checkForFallbacks = (scoredEndpoints: TScoredEndpoint[]) => {
     const currentScoredEndpoint = scoredEndpoints.find((scoredEdnpoint) => scoredEdnpoint.endpointUrl === nodeAddressRef.current);
     if (currentScoredEndpoint && !currentScoredEndpoint.up) {
-      fallbacksRef.current.forEach((fallback) => {
+      fallbacksRef.current?.forEach((fallback) => {
         const fallbackScoredEndpoint = scoredEndpoints.find((scoredEdnpoint) => scoredEdnpoint.endpointUrl === fallback);
         if (fallbackScoredEndpoint && fallbackScoredEndpoint.up) setNodeAddress(fallback);
       })

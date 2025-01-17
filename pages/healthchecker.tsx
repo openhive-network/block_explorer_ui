@@ -81,13 +81,13 @@ export default function HealthcheckerPage() {
   }
 
   const registerFallback = (provider: string) => {
-    if (!fallbacks.includes(provider) && fallbacks.length < 3) {
-      setFallbacks([...fallbacks, provider])
+    if (!fallbacks?.includes(provider)) {
+      setFallbacks([...fallbacks || [], provider])
     }
   }
 
   const removeFallback = (provider: string) => {
-    setFallbacks(fallbacks.filter((fallback) => fallback !== provider));
+    setFallbacks(fallbacks?.filter((fallback) => fallback !== provider) || []);
   }
 
   useEffect(() => {
@@ -111,7 +111,7 @@ export default function HealthcheckerPage() {
           deleteProvider={deleteProvider}
           registerFallback={registerFallback}
           scoredEndpoints={scoredEndpoints}
-          fallbacks={fallbacks}
+          fallbacks={fallbacks || []}
           removeFallback={removeFallback}
           resetProviders={resetProviders}
         />
