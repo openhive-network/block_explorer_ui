@@ -1,10 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
-import Image from "next/image";
-import Link from "next/link";
 import { config } from "@/Config";
 import Explorer from "@/types/Explorer";
 import Hive from "@/types/Hive";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { getVestsToHiveRatio } from "@/utils/Calculations";
 import { useUserSettingsContext } from "../../contexts/UserSettingsContext";
 import useBlockchainSyncInfo from "@/hooks/common/useBlockchainSyncInfo";
@@ -19,11 +16,10 @@ import { Toggle } from "../ui/toggle";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faCube,
-  faBoxes,
-  faExchangeAlt,
   faClock,
 } from "@fortawesome/free-solid-svg-icons";
+
+import CurrentBlockCard from "./CurrentBlockCard";
 
 interface HeadBlockCardProps {
   headBlockCardData?: Explorer.HeadBlockCardData | any;
@@ -95,7 +91,6 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
   >(null);
 
   useEffect(() => {
-    // Define the calculation logic
     const calculateTimeDifference = () => {
       if (!blockDetails?.created_at || !blockchainDate) {
         setTimeDifferenceInSeconds(null);
@@ -108,10 +103,8 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
       setTimeDifferenceInSeconds(Math.floor(timeDifference / 1000));
     };
 
-    // Invoke the calculation whenever dependencies change
     calculateTimeDifference();
 
-    // Clean up function is unnecessary here as we only update the state
   }, [blockDetails?.created_at, blockchainDate]);
 
   // refresh interval
@@ -145,8 +138,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
       setLiveVestsToHiveRatio(newVestsToHiveRatio);
     }
   }, [
-    headBlockCardData?.headBlockDetails?.totalVestingFundHive,
-    headBlockCardData?.headBlockDetails?.totalVestingShares,
+    headBlockCardData
   ]);
 
   /*Block Chain Time Update*/
@@ -168,7 +160,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
     }, intervalTime);
 
     return () => clearInterval(intervalId);
-  }, [blockchainDate, settings.liveData]);
+  }, [blockchainDate, settings.liveData , intervalTime]);
 
   /*Block Number Update*/
   useEffect(() => {
@@ -184,7 +176,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
     }, intervalTime);
 
     return () => clearInterval(intervalId);
-  }, [blockDetails?.block_num, settings.liveData]);
+  }, [blockDetails?.block_num, settings.liveData,intervalTime]);
 
   /*Feed Price and Vest/Hive Ratio Update*/
   useEffect(() => {
@@ -211,7 +203,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
     }, intervalTime);
 
     return () => clearInterval(intervalId);
-  }, [settings.liveData, headBlockCardData]);
+  }, [settings.liveData, headBlockCardData, intervalTime]);
 
   return (
     <Card className="col-span-4 md:col-span-1" data-testid="head-block-card">
@@ -258,80 +250,14 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
             <span>Vests To Hive Ratio:</span> {liveVestsToHiveRatio} VESTS
           </div>
         </div>
-        {/* Block Information */}
-
-        <div className="data-box relative flex flex-col w-full min-h-[160px]">
-          <div className="flex flex-col w-full">
-            <div className="text-lg border-b">Current Block</div>
-            <div className="flex justify-between items-center mt-1 min-h-[35px] flex-wrap">
-              {/* Block Number and Icon */}
-              <div className="flex items-center space-x-1">
-                <FontAwesomeIcon icon={faCube} size="sm" />
-                <Link
-                  href={`/block/${blockDetails?.block_num}`}
-                  data-testid="block-number-link"
-                >
-                  <span className="text-link text-lg font-semibold">
-                    {liveBlockNumber
-                      ? liveBlockNumber?.toLocaleString()
-                      : blockDetails?.block_num
-                      ? blockDetails?.block_num.toLocaleString()
-                      : ""}
-                  </span>
-                </Link>
-              </div>
-
-              {/* Producer Info */}
-              <div className="flex flex-wrap items-center space-x-1 min-w-[140px] min-h-10 transition-opacity duration-500 ease-in-out opacity-100">
-                <p className="text-sm">By:</p>
-
-                {blockDetails?.producer_account && (
-                  <Link
-                    className="flex items-center space-x-1 text-link"
-                    href={`/@${blockDetails?.producer_account}`}
-                    data-testid="current-witness-link"
-                  >
-                    <Image
-                      className="rounded-full border-2 border-link"
-                      src={getHiveAvatarUrl(blockDetails?.producer_account)}
-                      alt="avatar"
-                      width={30}
-                      height={30}
-                    />
-                    <p className="text-link text-sm font-semibold">
-                      {blockDetails?.producer_account}
-                    </p>
-                  </Link>
-                )}
-              </div>
-            </div>
-            {/* Time Difference */}
-            <div className="flex text-xs font-semibold text-explorer-red w-[65px] min-w-[65px] justify-end">
-              {timeDifferenceInSeconds} secs ago
-            </div>
-            {/* Operations and Transactions Info  */}
-            <div className="flex flex-col justify-end space-y-2 pt-4 min-h-[40px]">
-              <div className="flex items-center justify-end">
-                <div className="min-w-[120px]">
-                  <FontAwesomeIcon icon={faBoxes} size="xs" />
-                  <span className="ml-1">Operations: </span>
-                  <span className="font-semibold text-sm">
-                    {opcount ? opcount : ""}
-                  </span>
-                </div>
-              </div>
-              <div className="flex items-center justify-end">
-                <div className="min-w-[120px]">
-                  <FontAwesomeIcon icon={faExchangeAlt} size="xs" />
-                  <span className="ml-1">Trxs: </span>
-                  <span className="font-semibold text-sm">
-                    {transactionCount}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* Last Block Information */} 
+          <CurrentBlockCard
+          blockDetails={blockDetails}
+          transactionCount={transactionCount}
+          opcount={opcount}
+          timeDifferenceInSeconds={timeDifferenceInSeconds}
+          liveBlockNumber={liveBlockNumber}
+          />
 
         <div>
           <HeadBlockPropertyCard
