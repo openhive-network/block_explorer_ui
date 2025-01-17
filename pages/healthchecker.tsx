@@ -4,7 +4,7 @@ import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { useAddressesContext } from "@/contexts/AddressesContext";
 
 import { ExplorerNodeApi } from "@/types/Node";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { config } from "@/Config";
 import { useHealthCheckerContext } from "@/contexts/HealthCheckerContext";
 
@@ -14,7 +14,7 @@ export default function HealthcheckerPage() {
   const {healthChecker, scoredEndpoints, setScoredEndpoints, fallbacks, setFallbacks} = useHealthCheckerContext();
   const { nodeAddress, setNodeAddress, localProviders, setLocalProviders } =
     useAddressesContext();
-  const [providers, setProviders] = useState<string[]>(localProviders || config.defaultProviders);
+  const [providers, setProviders] = useState<string[]>(config.defaultProviders);
 
   const extendedHiveChain = hiveChain
     ?.extend<ExplorerNodeApi>();
@@ -89,6 +89,10 @@ export default function HealthcheckerPage() {
   const removeFallback = (provider: string) => {
     setFallbacks(fallbacks.filter((fallback) => fallback !== provider));
   }
+
+  useEffect(() => {
+    if (localProviders) setProviders(localProviders);
+  }, [])
 
   return (
     <>
