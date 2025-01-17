@@ -15,6 +15,7 @@ import AccountDetailsSection from "@/components/account/AccountDetailsSection";
 import MobileAccountNameCard from "@/components/account/MobileAccountNameCard";
 import { Button } from "@/components/ui/button";
 import AccountOperationViewTabs from "@/components/account/tabs/AccountOperationViewTabs";
+import { AccountTabsProvider } from "@/contexts/TabsContext";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -175,7 +176,7 @@ export default function Account() {
   }
 
   return (
-    <>
+    <AccountTabsProvider>
       <Head>
         <title>@{accountNameFromRoute} - Hive Explorer</title>
       </Head>
@@ -199,6 +200,6 @@ export default function Account() {
           <ScrollTopButton />
         </div>
       </div>
-    </>
+    </AccountTabsProvider>
   );
 }
