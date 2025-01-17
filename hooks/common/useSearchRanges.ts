@@ -101,6 +101,8 @@ const useSearchRanges = (defaultSelectKey: string = "none") => {
   const { checkTemporaryHeadBlockNumber } = useHeadBlockNumber();
 
   const setRangesValues = (params: Explorer.CommentSearchParams) => {
+    if (!params) return;
+
     params.fromBlock && setFromBlock(params.fromBlock);
     params.toBlock && setToBlock(params.toBlock);
     params.startDate && setStartDate(params.startDate);
