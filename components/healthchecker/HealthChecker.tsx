@@ -32,6 +32,7 @@ interface HealthCheckerComponentProps {
   deleteProvider: (provider: string) => void;
   registerFallback: (provider: string) => void;
   removeFallback: (provider: string) => void;
+  resetProviders: () => void;
 }
 
 const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
@@ -43,6 +44,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   deleteProvider,
   registerFallback,
   removeFallback,
+  resetProviders,
   customApiCheckers,
   className,
   healthChecker,
@@ -58,6 +60,11 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     if (!!initialEndpoints && !scoredEndpoints) setScoredEndpoints(initialEndpoints);
     subscribeToCheckers(customProviders || []);
     setChainIntialized(true);
+  }
+
+  const restoreDefault = () => {
+    resetProviders();
+    initializeDefaultChecks();
   }
 
   const subscribeToCheckers = (newProviders: string[]) => {
@@ -127,7 +134,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
           </div>
         </div>
         <div className="row-start-2 row-span-2 col-end-5 flex items-center justify-end">
-          <Button onClick={() => {initializeDefaultChecks()}}>Restore default</Button>
+          <Button onClick={() => {restoreDefault()}}>Restore default</Button>
         </div>
       </Card>
       {scoredEndpoints?.map(

@@ -76,6 +76,10 @@ export default function HealthcheckerPage() {
     }
   }
 
+  const resetProviders = () => {
+    setLocalProviders(config.defaultProviders);
+  }
+
   const registerFallback = (provider: string) => {
     if (!fallbacks.includes(provider) && fallbacks.length < 3) {
       setFallbacks([...fallbacks, provider])
@@ -105,6 +109,7 @@ export default function HealthcheckerPage() {
           scoredEndpoints={scoredEndpoints}
           fallbacks={fallbacks}
           removeFallback={removeFallback}
+          resetProviders={resetProviders}
         />
       </div>
     </>
