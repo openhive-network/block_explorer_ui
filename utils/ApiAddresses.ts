@@ -75,7 +75,7 @@ const useApiAddresses = () => {
     try {
       const readValue = window.localStorage.getItem(FALLBACKS);
       if (readValue) { 
-        setLocalProviders(JSON.parse(readValue));
+        setFallbacks(JSON.parse(readValue));
       } 
     } catch (error) {
       console.log(error);

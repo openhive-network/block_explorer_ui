@@ -74,6 +74,7 @@ export default function HealthcheckerPage() {
       const newLocalProviders = config.defaultProviders?.filter((node) => node !== provider);
       setLocalProviders(newLocalProviders);
     }
+    removeFallback(provider);
   }
 
   const resetProviders = () => {
