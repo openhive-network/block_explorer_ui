@@ -118,10 +118,10 @@ const useApiAddresses = () => {
     try {
       if (nodes && nodes.length > 0) {
         await window.localStorage.setItem(LOCAL_PROVIDERS, JSON.stringify(nodes));
-        setFallbacks(nodes);
+        setLocalProviders(nodes);
       } else {
         await window.localStorage.removeItem(LOCAL_PROVIDERS);
-        setFallbacks(undefined);
+        setLocalProviders(undefined);
       }
     } catch (error) {
       console.log(error);
