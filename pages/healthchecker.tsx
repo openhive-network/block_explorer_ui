@@ -105,7 +105,7 @@ export default function HealthcheckerPage() {
           currentAddress={nodeAddress ? nodeAddress : undefined} 
           changeNodeAddress={setNodeAddress} 
           customApiCheckers={checksMap}
-          customProviders={[...providers]}
+          customProviders={providers}
           healthChecker={healthChecker}
           setScoredEndpoints={setScoredEndpoints}
           addNewProvider={addNewProvider}

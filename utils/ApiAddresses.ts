@@ -130,7 +130,6 @@ const useApiAddresses = () => {
 
   const writeFallbacksToLocalStorage = async (fallbacks: string[]) => {
     try {
-      console.log('TRYYY');
       if (fallbacks && fallbacks.length > 0) {
         await window.localStorage.setItem(FALLBACKS, JSON.stringify(fallbacks));
         setFallbacks(fallbacks);
