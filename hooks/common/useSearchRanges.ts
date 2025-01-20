@@ -138,6 +138,19 @@ const useSearchRanges = (defaultSelectKey: string = "none") => {
         .milliseconds(0)
         .toDate();
     }
+    
+    //Validate that payloadStartDate is a valid
+    if (payloadStartDate && (isNaN(payloadStartDate?.getTime()) || payloadStartDate?.getTime() <= 0)) {
+      payloadStartDate = undefined; //fallback
+    }
+    //Validate that payloadToBlock does not exceed latest headblock number
+    if (payloadToBlock && (payloadToBlock)) {
+      const currentHeadBlockNumber = await checkTemporaryHeadBlockNumber();
+      if (payloadToBlock > currentHeadBlockNumber) {
+        payloadToBlock = currentHeadBlockNumber; //fallback
+      }
+    }
+    
     return {
       payloadFromBlock,
       payloadToBlock,
