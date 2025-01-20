@@ -52,7 +52,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
           }
         </div>
       </div>
-      <div className="row-start-2 flex items-center col-start-1 col-span-7 flex-wrap">
+      <div className="row-start-2 flex items-center col-start-1 col-span-6 flex-wrap">
         {checkerNamesList.map((checkerName) => 
           <Badge 
             key={customApiCheckers?.get(checkerName)?.title} 
