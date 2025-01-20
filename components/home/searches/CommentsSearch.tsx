@@ -136,6 +136,17 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
     setSelectedCommentSearchOperationTypes([]);
   };
 
+  // Render data if there is comment search permlink present on account page
+  useEffect(() => {
+    if (isAccountPage && commentsSearchPermlink) {
+      handleStartCommentSearch();
+    }
+    return () => {
+      setCommentSearchProps(undefined);
+      setSelectedCommentSearchOperationTypes([]);
+    };
+  }, [isAccountPage, commentsSearchPermlink]);
+
   const infoText = isAccountPage
     ? "Find all operations related to comments for exact permlink."
     : "Find all operations related to comments of given account or for exact permlink.";
