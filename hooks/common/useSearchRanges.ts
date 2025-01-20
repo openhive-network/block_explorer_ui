@@ -144,13 +144,20 @@ const useSearchRanges = (defaultSelectKey: string = "none") => {
       payloadStartDate = undefined; //fallback
     }
     //Validate that payloadToBlock does not exceed latest headblock number
-    if (payloadToBlock && (payloadToBlock)) {
+    if (payloadToBlock) {
       const currentHeadBlockNumber = await checkTemporaryHeadBlockNumber();
       if (payloadToBlock > currentHeadBlockNumber) {
         payloadToBlock = currentHeadBlockNumber; //fallback
       }
     }
-    
+    if(payloadFromBlock)
+    {
+      const currentHeadBlockNumber = await checkTemporaryHeadBlockNumber();
+      if (payloadFromBlock > currentHeadBlockNumber) {
+        payloadFromBlock = currentHeadBlockNumber; //fallback
+      }
+    }
+
     return {
       payloadFromBlock,
       payloadToBlock,
