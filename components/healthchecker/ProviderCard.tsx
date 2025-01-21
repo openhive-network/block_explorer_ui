@@ -36,7 +36,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
 
 
   return (
-    <Card className="grid grid-cols-8 grid-rows-2 gap-y-1 my-1 p-2">
+    <Card className={cn("grid grid-cols-8 grid-rows-2 gap-y-1 my-1 p-2", {"outline outline-2 outline-offset-2": isSelected})}>
       <div className="row-start-1 col-start-1 col-span-7 flex items-center justify-between" >
         <span className={cn({"text-red-600": disabled})}>{providerLink} {isFallback ? "- fallback" : null}</span>
         {latency ? <span>Latency: {latency}</span> : null}
@@ -44,7 +44,12 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
       <div className="col-start-7 row-start-1 col-span-2 row-span-2 flex flex-col">
         <Button className="hover:bg-slate-400 bg-transparent rounded self-end w-fit" onClick={() => {deleteProvider(providerLink)}}><X /></Button>
         <div className="flex justify-end items-center gap-2">
-          <Button className="hover:bg-slate-400 rounded" onClick={() => {switchToProvider(providerLink)}}>Switch to provider</Button>
+          {
+            isSelected ? 
+              <div className="justify-self-start">Selected</div> :
+              <Button className="hover:bg-slate-400 rounded" onClick={() => {switchToProvider(providerLink)}}>Switch to provider</Button>
+          }
+          
           {isFallback ?
             <Button className="hover:bg-slate-400 rounded" onClick={() => {removeFallback(providerLink)}}>Remove fallback</Button>
             :
@@ -57,7 +62,6 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
           <Badge 
             key={customApiCheckers?.get(checkerName)?.title} 
             variant={"outline"} 
-            className={cn({"text-green-400": isSelected})}
           >
               {customApiCheckers?.get(checkerName)?.title}
           </Badge>
