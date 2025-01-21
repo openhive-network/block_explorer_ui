@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { TScoredEndpoint, HealthChecker } from "@hiveio/wax";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
-import { Plus, X } from "lucide-react";
+import { Loader2, Plus, X } from "lucide-react";
 import ProviderCard from "./ProviderCard";
 import ApiCheckDialog from "./ApiCheckDialog";
 import { Card } from "../ui/card";
@@ -115,7 +115,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         isFallback={!!fallbacks.includes(endpointUrl)}
         deleteProvider={handleDeletionOfProvider}
         registerFallback={registerFallback}
-        removeFallback={removeFallback}
+        removeFallback={removeFallback}                                                                                    
       />
     )       
   }
@@ -136,9 +136,10 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
           <Button onClick={() => {restoreDefault()}}>Restore default</Button>
         </div>
       </Card>
-      {scoredEndpoints?.map(
-        (scoredEndpoint) => renderProvider(scoredEndpoint)
-      )}
+        {(!!scoredEndpoints && scoredEndpoints.length) ? scoredEndpoints?.map(
+          (scoredEndpoint) => renderProvider(scoredEndpoint)
+        ) :
+        <Loader2 className="ml-2 animate-spin h-8 w-8 justify-self-center mb-4  ..." />                                                                                                                                         }
       <Button onClick={() => {setIsProviderAdditionDialogOpened(true)}} className="w-full"><Plus /></Button>
       <ProviderAdditionDialog 
         isOpened={isProviderAdditionDialogOpened}

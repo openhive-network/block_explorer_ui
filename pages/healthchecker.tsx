@@ -79,6 +79,7 @@ export default function HealthcheckerPage() {
 
   const resetProviders = () => {
     setLocalProviders(config.defaultProviders);
+    setScoredEndpoints([]);
   }
 
   const registerFallback = (provider: string) => {
