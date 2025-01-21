@@ -92,6 +92,13 @@ export default function HealthcheckerPage() {
     setFallbacks(fallbacks?.filter((fallback) => fallback !== provider) || []);
   }
 
+  const changeNodeAddress = (nodeAddress: string | null) => {
+    if (nodeAddress) {
+      removeFallback(nodeAddress);
+      setNodeAddress(nodeAddress);
+    }
+  }
+
   useEffect(() => {
     if (localProviders) setProviders(localProviders);
   }, [localProviders])
@@ -104,7 +111,7 @@ export default function HealthcheckerPage() {
       <div className="md:m-8 max-w-[100vw]">
         <HealthCheckerComponent 
           currentAddress={nodeAddress ? nodeAddress : undefined} 
-          changeNodeAddress={setNodeAddress} 
+          changeNodeAddress={changeNodeAddress} 
           customApiCheckers={checksMap}
           customProviders={providers}
           healthChecker={healthChecker}

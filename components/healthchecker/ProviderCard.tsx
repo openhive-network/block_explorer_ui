@@ -42,20 +42,20 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
         {latency ? <span>Latency: {latency}</span> : null}
       </div>
       <div className="col-start-7 row-start-1 col-span-2 row-span-2 flex flex-col">
-        <Button className="hover:bg-slate-400 bg-transparent rounded self-end w-fit" onClick={() => {deleteProvider(providerLink)}}><X /></Button>
-        <div className="flex justify-end items-center gap-2">
-          {
-            isSelected ? 
-              <div className="justify-self-start">Selected</div> :
+        {isSelected ?   
+          <div className="flex justify-end">Selected</div> :
+          <>
+            <Button className="hover:bg-slate-400 bg-transparent rounded self-end w-fit" onClick={() => {deleteProvider(providerLink)}}><X /></Button>
+            <div className="flex justify-end items-center gap-2">
               <Button className="hover:bg-slate-400 rounded" onClick={() => {switchToProvider(providerLink)}}>Switch to provider</Button>
-          }
-          
-          {isFallback ?
-            <Button className="hover:bg-slate-400 rounded" onClick={() => {removeFallback(providerLink)}}>Remove fallback</Button>
-            :
-            <Button className="hover:bg-slate-400 rounded" onClick={() => {registerFallback(providerLink)}}>Set fallback</Button>
-          }
-        </div>
+              {isFallback ?
+                <Button className="hover:bg-slate-400 rounded" onClick={() => {removeFallback(providerLink)}}>Remove fallback</Button>
+                :
+                <Button className="hover:bg-slate-400 rounded" onClick={() => {registerFallback(providerLink)}}>Set fallback</Button>
+              }
+            </div>
+          </>
+        }
       </div>
       <div className="row-start-2 flex items-center col-start-1 col-span-6 flex-wrap">
         {checkerNamesList.map((checkerName) => 
