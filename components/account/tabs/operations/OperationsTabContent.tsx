@@ -26,6 +26,7 @@ import useAccountOperations from "@/hooks/api/accountPage/useAccountOperations";
 import useAccountOperationTypes from "@/hooks/api/accountPage/useAccountOperationTypes";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 import { getOperationButtonTitle } from "@/utils/UI";
+import { useSearchesContext } from "@/contexts/SearchesContext";
 
 interface OpeationTabContentProps {
   liveDataEnabled: boolean;
@@ -35,7 +36,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
   liveDataEnabled,
 }) => {
   const router = useRouter();
-  const searchRanges = useSearchRanges();
+  const { searchRanges } = useSearchesContext();
 
   const { paramsState, setParams } = useURLParams(
     {
@@ -240,17 +241,17 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     <TabsContent value="operations">
       <Card className="mb-4">
         <CardHeader>
-          <CardTitle>Ranges</CardTitle>
+          <CardTitle>Operation Search</CardTitle>
         </CardHeader>
         <CardContent>
           <SearchRanges rangesProps={searchRanges} />
-          <div className="flex items-center justify-between m-2">
+          <div className="flex items-center justify-between my-2">
             <div className="flex min-w-[120px] gap-2">
               <Button
                 onClick={() => handleSearch(true)}
                 data-testid="apply-filters"
               >
-                <span>Apply filters</span>{" "}
+                <span>Search</span>{" "}
               </Button>
             </div>
             <div className="flex w-full justify-end flex-wrap gap-2">
@@ -268,7 +269,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
                 onClick={handleFilterClear}
                 data-testid="clear-filters"
               >
-                <span>Clear filters</span>{" "}
+                <span>Clear</span>{" "}
               </Button>
             </div>
           </div>
