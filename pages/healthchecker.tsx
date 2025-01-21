@@ -93,7 +93,7 @@ export default function HealthcheckerPage() {
 
   useEffect(() => {
     if (localProviders) setProviders(localProviders);
-  }, [])
+  }, [localProviders])
 
   return (
     <>

@@ -58,34 +58,29 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   const initializeDefaultChecks = () => {
     const initialEndpoints: TScoredEndpoint[] | undefined = customProviders?.map((customProvider) => ({endpointUrl: customProvider, score: 1, up: true, lastLatency: 0}))
     if (!!initialEndpoints && !scoredEndpoints) setScoredEndpoints(initialEndpoints);
-    subscribeToCheckers(customProviders || []);
+    subscribeToCheckers();
     setChainIntialized(true);
   }
 
   const restoreDefault = () => {
     resetProviders();
-    initializeDefaultChecks();
   }
 
-  const subscribeToCheckers = (newProviders: string[]) => {
+  const subscribeToCheckers = () => {
     healthChecker?.unregisterAll();
     for (const [key, checker] of customApiCheckers || new Map<string, ApiChecker>()) {
-      healthChecker?.register(checker!.method, checker!.params, checker!.validatorFunction, newProviders);
+      healthChecker?.register(checker!.method, checker!.params, checker!.validatorFunction, customProviders);
     }
   }
 
   const handleDeletionOfProvider = (provider: string) => {
     deleteProvider(provider);
-    const newProviders = structuredClone(customProviders)?.filter((customProvider) => customProvider !== provider);
     setScoredEndpoints(scoredEndpoints?.filter((endpoint) => endpoint.endpointUrl !== provider));
-    subscribeToCheckers(newProviders || []);
   }
 
   const handleAdditionOfProvider = (provider: string) => {
     addNewProvider(provider);
     setIsProviderAdditionDialogOpened(false);
-    const newProviders = [...(customProviders || []), provider];
-    subscribeToCheckers(newProviders);
   }
   
   useEffect(() => { 
@@ -93,6 +88,10 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
       initializeDefaultChecks();
     }
   }, [chainInitialized, customApiCheckers, healthChecker, initializeDefaultChecks])
+
+  useEffect(() => {
+    if (customProviders) subscribeToCheckers();
+  }, [customProviders])
 
   const renderProvider = (scoredEndpoint: TScoredEndpoint) => {
     const {endpointUrl, score, up,} = scoredEndpoint;
