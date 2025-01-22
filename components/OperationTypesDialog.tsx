@@ -93,7 +93,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     } else {
       setExpandedSections([]);
     }
-  }, [searchTerm]);
+  }, [searchTerm,operationTypes]);
 
   if (!operationTypes || !operationTypes.length) return null;
 
