@@ -5,9 +5,9 @@ import { config } from "@/Config";
 import Explorer from "@/types/Explorer";
 import { useHeadBlockNumber } from "../../contexts/HeadBlockContext";
 
-const DEFAULT_LAST_BLOCK_VALUE = 1000;
-const DEFAULT_LAST_TIME_UNIT_VALUE = 30;
-const DEFAULT_TIME_UNIT_SELECT_KEY = "days";
+export const DEFAULT_LAST_BLOCK_VALUE = 1000;
+export const DEFAULT_LAST_TIME_UNIT_VALUE = 30;
+export const DEFAULT_TIME_UNIT_SELECT_KEY = "days";
 
 interface RangesValues {
   payloadFromBlock?: number;
