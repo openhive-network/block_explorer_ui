@@ -16,45 +16,38 @@ export interface SearchesContextType {
   setPreviousCommentSearchProps: Dispatch<
     SetStateAction<Explorer.CommentSearchProps | undefined>
   >;
-
   previousAccountOperationsSearchProps:
     | Explorer.AccountSearchOperationsProps
     | undefined;
   setPreviousAccountOperationsSearchProps: Dispatch<
     SetStateAction<Explorer.AccountSearchOperationsProps | undefined>
   >;
-
   commentPaginationPage: number;
   setCommentPaginationPage: Dispatch<SetStateAction<number>>;
-
+  permlinkPaginationPage: number;
+  setPermlinkPaginationPage: Dispatch<SetStateAction<number>>;
   accountOperationsPage: number | undefined;
   setAccountOperationsPage: Dispatch<SetStateAction<number | undefined>>;
-
   lastSearchKey: SearchKey | undefined;
   setLastSearchKey: Dispatch<SetStateAction<SearchKey | undefined>>;
-
   blockSearchProps: Explorer.BlockSearchProps | undefined;
   setBlockSearchProps: Dispatch<
     SetStateAction<Explorer.BlockSearchProps | undefined>
   >;
-
   commentSearchProps: Explorer.CommentSearchProps | undefined;
   setCommentSearchProps: Dispatch<
     SetStateAction<Explorer.CommentSearchProps | undefined>
   >;
-
   permlinkSearchProps: Explorer.PermlinkSearchProps | undefined;
   setPermlinkSearchProps: Dispatch<
     SetStateAction<Explorer.PermlinkSearchProps | undefined>
   >;
-
   accountOperationsSearchProps:
     | Explorer.AccountSearchOperationsProps
     | undefined;
   setAccountOperationsSearchProps: Dispatch<
     SetStateAction<Explorer.AccountSearchOperationsProps | undefined>
   >;
-
   commentType: CommentType;
   setCommentType: Dispatch<SetStateAction<CommentType>>;
   commentsSearchAccountName: string | string[] | undefined;
@@ -97,6 +90,8 @@ export const SearchesContextProvider: React.FC<{
   ] = useState<Explorer.AccountSearchOperationsProps | undefined>(undefined);
 
   const [commentPaginationPage, setCommentPaginationPage] = useState<number>(1);
+  const [permlinkPaginationPage, setPermlinkPaginationPage] =
+    useState<number>(1);
 
   const [accountOperationsPage, setAccountOperationsPage] = useState<
     number | undefined
@@ -133,7 +128,8 @@ export const SearchesContextProvider: React.FC<{
     selectedCommentSearchOperationTypes,
     setSelectedCommentSearchOperationTypes,
   ] = useState<number[]>([]);
-  const searchRanges = useSearchRanges("lastBlocks");
+
+  const searchRanges = useSearchRanges();
 
   return (
     <SearchesContext.Provider
@@ -150,6 +146,8 @@ export const SearchesContextProvider: React.FC<{
         setPreviousAccountOperationsSearchProps,
         commentPaginationPage,
         setCommentPaginationPage,
+        permlinkPaginationPage,
+        setPermlinkPaginationPage,
         accountOperationsPage,
         setAccountOperationsPage,
         lastSearchKey,
