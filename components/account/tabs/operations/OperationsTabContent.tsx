@@ -85,13 +85,13 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
   ) as Hive.AccountOperationsResponse;
 
   const handleFilterClear = () => {
-    const newPage = rangeSelectKey !== "none" ? undefined : page;
+    const newPage = rangeSelectKey !== "lastTime" ? undefined : page;
     setParams({
       ...defaultSearchParams,
       accountName: accountNameFromRoute,
       page: newPage,
     });
-    searchRanges.setRangeSelectKey("none");
+    searchRanges.setRangeSelectKey("lastTime");
     setFilters([]);
   };
 
