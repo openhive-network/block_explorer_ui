@@ -6,6 +6,8 @@ import Explorer from "@/types/Explorer";
 import { useHeadBlockNumber } from "../../contexts/HeadBlockContext";
 
 const DEFAULT_LAST_BLOCK_VALUE = 1000;
+const DEFAULT_LAST_TIME_UNIT_VALUE = 30;
+const DEFAULT_TIME_UNIT_SELECT_KEY = "days";
 
 interface RangesValues {
   payloadFromBlock?: number;
@@ -34,10 +36,10 @@ export interface SearchRangesResult {
   setRangeSelectKey: (key: string) => void;
   setTimeUnitSelectKey: (blockNumber: string) => void;
   getRangesValues: () => RangesValues;
-  setRangesValues: (params: Explorer.CommentSearchParams) => void;
+  setRangesValues: (params: Explorer.CommentSearchParams | undefined) => void;
 }
 
-const useSearchRanges = (defaultSelectKey: string = "none") => {
+const useSearchRanges = (defaultSelectKey: string) => {
   const rangeSelectOptions: Explorer.SelectOption[] = [
     {
       name: "Last blocks",
@@ -85,18 +87,18 @@ const useSearchRanges = (defaultSelectKey: string = "none") => {
   const [startDate, setStartDate] = useState<Date | undefined>(
     new Date(config.firstBlockTime)
   );
-  const [endDate, setEndDate] = useState<Date | undefined>(
-    new Date(Date.now())
-  );
-  const [lastBlocksValue, setLastBlocksValue] = useState<number | undefined>(
+  const [endDate, setEndDate] = useState<Date>(new Date(Date.now()));
+  const [lastBlocksValue, setLastBlocksValue] = useState<number>(
     DEFAULT_LAST_BLOCK_VALUE
   );
-  const [lastTimeUnitValue, setLastTimeUnitValue] = useState<
-    number | undefined
-  >(undefined);
+  const [lastTimeUnitValue, setLastTimeUnitValue] = useState<number>(
+    DEFAULT_LAST_TIME_UNIT_VALUE
+  );
   const [rangeSelectKey, setRangeSelectKey] =
     useState<string>(defaultSelectKey);
-  const [timeUnitSelectKey, setTimeUnitSelectKey] = useState<string>("days");
+  const [timeUnitSelectKey, setTimeUnitSelectKey] = useState<string>(
+    DEFAULT_TIME_UNIT_SELECT_KEY
+  );
 
   const { checkTemporaryHeadBlockNumber } = useHeadBlockNumber();
 
