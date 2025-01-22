@@ -1,5 +1,4 @@
 import React from "react";
-import { useRouter } from "next/router";
 import Link from "next/link";
 
 import {
@@ -12,10 +11,6 @@ import {
 } from "@/components/ui/table";
 import Hive from "@/types/Hive";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
-
-import { Button } from "@/components/ui/button";
-import { useTabs } from "@/contexts/TabsContext";
-import { useSearchesContext } from "@/contexts/SearchesContext";
 
 interface CommentPermlinkResultTableProps {
   data: Hive.Permlink[];
@@ -47,10 +42,7 @@ const buildTableHeader = () => {
 const buildTableBody = (
   data: Hive.Permlink[],
   accountName: string | undefined,
-  buildLink: (accountName: string, permlink: string) => {},
-  isAccountPage: boolean,
-  //Open comments tab only when permlink is clicked on account page
-  showCommentsByPermlink: (permlink: string) => void
+  buildLink: (accountName: string, permlink: string) => {}
 ) => {
   if (!data || !data.length || !accountName) return;
 
@@ -68,16 +60,7 @@ const buildTableBody = (
               {operation_id}
             </TableCell>
             <TableCell className="text-center text-link">
-              {isAccountPage ? (
-                <Button
-                  className="bg-inherit"
-                  onClick={() => showCommentsByPermlink(permlink)}
-                >
-                  {permlink}
-                </Button>
-              ) : (
-                <Link href={linkToCommentsPage}>{permlink}</Link>
-              )}
+              <Link href={linkToCommentsPage}>{permlink}</Link>
             </TableCell>
             <TableCell className="text-left text-text">
               {formatAndDelocalizeTime(timestamp)}
@@ -97,17 +80,6 @@ const CommentPermlinkResultTable = ({
   data,
   accountName,
 }: CommentPermlinkResultTableProps) => {
-  const router = useRouter();
-  const isAccountPage = Boolean(router.query.accountName) || false;
-
-  const { setActiveTab } = useTabs();
-  const { setCommentsSearchPermlink } = useSearchesContext();
-
-  const showCommentsByPermlink = (permlink: string) => {
-    setCommentsSearchPermlink(permlink);
-    setActiveTab("comments");
-  };
-
   return (
     <>
       <div className="flex w-full overflow-auto">
@@ -117,13 +89,7 @@ const CommentPermlinkResultTable = ({
               <TableRow>{buildTableHeader()}</TableRow>
             </TableHeader>
             <TableBody>
-              {buildTableBody(
-                data,
-                accountName,
-                buildLink,
-                isAccountPage,
-                showCommentsByPermlink
-              )}
+              {buildTableBody(data, accountName, buildLink)}
             </TableBody>
           </Table>
         </div>
