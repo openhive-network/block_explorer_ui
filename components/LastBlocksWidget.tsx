@@ -36,6 +36,7 @@ type ChartBlockData = {
   virtual: number;
 };
 
+
 const CustomTooltip = ({
   active,
   payload,
@@ -48,28 +49,27 @@ const CustomTooltip = ({
   if (active && payload && payload.length) {
     const totalOperations = payload.reduce((acc, pld) => acc + pld.value, 0);
     return (
-      <div className="bg-theme dark:bg-theme p-2 rounded border border-explorer-light-gray">
-        <p className="font-bold">{`Block ${label}`}</p>
-        <div className="my-2">
+      <div className="data-box">
+        <p className="font-bold text-xl">{`Block ${label}`}</p>
+        <div className="my-3 flex items-center">
           <Image
-            className="rounded-full inline"
+            className="rounded-full"
             src={getHiveAvatarUrl(payload[0].payload.witness)}
             alt="avatar"
-            width={40}
-            height={40}
+            width={50}
+            height={50}
           />
-          <p className="inline ml-4">{payload[0].payload.witness}</p>
+          <p className="ml-4 font-semibold">{payload[0].payload.witness}</p>
         </div>
-        <div>operations: {totalOperations}</div>
-        <div>
+        <div className="text-sm opacity-80">Operations: {totalOperations}</div>
+        <div className="mt-2 space-y-2">
           {payload.map((pld, index) => (
-            <div
-              key={index}
-              style={{ color: pld.fill }}
-            >
-              <div>
-                {pld.dataKey} {pld.value}
-              </div>
+            <div key={index} className="flex items-center">
+              <div
+                className="w-4 h-4 rounded-full"
+                style={{ backgroundColor: pld.fill }}
+              />
+              <span className="ml-2 text-sm">{`${pld.dataKey}: ${pld.value}`}</span>
             </div>
           ))}
         </div>
@@ -79,6 +79,7 @@ const CustomTooltip = ({
 
   return null;
 };
+
 
 const getOpsCount = (lastBlocks: Hive.LastBlocksTypeResponse[]) => {
   const opsCount: ChartBlockData[] = lastBlocks.map((block) => ({
@@ -216,7 +217,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
             content={<CustomTooltip />}
           />
           <Legend
-            wrapperStyle={{ position: "relative" }}
+            wrapperStyle={{ position: "relative" , marginLeft: "35px"}}
             align="center"
           />
           <Bar

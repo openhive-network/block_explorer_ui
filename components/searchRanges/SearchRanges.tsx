@@ -1,12 +1,11 @@
-import React, { useEffect , useState } from "react";
+import React, { useEffect, useState } from "react";
 import moment from "moment";
 
 import { SearchRangesResult } from "../../hooks/common/useSearchRanges";
 import { Select, SelectContent, SelectTrigger, SelectItem } from "../ui/select";
 import { Input } from "../ui/input";
 import DateTimePicker from "../DateTimePicker";
-import ErrorMessage from "../ErrorMessage";// Import the ErrorMessage component
-
+import ErrorMessage from "../ErrorMessage"; // Import the ErrorMessage component
 interface SearchRangesProps {
   rangesProps: SearchRangesResult;
   safeTimeRangeDisplay?: boolean;
@@ -37,23 +36,77 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
     setLastTimeUnitValue,
   } = rangesProps;
 
-  // Validate and update numeric values
+  
+  const [rangeError, setRangeError] = useState<string | null>(null); 
+
+  const handleOnBlur = (
+    e: React.FocusEvent<HTMLInputElement>,
+    fieldSetter: Function,
+    validateField: Function | null
+  ) => {
+    const value = e.target.value;
+    const numericValue = value ? Number(value) : undefined;
+
+    // Fetch the latest block number dynamically
+    let validated = true;
+    if (validateField) {
+      validated = validateField(e, numericValue); 
+    }
+
+    validated ? fieldSetter(numericValue) : fieldSetter(null);
+  };
+
+  const validateToBlock = (
+    e: React.FocusEvent<HTMLInputElement>,
+    value: number | undefined,
+  ) => {
+    if (value !== undefined && value <= 0) {
+      setRangeError("Block Number must be a positive number");
+      e.target.value = "";
+      return false;
+    }
+    if (value && fromBlock && !isNaN(value) && value < fromBlock) {
+      setRangeError("To block must be greater than From block");
+      e.target.value = "";
+      return false;
+    }
+    return true;
+  };
+
+  const validateFromBlock = (
+    e: React.FocusEvent<HTMLInputElement>,
+    value: number | undefined,
+  ) => {
+    if (value !== undefined && value <= 0) {
+      setRangeError("Block Number must be a positive number");
+      e.target.value = "";
+      return false;
+    }
+    if (value && toBlock && !isNaN(value) && value > toBlock) {
+      setRangeError("From block must be less than To block");
+      e.target.value = "";
+      return false;
+    }
+    return true;
+  };
+
   const handleNumericInput = (
     e: React.ChangeEvent<HTMLInputElement>,
     allowDecimal: boolean = false
   ) => {
     let cleanedValue = e.target.value;
-  
+
     // Clean the value based on the logic
     cleanedValue = allowDecimal
       ? cleanedValue.replace(/[^0-9.]/g, "") // Allow numbers and decimal point
       : cleanedValue.replace(/[^0-9]/g, ""); // Only allow numbers
-  
+
     if (allowDecimal && cleanedValue.split(".").length > 2) {
-      cleanedValue = cleanedValue.slice(0, cleanedValue.indexOf(".") + 1) + 
-      cleanedValue.split(".").slice(1).join(""); // Remove extra decimals
+      cleanedValue =
+        cleanedValue.slice(0, cleanedValue.indexOf(".") + 1) +
+        cleanedValue.split(".").slice(1).join(""); // Remove extra decimals
     }
-  
+
     if (cleanedValue.length > 15) {
       cleanedValue = cleanedValue.slice(0, 15); // Limit to 15 digits
     }
@@ -68,10 +121,9 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
     ) {
       setStartDate(moment(startDate).subtract(1, "hours").toDate());
     }
-    //eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startDate, endDate]);
 
-  const [blockRangeError, setBlockRangeError] = useState<string | null>(null); // Error state for block range validation
 
   return (
     <div className="py-2 flex flex-col gap-y-2">
@@ -109,11 +161,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
               type="text" // Use type="text" to allow custom validation
               defaultValue={lastBlocksValue || ""}
               onChange={(e) => handleNumericInput(e)}
-              onBlur={(e) => {
-                const value = e.target.value;
-                const numericValue = value ? Number(value) : undefined; 
-                setLastBlocksValue(numericValue);
-              }}
+              onBlur={(e) => handleOnBlur(e,setLastBlocksValue,null)}
               placeholder={"Last"}
             />
           </div>
@@ -129,11 +177,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
                 className="bg-theme border-0 border-b-2 text-text"
                 defaultValue={lastTimeUnitValue || ""}
                 onChange={(e) => handleNumericInput(e,true)}
-                onBlur={(e) => {
-                  const value = e.target.value;
-                  const numericValue = value ? Number(value) : undefined;
-                  setLastTimeUnitValue(numericValue);
-                }}
+                onBlur={(e) => handleOnBlur(e,setLastTimeUnitValue,null)}
                 placeholder={"Last"}
               />
             </div>
@@ -174,11 +218,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
               data-testid="from-block-input"
               defaultValue={fromBlock || ""}
               onChange={(e) => handleNumericInput(e)}
-              onBlur={(e) => {
-                const value = e.target.value;
-                const numericValue = value ? Number(value) : undefined;
-                setFromBlock(numericValue);
-              }}
+              onBlur={(e) => handleOnBlur(e,setFromBlock,validateFromBlock)}
               placeholder="From"
             />
           </div>
@@ -190,35 +230,15 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
               defaultValue={toBlock || ""}
               onChange={(e) => handleNumericInput(e)}
               placeholder={"To"}
-              onBlur={(e: React.FocusEvent<HTMLInputElement>) => {
-                const value = e.target.value;
-                const numericValue = value ? Number(value) : undefined;
-                  if (
-                    numericValue &&
-                    fromBlock &&
-                    !isNaN(numericValue) &&
-                    !isNaN(Number(fromBlock)) &&
-                    numericValue < Number(fromBlock)
-                  ) {
-                    setBlockRangeError("To block must be greater than From block");
-                    e.target.value = "";
-                  } else if (numericValue !=undefined && numericValue <= 0 && fromBlock) {
-                    setBlockRangeError("To block must be greater than From block");
-                    e.target.value = "";
-                  } else {
-                    setToBlock(numericValue);
-                    setBlockRangeError(null);
-                  }
-                }
-              }
+              onBlur={(e) => handleOnBlur(e,setToBlock,validateToBlock)}
             />
           </div>
         </div>
       )}
-      {blockRangeError && (
+      {rangeError && (
         <ErrorMessage
-          message={blockRangeError}
-          onClose={() => setBlockRangeError(null)} // Close the error message
+          message={rangeError}
+          onClose={() => setRangeError(null)} // Close the error message
           timeout={3000}
         />
       )}

@@ -142,6 +142,26 @@ const useSearchRanges = (defaultSelectKey: string = "lastTime") => {
         .milliseconds(0)
         .toDate();
     }
+    
+    //Validate that payloadStartDate is a valid
+    if (payloadStartDate && (isNaN(payloadStartDate?.getTime()) || payloadStartDate?.getTime() <= 0)) {
+      payloadStartDate = undefined; //fallback
+    }
+    //Validate that payloadToBlock does not exceed latest headblock number
+    if (payloadToBlock) {
+      const currentHeadBlockNumber = await checkTemporaryHeadBlockNumber();
+      if (payloadToBlock > currentHeadBlockNumber) {
+        payloadToBlock = currentHeadBlockNumber; //fallback
+      }
+    }
+    if(payloadFromBlock)
+    {
+      const currentHeadBlockNumber = await checkTemporaryHeadBlockNumber();
+      if (payloadFromBlock > currentHeadBlockNumber) {
+        payloadFromBlock = currentHeadBlockNumber; //fallback
+      }
+    }
+
     return {
       payloadFromBlock,
       payloadToBlock,

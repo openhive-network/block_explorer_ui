@@ -84,7 +84,7 @@ export const formatPercent = (numberToFormat: number): string => {
 export const convertOperationResultsToTableOperations = (
   operations: Hive.OperationResponse[]
 ): Explorer.OperationForTable[] => {
-  return operations.map((operation) => ({
+  return operations?.map((operation) => ({
     operation: operation.op,
     blockNumber: operation.block,
     trxId: operation.trx_id,

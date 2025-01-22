@@ -1,14 +1,14 @@
-import { Fragment } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
-
 import { convertUTCDateToLocalDate } from "@/utils/TimeUtils";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { Table, TableBody, TableRow, TableCell } from "../ui/table";
 import {
-  fundAndSupplyParameters,
-  hiveParameters,
-  blockchainDates,
+fundAndSupplyParameters,
+hiveParameters,
+blockchainDates,
 } from "./headBlockParameters";
+
+import { Loader2 } from "lucide-react";
 
 const cardNameMap = new Map([
   ["feedPrice", "Feed price"],
@@ -53,6 +53,7 @@ interface HeadBlockPropertyCardProps {
   header: string;
   isParamsHidden: boolean;
   handleHideParams: () => void;
+  isLoading: boolean;
 }
 
 const buildTableBody = (
@@ -61,18 +62,16 @@ const buildTableBody = (
   dynamicGlobalData: any
 ) => {
   return parameters.map((param: string, index: number) => (
-    <Fragment key={index}>
-      <TableRow className={"border-b border-gray-700  hover:bg-inherit"}>
-        <TableCell>{cardNameMap.get(param)}</TableCell>
-        <TableCell>
-          {header === "Blockchain Dates"
+    <TableRow key={index} className="border-b border-gray-700 hover:bg-inherit">
+      <TableCell>{cardNameMap.get(param)}</TableCell>
+      <TableCell>
+        {header === "Blockchain Dates"
             ? convertUTCDateToLocalDate(
                 dynamicGlobalData?.headBlockDetails[param]
               )
-            : dynamicGlobalData?.headBlockDetails[param]}
-        </TableCell>
-      </TableRow>
-    </Fragment>
+          : dynamicGlobalData?.headBlockDetails[param]}
+      </TableCell>
+    </TableRow>
   ));
 };
 
@@ -81,31 +80,32 @@ const HeadBlockPropertyCard: React.FC<HeadBlockPropertyCardProps> = ({
   header,
   isParamsHidden,
   handleHideParams,
+  isLoading,
 }) => {
   const { dynamicGlobalData } = useDynamicGlobal() as any;
 
   return (
-    <div
-      className="bg-theme py-1 rounded-[6px]"
-      data-testid="expandable-list"
-    >
-      <div
-        onClick={handleHideParams}
-        className="h-full flex justify-between align-center py-2 hover:bg-rowHover cursor-pointer px-2"
-      >
+    <div className="bg-theme py-1 rounded-[6px] data-box" data-testid="expandable-list" style={{ overflowX: "auto", width: "100%" }}>
+      <div onClick={handleHideParams} className="h-full w-full flex items-center justify-between py-1 cursor-pointer px-1">
         <div className="text-lg">{header}</div>
-        {isParamsHidden ? <ArrowDown /> : <ArrowUp />}
+        <div>{isParamsHidden ? <ArrowDown /> : <ArrowUp />}</div>
       </div>
-      <div
-        hidden={isParamsHidden}
-        data-testid="conntent-expandable-list"
-      >
-        <Table>
-          <TableBody>
-            {buildTableBody(parameters, header, dynamicGlobalData)}
-          </TableBody>
-        </Table>
-      </div>
+
+      {isLoading && !isParamsHidden ? (
+        <div className="flex justify-center w-full">
+          <Loader2 className="animate-spin mt-1 text-white h-8 w-8" />
+        </div>
+      ) : (
+        <div hidden={isParamsHidden} data-testid="content-expandable-list">
+          <div style={{ overflowX: "auto" }}>
+            <Table className="min-w-full">
+              <TableBody>
+                {dynamicGlobalData?.headBlockDetails && buildTableBody(parameters, header, dynamicGlobalData)}
+              </TableBody>
+            </Table>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
