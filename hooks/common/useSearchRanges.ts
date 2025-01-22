@@ -39,7 +39,7 @@ export interface SearchRangesResult {
   setRangesValues: (params: Explorer.CommentSearchParams | undefined) => void;
 }
 
-const useSearchRanges = (defaultSelectKey: string) => {
+const useSearchRanges = (defaultSelectKey: string = "lastTime") => {
   const rangeSelectOptions: Explorer.SelectOption[] = [
     {
       name: "Last blocks",
