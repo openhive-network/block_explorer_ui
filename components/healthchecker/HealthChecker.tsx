@@ -62,17 +62,18 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     setChainIntialized(true);
   }
 
-  const restoreDefault = () => {
-    resetProviders();
-  }
-
+  
   const subscribeToCheckers = () => {
     healthChecker?.unregisterAll();
     for (const [key, checker] of customApiCheckers || new Map<string, ApiChecker>()) {
       healthChecker?.register(checker!.method, checker!.params, checker!.validatorFunction, customProviders);
     }
   }
-
+  
+  const restoreDefault = () => {
+    resetProviders();
+  }
+  
   const handleDeletionOfProvider = (provider: string) => {
     deleteProvider(provider);
     setScoredEndpoints(scoredEndpoints?.filter((endpoint) => endpoint.endpointUrl !== provider));
