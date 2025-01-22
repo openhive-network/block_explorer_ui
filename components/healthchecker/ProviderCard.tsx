@@ -42,8 +42,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
         {latency ? <span>Latency: {latency}</span> : null}
       </div>
       <div className="col-start-7 row-start-1 col-span-2 row-span-2 flex flex-col">
-        {isSelected ?   
-          <div className="flex justify-end">Selected</div> :
+        {!isSelected && 
           <>
             <Button className="hover:bg-slate-400 bg-transparent rounded self-end w-fit" onClick={() => {deleteProvider(providerLink)}}><X /></Button>
             <div className="flex justify-end items-center gap-2">
