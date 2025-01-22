@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,13 +10,13 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Hive from "@/types/Hive";
 import { getOperationTypeForDisplay } from "@/utils/UI";
 import { useUserSettingsContext } from "../contexts/UserSettingsContext";
 import { cn } from "@/lib/utils";
 import Chip from "./Chip";
 import { categorizedOperationTypes } from "@/utils/CategorizedOperationTypes";
 import Explorer from "@/types/Explorer";
+import { ChevronDown, Search} from "lucide-react";
 
 type OperationTypesDialogProps = {
   operationTypes?: Explorer.ExtendedOperationTypePattern[];
@@ -40,6 +40,24 @@ export const colorByOperationCategory: Record<string, string> = {
   Other: "bg-explorer-operations-other",
 };
 
+const getCategoriesToExpand = (
+  selectedIds: number[],
+  operationTypes: Explorer.ExtendedOperationTypePattern[] | undefined,
+  categorizedOperationTypes: { name: string; types: string[] }[]
+): string[] => {
+  if (!operationTypes) return [];
+  return categorizedOperationTypes
+    .filter((cat) =>
+      cat.types.some((type) => {
+        const operationType = operationTypes.find(
+          (op) => op.operation_name === type
+        );
+        return selectedIds.includes(operationType?.op_type_id || 0);
+      })
+    )
+    .map((cat) => cat.name);
+};
+
 const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
   operationTypes,
   triggerTitle,
@@ -51,10 +69,33 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     []
   );
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [isOperationFilterHover, setIsOperationFilterHover] = useState(false);
   const { settings } = useUserSettingsContext();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [expandedSections, setExpandedSections] = useState<string[]>([]);
 
-  if (!operationTypes || !operationTypes.length) return;
+  const categoryHeadersRef = useRef<Record<string, HTMLDivElement | undefined>>(
+    {} as Record<string, HTMLDivElement | undefined>
+  );
+
+  useEffect(() => {
+    if (searchTerm) {
+      const allMatchingCategories = categorizedOperationTypes
+        .filter((cat) =>
+          cat.types.some((type) =>
+            operationTypes
+              ?.find((op) => op.operation_name === type)
+              ?.operation_name.toLowerCase()
+              .includes(searchTerm.toLowerCase())
+          )
+        )
+        .map((cat) => cat.name);
+      setExpandedSections(allMatchingCategories);
+    } else {
+      setExpandedSections([]);
+    }
+  }, [searchTerm]);
+
+  if (!operationTypes || !operationTypes.length) return null;
 
   const nonDisabledOperationTypes = operationTypes.filter(
     (operationType) => !operationType.isDisabled
@@ -66,6 +107,18 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
   const nonVirtualOperations = nonDisabledOperationTypes.filter(
     (operationType) => !operationType.is_virtual
   );
+
+  const filterOperations = (
+    operationType: Explorer.ExtendedOperationTypePattern
+  ) => {
+    if (!searchTerm) return true;
+    return operationType.operation_name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+  };
+
+  const filteredNonDisabledOperations =
+    nonDisabledOperationTypes.filter(filterOperations);
 
   const onFiltersSelect = (id: number) => {
     if (selectedOperationsIds.includes(id)) {
@@ -93,41 +146,52 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
   const onOpenChange = (open: boolean) => {
     if (open) {
       setSelectedOperationsIds(selectedOperations);
+      if (searchTerm) {
+         const allMatchingCategories = getCategoriesToExpand(selectedOperations, operationTypes, categorizedOperationTypes);
+        setExpandedSections(allMatchingCategories);
+      }
     }
+
     setIsOpen(open);
   };
 
-  const selectAll = () => {
-    const allIds = nonDisabledOperationTypes.map(
+    const selectAll = () => {
+    const allIds = filteredNonDisabledOperations.map(
       (operationType) => operationType.op_type_id
     );
     setSelectedOperationsIds(allIds);
+   const allMatchingCategories = getCategoriesToExpand(allIds, operationTypes, categorizedOperationTypes);
+    setExpandedSections(allMatchingCategories);
   };
 
   const selectReal = () => {
-    const realIds = nonVirtualOperations.map(
-      (operationType) => operationType.op_type_id
-    );
+    const realIds = nonVirtualOperations
+      .filter(filterOperations)
+      .map((operationType) => operationType.op_type_id);
     let finaList = [...realIds, ...selectedOperationsIds];
     finaList = finaList.filter((id, index) => finaList.indexOf(id) === index);
     setSelectedOperationsIds([...finaList]);
+    const allMatchingCategories = getCategoriesToExpand(finaList, operationTypes, categorizedOperationTypes);
+    setExpandedSections(allMatchingCategories);
   };
 
   const selectVirtual = () => {
-    const virtualIds = virtualOperations.map(
-      (operationType) => operationType.op_type_id
-    );
+    const virtualIds = virtualOperations
+      .filter(filterOperations)
+      .map((operationType) => operationType.op_type_id);
     let finaList = [...virtualIds, ...selectedOperationsIds];
     finaList = finaList.filter((id, index) => finaList.indexOf(id) === index);
-    setSelectedOperationsIds(finaList);
+    setSelectedOperationsIds([...finaList]);
+    const allMatchingCategories = getCategoriesToExpand(finaList, operationTypes, categorizedOperationTypes);
+    setExpandedSections(allMatchingCategories);
   };
 
   const selectAllOfCategory = (
     operationTypes: Explorer.ExtendedOperationTypePattern[]
   ) => {
-    const nonDisabledOperationTypesForCategory = operationTypes.filter(
-      (operationType) => !operationType.isDisabled
-    );
+    const nonDisabledOperationTypesForCategory = operationTypes
+      .filter(filterOperations)
+      .filter((operationType) => !operationType.isDisabled);
     const operationsIds = nonDisabledOperationTypesForCategory.map(
       (operationType) => operationType.op_type_id
     );
@@ -139,17 +203,17 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
   const clearCategory = (
     operationTypes: Explorer.ExtendedOperationTypePattern[]
   ) => {
-    const operationsIds = operationTypes.map(
-      (operationType) => operationType.op_type_id
-    );
+    const operationsIds = operationTypes
+      .filter(filterOperations)
+      .map((operationType) => operationType.op_type_id);
     const finalOperations = [...selectedOperationsIds].filter(
       (selectedOperationId) => !operationsIds.includes(selectedOperationId)
     );
     setSelectedOperationsIds(finalOperations);
   };
 
-  const invertSelection = () => {
-    const allIds = nonDisabledOperationTypes.map(
+ const invertSelection = () => {
+    const allIds = filteredNonDisabledOperations.map(
       (operationType) => operationType.op_type_id
     );
     const finaList = allIds.filter(
@@ -158,6 +222,8 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
         undefined
     );
     setSelectedOperationsIds(finaList);
+  const allMatchingCategories = getCategoriesToExpand(finaList, operationTypes, categorizedOperationTypes);
+    setExpandedSections(allMatchingCategories);
   };
 
   const renderOperationType = (
@@ -167,13 +233,13 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
       <li
         onClick={() => onFiltersSelect(operationType.op_type_id)}
         key={operationType.op_type_id}
-        className="col-span-3 pl-2 md:col-span-1 flex items-center font-bold text-text rounded-lg bg-inherit hover:bg-rowHover"
+        className="flex items-center py-1 px-2 rounded-md hover:bg-rowHover cursor-pointer"
       >
         <Input
           type="checkbox"
           checked={selectedOperationsIds.includes(operationType.op_type_id)}
-          name="bordered-checkbox"
-          className=" w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 "
+          name={`operation-checkbox-${operationType.op_type_id}`}
+          className=" w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
           {...{
             "data-testid": `operation-type-checkbox-${operationType.operation_name}`,
           }}
@@ -181,24 +247,43 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           disabled={operationType.isDisabled}
         />
         <Label
-          htmlFor="bordered-checkbox-1"
+          htmlFor={`operation-checkbox-${operationType.op_type_id}`}
           className={cn(
-            "p-1 ml-2 text-sm font-medium text-text whitespace-nowrap overflow-hidden text-ellipsis",
+            "p-1 ml-1 text-sm font-medium text-text whitespace-normal overflow-hidden text-ellipsis",
             {
               "text-sky-500 dark:text-sky-200": operationType.is_virtual,
               "opacity-50": operationType.isDisabled,
             }
-          )}
+          )} 
           {...{
             "data-testid": `operation-type-label-${operationType.operation_name}`,
-          }}
-        >
+          }}        
+          >
           {settings.rawJsonView
             ? operationType.operation_name
             : getOperationTypeForDisplay(operationType.operation_name)}
         </Label>
       </li>
     );
+  };
+
+  const toggleSection = (sectionName: string) => {
+    setExpandedSections((prev) => {
+      if (prev.includes(sectionName)) {
+        return prev.filter((s) => s !== sectionName);
+      } else {
+        return [...prev, sectionName];
+      }
+    });
+  };
+
+  const handleExpandAll = () => {
+    const allCategories = categorizedOperationTypes.map((cat) => cat.name);
+    setExpandedSections(allCategories);
+  };
+
+  const handleCollapseAll = () => {
+    setExpandedSections([]);
   };
 
   const renderSection = (sectionName: string, operationsNames: string[]) => {
@@ -214,52 +299,80 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     const sortedOperations = operations.sort((a, b) =>
       a?.operation_name.localeCompare(b?.operation_name)
     );
-    const nonDisabledOperationTypesForSection = operations.filter(
+    const filteredOperations = sortedOperations.filter(filterOperations);
+    const nonDisabledOperationTypesForSection = filteredOperations.filter(
       (operationType) => !operationType.isDisabled
     );
+
+    const isExpanded = expandedSections.includes(sectionName);
+    const allIdsInCategory = nonDisabledOperationTypesForSection.map(
+      (operationType) => operationType.op_type_id
+    );
+
+      const isCategoryChecked = nonDisabledOperationTypesForSection.length > 0 ? allIdsInCategory.every((id) =>
+      selectedOperationsIds.includes(id)
+    ) : false;
+
+    const handleCategoryCheckboxChange = () => {
+      if (isCategoryChecked) {
+        clearCategory(operations);
+        setExpandedSections((prev) => prev.filter((s) => s !== sectionName));
+      } else {
+        selectAllOfCategory(operations);
+        setExpandedSections((prev) => [...prev, sectionName]);
+      }
+    };
+
+    if (searchTerm && filteredOperations.length === 0) {
+      return null;
+    }
+
     return (
-      <div
-        className=" border-t px-2"
-        key={sectionName}
-      >
-        <div className="flex justify-between">
-          <div className="flex items-center justify-center">
+      <div className=" border-t px-2" key={sectionName}>
+        <div
+          className="flex items-center justify-between py-2 cursor-pointer  z-10"
+          onClick={() => toggleSection(sectionName)}
+           ref={(el) => {
+            if (el) {
+              categoryHeadersRef.current[sectionName] = el;
+            }
+          }}
+        >
+          <div className="flex items-center  flex-1 ">
+            <Input
+              type="checkbox"
+              checked={isCategoryChecked}
+              onChange={handleCategoryCheckboxChange}
+              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 mr-2"
+              id={`category-checkbox-${sectionName}`}
+            />
             <span
               className={`rounded w-4 h-4 mr-2 ${colorByOperationCategory[sectionName]}`}
             ></span>
-            <span>{sectionName}</span>
+            <span className="font-semibold flex-1 truncate">{sectionName}</span>
           </div>
-          <div>
-            <Button
-              className="bg-inherit text-text"
-              disabled={!nonDisabledOperationTypesForSection.length}
-              onClick={() => selectAllOfCategory(operations)}
-            >
-              Select
-            </Button>
-            <Button
-              className="bg-inherit text-text"
-              disabled={!nonDisabledOperationTypesForSection.length}
-              onClick={() => clearCategory(operations)}
-            >
-              Clear
-            </Button>
-          </div>
+          <ChevronDown
+            className={cn("h-5 w-5 transition-transform transform", {
+              "rotate-180": isExpanded,
+            })}
+          />
         </div>
-        <ul
-          className="my-4 grid grid-cols-4 gap-4 place-items-stretch text-text "
-          data-testid="virtual-operations-list"
-        >
-          {sortedOperations.map(
-            (operation) => !!operation && renderOperationType(operation)
-          )}
-        </ul>
+        {isExpanded && (
+          <ul className={cn("my-2 grid  gap-y-2", {
+            "sm:grid-cols-4": true,
+          })}>
+            {filteredOperations.map(
+              (operation) => !!operation && renderOperationType(operation)
+            )}
+          </ul>
+        )}
       </div>
     );
   };
 
   const handleClearOperationsFilter = () => {
     setSelectedOperations([]);
+    setSearchTerm("");
   };
 
   return (
@@ -279,15 +392,82 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
         />
       ) : null}
       <DialogContent
-        className="max-w-[95%] md:max-w-[80%] max-h-[90%] md:max-h-[80%] flex-column justify-center align-center  bg-white text-black dark:bg-theme dark:text-white overflow-auto px-0"
+        className=" pt-10 max-w-[95%] h-[90%] sm:max-h-[90%] sm:w-[90%] flex flex-col align-center overflow-auto px-0"
         data-testid="operation-types-dialog"
       >
-        <DialogHeader>
-          <DialogTitle className="flex justify-center pt-2">
-            Operation types filters
-          </DialogTitle>
+        <DialogHeader className="pb-0">
+          <div className="flex flex-col sm:flex-row justify-between items-center px-2">
+            <DialogTitle className="flex pb-1">
+              Operation Types Filters
+            </DialogTitle>
+            <div className="flex space-x-1">
+              <Button
+                type="button"
+                className="operations-button text-xs"
+                onClick={selectAll}
+              >
+                All
+              </Button>
+              <Button
+                type="button"
+                className="operations-button text-xs"
+                onClick={selectReal}
+              >
+                Real
+              </Button>
+              <Button
+                type="button"
+                 className="operations-button text-xs"
+                onClick={selectVirtual}
+              >
+                Virtual
+              </Button>
+              <Button
+                type="button"
+                 className="operations-button text-xs"
+                onClick={invertSelection}
+              >
+                Invert
+              </Button>
+              <Button
+                type="button"
+                className="operations-button text-xs"
+                onClick={handleOnClear}
+              >
+                Clear
+              </Button>
+            </div>
+          </div>
+          <div className="px-2 mt-1">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4" />
+              <Input
+                 type="text"
+                 placeholder="Search operations..."
+                 value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                 className="pl-10 pr-3 w-full"
+              />
+            </div>
+          </div>
+          <div className="flex space-x-1 px-1">
+            <Button
+              type="button"
+              className="bg-inherit text-xs px-2"
+              onClick={handleExpandAll}
+            >
+              Expand All
+            </Button>
+            <Button
+              type="button"
+              className="bg-inherit text-xs px-2"
+              onClick={handleCollapseAll}
+            >
+              Collapse All
+            </Button>
+          </div>
         </DialogHeader>
-        <div className="overflow-auto max-h-[500px] md:max-h-[600px]">
+        <div className="overflow-auto">
           {categorizedOperationTypes.map((categorizedOperationType) =>
             renderSection(
               categorizedOperationType.name,
@@ -295,52 +475,15 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
             )
           )}
         </div>
-        <DialogFooter>
+        <DialogFooter className="pt-0">
           <div
-            className="flex flex-wrap justify-between w-full gap-y-4 border-t pt-4 px-2"
+            className="flex flex-wrap justify-end w-full gap-y-4 border-t pt-4 px-2"
             data-testid="operation-types-dialog-footer"
           >
-            <div className="flex">
-              <Button
-                type="button"
-                className="bg-inherit text-black dark:text-white"
-                onClick={selectAll}
-              >
-                Select all
-              </Button>
-              <Button
-                type="button"
-                className="bg-inherit text-black dark:text-white"
-                onClick={selectReal}
-              >
-                Select real
-              </Button>
-              <Button
-                type="button"
-                className="bg-inherit text-black dark:text-white"
-                onClick={selectVirtual}
-              >
-                Select virtual
-              </Button>
-              <Button
-                type="button"
-                className="bg-inherit text-black dark:text-white"
-                onClick={invertSelection}
-              >
-                Invert
-              </Button>
-              <Button
-                type="button"
-                className="bg-inherit text-black dark:text-white"
-                onClick={handleOnClear}
-              >
-                Clear
-              </Button>
-            </div>
             <div className="flex w-full md:w-auto justify-center">
               <Button
                 type="button"
-                className="bg-inherit text-black dark:text-white mx-2"
+                className="bg-inherit mx-2"
                 onClick={() => {
                   onOpenChange(false);
                 }}
