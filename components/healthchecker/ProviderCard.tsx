@@ -57,7 +57,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
           </>
         }
       </div>
-      <div className="row-start-2 flex items-center col-start-1 col-span-6 flex-wrap">
+      <div className={cn("row-start-2 flex items-center col-start-1 col-span-6 flex-wrap", {"py-2": isSelected})}>
         {checkerNamesList.map((checkerName) => 
           <Badge 
             key={customApiCheckers?.get(checkerName)?.title} 
