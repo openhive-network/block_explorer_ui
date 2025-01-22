@@ -1,7 +1,7 @@
-import CommentsPermlinkSearch from "@/components/home/searches/CommentPermlinkSearch";
 import CommentPermlinkSearchResults from "@/components/home/searches/searchesResults/CommentPermlinkSearchResults";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
+import AccountCommentsPermlinkSearch from "./AccountCommentsPermlinkSearch";
 
 const PostsTabContent = () => {
   return (
@@ -11,7 +11,7 @@ const PostsTabContent = () => {
           <CardTitle>Post search</CardTitle>
         </CardHeader>
         <CardContent>
-          <CommentsPermlinkSearch />
+          <AccountCommentsPermlinkSearch />
         </CardContent>
       </Card>
       <CommentPermlinkSearchResults />
