@@ -38,9 +38,9 @@ export const defaultSearchParams: AccountSearchParams = {
   fromDate: undefined,
   toDate: undefined,
   lastBlocks: undefined,
-  lastTime: undefined,
+  lastTime: 30,
   timeUnit: "days",
-  rangeSelectKey: "none",
+  rangeSelectKey: "lastTime",
   page: undefined,
   filters: [],
 };

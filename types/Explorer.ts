@@ -108,8 +108,7 @@ declare module Explorer {
   interface PermlinkSearchProps extends CommonSearchProps {
     accountName: string;
     commentType?: CommentType;
-    page?: number;
-    pageSize?: number;
+    pageNumber?: number;
   }
 
   interface SelectOption {
