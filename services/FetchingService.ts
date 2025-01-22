@@ -365,8 +365,8 @@ class FetchingService {
     const requestParams: Hive.GetCommentPermlinksParams = {
       accountName: permlinkSearchProps.accountName,
       "comment-type": permlinkSearchProps.commentType,
-      page: 1,
-      "page-size": 100,
+      page: permlinkSearchProps.pageNumber || 1,
+      "page-size": config.standardPaginationSize,
       "from-block":
         permlinkSearchProps.fromBlock || permlinkSearchProps.startDate,
       "to-block": permlinkSearchProps.toBlock || permlinkSearchProps.endDate,
