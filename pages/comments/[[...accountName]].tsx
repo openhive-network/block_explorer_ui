@@ -42,7 +42,7 @@ const Comments: React.FC = () => {
     if (!commentSearchProps) {
       setCommentSearchPropsFromUrl(router.query);
     }
-  }, [router.query]);
+  }, [commentSearchProps, router.query]);
 
   return (
     <div
