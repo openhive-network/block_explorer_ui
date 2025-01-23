@@ -71,7 +71,9 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { settings } = useUserSettingsContext();
   const [searchTerm, setSearchTerm] = useState("");
-  const [expandedSections, setExpandedSections] = useState<string[]>([]);
+  const [expandedSections, setExpandedSections] = useState<string[]>(
+    categorizedOperationTypes.map((cat) => cat.name)
+  );
 
   const categoryHeadersRef = useRef<Record<string, HTMLDivElement | undefined>>(
     {} as Record<string, HTMLDivElement | undefined>
@@ -90,10 +92,8 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
         )
         .map((cat) => cat.name);
       setExpandedSections(allMatchingCategories);
-    } else {
-      setExpandedSections([]);
     }
-  }, [searchTerm,operationTypes]);
+  }, [searchTerm, operationTypes]);
 
   if (!operationTypes || !operationTypes.length) return null;
 
@@ -155,7 +155,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     setIsOpen(open);
   };
 
-    const selectAll = () => {
+  const selectAll = () => {
     const allIds = filteredNonDisabledOperations.map(
       (operationType) => operationType.op_type_id
     );
@@ -212,7 +212,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     setSelectedOperationsIds(finalOperations);
   };
 
- const invertSelection = () => {
+  const invertSelection = () => {
     const allIds = filteredNonDisabledOperations.map(
       (operationType) => operationType.op_type_id
     );
@@ -254,11 +254,11 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
               "text-sky-500 dark:text-sky-200": operationType.is_virtual,
               "opacity-50": operationType.isDisabled,
             }
-          )} 
+          )}
           {...{
             "data-testid": `operation-type-label-${operationType.operation_name}`,
-          }}        
-          >
+          }}
+        >
           {settings.rawJsonView
             ? operationType.operation_name
             : getOperationTypeForDisplay(operationType.operation_name)}
@@ -309,7 +309,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
       (operationType) => operationType.op_type_id
     );
 
-      const isCategoryChecked = nonDisabledOperationTypesForSection.length > 0 ? allIdsInCategory.every((id) =>
+    const isCategoryChecked = nonDisabledOperationTypesForSection.length > 0 ? allIdsInCategory.every((id) =>
       selectedOperationsIds.includes(id)
     ) : false;
 
@@ -332,7 +332,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
         <div
           className="flex items-center justify-between py-2 cursor-pointer  z-10"
           onClick={() => toggleSection(sectionName)}
-           ref={(el) => {
+          ref={(el) => {
             if (el) {
               categoryHeadersRef.current[sectionName] = el;
             }
@@ -359,7 +359,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
         </div>
         {isExpanded && (
           <ul className={cn("my-2 grid  gap-y-2", {
-            "sm:grid-cols-4": true,
+              "sm:grid-cols-4": true,
           })}>
             {filteredOperations.map(
               (operation) => !!operation && renderOperationType(operation)
@@ -417,14 +417,14 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
               </Button>
               <Button
                 type="button"
-                 className="operations-button text-xs"
+                className="operations-button text-xs"
                 onClick={selectVirtual}
               >
                 Virtual
               </Button>
               <Button
                 type="button"
-                 className="operations-button text-xs"
+                className="operations-button text-xs"
                 onClick={invertSelection}
               >
                 Invert
@@ -442,11 +442,11 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4" />
               <Input
-                 type="text"
-                 placeholder="Search operations..."
-                 value={searchTerm}
+                type="text"
+                placeholder="Search operations..."
+                value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                 className="pl-10 pr-3 w-full"
+                className="pl-10 pr-3 w-full"
               />
             </div>
           </div>
