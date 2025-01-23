@@ -123,7 +123,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
 
   return (
     <div className={cn(className)}>
-      <Card className="grid grid-cols-4 grid-rows-3 gap-y-1 my-1 p-2 mb-4">
+      <Card className="grid grid-cols-4 grid-rows-4 md:grid-rows-2 gap-y-1 my-1 p-2 mb-4">
         <div className="row-start-1 col-start-1 col-span-4 flex justify-center">Block Explorer healthchecker for nodes</div>
         <div className="col-start-1 row-start-2 row-span-2 col-span-3">
           <div>Api checks:</div>
@@ -133,9 +133,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
             ))}
           </div>
         </div>
-        <div className="row-start-2 row-span-2 col-end-5 flex items-center justify-end">
-          <Button onClick={() => {restoreDefault()}}>Restore default</Button>
-        </div>
+        <Button className="row-start-4 md:row-start-2 row-span-1 col-span-full md:col-span-1 md:col-end-5" onClick={() => {restoreDefault()}}>Restore default</Button>
       </Card>
         {(!!scoredEndpoints && scoredEndpoints.length) ? scoredEndpoints?.map(
           (scoredEndpoint) => renderProvider(scoredEndpoint)
