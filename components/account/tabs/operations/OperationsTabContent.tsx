@@ -98,7 +98,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
   const { accountOperationTypes } =
     useAccountOperationTypes(accountNameFromRoute);
 
-  const handleOperationSelect = (filters: number[]) => {
+  const handleOperationSelect = (filters: number[] | null) => {
     const newFilters = convertIdsToBooleanArray(filters);
     setFilters(newFilters);
     setParams({ ...paramsState, filters: newFilters, page: undefined });

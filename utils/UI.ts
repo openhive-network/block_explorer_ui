@@ -6,9 +6,11 @@ export const scrollTo = (ref: MutableRefObject<any>) => {
 };
 
 export const getOperationButtonTitle = (
-  selectedOperationTypes: number[],
+  selectedOperationTypes: number[] | null,
   operationsTypes?: Hive.OperationPattern[]
 ): string => {
+  if (!selectedOperationTypes) return "";
+
   if (selectedOperationTypes && selectedOperationTypes.length === 1) {
     return getOperationTypeForDisplay(
       operationsTypes?.find((op) => op.op_type_id === selectedOperationTypes[0])

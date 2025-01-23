@@ -16,14 +16,14 @@ import { cn } from "@/lib/utils";
 import Chip from "./Chip";
 import { categorizedOperationTypes } from "@/utils/CategorizedOperationTypes";
 import Explorer from "@/types/Explorer";
-import { ChevronDown, Search} from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
 
 type OperationTypesDialogProps = {
   operationTypes?: Explorer.ExtendedOperationTypePattern[];
   triggerTitle: string;
   selectedOperations: number[];
   buttonClassName: string;
-  setSelectedOperations: (operationIds: number[]) => void;
+  setSelectedOperations: (operationIds: number[] | null) => void;
 };
 
 export const colorByOperationCategory: Record<string, string> = {
@@ -93,7 +93,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     } else {
       setExpandedSections([]);
     }
-  }, [searchTerm,operationTypes]);
+  }, [searchTerm, operationTypes]);
 
   if (!operationTypes || !operationTypes.length) return null;
 
@@ -147,7 +147,11 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     if (open) {
       setSelectedOperationsIds(selectedOperations);
       if (searchTerm) {
-         const allMatchingCategories = getCategoriesToExpand(selectedOperations, operationTypes, categorizedOperationTypes);
+        const allMatchingCategories = getCategoriesToExpand(
+          selectedOperations,
+          operationTypes,
+          categorizedOperationTypes
+        );
         setExpandedSections(allMatchingCategories);
       }
     }
@@ -155,12 +159,16 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     setIsOpen(open);
   };
 
-    const selectAll = () => {
+  const selectAll = () => {
     const allIds = filteredNonDisabledOperations.map(
       (operationType) => operationType.op_type_id
     );
     setSelectedOperationsIds(allIds);
-   const allMatchingCategories = getCategoriesToExpand(allIds, operationTypes, categorizedOperationTypes);
+    const allMatchingCategories = getCategoriesToExpand(
+      allIds,
+      operationTypes,
+      categorizedOperationTypes
+    );
     setExpandedSections(allMatchingCategories);
   };
 
@@ -171,7 +179,11 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     let finaList = [...realIds, ...selectedOperationsIds];
     finaList = finaList.filter((id, index) => finaList.indexOf(id) === index);
     setSelectedOperationsIds([...finaList]);
-    const allMatchingCategories = getCategoriesToExpand(finaList, operationTypes, categorizedOperationTypes);
+    const allMatchingCategories = getCategoriesToExpand(
+      finaList,
+      operationTypes,
+      categorizedOperationTypes
+    );
     setExpandedSections(allMatchingCategories);
   };
 
@@ -182,7 +194,11 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     let finaList = [...virtualIds, ...selectedOperationsIds];
     finaList = finaList.filter((id, index) => finaList.indexOf(id) === index);
     setSelectedOperationsIds([...finaList]);
-    const allMatchingCategories = getCategoriesToExpand(finaList, operationTypes, categorizedOperationTypes);
+    const allMatchingCategories = getCategoriesToExpand(
+      finaList,
+      operationTypes,
+      categorizedOperationTypes
+    );
     setExpandedSections(allMatchingCategories);
   };
 
@@ -212,7 +228,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     setSelectedOperationsIds(finalOperations);
   };
 
- const invertSelection = () => {
+  const invertSelection = () => {
     const allIds = filteredNonDisabledOperations.map(
       (operationType) => operationType.op_type_id
     );
@@ -222,7 +238,11 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
         undefined
     );
     setSelectedOperationsIds(finaList);
-  const allMatchingCategories = getCategoriesToExpand(finaList, operationTypes, categorizedOperationTypes);
+    const allMatchingCategories = getCategoriesToExpand(
+      finaList,
+      operationTypes,
+      categorizedOperationTypes
+    );
     setExpandedSections(allMatchingCategories);
   };
 
@@ -254,11 +274,11 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
               "text-sky-500 dark:text-sky-200": operationType.is_virtual,
               "opacity-50": operationType.isDisabled,
             }
-          )} 
+          )}
           {...{
             "data-testid": `operation-type-label-${operationType.operation_name}`,
-          }}        
-          >
+          }}
+        >
           {settings.rawJsonView
             ? operationType.operation_name
             : getOperationTypeForDisplay(operationType.operation_name)}
@@ -309,9 +329,10 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
       (operationType) => operationType.op_type_id
     );
 
-      const isCategoryChecked = nonDisabledOperationTypesForSection.length > 0 ? allIdsInCategory.every((id) =>
-      selectedOperationsIds.includes(id)
-    ) : false;
+    const isCategoryChecked =
+      nonDisabledOperationTypesForSection.length > 0
+        ? allIdsInCategory.every((id) => selectedOperationsIds.includes(id))
+        : false;
 
     const handleCategoryCheckboxChange = () => {
       if (isCategoryChecked) {
@@ -328,11 +349,14 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     }
 
     return (
-      <div className=" border-t px-2" key={sectionName}>
+      <div
+        className="border-t px-2"
+        key={sectionName}
+      >
         <div
           className="flex items-center justify-between py-2 cursor-pointer  z-10"
           onClick={() => toggleSection(sectionName)}
-           ref={(el) => {
+          ref={(el) => {
             if (el) {
               categoryHeadersRef.current[sectionName] = el;
             }
@@ -358,9 +382,11 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           />
         </div>
         {isExpanded && (
-          <ul className={cn("my-2 grid  gap-y-2", {
-            "sm:grid-cols-4": true,
-          })}>
+          <ul
+            className={cn("my-2 grid  gap-y-2", {
+              "sm:grid-cols-4": true,
+            })}
+          >
             {filteredOperations.map(
               (operation) => !!operation && renderOperationType(operation)
             )}
@@ -371,7 +397,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
   };
 
   const handleClearOperationsFilter = () => {
-    setSelectedOperations([]);
+    setSelectedOperations(null);
     setSearchTerm("");
   };
 
@@ -385,7 +411,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
       <DialogTrigger asChild>
         <Button data-testid="operations-types-btn">Operation Types</Button>
       </DialogTrigger>
-      {selectedOperations.length ? (
+      {selectedOperations && selectedOperations?.length ? (
         <Chip
           text={triggerTitle}
           clearSelection={handleClearOperationsFilter}
@@ -417,14 +443,14 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
               </Button>
               <Button
                 type="button"
-                 className="operations-button text-xs"
+                className="operations-button text-xs"
                 onClick={selectVirtual}
               >
                 Virtual
               </Button>
               <Button
                 type="button"
-                 className="operations-button text-xs"
+                className="operations-button text-xs"
                 onClick={invertSelection}
               >
                 Invert
@@ -442,11 +468,11 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4" />
               <Input
-                 type="text"
-                 placeholder="Search operations..."
-                 value={searchTerm}
+                type="text"
+                placeholder="Search operations..."
+                value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                 className="pl-10 pr-3 w-full"
+                className="pl-10 pr-3 w-full"
               />
             </div>
           </div>
