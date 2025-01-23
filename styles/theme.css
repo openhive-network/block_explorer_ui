@@ -348,3 +348,8 @@ pre {
   font-weight: bold;
   font-size: 14px;
 }
+.operations-button {
+  border: 1px solid var(--color-light-gray);
+  background-color: inherit;
+  font-size: small;
+}
