@@ -13,6 +13,7 @@ import { useSearchesContext } from "@/contexts/SearchesContext";
 import useAccountOperations from "@/hooks/api/accountPage/useAccountOperations";
 import ErrorPage from "@/pages/ErrorPage";
 import { getAccountPageLink } from "../utils/accountSearchHelpers";
+import NoResult from "@/components/NoResult";
 
 const AccountSearchResults = () => {
   const {
@@ -97,9 +98,7 @@ const AccountSearchResults = () => {
           />
         </div>
       ) : (
-        <div className="flex justify-center w-full text-black dark:text-white">
-          No operations matching given criteria
-        </div>
+       <NoResult/>
       )}
     </>
   );
