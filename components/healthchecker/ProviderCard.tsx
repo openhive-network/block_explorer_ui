@@ -36,7 +36,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
 
 
   return (
-    <Card className={cn("grid grid-cols-8 grid-rows-5 md:grid-rows-2 gap-y-1 my-1 p-2", {"outline outline-2 outline-offset-2": isSelected})}>
+    <Card className={cn("grid grid-cols-8 grid-rows-5 md:grid-rows-2 gap-y-1 my-1 p-2 mx-2 md:mx-0", {"outline outline-2 outline-offset-2": isSelected})}>
       <div className={cn("row-start-1 col-start-1 col-span-6 self-center", {"text-red-600": disabled})}>
         {providerLink} {isFallback ? "- fallback" : null}
       </div>
