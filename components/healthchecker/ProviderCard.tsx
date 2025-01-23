@@ -40,7 +40,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
       <div className={cn("row-start-1 col-start-1 col-span-6 self-center", {"text-red-600": disabled})}>
         {providerLink} {isFallback ? "- fallback" : null}
       </div>
-      <div className="row-start-2 md:row-start-1 col-start-1 md:col-start-7 col-span-full md:col-span-1 self-center">Latency: {latency}</div>
+      {!!latency && <div className="row-start-2 md:row-start-1 col-start-1 md:col-start-7 col-span-full md:col-span-1 self-center">Latency: {latency}</div>}
         {!isSelected && 
           <>
             <Button className="row-start-1 col-start-8 col-span-1 hover:bg-slate-400 bg-transparent rounded place-self-end w-fit" onClick={() => {deleteProvider(providerLink)}}>
