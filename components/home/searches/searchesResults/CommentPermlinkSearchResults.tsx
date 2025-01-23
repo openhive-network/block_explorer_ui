@@ -3,6 +3,7 @@ import CommentPermlinkResultTable from "../CommentPermlinkResultTable";
 import { useSearchesContext } from "@/contexts/SearchesContext";
 import { getCommentPageLink } from "../utils/commentSearchHelpers";
 import PostTypeSelector from "../PostTypeSelector";
+import NoResults from "@/components/NoResults";
 
 const CommentPermlinkSearchResults = () => {
   const {
@@ -62,9 +63,7 @@ const CommentPermlinkSearchResults = () => {
           </div>
         </div>
       ) : (
-        <div className="flex justify-center w-full">
-          No permlinks matching given criteria
-        </div>
+        <NoResults/>
       )}
     </>
   );
