@@ -147,13 +147,36 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
   useEffect(() => {
     if (isAccountPage && commentsSearchPermlink) {
       handleStartCommentSearch();
+      return () => {
+        setCommentSearchProps(undefined);
+        setSelectedCommentSearchOperationTypes(null);
+      };
     }
-    return () => {
-      setCommentSearchProps(undefined);
-      setSelectedCommentSearchOperationTypes(null);
-    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAccountPage, commentsSearchPermlink]);
+
+  // Render data if there is account name and permlink set on main page
+  useEffect(() => {
+    if (
+      !isAccountPage &&
+      !isCommentsPage &&
+      commentsSearchPermlink &&
+      commentsSearchAccountName
+    ) {
+      handleStartCommentSearch();
+      return () => {
+        setCommentSearchProps(undefined);
+        setSelectedCommentSearchOperationTypes(null);
+      };
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    isAccountPage,
+    isCommentsPage,
+    commentsSearchPermlink,
+    commentsSearchAccountName,
+  ]);
 
   const infoText = isAccountPage
     ? "Find all operations related to comments for exact permlink."
