@@ -12,7 +12,6 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
 import OperationsTable from "@/components/OperationsTable";
 import useURLParams from "@/hooks/common/useURLParams";
-import useSearchRanges from "@/hooks/common/useSearchRanges";
 import { defaultSearchParams } from "@/pages/[accountName]";
 import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
 import {

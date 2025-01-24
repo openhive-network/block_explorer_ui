@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, useEffect } from "react";
+import { useState, ChangeEvent } from "react";
 import { Loader2 } from "lucide-react";
 import Explorer from "@/types/Explorer";
 import { trimAccountName } from "@/utils/StringUtils";
@@ -10,7 +10,6 @@ import { useSearchesContext } from "@/contexts/SearchesContext";
 import usePermlinkSearch from "@/hooks/api/common/usePermlinkSearch";
 import { startCommentPermlinkSearch } from "./utils/commentPermlinkSearchHelpers";
 import PostTypeSelector from "./PostTypeSelector";
-import useSearchRanges from "@/hooks/common/useSearchRanges";
 
 const CommentsPermlinkSearch = () => {
   const {
@@ -19,9 +18,8 @@ const CommentsPermlinkSearch = () => {
     setCommentPaginationPage,
     setCommentType,
     setLastSearchKey,
+    searchRanges,
   } = useSearchesContext();
-
-  const searchRanges = useSearchRanges("lastTime");
 
   const { permlinkSearchDataLoading } = usePermlinkSearch(permlinkSearchProps);
 
@@ -29,7 +27,7 @@ const CommentsPermlinkSearch = () => {
   const [localCommentType, setLocalCommentType] =
     useState<Explorer.CommentType>("post");
 
-  const { getRangesValues, setLastTimeUnitValue } = searchRanges;
+  const { getRangesValues } = searchRanges;
 
   const onButtonClick = async () => {
     if (accountName !== "") {
@@ -65,14 +63,6 @@ const CommentsPermlinkSearch = () => {
       );
     }
   };
-
-  // Set inital permlink search range as last 30 days
-  useEffect(() => {
-    setLastTimeUnitValue(30);
-    return () => {
-      setLastTimeUnitValue(undefined);
-    };
-  }, []);
 
   const handleChangeCommentType = (e: ChangeEvent<HTMLSelectElement>) => {
     const {
