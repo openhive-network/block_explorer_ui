@@ -42,7 +42,7 @@ const BlockSearch = () => {
 
   const [accountName, setAccountName] = useState<string>("");
   const [selectedOperationTypes, setSelectedOperationTypes] = useState<
-    number[]
+    number[] | null
   >([]);
   const [singleOperationTypeId, setSingleOperationTypeId] = useState<
     number | undefined
@@ -66,8 +66,8 @@ const BlockSearch = () => {
     }
   };
 
-  const changeSelectedOperationTypes = (operationTypesIds: number[]) => {
-    if (operationTypesIds.length === 1) {
+  const changeSelectedOperationTypes = (operationTypesIds: number[] | null) => {
+    if (operationTypesIds && operationTypesIds.length === 1) {
       setSingleOperationTypeId(operationTypesIds[0]);
     } else {
       setSingleOperationTypeId(undefined);
@@ -75,6 +75,12 @@ const BlockSearch = () => {
     setSelectedKeys(undefined);
     setFieldContent("");
     setSelectedOperationTypes(operationTypesIds);
+    setBlockSearchProps((prev: any) => {
+      return {
+        ...prev,
+        operationTypes: operationTypesIds,
+      };
+    });
   };
 
   const onSelect = (newValue: string) => {
@@ -92,9 +98,10 @@ const BlockSearch = () => {
     const blockSearchProps: Explorer.BlockSearchProps = {
       accountName:
         accountName !== "" ? trimAccountName(accountName) : undefined,
-      operationTypes: selectedOperationTypes.length
-        ? selectedOperationTypes
-        : undefined,
+      operationTypes:
+        selectedOperationTypes && selectedOperationTypes.length
+          ? selectedOperationTypes
+          : null,
       fromBlock: payloadFromBlock,
       toBlock: payloadToBlock,
       startDate: payloadStartDate,
@@ -129,7 +136,7 @@ const BlockSearch = () => {
       <div className="flex items-center">
         <OperationTypesDialog
           operationTypes={operationsTypes}
-          selectedOperations={selectedOperationTypes}
+          selectedOperations={selectedOperationTypes || []}
           setSelectedOperations={changeSelectedOperationTypes}
           buttonClassName="bg-gray-500"
           triggerTitle={getOperationButtonTitle(

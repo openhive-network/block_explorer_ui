@@ -15,12 +15,11 @@ export async function startCommentSearch(
   setPreviousCommentSearchProps: (props: Explorer.CommentSearchProps) => void,
   setLastSearchKey: (key: "comment") => void
 ) {
-  const { filters, ...params } = commentSearchParams;
+  const { operationTypes, ...params } = commentSearchParams;
   const props: Explorer.CommentSearchProps = {
     ...params,
     accountName: params.accountName || "",
-    operationTypes:
-      filters && filters.length ? convertBooleanArrayToIds(filters) : undefined,
+    operationTypes,
   };
   setCommentSearchProps(props);
   setCommentPaginationPage(1);

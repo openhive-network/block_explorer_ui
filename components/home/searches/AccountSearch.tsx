@@ -30,10 +30,21 @@ const AccountSearch = () => {
 
   const [accountName, setAccountName] = useState<string>("");
   const [selectedOperationTypes, setSelectedOperationTypes] = useState<
-    number[]
+    number[] | null
   >([]);
 
   const { getRangesValues } = searchRanges;
+
+  const handleOperationSelect = (operationTypeIds: number[] | null) => {
+    setSelectedOperationTypes(operationTypeIds);
+    setAccountOperationsPage(undefined);
+    setAccountOperationsSearchProps((prev: any) => {
+      return {
+        ...prev,
+        operationTypes: operationTypeIds,
+      };
+    });
+  };
 
   const onButtonClick = async () => {
     if (accountName !== "") {
@@ -51,9 +62,10 @@ const AccountSearch = () => {
           toBlock: payloadToBlock,
           startDate: payloadStartDate,
           endDate: payloadEndDate,
-          operationTypes: selectedOperationTypes.length
-            ? selectedOperationTypes
-            : undefined,
+          operationTypes:
+            selectedOperationTypes && selectedOperationTypes.length
+              ? selectedOperationTypes
+              : null,
         };
       startAccountOperationsSearch(
         accountOperationsSearchProps,
@@ -84,8 +96,8 @@ const AccountSearch = () => {
       <div className="flex items-center">
         <OperationTypesDialog
           operationTypes={operationsTypes}
-          selectedOperations={selectedOperationTypes}
-          setSelectedOperations={setSelectedOperationTypes}
+          selectedOperations={selectedOperationTypes || []}
+          setSelectedOperations={handleOperationSelect}
           buttonClassName="bg-gray-500"
           triggerTitle={getOperationButtonTitle(
             selectedOperationTypes,
@@ -105,7 +117,9 @@ const AccountSearch = () => {
           )}
         </Button>
         {!accountName && (
-          <label className="ml-2 text-gray-300 dark:text-gray-500 ">Set account name</label>
+          <label className="ml-2 text-gray-300 dark:text-gray-500 ">
+            Set account name
+          </label>
         )}
       </div>
     </>
