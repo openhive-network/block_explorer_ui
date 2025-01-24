@@ -12,7 +12,6 @@ import {
 import Hive from "@/types/Hive";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 
-import { Button } from "@/components/ui/button";
 import { useTabs } from "@/contexts/TabsContext";
 import { useSearchesContext } from "@/contexts/SearchesContext";
 
@@ -63,13 +62,11 @@ const buildTableBody = (
             <TableCell className="text-left text-text">
               {operation_id}
             </TableCell>
-            <TableCell className="text-left text-link truncate">
-              <Button
-                className="bg-inherit p-0"
-                onClick={handleShowCommentsByPermlink}
-              >
-                {permlink}
-              </Button>
+            <TableCell
+              onClick={handleShowCommentsByPermlink}
+              className="text-left text-text bg-inherit break-all cursor-pointer hover:bg-buttonHover font-bold"
+            >
+              {permlink}
             </TableCell>
             <TableCell className="text-left text-text">
               {formatAndDelocalizeTime(timestamp)}

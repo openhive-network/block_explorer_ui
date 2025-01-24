@@ -15,7 +15,7 @@ import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 interface CommentPermlinkResultTableProps {
   data: Hive.Permlink[];
   accountName: string | undefined;
-  buildLink: (accountName: string, permlink: string) => {};
+  openCommentsSection: (accountName: string, permlink: string) => void;
 }
 
 const TABLE_CELLS = [
@@ -42,13 +42,15 @@ const buildTableHeader = () => {
 const buildTableBody = (
   data: Hive.Permlink[],
   accountName: string | undefined,
-  buildLink: (accountName: string, permlink: string) => {}
+  openCommentsSection: (accountName: string, permlink: string) => void
 ) => {
   if (!data || !data.length || !accountName) return;
 
   return data.map(
     ({ block, operation_id, permlink, timestamp, trx_id }: any) => {
-      const linkToCommentsPage = buildLink(accountName, permlink);
+      const handleOpenCommentsSection = () => {
+        openCommentsSection(accountName, permlink);
+      };
 
       return (
         <React.Fragment key={trx_id}>
@@ -59,8 +61,11 @@ const buildTableBody = (
             <TableCell className="text-left text-text">
               {operation_id}
             </TableCell>
-            <TableCell className="text-center text-link">
-              <Link href={linkToCommentsPage}>{permlink}</Link>
+            <TableCell
+              onClick={handleOpenCommentsSection}
+              className="text-left text-text bg-inherit break-all cursor-pointer hover:bg-buttonHover font-bold"
+            >
+              {permlink}
             </TableCell>
             <TableCell className="text-left text-text">
               {formatAndDelocalizeTime(timestamp)}
@@ -76,7 +81,7 @@ const buildTableBody = (
 };
 
 const CommentPermlinkResultTable = ({
-  buildLink,
+  openCommentsSection,
   data,
   accountName,
 }: CommentPermlinkResultTableProps) => {
@@ -89,7 +94,7 @@ const CommentPermlinkResultTable = ({
               <TableRow>{buildTableHeader()}</TableRow>
             </TableHeader>
             <TableBody>
-              {buildTableBody(data, accountName, buildLink)}
+              {buildTableBody(data, accountName, openCommentsSection)}
             </TableBody>
           </Table>
         </div>
