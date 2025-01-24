@@ -2,7 +2,6 @@ import usePermlinkSearch from "@/hooks/api/common/usePermlinkSearch";
 import CommentPermlinkResultTable from "../CommentPermlinkResultTable";
 import { useSearchesContext } from "@/contexts/SearchesContext";
 import { getCommentPageLink } from "../utils/commentSearchHelpers";
-import PostTypeSelector from "../PostTypeSelector";
 import CustomPagination from "@/components/CustomPagination";
 import { config } from "@/Config";
 import { useRouter } from "next/router";
@@ -11,12 +10,12 @@ import AccountCommentPermlinkResultTable from "@/components/account/tabs/posts/A
 const CommentPermlinkSearchResults = () => {
   const {
     permlinkSearchProps,
-    commentType,
-    setCommentType,
+    setCommentsSearchAccountName,
+    setCommentsSearchPermlink,
     setPermlinkSearchProps,
-    searchRanges,
     permlinkPaginationPage,
     setPermlinkPaginationPage,
+    setActiveSearchSection,
   } = useSearchesContext();
   const router = useRouter();
   const isAccountPage = Boolean(router.query.accountName) || false;
@@ -25,27 +24,10 @@ const CommentPermlinkSearchResults = () => {
 
   const accountName = permlinkSearchProps?.accountName;
 
-  const handleChangeCommentType = (e: any) => {
-    const {
-      target: { value },
-    } = e;
-
-    setCommentType(value);
-    setPermlinkSearchProps((prev: any) => {
-      return {
-        ...prev,
-        commentType: value,
-      };
-    });
-  };
-
-  const buildLink = (accountName: string, permlink: string) => {
-    return getCommentPageLink({
-      ...permlinkSearchProps,
-      ...searchRanges,
-      accountName,
-      permlink,
-    });
+  const openCommentsSection = (accountName: string, permlink: string) => {
+    setActiveSearchSection("comment");
+    setCommentsSearchAccountName(accountName);
+    setCommentsSearchPermlink(permlink);
   };
 
   if (!permlinkSearchData) return;
@@ -63,18 +45,12 @@ const CommentPermlinkSearchResults = () => {
     <>
       {permlinkSearchData.total_permlinks ? (
         <div>
-          <div className="flex justify-center items-center text-text">
+          <div className="flex justify-center items-center text-text my-4">
             <CustomPagination
               currentPage={permlinkPaginationPage}
               totalCount={permlinkSearchData.total_permlinks}
               pageSize={config.standardPaginationSize}
               onPageChange={changePermlinkSearchPagination}
-            />
-          </div>
-          <div className="flex justify-end my-4">
-            <PostTypeSelector
-              handleChange={handleChangeCommentType}
-              commentType={commentType}
             />
           </div>
 
@@ -86,7 +62,7 @@ const CommentPermlinkSearchResults = () => {
               />
             ) : (
               <CommentPermlinkResultTable
-                buildLink={buildLink}
+                openCommentsSection={openCommentsSection}
                 data={permlinkSearchData.permlinks_result}
                 accountName={accountName}
               />
