@@ -7,7 +7,6 @@ import { trimAccountName } from "@/utils/StringUtils";
 import {
   cn,
   convertBooleanArrayToIds,
-  convertIdsToBooleanArray,
   parseUrlFlagsIntoBooleanArray,
 } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -73,9 +72,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
         toBlock: payloadToBlock,
         startDate: payloadStartDate,
         endDate: payloadEndDate,
-        filters: selectedCommentSearchOperationTypes.length
-          ? convertIdsToBooleanArray(selectedCommentSearchOperationTypes)
-          : undefined,
+        operationTypes: selectedCommentSearchOperationTypes,
         lastBlocks:
           searchRanges.rangeSelectKey === "lastBlocks"
             ? searchRanges.lastBlocksValue
@@ -98,14 +95,24 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
         const commentPageLink = getCommentPageLink({
           ...searchProps,
           ...searchRanges,
-          operationTypes: searchProps?.filters?.length
-            ? convertBooleanArrayToIds(searchProps.filters)
-            : undefined,
+          operationTypes: selectedCommentSearchOperationTypes,
         });
 
         router.replace(commentPageLink);
       }
     }
+  };
+  // Passing null if we want to reset operations
+  const handleOperationSelect = (operationTypes: number[] | null) => {
+    setSelectedCommentSearchOperationTypes(operationTypes);
+    setCommentPaginationPage(1);
+    setCommentSearchProps((prev: any) => {
+      return {
+        ...prev,
+        operationTypes,
+        pageNumber: 1,
+      };
+    });
   };
 
   //Set parameters for inputs and selected operation types from url (if there are any) on initial load
@@ -133,7 +140,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
   const handleClearCommentSearch = () => {
     setCommentSearchProps(undefined);
     setCommentsSearchPermlink("");
-    setSelectedCommentSearchOperationTypes([]);
+    setSelectedCommentSearchOperationTypes(null);
   };
 
   // Render data if there is comment search permlink present on account page
@@ -143,7 +150,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
     }
     return () => {
       setCommentSearchProps(undefined);
-      setSelectedCommentSearchOperationTypes([]);
+      setSelectedCommentSearchOperationTypes(null);
     };
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAccountPage, commentsSearchPermlink]);
@@ -192,8 +199,8 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
           operationTypes={operationsTypes?.filter((opType) =>
             config.commentOperationsTypeIds.includes(opType.op_type_id)
           )}
-          selectedOperations={selectedCommentSearchOperationTypes}
-          setSelectedOperations={setSelectedCommentSearchOperationTypes}
+          selectedOperations={selectedCommentSearchOperationTypes || []}
+          setSelectedOperations={handleOperationSelect}
           buttonClassName="bg-buttonBg"
           triggerTitle={getOperationButtonTitle(
             selectedCommentSearchOperationTypes,

@@ -16,14 +16,14 @@ import { cn } from "@/lib/utils";
 import Chip from "./Chip";
 import { categorizedOperationTypes } from "@/utils/CategorizedOperationTypes";
 import Explorer from "@/types/Explorer";
-import { ChevronDown, Search} from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
 
 type OperationTypesDialogProps = {
   operationTypes?: Explorer.ExtendedOperationTypePattern[];
   triggerTitle: string;
   selectedOperations: number[];
   buttonClassName: string;
-  setSelectedOperations: (operationIds: number[]) => void;
+  setSelectedOperations: (operationIds: number[] | null) => void;
 };
 
 export const colorByOperationCategory: Record<string, string> = {
@@ -145,9 +145,13 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
 
   const onOpenChange = (open: boolean) => {
     if (open) {
-      setSelectedOperationsIds(selectedOperations);
+      setSelectedOperationsIds(selectedOperations || []);
       if (searchTerm) {
-         const allMatchingCategories = getCategoriesToExpand(selectedOperations, operationTypes, categorizedOperationTypes);
+        const allMatchingCategories = getCategoriesToExpand(
+          selectedOperations || [],
+          operationTypes,
+          categorizedOperationTypes
+        );
         setExpandedSections(allMatchingCategories);
       }
     }
@@ -160,7 +164,11 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
       (operationType) => operationType.op_type_id
     );
     setSelectedOperationsIds(allIds);
-   const allMatchingCategories = getCategoriesToExpand(allIds, operationTypes, categorizedOperationTypes);
+    const allMatchingCategories = getCategoriesToExpand(
+      allIds,
+      operationTypes,
+      categorizedOperationTypes
+    );
     setExpandedSections(allMatchingCategories);
   };
 
@@ -171,7 +179,11 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     let finaList = [...realIds, ...selectedOperationsIds];
     finaList = finaList.filter((id, index) => finaList.indexOf(id) === index);
     setSelectedOperationsIds([...finaList]);
-    const allMatchingCategories = getCategoriesToExpand(finaList, operationTypes, categorizedOperationTypes);
+    const allMatchingCategories = getCategoriesToExpand(
+      finaList,
+      operationTypes,
+      categorizedOperationTypes
+    );
     setExpandedSections(allMatchingCategories);
   };
 
@@ -182,7 +194,11 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     let finaList = [...virtualIds, ...selectedOperationsIds];
     finaList = finaList.filter((id, index) => finaList.indexOf(id) === index);
     setSelectedOperationsIds([...finaList]);
-    const allMatchingCategories = getCategoriesToExpand(finaList, operationTypes, categorizedOperationTypes);
+    const allMatchingCategories = getCategoriesToExpand(
+      finaList,
+      operationTypes,
+      categorizedOperationTypes
+    );
     setExpandedSections(allMatchingCategories);
   };
 
@@ -222,7 +238,11 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
         undefined
     );
     setSelectedOperationsIds(finaList);
-  const allMatchingCategories = getCategoriesToExpand(finaList, operationTypes, categorizedOperationTypes);
+    const allMatchingCategories = getCategoriesToExpand(
+      finaList,
+      operationTypes,
+      categorizedOperationTypes
+    );
     setExpandedSections(allMatchingCategories);
   };
 
@@ -309,9 +329,10 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
       (operationType) => operationType.op_type_id
     );
 
-    const isCategoryChecked = nonDisabledOperationTypesForSection.length > 0 ? allIdsInCategory.every((id) =>
-      selectedOperationsIds.includes(id)
-    ) : false;
+    const isCategoryChecked =
+      nonDisabledOperationTypesForSection.length > 0
+        ? allIdsInCategory.every((id) => selectedOperationsIds.includes(id))
+        : false;
 
     const handleCategoryCheckboxChange = () => {
       if (isCategoryChecked) {
@@ -328,7 +349,10 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     }
 
     return (
-      <div className=" border-t px-2" key={sectionName}>
+      <div
+        className="border-t px-2"
+        key={sectionName}
+      >
         <div
           className="flex items-center justify-between py-2 cursor-pointer  z-10"
           onClick={() => toggleSection(sectionName)}
@@ -358,9 +382,11 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
           />
         </div>
         {isExpanded && (
-          <ul className={cn("my-2 grid  gap-y-2", {
+          <ul
+            className={cn("my-2 grid  gap-y-2", {
               "sm:grid-cols-4": true,
-          })}>
+            })}
+          >
             {filteredOperations.map(
               (operation) => !!operation && renderOperationType(operation)
             )}
@@ -371,7 +397,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
   };
 
   const handleClearOperationsFilter = () => {
-    setSelectedOperations([]);
+    setSelectedOperations(null);
     setSearchTerm("");
   };
 
@@ -385,7 +411,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
       <DialogTrigger asChild>
         <Button data-testid="operations-types-btn">Operation Types</Button>
       </DialogTrigger>
-      {selectedOperations.length ? (
+      {selectedOperations && selectedOperations?.length ? (
         <Chip
           text={triggerTitle}
           clearSelection={handleClearOperationsFilter}

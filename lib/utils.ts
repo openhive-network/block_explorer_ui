@@ -187,10 +187,10 @@ export const convertBooleanArrayToIds = (filters: boolean[]) => {
 };
 
 export const convertIdsToBooleanArray = (
-  filters: number[],
+  filters: number[] | null,
   numOfTypes?: number
 ) => {
-  if (filters.length === 0) return [];
+  if (!filters || filters.length === 0) return [];
   const booleanArray = new Array(numOfTypes ?? Math.max(...filters)).fill(
     false
   );
@@ -212,7 +212,6 @@ export const createPathFilterString = (
 export const convertBalanceHistoryResultsToTableOperations = (
   response: Hive.AccountBalanceHistoryResponse
 ): Explorer.BalanceHistoryForTable[] => {
-
   if (!response || !response.operations_result) {
     return [];
   }

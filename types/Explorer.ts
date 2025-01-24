@@ -45,7 +45,7 @@ declare module Explorer {
   }
 
   interface CommonSearchProps {
-    operationTypes?: number[];
+    operationTypes?: number[] | null;
     fromBlock?: number;
     toBlock?: number;
     startDate?: Date;
@@ -73,7 +73,7 @@ declare module Explorer {
     timeUnit: string | undefined;
     rangeSelectKey: string | undefined;
     page: number;
-    filters: boolean[] | undefined;
+    operationTypes: number[] | null;
   }
 
   type CommentType = "all" | "post" | "comment";

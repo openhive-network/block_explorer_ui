@@ -58,8 +58,10 @@ export interface SearchesContextType {
   setCommentsSearchPermlink: Dispatch<
     SetStateAction<string | string[] | undefined>
   >;
-  selectedCommentSearchOperationTypes: number[];
-  setSelectedCommentSearchOperationTypes: Dispatch<SetStateAction<number[]>>;
+  selectedCommentSearchOperationTypes: number[] | null;
+  setSelectedCommentSearchOperationTypes: Dispatch<
+    SetStateAction<number[] | null>
+  >;
   searchRanges: any;
 }
 
@@ -127,7 +129,7 @@ export const SearchesContextProvider: React.FC<{
   const [
     selectedCommentSearchOperationTypes,
     setSelectedCommentSearchOperationTypes,
-  ] = useState<number[]>([]);
+  ] = useState<number[] | null>([]);
 
   const searchRanges = useSearchRanges();
 
