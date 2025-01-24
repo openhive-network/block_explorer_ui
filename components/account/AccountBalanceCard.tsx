@@ -10,15 +10,6 @@ import {
   grabNumericValue,
 } from "@/utils/StringUtils";
 import { cn, formatNumber } from "@/lib/utils";
-import Link from "next/link";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHistory } from "@fortawesome/free-solid-svg-icons";
-import {
-  Tooltip,
-  TooltipProvider,
-  TooltipTrigger,
-  TooltipContent,
-} from "@radix-ui/react-tooltip";
 type AccountBalanceCardProps = {
   header: string;
   userDetails: Explorer.FormattedAccountDetails;
@@ -36,6 +27,7 @@ const cardNameMap = new Map([
   ["received_vesting_shares", "Received HP"],
   ["delegated_vesting_shares", "Delegated HP"],
   ["vesting_withdraw_rate", "Powering down HP"],
+ 
 ]);
 
 const unclaimedRecourses = new Map([
@@ -96,25 +88,6 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
 
   const [isBalancesHidden, setIsBalancesHidden] = useState(false);
 
-  const [totalBalance, setTotalBalance] = useState(0);
-
-  useEffect(() => {
-    const newBalance = keys.reduce((acc, param) => {
-      if (cardNameMap.has(param) && !skipCalculation.includes(param)) {
-        const value = grabNumericValue(userDetails.dollars[param]);
-        if (typeof value === "number" && !isNaN(value)) {
-          return acc + value;
-        } else {
-          console.error("Value is not a number:", value);
-          return acc;
-        }
-      }
-      return acc;
-    }, 0);
-
-    setTotalBalance(newBalance);
-  }, [keys, userDetails]);
-
   const renderBalance = () => {
     return (
       <TableRow className="border-b border-gray-700 hover:bg-inherit font-bold">
@@ -123,7 +96,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
           className="text-right"
           colSpan={2}
         >
-          {formatNumber(totalBalance, false, true)} $
+          {changeHBDToDollarsDisplay(userDetails.dollars.account_value)}
         </TableCell>
       </TableRow>
     );

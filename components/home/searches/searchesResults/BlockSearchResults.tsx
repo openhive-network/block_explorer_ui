@@ -5,6 +5,7 @@ import useBlockSearch from "@/hooks/api/homePage/useBlockSearch";
 import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
 import ErrorPage from "@/pages/ErrorPage";
 import { getBlockPageLink } from "../utils/blockSearchHelpers";
+import NoResult from "@/components/NoResult";
 
 const BlockSearchResults = () => {
   const { blockSearchProps } = useSearchesContext();
@@ -22,25 +23,25 @@ const BlockSearchResults = () => {
   if (!blockSearchData) return;
 
   return (
-    <div className="bg-theme dark:bg-theme p-2 md: h-fit rounded">
-      <div className="text-center">Results:</div>
-      <div className="flex flex-wrap">
-        {blockSearchData.total_blocks > 0 ? (
-          blockSearchData.blocks_result.map(({ block_num }) => (
-            <Link
-              key={block_num}
+    <>
+    {blockSearchData.total_blocks > 0 ? (
+      <div className="bg-theme dark:bg-theme p-2 md: h-fit rounded">
+        <div className="text-center">Results:</div>
+        <div className="flex flex-wrap pl-4">
+          {blockSearchData.blocks_result.map(({ block_num }) => (
+            <Link 
+              key={block_num} 
               href={blockPageLink(block_num)}
             >
               <div className="m-1 border border-solid p-1">{block_num}</div>
             </Link>
-          ))
-        ) : (
-          <div className="flex justify-center w-full">
-            No blocks matching given criteria
-          </div>
-        )}
+          ))}
+        </div>
       </div>
-    </div>
+        ) : (
+          <NoResult/>
+        )}
+      </>
   );
 };
 
