@@ -71,7 +71,9 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { settings } = useUserSettingsContext();
   const [searchTerm, setSearchTerm] = useState("");
-  const [expandedSections, setExpandedSections] = useState<string[]>([]);
+  const [expandedSections, setExpandedSections] = useState<string[]>(
+    categorizedOperationTypes.map((cat) => cat.name)
+  );
 
   const categoryHeadersRef = useRef<Record<string, HTMLDivElement | undefined>>(
     {} as Record<string, HTMLDivElement | undefined>
@@ -90,8 +92,6 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
         )
         .map((cat) => cat.name);
       setExpandedSections(allMatchingCategories);
-    } else {
-      setExpandedSections([]);
     }
   }, [searchTerm, operationTypes]);
 
