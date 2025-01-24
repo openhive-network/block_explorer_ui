@@ -62,6 +62,8 @@ export interface SearchesContextType {
   setSelectedCommentSearchOperationTypes: Dispatch<
     SetStateAction<number[] | null>
   >;
+  activeSearchSection: string;
+  setActiveSearchSection: Dispatch<SetStateAction<string>>;
   searchRanges: any;
 }
 
@@ -130,6 +132,8 @@ export const SearchesContextProvider: React.FC<{
     selectedCommentSearchOperationTypes,
     setSelectedCommentSearchOperationTypes,
   ] = useState<number[] | null>([]);
+  const [activeSearchSection, setActiveSearchSection] =
+    useState<string>("block");
 
   const searchRanges = useSearchRanges();
 
@@ -165,6 +169,8 @@ export const SearchesContextProvider: React.FC<{
         commentType,
         setCommentType,
         searchRanges,
+        activeSearchSection,
+        setActiveSearchSection,
       }}
     >
       {children}

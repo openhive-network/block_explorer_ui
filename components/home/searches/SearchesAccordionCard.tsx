@@ -1,5 +1,3 @@
-import React, { useState } from "react";
-
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
   Accordion,
@@ -11,6 +9,7 @@ import BlockSearch from "./BlockSearch";
 import AccountSearch from "./AccountSearch";
 import CommentsPermlinkSearch from "./CommentPermlinkSearch";
 import CommentsSearch from "./CommentsSearch";
+import { useSearchesContext } from "@/contexts/SearchesContext";
 
 const ACCORDION_SECTIONS = [
   { name: "Block Search", value: "block" },
@@ -52,7 +51,7 @@ const renderAccordionItem = () => {
 };
 
 const SearchesAccordionCard = () => {
-  const [accordionValue, setAccordionValue] = useState<string>("block");
+  const { activeSearchSection, setActiveSearchSection } = useSearchesContext();
 
   return (
     <Card
@@ -66,8 +65,8 @@ const SearchesAccordionCard = () => {
         <Accordion
           type="single"
           className="w-full"
-          value={accordionValue}
-          onValueChange={setAccordionValue}
+          value={activeSearchSection}
+          onValueChange={setActiveSearchSection}
         >
           {renderAccordionItem()}
         </Accordion>
