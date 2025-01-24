@@ -45,7 +45,7 @@ declare module Explorer {
   }
 
   interface CommonSearchProps {
-    operationTypes?: number[];
+    operationTypes?: number[] | null;
     fromBlock?: number;
     toBlock?: number;
     startDate?: Date;
