@@ -42,6 +42,7 @@ const Comments: React.FC = () => {
     if (!commentSearchProps) {
       setCommentSearchPropsFromUrl(router.query);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [commentSearchProps, router.query]);
 
   return (

@@ -145,6 +145,7 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
       setCommentSearchProps(undefined);
       setSelectedCommentSearchOperationTypes([]);
     };
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAccountPage, commentsSearchPermlink]);
 
   const infoText = isAccountPage
