@@ -8,6 +8,7 @@ import CommentSearchResults from "@/components/home/searches/searchesResults/Com
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
 import { useSearchesContext } from "@/contexts/SearchesContext";
+import NoResult from "@/components/NoResult";
 
 const CommentsTabContent = () => {
   const router = useRouter();
@@ -23,8 +24,8 @@ const CommentsTabContent = () => {
   const buildCommentSearchView = () => {
     if (!isCommentSearchDataLoading && !commentSearchData?.total_operations) {
       return (
-        <div className="w-full my-4 text-text text-center">
-          No operations were found.
+        <div>
+          <NoResult/>
         </div>
       );
     } else if (isCommentSearchDataLoading) {
