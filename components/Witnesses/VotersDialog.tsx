@@ -20,6 +20,7 @@ import LastUpdatedTooltip from "../LastUpdatedTooltip";
 import { convertVestsToHP } from "@/utils/Calculations";
 import fetchingService from "@/services/FetchingService";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
+import NoResult from "../NoResult";
 
 type VotersDialogProps = {
   accountName: string;
@@ -174,8 +175,8 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
               isMirrored={false}
             />
             {witnessVoters?.voters?.length === 0 && !isWitnessVotersLoading ? (
-              <div className="flex justify-center w-full">
-                No results matching given criteria
+              <div>
+                <NoResult/>
               </div>
             ) : (
               <>
