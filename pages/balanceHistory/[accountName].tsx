@@ -21,6 +21,7 @@ import { Card, CardHeader } from "@/components/ui/card";
 import BalanceHistoryChart from "@/components/balanceHistory/BalanceHistoryChart";
 
 import ErrorPage from "../ErrorPage";
+import NoResult from "@/components/NoResult";
 // Memoizing the BalanceHistoryChart component to avoid unnecessary re-renders
 const MemoizedBalanceHistoryChart = React.memo(BalanceHistoryChart);
 
@@ -226,8 +227,8 @@ export default function BalanceHistory() {
             <BalanceHistorySearch />
 
             {!isAccountBalanceHistoryLoading && !accountBalanceHistory?.total_operations ? (
-              <div className="w-full my-4 text-center">
-                No operations were found.
+              <div>
+                <NoResult/>
               </div>
             ) : isAccountBalanceHistoryLoading ? (
               <div className="flex justify-center text-center items-center">
