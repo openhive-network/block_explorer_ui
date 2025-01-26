@@ -26,6 +26,7 @@ import useAccountOperationTypes from "@/hooks/api/accountPage/useAccountOperatio
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 import { getOperationButtonTitle } from "@/utils/UI";
 import { useSearchesContext } from "@/contexts/SearchesContext";
+import NoResult from "@/components/NoResult";
 
 interface OpeationTabContentProps {
   liveDataEnabled: boolean;
@@ -106,8 +107,8 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
   const buildOperationView = () => {
     if (!isAccountOperationsLoading && !accountOperations?.total_operations) {
       return (
-        <div className="w-full my-4 text-text text-center">
-          No operations were found.
+        <div>
+          <NoResult/>
         </div>
       );
     } else if (isAccountOperationsLoading) {
