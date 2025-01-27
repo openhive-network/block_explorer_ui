@@ -22,7 +22,7 @@ interface HealthCheckerComponentProps {
   className?: string;
   currentAddress?: string;
   customProviders?: string[];
-  customApiCheckers?: Map<string, ApiChecker>;
+  customApiCheckers?: ApiChecker[];
   healthChecker?: HealthChecker;
   scoredEndpoints?: TScoredEndpoint[];
   fallbacks: string[];
@@ -65,7 +65,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   
   const subscribeToCheckers = () => {
     healthChecker?.unregisterAll();
-    for (const [key, checker] of customApiCheckers || new Map<string, ApiChecker>()) {
+    for (const checker of customApiCheckers || []) {
       healthChecker?.register(checker!.method, checker!.params, checker!.validatorFunction, customProviders);
     }
   }
@@ -111,8 +111,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         disabled={score <= 0}
         latency={lastLatency}
         isSelected={endpointUrl === currentAddress}
-        checkerNamesList={Array.from(customApiCheckers?.keys() || [])}
-        customApiCheckers={customApiCheckers}
+        checkerNamesList={customApiCheckers?.map((customApiChecker) => customApiChecker.title) || []}
         isFallback={!!fallbacks.includes(endpointUrl)}
         deleteProvider={handleDeletionOfProvider}
         registerFallback={registerFallback}

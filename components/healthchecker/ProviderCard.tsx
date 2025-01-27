@@ -12,7 +12,6 @@ interface ProviderCardProps {
   isSelected: boolean;
   checkerNamesList: string[];
   latency: number | null;
-  customApiCheckers?: Map<string, ApiChecker>;
   isFallback: boolean;
   switchToProvider: (providerLink: string | null) => void;
   deleteProvider: (provider: string) => void;
@@ -26,7 +25,6 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
   isSelected,
   checkerNamesList,
   latency,
-  customApiCheckers,
   isFallback,
   deleteProvider,
   switchToProvider,
@@ -63,10 +61,10 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
       <div className={cn("row-start-3 row-span-2 md:row-span-1 flex items-center col-start-1 col-span-8 md:col-span-6 flex-wrap", {"py-2": isSelected})}>
         {checkerNamesList.map((checkerName) => 
           <Badge 
-            key={customApiCheckers?.get(checkerName)?.title} 
+            key={checkerName} 
             variant={"outline"} 
           >
-              {customApiCheckers?.get(checkerName)?.title}
+              {checkerName}
           </Badge>
         )}
       </div>
