@@ -2,12 +2,10 @@ import { cn } from "@/lib/utils";
 import { TScoredEndpoint, HealthChecker } from "@hiveio/wax";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
-import { Loader2, Plus, X } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
 import ProviderCard from "./ProviderCard";
-import ApiCheckDialog from "./ApiCheckDialog";
 import { Card } from "../ui/card";
 import { Badge } from "../ui/badge";
-import EndpointProviderDialog from "./EndpointProviderDialog";
 import ProviderAdditionDialog from "./ProviderAdditionDialog";
 
 
@@ -30,26 +28,26 @@ interface HealthCheckerComponentProps {
   setScoredEndpoints: (scoredEndpoints: TScoredEndpoint[] | undefined ) => void;
   addNewProvider: (provider: string) => void;
   deleteProvider: (provider: string) => void;
+  resetProviders: () => void;
   registerFallback: (provider: string) => void;
   removeFallback: (provider: string) => void;
-  resetProviders: () => void;
 }
 
 const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
+  className,
   currentAddress,
   customProviders,
+  customApiCheckers,
+  healthChecker,
+  scoredEndpoints,
+  fallbacks,
   changeNodeAddress,
   setScoredEndpoints,
   addNewProvider,
   deleteProvider,
+  resetProviders,
   registerFallback,
   removeFallback,
-  resetProviders,
-  customApiCheckers,
-  className,
-  healthChecker,
-  scoredEndpoints,
-  fallbacks,
 }) => {
 
   const [chainInitialized, setChainIntialized] = useState<boolean>(false);
