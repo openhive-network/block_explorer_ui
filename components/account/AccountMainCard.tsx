@@ -209,7 +209,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
           </div>
         </div>
       </CardContent>
-      {!isWitnessError && !isWitnessLoading && (
+      {accountDetails.is_witness && !isWitnessError && !isWitnessLoading && (
         <CardFooter>
           <div className="w-full flex justify-between">
             <button
