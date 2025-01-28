@@ -25,6 +25,7 @@ const useConvertedAccountDetails = (accountName: string, liveDataEnabled: boolea
     return formattedHP as string;
   }
 
+
   const { hiveChain } = useHiveChainContext();
   const {accountDetails, notFound}= useAccountDetails(accountName, liveDataEnabled);
   if (!dynamicGlobalData || !hiveChain || !accountDetails) return {formattedAccountDetails: undefined, notFound: undefined};
@@ -75,6 +76,7 @@ const useConvertedAccountDetails = (accountName: string, liveDataEnabled: boolea
     created: formatAndDelocalizeTime(accountDetails.created),
   };
 
+  
   // Prepare HBD for $ display
   const dollars = {
     hbd_balance: accountDetailsForFormat.hbd_balance,
@@ -89,8 +91,23 @@ const useConvertedAccountDetails = (accountName: string, liveDataEnabled: boolea
     vesting_shares: hiveChain.hiveToHbd(vesting_shares, rawFeedPrice, rawQuote),
     vesting_withdraw_rate: hiveChain.hiveToHbd(vesting_withdraw_rate, rawFeedPrice, rawQuote)
   }
+  interface NaiAsset {
+    amount: string;
+    nai: string;
+    precision: number
+  }
+  
+  /* Account Value Calculations */ 
+  const skipCalculation = ["delegated_vesting_shares", "received_vesting_shares"];
 
+  let totalAccountValue = Object.entries(dollars).reduce((sum, [key, value]) => {
+    if (value && value.hasOwnProperty('amount') && !skipCalculation.includes(key)) {
+        return sum + Number((value as NaiAsset).amount);
+    }
+    return sum;
+  }, 0);
 
+  (dollars as any)["account_value"] =   hiveChain.hbd(totalAccountValue);
 
   const formattedAccountDetails = {...hiveChain?.formatter.format({
       ...accountDetailsForFormat, 
@@ -98,7 +115,7 @@ const useConvertedAccountDetails = (accountName: string, liveDataEnabled: boolea
       vests,
       has_hbd_reward: !!accountDetails.reward_hbd_balance,
       has_vesting_reward: !!Number(accountDetails.reward_vesting_balance),
-      has_hive_reward: !!accountDetails.reward_hive_balance
+      has_hive_reward: !!accountDetails.reward_hive_balance,
     }),
   } as Explorer.FormattedAccountDetails;
   delete formattedAccountDetails.last_post;

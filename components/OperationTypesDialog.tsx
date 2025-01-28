@@ -145,10 +145,10 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
 
   const onOpenChange = (open: boolean) => {
     if (open) {
-      setSelectedOperationsIds(selectedOperations);
+      setSelectedOperationsIds(selectedOperations || []);
       if (searchTerm) {
         const allMatchingCategories = getCategoriesToExpand(
-          selectedOperations,
+          selectedOperations || [],
           operationTypes,
           categorizedOperationTypes
         );

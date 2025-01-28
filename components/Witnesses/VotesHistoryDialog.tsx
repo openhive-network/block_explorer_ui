@@ -26,6 +26,7 @@ import LastUpdatedTooltip from "../LastUpdatedTooltip";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { convertVestsToHP } from "@/utils/Calculations";
 import fetchingService from "@/services/FetchingService";
+import NoResult from "../NoResult";
 
 interface Supply {
   amount: string;
@@ -215,8 +216,8 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
             )}
             {votesHistory?.votes_history?.length === 0 &&
             !isVotesHistoryLoading ? (
-              <div className="flex justify-center w-full">
-                No results matching given criteria
+              <div>
+                <NoResult />
               </div>
             ) : (
               <>

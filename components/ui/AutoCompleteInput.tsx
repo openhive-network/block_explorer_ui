@@ -39,8 +39,8 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
   const [inputFocus, setInputFocus] = useState(false);
   const [selectedResult, setSelectedResult] = useState(0);
   const searchContainerRef = useRef(null);
-  const inputRef = useRef<HTMLInputElement>(null); 
-  const selectedResultRef = useRef<HTMLDivElement>(null); 
+  const inputRef = useRef<HTMLInputElement>(null);
+  const selectedResultRef = useRef<HTMLDivElement>(null);
   const [searchInputType, setSearchInputType] = useState<string>("");
   const { inputTypeData } = useInputType(searchInputType);
   const [searchTerm, setSearchTerm] = useState("");
@@ -62,11 +62,11 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
   const isNumeric = (value: string): boolean => {
     return /^\d+$/.test(value);
   };
-  
+
   const isHash = (value: string): boolean => {
-    return /^[a-fA-F0-9]{40}$/.test(value); 
+    return /^[a-fA-F0-9]{40}$/.test(value);
   };
-  
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputFocus(true);
     onChange(e.target.value);
@@ -81,7 +81,7 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
   // Close the search when clicking outside of the container
   useOnClickOutside(searchContainerRef, () => closeSearchBar());
 
-  const resetSearchBar = () => {
+  const resetSearchBar = useCallback(() => {
     setInputFocus(false);
     onChange(""); // Clear the input field
     setSearchInputType("");
@@ -90,12 +90,12 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
     if (onBlur) {
       onBlur({} as React.FocusEvent<HTMLInputElement>);
     }
-  };
+  }, [onBlur, onChange]);
 
   const closeSearchBar = () => {
     setInputFocus(false);
   };
-  
+
   // Ensure cleaning the searchbar when navigating away
   useEffect(() => {
     const handleRouteChange = () => {
@@ -127,10 +127,11 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
       if (event.key === "ArrowUp") {
         setSelectedResult((prev) => (prev > 0 ? prev - 1 : prev));
       }
-      if (event.key === "Enter") {        
+      if (event.key === "Enter") {
         if (isItemSelected && linkResult) {
           const href =
-            inputTypeData.input_type === "account_name" || inputTypeData.input_type === "account_name_array"
+            inputTypeData.input_type === "account_name" ||
+            inputTypeData.input_type === "account_name_array"
               ? `/@${selectedAccount}`
               : `/${getResultTypeHeader(inputTypeData)}/${selectedAccount}`;
           router.push(href).then(() => {
@@ -169,7 +170,8 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
   const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
     if (
       resultsContainerRef.current &&
-      (resultsContainerRef.current.contains(event.relatedTarget) || inputRef.current?.contains(event.relatedTarget))
+      (resultsContainerRef.current.contains(event.relatedTarget) ||
+        inputRef.current?.contains(event.relatedTarget))
     ) {
       event.stopPropagation(); // Prevent the blur event from triggering if focus is inside results container or input
     } else {
@@ -198,9 +200,7 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
     const inputTypeArray = Array.isArray(inputType) ? inputType : [inputType];
     const resultType = getResultTypeHeader(data);
     if (data.input_type === "invalid_input") {
-      return (
-        <div className="px-4 py-2">Account not found: {searchTerm}</div>
-      );
+      return <div className="px-4 py-2">Account not found: {searchTerm}</div>;
     } else if (
       inputTypeArray.includes(data.input_type) ||
       (inputTypeArray.includes("account_name") &&
@@ -219,13 +219,10 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
               <div
                 key={index}
                 ref={selectedResult === index ? selectedResultRef : null}
-                className={cn(
-                  "autocomplete-result-item",
-                  {
-                    "bg-navbar-listHover": selectedResult === index,
-                    "autocomplete-result-item": index > 0,
-                  }
-                )}
+                className={cn("autocomplete-result-item", {
+                  "bg-navbar-listHover": selectedResult === index,
+                  "autocomplete-result-item": index > 0,
+                })}
                 onClick={() => {
                   onChange(account);
                   inputRef.current?.focus();
@@ -282,9 +279,14 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
                       {capitalizeFirst(resultType)}&nbsp;
                     </span>
                   )}
-                  <Link href={href} data-testid="">
+                  <Link
+                    href={href}
+                    data-testid=""
+                  >
                     <span className="autocomplete-result-link">
-                    {data.input_type === "transaction_hash" ? data.input_value.slice(0, 10) : data.input_value}
+                      {data.input_type === "transaction_hash"
+                        ? data.input_value.slice(0, 10)
+                        : data.input_value}
                     </span>
                   </Link>
                 </>
@@ -310,7 +312,10 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
   };
 
   return (
-    <div ref={searchContainerRef} className={cn("relative", className)}>
+    <div
+      ref={searchContainerRef}
+      className={cn("relative", className)}
+    >
       <div className="flex items-center pr-2 z-50">
         <Input
           ref={inputRef}
@@ -325,7 +330,10 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
           onKeyDown={handleKeyDown}
         />
         {value && !!value.length ? (
-          <X className="cursor-pointer" onClick={() => resetSearchBar()} />
+          <X
+            className="cursor-pointer"
+            onClick={() => resetSearchBar()}
+          />
         ) : linkResult ? (
           <Search />
         ) : null}

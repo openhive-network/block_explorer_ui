@@ -106,7 +106,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
     }
   };
 
-  const handleSetFilters = (filters: number[]) => {
+  const handleSetFilters = (filters: number[] | null) => {
     setFilters(convertIdsToBooleanArray(filters));
   };
 

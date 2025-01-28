@@ -8,6 +8,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
 import { useSearchesContext } from "@/contexts/SearchesContext";
 import AccountPageCommentsSearch from "./AccountPageCommnetsSearch";
+import NoResult from "@/components/NoResult";
 
 const CommentsTabContent = () => {
   const router = useRouter();
@@ -29,8 +30,8 @@ const CommentsTabContent = () => {
   const buildCommentSearchView = () => {
     if (!isCommentSearchDataLoading && !commentSearchData?.total_operations) {
       return (
-        <div className="w-full my-4 text-text text-center">
-          No operations were found.
+        <div>
+          <NoResult />
         </div>
       );
     } else if (isCommentSearchDataLoading) {
@@ -58,7 +59,7 @@ const CommentsTabContent = () => {
     setSelectedCommentSearchOperationTypes(null);
   };
 
-  // Clearn data after account name change
+  // Clean data after account name change
   useEffect(() => {
     if (!accountNameFromRoute) return;
 

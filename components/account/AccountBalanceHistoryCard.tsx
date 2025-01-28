@@ -8,6 +8,7 @@ import BalanceHistoryChart from "../balanceHistory/BalanceHistoryChart";
 import moment from "moment";
 import { useRouter } from "next/router";
 import { Loader2 } from "lucide-react";
+import NoResult from "../NoResult";
 
 // Define the type for balance operation data
 type AccountBalanceHistoryCardProps = {
@@ -201,7 +202,7 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
           </p>
         )}
         {!isLoading && !hasData && (
-          <p className="text-sm text-center">No balance information found.</p>
+          <NoResult/>
         )}
         {!isLoading && hasData && (
           <BalanceHistoryChart

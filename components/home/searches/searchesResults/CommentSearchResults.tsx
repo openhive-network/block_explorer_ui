@@ -14,6 +14,7 @@ import useCommentSearch from "@/hooks/api/common/useCommentSearch";
 import { useSearchesContext } from "@/contexts/SearchesContext";
 import { getCommentPageLink } from "../utils/commentSearchHelpers";
 import { usePathname } from "next/navigation";
+import NoResult from "@/components/NoResult";
 
 const CommentSearchResults = () => {
   const {
@@ -91,9 +92,7 @@ const CommentSearchResults = () => {
           />
         </div>
       ) : (
-        <div className="flex justify-center w-full text-black dark:text-white">
-          No operations matching given criteria
-        </div>
+        <NoResult/>
       )}
     </>
   );

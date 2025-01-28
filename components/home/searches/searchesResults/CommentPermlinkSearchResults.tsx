@@ -5,6 +5,7 @@ import CustomPagination from "@/components/CustomPagination";
 import { config } from "@/Config";
 import { useRouter } from "next/router";
 import AccountCommentPermlinkResultTable from "@/components/account/tabs/posts/AccountCommentPermlinkResultTable";
+import NoResult from "@/components/NoResult";
 
 const CommentPermlinkSearchResults = () => {
   const {
@@ -71,9 +72,7 @@ const CommentPermlinkSearchResults = () => {
           </div>
         </div>
       ) : (
-        <div className="flex justify-center w-full">
-          No permlinks matching given criteria
-        </div>
+        <NoResult/>
       )}
     </>
   );

@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, useEffect } from "react";
+import { useState, ChangeEvent } from "react";
 import { Loader2 } from "lucide-react";
 import Explorer from "@/types/Explorer";
 import { trimAccountName } from "@/utils/StringUtils";

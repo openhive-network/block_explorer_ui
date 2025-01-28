@@ -45,7 +45,7 @@ declare module Explorer {
   }
 
   interface CommonSearchProps {
-    operationTypes?: number[];
+    operationTypes?: number[] | null;
     fromBlock?: number;
     toBlock?: number;
     startDate?: Date;
@@ -244,6 +244,7 @@ declare module Explorer {
     curation_rewards: string;
     vesting_balance: string;
     reward_vesting_hive: string;
+    account_value : string;
   }
 
   interface FormattedAccountDetails
@@ -297,6 +298,7 @@ declare module Explorer {
     created: string;
     vests: AccountDetailsVests;
     dollars: AccountDetailsDollars;
+    account_value?: number;
   }
 
   interface BalanceHistoryForTable {

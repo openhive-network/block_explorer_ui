@@ -4,10 +4,10 @@ import SearchRanges from "@/components/searchRanges/SearchRanges";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-import useSearchRanges from "@/hooks/common/useSearchRanges";
 import useURLParams from "@/hooks/common/useURLParams";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 import useAccountOperationTypes from "@/hooks/api/accountPage/useAccountOperationTypes";
+import { useSearchesContext } from "@/contexts/SearchesContext";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -43,6 +43,7 @@ const BalanceHistorySearch = () => {
   const [coinType, setCoinType] = useState<string>("HIVE"); // State to store the selected coin name
   const COIN_TYPES = ["HIVE", "VESTS", "HBD"];
   const router = useRouter();
+  const { searchRanges } = useSearchesContext();
   const accountNameFromRoute = (router.query.accountName as string)?.slice(1);
   const { accountOperationTypes } =
     useAccountOperationTypes(accountNameFromRoute);
@@ -91,8 +92,6 @@ const BalanceHistorySearch = () => {
 
   const [initialSearch, setInitialSearch] = useState<boolean>(false);
   const [filters, setFilters] = useState<boolean[]>([]);
-
-  const searchRanges = useSearchRanges();
 
   const handleSearch = async (resetPage?: boolean) => {
     if (
@@ -200,7 +199,10 @@ const BalanceHistorySearch = () => {
               className="w-[180px] border border-gray-300 p-2 rounded bg-theme dark:bg-theme"
             >
               {COIN_TYPES.map((type) => (
-                <option key={type} value={type}>
+                <option
+                  key={type}
+                  value={type}
+                >
                   {type}
                 </option>
               ))}
