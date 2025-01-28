@@ -289,15 +289,17 @@ export default function Block() {
             >
               {!!totalOperations?.total_operations &&
                 totalOperations?.total_operations > 1000 && (
-                  <CustomPagination
-                    currentPage={paramsState.page}
-                    onPageChange={(newPage: number) =>
-                      setParams({ ...paramsState, page: newPage })
-                    }
-                    pageSize={config.blockPagePaginationSize}
-                    totalCount={blockOperations?.total_operations || 0}
-                    className="text-text"
-                  />
+                  <div className="my-4 w-full">
+                    <CustomPagination
+                      currentPage={paramsState.page}
+                      onPageChange={(newPage: number) =>
+                        setParams({ ...paramsState, page: newPage })
+                      }
+                      pageSize={config.blockPagePaginationSize}
+                      totalCount={blockOperations?.total_operations || 0}
+                      className="text-text"
+                    />
+                  </div>
                 )}
               <div className="w-full max-w-screen-2xl flex flex-col gap-y-2">
                 {!!convertedTotalOperations.length && (
