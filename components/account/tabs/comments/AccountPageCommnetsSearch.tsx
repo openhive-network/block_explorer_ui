@@ -19,6 +19,8 @@ const AccountPageCommentsSearch = () => {
     commentsSearchPermlink,
     setCommentsSearchPermlink,
     selectedCommentSearchOperationTypes,
+    commentsSearchAccountName,
+    setLastSearchKey,
     setSelectedCommentSearchOperationTypes,
   } = useSearchesContext();
 
@@ -58,6 +60,11 @@ const AccountPageCommentsSearch = () => {
 
   const buttonLabel = "Set permlink";
 
+  const onClickSearchButton = () => {
+    setLastSearchKey("comment");
+    handleCommentsSearch(commentsSearchAccountName, permlink);
+  };
+
   return (
     <>
       <p className="ml-2">{infoText}</p>
@@ -91,7 +98,7 @@ const AccountPageCommentsSearch = () => {
         <div>
           <Button
             data-testid="search-button"
-            onClick={() => handleCommentsSearch()}
+            onClick={onClickSearchButton}
             className="mr-2 my-2"
             disabled={!permlink}
           >
