@@ -1,3 +1,7 @@
+// TODO: Currently we can see results of one section, while we have open another section.
+// For better UX we should show results only related to section that user has open at the time.
+// At the time this could be achieved by setting `setActiveSearchSection` every time new section is open.
+
 import { useRef } from "react";
 
 import BlockSearchResults from "./searchesResults/BlockSearchResults";
