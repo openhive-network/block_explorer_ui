@@ -3,11 +3,11 @@ import { useRouter } from "next/router";
 import { Loader2 } from "lucide-react";
 
 import useCommentSearch from "@/hooks/api/common/useCommentSearch";
-import CommentsSearch from "@/components/home/searches/CommentsSearch";
 import CommentSearchResults from "@/components/home/searches/searchesResults/CommentSearchResults";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
 import { useSearchesContext } from "@/contexts/SearchesContext";
+import AccountPageCommentsSearch from "./AccountPageCommnetsSearch";
 
 const CommentsTabContent = () => {
   const router = useRouter();
@@ -15,8 +15,14 @@ const CommentsTabContent = () => {
     "@",
     ""
   );
-  const { setCommentsSearchAccountName, commentSearchProps } =
-    useSearchesContext();
+  const {
+    setCommentsSearchAccountName,
+    commentSearchProps,
+    setCommentSearchProps,
+    setSelectedCommentSearchOperationTypes,
+    setCommentsSearchPermlink,
+  } = useSearchesContext();
+
   const { commentSearchData, isCommentSearchDataLoading } =
     useCommentSearch(commentSearchProps);
 
@@ -46,6 +52,19 @@ const CommentsTabContent = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountNameFromRoute]);
 
+  const handleClearCommentSearch = () => {
+    setCommentsSearchPermlink(undefined);
+    setCommentSearchProps(undefined);
+    setSelectedCommentSearchOperationTypes(null);
+  };
+
+  // Clearn data after account name change
+  useEffect(() => {
+    if (!accountNameFromRoute) return;
+
+    return () => handleClearCommentSearch();
+  }, [accountNameFromRoute]);
+
   return (
     <TabsContent value="comments">
       <Card className="mb-4">
@@ -53,7 +72,7 @@ const CommentsTabContent = () => {
           <CardTitle>Comment Search</CardTitle>
         </CardHeader>
         <CardContent>
-          <CommentsSearch isAccountPage={true} />
+          <AccountPageCommentsSearch />
         </CardContent>
       </Card>
       {buildCommentSearchView()}
