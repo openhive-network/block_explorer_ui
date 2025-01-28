@@ -14,6 +14,7 @@ import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 
 import { useTabs } from "@/contexts/TabsContext";
 import { useSearchesContext } from "@/contexts/SearchesContext";
+import useHandleCommentsSearch from "@/components/home/searches/hooks/useHandleCommentsSearch";
 
 interface AccountCommentPermlinkResultTableProps {
   data: Hive.Permlink[];
@@ -87,10 +88,12 @@ const AccountCommentPermlinkResultTable = ({
 }: AccountCommentPermlinkResultTableProps) => {
   const { setActiveTab } = useTabs();
   const { setCommentsSearchPermlink } = useSearchesContext();
+  const { handleCommentsSearch } = useHandleCommentsSearch();
 
   const showCommentsByPermlink = (permlink: string) => {
     setCommentsSearchPermlink(permlink);
     setActiveTab("comments");
+    handleCommentsSearch(accountName, permlink);
   };
 
   return (
