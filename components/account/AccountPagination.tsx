@@ -22,10 +22,10 @@ const AccountPagination: React.FC<AccountPaginationProps> = ({
   return (
     <div className="flex-col w-full">
       <div
-        className="flex w-full justify-center flex-wrap my-4"
+        className="flex w-full justify-center items-center flex-wrap bg-theme"
         data-testid="account-top-bar"
       >
-        <div className="items-center mx-4">
+        <div className="flex items-center justify-center w-full md:ml-auto md:w-3/4">
           <CustomPagination
             handleLatestPage={onLatestButtonClick}
             currentPage={page}
@@ -35,7 +35,7 @@ const AccountPagination: React.FC<AccountPaginationProps> = ({
             isMirrored={true}
           />
         </div>
-        <div className="flex items-center ">
+        <div className="flex items-center mt-2 md:mt-0 md:ml-auto w-full md:w-auto justify-center md:justify-end mb-2">
           <JumpToPage
             currentPage={page}
             onPageChange={setPage}
