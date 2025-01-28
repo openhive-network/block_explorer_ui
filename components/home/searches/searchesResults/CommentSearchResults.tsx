@@ -58,41 +58,36 @@ const CommentSearchResults = () => {
     <>
       {commentSearchData.operations_result.length ? (
         <div>
-          {!isCommentsPage && (
-            <Link href={commentPageLink}>
-              <Button data-testid="go-to-result-page">Go to result page</Button>
-            </Link>
-          )}
-
-          <div
-            className={cn(
-              "flex justify-center items-center text-black dark:text-white",
-              {
-                "mt-10": isCommentsPage,
-              }
-            )}
-          >
-            <CustomPagination
-              currentPage={commentPaginationPage}
-              totalCount={commentSearchData.total_operations}
-              pageSize={config.standardPaginationSize}
-              onPageChange={changeCommentSearchPagination}
-            />
+          <div className="flex flex-wrap justify-between items-center bg-theme p-2 gap-4 mb-4">
+            <div className="flex justify-center w-full md:w-auto md:justify-start">
+              {!isCommentsPage && (
+                <Link href={commentPageLink}>
+                  <Button data-testid="go-to-result-page">
+                    Go to result page
+                  </Button>
+                </Link>
+              )}
+            </div>
+            <div className="flex flex-col md:flex-row items-center gap-2 flex-1 justify-center w-full">
+              <CustomPagination
+                currentPage={commentPaginationPage}
+                totalCount={commentSearchData.total_operations}
+                pageSize={config.standardPaginationSize}
+                onPageChange={changeCommentSearchPagination}
+              />
+              <JumpToPage
+                currentPage={commentPaginationPage}
+                onPageChange={changeCommentSearchPagination}
+              />
+            </div>
           </div>
-          <div className="flex justify-end items-center mb-4">
-            <JumpToPage
-              currentPage={commentPaginationPage}
-              onPageChange={changeCommentSearchPagination}
-            />
-          </div>
-
           <OperationsTable
             operations={formattedOperations}
             unformattedOperations={unformattedOperations}
           />
         </div>
       ) : (
-        <NoResult/>
+        <NoResult />
       )}
     </>
   );
