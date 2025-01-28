@@ -37,7 +37,7 @@ export const HealthCheckerContextProvider: React.FC<{
   const [healthChecker, setHealthChecker] = useState<HealthChecker | undefined>(undefined);
   const [scoredEndpoints, setScoredEndpoints] = useState<TScoredEndpoint[] | undefined>(undefined);
 
-  const {nodeAddress, setNodeAddress, localProviders, setLocalProviders, fallbacks, setFallbacks} = useAddressesContext();
+  const {nodeAddress, setNodeAddress, fallbacks, setFallbacks} = useAddressesContext();
 
   const fallbacksRef = useRef(fallbacks);
   const nodeAddressRef = useRef(nodeAddress);
