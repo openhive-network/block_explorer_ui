@@ -1,11 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { config } from "@/Config";
-import Explorer from "@/types/Explorer";
 import { getOperationButtonTitle } from "@/utils/UI";
 import { trimAccountName } from "@/utils/StringUtils";
 import {
-  cn,
   convertBooleanArrayToIds,
   parseUrlFlagsIntoBooleanArray,
 } from "@/lib/utils";
@@ -13,31 +11,19 @@ import { Input } from "@/components/ui/input";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 import { Button } from "@/components/ui/button";
 import AutocompleteInput from "@/components/ui/AutoCompleteInput";
-import {
-  getCommentPageLink,
-  startCommentSearch,
-} from "./utils/commentSearchHelpers";
 import { useSearchesContext } from "@/contexts/SearchesContext";
 import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
 import useCommentSearch from "@/hooks/api/common/useCommentSearch";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/router";
+import useHandleCommentsSearch from "./hooks/useHandleCommentsSearch";
 
-interface CommentsSearchProps {
-  isAccountPage?: boolean;
-}
-
-const CommentsSearch: React.FC<CommentsSearchProps> = ({
-  isAccountPage = false,
-}) => {
+const CommentsSearch = () => {
   const {
     setCommentSearchProps,
     commentSearchProps,
     setCommentPaginationPage,
-    commentPaginationPage,
-    setPreviousCommentSearchProps,
     setLastSearchKey,
-    searchRanges,
     commentsSearchAccountName,
     setCommentsSearchAccountName,
     commentsSearchPermlink,
@@ -50,58 +36,35 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
   const router = useRouter();
 
   const { isCommentSearchDataLoading } = useCommentSearch(commentSearchProps);
+  const { handleCommentsSearch } = useHandleCommentsSearch();
 
   const { operationsTypes } = useOperationsTypes();
 
-  const { getRangesValues } = searchRanges;
   const isCommentsPage = pathname?.startsWith("/comments") ?? false;
 
-  const handleStartCommentSearch = async () => {
-    if (commentsSearchAccountName !== "") {
-      const {
-        payloadFromBlock,
-        payloadToBlock,
-        payloadStartDate,
-        payloadEndDate,
-      } = await getRangesValues();
+  const [accountName, setAccountName] = useState(
+    commentsSearchAccountName || ""
+  );
 
-      const searchProps: Explorer.CommentSearchParams = {
-        accountName: trimAccountName(commentsSearchAccountName as string),
-        permlink: commentsSearchPermlink as string,
-        fromBlock: payloadFromBlock,
-        toBlock: payloadToBlock,
-        startDate: payloadStartDate,
-        endDate: payloadEndDate,
-        operationTypes: selectedCommentSearchOperationTypes,
-        lastBlocks:
-          searchRanges.rangeSelectKey === "lastBlocks"
-            ? searchRanges.lastBlocksValue
-            : undefined,
-        lastTime: searchRanges.lastTimeUnitValue,
-        page: commentPaginationPage,
-        rangeSelectKey: searchRanges.rangeSelectKey,
-        timeUnit: searchRanges.timeUnitSelectKey,
-      };
+  const [permlink, setPermlink] = useState(commentsSearchPermlink || "");
 
-      startCommentSearch(
-        searchProps,
-        setCommentSearchProps,
-        setCommentPaginationPage,
-        setPreviousCommentSearchProps,
-        (val: "comment") => setLastSearchKey(val)
-      );
-      // change url on comments page when filters are applied
-      if (isCommentsPage) {
-        const commentPageLink = getCommentPageLink({
-          ...searchProps,
-          ...searchRanges,
-          operationTypes: selectedCommentSearchOperationTypes,
-        });
+  const infoText =
+    "Find all operations related to comments of given account or for exact permlink.";
 
-        router.replace(commentPageLink);
-      }
-    }
+  const buttonLabel = "Set author name and permlink";
+
+  const handleAccountNameChange = (value: string) => {
+    setAccountName(value);
   };
+  const handlePermlinkChange = (e: { target: { value: string } }) => {
+    setPermlink(e.target.value);
+  };
+
+  const onSearchButtonClick = () => {
+    handleCommentsSearch(accountName, permlink);
+    setLastSearchKey("comment");
+  };
+
   // Passing null if we want to reset operations
   const handleOperationSelect = (operationTypes: number[] | null) => {
     setSelectedCommentSearchOperationTypes(operationTypes);
@@ -113,6 +76,15 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
         pageNumber: 1,
       };
     });
+  };
+
+  const handleClearCommentSearch = () => {
+    setAccountName("");
+    setPermlink("");
+    setCommentsSearchPermlink(undefined);
+    setCommentsSearchAccountName(undefined);
+    setCommentSearchProps(undefined);
+    setSelectedCommentSearchOperationTypes(null);
   };
 
   //Set parameters for inputs and selected operation types from url (if there are any) on initial load
@@ -137,82 +109,32 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isCommentsPage, router.query]);
 
-  const handleClearCommentSearch = () => {
-    setCommentSearchProps(undefined);
-    setCommentsSearchPermlink("");
-    setSelectedCommentSearchOperationTypes(null);
-  };
-
-  // Render data if there is comment search permlink present on account page
   useEffect(() => {
-    if (isAccountPage && commentsSearchPermlink) {
-      handleStartCommentSearch();
-      return () => {
-        setCommentSearchProps(undefined);
-        setSelectedCommentSearchOperationTypes(null);
-      };
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAccountPage, commentsSearchPermlink]);
-
-  // Render data if there is account name and permlink set on main page
-  useEffect(() => {
-    if (
-      !isAccountPage &&
-      !isCommentsPage &&
-      commentsSearchPermlink &&
-      commentsSearchAccountName
-    ) {
-      handleStartCommentSearch();
-      return () => {
-        setCommentSearchProps(undefined);
-        setSelectedCommentSearchOperationTypes(null);
-      };
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    isAccountPage,
-    isCommentsPage,
-    commentsSearchPermlink,
-    commentsSearchAccountName,
-  ]);
-
-  const infoText = isAccountPage
-    ? "Find all operations related to comments for exact permlink."
-    : "Find all operations related to comments of given account or for exact permlink.";
-
-  const buttonLabel = isAccountPage
-    ? "Set permlink"
-    : "Set author name and permlink";
+    if (!commentsSearchAccountName || commentsSearchPermlink) return;
+    return () => handleClearCommentSearch();
+  }, [commentsSearchAccountName, commentsSearchPermlink]);
 
   return (
     <>
       <p className="ml-2">{infoText}</p>
-      {!isAccountPage ? (
-        <div className="flex flex-col">
-          <AutocompleteInput
-            value={commentsSearchAccountName as string}
-            onChange={setCommentsSearchAccountName}
-            placeholder="Author"
-            inputType="account_name"
-            className="w-1/2 bg-theme dark:bg-theme border-0 border-b-2"
-            required
-          />
-        </div>
-      ) : null}
+      <div className="flex flex-col">
+        <AutocompleteInput
+          value={accountName as string}
+          onChange={handleAccountNameChange}
+          placeholder="Author"
+          inputType="account_name"
+          className="w-1/2 bg-theme dark:bg-theme border-0 border-b-2"
+          required
+        />
+      </div>
 
-      <div
-        className={cn("flex flex-col", {
-          "my-5": isAccountPage,
-        })}
-      >
+      <div className="flex flex-col">
         <Input
           data-testid="permlink-input"
           className="w-1/2 bg-theme dark:bg-theme border-0 border-b-2"
           type="text"
-          value={commentsSearchPermlink}
-          onChange={(e) => setCommentsSearchPermlink(e.target.value)}
+          value={permlink}
+          onChange={handlePermlinkChange}
           placeholder="Permlink *"
           required
         />
@@ -235,24 +157,21 @@ const CommentsSearch: React.FC<CommentsSearchProps> = ({
         <div>
           <Button
             data-testid="search-button"
-            onClick={handleStartCommentSearch}
+            onClick={onSearchButtonClick}
             className="mr-2 my-2"
-            disabled={!commentsSearchAccountName || !commentsSearchPermlink}
+            disabled={!accountName || !permlink}
           >
             Search
             {isCommentSearchDataLoading && (
               <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />
             )}
           </Button>
-          {(!commentsSearchAccountName || !commentsSearchPermlink) && (
+          {(!accountName || !permlink) && (
             <label className="text-gray-300 dark:text-gray-500 ">
               {buttonLabel}
             </label>
           )}
         </div>
-        {isAccountPage ? (
-          <Button onClick={handleClearCommentSearch}>Clear</Button>
-        ) : null}
       </div>
     </>
   );
