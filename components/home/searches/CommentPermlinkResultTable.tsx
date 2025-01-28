@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/table";
 import Hive from "@/types/Hive";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
+import useHandleCommentsSearch from "./hooks/useHandleCommentsSearch";
 
 interface CommentPermlinkResultTableProps {
   data: Hive.Permlink[];
@@ -42,16 +43,12 @@ const buildTableHeader = () => {
 const buildTableBody = (
   data: Hive.Permlink[],
   accountName: string | undefined,
-  openCommentsSection: (accountName: string, permlink: string) => void
+  handleOpenCommentsSection: (accountName: string, permlink: string) => void
 ) => {
   if (!data || !data.length || !accountName) return;
 
   return data.map(
     ({ block, operation_id, permlink, timestamp, trx_id }: any) => {
-      const handleOpenCommentsSection = () => {
-        openCommentsSection(accountName, permlink);
-      };
-
       return (
         <React.Fragment key={trx_id}>
           <TableRow className="border-b border-gray-700 hover:bg-inherit p-[10px]">
@@ -62,7 +59,7 @@ const buildTableBody = (
               {operation_id}
             </TableCell>
             <TableCell
-              onClick={handleOpenCommentsSection}
+              onClick={() => handleOpenCommentsSection(accountName, permlink)}
               className="text-left text-text bg-inherit break-all cursor-pointer hover:bg-buttonHover font-bold"
             >
               {permlink}
@@ -85,6 +82,12 @@ const CommentPermlinkResultTable = ({
   data,
   accountName,
 }: CommentPermlinkResultTableProps) => {
+  const { handleCommentsSearch } = useHandleCommentsSearch();
+
+  const handleOpenCommentsSection = (accountName: string, permlink: string) => {
+    handleCommentsSearch(accountName, permlink);
+    openCommentsSection(accountName, permlink);
+  };
   return (
     <>
       <div className="flex w-full overflow-auto">
@@ -94,7 +97,7 @@ const CommentPermlinkResultTable = ({
               <TableRow>{buildTableHeader()}</TableRow>
             </TableHeader>
             <TableBody>
-              {buildTableBody(data, accountName, openCommentsSection)}
+              {buildTableBody(data, accountName, handleOpenCommentsSection)}
             </TableBody>
           </Table>
         </div>
