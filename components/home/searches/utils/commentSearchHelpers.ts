@@ -1,32 +1,7 @@
-import {
-  convertBooleanArrayToIds,
-  convertIdsToBooleanArray,
-} from "@/lib/utils";
+import { convertIdsToBooleanArray } from "@/lib/utils";
 import { dataToURL } from "@/utils/URLutils";
 import Explorer from "@/types/Explorer";
 import { setParamIfPositive } from "./globalSearchHelpers";
-
-export async function startCommentSearch(
-  commentSearchParams: Explorer.CommentSearchParams,
-  setCommentSearchProps: (
-    props: Explorer.CommentSearchProps | undefined
-  ) => void,
-  setCommentPaginationPage: (page: number) => void,
-  setPreviousCommentSearchProps: (props: Explorer.CommentSearchProps) => void,
-  setLastSearchKey: (key: "comment") => void
-) {
-  const { filters, ...params } = commentSearchParams;
-  const props: Explorer.CommentSearchProps = {
-    ...params,
-    accountName: params.accountName || "",
-    operationTypes:
-      filters && filters.length ? convertBooleanArrayToIds(filters) : undefined,
-  };
-  setCommentSearchProps(props);
-  setCommentPaginationPage(1);
-  setPreviousCommentSearchProps(props);
-  setLastSearchKey("comment");
-}
 
 export function getCommentPageLink(
   commentSearchProps: Explorer.CommentSearchProps | undefined
