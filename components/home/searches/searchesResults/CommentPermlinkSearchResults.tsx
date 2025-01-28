@@ -1,7 +1,6 @@
 import usePermlinkSearch from "@/hooks/api/common/usePermlinkSearch";
 import CommentPermlinkResultTable from "../CommentPermlinkResultTable";
 import { useSearchesContext } from "@/contexts/SearchesContext";
-import { getCommentPageLink } from "../utils/commentSearchHelpers";
 import CustomPagination from "@/components/CustomPagination";
 import { config } from "@/Config";
 import { useRouter } from "next/router";
@@ -16,6 +15,7 @@ const CommentPermlinkSearchResults = () => {
     permlinkPaginationPage,
     setPermlinkPaginationPage,
     setActiveSearchSection,
+    setLastSearchKey,
   } = useSearchesContext();
   const router = useRouter();
   const isAccountPage = Boolean(router.query.accountName) || false;
@@ -25,6 +25,7 @@ const CommentPermlinkSearchResults = () => {
   const accountName = permlinkSearchProps?.accountName;
 
   const openCommentsSection = (accountName: string, permlink: string) => {
+    setLastSearchKey("comment");
     setActiveSearchSection("comment");
     setCommentsSearchAccountName(accountName);
     setCommentsSearchPermlink(permlink);
