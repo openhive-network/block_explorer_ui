@@ -125,8 +125,8 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         <div className="col-start-1 row-start-2 row-span-2 col-span-3">
           <div>Api checks:</div>
           <div className="flex flex-wrap">
-            {Array.from(customApiCheckers?.entries() || []).map(([key, apiChecker]) => (
-              <Badge key={key} variant={"outline"}>{apiChecker.title}</Badge>
+            {customApiCheckers?.map((apiChecker, index) => (
+              <Badge key={index} variant={"outline"}>{apiChecker.title}</Badge>
             ))}
           </div>
         </div>
