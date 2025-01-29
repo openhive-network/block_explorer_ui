@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from "react";
 import { HealthChecker, TScoredEndpoint } from "@hiveio/wax";
-import { useAddressesContext } from "./AddressesContext";
 import { useHiveChainContext } from "./HiveChainContext";
+import useApiAddresses from "@/utils/ApiAddresses";
 
 type HealthCheckerContextType = {
   healthChecker: HealthChecker | undefined;
@@ -9,6 +9,12 @@ type HealthCheckerContextType = {
   setScoredEndpoints: (scoredEndpoints: TScoredEndpoint[] | undefined ) => void;
   fallbacks?: string[];
   setFallbacks: (fallbacks: string[]) => void;
+  apiAddress: string | null;
+  setApiAddress: (address: string | null) => void;
+  nodeAddress: string | null;
+  setNodeAddress: (address: string | null) => void;
+  localProviders?: string[];
+  setLocalProviders: (nodes: string[]) => void;
 };
 
 export const HealthCheckerContext = createContext<HealthCheckerContextType>({
@@ -16,7 +22,13 @@ export const HealthCheckerContext = createContext<HealthCheckerContextType>({
   scoredEndpoints: undefined,
   setScoredEndpoints: () => {},
   fallbacks: [],
-  setFallbacks: () => {}
+  setFallbacks: () => {},
+  apiAddress: "",
+  setApiAddress: () => {},
+  nodeAddress: "",
+  setNodeAddress: () => {},
+  localProviders: undefined,
+  setLocalProviders: () => {},
 });
 
 export const useHealthCheckerContext = () => {
@@ -34,11 +46,19 @@ export const HealthCheckerContextProvider: React.FC<{
 }> = ({ children }) => {
     const {hiveChain} = useHiveChainContext();
 
+    const {
+      apiAddress,
+      nodeAddress,
+      localProviders,
+      fallbacks,
+      writeApiAddressToLocalStorage,
+      writeNodeAddressToLocalStorage,
+      writeLocalProvidersToLocalStorage,
+      writeFallbacksToLocalStorage,
+    } = useApiAddresses();
+
   const [healthChecker, setHealthChecker] = useState<HealthChecker | undefined>(undefined);
   const [scoredEndpoints, setScoredEndpoints] = useState<TScoredEndpoint[] | undefined>(undefined);
-
-  const {nodeAddress, setNodeAddress, fallbacks, setFallbacks} = useAddressesContext();
-
   const fallbacksRef = useRef(fallbacks);
   const nodeAddressRef = useRef(nodeAddress);
 
@@ -54,7 +74,7 @@ export const HealthCheckerContextProvider: React.FC<{
     if (currentScoredEndpoint && !currentScoredEndpoint.up) {
       fallbacksRef.current?.forEach((fallback) => {
         const fallbackScoredEndpoint = scoredEndpoints.find((scoredEdnpoint) => scoredEdnpoint.endpointUrl === fallback);
-        if (fallbackScoredEndpoint && fallbackScoredEndpoint.up) setNodeAddress(fallback);
+        if (fallbackScoredEndpoint && fallbackScoredEndpoint.up) writeNodeAddressToLocalStorage(fallback);
       })
     }
   }
@@ -74,7 +94,19 @@ export const HealthCheckerContextProvider: React.FC<{
   }, [nodeAddress])
 
   return (
-    <HealthCheckerContext.Provider value={{ healthChecker, scoredEndpoints, setScoredEndpoints, fallbacks, setFallbacks }}>
+    <HealthCheckerContext.Provider value={{ 
+      healthChecker, 
+      scoredEndpoints, 
+      setScoredEndpoints, 
+      fallbacks, 
+      setFallbacks: writeFallbacksToLocalStorage,
+      apiAddress,
+      setApiAddress: writeApiAddressToLocalStorage,
+      nodeAddress,
+      setNodeAddress: writeNodeAddressToLocalStorage,
+      localProviders,
+      setLocalProviders: writeLocalProvidersToLocalStorage,
+    }}>
       {children}
     </HealthCheckerContext.Provider>
   );

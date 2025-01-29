@@ -1,7 +1,6 @@
 import HealthCheckerComponent, { ApiChecker } from "@/components/healthchecker/HealthChecker";
 import Head from "next/head";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
-import { useAddressesContext } from "@/contexts/AddressesContext";
 
 import { ExplorerNodeApi } from "@/types/Node";
 import { useEffect, useState } from "react";
@@ -11,9 +10,17 @@ import { useHealthCheckerContext } from "@/contexts/HealthCheckerContext";
 export default function HealthcheckerPage() {
 
   const {hiveChain} = useHiveChainContext();
-  const {healthChecker, scoredEndpoints, setScoredEndpoints, fallbacks, setFallbacks} = useHealthCheckerContext();
-  const { nodeAddress, setNodeAddress, localProviders, setLocalProviders } =
-    useAddressesContext();
+  const {
+    healthChecker,
+    scoredEndpoints,
+    setScoredEndpoints,
+    fallbacks,
+    setFallbacks,
+    nodeAddress,
+    setNodeAddress,
+    localProviders,
+    setLocalProviders,
+  } = useHealthCheckerContext();
   const [providers, setProviders] = useState<string[]>(config.defaultProviders);
 
   const extendedHiveChain = hiveChain
