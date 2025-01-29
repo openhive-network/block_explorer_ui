@@ -10,7 +10,6 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { UserSettingsContextProvider } from "../contexts/UserSettingsContext";
 import { HiveChainContextProvider } from "../contexts/HiveChainContext";
-import { AddressesContextProvider } from "../contexts/AddressesContext";
 import { HeadBlockContextProvider } from "@/contexts/HeadBlockContext";
 import Layout from "./layout";
 import useApiAddresses from "@/utils/ApiAddresses";
