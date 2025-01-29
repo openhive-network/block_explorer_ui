@@ -13,11 +13,11 @@ const useWitnessDetails = (accountName: string, isWitness: boolean) => {
     const witness = {
       ...witnessData,
       votes_updated_at: witnessData.votes_updated_at,
-      vests: hiveChain?.vests(witnessData.witness.vests),
+      vests: witnessData.witness.vests? hiveChain?.vests(witnessData.witness.vests):hiveChain?.vests(0) ,
       hbd_interest_rate: formatPercent(witnessData.witness.hbd_interest_rate),
-      votes_daily_change: hiveChain?.vests(
+      votes_daily_change:witnessData.witness.votes_daily_change ? hiveChain?.vests(
         witnessData.witness.votes_daily_change
-      ),
+      ):hiveChain?.vests(0) ,
     };
     const formattedWitness = hiveChain?.formatter.format(
       witness

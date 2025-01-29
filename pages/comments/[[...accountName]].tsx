@@ -55,7 +55,9 @@ const Comments: React.FC = () => {
           <CommentsSearch />
         </CardContent>
       </Card>
+      <div className="mt-4">
       <CommentSearchResults />
+      </div>
     </div>
   );
 };

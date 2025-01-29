@@ -73,24 +73,30 @@ const AccountSearchResults = () => {
     <>
       {accountOperations.total_operations > 0 ? (
         <div data-testid="operations-card">
-          <Link href={accountPageLink}>
-            <Button data-testid="go-to-result-page">Go to result page</Button>
-          </Link>
-
-          <div className="flex justify-center items-center text-black dark:text-white">
-            <CustomPagination
-              currentPage={accountOperationsPage || 1}
-              totalCount={totalOperations}
-              pageSize={config.standardPaginationSize}
-              onPageChange={changeAccountOperationsPagination}
-              isMirrored={true}
-            />
-          </div>
-          <div className="flex justify-end items-center mb-4">
-            <JumpToPage
-              currentPage={accountOperationsPage || 1}
-              onPageChange={changeAccountOperationsPagination}
-            />
+          <div className="flex flex-wrap justify-between items-center bg-theme p-2 gap-4 mb-4">
+            <div className="flex justify-center w-full md:w-auto md:justify-start">
+              <Link href={accountPageLink}>
+                <Button
+                  data-testid="go-to-result-page"
+                  className="w-full md:w-auto"
+                >
+                  Go to result page
+                </Button>
+              </Link>
+            </div>
+            <div className="flex flex-col md:flex-row items-center gap-2 flex-1 justify-center w-full">
+              <CustomPagination
+                currentPage={accountOperationsPage || 1}
+                totalCount={totalOperations}
+                pageSize={config.standardPaginationSize}
+                onPageChange={changeAccountOperationsPagination}
+                isMirrored={true}
+              />
+              <JumpToPage
+                currentPage={accountOperationsPage || 1}
+                onPageChange={changeAccountOperationsPagination}
+              />
+            </div>
           </div>
           <OperationsTable
             operations={formattedOperations}
@@ -98,7 +104,7 @@ const AccountSearchResults = () => {
           />
         </div>
       ) : (
-       <NoResult/>
+        <NoResult />
       )}
     </>
   );

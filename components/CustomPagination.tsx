@@ -78,29 +78,57 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
   const onLastPage = () => {
     if (handleLatestPage) {
       handleLatestPage(); // Use the custom handler if provided
-    } else { 
+    } else {
       onPageChange(lastPage); // Default behavior: go to the last page
     }
+  };
+
+  const arrowStyle =
+    "cursor-pointer border transition-colors duration-200 hover:border-explorer-dark-gray dark:border-explorer-bg-start dark:hover:border-white";
+
+  const activePageStyle = "font-bold border border-black dark:border-white";
+
+  const totalPages = Math.ceil(totalCount / pageSize);
+
+  let iconPaddingClass = "";
+  let pageItemPaddingClass = "";
+
+
+  if (totalPages > 10 && totalPages < 100) {
+    iconPaddingClass = "p-1.5 md:p-2.5 m-0";
+    pageItemPaddingClass = "px-1.5 md:px-2.5";
+  }
+  else if (totalPages > 100 && totalPages < 1000) {
+    iconPaddingClass = "p-0.5 md:p-2.5 m-0";
+    pageItemPaddingClass = "px-1 md:px-2";
+  } else if (totalPages >= 1000) {
+    iconPaddingClass = "p-0.5 md:p-1 m-0";
+    pageItemPaddingClass = "px-[0.5px] md:px-1.5";
+  }else {
+    iconPaddingClass = "p-2";
+    pageItemPaddingClass = "px-3";
   }
 
   return (
-    <Pagination className={className}>
-      <PaginationContent className="md:gap-x-4">
+    <Pagination
+      className={cn("bg-theme p-2 flex items-center justify-center", className)}
+    >
+      <PaginationContent className="md:gap-x-1">
         {paginationRange.length > 1 &&
           (isMirrored ? currentPage !== maxPage : currentPage !== 1) && (
             <>
               <PaginationItem
                 onClick={isMirrored ? onLastPage : onFirstPage}
-                className="cursor-pointer"
+                className={cn(arrowStyle, "flex items-center justify-center")}
               >
-                <PaginationLatest />
+                <PaginationLatest className={iconPaddingClass} />
               </PaginationItem>
 
               <PaginationItem
                 onClick={isMirrored ? onNext : onPrevious}
-                className="cursor-pointer"
+                className={cn(arrowStyle, "flex items-center justify-center")}
               >
-                <PaginationPrevious />
+                <PaginationPrevious className={iconPaddingClass} />
               </PaginationItem>
             </>
           )}
@@ -119,10 +147,10 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
               <PaginationItem
                 key={i}
                 className={cn(
-                  "px-1 md:px-3 md:py-1.5 rounded-full cursor-pointer hover:bg-white dark:hover:bg-theme",
+                  pageItemPaddingClass,
+                  "py-1.5 cursor-pointer hover:bg-explorer-extra-light-gray text-[6px]",
                   {
-                    "font-bold bg-white dark:bg-theme":
-                      currentPage === pageNumber,
+                    [activePageStyle]: currentPage === pageNumber,
                   }
                 )}
                 onClick={() => onPageChange(Number(pageNumber))}
@@ -144,15 +172,15 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
             <>
               <PaginationItem
                 onClick={isMirrored ? onPrevious : onNext}
-                className="cursor-pointer"
+                className={cn(arrowStyle, "flex items-center justify-center")}
               >
-                <PaginationNext />
+                <PaginationNext className={iconPaddingClass} />
               </PaginationItem>
               <PaginationItem
                 onClick={isMirrored ? onFirstPage : onLastPage}
-                className="cursor-pointer"
+                className={cn(arrowStyle, "flex items-center justify-center")}
               >
-                <PaginationFirst />
+                <PaginationFirst className={iconPaddingClass} />
               </PaginationItem>
             </>
           )}
