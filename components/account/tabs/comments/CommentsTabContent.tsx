@@ -64,6 +64,7 @@ const CommentsTabContent = () => {
     if (!accountNameFromRoute) return;
 
     return () => handleClearCommentSearch();
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountNameFromRoute]);
 
   return (
