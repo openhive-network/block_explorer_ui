@@ -154,7 +154,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
       <Link
         rel="noopener noreferrer"
         target="_blank"
-        href={`https://hive.blog/@${author}/${permlink}`}
+        href={`/@${author}/${permlink}`}
       >
         <span className="text-explorer-light-green">{permlink}</span>
       </Link>
