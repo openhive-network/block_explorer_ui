@@ -1,13 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import moment from "moment";
 
 import { config } from "@/Config";
 import Explorer from "@/types/Explorer";
 import { useHeadBlockNumber } from "../../contexts/HeadBlockContext";
+import useURLParams from "./useURLParams";
+import { defaultSearchParams } from "@/pages/[accountName]";
 
 export const DEFAULT_LAST_BLOCK_VALUE = 1000;
 export const DEFAULT_LAST_TIME_UNIT_VALUE = 30;
 export const DEFAULT_TIME_UNIT_SELECT_KEY = "days";
+export const DEFAULT_RANGE_SELECT_KEY = "lastTime";
 
 interface RangesValues {
   payloadFromBlock?: number;
@@ -39,7 +42,11 @@ export interface SearchRangesResult {
   setRangesValues: (params: Explorer.CommentSearchParams | undefined) => void;
 }
 
-const useSearchRanges = (defaultSelectKey: string = "lastTime") => {
+const useSearchRanges = (
+  defaultSelectKey: string = DEFAULT_RANGE_SELECT_KEY
+) => {
+  const { paramsState } = useURLParams(defaultSearchParams);
+
   const rangeSelectOptions: Explorer.SelectOption[] = [
     {
       name: "Last blocks",
@@ -99,16 +106,17 @@ const useSearchRanges = (defaultSelectKey: string = "lastTime") => {
   const [timeUnitSelectKey, setTimeUnitSelectKey] = useState<string>(
     DEFAULT_TIME_UNIT_SELECT_KEY
   );
-
   const { checkTemporaryHeadBlockNumber } = useHeadBlockNumber();
 
-  const setRangesValues = (params: Explorer.CommentSearchParams) => {
+  const setRangesValues = (params: any) => {
     if (!params) return;
 
     params.fromBlock && setFromBlock(params.fromBlock);
     params.toBlock && setToBlock(params.toBlock);
     params.startDate && setStartDate(params.startDate);
     params.endDate && setEndDate(params.endDate);
+    params.fromDate && setStartDate(params.fromDate);
+    params.toDate && setEndDate(params.toDate);
     params.lastBlocks && setLastBlocksValue(params.lastBlocks);
     params.lastTime && setLastTimeUnitValue(params.lastTime);
     params.rangeSelectKey && setRangeSelectKey(params.rangeSelectKey);
@@ -142,9 +150,12 @@ const useSearchRanges = (defaultSelectKey: string = "lastTime") => {
         .milliseconds(0)
         .toDate();
     }
-    
+
     //Validate that payloadStartDate is a valid
-    if (payloadStartDate && (isNaN(payloadStartDate?.getTime()) || payloadStartDate?.getTime() <= 0)) {
+    if (
+      payloadStartDate &&
+      (isNaN(payloadStartDate?.getTime()) || payloadStartDate?.getTime() <= 0)
+    ) {
       payloadStartDate = undefined; //fallback
     }
     //Validate that payloadToBlock does not exceed latest headblock number
@@ -154,8 +165,7 @@ const useSearchRanges = (defaultSelectKey: string = "lastTime") => {
         payloadToBlock = currentHeadBlockNumber; //fallback
       }
     }
-    if(payloadFromBlock)
-    {
+    if (payloadFromBlock) {
       const currentHeadBlockNumber = await checkTemporaryHeadBlockNumber();
       if (payloadFromBlock > currentHeadBlockNumber) {
         payloadFromBlock = currentHeadBlockNumber; //fallback
@@ -169,6 +179,13 @@ const useSearchRanges = (defaultSelectKey: string = "lastTime") => {
       payloadEndDate,
     };
   };
+
+  // Set range values from url params
+  useEffect(() => {
+    if (paramsState) {
+      setRangesValues(paramsState);
+    }
+  }, [paramsState]);
 
   return {
     rangeSelectOptions,
