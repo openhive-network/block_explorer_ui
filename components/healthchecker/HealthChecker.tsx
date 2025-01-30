@@ -21,7 +21,6 @@ interface HealthCheckerComponentProps {
   currentAddress?: string;
   customProviders?: string[];
   customApiCheckers?: ApiChecker[];
-  healthChecker?: HealthChecker;
   scoredEndpoints?: TScoredEndpoint[];
   fallbacks: string[];
   changeNodeAddress: (url: string | null) => void; 
@@ -38,7 +37,6 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   currentAddress,
   customProviders,
   customApiCheckers,
-  healthChecker,
   scoredEndpoints,
   fallbacks,
   changeNodeAddress,
@@ -50,24 +48,8 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   removeFallback,
 }) => {
 
-  const [chainInitialized, setChainIntialized] = useState<boolean>(false);
   const [isProviderAdditionDialogOpened, setIsProviderAdditionDialogOpened] = useState<boolean>(false);
 
-  const initializeDefaultChecks = () => {
-    const initialEndpoints: TScoredEndpoint[] | undefined = customProviders?.map((customProvider) => ({endpointUrl: customProvider, score: 1, up: true, lastLatency: 0}))
-    if (!!initialEndpoints && !scoredEndpoints) setScoredEndpoints(initialEndpoints);
-    subscribeToCheckers();
-    setChainIntialized(true);
-  }
-
-  
-  const subscribeToCheckers = () => {
-    healthChecker?.unregisterAll();
-    for (const checker of customApiCheckers || []) {
-      healthChecker?.register(checker!.method, checker!.params, checker!.validatorFunction, customProviders);
-    }
-  }
-  
   const restoreDefault = () => {
     resetProviders();
   }
@@ -82,16 +64,6 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     setIsProviderAdditionDialogOpened(false);
   }
   
-  useEffect(() => { 
-    if (healthChecker && !chainInitialized && !!customApiCheckers) {
-      initializeDefaultChecks();
-    }
-  }, [chainInitialized, customApiCheckers, healthChecker, initializeDefaultChecks])
-
-  useEffect(() => {
-    if (customProviders) subscribeToCheckers();
-  }, [customProviders])
-
   const renderProvider = (scoredEndpoint: TScoredEndpoint) => {
     const {endpointUrl, score, up,} = scoredEndpoint;
     let lastLatency: number | null = null;

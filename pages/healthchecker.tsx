@@ -11,7 +11,6 @@ export default function HealthcheckerPage() {
 
   const {hiveChain} = useHiveChainContext();
   const {
-    healthChecker,
     apiCheckers,
     scoredEndpoints,
     setScoredEndpoints,
@@ -23,9 +22,6 @@ export default function HealthcheckerPage() {
     setLocalProviders,
   } = useHealthCheckerContext();
   const [providers, setProviders] = useState<string[]>(config.defaultProviders);
-
-  const extendedHiveChain = hiveChain
-    ?.extend<ExplorerNodeApi>();
 
   const addNewProvider = (provider: string) => {
     if (localProviders) {
@@ -83,7 +79,7 @@ export default function HealthcheckerPage() {
           changeNodeAddress={changeNodeAddress} 
           customApiCheckers={apiCheckers}
           customProviders={providers}
-          healthChecker={healthChecker}
+
           setScoredEndpoints={setScoredEndpoints}
           addNewProvider={addNewProvider}
           deleteProvider={deleteProvider}

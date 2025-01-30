@@ -4,9 +4,9 @@ import { useHiveChainContext } from "./HiveChainContext";
 import useApiAddresses from "@/utils/ApiAddresses";
 import { ApiChecker } from "@/components/healthchecker/HealthChecker";
 import { ExplorerNodeApi } from "@/types/Node";
+import { config } from "@/Config";
 
 type HealthCheckerContextType = {
-  healthChecker: HealthChecker | undefined;
   apiCheckers: ApiChecker[];
   scoredEndpoints: TScoredEndpoint[] | undefined;
   setScoredEndpoints: (scoredEndpoints: TScoredEndpoint[] | undefined ) => void;
@@ -21,7 +21,6 @@ type HealthCheckerContextType = {
 };
 
 export const HealthCheckerContext = createContext<HealthCheckerContextType>({
-  healthChecker: undefined,
   apiCheckers: [],
   scoredEndpoints: undefined,
   setScoredEndpoints: () => {},
@@ -63,6 +62,8 @@ export const HealthCheckerContextProvider: React.FC<{
 
   const [healthChecker, setHealthChecker] = useState<HealthChecker | undefined>(undefined);
   const [scoredEndpoints, setScoredEndpoints] = useState<TScoredEndpoint[] | undefined>(undefined);
+  const [providers, setProviders] = useState<string[]>(config.defaultProviders);
+  const [chainInitialized, setChainIntialized] = useState<boolean>(false);
   const fallbacksRef = useRef(fallbacks);
   const nodeAddressRef = useRef(nodeAddress);
 
@@ -126,6 +127,20 @@ const apiCheckers: ApiChecker[] = [
     }
   }
 
+  const initializeDefaultChecks = () => {
+    const initialEndpoints: TScoredEndpoint[] | undefined = providers?.map((customProvider) => ({endpointUrl: customProvider, score: 1, up: true, lastLatency: 0}))
+    if (!!initialEndpoints && !scoredEndpoints) setScoredEndpoints(initialEndpoints);
+    subscribeToCheckers();
+    setChainIntialized(true);
+  }
+
+  const subscribeToCheckers = () => {
+    healthChecker?.unregisterAll();
+    for (const checker of apiCheckers) {
+      healthChecker?.register(checker!.method, checker!.params, checker!.validatorFunction, providers);
+    }
+  }
+
   useEffect(() => {
     if (hiveChain) {
       createHealthChecker();
@@ -140,9 +155,21 @@ const apiCheckers: ApiChecker[] = [
     nodeAddressRef.current = nodeAddress;
   }, [nodeAddress])
 
+  useEffect(() => {
+    if (localProviders) {
+      setProviders(localProviders);
+      subscribeToCheckers();
+    } 
+  }, [localProviders])
+
+  useEffect(() => { 
+    if (healthChecker && !chainInitialized) {
+      initializeDefaultChecks();
+    }
+  }, [chainInitialized, healthChecker, initializeDefaultChecks])
+
   return (
     <HealthCheckerContext.Provider value={{ 
-      healthChecker, 
       apiCheckers,
       scoredEndpoints, 
       setScoredEndpoints, 
