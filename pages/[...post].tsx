@@ -39,11 +39,9 @@ const Post = () => {
     const community = data?.category;
     if (!community) return;
 
-    const newQuery = [community, accountName, permlink] as string[];
+    const url = `${community}/${encodeURI(accountName)}/${permlink}`;
 
-    router.replace({
-      query: { post: newQuery },
-    });
+    router.replace(url);
 
     return <PostPageContent />;
   } else if (post.length === 3) {
