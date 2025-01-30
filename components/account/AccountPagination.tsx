@@ -1,5 +1,4 @@
 import { config } from "@/Config";
-import Hive from "@/types/Hive";
 import JumpToPage from "../JumpToPage";
 
 import CustomPagination from "../CustomPagination";
@@ -7,13 +6,13 @@ import CustomPagination from "../CustomPagination";
 interface AccountPaginationProps {
   page: number;
   setPage: (page: number | undefined) => void;
-  accountOperations: Hive.OperationsCount;
+  operationsCount: number;
 }
 
 const AccountPagination: React.FC<AccountPaginationProps> = ({
   page,
   setPage,
-  accountOperations,
+  operationsCount,
 }) => {
   const onLatestButtonClick = () => {
     setPage(undefined);
@@ -29,7 +28,7 @@ const AccountPagination: React.FC<AccountPaginationProps> = ({
           <CustomPagination
             handleLatestPage={onLatestButtonClick}
             currentPage={page}
-            totalCount={accountOperations.total_operations || 0}
+            totalCount={operationsCount ?? 1}
             pageSize={config.standardPaginationSize}
             onPageChange={setPage}
             isMirrored={true}
