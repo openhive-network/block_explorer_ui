@@ -1,32 +1,28 @@
-// TODO: This component should be investigated and rebuild in more simple way.
-// Possible improvements: handleSearch function , reduce count of use effects.
-// I believe we could use much less code and export what is nacessary to other components or utils functions and leave component less crowded than it is now
-
-import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
+import { useState } from "react";
 import { useRouter } from "next/router";
 
 import SearchRanges from "@/components/searchRanges/SearchRanges";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
-import OperationsTable from "@/components/OperationsTable";
 import useURLParams from "@/hooks/common/useURLParams";
 import { defaultSearchParams } from "@/pages/[accountName]";
-import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
 import {
   convertBooleanArrayToIds,
   convertIdsToBooleanArray,
-  convertOperationResultsToTableOperations,
 } from "@/lib/utils";
-import Hive from "@/types/Hive";
-import AccountPagination from "../../AccountPagination";
 import useAccountOperations from "@/hooks/api/accountPage/useAccountOperations";
 import useAccountOperationTypes from "@/hooks/api/accountPage/useAccountOperationTypes";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 import { getOperationButtonTitle } from "@/utils/UI";
 import { useSearchesContext } from "@/contexts/SearchesContext";
-import NoResult from "@/components/NoResult";
+import {
+  DEFAULT_RANGE_SELECT_KEY,
+  DEFAULT_LAST_BLOCK_VALUE,
+  DEFAULT_LAST_TIME_UNIT_VALUE,
+  DEFAULT_TIME_UNIT_SELECT_KEY,
+} from "@/hooks/common/useSearchRanges";
+import AccountOperationsSection from "./AccountOperationsSection";
 
 interface OpeationTabContentProps {
   liveDataEnabled: boolean;
@@ -38,16 +34,9 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
   const router = useRouter();
   const { searchRanges } = useSearchesContext();
 
-  const { paramsState, setParams } = useURLParams(
-    {
-      ...defaultSearchParams,
-    },
-    ["accountName"]
-  );
-
-  const [filters, setFilters] = useState<boolean[]>([]);
-  const [initialSearch, setInitialSearch] = useState<boolean>(false);
-  const [lastPage, setLastPage] = useState<number | undefined>(undefined);
+  const { paramsState, setParams } = useURLParams(defaultSearchParams, [
+    "accountName",
+  ]);
 
   const {
     filters: filtersParam,
@@ -55,48 +44,54 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     toBlock: toBlockParam,
     fromDate: fromDateParam,
     toDate: toDateParam,
-    lastBlocks: lastBlocksParam,
-    timeUnit: timeUnitParam,
-    lastTime: lastTimeParam,
-    rangeSelectKey,
-    page,
   } = paramsState;
 
   const accountNameFromRoute = (router.query.accountName as string)?.replace(
     "@",
     ""
   );
+
   const accountOperationsProps = {
     accountName: accountNameFromRoute,
     operationTypes: filtersParam.length
       ? convertBooleanArrayToIds(filtersParam)
-      : undefined,
+      : null,
     pageNumber: paramsState.page,
     fromBlock: fromBlockParam,
     toBlock: toBlockParam,
     startDate: fromDateParam,
     endDate: toDateParam,
   };
+
+  // Operation types
+  const [filters, setFilters] = useState<boolean[]>([]);
+
   const { accountOperations, isAccountOperationsLoading } =
     useAccountOperations(accountOperationsProps, liveDataEnabled);
 
-  const formattedAccountOperations = useOperationsFormatter(
-    accountOperations
-  ) as Hive.AccountOperationsResponse;
-
-  const handleFilterClear = () => {
-    const newPage = rangeSelectKey !== "lastTime" ? undefined : page;
-    setParams({
-      ...defaultSearchParams,
-      accountName: accountNameFromRoute,
-      page: newPage,
-    });
-    searchRanges.setRangeSelectKey("lastTime");
-    setFilters([]);
-  };
-
   const { accountOperationTypes } =
     useAccountOperationTypes(accountNameFromRoute);
+
+  const handleClearFilter = () => {
+    const {
+      setRangeSelectKey,
+      setTimeUnitSelectKey,
+      setLastTimeUnitValue,
+      setLastBlocksValue,
+    } = searchRanges;
+
+    const props = {
+      ...defaultSearchParams,
+      accountName: accountNameFromRoute,
+    };
+
+    setRangeSelectKey(DEFAULT_RANGE_SELECT_KEY);
+    setTimeUnitSelectKey(DEFAULT_TIME_UNIT_SELECT_KEY);
+    setLastTimeUnitValue(DEFAULT_LAST_TIME_UNIT_VALUE);
+    setLastBlocksValue(DEFAULT_LAST_BLOCK_VALUE);
+    setParams(props);
+    setFilters([]);
+  };
 
   const handleOperationSelect = (filters: number[] | null) => {
     const newFilters = convertIdsToBooleanArray(filters);
@@ -104,138 +99,38 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     setParams({ ...paramsState, filters: newFilters, page: undefined });
   };
 
-  const buildOperationView = () => {
-    if (!isAccountOperationsLoading && !accountOperations?.total_operations) {
-      return (
-        <div>
-          <NoResult/>
-        </div>
-      );
-    } else if (isAccountOperationsLoading) {
-      return (
-        <div className="flex justify-center text-center items-center">
-          <Loader2 className="animate-spin mt-1 text-text h-12 w-12 ml-3 ..." />
-        </div>
-      );
-    } else {
-      return (
-        <div>
-          <div
-            className={
-              "flex justify-center items-center text-text  sticky z-20 bg-explorer-bg-start my-4 top-[4.5rem]"
-            }
-          >
-            {accountOperations && (page || lastPage) && (
-              <AccountPagination
-                page={page ? page : lastPage || 0}
-                setPage={(page: number | undefined) =>
-                  setParams({ ...paramsState, page })
-                }
-                accountOperations={accountOperations}
-              />
-            )}
-          </div>
+  const handleSearch = async () => {
+    const {
+      payloadFromBlock,
+      payloadToBlock,
+      payloadStartDate,
+      payloadEndDate,
+    } = await searchRanges.getRangesValues();
 
-          <OperationsTable
-            operations={convertOperationResultsToTableOperations(
-              formattedAccountOperations?.operations_result || []
-            )}
-            unformattedOperations={convertOperationResultsToTableOperations(
-              accountOperations?.operations_result || []
-            )}
-          />
-        </div>
-      );
-    }
+    const props = {
+      ...paramsState,
+      fromBlock: payloadFromBlock,
+      toBlock: payloadToBlock,
+      fromDate: payloadStartDate,
+      toDate: payloadEndDate,
+      lastBlocks:
+        searchRanges.rangeSelectKey === "lastBlocks"
+          ? searchRanges.lastBlocksValue
+          : undefined,
+      lastTime:
+        searchRanges.rangeSelectKey === "lastTime"
+          ? searchRanges.lastTimeUnitValue
+          : undefined,
+      timeUnit:
+        searchRanges.rangeSelectKey === "lastTime"
+          ? searchRanges.timeUnitSelectKey
+          : undefined,
+      rangeSelectKey: searchRanges.rangeSelectKey,
+      page: undefined,
+    };
+
+    setParams(props);
   };
-
-  const handleSearch = async (resetPage?: boolean) => {
-    if (
-      !initialSearch &&
-      (!!fromDateParam ||
-        !!toDateParam ||
-        !!fromBlockParam ||
-        !!toBlockParam ||
-        !!lastBlocksParam ||
-        !!lastTimeParam ||
-        !!filtersParam?.length)
-    ) {
-      fromDateParam && searchRanges.setStartDate(fromDateParam);
-      toDateParam && searchRanges.setEndDate(toDateParam);
-      fromBlockParam && searchRanges.setFromBlock(fromBlockParam);
-      toBlockParam && searchRanges.setToBlock(toBlockParam);
-      lastBlocksParam && searchRanges.setLastBlocksValue(lastBlocksParam);
-      timeUnitParam && searchRanges.setTimeUnitSelectKey(timeUnitParam);
-      rangeSelectKey && searchRanges.setRangeSelectKey(rangeSelectKey);
-      searchRanges.setLastTimeUnitValue(lastTimeParam);
-      setFilters(filtersParam);
-      setInitialSearch(true);
-    } else {
-      if (!initialSearch && !isAccountOperationsLoading && accountOperations) {
-        setInitialSearch(true);
-      }
-
-      const {
-        payloadFromBlock,
-        payloadToBlock,
-        payloadStartDate,
-        payloadEndDate,
-      } = await searchRanges.getRangesValues();
-
-      setParams({
-        ...paramsState,
-        filters: filters,
-        fromBlock: payloadFromBlock,
-        toBlock: payloadToBlock,
-        fromDate: payloadStartDate,
-        toDate: payloadEndDate,
-        lastBlocks:
-          searchRanges.rangeSelectKey === "lastBlocks"
-            ? searchRanges.lastBlocksValue
-            : undefined,
-        lastTime:
-          searchRanges.rangeSelectKey === "lastTime"
-            ? searchRanges.lastTimeUnitValue
-            : undefined,
-        timeUnit:
-          searchRanges.rangeSelectKey === "lastTime"
-            ? searchRanges.timeUnitSelectKey
-            : undefined,
-        rangeSelectKey: searchRanges.rangeSelectKey,
-        page: resetPage ? undefined : page,
-      });
-    }
-  };
-
-  useEffect(() => {
-    if (!page && accountOperations) {
-      setLastPage(accountOperations.total_pages);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accountOperations, page]);
-
-  useEffect(() => {
-    if (paramsState && !initialSearch) {
-      handleSearch();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paramsState]);
-
-  useEffect(() => {
-    if (
-      router.query.page &&
-      accountOperations &&
-      (Number(router.query.page) <= 0 ||
-        Number(router.query.page) > accountOperations.total_pages)
-    ) {
-      router.replace({
-        query: {
-          ...router.query,
-          page: accountOperations.total_pages,
-        },
-      });
-    }
-  }, [router, accountOperations]);
 
   return (
     <TabsContent value="operations">
@@ -248,34 +143,39 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
           <div className="flex items-center justify-between my-2">
             <div className="flex min-w-[120px] gap-2">
               <Button
-                onClick={() => handleSearch(true)}
+                onClick={handleSearch}
                 data-testid="apply-filters"
               >
-                <span>Search</span>{" "}
+                <span>Search</span>
               </Button>
             </div>
             <div className="flex w-full justify-end flex-wrap gap-2">
               <OperationTypesDialog
                 operationTypes={accountOperationTypes}
                 setSelectedOperations={handleOperationSelect}
-                selectedOperations={convertBooleanArrayToIds(filters)}
+                selectedOperations={convertBooleanArrayToIds(
+                  filtersParam ?? filters
+                )}
                 buttonClassName="bg-theme"
                 triggerTitle={getOperationButtonTitle(
-                  convertBooleanArrayToIds(filters),
+                  convertBooleanArrayToIds(filtersParam ?? filters),
                   accountOperationTypes
                 )}
               />
               <Button
-                onClick={handleFilterClear}
+                onClick={handleClearFilter}
                 data-testid="clear-filters"
               >
-                <span>Clear</span>{" "}
+                <span>Clear</span>
               </Button>
             </div>
           </div>
         </CardContent>
       </Card>
-      {buildOperationView()}
+      <AccountOperationsSection
+        accountOperations={accountOperations}
+        isAccountOperationsLoading={isAccountOperationsLoading}
+      />
     </TabsContent>
   );
 };
