@@ -12,6 +12,7 @@ export default function HealthcheckerPage() {
   const {hiveChain} = useHiveChainContext();
   const {
     healthChecker,
+    apiCheckers,
     scoredEndpoints,
     setScoredEndpoints,
     fallbacks,
@@ -25,46 +26,6 @@ export default function HealthcheckerPage() {
 
   const extendedHiveChain = hiveChain
     ?.extend<ExplorerNodeApi>();
-
-
-  const checksList: ApiChecker[] = [
-    {
-      title: "Reward Funds",
-      method: extendedHiveChain?.api.database_api.get_reward_funds,
-      params: {}, 
-      validatorFunction: data => !!data ? true : data,
-    },
-    {
-      title: "Dynamic Global",
-      method: extendedHiveChain?.api.database_api.get_dynamic_global_properties,
-      params: {}, 
-      validatorFunction: data => !!data ? true : data,
-    },
-    {
-      title: "Price Feed",
-      method: extendedHiveChain?.api.database_api.get_current_price_feed,
-      params: {}, 
-      validatorFunction: data => !!data ? true : data,
-    },
-    {
-      title: "Witness Schedule",
-      method: extendedHiveChain?.api.database_api.get_witness_schedule,
-      params: { id: 1 }, 
-      validatorFunction: data => !!data ? true : data,
-    },
-    {
-      title: "Vesting Delegations",
-      method: extendedHiveChain?.api.database_api.find_vesting_delegations,
-      params: { account: "hiveio" }, 
-      validatorFunction: data => !!data ? true : data,
-    },
-    {
-      title: "RC Direct Delegations",
-      method: extendedHiveChain?.api.rc_api.list_rc_direct_delegations,
-      params: { start: ["hiveio", ""], limit: 1000 }, 
-      validatorFunction: data => !!data ? true : data,
-    }
-  ]
 
   const addNewProvider = (provider: string) => {
     if (localProviders) {
@@ -120,7 +81,7 @@ export default function HealthcheckerPage() {
         <HealthCheckerComponent 
           currentAddress={nodeAddress ? nodeAddress : undefined} 
           changeNodeAddress={changeNodeAddress} 
-          customApiCheckers={checksList}
+          customApiCheckers={apiCheckers}
           customProviders={providers}
           healthChecker={healthChecker}
           setScoredEndpoints={setScoredEndpoints}
