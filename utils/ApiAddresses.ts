@@ -65,7 +65,9 @@ const useApiAddresses = () => {
       const readValue = window.localStorage.getItem(LOCAL_PROVIDERS);
       if (readValue) { 
         setLocalProviders(JSON.parse(readValue));
-      } 
+      } else {
+        setLocalProviders(config.defaultProviders)
+      }
     } catch (error) {
       console.log(error);
     }
@@ -114,11 +116,11 @@ const useApiAddresses = () => {
     }
   }
 
-  const writeLocalProvidersToLocalStorage = async (nodes: string[]) => {
+  const writeLocalProvidersToLocalStorage = async (localProviders: string[]) => {
     try {
-      if (nodes && nodes.length > 0) {
-        await window.localStorage.setItem(LOCAL_PROVIDERS, JSON.stringify(nodes));
-        setLocalProviders(nodes);
+      if (localProviders && localProviders.length > 0) {
+        await window.localStorage.setItem(LOCAL_PROVIDERS, JSON.stringify(localProviders));
+        setLocalProviders(localProviders);
       } else {
         await window.localStorage.removeItem(LOCAL_PROVIDERS);
         setLocalProviders(undefined);

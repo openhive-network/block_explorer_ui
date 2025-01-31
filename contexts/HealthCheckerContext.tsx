@@ -62,7 +62,6 @@ export const HealthCheckerContextProvider: React.FC<{
 
   const [healthChecker, setHealthChecker] = useState<HealthChecker | undefined>(undefined);
   const [scoredEndpoints, setScoredEndpoints] = useState<TScoredEndpoint[] | undefined>(undefined);
-  const [providers, setProviders] = useState<string[]>(config.defaultProviders);
   const [chainInitialized, setChainIntialized] = useState<boolean>(false);
   const fallbacksRef = useRef(fallbacks);
   const nodeAddressRef = useRef(nodeAddress);
@@ -128,7 +127,7 @@ const apiCheckers: ApiChecker[] = [
   }
 
   const initializeDefaultChecks = () => {
-    const initialEndpoints: TScoredEndpoint[] | undefined = providers?.map((customProvider) => ({endpointUrl: customProvider, score: 1, up: true, lastLatency: 0}))
+    const initialEndpoints: TScoredEndpoint[] | undefined = localProviders?.map((customProvider) => ({endpointUrl: customProvider, score: 1, up: true, lastLatency: 0}))
     if (!!initialEndpoints && !scoredEndpoints) setScoredEndpoints(initialEndpoints);
     subscribeToCheckers();
     setChainIntialized(true);
@@ -137,7 +136,7 @@ const apiCheckers: ApiChecker[] = [
   const subscribeToCheckers = () => {
     healthChecker?.unregisterAll();
     for (const checker of apiCheckers) {
-      healthChecker?.register(checker!.method, checker!.params, checker!.validatorFunction, providers);
+      healthChecker?.register(checker!.method, checker!.params, checker!.validatorFunction, localProviders);
     }
   }
 
@@ -157,9 +156,8 @@ const apiCheckers: ApiChecker[] = [
 
   useEffect(() => {
     if (localProviders) {
-      setProviders(localProviders);
       subscribeToCheckers();
-    } 
+    }
   }, [localProviders])
 
   useEffect(() => { 
