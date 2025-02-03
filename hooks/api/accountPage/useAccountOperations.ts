@@ -21,12 +21,13 @@ const useAccountOperations = (
     data: accountOperations,
     isFetching: isAccountOperationsLoading,
     isError: isAccountOperationsError,
-    refetch: refetchAccountOperations,
   }: UseQueryResult<Hive.AccountOperationsResponse> = useQuery({
     queryKey: ["account_operations", accountOperationsProps, liveDataEnabled],
     queryFn: () => fetchAccountOperations(accountOperationsProps),
     refetchOnWindowFocus: false,
-    refetchInterval: liveDataEnabled ? config.accountRefreshInterval : false,
+    refetchInterval: liveDataEnabled
+      ? config.accountRefreshInterval
+      : undefined,
     enabled:
       !!accountOperationsProps?.accountName &&
       !!accountOperationsProps?.accountName.length,
@@ -36,7 +37,6 @@ const useAccountOperations = (
     accountOperations,
     isAccountOperationsLoading,
     isAccountOperationsError,
-    refetchAccountOperations,
   };
 };
 

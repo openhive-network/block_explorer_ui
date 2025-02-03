@@ -14,9 +14,18 @@ const PostPageContent = () => {
   const { post } = router.query;
   const accountName = post?.[1] ?? "";
   const permlink = post?.[2] ?? "";
-  const path = router.asPath;
 
   const { data } = usePostContent(accountName, permlink);
+
+  const buildLinkByUrl = (url: string) => {
+    return `${url}/${accountName}/${permlink}`;
+  };
+
+  const LINKS = [
+    { name: "hive.blog", href: buildLinkByUrl(HIVE_BLOG_URL) },
+    { name: "peakd.com", href: buildLinkByUrl(PEAKD_URL) },
+    { name: "ecency.com", href: buildLinkByUrl(ECENCY_URL) },
+  ];
 
   if (!data) return;
 
@@ -30,29 +39,20 @@ const PostPageContent = () => {
         </div>
         <div className="flex gap-2">
           View this thread on:
-          <Link
-            className="text-link"
-            href={HIVE_BLOG_URL + path}
-            target="_blank"
-          >
-            hive.blog
-          </Link>{" "}
-          |
-          <Link
-            className="text-link"
-            href={PEAKD_URL + path}
-            target="_blank"
-          >
-            peakd.com
-          </Link>{" "}
-          |
-          <Link
-            className="text-link"
-            href={ECENCY_URL + path}
-            target="_blank"
-          >
-            ecency.com
-          </Link>
+          {LINKS.map(({ name, href }) => {
+            return (
+              <div key={name}>
+                <Link
+                  className="text-link"
+                  href={href}
+                  target="_blank"
+                >
+                  {name}
+                </Link>{" "}
+                |
+              </div>
+            );
+          })}
         </div>
       </div>
       <PostContent

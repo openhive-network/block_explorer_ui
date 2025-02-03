@@ -18,7 +18,6 @@ import Explorer from "@/types/Explorer";
 import AccountBalanceHistoryCard from "./AccountBalanceHistoryCard";
 interface AccountDetailsSectionProps {
   accountName: string;
-  refetchAccountOperations: QueryObserverResult<Hive.AccountOperationsResponse>["refetch"];
   liveDataEnabled: boolean;
   changeLiveRefresh: () => void;
   accountDetails?: Explorer.FormattedAccountDetails;
@@ -27,11 +26,10 @@ interface AccountDetailsSectionProps {
 
 const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
   accountName,
-  refetchAccountOperations,
   liveDataEnabled,
   changeLiveRefresh,
   accountDetails,
-  dynamicGlobalData
+  dynamicGlobalData,
 }) => {
   const { witnessDetails, isWitnessDetailsLoading, isWitnessDetailsError } =
     useWitnessDetails(accountName, !!accountDetails?.is_witness);
@@ -89,13 +87,19 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
         accountName={accountName}
         liveDataEnabled={liveDataEnabled}
       />
-      { accountDetails.is_witness && !isWitnessDetailsError && !!witnessDetails && (
-        <AccountDetailsCard
-          header="Witness Properties"
-          userDetails={witnessDetails}
-        />
-      )}
-      <AccountWitnessVotesCard voters={accountDetails.witness_votes} accountName={accountName} proxy={accountDetails.proxy} />
+      {accountDetails.is_witness &&
+        !isWitnessDetailsError &&
+        !!witnessDetails && (
+          <AccountDetailsCard
+            header="Witness Properties"
+            userDetails={witnessDetails}
+          />
+        )}
+      <AccountWitnessVotesCard
+        voters={accountDetails.witness_votes}
+        accountName={accountName}
+        proxy={accountDetails.proxy}
+      />
       <AccountVestingDelegationsCard
         delegatorAccount={accountName}
         liveDataEnabled={liveDataEnabled}

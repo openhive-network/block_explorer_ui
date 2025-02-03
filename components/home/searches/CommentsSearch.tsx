@@ -111,7 +111,9 @@ const CommentsSearch = () => {
 
   useEffect(() => {
     if (!commentsSearchAccountName || commentsSearchPermlink) return;
+
     return () => handleClearCommentSearch();
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [commentsSearchAccountName, commentsSearchPermlink]);
 
   return (

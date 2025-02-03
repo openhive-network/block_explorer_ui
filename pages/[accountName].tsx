@@ -4,10 +4,8 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 
 import ErrorPage from "./ErrorPage";
-import { cn, convertBooleanArrayToIds } from "@/lib/utils";
-import useAccountOperations from "@/hooks/api/accountPage/useAccountOperations";
+import { cn } from "@/lib/utils";
 import useMediaQuery from "@/hooks/common/useMediaQuery";
-import useURLParams from "@/hooks/common/useURLParams";
 import useConvertedAccountDetails from "@/hooks/common/useConvertedAccountDetails";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import ScrollTopButton from "@/components/ScrollTopButton";
@@ -16,6 +14,7 @@ import MobileAccountNameCard from "@/components/account/MobileAccountNameCard";
 import { Button } from "@/components/ui/button";
 import AccountOperationViewTabs from "@/components/account/tabs/AccountOperationViewTabs";
 import { AccountTabsProvider } from "@/contexts/TabsContext";
+import moment from "moment";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -35,7 +34,7 @@ export const defaultSearchParams: AccountSearchParams = {
   accountName: undefined,
   fromBlock: undefined,
   toBlock: undefined,
-  fromDate: undefined,
+  fromDate: moment(new Date()).subtract(30, "days").toDate(),
   toDate: undefined,
   lastBlocks: undefined,
   lastTime: 30,
@@ -60,21 +59,6 @@ export default function Account() {
     setLiveDataEnabled((prev) => !prev);
   };
 
-  const { paramsState } = useURLParams(
-    {
-      ...defaultSearchParams,
-    },
-    ["accountName"]
-  );
-
-  const {
-    filters: filtersParam,
-    fromBlock: fromBlockParam,
-    toBlock: toBlockParam,
-    fromDate: fromDateParam,
-    toDate: toDateParam,
-  } = paramsState;
-
   const [showMobileAccountDetails, setShowMobileAccountDetails] =
     useState(false);
 
@@ -85,22 +69,6 @@ export default function Account() {
       liveDataEnabled,
       dynamicGlobalData
     );
-
-  const accountOperationsProps = {
-    accountName: accountNameFromRoute,
-    operationTypes: filtersParam.length
-      ? convertBooleanArrayToIds(filtersParam)
-      : undefined,
-    pageNumber: paramsState.page,
-    fromBlock: fromBlockParam,
-    toBlock: toBlockParam,
-    startDate: fromDateParam,
-    endDate: toDateParam,
-  };
-  const { refetchAccountOperations } = useAccountOperations(
-    accountOperationsProps,
-    liveDataEnabled
-  );
 
   const renderAccountDetailsView = () => {
     if (isMobile) {
@@ -131,7 +99,6 @@ export default function Account() {
             </div>
             <AccountDetailsSection
               accountName={accountNameFromRoute}
-              refetchAccountOperations={refetchAccountOperations}
               liveDataEnabled={liveDataEnabled}
               changeLiveRefresh={changeLiveRefresh}
               accountDetails={accountDetails}
@@ -145,7 +112,6 @@ export default function Account() {
         <div className="col-start-1 col-span-1 flex flex-col gap-y-2">
           <AccountDetailsSection
             accountName={accountNameFromRoute}
-            refetchAccountOperations={refetchAccountOperations}
             liveDataEnabled={liveDataEnabled}
             changeLiveRefresh={changeLiveRefresh}
             accountDetails={accountDetails}
