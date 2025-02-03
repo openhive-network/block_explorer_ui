@@ -245,33 +245,32 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
         </CardHeader>
         <CardContent>
           <SearchRanges rangesProps={searchRanges} />
-          <div className="flex items-center justify-between my-2">
-            <div className="flex min-w-[120px] gap-2">
+
+          <div className="flex items-center my-2">
+            <OperationTypesDialog
+              operationTypes={accountOperationTypes}
+              setSelectedOperations={handleOperationSelect}
+              selectedOperations={convertBooleanArrayToIds(filters)}
+              buttonClassName="bg-theme"
+              triggerTitle={getOperationButtonTitle(
+                convertBooleanArrayToIds(filters),
+                accountOperationTypes
+              )}
+            />
+          </div>
+          <div className="flex items-center justify-between">
+            <div>
               <Button
                 onClick={() => handleSearch(true)}
                 data-testid="apply-filters"
+                className="mr-2 my-2"
               >
-                <span>Search</span>{" "}
+                <span>Search</span>
               </Button>
             </div>
-            <div className="flex w-full justify-end flex-wrap gap-2">
-              <OperationTypesDialog
-                operationTypes={accountOperationTypes}
-                setSelectedOperations={handleOperationSelect}
-                selectedOperations={convertBooleanArrayToIds(filters)}
-                buttonClassName="bg-theme"
-                triggerTitle={getOperationButtonTitle(
-                  convertBooleanArrayToIds(filters),
-                  accountOperationTypes
-                )}
-              />
-              <Button
-                onClick={handleFilterClear}
-                data-testid="clear-filters"
-              >
-                <span>Clear</span>{" "}
-              </Button>
-            </div>
+            <Button onClick={handleFilterClear} data-testid="clear-filters">
+              <span>Clear</span>
+            </Button>
           </div>
         </CardContent>
       </Card>
