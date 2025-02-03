@@ -145,10 +145,12 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
             <OperationTypesDialog
               operationTypes={accountOperationTypes}
               setSelectedOperations={handleOperationSelect}
-              selectedOperations={convertBooleanArrayToIds(filters)}
+              selectedOperations={convertBooleanArrayToIds(
+                filtersParam ?? filters
+              )}
               buttonClassName="bg-theme"
               triggerTitle={getOperationButtonTitle(
-                convertBooleanArrayToIds(filters),
+                convertBooleanArrayToIds(filtersParam ?? filters),
                 accountOperationTypes
               )}
             />

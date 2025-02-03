@@ -14,6 +14,7 @@ import MobileAccountNameCard from "@/components/account/MobileAccountNameCard";
 import { Button } from "@/components/ui/button";
 import AccountOperationViewTabs from "@/components/account/tabs/AccountOperationViewTabs";
 import { AccountTabsProvider } from "@/contexts/TabsContext";
+import moment from "moment";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -33,7 +34,7 @@ export const defaultSearchParams: AccountSearchParams = {
   accountName: undefined,
   fromBlock: undefined,
   toBlock: undefined,
-  fromDate: undefined,
+  fromDate: moment(new Date()).subtract(30, "days").toDate(),
   toDate: undefined,
   lastBlocks: undefined,
   lastTime: 30,
