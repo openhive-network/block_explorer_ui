@@ -1,11 +1,17 @@
 import Link from "next/link";
 import { ChevronDown, ChevronUp, ThumbsUp } from "lucide-react";
 
-import { formatAndDelocalizeFromTime } from "@/utils/TimeUtils";
+import { formatAndDelocalizeFromTime ,formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import { Card, CardHeader, CardContent, CardFooter } from "../ui/card";
 import { changeHBDToDollarsDisplay } from "@/utils/StringUtils";
 import Hive from "@/types/Hive";
 import { cn } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipProvider,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip";
 
 interface PostContentCardProps {
   isComment?: boolean;
@@ -42,7 +48,26 @@ const PostContentCard: React.FC<PostContentCardProps> = ({
           >
             @{author}
           </Link>
-          -<p>{formatAndDelocalizeFromTime(created)}</p>
+          -<p>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span>{formatAndDelocalizeFromTime(created)}</span>
+                </TooltipTrigger>
+                <TooltipContent
+                  side="top"
+                  align="start"
+                  sideOffset={5}
+                  alignOffset={10}
+                  className="border-0"
+                >
+                  <div className="bg-theme text-text p-1">
+                    <p>{formatAndDelocalizeTime(created)}</p>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </p>
         </div>
         <div>{changeHBDToDollarsDisplay(total_payout_value)}</div>
       </div>
