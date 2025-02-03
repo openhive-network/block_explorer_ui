@@ -1,14 +1,12 @@
 import { cn } from "@/lib/utils";
-import { TScoredEndpoint, HealthChecker } from "@hiveio/wax";
-import { useEffect, useState } from "react";
+import { TScoredEndpoint } from "@hiveio/wax";
+import { useState } from "react";
 import { Button } from "../ui/button";
 import { Loader2, Plus } from "lucide-react";
 import ProviderCard from "./ProviderCard";
 import { Card } from "../ui/card";
 import { Badge } from "../ui/badge";
 import ProviderAdditionDialog from "./ProviderAdditionDialog";
-import { config } from "@/Config";
-
 
 export interface ApiChecker {
   title: string;
@@ -24,6 +22,7 @@ interface HealthCheckerComponentProps {
   customApiCheckers?: ApiChecker[];
   scoredEndpoints?: TScoredEndpoint[];
   fallbacks: string[];
+  defaultProviders: string[];
   setScoredEndpoints: (scoredEndpoints: TScoredEndpoint[] | undefined ) => void;
   setFallbacks: (providers: string[]) => void;
   setLocalProviders: (providers: string[]) => void;
@@ -37,6 +36,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   customApiCheckers,
   scoredEndpoints,
   fallbacks,
+  defaultProviders,
   setScoredEndpoints,
   setFallbacks,
   setLocalProviders,
@@ -84,7 +84,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   }
 
   const resetProviders = () => {
-    setLocalProviders(config.defaultProviders);
+    setLocalProviders(defaultProviders);
     setScoredEndpoints([]);
   }
 

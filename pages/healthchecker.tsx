@@ -1,6 +1,7 @@
 import HealthCheckerComponent from "@/components/healthchecker/HealthChecker";
 import Head from "next/head";
 import { useHealthCheckerContext } from "@/contexts/HealthCheckerContext";
+import { config } from "@/Config";
 
 export default function HealthcheckerPage() {
 
@@ -29,6 +30,7 @@ export default function HealthcheckerPage() {
           setScoredEndpoints={setScoredEndpoints}
           scoredEndpoints={scoredEndpoints}
           fallbacks={fallbacks || []}
+          defaultProviders={config.defaultProviders}
           setFallbacks={setFallbacks}
           setLocalProviders={setLocalProviders}
           setNodeAddress={setNodeAddress}
