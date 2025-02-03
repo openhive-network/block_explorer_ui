@@ -1,7 +1,7 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import OperationTabContent from "./operations/OperationsTabContent";
+import InteractionsTabContent from "./interactions/InteractionsTabContent";
 import CommentsTabContent from "./comments/CommentsTabContent";
-import PostsTabContent from "./posts/PostsTabContent";
 import { useTabs } from "@/contexts/TabsContext";
 
 interface AccountOperationViewTabs {
@@ -31,21 +31,21 @@ const AccountOperationViewTabs: React.FC<AccountOperationViewTabs> = ({
           </TabsTrigger>
           <TabsTrigger
             className="rounded"
-            value="posts"
+            value="comments"
           >
-            Posts
+            Comments
           </TabsTrigger>
           <TabsTrigger
             className="rounded"
-            value="comments"
+            value="interactions"
           >
-            Comment Search
+            Interactions
           </TabsTrigger>
         </div>
       </TabsList>
       <OperationTabContent liveDataEnabled={liveDataEnabled} />
-      <PostsTabContent />
       <CommentsTabContent />
+      <InteractionsTabContent />
     </Tabs>
   );
 };

@@ -4,7 +4,7 @@ import { useSearchesContext } from "@/contexts/SearchesContext";
 import CustomPagination from "@/components/CustomPagination";
 import { config } from "@/Config";
 import { useRouter } from "next/router";
-import AccountCommentPermlinkResultTable from "@/components/account/tabs/posts/AccountCommentPermlinkResultTable";
+import AccountCommentPermlinkResultTable from "@/components/account/tabs/comments/AccountCommentPermlinkResultTable";
 import NoResult from "@/components/NoResult";
 
 const CommentPermlinkSearchResults = () => {
@@ -72,7 +72,7 @@ const CommentPermlinkSearchResults = () => {
           </div>
         </div>
       ) : (
-        <NoResult/>
+        <NoResult />
       )}
     </>
   );

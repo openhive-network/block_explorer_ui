@@ -11,7 +11,7 @@ import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
 import useCommentSearch from "@/hooks/api/common/useCommentSearch";
 import useHandleCommentsSearch from "@/components/home/searches/hooks/useHandleCommentsSearch";
 
-const AccountPageCommentsSearch = () => {
+const AccountPageInteractionSearch = () => {
   const {
     setCommentSearchProps,
     commentSearchProps,
@@ -119,4 +119,4 @@ const AccountPageCommentsSearch = () => {
   );
 };
 
-export default AccountPageCommentsSearch;
+export default AccountPageInteractionSearch;
