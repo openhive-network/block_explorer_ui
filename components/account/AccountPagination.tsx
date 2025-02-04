@@ -20,28 +20,31 @@ const AccountPagination: React.FC<AccountPaginationProps> = ({
 
   return (
     <div className="flex-col w-full">
-      <div
-        className="flex w-full justify-center items-center flex-wrap bg-theme"
-        data-testid="account-top-bar"
-      >
-        <div className="flex items-center justify-center w-full md:ml-auto md:w-3/4">
-          <CustomPagination
-            handleLatestPage={onLatestButtonClick}
-            currentPage={page}
-            totalCount={operationsCount ?? 1}
-            pageSize={config.standardPaginationSize}
-            onPageChange={setPage}
-            isMirrored={true}
-          />
+      {operationsCount &&  Math.ceil(operationsCount / config.standardPaginationSize) > 1 && (
+        <div
+          className="flex w-full justify-center items-center flex-wrap bg-theme"
+          data-testid="account-top-bar"
+        >
+          <div className="flex items-center justify-center w-full md:ml-auto md:w-3/4">
+            <CustomPagination
+              handleLatestPage={onLatestButtonClick}
+              currentPage={page}
+              totalCount={operationsCount ?? 1}
+              pageSize={config.standardPaginationSize}
+              onPageChange={setPage}
+              isMirrored={true}
+            />
+          </div>
+          <div className="flex items-center mt-2 md:mt-0 md:ml-auto w-full md:w-auto justify-center md:justify-end mb-2">
+            <JumpToPage
+              currentPage={page}
+              onPageChange={setPage}
+              totalCount={operationsCount ?? 1}
+              pageSize={config.standardPaginationSize}
+            />
+          </div>
         </div>
-        <div className="flex items-center mt-2 md:mt-0 md:ml-auto w-full md:w-auto justify-center md:justify-end mb-2">
-          <JumpToPage
-            currentPage={page}
-            onPageChange={setPage}
-            className="flex-shrink"
-          />
-        </div>
-      </div>
+    )}
     </div>
   );
 };

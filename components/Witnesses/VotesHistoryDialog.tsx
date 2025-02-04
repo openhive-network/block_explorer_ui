@@ -210,6 +210,8 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                   <JumpToPage
                     currentPage={page}
                     onPageChange={(page: number) => handlePageChange(page)}
+                    totalCount={votesHistory.length}
+                    pageSize={PAGE_SIZE}
                   />
                 </div>
               </div>
