@@ -68,12 +68,12 @@ const AccountSearchResults = () => {
     accountOperationsSearchProps,
     searchRanges
   );
-
+console.log(accountOperations?.total_pages);
   return (
     <>
       {accountOperations.total_operations > 0 ? (
-        <div data-testid="operations-card">
-          <div className="flex flex-wrap justify-between items-center bg-theme p-2 gap-4 mb-4">
+        <div data-testid="operations-card" >
+          <div className="flex flex-wrap justify-between items-center bg-theme p-2 gap-4 mb-4 sticky z-20 top-[3.2rem] md:top-[4rem]">
             <div className="flex justify-center w-full md:w-auto md:justify-start">
               <Link href={accountPageLink}>
                 <Button
@@ -95,6 +95,8 @@ const AccountSearchResults = () => {
               <JumpToPage
                 currentPage={accountOperationsPage || 1}
                 onPageChange={changeAccountOperationsPagination}
+                totalCount={totalOperations}
+                pageSize={config.standardPaginationSize}
               />
             </div>
           </div>
