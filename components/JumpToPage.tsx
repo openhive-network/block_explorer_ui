@@ -21,10 +21,6 @@ const JumpToPage = ({
 
   const totalPageCount = Math.ceil(totalCount / pageSize);
 
-  if (totalPageCount <= 1) {
-    return null;
-  }
-
   const onInputChange = (e: { target: { value: string } }) => {
     setInputValue(e.target.value);
   };
@@ -54,6 +50,11 @@ const JumpToPage = ({
     setValue(currentPage);
     setInputValue(String(currentPage));
   }, [currentPage]);
+  
+  if (totalPageCount <= 1) {
+    return null;
+  }
+
 
   return (
     <form
