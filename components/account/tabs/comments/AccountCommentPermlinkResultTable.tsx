@@ -16,6 +16,7 @@ import { useTabs } from "@/contexts/TabsContext";
 import { useSearchesContext } from "@/contexts/SearchesContext";
 import useHandleCommentsSearch from "@/components/home/searches/hooks/useHandleCommentsSearch";
 import { SquareArrowOutUpRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface AccountCommentPermlinkResultTableProps {
   data: Hive.Permlink[];
@@ -26,6 +27,7 @@ const TABLE_CELLS = [
   "Block",
   "Operation Id",
   "Permlink",
+  "",
   "Timestamp",
   "Trx Id",
 ];
@@ -76,19 +78,22 @@ const buildTableBody = (
             <Link href={`/block/${block}`}>{block}</Link>
           </TableCell>
           <TableCell className="text-left text-text">{operation_id}</TableCell>
-          <TableCell
-            onClick={handleShowCommentsByPermlink}
-            className="text-text bg-inherit cursor-pointer text-wrap  whitespace-nowrap hover:bg-buttonHover font-bold"
-          >
-            <div className="flex items-center">
-              <div>
-                <SquareArrowOutUpRight
-                  size="20"
-                  className="mr-2"
-                />
-              </div>
-              <div>{permlink}</div>
-            </div>
+          <TableCell className="text-left text-wrap whitespace-nowrap">
+            <Link
+              className="text-link"
+              href={`/@${accountName}/${permlink}`}
+              target="_blank"
+            >
+              {permlink}
+            </Link>
+          </TableCell>
+          <TableCell className="text-left p-0 m-0 text-text">
+            <Button
+              className="bg-inherit p-2"
+              onClick={handleShowCommentsByPermlink}
+            >
+              <SquareArrowOutUpRight size="20" />
+            </Button>
           </TableCell>
           <TableCell className="text-left text-text">
             {formatAndDelocalizeTime(timestamp)}
