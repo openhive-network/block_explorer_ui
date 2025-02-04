@@ -48,7 +48,7 @@ const PostContentCard: React.FC<PostContentCardProps> = ({
           >
             @{author}
           </Link>
-          -<p>
+          -
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -67,7 +67,6 @@ const PostContentCard: React.FC<PostContentCardProps> = ({
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-          </p>
         </div>
         <div>{changeHBDToDollarsDisplay(total_payout_value)}</div>
       </div>
