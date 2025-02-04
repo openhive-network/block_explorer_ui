@@ -42,7 +42,7 @@ const AccountOperationsSection: React.FC<AccountOperationsSectionProps> = ({
     <>
       <div
         className={
-          "flex justify-center items-center text-text  sticky z-20 bg-explorer-bg-start my-4 top-[4.5rem]"
+          "flex justify-center items-center text-text  sticky z-20 bg-explorer-bg-start my-4 top-[3.2rem] md:top-[4rem]"
         }
       >
         {accountOperations &&
