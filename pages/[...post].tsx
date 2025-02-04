@@ -13,7 +13,11 @@ const Post = () => {
 
   let accountName: string = "";
   let permlink: string = "";
-
+  if (!router.isReady) {
+    return (
+      <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />
+    ); 
+  }
   // Post query as array
   const { post } = router.query;
 
