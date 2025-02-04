@@ -171,6 +171,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
 
   return (
     <>
+    <div className="sticky z-20 top-[3.2rem] md:top-[4rem]">
       <CustomPagination
         currentPage={current_page ? current_page : 1}
         onPageChange={updateUrl}
@@ -179,6 +180,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
         className="text-black dark:text-white"
         isMirrored={false}
       />
+    </div>
       {total_operations === 0 ? (
         <div className="flex justify-center w-full">
           No results matching given criteria
