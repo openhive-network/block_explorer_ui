@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import SearchRanges from "@/components/searchRanges/SearchRanges";
@@ -23,6 +23,7 @@ import {
   DEFAULT_TIME_UNIT_SELECT_KEY,
 } from "@/hooks/common/useSearchRanges";
 import AccountOperationsSection from "./AccountOperationsSection";
+import { trimAccountName } from "@/utils/StringUtils";
 
 interface OpeationTabContentProps {
   liveDataEnabled: boolean;
@@ -34,6 +35,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
   const router = useRouter();
   const { searchRanges } = useSearchesContext();
 
+  const [accountName, setAccountName] = useState("");
   const { paramsState, setParams } = useURLParams(defaultSearchParams, [
     "accountName",
   ]);
@@ -46,13 +48,8 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     toDate: toDateParam,
   } = paramsState;
 
-  const accountNameFromRoute = (router.query.accountName as string)?.replace(
-    "@",
-    ""
-  );
-
   const accountOperationsProps = {
-    accountName: accountNameFromRoute,
+    accountName,
     operationTypes: filtersParam.length
       ? convertBooleanArrayToIds(filtersParam)
       : null,
@@ -69,8 +66,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
   const { accountOperations, isAccountOperationsLoading } =
     useAccountOperations(accountOperationsProps, liveDataEnabled);
 
-  const { accountOperationTypes } =
-    useAccountOperationTypes(accountNameFromRoute);
+  const { accountOperationTypes } = useAccountOperationTypes(accountName);
 
   const handleClearFilter = () => {
     const {
@@ -82,7 +78,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
 
     const props = {
       ...defaultSearchParams,
-      accountName: accountNameFromRoute,
+      accountName,
     };
 
     setRangeSelectKey(DEFAULT_RANGE_SELECT_KEY);
@@ -131,6 +127,15 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
 
     setParams(props);
   };
+
+  useEffect(() => {
+    if (!router.isReady) return;
+
+    const accounNameFromRoute = trimAccountName(
+      router.query.accountName as string
+    );
+    setAccountName(accounNameFromRoute);
+  }, [router.isReady, router.query.accountName]);
 
   return (
     <TabsContent value="operations">
