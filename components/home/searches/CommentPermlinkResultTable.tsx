@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import { SquareArrowDown } from "lucide-react";
 
 import {
   TableHead,
@@ -12,6 +13,7 @@ import {
 import Hive from "@/types/Hive";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import useHandleCommentsSearch from "./hooks/useHandleCommentsSearch";
+import { Button } from "@/components/ui/button";
 
 interface CommentPermlinkResultTableProps {
   data: Hive.Permlink[];
@@ -23,6 +25,7 @@ const TABLE_CELLS = [
   "Block",
   "Operation Id",
   "Permlink",
+  "",
   "Timestamp",
   "Trx Id",
 ];
@@ -58,17 +61,28 @@ const buildTableBody = (
             <TableCell className="text-left text-text">
               {operation_id}
             </TableCell>
-            <TableCell
-              onClick={() => handleOpenCommentsSection(accountName, permlink)}
-              className="text-left text-text bg-inherit break-all cursor-pointer hover:bg-buttonHover font-bold"
-            >
-              {permlink}
+            <TableCell className="text-left text-wrap whitespace-nowrap">
+              <Link
+                className="text-link"
+                target="_blank"
+                href={`/@${accountName}/${permlink}`}
+              >
+                {permlink}
+              </Link>
+            </TableCell>
+            <TableCell className="text-left text-text p-0 m-0">
+              <Button
+                className="bg-inherit p-2"
+                onClick={() => handleOpenCommentsSection(accountName, permlink)}
+              >
+                <SquareArrowDown size="20" />
+              </Button>
             </TableCell>
             <TableCell className="text-left text-text">
               {formatAndDelocalizeTime(timestamp)}
             </TableCell>
             <TableCell className="text-left text-link">
-              <Link href={`/transaction/${trx_id}`}> {trx_id}</Link>
+              <Link href={`/transaction/${trx_id}`}>{trx_id}</Link>
             </TableCell>
           </TableRow>
         </React.Fragment>
