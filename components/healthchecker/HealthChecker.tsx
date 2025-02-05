@@ -95,7 +95,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     }
   }
   
-  const renderProvider = (scoredEndpoint: TScoredEndpoint) => {
+  const renderProvider = (scoredEndpoint: TScoredEndpoint, isSelected?: boolean) => {
     const {endpointUrl, score, up,} = scoredEndpoint;
     let lastLatency: number | null = null;
     if (up) {
@@ -106,12 +106,13 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     }
     return (
       <ProviderCard 
+        className={isSelected ? "mb-6" : ""}
         key={endpointUrl}
         providerLink={endpointUrl}
         switchToProvider={changeNodeAddress}
         disabled={score <= 0}
         latency={lastLatency}
-        isSelected={endpointUrl === currentAddress}
+        isSelected={!!isSelected}
         checkerNamesList={customApiCheckers?.map((customApiChecker) => customApiChecker.title) || []}
         isFallback={!!fallbacks.includes(endpointUrl)}
         deleteProvider={handleDeletionOfProvider}
@@ -119,6 +120,20 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         removeFallback={removeFallback}                                                                                    
       />
     )       
+  }
+
+  const renderProviders = () => {
+    if (!scoredEndpoints || !scoredEndpoints.length) return <Loader2 className="ml-2 animate-spin h-8 w-8 justify-self-center mb-4  ..." />  
+    const selectedProvider = scoredEndpoints.find((scoredEndpoint) => scoredEndpoint.endpointUrl === currentAddress);
+    const filteredProviders = scoredEndpoints.filter((scoredEndpoint) => scoredEndpoint.endpointUrl !== currentAddress)
+    return (
+      <>
+        {!!selectedProvider && renderProvider(selectedProvider, true)}
+        {filteredProviders?.map(
+          (scoredEndpoint) => renderProvider(scoredEndpoint)
+        )}
+      </>
+    )
   }
 
   return (
@@ -135,10 +150,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         </div>
         <Button className="row-start-4 lg:row-start-2 row-span-1 col-span-full lg:col-span-1 lg:col-end-5" onClick={() => {restoreDefault()}}>Restore default</Button>
       </Card>
-        {(!!scoredEndpoints && scoredEndpoints.length) ? scoredEndpoints?.map(
-          (scoredEndpoint) => renderProvider(scoredEndpoint)
-        ) :
-        <Loader2 className="ml-2 animate-spin h-8 w-8 justify-self-center mb-4  ..." />                                                                                                                                         }
+      {renderProviders()}
       <Button onClick={() => {setIsProviderAdditionDialogOpened(true)}} className="w-full"><Plus /></Button>
       <ProviderAdditionDialog 
         isOpened={isProviderAdditionDialogOpened}

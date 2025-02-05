@@ -7,6 +7,7 @@ import { ApiChecker } from "./HealthChecker";
 
 
 interface ProviderCardProps {
+  className?: string;
   providerLink: string;
   disabled: boolean;
   isSelected: boolean;
@@ -20,6 +21,7 @@ interface ProviderCardProps {
 }
 
 const ProviderCard: React.FC<ProviderCardProps> = ({
+  className,
   providerLink,
   disabled,
   isSelected,
@@ -34,7 +36,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
 
 
   return (
-    <Card className={cn("grid grid-cols-8 grid-rows-5 lg:grid-rows-2 gap-y-1 my-1 p-2 mx-2 lg:mx-0", {"outline outline-2 outline-offset-2": isSelected})}>
+    <Card className={cn("grid grid-cols-8 grid-rows-5 lg:grid-rows-2 gap-y-1 my-1 p-2 mx-2 lg:mx-0", className, {"outline outline-2 outline-offset-2": isSelected})}>
       <div className={cn("row-start-1 col-start-1 col-span-6 self-center", {"text-red-600": disabled})}>
         {providerLink} {isFallback ? "- fallback" : null}
       </div>
