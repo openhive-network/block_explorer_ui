@@ -127,7 +127,7 @@ const apiCheckers: ApiChecker[] = [
   }
 
   const initializeDefaultChecks = () => {
-    const initialEndpoints: TScoredEndpoint[] | undefined = localProviders?.map((customProvider) => ({endpointUrl: customProvider, score: 1, up: true, lastLatency: 0}))
+    const initialEndpoints: TScoredEndpoint[] | undefined = localProviders?.map((customProvider) => ({endpointUrl: customProvider, score: 1, up: true, latencies: []}))
     if (!!initialEndpoints && !scoredEndpoints) setScoredEndpoints(initialEndpoints);
     subscribeToCheckers();
     setChainIntialized(true);

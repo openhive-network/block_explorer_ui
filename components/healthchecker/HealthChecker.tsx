@@ -98,7 +98,8 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     const {endpointUrl, score, up,} = scoredEndpoint;
     let lastLatency: number | null = null;
     if (up) {
-      lastLatency = scoredEndpoint.lastLatency || null;
+      const count = scoredEndpoint.latencies.length;
+      lastLatency = count != 0 ? scoredEndpoint.latencies[count - 1] : null;
     }
     if (!customProviders?.find((customProvider) => customProvider === endpointUrl)) {
       return null;
