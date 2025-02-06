@@ -95,7 +95,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     }
   }
   
-  const renderProvider = (scoredEndpoint: TScoredEndpoint, isSelected?: boolean) => {
+  const renderProvider = (scoredEndpoint: TScoredEndpoint, isTop?: boolean) => {
     const {endpointUrl, score, up,} = scoredEndpoint;
     let lastLatency: number | null = null;
     if (up) {
@@ -106,13 +106,13 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     }
     return (
       <ProviderCard 
-        className={isSelected ? "mb-6" : ""}
+        isTop={!!isTop}
         key={endpointUrl}
         providerLink={endpointUrl}
         switchToProvider={changeNodeAddress}
         disabled={score <= 0}
         latency={lastLatency}
-        isSelected={!!isSelected}
+        isSelected={scoredEndpoint.endpointUrl === currentAddress}
         checkerNamesList={customApiCheckers?.map((customApiChecker) => customApiChecker.title) || []}
         isFallback={!!fallbacks.includes(endpointUrl)}
         deleteProvider={handleDeletionOfProvider}
@@ -125,11 +125,10 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   const renderProviders = () => {
     if (!scoredEndpoints || !scoredEndpoints.length) return <Loader2 className="ml-2 animate-spin h-8 w-8 justify-self-center mb-4  ..." />  
     const selectedProvider = scoredEndpoints.find((scoredEndpoint) => scoredEndpoint.endpointUrl === currentAddress);
-    const filteredProviders = scoredEndpoints.filter((scoredEndpoint) => scoredEndpoint.endpointUrl !== currentAddress)
     return (
       <>
         {!!selectedProvider && renderProvider(selectedProvider, true)}
-        {filteredProviders?.map(
+        {scoredEndpoints?.map(
           (scoredEndpoint) => renderProvider(scoredEndpoint)
         )}
       </>
