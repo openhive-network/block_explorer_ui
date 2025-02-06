@@ -70,9 +70,8 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   }
 
   const addNewProvider = (provider: string) => {
-    if (customProviders) {
-      setLocalProviders([...(customProviders || []), provider]);
-    }
+    if (customProviders && !customProviders.some((customProvider) => provider === customProvider))
+    setLocalProviders([...(customProviders || []), provider]);
   }
 
   const deleteProvider = (provider: string) => {
