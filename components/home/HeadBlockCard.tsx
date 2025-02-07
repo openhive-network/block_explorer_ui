@@ -14,12 +14,9 @@ import {
 import { getBlockDifference } from "./SyncInfo";
 import { Toggle } from "../ui/toggle";
 import { Card, CardContent, CardHeader } from "../ui/card";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faClock,
-} from "@fortawesome/free-solid-svg-icons";
 
 import CurrentBlockCard from "./CurrentBlockCard";
+import { Clock } from "lucide-react";
 
 interface HeadBlockCardProps {
   headBlockCardData?: Explorer.HeadBlockCardData | any;
@@ -211,7 +208,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
         {/* Blockchain Time and Live Data Toggle */}
         <div className="flex flex-col items-end space-y-2">
           <div className="flex items-end space-x-2 text-[12px]">
-            <FontAwesomeIcon icon={faClock} size="xl" />
+          <Clock size={18} strokeWidth={2} />
             <span className="font-semibold">Blockchain Time:</span>
             <span className="font-semibold text-right">
               {liveBlockchainTime
