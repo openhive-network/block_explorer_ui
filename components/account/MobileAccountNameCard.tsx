@@ -4,9 +4,8 @@ import { Card, CardHeader } from "../ui/card";
 import Explorer from "@/types/Explorer";
 import { config } from "@/Config";
 import { cn } from "@/lib/utils";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLink, faStar } from "@fortawesome/free-solid-svg-icons";
 import useWitnessDetails from "@/hooks/api/common/useWitnessDetails";
+import { Link, Star } from "lucide-react";
 
 interface MobileAccountNameCardProps {
   accountName: string;
@@ -57,10 +56,11 @@ const MobileAccountNameCard: React.FC<MobileAccountNameCardProps> = ({
                   </span>
                   {witnessDetails?.witness.rank && isWitnessActive && (
                     <span className="flex items-center gap-1">
-                      <FontAwesomeIcon
-                        icon={faStar}
+                      <Star 
                         data-testid="witness-rank-icon"
-                      />
+                        fill="currentColor"
+                        size={16}
+                        />
                       <span>{witnessDetails.witness.rank}</span>
                     </span>
                   )}
@@ -70,9 +70,9 @@ const MobileAccountNameCard: React.FC<MobileAccountNameCardProps> = ({
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <FontAwesomeIcon
-                        icon={faLink}
-                        data-testid="witness-url-icon"
+                      <Link 
+                        size={15}
+                        strokeWidth={3}
                       />
                     </a>
                   )}
