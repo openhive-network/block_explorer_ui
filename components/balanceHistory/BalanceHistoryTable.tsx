@@ -30,9 +30,8 @@ import useOperation from "@/hooks/api/common/useOperation";
 import { formatNumber } from "@/lib/utils";
 import CustomPagination from "../CustomPagination";
 import { config } from "@/Config";
-import { faChevronUp, faChevronDown } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
+import { ChevronDown, ChevronUp } from "lucide-react";
 interface BalanceHistoryTableProps {
   operations: Explorer.BalanceHistoryForTable[];
   total_operations: number;
@@ -266,11 +265,11 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
                         onClick={() => handleRowClick(operation.operationId)}
                         className="text-link"
                       >
-                        <FontAwesomeIcon
-                          icon={isExpanded ? faChevronUp : faChevronDown}
-                          size="lg"
-                          data-testid="last-updated-icon"
-                        />
+                        {isExpanded ? (
+                          <ChevronUp size={20} data-testid="last-updated-icon" />
+                        ) : (
+                          <ChevronDown size={20} data-testid="last-updated-icon" />
+                        )}                      
                       </button>
                     </TableCell>
                   </TableRow>
