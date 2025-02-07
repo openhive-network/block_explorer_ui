@@ -13,8 +13,7 @@ import {
 import { formatNumber } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import moment from "moment";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowDown, faArrowUp } from "@fortawesome/free-solid-svg-icons";
+import { ArrowDown, ArrowUp } from "lucide-react";
 
 interface BalanceHistoryChartProps {
   hiveBalanceHistoryData?: {
@@ -124,20 +123,12 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
         <p className="font-bold">{`Date: ${label}`}</p>
         {payload.map((pld, index) => (
           <div key={index} style={{ color: pld.stroke }}>
-            <div>
+            <div className="flex items-center">
               {isPositiveChange ? (
-                <FontAwesomeIcon
-                  icon={faArrowUp}
-                  size="sm"
-                  className="bg-green-400 p-[1.2px]"
-                />
+                <ArrowUp className="bg-green-400 p-[1.2px]" size={16}/>
+                
               ) : (
-                <FontAwesomeIcon
-                  icon={faArrowDown}
-                  size="sm"
-                  color="red"
-                  className="bg-red-400 p-[1.2px]"
-                />
+                <ArrowDown className="bg-red-400  p-[1.2px]" size={16}/> 
               )}
               {` ${formatNumber(
                 balanceChange,
