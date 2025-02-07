@@ -22,8 +22,7 @@ import {
 } from "@/components/ui/card";
 import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
 import { useTheme } from "@/contexts/ThemeContext";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRightLong } from '@fortawesome/free-solid-svg-icons'
+import { MoveRight } from "lucide-react";
 
 export default function Home() {
   const { settings } = useUserSettingsContext();
@@ -80,12 +79,7 @@ export default function Home() {
                 data-testid="see-witnesses-link"
               >
                 <span>See All</span>
-                <FontAwesomeIcon
-                  icon={faArrowRightLong}
-                  size="lg"
-                  width={16}
-                  className=" opacity-70 hover:opacity-100 transition-opacity"
-                />
+                <MoveRight width={18}/>
               </Link>
             </CardHeader>
             <CardContent className="px-4 py-2">
