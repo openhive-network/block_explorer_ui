@@ -55,7 +55,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
           <Button className="row-start-1 col-start-10 col-span-1 hover:bg-slate-400 bg-transparent rounded place-self-end w-fit" onClick={() => {deleteProvider(providerLink)}}>
             <X />
           </Button>
-          <div className="row-start-5 lg:row-start-2 col-start-1 lg:col-start-8 col-span-10 lg:col-span-3 flex justify-end">
+          <div className="row-start-5 lg:row-start-2 col-start-1 lg:col-start-8 col-span-10 lg:col-span-3 flex justify-end ml-2">
             <Button className="hover:bg-slate-400 rounded w-full" onClick={() => {switchToProvider(providerLink)}}>
               Switch to provider
             </Button>
