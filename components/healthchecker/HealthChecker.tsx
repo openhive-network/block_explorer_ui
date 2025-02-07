@@ -149,7 +149,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
             ))}
           </div>
         </div>
-        <Button className="row-start-4 lg:row-start-2 row-span-1 col-span-full lg:col-span-1 lg:col-end-5" onClick={() => {restoreDefault()}}>Restore default</Button>
+        <Button className="row-start-4 lg:row-start-2 row-span-1 col-span-full lg:col-span-1 lg:col-end-5" onClick={() => {restoreDefault()}}>Restore initial providers</Button>
       </Card>
       {renderProviders()}
       <Button onClick={() => {setIsProviderAdditionDialogOpened(true)}} className="w-full"><Plus /></Button>
