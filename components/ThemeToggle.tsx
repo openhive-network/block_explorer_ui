@@ -1,7 +1,5 @@
 import { useTheme } from "@/contexts/ThemeContext";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMoon } from "@fortawesome/free-solid-svg-icons";
-import { Sun } from "lucide-react";
+import { Sun, Moon } from "lucide-react";
 
 const ThemeToggle = () => {
   const { theme, toggleTheme } = useTheme();
@@ -16,11 +14,13 @@ const ThemeToggle = () => {
           <Sun 
             strokeWidth={3}/>
         ) : (
-          <FontAwesomeIcon
-          icon={faMoon}
-          className="text-lg" size="lg"
-        />        )}
-
+          <Moon
+            fill="currentColor"
+            stroke="currentColor"
+            className="transform rotate-12 transition-transform duration-300" // Added !important
+            strokeWidth={1}
+          />
+        )}
       </button>
     </div>
   );
