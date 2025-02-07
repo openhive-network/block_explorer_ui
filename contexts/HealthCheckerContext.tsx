@@ -18,6 +18,9 @@ type HealthCheckerContextType = {
   setNodeAddress: (address: string | null) => void;
   localProviders?: string[];
   setLocalProviders: (nodes: string[]) => void;
+  addProvider: (provider: string) => void;
+  removeProvider: (provider: string) => void;
+  resetProviders: () => void;
 };
 
 export const HealthCheckerContext = createContext<HealthCheckerContextType>({
@@ -32,6 +35,9 @@ export const HealthCheckerContext = createContext<HealthCheckerContextType>({
   setNodeAddress: () => {},
   localProviders: undefined,
   setLocalProviders: () => {},
+  addProvider: () => {},
+  removeProvider: () => {},
+  resetProviders: () => {},
 });
 
 export const useHealthCheckerContext = () => {
@@ -140,6 +146,36 @@ const apiCheckers: ApiChecker[] = [
     }
   }
 
+  const removeFallback = (provider: string) => {
+    writeFallbacksToLocalStorage(fallbacks?.filter((fallback) => fallback !== provider) || []);
+  }
+
+  const addProvider = (provider: string) => {
+    if (healthChecker) {
+      for (const endpoint of healthChecker) {
+        endpoint.addEndpointUrl(provider);
+      }
+      if (localProviders && !localProviders.some((localProvider) => provider === localProvider))
+      writeLocalProvidersToLocalStorage([...(localProviders || []), provider]);
+    }
+  }
+
+  const removeProvider = (provider: string) => {
+    if (healthChecker && localProviders)
+    for (const endpoint of healthChecker) {
+      endpoint.removeEndpointUrl(provider);
+    }
+    const newLocalProviders = localProviders?.filter((localProvider) => localProvider !== provider) || [];
+    writeLocalProvidersToLocalStorage(newLocalProviders);
+    removeFallback(provider);
+  }
+
+  const resetProviders = () => {
+    writeLocalProvidersToLocalStorage(config.defaultProviders);
+    setScoredEndpoints([]);
+    subscribeToCheckers();
+  }
+
   useEffect(() => {
     if (hiveChain) {
       createHealthChecker();
@@ -156,6 +192,7 @@ const apiCheckers: ApiChecker[] = [
 
   useEffect(() => {
     if (localProviders) {
+      console.log('TEST IT', localProviders);
       subscribeToCheckers();
     }
   }, [localProviders])
@@ -179,6 +216,9 @@ const apiCheckers: ApiChecker[] = [
       setNodeAddress: writeNodeAddressToLocalStorage,
       localProviders,
       setLocalProviders: writeLocalProvidersToLocalStorage,
+      addProvider,
+      removeProvider,
+      resetProviders
     }}>
       {children}
     </HealthCheckerContext.Provider>

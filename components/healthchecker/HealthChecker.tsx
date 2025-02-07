@@ -22,11 +22,13 @@ interface HealthCheckerComponentProps {
   customApiCheckers?: ApiChecker[];
   scoredEndpoints?: TScoredEndpoint[];
   fallbacks: string[];
-  defaultProviders: string[];
   setScoredEndpoints: (scoredEndpoints: TScoredEndpoint[] | undefined ) => void;
   setFallbacks: (providers: string[]) => void;
   setLocalProviders: (providers: string[]) => void;
   setNodeAddress: (address: string) => void;
+  addProvider: (provider: string) => void;
+  removeProvider: (provider: string) => void;
+  resetProviders: () => void;
 }
 
 const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
@@ -36,11 +38,13 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   customApiCheckers,
   scoredEndpoints,
   fallbacks,
-  defaultProviders,
   setScoredEndpoints,
   setFallbacks,
   setLocalProviders,
-  setNodeAddress
+  setNodeAddress,
+  addProvider,
+  removeProvider,
+  resetProviders
 }) => {
 
   const [isProviderAdditionDialogOpened, setIsProviderAdditionDialogOpened] = useState<boolean>(false);
@@ -50,12 +54,12 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   }
   
   const handleDeletionOfProvider = (provider: string) => {
-    deleteProvider(provider);
+    removeProvider(provider);
     setScoredEndpoints(scoredEndpoints?.filter((endpoint) => endpoint.endpointUrl !== provider));
   }
 
   const handleAdditionOfProvider = (provider: string) => {
-    addNewProvider(provider);
+    addProvider(provider);
     setIsProviderAdditionDialogOpened(false);
   }
 
@@ -67,24 +71,6 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
 
   const removeFallback = (provider: string) => {
     setFallbacks(fallbacks?.filter((fallback) => fallback !== provider) || []);
-  }
-
-  const addNewProvider = (provider: string) => {
-    if (customProviders && !customProviders.some((customProvider) => provider === customProvider))
-    setLocalProviders([...(customProviders || []), provider]);
-  }
-
-  const deleteProvider = (provider: string) => {
-    if (customProviders) {
-      const newLocalProviders = customProviders?.filter((node) => node !== provider);
-      setLocalProviders(newLocalProviders);
-      removeFallback(provider);
-    }
-  }
-
-  const resetProviders = () => {
-    setLocalProviders(defaultProviders);
-    setScoredEndpoints([]);
   }
 
   const changeNodeAddress = (nodeAddress: string | null) => {
