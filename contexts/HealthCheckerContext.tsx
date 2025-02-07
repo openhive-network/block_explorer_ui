@@ -134,7 +134,7 @@ const apiCheckers: ApiChecker[] = [
   }
 
   const initializeDefaultChecks = () => {
-    const initialEndpoints: TScoredEndpoint[] | undefined = localProviders?.map((customProvider) => ({endpointUrl: customProvider, score: 1, up: true, latencies: []}))
+    const initialEndpoints: TScoredEndpoint[] | undefined = localProviders?.map((customProvider) => ({endpointUrl: customProvider, score: -1, up: true, latencies: []}))
     if (!!initialEndpoints && !scoredEndpoints) setScoredEndpoints(initialEndpoints);
     subscribeToCheckers();
     setChainIntialized(true);
@@ -157,15 +157,16 @@ const apiCheckers: ApiChecker[] = [
         console.log("ENDPOINT ADD", endpoint);
         endpoint.addEndpointUrl(provider);
       }
-      if (localProviders && !localProviders.some((localProvider) => provider === localProvider))
-      writeLocalProvidersToLocalStorage([...(localProviders || []), provider]);
+      if (localProviders && !localProviders.some((localProvider) => provider === localProvider)) {
+        writeLocalProvidersToLocalStorage([...(localProviders || []), provider]);
+        setScoredEndpoints([...scoredEndpoints || [], {endpointUrl: provider, score: -1, up: true, latencies: []}])
+      }
     }
   }
 
   const removeProvider = (provider: string) => {
     if (healthChecker && localProviders)
     for (const endpoint of healthChecker) {
-      console.log("ENDPOINT REMOVE", endpoint);
       endpoint.removeEndpointUrl(provider);
     }
     const newLocalProviders = localProviders?.filter((localProvider) => localProvider !== provider) || [];

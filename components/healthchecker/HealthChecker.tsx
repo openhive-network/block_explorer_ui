@@ -26,7 +26,8 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   healthCheckerProps
 }) => {
 
-  const {apiCheckers,
+  const {
+    apiCheckers,
     scoredEndpoints,
     setScoredEndpoints,
     fallbacks,
@@ -34,10 +35,10 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     nodeAddress,
     setNodeAddress,
     localProviders,
-    setLocalProviders,
     addProvider,
     removeProvider,
-    resetProviders} = healthCheckerProps
+    resetProviders
+  } = healthCheckerProps
 
   const [isProviderAdditionDialogOpened, setIsProviderAdditionDialogOpened] = useState<boolean>(false);
 
@@ -87,7 +88,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         key={endpointUrl}
         providerLink={endpointUrl}
         switchToProvider={changeNodeAddress}
-        disabled={score <= 0}
+        disabled={score === 0}
         latency={lastLatency}
         isSelected={scoredEndpoint.endpointUrl === nodeAddress}
         checkerNamesList={apiCheckers?.map((apicChecker) => apicChecker.title) || []}
