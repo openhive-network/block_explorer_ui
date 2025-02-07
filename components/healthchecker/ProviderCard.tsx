@@ -2,8 +2,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
 import { Badge } from "../ui/badge";
-import { Pencil, X } from 'lucide-react';
-import { ApiChecker } from "./HealthChecker";
+import { Loader2, X } from 'lucide-react';
 
 
 interface ProviderCardProps {
@@ -45,28 +44,33 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
       <div className={cn("row-start-1 col-start-2 col-span-6 self-center", {"text-red-600": disabled})}>
         {providerLink} {isFallback ? "- fallback" : null}
       </div>
-      {!!latency && <div className="row-start-2 lg:row-start-1 col-start-1 lg:col-start-8 col-span-full lg:col-span-2 self-center">Latency: {latency}, Score: {score.toFixed(3)}</div>}
-        {!isSelected && 
-          <>
-            <Button className="row-start-1 col-start-10 col-span-1 hover:bg-slate-400 bg-transparent rounded place-self-end w-fit" onClick={() => {deleteProvider(providerLink)}}>
-              <X />
-            </Button>
-            <div className="row-start-5 lg:row-start-2 col-start-1 lg:col-start-8 col-span-10 lg:col-span-3 flex justify-end">
-              <Button className="hover:bg-slate-400 rounded w-full" onClick={() => {switchToProvider(providerLink)}}>
-                Switch to provider
-              </Button>
-              {isFallback ?
-                <Button className="hover:bg-slate-400 rounded ml-2 w-full" onClick={() => {removeFallback(providerLink)}}>
-                  Remove fallback
-                </Button>
-                :
-                <Button className="hover:bg-slate-400 rounded ml-2 w-full" onClick={() => {registerFallback(providerLink)}}>
-                  Set fallback
-                </Button>
-              }
-            </div>
-          </>
+      <div className="row-start-2 lg:row-start-1 col-start-1 lg:col-start-8 col-span-full lg:col-span-2 self-center">
+        {score !== -1 ?
+          <>{score !==0 && <>Latency: {latency}, Score: {score.toFixed(3)} </>}</> :
+          <Loader2 className="animate-spin h-6 w-6 ..." /> 
         }
+      </div> 
+      {!isSelected && 
+        <>
+          <Button className="row-start-1 col-start-10 col-span-1 hover:bg-slate-400 bg-transparent rounded place-self-end w-fit" onClick={() => {deleteProvider(providerLink)}}>
+            <X />
+          </Button>
+          <div className="row-start-5 lg:row-start-2 col-start-1 lg:col-start-8 col-span-10 lg:col-span-3 flex justify-end">
+            <Button className="hover:bg-slate-400 rounded w-full" onClick={() => {switchToProvider(providerLink)}}>
+              Switch to provider
+            </Button>
+            {isFallback ?
+              <Button className="hover:bg-slate-400 rounded ml-2 w-full" onClick={() => {removeFallback(providerLink)}}>
+                Remove fallback
+              </Button>
+              :
+              <Button className="hover:bg-slate-400 rounded ml-2 w-full" onClick={() => {registerFallback(providerLink)}}>
+                Set fallback
+              </Button>
+            }
+          </div>
+        </>
+      }
       <div className={cn("row-start-3 row-span-2 lg:row-start-2 lg:row-span-1 flex items-center col-start-1 col-span-10 lg:col-span-6 lg:col-start-2 flex-wrap", {"py-2": isSelected})}>
         {checkerNamesList.map((checkerName) => 
           <Badge 
