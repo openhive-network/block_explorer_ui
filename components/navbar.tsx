@@ -1,13 +1,7 @@
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X ,Wrench , ChevronDown, Workflow } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faWrench,
-  faCaretDown,
-  faCircleNodes,
-} from "@fortawesome/free-solid-svg-icons";
 
 import { cn } from "@/lib/utils";
 import useMediaQuery from "@/hooks/common/useMediaQuery";
@@ -66,15 +60,21 @@ export default function Navbar() {
                 />
               </div>
               <div className="text-left py-2 rounded-lg bg-white dark:bg-navbar shadow-md mb-4 px-4 hover:bg-navbar-listHover transition">
-                <div className="flex items-center">
-                  <FontAwesomeIcon icon={faWrench} className="mr-2" />
-                  <span
-                    className="text-lg font-bold cursor-pointer"
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <Wrench className="mr-2" size={22} />
+                    <span
+                      className="text-lg font-bold cursor-pointer"
+                      onClick={() => setSettingsOpen(!settingsOpen)}
+                    >
+                      Settings
+                    </span>
+                  </div>
+                  <ChevronDown
+                    size={20}
+                    className="cursor-pointer"
                     onClick={() => setSettingsOpen(!settingsOpen)}
-                  >
-                    Settings
-                    <FontAwesomeIcon icon={faCaretDown} className="ml-2" />
-                  </span>
+                  />
                 </div>
                 {settingsOpen && (
                   <div className="mt-2 pl-8 space-y-2">
@@ -94,7 +94,7 @@ export default function Navbar() {
                   className="flex items-center"
                   onClick={() => setMenuOpen(false)}
                 >
-                  <FontAwesomeIcon icon={faCircleNodes} className="mr-2" />
+                  <Workflow className="mr-2" size={22} />
                   <span className="text-lg font-bold">Witnesses</span>
                 </Link>
               </div>
