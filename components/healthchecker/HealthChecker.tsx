@@ -140,7 +140,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   return (
     <div className={cn(className)}>
       <Card className="grid grid-cols-4 grid-rows-4 lg:grid-rows-2 gap-y-1 my-1 p-2 mb-4">
-        <div className="row-start-1 col-start-1 col-span-4 flex justify-center">Block Explorer healthchecker for nodes</div>
+        <div className="row-start-1 col-start-1 col-span-4 flex justify-center">Healthchecker for API servers</div>
         <div className="col-start-1 row-start-2 row-span-2 col-span-3">
           <div>Api checks:</div>
           <div className="flex flex-wrap">
@@ -149,7 +149,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
             ))}
           </div>
         </div>
-        <Button className="row-start-4 lg:row-start-2 row-span-1 col-span-full lg:col-span-1 lg:col-end-5" onClick={() => {restoreDefault()}}>Restore initial providers</Button>
+        <Button className="row-start-4 lg:row-start-2 row-span-1 col-span-full lg:col-span-1 lg:col-end-5" onClick={() => {restoreDefault()}}>Restore default API server set</Button>
       </Card>
       {renderProviders()}
       <Button onClick={() => {setIsProviderAdditionDialogOpened(true)}} className="w-full"><Plus /></Button>
