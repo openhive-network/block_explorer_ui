@@ -1,7 +1,5 @@
-import { Loader2 } from "lucide-react";
+import { Link, Loader2, Star } from "lucide-react";
 import Image from "next/image";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLink, faStar } from "@fortawesome/free-solid-svg-icons";
 import Explorer from "@/types/Explorer";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
@@ -80,9 +78,10 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <span className="flex items-center gap-1">
-                            <FontAwesomeIcon
-                              icon={faStar}
-                              data-testid="witness-rank-icon"
+                            <Star 
+                            data-testid="witness-rank-icon"
+                            fill="currentColor"
+                            size={16}
                             />
                             <span>{witnessDetails.witness.rank}</span>
                           </span>
@@ -104,9 +103,9 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                             target="_blank"
                             rel="noopener noreferrer"
                           >
-                            <FontAwesomeIcon
-                              icon={faLink}
-                              data-testid="witness-url-icon"
+                            <Link 
+                            size={15}
+                            strokeWidth={3}
                             />
                           </a>
                         </TooltipTrigger>
