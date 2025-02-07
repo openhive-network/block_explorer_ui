@@ -136,15 +136,10 @@ const apiCheckers: ApiChecker[] = [
   const initializeDefaultChecks = () => {
     const initialEndpoints: TScoredEndpoint[] | undefined = localProviders?.map((customProvider) => ({endpointUrl: customProvider, score: -1, up: true, latencies: []}))
     if (!!initialEndpoints && !scoredEndpoints) setScoredEndpoints(initialEndpoints);
-    subscribeToCheckers();
-    setChainIntialized(true);
-  }
-
-  const subscribeToCheckers = () => {
-    healthChecker?.unregisterAll();
     for (const checker of apiCheckers) {
       healthChecker?.register(checker!.method, checker!.params, checker!.validatorFunction, localProviders);
     }
+    setChainIntialized(true);
   }
 
   const removeFallback = (provider: string) => {
@@ -154,7 +149,6 @@ const apiCheckers: ApiChecker[] = [
   const addProvider = (provider: string) => {
     if (healthChecker) {
       for (const endpoint of healthChecker) {
-        console.log("ENDPOINT ADD", endpoint);
         endpoint.addEndpointUrl(provider);
       }
       if (localProviders && !localProviders.some((localProvider) => provider === localProvider)) {
@@ -170,6 +164,7 @@ const apiCheckers: ApiChecker[] = [
       endpoint.removeEndpointUrl(provider);
     }
     const newLocalProviders = localProviders?.filter((localProvider) => localProvider !== provider) || [];
+    setScoredEndpoints(scoredEndpoints?.filter((endpoint) => endpoint.endpointUrl !== provider));
     writeLocalProvidersToLocalStorage(newLocalProviders);
     removeFallback(provider);
   }
@@ -177,7 +172,10 @@ const apiCheckers: ApiChecker[] = [
   const resetProviders = () => {
     writeLocalProvidersToLocalStorage(config.defaultProviders);
     setScoredEndpoints([]);
-    subscribeToCheckers();
+    healthChecker?.unregisterAll();
+    for (const checker of apiCheckers) {
+      healthChecker?.register(checker!.method, checker!.params, checker!.validatorFunction, config.defaultProviders);
+    }
   }
 
   useEffect(() => {

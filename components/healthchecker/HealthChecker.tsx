@@ -29,7 +29,6 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   const {
     apiCheckers,
     scoredEndpoints,
-    setScoredEndpoints,
     fallbacks,
     setFallbacks,
     nodeAddress,
@@ -41,16 +40,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   } = healthCheckerProps
 
   const [isProviderAdditionDialogOpened, setIsProviderAdditionDialogOpened] = useState<boolean>(false);
-
-  const restoreDefault = () => {
-    resetProviders();
-  }
   
-  const handleDeletionOfProvider = (provider: string) => {
-    removeProvider(provider);
-    setScoredEndpoints(scoredEndpoints?.filter((endpoint) => endpoint.endpointUrl !== provider));
-  }
-
   const handleAdditionOfProvider = (provider: string) => {
     addProvider(provider);
     setIsProviderAdditionDialogOpened(false);
@@ -95,7 +85,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         isFallback={!!fallbacks?.includes(endpointUrl)}
         index={index + 1}
         score={scoredEndpoint.score}
-        deleteProvider={handleDeletionOfProvider}
+        deleteProvider={removeProvider}
         registerFallback={registerFallback}
         removeFallback={removeFallback}                                                                                    
       />
@@ -128,7 +118,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
             ))}
           </div>
         </div>
-        <Button className="row-start-4 lg:row-start-2 row-span-1 col-span-full lg:col-span-1 lg:col-end-5" onClick={() => {restoreDefault()}}>Restore default API server set</Button>
+        <Button className="row-start-4 lg:row-start-2 row-span-1 col-span-full lg:col-span-1 lg:col-end-5" onClick={() => {resetProviders()}}>Restore default API server set</Button>
       </Card>
       {renderProviders()}
       <Button onClick={() => {setIsProviderAdditionDialogOpened(true)}} className="w-full"><Plus /></Button>
