@@ -11,9 +11,7 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { Tooltip , TooltipTrigger , TooltipProvider ,TooltipContent } from "../ui/tooltip";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCube, faCubes, faExclamationCircle, faClock } from '@fortawesome/free-solid-svg-icons';
-import { RefreshCcw, RefreshCwOff } from "lucide-react";
+import { AlertCircle, Box, Boxes, Clock, RefreshCcw, RefreshCwOff } from "lucide-react";
 
 interface SyncInfoProps {
   className?: string;
@@ -136,7 +134,7 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
         <section className="dialog-section">
           <div className="dialog-item">
             <div className="dialog-item-text">
-              <FontAwesomeIcon icon={faCubes} className="text-sm" />
+              <Boxes size={18} />
               <div>Blockchain Headblock:</div>
             </div>
             <div className="dialog-item-value">
@@ -145,7 +143,7 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
           </div>
           <div className="dialog-item">
             <div className="dialog-item-text">
-              <FontAwesomeIcon icon={faCube} className="text-sm" />
+              <Box size={18}/>
               <div>Hafbe Last Block:</div>
             </div>
             <div className="dialog-item-value">
@@ -154,7 +152,7 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
           </div>
           <div className={cn("dialog-item", differenceColorText)}>
             <div className="dialog-item-text">
-              <FontAwesomeIcon icon={faExclamationCircle} className="text-sm" />
+              <AlertCircle size={18}/>
               <div>Block Difference:</div>
             </div>
             <div className="dialog-item-value">
@@ -163,7 +161,7 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
           </div>
           <div className={cn("dialog-item", differenceColorText)}>
             <div className="dialog-item-text">
-              <FontAwesomeIcon icon={faClock} className="text-sm" />
+              <Clock size={18}/>
               <div>Last Synced Block At:</div>
             </div>
             {explorerTime && (
