@@ -5,15 +5,14 @@ import useApiAddresses from "@/utils/ApiAddresses";
 import { ApiChecker } from "@/components/healthchecker/HealthChecker";
 import { ExplorerNodeApi } from "@/types/Node";
 import { config } from "@/Config";
+import { useApiAddressesContext } from "./ApiAddressesContext";
 
-type HealthCheckerContextType = {
+export interface HealthCheckerProps {
   apiCheckers: ApiChecker[];
   scoredEndpoints: TScoredEndpoint[] | undefined;
   setScoredEndpoints: (scoredEndpoints: TScoredEndpoint[] | undefined ) => void;
   fallbacks?: string[];
   setFallbacks: (fallbacks: string[]) => void;
-  apiAddress: string | null;
-  setApiAddress: (address: string | null) => void;
   nodeAddress: string | null;
   setNodeAddress: (address: string | null) => void;
   localProviders?: string[];
@@ -21,23 +20,27 @@ type HealthCheckerContextType = {
   addProvider: (provider: string) => void;
   removeProvider: (provider: string) => void;
   resetProviders: () => void;
+}
+
+type HealthCheckerContextType = {
+  healthCheckerProps: HealthCheckerProps
 };
 
 export const HealthCheckerContext = createContext<HealthCheckerContextType>({
-  apiCheckers: [],
-  scoredEndpoints: undefined,
-  setScoredEndpoints: () => {},
-  fallbacks: [],
-  setFallbacks: () => {},
-  apiAddress: "",
-  setApiAddress: () => {},
-  nodeAddress: "",
-  setNodeAddress: () => {},
-  localProviders: undefined,
-  setLocalProviders: () => {},
-  addProvider: () => {},
-  removeProvider: () => {},
-  resetProviders: () => {},
+  healthCheckerProps: {
+    apiCheckers: [],
+    scoredEndpoints: undefined,
+    setScoredEndpoints: () => {},
+    fallbacks: [],
+    setFallbacks: () => {},
+    nodeAddress: "",
+    setNodeAddress: () => {},
+    localProviders: undefined,
+    setLocalProviders: () => {},
+    addProvider: () => {},
+    removeProvider: () => {},
+    resetProviders: () => {},
+  }
 });
 
 export const useHealthCheckerContext = () => {
@@ -56,15 +59,13 @@ export const HealthCheckerContextProvider: React.FC<{
     const {hiveChain} = useHiveChainContext();
 
     const {
-      apiAddress,
-      nodeAddress,
       localProviders,
       fallbacks,
-      writeApiAddressToLocalStorage,
-      writeNodeAddressToLocalStorage,
       writeLocalProvidersToLocalStorage,
       writeFallbacksToLocalStorage,
     } = useApiAddresses();
+
+    const {nodeAddress, setNodeAddress} = useApiAddressesContext();
 
   const [healthChecker, setHealthChecker] = useState<HealthChecker | undefined>(undefined);
   const [scoredEndpoints, setScoredEndpoints] = useState<TScoredEndpoint[] | undefined>(undefined);
@@ -127,7 +128,7 @@ const apiCheckers: ApiChecker[] = [
     if (currentScoredEndpoint && !currentScoredEndpoint.up) {
       fallbacksRef.current?.forEach((fallback) => {
         const fallbackScoredEndpoint = scoredEndpoints.find((scoredEdnpoint) => scoredEdnpoint.endpointUrl === fallback);
-        if (fallbackScoredEndpoint && fallbackScoredEndpoint.up) writeNodeAddressToLocalStorage(fallback);
+        if (fallbackScoredEndpoint && fallbackScoredEndpoint.up) setNodeAddress(fallback);
       })
     }
   }
@@ -153,6 +154,7 @@ const apiCheckers: ApiChecker[] = [
   const addProvider = (provider: string) => {
     if (healthChecker) {
       for (const endpoint of healthChecker) {
+        console.log("ENDPOINT ADD", endpoint);
         endpoint.addEndpointUrl(provider);
       }
       if (localProviders && !localProviders.some((localProvider) => provider === localProvider))
@@ -163,6 +165,7 @@ const apiCheckers: ApiChecker[] = [
   const removeProvider = (provider: string) => {
     if (healthChecker && localProviders)
     for (const endpoint of healthChecker) {
+      console.log("ENDPOINT REMOVE", endpoint);
       endpoint.removeEndpointUrl(provider);
     }
     const newLocalProviders = localProviders?.filter((localProvider) => localProvider !== provider) || [];
@@ -190,13 +193,6 @@ const apiCheckers: ApiChecker[] = [
     nodeAddressRef.current = nodeAddress;
   }, [nodeAddress])
 
-  useEffect(() => {
-    if (localProviders) {
-      console.log('TEST IT', localProviders);
-      subscribeToCheckers();
-    }
-  }, [localProviders])
-
   useEffect(() => { 
     if (healthChecker && !chainInitialized) {
       initializeDefaultChecks();
@@ -204,21 +200,21 @@ const apiCheckers: ApiChecker[] = [
   }, [chainInitialized, healthChecker, initializeDefaultChecks])
 
   return (
-    <HealthCheckerContext.Provider value={{ 
-      apiCheckers,
-      scoredEndpoints, 
-      setScoredEndpoints, 
-      fallbacks, 
-      setFallbacks: writeFallbacksToLocalStorage,
-      apiAddress,
-      setApiAddress: writeApiAddressToLocalStorage,
-      nodeAddress,
-      setNodeAddress: writeNodeAddressToLocalStorage,
-      localProviders,
-      setLocalProviders: writeLocalProvidersToLocalStorage,
-      addProvider,
-      removeProvider,
-      resetProviders
+    <HealthCheckerContext.Provider value={{
+      healthCheckerProps: {
+        apiCheckers,
+        scoredEndpoints, 
+        setScoredEndpoints, 
+        fallbacks, 
+        setFallbacks: writeFallbacksToLocalStorage,
+        localProviders,
+        nodeAddress,
+        setNodeAddress,
+        setLocalProviders: writeLocalProvidersToLocalStorage,
+        addProvider,
+        removeProvider,
+        resetProviders
+      }
     }}>
       {children}
     </HealthCheckerContext.Provider>

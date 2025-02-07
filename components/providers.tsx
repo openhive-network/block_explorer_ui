@@ -17,6 +17,7 @@ import ErrorPage from "@/pages/ErrorPage";
 import { OperationTypesContextProvider } from "@/contexts/OperationsTypesContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { HealthCheckerContextProvider } from "@/contexts/HealthCheckerContext";
+import { ApiAddressesContextProvider } from "@/contexts/ApiAddressesContext";
 
 const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { apiAddress, nodeAddress } = useApiAddresses();
@@ -48,16 +49,18 @@ const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
       <ErrorBoundary fallback={<ErrorPage />}>
         <ThemeProvider>
           <HiveChainContextProvider>
-            <HealthCheckerContextProvider>
-              <UserSettingsContextProvider>
-                <HeadBlockContextProvider>
-                  <OperationTypesContextProvider>
-                    <Layout>{children}</Layout>
-                    <ReactQueryDevtools initialIsOpen={false} />
-                  </OperationTypesContextProvider>
-                </HeadBlockContextProvider>
-              </UserSettingsContextProvider>
-            </HealthCheckerContextProvider>
+            <ApiAddressesContextProvider>
+              <HealthCheckerContextProvider>
+                <UserSettingsContextProvider>
+                  <HeadBlockContextProvider>
+                    <OperationTypesContextProvider>
+                      <Layout>{children}</Layout>
+                      <ReactQueryDevtools initialIsOpen={false} />
+                    </OperationTypesContextProvider>
+                  </HeadBlockContextProvider>
+                </UserSettingsContextProvider>
+              </HealthCheckerContextProvider>
+            </ApiAddressesContextProvider>
           </HiveChainContextProvider>
         </ThemeProvider>
       </ErrorBoundary>

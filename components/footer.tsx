@@ -3,6 +3,7 @@ import { useHealthCheckerContext } from "@/contexts/HealthCheckerContext";
 import useHafbeVersion from "@/hooks/api/common/useHafbeVersion";
 import AddressSwitchedDialog from "./AddressSwitchedDialog";
 import Link from "next/link";
+import { useApiAddressesContext } from "@/contexts/ApiAddressesContext";
 
 const { lastCommitHashRepoUrl, gitHash } = config;
 
@@ -10,7 +11,7 @@ export default function Footer() {
   const { hafbeVersionData } = useHafbeVersion();
   const current_year = new Date().getFullYear();
   const { nodeAddress, apiAddress, setNodeAddress, setApiAddress } =
-    useHealthCheckerContext();
+    useApiAddressesContext();
   return (
     <div
       className="flex flex-col justify-center items-center bg-theme dark:bg-theme w-full mt-12 text-white text-sm"

@@ -7,6 +7,7 @@ import ProviderCard from "./ProviderCard";
 import { Card } from "../ui/card";
 import { Badge } from "../ui/badge";
 import ProviderAdditionDialog from "./ProviderAdditionDialog";
+import { HealthCheckerProps } from "@/contexts/HealthCheckerContext";
 
 export interface ApiChecker {
   title: string;
@@ -17,35 +18,26 @@ export interface ApiChecker {
 
 interface HealthCheckerComponentProps {
   className?: string;
-  currentAddress?: string;
-  customProviders?: string[];
-  customApiCheckers?: ApiChecker[];
-  scoredEndpoints?: TScoredEndpoint[];
-  fallbacks: string[];
-  setScoredEndpoints: (scoredEndpoints: TScoredEndpoint[] | undefined ) => void;
-  setFallbacks: (providers: string[]) => void;
-  setLocalProviders: (providers: string[]) => void;
-  setNodeAddress: (address: string) => void;
-  addProvider: (provider: string) => void;
-  removeProvider: (provider: string) => void;
-  resetProviders: () => void;
+  healthCheckerProps: HealthCheckerProps
 }
 
 const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   className,
-  currentAddress,
-  customProviders,
-  customApiCheckers,
-  scoredEndpoints,
-  fallbacks,
-  setScoredEndpoints,
-  setFallbacks,
-  setLocalProviders,
-  setNodeAddress,
-  addProvider,
-  removeProvider,
-  resetProviders
+  healthCheckerProps
 }) => {
+
+  const {apiCheckers,
+    scoredEndpoints,
+    setScoredEndpoints,
+    fallbacks,
+    setFallbacks,
+    nodeAddress,
+    setNodeAddress,
+    localProviders,
+    setLocalProviders,
+    addProvider,
+    removeProvider,
+    resetProviders} = healthCheckerProps
 
   const [isProviderAdditionDialogOpened, setIsProviderAdditionDialogOpened] = useState<boolean>(false);
 
@@ -86,7 +78,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     if (up && scoredEndpoint.latencies.length) {
       lastLatency = scoredEndpoint.latencies[scoredEndpoint.latencies.length - 1];
     }
-    if (!customProviders?.find((customProvider) => customProvider === endpointUrl)) {
+    if (!localProviders?.find((customProvider) => customProvider === endpointUrl)) {
       return null;
     }
     return (
@@ -97,9 +89,9 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         switchToProvider={changeNodeAddress}
         disabled={score <= 0}
         latency={lastLatency}
-        isSelected={scoredEndpoint.endpointUrl === currentAddress}
-        checkerNamesList={customApiCheckers?.map((customApiChecker) => customApiChecker.title) || []}
-        isFallback={!!fallbacks.includes(endpointUrl)}
+        isSelected={scoredEndpoint.endpointUrl === nodeAddress}
+        checkerNamesList={apiCheckers?.map((apicChecker) => apicChecker.title) || []}
+        isFallback={!!fallbacks?.includes(endpointUrl)}
         index={index + 1}
         score={scoredEndpoint.score}
         deleteProvider={handleDeletionOfProvider}
@@ -111,7 +103,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
 
   const renderProviders = () => {
     if (!scoredEndpoints || !scoredEndpoints.length) return <Loader2 className="ml-2 animate-spin h-8 w-8 justify-self-center mb-4  ..." />  
-    const selectedProviderIndex = scoredEndpoints.findIndex((scoredEndpoint) => scoredEndpoint.endpointUrl === currentAddress);
+    const selectedProviderIndex = scoredEndpoints.findIndex((scoredEndpoint) => scoredEndpoint.endpointUrl === nodeAddress);
     const selectedProvider = scoredEndpoints[selectedProviderIndex]
     return (
       <>
@@ -130,7 +122,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         <div className="col-start-1 row-start-2 row-span-2 col-span-3">
           <div>Api checks:</div>
           <div className="flex flex-wrap">
-            {customApiCheckers?.map((apiChecker, index) => (
+            {apiCheckers?.map((apiChecker, index) => (
               <Badge key={index} variant={"outline"}>{apiChecker.title}</Badge>
             ))}
           </div>
