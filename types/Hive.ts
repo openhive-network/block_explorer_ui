@@ -251,61 +251,68 @@ namespace Hive {
     virtual_scheduled_time!: string;
     votes!: string;
   }
-  export class Content {
-    id!: number;
+  export class HivePostMetadata {
+    app!: string;
+    format!: string;
+    tags!: string[];
+  }
+
+  export class HivePostStats {
+    flag_weight!: number;
+    gray!: boolean;
+    hide!: boolean;
+    total_votes!: number;
+  }
+
+  export class ActiveVote {
+    voter!: string;
+    rshares!: number;
+  }
+  export class HivePost {
+    active_votes!: ActiveVote[];
     author!: string;
-    permlink!: string;
+    author_payout_value!: string;
+    author_reputation!: number;
+    author_role!: string;
+    author_title!: string;
+    beneficiaries!: number[] | string[];
+    blacklists!: number[] | string[];
+    body!: string;
     category!: string;
+    children!: number;
+    community!: string;
+    community_title!: string;
+    created!: string;
+    curator_payout_value!: string;
+    depth!: number;
+    is_paidout!: boolean;
+    json_metadata!: HivePostMetadata;
+    max_accepted_payout!: string;
+    net_rshares!: number;
     parent_author!: string;
     parent_permlink!: string;
-    title!: string;
-    body!: string;
-    json_metadata!: string;
-    last_update!: string;
-    created!: string;
-    active!: string;
-    last_payout!: string;
-    depth!: number;
-    children!: number;
-    net_rshares!: number;
-    abs_rshares!: number;
-    vote_rshares!: number;
-    children_abs_rshares!: number;
-    cashout_time!: string;
-    max_cashout_time!: string;
-    total_vote_weight!: number;
-    reward_weight!: number;
-    total_payout_value!: string;
-    curator_payout_value!: string;
-    author_rewards!: number;
-    net_votes!: number;
-    root_author!: string;
-    root_permlink!: string;
-    max_accepted_payout!: string;
-    percent_hbd!: number;
-    allow_replies!: boolean;
-    allow_votes!: boolean;
-    allow_curation_rewards!: boolean;
-    beneficiaries!: string[] | number[];
-    url!: string;
-    root_title!: string;
+    payout!: number;
+    payout_at!: string;
     pending_payout_value!: string;
-    total_pending_payout_value!: string;
-    active_votes!: PostPageVoteDetails[];
-    replies!: string[] | number[];
-    author_reputation!: number;
+    percent_hbd!: number;
+    permlink!: string;
+    post_id!: number;
     promoted!: string;
-    body_length!: number;
-    reblogged_by!: string[] | number[];
+    reblogs!: number;
+    replies!: string[];
+    stats!: HivePostStats;
+    title!: string;
+    updated!: string;
+    url!: string;
+  }
+
+  export class HivePosts {
+    [key: string]: HivePost;
   }
 
   export class PostPageVoteDetails {
-    percent!: number;
-    reputation!: number;
     rshares!: number;
-    time!: Date;
     voter!: string;
-    weight!: number;
   }
 
   export class GetVotersParams {
