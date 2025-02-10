@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from "react";
-import { HealthChecker, TScoredEndpoint } from "@hiveio/wax";
+import { HealthChecker, IHiveEndpoint, TScoredEndpoint, WaxHealthCheckerValidatorFailedError } from "@hiveio/wax";
 import { useHiveChainContext } from "./HiveChainContext";
 import useApiAddresses from "@/utils/ApiAddresses";
 import { ApiChecker } from "@/components/healthchecker/HealthChecker";
@@ -70,8 +70,11 @@ export const HealthCheckerContextProvider: React.FC<{
   const [healthChecker, setHealthChecker] = useState<HealthChecker | undefined>(undefined);
   const [scoredEndpoints, setScoredEndpoints] = useState<TScoredEndpoint[] | undefined>(undefined);
   const [chainInitialized, setChainIntialized] = useState<boolean>(false);
+  const [endpointTitleById, setEndpointTitleById] = useState<Map<number, string>>(new Map());
+  const [failedChecksByProvider, setFailedChecksByProvider] = useState<Map<string, string[]>>(new Map());
   const fallbacksRef = useRef(fallbacks);
   const nodeAddressRef = useRef(nodeAddress);
+  const endpointTitleByIdRef = useRef(endpointTitleById);
 
   const extendedHiveChain = hiveChain
   ?.extend<ExplorerNodeApi>();
@@ -100,7 +103,7 @@ const apiCheckers: ApiChecker[] = [
     title: "Witness Schedule",
     method: extendedHiveChain?.api.database_api.get_witness_schedule,
     params: { id: 1 }, 
-    validatorFunction: data => !!data ? true : data,
+    validatorFunction: data => data.max_voted_witnesses === 21 ? true : "Witness schedule error",
   },
   {
     title: "Vesting Delegations",
@@ -116,11 +119,27 @@ const apiCheckers: ApiChecker[] = [
   }
 ]
 
+  const markValidationError = (endpointId: number, provider: string) => {
+    const checkTitle = endpointTitleByIdRef.current.get(endpointId);
+    if (checkTitle) {
+      const prevoiusFailedChecks = [...failedChecksByProvider.get(provider) || [], checkTitle];
+      setFailedChecksByProvider((previousChecks) => {
+        const newFailedChecks = structuredClone(previousChecks).set(provider, prevoiusFailedChecks);
+        return newFailedChecks
+      })
+    }
+  } 
+
   const createHealthChecker = async () => {
     const healthChecker = new HealthChecker();
     setHealthChecker(healthChecker);
     healthChecker?.on('error', error => console.error(error.message));
-    healthChecker?.on("data", (data: Array<TScoredEndpoint>) => { console.log(JSON.stringify(data)); checkForFallbacks(data); data.length ?setScoredEndpoints(data) : null });
+    healthChecker?.on("data", (data: Array<TScoredEndpoint>) => { 
+      console.log(JSON.stringify(data)); 
+      checkForFallbacks(data); 
+      data.length ?setScoredEndpoints(data) : null 
+    });
+    healthChecker?.on("validationerror", error => markValidationError(error.apiEndpoint.id, error.request.endpoint));
   }
 
   const checkForFallbacks = (scoredEndpoints: TScoredEndpoint[]) => {
@@ -133,12 +152,20 @@ const apiCheckers: ApiChecker[] = [
     }
   }
 
-  const initializeDefaultChecks = () => {
+  const registerCalls = async () => {
+    const registeredEndpoints = new Map<number, string>();
+    for (const checker of apiCheckers) {
+      const testHC = await healthChecker?.register(checker!.method, checker!.params, checker!.validatorFunction, localProviders);
+      if (testHC)
+      registeredEndpoints.set(testHC.id, checker.title);
+    }
+    setEndpointTitleById(registeredEndpoints);
+  }
+
+  const initializeDefaultChecks = async () => {
     const initialEndpoints: TScoredEndpoint[] | undefined = localProviders?.map((customProvider) => ({endpointUrl: customProvider, score: -1, up: true, latencies: []}))
     if (!!initialEndpoints && !scoredEndpoints) setScoredEndpoints(initialEndpoints);
-    for (const checker of apiCheckers) {
-      healthChecker?.register(checker!.method, checker!.params, checker!.validatorFunction, localProviders);
-    }
+    registerCalls()
     setChainIntialized(true);
   }
 
@@ -173,9 +200,7 @@ const apiCheckers: ApiChecker[] = [
     writeLocalProvidersToLocalStorage(config.defaultProviders);
     setScoredEndpoints([]);
     healthChecker?.unregisterAll();
-    for (const checker of apiCheckers) {
-      healthChecker?.register(checker!.method, checker!.params, checker!.validatorFunction, config.defaultProviders);
-    }
+    registerCalls();
   }
 
   useEffect(() => {
@@ -191,6 +216,10 @@ const apiCheckers: ApiChecker[] = [
   useEffect(() => {
     nodeAddressRef.current = nodeAddress;
   }, [nodeAddress])
+
+  useEffect(() => {
+    endpointTitleByIdRef.current = endpointTitleById
+  }, [endpointTitleById])
 
   useEffect(() => { 
     if (healthChecker && !chainInitialized) {
