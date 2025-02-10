@@ -39,8 +39,6 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
   removeFallback
 }) => {
 
-  console.log('FAILED CHECKS', failedChecks);
-
   return (
     <Card className={cn("grid grid-cols-10 grid-rows-5 lg:grid-rows-2 gap-y-1 my-1 p-2 mx-2 lg:mx-0", {"outline outline-2 outline-offset-2 mb-6": isTop})}>
       <div className="lg:col-start-1 lg:col-span-1 lg:row-start-1 lg:row-span-full justify-self-center self-center">{index}</div>
