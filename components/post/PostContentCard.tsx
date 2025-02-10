@@ -1,7 +1,10 @@
 import Link from "next/link";
 import { ChevronDown, ChevronUp, ThumbsUp } from "lucide-react";
 
-import { formatAndDelocalizeFromTime ,formatAndDelocalizeTime } from "@/utils/TimeUtils";
+import {
+  formatAndDelocalizeFromTime,
+  formatAndDelocalizeTime,
+} from "@/utils/TimeUtils";
 import { Card, CardHeader, CardContent, CardFooter } from "../ui/card";
 import { changeHBDToDollarsDisplay } from "@/utils/StringUtils";
 import Hive from "@/types/Hive";
@@ -21,8 +24,22 @@ interface PostContentCardProps {
   handleVoteDetailsToggle: () => void;
   voteDetailsLength: number;
   voters: string[];
-  data: Hive.Content;
+  data: Hive.HivePost | undefined | null;
 }
+
+const showPayoutValue = (
+  isPaidout: boolean,
+  payout: number,
+  pendingPayout: string
+) => {
+  if (isPaidout) {
+    const roundPayoutValue = Math.round(payout * 100) / 100;
+
+    return `${roundPayoutValue} $`;
+  } else {
+    return changeHBDToDollarsDisplay(pendingPayout);
+  }
+};
 
 const PostContentCard: React.FC<PostContentCardProps> = ({
   isComment,
@@ -36,7 +53,17 @@ const PostContentCard: React.FC<PostContentCardProps> = ({
 }) => {
   if (!data) return;
 
-  const { category, author, created, body, title, total_payout_value } = data;
+  const {
+    category,
+    author,
+    created,
+    body,
+    title,
+    is_paidout,
+    payout,
+    pending_payout_value,
+  } = data;
+
   return (
     <Card className="overflow-hidden pb-0 w-[100%]">
       <div className="flex text-sm justify-between items-center py-1 px-4 border-b-[1px] border-slate-400 bg-rowHover">
@@ -49,28 +76,28 @@ const PostContentCard: React.FC<PostContentCardProps> = ({
             @{author}
           </Link>
           -
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span>{formatAndDelocalizeFromTime(created)}</span>
-                </TooltipTrigger>
-                <TooltipContent
-                  side="top"
-                  align="start"
-                  sideOffset={5}
-                  alignOffset={10}
-                  className="border-0"
-                >
-                  <div className="bg-theme text-text p-1">
-                    <p>{formatAndDelocalizeTime(created)}</p>
-                  </div>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span>{formatAndDelocalizeFromTime(created)}</span>
+              </TooltipTrigger>
+              <TooltipContent
+                side="top"
+                align="start"
+                sideOffset={5}
+                alignOffset={10}
+                className="border-0"
+              >
+                <div className="bg-theme text-text p-1">
+                  <p>{formatAndDelocalizeTime(created)}</p>
+                </div>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
-        <div>{changeHBDToDollarsDisplay(total_payout_value)}</div>
+        <div>{showPayoutValue(is_paidout, payout, pending_payout_value)}</div>
       </div>
-      {title && (
+      {title && !isComment && (
         <CardHeader className="p-0">
           <div className="flex justify-between font-semibold p-2 px-4 border-b-[1px] border-slate-400">
             {title}
