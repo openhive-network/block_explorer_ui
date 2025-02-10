@@ -15,6 +15,7 @@ interface ProviderCardProps {
   score: number;
   isFallback: boolean;
   index: number;
+  failedChecks: string[];
   switchToProvider: (providerLink: string | null) => void;
   deleteProvider: (provider: string) => void;
   registerFallback: (provider: string) => void;
@@ -31,12 +32,14 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
   score,
   isFallback,
   index,
+  failedChecks,
   deleteProvider,
   switchToProvider,
   registerFallback,
   removeFallback
 }) => {
 
+  console.log('FAILED CHECKS', failedChecks);
 
   return (
     <Card className={cn("grid grid-cols-10 grid-rows-5 lg:grid-rows-2 gap-y-1 my-1 p-2 mx-2 lg:mx-0", {"outline outline-2 outline-offset-2 mb-6": isTop})}>
@@ -76,6 +79,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
           <Badge 
             key={checkerName} 
             variant={"outline"} 
+            className={cn("m-0.5", {"border-red-600": failedChecks.includes(checkerName) || disabled})}
           >
               {checkerName}
           </Badge>

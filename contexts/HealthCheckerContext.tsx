@@ -10,6 +10,7 @@ import { useApiAddressesContext } from "./ApiAddressesContext";
 export interface HealthCheckerProps {
   apiCheckers: ApiChecker[];
   scoredEndpoints: TScoredEndpoint[] | undefined;
+  failedChecksByProvider: Map<string, string[]>;
   setScoredEndpoints: (scoredEndpoints: TScoredEndpoint[] | undefined ) => void;
   fallbacks?: string[];
   setFallbacks: (fallbacks: string[]) => void;
@@ -30,6 +31,7 @@ export const HealthCheckerContext = createContext<HealthCheckerContextType>({
   healthCheckerProps: {
     apiCheckers: [],
     scoredEndpoints: undefined,
+    failedChecksByProvider: new Map(),
     setScoredEndpoints: () => {},
     fallbacks: [],
     setFallbacks: () => {},
@@ -91,7 +93,7 @@ const apiCheckers: ApiChecker[] = [
     title: "Dynamic Global",
     method: extendedHiveChain?.api.database_api.get_dynamic_global_properties,
     params: {}, 
-    validatorFunction: data => !!data ? true : data,
+    validatorFunction: data => data.last_irreversible_block_num === 93206822 ? true : "Dynamic global error",
   },
   {
     title: "Price Feed",
@@ -122,8 +124,8 @@ const apiCheckers: ApiChecker[] = [
   const markValidationError = (endpointId: number, provider: string) => {
     const checkTitle = endpointTitleByIdRef.current.get(endpointId);
     if (checkTitle) {
-      const prevoiusFailedChecks = [...failedChecksByProvider.get(provider) || [], checkTitle];
       setFailedChecksByProvider((previousChecks) => {
+        const prevoiusFailedChecks = [...previousChecks.get(provider) || [], checkTitle];
         const newFailedChecks = structuredClone(previousChecks).set(provider, prevoiusFailedChecks);
         return newFailedChecks
       })
@@ -232,6 +234,7 @@ const apiCheckers: ApiChecker[] = [
       healthCheckerProps: {
         apiCheckers,
         scoredEndpoints, 
+        failedChecksByProvider,
         setScoredEndpoints, 
         fallbacks, 
         setFallbacks: writeFallbacksToLocalStorage,

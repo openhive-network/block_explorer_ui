@@ -36,7 +36,8 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     localProviders,
     addProvider,
     removeProvider,
-    resetProviders
+    resetProviders,
+    failedChecksByProvider
   } = healthCheckerProps
 
   const [isProviderAdditionDialogOpened, setIsProviderAdditionDialogOpened] = useState<boolean>(false);
@@ -87,7 +88,8 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         score={scoredEndpoint.score}
         deleteProvider={removeProvider}
         registerFallback={registerFallback}
-        removeFallback={removeFallback}                                                                                    
+        removeFallback={removeFallback}    
+        failedChecks={failedChecksByProvider.get(endpointUrl) || []}                                                                                
       />
     )       
   }
