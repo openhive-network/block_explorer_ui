@@ -7,8 +7,8 @@ import VoteDetailsTable from "./VoteDetailsTable";
 
 interface PostContentProps {
   isComment?: boolean;
-  active_votes: Hive.PostPageVoteDetails[];
-  data: Hive.Content;
+  active_votes: Hive.ActiveVote[];
+  data: Hive.HivePost | null | undefined;
 }
 
 const PostContent: React.FC<PostContentProps> = ({
