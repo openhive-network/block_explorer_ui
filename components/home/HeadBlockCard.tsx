@@ -1,4 +1,6 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
+import { Clock } from "lucide-react";
+
 import { config } from "@/Config";
 import Explorer from "@/types/Explorer";
 import Hive from "@/types/Hive";
@@ -14,9 +16,7 @@ import {
 import { getBlockDifference } from "./SyncInfo";
 import { Toggle } from "../ui/toggle";
 import { Card, CardContent, CardHeader } from "../ui/card";
-
 import CurrentBlockCard from "./CurrentBlockCard";
-import { Clock } from "lucide-react";
 
 interface HeadBlockCardProps {
   headBlockCardData?: Explorer.HeadBlockCardData | any;
@@ -24,6 +24,15 @@ interface HeadBlockCardProps {
   transactionCount?: number;
   opcount?: number;
 }
+
+const calculateTimeDifference = (createdAt: string, blockchainDate: number) => {
+  const blockCreationDate = new Date(createdAt).getTime();
+  const timeDifference = Math.abs(blockchainDate - blockCreationDate);
+
+  const timeDiffInSeconds = Math.floor(timeDifference / 1000);
+
+  return timeDiffInSeconds;
+};
 
 const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
   headBlockCardData,
@@ -87,22 +96,16 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
     number | null
   >(null);
 
+  const timeDifference = calculateTimeDifference(
+    blockDetails?.created_at as string,
+    blockchainDate as number
+  );
+
   useEffect(() => {
-    const calculateTimeDifference = () => {
-      if (!blockDetails?.created_at || !blockchainDate) {
-        setTimeDifferenceInSeconds(null);
-        return;
-      }
+    if (!blockDetails?.created_at || !blockchainDate) return;
 
-      const blockCreationDate = new Date(blockDetails.created_at).getTime();
-      const timeDifference = Math.abs(blockchainDate - blockCreationDate);
-
-      setTimeDifferenceInSeconds(Math.floor(timeDifference / 1000));
-    };
-
-    calculateTimeDifference();
-
-  }, [blockDetails?.created_at, blockchainDate]);
+    setTimeDifferenceInSeconds(timeDifference);
+  }, [blockDetails?.created_at, blockchainDate, timeDifference]);
 
   // refresh interval
   const intervalTime = config.accountRefreshInterval;
@@ -134,9 +137,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
     if (newVestsToHiveRatio) {
       setLiveVestsToHiveRatio(newVestsToHiveRatio);
     }
-  }, [
-    headBlockCardData
-  ]);
+  }, [headBlockCardData]);
 
   /*Block Chain Time Update*/
   useEffect(() => {
@@ -157,7 +158,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
     }, intervalTime);
 
     return () => clearInterval(intervalId);
-  }, [blockchainDate, settings.liveData , intervalTime]);
+  }, [blockchainDate, settings.liveData, intervalTime]);
 
   /*Block Number Update*/
   useEffect(() => {
@@ -173,7 +174,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
     }, intervalTime);
 
     return () => clearInterval(intervalId);
-  }, [blockDetails?.block_num, settings.liveData,intervalTime]);
+  }, [blockDetails?.block_num, settings.liveData, intervalTime]);
 
   /*Feed Price and Vest/Hive Ratio Update*/
   useEffect(() => {
@@ -203,12 +204,18 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
   }, [settings.liveData, headBlockCardData, intervalTime]);
 
   return (
-    <Card className="col-span-4 md:col-span-1" data-testid="head-block-card">
+    <Card
+      className="col-span-4 md:col-span-1"
+      data-testid="head-block-card"
+    >
       <CardHeader className="flex justify-between items-end py-2 border-b ">
         {/* Blockchain Time and Live Data Toggle */}
         <div className="flex flex-col items-end space-y-2">
           <div className="flex items-end space-x-2 text-[12px]">
-          <Clock size={18} strokeWidth={2} />
+            <Clock
+              size={18}
+              strokeWidth={2}
+            />
             <span className="font-semibold">Blockchain Time:</span>
             <span className="font-semibold text-right">
               {liveBlockchainTime
@@ -247,14 +254,14 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
             <span>Vests To Hive Ratio:</span> {liveVestsToHiveRatio} VESTS
           </div>
         </div>
-        {/* Last Block Information */} 
-          <CurrentBlockCard
+        {/* Last Block Information */}
+        <CurrentBlockCard
           blockDetails={blockDetails}
           transactionCount={transactionCount}
           opcount={opcount}
           timeDifferenceInSeconds={timeDifferenceInSeconds}
           liveBlockNumber={liveBlockNumber}
-          />
+        />
 
         <div>
           <HeadBlockPropertyCard
