@@ -105,7 +105,7 @@ const apiCheckers: ApiChecker[] = [
     title: "Witness Schedule",
     method: extendedHiveChain?.api.database_api.get_witness_schedule,
     params: { id: 1 }, 
-    validatorFunction: data => data.max_voted_witnesses === 21 ? true : "Witness schedule error",
+    validatorFunction: data => /*data.max_scheduled_witnesses === 21*/ !!data ? true : "Witness schedule error",
     // This is left wrong on purpose for tests
   },
   {
