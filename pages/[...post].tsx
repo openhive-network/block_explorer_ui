@@ -5,18 +5,19 @@ import { Loader2 } from "lucide-react";
 
 import PageNotFound from "@/components/PageNotFound";
 import PostPageContent from "@/components/post/PostPageContent";
-import usePostContent from "@/hooks/api/postPage/usePostContent";
+import usePostDiscussion from "@/hooks/api/postPage/usePostDiscussion";
 
 const Post = () => {
   const router = useRouter();
-  const getContent = usePostContent;
+  const getDiscussion = usePostDiscussion;
 
   let accountName: string = "";
   let permlink: string = "";
+
   if (!router.isReady) {
     return (
       <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />
-    ); 
+    );
   }
   // Post query as array
   const { post } = router.query;
@@ -29,9 +30,11 @@ const Post = () => {
     accountName = post[0];
     permlink = post[1];
 
-    const { data, isError, isLoading } = getContent(accountName, permlink);
+    const { data, isError, isLoading } = getDiscussion(accountName, permlink);
 
-    if (!isLoading && isError) return <PageNotFound />;
+    // Account name must start with "@"
+    if (!accountName.startsWith("@")) return <PageNotFound />;
+    if (!isLoading && isError) return;
     if (!isLoading && !data) return <PageNotFound />;
 
     if (isLoading) {
@@ -39,8 +42,12 @@ const Post = () => {
         <Loader2 className="dark:text-white animate-spin mt-1 h-8 w-8 ml-3 ..." />
       );
     }
+    const author = accountName?.replace("@", "");
+    const discussionKey = `${author}/${permlink}`;
+    const postContent = data?.[discussionKey];
 
-    const community = data?.category;
+    const community = postContent?.category;
+
     if (!community) return;
 
     const url = `${community}/${encodeURI(accountName)}/${permlink}`;
@@ -49,31 +56,9 @@ const Post = () => {
 
     return <PostPageContent />;
   } else if (post.length === 3) {
-    const community = post[0];
-    accountName = post[1];
-    permlink = post[2];
-
-    const { data, isError, isLoading } = getContent(accountName, permlink);
-
-    if (!isLoading && isError) return <PageNotFound />;
-    if (!isLoading && !data) return <PageNotFound />;
-
-    const communityFromRequest = data?.category;
-
-    if (community !== communityFromRequest && !isLoading) {
-      return <PageNotFound />;
-    }
-
-    if (isLoading) {
-      return (
-        <Loader2 className="dark:text-white animate-spin mt-1 h-8 w-8 ml-3 ..." />
-      );
-    }
-
     return <PostPageContent />;
   } else {
     return <PageNotFound />;
   }
 };
-
 export default Post;

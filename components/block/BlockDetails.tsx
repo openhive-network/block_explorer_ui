@@ -6,6 +6,7 @@ import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import Explorer from "@/types/Explorer";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { cn } from "@/lib/utils";
 
 interface BlockDetailsProps {
   virtualOperationsTypesCounters?: Explorer.OperationCounter[];
@@ -15,6 +16,7 @@ interface BlockDetailsProps {
   blockDetails?: Hive.BlockDetails;
   enableRawVirtualOperations: boolean;
   handleEnableVirtualOperations: () => void;
+  trxOperationsLength : number | undefined;
 }
 
 const BlockDetails: React.FC<BlockDetailsProps> = ({
@@ -25,67 +27,90 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
   nonVirtualOperationLength,
   enableRawVirtualOperations,
   handleEnableVirtualOperations,
+  trxOperationsLength,
 }) => {
   if (!blockDetails) return;
+  const BlockDetailItem = ({ label, value, dataTestId, hasBorder }: { label: string; value: React.ReactNode; dataTestId?: string; hasBorder?: boolean }) => (
+    <div className={cn(
+      "grid grid-cols-1 md:grid-cols-[360px_1fr] items-center py-1.5",
+      hasBorder && "border-b" 
+    )}>
+      <div className="font-medium md:text-left pr-2 md:pr-0" data-testid={`${dataTestId}-label`}>
+        {label}:
+      </div>
+      <div className="text-sm" data-testid={dataTestId}>
+        {value}
+      </div>
+    </div>
+  );
 
   return (
     <Card
       className="flex flex-col w-full md:max-w-screen-2xl m-auto"
       data-testid="block-page-block-details"
     >
-      <CardHeader>
-        <CardTitle data-testid="block-number">
+      <CardHeader className="px-4 pt-4 pb-2">
+        <CardTitle data-testid="block-number" className="text-lg font-semibold text-left">
           Block {blockDetails.block_num.toLocaleString()}
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div
-          className="flex items-center gap-x-1 mt-3 px-8 w-full justify-center flex-wrap gap-y-2"
-          data-testid="produced-data"
-        >
-          <p>Produced at: </p>
-          <p>{formatAndDelocalizeTime(blockDetails.created_at)}</p>
-          <p>by</p>
-          <Link
-            className="flex justif-between items-center"
-            data-testid="account-name"
-            href={`/@${blockDetails.producer_account}`}
-          >
-            <span
-              className="text-link mx-2"
-              data-testid="block-producer-name"
+      <CardContent className="space-y-0 px-4 py-2">
+
+        <BlockDetailItem
+          label="Produced at"
+          value={formatAndDelocalizeTime(blockDetails.created_at)}
+          dataTestId="produced-at"
+          hasBorder
+        />
+
+        <BlockDetailItem
+          label="Produced by"
+          value={
+            <Link
+              className="flex items-center justify-start gap-2"
+              data-testid="account-name"
+              href={`/@${blockDetails.producer_account}`}
             >
-              {blockDetails.producer_account}
-            </span>
-            <Image
-              className="rounded-full border-2 border-link"
-              src={getHiveAvatarUrl(blockDetails.producer_account)}
-              alt="avatar"
-              width={40}
-              height={40}
-            />
-          </Link>
-        </div>
-        <div className="flex items-center gap-x-4 mt-3 px-8 md:px-4 w-full justify-center flex-wrap text-sm md:text-base">
-          <p>
-            <span
-              data-testid="hash"
-              className="text-base"
-            >
-              Hash:{" "}
-            </span>
-            {blockDetails.hash}
-          </p>
-          <p>
-            <span
-              data-testid="prev-hash"
-              className="text-base"
-            >
-              Prev hash:{" "}
-            </span>
-            {blockDetails.prev}
-          </p>
-        </div>
+              <span
+                className="text-link"
+                data-testid="block-producer-name"
+              >
+                {blockDetails.producer_account}
+              </span>
+              <Image
+                className="rounded-full border-2 border-link"
+                src={getHiveAvatarUrl(blockDetails.producer_account)}
+                alt="avatar"
+                width={32}
+                height={32}
+              />
+            </Link>
+          }
+          dataTestId="produced-by"
+          hasBorder
+        />
+
+
+        <BlockDetailItem
+          label="Hash"
+          value={blockDetails.hash}
+          dataTestId="hash"
+          hasBorder
+        />
+
+        <BlockDetailItem
+          label="Previous Hash"
+          value={blockDetails.prev}
+          dataTestId="prev-hash"
+          hasBorder
+        />
+
+        <BlockDetailItem
+          label="Number of Transactions"
+          value={trxOperationsLength}
+          dataTestId="trx-length"
+          hasBorder
+        />
         <BlockPageOperationCount
           virtualOperationLength={virtualOperationLength}
           nonVirtualOperationLength={nonVirtualOperationLength}

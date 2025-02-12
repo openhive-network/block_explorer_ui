@@ -96,6 +96,9 @@ export default function Block() {
   const { blockOperations: totalOperations, trxLoading: totalLoading } =
     useBlockOperations(blockId, undefined, paramsState.page || 1);
 
+  const trxOperations = totalOperations?.operations_result.filter((operation) => operation.trx_id);
+  const trxOperationsLength = trxOperations?.length;
+  
   const { blockError, blockOperations, trxLoading } = useBlockOperations(
     blockId,
     paramsState.filters
@@ -108,7 +111,7 @@ export default function Block() {
   );
   const { operationsTypes } = useOperationsTypes();
   const formattedOperations = useOperationsFormatter(
-    blockOperations?.operations_result
+    blockOperations?.operations_result 
   ) as Hive.OperationResponse[];
   useEffect(() => {
     if (blockDetails && blockDetails.created_at) {
@@ -236,7 +239,9 @@ export default function Block() {
         <title>{blockId} - Hive Explorer</title>
       </Head>
       {loading ? (
-        <div>Loading ...</div>
+        <div>
+          <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />          
+        </div>
       ) : blockDetails?.block_num ? (
         <div
           className="w-full h-full flex flex-col gap-y-4 px-2"
@@ -262,6 +267,7 @@ export default function Block() {
             nonVirtualOperationsTypesCounters={
               nonVirtualOperationsTypesCounters
             }
+            trxOperationsLength = {trxOperationsLength}
             blockDetails={blockDetails}
             enableRawVirtualOperations={enableRawVirtualOperations}
             handleEnableVirtualOperations={handleEnableVirtualOperations}
@@ -274,11 +280,11 @@ export default function Block() {
               <Loader2 className="animate-spin text-text mt-1 h-16 w-16 ml-3 ... " />
             </div>
           ) : settings.rawJsonView || settings.prettyJsonView ? (
-            <div className="px-2">
+            <div>
               <JSONView
                 data-testid="json-view"
                 json={rawBlockdata || {}}
-                className="w-full md:w-[962px] mt-6 m-auto py-2 px-4 bg-theme dark:bg-theme rounded text-white text-xs break-words break-all"
+                className="w-full m-auto py-2 px-4 bg-theme dark:bg-theme rounded text-white text-xs break-words break-all"
                 isPrettyView={settings.prettyJsonView}
               />
             </div>

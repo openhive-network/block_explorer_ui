@@ -9,11 +9,10 @@ import {
   TableCell,
   TableBody,
 } from "../ui/table";
-import { cn, formatNumber, formatPercent } from "@/lib/utils";
-import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
+import { cn, formatNumber } from "@/lib/utils";
 import Hive from "@/types/Hive";
 
-const TABLE_CELLS = ["Voter", "Weight", "Rshares", "Percent", "Time"];
+const TABLE_CELLS = ["Voter", "Rshares"];
 
 const buildTableHeader = () => {
   return TABLE_CELLS.map((cell, index) => {
@@ -32,7 +31,7 @@ const buildTableHeader = () => {
 
 const buildTableBody = (voteDetails: Hive.PostPageVoteDetails[]) => {
   return voteDetails.map((item, index) => {
-    const { voter, weight, rshares, percent, time } = item;
+    const { voter, rshares } = item;
 
     return (
       <Fragment key={index}>
@@ -46,15 +45,9 @@ const buildTableBody = (voteDetails: Hive.PostPageVoteDetails[]) => {
               {voter}
             </Link>
           </TableCell>
-          <TableCell className="text-right">
-            {formatNumber(weight, false, true)}
-          </TableCell>
-          {/* Add wht % if needed*/}
-          <TableCell className="text-right">
+          <TableCell className="text-left">
             {formatNumber(rshares, false, true)}
           </TableCell>
-          <TableCell className="text-right">{formatPercent(percent)}</TableCell>
-          <TableCell>{formatAndDelocalizeTime(time)}</TableCell>
         </TableRow>
       </Fragment>
     );

@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from "react";
 import { ChevronRight, ChevronLeft } from "lucide-react";
-import moment from "moment";
 
 import Hive from "@/types/Hive";
 import { getOperationButtonTitle } from "@/utils/UI";
@@ -15,6 +14,8 @@ import DateTimePicker from "../DateTimePicker";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { Label } from "../ui/label";
+import { cn } from "@/lib/utils";
 
 interface BlockPageNavigationProps {
   blockNumber: number;
@@ -112,51 +113,62 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
 
   return (
     <Card
-      className="w-full md:max-w-screen-2xl md:px-2 m-auto"
+      className="w-full md:max-w-screen-2xl m-auto"
       data-testid="block-page-search"
     >
-      <CardHeader>
-        <CardTitle>Search</CardTitle>
+      <CardHeader className="px-4">
+        <CardTitle className="text-left">Search</CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="w-full flex justify-around items-center flex-wrap gap-y-4">
-          <div className="flex justify-center items-center flex-wrap">
-            <p>Block Number : </p>
-            <button
+      <CardContent className="space-y-6 px-4">
+        <div className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-4 items-center">
+          <Label htmlFor="blockNumber" className="text-left font-medium">
+            Block Number:
+          </Label>
+          <div className="flex items-center justify-start">
+            <Button
               onClick={() => handleBlockChange((blockNumber - 1).toString())}
-              className="text-text bg-transparent text-sm border-0 h-[30px] md:px-1 hover:bg-buttonHover ml-2"
+              className="text-text bg-transparent text-sm border-0 h-[30px] md:px-1 px-0 hover:bg-buttonHover"
             >
-              <ChevronLeft />
-            </button>
+              <ChevronLeft size={20}/>
+            </Button>
             <Input
-              className="max-w-[110px] py-0 mx-2 h-[30px] border-0 border-b-2 text-link  text-md [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              className="max-w-[110px] py-0 mx-1 h-[30px] border-0 border-b-2 text-link text-md [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               value={block}
               onChange={(e) => setBlock(e.target.value)}
               type="number"
               min="0"
               data-testid="block-number-search"
             />
-            <button
+            <Button
               data-testid="next-block-btn"
               onClick={() => handleBlockChange((blockNumber + 1).toString())}
-              className="text-text bg-transparent text-sm border-0 h-[30px] md:px-1 hover:bg-buttonHover"
+              className="text-text bg-transparent text-sm border-0 h-[30px] md:px-1 px-0 hover:bg-buttonHover"
             >
-              <ChevronRight />
-            </button>
+              <ChevronRight size={20}/>
+            </Button>
           </div>
-          <div
-            className="flex flex-wrap items-center justify-center"
-            ref={datePickerRef}
+        </div>
+      
+        <div 
+          className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-4 items-center"
+          ref={datePickerRef}
           >
-            <p> Block Time : </p>
-            <div className="ml-2">
-              <DateTimePicker
-                date={blockDate || new Date()}
-                setDate={setBlockDate}
-              />
-            </div>
+           <Label htmlFor="blockTime" className="text-left font-medium">
+            Block Time:
+          </Label>
+          <div className="flex items-center justify-start max-w-[280px]">
+            <DateTimePicker
+              date={blockDate || new Date()}
+              setDate={setBlockDate}
+            />
           </div>
-          <div className="flex">
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-4 items-center">
+          <Label className="text-left font-medium">
+            Operation Types:
+          </Label>
+          <div className="flex items-center">
             <OperationTypesDialog
               operationTypes={operationTypes}
               setSelectedOperations={handleSetFilters}
@@ -174,7 +186,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
 
         {(!!accountName || !!keyContent || !!setOfKeys) && (
           <div className="w-full flex justify-between items-center px-2 md:px-8 flex-wrap gap-y-4 mt-4">
-            <div className="flex gap-x-6">
+            <div className="flex gap-x-6 text-sm">
               {!!keyContent && <div>Key content: {keyContent}</div>}
               {!!setOfKeys && <div>Set of keys: {setOfKeys.join(", ")}</div>}
               {!!accountName && <div>Account: {accountName}</div>}
@@ -182,6 +194,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
             <Button
               onClick={onClearParams}
               variant="outline"
+              size="sm"
             >
               Clear params
             </Button>

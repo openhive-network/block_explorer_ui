@@ -1,9 +1,10 @@
 import { useRouter } from "next/router";
+import { Loader2 } from "lucide-react";
 import Link from "next/link";
 
-import usePostContent from "@/hooks/api/postPage/usePostContent";
 import PostContent from "./PostContent";
 import PostComments from "./PostComments";
+import usePostDiscussion from "@/hooks/api/postPage/usePostDiscussion";
 
 const HIVE_BLOG_URL = "https://hive.blog";
 const PEAKD_URL = "https://peakd.com";
@@ -11,14 +12,22 @@ const ECENCY_URL = "https://ecency.com";
 
 const PostPageContent = () => {
   const router = useRouter();
-  const { post } = router.query;
-  const accountName = post?.[1] ?? "";
-  const permlink = post?.[2] ?? "";
 
-  const { data } = usePostContent(accountName, permlink);
+  const { post } = router.query;
+
+  const accountNameFromRoute = post?.[1] as string; // Because of url replacement in [...post].tsx file, first parameter should always be category (community)
+  const permlink = post?.[2] as string;
+
+  const { data, isLoading } = usePostDiscussion(accountNameFromRoute, permlink);
+
+  if (isLoading) {
+    return (
+      <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />
+    );
+  }
 
   const buildLinkByUrl = (url: string) => {
-    return `${url}/${accountName}/${permlink}`;
+    return `${url}/${accountNameFromRoute}/${permlink}`;
   };
 
   const LINKS = [
@@ -29,7 +38,11 @@ const PostPageContent = () => {
 
   if (!data) return;
 
-  const { title, author, active_votes } = data;
+  const accountName = accountNameFromRoute?.replace("@", "");
+  const discussionKey = `${accountName}/${permlink}`;
+  const postContent = data[discussionKey];
+
+  const { title, author, active_votes } = postContent;
 
   return (
     <div className="w-full h-full px-10">
@@ -57,9 +70,13 @@ const PostPageContent = () => {
       </div>
       <PostContent
         active_votes={active_votes}
+        data={postContent}
+      />
+      <PostComments
+        accountName={accountName}
+        permlink={permlink}
         data={data}
       />
-      <PostComments />
     </div>
   );
 };
