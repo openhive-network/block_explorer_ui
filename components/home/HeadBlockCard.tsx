@@ -34,6 +34,20 @@ const calculateTimeDifference = (createdAt: string, blockchainDate: number) => {
   return timeDiffInSeconds;
 };
 
+const getFormattedLiveBlockchainTime = (liveBlockchainTime: Date | null) => {
+  if (!liveBlockchainTime) return "";
+
+  const formattedLiveBlockChainTime = `${
+    liveBlockchainTime
+      .toISOString()
+      .replace("T", " ")
+      .replaceAll("-", "/")
+      .split(".")[0]
+  } UTC`;
+
+  return formattedLiveBlockChainTime;
+};
+
 const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
   headBlockCardData,
   transactionCount,
@@ -219,10 +233,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
             <span className="font-semibold">Blockchain Time:</span>
             <span className="font-semibold text-right">
               {liveBlockchainTime
-                ? `${liveBlockchainTime
-                    .toISOString()
-                    .replace("T", " ")
-                    .slice(0, 19)} UTC`
+                ? getFormattedLiveBlockchainTime(liveBlockchainTime)
                 : blockchainTime ?? ""}
             </span>
           </div>
