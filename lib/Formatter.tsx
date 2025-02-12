@@ -87,19 +87,61 @@ import {
   witness_set_properties,
   witness_update,
 } from "@hiveio/wax";
-import { formatPercent } from "./utils";
+import { formatNumber, formatPercent } from "./utils";
 import Link from "next/link";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
+import HiveTooltip from "@/components/HiveTooltip";
+import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
+import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
+import { getVestsToHiveRatio } from "@/utils/Calculations";
+import { grabNumericValue } from "@/utils/StringUtils";
 
 class OperationsFormatter implements IWaxCustomFormatter {
   public constructor(private readonly wax: IWaxBaseInterface) {}
 
-  private getFormattedAmount(supply: Hive.Supply | undefined): string {
-    return this.wax.formatter.format(supply);
+  private headBlockNum = useHeadBlockNumber().headBlockNumberData;
+  private dynamicGlobalQueryData = useDynamicGlobal(this.headBlockNum)
+    .dynamicGlobalData;
+
+  private getFormattedAmount(
+    supply: Hive.Supply | undefined
+  ): React.JSX.Element | string {
+    if (!supply) return "";
+
+    const formattedValue = this.wax.formatter.format(supply);
+
+    if (formattedValue.includes("VESTS")) {
+      return this.getConvertedHiveTooltip(formattedValue, supply);
+    }
+
+    return formattedValue;
   }
 
   private getFormattedDate(time: Date | string): string {
     return formatAndDelocalizeTime(time);
+  }
+
+  private getConvertedHiveTooltip(tooltipTrigger: string, supply: Hive.Supply) {
+    if (!this.dynamicGlobalQueryData || !tooltipTrigger || !supply) {
+      return "";
+    }
+    const vests = Number(supply.amount);
+    const divider = 10 ** supply.precision;
+
+    const ratio = Math.round(
+      grabNumericValue(String(getVestsToHiveRatio(this.dynamicGlobalQueryData)))
+    );
+
+    const convertToHive = Math.round(vests / ratio) / divider;
+
+    const resultString = `${formatNumber(convertToHive, true, true)} HIVE`;
+
+    return (
+      <HiveTooltip
+        tooltipTrigger={tooltipTrigger}
+        tooltipContent={resultString}
+      />
+    );
   }
 
   private getFormattedMultipleAssets(
@@ -198,9 +240,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
     amounts?: { hbd_amount?: Hive.Supply; hive_amount?: Hive.Supply }
   ): React.JSX.Element {
     const amountMessage = amounts
-      ? `sent: ${this.getFormattedAmount(
-          amounts.hbd_amount
-        )} and ${this.getFormattedAmount(amounts.hive_amount)}`
+      ? "sent: " +
+        this.getFormattedAmount(amounts.hbd_amount) +
+        "and " +
+        this.getFormattedAmount(amounts.hive_amount)
       : "";
     return this.generateReactLink([
       initialMessage,
@@ -470,13 +513,12 @@ class OperationsFormatter implements IWaxCustomFormatter {
     if (op.block_signing_key) {
       message = this.generateReactLink([
         this.getAccountLink(op.owner),
-        `updated witness data - HBD interest rate: ${formatPercent(
-          op.props?.hbd_interest_rate || 0
-        )}, max block size: ${
-          op.props?.maximum_block_size
-        }, account fee: ${this.getFormattedAmount(
-          op.props?.account_creation_fee
-        )}`,
+        "updated witness data - HBD interest rate: ",
+        formatPercent(op.props?.hbd_interest_rate || 0),
+        ", max block size: ",
+        String(op.props?.maximum_block_size),
+        ", account fee: ",
+        this.getFormattedAmount(op.props?.account_creation_fee),
       ]);
     } else {
       message = this.generateReactLink([
@@ -647,7 +689,9 @@ class OperationsFormatter implements IWaxCustomFormatter {
       value: {
         message: this.generateReactLink([
           this.getAccountLink(op.from),
-          `delegated ${this.getFormattedAmount(op.rc)} of RC for`,
+          "delegated ",
+          this.getFormattedAmount(op.rc),
+          "of RC for ",
           this.getMultipleAccountsListLink(op.delegatees),
           `(${source.value.id})`,
         ]),
@@ -761,7 +805,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
     const allowVotes = !op.allow_votes ? "disallow votes, " : "";
     const maxPayout =
       op.max_accepted_payout?.amount !== "1000000000"
-        ? `max payout: ${this.getFormattedAmount(op.max_accepted_payout)}`
+        ? "max payout: " + this.getFormattedAmount(op.max_accepted_payout)
         : "";
     const percentHbd =
       op.percent_hbd !== 5000
@@ -813,13 +857,15 @@ class OperationsFormatter implements IWaxCustomFormatter {
       : `, expiration: ${this.getFormattedDate(op.expiration)}`;
     const message = this.generateReactLink([
       this.getAccountLink(op.owner),
-      `created limit order (id: ${
-        op.orderid
-      }) to sell: ${this.getFormattedAmount(
-        op.amount_to_sell
-      )}, exchange rate: ${this.getFormattedAmount(
-        op.exchange_rate?.base
-      )} to ${this.getFormattedAmount(op.exchange_rate?.quote)}${expiration}`,
+      "created limit order ",
+      `(id: ${op.orderid})`,
+      "to sell: ",
+      this.getFormattedAmount(op.amount_to_sell),
+      "exchange rate: ",
+      this.getFormattedAmount(op.exchange_rate?.base),
+      "to ",
+      this.getFormattedAmount(op.exchange_rate?.quote),
+      expiration,
     ]);
     return {
       ...target,
@@ -837,7 +883,8 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }: IFormatFunctionArguments<{ value: claim_account }>) {
     const message = this.generateReactLink([
       this.getAccountLink(op.creator),
-      `claimed an account with ${this.getFormattedAmount(op.fee)}`,
+      "claimed an account with",
+      this.getFormattedAmount(op.fee),
     ]);
     return {
       ...target,
@@ -995,11 +1042,12 @@ class OperationsFormatter implements IWaxCustomFormatter {
     target,
   }: IFormatFunctionArguments<{ value: pow2 }>) {
     const message = this.generateReactLink([
-      `Prove of Work 2, account creation fee: ${this.getFormattedAmount(
-        op.props?.account_creation_fee
-      )}, HBD interest rate: ${formatPercent(
-        op.props?.hbd_interest_rate || 0
-      )}, maximum block size: ${op.props?.maximum_block_size}`,
+      "Prove of Work 2, account creation fee:",
+      this.getFormattedAmount(op.props?.account_creation_fee),
+      ", HBD interest rate:",
+      formatPercent(op.props?.hbd_interest_rate || 0),
+      ", maximum block size:",
+      String(op.props?.maximum_block_size),
     ]);
     return {
       ...target,
@@ -1130,11 +1178,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }: IFormatFunctionArguments<{ value: claim_reward_balance }>) {
     const message = this.generateReactLink([
       this.getAccountLink(op.account),
-      `claimed rewards: ${this.getFormattedAmount(
-        op.reward_hbd
-      )}, ${this.getFormattedAmount(op.reward_hive)}, ${this.getFormattedAmount(
-        op.reward_vests
-      )}`,
+      "claimed rewards: ",
+      this.getFormattedAmount(op.reward_hbd),
+      this.getFormattedAmount(op.reward_hive),
+      this.getFormattedAmount(op.reward_vests),
     ]);
     return {
       ...target,
@@ -1152,7 +1199,9 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }: IFormatFunctionArguments<{ value: delegate_vesting_shares }>) {
     const message = this.generateReactLink([
       this.getAccountLink(op.delegator),
-      `delegated ${this.getFormattedAmount(op.vesting_shares)} to`,
+      "delegated",
+      this.getFormattedAmount(op.vesting_shares),
+      "to",
       this.getAccountLink(op.delegatee),
     ]);
     return {
@@ -1173,9 +1222,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getAccountLink(op.creator),
       "created new account:",
       this.getAccountLink(op.new_account_name),
-      `with delegation: ${this.getFormattedAmount(
-        op.delegation
-      )} and fee: ${this.getFormattedAmount(op.fee)}`,
+      "with delegation:",
+      this.getFormattedAmount(op.delegation),
+      "and fee:",
+      this.getFormattedAmount(op.fee),
     ]);
     return {
       ...target,
@@ -1231,15 +1281,16 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }: IFormatFunctionArguments<{ value: create_proposal }>) {
     const message = this.generateReactLink([
       this.getAccountLink(op.creator),
-      `created a proposal for ${this.getFormattedAmount(
-        op.daily_pay
-      )} daily to`,
+      "created a proposal for",
+      this.getFormattedAmount(op.daily_pay),
+      "daily to",
       this.getAccountLink(op.receiver),
-      `, details:`,
+      ", details:",
       this.getPermlink(op.creator, op.permlink),
-      `since ${this.getFormattedDate(op.start_date)} to ${this.getFormattedDate(
-        op.end_date
-      )}`,
+      "since",
+      this.getFormattedDate(op.start_date),
+      "to",
+      this.getFormattedDate(op.end_date),
     ]);
     return {
       ...target,
@@ -1302,9 +1353,11 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }: IFormatFunctionArguments<{ value: update_proposal }>) {
     const message = this.generateReactLink([
       this.getAccountLink(op.creator),
-      `updated proposal ${op.proposal_id} for ${this.getFormattedAmount(
-        op.daily_pay
-      )} daily, details:`,
+      "updated proposal",
+      op.proposal_id,
+      "for",
+      this.getFormattedAmount(op.daily_pay),
+      "daily, details:",
       this.getPermlink(op.creator, op.permlink),
     ]);
     return {
@@ -1323,9 +1376,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }: IFormatFunctionArguments<{ value: collateralized_convert }>) {
     const message = this.generateReactLink([
       this.getAccountLink(op.owner),
-      `collateralized convert ${this.getFormattedAmount(
-        op.amount
-      )} with request ID: ${op.requestid}`,
+      "collateralized convert",
+      this.getFormattedAmount(op.amount),
+      "with request ID:",
+      String(op.requestid),
     ]);
     return {
       ...target,
@@ -1343,9 +1397,12 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }: IFormatFunctionArguments<{ value: Hive.RecurrentTransferOperation }>) {
     const message = this.generateReactLink([
       this.getAccountLink(op.from),
-      `set recurrent transfer of ${this.getFormattedAmount(op.amount)}, ${
-        op.executions
-      } executions every ${op.recurrence} hours to`,
+      "set recurrent transfer of",
+      this.getFormattedAmount(op.amount),
+      String(op.executions),
+      ", executions every",
+      String(op.recurrence),
+      "hours to",
       this.getAccountLink(op.to),
       this.getOperationMemo(op.memo),
     ]);
@@ -1367,11 +1424,12 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }: IFormatFunctionArguments<{ value: fill_convert_request }>) {
     const message = this.generateReactLink([
       this.getAccountLink(op.owner),
-      `converted ${this.getFormattedAmount(
-        op.amount_in
-      )} to ${this.getFormattedAmount(op.amount_out)} for request ID: ${
-        op.requestid
-      }`,
+      "converted",
+      this.getFormattedAmount(op.amount_in),
+      "to",
+      this.getFormattedAmount(op.amount_out),
+      "for request ID:",
+      String(op.requestid),
     ]);
     return {
       ...target,
@@ -1394,13 +1452,15 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getAccountLink(op.author),
       "got an author reward for",
       this.getPermlink(op.author, op.permlink),
-      `curators payout: ${this.getFormattedAmount(
-        op.curators_vesting_payout
-      )}, payouts: ${this.getFormattedAmount(
-        op.vesting_payout
-      )}, ${this.getFormattedAmount(op.hive_payout)}, ${this.getFormattedAmount(
-        op.hbd_payout
-      )}${mustBeClaimed}`,
+      "curators payout:",
+      this.getFormattedAmount(op.curators_vesting_payout),
+      ", payouts:",
+      this.getFormattedAmount(op.vesting_payout),
+      ",",
+      this.getFormattedAmount(op.hive_payout),
+      ",",
+      this.getFormattedAmount(op.hbd_payout),
+      mustBeClaimed,
     ]);
     return {
       ...target,
@@ -1421,7 +1481,9 @@ class OperationsFormatter implements IWaxCustomFormatter {
       : ", doesn't have to be claimed";
     const message = this.generateReactLink([
       this.getAccountLink(op.curator),
-      `got a curation reward ${this.getFormattedAmount(op.reward)} for`,
+      "got a curation reward",
+      this.getFormattedAmount(op.reward),
+      "for",
       this.getPermlink(op.author, op.permlink),
       mustBeClaimed,
     ]);
@@ -1442,7 +1504,9 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }: IFormatFunctionArguments<{ value: comment_reward }>) {
     const message = this.generateReactLink([
       this.getAccountLink(op.author),
-      `got a comment reward ${this.getFormattedAmount(op.payout)} for`,
+      "got a comment reward",
+      this.getFormattedAmount(op.payout),
+      "for",
       this.getPermlink(op.author, op.permlink),
     ]);
     return {
@@ -1461,7 +1525,8 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }: IFormatFunctionArguments<{ value: liquidity_reward }>) {
     const message = this.generateReactLink([
       this.getAccountLink(op.owner),
-      `got a liquidity reward ${this.getFormattedAmount(op.payout)}`,
+      "got a liquidity reward",
+      this.getFormattedAmount(op.payout),
     ]);
     return {
       ...target,
@@ -1479,7 +1544,8 @@ class OperationsFormatter implements IWaxCustomFormatter {
       : "";
     const message = this.generateReactLink([
       this.getAccountLink(op.owner),
-      `got interest paid ${this.getFormattedAmount(op.interest)}`,
+      "got interest paid",
+      this.getFormattedAmount(op.interest),
       wasLiquidModified,
     ]);
     return {
@@ -1498,9 +1564,12 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }: IFormatFunctionArguments<{ value: fill_vesting_withdraw }>) {
     const message = this.generateReactLink([
       this.getAccountLink(op.from_account),
-      `withdrawed ${this.getFormattedAmount(op.withdrawn)} and`,
+      "withdrawed",
+      this.getFormattedAmount(op.withdrawn),
+      "and",
       this.getAccountLink(op.to_account),
-      `deposited ${this.getFormattedAmount(op.deposited)}`,
+      "deposited",
+      this.getFormattedAmount(op.deposited),
     ]);
     return {
       ...target,
@@ -1515,9 +1584,11 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }: IFormatFunctionArguments<{ value: fill_order }>) {
     const message = this.generateReactLink([
       this.getAccountLink(op.current_owner),
-      `paid ${this.getFormattedAmount(
-        op.current_pays
-      )} for ${this.getFormattedAmount(op.open_pays)} from`,
+      "paid",
+      this.getFormattedAmount(op.current_pays),
+      "for",
+      this.getFormattedAmount(op.open_pays),
+      "from",
       this.getAccountLink(op.open_owner),
       `(IDs: ${op.current_orderid} -> ${op.open_orderid})`,
     ]);
@@ -1555,7 +1626,8 @@ class OperationsFormatter implements IWaxCustomFormatter {
     target,
   }: IFormatFunctionArguments<{ value: Hive.TransferOperation }>) {
     const message = this.generateReactLink([
-      `${this.getFormattedAmount(op.amount)} was transfered from`,
+      this.getFormattedAmount(op.amount),
+      "was transfered from",
       this.getAccountLink(op.from),
       "to",
       this.getAccountLink(op.to),
@@ -1611,7 +1683,8 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }: IFormatFunctionArguments<{ value: return_vesting_delegation }>) {
     const message = this.generateReactLink([
       this.getAccountLink(op.account),
-      `received ${this.getFormattedAmount(op.vesting_shares)}`,
+      "received",
+      this.getFormattedAmount(op.vesting_shares),
     ]);
     return {
       ...target,
@@ -1632,11 +1705,13 @@ class OperationsFormatter implements IWaxCustomFormatter {
       : ", doesn't have to be claimed";
     const message = this.generateReactLink([
       this.getAccountLink(op.benefactor),
-      `received ${this.getFormattedAmount(
-        op.vesting_payout
-      )}, ${this.getFormattedAmount(op.hbd_payout)}, ${this.getFormattedAmount(
-        op.hbd_payout
-      )} for comment`,
+      "received",
+      this.getFormattedAmount(op.vesting_payout),
+      ",",
+      this.getFormattedAmount(op.hbd_payout),
+      ",",
+      this.getFormattedAmount(op.hbd_payout),
+      "for comment",
       this.getPermlink(op.author, op.permlink),
       mustBeClaimed,
     ]);
@@ -1656,8 +1731,11 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }: IFormatFunctionArguments<{ value: producer_reward }>) {
     const message = this.generateReactLink([
       this.getAccountLink(op.producer),
-      `received ${this.getFormattedAmount(op.vesting_shares)} reward`,
+      "received",
+      this.getFormattedAmount(op.vesting_shares),
+      "reward",
     ]);
+
     return {
       ...target,
       value: { ...message, ...this.getOperationPerspective(op.producer) },
@@ -1691,9 +1769,11 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }: IFormatFunctionArguments<{ value: proposal_pay }>) {
     const message = this.generateReactLink([
       this.getAccountLink(op.receiver),
-      ` was paid ${this.getFormattedAmount(op.payment)} for his proposal ${
-        op.proposal_id
-      } by`,
+      "was paid",
+      this.getFormattedAmount(op.payment),
+      "for his proposal",
+      String(op.proposal_id),
+      "by",
       this.getAccountLink(op.payer),
     ]);
     return {
@@ -1712,7 +1792,8 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }: IFormatFunctionArguments<{ value: dhf_funding }>) {
     const message = this.generateReactLink([
       this.getAccountLink(op.treasury),
-      `received ${this.getFormattedAmount(op.additional_funds)}`,
+      "received",
+      this.getFormattedAmount(op.additional_funds),
     ]);
     return {
       ...target,
@@ -1730,13 +1811,15 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }: IFormatFunctionArguments<{ value: hardfork_hive }>) {
     const message = this.generateReactLink([
       this.getAccountLink(op.account),
-      `aidrop of ${this.getFormattedAmount(
-        op.hbd_transferred
-      )}, ${this.getFormattedAmount(
-        op.hive_transferred
-      )}, ${this.getFormattedAmount(
-        op.total_hive_from_vests
-      )}, ${this.getFormattedAmount(op.vests_converted)} went to`,
+      "aidrop of",
+      this.getFormattedAmount(op.hbd_transferred),
+      ",",
+      this.getFormattedAmount(op.hive_transferred),
+      ",",
+      this.getFormattedAmount(op.total_hive_from_vests),
+      ",",
+      this.getFormattedAmount(op.vests_converted),
+      "went to",
       this.getAccountLink(op.treasury),
     ]);
     return {
@@ -1755,9 +1838,11 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }: IFormatFunctionArguments<{ value: hardfork_hive_restore }>) {
     const message = this.generateReactLink([
       this.getAccountLink(op.account),
-      `received ${this.getFormattedAmount(
-        op.hive_transferred
-      )} and ${this.getFormattedAmount(op.hbd_transferred)} from`,
+      "received",
+      this.getFormattedAmount(op.hive_transferred),
+      "and",
+      this.getFormattedAmount(op.hbd_transferred),
+      "from",
       this.getAccountLink(op.treasury),
     ]);
     return {
@@ -1817,9 +1902,9 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getAccountLink(op.voter),
       "voted for",
       this.getPermlink(op.author, op.permlink),
-      `and generated ${this.getFormattedAmount(
-        op.pending_payout
-      )} pending payout`,
+      "and generated",
+      this.getFormattedAmount(op.pending_payout),
+      "pending payout",
     ]);
     return {
       ...target,
@@ -1856,9 +1941,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }: IFormatFunctionArguments<{ value: dhf_conversion }>) {
     const message = this.generateReactLink([
       this.getAccountLink(op.treasury),
-      `converted ${this.getFormattedAmount(
-        op.hive_amount_in
-      )} to ${this.getFormattedAmount(op.hbd_amount_out)}`,
+      "converted",
+      this.getFormattedAmount(op.hive_amount_in),
+      "to",
+      this.getFormattedAmount(op.hbd_amount_out),
     ]);
 
     return {
@@ -1921,9 +2007,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getAccountLink(op.from_account),
       "to",
       this.getAccountLink(op.to_account),
-      `was completed with ${this.getFormattedAmount(
-        op.hive_vested
-      )} -> ${this.getFormattedAmount(op.vesting_shares_received)}`,
+      "was completed with",
+      this.getFormattedAmount(op.hive_vested),
+      "->",
+      this.getFormattedAmount(op.vesting_shares_received),
     ]);
     return {
       ...target,
@@ -1938,7 +2025,9 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }: IFormatFunctionArguments<{ value: pow_reward }>) {
     const message = this.generateReactLink([
       this.getAccountLink(op.worker),
-      `received ${this.getFormattedAmount(op.reward)} reward`,
+      "received",
+      this.getFormattedAmount(op.reward),
+      "reward",
     ]);
     return {
       ...target,
@@ -1956,9 +2045,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }: IFormatFunctionArguments<{ value: vesting_shares_split }>) {
     const message = this.generateReactLink([
       this.getAccountLink(op.owner),
-      ` splited vests ${this.getFormattedAmount(
-        op.vesting_shares_before_split
-      )} -> ${this.getFormattedAmount(op.vesting_shares_after_split)}`,
+      "splited vests",
+      this.getFormattedAmount(op.vesting_shares_before_split),
+      "->",
+      this.getFormattedAmount(op.vesting_shares_after_split),
     ]);
     return {
       ...target,
@@ -1978,9 +2068,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getAccountLink(op.new_account_name),
       "was created by",
       this.getAccountLink(op.creator),
-      `with initials: vesting shares ${this.getFormattedAmount(
-        op.initial_vesting_shares
-      )} and delegations ${this.getFormattedAmount(op.initial_delegation)}`,
+      "with initials: vesting shares",
+      this.getFormattedAmount(op.initial_vesting_shares),
+      "and delegations",
+      this.getFormattedAmount(op.initial_delegation),
     ]);
     return {
       ...target,
@@ -1997,13 +2088,16 @@ class OperationsFormatter implements IWaxCustomFormatter {
     target,
   }: IFormatFunctionArguments<{ value: fill_collateralized_convert_request }>) {
     const message = this.generateReactLink([
-      `Collateralized convert reuqest of ${op.owner} (ID: ${
-        op.requestid
-      }) was filled with ${this.getFormattedAmount(
-        op.amount_in
-      )} -> ${this.getFormattedAmount(
-        op.amount_out
-      )} and ${this.getFormattedAmount(op.excess_collateral)} excess`,
+      "Collateralized convert reuqest of",
+      op.owner,
+      `(ID: ${op.requestid})`,
+      "was filled with",
+      this.getFormattedAmount(op.amount_in),
+      "->",
+      this.getFormattedAmount(op.amount_out),
+      "and",
+      this.getFormattedAmount(op.excess_collateral),
+      "excess",
     ]);
     return {
       ...target,
@@ -2041,9 +2135,11 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getAccountLink(op.from),
       "to",
       this.getAccountLink(op.to),
-      `with amount: ${this.getFormattedAmount(op.amount)} and ${
-        op.remaining_executions
-      } remaining executions`,
+      "with amount:",
+      this.getFormattedAmount(op.amount),
+      "and",
+      String(op.remaining_executions),
+      "remaining executions",
       this.getOperationMemo(op.memo),
     ]);
     return {
@@ -2066,9 +2162,13 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getAccountLink(op.from),
       "to",
       this.getAccountLink(op.to),
-      `with amount: ${this.getFormattedAmount(op.amount)} and ${
-        op.remaining_executions
-      } remaining executions failed for ${op.consecutive_failures} times`,
+      "with amount:",
+      this.getFormattedAmount(op.amount),
+      "and",
+      String(op.remaining_executions),
+      "remaining executions failed for",
+      String(op.consecutive_failures),
+      "times",
       deleted,
       this.getOperationMemo(op.memo),
     ]);
@@ -2089,9 +2189,9 @@ class OperationsFormatter implements IWaxCustomFormatter {
     const message = this.generateReactLink([
       `Order ${op.orderid} by`,
       this.getAccountLink(op.seller),
-      ` was cancelled and ${this.getFormattedAmount(
-        op.amount_back
-      )} was sent back`,
+      "was cancelled and",
+      this.getFormattedAmount(op.amount_back),
+      "was sent back",
     ]);
     return {
       ...target,
@@ -2127,9 +2227,11 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }: IFormatFunctionArguments<{ value: proposal_fee }>) {
     const message = this.generateReactLink([
       this.getAccountLink(op.creator),
-      `got proposal fee ${this.getFormattedAmount(op.fee)} ID: ${
-        op.proposal_id
-      } from`,
+      "got proposal fee",
+      this.getFormattedAmount(op.fee),
+      "ID:",
+      String(op.proposal_id),
+      "from",
       this.getAccountLink(op.treasury),
     ]);
     return {
@@ -2150,9 +2252,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }>) {
     const message = this.generateReactLink([
       this.getAccountLink(op.owner),
-      `received ${this.getFormattedAmount(op.hbd_out)} for conversion ID: ${
-        op.requestid
-      }`,
+      "received",
+      this.getFormattedAmount(op.hbd_out),
+      "for conversion ID:",
+      String(op.requestid),
     ]);
 
     return {
@@ -2176,9 +2279,12 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getAccountLink(op.to),
       "by agent",
       this.getAccountLink(op.agent),
-      `with fee: ${this.getFormattedAmount(op.fee)}, ID: ${
-        op.escrow_id
-      } was approved`,
+      "with fee:",
+      this.getFormattedAmount(op.fee),
+      ",",
+      "ID:",
+      String(op.escrow_id),
+      "was approved",
     ]);
     return {
       ...target,
@@ -2202,9 +2308,12 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getAccountLink(op.to),
       "by agent",
       this.getAccountLink(op.agent),
-      `with fee: ${this.getFormattedAmount(op.fee)}, ID: ${
-        op.escrow_id
-      } was rejected`,
+      "with fee:",
+      this.getFormattedAmount(op.fee),
+      ",",
+      "ID:",
+      String(op.escrow_id),
+      "was rejected",
     ]);
     return {
       ...target,
