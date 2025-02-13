@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
 import useURLParams from "@/hooks/common/useURLParams";
-import { defaultSearchParams } from "@/pages/[accountName]";
 import {
   convertBooleanArrayToIds,
   convertIdsToBooleanArray,
@@ -15,15 +14,11 @@ import useAccountOperations from "@/hooks/api/accountPage/useAccountOperations";
 import useAccountOperationTypes from "@/hooks/api/accountPage/useAccountOperationTypes";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 import { getOperationButtonTitle } from "@/utils/UI";
-import { useSearchesContext } from "@/contexts/SearchesContext";
-import {
-  DEFAULT_RANGE_SELECT_KEY,
-  DEFAULT_LAST_BLOCK_VALUE,
-  DEFAULT_LAST_TIME_UNIT_VALUE,
-  DEFAULT_TIME_UNIT_SELECT_KEY,
-} from "@/hooks/common/useSearchRanges";
 import AccountOperationsSection from "./AccountOperationsSection";
 import { trimAccountName } from "@/utils/StringUtils";
+import useAccountOperationsTabSearchRanges, {
+  defaultAccountOperationsTabSearchParams,
+} from "./useAccountOperationsTabSearchRanges";
 
 interface OpeationTabContentProps {
   liveDataEnabled: boolean;
@@ -33,12 +28,13 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
   liveDataEnabled,
 }) => {
   const router = useRouter();
-  const { searchRanges } = useSearchesContext();
+  const searchRanges = useAccountOperationsTabSearchRanges();
 
   const [accountName, setAccountName] = useState("");
-  const { paramsState, setParams } = useURLParams(defaultSearchParams, [
-    "accountName",
-  ]);
+  const { paramsState, setParams } = useURLParams(
+    defaultAccountOperationsTabSearchParams,
+    ["accountName"]
+  );
 
   const {
     filters: filtersParam,
@@ -77,14 +73,14 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     } = searchRanges;
 
     const props = {
-      ...defaultSearchParams,
+      ...defaultAccountOperationsTabSearchParams,
       accountName,
     };
 
-    setRangeSelectKey(DEFAULT_RANGE_SELECT_KEY);
-    setTimeUnitSelectKey(DEFAULT_TIME_UNIT_SELECT_KEY);
-    setLastTimeUnitValue(DEFAULT_LAST_TIME_UNIT_VALUE);
-    setLastBlocksValue(DEFAULT_LAST_BLOCK_VALUE);
+    setRangeSelectKey("none");
+    setTimeUnitSelectKey(undefined);
+    setLastTimeUnitValue(undefined);
+    setLastBlocksValue(undefined);
     setParams(props);
     setFilters([]);
   };

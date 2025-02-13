@@ -4,10 +4,10 @@ import Hive from "@/types/Hive";
 import { convertOperationResultsToTableOperations } from "@/lib/utils";
 import NoResult from "@/components/NoResult";
 import OperationsTable from "@/components/OperationsTable";
-import { defaultSearchParams } from "@/pages/[accountName]";
 import useURLParams from "@/hooks/common/useURLParams";
 import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
 import AccountPagination from "../../AccountPagination";
+import { defaultAccountOperationsTabSearchParams } from "./useAccountOperationsTabSearchRanges";
 
 interface AccountOperationsSectionProps {
   accountOperations: Hive.AccountOperationsResponse | undefined;
@@ -18,7 +18,10 @@ const AccountOperationsSection: React.FC<AccountOperationsSectionProps> = ({
   accountOperations,
   isAccountOperationsLoading,
 }) => {
-  const { paramsState, setParams } = useURLParams(defaultSearchParams);
+  const { paramsState, setParams } = useURLParams(
+    defaultAccountOperationsTabSearchParams,
+    ["accountName"]
+  );
   const { page: pageParam } = paramsState;
 
   const formattedAccountOperations = useOperationsFormatter(

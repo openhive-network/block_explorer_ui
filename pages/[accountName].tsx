@@ -16,7 +16,7 @@ import AccountOperationViewTabs from "@/components/account/tabs/AccountOperation
 import { AccountTabsProvider } from "@/contexts/TabsContext";
 import moment from "moment";
 
-interface AccountSearchParams {
+export interface AccountSearchParams {
   accountName?: string | undefined;
   fromBlock: number | undefined;
   toBlock: number | undefined;

@@ -36,59 +36,57 @@ export interface SearchRangesResult {
   setEndDate: (date: Date | undefined) => void;
   setLastBlocksValue: (last: number | undefined) => void;
   setLastTimeUnitValue: (last: number | undefined) => void;
-  setRangeSelectKey: (key: string) => void;
-  setTimeUnitSelectKey: (blockNumber: string) => void;
+  setRangeSelectKey: (key: string | undefined) => void;
+  setTimeUnitSelectKey: (blockNumber: string | undefined) => void;
   getRangesValues: () => RangesValues;
   setRangesValues: (params: Explorer.CommentSearchParams | undefined) => void;
 }
 
+export const rangeSelectOptions: Explorer.SelectOption[] = [
+  {
+    name: "Last blocks",
+    key: "lastBlocks",
+  },
+  {
+    name: "Last days/weeks/months",
+    key: "lastTime",
+  },
+  {
+    name: "Block range",
+    key: "blockRange",
+  },
+  {
+    name: "Time range",
+    key: "timeRange",
+  },
+  {
+    name: "---",
+    key: "none",
+  },
+];
+
+export const timeSelectOptions: Explorer.SelectOption[] = [
+  {
+    name: "Hours",
+    key: "hours",
+  },
+  {
+    name: "Days",
+    key: "days",
+  },
+  {
+    name: "Weeks",
+    key: "weeks",
+  },
+  {
+    name: "Months",
+    key: "months",
+  },
+];
+
 const useSearchRanges = (
   defaultSelectKey: string = DEFAULT_RANGE_SELECT_KEY
 ) => {
-  const { paramsState } = useURLParams(defaultSearchParams);
-
-  const rangeSelectOptions: Explorer.SelectOption[] = [
-    {
-      name: "Last blocks",
-      key: "lastBlocks",
-    },
-    {
-      name: "Last days/weeks/months",
-      key: "lastTime",
-    },
-    {
-      name: "Block range",
-      key: "blockRange",
-    },
-    {
-      name: "Time range",
-      key: "timeRange",
-    },
-    {
-      name: "---",
-      key: "none",
-    },
-  ];
-
-  const timeSelectOptions: Explorer.SelectOption[] = [
-    {
-      name: "Hours",
-      key: "hours",
-    },
-    {
-      name: "Days",
-      key: "days",
-    },
-    {
-      name: "Weeks",
-      key: "weeks",
-    },
-    {
-      name: "Months",
-      key: "months",
-    },
-  ];
-
   const [fromBlock, setFromBlock] = useState<number | undefined>(undefined);
   const [toBlock, setToBlock] = useState<number | undefined>(undefined);
   const [startDate, setStartDate] = useState<Date | undefined>(
@@ -179,13 +177,6 @@ const useSearchRanges = (
       payloadEndDate,
     };
   };
-
-  // Set range values from url params
-  useEffect(() => {
-    if (paramsState) {
-      setRangesValues(paramsState);
-    }
-  }, [paramsState]);
 
   return {
     rangeSelectOptions,
