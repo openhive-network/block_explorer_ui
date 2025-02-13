@@ -126,7 +126,42 @@ export const changeHBDToDollarsDisplay = (hbd: string): string => {
  * @param hbd grab pure numeric value without any unit or commas
  * @returns 
  */
-export const grabNumericValue = (hbd: string): number => {
-  const numericValue = Number(hbd.split(" ")[0].slice(0, -1).replaceAll(",", ""));
-  return numericValue;
+export const grabNumericValue = (str: string): number => {
+  // 1. Remove all non-numeric characters EXCEPT the decimal point (period or comma).
+  const cleaned = str.replace(/[^0-9.,-]/g, '');
+
+  // 2. Handle negative sign: Keep only the first one (if present) and make sure it's at the beginning.
+  let negative = '';
+  if (cleaned.startsWith('-')) {
+    negative = '-';
+  }
+  const withoutNegative = cleaned.replace(/^-/, ''); // Remove initial negative sign
+
+
+  //3. Determine the decimal separator (either comma or period), preferring the last occurrence
+  let decimalSeparator = '';
+  if (withoutNegative.lastIndexOf(',') > withoutNegative.lastIndexOf('.')) {
+    decimalSeparator = ',';
+  } else if (withoutNegative.lastIndexOf('.') > -1) {
+    decimalSeparator = '.';
+  }
+
+  // 4. Remove thousands separators, keeping only the decimal point.
+  let numberString = withoutNegative;
+
+  if (decimalSeparator) {
+    const thousandsSeparator = decimalSeparator === ',' ? '.' : ',';
+    const regex = new RegExp(thousandsSeparator === '.' ? '\\.' : thousandsSeparator, 'g');
+    numberString = numberString.replace(regex, '');
+  } else {
+    // No decimal separator found, so remove all periods and commas.
+    numberString = numberString.replace(/[.,]/g, '');
+  }
+
+  // 5. Replace the decimal separator with a period.
+  if (decimalSeparator) {
+    numberString = numberString.replace(decimalSeparator, '.');
+  }
+
+  return Number(negative + numberString);
 }
