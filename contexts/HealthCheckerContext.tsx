@@ -7,10 +7,19 @@ import { ExplorerNodeApi } from "@/types/Node";
 import { config } from "@/Config";
 import { useApiAddressesContext } from "./ApiAddressesContext";
 
+
+export type ValidationErrorDetails = {
+  checkName: string;
+  providerName: string;
+  message: string;
+  paths: string[];
+  params?: string;
+}
+
 export interface HealthCheckerProps {
   apiCheckers: ApiChecker[];
   scoredEndpoints: TScoredEndpoint[] | undefined;
-  failedChecksByProvider: Map<string, string[]>;
+  failedChecksByProvider: Map<string, ValidationErrorDetails[]>;
   setScoredEndpoints: (scoredEndpoints: TScoredEndpoint[] | undefined ) => void;
   fallbacks?: string[];
   setFallbacks: (fallbacks: string[]) => void;
@@ -21,6 +30,7 @@ export interface HealthCheckerProps {
   addProvider: (provider: string) => void;
   removeProvider: (provider: string) => void;
   resetProviders: () => void;
+  clearValidationError: (providerName: string, checkerName: string) => void;
 }
 
 type HealthCheckerContextType = {
@@ -42,6 +52,7 @@ export const HealthCheckerContext = createContext<HealthCheckerContextType>({
     addProvider: () => {},
     removeProvider: () => {},
     resetProviders: () => {},
+    clearValidationError: () => {}
   }
 });
 
@@ -73,7 +84,7 @@ export const HealthCheckerContextProvider: React.FC<{
   const [scoredEndpoints, setScoredEndpoints] = useState<TScoredEndpoint[] | undefined>(undefined);
   const [chainInitialized, setChainIntialized] = useState<boolean>(false);
   const [endpointTitleById, setEndpointTitleById] = useState<Map<number, string>>(new Map());
-  const [failedChecksByProvider, setFailedChecksByProvider] = useState<Map<string, string[]>>(new Map());
+  const [failedChecksByProvider, setFailedChecksByProvider] = useState<Map<string, ValidationErrorDetails[]>>(new Map());
   const fallbacksRef = useRef(fallbacks);
   const nodeAddressRef = useRef(nodeAddress);
   const endpointTitleByIdRef = useRef(endpointTitleById);
@@ -122,16 +133,31 @@ const apiCheckers: ApiChecker[] = [
   }
 ]
 
-  const markValidationError = (endpointId: number, provider: string) => {
+  const markValidationError = (endpointId: number, providerName: string, error: WaxHealthCheckerValidatorFailedError<string>) => {
     const checkTitle = endpointTitleByIdRef.current.get(endpointId);
     if (checkTitle) {
       setFailedChecksByProvider((previousChecks) => {
-        const prevoiusFailedChecks = [...previousChecks.get(provider) || [], checkTitle];
-        const newFailedChecks = structuredClone(previousChecks).set(provider, prevoiusFailedChecks);
+        const checkObject: ValidationErrorDetails = {
+        checkName: checkTitle,
+        providerName: providerName,
+        message: error.message,
+        paths: error.apiEndpoint.paths,
+        params: JSON.stringify(error.request.data),
+      }
+        const prevoiusFailedChecks = [...previousChecks.get(providerName) || [], checkObject];
+        const newFailedChecks = structuredClone(previousChecks).set(providerName, prevoiusFailedChecks);
         return newFailedChecks
       })
     }
   } 
+
+  const clearValidationError = (providerName: string, checkName: string) => {
+    setFailedChecksByProvider((previousChecks) => {
+      const failedChecks = [...previousChecks.get(providerName) || []].filter((failedCheck) => failedCheck.checkName !== checkName);
+      const newFailedChecks = structuredClone(previousChecks).set(providerName, failedChecks);
+      return newFailedChecks
+    })
+  }
 
   const createHealthChecker = async () => {
     const healthChecker = new HealthChecker();
@@ -142,7 +168,7 @@ const apiCheckers: ApiChecker[] = [
       checkForFallbacks(data); 
       data.length ?setScoredEndpoints(data) : null 
     });
-    healthChecker?.on("validationerror", error => markValidationError(error.apiEndpoint.id, error.request.endpoint));
+    healthChecker?.on("validationerror", error => markValidationError(error.apiEndpoint.id, error.request.endpoint, error));
   }
 
   const checkForFallbacks = (scoredEndpoints: TScoredEndpoint[]) => {
@@ -245,7 +271,8 @@ const apiCheckers: ApiChecker[] = [
         setLocalProviders: writeLocalProvidersToLocalStorage,
         addProvider,
         removeProvider,
-        resetProviders
+        resetProviders,
+        clearValidationError
       }
     }}>
       {children}

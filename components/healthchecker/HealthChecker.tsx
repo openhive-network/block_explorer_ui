@@ -7,7 +7,8 @@ import ProviderCard from "./ProviderCard";
 import { Card } from "../ui/card";
 import { Badge } from "../ui/badge";
 import ProviderAdditionDialog from "./ProviderAdditionDialog";
-import { HealthCheckerProps } from "@/contexts/HealthCheckerContext";
+import { HealthCheckerProps, ValidationErrorDetails } from "@/contexts/HealthCheckerContext";
+import ValidationErrorDialog from "./ValidationErrorDialog";
 
 export interface ApiChecker {
   title: string;
@@ -37,10 +38,13 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     addProvider,
     removeProvider,
     resetProviders,
+    clearValidationError,
     failedChecksByProvider
   } = healthCheckerProps
 
   const [isProviderAdditionDialogOpened, setIsProviderAdditionDialogOpened] = useState<boolean>(false);
+  const [isValidationErrorDialogOpened, setIsValidationErrorDialogOpened] = useState<boolean>(false);
+  const [selectedValidator, setSelectedValidator] = useState<ValidationErrorDetails | undefined>(undefined);
   
   const handleAdditionOfProvider = (provider: string) => {
     addProvider(provider);
@@ -61,6 +65,14 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     if (nodeAddress) {
       removeFallback(nodeAddress);
       setNodeAddress(nodeAddress);
+    }
+  }
+
+  const selectValidator = (providerName: string, checkTitle: string) => {
+    const foundValidator = failedChecksByProvider.get(providerName)?.find((failedCheck) => failedCheck.checkName === checkTitle);
+    if (foundValidator) {
+      setSelectedValidator(foundValidator);
+      setIsValidationErrorDialogOpened(true);
     }
   }
   
@@ -89,7 +101,8 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         deleteProvider={removeProvider}
         registerFallback={registerFallback}
         removeFallback={removeFallback}    
-        failedChecks={failedChecksByProvider.get(endpointUrl) || []}                                                                                
+        failedChecks={failedChecksByProvider.get(endpointUrl)?.map((failedCheck) => failedCheck.checkName) || []}
+        selectValidator={selectValidator}                                                                               
       />
     )       
   }
@@ -128,6 +141,12 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         isOpened={isProviderAdditionDialogOpened}
         onDialogOpenChange={setIsProviderAdditionDialogOpened}
         onProviderSubmit={handleAdditionOfProvider}
+      />
+      <ValidationErrorDialog 
+        isOpened={isValidationErrorDialogOpened}
+        onDialogOpenChange={setIsValidationErrorDialogOpened}
+        validatorDetails={selectedValidator}
+        clearValidationError={clearValidationError}
       />
     </div>
   );

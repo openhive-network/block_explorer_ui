@@ -20,6 +20,7 @@ interface ProviderCardProps {
   deleteProvider: (provider: string) => void;
   registerFallback: (provider: string) => void;
   removeFallback: (provider: string) => void;
+  selectValidator: (providerName: string, checkTitle: string) => void;
 }
 
 const ProviderCard: React.FC<ProviderCardProps> = ({
@@ -36,8 +37,14 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
   deleteProvider,
   switchToProvider,
   registerFallback,
-  removeFallback
+  removeFallback,
+  selectValidator
 }) => {
+
+  const handleBadgeClick = (checkerName: string) => {
+    if (failedChecks.includes(checkerName))
+    selectValidator(providerLink, checkerName);
+  }
 
   return (
     <Card className={cn("grid grid-cols-10 grid-rows-5 lg:grid-rows-2 gap-y-1 my-1 p-2 mx-2 lg:mx-0", {"outline outline-2 outline-offset-2 mb-6": isTop})}>
@@ -77,7 +84,8 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
           <Badge 
             key={checkerName} 
             variant={"outline"} 
-            className={cn("m-0.5", {"border-red-600": failedChecks.includes(checkerName) || disabled})}
+            className={cn("m-0.5", {"border-red-600 cursor-pointer": failedChecks.includes(checkerName), "border-red-600": disabled})}
+            onClick={() => handleBadgeClick(checkerName)}
           >
               {checkerName}
           </Badge>
