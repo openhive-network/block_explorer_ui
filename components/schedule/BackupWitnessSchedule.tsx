@@ -25,7 +25,7 @@ const buildTableHeader = () => {
   return TABLE_CELLS.map((cell, index) => {
     return (
       <TableHead
-        className="text-left text-[1.5rem]"
+        className="text-left text-sm font-medium uppercase tracking-wider py-1 px-2"
         key={index}
       >
         {cell}
@@ -40,15 +40,13 @@ const buildTableBody = (data: BackupWitness[]) => {
   return data.map(({ rank, owner, timestamp }: any, index: number) => {
     return (
       <React.Fragment key={index}>
-        <TableRow className="border-b border-gray-700 hover:bg-inherit p-[10px]">
-          <TableCell className="text-left text-text">
-            <span className="font-mono grid grid-cols-[repeat(auto-fill,_minmax(1ch,_1fr))] justify-items-end ml-2.5">
-              {rank}
-            </span>
+        <TableRow className="border-b hover:bg-rowHover transition-colors"> 
+          <TableCell className="py-1 px-2 whitespace-nowrap text-sm">
+            {rank !== null ? `#${rank}` : "-"}
           </TableCell>
-          <TableCell className="text-left text-text">{owner}</TableCell>
-          <TableCell className="text-left" >{timestamp}</TableCell>
-          <TableCell>{`[${index + 1}]`}</TableCell>
+          <TableCell className="py-1 px-2 whitespace-nowrap text-sm">{owner}</TableCell>
+          <TableCell className="py-1 px-2 whitespace-nowrap text-xs">{timestamp}</TableCell>
+          <TableCell className="py-1 px-2 whitespace-nowrap text-sm">{`[${index + 1}]`}</TableCell>
         </TableRow>
       </React.Fragment>
     );
@@ -59,10 +57,10 @@ const BackupWitnessSchedule: React.FC<BackupWitnessScheduleProps> = ({
   data,
 }) => {
   return (
-    <>
-      <div className="flex w-full overflow-auto">
-        <div className="text-text w-[100%] bg-theme dark:bg-theme p-4">
-          <p className="text-center text-3xl my-2">Backup Witness Schedule</p>
+    <div className="flex w-full overflow-auto">
+      <div className="bg-theme rounded-xl shadow-md w-full max-w-4xl p-3"> 
+        <h2 className="text-xl font-semibold mb-2">Backup Witness Schedule</h2> 
+        <div className="overflow-x-auto">
           <Table data-testid="table-body">
             <TableHeader>
               <TableRow>{buildTableHeader()}</TableRow>
@@ -71,7 +69,7 @@ const BackupWitnessSchedule: React.FC<BackupWitnessScheduleProps> = ({
           </Table>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
