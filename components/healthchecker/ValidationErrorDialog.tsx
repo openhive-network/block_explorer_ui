@@ -30,12 +30,20 @@ const ValidationErrorDialog: React.FC<ValidationErrorDialogProps> = ({
     }
   }
 
+  const displayPrettyJSON = () => {
+    return typeof validatorDetails?.params === "string" ? JSON.stringify(JSON.parse(validatorDetails?.params), null, 2) : null;
+  }
+
   return (
     <Dialog open={isOpened} onOpenChange={onDialogOpenChange}>
       <DialogContent>
         <DialogHeader><DialogTitle>{validatorDetails?.checkName} validator error</DialogTitle></DialogHeader>
+        <div>Message:</div>
         <div>{validatorDetails?.message}</div>
-        <div>{validatorDetails?.paths.join("/")}</div>
+        <div>Path:</div>
+        <pre>{validatorDetails?.paths.join("/")}</pre>
+        <div>Params:</div>
+        <pre>{displayPrettyJSON()}</pre>
       <DialogFooter>
         <Button onClick={handleErrorClearClick}>Clear error</Button>
       </DialogFooter>

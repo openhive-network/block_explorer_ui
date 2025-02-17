@@ -13,7 +13,7 @@ export type ValidationErrorDetails = {
   providerName: string;
   message: string;
   paths: string[];
-  params?: string;
+  params?: string | object;
 }
 
 export interface HealthCheckerProps {
@@ -142,7 +142,7 @@ const apiCheckers: ApiChecker[] = [
         providerName: providerName,
         message: error.message,
         paths: error.apiEndpoint.paths,
-        params: JSON.stringify(error.request.data),
+        params: error.request.data,
       }
         const prevoiusFailedChecks = [...previousChecks.get(providerName) || [], checkObject];
         const newFailedChecks = structuredClone(previousChecks).set(providerName, prevoiusFailedChecks);
