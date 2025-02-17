@@ -1,13 +1,5 @@
-import React from "react";
-import {
-  Table,
-  TableHead,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableCell,
-} from "../ui/table";
-import { cn } from "@/lib/utils";
+import React, { useState, useEffect } from "react";
+import { Loader2, Check } from "lucide-react";
 
 export interface Witness {
   producerRank: number | null;
@@ -15,7 +7,7 @@ export interface Witness {
   blockNumber: number;
 }
 
-interface WitnessSchedule {
+interface WitnessScheduleProps {
   data: Witness[];
   currentProducer: string | undefined;
   currentBlock: number | undefined;
@@ -23,89 +15,73 @@ interface WitnessSchedule {
   blocksLeftBeforeRefetch: number | string;
 }
 
-const TABLE_CELLS = ["Rank", "Witness", "Block"];
-
-const buildTableHeader = () => {
-  return TABLE_CELLS.map((cell, index) => {
-    return (
-      <TableHead
-        className="text-left text-[1.5rem] "
-        key={index}
-      >
-        {cell}
-      </TableHead>
-    );
-  });
-};
-
-const buildTableBody = (
-  data: Witness[],
-  currentProducer: string | undefined,
-  currentBlock: number | undefined
-) => {
-  if (!data || !data.length) return;
-
-  return data.map(
-    ({ producerRank, producerName, blockNumber }, index: number) => {
-      return (
-        <React.Fragment key={index}>
-          <TableRow className="border-b border-gray-700 hover:bg-inherit p-[10px]">
-          <TableCell>
-            <span 
-                className="font-mono grid grid-cols-[repeat(auto-fill,_minmax(1ch,_1fr))] justify-items-end ml-2.5">
-              {producerRank}
-            </span>
-          </TableCell>
-            <TableCell
-              className={cn("text-left", {
-                "text-gray-300 dark:text-gray-500":
-                  !!blockNumber && producerName !== currentProducer,
-                "text-explorer-light-green": producerName === currentProducer,
-              })}
-            >
-              {producerName}
-            </TableCell>
-            <TableCell
-              className={cn({
-                "text-gray-300 dark:text-gray-500":
-                  blockNumber !== currentBlock,
-              })}
-            >
-              {blockNumber}
-            </TableCell>
-          </TableRow>
-        </React.Fragment>
-      );
-    }
-  );
-};
-
-const WitnessSchedule: React.FC<WitnessSchedule> = ({
+const WitnessSchedule: React.FC<WitnessScheduleProps> = ({
   data,
   currentProducer,
   currentBlock,
   nextShuffleBlockNumber,
   blocksLeftBeforeRefetch,
 }) => {
-  return (
-      <div className="flex w-full overflow-auto">
-        <div className="text-text w-[100%] bg-theme dark:bg-theme p-4">
-          <p className="text-center text-3xl my-2">Witness Schedule</p>
+  const isCurrentProducer = (producerName: string) => producerName === currentProducer;
+  const [producedBlocks, setProducedBlocks] = useState<number[]>([]);
 
-          <Table data-testid="table-body">
-            <TableHeader>
-              <TableRow>{buildTableHeader()}</TableRow>
-            </TableHeader>
-            <TableBody>
-              {buildTableBody(data, currentProducer, currentBlock)}
-            </TableBody>
-          </Table>
-          <div className="text-center my-4">
-            <p>
-              Next shuffle block number <br /> {nextShuffleBlockNumber}{" "}
-              <small>(left {blocksLeftBeforeRefetch})</small>
-            </p>
-          </div>
+  useEffect(() => {
+    if (currentBlock !== undefined && currentBlock !== null && !producedBlocks.includes(currentBlock)) {
+      setProducedBlocks(prevBlocks => [...prevBlocks, currentBlock]);
+    }
+  }, [currentBlock, producedBlocks]);
+
+  return (
+      <div
+        className="bg-theme rounded-xl shadow-lg w-full max-w-4xl p-4"
+      >
+        {/* Title and Next Shuffle Container */}
+        <div className="mb-3">
+          <h2 className="text-xl font-semibold">
+            Witness Schedule
+          </h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Next Shuffle: {nextShuffleBlockNumber} <span className="text-green-500">({blocksLeftBeforeRefetch} blocks left)</span>
+          </p>
+        </div>
+
+        {/* Block Production Timeline List */}
+        <div className="flex flex-col items-stretch justify-start space-y-1">
+          {data.map((witness, index) => {
+            const isCurrent = isCurrentProducer(witness.producerName);
+            const blockHasBeenProduced = witness.blockNumber !== null && witness.blockNumber !== undefined && producedBlocks.includes(witness.blockNumber);
+
+            return (
+              <div
+                key={witness.blockNumber}
+                className={`relative w-full grid grid-cols-[1fr_2fr_1fr] items-center p-1 ${
+                  isCurrent
+                    ? "bg-green-500 text-white"
+                    : blockHasBeenProduced ? "bg-gray-400 text-gray-700 dark:bg-gray-600 dark:text-gray-300" : "bg-rowHover"
+                } shadow-sm text-xs`}
+              >
+                <div className="font-semibold justify-self-start">#{witness.producerRank != null ? witness.producerRank : "-"}</div>
+                <div className="justify-self-start">{witness.producerName}</div>
+                {witness.blockNumber !== null && witness.blockNumber !== undefined ? (
+                  <div className="justify-self-end flex items-center space-x-1">
+                    {isCurrent ? (
+                      <Loader2 className="animate-spin dark:text-white" size={14}/>
+                    ) : blockHasBeenProduced ? (
+                      <Check size={14} color="green" strokeWidth={4} />
+                    ) : null}
+                    <span>Block #{witness.blockNumber}</span>
+                  </div>
+                ) : null}
+              </div>
+            );
+          })}
+        </div>
+
+         {/* Next Shuffle Information (Moved Below List) */}
+        <div className="text-center mt-4">
+          <p className="text-gray-600 dark:text-gray-400">
+            Next Shuffle: {nextShuffleBlockNumber} ({blocksLeftBeforeRefetch} blocks left)
+          </p>
         </div>
       </div>
   );
