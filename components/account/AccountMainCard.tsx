@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import { Link, Loader2, Star } from "lucide-react";
 import Image from "next/image";
 import Explorer from "@/types/Explorer";
@@ -11,11 +12,13 @@ import useWitnessDetails from "@/hooks/api/common/useWitnessDetails";
 import { config } from "@/Config";
 import { cn } from "@/lib/utils";
 import {
-  TooltipProvider,
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
+    TooltipProvider,
+    Tooltip,
+    TooltipTrigger,
+    TooltipContent,
 } from "../ui/tooltip";
+import list from '../../utils/BadActorList';
+import ErrorMessage from "../ErrorMessage";
 
 interface AccountMainCardProps {
   accountDetails: Explorer.FormattedAccountDetails;
@@ -45,6 +48,18 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
   );
   const isWitnessActive =
     witnessDetails?.witness.signing_key !== config.inactiveWitnessKey;
+
+  const [isBadActor, setIsBadActor] = useState(false);
+   useEffect(() => {
+        // Check if the accountName is in the list
+        if (list.includes(accountName)) {
+            setIsBadActor(true);
+        }
+    }, [accountName]);
+
+   const handleCloseWarning = () => {
+        setIsBadActor(false);
+    };
 
   return (
     <Card data-testid="account-details">
@@ -78,10 +93,10 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <span className="flex items-center gap-1">
-                            <Star 
-                            data-testid="witness-rank-icon"
-                            fill="currentColor"
-                            size={16}
+                            <Star
+                              data-testid="witness-rank-icon"
+                              fill="currentColor"
+                              size={16}
                             />
                             <span>{witnessDetails.witness.rank}</span>
                           </span>
@@ -130,6 +145,14 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
             />
           </div>
         </div>
+        {/* Warning Message */}
+        {isBadActor && (
+          <ErrorMessage
+            message="This account is listed as a potential bad actor. Please exercise caution."
+            isWarning={true}
+            onClose={handleCloseWarning}
+          />
+        )}
       </CardHeader>
       <CardContent>
         {!!manabarsData ? (
