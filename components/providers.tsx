@@ -50,7 +50,6 @@ const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
         <ThemeProvider>
           <HiveChainContextProvider>
             <ApiAddressesContextProvider>
-              <HealthCheckerContextProvider>
                 <UserSettingsContextProvider>
                   <HeadBlockContextProvider>
                     <OperationTypesContextProvider>
@@ -59,7 +58,6 @@ const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
                     </OperationTypesContextProvider>
                   </HeadBlockContextProvider>
                 </UserSettingsContextProvider>
-              </HealthCheckerContextProvider>
             </ApiAddressesContextProvider>
           </HiveChainContextProvider>
         </ThemeProvider>
