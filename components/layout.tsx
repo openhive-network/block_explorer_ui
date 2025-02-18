@@ -30,7 +30,7 @@ export default function Layout({ children }: LayoutProps) {
       title: "Dynamic Global",
       method: extendedHiveChain?.api.database_api.get_dynamic_global_properties,
       params: {}, 
-      validatorFunction: data => data.id === 1 ? true : "Dynamic global error",
+      validatorFunction: data => data.id === 0 ? true : "Dynamic global error",
     },
     {
       title: "Price Feed",
