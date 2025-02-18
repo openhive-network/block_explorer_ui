@@ -80,7 +80,9 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
         </>
       }
       <div className={cn("row-start-3 row-span-2 lg:row-start-2 lg:row-span-1 flex items-center col-start-1 col-span-10 lg:col-span-6 lg:col-start-2 flex-wrap", {"py-2": isSelected})}>
-        {checkerNamesList.map((checkerName) => 
+        {disabled ?
+        <div>API failed</div> :
+        checkerNamesList.map((checkerName) => 
           <Badge 
             key={checkerName} 
             variant={"outline"} 
