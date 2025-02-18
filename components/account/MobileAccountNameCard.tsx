@@ -7,6 +7,9 @@ import { cn } from "@/lib/utils";
 import useWitnessDetails from "@/hooks/api/common/useWitnessDetails";
 import { Link, Star } from "lucide-react";
 
+import { useEffect, useState } from "react";
+import list from '../../utils/BadActorList';
+import ErrorMessage from "../ErrorMessage";
 interface MobileAccountNameCardProps {
   accountName: string;
   liveDataEnabled: boolean;
@@ -26,6 +29,18 @@ const MobileAccountNameCard: React.FC<MobileAccountNameCardProps> = ({
     witnessDetails?.witness.signing_key !== config.inactiveWitnessKey;
 
   if (!accountDetails) return;
+
+  const [isBadActor, setIsBadActor] = useState(false);
+  useEffect(() => {
+       // Check if the accountName is in the list
+       if (list.includes(accountName)) {
+           setIsBadActor(true);
+       }
+   }, [accountName]);
+
+  const handleCloseWarning = () => {
+       setIsBadActor(false); // Clear the error by setting state to false
+   };
 
   return (
     <Card>
@@ -78,9 +93,19 @@ const MobileAccountNameCard: React.FC<MobileAccountNameCardProps> = ({
                   )}
                 </div>
               )}
-            </div>
+            </div>            
           </div>
         </div>
+         {/* Warning Message */}
+         <div>
+            {isBadActor && (
+              <ErrorMessage
+                message="This account is listed as a potential bad actor. Please exercise caution."
+                isWarning={true}
+                onClose={handleCloseWarning}
+              />
+            )}
+          </div>
       </CardHeader>
     </Card>
   );
