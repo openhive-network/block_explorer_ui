@@ -86,7 +86,7 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
           <Badge 
             key={checkerName} 
             variant={"outline"} 
-            className={cn("m-0.5", {"border-red-600 cursor-pointer": failedChecks.includes(checkerName), "border-red-600": disabled})}
+            className={cn("m-0.5", {"border-red-600 cursor-pointer": failedChecks.includes(checkerName)})}
             onClick={() => handleBadgeClick(checkerName)}
           >
               {checkerName}
