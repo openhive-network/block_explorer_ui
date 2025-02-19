@@ -42,6 +42,18 @@ const MobileAccountNameCard: React.FC<MobileAccountNameCardProps> = ({
 
   if (!accountDetails) return;
 
+  const [isBadActor, setIsBadActor] = useState(false);
+  useEffect(() => {
+       // Check if the accountName is in the list
+       if (list.includes(accountName)) {
+           setIsBadActor(true);
+       }
+   }, [accountName]);
+
+  const handleCloseWarning = () => {
+       setIsBadActor(false); // Clear the error by setting state to false
+   };
+
   return (
     <Card>
       <CardHeader>
