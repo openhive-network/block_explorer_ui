@@ -28,8 +28,6 @@ const MobileAccountNameCard: React.FC<MobileAccountNameCardProps> = ({
   const isWitnessActive =
     witnessDetails?.witness.signing_key !== config.inactiveWitnessKey;
 
-  if (!accountDetails) return;
-
   const [isBadActor, setIsBadActor] = useState(false);
   useEffect(() => {
        // Check if the accountName is in the list
@@ -41,6 +39,8 @@ const MobileAccountNameCard: React.FC<MobileAccountNameCardProps> = ({
   const handleCloseWarning = () => {
        setIsBadActor(false); // Clear the error by setting state to false
    };
+
+  if (!accountDetails) return;
 
   return (
     <Card>
