@@ -1,34 +1,24 @@
-import usePermlinkSearch from "@/hooks/api/common/usePermlinkSearch";
-import CommentPermlinkResultTable from "../CommentPermlinkResultTable";
 import { useSearchesContext } from "@/contexts/SearchesContext";
 import CustomPagination from "@/components/CustomPagination";
 import { config } from "@/Config";
+import AccountCommentPermlinkResultTable from "@/components/account/tabs/comments/AccountCommentPermlinkResultTable";
 import NoResult from "@/components/NoResult";
+import Hive from "@/types/Hive";
 
-const CommentPermlinkSearchResults = () => {
+interface AccountCommentPermlinkSearchResultsProps {
+  data: Hive.CommentPermlinksResponse | null | undefined;
+  accountName: string;
+}
+
+const AccountCommentPermlinkSearchResults: React.FC<
+  AccountCommentPermlinkSearchResultsProps
+> = ({ data, accountName }) => {
   const {
     permlinkSearchProps,
-    setCommentsSearchAccountName,
-    setCommentsSearchPermlink,
     setPermlinkSearchProps,
     permlinkPaginationPage,
     setPermlinkPaginationPage,
-    setActiveSearchSection,
-    setLastSearchKey,
   } = useSearchesContext();
-
-  const { permlinkSearchData } = usePermlinkSearch(permlinkSearchProps);
-
-  const accountName = permlinkSearchProps?.accountName;
-
-  const openCommentsSection = (accountName: string, permlink: string) => {
-    setLastSearchKey("comment");
-    setActiveSearchSection("comment");
-    setCommentsSearchAccountName(accountName);
-    setCommentsSearchPermlink(permlink);
-  };
-
-  if (!permlinkSearchData) return;
 
   const changePermlinkSearchPagination = (newPageNum: number) => {
     const newSearchProps: any = {
@@ -39,23 +29,24 @@ const CommentPermlinkSearchResults = () => {
     setPermlinkPaginationPage(newPageNum);
   };
 
+  if (!data) return;
+
   return (
     <>
-      {permlinkSearchData.total_permlinks ? (
+      {data.total_permlinks ? (
         <div>
           <div className="flex justify-center items-center text-text my-4 sticky z-20 top-[3.2rem] md:top-[4rem]">
             <CustomPagination
               currentPage={permlinkPaginationPage}
-              totalCount={permlinkSearchData.total_permlinks}
+              totalCount={data.total_permlinks}
               pageSize={config.standardPaginationSize}
               onPageChange={changePermlinkSearchPagination}
             />
           </div>
 
           <div className="flex flex-wrap">
-            <CommentPermlinkResultTable
-              openCommentsSection={openCommentsSection}
-              data={permlinkSearchData.permlinks_result}
+            <AccountCommentPermlinkResultTable
+              data={data.permlinks_result}
               accountName={accountName}
             />
           </div>
@@ -67,4 +58,4 @@ const CommentPermlinkSearchResults = () => {
   );
 };
 
-export default CommentPermlinkSearchResults;
+export default AccountCommentPermlinkSearchResults;
