@@ -8,12 +8,13 @@ const usePermlinkSearch = (
 ) => {
   const {
     data: permlinkSearchData,
-    isFetching: permlinkSearchDataLoading,
+    isLoading: permlinkSearchDataLoading,
     isError: permlinkSearchDataError,
   } = useQuery({
     queryKey: ["permlinkSearch", permlinkSearchProps],
     queryFn: () => fetchCommentPermlinks(permlinkSearchProps),
     refetchOnWindowFocus: false,
+    enabled: !!permlinkSearchProps?.accountName,
   });
 
   const fetchCommentPermlinks = async (
