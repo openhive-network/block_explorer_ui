@@ -1,68 +1,30 @@
-import { useState, ChangeEvent, useEffect } from "react";
-import { useRouter } from "next/router";
+import { ChangeEvent } from "react";
 import { Loader2 } from "lucide-react";
-import moment from "moment";
 
 import Explorer from "@/types/Explorer";
-import { trimAccountName } from "@/utils/StringUtils";
 import SearchRanges from "@/components/searchRanges/SearchRanges";
 import { Button } from "@/components/ui/button";
 import { useSearchesContext } from "@/contexts/SearchesContext";
-import usePermlinkSearch from "@/hooks/api/common/usePermlinkSearch";
-import { getSearchParams } from "@/components/home/searches/utils/getSearchParams";
 import PostTypeSelector from "@/components/home/searches/PostTypeSelector";
-import {
-  DEFAULT_LAST_TIME_UNIT_VALUE,
-  DEFAULT_TIME_UNIT_SELECT_KEY,
-} from "@/hooks/common/useSearchRanges";
+import usePermlinkCommentSearch from "./usePermlinkCommentSearch";
 
-const AccountCommentsPermlinkSearch = () => {
-  const {
-    permlinkSearchProps,
-    setPermlinkSearchProps,
-    setPermlinkPaginationPage,
-    permlinkPaginationPage,
-    setCommentType,
-    searchRanges,
-  } = useSearchesContext();
-  const router = useRouter();
-  const accountNameFromRoute = router.query.accountName as string;
+interface AccountCommentsPermlinkSearchProps {
+  accountName: string;
+  isDataLoading: boolean;
+}
 
-  const { permlinkSearchDataLoading } = usePermlinkSearch(permlinkSearchProps);
-
-  const [accountName, setAccountName] = useState("");
-  const [localCommentType, setLocalCommentType] =
-    useState<Explorer.CommentType>(permlinkSearchProps?.commentType || "post");
+const AccountCommentsPermlinkSearch: React.FC<
+  AccountCommentsPermlinkSearchProps
+> = ({ accountName, isDataLoading }) => {
+  const { setPermlinkPaginationPage, setCommentType, searchRanges } =
+    useSearchesContext();
 
   const {
-    setRangesValues,
-    setLastTimeUnitValue,
-    setRangeSelectKey,
-    setTimeUnitSelectKey,
-    setFromBlock,
-    setToBlock,
-    setStartDate,
-    setEndDate,
-    setLastBlocksValue,
-  } = searchRanges;
-
-  const handleCommentPermlinkSearch = async () => {
-    if (!accountName) return;
-
-    const searchParams = await getSearchParams(searchRanges);
-
-    if (!searchParams) return;
-
-    const commentPermlinksSearchProps = {
-      accountName: trimAccountName(accountName),
-      commentType: localCommentType,
-      pageNumber: permlinkPaginationPage,
-      ...searchParams,
-    };
-
-    setPermlinkSearchProps(commentPermlinksSearchProps);
-    setRangesValues(commentPermlinksSearchProps);
-  };
+    handleClearFilters,
+    handleCommentPermlinkSearch,
+    localCommentType,
+    setLocalCommentType,
+  } = usePermlinkCommentSearch(accountName);
 
   const handleChangeCommentType = (e: ChangeEvent<HTMLSelectElement>) => {
     const {
@@ -79,58 +41,9 @@ const AccountCommentsPermlinkSearch = () => {
     handleCommentPermlinkSearch();
   };
 
-  const handleClearFilters = async () => {
-    setFromBlock(undefined);
-    setToBlock(undefined);
-    setStartDate(undefined);
-    setEndDate(undefined);
-    setLastBlocksValue(undefined);
-    setLastTimeUnitValue(DEFAULT_LAST_TIME_UNIT_VALUE);
-    setRangeSelectKey("lastTime");
-    setTimeUnitSelectKey(DEFAULT_TIME_UNIT_SELECT_KEY);
-    setLocalCommentType("post");
-    setCommentType("post");
-
-    const commentPermlinksSearchProps = {
-      accountName: trimAccountName(accountName),
-      commentType: "post" as Explorer.CommentType,
-      pageNumber: 1,
-      fromBlock: undefined,
-      toBlock: undefined,
-      startDate: moment(Date.now()).subtract(30, "days").toDate(),
-      endDate: undefined,
-      lastBlocks: undefined,
-      lastTime: 30,
-      rangeSelectKey: "lastTime",
-      timeUnit: "days",
-    };
-    setPermlinkSearchProps(commentPermlinksSearchProps);
-    setRangesValues(commentPermlinksSearchProps);
-  };
-
-  useEffect(() => {
-    if (!accountName) {
-      setAccountName(accountNameFromRoute);
-    }
-  }, [accountName, accountNameFromRoute]);
-
-  useEffect(() => {
-    if (!accountName) return;
-    handleCommentPermlinkSearch();
-
-    return () => {
-      handleClearFilters();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accountName]);
-
   return (
     <>
-      <SearchRanges
-        rangesProps={searchRanges}
-        safeTimeRangeDisplay
-      />
-
+      <SearchRanges rangesProps={searchRanges} />
       <div className={"flex justify-start my-4"}>
         <PostTypeSelector
           showLabel
@@ -146,9 +59,7 @@ const AccountCommentsPermlinkSearch = () => {
           disabled={!accountName}
         >
           Search
-          {permlinkSearchDataLoading && (
-            <Loader2 className="ml-2 animate-spin h-4 w-4" />
-          )}
+          {isDataLoading && <Loader2 className="ml-2 animate-spin h-4 w-4" />}
         </Button>
         <Button onClick={handleClearFilters}>Clear</Button>
       </div>
