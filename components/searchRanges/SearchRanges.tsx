@@ -11,10 +11,7 @@ interface SearchRangesProps {
   safeTimeRangeDisplay?: boolean;
 }
 
-const SearchRanges: React.FC<SearchRangesProps> = ({
-  rangesProps,
-  safeTimeRangeDisplay,
-}) => {
+const SearchRanges: React.FC<SearchRangesProps> = ({ rangesProps }) => {
   const {
     rangeSelectOptions,
     timeSelectOptions,
@@ -36,29 +33,11 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
     setLastTimeUnitValue,
   } = rangesProps;
 
-  
-  const [rangeError, setRangeError] = useState<string | null>(null); 
-
-  const handleOnBlur = (
-    e: React.FocusEvent<HTMLInputElement>,
-    fieldSetter: Function,
-    validateField: Function | null
-  ) => {
-    const value = e.target.value;
-    const numericValue = value ? Number(value) : undefined;
-
-    // Fetch the latest block number dynamically
-    let validated = true;
-    if (validateField) {
-      validated = validateField(e, numericValue); 
-    }
-
-    validated ? fieldSetter(numericValue) : fieldSetter(null);
-  };
+  const [rangeError, setRangeError] = useState<string | null>(null);
 
   const validateToBlock = (
     e: React.FocusEvent<HTMLInputElement>,
-    value: number | undefined,
+    value: number | undefined
   ) => {
     if (value !== undefined && value <= 0) {
       setRangeError("Block Number must be a positive number");
@@ -75,7 +54,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
 
   const validateFromBlock = (
     e: React.FocusEvent<HTMLInputElement>,
-    value: number | undefined,
+    value: number | undefined
   ) => {
     if (value !== undefined && value <= 0) {
       setRangeError("Block Number must be a positive number");
@@ -92,6 +71,8 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
 
   const handleNumericInput = (
     e: React.ChangeEvent<HTMLInputElement>,
+    fieldSetter: Function,
+    validateField: Function | null,
     allowDecimal: boolean = false
   ) => {
     let cleanedValue = e.target.value;
@@ -112,6 +93,15 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
     }
 
     e.target.value = cleanedValue;
+
+    const numericValue = cleanedValue ? Number(cleanedValue) : undefined;
+
+    let validated = true;
+    if (validateField) {
+      validated = validateField(e, numericValue);
+    }
+
+    validated ? fieldSetter(numericValue) : fieldSetter(null);
   };
 
   useEffect(() => {
@@ -123,7 +113,6 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startDate, endDate]);
-
 
   return (
     <div className="py-2 flex flex-col gap-y-2">
@@ -159,9 +148,8 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
             <Input
               className="w-1/2 border-0 border-b-2 bg-theme"
               type="text" // Use type="text" to allow custom validation
-              defaultValue={lastBlocksValue || ""}
-              onChange={(e) => handleNumericInput(e)}
-              onBlur={(e) => handleOnBlur(e,setLastBlocksValue,null)}
+              value={lastBlocksValue || ""}
+              onChange={(e) => handleNumericInput(e, setLastBlocksValue, null)}
               placeholder={"Last"}
             />
           </div>
@@ -175,9 +163,10 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
               <Input
                 type="text"
                 className="bg-theme border-0 border-b-2 text-text"
-                defaultValue={lastTimeUnitValue || ""}
-                onChange={(e) => handleNumericInput(e,true)}
-                onBlur={(e) => handleOnBlur(e,setLastTimeUnitValue,null)}
+                value={lastTimeUnitValue || ""}
+                onChange={(e) =>
+                  handleNumericInput(e, setLastTimeUnitValue, null)
+                }
                 placeholder={"Last"}
               />
             </div>
@@ -216,9 +205,10 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
               type="text"
               className="bg-theme border-0 border-b-2"
               data-testid="from-block-input"
-              defaultValue={fromBlock || ""}
-              onChange={(e) => handleNumericInput(e)}
-              onBlur={(e) => handleOnBlur(e,setFromBlock,validateFromBlock)}
+              value={fromBlock || ""}
+              onChange={(e) =>
+                handleNumericInput(e, setFromBlock, validateFromBlock)
+              }
               placeholder="From"
             />
           </div>
@@ -228,9 +218,10 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
               data-testid="headblock-number"
               type="text"
               defaultValue={toBlock || ""}
-              onChange={(e) => handleNumericInput(e)}
+              onChange={(e) =>
+                handleNumericInput(e, setToBlock, validateToBlock)
+              }
               placeholder={"To"}
-              onBlur={(e) => handleOnBlur(e,setToBlock,validateToBlock)}
             />
           </div>
         </div>
