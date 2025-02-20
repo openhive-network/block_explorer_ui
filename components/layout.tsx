@@ -7,6 +7,7 @@ import { HealthCheckerContextProvider } from "@/contexts/HealthCheckerContext";
 import { ApiChecker } from "./healthchecker/HealthChecker";
 import { ExplorerNodeApi } from "@/types/Node";
 import { config } from "@/Config";
+import { useApiAddressesContext } from "@/contexts/ApiAddressesContext";
 
 interface LayoutProps {
   children: ReactNode;
@@ -15,6 +16,8 @@ interface LayoutProps {
 export default function Layout({ children }: LayoutProps) {
   const {hiveChain} = useHiveChainContext();
   if (!hiveChain) return null;
+
+  const {nodeAddress, setNodeAddress} = useApiAddressesContext();
 
   const extendedHiveChain = hiveChain
   ?.extend<ExplorerNodeApi>();
@@ -64,6 +67,8 @@ export default function Layout({ children }: LayoutProps) {
       hiveChain={hiveChain}
       apiCheckers={apiCheckers}
       defaultProviders={config.defaultProviders}
+      nodeAddress={nodeAddress}
+      setNodeAddress={setNodeAddress}
     >
       <main className="flex flex-col min-h-screen justify-between items-center max-w-[100vw] mt-[72px] md:mt-20">
         <Navbar />

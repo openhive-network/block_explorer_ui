@@ -67,6 +67,8 @@ export const HealthCheckerContextProvider: React.FC<{
   hiveChain: IHiveChainInterface;
   apiCheckers: ApiChecker[];
   defaultProviders: string[];
+  nodeAddress: string | null;
+  setNodeAddress: (node: string) => void;
   children: React.ReactNode;
 }> = ({ hiveChain, apiCheckers, defaultProviders, children }) => {
 
@@ -116,14 +118,14 @@ export const HealthCheckerContextProvider: React.FC<{
 
   const createHealthChecker = async () => {
     const healthChecker = new HealthChecker();
-    setHealthChecker(healthChecker);
     healthChecker?.on('error', error => console.error(error.message));
     healthChecker?.on("data", (data: Array<TScoredEndpoint>) => { 
       console.log(JSON.stringify(data)); 
       checkForFallbacks(data); 
-      data.length ?setScoredEndpoints(data) : null 
+      data.length ? setScoredEndpoints(data) : null 
     });
     healthChecker?.on("validationerror", error => markValidationError(error.apiEndpoint.id, error.request.endpoint, error));
+    setHealthChecker(healthChecker);
   }
 
   const checkForFallbacks = (scoredEndpoints: TScoredEndpoint[]) => {
