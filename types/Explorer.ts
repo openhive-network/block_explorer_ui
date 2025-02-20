@@ -107,7 +107,7 @@ declare module Explorer {
 
   interface PermlinkSearchProps extends CommonSearchProps {
     accountName: string;
-    commentType?: CommentType;
+    commentType?: CommentType | string;
     pageNumber?: number;
   }
 
@@ -244,7 +244,7 @@ declare module Explorer {
     curation_rewards: string;
     vesting_balance: string;
     reward_vesting_hive: string;
-    account_value : string;
+    account_value: string;
   }
 
   interface FormattedAccountDetails
