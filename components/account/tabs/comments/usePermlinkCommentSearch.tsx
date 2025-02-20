@@ -18,8 +18,9 @@ const usePermlinkCommentSearch = (accountName: string) => {
     permlinkPaginationPage,
   } = useSearchesContext();
 
-  const [localCommentType, setLocalCommentType] =
-    useState<Explorer.CommentType>(permlinkSearchProps?.commentType || "post");
+  const [localCommentType, setLocalCommentType] = useState<
+    Explorer.CommentType | string
+  >(permlinkSearchProps?.commentType || "post");
 
   const {
     setRangesValues,
