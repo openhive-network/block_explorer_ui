@@ -28,8 +28,10 @@ const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
         defaultOptions: {
           queries: {
             enabled: apiAddress !== null && nodeAddress !== null,
+            staleTime: 10000,
           },
         },
+
         queryCache: new QueryCache({
           onError: (error: any) => {
             toast.error("Error occured", {
