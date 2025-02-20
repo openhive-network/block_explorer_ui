@@ -6,7 +6,7 @@ const COMMENT_TYPES = ["all", "post", "comment"];
 interface PostTypeSelectorProps {
   showLabel?: boolean | undefined;
   handleChange: ChangeEventHandler<HTMLSelectElement>;
-  commentType: Explorer.CommentType;
+  commentType: Explorer.CommentType | string;
 }
 
 const PostTypeSelector: React.FC<PostTypeSelectorProps> = ({

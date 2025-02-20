@@ -48,8 +48,8 @@ export interface SearchesContextType {
   setAccountOperationsSearchProps: Dispatch<
     SetStateAction<Explorer.AccountSearchOperationsProps | undefined>
   >;
-  commentType: CommentType;
-  setCommentType: Dispatch<SetStateAction<CommentType>>;
+  commentType: CommentType | string;
+  setCommentType: Dispatch<SetStateAction<CommentType | string>>;
   commentsSearchAccountName: string | string[] | undefined;
   setCommentsSearchAccountName: Dispatch<
     SetStateAction<string | string[] | undefined>
@@ -121,7 +121,7 @@ export const SearchesContextProvider: React.FC<{
     useState<Explorer.AccountSearchOperationsProps | undefined>(undefined);
 
   //  comment_type: post is default by backend
-  const [commentType, setCommentType] = useState<CommentType>("post");
+  const [commentType, setCommentType] = useState<CommentType | string>("post");
   const [commentsSearchAccountName, setCommentsSearchAccountName] = useState<
     string | string[] | undefined
   >("");
