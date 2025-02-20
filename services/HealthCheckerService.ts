@@ -21,6 +21,8 @@ class HealthCheckerService {
   private healthChecker?: HealthChecker;
   private nodeAddress: string | null = null;
   private setNodeAddress: (node:string) => void = () => {}
+  private endpointTitleById: Map<number, string> = new Map();
+  private chainInitialized: boolean = false;
 
   constructor(
     hiveChain: IHiveChainInterface,
@@ -115,6 +117,58 @@ class HealthCheckerService {
         if (fallbackScoredEndpoint && fallbackScoredEndpoint.up) this.setNodeAddress(fallback) ;
       })
     }
+  }
+
+  registerCalls = async () => {
+    const registeredEndpoints = new Map<number, string>();
+    if (this.apiCheckers)
+    for (const checker of this.apiCheckers) {
+      const testHC = await this.healthChecker?.register(checker!.method, checker!.params, checker!.validatorFunction, this.providers);
+      if (testHC)
+      registeredEndpoints.set(testHC.id, checker.title);
+    }
+    this.endpointTitleById = registeredEndpoints;
+  }
+
+  initializeDefaultChecks = async () => {
+    const initialEndpoints: TScoredEndpoint[] | undefined = this.providers?.map((customProvider) => ({endpointUrl: customProvider, score: -1, up: true, latencies: []}))
+    if (!!initialEndpoints && !this.scoredEndpoints) this.scoredEndpoints = initialEndpoints;
+    this.registerCalls()
+    this.chainInitialized = true;
+  }
+
+  removeFallback = (provider: string) => {
+    this.writeFallbacksToLocalStorage(this.fallbacks?.filter((fallback) => fallback !== provider) || []);
+  }
+
+  addProvider = (provider: string) => {
+    if (this.healthChecker) {
+      for (const endpoint of this.healthChecker) {
+        endpoint.addEndpointUrl(provider);
+      }
+      if (this.providers && !this.providers.some((localProvider) => provider === localProvider)) {
+        this.writeLocalProvidersToLocalStorage([...(this.providers || []), provider]);
+        this.scoredEndpoints = [...this.scoredEndpoints || [], {endpointUrl: provider, score: -1, up: true, latencies: []}]
+      }
+    }
+  }
+
+  removeProvider = (provider: string) => {
+    if (this.healthChecker && this.providers)
+    for (const endpoint of this.healthChecker) {
+      endpoint.removeEndpointUrl(provider);
+    }
+    const newLocalProviders = this.providers?.filter((localProvider) => localProvider !== provider) || [];
+    this.scoredEndpoints = this.scoredEndpoints?.filter((endpoint) => endpoint.endpointUrl !== provider);
+    this.writeLocalProvidersToLocalStorage(newLocalProviders);
+    this.removeFallback(provider);
+  }
+
+  resetProviders = () => {
+    this.writeLocalProvidersToLocalStorage(this?.defaultProviders || []);
+    this.scoredEndpoints = [];
+    this.healthChecker?.unregisterAll();
+    this.registerCalls();
   }
 
 }
