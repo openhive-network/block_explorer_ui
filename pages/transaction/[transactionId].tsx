@@ -7,7 +7,6 @@ import Hive from "@/types/Hive";
 import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
 import { convertTransactionResponseToTableOperations } from "@/lib/utils";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
-import { addSpacesAndCapitalizeFirst } from "@/utils/StringUtils";
 import useTransactionData from "@/hooks/api/common/useTransactionData";
 import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
 import PageNotFound from "@/components/PageNotFound";
@@ -15,31 +14,36 @@ import JSONView from "@/components/JSONView";
 import OperationsTable from "@/components/OperationsTable";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Toggle } from "@/components/ui/toggle";
+import { cn } from "@/lib/utils";
 
-const displayTransactionData = (
-  key: string,
-  value: string | string[] | number | Date | Hive.Operation[] | Object
-) => {
-  if (value instanceof Array || value instanceof Object) {
-    return null;
-  } else {
-    return (
-      <tr
-        key={key}
-        className="border-b border-solid border-gray-700 max-w-full overflow-hidden flex flex-col md:table-row"
-      >
-        <td className="pl-2 py-1">{addSpacesAndCapitalizeFirst(key)}</td>
-        <td
-          align="right"
-          className="pr-2"
-        >
-          {typeof value === "number" ? value.toLocaleString() : value}
-        </td>
-      </tr>
-    );
-  }
-};
-
+const TransactionDetailItem = ({
+  label,
+  value,
+  dataTestId,
+  hasBorder,
+}: {
+  label: string;
+  value: any;
+  dataTestId?: string;
+  hasBorder?: boolean;
+}) => (
+  <div
+    className={cn(
+      "grid grid-cols-1 md:grid-cols-[360px_1fr] items-center py-1.5",
+      hasBorder && "border-b"
+    )}
+  >
+    <div
+      className="font-medium md:text-left pr-2 md:pr-0"
+      data-testid={`${dataTestId}-label`}
+    >
+      {label}:
+    </div>
+    <div className="text-sm" data-testid={dataTestId}>
+      {value}
+    </div>
+  </div>
+);
 export default function Transaction() {
   const router = useRouter();
   const { settings } = useUserSettingsContext();
@@ -50,7 +54,6 @@ export default function Transaction() {
     transactionId,
     includeVirtual
   );
-
   const formattedTransaction = useOperationsFormatter(trxData) as
     | Hive.TransactionResponse
     | undefined;
@@ -68,50 +71,56 @@ export default function Transaction() {
       <Head>
         <title>{trxData?.transaction_id?.slice(0, 10)} - Hive Explorer</title>
       </Head>
-      <div className="w-full max-w-5xl px-2 md:px-4 text-white flex flex-col gap-y-4">
+      <div className="w-full px-2 flex flex-col gap-y-4">
         {!trxLoading && !!trxData && (
           <>
-            <div className="flex justify-end items-center">
-              Include Virtual Operation :
-              <span className="ml-2">
-                <Toggle
-                  checked={includeVirtual}
-                  onClick={handleToggleIncludeVirtual}
-                />
-              </span>
-            </div>
             <Card data-testid="transaction-header">
-              <CardContent>
+              <CardHeader className="flex items-center py-2 ">
+                <CardTitle className="text-xl font-semibold text-left flex justify-between items-center">
+                  Transaction Details
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm mr-1">
+                      Include Virtual Operations:
+                    </span>
+                    <Toggle
+                      checked={includeVirtual}
+                      onClick={handleToggleIncludeVirtual}
+                    />
+                  </div>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2 px-4 py-2">
                 <div
                   data-testid="transaction-header-hash-trx"
-                  className="w-full text-center"
+                  className="w-full text-left text-sm"
                 >
-                  Transaction: <span>{trxData?.transaction_id}</span>
+                  <span className="font-semibold">Transaction ID:</span>{" "}
+                  {trxData?.transaction_id}
                 </div>
-                <div className="w-full flex justify-evenly">
-                  <div>
-                    Block:{" "}
+                  <div className="text-left text-sm">
+                    <span className="font-semibold">Block:</span>{" "}
                     <Link
                       href={`/block/${trxData?.block_num}`}
-                      className="text-explorer-turquoise"
                       data-testid="transaction-header-block-number"
                     >
-                      <span className="text-link">{trxData?.block_num}</span>
+                      <span className="text-link">
+                        {trxData?.block_num.toLocaleString()}
+                      </span>
                     </Link>
                   </div>
-                  <div data-testid="transaction-header-date">
-                    Date:
-                    <span>
-                      {" " + formatAndDelocalizeTime(trxData.timestamp)}
-                    </span>
+                <div
+                    data-testid="transaction-header-date"
+                    className="text-left text-sm"
+                  >
+                    <span className="font-semibold">Date:</span>{" "}
+                    <span>{formatAndDelocalizeTime(trxData.timestamp)}</span>
                   </div>
-                </div>
               </CardContent>
             </Card>
             {settings.rawJsonView || settings.prettyJsonView ? (
               <JSONView
                 json={trxData.transaction_json}
-                className="w-full md:w-[992px] m-auto py-2 px-4 bg-theme dark:bg-theme rounded text-white text-xs break-words break-all"
+                className="w-full m-auto py-2 px-4 bg-theme rounded text-xs break-words break-all"
                 isPrettyView={settings.prettyJsonView}
               />
             ) : (
@@ -127,36 +136,50 @@ export default function Transaction() {
                   />
                 )}
                 <Card data-testid="transaction-details">
-                  <CardHeader>
-                    <CardTitle>Transaction Details</CardTitle>
+                  <CardHeader className="px-4 pt-4 pb-2">
+                    <CardTitle className="text-lg font-semibold text-left">
+                      Transaction Details
+                    </CardTitle>
                   </CardHeader>
-                  <CardContent className="px-0">
-                    <table className="w-full text-xs">
-                      <tbody>
-                        {Object.keys(trxData.transaction_json).map((key) =>
-                          displayTransactionData(
-                            key,
-                            trxData.transaction_json[
-                              key as keyof Omit<
-                                Hive.TransactionDetails,
-                                "operations"
-                              >
-                            ]
-                          )
-                        )}
-                        {Object.keys(trxData).map((key) =>
-                          displayTransactionData(
-                            key,
-                            trxData[
-                              key as keyof Omit<
-                                Hive.TransactionResponse,
-                                "transaction_json"
-                              >
-                            ]
-                          )
-                        )}
-                      </tbody>
-                    </table>
+                  <CardContent className="space-y-0 px-4 py-2">
+                    <TransactionDetailItem
+                      label="Ref Block Num"
+                      value={trxData.transaction_json.ref_block_num}
+                      dataTestId="ref-block-num"
+                      hasBorder
+                    />
+                    <TransactionDetailItem
+                      label="Ref Block Prefix"
+                      value={trxData.transaction_json.ref_block_prefix}
+                      dataTestId="ref-block-prefix"
+                      hasBorder
+                    />
+                    <TransactionDetailItem
+                      label="Expiration"
+                      value={formatAndDelocalizeTime(
+                        trxData.transaction_json.expiration
+                      )}
+                      dataTestId="expiration"
+                      hasBorder
+                    />
+                    <TransactionDetailItem
+                      label="Block Number"
+                      value={trxData.block_num}
+                      dataTestId="block-number"
+                      hasBorder
+                    />
+                    <TransactionDetailItem
+                      label="Transaction Number"
+                      value={trxData.transaction_num}
+                      dataTestId="transaction-number"
+                      hasBorder
+                    />
+                    <TransactionDetailItem
+                      label="Timestamp"
+                      value={trxData.timestamp} // Format the date here
+                      dataTestId="transaction-expiration"
+                      hasBorder
+                    />
                   </CardContent>
                 </Card>
               </>
