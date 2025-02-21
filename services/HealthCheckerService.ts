@@ -1,4 +1,5 @@
-import { HealthChecker, IHiveChainInterface, TScoredEndpoint } from "@hiveio/wax";
+import { ValidationErrorDetails } from "@/contexts/HealthCheckerContext";
+import { HealthChecker, IHiveChainInterface, TScoredEndpoint, WaxHealthCheckerValidatorFailedError } from "@hiveio/wax";
 
 export interface ApiChecker {
   title: string;
@@ -23,6 +24,7 @@ class HealthCheckerService {
   private setNodeAddress: (node:string) => void = () => {}
   private endpointTitleById: Map<number, string> = new Map();
   private chainInitialized: boolean = false;
+  private failedChecksByProvider: Map<string, ValidationErrorDetails[]> = new Map();
 
   constructor(
     hiveChain: IHiveChainInterface,
@@ -99,6 +101,22 @@ class HealthCheckerService {
 
   // HC Logic
 
+  markValidationError = (endpointId: number, providerName: string, error: WaxHealthCheckerValidatorFailedError<string>) => {
+    const checkTitle = this.endpointTitleById.get(endpointId);
+    if (checkTitle) {
+      const checkObject: ValidationErrorDetails = {
+        checkName: checkTitle,
+        providerName: providerName,
+        message: error.message,
+        paths: error.apiEndpoint.paths,
+        params: error.request.data,
+      }
+      const prevoiusFailedChecks = [...this.failedChecksByProvider.get(providerName) || [], checkObject];
+      const newFailedChecks = structuredClone(this.failedChecksByProvider).set(providerName, prevoiusFailedChecks);
+      this.failedChecksByProvider = newFailedChecks;
+    }
+  } 
+
   createHealthChecker = async () => {
     this.healthChecker?.on('error', error => console.error(error.message));
     this.healthChecker?.on("data", (data: Array<TScoredEndpoint>) => { 
@@ -106,7 +124,7 @@ class HealthCheckerService {
       this.checkForFallbacks(data); 
       if (data.length)this.scoredEndpoints = data
     });
-    // this.healthChecker?.on("validationerror", error => markValidationError(error.apiEndpoint.id, error.request.endpoint, error));
+    this.healthChecker?.on("validationerror", error => this.markValidationError(error.apiEndpoint.id, error.request.endpoint, error));
   }
 
   checkForFallbacks = (scoredEndpoints: TScoredEndpoint[]) => {
