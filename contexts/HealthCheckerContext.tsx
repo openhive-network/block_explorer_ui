@@ -141,9 +141,9 @@ export const HealthCheckerContextProvider: React.FC<{
   const registerCalls = async () => {
     const registeredEndpoints = new Map<number, string>();
     for (const checker of apiCheckers) {
-      const testHC = await healthChecker?.register(checker!.method, checker!.params, checker!.validatorFunction, localProviders);
-      if (testHC)
-      registeredEndpoints.set(testHC.id, checker.title);
+      const heaalthCheckerEndpoints = await healthChecker?.register(checker!.method, checker!.params, checker!.validatorFunction, localProviders);
+      if (heaalthCheckerEndpoints)
+      registeredEndpoints.set(heaalthCheckerEndpoints.id, checker.title);
     }
     setEndpointTitleById(registeredEndpoints);
   }
