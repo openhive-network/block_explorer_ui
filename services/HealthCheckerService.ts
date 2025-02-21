@@ -13,28 +13,26 @@ const FALLBACKS = "fallbacks";
 
 class HealthCheckerService {
 
-  private hiveChain?: IHiveChainInterface;
-  private apiCheckers?: ApiChecker[];
   private defaultProviders?: string[];
-  private providers?: string[];
-  private fallbacks?: string[];
-  private scoredEndpoints?: TScoredEndpoint[];
   private healthChecker?: HealthChecker;
-  private nodeAddress: string | null = null;
-  private setNodeAddress: (node:string) => void = () => {}
   private endpointTitleById: Map<number, string> = new Map();
-  private chainInitialized: boolean = false;
-  private failedChecksByProvider: Map<string, ValidationErrorDetails[]> = new Map();
+  
+  
+  public scoredEndpoints?: TScoredEndpoint[];
+  public failedChecksByProvider: Map<string, ValidationErrorDetails[]> = new Map();
+  public setNodeAddress: (node:string) => void = () => {}
+  public nodeAddress: string | null = null;
+  public fallbacks?: string[];
+  public providers?: string[];
+  public apiCheckers?: ApiChecker[];
 
   constructor(
-    hiveChain: IHiveChainInterface,
     apiCheckers: ApiChecker[],
     defaultProviders: string[],
     healthChecker: HealthChecker,
     nodeAddress: string | null,
     setNodeAddress: (node: string) => void,
   ) {
-    this.hiveChain = hiveChain;
     this.healthChecker = healthChecker;
     this.apiCheckers = apiCheckers;
     this.readFallbacksFromLocalStorage();
@@ -152,7 +150,6 @@ class HealthCheckerService {
     const initialEndpoints: TScoredEndpoint[] | undefined = this.providers?.map((customProvider) => ({endpointUrl: customProvider, score: -1, up: true, latencies: []}))
     if (!!initialEndpoints && !this.scoredEndpoints) this.scoredEndpoints = initialEndpoints;
     this.registerCalls()
-    this.chainInitialized = true;
   }
 
   removeFallback = (provider: string) => {
