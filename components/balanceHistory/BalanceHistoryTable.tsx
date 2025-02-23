@@ -32,6 +32,7 @@ import CustomPagination from "../CustomPagination";
 import { config } from "@/Config";
 import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import CopyButton from "../ui/CopyButton";
 interface BalanceHistoryTableProps {
   operations: Explorer.BalanceHistoryForTable[];
   total_operations: number;
@@ -145,6 +146,10 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
               >
                 {operation.trx_id?.slice(0, 10)}{" "}
               </Link>
+              <CopyButton
+                text={operation.trx_id || ""}
+                tooltipText="Copy transaction ID"
+              />
             </div>
           </>
         );
@@ -250,6 +255,10 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
                       >
                         {operation.blockNumber?.toLocaleString()}
                       </Link>
+                      <CopyButton
+                        text={operation.blockNumber}
+                        tooltipText="Copy block number"
+                      />
                     </TableCell>
                     <TableCell data-testid="operation-prev-balance">
                       {formatRawCoin(operation.prev_balance)} {coinName}
