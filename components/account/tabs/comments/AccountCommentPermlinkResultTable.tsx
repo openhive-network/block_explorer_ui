@@ -17,6 +17,7 @@ import { useSearchesContext } from "@/contexts/SearchesContext";
 import useHandleCommentsSearch from "@/components/home/searches/hooks/useHandleCommentsSearch";
 import { SquareArrowOutUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import CopyButton from "@/components/ui/CopyButton";
 
 interface AccountCommentPermlinkResultTableProps {
   data: Hive.Permlink[];
@@ -75,7 +76,11 @@ const buildTableBody = (
       <Fragment key={trx_id}>
         <TableRow className="border-b border-gray-700  hover:bg-inherit p-[10px]">
           <TableCell className="text-left text-link">
-            <Link href={`/block/${block}`}>{block}</Link>
+            <Link href={`/block/${block}`}>{block.toLocaleString()}</Link>
+            <CopyButton
+              text={block}
+              tooltipText="Copy block number"
+            />
           </TableCell>
           <TableCell className="text-left text-text">{operation_id}</TableCell>
           <TableCell className="text-left text-wrap whitespace-nowrap">
@@ -99,7 +104,11 @@ const buildTableBody = (
             {formatAndDelocalizeTime(timestamp)}
           </TableCell>
           <TableCell className="text-left text-link">
-            <Link href={`/transaction/${trx_id}`}>{trx_id}</Link>
+            <Link href={`/transaction/${trx_id}`}>{trx_id?.slice(0, 10)}</Link>
+            <CopyButton
+                text={trx_id}
+                tooltipText="Copy transaction ID"
+              />
           </TableCell>
         </TableRow>
       </Fragment>
