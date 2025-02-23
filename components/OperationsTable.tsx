@@ -28,6 +28,7 @@ import {
   TooltipTrigger,
 } from "./ui/tooltip";
 import { useRouter } from "next/router";
+import CopyButton from "./ui/CopyButton";
 
 interface OperationsTableProps {
   operations: Explorer.OperationForTable[];
@@ -160,7 +161,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                   <CopyJSON value={getUnformattedValue(operation)} />
                 </TableCell>
                 <TableCell
-                  className="pl-2 sticky left-12 bg-inherit"
+                  className="pl-2 sticky left-12 bg-inherit whitespace-nowrap"
                   data-testid="block-number-operation-table"
                 >
                   <Link
@@ -171,8 +172,15 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                   >
                     {operation.blockNumber?.toLocaleString()}
                   </Link>
+                  <CopyButton
+                    text={operation.blockNumber}
+                    tooltipText="Copy block number"
+                  />
                 </TableCell>
-                <TableCell data-testid="transaction-number">
+                <TableCell
+                  data-testid="transaction-number"
+                  className="whitespace-nowrap"
+                >
                   <Link
                     className={cn("text-link", {
                       "bg-explorer-light-green py-2 px-1 ":
@@ -182,6 +190,12 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                   >
                     {operation.trxId?.slice(0, 10)}
                   </Link>
+                  {operation.trxId && (
+                    <CopyButton
+                      text={operation.trxId || ""}
+                      tooltipText="Copy transaction ID"
+                    />
+                  )}
                 </TableCell>
                 <TableCell className="w-1/5">
                   <TooltipProvider>
