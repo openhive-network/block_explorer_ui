@@ -22,8 +22,8 @@ export interface HealthCheckerProps {
   setFallbacks: (fallbacks: string[]) => void;
   nodeAddress: string | null;
   setNodeAddress: (address: string | null) => void;
-  localProviders?: string[];
-  setLocalProviders: (nodes: string[]) => void;
+  providers?: string[];
+  setProviders: (nodes: string[]) => void;
   addProvider: (provider: string) => void;
   removeProvider: (provider: string) => void;
   resetProviders: () => void;
@@ -43,8 +43,8 @@ export const HealthCheckerContext = createContext<HealthCheckerContextType>({
     setFallbacks: () => {},
     nodeAddress: "",
     setNodeAddress: () => {},
-    localProviders: undefined,
-    setLocalProviders: () => {},
+    providers: undefined,
+    setProviders: () => {},
     addProvider: () => {},
     removeProvider: () => {},
     resetProviders: () => {},
@@ -72,7 +72,7 @@ export const HealthCheckerContextProvider: React.FC<{
 }> = ({ hiveChain, apiCheckers, defaultProviders, children }) => {
 
     const {
-      localProviders,
+      localProviders: providers,
       fallbacks,
       writeLocalProvidersToLocalStorage,
       writeFallbacksToLocalStorage,
@@ -154,7 +154,7 @@ export const HealthCheckerContextProvider: React.FC<{
   const registerCalls = async () => {
     const registeredEndpoints = new Map<number, string>();
     for (const checker of apiCheckers) {
-      const heaalthCheckerEndpoints = await healthChecker?.register(checker!.method, checker!.params, checker!.validatorFunction, localProviders);
+      const heaalthCheckerEndpoints = await healthChecker?.register(checker!.method, checker!.params, checker!.validatorFunction, providers);
       if (heaalthCheckerEndpoints)
       registeredEndpoints.set(heaalthCheckerEndpoints.id, checker.title);
     }
@@ -162,7 +162,7 @@ export const HealthCheckerContextProvider: React.FC<{
   }
 
   const initializeDefaultChecks = async () => {
-    const initialEndpoints: TScoredEndpoint[] | undefined = localProviders?.map((customProvider) => ({endpointUrl: customProvider, score: -1, up: true, latencies: []}))
+    const initialEndpoints: TScoredEndpoint[] | undefined = providers?.map((customProvider) => ({endpointUrl: customProvider, score: -1, up: true, latencies: []}))
     if (!!initialEndpoints && !scoredEndpoints) setScoredEndpoints(initialEndpoints);
     registerCalls()
     setChainIntialized(true);
@@ -177,19 +177,19 @@ export const HealthCheckerContextProvider: React.FC<{
       for (const endpoint of healthChecker) {
         endpoint.addEndpointUrl(provider);
       }
-      if (localProviders && !localProviders.some((localProvider) => provider === localProvider)) {
-        writeLocalProvidersToLocalStorage([...(localProviders || []), provider]);
+      if (providers && !providers.some((localProvider) => provider === localProvider)) {
+        writeLocalProvidersToLocalStorage([...(providers || []), provider]);
         setScoredEndpoints([...scoredEndpoints || [], {endpointUrl: provider, score: -1, up: true, latencies: []}])
       }
     }
   }
 
   const removeProvider = (provider: string) => {
-    if (healthChecker && localProviders)
+    if (healthChecker && providers)
     for (const endpoint of healthChecker) {
       endpoint.removeEndpointUrl(provider);
     }
-    const newLocalProviders = localProviders?.filter((localProvider) => localProvider !== provider) || [];
+    const newLocalProviders = providers?.filter((localProvider) => localProvider !== provider) || [];
     setScoredEndpoints(scoredEndpoints?.filter((endpoint) => endpoint.endpointUrl !== provider));
     writeLocalProvidersToLocalStorage(newLocalProviders);
     removeFallback(provider);
@@ -235,10 +235,10 @@ export const HealthCheckerContextProvider: React.FC<{
         failedChecksByProvider,
         fallbacks, 
         setFallbacks: writeFallbacksToLocalStorage,
-        localProviders,
+        providers,
         nodeAddress,
         setNodeAddress,
-        setLocalProviders: writeLocalProvidersToLocalStorage,
+        setProviders: writeLocalProvidersToLocalStorage,
         addProvider,
         removeProvider,
         resetProviders,

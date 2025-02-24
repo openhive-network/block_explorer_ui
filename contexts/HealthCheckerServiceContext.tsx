@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from "react";
-import { HealthChecker, IHiveChainInterface, TScoredEndpoint } from "@hiveio/wax";
+import { HealthChecker } from "@hiveio/wax";
 import { ApiChecker } from "@/components/healthchecker/HealthChecker";
 import { useApiAddressesContext } from "./ApiAddressesContext";
 import HealthCheckerService from "@/services/HealthCheckerService";

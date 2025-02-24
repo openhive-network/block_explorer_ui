@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { TScoredEndpoint } from "@hiveio/wax";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { Loader2, Plus } from "lucide-react";
 import ProviderCard from "./ProviderCard";
@@ -29,19 +29,18 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
 }) => {
 
   const {
-    apiCheckers,
-    scoredEndpoints,
-    fallbacks,
-    nodeAddress,
-    providers,
-    setFallbacks,
-    setNodeAddress,
     addProvider,
     removeProvider,
     resetProviders,
     clearValidationError,
-    failedChecksByProvider
   } = healthCheckerService
+
+  const [apiCheckers, setApiCheckers] = useState<ApiChecker[] | undefined>(undefined);
+  const [scoredEndpoints, setScoredEndpoints] = useState<TScoredEndpoint[] | undefined>(undefined);
+  const [fallbacks, setFallbacks] = useState<string[] | undefined>(undefined);
+  const [nodeAddress, setNodeAddress] = useState<string | null>(null);
+  const [providers, setProviders] = useState<string[] | undefined>(undefined);
+  const [failedChecksByProvider, setFailedChecksByProvider] = useState<Map<string, ValidationErrorDetails[]>>(new Map());
 
   const [isProviderAdditionDialogOpened, setIsProviderAdditionDialogOpened] = useState<boolean>(false);
   const [isValidationErrorDialogOpened, setIsValidationErrorDialogOpened] = useState<boolean>(false);
@@ -70,12 +69,27 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   }
 
   const selectValidator = (providerName: string, checkTitle: string) => {
-    const foundValidator = failedChecksByProvider.get(providerName)?.find((failedCheck) => failedCheck.checkName === checkTitle);
+    const foundValidator = failedChecksByProvider?.get(providerName)?.find((failedCheck) => failedCheck.checkName === checkTitle);
     if (foundValidator) {
       setSelectedValidator(foundValidator);
       setIsValidationErrorDialogOpened(true);
     }
   }
+
+  const actualizeData = () => {
+    const hcData = healthCheckerService.getComponentData();
+    if (hcData) {
+      setFallbacks(hcData?.fallbacks);
+      setScoredEndpoints(hcData?.scoredEndpoints);
+      setApiCheckers(hcData?.apiCheckers)
+      setProviders(hcData?.providers)
+      setFailedChecksByProvider(hcData.failedChecksByProvider)
+    }
+  }
+
+  useEffect(() => {
+    healthCheckerService.on("scoredEndpoint", () => {actualizeData()})
+  }, [])
   
   const renderProvider = (scoredEndpoint: TScoredEndpoint, index: number, isTop?: boolean) => {
     const {endpointUrl, score, up,} = scoredEndpoint;

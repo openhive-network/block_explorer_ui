@@ -213,11 +213,11 @@ class HealthCheckerService extends EventEmitter {
       failedChecksByProvider: this.failedChecksByProvider,
       fallbacks: this.fallbacks,
       nodeAddress: this.nodeAddress,
-      localProviders: this.providers,
+      providers: this.providers,
 
       setFallbacks: this.writeFallbacksToLocalStorage,
       setNodeAddress: this.setNodeAddress,
-      setLocalProviders: this.writeFallbacksToLocalStorage,
+      setProviders: this.writeFallbacksToLocalStorage,
       addProvider: this.addProvider,
       removeProvider: this.removeProvider,
       resetProviders: this.resetProviders,
