@@ -9,6 +9,7 @@ import { Badge } from "../ui/badge";
 import ProviderAdditionDialog from "./ProviderAdditionDialog";
 import { HealthCheckerProps, ValidationErrorDetails } from "@/contexts/HealthCheckerContext";
 import ValidationErrorDialog from "./ValidationErrorDialog";
+import HealthCheckerService from "@/services/HealthCheckerService";
 
 export interface ApiChecker {
   title: string;
@@ -19,12 +20,12 @@ export interface ApiChecker {
 
 interface HealthCheckerComponentProps {
   className?: string;
-  healthCheckerProps: HealthCheckerProps
+  healthCheckerService: HealthCheckerService
 }
 
 const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   className,
-  healthCheckerProps
+  healthCheckerService
 }) => {
 
   const {
@@ -32,7 +33,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     scoredEndpoints,
     fallbacks,
     nodeAddress,
-    localProviders,
+    providers,
     setFallbacks,
     setNodeAddress,
     addProvider,
@@ -40,7 +41,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     resetProviders,
     clearValidationError,
     failedChecksByProvider
-  } = healthCheckerProps
+  } = healthCheckerService
 
   const [isProviderAdditionDialogOpened, setIsProviderAdditionDialogOpened] = useState<boolean>(false);
   const [isValidationErrorDialogOpened, setIsValidationErrorDialogOpened] = useState<boolean>(false);
@@ -82,7 +83,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     if (up && scoredEndpoint.latencies.length) {
       lastLatency = scoredEndpoint.latencies[scoredEndpoint.latencies.length - 1];
     }
-    if (!localProviders?.find((customProvider) => customProvider === endpointUrl)) {
+    if (!providers?.find((customProvider) => customProvider === endpointUrl)) {
       return null;
     }
     return (

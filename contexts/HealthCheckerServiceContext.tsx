@@ -14,7 +14,7 @@ export const HealthCheckerServiceContext = createContext<HealthCheckerContextTyp
 }
 );
 
-export const useHealthCheckerContext = () => {
+export const useHealthCheckerServiceContext = () => {
   const context = useContext(HealthCheckerServiceContext);
 
   if (context === undefined) {

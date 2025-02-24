@@ -1,13 +1,15 @@
 import HealthCheckerComponent from "@/components/healthchecker/HealthChecker";
 import Head from "next/head";
 import { useHealthCheckerContext } from "@/contexts/HealthCheckerContext";
+import { useHealthCheckerServiceContext } from "@/contexts/HealthCheckerServiceContext";
 
 export default function HealthcheckerPage() {
 
   const {
-    healthCheckerProps
-  } = useHealthCheckerContext();
+    healthCheckerService
+  } = useHealthCheckerServiceContext();
 
+  if (healthCheckerService)
   return (
     <>
       <Head>
@@ -16,7 +18,7 @@ export default function HealthcheckerPage() {
       <div className="md:m-8 max-w-[100vw]">
         <HealthCheckerComponent 
           className=""
-          healthCheckerProps={healthCheckerProps}
+          healthCheckerService={healthCheckerService}
         />
       </div>
     </>

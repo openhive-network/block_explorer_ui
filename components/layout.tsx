@@ -8,6 +8,7 @@ import { ApiChecker } from "./healthchecker/HealthChecker";
 import { ExplorerNodeApi } from "@/types/Node";
 import { config } from "@/Config";
 import { useApiAddressesContext } from "@/contexts/ApiAddressesContext";
+import { HealthCheckerServiceContextProvider } from "@/contexts/HealthCheckerServiceContext";
 
 interface LayoutProps {
   children: ReactNode;
@@ -63,8 +64,7 @@ export default function Layout({ children }: LayoutProps) {
   ]
 
   return (
-    <HealthCheckerContextProvider
-      hiveChain={hiveChain}
+    <HealthCheckerServiceContextProvider
       apiCheckers={apiCheckers}
       defaultProviders={config.defaultProviders}
       nodeAddress={nodeAddress}
@@ -79,6 +79,6 @@ export default function Layout({ children }: LayoutProps) {
         />
         <Footer />
       </main>
-    </HealthCheckerContextProvider>
+    </HealthCheckerServiceContextProvider>
   );
 }
