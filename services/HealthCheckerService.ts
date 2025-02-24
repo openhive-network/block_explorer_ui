@@ -1,4 +1,4 @@
-import { ValidationErrorDetails } from "@/contexts/HealthCheckerContext";
+import { HealthCheckerProps, ValidationErrorDetails } from "@/contexts/HealthCheckerContext";
 import { HealthChecker, IHiveChainInterface, TScoredEndpoint, WaxHealthCheckerValidatorFailedError } from "@hiveio/wax";
 
 export interface ApiChecker {
@@ -115,6 +115,12 @@ class HealthCheckerService {
     }
   } 
 
+  clearValidationError = (providerName: string, checkName: string) => {
+    const failedChecks = [...this.failedChecksByProvider.get(providerName) || []].filter((failedCheck) => failedCheck.checkName !== checkName);
+    const newFailedChecks = structuredClone(this.failedChecksByProvider).set(providerName, failedChecks);
+    this.failedChecksByProvider = newFailedChecks;
+  }
+
   createHealthChecker = async () => {
     this.healthChecker?.on('error', error => console.error(error.message));
     this.healthChecker?.on("data", (data: Array<TScoredEndpoint>) => { 
@@ -184,6 +190,28 @@ class HealthCheckerService {
     this.scoredEndpoints = [];
     this.healthChecker?.unregisterAll();
     this.registerCalls();
+  }
+
+  getComponentData = (): HealthCheckerProps | undefined => {
+    if (this.apiCheckers && this.scoredEndpoints)
+    return {
+      apiCheckers: this.apiCheckers,
+      scoredEndpoints: this.scoredEndpoints,
+      failedChecksByProvider: this.failedChecksByProvider,
+      fallbacks: this.fallbacks,
+      nodeAddress: this.nodeAddress,
+      localProviders: this.providers,
+
+      setScoredEndpoints: () => {},
+      setFallbacks: () => {},
+      setNodeAddress: () => {},
+      setLocalProviders: () => {},
+      addProvider: this.addProvider,
+      removeProvider: this.removeProvider,
+      resetProviders: this.resetProviders,
+      clearValidationError: this.clearValidationError
+
+    }
   }
 
 }
