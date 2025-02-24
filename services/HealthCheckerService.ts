@@ -1,5 +1,6 @@
 import { HealthCheckerProps, ValidationErrorDetails } from "@/contexts/HealthCheckerContext";
 import { HealthChecker, IHiveChainInterface, TScoredEndpoint, WaxHealthCheckerValidatorFailedError } from "@hiveio/wax";
+import { EventEmitter } from "events";
 
 export interface ApiChecker {
   title: string;
@@ -11,7 +12,7 @@ export interface ApiChecker {
 const LOCAL_PROVIDERS = "localProviders";
 const FALLBACKS = "fallbacks";
 
-class HealthCheckerService {
+class HealthCheckerService extends EventEmitter {
 
   private defaultProviders?: string[];
   private healthChecker?: HealthChecker;
@@ -20,11 +21,12 @@ class HealthCheckerService {
   
   public scoredEndpoints?: TScoredEndpoint[];
   public failedChecksByProvider: Map<string, ValidationErrorDetails[]> = new Map();
-  public setNodeAddress: (node:string | null) => void = () => {}
   public nodeAddress: string | null = null;
   public fallbacks?: string[];
   public providers?: string[];
   public apiCheckers?: ApiChecker[];
+  
+  public setNodeAddress: (node:string | null) => void = () => {}
 
   constructor(
     apiCheckers: ApiChecker[],
@@ -33,6 +35,7 @@ class HealthCheckerService {
     nodeAddress: string | null,
     setNodeAddress: (node: string | null) => void,
   ) {
+    super();
     this.healthChecker = healthChecker;
     this.apiCheckers = apiCheckers;
     this.readFallbacksFromLocalStorage();
@@ -40,6 +43,8 @@ class HealthCheckerService {
     this.nodeAddress = nodeAddress;
     this.setNodeAddress = setNodeAddress;
     this.defaultProviders = defaultProviders;
+    this.createHealthChecker();
+    this.initializeDefaultChecks();
   }
 
 
@@ -121,13 +126,17 @@ class HealthCheckerService {
     this.failedChecksByProvider = newFailedChecks;
   }
 
+  updateAppAfterScoredEndpointsChange = (data: Array<TScoredEndpoint>) => {
+    console.log(JSON.stringify(data)); 
+    this.checkForFallbacks(data); 
+    if (data.length)this.scoredEndpoints = data;
+    console.log('EMIT', this.getComponentData());
+    this.emit("scoredEndpoint", this.getComponentData());
+  }
+
   createHealthChecker = async () => {
     this.healthChecker?.on('error', error => console.error(error.message));
-    this.healthChecker?.on("data", (data: Array<TScoredEndpoint>) => { 
-      console.log(JSON.stringify(data)); 
-      this.checkForFallbacks(data); 
-      if (data.length)this.scoredEndpoints = data
-    });
+    this.healthChecker?.on("data", this.updateAppAfterScoredEndpointsChange);
     this.healthChecker?.on("validationerror", error => this.markValidationError(error.apiEndpoint.id, error.request.endpoint, error));
   }
 
