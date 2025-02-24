@@ -32,7 +32,7 @@ class HealthCheckerService extends EventEmitter {
     apiCheckers: ApiChecker[],
     defaultProviders: string[],
     healthChecker: HealthChecker,
-    nodeAddress: string | null,
+    nodeAddress: string | null, // Remember to ge this inside service
     setNodeAddress: (node: string | null) => void,
   ) {
     super();
