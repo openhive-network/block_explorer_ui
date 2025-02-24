@@ -218,7 +218,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                   </TooltipProvider>
                 </TableCell>
                 <TableCell data-testid="operation-type">
-                  <div className={`flex justify-stretch p-1 rounded `}>
+                  <div className={`flex justify-start rounded `}>
                     <span
                       className={`rounded w-4 mr-2 ${operationBgColor}`}
                     ></span>
