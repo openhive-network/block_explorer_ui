@@ -20,7 +20,7 @@ class HealthCheckerService {
   
   public scoredEndpoints?: TScoredEndpoint[];
   public failedChecksByProvider: Map<string, ValidationErrorDetails[]> = new Map();
-  public setNodeAddress: (node:string) => void = () => {}
+  public setNodeAddress: (node:string | null) => void = () => {}
   public nodeAddress: string | null = null;
   public fallbacks?: string[];
   public providers?: string[];
@@ -31,7 +31,7 @@ class HealthCheckerService {
     defaultProviders: string[],
     healthChecker: HealthChecker,
     nodeAddress: string | null,
-    setNodeAddress: (node: string) => void,
+    setNodeAddress: (node: string | null) => void,
   ) {
     this.healthChecker = healthChecker;
     this.apiCheckers = apiCheckers;
@@ -192,6 +192,10 @@ class HealthCheckerService {
     this.registerCalls();
   }
 
+  setFallbacks = (fallbacks: string[]) => {
+
+  }
+
   getComponentData = (): HealthCheckerProps | undefined => {
     if (this.apiCheckers && this.scoredEndpoints)
     return {
@@ -202,10 +206,9 @@ class HealthCheckerService {
       nodeAddress: this.nodeAddress,
       localProviders: this.providers,
 
-      setScoredEndpoints: () => {},
-      setFallbacks: () => {},
-      setNodeAddress: () => {},
-      setLocalProviders: () => {},
+      setFallbacks: this.writeFallbacksToLocalStorage,
+      setNodeAddress: this.setNodeAddress,
+      setLocalProviders: this.writeFallbacksToLocalStorage,
       addProvider: this.addProvider,
       removeProvider: this.removeProvider,
       resetProviders: this.resetProviders,

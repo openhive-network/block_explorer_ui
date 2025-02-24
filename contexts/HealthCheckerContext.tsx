@@ -17,7 +17,6 @@ export interface HealthCheckerProps {
   apiCheckers: ApiChecker[];
   scoredEndpoints: TScoredEndpoint[] | undefined;
   failedChecksByProvider: Map<string, ValidationErrorDetails[]>;
-  setScoredEndpoints: (scoredEndpoints: TScoredEndpoint[] | undefined ) => void;
   fallbacks?: string[];
   setFallbacks: (fallbacks: string[]) => void;
   nodeAddress: string | null;
@@ -39,7 +38,6 @@ export const HealthCheckerContext = createContext<HealthCheckerContextType>({
     apiCheckers: [],
     scoredEndpoints: undefined,
     failedChecksByProvider: new Map(),
-    setScoredEndpoints: () => {},
     fallbacks: [],
     setFallbacks: () => {},
     nodeAddress: "",
@@ -219,7 +217,6 @@ export const HealthCheckerContextProvider: React.FC<{
         apiCheckers,
         scoredEndpoints, 
         failedChecksByProvider,
-        setScoredEndpoints, 
         fallbacks, 
         setFallbacks: writeFallbacksToLocalStorage,
         localProviders,
