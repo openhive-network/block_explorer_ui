@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Loader2, ArrowBigRightDash, X } from "lucide-react";
 import { useRouter } from "next/router";
 import Head from "next/head";
@@ -15,7 +15,6 @@ import { Button } from "@/components/ui/button";
 import AccountOperationViewTabs from "@/components/account/tabs/AccountOperationViewTabs";
 import { AccountTabsProvider } from "@/contexts/TabsContext";
 import moment from "moment";
-import usePermlinkCommentSearch from "@/components/account/tabs/comments/usePermlinkCommentSearch";
 
 export interface AccountSearchParams {
   accountName?: string | undefined;
@@ -71,8 +70,6 @@ export default function Account() {
       dynamicGlobalData
     );
 
-  const { handleClearFilters } = usePermlinkCommentSearch(accountNameFromRoute);
-
   const renderAccountDetailsView = () => {
     if (isMobile) {
       return (
@@ -124,11 +121,6 @@ export default function Account() {
       );
     }
   };
-
-  useEffect(() => {
-    handleClearFilters();
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accountNameFromRoute]);
 
   // get the accountName and treat it as a string
   const routeAccountName = Array.isArray(router.query.accountName)
