@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, ReactNode } from "react";
+import { useRouter } from "next/router";
 
 type TabsContextType = {
   activeTab: string;
@@ -8,7 +9,10 @@ type TabsContextType = {
 const TabsContext = createContext<TabsContextType | undefined>(undefined);
 
 export function AccountTabsProvider({ children }: { children: ReactNode }) {
-  const [activeTab, setActiveTab] = useState("operations");
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState(
+    (router.query.activeTab as string) ?? "operations"
+  );
 
   return (
     <TabsContext.Provider value={{ activeTab, setActiveTab }}>
