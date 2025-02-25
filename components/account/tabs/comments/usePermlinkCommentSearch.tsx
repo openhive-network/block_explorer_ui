@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+
 import { useSearchesContext } from "@/contexts/SearchesContext";
 import {
   DEFAULT_TIME_UNIT_SELECT_KEY,
@@ -8,8 +10,19 @@ import { trimAccountName } from "@/utils/StringUtils";
 import moment from "moment";
 import Explorer from "@/types/Explorer";
 import { getSearchParams } from "@/components/home/searches/utils/getSearchParams";
+import useURLParams from "@/hooks/common/useURLParams";
+import { DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS } from "./CommentsTabContent";
 
 const usePermlinkCommentSearch = (accountName: string) => {
+  const router = useRouter();
+  const { paramsState, setParams } = useURLParams(
+    {
+      ...DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS,
+      accountName,
+    },
+    ["accountName"]
+  );
+
   const {
     searchRanges,
     setCommentType,
@@ -48,6 +61,7 @@ const usePermlinkCommentSearch = (accountName: string) => {
 
     const commentPermlinksSearchProps = {
       accountName: trimAccountName(accountName),
+      activeTab: "comments",
       commentType: "post" as Explorer.CommentType,
       pageNumber: 1,
       fromBlock: undefined,
@@ -61,6 +75,7 @@ const usePermlinkCommentSearch = (accountName: string) => {
     };
     setPermlinkSearchProps(commentPermlinksSearchProps);
     setRangesValues(commentPermlinksSearchProps);
+    setParams({ ...commentPermlinksSearchProps, startDate: undefined } as any);
   };
 
   const handleCommentPermlinkSearch = async () => {
@@ -72,14 +87,43 @@ const usePermlinkCommentSearch = (accountName: string) => {
 
     const commentPermlinksSearchProps = {
       accountName: trimAccountName(accountName),
+      activeTab: "comments",
       commentType: localCommentType,
       pageNumber: permlinkPaginationPage,
       ...searchParams,
-    };
+    } as any;
 
     setPermlinkSearchProps(commentPermlinksSearchProps);
     setRangesValues(commentPermlinksSearchProps);
+    setParams(commentPermlinksSearchProps);
   };
+
+  useEffect(() => {
+    if (!router.isReady) return;
+    setFromBlock(paramsState.fromBlock);
+    setToBlock(paramsState.toBlock);
+    setStartDate(paramsState.startDate);
+    setEndDate(paramsState.endDate);
+    setLastBlocksValue(paramsState.lastBlocks);
+    setLastTimeUnitValue(paramsState.lastTime);
+    setRangeSelectKey(paramsState.rangeSelectKey);
+    setTimeUnitSelectKey(paramsState.timeUnit);
+    setLocalCommentType(paramsState.commentType);
+    setCommentType(paramsState.commentType);
+
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    router.isReady,
+    paramsState.fromBlock,
+    paramsState.toBlock,
+    paramsState.startDate,
+    paramsState.endDate,
+    paramsState.lastBlocks,
+    paramsState.lastTime,
+    paramsState.rangeSelectKey,
+    paramsState.timeUnit,
+    paramsState.commentType,
+  ]);
 
   return {
     handleClearFilters,

@@ -1,9 +1,10 @@
-import { useSearchesContext } from "@/contexts/SearchesContext";
 import CustomPagination from "@/components/CustomPagination";
 import { config } from "@/Config";
 import AccountCommentPermlinkResultTable from "@/components/account/tabs/comments/AccountCommentPermlinkResultTable";
 import NoResult from "@/components/NoResult";
 import Hive from "@/types/Hive";
+import useURLParams from "@/hooks/common/useURLParams";
+import { DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS } from "./CommentsTabContent";
 
 interface AccountCommentPermlinkSearchResultsProps {
   data: Hive.CommentPermlinksResponse | null | undefined;
@@ -13,21 +14,10 @@ interface AccountCommentPermlinkSearchResultsProps {
 const AccountCommentPermlinkSearchResults: React.FC<
   AccountCommentPermlinkSearchResultsProps
 > = ({ data, accountName }) => {
-  const {
-    permlinkSearchProps,
-    setPermlinkSearchProps,
-    permlinkPaginationPage,
-    setPermlinkPaginationPage,
-  } = useSearchesContext();
-
-  const changePermlinkSearchPagination = (newPageNum: number) => {
-    const newSearchProps: any = {
-      ...permlinkSearchProps,
-      pageNumber: newPageNum,
-    };
-    setPermlinkSearchProps(newSearchProps);
-    setPermlinkPaginationPage(newPageNum);
-  };
+  const { paramsState, setParams } = useURLParams(
+    DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS,
+    ["accountName"]
+  );
 
   if (!data) return;
 
@@ -37,10 +27,12 @@ const AccountCommentPermlinkSearchResults: React.FC<
         <div>
           <div className="flex justify-center items-center text-text my-4 sticky z-20 top-[3.2rem] md:top-[4rem]">
             <CustomPagination
-              currentPage={permlinkPaginationPage}
+              currentPage={paramsState?.pageNumber ?? 1}
               totalCount={data.total_permlinks}
               pageSize={config.standardPaginationSize}
-              onPageChange={changePermlinkSearchPagination}
+              onPageChange={(page: number) =>
+                setParams({ ...paramsState, pageNumber: page })
+              }
             />
           </div>
 

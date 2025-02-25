@@ -3,15 +3,16 @@ import { TabsContent } from "@/components/ui/tabs";
 import AccountCommentsPermlinkSearch from "./AccountCommentsPermlinkSearch";
 import AccountCommentPermlinkSearchResults from "./AccountCommentPermlinkSearchResults";
 import usePermlinkSearch from "@/hooks/api/common/usePermlinkSearch";
-import { useSearchesContext } from "@/contexts/SearchesContext";
 import moment from "moment";
 import { useState, useEffect } from "react";
 import { trimAccountName } from "@/utils/StringUtils";
 import { useRouter } from "next/router";
+import useURLParams from "@/hooks/common/useURLParams";
 
-const DEFAULT_SEARCH_PROPS = {
+export const DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS = {
   accountName: undefined,
   commentType: "post",
+  activeTab: "operations",
   pageNumber: 1,
   fromBlock: undefined,
   toBlock: undefined,
@@ -24,13 +25,19 @@ const DEFAULT_SEARCH_PROPS = {
 };
 
 const CommentsTabContent = () => {
-  const { permlinkSearchProps } = useSearchesContext();
   const router = useRouter();
   const [accountName, setAccountName] = useState("");
+  const { paramsState } = useURLParams(
+    {
+      ...DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS,
+      accountName,
+    },
+    ["accountName"]
+  );
 
   const props = {
-    ...DEFAULT_SEARCH_PROPS,
-    ...permlinkSearchProps,
+    ...DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS,
+    ...paramsState,
     accountName,
   };
 
