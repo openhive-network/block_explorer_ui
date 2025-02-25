@@ -75,7 +75,7 @@ const buildTableBody = (
     return (
       <Fragment key={trx_id}>
         <TableRow className="border-b border-gray-700  hover:bg-inherit p-[10px]">
-          <TableCell className="text-left text-link">
+          <TableCell className="text-left text-link whitespace-nowrap">
             <Link href={`/block/${block}`}>{block.toLocaleString()}</Link>
             <CopyButton
               text={block}
@@ -103,7 +103,7 @@ const buildTableBody = (
           <TableCell className="text-left text-text">
             {formatAndDelocalizeTime(timestamp)}
           </TableCell>
-          <TableCell className="text-left text-link">
+          <TableCell className="text-left text-link whitespace-nowrap">
             <Link href={`/transaction/${trx_id}`}>{trx_id?.slice(0, 10)}</Link>
             <CopyButton
                 text={trx_id}
