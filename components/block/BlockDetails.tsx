@@ -72,7 +72,11 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
     >
       <CardHeader className="px-4 pt-4 pb-2">
         <CardTitle data-testid="block-number" className="text-lg font-semibold text-left">
-          Block {blockDetails.block_num.toLocaleString()}
+          Block {blockDetails.block_num.toLocaleString()}   
+          <CopyButton
+            text={blockDetails.block_num}
+            tooltipText="Copy block hash"
+          />
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-0 px-4 py-2">
