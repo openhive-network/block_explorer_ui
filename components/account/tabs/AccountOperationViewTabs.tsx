@@ -1,3 +1,5 @@
+import { useRouter } from "next/router";
+
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import OperationTabContent from "./operations/OperationsTabContent";
 import InteractionsTabContent from "./interactions/InteractionsTabContent";
@@ -11,9 +13,22 @@ interface AccountOperationViewTabs {
 const AccountOperationViewTabs: React.FC<AccountOperationViewTabs> = ({
   liveDataEnabled,
 }) => {
+  const router = useRouter();
   const { activeTab, setActiveTab } = useTabs();
 
-  const handleTabChange = (value: string) => setActiveTab(value);
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    router.push(
+      {
+        pathname: `/${router.query.accountName}`,
+        query: { activeTab: value },
+      },
+      undefined,
+      {
+        shallow: true,
+      }
+    );
+  };
 
   return (
     <Tabs
