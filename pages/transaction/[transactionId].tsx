@@ -15,6 +15,7 @@ import OperationsTable from "@/components/OperationsTable";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Toggle } from "@/components/ui/toggle";
 import { cn } from "@/lib/utils";
+import CopyButton from "@/components/ui/CopyButton";
 
 const TransactionDetailItem = ({
   label,
@@ -95,7 +96,11 @@ export default function Transaction() {
                   className="w-full text-left text-sm"
                 >
                   <span className="font-semibold">Transaction ID:</span>{" "}
-                  {trxData?.transaction_id}
+                  {trxData?.transaction_id} 
+                  <CopyButton
+                    text={trxData?.transaction_id}
+                    tooltipText="Copy transaction ID"
+                  />                  
                 </div>
                   <div className="text-left text-sm">
                     <span className="font-semibold">Block:</span>{" "}
@@ -105,7 +110,11 @@ export default function Transaction() {
                     >
                       <span className="text-link">
                         {trxData?.block_num.toLocaleString()}
-                      </span>
+                      </span>                      
+                      <CopyButton
+                        text={trxData?.block_num}
+                        tooltipText="Copy block hash"
+                      />
                     </Link>
                   </div>
                 <div
