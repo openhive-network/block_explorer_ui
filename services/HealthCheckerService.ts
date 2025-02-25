@@ -17,6 +17,7 @@ class HealthCheckerService extends EventEmitter {
   private defaultProviders?: string[];
   private healthChecker?: HealthChecker;
   private endpointTitleById: Map<number, string> = new Map();
+  private hiveChain?: IHiveChainInterface;
   
   
   public scoredEndpoints?: TScoredEndpoint[];
@@ -31,6 +32,7 @@ class HealthCheckerService extends EventEmitter {
   constructor(
     apiCheckers: ApiChecker[],
     defaultProviders: string[],
+    hiveChain: IHiveChainInterface,
     healthChecker: HealthChecker,
     nodeAddress: string | null, // Remember to ge this inside service
     setNodeAddress: (node: string | null) => void,
@@ -43,6 +45,7 @@ class HealthCheckerService extends EventEmitter {
     this.nodeAddress = nodeAddress;
     this.setNodeAddress = setNodeAddress;
     this.defaultProviders = defaultProviders;
+    this.hiveChain = hiveChain;
     this.createHealthChecker();
     this.initializeDefaultChecks();
   }

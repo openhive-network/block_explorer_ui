@@ -3,6 +3,7 @@ import { HealthChecker } from "@hiveio/wax";
 import { ApiChecker } from "@/components/healthchecker/HealthChecker";
 import { useApiAddressesContext } from "./ApiAddressesContext";
 import HealthCheckerService from "@/services/HealthCheckerService";
+import { useHiveChainContext } from "./HiveChainContext";
 
 
 type HealthCheckerContextType = {
@@ -33,19 +34,23 @@ export const HealthCheckerServiceContextProvider: React.FC<{
 }> = ({ apiCheckers, defaultProviders, children }) => {
 
   const {nodeAddress, setNodeAddress} = useApiAddressesContext();
+  const {hiveChain} = useHiveChainContext();
 
   const [healthCheckerService, setHealthCheckerService] = useState<HealthCheckerService | undefined>(undefined);
 
   const startHealthCheckerSerivce = async () => {
     const healthChecker = new HealthChecker();
-    const hcService = new HealthCheckerService(
-      apiCheckers,
-      defaultProviders,
-      healthChecker,
-      nodeAddress,
-      setNodeAddress
-    )
-    await setHealthCheckerService(hcService);
+    if (hiveChain) {
+      const hcService = new HealthCheckerService(
+        apiCheckers,
+        defaultProviders,
+        hiveChain,
+        healthChecker,
+        nodeAddress,
+        setNodeAddress
+      )
+      await setHealthCheckerService(hcService);
+    }
   }
 
   useEffect(() => { 
