@@ -9,6 +9,15 @@ export interface ApiChecker {
   validatorFunction: (data: any) => string | true;
 }
 
+export interface HealthCheckerFields {
+  apiCheckers: ApiChecker[];
+  scoredEndpoints: TScoredEndpoint[] | undefined;
+  failedChecksByProvider: Map<string, ValidationErrorDetails[]>;
+  nodeAddress: string | null;
+  fallbacks?: string[];
+  providers?: string[];
+}
+
 const LOCAL_PROVIDERS = "localProviders";
 const FALLBACKS = "fallbacks";
 
@@ -208,7 +217,7 @@ class HealthCheckerService extends EventEmitter {
 
   }
 
-  getComponentData = (): HealthCheckerProps | undefined => {
+  getComponentData = (): HealthCheckerFields | undefined => {
     if (this.apiCheckers && this.scoredEndpoints)
     return {
       apiCheckers: this.apiCheckers,
@@ -217,15 +226,6 @@ class HealthCheckerService extends EventEmitter {
       fallbacks: this.fallbacks,
       nodeAddress: this.nodeAddress,
       providers: this.providers,
-
-      setFallbacks: this.writeFallbacksToLocalStorage,
-      setNodeAddress: this.setNodeAddress,
-      setProviders: this.writeFallbacksToLocalStorage,
-      addProvider: this.addProvider,
-      removeProvider: this.removeProvider,
-      resetProviders: this.resetProviders,
-      clearValidationError: this.clearValidationError
-
     }
   }
 

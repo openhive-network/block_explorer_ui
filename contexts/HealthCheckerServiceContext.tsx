@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useRef } from "r
 import { HealthChecker } from "@hiveio/wax";
 import { ApiChecker } from "@/components/healthchecker/HealthChecker";
 import { useApiAddressesContext } from "./ApiAddressesContext";
-import HealthCheckerService from "@/services/HealthCheckerService";
+import HealthCheckerService, { HealthCheckerFields } from "@/services/HealthCheckerService";
 import { useHiveChainContext } from "./HiveChainContext";
 
 
@@ -58,7 +58,7 @@ export const HealthCheckerServiceContextProvider: React.FC<{
   }, [])
 
   useEffect(() => {
-    if (healthCheckerService) healthCheckerService?.on("scoredEndpoint", (data) => {console.log('GOT IT');})
+    if (healthCheckerService) healthCheckerService?.on("scoredEndpoint", (data: HealthCheckerFields) => {console.log('GOT IT');})
   }, [healthCheckerService])
 
 

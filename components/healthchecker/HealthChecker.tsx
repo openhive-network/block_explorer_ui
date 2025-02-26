@@ -33,6 +33,8 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     removeProvider,
     resetProviders,
     clearValidationError,
+    writeFallbacksToLocalStorage,
+    setNodeAddress: writeNodeAddressToLocalStorage,
   } = healthCheckerService
 
   const [apiCheckers, setApiCheckers] = useState<ApiChecker[] | undefined>(undefined);
@@ -54,11 +56,13 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   const registerFallback = (provider: string) => {
     if (!fallbacks?.includes(provider)) {
       setFallbacks([...fallbacks || [], provider])
+      writeFallbacksToLocalStorage([...fallbacks || [], provider]);
     }
   }
 
   const removeFallback = (provider: string) => {
     setFallbacks(fallbacks?.filter((fallback) => fallback !== provider) || []);
+    writeFallbacksToLocalStorage(fallbacks?.filter((fallback) => fallback !== provider) || []);
   }
 
   const changeNodeAddress = (nodeAddress: string | null) => {
