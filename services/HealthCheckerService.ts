@@ -119,7 +119,6 @@ class HealthCheckerService extends EventEmitter {
   handleChangeOfNode = (nodeAddress: string | null) => {
     this.removeFallback(nodeAddress || "");
     this.changeNodeAddress(nodeAddress);
-    console.log('TEST HERE')
     this.emit("stateChange", this.getComponentData());
   }
 
@@ -194,6 +193,7 @@ class HealthCheckerService extends EventEmitter {
       }
       if (this.providers && !this.providers.some((localProvider) => provider === localProvider)) {
         this.writeLocalProvidersToLocalStorage([...(this.providers || []), provider]);
+        this.providers = [...(this.providers || []), provider];
         this.scoredEndpoints = [...this.scoredEndpoints || [], {endpointUrl: provider, score: -1, up: true, latencies: []}]
         this.emit("stateChange", this.getComponentData());
       }
@@ -208,6 +208,7 @@ class HealthCheckerService extends EventEmitter {
     const newLocalProviders = this.providers?.filter((localProvider) => localProvider !== provider) || [];
     this.scoredEndpoints = this.scoredEndpoints?.filter((endpoint) => endpoint.endpointUrl !== provider);
     this.writeLocalProvidersToLocalStorage(newLocalProviders);
+    this.providers = newLocalProviders;
     this.removeFallback(provider);
     this.emit("stateChange", this.getComponentData());
   }

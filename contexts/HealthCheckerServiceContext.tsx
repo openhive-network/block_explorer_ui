@@ -57,11 +57,6 @@ export const HealthCheckerServiceContextProvider: React.FC<{
       startHealthCheckerSerivce();
   }, [])
 
-  useEffect(() => {
-    if (healthCheckerService) healthCheckerService?.on("stateChange", (data: HealthCheckerFields) => {console.log('GOT IT');})
-  }, [healthCheckerService])
-
-
   return (
     <HealthCheckerServiceContext.Provider value={{
         healthCheckerService
