@@ -1,4 +1,4 @@
-import { HealthCheckerProps, ValidationErrorDetails } from "@/contexts/HealthCheckerContext";
+import { ValidationErrorDetails } from "@/contexts/HealthCheckerServiceContext"; 
 import { HealthChecker, IHiveChainInterface, TScoredEndpoint, WaxHealthCheckerValidatorFailedError } from "@hiveio/wax";
 import { EventEmitter } from "events";
 

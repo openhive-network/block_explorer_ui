@@ -4,15 +4,7 @@ import useApiAddresses from "@/utils/ApiAddresses";
 import { ApiChecker } from "@/components/healthchecker/HealthChecker";
 import { useApiAddressesContext } from "./ApiAddressesContext";
 import HealthCheckerService from "@/services/HealthCheckerService";
-
-
-export type ValidationErrorDetails = {
-  checkName: string;
-  providerName: string;
-  message: string;
-  paths: string[];
-  params?: string | object;
-}
+import { ValidationErrorDetails } from "./HealthCheckerServiceContext";
 
 export interface HealthCheckerProps {
   apiCheckers: ApiChecker[];

@@ -3,7 +3,7 @@ import Footer from "./footer";
 import Navbar from "./navbar";
 import { Toaster } from "sonner";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
-import { HealthCheckerContextProvider } from "@/contexts/HealthCheckerContext";
+
 import { ApiChecker } from "./healthchecker/HealthChecker";
 import { ExplorerNodeApi } from "@/types/Node";
 import { config } from "@/Config";

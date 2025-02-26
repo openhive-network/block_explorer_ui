@@ -16,7 +16,6 @@ import useApiAddresses from "@/utils/ApiAddresses";
 import ErrorPage from "@/pages/ErrorPage";
 import { OperationTypesContextProvider } from "@/contexts/OperationsTypesContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
-import { HealthCheckerContextProvider } from "@/contexts/HealthCheckerContext";
 import { ApiAddressesContextProvider } from "@/contexts/ApiAddressesContext";
 
 const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {

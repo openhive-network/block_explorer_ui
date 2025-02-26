@@ -10,6 +10,14 @@ type HealthCheckerContextType = {
     healthCheckerService?: HealthCheckerService;
 };
 
+export type ValidationErrorDetails = {
+  checkName: string;
+  providerName: string;
+  message: string;
+  paths: string[];
+  params?: string | object;
+}
+
 export const HealthCheckerServiceContext = createContext<HealthCheckerContextType>({
     healthCheckerService: undefined,
 }
