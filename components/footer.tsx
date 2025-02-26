@@ -73,6 +73,7 @@ const Footer = () => {
                   height={20}
                 />
               </Link>
+              {/*
               <Link
                 href="https://myhive.li/discord"
                 target="_blank"
@@ -91,6 +92,7 @@ const Footer = () => {
                   height={20}
                 />
               </Link>
+              */}
               <Link
                 href="https://www.facebook.com/hiveblocks/"
                 target="_blank"
