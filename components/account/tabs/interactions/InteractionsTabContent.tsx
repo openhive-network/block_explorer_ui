@@ -1,14 +1,15 @@
-import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { Loader2 } from "lucide-react";
 
 import useCommentSearch from "@/hooks/api/common/useCommentSearch";
-import CommentSearchResults from "@/components/home/searches/searchesResults/CommentSearchResults";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
-import { useSearchesContext } from "@/contexts/SearchesContext";
 import AccountPageInteractionSearch from "./AccountPageInteractionSearch";
 import NoResult from "@/components/NoResult";
+import useURLParams from "@/hooks/common/useURLParams";
+import InteractionsTabResult from "./InteractionsTabResult";
+import { convertBooleanArrayToIds } from "@/lib/utils";
+import { DEFAULT_PARAMS } from "./AccountPageInteractionSearch";
 
 const InteractionsTabContent = () => {
   const router = useRouter();
@@ -16,16 +17,19 @@ const InteractionsTabContent = () => {
     "@",
     ""
   );
-  const {
-    setCommentsSearchAccountName,
-    commentSearchProps,
-    setCommentSearchProps,
-    setSelectedCommentSearchOperationTypes,
-    setCommentsSearchPermlink,
-  } = useSearchesContext();
+
+  const { paramsState } = useURLParams(DEFAULT_PARAMS, ["accountName"]);
+
+  const props = {
+    ...paramsState,
+    operationTypes: paramsState.filters
+      ? convertBooleanArrayToIds(paramsState.filters)
+      : null,
+    accountName: accountNameFromRoute,
+  } as any;
 
   const { commentSearchData, isCommentSearchDataLoading } =
-    useCommentSearch(commentSearchProps);
+    useCommentSearch(props);
 
   const buildCommentSearchView = () => {
     if (!isCommentSearchDataLoading && !commentSearchData?.total_operations) {
@@ -41,31 +45,9 @@ const InteractionsTabContent = () => {
         </div>
       );
     } else {
-      return <CommentSearchResults />;
+      return <InteractionsTabResult data={commentSearchData} />;
     }
   };
-
-  useEffect(() => {
-    setCommentsSearchAccountName(accountNameFromRoute);
-
-    return () => setCommentsSearchAccountName("");
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accountNameFromRoute]);
-
-  const handleClearCommentSearch = () => {
-    setCommentsSearchPermlink(undefined);
-    setCommentSearchProps(undefined);
-    setSelectedCommentSearchOperationTypes(null);
-  };
-
-  // Clean data after account name change
-  useEffect(() => {
-    if (!accountNameFromRoute) return;
-
-    return () => handleClearCommentSearch();
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accountNameFromRoute]);
 
   return (
     <TabsContent value="interactions">
@@ -74,7 +56,9 @@ const InteractionsTabContent = () => {
           <CardTitle>Interaction Search</CardTitle>
         </CardHeader>
         <CardContent>
-          <AccountPageInteractionSearch />
+          <AccountPageInteractionSearch
+            isCommentSearchDataLoading={isCommentSearchDataLoading}
+          />
         </CardContent>
       </Card>
       {buildCommentSearchView()}

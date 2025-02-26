@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 
 import { config } from "@/Config";
@@ -8,28 +8,53 @@ import OperationTypesDialog from "@/components/OperationTypesDialog";
 import { Button } from "@/components/ui/button";
 import { useSearchesContext } from "@/contexts/SearchesContext";
 import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
-import useCommentSearch from "@/hooks/api/common/useCommentSearch";
-import useHandleCommentsSearch from "@/components/home/searches/hooks/useHandleCommentsSearch";
+import useURLParams from "@/hooks/common/useURLParams";
+import { trimAccountName } from "@/utils/StringUtils";
+import {
+  convertBooleanArrayToIds,
+  convertIdsToBooleanArray,
+} from "@/lib/utils";
+import { useHandleInteractionsSearch } from "./useHandleInteractionsSearch";
 
-const AccountPageInteractionSearch = () => {
+export const DEFAULT_PARAMS = {
+  accountName: "",
+  permlink: undefined,
+  filters: null,
+  pageNumber: 1,
+};
+
+interface AccountPageInteractionSearchProps {
+  isCommentSearchDataLoading: boolean;
+}
+
+const AccountPageInteractionSearch: React.FC<
+  AccountPageInteractionSearchProps
+> = ({ isCommentSearchDataLoading }) => {
   const {
-    setCommentSearchProps,
-    commentSearchProps,
-    setCommentPaginationPage,
-    commentsSearchPermlink,
-    setCommentsSearchPermlink,
-    selectedCommentSearchOperationTypes,
-    commentsSearchAccountName,
     setLastSearchKey,
+    setCommentPaginationPage,
     setSelectedCommentSearchOperationTypes,
   } = useSearchesContext();
 
-  const { isCommentSearchDataLoading } = useCommentSearch(commentSearchProps);
-  const { handleCommentsSearch } = useHandleCommentsSearch();
+  const { paramsState, setParams } = useURLParams(DEFAULT_PARAMS, [
+    "accountName",
+  ]);
+
+  const accountName = trimAccountName(paramsState?.accountName ?? "");
+  const { handleCommentsSearch } = useHandleInteractionsSearch();
+
+  const handleClearCommentSearch = () => {
+    const clearParams = {
+      accountName,
+      activeTab: "interactions",
+    } as any;
+    setPermlink("");
+    setParams(clearParams);
+  };
 
   const { operationsTypes } = useOperationsTypes();
 
-  const [permlink, setPermlink] = useState(commentsSearchPermlink || "");
+  const [permlink, setPermlink] = useState("");
 
   const handlePermlinkChange = (e: { target: { value: string } }) => {
     setPermlink(e.target.value);
@@ -39,20 +64,17 @@ const AccountPageInteractionSearch = () => {
   const handleOperationSelect = (operationTypes: number[] | null) => {
     setSelectedCommentSearchOperationTypes(operationTypes);
     setCommentPaginationPage(1);
-    setCommentSearchProps((prev: any) => {
-      return {
-        ...prev,
-        operationTypes,
-        pageNumber: 1,
-      };
-    });
-  };
 
-  const handleClearCommentSearch = () => {
-    setCommentsSearchPermlink("");
-    setPermlink("");
-    setCommentSearchProps(undefined);
-    setSelectedCommentSearchOperationTypes(null);
+    const filters = convertIdsToBooleanArray(operationTypes);
+
+    const props = {
+      ...paramsState,
+      accountName,
+      filters,
+      pageNumber: 1,
+    } as any;
+
+    setParams(props);
   };
 
   const infoText =
@@ -62,8 +84,14 @@ const AccountPageInteractionSearch = () => {
 
   const onClickSearchButton = () => {
     setLastSearchKey("comment");
-    handleCommentsSearch(commentsSearchAccountName, permlink);
+    handleCommentsSearch(accountName, permlink);
   };
+
+  useEffect(() => {
+    if (paramsState.permlink) {
+      setPermlink(paramsState.permlink);
+    }
+  }, [paramsState.permlink]);
 
   return (
     <>
@@ -85,11 +113,13 @@ const AccountPageInteractionSearch = () => {
           operationTypes={operationsTypes?.filter((opType) =>
             config.commentOperationsTypeIds.includes(opType.op_type_id)
           )}
-          selectedOperations={selectedCommentSearchOperationTypes || []}
           setSelectedOperations={handleOperationSelect}
           buttonClassName="bg-buttonBg"
+          selectedOperations={convertBooleanArrayToIds(
+            paramsState.filters ?? []
+          )}
           triggerTitle={getOperationButtonTitle(
-            selectedCommentSearchOperationTypes,
+            convertBooleanArrayToIds(paramsState.filters ?? []),
             operationsTypes
           )}
         />
@@ -107,11 +137,11 @@ const AccountPageInteractionSearch = () => {
               <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />
             )}
           </Button>
-          {!permlink && (
+          {!permlink ? (
             <label className="text-gray-300 dark:text-gray-500 ">
               {buttonLabel}
             </label>
-          )}
+          ) : null}
         </div>
         <Button onClick={handleClearCommentSearch}>Clear</Button>
       </div>

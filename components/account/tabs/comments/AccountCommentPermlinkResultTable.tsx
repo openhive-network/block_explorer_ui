@@ -14,9 +14,9 @@ import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 
 import { useTabs } from "@/contexts/TabsContext";
 import { useSearchesContext } from "@/contexts/SearchesContext";
-import useHandleCommentsSearch from "@/components/home/searches/hooks/useHandleCommentsSearch";
 import { SquareArrowOutUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useHandleInteractionsSearch } from "../interactions/useHandleInteractionsSearch";
 
 interface AccountCommentPermlinkResultTableProps {
   data: Hive.Permlink[];
@@ -114,12 +114,12 @@ const AccountCommentPermlinkResultTable = ({
   const { setActiveTab } = useTabs();
 
   const { setCommentsSearchPermlink } = useSearchesContext();
-  const { handleCommentsSearch } = useHandleCommentsSearch();
+  const { handleCommentsSearch } = useHandleInteractionsSearch();
 
   const showCommentsByPermlink = (permlink: string) => {
     setCommentsSearchPermlink(permlink);
     setActiveTab("interactions");
-    handleCommentsSearch(accountName, permlink);
+    handleCommentsSearch(accountName as string, permlink);
   };
 
   return (
