@@ -8,12 +8,14 @@ const useCommentSearch = (
 ) => {
   const {
     data: commentSearchData,
-    isLoading: isCommentSearchDataLoading,
+    isFetching: isCommentSearchDataLoading,
     isError: commentSearchDataError,
   } = useQuery({
     queryKey: ["commentSearch", commentSearchProps],
     queryFn: () => fetchCommentOperations(commentSearchProps),
     refetchOnWindowFocus: false,
+    enabled:
+      !!commentSearchProps?.permlink && !!commentSearchProps?.accountName,
   });
 
   const fetchCommentOperations = async (
