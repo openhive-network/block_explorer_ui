@@ -33,8 +33,9 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     removeProvider,
     resetProviders,
     clearValidationError,
-    writeFallbacksToLocalStorage,
-    setNodeAddress: writeNodeAddressToLocalStorage,
+    handleChangeOfNode,
+    registerFallback,
+    removeFallback
   } = healthCheckerService
 
   const [apiCheckers, setApiCheckers] = useState<ApiChecker[] | undefined>(undefined);
@@ -53,25 +54,6 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
     setIsProviderAdditionDialogOpened(false);
   }
 
-  const registerFallback = (provider: string) => {
-    if (!fallbacks?.includes(provider)) {
-      setFallbacks([...fallbacks || [], provider])
-      writeFallbacksToLocalStorage([...fallbacks || [], provider]);
-    }
-  }
-
-  const removeFallback = (provider: string) => {
-    setFallbacks(fallbacks?.filter((fallback) => fallback !== provider) || []);
-    writeFallbacksToLocalStorage(fallbacks?.filter((fallback) => fallback !== provider) || []);
-  }
-
-  const changeNodeAddress = (nodeAddress: string | null) => {
-    if (nodeAddress) {
-      removeFallback(nodeAddress);
-      setNodeAddress(nodeAddress);
-    }
-  }
-
   const selectValidator = (providerName: string, checkTitle: string) => {
     const foundValidator = failedChecksByProvider?.get(providerName)?.find((failedCheck) => failedCheck.checkName === checkTitle);
     if (foundValidator) {
@@ -88,11 +70,12 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
       setApiCheckers(hcData?.apiCheckers)
       setProviders(hcData?.providers)
       setFailedChecksByProvider(hcData.failedChecksByProvider)
+      setNodeAddress(hcData?.nodeAddress);
     }
   }
 
   useEffect(() => {
-    healthCheckerService.on("scoredEndpoint", () => {actualizeData()})
+    healthCheckerService.on("stateChange", () => {actualizeData()})
     actualizeData();
   }, [])
   
@@ -110,7 +93,7 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
         isTop={!!isTop}
         key={endpointUrl}
         providerLink={endpointUrl}
-        switchToProvider={changeNodeAddress}
+        switchToProvider={handleChangeOfNode}
         disabled={score === 0}
         latency={lastLatency}
         isSelected={scoredEndpoint.endpointUrl === nodeAddress}

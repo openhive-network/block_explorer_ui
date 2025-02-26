@@ -36,7 +36,7 @@ class HealthCheckerService extends EventEmitter {
   public providers?: string[];
   public apiCheckers?: ApiChecker[];
   
-  public setNodeAddress: (node:string | null) => void = () => {}
+  public changeNodeAddress: (node:string | null) => void = () => {}
 
   constructor(
     apiCheckers: ApiChecker[],
@@ -44,17 +44,17 @@ class HealthCheckerService extends EventEmitter {
     hiveChain: IHiveChainInterface,
     healthChecker: HealthChecker,
     nodeAddress: string | null, // Remember to ge this inside service
-    setNodeAddress: (node: string | null) => void,
+    changeNodeAddress: (node: string | null) => void,
   ) {
     super();
     this.healthChecker = healthChecker;
+    this.hiveChain = hiveChain;
     this.apiCheckers = apiCheckers;
+    this.nodeAddress = nodeAddress;
+    this.defaultProviders = defaultProviders;
     this.readFallbacksFromLocalStorage();
     this.readLocalProvidersFromLocalStorage();
-    this.nodeAddress = nodeAddress;
-    this.setNodeAddress = setNodeAddress;
-    this.defaultProviders = defaultProviders;
-    this.hiveChain = hiveChain;
+    this.changeNodeAddress = changeNodeAddress;
     this.createHealthChecker();
     this.initializeDefaultChecks();
   }
@@ -116,6 +116,13 @@ class HealthCheckerService extends EventEmitter {
 
   // HC Logic
 
+  handleChangeOfNode = (nodeAddress: string | null) => {
+    this.removeFallback(nodeAddress || "");
+    this.changeNodeAddress(nodeAddress);
+    console.log('TEST HERE')
+    this.emit("stateChange", this.getComponentData());
+  }
+
   markValidationError = (endpointId: number, providerName: string, error: WaxHealthCheckerValidatorFailedError<string>) => {
     const checkTitle = this.endpointTitleById.get(endpointId);
     if (checkTitle) {
@@ -129,6 +136,7 @@ class HealthCheckerService extends EventEmitter {
       const prevoiusFailedChecks = [...this.failedChecksByProvider.get(providerName) || [], checkObject];
       const newFailedChecks = structuredClone(this.failedChecksByProvider).set(providerName, prevoiusFailedChecks);
       this.failedChecksByProvider = newFailedChecks;
+      this.emit("stateChange", this.getComponentData());
     }
   } 
 
@@ -136,14 +144,14 @@ class HealthCheckerService extends EventEmitter {
     const failedChecks = [...this.failedChecksByProvider.get(providerName) || []].filter((failedCheck) => failedCheck.checkName !== checkName);
     const newFailedChecks = structuredClone(this.failedChecksByProvider).set(providerName, failedChecks);
     this.failedChecksByProvider = newFailedChecks;
+    this.emit("stateChange", this.getComponentData());
   }
 
   updateAppAfterScoredEndpointsChange = (data: Array<TScoredEndpoint>) => {
     console.log(JSON.stringify(data)); 
     this.checkForFallbacks(data); 
     if (data.length)this.scoredEndpoints = data;
-    console.log('EMIT', this.getComponentData());
-    this.emit("scoredEndpoint", this.getComponentData());
+    this.emit("stateChange", this.getComponentData());
   }
 
   createHealthChecker = async () => {
@@ -157,7 +165,7 @@ class HealthCheckerService extends EventEmitter {
     if (currentScoredEndpoint && !currentScoredEndpoint.up) {
       this.fallbacks?.forEach((fallback) => {
         const fallbackScoredEndpoint = scoredEndpoints.find((scoredEdnpoint) => scoredEdnpoint.endpointUrl === fallback);
-        if (fallbackScoredEndpoint && fallbackScoredEndpoint.up) this.setNodeAddress(fallback) ;
+        if (fallbackScoredEndpoint && fallbackScoredEndpoint.up) this.changeNodeAddress(fallback) ;
       })
     }
   }
@@ -179,10 +187,6 @@ class HealthCheckerService extends EventEmitter {
     this.registerCalls()
   }
 
-  removeFallback = (provider: string) => {
-    this.writeFallbacksToLocalStorage(this.fallbacks?.filter((fallback) => fallback !== provider) || []);
-  }
-
   addProvider = (provider: string) => {
     if (this.healthChecker) {
       for (const endpoint of this.healthChecker) {
@@ -191,6 +195,7 @@ class HealthCheckerService extends EventEmitter {
       if (this.providers && !this.providers.some((localProvider) => provider === localProvider)) {
         this.writeLocalProvidersToLocalStorage([...(this.providers || []), provider]);
         this.scoredEndpoints = [...this.scoredEndpoints || [], {endpointUrl: provider, score: -1, up: true, latencies: []}]
+        this.emit("stateChange", this.getComponentData());
       }
     }
   }
@@ -204,6 +209,7 @@ class HealthCheckerService extends EventEmitter {
     this.scoredEndpoints = this.scoredEndpoints?.filter((endpoint) => endpoint.endpointUrl !== provider);
     this.writeLocalProvidersToLocalStorage(newLocalProviders);
     this.removeFallback(provider);
+    this.emit("stateChange", this.getComponentData());
   }
 
   resetProviders = () => {
@@ -211,10 +217,21 @@ class HealthCheckerService extends EventEmitter {
     this.scoredEndpoints = [];
     this.healthChecker?.unregisterAll();
     this.registerCalls();
+    this.emit("stateChange", this.getComponentData());
   }
 
-  setFallbacks = (fallbacks: string[]) => {
+  registerFallback = (provider: string) => {
+    if (!this.fallbacks?.includes(provider)) {
+      this.fallbacks = [...this.fallbacks || [], provider];
+      this.writeFallbacksToLocalStorage(this.fallbacks);
+      this.emit("stateChange", this.getComponentData());
+    }
+  }
 
+  removeFallback = (provider: string) => {
+    this.fallbacks = this.fallbacks?.filter((fallback) => fallback !== provider) || [];
+    this.writeFallbacksToLocalStorage(this.fallbacks);
+    this.emit("stateChange", this.getComponentData());
   }
 
   getComponentData = (): HealthCheckerFields | undefined => {
