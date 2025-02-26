@@ -11,7 +11,10 @@ interface SearchRangesProps {
   safeTimeRangeDisplay?: boolean;
 }
 
-const SearchRanges: React.FC<SearchRangesProps> = ({ rangesProps }) => {
+const SearchRanges: React.FC<SearchRangesProps> = ({
+  rangesProps,
+  safeTimeRangeDisplay,
+}) => {
   const {
     rangeSelectOptions,
     timeSelectOptions,
@@ -34,6 +37,23 @@ const SearchRanges: React.FC<SearchRangesProps> = ({ rangesProps }) => {
   } = rangesProps;
 
   const [rangeError, setRangeError] = useState<string | null>(null);
+
+  const handleOnBlur = (
+    e: React.FocusEvent<HTMLInputElement>,
+    fieldSetter: Function,
+    validateField: Function | null
+  ) => {
+    const value = e.target.value;
+    const numericValue = value ? Number(value) : undefined;
+
+    // Fetch the latest block number dynamically
+    let validated = true;
+    if (validateField) {
+      validated = validateField(e, numericValue);
+    }
+
+    validated ? fieldSetter(numericValue) : fieldSetter(null);
+  };
 
   const validateToBlock = (
     e: React.FocusEvent<HTMLInputElement>,
@@ -71,8 +91,6 @@ const SearchRanges: React.FC<SearchRangesProps> = ({ rangesProps }) => {
 
   const handleNumericInput = (
     e: React.ChangeEvent<HTMLInputElement>,
-    fieldSetter: Function,
-    validateField: Function | null,
     allowDecimal: boolean = false
   ) => {
     let cleanedValue = e.target.value;
@@ -93,15 +111,6 @@ const SearchRanges: React.FC<SearchRangesProps> = ({ rangesProps }) => {
     }
 
     e.target.value = cleanedValue;
-
-    const numericValue = cleanedValue ? Number(cleanedValue) : undefined;
-
-    let validated = true;
-    if (validateField) {
-      validated = validateField(e, numericValue);
-    }
-
-    validated ? fieldSetter(numericValue) : fieldSetter(null);
   };
 
   useEffect(() => {
@@ -148,8 +157,9 @@ const SearchRanges: React.FC<SearchRangesProps> = ({ rangesProps }) => {
             <Input
               className="w-1/2 border-0 border-b-2 bg-theme"
               type="text" // Use type="text" to allow custom validation
-              value={lastBlocksValue || ""}
-              onChange={(e) => handleNumericInput(e, setLastBlocksValue, null)}
+              defaultValue={lastBlocksValue || ""}
+              onChange={(e) => handleNumericInput(e)}
+              onBlur={(e) => handleOnBlur(e, setLastBlocksValue, null)}
               placeholder={"Last"}
             />
           </div>
@@ -163,10 +173,9 @@ const SearchRanges: React.FC<SearchRangesProps> = ({ rangesProps }) => {
               <Input
                 type="text"
                 className="bg-theme border-0 border-b-2 text-text"
-                value={lastTimeUnitValue || ""}
-                onChange={(e) =>
-                  handleNumericInput(e, setLastTimeUnitValue, null)
-                }
+                defaultValue={lastTimeUnitValue || ""}
+                onChange={(e) => handleNumericInput(e, true)}
+                onBlur={(e) => handleOnBlur(e, setLastTimeUnitValue, null)}
                 placeholder={"Last"}
               />
             </div>
@@ -205,10 +214,9 @@ const SearchRanges: React.FC<SearchRangesProps> = ({ rangesProps }) => {
               type="text"
               className="bg-theme border-0 border-b-2"
               data-testid="from-block-input"
-              value={fromBlock || ""}
-              onChange={(e) =>
-                handleNumericInput(e, setFromBlock, validateFromBlock)
-              }
+              defaultValue={fromBlock || ""}
+              onChange={(e) => handleNumericInput(e)}
+              onBlur={(e) => handleOnBlur(e, setFromBlock, validateFromBlock)}
               placeholder="From"
             />
           </div>
@@ -218,10 +226,9 @@ const SearchRanges: React.FC<SearchRangesProps> = ({ rangesProps }) => {
               data-testid="headblock-number"
               type="text"
               defaultValue={toBlock || ""}
-              onChange={(e) =>
-                handleNumericInput(e, setToBlock, validateToBlock)
-              }
+              onChange={(e) => handleNumericInput(e)}
               placeholder={"To"}
+              onBlur={(e) => handleOnBlur(e, setToBlock, validateToBlock)}
             />
           </div>
         </div>
