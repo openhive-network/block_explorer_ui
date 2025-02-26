@@ -26,6 +26,7 @@ import VotersDialog from "@/components/Witnesses/VotersDialog";
 import VotesHistoryDialog from "@/components/Witnesses/VotesHistoryDialog";
 import WitnessScheduleIcon from "@/components/WitnessScheduleIcon";
 import LastUpdatedTooltip from "@/components/LastUpdatedTooltip";
+import CopyButton from "@/components/ui/CopyButton";
 
 const TABLE_CELLS = [
   "Rank",
@@ -284,6 +285,7 @@ export default function Witnesses() {
                 <TableCell>{singleWitness.version}</TableCell>
                 <TableCell className="text-right">
                   {singleWitness.last_confirmed_block_num ? (
+                    <>
                     <Link
                       className="text-link"
                       href={`/block/${singleWitness.last_confirmed_block_num}${
@@ -293,7 +295,12 @@ export default function Witnesses() {
                       }`}
                     >
                       {singleWitness.last_confirmed_block_num.toLocaleString()}
-                    </Link>
+                    </Link> 
+                    <CopyButton
+                    text={singleWitness.last_confirmed_block_num}
+                    tooltipText="Copy block number"
+                  />
+                    </>
                   ) : (
                     "--"
                   )}

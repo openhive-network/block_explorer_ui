@@ -14,6 +14,7 @@ import Hive from "@/types/Hive";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import useHandleCommentsSearch from "./hooks/useHandleCommentsSearch";
 import { Button } from "@/components/ui/button";
+import CopyButton from "@/components/ui/CopyButton";
 
 interface CommentPermlinkResultTableProps {
   data: Hive.Permlink[];
@@ -55,8 +56,12 @@ const buildTableBody = (
       return (
         <React.Fragment key={trx_id}>
           <TableRow className="border-b border-gray-700 hover:bg-inherit p-[10px]">
-            <TableCell className="text-left text-link">
-              <Link href={`/block/${block}`}>{block}</Link>
+            <TableCell className="text-left text-link whitespace-nowrap">
+              <Link href={`/block/${block}`}>{block.toLocaleString()}</Link>
+              <CopyButton
+                text={block}
+                tooltipText="Copy block number"
+              />
             </TableCell>
             <TableCell className="text-left text-text">
               {operation_id}
@@ -81,8 +86,12 @@ const buildTableBody = (
             <TableCell className="text-left text-text">
               {formatAndDelocalizeTime(timestamp)}
             </TableCell>
-            <TableCell className="text-left text-link">
-              <Link href={`/transaction/${trx_id}`}>{trx_id}</Link>
+            <TableCell className="text-left text-link whitespace-nowrap">
+              <Link href={`/transaction/${trx_id}`}>{trx_id?.slice(0, 10)}</Link>
+              <CopyButton
+                text={trx_id}
+                tooltipText="Copy transaction ID"
+              />
             </TableCell>
           </TableRow>
         </React.Fragment>

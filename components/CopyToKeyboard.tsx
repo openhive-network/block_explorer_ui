@@ -1,4 +1,4 @@
-import { Check, ClipboardCopy } from "lucide-react";
+import { Check, Copy } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -31,7 +31,7 @@ const CopyToKeyboard: React.FC<CopyToKeyboardProps> = ({
       {copied ? (
         <Check className="text-explorer-light-green w-5 h-5" />
       ) : (
-        <ClipboardCopy className="w-4 mr-2" />
+        <Copy className="w-4 mr-2" />
       )}
       {displayValue}
     </div>
