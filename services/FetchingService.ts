@@ -27,10 +27,8 @@ class FetchingService {
     this.nodeUrl = newUrl;
   }
 
-  public setHiveChain(hiveChain: IHiveChainInterface | null) {
-    this.extendedHiveChain = hiveChain
-      ?.extend<ExplorerNodeApi>()
-      .extendRest(extendedRest);
+  public setHiveChain(extendedHiveChain: TWaxExtended<ExplorerNodeApi, TWaxRestExtended<typeof extendedRest>> | undefined) {
+    this.extendedHiveChain = extendedHiveChain;
     if (this.extendedHiveChain && this.nodeUrl) {
       this.extendedHiveChain.endpointUrl = this.nodeUrl;
     }
