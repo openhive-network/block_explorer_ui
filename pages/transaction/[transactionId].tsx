@@ -111,11 +111,11 @@ export default function Transaction() {
                       <span className="text-link">
                         {trxData?.block_num.toLocaleString()}
                       </span>                      
-                      <CopyButton
+                    </Link>
+                    <CopyButton
                         text={trxData?.block_num}
                         tooltipText="Copy block hash"
                       />
-                    </Link>
                   </div>
                 <div
                     data-testid="transaction-header-date"
