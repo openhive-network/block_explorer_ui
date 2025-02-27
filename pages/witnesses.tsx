@@ -27,6 +27,7 @@ import VotesHistoryDialog from "@/components/Witnesses/VotesHistoryDialog";
 import WitnessScheduleIcon from "@/components/WitnessScheduleIcon";
 import LastUpdatedTooltip from "@/components/LastUpdatedTooltip";
 import CopyButton from "@/components/ui/CopyButton";
+import ScrollTopButton from "@/components/ScrollTopButton";
 
 const TABLE_CELLS = [
   "Rank",
@@ -55,6 +56,16 @@ const sortKeyByCell: { [objectKey: string]: string } = {
   version: "version",
   "last block produced": "last_confirmed_block_num",
 };
+
+const RIGHT_ALIGNED_HEADERS = [
+  "Missed Blocks",
+  "APR",
+  "Version",
+  "Price Feed",
+  "Feed Age",
+  "Last Block Produced",
+  "Block Size",
+];
 
 const renderSortArrow = (
   cell: string,
@@ -143,8 +154,14 @@ export default function Witnesses() {
   const buildTableHeader = () => {
     return TABLE_CELLS.map((cell) => {
       const toLowerCase = cell.toLocaleLowerCase();
-      const className =
-        "first:sticky first:left-0 [&:nth-child(2)]:sticky [&:nth-child(2)]:left-16 text-center";
+      const isRightAligned = RIGHT_ALIGNED_HEADERS.includes(cell); // Check if header should be right-aligned
+      const headerIndex = TABLE_CELLS.indexOf(cell);
+
+      const className = "first:sticky first:left-0 [&:nth-child(2)]:sticky [&:nth-child(2)]:left-16 text-center";
+
+      const buttonClassName = `w-full flex items-center ${
+        isRightAligned ? "justify-end text-right" : "justify-start text-left"
+      }`;
 
       return (
         <TableHead
@@ -153,10 +170,10 @@ export default function Witnesses() {
         >
           <button
             disabled={isCellUnsortable(cell)}
-            className="flex items-center"
+            className={buttonClassName}
             onClick={() => handleSortBy(toLowerCase)}
           >
-            {cell}
+            <span>{cell}</span>
             {renderSortArrow(toLowerCase, sort.orderBy, sort.isOrderAscending)}
           </button>
         </TableHead>
@@ -169,7 +186,7 @@ export default function Witnesses() {
       <Head>
         <title>Witnesses - Hive Explorer</title>
       </Head>
-      <div className="md:m-8 max-w-[100vw] px-4">
+      <div className="page-container">
         <div className="flex justify-between mt-1 mx-1">
           <WitnessScheduleIcon />
           <LastUpdatedTooltip lastUpdatedAt={witnessesData.votes_updated_at} />
@@ -282,8 +299,8 @@ export default function Witnesses() {
                     ? formatAndDelocalizeFromTime(singleWitness.feed_updated_at)
                     : "--"}
                 </TableCell>
-                <TableCell>{singleWitness.version}</TableCell>
-                <TableCell className="text-right">
+                <TableCell className="text-right">{singleWitness.version}</TableCell>
+                <TableCell className="text-right whitespace-nowrap">
                   {singleWitness.last_confirmed_block_num ? (
                     <>
                     <Link
@@ -310,6 +327,9 @@ export default function Witnesses() {
           </TableBody>
         </Table>
       </div>
+      <div className="fixed bottom-[10px] right-0 flex flex-col items-end justify-end px-3 md:px-12">
+          <ScrollTopButton />
+        </div>
     </>
   );
 }
