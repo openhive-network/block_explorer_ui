@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from "react";
 import { HealthChecker, IHiveChainInterface, TScoredEndpoint, WaxHealthCheckerValidatorFailedError } from "@hiveio/wax";
 import useApiAddresses from "@/utils/ApiAddresses";
-import { ApiChecker } from "@/components/healthchecker/HealthChecker";
+import { ApiChecker } from "@/services/HealthCheckerService";
 import { useApiAddressesContext } from "./ApiAddressesContext";
 import HealthCheckerService from "@/services/HealthCheckerService";
 import { ValidationErrorDetails } from "@/services/HealthCheckerService"; 
@@ -88,7 +88,6 @@ export const HealthCheckerContextProvider: React.FC<{
     const hcService = new HealthCheckerService(
       apiCheckers,
       defaultProviders,
-      hiveChain,
       healthChecker,
       nodeAddress,
       setNodeAddress
