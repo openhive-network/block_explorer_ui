@@ -1,22 +1,16 @@
 import { cn } from "@/lib/utils";
 import { TScoredEndpoint } from "@hiveio/wax";
 import { useEffect, useState } from "react";
-import { Button } from "../ui/button";
 import { Loader2, Plus } from "lucide-react";
-import ProviderCard from "./ProviderCard";
+import { Button } from "../ui/button";
 import { Card } from "../ui/card";
 import { Badge } from "../ui/badge";
+import ProviderCard from "./ProviderCard";
 import ProviderAdditionDialog from "./ProviderAdditionDialog";
-import { ValidationErrorDetails } from "@/services/HealthCheckerService"; 
 import ValidationErrorDialog from "./ValidationErrorDialog";
+import { ValidationErrorDetails, ApiChecker } from "@/services/HealthCheckerService"; 
 import HealthCheckerService from "@/services/HealthCheckerService";
 
-export interface ApiChecker {
-  title: string;
-  method: any;
-  params: any;
-  validatorFunction: (data: any) => string | true;
-}
 
 interface HealthCheckerComponentProps {
   className?: string;
