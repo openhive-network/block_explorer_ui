@@ -200,7 +200,7 @@ const Footer = () => {
 
           <div>
             <h4 className="text-md font-semibold mb-2 dark:text-white">
-              Documentation
+              Resources
             </h4>
             {/* Header */}
             <ul className="list-none p-0">
@@ -224,15 +224,6 @@ const Footer = () => {
                   Hive Glossary
                 </Link>
               </li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="text-md font-semibold mb-2 dark:text-white">
-              Technical
-            </h4>
-            {/* Header */}
-            <ul className="list-none p-0 ">
               <li>
                 <Link
                   href="https://github.com/openhive-network/hive"
@@ -241,7 +232,7 @@ const Footer = () => {
                   className="hover:opacity-75"
                   aria-label="GitHub"
                 >
-                  Git Hub
+                  GitHub
                 </Link>
               </li>
               <li>
@@ -253,9 +244,18 @@ const Footer = () => {
                   aria-label="GitLab"
                 >
                   {" "}
-                  Git lab
+                  Gitlab
                 </Link>
               </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="text-md font-semibold mb-2 dark:text-white">
+              Technical
+            </h4>
+            {/* Header */}
+            <ul className="list-none p-0 ">
               <li>
                 <span>Last Commit #: </span>
                 <Link
