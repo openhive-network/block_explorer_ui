@@ -1,4 +1,4 @@
-import { HealthChecker, IHiveChainInterface, TScoredEndpoint, WaxHealthCheckerValidatorFailedError } from "@hiveio/wax";
+import { HealthChecker, TScoredEndpoint, WaxHealthCheckerValidatorFailedError } from "@hiveio/wax";
 
 export interface ApiChecker {
   title: string;
@@ -32,7 +32,6 @@ class HealthCheckerService extends EventTarget {
   private defaultProviders?: string[];
   private healthChecker?: HealthChecker;
   private endpointTitleById: Map<number, string> = new Map();
-  private hiveChain?: IHiveChainInterface;
   
   
   public scoredEndpoints?: TScoredEndpoint[];
@@ -47,14 +46,12 @@ class HealthCheckerService extends EventTarget {
   constructor(
     apiCheckers: ApiChecker[],
     defaultProviders: string[],
-    hiveChain: IHiveChainInterface,
     healthChecker: HealthChecker,
     nodeAddress: string | null, // Remember to ge this inside service
     changeNodeAddress: (node: string | null) => void,
   ) {
     super();
     this.healthChecker = healthChecker;
-    this.hiveChain = hiveChain;
     this.apiCheckers = apiCheckers;
     this.nodeAddress = nodeAddress;
     this.defaultProviders = defaultProviders;

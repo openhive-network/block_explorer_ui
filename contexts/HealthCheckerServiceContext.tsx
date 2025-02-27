@@ -46,7 +46,6 @@ export const HealthCheckerServiceContextProvider: React.FC<{
       const hcService = new HealthCheckerService(
         apiCheckers,
         defaultProviders,
-        hiveChain,
         healthChecker,
         nodeAddress,
         setNodeAddress
