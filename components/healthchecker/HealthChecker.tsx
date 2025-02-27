@@ -75,8 +75,11 @@ const HealthCheckerComponent: React.FC<HealthCheckerComponentProps> = ({
   }
 
   useEffect(() => {
-    healthCheckerService.on("stateChange", () => {actualizeData()})
+    healthCheckerService.addEventListener("stateChange", () => {actualizeData()});
     actualizeData();
+    return () => {
+      healthCheckerService.removeEventListener("stateChange", () => {actualizeData()});
+    };
   }, [])
   
   const renderProvider = (scoredEndpoint: TScoredEndpoint, index: number, isTop?: boolean) => {

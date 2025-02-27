@@ -1,5 +1,4 @@
 import { HealthChecker, IHiveChainInterface, TScoredEndpoint, WaxHealthCheckerValidatorFailedError } from "@hiveio/wax";
-import { EventEmitter } from "events";
 
 export interface ApiChecker {
   title: string;
@@ -28,7 +27,7 @@ export interface HealthCheckerFields {
 const LOCAL_PROVIDERS = "localProviders";
 const FALLBACKS = "fallbacks";
 
-class HealthCheckerService extends EventEmitter {
+class HealthCheckerService extends EventTarget {
 
   private defaultProviders?: string[];
   private healthChecker?: HealthChecker;
@@ -64,6 +63,10 @@ class HealthCheckerService extends EventEmitter {
     this.changeNodeAddress = changeNodeAddress;
     this.createHealthChecker();
     this.initializeDefaultChecks();
+  }
+
+  emit(eventName: string, detail?: any) {
+    this.dispatchEvent(new CustomEvent(eventName, { detail }));
   }
 
 
