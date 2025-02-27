@@ -12,7 +12,6 @@ import useURLParams from "@/hooks/common/useURLParams";
 export const DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS = {
   accountName: undefined,
   commentType: "post",
-  activeTab: "operations",
   pageNumber: 1,
   fromBlock: undefined,
   toBlock: undefined,
