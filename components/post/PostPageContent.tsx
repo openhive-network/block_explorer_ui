@@ -45,7 +45,7 @@ const PostPageContent = () => {
   const { title, author, active_votes } = postContent;
 
   return (
-    <div className="w-full h-full px-10">
+    <div className="page-container h-full">
       <div className="mb-10">
         <div className="text-3xl my-5">
           {title} by {author}

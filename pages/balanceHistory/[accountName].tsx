@@ -22,6 +22,7 @@ import BalanceHistoryChart from "@/components/balanceHistory/BalanceHistoryChart
 
 import ErrorPage from "../ErrorPage";
 import NoResult from "@/components/NoResult";
+import ScrollTopButton from "@/components/ScrollTopButton";
 // Memoizing the BalanceHistoryChart component to avoid unnecessary re-renders
 const MemoizedBalanceHistoryChart = React.memo(BalanceHistoryChart);
 
@@ -198,7 +199,7 @@ export default function BalanceHistory() {
         <div>Account not found</div>
       ) : (
         accountNameFromRoute && (
-          <div className="w-[95%]">
+          <div className="page-container">
             <Card data-testid="account-details">
               <CardHeader>
                 <div className="flex flex-wrap items-center justify-between gap-4 bg-theme dark:bg-theme">
@@ -269,6 +270,9 @@ export default function BalanceHistory() {
                 />
               </>
             )}
+            <div className="fixed bottom-[10px] right-0 flex flex-col items-end justify-end px-3 md:px-12">
+          <ScrollTopButton />
+        </div>
           </div>
         )
       )}

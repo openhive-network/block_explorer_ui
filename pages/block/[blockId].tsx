@@ -244,7 +244,7 @@ export default function Block() {
         </div>
       ) : blockDetails?.block_num ? (
         <div
-          className="w-full h-full flex flex-col gap-y-4 px-2"
+          className="page-container h-full flex flex-col gap-y-4"
           style={{ scrollMargin: "100px" }}
           id="block-page-top"
         >

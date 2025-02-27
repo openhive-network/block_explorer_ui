@@ -8,7 +8,7 @@ const ErrorPage: React.FC = () => {
   const router = useRouter();
   const apiAdresses = useApiAddresses();
   return (
-    <div className="w-full h-screen flex flex-col justify-between items-center">
+    <div className="page-container bg-theme h-screen flex flex-col justify-between items-center">
       <div></div>
       <div className="flex justify-center flex-col">
         <div className="flex justify-center">An error occured</div>

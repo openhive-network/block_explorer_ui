@@ -146,7 +146,7 @@ export default function Account() {
       <Head>
         <title>@{accountNameFromRoute} - Hive Explorer</title>
       </Head>
-      <div className="grid grid-cols-1 md:grid-cols-3 text-white mx-8  w-full gap-4 px-2 md:px-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 text-white page-container gap-4">
         {isMobile && (
           <MobileAccountNameCard
             accountName={accountNameFromRoute}

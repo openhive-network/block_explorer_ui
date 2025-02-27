@@ -58,7 +58,7 @@ const BackupWitnessSchedule: React.FC<BackupWitnessScheduleProps> = ({
 }) => {
   return (
     <div className="flex w-full overflow-auto">
-      <div className="bg-theme rounded-xl shadow-md w-full max-w-4xl p-3"> 
+      <div className="bg-theme rounded-xl shadow-md w-full p-3"> 
         <h2 className="text-xl font-semibold mb-2">Backup Witness Schedule</h2> 
         <div className="overflow-x-auto">
           <Table data-testid="table-body">

@@ -43,7 +43,7 @@ const WitnessSchedule: React.FC<WitnessScheduleProps> = ({
   }, [currentBlock, producedBlocks]);
 
   return (
-    <div className="bg-theme rounded-xl shadow-lg w-full max-w-4xl p-4">
+    <div className="bg-theme rounded-xl shadow-lg w-full p-4">
       {/* Title and Next Shuffle Container */}
       <div className="mb-3">
         <h2 className="text-xl font-semibold">Witness Schedule</h2>

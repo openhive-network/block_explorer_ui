@@ -64,7 +64,7 @@ export default function Home() {
       <Head>
         <title>Hive Explorer</title>
       </Head>
-      <div className="grid grid-cols-4 text-white px-2 w-full gap-3">
+      <div className=" page-container grid grid-cols-4 text-white gap-3">
         <HeadBlockCard
           headBlockCardData={dynamicGlobalQueryData}
           transactionCount={trxOpsLength}

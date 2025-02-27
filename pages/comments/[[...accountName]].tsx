@@ -47,7 +47,7 @@ const Comments: React.FC = () => {
 
   return (
     <div
-      className="w-full md:w-4/5 px-2 md:px-0"
+      className="page-container"
       data-testid="comments-search-comments-page"
     >
       <Card>

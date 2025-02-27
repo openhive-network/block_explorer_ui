@@ -72,7 +72,7 @@ export default function Transaction() {
       <Head>
         <title>{trxData?.transaction_id?.slice(0, 10)} - Hive Explorer</title>
       </Head>
-      <div className="w-full px-2 flex flex-col gap-y-4">
+      <div className="page-container flex flex-col gap-y-4">
         {!trxLoading && !!trxData && (
           <>
             <Card data-testid="transaction-header">
