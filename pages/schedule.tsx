@@ -9,6 +9,7 @@ import WitnessSchedule from "@/components/schedule/WitnessSchedule";
 import BackupWitnessSchedule from "@/components/schedule/BackupWitnessSchedule";
 import useWitnessesSchedule from "@/hooks/api/schedulePage/useWitnessesSchedule";
 import useBackupWitnessesSchedule from "@/hooks/api/schedulePage/useBackupWitnessesSchedule";
+import ScrollTopButton from "@/components/ScrollTopButton";
 
 const Schedule = () => {
   const { witnessesData } = useWitnesses(200, "rank", "asc");
@@ -63,7 +64,8 @@ const Schedule = () => {
       <Loader2 className="animate-spin mt-1 h-12 w-12 ml-3 ..." />
     </div>
   ) : (
-    <div className="w-full grid lg:grid-cols-2 gap-4 content-start px-[1rem] md:px-[5rem] ">
+  <div className="page-container">
+    <div className="w-full grid lg:grid-cols-2 gap-4 content-start">
       <WitnessSchedule
         data={scheduledWitnessesData}
         currentProducer={producerAccount}
@@ -74,6 +76,10 @@ const Schedule = () => {
 
       <BackupWitnessSchedule data={backupWitnessScheduleData} />
     </div>
+    <div className="fixed bottom-[10px] right-0 flex flex-col items-end justify-end px-3 md:px-12">
+      <ScrollTopButton />
+    </div>
+  </div>
   );
 };
 
