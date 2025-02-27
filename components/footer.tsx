@@ -271,14 +271,14 @@ const Footer = () => {
                 <span>Hafbe version #: </span>
                 {hafbeVersionData}
               </li>
-              <li className="whitespace-nowrap">
+              <li>
                 <AddressSwitchedDialog
                   addressType="api"
                   currentAddress={apiAddress}
                   setAddress={setApiAddress}
                 />
               </li>
-              <li className="whitespace-nowrap">
+              <li>
                 <AddressSwitchedDialog
                   addressType="node"
                   currentAddress={nodeAddress}
