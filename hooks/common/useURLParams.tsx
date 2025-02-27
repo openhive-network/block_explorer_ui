@@ -22,7 +22,7 @@ const useURLParams = <T,>(defaultState: T, omit?: string[]) => {
     return matches as (keyof T)[];
   }, [router.pathname]);
 
-  const setParams = (params: T) => {
+  const setParams = (params: T, excludeParams = omit) => {
     if (
       interpolationParams.every((param) => !!params[param]) &&
       router.isReady
@@ -33,7 +33,7 @@ const useURLParams = <T,>(defaultState: T, omit?: string[]) => {
         const value = dataToURL(params[paramKey]);
         if (
           !!value &&
-          !omit?.includes(key) &&
+          !excludeParams?.includes(key) &&
           value !== defaultState[paramKey]
         ) {
           urlParams[key] = value;
@@ -68,6 +68,21 @@ const useURLParams = <T,>(defaultState: T, omit?: string[]) => {
     getParams();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.query]);
+
+  // If someone messes with a url query, remove empty value param
+  useEffect(() => {
+    if (!router.isReady) return;
+
+    const queryParams = router.query;
+
+    Object.keys(queryParams).forEach((key) => {
+      if (!queryParams[key]) {
+        setParams(queryParams as T, ["accountName"]);
+      }
+    });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.query, router.isReady]);
 
   return {
     paramsState,
