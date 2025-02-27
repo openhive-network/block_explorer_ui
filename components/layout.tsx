@@ -4,7 +4,7 @@ import Navbar from "./navbar";
 import { Toaster } from "sonner";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 
-import { ApiChecker } from "./healthchecker/HealthChecker";
+import { ApiChecker } from "@/services/HealthCheckerService";
 import { ExplorerNodeApi } from "@/types/Node";
 import { config } from "@/Config";
 import { useApiAddressesContext } from "@/contexts/ApiAddressesContext";
