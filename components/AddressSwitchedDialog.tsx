@@ -60,7 +60,7 @@ const AddressSwitchedDialog: React.FC<AddressSwitcherDialogProps> = ({
       onOpenChange={setIsOpen}
     >
       <DialogTrigger data-testid="api-address-link">
-        <div>
+        <div className="text-left">
           <span>
             {addressType === "api" ? "Explorer backend API:" : "Hive node:"}
           </span>

@@ -19,7 +19,7 @@ export const defaultAccountOperationsTabSearchParams: AccountSearchParams = {
   toDate: undefined,
   lastBlocks: undefined,
   lastTime: undefined,
-  timeUnit: undefined,
+  timeUnit: "days",
   rangeSelectKey: "none",
   page: undefined,
   filters: [],
