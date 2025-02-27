@@ -16,10 +16,10 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const {hiveChain} = useHiveChainContext();
-  if (!hiveChain) return null;
-
+  
   const {nodeAddress, setNodeAddress} = useApiAddressesContext();
-
+  
+  if (!hiveChain) return null;
   const extendedHiveChain = hiveChain
   ?.extend<ExplorerNodeApi>();
 
