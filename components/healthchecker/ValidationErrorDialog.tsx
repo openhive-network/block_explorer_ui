@@ -5,9 +5,8 @@ import {
     DialogHeader,
     DialogTitle,
   } from "@/components/ui/dialog";
-import { useState } from "react";
 import { Button } from "../ui/button";
-import { ValidationErrorDetails } from "@/contexts/HealthCheckerContext";
+import { ValidationErrorDetails } from "@/services/HealthCheckerService"; 
 
 interface ValidationErrorDialogProps {
   isOpened: boolean;

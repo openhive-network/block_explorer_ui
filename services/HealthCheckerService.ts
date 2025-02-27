@@ -1,4 +1,3 @@
-import { ValidationErrorDetails } from "@/contexts/HealthCheckerServiceContext"; 
 import { HealthChecker, IHiveChainInterface, TScoredEndpoint, WaxHealthCheckerValidatorFailedError } from "@hiveio/wax";
 import { EventEmitter } from "events";
 
@@ -7,6 +6,14 @@ export interface ApiChecker {
   method: any;
   params: any;
   validatorFunction: (data: any) => string | true;
+}
+
+export type ValidationErrorDetails = {
+  checkName: string;
+  providerName: string;
+  message: string;
+  paths: string[];
+  params?: string | object;
 }
 
 export interface HealthCheckerFields {

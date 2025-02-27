@@ -7,7 +7,7 @@ import ProviderCard from "./ProviderCard";
 import { Card } from "../ui/card";
 import { Badge } from "../ui/badge";
 import ProviderAdditionDialog from "./ProviderAdditionDialog";
-import { ValidationErrorDetails } from "@/contexts/HealthCheckerServiceContext"; 
+import { ValidationErrorDetails } from "@/services/HealthCheckerService"; 
 import ValidationErrorDialog from "./ValidationErrorDialog";
 import HealthCheckerService from "@/services/HealthCheckerService";
 
