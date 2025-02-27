@@ -353,3 +353,15 @@ pre {
   background-color: inherit;
   font-size: small;
 }
+
+/*Page Container*/
+.page-container {
+  width: 98%; /* Default for larger screens */
+}
+
+/* Media query for small screens*/
+@media (max-width: 768px) { 
+  .page-container {
+    width: 99%;
+  }
+}
