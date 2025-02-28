@@ -20,7 +20,7 @@ const Footer = () => {
   const isDarkMode = theme === "dark"; // Check if the theme is dark
 
   return (
-    <footer className="w-full bg-theme mt-20 border-t border-gray-200 dark:border-gray-700">
+    <footer className="w-full bg-theme mt-5 border-t border-gray-200 dark:border-gray-700">
       <div className="container py-4">
         {/* Container for content */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-4">
