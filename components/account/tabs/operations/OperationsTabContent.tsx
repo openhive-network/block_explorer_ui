@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { ArrowDown, ArrowUp } from "lucide-react";
 
 import SearchRanges from "@/components/searchRanges/SearchRanges";
 import { Button } from "@/components/ui/button";
@@ -36,6 +37,10 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     ["accountName"]
   );
 
+  const [isCardContentHidden, setIsCardContentHidden] = useState(true);
+  // Operation types
+  const [filters, setFilters] = useState<boolean[]>([]);
+
   const {
     filters: filtersParam,
     fromBlock: fromBlockParam,
@@ -55,9 +60,6 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     startDate: fromDateParam,
     endDate: toDateParam,
   };
-
-  // Operation types
-  const [filters, setFilters] = useState<boolean[]>([]);
 
   const { accountOperations, isAccountOperationsLoading } =
     useAccountOperations(accountOperationsProps, liveDataEnabled);
@@ -124,6 +126,10 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     setParams(props);
   };
 
+  const handleCardContentVisibility = () => {
+    setIsCardContentHidden(!isCardContentHidden);
+  };
+
   useEffect(() => {
     if (!router.isReady) return;
 
@@ -133,13 +139,40 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     setAccountName(accounNameFromRoute);
   }, [router.isReady, router.query.accountName]);
 
+  // Don't show filters if only account name is present
+  useEffect(() => {
+    Object.keys(defaultAccountOperationsTabSearchParams).forEach((key) => {
+      if (key === "accountName") return;
+
+      const param =
+        paramsState[
+          key as keyof typeof defaultAccountOperationsTabSearchParams
+        ];
+      const defaultParam =
+        defaultAccountOperationsTabSearchParams[
+          key as keyof typeof defaultAccountOperationsTabSearchParams
+        ];
+      if (param !== defaultParam) {
+        setIsCardContentHidden(false);
+      }
+    });
+  }, [paramsState]);
+
   return (
     <TabsContent value="operations">
       <Card className="mb-4">
-        <CardHeader>
-          <CardTitle>Operation Search</CardTitle>
+        <CardHeader
+          className="p-0 m-0"
+          onClick={handleCardContentVisibility}
+        >
+          <div className="flex justify-center  items-center p-3 hover:bg-rowHover cursor-pointer">
+            <div className="w-full text-center text-2xl">Operation Search</div>
+            <div className="flex justify-end items-center">
+              {isCardContentHidden ? <ArrowDown /> : <ArrowUp />}
+            </div>
+          </div>
         </CardHeader>
-        <CardContent>
+        <CardContent hidden={isCardContentHidden}>
           <SearchRanges rangesProps={searchRanges} />
 
           <div className="flex items-center my-2">
