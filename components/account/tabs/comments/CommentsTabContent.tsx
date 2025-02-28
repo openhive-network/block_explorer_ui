@@ -1,12 +1,14 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState, useEffect } from "react";
+import { ArrowDown, ArrowUp } from "lucide-react";
+import { useRouter } from "next/router";
+import moment from "moment";
+
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
 import AccountCommentsPermlinkSearch from "./AccountCommentsPermlinkSearch";
 import AccountCommentPermlinkSearchResults from "./AccountCommentPermlinkSearchResults";
 import usePermlinkSearch from "@/hooks/api/common/usePermlinkSearch";
-import moment from "moment";
-import { useState, useEffect } from "react";
 import { trimAccountName } from "@/utils/StringUtils";
-import { useRouter } from "next/router";
 import useURLParams from "@/hooks/common/useURLParams";
 
 export const DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS = {
@@ -52,13 +54,44 @@ const CommentsTabContent = () => {
     setAccountName(accounNameFromRoute);
   }, [router.isReady, router.query.accountName]);
 
+  const [isCardContentHidden, setIsCardContentHidden] = useState(true);
+
+  const handleCardContentVisibility = () => {
+    setIsCardContentHidden(!isCardContentHidden);
+  };
+
+  // Don't show filters if only account name is present
+  useEffect(() => {
+    Object.keys(DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS).forEach((key) => {
+      if (key === "accountName") return;
+
+      const param =
+        paramsState[key as keyof typeof DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS];
+      const defaultParam =
+        DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS[
+          key as keyof typeof DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS
+        ];
+      if (param !== defaultParam) {
+        setIsCardContentHidden(false);
+      }
+    });
+  }, [paramsState]);
+
   return (
     <TabsContent value="comments">
       <Card className="mb-4">
-        <CardHeader>
-          <CardTitle>Comment Search</CardTitle>
+        <CardHeader
+          className="p-0 m-0"
+          onClick={handleCardContentVisibility}
+        >
+          <div className="flex justify-center  items-center p-3 hover:bg-rowHover cursor-pointer">
+            <div className="w-full text-center text-2xl">Comment Search</div>
+            <div className="flex justify-end items-center">
+              {isCardContentHidden ? <ArrowDown /> : <ArrowUp />}
+            </div>
+          </div>
         </CardHeader>
-        <CardContent>
+        <CardContent hidden={isCardContentHidden}>
           <AccountCommentsPermlinkSearch
             isDataLoading={permlinkSearchDataLoading}
             accountName={accountName}
