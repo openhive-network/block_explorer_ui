@@ -25,7 +25,7 @@ const AccountCommentPermlinkSearchResults: React.FC<
     <>
       {data.total_permlinks ? (
         <div>
-          <div className="flex justify-center items-center text-text sticky z-20">
+          <div className="flex justify-center items-center text-text sticky z-20 top-[3.2rem] md:top-[4rem]">
             <CustomPagination
               currentPage={paramsState?.pageNumber ?? 1}
               totalCount={data.total_permlinks}
