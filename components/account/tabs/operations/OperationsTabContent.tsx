@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { ArrowDown, ArrowUp } from "lucide-react";
 
 import SearchRanges from "@/components/searchRanges/SearchRanges";
 import { Button } from "@/components/ui/button";
@@ -8,6 +7,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
 import useURLParams from "@/hooks/common/useURLParams";
 import {
+  cn,
   convertBooleanArrayToIds,
   convertIdsToBooleanArray,
 } from "@/lib/utils";
@@ -23,10 +23,16 @@ import useAccountOperationsTabSearchRanges, {
 
 interface OpeationTabContentProps {
   liveDataEnabled: boolean;
+  isVisible: boolean;
+  setIsVisible: Dispatch<SetStateAction<boolean>>;
+  setIsFiltersActive: Dispatch<SetStateAction<boolean>>;
 }
 
 const OperationTabContent: React.FC<OpeationTabContentProps> = ({
   liveDataEnabled,
+  isVisible,
+  setIsVisible,
+  setIsFiltersActive,
 }) => {
   const router = useRouter();
   const searchRanges = useAccountOperationsTabSearchRanges();
@@ -37,7 +43,6 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     ["accountName"]
   );
 
-  const [isCardContentHidden, setIsCardContentHidden] = useState(true);
   // Operation types
   const [filters, setFilters] = useState<boolean[]>([]);
 
@@ -126,10 +131,6 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     setParams(props);
   };
 
-  const handleCardContentVisibility = () => {
-    setIsCardContentHidden(!isCardContentHidden);
-  };
-
   useEffect(() => {
     if (!router.isReady) return;
 
@@ -142,7 +143,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
   // Don't show filters if only account name is present
   useEffect(() => {
     Object.keys(defaultAccountOperationsTabSearchParams).forEach((key) => {
-      if (key === "accountName") return;
+      if (key === "accountName" || key === "page") return;
 
       const param =
         paramsState[
@@ -153,26 +154,27 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
           key as keyof typeof defaultAccountOperationsTabSearchParams
         ];
       if (param !== defaultParam) {
-        setIsCardContentHidden(false);
+        setIsFiltersActive(true);
+        setIsVisible(true);
       }
     });
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paramsState]);
 
   return (
     <TabsContent value="operations">
-      <Card className="mb-4">
-        <CardHeader
-          className="p-0 m-0"
-          onClick={handleCardContentVisibility}
-        >
-          <div className="flex justify-center  items-center p-3 hover:bg-rowHover cursor-pointer">
-            <div className="w-full text-center text-2xl">Operation Search</div>
-            <div className="flex justify-end items-center">
-              {isCardContentHidden ? <ArrowDown /> : <ArrowUp />}
-            </div>
-          </div>
+      <Card
+        className={cn(
+          "mb-4 overflow-hidden transition-all duration-500 ease-in max-h-0 opacity-0",
+          {
+            "max-h-96 opacity-100": isVisible,
+          }
+        )}
+      >
+        <CardHeader>
+          <CardTitle>Filters</CardTitle>
         </CardHeader>
-        <CardContent hidden={isCardContentHidden}>
+        <CardContent>
           <SearchRanges rangesProps={searchRanges} />
 
           <div className="flex items-center my-2">

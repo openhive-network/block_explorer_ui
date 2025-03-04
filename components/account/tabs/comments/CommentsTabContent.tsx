@@ -1,15 +1,21 @@
-import { useState, useEffect } from "react";
-import { ArrowDown, ArrowUp } from "lucide-react";
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { useRouter } from "next/router";
 import moment from "moment";
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
 import AccountCommentsPermlinkSearch from "./AccountCommentsPermlinkSearch";
 import AccountCommentPermlinkSearchResults from "./AccountCommentPermlinkSearchResults";
 import usePermlinkSearch from "@/hooks/api/common/usePermlinkSearch";
 import { trimAccountName } from "@/utils/StringUtils";
 import useURLParams from "@/hooks/common/useURLParams";
+import { cn } from "@/lib/utils";
+
+interface CommnetsTabContentProps {
+  isVisible: boolean;
+  setIsVisible: Dispatch<SetStateAction<boolean>>;
+  setIsFiltersActive: Dispatch<SetStateAction<boolean>>;
+}
 
 export const DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS = {
   accountName: undefined,
@@ -25,7 +31,11 @@ export const DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS = {
   timeUnit: "days",
 };
 
-const CommentsTabContent = () => {
+const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
+  isVisible,
+  setIsVisible,
+  setIsFiltersActive,
+}) => {
   const router = useRouter();
   const [accountName, setAccountName] = useState("");
   const { paramsState } = useURLParams(
@@ -54,12 +64,6 @@ const CommentsTabContent = () => {
     setAccountName(accounNameFromRoute);
   }, [router.isReady, router.query.accountName]);
 
-  const [isCardContentHidden, setIsCardContentHidden] = useState(true);
-
-  const handleCardContentVisibility = () => {
-    setIsCardContentHidden(!isCardContentHidden);
-  };
-
   // Don't show filters if only account name is present
   useEffect(() => {
     Object.keys(DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS).forEach((key) => {
@@ -72,26 +76,27 @@ const CommentsTabContent = () => {
           key as keyof typeof DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS
         ];
       if (param !== defaultParam) {
-        setIsCardContentHidden(false);
+        setIsFiltersActive(true);
+        setIsVisible(true);
       }
     });
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paramsState]);
 
   return (
     <TabsContent value="comments">
-      <Card className="mb-4">
-        <CardHeader
-          className="p-0 m-0"
-          onClick={handleCardContentVisibility}
-        >
-          <div className="flex justify-center  items-center p-3 hover:bg-rowHover cursor-pointer">
-            <div className="w-full text-center text-2xl">Comment Search</div>
-            <div className="flex justify-end items-center">
-              {isCardContentHidden ? <ArrowDown /> : <ArrowUp />}
-            </div>
-          </div>
+      <Card
+        className={cn(
+          "mb-4 overflow-hidden transition-all duration-500 ease-in max-h-0 opacity-0",
+          {
+            "max-h-96 opacity-100": isVisible,
+          }
+        )}
+      >
+        <CardHeader>
+          <CardTitle className="text-left">Filters</CardTitle>
         </CardHeader>
-        <CardContent hidden={isCardContentHidden}>
+        <CardContent>
           <AccountCommentsPermlinkSearch
             isDataLoading={permlinkSearchDataLoading}
             accountName={accountName}
