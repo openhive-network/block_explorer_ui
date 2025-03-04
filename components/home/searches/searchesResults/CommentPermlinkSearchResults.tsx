@@ -43,12 +43,13 @@ const CommentPermlinkSearchResults = () => {
     <>
       {permlinkSearchData.total_permlinks ? (
         <div>
-          <div className="flex justify-center items-center text-text my-4 sticky z-20 top-[3.2rem] md:top-[4rem]">
+          <div className="flex justify-center items-center text-text sticky z-20 pt-0 top-[3.2rem] md:top-[4rem]">
             <CustomPagination
               currentPage={permlinkPaginationPage}
               totalCount={permlinkSearchData.total_permlinks}
               pageSize={config.standardPaginationSize}
               onPageChange={changePermlinkSearchPagination}
+              className="mb-4"
             />
           </div>
 
