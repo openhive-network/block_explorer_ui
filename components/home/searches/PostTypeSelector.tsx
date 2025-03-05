@@ -20,7 +20,7 @@ const PostTypeSelector: React.FC<PostTypeSelectorProps> = ({
       <select
         onChange={handleChange}
         value={commentType}
-        className="border p-2 rounded bg-theme text-text"
+        className="border p-2 rounded bg-theme text-text cursor-pointer"
       >
         {COMMENT_TYPES.map((type, index) => (
           <option
