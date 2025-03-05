@@ -12,13 +12,14 @@ import useWitnessDetails from "@/hooks/api/common/useWitnessDetails";
 import { config } from "@/Config";
 import { cn } from "@/lib/utils";
 import {
-    TooltipProvider,
-    Tooltip,
-    TooltipTrigger,
-    TooltipContent,
+  TooltipProvider,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
 } from "../ui/tooltip";
-import list from '../../utils/BadActorList';
+import list from "../../utils/BadActorList";
 import ErrorMessage from "../ErrorMessage";
+import { Button } from "../ui/button";
 
 interface AccountMainCardProps {
   accountDetails: Explorer.FormattedAccountDetails;
@@ -50,16 +51,16 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
     witnessDetails?.witness.signing_key !== config.inactiveWitnessKey;
 
   const [isBadActor, setIsBadActor] = useState(false);
-   useEffect(() => {
-        // Check if the accountName is in the list
-        if (list.includes(accountName)) {
-            setIsBadActor(true);
-        }
-    }, [accountName]);
+  useEffect(() => {
+    // Check if the accountName is in the list
+    if (list.includes(accountName)) {
+      setIsBadActor(true);
+    }
+  }, [accountName]);
 
-   const handleCloseWarning = () => {
-        setIsBadActor(false);
-    };
+  const handleCloseWarning = () => {
+    setIsBadActor(false);
+  };
 
   return (
     <Card data-testid="account-details">
@@ -76,7 +77,10 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
               data-testid="user-avatar"
             />
             <div>
-              <h2 className="text-lg font-semibold text-gray-800 dark:text-white" data-testid="account-name">
+              <h2
+                className="text-lg font-semibold text-gray-800 dark:text-white"
+                data-testid="account-name"
+              >
                 {accountDetails.name}
               </h2>
               {accountDetails.is_witness && (
@@ -118,9 +122,9 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                             target="_blank"
                             rel="noopener noreferrer"
                           >
-                            <Link 
-                            size={15}
-                            strokeWidth={3}
+                            <Link
+                              size={15}
+                              strokeWidth={3}
                             />
                           </a>
                         </TooltipTrigger>
@@ -234,18 +238,8 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
       {accountDetails.is_witness && !isWitnessError && !isWitnessLoading && (
         <CardFooter>
           <div className="w-full flex justify-between">
-            <button
-              onClick={openVotersModal}
-              className="bg-explorer-orange text-explorer-gray-light dark:explorer-gray-dark rounded p-2"
-            >
-              Voters
-            </button>
-            <button
-              onClick={openVotesHistoryModal}
-              className="bg-explorer-orange text-explorer-gray-light dark:explorer-gray-dark rounded p-2"
-            >
-              Votes History
-            </button>
+            <Button onClick={openVotersModal}>Voters</Button>
+            <Button onClick={openVotesHistoryModal}>Votes History</Button>
           </div>
         </CardFooter>
       )}
