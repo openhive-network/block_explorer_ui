@@ -172,7 +172,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
         )}
       >
         <CardHeader>
-          <CardTitle>Filters</CardTitle>
+          <CardTitle className="text-left">Filters</CardTitle>
         </CardHeader>
         <CardContent>
           <SearchRanges rangesProps={searchRanges} />
