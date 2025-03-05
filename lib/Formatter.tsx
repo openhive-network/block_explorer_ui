@@ -242,9 +242,13 @@ class OperationsFormatter implements IWaxCustomFormatter {
     const amountMessage = amounts
       ? "sent: " +
         this.getFormattedAmount(amounts.hbd_amount) +
-        "and " +
+        " and " +
         this.getFormattedAmount(amounts.hive_amount)
       : "";
+
+    const fee = String(Number(escrow?.fee?.amount) / 10 ** 3);
+    const feeMessage = fee ? " with fee: " + fee + " HIVE " : "";
+
     return this.generateReactLink([
       initialMessage,
       this.getAccountLink(escrow.from),
@@ -253,6 +257,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
       "by agent",
       this.getAccountLink(escrow.agent),
       amountMessage,
+      feeMessage,
     ]);
   }
   /**
