@@ -39,19 +39,19 @@ const AccountOperationViewTabs: React.FC<AccountOperationViewTabs> = ({
       <TabsList className="flex w-full justify-start">
         <div className="bg-theme p-1 flex gap-2 rounded w-auto">
           <TabsTrigger
-            className="rounded"
+            className="rounded cursor-pointer hover:bg-buttonHover"
             value="operations"
           >
             Operations
           </TabsTrigger>
           <TabsTrigger
-            className="rounded"
+            className="rounded cursor-pointer hover:bg-buttonHover"
             value="comments"
           >
             Comments
           </TabsTrigger>
           <TabsTrigger
-            className="rounded"
+            className="rounded cursor-pointer hover:bg-buttonHover"
             value="interactions"
           >
             Interactions
