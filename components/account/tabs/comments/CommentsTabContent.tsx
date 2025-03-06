@@ -1,13 +1,21 @@
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
+import { useRouter } from "next/router";
+import moment from "moment";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
 import AccountCommentsPermlinkSearch from "./AccountCommentsPermlinkSearch";
 import AccountCommentPermlinkSearchResults from "./AccountCommentPermlinkSearchResults";
 import usePermlinkSearch from "@/hooks/api/common/usePermlinkSearch";
-import moment from "moment";
-import { useState, useEffect } from "react";
 import { trimAccountName } from "@/utils/StringUtils";
-import { useRouter } from "next/router";
 import useURLParams from "@/hooks/common/useURLParams";
+import { cn } from "@/lib/utils";
+
+interface CommnetsTabContentProps {
+  isVisible: boolean;
+  setIsVisible: Dispatch<SetStateAction<boolean>>;
+  setIsFiltersActive: Dispatch<SetStateAction<boolean>>;
+}
 
 export const DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS = {
   accountName: undefined,
@@ -23,7 +31,11 @@ export const DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS = {
   timeUnit: "days",
 };
 
-const CommentsTabContent = () => {
+const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
+  isVisible,
+  setIsVisible,
+  setIsFiltersActive,
+}) => {
   const router = useRouter();
   const [accountName, setAccountName] = useState("");
   const { paramsState } = useURLParams(
@@ -52,11 +64,37 @@ const CommentsTabContent = () => {
     setAccountName(accounNameFromRoute);
   }, [router.isReady, router.query.accountName]);
 
+  // Don't show filters if only account name is present
+  useEffect(() => {
+    Object.keys(DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS).forEach((key) => {
+      if (key === "accountName") return;
+
+      const param =
+        paramsState[key as keyof typeof DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS];
+      const defaultParam =
+        DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS[
+          key as keyof typeof DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS
+        ];
+      if (param !== defaultParam) {
+        setIsFiltersActive(true);
+        setIsVisible(true);
+      }
+    });
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paramsState]);
+
   return (
     <TabsContent value="comments">
-      <Card className="mb-4">
+      <Card
+        className={cn(
+          "mb-4 overflow-hidden transition-all duration-500 ease-in max-h-0 opacity-0",
+          {
+            "max-h-96 opacity-100": isVisible,
+          }
+        )}
+      >
         <CardHeader>
-          <CardTitle>Comment Search</CardTitle>
+          <CardTitle className="text-left">Filters</CardTitle>
         </CardHeader>
         <CardContent>
           <AccountCommentsPermlinkSearch

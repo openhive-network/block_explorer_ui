@@ -8,7 +8,7 @@ const usePermlinkSearch = (
 ) => {
   const {
     data: permlinkSearchData,
-    isLoading: permlinkSearchDataLoading,
+    isFetching: permlinkSearchDataLoading,
     isError: permlinkSearchDataError,
   } = useQuery({
     queryKey: ["permlinkSearch", permlinkSearchProps],

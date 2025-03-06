@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import SearchRanges from "@/components/searchRanges/SearchRanges";
@@ -7,6 +7,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
 import useURLParams from "@/hooks/common/useURLParams";
 import {
+  cn,
   convertBooleanArrayToIds,
   convertIdsToBooleanArray,
 } from "@/lib/utils";
@@ -22,10 +23,16 @@ import useAccountOperationsTabSearchRanges, {
 
 interface OpeationTabContentProps {
   liveDataEnabled: boolean;
+  isVisible: boolean;
+  setIsVisible: Dispatch<SetStateAction<boolean>>;
+  setIsFiltersActive: Dispatch<SetStateAction<boolean>>;
 }
 
 const OperationTabContent: React.FC<OpeationTabContentProps> = ({
   liveDataEnabled,
+  isVisible,
+  setIsVisible,
+  setIsFiltersActive,
 }) => {
   const router = useRouter();
   const searchRanges = useAccountOperationsTabSearchRanges();
@@ -35,6 +42,9 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     defaultAccountOperationsTabSearchParams,
     ["accountName"]
   );
+
+  // Operation types
+  const [filters, setFilters] = useState<boolean[]>([]);
 
   const {
     filters: filtersParam,
@@ -55,9 +65,6 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     startDate: fromDateParam,
     endDate: toDateParam,
   };
-
-  // Operation types
-  const [filters, setFilters] = useState<boolean[]>([]);
 
   const { accountOperations, isAccountOperationsLoading } =
     useAccountOperations(accountOperationsProps, liveDataEnabled);
@@ -133,11 +140,39 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     setAccountName(accounNameFromRoute);
   }, [router.isReady, router.query.accountName]);
 
+  // Don't show filters if only account name is present
+  useEffect(() => {
+    Object.keys(defaultAccountOperationsTabSearchParams).forEach((key) => {
+      if (key === "accountName" || key === "page") return;
+
+      const param =
+        paramsState[
+          key as keyof typeof defaultAccountOperationsTabSearchParams
+        ];
+      const defaultParam =
+        defaultAccountOperationsTabSearchParams[
+          key as keyof typeof defaultAccountOperationsTabSearchParams
+        ];
+      if (param !== defaultParam) {
+        setIsFiltersActive(true);
+        setIsVisible(true);
+      }
+    });
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paramsState]);
+
   return (
     <TabsContent value="operations">
-      <Card className="mb-4">
+      <Card
+        className={cn(
+          "mb-4 overflow-hidden transition-all duration-500 ease-in max-h-0 opacity-0",
+          {
+            "max-h-96 opacity-100": isVisible,
+          }
+        )}
+      >
         <CardHeader>
-          <CardTitle>Operation Search</CardTitle>
+          <CardTitle className="text-left">Filters</CardTitle>
         </CardHeader>
         <CardContent>
           <SearchRanges rangesProps={searchRanges} />
