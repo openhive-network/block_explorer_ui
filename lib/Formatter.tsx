@@ -239,6 +239,8 @@ class OperationsFormatter implements IWaxCustomFormatter {
     escrow: Hive.EscrowOperation,
     amounts?: { hbd_amount?: Hive.Supply; hive_amount?: Hive.Supply }
   ): React.JSX.Element {
+    const fee = this.getFormattedAmount(escrow.fee);
+
     const amountMessage = amounts
       ? "sent: " +
         this.getFormattedAmount(amounts.hbd_amount) +
@@ -246,8 +248,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
         this.getFormattedAmount(amounts.hive_amount)
       : "";
 
-    const fee = String(Number(escrow?.fee?.amount) / 10 ** 3);
-    const feeMessage = fee ? " with fee: " + fee + " HIVE " : "";
+    const feeMessage = fee ? " with fee: " + fee : "";
 
     return this.generateReactLink([
       initialMessage,
