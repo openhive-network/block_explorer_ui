@@ -267,6 +267,7 @@ export default function BalanceHistory() {
                   total_operations={accountBalanceHistory.total_operations}
                   total_pages={accountBalanceHistory.total_pages}
                   current_page={paramsState.page}
+                  account_name ={accountNameFromRoute}
                 />
               </>
             )}
