@@ -187,10 +187,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
     return operations.map((operation) => {
       return {
         "Operation Type": getOperationTypeForDisplayById(operation.opTypeId),
-        Date: operation.timestamp
-          ? new Date(operation.timestamp).toLocaleString()
-          : "",
-        Timestamp: operation.timestamp || "",
+        Timestamp: formatAndDelocalizeTime(operation.timestamp),
         "Block Number": operation.blockNumber?.toLocaleString() || "",
         Balance: `${formatRawCoin(operation.prev_balance)} ${coinName}`,
         "Balance Change": `${formatRawCoin(operation.balanceChange)} ${coinName}`,
