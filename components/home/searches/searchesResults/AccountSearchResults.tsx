@@ -68,7 +68,6 @@ const AccountSearchResults = () => {
     accountOperationsSearchProps,
     searchRanges
   );
-console.log(accountOperations?.total_pages);
   return (
     <>
       {accountOperations.total_operations > 0 ? (
