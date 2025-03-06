@@ -19,7 +19,8 @@ const useAccountOperations = (
 
   const {
     data: accountOperations,
-    isFetching: isAccountOperationsLoading,
+    isFetching: isAccountOperationsFetching,
+    isLoading: isAccountOperationsLoading,
     isError: isAccountOperationsError,
   }: UseQueryResult<Hive.AccountOperationsResponse> = useQuery({
     queryKey: ["account_operations", accountOperationsProps, liveDataEnabled],
@@ -35,6 +36,7 @@ const useAccountOperations = (
 
   return {
     accountOperations,
+    isAccountOperationsFetching,
     isAccountOperationsLoading,
     isAccountOperationsError,
   };

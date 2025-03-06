@@ -23,7 +23,7 @@ const AccountSearch = () => {
     searchRanges,
   } = useSearchesContext();
 
-  const { isAccountOperationsLoading } = useAccountOperations(
+  const { isAccountOperationsFetching } = useAccountOperations(
     accountOperationsSearchProps
   );
   const { operationsTypes } = useOperationsTypes();
@@ -112,7 +112,7 @@ const AccountSearch = () => {
           disabled={!accountName}
         >
           Search
-          {isAccountOperationsLoading && (
+          {isAccountOperationsFetching && (
             <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />
           )}
         </Button>
