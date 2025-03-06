@@ -29,12 +29,21 @@ import {
 } from "./ui/tooltip";
 import { useRouter } from "next/router";
 import CopyButton from "./ui/CopyButton";
+import DataExport from "./DataExport"; // Import DataExport
+import { extractTextFromReactElement } from "@/utils/StringUtils";
 
 interface OperationsTableProps {
   operations: Explorer.OperationForTable[];
   unformattedOperations?: Explorer.OperationForTable[];
   markedTrxId?: string;
   className?: string;
+}
+interface ExportableOperation {
+  Block: string;
+  Transaction: string;
+  Time: string;
+  Operation: string;
+  Content: string;
 }
 
 const localColors = colorByOperationCategory;
@@ -115,7 +124,61 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
     }
   };
 
+  const prepareExportData = () => {
+    const preparedData = operations.map(operation => {
+        let contentString: string = ""; // Initialize contentString
+
+        const unformattedOperation = unformattedOperations?.find(
+            (op) => op.operationId === operation.operationId
+        )?.operation;
+
+        if (rawJsonView || prettyJsonView) {
+            // JSON view is enabled, use JSON data
+            let jsonString = JSON.stringify(unformattedOperation, null, prettyJsonView ? 2 : undefined);
+            contentString = jsonString;  //Set content string to the Json String
+
+        } else {
+            // Visualized data view
+            const content = renderOperationContent(rawJsonView, prettyJsonView, operation);
+
+            if (typeof content === 'string') {
+
+                contentString = content;
+            } else if (React.isValidElement(content) && typeof content.type === 'string' && content.type === 'div') {
+
+                // Use the recursive function to extract text content
+                contentString = extractTextFromReactElement(content);
+
+            }
+            else {
+
+                contentString = String(content);
+            }
+        }
+        // Replace multiple spaces with single space
+        contentString = contentString.replace(/\s+/g, ' ');
+
+        return {
+            Block: operation.blockNumber?.toLocaleString() || '',
+            Transaction: operation.trxId?.slice(0, 10) || '',
+            Time: formatAndDelocalizeTime(operation.timestamp),
+            Operation: getOperationTypeForDisplay(operation.operation?.type),
+            Content: contentString,
+        };
+    });
+
+    return preparedData;
+  };
+
   return (
+    <>
+    <div className="flex justify-end">
+      <DataExport
+          data={prepareExportData()}
+          filename="operations.csv"
+          className="mb-2"
+      />
+    </div>
     <Table
       className={cn(
         "rounded-[6px] overflow-hidden max-w-[100%] text-xs",
@@ -304,6 +367,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
         })}
       </TableBody>
     </Table>
+  </> 
   );
 };
 
