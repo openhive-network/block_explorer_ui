@@ -1,3 +1,5 @@
+import React, { ReactNode } from 'react';
+
 export const capitalizeFirst = (text: string) => {
   return text.charAt(0).toUpperCase() + text.slice(1);
 };
@@ -165,3 +167,73 @@ export const grabNumericValue = (str: string): number => {
 
   return Number(negative + numberString);
 }
+
+/**
+ * function to extract content from React Element returned by operations formatter
+ *
+ * @param element react node of the element 
+ * @returns content of the react element
+ */
+export const extractTextFromReactElement = (element: ReactNode): string => {
+  if (typeof element === 'string') {
+    let trimmed = element.trim();
+    if (trimmed.startsWith("@")) {
+      // No space after @
+      return trimmed;
+    } else {
+      // Add a space after other strings
+      return trimmed + " ";
+    }
+  }
+
+  if (typeof element === 'number') {
+    return element.toString() + " ";
+  }
+
+  if (!React.isValidElement(element)) {
+    return ''; // Or some other appropriate fallback
+  }
+
+  let text = '';
+
+  if (Array.isArray(element)) {
+    // Recursively process each element in the array
+    element.forEach(child => {
+      text += extractTextFromReactElement(child);
+    });
+    return text;
+  }
+
+  if (React.isValidElement(element) && typeof element.type === 'function' && element.props && element.props.tooltipContent != null && element.props.tooltipTrigger != null) {
+    let trigger = extractTextFromReactElement(element.props.tooltipTrigger);
+    let content = extractTextFromReactElement(element.props.tooltipContent).trimEnd();
+    return `${trigger} (${content})`
+  }
+
+  if (React.isValidElement(element) && element.type === React.Fragment) {
+    // Handle React Fragment ( <></> )
+
+    React.Children.forEach(element.props.children, (child) => {
+
+      text += extractTextFromReactElement(child);
+    });
+    return text
+  }
+
+  if (React.isValidElement(element) && typeof element.type === 'string' && element.type === "span" && element.props && element.props.className === 'text-link') {
+    //It is a link
+    React.Children.forEach(element.props.children, (child) => {
+
+      text += extractTextFromReactElement(child);
+    });
+  }
+  else {
+    if (React.isValidElement(element) && element.props) {
+      React.Children.forEach(element.props.children, (child) => {
+
+        text += extractTextFromReactElement(child);
+      });
+    }
+  }
+  return text;
+};
