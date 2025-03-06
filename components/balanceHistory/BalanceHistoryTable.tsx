@@ -33,11 +33,14 @@ import { config } from "@/Config";
 import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import CopyButton from "../ui/CopyButton";
+import DataExport from "../DataExport";
+
 interface BalanceHistoryTableProps {
   operations: Explorer.BalanceHistoryForTable[];
   total_operations: number;
   total_pages: number;
   current_page: number;
+  account_name: string;
 }
 
 const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
@@ -45,6 +48,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
   total_operations,
   total_pages,
   current_page,
+  account_name,
 }) => {
   const router = useRouter();
   const {
@@ -57,7 +61,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
   // Create refs to store row and detail div elements
   const rowRefs = useRef<Map<number, HTMLTableRowElement>>(new Map());
   const detailRefs = useRef<Map<number, HTMLDivElement>>(new Map());
-  
+
   // Track screen size for mobile responsiveness
   const [isMobile, setIsMobile] = useState(false);
 
@@ -75,7 +79,9 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
   }, []);
 
   const formatRawCoin = (coinValue: number) =>
-    router.query.coinType === 'VESTS' ? formatNumber(coinValue, true, false) : formatNumber(coinValue, false, false);
+    router.query.coinType === "VESTS"
+      ? formatNumber(coinValue, true, false)
+      : formatNumber(coinValue, false, false);
 
   const getOperationColor = (op_type_id: number) => {
     const operation = operationsTypes.find(
@@ -173,136 +179,181 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
     }
   };
 
+  const coinName = router.query.coinType
+                  ? router.query.coinType
+                  : "HIVE";
+
+  const prepareExportData = () => {
+    return operations.map((operation) => {
+      return {
+        "Operation Type": getOperationTypeForDisplayById(operation.opTypeId),
+        Date: operation.timestamp
+          ? new Date(operation.timestamp).toLocaleString()
+          : "",
+        Timestamp: operation.timestamp || "",
+        "Block Number": operation.blockNumber?.toLocaleString() || "",
+        Balance: `${formatRawCoin(operation.prev_balance)} ${coinName}`,
+        "Balance Change": `${formatRawCoin(operation.balanceChange)} ${coinName}`,
+        "New Balance": `${formatRawCoin(operation.balance)} ${coinName}`,
+      };
+    });
+  };
+
   return (
     <>
     <div className="sticky z-20 top-[3.2rem] md:top-[4rem]">
-      <CustomPagination
-        currentPage={current_page ? current_page : 1}
-        onPageChange={updateUrl}
-        pageSize={config.standardPaginationSize}
-        totalCount={total_operations}
-        className="text-black dark:text-white"
-        isMirrored={false}
-      />
-    </div>
+        <CustomPagination
+          currentPage={current_page ? current_page : 1}
+          onPageChange={updateUrl}
+          pageSize={config.standardPaginationSize}
+          totalCount={total_operations}
+          className="text-black dark:text-white"
+          isMirrored={false}
+        />
+      </div>
       {total_operations === 0 ? (
         <div className="flex justify-center w-full">
           No results matching given criteria
         </div>
       ) : (
-        <Table
-          className={cn(
-            "rounded-[6px] overflow-hidden max-w-full text-xs mt-3"
-          )}
-        >
-          <TableHeader>
-            <TableRow>
-              <TableHead>Operation Type</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>Block Number</TableHead>
-              <TableHead>Balance</TableHead>
-              <TableHead>Balance Change</TableHead>
-              <TableHead>New Balance</TableHead>
-              <TableHead>Details</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {operations.map((operation, index) => {
-              const operationBgColor = getOperationColor(operation.opTypeId);
-              const coinName = router.query.coinType
-                ? router.query.coinType
-                : "HIVE";
-              const isExpanded = expandedRow === operation.operationId;
+        <>
+          <div className="flex justify-end">
+            <DataExport
+              data={prepareExportData()}
+              filename={`${account_name}_balance_history.csv`}
+              className="mt-2"
+            />
+          </div>
 
-              return (
-                <React.Fragment key={index}>
-                  <TableRow
-                    ref={(el) => el && rowRefs.current.set(operation.operationId, el)}
-                    className={isExpanded ? "bg-rowOdd" : ""}
-                  >
-                    <TableCell data-testid="operation-type">
-                      <div className="flex justify-start rounded">
-                        <span
-                          className={`rounded w-4 mr-2 ${operationBgColor}`}
-                        ></span>
-                        <span>
-                          {getOperationTypeForDisplayById(operation.opTypeId)}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div>
-                              <TimeAgo
-                                datetime={new Date(
-                                  formatAndDelocalizeTime(operation.timestamp)
-                                )}
-                              />
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent className="bg-theme text-text">
-                            {formatAndDelocalizeTime(operation.timestamp)}
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </TableCell>
-                    <TableCell data-testid="block-number">
-                      <Link
-                        className="text-link"
-                        href={`/block/${operation.blockNumber}`}
-                      >
-                        {operation.blockNumber?.toLocaleString()}
-                      </Link>
-                      <CopyButton
-                        text={operation.blockNumber}
-                        tooltipText="Copy block number"
-                      />
-                    </TableCell>
-                    <TableCell data-testid="operation-prev-balance">
-                      {formatRawCoin(operation.prev_balance)} {coinName}
-                    </TableCell>
-                    <TableCell data-testid="operation-balance-change">
-                      {formatRawCoin(operation.balanceChange)} {coinName}
-                    </TableCell>
-                    <TableCell>
-                      {formatRawCoin(operation.balance)} {coinName}
-                    </TableCell>
-                    <TableCell>
-                      <button
-                        onClick={() => handleRowClick(operation.operationId)}
-                        className="text-link"
-                      >
-                        {isExpanded ? (
-                          <ChevronUp size={20} data-testid="last-updated-icon" />
-                        ) : (
-                          <ChevronDown size={20} data-testid="last-updated-icon" />
-                        )}                      
-                      </button>
-                    </TableCell>
-                  </TableRow>
-                  {isExpanded && (
+          <Table
+            className={cn(
+              "rounded-[6px] overflow-hidden max-w-full text-xs mt-3"
+            )}
+          >
+            <TableHeader>
+              <TableRow>
+                <TableHead>Operation Type</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>Block Number</TableHead>
+                <TableHead>Balance</TableHead>
+                <TableHead>Balance Change</TableHead>
+                <TableHead>New Balance</TableHead>
+                <TableHead>Details</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {operations.map((operation, index) => {
+                const operationBgColor = getOperationColor(operation.opTypeId);
+                const isExpanded = expandedRow === operation.operationId;
+
+                return (
+                  <React.Fragment key={index}>
                     <TableRow
-                      ref={(el) => el && detailRefs.current.set(operation.operationId, el)}
+                      ref={(el) =>
+                        el && rowRefs.current.set(operation.operationId, el)
+                      }
+                      className={isExpanded ? "bg-rowOdd" : ""}
                     >
-                      <TableCell colSpan={7} className="p-4">
-                        <div className="border rounded-2xl p-4">
-                          <h3 className="text-lg font-bold">
-                            Operation Details
-                          </h3>
-                          <OperationDetails
-                            operationId={operation.operationId}
-                          />
+                      <TableCell data-testid="operation-type">
+                        <div className="flex justify-start rounded">
+                          <span
+                            className={`rounded w-4 mr-2 ${operationBgColor}`}
+                          ></span>
+                          <span>
+                            {getOperationTypeForDisplayById(operation.opTypeId)}
+                          </span>
                         </div>
                       </TableCell>
+                      <TableCell>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <div>
+                                <TimeAgo
+                                  datetime={
+                                    new Date(
+                                      formatAndDelocalizeTime(
+                                        operation.timestamp
+                                      )
+                                    )
+                                  }
+                                />
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipContent className="bg-theme text-text">
+                              {formatAndDelocalizeTime(operation.timestamp)}
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </TableCell>
+                      <TableCell
+                        data-testid="block-number"
+                        className="whitespace-nowrap"
+                      >
+                        <Link
+                          className="text-link"
+                          href={`/block/${operation.blockNumber}`}
+                        >
+                          {operation.blockNumber?.toLocaleString()}
+                        </Link>
+                        <CopyButton
+                          text={operation.blockNumber}
+                          tooltipText="Copy block number"
+                        />
+                      </TableCell>
+                      <TableCell data-testid="operation-prev-balance">
+                        {formatRawCoin(operation.prev_balance)} {coinName}
+                      </TableCell>
+                      <TableCell data-testid="operation-balance-change">
+                        {formatRawCoin(operation.balanceChange)} {coinName}
+                      </TableCell>
+                      <TableCell>
+                        {formatRawCoin(operation.balance)} {coinName}
+                      </TableCell>
+                      <TableCell>
+                        <button
+                          onClick={() => handleRowClick(operation.operationId)}
+                          className="text-link"
+                        >
+                          {isExpanded ? (
+                            <ChevronUp
+                              size={20}
+                              data-testid="last-updated-icon"
+                            />
+                          ) : (
+                            <ChevronDown
+                              size={20}
+                              data-testid="last-updated-icon"
+                            />
+                          )}
+                        </button>
+                      </TableCell>
                     </TableRow>
-                  )}
-                </React.Fragment>
-              );
-            })}
-          </TableBody>
-        </Table>
+                    {isExpanded && (
+                      <TableRow
+                        ref={(el) =>
+                          el &&
+                          detailRefs.current.set(operation.operationId, el)
+                        }
+                      >
+                        <TableCell colSpan={7} className="p-4">
+                          <div className="border rounded-2xl p-4">
+                            <h3 className="text-lg font-bold">
+                              Operation Details
+                            </h3>
+                            <OperationDetails
+                              operationId={operation.operationId}
+                            />
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </React.Fragment>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </>
       )}
     </>
   );
