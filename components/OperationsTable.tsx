@@ -37,6 +37,8 @@ interface OperationsTableProps {
   unformattedOperations?: Explorer.OperationForTable[];
   markedTrxId?: string;
   className?: string;
+  referrer?:string;
+  accountName?:string;
 }
 interface ExportableOperation {
   Block: string;
@@ -90,6 +92,8 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
   unformattedOperations,
   markedTrxId,
   className,
+  referrer,
+  accountName,
 }) => {
   const router = useRouter();
   const {
@@ -175,8 +179,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
     <div className="flex justify-end">
       <DataExport
           data={prepareExportData()}
-          filename="operations.csv"
-          className="mb-2"
+          filename={`${accountName ? `${accountName}_` : ""}${referrer ? referrer: ""}`} className="mb-2" 
       />
     </div>
     <Table
