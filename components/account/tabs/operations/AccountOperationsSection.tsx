@@ -68,6 +68,8 @@ const AccountOperationsSection: React.FC<AccountOperationsSectionProps> = ({
         unformattedOperations={convertOperationResultsToTableOperations(
           accountOperations?.operations_result || []
         )}
+        referrer="operations"
+        accountName={paramsState.accountName?.startsWith('@') ? paramsState.accountName.slice(1) : paramsState.accountName}
       />
     </>
   );
