@@ -102,6 +102,8 @@ const AccountSearchResults = () => {
           <OperationsTable
             operations={formattedOperations}
             unformattedOperations={unformattedOperations}
+            referrer="account_search_result"
+            accountName={accountOperationsSearchProps?.accountName}
           />
         </div>
       ) : (
