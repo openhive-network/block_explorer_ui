@@ -159,7 +159,7 @@ const AccountCommentPermlinkResultTable = ({
         />
       </div>
     </div>
-      <div className="flex w-full overflow-auto">
+      <div className="flex w-full overflow-auto rounded">
         <div className="text-text w-[100%] bg-theme p-5">
           <Table data-testid="table-body">
             <TableHeader>

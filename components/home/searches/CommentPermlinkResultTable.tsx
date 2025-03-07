@@ -140,8 +140,7 @@ const CommentPermlinkResultTable = ({
       </div>
     </div>
       <div className="flex w-full overflow-auto">
-      
-        <div className="text-text w-[100%] bg-theme dark:bg-theme p-5">
+        <div className="text-text w-[100%] bg-theme dark:bg-theme p-5 rounded">
           <Table data-testid="table-body">
             <TableHeader>
               <TableRow>{buildTableHeader()}</TableRow>

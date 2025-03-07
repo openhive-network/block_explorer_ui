@@ -204,7 +204,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
           onPageChange={updateUrl}
           pageSize={config.standardPaginationSize}
           totalCount={total_operations}
-          className="text-black dark:text-white"
+          className="rounded"
           isMirrored={false}
         />
       </div>

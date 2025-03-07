@@ -140,7 +140,7 @@ const DataExport: React.FC<DataExportProps> = ({
               <Button
                 variant="outline"
                 className={cn(
-                  " border-gray-300 text-gray-700 shadow-sm hover:bg-explorer-extra-light-gray flex items-center space-x-1 max-w-fit h-8 p-2",
+                  " border-gray-300 shadow-sm hover:bg-explorer-extra-light-gray flex items-center space-x-1 max-w-fit h-8 p-2 rounded",
                   className
                 )}
                 disabled={isExporting || data.length === 0} //Disable if exporting or no data

@@ -171,7 +171,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
               }}
               pageSize={config.standardPaginationSize}
               totalCount={witnessVoters.total_operations}
-              className="text-black dark:text-white"
+              className="rounded"
               isMirrored={false}
             />
             {witnessVoters?.voters?.length === 0 && !isWitnessVotersLoading ? (

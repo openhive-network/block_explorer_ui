@@ -64,7 +64,7 @@ const AccountOperationViewTabs: React.FC<AccountOperationViewTabs> = ({
       onValueChange={handleTabChange}
       className="flex-col w-full"
     >
-      <TabsList className="flex w-full justify-between">
+      <TabsList className="flex w-full justify-between p-0">
         <div className="bg-theme p-1 flex gap-2 rounded w-auto">
           <TabsTrigger
             className="rounded cursor-pointer hover:bg-buttonHover"

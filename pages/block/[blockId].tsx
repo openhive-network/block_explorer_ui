@@ -295,7 +295,7 @@ export default function Block() {
             >
               {!!totalOperations?.total_operations &&
                 totalOperations?.total_operations > 1000 && (
-                  <div className="my-4 w-full sticky z-20 top-[3.2rem] md:top-[4rem]">
+                  <div className="my-4 w-full sticky z-20 top-[3.2rem] md:top-[4rem] rounded">
                     <CustomPagination
                       currentPage={paramsState.page}
                       onPageChange={(newPage: number) =>

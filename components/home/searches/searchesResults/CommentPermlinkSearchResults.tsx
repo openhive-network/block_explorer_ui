@@ -49,7 +49,7 @@ const CommentPermlinkSearchResults = () => {
               totalCount={permlinkSearchData.total_permlinks}
               pageSize={config.standardPaginationSize}
               onPageChange={changePermlinkSearchPagination}
-              className="mb-4"
+              className="mb-4 rounded"
             />
           </div>
 

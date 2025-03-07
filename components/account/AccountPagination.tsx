@@ -22,7 +22,7 @@ const AccountPagination: React.FC<AccountPaginationProps> = ({
     <div className="flex-col w-full">
       {operationsCount &&  Math.ceil(operationsCount / config.standardPaginationSize) > 1 && (
         <div
-          className="flex w-full justify-center items-center flex-wrap bg-theme"
+          className="flex w-full justify-center items-center flex-wrap bg-theme rounded"
           data-testid="account-top-bar"
         >
           <div className="flex items-center justify-center w-full md:ml-auto md:w-3/4">
