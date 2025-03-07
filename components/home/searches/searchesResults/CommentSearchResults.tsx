@@ -87,6 +87,8 @@ const CommentSearchResults = () => {
           <OperationsTable
             operations={formattedOperations}
             unformattedOperations={unformattedOperations}
+            referrer="comments_search_results"
+            accountName={commentSearchProps?.accountName}
           />
         </div>
       ) : (
