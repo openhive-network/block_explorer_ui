@@ -15,6 +15,7 @@ import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import useHandleCommentsSearch from "./hooks/useHandleCommentsSearch";
 import { Button } from "@/components/ui/button";
 import CopyButton from "@/components/ui/CopyButton";
+import DataExport from "@/components/DataExport";
 
 interface CommentPermlinkResultTableProps {
   data: Hive.Permlink[];
@@ -54,7 +55,7 @@ const buildTableBody = (
   return data.map(
     ({ block, operation_id, permlink, timestamp, trx_id }: any) => {
       return (
-        <React.Fragment key={trx_id}>
+        <React.Fragment key={trx_id}>          
           <TableRow className="border-b border-gray-700 hover:bg-inherit p-[10px]">
             <TableCell className="text-left text-link whitespace-nowrap">
               <Link href={`/block/${block}`}>{block.toLocaleString()}</Link>
@@ -111,9 +112,35 @@ const CommentPermlinkResultTable = ({
     handleCommentsSearch(accountName, permlink);
     openCommentsSection(accountName, permlink);
   };
+
+  const prepareExportData = () => {
+    if (!data || !data.length || !accountName) return [];
+  
+    return data.map(({ block, operation_id, permlink, timestamp, trx_id }: any) => {
+ 
+      return {
+        Block: block.toLocaleString(),
+        "Operation Id": operation_id,
+        Permlink: permlink,
+        Timestamp: formatAndDelocalizeTime(timestamp),
+        "Trx Id": trx_id?.slice(0, 10),
+      };
+    });
+  };
+
   return (
     <>
+    <div className="w-full">
+      <div className="flex justify-end">
+        <DataExport
+            data={prepareExportData()}
+            filename={`${accountName}_permlink_search_result.csv`}
+            className="mb-2"
+        />
+      </div>
+    </div>
       <div className="flex w-full overflow-auto">
+      
         <div className="text-text w-[100%] bg-theme dark:bg-theme p-5">
           <Table data-testid="table-body">
             <TableHeader>
