@@ -18,6 +18,7 @@ import { SquareArrowOutUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useHandleInteractionsSearch } from "../interactions/useHandleInteractionsSearch";
 import CopyButton from "@/components/ui/CopyButton";
+import DataExport from "@/components/DataExport";
 
 interface AccountCommentPermlinkResultTableProps {
   data: Hive.Permlink[];
@@ -131,8 +132,33 @@ const AccountCommentPermlinkResultTable = ({
     handleCommentsSearch(accountName as string, permlink);
   };
 
+   const prepareExportData = () => {
+      if (!data || !data.length || !accountName) return [];
+    
+      return data.map(({ block, operation_id, permlink, timestamp, trx_id }: any) => {
+   
+        return {
+          Block: block.toLocaleString(),
+          "Operation Id": operation_id,
+          Permlink: permlink,
+          Timestamp: formatAndDelocalizeTime(timestamp),
+          "Trx Id": trx_id?.slice(0, 10),
+        };
+      });
+    };
+  
+
   return (
     <>
+    <div className="w-full">
+      <div className="flex justify-end">
+        <DataExport
+            data={prepareExportData()}
+            filename={`${accountName}_comments.csv`}
+            className="mb-2"
+        />
+      </div>
+    </div>
       <div className="flex w-full overflow-auto">
         <div className="text-text w-[100%] bg-theme p-5">
           <Table data-testid="table-body">
