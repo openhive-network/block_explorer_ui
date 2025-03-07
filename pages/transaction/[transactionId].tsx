@@ -142,6 +142,7 @@ export default function Transaction() {
                     unformattedOperations={convertTransactionResponseToTableOperations(
                       trxData
                     )}
+                    referrer={`${trxData?.transaction_id?.slice(0, 10)}_transaction_details`}
                   />
                 )}
                 <Card data-testid="transaction-details">
