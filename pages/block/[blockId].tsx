@@ -313,6 +313,7 @@ export default function Block() {
                     operations={convertedTotalOperations}
                     markedTrxId={paramsState.trxId}
                     unformattedOperations={unformattedOperations}
+                    referrer={`${blockId}_block_details.csv`}
                   />
                 )}
               </div>
