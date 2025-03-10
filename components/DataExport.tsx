@@ -12,12 +12,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { stringify } from "csv-stringify";
 import { Download } from "lucide-react";
 import { Loader2 } from "lucide-react";
@@ -74,7 +68,7 @@ const DataExport: React.FC<DataExportProps> = ({
       const filteredData = data.map((item) => {
         const newItem: { [key: string]: any } = {};
         selectedColumns.forEach((col) => {
-          if (item.hasOwnProperty(col)) {              
+          if (item.hasOwnProperty(col)) {
             newItem[col] = item[col];
           }
         });
@@ -132,103 +126,93 @@ const DataExport: React.FC<DataExportProps> = ({
   };
 
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger>
-              <Button
-                variant="outline"
-                className={cn(
-                  " border-gray-300 shadow-sm hover:bg-explorer-extra-light-gray flex items-center space-x-1 max-w-fit h-8 p-2 rounded",
-                  className
-                )}
-                disabled={isExporting || data.length === 0} //Disable if exporting or no data
-              >
-                <Download className="h-4 w-4" />
-                <span>{title}</span>
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] flex flex-col align-center overflow-auto px-0 pt-10">
-              <DialogHeader className="pb-0">
-                <div className="px-2">
-                  <DialogTitle className="flex pb-1">
-                    Select Columns to Export
-                  </DialogTitle>
-                  <DialogDescription>
-                    Choose which columns you want to include in the CSV export.
-                  </DialogDescription>
-                </div>
-                <div className="flex justify-end space-x-2 px-2 pt-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleSelectAll}
-                    disabled={isExporting || noDataMessage !== null}
-                  >
-                    Select All
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleDeselectAll}
-                    disabled={isExporting || noDataMessage !== null}
-                  >
-                    Deselect All
-                  </Button>
-                </div>
-              </DialogHeader>
-              {noDataMessage ? (
-                <div className="px-2 py-4 text-center text-gray-500">
-                  {noDataMessage}
-                </div>
-              ) : (
-                <div className="grid gap-4 py-4 px-2 overflow-auto">
-                  {allColumns.map((column) => (
-                    <div key={column} className="flex items-center space-x-2">
-                      <Input
-                        type="checkbox"
-                        id={column}
-                        checked={selectedColumns.includes(column)}
-                        onChange={() => handleColumnSelect(column)}
-                        className="h-4 w-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                      />
-                      <Label
-                        htmlFor={column}
-                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                      >
-                        {column}
-                      </Label>
-                    </div>
-                  ))}
-                </div>
-              )}
-              <DialogFooter>
-                <Button
-                  type="submit"
-                  onClick={handleExport}
-                  disabled={
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <div
+          className={cn(
+            "bg-buttonBg border-gray-300 shadow-sm hover:bg-buttonHover flex items-center space-x-1 max-w-fit h-8 p-2 rounded cursor-pointer outline-none",
+            className
+          )}
+          
+        >
+          <Download className="h-4 w-4" />
+          <span>{title}</span>
+        </div>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px] flex flex-col align-center overflow-auto px-0 pt-10">
+        <DialogHeader className="pb-0">
+          <div className="px-2">
+            <DialogTitle className="flex pb-1">
+              Select Columns to Export
+            </DialogTitle>
+            <DialogDescription>
+              Choose which columns you want to include in the CSV export.
+            </DialogDescription>
+          </div>
+          <div className="flex justify-end space-x-2 px-2 pt-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleSelectAll}
+              disabled={isExporting || noDataMessage !== null}
+            >
+              Select All
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleDeselectAll}
+              disabled={isExporting || noDataMessage !== null}
+            >
+              Deselect All
+            </Button>
+          </div>
+        </DialogHeader>
+        {noDataMessage ? (
+          <div className="px-2 py-4 text-center text-gray-500">
+            {noDataMessage}
+          </div>
+        ) : (
+          <div className="grid gap-4 py-4 px-2 overflow-auto">
+            {allColumns.map((column) => (
+              <div key={column} className="flex items-center space-x-2">
+                <Input
+                  type="checkbox"
+                  id={column}
+                  checked={selectedColumns.includes(column)}
+                  onChange={() => handleColumnSelect(column)}
+                  className="h-4 w-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                />
+                <Label
+                  htmlFor={column}
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  {column}
+                </Label>
+              </div>
+            ))}
+          </div>
+        )}
+        <DialogFooter>
+          <Button
+            type="submit"
+            onClick={handleExport}
+            disabled={
                     isExporting ||
                     isExportButtonDisabled ||
                     noDataMessage !== null
-                  }
-                  className="mr-2"
-                >
-                  {isExporting ? (
-                    <Loader2 className="animate-spin h-4 w-4 mr-2" />
-                  ) : (
-                    "Export"
-                  )}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </TooltipTrigger>
-        <TooltipContent className="bg-theme text-text">
-          The data will be filtered according to the selected columns
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+            }
+            className="mr-2"
+          >
+            {isExporting ? (
+              <Loader2 className="animate-spin h-4 w-4 mr-2" />
+            ) : (
+              "Export"
+            )}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
 
