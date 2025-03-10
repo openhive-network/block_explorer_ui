@@ -262,7 +262,7 @@ class FetchingService {
 
   async getVestingDelegations(
     delegatorAccount: string
-  ): Promise<Hive.AccountDelegationsResponse> {
+  ): Promise<Hive.VestingDelegationsResponse> {
     return await this.extendedHiveChain!.restApi["balance-api"].delegations({
       accountName: delegatorAccount,
     });
