@@ -147,8 +147,8 @@ export const extendedRest = {
       urlPath: "accounts/{accountName}/balance-history",
     },
     delegations: {
-      params: Hive.GetAccountDelegationsParams,
-      result: Hive.AccountDelegationsResponse,
+      params: Hive.GetVestingDelegationsParams,
+      result: Hive.VestingDelegationsResponse,
       urlPath: "accounts/{accountName}/delegations",
     },
   },
