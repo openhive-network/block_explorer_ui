@@ -13,23 +13,16 @@ const useVestingDelegations = (
     data: vestingDelegationsData,
     isLoading: isVestingDelegationsLoading,
     isError: isVestingDelegationsError,
-  }: UseQueryResult<Hive.VestingDelegations[]> = useQuery({
+  }: UseQueryResult<Hive.TwoDirectionDelegations> = useQuery({
     queryKey: ["vestingDelegations", delegatorAccount, liveDataEnabled],
     queryFn: () => fetchingService.getVestingDelegations(delegatorAccount),
     enabled: !!delegatorAccount,
-    select: (data) => {
-      const sortedData = data.sort(
-        (a: Hive.VestingDelegations, b: Hive.VestingDelegations) =>
-          a.delegatee.toLowerCase().localeCompare(b.delegatee.toLowerCase())
-      );
-      return sortedData;
-    },
-
     refetchOnWindowFocus: false,
   });
 
   return {
-    vestingDelegationsData,
+    outgoingDelegations: vestingDelegationsData?.outgoing_delegations,
+    incomingDelegations: vestingDelegationsData?.incoming_delegations,
     isVestingDelegationsLoading,
     isVestingDelegationsError,
   };
