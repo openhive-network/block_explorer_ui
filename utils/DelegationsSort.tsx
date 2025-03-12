@@ -91,9 +91,9 @@ export const buildTableHead = (
   direction?: "incoming" | "outgoing"
 ) => {
   const tableHeaderCells =
-    direction === "outgoing"
-      ? TABLE_HEADER_CELLS_OUTGOING
-      : TABLE_HEADER_CELLS_INCOMING;
+    direction === "incoming"
+      ? TABLE_HEADER_CELLS_INCOMING
+      : TABLE_HEADER_CELLS_OUTGOING;
 
   return tableHeaderCells.map((cellName: string) => {
     return (
