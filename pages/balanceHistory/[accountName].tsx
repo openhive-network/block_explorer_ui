@@ -23,6 +23,7 @@ import BalanceHistoryChart from "@/components/balanceHistory/BalanceHistoryChart
 import ErrorPage from "../ErrorPage";
 import NoResult from "@/components/NoResult";
 import ScrollTopButton from "@/components/ScrollTopButton";
+import useAggregatedBalanceHistory from "@/hooks/api/balanceHistory/useAggregatedHistory";
 // Memoizing the BalanceHistoryChart component to avoid unnecessary re-renders
 const MemoizedBalanceHistoryChart = React.memo(BalanceHistoryChart);
 
@@ -33,40 +34,26 @@ interface Operation {
 
 const prepareData = (operations: Operation[]) => {
   if (!operations || operations.length === 0) return [];
-  
-  const dailyData = new Map<string, { balance: number; balance_change: number }>();
+
+  const aggregatedData = new Map<
+    string,
+    { balance: number; balance_change: number }
+  >();
 
   operations.forEach((operation: any) => {
-    let date;
-    if (typeof operation.timestamp === 'string') {
-      date = new Date(operation.timestamp);
-    } else if (typeof operation.timestamp === 'number') {
-      date = new Date(operation.timestamp * 1000);
-    } else {
-      return;
-    }
+    let balance_change = operation.balance - operation.prev_balance;
+    let balance = parseInt(operation.balance, 10);
 
-    if (!isNaN(date.getTime())) {
-      const dateString = date.toISOString().split('T')[0];
-
-      let balance_change = parseInt(operation.balance_change, 10);
-      let balance = parseInt(operation.balance, 10);
-
-      if (dailyData.has(dateString)) {
-        dailyData.get(dateString)!.balance_change += balance_change;
-        dailyData.get(dateString)!.balance = balance;
-      } else {
-        dailyData.set(dateString, { balance, balance_change });
-      }
-    }
+    aggregatedData.set(operation.date, { balance, balance_change });
   });
 
-  const preparedData = Array.from(dailyData.entries()).map(([date, data]) => ({
-    timestamp: date,
-    balance: data.balance,
-    balance_change: data.balance_change,
-  }));
-
+  const preparedData = Array.from(aggregatedData.entries()).map(
+    ([date, data]) => ({
+      timestamp: date,
+      balance: data.balance,
+      balance_change: data.balance_change,
+    })
+  );
   return preparedData;
 };
 
@@ -148,24 +135,75 @@ export default function BalanceHistory() {
     effectiveToBlock
   );
 
-  // Update chartData to return loading, error, and data
+  const getGranularityPeriod = () => {
+    if (paramsState.fromDate) {
+      const fromDate = new Date(paramsState.fromDate);
+      const now = new Date();
+      const diffInDays = Math.floor(
+        (Number(now) - Number(fromDate)) / (1000 * 60 * 60 * 24)
+      );
+
+      if (diffInDays > 90) {
+        // more than 3 months
+        return "monthly";
+      } else {
+        return "daily";
+      }
+    } else if (paramsState.rangeSelectKey == "lastTime") {
+      if (
+        paramsState.timeUnit === "hours" &&
+        paramsState.lastTime &&
+        paramsState.lastTime > 2160
+      ) {
+        // more than 3 months
+        return "monthly";
+      } else if (
+        paramsState.timeUnit === "days" &&
+        paramsState.lastTime &&
+        paramsState.lastTime > 90
+      ) {
+        // more than 3 months
+        return "monthly";
+      } else if (
+        paramsState.timeUnit === "weeks" &&
+        paramsState.lastTime &&
+        paramsState.lastTime > 16
+      ) {
+        // more than 3 months
+        return "monthly";
+      } else if (
+        paramsState.timeUnit === "months" &&
+        paramsState.lastTime &&
+        paramsState.lastTime > 48
+      ) {
+        // more than 4 months
+        return "yearly";
+      } else if (paramsState.timeUnit === "months") {
+        return "monthly";
+      } else {
+        return "daily";
+      }
+    } else {
+      return "daily";
+    }
+  };
+
   const {
-    accountBalanceHistory: chartData,
-    isAccountBalanceHistoryLoading: isChartDataLoading,
-    isAccountBalanceHistoryError: isChartDataError,
-  } = useBalanceHistory(
+    aggregatedAccountBalanceHistory: chartData,
+    isAggregatedAccountBalanceHistoryLoading: isChartDataLoading,
+    isAggregatedAccountBalanceHistoryError: isChartDataError,
+  } = useAggregatedBalanceHistory(
     accountNameFromRoute,
     paramsState.coinType,
-    undefined,
-    5000, // Default size for chart data
-    "desc",
+    getGranularityPeriod(),
+    "asc",
     effectiveFromBlock,
     effectiveToBlock
   );
 
-  // Use useMemo to memoize the prepared data so it only recalculates when chartData changes
+ // Use useMemo to memoize the prepared data so it only recalculates when chartData changes
   const preparedData = useMemo(() => {
-      return chartData ? prepareData(chartData.operations_result?.slice().reverse()) : [];
+      return chartData ? prepareData(chartData) : [];
   }, [chartData]); // This will only recompute when chartData changes
 
   let message = "";
@@ -227,53 +265,51 @@ export default function BalanceHistory() {
 
             <BalanceHistorySearch />
 
-            {!isAccountBalanceHistoryLoading && !accountBalanceHistory?.total_operations ? (
-              <div>
-                <NoResult/>
-              </div>
-            ) : isAccountBalanceHistoryLoading ? (
+            <Card data-testid="account-details">
+              {message && (
+                <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg mb-4 text-center text-sm text-gray-500">
+                  {message}<br />
+                </div>
+              )}
+
+              {isChartDataLoading ? (
+                <div className="flex justify-center text-center items-center">
+                  <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />
+                </div>
+              ) : isChartDataError ? (
+                <div className="text-center">Error loading chart data</div>
+              ) : preparedData.length > 0 ? (
+                <MemoizedBalanceHistoryChart
+                  hiveBalanceHistoryData={(!paramsState.coinType || paramsState.coinType === "HIVE") ? preparedData : undefined}
+                  vestsBalanceHistoryData={paramsState.coinType === "VESTS" ? preparedData : undefined}
+                  hbdBalanceHistoryData={paramsState.coinType === "HBD" ? preparedData : undefined}
+                  quickView={false}
+                  className="h-[450px] mb-10 mr-0 pr-1 pb-6"
+                />
+              ) : (
+                <NoResult title="No chart data available"/>
+              )}
+            </Card>
+
+            {isAccountBalanceHistoryLoading ? (
               <div className="flex justify-center text-center items-center">
                 <Loader2 className="animate-spin mt-1 h-12 w-12 ml-3" />
               </div>
+            ) : accountBalanceHistory?.total_operations ? (
+              <BalanceHistoryTable
+                operations={convertBalanceHistoryResultsToTableOperations(accountBalanceHistory)}
+                total_operations={accountBalanceHistory.total_operations}
+                total_pages={accountBalanceHistory.total_pages}
+                current_page={paramsState.page}
+                account_name={accountNameFromRoute}
+              />
             ) : (
-              <>
-                <Card data-testid="account-details">
-                  {message && (
-                    <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg mb-4 text-center text-sm text-gray-500">
-                      {message}<br />
-                      Results are limited to 5000 records and grouped by day.<br />
-                    </div>
-                  )}
-
-                  {isChartDataLoading ? (
-                    <div className="flex justify-center text-center items-center">
-                      <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />
-                    </div>
-                  ) : !isChartDataError ? (
-                    <MemoizedBalanceHistoryChart
-                      hiveBalanceHistoryData={(!paramsState.coinType || paramsState.coinType === "HIVE") ? preparedData : undefined}
-                      vestsBalanceHistoryData={paramsState.coinType === "VESTS" ? preparedData : undefined}
-                      hbdBalanceHistoryData={paramsState.coinType === "HBD" ? preparedData : undefined}
-                      quickView={false}
-                      className="h-[450px] mb-10 mr-0 pr-1 pb-6"
-                    />
-                  ) : (
-                    <div>Error loading chart data</div>
-                  )}
-                </Card>
-
-                <BalanceHistoryTable
-                  operations={convertBalanceHistoryResultsToTableOperations(accountBalanceHistory)}
-                  total_operations={accountBalanceHistory.total_operations}
-                  total_pages={accountBalanceHistory.total_pages}
-                  current_page={paramsState.page}
-                  account_name ={accountNameFromRoute}
-                />
-              </>
+              <NoResult title="No transaction data available"/>
             )}
+
             <div className="fixed bottom-[10px] right-0 flex flex-col items-end justify-end px-3 md:px-12">
-          <ScrollTopButton />
-        </div>
+              <ScrollTopButton />
+            </div>
           </div>
         )
       )}
