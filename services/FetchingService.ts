@@ -447,6 +447,26 @@ class FetchingService {
       "to-block": toBlock,
     });
   }
+
+
+  async geAccountAggregatedtBalanceHistory(
+    accountName: string,
+    coinType: string,
+    granularity : "daily"|"monthly"|"yearly",
+    direction: "asc" | "desc",
+    fromBlock?: Date | number | undefined,
+    toBlock?: Date | number | undefined
+  ): Promise<Hive.AccountAggregatedBalanceHistoryResponse> {
+    return await this.extendedHiveChain!.restApi["balance-api"].aggregatedHistory({
+      accountName,
+      "coin-type": coinType,
+      "granularity":granularity,
+      direction: direction,
+      "from-block": fromBlock,
+      "to-block": toBlock,
+    });
+  }
+
 }
 
 const fetchingService = new FetchingService();
