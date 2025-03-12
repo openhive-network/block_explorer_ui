@@ -793,7 +793,7 @@ namespace Hive {
     total_pages!: number;
     operations_result!: AccountBalanceHistory[];
   }
-  export class AggregatedAccountBalanceHistoryParams {
+  export class AccountAggregatedBalanceHistoryParams {
     "accountName": string;
     "coin-type": string;
     "granularity": string;
