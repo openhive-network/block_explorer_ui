@@ -13,7 +13,8 @@ import {
 import { formatNumber } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import moment from "moment";
-import { ArrowDown, ArrowUp } from "lucide-react";
+import { ArrowDown, ArrowUp, Minus } from "lucide-react";
+
 
 interface BalanceHistoryChartProps {
   hiveBalanceHistoryData?: {
@@ -117,6 +118,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     const balanceChange = payload[0]?.payload.balance_change ?? 0;
 
     const isPositiveChange = balanceChange > 0;
+    const isZeroChange = balanceChange == 0;
 
     return (
       <div className="bg-theme dark:bg-theme p-2 rounded border border-explorer-light-gray">
@@ -127,7 +129,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
               {isPositiveChange ? (
                 <ArrowUp className="bg-green-400 p-[1.2px]" size={16}/>
                 
-              ) : (
+              ) : isZeroChange ? <Minus className="bg-black p-[1.2px] mr-1" color={"white"} size={16}/> : (
                 <ArrowDown className="bg-red-400  p-[1.2px]" size={16}/> 
               )}
               {` ${formatNumber(
