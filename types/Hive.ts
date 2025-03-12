@@ -779,7 +779,7 @@ namespace Hive {
     balance_change!: number;
     timestamp!: string;
   }
-  export class GetAccountBalanceHistoryParams {
+  export class AccountBalanceHistoryParams {
     "accountName": string;
     "coin-type": string;
     direction?: Hive.Direction;
@@ -793,7 +793,7 @@ namespace Hive {
     total_pages!: number;
     operations_result!: AccountBalanceHistory[];
   }
-  export class GetAggregatedAccountBalanceHistoryParams {
+  export class AggregatedAccountBalanceHistoryParams {
     "accountName": string;
     "coin-type": string;
     "granularity": string;
