@@ -85,10 +85,10 @@ const renderChevron = (
 };
 
 export const buildTableHead = (
-  direction: "incoming" | "outgoing",
   handleSort: (key: string) => void,
   sortKey: string,
-  isOrderAscending: boolean
+  isOrderAscending: boolean,
+  direction?: "incoming" | "outgoing"
 ) => {
   const tableHeaderCells =
     direction === "outgoing"

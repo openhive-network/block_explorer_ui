@@ -118,7 +118,7 @@ const AccountVestingDelegationsCard: React.FC<
         <Table>
           <TableHeader>
             <TableRow>
-              {buildTableHead(direction, sortBy, key, isAscending)}
+              {buildTableHead(sortBy, key, isAscending, direction)}
             </TableRow>
           </TableHeader>
           <TableBody>{buildTableBody(direction, sortedDelegations)}</TableBody>
