@@ -72,7 +72,7 @@ const AccountVestingDelegationsCard: React.FC<
     key: string;
     isAscending: boolean;
   }>({
-    key: "recipient",
+    key: direction === "outgoing" ? "recipient" : "delegator",
     isAscending: true,
   });
 
@@ -117,7 +117,9 @@ const AccountVestingDelegationsCard: React.FC<
       <CardContent hidden={isPropertiesHidden}>
         <Table>
           <TableHeader>
-            <TableRow>{buildTableHead(sortBy, key, isAscending)}</TableRow>
+            <TableRow>
+              {buildTableHead(direction, sortBy, key, isAscending)}
+            </TableRow>
           </TableHeader>
           <TableBody>{buildTableBody(direction, sortedDelegations)}</TableBody>
         </Table>

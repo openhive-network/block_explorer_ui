@@ -20,7 +20,8 @@ type SortedDelegations = {
   amount: string | number;
 };
 
-export const TABLE_HEADER_CELLS = ["", "Recipient", "Amount"];
+export const TABLE_HEADER_CELLS_OUTGOING = ["", "Recipient", "Amount"];
+export const TABLE_HEADER_CELLS_INCOMING = ["", "Delegator", "Amount"];
 
 export const handleSortDelegations = ({
   delegations,
@@ -30,7 +31,7 @@ export const handleSortDelegations = ({
   amount,
 }: SortedDelegations) => {
   return [...delegations].sort((a: any, b: any) => {
-    if (key === "recipient") {
+    if (key === "recipient" || key === "delegator") {
       const delegateeA = a[recipient].toLowerCase();
       const delegateeB = b[recipient].toLowerCase();
       return isAscending
@@ -84,11 +85,17 @@ const renderChevron = (
 };
 
 export const buildTableHead = (
+  direction: "incoming" | "outgoing",
   handleSort: (key: string) => void,
   sortKey: string,
   isOrderAscending: boolean
 ) => {
-  return TABLE_HEADER_CELLS.map((cellName: string) => {
+  const tableHeaderCells =
+    direction === "outgoing"
+      ? TABLE_HEADER_CELLS_OUTGOING
+      : TABLE_HEADER_CELLS_INCOMING;
+
+  return tableHeaderCells.map((cellName: string) => {
     return (
       <Fragment key={cellName}>
         <TableHead
