@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import { Loader2 } from "lucide-react";
 import NoResult from "../NoResult";
 import { Button } from "../ui/button";
+import useAggregatedBalanceHistory from "@/hooks/api/balanceHistory/useAggregatedHistory";
 
 // Define the type for balance operation data
 type AccountBalanceHistoryCardProps = {
@@ -30,42 +31,39 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
   const accountNameFromRoute = (router.query.accountName as string)?.slice(1);
 
   const {
-    accountBalanceHistory: hiveBalanceHistory,
-    isAccountBalanceHistoryLoading: hiveBalanceHistoryLoading,
-    isAccountBalanceHistoryError: hiveBalanceHistoryError,
-  } = useBalanceHistory(
+    aggregatedAccountBalanceHistory: hiveBalanceHistory,
+    isAggregatedAccountBalanceHistoryLoading: hiveBalanceHistoryLoading,
+    isAggregatedAccountBalanceHistoryError: hiveBalanceHistoryError,
+  } = useAggregatedBalanceHistory(
     accountNameFromRoute,
     "HIVE",
-    undefined,
-    undefined,
-    "desc",
-    defaultFromDate
+    "daily",
+    "asc",
+    defaultFromDate,
   );
 
   const {
-    accountBalanceHistory: vestsBalanceHistory,
-    isAccountBalanceHistoryLoading: vestsBalanceHistoryLoading,
-    isAccountBalanceHistoryError: vestsBalanceHistoryError,
-  } = useBalanceHistory(
+    aggregatedAccountBalanceHistory: vestsBalanceHistory,
+    isAggregatedAccountBalanceHistoryLoading: vestsBalanceHistoryLoading,
+    isAggregatedAccountBalanceHistoryError: vestsBalanceHistoryError,
+  } = useAggregatedBalanceHistory(
     accountNameFromRoute,
     "VESTS",
-    undefined,
-    undefined,
-    "desc",
-    defaultFromDate
+    "daily",
+    "asc",
+    defaultFromDate,
   );
 
   const {
-    accountBalanceHistory: hbdBalanceHistory,
-    isAccountBalanceHistoryLoading: hbdBalanceHistoryLoading,
-    isAccountBalanceHistoryError: hbdBalanceHistoryError,
-  } = useBalanceHistory(
+    aggregatedAccountBalanceHistory: hbdBalanceHistory,
+    isAggregatedAccountBalanceHistoryLoading: hbdBalanceHistoryLoading,
+    isAggregatedAccountBalanceHistoryError: hbdBalanceHistoryError,
+  } = useAggregatedBalanceHistory(
     accountNameFromRoute,
-    "HBD",
-    undefined,
-    undefined,
-    "desc",
-    defaultFromDate
+    "VESTS",
+    "daily",
+    "asc",
+    defaultFromDate,
   );
 
   const handleBalancesVisibility = () => {
@@ -77,90 +75,40 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
     vestsBalanceHistoryLoading ||
     hbdBalanceHistoryLoading;
   const hasData =
-    hiveBalanceHistory?.operations_result?.length > 0 ||
-    vestsBalanceHistory?.operations_result?.length > 0 ||
-    hbdBalanceHistory?.operations_result?.length > 0;
+    hiveBalanceHistory ||
+    vestsBalanceHistory ||
+    hbdBalanceHistory;
   const hasError =
     hiveBalanceHistoryError ||
     vestsBalanceHistoryError ||
     hbdBalanceHistoryError;
 
-  const prepareData = (
-    operations: { timestamp: string; balance: number }[]
-  ) => {
-    if (!operations || operations.length === 0) return [];
+    const prepareData = (
+      operations: { timestamp: string; balance: number }[]
+    ) => {
+      if (!operations || operations.length === 0) return [];
 
-    const dailyData = new Map<
-      string,
-      { balance: number; balance_change: number }
-    >();
+      const aggregatedData = new Map<
+        string,
+        { balance: number; balance_change: number }
+      >();
 
-    operations.forEach((operation: any) => {
-      let date;
-      if (typeof operation.timestamp === "string") {
-        date = new Date(operation.timestamp);
-      } else if (typeof operation.timestamp === "number") {
-        date = new Date(operation.timestamp * 1000);
-      } else {
-        return;
-      }
-
-      if (!isNaN(date.getTime())) {
-        const dateString = date.toISOString().split("T")[0];
-
-        let balance_change = parseInt(operation.balance_change, 10);
+      operations.forEach((operation: any) => {
+        let balance_change = operation.balance - operation.prev_balance;
         let balance = parseInt(operation.balance, 10);
 
-        if (dailyData.has(dateString)) {
-          dailyData.get(dateString)!.balance_change += balance_change;
-          dailyData.get(dateString)!.balance = balance;
-        } else {
-          dailyData.set(dateString, { balance, balance_change });
-        }
-      }
-    });
+        aggregatedData.set(operation.date, { balance, balance_change });
+      });
 
-    const preparedData = Array.from(dailyData.entries()).map(
-      ([date, data]) => ({
-        timestamp: date,
-        balance: data.balance,
-        balance_change: data.balance_change,
-      })
-    );
-
-    return preparedData;
-  };
-
-  // Reverse and prepare data with useMemo
-  const reversedHiveBalanceHistory = useMemo(
-    () =>
-      prepareData(
-        Array.isArray(hiveBalanceHistory?.operations_result)
-          ? [...hiveBalanceHistory.operations_result].reverse()
-          : []
-      ),
-    [hiveBalanceHistory?.operations_result]
-  );
-
-  const reversedVestsBalanceHistory = useMemo(
-    () =>
-      prepareData(
-        Array.isArray(vestsBalanceHistory?.operations_result)
-          ? [...vestsBalanceHistory.operations_result].reverse()
-          : []
-      ),
-    [vestsBalanceHistory?.operations_result]
-  );
-
-  const reversedHbdBalanceHistory = useMemo(
-    () =>
-      prepareData(
-        Array.isArray(hbdBalanceHistory?.operations_result)
-          ? [...hbdBalanceHistory.operations_result].reverse()
-          : []
-      ),
-    [hbdBalanceHistory?.operations_result]
-  );
+      const preparedData = Array.from(aggregatedData.entries()).map(
+        ([date, data]) => ({
+          timestamp: date,
+          balance: data.balance,
+          balance_change: data.balance_change,
+        })
+      );
+      return preparedData;
+    };
 
   const handleButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation(); // Prevents the event from bubbling up
@@ -208,9 +156,9 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
         {!isLoading && !hasData && <NoResult />}
         {!isLoading && hasData && (
           <BalanceHistoryChart
-            hiveBalanceHistoryData={reversedHiveBalanceHistory}
-            vestsBalanceHistoryData={reversedVestsBalanceHistory}
-            hbdBalanceHistoryData={reversedHbdBalanceHistory}
+            hiveBalanceHistoryData={prepareData(hiveBalanceHistory)}
+            vestsBalanceHistoryData={prepareData(vestsBalanceHistory)}
+            hbdBalanceHistoryData={prepareData(hbdBalanceHistory)}
             quickView={true}
             className="h-[320px]"
           />
