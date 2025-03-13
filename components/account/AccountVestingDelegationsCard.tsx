@@ -14,26 +14,40 @@ import {
 import Explorer from "@/types/Explorer";
 import useConvertedVestingShares from "@/hooks/common/useConvertedVestingShares";
 import { buildTableHead, handleSortDelegations } from "@/utils/DelegationsSort";
+import { capitalizeFirst } from "@/utils/StringUtils";
 
 type AccountVestingDelegationsCardProps = {
+  direction: "incoming" | "outgoing";
   delegatorAccount: string;
   liveDataEnabled: boolean;
   dynamicGlobalData?: Explorer.HeadBlockCardData;
 };
 
-const buildTableBody = (delegations: Explorer.VestingDelegation[]) => {
+const buildTableBody = (
+  direction: "outgoing" | "incoming",
+  delegations: Explorer.VestingDelegation[]
+) => {
   return delegations.map((delegation, index: number) => {
     return (
       <Fragment key={index}>
         <TableRow className={"border-b border-gray-700 hover:bg-inherit"}>
           <TableCell>{index + 1}</TableCell>
           <TableCell className="text-right">
-            <Link
-              className="text-blue-400"
-              href={`/@${delegation.delegatee}`}
-            >
-              {delegation.delegatee}
-            </Link>
+            {direction === "outgoing" ? (
+              <Link
+                className="text-link"
+                href={`/@${delegation.delegatee}`}
+              >
+                {delegation.delegatee}
+              </Link>
+            ) : (
+              <Link
+                className="text-link"
+                href={`/@${delegation.delegator}`}
+              >
+                {delegation.delegator}
+              </Link>
+            )}
           </TableCell>
           <TableCell className="text-right">
             {delegation.vesting_shares}
@@ -45,10 +59,11 @@ const buildTableBody = (delegations: Explorer.VestingDelegation[]) => {
 };
 const AccountVestingDelegationsCard: React.FC<
   AccountVestingDelegationsCardProps
-> = ({ delegatorAccount, liveDataEnabled, dynamicGlobalData }) => {
+> = ({ direction, delegatorAccount, liveDataEnabled, dynamicGlobalData }) => {
   const [isPropertiesHidden, setIsPropertiesHidden] = useState(true);
   const { hiveChain } = useHiveChainContext();
   const delegations = useConvertedVestingShares(
+    direction,
     delegatorAccount,
     liveDataEnabled,
     dynamicGlobalData
@@ -57,7 +72,7 @@ const AccountVestingDelegationsCard: React.FC<
     key: string;
     isAscending: boolean;
   }>({
-    key: "recipient",
+    key: direction === "outgoing" ? "recipient" : "delegator",
     isAscending: true,
   });
 
@@ -65,7 +80,6 @@ const AccountVestingDelegationsCard: React.FC<
 
   if (!hiveChain || !dynamicGlobalData || !delegations || !delegations.length)
     return;
-
   const handlePropertiesVisibility = () => {
     setIsPropertiesHidden(!isPropertiesHidden);
   };
@@ -78,9 +92,13 @@ const AccountVestingDelegationsCard: React.FC<
     delegations,
     key,
     isAscending,
-    recipient: "delegatee",
+    recipient: direction === "outgoing" ? "delegatee" : "delegator",
     amount: "vesting_shares",
   }) as Explorer.VestingDelegation[];
+
+  const headerText = `${capitalizeFirst(direction)} HP Delegations (${
+    delegations.length
+  })`;
 
   return (
     <Card
@@ -92,16 +110,18 @@ const AccountVestingDelegationsCard: React.FC<
           onClick={handlePropertiesVisibility}
           className="h-full flex justify-between align-center p-2 hover:bg-rowHover cursor-pointer px-4"
         >
-          <div className="text-lg">HP Delegations ({delegations.length})</div>
+          <div className="text-lg">{headerText}</div>
           {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
         </div>
       </CardHeader>
       <CardContent hidden={isPropertiesHidden}>
         <Table>
           <TableHeader>
-            <TableRow>{buildTableHead(sortBy, key, isAscending)}</TableRow>
+            <TableRow>
+              {buildTableHead(sortBy, key, isAscending, direction)}
+            </TableRow>
           </TableHeader>
-          <TableBody>{buildTableBody(sortedDelegations)}</TableBody>
+          <TableBody>{buildTableBody(direction, sortedDelegations)}</TableBody>
         </Table>
       </CardContent>
     </Card>

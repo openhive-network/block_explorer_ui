@@ -140,12 +140,16 @@ export const extendedRest = {
       urlPath: "block-number-by-date/{date}",
     },
   },
-  "balance-api" : {
-      balanceHistory: {
-        params: Hive.GetAccountBalanceHistoryParams,
-        result: Hive.AccountBalanceHistoryResponse,
-        urlPath: "accounts/{accountName}/balance-history",
-      },
-
+  "balance-api": {
+    balanceHistory: {
+      params: Hive.GetAccountBalanceHistoryParams,
+      result: Hive.AccountBalanceHistoryResponse,
+      urlPath: "accounts/{accountName}/balance-history",
+    },
+    delegations: {
+      params: Hive.GetVestingDelegationsParams,
+      result: Hive.VestingDelegationsResponse,
+      urlPath: "accounts/{accountName}/delegations",
+    },
   },
 };
