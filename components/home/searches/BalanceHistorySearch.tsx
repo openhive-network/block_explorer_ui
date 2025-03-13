@@ -8,6 +8,8 @@ import useURLParams from "@/hooks/common/useURLParams";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 import useAccountOperationTypes from "@/hooks/api/accountPage/useAccountOperationTypes";
 import { useSearchesContext } from "@/contexts/SearchesContext";
+import FilterSectionToggle from "@/components/account/FilterSectionToggle";
+import { cn } from "@/lib/utils";
 
 interface AccountSearchParams {
   accountName?: string | undefined;
@@ -20,7 +22,7 @@ interface AccountSearchParams {
   timeUnit: string | undefined;
   rangeSelectKey: string | undefined;
   page: number | undefined;
-  filters: boolean[];
+  filters: boolean[] | undefined;
   coinType?: string;
 }
 
@@ -31,16 +33,18 @@ const defaultSearchParams: AccountSearchParams = {
   fromDate: undefined,
   toDate: undefined,
   lastBlocks: undefined,
-  lastTime: undefined,
+  lastTime: 30,
   timeUnit: "days",
-  rangeSelectKey: "none",
+  rangeSelectKey: "lastTime",
   page: undefined,
-  filters: [],
+  filters: undefined,
   coinType: "HIVE", // Default to HIVE
 };
 
-const BalanceHistorySearch = () => {
-  const [coinType, setCoinType] = useState<string>("HIVE"); // State to store the selected coin name
+const BalanceHistorySearch = ({ paramsState, setParams }: any) => {
+  const [coinType, setCoinType] = useState<string>(
+    paramsState.coinType ?? "HIVE"
+  ); // State to store the selected coin name
   const COIN_TYPES = ["HIVE", "VESTS", "HBD"];
   const router = useRouter();
   const { searchRanges } = useSearchesContext();
@@ -70,12 +74,6 @@ const BalanceHistorySearch = () => {
     setSelectedOperationTypes(operationTypesIds);
   };
 
-  const { paramsState, setParams } = useURLParams(
-    {
-      ...defaultSearchParams,
-    },
-    ["accountName"]
-  );
 
   const {
     filters: filtersParam,
@@ -91,7 +89,9 @@ const BalanceHistorySearch = () => {
   } = paramsState;
 
   const [initialSearch, setInitialSearch] = useState<boolean>(false);
-  const [filters, setFilters] = useState<boolean[]>([]);
+  const [isFiltersActive, setIsFiltersActive] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [filters, setFilters] = useState<boolean[] | undefined>(undefined);
 
   const handleSearch = async (resetPage?: boolean) => {
     if (
@@ -167,13 +167,17 @@ const BalanceHistorySearch = () => {
       accountName: accountNameFromRoute,
       page: newPage,
     });
-    searchRanges.setRangeSelectKey("none");
+    setIsFiltersActive(false);
+    searchRanges.setRangeSelectKey("lastTime");
+    searchRanges.setTimeUnitSelectKey("days");
+    searchRanges.setLastTimeUnitValue(30);
     setFilters([]);
   };
 
   useEffect(() => {
     if (paramsState.coinType) {
       setCoinType(paramsState.coinType);
+
     }
     if (paramsState && !initialSearch) {
       handleSearch();
@@ -181,13 +185,44 @@ const BalanceHistorySearch = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paramsState]);
 
+  useEffect(() => {
+    Object.keys(defaultSearchParams).forEach((key) => {
+      if (key === "accountName" || key === "page") return;
+
+      const param = paramsState[key as keyof typeof defaultSearchParams];
+      const defaultParam =
+        defaultSearchParams[key as keyof typeof defaultSearchParams];
+
+      console.log(key, param, defaultParam);
+      // console.log(defaultParam);
+      if (param !== defaultParam) {
+        setIsFiltersActive(true);
+        setIsVisible(true);
+      }
+    });
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paramsState]);
+
   return (
     <>
-      <p className="m-2 mb-6 mt-6">
-        Find balance history of given account by coin and range.
-      </p>
+      <div className="flex justify-between items-center py-6">
+        <p>Find balance history of given account by coin and range.</p>
+        <div>
+          <FilterSectionToggle
+            isFiltersActive={isFiltersActive}
+            toggleFilters={() => setIsVisible(!isVisible)}
+          />
+        </div>
+      </div>
 
-      <Card className="mb-4">
+      <Card
+        className={cn(
+          "mb-4 overflow-hidden transition-all duration-500 ease-in max-h-0 opacity-0",
+          {
+            "max-h-96 opacity-100": isVisible,
+          }
+        )}
+      >
         <CardHeader>
           <CardTitle className="">Filters</CardTitle>
         </CardHeader>

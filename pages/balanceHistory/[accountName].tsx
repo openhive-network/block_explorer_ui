@@ -27,27 +27,30 @@ import ScrollTopButton from "@/components/ScrollTopButton";
 const MemoizedBalanceHistoryChart = React.memo(BalanceHistoryChart);
 
 interface Operation {
-  timestamp: number;  // Timestamp in seconds
-  balance: number;    // Balance associated with the operation
+  timestamp: number; // Timestamp in seconds
+  balance: number; // Balance associated with the operation
 }
 
 const prepareData = (operations: Operation[]) => {
   if (!operations || operations.length === 0) return [];
-  
-  const dailyData = new Map<string, { balance: number; balance_change: number }>();
+
+  const dailyData = new Map<
+    string,
+    { balance: number; balance_change: number }
+  >();
 
   operations.forEach((operation: any) => {
     let date;
-    if (typeof operation.timestamp === 'string') {
+    if (typeof operation.timestamp === "string") {
       date = new Date(operation.timestamp);
-    } else if (typeof operation.timestamp === 'number') {
+    } else if (typeof operation.timestamp === "number") {
       date = new Date(operation.timestamp * 1000);
     } else {
       return;
     }
 
     if (!isNaN(date.getTime())) {
-      const dateString = date.toISOString().split('T')[0];
+      const dateString = date.toISOString().split("T")[0];
 
       let balance_change = parseInt(operation.balance_change, 10);
       let balance = parseInt(operation.balance, 10);
@@ -72,7 +75,10 @@ const prepareData = (operations: Operation[]) => {
 
 export default function BalanceHistory() {
   const router = useRouter();
-  const accountNameFromRoute = (router.query.accountName as string)?.slice(1);
+  const accountNameFromRoute = (router.query.accountName as string)?.replace(
+    "@",
+    ""
+  );
 
   const {
     accountDetails,
@@ -93,7 +99,7 @@ export default function BalanceHistory() {
     timeUnit: string | undefined;
     rangeSelectKey: string | undefined;
     page: number;
-    filters: boolean[];
+    filters: boolean[] | undefined;
   }
 
   const defaultSearchParams: BalanceHistorySearchParams = {
@@ -104,14 +110,16 @@ export default function BalanceHistory() {
     fromDate: undefined,
     toDate: undefined,
     lastBlocks: undefined,
-    lastTime: undefined,
+    lastTime: 30,
     timeUnit: "days",
-    rangeSelectKey: "none",
+    rangeSelectKey: "lastTime",
     page: 1,
-    filters: [],
+    filters: undefined,
   };
 
-  const { paramsState } = useURLParams(defaultSearchParams, ["accountName"]);
+  const { paramsState, setParams } = useURLParams(defaultSearchParams, [
+    "accountName",
+  ]);
 
   const {
     filters: filtersParam,
@@ -126,11 +134,19 @@ export default function BalanceHistory() {
     page,
   } = paramsState;
 
-  const defaultFromDate = React.useMemo(() => moment().subtract(1, "month").toDate(), []);
-  let effectiveFromBlock = paramsState.fromBlock || fromDateParam || defaultFromDate;
+  const defaultFromDate = React.useMemo(
+    () => moment().subtract(1, "month").toDate(),
+    []
+  );
+  let effectiveFromBlock =
+    paramsState.fromBlock || fromDateParam || defaultFromDate;
   let effectiveToBlock = paramsState.toBlock || toDateParam;
 
-  if (rangeSelectKey === "lastBlocks" && typeof effectiveFromBlock === "number" && paramsState.lastBlocks) {
+  if (
+    rangeSelectKey === "lastBlocks" &&
+    typeof effectiveFromBlock === "number" &&
+    paramsState.lastBlocks
+  ) {
     effectiveToBlock = effectiveFromBlock + paramsState.lastBlocks;
   }
 
@@ -165,26 +181,31 @@ export default function BalanceHistory() {
 
   // Use useMemo to memoize the prepared data so it only recalculates when chartData changes
   const preparedData = useMemo(() => {
-      return chartData ? prepareData(chartData.operations_result?.slice().reverse()) : [];
+    return chartData
+      ? prepareData(chartData.operations_result?.slice().reverse())
+      : [];
   }, [chartData]); // This will only recompute when chartData changes
 
   let message = "";
-  if (effectiveFromBlock === defaultFromDate && !fromBlockParam && !toBlockParam) {
+  if (
+    effectiveFromBlock === defaultFromDate &&
+    !fromBlockParam &&
+    !toBlockParam
+  ) {
     message = "Showing Results for the last month.";
   } else {
     message = "Showing Results with applied filters.";
   }
 
-   // get the accountName
-   const routeAccountName = Array.isArray(router.query.accountName)
-   ? router.query.accountName[0] // If it's an array, get the first element
-   : router.query.accountName; // Otherwise, treat it as a string directly
+  // get the accountName
+  const routeAccountName = Array.isArray(router.query.accountName)
+    ? router.query.accountName[0] // If it's an array, get the first element
+    : router.query.accountName; // Otherwise, treat it as a string directly
 
-  if(routeAccountName  && !routeAccountName.startsWith("@"))
-  {
+  if (routeAccountName && !routeAccountName.startsWith("@")) {
     return <ErrorPage />;
   }
-  
+
   return (
     <>
       <Head>
@@ -213,8 +234,14 @@ export default function BalanceHistory() {
                       data-testid="user-avatar"
                     />
                     <div>
-                      <h2 className="text-lg font-semibold text-gray-800 dark:text-white" data-testid="account-name">
-                        <Link className="text-link" href={`/@${accountNameFromRoute}`}>
+                      <h2
+                        className="text-lg font-semibold text-gray-800 dark:text-white"
+                        data-testid="account-name"
+                      >
+                        <Link
+                          className="text-link"
+                          href={`/@${accountNameFromRoute}`}
+                        >
                           {accountNameFromRoute}
                         </Link>
                         / <span className="text-text">Balance History</span>
@@ -225,11 +252,15 @@ export default function BalanceHistory() {
               </CardHeader>
             </Card>
 
-            <BalanceHistorySearch />
+            <BalanceHistorySearch
+              paramsState={paramsState}
+              setParams={setParams}
+            />
 
-            {!isAccountBalanceHistoryLoading && !accountBalanceHistory?.total_operations ? (
+            {!isAccountBalanceHistoryLoading &&
+            !accountBalanceHistory?.total_operations ? (
               <div>
-                <NoResult/>
+                <NoResult />
               </div>
             ) : isAccountBalanceHistoryLoading ? (
               <div className="flex justify-center text-center items-center">
@@ -240,8 +271,10 @@ export default function BalanceHistory() {
                 <Card data-testid="account-details">
                   {message && (
                     <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-lg mb-4 text-center text-sm text-gray-500">
-                      {message}<br />
-                      Results are limited to 5000 records and grouped by day.<br />
+                      {message}
+                      <br />
+                      Results are limited to 5000 records and grouped by day.
+                      <br />
                     </div>
                   )}
 
@@ -251,9 +284,21 @@ export default function BalanceHistory() {
                     </div>
                   ) : !isChartDataError ? (
                     <MemoizedBalanceHistoryChart
-                      hiveBalanceHistoryData={(!paramsState.coinType || paramsState.coinType === "HIVE") ? preparedData : undefined}
-                      vestsBalanceHistoryData={paramsState.coinType === "VESTS" ? preparedData : undefined}
-                      hbdBalanceHistoryData={paramsState.coinType === "HBD" ? preparedData : undefined}
+                      hiveBalanceHistoryData={
+                        !paramsState.coinType || paramsState.coinType === "HIVE"
+                          ? preparedData
+                          : undefined
+                      }
+                      vestsBalanceHistoryData={
+                        paramsState.coinType === "VESTS"
+                          ? preparedData
+                          : undefined
+                      }
+                      hbdBalanceHistoryData={
+                        paramsState.coinType === "HBD"
+                          ? preparedData
+                          : undefined
+                      }
                       quickView={false}
                       className="h-[450px] mb-10 mr-0 pr-1 pb-6"
                     />
@@ -263,17 +308,19 @@ export default function BalanceHistory() {
                 </Card>
 
                 <BalanceHistoryTable
-                  operations={convertBalanceHistoryResultsToTableOperations(accountBalanceHistory)}
+                  operations={convertBalanceHistoryResultsToTableOperations(
+                    accountBalanceHistory
+                  )}
                   total_operations={accountBalanceHistory.total_operations}
                   total_pages={accountBalanceHistory.total_pages}
                   current_page={paramsState.page}
-                  account_name ={accountNameFromRoute}
+                  account_name={accountNameFromRoute}
                 />
               </>
             )}
             <div className="fixed bottom-[10px] right-0 flex flex-col items-end justify-end px-3 md:px-12">
-          <ScrollTopButton />
-        </div>
+              <ScrollTopButton />
+            </div>
           </div>
         )
       )}
