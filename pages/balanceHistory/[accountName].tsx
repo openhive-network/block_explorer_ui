@@ -135,59 +135,6 @@ export default function BalanceHistory() {
     effectiveToBlock
   );
 
-  const getGranularityPeriod = () => {
-    if (paramsState.fromDate) {
-      const fromDate = new Date(paramsState.fromDate);
-      const now = new Date();
-      const diffInDays = Math.floor(
-        (Number(now) - Number(fromDate)) / (1000 * 60 * 60 * 24)
-      );
-
-      if (diffInDays > 90) {
-        // more than 3 months
-        return "monthly";
-      } else {
-        return "daily";
-      }
-    } else if (paramsState.rangeSelectKey == "lastTime") {
-      if (
-        paramsState.timeUnit === "hours" &&
-        paramsState.lastTime &&
-        paramsState.lastTime > 2160
-      ) {
-        // more than 3 months
-        return "monthly";
-      } else if (
-        paramsState.timeUnit === "days" &&
-        paramsState.lastTime &&
-        paramsState.lastTime > 90
-      ) {
-        // more than 3 months
-        return "monthly";
-      } else if (
-        paramsState.timeUnit === "weeks" &&
-        paramsState.lastTime &&
-        paramsState.lastTime > 16
-      ) {
-        // more than 3 months
-        return "monthly";
-      } else if (
-        paramsState.timeUnit === "months" &&
-        paramsState.lastTime &&
-        paramsState.lastTime > 48
-      ) {
-        // more than 4 months
-        return "yearly";
-      } else if (paramsState.timeUnit === "months") {
-        return "monthly";
-      } else {
-        return "daily";
-      }
-    } else {
-      return "daily";
-    }
-  };
-
   const {
     aggregatedAccountBalanceHistory: chartData,
     isAggregatedAccountBalanceHistoryLoading: isChartDataLoading,
@@ -195,7 +142,7 @@ export default function BalanceHistory() {
   } = useAggregatedBalanceHistory(
     accountNameFromRoute,
     paramsState.coinType,
-    getGranularityPeriod(),
+    'daily',
     "asc",
     effectiveFromBlock,
     effectiveToBlock
