@@ -2,8 +2,6 @@ import React, { useState, useMemo, MouseEvent } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import Explorer from "@/types/Explorer";
-import Link from "next/link";
-import useBalanceHistory from "@/hooks/api/balanceHistory/useBalanceHistory";
 import BalanceHistoryChart from "../balanceHistory/BalanceHistoryChart";
 import moment from "moment";
 import { useRouter } from "next/router";
@@ -60,7 +58,7 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
     isAggregatedAccountBalanceHistoryError: hbdBalanceHistoryError,
   } = useAggregatedBalanceHistory(
     accountNameFromRoute,
-    "VESTS",
+    "HBD",
     "daily",
     "asc",
     defaultFromDate,
