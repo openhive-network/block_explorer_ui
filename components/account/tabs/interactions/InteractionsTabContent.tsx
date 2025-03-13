@@ -39,8 +39,11 @@ const InteractionsTabContent: React.FC<InteractionsTabContentProps> = ({
     accountName: accountNameFromRoute,
   } as any;
 
-  const { commentSearchData, isCommentSearchDataLoading } =
-    useCommentSearch(props);
+  const {
+    commentSearchData,
+    isCommentSearchDataLoading,
+    isCommentSearchDataFetching,
+  } = useCommentSearch(props);
 
   const buildCommentSearchView = () => {
     if (!isCommentSearchDataLoading && !commentSearchData?.total_operations) {
@@ -49,7 +52,7 @@ const InteractionsTabContent: React.FC<InteractionsTabContentProps> = ({
           <NoResult />
         </div>
       );
-    } else if (isCommentSearchDataLoading) {
+    } else if (isCommentSearchDataFetching && isCommentSearchDataLoading) {
       return (
         <div className="flex justify-center text-center items-center">
           <Loader2 className="animate-spin mt-1 text-text h-12 w-12 ml-3 ..." />
@@ -89,7 +92,7 @@ const InteractionsTabContent: React.FC<InteractionsTabContentProps> = ({
         </CardHeader>
         <CardContent>
           <AccountPageInteractionSearch
-            isCommentSearchDataLoading={isCommentSearchDataLoading}
+            isCommentSearchDataLoading={isCommentSearchDataFetching}
           />
         </CardContent>
       </Card>

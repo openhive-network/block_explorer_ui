@@ -35,7 +35,7 @@ const CommentsSearch = () => {
   const pathname = usePathname();
   const router = useRouter();
 
-  const { isCommentSearchDataLoading } = useCommentSearch(commentSearchProps);
+  const { isCommentSearchDataFetching } = useCommentSearch(commentSearchProps);
   const { handleCommentsSearch } = useHandleCommentsSearch();
 
   const { operationsTypes } = useOperationsTypes();
@@ -164,7 +164,7 @@ const CommentsSearch = () => {
             disabled={!accountName || !permlink}
           >
             Search
-            {isCommentSearchDataLoading && (
+            {isCommentSearchDataFetching && (
               <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />
             )}
           </Button>
