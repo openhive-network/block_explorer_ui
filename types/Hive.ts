@@ -653,8 +653,9 @@ namespace Hive {
   export class VestingDelegations {
     delegatee!: string;
     delegator!: string;
-    id!: number;
-    min_delegation_time!: string;
+    amount!: string;
+    operation_id!: string;
+    block_num!: number;
     vesting_shares!: Supply;
   }
 
@@ -662,24 +663,6 @@ namespace Hive {
     delegated_rc!: number;
     from!: string;
     to!: string;
-  }
-
-  export interface VestingDelegations {
-    delegatee: string;
-    delegator: string;
-    id: number;
-    min_delegation_time: string;
-    vesting_shares: {
-      amount: string;
-      precision: number;
-      nai: string;
-    };
-  }
-
-  export interface RCDelegations {
-    delegated_rc: number;
-    from: string;
-    to: string;
   }
 
   export interface BlockByOpResponse {
@@ -807,6 +790,26 @@ namespace Hive {
     min_balance!: number;
     max_balance!: number;
     date!:Date;
+  }
+
+  export class Delegation {
+    delegator!: string;
+    amount!: string;
+    operation_id!: string;
+    block_num!: number;
+  }
+  export class TwoDirectionDelegations {
+    outgoing_delegations!: Delegation[];
+    incoming_delegations!: Delegation[];
+  }
+
+  export class GetVestingDelegationsParams {
+    accountName!: string;
+  }
+  export class VestingDelegationsResponse {
+    total_operations!: number;
+    total_pages!: number;
+    operations_result!: TwoDirectionDelegations[];
   }
 }
 

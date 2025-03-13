@@ -1,8 +1,6 @@
 import { useState } from "react";
-import { QueryObserverResult } from "@tanstack/react-query";
 
 import { config } from "@/Config";
-import Hive from "@/types/Hive";
 import useWitnessDetails from "@/hooks/api/common/useWitnessDetails";
 import AccountMainCard from "./AccountMainCard";
 import AccountDetailsCard from "./AccountDetailsCard";
@@ -16,6 +14,7 @@ import AccountRcDelegationsCard from "./AccountRcDelegationsCard";
 import AccountBalanceCard from "./AccountBalanceCard";
 import Explorer from "@/types/Explorer";
 import AccountBalanceHistoryCard from "./AccountBalanceHistoryCard";
+
 interface AccountDetailsSectionProps {
   accountName: string;
   liveDataEnabled: boolean;
@@ -101,6 +100,13 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
         proxy={accountDetails.proxy}
       />
       <AccountVestingDelegationsCard
+        direction="outgoing"
+        delegatorAccount={accountName}
+        liveDataEnabled={liveDataEnabled}
+        dynamicGlobalData={dynamicGlobalData}
+      />
+      <AccountVestingDelegationsCard
+        direction="incoming"
         delegatorAccount={accountName}
         liveDataEnabled={liveDataEnabled}
         dynamicGlobalData={dynamicGlobalData}
