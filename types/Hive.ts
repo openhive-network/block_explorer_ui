@@ -762,7 +762,7 @@ namespace Hive {
     balance_change!: number;
     timestamp!: string;
   }
-  export class GetAccountBalanceHistoryParams {
+  export class AccountBalanceHistoryParams {
     "accountName": string;
     "coin-type": string;
     direction?: Hive.Direction;
@@ -775,6 +775,21 @@ namespace Hive {
     total_operations!: number;
     total_pages!: number;
     operations_result!: AccountBalanceHistory[];
+  }
+  export class AccountAggregatedBalanceHistoryParams {
+    "accountName": string;
+    "coin-type": string;
+    "granularity": string;
+    direction?: Hive.Direction;
+    "from-block"?: Date | number | undefined;
+    "to-block"?: Date | number | undefined;
+  }
+  export class AccountAggregatedBalanceHistoryResponse {
+    balance!: number;
+    prev_balance!: number;
+    min_balance!: number;
+    max_balance!: number;
+    date!:Date;
   }
 
   export class Delegation {

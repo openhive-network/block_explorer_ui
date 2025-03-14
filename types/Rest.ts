@@ -142,7 +142,7 @@ export const extendedRest = {
   },
   "balance-api": {
     balanceHistory: {
-      params: Hive.GetAccountBalanceHistoryParams,
+      params: Hive.AccountBalanceHistoryParams,
       result: Hive.AccountBalanceHistoryResponse,
       urlPath: "accounts/{accountName}/balance-history",
     },
@@ -151,5 +151,10 @@ export const extendedRest = {
       result: Hive.VestingDelegationsResponse,
       urlPath: "accounts/{accountName}/delegations",
     },
+      aggregatedHistory: {
+        params: Hive.AccountAggregatedBalanceHistoryParams,
+        result: Hive.AccountAggregatedBalanceHistoryResponse,
+        urlPath: "accounts/{accountName}/aggregated-history",
+      },
   },
 };

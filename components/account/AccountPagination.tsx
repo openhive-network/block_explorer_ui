@@ -35,12 +35,13 @@ const AccountPagination: React.FC<AccountPaginationProps> = ({
               isMirrored={true}
             />
           </div>
-          <div className="flex items-center mt-2 md:mt-0 md:ml-auto w-full md:w-auto justify-center md:justify-end mb-2">
+          <div className="flex items-center mt-2 md:ml-auto w-full md:w-auto justify-center md:justify-end mb-2">
             <JumpToPage
               currentPage={page}
               onPageChange={setPage}
               totalCount={operationsCount ?? 1}
               pageSize={config.standardPaginationSize}
+              
             />
           </div>
         </div>
