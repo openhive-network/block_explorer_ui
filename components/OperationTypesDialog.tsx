@@ -17,7 +17,7 @@ import Chip from "./Chip";
 import { categorizedOperationTypes } from "@/utils/CategorizedOperationTypes";
 import Explorer from "@/types/Explorer";
 import { ChevronDown, Search } from "lucide-react";
-
+import { FinancialOperationTypes } from "@/utils/FinancialOperationTypes";
 type OperationTypesDialogProps = {
   operationTypes?: Explorer.ExtendedOperationTypePattern[];
   triggerTitle: string;
@@ -177,6 +177,30 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
       .filter(filterOperations)
       .map((operationType) => operationType.op_type_id);
     let finaList = [...realIds, ...selectedOperationsIds];
+    finaList = finaList.filter((id, index) => finaList.indexOf(id) === index);
+    setSelectedOperationsIds([...finaList]);
+    const allMatchingCategories = getCategoriesToExpand(
+      finaList,
+      operationTypes,
+      categorizedOperationTypes
+    );
+    setExpandedSections(allMatchingCategories);
+  };
+
+  const selectFinancial = () => {
+    const financialOperationTypePatterns = operationTypes?.filter(operationType =>
+      FinancialOperationTypes.includes(operationType.operation_name)
+    );
+
+    if (!financialOperationTypePatterns) {
+        return;
+    }
+
+    const financialIds = financialOperationTypePatterns
+      .filter(filterOperations)
+      .map((operationType) => operationType.op_type_id);
+
+    let finaList = [...financialIds, ...selectedOperationsIds];
     finaList = finaList.filter((id, index) => finaList.indexOf(id) === index);
     setSelectedOperationsIds([...finaList]);
     const allMatchingCategories = getCategoriesToExpand(
@@ -447,6 +471,13 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
                 onClick={selectVirtual}
               >
                 Virtual
+              </Button>
+              <Button
+                type="button"
+                className="operations-button text-xs"
+                onClick={selectFinancial}
+              >
+                Financial
               </Button>
               <Button
                 type="button"
