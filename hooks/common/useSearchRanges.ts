@@ -178,6 +178,14 @@ const useSearchRanges = (
     };
   };
 
+ const { paramsState } = useURLParams(undefined);
+ // Set range values from url params
+  useEffect(() => {
+    if (paramsState) {
+      setRangesValues(paramsState);
+    }
+  }, [paramsState]);
+
   return {
     rangeSelectOptions,
     timeSelectOptions,
