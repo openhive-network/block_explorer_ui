@@ -89,7 +89,7 @@ const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
         className={cn(
           "mb-4 overflow-hidden transition-all duration-500 ease-in max-h-0 opacity-0",
           {
-            "max-h-96 opacity-100": isVisible,
+            "max-h-full opacity-100": isVisible,
           }
         )}
       >
