@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState, Dispatch } from "react";
 import { Loader2 } from "lucide-react";
 
 import { config } from "@/Config";
@@ -25,11 +25,12 @@ export const DEFAULT_PARAMS = {
 
 interface AccountPageInteractionSearchProps {
   isCommentSearchDataLoading: boolean;
+  setIsFiltersActive: Dispatch<SetStateAction<boolean>>;
 }
 
 const AccountPageInteractionSearch: React.FC<
   AccountPageInteractionSearchProps
-> = ({ isCommentSearchDataLoading }) => {
+> = ({ isCommentSearchDataLoading, setIsFiltersActive }) => {
   const {
     setLastSearchKey,
     setCommentPaginationPage,
@@ -50,6 +51,7 @@ const AccountPageInteractionSearch: React.FC<
     } as any;
     setPermlink("");
     setParams(clearParams);
+    setIsFiltersActive(false);
   };
 
   const { operationsTypes } = useOperationsTypes();

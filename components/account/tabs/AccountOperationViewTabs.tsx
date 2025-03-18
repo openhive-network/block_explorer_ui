@@ -32,6 +32,7 @@ const AccountOperationViewTabs: React.FC<AccountOperationViewTabs> = ({
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
+    setIsFiltersActive(false);
     router.push(
       {
         pathname: `/${router.query.accountName}`,
