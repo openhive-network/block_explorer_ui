@@ -450,7 +450,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
             <DialogTitle className="flex pb-1">
               Operation Types Filters
             </DialogTitle>
-            <div className="flex space-x-1">
+            <div className="flex space-x-1 flex-wrap mt-1 gap-y-1">
               <Button
                 type="button"
                 className="operations-button text-xs"
