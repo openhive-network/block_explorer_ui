@@ -49,6 +49,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
 
   // State to store available coins
   const [availableCoins, setAvailableCoins] = useState<string[]>([]);
+  const [zoomedDomain, setZoomedDomain] = useState<[number, number] | null>(null);
 
   useEffect(() => {
     const newAvailableCoins: string[] = [];
@@ -167,13 +168,34 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
   };
 
   const getMinMax = (data: { balance: number }[]) => {
+    if (!data || data.length === 0) {
+      return [0, 1]; // Default values if data is empty
+    }
     const balance = data.map((item) => item.balance);
     const minValue = Math.min(...balance);
     const maxValue = Math.max(...balance);
     return [minValue, maxValue];
   };
 
-  const [minValue, maxValue] = getMinMax(dataMap[selectedCoinType]);
+  const [fullDataMin, fullDataMax] = getMinMax(dataMap[selectedCoinType]);
+  const [minValue, maxValue] = zoomedDomain || [fullDataMin, fullDataMax];
+
+  const handleBrushAreaChange = (domain: { startIndex?: number; endIndex?: number }) => {
+  if (!domain || domain.startIndex === undefined || domain.endIndex === undefined) {
+      // Reset zoom if brush is cleared or start/end index is undefined
+      setZoomedDomain([fullDataMin, fullDataMax]);
+      return;
+  }
+
+  const { startIndex, endIndex } = domain;
+  const visibleData = (dataMap[selectedCoinType] || []).slice(startIndex, endIndex + 1);
+
+  if (visibleData.length > 0) {
+      const [min, max] = getMinMax(visibleData);
+      setZoomedDomain([min, max]);
+  }
+};
+
 
   return (
     <div className={cn("w-full", className)}>
@@ -241,6 +263,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
               y={380}
               x={50}
               className="text-xs"
+              onChange={handleBrushAreaChange}
             />
           )}
           <Legend
