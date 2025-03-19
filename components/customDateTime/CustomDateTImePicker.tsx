@@ -39,6 +39,23 @@ const MONTHS = [
 
 const WEEK_DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
+const sanitizeTimeValue = (rawValue: string, max: number): string => {
+  let clean = rawValue.replace(/\D/g, "");
+
+  if (clean.length > 2) {
+    clean = clean.slice(0, 2);
+  }
+
+  if (clean === "") return "";
+
+  let num = parseInt(clean, 10);
+
+  if (num < 0) num = 0;
+  if (num > max) num = max;
+
+  return String(num);
+};
+
 const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
   value,
   onChange,
@@ -46,36 +63,51 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
   onClose,
   isValidDate,
 }) => {
-  const [internalValue, setInternalValue] = useState(value || new Date());
+  const [internalDate, setInternalDate] = useState<Date>(value || new Date());
+
+  const [hourStr, setHourStr] = useState(String(value.getUTCHours()));
+  const [minuteStr, setMinuteStr] = useState(String(value.getUTCMinutes()));
+  const [secondStr, setSecondStr] = useState(String(value.getUTCSeconds()));
+
   const [currentMonth, setCurrentMonth] = useState(
     value ? new Date(value) : new Date()
   );
   const [showYearMonthPicker, setShowYearMonthPicker] = useState(false);
-  const [tempYear, setTempYear] = useState((value || new Date()).getFullYear());
-
-  const containerRef: React.MutableRefObject<null | any> = useRef(null);
+  const [tempYear, setTempYear] = useState(currentMonth.getFullYear());
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (e: MouseEvent) => {
       if (
         containerRef.current &&
-        event.target instanceof Node &&
-        !containerRef.current.contains(event.target)
+        e.target instanceof Node &&
+        !containerRef.current.contains(e.target)
       ) {
         setShowYearMonthPicker(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const handleLocalTimeChange = (
+    type: "hours" | "minutes" | "seconds",
+    val: string
+  ) => {
+    if (type === "hours") {
+      setHourStr(sanitizeTimeValue(val, 23));
+    } else if (type === "minutes") {
+      setMinuteStr(sanitizeTimeValue(val, 59));
+    } else if (type === "seconds") {
+      setSecondStr(sanitizeTimeValue(val, 59));
+    }
+  };
+
   const handleDateClick = (day: Date) => {
     if (isValidDate && !isValidDate(day)) return;
-
-    const hours = internalValue.getUTCHours();
-    const minutes = internalValue.getUTCMinutes();
-    const seconds = internalValue.getUTCSeconds();
+    const hours = parseInt(hourStr, 10) || 0;
+    const minutes = parseInt(minuteStr, 10) || 0;
+    const seconds = parseInt(secondStr, 10) || 0;
 
     const updatedDate = new Date(
       Date.UTC(
@@ -87,35 +119,33 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
         seconds
       )
     );
-    setInternalValue(updatedDate);
+    setInternalDate(updatedDate);
   };
 
-  const handleMonthChange = (direction: any) => {
+  const handleMonthChange = (direction: number) => {
     setCurrentMonth(addMonths(currentMonth, direction));
   };
 
-  const handleTimeChange = (type: any, newValue: any) => {
-    const updatedDate = new Date(internalValue.getTime());
-    if (type === "hours") {
-      updatedDate.setUTCHours(
-        parseInt(newValue, 10),
-        updatedDate.getUTCMinutes(),
-        updatedDate.getUTCSeconds()
-      );
-    } else if (type === "minutes") {
-      updatedDate.setUTCMinutes(
-        parseInt(newValue, 10),
-        updatedDate.getUTCSeconds()
-      );
-    } else if (type === "seconds") {
-      updatedDate.setUTCSeconds(parseInt(newValue, 10));
-    }
-
-    setInternalValue(updatedDate);
-  };
-
   const handleConfirm = () => {
-    onChange(internalValue);
+    const h = parseInt(hourStr, 10) || 0;
+    const m = parseInt(minuteStr, 10) || 0;
+    const s = parseInt(secondStr, 10) || 0;
+
+    const hours = Math.max(0, Math.min(h, 23));
+    const minutes = Math.max(0, Math.min(m, 59));
+    const seconds = Math.max(0, Math.min(s, 59));
+
+    const finalDate = new Date(
+      Date.UTC(
+        internalDate.getFullYear(),
+        internalDate.getMonth(),
+        internalDate.getDate(),
+        hours,
+        minutes,
+        seconds
+      )
+    );
+    onChange(finalDate);
     setShowYearMonthPicker(false);
     onClose();
   };
@@ -126,18 +156,16 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
     const startDate = startOfWeek(monthStart, { weekStartsOn: 0 });
     const endDate = endOfWeek(monthEnd, { weekStartsOn: 0 });
 
-    const dayFormat = "d";
     const rows = [];
-    let days = [];
+    let days: JSX.Element[] = [];
     let day = startDate;
 
     while (day <= endDate) {
       const weekStart = day;
       for (let i = 0; i < 7; i++) {
         const cloneDay = day;
-        const formattedDate = format(day, dayFormat);
-        const isSelectedDay = isSameDay(cloneDay, internalValue);
         const inCurrentMonth = isSameMonth(cloneDay, monthStart);
+        const isSelectedDay = isSameDay(cloneDay, internalDate);
         const dayIsValid = !isValidDate || isValidDate(cloneDay);
 
         const disabledClass = !inCurrentMonth ? "not-same-month" : "";
@@ -150,7 +178,7 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
             key={cloneDay.toISOString()}
             onClick={() => handleDateClick(cloneDay)}
           >
-            <span>{formattedDate}</span>
+            <span>{format(day, "d")}</span>
           </div>
         );
         day = addDays(day, 1);
@@ -170,11 +198,11 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
     return <div className="calendar-body">{rows}</div>;
   };
 
-  const handleYearChange = (e: any) => {
+  const handleYearChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTempYear(parseInt(e.target.value, 10));
   };
 
-  const handleMonthSelect = (monthIndex: any) => {
+  const handleMonthSelect = (monthIndex: number) => {
     const updatedMonth = setYear(
       setMonth(new Date(currentMonth), monthIndex),
       tempYear
@@ -183,14 +211,13 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
     setShowYearMonthPicker(false);
   };
 
-  const hours = internalValue.getUTCHours();
-  const minutes = internalValue.getUTCMinutes();
-  const seconds = internalValue.getUTCSeconds();
-
   return (
     <>
       {open && (
-        <div className="datetime-popover">
+        <div
+          ref={containerRef}
+          className="datetime-popover"
+        >
           {!showYearMonthPicker && (
             <>
               <div className="calendar-header">
@@ -233,36 +260,30 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
                   <div className="time-field">
                     <label>Hours</label>
                     <input
-                      type="number"
-                      min="0"
-                      max="23"
-                      value={hours}
+                      type="text"
+                      value={hourStr}
                       onChange={(e) =>
-                        handleTimeChange("hours", e.target.value)
+                        handleLocalTimeChange("hours", e.target.value)
                       }
                     />
                   </div>
                   <div className="time-field">
                     <label>Minutes</label>
                     <input
-                      type="number"
-                      min="0"
-                      max="59"
-                      value={minutes}
+                      type="text"
+                      value={minuteStr}
                       onChange={(e) =>
-                        handleTimeChange("minutes", e.target.value)
+                        handleLocalTimeChange("minutes", e.target.value)
                       }
                     />
                   </div>
                   <div className="time-field">
                     <label>Seconds</label>
                     <input
-                      type="number"
-                      min="0"
-                      max="59"
-                      value={seconds}
+                      type="text"
+                      value={secondStr}
                       onChange={(e) =>
-                        handleTimeChange("seconds", e.target.value)
+                        handleLocalTimeChange("seconds", e.target.value)
                       }
                     />
                   </div>
