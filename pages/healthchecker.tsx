@@ -1,7 +1,7 @@
-import HealthCheckerComponent from "@/components/healthchecker/HealthChecker";
 import Head from "next/head";
 import { useHealthCheckerContext } from "@/contexts/HealthCheckerContext";
 import { useHealthCheckerServiceContext } from "@/contexts/HealthCheckerServiceContext";
+import { HealthCheckerComponent } from "healthchecker"
 
 export default function HealthcheckerPage() {
 
