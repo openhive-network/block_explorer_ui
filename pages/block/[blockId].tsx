@@ -96,9 +96,25 @@ export default function Block() {
   const { blockOperations: totalOperations, trxLoading: totalLoading } =
     useBlockOperations(blockId, undefined, paramsState.page || 1);
 
-  const trxOperations = totalOperations?.operations_result.filter((operation) => operation.trx_id);
-  const trxOperationsLength = trxOperations?.length;
-  
+   /* Calculating Maximum Transaction in Blog */ 
+  let maxTransactions = 0;
+  if (
+    totalOperations?.operations_result &&
+    Array.isArray(totalOperations.operations_result)
+  ) {
+    maxTransactions = totalOperations.operations_result.reduce(
+      (max, operation) => {
+        if (typeof operation?.trx_in_block === "number") {
+          return Math.max(max, operation.trx_in_block);
+        } else {
+          return max;
+        }
+      },
+      0
+    );
+  }
+  maxTransactions += 1; // Add one since trx_in_block starts at 0 an not 1
+
   const { blockError, blockOperations, trxLoading } = useBlockOperations(
     blockId,
     paramsState.filters
@@ -111,7 +127,7 @@ export default function Block() {
   );
   const { operationsTypes } = useOperationsTypes();
   const formattedOperations = useOperationsFormatter(
-    blockOperations?.operations_result 
+    blockOperations?.operations_result
   ) as Hive.OperationResponse[];
   useEffect(() => {
     if (blockDetails && blockDetails.created_at) {
@@ -240,7 +256,7 @@ export default function Block() {
       </Head>
       {loading ? (
         <div>
-          <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />          
+          <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />
         </div>
       ) : blockDetails?.block_num ? (
         <div
@@ -267,7 +283,7 @@ export default function Block() {
             nonVirtualOperationsTypesCounters={
               nonVirtualOperationsTypesCounters
             }
-            trxOperationsLength = {trxOperationsLength}
+            trxOperationsLength={maxTransactions}
             blockDetails={blockDetails}
             enableRawVirtualOperations={enableRawVirtualOperations}
             handleEnableVirtualOperations={handleEnableVirtualOperations}
