@@ -15,7 +15,6 @@ import { cn } from "@/lib/utils";
 import moment from "moment";
 import { ArrowDown, ArrowUp, Minus } from "lucide-react";
 
-
 interface BalanceHistoryChartProps {
   hiveBalanceHistoryData?: {
     timestamp: string;
@@ -35,6 +34,12 @@ interface BalanceHistoryChartProps {
   className?: string;
   quickView?: boolean;
 }
+
+export const colorMap: Record<string, string> = {
+  HIVE: "#8884d8",
+  VESTS: "#82ca9d",
+  HBD: "#ff7300",
+};
 
 const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
   hiveBalanceHistoryData,
@@ -82,12 +87,6 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  const colorMap: Record<string, string> = {
-    HIVE: "#8884d8",
-    VESTS: "#82ca9d",
-    HBD: "#ff7300",
-  };
 
   const dataMap: Record<
     string,
