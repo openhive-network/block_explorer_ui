@@ -789,7 +789,7 @@ namespace Hive {
     prev_balance!: number;
     min_balance!: number;
     max_balance!: number;
-    date!:Date;
+    date!: Date;
   }
 
   export class Delegation {
@@ -810,6 +810,32 @@ namespace Hive {
     total_operations!: number;
     total_pages!: number;
     operations_result!: TwoDirectionDelegations[];
+  }
+
+  export class MarketHistory {
+    buckets!: MarketBucket[];
+  }
+
+  export class MarketBucket {
+    id!: number;
+    open!: string;
+    seconds!: number;
+    hive!: MarketData;
+    symbol!: MarketSymbol;
+    non_hive!: MarketData;
+  }
+
+  export class MarketData {
+    high!: number;
+    low!: number;
+    open!: number;
+    close!: number;
+    volume!: number;
+  }
+
+  export class MarketSymbol {
+    nai!: string;
+    precision!: number;
   }
 }
 
