@@ -39,6 +39,12 @@ type ExplorerNodeApi = {
       Hive.HivePosts
     >;
   };
+  market_history_api: {
+    get_market_history: TWaxApiRequest<
+      { bucket_seconds: number; start: string; end: string },
+      Hive.MarketHistory[]
+    >;
+  };
 };
 
 class FetchingService {
@@ -446,25 +452,39 @@ class FetchingService {
     });
   }
 
-
   async geAccountAggregatedtBalanceHistory(
     accountName: string,
     coinType: string,
-    granularity : "daily"|"monthly"|"yearly",
+    granularity: "daily" | "monthly" | "yearly",
     direction: "asc" | "desc",
     fromBlock?: Date | number | undefined,
     toBlock?: Date | number | undefined
   ): Promise<Hive.AccountAggregatedBalanceHistoryResponse> {
-    return await this.extendedHiveChain!.restApi["balance-api"].aggregatedHistory({
+    return await this.extendedHiveChain!.restApi[
+      "balance-api"
+    ].aggregatedHistory({
       accountName,
       "coin-type": coinType,
-      "granularity":granularity,
+      granularity: granularity,
       direction: direction,
       "from-block": fromBlock,
       "to-block": toBlock,
     });
   }
 
+  async getMarketHistory(
+    bucketSeconds: number,
+    start: string,
+    end: string
+  ): Promise<Hive.MarketHistory[]> {
+    return await this.extendedHiveChain!.api.market_history_api.get_market_history(
+      {
+        bucket_seconds: bucketSeconds,
+        start,
+        end,
+      }
+    );
+  }
 }
 
 const fetchingService = new FetchingService();
