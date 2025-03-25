@@ -24,6 +24,15 @@ import {
 } from "@/components/ui/card";
 import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import useMarketHistory from "@/hooks/common/useMarketHistory";
+import MarketHistoryChart from "@/components/home/MarketHistoryChart";
+import moment from "moment";
+
+const MARKET_HISTORY_INTERVAL = 86400; // 1 day
+const CURRENT_TIME = moment().format("YYYY-MM-DDTHH:mm:ss");
+const MARKET_HISTORY_TIME_PERIOD = moment()
+  .subtract(30, "days")
+  .format("YYYY-MM-DDTHH:mm:ss");
 
 export default function Home() {
   const { theme } = useTheme();
@@ -38,6 +47,12 @@ export default function Home() {
     useDynamicGlobal(headBlockNum).dynamicGlobalData;
   const headBlockData = useHeadBlock(headBlockNum).headBlockData;
   const { blockOperations } = useBlockOperations(headBlockNum || 0);
+
+  const { marketHistory, isMarketHistoryLoading } = useMarketHistory(
+    MARKET_HISTORY_INTERVAL,
+    MARKET_HISTORY_TIME_PERIOD,
+    CURRENT_TIME
+  );
 
   // Filter operations that have a trx_id
   const trxOperations = blockOperations?.operations_result.filter(
@@ -72,6 +87,11 @@ export default function Home() {
           opcount={opcount}
         />
         <div className="col-span-4 md:col-span-3 lg:col-span-2">
+          <MarketHistoryChart
+            data={marketHistory}
+            isLoading={isMarketHistoryLoading}
+            strokeColor={strokeColor}
+          />
           <LastBlocksWidget
             headBlock={headBlockNum}
             strokeColor={strokeColor}
