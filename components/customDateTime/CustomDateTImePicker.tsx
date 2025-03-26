@@ -110,14 +110,12 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
     const seconds = parseInt(secondStr, 10) || 0;
 
     const updatedDate = new Date(
-      Date.UTC(
-        day.getFullYear(),
-        day.getMonth(),
-        day.getDate(),
-        hours,
-        minutes,
-        seconds
-      )
+      day.getFullYear(),
+      day.getMonth(),
+      day.getDate(),
+      hours,
+      minutes,
+      seconds
     );
     setInternalDate(updatedDate);
   };
