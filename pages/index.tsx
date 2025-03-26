@@ -79,19 +79,21 @@ export default function Home() {
       <Head>
         <title>Hive Explorer</title>
       </Head>
-      <div className=" page-container grid grid-cols-4 text-white gap-3">
-        <HeadBlockCard
-          headBlockCardData={dynamicGlobalQueryData}
-          transactionCount={trxOpsLength}
-          blockDetails={headBlockData}
-          opcount={opcount}
-        />
-        <div className="col-span-4 md:col-span-3 lg:col-span-2">
+      <div className="page-container grid grid-cols-4 text-white gap-3">
+        <div className="flex flex-col gap-3">
+          <HeadBlockCard
+            headBlockCardData={dynamicGlobalQueryData}
+            transactionCount={trxOpsLength}
+            blockDetails={headBlockData}
+            opcount={opcount}
+          />
           <MarketHistoryChart
             data={marketHistory}
             isLoading={isMarketHistoryLoading}
             strokeColor={strokeColor}
           />
+        </div>
+        <div className="col-span-4 md:col-span-3 lg:col-span-2">
           <LastBlocksWidget
             headBlock={headBlockNum}
             strokeColor={strokeColor}
