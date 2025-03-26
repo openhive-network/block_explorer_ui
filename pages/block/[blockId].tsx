@@ -90,14 +90,14 @@ export default function Block() {
   const { settings } = useUserSettingsContext();
   const { operationsCountInBlock, countLoading } =
     useOperationsCountInBlock(blockId);
-  const { blockDetails, loading } = useBlockData(blockId);
+    const { blockDetails, loading } = useBlockData(blockId);
 
   const { rawBlockdata } = useBlockRawData(blockId, enableRawVirtualOperations);
   const { blockOperations: totalOperations, trxLoading: totalLoading } =
     useBlockOperations(blockId, undefined, paramsState.page || 1);
 
    /* Calculating Maximum Transaction in Blog */ 
-  let maxTransactions = 0;
+  let maxTransactions = undefined;
   if (
     totalOperations?.operations_result &&
     Array.isArray(totalOperations.operations_result)
@@ -112,8 +112,9 @@ export default function Block() {
       },
       0
     );
+    maxTransactions += 1; // Add one since trx_in_block starts at 0 an not 1
   }
-  maxTransactions += 1; // Add one since trx_in_block starts at 0 an not 1
+
 
   const { blockError, blockOperations, trxLoading } = useBlockOperations(
     blockId,
@@ -147,6 +148,15 @@ export default function Block() {
   );
 
   const getOperationsCounts = useCallback(() => {
+    if(countLoading)
+    {
+      return {
+        virtualOperationsCounter: undefined,
+        nonVirtualOperationsCounter: undefined,
+        virtualOperationsTypesCounters: [],
+        nonVirtualOperationsTypesCounters: [],
+      };
+    }
     if (operationsCountInBlock && !countLoading && operationsTypes) {
       const virtualOperationsTypesCounters: Explorer.OperationCounter[] = [];
       const nonVirtualOperationsTypesCounters: Explorer.OperationCounter[] = [];
