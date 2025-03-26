@@ -3,7 +3,7 @@ import { HealthChecker } from "@hiveio/wax";
 import { ApiChecker } from "@/services/HealthCheckerService";
 import { useApiAddressesContext } from "./ApiAddressesContext";
 // import HealthCheckerService, { HealthCheckerFields } from "@/services/HealthCheckerService";
-import {HealthCheckerService} from "healthchecker"
+import {HealthCheckerService} from "healthchecker-component"
 import { useHiveChainContext } from "./HiveChainContext";
 
 
