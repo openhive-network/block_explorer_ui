@@ -24,10 +24,10 @@ const CustomTooltip = ({
   if (active && payload && payload.length) {
     return (
       <div className="bg-buttonHover text-text p-2 rounded-xl">
-        {payload.map(({ payload: { date, avgPrice, volume } }) => {
+        {payload.map(({ payload: { tooltipDate, avgPrice, volume } }) => {
           return (
-            <div key={date}>
-              <p>{`Date: ${date}`}</p>
+            <div key={tooltipDate}>
+              <p>{`Date: ${tooltipDate}`}</p>
               <p>{`Average Price: $${avgPrice}`}</p>
               <p>{`Volume: ${volume.toLocaleString("en-US")} HIVE`}</p>
             </div>
@@ -85,6 +85,7 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({
 
     return {
       date: moment(bucket.open).format("MMM D"),
+      tooltipDate: moment(bucket.open).format("YYYY MMM D"),
       avgPrice: hiveAveragePrice,
       volume: bucket.hive.volume,
     };
