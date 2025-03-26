@@ -8,8 +8,8 @@ import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
 interface BlockPageOperationCountProps {
   virtualOperationsTypesCounters?: Explorer.OperationCounter[];
   nonVirtualOperationsTypesCounters?: Explorer.OperationCounter[];
-  virtualOperationLength: number;
-  nonVirtualOperationLength: number;
+  virtualOperationLength: number | undefined;
+  nonVirtualOperationLength: number | undefined;
   enableRawVirtualOperations: boolean;
   handleEnableVirtualOperations: () => void;
 }
