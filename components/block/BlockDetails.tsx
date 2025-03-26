@@ -12,8 +12,8 @@ import CopyButton from "../ui/CopyButton";
 interface BlockDetailsProps {
   virtualOperationsTypesCounters?: Explorer.OperationCounter[];
   nonVirtualOperationsTypesCounters?: Explorer.OperationCounter[];
-  virtualOperationLength: number;
-  nonVirtualOperationLength: number;
+  virtualOperationLength: number | undefined;
+  nonVirtualOperationLength: number | undefined;
   blockDetails?: Hive.BlockDetails;
   enableRawVirtualOperations: boolean;
   handleEnableVirtualOperations: () => void;
