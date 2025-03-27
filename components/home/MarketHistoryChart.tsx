@@ -13,6 +13,7 @@ import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Loader2 } from "lucide-react";
 import { colorMap } from "../balanceHistory/BalanceHistoryChart";
+import { useTheme } from "@/contexts/ThemeContext";
 
 const CustomTooltip = ({
   active,
@@ -54,7 +55,6 @@ const calculateAvgHivePrice = (
 interface MarketChartProps {
   data: Hive.MarketHistory | undefined;
   isLoading: boolean;
-  strokeColor: string;
 }
 interface ChartData {
   date: string;
@@ -65,9 +65,9 @@ interface ChartData {
 const MarketHistoryChart: React.FC<MarketChartProps> = ({
   data,
   isLoading,
-  strokeColor,
 }) => {
   const { hiveChain } = useHiveChainContext();
+  const { theme } = useTheme();
 
   if (!data || !hiveChain) return;
 
@@ -99,44 +99,38 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({
   const maxValue = Math.max(
     ...chartData.map((d: ChartData) => parseFloat(d.avgPrice))
   );
+  const strokeColor = theme === "dark" ? "#FFF" : "#000";
 
   return (
-    <Card className="mb-3">
-      <CardHeader className="flex justify-between items-center  px-1 py-3">
-        <h2 className="text-lg font-semibold">Hive Price Chart</h2>
-      </CardHeader>
-      <CardContent>
-        <ResponsiveContainer
-          width="100%"
-          height={300}
-        >
-          <LineChart data={chartData}>
-            <XAxis
-              dataKey="date"
-              stroke={strokeColor}
-            />
-            <YAxis
-              dataKey="avgPrice"
-              domain={[minValue, maxValue]}
-              stroke={strokeColor}
-            />
-            <Tooltip content={<CustomTooltip />} />
-            <Legend
-              verticalAlign="top"
-              height={36}
-            />
-            <Line
-              name={`Hive Price: $${lastHivePrice}`}
-              type="monotone"
-              dataKey="avgPrice"
-              stroke={colorMap.HIVE}
-              dot={false}
-              strokeWidth={2}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </CardContent>
-    </Card>
+    <ResponsiveContainer
+      width="100%"
+      height={250}
+    >
+      <LineChart data={chartData}>
+        <XAxis
+          dataKey="date"
+          stroke={strokeColor}
+        />
+        <YAxis
+          dataKey="avgPrice"
+          domain={[minValue, maxValue]}
+          stroke={strokeColor}
+        />
+        <Tooltip content={<CustomTooltip />} />
+        <Legend
+          verticalAlign="top"
+          height={36}
+        />
+        <Line
+          name={`Hive Price: $${lastHivePrice}`}
+          type="monotone"
+          dataKey="avgPrice"
+          stroke={colorMap.HIVE}
+          dot={false}
+          strokeWidth={2}
+        />
+      </LineChart>
+    </ResponsiveContainer>
   );
 };
 
