@@ -17,6 +17,7 @@ import { getBlockDifference } from "./SyncInfo";
 import { Toggle } from "../ui/toggle";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import CurrentBlockCard from "./CurrentBlockCard";
+import HeadBlockHiveChartCard from "./HeadBlockHiveChartCard";
 
 interface HeadBlockCardProps {
   headBlockCardData?: Explorer.HeadBlockCardData | any;
@@ -61,6 +62,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
     timeCard: true,
     supplyCard: true,
     hiveParamsCard: true,
+    hiveChart: false,
   });
   const { settings, setSettings } = useUserSettingsContext();
 
@@ -81,6 +83,13 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
     setHiddenPropertiesByCard({
       ...hiddenPropertiesByCard,
       hiveParamsCard: !hiddenPropertiesByCard.hiveParamsCard,
+    });
+  };
+
+  const handleHideHiveChart = () => {
+    setHiddenPropertiesByCard({
+      ...hiddenPropertiesByCard,
+      hiveChart: !hiddenPropertiesByCard.hiveChart,
     });
   };
 
@@ -256,6 +265,14 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
       </CardHeader>
 
       <CardContent className="p-4 space-y-4">
+        {/* Last Block Information */}
+        <CurrentBlockCard
+          blockDetails={blockDetails}
+          transactionCount={transactionCount}
+          opcount={opcount}
+          timeDifferenceInSeconds={timeDifferenceInSeconds}
+          liveBlockNumber={liveBlockNumber}
+        />
         {/* Other Information*/}
         <div className="data-box">
           <div>
@@ -265,16 +282,14 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
             <span>Vests To Hive Ratio:</span> {liveVestsToHiveRatio} VESTS
           </div>
         </div>
-        {/* Last Block Information */}
-        <CurrentBlockCard
-          blockDetails={blockDetails}
-          transactionCount={transactionCount}
-          opcount={opcount}
-          timeDifferenceInSeconds={timeDifferenceInSeconds}
-          liveBlockNumber={liveBlockNumber}
-        />
 
         <div>
+          <HeadBlockHiveChartCard
+            header="Hive Price Chart"
+            isParamsHidden={hiddenPropertiesByCard.hiveChart}
+            handleHideParams={handleHideHiveChart}
+            isLoading={isBlockCardLoading}
+          />
           <HeadBlockPropertyCard
             parameters={fundAndSupplyParameters}
             header="Fund and Supply"
