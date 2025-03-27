@@ -338,6 +338,19 @@ pre {
   flex-direction: column; /* Stack elements vertically */
 }
 
+.data-box-chart {
+  background-color: var(--color-extra-light-gray);
+  border-radius: 12px;
+  padding: 10px;
+  margin: 6px 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: var(--color-text);
+  font-size: 14px;
+  border: 1px solid var(--color-light-gray);
+  transition: all 0.3s ease-in-out;
+  flex-direction: column;
+}
+
 .data-box:hover {
   background-color: var(--color-row-hover);
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15); /* Elevated shadow */
