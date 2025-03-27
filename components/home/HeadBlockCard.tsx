@@ -228,7 +228,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
 
   return (
     <Card
-      className="col-span-4 md:col-span-1"
+      className="col-span-12 md:col-span-4 lg:col-span-3"
       data-testid="head-block-card"
     >
       <CardHeader className="flex justify-between items-end py-2 border-b ">

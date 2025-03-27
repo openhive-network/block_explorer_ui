@@ -63,16 +63,15 @@ export default function Home() {
       <Head>
         <title>Hive Explorer</title>
       </Head>
-      <div className="page-container grid grid-cols-4 text-white gap-3">
-        <div className="flex flex-col gap-3">
-          <HeadBlockCard
-            headBlockCardData={dynamicGlobalQueryData}
-            transactionCount={trxOpsLength}
-            blockDetails={headBlockData}
-            opcount={opcount}
-          />
-        </div>
-        <div className="col-span-4 md:col-span-3 lg:col-span-2">
+      <div className="page-container grid grid-cols-12 text-white gap-3">
+        <HeadBlockCard
+          headBlockCardData={dynamicGlobalQueryData}
+          transactionCount={trxOpsLength}
+          blockDetails={headBlockData}
+          opcount={opcount}
+        />
+
+        <div className="col-span-12 md:col-span-8 lg:col-span-6">
           <LastBlocksWidget
             headBlock={headBlockNum}
             strokeColor={strokeColor}
@@ -81,7 +80,7 @@ export default function Home() {
         </div>
 
         <Card
-          className="col-span-4 md:col-span-4 lg:col-span-1 overflow-hidden"
+          className="col-span-12 md:col-span-12 lg:col-span-3 overflow-hidden"
           data-testid="top-witnesses-sidebar"
         >
           <CardHeader className="flex justify-between items-center border-b px-1 py-3">
