@@ -216,7 +216,6 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             bottom: isMobile ? 100 : 60,
           }}
         >
-          <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey="timestamp"
             tickCount={quickView ? 5 : 14}
