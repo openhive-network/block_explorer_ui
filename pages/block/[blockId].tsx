@@ -11,7 +11,6 @@ import {
   convertOperationResultsToTableOperations,
 } from "@/lib/utils";
 import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
-import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
 import useBlockData from "@/hooks/api/blockPage/useBlockData";
 import useBlockOperations from "@/hooks/api/common/useBlockOperations";
 import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
@@ -70,7 +69,6 @@ const scrollToTrxSection = (trxId?: string) => {
 export default function Block() {
   const router = useRouter();
   const { blockId } = useBlockId();
-  const { refetch } = useHeadBlockNumber();
 
   const [blockDate, setBlockDate] = useState<Date>();
   const [enableRawVirtualOperations, setEnableRawVirtualOperations] =
@@ -83,20 +81,16 @@ export default function Block() {
     ["blockId"]
   );
 
-  useEffect(() => {
-    refetch();
-  }, [blockId, refetch]);
-
   const { settings } = useUserSettingsContext();
   const { operationsCountInBlock, countLoading } =
     useOperationsCountInBlock(blockId);
-    const { blockDetails, loading } = useBlockData(blockId);
+  const { blockDetails, loading } = useBlockData(blockId);
 
   const { rawBlockdata } = useBlockRawData(blockId, enableRawVirtualOperations);
   const { blockOperations: totalOperations, trxLoading: totalLoading } =
     useBlockOperations(blockId, undefined, paramsState.page || 1);
 
-   /* Calculating Maximum Transaction in Blog */ 
+  /* Calculating Maximum Transaction in Blog */
   let maxTransactions = undefined;
   if (
     totalOperations?.operations_result &&
@@ -114,7 +108,6 @@ export default function Block() {
     );
     maxTransactions += 1; // Add one since trx_in_block starts at 0 an not 1
   }
-
 
   const { blockError, blockOperations, trxLoading } = useBlockOperations(
     blockId,
@@ -148,8 +141,7 @@ export default function Block() {
   );
 
   const getOperationsCounts = useCallback(() => {
-    if(countLoading)
-    {
+    if (countLoading) {
       return {
         virtualOperationsCounter: undefined,
         nonVirtualOperationsCounter: undefined,
