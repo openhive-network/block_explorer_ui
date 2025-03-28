@@ -215,6 +215,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             left: isMobile ? 0 : 10,
             bottom: isMobile ? 100 : 60,
           }}
+    
         >
           <XAxis
             dataKey="timestamp"
@@ -244,6 +245,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             type="monotone"
             dataKey="balance"
             stroke={colorMap[selectedCoinType]}
+            strokeWidth={2}
             activeDot={{ r: 6 }}
             name={selectedCoinType}
             dot={false}
