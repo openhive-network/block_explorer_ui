@@ -39,8 +39,15 @@ export default function Home() {
   const { blockOperations } = useBlockOperations(headBlockNum || 0);
 
   // Filter operations that have a trx_id
-  const trxOperations = blockOperations?.operations_result.filter(
-    (operation) => operation.trx_id
+  const trxOperations = blockOperations?.operations_result.reduce(
+    (max, operation) => {
+      if (typeof operation?.trx_in_block === "number") {
+        return Math.max(max, operation.trx_in_block);
+      } else {
+        return max;
+      }
+    },
+    0
   );
 
   const [opcount, setOpcount] = useState<number>(0);
@@ -51,10 +58,10 @@ export default function Home() {
       setOpcount(blockOperations?.total_operations);
     }
     if (trxOperations) {
-      setTrxOpLength(trxOperations.length);
+      setTrxOpLength(trxOperations + 1);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [blockOperations?.total_operations, trxOperations?.length]);
+  }, [blockOperations?.total_operations, trxOperations]);
 
   const strokeColor = theme === "dark" ? "#FFF" : "#000";
 

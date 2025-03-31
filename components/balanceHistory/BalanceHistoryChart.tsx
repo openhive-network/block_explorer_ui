@@ -215,8 +215,8 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             left: isMobile ? 0 : 10,
             bottom: isMobile ? 100 : 60,
           }}
+    
         >
-          <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey="timestamp"
             tickCount={quickView ? 5 : 14}
@@ -245,6 +245,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             type="monotone"
             dataKey="balance"
             stroke={colorMap[selectedCoinType]}
+            strokeWidth={2}
             activeDot={{ r: 6 }}
             name={selectedCoinType}
             dot={false}
