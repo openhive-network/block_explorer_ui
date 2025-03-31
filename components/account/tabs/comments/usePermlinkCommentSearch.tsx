@@ -66,12 +66,14 @@ const usePermlinkCommentSearch = (accountName: string) => {
       pageNumber: 1,
       fromBlock: undefined,
       toBlock: undefined,
-      startDate: moment(Date.now()).subtract(30, "days").toDate(),
+      startDate: moment(Date.now())
+        .subtract(DEFAULT_LAST_TIME_UNIT_VALUE, DEFAULT_TIME_UNIT_SELECT_KEY)
+        .toDate(),
       endDate: undefined,
       lastBlocks: undefined,
       lastTime: 30,
       rangeSelectKey: "lastTime",
-      timeUnit: "days",
+      timeUnit: DEFAULT_TIME_UNIT_SELECT_KEY,
     };
     setPermlinkSearchProps(commentPermlinksSearchProps);
     setRangesValues(commentPermlinksSearchProps);
