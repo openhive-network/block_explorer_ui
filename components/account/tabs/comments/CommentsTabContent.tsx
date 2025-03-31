@@ -47,9 +47,13 @@ const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
   );
 
   const props = {
-    ...DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS,
     ...paramsState,
     accountName,
+    startDate:
+      paramsState?.rangeSelectKey === "none"
+        ? undefined
+        : paramsState.startDate ||
+          DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS.startDate,
   };
 
   const { permlinkSearchData, permlinkSearchDataLoading } =
