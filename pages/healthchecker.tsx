@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { useHealthCheckerContext } from "@/contexts/HealthCheckerContext";
 import { useHealthCheckerServiceContext } from "@/contexts/HealthCheckerServiceContext";
-import { HealthCheckerComponent } from "healthchecker-component"
+import { HealthCheckerComponent } from "@hiveio/healthchecker-component"
 
 export default function HealthcheckerPage() {
 

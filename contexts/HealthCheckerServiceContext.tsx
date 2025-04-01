@@ -3,7 +3,7 @@ import { HealthChecker } from "@hiveio/wax";
 import { ApiChecker } from "@/services/HealthCheckerService";
 import { useApiAddressesContext } from "./ApiAddressesContext";
 // import HealthCheckerService, { HealthCheckerFields } from "@/services/HealthCheckerService";
-import {HealthCheckerService} from "healthchecker-component"
+import {HealthCheckerService} from "@hiveio/healthchecker-component";
 import { useHiveChainContext } from "./HiveChainContext";
 
 
@@ -57,6 +57,7 @@ export const HealthCheckerServiceContextProvider: React.FC<{
 
   useEffect(() => { 
       startHealthCheckerSerivce();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (

@@ -11,6 +11,9 @@ importers:
       '@headlessui/react':
         specifier: ^1.7.15
         version: 1.7.19(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@hiveio/healthchecker-component':
+        specifier: 1.0.0-stable.250401103509
+        version: 1.0.0-stable.250401103509(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@hiveio/wax':
         specifier: 1.27.6-rc7-stable.250211115622
         version: 1.27.6-rc7-stable.250211115622
@@ -80,9 +83,6 @@ importers:
       eslint-config-next:
         specifier: 13.4.10
         version: 13.4.10(eslint@8.45.0)(typescript@5.1.6)
-      healthchecker-component:
-        specifier: file:../healthchecker-component
-        version: file:../healthchecker-component(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       long:
         specifier: ^5.2.3
         version: 5.3.1
@@ -229,6 +229,12 @@ packages:
   '@hiveio/beekeeper@1.27.8-stable.250131103618':
     resolution: {integrity: sha1-0IYuFBbxIIKfRTrI6ZZc7Jf+qLA=, tarball: https://gitlab.syncad.com/api/v4/projects/198/packages/npm/@hiveio/beekeeper/-/@hiveio/beekeeper-1.27.8-stable.250131103618.tgz}
     engines: {node: ^20.11 || >= 21.2}
+
+  '@hiveio/healthchecker-component@1.0.0-stable.250401103509':
+    resolution: {integrity: sha1-tTdaJVayrNz5j+ab5OP1I+U7xoU=, tarball: https://gitlab.syncad.com/api/v4/projects/520/packages/npm/@hiveio/healthchecker-component/-/@hiveio/healthchecker-component-1.0.0-stable.250401103509.tgz}
+    peerDependencies:
+      react: ^18.2.0
+      react-dom: ^18.2.0
 
   '@hiveio/wax@1.27.6-rc7-stable.250211115622':
     resolution: {integrity: sha1-u4xpWFifKGdBz6dKebsMzWho02c=, tarball: https://gitlab.syncad.com/api/v4/projects/419/packages/npm/@hiveio/wax/-/@hiveio/wax-1.27.6-rc7-stable.250211115622.tgz}
@@ -1950,12 +1956,6 @@ packages:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
 
-  healthchecker-component@file:../healthchecker-component:
-    resolution: {directory: ../healthchecker-component, type: directory}
-    peerDependencies:
-      react: ^18.2.0
-      react-dom: ^18.2.0
-
   ieee754@1.2.1:
     resolution: {integrity: sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==}
 
@@ -3171,6 +3171,11 @@ snapshots:
       react-dom: 18.2.0(react@18.2.0)
 
   '@hiveio/beekeeper@1.27.8-stable.250131103618': {}
+
+  '@hiveio/healthchecker-component@1.0.0-stable.250401103509(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
 
   '@hiveio/wax@1.27.6-rc7-stable.250211115622':
     dependencies:
@@ -4983,11 +4988,6 @@ snapshots:
   hasown@2.0.2:
     dependencies:
       function-bind: 1.1.2
-
-  healthchecker-component@file:../healthchecker-component(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
-    dependencies:
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
 
   ieee754@1.2.1: {}
 
