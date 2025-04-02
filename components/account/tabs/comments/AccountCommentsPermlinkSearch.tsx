@@ -1,4 +1,4 @@
-import { ChangeEvent, Dispatch, SetStateAction } from "react";
+import { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
 import { Loader2 } from "lucide-react";
 
 import Explorer from "@/types/Explorer";
@@ -28,6 +28,8 @@ const AccountCommentsPermlinkSearch: React.FC<
     setLocalCommentType,
   } = usePermlinkCommentSearch(accountName);
 
+  const [isSearchButtonDisabled, setIsSearchButtonDisabled] = useState(false);
+
   const handleChangeCommentType = (e: ChangeEvent<HTMLSelectElement>) => {
     const {
       target: { value },
@@ -49,9 +51,14 @@ const AccountCommentsPermlinkSearch: React.FC<
     setIsVisible(false);
   };
 
+  const buttonLabel = `Value field can't be empty`;
+
   return (
     <>
-      <SearchRanges rangesProps={searchRanges} />
+      <SearchRanges
+        rangesProps={searchRanges}
+        setIsSearchButtonDisabled={setIsSearchButtonDisabled}
+      />
       <div className={"flex justify-start my-4"}>
         <PostTypeSelector
           showLabel
@@ -60,15 +67,22 @@ const AccountCommentsPermlinkSearch: React.FC<
         />
       </div>
       <div className="flex justify-between items-center">
-        <Button
-          data-testid="search-button"
-          className="mr-2 my-2"
-          onClick={onSearchButtonClick}
-          disabled={!accountName}
-        >
-          Search
-          {isDataLoading && <Loader2 className="ml-2 animate-spin h-4 w-4" />}
-        </Button>
+        <div>
+          <Button
+            data-testid="search-button"
+            className="mr-2 my-2"
+            onClick={onSearchButtonClick}
+            disabled={isSearchButtonDisabled}
+          >
+            Search
+            {isDataLoading && <Loader2 className="ml-2 animate-spin h-4 w-4" />}
+          </Button>
+          {isSearchButtonDisabled ? (
+            <label className="text-gray-300 dark:text-gray-500 ">
+              {buttonLabel}
+            </label>
+          ) : null}
+        </div>
         <Button onClick={onResetButtonClick}>Reset</Button>
       </div>
     </>
