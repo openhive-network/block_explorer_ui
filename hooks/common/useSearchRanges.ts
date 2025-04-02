@@ -60,7 +60,7 @@ export const rangeSelectOptions: Explorer.SelectOption[] = [
     key: "timeRange",
   },
   {
-    name: "---",
+    name: "None",
     key: "none",
   },
 ];
@@ -178,8 +178,8 @@ const useSearchRanges = (
     };
   };
 
- const { paramsState } = useURLParams(undefined);
- // Set range values from url params
+  const { paramsState } = useURLParams(undefined);
+  // Set range values from url params
   useEffect(() => {
     if (paramsState) {
       setRangesValues(paramsState);
