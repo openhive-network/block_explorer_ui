@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { Loader2 } from "lucide-react";
 
 import SearchRanges from "@/components/searchRanges/SearchRanges";
 import { Button } from "@/components/ui/button";
@@ -45,6 +46,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
 
   // Operation types
   const [filters, setFilters] = useState<boolean[]>([]);
+  const [isSearchButtonDisabled, setIsSearchButtonDisabled] = useState(false);
 
   const {
     filters: filtersParam,
@@ -90,6 +92,8 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     setLastBlocksValue(undefined);
     setParams(props);
     setFilters([]);
+    setIsVisible(false);
+    setIsFiltersActive(false);
   };
 
   const handleOperationSelect = (filters: number[] | null) => {
@@ -161,6 +165,8 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paramsState]);
 
+  const buttonLabel = `Value field can't be empty`;
+
   return (
     <TabsContent value="operations">
       <Card
@@ -175,7 +181,10 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
           <CardTitle className="text-left">Filters</CardTitle>
         </CardHeader>
         <CardContent>
-          <SearchRanges rangesProps={searchRanges} />
+          <SearchRanges
+            rangesProps={searchRanges}
+            setIsSearchButtonDisabled={setIsSearchButtonDisabled}
+          />
 
           <div className="flex items-center my-2">
             <OperationTypesDialog
@@ -197,15 +206,25 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
                 onClick={handleSearch}
                 data-testid="apply-filters"
                 className="mr-2 my-2"
+                disabled={isSearchButtonDisabled}
               >
-                <span>Search</span>
+                Search
+                {isAccountOperationsLoading && (
+                  <Loader2 className="ml-2 animate-spin h-4 w-4" />
+                )}
               </Button>
+
+              {isSearchButtonDisabled ? (
+                <label className="text-gray-300 dark:text-gray-500 ">
+                  {buttonLabel}
+                </label>
+              ) : null}
             </div>
             <Button
               onClick={handleClearFilter}
               data-testid="clear-filters"
             >
-              <span>Clear</span>
+              Clear
             </Button>
           </div>
         </CardContent>
