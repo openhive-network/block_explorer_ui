@@ -41,11 +41,12 @@ const defaultSearchParams: AccountSearchParams = {
   coinType: "HIVE", // Default to HIVE
 };
 
+const COIN_TYPES = ["HIVE", "VESTS", "HBD"];
+
 const BalanceHistorySearch = ({ paramsState, setParams }: any) => {
   const [coinType, setCoinType] = useState<string>(
     paramsState.coinType ?? "HIVE"
   ); // State to store the selected coin name
-  const COIN_TYPES = ["HIVE", "VESTS", "HBD"];
   const router = useRouter();
   const { searchRanges } = useSearchesContext();
   const accountNameFromRoute = (router.query.accountName as string)?.slice(1);
@@ -74,7 +75,6 @@ const BalanceHistorySearch = ({ paramsState, setParams }: any) => {
     setSelectedOperationTypes(operationTypesIds);
   };
 
-
   const {
     filters: filtersParam,
     fromBlock: fromBlockParam,
@@ -92,6 +92,7 @@ const BalanceHistorySearch = ({ paramsState, setParams }: any) => {
   const [isFiltersActive, setIsFiltersActive] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [filters, setFilters] = useState<boolean[] | undefined>(undefined);
+  const [isSearchButtonDisabled, setIsSearchButtonDisabled] = useState(false);
 
   const handleSearch = async (resetPage?: boolean) => {
     if (
@@ -168,6 +169,7 @@ const BalanceHistorySearch = ({ paramsState, setParams }: any) => {
       page: newPage,
     });
     setIsFiltersActive(false);
+    setIsVisible(false);
     searchRanges.setRangeSelectKey("lastTime");
     searchRanges.setTimeUnitSelectKey("days");
     searchRanges.setLastTimeUnitValue(30);
@@ -177,7 +179,6 @@ const BalanceHistorySearch = ({ paramsState, setParams }: any) => {
   useEffect(() => {
     if (paramsState.coinType) {
       setCoinType(paramsState.coinType);
-
     }
     if (paramsState && !initialSearch) {
       handleSearch();
@@ -193,8 +194,6 @@ const BalanceHistorySearch = ({ paramsState, setParams }: any) => {
       const defaultParam =
         defaultSearchParams[key as keyof typeof defaultSearchParams];
 
-      console.log(key, param, defaultParam);
-      // console.log(defaultParam);
       if (param !== defaultParam) {
         setIsFiltersActive(true);
         setIsVisible(true);
@@ -202,6 +201,8 @@ const BalanceHistorySearch = ({ paramsState, setParams }: any) => {
     });
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paramsState]);
+
+  const buttonLabel = `Value field can't be empty`;
 
   return (
     <>
@@ -219,7 +220,7 @@ const BalanceHistorySearch = ({ paramsState, setParams }: any) => {
         className={cn(
           "mb-4 overflow-hidden transition-all duration-500 ease-in max-h-0 opacity-0",
           {
-            "max-h-96 opacity-100": isVisible,
+            "max-h-full opacity-100": isVisible,
           }
         )}
       >
@@ -243,7 +244,10 @@ const BalanceHistorySearch = ({ paramsState, setParams }: any) => {
               ))}
             </select>
           </div>
-          <SearchRanges rangesProps={searchRanges} />
+          <SearchRanges
+            rangesProps={searchRanges}
+            setIsSearchButtonDisabled={setIsSearchButtonDisabled}
+          />
           {/* Operations Types commented for now
           <div className="flex items-center mb-10 mt-2">
         <OperationTypesDialog
@@ -257,19 +261,26 @@ const BalanceHistorySearch = ({ paramsState, setParams }: any) => {
           )}
         /> 
       </div> */}
-          <div>
-            <Button
-              onClick={() => handleSearch(true)}
-              data-testid="apply-filters"
-            >
-              <span>Apply filters</span>
-            </Button>
+          <div className="flex items-center justify-between mt-10">
+            <div>
+              <Button
+                onClick={() => handleSearch(true)}
+                data-testid="apply-filters"
+                disabled={isSearchButtonDisabled}
+              >
+                Search{" "}
+              </Button>
+              {isSearchButtonDisabled ? (
+                <label className="ml-2 text-gray-300 dark:text-gray-500 ">
+                  {buttonLabel}
+                </label>
+              ) : null}
+            </div>
             <Button
               onClick={() => handleFilterClear()}
               data-testid="clear-filters"
-              className="ml-2"
             >
-              <span>Clear filters</span>
+              Reset
             </Button>
           </div>
         </CardContent>
