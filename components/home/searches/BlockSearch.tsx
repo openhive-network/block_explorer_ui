@@ -28,6 +28,7 @@ import { useSearchesContext } from "@/contexts/SearchesContext";
 import useBlockSearch from "@/hooks/api/homePage/useBlockSearch";
 import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
 import { startBlockSearch } from "./utils/blockSearchHelpers";
+import NoValueErrorMessage from "./NoValueErrorMessage";
 
 const BlockSearch = () => {
   const {
@@ -52,6 +53,7 @@ const BlockSearch = () => {
     undefined
   );
   const [selectedIndex, setSelectedIndex] = useState<string>("");
+  const [isSearchButtonDisabled, setIsSearchButtonDisabled] = useState(false);
 
   const { operationKeysData } = useOperationKeys(singleOperationTypeId);
   const { getRangesValues } = searchRanges;
@@ -122,6 +124,7 @@ const BlockSearch = () => {
     <>
       <div className="flex flex-col">
         <AutocompleteInput
+          required
           value={accountName}
           onChange={setAccountName}
           placeholder="Account name"
@@ -131,7 +134,7 @@ const BlockSearch = () => {
       </div>
       <SearchRanges
         rangesProps={searchRanges}
-        safeTimeRangeDisplay
+        setIsSearchButtonDisabled={setIsSearchButtonDisabled}
       />
       <div className="flex items-center">
         <OperationTypesDialog
@@ -244,12 +247,17 @@ const BlockSearch = () => {
         <Button
           data-testid="block-search-btn"
           onClick={handleStartBlockSearch}
+          disabled={isSearchButtonDisabled || !accountName}
         >
           Search
           {blockSearchDataLoading && (
             <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />
           )}
         </Button>
+        <NoValueErrorMessage
+          accountName={accountName}
+          isSearchButtonDisabled={isSearchButtonDisabled}
+        />
       </div>
     </>
   );

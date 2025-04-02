@@ -10,6 +10,7 @@ import { useSearchesContext } from "@/contexts/SearchesContext";
 import usePermlinkSearch from "@/hooks/api/common/usePermlinkSearch";
 import { startCommentPermlinkSearch } from "./utils/commentPermlinkSearchHelpers";
 import PostTypeSelector from "./PostTypeSelector";
+import NoValueErrorMessage from "./NoValueErrorMessage";
 
 const CommentsPermlinkSearch = () => {
   const {
@@ -26,6 +27,7 @@ const CommentsPermlinkSearch = () => {
   const [accountName, setAccountName] = useState<string>("");
   const [localCommentType, setLocalCommentType] =
     useState<Explorer.CommentType>("post");
+  const [isSearchButtonDisabled, setIsSearchButtonDisabled] = useState(false);
 
   const { getRangesValues } = searchRanges;
 
@@ -79,7 +81,7 @@ const CommentsPermlinkSearch = () => {
         <AutocompleteInput
           value={accountName}
           onChange={setAccountName}
-          placeholder="Author"
+          placeholder="Account name"
           inputType="account_name"
           className="w-1/2 bg-theme dark:bg-theme border-0 border-b-2"
           required
@@ -87,7 +89,7 @@ const CommentsPermlinkSearch = () => {
       </div>
       <SearchRanges
         rangesProps={searchRanges}
-        safeTimeRangeDisplay
+        setIsSearchButtonDisabled={setIsSearchButtonDisabled}
       />
 
       <div className="flex justify-start">
@@ -102,18 +104,17 @@ const CommentsPermlinkSearch = () => {
           data-testid="search-button"
           className="mr-2 my-2"
           onClick={onButtonClick}
-          disabled={!accountName}
+          disabled={isSearchButtonDisabled || !accountName}
         >
           Search
           {permlinkSearchDataLoading && (
             <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />
           )}
         </Button>
-        {!accountName && (
-          <label className="text-gray-300 dark:text-gray-500 ">
-            Set author name
-          </label>
-        )}
+        <NoValueErrorMessage
+          accountName={accountName}
+          isSearchButtonDisabled={isSearchButtonDisabled}
+        />
       </div>
     </>
   );

@@ -17,6 +17,7 @@ import useCommentSearch from "@/hooks/api/common/useCommentSearch";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/router";
 import useHandleCommentsSearch from "./hooks/useHandleCommentsSearch";
+import NoValueErrorMessage from "./NoValueErrorMessage";
 
 const CommentsSearch = () => {
   const {
@@ -50,8 +51,6 @@ const CommentsSearch = () => {
 
   const infoText =
     "Find all operations related to comments of given account or for exact permlink.";
-
-  const buttonLabel = "Set author name and permlink";
 
   const handleAccountNameChange = (value: string) => {
     setAccountName(value);
@@ -123,7 +122,7 @@ const CommentsSearch = () => {
         <AutocompleteInput
           value={accountName as string}
           onChange={handleAccountNameChange}
-          placeholder="Author"
+          placeholder="Account name"
           inputType="account_name"
           className="w-1/2 bg-theme dark:bg-theme border-0 border-b-2"
           required
@@ -168,11 +167,10 @@ const CommentsSearch = () => {
               <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />
             )}
           </Button>
-          {(!accountName || !permlink) && (
-            <label className="text-gray-300 dark:text-gray-500 ">
-              {buttonLabel}
-            </label>
-          )}
+          <NoValueErrorMessage
+            accountName={accountName as string}
+            isSearchButtonDisabled={!permlink}
+          />
         </div>
       </div>
     </>

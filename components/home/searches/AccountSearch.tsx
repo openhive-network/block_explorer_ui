@@ -12,6 +12,7 @@ import { startAccountOperationsSearch } from "./utils/accountSearchHelpers";
 import { useSearchesContext } from "@/contexts/SearchesContext";
 import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
 import useAccountOperations from "@/hooks/api/accountPage/useAccountOperations";
+import NoValueErrorMessage from "./NoValueErrorMessage";
 
 const AccountSearch = () => {
   const {
@@ -32,6 +33,7 @@ const AccountSearch = () => {
   const [selectedOperationTypes, setSelectedOperationTypes] = useState<
     number[] | null
   >([]);
+  const [isSearchButtonDisabled, setIsSearchButtonDisabled] = useState(false);
 
   const { getRangesValues } = searchRanges;
 
@@ -76,7 +78,6 @@ const AccountSearch = () => {
       );
     }
   };
-
   return (
     <>
       <div className="flex flex-col">
@@ -91,7 +92,7 @@ const AccountSearch = () => {
       </div>
       <SearchRanges
         rangesProps={searchRanges}
-        safeTimeRangeDisplay
+        setIsSearchButtonDisabled={setIsSearchButtonDisabled}
       />
       <div className="flex items-center">
         <OperationTypesDialog
@@ -109,18 +110,18 @@ const AccountSearch = () => {
         <Button
           data-testid="search-button"
           onClick={onButtonClick}
-          disabled={!accountName}
+          disabled={isSearchButtonDisabled || !accountName}
         >
           Search
           {isAccountOperationsFetching && (
             <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />
           )}
         </Button>
-        {!accountName && (
-          <label className="ml-2 text-gray-300 dark:text-gray-500 ">
-            Set account name
-          </label>
-        )}
+
+        <NoValueErrorMessage
+          accountName={accountName}
+          isSearchButtonDisabled={isSearchButtonDisabled}
+        />
       </div>
     </>
   );
