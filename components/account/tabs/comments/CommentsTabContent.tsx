@@ -104,6 +104,8 @@ const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
           <AccountCommentsPermlinkSearch
             isDataLoading={permlinkSearchDataLoading}
             accountName={accountName}
+            setIsFiltersActive={setIsFiltersActive}
+            setIsVisible={setIsVisible}
           />
         </CardContent>
       </Card>

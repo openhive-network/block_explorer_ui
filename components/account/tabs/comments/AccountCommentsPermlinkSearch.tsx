@@ -1,4 +1,4 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, Dispatch, SetStateAction } from "react";
 import { Loader2 } from "lucide-react";
 
 import Explorer from "@/types/Explorer";
@@ -11,11 +11,13 @@ import usePermlinkCommentSearch from "./usePermlinkCommentSearch";
 interface AccountCommentsPermlinkSearchProps {
   accountName: string;
   isDataLoading: boolean;
+  setIsFiltersActive: Dispatch<SetStateAction<boolean>>;
+  setIsVisible: Dispatch<SetStateAction<boolean>>;
 }
 
 const AccountCommentsPermlinkSearch: React.FC<
   AccountCommentsPermlinkSearchProps
-> = ({ accountName, isDataLoading }) => {
+> = ({ accountName, isDataLoading, setIsFiltersActive, setIsVisible }) => {
   const { setPermlinkPaginationPage, setCommentType, searchRanges } =
     useSearchesContext();
 
@@ -41,6 +43,12 @@ const AccountCommentsPermlinkSearch: React.FC<
     handleCommentPermlinkSearch();
   };
 
+  const onResetButtonClick = () => {
+    handleClearFilters();
+    setIsFiltersActive(false);
+    setIsVisible(false);
+  };
+
   return (
     <>
       <SearchRanges rangesProps={searchRanges} />
@@ -61,7 +69,7 @@ const AccountCommentsPermlinkSearch: React.FC<
           Search
           {isDataLoading && <Loader2 className="ml-2 animate-spin h-4 w-4" />}
         </Button>
-        <Button onClick={handleClearFilters}>Clear</Button>
+        <Button onClick={onResetButtonClick}>Reset</Button>
       </div>
     </>
   );
