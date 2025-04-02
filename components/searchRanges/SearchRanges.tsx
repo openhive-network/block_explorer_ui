@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
 import moment from "moment";
 import { SearchRangesResult } from "../../hooks/common/useSearchRanges";
 import { Select, SelectContent, SelectTrigger, SelectItem } from "../ui/select";
@@ -8,10 +8,32 @@ import ErrorMessage from "../ErrorMessage";
 
 interface SearchRangesProps {
   rangesProps: SearchRangesResult;
+  setIsSearchButtonDisabled: Dispatch<SetStateAction<boolean>>;
   safeTimeRangeDisplay?: boolean;
 }
 
-const SearchRanges: React.FC<SearchRangesProps> = ({ rangesProps }) => {
+export const isSearchButtonDisabled = (
+  rangeSelectKey: string,
+  localLastBlocks: string,
+  localLastTimeUnit: string,
+  localFromBlock: string
+) => {
+  if (rangeSelectKey === "lastTime") {
+    return Boolean(!localLastTimeUnit);
+  }
+  if (rangeSelectKey === "lastBlocks") {
+    return Boolean(!localLastBlocks);
+  }
+  if (rangeSelectKey === "blockRange") {
+    return Boolean(!localFromBlock);
+  }
+  return false;
+};
+
+const SearchRanges: React.FC<SearchRangesProps> = ({
+  rangesProps,
+  setIsSearchButtonDisabled,
+}) => {
   const {
     rangeSelectOptions,
     timeSelectOptions,
@@ -141,6 +163,23 @@ const SearchRanges: React.FC<SearchRangesProps> = ({ rangesProps }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [startDate, endDate]);
 
+  // Disable `Search` button if value field is empty
+  useEffect(() => {
+    const isDisabled = isSearchButtonDisabled(
+      rangeSelectKey,
+      localLastBlocks,
+      localLastTimeUnit,
+      localFromBlock
+    );
+    setIsSearchButtonDisabled(isDisabled);
+  }, [
+    rangeSelectKey,
+    localLastTimeUnit,
+    localLastBlocks,
+    localFromBlock,
+    localToBlock,
+  ]);
+
   return (
     <div className="py-2 flex flex-col gap-y-2">
       <Select
@@ -167,6 +206,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({ rangesProps }) => {
       {rangeSelectKey === "lastBlocks" && (
         <div className="flex items-center">
           <Input
+            required
             className="w-1/2 border-0 border-b-2 bg-theme"
             type="text"
             value={localLastBlocks}
@@ -174,7 +214,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({ rangesProps }) => {
               setLocalLastBlocks(sanitizeNumericInput(e.target.value))
             }
             onBlur={handleLastBlocksBlur}
-            placeholder="Last"
+            placeholder="Last *"
           />
         </div>
       )}
@@ -182,6 +222,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({ rangesProps }) => {
       {rangeSelectKey === "lastTime" && (
         <div className="flex items-center justify-center">
           <Input
+            required
             type="text"
             className="bg-theme border-0 border-b-2 text-text mr-2"
             value={localLastTimeUnit}
@@ -189,7 +230,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({ rangesProps }) => {
               setLocalLastTimeUnit(sanitizeNumericInput(e.target.value, true))
             }
             onBlur={handleLastTimeUnitBlur}
-            placeholder="Last"
+            placeholder="Last *"
           />
           <Select
             onValueChange={setTimeUnitSelectKey}
@@ -220,6 +261,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({ rangesProps }) => {
         <div className="flex items-center">
           <div className="mr-2 w-full">
             <Input
+              required
               type="text"
               className="bg-theme border-0 border-b-2"
               data-testid="from-block-input"
@@ -228,7 +270,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({ rangesProps }) => {
                 setLocalFromBlock(sanitizeNumericInput(e.target.value))
               }
               onBlur={handleFromBlockBlur}
-              placeholder="From"
+              placeholder="From *"
             />
           </div>
           <div className="w-full">
