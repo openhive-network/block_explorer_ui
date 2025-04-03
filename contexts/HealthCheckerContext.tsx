@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useRef } from "r
 import { HealthChecker } from "@hiveio/wax";
 import { useAddressesContext } from "./AddressesContext"; 
 // import HealthCheckerService, { HealthCheckerFields } from "@/services/HealthCheckerService";
-import {HealthCheckerService, ApiChecker} from "@hiveio/healthchecker-component";
+import {HealthCheckerService, ApiChecker} from "healthchecker-component";
 import { useHiveChainContext } from "./HiveChainContext";
 import { config } from "@/Config";
 import { ExplorerNodeApi } from "@/services/FetchingService";
