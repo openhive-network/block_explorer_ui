@@ -3,9 +3,9 @@ import { convertUTCDateToLocalDate } from "@/utils/TimeUtils";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { Table, TableBody, TableRow, TableCell } from "../ui/table";
 import {
-fundAndSupplyParameters,
-hiveParameters,
-blockchainDates,
+  fundAndSupplyParameters,
+  hiveParameters,
+  blockchainDates,
 } from "./headBlockParameters";
 
 import { Loader2 } from "lucide-react";
@@ -62,13 +62,16 @@ const buildTableBody = (
   dynamicGlobalData: any
 ) => {
   return parameters.map((param: string, index: number) => (
-    <TableRow key={index} className="border-b border-gray-700 hover:bg-inherit">
+    <TableRow
+      key={index}
+      className="border-b border-gray-700 hover:bg-inherit dark:hover:bg-inherit"
+    >
       <TableCell>{cardNameMap.get(param)}</TableCell>
       <TableCell>
         {header === "Blockchain Dates"
-            ? convertUTCDateToLocalDate(
-                dynamicGlobalData?.headBlockDetails[param]
-              )
+          ? convertUTCDateToLocalDate(
+              dynamicGlobalData?.headBlockDetails[param]
+            )
           : dynamicGlobalData?.headBlockDetails[param]}
       </TableCell>
     </TableRow>
@@ -85,8 +88,15 @@ const HeadBlockPropertyCard: React.FC<HeadBlockPropertyCardProps> = ({
   const { dynamicGlobalData } = useDynamicGlobal() as any;
 
   return (
-    <div className="bg-theme py-1 rounded-[6px] data-box" data-testid="expandable-list" style={{ overflowX: "auto", width: "100%" }}>
-      <div onClick={handleHideParams} className="h-full w-full flex items-center justify-between py-1 cursor-pointer px-1">
+    <div
+      className="py-1 rounded-[6px] data-box"
+      data-testid="expandable-list"
+      style={{ overflowX: "auto", width: "100%" }}
+    >
+      <div
+        onClick={handleHideParams}
+        className="h-full w-full flex items-center justify-between py-1 cursor-pointer px-1"
+      >
         <div className="text-lg">{header}</div>
         <div>{isParamsHidden ? <ArrowDown /> : <ArrowUp />}</div>
       </div>
@@ -96,11 +106,15 @@ const HeadBlockPropertyCard: React.FC<HeadBlockPropertyCardProps> = ({
           <Loader2 className="animate-spin mt-1 text-white h-8 w-8" />
         </div>
       ) : (
-        <div hidden={isParamsHidden} data-testid="content-expandable-list">
+        <div
+          hidden={isParamsHidden}
+          data-testid="content-expandable-list"
+        >
           <div style={{ overflowX: "auto" }}>
             <Table className="min-w-full">
-              <TableBody>
-                {dynamicGlobalData?.headBlockDetails && buildTableBody(parameters, header, dynamicGlobalData)}
+              <TableBody className="bg-inherit dark:bg-inherit">
+                {dynamicGlobalData?.headBlockDetails &&
+                  buildTableBody(parameters, header, dynamicGlobalData)}
               </TableBody>
             </Table>
           </div>
