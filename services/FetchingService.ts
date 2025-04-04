@@ -485,6 +485,27 @@ class FetchingService {
       }
     );
   }
+
+  async getAllBlocksByOp(
+    allBlockSearchProps: Explorer.AllBlocksSearchProps | undefined,
+    pageNum: number | undefined,
+    toBlock: number | undefined,
+  ): Promise<Hive.AllBlocksSearchResponse> {
+    const requestParams: Hive.AllBlocksSearchParams = {
+      "operation-types": allBlockSearchProps ? allBlockSearchProps.operationTypes?.join(",") : undefined,
+      "account-name": allBlockSearchProps ? allBlockSearchProps?.accountName : undefined,
+      page: pageNum,
+      "page-size": 100,
+      direction: "desc",
+      "from-block": allBlockSearchProps ? (allBlockSearchProps.fromBlock || allBlockSearchProps.startDate) : undefined,
+      "to-block": toBlock ?? (allBlockSearchProps?.toBlock || allBlockSearchProps?.endDate)
+    };
+    return await this.extendedHiveChain!.restApi["hafbe-api"].allBlockSearch(
+      requestParams
+    );
+  }
+
+
 }
 
 const fetchingService = new FetchingService();
