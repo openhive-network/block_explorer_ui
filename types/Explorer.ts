@@ -310,6 +310,13 @@ declare module Explorer {
     prev_balance: number;
     balanceChange: number;
   }
+
+  interface AllBlocksSearchProps extends CommonSearchProps {
+    accountName?: string;
+    pageNumber?: number;
+    toBlock?: number;
+    limit: number;
+  }
 }
 
 export default Explorer;
