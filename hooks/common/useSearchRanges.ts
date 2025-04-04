@@ -60,7 +60,7 @@ export const rangeSelectOptions: Explorer.SelectOption[] = [
     key: "timeRange",
   },
   {
-    name: "None",
+    name: "No Filter",
     key: "none",
   },
 ];
