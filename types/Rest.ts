@@ -74,6 +74,11 @@ export const extendedRest = {
         urlPath: "{accountName}/comment-permlinks",
       },
     },
+    allBlockSearch: {
+      params: Hive.AllBlocksSearchParams,
+      result: Hive.AllBlocksSearchResponse,
+      urlPath: "block-search",
+    },
   },
   "hafah-api": {
     block: {
