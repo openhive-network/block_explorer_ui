@@ -237,3 +237,11 @@ export const extractTextFromReactElement = (element: ReactNode): string => {
   }
   return text;
 };
+
+/**
+ * format transaction hash
+ * @param hash hash number
+ */
+export const formatHash = (hash: string): string => {
+  return hash?.slice(0, 10);
+}
