@@ -1,5 +1,4 @@
 import { ArrowDown, ArrowUp } from "lucide-react";
-import { Loader2 } from "lucide-react";
 import MarketHistoryChart from "./MarketHistoryChart";
 import moment from "moment";
 import useMarketHistory from "@/hooks/common/useMarketHistory";
@@ -8,7 +7,6 @@ interface HeadBlockPropertyCardProps {
   header: string;
   isParamsHidden: boolean;
   handleHideParams: () => void;
-  isLoading: boolean;
 }
 
 const MARKET_HISTORY_INTERVAL = 86400; // 1 day
@@ -21,13 +19,14 @@ const HeadBlockHiveChartCard: React.FC<HeadBlockPropertyCardProps> = ({
   header,
   isParamsHidden,
   handleHideParams,
-  isLoading,
 }) => {
-  const { marketHistory, isMarketHistoryLoading } = useMarketHistory(
+  const { marketHistory } = useMarketHistory(
     MARKET_HISTORY_INTERVAL,
     MARKET_HISTORY_TIME_PERIOD,
     CURRENT_TIME
   );
+
+  if (!marketHistory) return null;
 
   return (
     <div
@@ -43,23 +42,14 @@ const HeadBlockHiveChartCard: React.FC<HeadBlockPropertyCardProps> = ({
         <div>{isParamsHidden ? <ArrowDown /> : <ArrowUp />}</div>
       </div>
 
-      {isLoading && !isParamsHidden ? (
-        <div className="flex justify-center w-full">
-          <Loader2 className="animate-spin mt-1 text-white h-8 w-8" />
+      <div
+        hidden={isParamsHidden}
+        data-testid="content-expandable-list"
+      >
+        <div>
+          <MarketHistoryChart data={marketHistory} />
         </div>
-      ) : (
-        <div
-          hidden={isParamsHidden}
-          data-testid="content-expandable-list"
-        >
-          <div>
-            <MarketHistoryChart
-              data={marketHistory}
-              isLoading={isMarketHistoryLoading}
-            />
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 };

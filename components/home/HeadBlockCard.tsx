@@ -288,7 +288,6 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
             header="Hive Price Chart"
             isParamsHidden={hiddenPropertiesByCard.hiveChart}
             handleHideParams={handleHideHiveChart}
-            isLoading={isBlockCardLoading}
           />
           <HeadBlockPropertyCard
             parameters={fundAndSupplyParameters}
