@@ -34,6 +34,10 @@ export interface SearchesContextType {
   setBlockSearchProps: Dispatch<
     SetStateAction<Explorer.BlockSearchProps | undefined>
   >;
+  allBlocksSearchProps: Explorer.AllBlocksSearchProps | undefined;
+  setAllBlocksSearchProps: Dispatch<
+    SetStateAction<Explorer.AllBlocksSearchProps | undefined>
+  >;
   commentSearchProps: Explorer.CommentSearchProps | undefined;
   setCommentSearchProps: Dispatch<
     SetStateAction<Explorer.CommentSearchProps | undefined>
@@ -109,6 +113,11 @@ export const SearchesContextProvider: React.FC<{
     Explorer.BlockSearchProps | undefined
   >(undefined);
 
+  const [allBlocksSearchProps, setAllBlocksSearchProps] = useState<
+  Explorer.AllBlocksSearchProps | undefined
+>(undefined);
+
+
   const [commentSearchProps, setCommentSearchProps] = useState<
     Explorer.CommentSearchProps | undefined
   >(undefined);
@@ -160,6 +169,8 @@ export const SearchesContextProvider: React.FC<{
         setLastSearchKey,
         blockSearchProps,
         setBlockSearchProps,
+        allBlocksSearchProps,
+        setAllBlocksSearchProps,
         commentSearchProps,
         setCommentSearchProps,
         permlinkSearchProps,
