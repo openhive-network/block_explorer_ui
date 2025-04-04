@@ -837,6 +837,43 @@ namespace Hive {
     nai!: string;
     precision!: number;
   }
+  export class Blocks {
+    block_num!: number;
+    created_at!: Date;
+    producer_account!: string;
+    producer_reward!: number;
+    trx_count!: number;
+    hash!: string;
+    prev!: string;
+    operations!: BlockOperationsCount[];
+  }
+  export class BlockOperationsCount {
+    op_type_id!: number;
+    op_count!: number;
+  }
+  export class AllBlocksSearchParams {
+    "operation-types"?: string;
+    "account-name"?: string;
+    page?: number;
+    "page-size"?: number;
+    "result-limit"?: number;
+    direction!: Hive.Direction;
+    "from-block"?: number | Date;
+    "to-block"?: number | Date;
+    "path-filter"?: string;
+  }
+
+  export class AllBlocksSearchResponse {
+    total_blocks!: number;
+    total_pages!: number;
+    blocks_result!: Blocks[];
+    block_range!: {
+      from: number;
+      to: number;
+  };
+
+  }
+
 }
 
 export default Hive;
