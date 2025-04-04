@@ -18,6 +18,8 @@ import { cn } from "@/lib/utils";
 import useMediaQuery from "@/hooks/common/useMediaQuery";
 import useLastBlocks from "@/hooks/api/homePage/useLastBlocks";
 import { Card, CardHeader, CardTitle } from "./ui/card";
+import { MoveRight } from "lucide-react";
+import Link from "next/link";
 
 interface LastBlocksWidgetProps {
   headBlock?: number;
@@ -177,11 +179,19 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
 
   return (
     <Card
-      className={cn("w-full h-[460px]", className)}
+      className={cn("w-full h-fit border", className)}
       data-testid="last-block-widget"
     >
       <CardHeader>
         <CardTitle>Last Blocks</CardTitle>
+        <Link
+              href="/blocks"
+              className="text-sm flex items-center space-x-1 w-full text-center justify-center"
+              data-testid="see-witnesses-link"
+            >
+              <span>See More</span>
+              <MoveRight width={18} />
+            </Link>
       </CardHeader>
       <ResponsiveContainer
         width="100%"
