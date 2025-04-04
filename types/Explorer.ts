@@ -311,11 +311,19 @@ declare module Explorer {
     balanceChange: number;
   }
 
-  interface AllBlocksSearchProps extends CommonSearchProps {
-    accountName?: string;
+  interface AllBlocksSearchProps extends CommonSearchProps { 
     pageNumber?: number;
+    accountName?: string;
+    operationTypes?: number[] | null;
+    fromBlock?: number;
     toBlock?: number;
-    limit: number;
+    startDate?: Date;
+    endDate?: Date;
+    limit: number; 
+    rangeSelectKey?: string;
+    timeUnit?: string;
+    lastBlocks?: number;
+    lastTime?: number;
   }
 }
 
