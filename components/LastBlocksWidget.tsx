@@ -36,7 +36,6 @@ type ChartBlockData = {
   virtual: number;
 };
 
-
 const CustomTooltip = ({
   active,
   payload,
@@ -64,7 +63,10 @@ const CustomTooltip = ({
         <div className="text-sm opacity-80">Operations: {totalOperations}</div>
         <div className="mt-2 space-y-2">
           {payload.map((pld, index) => (
-            <div key={index} className="flex items-center">
+            <div
+              key={index}
+              className="flex items-center"
+            >
               <div
                 className="w-4 h-4 rounded-full"
                 style={{ backgroundColor: pld.fill }}
@@ -79,7 +81,6 @@ const CustomTooltip = ({
 
   return null;
 };
-
 
 const getOpsCount = (lastBlocks: Hive.LastBlocksTypeResponse[]) => {
   const opsCount: ChartBlockData[] = lastBlocks.map((block) => ({
@@ -141,7 +142,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
       const witness = lastBlocks.lastBlocksData?.find(
         (block) => block.block_num.toString() === name
       )?.witness;
-      const size = isMobile ? 16 : 40;
+      const size = viewBox.width * 1.5;
       return (
         <g
           id={`x=${x}, y=${y}`}
@@ -154,7 +155,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
               <circle
                 cx={x + viewBox.width / 2}
                 cy={y - size / 2}
-                r={isMobile ? 6 : 16}
+                r={viewBox.width / 1.75}
                 fill="#ffffff"
               />
             </clipPath>
@@ -217,7 +218,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
             content={<CustomTooltip />}
           />
           <Legend
-            wrapperStyle={{ position: "relative" , marginLeft: "35px"}}
+            wrapperStyle={{ position: "relative", marginLeft: "35px" }}
             align="center"
           />
           <Bar
