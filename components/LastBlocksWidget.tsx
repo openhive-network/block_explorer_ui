@@ -179,7 +179,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
 
   return (
     <Card
-      className={cn("w-full h-fit border", className)}
+      className={cn("w-full h-[480px] pb-10", className)}
       data-testid="last-block-widget"
     >
       <CardHeader>
