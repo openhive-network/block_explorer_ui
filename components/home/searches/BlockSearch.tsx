@@ -124,7 +124,6 @@ const BlockSearch = () => {
     <>
       <div className="flex flex-col">
         <AutocompleteInput
-          required
           value={accountName}
           onChange={setAccountName}
           placeholder="Account name"
@@ -247,7 +246,7 @@ const BlockSearch = () => {
         <Button
           data-testid="block-search-btn"
           onClick={handleStartBlockSearch}
-          disabled={isSearchButtonDisabled || !accountName}
+          disabled={isSearchButtonDisabled}
         >
           Search
           {blockSearchDataLoading && (
@@ -255,7 +254,7 @@ const BlockSearch = () => {
           )}
         </Button>
         <NoValueErrorMessage
-          accountName={accountName}
+          accountName={true}
           isSearchButtonDisabled={isSearchButtonDisabled}
         />
       </div>

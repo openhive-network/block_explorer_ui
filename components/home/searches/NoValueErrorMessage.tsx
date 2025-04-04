@@ -1,7 +1,7 @@
 import React from "react";
 
 interface NoValueErrorMessage {
-  accountName: string;
+  accountName: string | boolean; //boolean=true if accountName isn't required (e.g. block search)
   isSearchButtonDisabled: boolean;
 }
 

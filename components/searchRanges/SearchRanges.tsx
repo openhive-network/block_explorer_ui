@@ -172,6 +172,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
       localFromBlock
     );
     setIsSearchButtonDisabled(isDisabled);
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     rangeSelectKey,
     localLastTimeUnit,
