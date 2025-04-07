@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Loader2,
   MenuSquareIcon,
@@ -9,10 +9,10 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import Head from "next/head";
-
-import { config } from "@/Config";
+import Image from "next/image";
+import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { cn, formatNumber, formatPercent } from "@/lib/utils";
-import { formatAndDelocalizeFromTime } from "@/utils/TimeUtils";
+import { formatAndDelocalizeFromTime, formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import useWitnesses from "@/hooks/api/common/useWitnesses";
 import {
   Table,
@@ -28,19 +28,32 @@ import WitnessScheduleIcon from "@/components/WitnessScheduleIcon";
 import LastUpdatedTooltip from "@/components/LastUpdatedTooltip";
 import CopyButton from "@/components/ui/CopyButton";
 import ScrollTopButton from "@/components/ScrollTopButton";
+import { config } from "@/Config";
+import NoResult from "@/components/NoResult";
+import fetchingService from "@/services/FetchingService";
+import { useHiveChainContext } from "@/contexts/HiveChainContext";
+import { convertVestsToHP } from "@/utils/Calculations";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import Title from "@/components/title";
 
 const TABLE_CELLS = [
   "Rank",
   "Name",
   "Votes",
   "Voters",
-  "Block Size",
   "Missed Blocks",
+  "Last Block",
+  "Block Size",
   "APR",
   "Price Feed",
   "Feed Age",
+  "AC Fee",
   "Version",
-  "Last Block Produced",
 ];
 
 const sortKeyByCell: { [objectKey: string]: string } = {
@@ -59,12 +72,12 @@ const sortKeyByCell: { [objectKey: string]: string } = {
 
 const RIGHT_ALIGNED_HEADERS = [
   "Missed Blocks",
-  "APR",
-  "Version",
   "Price Feed",
   "Feed Age",
-  "Last Block Produced",
+  "APR",
+  "Version",
   "Block Size",
+  "AC Fee",
 ];
 
 const renderSortArrow = (
@@ -72,47 +85,84 @@ const renderSortArrow = (
   orderBy: string,
   isOrderAscending: boolean
 ) => {
-  // Remove this code block when sorting by `missed_blocks` and `hbd_interest_rate` and `last_confirmed_block_num` will be available
   const hideSort =
     cell === "missed blocks" ||
-    cell === "apr" ||
+    cell === "ac fee" ||
     cell === "version" ||
-    cell === "last block produced";
+    cell === "last block" ||
+    cell === "apr";
   if (hideSort) return;
-  //
 
   if (sortKeyByCell[cell] !== orderBy) {
-    return (
-      <MoveVertical
-        size={13}
-        className="min-w-[13px]  ml-1"
-      />
-    );
+    return <MoveVertical size={13} className="ml-1" />;
   } else {
     return isOrderAscending ? (
-      <MoveDown
-        size={13}
-        className="min-w-[13px] ml-1"
-      />
+      <MoveDown size={13} className="ml-1" />
     ) : (
-      <MoveUp
-        size={13}
-        className="min-w-[13px] ml-1"
-      />
+      <MoveUp size={13} className="ml-1" />
     );
   }
 };
 
-// Remove this code block when sorting by `missed_blocks` and `hbd_interest_rate`  and `last_confirmed_block_num` will be available
 const isCellUnsortable = (cell: string) => {
   return (
-    cell === "APR" ||
     cell === "Missed Blocks" ||
+    cell === "AC Fee" ||
     cell === "Version" ||
-    cell === "Last Block Produced"
+    cell === "Last Block" ||
+    cell === "APR"
   );
 };
-//
+
+// Witness Information Component
+const WitnessInfo = () => (
+  <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-4">
+    <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+      What are Hive Witnesses?
+    </h2>
+
+    <p className="text-gray-700 dark:text-gray-300 mb-4">
+      Hive Witnesses are the elected representatives who ensure the chain
+      operates with integrity, but also actively shape its direction through key
+      decisions.
+    </p>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">
+      Imagine Hive as a thriving, decentralized city. Witnesses are the city
+      council, the construction crews, and the security force all rolled into
+      one. <br />
+      They not only keep the city running (producing blocks, maintaining nodes),
+      but also decide on important policies like road construction (parameter
+      setting) and the value of the city's currency (price feeds).
+    </p>
+
+    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+      Key Functions:
+    </h3>
+
+    <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 mb-4">
+      <li>
+        <span className="font-medium">Block Production:</span> They are
+        responsible for creating new blocks on the Hive blockchain, confirming
+        transactions and securing the network.
+      </li>
+      <li>
+        <span className="font-medium">Network Maintenance:</span> They operate
+        and maintain powerful servers that keep the Hive network running
+        reliably.
+      </li>
+      <li>
+        <span className="font-medium">Parameter Setting:</span> They participate
+        in setting key parameters of the Hive blockchain, such as block size,
+        account creation fees, and HBD interest rates (APR).
+      </li>
+      <li>
+        <span className="font-medium">Price Feeds:</span> They provide price
+        feeds for HIVE and HBD, which are crucial for the operation of the
+        decentralized stablecoin.
+      </li>
+    </ul>
+  </div>
+);
 
 export default function Witnesses() {
   const [voterAccount, setVoterAccount] = useState<string>("");
@@ -127,6 +177,56 @@ export default function Witnesses() {
     sort.orderBy,
     sort.isOrderAscending ? "asc" : "desc"
   );
+
+  const [availableVersions, setAvailableVersions] = useState<string[]>([]);
+  const [latestVersion, setLatestVersion] = useState<string | null>(null);
+
+  interface Supply {
+    amount: string;
+    nai: string;
+    precision: number;
+  }
+
+  const [totalVestingShares, setTotalVestingShares] = useState<Supply>({
+    amount: "0",
+    nai: "",
+    precision: 0,
+  });
+
+  const [totalVestingFundHive, setTotalVestingFundHive] = useState<Supply>({
+    amount: "0",
+    nai: "",
+    precision: 0,
+  });
+  const { hiveChain } = useHiveChainContext();
+  useEffect(() => {
+    const fetchDynamicGlobalProperties = async () => {
+      const dynamicGlobalProperties =
+        await fetchingService.getDynamicGlobalProperties();
+      const _totalVestingfundHive =
+        dynamicGlobalProperties.total_vesting_fund_hive;
+      const _totalVestingShares = dynamicGlobalProperties.total_vesting_shares;
+
+      setTotalVestingFundHive(_totalVestingfundHive);
+      setTotalVestingShares(_totalVestingShares);
+    };
+
+    fetchDynamicGlobalProperties();
+  }, []);
+
+  useEffect(() => {
+    if (witnessesData?.witnesses) {
+      const versions = new Set<string>();
+      witnessesData.witnesses.forEach((witness: any) => {
+        versions.add(witness.version);
+      });
+      const sortedVersions = Array.from(versions).sort((a, b) =>
+        b.localeCompare(a, undefined, { numeric: true })
+      );
+      setAvailableVersions(sortedVersions);
+      setLatestVersion(sortedVersions[0] || null);
+    }
+  }, [witnessesData]);
 
   const handleSortBy = (tableCell: string) => {
     setSort({
@@ -157,7 +257,8 @@ export default function Witnesses() {
       const isRightAligned = RIGHT_ALIGNED_HEADERS.includes(cell); // Check if header should be right-aligned
       const headerIndex = TABLE_CELLS.indexOf(cell);
 
-      const className = "first:sticky first:left-0 [&:nth-child(2)]:sticky [&:nth-child(2)]:left-16 text-center";
+      const className =
+        "first:sticky first:left-0 [&:nth-child(2)]:sticky [&:nth-child(2)]:left-12 text-center";
 
       const buttonClassName = `w-full flex items-center ${
         isRightAligned ? "justify-end text-right" : "justify-start text-left"
@@ -186,150 +287,301 @@ export default function Witnesses() {
       <Head>
         <title>Witnesses - Hive Explorer</title>
       </Head>
-      <div className="page-container">
-        <div className="flex justify-between mt-1 mx-1">
-          <WitnessScheduleIcon />
-          <LastUpdatedTooltip lastUpdatedAt={witnessesData.votes_updated_at} />
-        </div>
+      <div className="page-container bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 font-sans antialiased">
+        <div className="mx-4 my-4">
+          <main className="flex-1">
+            <Title title="Hive Witnesses" info={<WitnessInfo />} />
 
-        <VotersDialog
-          accountName={voterAccount}
-          isVotersOpen={isVotersOpen}
-          changeVotersDialogue={changeVotersDialogue}
-          liveDataEnabled={false}
-        />
-        <VotesHistoryDialog
-          accountName={voterAccount}
-          isVotesHistoryOpen={isVotesHistoryOpen}
-          changeVoteHistoryDialogue={changeVotesHistoryDialog}
-          liveDataEnabled={false}
-        />
-        <Table
-          className="text-white min-w-[80vw]"
-          data-testid="table-body"
-        >
-          <TableHeader>
-            <TableRow>{buildTableHeader()}</TableRow>
-          </TableHeader>
-          <TableBody>
-            {witnessesData.witnesses.map((singleWitness: any, index: any) => (
-              <TableRow
-                key={index}
-                className={cn(
-                  `${index % 2 === 0 ? "bg-rowEven" : "bg-rowOdd"}`,
-                  {
-                    "line-through":
-                      singleWitness.signing_key === config.inactiveWitnessKey,
-                    "font-bold": singleWitness.rank && singleWitness.rank <= 20,
-                  }
-                )}
-                data-testid="witnesses-table-row"
-              >
-                <TableCell className="sticky left-0 min-w-[20px] bg-inherit">
-                  {singleWitness.rank}
-                </TableCell>
-                <TableCell className="text-explorer-turquoise sticky left-16 bg-inherit">
-                  <div className="flex justify-between">
-                    <Link
-                      href={`/@${singleWitness.witness_name}`}
-                      target="_blank"
-                      data-testid="witness-name"
-                    >
-                      {singleWitness.witness_name}
-                    </Link>
-                    {singleWitness.url && (
-                      <Link
-                        href={singleWitness.url}
-                        target="_blank"
-                        data-testid="witness-link"
-                      >
-                        <LinkIcon size={15} />
-                      </Link>
+            <div className="flex items-center justify-between mb-4 text-sm text-gray-500 dark:text-gray-400">
+              <WitnessScheduleIcon />
+              <LastUpdatedTooltip
+                lastUpdatedAt={witnessesData?.votes_updated_at}
+              />
+            </div>
+
+            {isWitnessDataLoading ? (
+              <div className="flex justify-center items-center py-12">
+                <Loader2 className="dark:text-white animate-spin h-6 w-6" />
+              </div>
+            ) : witnessesData?.witnesses?.length > 0 ? (
+              <>
+                <VotersDialog
+                  accountName={voterAccount}
+                  isVotersOpen={isVotersOpen}
+                  changeVotersDialogue={changeVotersDialogue}
+                  liveDataEnabled={false}
+                />
+                <VotesHistoryDialog
+                  accountName={voterAccount}
+                  isVotesHistoryOpen={isVotesHistoryOpen}
+                  changeVoteHistoryDialogue={changeVotesHistoryDialog}
+                  liveDataEnabled={false}
+                />
+
+                <Table className="min-w-full">
+                  <TableHeader>{buildTableHeader()}</TableHeader>
+                  <TableBody>
+                    {witnessesData?.witnesses.map(
+                      (singleWitness: any, index: any) => (
+                        <TableRow
+                          key={index}
+                          className={cn(
+                            `${
+                              index % 2 === 0
+                                ? "bg-rowEven hover:bg-rowHover"
+                                : "bg-rowOdd  hover:bg-rowHover"
+                            }`,
+                            "transition-colors duration-150 rounded-md",
+                            {
+                              "opacity-50 dark:opacity-45 line-through":
+                                singleWitness.signing_key ===
+                                config.inactiveWitnessKey,
+                              "font-bold":
+                                singleWitness.rank && singleWitness.rank <= 20,
+                            }
+                          )}
+                        >
+                          <TableCell className="sticky left-0 bg-inherit z-10">
+                            {singleWitness.rank}
+                          </TableCell>
+                          <TableCell className="sticky left-12 bg-inherit flex items-center space-x-2 py-4 whitespace-nowrap min-w-min z-10">
+                            <Image
+                              className="rounded-full border-2 border-explorer-orange"
+                              src={getHiveAvatarUrl(singleWitness.witness_name)}
+                              alt="avatar"
+                              width={30}
+                              height={30}
+                            />
+                            <div className="flex items-center">
+                              <Link
+                                href={`/@${singleWitness.witness_name}`}
+                                className="text-link hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium transition-colors duration-200"
+                                target="_blank"
+                              >
+                                {singleWitness.witness_name}
+                              </Link>
+                              {singleWitness.url && (
+                                <Link
+                                  href={singleWitness.url}
+                                  target="_blank"
+                                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 ml-2"
+                                >
+                                  <LinkIcon className="h-4 w-4" />
+                                </Link>
+                              )}
+                            </div>
+                          </TableCell>
+
+                          <TableCell className="text-right relative">
+                            <div className="flex flex-col items-end justify-center pr-2">
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <span className="cursor-pointer">
+                                      {convertVestsToHP(
+                                        hiveChain,
+                                        singleWitness.vests,
+                                        totalVestingFundHive,
+                                        totalVestingShares
+                                      )}
+                                    </span>
+                                  </TooltipTrigger>
+                                  <TooltipContent className="text-left">
+                                    <p>
+                                      Vests:{" "}
+                                      {
+                                        formatNumber(
+                                          singleWitness.vests || 0,
+                                          true
+                                        ).split(".")[0]
+                                      }
+                                    </p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                              {singleWitness.votes_daily_change !== "0" && (
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <span
+                                        className={cn(
+                                          "text-[0.7rem]",
+                                          singleWitness.votes_daily_change >= 0
+                                            ? "text-green-500 dark:text-green-400"
+                                            : "text-red-500 dark:text-red-400",
+                                          "cursor-pointer"
+                                        )}
+                                      >
+                                        {singleWitness.votes_daily_change > 0
+                                          ? "+"
+                                          : ""}
+                                        {convertVestsToHP(
+                                          hiveChain,
+                                          singleWitness.votes_daily_change,
+                                          totalVestingFundHive,
+                                          totalVestingShares
+                                        )}
+                                      </span>
+                                    </TooltipTrigger>
+                                    <TooltipContent className="text-left">
+                                      Vests Change:{" "}
+                                      {
+                                        formatNumber(
+                                          singleWitness.votes_daily_change || 0,
+                                          true
+                                        ).split(".")[0]
+                                      }
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                              )}
+                              <MenuSquareIcon
+                                className="w-4 h-4 cursor-pointer opacity-50 hover:opacity-80 transition-opacity duration-200 absolute top-1/2 right-0 transform -translate-y-1/2"
+                                onClick={() => {
+                                  setVoterAccount(singleWitness.witness_name);
+                                  setIsVotesHistoryOpen(true);
+                                }}
+                                data-testid="witness-votes-button"
+                              />
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-right relative">
+                            <div className="flex flex-col items-end justify-center pr-2">
+                              <div className="flex flex-col items-end">
+                                <span>
+                                  {singleWitness.voters_num.toLocaleString()}
+                                </span>
+                                {singleWitness.voters_num_daily_change !==
+                                  0 && (
+                                  <span
+                                    className={cn(
+                                      "text-[0.7rem]",
+                                      singleWitness.voters_num_daily_change > 0
+                                        ? "text-green-500 dark:text-green-400"
+                                        : "text-red-500 dark:text-red-400"
+                                    )}
+                                  >
+                                    {singleWitness.voters_num_daily_change > 0
+                                      ? "+"
+                                      : ""}
+                                    {singleWitness.voters_num_daily_change.toLocaleString()}
+                                  </span>
+                                )}
+                              </div>
+                              <div className="flex items-center space-x-2 justi">
+                                <MenuSquareIcon
+                                  className="w-4 h-4 cursor-pointer opacity-50 hover:opacity-80 transition-opacity duration-200 absolute top-1/2 right-0 transform -translate-y-1/2"
+                                  onClick={() => {
+                                    setVoterAccount(singleWitness.witness_name);
+                                    setIsVotersOpen(true);
+                                  }}
+                                  data-testid="witness-voters-button"
+                                />
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {singleWitness.missed_blocks
+                              ? singleWitness.missed_blocks.toLocaleString()
+                              : "--"}
+                          </TableCell>
+                          <TableCell className="text-right whitespace-nowrap">
+                            {singleWitness.last_confirmed_block_num ? (
+                              <div className="flex items-center justify-end">
+                                <Link
+                                  className="text-link"
+                                  href={`/block/${
+                                    singleWitness.last_confirmed_block_num
+                                  }${
+                                    singleWitness.trxId
+                                      ? `?trxId=${singleWitness.trxId}`
+                                      : ""
+                                  }`}
+                                >
+                                  {singleWitness.last_confirmed_block_num.toLocaleString()}
+                                </Link>
+                                <CopyButton
+                                  text={singleWitness.last_confirmed_block_num}
+                                  tooltipText="Copy block number"
+                                />
+                              </div>
+                            ) : (
+                              "--"
+                            )}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {singleWitness.block_size
+                              ? singleWitness.block_size.toLocaleString()
+                              : "--"}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {singleWitness.hbd_interest_rate
+                              ? formatPercent(singleWitness.hbd_interest_rate)
+                              : "--"}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {singleWitness.price_feed
+                              ? singleWitness.price_feed.toLocaleString()
+                              : "--"}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {singleWitness.feed_updated_at ? (
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <span className="cursor-pointer">
+                                      {formatAndDelocalizeFromTime(
+                                        singleWitness.feed_updated_at
+                                      )}
+                                    </span>
+                                  </TooltipTrigger>
+                                  <TooltipContent className="text-left">
+                                  {formatAndDelocalizeTime(singleWitness.feed_updated_at)}
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                            ) : (
+                              "--"
+                            )}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            {singleWitness.account_creation_fee
+                              ? (
+                                  singleWitness.account_creation_fee / 1000
+                                ).toLocaleString()
+                              : "--"}
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <div className="flex items-center justify-end">
+                              <span
+                                className={cn(
+                                  "inline-block h-2 w-2 rounded-full mr-1",
+                                  {
+                                    "bg-green-500":
+                                      singleWitness.version === latestVersion,
+                                    "bg-yellow-500":
+                                      singleWitness.version !== latestVersion,
+                                  }
+                                )}
+                              />
+                              {singleWitness.version}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      )
                     )}
-                  </div>
-                </TableCell>
-                <TableCell className="text-right">
-                  <span className="flex items-center">
-                    {formatNumber(singleWitness.vests || 0, true).split(".")[0]}
-                    <MenuSquareIcon
-                      className="w-4 ml-1 cursor-pointer"
-                      onClick={() => {
-                        setVoterAccount(singleWitness.witness_name);
-                        setIsVotesHistoryOpen(true);
-                      }}
-                      data-testid="witness-votes-button"
-                    />
-                  </span>
-                </TableCell>
-                <TableCell className="text-right">
-                  <span className="flex items-center">
-                    {singleWitness.voters_num.toLocaleString()}
-                    <MenuSquareIcon
-                      className="w-4 ml-1 cursor-pointer"
-                      onClick={() => {
-                        setVoterAccount(singleWitness.witness_name);
-                        setIsVotersOpen(true);
-                      }}
-                      data-testid="witness-voters-button"
-                    />
-                  </span>
-                </TableCell>
-                <TableCell className="text-right">
-                  {singleWitness.block_size
-                    ? singleWitness.block_size.toLocaleString()
-                    : "--"}
-                </TableCell>
-                <TableCell className="text-right">
-                  {singleWitness.block_size
-                    ? singleWitness.missed_blocks.toLocaleString()
-                    : "--"}
-                </TableCell>
-                <TableCell className="text-right">
-                  {singleWitness.hbd_interest_rate
-                    ? formatPercent(singleWitness.hbd_interest_rate)
-                    : "--"}
-                </TableCell>
-                <TableCell className="text-right">
-                  {singleWitness.price_feed
-                    ? singleWitness.price_feed.toLocaleString()
-                    : "--"}
-                </TableCell>
-                <TableCell className="text-right">
-                  {singleWitness.feed_updated_at
-                    ? formatAndDelocalizeFromTime(singleWitness.feed_updated_at)
-                    : "--"}
-                </TableCell>
-                <TableCell className="text-right">{singleWitness.version}</TableCell>
-                <TableCell className="text-right whitespace-nowrap">
-                  {singleWitness.last_confirmed_block_num ? (
-                    <>
-                    <Link
-                      className="text-link"
-                      href={`/block/${singleWitness.last_confirmed_block_num}${
-                        singleWitness.trxId
-                          ? `?trxId=${singleWitness.trxId}`
-                          : ""
-                      }`}
-                    >
-                      {singleWitness.last_confirmed_block_num.toLocaleString()}
-                    </Link> 
-                    <CopyButton
-                    text={singleWitness.last_confirmed_block_num}
-                    tooltipText="Copy block number"
-                  />
-                    </>
-                  ) : (
-                    "--"
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-      <div className="fixed bottom-[10px] right-0 flex flex-col items-end justify-end px-3 md:px-12">
+                  </TableBody>
+                </Table>
+              </>
+            ) : (
+              <NoResult />
+            )}
+          </main>
+        </div>
+        <div className="fixed bottom-[10px] right-0 flex flex-col items-end justify-end px-3 md:px-12">
           <ScrollTopButton />
         </div>
+      </div>
     </>
   );
 }
