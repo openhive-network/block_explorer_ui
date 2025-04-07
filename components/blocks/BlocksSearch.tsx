@@ -14,6 +14,7 @@ import { useSearchesContext } from "@/contexts/SearchesContext";
 import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
 import FilterSectionToggle from "../account/FilterSectionToggle";
 import useURLParams from "@/hooks/common/useURLParams";
+import useSearchRanges from "@/hooks/common/useSearchRanges";
 
 const DEFAULT_BLOCKS_SEARCH_PROPS: Partial<Explorer.AllBlocksSearchProps> = {
   limit: config.standardPaginationSize,
@@ -31,8 +32,13 @@ const DEFAULT_BLOCKS_SEARCH_PROPS: Partial<Explorer.AllBlocksSearchProps> = {
 
 const BlocksSearch = () => {
   const router = useRouter();
-  const { allBlocksSearchProps, setAllBlocksSearchProps, searchRanges } =
+  const { allBlocksSearchProps, setAllBlocksSearchProps } =
     useSearchesContext();
+
+  const searchRanges = useSearchRanges(
+    DEFAULT_BLOCKS_SEARCH_PROPS.rangeSelectKey
+  );
+
   const { operationsTypes } = useOperationsTypes();
 
   // Use URL params hook
@@ -119,7 +125,7 @@ const BlocksSearch = () => {
     };
 
     setAllBlocksSearchProps(allBlocksSearchProps);
-    setRangesValues(allBlocksSearchProps);
+    setRangesValues(allBlocksSearchProps as any);
     setParams(allBlocksSearchProps);
   }, [
     accountName,
@@ -137,7 +143,7 @@ const BlocksSearch = () => {
     setSelectedOperationTypes(null);
     setAllBlocksSearchProps(undefined);
     setIsFiltersActive(false);
-    setRangesValues(DEFAULT_BLOCKS_SEARCH_PROPS);
+    setRangesValues(DEFAULT_BLOCKS_SEARCH_PROPS as any);
     setFromBlock(undefined);
     setToBlock(undefined);
     setStartDate(undefined);
@@ -167,9 +173,12 @@ const BlocksSearch = () => {
     Object.keys(DEFAULT_BLOCKS_SEARCH_PROPS).forEach((key) => {
       if (key === "limit") return;
 
-      const param = paramsState[key as keyof typeof DEFAULT_BLOCKS_SEARCH_PROPS];
+      const param =
+        paramsState[key as keyof typeof DEFAULT_BLOCKS_SEARCH_PROPS];
       const defaultParam =
-        DEFAULT_BLOCKS_SEARCH_PROPS[key as keyof typeof DEFAULT_BLOCKS_SEARCH_PROPS];
+        DEFAULT_BLOCKS_SEARCH_PROPS[
+          key as keyof typeof DEFAULT_BLOCKS_SEARCH_PROPS
+        ];
 
       if (param !== defaultParam) {
         filtersActive = true;
@@ -228,7 +237,7 @@ const BlocksSearch = () => {
               )}
             />
           </div>
-          <div className="flex items-center mt-2">
+          <div className="flex justify-between mt-2">
             <Button
               data-testid="block-search-btn"
               onClick={handleStartBlockSearch}
