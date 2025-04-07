@@ -35,6 +35,27 @@ export const HealthCheckerContextProvider: React.FC<{
 
   const defaultProviders = config.defaultProviders;
 
+  const [healthCheckerService, setHealthCheckerService] = useState<HealthCheckerService | undefined>(undefined);
+
+  const startHealthCheckerSerivce = async () => {
+    const healthChecker = new HealthChecker();
+    if (hiveChain) {
+      const hcService = new HealthCheckerService(
+        apiCheckers,
+        defaultProviders,
+        healthChecker,
+        nodeAddress,
+        setNodeAddress
+      )
+      await setHealthCheckerService(hcService);
+    }
+  }
+
+  useEffect(() => { 
+      startHealthCheckerSerivce();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   
   
   
@@ -84,27 +105,6 @@ export const HealthCheckerContextProvider: React.FC<{
       validatorFunction: data => !!data.rc_direct_delegations ? true : "RC delegation error",
     }
   ]
-
-  const [healthCheckerService, setHealthCheckerService] = useState<HealthCheckerService | undefined>(undefined);
-
-  const startHealthCheckerSerivce = async () => {
-    const healthChecker = new HealthChecker();
-    if (hiveChain) {
-      const hcService = new HealthCheckerService(
-        apiCheckers,
-        defaultProviders,
-        healthChecker,
-        nodeAddress,
-        setNodeAddress
-      )
-      await setHealthCheckerService(hcService);
-    }
-  }
-
-  useEffect(() => { 
-      startHealthCheckerSerivce();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   return (
     <HealthCheckerContext.Provider value={{
