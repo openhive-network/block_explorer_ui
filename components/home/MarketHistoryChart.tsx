@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   LineChart,
   Line,
@@ -10,8 +11,6 @@ import {
 import Hive from "@/types/Hive";
 import moment from "moment";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
-import { Card, CardContent, CardHeader } from "../ui/card";
-import { Loader2 } from "lucide-react";
 import { colorMap } from "../balanceHistory/BalanceHistoryChart";
 import { useTheme } from "@/contexts/ThemeContext";
 
@@ -65,28 +64,40 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({ data }) => {
   const { hiveChain } = useHiveChainContext();
   const { theme } = useTheme();
 
-  if (!data || !hiveChain) return;
-
-  const chartData = data.buckets.map((bucket) => {
-    const { hive, non_hive } = bucket;
-    const hiveAveragePrice = calculateAvgHivePrice(hive, non_hive);
-
-    return {
-      date: moment(bucket.open).format("MMM D"),
-      tooltipDate: moment(bucket.open).format("YYYY MMM D"),
-      avgPrice: hiveAveragePrice,
-      volume: bucket.hive.volume,
-    };
-  });
-
-  const lastHivePrice = chartData[chartData.length - 1].avgPrice;
-
-  const minValue = Math.min(
-    ...chartData.map((d: ChartData) => parseFloat(d.avgPrice))
+  const [chartData, setChartData] = useState<ChartData[] | undefined>(
+    undefined
   );
-  const maxValue = Math.max(
-    ...chartData.map((d: ChartData) => parseFloat(d.avgPrice))
-  );
+  const [minValue, setMinValue] = useState<number>(0);
+  const [maxValue, setMaxValue] = useState<number>(0);
+
+  useEffect(() => {
+    if (!data || !hiveChain) return;
+
+    const filterData = data.buckets.map((bucket) => {
+      const { hive, non_hive } = bucket;
+      const hiveAveragePrice = calculateAvgHivePrice(hive, non_hive);
+
+      return {
+        date: moment(bucket.open).format("MMM D"),
+        tooltipDate: moment(bucket.open).format("YYYY MMM D"),
+        avgPrice: hiveAveragePrice,
+        volume: bucket.hive.volume,
+      };
+    });
+
+    const min = Math.min(
+      ...filterData?.map((d: ChartData) => parseFloat(d.avgPrice))
+    );
+    const max = Math.max(
+      ...filterData?.map((d: ChartData) => parseFloat(d.avgPrice))
+    );
+
+    setChartData(filterData);
+    setMinValue(min);
+    setMaxValue(max);
+  }, [data, hiveChain]);
+
+  const lastHivePrice = chartData?.[chartData.length - 1].avgPrice;
   const strokeColor = theme === "dark" ? "#FFF" : "#000";
 
   return (
@@ -110,7 +121,7 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({ data }) => {
           height={36}
         />
         <Line
-          name={`Hive Price: $${lastHivePrice}`}
+          name={`Hive Price: $${lastHivePrice ?? 0}`}
           type="monotone"
           dataKey="avgPrice"
           stroke={colorMap.HIVE}
