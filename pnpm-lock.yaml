@@ -11,9 +11,12 @@ importers:
       '@headlessui/react':
         specifier: ^1.7.15
         version: 1.7.19(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@hiveio/healthchecker-component':
+        specifier: 1.0.0-stable.250401103509
+        version: 1.0.0-stable.250401103509(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@hiveio/wax':
-        specifier: 1.27.6-rc4-stable.240911204120
-        version: 1.27.6-rc4-stable.240911204120
+        specifier: 1.27.6-rc7-stable.250211115622
+        version: 1.27.6-rc7-stable.250211115622
       '@radix-ui/react-accordion':
         specifier: ^1.1.2
         version: 1.2.3(@types/react-dom@18.2.7)(@types/react@18.2.15)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -232,13 +235,19 @@ packages:
       react: ^16 || ^17 || ^18
       react-dom: ^16 || ^17 || ^18
 
-  '@hiveio/beekeeper@1.27.6-rc3':
-    resolution: {integrity: sha1-+tV/0zANMNTgBA7WJAT5DKO9Bk0=, tarball: https://gitlab.syncad.com/api/v4/projects/198/packages/npm/@hiveio/beekeeper/-/@hiveio/beekeeper-1.27.6-rc3.tgz}
-    engines: {node: '>= 18'}
+  '@hiveio/beekeeper@1.27.8-stable.250131103618':
+    resolution: {integrity: sha1-0IYuFBbxIIKfRTrI6ZZc7Jf+qLA=, tarball: https://gitlab.syncad.com/api/v4/projects/198/packages/npm/@hiveio/beekeeper/-/@hiveio/beekeeper-1.27.8-stable.250131103618.tgz}
+    engines: {node: ^20.11 || >= 21.2}
 
-  '@hiveio/wax@1.27.6-rc4-stable.240911204120':
-    resolution: {integrity: sha1-8hUSP0cwO8So3GbI6qcYolqIoU8=, tarball: https://gitlab.syncad.com/api/v4/projects/419/packages/npm/@hiveio/wax/-/@hiveio/wax-1.27.6-rc4-stable.240911204120.tgz}
-    engines: {node: '>= 18'}
+  '@hiveio/healthchecker-component@1.0.0-stable.250401103509':
+    resolution: {integrity: sha1-tTdaJVayrNz5j+ab5OP1I+U7xoU=, tarball: https://gitlab.syncad.com/api/v4/projects/520/packages/npm/@hiveio/healthchecker-component/-/@hiveio/healthchecker-component-1.0.0-stable.250401103509.tgz}
+    peerDependencies:
+      react: ^18.2.0
+      react-dom: ^18.2.0
+
+  '@hiveio/wax@1.27.6-rc7-stable.250211115622':
+    resolution: {integrity: sha1-u4xpWFifKGdBz6dKebsMzWho02c=, tarball: https://gitlab.syncad.com/api/v4/projects/419/packages/npm/@hiveio/wax/-/@hiveio/wax-1.27.6-rc7-stable.250211115622.tgz}
+    engines: {node: ^20.11 || >= 21.2}
 
   '@humanwhocodes/config-array@0.11.14':
     resolution: {integrity: sha512-3T8LkOmg45BV5FICb15QQMsyUSWrQ8AygVfC7ZG32zOalnqrilm018ZVCw0eapXux8FtA33q8PSRSstjee3jSg==}
@@ -1089,9 +1098,6 @@ packages:
   '@types/scheduler@0.23.0':
     resolution: {integrity: sha512-YIoDCTH3Af6XM5VuwGG/QL/CJqga1Zm3NkU3HZ4ZHK2fRMPYP1VczsTUqtsf43PH/iJNVlPHAo2oWX7BSdB2Hw==}
 
-  '@types/validator@13.12.3':
-    resolution: {integrity: sha512-2ipwZ2NydGQJImne+FhNdhgRM37e9lCev99KnqkbFHd94Xn/mErARWI1RSLem1QA19ch5kOhzIZd7e8CA2FI8g==}
-
   '@types/yazl@2.4.6':
     resolution: {integrity: sha512-/ifFjQtcKaoZOjl5NNCQRR0fAKafB3Foxd7J/WvFPTMea46zekapcR30uzkwIkKAAuq5T6d0dkwz754RFH27hg==}
 
@@ -1420,12 +1426,6 @@ packages:
 
   chownr@1.1.4:
     resolution: {integrity: sha512-jJ0bqzaylmJtVnNgzTeSOs8DPavpbYgEr/b0YL8/2GO3xJEhInFmhKMUnEJQjZumK7KXGFhUy89PrsJWlakBVg==}
-
-  class-transformer@0.5.1:
-    resolution: {integrity: sha512-SQa1Ws6hUbfC98vKGxZH3KFY0Y1lm5Zm0SY8XX9zbK7FJCyVEac3ATW0RIpwzW+oOfmHE5PMPufDG9hCfoEOMw==}
-
-  class-validator@0.14.1:
-    resolution: {integrity: sha512-2VEG9JICxIqTpoK1eMzZqaV+u/EiwEJkMGzTrZf6sU/fwsnOITVgYJ8yojSy6CaXtO9V0Cc6ZQZ8h8m4UBuLwQ==}
 
   class-variance-authority@0.7.1:
     resolution: {integrity: sha512-Ka+9Trutv7G8M6WT6SeiRWz792K5qEqIGEGzXKhAE6xOWAY6pPH8U+9IY3oCMv6kqTmLsv7Xh/2w2RigkePMsg==}
@@ -2207,9 +2207,6 @@ packages:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}
     engines: {node: '>= 0.8.0'}
 
-  libphonenumber-js@1.12.6:
-    resolution: {integrity: sha512-PJiS4ETaUfCOFLpmtKzAbqZQjCCKVu2OhTV4SVNNE7c2nu/dACvtCqj4L0i/KWNnIgRv7yrILvBj5Lonv5Ncxw==}
-
   lie@3.3.0:
     resolution: {integrity: sha512-UaiMJzeWRlEujzAuw5LokY1L5ecNQYZKfmyZ9L7wDHb/p5etKaxXhohBcrw0EYby+G/NA52vRSN4N39dxHAIwQ==}
 
@@ -2655,9 +2652,6 @@ packages:
     resolution: {integrity: sha512-HFM8rkZ+i3zrV+4LQjwQ0W+ez98pApMGM3HUrN04j3CqzPOzl9nmP15Y8YXNm8QHGv/eacOVEjqhmWpkRV0NAw==}
     engines: {node: '>= 0.10'}
 
-  reflect-metadata@0.1.14:
-    resolution: {integrity: sha512-ZhYeb6nRaXCfhnndflDK8qI6ZQ/YcWZCISRAWICW9XYqMUwjZM9Z0DveWX/ABN01oxSHwVxKQmxeYZSsm0jh5A==}
-
   reflect.getprototypeof@1.0.10:
     resolution: {integrity: sha512-00o4I+DVrefhv+nX0ulyi3biSHCPDe+yLv5o/p6d/UVlirijB8E16FtfwSAi4g3tcqrQ4lRAqQSoFEZJehYEcw==}
     engines: {node: '>= 0.4'}
@@ -3075,10 +3069,6 @@ packages:
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
-  validator@13.15.0:
-    resolution: {integrity: sha512-36B2ryl4+oL5QxZ3AzD0t5SsMNGvTtQHpjgFO5tbNxfXbMFkY822ktCDe1MnlqV3301QQI9SLHDNJokDI+Z9pA==}
-    engines: {node: '>= 0.10'}
-
   victory-vendor@36.9.2:
     resolution: {integrity: sha512-PnpQQMuxlwYdocC8fIJqVXvkeViHYzotI+NJrCuav0ZYFoq912ZHBk3mCeuj+5/VpodOjPe1z0Fk2ihgzlXqjQ==}
 
@@ -3212,16 +3202,18 @@ snapshots:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
 
-  '@hiveio/beekeeper@1.27.6-rc3': {}
+  '@hiveio/beekeeper@1.27.8-stable.250131103618': {}
 
-  '@hiveio/wax@1.27.6-rc4-stable.240911204120':
+  '@hiveio/healthchecker-component@1.0.0-stable.250401103509(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
     dependencies:
-      '@hiveio/beekeeper': 1.27.6-rc3
-      class-transformer: 0.5.1
-      class-validator: 0.14.1
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+
+  '@hiveio/wax@1.27.6-rc7-stable.250211115622':
+    dependencies:
+      '@hiveio/beekeeper': 1.27.8-stable.250131103618
       events: 3.3.0
       long: 5.3.1
-      reflect-metadata: 0.1.14
 
   '@humanwhocodes/config-array@0.11.14':
     dependencies:
@@ -4024,8 +4016,6 @@ snapshots:
 
   '@types/scheduler@0.23.0': {}
 
-  '@types/validator@13.12.3': {}
-
   '@types/yazl@2.4.6':
     dependencies:
       '@types/node': 20.4.2
@@ -4357,14 +4347,6 @@ snapshots:
       fsevents: 2.3.3
 
   chownr@1.1.4: {}
-
-  class-transformer@0.5.1: {}
-
-  class-validator@0.14.1:
-    dependencies:
-      '@types/validator': 13.12.3
-      libphonenumber-js: 1.12.6
-      validator: 13.15.0
 
   class-variance-authority@0.7.1:
     dependencies:
@@ -5284,8 +5266,6 @@ snapshots:
       prelude-ls: 1.2.1
       type-check: 0.4.0
 
-  libphonenumber-js@1.12.6: {}
-
   lie@3.3.0:
     dependencies:
       immediate: 3.0.6
@@ -5730,8 +5710,6 @@ snapshots:
   rechoir@0.6.2:
     dependencies:
       resolve: 1.22.10
-
-  reflect-metadata@0.1.14: {}
 
   reflect.getprototypeof@1.0.10:
     dependencies:
@@ -6263,8 +6241,6 @@ snapshots:
       react: 18.2.0
 
   util-deprecate@1.0.2: {}
-
-  validator@13.15.0: {}
 
   victory-vendor@36.9.2:
     dependencies:
