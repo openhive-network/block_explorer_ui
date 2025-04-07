@@ -279,11 +279,12 @@ const Footer = () => {
                 />
               </li>
               <li>
-                <AddressSwitchedDialog
-                  addressType="node"
-                  currentAddress={nodeAddress}
-                  setAddress={setNodeAddress}
-                />
+               <Link 
+                href={"/healthchecker"}
+                className="hover:opacity-75"
+               >
+                Hive node: <span className="text-link ml-1">{nodeAddress}</span>
+               </Link>
               </li>
             </ul>
           </div>
