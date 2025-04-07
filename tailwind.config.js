@@ -6,7 +6,7 @@ module.exports = {
     "./components/**/*.{ts,tsx}",
     "./app/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
-    "./node_modules/healthchecker-component/**/*.{ts,tsx,js,jsx}"
+    "./node_modules/@hiveio/healthchecker-component/**/*.{ts,tsx,js,jsx}"
   ],
   theme: {
     container: {
