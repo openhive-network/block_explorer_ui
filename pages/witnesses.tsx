@@ -40,6 +40,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import Title from "@/components/title";
+import Hive from "@/types/Hive";
+import { IHiveChainInterface } from "@hiveio/wax";
 
 const TABLE_CELLS = [
   "Rank",
@@ -181,24 +183,10 @@ export default function Witnesses() {
   const [availableVersions, setAvailableVersions] = useState<string[]>([]);
   const [latestVersion, setLatestVersion] = useState<string | null>(null);
 
-  interface Supply {
-    amount: string;
-    nai: string;
-    precision: number;
-  }
-
-  const [totalVestingShares, setTotalVestingShares] = useState<Supply>({
-    amount: "0",
-    nai: "",
-    precision: 0,
-  });
-
-  const [totalVestingFundHive, setTotalVestingFundHive] = useState<Supply>({
-    amount: "0",
-    nai: "",
-    precision: 0,
-  });
+  const [totalVestingShares, setTotalVestingShares] = useState<Hive.Supply | null>(null);
+  const [totalVestingFundHive, setTotalVestingFundHive] =  useState<Hive.Supply | null>(null);
   const { hiveChain } = useHiveChainContext();
+
   useEffect(() => {
     const fetchDynamicGlobalProperties = async () => {
       const dynamicGlobalProperties =
@@ -378,12 +366,12 @@ export default function Witnesses() {
                                 <Tooltip>
                                   <TooltipTrigger asChild>
                                     <span className="cursor-pointer">
-                                      {convertVestsToHP(
+                                      {hiveChain && totalVestingFundHive && totalVestingShares ? convertVestsToHP(
                                         hiveChain,
                                         singleWitness.vests,
                                         totalVestingFundHive,
                                         totalVestingShares
-                                      )}
+                                      ) : <Loader2 className="dark:text-white animate-spin mt-1 h-2 w-2" />}
                                     </span>
                                   </TooltipTrigger>
                                   <TooltipContent className="text-left">
@@ -415,12 +403,12 @@ export default function Witnesses() {
                                         {singleWitness.votes_daily_change > 0
                                           ? "+"
                                           : ""}
-                                        {convertVestsToHP(
-                                          hiveChain,
-                                          singleWitness.votes_daily_change,
-                                          totalVestingFundHive,
-                                          totalVestingShares
-                                        )}
+                                          {hiveChain && totalVestingFundHive && totalVestingShares ? convertVestsToHP(
+                                        hiveChain,
+                                        singleWitness.votes_daily_change,
+                                        totalVestingFundHive,
+                                        totalVestingShares
+                                      ) : <Loader2 className="dark:text-white animate-spin mt-1 h-2 w-2" />}
                                       </span>
                                     </TooltipTrigger>
                                     <TooltipContent className="text-left">
