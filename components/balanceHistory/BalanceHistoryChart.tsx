@@ -268,8 +268,8 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
           )}
           <Legend
             onClick={(event) => {
-              const { dataKey } = event;
-              const isHidden = hiddenDataKeys.includes(dataKey);
+              const dataKey = event.dataKey as string;
+              const isHidden = hiddenDataKeys.includes(dataKey as string);
               if (isHidden) {
                 setHiddenDataKeys(hiddenDataKeys.filter((key) => key !== dataKey));
               } else {
