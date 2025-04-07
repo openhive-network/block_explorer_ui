@@ -9,8 +9,8 @@
   --background-end-rgb: rgb(255, 255, 255);
   --color-text: #000;
   --color-background: #FFF;
-  --color-row-even: #dadfeb;
-  --color-row-odd: #c3d0eb;
+  --color-row-even: rgb(249, 250, 251);
+  --color-row-odd: rgb(255, 255, 255);
   --color-row-hover: #e5eaf3;
   --color-button: #e0e2e8;
   --color-button-text: #000;
@@ -62,8 +62,8 @@
   --background-end-rgb: rgb(60, 60, 60);
   --color-text: #FFF;
   --color-background: #292F3D;
-  --color-row-even: #48526b;
-  --color-row-odd: #333b4c;
+  --color-row-even: rgb(31, 41, 55 );
+  --color-row-odd: rgb(17, 24, 39);
   --color-row-hover: #5c6a89;
   --color-button: #5c6a89;
   --color-button-text: #FFF;
