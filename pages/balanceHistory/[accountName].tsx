@@ -122,9 +122,12 @@ export default function BalanceHistory() {
     () => moment().subtract(1, "month").toDate(),
     []
   );
+
   let effectiveFromBlock =
-    paramsState.fromBlock || fromDateParam || defaultFromDate;
-  let effectiveToBlock = paramsState.toBlock || toDateParam;
+  paramsState.rangeSelectKey === 'none'
+    ? undefined // Set to undefined if rangeSelectKey is 'none'
+    : paramsState.fromBlock || fromDateParam || defaultFromDate;
+let effectiveToBlock = paramsState.rangeSelectKey === 'none' ? undefined : paramsState.toBlock || toDateParam;
 
   if (
     rangeSelectKey === "lastBlocks" &&
