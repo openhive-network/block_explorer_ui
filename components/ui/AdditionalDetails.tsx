@@ -31,11 +31,12 @@ const AdditionalDetails: React.FC<AdditionalDetailsProps> = ({
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, onToggle]);
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768); 
+      setIsMobile(window.innerWidth < 768);
     };
 
     handleResize();
@@ -67,10 +68,10 @@ const AdditionalDetails: React.FC<AdditionalDetailsProps> = ({
       }
 
       setInsetStyle({
-        top: isMobile ? '6%' : `${top}px`,
-        left: isMobile ? '10%' : `${rect.left + 15}px`,
-        width: isMobile ? '80%' : 'auto',
-        transform: isMobile ? 'translateX(0)' : 'none',
+        top: isMobile ? "6%" : `${top}px`,
+        left: isMobile ? "10%" : `${rect.left + 15}px`,
+        width: isMobile ? "80%" : "auto",
+        transform: isMobile ? "translateX(0)" : "none",
       });
     } else {
       setInsetStyle({});
@@ -100,15 +101,18 @@ const AdditionalDetails: React.FC<AdditionalDetailsProps> = ({
         >
           <div className="p-4 border-b border-gray-200 dark:border-gray-600 flex items-center justify-between">
             <h2>Additional Info</h2>
-            <button onClick={onToggle} className="ml-4">
+            <button
+              onClick={onToggle}
+              className="ml-4"
+            >
               <X className="fill-current w-4 h-4" />
             </button>
           </div>
           <div
             className="p-4 overflow-wrap bg-theme text-xs rounded-xl shadow-xl"
             style={{
-              maxHeight: isMobile ? '70vh' : 'none',
-              overflowY: 'auto', 
+              maxHeight: isMobile ? "70vh" : "none",
+              overflowY: "auto",
             }}
           >
             {children}

@@ -174,7 +174,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
         </g>
       );
     },
-    [lastBlocks.lastBlocksData, isMobile, router]
+    [lastBlocks.lastBlocksData, router]
   );
 
   return (
@@ -185,13 +185,13 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
       <CardHeader>
         <CardTitle>Last Blocks</CardTitle>
         <Link
-              href="/blocks"
-              className="text-sm flex items-center space-x-1 w-full text-center justify-center"
-              data-testid="see-witnesses-link"
-            >
-              <span>See More</span>
-              <MoveRight width={18} />
-            </Link>
+          href="/blocks"
+          className="text-sm flex items-center space-x-1 w-full text-center justify-center"
+          data-testid="see-witnesses-link"
+        >
+          <span>See More</span>
+          <MoveRight width={18} />
+        </Link>
       </CardHeader>
       <ResponsiveContainer
         width="100%"
