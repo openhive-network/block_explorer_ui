@@ -89,9 +89,6 @@ importers:
       eslint-config-next:
         specifier: 13.4.10
         version: 13.4.10(eslint@8.45.0)(typescript@5.1.6)
-      healthchecker-component:
-        specifier: file:../healthchecker-component
-        version: file:../healthchecker-component(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(tailwindcss@3.4.17)
       long:
         specifier: ^5.2.3
         version: 5.3.1
@@ -1980,13 +1977,6 @@ packages:
   hasown@2.0.2:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
-
-  healthchecker-component@file:../healthchecker-component:
-    resolution: {directory: ../healthchecker-component, type: directory}
-    peerDependencies:
-      react: ^18.2.0
-      react-dom: ^18.2.0
-      tailwindcss: ^3.4.12
 
   ieee754@1.2.1:
     resolution: {integrity: sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA==}
@@ -5038,12 +5028,6 @@ snapshots:
   hasown@2.0.2:
     dependencies:
       function-bind: 1.1.2
-
-  healthchecker-component@file:../healthchecker-component(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(tailwindcss@3.4.17):
-    dependencies:
-      react: 18.2.0
-      react-dom: 18.2.0(react@18.2.0)
-      tailwindcss: 3.4.17
 
   ieee754@1.2.1: {}
 
