@@ -31,8 +31,10 @@ import { useRouter } from "next/router";
 import CopyButton from "./ui/CopyButton";
 import DataExport from "./DataExport"; // Import DataExport
 import { extractTextFromReactElement } from "@/utils/StringUtils";
+import DataCountMessage from "./DataCountMessage";
 
 interface OperationsTableProps {
+  operationCount?: number;
   operations: Explorer.OperationForTable[];
   unformattedOperations?: Explorer.OperationForTable[];
   markedTrxId?: string;
@@ -88,6 +90,7 @@ const getOperationValues = (operation: Hive.Operation) => {
 };
 
 const OperationsTable: React.FC<OperationsTableProps> = ({
+  operationCount,
   operations,
   unformattedOperations,
   markedTrxId,
@@ -182,7 +185,15 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
 
   return (
     <>
-      <div className="flex justify-end">
+      <div
+        className={cn("flex items-center justify-end", {
+          "justify-between": !!operationCount,
+        })}
+      >
+        <DataCountMessage
+          count={operationCount || 0}
+          dataType="operations"
+        />
         <DataExport
           data={prepareExportData()}
           filename={`${accountName ? `${accountName}_` : ""}${

@@ -62,6 +62,7 @@ const AccountOperationsSection: React.FC<AccountOperationsSectionProps> = ({
       </div>
 
       <OperationsTable
+        operationCount={accountOperations?.total_operations || 0}
         operations={convertOperationResultsToTableOperations(
           formattedAccountOperations?.operations_result || []
         )}
@@ -69,7 +70,11 @@ const AccountOperationsSection: React.FC<AccountOperationsSectionProps> = ({
           accountOperations?.operations_result || []
         )}
         referrer="operations"
-        accountName={paramsState.accountName?.startsWith('@') ? paramsState.accountName.slice(1) : paramsState.accountName}
+        accountName={
+          paramsState.accountName?.startsWith("@")
+            ? paramsState.accountName.slice(1)
+            : paramsState.accountName
+        }
       />
     </>
   );

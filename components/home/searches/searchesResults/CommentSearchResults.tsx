@@ -80,11 +80,11 @@ const CommentSearchResults = () => {
                 onPageChange={changeCommentSearchPagination}
                 totalCount={commentSearchData.total_operations}
                 pageSize={config.standardPaginationSize}
-               
               />
             </div>
           </div>
           <OperationsTable
+            operationCount={commentSearchData.total_operations}
             operations={formattedOperations}
             unformattedOperations={unformattedOperations}
             referrer="comments_search_results"

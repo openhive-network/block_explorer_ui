@@ -37,6 +37,7 @@ const AccountCommentPermlinkSearchResults: React.FC<
 
           <div className="flex flex-wrap mt-4">
             <AccountCommentPermlinkResultTable
+              permlinkCount={data.total_permlinks}
               data={data.permlinks_result}
               accountName={accountName}
             />

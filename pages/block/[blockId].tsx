@@ -328,6 +328,7 @@ export default function Block() {
               <div className="w-full max-w-screen-2xl flex flex-col gap-y-2">
                 {!!convertedTotalOperations.length && (
                   <OperationsTable
+                    operationCount={totalOperations?.total_operations || 0}
                     operations={convertedTotalOperations}
                     markedTrxId={paramsState.trxId}
                     unformattedOperations={unformattedOperations}

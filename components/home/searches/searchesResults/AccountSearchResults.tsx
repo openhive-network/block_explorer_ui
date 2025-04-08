@@ -100,6 +100,7 @@ const AccountSearchResults = () => {
             </div>
           </div>
           <OperationsTable
+            operationCount={accountOperations.total_operations}
             operations={formattedOperations}
             unformattedOperations={unformattedOperations}
             referrer="account_search_result"

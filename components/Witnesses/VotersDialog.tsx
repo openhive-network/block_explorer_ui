@@ -21,6 +21,7 @@ import { convertVestsToHP } from "@/utils/Calculations";
 import fetchingService from "@/services/FetchingService";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import NoResult from "../NoResult";
+import DataCountMessage from "../DataCountMessage";
 
 type VotersDialogProps = {
   accountName: string;
@@ -174,9 +175,20 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
               className="rounded"
               isMirrored={false}
             />
+
+            <div
+              className={cn("flex justify-end items-center", {
+                "justify-between": !!witnessVoters.total_operations,
+              })}
+            >
+              <DataCountMessage
+                count={witnessVoters.total_operations}
+                dataType="voters"
+              />
+            </div>
             {witnessVoters?.voters?.length === 0 && !isWitnessVotersLoading ? (
               <div>
-                <NoResult/>
+                <NoResult />
               </div>
             ) : (
               <>

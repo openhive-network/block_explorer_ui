@@ -19,8 +19,11 @@ import { Button } from "@/components/ui/button";
 import { useHandleInteractionsSearch } from "../interactions/useHandleInteractionsSearch";
 import CopyButton from "@/components/ui/CopyButton";
 import DataExport from "@/components/DataExport";
+import { cn } from "@/lib/utils";
+import DataCountMessage from "@/components/DataCountMessage";
 
 interface AccountCommentPermlinkResultTableProps {
+  permlinkCount: number;
   data: Hive.Permlink[];
   accountName: string | undefined;
 }
@@ -118,6 +121,7 @@ const buildTableBody = (
 };
 
 const AccountCommentPermlinkResultTable = ({
+  permlinkCount,
   data,
   accountName,
 }: AccountCommentPermlinkResultTableProps) => {
@@ -132,11 +136,11 @@ const AccountCommentPermlinkResultTable = ({
     handleCommentsSearch(accountName as string, permlink);
   };
 
-   const prepareExportData = () => {
-      if (!data || !data.length || !accountName) return [];
-    
-      return data.map(({ block, operation_id, permlink, timestamp, trx_id }: any) => {
-   
+  const prepareExportData = () => {
+    if (!data || !data.length || !accountName) return [];
+
+    return data.map(
+      ({ block, operation_id, permlink, timestamp, trx_id }: any) => {
         return {
           Block: block.toLocaleString(),
           "Operation Id": operation_id,
@@ -144,21 +148,29 @@ const AccountCommentPermlinkResultTable = ({
           Timestamp: formatAndDelocalizeTime(timestamp),
           "Trx Id": trx_id?.slice(0, 10),
         };
-      });
-    };
-  
+      }
+    );
+  };
 
   return (
     <>
-    <div className="w-full">
-      <div className="flex justify-end">
-        <DataExport
+      <div className="w-full">
+        <div
+          className={cn("flex justify-end items-center", {
+            "justify-between": !!permlinkCount,
+          })}
+        >
+          <DataCountMessage
+            count={permlinkCount}
+            dataType="permlinks"
+          />
+          <DataExport
             data={prepareExportData()}
             filename={`${accountName}_comments.csv`}
             className="mb-2"
-        />
+          />
+        </div>
       </div>
-    </div>
       <div className="flex w-full overflow-auto rounded">
         <div className="text-text w-[100%] bg-theme p-5">
           <Table data-testid="table-body">

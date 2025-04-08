@@ -82,6 +82,7 @@ const InteractionsTabResult: React.FC<InteractionsTabResultProps> = ({
           </div>
         </div>
         <OperationsTable
+          operationCount={data.total_operations}
           operations={formattedOperations}
           unformattedOperations={unformattedOperations}
           referrer="interactions"

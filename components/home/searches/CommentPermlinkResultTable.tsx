@@ -16,8 +16,11 @@ import useHandleCommentsSearch from "./hooks/useHandleCommentsSearch";
 import { Button } from "@/components/ui/button";
 import CopyButton from "@/components/ui/CopyButton";
 import DataExport from "@/components/DataExport";
+import { cn } from "@/lib/utils";
+import DataCountMessage from "@/components/DataCountMessage";
 
 interface CommentPermlinkResultTableProps {
+  permlinkCount: number;
   data: Hive.Permlink[];
   accountName: string | undefined;
   openCommentsSection: (accountName: string, permlink: string) => void;
@@ -55,7 +58,7 @@ const buildTableBody = (
   return data.map(
     ({ block, operation_id, permlink, timestamp, trx_id }: any) => {
       return (
-        <React.Fragment key={trx_id}>          
+        <React.Fragment key={trx_id}>
           <TableRow className="border-b border-gray-700 hover:bg-inherit p-[10px]">
             <TableCell className="text-left text-link whitespace-nowrap">
               <Link href={`/block/${block}`}>{block.toLocaleString()}</Link>
@@ -88,7 +91,9 @@ const buildTableBody = (
               {formatAndDelocalizeTime(timestamp)}
             </TableCell>
             <TableCell className="text-left text-link whitespace-nowrap">
-              <Link href={`/transaction/${trx_id}`}>{trx_id?.slice(0, 10)}</Link>
+              <Link href={`/transaction/${trx_id}`}>
+                {trx_id?.slice(0, 10)}
+              </Link>
               <CopyButton
                 text={trx_id}
                 tooltipText="Copy transaction ID"
@@ -102,6 +107,7 @@ const buildTableBody = (
 };
 
 const CommentPermlinkResultTable = ({
+  permlinkCount,
   openCommentsSection,
   data,
   accountName,
@@ -115,30 +121,39 @@ const CommentPermlinkResultTable = ({
 
   const prepareExportData = () => {
     if (!data || !data.length || !accountName) return [];
-  
-    return data.map(({ block, operation_id, permlink, timestamp, trx_id }: any) => {
- 
-      return {
-        Block: block.toLocaleString(),
-        "Operation Id": operation_id,
-        Permlink: permlink,
-        Timestamp: formatAndDelocalizeTime(timestamp),
-        "Trx Id": trx_id?.slice(0, 10),
-      };
-    });
+
+    return data.map(
+      ({ block, operation_id, permlink, timestamp, trx_id }: any) => {
+        return {
+          Block: block.toLocaleString(),
+          "Operation Id": operation_id,
+          Permlink: permlink,
+          Timestamp: formatAndDelocalizeTime(timestamp),
+          "Trx Id": trx_id?.slice(0, 10),
+        };
+      }
+    );
   };
 
   return (
     <>
-    <div className="w-full">
-      <div className="flex justify-end">
-        <DataExport
+      <div className="w-full">
+        <div
+          className={cn("flex justify-end items-center", {
+            "justify-between": !!permlinkCount,
+          })}
+        >
+          <DataCountMessage
+            count={permlinkCount}
+            dataType="permlinks"
+          />
+          <DataExport
             data={prepareExportData()}
             filename={`${accountName}_permlink_search_result.csv`}
             className="mb-2"
-        />
+          />
+        </div>
       </div>
-    </div>
       <div className="flex w-full overflow-auto">
         <div className="text-text w-[100%] bg-theme dark:bg-theme p-5 rounded">
           <Table data-testid="table-body">

@@ -55,6 +55,7 @@ const CommentPermlinkSearchResults = () => {
 
           <div className="flex flex-wrap">
             <CommentPermlinkResultTable
+              permlinkCount={permlinkSearchData.total_permlinks}
               openCommentsSection={openCommentsSection}
               data={permlinkSearchData.permlinks_result}
               accountName={accountName}

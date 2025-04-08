@@ -34,6 +34,7 @@ import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import CopyButton from "../ui/CopyButton";
 import DataExport from "../DataExport";
+import DataCountMessage from "../DataCountMessage";
 
 interface BalanceHistoryTableProps {
   operations: Explorer.BalanceHistoryForTable[];
@@ -179,9 +180,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
     }
   };
 
-  const coinName = router.query.coinType
-                  ? router.query.coinType
-                  : "HIVE";
+  const coinName = router.query.coinType ? router.query.coinType : "HIVE";
 
   const prepareExportData = () => {
     return operations.map((operation) => {
@@ -190,7 +189,9 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
         Timestamp: formatAndDelocalizeTime(operation.timestamp),
         "Block Number": operation.blockNumber?.toLocaleString() || "",
         Balance: `${formatRawCoin(operation.prev_balance)} ${coinName}`,
-        "Balance Change": `${formatRawCoin(operation.balanceChange)} ${coinName}`,
+        "Balance Change": `${formatRawCoin(
+          operation.balanceChange
+        )} ${coinName}`,
         "New Balance": `${formatRawCoin(operation.balance)} ${coinName}`,
       };
     });
@@ -198,7 +199,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
 
   return (
     <>
-    <div className="sticky z-20 top-[3.2rem] md:top-[4rem]">
+      <div className="sticky z-20 top-[3.2rem] md:top-[4rem]">
         <CustomPagination
           currentPage={current_page ? current_page : 1}
           onPageChange={updateUrl}
@@ -214,18 +215,23 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
         </div>
       ) : (
         <>
-          <div className="flex justify-end">
+          <div
+            className={cn("flex items-center justify-end my-2", {
+              "justify-between": !!total_operations,
+            })}
+          >
+            <DataCountMessage
+              count={total_operations}
+              dataType="operations"
+            />
             <DataExport
               data={prepareExportData()}
               filename={`${account_name}_balance_history.csv`}
-              className="mt-2"
             />
           </div>
 
           <Table
-            className={cn(
-              "rounded-[6px] overflow-hidden max-w-full text-xs mt-3"
-            )}
+            className={cn("rounded-[6px] overflow-hidden max-w-full text-xs")}
           >
             <TableHeader>
               <TableRow>
@@ -333,7 +339,10 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
                           detailRefs.current.set(operation.operationId, el)
                         }
                       >
-                        <TableCell colSpan={7} className="p-4">
+                        <TableCell
+                          colSpan={7}
+                          className="p-4"
+                        >
                           <div className="border rounded-2xl p-4">
                             <h3 className="text-lg font-bold">
                               Operation Details
