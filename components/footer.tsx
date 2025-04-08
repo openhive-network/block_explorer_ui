@@ -6,6 +6,7 @@ import { useAddressesContext } from "../contexts/AddressesContext";
 import useHafbeVersion from "@/hooks/api/common/useHafbeVersion";
 import AddressSwitchedDialog from "./AddressSwitchedDialog";
 import { useTheme } from "@/contexts/ThemeContext";
+import HealthCheckerDialog from "./HealthCheckerDialog";
 
 const { lastCommitHashRepoUrl, gitHash } = config;
 
@@ -286,6 +287,7 @@ const Footer = () => {
                 Hive node: <span className="text-link ml-1">{nodeAddress}</span>
                </Link>
               </li>
+              <li><HealthCheckerDialog /></li>
             </ul>
           </div>
         </div>
