@@ -19,6 +19,19 @@ interface RangesValues {
   payloadEndDate?: Date;
 }
 
+interface SearchRangeParams {
+  fromBlock: number | undefined;
+  toBlock: number | undefined;
+  startDate: Date | undefined;
+  endDate: Date | undefined;
+  fromDate: Date | undefined;
+  toDate: Date | undefined;
+  lastBlocks: number | undefined;
+  lastTime: number | undefined;
+  rangeSelectKey: string | undefined;
+  timeUnit: string | undefined;
+}
+
 export interface SearchRangesResult {
   rangeSelectOptions: Explorer.SelectOption[];
   timeSelectOptions: Explorer.SelectOption[];
@@ -39,7 +52,7 @@ export interface SearchRangesResult {
   setRangeSelectKey: (key: string | undefined) => void;
   setTimeUnitSelectKey: (blockNumber: string | undefined) => void;
   getRangesValues: () => RangesValues;
-  setRangesValues: (params: Explorer.CommentSearchParams | undefined) => void;
+  setRangesValues: (params: SearchRangeParams) => void;
 }
 
 export const rangeSelectOptions: Explorer.SelectOption[] = [
@@ -106,7 +119,7 @@ const useSearchRanges = (
   );
   const { checkTemporaryHeadBlockNumber } = useHeadBlockNumber();
 
-  const setRangesValues = (params: any) => {
+  const setRangesValues = (params: SearchRangeParams) => {
     if (!params) return;
 
     params.fromBlock && setFromBlock(params.fromBlock);

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import Link from "next/link";
 import {
   Table,
@@ -48,7 +48,11 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
     return (
       <TableRow>
         {TABLE_CELLS.map((cell, index) => (
-          <TableHead key={index} scope="col" className="text-left">
+          <TableHead
+            key={index}
+            scope="col"
+            className="text-left"
+          >
             {cell}
           </TableHead>
         ))}
@@ -59,7 +63,7 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
   const buildTableBody = () => {
     if (!rows) return null;
     return rows.map((row) => (
-      <>
+      <Fragment key={row.hash}>
         <TableRow className="text-left">
           <TableCell className="w-[8px]">
             <AdditionalDetails
@@ -71,7 +75,10 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
           </TableCell>
           <TableCell className="whitespace-nowrap relative ">
             <div className="flex items-center space-x-2">
-              <Link href={`/block/${row.block_num}`} className="text-link">
+              <Link
+                href={`/block/${row.block_num}`}
+                className="text-link"
+              >
                 {row.block_num.toLocaleString()}
               </Link>
               <CopyButton
@@ -82,7 +89,10 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
           </TableCell>
           <TableCell className="whitespace-nowrap ">
             <div className="flex items-center space-x-2">
-              <Link href={`/block/${row.block_num}`} className="text-link">
+              <Link
+                href={`/block/${row.block_num}`}
+                className="text-link"
+              >
                 {formatHash(row.hash)}
               </Link>
               <CopyButton
@@ -112,7 +122,10 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
             </TooltipProvider>
           </TableCell>
           <TableCell className="whitespace-nowrap">
-            <Link className="text-link" href={`@${row.producer_account}`}>
+            <Link
+              className="text-link"
+              href={`@${row.producer_account}`}
+            >
               {row.producer_account}
             </Link>
           </TableCell>
@@ -122,7 +135,7 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
               : "-"}
           </TableCell>
         </TableRow>
-      </>
+      </Fragment>
     ));
   };
 
