@@ -29,7 +29,7 @@ const HealthCheckerDialog: React.FC<HealthCheckerDialogProps> = ({}) => {
       onOpenChange={setIsOpen}
     >
       <DialogTrigger data-testid="api-address-link">
-        Hive node in dialog: <span className="text-link">{nodeAddress}</span>
+        Hive node healthchecker: <span className="text-link">{nodeAddress}</span>
       </DialogTrigger>
       <DialogContent
         className="h-[80vh] max-w-5xl overflow-auto flex flex-col rounded-lg shadow-md border"

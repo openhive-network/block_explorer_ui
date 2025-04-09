@@ -279,14 +279,6 @@ const Footer = () => {
                   setAddress={setApiAddress}
                 />
               </li>
-              <li>
-               <Link 
-                href={"/healthchecker"}
-                className="hover:opacity-75"
-               >
-                Hive node: <span className="text-link ml-1">{nodeAddress}</span>
-               </Link>
-              </li>
               <li><HealthCheckerDialog /></li>
             </ul>
           </div>
