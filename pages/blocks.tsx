@@ -18,7 +18,7 @@ const TABLE_CELLS = [
   "Transactions",
   "Time",
   "Producer",
-  "Reward",
+  "Reward(VESTS)",
 ];
 
 interface Operations {

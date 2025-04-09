@@ -1,42 +1,40 @@
-import { useState, ReactNode, useEffect, useRef } from "react";
-import { Eye, X } from "lucide-react";
+import * as React from "react";
+import { Eye } from "lucide-react";
 import { cn } from "@/lib/utils";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogPortal,
+  DialogOverlay
+} from "@/components/ui/dialog";
 
 interface AdditionalDetailsProps {
-  children: ReactNode;
-  isOpen: boolean;
-  onToggle: () => void;
-  className?: string;
+  children: React.ReactNode;
+  title?: string;
+  description?: string;
+  triggerClassName?: string;
+  dialogHeight?: number;
+  enableBlur?: boolean;
 }
 
 const AdditionalDetails: React.FC<AdditionalDetailsProps> = ({
   children,
-  isOpen,
-  onToggle,
-  className,
+  title = "Additional Info",
+  description,
+  triggerClassName = "",
+  dialogHeight = 400,
+  enableBlur = true,
 }) => {
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const [insetStyle, setInsetStyle] = useState({});
-  const detailsHeight = 340;
-  const [isMobile, setIsMobile] = useState(false); // State for mobile detection
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [isMobile, setIsMobile] = React.useState(false);
+  const buttonRef = React.useRef<HTMLButtonElement>(null);
 
-  const handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key === "Escape" && isOpen) {
-      onToggle();
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOpen, onToggle]);
-
-  useEffect(() => {
+  React.useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
+      setIsMobile(window.innerWidth < 768); // Adjust breakpoint as needed
     };
 
     handleResize();
@@ -47,78 +45,53 @@ const AdditionalDetails: React.FC<AdditionalDetailsProps> = ({
     };
   }, []);
 
-  useEffect(() => {
-    if (isOpen && buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
-      const buttonTop = rect.top;
-      const buttonBottom = rect.bottom;
-      const windowHeight = window.innerHeight;
+  const handleOpen = () => {
+    setIsOpen(true);
+  };
 
-      const potentialBottomTop = buttonBottom + 5;
-      const potentialTopTop = buttonTop - detailsHeight + 70;
-
-      let top;
-
-      if (buttonBottom + detailsHeight <= windowHeight) {
-        top = buttonBottom;
-      } else if (potentialTopTop >= 0) {
-        top = potentialTopTop;
-      } else {
-        top = 5;
-      }
-
-      setInsetStyle({
-        top: isMobile ? "6%" : `${top}px`,
-        left: isMobile ? "10%" : `${rect.left + 15}px`,
-        width: isMobile ? "80%" : "auto",
-        transform: isMobile ? "translateX(0)" : "none",
-      });
-    } else {
-      setInsetStyle({});
-    }
-  }, [isOpen, children, isMobile]);
+  const handleClose = () => {
+    setIsOpen(false);
+  };
 
   return (
     <div className="relative inline-block">
       <button
         ref={buttonRef}
-        onClick={onToggle}
+        onClick={handleOpen}
         className={cn(
           "cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 rounded-full p-1 transition-colors duration-150 relative",
-          className
+          triggerClassName
         )}
       >
-        <Eye className="w-4 h-4" />
+        <Eye className="w-3 h-3" />
       </button>
 
-      {isOpen && buttonRef.current && (
-        <div
-          className="fixed z-50 bg-theme  rounded-xl shadow-xl dark:shadow-md"
-          style={{
-            zIndex: 600,
-            ...insetStyle,
-          }}
-        >
-          <div className="p-4 border-b border-gray-200 dark:border-gray-600 flex items-center justify-between">
-            <h2>Additional Info</h2>
-            <button
-              onClick={onToggle}
-              className="ml-4"
-            >
-              <X className="fill-current w-4 h-4" />
-            </button>
-          </div>
-          <div
-            className="p-4 overflow-wrap bg-theme text-xs rounded-xl shadow-xl"
+      <Dialog open={isOpen} onOpenChange={handleClose}>
+        <DialogPortal>
+          <DialogOverlay className="fixed inset-0 z-50 bg-theme/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+
+          <DialogContent
+            className={cn(
+              "rounded fixed z-50 grid w-full max-w-md gap-4 border bg-theme p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] md:w-full",
+                isMobile ? "top-[5%] left-[0]" : "top-[15%] left-[50px]"
+            )}
             style={{
-              maxHeight: isMobile ? "70vh" : "none",
-              overflowY: "auto",
+              transform: "none",
             }}
+            onOpenAutoFocus={(e) => e.preventDefault()}
           >
-            {children}
-          </div>
-        </div>
-      )}
+            <DialogHeader>
+              <DialogTitle>{title}</DialogTitle>
+              {description && (
+                <DialogDescription className="text-slate-800 dark:text-white">
+                  {description}
+                </DialogDescription>
+              )}
+            </DialogHeader>
+            <div>{children}</div>
+          </DialogContent>
+        </DialogPortal>
+      </Dialog>
     </div>
   );
 };

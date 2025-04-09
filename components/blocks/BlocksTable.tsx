@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Table,
@@ -24,13 +24,18 @@ import { formatHash } from "@/utils/StringUtils";
 import CustomPagination from "@/components/CustomPagination";
 import { config } from "@/Config";
 import { BlockRow } from "@/pages/blocks";
+import JumpToPage from "../JumpToPage";
+import { useHiveChainContext } from "@/contexts/HiveChainContext";
+import Hive from "@/types/Hive";
+import fetchingService from "@/services/FetchingService";
+import { convertVestsToHP } from "@/utils/Calculations";
 
 interface BlocksTableProps {
   rows: BlockRow[];
   openBlockNum?: number | null;
   handleToggle: (blockNum: number) => void;
   TABLE_CELLS: string[];
-  currentPage: number | undefined;
+  currentPage: number;
   totalCount: number;
   onPageChange: (newPage: number) => void;
 }
@@ -51,7 +56,9 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
           <TableHead
             key={index}
             scope="col"
-            className="text-left"
+            className={`text-left ${
+              index < 2 ? "sticky left-0 z-10 bg-theme" : ""
+            } ${index === 0 ? "min-w-2" : ""}`}
           >
             {cell}
           </TableHead>
@@ -65,15 +72,13 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
     return rows.map((row) => (
       <Fragment key={row.hash}>
         <TableRow className="text-left">
-          <TableCell className="w-[8px]">
+        <TableCell className="w-[12px] sticky left-0 z-5 bg-theme">
             <AdditionalDetails
-              isOpen={openBlockNum === row.block_num}
-              onToggle={() => handleToggle(row.block_num)}
             >
               {row.additionalDetailsContent}
             </AdditionalDetails>
           </TableCell>
-          <TableCell className="whitespace-nowrap relative ">
+          <TableCell className="whitespace-nowrap sticky left-[32px] z-10 bg-theme">
             <div className="flex items-center space-x-2">
               <Link
                 href={`/block/${row.block_num}`}
@@ -130,10 +135,31 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
             </Link>
           </TableCell>
           <TableCell className="whitespace-nowrap">
-            {row.producer_reward !== undefined
-              ? formatNumber(row.producer_reward, true, false) + " VESTS"
-              : "-"}
-          </TableCell>
+          {row.producer_reward !== undefined ? (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="cursor-pointer">
+                    {formatNumber(row.producer_reward, true, false)}
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent className="bg-theme text-text">
+                  {hiveChain &&
+                    totalVestingFundHive &&
+                    totalVestingShares &&
+                    convertVestsToHP(
+                      hiveChain,
+                      String(row.producer_reward),
+                      totalVestingFundHive,
+                      totalVestingShares
+                    )}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : (
+            "-"
+          )}
+        </TableCell>
         </TableRow>
       </Fragment>
     ));
@@ -148,18 +174,39 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
         Transactions: block.trx_count,
         Timestamp: block.timestamp,
         Producer: block.producer_account,
-        "Producer reward":
-          formatNumber(block.producer_reward, true, false) + " VESTS",
+        "Producer reward (VESTS)":
+          formatNumber(block.producer_reward, true, false) ,
         hash: formatHash(block.hash),
         "prev hash": formatHash(block.prev),
       };
     });
   };
 
+  const [totalVestingShares, setTotalVestingShares] =
+    useState<Hive.Supply | null>(null);
+  const [totalVestingFundHive, setTotalVestingFundHive] =
+    useState<Hive.Supply | null>(null);
+  const { hiveChain } = useHiveChainContext();
+
+  useEffect(() => {
+    const fetchDynamicGlobalProperties = async () => {
+      const dynamicGlobalProperties =
+        await fetchingService.getDynamicGlobalProperties();
+      const _totalVestingfundHive =
+        dynamicGlobalProperties.total_vesting_fund_hive;
+      const _totalVestingShares = dynamicGlobalProperties.total_vesting_shares;
+
+      setTotalVestingFundHive(_totalVestingfundHive);
+      setTotalVestingShares(_totalVestingShares);
+    };
+
+    fetchDynamicGlobalProperties();
+  }, []);
+
   return (
     <>
-      <div className="sticky z-20 top-[3.2rem] md:top-[4rem] mt-6">
-        <div className="flex flex-col md:flex-row items-center gap-2 flex-1 justify-center w-full">
+      <div className="sticky z-20 top-[3.2rem] md:top-[4rem] mt-6 bg-theme">
+        <div className="flex flex-col md:flex-row items-center gap-2 flex-1 justify-between w-full">
           <CustomPagination
             currentPage={currentPage || 1}
             totalCount={totalCount}
@@ -167,6 +214,14 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
             onPageChange={onPageChange}
             isMirrored={true}
           />
+          <div className="flex items-center mt-2 w-full md:w-auto justify-center md:justify-end mb-2">
+            <JumpToPage
+              currentPage={currentPage}
+              onPageChange={onPageChange}
+              totalCount={totalCount ?? 1}
+              pageSize={config.standardPaginationSize}
+            />
+          </div>
         </div>
       </div>
       <div className="flex justify-end">
@@ -178,7 +233,7 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
       </div>
       <Table
         data-testid="table-body"
-        className="rounded-[6px] overflow-hidden mt-3"
+        className="rounded-[6px] overflow-auto mt-3"
       >
         <TableHeader>{buildTableHeader()}</TableHeader>
 

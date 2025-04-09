@@ -194,8 +194,17 @@ const BlockAdditionalDetails: React.FC<BlockAdditionalDetailsProps> = ({ block, 
         {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
         <span className="text-xs">{isExpanded ? "less" : "more"}</span>
       </button>
-      <div style={{ display: isExpanded ? "block" : "none" }}>
-        <div className="my-2 text-left">
+      <div
+        style={{
+          display: isExpanded ? "block" : "none",
+          overflow: "auto",
+          height: "11rem", 
+          scrollbarWidth: "thin", 
+          scrollbarColor: " transparent", 
+        }}
+        className="overflow-auto"
+      > 
+      <div className="my-2 text-left">
           <h4 className="font-bold">Relevant Operations: </h4>
           <h5 className="font-semibold mb-1 mt-3">
             Operations: {nonVirtualOperationsCount}
