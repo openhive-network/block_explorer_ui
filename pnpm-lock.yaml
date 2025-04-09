@@ -12,8 +12,8 @@ importers:
         specifier: ^1.7.15
         version: 1.7.19(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@hiveio/healthchecker-component':
-        specifier: 1.0.0-stable.250401103509
-        version: 1.0.0-stable.250401103509(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+        specifier: 1.0.0-stable.250409093341
+        version: 1.0.0-stable.250409093341(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(tailwindcss@3.4.17)
       '@hiveio/wax':
         specifier: 1.27.6-rc7-stable.250211115622
         version: 1.27.6-rc7-stable.250211115622
@@ -236,11 +236,12 @@ packages:
     resolution: {integrity: sha1-0IYuFBbxIIKfRTrI6ZZc7Jf+qLA=, tarball: https://gitlab.syncad.com/api/v4/projects/198/packages/npm/@hiveio/beekeeper/-/@hiveio/beekeeper-1.27.8-stable.250131103618.tgz}
     engines: {node: ^20.11 || >= 21.2}
 
-  '@hiveio/healthchecker-component@1.0.0-stable.250401103509':
-    resolution: {integrity: sha1-tTdaJVayrNz5j+ab5OP1I+U7xoU=, tarball: https://gitlab.syncad.com/api/v4/projects/520/packages/npm/@hiveio/healthchecker-component/-/@hiveio/healthchecker-component-1.0.0-stable.250401103509.tgz}
+  '@hiveio/healthchecker-component@1.0.0-stable.250409093341':
+    resolution: {integrity: sha1-554g+eOFP2n51lcwiFVozaLvYzc=, tarball: https://gitlab.syncad.com/api/v4/projects/520/packages/npm/@hiveio/healthchecker-component/-/@hiveio/healthchecker-component-1.0.0-stable.250409093341.tgz}
     peerDependencies:
       react: ^18.2.0
       react-dom: ^18.2.0
+      tailwindcss: ^3.4.12
 
   '@hiveio/wax@1.27.6-rc7-stable.250211115622':
     resolution: {integrity: sha1-u4xpWFifKGdBz6dKebsMzWho02c=, tarball: https://gitlab.syncad.com/api/v4/projects/419/packages/npm/@hiveio/wax/-/@hiveio/wax-1.27.6-rc7-stable.250211115622.tgz}
@@ -3194,10 +3195,11 @@ snapshots:
 
   '@hiveio/beekeeper@1.27.8-stable.250131103618': {}
 
-  '@hiveio/healthchecker-component@1.0.0-stable.250401103509(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+  '@hiveio/healthchecker-component@1.0.0-stable.250409093341(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(tailwindcss@3.4.17)':
     dependencies:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
+      tailwindcss: 3.4.17
 
   '@hiveio/wax@1.27.6-rc7-stable.250211115622':
     dependencies:
