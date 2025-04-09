@@ -15,6 +15,7 @@ import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
 import FilterSectionToggle from "../account/FilterSectionToggle";
 import useURLParams from "@/hooks/common/useURLParams";
 import useSearchRanges from "@/hooks/common/useSearchRanges";
+import NoValueErrorMessage from "../home/searches/NoValueErrorMessage";
 
 const DEFAULT_BLOCKS_SEARCH_PROPS: Partial<Explorer.AllBlocksSearchProps> = {
   limit: config.standardPaginationSize,
@@ -27,7 +28,7 @@ const DEFAULT_BLOCKS_SEARCH_PROPS: Partial<Explorer.AllBlocksSearchProps> = {
   endDate: undefined,
   lastBlocks: undefined,
   lastTime: undefined,
-  timeUnit: undefined,
+  timeUnit: "days",
 };
 
 const BlocksSearch = () => {
@@ -238,12 +239,19 @@ const BlocksSearch = () => {
             />
           </div>
           <div className="flex justify-between mt-2">
-            <Button
-              data-testid="block-search-btn"
-              onClick={handleStartBlockSearch}
-            >
-              Search
-            </Button>
+            <div>
+              <Button
+                data-testid="block-search-btn"
+                onClick={handleStartBlockSearch}
+                disabled={isSearchButtonDisabled}
+              >
+                Search
+              </Button>
+              <NoValueErrorMessage
+                accountName={true}
+                isSearchButtonDisabled={isSearchButtonDisabled}
+              />
+            </div>
             <Button
               onClick={handleFilterClear}
               data-testid="clear-filters"
