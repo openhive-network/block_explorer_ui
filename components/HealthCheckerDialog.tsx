@@ -12,15 +12,17 @@ import { Button } from "./ui/button";
 import { HiveNodes } from "@/utils/HiveNodes";
 import { Input } from "@/components/ui/input";
 import useApiAddresses from "@/utils/ApiAddresses";
-import { HealthCheckerComponent } from "@hiveio/healthchecker-component";
+import { HealthCheckerComponent, HealthCheckerService } from "@hiveio/healthchecker-component";
 import { useHealthCheckerContext } from "@/contexts/HealthCheckerContext";
 
-type HealthCheckerDialogProps = {};
+type HealthCheckerDialogProps = {
+  trigerText?: string;
+  apiAddress: string | null;
+  healthCheckerService: HealthCheckerService;
+};
 
-const HealthCheckerDialog: React.FC<HealthCheckerDialogProps> = ({}) => {
+const HealthCheckerDialog: React.FC<HealthCheckerDialogProps> = ({trigerText, apiAddress, healthCheckerService}) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const {nodeAddress} = useApiAddresses();
-  const {healthCheckerService} = useHealthCheckerContext();
 
 
   return (
@@ -29,7 +31,7 @@ const HealthCheckerDialog: React.FC<HealthCheckerDialogProps> = ({}) => {
       onOpenChange={setIsOpen}
     >
       <DialogTrigger data-testid="api-address-link">
-        Hive node healthchecker: <span className="text-link">{nodeAddress}</span>
+        {trigerText} <span className="text-link">{apiAddress}</span>
       </DialogTrigger>
       <DialogContent
         className="h-[80vh] max-w-5xl overflow-auto flex flex-col rounded-lg shadow-md border"
