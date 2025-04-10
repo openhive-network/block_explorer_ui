@@ -24,6 +24,7 @@ import ErrorPage from "../ErrorPage";
 import NoResult from "@/components/NoResult";
 import ScrollTopButton from "@/components/ScrollTopButton";
 import useAggregatedBalanceHistory from "@/hooks/api/balanceHistory/useAggregatedHistory";
+import PageTitle from "@/components/PageTitle";
 // Memoizing the BalanceHistoryChart component to avoid unnecessary re-renders
 const MemoizedBalanceHistoryChart = React.memo(BalanceHistoryChart);
 
@@ -203,29 +204,35 @@ export default function BalanceHistory() {
           <div className="page-container">
             <Card data-testid="account-details">
               <CardHeader>
-                <div className="flex flex-wrap items-center justify-between gap-4 bg-theme dark:bg-theme">
-                  <div className="flex items-center gap-4">
+          
+              <div className="flex flex-wrap items-start justify-between gap-2 bg-theme dark:bg-theme">
+                  <div className="flex items-start gap-2">
                     <Image
-                      className="rounded-full border-2 border-explorer-orange"
+                      className="rounded-full border-2 border-explorer-orange mt-1"
                       src={getHiveAvatarUrl(accountNameFromRoute)}
                       alt="avatar"
-                      width={60}
-                      height={60}
+                      width={50}
+                      height={50}
                       data-testid="user-avatar"
                     />
-                    <div>
+                    <div className="i">
                       <h2
-                        className="text-lg font-semibold text-gray-800 dark:text-white"
+                        className=" flex items-start"
                         data-testid="account-name"
                       >
                         <Link
-                          className="text-link"
+                          className="text-link text-lg font-semibold text-gray-800 dark:text-white mt-4 "
                           href={`/@${accountNameFromRoute}`}
                         >
                           {accountNameFromRoute}
                         </Link>
-                        / <span className="text-text">Balance History</span>
+                        <span className="text-gray-800 dark:text-white mx-2 mt-4 text-2xl">|</span> {/* Separator */}
+                        <PageTitle
+                          title="Balance History"
+                          className=" py-4 pr-1"
+                        />
                       </h2>
+
                     </div>
                   </div>
                 </div>
