@@ -29,7 +29,17 @@ const CommentsPermlinkSearch = () => {
     useState<Explorer.CommentType>("post");
   const [isSearchButtonDisabled, setIsSearchButtonDisabled] = useState(false);
 
-  const { getRangesValues } = searchRanges;
+  const {
+    getRangesValues,
+    setRangeSelectKey,
+    setFromBlock,
+    setToBlock,
+    setStartDate,
+    setEndDate,
+    setLastBlocksValue,
+    setLastTimeUnitValue,
+    setTimeUnitSelectKey,
+  } = searchRanges;
 
   const onButtonClick = async () => {
     if (accountName !== "") {
@@ -74,6 +84,20 @@ const CommentsPermlinkSearch = () => {
     setLocalCommentType(value as Explorer.CommentType);
   };
 
+  const handleClearSearch = () => {
+    setPermlinkSearchProps(undefined);
+    setAccountName("");
+    setFromBlock(undefined);
+    setToBlock(undefined);
+    setStartDate(undefined);
+    setEndDate(undefined);
+    setLastBlocksValue(undefined);
+    setLastTimeUnitValue(30);
+    setRangeSelectKey("none");
+    setTimeUnitSelectKey("days");
+    setLocalCommentType("post");
+  };
+
   return (
     <>
       <p className="ml-2">Find comments permlinks by account name</p>
@@ -99,22 +123,25 @@ const CommentsPermlinkSearch = () => {
           commentType={localCommentType}
         />
       </div>
-      <div className="flex items-center">
-        <Button
-          data-testid="search-button"
-          className="mr-2 my-2"
-          onClick={onButtonClick}
-          disabled={isSearchButtonDisabled || !accountName}
-        >
-          Search
-          {permlinkSearchDataLoading && (
-            <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />
-          )}
-        </Button>
-        <NoValueErrorMessage
-          accountName={accountName}
-          isSearchButtonDisabled={isSearchButtonDisabled}
-        />
+      <div className="flex items-center justify-between">
+        <div>
+          <Button
+            data-testid="search-button"
+            className="mr-2 my-2"
+            onClick={onButtonClick}
+            disabled={isSearchButtonDisabled || !accountName}
+          >
+            Search
+            {permlinkSearchDataLoading && (
+              <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />
+            )}
+          </Button>
+          <NoValueErrorMessage
+            accountName={accountName}
+            isSearchButtonDisabled={isSearchButtonDisabled}
+          />
+        </div>
+        <Button onClick={handleClearSearch}>Clear</Button>
       </div>
     </>
   );
