@@ -6,6 +6,7 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "../ui/tooltip";
+import PageTitle from "../PageTitle";
 
 
 export interface Witness {
@@ -46,7 +47,8 @@ const WitnessSchedule: React.FC<WitnessScheduleProps> = ({
     <div className="bg-theme rounded-xl shadow-lg w-full p-4">
       {/* Title and Next Shuffle Container */}
       <div className="mb-3">
-        <h2 className="text-xl font-semibold">Witness Schedule</h2>
+        <PageTitle title="Witness Schedule" />
+
         <p className="text-sm text-gray-500 dark:text-gray-400">
           Next Shuffle: {nextShuffleBlockNumber}{" "}
           <span className="text-green-500">
