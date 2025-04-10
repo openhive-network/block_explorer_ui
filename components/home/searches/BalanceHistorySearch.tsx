@@ -167,12 +167,15 @@ const BalanceHistorySearch = ({ paramsState, setParams }: any) => {
       ...defaultSearchParams,
       accountName: accountNameFromRoute,
       page: newPage,
+      lastTime: undefined,
+      rangeSelectKey : "none",
+      timeUnit:undefined,
     });
     setIsFiltersActive(false);
     setIsVisible(false);
-    searchRanges.setRangeSelectKey("lastTime");
+    searchRanges.setRangeSelectKey("none");
     searchRanges.setTimeUnitSelectKey("days");
-    searchRanges.setLastTimeUnitValue(30);
+    searchRanges.setLastTimeUnitValue(undefined);
     setFilters([]);
   };
 
@@ -280,7 +283,7 @@ const BalanceHistorySearch = ({ paramsState, setParams }: any) => {
               onClick={() => handleFilterClear()}
               data-testid="clear-filters"
             >
-              Reset
+              Clear
             </Button>
           </div>
         </CardContent>
