@@ -56,7 +56,17 @@ const BlockSearch = () => {
   const [isSearchButtonDisabled, setIsSearchButtonDisabled] = useState(false);
 
   const { operationKeysData } = useOperationKeys(singleOperationTypeId);
-  const { getRangesValues } = searchRanges;
+  const {
+    getRangesValues,
+    setRangeSelectKey,
+    setFromBlock,
+    setToBlock,
+    setStartDate,
+    setEndDate,
+    setLastBlocksValue,
+    setLastTimeUnitValue,
+    setTimeUnitSelectKey,
+  } = searchRanges;
 
   const setKeysForProperty = (index: number | undefined) => {
     if (index !== undefined && operationKeysData?.[index]) {
@@ -118,6 +128,20 @@ const BlockSearch = () => {
     startBlockSearch(blockSearchProps, setBlockSearchProps, (val: "block") =>
       setLastSearchKey(val)
     );
+  };
+
+  const handleClearSearch = () => {
+    setBlockSearchProps(undefined);
+    setAccountName("");
+    setFromBlock(undefined);
+    setToBlock(undefined);
+    setStartDate(undefined);
+    setEndDate(undefined);
+    setLastBlocksValue(undefined);
+    setLastTimeUnitValue(30);
+    setRangeSelectKey("none");
+    setTimeUnitSelectKey("days");
+    setSelectedOperationTypes([]);
   };
 
   return (
@@ -242,21 +266,24 @@ const BlockSearch = () => {
           }
         />
       </div> */}
-      <div className="flex items-center ">
-        <Button
-          data-testid="block-search-btn"
-          onClick={handleStartBlockSearch}
-          disabled={isSearchButtonDisabled}
-        >
-          Search
-          {blockSearchDataLoading && (
-            <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />
-          )}
-        </Button>
-        <NoValueErrorMessage
-          accountName={true}
-          isSearchButtonDisabled={isSearchButtonDisabled}
-        />
+      <div className="flex items-center justify-between">
+        <div>
+          <Button
+            data-testid="block-search-btn"
+            onClick={handleStartBlockSearch}
+            disabled={isSearchButtonDisabled}
+          >
+            Search
+            {blockSearchDataLoading && (
+              <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />
+            )}
+          </Button>
+          <NoValueErrorMessage
+            accountName={true}
+            isSearchButtonDisabled={isSearchButtonDisabled}
+          />
+        </div>
+        <Button onClick={handleClearSearch}>Clear</Button>
       </div>
     </>
   );
