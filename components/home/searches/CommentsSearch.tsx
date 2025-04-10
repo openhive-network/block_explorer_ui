@@ -172,6 +172,7 @@ const CommentsSearch = () => {
             isSearchButtonDisabled={!permlink}
           />
         </div>
+        <Button onClick={handleClearCommentSearch}>Clear</Button>
       </div>
     </>
   );
