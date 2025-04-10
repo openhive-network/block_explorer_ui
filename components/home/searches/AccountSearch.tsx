@@ -35,7 +35,17 @@ const AccountSearch = () => {
   >([]);
   const [isSearchButtonDisabled, setIsSearchButtonDisabled] = useState(false);
 
-  const { getRangesValues } = searchRanges;
+  const {
+    getRangesValues,
+    setRangeSelectKey,
+    setFromBlock,
+    setToBlock,
+    setStartDate,
+    setEndDate,
+    setLastBlocksValue,
+    setLastTimeUnitValue,
+    setTimeUnitSelectKey,
+  } = searchRanges;
 
   const handleOperationSelect = (operationTypeIds: number[] | null) => {
     setSelectedOperationTypes(operationTypeIds);
@@ -78,6 +88,20 @@ const AccountSearch = () => {
       );
     }
   };
+
+  const handleClearSearch = () => {
+    setAccountOperationsSearchProps(undefined);
+    setAccountName("");
+    setFromBlock(undefined);
+    setToBlock(undefined);
+    setStartDate(undefined);
+    setEndDate(undefined);
+    setLastBlocksValue(undefined);
+    setLastTimeUnitValue(30);
+    setRangeSelectKey("none");
+    setTimeUnitSelectKey("days");
+    setSelectedOperationTypes([]);
+  };
   return (
     <>
       <div className="flex flex-col">
@@ -106,22 +130,25 @@ const AccountSearch = () => {
           )}
         />
       </div>
-      <div className="flex items-center ">
-        <Button
-          data-testid="search-button"
-          onClick={onButtonClick}
-          disabled={isSearchButtonDisabled || !accountName}
-        >
-          Search
-          {isAccountOperationsFetching && (
-            <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />
-          )}
-        </Button>
+      <div className="flex items-center justify-between ">
+        <div>
+          <Button
+            data-testid="search-button"
+            onClick={onButtonClick}
+            disabled={isSearchButtonDisabled || !accountName}
+          >
+            Search
+            {isAccountOperationsFetching && (
+              <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />
+            )}
+          </Button>
 
-        <NoValueErrorMessage
-          accountName={accountName}
-          isSearchButtonDisabled={isSearchButtonDisabled}
-        />
+          <NoValueErrorMessage
+            accountName={accountName}
+            isSearchButtonDisabled={isSearchButtonDisabled}
+          />
+        </div>
+        <Button onClick={handleClearSearch}>Clear</Button>
       </div>
     </>
   );
