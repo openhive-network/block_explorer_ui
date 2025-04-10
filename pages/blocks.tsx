@@ -10,6 +10,7 @@ import useAllBlocksSearch from "@/hooks/api/blocks/useAllBlocksSearch";
 import BlocksSearch from "@/components/blocks/BlocksSearch";
 import BlockAdditionalDetails from "@/components/blocks/BlockAdditionalDetails";
 import ScrollTopButton from "@/components/ScrollTopButton";
+import PageTitle from "@/components/PageTitle";
 
 const TABLE_CELLS = [
   "",
@@ -100,6 +101,7 @@ const BlocksPage = () => {
       </Head>
 
       <div className="page-container">
+        <PageTitle title="Hive Blocks" className="py-4 pl-4" />
         <BlocksSearch />
 
         {blocksSearchDataLoading ? (
