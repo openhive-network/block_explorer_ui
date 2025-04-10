@@ -16,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Toggle } from "@/components/ui/toggle";
 import { cn } from "@/lib/utils";
 import CopyButton from "@/components/ui/CopyButton";
+import PageTitle from "@/components/PageTitle";
 
 const TransactionDetailItem = ({
   label,
@@ -76,11 +77,12 @@ export default function Transaction() {
         {!trxLoading && !!trxData && (
           <>
             <Card data-testid="transaction-header">
+            <PageTitle title="Transaction Details" className=" min-h-4 py-4 pl-4"/>
               <CardHeader className="flex items-center py-2 ">
-                <CardTitle className="text-xl font-semibold text-left flex justify-between items-center">
-                  Transaction Details
-                  <div className="flex items-center space-x-2">
-                    <span className="text-sm mr-1">
+                <CardTitle>
+              
+                  <div className="flex space-x-2">
+                    <span className="text-sm">
                       Include Virtual Operations:
                     </span>
                     <Toggle
