@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableBody,
 } from "../ui/table";
+import PageTitle from "../PageTitle";
 
 const TABLE_CELLS = ["Rank", "Witness", "Timestamp", "Order"];
 
@@ -40,13 +41,19 @@ const buildTableBody = (data: BackupWitness[]) => {
   return data.map(({ rank, owner, timestamp }: any, index: number) => {
     return (
       <React.Fragment key={index}>
-        <TableRow className="border-b hover:bg-rowHover transition-colors"> 
+        <TableRow className="border-b hover:bg-rowHover transition-colors">
           <TableCell className="py-1 px-2 whitespace-nowrap text-sm">
             {rank !== null ? `#${rank}` : "-"}
           </TableCell>
-          <TableCell className="py-1 px-2 whitespace-nowrap text-sm">{owner}</TableCell>
-          <TableCell className="py-1 px-2 whitespace-nowrap text-xs">{timestamp}</TableCell>
-          <TableCell className="py-1 px-2 whitespace-nowrap text-sm">{`[${index + 1}]`}</TableCell>
+          <TableCell className="py-1 px-2 whitespace-nowrap text-sm">
+            {owner}
+          </TableCell>
+          <TableCell className="py-1 px-2 whitespace-nowrap text-xs">
+            {timestamp}
+          </TableCell>
+          <TableCell className="py-1 px-2 whitespace-nowrap text-sm">{`[${
+            index + 1
+          }]`}</TableCell>
         </TableRow>
       </React.Fragment>
     );
@@ -58,8 +65,9 @@ const BackupWitnessSchedule: React.FC<BackupWitnessScheduleProps> = ({
 }) => {
   return (
     <div className="flex w-full overflow-auto">
-      <div className="bg-theme rounded-xl shadow-md w-full p-3"> 
-        <h2 className="text-xl font-semibold mb-2">Backup Witness Schedule</h2> 
+      <div className="bg-theme rounded-xl shadow-md w-full p-3">
+        <PageTitle title="Backup Witness Schedule" />
+
         <div className="overflow-x-auto">
           <Table data-testid="table-body">
             <TableHeader>
