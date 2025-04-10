@@ -12,7 +12,10 @@ import Head from "next/head";
 import Image from "next/image";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { cn, formatNumber, formatPercent } from "@/lib/utils";
-import { formatAndDelocalizeFromTime, formatAndDelocalizeTime } from "@/utils/TimeUtils";
+import {
+  formatAndDelocalizeFromTime,
+  formatAndDelocalizeTime,
+} from "@/utils/TimeUtils";
 import useWitnesses from "@/hooks/api/common/useWitnesses";
 import {
   Table,
@@ -39,9 +42,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import Title from "@/components/title";
 import Hive from "@/types/Hive";
 import { IHiveChainInterface } from "@hiveio/wax";
+import PageTitle from "@/components/PageTitle";
 
 const TABLE_CELLS = [
   "Rank",
@@ -116,56 +119,6 @@ const isCellUnsortable = (cell: string) => {
   );
 };
 
-// Witness Information Component
-const WitnessInfo = () => (
-  <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-4">
-    <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
-      What are Hive Witnesses?
-    </h2>
-
-    <p className="text-gray-700 dark:text-gray-300 mb-4">
-      Hive Witnesses are the elected representatives who ensure the chain
-      operates with integrity, but also actively shape its direction through key
-      decisions.
-    </p>
-    <p className="text-gray-700 dark:text-gray-300 mb-4">
-      Imagine Hive as a thriving, decentralized city. Witnesses are the city
-      council, the construction crews, and the security force all rolled into
-      one. <br />
-      They not only keep the city running (producing blocks, maintaining nodes),
-      but also decide on important policies like road construction (parameter
-      setting) and the value of the city&apos;s currency (price feeds).
-    </p>
-
-    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
-      Key Functions:
-    </h3>
-
-    <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 mb-4">
-      <li>
-        <span className="font-medium">Block Production:</span> They are
-        responsible for creating new blocks on the Hive blockchain, confirming
-        transactions and securing the network.
-      </li>
-      <li>
-        <span className="font-medium">Network Maintenance:</span> They operate
-        and maintain powerful servers that keep the Hive network running
-        reliably.
-      </li>
-      <li>
-        <span className="font-medium">Parameter Setting:</span> They participate
-        in setting key parameters of the Hive blockchain, such as block size,
-        account creation fees, and HBD interest rates (APR).
-      </li>
-      <li>
-        <span className="font-medium">Price Feeds:</span> They provide price
-        feeds for HIVE and HBD, which are crucial for the operation of the
-        decentralized stablecoin.
-      </li>
-    </ul>
-  </div>
-);
-
 export default function Witnesses() {
   const [voterAccount, setVoterAccount] = useState<string>("");
   const [isVotersOpen, setIsVotersOpen] = useState<boolean>(false);
@@ -183,8 +136,10 @@ export default function Witnesses() {
   const [availableVersions, setAvailableVersions] = useState<string[]>([]);
   const [latestVersion, setLatestVersion] = useState<string | null>(null);
 
-  const [totalVestingShares, setTotalVestingShares] = useState<Hive.Supply | null>(null);
-  const [totalVestingFundHive, setTotalVestingFundHive] =  useState<Hive.Supply | null>(null);
+  const [totalVestingShares, setTotalVestingShares] =
+    useState<Hive.Supply | null>(null);
+  const [totalVestingFundHive, setTotalVestingFundHive] =
+    useState<Hive.Supply | null>(null);
   const { hiveChain } = useHiveChainContext();
 
   useEffect(() => {
@@ -253,10 +208,7 @@ export default function Witnesses() {
       }`;
 
       return (
-        <TableHead
-          key={cell}
-          className={className}
-        >
+        <TableHead key={cell} className={className}>
           <button
             disabled={isCellUnsortable(cell)}
             className={buttonClassName}
@@ -278,7 +230,7 @@ export default function Witnesses() {
       <div className="page-container bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 font-sans antialiased">
         <div className="mx-4 my-4">
           <main className="flex-1">
-            <Title title="Hive Witnesses" info={<WitnessInfo />} />
+            <PageTitle title="Hive Witnesses" className="py-4"/>
 
             <div className="flex items-center justify-between mb-4 text-sm text-gray-500 dark:text-gray-400">
               <WitnessScheduleIcon />
@@ -366,12 +318,18 @@ export default function Witnesses() {
                                 <Tooltip>
                                   <TooltipTrigger asChild>
                                     <span className="cursor-pointer">
-                                      {hiveChain && totalVestingFundHive && totalVestingShares ? convertVestsToHP(
-                                        hiveChain,
-                                        singleWitness.vests,
-                                        totalVestingFundHive,
-                                        totalVestingShares
-                                      ) : <Loader2 className="dark:text-white animate-spin mt-1 h-2 w-2" />}
+                                      {hiveChain &&
+                                      totalVestingFundHive &&
+                                      totalVestingShares ? (
+                                        convertVestsToHP(
+                                          hiveChain,
+                                          singleWitness.vests,
+                                          totalVestingFundHive,
+                                          totalVestingShares
+                                        )
+                                      ) : (
+                                        <Loader2 className="dark:text-white animate-spin mt-1 h-2 w-2" />
+                                      )}
                                     </span>
                                   </TooltipTrigger>
                                   <TooltipContent className="text-left">
@@ -403,12 +361,18 @@ export default function Witnesses() {
                                         {singleWitness.votes_daily_change > 0
                                           ? "+"
                                           : ""}
-                                          {hiveChain && totalVestingFundHive && totalVestingShares ? convertVestsToHP(
-                                        hiveChain,
-                                        singleWitness.votes_daily_change,
-                                        totalVestingFundHive,
-                                        totalVestingShares
-                                      ) : <Loader2 className="dark:text-white animate-spin mt-1 h-2 w-2" />}
+                                        {hiveChain &&
+                                        totalVestingFundHive &&
+                                        totalVestingShares ? (
+                                          convertVestsToHP(
+                                            hiveChain,
+                                            singleWitness.votes_daily_change,
+                                            totalVestingFundHive,
+                                            totalVestingShares
+                                          )
+                                        ) : (
+                                          <Loader2 className="dark:text-white animate-spin mt-1 h-2 w-2" />
+                                        )}
                                       </span>
                                     </TooltipTrigger>
                                     <TooltipContent className="text-left">
@@ -524,7 +488,9 @@ export default function Witnesses() {
                                     </span>
                                   </TooltipTrigger>
                                   <TooltipContent className="text-left">
-                                  {formatAndDelocalizeTime(singleWitness.feed_updated_at)}
+                                    {formatAndDelocalizeTime(
+                                      singleWitness.feed_updated_at
+                                    )}
                                   </TooltipContent>
                                 </Tooltip>
                               </TooltipProvider>
