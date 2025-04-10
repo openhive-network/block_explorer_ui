@@ -55,10 +55,11 @@ declare module Explorer {
   interface BlockSearchProps extends CommonSearchProps {
     accountName?: string;
     limit: number;
-    deepProps: {
+    deepProps?: {
       content?: any;
       keys?: string[];
     };
+    rangeSelectKey?: string;
   }
 
   interface CommentSearchParams {
@@ -311,7 +312,7 @@ declare module Explorer {
     balanceChange: number;
   }
 
-  interface AllBlocksSearchProps extends CommonSearchProps { 
+  interface AllBlocksSearchProps extends CommonSearchProps {
     pageNumber?: number;
     accountName?: string;
     operationTypes?: number[] | null;
@@ -319,7 +320,7 @@ declare module Explorer {
     toBlock?: number;
     startDate?: Date;
     endDate?: Date;
-    limit: number; 
+    limit: number;
     rangeSelectKey?: string;
     timeUnit?: string;
     lastBlocks?: number;
