@@ -2,12 +2,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import { useSearchesContext } from "@/contexts/SearchesContext";
-import {
-  DEFAULT_TIME_UNIT_SELECT_KEY,
-  DEFAULT_LAST_TIME_UNIT_VALUE,
-} from "@/hooks/common/useSearchRanges";
+
 import { trimAccountName } from "@/utils/StringUtils";
-import moment from "moment";
 import Explorer from "@/types/Explorer";
 import { getSearchParams } from "@/components/home/searches/utils/getSearchParams";
 import useURLParams from "@/hooks/common/useURLParams";
@@ -53,9 +49,9 @@ const usePermlinkCommentSearch = (accountName: string) => {
     setStartDate(undefined);
     setEndDate(undefined);
     setLastBlocksValue(undefined);
-    setLastTimeUnitValue(DEFAULT_LAST_TIME_UNIT_VALUE);
-    setRangeSelectKey("lastTime");
-    setTimeUnitSelectKey(DEFAULT_TIME_UNIT_SELECT_KEY);
+    setLastTimeUnitValue(undefined);
+    setRangeSelectKey("none");
+    setTimeUnitSelectKey(undefined);
     setLocalCommentType("post");
     setCommentType("post");
 
@@ -66,14 +62,12 @@ const usePermlinkCommentSearch = (accountName: string) => {
       pageNumber: 1,
       fromBlock: undefined,
       toBlock: undefined,
-      startDate: moment(Date.now())
-        .subtract(DEFAULT_LAST_TIME_UNIT_VALUE, DEFAULT_TIME_UNIT_SELECT_KEY)
-        .toDate(),
+      startDate: undefined,
       endDate: undefined,
       lastBlocks: undefined,
       lastTime: 30,
-      rangeSelectKey: "lastTime",
-      timeUnit: DEFAULT_TIME_UNIT_SELECT_KEY,
+      rangeSelectKey: "none",
+      timeUnit: undefined,
     };
     setPermlinkSearchProps(commentPermlinksSearchProps);
     setRangesValues(commentPermlinksSearchProps);

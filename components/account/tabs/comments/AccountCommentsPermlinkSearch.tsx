@@ -45,7 +45,7 @@ const AccountCommentsPermlinkSearch: React.FC<
     handleCommentPermlinkSearch();
   };
 
-  const onResetButtonClick = () => {
+  const onClearButtonClick = () => {
     handleClearFilters();
     setIsFiltersActive(false);
     setIsVisible(false);
@@ -83,7 +83,7 @@ const AccountCommentsPermlinkSearch: React.FC<
             </label>
           ) : null}
         </div>
-        <Button onClick={onResetButtonClick}>Reset</Button>
+        <Button onClick={onClearButtonClick}>Clear</Button>
       </div>
     </>
   );
