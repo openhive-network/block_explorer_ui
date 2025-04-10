@@ -10,14 +10,15 @@ import { extendedRest } from "@/types/Rest";
 
 
 type HealthCheckerContextType = {
-    healthCheckerService?: HealthCheckerService;
+    nodeHealthCheckerService?: HealthCheckerService;
     restApiHealthCheckerService?: HealthCheckerService;
 };
 
 
 
 export const HealthCheckerContext = createContext<HealthCheckerContextType>({
-    healthCheckerService: undefined,
+  nodeHealthCheckerService: undefined,
+  restApiHealthCheckerService: undefined
 }
 );
 
@@ -37,7 +38,7 @@ export const HealthCheckerContextProvider: React.FC<{
 
   const {defaultNodeProviders, defaultRestApiProvicers} = config;
 
-  const [healthCheckerService, setHealthCheckerService] = useState<HealthCheckerService | undefined>(undefined);
+  const [nodeHealthCheckerService, setNodeHealthCheckerService] = useState<HealthCheckerService | undefined>(undefined);
   const [restApiHealthCheckerService, setRestApiHealthCheckerService] = useState<HealthCheckerService | undefined>(undefined);
   const [healthCheckerInitialized, setHealthCheckerInitialized] = useState<boolean>(false);
 
@@ -118,7 +119,7 @@ export const HealthCheckerContextProvider: React.FC<{
         nodeAddress,
         setNodeAddress,
       )
-      setHealthCheckerService(hcService);
+      setNodeHealthCheckerService(hcService);
       const restHealthChecker = new HealthChecker();
       const restHcService = new HealthCheckerService(
         "rest",
@@ -146,7 +147,7 @@ export const HealthCheckerContextProvider: React.FC<{
 
   return (
     <HealthCheckerContext.Provider value={{
-        healthCheckerService,
+        nodeHealthCheckerService,
         restApiHealthCheckerService
     }}>
       {children}

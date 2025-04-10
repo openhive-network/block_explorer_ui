@@ -16,7 +16,7 @@ const Footer = () => {
   const { hafbeVersionData } = useHafbeVersion();
   const { nodeAddress, apiAddress, setNodeAddress, setApiAddress } =
     useAddressesContext();
-  const {healthCheckerService, restApiHealthCheckerService} = useHealthCheckerContext();
+  const {nodeHealthCheckerService, restApiHealthCheckerService} = useHealthCheckerContext();
 
   const { theme } = useTheme();
 
@@ -274,8 +274,8 @@ const Footer = () => {
                 <span>Hafbe version #: </span>
                 {hafbeVersionData}
               </li>
-              {!! healthCheckerService &&
-                <li><HealthCheckerDialog trigerText="Hive node:" apiAddress={nodeAddress} healthCheckerService={healthCheckerService} /></li>
+              {!! nodeHealthCheckerService &&
+                <li><HealthCheckerDialog trigerText="Hive node:" apiAddress={nodeAddress} healthCheckerService={nodeHealthCheckerService} /></li>
               }
               {!! restApiHealthCheckerService &&
                 <li><HealthCheckerDialog trigerText="Explorer backend API:" apiAddress={apiAddress} healthCheckerService={restApiHealthCheckerService} /></li>
