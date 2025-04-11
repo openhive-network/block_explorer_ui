@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Head from "next/head";
 import BlocksTable from "@/components/blocks/BlocksTable";
 import { useSearchesContext } from "@/contexts/SearchesContext";
@@ -57,6 +57,33 @@ const BlocksPage = () => {
     useAllBlocksSearch(allBlocksSearchProps, pageNum, toBlock);
 
   const [openBlockNum, setOpenBlockNum] = useState<number | null>(null);
+  const [newBlockView, setNewBlockView] = useState<Block | undefined>(
+    undefined
+  );
+  const [isBlockNavigationActive, setIsBlockNavigationActive] = useState(false);
+
+  const handlePrevBlock = () => {
+    if (!openBlockNum) return;
+
+    setIsBlockNavigationActive(true);
+    setOpenBlockNum(() => openBlockNum - 1);
+  };
+  const handleNextBlock = () => {
+    if (!openBlockNum) return;
+
+    setIsBlockNavigationActive(true);
+    setOpenBlockNum(() => openBlockNum + 1);
+  };
+
+  useEffect(() => {
+    if (!blocksSearchData) return;
+
+    const newBlock = blocksSearchData.blocks_result.find(
+      (block) => block.block_num === openBlockNum
+    );
+
+    setNewBlockView(newBlock);
+  }, [openBlockNum]);
 
   const handleToggle = (blockNum: number) => {
     setOpenBlockNum((prevBlockNum) =>
@@ -76,11 +103,19 @@ const BlocksPage = () => {
   const prepareTableData = (): BlockRow[] => {
     if (!blocksSearchData || !blocksSearchData.blocks_result) return [];
 
+    const firstBlockInPage = blocksSearchData.blocks_result[0].block_num;
+    const lastBlockInPage = blocksSearchData.blocks_result.at(-1)
+      ?.block_num as number;
+
     return blocksSearchData.blocks_result.map((block: Block) => {
       const additionalDetailsContent = (
         <BlockAdditionalDetails
-          block={block}
+          block={!isBlockNavigationActive ? block : (newBlockView as Block)}
           operationsTypes={operationsTypes}
+          handlePrevBlock={handlePrevBlock}
+          handleNextBlock={handleNextBlock}
+          firstBlockInPage={firstBlockInPage}
+          lastBlockInPage={lastBlockInPage}
         />
       );
 
@@ -101,7 +136,10 @@ const BlocksPage = () => {
       </Head>
 
       <div className="page-container">
-        <PageTitle title="Hive Blocks" className="py-4 pl-4" />
+        <PageTitle
+          title="Hive Blocks"
+          className="py-4 pl-4"
+        />
         <BlocksSearch />
 
         {blocksSearchDataLoading ? (
@@ -120,6 +158,7 @@ const BlocksPage = () => {
                 currentPage={pageNum || blocksSearchData.total_pages}
                 totalCount={blocksSearchData.total_blocks}
                 onPageChange={handlePageChange}
+                setIsBlockNavigationActive={setIsBlockNavigationActive}
               />
             </div>
           </>

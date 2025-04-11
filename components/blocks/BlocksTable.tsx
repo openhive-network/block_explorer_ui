@@ -1,4 +1,10 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, {
+  Fragment,
+  SetStateAction,
+  useEffect,
+  useState,
+  Dispatch,
+} from "react";
 import Link from "next/link";
 import {
   Table,
@@ -38,6 +44,7 @@ interface BlocksTableProps {
   currentPage: number;
   totalCount: number;
   onPageChange: (newPage: number) => void;
+  setIsBlockNavigationActive: Dispatch<SetStateAction<boolean>>;
 }
 
 const BlocksTable: React.FC<BlocksTableProps> = ({
@@ -48,6 +55,7 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
   currentPage,
   totalCount,
   onPageChange,
+  setIsBlockNavigationActive,
 }) => {
   const buildTableHeader = () => {
     return (
@@ -72,8 +80,11 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
     return rows.map((row) => (
       <Fragment key={row.hash}>
         <TableRow className="text-left">
-        <TableCell className="w-[12px] sticky left-0 z-5 bg-theme">
+          <TableCell className="w-[12px] sticky left-0 z-5 bg-theme">
             <AdditionalDetails
+              handleToggle={handleToggle}
+              blockNum={row.block_num}
+              setIsBlockNavigationActive={setIsBlockNavigationActive}
             >
               {row.additionalDetailsContent}
             </AdditionalDetails>
@@ -135,31 +146,31 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
             </Link>
           </TableCell>
           <TableCell className="whitespace-nowrap">
-          {row.producer_reward !== undefined ? (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span className="cursor-pointer">
-                    {formatNumber(row.producer_reward, true, false)}
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent className="bg-theme text-text">
-                  {hiveChain &&
-                    totalVestingFundHive &&
-                    totalVestingShares &&
-                    convertVestsToHP(
-                      hiveChain,
-                      String(row.producer_reward),
-                      totalVestingFundHive,
-                      totalVestingShares
-                    )}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          ) : (
-            "-"
-          )}
-        </TableCell>
+            {row.producer_reward !== undefined ? (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="cursor-pointer">
+                      {formatNumber(row.producer_reward, true, false)}
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent className="bg-theme text-text">
+                    {hiveChain &&
+                      totalVestingFundHive &&
+                      totalVestingShares &&
+                      convertVestsToHP(
+                        hiveChain,
+                        String(row.producer_reward),
+                        totalVestingFundHive,
+                        totalVestingShares
+                      )}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ) : (
+              "-"
+            )}
+          </TableCell>
         </TableRow>
       </Fragment>
     ));
@@ -174,8 +185,11 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
         Transactions: block.trx_count,
         Timestamp: block.timestamp,
         Producer: block.producer_account,
-        "Producer reward (VESTS)":
-          formatNumber(block.producer_reward, true, false) ,
+        "Producer reward (VESTS)": formatNumber(
+          block.producer_reward,
+          true,
+          false
+        ),
         hash: formatHash(block.hash),
         "prev hash": formatHash(block.prev),
       };

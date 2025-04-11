@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { cn, formatNumber } from "@/lib/utils";
 import Hive from "@/types/Hive";
 import Link from "next/link";
@@ -7,7 +7,15 @@ import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { formatHash } from "@/utils/StringUtils";
 import { getOperationColor } from "@/components/OperationsTable";
 import { getOperationTypeForDisplay } from "@/utils/UI";
-import { ChevronDown, ChevronUp, Loader2 } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Loader2,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+
+import { Button } from "../ui/button";
 import { Block } from "@/pages/blocks";
 
 interface BlockDetailItemProps {
@@ -36,7 +44,10 @@ const BlockDetailItem: React.FC<BlockDetailItemProps> = ({
       >
         {label}:
       </div>
-      <div className="text-left" data-testid={dataTestId}>
+      <div
+        className="text-left"
+        data-testid={dataTestId}
+      >
         {value}
       </div>
     </div>
@@ -68,10 +79,21 @@ const OperationBadge: React.FC<OperationBadgeProps> = ({
 interface BlockAdditionalDetailsProps {
   block: Block;
   operationsTypes: Hive.OperationPattern[] | undefined;
+  handlePrevBlock: () => void;
+  handleNextBlock: () => void;
+  firstBlockInPage: number;
+  lastBlockInPage: number;
 }
 
-const BlockAdditionalDetails: React.FC<BlockAdditionalDetailsProps> = ({ block, operationsTypes }) => {
-  const [isExpanded, setIsExpanded] = React.useState(false);
+const BlockAdditionalDetails: React.FC<BlockAdditionalDetailsProps> = ({
+  block,
+  operationsTypes,
+  handlePrevBlock,
+  handleNextBlock,
+  firstBlockInPage,
+  lastBlockInPage,
+}) => {
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const handleToggleOperations = () => {
     setIsExpanded(!isExpanded);
@@ -102,6 +124,9 @@ const BlockAdditionalDetails: React.FC<BlockAdditionalDetailsProps> = ({ block, 
     counter: number;
   }[] = [];
 
+  const isNextBlockButtonDisabled = firstBlockInPage === block.block_num;
+  const isPrevBlockButtonDisabled = lastBlockInPage === block.block_num;
+
   block.operations?.forEach((op: { op_type_id: number; op_count: number }) => {
     const operationType = operationTypesMap.get(op.op_type_id);
     const operationTypeName =
@@ -124,14 +149,33 @@ const BlockAdditionalDetails: React.FC<BlockAdditionalDetailsProps> = ({ block, 
       <BlockDetailItem
         label="Block"
         value={
-          <Link
-            className="flex items-center justify-start gap-2 text-link"
-            href={`/block/${block.block_num}`}
-          >
-            {block.block_num.toLocaleString()}
-          </Link>
+          <div className="flex">
+            <Button
+              disabled={isPrevBlockButtonDisabled}
+              className="bg-inherit hover:bg-buttonHover text-text p-0 mx-1"
+            >
+              <ChevronLeft
+                size={20}
+                onClick={handlePrevBlock}
+              />
+            </Button>
+            <Link
+              className="flex items-center justify-start gap-2 text-link"
+              href={`/block/${block.block_num}`}
+            >
+              {block.block_num.toLocaleString()}
+            </Link>
+            <Button
+              disabled={isNextBlockButtonDisabled}
+              className="bg-inherit hover:bg-buttonHover text-text p-0 mx-1"
+            >
+              <ChevronRight
+                size={20}
+                onClick={handleNextBlock}
+              />
+            </Button>
+          </div>
         }
-
         dataTestId={`block-${block.block_num}-num`}
         hasBorder
       />
@@ -143,7 +187,10 @@ const BlockAdditionalDetails: React.FC<BlockAdditionalDetailsProps> = ({ block, 
             data-testid="account-name"
             href={`/@${block.producer_account}`}
           >
-            <span className="text-link" data-testid="block-producer-name">
+            <span
+              className="text-link"
+              data-testid="block-producer-name"
+            >
               {block.producer_account}
             </span>
             <Image
@@ -191,20 +238,24 @@ const BlockAdditionalDetails: React.FC<BlockAdditionalDetailsProps> = ({ block, 
         onClick={handleToggleOperations}
         className="flex items-center justify-end w-full gap-1 text-sm text-gray-500 hover:text-gray-700"
       >
-        {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+        {isExpanded ? (
+          <ChevronUp className="w-3 h-3" />
+        ) : (
+          <ChevronDown className="w-3 h-3" />
+        )}
         <span className="text-xs">{isExpanded ? "less" : "more"}</span>
       </button>
       <div
         style={{
           display: isExpanded ? "block" : "none",
           overflow: "auto",
-          height: "11rem", 
-          scrollbarWidth: "thin", 
-          scrollbarColor: " transparent", 
+          height: "11rem",
+          scrollbarWidth: "thin",
+          scrollbarColor: "transparent",
         }}
         className="overflow-auto"
-      > 
-      <div className="my-2 text-left">
+      >
+        <div className="my-2 text-left">
           <h4 className="font-bold">Relevant Operations: </h4>
           <h5 className="font-semibold mb-1 mt-3">
             Operations: {nonVirtualOperationsCount}

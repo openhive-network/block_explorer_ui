@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogPortal,
-  DialogOverlay
+  DialogOverlay,
 } from "@/components/ui/dialog";
 
 interface AdditionalDetailsProps {
@@ -18,6 +18,9 @@ interface AdditionalDetailsProps {
   triggerClassName?: string;
   dialogHeight?: number;
   enableBlur?: boolean;
+  handleToggle: (blockNumber: number) => void;
+  blockNum: number;
+  setIsBlockNavigationActive: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const AdditionalDetails: React.FC<AdditionalDetailsProps> = ({
@@ -27,6 +30,9 @@ const AdditionalDetails: React.FC<AdditionalDetailsProps> = ({
   triggerClassName = "",
   dialogHeight = 400,
   enableBlur = true,
+  handleToggle,
+  blockNum,
+  setIsBlockNavigationActive,
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [isMobile, setIsMobile] = React.useState(false);
@@ -47,10 +53,12 @@ const AdditionalDetails: React.FC<AdditionalDetailsProps> = ({
 
   const handleOpen = () => {
     setIsOpen(true);
+    handleToggle(blockNum);
   };
 
   const handleClose = () => {
     setIsOpen(false);
+    setIsBlockNavigationActive(false);
   };
 
   return (
@@ -66,14 +74,17 @@ const AdditionalDetails: React.FC<AdditionalDetailsProps> = ({
         <Eye className="w-3 h-3" />
       </button>
 
-      <Dialog open={isOpen} onOpenChange={handleClose}>
+      <Dialog
+        open={isOpen}
+        onOpenChange={handleClose}
+      >
         <DialogPortal>
           <DialogOverlay className="fixed inset-0 z-50 bg-theme/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
 
           <DialogContent
             className={cn(
               "rounded fixed z-50 grid w-full max-w-md gap-4 border bg-theme p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] md:w-full",
-                isMobile ? "top-[5%] left-[0]" : "top-[15%] left-[50px]"
+              isMobile ? "top-[5%] left-[0]" : "top-[15%] left-[50px]"
             )}
             style={{
               transform: "none",
