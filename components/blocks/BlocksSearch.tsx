@@ -43,21 +43,19 @@ const BlocksSearch = () => {
   const { operationsTypes } = useOperationsTypes();
 
   // Use URL params hook
-  const { paramsState, setParams } = useURLParams(DEFAULT_BLOCKS_SEARCH_PROPS, [
-    "accountName",
-    "operationTypes",
-    "fromBlock",
-    "toBlock",
-    "startDate",
-    "endDate",
-    "limit",
-    "rangeSelectKey",
-    "timeUnit",
-  ]);
-
+  const { paramsState, setParams } = useURLParams(DEFAULT_BLOCKS_SEARCH_PROPS);
   const [accountName, setAccountName] = useState<string>(
     paramsState.accountName || ""
   );
+  
+  useEffect(() => {
+    if (!router.isReady || ! router.query.accountName) return;
+    const accounNameFromRoute = trimAccountName(
+      router.query.accountName as string
+    );
+    setAccountName(accounNameFromRoute);
+  }, [router.isReady, router.query.accountName]);
+
   const [selectedOperationTypes, setSelectedOperationTypes] = useState<
     number[] | null
   >(
@@ -94,6 +92,7 @@ const BlocksSearch = () => {
             ...prev,
             operationTypes: operationTypesIds,
             limit: config.standardPaginationSize,
+            page:undefined,
           };
         }
       );
@@ -109,20 +108,28 @@ const BlocksSearch = () => {
       payloadEndDate,
     } = await getRangesValues();
 
-    const allBlocksSearchProps: Explorer.AllBlocksSearchProps = {
+    const allBlocksSearchProps = {
+      ...paramsState,
       accountName:
-        accountName !== "" ? trimAccountName(accountName) : undefined,
-      operationTypes:
-        selectedOperationTypes && selectedOperationTypes.length > 0
-          ? selectedOperationTypes
-          : undefined,
+      accountName !== "" ? trimAccountName(accountName) : undefined,
       fromBlock: payloadFromBlock,
       toBlock: payloadToBlock,
       startDate: payloadStartDate,
       endDate: payloadEndDate,
-      limit: config.standardPaginationSize,
+      lastBlocks:
+        searchRanges.rangeSelectKey === "lastBlocks"
+          ? searchRanges.lastBlocksValue
+          : undefined,
+      lastTime:
+        searchRanges.rangeSelectKey === "lastTime"
+          ? searchRanges.lastTimeUnitValue
+          : undefined,
+      timeUnit:
+        searchRanges.rangeSelectKey === "lastTime"
+          ? searchRanges.timeUnitSelectKey
+          : undefined,
       rangeSelectKey: searchRanges.rangeSelectKey,
-      timeUnit: searchRanges.timeUnitSelectKey,
+      limit: config.standardPaginationSize,
     };
 
     setAllBlocksSearchProps(allBlocksSearchProps);
