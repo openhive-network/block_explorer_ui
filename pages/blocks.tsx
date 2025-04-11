@@ -83,6 +83,7 @@ const BlocksPage = () => {
     );
 
     setNewBlockView(newBlock);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [openBlockNum]);
 
   const handleToggle = (blockNum: number) => {
