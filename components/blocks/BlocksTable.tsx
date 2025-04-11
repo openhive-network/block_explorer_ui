@@ -71,14 +71,14 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
     if (!rows) return null;
     return rows.map((row) => (
       <Fragment key={row.hash}>
-        <TableRow className="text-left">
-        <TableCell className="w-[12px] sticky left-0 z-5 bg-theme">
+        <TableRow className="text-left bg-theme hover:bg-rowHover ">
+        <TableCell className="w-[12px] sticky left-0 z-10 bg-inherit">
             <AdditionalDetails
             >
               {row.additionalDetailsContent}
             </AdditionalDetails>
           </TableCell>
-          <TableCell className="whitespace-nowrap sticky left-[32px] z-10 bg-theme">
+          <TableCell className="whitespace-nowrap sticky left-[32px] z-10 bg-inherit">
             <div className="flex items-center space-x-2">
               <Link
                 href={`/block/${row.block_num}`}
@@ -205,25 +205,27 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
 
   return (
     <>
-      <div className="sticky z-20 top-[3.2rem] md:top-[4rem] mt-6 bg-theme">
-        <div className="flex flex-col md:flex-row items-center gap-2 flex-1 justify-between w-full">
-          <CustomPagination
-            currentPage={currentPage || 1}
-            totalCount={totalCount}
-            pageSize={config.standardPaginationSize}
+    {totalCount > config.standardPaginationSize ? (
+    <div className="sticky z-20 top-[3.2rem] md:top-[4rem] mt-6 bg-theme">
+      <div className="flex flex-col md:flex-row items-center gap-2 flex-1 justify-between w-full">
+        <CustomPagination
+          currentPage={currentPage || 1}
+          totalCount={totalCount}
+          pageSize={config.standardPaginationSize}
+          onPageChange={onPageChange}
+          isMirrored={true}
+        />
+        <div className="flex items-center mt-2 w-full md:w-auto justify-center md:justify-end mb-2">
+          <JumpToPage
+            currentPage={currentPage}
             onPageChange={onPageChange}
-            isMirrored={true}
+            totalCount={totalCount ?? 1}
+            pageSize={config.standardPaginationSize}
           />
-          <div className="flex items-center mt-2 w-full md:w-auto justify-center md:justify-end mb-2">
-            <JumpToPage
-              currentPage={currentPage}
-              onPageChange={onPageChange}
-              totalCount={totalCount ?? 1}
-              pageSize={config.standardPaginationSize}
-            />
-          </div>
         </div>
       </div>
+    </div>
+  ) : ""}
       <div className="flex justify-end">
         <DataExport
           data={prepareExportData()}
