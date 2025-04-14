@@ -99,20 +99,20 @@ const getOpsCount = (lastBlocks: Hive.LastBlocksTypeResponse[]) => {
   lastBlocks.forEach((block, index) => {
     let other = 0;
     let virtual = 0;
-    block.ops_count.forEach((op) => {
+    block.operations?.forEach((op) => {
       const typeId = op.op_type_id;
       if (typeId === 0) {
-        opsCount[index].vote = op.count;
+        opsCount[index].vote = op.op_count;
       } else if (typeId === 1) {
-        opsCount[index].comment = op.count;
+        opsCount[index].comment = op.op_count;
       } else if (typeId === 2) {
-        opsCount[index].transfer = op.count;
+        opsCount[index].transfer = op.op_count;
       } else if (typeId === 18) {
-        opsCount[index].custom = op.count;
+        opsCount[index].custom = op.op_count;
       } else if (typeId >= 50) {
-        virtual += op.count;
+        virtual += op.op_count;
       } else {
-        other += op.count;
+        other += op.op_count;
       }
     });
     opsCount[index].other = other;
