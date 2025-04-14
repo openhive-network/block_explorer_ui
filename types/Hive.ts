@@ -11,7 +11,7 @@ namespace Hive {
     | "invalid_input";
 
   export interface OperationsByTypeCount {
-    count: number;
+    op_count: number;
     op_type_id: number;
   }
 
@@ -152,8 +152,10 @@ namespace Hive {
   }
 
   export class WitnessesResponse {
-    witnesses!: Witness[];
+    total_witnesses!: number;
+    total_pages!: number;
     votes_updated_at!: Date;
+    witnesses!: Witness[];
   }
 
   export class SingleWitnessResponse {
@@ -162,7 +164,7 @@ namespace Hive {
   }
 
   export class WitnessVotersResponse {
-    total_operations!: number;
+    total_votes!: number;
     total_pages!: number;
     voters!: Voter[];
     votes_updated_at!: Date;
@@ -422,7 +424,7 @@ namespace Hive {
   export class LastBlocksTypeResponse {
     block_num!: number;
     witness!: string;
-    ops_count!: Hive.OperationsByTypeCount[];
+    operations!: Hive.OperationsByTypeCount[];
   }
 
   export class GetLastOperationTypeCountsParams {
@@ -467,8 +469,8 @@ namespace Hive {
   export class AccountDetails {
     id!: number;
     name!: string;
-    can_vote!: true;
-    mined!: true;
+    can_vote!: boolean;
+    mined!: boolean;
     proxy!: string;
     recovery_account!: string;
     last_account_recovery!: Date;
@@ -492,7 +494,7 @@ namespace Hive {
     curation_rewards!: string;
     delegated_vesting_shares!: string;
     received_vesting_shares!: string;
-    proxied_vsf_votes!: number[];
+    proxied_vsf_votes!: number[] | string[];
     withdrawn!: string;
     vesting_withdraw_rate!: string;
     to_withdraw!: string;
@@ -552,9 +554,15 @@ namespace Hive {
     trx_id!: string;
   }
 
+  export class BlockRange {
+    from!: number;
+    to!: number;
+  }
+
   export class CommentPermlinksResponse {
     total_permlinks!: number;
     total_pages!: number;
+    block_range!: BlockRange;
     permlinks_result!: Permlink[];
   }
 
@@ -572,12 +580,19 @@ namespace Hive {
 
   export class BlocksResult {
     block_num!: number;
-    op_type_ids!: number[];
+    created_at!: Date;
+    producer_account!: string;
+    producer_reward!: string;
+    trx_count!: number;
+    hash!: string;
+    prev!: string;
+    operations!: BlockOperationsCount[];
   }
 
   export class BlockByOpResponse {
     total_blocks!: number;
     total_pages!: number;
+    block_range!: BlockRange;
     blocks_result!: BlocksResult[];
   }
 
