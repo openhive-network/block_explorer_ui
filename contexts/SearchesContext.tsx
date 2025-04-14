@@ -114,9 +114,8 @@ export const SearchesContextProvider: React.FC<{
   >(undefined);
 
   const [allBlocksSearchProps, setAllBlocksSearchProps] = useState<
-  Explorer.AllBlocksSearchProps | undefined
->(undefined);
-
+    Explorer.AllBlocksSearchProps | undefined
+  >(undefined);
 
   const [commentSearchProps, setCommentSearchProps] = useState<
     Explorer.CommentSearchProps | undefined
@@ -129,8 +128,8 @@ export const SearchesContextProvider: React.FC<{
   const [accountOperationsSearchProps, setAccountOperationsSearchProps] =
     useState<Explorer.AccountSearchOperationsProps | undefined>(undefined);
 
-  //  comment_type: post is default by backend
-  const [commentType, setCommentType] = useState<CommentType | string>("post");
+  //  comment_type: all is default by backend
+  const [commentType, setCommentType] = useState<CommentType | string>("all");
   const [commentsSearchAccountName, setCommentsSearchAccountName] = useState<
     string | string[] | undefined
   >("");

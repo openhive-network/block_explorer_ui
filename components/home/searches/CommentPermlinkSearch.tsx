@@ -26,7 +26,7 @@ const CommentsPermlinkSearch = () => {
 
   const [accountName, setAccountName] = useState<string>("");
   const [localCommentType, setLocalCommentType] =
-    useState<Explorer.CommentType>("post");
+    useState<Explorer.CommentType>("all");
   const [isSearchButtonDisabled, setIsSearchButtonDisabled] = useState(false);
 
   const {
