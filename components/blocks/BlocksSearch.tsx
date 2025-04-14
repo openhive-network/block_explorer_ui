@@ -47,9 +47,8 @@ const BlocksSearch = () => {
   const [accountName, setAccountName] = useState<string>(
     paramsState.accountName || ""
   );
-  
   useEffect(() => {
-    if (!router.isReady || ! router.query.accountName) return;
+    if (!router.isReady || !router.query.accountName) return;
     const accounNameFromRoute = trimAccountName(
       router.query.accountName as string
     );
@@ -92,7 +91,7 @@ const BlocksSearch = () => {
             ...prev,
             operationTypes: operationTypesIds,
             limit: config.standardPaginationSize,
-            page:undefined,
+            page: undefined,
           };
         }
       );
@@ -111,7 +110,7 @@ const BlocksSearch = () => {
     const allBlocksSearchProps = {
       ...paramsState,
       accountName:
-      accountName !== "" ? trimAccountName(accountName) : undefined,
+        accountName !== "" ? trimAccountName(accountName) : undefined,
       fromBlock: payloadFromBlock,
       toBlock: payloadToBlock,
       startDate: payloadStartDate,
@@ -135,6 +134,7 @@ const BlocksSearch = () => {
     setAllBlocksSearchProps(allBlocksSearchProps);
     setRangesValues(allBlocksSearchProps as any);
     setParams(allBlocksSearchProps);
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     accountName,
     selectedOperationTypes,
@@ -143,6 +143,8 @@ const BlocksSearch = () => {
     setParams,
     searchRanges.rangeSelectKey,
     searchRanges.timeUnitSelectKey,
+    searchRanges.lastBlocksValue,
+    searchRanges.lastTimeUnitValue,
     setRangesValues,
   ]);
 
