@@ -19,7 +19,7 @@ interface CommnetsTabContentProps {
 
 export const DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS = {
   accountName: undefined,
-  commentType: "post",
+  commentType: "all",
   pageNumber: 1,
   fromBlock: undefined,
   toBlock: undefined,

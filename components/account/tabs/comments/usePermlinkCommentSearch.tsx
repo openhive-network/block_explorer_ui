@@ -29,7 +29,7 @@ const usePermlinkCommentSearch = (accountName: string) => {
 
   const [localCommentType, setLocalCommentType] = useState<
     Explorer.CommentType | string
-  >(permlinkSearchProps?.commentType || "post");
+  >(permlinkSearchProps?.commentType || "all");
 
   const {
     setRangesValues,
@@ -52,13 +52,13 @@ const usePermlinkCommentSearch = (accountName: string) => {
     setLastTimeUnitValue(undefined);
     setRangeSelectKey("none");
     setTimeUnitSelectKey(undefined);
-    setLocalCommentType("post");
-    setCommentType("post");
+    setLocalCommentType("all");
+    setCommentType("all");
 
     const commentPermlinksSearchProps = {
       accountName: trimAccountName(accountName),
       activeTab: "comments",
-      commentType: "post" as Explorer.CommentType,
+      commentType: "all" as Explorer.CommentType,
       pageNumber: 1,
       fromBlock: undefined,
       toBlock: undefined,
