@@ -362,8 +362,8 @@ namespace Hive {
   export class BlockDetails {
     block_num!: number;
     created_at!: string;
-    current_hbd_supply!: number;
-    current_supply!: number;
+    current_hbd_supply!: number | string;
+    current_supply!: number | string;
     dhf_interval_ledger!: number;
     extensions!: null;
     hash!: string;
@@ -371,11 +371,11 @@ namespace Hive {
     prev!: string;
     producer_account!: string;
     signing_key!: string;
-    total_reward_fund_hive!: number;
-    total_vesting_fund_hive!: number;
-    total_vesting_shares!: number;
+    total_reward_fund_hive!: number | string;
+    total_vesting_fund_hive!: number | string;
+    total_vesting_shares!: number | string;
     transaction_merkle_root!: string;
-    virtual_supply!: number;
+    virtual_supply!: number | string;
     witness_signature!: string;
   }
 
@@ -870,10 +870,8 @@ namespace Hive {
     block_range!: {
       from: number;
       to: number;
-  };
-
+    };
   }
-
 }
 
 export default Hive;
