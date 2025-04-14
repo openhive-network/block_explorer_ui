@@ -27,6 +27,7 @@ import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { convertVestsToHP } from "@/utils/Calculations";
 import fetchingService from "@/services/FetchingService";
 import NoResult from "../NoResult";
+import Explorer from "@/types/Explorer";
 
 interface Supply {
   amount: string;
@@ -39,6 +40,7 @@ type VotersDialogProps = {
   isVotesHistoryOpen: boolean;
   changeVoteHistoryDialogue: (isOpen: boolean) => void;
   liveDataEnabled: boolean;
+  accountDetails?: Explorer.FormattedAccountDetails;
 };
 
 const tableColums = [
@@ -55,6 +57,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
   isVotesHistoryOpen,
   changeVoteHistoryDialogue,
   liveDataEnabled,
+  accountDetails,
 }) => {
   const [page, setPage] = useState(1);
   const [displayData, setDisplayData] =
@@ -76,7 +79,10 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
   });
 
   const { hiveChain } = useHiveChainContext();
-  const { witnessDetails } = useWitnessDetails(accountName, true) as any;
+  const { witnessDetails } = useWitnessDetails(
+    accountName,
+    !!accountDetails?.is_witness
+  );
 
   const { votesHistory, isVotesHistoryLoading } = useWitnessVotesHistory(
     accountName,
