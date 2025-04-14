@@ -171,18 +171,18 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                 setPageNum(newPage);
               }}
               pageSize={config.standardPaginationSize}
-              totalCount={witnessVoters.total_operations}
+              totalCount={witnessVoters.total_votes}
               className="rounded"
               isMirrored={false}
             />
 
             <div
               className={cn("flex justify-end items-center", {
-                "justify-between": !!witnessVoters.total_operations,
+                "justify-between": !!witnessVoters.total_votes,
               })}
             >
               <DataCountMessage
-                count={witnessVoters.total_operations}
+                count={witnessVoters.total_votes}
                 dataType="voters"
               />
             </div>
