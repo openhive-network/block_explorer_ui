@@ -158,17 +158,17 @@ export default function Block() {
       for (const operationType of operationsTypes) {
         operationTypesMap.set(operationType.op_type_id, operationType);
       }
-      for (const operationCount of operationsCountInBlock.ops_count) {
+      for (const operationCount of operationsCountInBlock.operations) {
         const operationType = operationTypesMap.get(operationCount.op_type_id);
         const countObject: Explorer.OperationCounter = {
           operationTypeName: operationType?.operation_name || "",
-          counter: operationCount.count,
+          counter: operationCount.op_count,
         };
         if (operationType?.is_virtual) {
-          virtualOperationsCounter += operationCount.count;
+          virtualOperationsCounter += operationCount.op_count;
           virtualOperationsTypesCounters.push(countObject);
         } else {
-          nonVirtualOperationsCounter += operationCount.count;
+          nonVirtualOperationsCounter += operationCount.op_count;
           nonVirtualOperationsTypesCounters.push(countObject);
         }
       }
