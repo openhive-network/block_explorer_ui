@@ -22,12 +22,14 @@ import fetchingService from "@/services/FetchingService";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import NoResult from "../NoResult";
 import DataCountMessage from "../DataCountMessage";
+import Explorer from "@/types/Explorer";
 
 type VotersDialogProps = {
   accountName: string;
   isVotersOpen: boolean;
   changeVotersDialogue: (isOpen: boolean) => void;
   liveDataEnabled: boolean;
+  accountDetails?: Explorer.FormattedAccountDetails;
 };
 
 const tableColums = [
@@ -42,13 +44,17 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
   isVotersOpen,
   changeVotersDialogue,
   liveDataEnabled,
+  accountDetails,
 }) => {
   const [sortKey, setSortKey] = useState<string>("vests");
   const [isAsc, setIsAsc] = useState<boolean>(false);
   const [pageNum, setPageNum] = useState<number>(1);
   const [isHP, setIsHP] = useState<boolean>(true); // Toggle state
 
-  const { witnessDetails } = useWitnessDetails(accountName, true);
+  const { witnessDetails } = useWitnessDetails(
+    accountName,
+    !!accountDetails?.is_witness
+  );
   const { witnessVoters, isWitnessVotersLoading } = useWitnessVoters(
     accountName,
     isVotersOpen,

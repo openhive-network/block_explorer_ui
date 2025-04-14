@@ -121,12 +121,14 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
         isVotersOpen={isVotersModalOpen}
         changeVotersDialogue={handleOpenVotersModal}
         liveDataEnabled={liveDataEnabled}
+        accountDetails={accountDetails}
       />
       <VotesHistoryDialog
         accountName={accountName}
         isVotesHistoryOpen={isVotesHistoryModalOpen}
         changeVoteHistoryDialogue={handleOpenVotesHistoryModal}
         liveDataEnabled={liveDataEnabled}
+        accountDetails={accountDetails}
       />
     </>
   );
