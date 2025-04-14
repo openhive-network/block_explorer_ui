@@ -13,10 +13,10 @@ export const extendedRest = {
       result: Number,
       urlPath: "last-synced-block",
     },
-    blockNumbers: {
+    blockSearch: {
       params: Hive.BlockSearchParams,
       result: Hive.BlockByOpResponse,
-      urlPath: "block-numbers",
+      urlPath: "block-search",
     },
     witnesses: {
       params: Hive.GetWitnessesParams,
@@ -156,10 +156,10 @@ export const extendedRest = {
       result: Hive.VestingDelegationsResponse,
       urlPath: "accounts/{accountName}/delegations",
     },
-      aggregatedHistory: {
-        params: Hive.AccountAggregatedBalanceHistoryParams,
-        result: Hive.AccountAggregatedBalanceHistoryResponse,
-        urlPath: "accounts/{accountName}/aggregated-history",
-      },
+    aggregatedHistory: {
+      params: Hive.AccountAggregatedBalanceHistoryParams,
+      result: Hive.AccountAggregatedBalanceHistoryResponse,
+      urlPath: "accounts/{accountName}/aggregated-history",
+    },
   },
 };
