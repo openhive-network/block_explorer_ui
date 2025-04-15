@@ -111,7 +111,7 @@ const HeadBlockPropertyCard: React.FC<HeadBlockPropertyCardProps> = ({
           data-testid="content-expandable-list"
         >
           <div style={{ overflowX: "auto" }}>
-            <Table className="min-w-full">
+            <Table className="min-w-full bg-inherit">
               <TableBody className="bg-inherit dark:bg-inherit">
                 {dynamicGlobalData?.headBlockDetails &&
                   buildTableBody(parameters, header, dynamicGlobalData)}
