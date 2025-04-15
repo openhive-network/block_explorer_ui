@@ -42,4 +42,26 @@ export const config = {
     outgoing: "outgoing",
   },
   maxProxyDepth: 3,
+  defaultNodeProviders: [
+    "https://api.hive.blog",
+    "https://api.openhive.network",
+    "https://anyx.io",
+    "https://rpc.ausbit.dev",
+    "https://rpc.mahdiyari.info",
+    "https://techcoderx.com",
+    "https://hive.roelandp.nl",
+    "https://hived.emre.sh",
+    "https://api.deathwing.me",
+    "https://api.c0ff33a.uk",
+    "https://hive-api.arcange.eu",
+    "https://hive-api.3speak.tv",
+    "https://hiveapi.actifit.io"
+  ],
+  defaultRestApiProvicers: [
+    "https://hiveapi.actifit.io",
+    "https://techcoderx.com",
+    "https://api.hive.blog",
+    "https://hafbe.openhive.network"
+  ]
+
 };
