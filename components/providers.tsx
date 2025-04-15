@@ -18,6 +18,7 @@ import ErrorPage from "@/pages/ErrorPage";
 import { OperationTypesContextProvider } from "@/contexts/OperationsTypesContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { SearchesContextProvider } from "@/contexts/SearchesContext";
+import { HealthCheckerContextProvider } from "@/contexts/HealthCheckerContext";
 
 const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
   const { apiAddress, nodeAddress } = useApiAddresses();
@@ -56,8 +57,10 @@ const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
                 <OperationTypesContextProvider>
                   <AddressesContextProvider>
                     <SearchesContextProvider>
-                      <Layout>{children}</Layout>
-                      <ReactQueryDevtools initialIsOpen={false} />
+                      <HealthCheckerContextProvider>
+                        <Layout>{children}</Layout>
+                        <ReactQueryDevtools initialIsOpen={false} />
+                      </HealthCheckerContextProvider>
                     </SearchesContextProvider>
                   </AddressesContextProvider>
                 </OperationTypesContextProvider>

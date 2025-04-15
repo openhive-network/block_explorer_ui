@@ -6,6 +6,8 @@ import { useAddressesContext } from "../contexts/AddressesContext";
 import useHafbeVersion from "@/hooks/api/common/useHafbeVersion";
 import AddressSwitchedDialog from "./AddressSwitchedDialog";
 import { useTheme } from "@/contexts/ThemeContext";
+import HealthCheckerDialog from "./HealthCheckerDialog";
+import { useHealthCheckerContext } from "@/contexts/HealthCheckerContext";
 
 const { lastCommitHashRepoUrl, gitHash } = config;
 
@@ -14,6 +16,7 @@ const Footer = () => {
   const { hafbeVersionData } = useHafbeVersion();
   const { nodeAddress, apiAddress, setNodeAddress, setApiAddress } =
     useAddressesContext();
+  const {nodeHealthCheckerService, restApiHealthCheckerService} = useHealthCheckerContext();
 
   const { theme } = useTheme();
 
@@ -271,20 +274,12 @@ const Footer = () => {
                 <span>Hafbe version #: </span>
                 {hafbeVersionData}
               </li>
-              <li>
-                <AddressSwitchedDialog
-                  addressType="api"
-                  currentAddress={apiAddress}
-                  setAddress={setApiAddress}
-                />
-              </li>
-              <li>
-                <AddressSwitchedDialog
-                  addressType="node"
-                  currentAddress={nodeAddress}
-                  setAddress={setNodeAddress}
-                />
-              </li>
+              {!! nodeHealthCheckerService &&
+                <li><HealthCheckerDialog trigerText="Hive node:" apiAddress={nodeAddress} healthCheckerService={nodeHealthCheckerService} /></li>
+              }
+              {!! restApiHealthCheckerService &&
+                <li><HealthCheckerDialog trigerText="Explorer backend API:" apiAddress={apiAddress} healthCheckerService={restApiHealthCheckerService} /></li>
+              }
             </ul>
           </div>
         </div>
