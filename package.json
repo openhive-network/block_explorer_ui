@@ -19,8 +19,8 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.7.15",
-    "@hiveio/wax": "1.27.6-rc7-stable.250211115622",
     "@hiveio/healthchecker-component": "1.0.0-stable.250414101433",
+    "@hiveio/wax": "^1.27.6-rc7-stable.250414125549",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-label": "^2.0.2",
