@@ -11,7 +11,7 @@ import {
 import { extendedRest } from "@/types/Rest";
 import { createPathFilterString } from "@/lib/utils";
 
-type ExplorerNodeApi = {
+export type ExplorerNodeApi = {
   database_api: {
     get_reward_funds: TWaxApiRequest<{}, { funds: Hive.RewardFunds[] }>;
     get_current_price_feed: TWaxApiRequest<{}, Hive.PriceFeed>;
