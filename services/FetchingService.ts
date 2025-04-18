@@ -96,7 +96,7 @@ class FetchingService {
     blockNumber: number | string
   ): Promise<Hive.BlockDetails> {
     return await this.extendedHiveChain!.restApi["hafah-api"].globalState({
-      "block-num": blockNumber,
+      "block-num": String(blockNumber),
     });
   }
 
