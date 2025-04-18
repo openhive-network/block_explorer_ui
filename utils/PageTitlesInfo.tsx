@@ -8,7 +8,7 @@ interface InfoContent {
 
 const WitnessInfo = () => (
   <div className="bg-white dark:bg-gray-800">
-    <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
       What are Hive Witnesses?
     </h2>
 
@@ -26,7 +26,7 @@ const WitnessInfo = () => (
       setting) and the value of the city's currency (price feeds).
     </p>
 
-    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
       Key Functions:
     </h3>
 

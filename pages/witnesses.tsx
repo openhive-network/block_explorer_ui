@@ -201,7 +201,7 @@ export default function Witnesses() {
       const headerIndex = TABLE_CELLS.indexOf(cell);
 
       const className =
-        "first:sticky first:left-0 [&:nth-child(2)]:sticky [&:nth-child(2)]:left-12 text-center";
+        "first:sticky first:left-0 [&:nth-child(2)]:sticky [&:nth-child(2)]:left-12 text-center bg-navbar";
 
       const buttonClassName = `w-full flex items-center ${
         isRightAligned ? "justify-end text-right" : "justify-start text-left"
@@ -227,18 +227,22 @@ export default function Witnesses() {
       <Head>
         <title>Witnesses - Hive Explorer</title>
       </Head>
-      <div className="page-container bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 font-sans antialiased">
+      <div className="page-container rounded bg-white dark:bg-theme text-gray-800 dark:text-gray-200 font-sans antialiased">
         <div className="mx-4 my-4">
           <main className="flex-1">
-            <PageTitle title="Hive Witnesses" className="py-4"/>
+            <div className="flex flex-col md:flex-row justify-between items-start bg-theme">
+              <PageTitle title="Hive Witnesses" className="py-4" />
 
-            <div className="flex items-center justify-between mb-4 text-sm text-gray-500 dark:text-gray-400">
-              <WitnessScheduleIcon />
-              <LastUpdatedTooltip
-                lastUpdatedAt={witnessesData?.votes_updated_at}
-              />
+              <div className="flex justify-start md:justify-end mt-2 md:mt-0 ml-1 md:ml-4 mr-4 flex-shrink-0">
+                <div className="flex items-center space-x-4">
+                  <WitnessScheduleIcon />
+                  <LastUpdatedTooltip
+                    lastUpdatedAt={witnessesData?.votes_updated_at}
+                  />
+                </div>
+              </div>
             </div>
-
+            
             {isWitnessDataLoading ? (
               <div className="flex justify-center items-center py-12">
                 <Loader2 className="dark:text-white animate-spin h-6 w-6" />
