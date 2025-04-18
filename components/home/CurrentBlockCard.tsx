@@ -7,7 +7,7 @@ import Hive from "@/types/Hive";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 
 interface CurrentBlockCardProps {
-  blockDetails?: Hive.BlockDetails;
+  blockDetails?: Hive.BlockDetails | null;
   transactionCount?: number;
   opcount?: number;
   liveBlockNumber?: number | null;

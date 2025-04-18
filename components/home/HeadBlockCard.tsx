@@ -21,7 +21,7 @@ import HeadBlockHiveChartCard from "./HeadBlockHiveChartCard";
 
 interface HeadBlockCardProps {
   headBlockCardData?: Explorer.HeadBlockCardData | any;
-  blockDetails?: Hive.BlockDetails;
+  blockDetails?: Hive.BlockDetails | null;
   transactionCount?: number;
   opcount?: number;
 }

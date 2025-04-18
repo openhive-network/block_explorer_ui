@@ -10,10 +10,15 @@ const useBlockData = (blockNumber: number | string) => {
     error: blockDetailsError,
   }: UseQueryResult<Hive.BlockDetails> = useQuery({
     queryKey: ["block_details", blockNumber],
-    queryFn: () => fetchingService.getBlockGlobalState(blockNumber),
-    enabled: !!blockNumber,
+    queryFn: () => fetchBlockGlobalState(blockNumber),
     refetchOnWindowFocus: false,
   });
+
+  const fetchBlockGlobalState = async (blockNumber: number | string) => {
+    if (!blockNumber) return null;
+    const response = await fetchingService.getBlockGlobalState(blockNumber);
+    return response;
+  };
 
   return {
     blockDetails,

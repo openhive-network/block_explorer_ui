@@ -11,11 +11,15 @@ const useBlockchainSyncInfo = () => {
   const headBlockNum = useHeadBlockNumber().headBlockNumberData;
   const headBlockData = useHeadBlock(headBlockNum).headBlockData;
 
-  const { explorerBlockNumber, hiveBlockNumber, explorerTime, hiveBlockTime } =
-    useMemo(
-      () => getSyncInfoData(dynamicGlobalQueryData, headBlockData),
-      [dynamicGlobalQueryData, headBlockData]
-    );
+  const syncInfoData = useMemo(
+    () => getSyncInfoData(dynamicGlobalQueryData, headBlockData),
+    [dynamicGlobalQueryData, headBlockData]
+  );
+
+  const explorerBlockNumber = syncInfoData?.explorerBlockNumber;
+  const hiveBlockNumber = syncInfoData?.hiveBlockNumber;
+  const explorerTime = syncInfoData?.explorerTime;
+  const hiveBlockTime = syncInfoData?.hiveBlockTime;
 
   const loading =
     typeof explorerBlockNumber === "undefined" ||
@@ -33,9 +37,11 @@ const useBlockchainSyncInfo = () => {
 export default useBlockchainSyncInfo;
 
 const getSyncInfoData = (
-  globalData?: Explorer.HeadBlockCardData,
-  headBlockData?: Hive.BlockDetails
+  globalData?: Explorer.HeadBlockCardData | undefined | null,
+  headBlockData?: Hive.BlockDetails | undefined | null
 ) => {
+  if (!globalData || !headBlockData) return null;
+
   const hiveBlockNumber =
     globalData?.headBlockNumber && globalData?.headBlockNumber;
   const explorerBlockNumber =
