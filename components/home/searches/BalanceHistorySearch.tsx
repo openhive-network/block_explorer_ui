@@ -8,7 +8,6 @@ import useURLParams from "@/hooks/common/useURLParams";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 import useAccountOperationTypes from "@/hooks/api/accountPage/useAccountOperationTypes";
 import { useSearchesContext } from "@/contexts/SearchesContext";
-import FilterSectionToggle from "@/components/account/FilterSectionToggle";
 import { cn } from "@/lib/utils";
 
 interface AccountSearchParams {
@@ -43,7 +42,12 @@ const defaultSearchParams: AccountSearchParams = {
 
 const COIN_TYPES = ["HIVE", "VESTS", "HBD"];
 
-const BalanceHistorySearch = ({ paramsState, setParams }: any) => {
+const BalanceHistorySearch = ({
+  paramsState,
+  setParams,
+  isBalanceFilterSectionVisible,
+  setIsFiltersActive,
+}: any) => {
   const [coinType, setCoinType] = useState<string>(
     paramsState.coinType ?? "HIVE"
   ); // State to store the selected coin name
@@ -89,8 +93,6 @@ const BalanceHistorySearch = ({ paramsState, setParams }: any) => {
   } = paramsState;
 
   const [initialSearch, setInitialSearch] = useState<boolean>(false);
-  const [isFiltersActive, setIsFiltersActive] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
   const [filters, setFilters] = useState<boolean[] | undefined>(undefined);
   const [isSearchButtonDisabled, setIsSearchButtonDisabled] = useState(false);
 
@@ -168,11 +170,10 @@ const BalanceHistorySearch = ({ paramsState, setParams }: any) => {
       accountName: accountNameFromRoute,
       page: newPage,
       lastTime: undefined,
-      rangeSelectKey : "none",
-      timeUnit:undefined,
+      rangeSelectKey: "none",
+      timeUnit: undefined,
     });
     setIsFiltersActive(false);
-    setIsVisible(false);
     searchRanges.setRangeSelectKey("none");
     searchRanges.setTimeUnitSelectKey("days");
     searchRanges.setLastTimeUnitValue(undefined);
@@ -190,6 +191,7 @@ const BalanceHistorySearch = ({ paramsState, setParams }: any) => {
   }, [paramsState]);
 
   useEffect(() => {
+    let filtersActive = false;
     Object.keys(defaultSearchParams).forEach((key) => {
       if (key === "accountName" || key === "page") return;
 
@@ -198,32 +200,21 @@ const BalanceHistorySearch = ({ paramsState, setParams }: any) => {
         defaultSearchParams[key as keyof typeof defaultSearchParams];
 
       if (param !== defaultParam) {
-        setIsFiltersActive(true);
-        setIsVisible(true);
+        filtersActive = true;
       }
     });
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paramsState]);
+    setIsFiltersActive(filtersActive);
+  }, [paramsState, setIsFiltersActive]);
 
   const buttonLabel = `Value field can't be empty`;
 
   return (
     <>
-      <div className="flex justify-between items-center py-6">
-        <p>Find balance history of given account by coin and range.</p>
-        <div>
-          <FilterSectionToggle
-            isFiltersActive={isFiltersActive}
-            toggleFilters={() => setIsVisible(!isVisible)}
-          />
-        </div>
-      </div>
-
       <Card
         className={cn(
-          "mb-4 overflow-hidden transition-all duration-500 ease-in max-h-0 opacity-0",
+          "mb-4 overflow-hidden transition-all duration-500 ease-in max-h-0 opacity-0 mt-4",
           {
-            "max-h-full opacity-100": isVisible,
+            "max-h-full opacity-100": isBalanceFilterSectionVisible,
           }
         )}
       >
