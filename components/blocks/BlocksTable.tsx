@@ -91,10 +91,7 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
           </TableCell>
           <TableCell className="whitespace-nowrap sticky left-[32px] z-10 bg-inherit">
             <div className="flex items-center space-x-2">
-              <Link
-                href={`/block/${row.block_num}`}
-                className="text-link"
-              >
+              <Link href={`/block/${row.block_num}`} className="text-link">
                 {row.block_num.toLocaleString()}
               </Link>
               <CopyButton
@@ -105,10 +102,7 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
           </TableCell>
           <TableCell className="whitespace-nowrap ">
             <div className="flex items-center space-x-2">
-              <Link
-                href={`/block/${row.block_num}`}
-                className="text-link"
-              >
+              <Link href={`/block/${row.block_num}`} className="text-link">
                 {formatHash(row.hash)}
               </Link>
               <CopyButton
@@ -138,10 +132,7 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
             </TooltipProvider>
           </TableCell>
           <TableCell className="whitespace-nowrap">
-            <Link
-              className="text-link"
-              href={`@${row.producer_account}`}
-            >
+            <Link className="text-link" href={`@${row.producer_account}`}>
               {row.producer_account}
             </Link>
           </TableCell>
@@ -220,8 +211,8 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
   return (
     <>
       {totalCount > config.standardPaginationSize ? (
-        <div className="sticky z-20 top-[3.2rem] md:top-[4rem] mt-6 bg-theme">
-          <div className="flex flex-col md:flex-row items-center gap-2 flex-1 justify-between w-full">
+        <div className="sticky z-20 top-[3.2rem] md:top-[4rem] mt-6 bg-theme rounded">
+          <div className="flex flex-col md:flex-row items-center gap-2 flex-1 justify-between w-full ">
             <CustomPagination
               currentPage={currentPage || 1}
               totalCount={totalCount}
@@ -249,14 +240,13 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
           className="mt-4"
         />
       </div>
-      <Table
-        data-testid="table-body"
-        className="rounded-[6px] overflow-auto mt-3"
-      >
-        <TableHeader>{buildTableHeader()}</TableHeader>
+      <div className="border-2 border-theme rounded bg-theme mt-3">
+        <Table data-testid="table-body" className=" overflow-auto p-3">
+          <TableHeader>{buildTableHeader()}</TableHeader>
 
-        <TableBody>{buildTableBody()}</TableBody>
-      </Table>
+          <TableBody>{buildTableBody()}</TableBody>
+        </Table>
+      </div>
     </>
   );
 };

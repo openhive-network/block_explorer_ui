@@ -31,7 +31,10 @@ const DEFAULT_BLOCKS_SEARCH_PROPS: Partial<Explorer.AllBlocksSearchProps> = {
   timeUnit: "days",
 };
 
-const BlocksSearch = () => {
+const BlocksSearch = ({
+  isBlocksFilterSectionVisible,
+  setIsFiltersActive,
+}: any) => {
   const router = useRouter();
   const { allBlocksSearchProps, setAllBlocksSearchProps } =
     useSearchesContext();
@@ -79,7 +82,6 @@ const BlocksSearch = () => {
   } = searchRanges;
 
   const [isVisible, setIsVisible] = useState(false);
-  const [isFiltersActive, setIsFiltersActive] = useState(false);
   const [isSearchButtonDisabled, setIsSearchButtonDisabled] = useState(false);
 
   const changeSelectedOperationTypes = useCallback(
@@ -197,24 +199,15 @@ const BlocksSearch = () => {
 
     setIsFiltersActive(filtersActive);
     setIsVisible(filtersActive);
-  }, [paramsState]);
+  }, [paramsState, setIsFiltersActive]);
 
   return (
     <>
-      <div className="flex justify-between items-center py-6">
-        <div className="text-right justify-end w-full">
-          <FilterSectionToggle
-            isFiltersActive={isFiltersActive}
-            toggleFilters={() => setIsVisible(!isVisible)}
-          />
-        </div>
-      </div>
-
       <Card
         className={cn(
           "mb-4 overflow-hidden transition-all duration-500 ease-in max-h-0 opacity-0",
           {
-            "max-h-fit opacity-100": isVisible,
+            "max-h-fit opacity-100": isBlocksFilterSectionVisible,
           }
         )}
       >
