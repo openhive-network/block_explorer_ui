@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Head from "next/head";
 import BlocksTable from "@/components/blocks/BlocksTable";
 import { useSearchesContext } from "@/contexts/SearchesContext";
@@ -11,6 +11,7 @@ import BlocksSearch from "@/components/blocks/BlocksSearch";
 import BlockAdditionalDetails from "@/components/blocks/BlockAdditionalDetails";
 import ScrollTopButton from "@/components/ScrollTopButton";
 import PageTitle from "@/components/PageTitle";
+import FilterSectionToggle from "@/components/account/FilterSectionToggle";
 
 const TABLE_CELLS = [
   "",
@@ -61,6 +62,18 @@ const BlocksPage = () => {
     undefined
   );
   const [isBlockNavigationActive, setIsBlockNavigationActive] = useState(false);
+
+  const [isFiltersActive, setIsFiltersActive] = useState(false);
+  const [isBalanceFilterSectionVisible, setIsBalanceFilterSectionVisible] =
+    useState(false);
+
+  const handleFiltersVisibility = () => {
+    setIsBalanceFilterSectionVisible(!isBalanceFilterSectionVisible);
+  };
+
+  const updateIsFiltersActive = useCallback((newValue: boolean) => {
+    setIsFiltersActive(newValue);
+  }, []);
 
   const handlePrevBlock = () => {
     if (!openBlockNum) return;
@@ -137,12 +150,23 @@ const BlocksPage = () => {
       </Head>
 
       <div className="page-container">
-        <PageTitle
-          title="Hive Blocks"
-          className="py-4 pl-4"
-        />
-        <BlocksSearch />
-
+        <div className="flex items-start justify-between w-full bg-theme rounded">
+          <div className="ml-6">
+            <PageTitle title="Hive Blocks" className="py-4" />
+          </div>
+          <div className="flex-shrink-0 mt-2 mr-2">
+            <FilterSectionToggle
+              isFiltersActive={isFiltersActive}
+              toggleFilters={handleFiltersVisibility}
+            />
+          </div>
+        </div>
+        <div className="mt-4">
+          <BlocksSearch
+            isBlocksFilterSectionVisible={isBalanceFilterSectionVisible}
+            setIsFiltersActive={updateIsFiltersActive}
+          />
+        </div>
         {blocksSearchDataLoading ? (
           <div className="flex justify-center items-center">
             <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />
@@ -150,18 +174,16 @@ const BlocksPage = () => {
         ) : blocksSearchData?.blocks_result &&
           blocksSearchData?.blocks_result.length > 0 ? (
           <>
-            <div className="mt-2">
-              <BlocksTable
-                rows={tableRows}
-                openBlockNum={openBlockNum}
-                handleToggle={handleToggle}
-                TABLE_CELLS={TABLE_CELLS}
-                currentPage={pageNum || blocksSearchData.total_pages}
-                totalCount={blocksSearchData.total_blocks}
-                onPageChange={handlePageChange}
-                setIsBlockNavigationActive={setIsBlockNavigationActive}
-              />
-            </div>
+            <BlocksTable
+              rows={tableRows}
+              openBlockNum={openBlockNum}
+              handleToggle={handleToggle}
+              TABLE_CELLS={TABLE_CELLS}
+              currentPage={pageNum || blocksSearchData.total_pages}
+              totalCount={blocksSearchData.total_blocks}
+              onPageChange={handlePageChange}
+              setIsBlockNavigationActive={setIsBlockNavigationActive}
+            />
           </>
         ) : (
           <NoResult />
