@@ -45,6 +45,7 @@ import {
 import Hive from "@/types/Hive";
 import { IHiveChainInterface } from "@hiveio/wax";
 import PageTitle from "@/components/PageTitle";
+import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 
 const TABLE_CELLS = [
   "Rank",
@@ -136,26 +137,26 @@ export default function Witnesses() {
   const [availableVersions, setAvailableVersions] = useState<string[]>([]);
   const [latestVersion, setLatestVersion] = useState<string | null>(null);
 
-  const [totalVestingShares, setTotalVestingShares] =
-    useState<Hive.Supply | null>(null);
-  const [totalVestingFundHive, setTotalVestingFundHive] =
-    useState<Hive.Supply | null>(null);
   const { hiveChain } = useHiveChainContext();
+  const { dynamicGlobalData } = useDynamicGlobal() as any;
+
+  const [totalVestingShares, setTotalVestingShares] = useState<Hive.Supply>(
+    dynamicGlobalData?.headBlockDetails.rawTotalVestingShares
+  );
+  const [totalVestingFundHive, setTotalVestingFundHive] = useState<Hive.Supply>(
+    dynamicGlobalData?.headBlockDetails.rawTotalVestingFundHive
+  );
 
   useEffect(() => {
-    const fetchDynamicGlobalProperties = async () => {
-      const dynamicGlobalProperties =
-        await fetchingService.getDynamicGlobalProperties();
-      const _totalVestingfundHive =
-        dynamicGlobalProperties.total_vesting_fund_hive;
-      const _totalVestingShares = dynamicGlobalProperties.total_vesting_shares;
-
-      setTotalVestingFundHive(_totalVestingfundHive);
-      setTotalVestingShares(_totalVestingShares);
-    };
-
-    fetchDynamicGlobalProperties();
-  }, []);
+    if (dynamicGlobalData?.headBlockDetails) {
+      setTotalVestingShares(
+        dynamicGlobalData.headBlockDetails.rawTotalVestingShares
+      );
+      setTotalVestingFundHive(
+        dynamicGlobalData.headBlockDetails.rawTotalVestingFundHive
+      );
+    }
+  }, [dynamicGlobalData]);
 
   useEffect(() => {
     if (witnessesData?.witnesses) {
