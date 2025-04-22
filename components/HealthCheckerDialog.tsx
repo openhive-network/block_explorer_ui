@@ -30,8 +30,12 @@ const HealthCheckerDialog: React.FC<HealthCheckerDialogProps> = ({trigerText, ap
       open={isOpen}
       onOpenChange={setIsOpen}
     >
-      <DialogTrigger data-testid="api-address-link">
-        {trigerText} <span className="text-link">{apiAddress}</span>
+   <DialogTrigger
+        data-testid="api-address-link"
+        className="flex flex-wrap items-center"
+      >
+        <span className="whitespace-nowrap">{trigerText}</span>
+        <span className="text-link break-all">{apiAddress}</span>
       </DialogTrigger>
       <DialogContent
         className="h-[80vh] max-w-5xl overflow-auto flex flex-col rounded-lg shadow-md border"
