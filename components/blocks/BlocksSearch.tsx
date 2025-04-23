@@ -177,6 +177,7 @@ const BlocksSearch = ({
     setLastTimeUnitValue,
     setRangeSelectKey,
     setTimeUnitSelectKey,
+    setIsFiltersActive,
   ]);
 
   useEffect(() => {
