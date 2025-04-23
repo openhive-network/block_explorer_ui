@@ -28,6 +28,7 @@ import { convertVestsToHP } from "@/utils/Calculations";
 import fetchingService from "@/services/FetchingService";
 import NoResult from "../NoResult";
 import Explorer from "@/types/Explorer";
+import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 
 interface Supply {
   amount: string;
@@ -67,18 +68,28 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
   );
   const [toDate, setToDate] = useState<Date>(moment().toDate());
   const [isHP, setIsHP] = useState<boolean>(true); // Toggle state
-  const [totalVestingShares, setTotalVestingShares] = useState<Supply>({
-    amount: "0",
-    nai: "",
-    precision: 0,
-  });
-  const [totalVestingFundHive, setTotalVestingFundHive] = useState<Supply>({
-    amount: "0",
-    nai: "",
-    precision: 0,
-  });
 
   const { hiveChain } = useHiveChainContext();
+  const { dynamicGlobalData } = useDynamicGlobal() as any;
+
+  const [totalVestingShares, setTotalVestingShares] = useState<Hive.Supply>(
+    dynamicGlobalData?.headBlockDetails.rawTotalVestingShares
+  );
+  const [totalVestingFundHive, setTotalVestingFundHive] = useState<Hive.Supply>(
+    dynamicGlobalData?.headBlockDetails.rawTotalVestingFundHive
+  );
+
+  useEffect(() => {
+    if (dynamicGlobalData?.headBlockDetails) {
+      setTotalVestingShares(
+        dynamicGlobalData.headBlockDetails.rawTotalVestingShares
+      );
+      setTotalVestingFundHive(
+        dynamicGlobalData.headBlockDetails.rawTotalVestingFundHive
+      );
+    }
+  }, [dynamicGlobalData]);
+
   const { witnessDetails } = useWitnessDetails(
     accountName,
     !!accountDetails?.is_witness
@@ -116,21 +127,6 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
       setFromDate(moment(fromDate).subtract(1, "hours").toDate());
     }
   }, [fromDate, toDate]);
-
-  useEffect(() => {
-    const fetchDynamicGlobalProperties = async () => {
-      const dynamicGlobalProperties =
-        await fetchingService.getDynamicGlobalProperties();
-      const _totalVestingfundHive =
-        dynamicGlobalProperties.total_vesting_fund_hive;
-      const _totalVestingShares = dynamicGlobalProperties.total_vesting_shares;
-
-      setTotalVestingFundHive(_totalVestingfundHive);
-      setTotalVestingShares(_totalVestingShares);
-    };
-
-    fetchDynamicGlobalProperties();
-  }, []);
 
   useEffect(() => {
     setPage(1);

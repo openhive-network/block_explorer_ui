@@ -23,6 +23,8 @@ import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import NoResult from "../NoResult";
 import DataCountMessage from "../DataCountMessage";
 import Explorer from "@/types/Explorer";
+import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
+import Hive from "@/types/Hive";
 
 type VotersDialogProps = {
   accountName: string;
@@ -81,40 +83,27 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
     } else return null;
   };
 
-  interface Supply {
-    amount: string;
-    nai: string;
-    precision: number;
-  }
-
-  const [totalVestingShares, setTotalVestingShares] = useState<Supply>({
-    amount: "0",
-    nai: "",
-    precision: 0,
-  });
-
-  const [totalVestingFundHive, setTotalVestingFundHive] = useState<Supply>({
-    amount: "0",
-    nai: "",
-    precision: 0,
-  });
-
   const { hiveChain } = useHiveChainContext();
+  const { dynamicGlobalData } = useDynamicGlobal() as any;
+
+  const [totalVestingShares, setTotalVestingShares] = useState<Hive.Supply>(
+    dynamicGlobalData?.headBlockDetails.rawTotalVestingShares
+  );
+  const [totalVestingFundHive, setTotalVestingFundHive] = useState<Hive.Supply>(
+    dynamicGlobalData?.headBlockDetails.rawTotalVestingFundHive
+  );
 
   useEffect(() => {
-    const fetchDynamicGlobalProperties = async () => {
-      const dynamicGlobalProperties =
-        await fetchingService.getDynamicGlobalProperties();
-      const _totalVestingfundHive =
-        dynamicGlobalProperties.total_vesting_fund_hive;
-      const _totalVestingShares = dynamicGlobalProperties.total_vesting_shares;
+    if (dynamicGlobalData?.headBlockDetails) {
+      setTotalVestingShares(
+        dynamicGlobalData.headBlockDetails.rawTotalVestingShares
+      );
+      setTotalVestingFundHive(
+        dynamicGlobalData.headBlockDetails.rawTotalVestingFundHive
+      );
+    }
+  }, [dynamicGlobalData]);
 
-      setTotalVestingFundHive(_totalVestingfundHive);
-      setTotalVestingShares(_totalVestingShares);
-    };
-
-    fetchDynamicGlobalProperties();
-  }, []);
 
   const fetchHivePower = (value: string, isHP: boolean): string => {
     if (isHP) {
