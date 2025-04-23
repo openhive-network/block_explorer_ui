@@ -12,7 +12,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
   TooltipContent,
-} from "@/components/ui/tooltip";
+} from "@/components/ui/hybrid-tooltip";
 import {
   Select,
   SelectContent,

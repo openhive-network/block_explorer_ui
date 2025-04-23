@@ -7,6 +7,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import { Button } from "./button";
 
 interface CopyButtonProps {
   text: any;
@@ -21,12 +22,29 @@ const CopyButton: React.FC<CopyButtonProps> = ({
 }) => {
   const [isCopied, setIsCopied] = React.useState(false);
 
+  const fallbackCopy = (text: string) => {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed"; // Prevent scrolling to bottom of page in MS Edge
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      document.execCommand("copy");
+    } catch (err) {}
+    document.body.removeChild(textArea);
+  };
+
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(text);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        fallbackCopy(text);
+      }
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 1000);
-    } catch (err) {
+    } catch {
       setIsCopied(false);
     }
   };
@@ -35,7 +53,7 @@ const CopyButton: React.FC<CopyButtonProps> = ({
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <button
+          <Button
             className="
                 inline-flex               
                 text-sm
@@ -52,13 +70,18 @@ const CopyButton: React.FC<CopyButtonProps> = ({
                 cursor-pointer"
             aria-label={tooltipText}
             onClick={handleCopy}
+            onTouchEnd={handleCopy}
           >
             {isCopied ? (
-              <Check className="h-3 w-3" color="green" strokeWidth={4} />
+              <Check
+                className="h-3 w-3"
+                color="green"
+                strokeWidth={4}
+              />
             ) : (
               <Copy className="h-3 w-3" />
             )}
-          </button>
+          </Button>
         </TooltipTrigger>
 
         <TooltipContent

@@ -4,7 +4,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
   TooltipContent,
-} from "@/components/ui/tooltip";
+} from "@/components/ui/hybrid-tooltip";
 import moment from "moment";
 import { formatAndDelocalizeFromTime } from "@/utils/TimeUtils";
 import { Clock } from "lucide-react";
@@ -52,7 +52,7 @@ const LastUpdatedTooltip: React.FC<LastUpdatedProps> = ({ lastUpdatedAt }) => {
     return { colorClass, fillColor };
   };
 
-  const { colorClass,fillColor } = getIconColor(timeDiff);
+  const { colorClass, fillColor } = getIconColor(timeDiff);
   const tooltipMessage = `Last Updated - ${formattedTime}`;
 
   return (
@@ -61,7 +61,13 @@ const LastUpdatedTooltip: React.FC<LastUpdatedProps> = ({ lastUpdatedAt }) => {
         <Tooltip>
           <TooltipTrigger asChild>
             <div className="flex items-center">
-              <Clock fill={fillColor} strokeOpacity={1} stroke="white" strokeWidth={1} size={24} />
+              <Clock
+                fill={fillColor}
+                strokeOpacity={1}
+                stroke="white"
+                strokeWidth={1}
+                size={24}
+              />
               <span className={`${colorClass} ml-2`}>{formattedTime}</span>
             </div>
           </TooltipTrigger>

@@ -16,7 +16,7 @@ import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
-} from "../ui/tooltip";
+} from "@/components/ui/hybrid-tooltip";
 import list from "../../utils/BadActorList";
 import ErrorMessage from "../ErrorMessage";
 import { Button } from "../ui/button";

@@ -3,7 +3,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
   TooltipContent,
-} from "./ui/tooltip";
+} from "./ui/hybrid-tooltip";
 
 interface VestsTooltipProps {
   tooltipTrigger: string;

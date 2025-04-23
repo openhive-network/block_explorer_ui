@@ -26,7 +26,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "./ui/tooltip";
+} from "./ui/hybrid-tooltip";
 import { useRouter } from "next/router";
 import CopyButton from "./ui/CopyButton";
 import DataExport from "./DataExport"; // Import DataExport
