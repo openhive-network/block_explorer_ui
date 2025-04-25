@@ -7,7 +7,7 @@ interface InfoContent {
 }
 
 const WitnessInfo = () => (
-  <div className="bg-white dark:bg-gray-800">
+  <div>
     <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
       What are Hive Witnesses?
     </h2>
