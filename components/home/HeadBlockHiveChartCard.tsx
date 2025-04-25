@@ -5,11 +5,13 @@ import useMarketHistory from "@/hooks/common/useMarketHistory";
 import { useEffect, useState } from "react";
 import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
 import { config } from "@/Config";
+import { Button } from "../ui/button";
 
 interface HeadBlockPropertyCardProps {
   header: string;
   isParamsHidden: boolean;
   handleHideParams: () => void;
+  handleHiveFullChartVisibility: () => void;
 }
 
 const MARKET_HISTORY_INTERVAL = 86400; // 1 day
@@ -19,6 +21,7 @@ const HeadBlockHiveChartCard: React.FC<HeadBlockPropertyCardProps> = ({
   header,
   isParamsHidden,
   handleHideParams,
+  handleHiveFullChartVisibility,
 }) => {
   const { settings } = useUserSettingsContext();
 
@@ -71,8 +74,9 @@ const HeadBlockHiveChartCard: React.FC<HeadBlockPropertyCardProps> = ({
         hidden={isParamsHidden}
         data-testid="content-expandable-list"
       >
-        <div>
+        <div className="flex flex-col items-end gap-3">
           <MarketHistoryChart data={marketHistory} />
+          <Button onClick={handleHiveFullChartVisibility}>Full Chart</Button>
         </div>
       </div>
     </div>
