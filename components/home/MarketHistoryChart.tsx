@@ -7,6 +7,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
+  Brush,
 } from "recharts";
 import Hive from "@/types/Hive";
 import moment from "moment";
@@ -41,7 +42,7 @@ const CustomTooltip = ({
 };
 
 // Using volume to calculate the average daily price of HIVE
-const calculateAvgHivePrice = (
+export const calculateAvgHivePrice = (
   hive: Hive.MarketData,
   nonHive: Hive.MarketData
 ) => {
@@ -53,6 +54,7 @@ const calculateAvgHivePrice = (
 
 interface MarketChartProps {
   data: Hive.MarketHistory | undefined;
+  isFullChart?: boolean;
 }
 interface ChartData {
   date: string;
@@ -60,7 +62,10 @@ interface ChartData {
   volume: number;
 }
 
-const MarketHistoryChart: React.FC<MarketChartProps> = ({ data }) => {
+const MarketHistoryChart: React.FC<MarketChartProps> = ({
+  data,
+  isFullChart = false,
+}) => {
   const { hiveChain } = useHiveChainContext();
   const { theme } = useTheme();
 
@@ -103,7 +108,7 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({ data }) => {
   return (
     <ResponsiveContainer
       width="100%"
-      height={250}
+      height={isFullChart ? 500 : 250}
     >
       <LineChart data={chartData}>
         <XAxis
@@ -128,6 +133,17 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({ data }) => {
           dot={false}
           strokeWidth={2}
         />
+        {isFullChart && (
+          <Brush
+            data={data as any}
+            dataKey="date"
+            height={30}
+            stroke="var(--color-switch-off)"
+            fill="var(--color-background)"
+            travellerWidth={10}
+            className="text-xs"
+          />
+        )}
       </LineChart>
     </ResponsiveContainer>
   );
