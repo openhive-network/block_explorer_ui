@@ -7,21 +7,22 @@ import SearchRanges from "@/components/searchRanges/SearchRanges";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import {
+  cn,
+  convertBooleanArrayToIds,
+  convertIdsToBooleanArray,
+} from "@/lib/utils";
 import { trimAccountName } from "@/utils/StringUtils";
 import AutocompleteInput from "@/components/ui/AutoCompleteInput";
-import { useSearchesContext } from "@/contexts/SearchesContext";
 import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
-import FilterSectionToggle from "../account/FilterSectionToggle";
 import useURLParams from "@/hooks/common/useURLParams";
 import useSearchRanges from "@/hooks/common/useSearchRanges";
 import NoValueErrorMessage from "../home/searches/NoValueErrorMessage";
 
-const DEFAULT_BLOCKS_SEARCH_PROPS: Partial<Explorer.AllBlocksSearchProps> = {
+export const DEFAULT_BLOCKS_SEARCH_PROPS: Explorer.AllBlocksSearchProps = {
   limit: config.standardPaginationSize,
   rangeSelectKey: "none",
   accountName: undefined,
-  operationTypes: undefined,
   fromBlock: undefined,
   toBlock: undefined,
   startDate: undefined,
@@ -29,15 +30,23 @@ const DEFAULT_BLOCKS_SEARCH_PROPS: Partial<Explorer.AllBlocksSearchProps> = {
   lastBlocks: undefined,
   lastTime: undefined,
   timeUnit: "days",
+  filters: null,
 };
+
+interface BlocksSearchProps {
+  isBlocksFilterSectionVisible: boolean;
+  setIsFiltersActive: (newValue: boolean) => void;
+  setInitialToBlock: (toBlock: number | undefined) => void;
+  setIsNewSearch: (value: boolean) => void;
+}
 
 const BlocksSearch = ({
   isBlocksFilterSectionVisible,
   setIsFiltersActive,
-}: any) => {
+  setInitialToBlock,
+  setIsNewSearch,
+}: BlocksSearchProps) => {
   const router = useRouter();
-  const { allBlocksSearchProps, setAllBlocksSearchProps } =
-    useSearchesContext();
 
   const searchRanges = useSearchRanges(
     DEFAULT_BLOCKS_SEARCH_PROPS.rangeSelectKey
@@ -47,25 +56,32 @@ const BlocksSearch = ({
 
   // Use URL params hook
   const { paramsState, setParams } = useURLParams(DEFAULT_BLOCKS_SEARCH_PROPS);
+
   const [accountName, setAccountName] = useState<string>(
     paramsState.accountName || ""
   );
-  useEffect(() => {
-    if (!router.isReady || !router.query.accountName) return;
-    const accounNameFromRoute = trimAccountName(
-      router.query.accountName as string
-    );
-    setAccountName(accounNameFromRoute);
-  }, [router.isReady, router.query.accountName]);
 
-  const [selectedOperationTypes, setSelectedOperationTypes] = useState<
-    number[] | null
-  >(
-    paramsState.operationTypes
-      ? Array.isArray(paramsState.operationTypes)
-        ? paramsState.operationTypes
-        : [paramsState.operationTypes]
-      : null
+  useEffect(() => {
+    if (!router.isReady) return;
+    if (paramsState.accountName) {
+      setAccountName(paramsState.accountName);
+    }
+  }, [router.isReady, paramsState]);
+
+  const [totalPages, setTotalPages] = useState<number | null>(null);
+
+  const handleOperationSelect = useCallback(
+    (operationTypes: number[] | null) => {
+      const filters = convertIdsToBooleanArray(operationTypes);
+      const newParams: Explorer.AllBlocksSearchProps = {
+        ...paramsState,
+        filters: filters || null,
+        pageNumber: totalPages !== null ? totalPages : undefined,
+      };
+      setParams(newParams);
+      setIsNewSearch(false);
+    },
+    [paramsState, setParams, totalPages, setIsNewSearch]
   );
 
   const {
@@ -73,7 +89,6 @@ const BlocksSearch = ({
     setRangesValues,
     setLastTimeUnitValue,
     setRangeSelectKey,
-    setTimeUnitSelectKey,
     setFromBlock,
     setToBlock,
     setStartDate,
@@ -84,23 +99,6 @@ const BlocksSearch = ({
   const [isVisible, setIsVisible] = useState(false);
   const [isSearchButtonDisabled, setIsSearchButtonDisabled] = useState(false);
 
-  const changeSelectedOperationTypes = useCallback(
-    (operationTypesIds: number[] | null) => {
-      setSelectedOperationTypes(operationTypesIds);
-      setAllBlocksSearchProps(
-        (prev: Explorer.AllBlocksSearchProps | undefined) => {
-          return {
-            ...prev,
-            operationTypes: operationTypesIds,
-            limit: config.standardPaginationSize,
-            page: undefined,
-          };
-        }
-      );
-    },
-    [setAllBlocksSearchProps]
-  );
-
   const handleStartBlockSearch = useCallback(async () => {
     const {
       payloadFromBlock,
@@ -109,7 +107,10 @@ const BlocksSearch = ({
       payloadEndDate,
     } = await getRangesValues();
 
-    const allBlocksSearchProps = {
+    setInitialToBlock(undefined); // Reset initialToBlock on new search
+    setIsNewSearch(true);
+
+    const newParams: Explorer.AllBlocksSearchProps = {
       ...paramsState,
       accountName:
         accountName !== "" ? trimAccountName(accountName) : undefined,
@@ -131,30 +132,30 @@ const BlocksSearch = ({
           : undefined,
       rangeSelectKey: searchRanges.rangeSelectKey,
       limit: config.standardPaginationSize,
+      pageNumber: undefined,
     };
-
-    setAllBlocksSearchProps(allBlocksSearchProps);
-    setRangesValues(allBlocksSearchProps as any);
-    setParams(allBlocksSearchProps);
-    //eslint-disable-next-line react-hooks/exhaustive-deps
+    setParams(newParams);
   }, [
     accountName,
-    selectedOperationTypes,
-    getRangesValues,
-    setAllBlocksSearchProps,
     setParams,
-    searchRanges.rangeSelectKey,
-    searchRanges.timeUnitSelectKey,
-    searchRanges.lastBlocksValue,
-    searchRanges.lastTimeUnitValue,
-    setRangesValues,
+    paramsState,
+    searchRanges,
+    setInitialToBlock,
+    getRangesValues,
+    setIsNewSearch,
   ]);
 
   const handleFilterClear = useCallback(() => {
+    setIsNewSearch(true);
+    setInitialToBlock(undefined); // Reset initialToBlock on clear
+    const newParams: Explorer.AllBlocksSearchProps = {
+      ...DEFAULT_BLOCKS_SEARCH_PROPS,
+      pageNumber: undefined,
+    };
+
     setAccountName("");
-    setSelectedOperationTypes(null);
-    setAllBlocksSearchProps(undefined);
     setIsFiltersActive(false);
+    setParams(newParams);
     setRangesValues(DEFAULT_BLOCKS_SEARCH_PROPS as any);
     setFromBlock(undefined);
     setToBlock(undefined);
@@ -163,12 +164,11 @@ const BlocksSearch = ({
     setLastBlocksValue(undefined);
     setLastTimeUnitValue(undefined);
     setRangeSelectKey("none");
-    setTimeUnitSelectKey(undefined);
     setParams(DEFAULT_BLOCKS_SEARCH_PROPS);
   }, [
-    setAllBlocksSearchProps,
-    setRangesValues,
     setParams,
+    setIsFiltersActive,
+    setRangesValues,
     setFromBlock,
     setToBlock,
     setStartDate,
@@ -176,8 +176,8 @@ const BlocksSearch = ({
     setLastBlocksValue,
     setLastTimeUnitValue,
     setRangeSelectKey,
-    setTimeUnitSelectKey,
-    setIsFiltersActive,
+    setInitialToBlock,
+    setIsNewSearch,
   ]);
 
   useEffect(() => {
@@ -232,11 +232,13 @@ const BlocksSearch = ({
           <div className="flex items-center mb-4">
             <OperationTypesDialog
               operationTypes={operationsTypes}
-              selectedOperations={selectedOperationTypes || []}
-              setSelectedOperations={changeSelectedOperationTypes}
+              selectedOperations={convertBooleanArrayToIds(
+                paramsState.filters ?? []
+              )}
+              setSelectedOperations={handleOperationSelect}
               buttonClassName="bg-gray-500"
               triggerTitle={getOperationButtonTitle(
-                selectedOperationTypes,
+                convertBooleanArrayToIds(paramsState.filters ?? []),
                 operationsTypes
               )}
             />

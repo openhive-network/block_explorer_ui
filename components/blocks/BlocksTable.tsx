@@ -24,7 +24,7 @@ import {
 } from "../ui/tooltip";
 import TimeAgo from "timeago-react";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
-import { formatNumber } from "@/lib/utils";
+import { cn, formatNumber } from "@/lib/utils";
 import DataExport from "../DataExport";
 import { formatHash } from "@/utils/StringUtils";
 import CustomPagination from "@/components/CustomPagination";
@@ -36,6 +36,7 @@ import Hive from "@/types/Hive";
 import fetchingService from "@/services/FetchingService";
 import { convertVestsToHP } from "@/utils/Calculations";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
+import DataCountMessage from "../DataCountMessage";
 
 interface BlocksTableProps {
   rows: BlockRow[];
@@ -235,14 +236,19 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
       ) : (
         ""
       )}
-      <div className="flex justify-end">
+      <div
+        className={cn("flex items-center justify-end mt-8", {
+          "justify-between": !!totalCount,
+        })}
+      >
+        <DataCountMessage count={totalCount || 0} dataType="blocks" />
         <DataExport
           data={prepareExportData()}
           filename={`blocks.csv`}
-          className="mt-4"
+          className="mb-2"
         />
       </div>
-      <div className="border-2 border-theme rounded bg-theme mt-3">
+      <div className="border-2 border-theme rounded bg-theme">
         <Table data-testid="table-body" className=" overflow-auto p-3">
           <TableHeader>{buildTableHeader()}</TableHeader>
 

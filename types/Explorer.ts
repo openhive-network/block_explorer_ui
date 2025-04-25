@@ -325,6 +325,7 @@ declare module Explorer {
     timeUnit?: string;
     lastBlocks?: number;
     lastTime?: number;
+    filters?:any;
   }
 }
 

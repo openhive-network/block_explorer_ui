@@ -1,17 +1,20 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Head from "next/head";
 import BlocksTable from "@/components/blocks/BlocksTable";
-import { useSearchesContext } from "@/contexts/SearchesContext";
 import NoResult from "@/components/NoResult";
 import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import { Loader2 } from "lucide-react";
 import useAllBlocksSearch from "@/hooks/api/blocks/useAllBlocksSearch";
-import BlocksSearch from "@/components/blocks/BlocksSearch";
+import BlocksSearch, {
+  DEFAULT_BLOCKS_SEARCH_PROPS,
+} from "@/components/blocks/BlocksSearch";
 import BlockAdditionalDetails from "@/components/blocks/BlockAdditionalDetails";
 import ScrollTopButton from "@/components/ScrollTopButton";
 import PageTitle from "@/components/PageTitle";
 import FilterSectionToggle from "@/components/account/FilterSectionToggle";
+import useURLParams from "@/hooks/common/useURLParams";
+import { convertBooleanArrayToIds } from "@/lib/utils";
 
 const TABLE_CELLS = [
   "",
@@ -45,17 +48,46 @@ export interface BlockRow extends Block {
 }
 
 const BlocksPage = () => {
-  const { allBlocksSearchProps, setAllBlocksSearchProps } =
-    useSearchesContext();
   const { operationsTypes } = useOperationsTypes();
-  const [toBlock, setToBlock] = useState<number | undefined>(
-    allBlocksSearchProps?.toBlock
-  );
 
-  const pageNum = allBlocksSearchProps?.pageNumber;
+  const { paramsState, setParams } = useURLParams(DEFAULT_BLOCKS_SEARCH_PROPS);
+  const [totalPages, setTotalPages] = useState<number | null>(null);
+  const [initialToBlock, setInitialToBlock] = useState<number | undefined>(
+    undefined
+  ); /* initialToBlock is sent to useAllBlocksSearch so that there is no change between the initial search and subsequent pagination clicks because new blocks are being added to the blockchain.*/
+  const [isNewSearch, setIsNewSearch] = useState<boolean>(false);
+
+  const pageNum = paramsState.pageNumber;
+
+  const props = {
+    ...paramsState,
+    operationTypes: paramsState.filters
+      ? convertBooleanArrayToIds(paramsState.filters)
+      : null,
+  } as any;
 
   const { blocksSearchData, blocksSearchDataError, blocksSearchDataLoading } =
-    useAllBlocksSearch(allBlocksSearchProps, pageNum, toBlock);
+    useAllBlocksSearch(props, pageNum, initialToBlock);
+
+  useEffect(() => {
+    if (
+      blocksSearchData?.blocks_result &&
+      blocksSearchData.blocks_result.length > 0 &&
+      !isNewSearch
+    ) {
+      setInitialToBlock(
+        paramsState.toBlock
+          ? paramsState.toBlock
+          : blocksSearchData.block_range.to
+      ); // Store the toBlock
+      setIsNewSearch(false);
+    }
+  }, [
+    blocksSearchData,
+    paramsState.toBlock,
+    blocksSearchData?.block_range.to,
+    isNewSearch,
+  ]);
 
   const [openBlockNum, setOpenBlockNum] = useState<number | null>(null);
   const [newBlockView, setNewBlockView] = useState<Block | undefined>(
@@ -106,21 +138,23 @@ const BlocksPage = () => {
   };
 
   const handlePageChange = (newPage: number) => {
-    const newSearchProps: any = {
-      ...allBlocksSearchProps,
+    setParams({
+      ...paramsState,
       pageNumber: newPage,
-      toBlock: blocksSearchData?.block_range.to,
-    };
-    setAllBlocksSearchProps(newSearchProps);
+    });
+    setIsNewSearch(false);
   };
 
   const prepareTableData = (): BlockRow[] => {
-    if (!blocksSearchData || !blocksSearchData.blocks_result) return [];
-
+    if (
+      !blocksSearchData ||
+      !blocksSearchData.blocks_result ||
+      blocksSearchData.total_blocks == 0
+    )
+      return [];
     const firstBlockInPage = blocksSearchData.blocks_result[0].block_num;
     const lastBlockInPage = blocksSearchData.blocks_result.at(-1)
       ?.block_num as number;
-
     return blocksSearchData.blocks_result.map((block: Block) => {
       const additionalDetailsContent = (
         <BlockAdditionalDetails
@@ -165,6 +199,8 @@ const BlocksPage = () => {
           <BlocksSearch
             isBlocksFilterSectionVisible={isBalanceFilterSectionVisible}
             setIsFiltersActive={updateIsFiltersActive}
+            setInitialToBlock={setInitialToBlock}
+            setIsNewSearch={setIsNewSearch}
           />
         </div>
         {blocksSearchDataLoading ? (
