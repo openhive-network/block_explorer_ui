@@ -1,6 +1,5 @@
 import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { useRouter } from "next/router";
-import moment from "moment";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TabsContent } from "@/components/ui/tabs";
@@ -23,11 +22,11 @@ export const DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS = {
   pageNumber: 1,
   fromBlock: undefined,
   toBlock: undefined,
-  startDate: moment(Date.now()).subtract(30, "days").toDate(),
+  startDate: undefined,
   endDate: undefined,
   lastBlocks: undefined,
   lastTime: 30,
-  rangeSelectKey: "lastTime",
+  rangeSelectKey: "none",
   timeUnit: "days",
 };
 
@@ -49,11 +48,6 @@ const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
   const props = {
     ...paramsState,
     accountName,
-    startDate:
-      paramsState?.rangeSelectKey === "none"
-        ? undefined
-        : paramsState.startDate ||
-          DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS.startDate,
   };
 
   const { permlinkSearchData, permlinkSearchDataLoading } =

@@ -111,7 +111,7 @@ export default function BalanceHistory() {
     lastBlocks: undefined,
     lastTime: 30,
     timeUnit: "days",
-    rangeSelectKey: "lastTime",
+    rangeSelectKey: "none",
     page: 1,
     filters: undefined,
   };
@@ -297,7 +297,10 @@ export default function BalanceHistory() {
             setIsFiltersActive={updateIsFiltersActive}
           />
 
-          <Card data-testid="account-details" className="rounded">
+          <Card
+            data-testid="account-details"
+            className="rounded"
+          >
             {message && (
               <div className="rounded p-4 bg-gray-100 dark:bg-gray-700 mb-4 text-center text-sm text-gray-500">
                 {message}

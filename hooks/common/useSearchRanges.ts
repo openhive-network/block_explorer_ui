@@ -5,12 +5,11 @@ import { config } from "@/Config";
 import Explorer from "@/types/Explorer";
 import { useHeadBlockNumber } from "../../contexts/HeadBlockContext";
 import useURLParams from "./useURLParams";
-import { defaultSearchParams } from "@/pages/[accountName]";
 
 export const DEFAULT_LAST_BLOCK_VALUE = 1000;
 export const DEFAULT_LAST_TIME_UNIT_VALUE = 30;
 export const DEFAULT_TIME_UNIT_SELECT_KEY = "days";
-export const DEFAULT_RANGE_SELECT_KEY = "lastTime";
+export const DEFAULT_RANGE_SELECT_KEY = "none";
 
 interface RangesValues {
   payloadFromBlock?: number;
