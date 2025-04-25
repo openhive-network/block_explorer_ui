@@ -109,28 +109,32 @@ export const HealthCheckerContextProvider: React.FC<{
 
 
   const startHealthCheckerService = () => {
-    if (hiveChain) {
-      const healthChecker = new HealthChecker();
-      const hcService = new HealthCheckerService(
-        "node",
-        apiCheckers,
-        defaultNodeProviders,
-        healthChecker,
-        nodeAddress,
-        setNodeAddress,
-      )
-      setNodeHealthCheckerService(hcService);
-      const restHealthChecker = new HealthChecker();
-      const restHcService = new HealthCheckerService(
-        "rest",
-        restApiCheckers,
-        defaultRestApiProvicers,
-        restHealthChecker,
-        apiAddress,
-        setApiAddress,
-      )
-      setRestApiHealthCheckerService(restHcService)
-      setHealthCheckerInitialized(true);
+    try {
+      if (hiveChain) {
+        const healthChecker = new HealthChecker();
+        const hcService = new HealthCheckerService(
+          "node",
+          apiCheckers,
+          defaultNodeProviders,
+          healthChecker,
+          nodeAddress,
+          setNodeAddress,
+        )
+        setNodeHealthCheckerService(hcService);
+        const restHealthChecker = new HealthChecker();
+        const restHcService = new HealthCheckerService(
+          "rest",
+          restApiCheckers,
+          defaultRestApiProvicers,
+          restHealthChecker,
+          apiAddress,
+          setApiAddress,
+        )
+        setRestApiHealthCheckerService(restHcService)
+        setHealthCheckerInitialized(true);
+      }
+    } catch (error) {
+      console.log('HealthChecker error', error);
     }
   }
 

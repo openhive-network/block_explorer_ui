@@ -34,7 +34,7 @@ const defaultSearchParams: AccountSearchParams = {
   lastBlocks: undefined,
   lastTime: 30,
   timeUnit: "days",
-  rangeSelectKey: "lastTime",
+  rangeSelectKey: "none",
   page: undefined,
   filters: undefined,
   coinType: "HIVE", // Default to HIVE

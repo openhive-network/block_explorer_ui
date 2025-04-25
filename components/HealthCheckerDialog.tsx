@@ -34,7 +34,7 @@ const HealthCheckerDialog: React.FC<HealthCheckerDialogProps> = ({trigerText, ap
         data-testid="api-address-link"
         className="flex flex-wrap items-center"
       >
-        <span className="whitespace-nowrap">{trigerText}</span>
+        <span className="whitespace-nowrap mr-1">{trigerText}</span>
         <span className="text-link break-all">{apiAddress}</span>
       </DialogTrigger>
       <DialogContent
