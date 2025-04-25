@@ -18,6 +18,7 @@ import { Toggle } from "../ui/toggle";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import CurrentBlockCard from "./CurrentBlockCard";
 import HeadBlockHiveChartCard from "./HeadBlockHiveChartCard";
+import HiveFullChartDialog from "./HiveFullChartDialog";
 
 interface HeadBlockCardProps {
   headBlockCardData?: Explorer.HeadBlockCardData | any;
@@ -64,6 +65,9 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
     hiveParamsCard: true,
     hiveChart: false,
   });
+  const [isFullHiveChartVisible, setIsFullHiveChartVisible] =
+    useState<boolean>(false);
+
   const { settings, setSettings } = useUserSettingsContext();
 
   const handleHideBlockchainDates = () => {
@@ -91,6 +95,10 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
       ...hiddenPropertiesByCard,
       hiveChart: !hiddenPropertiesByCard.hiveChart,
     });
+  };
+
+  const handleHiveFullChartVisibility = () => {
+    setIsFullHiveChartVisible(!isFullHiveChartVisible);
   };
 
   const {
@@ -227,92 +235,99 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
   }, [settings.liveData, headBlockCardData, intervalTime]);
 
   return (
-    <Card
-      className="col-span-12 md:col-span-4 lg:col-span-3"
-      data-testid="head-block-card"
-    >
-      <CardHeader className="flex justify-between items-end py-2 border-b ">
-        {/* Blockchain Time and Live Data Toggle */}
-        <div className="flex flex-col items-end space-y-2">
-          <div className="flex items-end space-x-2 text-[12px]">
-            <Clock
-              size={18}
-              strokeWidth={2}
-            />
-            <span className="font-semibold">Blockchain Time:</span>
-            <span className="font-semibold text-right">
-              {liveBlockchainTime
-                ? getFormattedLiveBlockchainTime(liveBlockchainTime)
-                : blockchainTime ?? ""}
-            </span>
+    <>
+      <Card
+        className="col-span-12 md:col-span-4 lg:col-span-3"
+        data-testid="head-block-card"
+      >
+        <CardHeader className="flex justify-between items-end py-2 border-b ">
+          {/* Blockchain Time and Live Data Toggle */}
+          <div className="flex flex-col items-end space-y-2">
+            <div className="flex items-end space-x-2 text-[12px]">
+              <Clock
+                size={18}
+                strokeWidth={2}
+              />
+              <span className="font-semibold">Blockchain Time:</span>
+              <span className="font-semibold text-right">
+                {liveBlockchainTime
+                  ? getFormattedLiveBlockchainTime(liveBlockchainTime)
+                  : blockchainTime ?? ""}
+              </span>
+            </div>
+
+            <div className="mt-4">
+              <Toggle
+                disabled={isLiveDataToggleDisabled}
+                checked={settings.liveData}
+                onClick={() =>
+                  setSettings({
+                    ...settings,
+                    liveData: !settings.liveData,
+                  })
+                }
+                className="text-base"
+                leftLabel="Live data"
+              />
+            </div>
+          </div>
+        </CardHeader>
+
+        <CardContent className="p-4 space-y-4">
+          {/* Last Block Information */}
+          <CurrentBlockCard
+            blockDetails={blockDetails}
+            transactionCount={transactionCount}
+            opcount={opcount}
+            timeDifferenceInSeconds={timeDifferenceInSeconds}
+            liveBlockNumber={liveBlockNumber}
+          />
+          {/* Other Information*/}
+          <div className="data-box">
+            <div>
+              <span>Feed Price:</span> {liveFeedPrice}
+            </div>
+            <div>
+              <span>Vests To Hive Ratio:</span> {liveVestsToHiveRatio} VESTS
+            </div>
           </div>
 
-          <div className="mt-4">
-            <Toggle
-              disabled={isLiveDataToggleDisabled}
-              checked={settings.liveData}
-              onClick={() =>
-                setSettings({
-                  ...settings,
-                  liveData: !settings.liveData,
-                })
-              }
-              className="text-base"
-              leftLabel="Live data"
-            />
-          </div>
-        </div>
-      </CardHeader>
-
-      <CardContent className="p-4 space-y-4">
-        {/* Last Block Information */}
-        <CurrentBlockCard
-          blockDetails={blockDetails}
-          transactionCount={transactionCount}
-          opcount={opcount}
-          timeDifferenceInSeconds={timeDifferenceInSeconds}
-          liveBlockNumber={liveBlockNumber}
-        />
-        {/* Other Information*/}
-        <div className="data-box">
           <div>
-            <span>Feed Price:</span> {liveFeedPrice}
+            <HeadBlockHiveChartCard
+              header="Hive Price Chart"
+              isParamsHidden={hiddenPropertiesByCard.hiveChart}
+              handleHideParams={handleHideHiveChart}
+              handleHiveFullChartVisibility={handleHiveFullChartVisibility}
+            />
+            <HeadBlockPropertyCard
+              parameters={fundAndSupplyParameters}
+              header="Fund and Supply"
+              isParamsHidden={hiddenPropertiesByCard.supplyCard}
+              handleHideParams={handleHideSupplyParams}
+              isLoading={isBlockCardLoading}
+            />
+            <HeadBlockPropertyCard
+              parameters={hiveParameters}
+              header="Hive Parameters"
+              isParamsHidden={hiddenPropertiesByCard.hiveParamsCard}
+              handleHideParams={handleHideHiveParams}
+              isLoading={isBlockCardLoading}
+            />
+            <HeadBlockPropertyCard
+              parameters={blockchainDates}
+              header="Blockchain Dates"
+              isParamsHidden={hiddenPropertiesByCard.timeCard}
+              handleHideParams={handleHideBlockchainDates}
+              isLoading={isBlockCardLoading}
+            />
           </div>
-          <div>
-            <span>Vests To Hive Ratio:</span> {liveVestsToHiveRatio} VESTS
-          </div>
-        </div>
-
-        <div>
-          <HeadBlockHiveChartCard
-            header="Hive Price Chart"
-            isParamsHidden={hiddenPropertiesByCard.hiveChart}
-            handleHideParams={handleHideHiveChart}
-          />
-          <HeadBlockPropertyCard
-            parameters={fundAndSupplyParameters}
-            header="Fund and Supply"
-            isParamsHidden={hiddenPropertiesByCard.supplyCard}
-            handleHideParams={handleHideSupplyParams}
-            isLoading={isBlockCardLoading}
-          />
-          <HeadBlockPropertyCard
-            parameters={hiveParameters}
-            header="Hive Parameters"
-            isParamsHidden={hiddenPropertiesByCard.hiveParamsCard}
-            handleHideParams={handleHideHiveParams}
-            isLoading={isBlockCardLoading}
-          />
-          <HeadBlockPropertyCard
-            parameters={blockchainDates}
-            header="Blockchain Dates"
-            isParamsHidden={hiddenPropertiesByCard.timeCard}
-            handleHideParams={handleHideBlockchainDates}
-            isLoading={isBlockCardLoading}
-          />
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+      <HiveFullChartDialog
+        isOpen={isFullHiveChartVisible}
+        handleHiveFullChartVisibility={handleHiveFullChartVisibility}
+      />
+    </>
   );
 };
 
