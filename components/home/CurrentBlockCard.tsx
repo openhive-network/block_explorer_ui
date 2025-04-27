@@ -5,6 +5,8 @@ import Link from "next/link";
 
 import Hive from "@/types/Hive";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
+import TimeAgo from "timeago-react";
+import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 
 interface CurrentBlockCardProps {
   blockDetails?: Hive.BlockDetails | null;
@@ -12,6 +14,7 @@ interface CurrentBlockCardProps {
   opcount?: number;
   liveBlockNumber?: number | null;
   timeDifferenceInSeconds?: number | null;
+  isLive?:boolean;
 }
 
 interface Producer {
@@ -32,9 +35,9 @@ const CurrentBlockCard: React.FC<CurrentBlockCardProps> = ({
   opcount,
   liveBlockNumber,
   timeDifferenceInSeconds,
+  isLive,
 }) => {
   const [producer, setProducer] = useState<Producer | null>(null);
-
   useEffect(() => {
     if (blockDetails?.producer_account) {
       const href = `/@${blockDetails?.producer_account}`;
@@ -87,9 +90,18 @@ const CurrentBlockCard: React.FC<CurrentBlockCardProps> = ({
           </div>
         </div>
         {/* Time Difference */}
-        <div className="flex text-xs font-semibold text-explorer-red w-[65px] min-w-[65px] justify-end">
-          {timeDifferenceInSeconds} secs ago
-        </div>
+        {isLive ? (
+          <div className="w-[65px] min-w-[65px] flex text-xs font-semibold text-explorer-red justify-end ">
+            {timeDifferenceInSeconds} secs ago
+          </div>
+        ) : (
+          <TimeAgo
+            datetime={
+              new Date(formatAndDelocalizeTime(blockDetails?.created_at))
+            }
+            className="text-explorer-red w-[120px] min-w-[120px]flex text-xs font-semibold justify-end "
+          />
+        )}
         {/* Operations and Transactions Info  */}
         <div className="flex flex-col justify-end space-y-2 pt-4 min-h-[40px]">
           <div className="flex items-center justify-end">

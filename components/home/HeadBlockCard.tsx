@@ -140,7 +140,6 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
 
   // refresh interval
   const intervalTime = config.accountRefreshInterval;
-
   /*States to handle seamless update of blockNumber , blockChainTime, feedprice, and vests/hive ratio when liveData is on*/
   const [liveBlockchainTime, setLiveBlockchainTime] = useState<Date | null>(
     null
@@ -281,6 +280,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
             opcount={opcount}
             timeDifferenceInSeconds={timeDifferenceInSeconds}
             liveBlockNumber={liveBlockNumber}
+            isLive={settings.liveData}
           />
           {/* Other Information*/}
           <div className="data-box">
