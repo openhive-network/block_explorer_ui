@@ -75,13 +75,15 @@ const BlocksSearch = ({
       const filters = convertIdsToBooleanArray(operationTypes);
       const newParams: Explorer.AllBlocksSearchProps = {
         ...paramsState,
+        accountName:
+          accountName ? trimAccountName(accountName) : undefined,
         filters: filters || null,
         pageNumber: totalPages !== null ? totalPages : undefined,
       };
       setParams(newParams);
       setIsNewSearch(false);
     },
-    [paramsState, setParams, totalPages, setIsNewSearch]
+    [paramsState, setParams, totalPages, setIsNewSearch, accountName]
   );
 
   const {
