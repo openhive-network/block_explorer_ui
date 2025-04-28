@@ -110,7 +110,6 @@ export const HealthCheckerContextProvider: React.FC<{
 
   const startHealthCheckerService = () => {
     try {
-      if (hiveChain) {
         const healthChecker = new HealthChecker();
         const hcService = new HealthCheckerService(
           "node",
@@ -121,26 +120,34 @@ export const HealthCheckerContextProvider: React.FC<{
           setNodeAddress,
         )
         setNodeHealthCheckerService(hcService);
-        const restHealthChecker = new HealthChecker();
-        const restHcService = new HealthCheckerService(
-          "rest",
-          restApiCheckers,
-          defaultRestApiProvicers,
-          restHealthChecker,
-          apiAddress,
-          setApiAddress,
-        )
-        setRestApiHealthCheckerService(restHcService)
-        setHealthCheckerInitialized(true);
-      }
     } catch (error) {
       console.log('HealthChecker error', error);
     }
   }
 
+  const startRestHealthCheckerService = () => {
+    try {
+      const restHealthChecker = new HealthChecker();
+      const restHcService = new HealthCheckerService(
+        "rest",
+        restApiCheckers,
+        defaultRestApiProvicers,
+        restHealthChecker,
+        apiAddress,
+        setApiAddress,
+      )
+      setRestApiHealthCheckerService(restHcService);
+    } catch (error) {
+      
+    }
+  }
+
   useEffect(() => { 
-    if (hiveChain && !healthCheckerInitialized)
+    if (hiveChain && !healthCheckerInitialized) {
       startHealthCheckerService();
+      startRestHealthCheckerService();
+      setHealthCheckerInitialized(true);
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hiveChain, healthCheckerInitialized])
 
