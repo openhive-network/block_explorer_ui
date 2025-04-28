@@ -108,16 +108,29 @@ const BlocksPage = () => {
   }, []);
 
   const handlePrevBlock = () => {
-    if (!openBlockNum) return;
+    if (!blocksSearchData?.blocks_result || !openBlockNum) return;
 
+    const currentIndex = blocksSearchData.blocks_result.findIndex(
+      (block) => block.block_num === openBlockNum
+    );
+
+    const newBlockNum =
+      blocksSearchData.blocks_result[currentIndex + 1].block_num;
     setIsBlockNavigationActive(true);
-    setOpenBlockNum(() => openBlockNum - 1);
+    setOpenBlockNum(newBlockNum);
   };
-  const handleNextBlock = () => {
-    if (!openBlockNum) return;
 
+  const handleNextBlock = () => {
+    if (!blocksSearchData?.blocks_result || !openBlockNum) return;
+
+    const currentIndex = blocksSearchData.blocks_result.findIndex(
+      (block) => block.block_num === openBlockNum
+    );
+
+    const newBlockNum =
+      blocksSearchData.blocks_result[currentIndex - 1].block_num;
     setIsBlockNavigationActive(true);
-    setOpenBlockNum(() => openBlockNum + 1);
+    setOpenBlockNum(newBlockNum);
   };
 
   useEffect(() => {
