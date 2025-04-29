@@ -70,25 +70,26 @@ export const HealthCheckerContextProvider: React.FC<{
       params: {}, 
       validatorFunction: data => !!data.base ? true : "Price feed error",
     },
-    {
-      title: "Witness Schedule",
-      method: extendedHiveChain?.api.database_api.get_witness_schedule,
-      params: { id: 1 }, 
-      validatorFunction: data => /*data.max_scheduled_witnesses === 21*/ !!data ? true : "Witness schedule error",
-      // This is left wrong on purpose for tests
-    },
-    {
-      title: "Vesting Delegations",
-      method: extendedHiveChain?.api.database_api.find_vesting_delegations,
-      params: { account: "hiveio" }, 
-      validatorFunction: data => !!data.delegations ? true : "Vesting delegations error",
-    },
-    {
-      title: "RC Direct Delegations",
-      method: extendedHiveChain?.api.rc_api.list_rc_direct_delegations,
-      params: { start: ["hiveio", ""], limit: 1000 }, 
-      validatorFunction: data => !!data.rc_direct_delegations ? true : "RC delegation error",
-    }
+    // Tempararly remove half of calls
+    // {
+    //   title: "Witness Schedule",
+    //   method: extendedHiveChain?.api.database_api.get_witness_schedule,
+    //   params: { id: 1 }, 
+    //   validatorFunction: data => /*data.max_scheduled_witnesses === 21*/ !!data ? true : "Witness schedule error",
+    //   // This is left wrong on purpose for tests
+    // },
+    // {
+    //   title: "Vesting Delegations",
+    //   method: extendedHiveChain?.api.database_api.find_vesting_delegations,
+    //   params: { account: "hiveio" }, 
+    //   validatorFunction: data => !!data.delegations ? true : "Vesting delegations error",
+    // },
+    // {
+    //   title: "RC Direct Delegations",
+    //   method: extendedHiveChain?.api.rc_api.list_rc_direct_delegations,
+    //   params: { start: ["hiveio", ""], limit: 1000 }, 
+    //   validatorFunction: data => !!data.rc_direct_delegations ? true : "RC delegation error",
+    // } 
   ]
 
   const restApiCheckers: ApiChecker[] = [
