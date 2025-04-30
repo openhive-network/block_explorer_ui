@@ -306,7 +306,6 @@ class FetchingService {
     const requestParams: Hive.BlockSearchParams = {
       "operation-types": blockSearchProps.operationTypes?.join(","),
       "account-name": blockSearchProps?.accountName,
-      page: 1,
       "page-size": 100,
       direction: "desc",
       "from-block": blockSearchProps.fromBlock || blockSearchProps.startDate,
