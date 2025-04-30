@@ -28,6 +28,7 @@ export interface AccountSearchParams {
   rangeSelectKey: string | undefined;
   page: number | undefined;
   filters: boolean[];
+  activeTab?: "operations" | "comments" | "interactions";
 }
 
 export const defaultSearchParams: AccountSearchParams = {

@@ -59,7 +59,7 @@ const usePermlinkCommentSearch = (accountName: string) => {
       accountName: trimAccountName(accountName),
       activeTab: "comments",
       commentType: "all" as Explorer.CommentType,
-      pageNumber: 1,
+      page: undefined,
       fromBlock: undefined,
       toBlock: undefined,
       startDate: undefined,
@@ -85,7 +85,7 @@ const usePermlinkCommentSearch = (accountName: string) => {
       accountName: trimAccountName(accountName),
       activeTab: "comments",
       commentType: localCommentType,
-      pageNumber: permlinkPaginationPage,
+      page: permlinkPaginationPage,
       ...searchParams,
     } as any;
 

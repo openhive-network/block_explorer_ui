@@ -367,7 +367,7 @@ class FetchingService {
         | "all"
         | "post"
         | "comment",
-      page: permlinkSearchProps.pageNumber || 1,
+      page: permlinkSearchProps.page || 1,
       "page-size": config.standardPaginationSize,
       "from-block":
         permlinkSearchProps.fromBlock || permlinkSearchProps.startDate,

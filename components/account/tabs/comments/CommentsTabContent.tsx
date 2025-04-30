@@ -18,8 +18,8 @@ interface CommnetsTabContentProps {
 
 export const DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS = {
   accountName: undefined,
+  page: 1,
   commentType: "all",
-  pageNumber: 1,
   fromBlock: undefined,
   toBlock: undefined,
   startDate: undefined,
@@ -37,7 +37,7 @@ const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
 }) => {
   const router = useRouter();
   const [accountName, setAccountName] = useState("");
-  const { paramsState } = useURLParams(
+  const { paramsState, setParams }: any = useURLParams(
     {
       ...DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS,
       accountName,
@@ -45,10 +45,14 @@ const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
     ["accountName"]
   );
 
-  const props = {
-    ...paramsState,
-    accountName,
-  };
+  const props = (() => {
+    if (paramsState.activeTab === "comments") {
+      return {
+        ...paramsState,
+        accountName,
+      };
+    }
+  })();
 
   const { permlinkSearchData, permlinkSearchDataLoading } =
     usePermlinkSearch(props);
@@ -65,7 +69,7 @@ const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
   // Don't show filters if only account name is present
   useEffect(() => {
     Object.keys(DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS).forEach((key) => {
-      if (key === "accountName") return;
+      if (key === "accountName" || key === "page") return;
 
       const param =
         paramsState[key as keyof typeof DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS];
@@ -106,6 +110,8 @@ const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
       <AccountCommentPermlinkSearchResults
         data={permlinkSearchData}
         accountName={accountName}
+        paramsState={paramsState}
+        setParams={setParams}
       />
     </TabsContent>
   );

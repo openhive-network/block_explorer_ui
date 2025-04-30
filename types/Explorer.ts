@@ -109,7 +109,7 @@ declare module Explorer {
   interface PermlinkSearchProps extends CommonSearchProps {
     accountName: string;
     commentType?: CommentType | string;
-    pageNumber?: number;
+    page?: number;
   }
 
   interface SelectOption {
@@ -325,7 +325,7 @@ declare module Explorer {
     timeUnit?: string;
     lastBlocks?: number;
     lastTime?: number;
-    filters?:any;
+    filters?: any;
   }
 }
 
