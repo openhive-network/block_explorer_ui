@@ -21,12 +21,14 @@ import { trimAccountName } from "@/utils/StringUtils";
 import useAccountOperationsTabSearchRanges, {
   defaultAccountOperationsTabSearchParams,
 } from "./useAccountOperationsTabSearchRanges";
+import { getLocalStorage, removeStorageItem } from "@/utils/LocalStorage";
 
 interface OpeationTabContentProps {
   liveDataEnabled: boolean;
   isVisible: boolean;
   setIsVisible: Dispatch<SetStateAction<boolean>>;
   setIsFiltersActive: Dispatch<SetStateAction<boolean>>;
+  isFiltersActive: boolean;
 }
 
 const OperationTabContent: React.FC<OpeationTabContentProps> = ({
@@ -34,6 +36,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
   isVisible,
   setIsVisible,
   setIsFiltersActive,
+  isFiltersActive,
 }) => {
   const router = useRouter();
   const searchRanges = useAccountOperationsTabSearchRanges();
@@ -95,6 +98,8 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     setFilters([]);
     setIsVisible(false);
     setIsFiltersActive(false);
+
+    removeStorageItem("is_operations_filters_visible");
   };
 
   const handleOperationSelect = (filters: number[] | null) => {
@@ -158,13 +163,19 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
         defaultAccountOperationsTabSearchParams[
           key as keyof typeof defaultAccountOperationsTabSearchParams
         ];
+
+      const visibleFilters =
+        (isFiltersActive &&
+          getLocalStorage("is_operations_filters_visible", true)) ??
+        true;
+
       if (param !== defaultParam) {
         setIsFiltersActive(true);
-        setIsVisible(true);
+        setIsVisible(visibleFilters);
       }
     });
     //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paramsState]);
+  }, [paramsState, isFiltersActive]);
 
   const buttonLabel = `Value field can't be empty`;
 

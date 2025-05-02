@@ -7,6 +7,7 @@ import InteractionsTabContent from "./interactions/InteractionsTabContent";
 import CommentsTabContent from "./comments/CommentsTabContent";
 import { useTabs } from "@/contexts/TabsContext";
 import FilterSectionToggle from "../FilterSectionToggle";
+import { setLocalStorage, getLocalStorage } from "@/utils/LocalStorage";
 
 interface AccountOperationViewTabs {
   liveDataEnabled: boolean;
@@ -17,16 +18,19 @@ const AccountOperationViewTabs: React.FC<AccountOperationViewTabs> = ({
 }) => {
   const router = useRouter();
   const { activeTab, setActiveTab } = useTabs();
+
   const [
     isOperationsFilterSectionVisible,
     setIsOperationsFilterSectionVisible,
-  ] = useState(false);
+  ] = useState(getLocalStorage("is_operations_filters_visible", true) ?? false);
   const [isCommentsFilterSectionVisible, setIsCommentsFilterSectionVisible] =
-    useState(false);
+    useState(getLocalStorage("is_comments_filters_visible", true) ?? false);
   const [
     isInteractionsFilterSectionVisible,
     setIsInteractionsFilterSectionVisible,
-  ] = useState(true);
+  ] = useState(
+    getLocalStorage("is_interactions_filters_visible", true) ?? true
+  );
 
   const [isFiltersActive, setIsFiltersActive] = useState(false);
 
@@ -48,14 +52,32 @@ const AccountOperationViewTabs: React.FC<AccountOperationViewTabs> = ({
   const handleFiltersVisibility = () => {
     if (activeTab === "operations") {
       setIsOperationsFilterSectionVisible(!isOperationsFilterSectionVisible);
+      if (isFiltersActive) {
+        setLocalStorage(
+          "is_operations_filters_visible",
+          !isOperationsFilterSectionVisible
+        );
+      }
     }
     if (activeTab === "comments") {
       setIsCommentsFilterSectionVisible(!isCommentsFilterSectionVisible);
+      if (isFiltersActive) {
+        setLocalStorage(
+          "is_comments_filters_visible",
+          !isCommentsFilterSectionVisible
+        );
+      }
     }
     if (activeTab === "interactions") {
       setIsInteractionsFilterSectionVisible(
         !isInteractionsFilterSectionVisible
       );
+      if (isFiltersActive) {
+        setLocalStorage(
+          "is_interactions_filters_visible",
+          !isInteractionsFilterSectionVisible
+        );
+      }
     }
   };
 
@@ -99,16 +121,19 @@ const AccountOperationViewTabs: React.FC<AccountOperationViewTabs> = ({
         setIsVisible={setIsOperationsFilterSectionVisible}
         setIsFiltersActive={setIsFiltersActive}
         liveDataEnabled={liveDataEnabled}
+        isFiltersActive={isFiltersActive}
       />
       <CommentsTabContent
         isVisible={isCommentsFilterSectionVisible}
         setIsVisible={setIsCommentsFilterSectionVisible}
         setIsFiltersActive={setIsFiltersActive}
+        isFiltersActive={isFiltersActive}
       />
       <InteractionsTabContent
         isVisible={isInteractionsFilterSectionVisible}
         setIsVisible={setIsInteractionsFilterSectionVisible}
         setIsFiltersActive={setIsFiltersActive}
+        isFiltersActive={isFiltersActive}
       />
     </Tabs>
   );

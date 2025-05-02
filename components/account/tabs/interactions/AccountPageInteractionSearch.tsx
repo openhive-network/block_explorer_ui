@@ -15,6 +15,7 @@ import {
   convertIdsToBooleanArray,
 } from "@/lib/utils";
 import { useHandleInteractionsSearch } from "./useHandleInteractionsSearch";
+import { removeStorageItem } from "@/utils/LocalStorage";
 
 export const DEFAULT_PARAMS = {
   accountName: "",
@@ -52,6 +53,8 @@ const AccountPageInteractionSearch: React.FC<
     setPermlink("");
     setParams(clearParams);
     setIsFiltersActive(false);
+
+    removeStorageItem("is_interactions_filters_visible");
   };
 
   const { operationsTypes } = useOperationsTypes();

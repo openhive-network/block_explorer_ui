@@ -11,16 +11,20 @@ import useURLParams from "@/hooks/common/useURLParams";
 import InteractionsTabResult from "./InteractionsTabResult";
 import { cn, convertBooleanArrayToIds } from "@/lib/utils";
 import { DEFAULT_PARAMS } from "./AccountPageInteractionSearch";
+import { getLocalStorage } from "@/utils/LocalStorage";
 
 interface InteractionsTabContentProps {
   isVisible: boolean;
   setIsVisible: Dispatch<SetStateAction<boolean>>;
   setIsFiltersActive: Dispatch<SetStateAction<boolean>>;
+  isFiltersActive: boolean;
 }
 
 const InteractionsTabContent: React.FC<InteractionsTabContentProps> = ({
   isVisible,
+  setIsVisible,
   setIsFiltersActive,
+  isFiltersActive,
 }) => {
   const router = useRouter();
 
@@ -71,12 +75,19 @@ const InteractionsTabContent: React.FC<InteractionsTabContentProps> = ({
 
       const param = paramsState[key as keyof typeof DEFAULT_PARAMS];
       const defaultParam = DEFAULT_PARAMS[key as keyof typeof DEFAULT_PARAMS];
+
+      const visibleFilters =
+        (isFiltersActive &&
+          getLocalStorage("is_interactions_filters_visible", true)) ??
+        true;
+
       if (param !== defaultParam) {
         setIsFiltersActive(true);
+        setIsVisible(visibleFilters);
       }
     });
     //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paramsState]);
+  }, [paramsState, isFiltersActive]);
 
   return (
     <TabsContent value="interactions">

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useSearchesContext } from "@/contexts/SearchesContext";
 import PostTypeSelector from "@/components/home/searches/PostTypeSelector";
 import usePermlinkCommentSearch from "./usePermlinkCommentSearch";
+import { removeStorageItem } from "@/utils/LocalStorage";
 
 interface AccountCommentsPermlinkSearchProps {
   accountName: string;
@@ -49,6 +50,8 @@ const AccountCommentsPermlinkSearch: React.FC<
     handleClearFilters();
     setIsFiltersActive(false);
     setIsVisible(false);
+
+    removeStorageItem("is_comments_filters_visible");
   };
 
   const buttonLabel = `Value field can't be empty`;

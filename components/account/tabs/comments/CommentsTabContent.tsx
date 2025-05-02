@@ -9,11 +9,13 @@ import usePermlinkSearch from "@/hooks/api/common/usePermlinkSearch";
 import { trimAccountName } from "@/utils/StringUtils";
 import useURLParams from "@/hooks/common/useURLParams";
 import { cn } from "@/lib/utils";
+import { getLocalStorage } from "@/utils/LocalStorage";
 
 interface CommnetsTabContentProps {
   isVisible: boolean;
   setIsVisible: Dispatch<SetStateAction<boolean>>;
   setIsFiltersActive: Dispatch<SetStateAction<boolean>>;
+  isFiltersActive: boolean;
 }
 
 export const DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS = {
@@ -34,6 +36,7 @@ const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
   isVisible,
   setIsVisible,
   setIsFiltersActive,
+  isFiltersActive,
 }) => {
   const router = useRouter();
   const [accountName, setAccountName] = useState("");
@@ -77,13 +80,19 @@ const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
         DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS[
           key as keyof typeof DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS
         ];
+
+      const visibleFilters =
+        (isFiltersActive &&
+          getLocalStorage("is_comments_filters_visible", true)) ??
+        true;
+
       if (param !== defaultParam) {
         setIsFiltersActive(true);
-        setIsVisible(true);
+        setIsVisible(visibleFilters);
       }
     });
     //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paramsState]);
+  }, [paramsState, isFiltersActive]);
 
   return (
     <TabsContent value="comments">
