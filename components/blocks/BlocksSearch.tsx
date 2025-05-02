@@ -38,6 +38,8 @@ interface BlocksSearchProps {
   setIsFiltersActive: (newValue: boolean) => void;
   setInitialToBlock: (toBlock: number | undefined) => void;
   setIsNewSearch: (value: boolean) => void;
+  isFromRangeSelection: boolean;
+  firstUserSelectedBlock : (number | undefined);
 }
 
 const BlocksSearch = ({
@@ -45,6 +47,9 @@ const BlocksSearch = ({
   setIsFiltersActive,
   setInitialToBlock,
   setIsNewSearch,
+  isFromRangeSelection,
+  firstUserSelectedBlock ,
+
 }: BlocksSearchProps) => {
   const router = useRouter();
 
@@ -204,6 +209,12 @@ const BlocksSearch = ({
     setIsVisible(filtersActive);
   }, [paramsState, setIsFiltersActive]);
 
+  useEffect(() => {
+    if (isFromRangeSelection === true && firstUserSelectedBlock) {
+      setToBlock(firstUserSelectedBlock);
+    }
+  }, [isFromRangeSelection, firstUserSelectedBlock, searchRanges]);
+  
   return (
     <>
       <Card
