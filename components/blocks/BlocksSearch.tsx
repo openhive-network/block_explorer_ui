@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  SetStateAction,
+  Dispatch,
+} from "react";
 import { useRouter } from "next/router";
 import { config } from "@/Config";
 import Explorer from "@/types/Explorer";
@@ -18,6 +24,7 @@ import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
 import useURLParams from "@/hooks/common/useURLParams";
 import useSearchRanges from "@/hooks/common/useSearchRanges";
 import NoValueErrorMessage from "../home/searches/NoValueErrorMessage";
+import { removeStorageItem, getLocalStorage } from "@/utils/LocalStorage";
 
 export const DEFAULT_BLOCKS_SEARCH_PROPS: Explorer.AllBlocksSearchProps = {
   limit: config.standardPaginationSize,
@@ -34,17 +41,21 @@ export const DEFAULT_BLOCKS_SEARCH_PROPS: Explorer.AllBlocksSearchProps = {
 };
 
 interface BlocksSearchProps {
-  isBlocksFilterSectionVisible: boolean;
+  isVisible: boolean;
+  setIsVisible: Dispatch<SetStateAction<boolean>>;
   setIsFiltersActive: (newValue: boolean) => void;
   setInitialToBlock: (toBlock: number | undefined) => void;
   setIsNewSearch: (value: boolean) => void;
+  isFiltersActive: boolean;
 }
 
 const BlocksSearch = ({
-  isBlocksFilterSectionVisible,
+  isVisible,
+  setIsVisible,
   setIsFiltersActive,
   setInitialToBlock,
   setIsNewSearch,
+  isFiltersActive,
 }: BlocksSearchProps) => {
   const router = useRouter();
 
@@ -75,8 +86,7 @@ const BlocksSearch = ({
       const filters = convertIdsToBooleanArray(operationTypes);
       const newParams: Explorer.AllBlocksSearchProps = {
         ...paramsState,
-        accountName:
-          accountName ? trimAccountName(accountName) : undefined,
+        accountName: accountName ? trimAccountName(accountName) : undefined,
         filters: filters || null,
         pageNumber: totalPages !== null ? totalPages : undefined,
       };
@@ -98,7 +108,6 @@ const BlocksSearch = ({
     setLastBlocksValue,
   } = searchRanges;
 
-  const [isVisible, setIsVisible] = useState(false);
   const [isSearchButtonDisabled, setIsSearchButtonDisabled] = useState(false);
 
   const handleStartBlockSearch = useCallback(async () => {
@@ -167,6 +176,7 @@ const BlocksSearch = ({
     setLastTimeUnitValue(undefined);
     setRangeSelectKey("none");
     setParams(DEFAULT_BLOCKS_SEARCH_PROPS);
+    removeStorageItem("is_blocks_filters_visible");
   }, [
     setParams,
     setIsFiltersActive,
@@ -183,8 +193,6 @@ const BlocksSearch = ({
   ]);
 
   useEffect(() => {
-    let filtersActive = false;
-
     Object.keys(DEFAULT_BLOCKS_SEARCH_PROPS).forEach((key) => {
       if (key === "limit") return;
 
@@ -195,14 +203,19 @@ const BlocksSearch = ({
           key as keyof typeof DEFAULT_BLOCKS_SEARCH_PROPS
         ];
 
+      const visibleFilters =
+        (isFiltersActive &&
+          getLocalStorage("is_blocks_filters_visible", true)) ??
+        true;
+
       if (param !== defaultParam) {
-        filtersActive = true;
+        setIsFiltersActive(true);
+        setIsVisible(visibleFilters);
       }
     });
 
-    setIsFiltersActive(filtersActive);
-    setIsVisible(filtersActive);
-  }, [paramsState, setIsFiltersActive]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paramsState, isFiltersActive]);
 
   return (
     <>
@@ -210,7 +223,7 @@ const BlocksSearch = ({
         className={cn(
           "mb-4 overflow-hidden transition-all duration-500 ease-in max-h-0 opacity-0",
           {
-            "max-h-fit opacity-100": isBlocksFilterSectionVisible,
+            "max-h-fit opacity-100": isVisible,
           }
         )}
       >

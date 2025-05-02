@@ -15,6 +15,7 @@ import PageTitle from "@/components/PageTitle";
 import FilterSectionToggle from "@/components/account/FilterSectionToggle";
 import useURLParams from "@/hooks/common/useURLParams";
 import { convertBooleanArrayToIds } from "@/lib/utils";
+import { setLocalStorage, getLocalStorage } from "@/utils/LocalStorage";
 
 const TABLE_CELLS = [
   "",
@@ -96,11 +97,17 @@ const BlocksPage = () => {
   const [isBlockNavigationActive, setIsBlockNavigationActive] = useState(false);
 
   const [isFiltersActive, setIsFiltersActive] = useState(false);
-  const [isBalanceFilterSectionVisible, setIsBalanceFilterSectionVisible] =
-    useState(false);
+  const [isBlocksFilterSectionVisible, setIsBlocksFilterSectionVisible] =
+    useState(getLocalStorage("is_blocks_filters_visible", true) ?? false);
 
   const handleFiltersVisibility = () => {
-    setIsBalanceFilterSectionVisible(!isBalanceFilterSectionVisible);
+    setIsBlocksFilterSectionVisible(!isBlocksFilterSectionVisible);
+    if (isFiltersActive) {
+      setLocalStorage(
+        "is_blocks_filters_visible",
+        !isBlocksFilterSectionVisible
+      );
+    }
   };
 
   const updateIsFiltersActive = useCallback((newValue: boolean) => {
@@ -199,7 +206,10 @@ const BlocksPage = () => {
       <div className="page-container">
         <div className="flex items-start justify-between w-full bg-theme rounded">
           <div className="ml-6">
-            <PageTitle title="Hive Blocks" className="py-4" />
+            <PageTitle
+              title="Hive Blocks"
+              className="py-4"
+            />
           </div>
           <div className="flex-shrink-0 mt-2 mr-2">
             <FilterSectionToggle
@@ -210,10 +220,12 @@ const BlocksPage = () => {
         </div>
         <div className="mt-4">
           <BlocksSearch
-            isBlocksFilterSectionVisible={isBalanceFilterSectionVisible}
+            isVisible={isBlocksFilterSectionVisible}
+            setIsVisible={setIsBlocksFilterSectionVisible}
             setIsFiltersActive={updateIsFiltersActive}
             setInitialToBlock={setInitialToBlock}
             setIsNewSearch={setIsNewSearch}
+            isFiltersActive={isFiltersActive}
           />
         </div>
         {blocksSearchDataLoading ? (
