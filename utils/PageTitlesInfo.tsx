@@ -23,7 +23,7 @@ const WitnessInfo = () => (
       one. <br />
       They not only keep the city running (producing blocks, maintaining nodes),
       but also decide on important policies like road construction (parameter
-      setting) and the value of the city's currency (price feeds).
+      setting) and the value of the city&apos;s currency (price feeds).
     </p>
 
     <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
