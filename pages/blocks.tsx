@@ -16,6 +16,7 @@ import FilterSectionToggle from "@/components/account/FilterSectionToggle";
 import useURLParams from "@/hooks/common/useURLParams";
 import { convertBooleanArrayToIds } from "@/lib/utils";
 import { setLocalStorage, getLocalStorage } from "@/utils/LocalStorage";
+import BlockSegments from "@/components/BlockSegments";
 
 const TABLE_CELLS = [
   "",
@@ -68,9 +69,29 @@ const BlocksPage = () => {
   } as any;
 
   const { blocksSearchData, blocksSearchDataError, blocksSearchDataLoading } =
-    useAllBlocksSearch(props, pageNum, initialToBlock);
+    useAllBlocksSearch(
+      props,
+      pageNum,
+      paramsState.toBlock ? paramsState.toBlock : initialToBlock
+    );
+
+  // Store the very first block selected - use toBlock instead of fromBlock.
+  const [firstUserSelectedBlock, setFirstUserSelectedBlock] = useState<
+    number | undefined
+  >();
+  useEffect(() => {
+    // Initialize the first user selected block only on the first load
+    if (paramsState.toBlock !== undefined && isNewSearch) {
+      setFirstUserSelectedBlock(paramsState.toBlock);
+    }
+  }, [paramsState.toBlock, isNewSearch]);
+
+  // Flag indicating whether the data is based on a ranged selection or filtering
+  const [isFromRangeSelection, setIsFromRangeSelection] =
+    useState<boolean>(false);
 
   useEffect(() => {
+    // Update the `initialToBlock` when the data is available.
     if (
       blocksSearchData?.blocks_result &&
       blocksSearchData.blocks_result.length > 0 &&
@@ -99,6 +120,11 @@ const BlocksPage = () => {
   const [isFiltersActive, setIsFiltersActive] = useState(false);
   const [isBlocksFilterSectionVisible, setIsBlocksFilterSectionVisible] =
     useState(getLocalStorage("is_blocks_filters_visible", true) ?? false);
+
+  const [toBlockHistory, setToBlockHistory] = useState<number[]>([]);
+  useEffect(() => {
+    if (isNewSearch) setToBlockHistory([]);
+  }, [isNewSearch]);
 
   const handleFiltersVisibility = () => {
     setIsBlocksFilterSectionVisible(!isBlocksFilterSectionVisible);
@@ -161,9 +187,93 @@ const BlocksPage = () => {
     setParams({
       ...paramsState,
       pageNumber: newPage,
+      toBlock: blocksSearchData?.block_range.to,
     });
     setIsNewSearch(false);
   };
+
+  const handleLoadNextBlocks = () => {
+    if (
+      !blocksSearchData?.block_range?.to ||
+      !blocksSearchData?.block_range?.from
+    ) {
+      return;
+    }
+
+    const currentToBlock = blocksSearchData.block_range.to;
+    const nextToBlockParam = blocksSearchData.block_range.from; // The 'from' becomes the new 'to' boundary
+
+    // Save the 'to' block we are navigating AWAY from
+    setToBlockHistory((prevHistory) => [...prevHistory, currentToBlock]);
+
+    setParams({
+      ...paramsState,
+      toBlock: nextToBlockParam, // Set toBlock to the previous 'from'
+      pageNumber: undefined,
+    });
+    setIsNewSearch(false);
+    setIsFromRangeSelection(true); // data is based on a range selection
+  };
+
+  const handleLoadPreviousBlocks = () => {
+    if (toBlockHistory.length === 0) {
+      return; // Nothing in history to go back to
+    }
+    // Get the 'to' block boundary we want to return to
+    const targetToBlock = toBlockHistory[toBlockHistory.length - 1];
+
+    // Remove the used block from history
+    setToBlockHistory((prevHistory) => prevHistory.slice(0, -1));
+
+    setParams({
+      ...paramsState,
+      toBlock: targetToBlock, // Use the 'to' block from history
+      pageNumber: undefined,
+    });
+
+    setIsNewSearch(false);
+    setIsFromRangeSelection(true); // data is based on a range selection
+  };
+
+  const checkForMoreBlocks = (): boolean => {
+    if (!blocksSearchData?.block_range) {
+      return false;
+    }
+
+    if (
+      paramsState.fromBlock &&
+      paramsState.lastBlocks &&
+      paramsState.rangeSelectKey === "lastBlocks" &&
+      blocksSearchData.block_range.to > paramsState.fromBlock &&
+      blocksSearchData.block_range.from != paramsState.fromBlock
+    ) {
+      return true;
+    }
+
+    if (
+      paramsState.fromBlock &&
+      paramsState.rangeSelectKey === "blockRange" &&
+      blocksSearchData.block_range.from > paramsState.fromBlock
+    ) {
+      return true;
+    }
+
+    return (
+      blocksSearchData.block_range.from !== 1 &&
+      (paramsState.fromBlock === undefined ||
+        blocksSearchData.block_range.from < paramsState.fromBlock)
+    );
+  };
+  const checkForPreviousBlocks = (): boolean => {
+    if (!blocksSearchData?.block_range) {
+      return false;
+    }
+
+    return toBlockHistory.length > 0;
+  };
+
+  const hasMoreBlocks = checkForMoreBlocks();
+  const hasPreviousBlocks = checkForPreviousBlocks();
 
   const prepareTableData = (): BlockRow[] => {
     if (
@@ -226,8 +336,22 @@ const BlocksPage = () => {
             setInitialToBlock={setInitialToBlock}
             setIsNewSearch={setIsNewSearch}
             isFiltersActive={isFiltersActive}
+            isFromRangeSelection={isFromRangeSelection}
+            firstUserSelectedBlock={firstUserSelectedBlock}
           />
         </div>
+
+        <BlockSegments
+          fromBlock={blocksSearchData?.block_range.from}
+          toBlock={blocksSearchData?.block_range.to}
+          hasPrevious={hasPreviousBlocks}
+          hasNext={hasMoreBlocks}
+          loadPreviousBlocks={handleLoadPreviousBlocks}
+          loadNextBlocks={handleLoadNextBlocks}
+          urlParams={paramsState}
+          className="md:pr-36 rounded"
+        />
+
         {blocksSearchDataLoading ? (
           <div className="flex justify-center items-center">
             <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />

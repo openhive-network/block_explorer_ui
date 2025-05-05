@@ -47,6 +47,8 @@ interface BlocksSearchProps {
   setInitialToBlock: (toBlock: number | undefined) => void;
   setIsNewSearch: (value: boolean) => void;
   isFiltersActive: boolean;
+  isFromRangeSelection: boolean;
+  firstUserSelectedBlock: number | undefined;
 }
 
 const BlocksSearch = ({
@@ -56,6 +58,8 @@ const BlocksSearch = ({
   setInitialToBlock,
   setIsNewSearch,
   isFiltersActive,
+  isFromRangeSelection,
+  firstUserSelectedBlock,
 }: BlocksSearchProps) => {
   const router = useRouter();
 
@@ -216,6 +220,13 @@ const BlocksSearch = ({
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paramsState, isFiltersActive]);
+
+  useEffect(() => {
+    if (isFromRangeSelection === true && firstUserSelectedBlock) {
+      setToBlock(firstUserSelectedBlock);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFromRangeSelection, firstUserSelectedBlock, searchRanges]);
 
   return (
     <>

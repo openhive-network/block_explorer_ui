@@ -29,6 +29,9 @@ const BalanceHistorySearch = ({
   const [coinType, setCoinType] = useState<string>(
     paramsState.coinType ?? DEFAULT_COIN_TYPE
   ); // State to store the selected coin name
+  const [includeSavings, setIncludeSavings] = useState<boolean>(
+    paramsState.includeSavings ?? false
+  );
   const router = useRouter();
   const { searchRanges } = useSearchesContext();
   const accountNameFromRoute = (router.query.accountName as string)?.slice(1);
@@ -112,6 +115,16 @@ const BalanceHistorySearch = ({
     setParams({
       ...paramsState,
       coinType: newCoinType,
+      page: undefined, // Reset the page when the coin type changes
+      includeSavings: false,
+    });
+  };
+
+  const handleSavingsChange = () => {
+    setIncludeSavings(!includeSavings);
+    setParams({
+      ...paramsState,
+      includeSavings: !includeSavings,
       page: undefined, // Reset the page when the coin type changes
     });
   };
@@ -205,7 +218,25 @@ const BalanceHistorySearch = ({
             rangesProps={searchRanges}
             setIsSearchButtonDisabled={setIsSearchButtonDisabled}
           />
-          {/* 
+          {/* Savings checkbox */}
+          <div className="flex items-center mb-3">
+            <input
+              type="checkbox"
+              id="includeSavings"
+              checked={includeSavings}
+              onChange={handleSavingsChange}
+              disabled={coinType === "VESTS"}
+              className="mr-2 h-4 w-4 accent-blue-500 mt-4"
+              data-testid="savings-checkbox"
+            />
+            <label
+              htmlFor="includeSavings"
+              className={cn("mt-4", { "text-gray-500": coinType === "VESTS" })}
+            >
+              Savings
+            </label>
+          </div>
+          {/* Operations Types commented for now
           <div className="flex items-center mb-10 mt-2">
         <OperationTypesDialog
           operationTypes={accountOperationTypes}

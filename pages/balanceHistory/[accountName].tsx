@@ -33,6 +33,7 @@ const MemoizedBalanceHistoryChart = React.memo(BalanceHistoryChart);
 interface Operation {
   timestamp: number;
   balance: number;
+  savings_balance?: number; // Optional savings balance
 }
 
 interface BalanceHistorySearchParams {
@@ -48,6 +49,7 @@ interface BalanceHistorySearchParams {
   rangeSelectKey: string | undefined;
   page: number | undefined;
   filters: boolean[] | undefined;
+  includeSavings: boolean;
 }
 
 export const defaultBalanceHistorySearchParams: BalanceHistorySearchParams = {
@@ -63,6 +65,7 @@ export const defaultBalanceHistorySearchParams: BalanceHistorySearchParams = {
   rangeSelectKey: "none",
   page: undefined,
   filters: undefined,
+  includeSavings: false,
 };
 
 const prepareData = (operations: Operation[]) => {
@@ -70,14 +73,30 @@ const prepareData = (operations: Operation[]) => {
 
   const aggregatedData = new Map<
     string,
-    { balance: number; balance_change: number }
+    {
+      balance: number;
+      balance_change: number;
+      savings_balance: number | undefined;
+      savings_balance_change: number | undefined;
+    }
   >();
 
   operations.forEach((operation: any) => {
-    let balance_change = operation.balance - operation.prev_balance;
-    let balance = parseInt(operation.balance, 10);
-
-    aggregatedData.set(operation.date, { balance, balance_change });
+    let balance_change =
+      operation.balance.balance - operation.prev_balance.balance;
+    let balance = parseInt(operation.balance.balance, 10);
+    let savings_balance = operation.balance.savings_balance
+      ? parseInt(operation.balance.savings_balance, 10)
+      : undefined;
+    let savings_balance_change =
+      operation.balance.savings_balance -
+      operation.prev_balance.savings_balance;
+    aggregatedData.set(operation.date, {
+      balance,
+      balance_change,
+      savings_balance,
+      savings_balance_change,
+    });
   });
 
   const preparedData = Array.from(aggregatedData.entries()).map(
@@ -85,8 +104,11 @@ const prepareData = (operations: Operation[]) => {
       timestamp: date,
       balance: data.balance,
       balance_change: data.balance_change,
+      savings_balance: data.savings_balance,
+      savings_balance_change: data.savings_balance_change,
     })
   );
+
   return preparedData;
 };
 
@@ -135,6 +157,7 @@ export default function BalanceHistory() {
     lastTime: lastTimeParam,
     rangeSelectKey,
     page,
+    includeSavings,
   } = paramsState;
 
   const defaultFromDate = React.useMemo(
@@ -333,7 +356,7 @@ export default function BalanceHistory() {
                 hbdBalanceHistoryData={
                   paramsState.coinType === "HBD" ? preparedData : undefined
                 }
-                quickView={false}
+                showSavingsBalance={includeSavings}
                 className="h-[450px] mb-10 mr-0 pr-1 pb-6"
               />
             ) : (

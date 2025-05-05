@@ -5,7 +5,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
   TooltipContent,
-} from "@/components/ui/tooltip";
+} from "@/components/ui/hybrid-tooltip";
 import { CalendarDays } from "lucide-react";
 
 const WitnessScheduleIcon: React.FC = () => {
@@ -22,16 +22,25 @@ const WitnessScheduleIcon: React.FC = () => {
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <span>
-                <Link
-                  className="text-explorer-blue"
-                  href="/schedule"
-                  data-testid="witness-schedule-link">
-                  <CalendarDays size={20} strokeWidth={3} onClick={handleTooltipToggle} onTouchStart={handleTooltipToggle} />
-                </Link>
-              </span>
+              <Link
+                className="text-explorer-blue"
+                href="/schedule"
+                data-testid="witness-schedule-link"
+              >
+                <CalendarDays
+                  size={20}
+                  strokeWidth={3}
+                  onClick={handleTooltipToggle}
+                  onTouchStart={handleTooltipToggle}
+                />
+              </Link>
             </TooltipTrigger>
-            <TooltipContent side="top" align="start" sideOffset={5} alignOffset={10}>
+            <TooltipContent
+              side="top"
+              align="start"
+              sideOffset={5}
+              alignOffset={10}
+            >
               <div className="bg-theme text-text p-1 ml-1">
                 <p>
                   Check{" "}

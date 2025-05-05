@@ -14,7 +14,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
   TooltipContent,
-} from "@/components/ui/tooltip";
+} from "@/components/ui/hybrid-tooltip";
 
 interface PostContentCardProps {
   isComment?: boolean;

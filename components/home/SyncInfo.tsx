@@ -10,8 +10,20 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { Tooltip , TooltipTrigger , TooltipProvider ,TooltipContent } from "../ui/tooltip";
-import { AlertCircle, Box, Boxes, Clock, RefreshCcw, RefreshCwOff } from "lucide-react";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipProvider,
+  TooltipContent,
+} from "../ui/hybrid-tooltip";
+import {
+  AlertCircle,
+  Box,
+  Boxes,
+  Clock,
+  RefreshCcw,
+  RefreshCwOff,
+} from "lucide-react";
 
 interface SyncInfoProps {
   className?: string;
@@ -40,7 +52,7 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
     hiveBlockNumber,
     explorerBlockNumber
   );
-  
+
   const differenceColorText =
     blockDifference > 20
       ? "text-explorer-red"
@@ -49,18 +61,17 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
       : "text-explorer-light-green";
 
   const iconColor =
-    blockDifference > 20
-      ? "red"
-      : blockDifference > 3
-      ? "orange"
-      : "green";
-  
+    blockDifference > 20 ? "red" : blockDifference > 3 ? "orange" : "green";
+
   return !syncLoading ? (
     <Dialog
       open={dialogOpen}
       onOpenChange={(open) => setDialogOpen(open)}
     >
-      <DialogTrigger asChild={true} style={{ width: "32px"}}>
+      <DialogTrigger
+        asChild={true}
+        style={{ width: "32px" }}
+      >
         <div
           className={cn(
             "bg-navbar hover:bg-navbar-hover border rounded-[6px] py-px cursor-pointer",
@@ -80,10 +91,11 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
-                    <RefreshCcw 
-                      color={iconColor} 
-                      size={18} 
-                      strokeWidth={2} />
+                    <RefreshCcw
+                      color={iconColor}
+                      size={18}
+                      strokeWidth={2}
+                    />
                   </TooltipTrigger>
                   <TooltipContent className="bg-theme text-text">
                     Explorer synced with blockchain
@@ -110,17 +122,18 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
                 </TooltipProvider>
 
                 <span
-                className={cn(
-                  "absolute top-[-17px] sm:top-[-17px] text-xs font-semibold text-white bg-red-600 rounded-full px-1 py-1 z-20",
-                  {
-                    "right-[-17px]": blockDifference >= 100,
-                    "right-[-14px]": blockDifference < 100,
-                  }
-                )}
-              >
-                {blockDifference > 999 ? "999+" : blockDifference.toLocaleString()}
-              </span>
-
+                  className={cn(
+                    "absolute top-[-17px] sm:top-[-17px] text-xs font-semibold text-white bg-red-600 rounded-full px-1 py-1 z-20",
+                    {
+                      "right-[-17px]": blockDifference >= 100,
+                      "right-[-14px]": blockDifference < 100,
+                    }
+                  )}
+                >
+                  {blockDifference > 999
+                    ? "999+"
+                    : blockDifference.toLocaleString()}
+                </span>
               </div>
             )}
           </div>
@@ -143,7 +156,7 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
           </div>
           <div className="dialog-item">
             <div className="dialog-item-text">
-              <Box size={18}/>
+              <Box size={18} />
               <div>Hafbe Last Block:</div>
             </div>
             <div className="dialog-item-value">
@@ -152,7 +165,7 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
           </div>
           <div className={cn("dialog-item", differenceColorText)}>
             <div className="dialog-item-text">
-              <AlertCircle size={18}/>
+              <AlertCircle size={18} />
               <div>Block Difference:</div>
             </div>
             <div className="dialog-item-value">
@@ -161,7 +174,7 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
           </div>
           <div className={cn("dialog-item", differenceColorText)}>
             <div className="dialog-item-text">
-              <Clock size={18}/>
+              <Clock size={18} />
               <div>Last Synced Block At:</div>
             </div>
             {explorerTime && (

@@ -23,7 +23,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "../ui/tooltip";
+} from "../ui/hybrid-tooltip";
 import { useRouter } from "next/router";
 import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
 import useOperation from "@/hooks/api/common/useOperation";

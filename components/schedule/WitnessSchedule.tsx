@@ -5,9 +5,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
   TooltipContent,
-} from "../ui/tooltip";
+} from "../ui/hybrid-tooltip";
 import PageTitle from "../PageTitle";
-
 
 export interface Witness {
   producerRank: number | null;
@@ -86,7 +85,11 @@ const WitnessSchedule: React.FC<WitnessScheduleProps> = ({
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <ShieldCheck color="orange" strokeWidth={3} size={14} />
+                        <ShieldCheck
+                          color="orange"
+                          strokeWidth={3}
+                          size={14}
+                        />
                       </TooltipTrigger>
                       <TooltipContent className="bg-theme text-text border-0">
                         <p>Backup Witness</p>
@@ -106,7 +109,11 @@ const WitnessSchedule: React.FC<WitnessScheduleProps> = ({
                       size={14}
                     />
                   ) : blockHasBeenProduced ? (
-                    <Check size={14} color="green" strokeWidth={4} />
+                    <Check
+                      size={14}
+                      color="green"
+                      strokeWidth={4}
+                    />
                   ) : null}
                   <span>Block #{witness.blockNumber}</span>
                 </div>
