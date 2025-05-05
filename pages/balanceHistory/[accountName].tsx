@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useMemo, useState, useCallback } from "react";
+import React, { useMemo, useState } from "react";
 import moment from "moment";
 import { config } from "@/Config";
 
@@ -26,6 +26,7 @@ import ScrollTopButton from "@/components/ScrollTopButton";
 import useAggregatedBalanceHistory from "@/hooks/api/balanceHistory/useAggregatedHistory";
 import PageTitle from "@/components/PageTitle";
 import FilterSectionToggle from "@/components/account/FilterSectionToggle";
+import { setLocalStorage, getLocalStorage } from "@/utils/LocalStorage";
 
 const MemoizedBalanceHistoryChart = React.memo(BalanceHistoryChart);
 
@@ -33,6 +34,36 @@ interface Operation {
   timestamp: number;
   balance: number;
 }
+
+interface BalanceHistorySearchParams {
+  accountName?: string;
+  coinType: string;
+  fromBlock: Date | number | undefined;
+  toBlock: Date | number | undefined;
+  fromDate: undefined;
+  toDate: undefined;
+  lastBlocks: number | undefined;
+  lastTime: number | undefined;
+  timeUnit: string | undefined;
+  rangeSelectKey: string | undefined;
+  page: number | undefined;
+  filters: boolean[] | undefined;
+}
+
+export const defaultBalanceHistorySearchParams: BalanceHistorySearchParams = {
+  accountName: undefined,
+  coinType: "HIVE",
+  fromBlock: undefined,
+  toBlock: undefined,
+  fromDate: undefined,
+  toDate: undefined,
+  lastBlocks: undefined,
+  lastTime: 30,
+  timeUnit: "days",
+  rangeSelectKey: "none",
+  page: undefined,
+  filters: undefined,
+};
 
 const prepareData = (operations: Operation[]) => {
   if (!operations || operations.length === 0) return [];
@@ -69,15 +100,17 @@ export default function BalanceHistory() {
   // Initialize state variables outside the conditional block
   const [isFiltersActive, setIsFiltersActive] = useState(false);
   const [isBalanceFilterSectionVisible, setIsBalanceFilterSectionVisible] =
-    useState(false);
+    useState(getLocalStorage("is_balance_filters_visible", true) ?? false);
 
   const handleFiltersVisibility = () => {
     setIsBalanceFilterSectionVisible(!isBalanceFilterSectionVisible);
+    if (isFiltersActive) {
+      setLocalStorage(
+        "is_balance_filters_visible",
+        !isBalanceFilterSectionVisible
+      );
+    }
   };
-
-  const updateIsFiltersActive = useCallback((newValue: boolean) => {
-    setIsFiltersActive(newValue);
-  }, []);
 
   const {
     accountDetails,
@@ -86,39 +119,10 @@ export default function BalanceHistory() {
     notFound,
   } = useAccountDetails(accountNameFromRoute, false);
 
-  interface BalanceHistorySearchParams {
-    accountName?: string;
-    coinType: string;
-    fromBlock: Date | number | undefined;
-    toBlock: Date | number | undefined;
-    fromDate: undefined;
-    toDate: undefined;
-    lastBlocks: number | undefined;
-    lastTime: number | undefined;
-    timeUnit: string | undefined;
-    rangeSelectKey: string | undefined;
-    page: number;
-    filters: boolean[] | undefined;
-  }
-
-  const defaultSearchParams: BalanceHistorySearchParams = {
-    accountName: accountNameFromRoute,
-    coinType: "HIVE",
-    fromBlock: undefined,
-    toBlock: undefined,
-    fromDate: undefined,
-    toDate: undefined,
-    lastBlocks: undefined,
-    lastTime: 30,
-    timeUnit: "days",
-    rangeSelectKey: "none",
-    page: 1,
-    filters: undefined,
-  };
-
-  const { paramsState, setParams } = useURLParams(defaultSearchParams, [
-    "accountName",
-  ]);
+  const { paramsState, setParams } = useURLParams(
+    defaultBalanceHistorySearchParams,
+    ["accountName"]
+  );
 
   const {
     filters: filtersParam,
@@ -293,8 +297,10 @@ export default function BalanceHistory() {
           <BalanceHistorySearch
             paramsState={paramsState}
             setParams={setParams}
-            isBalanceFilterSectionVisible={isBalanceFilterSectionVisible}
-            setIsFiltersActive={updateIsFiltersActive}
+            isVisible={isBalanceFilterSectionVisible}
+            setIsVisible={setIsBalanceFilterSectionVisible}
+            setIsFiltersActive={setIsFiltersActive}
+            isFiltersActive={isFiltersActive}
           />
 
           <Card
@@ -346,7 +352,7 @@ export default function BalanceHistory() {
               )}
               total_operations={accountBalanceHistory.total_operations}
               total_pages={accountBalanceHistory.total_pages}
-              current_page={paramsState.page}
+              current_page={paramsState.page ?? 1}
               account_name={accountNameFromRoute}
             />
           ) : (
