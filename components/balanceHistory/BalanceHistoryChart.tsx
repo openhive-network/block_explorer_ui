@@ -20,25 +20,33 @@ interface BalanceHistoryChartProps {
     timestamp: string;
     balance_change: number;
     balance: number;
+    savings_balance?: number;
+    savings_balance_change?: number;
   }[];
   vestsBalanceHistoryData?: {
     timestamp: string;
     balance_change: number;
     balance: number;
+    savings_balance?: number;
+    savings_balance_change?: number;
   }[];
   hbdBalanceHistoryData?: {
     timestamp: string;
     balance_change: number;
     balance: number;
+    savings_balance?: number;
+    savings_balance_change?: number;
   }[];
   className?: string;
   quickView?: boolean;
+  showSavingsBalance?: boolean;
 }
 
 export const colorMap: Record<string, string> = {
   HIVE: "#8884d8",
   VESTS: "#82ca9d",
   HBD: "#ff7300",
+  SAVINGS: "#1E90FF",
 };
 
 const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
@@ -47,6 +55,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
   hbdBalanceHistoryData,
   className = "",
   quickView = false,
+  showSavingsBalance = false,
 }) => {
   const [selectedCoinType, setSelectedCoinType] = useState<string>("HIVE");
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 480);
@@ -90,7 +99,13 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
 
   const dataMap: Record<
     string,
-    { timestamp: string; balance_change: number; balance: number }[]
+    {
+      timestamp: string;
+      balance_change: number;
+      balance: number;
+      savings_balance?: number;
+      savings_balance_change?: number;
+    }[]
   > = {
     HIVE: hiveBalanceHistoryData || [],
     VESTS: vestsBalanceHistoryData || [],
@@ -112,39 +127,65 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
   }) => {
     if (quickView || !active || !payload || payload.length === 0) return null;
 
-    const actualBalance =
-      dataMap[selectedCoinType]?.find((item) => item.timestamp === label)
-        ?.balance ?? 0;
-    const balanceChange = payload[0]?.payload.balance_change ?? 0;
+    const selectedData = dataMap[selectedCoinType]?.find((item) => item.timestamp === label);
+    if (!selectedData) return null;
+
+    const actualBalance = selectedData?.balance ?? 0;
+    const balanceChange = selectedData?.balance_change ?? 0;
+    const savingsBalance = selectedData?.savings_balance ?? undefined;
+    const savingsBalanceChange = selectedData?.savings_balance_change ?? 0;
 
     const isPositiveChange = balanceChange > 0;
-    const isZeroChange = balanceChange == 0;
+    const isZeroChange = balanceChange === 0;
+    const isSavingsPositiveChange = savingsBalanceChange > 0;
+    const isSavingsZeroChange = savingsBalanceChange === 0;
+
+    const currentCoinColor = colorMap[selectedCoinType];
 
     return (
       <div className="bg-theme dark:bg-theme p-2 rounded border border-explorer-light-gray">
         <p className="font-bold">{`Date: ${label}`}</p>
-        {payload.map((pld, index) => (
-          <div key={index} style={{ color: pld.stroke }}>
-            <div className="flex items-center">
-              {isPositiveChange ? (
-                <ArrowUp className="bg-green-400 p-[1.2px]" size={16}/>
-                
-              ) : isZeroChange ? <Minus className="bg-black p-[1.2px] mr-1" color={"white"} size={16}/> : (
-                <ArrowDown className="bg-red-400  p-[1.2px]" size={16}/> 
+        <div className="mb-1" style={{ color: currentCoinColor }}>
+          {/* Divider with color */}
+          <div className="flex items-center" style={{ color: currentCoinColor }}>
+            {isPositiveChange ? (
+              <ArrowUp className="bg-green-400 p-[1.2px]" size={16} />
+            ) : isZeroChange ? (
+              <Minus className="bg-black p-[1.2px] mr-1" color={currentCoinColor} size={16} />
+            ) : (
+              <ArrowDown className="bg-red-400  p-[1.2px]" size={16} />
+            )}
+            {` ${formatNumber(balanceChange, selectedCoinType === "VESTS")}`}
+          </div>
+          <div style={{ color: currentCoinColor }}>{`Balance: ${formatNumber(
+            actualBalance,
+            selectedCoinType === "VESTS"
+          )}`}</div>
+        </div>
+
+        {showSavingsBalance && savingsBalance !== undefined && (
+          <div className=" border-t border-gray-400 dark:border-gray-600 mt-1">
+            <div className="flex items-center" style={{ color: colorMap.SAVINGS }}>
+              {isSavingsPositiveChange ? (
+                <ArrowUp className="bg-green-400 p-[1.2px]" size={16} />
+              ) : isSavingsZeroChange ? (
+                <Minus className="bg-black p-[1.2px] mr-1" color={colorMap.SAVINGS} size={16} />
+              ) : (
+                <ArrowDown className="bg-red-400 p-[1.2px]" size={16} />
               )}
               {` ${formatNumber(
-                balanceChange,
-                selectedCoinType === "VESTS",
-                false
+                savingsBalanceChange,
+                selectedCoinType === "VESTS"
               )}`}
             </div>
-            <div>{`Balance: ${formatNumber(
-              actualBalance,
-              selectedCoinType === "VESTS",
-              false
-            )}`}</div>
+            <div style={{ color: colorMap.SAVINGS }}>
+              {`Savings Balance: ${formatNumber(
+                savingsBalance,
+                selectedCoinType === "VESTS"
+              )}`}
+            </div>
           </div>
-        ))}
+        )}
       </div>
     );
   };
@@ -166,13 +207,19 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     ));
   };
 
-  const getMinMax = (data: { balance: number }[]) => {
+  const getMinMax = (data: { balance: number; savings_balance?: number }[]) => {
     if (!data || data.length === 0) {
-      return [0, 1]; // Default values if data is empty
+      return [0, 1];
     }
-    const balance = data.map((item) => item.balance);
-    const minValue = Math.min(...balance);
-    const maxValue = Math.max(...balance);
+
+    let allValues: number[] = data.map((item) => item.balance);
+    if (showSavingsBalance) {
+      const savingsValues = data.map(item => item.savings_balance).filter(value => value !== undefined) as number[];
+      allValues = allValues.concat(savingsValues);
+    }
+
+    const minValue = Math.min(...allValues);
+    const maxValue = Math.max(...allValues);
     return [minValue, maxValue];
   };
 
@@ -180,20 +227,23 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
   const [minValue, maxValue] = zoomedDomain || [fullDataMin, fullDataMax];
 
   const handleBrushAreaChange = (domain: { startIndex?: number; endIndex?: number }) => {
-  if (!domain || domain.startIndex === undefined || domain.endIndex === undefined) {
+    if (!domain || domain.startIndex === undefined || domain.endIndex === undefined) {
       // Reset zoom if brush is cleared or start/end index is undefined
       setZoomedDomain([fullDataMin, fullDataMax]);
       return;
-  }
+    }
 
-  const { startIndex, endIndex } = domain;
-  const visibleData = (dataMap[selectedCoinType] || []).slice(startIndex, endIndex + 1);
+    const { startIndex, endIndex } = domain;
+    const visibleData = (dataMap[selectedCoinType] || []).slice(
+      startIndex,
+      endIndex + 1
+    );
 
-  if (visibleData.length > 0) {
+    if (visibleData.length > 0) {
       const [min, max] = getMinMax(visibleData);
       setZoomedDomain([min, max]);
-  }
-};
+    }
+  };
 
 
   return (
@@ -252,6 +302,19 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             hide={hiddenDataKeys.includes("balance")}
           />
 
+          {showSavingsBalance && (
+            <Line
+              type="monotone"
+              dataKey="savings_balance"
+              stroke={colorMap.SAVINGS}
+              strokeWidth={2}
+              activeDot={{ r: 6 }}
+              name="Savings Balance"
+              dot={false}
+              hide={hiddenDataKeys.includes("savings_balance")}
+            />
+          )}
+
           {!quickView && (
             <Brush
               dataKey="timestamp"
@@ -271,7 +334,9 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
               const dataKey = event.dataKey as string;
               const isHidden = hiddenDataKeys.includes(dataKey as string);
               if (isHidden) {
-                setHiddenDataKeys(hiddenDataKeys.filter((key) => key !== dataKey));
+                setHiddenDataKeys(
+                  hiddenDataKeys.filter((key) => key !== dataKey)
+                );
               } else {
                 setHiddenDataKeys([...hiddenDataKeys, dataKey]);
               }

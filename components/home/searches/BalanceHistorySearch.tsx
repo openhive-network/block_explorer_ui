@@ -23,6 +23,7 @@ interface AccountSearchParams {
   page: number | undefined;
   filters: boolean[] | undefined;
   coinType?: string;
+  includeSavings: boolean;
 }
 
 const defaultSearchParams: AccountSearchParams = {
@@ -38,6 +39,7 @@ const defaultSearchParams: AccountSearchParams = {
   page: undefined,
   filters: undefined,
   coinType: "HIVE", // Default to HIVE
+  includeSavings: false,
 };
 
 const COIN_TYPES = ["HIVE", "VESTS", "HBD"];
@@ -51,6 +53,9 @@ const BalanceHistorySearch = ({
   const [coinType, setCoinType] = useState<string>(
     paramsState.coinType ?? "HIVE"
   ); // State to store the selected coin name
+  const [includeSavings, setIncludeSavings] = useState<boolean>(
+    paramsState.includeSavings ?? false
+  );
   const router = useRouter();
   const { searchRanges } = useSearchesContext();
   const accountNameFromRoute = (router.query.accountName as string)?.slice(1);
@@ -150,6 +155,7 @@ const BalanceHistorySearch = ({
             : undefined,
         rangeSelectKey: searchRanges.rangeSelectKey,
         page: resetPage ? undefined : page,
+        includeSavings: includeSavings,
       });
     }
   };
@@ -159,6 +165,16 @@ const BalanceHistorySearch = ({
     setParams({
       ...paramsState,
       coinType: newCoinType,
+      page: undefined, // Reset the page when the coin type changes
+      includeSavings:false,
+    });
+  };
+
+  const handleSavingsChange = () => {
+    setIncludeSavings(!includeSavings);
+    setParams({
+      ...paramsState,
+      includeSavings: !includeSavings,
       page: undefined, // Reset the page when the coin type changes
     });
   };
@@ -172,17 +188,22 @@ const BalanceHistorySearch = ({
       lastTime: undefined,
       rangeSelectKey: "none",
       timeUnit: undefined,
+      includeSavings: false,
     });
     setIsFiltersActive(false);
     searchRanges.setRangeSelectKey("none");
     searchRanges.setTimeUnitSelectKey("days");
     searchRanges.setLastTimeUnitValue(undefined);
     setFilters([]);
+    setIncludeSavings(false);
   };
 
   useEffect(() => {
     if (paramsState.coinType) {
       setCoinType(paramsState.coinType);
+    }
+    if (paramsState.includeSavings !== undefined) {
+      setIncludeSavings(paramsState.includeSavings);
     }
     if (paramsState && !initialSearch) {
       handleSearch();
@@ -193,7 +214,8 @@ const BalanceHistorySearch = ({
   useEffect(() => {
     let filtersActive = false;
     Object.keys(defaultSearchParams).forEach((key) => {
-      if (key === "accountName" || key === "page") return;
+      if (key === "accountName" || key === "page" || key === "includeSavings")
+        return;
 
       const param = paramsState[key as keyof typeof defaultSearchParams];
       const defaultParam =
@@ -242,6 +264,24 @@ const BalanceHistorySearch = ({
             rangesProps={searchRanges}
             setIsSearchButtonDisabled={setIsSearchButtonDisabled}
           />
+          {/* Savings checkbox */}
+          <div className="flex items-center mb-3">
+            <input
+              type="checkbox"
+              id="includeSavings"
+              checked={includeSavings}
+              onChange={handleSavingsChange}
+              disabled={coinType === "VESTS"}
+              className="mr-2 h-4 w-4 accent-blue-500 mt-4"
+              data-testid="savings-checkbox"
+            />
+            <label
+              htmlFor="includeSavings"
+              className={cn("mt-4", { "text-gray-500": coinType === "VESTS" })}
+            >
+              Savings
+            </label>
+          </div>
           {/* Operations Types commented for now
           <div className="flex items-center mb-10 mt-2">
         <OperationTypesDialog
