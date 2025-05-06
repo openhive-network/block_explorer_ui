@@ -37,7 +37,7 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
     "HIVE",
     "daily",
     "asc",
-    defaultFromDate,
+    defaultFromDate
   );
 
   const {
@@ -49,7 +49,7 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
     "VESTS",
     "daily",
     "asc",
-    defaultFromDate,
+    defaultFromDate
   );
 
   const {
@@ -61,7 +61,7 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
     "HBD",
     "daily",
     "asc",
-    defaultFromDate,
+    defaultFromDate
   );
 
   const handleBalancesVisibility = () => {
@@ -73,40 +73,40 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
     vestsBalanceHistoryLoading ||
     hbdBalanceHistoryLoading;
   const hasData =
-    hiveBalanceHistory ||
-    vestsBalanceHistory ||
-    hbdBalanceHistory;
+    hiveBalanceHistory || vestsBalanceHistory || hbdBalanceHistory;
   const hasError =
     hiveBalanceHistoryError ||
     vestsBalanceHistoryError ||
     hbdBalanceHistoryError;
 
-    const prepareData = (
-      operations: { timestamp: string; balance: number }[]
-    ) => {
-      if (!operations || operations.length === 0) return [];
+  const prepareData = (
+    operations: { timestamp: string; balance: number }[]
+  ) => {
+    if (!operations || operations.length === 0) return [];
 
-      const aggregatedData = new Map<
-        string,
-        { balance: number; balance_change: number }
-      >();
+    const aggregatedData = new Map<
+      string,
+      { balance: number; balance_change: number }
+    >();
 
-      operations.forEach((operation: any) => {
-        let balance_change = operation.balance - operation.prev_balance;
-        let balance = parseInt(operation.balance, 10);
+    operations.forEach((operation: any) => {
+      let balance_change =
+        operation.balance.balance - operation.prev_balance.balance;
+      let balance = parseInt(operation.balance.balance, 10);
 
-        aggregatedData.set(operation.date, { balance, balance_change });
-      });
+      aggregatedData.set(operation.date, { balance, balance_change });
+    });
 
-      const preparedData = Array.from(aggregatedData.entries()).map(
-        ([date, data]) => ({
-          timestamp: date,
-          balance: data.balance,
-          balance_change: data.balance_change,
-        })
-      );
-      return preparedData;
-    };
+    const preparedData = Array.from(aggregatedData.entries()).map(
+      ([date, data]) => ({
+        timestamp: date,
+        balance: data.balance,
+        balance_change: data.balance_change,
+      })
+    );
+
+    return preparedData;
+  };
 
   const handleButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation(); // Prevents the event from bubbling up

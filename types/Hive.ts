@@ -799,12 +799,18 @@ namespace Hive {
     "from-block"?: Date | number | undefined;
     "to-block"?: Date | number | undefined;
   }
+
+  export class Balance {
+    balance!: string;
+    savings_balance!: string;
+  }
+
   export class AccountAggregatedBalanceHistoryResponse {
-    balance!: number;
-    prev_balance!: number;
-    min_balance!: number;
-    max_balance!: number;
     date!: Date;
+    balance!: Balance;
+    prev_balance!: Balance;
+    min_balance!: Balance;
+    max_balance!: Balance;
   }
 
   export class Delegation {
