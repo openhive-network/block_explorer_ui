@@ -39,7 +39,7 @@ interface BalanceHistoryChartProps {
   }[];
   className?: string;
   quickView?: boolean;
-  showSavingsBalance?: boolean;
+  showSavingsBalance?: string;
 }
 
 export const colorMap: Record<string, string> = {
@@ -55,7 +55,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
   hbdBalanceHistoryData,
   className = "",
   quickView = false,
-  showSavingsBalance = false,
+  showSavingsBalance = "yes",
 }) => {
   const [selectedCoinType, setSelectedCoinType] = useState<string>("HIVE");
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 480);
@@ -213,7 +213,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     }
 
     let allValues: number[] = data.map((item) => item.balance);
-    if (showSavingsBalance) {
+    if (showSavingsBalance=="yes") {
       const savingsValues = data.map(item => item.savings_balance).filter(value => value !== undefined) as number[];
       allValues = allValues.concat(savingsValues);
     }
@@ -302,7 +302,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             hide={hiddenDataKeys.includes("balance")}
           />
 
-          {showSavingsBalance && (
+          {showSavingsBalance =="yes" && (
             <Line
               type="monotone"
               dataKey="savings_balance"

@@ -29,9 +29,7 @@ const BalanceHistorySearch = ({
   const [coinType, setCoinType] = useState<string>(
     paramsState.coinType ?? DEFAULT_COIN_TYPE
   ); // State to store the selected coin name
-  const [includeSavings, setIncludeSavings] = useState<boolean>(
-    paramsState.includeSavings ?? false
-  );
+  const [includeSavings, setIncludeSavings] = useState<string>(paramsState.includeSavings);
   const router = useRouter();
   const { searchRanges } = useSearchesContext();
   const accountNameFromRoute = (router.query.accountName as string)?.slice(1);
@@ -112,23 +110,30 @@ const BalanceHistorySearch = ({
 
   const handleCoinTypeChange = (newCoinType: string) => {
     setCoinType(newCoinType);
-    setParams({
+    let paramsUpdate = {
       ...paramsState,
       coinType: newCoinType,
-      page: undefined, // Reset the page when the coin type changes
-      includeSavings: false,
-    });
+      page: undefined,
+    };
+  
+    if (newCoinType === "VESTS") {
+      paramsUpdate.includeSavings = "no";
+      setIncludeSavings("no");
+    }
+  
+    setParams(paramsUpdate);
   };
 
   const handleSavingsChange = () => {
-    setIncludeSavings(!includeSavings);
+    setIncludeSavings(includeSavings=="yes"?"no":"yes");
     setParams({
       ...paramsState,
-      includeSavings: !includeSavings,
+      includeSavings:includeSavings=="yes"?"no":"yes",
       page: undefined, // Reset the page when the coin type changes
     });
   };
 
+  
   const handleFilterClear = () => {
     const {
       setRangeSelectKey,
@@ -150,6 +155,7 @@ const BalanceHistorySearch = ({
     setLastTimeUnitValue(30);
     setLastBlocksValue(1000);
     setCoinType(DEFAULT_COIN_TYPE);
+    setIncludeSavings("yes");
 
     setIsVisible(false);
     setIsFiltersActive(false);
@@ -223,7 +229,7 @@ const BalanceHistorySearch = ({
             <input
               type="checkbox"
               id="includeSavings"
-              checked={includeSavings}
+              checked={(includeSavings=="yes"?true:false)}
               onChange={handleSavingsChange}
               disabled={coinType === "VESTS"}
               className="mr-2 h-4 w-4 accent-blue-500 mt-4"
