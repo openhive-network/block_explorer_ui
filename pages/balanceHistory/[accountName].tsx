@@ -49,7 +49,7 @@ interface BalanceHistorySearchParams {
   rangeSelectKey: string | undefined;
   page: number | undefined;
   filters: boolean[] | undefined;
-  includeSavings: boolean;
+  includeSavings: string;
 }
 
 export const defaultBalanceHistorySearchParams: BalanceHistorySearchParams = {
@@ -65,7 +65,7 @@ export const defaultBalanceHistorySearchParams: BalanceHistorySearchParams = {
   rangeSelectKey: "none",
   page: undefined,
   filters: undefined,
-  includeSavings: false,
+  includeSavings: "yes",
 };
 
 const prepareData = (operations: Operation[]) => {
