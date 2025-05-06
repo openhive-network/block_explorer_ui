@@ -223,7 +223,7 @@ const BlocksSearch = ({
 
   useEffect(() => {
     if (isFromRangeSelection === true && firstUserSelectedBlock) {
-      setToBlock(firstUserSelectedBlock);
+      searchRanges.setToBlock(firstUserSelectedBlock);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFromRangeSelection, firstUserSelectedBlock, searchRanges]);
