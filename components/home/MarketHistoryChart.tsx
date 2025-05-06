@@ -25,11 +25,11 @@ const CustomTooltip = ({
   if (active && payload && payload.length) {
     return (
       <div className="bg-buttonHover text-text p-2 rounded-xl">
-        {payload.map(({ payload: { tooltipDate, avgPrice, volume } }) => {
+        {payload.map(({ payload: { tooltipDate, close, volume } }) => {
           return (
             <div key={tooltipDate}>
               <p>{`Date: ${tooltipDate}`}</p>
-              <p>{`Average Price: $${avgPrice}`}</p>
+              <p>{`Close Price: $${close}`}</p>
               <p>{`Volume: ${volume.toLocaleString("en-US")} HIVE`}</p>
             </div>
           );
@@ -41,15 +41,14 @@ const CustomTooltip = ({
   return null;
 };
 
-// Using volume to calculate the average daily price of HIVE
-export const calculateAvgHivePrice = (
+export const calculateCloseHivePrice = (
   hive: Hive.MarketData,
   nonHive: Hive.MarketData
 ) => {
-  const hiveVolume = hive.volume;
-  const nonHiveVolume = nonHive.volume;
+  const hiveClose = hive.close;
+  const nonHiveClose = nonHive.close;
 
-  return (nonHiveVolume / hiveVolume).toFixed(4);
+  return (nonHiveClose / hiveClose).toFixed(4);
 };
 
 interface MarketChartProps {
@@ -58,7 +57,7 @@ interface MarketChartProps {
 }
 interface ChartData {
   date: string;
-  avgPrice: string;
+  close: string;
   volume: number;
 }
 
@@ -80,21 +79,21 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({
 
     const filterData = data.buckets.map((bucket) => {
       const { hive, non_hive } = bucket;
-      const hiveAveragePrice = calculateAvgHivePrice(hive, non_hive);
+      const hiveClosePrice = calculateCloseHivePrice(hive, non_hive);
 
       return {
         date: moment(bucket.open).format("MMM D"),
         tooltipDate: moment(bucket.open).format("YYYY MMM D"),
-        avgPrice: hiveAveragePrice,
+        close: hiveClosePrice,
         volume: bucket.hive.volume,
       };
     });
 
     const min = Math.min(
-      ...filterData?.map((d: ChartData) => parseFloat(d.avgPrice))
+      ...filterData?.map((d: ChartData) => parseFloat(d.close))
     );
     const max = Math.max(
-      ...filterData?.map((d: ChartData) => parseFloat(d.avgPrice))
+      ...filterData?.map((d: ChartData) => parseFloat(d.close))
     );
 
     setChartData(filterData);
@@ -102,7 +101,7 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({
     setMaxValue(max);
   }, [data, hiveChain]);
 
-  const lastHivePrice = chartData?.[chartData.length - 1].avgPrice;
+  const lastHivePrice = chartData?.[chartData.length - 1].close;
   const strokeColor = theme === "dark" ? "#FFF" : "#000";
 
   return (
@@ -116,7 +115,7 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({
           stroke={strokeColor}
         />
         <YAxis
-          dataKey="avgPrice"
+          dataKey="close"
           domain={[minValue, maxValue]}
           stroke={strokeColor}
         />
@@ -128,7 +127,7 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({
         <Line
           name={`Hive Price: $${lastHivePrice ?? 0}`}
           type="monotone"
-          dataKey="avgPrice"
+          dataKey="close"
           stroke={colorMap.HIVE}
           dot={false}
           strokeWidth={2}
