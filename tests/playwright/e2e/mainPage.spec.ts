@@ -26,49 +26,71 @@ test.describe("Block Explorer UI tests", () => {
     await mainPage.validateMainPageIsLoaded();
   });
 
-  test("Move to the block page by clicking block link",async ({ page, browserName }) => {
-    test.skip(browserName === 'webkit', 'This feature is fleaky only in Webkit');
+  test("Move to the block page by clicking block link", async ({
+    page,
+    browserName,
+  }) => {
+    test.skip(
+      browserName === "webkit",
+      "This feature is fleaky only in Webkit"
+    );
     test.slow();
     await mainPage.gotoBlockExplorerPage();
     await mainPage.validateMainPageIsLoaded();
 
     // Extract number as string from Head Block Card Block Link
-    await mainPage.page.waitForSelector(await mainPage.headBlockCardFundAndSupplyExpandableList['_selector']);
-    const block: string = await mainPage.headBlockCardBlockLink.textContent() || '';
+    await mainPage.page.waitForSelector(
+      await mainPage.headBlockCardFundAndSupplyExpandableList["_selector"]
+    );
+    const block: string =
+      (await mainPage.headBlockCardBlockLink.textContent()) || "";
     const foundNumberInBlock: any = block.match(RegExp(/\d+$/gm));
     const blockNumber: string = await foundNumberInBlock[0];
-
 
     await mainPage.headBlockCardBlockLink.click();
     await blockPage.validateBlockPageIsLoaded();
 
     // Extract number as string from Block Page Details Card
-    const blockNumberBlockPage: string = await blockPage.blockDetailsBlockNumber.textContent() || '';
-    const foundNumberInBlockDetails: any = blockNumberBlockPage.match(RegExp(/\d+$/gm));
+    const blockNumberBlockPage: string =
+      (await blockPage.blockDetailsBlockNumber.textContent()) || "";
+    const foundNumberInBlockDetails: any = blockNumberBlockPage.match(
+      RegExp(/\d+$/gm)
+    );
     const blockNumberDetails: string = await foundNumberInBlockDetails[0];
 
     await blockPage.validateBlockNumber(blockNumber); // against block number in head block card
     await blockPage.validateBlockNumber(blockNumberDetails); // against block number in Block Page Details Card
   });
 
-  test("Move to the block page by clicking block link and back to the home page",async ({ page, browserName }) => {
-    test.skip(browserName === 'webkit', 'This feature is fleaky only in Webkit');
+  test("Move to the block page by clicking block link and back to the home page", async ({
+    page,
+    browserName,
+  }) => {
+    test.skip(
+      browserName === "webkit",
+      "This feature is fleaky only in Webkit"
+    );
     await mainPage.gotoBlockExplorerPage();
     await mainPage.validateMainPageIsLoaded();
 
     // Extract number as string from Head Block Card Block Link
-    await mainPage.page.waitForSelector(await mainPage.headBlockCardFundAndSupplyExpandableList['_selector']);
-    const block: string = await mainPage.headBlockCardBlockLink.textContent() || '';
+    await mainPage.page.waitForSelector(
+      await mainPage.headBlockCardFundAndSupplyExpandableList["_selector"]
+    );
+    const block: string =
+      (await mainPage.headBlockCardBlockLink.textContent()) || "";
     const foundNumberInBlock: any = block.match(RegExp(/\d+$/gm));
     const blockNumber: string = foundNumberInBlock[0];
-
 
     await mainPage.headBlockCardBlockLink.click();
     await blockPage.validateBlockPageIsLoaded();
 
     // Extract number as string from Block Page Details Card
-    const blockNumberBlockPage: string = await blockPage.blockDetailsBlockNumber.textContent() || '';
-    const foundNumberInBlockDetails: any = blockNumberBlockPage.match(RegExp(/\d+$/gm));
+    const blockNumberBlockPage: string =
+      (await blockPage.blockDetailsBlockNumber.textContent()) || "";
+    const foundNumberInBlockDetails: any = blockNumberBlockPage.match(
+      RegExp(/\d+$/gm)
+    );
     const blockNumberDetails: string = foundNumberInBlockDetails[0];
 
     await blockPage.validateBlockNumber(blockNumber); // against block number in head block card
@@ -79,11 +101,14 @@ test.describe("Block Explorer UI tests", () => {
     await mainPage.validateMainPageIsLoaded();
   });
 
-  test("Move to the Account page by clicking current witness link",async ({ page }) => {
+  test("Move to the Account page by clicking current witness link", async ({
+    page,
+  }) => {
     await mainPage.gotoBlockExplorerPage();
     await mainPage.validateMainPageIsLoaded();
 
-    const currentWitnessName: string = await mainPage.headBlockCardWitnessName.textContent() || '';
+    const currentWitnessName: string =
+      (await mainPage.headBlockCardWitnessName.textContent()) || "";
 
     // Click current witness link
     await mainPage.headBlockCardWitnessLink.click();
@@ -93,11 +118,14 @@ test.describe("Block Explorer UI tests", () => {
     await accountPage.validateAccountName(currentWitnessName);
   });
 
-  test("Move to the Account page by clicking current witness link and back to the home page",async ({ page }) => {
+  test("Move to the Account page by clicking current witness link and back to the home page", async ({
+    page,
+  }) => {
     await mainPage.gotoBlockExplorerPage();
     await mainPage.validateMainPageIsLoaded();
 
-    const currentWitnessName: string = await mainPage.headBlockCardWitnessName.textContent() || '';
+    const currentWitnessName: string =
+      (await mainPage.headBlockCardWitnessName.textContent()) || "";
 
     // Click current witness link
     await mainPage.headBlockCardWitnessLink.click();
@@ -110,7 +138,9 @@ test.describe("Block Explorer UI tests", () => {
     await mainPage.validateMainPageIsLoaded();
   });
 
-  test("Move to the Witness page by clicking the witness link in navbar",async ({ page }) => {
+  test("Move to the Witness page by clicking the witness link in navbar", async ({
+    page,
+  }) => {
     witnessesPage = new Witnesses(page);
 
     await mainPage.gotoBlockExplorerPage();
@@ -122,7 +152,9 @@ test.describe("Block Explorer UI tests", () => {
     await witnessesPage.validateWitnessesPageIsLoaded();
   });
 
-  test("Move to the Witness page by clicking the witness link in navbar and back to the home page",async ({ page }) => {
+  test("Move to the Witness page by clicking the witness link in navbar and back to the home page", async ({
+    page,
+  }) => {
     witnessesPage = new Witnesses(page);
 
     await mainPage.gotoBlockExplorerPage();
@@ -137,7 +169,9 @@ test.describe("Block Explorer UI tests", () => {
     await mainPage.validateMainPageIsLoaded();
   });
 
-  test("Move to the Witness page by clicking the See more link in Top Witnesses and back to the home page",async ({ page }) => {
+  test("Move to the Witness page by clicking the See more link in Top Witnesses and back to the home page", async ({
+    page,
+  }) => {
     witnessesPage = new Witnesses(page);
 
     await mainPage.gotoBlockExplorerPage();
@@ -152,7 +186,9 @@ test.describe("Block Explorer UI tests", () => {
     await mainPage.validateMainPageIsLoaded();
   });
 
-  test("Validate that expanding Fund and Supply list displays the data", async ({ page }) => {
+  test("Validate that expanding Fund and Supply list displays the data", async ({
+    page,
+  }) => {
     await mainPage.gotoBlockExplorerPage();
     await mainPage.validateMainPageIsLoaded();
 
@@ -163,7 +199,9 @@ test.describe("Block Explorer UI tests", () => {
     await expect(mainPage.contentFundAndSupplyExpandableList).toBeHidden();
   });
 
-  test("Validate that expanding Hive Parameters list displays the data", async ({ page }) => {
+  test("Validate that expanding Hive Parameters list displays the data", async ({
+    page,
+  }) => {
     await mainPage.gotoBlockExplorerPage();
     await mainPage.validateMainPageIsLoaded();
 
@@ -174,18 +212,24 @@ test.describe("Block Explorer UI tests", () => {
     await expect(mainPage.contentHiveParametersExpandableList).toBeHidden();
   });
 
-  test("Validate that expanding Blockchain Dates list displays the data", async ({ page }) => {
+  test("Validate that expanding Blockchain Dates list displays the data", async ({
+    page,
+  }) => {
     await mainPage.gotoBlockExplorerPage();
     await mainPage.validateMainPageIsLoaded();
 
     await expect(mainPage.contentBlockchainDatesExpandableList).toBeHidden();
     await mainPage.headBlockCardBlockchainDatesExpandableList.click();
-    await expect(mainPage.contentBlockchainDatesExpandableList).not.toBeHidden();
+    await expect(
+      mainPage.contentBlockchainDatesExpandableList
+    ).not.toBeHidden();
     await mainPage.headBlockCardBlockchainDatesExpandableList.click();
     await expect(mainPage.contentBlockchainDatesExpandableList).toBeHidden();
   });
 
-  test("Validate that database api address link open the dialog to change api address", async ({ page }) => {
+  test("Validate that database api address link open the dialog to change api address", async ({
+    page,
+  }) => {
     const apiAddressDialog = new ApiAddressDialog(page);
 
     await mainPage.gotoBlockExplorerPage();
@@ -197,7 +241,9 @@ test.describe("Block Explorer UI tests", () => {
     await mainPage.validateMainPageIsLoaded();
   });
 
-  test("Validate that node api address link open the dialog to change api address", async ({ page }) => {
+  test("Validate that node api address link open the dialog to change api address", async ({
+    page,
+  }) => {
     const apiAddressDialog = new ApiAddressDialog(page);
 
     await mainPage.gotoBlockExplorerPage();
@@ -209,10 +255,14 @@ test.describe("Block Explorer UI tests", () => {
     await mainPage.validateMainPageIsLoaded();
   });
 
-  test("Change database api address and back to the default one", async ({ page }) => {
-    const newDatabaseApiAddress: string = 'http://steem-10.syncad.com:3000/rpc';
-    const assertNewDatabeseApiAddress: string = 'Explorer backend API:http://steem-10.syncad.com:3000/rpc';
-    const assertDefaultDatabaseApiAddress: string = 'Explorer backend API:https://hafbe.openhive.network';
+  test("Change database api address and back to the default one", async ({
+    page,
+  }) => {
+    const newDatabaseApiAddress: string = "http://steem-10.syncad.com:3000/rpc";
+    const assertNewDatabeseApiAddress: string =
+      "Explorer backend API:http://steem-10.syncad.com:3000/rpc";
+    const assertDefaultDatabaseApiAddress: string =
+      "Explorer backend API:https://api.hive.blog";
     const apiAddressDialog = new ApiAddressDialog(page);
 
     await mainPage.gotoBlockExplorerPage();
@@ -224,20 +274,27 @@ test.describe("Block Explorer UI tests", () => {
     await apiAddressDialog.apiAddressSubmitButton.click();
     await page.waitForTimeout(1000);
     await mainPage.validateMainPageIsLoaded();
-    await apiAddressDialog.validateDatabaseApiInFooter(assertNewDatabeseApiAddress);
+    await apiAddressDialog.validateDatabaseApiInFooter(
+      assertNewDatabeseApiAddress
+    );
 
     await apiAddressDialog.openDatabaseApiDialog();
     await apiAddressDialog.validateDatabaseApiDialogIsLoaded();
-    await apiAddressDialog.apiAddressResetButton.click( {force: true} );
+    await apiAddressDialog.apiAddressResetButton.click({ force: true });
     await page.waitForTimeout(1000);
     await mainPage.validateMainPageIsLoaded();
-    await apiAddressDialog.validateDatabaseApiInFooter(assertDefaultDatabaseApiAddress);
+    await apiAddressDialog.validateDatabaseApiInFooter(
+      assertDefaultDatabaseApiAddress
+    );
   });
 
-  test("Change node api address and back to the default one", async ({ page }) => {
-    const newNodeApiAddress: string = 'https://rpc.ausbit.dev';
-    const AssertNewNodeApiAddress: string = 'Hive node:https://rpc.ausbit.dev'
-    const AssertDefaultNodeApiAddress: string = 'Hive node:https://api.hive.blog'
+  test("Change node api address and back to the default one", async ({
+    page,
+  }) => {
+    const newNodeApiAddress: string = "https://rpc.ausbit.dev";
+    const AssertNewNodeApiAddress: string = "Hive node:https://rpc.ausbit.dev";
+    const AssertDefaultNodeApiAddress: string =
+      "Hive node:https://api.hive.blog";
     const apiAddressDialog = new ApiAddressDialog(page);
 
     await mainPage.gotoBlockExplorerPage();
@@ -259,20 +316,28 @@ test.describe("Block Explorer UI tests", () => {
     await apiAddressDialog.validateNodeApiInFooter(AssertDefaultNodeApiAddress);
   });
 
-  test("Validate the empty Comment Search is loaded after moving to comments page", async ({ page }) => {
+  test("Validate the empty Comment Search is loaded after moving to comments page", async ({
+    page,
+  }) => {
     const commentsPage = new CommentsPage(page);
 
     await commentsPage.gotoCommentsPage();
     await commentsPage.validateEmptyCommentsPageIsLoaded();
   });
 
-  test.skip("Validate the operations list has correct information after moving to the comments page by the specific URL with author and parmlink", async ({ page }) => {
+  test.skip("Validate the operations list has correct information after moving to the comments page by the specific URL with author and parmlink", async ({
+    page,
+  }) => {
     const commentsPage = new CommentsPage(page);
-    const specificUrl: string = '/comments?accountName=gtg&permlink=power-to-the-hive-but-just-a-little';
+    const specificUrl: string =
+      "/comments?accountName=gtg&permlink=power-to-the-hive-but-just-a-little";
 
     await commentsPage.gotoSpecificCommentsPage(specificUrl);
-    await commentsPage.validateSpecificCommentsPageIsLoaded('gtg', 'power-to-the-hive-but-just-a-little', '---');
+    await commentsPage.validateSpecificCommentsPageIsLoaded(
+      "gtg",
+      "power-to-the-hive-but-just-a-little",
+      "---"
+    );
     await commentsPage.validateOperationTypeCardsAreVisible();
   });
-
 });
