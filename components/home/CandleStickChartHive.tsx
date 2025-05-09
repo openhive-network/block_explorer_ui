@@ -15,7 +15,6 @@ import { useTheme } from "@/contexts/ThemeContext";
 import Hive from "@/types/Hive";
 import { colorMap } from "../balanceHistory/BalanceHistoryChart";
 import { Props as BarShapeProps } from "recharts/types/cartesian/Bar";
-import { calculateAvgHivePrice } from "./MarketHistoryChart";
 
 interface CandleStickChartProps {
   data: Hive.MarketHistory | undefined;
@@ -141,14 +140,12 @@ const prepareData = (data: Hive.MarketHistory | undefined) => {
     const close = Number((non_hive.close / hive.close).toFixed(4));
     const high = Number((non_hive.high / hive.high).toFixed(4));
     const low = Number((non_hive.low / hive.low).toFixed(4));
-    const avgPrice = calculateAvgHivePrice(hive, non_hive);
     const volume = hive.volume;
     return {
       openClose: [open, close],
       high,
       low,
       volume,
-      avgPrice,
       tooltipDate: moment(openTime).format("YYYY MMM D"),
       openTime: moment(openTime).format("MMM D"),
     };
@@ -162,7 +159,7 @@ const CustomShapeBarChart: React.FC<CandleStickChartProps> = ({ data }) => {
   const minValue: number = Math.min(...chartData!.map((d) => d.low));
   const maxValue: number = Math.max(...chartData!.map((d) => d.high));
 
-  const lastHivePrice = chartData?.[chartData.length - 1].avgPrice;
+  const lastHivePrice = chartData?.[chartData.length - 1].openClose[1];
   const strokeColor = theme === "dark" ? "#FFF" : "#000";
 
   return (

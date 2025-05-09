@@ -7,7 +7,7 @@ export const config = {
       : "https://api.hive.blog"
   }`,
   apiAddress: `${
-    env("API_ADDRESS") ? env("API_ADDRESS") : "https://hafbe.openhive.network"
+    env("API_ADDRESS") ? env("API_ADDRESS") : "https://api.hive.blog"
   }`,
   baseMomentTimeFormat: "YYYY/MM/DD HH:mm:ss UTC",
   gitHash: process.env.NEXT_PUBLIC_COMMIT_HASH,
@@ -55,13 +55,12 @@ export const config = {
     "https://api.c0ff33a.uk",
     "https://hive-api.arcange.eu",
     "https://hive-api.3speak.tv",
-    "https://hiveapi.actifit.io"
+    "https://hiveapi.actifit.io",
   ],
   defaultRestApiProvicers: [
     "https://hiveapi.actifit.io",
     "https://techcoderx.com",
     "https://api.hive.blog",
-    "https://hafbe.openhive.network"
-  ]
-
+    "https://hafbe.openhive.network",
+  ],
 };

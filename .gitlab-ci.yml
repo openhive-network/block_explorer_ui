@@ -1,10 +1,10 @@
 stages:
- - build
- - test
- - test-report-aggregate
- - deploy
- - publish
- - cleanup
+  - build
+  - test
+  - test-report-aggregate
+  - deploy
+  - publish
+  - cleanup
 
 variables:
   # Variables required by Common CI jobs
@@ -15,9 +15,9 @@ variables:
 
 include:
   - template: Workflows/Branch-Pipelines.gitlab-ci.yml
-  - project: 'hive/common-ci-configuration'
+  - project: "hive/common-ci-configuration"
     ref: d4e29410ea168096e1a822f77c7ce741d9cfb57a # develop
-    file: '/templates/docker_image_jobs.gitlab-ci.yml'
+    file: "/templates/docker_image_jobs.gitlab-ci.yml"
 
 docker-build:
   extends: .docker_image_builder_job_template
@@ -140,7 +140,7 @@ startup-test:
   image: mcr.microsoft.com/playwright:v1.47.0-jammy
   parallel:
     matrix:
-      - PROJECT: ['chromium', 'firefox', 'webkit']
+      - PROJECT: ["chromium", "firefox", "webkit"]
         SHARD_INDEX: [1, 2, 3, 4, 5]
         SHARD_TOTAL: 5
   script:
@@ -166,7 +166,7 @@ e2e-tests:
     - name: $IMAGE_NAME
       alias: block-explorer
       variables:
-        REACT_APP_API_ADDRESS: https://hafbe.openhive.network
+        REACT_APP_API_ADDRESS: https://api.hive.blog
         REACT_APP_HIVE_BLOG_API_ADDRESS: https://api.hive.blog
   variables:
     PORT: 5000
@@ -227,7 +227,7 @@ staging:deploy:
   extends: .deploy
   variables:
     PORT: 5000
-    API_ENDPOINT: https://hafbe.openhive.network
+    API_ENDPOINT: https://api.hive.blog
     HIVE_BLOG_API_ENDPOINT: https://api.hive.blog
     CONTAINER_NAME: block-explorer-ui
   environment:
@@ -243,7 +243,7 @@ test:deploy:
   extends: .deploy
   variables:
     PORT: 5001
-    API_ENDPOINT: https://hafbe.openhive.network
+    API_ENDPOINT: https://api.hive.blog
     HIVE_BLOG_API_ENDPOINT: https://api.hive.blog
     CONTAINER_NAME: block-explorer-ui-2
   environment:
