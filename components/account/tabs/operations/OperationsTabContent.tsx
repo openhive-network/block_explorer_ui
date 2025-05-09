@@ -60,12 +60,14 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     activeTab,
   } = paramsState;
 
+  const isOperationsTabActive = !activeTab || activeTab === "operations";
+
   const accountOperationsProps = {
     accountName,
     operationTypes: filtersParam.length
       ? convertBooleanArrayToIds(filtersParam)
       : null,
-    pageNumber: activeTab === "operations" ? paramsState.page : undefined,
+    pageNumber: isOperationsTabActive ? paramsState.page : undefined,
     fromBlock: fromBlockParam,
     toBlock: toBlockParam,
     startDate: fromDateParam,
