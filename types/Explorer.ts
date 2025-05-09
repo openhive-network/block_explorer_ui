@@ -313,7 +313,7 @@ declare module Explorer {
   }
 
   interface AllBlocksSearchProps extends CommonSearchProps {
-    pageNumber?: number;
+    page?: number;
     accountName?: string;
     operationTypes?: number[] | null;
     fromBlock?: number;
