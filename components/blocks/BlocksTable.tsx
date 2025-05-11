@@ -1,10 +1,4 @@
-import React, {
-  Fragment,
-  SetStateAction,
-  useEffect,
-  useState,
-  Dispatch,
-} from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Table,
@@ -14,7 +8,6 @@ import {
   TableHeader,
   TableHead,
 } from "@/components/ui/table";
-import AdditionalDetails from "../ui/AdditionalDetails";
 import CopyButton from "../ui/CopyButton";
 import {
   Tooltip,
@@ -33,32 +26,40 @@ import { BlockRow } from "@/pages/blocks";
 import JumpToPage from "../JumpToPage";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import Hive from "@/types/Hive";
-import fetchingService from "@/services/FetchingService";
 import { convertVestsToHP } from "@/utils/Calculations";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import DataCountMessage from "../DataCountMessage";
+import { Button } from "../ui/button";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import BlockOperationsContent from "./BlockOperationContent";
 
 interface BlocksTableProps {
   rows: BlockRow[];
-  openBlockNum?: number | null;
-  handleToggle: (blockNum: number) => void;
+  filters?: any;
   TABLE_CELLS: string[];
   currentPage: number;
   totalCount: number;
   onPageChange: (newPage: number) => void;
-  setIsBlockNavigationActive: Dispatch<SetStateAction<boolean>>;
 }
 
 const BlocksTable: React.FC<BlocksTableProps> = ({
   rows,
-  openBlockNum,
-  handleToggle,
+  filters,
   TABLE_CELLS,
   currentPage,
   totalCount,
   onPageChange,
-  setIsBlockNavigationActive,
 }) => {
+  const [expandedRows, setExpandedRows] = useState<number[]>([]);
+
+  const toggleRow = (blockNum: number) => {
+    setExpandedRows((prevExpandedRows) =>
+      prevExpandedRows.includes(blockNum)
+        ? prevExpandedRows.filter((rowId) => rowId !== blockNum)
+        : [...prevExpandedRows, blockNum]
+    );
+  };
+
   const buildTableHeader = () => {
     return (
       <TableRow>
@@ -66,9 +67,10 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
           <TableHead
             key={index}
             scope="col"
-            className={`text-left ${
-              index < 2 ? "sticky left-0 z-10 bg-theme" : ""
-            } ${index === 0 ? "min-w-2" : ""}`}
+            className={cn(
+              "text-left",
+              index === 0 ? "sticky left-0 z-10 bg-theme" : ""
+            )}
           >
             {cell}
           </TableHead>
@@ -79,94 +81,129 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
 
   const buildTableBody = () => {
     if (!rows) return null;
-    return rows.map((row) => (
-      <Fragment key={row.hash}>
-        <TableRow className="text-left bg-theme hover:bg-rowHover ">
-          <TableCell className="w-[12px] sticky left-0 z-10 bg-inherit">
-            <AdditionalDetails
-              handleToggle={handleToggle}
-              blockNum={row.block_num}
-              setIsBlockNavigationActive={setIsBlockNavigationActive}
-            >
-              {row.additionalDetailsContent}
-            </AdditionalDetails>
-          </TableCell>
-          <TableCell className="whitespace-nowrap sticky left-[32px] z-10 bg-inherit">
-            <div className="flex items-center space-x-2">
-              <Link href={`/block/${row.block_num}`} className="text-link">
-                {row.block_num.toLocaleString()}
-              </Link>
-              <CopyButton
-                text={String(row.block_num)}
-                tooltipText="Copy block number"
-              />
-            </div>
-          </TableCell>
-          <TableCell className="whitespace-nowrap ">
-            <div className="flex items-center space-x-2">
-              <Link href={`/block/${row.block_num}`} className="text-link">
-                {formatHash(row.hash)}
-              </Link>
-              <CopyButton
-                text={String(row.hash)}
-                tooltipText="Copy block hash"
-              />
-            </div>
-          </TableCell>
-          <TableCell className="whitespace-nowrap">{row.trx_count}</TableCell>
 
-          <TableCell className="whitespace-nowrap">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div>
-                    <TimeAgo
-                      datetime={
-                        new Date(formatAndDelocalizeTime(row.created_at))
-                      }
-                    />
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent className="bg-theme text-text">
-                  {formatAndDelocalizeTime(row.timestamp)}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </TableCell>
-          <TableCell className="whitespace-nowrap">
-            <Link className="text-link" href={`@${row.producer_account}`}>
-              {row.producer_account}
-            </Link>
-          </TableCell>
-          <TableCell className="whitespace-nowrap">
-            {row.producer_reward !== undefined ? (
+    return rows.map((row) => {
+      const blockNum = row.block_num;
+
+      return (
+        <Fragment key={row.hash}>
+          <TableRow className="text-left bg-theme hover:bg-rowHover border-b-2 ">
+            <TableCell className="whitespace-nowrap sticky left-[0px] z-10 bg-inherit p-4">
+              <div className="flex items-center space-x-2">
+                <Link href={`/block/${row.block_num}`} className="text-link">
+                  {row.block_num.toLocaleString()}
+                </Link>
+                <CopyButton
+                  text={String(row.block_num)}
+                  tooltipText="Copy block number"
+                />
+              </div>
+            </TableCell>
+            <TableCell className="whitespace-nowrap p-3">
+              <Link className="text-link" href={`@${row.producer_account}`}>
+                {row.producer_account}
+              </Link>
+            </TableCell>
+            <TableCell className="whitespace-nowrap p-3">
+              <div className="flex items-center space-x-2">
+                <Link href={`/block/${row.block_num}`} className="text-link">
+                  {formatHash(row.prev)}
+                </Link>
+                <CopyButton
+                  text={String(row.prev)}
+                  tooltipText="Copy prev block hash"
+                />
+              </div>
+            </TableCell>
+            <TableCell className="whitespace-nowrap p-3">
+              <div className="flex items-center space-x-2">
+                <Link href={`/block/${row.block_num}`} className="text-link">
+                  {formatHash(row.hash)}
+                </Link>
+                <CopyButton
+                  text={String(row.hash)}
+                  tooltipText="Copy block hash"
+                />
+              </div>
+            </TableCell>
+
+            <TableCell className="whitespace-nowrap p-3">
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <span className="cursor-pointer">
-                      {formatNumber(row.producer_reward, true, false)}
-                    </span>
+                    <div>
+                      <TimeAgo
+                        datetime={
+                          new Date(formatAndDelocalizeTime(row.created_at))
+                        }
+                      />
+                    </div>
                   </TooltipTrigger>
-                  <TooltipContent className="bg-theme text-text">
-                    {hiveChain &&
-                      totalVestingFundHive &&
-                      totalVestingShares &&
-                      convertVestsToHP(
-                        hiveChain,
-                        String(row.producer_reward),
-                        totalVestingFundHive,
-                        totalVestingShares
-                      )}
+                  <TooltipContent className="bg-theme text-text p-3">
+                    {formatAndDelocalizeTime(row.timestamp)}
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-            ) : (
-              "-"
-            )}
-          </TableCell>
-        </TableRow>
-      </Fragment>
-    ));
+            </TableCell>
+            <TableCell className="whitespace-nowrap p-3">
+              {row.producer_reward !== undefined ? (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="cursor-pointer">
+                        {formatNumber(row.producer_reward, true, false)}
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent className="bg-theme text-text">
+                      {hiveChain &&
+                        totalVestingFundHive &&
+                        totalVestingShares &&
+                        convertVestsToHP(
+                          hiveChain,
+                          String(row.producer_reward),
+                          totalVestingFundHive,
+                          totalVestingShares
+                        )}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              ) : (
+                "-"
+              )}
+            </TableCell>
+            <TableCell className="whitespace-nowrap p-3">
+              {row.trx_count}
+            </TableCell>
+
+            <TableCell className="text-right">
+              <Button
+                data-testid="expand-details"
+                className="p-0 h-fit bg-inherit pr-4"
+                onClick={() => toggleRow(row.block_num)}
+              >
+                {expandedRows.includes(row.block_num) ? (
+                  <ChevronUp width={20} height={20} className="mt-1" />
+                ) : (
+                  <ChevronDown width={20} height={20} className="mt-1" />
+                )}
+              </Button>
+            </TableCell>
+          </TableRow>
+
+          {/* Conditional rendering of BlockOperationsContent */}
+          {expandedRows.includes(row.block_num) && (
+            <TableRow className="hover:bg-transparent">
+              <TableCell colSpan={TABLE_CELLS.length} className="p-2">
+                <BlockOperationsContent
+                  blockNum={row.block_num}
+                  filters={filters}
+                />
+              </TableCell>
+            </TableRow>
+          )}
+        </Fragment>
+      );
+    });
   };
 
   const prepareExportData = () => {
@@ -175,16 +212,16 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
     return rows.map((block) => {
       return {
         Block: block.block_num,
-        Transactions: block.trx_count,
-        Timestamp: block.timestamp,
         Producer: block.producer_account,
+        hash: formatHash(block.hash),
+        "prev hash": formatHash(block.prev),
+        Timestamp: block.timestamp,     
         "Producer reward (VESTS)": formatNumber(
           block.producer_reward,
           true,
           false
         ),
-        hash: formatHash(block.hash),
-        "prev hash": formatHash(block.prev),
+        Transactions: block.trx_count,
       };
     });
   };
@@ -249,9 +286,8 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
         />
       </div>
       <div className="border-2 border-theme rounded bg-theme">
-        <Table data-testid="table-body" className=" overflow-auto p-3">
+        <Table data-testid="table-body" className=" overflow-auto">
           <TableHeader>{buildTableHeader()}</TableHeader>
-
           <TableBody>{buildTableBody()}</TableBody>
         </Table>
       </div>

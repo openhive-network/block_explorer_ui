@@ -1,32 +1,23 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Head from "next/head";
+import { Loader2 } from "lucide-react";
+
 import BlocksTable from "@/components/blocks/BlocksTable";
 import NoResult from "@/components/NoResult";
-import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
-import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
-import { Loader2 } from "lucide-react";
-import useAllBlocksSearch from "@/hooks/api/blocks/useAllBlocksSearch";
 import BlocksSearch, {
   DEFAULT_BLOCKS_SEARCH_PROPS,
 } from "@/components/blocks/BlocksSearch";
-import BlockAdditionalDetails from "@/components/blocks/BlockAdditionalDetails";
 import ScrollTopButton from "@/components/ScrollTopButton";
 import PageTitle from "@/components/PageTitle";
 import FilterSectionToggle from "@/components/account/FilterSectionToggle";
-import useURLParams from "@/hooks/common/useURLParams";
-import { convertBooleanArrayToIds } from "@/lib/utils";
-import { setLocalStorage, getLocalStorage } from "@/utils/LocalStorage";
 import BlockSegments from "@/components/BlockSegments";
 
-const TABLE_CELLS = [
-  "",
-  "Block",
-  "Hash",
-  "Transactions",
-  "Time",
-  "Producer",
-  "Reward(VESTS)",
-];
+import useAllBlocksSearch from "@/hooks/api/blocks/useAllBlocksSearch";
+import useURLParams from "@/hooks/common/useURLParams";
+
+import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
+import { convertBooleanArrayToIds } from "@/lib/utils";
+import { setLocalStorage, getLocalStorage } from "@/utils/LocalStorage";
 
 interface Operations {
   op_type_id: number;
@@ -46,21 +37,41 @@ export interface Block {
 
 export interface BlockRow extends Block {
   timestamp: string;
-  additionalDetailsContent: React.ReactNode;
 }
 
+const TABLE_CELLS = [
+  "Block",
+  "Producer",
+  "Hash",
+  "Prev Hash",
+  "Time",
+  "Reward(VESTS)",
+  "Transactions",
+  "",
+];
+
 const BlocksPage = () => {
-  const { operationsTypes } = useOperationsTypes();
-
+  // URL Parameters and Initial State
   const { paramsState, setParams } = useURLParams(DEFAULT_BLOCKS_SEARCH_PROPS);
-  const [totalPages, setTotalPages] = useState<number | null>(null);
-  const [initialToBlock, setInitialToBlock] = useState<number | undefined>(
-    undefined
-  ); /* initialToBlock is sent to useAllBlocksSearch so that there is no change between the initial search and subsequent pagination clicks because new blocks are being added to the blockchain.*/
-  const [isNewSearch, setIsNewSearch] = useState<boolean>(false);
-
+  const [initialToBlock, setInitialToBlock] = useState<number | undefined>(undefined);
   const pageNum = paramsState.page;
 
+  // Store the very first block selected - use toBlock instead of fromBlock.
+  const [firstUserSelectedBlock, setFirstUserSelectedBlock] = useState<number | undefined>();
+  const [isNewSearch, setIsNewSearch] = useState<boolean>(false);
+
+  // Flag indicating whether the data is based on a ranged selection or filtering
+  const [isFromRangeSelection, setIsFromRangeSelection] = useState<boolean>(false);
+  const [toBlockHistory, setToBlockHistory] = useState<number[]>([]);
+
+
+  // Filter Visibility State
+  const [isFiltersActive, setIsFiltersActive] = useState(false);
+  const [isBlocksFilterSectionVisible, setIsBlocksFilterSectionVisible] = useState(
+    getLocalStorage("is_blocks_filters_visible", true) ?? false
+  );
+
+  // Data Fetching
   const props = {
     ...paramsState,
     operationTypes: paramsState.filters
@@ -68,64 +79,13 @@ const BlocksPage = () => {
       : null,
   } as any;
 
-  const { blocksSearchData, blocksSearchDataError, blocksSearchDataLoading } =
-    useAllBlocksSearch(
-      props,
-      pageNum,
-      paramsState.toBlock ? paramsState.toBlock : initialToBlock
-    );
-
-  // Store the very first block selected - use toBlock instead of fromBlock.
-  const [firstUserSelectedBlock, setFirstUserSelectedBlock] = useState<
-    number | undefined
-  >();
-  useEffect(() => {
-    // Initialize the first user selected block only on the first load
-    if (paramsState.toBlock !== undefined && isNewSearch) {
-      setFirstUserSelectedBlock(paramsState.toBlock);
-    }
-  }, [paramsState.toBlock, isNewSearch]);
-
-  // Flag indicating whether the data is based on a ranged selection or filtering
-  const [isFromRangeSelection, setIsFromRangeSelection] =
-    useState<boolean>(false);
-
-  useEffect(() => {
-    // Update the `initialToBlock` when the data is available.
-    if (
-      blocksSearchData?.blocks_result &&
-      blocksSearchData.blocks_result.length > 0 &&
-      !isNewSearch
-    ) {
-      setInitialToBlock(
-        paramsState.toBlock
-          ? paramsState.toBlock
-          : blocksSearchData.block_range.to
-      ); // Store the toBlock
-      setIsNewSearch(false);
-    }
-  }, [
-    blocksSearchData,
-    paramsState.toBlock,
-    blocksSearchData?.block_range.to,
-    isNewSearch,
-  ]);
-
-  const [openBlockNum, setOpenBlockNum] = useState<number | null>(null);
-  const [newBlockView, setNewBlockView] = useState<Block | undefined>(
-    undefined
+  const { blocksSearchData, blocksSearchDataError, blocksSearchDataLoading } = useAllBlocksSearch(
+    props,
+    pageNum,
+    paramsState.toBlock ? paramsState.toBlock : initialToBlock
   );
-  const [isBlockNavigationActive, setIsBlockNavigationActive] = useState(false);
 
-  const [isFiltersActive, setIsFiltersActive] = useState(false);
-  const [isBlocksFilterSectionVisible, setIsBlocksFilterSectionVisible] =
-    useState(getLocalStorage("is_blocks_filters_visible", true) ?? false);
-
-  const [toBlockHistory, setToBlockHistory] = useState<number[]>([]);
-  useEffect(() => {
-    if (isNewSearch) setToBlockHistory([]);
-  }, [isNewSearch]);
-
+  // Handlers
   const handleFiltersVisibility = () => {
     setIsBlocksFilterSectionVisible(!isBlocksFilterSectionVisible);
     if (isFiltersActive) {
@@ -139,49 +99,6 @@ const BlocksPage = () => {
   const updateIsFiltersActive = useCallback((newValue: boolean) => {
     setIsFiltersActive(newValue);
   }, []);
-
-  const handlePrevBlock = () => {
-    if (!blocksSearchData?.blocks_result || !openBlockNum) return;
-
-    const currentIndex = blocksSearchData.blocks_result.findIndex(
-      (block) => block.block_num === openBlockNum
-    );
-
-    const newBlockNum =
-      blocksSearchData.blocks_result[currentIndex + 1].block_num;
-    setIsBlockNavigationActive(true);
-    setOpenBlockNum(newBlockNum);
-  };
-
-  const handleNextBlock = () => {
-    if (!blocksSearchData?.blocks_result || !openBlockNum) return;
-
-    const currentIndex = blocksSearchData.blocks_result.findIndex(
-      (block) => block.block_num === openBlockNum
-    );
-
-    const newBlockNum =
-      blocksSearchData.blocks_result[currentIndex - 1].block_num;
-    setIsBlockNavigationActive(true);
-    setOpenBlockNum(newBlockNum);
-  };
-
-  useEffect(() => {
-    if (!blocksSearchData) return;
-
-    const newBlock = blocksSearchData.blocks_result.find(
-      (block) => block.block_num === openBlockNum
-    );
-
-    setNewBlockView(newBlock);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [openBlockNum]);
-
-  const handleToggle = (blockNum: number) => {
-    setOpenBlockNum((prevBlockNum) =>
-      prevBlockNum === blockNum ? null : blockNum
-    );
-  };
 
   const handlePageChange = (newPage: number) => {
     setParams({
@@ -235,6 +152,8 @@ const BlocksPage = () => {
     setIsFromRangeSelection(true); // data is based on a range selection
   };
 
+
+  // Utility Functions
   const checkForMoreBlocks = (): boolean => {
     if (!blocksSearchData?.block_range) {
       return false;
@@ -264,6 +183,7 @@ const BlocksPage = () => {
         blocksSearchData.block_range.from < paramsState.fromBlock)
     );
   };
+
   const checkForPreviousBlocks = (): boolean => {
     if (!blocksSearchData?.block_range) {
       return false;
@@ -275,6 +195,7 @@ const BlocksPage = () => {
   const hasMoreBlocks = checkForMoreBlocks();
   const hasPreviousBlocks = checkForPreviousBlocks();
 
+  // Data Preparation
   const prepareTableData = (): BlockRow[] => {
     if (
       !blocksSearchData ||
@@ -282,30 +203,50 @@ const BlocksPage = () => {
       blocksSearchData.total_blocks == 0
     )
       return [];
-    const firstBlockInPage = blocksSearchData.blocks_result[0].block_num;
-    const lastBlockInPage = blocksSearchData.blocks_result.at(-1)
-      ?.block_num as number;
-    return blocksSearchData.blocks_result.map((block: Block) => {
-      const additionalDetailsContent = (
-        <BlockAdditionalDetails
-          block={!isBlockNavigationActive ? block : (newBlockView as Block)}
-          operationsTypes={operationsTypes}
-          handlePrevBlock={handlePrevBlock}
-          handleNextBlock={handleNextBlock}
-          firstBlockInPage={firstBlockInPage}
-          lastBlockInPage={lastBlockInPage}
-        />
-      );
 
+    return blocksSearchData.blocks_result.map((block: Block) => {
       return {
         ...block,
         timestamp: formatAndDelocalizeTime(block.created_at),
-        additionalDetailsContent: additionalDetailsContent,
       };
     });
   };
 
   const tableRows = prepareTableData();
+
+
+  // useEffect Hooks
+    useEffect(() => {
+    // Initialize the first user selected block only on the first load
+    if (paramsState.toBlock !== undefined && isNewSearch) {
+      setFirstUserSelectedBlock(paramsState.toBlock);
+    }
+  }, [paramsState.toBlock, isNewSearch]);
+
+  useEffect(() => {
+    if (isNewSearch) setToBlockHistory([]);
+  }, [isNewSearch]);
+
+  useEffect(() => {
+    // Update the `initialToBlock` when the data is available.
+    if (
+      blocksSearchData?.blocks_result &&
+      blocksSearchData.blocks_result.length > 0 &&
+      !isNewSearch
+    ) {
+      setInitialToBlock(
+        paramsState.toBlock
+          ? paramsState.toBlock
+          : blocksSearchData.block_range.to
+      ); // Store the toBlock
+      setIsNewSearch(false);
+    }
+  }, [
+    blocksSearchData,
+    paramsState.toBlock,
+    blocksSearchData?.block_range.to,
+    isNewSearch,
+  ]);
 
   return (
     <>
@@ -361,13 +302,11 @@ const BlocksPage = () => {
           <>
             <BlocksTable
               rows={tableRows}
-              openBlockNum={openBlockNum}
-              handleToggle={handleToggle}
+              filters={paramsState.filters}
               TABLE_CELLS={TABLE_CELLS}
               currentPage={pageNum || blocksSearchData.total_pages}
               totalCount={blocksSearchData.total_blocks}
               onPageChange={handlePageChange}
-              setIsBlockNavigationActive={setIsBlockNavigationActive}
             />
           </>
         ) : (

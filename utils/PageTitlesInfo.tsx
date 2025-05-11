@@ -1,5 +1,5 @@
 // utils/PageTitles.ts
-import { Eye, Filter } from "lucide-react";
+import { ChevronDown, Eye, Filter } from "lucide-react";
 import * as React from "react";
 
 interface InfoContent {
@@ -63,8 +63,8 @@ const BlocksInfo = () => (
       information about it.
     </li>
     <li>
-      Click the <Eye className="inline-block align-middle h-4 w-4" /> eye icon
-      on the left of each row to view additional details about a specific block.
+      Click the <ChevronDown className="inline-block align-middle h-4 w-4" /> icon
+      on the end of each row to view additional details about block operations.
     </li>
     <li>
       Use the <Filter className="inline-block align-middle h-4 w-4" /> funnel
