@@ -161,5 +161,10 @@ export const extendedRest = {
       result: Hive.AccountAggregatedBalanceHistoryResponse,
       urlPath: "accounts/{accountName}/aggregated-history",
     },
+    recurrentTransfers: {
+      params: Hive.AccountRecurrentBalanceTransfersParams,
+      result: Hive.AccountRecurrentBalanceTransfersResponse,
+      urlPath: "accounts/{accountName}/recurrent-transfers",
+    },
   },
 };

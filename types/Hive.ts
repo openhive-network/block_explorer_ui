@@ -799,6 +799,9 @@ namespace Hive {
     "from-block"?: Date | number | undefined;
     "to-block"?: Date | number | undefined;
   }
+  export class AccountRecurrentBalanceTransfersParams {
+    "accountName": string;
+  }
 
   export class Balance {
     balance!: string;
@@ -811,6 +814,43 @@ namespace Hive {
     prev_balance!: Balance;
     min_balance!: Balance;
     max_balance!: Balance;
+  }
+
+  type Amount = {
+    nai: string;
+    amount: string;
+    precision: number;
+  };
+
+  export class OutgoingRecurrentTransfer {
+    to!: string;
+    pair_id!: number;
+    amount!: Amount;
+    consecutive_failures!: number;
+    remaining_executions!: number;
+    recurrence!: number;
+    memo!: string;
+    trigger_date!: string;
+    operation_id!: string;
+    block_num!: number;
+  }
+
+  export class IncomingRecurrentTransfer {
+    from!: string;
+    pair_id!: number;
+    amount!: Amount;
+    consecutive_failures!: number;
+    remaining_executions!: number;
+    recurrence!: number;
+    memo!: string;
+    trigger_date!: string;
+    operation_id!: string;
+    block_num!: number;
+  }
+
+  export class AccountRecurrentBalanceTransfersResponse {
+    outgoing_recurrent_transfers!: OutgoingRecurrentTransfer[];
+    incoming_recurrent_transfers!: IncomingRecurrentTransfer[];
   }
 
   export class Delegation {

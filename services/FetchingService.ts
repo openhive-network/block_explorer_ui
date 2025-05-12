@@ -198,6 +198,16 @@ class FetchingService {
     });
   }
 
+  async getAccountRecurrentTransfers(
+    accountName: string
+  ): Promise<Hive.AccountRecurrentBalanceTransfersResponse> {
+    return await this.extendedHiveChain!.restApi[
+      "balance-api"
+    ].recurrentTransfers({
+      accountName,
+    });
+  }
+
   async getWitnesses(
     limit: number,
     offset: number,
