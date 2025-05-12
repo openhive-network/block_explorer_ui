@@ -100,9 +100,9 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
 
   const buildTableBody = (keys: string[]) => {
     return keys.map((key, index) => {
-      const isZeroValue = userDetails[key] === 0 || userDetails[key] === "0";
+      // const isZeroValue = userDetails[key] === 0 || userDetails[key] === "0";
 
-      if (EXCLUDE_KEYS.includes(key) || isZeroValue) {
+      if (EXCLUDE_KEYS.includes(key)) {
         return null;
       } else {
         return (
