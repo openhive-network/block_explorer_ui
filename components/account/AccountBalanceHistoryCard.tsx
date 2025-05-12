@@ -9,6 +9,7 @@ import { Loader2 } from "lucide-react";
 import NoResult from "../NoResult";
 import { Button } from "../ui/button";
 import useAggregatedBalanceHistory from "@/hooks/api/balanceHistory/useAggregatedHistory";
+import { Operation } from "@/pages/balanceHistory/[accountName]";
 
 // Define the type for balance operation data
 type AccountBalanceHistoryCardProps = {
@@ -16,11 +17,56 @@ type AccountBalanceHistoryCardProps = {
   userDetails: Explorer.FormattedAccountDetails;
 };
 
+const prepareData = (operations: Operation[]) => {
+  if (!operations || operations.length === 0) return [];
+
+  const aggregatedData = new Map<
+    string,
+    {
+      balance: number;
+      balance_change: number;
+      savings_balance: number | undefined;
+      savings_balance_change: number | undefined;
+    }
+  >();
+
+  operations.forEach((operation: any) => {
+    let balance_change =
+      operation.balance.balance - operation.prev_balance.balance;
+    let balance = parseInt(operation.balance.balance, 10);
+    let savings_balance = operation.balance.savings_balance
+      ? parseInt(operation.balance.savings_balance, 10)
+      : undefined;
+    let savings_balance_change =
+      operation.balance.savings_balance -
+      operation.prev_balance.savings_balance;
+    aggregatedData.set(operation.date, {
+      balance,
+      balance_change,
+      savings_balance,
+      savings_balance_change,
+    });
+  });
+
+  const preparedData = Array.from(aggregatedData.entries()).map(
+    ([date, data]) => ({
+      timestamp: date,
+      balance: data.balance,
+      balance_change: data.balance_change,
+      savings_balance: data.savings_balance,
+      savings_balance_change: data.savings_balance_change,
+    })
+  );
+
+  return preparedData;
+};
+
 const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
   header,
   userDetails,
 }) => {
   const [isBalancesHidden, setIsBalancesHidden] = useState(false);
+  const [coinType, setCoinType] = useState("HIVE");
   const defaultFromDate = useMemo(
     () => moment().subtract(1, "month").toDate(),
     []
@@ -78,35 +124,6 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
     hiveBalanceHistoryError ||
     vestsBalanceHistoryError ||
     hbdBalanceHistoryError;
-
-  const prepareData = (
-    operations: { timestamp: string; balance: number }[]
-  ) => {
-    if (!operations || operations.length === 0) return [];
-
-    const aggregatedData = new Map<
-      string,
-      { balance: number; balance_change: number }
-    >();
-
-    operations.forEach((operation: any) => {
-      let balance_change =
-        operation.balance.balance - operation.prev_balance.balance;
-      let balance = parseInt(operation.balance.balance, 10);
-
-      aggregatedData.set(operation.date, { balance, balance_change });
-    });
-
-    const preparedData = Array.from(aggregatedData.entries()).map(
-      ([date, data]) => ({
-        timestamp: date,
-        balance: data.balance,
-        balance_change: data.balance_change,
-      })
-    );
-
-    return preparedData;
-  };
 
   const handleButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation(); // Prevents the event from bubbling up

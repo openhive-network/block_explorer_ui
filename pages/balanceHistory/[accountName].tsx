@@ -30,7 +30,7 @@ import { setLocalStorage, getLocalStorage } from "@/utils/LocalStorage";
 
 const MemoizedBalanceHistoryChart = React.memo(BalanceHistoryChart);
 
-interface Operation {
+export interface Operation {
   timestamp: number;
   balance: number;
   savings_balance?: number; // Optional savings balance
