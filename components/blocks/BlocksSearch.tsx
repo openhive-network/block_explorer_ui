@@ -37,6 +37,7 @@ export const DEFAULT_BLOCKS_SEARCH_PROPS: Explorer.AllBlocksSearchProps = {
   lastBlocks: undefined,
   lastTime: undefined,
   timeUnit: "days",
+  page: undefined,
   filters: null,
 };
 
@@ -92,7 +93,7 @@ const BlocksSearch = ({
         ...paramsState,
         accountName: accountName ? trimAccountName(accountName) : undefined,
         filters: filters || null,
-        pageNumber: totalPages !== null ? totalPages : undefined,
+        page: totalPages !== null ? totalPages : undefined,
       };
       setParams(newParams);
       setIsNewSearch(false);
@@ -147,7 +148,7 @@ const BlocksSearch = ({
           : undefined,
       rangeSelectKey: searchRanges.rangeSelectKey,
       limit: config.standardPaginationSize,
-      pageNumber: undefined,
+      page: undefined,
     };
     setParams(newParams);
   }, [
@@ -165,11 +166,12 @@ const BlocksSearch = ({
     setInitialToBlock(undefined); // Reset initialToBlock on clear
     const newParams: Explorer.AllBlocksSearchProps = {
       ...DEFAULT_BLOCKS_SEARCH_PROPS,
-      pageNumber: undefined,
+      page: undefined,
     };
 
     setAccountName("");
     setIsFiltersActive(false);
+    setIsVisible(false);
     setParams(newParams);
     setRangesValues(DEFAULT_BLOCKS_SEARCH_PROPS as any);
     setFromBlock(undefined);
@@ -183,6 +185,7 @@ const BlocksSearch = ({
     removeStorageItem("is_blocks_filters_visible");
   }, [
     setParams,
+    setIsVisible,
     setIsFiltersActive,
     setRangesValues,
     setFromBlock,
@@ -198,7 +201,7 @@ const BlocksSearch = ({
 
   useEffect(() => {
     Object.keys(DEFAULT_BLOCKS_SEARCH_PROPS).forEach((key) => {
-      if (key === "limit") return;
+      if (key === "limit" || key === "page" || key === "toBlock") return;
 
       const param =
         paramsState[key as keyof typeof DEFAULT_BLOCKS_SEARCH_PROPS];

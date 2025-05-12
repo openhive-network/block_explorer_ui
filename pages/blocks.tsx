@@ -59,7 +59,7 @@ const BlocksPage = () => {
   ); /* initialToBlock is sent to useAllBlocksSearch so that there is no change between the initial search and subsequent pagination clicks because new blocks are being added to the blockchain.*/
   const [isNewSearch, setIsNewSearch] = useState<boolean>(false);
 
-  const pageNum = paramsState.pageNumber;
+  const pageNum = paramsState.page;
 
   const props = {
     ...paramsState,
@@ -186,7 +186,7 @@ const BlocksPage = () => {
   const handlePageChange = (newPage: number) => {
     setParams({
       ...paramsState,
-      pageNumber: newPage,
+      page: newPage,
       toBlock: blocksSearchData?.block_range.to,
     });
     setIsNewSearch(false);
@@ -209,7 +209,7 @@ const BlocksPage = () => {
     setParams({
       ...paramsState,
       toBlock: nextToBlockParam, // Set toBlock to the previous 'from'
-      pageNumber: undefined,
+      page: undefined,
     });
     setIsNewSearch(false);
     setIsFromRangeSelection(true); // data is based on a range selection
@@ -228,7 +228,7 @@ const BlocksPage = () => {
     setParams({
       ...paramsState,
       toBlock: targetToBlock, // Use the 'to' block from history
-      pageNumber: undefined,
+      page: undefined,
     });
 
     setIsNewSearch(false);
@@ -332,7 +332,7 @@ const BlocksPage = () => {
           <BlocksSearch
             isVisible={isBlocksFilterSectionVisible}
             setIsVisible={setIsBlocksFilterSectionVisible}
-            setIsFiltersActive={updateIsFiltersActive}
+            setIsFiltersActive={setIsFiltersActive}
             setInitialToBlock={setInitialToBlock}
             setIsNewSearch={setIsNewSearch}
             isFiltersActive={isFiltersActive}
