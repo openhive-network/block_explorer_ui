@@ -326,6 +326,7 @@ declare module Explorer {
     lastBlocks?: number;
     lastTime?: number;
     filters?: any;
+    history?:any;
   }
 }
 

@@ -1,16 +1,16 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { cn } from "@/lib/utils"; // Assuming you use this utility for classnames
+import { cn } from "@/lib/utils";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
   TooltipPortal,
-} from  "@/components/ui/hybrid-tooltip";
+} from "@/components/ui/hybrid-tooltip";
 
-interface BlockSegmentsProps {
+interface BlockNavigationProps {
   fromBlock?: number;
   toBlock?: number;
   hasPrevious: boolean;
@@ -21,7 +21,7 @@ interface BlockSegmentsProps {
   className?: string;
 }
 
-const BlockSegments: React.FC<BlockSegmentsProps> = ({
+const BlockNavigation: React.FC<BlockNavigationProps> = ({
   fromBlock,
   toBlock,
   hasPrevious,
@@ -37,7 +37,6 @@ const BlockSegments: React.FC<BlockSegmentsProps> = ({
     return null;
   }
 
-  // Main wrapper for positioning the entire component
   const wrapperClasses = cn(
     "flex items-center justify-center rounded",
     className
@@ -66,7 +65,6 @@ const BlockSegments: React.FC<BlockSegmentsProps> = ({
   return (
     <div className={wrapperClasses}>
       <div className={segmentContainerClasses}>
-        {/* Previous Button */}
         {hasPrevious && loadPreviousBlocks ? (
           <TooltipProvider>
             <Tooltip>
@@ -109,8 +107,6 @@ const BlockSegments: React.FC<BlockSegmentsProps> = ({
           </TooltipProvider>
         )}
 
-        {/* Central Block Range Link */}
-
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -126,7 +122,6 @@ const BlockSegments: React.FC<BlockSegmentsProps> = ({
           </Tooltip>
         </TooltipProvider>
 
-        {/* Next Button */}
         {hasNext && loadNextBlocks ? (
           <TooltipProvider>
             <Tooltip>
@@ -173,4 +168,4 @@ const BlockSegments: React.FC<BlockSegmentsProps> = ({
   );
 };
 
-export default BlockSegments;
+export default BlockNavigation;
