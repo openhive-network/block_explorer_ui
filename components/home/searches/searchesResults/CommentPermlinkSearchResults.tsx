@@ -60,15 +60,6 @@ const CommentPermlinkSearchResults = () => {
     <>
       {permlinkSearchData.total_permlinks ? (
         <div>
-          <div className="flex justify-center items-center text-text sticky z-20 pt-0 top-[3.2rem] md:top-[4rem]">
-            <CustomPagination
-              currentPage={permlinkPaginationPage}
-              totalCount={permlinkSearchData.total_permlinks}
-              pageSize={config.standardPaginationSize}
-              onPageChange={changePermlinkSearchPagination}
-              className="mb-4 rounded"
-            />
-          </div>
           <div className="w-full rounded bg-theme mb-4 pb-2 pt-1">
             <BlockNavigation
               fromBlock={permlinkSearchData?.block_range.from}
@@ -78,6 +69,15 @@ const CommentPermlinkSearchResults = () => {
               loadPreviousBlocks={handleLoadPreviousBlocks}
               loadNextBlocks={handleLoadNextBlocks}
               urlParams={permlinkSearchProps}
+            />
+          </div>
+          <div className="flex justify-center items-center text-text sticky z-20 pt-0 top-[3.2rem] md:top-[4rem]">
+            <CustomPagination
+              currentPage={permlinkPaginationPage}
+              totalCount={permlinkSearchData.total_permlinks}
+              pageSize={config.standardPaginationSize}
+              onPageChange={changePermlinkSearchPagination}
+              className="mb-4 rounded"
             />
           </div>
           <div className="flex flex-wrap">
