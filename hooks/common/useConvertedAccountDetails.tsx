@@ -127,7 +127,7 @@ const useConvertedAccountDetails = (
     ),
     created: formatAndDelocalizeTime(accountDetails.created),
     open_recurrent_transfer:
-      recurrentTransfers?.outgoing_recurrent_transfers.length || 0,
+      recurrentTransfers?.outgoing_recurrent_transfers?.length || 0,
   };
 
   // Prepare HBD for $ display
