@@ -14,6 +14,9 @@ import AccountRcDelegationsCard from "./AccountRcDelegationsCard";
 import AccountBalanceCard from "./AccountBalanceCard";
 import Explorer from "@/types/Explorer";
 import AccountBalanceHistoryCard from "./AccountBalanceHistoryCard";
+import AccountRecurrentTransfersCard from "./AccountRecurrentTransfersCard";
+import useAccountRecurrentTransfers from "@/hooks/api/accountPage/useAccoutRecurrentTransfers";
+import { AllTransfers } from "./AccountRecurrentTransfersCard";
 
 interface AccountDetailsSectionProps {
   accountName: string;
@@ -32,6 +35,11 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
 }) => {
   const { witnessDetails, isWitnessDetailsLoading, isWitnessDetailsError } =
     useWitnessDetails(accountName, !!accountDetails?.is_witness);
+
+  const { recurrentTransfers } = useAccountRecurrentTransfers(
+    accountName,
+    liveDataEnabled
+  );
 
   const [isVotersModalOpen, setIsVotersModalOpen] = useState(false);
   const [isVotesHistoryModalOpen, setIsVotesHistoryModalOpen] = useState(false);
@@ -115,6 +123,18 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
         delegatorAccount={accountName}
         limit={config.maxDelegatorsCount}
         liveDataEnabled={liveDataEnabled}
+      />
+      <AccountRecurrentTransfersCard
+        direction="outgoing"
+        transfers={
+          recurrentTransfers?.outgoing_recurrent_transfers as AllTransfers[]
+        }
+      />
+      <AccountRecurrentTransfersCard
+        direction="incoming"
+        transfers={
+          recurrentTransfers?.incoming_recurrent_transfers as AllTransfers[]
+        }
       />
       <VotersDialog
         accountName={accountName}
