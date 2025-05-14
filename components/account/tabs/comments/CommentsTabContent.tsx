@@ -50,6 +50,15 @@ const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
     ["accountName"]
   );
 
+    useEffect(() => {
+      if (
+        typeof paramsState.history === "string" &&
+        paramsState.history.length > 0
+      ) {
+        setIsFiltersActive(false);
+      }
+    }, [paramsState.history, setIsFiltersActive]);
+
   const props = (() => {
     if (paramsState.activeTab === "comments") {
       return {
@@ -86,8 +95,10 @@ const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
   // Don't show filters if only account name is present
   useEffect(() => {
     Object.keys(DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS).forEach((key) => {
-      if (key === "accountName" || key === "page") return;
-
+      
+      if (key === "accountName" || key === "page" || ( key === "toBlock" && typeof paramsState.history === "string" && paramsState.history.length > 0
+      )) return;
+      
       const param =
         paramsState[key as keyof typeof DEFAULT_COMMENT_PERMLINKS_SEARCH_PROPS];
       const defaultParam =
