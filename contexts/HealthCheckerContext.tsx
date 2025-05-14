@@ -111,7 +111,7 @@ export const HealthCheckerContextProvider: React.FC<{
 
   const startHealthCheckerService = () => {
     try {
-        const healthChecker = new HealthChecker();
+        const healthChecker = new HealthChecker(undefined, 20000);
         const hcService = new HealthCheckerService(
           "node",
           apiCheckers,
@@ -128,7 +128,7 @@ export const HealthCheckerContextProvider: React.FC<{
 
   const startRestHealthCheckerService = () => {
     try {
-      const restHealthChecker = new HealthChecker();
+      const restHealthChecker = new HealthChecker(undefined, 20000);
       const restHcService = new HealthCheckerService(
         "rest",
         restApiCheckers,
