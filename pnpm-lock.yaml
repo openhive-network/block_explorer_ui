@@ -12,11 +12,11 @@ importers:
         specifier: ^1.7.15
         version: 1.7.19(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@hiveio/healthchecker-component':
-        specifier: 1.0.0-stable.250506100136
-        version: 1.0.0-stable.250506100136(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(tailwindcss@3.4.17)
+        specifier: 1.0.0-stable.250513074015
+        version: 1.0.0-stable.250513074015(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(tailwindcss@3.4.17)
       '@hiveio/wax':
-        specifier: ^1.27.6-rc7-stable.250414125549
-        version: 1.27.6-rc7-stable.250416082029
+        specifier: ^1.27.6-rc7-stable.250512112737
+        version: 1.27.6-rc7-stable.250512112737
       '@radix-ui/react-accordion':
         specifier: ^1.1.2
         version: 1.2.3(@types/react-dom@18.2.7)(@types/react@18.2.15)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -232,19 +232,19 @@ packages:
       react: ^16 || ^17 || ^18
       react-dom: ^16 || ^17 || ^18
 
-  '@hiveio/beekeeper@1.27.10-stable.250305202831':
-    resolution: {integrity: sha1-mPx0QrDh3NSPSOYGyR1SUyi3lyA=, tarball: https://gitlab.syncad.com/api/v4/projects/198/packages/npm/@hiveio/beekeeper/-/@hiveio/beekeeper-1.27.10-stable.250305202831.tgz}
+  '@hiveio/beekeeper@1.27.11-stable.250508111822':
+    resolution: {integrity: sha1-VzR+ETHeiK6+rKn2+0fbtSj+W0Q=, tarball: https://gitlab.syncad.com/api/v4/projects/198/packages/npm/@hiveio/beekeeper/-/@hiveio/beekeeper-1.27.11-stable.250508111822.tgz}
     engines: {node: ^20.11 || >= 21.2}
 
-  '@hiveio/healthchecker-component@1.0.0-stable.250506100136':
-    resolution: {integrity: sha1-Dr35I4tCA1Bkh9j2Q7OBLpWlw38=, tarball: https://gitlab.syncad.com/api/v4/projects/520/packages/npm/@hiveio/healthchecker-component/-/@hiveio/healthchecker-component-1.0.0-stable.250506100136.tgz}
+  '@hiveio/healthchecker-component@1.0.0-stable.250513074015':
+    resolution: {integrity: sha1-eb3yOmLJDCGUltjkCQaX7scln5k=, tarball: https://gitlab.syncad.com/api/v4/projects/520/packages/npm/@hiveio/healthchecker-component/-/@hiveio/healthchecker-component-1.0.0-stable.250513074015.tgz}
     peerDependencies:
       react: ^18.2.0
       react-dom: ^18.2.0
       tailwindcss: ^3.4.12
 
-  '@hiveio/wax@1.27.6-rc7-stable.250416082029':
-    resolution: {integrity: sha1-qajRtbYMAhxFI5DHEl1Niwxg6iU=, tarball: https://gitlab.syncad.com/api/v4/projects/419/packages/npm/@hiveio/wax/-/@hiveio/wax-1.27.6-rc7-stable.250416082029.tgz}
+  '@hiveio/wax@1.27.6-rc7-stable.250512112737':
+    resolution: {integrity: sha1-6b1XeiJkFbQ5/ujb7On6VVnuXV4=, tarball: https://gitlab.syncad.com/api/v4/projects/419/packages/npm/@hiveio/wax/-/@hiveio/wax-1.27.6-rc7-stable.250512112737.tgz}
     engines: {node: ^20.11 || >= 21.2}
 
   '@humanwhocodes/config-array@0.11.14':
@@ -3193,17 +3193,17 @@ snapshots:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
 
-  '@hiveio/beekeeper@1.27.10-stable.250305202831': {}
+  '@hiveio/beekeeper@1.27.11-stable.250508111822': {}
 
-  '@hiveio/healthchecker-component@1.0.0-stable.250506100136(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(tailwindcss@3.4.17)':
+  '@hiveio/healthchecker-component@1.0.0-stable.250513074015(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(tailwindcss@3.4.17)':
     dependencies:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       tailwindcss: 3.4.17
 
-  '@hiveio/wax@1.27.6-rc7-stable.250416082029':
+  '@hiveio/wax@1.27.6-rc7-stable.250512112737':
     dependencies:
-      '@hiveio/beekeeper': 1.27.10-stable.250305202831
+      '@hiveio/beekeeper': 1.27.11-stable.250508111822
       events: 3.3.0
       long: 5.3.1
 

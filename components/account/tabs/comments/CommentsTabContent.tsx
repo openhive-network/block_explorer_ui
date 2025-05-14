@@ -10,6 +10,8 @@ import { trimAccountName } from "@/utils/StringUtils";
 import useURLParams from "@/hooks/common/useURLParams";
 import { cn } from "@/lib/utils";
 import { getLocalStorage } from "@/utils/LocalStorage";
+import useBlockNavigation from "@/hooks/common/useBlockNavigation";
+import BlockNavigation from "@/components/BlockNavigation";
 
 interface CommnetsTabContentProps {
   isVisible: boolean;
@@ -59,6 +61,18 @@ const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
 
   const { permlinkSearchData, permlinkSearchDataLoading } =
     usePermlinkSearch(props);
+
+  const {
+    handleLoadNextBlocks,
+    handleLoadPreviousBlocks,
+    hasMoreBlocks,
+    hasPreviousBlocks,
+  } = useBlockNavigation(
+    paramsState.toBlock,
+    permlinkSearchData,
+    paramsState,
+    setParams
+  );
 
   useEffect(() => {
     if (!router.isReady) return;
@@ -116,6 +130,16 @@ const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
           />
         </CardContent>
       </Card>
+      <BlockNavigation
+        fromBlock={permlinkSearchData?.block_range.from}
+        toBlock={permlinkSearchData?.block_range.to}
+        hasPrevious={hasPreviousBlocks}
+        hasNext={hasMoreBlocks}
+        loadPreviousBlocks={handleLoadPreviousBlocks}
+        loadNextBlocks={handleLoadNextBlocks}
+        urlParams={paramsState}
+        className="rounded mb-4"
+      />
       <AccountCommentPermlinkSearchResults
         data={permlinkSearchData}
         accountName={accountName}

@@ -5,6 +5,9 @@ import CustomPagination from "@/components/CustomPagination";
 import { config } from "@/Config";
 import NoResult from "@/components/NoResult";
 
+import useBlockNavigation from "@/hooks/common/useBlockNavigation";
+import BlockNavigation from "@/components/BlockNavigation";
+
 const CommentPermlinkSearchResults = () => {
   const {
     permlinkSearchProps,
@@ -28,6 +31,20 @@ const CommentPermlinkSearchResults = () => {
     setCommentsSearchPermlink(permlink);
   };
 
+  const {
+    toBlockHistory,
+    handleLoadNextBlocks,
+    handleLoadPreviousBlocks,
+    hasMoreBlocks,
+    hasPreviousBlocks,
+  } = useBlockNavigation(
+    permlinkSearchProps?.toBlock,
+    permlinkSearchData,
+    permlinkSearchProps,
+    setPermlinkSearchProps,
+    true
+  );
+
   if (!permlinkSearchData) return;
 
   const changePermlinkSearchPagination = (newPageNum: number) => {
@@ -39,7 +56,7 @@ const CommentPermlinkSearchResults = () => {
     setPermlinkPaginationPage(newPageNum);
   };
 
-  return (
+   return (
     <>
       {permlinkSearchData.total_permlinks ? (
         <div>
@@ -52,7 +69,17 @@ const CommentPermlinkSearchResults = () => {
               className="mb-4 rounded"
             />
           </div>
-
+          <div className="w-full rounded bg-theme mb-4 pb-2 pt-1">
+            <BlockNavigation
+              fromBlock={permlinkSearchData?.block_range.from}
+              toBlock={permlinkSearchData?.block_range.to}
+              hasPrevious={hasPreviousBlocks}
+              hasNext={hasMoreBlocks}
+              loadPreviousBlocks={handleLoadPreviousBlocks}
+              loadNextBlocks={handleLoadNextBlocks}
+              urlParams={permlinkSearchProps}
+            />
+          </div>
           <div className="flex flex-wrap">
             <CommentPermlinkResultTable
               permlinkCount={permlinkSearchData.total_permlinks}

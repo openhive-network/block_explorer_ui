@@ -94,6 +94,7 @@ const BlocksSearch = ({
         accountName: accountName ? trimAccountName(accountName) : undefined,
         filters: filters || null,
         page: totalPages !== null ? totalPages : undefined,
+        history: undefined,
       };
       setParams(newParams);
       setIsNewSearch(false);
@@ -149,6 +150,7 @@ const BlocksSearch = ({
       rangeSelectKey: searchRanges.rangeSelectKey,
       limit: config.standardPaginationSize,
       page: undefined,
+      history:undefined,
     };
     setParams(newParams);
   }, [
@@ -167,6 +169,7 @@ const BlocksSearch = ({
     const newParams: Explorer.AllBlocksSearchProps = {
       ...DEFAULT_BLOCKS_SEARCH_PROPS,
       page: undefined,
+      history:undefined,
     };
 
     setAccountName("");
