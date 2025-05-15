@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Head from "next/head";
 import { Loader2 } from "lucide-react";
 
@@ -15,8 +15,8 @@ import BlockNavigation from "@/components/BlockNavigation";
 import useAllBlocksSearch from "@/hooks/api/blocks/useAllBlocksSearch";
 import useURLParams from "@/hooks/common/useURLParams";
 import useBlockNavigation from "@/hooks/common/useBlockNavigation";
+import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
 
-import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import { convertBooleanArrayToIds } from "@/lib/utils";
 import { setLocalStorage, getLocalStorage } from "@/utils/LocalStorage";
 
@@ -37,7 +37,8 @@ export interface Block {
 }
 
 export interface BlockRow extends Block {
-  timestamp: string;
+  operationCount: number;
+  virtualOperationCount: number;
 }
 
 const TABLE_CELLS = [
@@ -48,6 +49,8 @@ const TABLE_CELLS = [
   "Time",
   "Reward(VESTS)",
   "Transactions",
+  "Operations",
+  "Virtual Operations",
   "",
 ];
 
@@ -83,6 +86,8 @@ const BlocksPage = () => {
       pageNum,
       paramsState.toBlock ? paramsState.toBlock : initialToBlock
     );
+
+    const { operationsTypes } = useOperationsTypes();
 
   // Handlers
   const handleFiltersVisibility = () => {
@@ -125,24 +130,59 @@ const BlocksPage = () => {
   );
 
   // Data Preparation
-  const prepareTableData = (): BlockRow[] => {
-    if (
-      !blocksSearchData ||
-      !blocksSearchData.blocks_result ||
-      blocksSearchData.total_blocks == 0
-    )
-      return [];
 
-    return blocksSearchData.blocks_result.map((block: Block) => {
+  const getOperationsCounts = useCallback(
+    (operations: Operations[] | undefined) => {
+      if (!operations || !operationsTypes) {
+        return {
+          operationCount: 0,
+          virtualOperationCount: 0,
+        };
+      }
+
+      let operationCount = 0;
+      let virtualOperationCount = 0;
+
+      const operationTypesMap = new Map<number, any>();
+      for (const operationType of operationsTypes) {
+        operationTypesMap.set(operationType.op_type_id, operationType);
+      }
+
+      if (operations) {
+        for (const op of operations) {
+          const operationType = operationTypesMap.get(op.op_type_id);
+          if (operationType) {
+            if (operationType.is_virtual) {
+              virtualOperationCount += op.op_count;
+            } else {
+              operationCount += op.op_count;
+            }
+          } 
+        }
+      }
+
+      return {
+        operationCount,
+        virtualOperationCount,
+      };
+    },
+    [operationsTypes]
+  );
+
+  const tableRows = useMemo(() => {
+    if (!blocksSearchData?.blocks_result) {
+      return [];
+    }
+
+    return blocksSearchData.blocks_result.map((block) => {
+      const { operationCount, virtualOperationCount } = getOperationsCounts(block.operations);
       return {
         ...block,
-        timestamp: formatAndDelocalizeTime(block.created_at),
+        operationCount,
+        virtualOperationCount,
       };
     });
-  };
-
-  const tableRows = prepareTableData();
-
+  }, [blocksSearchData?.blocks_result, getOperationsCounts]);
 
   // useEffect Hooks
   useEffect(() => {
@@ -198,7 +238,7 @@ const BlocksPage = () => {
           <BlocksSearch
             isVisible={isBlocksFilterSectionVisible}
             setIsVisible={setIsBlocksFilterSectionVisible}
-            setIsFiltersActive={setIsFiltersActive}
+            setIsFiltersActive={updateIsFiltersActive}
             setInitialToBlock={setInitialToBlock}
             setIsNewSearch={setIsNewSearch}
             isFiltersActive={isFiltersActive}
@@ -227,7 +267,7 @@ const BlocksPage = () => {
           <>
             <BlocksTable
               rows={tableRows}
-              filters={paramsState.filters}
+              paramsState={paramsState}
               TABLE_CELLS={TABLE_CELLS}
               currentPage={pageNum || blocksSearchData.total_pages}
               totalCount={blocksSearchData.total_blocks}

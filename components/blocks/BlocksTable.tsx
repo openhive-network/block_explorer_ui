@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import {
   Table,
@@ -22,7 +22,7 @@ import DataExport from "../DataExport";
 import { formatHash } from "@/utils/StringUtils";
 import CustomPagination from "@/components/CustomPagination";
 import { config } from "@/Config";
-import { BlockRow } from "@/pages/blocks";
+import { Block, BlockRow } from "@/pages/blocks"; // Import Block
 import JumpToPage from "../JumpToPage";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import Hive from "@/types/Hive";
@@ -34,8 +34,8 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import BlockOperationsContent from "./BlockOperationContent";
 
 interface BlocksTableProps {
-  rows: BlockRow[];
-  filters?: any;
+  rows: BlockRow[]; // Changed to BlockRow, since we added the counts
+  paramsState?: any;
   TABLE_CELLS: string[];
   currentPage: number;
   totalCount: number;
@@ -44,20 +44,34 @@ interface BlocksTableProps {
 
 const BlocksTable: React.FC<BlocksTableProps> = ({
   rows,
-  filters,
+  paramsState,
   TABLE_CELLS,
   currentPage,
   totalCount,
   onPageChange,
 }) => {
   const [expandedRows, setExpandedRows] = useState<number[]>([]);
+  const expandedRowRef = useRef<HTMLTableRowElement>(null); // Ref to expanded row
 
   const toggleRow = (blockNum: number) => {
-    setExpandedRows((prevExpandedRows) =>
-      prevExpandedRows.includes(blockNum)
+    setExpandedRows((prevExpandedRows) => {
+      const newExpandedRows = prevExpandedRows.includes(blockNum)
         ? prevExpandedRows.filter((rowId) => rowId !== blockNum)
-        : [...prevExpandedRows, blockNum]
-    );
+        : [...prevExpandedRows, blockNum];
+
+      // After updating the state, scroll into view
+      setTimeout(() => { // Use setTimeout to wait for the DOM to update
+        if (expandedRowRef.current) {
+          expandedRowRef.current.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest", // Keep the expanded row near the top/bottom
+            inline: "start", // Align to the left
+          });
+        }
+      }, 0); // Execute after the DOM update
+
+      return newExpandedRows;
+    });
   };
 
   const buildTableHeader = () => {
@@ -140,7 +154,7 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
                     </div>
                   </TooltipTrigger>
                   <TooltipContent className="bg-theme text-text p-3">
-                    {formatAndDelocalizeTime(row.timestamp)}
+                  {formatAndDelocalizeTime(row.created_at)}
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -174,11 +188,16 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
             <TableCell className="whitespace-nowrap p-3">
               {row.trx_count}
             </TableCell>
-
-            <TableCell className="text-right">
+            <TableCell className="whitespace-nowrap p-3">
+              {row.operationCount}
+            </TableCell>
+            <TableCell className="whitespace-nowrap p-3">
+              {row.virtualOperationCount}
+            </TableCell>
+            <TableCell className="text-right pr-4">
               <Button
                 data-testid="expand-details"
-                className="p-0 h-fit bg-inherit pr-4"
+                className="p-0 h-fit bg-inherit"
                 onClick={() => toggleRow(row.block_num)}
               >
                 {expandedRows.includes(row.block_num) ? (
@@ -192,11 +211,11 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
 
           {/* Conditional rendering of BlockOperationsContent */}
           {expandedRows.includes(row.block_num) && (
-            <TableRow className="hover:bg-transparent">
+            <TableRow className="hover:bg-transparent" ref={expandedRowRef}> {/* Add the ref here */}
               <TableCell colSpan={TABLE_CELLS.length} className="p-2">
                 <BlockOperationsContent
                   blockNum={row.block_num}
-                  filters={filters}
+                  paramsState={paramsState}
                 />
               </TableCell>
             </TableRow>
@@ -210,21 +229,23 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
     if (!rows) return [];
 
     return rows.map((block) => {
-      return {
-        Block: block.block_num,
-        Producer: block.producer_account,
-        hash: formatHash(block.hash),
-        "prev hash": formatHash(block.prev),
-        Timestamp: block.timestamp,     
-        "Producer reward (VESTS)": formatNumber(
-          block.producer_reward,
-          true,
-          false
-        ),
-        Transactions: block.trx_count,
-      };
-    });
-  };
+     return {
+       Block: block.block_num,
+       Producer: block.producer_account,
+       hash: formatHash(block.hash),
+       "prev hash": formatHash(block.prev),
+       Timestamp: formatAndDelocalizeTime(block.created_at),
+       "Producer reward (VESTS)": formatNumber(
+         block.producer_reward,
+         true,
+         false
+       ),
+       Transactions: block.trx_count,
+       "Operation Count": block.operationCount,  // Include the counts
+       "Virtual Ops Count": block.virtualOperationCount,
+     };
+   });
+ };
 
   const { hiveChain } = useHiveChainContext();
   const { dynamicGlobalData } = useDynamicGlobal() as any;

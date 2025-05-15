@@ -1,37 +1,43 @@
-import React from 'react';
-import Link from 'next/link';
+import React from "react";
+import Link from "next/link";
 import { getOperationColor } from "@/components/OperationsTable";
 import { getOperationTypeForDisplay } from "@/utils/UI";
 import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
 import useBlockOperations from "@/hooks/api/common/useBlockOperations";
 import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
-import CopyButton from '../ui/CopyButton';
-import { convertBooleanArrayToIds } from '@/lib/utils';
-import { Loader2 } from 'lucide-react';
-
+import CopyButton from "../ui/CopyButton";
+import { convertBooleanArrayToIds } from "@/lib/utils";
+import { Loader2 } from "lucide-react";
 
 interface Props {
   blockNum: number;
-  filters?: any;
+  paramsState?: any;
 }
 
-const BlockOperationsContent: React.FC<Props> = ({ blockNum, filters }) => {
+const BlockOperationsContent: React.FC<Props> = ({ blockNum, paramsState }) => {
   const {
     settings: { rawJsonView, prettyJsonView },
   } = useUserSettingsContext();
 
-  const { blockOperations, trxLoading } = useBlockOperations(blockNum,
-    filters
-      ? convertBooleanArrayToIds(filters)
-      : undefined
+  const { blockOperations, trxLoading } = useBlockOperations(
+    blockNum,
+    paramsState?.filters
+      ? convertBooleanArrayToIds(paramsState?.filters)
+      : undefined,
+    undefined,
+    paramsState.accountName
   );
 
   const formattedOperations = useOperationsFormatter(
     blockOperations?.operations_result
   );
 
-  if (trxLoading) { 
-    return <div><Loader2 className="animate-spin h-4 w-4 mr-2" /></div>;
+  if (trxLoading) {
+    return (
+      <div>
+        <Loader2 className="animate-spin h-4 w-4 mr-2" />
+      </div>
+    );
   }
 
   if (!formattedOperations) {
@@ -48,7 +54,7 @@ const BlockOperationsContent: React.FC<Props> = ({ blockNum, filters }) => {
       messageToDisplay = value;
     } else if (React.isValidElement(value)) {
       messageToDisplay = value;
-    } else if (value && typeof value === 'object' && value.message) {
+    } else if (value && typeof value === "object" && value.message) {
       messageToDisplay = value.message;
     }
 
@@ -80,10 +86,16 @@ const BlockOperationsContent: React.FC<Props> = ({ blockNum, filters }) => {
     );
   };
 
-  const OperationBadge = ({ operationTypeName }: { operationTypeName: string }) => (
+  const OperationBadge = ({
+    operationTypeName,
+  }: {
+    operationTypeName: string;
+  }) => (
     <div className="flex items-center space-x-1 rounded-full bg-buttonBg px-3 py-1">
       <span
-        className={`inline-block w-2 h-2 ${getOperationColor(operationTypeName)}`}
+        className={`inline-block w-2 h-2 ${getOperationColor(
+          operationTypeName
+        )}`}
         style={{ borderRadius: "2px" }}
       ></span>
       <span className="text-xs font-medium">{`${getOperationTypeForDisplay(
@@ -108,16 +120,38 @@ const BlockOperationsContent: React.FC<Props> = ({ blockNum, filters }) => {
         return <pre>{JSON.stringify(unformattedOperation)}</pre>;
       }
     }
-
   };
 
+  const operations = formattedOperations.filter((op: any) => !op.virtual_op);
+  const virtualOperations = formattedOperations.filter(
+    (op: any) => op.virtual_op
+  );
+
   return (
-     <div
-      className="border rounded-2xl p-4 max-h-[60vh] md:max-h-64 overflow-auto scrollbar-autocomplete " >
-      <h3 className="text-lg font-bold">Operation Details</h3>
-      {formattedOperations.map((operation: any) => (
-        <OperationDetails key={operation.operation_id} operation={operation} />
-      ))}
+    <div className="border rounded-2xl p-4 max-h-[60vh] md:max-h-64 overflow-auto scrollbar-autocomplete ">
+      {operations.length > 0 && (
+        <>
+          <h3 className="text-lg font-bold">Operations</h3>
+          {operations.map((operation: any) => (
+            <OperationDetails
+              key={operation.operation_id}
+              operation={operation}
+            />
+          ))}
+        </>
+      )}
+
+      {virtualOperations.length > 0 && (
+        <>
+          <h3 className="text-lg font-bold">Virtual Operations</h3>
+          {virtualOperations.map((operation: any) => (
+            <OperationDetails
+              key={operation.operation_id}
+              operation={operation}
+            />
+          ))}
+        </>
+      )}
     </div>
   );
 };
