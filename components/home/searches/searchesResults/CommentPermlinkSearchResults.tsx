@@ -50,13 +50,13 @@ const CommentPermlinkSearchResults = () => {
   const changePermlinkSearchPagination = (newPageNum: number) => {
     const newSearchProps: any = {
       ...permlinkSearchProps,
-      pageNumber: newPageNum,
+      page: newPageNum,
     };
     setPermlinkSearchProps(newSearchProps);
     setPermlinkPaginationPage(newPageNum);
   };
 
-   return (
+  return (
     <>
       {permlinkSearchData.total_permlinks ? (
         <div>
