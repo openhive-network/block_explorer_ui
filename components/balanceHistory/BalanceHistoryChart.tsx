@@ -213,7 +213,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     }
 
     let allValues: number[] = data.map((item) => item.balance);
-    if (showSavingsBalance=="yes") {
+    if (showSavingsBalance=="yes" && selectedCoinType !== 'VESTS') {
       const savingsValues = data.map(item => item.savings_balance).filter(value => value !== undefined) as number[];
       allValues = allValues.concat(savingsValues);
     }
@@ -302,7 +302,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             hide={hiddenDataKeys.includes("balance")}
           />
 
-          {showSavingsBalance =="yes" && (
+          {showSavingsBalance == "yes" && selectedCoinType !== 'VESTS' && (
             <Line
               type="monotone"
               dataKey="savings_balance"
