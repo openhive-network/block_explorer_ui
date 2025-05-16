@@ -209,6 +209,15 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
     setShowYearMonthPicker(false);
   };
 
+  const handleTodaySelect = () => {
+    setInternalDate(new Date());
+    setHourStr(String(new Date().getUTCHours()));
+    setMinuteStr(String(new Date().getUTCMinutes()));
+    setSecondStr(String(new Date().getUTCSeconds()));
+    setCurrentMonth(new Date());
+    setTempYear(new Date().getFullYear());
+  };
+
   return (
     <>
       {open && (
@@ -287,6 +296,7 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
                   </div>
                 </div>
               </div>
+
               <div className="actions">
                 <button
                   onClick={() => {
@@ -296,7 +306,11 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
                 >
                   Cancel
                 </button>
-                <button onClick={handleConfirm}>OK</button>
+
+                <div>
+                  <button onClick={handleTodaySelect}>Today</button>
+                  <button onClick={handleConfirm}>OK</button>
+                </div>
               </div>
             </>
           )}
