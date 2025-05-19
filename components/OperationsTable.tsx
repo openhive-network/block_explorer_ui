@@ -202,14 +202,15 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
           className="mb-2"
         />
       </div>
+      <div className="rounded p-1 bg-theme">
       <Table
         className={cn(
-          "rounded-[6px] overflow-x-auto max-w-[100%] text-xs",
+          "rounded overflow-x-auto max-w-[100%] text-xs",
           className
         )}
       >
         <TableHeader>
-          <TableRow>
+          <TableRow className="text-sm">
             <TableHead className="sticky top-0 left-0 z-10 "></TableHead>
             <TableHead className="pl-2 sticky top-0 left-12 z-10">
               Block
@@ -238,7 +239,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                   data-testid="detailed-operation-card"
                   key={index}
                   className={cn(
-                    "border-b border-b-2 dark:border-gray-700 bg-theme hover:bg-rowHover",
+                    "border-b-2 dark:border-gray-700 bg-theme hover:bg-rowHover",
                     {
                       "border-b-0":
                         nextTransactionId === operation.trxId &&
@@ -308,7 +309,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                       </Tooltip>
                     </TooltipProvider>
                   </TableCell>
-                  <TableCell data-testid="operation-type">
+                  <TableCell data-testid="operation-type" className="px-2">
                     <div className={`flex justify-start rounded `}>
                       <span
                         className={`rounded w-4 mr-2 ${operationBgColor}`}
@@ -319,7 +320,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                     </div>
                   </TableCell>
                   <TableCell
-                    className="min-w-[200px] md:max-w-0 w-1/2 py-2"
+                    className="max-w-[150px] py-2 break-words"
                     data-testid="operation-content"
                   >
                     {renderOperationContent(
@@ -395,6 +396,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
           })}
         </TableBody>
       </Table>
+      </div>
     </>
   );
 };
