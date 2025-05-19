@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState, useRef } from "react";
 import { useRouter } from "next/router";
 import { Loader2 } from "lucide-react";
 
@@ -87,20 +87,17 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
       setLastBlocksValue,
     } = searchRanges;
 
-    const props = {
-      ...defaultAccountOperationsTabSearchParams,
-      accountName,
-    };
-
     setRangeSelectKey("none");
     setTimeUnitSelectKey(undefined);
     setLastTimeUnitValue(undefined);
     setLastBlocksValue(undefined);
-    setParams(props);
-    setFilters([]);
-    setIsVisible(false);
-    setIsFiltersActive(false);
 
+    setParams({
+      ...defaultAccountOperationsTabSearchParams,
+      filters: [],
+      accountName,
+    });
+    setFilters([]);
     removeStorageItem("is_operations_filters_visible");
   };
 
@@ -152,32 +149,25 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     setAccountName(accounNameFromRoute);
   }, [router.isReady, router.query.accountName]);
 
-  // Don't show filters if only account name is present
+  const hasActiveFilters = Boolean(
+    (filtersParam?.length ?? 0) ||
+      fromBlockParam ||
+      toBlockParam ||
+      fromDateParam ||
+      toDateParam
+  );
+
   useEffect(() => {
-    Object.keys(defaultAccountOperationsTabSearchParams).forEach((key) => {
-      if (key === "accountName" || key === "page") return;
+    setIsFiltersActive(hasActiveFilters);
 
-      const param =
-        paramsState[
-          key as keyof typeof defaultAccountOperationsTabSearchParams
-        ];
-      const defaultParam =
-        defaultAccountOperationsTabSearchParams[
-          key as keyof typeof defaultAccountOperationsTabSearchParams
-        ];
-
-      const visibleFilters =
-        (isFiltersActive &&
-          getLocalStorage("is_operations_filters_visible", true)) ??
-        true;
-
-      if (param !== defaultParam) {
-        setIsFiltersActive(true);
-        setIsVisible(visibleFilters);
-      }
-    });
+    if (hasActiveFilters) {
+      const persisted = getLocalStorage("is_operations_filters_visible", true);
+      setIsVisible(persisted);
+    } else {
+      setIsVisible(false);
+    }
     //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paramsState, isFiltersActive]);
+  }, [hasActiveFilters]);
 
   const buttonLabel = `Value field can't be empty`;
 
