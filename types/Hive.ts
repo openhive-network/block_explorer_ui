@@ -504,6 +504,7 @@ namespace Hive {
     witnesses_voted_for!: number;
     ops_count!: number;
     is_witness!: boolean;
+    governanceTs!: any;
   }
 
   export class GetAccountAuthoritiesParams {

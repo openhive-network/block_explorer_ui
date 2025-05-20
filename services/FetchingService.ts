@@ -7,12 +7,14 @@ import {
   TWaxRestExtended,
   TWaxApiRequest,
   TWaxExtended,
+  FindAccountsResponse,
 } from "@hiveio/wax";
 import { extendedRest } from "@/types/Rest";
 import { createPathFilterString } from "@/lib/utils";
 
 export type ExplorerNodeApi = {
   database_api: {
+    find_accounts: TWaxApiRequest<{}, FindAccountsResponse[]>;
     get_reward_funds: TWaxApiRequest<{}, { funds: Hive.RewardFunds[] }>;
     get_current_price_feed: TWaxApiRequest<{}, Hive.PriceFeed>;
     find_vesting_delegations: TWaxApiRequest<
@@ -163,6 +165,16 @@ class FetchingService {
     return await this.extendedHiveChain!.api.database_api.get_current_price_feed(
       {}
     );
+  }
+
+  async findAccounts(
+    accounts: string[],
+    delayed_votes_active: boolean = true
+  ): Promise<FindAccountsResponse> {
+    return await this.extendedHiveChain!.api.database_api.find_accounts({
+      accounts,
+      delayed_votes_active,
+    });
   }
 
   async getAccOpTypes(accountName: string): Promise<number[]> {
