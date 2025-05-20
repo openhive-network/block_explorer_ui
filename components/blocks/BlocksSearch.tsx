@@ -45,8 +45,8 @@ interface BlocksSearchProps {
   isVisible: boolean;
   setIsVisible: Dispatch<SetStateAction<boolean>>;
   setIsFiltersActive: (newValue: boolean) => void;
-  setInitialToBlock: (toBlock: number | undefined) => void;
   setIsNewSearch: (value: boolean) => void;
+  isNewSearch: boolean;
   isFiltersActive: boolean;
   isFromRangeSelection: boolean;
   firstUserSelectedBlock: number | undefined;
@@ -56,7 +56,7 @@ const BlocksSearch = ({
   isVisible,
   setIsVisible,
   setIsFiltersActive,
-  setInitialToBlock,
+  isNewSearch,
   setIsNewSearch,
   isFiltersActive,
   isFromRangeSelection,
@@ -124,7 +124,6 @@ const BlocksSearch = ({
       payloadEndDate,
     } = await getRangesValues();
 
-    setInitialToBlock(undefined); // Reset initialToBlock on new search
     setIsNewSearch(true);
 
     const newParams: Explorer.AllBlocksSearchProps = {
@@ -151,6 +150,7 @@ const BlocksSearch = ({
       limit: config.standardPaginationSize,
       page: undefined,
       history: undefined,
+      firstBlock:undefined,
     };
     setParams(newParams);
   }, [
@@ -158,18 +158,17 @@ const BlocksSearch = ({
     setParams,
     paramsState,
     searchRanges,
-    setInitialToBlock,
     getRangesValues,
     setIsNewSearch,
   ]);
 
   const handleFilterClear = useCallback(() => {
     setIsNewSearch(true);
-    setInitialToBlock(undefined); // Reset initialToBlock on clear
     const newParams: Explorer.AllBlocksSearchProps = {
       ...DEFAULT_BLOCKS_SEARCH_PROPS,
       page: undefined,
       history: undefined,
+      firstBlock: undefined,
     };
 
     setAccountName("");
@@ -198,7 +197,6 @@ const BlocksSearch = ({
     setLastBlocksValue,
     setLastTimeUnitValue,
     setRangeSelectKey,
-    setInitialToBlock,
     setIsNewSearch,
   ]);
 
@@ -207,7 +205,8 @@ const BlocksSearch = ({
       paramsState.fromBlock ||
       paramsState.toBlock ||
       paramsState.startDate ||
-      paramsState.endDate
+      paramsState.endDate ||
+      paramsState.accountName
   );
 
   useEffect(() => {
@@ -222,8 +221,9 @@ const BlocksSearch = ({
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasActiveFilters]);
 
+  //When we are in Block Range we need to preserve the firstBlock
   useEffect(() => {
-    if (isFromRangeSelection === true && firstUserSelectedBlock) {
+    if (isFromRangeSelection === true && firstUserSelectedBlock && paramsState.rangeSelectKey == "blockRange" && !isNewSearch) {
       searchRanges.setToBlock(firstUserSelectedBlock);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

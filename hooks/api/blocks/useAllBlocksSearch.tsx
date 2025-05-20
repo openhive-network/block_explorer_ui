@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import Explorer from "@/types/Explorer";
 import fetchingService from "@/services/FetchingService";
+import { config } from "@/Config";
 
 
 
@@ -9,15 +10,17 @@ const useAllBlocksSearch = (
   allBlockSearchProps?: Explorer.AllBlocksSearchProps, 
   page?: number,
   toBlock?: number,
+  liveDataEnabled?:boolean,
 ) => {
   const {
     data: blocksSearchData,
     isFetching: blocksSearchDataLoading,
     isError: blocksSearchDataError,
   } = useQuery({
-    queryKey: ["blockSearch", allBlockSearchProps],
+    queryKey: ["blockSearch", allBlockSearchProps, liveDataEnabled],
     queryFn: () => fetchAllBlocks(allBlockSearchProps, page, toBlock),
     refetchOnWindowFocus: false,
+    refetchInterval: liveDataEnabled ? config.mainRefreshInterval : false,
   });
   const fetchAllBlocks = async (
     allBlockSearchProps: Explorer.AllBlocksSearchProps | undefined , 

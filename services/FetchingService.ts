@@ -526,8 +526,7 @@ class FetchingService {
         ? allBlockSearchProps.fromBlock || allBlockSearchProps.startDate
         : undefined,
       "to-block":
-        toBlock ??
-        (allBlockSearchProps?.toBlock || allBlockSearchProps?.endDate),
+        toBlock,
     };
     return await this.extendedHiveChain!.restApi["hafbe-api"].allBlockSearch(
       requestParams

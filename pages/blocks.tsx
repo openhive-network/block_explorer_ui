@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  useRef,
+} from "react";
 import Head from "next/head";
 import { Loader2 } from "lucide-react";
 
@@ -19,6 +25,8 @@ import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
 
 import { convertBooleanArrayToIds } from "@/lib/utils";
 import { setLocalStorage, getLocalStorage } from "@/utils/LocalStorage";
+import { Toggle } from "@/components/ui/toggle";
+import { useRouter } from "next/router";
 
 interface Operations {
   op_type_id: number;
@@ -39,6 +47,7 @@ export interface Block {
 export interface BlockRow extends Block {
   operationCount: number;
   virtualOperationCount: number;
+  isNew?: boolean; // Added property to indicate new block
 }
 
 const TABLE_CELLS = [
@@ -55,23 +64,31 @@ const TABLE_CELLS = [
 ];
 
 const BlocksPage = () => {
-  // URL Parameters and Initial State
+
   const { paramsState, setParams } = useURLParams(DEFAULT_BLOCKS_SEARCH_PROPS);
-  const [initialToBlock, setInitialToBlock] = useState<number | undefined>(undefined);
   const pageNum = paramsState.page;
+  const router = useRouter();
+  const { operationsTypes } = useOperationsTypes();
 
-  // Store the very first block selected - use toBlock instead of fromBlock.
-  const [firstUserSelectedBlock, setFirstUserSelectedBlock] = useState<number | undefined>();
-  const [isNewSearch, setIsNewSearch] = useState<boolean>(false);
-
-  // Flag indicating whether the data is based on a ranged selection or filtering
-  const [isFromRangeSelection, setIsFromRangeSelection] = useState<boolean>(false);
+  // Store the very first block selected so that when we click next in pagination or in block navigation the results are not disrupted by new blocks
+  const [firstBlock, setFirstBlock] = useState<number | undefined>(
+    paramsState.firstBlock
+  );
+  const [isNewSearch, setIsNewSearch] = useState<boolean>(true);
 
   // Filter Visibility State
   const [isFiltersActive, setIsFiltersActive] = useState(false);
-  const [isBlocksFilterSectionVisible, setIsBlocksFilterSectionVisible] = useState(
-    getLocalStorage("is_blocks_filters_visible", true) ?? false
-  );
+  const [isBlocksFilterSectionVisible, setIsBlocksFilterSectionVisible] =
+    useState(getLocalStorage("is_blocks_filters_visible", true) ?? false);
+
+  //Live Data
+  const [liveDataEnabled, setLiveDataEnabled] = useState(false);
+  const changeLiveRefresh = () => {
+    setLiveDataEnabled((prev) => !prev);
+  };
+  // Ref to store previous blocks data for live updates comparison
+  const prevBlocksDataRef = useRef<Block[] | null>(null);
+
 
   // Data Fetching
   const props = {
@@ -81,13 +98,23 @@ const BlocksPage = () => {
       : null,
   } as any;
 
-  const { blocksSearchData, blocksSearchDataError, blocksSearchDataLoading } = useAllBlocksSearch(
+
+  const { blocksSearchData, blocksSearchDataError, blocksSearchDataLoading } =
+    useAllBlocksSearch(
       props,
       pageNum,
-      paramsState.toBlock ? paramsState.toBlock : initialToBlock
+      //router.query.history?.length == 2 means that we are the very first page where history=[]
+      liveDataEnabled &&
+        firstBlock &&
+        (!paramsState.toBlock || router.query.history?.length == 2)
+        ? undefined
+        : paramsState.toBlock
+          ? paramsState.toBlock
+          : paramsState.firstBlock,
+      liveDataEnabled
     );
 
-    const { operationsTypes } = useOperationsTypes();
+
 
   // Handlers
   const handleFiltersVisibility = () => {
@@ -105,12 +132,17 @@ const BlocksPage = () => {
   }, []);
 
   const handlePageChange = (newPage: number) => {
-    setParams({
+    setIsNewSearch(false);
+    const newParams = {
       ...paramsState,
       page: newPage,
-      toBlock: blocksSearchData?.block_range.to,
-    });
-    setIsNewSearch(false);
+    };
+
+    if (!paramsState.toBlock) {
+      newParams.firstBlock = blocksSearchData?.block_range.to;
+    }
+
+    setParams(newParams);
   };
 
   const {
@@ -118,19 +150,17 @@ const BlocksPage = () => {
     handleLoadPreviousBlocks,
     hasMoreBlocks,
     hasPreviousBlocks,
+    isFromRangeSelection,
   } = useBlockNavigation(
     paramsState.toBlock,
     blocksSearchData,
     paramsState,
     setParams,
     false,
-    isNewSearch,
-    setIsNewSearch,
-    setIsFromRangeSelection
+    firstBlock
   );
 
   // Data Preparation
-
   const getOperationsCounts = useCallback(
     (operations: Operations[] | undefined) => {
       if (!operations || !operationsTypes) {
@@ -157,7 +187,7 @@ const BlocksPage = () => {
             } else {
               operationCount += op.op_count;
             }
-          } 
+          }
         }
       }
 
@@ -174,44 +204,56 @@ const BlocksPage = () => {
       return [];
     }
 
+    // Determine new blocks for highlighting, only when liveDataEnabled is true and when we are in very first page of history
+    let newBlocks: number[] = [];
+    if (
+      liveDataEnabled &&
+      prevBlocksDataRef.current &&
+      (router.query.history?.length == 2 || !router.query.history)
+    ) {
+      const existingBlockNums = prevBlocksDataRef.current.map(
+        (block) => block.block_num
+      );
+      newBlocks = blocksSearchData.blocks_result
+        .map((block) => block.block_num)
+        .filter((blockNum) => !existingBlockNums.includes(blockNum));
+    }
+
     return blocksSearchData.blocks_result.map((block) => {
-      const { operationCount, virtualOperationCount } = getOperationsCounts(block.operations);
+      const { operationCount, virtualOperationCount } = getOperationsCounts(
+        block.operations
+      );
+      const isNew = liveDataEnabled && newBlocks.includes(block.block_num);
+
       return {
         ...block,
         operationCount,
         virtualOperationCount,
+        isNew,
       };
     });
-  }, [blocksSearchData?.blocks_result, getOperationsCounts]);
+  }, [blocksSearchData?.blocks_result, getOperationsCounts, liveDataEnabled]);
 
-  // useEffect Hooks
+  // Update the ref with the current blocks data for the next comparison if liveDataEnabled
   useEffect(() => {
-    // Initialize the first user selected block only on the first load
-    if (paramsState.toBlock !== undefined && isNewSearch) {
-      setFirstUserSelectedBlock(paramsState.toBlock);
+    if (liveDataEnabled) {
+      prevBlocksDataRef.current = blocksSearchData?.blocks_result || null;
+    } else {
+      prevBlocksDataRef.current = null;
     }
-  }, [paramsState.toBlock, isNewSearch]);
+  }, [blocksSearchData?.blocks_result, liveDataEnabled]);
 
   useEffect(() => {
-    // Update the `initialToBlock` when the data is available.
-    if (
-      blocksSearchData?.blocks_result &&
-      blocksSearchData.blocks_result.length > 0 &&
-      !isNewSearch
-    ) {
-      setInitialToBlock(
-        paramsState.toBlock
-          ? paramsState.toBlock
-          : blocksSearchData.block_range.to
-      ); // Store the toBlock
-      setIsNewSearch(false);
+    if (isNewSearch && !paramsState.firstBlock) {
+      // New Search
+      setFirstBlock(blocksSearchData?.block_range.to);
+    } else if (paramsState.toBlock !== undefined && !paramsState.firstBlock) {
+      setFirstBlock(paramsState.toBlock);
+    } else {
+      setFirstBlock(paramsState.firstBlock);
     }
-  }, [
-    blocksSearchData,
-    paramsState.toBlock,
-    blocksSearchData?.block_range.to,
-    isNewSearch,
-  ]);
+
+  }, [paramsState.toBlock, paramsState.firstBlock, blocksSearchData]);
 
   return (
     <>
@@ -220,6 +262,7 @@ const BlocksPage = () => {
       </Head>
 
       <div className="page-container">
+
         <div className="flex items-start justify-between w-full bg-theme rounded">
           <div className="ml-6">
             <PageTitle
@@ -227,7 +270,16 @@ const BlocksPage = () => {
               className="py-4"
             />
           </div>
-          <div className="flex-shrink-0 mt-2 mr-2">
+          {/* Live Data Toggle */}
+          <div className="w-full sm:w-auto mt-4 top-0">
+            <Toggle
+              checked={liveDataEnabled}
+              onClick={changeLiveRefresh}
+              className="text-base whitespace-nowrap"
+              leftLabel="Live Data"
+            />
+          </div>
+          <div className="flex-shrink-0 mt-2">
             <FilterSectionToggle
               isFiltersActive={isFiltersActive}
               toggleFilters={handleFiltersVisibility}
@@ -239,11 +291,11 @@ const BlocksPage = () => {
             isVisible={isBlocksFilterSectionVisible}
             setIsVisible={setIsBlocksFilterSectionVisible}
             setIsFiltersActive={updateIsFiltersActive}
-            setInitialToBlock={setInitialToBlock}
             setIsNewSearch={setIsNewSearch}
+            isNewSearch={isNewSearch}
             isFiltersActive={isFiltersActive}
             isFromRangeSelection={isFromRangeSelection}
-            firstUserSelectedBlock={firstUserSelectedBlock}
+            firstUserSelectedBlock={firstBlock}
           />
         </div>
 
@@ -258,7 +310,7 @@ const BlocksPage = () => {
           className="md:pr-36 rounded"
         />
 
-        {blocksSearchDataLoading ? (
+        {blocksSearchDataLoading && !liveDataEnabled ? (
           <div className="flex justify-center items-center">
             <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />
           </div>
@@ -274,13 +326,14 @@ const BlocksPage = () => {
               onPageChange={handlePageChange}
             />
           </>
-        ) : (
+        ) : !blocksSearchDataLoading ? (
           <NoResult />
-        )}
+        ) : null}
         <div className="fixed bottom-[10px] right-0 flex flex-col items-end justify-end px-3 md:px-12">
           <ScrollTopButton />
         </div>
       </div>
+
     </>
   );
 };

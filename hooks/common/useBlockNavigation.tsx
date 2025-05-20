@@ -2,8 +2,6 @@
 import {
   useState,
   useCallback,
-  Dispatch,
-  SetStateAction,
   useEffect,
 } from "react";
 import { useRouter } from "next/router";
@@ -14,9 +12,7 @@ const useBlockNavigation = (
   paramsState: any,
   setParams: any,
   parseFromParamState?: boolean,
-  isNewSearch?: boolean,
-  setIsNewSearch?: Dispatch<SetStateAction<boolean>>,
-  setIsFromRangeSelection?: Dispatch<SetStateAction<boolean>>
+  firstBlock?: number,
 ) => {
     
   const router = useRouter();
@@ -43,7 +39,7 @@ const useBlockNavigation = (
   }, []);
 
   const [toBlockHistory, setToBlockHistory] = useState<number[] | null>(null);
-
+  const [isFromRangeSelection, setIsFromRangeSelection] = useState<boolean>(false);
   useEffect(() => {
     // Parse the history from the URL or paramsState
     const initialHistory = parseHistoryFromQuery(
@@ -71,6 +67,7 @@ const useBlockNavigation = (
     const newHistory = [...toBlockHistory, currentToBlock - nextToBlockParam];
 
     setToBlockHistory(newHistory);
+    setIsFromRangeSelection(true);
 
     const serializedHistory = JSON.stringify(newHistory);
     setParams({
@@ -79,17 +76,15 @@ const useBlockNavigation = (
       page: undefined,
       pageNumber: undefined,
       history: serializedHistory,
+      firstBlock: firstBlock ,
     });
-    setIsNewSearch && setIsNewSearch(false);
-    setIsFromRangeSelection && setIsFromRangeSelection(true);
   }, [
     blocksSearchData,
     paramsState,
     setParams,
     toBlockHistory,
     setToBlockHistory,
-    setIsNewSearch,
-    setIsFromRangeSelection,
+
   ]);
 
   const handleLoadPreviousBlocks = useCallback(() => {
@@ -113,15 +108,11 @@ const useBlockNavigation = (
       page: undefined,
       history: JSON.stringify(toBlockHistory.slice(0, -1)),
     });
-    setIsNewSearch && setIsNewSearch(false);
-    setIsFromRangeSelection && setIsFromRangeSelection(true);
   }, [
     paramsState,
     setParams,
     toBlockHistory,
     setToBlockHistory,
-    setIsNewSearch,
-    setIsFromRangeSelection,
   ]);
 
   const checkForMoreBlocks = useCallback((): boolean => {
@@ -164,6 +155,7 @@ const useBlockNavigation = (
     handleLoadPreviousBlocks,
     hasMoreBlocks: checkForMoreBlocks(),
     hasPreviousBlocks: checkForPreviousBlocks(),
+    isFromRangeSelection: isFromRangeSelection,
   };
 };
 
