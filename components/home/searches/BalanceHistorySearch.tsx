@@ -29,7 +29,9 @@ const BalanceHistorySearch = ({
   const [coinType, setCoinType] = useState<string>(
     paramsState.coinType ?? DEFAULT_COIN_TYPE
   ); // State to store the selected coin name
-  const [includeSavings, setIncludeSavings] = useState<string>(paramsState.includeSavings);
+  const [includeSavings, setIncludeSavings] = useState<string>(
+    paramsState.includeSavings
+  );
   const router = useRouter();
   const { searchRanges } = useSearchesContext();
   const accountNameFromRoute = (router.query.accountName as string)?.slice(1);
@@ -115,25 +117,24 @@ const BalanceHistorySearch = ({
       coinType: newCoinType,
       page: undefined,
     };
-  
+
     if (newCoinType === "VESTS") {
       paramsUpdate.includeSavings = "no";
       setIncludeSavings("no");
     }
-  
+
     setParams(paramsUpdate);
   };
 
   const handleSavingsChange = () => {
-    setIncludeSavings(includeSavings=="yes"?"no":"yes");
+    setIncludeSavings(includeSavings == "yes" ? "no" : "yes");
     setParams({
       ...paramsState,
-      includeSavings:includeSavings=="yes"?"no":"yes",
+      includeSavings: includeSavings == "yes" ? "no" : "yes",
       page: undefined, // Reset the page when the coin type changes
     });
   };
 
-  
   const handleFilterClear = () => {
     const {
       setRangeSelectKey,
@@ -163,30 +164,25 @@ const BalanceHistorySearch = ({
     removeStorageItem("is_balance_filters_visible");
   };
 
+  const hasActiveFilters = Boolean(
+    (paramsState.filters?.length ?? 0) ||
+      paramsState.fromBlock ||
+      paramsState.toBlock ||
+      paramsState.fromDate ||
+      paramsState.toDate
+  );
+
   useEffect(() => {
-    Object.keys(defaultBalanceHistorySearchParams).forEach((key) => {
-      if (key === "accountName" || key === "page") return;
+    setIsFiltersActive(hasActiveFilters);
 
-      const param =
-        paramsState[key as keyof typeof defaultBalanceHistorySearchParams];
-      const defaultParam =
-        defaultBalanceHistorySearchParams[
-          key as keyof typeof defaultBalanceHistorySearchParams
-        ];
-
-      const visibleFilters =
-        (isFiltersActive &&
-          getLocalStorage("is_balance_filters_visible", true)) ??
-        true;
-
-      if (param !== defaultParam) {
-        setIsFiltersActive(true);
-        setIsVisible(visibleFilters);
-      }
-    });
-
+    if (hasActiveFilters) {
+      const persisted = getLocalStorage("is_balance_filters_visible", true);
+      setIsVisible(persisted);
+    } else {
+      setIsVisible(false);
+    }
     //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paramsState, isFiltersActive]);
+  }, [hasActiveFilters]);
 
   const buttonLabel = `Value field can't be empty`;
 
@@ -229,7 +225,7 @@ const BalanceHistorySearch = ({
             <input
               type="checkbox"
               id="includeSavings"
-              checked={(includeSavings=="yes"?true:false)}
+              checked={includeSavings == "yes" ? true : false}
               onChange={handleSavingsChange}
               disabled={coinType === "VESTS"}
               className="mr-2 h-4 w-4 accent-blue-500 mt-4"

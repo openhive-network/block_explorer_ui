@@ -39,7 +39,7 @@ const buildTableHeader = () => {
   return TABLE_CELLS.map((cell, index) => {
     return (
       <TableHead
-        className="text-left text-[1.2rem]"
+        className="text-left text-sm"
         key={index}
       >
         {cell}
@@ -70,9 +70,9 @@ const buildTableBody = (
             <TableCell className="text-left text-text">
               {operation_id}
             </TableCell>
-            <TableCell className="text-left text-wrap whitespace-nowrap">
+            <TableCell className="text-left text-wrap whitespace-nowrap max-w-36">
               <Link
-                className="text-link"
+                className="text-link break-words"
                 target="_blank"
                 href={`/@${accountName}/${permlink}`}
               >
@@ -156,7 +156,7 @@ const CommentPermlinkResultTable = ({
       </div>
       <div className="flex w-full overflow-auto">
         <div className="text-text w-[100%] bg-theme dark:bg-theme p-5 rounded">
-          <Table data-testid="table-body">
+          <Table data-testid="table-body" className= "text-xs">
             <TableHeader>
               <TableRow>{buildTableHeader()}</TableRow>
             </TableHeader>

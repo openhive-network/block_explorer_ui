@@ -150,7 +150,7 @@ const BlocksSearch = ({
       rangeSelectKey: searchRanges.rangeSelectKey,
       limit: config.standardPaginationSize,
       page: undefined,
-      history:undefined,
+      history: undefined,
     };
     setParams(newParams);
   }, [
@@ -169,7 +169,7 @@ const BlocksSearch = ({
     const newParams: Explorer.AllBlocksSearchProps = {
       ...DEFAULT_BLOCKS_SEARCH_PROPS,
       page: undefined,
-      history:undefined,
+      history: undefined,
     };
 
     setAccountName("");
@@ -202,30 +202,25 @@ const BlocksSearch = ({
     setIsNewSearch,
   ]);
 
+  const hasActiveFilters = Boolean(
+    (paramsState.filters?.length ?? 0) ||
+      paramsState.fromBlock ||
+      paramsState.toBlock ||
+      paramsState.startDate ||
+      paramsState.endDate
+  );
+
   useEffect(() => {
-    Object.keys(DEFAULT_BLOCKS_SEARCH_PROPS).forEach((key) => {
-      if (key === "limit" || key === "page" || key === "toBlock") return;
+    setIsFiltersActive(hasActiveFilters);
 
-      const param =
-        paramsState[key as keyof typeof DEFAULT_BLOCKS_SEARCH_PROPS];
-      const defaultParam =
-        DEFAULT_BLOCKS_SEARCH_PROPS[
-          key as keyof typeof DEFAULT_BLOCKS_SEARCH_PROPS
-        ];
-
-      const visibleFilters =
-        (isFiltersActive &&
-          getLocalStorage("is_blocks_filters_visible", true)) ??
-        true;
-
-      if (param !== defaultParam) {
-        setIsFiltersActive(true);
-        setIsVisible(visibleFilters);
-      }
-    });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [paramsState, isFiltersActive]);
+    if (hasActiveFilters) {
+      const persisted = getLocalStorage("is_blocks_filters_visible", true);
+      setIsVisible(persisted);
+    } else {
+      setIsVisible(false);
+    }
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasActiveFilters]);
 
   useEffect(() => {
     if (isFromRangeSelection === true && firstUserSelectedBlock) {
