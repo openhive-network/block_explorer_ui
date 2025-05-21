@@ -232,7 +232,7 @@ const BlocksPage = () => {
         isNew,
       };
     });
-  }, [blocksSearchData?.blocks_result, getOperationsCounts, liveDataEnabled]);
+  }, [blocksSearchData?.blocks_result, getOperationsCounts, liveDataEnabled,router.query.history]);
 
   // Update the ref with the current blocks data for the next comparison if liveDataEnabled
   useEffect(() => {
@@ -253,7 +253,7 @@ const BlocksPage = () => {
       setFirstBlock(paramsState.firstBlock);
     }
 
-  }, [paramsState.toBlock, paramsState.firstBlock, blocksSearchData]);
+  }, [paramsState.toBlock, paramsState.firstBlock, blocksSearchData,isNewSearch]);
 
   return (
     <>

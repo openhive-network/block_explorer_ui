@@ -129,26 +129,6 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
     });
   };
 
-  const { dynamicGlobalData } = useDynamicGlobal() as any;
-
-  const [totalVestingShares, setTotalVestingShares] = useState<Hive.Supply>(
-    dynamicGlobalData?.headBlockDetails.rawTotalVestingShares
-  );
-  const [totalVestingFundHive, setTotalVestingFundHive] = useState<Hive.Supply>(
-    dynamicGlobalData?.headBlockDetails.rawTotalVestingFundHive
-  );
-
-  useEffect(() => {
-    if (dynamicGlobalData?.headBlockDetails) {
-      setTotalVestingShares(
-        dynamicGlobalData.headBlockDetails.rawTotalVestingShares
-      );
-      setTotalVestingFundHive(
-        dynamicGlobalData.headBlockDetails.rawTotalVestingFundHive
-      );
-    }
-  }, [dynamicGlobalData]);
-
   return (
     <>
       {totalCount > config.standardPaginationSize ? (
@@ -241,12 +221,12 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({row, blockNum, par
         setBgColor("bg-theme"); // Revert to the base background color
       }, 2200); // 2 seconds
 
-      return () => clearTimeout(timer); // Cleanup on unmount or update
-    } else if (isNewRow) { // Handle the transition when row.isNew becomes false
+      return () => clearTimeout(timer);
+    } else{ // Handle the transition when row.isNew becomes false
       setIsNewRow(false);
       setBgColor("bg-theme");
     }
-  }, [row.isNew]); // Effect runs when row.isNew changes
+  }, [row.isNew ]);
 
   const textColorClass = isNewRow ? "text-green-800 dark:text-green-200" : "";
   const shadowClass = isNewRow ? "shadow-inner" : "";
