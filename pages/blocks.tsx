@@ -209,7 +209,8 @@ const BlocksPage = () => {
     if (
       liveDataEnabled &&
       prevBlocksDataRef.current &&
-      (router.query.history?.length == 2 || !router.query.history)
+      (paramsState.page == blocksSearchData.total_pages || !paramsState.page )  && // Make sure we are on first page
+      (router.query.history?.length == 2 || !router.query.history) // First page - no history
     ) {
       const existingBlockNums = prevBlocksDataRef.current.map(
         (block) => block.block_num
