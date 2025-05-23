@@ -61,7 +61,6 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
 
       // After updating the state, scroll into view
       setTimeout(() => {
-        // Use setTimeout to wait for the DOM to update
         if (expandedRowRef.current) {
           expandedRowRef.current.scrollIntoView({
             behavior: "smooth",
@@ -102,153 +101,15 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
 
       return (
         <Fragment key={row.hash}>
-          <TableRow>
-            <TableCell className="whitespace-nowrap sticky left-[0px] z-10 bg-inherit p-4">
-              <div className="flex items-center space-x-2">
-                <Link
-                  href={`/block/${row.block_num}`}
-                  className="text-link"
-                >
-                  {row.block_num.toLocaleString()}
-                </Link>
-                <CopyButton
-                  text={String(row.block_num)}
-                  tooltipText="Copy block number"
-                />
-              </div>
-            </TableCell>
-            <TableCell className="whitespace-nowrap p-3">
-              <Link
-                className="text-link"
-                href={`@${row.producer_account}`}
-              >
-                {row.producer_account}
-              </Link>
-            </TableCell>
-            <TableCell className="whitespace-nowrap p-3">
-              <div className="flex items-center space-x-2">
-                <Link
-                  href={`/block/${row.block_num}`}
-                  className="text-link"
-                >
-                  {formatHash(row.prev)}
-                </Link>
-                <CopyButton
-                  text={String(row.prev)}
-                  tooltipText="Copy prev block hash"
-                />
-              </div>
-            </TableCell>
-            <TableCell className="whitespace-nowrap p-3">
-              <div className="flex items-center space-x-2">
-                <Link
-                  href={`/block/${row.block_num}`}
-                  className="text-link"
-                >
-                  {formatHash(row.hash)}
-                </Link>
-                <CopyButton
-                  text={String(row.hash)}
-                  tooltipText="Copy block hash"
-                />
-              </div>
-            </TableCell>
-
-            <TableCell className="whitespace-nowrap p-3">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div>
-                      <TimeAgo
-                        datetime={
-                          new Date(formatAndDelocalizeTime(row.created_at))
-                        }
-                      />
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent className="bg-theme text-text p-3">
-                    {formatAndDelocalizeTime(row.created_at)}
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </TableCell>
-            <TableCell className="whitespace-nowrap p-3">
-              {row.producer_reward !== undefined ? (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <span className="cursor-pointer">
-                        {formatNumber(row.producer_reward, true, false)}
-                      </span>
-                    </TooltipTrigger>
-                    <TooltipContent className="bg-theme text-text">
-                      {hiveChain &&
-                        totalVestingFundHive &&
-                        totalVestingShares &&
-                        convertVestsToHP(
-                          hiveChain,
-                          String(row.producer_reward),
-                          totalVestingFundHive,
-                          totalVestingShares
-                        )}
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              ) : (
-                "-"
-              )}
-            </TableCell>
-            <TableCell className="whitespace-nowrap p-3">
-              {row.trx_count}
-            </TableCell>
-            <TableCell className="whitespace-nowrap p-3">
-              {row.operationCount}
-            </TableCell>
-            <TableCell className="whitespace-nowrap p-3">
-              {row.virtualOperationCount}
-            </TableCell>
-            <TableCell className="text-right pr-4">
-              <Button
-                data-testid="expand-details"
-                className="p-0 h-fit bg-inherit"
-                onClick={() => toggleRow(row.block_num)}
-              >
-                {expandedRows.includes(row.block_num) ? (
-                  <ChevronUp
-                    width={20}
-                    height={20}
-                    className="mt-1"
-                  />
-                ) : (
-                  <ChevronDown
-                    width={20}
-                    height={20}
-                    className="mt-1"
-                  />
-                )}
-              </Button>
-            </TableCell>
-          </TableRow>
-
-          {/* Conditional rendering of BlockOperationsContent */}
-          {expandedRows.includes(row.block_num) && (
-            <TableRow
-              className="hover:bg-transparent"
-              ref={expandedRowRef}
-            >
-              {" "}
-              {/* Add the ref here */}
-              <TableCell
-                colSpan={TABLE_CELLS.length}
-                className="p-2"
-              >
-                <BlockOperationsContent
-                  blockNum={row.block_num}
-                  paramsState={paramsState}
-                />
-              </TableCell>
-            </TableRow>
-          )}
+          <TableRowComponent
+            row={row}
+            blockNum={blockNum}
+            paramsState={paramsState}
+            TABLE_CELLS={TABLE_CELLS}
+            expandedRows={expandedRows}
+            expandedRowRef={expandedRowRef}
+            toggleRow={toggleRow}
+          />
         </Fragment>
       );
     });
@@ -275,27 +136,6 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
       };
     });
   };
-
-  const { hiveChain } = useHiveChainContext();
-  const { dynamicGlobalData } = useDynamicGlobal() as any;
-
-  const [totalVestingShares, setTotalVestingShares] = useState<Hive.Supply>(
-    dynamicGlobalData?.headBlockDetails.rawTotalVestingShares
-  );
-  const [totalVestingFundHive, setTotalVestingFundHive] = useState<Hive.Supply>(
-    dynamicGlobalData?.headBlockDetails.rawTotalVestingFundHive
-  );
-
-  useEffect(() => {
-    if (dynamicGlobalData?.headBlockDetails) {
-      setTotalVestingShares(
-        dynamicGlobalData.headBlockDetails.rawTotalVestingShares
-      );
-      setTotalVestingFundHive(
-        dynamicGlobalData.headBlockDetails.rawTotalVestingFundHive
-      );
-    }
-  }, [dynamicGlobalData]);
 
   return (
     <>
@@ -347,6 +187,220 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
           <TableBody>{buildTableBody()}</TableBody>
         </Table>
       </div>
+    </>
+  );
+};
+
+interface TableRowComponentProps {
+  row: BlockRow;
+  blockNum: number;
+  paramsState?: any;
+  TABLE_CELLS: string[];
+  expandedRows: number[];
+  expandedRowRef: React.RefObject<HTMLTableRowElement>;
+  toggleRow: (blockNum: number) => void;
+}
+
+const TableRowComponent: React.FC<TableRowComponentProps> = ({
+  row,
+  blockNum,
+  paramsState,
+  TABLE_CELLS,
+  expandedRows,
+  expandedRowRef,
+  toggleRow,
+}) => {
+  const [isNewRow, setIsNewRow] = useState(row.isNew);
+  const [bgColor, setBgColor] = useState("bg-theme"); // Initial background color
+  const { hiveChain } = useHiveChainContext();
+  const { dynamicGlobalData } = useDynamicGlobal() as any;
+
+  const [totalVestingShares, setTotalVestingShares] = useState<Hive.Supply>(
+    dynamicGlobalData?.headBlockDetails.rawTotalVestingShares
+  );
+  const [totalVestingFundHive, setTotalVestingFundHive] = useState<Hive.Supply>(
+    dynamicGlobalData?.headBlockDetails.rawTotalVestingFundHive
+  );
+
+  useEffect(() => {
+    if (dynamicGlobalData?.headBlockDetails) {
+      setTotalVestingShares(
+        dynamicGlobalData.headBlockDetails.rawTotalVestingShares
+      );
+      setTotalVestingFundHive(
+        dynamicGlobalData.headBlockDetails.rawTotalVestingFundHive
+      );
+    }
+  }, [dynamicGlobalData]);
+
+  useEffect(() => {
+    if (row.isNew) {
+      setIsNewRow(true); // Make sure we use the state variable
+      setBgColor("bg-green-300 dark:bg-green-900"); // Apply new row background
+
+      const timer = setTimeout(() => {
+        setIsNewRow(false);
+        setBgColor("bg-theme"); // Revert to the base background color
+      }, 2200); // 2 seconds
+
+      return () => clearTimeout(timer);
+    } else {
+      // Handle the transition when row.isNew becomes false
+      setIsNewRow(false);
+      setBgColor("bg-theme");
+    }
+  }, [row.isNew]);
+
+  const textColorClass = isNewRow ? "text-green-800 dark:text-green-200" : "";
+  const shadowClass = isNewRow ? "shadow-inner" : "";
+
+  return (
+    <>
+      <TableRow
+        className={`text-left ${bgColor} hover:bg-rowHover border-b-2 transition-colors duration-300 ease-in-out ${textColorClass} ${shadowClass}`}
+      >
+        <TableCell className="whitespace-nowrap sticky left-[0px] z-10 bg-inherit p-4">
+          <div className="flex items-center space-x-2">
+            <Link
+              href={`/block/${row.block_num}`}
+              className="text-link"
+            >
+              {row.block_num.toLocaleString()}
+            </Link>
+            <CopyButton
+              text={String(row.block_num)}
+              tooltipText="Copy block number"
+            />
+          </div>
+        </TableCell>
+        <TableCell className="whitespace-nowrap p-3">
+          <Link
+            className="text-link"
+            href={`@${row.producer_account}`}
+          >
+            {row.producer_account}
+          </Link>
+        </TableCell>
+        <TableCell className="whitespace-nowrap p-3">
+          <div className="flex items-center space-x-2">
+            <Link
+              href={`/block/${row.block_num}`}
+              className="text-link"
+            >
+              {formatHash(row.prev)}
+            </Link>
+            <CopyButton
+              text={String(row.prev)}
+              tooltipText="Copy prev block hash"
+            />
+          </div>
+        </TableCell>
+        <TableCell className="whitespace-nowrap p-3">
+          <div className="flex items-center space-x-2">
+            <Link
+              href={`/block/${row.block_num}`}
+              className="text-link"
+            >
+              {formatHash(row.hash)}
+            </Link>
+            <CopyButton
+              text={String(row.hash)}
+              tooltipText="Copy block hash"
+            />
+          </div>
+        </TableCell>
+
+        <TableCell className="whitespace-nowrap p-3">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div>
+                  <TimeAgo
+                    datetime={new Date(formatAndDelocalizeTime(row.created_at))}
+                  />
+                </div>
+              </TooltipTrigger>
+              <TooltipContent className="bg-theme text-text p-3">
+                {formatAndDelocalizeTime(row.created_at)}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </TableCell>
+        <TableCell className="whitespace-nowrap p-3">
+          {row.producer_reward !== undefined ? (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="cursor-pointer">
+                    {formatNumber(row.producer_reward, true, false)}
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent className="bg-theme text-text">
+                  {hiveChain &&
+                    totalVestingFundHive &&
+                    totalVestingShares &&
+                    convertVestsToHP(
+                      hiveChain,
+                      String(row.producer_reward),
+                      totalVestingFundHive,
+                      totalVestingShares
+                    )}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          ) : (
+            "-"
+          )}
+        </TableCell>
+        <TableCell className="whitespace-nowrap p-3">{row.trx_count}</TableCell>
+        <TableCell className="whitespace-nowrap p-3">
+          {row.operationCount}
+        </TableCell>
+        <TableCell className="whitespace-nowrap p-3">
+          {row.virtualOperationCount}
+        </TableCell>
+        <TableCell className="text-right pr-4">
+          <Button
+            data-testid="expand-details"
+            className="p-0 h-fit bg-inherit"
+            onClick={() => toggleRow(row.block_num)}
+          >
+            {expandedRows.includes(row.block_num) ? (
+              <ChevronUp
+                width={20}
+                height={20}
+                className="mt-1"
+              />
+            ) : (
+              <ChevronDown
+                width={20}
+                height={20}
+                className="mt-1"
+              />
+            )}
+          </Button>
+        </TableCell>
+      </TableRow>
+
+      {/* Conditional rendering of BlockOperationsContent */}
+      {expandedRows.includes(row.block_num) && (
+        <TableRow
+          className="hover:bg-transparent"
+          ref={expandedRowRef}
+        >
+          {" "}
+          {/* Add the ref here */}
+          <TableCell
+            colSpan={TABLE_CELLS.length}
+            className="p-2"
+          >
+            <BlockOperationsContent
+              blockNum={row.block_num}
+              paramsState={paramsState}
+            />
+          </TableCell>
+        </TableRow>
+      )}
     </>
   );
 };
