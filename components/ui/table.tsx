@@ -1,6 +1,62 @@
+// ui/table.tsx
 import * as React from "react";
-
 import { cn } from "@/lib/utils";
+
+/** Helper to get a nice name for displayName */
+function getDisplayName(Tag: React.ElementType) {
+  return typeof Tag === "string"
+    ? Tag
+    : (Tag as any).displayName || (Tag as any).name || "Component";
+}
+
+/**
+ * HOC that:
+ *  • Adds `stickyLeft?: boolean|number`
+ *  • Always applies `baseClasses` (global defaults)
+ *  • Then applies `"px-4 align-middle"`
+ *  • Then applies any `className` the consumer passes
+ */
+export function withSticky<T extends React.ElementType>(
+  Tag: T,
+  baseClasses = ""
+) {
+  type OwnProps = React.ComponentPropsWithoutRef<T>;
+  type Props = OwnProps & { stickyLeft?: boolean | number; className?: string };
+  type RefType = React.ElementRef<T>;
+
+  const StickyComp = React.forwardRef<RefType, Props>(
+    ({ stickyLeft, style, className, ...props }, ref) => {
+      const stickyStyle =
+        stickyLeft !== undefined
+          ? {
+              position: "sticky",
+              left: stickyLeft === true ? 0 : stickyLeft,
+              zIndex: 1,
+              background: "inherit",
+            }
+          : undefined;
+
+      return (
+        <Tag
+          ref={ref as any}
+          style={{ ...(style as React.CSSProperties), ...stickyStyle }}
+          className={cn(baseClasses, className)}
+          {...(props as any)}
+        />
+      );
+    }
+  );
+
+  StickyComp.displayName = `withSticky(${getDisplayName(Tag)})`;
+  return StickyComp as React.ForwardRefExoticComponent<
+    Props & React.RefAttributes<RefType>
+  >;
+}
+
+const rowVariants = {
+  body: "transition-colors hover:bg-rowHover dark:hover:bg-rowHover data-[state=selected]:bg-muted",
+  header: "font-medium bg-theme",
+};
 
 const Table = React.forwardRef<
   HTMLTableElement,
@@ -9,7 +65,10 @@ const Table = React.forwardRef<
   <div className="w-full overflow-auto">
     <table
       ref={ref}
-      className={cn("w-full caption-bottom bg-theme text-sm", className)}
+      className={cn(
+        "w-full caption-bottom bg-theme text-xs rounded max-w-full",
+        className
+      )}
       {...props}
     />
   </div>
@@ -35,7 +94,7 @@ const TableBody = React.forwardRef<
   <tbody
     ref={ref}
     className={cn(
-      "[&_tr:last-child]:border-0 bg-theme dark:bg-theme",
+      "[&_tr:last-child]:border-0 bg-theme dark:bg-theme max-w-[100%]",
       className
     )}
     {...props}
@@ -57,12 +116,13 @@ TableFooter.displayName = "TableFooter";
 
 const TableRow = React.forwardRef<
   HTMLTableRowElement,
-  React.HTMLAttributes<HTMLTableRowElement>
->(({ className, ...props }, ref) => (
+  React.HTMLAttributes<HTMLTableRowElement> & { rowVariant?: "body" | "header" }
+>(({ className, rowVariant = "body", ...props }, ref) => (
   <tr
     ref={ref}
     className={cn(
-      "transition-colors hover:bg-rowHover dark:hover:bg-rowHover data-[state=selected]:bg-muted",
+      "border-b-2 text-left bg-theme dark:border-gray-700",
+      rowVariants[rowVariant],
       className
     )}
     {...props}
@@ -70,31 +130,17 @@ const TableRow = React.forwardRef<
 ));
 TableRow.displayName = "TableRow";
 
-const TableHead = React.forwardRef<
-  HTMLTableCellElement,
-  React.ThHTMLAttributes<HTMLTableCellElement>
->(({ className, ...props }, ref) => (
-  <th
-    ref={ref}
-    className={cn(
-      "h-12 px-4 text-left align-middle font-medium bg-theme text-text [&:has([role=checkbox])]:pr-0",
-      className
-    )}
-    {...props}
-  />
-));
+const TableHead = withSticky(
+  "th",
+
+  "h-12 px-4 text-left align-middle font-medium bg-theme text-text [&:has([role=checkbox])]:pr-0"
+);
 TableHead.displayName = "TableHead";
 
-const TableCell = React.forwardRef<
-  HTMLTableCellElement,
-  React.TdHTMLAttributes<HTMLTableCellElement>
->(({ className, ...props }, ref) => (
-  <td
-    ref={ref}
-    className={cn("px-4 align-middle [&:has([role=checkbox])]:pr-0", className)}
-    {...props}
-  />
-));
+const TableCell = withSticky(
+  "td",
+  "px-4 align-middle text-text [&:has([role=checkbox])]:pr-0"
+);
 TableCell.displayName = "TableCell";
 
 const TableCaption = React.forwardRef<

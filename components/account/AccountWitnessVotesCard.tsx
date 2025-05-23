@@ -18,19 +18,11 @@ const buildTableBody = (voters: string[], isProxy: boolean) => {
     const isLast = index === voters.length - 1;
     return (
       <Fragment key={index}>
-        <TableRow
-          className={cn(
-            {
-              "border-t border-gray-700": index !== 0,
-              "border-b border-gray-700": !isLast,
-            },
-            "hover:bg-inherit"
-          )}
-        >
+        <TableRow>
           <TableCell>{index + 1}</TableCell>
           <TableCell className="text-right">
             <Link
-              className={cn("text-blue-400", { "italic": isProxy })} // Apply italic class conditionally
+              className={cn("text-blue-400", { italic: isProxy })} // Apply italic class conditionally
               href={`/@${voter}`}
             >
               {voter}
@@ -55,41 +47,58 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
   const handlePropertiesVisibility = () => {
     setIsPropertiesHidden(!isPropertiesHidden);
   };
-  
+
   const fetchWitnessVotes = useCallback(
-    async (proxy: string, currentDepth: number, maxDepth: number, proxiesList: string[]): Promise<any[]> => {
+    async (
+      proxy: string,
+      currentDepth: number,
+      maxDepth: number,
+      proxiesList: string[]
+    ): Promise<any[]> => {
       if (currentDepth > maxDepth || !proxy) return [];
-  
+
       const result = await fetchingService.getAccount(proxy);
-  
+
       // Add the current proxy to the proxies list
       proxiesList.push(proxy);
-  
+
       // If there's another proxy, go deeper if within maxDepth
       if (result.proxy && currentDepth < maxDepth) {
-        const nestedVotes = await fetchWitnessVotes(result.proxy, currentDepth + 1, maxDepth, proxiesList);
+        const nestedVotes = await fetchWitnessVotes(
+          result.proxy,
+          currentDepth + 1,
+          maxDepth,
+          proxiesList
+        );
         return [...result.witness_votes, ...nestedVotes];
       }
-  
-      return result.witness_votes?.slice().sort(
-        (a, b) => a.toLowerCase().localeCompare(b.toLowerCase())) || [];
+
+      return (
+        result.witness_votes
+          ?.slice()
+          .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase())) || []
+      );
     },
-    [] 
+    []
   );
 
-  
-  useEffect(() => {  
+  useEffect(() => {
     if (!proxy) return;
     const getVotersForProxy = async () => {
-      const proxiesList: string[] = [];  // Local list to track all proxy names
-      const votes = await fetchWitnessVotes(proxy, 1, config.maxProxyDepth, proxiesList);
+      const proxiesList: string[] = []; // Local list to track all proxy names
+      const votes = await fetchWitnessVotes(
+        proxy,
+        1,
+        config.maxProxyDepth,
+        proxiesList
+      );
       setVotersForProxy(votes);
-      setAllProxies(proxiesList);  // Update state with the complete list of proxies
+      setAllProxies(proxiesList); // Update state with the complete list of proxies
     };
     getVotersForProxy();
-  }, [proxy,fetchWitnessVotes]);
+  }, [proxy, fetchWitnessVotes]);
 
-  if (proxy != null && proxy.length > 0) {     
+  if (proxy != null && proxy.length > 0) {
     return (
       <Card
         data-testid="witness-votes-dropdown"
@@ -107,36 +116,46 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
         </CardHeader>
         <CardContent hidden={isPropertiesHidden}>
           <div>
-            <Link className="text-link" href={`/@${accountName}`}>
+            <Link
+              className="text-link"
+              href={`/@${accountName}`}
+            >
               @{accountName}
             </Link>
             <span> uses </span>
 
             {allProxies.map((proxyName, index) => (
               <span key={index}>
-                <Link className="text-link" href={`/@${proxyName}`}>
+                <Link
+                  className="text-link"
+                  href={`/@${proxyName}`}
+                >
                   @{proxyName}
                 </Link>
                 {index < allProxies.length - 1 && <span>, who uses </span>}
               </span>
             ))}
-            
-            <span> as a voting proxy</span><br /><br />
-            <h1>Votes of <Link className="text-link" href={`/@${allProxies[allProxies.length - 1]}`}>
-              @{allProxies[allProxies.length - 1]}
-            </Link></h1>
+
+            <span> as a voting proxy</span>
+            <br />
+            <br />
+            <h1>
+              Votes of{" "}
+              <Link
+                className="text-link"
+                href={`/@${allProxies[allProxies.length - 1]}`}
+              >
+                @{allProxies[allProxies.length - 1]}
+              </Link>
+            </h1>
             <Table>
               <TableBody>{buildTableBody(votersForProxy, true)}</TableBody>
             </Table>
-
           </div>
         </CardContent>
-
-
       </Card>
     );
-  }
-  else if (!voters || !voters.length) return null;
+  } else if (!voters || !voters.length) return null;
   voters.sort(
     (a, b) => a.toLowerCase().localeCompare(b.toLowerCase()) // Changed: Sorting logic to ensure alphabetical order
   );

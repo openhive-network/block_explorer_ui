@@ -29,11 +29,11 @@ const buildTableBody = (delegations: RcDelegation[]) => {
     const isLast = index === delegations.length - 1;
     return (
       <Fragment key={index}>
-        <TableRow className={"border-b border-gray-700 hover:bg-inherit"}>
+        <TableRow>
           <TableCell>{index + 1}</TableCell>
           <TableCell className="text-right">
             <Link
-              className="text-blue-400"
+              className="text-link"
               href={`/@${delegation.to}`}
             >
               {delegation.to}

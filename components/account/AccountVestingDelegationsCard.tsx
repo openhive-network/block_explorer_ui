@@ -30,7 +30,7 @@ const buildTableBody = (
   return delegations.map((delegation, index: number) => {
     return (
       <Fragment key={index}>
-        <TableRow className={"border-b border-gray-700 hover:bg-inherit"}>
+        <TableRow>
           <TableCell>{index + 1}</TableCell>
           <TableCell className="text-right">
             {direction === "outgoing" ? (

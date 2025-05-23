@@ -36,7 +36,7 @@ const buildTableBody = (transfers: AllTransfers[]) => {
   return transfers.map((transfer, index: number) => {
     return (
       <Fragment key={index}>
-        <TableRow className={"border-b border-gray-700 hover:bg-inherit"}>
+        <TableRow>
           <TableCell>{index + 1}</TableCell>
           <TableCell className="text-right">
             {"to" in transfer ? (

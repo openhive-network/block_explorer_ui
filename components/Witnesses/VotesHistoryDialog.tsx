@@ -44,13 +44,6 @@ type VotersDialogProps = {
   accountDetails?: Explorer.FormattedAccountDetails;
 };
 
-const tableColums = [
-  { key: "timestamp", name: "Date" },
-  { key: "voter", name: "Voter" },
-  { key: "vote", name: "Vote" },
-  { key: "power", name: "Current Voter Power", isRightAligned: true },
-];
-
 const PAGE_SIZE = 100;
 
 const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
@@ -224,73 +217,61 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                 <NoResult />
               </div>
             ) : (
-              <>
-                <Table className="text-text">
-                  <TableHeader>
-                    <TableRow>
-                      {tableColums.map((column, index) => (
-                        <TableHead
-                          key={column.key}
-                          className={cn("min-h-12 h-auto p-3", {
-                            "sticky md:static left-0": !index,
-                            "flex justify-end items-center":
-                              column.isRightAligned,
-                          })}
-                        >
-                          <span className="flex ">{column.name}</span>
+              <div className="flex w-full overflow-auto rounded">
+                <div className="text-text w-[100%] bg-theme">
+                  <Table>
+                    <TableHeader>
+                      <TableRow rowVariant="header">
+                        <TableHead stickyLeft>Date</TableHead>
+                        <TableHead>Voter</TableHead>
+                        <TableHead>Vote</TableHead>
+                        <TableHead className="text-right">
+                          Current Voter Power
                         </TableHead>
-                      ))}
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody data-testid="votes-history-dialog-table-body">
-                    {displayData?.votes_history &&
-                      displayData?.votes_history.map((vote, index) => (
-                        <TableRow
-                          key={index}
-                          className={`${
-                            index % 2 === 0 ? "bg-rowEven" : "bg-rowOdd"
-                          }`}
-                        >
-                          <TableCell
-                            className="sticky md:static left-0 bg-inherit"
-                            data-testid="date-format"
-                          >
-                            {formatAndDelocalizeTime(vote.timestamp)}
-                          </TableCell>
-                          <TableCell
-                            className="text-link"
-                            data-testid="voter"
-                          >
-                            <Link href={`/@${vote.voter_name}`}>
-                              {vote.voter_name}
-                            </Link>
-                          </TableCell>
-                          <TableCell
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody data-testid="votes-history-dialog-table-body">
+                      {displayData?.votes_history &&
+                        displayData?.votes_history.map((vote, index) => (
+                          <TableRow
+                            key={index}
                             className={`${
-                              vote.approve
-                                ? "text-explorer-light-green"
-                                : "text-explorer-red"
+                              index % 2 === 0 ? "bg-rowEven" : "bg-rowOdd"
                             }`}
-                            data-testid="vote-arrow"
                           >
-                            {vote.approve ? (
-                              <ArrowUpCircleIcon color="#17e405" />
-                            ) : (
-                              <ArrowDownCircleIcon color="#f71b1b" />
-                            )}
-                          </TableCell>
-                          <TableCell
-                            className="text-right"
-                            data-testid="current-voter-power"
-                          >
-                            {" "}
-                            {fetchHivePower(vote.vests.toString(), isHP)}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </>
+                            <TableCell
+                              stickyLeft
+                              data-testid="date-format"
+                            >
+                              {formatAndDelocalizeTime(vote.timestamp)}
+                            </TableCell>
+                            <TableCell data-testid="voter">
+                              <Link
+                                className="text-link"
+                                href={`/@${vote.voter_name}`}
+                              >
+                                {vote.voter_name}
+                              </Link>
+                            </TableCell>
+                            <TableCell data-testid="vote-arrow">
+                              {vote.approve ? (
+                                <ArrowUpCircleIcon color="#17e405" />
+                              ) : (
+                                <ArrowDownCircleIcon color="#f71b1b" />
+                              )}
+                            </TableCell>
+                            <TableCell
+                              className="text-right"
+                              data-testid="current-voter-power"
+                            >
+                              {fetchHivePower(vote.vests.toString(), isHP)}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
             )}
           </>
         ) : (

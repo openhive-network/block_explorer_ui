@@ -60,7 +60,8 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
         : [...prevExpandedRows, blockNum];
 
       // After updating the state, scroll into view
-      setTimeout(() => { // Use setTimeout to wait for the DOM to update
+      setTimeout(() => {
+        // Use setTimeout to wait for the DOM to update
         if (expandedRowRef.current) {
           expandedRowRef.current.scrollIntoView({
             behavior: "smooth",
@@ -101,10 +102,13 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
 
       return (
         <Fragment key={row.hash}>
-          <TableRow className="text-left bg-theme hover:bg-rowHover border-b-2 ">
+          <TableRow>
             <TableCell className="whitespace-nowrap sticky left-[0px] z-10 bg-inherit p-4">
               <div className="flex items-center space-x-2">
-                <Link href={`/block/${row.block_num}`} className="text-link">
+                <Link
+                  href={`/block/${row.block_num}`}
+                  className="text-link"
+                >
                   {row.block_num.toLocaleString()}
                 </Link>
                 <CopyButton
@@ -114,13 +118,19 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
               </div>
             </TableCell>
             <TableCell className="whitespace-nowrap p-3">
-              <Link className="text-link" href={`@${row.producer_account}`}>
+              <Link
+                className="text-link"
+                href={`@${row.producer_account}`}
+              >
                 {row.producer_account}
               </Link>
             </TableCell>
             <TableCell className="whitespace-nowrap p-3">
               <div className="flex items-center space-x-2">
-                <Link href={`/block/${row.block_num}`} className="text-link">
+                <Link
+                  href={`/block/${row.block_num}`}
+                  className="text-link"
+                >
                   {formatHash(row.prev)}
                 </Link>
                 <CopyButton
@@ -131,7 +141,10 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
             </TableCell>
             <TableCell className="whitespace-nowrap p-3">
               <div className="flex items-center space-x-2">
-                <Link href={`/block/${row.block_num}`} className="text-link">
+                <Link
+                  href={`/block/${row.block_num}`}
+                  className="text-link"
+                >
                   {formatHash(row.hash)}
                 </Link>
                 <CopyButton
@@ -154,7 +167,7 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
                     </div>
                   </TooltipTrigger>
                   <TooltipContent className="bg-theme text-text p-3">
-                  {formatAndDelocalizeTime(row.created_at)}
+                    {formatAndDelocalizeTime(row.created_at)}
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -201,9 +214,17 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
                 onClick={() => toggleRow(row.block_num)}
               >
                 {expandedRows.includes(row.block_num) ? (
-                  <ChevronUp width={20} height={20} className="mt-1" />
+                  <ChevronUp
+                    width={20}
+                    height={20}
+                    className="mt-1"
+                  />
                 ) : (
-                  <ChevronDown width={20} height={20} className="mt-1" />
+                  <ChevronDown
+                    width={20}
+                    height={20}
+                    className="mt-1"
+                  />
                 )}
               </Button>
             </TableCell>
@@ -211,8 +232,16 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
 
           {/* Conditional rendering of BlockOperationsContent */}
           {expandedRows.includes(row.block_num) && (
-            <TableRow className="hover:bg-transparent" ref={expandedRowRef}> {/* Add the ref here */}
-              <TableCell colSpan={TABLE_CELLS.length} className="p-2">
+            <TableRow
+              className="hover:bg-transparent"
+              ref={expandedRowRef}
+            >
+              {" "}
+              {/* Add the ref here */}
+              <TableCell
+                colSpan={TABLE_CELLS.length}
+                className="p-2"
+              >
                 <BlockOperationsContent
                   blockNum={row.block_num}
                   paramsState={paramsState}
@@ -229,23 +258,23 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
     if (!rows) return [];
 
     return rows.map((block) => {
-     return {
-       Block: block.block_num,
-       Producer: block.producer_account,
-       hash: formatHash(block.hash),
-       "prev hash": formatHash(block.prev),
-       Timestamp: formatAndDelocalizeTime(block.created_at),
-       "Producer reward (VESTS)": formatNumber(
-         block.producer_reward,
-         true,
-         false
-       ),
-       Transactions: block.trx_count,
-       "Operation Count": block.operationCount,  // Include the counts
-       "Virtual Ops Count": block.virtualOperationCount,
-     };
-   });
- };
+      return {
+        Block: block.block_num,
+        Producer: block.producer_account,
+        hash: formatHash(block.hash),
+        "prev hash": formatHash(block.prev),
+        Timestamp: formatAndDelocalizeTime(block.created_at),
+        "Producer reward (VESTS)": formatNumber(
+          block.producer_reward,
+          true,
+          false
+        ),
+        Transactions: block.trx_count,
+        "Operation Count": block.operationCount, // Include the counts
+        "Virtual Ops Count": block.virtualOperationCount,
+      };
+    });
+  };
 
   const { hiveChain } = useHiveChainContext();
   const { dynamicGlobalData } = useDynamicGlobal() as any;
@@ -299,7 +328,10 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
           "justify-between": !!totalCount,
         })}
       >
-        <DataCountMessage count={totalCount || 0} dataType="blocks" />
+        <DataCountMessage
+          count={totalCount || 0}
+          dataType="blocks"
+        />
         <DataExport
           data={prepareExportData()}
           filename={`blocks.csv`}
@@ -307,7 +339,10 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
         />
       </div>
       <div className="border-2 border-theme rounded bg-theme">
-        <Table data-testid="table-body" className=" overflow-auto">
+        <Table
+          data-testid="table-body"
+          className=" overflow-auto"
+        >
           <TableHeader>{buildTableHeader()}</TableHeader>
           <TableBody>{buildTableBody()}</TableBody>
         </Table>
