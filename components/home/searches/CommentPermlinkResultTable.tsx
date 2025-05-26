@@ -39,6 +39,7 @@ const buildTableHeader = () => {
   return TABLE_CELLS.map((cell, index) => {
     return (
       <TableHead
+        stickyLeft={index === 0 ? true : undefined}
         className="text-left text-sm"
         key={index}
       >
@@ -59,18 +60,19 @@ const buildTableBody = (
     ({ block, operation_id, permlink, timestamp, trx_id }: any) => {
       return (
         <React.Fragment key={trx_id}>
-          <TableRow className="border-b border-gray-700 hover:bg-inherit p-[10px]">
-            <TableCell className="text-left text-link whitespace-nowrap">
+          <TableRow>
+            <TableCell
+              stickyLeft
+              className="text-link whitespace-nowrap"
+            >
               <Link href={`/block/${block}`}>{block.toLocaleString()}</Link>
               <CopyButton
                 text={block}
                 tooltipText="Copy block number"
               />
             </TableCell>
-            <TableCell className="text-left text-text">
-              {operation_id}
-            </TableCell>
-            <TableCell className="text-left text-wrap whitespace-nowrap max-w-36">
+            <TableCell>{operation_id}</TableCell>
+            <TableCell className="text-wrap whitespace-nowrap max-w-36">
               <Link
                 className="text-link break-words"
                 target="_blank"
@@ -156,9 +158,12 @@ const CommentPermlinkResultTable = ({
       </div>
       <div className="flex w-full overflow-auto">
         <div className="text-text w-[100%] bg-theme dark:bg-theme p-5 rounded">
-          <Table data-testid="table-body" className= "text-xs">
+          <Table
+            data-testid="table-body"
+            className="text-xs"
+          >
             <TableHeader>
-              <TableRow>{buildTableHeader()}</TableRow>
+              <TableRow rowVariant="header">{buildTableHeader()}</TableRow>
             </TableHeader>
             <TableBody>
               {buildTableBody(data, accountName, handleOpenCommentsSection)}

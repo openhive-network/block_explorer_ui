@@ -1,8 +1,6 @@
-// ui/table.tsx
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-/** Helper to get a nice name for displayName */
 function getDisplayName(Tag: React.ElementType) {
   return typeof Tag === "string"
     ? Tag
@@ -132,7 +130,6 @@ TableRow.displayName = "TableRow";
 
 const TableHead = withSticky(
   "th",
-
   "h-12 px-4 text-left align-middle font-medium bg-theme text-text [&:has([role=checkbox])]:pr-0"
 );
 TableHead.displayName = "TableHead";

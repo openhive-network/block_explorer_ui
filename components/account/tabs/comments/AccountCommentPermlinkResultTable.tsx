@@ -81,9 +81,9 @@ const buildTableBody = (
             />
           </TableCell>
           <TableCell>{operation_id}</TableCell>
-          <TableCell>
+          <TableCell className="text-link text-wrap whitespace-nowrap max-w-36">
             <Link
-              className="text-link"
+              className="text-link break-words"
               href={`/@${accountName}/${permlink}`}
               target="_blank"
             >
