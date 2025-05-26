@@ -532,6 +532,21 @@ class FetchingService {
       requestParams
     );
   }
+
+  async getTransactionStatistics(
+    granularity: "daily" | "monthly" | "yearly",
+    direction: "asc" | "desc",
+    fromBlock?: Date | number | undefined,
+    toBlock?: Date | number | undefined
+  ): Promise<Hive.TransactionStatisticsResponse> {
+    return await this.extendedHiveChain!.restApi["hafbe-api"].transactionStatistics({
+      granularity,
+      direction: direction,
+      "from-block": fromBlock,
+      "to-block": toBlock,
+    });
+  }
+
 }
 
 const fetchingService = new FetchingService();

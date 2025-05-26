@@ -934,6 +934,21 @@ namespace Hive {
       to: number;
     };
   }
+  
+   export class TransactionStatisticsResponse {
+    date!: Date ;
+    trx_count!: number;
+    avg_trx!: number;
+    min_trx!: number;
+    max_trx!: number;
+    last_block_num!: number;
+  }
+  export class TransactionStatisticsParams {
+    granularity!: string;
+    direction!: Hive.Direction;
+    "from-block"?: number | Date;
+    "to-block"?: number | Date;
+  }
 }
 
 export default Hive;

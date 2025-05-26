@@ -9,7 +9,7 @@ const DataCountMessage: React.FC<DataCountMessageProps> = ({
 }) => {
   if (!count) return null;
 
-  const message = `A total of ${count} ${dataType} found`;
+  const message = `A total of ${count.toLocaleString()} ${dataType} found`;
   return <div className="text-gray-500">{message}</div>;
 };
 

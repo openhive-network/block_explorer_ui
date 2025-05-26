@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/card";
 import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import TransactionStatisticsCard from "@/components/home/TransactionStatisticsCard";
 
 export default function Home() {
   const { theme } = useTheme();
@@ -83,6 +84,7 @@ export default function Home() {
             headBlock={headBlockNum}
             strokeColor={strokeColor}
           />
+          <TransactionStatisticsCard/>
           <SearchesSection />
         </div>
 
