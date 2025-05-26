@@ -58,7 +58,7 @@ const TransactionStatisticsChart: React.FC<TransactionStatisticsChartProps> = ({
       return (
         <div className="bg-theme rounded shadow-sm py-1 px-2 text-[0.6rem]">
           <p className="text-gray-400 mb-0.5 text-center">
-            {moment(date).format("MMM D, YYYY")}
+            {showYear? moment(date).format(" YYYY"): moment(date).format("MMM D, YYYY")}
           </p>
           <div className="grid grid-cols-2 gap-1">
             <div>
