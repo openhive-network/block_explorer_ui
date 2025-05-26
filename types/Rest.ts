@@ -78,7 +78,12 @@ export const extendedRest = {
       params: Hive.AllBlocksSearchParams,
       result: Hive.AllBlocksSearchResponse,
       urlPath: "block-search",
-    },
+    },  
+    transactionStatistics: {
+      params: Hive.TransactionStatisticsParams,
+      result: Hive.TransactionStatisticsResponse,
+      urlPath: "transaction-statistics",
+    }
   },
   "hafah-api": {
     block: {
