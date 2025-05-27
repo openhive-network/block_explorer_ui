@@ -209,7 +209,7 @@ const BlocksPage = () => {
     if (
       liveDataEnabled &&
       prevBlocksDataRef.current &&
-      (paramsState.page == blocksSearchData.total_pages || !paramsState.page )  && // Make sure we are on first page
+      (paramsState.page == blocksSearchData.total_pages || !paramsState.page) && // Make sure we are on first page
       (router.query.history?.length == 2 || !router.query.history) // First page - no history
     ) {
       const existingBlockNums = prevBlocksDataRef.current.map(
@@ -233,7 +233,14 @@ const BlocksPage = () => {
         isNew,
       };
     });
-  }, [blocksSearchData?.blocks_result, getOperationsCounts, liveDataEnabled,router.query.history]);
+  }, [
+    blocksSearchData?.blocks_result,
+    getOperationsCounts,
+    liveDataEnabled,
+    router.query.history,
+    paramsState.page,
+    blocksSearchData?.total_pages,
+  ]);
 
   // Update the ref with the current blocks data for the next comparison if liveDataEnabled
   useEffect(() => {

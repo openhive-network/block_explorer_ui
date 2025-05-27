@@ -115,9 +115,11 @@ const TransactionStatisticsFullChartDialog: React.FC<
             <div className="flex flex-col gap-y-3 min-w-fit">
               <Label>Granularity</Label>
               <Select
-                onValueChange={(value) =>
-                  setGranularity(value as "daily" | "monthly" | "yearly")
-                }
+                onValueChange={(value) => {
+                  setGranularity(value as "daily" | "monthly" | "yearly");
+                  setLastTimeUnitValue(undefined);
+                  setRangeSelectKey("none");
+                }}
                 defaultValue="daily"
               >
                 <SelectTrigger>
