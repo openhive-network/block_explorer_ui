@@ -230,11 +230,11 @@ const BlocksPage = () => {
     });
   }, [
     blocksSearchData?.blocks_result,
-    blocksSearchData?.total_pages,
-    paramsState.page,
     getOperationsCounts,
     liveDataEnabled,
     router.query.history,
+    paramsState.page,
+    blocksSearchData?.total_pages,
   ]);
 
   // Update the ref with the current blocks data for the next comparison if liveDataEnabled

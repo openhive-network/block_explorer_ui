@@ -150,12 +150,12 @@ const TransactionStatisticsCard = () => {
           </div>
         </div>
 
-        {/* Right Side: Last 14 Days Chart */}
+        {/* Right Side: Last 30 Days Chart */}
         <div className="md:col-span-2">
           <div className="bg-explorer-extra-light-gray rounded-lg p-4 shadow-md h-full flex flex-col">
             <div className="flex justify-between items-center mb-1">
               <h3 className="text-sm font-semibold uppercase tracking-wide text-explorer-dark-gray dark:text-text">
-                Last 14 Days
+                Last 30 Days
               </h3>
               <button onClick={openModal} className="text-xs underline">
                 Full Chart
