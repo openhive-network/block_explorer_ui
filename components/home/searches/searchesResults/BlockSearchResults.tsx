@@ -1,47 +1,144 @@
-import Link from "next/link";
-
 import { useSearchesContext } from "@/contexts/SearchesContext";
-import useBlockSearch from "@/hooks/api/homePage/useBlockSearch";
 import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
 import ErrorPage from "@/pages/ErrorPage";
-import { getBlockPageLink } from "../utils/blockSearchHelpers";
+import { getAllBlocksPageLink } from "../utils/blockSearchHelpers";
 import NoResult from "@/components/NoResult";
+import BlocksTable from "@/components/blocks/BlocksTable";
+import useAllBlocksSearch from "@/hooks/api/blocks/useAllBlocksSearch";
+import { useCallback, useState, useMemo, useRef } from "react";
+import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
+import { Loader2 } from "lucide-react";
+import { Operations, Block } from "@/pages/blocks";
+const TABLE_CELLS = ["Block", "Producer", "Time", "Transactions", ""];
 
 const BlockSearchResults = () => {
-  const { blockSearchProps } = useSearchesContext();
+  const { allBlocksSearchProps, setAllBlocksSearchProps, searchRanges } =
+    useSearchesContext();
   const { operationsTypes } = useOperationsTypes();
+  const {
+    settings: { liveData },
+  } = useUserSettingsContext();
+  const prevBlocksDataRef = useRef<Block[] | null>(null);
+  const [pageNum, setPageNum] = useState<number | undefined>(undefined);
 
-  const { blockSearchData, blockSearchDataError } =
-    useBlockSearch(blockSearchProps);
+  const { blocksSearchData, blocksSearchDataError, blocksSearchDataLoading } =
+    useAllBlocksSearch(allBlocksSearchProps, pageNum, undefined, liveData);
 
-  const blockPageLink = getBlockPageLink(blockSearchProps, operationsTypes);
+  const getOperationsCounts = useCallback(
+    (operations: Operations[] | undefined) => {
+      if (!operations || !operationsTypes) {
+        return {
+          operationCount: 0,
+          virtualOperationCount: 0,
+        };
+      }
 
-  if (blockSearchDataError) {
+      let operationCount = 0;
+      let virtualOperationCount = 0;
+
+      const operationTypesMap = new Map<number, any>();
+      for (const operationType of operationsTypes) {
+        operationTypesMap.set(operationType.op_type_id, operationType);
+      }
+
+      if (operations) {
+        for (const op of operations) {
+          const operationType = operationTypesMap.get(op.op_type_id);
+          if (operationType) {
+            if (operationType.is_virtual) {
+              virtualOperationCount += op.op_count;
+            } else {
+              operationCount += op.op_count;
+            }
+          }
+        }
+      }
+
+      return {
+        operationCount,
+        virtualOperationCount,
+      };
+    },
+    [operationsTypes]
+  );
+
+  const allBlocksPageLink = getAllBlocksPageLink(
+    allBlocksSearchProps,
+    searchRanges
+  );
+  const tableRows = useMemo(() => {
+    if (!blocksSearchData?.blocks_result) {
+      return [];
+    }
+
+    // Determine new blocks for highlighting, only when liveDataEnabled is true and when we are in very first page of history
+    let newBlocks: number[] = [];
+    if (
+      liveData &&
+      prevBlocksDataRef.current &&
+      blocksSearchData.total_pages === undefined // Make sure we are on first page
+    ) {
+      const existingBlockNums = prevBlocksDataRef.current.map(
+        (block) => block.block_num
+      );
+      newBlocks = blocksSearchData.blocks_result
+        .map((block) => block.block_num)
+        .filter((blockNum) => !existingBlockNums.includes(blockNum));
+    }
+
+    return blocksSearchData.blocks_result.map((block) => {
+      const { operationCount, virtualOperationCount } = getOperationsCounts(
+        block.operations
+      );
+      const isNew = liveData && newBlocks.includes(block.block_num);
+
+      return {
+        ...block,
+        operationCount,
+        virtualOperationCount,
+        isNew,
+      };
+    });
+  }, [
+    blocksSearchData?.blocks_result,
+    blocksSearchData?.total_pages,
+    getOperationsCounts,
+    liveData,
+  ]);
+
+  const handlePageChange = (newPage: number) => {
+    setPageNum(newPage);
+  };
+
+  if (blocksSearchDataError) {
     return <ErrorPage />;
   }
 
-  if (!blockSearchData) return;
+  if (!blocksSearchData) return;
 
   return (
     <>
-    {blockSearchData.total_blocks > 0 ? (
-      <div className="bg-theme dark:bg-theme p-2 md: h-fit rounded">
-        <div className="text-center">Results:</div>
-        <div className="flex flex-wrap pl-4">
-          {blockSearchData.blocks_result.map(({ block_num }) => (
-            <Link 
-              key={block_num} 
-              href={blockPageLink(block_num)}
-            >
-              <div className="m-1 border border-solid p-1">{block_num}</div>
-            </Link>
-          ))}
+      {blocksSearchDataLoading && !liveData ? (
+        <div className="flex justify-center items-center">
+          <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />
         </div>
-      </div>
-        ) : (
-          <NoResult/>
-        )}
-      </>
+      ) : blocksSearchData?.blocks_result &&
+        blocksSearchData?.blocks_result.length > 0 ? (
+        <>
+          <BlocksTable
+            rows={tableRows}
+            TABLE_CELLS={TABLE_CELLS}
+            currentPage={pageNum || blocksSearchData.total_pages}
+            totalCount={blocksSearchData.total_blocks}
+            onPageChange={handlePageChange}
+            isMainPageTable={true}
+            allBlocksPageLink={allBlocksPageLink}
+          />
+        </>
+      ) : !blocksSearchDataLoading ? (
+        <NoResult />
+      ) : null}
+    </>
   );
 };
 

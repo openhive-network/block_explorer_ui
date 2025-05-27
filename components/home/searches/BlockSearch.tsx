@@ -25,21 +25,22 @@ import { trimAccountName } from "@/utils/StringUtils";
 import AutocompleteInput from "@/components/ui/AutoCompleteInput";
 import { useSearchesContext } from "@/contexts/SearchesContext";
 
-import useBlockSearch from "@/hooks/api/homePage/useBlockSearch";
 import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
 import { startBlockSearch } from "./utils/blockSearchHelpers";
 import NoValueErrorMessage from "./NoValueErrorMessage";
+import useAllBlocksSearch from "@/hooks/api/blocks/useAllBlocksSearch";
+
 
 const BlockSearch = () => {
   const {
-    blockSearchProps,
-    setBlockSearchProps,
+    allBlocksSearchProps,
+    setAllBlocksSearchProps,
     setLastSearchKey,
     searchRanges,
   } = useSearchesContext();
   const { operationsTypes } = useOperationsTypes();
 
-  const { blockSearchDataLoading } = useBlockSearch(blockSearchProps);
+  const { blocksSearchDataLoading } = useAllBlocksSearch(allBlocksSearchProps);
 
   const [accountName, setAccountName] = useState<string>("");
   const [selectedOperationTypes, setSelectedOperationTypes] = useState<
@@ -87,7 +88,7 @@ const BlockSearch = () => {
     setSelectedKeys(undefined);
     setFieldContent("");
     setSelectedOperationTypes(operationTypesIds);
-    setBlockSearchProps((prev: any) => {
+    setAllBlocksSearchProps((prev: any) => {
       return {
         ...prev,
         operationTypes: operationTypesIds,
@@ -125,13 +126,15 @@ const BlockSearch = () => {
       },
     };
 
-    startBlockSearch(blockSearchProps, setBlockSearchProps, (val: "block") =>
-      setLastSearchKey(val)
+    startBlockSearch(
+      blockSearchProps,
+      setAllBlocksSearchProps,
+      (val: "block") => setLastSearchKey(val)
     );
   };
 
   const handleClearSearch = () => {
-    setBlockSearchProps(undefined);
+    setAllBlocksSearchProps(undefined);
     setAccountName("");
     setFromBlock(undefined);
     setToBlock(undefined);
@@ -274,7 +277,7 @@ const BlockSearch = () => {
             disabled={isSearchButtonDisabled}
           >
             Search
-            {blockSearchDataLoading && (
+            {blocksSearchDataLoading && (
               <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />
             )}
           </Button>
