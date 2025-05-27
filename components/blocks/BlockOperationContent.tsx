@@ -25,7 +25,7 @@ const BlockOperationsContent: React.FC<Props> = ({ blockNum, paramsState }) => {
       ? convertBooleanArrayToIds(paramsState?.filters)
       : undefined,
     undefined,
-    paramsState.accountName
+    paramsState?.accountName
   );
 
   const formattedOperations = useOperationsFormatter(
