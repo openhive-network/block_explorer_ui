@@ -22,7 +22,7 @@ const buildTableBody = (voters: string[], isProxy: boolean) => {
           <TableCell>{index + 1}</TableCell>
           <TableCell className="text-right">
             <Link
-              className={cn("text-blue-400", { italic: isProxy })} // Apply italic class conditionally
+              className={cn("text-link", { italic: isProxy })} // Apply italic class conditionally
               href={`/@${voter}`}
             >
               {voter}
@@ -149,7 +149,9 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
               </Link>
             </h1>
             <Table>
-              <TableBody>{buildTableBody(votersForProxy, true)}</TableBody>
+              <TableBody className="text-sm">
+                {buildTableBody(votersForProxy, true)}
+              </TableBody>
             </Table>
           </div>
         </CardContent>
@@ -179,7 +181,9 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
       </CardHeader>
       <CardContent hidden={isPropertiesHidden}>
         <Table>
-          <TableBody>{buildTableBody(voters, false)}</TableBody>
+          <TableBody className="text-sm">
+            {buildTableBody(voters, false)}
+          </TableBody>
         </Table>
       </CardContent>
     </Card>

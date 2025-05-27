@@ -123,7 +123,9 @@ const AccountRecurrentTransfersCard: React.FC<
               {buildTableHead(sortBy, key, isAscending, direction)}
             </TableRow>
           </TableHeader>
-          <TableBody>{buildTableBody(sortedTransfers)}</TableBody>
+          <TableBody className="text-sm">
+            {buildTableBody(sortedTransfers)}
+          </TableBody>
         </Table>
       </CardContent>
     </Card>

@@ -111,7 +111,9 @@ const AccountRcDelegationsCard: React.FC<AccountRcDelegationsCardProps> = ({
           <TableHeader>
             <TableRow>{buildTableHead(sortBy, key, isAscending)}</TableRow>
           </TableHeader>
-          <TableBody>{buildTableBody(sortedDelegations)}</TableBody>
+          <TableBody className="text-sm">
+            {buildTableBody(sortedDelegations)}
+          </TableBody>
         </Table>
       </CardContent>
     </Card>
