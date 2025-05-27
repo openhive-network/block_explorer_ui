@@ -40,6 +40,8 @@ interface BlocksTableProps {
   currentPage: number;
   totalCount: number;
   onPageChange: (newPage: number) => void;
+  isMainPageTable?: boolean;
+  allBlocksPageLink?: string;
 }
 
 const BlocksTable: React.FC<BlocksTableProps> = ({
@@ -49,6 +51,8 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
   currentPage,
   totalCount,
   onPageChange,
+  isMainPageTable = false,
+  allBlocksPageLink,
 }) => {
   const [expandedRows, setExpandedRows] = useState<number[]>([]);
   const expandedRowRef = useRef<HTMLTableRowElement>(null); // Ref to expanded row
@@ -95,13 +99,21 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
 
   const buildTableBody = () => {
     if (!rows) return null;
-
     return rows.map((row) => {
       const blockNum = row.block_num;
 
       return (
         <Fragment key={row.hash}>
-          <TableRowComponent row={row} blockNum={blockNum} paramsState={paramsState} TABLE_CELLS={TABLE_CELLS} expandedRows={expandedRows} expandedRowRef={expandedRowRef} toggleRow={toggleRow}/>
+          <TableRowComponent
+            row={row}
+            blockNum={blockNum}
+            paramsState={paramsState}
+            TABLE_CELLS={TABLE_CELLS}
+            expandedRows={expandedRows}
+            expandedRowRef={expandedRowRef}
+            toggleRow={toggleRow}
+            isMainPageTable={isMainPageTable}
+          />
         </Fragment>
       );
     });
@@ -132,8 +144,24 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
   return (
     <>
       {totalCount > config.standardPaginationSize ? (
-        <div className="sticky z-20 top-[3.2rem] md:top-[4rem] mt-6 bg-theme rounded">
-          <div className="flex flex-col md:flex-row items-center gap-2 flex-1 justify-between w-full rounded ">
+        <div className="flex flex-wrap justify-between items-center bg-theme p-2 gap-4 my-4 sticky z-20 top-[3.2rem] md:top-[4rem] rounded">
+          {isMainPageTable ? (
+            <div className="flex justify-center w-full md:w-auto md:justify-start bg-theme">
+              <Link
+                href={allBlocksPageLink ?? "/blocks"}
+                target="_blank"
+              >
+                <Button
+                  data-testid="go-to-result-page"
+                  className="w-full md:w-auto"
+                >
+                  Go to result page
+                </Button>
+              </Link>
+            </div>
+          ) : null}
+
+          <div className="flex flex-col md:flex-row items-center gap-2 flex-1 justify-center w-full rounded">
             <CustomPagination
               currentPage={currentPage || 1}
               totalCount={totalCount}
@@ -152,15 +180,31 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
             </div>
           </div>
         </div>
-      ) : (
-        ""
-      )}
+      ) : isMainPageTable ? (
+        <div className="flex justify-center w-full md:w-auto md:justify-start bg-theme p-2 rounded">
+          <Link
+            href={allBlocksPageLink ?? "/blocks"}
+            target="_blank"
+          >
+            <Button
+              data-testid="go-to-result-page"
+              className="w-full md:w-auto"
+            >
+              Go to result page
+            </Button>
+          </Link>
+        </div>
+      ) : null}
+
       <div
         className={cn("flex items-center justify-end mt-8", {
           "justify-between": !!totalCount,
         })}
       >
-        <DataCountMessage count={totalCount || 0} dataType="blocks" />
+        <DataCountMessage
+          count={totalCount || 0}
+          dataType="blocks"
+        />
         <DataExport
           data={prepareExportData()}
           filename={`blocks.csv`}
@@ -168,7 +212,10 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
         />
       </div>
       <div className="border-2 border-theme rounded bg-theme">
-        <Table data-testid="table-body" className=" overflow-auto">
+        <Table
+          data-testid="table-body"
+          className=" overflow-auto"
+        >
           <TableHeader>{buildTableHeader()}</TableHeader>
           <TableBody>{buildTableBody()}</TableBody>
         </Table>
@@ -185,9 +232,19 @@ interface TableRowComponentProps {
   expandedRows: number[];
   expandedRowRef: React.RefObject<HTMLTableRowElement>;
   toggleRow: (blockNum: number) => void;
+  isMainPageTable: boolean;
 }
 
-const TableRowComponent: React.FC<TableRowComponentProps> = ({row, blockNum, paramsState, TABLE_CELLS, expandedRows, expandedRowRef, toggleRow}) => {
+const TableRowComponent: React.FC<TableRowComponentProps> = ({
+  row,
+  blockNum,
+  paramsState,
+  TABLE_CELLS,
+  expandedRows,
+  expandedRowRef,
+  toggleRow,
+  isMainPageTable = false,
+}) => {
   const [isNewRow, setIsNewRow] = useState(row.isNew);
   const [bgColor, setBgColor] = useState("bg-theme"); // Initial background color
   const { hiveChain } = useHiveChainContext();
@@ -222,11 +279,12 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({row, blockNum, par
       }, 2200); // 2 seconds
 
       return () => clearTimeout(timer);
-    } else{ // Handle the transition when row.isNew becomes false
+    } else {
+      // Handle the transition when row.isNew becomes false
       setIsNewRow(false);
       setBgColor("bg-theme");
     }
-  }, [row.isNew ]);
+  }, [row.isNew]);
 
   const textColorClass = isNewRow ? "text-green-800 dark:text-green-200" : "";
   const shadowClass = isNewRow ? "shadow-inner" : "";
@@ -238,7 +296,10 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({row, blockNum, par
       >
         <TableCell className="whitespace-nowrap sticky left-[0px] z-10 bg-inherit p-4">
           <div className="flex items-center space-x-2">
-            <Link href={`/block/${row.block_num}`} className="text-link">
+            <Link
+              href={`/block/${row.block_num}`}
+              className="text-link"
+            >
               {row.block_num.toLocaleString()}
             </Link>
             <CopyButton
@@ -248,32 +309,45 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({row, blockNum, par
           </div>
         </TableCell>
         <TableCell className="whitespace-nowrap p-3">
-          <Link className="text-link" href={`@${row.producer_account}`}>
+          <Link
+            className="text-link"
+            href={`@${row.producer_account}`}
+          >
             {row.producer_account}
           </Link>
         </TableCell>
-        <TableCell className="whitespace-nowrap p-3">
-          <div className="flex items-center space-x-2">
-            <Link href={`/block/${row.block_num}`} className="text-link">
-              {formatHash(row.prev)}
-            </Link>
-            <CopyButton
-              text={String(row.prev)}
-              tooltipText="Copy prev block hash"
-            />
-          </div>
-        </TableCell>
-        <TableCell className="whitespace-nowrap p-3">
-          <div className="flex items-center space-x-2">
-            <Link href={`/block/${row.block_num}`} className="text-link">
-              {formatHash(row.hash)}
-            </Link>
-            <CopyButton
-              text={String(row.hash)}
-              tooltipText="Copy block hash"
-            />
-          </div>
-        </TableCell>
+        {!isMainPageTable ? (
+          <>
+            <TableCell className="whitespace-nowrap p-3">
+              <div className="flex items-center space-x-2">
+                <Link
+                  href={`/block/${row.block_num}`}
+                  className="text-link"
+                >
+                  {formatHash(row.prev)}
+                </Link>
+                <CopyButton
+                  text={String(row.prev)}
+                  tooltipText="Copy prev block hash"
+                />
+              </div>
+            </TableCell>
+            <TableCell className="whitespace-nowrap p-3">
+              <div className="flex items-center space-x-2">
+                <Link
+                  href={`/block/${row.block_num}`}
+                  className="text-link"
+                >
+                  {formatHash(row.hash)}
+                </Link>
+                <CopyButton
+                  text={String(row.hash)}
+                  tooltipText="Copy block hash"
+                />
+              </div>
+            </TableCell>
+          </>
+        ) : null}
 
         <TableCell className="whitespace-nowrap p-3">
           <TooltipProvider>
@@ -281,9 +355,7 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({row, blockNum, par
               <TooltipTrigger asChild>
                 <div>
                   <TimeAgo
-                    datetime={
-                      new Date(formatAndDelocalizeTime(row.created_at))
-                    }
+                    datetime={new Date(formatAndDelocalizeTime(row.created_at))}
                   />
                 </div>
               </TooltipTrigger>
@@ -293,41 +365,45 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({row, blockNum, par
             </Tooltip>
           </TooltipProvider>
         </TableCell>
-        <TableCell className="whitespace-nowrap p-3">
-          {row.producer_reward !== undefined ? (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span className="cursor-pointer">
-                    {formatNumber(row.producer_reward, true, false)}
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent className="bg-theme text-text">
-                  {hiveChain &&
-                    totalVestingFundHive &&
-                    totalVestingShares &&
-                    convertVestsToHP(
-                      hiveChain,
-                      String(row.producer_reward),
-                      totalVestingFundHive,
-                      totalVestingShares
-                    )}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          ) : (
-            "-"
-          )}
-        </TableCell>
-        <TableCell className="whitespace-nowrap p-3">
-          {row.trx_count}
-        </TableCell>
-        <TableCell className="whitespace-nowrap p-3">
-          {row.operationCount}
-        </TableCell>
-        <TableCell className="whitespace-nowrap p-3">
-          {row.virtualOperationCount}
-        </TableCell>
+        {!isMainPageTable ? (
+          <TableCell className="whitespace-nowrap p-3">
+            {row.producer_reward !== undefined ? (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="cursor-pointer">
+                      {formatNumber(row.producer_reward, true, false)}
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent className="bg-theme text-text">
+                    {hiveChain &&
+                      totalVestingFundHive &&
+                      totalVestingShares &&
+                      convertVestsToHP(
+                        hiveChain,
+                        String(row.producer_reward),
+                        totalVestingFundHive,
+                        totalVestingShares
+                      )}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ) : (
+              "-"
+            )}
+          </TableCell>
+        ) : null}
+        <TableCell className="whitespace-nowrap p-3">{row.trx_count}</TableCell>
+        {!isMainPageTable ? (
+          <>
+            <TableCell className="whitespace-nowrap p-3">
+              {row.operationCount}
+            </TableCell>
+            <TableCell className="whitespace-nowrap p-3">
+              {row.virtualOperationCount}
+            </TableCell>
+          </>
+        ) : null}
         <TableCell className="text-right pr-4">
           <Button
             data-testid="expand-details"
@@ -335,9 +411,17 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({row, blockNum, par
             onClick={() => toggleRow(row.block_num)}
           >
             {expandedRows.includes(row.block_num) ? (
-              <ChevronUp width={20} height={20} className="mt-1" />
+              <ChevronUp
+                width={20}
+                height={20}
+                className="mt-1"
+              />
             ) : (
-              <ChevronDown width={20} height={20} className="mt-1" />
+              <ChevronDown
+                width={20}
+                height={20}
+                className="mt-1"
+              />
             )}
           </Button>
         </TableCell>
@@ -345,8 +429,15 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({row, blockNum, par
 
       {/* Conditional rendering of BlockOperationsContent */}
       {expandedRows.includes(row.block_num) && (
-        <TableRow className="hover:bg-transparent" ref={expandedRowRef}> {/* Add the ref here */}
-          <TableCell colSpan={TABLE_CELLS.length} className="p-2">
+        <TableRow
+          className="hover:bg-transparent"
+          ref={expandedRowRef}
+        >
+          {/* Add the ref here */}
+          <TableCell
+            colSpan={TABLE_CELLS.length}
+            className="p-2"
+          >
             <BlockOperationsContent
               blockNum={row.block_num}
               paramsState={paramsState}
