@@ -217,8 +217,8 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                 <NoResult />
               </div>
             ) : (
-              <div className="flex w-full overflow-auto rounded">
-                <div className="text-text w-[100%] bg-theme">
+              <div className="relative rounded overflow-hidden w-full">
+                <div className="text-text w-full h-full overflow-auto bg-theme rounded">
                   <Table>
                     <TableHeader>
                       <TableRow rowVariant="header">
