@@ -63,9 +63,8 @@ const buildTableBody = (
 ) => {
   return parameters.map((param: string, index: number) => (
     <TableRow
-      rowVariant="header"
       key={index}
-      className="bg-explorer-extra-light-gray"
+      className="bg-transparent hover:bg-transparent dark:bg-transparent dark:hover:bg-transparent"
     >
       <TableCell>{cardNameMap.get(param)}</TableCell>
       <TableCell>
@@ -112,8 +111,8 @@ const HeadBlockPropertyCard: React.FC<HeadBlockPropertyCardProps> = ({
           data-testid="content-expandable-list"
         >
           <div style={{ overflowX: "auto" }}>
-            <Table className="bg-explorer-extra-light-gray">
-              <TableBody className="bg-explorer-extra-light-gray">
+            <Table className="bg-transparent dark:bg-transparent">
+              <TableBody className="bg-transparent dark:bg-transparent">
                 {dynamicGlobalData?.headBlockDetails &&
                   buildTableBody(parameters, header, dynamicGlobalData)}
               </TableBody>
