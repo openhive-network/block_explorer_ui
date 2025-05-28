@@ -108,7 +108,7 @@ const AccountRcDelegationsCard: React.FC<AccountRcDelegationsCardProps> = ({
       </CardHeader>
       <CardContent hidden={isPropertiesHidden}>
         <Table>
-          <TableHeader>
+          <TableHeader className="text-base">
             <TableRow>{buildTableHead(sortBy, key, isAscending)}</TableRow>
           </TableHeader>
           <TableBody className="text-sm">

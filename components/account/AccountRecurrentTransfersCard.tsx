@@ -118,7 +118,7 @@ const AccountRecurrentTransfersCard: React.FC<
       </CardHeader>
       <CardContent hidden={isPropertiesHidden}>
         <Table>
-          <TableHeader>
+          <TableHeader className="text-base">
             <TableRow>
               {buildTableHead(sortBy, key, isAscending, direction)}
             </TableRow>
