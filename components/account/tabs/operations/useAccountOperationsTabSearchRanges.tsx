@@ -23,6 +23,7 @@ export const defaultAccountOperationsTabSearchParams: AccountSearchParams = {
   rangeSelectKey: "none",
   page: undefined,
   filters: [],
+  history: [],
 };
 
 const useAccountOperationsTabSearchRanges = (

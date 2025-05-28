@@ -152,7 +152,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
   const hasActiveFilters = Boolean(
     (filtersParam?.length ?? 0) ||
       fromBlockParam ||
-      toBlockParam ||
+      (paramsState.toBlock && paramsState.history.length < 2) ||
       fromDateParam ||
       toDateParam
   );

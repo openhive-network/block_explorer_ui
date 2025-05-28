@@ -50,14 +50,6 @@ const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
     ["accountName"]
   );
 
-  useEffect(() => {
-    if (
-      typeof paramsState.history === "string" &&
-      paramsState.history.length > 0
-    ) {
-      setIsFiltersActive(false);
-    }
-  }, [paramsState.history, setIsFiltersActive]);
 
   const props = (() => {
     if (paramsState.activeTab === "comments") {
@@ -91,14 +83,13 @@ const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
     );
     setAccountName(accounNameFromRoute);
   }, [router.isReady, router.query.accountName]);
-console.log('paramsState',paramsState);
   const hasActiveFilters = Boolean(
     (paramsState.filters?.length ?? 0) ||
       paramsState.fromBlock ||
-      paramsState.toBlock ||
+      (paramsState.toBlock && paramsState.history.length < 2) ||
       paramsState.startDate ||
       paramsState.endDate ||
-      paramsState.commentType !=="all"
+      paramsState.commentType !== "all"
   );
 
   useEffect(() => {

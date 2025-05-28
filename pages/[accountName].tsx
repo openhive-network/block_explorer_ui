@@ -29,6 +29,7 @@ export interface AccountSearchParams {
   page: number | undefined;
   filters: boolean[];
   activeTab?: "operations" | "comments" | "interactions";
+  history:[];
 }
 
 export const defaultSearchParams: AccountSearchParams = {
@@ -43,6 +44,7 @@ export const defaultSearchParams: AccountSearchParams = {
   rangeSelectKey: "none",
   page: undefined,
   filters: [],
+  history: [],
 };
 
 export default function Account() {
