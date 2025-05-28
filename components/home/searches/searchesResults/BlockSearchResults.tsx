@@ -9,6 +9,10 @@ import { useCallback, useState, useMemo, useRef } from "react";
 import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
 import { Loader2 } from "lucide-react";
 import { Operations, Block } from "@/pages/blocks";
+import BlockNavigation from "@/components/BlockNavigation";
+import useBlockNavigation from "@/hooks/common/useBlockNavigation";
+import { DEFAULT_BLOCKS_SEARCH_PROPS } from "@/components/blocks/BlocksSearch";
+
 const TABLE_CELLS = ["Block", "Producer", "Time", "Transactions", ""];
 
 const BlockSearchResults = () => {
@@ -21,8 +25,13 @@ const BlockSearchResults = () => {
   const prevBlocksDataRef = useRef<Block[] | null>(null);
   const [pageNum, setPageNum] = useState<number | undefined>(undefined);
 
+  const props = {
+    ...DEFAULT_BLOCKS_SEARCH_PROPS,
+    ...allBlocksSearchProps,
+  } as any;
+
   const { blocksSearchData, blocksSearchDataError, blocksSearchDataLoading } =
-    useAllBlocksSearch(allBlocksSearchProps, pageNum, undefined, liveData);
+    useAllBlocksSearch(props, pageNum, props.toBlock, liveData);
 
   const getOperationsCounts = useCallback(
     (operations: Operations[] | undefined) => {
@@ -110,6 +119,20 @@ const BlockSearchResults = () => {
     setPageNum(newPage);
   };
 
+  const {
+    handleLoadNextBlocks,
+    handleLoadPreviousBlocks,
+    hasMoreBlocks,
+    hasPreviousBlocks,
+  } = useBlockNavigation(
+    allBlocksSearchProps?.toBlock,
+    blocksSearchData,
+    allBlocksSearchProps,
+    setAllBlocksSearchProps,
+    true,
+    allBlocksSearchProps?.firstBlock
+  );
+
   if (blocksSearchDataError) {
     return <ErrorPage />;
   }
@@ -125,6 +148,17 @@ const BlockSearchResults = () => {
       ) : blocksSearchData?.blocks_result &&
         blocksSearchData?.blocks_result.length > 0 ? (
         <>
+          <div className="w-full rounded bg-theme mb-4 pb-2 pt-1">
+            <BlockNavigation
+              fromBlock={blocksSearchData?.block_range.from}
+              toBlock={blocksSearchData?.block_range.to}
+              hasPrevious={hasPreviousBlocks}
+              hasNext={hasMoreBlocks}
+              loadPreviousBlocks={handleLoadPreviousBlocks}
+              loadNextBlocks={handleLoadNextBlocks}
+              urlParams={allBlocksSearchProps}
+            />
+          </div>
           <BlocksTable
             rows={tableRows}
             TABLE_CELLS={TABLE_CELLS}
