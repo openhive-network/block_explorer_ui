@@ -23,7 +23,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ open, onChange, className }) => {
     if (onChange) onChange(!isAutocompleteVisible);
   };
 
-  const handleClick = (event: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
+   const handleClick = (event: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
     setIsClicked(true);
   };
 
@@ -37,12 +37,13 @@ const SearchBar: React.FC<SearchBarProps> = ({ open, onChange, className }) => {
           value={searchTerm}
           onChange={setSearchTerm}
           placeholder="User, Block, Trx #"
-          inputType={['block_num', 'transaction_hash', 'block_hash', 'account_name']}
-          className={cn(
-            "bg-theme dark:bg-theme border-b transition-width duration-300 ease-in-out",
-            (isClicked&& !isMobile) ? "w-3/5" : "w-[full]",
-            className
-          )}
+          inputType={[
+            "block_num",
+            "transaction_hash",
+            "block_hash",
+            "account_name",
+          ]}
+          className={cn("bg-theme border-b", className)}
           onClick={handleClick}
           onBlur={handleBlur}
           linkResult={true}
@@ -58,7 +59,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ open, onChange, className }) => {
         </Button>
       )}
       {isAutocompleteVisible && (
-         <X
+        <X
           onClick={handleToggle}
           className="md:hidden"
         />
