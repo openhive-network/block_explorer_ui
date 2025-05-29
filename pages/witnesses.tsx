@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import {
   Loader2,
   MenuSquareIcon,
-  MoveVertical,
-  MoveUp,
-  MoveDown,
+  ChevronDown,
+  ChevronUp,
+  ChevronsUpDown,
   Link as LinkIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -100,12 +100,23 @@ const renderSortArrow = (
   if (hideSort) return;
 
   if (sortKeyByCell[cell] !== orderBy) {
-    return <MoveVertical size={13} className="ml-1" />;
+    return (
+      <ChevronsUpDown
+        size={15}
+        className="ml-1"
+      />
+    );
   } else {
     return isOrderAscending ? (
-      <MoveDown size={13} className="ml-1" />
+      <ChevronDown
+        size={15}
+        className="ml-1"
+      />
     ) : (
-      <MoveUp size={13} className="ml-1" />
+      <ChevronUp
+        size={15}
+        className="ml-1"
+      />
     );
   }
 };
@@ -201,15 +212,18 @@ export default function Witnesses() {
       const isRightAligned = RIGHT_ALIGNED_HEADERS.includes(cell); // Check if header should be right-aligned
       const headerIndex = TABLE_CELLS.indexOf(cell);
 
-      const className =
-        "first:sticky first:left-0 [&:nth-child(2)]:sticky [&:nth-child(2)]:left-12 text-center bg-navbar";
+      const className = "text-center !bg-navbar py-2";
 
       const buttonClassName = `w-full flex items-center ${
         isRightAligned ? "justify-end text-right" : "justify-start text-left"
       }`;
 
       return (
-        <TableHead key={cell} className={className}>
+        <TableCell
+          stickyLeft={headerIndex === 0 ? true : undefined}
+          key={cell}
+          className={className}
+        >
           <button
             disabled={isCellUnsortable(cell)}
             className={buttonClassName}
@@ -218,7 +232,7 @@ export default function Witnesses() {
             <span>{cell}</span>
             {renderSortArrow(toLowerCase, sort.orderBy, sort.isOrderAscending)}
           </button>
-        </TableHead>
+        </TableCell>
       );
     });
   };
@@ -232,7 +246,10 @@ export default function Witnesses() {
         <div className="mx-4 my-4">
           <main className="flex-1">
             <div className="flex flex-col md:flex-row justify-between items-start bg-theme">
-              <PageTitle title="Hive Witnesses" className="py-4" />
+              <PageTitle
+                title="Hive Witnesses"
+                className="py-4"
+              />
 
               <div className="flex justify-start md:justify-end mt-2 md:mt-0 ml-1 md:ml-4 mr-4 flex-shrink-0">
                 <div className="flex items-center space-x-4">
@@ -243,7 +260,6 @@ export default function Witnesses() {
                 </div>
               </div>
             </div>
-            
             {isWitnessDataLoading ? (
               <div className="flex justify-center items-center py-12">
                 <Loader2 className="dark:text-white animate-spin h-6 w-6" />
@@ -264,7 +280,11 @@ export default function Witnesses() {
                 />
 
                 <Table className="min-w-full">
-                  <TableHeader>{buildTableHeader()}</TableHeader>
+                  <TableHeader>
+                    <TableRow rowVariant="header">
+                      {buildTableHeader()}
+                    </TableRow>
+                  </TableHeader>
                   <TableBody>
                     {witnessesData?.witnesses.map(
                       (singleWitness: any, index: any) => (
@@ -286,10 +306,8 @@ export default function Witnesses() {
                             }
                           )}
                         >
-                          <TableCell className="sticky left-0 bg-inherit z-10">
-                            {singleWitness.rank}
-                          </TableCell>
-                          <TableCell className="sticky left-12 bg-inherit flex items-center space-x-2 py-4 whitespace-nowrap min-w-min z-10">
+                          <TableCell stickyLeft>{singleWitness.rank}</TableCell>
+                          <TableCell className="flex items-center space-x-2 py-4 whitespace-nowrap">
                             <Image
                               className="rounded-full border-2 border-explorer-orange"
                               src={getHiveAvatarUrl(singleWitness.witness_name)}

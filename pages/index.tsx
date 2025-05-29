@@ -103,18 +103,17 @@ export default function Home() {
               <MoveRight width={18} />
             </Link>
           </CardHeader>
-          <CardContent className="px-4 py-2">
+          <CardContent className="px-0 py-2">
             <Table>
-              <TableBody>
+              <TableBody className="text-base">
                 {witnesses &&
                   witnesses.witnesses.map((witness, index) => (
                     <TableRow
-                      className="text-base"
                       key={index}
                       data-testid="witnesses-name"
                     >
-                      <TableCell className="py-2">{index + 1}</TableCell>
-                      <TableCell className="py-2">
+                      <TableCell>{index + 1}</TableCell>
+                      <TableCell>
                         <Link
                           href={`/@${witness.witness_name}`}
                           className="text-link"

@@ -64,7 +64,7 @@ const buildTableBody = (
   return parameters.map((param: string, index: number) => (
     <TableRow
       key={index}
-      className="border-b border-gray-700 hover:bg-inherit dark:hover:bg-inherit"
+      className="bg-transparent hover:bg-transparent dark:bg-transparent dark:hover:bg-transparent"
     >
       <TableCell>{cardNameMap.get(param)}</TableCell>
       <TableCell>
@@ -111,8 +111,8 @@ const HeadBlockPropertyCard: React.FC<HeadBlockPropertyCardProps> = ({
           data-testid="content-expandable-list"
         >
           <div style={{ overflowX: "auto" }}>
-            <Table className="min-w-full bg-inherit">
-              <TableBody className="bg-inherit dark:bg-inherit">
+            <Table className="bg-transparent dark:bg-transparent">
+              <TableBody className="bg-transparent dark:bg-transparent">
                 {dynamicGlobalData?.headBlockDetails &&
                   buildTableBody(parameters, header, dynamicGlobalData)}
               </TableBody>

@@ -234,8 +234,8 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
             className={cn("rounded-[6px] overflow-hidden max-w-full text-xs")}
           >
             <TableHeader>
-              <TableRow>
-                <TableHead>Operation Type</TableHead>
+              <TableRow rowVariant="header">
+                <TableHead stickyLeft>Operation Type</TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead>Block Number</TableHead>
                 <TableHead>Balance</TableHead>
@@ -257,7 +257,10 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
                       }
                       className={isExpanded ? "bg-rowOdd" : ""}
                     >
-                      <TableCell data-testid="operation-type">
+                      <TableCell
+                        stickyLeft
+                        data-testid="operation-type"
+                      >
                         <div className="flex justify-start rounded">
                           <span
                             className={`rounded w-4 mr-2 ${operationBgColor}`}

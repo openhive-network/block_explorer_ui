@@ -30,7 +30,7 @@ const buildTableBody = (
   return delegations.map((delegation, index: number) => {
     return (
       <Fragment key={index}>
-        <TableRow className={"border-b border-gray-700 hover:bg-inherit"}>
+        <TableRow>
           <TableCell>{index + 1}</TableCell>
           <TableCell className="text-right">
             {direction === "outgoing" ? (
@@ -116,12 +116,14 @@ const AccountVestingDelegationsCard: React.FC<
       </CardHeader>
       <CardContent hidden={isPropertiesHidden}>
         <Table>
-          <TableHeader>
+          <TableHeader className="text-base">
             <TableRow>
               {buildTableHead(sortBy, key, isAscending, direction)}
             </TableRow>
           </TableHeader>
-          <TableBody>{buildTableBody(direction, sortedDelegations)}</TableBody>
+          <TableBody className="text-sm">
+            {buildTableBody(direction, sortedDelegations)}
+          </TableBody>
         </Table>
       </CardContent>
     </Card>

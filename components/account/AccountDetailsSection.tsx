@@ -71,6 +71,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
         header="Wallet"
         userDetails={accountDetails}
       />
+      {/*  */}
       <AccountBalanceHistoryCard
         header="Balance History"
         userDetails={accountDetails}

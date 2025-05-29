@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { MoveDown, MoveUp, Loader2 } from "lucide-react";
+import { Loader2, ChevronDown, ChevronUp, ChevronsUpDown } from "lucide-react";
 import { Switch } from "../ui/switch";
 import { cn, formatNumber } from "@/lib/utils";
 import useWitnessVoters from "@/hooks/api/common/useWitnessVoters";
@@ -34,12 +34,12 @@ type VotersDialogProps = {
   accountDetails?: Explorer.FormattedAccountDetails;
 };
 
-const tableColums = [
-  { key: "voter", name: "Voter" },
-  { key: "vests", name: "Votes", isRightAligned: true },
-  { key: "account_vests", name: "Account", isRightAligned: true },
-  { key: "proxied_vests", name: "Proxy", isRightAligned: true },
-];
+// const tableColums = [
+//   { key: "voter", name: "Voter" },
+//   { key: "vests", name: "Votes", isRightAligned: true },
+//   { key: "account_vests", name: "Account", isRightAligned: true },
+//   { key: "proxied_vests", name: "Proxy", isRightAligned: true },
+// ];
 
 const VotersDialog: React.FC<VotersDialogProps> = ({
   accountName,
@@ -79,8 +79,27 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
 
   const showSorter = (columnName: string) => {
     if (columnName === sortKey) {
-      return isAsc ? <MoveDown /> : <MoveUp />;
-    } else return null;
+      return isAsc ? (
+        <ChevronDown
+          onClick={() => onHeaderClick(columnName)}
+          className="cursor-pointer hover:bg-buttonHover ml-1 text-text"
+          size={15}
+        />
+      ) : (
+        <ChevronUp
+          onClick={() => onHeaderClick(columnName)}
+          className="cursor-pointer hover:bg-buttonHover mx-2 text-text"
+          size={15}
+        />
+      );
+    } else
+      return (
+        <ChevronsUpDown
+          onClick={() => onHeaderClick(columnName)}
+          className="cursor-pointer hover:bg-buttonHover mx-2 text-text"
+          size={15}
+        />
+      );
   };
 
   const { hiveChain } = useHiveChainContext();
@@ -103,7 +122,6 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
       );
     }
   }, [dynamicGlobalData]);
-
 
   const fetchHivePower = (value: string, isHP: boolean): string => {
     if (isHP) {
@@ -186,77 +204,84 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                 <NoResult />
               </div>
             ) : (
-              <>
-                <Table className="text-white">
-                  <TableHeader>
-                    <TableRow>
-                      {tableColums.map((column, index) => (
-                        <TableHead
-                          onClick={() => {
-                            onHeaderClick(column.key);
-                          }}
-                          key={column.key}
-                          className={cn({
-                            "sticky md:static left-0": !index,
-                          })}
-                        >
-                          <span
-                            className={cn("flex", {
-                              "justify-end": column.isRightAligned,
-                            })}
-                          >
-                            {column.name} {showSorter(column.key)}
+              <div className="relative rounded overflow-hidden w-full">
+                <div className="text-text w-full h-full overflow-auto bg-theme rounded">
+                  <Table>
+                    <TableHeader>
+                      <TableRow rowVariant="header">
+                        <TableHead stickyLeft>
+                          <span className="flex">
+                            Voter {showSorter("voter")}
                           </span>
                         </TableHead>
-                      ))}
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody data-testid="voters-dialog-table-body">
-                    {witnessVoters &&
-                      witnessVoters.voters.map((voter, index) => (
-                        <TableRow
-                          key={index}
-                          className={`${
-                            index % 2 === 0 ? "bg-rowEven" : "bg-rowOdd"
-                          }`}
-                        >
-                          <TableCell className="text-link sticky md:static left-0 bg-inherit">
-                            <Link
-                              href={`/@${voter.voter_name}`}
-                              data-testid="voter-name"
+
+                        <TableHead className="text-right">
+                          <span className="flex justify-end">
+                            Votes {showSorter("vests")}
+                          </span>
+                        </TableHead>
+
+                        <TableHead className="text-right">
+                          <span className="flex justify-end">
+                            Account {showSorter("account_vests")}
+                          </span>
+                        </TableHead>
+
+                        <TableHead className="text-right">
+                          <span className="flex justify-end">
+                            Proxy {showSorter("proxied_vests")}
+                          </span>
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody data-testid="voters-dialog-table-body">
+                      {witnessVoters &&
+                        witnessVoters.voters.map((voter, index) => (
+                          <TableRow
+                            key={index}
+                            className={`${
+                              index % 2 === 0 ? "bg-rowEven" : "bg-rowOdd"
+                            }`}
+                          >
+                            <TableCell stickyLeft>
+                              <Link
+                                className="text-link"
+                                href={`/@${voter.voter_name}`}
+                                data-testid="voter-name"
+                              >
+                                {voter.voter_name}
+                              </Link>
+                            </TableCell>
+                            <TableCell
+                              className="text-right"
+                              data-testid="vote-power"
                             >
-                              {voter.voter_name}
-                            </Link>
-                          </TableCell>
-                          <TableCell
-                            className="text-right"
-                            data-testid="vote-power"
-                          >
-                            {fetchHivePower(voter.vests.toString(), isHP)}
-                          </TableCell>
-                          <TableCell
-                            className="text-right"
-                            data-testid="account-power"
-                          >
-                            {fetchHivePower(
-                              voter.account_vests.toString(),
-                              isHP
-                            )}
-                          </TableCell>
-                          <TableCell
-                            className="text-right"
-                            data-testid="proxied-power"
-                          >
-                            {fetchHivePower(
-                              voter.proxied_vests.toString(),
-                              isHP
-                            )}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                  </TableBody>
-                </Table>
-              </>
+                              {fetchHivePower(voter.vests.toString(), isHP)}
+                            </TableCell>
+                            <TableCell
+                              className="text-right"
+                              data-testid="account-power"
+                            >
+                              {fetchHivePower(
+                                voter.account_vests.toString(),
+                                isHP
+                              )}
+                            </TableCell>
+                            <TableCell
+                              className="text-right"
+                              data-testid="proxied-power"
+                            >
+                              {fetchHivePower(
+                                voter.proxied_vests.toString(),
+                                isHP
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
             )}
           </>
         ) : (

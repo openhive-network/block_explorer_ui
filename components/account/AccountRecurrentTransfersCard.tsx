@@ -36,7 +36,7 @@ const buildTableBody = (transfers: AllTransfers[]) => {
   return transfers.map((transfer, index: number) => {
     return (
       <Fragment key={index}>
-        <TableRow className={"border-b border-gray-700 hover:bg-inherit"}>
+        <TableRow>
           <TableCell>{index + 1}</TableCell>
           <TableCell className="text-right">
             {"to" in transfer ? (
@@ -118,12 +118,14 @@ const AccountRecurrentTransfersCard: React.FC<
       </CardHeader>
       <CardContent hidden={isPropertiesHidden}>
         <Table>
-          <TableHeader>
+          <TableHeader className="text-base">
             <TableRow>
               {buildTableHead(sortBy, key, isAscending, direction)}
             </TableRow>
           </TableHeader>
-          <TableBody>{buildTableBody(sortedTransfers)}</TableBody>
+          <TableBody className="text-sm">
+            {buildTableBody(sortedTransfers)}
+          </TableBody>
         </Table>
       </CardContent>
     </Card>

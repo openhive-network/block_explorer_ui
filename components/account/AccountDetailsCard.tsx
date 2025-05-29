@@ -107,11 +107,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
       } else {
         return (
           <Fragment key={index}>
-            <TableRow
-              className={
-                "border-b border-gray-700 hover:bg-inherit dark:hover:bg-inherit"
-              }
-            >
+            <TableRow>
               <TableCell>{key}</TableCell>
               <TableCell>{renderKey(key)}</TableCell>
             </TableRow>
@@ -144,7 +140,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
         hidden={isPropertiesHidden}
       >
         <Table>
-          <TableBody>{buildTableBody(keys)}</TableBody>
+          <TableBody className="text-sm">{buildTableBody(keys)}</TableBody>
         </Table>
       </CardContent>
     </Card>

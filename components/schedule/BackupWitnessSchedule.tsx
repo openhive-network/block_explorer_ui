@@ -26,6 +26,7 @@ const buildTableHeader = () => {
   return TABLE_CELLS.map((cell, index) => {
     return (
       <TableHead
+        stickyLeft={index === 0 ? true : undefined}
         className="text-left text-sm font-medium uppercase tracking-wider py-1 px-2"
         key={index}
       >
@@ -41,14 +42,17 @@ const buildTableBody = (data: BackupWitness[]) => {
   return data.map(({ rank, owner, timestamp }: any, index: number) => {
     return (
       <React.Fragment key={index}>
-        <TableRow className="border-b hover:bg-rowHover transition-colors">
-          <TableCell className="py-1 px-2 whitespace-nowrap text-sm">
+        <TableRow className="transition-colors">
+          <TableCell
+            stickyLeft
+            className="py-1 px-2 whitespace-nowrap text-sm"
+          >
             {rank !== null ? `#${rank}` : "-"}
           </TableCell>
           <TableCell className="py-1 px-2 whitespace-nowrap text-sm">
             {owner}
           </TableCell>
-          <TableCell className="py-1 px-2 whitespace-nowrap text-xs">
+          <TableCell className="py-1 px-2 whitespace-nowrap">
             {timestamp}
           </TableCell>
           <TableCell className="py-1 px-2 whitespace-nowrap text-sm">{`[${
@@ -71,7 +75,7 @@ const BackupWitnessSchedule: React.FC<BackupWitnessScheduleProps> = ({
         <div className="overflow-x-auto">
           <Table data-testid="table-body">
             <TableHeader>
-              <TableRow>{buildTableHeader()}</TableRow>
+              <TableRow rowVariant="header">{buildTableHeader()}</TableRow>
             </TableHeader>
             <TableBody>{buildTableBody(data)}</TableBody>
           </Table>

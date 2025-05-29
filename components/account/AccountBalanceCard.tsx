@@ -27,7 +27,6 @@ const cardNameMap = new Map([
   ["received_vesting_shares", "Received HP"],
   ["delegated_vesting_shares", "Delegated HP"],
   ["vesting_withdraw_rate", "Powering down HP"],
- 
 ]);
 
 const unclaimedRecourses = new Map([
@@ -144,15 +143,15 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
           className="flex justify-between items-center p-2 hover:bg-rowHover cursor-pointer px-4"
         >
           <div className="text-lg">{header}</div>
-            <span> {isBalancesHidden ? <ArrowDown /> : <ArrowUp />}</span>
-          </div>
+          <span> {isBalancesHidden ? <ArrowDown /> : <ArrowUp />}</span>
+        </div>
       </CardHeader>
       <CardContent
         hidden={isBalancesHidden}
         data-testid="card-content"
       >
         <Table>
-          <TableBody>
+          <TableBody className="text-sm">
             {buildTableBody(keys)}
             {renderBalance()}
           </TableBody>
