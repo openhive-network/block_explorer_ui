@@ -6,68 +6,85 @@ import useOnClickOutside from "@/hooks/common/useOnClickOutside";
 import useInputType from "@/hooks/api/common/useInputType";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { trimAccountName } from "@/utils/StringUtils";
+import { trimAccountName, capitalizeFirst } from "@/utils/StringUtils";
 import Hive from "@/types/Hive";
-import { capitalizeFirst } from "@/utils/StringUtils";
-import Router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 
-interface AutocompleteInputProps {
+const isNumeric = (v: string) => /^\d+$/.test(v);
+const isHash = (v: string) => /^[a-fA-F0-9]{40}$/.test(v);
+
+const getResultTypeHeader = (r: Hive.InputTypeResponse) =>
+  r.input_type === "block_num"
+    ? "block"
+    : r.input_type === "transaction_hash"
+    ? "transaction"
+    : r.input_type === "block_hash"
+    ? "block"
+    : "account";
+
+interface Props {
   value: string | null;
-  onChange: (value: string) => void;
-  onClick?: (event: React.MouseEvent<HTMLInputElement, MouseEvent>) => void;
-  onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;
+  onChange: (v: string) => void;
   placeholder: string;
-  inputType: string | string[]; // The input type (e.g., 'account_name', 'block', 'transaction')
-  className?: string; // Optional custom className for styling
+  inputType: string | string[];
+  className?: string;
   linkResult?: boolean;
   required?: boolean;
   addLabel?: boolean;
+  onClick?: (e: React.MouseEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
 }
 
-const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
+const AutoCompleteInput: React.FC<Props> = ({
   value,
   onChange,
-  onClick,
-  onBlur,
   placeholder,
   inputType,
   className,
   linkResult = false,
-  required = false, // Default value is false
+  required = false,
   addLabel = false,
+  onClick,
+  onBlur,
 }) => {
-  const [inputFocus, setInputFocus] = useState(false);
-  const [selectedResult, setSelectedResult] = useState(0);
-  const searchContainerRef = useRef(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const selectedResultRef = useRef<HTMLDivElement>(null);
-  const [searchInputType, setSearchInputType] = useState<string>("");
-  const { inputTypeData } = useInputType(searchInputType);
-  const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
-  const [isItemSelected, setIsItemSelected] = useState(false);
+  const [inputFocus, setInputFocus] = useState(false);
+  const [selected, setSelected] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isChosen, setIsChosen] = useState(false);
 
-  // Used to track if the user clicks inside the results container or input field
-  const resultsContainerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const resultRef = useRef<HTMLDivElement>(null);
 
-  const updateInput = async (value: string) => {
-    setSearchInputType(value);
-  };
-
+  const [query, setQuery] = useState("");
+  const { inputTypeData } = useInputType(query);
   const debouncedSearch = useDebounce(
-    (value: string) => updateInput(trimAccountName(value)),
+    (v: string) => setQuery(trimAccountName(v)),
     600
   );
 
-  const isNumeric = (value: string): boolean => {
-    return /^\d+$/.test(value);
-  };
+  const pick = useCallback(
+    (account: string) => {
+      setIsChosen(true);
+      onChange(account);
 
-  const isHash = (value: string): boolean => {
-    return /^[a-fA-F0-9]{40}$/.test(value);
-  };
+      if (linkResult) {
+        const base = ["account_name", "account_name_array"].includes(
+          inputTypeData?.input_type as string
+        )
+          ? `/@${account}`
+          : `/${getResultTypeHeader(
+              inputTypeData as Hive.InputTypeResponse
+            )}/${account}`;
+        router.push(base);
+      }
+      setInputFocus(false);
+    },
+    [inputTypeData, linkResult, onChange, router]
+  );
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputFocus(true);
     onChange(e.target.value);
     setSearchTerm(e.target.value);
@@ -78,242 +95,84 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
     }
   };
 
-  // Close the search when clicking outside of the container
-  useOnClickOutside(searchContainerRef, () => closeSearchBar());
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!inputTypeData?.input_value) return;
 
-  const resetSearchBar = useCallback(() => {
-    setInputFocus(false);
-    onChange(""); // Clear the input field
-    setSearchInputType("");
-    setSelectedResult(0);
-    setIsItemSelected(false);
-    if (onBlur) {
-      onBlur({} as React.FocusEvent<HTMLInputElement>);
+    const arr = Array.isArray(inputTypeData.input_value)
+      ? inputTypeData.input_value
+      : [inputTypeData.input_value];
+
+    if (e.key === "ArrowDown")
+      setSelected((p) => Math.min(p + 1, arr.length - 1));
+    if (e.key === "ArrowUp") setSelected((p) => Math.max(p - 1, 0));
+
+    if (e.key === "Enter") pick(arr.length === 1 ? arr[0] : arr[selected]);
+    if (e.key === "Tab") {
+      e.preventDefault();
+      pick(arr[selected]);
     }
-  }, [onBlur, onChange]);
-
-  const closeSearchBar = () => {
-    setInputFocus(false);
   };
 
-  // Ensure cleaning the searchbar when navigating away
+  useOnClickOutside(wrapRef, () => setInputFocus(false));
+
   useEffect(() => {
-    const handleRouteChange = () => {
-      resetSearchBar();
-    };
-    router.events.on("routeChangeStart", handleRouteChange);
-    // Cleanup the event listener on unmount
-    return () => {
-      router.events.off("routeChangeStart", handleRouteChange);
-    };
-  }, [router.events, resetSearchBar]);
+    resultRef.current?.scrollIntoView({ block: "nearest" });
+  }, [selected]);
 
-  //Handle keyboard events
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (inputFocus && inputTypeData?.input_value) {
-      let selectedAccount;
+  const renderOptions = (d: Hive.InputTypeResponse) => {
+    const resType = getResultTypeHeader(d);
+    const arr = Array.isArray(d.input_value) ? d.input_value : [d.input_value];
 
-      if (Array.isArray(inputTypeData.input_value)) {
-        selectedAccount = inputTypeData.input_value[selectedResult];
-      } else {
-        selectedAccount = inputTypeData.input_value;
-      }
-
-      if (event.key === "ArrowDown") {
-        setSelectedResult((prev) =>
-          prev < inputTypeData.input_value.length - 1 ? prev + 1 : prev
-        );
-      }
-      if (event.key === "ArrowUp") {
-        setSelectedResult((prev) => (prev > 0 ? prev - 1 : prev));
-      }
-      if (event.key === "Enter") {
-        if (isItemSelected && linkResult) {
-          const href =
-            inputTypeData.input_type === "account_name" ||
-            inputTypeData.input_type === "account_name_array"
-              ? `/@${selectedAccount}`
-              : `/${getResultTypeHeader(inputTypeData)}/${selectedAccount}`;
-          router.push(href).then(() => {
-            closeSearchBar();
-            resetSearchBar();
-          });
-        } else if (!linkResult) {
-          onChange(selectedAccount);
-          closeSearchBar();
-        }
-      }
-      if (event.key === "Tab") {
-        event.preventDefault();
-        onChange(selectedAccount);
-        setIsItemSelected(true);
-        setInputFocus(true);
-        inputRef.current?.focus();
-        linkResult ? "" : closeSearchBar();
-      }
-      if (event.key === "Backspace") {
-        setInputFocus(true); // Reopen the suggestions on backspace
-      }
-    }
-  };
-  // Ensure the selected result is visible in the scrollable container
-  useEffect(() => {
-    if (selectedResultRef.current) {
-      selectedResultRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "nearest",
-      });
-    }
-  }, [selectedResult]);
-
-  // Handle onBlur event
-  const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
-    if (
-      resultsContainerRef.current &&
-      (resultsContainerRef.current.contains(event.relatedTarget) ||
-        inputRef.current?.contains(event.relatedTarget))
-    ) {
-      event.stopPropagation(); // Prevent the blur event from triggering if focus is inside results container or input
-    } else {
-      if (onBlur) onBlur(event);
-    }
-  };
-
-  const getResultTypeHeader = (result: Hive.InputTypeResponse) => {
-    switch (result.input_type) {
-      case "block_num":
-        return "block";
-      case "transaction_hash":
-        return "transaction";
-      case "block_hash":
-        return "block";
-      default:
-        return "account";
-    }
-  };
-
-  const renderSearchData = (
-    data: Hive.InputTypeResponse,
-    linkResult: boolean
-  ) => {
-    const inputValue = data.input_value;
-    const inputTypeArray = Array.isArray(inputType) ? inputType : [inputType];
-    const resultType = getResultTypeHeader(data);
-    if (data.input_type === "invalid_input") {
-      return <div className="px-4 py-2">Account not found: {searchTerm}</div>;
-    } else if (
-      inputTypeArray.includes(data.input_type) ||
-      (inputTypeArray.includes("account_name") &&
-        data.input_type === "account_name_array")
-    ) {
-      if (
-        data.input_type === "account_name_array" &&
-        Array.isArray(inputValue)
-      ) {
-        return (
+    return (
+      <div
+        className="autocomplete-result-container scrollbar-autocomplete"
+        ref={resultRef}
+      >
+        {arr.map((acc, i) => (
           <div
-            ref={resultsContainerRef}
-            className="autocomplete-result-container scrollbar-autocomplete"
+            key={acc}
+            className={cn("autocomplete-result-item cursor-pointer", {
+              "bg-navbar-listHover": selected === i,
+            })}
+            onClick={() => pick(acc)}
           >
-            {inputValue.map((account, index) => (
-              <div
-                key={index}
-                ref={selectedResult === index ? selectedResultRef : null}
-                className={cn("autocomplete-result-item", {
-                  "bg-navbar-listHover": selectedResult === index,
-                  "autocomplete-result-item": index > 0,
-                })}
-                onClick={() => {
-                  onChange(account);
-                  inputRef.current?.focus();
-                  setInputFocus(true);
-                  setSearchInputType(account);
-                }}
-              >
-                {linkResult ? (
-                  <>
-                    {addLabel && (
-                      <span className="autocomplete-result-label">
-                        {capitalizeFirst(resultType)}:&nbsp;
-                      </span>
-                    )}
-                    <Link
-                      href={`/@${account}`}
-                      className="autocomplete-result-link"
-                    >
-                      <span className="autocomplete-result-link">
-                        {account}
-                      </span>
-                    </Link>
-                  </>
-                ) : (
-                  <span className="autocomplete-result-link">
-                    {addLabel && (
-                      <span>{capitalizeFirst(resultType)}::&nbsp;</span>
-                    )}
-                    {account}
+            {linkResult ? (
+              <>
+                {addLabel && (
+                  <span className="autocomplete-result-label">
+                    {capitalizeFirst(resType)}:&nbsp;
                   </span>
                 )}
-                {selectedResult === index && (
-                  <Enter className="hidden md:inline" />
-                )}
-              </div>
-            ))}
-          </div>
-        );
-      } else {
-        const href =
-          resultType === "account"
-            ? `/@${data.input_value}`
-            : `/${resultType}/${data.input_value}`;
-        return (
-          <div
-            ref={resultsContainerRef}
-            className="autocomplete-result-container scrollbar-autocomplete"
-          >
-            <div className="autocomplete-result-item">
-              {linkResult ? (
-                <>
-                  {addLabel && (
-                    <span className="autocomplete-result-label">
-                      {capitalizeFirst(resultType)}&nbsp;
-                    </span>
-                  )}
-                  <Link
-                    href={href}
-                    data-testid=""
-                  >
-                    <span className="autocomplete-result-link">
-                      {data.input_type === "transaction_hash"
-                        ? data.input_value.slice(0, 10)
-                        : data.input_value}
-                    </span>
-                  </Link>
-                </>
-              ) : (
-                <>
-                  {addLabel && (
-                    <span className="autocomplete-result-label">
-                      {capitalizeFirst(resultType)}&nbsp;
-                    </span>
-                  )}
-                  <span className="autocomplete-result-highlight">
-                    {data.input_value}
+                <Link
+                  className="autocomplete-result-link"
+                  href={
+                    resType === "account" ? `/@${acc}` : `/${resType}/${acc}`
+                  }
+                  onClick={(e) => e.preventDefault()}
+                >
+                  {acc}
+                </Link>
+              </>
+            ) : (
+              <>
+                {addLabel && (
+                  <span className="autocomplete-result-label">
+                    {capitalizeFirst(resType)}:&nbsp;
                   </span>
-                </>
-              )}
-              <Enter className="hidden md:inline text-explorer-dark-gray" />
-            </div>
+                )}
+                {acc}
+              </>
+            )}
+            {selected === i && <Enter className="hidden md:inline ml-1" />}
           </div>
-        );
-      }
-    }
-    return null;
+        ))}
+      </div>
+    );
   };
 
   return (
     <div
-      ref={searchContainerRef}
+      ref={wrapRef}
       className={cn("relative", className)}
     >
       <div className="flex items-center pr-2 z-50">
@@ -321,33 +180,34 @@ const AutocompleteInput: React.FC<AutocompleteInputProps> = ({
           ref={inputRef}
           className={cn("autocomplete_input")}
           type="text"
-          placeholder={required ? `${placeholder} *` : placeholder} // Add asterisk if required
-          value={value || ""}
-          onChange={handleInputChange}
+          placeholder={required ? `${placeholder} *` : placeholder}
+          value={value ?? ""}
+          onChange={handleInput}
           onClick={onClick}
-          onBlur={handleBlur}
+          onBlur={onBlur}
           onFocus={() => setInputFocus(true)}
           onKeyDown={handleKeyDown}
         />
-        {value && !!value.length ? (
+        {value ? (
           <X
             className="cursor-pointer"
-            onClick={() => resetSearchBar()}
+            onClick={() => {
+              onChange("");
+              setInputFocus(false);
+            }}
           />
         ) : linkResult ? (
           <Search />
         ) : null}
       </div>
-      {inputFocus &&
-        value &&
-        value.length > 0 &&
-        !!inputTypeData?.input_value && (
-          <div className="absolute bg-theme dark:bg-theme  w-full max-h-60 border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden">
-            {renderSearchData(inputTypeData, linkResult)}
-          </div>
-        )}
+
+      {inputFocus && value && value.length && inputTypeData?.input_value && (
+        <div className="absolute bg-theme w-full max-h-60 border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden">
+          {renderOptions(inputTypeData)}
+        </div>
+      )}
     </div>
   );
 };
 
-export default AutocompleteInput;
+export default AutoCompleteInput;
