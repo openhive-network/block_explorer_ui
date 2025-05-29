@@ -16,14 +16,18 @@ import { DEFAULT_BLOCKS_SEARCH_PROPS } from "@/components/blocks/BlocksSearch";
 const TABLE_CELLS = ["Block", "Producer", "Time", "Transactions", ""];
 
 const BlockSearchResults = () => {
-  const { allBlocksSearchProps, setAllBlocksSearchProps, searchRanges } =
-    useSearchesContext();
+  const {
+    allBlocksSearchProps,
+    setAllBlocksSearchProps,
+    searchRanges,
+    blockSearchPage,
+    setBlockSearchPage,
+  } = useSearchesContext();
   const { operationsTypes } = useOperationsTypes();
   const {
     settings: { liveData },
   } = useUserSettingsContext();
   const prevBlocksDataRef = useRef<Block[] | null>(null);
-  const [pageNum, setPageNum] = useState<number | undefined>(undefined);
 
   const props = {
     ...DEFAULT_BLOCKS_SEARCH_PROPS,
@@ -31,7 +35,7 @@ const BlockSearchResults = () => {
   } as any;
 
   const { blocksSearchData, blocksSearchDataError, blocksSearchDataLoading } =
-    useAllBlocksSearch(props, pageNum, props.toBlock, liveData);
+    useAllBlocksSearch(props, blockSearchPage, props.toBlock, liveData);
 
   const getOperationsCounts = useCallback(
     (operations: Operations[] | undefined) => {
@@ -116,7 +120,7 @@ const BlockSearchResults = () => {
   ]);
 
   const handlePageChange = (newPage: number) => {
-    setPageNum(newPage);
+    setBlockSearchPage(newPage);
   };
 
   const {
@@ -162,7 +166,7 @@ const BlockSearchResults = () => {
           <BlocksTable
             rows={tableRows}
             TABLE_CELLS={TABLE_CELLS}
-            currentPage={pageNum || blocksSearchData.total_pages}
+            currentPage={blockSearchPage || blocksSearchData.total_pages}
             totalCount={blocksSearchData.total_blocks}
             onPageChange={handlePageChange}
             isMainPageTable={true}

@@ -30,13 +30,13 @@ import { startBlockSearch } from "./utils/blockSearchHelpers";
 import NoValueErrorMessage from "./NoValueErrorMessage";
 import useAllBlocksSearch from "@/hooks/api/blocks/useAllBlocksSearch";
 
-
 const BlockSearch = () => {
   const {
     allBlocksSearchProps,
     setAllBlocksSearchProps,
     setLastSearchKey,
     searchRanges,
+    setBlockSearchPage,
   } = useSearchesContext();
   const { operationsTypes } = useOperationsTypes();
 
@@ -145,6 +145,7 @@ const BlockSearch = () => {
     setRangeSelectKey("none");
     setTimeUnitSelectKey("days");
     setSelectedOperationTypes([]);
+    setBlockSearchPage(undefined);
   };
 
   return (
