@@ -35,7 +35,7 @@ import BlockOperationsContent from "./BlockOperationContent";
 
 interface BlocksTableProps {
   rows: BlockRow[]; // Changed to BlockRow, since we added the counts
-  paramsState?: any;
+  paramsState?: any; // Or props if there is no url query available
   TABLE_CELLS: string[];
   currentPage: number;
   totalCount: number;
@@ -288,7 +288,7 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({
 
   const textColorClass = isNewRow ? "text-green-800 dark:text-green-200" : "";
   const shadowClass = isNewRow ? "shadow-inner" : "";
-
+  console.log(row.block_num);
   return (
     <>
       <TableRow

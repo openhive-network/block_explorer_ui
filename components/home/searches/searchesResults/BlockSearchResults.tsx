@@ -165,6 +165,7 @@ const BlockSearchResults = () => {
           </div>
           <BlocksTable
             rows={tableRows}
+            paramsState={allBlocksSearchProps}
             TABLE_CELLS={TABLE_CELLS}
             currentPage={blockSearchPage || blocksSearchData.total_pages}
             totalCount={blocksSearchData.total_blocks}
