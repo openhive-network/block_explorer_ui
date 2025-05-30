@@ -33,6 +33,7 @@ interface Props {
   addLabel?: boolean;
   onClick?: (e: React.MouseEvent<HTMLInputElement>) => void;
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  expand?: boolean;
 }
 
 const AutoCompleteInput: React.FC<Props> = ({
@@ -46,6 +47,7 @@ const AutoCompleteInput: React.FC<Props> = ({
   addLabel = false,
   onClick,
   onBlur,
+  expand = false,
 }) => {
   const router = useRouter();
   const [inputFocus, setInputFocus] = useState(false);
@@ -173,7 +175,11 @@ const AutoCompleteInput: React.FC<Props> = ({
   return (
     <div
       ref={wrapRef}
-      className={cn("relative", className)}
+      className={cn(
+        "relative",
+        { "w-1/2": expand && inputFocus, "w-1/3": !expand },
+        className
+      )}
     >
       <div className="flex items-center pr-2 z-50">
         <Input
