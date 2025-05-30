@@ -19,11 +19,14 @@ const BlockOperationsContent: React.FC<Props> = ({ blockNum, paramsState }) => {
     settings: { rawJsonView, prettyJsonView },
   } = useUserSettingsContext();
 
+  const filters = paramsState?.filters
+    ? convertBooleanArrayToIds(paramsState?.filters)
+    : undefined; //Filters from url query
+  const operationTypes = paramsState.operationTypes ?? undefined; // Operation types (filters) from props
+
   const { blockOperations, trxLoading } = useBlockOperations(
     blockNum,
-    paramsState?.filters
-      ? convertBooleanArrayToIds(paramsState?.filters)
-      : undefined,
+    filters || operationTypes,
     undefined,
     paramsState?.accountName
   );

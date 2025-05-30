@@ -288,7 +288,7 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({
 
   const textColorClass = isNewRow ? "text-green-800 dark:text-green-200" : "";
   const shadowClass = isNewRow ? "shadow-inner" : "";
-  console.log(row.block_num);
+
   return (
     <>
       <TableRow
