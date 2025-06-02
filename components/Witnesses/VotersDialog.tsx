@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { Loader2, ChevronDown, ChevronUp, ChevronsUpDown } from "lucide-react";
 import { Switch } from "../ui/switch";
-import { cn, formatNumber } from "@/lib/utils";
+import { cn, formatNumber, formatPercent } from "@/lib/utils";
 import useWitnessVoters from "@/hooks/api/common/useWitnessVoters";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import {
@@ -25,6 +25,10 @@ import DataCountMessage from "../DataCountMessage";
 import Explorer from "@/types/Explorer";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import Hive from "@/types/Hive";
+import VotersChart from "./VotersChart";
+import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
+import Image from "next/image";
+import DataExport from "../DataExport";
 
 type VotersDialogProps = {
   accountName: string;
@@ -34,12 +38,17 @@ type VotersDialogProps = {
   accountDetails?: Explorer.FormattedAccountDetails;
 };
 
-// const tableColums = [
-//   { key: "voter", name: "Voter" },
-//   { key: "vests", name: "Votes", isRightAligned: true },
-//   { key: "account_vests", name: "Account", isRightAligned: true },
-//   { key: "proxied_vests", name: "Proxy", isRightAligned: true },
-// ];
+interface VoterData {
+  voter_name: string;
+  vests: number;
+  account_vests: number;
+  proxied_vests: number;
+}
+
+interface ChartVoter {
+  voterWeight: number;
+  voterName: string;
+}
 
 const VotersDialog: React.FC<VotersDialogProps> = ({
   accountName,
@@ -55,7 +64,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
 
   const { witnessDetails } = useWitnessDetails(
     accountName,
-    !!accountDetails?.is_witness
+    accountDetails ? !!accountDetails?.is_witness : true
   );
   const { witnessVoters, isWitnessVotersLoading } = useWitnessVoters(
     accountName,
@@ -65,6 +74,16 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
     liveDataEnabled,
     pageNum
   );
+
+  const { witnessVoters: chartData } = useWitnessVoters(
+    accountName,
+    isVotersOpen,
+    false,
+    "vests",
+    liveDataEnabled,
+    1
+  );
+
   const changeSorter = (newIsAsc: boolean, newSortKey: string) => {
     const isAscForChange = newSortKey === sortKey ? newIsAsc : false;
     setSortKey(newSortKey);
@@ -133,159 +152,246 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
         totalVestingShares
       );
     }
-    return `${BigInt(value).toLocaleString()} Vests`; // Return raw vests if not toggled to HP
+    return `${BigInt(value).toLocaleString()} Vests`;
   };
+
+  const totalAccountVests = Number(witnessDetails?.witness?.vests);
+
+  // Function to calculate voter weight
+  const calculateVoterWeight = (voterVests: number): number => {
+    return totalAccountVests > 0 ? (voterVests / totalAccountVests) * 100 : 0;
+  };
+
+  const memoizedVotersChart = useMemo(() => {
+    if (!chartData?.voters) return null;
+
+    const topVoters = [...chartData.voters]
+      .sort((a, b) => b.vests - a.vests)
+      .slice(0, 10);
+
+    const chartVoters: ChartVoter[] = topVoters.map((voter: VoterData) => {
+      const voterWeight = calculateVoterWeight(voter.vests);
+
+      return {
+        voterWeight: voterWeight,
+        voterName: voter.voter_name,
+      };
+    });
+
+    return <VotersChart voters={chartVoters} accountName={accountName} />;
+  }, [chartData, totalAccountVests, accountName, calculateVoterWeight]);
+
+  const prepareExportData = () => {
+    if (!witnessVoters || !witnessVoters.voters || !accountName) return [];
+
+    return witnessVoters.voters.map((voter: VoterData) => {
+      const voterWeight = calculateVoterWeight(voter.vests);
+
+      // Format the values as they appear in the table
+      const votesFormatted = fetchHivePower(voter.vests.toString(), isHP);
+      const accountVestsFormatted = fetchHivePower(voter.account_vests.toString(), isHP);
+      const proxiedVestsFormatted = fetchHivePower(voter.proxied_vests.toString(), isHP);
+      const voterWeightFormatted = formatPercent(voterWeight * 100);
+
+      return {
+        Voter: voter.voter_name,
+        Votes: votesFormatted,
+        "Account Vests": accountVestsFormatted,
+        "Proxied Vests": proxiedVestsFormatted,
+        "Voter Weight": voterWeightFormatted,
+      };
+    });
+  };
+
   return (
     <Dialog
       open={isVotersOpen}
       onOpenChange={changeVotersDialogue}
     >
       <DialogContent
-        className={`h-3/4 max-w-4xl bg-explorer-bg-start ${
+        className={cn(
+          "h-3/4 max-w-7xl bg-explorer-bg-start flex flex-col md:flex-row overflow-y-auto md:p-6 p-1",
           !witnessVoters && "flex justify-center items-center"
-        }`}
+        )}
         data-testid="voters-dialog"
       >
-        {witnessVoters ? (
-          <>
-            <div>
-              <div
-                className="flex justify-center  items-centertext-center font-semibold	"
-                data-testid="voters-dialog-witness-name"
-              >
-                {accountName.toUpperCase()} - Voters
-                {isWitnessVotersLoading && (
-                  <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
-                )}
+        {isWitnessVotersLoading ? (
+          <div className="flex justify-center items-center w-full h-full">
+            <Loader2 className="animate-spin mt-1 h-8 w-8 ml-3 ..." />
+          </div>
+        ) : witnessVoters ? (
+          witnessVoters.voters?.length === 0 ? (
+            <div className="flex justify-center items-center w-full h-full">
+              <NoResult />
+            </div>
+          ) : (
+            <>
+              {/* Chart Column */}
+              <div className="w-full md:w-1/3 p-4">
+                <div>
+                  <div
+                    className="flex justify-center text-left font-semibold"
+                    data-testid="voters-dialog-witness-name"
+                  >
+                    {accountName.toUpperCase()} - Voters
+                    {isWitnessVotersLoading && (
+                      <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
+                    )}
+                  </div>
+                </div>
+                {memoizedVotersChart}
               </div>
-              <div className="flex justify-between items-center w-full pt-4 pb-4">
-                <div className="flex items-center">
-                  {witnessDetails && (
-                    <LastUpdatedTooltip
-                      lastUpdatedAt={witnessDetails.votes_updated_at}
+
+              {/* Table & Pagination Column */}
+              <div className="w-full flex flex-col mt-2">
+                <div className="flex justify-between items-center w-full mb-2">
+                  <div className="flex items-center">
+                    {witnessDetails && (
+                      <LastUpdatedTooltip
+                        lastUpdatedAt={witnessDetails.votes_updated_at}
+                      />
+                    )}
+                  </div>
+
+                  <div className="flex items-center">
+                    <label className="mr-2">Vests</label>
+                    <Switch
+                      checked={isHP}
+                      onCheckedChange={() => setIsHP((prev) => !prev)}
+                      className="mx-1"
                     />
-                  )}
+                    <label>HP</label>
+                  </div>
                 </div>
 
-                <div className="flex items-center">
-                  <label className="mr-2">Vests</label>
-                  <Switch
-                    checked={isHP}
-                    onCheckedChange={() => setIsHP((prev) => !prev)}
-                    className="mx-1"
+                <CustomPagination
+                  currentPage={pageNum}
+                  onPageChange={(newPage: number) => {
+                    setPageNum(newPage);
+                  }}
+                  pageSize={config.standardPaginationSize}
+                  totalCount={witnessVoters.total_votes}
+                  className="rounded"
+                  isMirrored={false}
+                />
+
+                <div
+                  className={cn("flex justify-end items-center mt-2 mb-2", {
+                    "justify-between": !!witnessVoters.total_votes,
+                  })}
+                >
+                  <DataCountMessage
+                    count={witnessVoters.total_votes}
+                    dataType="voters"
                   />
-                  <label>HP</label>
+                  <DataExport
+                    data={prepareExportData()}
+                    filename={`${accountName}_voters.csv`}
+                  />
                 </div>
-              </div>
-            </div>
-            <CustomPagination
-              currentPage={pageNum}
-              onPageChange={(newPage: number) => {
-                setPageNum(newPage);
-              }}
-              pageSize={config.standardPaginationSize}
-              totalCount={witnessVoters.total_votes}
-              className="rounded"
-              isMirrored={false}
-            />
 
-            <div
-              className={cn("flex justify-end items-center", {
-                "justify-between": !!witnessVoters.total_votes,
-              })}
-            >
-              <DataCountMessage
-                count={witnessVoters.total_votes}
-                dataType="voters"
-              />
-            </div>
-            {witnessVoters?.voters?.length === 0 && !isWitnessVotersLoading ? (
-              <div>
-                <NoResult />
-              </div>
-            ) : (
-              <div className="relative rounded overflow-hidden w-full">
-                <div className="text-text w-full h-full overflow-auto bg-theme rounded">
-                  <Table>
-                    <TableHeader>
-                      <TableRow rowVariant="header">
-                        <TableHead stickyLeft>
-                          <span className="flex">
-                            Voter {showSorter("voter")}
-                          </span>
-                        </TableHead>
+                <div className="relative rounded overflow-hidden w-full">
+                  <div className="text-text w-full h-full overflow-auto bg-theme rounded">
+                    <Table>
+                      <TableHeader>
+                        <TableRow rowVariant="header">
+                          <TableHead stickyLeft>
+                            <span className="flex">
+                              Voter {showSorter("voter")}
+                            </span>
+                          </TableHead>
 
-                        <TableHead className="text-right">
-                          <span className="flex justify-end">
-                            Votes {showSorter("vests")}
-                          </span>
-                        </TableHead>
+                          <TableHead className="text-right">
+                            <span className="flex justify-end">
+                              Votes {showSorter("vests")}
+                            </span>
+                          </TableHead>
 
-                        <TableHead className="text-right">
-                          <span className="flex justify-end">
-                            Account {showSorter("account_vests")}
-                          </span>
-                        </TableHead>
+                          <TableHead className="text-right">
+                            <span className="flex justify-end">
+                              Account {showSorter("account_vests")}
+                            </span>
+                          </TableHead>
 
-                        <TableHead className="text-right">
-                          <span className="flex justify-end">
-                            Proxy {showSorter("proxied_vests")}
-                          </span>
-                        </TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody data-testid="voters-dialog-table-body">
-                      {witnessVoters &&
-                        witnessVoters.voters.map((voter, index) => (
-                          <TableRow
-                            key={index}
-                            className={`${
-                              index % 2 === 0 ? "bg-rowEven" : "bg-rowOdd"
-                            }`}
-                          >
-                            <TableCell stickyLeft>
-                              <Link
-                                className="text-link"
-                                href={`/@${voter.voter_name}`}
-                                data-testid="voter-name"
+                          <TableHead className="text-right">
+                            <span className="flex justify-end">
+                              Proxy {showSorter("proxied_vests")}
+                            </span>
+                          </TableHead>
+                          <TableHead className="text-right">
+                            <span className="flex justify-end">
+                              Voter Weight
+                            </span>
+                          </TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody data-testid="voters-dialog-table-body">
+                        {witnessVoters &&
+                          witnessVoters.voters.map((voter, index) => {
+                            const voterWeight = calculateVoterWeight(voter.vests);
+                            return (
+                              <TableRow
+                                key={index}
                               >
-                                {voter.voter_name}
-                              </Link>
-                            </TableCell>
-                            <TableCell
-                              className="text-right"
-                              data-testid="vote-power"
-                            >
-                              {fetchHivePower(voter.vests.toString(), isHP)}
-                            </TableCell>
-                            <TableCell
-                              className="text-right"
-                              data-testid="account-power"
-                            >
-                              {fetchHivePower(
-                                voter.account_vests.toString(),
-                                isHP
-                              )}
-                            </TableCell>
-                            <TableCell
-                              className="text-right"
-                              data-testid="proxied-power"
-                            >
-                              {fetchHivePower(
-                                voter.proxied_vests.toString(),
-                                isHP
-                              )}
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                    </TableBody>
-                  </Table>
+                                <TableCell stickyLeft>
+                                  <div className="flex items-center space-x-2 p-2">
+                                    <Image
+                                      src={getHiveAvatarUrl(voter.voter_name)}
+                                      alt={`${voter.voter_name}'s profile`}
+                                      width={30}
+                                      height={30}
+                                      className="rounded-full"
+                                    />
+                                    <Link
+                                      className="text-link"
+                                      href={`/@${voter.voter_name}`}
+                                      data-testid="voter-name"
+                                    >
+                                      {voter.voter_name}
+                                    </Link>
+                                  </div>
+                                </TableCell>
+                                <TableCell
+                                  className="text-right"
+                                  data-testid="vote-power"
+                                >
+                                  {fetchHivePower(voter.vests.toString(), isHP)}
+                                </TableCell>
+                                <TableCell
+                                  className="text-right"
+                                  data-testid="account-power"
+                                >
+                                  {fetchHivePower(
+                                    voter.account_vests.toString(),
+                                    isHP
+                                  )}
+                                </TableCell>
+                                <TableCell
+                                  className="text-right"
+                                  data-testid="proxied-power"
+                                >
+                                  {fetchHivePower(
+                                    voter.proxied_vests.toString(),
+                                    isHP
+                                  )}
+                                </TableCell>
+                                <TableCell className="text-right">
+                                  {formatPercent(voterWeight * 100)}
+                                </TableCell>
+                              </TableRow>
+                            );
+                          })}
+                      </TableBody>
+                    </Table>
+                  </div>
                 </div>
               </div>
-            )}
-          </>
+            </>
+          )
         ) : (
-          <Loader2 className="animate-spin mt-1 h-8 w-8 ml-3 ..." />
+          <div className="flex justify-center items-center w-full h-full">
+            <p>Error: Unable to load voters.</p>
+          </div>
         )}
       </DialogContent>
     </Dialog>
