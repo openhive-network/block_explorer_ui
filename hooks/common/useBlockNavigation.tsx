@@ -141,7 +141,7 @@ const useBlockNavigation = (
       blocksSearchData.block_range.from !== 1 &&
       blocksSearchData.block_range.from != blocksSearchData.block_range.to &&
       (paramsState.fromBlock === undefined ||
-        blocksSearchData.block_range.from <= paramsState.fromBlock)
+        blocksSearchData.block_range.from < paramsState.fromBlock)
     );
   }, [blocksSearchData, paramsState]);
 
