@@ -28,7 +28,7 @@ import { setLocalStorage, getLocalStorage } from "@/utils/LocalStorage";
 import { Toggle } from "@/components/ui/toggle";
 import { useRouter } from "next/router";
 
-interface Operations {
+export interface Operations {
   op_type_id: number;
   op_count: number;
 }
@@ -64,7 +64,6 @@ const TABLE_CELLS = [
 ];
 
 const BlocksPage = () => {
-
   const { paramsState, setParams } = useURLParams(DEFAULT_BLOCKS_SEARCH_PROPS);
   const pageNum = paramsState.page;
   const router = useRouter();
@@ -89,7 +88,6 @@ const BlocksPage = () => {
   // Ref to store previous blocks data for live updates comparison
   const prevBlocksDataRef = useRef<Block[] | null>(null);
 
-
   // Data Fetching
   const props = {
     ...paramsState,
@@ -97,7 +95,6 @@ const BlocksPage = () => {
       ? convertBooleanArrayToIds(paramsState.filters)
       : null,
   } as any;
-
 
   const { blocksSearchData, blocksSearchDataError, blocksSearchDataLoading } =
     useAllBlocksSearch(
@@ -109,12 +106,10 @@ const BlocksPage = () => {
         (!paramsState.toBlock || router.query.history?.length == 2)
         ? undefined
         : paramsState.toBlock
-          ? paramsState.toBlock
-          : paramsState.firstBlock,
+        ? paramsState.toBlock
+        : paramsState.firstBlock,
       liveDataEnabled
     );
-
-
 
   // Handlers
   const handleFiltersVisibility = () => {
@@ -260,8 +255,12 @@ const BlocksPage = () => {
     } else {
       setFirstBlock(paramsState.firstBlock);
     }
-
-  }, [paramsState.toBlock, paramsState.firstBlock, blocksSearchData,isNewSearch]);
+  }, [
+    paramsState.toBlock,
+    paramsState.firstBlock,
+    blocksSearchData,
+    isNewSearch,
+  ]);
 
   return (
     <>
@@ -270,7 +269,6 @@ const BlocksPage = () => {
       </Head>
 
       <div className="page-container">
-
         <div className="flex items-start justify-between w-full bg-theme rounded">
           <div className="ml-6">
             <PageTitle
@@ -341,7 +339,6 @@ const BlocksPage = () => {
           <ScrollTopButton />
         </div>
       </div>
-
     </>
   );
 };

@@ -13,18 +13,20 @@ import useBlockSearch from "@/hooks/api/homePage/useBlockSearch";
 import useAccountOperations from "@/hooks/api/accountPage/useAccountOperations";
 import useCommentSearch from "@/hooks/api/common/useCommentSearch";
 import usePermlinkSearch from "@/hooks/api/common/usePermlinkSearch";
+import useAllBlocksSearch from "@/hooks/api/blocks/useAllBlocksSearch";
 
 const SearchesResponseSection = () => {
   const searchesRef = useRef<HTMLDivElement | null>(null);
 
   const {
-    blockSearchProps,
+    allBlocksSearchProps,
     accountOperationsSearchProps,
     permlinkSearchProps,
     commentSearchProps,
     lastSearchKey,
   } = useSearchesContext();
-  const { blockSearchData } = useBlockSearch(blockSearchProps);
+
+  const { blocksSearchData } = useAllBlocksSearch(allBlocksSearchProps);
   const { accountOperations } = useAccountOperations(
     accountOperationsSearchProps
   );
@@ -36,7 +38,7 @@ const SearchesResponseSection = () => {
       className="pt-4 scroll-mt-16"
       ref={searchesRef}
     >
-      {blockSearchData && lastSearchKey === "block" && <BlockSearchResults />}
+      {blocksSearchData && lastSearchKey === "block" && <BlockSearchResults />}
       {accountOperations && lastSearchKey === "account" && (
         <AccountSearchResults />
       )}

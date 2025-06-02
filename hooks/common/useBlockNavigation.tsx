@@ -1,9 +1,5 @@
 // hooks/useBlockNavigation.tsx
-import {
-  useState,
-  useCallback,
-  useEffect,
-} from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/router";
 
 const useBlockNavigation = (
@@ -12,9 +8,8 @@ const useBlockNavigation = (
   paramsState: any,
   setParams: any,
   parseFromParamState?: boolean,
-  firstBlock?: number,
+  firstBlock?: number
 ) => {
-    
   const router = useRouter();
 
   const parseHistoryFromQuery = useCallback((queryHistory: any): number[] => {
@@ -39,16 +34,18 @@ const useBlockNavigation = (
   }, []);
 
   const [toBlockHistory, setToBlockHistory] = useState<number[] | null>(null);
-  const [isFromRangeSelection, setIsFromRangeSelection] = useState<boolean>(false);
+  const [isFromRangeSelection, setIsFromRangeSelection] =
+    useState<boolean>(false);
+
   useEffect(() => {
     // Parse the history from the URL or paramsState
     const initialHistory = parseHistoryFromQuery(
-      parseFromParamState ? paramsState.history : router.query.history
+      parseFromParamState ? paramsState?.history : router.query.history
     );
     setToBlockHistory(initialHistory);
   }, [
     parseFromParamState,
-    paramsState.history,
+    paramsState?.history,
     router.query.history,
     parseHistoryFromQuery,
   ]);
@@ -76,7 +73,7 @@ const useBlockNavigation = (
       page: undefined,
       pageNumber: undefined,
       history: serializedHistory,
-      firstBlock: firstBlock ,
+      firstBlock: firstBlock,
     });
   }, [
     blocksSearchData,
@@ -84,7 +81,7 @@ const useBlockNavigation = (
     setParams,
     toBlockHistory,
     setToBlockHistory,
-
+    firstBlock,
   ]);
 
   const handleLoadPreviousBlocks = useCallback(() => {
@@ -93,8 +90,8 @@ const useBlockNavigation = (
     }
 
     const targetToBlockDiff = toBlockHistory[toBlockHistory.length - 1];
-    const targetToBlock = paramsState.toBlock
-      ? paramsState.toBlock + targetToBlockDiff
+    const targetToBlock = paramsState?.toBlock
+      ? paramsState?.toBlock + targetToBlockDiff
       : undefined;
 
     setToBlockHistory((prevHistory) =>
@@ -108,12 +105,7 @@ const useBlockNavigation = (
       page: undefined,
       history: JSON.stringify(toBlockHistory.slice(0, -1)),
     });
-  }, [
-    paramsState,
-    setParams,
-    toBlockHistory,
-    setToBlockHistory,
-  ]);
+  }, [paramsState, setParams, toBlockHistory, setToBlockHistory]);
 
   const checkForMoreBlocks = useCallback((): boolean => {
     if (!blocksSearchData?.block_range) {
@@ -121,19 +113,19 @@ const useBlockNavigation = (
     }
 
     if (
-      paramsState.fromBlock &&
-      paramsState.lastBlocks &&
-      paramsState.rangeSelectKey === "lastBlocks" &&
-      blocksSearchData.block_range.to > paramsState.fromBlock &&
-      blocksSearchData.block_range.from != paramsState.fromBlock
+      paramsState?.fromBlock &&
+      paramsState?.lastBlocks &&
+      paramsState?.rangeSelectKey === "lastBlocks" &&
+      blocksSearchData.block_range.to > paramsState?.fromBlock &&
+      blocksSearchData.block_range.from != paramsState?.fromBlock
     ) {
       return true;
     }
 
     if (
-      paramsState.fromBlock &&
-      paramsState.rangeSelectKey === "blockRange" &&
-      blocksSearchData.block_range.from > paramsState.fromBlock
+      paramsState?.fromBlock &&
+      paramsState?.rangeSelectKey === "blockRange" &&
+      blocksSearchData.block_range.from > paramsState?.fromBlock
     ) {
       return true;
     }

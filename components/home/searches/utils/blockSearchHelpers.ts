@@ -11,38 +11,60 @@ export function startBlockSearch(
   setLastSearchKey("block");
 }
 
-export function getBlockPageLink(
+export function getAllBlocksPageLink(
   blockSearchProps: Explorer.BlockSearchProps | undefined,
-  operationsTypes: Explorer.ExtendedOperationTypePattern[] | undefined
-): (blockNumber: number) => string {
-  return (blockNumber: number) => {
-    if (!blockSearchProps) return "#";
+  searchRanges: any
+) {
+  if (!blockSearchProps) return "/blocks";
 
-    const { accountName, operationTypes } = blockSearchProps;
+  const {
+    accountName,
+    operationTypes,
+    fromBlock,
+    toBlock,
+    startDate,
+    endDate,
+  } = blockSearchProps;
 
-    const searchParams = new URLSearchParams();
+  const {
+    rangeSelectKey,
+    lastTimeUnitValue,
+    timeUnitSelectKey,
+    lastBlocksValue,
+  } = searchRanges;
 
-    setParamIfPositive(searchParams, "accountName", accountName);
+  const searchParams = new URLSearchParams();
 
-    if (operationTypes) {
-      const booleanTypesArray = convertIdsToBooleanArray(operationTypes);
-      let isFull = !!operationTypes;
+  setParamIfPositive(searchParams, "accountName", accountName);
+  setParamIfPositive(searchParams, "fromBlock", fromBlock);
+  setParamIfPositive(searchParams, "toBlock", toBlock);
+  setParamIfPositive(searchParams, "fromDate", startDate);
+  setParamIfPositive(searchParams, "toDate", endDate);
+  setParamIfPositive(searchParams, "rangeSelectKey", rangeSelectKey);
 
-      operationsTypes?.forEach((operationType: any) => {
-        if (!operationTypes.includes(operationType.op_type_id)) {
-          isFull = false;
-        }
-      });
+  if (operationTypes) {
+    const booleanTypesArray = convertIdsToBooleanArray(operationTypes);
+    let isFull = !!operationTypes;
 
-      const filtersValue = !isFull ? booleanTypesArray : [];
-      setParamIfPositive(searchParams, "filters", filtersValue);
-    }
+    operationTypes?.forEach((operationType: any) => {
+      if (!operationTypes.includes(operationType.op_type_id)) {
+        isFull = false;
+      }
+    });
 
-    const queryString = searchParams.toString();
-    const urlPath = `/block/${blockNumber}${
-      queryString ? `?${queryString}` : ""
-    }`;
+    const filtersValue = !isFull ? booleanTypesArray : [];
+    setParamIfPositive(searchParams, "filters", filtersValue);
+  }
 
-    return urlPath;
-  };
+  if (rangeSelectKey === "lastTime") {
+    setParamIfPositive(searchParams, "lastTime", lastTimeUnitValue);
+    setParamIfPositive(searchParams, "timeUnit", timeUnitSelectKey);
+  } else if (rangeSelectKey === "lastBlocks") {
+    setParamIfPositive(searchParams, "lastBlocks", lastBlocksValue);
+  }
+
+  const queryString = searchParams.toString();
+  const urlPath = `/blocks${queryString ? `?${queryString}` : ""}`;
+
+  return urlPath;
 }
