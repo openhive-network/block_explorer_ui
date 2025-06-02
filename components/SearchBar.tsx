@@ -17,19 +17,21 @@ const SearchBar: React.FC<SearchBarProps> = ({ open, onChange, className }) => {
   const [isClicked, setIsClicked] = useState(false);
   const isMobile = useMediaQuery("(max-width: 768px)");
 
-
   const handleToggle = () => {
     setAutocompleteVisible(!isAutocompleteVisible);
     if (onChange) onChange(!isAutocompleteVisible);
   };
 
-  const handleClick = (event: React.MouseEvent<HTMLInputElement, MouseEvent>) => {
+  const handleClick = (
+    event: React.MouseEvent<HTMLInputElement, MouseEvent>
+  ) => {
     setIsClicked(true);
   };
 
-  const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {   
+  const handleBlur = (event: React.FocusEvent<HTMLInputElement>) => {
     setIsClicked(false);
   };
+
   return (
     <>
       {isAutocompleteVisible && (
@@ -37,16 +39,22 @@ const SearchBar: React.FC<SearchBarProps> = ({ open, onChange, className }) => {
           value={searchTerm}
           onChange={setSearchTerm}
           placeholder="User, Block, Trx #"
-          inputType={['block_num', 'transaction_hash', 'block_hash', 'account_name']}
+          inputType={[
+            "block_num",
+            "transaction_hash",
+            "block_hash",
+            "account_name",
+          ]}
           className={cn(
-            "bg-theme dark:bg-theme border-b transition-width duration-300 ease-in-out",
-            (isClicked&& !isMobile) ? "w-3/5" : "w-[full]",
+            "bg-theme border-b transition-width duration-300 ease-in-out",
+            { "w-full": isMobile },
             className
           )}
           onClick={handleClick}
           onBlur={handleBlur}
           linkResult={true}
           addLabel={true}
+          expand={isMobile === false}
         />
       )}
       {!isAutocompleteVisible && (
@@ -58,7 +66,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ open, onChange, className }) => {
         </Button>
       )}
       {isAutocompleteVisible && (
-         <X
+        <X
           onClick={handleToggle}
           className="md:hidden"
         />

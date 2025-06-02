@@ -133,7 +133,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
         totalVestingShares
       );
     }
-    return formatNumber(parseInt(value), true, false) + " Vests"; // Return raw vests if not toggled to HP
+    return `${BigInt(value).toLocaleString()} Vests`; // Return raw vests if not toggled to HP
   };
   return (
     <Dialog
