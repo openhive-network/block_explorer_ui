@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { Loader2, ChevronDown, ChevronUp, ChevronsUpDown } from "lucide-react";
 import { Switch } from "../ui/switch";
@@ -60,8 +60,9 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
   const [sortKey, setSortKey] = useState<string>("vests");
   const [isAsc, setIsAsc] = useState<boolean>(false);
   const [pageNum, setPageNum] = useState<number>(1);
-  const [isHP, setIsHP] = useState<boolean>(true); // Toggle state
+  const [isHP, setIsHP] = useState<boolean>(true);
 
+  // Fetch witness details
   const { witnessDetails } = useWitnessDetails(
     accountName,
     accountDetails ? !!accountDetails?.is_witness : true
@@ -157,10 +158,14 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
 
   const totalAccountVests = Number(witnessDetails?.witness?.vests);
 
-  // Function to calculate voter weight
-  const calculateVoterWeight = (voterVests: number): number => {
-    return totalAccountVests > 0 ? (voterVests / totalAccountVests) * 100 : 0;
-  };
+  const calculateVoterWeight = useCallback(
+    (voterVests: number): number => {
+      return totalAccountVests > 0
+        ? (voterVests / totalAccountVests) * 100
+        : 0;
+    },
+    [totalAccountVests]
+  );
 
   const memoizedVotersChart = useMemo(() => {
     if (!chartData?.voters) return null;
@@ -179,7 +184,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
     });
 
     return <VotersChart voters={chartVoters} accountName={accountName} />;
-  }, [chartData, totalAccountVests, accountName, calculateVoterWeight]);
+  }, [chartData, accountName, calculateVoterWeight]);
 
   const prepareExportData = () => {
     if (!witnessVoters || !witnessVoters.voters || !accountName) return [];
