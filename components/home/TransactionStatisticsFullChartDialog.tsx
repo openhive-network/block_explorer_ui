@@ -183,9 +183,6 @@ const TransactionStatisticsFullChartDialog: React.FC<
                 />
               )
             )}
-            {isChartError && (
-              <div>Error loading chart data. Please try again.</div>
-            )}
           </div>
         </div>
       </DialogContent>

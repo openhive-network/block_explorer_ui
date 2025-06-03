@@ -18,6 +18,7 @@ interface TransactionStatisticsChartProps {
   includeBrush?: boolean;
   tickCount?: number;
   showYear?: boolean;
+  dateFormat?:string;
 }
 
 const TransactionStatisticsChart: React.FC<TransactionStatisticsChartProps> = ({
@@ -25,13 +26,13 @@ const TransactionStatisticsChart: React.FC<TransactionStatisticsChartProps> = ({
   includeBrush = false,
   tickCount,
   showYear = false,
+  dateFormat,
 }) => {
   const { theme } = useTheme();
   const strokeColor = theme === "dark" ? "#FFF" : "#000";
   const [zoomedDomain, setZoomedDomain] = useState<[number, number] | null>(
     null
   );
-
   const chartData = useMemo(() => {
     if (!data || data.length === 0) {
       return [];
@@ -58,7 +59,7 @@ const TransactionStatisticsChart: React.FC<TransactionStatisticsChartProps> = ({
       return (
         <div className="bg-theme rounded shadow-sm py-1 px-2 text-[0.6rem]">
           <p className="text-gray-400 mb-0.5 text-center">
-            {showYear? moment(date).format(" YYYY"): moment(date).format("MMM D, YYYY")}
+            {showYear? moment(date).format(" YYYY"): (dateFormat? moment(date).format(dateFormat): moment(date).format("MMM D, YYYY"))}
           </p>
           <div className="grid grid-cols-2 gap-1">
             <div>
@@ -139,14 +140,17 @@ const TransactionStatisticsChart: React.FC<TransactionStatisticsChartProps> = ({
   const yAxisDomain = zoomedDomain || [lowerBound, upperBound];
 
   const xAxisTickFormatter = (value: any) => {
-    return moment(value).format(showYear ? "YYYY" : "MMM D, YYYY");
+    
+    return moment(value).format(
+      showYear ? "YYYY" : dateFormat ? dateFormat : "MMM D, YYYY"
+    );
   };
 
   return (
     <ResponsiveContainer width="100%" height="100%">
       <LineChart
         data={chartData}
-        margin={{ top: 10, right: 20, left: 30, bottom: includeBrush ? 40 : 0 }}
+        margin={{ top: 20, right: 10, left: 0, bottom: includeBrush ? 40 : 0 }}
       >
         <XAxis
           dataKey="date"

@@ -166,8 +166,8 @@ const TransactionStatisticsCard = () => {
                 <Loader2 className="animate-spin h-6 w-6" />
               </div>
             ) : (
-              <div className="flex-grow">
-                <TransactionStatisticsChart data={chartData} tickCount={4} />
+              <div className="flex-grow min-h-[189px]">
+                <TransactionStatisticsChart data={chartData} tickCount={4} dateFormat="MMM D"/>
               </div>
             )}
             {isChartError && (
