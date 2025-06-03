@@ -28,7 +28,7 @@ import { setLocalStorage, getLocalStorage } from "@/utils/LocalStorage";
 import { Toggle } from "@/components/ui/toggle";
 import { useRouter } from "next/router";
 
-interface Operations {
+export interface Operations {
   op_type_id: number;
   op_count: number;
 }
