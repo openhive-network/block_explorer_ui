@@ -262,6 +262,12 @@ const BlocksPage = () => {
     isNewSearch,
   ]);
 
+  useEffect(() => {
+    if (paramsState.toBlock || paramsState.endDate) {
+      setLiveDataEnabled(false);
+    }
+  }, [paramsState.toBlock, paramsState.endDate]);
+
   return (
     <>
       <Head>
