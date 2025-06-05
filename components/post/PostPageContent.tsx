@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useRouter } from "next/router";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
@@ -12,6 +13,7 @@ const ECENCY_URL = "https://ecency.com";
 
 const PostPageContent = () => {
   const router = useRouter();
+  const [isCommentsVisible, setIsCommentsVisible] = useState(true);
 
   const { post } = router.query;
 
@@ -44,6 +46,8 @@ const PostPageContent = () => {
 
   const { title, author, active_votes } = postContent;
 
+  const handleCommentsToggle = () => setIsCommentsVisible(!isCommentsVisible);
+
   return (
     <div className="page-container h-full">
       <div className="mb-10">
@@ -71,12 +75,18 @@ const PostPageContent = () => {
       <PostContent
         active_votes={active_votes}
         data={postContent}
+        isCommentsVisible={isCommentsVisible}
+        handleCommentsToggle={handleCommentsToggle}
       />
-      <PostComments
-        accountName={accountName}
-        permlink={permlink}
-        data={data}
-      />
+      {isCommentsVisible ? (
+        <PostComments
+          accountName={accountName}
+          permlink={permlink}
+          data={data}
+          isCommentsVisible={isCommentsVisible}
+          handleCommentsToggle={handleCommentsToggle}
+        />
+      ) : null}
     </div>
   );
 };

@@ -378,3 +378,45 @@ pre {
     width: 99%;
   }
 }
+
+/* General Scrollable Container */
+.scrollableContainer {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: rgba(150, 150, 150, 0.3) transparent; /* Firefox */
+}
+
+/* WebKit (Chrome, Safari) */
+.scrollableContainer::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollableContainer::-webkit-scrollbar-track {
+  background: transparent; /* Make the track transparent */
+}
+
+.scrollableContainer::-webkit-scrollbar-thumb {
+  background-color: rgba(150, 150, 150, 0.5); /* Subtle gray thumb */
+  border-radius: 3px; /* Slightly rounded corners */
+}
+
+.scrollableContainer::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(120, 120, 120, 0.7); /* Darker on hover */
+}
+
+/* Optional: Style the corner (where horizontal and vertical scrollbars meet) */
+.scrollableContainer::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Dark mode variants (if applicable - adapt colors to your theme) */
+.scrollableContainer.dark::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollableContainer.dark::-webkit-scrollbar-thumb {
+  background-color: rgba(80, 80, 80, 0.5);
+}
+
+.scrollableContainer.dark::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(100, 100, 100, 0.7);
+}

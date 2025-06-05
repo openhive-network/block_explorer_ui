@@ -28,6 +28,8 @@ export interface SearchesContextType {
   setPermlinkPaginationPage: Dispatch<SetStateAction<number>>;
   accountOperationsPage: number | undefined;
   setAccountOperationsPage: Dispatch<SetStateAction<number | undefined>>;
+  blockSearchPage: number | undefined;
+  setBlockSearchPage: Dispatch<SetStateAction<number | undefined>>;
   lastSearchKey: SearchKey | undefined;
   setLastSearchKey: Dispatch<SetStateAction<SearchKey | undefined>>;
   blockSearchProps: Explorer.BlockSearchProps | undefined;
@@ -104,6 +106,9 @@ export const SearchesContextProvider: React.FC<{
   const [accountOperationsPage, setAccountOperationsPage] = useState<
     number | undefined
   >(undefined);
+  const [blockSearchPage, setBlockSearchPage] = useState<number | undefined>(
+    undefined
+  );
 
   const [lastSearchKey, setLastSearchKey] = useState<SearchKey | undefined>(
     undefined
@@ -181,6 +186,8 @@ export const SearchesContextProvider: React.FC<{
         searchRanges,
         activeSearchSection,
         setActiveSearchSection,
+        blockSearchPage,
+        setBlockSearchPage,
       }}
     >
       {children}

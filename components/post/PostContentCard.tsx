@@ -20,11 +20,14 @@ interface PostContentCardProps {
   isComment?: boolean;
   isPropertiesOpen: boolean;
   isVoteDetailsOpen: boolean;
+  isCommentsVisible: boolean;
   handlePropertiesToggle: () => void;
   handleVoteDetailsToggle: () => void;
+  handleCommentsToggle: () => void;
   voteDetailsLength: number;
   voters: string[];
   data: Hive.HivePost | undefined | null;
+  commentsLength: number;
 }
 
 const showPayoutValue = (
@@ -45,11 +48,14 @@ const PostContentCard: React.FC<PostContentCardProps> = ({
   isComment,
   isPropertiesOpen,
   isVoteDetailsOpen,
+  isCommentsVisible,
   handlePropertiesToggle,
   handleVoteDetailsToggle,
+  handleCommentsToggle,
   voteDetailsLength,
   voters,
   data,
+  commentsLength,
 }) => {
   if (!data) return;
 
@@ -159,6 +165,19 @@ const PostContentCard: React.FC<PostContentCardProps> = ({
             >
               {`Vote Details (${voteDetailsLength})`}
               {isVoteDetailsOpen ? (
+                <ChevronUp className="w-4 ml-1" />
+              ) : (
+                <ChevronDown className="w-4  ml-1" />
+              )}
+            </button>
+          ) : null}
+          {commentsLength > 0 ? (
+            <button
+              onClick={handleCommentsToggle}
+              className="flex items-center text-xs px-2 hover:bg-buttonHover"
+            >
+              {`Comments (${commentsLength})`}
+              {isCommentsVisible ? (
                 <ChevronUp className="w-4 ml-1" />
               ) : (
                 <ChevronDown className="w-4  ml-1" />

@@ -4,30 +4,32 @@ import Explorer from "@/types/Explorer";
 import fetchingService from "@/services/FetchingService";
 import { config } from "@/Config";
 
-
-
 const useAllBlocksSearch = (
-  allBlockSearchProps?: Explorer.AllBlocksSearchProps, 
+  allBlockSearchProps?: Explorer.AllBlocksSearchProps,
   page?: number,
   toBlock?: number,
-  liveDataEnabled?:boolean,
+  liveDataEnabled?: boolean
 ) => {
   const {
     data: blocksSearchData,
     isFetching: blocksSearchDataLoading,
     isError: blocksSearchDataError,
   } = useQuery({
-    queryKey: ["blockSearch", allBlockSearchProps, liveDataEnabled],
+    queryKey: ["blockSearch", allBlockSearchProps, page, liveDataEnabled],
     queryFn: () => fetchAllBlocks(allBlockSearchProps, page, toBlock),
     refetchOnWindowFocus: false,
     refetchInterval: liveDataEnabled ? config.mainRefreshInterval : false,
   });
   const fetchAllBlocks = async (
-    allBlockSearchProps: Explorer.AllBlocksSearchProps | undefined , 
-    page:number | undefined,
-    toBlock : number|undefined,
+    allBlockSearchProps: Explorer.AllBlocksSearchProps | undefined,
+    page: number | undefined,
+    toBlock: number | undefined
   ) => {
-    const response = await fetchingService.getAllBlocksByOp(allBlockSearchProps,page,toBlock);
+    const response = await fetchingService.getAllBlocksByOp(
+      allBlockSearchProps,
+      page,
+      toBlock
+    );
     return response;
   };
 
