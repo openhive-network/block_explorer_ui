@@ -102,8 +102,8 @@ const TransactionStatisticsFullChartDialog: React.FC<
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="min-w-[70vw] min-h-[55vh]">
-        <div>
+      <DialogContent className="min-w-[70vw] ">
+        <div className="max-h-[90vh] overflow-y-auto overflow-x-hidden scrollableContainer">
           <DialogHeader>
             <div className="mb-4">
               <DialogTitle>Transaction Statistics Chart</DialogTitle>
@@ -111,8 +111,8 @@ const TransactionStatisticsFullChartDialog: React.FC<
             </div>
           </DialogHeader>
 
-          <div className="flex items-start gap-4 mb-4 w-full">
-            <div className="flex flex-col gap-y-3 min-w-fit">
+          <div className="flex flex-col md:flex-row items-start gap-4 mb-4 w-full">
+            <div className="flex flex-col gap-y-3 w-1/2 md:w-1/4">
               <Label>Granularity</Label>
               <Select
                 onValueChange={(value) => {
@@ -134,7 +134,7 @@ const TransactionStatisticsFullChartDialog: React.FC<
             </div>
 
             {/* Block RANGE FILTER */}
-            <div className="w-1/2 h-[220px] flex flex-col mb-4">
+            <div className="w-full flex flex-col mb-4">
               <Label>Filters</Label>
               <div className="m-0 p-0 gap-y-0">
                 <SearchRanges
@@ -142,7 +142,7 @@ const TransactionStatisticsFullChartDialog: React.FC<
                   setIsSearchButtonDisabled={setIsSearchButtonDisabled}
                 />
               </div>
-              <div className="w-1/4 flex items-end justify-start mt-2 gap-2">
+              <div className="w-full flex items-end justify-start mt-2 gap-2">
                 <div>
                   <Button
                     onClick={handleSearch}
@@ -165,8 +165,6 @@ const TransactionStatisticsFullChartDialog: React.FC<
                 </Button>
               </div>
             </div>
-
-            {/* BUTTONS ROW (BELOW FILTERS) */}
           </div>
 
           <div className="h-[55%] w-[100%] flex items-center justify-center">
