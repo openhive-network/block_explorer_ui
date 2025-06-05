@@ -49,26 +49,26 @@ const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ErrorBoundary fallback={<ErrorPage />}>
-        <ThemeProvider>
-          <HiveChainContextProvider>
-            <UserSettingsContextProvider>
-              <HeadBlockContextProvider>
-                <OperationTypesContextProvider>
-                  <AddressesContextProvider>
-                    <SearchesContextProvider>
-                      <HealthCheckerContextProvider>
+      <HiveChainContextProvider>
+        <AddressesContextProvider>
+          <HealthCheckerContextProvider>
+            <ErrorBoundary fallback={<ErrorPage />}>
+              <ThemeProvider>
+                <UserSettingsContextProvider>
+                  <HeadBlockContextProvider>
+                    <OperationTypesContextProvider>
+                      <SearchesContextProvider>
                         <Layout>{children}</Layout>
                         <ReactQueryDevtools initialIsOpen={false} />
-                      </HealthCheckerContextProvider>
-                    </SearchesContextProvider>
-                  </AddressesContextProvider>
-                </OperationTypesContextProvider>
-              </HeadBlockContextProvider>
-            </UserSettingsContextProvider>
-          </HiveChainContextProvider>
-        </ThemeProvider>
-      </ErrorBoundary>
+                      </SearchesContextProvider>
+                    </OperationTypesContextProvider>
+                  </HeadBlockContextProvider>
+                </UserSettingsContextProvider>
+              </ThemeProvider>
+            </ErrorBoundary>
+          </HealthCheckerContextProvider>
+        </AddressesContextProvider>
+      </HiveChainContextProvider>
     </QueryClientProvider>
   );
 };
