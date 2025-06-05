@@ -62,92 +62,117 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
     setIsBadActor(false);
   };
 
+  let profileMetadata;
+  try {
+    profileMetadata = JSON.parse(accountDetails.posting_json_metadata);
+  } catch (error) {
+    profileMetadata = null;
+  }
+
+  const witnessDescription = profileMetadata?.profile?.witness_description || "";
+  const about = profileMetadata?.profile?.about || "";
+
   return (
     <Card data-testid="account-details">
       <CardHeader>
-        <div className="flex flex-wrap items-center justify-between gap-4 bg-theme dark:bg-theme">
-          {/* Avatar and Name */}
-          <div className="flex items-center gap-4">
-            <Image
-              className="rounded-full border-2 border-explorer-orange"
-              src={getHiveAvatarUrl(accountName)}
-              alt="avatar"
-              width={60}
-              height={60}
-              data-testid="user-avatar"
-            />
-            <div>
-              <h2
-                className="text-lg font-semibold text-gray-800 dark:text-white"
-                data-testid="account-name"
-              >
-                {accountDetails.name}
-              </h2>
-              {accountDetails.is_witness && (
-                <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-                  <span
-                    className={cn({
-                      "line-through text-red-500": !isWitnessActive,
-                    })}
-                  >
-                    Witness
-                  </span>
-                  {witnessDetails?.witness.rank && isWitnessActive && (
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <span className="flex items-center gap-1">
-                            <Star
-                              data-testid="witness-rank-icon"
-                              fill="currentColor"
-                              size={16}
-                            />
-                            <span>{witnessDetails.witness.rank}</span>
-                          </span>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <span className="text-xs">
-                            Witness Rank: {witnessDetails.witness.rank}
-                          </span>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  )}
-                  {witnessDetails?.witness.url && isWitnessActive && (
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <a
-                            href={witnessDetails.witness.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <Link
-                              size={15}
-                              strokeWidth={3}
-                            />
-                          </a>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <span className="text-xs">Witness Link</span>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  )}
-                </div>
-              )}
+        <div className="flex flex-col gap-4 bg-theme dark:bg-theme">
+          <div className="flex flex-col sm:flex-row items-center justify-between align-top">
+            <div className="w-auto order-1 sm:order-2 self-end sm:self-auto">
+              <Toggle
+                checked={liveDataEnabled}
+                onClick={changeLiveRefresh}
+                className="text-base"
+                leftLabel="Live Data"
+              />
+            </div>
+            <div className="flex flex-col sm:flex-row items-center gap-4 order-2 sm:order-1">
+              <Image
+                className="rounded-full border-2 border-explorer-orange"
+                src={getHiveAvatarUrl(accountName)}
+                alt="avatar"
+                width={60}
+                height={60}
+                data-testid="user-avatar"
+              />
+              <div>
+                <h2
+                  className="text-lg font-semibold text-gray-800 dark:text-white"
+                  data-testid="account-name"
+                >
+                  {accountDetails.name}
+                </h2>
+                {accountDetails.is_witness && (
+                  <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    <span
+                      className={cn({
+                        "line-through text-red-500": !isWitnessActive,
+                      })}
+                    >
+                      Witness
+                    </span>
+                    {witnessDetails?.witness.rank && isWitnessActive && (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span className="flex items-center gap-1">
+                              <Star
+                                data-testid="witness-rank-icon"
+                                fill="currentColor"
+                                size={16}
+                              />
+                              <span>{witnessDetails.witness.rank}</span>
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <span className="text-xs">
+                              Witness Rank: {witnessDetails.witness.rank}
+                            </span>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    )}
+                    {witnessDetails?.witness.url && isWitnessActive && (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <a
+                              href={witnessDetails.witness.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <Link
+                                size={15}
+                                strokeWidth={3}
+                              />
+                            </a>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <span className="text-xs">Witness Link</span>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* Live Data Toggle */}
-          <div className="w-full sm:w-auto mt-4 sm:mt-0 top-0">
-            <Toggle
-              checked={liveDataEnabled}
-              onClick={changeLiveRefresh}
-              className="text-base"
-              leftLabel="Live Data"
-            />
-          </div>
+          {/* Description (spans full width) */}
+          {(witnessDescription || about) && (
+            <div className="w-full px-3 py-2 rounded-md bg-gray-50 dark:bg-gray-700">
+              {witnessDescription && (
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-300 leading-relaxed">
+                  {witnessDescription}
+                </p>
+              )}
+              {about && (
+                <p className="text-sm text-gray-500 dark:text-gray-300 leading-relaxed">
+                  {about}
+                </p>
+              )}
+            </div>
+          )}
         </div>
         {/* Warning Message */}
         {isBadActor && (
@@ -158,7 +183,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
           />
         )}
       </CardHeader>
-      <CardContent>
+      <CardContent className="mt-6">
         {!!manabarsData ? (
           <>
             <div className="text-center">
