@@ -150,7 +150,7 @@ const TransactionStatisticsChart: React.FC<TransactionStatisticsChartProps> = ({
     <ResponsiveContainer width="100%" height="100%">
       <LineChart
         data={chartData}
-        margin={{ top: 20, right: 0, left: 10, bottom: includeBrush ? 40 : 0 }}
+        margin={{ top: 20, right: 10, left: 10, bottom: includeBrush ? 40 : 0 }}
       >
         <XAxis
           dataKey="date"
