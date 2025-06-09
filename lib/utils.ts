@@ -54,20 +54,51 @@ export const getPageUrlParams = (urlParams: Explorer.UrlParam[]) => {
  * @returns Formatted string
  */
 export const formatNumber = (
-  numberToFormat: number,
+  numberToFormat: number | string,
   isVest: boolean,
   skipPrecision: boolean = false
 ): string => {
+  let valueStr =
+    typeof numberToFormat === "string"
+      ? numberToFormat
+      : numberToFormat.toString();
+
+  // If not using precision, just format with commas, no rounding
+  if (skipPrecision) {
+    // If there's a decimal point
+    const [intPart, decPart] = valueStr.split(".");
+    // Add commas to integer part
+    const intWithCommas = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return decPart ? `${intWithCommas}.${decPart}` : intWithCommas;
+  }
+
   const precision = isVest
     ? config.precisions.vests
     : config.precisions.hivePower;
-  const vestsFormat = isVest ? { minimumFractionDigits: precision } : undefined;
-  return skipPrecision
-    ? numberToFormat.toLocaleString(undefined, vestsFormat)
-    : (numberToFormat / Math.pow(10, precision)).toLocaleString(
-        undefined,
-        vestsFormat
-      );
+
+  // For precision formatting, convert to string with the decimal at correct position
+  // Only for values that may overflow JS number, otherwise fallback
+  if (typeof numberToFormat === "string" && numberToFormat.length > 15) {
+    // Insert decimal at correct position (from the end)
+    const intLength = valueStr.length - precision;
+    const intPart = valueStr.substring(0, intLength) || "0";
+    const decPart = valueStr.substring(intLength).replace(/0+$/, "") || "0";
+    const intWithCommas = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return `${intWithCommas}.${decPart}`;
+  } else {
+    // fallback to normal float logic
+    const num =
+      typeof numberToFormat === "string"
+        ? parseFloat(numberToFormat)
+        : numberToFormat;
+    const vestsFormat = isVest
+      ? { minimumFractionDigits: precision, maximumFractionDigits: precision }
+      : undefined;
+    return (num / Math.pow(10, precision)).toLocaleString(
+      undefined,
+      vestsFormat
+    );
+  }
 };
 
 /**
