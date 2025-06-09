@@ -153,7 +153,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
         totalVestingShares
       );
     }
-    return `${BigInt(value).toLocaleString()} Vests`;
+    return `${formatNumber(value, true)} Vests`;
   };
 
   const totalAccountVests = Number(witnessDetails?.witness?.vests);

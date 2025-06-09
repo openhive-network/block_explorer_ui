@@ -358,12 +358,10 @@ export default function Witnesses() {
                                   <TooltipContent className="text-left">
                                     <p>
                                       Vests:{" "}
-                                      {
-                                        formatNumber(
-                                          singleWitness.vests || 0,
-                                          true
-                                        ).split(".")[0]
-                                      }
+                                      {formatNumber(
+                                        singleWitness.vests || 0,
+                                        true
+                                      )}
                                     </p>
                                   </TooltipContent>
                                 </Tooltip>
@@ -400,12 +398,10 @@ export default function Witnesses() {
                                     </TooltipTrigger>
                                     <TooltipContent className="text-left">
                                       Vests Change:{" "}
-                                      {
-                                        formatNumber(
-                                          singleWitness.votes_daily_change || 0,
-                                          true
-                                        ).split(".")[0]
-                                      }
+                                      {formatNumber(
+                                        singleWitness.votes_daily_change || 0,
+                                        true
+                                      )}
                                     </TooltipContent>
                                   </Tooltip>
                                 </TooltipProvider>

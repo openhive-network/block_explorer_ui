@@ -113,7 +113,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
         totalVestingShares
       );
     }
-    return `${BigInt(value).toLocaleString()} Vests`; // Return raw vests if not toggled to HP
+    return `${formatNumber(value, true)} Vests`; // Return raw vests if not toggled to HP
   };
   useEffect(() => {
     if (moment(fromDate).isSame(toDate) || moment(fromDate).isAfter(toDate)) {
