@@ -60,6 +60,9 @@ declare module Explorer {
       keys?: string[];
     };
     rangeSelectKey?: string;
+    lastBlocks?: number;
+    lastTime?: number;
+    timeUnit?: string;
   }
 
   interface CommentSearchParams {
@@ -326,8 +329,8 @@ declare module Explorer {
     lastBlocks?: number;
     lastTime?: number;
     filters?: any;
-    history?:any;
-    firstBlock?:number;
+    history?: any;
+    firstBlock?: number;
   }
 }
 
