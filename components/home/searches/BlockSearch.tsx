@@ -67,6 +67,10 @@ const BlockSearch = () => {
     setLastBlocksValue,
     setLastTimeUnitValue,
     setTimeUnitSelectKey,
+    lastBlocksValue,
+    rangeSelectKey,
+    lastTimeUnitValue,
+    timeUnitSelectKey,
   } = searchRanges;
 
   const setKeysForProperty = (index: number | undefined) => {
@@ -124,6 +128,10 @@ const BlockSearch = () => {
         keys: selectedKeys,
         content: fieldContent !== "" ? fieldContent : undefined,
       },
+      lastBlocks: lastBlocksValue || undefined,
+      rangeSelectKey: rangeSelectKey || undefined,
+      lastTime: lastTimeUnitValue || undefined,
+      timeUnit: timeUnitSelectKey || undefined,
     };
 
     startBlockSearch(
