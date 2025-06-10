@@ -82,7 +82,7 @@ export const formatNumber = (
     // Insert decimal at correct position (from the end)
     const intLength = valueStr.length - precision;
     const intPart = valueStr.substring(0, intLength) || "0";
-    const decPart = valueStr.substring(intLength).replace(/0+$/, "") || "0";
+    const decPart = valueStr.substring(intLength) || "0";
     const intWithCommas = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     return `${intWithCommas}.${decPart}`;
   } else {
