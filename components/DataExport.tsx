@@ -95,7 +95,20 @@ const DataExport: React.FC<DataExportProps> = ({
       const url = URL.createObjectURL(blob);
       const downloadLink = document.createElement("a");
       downloadLink.href = url;
-      downloadLink.download = filename;
+
+      // Sanitize only the filename prefix
+      let sanitizedFilename = filename;
+      if (filename.toLowerCase().endsWith(".csv")) {
+        const filenamePrefix = filename.substring(0, filename.length - 4); // Remove ".csv"
+        const sanitizedPrefix = filenamePrefix.replace(/\./g, "_"); // Sanitize
+        sanitizedFilename = sanitizedPrefix + ".csv"; // Re-add ".csv"
+      } else {
+        // If it doesn't end with .csv, still sanitize the whole name
+        sanitizedFilename = filename.replace(/\./g, "_") + ".csv";
+      }
+
+      downloadLink.download = sanitizedFilename;
+
       document.body.appendChild(downloadLink);
       downloadLink.click();
       document.body.removeChild(downloadLink);
@@ -133,7 +146,7 @@ const DataExport: React.FC<DataExportProps> = ({
             "bg-buttonBg border-gray-300 shadow-sm hover:bg-buttonHover flex items-center space-x-1 max-w-fit h-8 p-2 rounded cursor-pointer outline-none",
             className
           )}
-          
+
         >
           <Download className="h-4 w-4" />
           <span>{title}</span>
