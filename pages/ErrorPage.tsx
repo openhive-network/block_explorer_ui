@@ -28,7 +28,7 @@ const ErrorPage: React.FC<ErrorPageProps> = ({ errorMessage }) => {
       <div className="text-center mb-6">
         <h1 className="text-xl font-semibold">{displayMessage}</h1>
         <p className="text-gray-600 dark:text-gray-400 mt-2">
-          We're sorry, something went wrong. Please try one of the following options:
+          We&apos;re sorry, something went wrong. Please try one of the following options:
         </p>
       </div>
 
