@@ -204,7 +204,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
       </div>
       <div className="flex w-full overflow-auto rounded">
         <div className="text-text w-[100%] bg-theme">
-          <Table>
+          <Table enableMobileScrollArrows>
             <TableHeader>
               <TableRow rowVariant="header">
                 <TableHead stickyLeft></TableHead>

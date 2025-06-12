@@ -14,7 +14,7 @@ import { formatNumber } from "@/lib/utils";
 
 export const convertVestsToHP = (
   hivechain: IHiveChainInterface,
-  vests: Hive.Supply|string,
+  vests: Hive.Supply | string,
   totalVestingFundHive: Hive.Supply,
   totalVestingShares: Hive.Supply
 ) => {
@@ -25,9 +25,9 @@ export const convertVestsToHP = (
     vests,
     totalVestingFundHive,
     totalVestingShares
-    );
-    //Replace original value of `HIVE` with `HP`
-    const formattedHP = hivechain.formatter
+  );
+  //Replace original value of `HIVE` with `HP`
+  const formattedHP = hivechain.formatter
     .format(convertedHp)
     .replace("HIVE", "HP");
   return formattedHP;
@@ -39,7 +39,17 @@ export const getVestsToHiveRatio = (
   if (!headBlockCardData) return;
   const headBlockDetails = headBlockCardData.headBlockDetails;
   const { totalVestingFundHive, totalVestingShares } = headBlockDetails;
-  const result = formatNumber( (grabNumericValue(totalVestingShares) / grabNumericValue(totalVestingFundHive)),false,true);
 
-  return result;
+  const result = grabNumericValue(
+    formatNumber(
+      grabNumericValue(totalVestingShares) /
+        grabNumericValue(totalVestingFundHive),
+      false,
+      true
+    )
+  ).toFixed(3);
+
+  const resultToString = String(result);
+
+  return resultToString;
 };

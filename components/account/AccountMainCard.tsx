@@ -62,6 +62,16 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
     setIsBadActor(false);
   };
 
+    let profileMetadata;
+  try {
+    profileMetadata = JSON.parse(accountDetails.posting_json_metadata);
+  } catch (error) {
+    profileMetadata = null;
+  }
+
+  const witnessDescription = profileMetadata?.profile?.witness_description || "";
+  const about = profileMetadata?.profile?.about || "";
+
   return (
     <Card data-testid="account-details">
       <CardHeader>
@@ -148,6 +158,21 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
               leftLabel="Live Data"
             />
           </div>
+          {/* Description (spans full width) */}
+          {(witnessDescription || about) && (
+            <div className="w-full px-3 py-2 data-box">
+              {witnessDescription && (
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-300 leading-relaxed pb-2">
+                  {witnessDescription}
+                </p>
+              )}
+              {about && (
+                <p className="text-sm text-gray-500 dark:text-gray-300 leading-relaxed">
+                  {about}
+                </p>
+              )}
+            </div>
+          )}
         </div>
         {/* Warning Message */}
         {isBadActor && (

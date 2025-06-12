@@ -158,7 +158,7 @@ const CommentPermlinkResultTable = ({
       </div>
       <div className="flex w-full overflow-auto">
         <div className="text-text w-[100%] bg-theme dark:bg-theme p-5 rounded">
-          <Table
+          <Table enableMobileScrollArrows
             data-testid="table-body"
             className="text-xs"
           >

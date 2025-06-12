@@ -153,16 +153,14 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
         totalVestingShares
       );
     }
-    return `${BigInt(value).toLocaleString()} Vests`;
+    return `${formatNumber(value, true)} Vests`;
   };
 
   const totalAccountVests = Number(witnessDetails?.witness?.vests);
 
   const calculateVoterWeight = useCallback(
     (voterVests: number): number => {
-      return totalAccountVests > 0
-        ? (voterVests / totalAccountVests) * 100
-        : 0;
+      return totalAccountVests > 0 ? (voterVests / totalAccountVests) * 100 : 0;
     },
     [totalAccountVests]
   );
@@ -183,7 +181,12 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
       };
     });
 
-    return <VotersChart voters={chartVoters} accountName={accountName} />;
+    return (
+      <VotersChart
+        voters={chartVoters}
+        accountName={accountName}
+      />
+    );
   }, [chartData, accountName, calculateVoterWeight]);
 
   const prepareExportData = () => {
@@ -194,8 +197,14 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
 
       // Format the values as they appear in the table
       const votesFormatted = fetchHivePower(voter.vests.toString(), isHP);
-      const accountVestsFormatted = fetchHivePower(voter.account_vests.toString(), isHP);
-      const proxiedVestsFormatted = fetchHivePower(voter.proxied_vests.toString(), isHP);
+      const accountVestsFormatted = fetchHivePower(
+        voter.account_vests.toString(),
+        isHP
+      );
+      const proxiedVestsFormatted = fetchHivePower(
+        voter.proxied_vests.toString(),
+        isHP
+      );
       const voterWeightFormatted = formatPercent(voterWeight * 100);
 
       return {
@@ -297,7 +306,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
 
                 <div className="relative rounded overflow-hidden w-full">
                   <div className="text-text w-full h-full overflow-auto bg-theme rounded">
-                    <Table>
+                    <Table enableMobileScrollArrows> 
                       <TableHeader>
                         <TableRow rowVariant="header">
                           <TableHead stickyLeft>
@@ -333,11 +342,11 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                       <TableBody data-testid="voters-dialog-table-body">
                         {witnessVoters &&
                           witnessVoters.voters.map((voter, index) => {
-                            const voterWeight = calculateVoterWeight(voter.vests);
+                            const voterWeight = calculateVoterWeight(
+                              voter.vests
+                            );
                             return (
-                              <TableRow
-                                key={index}
-                              >
+                              <TableRow key={index}>
                                 <TableCell stickyLeft>
                                   <div className="flex items-center space-x-2 p-2">
                                     <Image

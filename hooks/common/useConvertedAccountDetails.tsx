@@ -31,7 +31,7 @@ const useConvertedAccountDetails = (
   };
 
   const { hiveChain } = useHiveChainContext();
-  const { accountDetails, notFound } = useAccountDetails(
+  const { accountDetails, notFound, isAccountDetailsLoading } = useAccountDetails(
     accountName,
     liveDataEnabled
   );
@@ -40,8 +40,13 @@ const useConvertedAccountDetails = (
     liveDataEnabled
   );
 
-  if (!dynamicGlobalData || !hiveChain || !accountDetails)
-    return { formattedAccountDetails: undefined, notFound: undefined };
+  if (!dynamicGlobalData || !hiveChain)
+    return { formattedAccountDetails: undefined, notFound: undefined ,isAccountDetailsLoading};
+  
+  if(!accountDetails)
+  {
+   return { formattedAccountDetails: undefined, notFound: !accountDetails ,isAccountDetailsLoading };
+  }
   const {
     headBlockDetails: {
       rawFeedPrice,
@@ -216,6 +221,7 @@ const useConvertedAccountDetails = (
   return {
     formattedAccountDetails,
     notFound,
+    isAccountDetailsLoading,
   };
 };
 

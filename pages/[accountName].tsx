@@ -66,7 +66,7 @@ export default function Account() {
     useState(false);
 
   const { dynamicGlobalData } = useDynamicGlobal();
-  const { formattedAccountDetails: accountDetails, notFound } =
+  const { formattedAccountDetails: accountDetails, notFound, isAccountDetailsLoading} =
     useConvertedAccountDetails(
       accountNameFromRoute,
       liveDataEnabled,
@@ -132,6 +132,10 @@ export default function Account() {
 
   if (routeAccountName && !routeAccountName.startsWith("@")) {
     return <ErrorPage />;
+  }
+  
+  if (notFound && !isAccountDetailsLoading) {
+    return <div>Account not found</div>;
   }
 
   if (!accountDetails) {
