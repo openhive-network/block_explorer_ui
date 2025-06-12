@@ -219,7 +219,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
             ) : (
               <div className="relative rounded overflow-hidden w-full">
                 <div className="text-text w-full h-full overflow-auto bg-theme rounded">
-                  <Table>
+                  <Table enableMobileScrollArrows>
                     <TableHeader>
                       <TableRow rowVariant="header">
                         <TableHead stickyLeft>Date</TableHead>

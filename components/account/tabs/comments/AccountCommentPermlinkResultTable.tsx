@@ -165,7 +165,7 @@ const AccountCommentPermlinkResultTable = ({
       </div>
       <div className="flex w-full overflow-auto rounded">
         <div className="text-text w-[100%] bg-theme">
-          <Table data-testid="table-body">
+          <Table enableMobileScrollArrows>
             <TableHeader>{buildTableHeader()}</TableHeader>
 
             <TableBody>
