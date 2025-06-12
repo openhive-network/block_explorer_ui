@@ -43,16 +43,21 @@
   --color-light-green: #15a017;
   --color-light-gray: #ADA9A9DC;
   --color-dark-gray: #292F3D;
-  --color-extra-light-gray : #F9FAFB;
+  --color-extra-light-gray: #F9FAFB;
 
   --error-bg-light: linear-gradient(135deg, rgba(247, 255, 255, 0.8), rgba(248, 247, 247, 0.8));
   --error-bg: var(--error-bg-light);
 
   --color-navbar-icon: #d9e0e8;
-  --color-navbar-icon-hover:#cbd5e1;
+  --color-navbar-icon-hover: #cbd5e1;
   --color-navbar-icon-border: #6b7280;
-  --color-navbar-icon-list-hover : #eff2f4;
+  --color-navbar-icon-list-hover: #eff2f4;
 
+  --cd-day-fg: #000;
+  --cd-day-fg-disabled: #9ca3af;
+  --cd-day-fg-outmonth: #6b7280;
+  --cd-day-bg-selected: #2563eb;
+  --cd-day-fg-selected: #fff;
 
 }
 
@@ -62,7 +67,7 @@
   --background-end-rgb: rgb(60, 60, 60);
   --color-text: #FFF;
   --color-background: #292F3D;
-  --color-row-even: rgb(31, 41, 55 );
+  --color-row-even: rgb(31, 41, 55);
   --color-row-odd: rgb(17, 24, 39);
   --color-row-hover: #5c6a89;
   --color-button: #5c6a89;
@@ -96,15 +101,21 @@
   --color-light-green: #64FFAA;
   --color-light-gray: #ADA9A9DC;
   --color-dark-gray: #444c5e;
-  --color-extra-light-gray : #34373ed4;
+  --color-extra-light-gray: #34373ed4;
 
   --error-bg-dark: linear-gradient(135deg, rgba(159, 149, 149, 0.8), rgba(104, 100, 100, 0.8));
   --error-bg: var(--error-bg-dark);
 
-  --color-navbar-icon:#292F3D;
+  --color-navbar-icon: #292F3D;
   --color-navbar-icon-hover: #34373ed4;
   --color-navbar-icon-border: #6b7280;
-  --color-navbar-icon-list-hover : #374151;
+  --color-navbar-icon-list-hover: #374151;
+
+  --cd-day-fg: #fff;
+  --cd-day-fg-disabled: #6b7280;
+  --cd-day-fg-outmonth: #4b5563;
+  --cd-day-bg-selected: #3b82f6;
+  --cd-day-fg-selected: #fff;
 
 }
 
@@ -130,17 +141,19 @@ pre {
   /* Internet Explorer 5.5+ */
 }
 
-.rdp-dropdown{
+.rdp-dropdown {
   background-color: rgb(255, 255, 255) !important;
-  color: rgb(0, 0, 0) !important; 
+  color: rgb(0, 0, 0) !important;
 }
+
 .rdp-dropdown option {
   background-color: rgb(255, 255, 255) !important;
-  color: rgb(0, 0, 0) !important; 
+  color: rgb(0, 0, 0) !important;
 }
+
 /*AutoCompleteInput Styles*/
 .scrollbar-autocomplete {
-  max-height: 18rem; 
+  max-height: 18rem;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-bg) var(--scrollbar-thumb);
@@ -179,7 +192,8 @@ pre {
 }
 
 .autocomplete_input::placeholder {
-  opacity: 1; /* Ensures placeholder is fully opaque */
+  opacity: 1;
+  /* Ensures placeholder is fully opaque */
   transition: color 0.3s ease;
 }
 
@@ -194,11 +208,11 @@ pre {
   max-height: 24rem;
   overflow-y: auto;
 
-  
+
 }
 
 .autocomplete-result-item {
-  padding: 6px 12px; 
+  padding: 6px 12px;
   margin: 4px 8px;
   border-radius: 4px;
   color: var(--text-color);
@@ -228,6 +242,7 @@ pre {
 .autocomplete-result-highlight {
   color: var(--explorer-turquoise);
 }
+
 /*End AutoCompleteInput Styles*/
 
 /*Error Component Styling*/
@@ -266,6 +281,7 @@ pre {
   opacity: 0;
   transform: translateY(-20px);
 }
+
 /*Error Component Styling*/
 
 /* Sync Dialog Styles */
@@ -276,8 +292,9 @@ pre {
   border-radius: 0.75rem;
   box-shadow: 0 10px 15px var(--color-background);
   transition: all 0.5s ease;
-  
+
 }
+
 .dialog-header {
   border-bottom: 1px solid var(--color-row-odd);
   padding-bottom: 0.5rem;
@@ -303,6 +320,7 @@ pre {
   padding: 0.5rem 0;
   transition: background-color 0.3s ease;
 }
+
 .dialog-item:hover {
   background-color: var(--color-row-hover);
 }
@@ -333,9 +351,11 @@ pre {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  border: 1px solid var(--color-light-gray); /* Fine border */
+  border: 1px solid var(--color-light-gray);
+  /* Fine border */
   transition: all 0.3s ease-in-out;
-  flex-direction: column; /* Stack elements vertically */
+  flex-direction: column;
+  /* Stack elements vertically */
 }
 
 .data-box-chart {
@@ -353,14 +373,17 @@ pre {
 
 .data-box:hover {
   background-color: var(--color-row-hover);
-  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15); /* Elevated shadow */
-  transform: translateY(-3px); /* Slight lift on hover */
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
+  /* Elevated shadow */
+  transform: translateY(-3px);
+  /* Slight lift on hover */
 }
 
 .data-box span {
   font-weight: bold;
   font-size: 14px;
 }
+
 .operations-button {
   border: 1px solid var(--color-light-gray);
   background-color: inherit;
@@ -369,11 +392,12 @@ pre {
 
 /*Page Container*/
 .page-container {
-  width: 98%; /* Default for larger screens */
+  width: 98%;
+  /* Default for larger screens */
 }
 
 /* Media query for small screens*/
-@media (max-width: 768px) { 
+@media (max-width: 768px) {
   .page-container {
     width: 99%;
   }
@@ -381,8 +405,10 @@ pre {
 
 /* General Scrollable Container */
 .scrollableContainer {
-  scrollbar-width: thin; /* Firefox */
-  scrollbar-color: rgba(150, 150, 150, 0.3) transparent; /* Firefox */
+  scrollbar-width: thin;
+  /* Firefox */
+  scrollbar-color: rgba(150, 150, 150, 0.3) transparent;
+  /* Firefox */
 }
 
 /* WebKit (Chrome, Safari) */
@@ -391,16 +417,20 @@ pre {
 }
 
 .scrollableContainer::-webkit-scrollbar-track {
-  background: transparent; /* Make the track transparent */
+  background: transparent;
+  /* Make the track transparent */
 }
 
 .scrollableContainer::-webkit-scrollbar-thumb {
-  background-color: rgba(150, 150, 150, 0.5); /* Subtle gray thumb */
-  border-radius: 3px; /* Slightly rounded corners */
+  background-color: rgba(150, 150, 150, 0.5);
+  /* Subtle gray thumb */
+  border-radius: 3px;
+  /* Slightly rounded corners */
 }
 
 .scrollableContainer::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(120, 120, 120, 0.7); /* Darker on hover */
+  background-color: rgba(120, 120, 120, 0.7);
+  /* Darker on hover */
 }
 
 /* Optional: Style the corner (where horizontal and vertical scrollbars meet) */
