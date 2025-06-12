@@ -228,10 +228,13 @@ export default function BalanceHistory() {
     ? router.query.accountName[0]
     : router.query.accountName;
 
-  if (routeAccountName && !routeAccountName.startsWith("@")) {
-    return <ErrorPage />;
+  if (
+    (routeAccountName && !routeAccountName.startsWith("@")) ||
+    (isAccountDetailsError && !isAccountDetailsLoading)
+  ) {
+    const accountNotFoundError = `Account ${routeAccountName} not found. Please ensure the account name is correct and starts with '@'. Account names are case-sensitive.`;
+    return <ErrorPage errorMessage={accountNotFoundError} />;
   }
-
   // Return early with a loading state if accountNameFromRoute is not yet available
   if (!accountNameFromRoute) {
     return (
@@ -256,8 +259,6 @@ export default function BalanceHistory() {
         <div className="flex justify-center text-center items-center">
           <Loader2 className="animate-spin mt-1 text-black h-12 w-12 ml-3" />
         </div>
-      ) : notFound ? (
-        <div>Account not found</div>
       ) : (
         <div className="page-container">
           <Card data-testid="account-details">
