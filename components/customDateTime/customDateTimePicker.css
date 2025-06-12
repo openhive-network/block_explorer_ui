@@ -38,6 +38,7 @@
 .calendar-day-names {
     display: flex;
     background: var(--color-row-even);
+
 }
 
 
@@ -49,6 +50,7 @@
 
 .calendar-row {
     display: flex;
+
 }
 
 
@@ -58,7 +60,8 @@
     text-align: center;
     margin: 2px 0;
     font-size: 12px;
-    background: var(--color-row-odd)
+    background: var(--color-row-odd);
+
 }
 
 .calendar-day {
@@ -66,6 +69,7 @@
     border-radius: 4px;
     padding: 4px 0;
     transition: background 0.2s;
+    color: var(--cd-day-fg) !important
 }
 
 .calendar-day:not(.not-same-month) {
@@ -85,10 +89,12 @@
 }
 
 .time-section {
-    margin-top: 8px;
-    padding: 8px 0;
-    border-top: 1px solid #ccc;
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    margin: 1rem;
 }
+
 
 .time-inputs {
     display: flex;
@@ -114,7 +120,9 @@
     border: solid var(--color-text) 1px;
     border-radius: 4px;
     background: var(--color-background);
-    color: var(--color-text)
+    color: var(--color-text);
+    width: 3.5rem;
+    text-align: center;
 }
 
 .actions {
@@ -192,4 +200,17 @@
     background: var(--color-row-even);
     pointer-events: none;
     cursor: default;
+}
+
+.calendar-day.disabled-day,
+.dark .calendar-day.disabled-day {
+    color: var(--cd-day-fg-disabled) !important;
+    cursor: not-allowed;
+    background: transparent;
+}
+
+.calendar-day.not-same-month:not(.disabled-day),
+.dark .calendar-day.not-same-month:not(.disabled-day) {
+    color: var(--cd-day-fg-outmonth) !important;
+    cursor: pointer;
 }
