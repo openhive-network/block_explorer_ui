@@ -102,6 +102,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
   private headBlockNum = useHeadBlockNumber().headBlockNumberData;
   private dynamicGlobalQueryData = useDynamicGlobal(this.headBlockNum)
     .dynamicGlobalData;
+  private hiveChain  = useHiveChainContext();
 
   private getFormattedAmount(
     supply: Hive.Supply | undefined
@@ -125,13 +126,13 @@ class OperationsFormatter implements IWaxCustomFormatter {
     if (!this.dynamicGlobalQueryData || !tooltipTrigger || !supply) {
       return "";
     }
-    const { hiveChain } = useHiveChainContext();
-    if (!hiveChain) {
+  
+    if (!this.hiveChain.hiveChain) {
       return "";
     }
 
     const resultString = convertVestsToHP(
-      hiveChain,
+      this.hiveChain.hiveChain,
       supply,
       this.dynamicGlobalQueryData.headBlockDetails.rawTotalVestingFundHive,
       this.dynamicGlobalQueryData.headBlockDetails.rawTotalVestingShares

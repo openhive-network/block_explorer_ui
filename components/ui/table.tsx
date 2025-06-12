@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { ChevronRight, ChevronLeft } from "lucide-react";
 
 function getDisplayName(Tag: React.ElementType) {
   return typeof Tag === "string"
@@ -51,26 +52,187 @@ export function withSticky<T extends React.ElementType>(
   >;
 }
 
+/**
+ * HOC that adds `enableMobileScrollArrows?: boolean` and `isStandaloneTable?: boolean`
+ * and handles the scroll logic and arrow visibility.
+ */
+export function withMobileScrollArrows<T extends React.ElementType>(Tag: T) {
+  type OwnProps = React.ComponentPropsWithoutRef<T>;
+  type Props = OwnProps & {
+    enableMobileScrollArrows?: boolean;
+    isStandaloneTable?: boolean;
+  };
+  type RefType = React.ElementRef<T>;
+
+  const MobileScrollComp = React.forwardRef<RefType, Props>(
+    (
+      {
+        enableMobileScrollArrows = false,
+        isStandaloneTable = false,
+        className,
+        children,
+        ...props
+      },
+      ref
+    ) => {
+      const [showLeftArrow, setShowLeftArrow] = React.useState(false);
+      const [showRightArrow, setShowRightArrow] = React.useState(false);
+      const tableRef = React.useRef<HTMLDivElement>(null);
+      const [isTableVisible, setIsTableVisible] = React.useState(false);
+
+      const handleScroll = React.useCallback(() => {
+        if (!tableRef.current) return;
+
+        const { scrollLeft, scrollWidth, clientWidth } = tableRef.current;
+
+        const atLeftEdge = scrollLeft <= 0;
+        const atRightEdge = scrollLeft + clientWidth >= scrollWidth - 1;
+
+        const shouldShowLeft = scrollLeft > 0 && !atLeftEdge && isTableVisible;
+        const shouldShowRight =
+          scrollLeft + clientWidth < scrollWidth &&
+          !atRightEdge &&
+          isTableVisible;
+
+        setShowLeftArrow(shouldShowLeft);
+        setShowRightArrow(shouldShowRight);
+
+        // Always show arrows on mobile if it overflows
+        if (
+          window.innerWidth <= 768 &&
+          scrollWidth > clientWidth &&
+          isTableVisible &&
+          enableMobileScrollArrows
+        ) {
+          setShowLeftArrow(shouldShowLeft);
+          setShowRightArrow(shouldShowRight);
+        }
+      }, [isTableVisible, enableMobileScrollArrows]);
+
+      React.useEffect(() => {
+        if (!tableRef.current) return;
+        const tableDiv = tableRef.current;
+
+        const thresholdValue = isStandaloneTable ? 0.01 : 0.1;
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              const isSufficientlyVisible = entry.intersectionRatio >= thresholdValue;
+              setIsTableVisible(entry.isIntersecting && isSufficientlyVisible);
+            });
+          },
+          {
+            root: null,
+            threshold: thresholdValue,
+          }
+        );
+
+        observer.observe(tableDiv);
+        handleScroll();
+
+        tableDiv.addEventListener("scroll", handleScroll);
+        window.addEventListener("resize", handleScroll);
+
+        return () => {
+          observer.unobserve(tableDiv);
+          tableDiv.removeEventListener("scroll", handleScroll);
+          window.removeEventListener("resize", handleScroll);
+        };
+      }, [handleScroll, isStandaloneTable]);
+
+      const arrowStyle =
+        "fixed top-1/2 transform -translate-y-1/2 bg-gray-200 bg-opacity-50 hover:bg-opacity-70 rounded-full p-2 z-20 cursor-pointer text-gray-700";
+
+      return (
+        <React.Fragment>
+          <div className="relative w-full overflow-auto" ref={tableRef}>
+            {enableMobileScrollArrows && showLeftArrow && (
+              <div
+                className={cn(arrowStyle, "left-2")}
+                style={{ top: `50vh` }}
+                onClick={() => {
+                  tableRef.current?.scrollBy({
+                    left: -100,
+                    behavior: "smooth",
+                  });
+                }}
+              >
+                <ChevronLeft size={20} />
+              </div>
+            )}
+
+            {enableMobileScrollArrows && showRightArrow && (
+              <div
+                className={cn(arrowStyle, "right-2")}
+                style={{ top: `50vh` }}
+                onClick={() => {
+                  tableRef.current?.scrollBy({
+                    left: 100,
+                    behavior: "smooth",
+                  });
+                }}
+              >
+                <ChevronRight size={20} />
+              </div>
+            )}
+            <Tag
+              ref={ref}
+              className={className}
+              {...(props as any)}
+            >
+              {children}
+            </Tag>
+          </div>
+        </React.Fragment>
+      );
+    }
+  );
+
+  MobileScrollComp.displayName = `withMobileScrollArrows(${getDisplayName(
+    Tag
+  )})`;
+  return MobileScrollComp as React.ForwardRefExoticComponent<
+    Props & React.RefAttributes<RefType>
+  >;
+}
+
 const rowVariants = {
   body: "transition-colors hover:bg-rowHover dark:hover:bg-rowHover data-[state=selected]:bg-muted",
   header: "font-medium bg-theme",
 };
 
-const Table = React.forwardRef<
-  HTMLTableElement,
-  React.HTMLAttributes<HTMLTableElement>
->(({ className, ...props }, ref) => (
-  <div className="w-full overflow-auto">
-    <table
-      ref={ref}
-      className={cn(
-        "w-full caption-bottom bg-theme text-xs rounded max-w-full",
-        className
-      )}
-      {...props}
-    />
-  </div>
-));
+interface TableContextProps {
+  showLeftArrow: boolean;
+  showRightArrow: boolean;
+}
+
+const TableContext = React.createContext<TableContextProps>({
+  showLeftArrow: false,
+  showRightArrow: false,
+});
+
+interface TableProps extends React.HTMLAttributes<HTMLTableElement> {}
+
+const Table = withMobileScrollArrows(
+  React.forwardRef<HTMLTableElement, TableProps>(
+    ({ className, children, ...props }, ref) => {
+      return (
+        <table
+          ref={ref}
+          className={cn(
+            "w-full caption-bottom bg-theme text-xs rounded max-w-full",
+            className
+          )}
+          {...props}
+        >
+          {children}
+        </table>
+      );
+    }
+  )
+);
+
 Table.displayName = "Table";
 
 const TableHeader = React.forwardRef<

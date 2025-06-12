@@ -279,7 +279,7 @@ export default function Witnesses() {
                   liveDataEnabled={false}
                 />
 
-                <Table className="min-w-full">
+                <Table className="min-w-full" enableMobileScrollArrows isStandaloneTable>
                   <TableHeader>
                     <TableRow rowVariant="header">
                       {buildTableHeader()}
@@ -307,7 +307,7 @@ export default function Witnesses() {
                           )}
                         >
                           <TableCell stickyLeft>{singleWitness.rank}</TableCell>
-                          <TableCell className="flex items-center space-x-2 py-4 whitespace-nowrap">
+                          <TableCell stickyLeft className="flex items-center space-x-2 py-4 whitespace-nowrap">
                             <Image
                               className="rounded-full border-2 border-explorer-orange"
                               src={getHiveAvatarUrl(singleWitness.witness_name)}

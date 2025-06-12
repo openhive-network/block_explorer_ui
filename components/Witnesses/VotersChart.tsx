@@ -39,7 +39,6 @@ const VotersChart: React.FC<VotersChartProps> = ({ voters, accountName }) => {
       topVotersTotalWeight += voter.voterWeight;
     });
 
-    console.log("topVotersTotalWeight", topVotersTotalWeight);
     let otherVotersWeight = Math.max(0, 100 - topVotersTotalWeight);
 
     const chartData = top9Voters.map((voter) => ({
