@@ -93,8 +93,8 @@ import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import HiveTooltip from "@/components/HiveTooltip";
 import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
-import { getVestsToHiveRatio } from "@/utils/Calculations";
-import { grabNumericValue } from "@/utils/StringUtils";
+import { convertVestsToHP } from "@/utils/Calculations";
+import { useHiveChainContext } from "@/contexts/HiveChainContext";
 
 class OperationsFormatter implements IWaxCustomFormatter {
   public constructor(private readonly wax: IWaxBaseInterface) {}
@@ -125,16 +125,17 @@ class OperationsFormatter implements IWaxCustomFormatter {
     if (!this.dynamicGlobalQueryData || !tooltipTrigger || !supply) {
       return "";
     }
-    const vests = Number(supply.amount);
-    const divider = 10 ** supply.precision;
+    const { hiveChain } = useHiveChainContext();
+    if (!hiveChain) {
+      return "";
+    }
 
-    const ratio = Math.round(
-      grabNumericValue(String(getVestsToHiveRatio(this.dynamicGlobalQueryData)))
+    const resultString = convertVestsToHP(
+      hiveChain,
+      supply,
+      this.dynamicGlobalQueryData.headBlockDetails.rawTotalVestingFundHive,
+      this.dynamicGlobalQueryData.headBlockDetails.rawTotalVestingShares
     );
-
-    const convertToHive = Math.round(vests / ratio) / divider;
-
-    const resultString = `${formatNumber(convertToHive, true, true)} HIVE`;
 
     return (
       <HiveTooltip
