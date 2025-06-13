@@ -135,17 +135,18 @@ export default function Account() {
   }
   
   if (notFound && !isAccountDetailsLoading) {
-    return <div>Account not found</div>;
+  const accountNotFoundError = `Account ${routeAccountName} not found. Please ensure the account name is correct and starts with '@'. Account names are case-sensitive.`;
+
+  if (notFound && !isAccountDetailsLoading) {
+    return <ErrorPage errorMessage={accountNotFoundError} />;
   }
+
+}
 
   if (!accountDetails) {
     return (
       <Loader2 className="animate-spin mt-1 text-black dark:text-white h-12 w-12 ml-3 ..." />
     );
-  }
-
-  if (notFound) {
-    return <div>Account not found</div>;
   }
 
   return (
