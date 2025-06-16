@@ -238,7 +238,7 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
               />
             </div>
             <div className="time-field">
-              <label>Seconds UTC</label>
+              <label>Seconds</label>
               <input
                 type="text"
                 value={second}
@@ -246,6 +246,7 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
                 onBlur={(e) => setSecond(padIfNeeded(e.target.value))}
               />
             </div>
+            <div className="mt-6">UTC</div>
           </div>
 
           <div className="actions">
