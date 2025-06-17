@@ -265,7 +265,6 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             left: isMobile ? 0 : 10,
             bottom: isMobile ? 100 : 60,
           }}
-    
         >
           <XAxis
             dataKey="timestamp"
@@ -302,7 +301,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             hide={hiddenDataKeys.includes("balance")}
           />
 
-          {showSavingsBalance == "yes" && selectedCoinType !== 'VESTS' && (
+          {showSavingsBalance == "yes" && selectedCoinType !== "VESTS" && (
             <Line
               type="monotone"
               dataKey="savings_balance"
@@ -330,6 +329,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             />
           )}
           <Legend
+            wrapperStyle={{ paddingTop: isMobile ? "20px" : "0px" }}
             onClick={(event) => {
               const dataKey = event.dataKey as string;
               const isHidden = hiddenDataKeys.includes(dataKey as string);
