@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "private": true,
   "scripts": {
-    "dev": "node helpers/versions.js && react-env -- next dev",
+    "dev": "node helpers/versions.js && react-env -- next dev --turbopack",
     "copy:public": "shx cp -R public/ .next/standalone/",
     "copy:static": "shx cp -R .next/static/ .next/standalone/.next",
     "build": "node helpers/versions.js && next build",
@@ -35,8 +35,8 @@
     "@tanstack/react-query": "^4.29.25",
     "@tanstack/react-query-devtools": "^4.29.25",
     "@types/node": "20.4.2",
-    "@types/react": "18.2.15",
-    "@types/react-dom": "18.2.7",
+    "@types/react": "19.1.8",
+    "@types/react-dom": "19.1.6",
     "autoprefixer": "10.4.14",
     "child_process": "^1.0.2",
     "class-variance-authority": "^0.7.0",
@@ -44,17 +44,17 @@
     "csv-stringify": "^6.5.2",
     "date-fns": "^3.6.0",
     "eslint": "8.45.0",
-    "eslint-config-next": "13.4.10",
+    "eslint-config-next": "15.3.3",
     "long": "^5.2.3",
     "lucide-react": "^0.474.0",
     "moment": "^2.29.4",
-    "next": "^14.2.25",
+    "next": "15.3.3",
     "next-themes": "^0.2.1",
     "playwright-merge-html-reports": "^0.2.8",
     "postcss": "^8.4.31",
-    "react": "18.2.0",
+    "react": "18.3.1",
     "react-day-picker": "^8.10.0",
-    "react-dom": "18.2.0",
+    "react-dom": "18.3.1",
     "react-error-boundary": "^4.0.11",
     "recharts": "^2.9.2",
     "sharp": "^0.32.4",
@@ -76,5 +76,9 @@
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "overrides": {
+    "@types/react": "19.1.8",
+    "@types/react-dom": "19.1.6"
   }
 }
