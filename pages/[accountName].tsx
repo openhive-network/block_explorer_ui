@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import AccountOperationViewTabs from "@/components/account/tabs/AccountOperationViewTabs";
 import { AccountTabsProvider } from "@/contexts/TabsContext";
 import moment from "moment";
+import { useI18n } from "@/i18n/i18n";
 
 export interface AccountSearchParams {
   accountName?: string | undefined;
@@ -48,6 +49,7 @@ export const defaultSearchParams: AccountSearchParams = {
 };
 
 export default function Account() {
+  const { t } = useI18n();
   const router = useRouter();
   const isMobile = useMediaQuery("(max-width: 768px)");
 
@@ -135,13 +137,12 @@ export default function Account() {
   }
   
   if (notFound && !isAccountDetailsLoading) {
-  const accountNotFoundError = `Account ${routeAccountName} not found. Please ensure the account name is correct and starts with '@'. Account names are case-sensitive.`;
-
+  const accountNotFoundError = `${routeAccountName} : ${t("accountName.accountNotFound")}`;
   if (notFound && !isAccountDetailsLoading) {
     return <ErrorPage errorMessage={accountNotFoundError} />;
   }
 
-}
+  }
 
   if (!accountDetails) {
     return (

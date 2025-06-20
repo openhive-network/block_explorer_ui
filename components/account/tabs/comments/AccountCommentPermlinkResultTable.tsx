@@ -21,6 +21,7 @@ import CopyButton from "@/components/ui/CopyButton";
 import DataExport from "@/components/DataExport";
 import { cn } from "@/lib/utils";
 import DataCountMessage from "@/components/DataCountMessage";
+import { useI18n } from "@/i18n/i18n";
 
 interface AccountCommentPermlinkResultTableProps {
   permlinkCount: number;
@@ -41,15 +42,25 @@ const onScrollDebounced = () => {
   }, 200);
 };
 
-const buildTableHeader = () => {
+const buildTableHeader = (t: (key: string) => string) => {
+  const TABLE_CELL_KEYS = [
+    "commentPermlinkResultTable.block",
+    "commentPermlinkResultTable.operationId",
+    "commentPermlinkResultTable.permlink",
+    "",
+    "commentPermlinkResultTable.timestamp",
+    "commentPermlinkResultTable.trxId",
+  ];
   return (
     <TableRow rowVariant="header">
-      <TableHead stickyLeft>Block </TableHead>
-      <TableHead>Operation Id </TableHead>
-      <TableHead>Permlink </TableHead>
-      <TableHead></TableHead>
-      <TableHead>Timestamp </TableHead>
-      <TableHead>Trx Id </TableHead>
+      {TABLE_CELL_KEYS.map((cellKey, index) => (
+          <TableHead
+            key={cellKey} 
+            stickyLeft={index === 0 ? true : undefined}
+          >
+            {cellKey ? t(cellKey) : ""}
+          </TableHead>
+        ))}
     </TableRow>
   );
 };
@@ -57,7 +68,8 @@ const buildTableHeader = () => {
 const buildTableBody = (
   data: Hive.Permlink[],
   accountName: string | undefined,
-  showCommentsByPermlink: (permlink: string) => void
+  showCommentsByPermlink: (permlink: string) => void,
+  t: (key: string) => string
 ) => {
   if (!data || !data.length || !accountName) return;
 
@@ -77,7 +89,7 @@ const buildTableBody = (
             <Link href={`/block/${block}`}>{block.toLocaleString()}</Link>
             <CopyButton
               text={block}
-              tooltipText="Copy block number"
+              tooltipText={t("common.copyBlockNumber")}
             />
           </TableCell>
           <TableCell>{operation_id}</TableCell>
@@ -103,7 +115,7 @@ const buildTableBody = (
             <Link href={`/transaction/${trx_id}`}>{trx_id?.slice(0, 10)}</Link>
             <CopyButton
               text={trx_id}
-              tooltipText="Copy transaction ID"
+              tooltipText={t("common.copyTransactionId")}
             />
           </TableCell>
         </TableRow>
@@ -117,6 +129,7 @@ const AccountCommentPermlinkResultTable = ({
   data,
   accountName,
 }: AccountCommentPermlinkResultTableProps) => {
+  const { t } = useI18n();
   const { setActiveTab } = useTabs();
 
   const { setCommentsSearchPermlink } = useSearchesContext();
@@ -134,11 +147,11 @@ const AccountCommentPermlinkResultTable = ({
     return data.map(
       ({ block, operation_id, permlink, timestamp, trx_id }: any) => {
         return {
-          Block: block.toLocaleString(),
-          "Operation Id": operation_id,
-          Permlink: permlink,
-          Timestamp: formatAndDelocalizeTime(timestamp),
-          "Trx Id": trx_id?.slice(0, 10),
+          [t("commentPermlinkResultTable.block")]: block.toLocaleString(),
+          [t("commentPermlinkResultTable.operationId")]: operation_id,
+          [t("commentPermlinkResultTable.permlink")]: permlink,
+          [t("commentPermlinkResultTable.timestamp")]: formatAndDelocalizeTime(timestamp),
+          [t("commentPermlinkResultTable.trxId")]: trx_id?.slice(0, 10),
         };
       }
     );
@@ -154,7 +167,7 @@ const AccountCommentPermlinkResultTable = ({
         >
           <DataCountMessage
             count={permlinkCount}
-            dataType="permlinks"
+            dataType={t("commentPermlinkResultTable.permlinksDataType")}
           />
           <DataExport
             data={prepareExportData()}
@@ -166,10 +179,10 @@ const AccountCommentPermlinkResultTable = ({
       <div className="flex w-full overflow-auto rounded">
         <div className="text-text w-[100%] bg-theme">
           <Table enableMobileScrollArrows>
-            <TableHeader>{buildTableHeader()}</TableHeader>
+            <TableHeader>{buildTableHeader(t)}</TableHeader>
 
             <TableBody>
-              {buildTableBody(data, accountName, showCommentsByPermlink)}
+              {buildTableBody(data, accountName, showCommentsByPermlink, t)}
             </TableBody>
           </Table>
         </div>

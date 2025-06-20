@@ -27,6 +27,7 @@ import useAggregatedBalanceHistory from "@/hooks/api/balanceHistory/useAggregate
 import PageTitle from "@/components/PageTitle";
 import FilterSectionToggle from "@/components/account/FilterSectionToggle";
 import { setLocalStorage, getLocalStorage } from "@/utils/LocalStorage";
+import { useI18n } from "@/i18n/i18n";
 
 const MemoizedBalanceHistoryChart = React.memo(BalanceHistoryChart);
 
@@ -114,6 +115,7 @@ const prepareData = (operations: Operation[]) => {
 
 export default function BalanceHistory() {
   const router = useRouter();
+  const { t } = useI18n();
   const accountNameFromRoute = (router.query.accountName as string)?.replace(
     "@",
     ""
@@ -219,9 +221,9 @@ export default function BalanceHistory() {
     !fromBlockParam &&
     !toBlockParam
   ) {
-    message = "Showing Results for the last month.";
+    message = t("balanceHistoryPage.showingResultsLastMonth");
   } else {
-    message = "Showing Results with applied filters.";
+    message = t("balanceHistoryPage.showingResultsAppliedFilters");
   }
 
   const routeAccountName = Array.isArray(router.query.accountName)
@@ -232,7 +234,7 @@ export default function BalanceHistory() {
     (routeAccountName && !routeAccountName.startsWith("@")) ||
     (isAccountDetailsError && !isAccountDetailsLoading)
   ) {
-    const accountNotFoundError = `Account ${routeAccountName} not found. Please ensure the account name is correct and starts with '@'. Account names are case-sensitive.`;
+    const accountNotFoundError = `${routeAccountName} : ${t("accountName.accountNotFound")}`;
     return <ErrorPage errorMessage={accountNotFoundError} />;
   }
   // Return early with a loading state if accountNameFromRoute is not yet available
@@ -240,7 +242,7 @@ export default function BalanceHistory() {
     return (
       <>
         <Head>
-          <title>Loading...</title>
+          <title>{t("balanceHistoryPage.loadingTitle")}</title>
         </Head>
         <div className="flex justify-center text-center items-center">
           <Loader2 className="animate-spin mt-1 text-black h-12 w-12 ml-3" />
@@ -292,7 +294,7 @@ export default function BalanceHistory() {
                             </span>
                             <div className="hidden md:inline ">
                               <PageTitle
-                                title="Balance History"
+                                titleKey="pageTitle.balanceHistory"
                                 className=" py-4 pr-1 mt-[2px]"
                               />
                             </div>
@@ -309,7 +311,7 @@ export default function BalanceHistory() {
                   </div>
                   <div className="md:hidden ml-14 ">
                     <PageTitle
-                      title="Balance History"
+                      titleKey="pageTitle.balanceHistory"
                       className="py-1 pr-1 mt-0 min-h-min"
                     />
                   </div>
@@ -343,7 +345,7 @@ export default function BalanceHistory() {
                 <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />
               </div>
             ) : isChartDataError ? (
-              <div className="text-center">Error loading chart data</div>
+              <div className="text-center">{t("balanceHistoryPage.errorLoadingChart")}</div>
             ) : preparedData.length > 0 ? (
               <MemoizedBalanceHistoryChart
                 hiveBalanceHistoryData={
@@ -361,7 +363,7 @@ export default function BalanceHistory() {
                 className="h-[450px] mb-10 mr-0 pr-1 pb-6"
               />
             ) : (
-              <NoResult title="No chart data available" />
+              <NoResult titleKey="noResult.noChartData"/>
             )}
           </Card>
 
@@ -380,7 +382,7 @@ export default function BalanceHistory() {
               account_name={accountNameFromRoute}
             />
           ) : (
-            <NoResult title="No transaction data available" />
+            <NoResult titleKey="noResult.noTransactionData" />
           )}
 
           <div className="fixed bottom-[10px] right-0 flex flex-col items-end justify-end px-3 md:px-12">

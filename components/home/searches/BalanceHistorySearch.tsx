@@ -14,6 +14,7 @@ import { useSearchesContext } from "@/contexts/SearchesContext";
 import { cn } from "@/lib/utils";
 import { removeStorageItem, getLocalStorage } from "@/utils/LocalStorage";
 import { defaultBalanceHistorySearchParams } from "@/pages/balanceHistory/[accountName]";
+import { useI18n } from "@/i18n/i18n";
 
 const COIN_TYPES = ["HIVE", "VESTS", "HBD"];
 const DEFAULT_COIN_TYPE = "HIVE";
@@ -26,6 +27,7 @@ const BalanceHistorySearch = ({
   setIsFiltersActive,
   isFiltersActive,
 }: any) => {
+  const { t } = useI18n();
   const [coinType, setCoinType] = useState<string>(
     paramsState.coinType ?? DEFAULT_COIN_TYPE
   ); // State to store the selected coin name
@@ -184,7 +186,7 @@ const BalanceHistorySearch = ({
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasActiveFilters]);
 
-  const buttonLabel = `Value field can't be empty`;
+  const buttonLabel = t("balanceHistorySearch.valueFieldEmpty");
 
   return (
     <>
@@ -197,7 +199,7 @@ const BalanceHistorySearch = ({
         )}
       >
         <CardHeader>
-          <CardTitle className="">Filters</CardTitle>
+          <CardTitle className="">{t("common.filters")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center mb-3">
@@ -235,7 +237,7 @@ const BalanceHistorySearch = ({
               htmlFor="includeSavings"
               className={cn("mt-4", { "text-gray-500": coinType === "VESTS" })}
             >
-              Savings
+              {t("balanceHistorySearch.savings")}
             </label>
           </div>
           {/* Operations Types commented for now
@@ -249,7 +251,7 @@ const BalanceHistorySearch = ({
             selectedOperationTypes,
             accountOperationTypes
           )}
-        /> 
+        />
       </div> */}
           <div className="flex items-center justify-between mt-10">
             <div>
@@ -258,7 +260,7 @@ const BalanceHistorySearch = ({
                 data-testid="apply-filters"
                 disabled={isSearchButtonDisabled}
               >
-                Search{" "}
+                {t("common.search")}
               </Button>
               {isSearchButtonDisabled ? (
                 <label className="ml-2 text-gray-300 dark:text-gray-500 ">
@@ -270,7 +272,7 @@ const BalanceHistorySearch = ({
               onClick={handleFilterClear}
               data-testid="clear-filters"
             >
-              Clear
+              {t("common.clear")}
             </Button>
           </div>
         </CardContent>

@@ -24,9 +24,11 @@ import {
 import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import TransactionStatisticsCard from "@/components/home/TransactionStatisticsCard";
+import { useI18n } from "@/i18n/i18n";
 
 export default function Home() {
   const { theme } = useTheme();
+    const { t } = useI18n();
 
   const witnesses = useWitnesses(
     config.witnessesPerPages.home,
@@ -69,7 +71,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Hive Explorer</title>
+        <title>{t("home.title")}</title>
       </Head>
       <div className="page-container grid grid-cols-12 text-white gap-3">
         <HeadBlockCard
@@ -93,13 +95,13 @@ export default function Home() {
           data-testid="top-witnesses-sidebar"
         >
           <CardHeader className="flex justify-between items-center border-b px-1 py-3">
-            <CardTitle>Top Witnesses</CardTitle>
+            <CardTitle>{t("home.topWitnesses")}</CardTitle>
             <Link
               href="/witnesses"
               className="text-sm flex items-center space-x-1"
               data-testid="see-witnesses-link"
             >
-              <span>See All</span>
+              <span>{t("common.seeMore")}</span>
               <MoveRight width={18} />
             </Link>
           </CardHeader>
@@ -146,7 +148,7 @@ export default function Home() {
                 href="/witnesses"
                 className="text-link"
               >
-                See More
+                {t("common.seeMore")}
               </Link>
             </div>
           </CardFooter>

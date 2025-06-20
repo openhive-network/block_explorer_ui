@@ -4,9 +4,11 @@ import { Loader2 } from "lucide-react";
 import TransactionStatisticsChart from "./TransactionStatisticsChart";
 import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
 import TransactionStatisticsFullChartDialog from "./TransactionStatisticsFullChartDialog";
+import { useI18n } from "../../i18n/i18n";
 
 const TransactionStatisticsCard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { t } = useI18n();
 
   const { settings } = useUserSettingsContext();
 
@@ -96,7 +98,7 @@ const TransactionStatisticsCard = () => {
             {/* Total Transactions */}
             <div className="bg-explorer-extra-light-gray rounded-lg p-4 shadow-md">
               <h3 className="text-sm font-semibold uppercase tracking-wide mb-1 text-explorer-dark-gray dark:text-text">
-                Total Transactions
+                {t("transactionStatisticsCard.totalTransactions")}
               </h3>
               {isYearlyLoading ? (
                 <div className="flex items-center justify-center">
@@ -114,7 +116,7 @@ const TransactionStatisticsCard = () => {
             {/* Today's Transactions */}
             <div className="bg-explorer-extra-light-gray rounded-lg p-4 shadow-md">
               <h3 className="text-sm font-semibold uppercase tracking-wide mb-1 text-explorer-dark-gray dark:text-text">
-                Today&apos;s Transactions
+                {t("transactionStatisticsCard.todaysTransactions")}
               </h3>
               {isDailyLoading ? (
                 <div className="flex items-center justify-center">
@@ -127,13 +129,13 @@ const TransactionStatisticsCard = () => {
                   </p>
                   <div className="mt-3">
                     <p className=" text-sm">
-                      Avg Trxs/block:{" "}
+                      {t("transactionStatisticsCard.avgTrxsBlock")}:{" "}
                       <span className="font-medium text-gray-700 dark:text-text">
                         {todayData.avg_trx}
                       </span>
                     </p>
                     <p className="text-sm">
-                      Max Trx/block:{" "}
+                      {t("transactionStatisticsCard.maxTrxBlock")}:{" "}
                       <span className="font-medium text-gray-700 dark:text-text">
                         {todayData.max_trx}
                       </span>
@@ -141,10 +143,10 @@ const TransactionStatisticsCard = () => {
                   </div>
                 </>
               ) : (
-                <p className="text-gray-500 text-sm">No data available</p>
+                <p className="text-gray-500 text-sm">{t("common.noDataAvailable")}</p>
               )}
               {isDailyError && (
-                <p className="text-red-500 text-xs mt-1">Error loading data</p>
+                <p className="text-red-500 text-xs mt-1">{t("common.errorLoadingData")}</p>
               )}
             </div>
           </div>
@@ -155,10 +157,10 @@ const TransactionStatisticsCard = () => {
           <div className="bg-explorer-extra-light-gray rounded-lg p-4 shadow-md h-full flex flex-col">
             <div className="flex justify-between items-center mb-1">
               <h3 className="text-sm font-semibold uppercase tracking-wide text-explorer-dark-gray dark:text-text">
-                Last 30 Days
+                {t("transactionStatisticsCard.last30Days")}
               </h3>
               <button onClick={openModal} className="text-xs underline">
-                Full Chart
+                {t("transactionStatisticsCard.fullChart")}
               </button>
             </div>
             {isChartLoading ? (
@@ -171,7 +173,7 @@ const TransactionStatisticsCard = () => {
               </div>
             )}
             {isChartError && (
-              <p className="text-red-500 text-xs mt-1">Error loading data</p>
+              <p className="text-red-500 text-xs mt-1">{t("common.errorLoadingData")}</p>
             )}
           </div>
         </div>

@@ -13,8 +13,11 @@ import { useSearchesContext } from "@/contexts/SearchesContext";
 import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
 import useAccountOperations from "@/hooks/api/accountPage/useAccountOperations";
 import NoValueErrorMessage from "./NoValueErrorMessage";
+import { useI18n } from "@/i18n/i18n";
 
 const AccountSearch = () => {
+  const { t } = useI18n();
+
   const {
     setLastSearchKey,
     setAccountOperationsPage,
@@ -108,7 +111,7 @@ const AccountSearch = () => {
         <AutocompleteInput
           value={accountName}
           onChange={setAccountName}
-          placeholder="Account name"
+          placeholder={t("accountSearch.accountName")}
           inputType="account_name"
           className="w-1/2 bg-theme dark:bg-theme border-0 border-b-2"
           required={true}
@@ -137,7 +140,7 @@ const AccountSearch = () => {
             onClick={onButtonClick}
             disabled={isSearchButtonDisabled || !accountName}
           >
-            Search
+            {t("common.search")}
             {isAccountOperationsFetching && (
               <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />
             )}
@@ -148,7 +151,7 @@ const AccountSearch = () => {
             isSearchButtonDisabled={isSearchButtonDisabled}
           />
         </div>
-        <Button onClick={handleClearSearch}>Clear</Button>
+        <Button onClick={handleClearSearch}>{t("common.clear")}</Button>
       </div>
     </>
   );

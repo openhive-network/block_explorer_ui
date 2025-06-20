@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { getLocalStorage } from "@/utils/LocalStorage";
 import useBlockNavigation from "@/hooks/common/useBlockNavigation";
 import BlockNavigation from "@/components/BlockNavigation";
+import { useI18n } from "@/i18n/i18n";
 
 interface CommnetsTabContentProps {
   isVisible: boolean;
@@ -40,6 +41,7 @@ const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
   setIsFiltersActive,
   isFiltersActive,
 }) => {
+  const { t } = useI18n();
   const router = useRouter();
   const [accountName, setAccountName] = useState("");
   const { paramsState, setParams }: any = useURLParams(
@@ -115,7 +117,7 @@ const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
         )}
       >
         <CardHeader>
-          <CardTitle className="text-left">Filters</CardTitle>
+          <CardTitle className="text-left">{t("common.filters")}</CardTitle>
         </CardHeader>
         <CardContent>
           <AccountCommentsPermlinkSearch

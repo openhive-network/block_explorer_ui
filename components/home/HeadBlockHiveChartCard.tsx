@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
 import { config } from "@/Config";
 import { Button } from "../ui/button";
+import { useI18n } from "../../i18n/i18n";
 
 interface HeadBlockPropertyCardProps {
   header: string;
@@ -24,6 +25,7 @@ const HeadBlockHiveChartCard: React.FC<HeadBlockPropertyCardProps> = ({
   handleHiveFullChartVisibility,
 }) => {
   const { settings } = useUserSettingsContext();
+  const { t } = useI18n();
 
   const CURRENT_TIME = moment().format("YYYY-MM-DDTHH:mm:ss");
   const MARKET_HISTORY_TIME_PERIOD = moment()
@@ -76,7 +78,7 @@ const HeadBlockHiveChartCard: React.FC<HeadBlockPropertyCardProps> = ({
       >
         <div className="flex flex-col items-end gap-3">
           <MarketHistoryChart data={marketHistory} />
-          <Button onClick={handleHiveFullChartVisibility}>Full Chart</Button>
+          <Button onClick={handleHiveFullChartVisibility}>{t("headBlockHiveChartCard.fullChart")}</Button>
         </div>
       </div>
     </div>

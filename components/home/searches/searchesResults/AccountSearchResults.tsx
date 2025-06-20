@@ -14,8 +14,10 @@ import useAccountOperations from "@/hooks/api/accountPage/useAccountOperations";
 import ErrorPage from "@/pages/ErrorPage";
 import { getAccountPageLink } from "../utils/accountSearchHelpers";
 import NoResult from "@/components/NoResult";
+import { useI18n } from "@/i18n/i18n";
 
 const AccountSearchResults = () => {
+  const { t } = useI18n();
   const {
     accountOperationsSearchProps,
     setAccountOperationsPage,
@@ -79,7 +81,7 @@ const AccountSearchResults = () => {
                   data-testid="go-to-result-page"
                   className="w-full md:w-auto"
                 >
-                  Go to result page
+                  {t("common.goToResultPage")}
                 </Button>
               </Link>
             </div>

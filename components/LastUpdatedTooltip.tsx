@@ -8,6 +8,7 @@ import {
 import moment from "moment";
 import { formatAndDelocalizeFromTime } from "@/utils/TimeUtils";
 import { Clock } from "lucide-react";
+import { useI18n } from "@/i18n/i18n";
 
 type LastUpdatedProps = {
   lastUpdatedAt: string | Date;
@@ -51,9 +52,9 @@ const LastUpdatedTooltip: React.FC<LastUpdatedProps> = ({ lastUpdatedAt }) => {
 
     return { colorClass, fillColor };
   };
-
+  const { t } = useI18n();
   const { colorClass, fillColor } = getIconColor(timeDiff);
-  const tooltipMessage = `Last Updated - ${formattedTime}`;
+  const tooltipMessage = `${t("lastUpdatedTooltip.prefix")} ${formattedTime}`;
 
   return (
     <div className="flex items-center space-x-2">

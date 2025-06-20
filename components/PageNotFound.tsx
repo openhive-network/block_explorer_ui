@@ -2,6 +2,7 @@ import React from "react";
 import { useRouter } from "next/router";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
+import { useI18n } from "@/i18n/i18n";
 
 interface PageNotFoundProps {
   message?: React.ReactNode;
@@ -15,6 +16,7 @@ const PageNotFound: React.FC<PageNotFoundProps> = ({
   className = "",
 }) => {
   const router = useRouter();
+  const { t } = useI18n();
 
   return (
     <>
@@ -23,8 +25,8 @@ const PageNotFound: React.FC<PageNotFoundProps> = ({
           404
         </div>
         <div className="flex flex-col justify-center text-4xl font-semibold px-4">
-          <p>Error</p>
-          <p>Not Found</p>
+          <p>{t("pageNotFound.error")}</p>
+          <p>{t("pageNotFound.notFound")}</p>
         </div>
       </div>
       <div className="mt-10">{message}</div>
@@ -34,21 +36,21 @@ const PageNotFound: React.FC<PageNotFoundProps> = ({
           className="hover:bg-explorer-bg-start"
           onClick={() => location.reload()}
         >
-          Reload Page
+          {t("errorPage.reloadPage")}
         </Button>
         <Button
           variant={"outline"}
           className="bg-explorer-yellow hover:bg-explorer-bg-start"
           onClick={() => router.push("/")}
         >
-          Go To Home Page
+          {t("errorPage.goToHomePage")}
         </Button>
       </div>
       {extra && (
         <div className="w-full flex flex-col items-center mt-10">
           <div className="flex gap-x-4 mb-10">
             <div className="border-b border-gray-300 w-24 md:w-40 h-3.5"></div>
-            <div>or</div>
+            <div>{t("pageNotFound.or")}</div>
             <div className="border-b border-gray-300 w-24 md:w-40 h-3.5"></div>
           </div>
           {extra}

@@ -9,8 +9,14 @@ import {
   TableBody,
 } from "../ui/table";
 import PageTitle from "../PageTitle";
+import { useI18n } from "../../i18n/i18n";
 
-const TABLE_CELLS = ["Rank", "Witness", "Timestamp", "Order"];
+const TABLE_CELLS = [
+  "backupWitnessSchedule.rank",
+  "backupWitnessSchedule.witness",
+  "backupWitnessSchedule.timestamp",
+  "backupWitnessSchedule.order",
+];
 
 export interface BackupWitness {
   owner: string;
@@ -22,21 +28,21 @@ interface BackupWitnessScheduleProps {
   data: BackupWitness[];
 }
 
-const buildTableHeader = () => {
+const buildTableHeader = (t: (key: string) => string) => {
   return TABLE_CELLS.map((cell, index) => {
     return (
       <TableHead
         stickyLeft={index === 0 ? true : undefined}
         className="text-left text-sm font-medium uppercase tracking-wider py-1 px-2"
-        key={index}
+        key={cell}
       >
-        {cell}
+        {t(cell)}
       </TableHead>
     );
   });
 };
 
-const buildTableBody = (data: BackupWitness[]) => {
+const buildTableBody = (data: BackupWitness[], t: (key: string) => string) => {
   if (!data || !data.length) return;
 
   return data.map(({ rank, owner, timestamp }: any, index: number) => {
@@ -67,17 +73,19 @@ const buildTableBody = (data: BackupWitness[]) => {
 const BackupWitnessSchedule: React.FC<BackupWitnessScheduleProps> = ({
   data,
 }) => {
+  const { t } = useI18n();
+
   return (
     <div className="flex w-full overflow-auto">
       <div className="bg-theme rounded-xl shadow-md w-full p-3">
-        <PageTitle title="Backup Witness Schedule" />
+        <PageTitle titleKey={t("backupWitnessSchedule.title")} />
 
         <div className="overflow-x-auto">
           <Table data-testid="table-body">
             <TableHeader>
-              <TableRow rowVariant="header">{buildTableHeader()}</TableRow>
+              <TableRow rowVariant="header">{buildTableHeader(t)}</TableRow>
             </TableHeader>
-            <TableBody>{buildTableBody(data)}</TableBody>
+            <TableBody>{buildTableBody(data, t)}</TableBody>
           </Table>
         </div>
       </div>

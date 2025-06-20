@@ -18,6 +18,7 @@ import CopyButton from "@/components/ui/CopyButton";
 import DataExport from "@/components/DataExport";
 import { cn } from "@/lib/utils";
 import DataCountMessage from "@/components/DataCountMessage";
+import { useI18n } from "@/i18n/i18n";
 
 interface CommentPermlinkResultTableProps {
   permlinkCount: number;
@@ -26,24 +27,24 @@ interface CommentPermlinkResultTableProps {
   openCommentsSection: (accountName: string, permlink: string) => void;
 }
 
-const TABLE_CELLS = [
-  "Block",
-  "Operation Id",
-  "Permlink",
-  "",
-  "Timestamp",
-  "Trx Id",
+const TABLE_CELL_KEYS = [
+  "commentPermlinkResultTable.block",
+  "commentPermlinkResultTable.operationId",
+  "commentPermlinkResultTable.permlink",
+  "", // Empty for the button column
+  "commentPermlinkResultTable.timestamp",
+  "commentPermlinkResultTable.trxId",
 ];
 
-const buildTableHeader = () => {
-  return TABLE_CELLS.map((cell, index) => {
+const buildTableHeader = (t: (key: string) => string) => {
+  return TABLE_CELL_KEYS.map((cellKey, index) => {
     return (
       <TableHead
         stickyLeft={index === 0 ? true : undefined}
         className="text-left text-sm"
-        key={index}
+        key={cellKey || `empty-header-${index}`} // Ensure unique key for empty header
       >
-        {cell}
+        {cellKey ? t(cellKey) : ""}
       </TableHead>
     );
   });
@@ -52,14 +53,15 @@ const buildTableHeader = () => {
 const buildTableBody = (
   data: Hive.Permlink[],
   accountName: string | undefined,
-  handleOpenCommentsSection: (accountName: string, permlink: string) => void
+  handleOpenCommentsSection: (accountName: string, permlink: string) => void,
+  t: (key: string) => string
 ) => {
   if (!data || !data.length || !accountName) return;
 
   return data.map(
-    ({ block, operation_id, permlink, timestamp, trx_id }: any) => {
+    ({ block, operation_id, permlink, timestamp, trx_id }: any, index: number) => { // Added index for key
       return (
-        <React.Fragment key={trx_id}>
+        <React.Fragment key={trx_id || index}>
           <TableRow>
             <TableCell
               stickyLeft
@@ -68,7 +70,7 @@ const buildTableBody = (
               <Link href={`/block/${block}`}>{block.toLocaleString()}</Link>
               <CopyButton
                 text={block}
-                tooltipText="Copy block number"
+                tooltipText={t("common.copyBlockNumber")}
               />
             </TableCell>
             <TableCell>{operation_id}</TableCell>
@@ -98,7 +100,7 @@ const buildTableBody = (
               </Link>
               <CopyButton
                 text={trx_id}
-                tooltipText="Copy transaction ID"
+                tooltipText={t("common.copyTransactionId")}
               />
             </TableCell>
           </TableRow>
@@ -114,6 +116,7 @@ const CommentPermlinkResultTable = ({
   data,
   accountName,
 }: CommentPermlinkResultTableProps) => {
+  const { t } = useI18n();
   const { handleCommentsSearch } = useHandleCommentsSearch();
 
   const handleOpenCommentsSection = (accountName: string, permlink: string) => {
@@ -127,11 +130,11 @@ const CommentPermlinkResultTable = ({
     return data.map(
       ({ block, operation_id, permlink, timestamp, trx_id }: any) => {
         return {
-          Block: block.toLocaleString(),
-          "Operation Id": operation_id,
-          Permlink: permlink,
-          Timestamp: formatAndDelocalizeTime(timestamp),
-          "Trx Id": trx_id?.slice(0, 10),
+          [t("commentPermlinkResultTable.block")]: block.toLocaleString(),
+          [t("commentPermlinkResultTable.operationId")]: operation_id,
+          [t("commentPermlinkResultTable.permlink")]: permlink,
+          [t("commentPermlinkResultTable.timestamp")]: formatAndDelocalizeTime(timestamp),
+          [t("commentPermlinkResultTable.trxId")]: trx_id?.slice(0, 10),
         };
       }
     );
@@ -147,7 +150,7 @@ const CommentPermlinkResultTable = ({
         >
           <DataCountMessage
             count={permlinkCount}
-            dataType="permlinks"
+            dataType={t("commentPermlinkResultTable.permlinksDataType")}
           />
           <DataExport
             data={prepareExportData()}
@@ -163,10 +166,10 @@ const CommentPermlinkResultTable = ({
             className="text-xs"
           >
             <TableHeader>
-              <TableRow rowVariant="header">{buildTableHeader()}</TableRow>
+              <TableRow rowVariant="header">{buildTableHeader(t)}</TableRow>
             </TableHeader>
             <TableBody>
-              {buildTableBody(data, accountName, handleOpenCommentsSection)}
+              {buildTableBody(data, accountName, handleOpenCommentsSection, t)}
             </TableBody>
           </Table>
         </div>

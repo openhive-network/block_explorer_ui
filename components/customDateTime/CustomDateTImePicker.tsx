@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import "./customDateTimePicker.css";
+import { useI18n } from "@/i18n/i18n";
 
 interface CustomDateTimePickerProps {
   value: Date;
@@ -11,20 +12,28 @@ interface CustomDateTimePickerProps {
   isValidDate: (day: Date) => boolean;
 }
 
-const WEEK_DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-const MONTHS = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
+const WEEK_DAYS_KEYS = [
+  "customDateTimePicker.weekdays.sun",
+  "customDateTimePicker.weekdays.mon",
+  "customDateTimePicker.weekdays.tue",
+  "customDateTimePicker.weekdays.wed",
+  "customDateTimePicker.weekdays.thu",
+  "customDateTimePicker.weekdays.fri",
+  "customDateTimePicker.weekdays.sat",
+];
+const MONTHS_KEYS = [
+  "customDateTimePicker.months.january",
+  "customDateTimePicker.months.february",
+  "customDateTimePicker.months.march",
+  "customDateTimePicker.months.april",
+  "customDateTimePicker.months.may",
+  "customDateTimePicker.months.june",
+  "customDateTimePicker.months.july",
+  "customDateTimePicker.months.august",
+  "customDateTimePicker.months.september",
+  "customDateTimePicker.months.october",
+  "customDateTimePicker.months.november",
+  "customDateTimePicker.months.december",
 ];
 
 const pad = (n: number) => n.toString().padStart(2, "0");
@@ -51,8 +60,9 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
   onClose,
   isValidDate,
 }) => {
-  const [selected, setSelected] = useState<Date>(new Date(value)); // always UTC
-  const [monthPage, setMonthPage] = useState<Date>(addUTCMonths(value, 0)); // 1st-of-month UTC
+  const { t } = useI18n();
+  const [selected, setSelected] = useState<Date>(new Date(value));
+  const [monthPage, setMonthPage] = useState<Date>(addUTCMonths(value, 0));
   const [hour, setHour] = useState(pad(value.getUTCHours()));
   const [minute, setMinute] = useState(pad(value.getUTCMinutes()));
   const [second, setSecond] = useState(pad(value.getUTCSeconds()));
@@ -163,7 +173,7 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
       {showYM ? (
         <div className="year-month-picker">
           <div className="year-input-section">
-            <label>Year</label>
+            <label>{t("customDateTimePicker.year")}</label>
             <input
               type="number"
               value={tmpYear}
@@ -171,21 +181,21 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
             />
           </div>
           <div className="month-grid">
-            {MONTHS.map((m, i) => (
+            {MONTHS_KEYS.map((monthKey, i) => (
               <div
-                key={m}
+                key={monthKey}
                 className="month-cell"
                 onClick={() => {
                   setMonthPage(new Date(Date.UTC(tmpYear, i, 1)));
                   setShowYM(false);
                 }}
               >
-                {m}
+                {t(monthKey)}
               </div>
             ))}
           </div>
           <div className="actions">
-            <button onClick={() => setShowYM(false)}>Back</button>
+            <button onClick={() => setShowYM(false)}>{t("customDateTimePicker.back")}</button>
           </div>
         </div>
       ) : (
@@ -198,7 +208,7 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
               className="month-label"
               onClick={() => setShowYM(true)}
             >
-              {MONTHS[monthPage.getUTCMonth()]} {monthPage.getUTCFullYear()}
+              {t(MONTHS_KEYS[monthPage.getUTCMonth()])} {monthPage.getUTCFullYear()}
             </span>
             <button onClick={() => setMonthPage(addUTCMonths(monthPage, +1))}>
               {">"}
@@ -206,12 +216,12 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
           </div>
 
           <div className="calendar-day-names">
-            {WEEK_DAYS.map((d) => (
+            {WEEK_DAYS_KEYS.map((dayKey) => (
               <div
-                key={d}
+                key={dayKey}
                 className="day-name"
               >
-                {d}
+                {t(dayKey)}
               </div>
             ))}
           </div>
@@ -220,7 +230,7 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
 
           <div className="time-section">
             <div className="time-field">
-              <label>Hours</label>
+              <label>{t("customDateTimePicker.hours")}</label>
               <input
                 type="text"
                 value={hour}
@@ -229,7 +239,7 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
               />
             </div>
             <div className="time-field">
-              <label>Minutes</label>
+              <label>{t("customDateTimePicker.minutes")}</label>
               <input
                 type="text"
                 value={minute}
@@ -238,7 +248,7 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
               />
             </div>
             <div className="time-field">
-              <label>Seconds</label>
+              <label>{t("customDateTimePicker.seconds")}</label>
               <input
                 type="text"
                 value={second}
@@ -246,14 +256,14 @@ const CustomDateTimePicker: React.FC<CustomDateTimePickerProps> = ({
                 onBlur={(e) => setSecond(padIfNeeded(e.target.value))}
               />
             </div>
-            <div className="mt-6">UTC</div>
+            <div className="mt-6">{t("customDateTimePicker.utc")}</div>
           </div>
 
-          <div className="actions">
-            <button onClick={handleCancelSelect}>Cancel</button>
+          <div className="actions"> 
+            <button onClick={handleCancelSelect}>{t("common.cancel")}</button>
             <div>
-              <button onClick={handleTodaySelect}>Today</button>
-              <button onClick={confirm}>OK</button>
+              <button onClick={handleTodaySelect}>{t("customDateTimePicker.today")}</button>
+              <button onClick={confirm}>{t("customDateTimePicker.ok")}</button>
             </div>
           </div>
         </>

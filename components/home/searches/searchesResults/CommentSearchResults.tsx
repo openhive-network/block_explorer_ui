@@ -15,6 +15,7 @@ import { useSearchesContext } from "@/contexts/SearchesContext";
 import { getCommentPageLink } from "../utils/commentSearchHelpers";
 import { usePathname } from "next/navigation";
 import NoResult from "@/components/NoResult";
+import { useI18n } from "@/i18n/i18n";
 
 const CommentSearchResults = () => {
   const {
@@ -28,6 +29,7 @@ const CommentSearchResults = () => {
   const { commentSearchData } = useCommentSearch(commentSearchProps);
   const formattedCommentOperations = useOperationsFormatter(commentSearchData);
   const pathname = usePathname();
+  const { t } = useI18n();
 
   const isCommentsPage = pathname?.includes("/comments") ?? false;
 
@@ -63,7 +65,7 @@ const CommentSearchResults = () => {
               {!isCommentsPage && (
                 <Link href={commentPageLink}>
                   <Button data-testid="go-to-result-page">
-                    Go to result page
+                   {t("common.goToResultPage")}
                   </Button>
                 </Link>
               )}

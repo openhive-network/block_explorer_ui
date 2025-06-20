@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useI18n } from "@/i18n/i18n";
 import {
   Loader2,
   MenuSquareIcon,
@@ -47,19 +48,26 @@ import { IHiveChainInterface } from "@hiveio/wax";
 import PageTitle from "@/components/PageTitle";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 
-const TABLE_CELLS = [
-  "Rank",
-  "Name",
-  "Votes",
-  "Voters",
-  "Missed Blocks",
-  "Last Block",
-  "Block Size",
-  "APR",
-  "Price Feed",
-  "Feed Age",
-  "AC Fee",
-  "Version",
+interface TableCellConfig {
+  displayKey: string;
+  sortKey: string;
+  isRightAligned?: boolean;
+  isUnsortable?: boolean;
+}
+
+const TABLE_CELL_CONFIGS: TableCellConfig[] = [
+  { displayKey: "common.rank", sortKey: "rank" },
+  { displayKey: "common.name", sortKey: "name" },
+  { displayKey: "witnesses.votes", sortKey: "votes" },
+  { displayKey: "witnesses.voters", sortKey: "voters" },
+  { displayKey: "witnesses.missedblocks", sortKey: "missed blocks", isRightAligned: true, isUnsortable: true },
+  { displayKey: "witnesses.lastblock", sortKey: "last block produced", isUnsortable: true },
+  { displayKey: "witnesses.blocksize", sortKey: "block size", isRightAligned: true },
+  { displayKey: "witnesses.apr", sortKey: "apr", isRightAligned: true, isUnsortable: true },
+  { displayKey: "witnesses.pricefeed", sortKey: "price feed", isRightAligned: true },
+  { displayKey: "witnesses.feedage", sortKey: "feed age", isRightAligned: true },
+  { displayKey: "witnesses.acfee", sortKey: "ac fee", isRightAligned: true, isUnsortable: true },
+  { displayKey: "witnesses.version", sortKey: "version", isRightAligned: true, isUnsortable: true },
 ];
 
 const sortKeyByCell: { [objectKey: string]: string } = {
@@ -76,36 +84,13 @@ const sortKeyByCell: { [objectKey: string]: string } = {
   "last block produced": "last_confirmed_block_num",
 };
 
-const RIGHT_ALIGNED_HEADERS = [
-  "Missed Blocks",
-  "Price Feed",
-  "Feed Age",
-  "APR",
-  "Version",
-  "Block Size",
-  "AC Fee",
-];
-
 const renderSortArrow = (
-  cell: string,
-  orderBy: string,
+  currentSortKey: string,
+  orderByApiField: string,
   isOrderAscending: boolean
 ) => {
-  const hideSort =
-    cell === "missed blocks" ||
-    cell === "ac fee" ||
-    cell === "version" ||
-    cell === "last block" ||
-    cell === "apr";
-  if (hideSort) return;
-
-  if (sortKeyByCell[cell] !== orderBy) {
-    return (
-      <ChevronsUpDown
-        size={15}
-        className="ml-1"
-      />
-    );
+  if (sortKeyByCell[currentSortKey] !== orderByApiField) {
+    return <ChevronsUpDown size={15} className="ml-1" />;
   } else {
     return isOrderAscending ? (
       <ChevronDown
@@ -121,22 +106,14 @@ const renderSortArrow = (
   }
 };
 
-const isCellUnsortable = (cell: string) => {
-  return (
-    cell === "Missed Blocks" ||
-    cell === "AC Fee" ||
-    cell === "Version" ||
-    cell === "Last Block" ||
-    cell === "APR"
-  );
-};
-
 export default function Witnesses() {
+  const { t } = useI18n();
+
   const [voterAccount, setVoterAccount] = useState<string>("");
   const [isVotersOpen, setIsVotersOpen] = useState<boolean>(false);
   const [isVotesHistoryOpen, setIsVotesHistoryOpen] = useState<boolean>(false);
-  const [sort, setSort] = useState<any>({
-    orderBy: "rank",
+  const [sort, setSort] = useState<{ orderBy: string; isOrderAscending: boolean }>({
+    orderBy: sortKeyByCell["rank"], // Default to API field for rank
     isOrderAscending: true,
   });
   const { witnessesData, isWitnessDataLoading } = useWitnesses(
@@ -183,11 +160,15 @@ export default function Witnesses() {
     }
   }, [witnessesData]);
 
-  const handleSortBy = (tableCell: string) => {
-    setSort({
-      orderBy: sortKeyByCell[tableCell],
-      isOrderAscending: !sort.isOrderAscending,
-    });
+  const handleSortBy = (clickedSortKey: string) => {
+    if (!clickedSortKey || !sortKeyByCell[clickedSortKey]) {
+      return;
+    }
+    const apiFieldForSort = sortKeyByCell[clickedSortKey];
+    setSort((prevSort) => ({
+      orderBy: apiFieldForSort,
+      isOrderAscending: apiFieldForSort === prevSort.orderBy ? !prevSort.isOrderAscending : true,
+    }));
   };
 
   if (isWitnessDataLoading) {
@@ -207,30 +188,31 @@ export default function Witnesses() {
   };
 
   const buildTableHeader = () => {
-    return TABLE_CELLS.map((cell) => {
-      const toLowerCase = cell.toLocaleLowerCase();
-      const isRightAligned = RIGHT_ALIGNED_HEADERS.includes(cell); // Check if header should be right-aligned
-      const headerIndex = TABLE_CELLS.indexOf(cell);
-
+    return TABLE_CELL_CONFIGS.map((cellConfig, index) => {
+      const isRightAligned = !!cellConfig.isRightAligned;
+      const isUnsortable = !!cellConfig.isUnsortable;
       const className = "text-center !bg-navbar py-2";
-
       const buttonClassName = `w-full flex items-center ${
         isRightAligned ? "justify-end text-right" : "justify-start text-left"
       }`;
 
       return (
         <TableCell
-          stickyLeft={headerIndex === 0 ? true : undefined}
-          key={cell}
+          stickyLeft={index === 0 ? true : undefined}
+          key={cellConfig.sortKey}
           className={className}
         >
           <button
-            disabled={isCellUnsortable(cell)}
+            disabled={isUnsortable}
             className={buttonClassName}
-            onClick={() => handleSortBy(toLowerCase)}
+            onClick={() => {
+              if (!isUnsortable) {
+                handleSortBy(cellConfig.sortKey);
+              }
+            }}
           >
-            <span>{cell}</span>
-            {renderSortArrow(toLowerCase, sort.orderBy, sort.isOrderAscending)}
+            <span>{t(cellConfig.displayKey)}</span>
+            {!isUnsortable && renderSortArrow(cellConfig.sortKey, sort.orderBy, sort.isOrderAscending)}
           </button>
         </TableCell>
       );
@@ -240,14 +222,14 @@ export default function Witnesses() {
   return (
     <>
       <Head>
-        <title>Witnesses - Hive Explorer</title>
+        <title>{t("witnesses.title")} - Hive Explorer</title>
       </Head>
       <div className="page-container rounded bg-white dark:bg-theme text-gray-800 dark:text-gray-200 font-sans antialiased">
         <div className="mx-4 my-4">
           <main className="flex-1">
             <div className="flex flex-col md:flex-row justify-between items-start bg-theme">
               <PageTitle
-                title="Hive Witnesses"
+                titleKey="pageTitle.hiveWitnesses"
                 className="py-4"
               />
 
@@ -287,9 +269,9 @@ export default function Witnesses() {
                   </TableHeader>
                   <TableBody>
                     {witnessesData?.witnesses.map(
-                      (singleWitness: any, index: any) => (
+                      (singleWitness: any, index: number) => ( // Explicitly type index
                         <TableRow
-                          key={index}
+                          key={singleWitness.witness_id || index} // Prefer a stable ID if available
                           className={cn(
                             `${
                               index % 2 === 0
@@ -311,7 +293,7 @@ export default function Witnesses() {
                             <Image
                               className="rounded-full border-2 border-explorer-orange"
                               src={getHiveAvatarUrl(singleWitness.witness_name)}
-                              alt="avatar"
+                              alt={t("common.avatarAltText", {name: singleWitness.witness_name})}
                               width={30}
                               height={30}
                             />
@@ -357,7 +339,7 @@ export default function Witnesses() {
                                   </TooltipTrigger>
                                   <TooltipContent className="text-left">
                                     <p>
-                                      Vests:{" "}
+                                      {t("common.vests")}:{" "}
                                       {formatNumber(
                                         singleWitness.vests || 0,
                                         true
@@ -397,7 +379,7 @@ export default function Witnesses() {
                                       </span>
                                     </TooltipTrigger>
                                     <TooltipContent className="text-left">
-                                      Vests Change:{" "}
+                                      {t("common.vestsChange")}:{" "}
                                       {formatNumber(
                                         singleWitness.votes_daily_change || 0,
                                         true
@@ -440,14 +422,14 @@ export default function Witnesses() {
                                 )}
                               </div>
                               <div className="flex items-center space-x-2 justi">
-                                <MenuSquareIcon
-                                  className="w-4 h-4 cursor-pointer opacity-50 hover:opacity-80 transition-opacity duration-200 absolute top-1/2 right-0 transform -translate-y-1/2"
-                                  onClick={() => {
-                                    setVoterAccount(singleWitness.witness_name);
-                                    setIsVotersOpen(true);
-                                  }}
-                                  data-testid="witness-voters-button"
-                                />
+                              <MenuSquareIcon
+                                className="w-4 h-4 cursor-pointer opacity-50 hover:opacity-80 transition-opacity duration-200 absolute top-1/2 right-0 transform -translate-y-1/2"
+                                onClick={() => {
+                                  setVoterAccount(singleWitness.witness_name);
+                                  setIsVotersOpen(true);
+                                }}
+                                data-testid="witness-voters-button"
+                              />
                               </div>
                             </div>
                           </TableCell>
@@ -472,8 +454,8 @@ export default function Witnesses() {
                                   {singleWitness.last_confirmed_block_num.toLocaleString()}
                                 </Link>
                                 <CopyButton
-                                  text={singleWitness.last_confirmed_block_num}
-                                  tooltipText="Copy block number"
+                                  text={String(singleWitness.last_confirmed_block_num)}
+                                  tooltipText={t("common.copyBlockNumber")}
                                 />
                               </div>
                             ) : (

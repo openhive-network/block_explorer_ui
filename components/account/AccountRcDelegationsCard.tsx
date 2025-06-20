@@ -17,6 +17,7 @@ import {
   buildTableHead,
   handleSortDelegations,
 } from "@/utils/DelegationsSort";
+import { useI18n } from "../../i18n/i18n";
 
 type AccountRcDelegationsCardProps = {
   delegatorAccount: string;
@@ -53,6 +54,7 @@ const AccountRcDelegationsCard: React.FC<AccountRcDelegationsCardProps> = ({
   limit,
   liveDataEnabled,
 }) => {
+  const { t } = useI18n();
   const [isPropertiesHidden, setIsPropertiesHidden] = useState(true);
   const { rcDelegationsData, isRcDelegationsLoading, isRcDelegationsError } =
     useRcDelegations(delegatorAccount, limit, liveDataEnabled);
@@ -102,7 +104,7 @@ const AccountRcDelegationsCard: React.FC<AccountRcDelegationsCardProps> = ({
           onClick={handlePropertiesVisibility}
           className="h-full flex justify-between align-center p-2 hover:bg-rowHover cursor-pointer px-4"
         >
-          <div className="text-lg">RC Delegations ({delegations.length})</div>
+          <div className="text-lg">{t("accountRcDelegationsCard.delegations")} ({delegations.length})</div>
           {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
         </div>
       </CardHeader>

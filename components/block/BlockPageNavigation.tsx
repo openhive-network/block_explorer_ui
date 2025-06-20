@@ -16,6 +16,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/i18n/i18n";
 
 interface BlockPageNavigationProps {
   blockNumber: number;
@@ -42,6 +43,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   setOfKeys,
   onClearParams,
 }) => {
+  const { t } = useI18n();
   const [block, setBlock] = useState(blockNumber.toString());
   const [blockDate, setBlockDate] = useState(timeStamp);
 
@@ -117,12 +119,12 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
       data-testid="block-page-search"
     >
       <CardHeader className="px-4">
-        <CardTitle className="text-left">Search</CardTitle>
+        <CardTitle className="text-left">{t("common.search")}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6 px-4">
         <div className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-4 items-center">
           <Label htmlFor="blockNumber" className="text-left font-medium">
-            Block Number:
+            {t("blockPageNavigation.blockNumber")}:
           </Label>
           <div className="flex items-center justify-start">
             <Button
@@ -148,13 +150,13 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
             </Button>
           </div>
         </div>
-      
-        <div 
+
+        <div
           className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-4 items-center"
           ref={datePickerRef}
           >
            <Label htmlFor="blockTime" className="text-left font-medium">
-            Block Time:
+            {t("blockPageNavigation.blockTime")}:
           </Label>
           <div className="flex items-center justify-start max-w-[280px]">
             <DateTimePicker
@@ -166,7 +168,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
 
         <div className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-4 items-center">
           <Label className="text-left font-medium">
-            Operation Types:
+            {t("operationTypesDialog.operationTypes")}:
           </Label>
           <div className="flex items-center">
             <OperationTypesDialog
@@ -187,16 +189,16 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
         {(!!accountName || !!keyContent || !!setOfKeys) && (
           <div className="w-full flex justify-between items-center px-2 md:px-8 flex-wrap gap-y-4 mt-4">
             <div className="flex gap-x-6 text-sm">
-              {!!keyContent && <div>Key content: {keyContent}</div>}
-              {!!setOfKeys && <div>Set of keys: {setOfKeys.join(", ")}</div>}
-              {!!accountName && <div>Account: {accountName}</div>}
+              {!!keyContent && <div>{t("blockPageNavigation.keyContent")}: {keyContent}</div>}
+              {!!setOfKeys && <div>{t("blockPageNavigation.setOfKeys")}: {setOfKeys.join(", ")}</div>}
+              {!!accountName && <div>{t("blockPageNavigation.account")}: {accountName}</div>}
             </div>
             <Button
               onClick={onClearParams}
               variant="outline"
               size="sm"
             >
-              Clear params
+              {t("blockPageNavigation.clearParams")}
             </Button>
           </div>
         )}

@@ -10,23 +10,25 @@ import {
   grabNumericValue,
 } from "@/utils/StringUtils";
 import { cn, formatNumber } from "@/lib/utils";
+import { useI18n } from "@/i18n/i18n";
+
 type AccountBalanceCardProps = {
   header: string;
   userDetails: Explorer.FormattedAccountDetails;
 };
 
-const cardNameMap = new Map([
-  ["hbd_balance", "HBD Liquid"],
-  ["hbd_saving_balance", "HBD Savings"],
-  ["reward_hbd_balance", "HBD Unclaimed"],
-  ["balance", "HIVE Liquid"],
-  ["savings_balance", "HIVE Savings"],
-  ["reward_hive_balance", "HIVE Unclaimed"],
-  ["vesting_shares", "Owned HP"],
-  ["reward_vesting_balance", "HP Unclaimed"],
-  ["received_vesting_shares", "Received HP"],
-  ["delegated_vesting_shares", "Delegated HP"],
-  ["vesting_withdraw_rate", "Powering down HP"],
+const cardNameMapKeys = new Map([
+  ["hbd_balance", "accountBalanceCard.hbdLiquid"],
+  ["hbd_saving_balance", "accountBalanceCard.hbdSavings"],
+  ["reward_hbd_balance", "accountBalanceCard.hbdUnclaimed"],
+  ["balance", "accountBalanceCard.hiveLiquid"],
+  ["savings_balance", "accountBalanceCard.hiveSavings"],
+  ["reward_hive_balance", "accountBalanceCard.hiveUnclaimed"],
+  ["vesting_shares", "accountBalanceCard.ownedHp"],
+  ["reward_vesting_balance", "accountBalanceCard.hpUnclaimed"],
+  ["received_vesting_shares", "accountBalanceCard.receivedHp"],
+  ["delegated_vesting_shares", "accountBalanceCard.delegatedHp"],
+  ["vesting_withdraw_rate", "accountBalanceCard.poweringDownHp"],
 ]);
 
 const unclaimedRecourses = new Map([
@@ -42,6 +44,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
   header,
   userDetails,
 }) => {
+  const { t } = useI18n();
   const keys = Object.keys(
     userDetails
   ) as (keyof Explorer.AccountDetailsDollars)[];
@@ -90,7 +93,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
   const renderBalance = () => {
     return (
       <TableRow className="border-b border-gray-700 hover:bg-inherit font-bold">
-        <TableCell className="">Account Value</TableCell>
+        <TableCell className="">{t("accountBalanceCard.accountValue")}</TableCell>
         <TableCell
           className="text-right"
           colSpan={2}
@@ -107,7 +110,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
     return parameters.map(
       (param: keyof Explorer.AccountDetailsDollars, index: number) => (
         <Fragment key={index}>
-          {cardNameMap.has(param) && (
+          {cardNameMapKeys.has(param) && (
             <TableRow
               className={cn(
                 "border-b border-gray-700 hover:bg-inherit dark:hover:bg-inherit",
@@ -116,7 +119,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
                 }
               )}
             >
-              <TableCell>{cardNameMap.get(param)}</TableCell>
+              <TableCell>{t(cardNameMapKeys.get(param) || "")}</TableCell>
               <TableCell className="text-right">{renderKey(param)}</TableCell>
               <TableCell className="text-right">
                 {changeHBDToDollarsDisplay(userDetails.dollars[param])}

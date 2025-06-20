@@ -4,6 +4,7 @@ import { getOperationTypeForDisplay } from "@/utils/UI";
 import { getOperationColor } from "../OperationsTable";
 import { Toggle } from "../ui/toggle";
 import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
+import { useI18n } from "@/i18n/i18n";
 
 interface BlockPageOperationCountProps {
   virtualOperationsTypesCounters?: Explorer.OperationCounter[];
@@ -22,6 +23,7 @@ const BlockPageOperationCount: React.FC<BlockPageOperationCountProps> = ({
   enableRawVirtualOperations,
   handleEnableVirtualOperations,
 }) => {
+  const { t } = useI18n();
   const { settings } = useUserSettingsContext();
 
   const isRawView = settings.rawJsonView || settings.prettyJsonView;
@@ -41,7 +43,7 @@ const BlockPageOperationCount: React.FC<BlockPageOperationCountProps> = ({
       <div className="w-full">
         {/* Non-Virtual Operations */}
         <div className="mb-2">
-          <h3 className="text-sm font-semibold mb-1">Operations: {nonVirtualOperationLength}</h3>
+          <h3 className="text-sm font-semibold mb-1">{t("common.operations")}: {nonVirtualOperationLength}</h3>
           <div className="flex flex-wrap gap-1 mt-1">
             {nonVirtualOperationsTypesCounters &&
               nonVirtualOperationsTypesCounters.map(({ operationTypeName, counter }) => (
@@ -53,7 +55,7 @@ const BlockPageOperationCount: React.FC<BlockPageOperationCountProps> = ({
         {/* Virtual Operations */}
         <div className="mb-2">
           <div className="flex items-center space-x-2 mb-1"> {/* Added space-x-2 */}
-            <h3 className="text-sm font-semibold mb-1">Virtual Operations: {virtualOperationLength}</h3>
+            <h3 className="text-sm font-semibold mb-1">{t("blockPageOperationCount.virtualOperations")}: {virtualOperationLength}</h3>
             {isRawView && (
               <div >
                 <Toggle

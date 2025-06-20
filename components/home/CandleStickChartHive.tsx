@@ -15,6 +15,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import Hive from "@/types/Hive";
 import { colorMap } from "../balanceHistory/BalanceHistoryChart";
 import { Props as BarShapeProps } from "recharts/types/cartesian/Bar";
+import { useI18n } from "@/i18n/i18n";
 
 interface CandleStickChartProps {
   data: Hive.MarketHistory | undefined;
@@ -42,6 +43,7 @@ const CustomTooltip = ({
   active?: boolean;
   payload?: any[];
 }) => {
+  const { t } = useI18n();
   if (active && payload && payload.length) {
     return (
       <div className="bg-buttonHover text-text p-2 rounded-xl">
@@ -51,12 +53,12 @@ const CustomTooltip = ({
           }) => {
             return (
               <div key={openTime}>
-                <p>{`Open: $${openClose[0].toFixed(4)}`}</p>
-                <p>{`Close $${openClose[1].toFixed(4)}`}</p>
-                <p>{`High $${high.toFixed(4)}`}</p>
-                <p>{`Low $${low.toFixed(4)}`}</p>
-                <p>{`Volume: ${volume.toLocaleString("en-US")} HIVE`}</p>
-                <p>{`Date: ${tooltipDate}`}</p>
+                <p>{t("customShapeBarChart.open")}: ${openClose[0].toFixed(4)}</p>
+                <p>{t("customShapeBarChart.close")}: ${openClose[1].toFixed(4)}</p>
+                <p>{t("customShapeBarChart.high")}: ${high.toFixed(4)}</p>
+                <p>{t("customShapeBarChart.low")}: ${low.toFixed(4)}</p>
+                <p>{t("marketHistoryChart.volume")}: {volume.toLocaleString("en-US")} HIVE</p>
+                <p>{t("marketHistoryChart.date")}: {tooltipDate}</p>
               </div>
             );
           }
@@ -154,6 +156,7 @@ const prepareData = (data: Hive.MarketHistory | undefined) => {
 
 const CustomShapeBarChart: React.FC<CandleStickChartProps> = ({ data }) => {
   const { theme } = useTheme();
+  const { t } = useI18n();
 
   const chartData = prepareData(data);
   const minValue: number = Math.min(...chartData!.map((d) => d.low));
@@ -183,7 +186,7 @@ const CustomShapeBarChart: React.FC<CandleStickChartProps> = ({ data }) => {
           height={36}
         />
         <Bar
-          name={`Hive Price: $${lastHivePrice ?? 0}`}
+          name={`${t("marketHistoryChart.hivePrice")}: $${lastHivePrice ?? 0}`}
           dataKey="openClose"
           fill={colorMap.HIVE}
           shape={Candlestick}

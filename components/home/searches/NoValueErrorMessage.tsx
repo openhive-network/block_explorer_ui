@@ -1,5 +1,5 @@
 import React from "react";
-
+import { useI18n } from "@/i18n/i18n";
 interface NoValueErrorMessage {
   accountName: string | boolean; //boolean=true if accountName isn't required (e.g. block search)
   isSearchButtonDisabled: boolean;
@@ -9,14 +9,15 @@ const NoValueErrorMessage: React.FC<NoValueErrorMessage> = ({
   accountName,
   isSearchButtonDisabled,
 }) => {
+  const { t } = useI18n();
   let message = "";
 
   if (!accountName && isSearchButtonDisabled) {
-    message = "Please insert required values";
+    message = t("noValueErrorMessage.insertRequiredValues");
   } else if (!accountName) {
-    message = "Set account name";
+    message = t("noValueErrorMessage.setAccountName");
   } else if (isSearchButtonDisabled) {
-    message = `Value field can't be empty`;
+    message = t("noValueErrorMessage.valueFieldEmpty");
   } else {
     message = "";
   }

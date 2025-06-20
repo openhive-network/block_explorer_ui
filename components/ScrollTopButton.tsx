@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { ArrowUp } from "lucide-react";
 import { Button } from "./ui/button";
+import { useI18n } from "@/i18n/i18n";
 
 const ScrollTopButton = () => {
+  const { t } = useI18n();
   const [visible, setVisible] = useState(false);
 
   const toggleVisible = () => {
@@ -34,7 +36,7 @@ const ScrollTopButton = () => {
           onClick={scrollToTop}
           className="w-fit mb-1 md:mb-2"
         >
-          <p className="hidden md:inline">To Top</p>
+          <p className="hidden md:inline">{t("scrollTopButton.toTop")}</p>
           <ArrowUp className="p-0 md:pl-2" />
         </Button>
       )}

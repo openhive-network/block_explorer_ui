@@ -7,8 +7,10 @@ import {
   TooltipContent,
 } from "@/components/ui/hybrid-tooltip";
 import { CalendarDays } from "lucide-react";
+import { useI18n } from "@/i18n/i18n";
 
 const WitnessScheduleIcon: React.FC = () => {
+  const { t } = useI18n();
   const [showTooltip, setShowTooltip] = useState<boolean>(false);
 
   // Handle mobile tooltip toggle on tap (unconditionally)
@@ -43,13 +45,13 @@ const WitnessScheduleIcon: React.FC = () => {
             >
               <div className="bg-theme text-text p-1 ml-1">
                 <p>
-                  Check{" "}
+                 {t("witnessScheduleIcon.check")}{" "}
                   <Link
                     className="text-explorer-blue"
                     href="/schedule"
                     data-testid="witness-schedule-link"
                   >
-                    Witness Schedule
+                    {t("witnessScheduleIcon.witnessSchedule")}
                   </Link>
                 </p>
               </div>

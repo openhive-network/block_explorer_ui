@@ -24,6 +24,7 @@ import {
   RefreshCcw,
   RefreshCwOff,
 } from "lucide-react";
+import { useI18n } from "@/i18n/i18n";
 
 interface SyncInfoProps {
   className?: string;
@@ -38,6 +39,7 @@ export const getBlockDifference = (
 };
 
 const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
+  const { t } = useI18n();
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const {
@@ -98,7 +100,7 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
                     />
                   </TooltipTrigger>
                   <TooltipContent className="bg-theme text-text">
-                    Explorer synced with blockchain
+                    {t("syncInfo.explorerSynced")}
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -115,7 +117,7 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
                     </TooltipTrigger>
                     <TooltipContent className="bg-theme text-text">
                       <p>
-                        {blockDifference.toLocaleString()} Blocks out of sync
+                        {blockDifference.toLocaleString()} {t("syncInfo.blocksOutOfSync")}
                       </p>
                     </TooltipContent>
                   </Tooltip>
@@ -142,13 +144,13 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
 
       <DialogContent className="dialog-content p-6 max-w-lg ">
         <DialogHeader className="dialog-header">
-          <DialogTitle className="dialog-title">Blockchain Sync</DialogTitle>
+          <DialogTitle className="dialog-title">{t("syncInfo.blockchainSync")}</DialogTitle>
         </DialogHeader>
         <section className="dialog-section">
           <div className="dialog-item">
             <div className="dialog-item-text">
               <Boxes size={18} />
-              <div>Blockchain Headblock:</div>
+              <div>{t("syncInfo.blockchainHeadblock")}:</div>
             </div>
             <div className="dialog-item-value">
               {hiveBlockNumber?.toLocaleString()}
@@ -157,7 +159,7 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
           <div className="dialog-item">
             <div className="dialog-item-text">
               <Box size={18} />
-              <div>Hafbe Last Block:</div>
+              <div>{t("syncInfo.hafbeLastBlock")}:</div>
             </div>
             <div className="dialog-item-value">
               {explorerBlockNumber?.toLocaleString()}
@@ -166,16 +168,16 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
           <div className={cn("dialog-item", differenceColorText)}>
             <div className="dialog-item-text">
               <AlertCircle size={18} />
-              <div>Block Difference:</div>
+              <div>{t("syncInfo.blockDifference")}:</div>
             </div>
             <div className="dialog-item-value">
-              {blockDifference.toLocaleString()} blocks
+              {blockDifference.toLocaleString()} {t("syncInfo.blocks")}
             </div>
           </div>
           <div className={cn("dialog-item", differenceColorText)}>
             <div className="dialog-item-text">
               <Clock size={18} />
-              <div>Last Synced Block At:</div>
+              <div>{t("syncInfo.lastSyncedBlock")}:</div>
             </div>
             {explorerTime && (
               <div className="dialog-item-value">
@@ -202,7 +204,7 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
             />
           </TooltipTrigger>
           <TooltipContent className="bg-theme text-text">
-            Connecting
+            {t("syncInfo.connecting")}
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

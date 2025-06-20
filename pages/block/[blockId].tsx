@@ -27,6 +27,7 @@ import ScrollTopButton from "@/components/ScrollTopButton";
 import OperationsTable from "@/components/OperationsTable";
 import CustomPagination from "@/components/CustomPagination";
 import useBlockId from "@/hooks/common/useBlockId";
+import { useI18n } from "@/i18n/i18n"; 
 
 interface BlockSearchParams {
   blockId?: number;
@@ -68,6 +69,7 @@ const scrollToTrxSection = (trxId?: string) => {
 
 export default function Block() {
   const router = useRouter();
+  const { t } = useI18n();
   const { blockId } = useBlockId();
 
   const [blockDate, setBlockDate] = useState<Date>();
@@ -243,10 +245,10 @@ export default function Block() {
     return (
       <PageNotFound
         message={
-          blockError
-            ? `Error code: ${blockError}`
-            : `Block ${blockId} couldn't be found.`
-        }
+          blockError 
+          ? `${t("blockPage.errorCode")}: ${blockError}` 
+          : `${blockId} : ${t("blockPage.blockNotFoundDetails")}`}
+
       />
     );
   }
@@ -341,12 +343,12 @@ export default function Block() {
         </div>
       ) : (
         <div>
-          <div className="mt-9 mb-6">Block not found</div>
+          <div className="mt-9 mb-6">{t("blockPage.blockNotFound")}</div>
           <Button
             variant="outline"
             onClick={() => router.reload()}
           >
-            Reload page
+            {t("errorPage.reloadPage")}
           </Button>
         </div>
       )}

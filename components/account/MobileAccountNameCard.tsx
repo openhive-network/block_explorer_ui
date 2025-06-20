@@ -10,6 +10,8 @@ import { Link, Star } from "lucide-react";
 import { useEffect, useState } from "react";
 import list from '../../utils/BadActorList';
 import ErrorMessage from "../ErrorMessage";
+import { useI18n } from "@/i18n/i18n";
+
 interface MobileAccountNameCardProps {
   accountName: string;
   liveDataEnabled: boolean;
@@ -21,6 +23,7 @@ const MobileAccountNameCard: React.FC<MobileAccountNameCardProps> = ({
   liveDataEnabled,
   accountDetails,
 }) => {
+  const { t } = useI18n();
   const { witnessDetails } = useWitnessDetails(
     accountName,
     accountDetails.is_witness
@@ -67,11 +70,11 @@ const MobileAccountNameCard: React.FC<MobileAccountNameCardProps> = ({
                       "line-through text-red-500": !isWitnessActive,
                     })}
                   >
-                    Witness
+                    {t("accountMainCard.witness")}
                   </span>
                   {witnessDetails?.witness.rank && isWitnessActive && (
                     <span className="flex items-center gap-1">
-                      <Star 
+                      <Star
                         data-testid="witness-rank-icon"
                         fill="currentColor"
                         size={16}
@@ -93,14 +96,14 @@ const MobileAccountNameCard: React.FC<MobileAccountNameCardProps> = ({
                   )}
                 </div>
               )}
-            </div>            
+            </div>
           </div>
         </div>
          {/* Warning Message */}
          <div>
             {isBadActor && (
               <ErrorMessage
-                message="This account is listed as a potential bad actor. Please exercise caution."
+                message={t("accountMainCard.badActorMessage")}
                 isWarning={true}
                 onClose={handleCloseWarning}
               />

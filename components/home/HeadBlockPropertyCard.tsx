@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { convertUTCDateToLocalDate } from "@/utils/TimeUtils";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
@@ -7,42 +8,42 @@ import {
   hiveParameters,
   blockchainDates,
 } from "./headBlockParameters";
-
+import { useI18n } from "../../i18n/i18n";
 import { Loader2 } from "lucide-react";
 
 const cardNameMap = new Map([
-  ["feedPrice", "Feed price"],
-  ["blockchainTime", "Blockchain time"],
-  ["rewardFund", "Rewards fund"],
-  ["currentSupply", "Current Supply"],
-  ["virtualSupply", "Virtual Supply"],
-  ["initHbdSupply", "Init hbd supply"],
-  ["currentHbdSupply", "Current hbd supply"],
-  ["pendingRewardedVestingHive", "Pending rewarded vesting hive"],
-  ["totalVestingFundHive", "Total vesting fund hive"],
-  ["totalVestingShares", "Total vesting shares"],
-  ["hbdInterestRate", "Hbd interest rate"],
-  ["hbdPrintRate", "Hbd print rate"],
-  ["lastIrreversibleBlockNumber", "Last irreversible block num"],
-  ["availableAccountSubsidies", "Available account subsidies"],
-  ["hbdStopPercent", "Hbd stop percent"],
-  ["hbdStartPercent", "Hbd start percent"],
-  ["nextMaintenanceTime", "Next maintenance time"],
-  ["lastBudgetTime", "Last budget time"],
-  ["nextDailyMaintenanceTime", "Next daily maintenance time"],
-  ["contentRewardPercent", "Content reward percent"],
-  ["vestingRewardPercent", "Vesting reward percent"],
-  ["downvotePoolPercent", "Downvote pool percent"],
-  ["currentRemoveThreshold", "Current remove threshold"],
-  ["earlyVotingSeconds", "Early voting seconds"],
-  ["midVotingSeconds", "Mid voting seconds"],
+  ["feedPrice", "headBlockPropertyCard.feedPrice"],
+  ["blockchainTime", "headBlockPropertyCard.blockchainTime"],
+  ["rewardFund", "headBlockPropertyCard.rewardFund"],
+  ["currentSupply", "headBlockPropertyCard.currentSupply"],
+  ["virtualSupply", "headBlockPropertyCard.virtualSupply"],
+  ["initHbdSupply", "headBlockPropertyCard.initHbdSupply"],
+  ["currentHbdSupply", "headBlockPropertyCard.currentHbdSupply"],
+  ["pendingRewardedVestingHive", "headBlockPropertyCard.pendingRewardedVestingHive"],
+  ["totalVestingFundHive", "headBlockPropertyCard.totalVestingFundHive"],
+  ["totalVestingShares", "headBlockPropertyCard.totalVestingShares"],
+  ["hbdInterestRate", "headBlockPropertyCard.hbdInterestRate"],
+  ["hbdPrintRate", "headBlockPropertyCard.hbdPrintRate"],
+  ["lastIrreversibleBlockNumber", "headBlockPropertyCard.lastIrreversibleBlockNumber"],
+  ["availableAccountSubsidies", "headBlockPropertyCard.availableAccountSubsidies"],
+  ["hbdStopPercent", "headBlockPropertyCard.hbdStopPercent"],
+  ["hbdStartPercent", "headBlockPropertyCard.hbdStartPercent"],
+  ["nextMaintenanceTime", "headBlockPropertyCard.nextMaintenanceTime"],
+  ["lastBudgetTime", "headBlockPropertyCard.lastBudgetTime"],
+  ["nextDailyMaintenanceTime", "headBlockPropertyCard.nextDailyMaintenanceTime"],
+  ["contentRewardPercent", "headBlockPropertyCard.contentRewardPercent"],
+  ["vestingRewardPercent", "headBlockPropertyCard.vestingRewardPercent"],
+  ["downvotePoolPercent", "headBlockPropertyCard.downvotePoolPercent"],
+  ["currentRemoveThreshold", "headBlockPropertyCard.currentRemoveThreshold"],
+  ["earlyVotingSeconds", "headBlockPropertyCard.earlyVotingSeconds"],
+  ["midVotingSeconds", "headBlockPropertyCard.midVotingSeconds"],
   [
     "maxConvecutiveRecurrentTransferFailures",
-    "Max consecutive recurrent transfer failures",
+    "headBlockPropertyCard.maxConvecutiveRecurrentTransferFailures",
   ],
-  ["maxRecurrentTransferEndDate", "Max recurrent transfer end date"],
-  ["minRecurrentTransfersRecurrence", "Min recurrent transfers recurrence"],
-  ["maxOpenRecurrentTransfers", "Max open recurrent transfers"],
+  ["maxRecurrentTransferEndDate", "headBlockPropertyCard.maxRecurrentTransferEndDate"],
+  ["minRecurrentTransfersRecurrence", "headBlockPropertyCard.minRecurrentTransfersRecurrence"],
+  ["maxOpenRecurrentTransfers", "headBlockPropertyCard.maxOpenRecurrentTransfers"],
 ]);
 
 interface HeadBlockPropertyCardProps {
@@ -59,14 +60,15 @@ interface HeadBlockPropertyCardProps {
 const buildTableBody = (
   parameters: string[],
   header: string,
-  dynamicGlobalData: any
+  dynamicGlobalData: any,
+  t: (key: string) => string
 ) => {
   return parameters.map((param: string, index: number) => (
     <TableRow
       key={index}
       className="bg-transparent hover:bg-transparent dark:bg-transparent dark:hover:bg-transparent"
     >
-      <TableCell>{cardNameMap.get(param)}</TableCell>
+      <TableCell>{t(cardNameMap.get(param) || '')}</TableCell>
       <TableCell>
         {header === "Blockchain Dates"
           ? convertUTCDateToLocalDate(
@@ -86,6 +88,8 @@ const HeadBlockPropertyCard: React.FC<HeadBlockPropertyCardProps> = ({
   isLoading,
 }) => {
   const { dynamicGlobalData } = useDynamicGlobal() as any;
+    const { t } = useI18n();
+
 
   return (
     <div
@@ -114,7 +118,7 @@ const HeadBlockPropertyCard: React.FC<HeadBlockPropertyCardProps> = ({
             <Table className="bg-transparent dark:bg-transparent">
               <TableBody className="bg-transparent dark:bg-transparent">
                 {dynamicGlobalData?.headBlockDetails &&
-                  buildTableBody(parameters, header, dynamicGlobalData)}
+                  buildTableBody(parameters, header, dynamicGlobalData, t)}
               </TableBody>
             </Table>
           </div>

@@ -6,6 +6,7 @@ import { Table, TableBody, TableRow, TableCell } from "../ui/table";
 import { cn } from "@/lib/utils";
 import { config } from "@/Config";
 import fetchingService from "@/services/FetchingService";
+import { useI18n } from "@/i18n/i18n";
 
 type AccountWitnessVotesCardProps = {
   voters: string[];
@@ -39,6 +40,7 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
   accountName: accountName,
   proxy: proxy,
 }) => {
+  const { t } = useI18n();
   const [isPropertiesHidden, setIsPropertiesHidden] = useState(true);
   const voters = [...initialVoters];
   const [votersForProxy, setVotersForProxy] = useState<any[]>([]);
@@ -109,7 +111,7 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
             onClick={handlePropertiesVisibility}
             className="h-full flex justify-between align-center p-2 hover:bg-rowHover cursor-pointer px-4"
           >
-            <div className="text-lg">Witness Votes (proxy)</div>
+            <div className="text-lg">{t("accountWitnessVotesCard.witnessVotesProxy")}</div>
 
             {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
           </div>
@@ -122,7 +124,7 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
             >
               @{accountName}
             </Link>
-            <span> uses </span>
+            <span> {t("accountWitnessVotesCard.uses")} </span>
 
             {allProxies.map((proxyName, index) => (
               <span key={index}>
@@ -132,15 +134,15 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
                 >
                   @{proxyName}
                 </Link>
-                {index < allProxies.length - 1 && <span>, who uses </span>}
+                {index < allProxies.length - 1 && <span>, {t("accountWitnessVotesCard.whoUses")} </span>}
               </span>
             ))}
 
-            <span> as a voting proxy</span>
+            <span> {t("accountWitnessVotesCard.asVotingProxy")}</span>
             <br />
             <br />
             <h1>
-              Votes of{" "}
+              {t("accountWitnessVotesCard.votesOf")}{" "}
               <Link
                 className="text-link"
                 href={`/@${allProxies[allProxies.length - 1]}`}
@@ -173,7 +175,7 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
           className="h-full flex justify-between align-center p-2 hover:bg-rowHover cursor-pointer px-4"
         >
           <div className="text-lg">
-            Witness Votes ({voters.length} / {config.maxWitnessVotes})
+            {t("accountWitnessVotesCard.witnessVotes")} ({voters.length} / {config.maxWitnessVotes})
           </div>
 
           {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}

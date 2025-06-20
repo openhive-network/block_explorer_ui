@@ -11,8 +11,10 @@ import usePermlinkSearch from "@/hooks/api/common/usePermlinkSearch";
 import { startCommentPermlinkSearch } from "./utils/commentPermlinkSearchHelpers";
 import PostTypeSelector from "./PostTypeSelector";
 import NoValueErrorMessage from "./NoValueErrorMessage";
+import { useI18n } from "@/i18n/i18n";
 
 const CommentsPermlinkSearch = () => {
+const { t } = useI18n();
   const {
     permlinkSearchProps,
     setPermlinkSearchProps,
@@ -100,12 +102,12 @@ const CommentsPermlinkSearch = () => {
 
   return (
     <>
-      <p className="ml-2">Find comments permlinks by account name</p>
+      <p className="ml-2">{t("commentPermalinkSearch.desc")}</p>
       <div className="flex flex-col">
         <AutocompleteInput
           value={accountName}
           onChange={setAccountName}
-          placeholder="Account name"
+          placeholder={t("accountSearch.accountName")}
           inputType="account_name"
           className="w-1/2 bg-theme dark:bg-theme border-0 border-b-2"
           required
@@ -131,7 +133,7 @@ const CommentsPermlinkSearch = () => {
             onClick={onButtonClick}
             disabled={isSearchButtonDisabled || !accountName}
           >
-            Search
+            {t("common.search")}
             {permlinkSearchDataLoading && (
               <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />
             )}
@@ -141,7 +143,7 @@ const CommentsPermlinkSearch = () => {
             isSearchButtonDisabled={isSearchButtonDisabled}
           />
         </div>
-        <Button onClick={handleClearSearch}>Clear</Button>
+        <Button onClick={handleClearSearch}>{t("common.clear")}</Button>
       </div>
     </>
   );

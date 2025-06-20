@@ -1,5 +1,6 @@
 import { ChangeEventHandler } from "react";
 import Explorer from "@/types/Explorer";
+import { useI18n } from "@/i18n/i18n";
 
 const COMMENT_TYPES = ["all", "post", "comment"];
 
@@ -14,9 +15,11 @@ const PostTypeSelector: React.FC<PostTypeSelectorProps> = ({
   handleChange,
   commentType,
 }) => {
+  const { t } = useI18n();
+
   return (
     <div className="flex flex-col gap-2">
-      {showLabel && <label>Select comment type</label>}
+      {showLabel && <label>{t("postTypeSelector.selectCommentType")}</label>}
       <select
         onChange={handleChange}
         value={commentType}
@@ -27,7 +30,7 @@ const PostTypeSelector: React.FC<PostTypeSelectorProps> = ({
             key={index}
             value={type}
           >
-            {type.charAt(0).toUpperCase() + type.slice(1)}
+            {t(`postTypeSelector.commentTypes.${type}`)}
           </option>
         ))}
       </select>

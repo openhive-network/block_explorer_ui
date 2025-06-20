@@ -12,6 +12,7 @@ import {
   Brush,
   Legend,
 } from "recharts";
+import { useI18n } from "../../i18n/i18n";
 
 interface TransactionStatisticsChartProps {
   data: Hive.TransactionStatisticsResponse[] | undefined;
@@ -29,6 +30,7 @@ const TransactionStatisticsChart: React.FC<TransactionStatisticsChartProps> = ({
   dateFormat,
 }) => {
   const { theme } = useTheme();
+    const { t } = useI18n();
   const strokeColor = theme === "dark" ? "#FFF" : "#000";
   const [zoomedDomain, setZoomedDomain] = useState<[number, number] | null>(
     null
@@ -53,6 +55,8 @@ const TransactionStatisticsChart: React.FC<TransactionStatisticsChartProps> = ({
     active?: boolean;
     payload?: any[];
   }) => {
+      const { t } = useI18n();
+
     if (active && payload && payload.length) {
       const { date, trx_count, avg_trx, min_trx, max_trx } = payload[0].payload;
 
@@ -64,7 +68,7 @@ const TransactionStatisticsChart: React.FC<TransactionStatisticsChartProps> = ({
           <div className="grid grid-cols-2 gap-1">
             <div>
               <p className="text-[0.6rem] text-gray-500 uppercase leading-none mb-1">
-                Transactions
+                {t("common.transactions")}
               </p>
               <p className="font-semibold leading-none">
                 {trx_count.toLocaleString()}
@@ -72,19 +76,19 @@ const TransactionStatisticsChart: React.FC<TransactionStatisticsChartProps> = ({
             </div>
             <div>
               <p className="text-[0.6rem] text-gray-500 uppercase leading-none">
-                Avg Trxs
+                {t("transactionStatisticsChart.avgTrxs")}
               </p>
               <p className="font-semibold leading-none">{avg_trx}</p>
             </div>
             <div>
               <p className="text-[0.6rem] text-gray-500 uppercase leading-none">
-                Min Trxs
+                {t("transactionStatisticsChart.minTrxs")}
               </p>
               <p className="font-semibold leading-none">{min_trx}</p>
             </div>
             <div>
               <p className="text-[0.6rem] text-gray-500 uppercase leading-none">
-                Max Trxs
+                {t("transactionStatisticsChart.maxTrxs")}
               </p>
               <p className="font-semibold leading-none">{max_trx}</p>
             </div>
@@ -170,7 +174,7 @@ const TransactionStatisticsChart: React.FC<TransactionStatisticsChartProps> = ({
         <Tooltip content={<CustomTooltip />} />
         <Legend verticalAlign="bottom" height={36} />
         <Line
-          name="Transactions"
+          name={t("common.transactions")}
           type="monotone"
           dataKey="trx_count"
           stroke="#8884d8"

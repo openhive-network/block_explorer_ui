@@ -18,6 +18,8 @@ import { categorizedOperationTypes } from "@/utils/CategorizedOperationTypes";
 import Explorer from "@/types/Explorer";
 import { ChevronDown, Search } from "lucide-react";
 import { FinancialOperationTypes } from "@/utils/FinancialOperationTypes";
+import { useI18n } from "../i18n/i18n";
+
 type OperationTypesDialogProps = {
   operationTypes?: Explorer.ExtendedOperationTypePattern[];
   triggerTitle: string;
@@ -65,6 +67,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
   buttonClassName,
   setSelectedOperations,
 }) => {
+  const { t } = useI18n();
   const [selectedOperationsIds, setSelectedOperationsIds] = useState<number[]>(
     []
   );
@@ -433,7 +436,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
       }}
     >
       <DialogTrigger asChild>
-        <Button data-testid="operations-types-btn">Operation Types</Button>
+        <Button data-testid="operations-types-btn">{t("operationTypesDialog.operationTypes")}</Button>
       </DialogTrigger>
       {selectedOperations && selectedOperations?.length ? (
         <Chip
@@ -448,7 +451,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
         <DialogHeader className="pb-0">
           <div className="flex flex-col sm:flex-row justify-between items-center px-2">
             <DialogTitle className="flex pb-1">
-              Operation Types Filters
+              {t("operationTypesDialog.operationTypesFilters")}
             </DialogTitle>
             <div className="flex space-x-1 flex-wrap mt-1 gap-y-1">
               <Button
@@ -456,42 +459,42 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
                 className="operations-button text-xs"
                 onClick={selectAll}
               >
-                All
+                {t("operationTypesDialog.all")}
               </Button>
               <Button
                 type="button"
                 className="operations-button text-xs"
                 onClick={selectReal}
               >
-                Real
+               {t("operationTypesDialog.real")}
               </Button>
               <Button
                 type="button"
                 className="operations-button text-xs"
                 onClick={selectVirtual}
               >
-                Virtual
+                {t("operationTypesDialog.virtual")}
               </Button>
               <Button
                 type="button"
                 className="operations-button text-xs"
                 onClick={selectFinancial}
               >
-                Financial
+                {t("operationTypesDialog.financial")}
               </Button>
               <Button
                 type="button"
                 className="operations-button text-xs"
                 onClick={invertSelection}
               >
-                Invert
+                {t("operationTypesDialog.invert")}
               </Button>
               <Button
                 type="button"
                 className="operations-button text-xs"
                 onClick={handleOnClear}
               >
-                Clear
+                {t("common.clear")}
               </Button>
             </div>
           </div>
@@ -500,7 +503,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4" />
               <Input
                 type="text"
-                placeholder="Search operations..."
+                placeholder={t("operationTypesDialog.searchOperations")}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 pr-3 w-full"
@@ -513,14 +516,14 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
               className="bg-inherit text-xs px-2"
               onClick={handleExpandAll}
             >
-              Expand All
+              {t("operationTypesDialog.expandAll")}
             </Button>
             <Button
               type="button"
               className="bg-inherit text-xs px-2"
               onClick={handleCollapseAll}
             >
-              Collapse All
+              {t("operationTypesDialog.collapseAll")}
             </Button>
           </div>
         </DialogHeader>
@@ -545,13 +548,13 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
                   onOpenChange(false);
                 }}
               >
-                Cancel
+                {t("common.cancel")}
               </Button>
               <Button
                 type="submit"
                 onClick={handleOnSubmit}
               >
-                Apply
+                 {t("operationTypesDialog.apply")}
               </Button>
             </div>
           </div>

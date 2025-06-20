@@ -21,6 +21,7 @@ import useTransactionStatistics from "@/hooks/api/homePage/useTransactionStatist
 import TransactionStatisticsChart from "./TransactionStatisticsChart";
 import Hive from "@/types/Hive";
 import { Loader2 } from "lucide-react";
+import { useI18n } from "../../i18n/i18n";
 
 interface TransactionStatisticsModalProps {
   isOpen: boolean;
@@ -31,6 +32,8 @@ interface TransactionStatisticsModalProps {
 const TransactionStatisticsFullChartDialog: React.FC<
   TransactionStatisticsModalProps
 > = ({ isOpen, onClose, data: initialData }) => {
+  const { t } = useI18n();
+
   const [granularity, setGranularity] = useState<
     "daily" | "monthly" | "yearly"
   >("daily");
@@ -106,14 +109,14 @@ const TransactionStatisticsFullChartDialog: React.FC<
         <div className="max-h-[90vh] overflow-y-auto overflow-x-hidden scrollableContainer">
           <DialogHeader>
             <div className="mb-4">
-              <DialogTitle>Transaction Statistics Chart</DialogTitle>
+              <DialogTitle>{t("transactionStatisticsFullChartDialog.title")}</DialogTitle>
            
             </div>
           </DialogHeader>
 
           <div className="flex flex-col md:flex-row items-start gap-4 mb-4 w-full">
             <div className="flex flex-col gap-y-3 w-1/2 md:w-1/4">
-              <Label>Granularity</Label>
+              <Label>{t("transactionStatisticsFullChartDialog.granularity")}</Label>
               <Select
                 onValueChange={(value) => {
                   setGranularity(value as "daily" | "monthly" | "yearly");
@@ -123,19 +126,19 @@ const TransactionStatisticsFullChartDialog: React.FC<
                 defaultValue="daily"
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select Granularity" />
+                  <SelectValue placeholder={t("transactionStatisticsFullChartDialog.selectGranularity")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="daily">Daily</SelectItem>
-                  <SelectItem value="monthly">Monthly</SelectItem>
-                  <SelectItem value="yearly">Yearly</SelectItem>
+                  <SelectItem value="daily">{t("common.daily")}</SelectItem>
+                  <SelectItem value="monthly">{t("common.monthly")}</SelectItem>
+                  <SelectItem value="yearly">{t("common.yearly")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             {/* Block RANGE FILTER */}
             <div className="w-full flex flex-col mb-4">
-              <Label>Filters</Label>
+              <Label>{t("common.filters")}</Label>
               <div className="m-0 p-0 gap-y-0">
                 <SearchRanges
                   rangesProps={searchRanges}
@@ -149,7 +152,7 @@ const TransactionStatisticsFullChartDialog: React.FC<
                     data-testid="apply-filters"
                     disabled={isSearchButtonDisabled}
                   >
-                    Search
+                    {t("common.search")}
                   </Button>
                   {isSearchButtonDisabled && (
                     <label className="ml-2 text-gray-300 dark:text-gray-500 ">
@@ -161,7 +164,7 @@ const TransactionStatisticsFullChartDialog: React.FC<
                   onClick={handleFilterClear}
                   data-testid="clear-filters"
                 >
-                  Clear
+                  {t("common.clear")}
                 </Button>
               </div>
             </div>

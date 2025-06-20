@@ -8,11 +8,13 @@ import AddressSwitchedDialog from "./AddressSwitchedDialog";
 import { useTheme } from "@/contexts/ThemeContext";
 import HealthCheckerDialog from "./HealthCheckerDialog";
 import { useHealthCheckerContext } from "@/contexts/HealthCheckerContext";
+import { useI18n } from "../i18n/i18n";
 
 const { lastCommitHashRepoUrl, gitHash } = config;
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+  const { t } = useI18n();
   const { hafbeVersionData } = useHafbeVersion();
   const { nodeAddress, apiAddress, setNodeAddress, setApiAddress } =
     useAddressesContext();
@@ -160,7 +162,7 @@ const Footer = () => {
           {/* Columns */}
           <div>
             <h4 className="text-md font-semibold mb-2 dark:text-white">
-              Explore
+              {t("footer.explore")}
             </h4>
             {/* Header */}
             <ul className="list-none p-0">
@@ -172,7 +174,7 @@ const Footer = () => {
                   aria-label="Hive"
                   className="hover:opacity-75"
                 >
-                  Hive Official
+                  {t("footer.hiveOfficial")}
                 </Link>
               </li>
 
@@ -184,18 +186,18 @@ const Footer = () => {
                   aria-label="Hive"
                   className="hover:opacity-75"
                 >
-                  Hive Blog
+                  {t("footer.hiveBlog")}
                 </Link>
               </li>
 
               <li>
                 <Link href="/witnesses" className="hover:opacity-75">
-                  Witnesses
+                  {t("common.witnesses")}
                 </Link>
               </li>
               <li>
                 <Link href="/schedule" className="hover:opacity-75">
-                  Witness Schedule
+                  {t("footer.witnessSchedule")}
                 </Link>
               </li>
             </ul>
@@ -203,7 +205,7 @@ const Footer = () => {
 
           <div>
             <h4 className="text-md font-semibold mb-2 dark:text-white">
-              Resources
+              {t("footer.resources")}
             </h4>
             {/* Header */}
             <ul className="list-none p-0">
@@ -214,7 +216,7 @@ const Footer = () => {
                   rel="noopener noreferrer"
                   className="hover:opacity-75"
                 >
-                  Hive Developer Portal
+                  {t("footer.hiveDeveloperPortal")}
                 </Link>
               </li>
               <li>
@@ -224,7 +226,7 @@ const Footer = () => {
                   rel="noopener noreferrer"
                   className="hover:opacity-75"
                 >
-                  Hive Glossary
+                  {t("footer.hiveGlossary")}
                 </Link>
               </li>
               <li>
@@ -255,12 +257,12 @@ const Footer = () => {
 
           <div>
             <h4 className="text-md font-semibold mb-2 dark:text-white">
-              Technical
+              {t("footer.technical")}
             </h4>
             {/* Header */}
             <ul className="list-none p-0 ">
               <li>
-                <span>Last Commit #: </span>
+                <span>{t("footer.lastCommit")}#: </span>
                 <Link
                   href={lastCommitHashRepoUrl}
                   target="_blank"
@@ -271,21 +273,21 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <span>Hafbe version #: </span>
+                <span>{t("footer.hafbeVersion")}#: </span>
                 {hafbeVersionData}
               </li>
               {!! nodeHealthCheckerService &&
-                <li><HealthCheckerDialog trigerText="Hive node:" apiAddress={nodeAddress} healthCheckerService={nodeHealthCheckerService} /></li>
+                <li><HealthCheckerDialog trigerText={t("footer.hiveNode")} apiAddress={nodeAddress} healthCheckerService={nodeHealthCheckerService} /></li>
               }
               {!! restApiHealthCheckerService &&
-                <li><HealthCheckerDialog trigerText="Explorer backend API:" apiAddress={apiAddress} healthCheckerService={restApiHealthCheckerService} /></li>
+                <li><HealthCheckerDialog trigerText={t("footer.explorerBackendApi")} apiAddress={apiAddress} healthCheckerService={restApiHealthCheckerService} /></li>
               }
             </ul>
           </div>
         </div>
 
         <div className="mt-4 text-left text-xs">
-          <p>© {currentYear} HIVE Block Explorer. All rights reserved.</p>
+          <p>© {currentYear} HIVE Block Explorer. {t("footer.allRightsReserved")}.</p>
         </div>
       </div>
     </footer>

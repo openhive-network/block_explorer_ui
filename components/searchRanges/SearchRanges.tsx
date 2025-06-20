@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectTrigger, SelectItem } from "../ui/select";
 import { Input } from "../ui/input";
 import DateTimePicker from "../DateTimePicker";
 import ErrorMessage from "../ErrorMessage";
+import { useI18n } from "../../i18n/i18n";
 
 interface SearchRangesProps {
   rangesProps: SearchRangesResult;
@@ -34,6 +35,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
   rangesProps,
   setIsSearchButtonDisabled,
 }) => {
+  const { t } = useI18n();
   const {
     rangeSelectOptions,
     timeSelectOptions,
@@ -99,11 +101,11 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
 
   const validateFromBlock = (numVal: number | undefined) => {
     if (numVal !== undefined && numVal <= 0) {
-      setRangeError("Block Number must be a positive number");
+      setRangeError(t("searchRanges.blockNumberPositive"));
       return false;
     }
     if (numVal && toBlock && !isNaN(numVal) && numVal > toBlock) {
-      setRangeError("From block must be less than To block");
+      setRangeError(t("searchRanges.fromBlockLessThanToBlock"));
       return false;
     }
     return true;
@@ -111,11 +113,11 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
 
   const validateToBlock = (numVal: number | undefined) => {
     if (numVal !== undefined && numVal <= 0) {
-      setRangeError("Block Number must be a positive number");
+      setRangeError(t("searchRanges.blockNumberPositive"));
       return false;
     }
     if (numVal && fromBlock && !isNaN(numVal) && numVal < fromBlock) {
-      setRangeError("To block must be greater than From block");
+      setRangeError(t("searchRanges.toBlockGreaterThanFromBlock"));
       return false;
     }
     return true;
@@ -215,7 +217,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
               setLocalLastBlocks(sanitizeNumericInput(e.target.value))
             }
             onBlur={handleLastBlocksBlur}
-            placeholder="Last *"
+            placeholder={t("searchRanges.last")}
           />
         </div>
       )}
@@ -231,7 +233,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
               setLocalLastTimeUnit(sanitizeNumericInput(e.target.value, true))
             }
             onBlur={handleLastTimeUnitBlur}
-            placeholder="Last *"
+            placeholder={t("searchRanges.last")}
           />
           <Select
             onValueChange={setTimeUnitSelectKey}
@@ -271,7 +273,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
                 setLocalFromBlock(sanitizeNumericInput(e.target.value))
               }
               onBlur={handleFromBlockBlur}
-              placeholder="From *"
+              placeholder={t("searchRanges.from")}
             />
           </div>
           <div className="w-full">
@@ -284,7 +286,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
                 setLocalToBlock(sanitizeNumericInput(e.target.value))
               }
               onBlur={handleToBlockBlur}
-              placeholder="To"
+              placeholder={t("searchRanges.to")}
             />
           </div>
         </div>
@@ -301,7 +303,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
       {rangeSelectKey === "timeRange" && (
         <div className="flex flex-col mt-5">
           <div className="flex flex-col w-full mb-4">
-            <label className="ml-2 my-2">From date</label>
+            <label className="ml-2 my-2">{t("searchRanges.fromDate")}</label>
             <DateTimePicker
               date={startDate ?? new Date()}
               setDate={setStartDate}
@@ -309,7 +311,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
             />
           </div>
           <div className="flex flex-col w-full">
-            <label className="ml-2 mb-2">To date</label>
+            <label className="ml-2 mb-2">{t("searchRanges.toDate")}</label>
             <DateTimePicker
               date={endDate ?? new Date()}
               setDate={setEndDate}

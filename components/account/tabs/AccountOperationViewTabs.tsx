@@ -8,6 +8,7 @@ import CommentsTabContent from "./comments/CommentsTabContent";
 import { useTabs } from "@/contexts/TabsContext";
 import FilterSectionToggle from "../FilterSectionToggle";
 import { setLocalStorage, getLocalStorage } from "@/utils/LocalStorage";
+import { useI18n } from "@/i18n/i18n";
 
 interface AccountOperationViewTabs {
   liveDataEnabled: boolean;
@@ -16,6 +17,7 @@ interface AccountOperationViewTabs {
 const AccountOperationViewTabs: React.FC<AccountOperationViewTabs> = ({
   liveDataEnabled,
 }) => {
+  const { t } = useI18n(); 
   const router = useRouter();
   const { activeTab, setActiveTab } = useTabs();
 
@@ -93,19 +95,19 @@ const AccountOperationViewTabs: React.FC<AccountOperationViewTabs> = ({
             className="rounded cursor-pointer hover:bg-buttonHover"
             value="operations"
           >
-            Operations
+            {t("accountOperationViewTabs.operations")}
           </TabsTrigger>
           <TabsTrigger
             className="rounded cursor-pointer hover:bg-buttonHover"
             value="comments"
           >
-            Comments
+            {t("accountOperationViewTabs.comments")}
           </TabsTrigger>
           <TabsTrigger
             className="rounded cursor-pointer hover:bg-buttonHover"
             value="interactions"
           >
-            Interactions
+            {t("accountOperationViewTabs.interactions")}
           </TabsTrigger>
         </div>
         <div>

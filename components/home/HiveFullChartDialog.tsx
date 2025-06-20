@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Loader2 } from "lucide-react";
-
+import { useI18n } from "../../i18n/i18n";
 import { config } from "@/Config";
 import useMarketHistory from "@/hooks/common/useMarketHistory";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -34,6 +34,7 @@ const HiveFullChartDialog: React.FC<HiveFullChartDialogProps> = ({
   handleHiveFullChartVisibility,
 }) => {
   const { settings } = useUserSettingsContext();
+  const { t } = useI18n();
   const [activeChartTab, setActiveChartTab] = useState("candle");
 
   const handleTabChange = (value: string) => {
@@ -90,14 +91,14 @@ const HiveFullChartDialog: React.FC<HiveFullChartDialogProps> = ({
           <div>
             <div className="flex justify-between items-center mb-4">
               <div>
-                <label>Start Date</label>
+                <label>{t("hiveFullChartDialog.startDate")}</label>
                 <DateTimePicker
                   date={marketHistoryStartDate}
                   setDate={setMarketHistoryStartDate}
                 />
               </div>
               <div>
-                <label>End Date</label>
+                <label>{t("hiveFullChartDialog.endDate")}</label>
                 <DateTimePicker
                   date={marketHistoryEndDate}
                   setDate={setMarketHistoryEndDate}
@@ -115,13 +116,13 @@ const HiveFullChartDialog: React.FC<HiveFullChartDialogProps> = ({
                     className="rounded cursor-pointer hover:bg-buttonHover"
                     value="candle"
                   >
-                    Candle
+                    {t("hiveFullChartDialog.candle")}
                   </TabsTrigger>
                   <TabsTrigger
                     className="rounded cursor-pointer hover:bg-buttonHover"
                     value="line"
                   >
-                    Line
+                    {t("hiveFullChartDialog.line")}
                   </TabsTrigger>
                 </div>
               </TabsList>

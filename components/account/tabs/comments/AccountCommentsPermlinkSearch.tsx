@@ -8,6 +8,7 @@ import { useSearchesContext } from "@/contexts/SearchesContext";
 import PostTypeSelector from "@/components/home/searches/PostTypeSelector";
 import usePermlinkCommentSearch from "./usePermlinkCommentSearch";
 import { removeStorageItem } from "@/utils/LocalStorage";
+import { useI18n } from "@/i18n/i18n";
 
 interface AccountCommentsPermlinkSearchProps {
   accountName: string;
@@ -19,6 +20,7 @@ interface AccountCommentsPermlinkSearchProps {
 const AccountCommentsPermlinkSearch: React.FC<
   AccountCommentsPermlinkSearchProps
 > = ({ accountName, isDataLoading, setIsFiltersActive, setIsVisible }) => {
+  const { t } = useI18n();
   const { setPermlinkPaginationPage, setCommentType, searchRanges } =
     useSearchesContext();
 
@@ -54,7 +56,7 @@ const AccountCommentsPermlinkSearch: React.FC<
     removeStorageItem("is_comments_filters_visible");
   };
 
-  const buttonLabel = `Value field can't be empty`;
+  const buttonLabel = t("noValueErrorMessage.valueFieldEmpty");
 
   return (
     <>
@@ -77,7 +79,7 @@ const AccountCommentsPermlinkSearch: React.FC<
             onClick={onSearchButtonClick}
             disabled={isSearchButtonDisabled}
           >
-            Search
+            {t("common.search")}
             {isDataLoading && <Loader2 className="ml-2 animate-spin h-4 w-4" />}
           </Button>
           {isSearchButtonDisabled ? (
@@ -86,7 +88,7 @@ const AccountCommentsPermlinkSearch: React.FC<
             </label>
           ) : null}
         </div>
-        <Button onClick={onClearButtonClick}>Clear</Button>
+        <Button onClick={onClearButtonClick}>{t("common.clear")}</Button>
       </div>
     </>
   );
