@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { stringify } from "csv-stringify";
 import { Download } from "lucide-react";
 import { Loader2 } from "lucide-react";
+import { useI18n } from "@/i18n/i18n";
 
 interface DataItem {
   [key: string]: any;
@@ -33,6 +34,7 @@ const DataExport: React.FC<DataExportProps> = ({
   className,
   title = "Export",
 }) => {
+    const { t } = useI18n();
   const [isExporting, setIsExporting] = useState(false);
   const [open, setOpen] = React.useState(false);
   const [selectedColumns, setSelectedColumns] = useState<string[]>([]);
@@ -49,9 +51,9 @@ const DataExport: React.FC<DataExportProps> = ({
       setNoDataMessage(null); // Clear no data message
     } else {
       setSelectedColumns([]);
-      setNoDataMessage("No data available to export.");
+      setNoDataMessage(t("dataExport.noDataAvailable"));
     }
-  }, [allColumns, data]);
+  }, [allColumns, data, t]);
 
   useEffect(() => {
     setIsExportButtonDisabled(selectedColumns.length === 0);
@@ -59,7 +61,7 @@ const DataExport: React.FC<DataExportProps> = ({
 
   const handleExport = async () => {
     if (!data || data.length === 0) {
-      return "No data to export.";
+      return t("dataExport.noDataToExport");
     }
 
     setIsExporting(true);
@@ -149,17 +151,17 @@ const DataExport: React.FC<DataExportProps> = ({
 
         >
           <Download className="h-4 w-4" />
-          <span>{title}</span>
+          <span>{t("dataExport.export")}</span>
         </div>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px] flex flex-col align-center overflow-auto px-0 pt-10">
         <DialogHeader className="pb-0">
           <div className="px-2">
             <DialogTitle className="flex pb-1">
-              Select Columns to Export
+              {t("dataExport.selectColumns")}
             </DialogTitle>
             <DialogDescription>
-              Choose which columns you want to include in the CSV export.
+             {t("dataExport.chooseColumns")}
             </DialogDescription>
           </div>
           <div className="flex justify-end space-x-2 px-2 pt-2">
@@ -169,7 +171,7 @@ const DataExport: React.FC<DataExportProps> = ({
               onClick={handleSelectAll}
               disabled={isExporting || noDataMessage !== null}
             >
-              Select All
+              {t("dataExport.selectAll")}
             </Button>
             <Button
               variant="ghost"
@@ -177,7 +179,7 @@ const DataExport: React.FC<DataExportProps> = ({
               onClick={handleDeselectAll}
               disabled={isExporting || noDataMessage !== null}
             >
-              Deselect All
+              {t("dataExport.deselectAll")}
             </Button>
           </div>
         </DialogHeader>
@@ -220,7 +222,7 @@ const DataExport: React.FC<DataExportProps> = ({
             {isExporting ? (
               <Loader2 className="animate-spin h-4 w-4 mr-2" />
             ) : (
-              "Export"
+              t("common.export")
             )}
           </Button>
         </DialogFooter>

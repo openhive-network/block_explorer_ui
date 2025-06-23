@@ -19,6 +19,7 @@ import { Card, CardContent, CardHeader } from "../ui/card";
 import CurrentBlockCard from "./CurrentBlockCard";
 import HeadBlockHiveChartCard from "./HeadBlockHiveChartCard";
 import HiveFullChartDialog from "./HiveFullChartDialog";
+import { useI18n } from "../../i18n/i18n";
 
 interface HeadBlockCardProps {
   headBlockCardData?: Explorer.HeadBlockCardData | any;
@@ -56,6 +57,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
   blockDetails,
   opcount = 0,
 }) => {
+  const { t } = useI18n();
   const isBlockCardLoading =
     !headBlockCardData || !headBlockCardData.headBlockDetails ? true : false;
 
@@ -247,7 +249,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
                 size={18}
                 strokeWidth={2}
               />
-              <span className="font-semibold">Blockchain Time:</span>
+              <span className="font-semibold">{t("headBlockCard.blockchainTime")}:</span>
               <span className="font-semibold text-right">
                 {liveBlockchainTime
                   ? getFormattedLiveBlockchainTime(liveBlockchainTime)
@@ -266,7 +268,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
                   })
                 }
                 className="text-base"
-                leftLabel="Live data"
+                leftLabel={t("headBlockCard.liveData")}
               />
             </div>
           </div>
@@ -285,37 +287,37 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
           {/* Other Information*/}
           <div className="data-box">
             <div>
-              <span>Feed Price:</span> {liveFeedPrice}
+              <span>{t("headBlockCard.feedPrice")}:</span> {liveFeedPrice}
             </div>
             <div>
-              <span>Vests To Hive Ratio:</span> {liveVestsToHiveRatio} VESTS
+              <span>{t("headBlockCard.vestsToHiveRatio")}:</span> {liveVestsToHiveRatio} VESTS
             </div>
           </div>
 
           <div>
             <HeadBlockHiveChartCard
-              header="Hive Price Chart"
+              header={t("headBlockCard.hivePriceChart")}
               isParamsHidden={hiddenPropertiesByCard.hiveChart}
               handleHideParams={handleHideHiveChart}
               handleHiveFullChartVisibility={handleHiveFullChartVisibility}
             />
             <HeadBlockPropertyCard
               parameters={fundAndSupplyParameters}
-              header="Fund and Supply"
+              header={t("headBlockCard.fundAndSupply")}
               isParamsHidden={hiddenPropertiesByCard.supplyCard}
               handleHideParams={handleHideSupplyParams}
               isLoading={isBlockCardLoading}
             />
             <HeadBlockPropertyCard
               parameters={hiveParameters}
-              header="Hive Parameters"
+              header={t("headBlockCard.hiveParameters")}
               isParamsHidden={hiddenPropertiesByCard.hiveParamsCard}
               handleHideParams={handleHideHiveParams}
               isLoading={isBlockCardLoading}
             />
             <HeadBlockPropertyCard
               parameters={blockchainDates}
-              header="Blockchain Dates"
+              header={t("headBlockCard.blockchainDates")}
               isParamsHidden={hiddenPropertiesByCard.timeCard}
               handleHideParams={handleHideBlockchainDates}
               isLoading={isBlockCardLoading}

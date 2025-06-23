@@ -9,8 +9,11 @@ import SearchBar from "./SearchBar";
 import SyncInfo from "./home/SyncInfo";
 import ViewPopover from "./ViewPopover";
 import ThemeToggle from "./ThemeToggle";
+import LanguageSelector from "./home/LanguageSelector";
+import { useI18n } from "@/i18n/i18n";
 
 export default function Navbar() {
+  const { t } = useI18n();
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchBarOpen, setSearchBarOpen] = useState(false);
@@ -67,7 +70,7 @@ export default function Navbar() {
                       className="text-lg font-bold cursor-pointer"
                       onClick={() => setSettingsOpen(!settingsOpen)}
                     >
-                      Settings
+                      {t("common.settings")}
                     </span>
                   </div>
                   <ChevronDown
@@ -78,9 +81,12 @@ export default function Navbar() {
                 </div>
                 {settingsOpen && (
                   <div className="mt-2 pl-8 space-y-2">
-                    <div className="py-1 border-b-2 flex items-center">
+                    <div className="py-1 border-b-2 flex items-start justify-start">
                       <ThemeToggle />
-                      <span className="text-base ml-2">Dark/Light Mode</span>
+                      <span className="text-base ml-2">{t("navbar.darkLightMode")}</span>
+                    </div>
+                    <div className="py-1 border-b-2 flex items-start justify-start">
+                      <LanguageSelector />
                     </div>
                     <div className="py-1 max-w-fit">
                       <ViewPopover isMobile={isMobile} />
@@ -95,7 +101,7 @@ export default function Navbar() {
                   onClick={() => setMenuOpen(false)}
                 >
                   <Workflow className="mr-2" size={22} />
-                  <span className="text-lg font-bold">Witnesses</span>
+                  <span className="text-lg font-bold">{t("common.witnesses")}</span>
                 </Link>
               </div>
             </div>
@@ -123,12 +129,13 @@ export default function Navbar() {
                       className="ml-4 whitespace-nowrap"
                       data-testid="hive-block-explorer"
                     >
-                      Hive Block Explorer
+                      {t("navbar.hiveBlockExplorer")}
                     </div>
                   </Link>
                   <div className="flex items-center gap-x-2 w-[60%] justify-end">
                     <SearchBar open={true} className=" justify-end" />
                     <ViewPopover />
+                    <LanguageSelector />
                     <SyncInfo />
                     <ThemeToggle />
                   </div>

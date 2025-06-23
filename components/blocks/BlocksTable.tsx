@@ -32,6 +32,7 @@ import DataCountMessage from "../DataCountMessage";
 import { Button } from "../ui/button";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import BlockOperationsContent from "./BlockOperationContent";
+import { useI18n } from "@/i18n/i18n";
 
 interface BlocksTableProps {
   rows: BlockRow[]; // Changed to BlockRow, since we added the counts
@@ -54,6 +55,7 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
   isMainPageTable = false,
   allBlocksPageLink,
 }) => {
+  const { t } = useI18n();
   const [expandedRows, setExpandedRows] = useState<number[]>([]);
   const expandedRowRef = useRef<HTMLTableRowElement>(null); // Ref to expanded row
 
@@ -124,19 +126,19 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
 
     return rows.map((block) => {
       return {
-        Block: block.block_num,
-        Producer: block.producer_account,
-        hash: formatHash(block.hash),
-        "prev hash": formatHash(block.prev),
-        Timestamp: formatAndDelocalizeTime(block.created_at),
-        "Producer reward (VESTS)": formatNumber(
+        [t("blocksTable.block")]: block.block_num,
+        [t("blocksTable.producer")]: block.producer_account,
+        [t("blocksTable.hash")]: formatHash(block.hash),
+        [t("blocksTable.prevHash")]: formatHash(block.prev),
+        [t("blocksTable.timestamp")]: formatAndDelocalizeTime(block.created_at),
+        [t("blocksTable.producerRewardVests")]: formatNumber(
           block.producer_reward,
           true,
           false
         ),
-        Transactions: block.trx_count,
-        "Operation Count": block.operationCount, // Include the counts
-        "Virtual Ops Count": block.virtualOperationCount,
+        [t("blocksTable.transactions")]: block.trx_count,
+        [t("blocksTable.operationCount")]: block.operationCount,
+        [t("blocksTable.virtualOpsCount")]: block.virtualOperationCount,
       };
     });
   };
@@ -155,7 +157,7 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
                   data-testid="go-to-result-page"
                   className="w-full md:w-auto"
                 >
-                  Go to result page
+                  {t("common.goToResultPage")}
                 </Button>
               </Link>
             </div>
@@ -190,7 +192,7 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
               data-testid="go-to-result-page"
               className="w-full md:w-auto"
             >
-              Go to result page
+              {t("common.goToResultPage")}
             </Button>
           </Link>
         </div>
@@ -203,11 +205,11 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
       >
         <DataCountMessage
           count={totalCount || 0}
-          dataType="blocks"
+          dataType={t("common.blocks")}
         />
         <DataExport
           data={prepareExportData()}
-          filename={`blocks.csv`}
+          filename={`${t("blocksTable.exportFilenamePrefix")}.csv`}
           className="mb-2"
         />
       </div>
@@ -246,6 +248,7 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({
   toggleRow,
   isMainPageTable = false,
 }) => {
+  const { locale: appLocale, t } = useI18n();
   const [isNewRow, setIsNewRow] = useState(row.isNew);
   const [bgColor, setBgColor] = useState("bg-theme"); // Initial background color
   const { hiveChain } = useHiveChainContext();
@@ -305,7 +308,7 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({
             </Link>
             <CopyButton
               text={String(row.block_num)}
-              tooltipText="Copy block number"
+              tooltipText={t("common.copyBlockNumber")}
             />
           </div>
         </TableCell>
@@ -329,7 +332,7 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({
                 </Link>
                 <CopyButton
                   text={String(row.prev)}
-                  tooltipText="Copy prev block hash"
+                  tooltipText={t("blocksTable.copyPrevBlockHash")}
                 />
               </div>
             </TableCell>
@@ -343,7 +346,7 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({
                 </Link>
                 <CopyButton
                   text={String(row.hash)}
-                  tooltipText="Copy block hash"
+                  tooltipText={t("common.copyBlockHash")}
                 />
               </div>
             </TableCell>
@@ -356,6 +359,7 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({
               <TooltipTrigger asChild>
                 <div>
                   <TimeAgo
+                    locale={appLocale}
                     datetime={new Date(formatAndDelocalizeTime(row.created_at))}
                   />
                 </div>

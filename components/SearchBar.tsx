@@ -5,6 +5,8 @@ import AutocompleteInput from "./ui/AutoCompleteInput";
 import { Search } from "lucide-react";
 import { X } from "lucide-react";
 import useMediaQuery from "@/hooks/common/useMediaQuery";
+import { useI18n } from "@/i18n/i18n";
+
 interface SearchBarProps {
   open: boolean;
   onChange?: (open: boolean) => void;
@@ -16,6 +18,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ open, onChange, className }) => {
   const [isAutocompleteVisible, setAutocompleteVisible] = useState(open);
   const [isClicked, setIsClicked] = useState(false);
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const { t } = useI18n();
 
   const handleToggle = () => {
     setAutocompleteVisible(!isAutocompleteVisible);
@@ -38,7 +41,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ open, onChange, className }) => {
         <AutocompleteInput
           value={searchTerm}
           onChange={setSearchTerm}
-          placeholder="User, Block, Trx #"
+          placeholder={t("searchBar.placeholder")}
           inputType={[
             "block_num",
             "transaction_hash",

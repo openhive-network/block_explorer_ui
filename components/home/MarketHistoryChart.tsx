@@ -14,6 +14,7 @@ import moment from "moment";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { colorMap } from "../balanceHistory/BalanceHistoryChart";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useI18n } from "../../i18n/i18n";
 
 const CustomTooltip = ({
   active,
@@ -22,15 +23,17 @@ const CustomTooltip = ({
   active?: boolean;
   payload?: any[];
 }) => {
+  const { t } = useI18n();
+
   if (active && payload && payload.length) {
     return (
       <div className="bg-buttonHover text-text p-2 rounded-xl">
         {payload.map(({ payload: { tooltipDate, close, volume } }) => {
           return (
             <div key={tooltipDate}>
-              <p>{`Date: ${tooltipDate}`}</p>
-              <p>{`Close Price: $${close}`}</p>
-              <p>{`Volume: ${volume.toLocaleString("en-US")} HIVE`}</p>
+              <p>{t("marketHistoryChart.date")}: {tooltipDate}</p>
+              <p>{t("marketHistoryChart.closePrice")}: ${close}</p>
+              <p>{t("marketHistoryChart.volume")}: {volume.toLocaleString("en-US")} HIVE</p>
             </div>
           );
         })}
@@ -67,6 +70,7 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({
 }) => {
   const { hiveChain } = useHiveChainContext();
   const { theme } = useTheme();
+  const { t } = useI18n();
 
   const [chartData, setChartData] = useState<ChartData[] | undefined>(
     undefined
@@ -125,7 +129,7 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({
           height={36}
         />
         <Line
-          name={`Hive Price: $${lastHivePrice ?? 0}`}
+          name={`${t("marketHistoryChart.hivePrice")}: $${lastHivePrice ?? 0}`}
           type="monotone"
           dataKey="close"
           stroke={colorMap.HIVE}

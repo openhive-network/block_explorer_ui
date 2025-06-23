@@ -9,6 +9,7 @@ import {
   TooltipTrigger,
   TooltipPortal,
 } from "./ui/hybrid-tooltip";
+import { useI18n } from "../i18n/i18n";
 
 interface CopyJSONProps {
   value: string | object;
@@ -17,6 +18,7 @@ interface CopyJSONProps {
 
 const CopyJSON: React.FC<CopyJSONProps> = ({ value, className }) => {
   const [copied, setCopied] = useState(false);
+  const { t } = useI18n();
 
   const fallbackCopy = (text: string) => {
     const textArea = document.createElement("textarea");
@@ -62,7 +64,7 @@ const CopyJSON: React.FC<CopyJSONProps> = ({ value, className }) => {
         </TooltipTrigger>
         <TooltipPortal>
           <TooltipContent className="bg-theme text-text">
-            Copy JSON to clipboard.
+            {t("common.copyJsonToClipboard")}
           </TooltipContent>
         </TooltipPortal>
       </Tooltip>

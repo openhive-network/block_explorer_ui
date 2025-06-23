@@ -20,6 +20,7 @@ import useLastBlocks from "@/hooks/api/homePage/useLastBlocks";
 import { Card, CardHeader, CardTitle } from "./ui/card";
 import { MoveRight } from "lucide-react";
 import Link from "next/link";
+import { useI18n } from "../i18n/i18n";
 
 interface LastBlocksWidgetProps {
   headBlock?: number;
@@ -47,11 +48,13 @@ const CustomTooltip = ({
   payload?: any[];
   label?: string;
 }) => {
+  const { t } = useI18n();
+
   if (active && payload && payload.length) {
     const totalOperations = payload.reduce((acc, pld) => acc + pld.value, 0);
     return (
       <div className="data-box">
-        <p className="font-bold text-xl">{`Block ${label}`}</p>
+        <p className="font-bold text-xl">{t("common.block")} {label}</p>
         <div className="my-3 flex items-center">
           <Image
             className="rounded-full"
@@ -62,7 +65,7 @@ const CustomTooltip = ({
           />
           <p className="ml-4 font-semibold">{payload[0].payload.witness}</p>
         </div>
-        <div className="text-sm opacity-80">Operations: {totalOperations}</div>
+        <div className="text-sm opacity-80">{t("common.operations")}: {totalOperations}</div>
         <div className="mt-2 space-y-2">
           {payload.map((pld, index) => (
             <div
@@ -126,6 +129,8 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
   className = "",
   strokeColor,
 }) => {
+  const { t } = useI18n();
+
   const [data, setData] = useState<ChartBlockData[]>([]);
   const router = useRouter();
 
@@ -183,13 +188,13 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
       data-testid="last-block-widget"
     >
       <CardHeader>
-        <CardTitle>Last Blocks</CardTitle>
+        <CardTitle>{t("lastBlocksWidget.lastBlocks")}</CardTitle>
         <Link
           href="/blocks"
           className="text-sm flex items-center space-x-1 w-full text-center justify-center"
           data-testid="see-witnesses-link"
         >
-          <span>See More</span>
+          <span>{t("common.seeMore")}</span>
           <MoveRight width={18} />
         </Link>
       </CardHeader>

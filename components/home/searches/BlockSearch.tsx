@@ -29,8 +29,10 @@ import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
 import { startBlockSearch } from "./utils/blockSearchHelpers";
 import NoValueErrorMessage from "./NoValueErrorMessage";
 import useAllBlocksSearch from "@/hooks/api/blocks/useAllBlocksSearch";
+import { useI18n } from "@/i18n/i18n";
 
 const BlockSearch = () => {
+const { t } = useI18n();
   const {
     allBlocksSearchProps,
     setAllBlocksSearchProps,
@@ -162,7 +164,7 @@ const BlockSearch = () => {
         <AutocompleteInput
           value={accountName}
           onChange={setAccountName}
-          placeholder="Account name"
+          placeholder={t("accountSearch.accountName")}
           inputType="account_name"
           className="w-1/2 bg-theme border-0 border-b-2"
         />
@@ -285,7 +287,7 @@ const BlockSearch = () => {
             onClick={handleStartBlockSearch}
             disabled={isSearchButtonDisabled}
           >
-            Search
+            {t("common.search")}
             {blocksSearchDataLoading && (
               <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />
             )}
@@ -295,7 +297,7 @@ const BlockSearch = () => {
             isSearchButtonDisabled={isSearchButtonDisabled}
           />
         </div>
-        <Button onClick={handleClearSearch}>Clear</Button>
+        <Button onClick={handleClearSearch}>{t("common.clear")}</Button>
       </div>
     </>
   );

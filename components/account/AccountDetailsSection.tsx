@@ -17,6 +17,7 @@ import AccountBalanceHistoryCard from "./AccountBalanceHistoryCard";
 import AccountRecurrentTransfersCard from "./AccountRecurrentTransfersCard";
 import useAccountRecurrentTransfers from "@/hooks/api/accountPage/useAccoutRecurrentTransfers";
 import { AllTransfers } from "./AccountRecurrentTransfersCard";
+import { useI18n } from "@/i18n/i18n";
 
 interface AccountDetailsSectionProps {
   accountName: string;
@@ -33,6 +34,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
   accountDetails,
   dynamicGlobalData,
 }) => {
+  const { t } = useI18n();
   const { witnessDetails, isWitnessDetailsLoading, isWitnessDetailsError } =
     useWitnessDetails(accountName, !!accountDetails?.is_witness);
 
@@ -68,26 +70,26 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
         changeLiveRefresh={changeLiveRefresh}
       />
       <AccountBalanceCard
-        header="Wallet"
+        header={t("accountDetailsSection.wallet")}
         userDetails={accountDetails}
       />
       {/*  */}
       <AccountBalanceHistoryCard
-        header="Balance History"
+        header={t("accountDetailsSection.balanceHistory")}
         userDetails={accountDetails}
       />
 
       <AccountDetailsCard
-        header="Properties"
+        header={t("accountDetailsSection.properties")}
         userDetails={accountDetails}
       />
       <JSONCard
-        header="JSON Metadata"
+        header={t("accountDetailsSection.jsonMetadata")}
         json={accountDetails.json_metadata}
         showCollapseButton={true}
       />
       <JSONCard
-        header="Posting JSON Metadata"
+        header={t("accountDetailsSection.postingJsonMetadata")}
         json={accountDetails.posting_json_metadata}
         showCollapseButton={true}
       />
@@ -99,7 +101,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
         !isWitnessDetailsError &&
         !!witnessDetails && (
           <AccountDetailsCard
-            header="Witness Properties"
+            header={t("accountDetailsSection.witnessProperties")}
             userDetails={witnessDetails}
           />
         )}

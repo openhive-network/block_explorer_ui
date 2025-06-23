@@ -25,6 +25,7 @@ import useURLParams from "@/hooks/common/useURLParams";
 import useSearchRanges from "@/hooks/common/useSearchRanges";
 import NoValueErrorMessage from "../home/searches/NoValueErrorMessage";
 import { removeStorageItem, getLocalStorage } from "@/utils/LocalStorage";
+import { useI18n } from "@/i18n/i18n";
 
 export const DEFAULT_BLOCKS_SEARCH_PROPS: Explorer.AllBlocksSearchProps = {
   limit: config.standardPaginationSize,
@@ -63,6 +64,7 @@ const BlocksSearch = ({
   firstUserSelectedBlock,
 }: BlocksSearchProps) => {
   const router = useRouter();
+  const { t } = useI18n();
 
   const searchRanges = useSearchRanges(
     DEFAULT_BLOCKS_SEARCH_PROPS.rangeSelectKey
@@ -240,14 +242,14 @@ const BlocksSearch = ({
         )}
       >
         <CardHeader>
-          <CardTitle>Filters</CardTitle>
+          <CardTitle>{t("common.filters")}</CardTitle>
         </CardHeader>
         <CardContent className="max-h-fit">
           <div className="flex flex-col mb-4">
             <AutocompleteInput
               value={accountName}
               onChange={setAccountName}
-              placeholder="Account name"
+              placeholder={t("accountSearch.accountName")}
               inputType="account_name"
               className="bg-theme border-0 border-b-2 w-1/2"
             />
@@ -277,7 +279,7 @@ const BlocksSearch = ({
                 onClick={handleStartBlockSearch}
                 disabled={isSearchButtonDisabled}
               >
-                Search
+                {t("common.search")}
               </Button>
               <NoValueErrorMessage
                 accountName={true}
@@ -289,7 +291,7 @@ const BlocksSearch = ({
               data-testid="clear-filters"
               className="ml-2"
             >
-              <span>Clear</span>
+              <span>{t("common.clear")}</span>
             </Button>
           </div>
         </CardContent>

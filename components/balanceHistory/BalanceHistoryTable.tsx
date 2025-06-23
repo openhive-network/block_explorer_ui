@@ -35,6 +35,7 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import CopyButton from "../ui/CopyButton";
 import DataExport from "../DataExport";
 import DataCountMessage from "../DataCountMessage";
+import { useI18n } from "@/i18n/i18n";
 
 interface BalanceHistoryTableProps {
   operations: Explorer.BalanceHistoryForTable[];
@@ -52,6 +53,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
   account_name,
 }) => {
   const router = useRouter();
+  const { locale: appLocale, t } = useI18n();
   const {
     settings: { rawJsonView, prettyJsonView },
   } = useUserSettingsContext();
@@ -116,7 +118,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
     const formattedAccountOperations = useOperationsFormatter(operationData);
     if (operationDataIsFetched) {
       if (!operationData || Object.keys(operationData).length === 0) {
-        return <p>No records for operation {operationId}</p>;
+        return <p>{t("balanceHistoryTable.noRecordsForOperation")}</p>;
       }
       if (!rawJsonView && !prettyJsonView) {
         return <div>{getOneLineDescription(formattedAccountOperations)}</div>;
@@ -130,10 +132,10 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
     }
 
     if (operationDataError) {
-      return <p>Error fetching operation details.</p>;
+      return <p>{t("balanceHistoryTable.errorFetchingOperationDetails")}</p>;
     }
 
-    return <p>Loading operation details...</p>;
+    return <p>{t("balanceHistoryTable.loadingOperationDetails")}</p>;
   };
 
   const getOneLineDescription = (operation: any) => {
@@ -146,7 +148,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
           <>
             {value}
             <div>
-              <span>Transaction : </span>
+              <span>{t("common.transaction")} : </span>
               <Link
                 className="text-link"
                 href={`/transaction/${operation.trx_id}`}
@@ -155,7 +157,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
               </Link>
               <CopyButton
                 text={operation.trx_id || ""}
-                tooltipText="Copy transaction ID"
+                tooltipText={t("common.copyTransactionId")}
               />
             </div>
           </>
@@ -185,14 +187,14 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
   const prepareExportData = () => {
     return operations.map((operation) => {
       return {
-        "Operation Type": getOperationTypeForDisplayById(operation.opTypeId),
-        Timestamp: formatAndDelocalizeTime(operation.timestamp),
-        "Block Number": operation.blockNumber?.toLocaleString() || "",
-        Balance: `${formatRawCoin(operation.prev_balance)} ${coinName}`,
-        "Balance Change": `${formatRawCoin(
+        [t("balanceHistoryTable.operationType")]: getOperationTypeForDisplayById(operation.opTypeId),
+        [t("balanceHistoryTable.timestamp")]: formatAndDelocalizeTime(operation.timestamp),
+        [t("balanceHistoryTable.blockNumber")]: operation.blockNumber?.toLocaleString() || "",
+        [t("balanceHistoryTable.balance")]: `${formatRawCoin(operation.prev_balance)} ${coinName}`,
+        [t("balanceHistoryTable.balanceChange")]: `${formatRawCoin(
           operation.balanceChange
         )} ${coinName}`,
-        "New Balance": `${formatRawCoin(operation.balance)} ${coinName}`,
+        [t("balanceHistoryTable.newBalance")]: `${formatRawCoin(operation.balance)} ${coinName}`,
       };
     });
   };
@@ -211,7 +213,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
       </div>
       {total_operations === 0 ? (
         <div className="flex justify-center w-full">
-          No results matching given criteria
+          {t("balanceHistoryTable.noResultsMatchingCriteria")}
         </div>
       ) : (
         <>
@@ -222,7 +224,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
           >
             <DataCountMessage
               count={total_operations}
-              dataType="operations"
+              dataType="common.operations"
             />
             <DataExport
               data={prepareExportData()}
@@ -236,13 +238,13 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
           >
             <TableHeader>
               <TableRow rowVariant="header">
-                <TableHead stickyLeft>Operation Type</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Block Number</TableHead>
-                <TableHead>Balance</TableHead>
-                <TableHead>Balance Change</TableHead>
-                <TableHead>New Balance</TableHead>
-                <TableHead>Details</TableHead>
+                <TableHead stickyLeft>{t("balanceHistoryTable.operationType")}</TableHead>
+                <TableHead>{t("balanceHistoryTable.date")}</TableHead>
+                <TableHead>{t("balanceHistoryTable.blockNumber")}</TableHead>
+                <TableHead>{t("balanceHistoryTable.balance")}</TableHead>
+                <TableHead>{t("balanceHistoryTable.balanceChange")}</TableHead>
+                <TableHead>{t("balanceHistoryTable.newBalance")}</TableHead>
+                <TableHead>{t("balanceHistoryTable.details")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -279,6 +281,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
                             <TooltipTrigger asChild>
                               <div>
                                 <TimeAgo
+                                  locale={appLocale}
                                   datetime={
                                     new Date(
                                       formatAndDelocalizeTime(
@@ -307,7 +310,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
                         </Link>
                         <CopyButton
                           text={operation.blockNumber}
-                          tooltipText="Copy block number"
+                          tooltipText={t("common.copyBlockNumber")}
                         />
                       </TableCell>
                       <TableCell data-testid="operation-prev-balance">
@@ -352,7 +355,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
                         >
                           <div className="border rounded-2xl p-4">
                             <h3 className="text-lg font-bold">
-                              Operation Details
+                             {t("balanceHistoryTable.operationDetails")}
                             </h3>
                             <OperationDetails
                               operationId={operation.operationId}

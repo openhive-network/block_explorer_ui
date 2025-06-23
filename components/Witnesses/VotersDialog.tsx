@@ -29,6 +29,7 @@ import VotersChart from "./VotersChart";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import Image from "next/image";
 import DataExport from "../DataExport";
+import { useI18n } from "@/i18n/i18n";
 
 type VotersDialogProps = {
   accountName: string;
@@ -57,6 +58,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
   liveDataEnabled,
   accountDetails,
 }) => {
+  const { t } = useI18n();
   const [sortKey, setSortKey] = useState<string>("vests");
   const [isAsc, setIsAsc] = useState<boolean>(false);
   const [pageNum, setPageNum] = useState<number>(1);
@@ -208,11 +210,12 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
       const voterWeightFormatted = formatPercent(voterWeight * 100);
 
       return {
-        Voter: voter.voter_name,
-        Votes: votesFormatted,
-        "Account Vests": accountVestsFormatted,
-        "Proxied Vests": proxiedVestsFormatted,
-        "Voter Weight": voterWeightFormatted,
+        
+        [t("votersDialog.voter")]: voter.voter_name,
+        [t("votersDialog.votes")]: votesFormatted,
+        [t("votersDialog.accountVests")]: accountVestsFormatted,
+        [t("votersDialog.proxiedVests")]: proxiedVestsFormatted,
+        [t("votersDialog.voterWeight")]: voterWeightFormatted,
       };
     });
   };
@@ -247,7 +250,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                     className="flex justify-center text-left font-semibold"
                     data-testid="voters-dialog-witness-name"
                   >
-                    {accountName.toUpperCase()} - Voters
+                     {t("votersDialog.nameVoters")} {accountName.toUpperCase()}
                     {isWitnessVotersLoading && (
                       <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
                     )}
@@ -268,13 +271,13 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                   </div>
 
                   <div className="flex items-center">
-                    <label className="mr-2">Vests</label>
+                    <label className="mr-2">{t("votersDialog.vests")}</label>
                     <Switch
                       checked={isHP}
                       onCheckedChange={() => setIsHP((prev) => !prev)}
                       className="mx-1"
                     />
-                    <label>HP</label>
+                    <label>{t("votersDialog.hp")}</label>
                   </div>
                 </div>
 
@@ -296,7 +299,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                 >
                   <DataCountMessage
                     count={witnessVoters.total_votes}
-                    dataType="voters"
+                    dataType={t("votersDialog.voters")}
                   />
                   <DataExport
                     data={prepareExportData()}
@@ -306,35 +309,35 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
 
                 <div className="relative rounded overflow-hidden w-full">
                   <div className="text-text w-full h-full overflow-auto bg-theme rounded">
-                    <Table enableMobileScrollArrows> 
+                    <Table enableMobileScrollArrows>
                       <TableHeader>
                         <TableRow rowVariant="header">
                           <TableHead stickyLeft>
                             <span className="flex">
-                              Voter {showSorter("voter")}
+                             {t("votersDialog.voter")} {showSorter("voter")}
                             </span>
                           </TableHead>
 
                           <TableHead className="text-right">
                             <span className="flex justify-end">
-                              Votes {showSorter("vests")}
+                              {t("votersDialog.votes")} {showSorter("vests")}
                             </span>
                           </TableHead>
 
                           <TableHead className="text-right">
                             <span className="flex justify-end">
-                              Account {showSorter("account_vests")}
+                             {t("votersDialog.accountVests")} {showSorter("account_vests")}
                             </span>
                           </TableHead>
 
                           <TableHead className="text-right">
                             <span className="flex justify-end">
-                              Proxy {showSorter("proxied_vests")}
+                            {t("votersDialog.proxiedVests")} {showSorter("proxied_vests")}
                             </span>
                           </TableHead>
                           <TableHead className="text-right">
                             <span className="flex justify-end">
-                              Voter Weight
+                             {t("votersDialog.voterWeight")}
                             </span>
                           </TableHead>
                         </TableRow>
@@ -404,7 +407,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
           )
         ) : (
           <div className="flex justify-center items-center w-full h-full">
-            <p>Error: Unable to load voters.</p>
+            <p>{t("common.errorLoadingData")}: {t("votersDialog.unableToLoad")}</p>
           </div>
         )}
       </DialogContent>

@@ -12,6 +12,7 @@ import InteractionsTabResult from "./InteractionsTabResult";
 import { cn, convertBooleanArrayToIds } from "@/lib/utils";
 import { DEFAULT_PARAMS } from "./AccountPageInteractionSearch";
 import { getLocalStorage } from "@/utils/LocalStorage";
+import { useI18n } from "@/i18n/i18n";
 
 interface InteractionsTabContentProps {
   isVisible: boolean;
@@ -26,6 +27,7 @@ const InteractionsTabContent: React.FC<InteractionsTabContentProps> = ({
   setIsFiltersActive,
   isFiltersActive,
 }) => {
+  const { t } = useI18n();
   const router = useRouter();
 
   const accountNameFromRoute = (router.query.accountName as string)?.replace(
@@ -100,7 +102,7 @@ const InteractionsTabContent: React.FC<InteractionsTabContentProps> = ({
         )}
       >
         <CardHeader>
-          <CardTitle className="text-left">Filters</CardTitle>
+          <CardTitle className="text-left">{t("common.filters")}</CardTitle>
         </CardHeader>
         <CardContent>
           <AccountPageInteractionSearch

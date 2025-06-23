@@ -20,6 +20,7 @@ import {
 import list from "../../utils/BadActorList";
 import ErrorMessage from "../ErrorMessage";
 import { Button } from "../ui/button";
+import { useI18n } from "../../i18n/i18n";
 
 interface AccountMainCardProps {
   accountDetails: Explorer.FormattedAccountDetails;
@@ -42,6 +43,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
   liveDataEnabled,
   changeLiveRefresh,
 }) => {
+  const { t } = useI18n();
   const { manabarsData } = useManabars(accountName, liveDataEnabled);
   const { witnessDetails } = useWitnessDetails(
     accountName,
@@ -100,7 +102,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                       "line-through text-red-500": !isWitnessActive,
                     })}
                   >
-                    Witness
+                    {t("accountMainCard.witness")}
                   </span>
                   {witnessDetails?.witness.rank && isWitnessActive && (
                     <TooltipProvider>
@@ -117,7 +119,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                         </TooltipTrigger>
                         <TooltipContent>
                           <span className="text-xs">
-                            Witness Rank: {witnessDetails.witness.rank}
+                           {t("accountMainCard.witnessRank")} {witnessDetails.witness.rank}
                           </span>
                         </TooltipContent>
                       </Tooltip>
@@ -139,7 +141,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                           </a>
                         </TooltipTrigger>
                         <TooltipContent>
-                          <span className="text-xs">Witness Link</span>
+                          <span className="text-xs">{t("accountMainCard.witnessLink")}</span>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
@@ -155,11 +157,11 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
               checked={liveDataEnabled}
               onClick={changeLiveRefresh}
               className="text-base"
-              leftLabel="Live Data"
+              leftLabel={t("headBlockCard.liveData")}
             />
           </div>
-          {/* Description (spans full width) */}
-          {(witnessDescription || about) && (
+           {/* Description (spans full width) */}
+           {(witnessDescription || about) && (
             <div className="w-full px-3 py-2 data-box">
               {witnessDescription && (
                 <p className="text-sm font-medium text-gray-600 dark:text-gray-300 leading-relaxed pb-2">
@@ -177,7 +179,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
         {/* Warning Message */}
         {isBadActor && (
           <ErrorMessage
-            message="This account is listed as a potential bad actor. Please exercise caution."
+            message={t("accountMainCard.badActorMessage")}
             isWarning={true}
             onClose={handleCloseWarning}
           />
@@ -191,7 +193,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                 className="my-2"
                 data-testid="voting-power"
               >
-                Voting Power
+                 {t("accountMainCard.votingPower")}
               </p>
               <Progress
                 value={manabarsData?.upvote.percentageValue}
@@ -207,7 +209,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                 className="my-2"
                 data-testid="downvote-power"
               >
-                Downvote power{" "}
+               {t("accountMainCard.downvotePower")}
               </p>
               <Progress
                 value={manabarsData?.downvote.percentageValue}
@@ -223,7 +225,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                 className="my-2"
                 data-testid="resources-credits"
               >
-                Resource credits{" "}
+               {t("accountMainCard.resourceCredits")}
               </p>
               <Progress
                 value={manabarsData?.rc.percentageValue}
@@ -241,7 +243,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
         )}
         <div className="flex justify-between p-4">
           <div className="text-center flex flex-col justify-space-between w-full gap-2">
-            <span className="text">Creation Date:</span>
+            <span className="text">{t("accountMainCard.creationDate")}</span>
             <span
               className="text"
               data-testid="creation-date"
@@ -250,7 +252,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
             </span>
           </div>
           <div className="text-center flex flex-col justify-space-between w-full gap-2">
-            <span className="text">Reputation:</span>
+            <span className="text">{t("accountMainCard.reputation")}</span>
             <span
               className="text"
               data-testid="creation-date"
@@ -263,8 +265,8 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
       {accountDetails.is_witness && !isWitnessError && !isWitnessLoading && (
         <CardFooter>
           <div className="w-full flex justify-between">
-            <Button onClick={openVotersModal}>Voters</Button>
-            <Button onClick={openVotesHistoryModal}>Votes History</Button>
+            <Button onClick={openVotersModal}>{t("accountMainCard.voters")}</Button>
+            <Button onClick={openVotesHistoryModal}>{t("accountMainCard.votesHistory")}</Button>
           </div>
         </CardFooter>
       )}

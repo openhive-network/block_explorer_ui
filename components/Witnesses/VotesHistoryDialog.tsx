@@ -29,6 +29,7 @@ import fetchingService from "@/services/FetchingService";
 import NoResult from "../NoResult";
 import Explorer from "@/types/Explorer";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
+import { useI18n } from "../../i18n/i18n";
 
 interface Supply {
   amount: string;
@@ -53,6 +54,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
   liveDataEnabled,
   accountDetails,
 }) => {
+  const { t } = useI18n();
   const [page, setPage] = useState(1);
   const [displayData, setDisplayData] =
     useState<Hive.WitnessesVotesHistoryResponse>();
@@ -113,7 +115,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
         totalVestingShares
       );
     }
-    return `${formatNumber(value, true)} Vests`; // Return raw vests if not toggled to HP
+    return `${formatNumber(value, true)} ${t("votesHistoryDialog.vests")}`;
   };
   useEffect(() => {
     if (moment(fromDate).isSame(toDate) || moment(fromDate).isAfter(toDate)) {
@@ -148,7 +150,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                 className="flex justify-center items-centertext-center font-semibold"
                 data-testid="votes-history-dialog-witness-name"
               >
-                {accountName.toUpperCase()} - Votes History
+                {accountName.toUpperCase()} - {t("votesHistoryDialog.votesHistory")}
                 {isVotesHistoryLoading && (
                   <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
                 )}
@@ -163,18 +165,18 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                 </div>
 
                 <div className="flex items-center">
-                  <label className="mr-2">Vests</label>
+                  <label className="mr-2">{t("votersDialog.vests")}</label>
                   <Switch
                     checked={isHP}
                     onCheckedChange={() => setIsHP((prev) => !prev)}
                     className="mx-1"
                   />
-                  <label>HP</label>
+                  <label>{t("votersDialog.hp")}</label>
                 </div>
               </div>
               <div className="flex justify-around items-center bg-explorer-bg-start rounded text-text p-2">
                 <div>
-                  <p>From: </p>
+                  <p>{t("votesHistoryDialog.from")}: </p>
                   <DateTimePicker
                     date={fromDate}
                     setDate={setFromDate}
@@ -183,7 +185,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                   />
                 </div>
                 <div>
-                  <p>To: </p>
+                  <p>{t("votesHistoryDialog.to")}: </p>
                   <DateTimePicker
                     date={toDate}
                     setDate={setToDate}
@@ -222,11 +224,11 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                   <Table enableMobileScrollArrows>
                     <TableHeader>
                       <TableRow rowVariant="header">
-                        <TableHead stickyLeft>Date</TableHead>
-                        <TableHead>Voter</TableHead>
-                        <TableHead>Vote</TableHead>
+                        <TableHead stickyLeft>{t("votesHistoryDialog.date")}</TableHead>
+                        <TableHead>{t("votersDialog.voter")}</TableHead>
+                        <TableHead>{t("votesHistoryDialog.vote")}</TableHead>
                         <TableHead className="text-right">
-                          Current Voter Power
+                        {t("votesHistoryDialog.currentVoterPower")}
                         </TableHead>
                       </TableRow>
                     </TableHeader>
@@ -236,7 +238,7 @@ const VotesHistoryDialog: React.FC<VotersDialogProps> = ({
                           <TableRow
                             key={index}
                             className={`${
-                              index % 2 === 0 ? "bg-rowEven" : "bg-rowOdd"
+                                index % 2 === 0 ? "bg-rowEven" : "bg-rowOdd"
                             }`}
                           >
                             <TableCell

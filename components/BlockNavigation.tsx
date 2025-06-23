@@ -9,6 +9,7 @@ import {
   TooltipTrigger,
   TooltipPortal,
 } from "@/components/ui/hybrid-tooltip";
+import { useI18n } from "@/i18n/i18n";
 
 interface BlockNavigationProps {
   fromBlock?: number;
@@ -32,6 +33,7 @@ const BlockNavigation: React.FC<BlockNavigationProps> = ({
   className,
 }) => {
   const router = useRouter();
+  const { t } = useI18n();
 
   if (!fromBlock || !toBlock) {
     return null;
@@ -77,7 +79,7 @@ const BlockNavigation: React.FC<BlockNavigationProps> = ({
                       loadPreviousBlocks();
                     }}
                     className={navLinkClasses}
-                    aria-label="Load previous blocks"
+                    aria-label={t("blockNavigation.loadPreviousBlocks")}
                   >
                     {`<<`}
                   </Link>
@@ -85,7 +87,7 @@ const BlockNavigation: React.FC<BlockNavigationProps> = ({
               </TooltipTrigger>
               <TooltipPortal>
                 <TooltipContent className="bg-white text-black dark:bg-theme dark:text-white">
-                  Previous Block Range
+                  {t("blockNavigation.previousBlockRange")}
                 </TooltipContent>
               </TooltipPortal>
             </Tooltip>
@@ -100,7 +102,7 @@ const BlockNavigation: React.FC<BlockNavigationProps> = ({
               </TooltipTrigger>
               <TooltipPortal>
                 <TooltipContent className="bg-white text-black dark:bg-theme dark:text-white">
-                  No Previous Block Range
+                  {t("blockNavigation.noPreviousBlockRange")}
                 </TooltipContent>
               </TooltipPortal>
             </Tooltip>
@@ -116,7 +118,7 @@ const BlockNavigation: React.FC<BlockNavigationProps> = ({
             </TooltipTrigger>
             <TooltipPortal>
               <TooltipContent className="bg-white text-black dark:bg-theme dark:text-white">
-                Current Block Range
+                {t("blockNavigation.currentBlockRange")}
               </TooltipContent>
             </TooltipPortal>
           </Tooltip>
@@ -134,7 +136,7 @@ const BlockNavigation: React.FC<BlockNavigationProps> = ({
                       loadNextBlocks();
                     }}
                     className={navLinkClasses}
-                    aria-label="Load next blocks"
+                    aria-label={t("blockNavigation.loadNextBlocks")}
                   >
                     {`>>`}
                   </Link>
@@ -142,7 +144,7 @@ const BlockNavigation: React.FC<BlockNavigationProps> = ({
               </TooltipTrigger>
               <TooltipPortal>
                 <TooltipContent className="bg-white text-black dark:bg-theme dark:text-white">
-                  Next Block Range
+                  {t("blockNavigation.nextBlockRange")}
                 </TooltipContent>
               </TooltipPortal>
             </Tooltip>
@@ -157,7 +159,7 @@ const BlockNavigation: React.FC<BlockNavigationProps> = ({
               </TooltipTrigger>
               <TooltipPortal>
                 <TooltipContent className="bg-white text-black dark:bg-theme dark:text-white">
-                  No Upcoming Block Range
+                  {t("blockNavigation.noUpcomingBlockRange")}
                 </TooltipContent>
               </TooltipPortal>
             </Tooltip>

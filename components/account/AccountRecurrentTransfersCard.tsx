@@ -17,6 +17,7 @@ import {
   handleSortTransfers,
 } from "@/utils/RecurrentTransfersSort";
 import Hive from "@/types/Hive";
+import { useI18n } from "../../i18n/i18n";
 
 type BaseTransfer = Omit<Hive.IncomingRecurrentTransfer, "from" | "amount"> &
   Omit<Hive.OutgoingRecurrentTransfer, "to" | "amount"> & {
@@ -69,6 +70,7 @@ const buildTableBody = (transfers: AllTransfers[]) => {
 const AccountRecurrentTransfersCard: React.FC<
   AccountRecurrentTransfersCardProps
 > = ({ direction, transfers }) => {
+  const { t } = useI18n();
   const [isPropertiesHidden, setIsPropertiesHidden] = useState(true);
   const { hiveChain } = useHiveChainContext();
 
@@ -97,11 +99,11 @@ const AccountRecurrentTransfersCard: React.FC<
     key,
     isAscending,
   });
-
-  const headerText = `${capitalizeFirst(direction)} Recurrent Transfers (${
+  
+  const headerText = `${capitalizeFirst(t(`accountRecurrentTransfersCard.${direction}`))} ${t("accountRecurrentTransfersCard.recurrentTransfersHeader")}(${
     transfers.length
   })`;
-
+  
   return (
     <Card
       data-testid="recurrent-transfers-dropdown"

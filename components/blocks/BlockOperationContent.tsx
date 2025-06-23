@@ -8,6 +8,7 @@ import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
 import CopyButton from "../ui/CopyButton";
 import { convertBooleanArrayToIds } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
+import { useI18n } from "@/i18n/i18n";
 
 interface Props {
   blockNum: number;
@@ -15,6 +16,7 @@ interface Props {
 }
 
 const BlockOperationsContent: React.FC<Props> = ({ blockNum, paramsState }) => {
+  const { t } = useI18n();
   const {
     settings: { rawJsonView, prettyJsonView },
   } = useUserSettingsContext();
@@ -44,7 +46,7 @@ const BlockOperationsContent: React.FC<Props> = ({ blockNum, paramsState }) => {
   }
 
   if (!formattedOperations) {
-    return <div>No operations available for this block.</div>;
+    return <div>{t("blockOperationsContent.noOperationsAvailable")}</div>;
   }
 
   const getOneLineDescription = (operation: any) => {
@@ -67,7 +69,7 @@ const BlockOperationsContent: React.FC<Props> = ({ blockNum, paramsState }) => {
           <OperationBadge operationTypeName={operationTypeName} />
           {operation.trx_id && (
             <div className="text-sm">
-              <span>Transaction : </span>
+              <span>{t("common.transaction")} : </span>
               <Link
                 className="text-link"
                 href={`/transaction/${operation.trx_id}`}
@@ -76,7 +78,7 @@ const BlockOperationsContent: React.FC<Props> = ({ blockNum, paramsState }) => {
               </Link>
               <CopyButton
                 text={operation.trx_id || ""}
-                tooltipText="Copy transaction ID"
+                tooltipText={t("common.copyTransactionId")}
               />
             </div>
           )}
@@ -134,7 +136,7 @@ const BlockOperationsContent: React.FC<Props> = ({ blockNum, paramsState }) => {
     <div className="border rounded-2xl p-4 max-h-[60vh] md:max-h-64 overflow-auto scrollbar-autocomplete ">
       {operations.length > 0 && (
         <>
-          <h3 className="text-lg font-bold">Operations</h3>
+          <h3 className="text-lg font-bold">{t("common.operations")}</h3>
           {operations.map((operation: any) => (
             <OperationDetails
               key={operation.operation_id}
@@ -146,7 +148,7 @@ const BlockOperationsContent: React.FC<Props> = ({ blockNum, paramsState }) => {
 
       {virtualOperations.length > 0 && (
         <>
-          <h3 className="text-lg font-bold">Virtual Operations</h3>
+          <h3 className="text-lg font-bold">{t("blockPageOperationCount.virtualOperations")}</h3>
           {virtualOperations.map((operation: any) => (
             <OperationDetails
               key={operation.operation_id}

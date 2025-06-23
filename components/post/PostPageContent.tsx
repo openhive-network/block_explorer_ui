@@ -6,12 +6,14 @@ import Link from "next/link";
 import PostContent from "./PostContent";
 import PostComments from "./PostComments";
 import usePostDiscussion from "@/hooks/api/postPage/usePostDiscussion";
+import { useI18n } from "@/i18n/i18n";
 
 const HIVE_BLOG_URL = "https://hive.blog";
 const PEAKD_URL = "https://peakd.com";
 const ECENCY_URL = "https://ecency.com";
 
 const PostPageContent = () => {
+  const { t } = useI18n();
   const router = useRouter();
   const [isCommentsVisible, setIsCommentsVisible] = useState(true);
 
@@ -55,7 +57,7 @@ const PostPageContent = () => {
           {title} by {author}
         </div>
         <div className="flex gap-2">
-          View this thread on:
+          {t("postPageContent.viewThread")}
           {LINKS.map(({ name, href }) => {
             return (
               <div key={name}>

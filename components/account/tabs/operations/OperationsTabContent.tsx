@@ -22,6 +22,7 @@ import useAccountOperationsTabSearchRanges, {
   defaultAccountOperationsTabSearchParams,
 } from "./useAccountOperationsTabSearchRanges";
 import { getLocalStorage, removeStorageItem } from "@/utils/LocalStorage";
+import { useI18n } from "@/i18n/i18n";
 
 interface OpeationTabContentProps {
   liveDataEnabled: boolean;
@@ -38,6 +39,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
   setIsFiltersActive,
   isFiltersActive,
 }) => {
+  const { t } = useI18n();
   const router = useRouter();
   const searchRanges = useAccountOperationsTabSearchRanges();
 
@@ -182,7 +184,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
         )}
       >
         <CardHeader>
-          <CardTitle className="text-left">Filters</CardTitle>
+          <CardTitle className="text-left">{t("common.filters")}</CardTitle>
         </CardHeader>
         <CardContent>
           <SearchRanges
@@ -212,7 +214,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
                 className="mr-2 my-2"
                 disabled={isSearchButtonDisabled}
               >
-                Search
+                {t("common.search")}
                 {isAccountOperationsLoading && (
                   <Loader2 className="ml-2 animate-spin h-4 w-4" />
                 )}
@@ -228,7 +230,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
               onClick={handleClearFilter}
               data-testid="clear-filters"
             >
-              Clear
+              {t("common.clear")}
             </Button>
           </div>
         </CardContent>

@@ -16,6 +16,7 @@ import {
 } from "@/lib/utils";
 import { useHandleInteractionsSearch } from "./useHandleInteractionsSearch";
 import { removeStorageItem } from "@/utils/LocalStorage";
+import { useI18n } from "@/i18n/i18n";
 
 export const DEFAULT_PARAMS = {
   accountName: "",
@@ -32,6 +33,7 @@ interface AccountPageInteractionSearchProps {
 const AccountPageInteractionSearch: React.FC<
   AccountPageInteractionSearchProps
 > = ({ isCommentSearchDataLoading, setIsFiltersActive }) => {
+  const { t } = useI18n();
   const {
     setLastSearchKey,
     setCommentPaginationPage,
@@ -82,10 +84,8 @@ const AccountPageInteractionSearch: React.FC<
     setParams(props);
   };
 
-  const infoText =
-    "Find all operations related to comments for exact permlink.";
-
-  const buttonLabel = "Set permlink";
+  const infoText = t("accountPageInteractionSearch.infoText");
+  const buttonLabel = t("accountPageInteractionSearch.setPermlink");
 
   const onClickSearchButton = () => {
     setLastSearchKey("comment");
@@ -109,7 +109,7 @@ const AccountPageInteractionSearch: React.FC<
           type="text"
           value={permlink}
           onChange={handlePermlinkChange}
-          placeholder="Permlink *"
+          placeholder={t("accountPageInteractionSearch.permlinkPlaceholder")}
           required
         />
       </div>
@@ -137,7 +137,7 @@ const AccountPageInteractionSearch: React.FC<
             className="mr-2 my-2"
             disabled={!permlink}
           >
-            Search
+            {t("common.search")}
             {isCommentSearchDataLoading && (
               <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />
             )}
@@ -148,7 +148,7 @@ const AccountPageInteractionSearch: React.FC<
             </label>
           ) : null}
         </div>
-        <Button onClick={handleClearCommentSearch}>Clear</Button>
+        <Button onClick={handleClearCommentSearch}>{t("common.clear")}</Button>
       </div>
     </>
   );

@@ -10,16 +10,17 @@ import AccountSearch from "./AccountSearch";
 import CommentsPermlinkSearch from "./CommentPermlinkSearch";
 import CommentsSearch from "./CommentsSearch";
 import { useSearchesContext } from "@/contexts/SearchesContext";
+import { useI18n } from "@/i18n/i18n";
 
-const ACCORDION_SECTIONS = [
-  { name: "Block Search", value: "block" },
-  { name: "Account Search", value: "account" },
-  { name: "Permalink Search", value: "comment-permlink" },
-  { name: "Comment Search", value: "comment" },
+const ACCORDION_SECTIONS_KEYS = [
+  { nameKey: "searchesAccordionCard.blockSearch", value: "block", originalName: "Block Search" },
+  { nameKey: "searchesAccordionCard.accountSearch", value: "account", originalName: "Account Search" },
+  { nameKey: "searchesAccordionCard.permalinkSearch", value: "comment-permlink", originalName: "Permalink Search" },
+  { nameKey: "searchesAccordionCard.commentSearch", value: "comment", originalName: "Comment Search" },
 ];
 
-const getAccordionContentByName = (name: string) => {
-  switch (name) {
+const getAccordionContentByName = (originalName: string) => {
+  switch (originalName) {
     case "Block Search":
       return <BlockSearch />;
       break;
@@ -34,24 +35,25 @@ const getAccordionContentByName = (name: string) => {
   }
 };
 
-const renderAccordionItem = () => {
-  return ACCORDION_SECTIONS.map(({ name, value }) => {
-    return (
-      <AccordionItem
-        value={value}
-        key={value}
-      >
-        <AccordionTrigger className="p-3 mb-2">{name}</AccordionTrigger>
-        <AccordionContent className="px-2 flex flex-col gap-y-4">
-          {getAccordionContentByName(name)}
-        </AccordionContent>
-      </AccordionItem>
-    );
-  });
-};
-
 const SearchesAccordionCard = () => {
   const { activeSearchSection, setActiveSearchSection } = useSearchesContext();
+  const { t } = useI18n();
+
+  const renderAccordionItem = () => {
+    return ACCORDION_SECTIONS_KEYS.map(({ nameKey, value, originalName }) => {
+      return (
+        <AccordionItem
+          value={value}
+          key={value}
+        >
+          <AccordionTrigger className="p-3 mb-2">{t(nameKey)}</AccordionTrigger>
+          <AccordionContent className="px-2 flex flex-col gap-y-4">
+            {getAccordionContentByName(originalName)}
+          </AccordionContent>
+        </AccordionItem>
+      );
+    });
+  };
 
   return (
     <Card
@@ -59,7 +61,7 @@ const SearchesAccordionCard = () => {
       data-testid="block-search-section"
     >
       <CardHeader>
-        <CardTitle>Search</CardTitle>
+        <CardTitle>{t("searchesAccordionCard.searchTitle")}</CardTitle>
       </CardHeader>
       <CardContent>
         <Accordion

@@ -18,8 +18,9 @@ import { usePathname } from "next/navigation";
 import { useRouter } from "next/router";
 import useHandleCommentsSearch from "./hooks/useHandleCommentsSearch";
 import NoValueErrorMessage from "./NoValueErrorMessage";
-
+import { useI18n } from "@/i18n/i18n";
 const CommentsSearch = () => {
+  const { t } = useI18n();
   const {
     setCommentSearchProps,
     commentSearchProps,
@@ -49,8 +50,7 @@ const CommentsSearch = () => {
 
   const [permlink, setPermlink] = useState(commentsSearchPermlink || "");
 
-  const infoText =
-    "Find all operations related to comments of given account or for exact permlink.";
+  const infoText = t("commentsSearch.infoText");
 
   const handleAccountNameChange = (value: string) => {
     setAccountName(value);
@@ -122,7 +122,7 @@ const CommentsSearch = () => {
         <AutocompleteInput
           value={accountName as string}
           onChange={handleAccountNameChange}
-          placeholder="Account name"
+          placeholder={t("accountSearch.accountName")}
           inputType="account_name"
           className="w-1/2 bg-theme dark:bg-theme border-0 border-b-2"
           required
@@ -136,7 +136,7 @@ const CommentsSearch = () => {
           type="text"
           value={permlink}
           onChange={handlePermlinkChange}
-          placeholder="Permlink *"
+          placeholder={t("commentsSearch.permlinkPlaceholder")}
           required
         />
       </div>
@@ -162,7 +162,7 @@ const CommentsSearch = () => {
             className="mr-2 my-2"
             disabled={!accountName || !permlink}
           >
-            Search
+            {t("common.search")}
             {isCommentSearchDataFetching && (
               <Loader2 className="ml-2 animate-spin h-4 w-4  ..." />
             )}
@@ -172,7 +172,7 @@ const CommentsSearch = () => {
             isSearchButtonDisabled={!permlink}
           />
         </div>
-        <Button onClick={handleClearCommentSearch}>Clear</Button>
+        <Button onClick={handleClearCommentSearch}>{t("common.clear")}</Button>
       </div>
     </>
   );

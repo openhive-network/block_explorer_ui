@@ -5,7 +5,7 @@ import useApiAddresses from "@/utils/ApiAddresses";
 import HealthCheckerDialog from "@/components/HealthCheckerDialog";
 import { useHealthCheckerContext } from "@/contexts/HealthCheckerContext";
 import { AlertTriangleIcon } from "lucide-react";
-
+import { useI18n } from "@/i18n/i18n";
 
 interface ErrorPageProps {
   errorMessage?: string;
@@ -13,11 +13,12 @@ interface ErrorPageProps {
 
 const ErrorPage: React.FC<ErrorPageProps> = ({ errorMessage }) => {
   const router = useRouter();
+  const { t } = useI18n();
   const apiAdresses = useApiAddresses();
   const { restApiHealthCheckerService, nodeHealthCheckerService } =
     useHealthCheckerContext();
 
-  const displayMessage = errorMessage || "An error occurred.";
+  const displayMessage = errorMessage || t("errorPage.defaultErrorMessage");
 
   return (
     <div className="page-container rounded  flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
@@ -28,7 +29,7 @@ const ErrorPage: React.FC<ErrorPageProps> = ({ errorMessage }) => {
       <div className="text-center mb-6">
         <h1 className="text-xl font-semibold">{displayMessage}</h1>
         <p className="text-gray-600 dark:text-gray-400 mt-2">
-          We&apos;re sorry, something went wrong. Please try one of the following options:
+          {t("errorPage.apologyMessage")}
         </p>
       </div>
 
@@ -39,7 +40,7 @@ const ErrorPage: React.FC<ErrorPageProps> = ({ errorMessage }) => {
           onClick={() => location.reload()}
           className="hover:bg-gray-200 dark:hover:bg-gray-700 transition duration-200"
         >
-          Reload Page
+          {t("errorPage.reloadPage")}
         </Button>
         <Button
           onClick={() => {
@@ -47,26 +48,26 @@ const ErrorPage: React.FC<ErrorPageProps> = ({ errorMessage }) => {
           }}
           className="bg-blue-500 hover:bg-blue-700 text-white transition duration-200"
         >
-          Go to Home Page
+          {t("errorPage.goToHomePage")}
         </Button>
       </div>
 
       {/* Health Checkers */}
       <div className="flex flex-col items-center w-full px-4 py-6 bg-gray-200 dark:bg-gray-800 border-t border-gray-300 dark:border-gray-700">
         <p className="mb-2 text-gray-700 dark:text-gray-300">
-          Check the status of our services:
+          {t("errorPage.checkServiceStatus")}
         </p>
         <div className="flex justify-center gap-x-4">
           {!!apiAdresses.apiAddress && !!restApiHealthCheckerService && (
             <HealthCheckerDialog
-              trigerText="Explorer Backend API"
+              trigerText={t("errorPage.explorerBackendApi")}
               apiAddress={apiAdresses.apiAddress}
               healthCheckerService={restApiHealthCheckerService}
             />
           )}
           {!!apiAdresses.nodeAddress && !!nodeHealthCheckerService && (
             <HealthCheckerDialog
-              trigerText="Hive Node"
+              trigerText={t("errorPage.hiveNode")}
               apiAddress={apiAdresses.nodeAddress}
               healthCheckerService={nodeHealthCheckerService}
             />

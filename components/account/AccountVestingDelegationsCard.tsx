@@ -15,6 +15,7 @@ import Explorer from "@/types/Explorer";
 import useConvertedVestingShares from "@/hooks/common/useConvertedVestingShares";
 import { buildTableHead, handleSortDelegations } from "@/utils/DelegationsSort";
 import { capitalizeFirst } from "@/utils/StringUtils";
+import { useI18n } from "../../i18n/i18n";
 
 type AccountVestingDelegationsCardProps = {
   direction: "incoming" | "outgoing";
@@ -60,6 +61,7 @@ const buildTableBody = (
 const AccountVestingDelegationsCard: React.FC<
   AccountVestingDelegationsCardProps
 > = ({ direction, delegatorAccount, liveDataEnabled, dynamicGlobalData }) => {
+  const { t } = useI18n();
   const [isPropertiesHidden, setIsPropertiesHidden] = useState(true);
   const { hiveChain } = useHiveChainContext();
   const delegations = useConvertedVestingShares(
@@ -96,7 +98,7 @@ const AccountVestingDelegationsCard: React.FC<
     amount: "vesting_shares",
   }) as Explorer.VestingDelegation[];
 
-  const headerText = `${capitalizeFirst(direction)} HP Delegations (${
+  const headerText = `${capitalizeFirst(t(`accountVestingDelegationsCard.${direction}`))} ${t("accountVestingDelegationsCard.hpDelegations")}(${
     delegations.length
   })`;
 

@@ -27,6 +27,7 @@ import { convertBooleanArrayToIds } from "@/lib/utils";
 import { setLocalStorage, getLocalStorage } from "@/utils/LocalStorage";
 import { Toggle } from "@/components/ui/toggle";
 import { useRouter } from "next/router";
+import { useI18n } from "@/i18n/i18n";
 
 export interface Operations {
   op_type_id: number;
@@ -50,20 +51,22 @@ export interface BlockRow extends Block {
   isNew?: boolean; // Added property to indicate new block
 }
 
-const TABLE_CELLS = [
-  "Block",
-  "Producer",
-  "Hash",
-  "Prev Hash",
-  "Time",
-  "Reward(VESTS)",
-  "Transactions",
-  "Operations",
-  "Virtual Operations",
-  "",
-];
-
 const BlocksPage = () => {
+  const { t } = useI18n();
+
+  const TABLE_CELLS = [ // Moved inside component to access `t`
+    t("common.block"),
+    t("blocksPage.producer"),
+    t("blocksPage.prevHash"),
+    t("blocksPage.hash"),
+    t("blocksPage.time"),
+    t("blocksPage.rewardVests"),
+    t("common.transactions"),
+    t("common.operations"),
+    t("blocksPage.virtualOperations"),
+    "",
+  ];
+
   const { paramsState, setParams } = useURLParams(DEFAULT_BLOCKS_SEARCH_PROPS);
   const pageNum = paramsState.page;
   const router = useRouter();
@@ -271,14 +274,14 @@ const BlocksPage = () => {
   return (
     <>
       <Head>
-        <title>Blocks - Hive Explorer</title>
+        <title>{t("blocksPage.title")} - {t("home.title")}</title>
       </Head>
 
       <div className="page-container">
         <div className="flex items-start justify-between w-full bg-theme rounded">
           <div className="ml-6">
             <PageTitle
-              title="Hive Blocks"
+              titleKey="pageTitle.hiveBlocks"
               className="py-4"
             />
           </div>
@@ -288,7 +291,7 @@ const BlocksPage = () => {
               checked={liveDataEnabled}
               onClick={changeLiveRefresh}
               className="text-base whitespace-nowrap"
-              leftLabel="Live Data"
+              leftLabel={t("headBlockCard.liveData")}
             />
           </div>
           <div className="flex-shrink-0 mt-2">

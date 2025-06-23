@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { useI18n } from "../i18n/i18n";
 
 interface JumpToPageProps {
   currentPage: number;
@@ -16,6 +17,7 @@ const JumpToPage = ({
   totalCount,
   pageSize,
 }: JumpToPageProps) => {
+  const { t } = useI18n();
   const [value, setValue] = useState<number>(currentPage);
   const [inputValue, setInputValue] = useState<string>(String(currentPage));
 
@@ -83,7 +85,7 @@ const JumpToPage = ({
         type="submit"
         data-testid="button-goto-page"
       >
-        Go
+      {t("common.go")}
       </Button>
     </form>
   );

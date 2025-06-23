@@ -32,6 +32,7 @@ import CopyButton from "./ui/CopyButton";
 import DataExport from "./DataExport"; // Import DataExport
 import { extractTextFromReactElement } from "@/utils/StringUtils";
 import DataCountMessage from "./DataCountMessage";
+import { useI18n } from "../i18n/i18n";
 
 interface OperationsTableProps {
   operationCount?: number;
@@ -62,7 +63,7 @@ export const getOperationColor = (operationType: string) => {
   return color;
 };
 
-const getOneLineDescription = (operation: Explorer.OperationForTable) => {
+const getOneLineDescription = (operation: Explorer.OperationForTable, t: (key: string) => string) => {
   const { value } = operation?.operation;
   if (typeof value === "string" || React.isValidElement(value)) return value;
   if (operation.operation.type === "custom_json_operation")
@@ -73,7 +74,7 @@ const getOneLineDescription = (operation: Explorer.OperationForTable) => {
         <Link
           href={`/longOperation/${operation.operation.value?.["org-op-id"]}`}
         >
-          See full operation
+          {t("operationsTable.seeFullOperation")}
         </Link>
       </div>
     );
@@ -99,6 +100,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
   accountName,
 }) => {
   const router = useRouter();
+  const { locale: appLocale, t } = useI18n();
   const {
     settings: { rawJsonView, prettyJsonView },
   } = useUserSettingsContext();
@@ -118,7 +120,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
     operation: Explorer.OperationForTable
   ) => {
     if (!rawJsonView && !prettyJsonView) {
-      return <div>{getOneLineDescription(operation)}</div>;
+      return <div>{getOneLineDescription(operation, t)}</div>;
     }
     const unformattedOperation = unformattedOperations?.find(
       (op) => op.operationId === operation.operationId
@@ -171,12 +173,12 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
       // Replace multiple spaces with single space
       contentString = contentString.replace(/\s+/g, " ");
 
-      return {
-        Block: operation.blockNumber?.toLocaleString() || "",
-        Transaction: operation.trxId?.slice(0, 10) || "",
-        Time: formatAndDelocalizeTime(operation.timestamp),
-        Operation: getOperationTypeForDisplay(operation.operation?.type),
-        Content: contentString,
+     return {
+        [t("operationsTable.block")]: operation.blockNumber?.toLocaleString() || "",
+        [t("operationsTable.transaction")]: operation.trxId?.slice(0, 10) || "",
+        [t("operationsTable.date")]: formatAndDelocalizeTime(operation.timestamp),
+        [t("operationsTable.operation")]: getOperationTypeForDisplay(operation.operation?.type),
+        [t("operationsTable.content")]: contentString,
       };
     });
 
@@ -192,7 +194,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
       >
         <DataCountMessage
           count={operationCount || 0}
-          dataType="operations"
+          dataType="common.operations"
         />
         <DataExport
           data={prepareExportData()}
@@ -208,11 +210,11 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
             <TableHeader>
               <TableRow rowVariant="header">
                 <TableHead stickyLeft></TableHead>
-                <TableHead stickyLeft={50}>Block</TableHead>
-                <TableHead>Transaction</TableHead>
-                <TableHead>Time</TableHead>
-                <TableHead>Operation</TableHead>
-                <TableHead>Content</TableHead>
+                <TableHead stickyLeft={50}>{t("operationsTable.block")}</TableHead>
+                <TableHead>{t("operationsTable.transaction")}</TableHead>
+                <TableHead>{t("operationsTable.date")}</TableHead>
+                <TableHead>{t("common.operations")}</TableHead>
+                <TableHead>{t("operationsTable.content")}</TableHead>
                 <TableHead></TableHead>
               </TableRow>
             </TableHeader>
@@ -258,7 +260,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                         </Link>
                         <CopyButton
                           text={operation.blockNumber}
-                          tooltipText="Copy block number"
+                          tooltipText={t("common.copyBlockNumber")}
                         />
                       </TableCell>
                       <TableCell
@@ -277,7 +279,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                         {operation.trxId && (
                           <CopyButton
                             text={operation.trxId || ""}
-                            tooltipText="Copy transaction ID"
+                            tooltipText={t("common.copyTransactionId")}
                           />
                         )}
                       </TableCell>
@@ -287,6 +289,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                             <TooltipTrigger asChild>
                               <div>
                                 <TimeAgo
+                                  locale={appLocale}
                                   datetime={
                                     new Date(
                                       formatAndDelocalizeTime(

@@ -17,6 +17,7 @@ import { Toggle } from "@/components/ui/toggle";
 import { cn } from "@/lib/utils";
 import CopyButton from "@/components/ui/CopyButton";
 import PageTitle from "@/components/PageTitle";
+import { useI18n } from "@/i18n/i18n";
 
 const TransactionDetailItem = ({
   label,
@@ -48,6 +49,7 @@ const TransactionDetailItem = ({
 );
 export default function Transaction() {
   const router = useRouter();
+  const { t } = useI18n();
   const { settings } = useUserSettingsContext();
   const transactionId = router.query.transactionId as string;
   const [includeVirtual, setIncludeVirtual] = useState(false);
@@ -65,7 +67,7 @@ export default function Transaction() {
   };
 
   if (trxError) {
-    return <PageNotFound message={`Transaction not found.`} />;
+    return <PageNotFound message={t("transactionPage.transactionNotFound")} />;
   }
 
   return (
@@ -77,13 +79,13 @@ export default function Transaction() {
         {!trxLoading && !!trxData && (
           <>
             <Card data-testid="transaction-header">
-            <PageTitle title="Transaction Details" className=" min-h-4 py-4 pl-4"/>
+            <PageTitle titleKey="pageTitle.transactionDetails" className=" min-h-4 py-4 pl-4"/>
               <CardHeader className="flex items-center py-2 ">
                 <CardTitle>
-              
+
                   <div className="flex space-x-2">
                     <span className="text-sm">
-                      Include Virtual Operations:
+                      {t("transactionPage.includeVirtualOperations")}:
                     </span>
                     <Toggle
                       checked={includeVirtual}
@@ -97,33 +99,33 @@ export default function Transaction() {
                   data-testid="transaction-header-hash-trx"
                   className="w-full text-left text-sm"
                 >
-                  <span className="font-semibold">Transaction ID:</span>{" "}
-                  {trxData?.transaction_id} 
+                  <span className="font-semibold">{t("transactionPage.transactionId")}:</span>{" "}
+                  {trxData?.transaction_id}
                   <CopyButton
                     text={trxData?.transaction_id}
-                    tooltipText="Copy transaction ID"
-                  />                  
+                    tooltipText={t("common.copyTransactionId")}
+                  />
                 </div>
                   <div className="text-left text-sm">
-                    <span className="font-semibold">Block:</span>{" "}
+                    <span className="font-semibold">{t("common.block")}:</span>{" "}
                     <Link
                       href={`/block/${trxData?.block_num}`}
                       data-testid="transaction-header-block-number"
                     >
                       <span className="text-link">
                         {trxData?.block_num.toLocaleString()}
-                      </span>                      
+                      </span>
                     </Link>
                     <CopyButton
                         text={trxData?.block_num}
-                        tooltipText="Copy block hash"
+                        tooltipText={t("common.copyBlockNumber")}
                       />
                   </div>
                 <div
                     data-testid="transaction-header-date"
                     className="text-left text-sm"
                   >
-                    <span className="font-semibold">Date:</span>{" "}
+                    <span className="font-semibold">{t("transactionPage.date")}:</span>{" "}
                     <span>{formatAndDelocalizeTime(trxData.timestamp)}</span>
                   </div>
               </CardContent>
@@ -150,24 +152,24 @@ export default function Transaction() {
                 <Card data-testid="transaction-details">
                   <CardHeader className="px-4 pt-4 pb-2">
                     <CardTitle className="text-lg font-semibold text-left">
-                      Transaction Details
+                      {t("transactionPage.transactionDetails")}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-0 px-4 py-2">
                     <TransactionDetailItem
-                      label="Ref Block Num"
+                      label={t("transactionPage.refBlockNum")}
                       value={trxData.transaction_json.ref_block_num}
                       dataTestId="ref-block-num"
                       hasBorder
                     />
                     <TransactionDetailItem
-                      label="Ref Block Prefix"
+                      label={t("transactionPage.refBlockPrefix")}
                       value={trxData.transaction_json.ref_block_prefix}
                       dataTestId="ref-block-prefix"
                       hasBorder
                     />
                     <TransactionDetailItem
-                      label="Expiration"
+                      label={t("transactionPage.expiration")}
                       value={formatAndDelocalizeTime(
                         trxData.transaction_json.expiration
                       )}
@@ -175,20 +177,20 @@ export default function Transaction() {
                       hasBorder
                     />
                     <TransactionDetailItem
-                      label="Block Number"
+                      label={t("blockPageNavigation.blockNumber")}
                       value={trxData.block_num}
                       dataTestId="block-number"
                       hasBorder
                     />
                     <TransactionDetailItem
-                      label="Transaction Number"
+                      label={t("transactionPage.transactionNumber")}
                       value={trxData.transaction_num}
                       dataTestId="transaction-number"
                       hasBorder
                     />
                     <TransactionDetailItem
-                      label="Timestamp"
-                      value={trxData.timestamp} // Format the date here
+                      label={t("commentPermlinkResultTable.timestamp")}
+                      value={trxData.timestamp}
                       dataTestId="transaction-expiration"
                       hasBorder
                     />

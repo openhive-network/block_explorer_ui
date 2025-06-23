@@ -10,6 +10,7 @@ import NoResult from "../NoResult";
 import { Button } from "../ui/button";
 import useAggregatedBalanceHistory from "@/hooks/api/balanceHistory/useAggregatedHistory";
 import { Operation } from "@/pages/balanceHistory/[accountName]";
+import { useI18n } from "../../i18n/i18n";
 
 // Define the type for balance operation data
 type AccountBalanceHistoryCardProps = {
@@ -65,6 +66,7 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
   header,
   userDetails,
 }) => {
+  const { t } = useI18n();
   const [isBalancesHidden, setIsBalancesHidden] = useState(false);
   const [coinType, setCoinType] = useState("HIVE");
   const defaultFromDate = useMemo(
@@ -150,7 +152,7 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
             onClick={handleButtonClick}
             className="rounded p-2 mr-4"
           >
-            Full Chart
+            {t("accountBalanceHistoryCard.fullChart")}
           </Button>
         </div>
       </CardHeader>
@@ -165,7 +167,7 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
         )}
         {!isLoading && hasError && (
           <p className="text-sm text-center">
-            Error loading balance information.
+            {t("accountBalanceHistoryCard.error")}
           </p>
         )}
         {!isLoading && !hasData && <NoResult />}

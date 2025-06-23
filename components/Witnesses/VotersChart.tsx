@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { formatPercent } from "@/lib/utils";
+import { useI18n } from "@/i18n/i18n";
 
 interface VoterWithWeight {
   voterWeight: number;
@@ -26,6 +27,7 @@ const COLORS = [
 ];
 
 const VotersChart: React.FC<VotersChartProps> = ({ voters, accountName }) => {
+  const { t } = useI18n();
   const chartData = useMemo(() => {
     if (!voters) return [];
 
@@ -48,20 +50,20 @@ const VotersChart: React.FC<VotersChartProps> = ({ voters, accountName }) => {
 
     // Conditionally include "Other Voters" entry
     if (otherVotersWeight > 0) {
-      chartData.push({ name: "Other Voters", value: otherVotersWeight });
+      chartData.push({ name: t("votersChart.otherVoters"), value: otherVotersWeight });
     }
 
     return chartData;
-  }, [voters]);
+  }, [voters,t]);
 
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow-md p-2">
           <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">{`${payload[0].name}`}</p>
-          <p className="text-xs text-gray-600 dark:text-gray-400">{`Weight: ${formatPercent(
+          <p className="text-xs text-gray-600 dark:text-gray-400">{t("votersChart.weight")}: {formatPercent(
             payload[0].value * 100
-          )}`}</p>
+          )}</p>
         </div>
       );
     }
@@ -71,7 +73,7 @@ const VotersChart: React.FC<VotersChartProps> = ({ voters, accountName }) => {
   return (
     <div>
       <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200 text-center mb-1">
-        Top Voters Weight Distribution
+        {t("votersChart.topVotersWeight")}
       </h3>
       {chartData.length > 0 ? (
         <>
@@ -104,7 +106,7 @@ const VotersChart: React.FC<VotersChartProps> = ({ voters, accountName }) => {
           <div className="flex flex-wrap justify-center mt-1">
             {chartData.map((entry, index) => {
               // Skip rendering the legend item if the entry is "Other Voters" and its value is 0
-              if (entry.name === "Other Voters" && entry.value === 0) {
+              if (entry.name === t("votersChart.otherVoters") && entry.value === 0) {
                 return null;
               }
               return (
@@ -123,7 +125,7 @@ const VotersChart: React.FC<VotersChartProps> = ({ voters, accountName }) => {
         </>
       ) : (
         <p>
-          No voter data available to display.
+          {t("votersChart.noVoterData")}
         </p>
       )}
     </div>

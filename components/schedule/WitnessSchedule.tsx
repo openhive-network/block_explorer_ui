@@ -7,6 +7,7 @@ import {
   TooltipContent,
 } from "../ui/hybrid-tooltip";
 import PageTitle from "../PageTitle";
+import { useI18n } from "../../i18n/i18n";
 
 export interface Witness {
   producerRank: number | null;
@@ -29,6 +30,7 @@ const WitnessSchedule: React.FC<WitnessScheduleProps> = ({
   nextShuffleBlockNumber,
   blocksLeftBeforeRefetch,
 }) => {
+  const { t } = useI18n();
   const isCurrentProducer = (producerName: string) =>
     producerName === currentProducer;
   const [producedBlocks, setProducedBlocks] = useState<number[]>([]);
@@ -46,12 +48,12 @@ const WitnessSchedule: React.FC<WitnessScheduleProps> = ({
     <div className="bg-theme rounded-xl shadow-lg w-full p-4">
       {/* Title and Next Shuffle Container */}
       <div className="mb-3">
-        <PageTitle title="Witness Schedule" />
+        <PageTitle titleKey={t("witnessSchedule.title")} />
 
         <p className="text-sm text-gray-500 dark:text-gray-400">
-          Next Shuffle: {nextShuffleBlockNumber}{" "}
+          {t("witnessSchedule.nextShuffle")}: {nextShuffleBlockNumber}{" "}
           <span className="text-green-500">
-            ({blocksLeftBeforeRefetch} blocks left)
+            ({blocksLeftBeforeRefetch} {t("witnessSchedule.blocksLeft")})
           </span>
         </p>
       </div>
@@ -92,7 +94,7 @@ const WitnessSchedule: React.FC<WitnessScheduleProps> = ({
                         />
                       </TooltipTrigger>
                       <TooltipContent className="bg-theme text-text border-0">
-                        <p>Backup Witness</p>
+                        <p>{t("witnessSchedule.backupWitness")}</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -115,7 +117,7 @@ const WitnessSchedule: React.FC<WitnessScheduleProps> = ({
                       strokeWidth={4}
                     />
                   ) : null}
-                  <span>Block #{witness.blockNumber}</span>
+                  <span>{t("witnessSchedule.block")} #{witness.blockNumber}</span>
                 </div>
               ) : null}
             </div>
@@ -126,8 +128,7 @@ const WitnessSchedule: React.FC<WitnessScheduleProps> = ({
       {/* Next Shuffle Information (Moved Below List) */}
       <div className="text-center mt-4">
         <p className="text-gray-600 dark:text-gray-400">
-          Next Shuffle: {nextShuffleBlockNumber} ({blocksLeftBeforeRefetch}{" "}
-          blocks left)
+         {t("witnessSchedule.nextShuffle")}: {nextShuffleBlockNumber} ({blocksLeftBeforeRefetch} {t("witnessSchedule.blocksLeft")})
         </p>
       </div>
     </div>

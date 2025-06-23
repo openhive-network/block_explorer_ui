@@ -8,6 +8,7 @@ import useAccountAuthorities from "@/hooks/api/accountPage/useAccountAuthorities
 import { Table, TableBody, TableCell, TableRow } from "../ui/table";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import CopyToKeyboard from "../CopyToKeyboard";
+import { useI18n } from "@/i18n/i18n";
 
 interface AccountMainCardProps {
   accountName: string;
@@ -18,6 +19,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
   accountName,
   liveDataEnabled,
 }) => {
+  const { t } = useI18n();
   const { accountAuthoritiesData } = useAccountAuthorities(
     accountName,
     liveDataEnabled
@@ -106,7 +108,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
                 "bg-rowEven ": shouldMarkThreshold,
               })}
             >
-              <TableCell>Threshold</TableCell>
+              <TableCell>{t("accountAuthoritiesCard.threshold")}</TableCell>
               <TableCell>{authorities?.weight_threshold}</TableCell>
             </TableRow>
           </TableBody>
@@ -125,7 +127,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
           onClick={handlePropertiesVisibility}
           className="h-full flex justify-between align-center p-2 hover:bg-rowHover cursor-pointer px-4"
         >
-          <div className="text-lg">Authorities</div>
+          <div className="text-lg">{t("accountAuthoritiesCard.authorities")}</div>
 
           {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
         </div>
@@ -134,17 +136,17 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
         hidden={isPropertiesHidden}
         className="break-all"
       >
-        {renderCollectionOfAuthorities(accountAuthoritiesData?.owner, "Owner")}
+        {renderCollectionOfAuthorities(accountAuthoritiesData?.owner, t("accountAuthoritiesCard.owner"))}
         {renderCollectionOfAuthorities(
           accountAuthoritiesData?.active,
-          "Active"
+          t("accountAuthoritiesCard.active")
         )}
         {renderCollectionOfAuthorities(
           accountAuthoritiesData?.posting,
-          "Posting"
+          t("accountAuthoritiesCard.posting")
         )}
         <div>
-          <div className=" text-lg mt-2">Memo:</div>
+          <div className=" text-lg mt-2">{t("accountAuthoritiesCard.memo")}:</div>
           <Table>
             <TableBody>
               <TableRow className="bg-rowEven">
@@ -159,7 +161,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
           </Table>
           {accountAuthoritiesData?.witness_signing && (
             <>
-              <div className=" text-lg mt-2">Witness signing:</div>
+              <div className=" text-lg mt-2">{t("accountAuthoritiesCard.witnessSigning")}:</div>
               <Table>
                 <TableBody>
                   <TableRow className="bg-rowEven">

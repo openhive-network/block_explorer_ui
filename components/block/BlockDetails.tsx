@@ -8,6 +8,7 @@ import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { cn } from "@/lib/utils";
 import CopyButton from "../ui/CopyButton";
+import { useI18n } from "@/i18n/i18n"; // Assuming this is your i18n hook import
 
 interface BlockDetailsProps {
   virtualOperationsTypesCounters?: Explorer.OperationCounter[];
@@ -30,6 +31,7 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
   handleEnableVirtualOperations,
   trxOperationsLength,
 }) => {
+  const { t } = useI18n();
   if (!blockDetails) return;
   interface BlockDetailItemProps {
     label: string;
@@ -37,7 +39,7 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
     dataTestId?: string;
     hasBorder?: boolean;
   }
-  
+
   const BlockDetailItem: React.FC<BlockDetailItemProps> = ({
     label,
     value,
@@ -58,12 +60,12 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
           {label}:
         </div>
         <div className="text-sm" data-testid={dataTestId}>
-          {value} 
+          {value}
         </div>
       </div>
     );
   };
-  
+
 
   return (
     <Card
@@ -72,24 +74,24 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
     >
       <CardHeader className="px-4 pt-4 pb-2">
         <CardTitle data-testid="block-number" className="text-lg font-semibold text-left">
-          Block {blockDetails.block_num.toLocaleString()}   
+          {t("common.block")} {blockDetails.block_num.toLocaleString()}
           <CopyButton
             text={blockDetails.block_num}
-            tooltipText="Copy block hash"
+            tooltipText={t("common.copyBlockNumber")}
           />
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-0 px-4 py-2">
 
         <BlockDetailItem
-          label="Produced at"
+          label={t("blockDetails.producedAt")}
           value={formatAndDelocalizeTime(blockDetails.created_at)}
           dataTestId="produced-at"
           hasBorder
         />
 
         <BlockDetailItem
-          label="Produced by"
+          label={t("blockDetails.producedBy")}
           value={
             <Link
               className="flex items-center justify-start gap-2"
@@ -117,13 +119,13 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
 
 
         <BlockDetailItem
-          label="Hash"
+          label={t("blockDetails.hash")}
           value={
             <>
               {blockDetails.hash}
               <CopyButton
                 text={blockDetails.hash || ""}
-                tooltipText="Copy block hash"
+                tooltipText={t("blockDetails.copyBlockHash")}
               />
             </>
           }
@@ -132,13 +134,13 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
         />
 
         <BlockDetailItem
-          label="Previous Hash"
+          label={t("blockDetails.previousHash")}
           value={
             <>
               {blockDetails.prev}
               <CopyButton
                 text={blockDetails.prev || ""}
-                tooltipText="Copy prev block hash"
+                tooltipText={t("blockDetails.copyPrevBlockHash")}
               />
             </>
           }
@@ -147,7 +149,7 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
         />
 
         <BlockDetailItem
-          label="Number of Transactions"
+          label={t("blockDetails.numberOfTransactions")}
           value={trxOperationsLength}
           dataTestId="trx-length"
           hasBorder

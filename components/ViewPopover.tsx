@@ -9,13 +9,14 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
 import { cn } from "@/lib/utils";
 import { ChevronDown } from "lucide-react";
-
+import { useI18n } from "@/i18n/i18n";
 interface ViewPopoverProps {
   isMobile?: boolean;
 }
 
 const ViewPopover: React.FC<ViewPopoverProps> = ({ isMobile }) => {
   const { settings, setSettings } = useUserSettingsContext();
+  const { t } = useI18n();
   const [popoverOpen, setPopoverOpen] = useState(false);
 
   const popupDefaultValue = (() => {
@@ -46,7 +47,7 @@ const ViewPopover: React.FC<ViewPopoverProps> = ({ isMobile }) => {
           )}
           data-testid="data-view-dropdown"
         >
-          <span className="font-semibold">Data View</span>
+          <span className="font-semibold">{t("viewPopover.dataView")}</span>
           <ChevronDown className="w-4 ml-1" />
         </div>
       </PopoverTrigger>
@@ -76,7 +77,7 @@ const ViewPopover: React.FC<ViewPopoverProps> = ({ isMobile }) => {
               className="cursor-pointer"
               htmlFor="r1"
             >
-              Visualised Data
+              {t("viewPopover.visualizedData")}
             </Label>
           </div>
           <div className="flex items-center space-x-2 p-2 hover:bg-navbar-listHover rounded-md transition-colors duration-200">
@@ -95,7 +96,7 @@ const ViewPopover: React.FC<ViewPopoverProps> = ({ isMobile }) => {
               className="cursor-pointer"
               htmlFor="r2"
             >
-              Raw JSON
+               {t("viewPopover.rawJson")}
             </Label>
           </div>
           <div className="flex items-center space-x-2 p-2 hover:bg-navbar-listHover rounded-md transition-colors duration-200">
@@ -114,7 +115,7 @@ const ViewPopover: React.FC<ViewPopoverProps> = ({ isMobile }) => {
               className="cursor-pointer"
               htmlFor="r3"
             >
-              Pretty JSON
+             {t("viewPopover.prettyJson")}
             </Label>
           </div>
         </RadioGroup>

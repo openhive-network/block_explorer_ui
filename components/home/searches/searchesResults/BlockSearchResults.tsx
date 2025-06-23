@@ -12,10 +12,18 @@ import { Operations, Block } from "@/pages/blocks";
 import BlockNavigation from "@/components/BlockNavigation";
 import useBlockNavigation from "@/hooks/common/useBlockNavigation";
 import { DEFAULT_BLOCKS_SEARCH_PROPS } from "@/components/blocks/BlocksSearch";
-
-const TABLE_CELLS = ["Block", "Producer", "Time", "Transactions", ""];
+import { useI18n } from "@/i18n/i18n";
 
 const BlockSearchResults = () => {
+  const { t } = useI18n();
+  const TABLE_CELLS = [
+    t("common.block"),
+    t("blocksPage.producer"),
+    t("blocksPage.time"),
+    t("common.transactions"),
+    "", 
+  ];
+
   const {
     allBlocksSearchProps,
     setAllBlocksSearchProps,
