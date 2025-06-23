@@ -231,7 +231,7 @@ interface TableRowComponentProps {
   paramsState?: any;
   TABLE_CELLS: string[];
   expandedRows: number[];
-  expandedRowRef: React.RefObject<HTMLTableRowElement>;
+  expandedRowRef: any;
   toggleRow: (blockNum: number) => void;
   isMainPageTable: boolean;
 }

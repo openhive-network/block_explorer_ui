@@ -21,7 +21,7 @@ export function withSticky<T extends React.ElementType>(
 ) {
   type OwnProps = React.ComponentPropsWithoutRef<T>;
   type Props = OwnProps & { stickyLeft?: boolean | number; className?: string };
-  type RefType = React.ElementRef<T>;
+  type RefType = React.ComponentRef<T>;
 
   const StickyComp = React.forwardRef<RefType, Props>(
     ({ stickyLeft, style, className, ...props }, ref) => {
@@ -73,7 +73,16 @@ interface TableProps extends React.HTMLAttributes<HTMLTableElement> {
 }
 
 const Table = React.forwardRef<HTMLTableElement, TableProps>(
-  ({ className, children, enableMobileScrollArrows = false, isStandaloneTable = false, ...props }, ref) => {
+  (
+    {
+      className,
+      children,
+      enableMobileScrollArrows = false,
+      isStandaloneTable = false,
+      ...props
+    },
+    ref
+  ) => {
     const [showLeftArrow, setShowLeftArrow] = React.useState(false);
     const [showRightArrow, setShowRightArrow] = React.useState(false);
     const tableRef = React.useRef<HTMLDivElement>(null);
@@ -117,7 +126,8 @@ const Table = React.forwardRef<HTMLTableElement, TableProps>(
       const observer = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
-            const isSufficientlyVisible = entry.intersectionRatio >= thresholdValue;
+            const isSufficientlyVisible =
+              entry.intersectionRatio >= thresholdValue;
             setIsTableVisible(entry.isIntersecting && isSufficientlyVisible);
           });
         },
@@ -140,13 +150,15 @@ const Table = React.forwardRef<HTMLTableElement, TableProps>(
       };
     }, [handleScroll, isStandaloneTable]);
 
-
     const arrowStyle =
       "fixed top-1/2 transform -translate-y-1/2 bg-gray-200 bg-opacity-70 hover:bg-opacity-100 rounded-full p-2 z-20 cursor-pointer text-gray-700";
 
     return (
       <TableContext.Provider value={{ showLeftArrow, showRightArrow }}>
-        <div className="relative w-full overflow-auto" ref={tableRef}>
+        <div
+          className="relative w-full overflow-auto"
+          ref={tableRef}
+        >
           {enableMobileScrollArrows && showLeftArrow && (
             <div
               className={cn(arrowStyle, "left-2")}
@@ -162,7 +174,7 @@ const Table = React.forwardRef<HTMLTableElement, TableProps>(
           {enableMobileScrollArrows && showRightArrow && (
             <div
               className={cn(arrowStyle, "right-2")}
-              style={{ top: `45vh`}}
+              style={{ top: `45vh` }}
               onClick={() => {
                 tableRef.current?.scrollBy({ left: 100, behavior: "smooth" });
               }}
@@ -192,7 +204,11 @@ const TableHeader = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
-  <thead ref={ref} className={cn("text-sm", className)} {...props} />
+  <thead
+    ref={ref}
+    className={cn("text-sm", className)}
+    {...props}
+  />
 ));
 TableHeader.displayName = "TableHeader";
 

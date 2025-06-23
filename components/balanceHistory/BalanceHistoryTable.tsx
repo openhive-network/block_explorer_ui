@@ -253,9 +253,11 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
                 return (
                   <React.Fragment key={index}>
                     <TableRow
-                      ref={(el) =>
-                        el && rowRefs.current.set(operation.operationId, el)
-                      }
+                      ref={(el) => {
+                        if (el) {
+                          rowRefs.current.set(operation.operationId, el);
+                        }
+                      }}
                       className={isExpanded ? "bg-rowOdd" : ""}
                     >
                       <TableCell
@@ -338,10 +340,11 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
                     </TableRow>
                     {isExpanded && (
                       <TableRow
-                        ref={(el) =>
-                          el &&
-                          detailRefs.current.set(operation.operationId, el)
-                        }
+                        ref={(el) => {
+                          if (el) {
+                            detailRefs.current.set(operation.operationId, el);
+                          }
+                        }}
                       >
                         <TableCell
                           colSpan={7}

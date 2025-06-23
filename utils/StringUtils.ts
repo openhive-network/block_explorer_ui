@@ -1,4 +1,11 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode } from "react";
+
+interface TooltipProps {
+  tooltipContent?: ReactNode;
+  tooltipTrigger?: ReactNode;
+  children?: ReactNode;
+  className?: string;
+}
 
 export const capitalizeFirst = (text: string) => {
   return text.charAt(0).toUpperCase() + text.slice(1);
@@ -120,62 +127,64 @@ export const splitStringValue = (value: string, keyword: string) => {
 export const changeHBDToDollarsDisplay = (hbd: string): string => {
   const numericValue = hbd.split(" ")[0].slice(0, -1);
 
-  return `${numericValue} $`
-}
+  return `${numericValue} $`;
+};
 
 /**
- * 
+ *
  * @param hbd grab pure numeric value without any unit or commas
- * @returns 
+ * @returns
  */
 export const grabNumericValue = (str: string): number => {
   // 1. Remove all non-numeric characters EXCEPT the decimal point (period or comma).
-  const cleaned = str.replace(/[^0-9.,-]/g, '');
+  const cleaned = str.replace(/[^0-9.,-]/g, "");
 
   // 2. Handle negative sign: Keep only the first one (if present) and make sure it's at the beginning.
-  let negative = '';
-  if (cleaned.startsWith('-')) {
-    negative = '-';
+  let negative = "";
+  if (cleaned.startsWith("-")) {
+    negative = "-";
   }
-  const withoutNegative = cleaned.replace(/^-/, ''); // Remove initial negative sign
-
+  const withoutNegative = cleaned.replace(/^-/, ""); // Remove initial negative sign
 
   //3. Determine the decimal separator (either comma or period), preferring the last occurrence
-  let decimalSeparator = '';
-  if (withoutNegative.lastIndexOf(',') > withoutNegative.lastIndexOf('.')) {
-    decimalSeparator = ',';
-  } else if (withoutNegative.lastIndexOf('.') > -1) {
-    decimalSeparator = '.';
+  let decimalSeparator = "";
+  if (withoutNegative.lastIndexOf(",") > withoutNegative.lastIndexOf(".")) {
+    decimalSeparator = ",";
+  } else if (withoutNegative.lastIndexOf(".") > -1) {
+    decimalSeparator = ".";
   }
 
   // 4. Remove thousands separators, keeping only the decimal point.
   let numberString = withoutNegative;
 
   if (decimalSeparator) {
-    const thousandsSeparator = decimalSeparator === ',' ? '.' : ',';
-    const regex = new RegExp(thousandsSeparator === '.' ? '\\.' : thousandsSeparator, 'g');
-    numberString = numberString.replace(regex, '');
+    const thousandsSeparator = decimalSeparator === "," ? "." : ",";
+    const regex = new RegExp(
+      thousandsSeparator === "." ? "\\." : thousandsSeparator,
+      "g"
+    );
+    numberString = numberString.replace(regex, "");
   } else {
     // No decimal separator found, so remove all periods and commas.
-    numberString = numberString.replace(/[.,]/g, '');
+    numberString = numberString.replace(/[.,]/g, "");
   }
 
   // 5. Replace the decimal separator with a period.
   if (decimalSeparator) {
-    numberString = numberString.replace(decimalSeparator, '.');
+    numberString = numberString.replace(decimalSeparator, ".");
   }
 
   return Number(negative + numberString);
-}
+};
 
 /**
  * function to extract content from React Element returned by operations formatter
  *
- * @param element react node of the element 
+ * @param element react node of the element
  * @returns content of the react element
  */
 export const extractTextFromReactElement = (element: ReactNode): string => {
-  if (typeof element === 'string') {
+  if (typeof element === "string") {
     let trimmed = element.trim();
     if (trimmed.startsWith("@")) {
       // No space after @
@@ -186,51 +195,64 @@ export const extractTextFromReactElement = (element: ReactNode): string => {
     }
   }
 
-  if (typeof element === 'number') {
+  if (typeof element === "number") {
     return element.toString() + " ";
   }
 
   if (!React.isValidElement(element)) {
-    return ''; // Or some other appropriate fallback
+    return ""; // Or some other appropriate fallback
   }
 
-  let text = '';
+  let text = "";
 
   if (Array.isArray(element)) {
     // Recursively process each element in the array
-    element.forEach(child => {
+    element.forEach((child) => {
       text += extractTextFromReactElement(child);
     });
     return text;
   }
 
-  if (React.isValidElement(element) && typeof element.type === 'function' && element.props && element.props.tooltipContent != null && element.props.tooltipTrigger != null) {
+  if (
+    React.isValidElement<TooltipProps>(element) &&
+    typeof element.type === "function" &&
+    element.props &&
+    element.props.tooltipContent != null &&
+    element.props.tooltipTrigger != null
+  ) {
     let trigger = extractTextFromReactElement(element.props.tooltipTrigger);
-    let content = extractTextFromReactElement(element.props.tooltipContent).trimEnd();
-    return `${trigger} (${content})`
+    let content = extractTextFromReactElement(
+      element.props.tooltipContent
+    ).trimEnd();
+    return `${trigger} (${content})`;
   }
 
-  if (React.isValidElement(element) && element.type === React.Fragment) {
+  if (
+    React.isValidElement<TooltipProps>(element) &&
+    element.type === React.Fragment
+  ) {
     // Handle React Fragment ( <></> )
 
     React.Children.forEach(element.props.children, (child) => {
-
       text += extractTextFromReactElement(child);
     });
-    return text
+    return text;
   }
 
-  if (React.isValidElement(element) && typeof element.type === 'string' && element.type === "span" && element.props && element.props.className === 'text-link') {
+  if (
+    React.isValidElement<TooltipProps>(element) &&
+    typeof element.type === "string" &&
+    element.type === "span" &&
+    element.props &&
+    element.props.className === "text-link"
+  ) {
     //It is a link
     React.Children.forEach(element.props.children, (child) => {
-
       text += extractTextFromReactElement(child);
     });
-  }
-  else {
-    if (React.isValidElement(element) && element.props) {
+  } else {
+    if (React.isValidElement<TooltipProps>(element) && element.props) {
       React.Children.forEach(element.props.children, (child) => {
-
         text += extractTextFromReactElement(child);
       });
     }
@@ -244,4 +266,4 @@ export const extractTextFromReactElement = (element: ReactNode): string => {
  */
 export const formatHash = (hash: string): string => {
   return hash?.slice(0, 10);
-}
+};

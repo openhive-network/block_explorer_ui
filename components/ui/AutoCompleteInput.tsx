@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  RefObject,
+} from "react";
 import { X, Search, CornerDownLeft as Enter } from "lucide-react";
 import { Input } from "./input";
 import useDebounce from "@/hooks/common/useDebounce";
@@ -115,7 +121,9 @@ const AutoCompleteInput: React.FC<Props> = ({
     }
   };
 
-  useOnClickOutside(wrapRef, () => setInputFocus(false));
+  useOnClickOutside(wrapRef as RefObject<HTMLDivElement>, () =>
+    setInputFocus(false)
+  );
 
   useEffect(() => {
     resultRef.current?.scrollIntoView({ block: "nearest" });

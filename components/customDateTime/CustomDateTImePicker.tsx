@@ -1,6 +1,6 @@
 //CUSTOM UTC DATE TIME PICKER
 
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback, JSX } from "react";
 import "./customDateTimePicker.css";
 
 interface CustomDateTimePickerProps {

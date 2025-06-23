@@ -87,22 +87,13 @@ import {
   witness_set_properties,
   witness_update,
 } from "@hiveio/wax";
-import { formatNumber, formatPercent } from "./utils";
+import { formatPercent } from "./utils";
 import Link from "next/link";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
-import HiveTooltip from "@/components/HiveTooltip";
-import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
-import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
-import { convertVestsToHP } from "@/utils/Calculations";
-import { useHiveChainContext } from "@/contexts/HiveChainContext";
+import ConvertedHiveTooltip from "@/components/ConvertedHiveTooltip";
 
 class OperationsFormatter implements IWaxCustomFormatter {
   public constructor(private readonly wax: IWaxBaseInterface) {}
-
-  private headBlockNum = useHeadBlockNumber().headBlockNumberData;
-  private dynamicGlobalQueryData = useDynamicGlobal(this.headBlockNum)
-    .dynamicGlobalData;
-  private hiveChain  = useHiveChainContext();
 
   private getFormattedAmount(
     supply: Hive.Supply | undefined
@@ -123,21 +114,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }
 
   private getConvertedHiveTooltip(tooltipTrigger: string, supply: Hive.Supply) {
-    if (!this.dynamicGlobalQueryData || !tooltipTrigger || !supply || !this.hiveChain.hiveChain) {
-      return "";
-    }
-
-    const resultString = convertVestsToHP(
-      this.hiveChain.hiveChain,
-      supply,
-      this.dynamicGlobalQueryData.headBlockDetails.rawTotalVestingFundHive,
-      this.dynamicGlobalQueryData.headBlockDetails.rawTotalVestingShares
-    );
-
     return (
-      <HiveTooltip
+      <ConvertedHiveTooltip
         tooltipTrigger={tooltipTrigger}
-        tooltipContent={resultString}
+        supply={supply}
       />
     );
   }
