@@ -190,7 +190,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
         value={rangeSelectKey}
       >
         <SelectTrigger className="w-1/2 border-0 border-b-2 bg-theme text-text">
-          {rangeSelectOptions.find((opt) => opt.key === rangeSelectKey)?.name}
+          {t(`searchRanges.${rangeSelectKey}`)}
         </SelectTrigger>
         <SelectContent className="bg-theme text-text rounded-sm max-h-[31rem]">
           {rangeSelectOptions.map((option, idx) => (
@@ -200,7 +200,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
               value={option.key}
               data-testid="search-select-option"
             >
-              {option.name}
+              {t(`searchRanges.${option.key}`)}
             </SelectItem>
           ))}
         </SelectContent>
@@ -240,10 +240,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
             value={timeUnitSelectKey}
           >
             <SelectTrigger className="pl-2 bg-theme border-0 border-b-2 text-text">
-              {
-                timeSelectOptions.find((opt) => opt.key === timeUnitSelectKey)
-                  ?.name
-              }
+              {t(`searchRanges.${timeUnitSelectKey}`)}
             </SelectTrigger>
             <SelectContent className="bg-theme text-text rounded-sm max-h-[31rem]">
               {timeSelectOptions.map((option, index) => (
@@ -252,7 +249,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
                   key={index}
                   value={option.key}
                 >
-                  {option.name}
+                  {t(`searchRanges.${option.key}`)}
                 </SelectItem>
               ))}
             </SelectContent>

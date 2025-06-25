@@ -9,6 +9,7 @@ import Link from "next/link";
 import { trimAccountName, capitalizeFirst } from "@/utils/StringUtils";
 import Hive from "@/types/Hive";
 import { useRouter } from "next/router";
+import { useI18n } from "@/i18n/i18n";
 
 const isNumeric = (v: string) => /^\d+$/.test(v);
 const isHash = (v: string) => /^[a-fA-F0-9]{40}$/.test(v);
@@ -49,6 +50,7 @@ const AutoCompleteInput: React.FC<Props> = ({
   onBlur,
   expand = false,
 }) => {
+  const { t } = useI18n();
   const router = useRouter();
   const [inputFocus, setInputFocus] = useState(false);
   const [selected, setSelected] = useState(0);
@@ -142,7 +144,7 @@ const AutoCompleteInput: React.FC<Props> = ({
               <>
                 {addLabel && (
                   <span className="autocomplete-result-label">
-                    {capitalizeFirst(resType)}:&nbsp;
+                      {capitalizeFirst(t(`autocompleteInput.${resType}`))}:&nbsp;
                   </span>
                 )}
                 <Link

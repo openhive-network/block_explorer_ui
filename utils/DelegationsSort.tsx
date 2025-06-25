@@ -6,6 +6,7 @@ import Explorer from "@/types/Explorer";
 import { grabNumericValue } from "./StringUtils";
 import { TableHead } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { useI18n } from "@/i18n/i18n";
 
 export type RcDelegation = {
   to: string;
@@ -90,6 +91,7 @@ export const buildTableHead = (
   isOrderAscending: boolean,
   direction?: "incoming" | "outgoing"
 ) => {
+  const { t } = useI18n();
   const tableHeaderCells =
     direction === "incoming"
       ? TABLE_HEADER_CELLS_INCOMING
@@ -106,7 +108,7 @@ export const buildTableHead = (
             className="bg-inherit hover:bg-inherit p-0 m-0"
             onClick={() => handleSort(cellName.toLocaleLowerCase())}
           >
-            {cellName} {renderChevron(cellName, sortKey, isOrderAscending)}
+           {cellName??t(`delegationSort.${cellName}`)} {renderChevron(cellName, sortKey, isOrderAscending)}
           </Button>
         </TableHead>
       </Fragment>

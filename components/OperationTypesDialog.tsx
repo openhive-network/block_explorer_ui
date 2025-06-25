@@ -14,10 +14,10 @@ import { getOperationTypeForDisplay } from "@/utils/UI";
 import { useUserSettingsContext } from "../contexts/UserSettingsContext";
 import { cn } from "@/lib/utils";
 import Chip from "./Chip";
-import { categorizedOperationTypes } from "@/utils/CategorizedOperationTypes";
+import { categorizedOperationTypes } from "@/utils/CategorizedOperationTypes"; // Assuming this file exports the array as is
 import Explorer from "@/types/Explorer";
 import { ChevronDown, Search } from "lucide-react";
-import { FinancialOperationTypes } from "@/utils/FinancialOperationTypes";
+import { FinancialOperationTypes } from "@/utils/FinancialOperationTypes"; // Assuming this file exports the array as is
 import { useI18n } from "../i18n/i18n";
 
 type OperationTypesDialogProps = {
@@ -375,6 +375,11 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
       return null;
     }
 
+    // Helper function to create the translation key from the sectionName
+    const getCategoryTranslationKey = (name: string): string => {
+      return `operationCategories.${name.toLowerCase().replace(/ /g, "")}`;
+    };
+
     return (
       <div
         className="border-t px-2"
@@ -400,7 +405,9 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
             <span
               className={`rounded w-4 h-4 mr-2 ${colorByOperationCategory[sectionName]}`}
             ></span>
-            <span className="font-semibold flex-1 truncate">{sectionName}</span>
+            <span className="font-semibold flex-1 truncate">
+                  {t(getCategoryTranslationKey(sectionName))}
+            </span>
           </div>
           <ChevronDown
             className={cn("h-5 w-5 transition-transform transform", {

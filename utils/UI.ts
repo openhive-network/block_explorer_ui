@@ -1,3 +1,4 @@
+import { useI18n } from "@/i18n/i18n";
 import Hive from "@/types/Hive";
 import { MutableRefObject } from "react";
 
@@ -9,6 +10,7 @@ export const getOperationButtonTitle = (
   selectedOperationTypes: number[] | null,
   operationsTypes?: Hive.OperationPattern[]
 ): string => {
+  const { t } = useI18n();
   if (!selectedOperationTypes) return "";
 
   if (selectedOperationTypes && selectedOperationTypes.length === 1) {
@@ -18,7 +20,7 @@ export const getOperationButtonTitle = (
     );
   }
   if (selectedOperationTypes && selectedOperationTypes.length > 1)
-    return `${selectedOperationTypes.length} operation types`;
+    return `${selectedOperationTypes.length} ${t("getOperationButtonTitle.operationTypes")}`;
   return "Operation types";
 };
 

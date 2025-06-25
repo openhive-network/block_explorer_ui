@@ -14,6 +14,7 @@ import { formatNumber } from "@/lib/utils";
 import { cn } from "@/lib/utils";
 import moment from "moment";
 import { ArrowDown, ArrowUp, Minus } from "lucide-react";
+import { useI18n } from "@/i18n/i18n";
 
 interface BalanceHistoryChartProps {
   hiveBalanceHistoryData?: {
@@ -57,6 +58,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
   quickView = false,
   showSavingsBalance = "yes",
 }) => {
+  const { t } = useI18n();
   const [selectedCoinType, setSelectedCoinType] = useState<string>("HIVE");
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 480);
   const [hiddenDataKeys, setHiddenDataKeys] = useState<string[]>([]);
@@ -179,7 +181,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
               )}`}
             </div>
             <div style={{ color: colorMap.SAVINGS }}>
-              {`Savings Balance: ${formatNumber(
+              {`${t("balanceHistoryChart.savingsBalance")}: ${formatNumber(
                 savingsBalance,
                 selectedCoinType === "VESTS"
               )}`}
@@ -308,7 +310,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
               stroke={colorMap.SAVINGS}
               strokeWidth={2}
               activeDot={{ r: 6 }}
-              name="Savings Balance"
+              name={t("balanceHistoryChart.savingsBalance")}
               dot={false}
               hide={hiddenDataKeys.includes("savings_balance")}
             />
