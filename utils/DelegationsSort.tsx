@@ -108,7 +108,7 @@ export const buildTableHead = (
             className="bg-inherit hover:bg-inherit p-0 m-0"
             onClick={() => handleSort(cellName.toLocaleLowerCase())}
           >
-           {cellName??t(`delegationSort.${cellName}`)} {renderChevron(cellName, sortKey, isOrderAscending)}
+           {cellName?t(`delegationSort.${cellName}`) : ''} {renderChevron(cellName, sortKey, isOrderAscending)}
           </Button>
         </TableHead>
       </Fragment>

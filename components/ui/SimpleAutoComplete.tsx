@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, RefObject } from "react";
 import { X, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -17,11 +17,11 @@ const SimpleAutocomplete: React.FC<SimpleAutocompleteProps> = ({
   className,
   placeholder = "Search...",
   onChange,
-  value
+  value,
 }) => {
   const [inputFocus, setInputFocus] = useState(false);
   const [filteredValues, setFilteredValues] = useState<string[]>([]);
-  const searchContainerRef = useRef(null);
+  const searchContainerRef = useRef<HTMLDivElement>(null);
 
   const resultsContainerRef = useRef<HTMLDivElement>(null);
   const scrollableContainerRef = useRef<HTMLDivElement>(null);
@@ -29,7 +29,9 @@ const SimpleAutocomplete: React.FC<SimpleAutocompleteProps> = ({
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
 
   // Close the search when clicking outside of the container
-  useOnClickOutside(searchContainerRef, () => closeSearchBar());
+  useOnClickOutside(searchContainerRef as RefObject<HTMLDivElement>, () =>
+    closeSearchBar()
+  );
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
@@ -74,7 +76,7 @@ const SimpleAutocomplete: React.FC<SimpleAutocompleteProps> = ({
     const validItemsExist = inputFocus && filteredValues.length > 0;
 
     if (event.key === "Enter") {
-        event.preventDefault();
+      event.preventDefault();
       if (highlightedIndex !== -1 && validItemsExist) {
         handleSelectValue(filteredValues[highlightedIndex]);
       } else if (filteredValues.length === 1 && value === filteredValues[0]) {
@@ -85,26 +87,30 @@ const SimpleAutocomplete: React.FC<SimpleAutocompleteProps> = ({
     } else if (event.key === "ArrowDown") {
       event.preventDefault();
       if (validItemsExist) {
-        setHighlightedIndex((prev) => (prev < filteredValues.length - 1 ? prev + 1 : 0));
+        setHighlightedIndex((prev) =>
+          prev < filteredValues.length - 1 ? prev + 1 : 0
+        );
       }
     } else if (event.key === "ArrowUp") {
       event.preventDefault();
       if (validItemsExist) {
-        setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : filteredValues.length - 1));
+        setHighlightedIndex((prev) =>
+          prev > 0 ? prev - 1 : filteredValues.length - 1
+        );
       }
     } else if (event.key === "Tab") {
-       event.preventDefault();
-       if (validItemsExist) {
-          if (highlightedIndex === -1) {
-            setHighlightedIndex(0);
-          } else if (highlightedIndex < filteredValues.length - 1) {
-            setHighlightedIndex(highlightedIndex + 1); 
-          } else {
-            setHighlightedIndex(0); 
-          }
-       } else {
+      event.preventDefault();
+      if (validItemsExist) {
+        if (highlightedIndex === -1) {
+          setHighlightedIndex(0);
+        } else if (highlightedIndex < filteredValues.length - 1) {
+          setHighlightedIndex(highlightedIndex + 1);
+        } else {
+          setHighlightedIndex(0);
+        }
+      } else {
         inputRef.current?.blur();
-       }
+      }
     }
   };
 
@@ -114,7 +120,7 @@ const SimpleAutocomplete: React.FC<SimpleAutocompleteProps> = ({
     if (!value) {
       setFilteredValues(values);
     } else {
-       const filtered = values.filter((item) =>
+      const filtered = values.filter((item) =>
         item.toLowerCase().includes(value.toLowerCase())
       );
       setFilteredValues(filtered);
@@ -124,19 +130,24 @@ const SimpleAutocomplete: React.FC<SimpleAutocompleteProps> = ({
   // Effect for scrolling the highlighted item into view
   useEffect(() => {
     if (highlightedIndex !== -1 && scrollableContainerRef.current) {
-      const highlightedElement = scrollableContainerRef.current.children[highlightedIndex] as HTMLElement;
+      const highlightedElement = scrollableContainerRef.current.children[
+        highlightedIndex
+      ] as HTMLElement;
 
       if (highlightedElement) {
         highlightedElement.scrollIntoView({
-          behavior: "smooth", 
-          block: "nearest", 
+          behavior: "smooth",
+          block: "nearest",
         });
       }
     }
-  }, [highlightedIndex]); 
+  }, [highlightedIndex]);
 
   return (
-    <div ref={searchContainerRef} className={cn("relative", className)}>
+    <div
+      ref={searchContainerRef}
+      className={cn("relative", className)}
+    >
       <div className="relative flex items-center z-10">
         <Input
           ref={inputRef}
@@ -150,7 +161,10 @@ const SimpleAutocomplete: React.FC<SimpleAutocompleteProps> = ({
         />
         <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center">
           {value && value.length > 0 ? (
-            <X className="cursor-pointer h-5 w-5 text-gray-500" onClick={resetSearchBar} />
+            <X
+              className="cursor-pointer h-5 w-5 text-gray-500"
+              onClick={resetSearchBar}
+            />
           ) : (
             <Search className="h-5 w-5 text-gray-500" />
           )}
@@ -158,12 +172,12 @@ const SimpleAutocomplete: React.FC<SimpleAutocompleteProps> = ({
       </div>
       {inputFocus && filteredValues.length > 0 && (
         <div
-          ref={resultsContainerRef} 
+          ref={resultsContainerRef}
           className="absolute mt-1 bg-white dark:bg-gray-800 w-full max-h-[150px] border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 overflow-hidden" // overflow-hidden on outer is fine
           id="autocomplete-results"
         >
           <div
-            ref={scrollableContainerRef} 
+            ref={scrollableContainerRef}
             className="autocomplete-result-container scrollbar-autocomplete h-full overflow-y-auto"
           >
             {filteredValues.map((item, index) => (
@@ -177,7 +191,6 @@ const SimpleAutocomplete: React.FC<SimpleAutocompleteProps> = ({
                   }
                 )}
                 onClick={() => handleSelectValue(item)}
-               
               >
                 {item}
               </div>

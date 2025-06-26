@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, RefObject } from "react";
 
 import { cn } from "@/lib/utils";
 import { numberToTimeString } from "@/utils/StringUtils";
@@ -94,9 +94,11 @@ const TimePicker: React.FC<TimePickerProps> = ({
   const [hours, setHours] = useState(date.getUTCHours());
   const [minutes, setMinutes] = useState(date.getUTCMinutes());
   const [seconds, setSeconds] = useState(date.getUTCSeconds());
-  const timePickerRef = useRef(null);
+  const timePickerRef = useRef<HTMLDivElement>(null);
 
-  useOnClickOutside(timePickerRef, () => handleTimeSelect());
+  useOnClickOutside(timePickerRef as RefObject<HTMLDivElement>, () =>
+    handleTimeSelect()
+  );
 
   const handleTimeSelect = () => {
     if (
