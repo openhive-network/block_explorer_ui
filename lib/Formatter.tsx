@@ -87,7 +87,7 @@ import {
   witness_set_properties,
   witness_update,
 } from "@hiveio/wax";
-import { formatNumber, formatPercent } from "./utils";
+import { formatPercent } from "./utils";
 import Link from "next/link";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import HiveTooltip from "@/components/HiveTooltip";
@@ -95,6 +95,7 @@ import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { convertVestsToHP } from "@/utils/Calculations";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
+import ConvertedHiveTooltip from "@/components/ConvertedHiveTooltip";
 import { useI18n } from "@/i18n/i18n";
 
 class OperationsFormatter implements IWaxCustomFormatter {
@@ -125,21 +126,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
   }
 
   private getConvertedHiveTooltip(tooltipTrigger: string, supply: Hive.Supply) {
-    if (!this.dynamicGlobalQueryData || !tooltipTrigger || !supply || !this.hiveChain.hiveChain) {
-      return "";
-    }
-
-    const resultString = convertVestsToHP(
-      this.hiveChain.hiveChain,
-      supply,
-      this.dynamicGlobalQueryData.headBlockDetails.rawTotalVestingFundHive,
-      this.dynamicGlobalQueryData.headBlockDetails.rawTotalVestingShares
-    );
-
     return (
-      <HiveTooltip
+      <ConvertedHiveTooltip
         tooltipTrigger={tooltipTrigger}
-        tooltipContent={resultString}
+        supply={supply}
       />
     );
   }
