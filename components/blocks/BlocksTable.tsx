@@ -55,7 +55,7 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
   isMainPageTable = false,
   allBlocksPageLink,
 }) => {
-  const { t } = useI18n();
+  const { t , dir} = useI18n();
   const [expandedRows, setExpandedRows] = useState<number[]>([]);
   const expandedRowRef = useRef<HTMLTableRowElement>(null); // Ref to expanded row
 
@@ -88,8 +88,9 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
             key={index}
             scope="col"
             className={cn(
-              "text-left",
-              index === 0 ? "sticky left-0 z-10 bg-theme" : ""
+             
+              index === 0 ? "sticky left-0 z-10 bg-theme" : "",
+              dir === "rtl" ?  "text-right" : "text-left"
             )}
           >
             {cell}
@@ -295,7 +296,7 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({
 
   return (
     <>
-      <TableRow
+      <TableRow 
         className={`text-left ${bgColor} hover:bg-rowHover border-b-2 transition-colors duration-300 ease-in-out ${textColorClass} ${shadowClass}`}
       >
         <TableCell className="whitespace-nowrap sticky left-[0px] z-10 bg-inherit p-4">

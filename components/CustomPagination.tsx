@@ -11,6 +11,7 @@ import {
   PaginationLatest,
   PaginationFirst,
 } from "./ui/pagination";
+import { useI18n } from "../i18n/i18n";
 
 interface CustomPaginationProps {
   currentPage: number;
@@ -35,6 +36,9 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
   handleLatestPage,
   handleFirstPage
 }) => {
+  const { dir } = useI18n();
+  const isRTL = dir === "rtl";
+
   const paginationRange = usePagination({
     currentPage,
     totalCount,
@@ -109,6 +113,11 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
     pageItemPaddingClass = "px-3";
   }
 
+  const PrevIcon = isRTL ? PaginationNext : PaginationPrevious;
+  const NextIcon = isRTL ? PaginationPrevious : PaginationNext;
+  const LatestIcon = isRTL ? PaginationFirst : PaginationLatest;
+  const FirstIcon = isRTL ? PaginationLatest : PaginationFirst;
+
   return (
     <Pagination
       className={cn("bg-theme p-2 flex items-center justify-center", className)}
@@ -121,14 +130,14 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
                 onClick={isMirrored ? onLastPage : onFirstPage}
                 className={cn(arrowStyle, "flex items-center justify-center")}
               >
-                <PaginationLatest className={iconPaddingClass} />
+                <LatestIcon className={iconPaddingClass} />
               </PaginationItem>
 
               <PaginationItem
                 onClick={isMirrored ? onNext : onPrevious}
                 className={cn(arrowStyle, "flex items-center justify-center")}
               >
-                <PaginationPrevious className={iconPaddingClass} />
+                <PrevIcon className={iconPaddingClass} />
               </PaginationItem>
             </>
           )}
@@ -174,13 +183,13 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
                 onClick={isMirrored ? onPrevious : onNext}
                 className={cn(arrowStyle, "flex items-center justify-center")}
               >
-                <PaginationNext className={iconPaddingClass} />
+                <NextIcon className={iconPaddingClass} />
               </PaginationItem>
               <PaginationItem
                 onClick={isMirrored ? onFirstPage : onLastPage}
                 className={cn(arrowStyle, "flex items-center justify-center")}
               >
-                <PaginationFirst className={iconPaddingClass} />
+                <FirstIcon className={iconPaddingClass} />
               </PaginationItem>
             </>
           )}

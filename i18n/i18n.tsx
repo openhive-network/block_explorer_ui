@@ -11,21 +11,34 @@ import React, {
 import * as timeago from "timeago.js";
 import esTimeagoLocale from "timeago.js/lib/lang/es";
 import itTimeagoLocale from "timeago.js/lib/lang/it";
+import arTimeagoLocale from "timeago.js/lib/lang/ar";
+import zhTimeagoLocale from "timeago.js/lib/lang/zh_CN";
+import deTimeagoLocale from "timeago.js/lib/lang/de";
+import frTimeagoLocale from "timeago.js/lib/lang/fr";
+import jaTimeagoLocale from "timeago.js/lib/lang/ja";
+import koTimeagoLocale from "timeago.js/lib/lang/ko";
+import plTimeagoLocale from "timeago.js/lib/lang/pl";
+import ptTimeagoLocale from "timeago.js/lib/lang/pt_BR";
+import roTimeagoLocale from "timeago.js/lib/lang/ro";
+
 
 let timeagoLocalesHaveBeenRegistered = false;
 const registerTimeagoLocalesOnce = () => {
   if (!timeagoLocalesHaveBeenRegistered) {
     timeago.register("es", esTimeagoLocale);
     timeago.register("it", itTimeagoLocale);
+    timeago.register("ar", arTimeagoLocale);
+    timeago.register("zh", zhTimeagoLocale);
+    timeago.register("de", deTimeagoLocale);
+    timeago.register("fr", frTimeagoLocale);
+    timeago.register("ja", jaTimeagoLocale);
+    timeago.register("ko", koTimeagoLocale);
+    timeago.register("pl", plTimeagoLocale);
+    timeago.register("pt", ptTimeagoLocale);
+    timeago.register("ro", roTimeagoLocale);
     timeagoLocalesHaveBeenRegistered = true;
   }
 };
-
-// Moment.js Setup - Each Time we add new language it should be imported here
-import moment from "moment";
-import "moment/locale/es"; // For Spanish
-import "moment/locale/it"; // For Italian
-
 export interface Translations {
   [key: string]: string;
 }
@@ -42,14 +55,32 @@ interface I18nContextProps {
 import enTranslations from "./en.json";
 import esTranslations from "./es.json";
 import itTranslations from "./it.json";
+import deTranslations from "./de.json";
+import ptTranslations from "./pt.json";
+import frTranslations from "./fr.json";
+import plTranslations from "./pl.json";
+import zhTranslations from "./zh.json";
+import jaTranslations from "./ja.json";
+import roTranslations from "./ro.json";
+import koTranslations from "./ko.json";
+import arTranslations from "./ar.json";
 
 const appTranslations: { [key: string]: Translations } = {
+  ar: arTranslations,
   en: enTranslations,
   es: esTranslations,
   it: itTranslations,
+  de: deTranslations,
+  pt: ptTranslations,
+  fr: frTranslations,
+  pl: plTranslations,
+  zh: zhTranslations,
+  ja: jaTranslations,
+  ro: roTranslations,
+  ko: koTranslations,
 };
 
-const rtlLanguages = ["ar", "he", "fa", "ur"];
+const rtlLanguages = ["ar"];
 const getBaseLocale = (locale: string) => locale.split("-")[0];
 const isRTL = (locale: string) => rtlLanguages.includes(getBaseLocale(locale));
 
@@ -99,8 +130,6 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({
       localStorage.setItem("locale", currentLocale);
     }
 
-    let momentLocaleToSet = currentLocale.toLowerCase();
-    moment.locale(momentLocaleToSet);
   }, [currentLocale]); // This effect runs when currentLocale changes
 
   const t = useCallback(

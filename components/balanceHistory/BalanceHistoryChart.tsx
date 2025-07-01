@@ -58,7 +58,9 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
   quickView = false,
   showSavingsBalance = "yes",
 }) => {
-  const { t } = useI18n();
+  const { t, dir, locale } = useI18n();
+  const isRTL = dir === "rtl";
+
   const [selectedCoinType, setSelectedCoinType] = useState<string>("HIVE");
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 480);
   const [hiddenDataKeys, setHiddenDataKeys] = useState<string[]>([]);
@@ -127,9 +129,12 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     payload?: any[];
     label?: string;
   }) => {
-    if (quickView || !active || !payload || payload.length === 0) return null;
-
-    const selectedData = dataMap[selectedCoinType]?.find((item) => item.timestamp === label);
+    const { dir: tooltipDir } = useI18n();
+    if (quickView || !active || !payload || payload.length === 0) return null;    
+    const isTooltipRTL = tooltipDir === "rtl";
+    const selectedData = dataMap[selectedCoinType]?.find(
+      (item) => item.timestamp === label
+    );
     if (!selectedData) return null;
 
     const actualBalance = selectedData?.balance ?? 0;
@@ -146,20 +151,34 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
 
     return (
       <div className="bg-theme dark:bg-theme p-2 rounded border border-explorer-light-gray">
-        <p className="font-bold">{`Date: ${label}`}</p>
+        <p className="font-bold">{`${t("common.date")}: ${label}`}</p>
         <div className="mb-1" style={{ color: currentCoinColor }}>
-          {/* Divider with color */}
-          <div className="flex items-center" style={{ color: currentCoinColor }}>
+          <div
+            className={cn(
+              "flex items-center",
+              isTooltipRTL && "flex-row-reverse"
+            )}
+            style={{ color: currentCoinColor }}
+          >
             {isPositiveChange ? (
               <ArrowUp className="bg-green-400 p-[1.2px]" size={16} />
             ) : isZeroChange ? (
-              <Minus className="bg-black p-[1.2px] mr-1" color={currentCoinColor} size={16} />
+              <Minus
+                className={cn(
+                  "bg-black p-[1.2px]",
+                  isTooltipRTL ? "ml-1" : "mr-1"
+                )}
+                color={currentCoinColor}
+                size={16}
+              />
             ) : (
               <ArrowDown className="bg-red-400  p-[1.2px]" size={16} />
             )}
             {` ${formatNumber(balanceChange, selectedCoinType === "VESTS")}`}
           </div>
-          <div style={{ color: currentCoinColor }}>{`Balance: ${formatNumber(
+          <div style={{ color: currentCoinColor }}>{`${t(
+            "common.balance"
+          )}: ${formatNumber(
             actualBalance,
             selectedCoinType === "VESTS"
           )}`}</div>
@@ -167,11 +186,24 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
 
         {showSavingsBalance && savingsBalance !== undefined && (
           <div className=" border-t border-gray-400 dark:border-gray-600 mt-1">
-            <div className="flex items-center" style={{ color: colorMap.SAVINGS }}>
+            <div
+              className={cn(
+                "flex items-center",
+                isTooltipRTL && "flex-row-reverse"
+              )}
+              style={{ color: colorMap.SAVINGS }}
+            >
               {isSavingsPositiveChange ? (
                 <ArrowUp className="bg-green-400 p-[1.2px]" size={16} />
               ) : isSavingsZeroChange ? (
-                <Minus className="bg-black p-[1.2px] mr-1" color={colorMap.SAVINGS} size={16} />
+                <Minus
+                  className={cn(
+                    "bg-black p-[1.2px]",
+                    isTooltipRTL ? "ml-1" : "mr-1"
+                  )}
+                  color={colorMap.SAVINGS}
+                  size={16}
+                />
               ) : (
                 <ArrowDown className="bg-red-400 p-[1.2px]" size={16} />
               )}
@@ -251,7 +283,9 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
   return (
     <div className={cn("w-full", className)}>
       {availableCoins.length > 1 && (
-        <div className="flex justify-end mb-4">{renderCoinButtons()}</div>
+        <div className={cn("flex mb-4", isRTL ? "justify-start" : "justify-end")}>
+            {renderCoinButtons()}
+        </div>
       )}
 
       <ResponsiveContainer
@@ -263,8 +297,8 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
           data={dataMap[selectedCoinType] || []}
           margin={{
             top: 20,
-            right: isMobile ? 0 : 20,
-            left: isMobile ? 0 : 10,
+            right: isRTL ? (isMobile ? 0 : 10) : (isMobile ? 0 : 20),
+            left: isRTL ? (isMobile ? 0 : 20) : (isMobile ? 0 : 10),
             bottom: isMobile ? 100 : 60,
           }}
         >
@@ -276,9 +310,11 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             angle={isMobile ? -90 : 0}
             dx={isMobile ? -8 : 0}
             dy={isMobile ? 20 : 10}
+            reversed={isRTL}
           />
           <YAxis
             domain={[minValue, maxValue]}
+            orientation={isRTL ? "right" : "left"}
             tickFormatter={(tick) => {
               if (selectedCoinType === "VESTS") {
                 const valueInK = tick / 1000;
@@ -331,6 +367,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             />
           )}
           <Legend
+            align={isRTL ? "right" : "left"}
             wrapperStyle={{ paddingTop: isMobile ? "20px" : "0px" }}
             onClick={(event) => {
               const dataKey = event.dataKey as string;

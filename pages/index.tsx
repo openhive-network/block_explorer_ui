@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Head from "next/head";
-import { MoveRight } from "lucide-react";
+import { MoveRight, MoveLeft } from "lucide-react";
 
 import HeadBlockCard from "@/components/home/HeadBlockCard";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
@@ -28,7 +28,9 @@ import { useI18n } from "@/i18n/i18n";
 
 export default function Home() {
   const { theme } = useTheme();
-    const { t } = useI18n();
+  const { t, dir } = useI18n();
+
+  const SeeMoreIcon = dir === 'rtl' ? MoveLeft : MoveRight;
 
   const witnesses = useWitnesses(
     config.witnessesPerPages.home,
@@ -102,7 +104,7 @@ export default function Home() {
               data-testid="see-witnesses-link"
             >
               <span>{t("common.seeMore")}</span>
-              <MoveRight width={18} />
+              <SeeMoreIcon width={18} />
             </Link>
           </CardHeader>
           <CardContent className="px-0 py-2">

@@ -6,6 +6,7 @@ import { Input } from "../ui/input";
 import DateTimePicker from "../DateTimePicker";
 import ErrorMessage from "../ErrorMessage";
 import { useI18n } from "../../i18n/i18n";
+import { cn } from "@/lib/utils";
 
 interface SearchRangesProps {
   rangesProps: SearchRangesResult;
@@ -35,7 +36,9 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
   rangesProps,
   setIsSearchButtonDisabled,
 }) => {
-  const { t } = useI18n();
+  const { t, dir } = useI18n();
+  const isRTL = dir === "rtl";
+
   const {
     rangeSelectOptions,
     timeSelectOptions,
@@ -189,7 +192,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
         onValueChange={setRangeSelectKey}
         value={rangeSelectKey}
       >
-        <SelectTrigger className="w-1/2 border-0 border-b-2 bg-theme text-text">
+        <SelectTrigger className="w-1/2 border-0 border-b-2 bg-theme text-text" dir={dir}>
           {t(`searchRanges.${rangeSelectKey}`)}
         </SelectTrigger>
         <SelectContent className="bg-theme text-text rounded-sm max-h-[31rem]">
@@ -223,11 +226,11 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
       )}
 
       {rangeSelectKey === "lastTime" && (
-        <div className="flex items-center justify-center">
+        <div className={cn("flex items-center justify-center", isRTL && "flex-row-reverse")}>
           <Input
             required
             type="text"
-            className="bg-theme border-0 border-b-2 text-text mr-2"
+            className="bg-theme border-0 border-b-2 text-text mr-2 ml-2" 
             value={localLastTimeUnit}
             onChange={(e) =>
               setLocalLastTimeUnit(sanitizeNumericInput(e.target.value, true))
@@ -238,6 +241,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
           <Select
             onValueChange={setTimeUnitSelectKey}
             value={timeUnitSelectKey}
+            dir={dir}
           >
             <SelectTrigger className="pl-2 bg-theme border-0 border-b-2 text-text">
               {t(`searchRanges.${timeUnitSelectKey}`)}
@@ -258,7 +262,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
       )}
 
       {rangeSelectKey === "blockRange" && (
-        <div className="flex items-center">
+        <div className={cn("flex items-center gap-x-2", isRTL && "flex-row-reverse")}>
           <div className="mr-2 w-full">
             <Input
               required

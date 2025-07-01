@@ -43,7 +43,8 @@ const CustomTooltip = ({
   active?: boolean;
   payload?: any[];
 }) => {
-  const { t } = useI18n();
+   const { t, locale } = useI18n();
+
   if (active && payload && payload.length) {
     return (
       <div className="bg-buttonHover text-text p-2 rounded-xl">
@@ -52,14 +53,14 @@ const CustomTooltip = ({
             payload: { openTime, tooltipDate, high, low, openClose, volume },
           }) => {
             return (
-              <div key={openTime}>
-                <p>{t("customShapeBarChart.open")}: ${openClose[0].toFixed(4)}</p>
-                <p>{t("customShapeBarChart.close")}: ${openClose[1].toFixed(4)}</p>
-                <p>{t("customShapeBarChart.high")}: ${high.toFixed(4)}</p>
-                <p>{t("customShapeBarChart.low")}: ${low.toFixed(4)}</p>
+            <div key={openTime}>
+              <p>{t("customShapeBarChart.open")}: ${openClose[0].toFixed(4)}</p>
+              <p>{t("customShapeBarChart.close")}: ${openClose[1].toFixed(4)}</p>
+              <p>{t("customShapeBarChart.high")}: ${high.toFixed(4)}</p>
+              <p>{t("customShapeBarChart.low")}: ${low.toFixed(4)}</p>
                 <p>{t("marketHistoryChart.volume")}: {volume.toLocaleString("en-US")} HIVE</p>
-                <p>{t("marketHistoryChart.date")}: {tooltipDate}</p>
-              </div>
+              <p>{t("marketHistoryChart.date")}: {tooltipDate}</p>
+            </div>
             );
           }
         )}
@@ -156,7 +157,8 @@ const prepareData = (data: Hive.MarketHistory | undefined) => {
 
 const CustomShapeBarChart: React.FC<CandleStickChartProps> = ({ data }) => {
   const { theme } = useTheme();
-  const { t } = useI18n();
+  const { t, dir } = useI18n();
+  const isRTL = dir === "rtl";
 
   const chartData = prepareData(data);
   const minValue: number = Math.min(...chartData!.map((d) => d.low));
@@ -174,16 +176,19 @@ const CustomShapeBarChart: React.FC<CandleStickChartProps> = ({ data }) => {
         <XAxis
           dataKey="openTime"
           stroke={strokeColor}
+          reversed={isRTL}
         />
         <YAxis
           dataKey="openClose"
           domain={[minValue, maxValue]}
           stroke={strokeColor}
+          orientation={isRTL ? 'right' : 'left'}
         />
         <Tooltip content={<CustomTooltip />} />
         <Legend
           verticalAlign="top"
           height={36}
+          align={isRTL ? 'right' : 'left'}
         />
         <Bar
           name={`${t("marketHistoryChart.hivePrice")}: $${lastHivePrice ?? 0}`}

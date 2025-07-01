@@ -43,7 +43,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
   setOfKeys,
   onClearParams,
 }) => {
-  const { t } = useI18n();
+  const { t , dir } = useI18n();
   const [block, setBlock] = useState(blockNumber.toString());
   const [blockDate, setBlockDate] = useState(timeStamp);
 
@@ -119,19 +119,20 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
       data-testid="block-page-search"
     >
       <CardHeader className="px-4">
-        <CardTitle className="text-left">{t("common.search")}</CardTitle>
+        <CardTitle  className={cn("text-left", dir === 'rtl' && "text-right")}>{t("common.search")}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6 px-4">
         <div className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-4 items-center">
-          <Label htmlFor="blockNumber" className="text-left font-medium">
+          <Label htmlFor="blockNumber" className={cn("font-medium text-left", dir === 'rtl' && "text-right")}>
             {t("blockPageNavigation.blockNumber")}:
           </Label>
-          <div className="flex items-center justify-start">
+          <div className={cn("flex items-center justify-start", dir === 'rtl' && "text-right")}>
             <Button
               onClick={() => handleBlockChange((blockNumber - 1).toString())}
               className="text-text bg-transparent text-sm border-0 h-[30px] md:px-1 px-0 hover:bg-buttonHover"
             >
-              <ChevronLeft size={20}/>
+             {dir === 'rtl' ? <ChevronRight size={20}/> : <ChevronLeft size={20}/>}
+
             </Button>
             <Input
               className="max-w-[110px] py-0 mx-1 h-[30px] border-0 border-b-2 text-link text-md [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
@@ -146,7 +147,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
               onClick={() => handleBlockChange((blockNumber + 1).toString())}
               className="text-text bg-transparent text-sm border-0 h-[30px] md:px-1 px-0 hover:bg-buttonHover"
             >
-              <ChevronRight size={20}/>
+              {dir === 'rtl' ? <ChevronLeft size={20}/> : <ChevronRight size={20}/>}      
             </Button>
           </div>
         </div>
@@ -155,7 +156,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
           className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-4 items-center"
           ref={datePickerRef}
           >
-           <Label htmlFor="blockTime" className="text-left font-medium">
+           <Label htmlFor="blockTime" className={cn("font-medium text-left", dir === 'rtl' && "text-right")}>
             {t("blockPageNavigation.blockTime")}:
           </Label>
           <div className="flex items-center justify-start max-w-[280px]">
@@ -167,7 +168,7 @@ const BlockPageNavigation: React.FC<BlockPageNavigationProps> = ({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-[150px_1fr] gap-4 items-center">
-          <Label className="text-left font-medium">
+          <Label className={cn("font-medium text-left", dir === 'rtl' && "text-right")}>
             {t("operationTypesDialog.operationTypes")}:
           </Label>
           <div className="flex items-center">

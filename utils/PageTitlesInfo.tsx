@@ -1,217 +1,591 @@
 import { ChevronDown, Filter } from "lucide-react";
 import * as React from "react";
+
 interface LocalizedInfo {
   en: React.ReactNode;
-  es: React.ReactNode; 
-
+  es: React.ReactNode;
+  it: React.ReactNode;
+  de: React.ReactNode;
+  pt: React.ReactNode;
+  fr: React.ReactNode;
+  pl: React.ReactNode;
+  zh: React.ReactNode;
+  ja: React.ReactNode;
+  ro: React.ReactNode;
+  ko: React.ReactNode;
+  ar: React.ReactNode;
 }
 
 interface InfoContent {
-  [key: string]: LocalizedInfo; // Key is still the titleKey
+  [key: string]: Partial<LocalizedInfo>; // Use Partial<> as not all languages might be available for all keys
 }
 
+// =================================================================
+// English Components (Original)
+// =================================================================
 const WitnessInfoEn: React.FC = () => (
   <div>
     <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
       What are Hive Witnesses?
     </h2>
     <p className="text-gray-700 dark:text-gray-300 mb-4">
-      Hive Witnesses are the elected representatives who ensure the chain
-      operates with integrity, but also actively shape its direction through key
-      decisions.
+      Hive Witnesses are the elected representatives who ensure the chain operates with integrity, but also actively shape its direction through key decisions.
     </p>
     <p className="text-gray-700 dark:text-gray-300 mb-4">
-      Imagine Hive as a thriving, decentralized city. Witnesses are the city
-      council, the construction crews, and the security force all rolled into
-      one. <br />
-      They not only keep the city running (producing blocks, maintaining nodes),
-      but also decide on important policies like road construction (parameter
-      setting) and the value of the city&apos;s currency (price feeds).
+      Imagine Hive as a thriving, decentralized city. Witnesses are the city council, the construction crews, and the security force all rolled into one. <br />
+      They not only keep the city running (producing blocks, maintaining nodes), but also decide on important policies like road construction (parameter setting) and the value of the city's currency (price feeds).
     </p>
-
     <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
       Key Functions:
     </h3>
-
     <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 mb-4">
-      <li>
-        <span className="font-medium">Block Production:</span> They are
-        responsible for creating new blocks on the Hive blockchain, confirming
-        transactions and securing the network.
-      </li>
-      <li>
-        <span className="font-medium">Network Maintenance:</span> They operate
-        and maintain powerful servers that keep the Hive network running
-        reliably.
-      </li>
-      <li>
-        <span className="font-medium">Parameter Setting:</span> They participate
-        in setting key parameters of the Hive blockchain, such as block size,
-        account creation fees, and HBD interest rates (APR).
-      </li>
-      <li>
-        <span className="font-medium">Price Feeds:</span> They provide price
-        feeds for HIVE and HBD, which are crucial for the operation of the
-        decentralized stablecoin.
-      </li>
+      <li><span className="font-medium">Block Production:</span> They are responsible for creating new blocks on the Hive blockchain, confirming transactions and securing the network.</li>
+      <li><span className="font-medium">Network Maintenance:</span> They operate and maintain powerful servers that keep the Hive network running reliably.</li>
+      <li><span className="font-medium">Parameter Setting:</span> They participate in setting key parameters of the Hive blockchain, such as block size, account creation fees, and HBD interest rates (APR).</li>
+      <li><span className="font-medium">Price Feeds:</span> They provide price feeds for HIVE and HBD, which are crucial for the operation of the decentralized stablecoin.</li>
     </ul>
   </div>
 );
-
 const BlocksInfoEn: React.FC = () => (
   <ul className="list-disc list-inside">
-    <li>
-      This page displays a list of blocks on the Hive blockchain, ordered from
-      newest to oldest. Each row represents a single block and provides key
-      information about it.
-    </li>
-    <li>
-      Click the <ChevronDown className="inline-block align-middle h-4 w-4" /> icon
-      on the end of each row to view additional details about block operations.
-    </li>
-    <li>
-      Use the <Filter className="inline-block align-middle h-4 w-4" /> funnel
-      icon at the top to access filters and narrow down the list of blocks based
-      on different criteria.
-    </li>
+    <li>This page displays a list of blocks on the Hive blockchain, ordered from newest to oldest. Each row represents a single block and provides key information about it.</li>
+    <li>Click the <ChevronDown className="inline-block align-middle h-4 w-4" /> icon on the end of each row to view additional details about block operations.</li>
+    <li>Use the <Filter className="inline-block align-middle h-4 w-4" /> funnel icon at the top to access filters and narrow down the list of blocks based on different criteria.</li>
     <li>Hover over Reward value for matching value in HP.</li>
   </ul>
 );
-
 const BalanceHistoryInfoEn: React.FC = () => (
   <ul className="list-disc list-inside">
-    <li>
-      This page displays the balance history of a given Hive account for a
-      selected coin and time range. It provides a visual representation of how
-      your balance has changed over time. By default, results are displayed for
-      the last month.
-    </li>
-    <li>
-      Click the <Filter className="inline-block align-middle h-4 w-4" /> icon at
-      the top to access filters and narrow down the records.
-    </li>
-    <li>
-      The chart displays your balance, with values granular by day to show daily
-      changes in balance.
-    </li>
-    <li>
-      Use the slider below the chart to zoom and focus on specific time
-      intervals for a more detailed view.
-    </li>
+    <li>This page displays the balance history of a given Hive account for a selected coin and time range. It provides a visual representation of how your balance has changed over time. By default, results are displayed for the last month.</li>
+    <li>Click the <Filter className="inline-block align-middle h-4 w-4" /> icon at the top to access filters and narrow down the records.</li>
+    <li>The chart displays your balance, with values granular by day to show daily changes in balance.</li>
+    <li>Use the slider below the chart to zoom and focus on specific time intervals for a more detailed view.</li>
   </ul>
 );
-
 const TransactionDetailsInfoEn: React.FC = () => (
   <ul className="list-disc list-inside">
-    <li>
-      This page displays the transaction details of a given transaction hash
-    </li>
-    <li>
-      Click the toggle switch to include the virtual operations in the
-      operations table below
-    </li>
-    <li>
-      You can change the setting from Data View in the main menu to view data in
-      other formats
-    </li>
+    <li>This page displays the transaction details of a given transaction hash</li>
+    <li>Click the toggle switch to include the virtual operations in the operations table below</li>
+    <li>You can change the setting from Data View in the main menu to view data in other formats</li>
   </ul>
 );
 
+// =================================================================
+// Spanish Components (Original)
+// =================================================================
 const WitnessInfoEs: React.FC = () => (
-  <div>
-    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-      ¿Qué son los Testigos de Hive?
-    </h2>
-    <p className="text-gray-700 dark:text-gray-300 mb-4">
-      Los Testigos de Hive son los representantes elegidos que aseguran que la cadena opere con integridad, pero también moldean activamente su dirección a través de decisiones clave.
-    </p>
-    <p className="text-gray-700 dark:text-gray-300 mb-4">
-      Imagina Hive como una ciudad próspera y descentralizada. Los Testigos son el ayuntamiento, los equipos de construcción y las fuerzas de seguridad, todo en uno. <br />
-      No solo mantienen la ciudad en funcionamiento (produciendo bloques, manteniendo nodos), sino que también deciden sobre políticas importantes como la construcción de carreteras (configuración de parámetros) y el valor de la moneda de la ciudad (fuentes de precios).
-    </p>
-    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-      Funciones Clave:
-    </h3>
-    <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 mb-4">
-      <li>
-        <span className="font-medium">Producción de Bloques:</span> Son responsables de crear nuevos bloques en la blockchain de Hive, confirmando transacciones y asegurando la red.
-      </li>
-      <li>
-        <span className="font-medium">Mantenimiento de la Red:</span> Operan y mantienen servidores potentes que mantienen la red de Hive funcionando de manera confiable.
-      </li>
-      <li>
-        <span className="font-medium">Configuración de Parámetros:</span> Participan en la configuración de parámetros clave de la blockchain de Hive, como el tamaño del bloque, las tarifas de creación de cuentas y las tasas de interés de HBD (APR).
-      </li>
-      <li>
-        <span className="font-medium">Fuentes de Precios:</span> Proporcionan fuentes de precios para HIVE y HBD, que son cruciales para el funcionamiento de la stablecoin descentralizada.
-      </li>
-    </ul>
-  </div>
+    <div>
+      <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+        ¿Qué son los Testigos de Hive?
+      </h2>
+      <p className="text-gray-700 dark:text-gray-300 mb-4">
+        Los Testigos de Hive son los representantes elegidos que aseguran que la cadena opere con integridad, pero también moldean activamente su dirección a través de decisiones clave.
+      </p>
+      <p className="text-gray-700 dark:text-gray-300 mb-4">
+        Imagina Hive como una ciudad próspera y descentralizada. Los Testigos son el ayuntamiento, los equipos de construcción y las fuerzas de seguridad, todo en uno. <br />
+        No solo mantienen la ciudad en funcionamiento (produciendo bloques, manteniendo nodos), sino que también deciden sobre políticas importantes como la construcción de carreteras (configuración de parámetros) y el valor de la moneda de la ciudad (fuentes de precios).
+      </p>
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+        Funciones Clave:
+      </h3>
+      <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 mb-4">
+        <li><span className="font-medium">Producción de Bloques:</span> Son responsables de crear nuevos bloques en la blockchain de Hive, confirmando transacciones y asegurando la red.</li>
+        <li><span className="font-medium">Mantenimiento de la Red:</span> Operan y mantienen servidores potentes que mantienen la red de Hive funcionando de manera confiable.</li>
+        <li><span className="font-medium">Configuración de Parámetros:</span> Participan en la configuración de parámetros clave de la blockchain de Hive, como el tamaño del bloque, las tarifas de creación de cuentas y las tasas de interés de HBD (APR).</li>
+        <li><span className="font-medium">Fuentes de Precios:</span> Proporcionan fuentes de precios para HIVE y HBD, que son cruciales para el funcionamiento de la stablecoin descentralizada.</li>
+      </ul>
+    </div>
 );
-
 const BlocksInfoEs: React.FC = () => (
   <ul className="list-disc list-inside">
-    <li>
-      Esta página muestra una lista de bloques en la blockchain de Hive, ordenados del más nuevo al más antiguo. Cada fila representa un solo bloque y proporciona información clave sobre él.
-    </li>
-    <li>
-      Haz clic en el icono <ChevronDown className="inline-block align-middle h-4 w-4" /> al final de cada fila para ver detalles adicionales sobre las operaciones del bloque.
-    </li>
-    <li>
-      Usa el icono del embudo <Filter className="inline-block align-middle h-4 w-4" /> en la parte superior para acceder a los filtros y reducir la lista de bloques según diferentes criterios.
-    </li>
+    <li>Esta página muestra una lista de bloques en la blockchain de Hive, ordenados del más nuevo al más antiguo. Cada fila representa un solo bloque y proporciona información clave sobre él.</li>
+    <li>Haz clic en el icono <ChevronDown className="inline-block align-middle h-4 w-4" /> al final de cada fila para ver detalles adicionales sobre las operaciones del bloque.</li>
+    <li>Usa el icono del embudo <Filter className="inline-block align-middle h-4 w-4" /> en la parte superior para acceder a los filtros y reducir la lista de bloques según diferentes criterios.</li>
     <li>Pasa el cursor sobre el valor de Recompensa para ver el valor correspondiente en HP.</li>
   </ul>
 );
-
-
 const BalanceHistoryInfoEs: React.FC = () => (
   <ul className="list-disc list-inside">
-    <li>
-      Esta página muestra el historial de saldos de una cuenta de Hive dada para una moneda y un rango de tiempo seleccionados. Proporciona una representación visual de cómo ha cambiado tu saldo con el tiempo. Por defecto, los resultados se muestran para el último mes.
-    </li>
-    <li>
-      Haz clic en el icono <Filter className="inline-block align-middle h-4 w-4" /> en la parte superior para acceder a los filtros y reducir los registros.
-    </li>
-    <li>
-      El gráfico muestra tu saldo, con valores granulares por día para mostrar los cambios diarios en el saldo.
-    </li>
-    <li>
-      Usa el control deslizante debajo del gráfico para hacer zoom y enfocarte en intervalos de tiempo específicos para una vista más detallada.
-    </li>
+    <li>Esta página muestra el historial de saldos de una cuenta de Hive dada para una moneda y un rango de tiempo seleccionados. Proporciona una representación visual de cómo ha cambiado tu saldo con el tiempo. Por defecto, los resultados se muestran para el último mes.</li>
+    <li>Haz clic en el icono <Filter className="inline-block align-middle h-4 w-4" /> en la parte superior para acceder a los filtros y reducir los registros.</li>
+    <li>El gráfico muestra tu saldo, con valores granulares por día para mostrar los cambios diarios en el saldo.</li>
+    <li>Usa el control deslizante debajo del gráfico para hacer zoom y enfocarte en intervalos de tiempo específicos para una vista más detallada.</li>
   </ul>
 );
-
 const TransactionDetailsInfoEs: React.FC = () => (
   <ul className="list-disc list-inside">
-    <li>
-      Esta página muestra los detalles de la transacción de un hash de transacción dado.
-    </li>
-    <li>
-      Haz clic en el interruptor para incluir las operaciones virtuales en la tabla de operaciones a continuación.
-    </li>
-    <li>
-      Puedes cambiar la configuración desde Vista de Datos en el menú principal para ver los datos en otros formatos.
-    </li>
+    <li>Esta página muestra los detalles de la transacción de un hash de transacción dado.</li>
+    <li>Haz clic en el interruptor para incluir las operaciones virtuales en la tabla de operaciones a continuación.</li>
+    <li>Puedes cambiar la configuración desde Vista de Datos en el menú principal para ver los datos en otros formatos.</li>
   </ul>
 );
 
+
+// =================================================================
+// 2. NEWLY ADDED LANGUAGE COMPONENTS
+// =================================================================
+
+// --- Italian (it) ---
+const WitnessInfoIt: React.FC = () => (
+  <div>
+    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Cosa sono i Testimoni di Hive?</h2>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">I Testimoni di Hive sono i rappresentanti eletti che garantiscono l'integrità della catena, ma che ne modellano attivamente la direzione attraverso decisioni chiave.</p>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">Immagina Hive come una città prospera e decentralizzata. I Testimoni sono il consiglio comunale, le squadre di costruzione e le forze di sicurezza, tutto in uno.<br />Non solo mantengono la città in funzione (producendo blocchi, mantenendo nodi), ma decidono anche su politiche importanti come la costruzione di strade (impostazione dei parametri) e il valore della valuta della città (fonti di prezzo).</p>
+    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Funzioni Chiave:</h3>
+    <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 mb-4">
+      <li><span className="font-medium">Produzione di Blocchi:</span> Sono responsabili della creazione di nuovi blocchi sulla blockchain di Hive, confermando le transazioni e proteggendo la rete.</li>
+      <li><span className="font-medium">Manutenzione della Rete:</span> Operano e mantengono server potenti che assicurano il funzionamento affidabile della rete Hive.</li>
+      <li><span className="font-medium">Impostazione dei Parametri:</span> Partecipano all'impostazione di parametri chiave della blockchain di Hive, come la dimensione del blocco, le commissioni di creazione degli account e i tassi di interesse HBD (APR).</li>
+      <li><span className="font-medium">Fonti di Prezzo:</span> Forniscono fonti di prezzo per HIVE e HBD, cruciali per il funzionamento della stablecoin decentralizzata.</li>
+    </ul>
+  </div>
+);
+const BlocksInfoIt: React.FC = () => (
+  <ul className="list-disc list-inside">
+    <li>Questa pagina mostra un elenco di blocchi sulla blockchain di Hive, ordinati dal più recente al più vecchio. Ogni riga rappresenta un singolo blocco e fornisce informazioni chiave su di esso.</li>
+    <li>Fai clic sull'icona <ChevronDown className="inline-block align-middle h-4 w-4" /> alla fine di ogni riga per visualizzare dettagli aggiuntivi sulle operazioni del blocco.</li>
+    <li>Usa l'icona a imbuto <Filter className="inline-block align-middle h-4 w-4" /> in alto per accedere ai filtri e restringere l'elenco dei blocchi in base a criteri diversi.</li>
+    <li>Passa il mouse sul valore della Ricompensa per il valore corrispondente in HP.</li>
+  </ul>
+);
+const BalanceHistoryInfoIt: React.FC = () => (
+    <ul className="list-disc list-inside">
+        <li>Questa pagina mostra la cronologia del saldo di un dato account Hive per una moneta e un intervallo di tempo selezionati. Fornisce una rappresentazione visiva di come il tuo saldo è cambiato nel tempo. Per impostazione predefinita, vengono visualizzati i risultati dell'ultimo mese.</li>
+        <li>Fai clic sull'icona <Filter className="inline-block align-middle h-4 w-4" /> in alto per accedere ai filtri e restringere i record.</li>
+        <li>Il grafico mostra il tuo saldo, con valori granulari per giorno per mostrare le variazioni giornaliere del saldo.</li>
+        <li>Usa lo slider sotto il grafico per ingrandire e concentrarti su intervalli di tempo specifici per una visualizzazione più dettagliata.</li>
+    </ul>
+);
+const TransactionDetailsInfoIt: React.FC = () => (
+    <ul className="list-disc list-inside">
+        <li>Questa pagina mostra i dettagli della transazione di un dato hash di transazione.</li>
+        <li>Fai clic sull'interruttore per includere le operazioni virtuali nella tabella delle operazioni sottostante.</li>
+        <li>Puoi cambiare l'impostazione da Vista Dati nel menu principale per visualizzare i dati in altri formati.</li>
+    </ul>
+);
+
+// --- German (de) ---
+const WitnessInfoDe: React.FC = () => (
+  <div>
+    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Was sind Hive-Zeugen?</h2>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">Hive-Zeugen (Witnesses) sind die gewählten Vertreter, die sicherstellen, dass die Chain integer funktioniert, aber auch durch wichtige Entscheidungen aktiv ihre Richtung gestalten.</p>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">Stellen Sie sich Hive als eine blühende, dezentrale Stadt vor. Zeugen sind der Stadtrat, die Bautrupps und die Sicherheitskräfte in einem.<br />Sie halten nicht nur die Stadt am Laufen (indem sie Blöcke produzieren und Knoten warten), sondern entscheiden auch über wichtige Richtlinien wie den Straßenbau (Parametereinstellung) und den Wert der städtischen Währung (Preis-Feeds).</p>
+    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Schlüsselfunktionen:</h3>
+    <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 mb-4">
+      <li><span className="font-medium">Blockproduktion:</span> Sie sind für die Erstellung neuer Blöcke auf der Hive-Blockchain verantwortlich, bestätigen Transaktionen und sichern das Netzwerk.</li>
+      <li><span className="font-medium">Netzwerkwartung:</span> Sie betreiben und warten leistungsstarke Server, die das Hive-Netzwerk zuverlässig am Laufen halten.</li>
+      <li><span className="font-medium">Parametereinstellung:</span> Sie beteiligen sich an der Festlegung wichtiger Parameter der Hive-Blockchain, wie Blockgröße, Gebühren für die Kontoerstellung und HBD-Zinssätze (APR).</li>
+      <li><span className="font-medium">Preis-Feeds:</span> Sie liefern Preis-Feeds für HIVE und HBD, die für den Betrieb des dezentralen Stablecoins von entscheidender Bedeutung sind.</li>
+    </ul>
+  </div>
+);
+const BlocksInfoDe: React.FC = () => (
+  <ul className="list-disc list-inside">
+    <li>Diese Seite zeigt eine Liste von Blöcken auf der Hive-Blockchain, geordnet vom neuesten zum ältesten. Jede Zeile repräsentiert einen einzelnen Block und liefert wichtige Informationen dazu.</li>
+    <li>Klicken Sie auf das <ChevronDown className="inline-block align-middle h-4 w-4" />-Symbol am Ende jeder Zeile, um zusätzliche Details zu den Blockoperationen anzuzeigen.</li>
+    <li>Verwenden Sie das <Filter className="inline-block align-middle h-4 w-4" />-Trichter-Symbol oben, um auf Filter zuzugreifen und die Liste der Blöcke nach verschiedenen Kriterien einzugrenzen.</li>
+    <li>Fahren Sie mit der Maus über den Belohnungswert, um den entsprechenden Wert in HP zu sehen.</li>
+  </ul>
+);
+const BalanceHistoryInfoDe: React.FC = () => (
+    <ul className="list-disc list-inside">
+        <li>Diese Seite zeigt den Kontostandverlauf eines bestimmten Hive-Kontos für eine ausgewählte Münze und einen bestimmten Zeitraum an. Sie bietet eine visuelle Darstellung, wie sich Ihr Kontostand im Laufe der Zeit verändert hat. Standardmäßig werden die Ergebnisse für den letzten Monat angezeigt.</li>
+        <li>Klicken Sie auf das <Filter className="inline-block align-middle h-4 w-4" />-Symbol oben, um auf Filter zuzugreifen und die Datensätze einzugrenzen.</li>
+        <li>Das Diagramm zeigt Ihren Kontostand an, wobei die Werte tagesgenau sind, um tägliche Änderungen des Kontostands darzustellen.</li>
+        <li>Verwenden Sie den Schieberegler unter dem Diagramm, um zu zoomen und sich auf bestimmte Zeitintervalle für eine detailliertere Ansicht zu konzentrieren.</li>
+    </ul>
+);
+const TransactionDetailsInfoDe: React.FC = () => (
+    <ul className="list-disc list-inside">
+        <li>Diese Seite zeigt die Transaktionsdetails eines bestimmten Transaktions-Hashes an.</li>
+        <li>Klicken Sie auf den Umschalter, um die virtuellen Operationen in die unten stehende Operationstabelle aufzunehmen.</li>
+        <li>Sie können die Einstellung von Datenansicht im Hauptmenü ändern, um Daten in anderen Formaten anzuzeigen.</li>
+    </ul>
+);
+
+// --- Portuguese (pt) ---
+const WitnessInfoPt: React.FC = () => (
+  <div>
+    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">O que são as Testemunhas do Hive?</h2>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">As Testemunhas do Hive são os representantes eleitos que garantem que a cadeia opere com integridade, mas também moldam ativamente sua direção através de decisões-chave.</p>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">Imagine o Hive como uma cidade próspera e descentralizada. As Testemunhas são a câmara municipal, as equipes de construção e a força de segurança, tudo em um.<br />Elas não apenas mantêm a cidade funcionando (produzindo blocos, mantendo nós), mas também decidem sobre políticas importantes como a construção de estradas (configuração de parâmetros) e o valor da moeda da cidade (feeds de preço).</p>
+    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Funções Principais:</h3>
+    <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 mb-4">
+      <li><span className="font-medium">Produção de Blocos:</span> São responsáveis por criar novos blocos na blockchain do Hive, confirmando transações e protegendo a rede.</li>
+      <li><span className="font-medium">Manutenção da Rede:</span> Operam e mantêm servidores potentes que mantêm a rede Hive funcionando de forma confiável.</li>
+      <li><span className="font-medium">Configuração de Parâmetros:</span> Participam na configuração de parâmetros-chave da blockchain do Hive, como o tamanho do bloco, taxas de criação de contas e taxas de juros do HBD (APR).</li>
+      <li><span className="font-medium">Feeds de Preço:</span> Fornecem feeds de preço para HIVE e HBD, que são cruciais para o funcionamento da stablecoin descentralizada.</li>
+    </ul>
+  </div>
+);
+const BlocksInfoPt: React.FC = () => (
+  <ul className="list-disc list-inside">
+    <li>Esta página exibe uma lista de blocos na blockchain do Hive, ordenados do mais novo para o mais antigo. Cada linha representa um único bloco e fornece informações-chave sobre ele.</li>
+    <li>Clique no ícone <ChevronDown className="inline-block align-middle h-4 w-4" /> no final de cada linha para ver detalhes adicionais sobre as operações do bloco.</li>
+    <li>Use o ícone de funil <Filter className="inline-block align-middle h-4 w-4" /> na parte superior para acessar filtros e restringir a lista de blocos com base em diferentes critérios.</li>
+    <li>Passe o mouse sobre o valor da Recompensa para ver o valor correspondente em HP.</li>
+  </ul>
+);
+const BalanceHistoryInfoPt: React.FC = () => (
+    <ul className="list-disc list-inside">
+        <li>Esta página exibe o histórico de saldo de uma determinada conta Hive para uma moeda e um intervalo de tempo selecionados. Ela fornece uma representação visual de como seu saldo mudou ao longo do tempo. Por padrão, os resultados são exibidos para o último mês.</li>
+        <li>Clique no ícone <Filter className="inline-block align-middle h-4 w-4" /> na parte superior para acessar filtros и restringir os registros.</li>
+        <li>O gráfico exibe seu saldo, com valores granulares por dia para mostrar as mudanças diárias no saldo.</li>
+        <li>Use o controle deslizante abaixo do gráfico para ampliar e focar em intervalos de tempo específicos para uma visualização mais detalhada.</li>
+    </ul>
+);
+const TransactionDetailsInfoPt: React.FC = () => (
+    <ul className="list-disc list-inside">
+        <li>Esta página exibe os detalhes da transação de um determinado hash de transação.</li>
+        <li>Clique no botão de alternância para incluir as operações virtuais na tabela de operações abaixo.</li>
+        <li>Você pode alterar a configuração de Visualização de Dados no menu principal para ver os dados em outros formatos.</li>
+    </ul>
+);
+
+// --- French (fr) ---
+const WitnessInfoFr: React.FC = () => (
+  <div>
+    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Que sont les Témoins Hive ?</h2>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">Les Témoins Hive sont les représentants élus qui garantissent l'intégrité de la chaîne, mais qui façonnent aussi activement sa direction par des décisions clés.</p>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">Imaginez Hive comme une ville prospère et décentralisée. Les Témoins sont le conseil municipal, les équipes de construction et les forces de sécurité, tout en un.<br />Ils ne se contentent pas de faire fonctionner la ville (en produisant des blocs, en maintenant des nœuds), mais décident également de politiques importantes comme la construction de routes (paramétrage) et la valeur de la monnaie de la ville (flux de prix).</p>
+    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Fonctions Clés :</h3>
+    <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 mb-4">
+      <li><span className="font-medium">Production de Blocs :</span> Ils sont responsables de la création de nouveaux blocs sur la blockchain Hive, de la confirmation des transactions et de la sécurisation du réseau.</li>
+      <li><span className="font-medium">Maintenance du Réseau :</span> Ils exploitent et maintiennent des serveurs puissants qui assurent le fonctionnement fiable du réseau Hive.</li>
+      <li><span className="font-medium">Paramétrage :</span> Ils participent à la définition des paramètres clés de la blockchain Hive, tels que la taille des blocs, les frais de création de compte et les taux d'intérêt HBD (APR).</li>
+      <li><span className="font-medium">Flux de Prix :</span> Ils fournissent des flux de prix pour HIVE et HBD, qui sont cruciaux pour le fonctionnement de la stablecoin décentralisée.</li>
+    </ul>
+  </div>
+);
+const BlocksInfoFr: React.FC = () => (
+  <ul className="list-disc list-inside">
+    <li>Cette page affiche une liste de blocs de la blockchain Hive, classés du plus récent au plus ancien. Chaque ligne représente un seul bloc et fournit des informations clés à son sujet.</li>
+    <li>Cliquez sur l'icône <ChevronDown className="inline-block align-middle h-4 w-4" /> à la fin de chaque ligne pour afficher des détails supplémentaires sur les opérations du bloc.</li>
+    <li>Utilisez l'icône en forme d'entonnoir <Filter className="inline-block align-middle h-4 w-4" /> en haut pour accéder aux filtres et affiner la liste des blocs en fonction de différents critères.</li>
+    <li>Passez la souris sur la valeur de la récompense pour voir la valeur correspondante en HP.</li>
+  </ul>
+);
+const BalanceHistoryInfoFr: React.FC = () => (
+    <ul className="list-disc list-inside">
+        <li>Cette page affiche l'historique du solde d'un compte Hive donné pour une devise et une période sélectionnées. Elle fournit une représentation visuelle de l'évolution de votre solde au fil du temps. Par défaut, les résultats sont affichés pour le dernier mois.</li>
+        <li>Cliquez sur l'icône <Filter className="inline-block align-middle h-4 w-4" /> en haut pour accéder aux filtres et affiner les enregistrements.</li>
+        <li>Le graphique affiche votre solde, avec des valeurs granulaires par jour pour montrer les variations quotidiennes du solde.</li>
+        <li>Utilisez le curseur sous le graphique pour zoomer et vous concentrer sur des intervalles de temps spécifiques pour une vue plus détaillée.</li>
+    </ul>
+);
+const TransactionDetailsInfoFr: React.FC = () => (
+    <ul className="list-disc list-inside">
+        <li>Cette page affiche les détails de la transaction pour un hash de transaction donné.</li>
+        <li>Cliquez sur le commutateur pour inclure les opérations virtuelles dans le tableau des opérations ci-dessous.</li>
+        <li>Vous pouvez modifier le paramètre de Vue des Données dans le menu principal pour afficher les données dans d'autres formats.</li>
+    </ul>
+);
+
+// --- Polish (pl) ---
+const WitnessInfoPl: React.FC = () => (
+  <div>
+    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Kim są Świadkowie Hive?</h2>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">Świadkowie Hive to wybrani przedstawiciele, którzy zapewniają integralność działania łańcucha, ale także aktywnie kształtują jego kierunek poprzez kluczowe decyzje.</p>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">Wyobraź sobie Hive jako kwitnące, zdecentralizowane miasto. Świadkowie to rada miasta, ekipy budowlane i siły bezpieczeństwa w jednym.<br />Nie tylko utrzymują miasto w ruchu (produkując bloki, utrzymując węzły), ale także decydują o ważnych politykach, takich jak budowa dróg (ustawianie parametrów) i wartość miejskiej waluty (feedy cenowe).</p>
+    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Kluczowe Funkcje:</h3>
+    <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 mb-4">
+      <li><span className="font-medium">Produkcja Bloków:</span> Są odpowiedzialni za tworzenie nowych bloków w blockchainie Hive, potwierdzanie transakcji i zabezpieczanie sieci.</li>
+      <li><span className="font-medium">Utrzymanie Sieci:</span> Obsługują i utrzymują potężne serwery, które zapewniają niezawodne działanie sieci Hive.</li>
+      <li><span className="font-medium">Ustawianie Parametrów:</span> Biorą udział w ustalaniu kluczowych parametrów blockchaina Hive, takich jak rozmiar bloku, opłaty za tworzenie kont i stopy procentowe HBD (APR).</li>
+      <li><span className="font-medium">Feedy Cenowe:</span> Dostarczają feedy cenowe dla HIVE i HBD, które są kluczowe dla działania zdecentralizowanego stablecoina.</li>
+    </ul>
+  </div>
+);
+const BlocksInfoPl: React.FC = () => (
+  <ul className="list-disc list-inside">
+    <li>Ta strona wyświetla listę bloków w blockchainie Hive, posortowaną od najnowszego do najstarszego. Każdy wiersz reprezentuje pojedynczy blok i dostarcza kluczowych informacji na jego temat.</li>
+    <li>Kliknij ikonę <ChevronDown className="inline-block align-middle h-4 w-4" /> na końcu każdego wiersza, aby wyświetlić dodatkowe szczegóły dotyczące operacji w bloku.</li>
+    <li>Użyj ikony lejka <Filter className="inline-block align-middle h-4 w-4" /> na górze, aby uzyskać dostęp do filtrów i zawęzić listę bloków na podstawie różnych kryteriów.</li>
+    <li>Najedź kursorem na wartość Nagrody, aby zobaczyć odpowiadającą jej wartość w HP.</li>
+  </ul>
+);
+const BalanceHistoryInfoPl: React.FC = () => (
+    <ul className="list-disc list-inside">
+        <li>Ta strona wyświetla historię salda danego konta Hive dla wybranej monety i zakresu czasowego. Przedstawia wizualną reprezentację zmian salda w czasie. Domyślnie wyświetlane są wyniki za ostatni miesiąc.</li>
+        <li>Kliknij ikonę <Filter className="inline-block align-middle h-4 w-4" /> na górze, aby uzyskać dostęp do filtrów i zawęzić rekordy.</li>
+        <li>Wykres wyświetla Twoje saldo z wartościami o granulacji dziennej, aby pokazać codzienne zmiany salda.</li>
+        <li>Użyj suwaka pod wykresem, aby powiększyć i skupić się na określonych przedziałach czasowych w celu uzyskania bardziej szczegółowego widoku.</li>
+    </ul>
+);
+const TransactionDetailsInfoPl: React.FC = () => (
+    <ul className="list-disc list-inside">
+        <li>Ta strona wyświetla szczegóły transakcji dla danego hasha transakcji.</li>
+        <li>Kliknij przełącznik, aby uwzględnić operacje wirtualne w poniższej tabeli operacji.</li>
+        <li>Możesz zmienić ustawienie z Widoku Danych w menu głównym, aby wyświetlić dane w innych formatach.</li>
+    </ul>
+);
+
+// --- Chinese (zh) ---
+const WitnessInfoZh: React.FC = () => (
+  <div>
+    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">什么是Hive见证人？</h2>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">Hive见证人是选举出的代表，他们确保链的完整性运作，并通过关键决策积极塑造其发展方向。</p>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">想象一下Hive是一个繁荣的去中心化城市。见证人集市议会、建筑队和安全部队于一身。<br />他们不仅保持城市运行（生产区块、维护节点），还决定重要政策，如道路建设（参数设置）和城市货币的价值（价格信息流）。</p>
+    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">主要职能：</h3>
+    <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 mb-4">
+      <li><span className="font-medium">区块生产：</span>他们负责在Hive区块链上创建新区块，确认交易并保护网络安全。</li>
+      <li><span className="font-medium">网络维护：</span>他们运营和维护强大的服务器，以保持Hive网络的可靠运行。</li>
+      <li><span className="font-medium">参数设置：</span>他们参与设置Hive区块链的关键参数，如区块大小、账户创建费和HBD利率（APR）。</li>
+      <li><span className="font-medium">价格信息流：</span>他们提供HIVE和HBD的价格信息流，这对于去中心化稳定币的运作至关重要。</li>
+    </ul>
+  </div>
+);
+const BlocksInfoZh: React.FC = () => (
+  <ul className="list-disc list-inside">
+    <li>此页面显示Hive区块链上的区块列表，按从新到旧的顺序排列。每一行代表一个区块，并提供其关键信息。</li>
+    <li>单击每行末尾的 <ChevronDown className="inline-block align-middle h-4 w-4" /> 图标，查看有关区块操作的更多详细信息。</li>
+    <li>使用顶部的 <Filter className="inline-block align-middle h-4 w-4" /> 漏斗图标访问筛选器，并根据不同标准缩小区块列表范围。</li>
+    <li>将鼠标悬停在奖励值上，可查看相应的HP值。</li>
+  </ul>
+);
+const BalanceHistoryInfoZh: React.FC = () => (
+    <ul className="list-disc list-inside">
+        <li>此页面显示给定Hive账户在选定代币和时间范围内的余额历史。它直观地展示了您的余额随时间的变化。默认情况下，显示上个月的结果。</li>
+        <li>单击顶部的 <Filter className="inline-block align-middle h-4 w-4" /> 图标访问筛选器并缩小记录范围。</li>
+        <li>图表显示您的余额，其值按天细分，以显示每日余额变化。</li>
+        <li>使用图表下方的滑块进行缩放，并专注于特定时间间隔以获取更详细的视图。</li>
+    </ul>
+);
+const TransactionDetailsInfoZh: React.FC = () => (
+    <ul className="list-disc list-inside">
+        <li>此页面显示给定交易哈希的交易详情。</li>
+        <li>单击切换开关以在下面的操作表中包含虚拟操作。</li>
+        <li>您可以从主菜单的数据视图更改设置，以其他格式查看数据。</li>
+    </ul>
+);
+
+// --- Japanese (ja) ---
+const WitnessInfoJa: React.FC = () => (
+  <div>
+    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Hiveの証人とは？</h2>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">Hiveの証人（ウィットネス）は、チェーンが誠実に運営されることを保証する選挙で選ばれた代表者であり、主要な決定を通じてその方向性を積極的に形成します。</p>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">Hiveを活気ある分散型の都市だと想像してみてください。証人は市議会、建設作業員、警備隊を兼ね備えた存在です。<br />彼らは都市の運営（ブロックの生成、ノードの維持）を維持するだけでなく、道路建設（パラメータ設定）や都市の通貨価値（価格フィード）などの重要な政策も決定します。</p>
+    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">主な機能：</h3>
+    <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 mb-4">
+      <li><span className="font-medium">ブロックの生成：</span>Hiveブロックチェーン上で新しいブロックを作成し、トランザクションを承認し、ネットワークを保護する責任があります。</li>
+      <li><span className="font-medium">ネットワークの維持：</span>Hiveネットワークを安定して稼働させる強力なサーバーを運用・維持します。</li>
+      <li><span className="font-medium">パラメータ設定：</span>ブロックサイズ、アカウント作成手数料、HBDの利率（APR）など、Hiveブロックチェーンの主要なパラメータ設定に参加します。</li>
+      <li><span className="font-medium">価格フィード：</span>分散型ステーブルコインの運用に不可欠なHIVEとHBDの価格フィードを提供します。</li>
+    </ul>
+  </div>
+);
+const BlocksInfoJa: React.FC = () => (
+  <ul className="list-disc list-inside">
+    <li>このページには、Hiveブロックチェーン上のブロックのリストが新しいものから古いものへと順に表示されます。各行は単一のブロックを表し、それに関する主要な情報を提供します。</li>
+    <li>各行の最後にある<ChevronDown className="inline-block align-middle h-4 w-4" />アイコンをクリックすると、ブロックのオペレーションに関する追加の詳細が表示されます。</li>
+    <li>上部にある<Filter className="inline-block align-middle h-4 w-4" />じょうごアイコンを使用してフィルターにアクセスし、さまざまな基準に基づいてブロックのリストを絞り込みます。</li>
+    <li>報酬の値にカーソルを合わせると、対応するHPの値が表示されます。</li>
+  </ul>
+);
+const BalanceHistoryInfoJa: React.FC = () => (
+    <ul className="list-disc list-inside">
+        <li>このページには、選択されたコインと期間における特定のHiveアカウントの残高履歴が表示されます。時間の経過とともに残高がどのように変化したかを視覚的に示します。デフォルトでは、先月の結果が表示されます。</li>
+        <li>上部の<Filter className="inline-block align-middle h-4 w-4" />アイコンをクリックしてフィルターにアクセスし、記録を絞り込みます。</li>
+        <li>チャートには、日々の残高変動を示すために日単位で詳細化された残高が表示されます。</li>
+        <li>チャートの下のスライダーを使用して、特定の期間にズームインして詳細なビューを表示します。</li>
+    </ul>
+);
+const TransactionDetailsInfoJa: React.FC = () => (
+    <ul className="list-disc list-inside">
+        <li>このページには、特定のトランザクションハッシュのトランザクション詳細が表示されます。</li>
+        <li>下のオペレーションテーブルに仮想オペレーションを含めるには、トグルスイッチをクリックします。</li>
+        <li>メインメニューのデータビューから設定を変更して、他の形式でデータを表示できます。</li>
+    </ul>
+);
+
+// --- Romanian (ro) ---
+const WitnessInfoRo: React.FC = () => (
+  <div>
+    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">Ce sunt Martorii Hive?</h2>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">Martorii Hive sunt reprezentanții aleși care se asigură că rețeaua funcționează cu integritate, dar și modelează activ direcția acesteia prin decizii cheie.</p>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">Imaginați-vă Hive ca pe un oraș prosper, descentralizat. Martorii sunt consiliul local, echipele de construcții și forța de securitate, toate la un loc.<br />Ei nu numai că mențin orașul în funcțiune (producând blocuri, întreținând noduri), dar decid și asupra politicilor importante, cum ar fi construcția de drumuri (setarea parametrilor) și valoarea monedei orașului (feed-uri de preț).</p>
+    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Funcții Cheie:</h3>
+    <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 mb-4">
+      <li><span className="font-medium">Producția de Blocuri:</span> Sunt responsabili pentru crearea de noi blocuri în blockchain-ul Hive, confirmând tranzacțiile și securizând rețeaua.</li>
+      <li><span className="font-medium">Întreținerea Rețelei:</span> Operează și întrețin servere puternice care mențin rețeaua Hive funcțională în mod fiabil.</li>
+      <li><span className="font-medium">Setarea Parametrilor:</span> Participă la setarea parametrilor cheie ai blockchain-ului Hive, cum ar fi dimensiunea blocului, taxele de creare a conturilor și ratele dobânzii HBD (DAE).</li>
+      <li><span className="font-medium">Feed-uri de Preț:</span> Furnizează feed-uri de preț pentru HIVE și HBD, care sunt cruciale pentru funcționarea stablecoin-ului descentralizat.</li>
+    </ul>
+  </div>
+);
+const BlocksInfoRo: React.FC = () => (
+  <ul className="list-disc list-inside">
+    <li>Această pagină afișează o listă de blocuri din blockchain-ul Hive, ordonate de la cel mai nou la cel mai vechi. Fiecare rând reprezintă un singur bloc și oferă informații cheie despre acesta.</li>
+    <li>Faceți clic pe pictograma <ChevronDown className="inline-block align-middle h-4 w-4" /> de la capătul fiecărui rând pentru a vizualiza detalii suplimentare despre operațiunile blocului.</li>
+    <li>Utilizați pictograma pâlnie <Filter className="inline-block align-middle h-4 w-4" /> din partea de sus pentru a accesa filtrele și a restrânge lista de blocuri pe baza diferitelor criterii.</li>
+    <li>Treceți cu mouse-ul peste valoarea Recompensei pentru valoarea corespunzătoare în HP.</li>
+  </ul>
+);
+const BalanceHistoryInfoRo: React.FC = () => (
+    <ul className="list-disc list-inside">
+        <li>Această pagină afișează istoricul soldului unui anumit cont Hive pentru o monedă și un interval de timp selectate. Oferă o reprezentare vizuală a modului în care soldul dvs. s-a schimbat în timp. În mod implicit, rezultatele sunt afișate pentru ultima lună.</li>
+        <li>Faceți clic pe pictograma <Filter className="inline-block align-middle h-4 w-4" /> din partea de sus pentru a accesa filtrele și a restrânge înregistrările.</li>
+        <li>Graficul afișează soldul dvs., cu valori granulare pe zi pentru a arăta modificările zilnice ale soldului.</li>
+        <li>Utilizați glisorul de sub grafic pentru a mări și a vă concentra pe intervale de timp specifice pentru o vizualizare mai detaliată.</li>
+    </ul>
+);
+const TransactionDetailsInfoRo: React.FC = () => (
+    <ul className="list-disc list-inside">
+        <li>Această pagină afișează detaliile tranzacției pentru un anumit hash de tranzacție.</li>
+        <li>Faceți clic pe comutator pentru a include operațiunile virtuale în tabelul de operațiuni de mai jos.</li>
+        <li>Puteți schimba setarea din Vizualizare Date în meniul principal pentru a vizualiza datele în alte formate.</li>
+    </ul>
+);
+
+// --- Korean (ko) ---
+const WitnessInfoKo: React.FC = () => (
+  <div>
+    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">하이브 증인이란 무엇인가요?</h2>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">하이브 증인은 체인이 무결하게 운영되도록 보장하는 선출된 대표자이며, 주요 결정을 통해 그 방향을 적극적으로 형성합니다.</p>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">하이브를 번창하는 분산형 도시라고 상상해 보세요. 증인은 시의회, 건설팀, 보안군을 모두 합친 존재입니다.<br />그들은 도시를 운영(블록 생성, 노드 유지)할 뿐만 아니라, 도로 건설(매개변수 설정)과 도시 통화의 가치(가격 피드)와 같은 중요한 정책도 결정합니다.</p>
+    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">주요 기능:</h3>
+    <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 mb-4">
+      <li><span className="font-medium">블록 생성:</span> 하이브 블록체인에서 새로운 블록을 생성하고, 트랜잭션을 확인하며, 네트워크를 보호할 책임이 있습니다.</li>
+      <li><span className="font-medium">네트워크 유지보수:</span> 하이브 네트워크가 안정적으로 운영되도록 강력한 서버를 운영하고 유지합니다.</li>
+      <li><span className="font-medium">매개변수 설정:</span> 블록 크기, 계정 생성 수수료, HBD 이자율(APR) 등 하이브 블록체인의 주요 매개변수 설정에 참여합니다.</li>
+      <li><span className="font-medium">가격 피드:</span> 분산형 스테이블코인 운영에 필수적인 HIVE와 HBD의 가격 피드를 제공합니다.</li>
+    </ul>
+  </div>
+);
+const BlocksInfoKo: React.FC = () => (
+  <ul className="list-disc list-inside">
+    <li>이 페이지는 하이브 블록체인의 블록 목록을 최신순으로 표시합니다. 각 행은 단일 블록을 나타내며 그에 대한 주요 정보를 제공합니다.</li>
+    <li>각 행 끝에 있는 <ChevronDown className="inline-block align-middle h-4 w-4" /> 아이콘을 클릭하여 블록 오퍼레이션에 대한 추가 세부 정보를 볼 수 있습니다.</li>
+    <li>상단의 <Filter className="inline-block align-middle h-4 w-4" /> 깔때기 아이콘을 사용하여 필터에 접근하고 다른 기준에 따라 블록 목록을 좁힐 수 있습니다.</li>
+    <li>보상 값 위로 마우스를 가져가면 해당 HP 값을 볼 수 있습니다.</li>
+  </ul>
+);
+const BalanceHistoryInfoKo: React.FC = () => (
+    <ul className="list-disc list-inside">
+        <li>이 페이지는 선택된 코인 및 기간에 대한 특정 하이브 계정의 잔액 내역을 표시합니다. 시간이 지남에 따라 잔액이 어떻게 변했는지 시각적으로 보여줍니다. 기본적으로 지난 한 달간의 결과가 표시됩니다.</li>
+        <li>상단의 <Filter className="inline-block align-middle h-4 w-4" /> 아이콘을 클릭하여 필터에 접근하고 기록을 좁힐 수 있습니다.</li>
+        <li>차트는 일별 잔액 변화를 보여주기 위해 일 단위로 세분화된 잔액을 표시합니다.</li>
+        <li>차트 아래의 슬라이더를 사용하여 특정 시간 간격으로 확대하고 초점을 맞춰 더 자세한 보기를 할 수 있습니다.</li>
+    </ul>
+);
+const TransactionDetailsInfoKo: React.FC = () => (
+    <ul className="list-disc list-inside">
+        <li>이 페이지는 특정 트랜잭션 해시의 트랜잭션 세부 정보를 표시합니다.</li>
+        <li>아래 오퍼레이션 테이블에 가상 오퍼레이션을 포함하려면 토글 스위치를 클릭하세요.</li>
+        <li>메인 메뉴의 데이터 보기에서 설정을 변경하여 다른 형식으로 데이터를 볼 수 있습니다.</li>
+    </ul>
+);
+
+const WitnessInfoAr: React.FC = () => (
+    <div>
+      <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+        ما هم شهود Hive؟
+      </h2>
+      <p className="text-gray-700 dark:text-gray-300 mb-4">
+        شهود Hive هم الممثلون المنتخبون الذين يضمنون عمل السلسلة بنزاهة، ويقومون أيضًا بتشكيل اتجاهها بفاعلية من خلال القرارات الرئيسية.
+      </p>
+      <p className="text-gray-700 dark:text-gray-300 mb-4">
+        تخيل Hive كمدينة مزدهرة ولامركزية. الشهود هم مجلس المدينة، وفرق البناء، وقوات الأمن، كل ذلك في كيان واحد. <br />
+        إنهم لا يحافظون على تشغيل المدينة فقط (بإنتاج البلوكات وصيانة العُقد)، بل يقررون أيضًا سياسات هامة مثل بناء الطرق (إعدادات المعلمات) وقيمة عملة المدينة (تغذية الأسعار).
+      </p>
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+        الوظائف الرئيسية:
+      </h3>
+      <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 mb-4">
+        <li><span className="font-medium">إنتاج البلوكات:</span> هم المسؤولون عن إنشاء بلوكات جديدة على بلوك تشين Hive، وتأكيد المعاملات، وتأمين الشبكة.</li>
+        <li><span className="font-medium">صيانة الشبكة:</span> يقومون بتشغيل وصيانة خوادم قوية تحافظ على تشغيل شبكة Hive بشكل موثوق.</li>
+        <li><span className="font-medium">إعداد المعلمات:</span> يشاركون في تحديد المعلمات الرئيسية لبلوك تشين Hive، مثل حجم البلوك، ورسوم إنشاء الحسابات، ومعدلات الفائدة على HBD (APR).</li>
+        <li><span className="font-medium">تغذية الأسعار:</span> يقدمون تغذية أسعار لـ HIVE و HBD، وهي حاسمة لتشغيل العملة المستقرة اللامركزية.</li>
+      </ul>
+    </div>
+);
+
+const BlocksInfoAr: React.FC = () => (
+  <ul className="list-disc list-inside">
+    <li>تعرض هذه الصفحة قائمة بالبلوكات في بلوك تشين Hive، مرتبة من الأحدث إلى الأقدم. يمثل كل صف بلوكاً واحداً ويوفر معلومات أساسية عنه.</li>
+    <li>انقر على أيقونة <ChevronDown className="inline-block align-middle h-4 w-4" /> في نهاية كل صف لعرض تفاصيل إضافية حول عمليات البلوك.</li>
+    <li>استخدم أيقونة القمع <Filter className="inline-block align-middle h-4 w-4" /> في الأعلى للوصول إلى المرشحات وتضييق قائمة البلوكات بناءً على معايير مختلفة.</li>
+    <li>مرر الفأرة فوق قيمة المكافأة لمعرفة القيمة المقابلة لها بـ HP.</li>
+  </ul>
+);
+
+const BalanceHistoryInfoAr: React.FC = () => (
+    <ul className="list-disc list-inside">
+        <li>تعرض هذه الصفحة سجل الرصيد لحساب Hive معين لعملة وفترة زمنية محددة. وهي توفر تمثيلاً مرئياً لكيفية تغير رصيدك بمرور الوقت. بشكل افتراضي، يتم عرض نتائج الشهر الماضي.</li>
+        <li>انقر على أيقونة <Filter className="inline-block align-middle h-4 w-4" /> في الأعلى للوصول إلى المرشحات وتضييق السجلات.</li>
+        <li>يعرض الرسم البياني رصيدك، مع قيم مفصلة يومياً لإظهار التغيرات اليومية في الرصيد.</li>
+        <li>استخدم شريط التمرير أسفل الرسم البياني للتكبير والتركيز على فترات زمنية محددة للحصول على عرض أكثر تفصيلاً.</li>
+    </ul>
+);
+
+const TransactionDetailsInfoAr: React.FC = () => (
+    <ul className="list-disc list-inside">
+        <li>تعرض هذه الصفحة تفاصيل المعاملة لهاش معاملة معين.</li>
+        <li>انقر على مفتاح التبديل لتضمين العمليات الافتراضية في جدول العمليات أدناه.</li>
+        <li>يمكنك تغيير الإعداد من "عرض البيانات" في القائمة الرئيسية لعرض البيانات بتنسيقات أخرى.</li>
+    </ul>
+);
+
+
+// =================================================================
+// 3. Final Populated Object
+// =================================================================
 const pageTitlesInfo: InfoContent = {
   "pageTitle.hiveWitnesses": {
     en: <WitnessInfoEn />,
     es: <WitnessInfoEs />,
+    it: <WitnessInfoIt />,
+    de: <WitnessInfoDe />,
+    pt: <WitnessInfoPt />,
+    fr: <WitnessInfoFr />,
+    pl: <WitnessInfoPl />,
+    zh: <WitnessInfoZh />,
+    ja: <WitnessInfoJa />,
+    ro: <WitnessInfoRo />,
+    ko: <WitnessInfoKo />,
+    ar: <WitnessInfoAr/>
   },
   "pageTitle.hiveBlocks": {
     en: <BlocksInfoEn />,
-    es: <BlocksInfoEs />
+    es: <BlocksInfoEs />,
+    it: <BlocksInfoIt />,
+    de: <BlocksInfoDe />,
+    pt: <BlocksInfoPt />,
+    fr: <BlocksInfoFr />,
+    pl: <BlocksInfoPl />,
+    zh: <BlocksInfoZh />,
+    ja: <BlocksInfoJa />,
+    ro: <BlocksInfoRo />,
+    ko: <BlocksInfoKo />,
+    ar: <BlocksInfoAr/>
   },
   "pageTitle.balanceHistory": {
     en: <BalanceHistoryInfoEn />,
     es: <BalanceHistoryInfoEs />,
+    it: <BalanceHistoryInfoIt />,
+    de: <BalanceHistoryInfoDe />,
+    pt: <BalanceHistoryInfoPt />,
+    fr: <BalanceHistoryInfoFr />,
+    pl: <BalanceHistoryInfoPl />,
+    zh: <BalanceHistoryInfoZh />,
+    ja: <BalanceHistoryInfoJa />,
+    ro: <BalanceHistoryInfoRo />,
+    ko: <BalanceHistoryInfoKo />,
+    ar : <BalanceHistoryInfoAr/>
   },
   "pageTitle.transactionDetails": {
     en: <TransactionDetailsInfoEn />,
     es: <TransactionDetailsInfoEs />,
+    it: <TransactionDetailsInfoIt />,
+    de: <TransactionDetailsInfoDe />,
+    pt: <TransactionDetailsInfoPt />,
+    fr: <TransactionDetailsInfoFr />,
+    pl: <TransactionDetailsInfoPl />,
+    zh: <TransactionDetailsInfoZh />,
+    ja: <TransactionDetailsInfoJa />,
+    ro: <TransactionDetailsInfoRo />,
+    ko: <TransactionDetailsInfoKo />,
+    ar: <TransactionDetailsInfoAr/>
   },
 };
 

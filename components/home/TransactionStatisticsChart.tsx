@@ -30,7 +30,9 @@ const TransactionStatisticsChart: React.FC<TransactionStatisticsChartProps> = ({
   dateFormat,
 }) => {
   const { theme } = useTheme();
-    const { t } = useI18n();
+  const { t, dir, locale } = useI18n();
+  const isRTL = dir === "rtl";
+  
   const strokeColor = theme === "dark" ? "#FFF" : "#000";
   const [zoomedDomain, setZoomedDomain] = useState<[number, number] | null>(
     null
@@ -47,7 +49,7 @@ const TransactionStatisticsChart: React.FC<TransactionStatisticsChartProps> = ({
       max_trx: item.max_trx,
     }));
   }, [data]);
-
+  
   const CustomTooltip = ({
     active,
     payload,
@@ -154,7 +156,12 @@ const TransactionStatisticsChart: React.FC<TransactionStatisticsChartProps> = ({
     <ResponsiveContainer width="100%" height="100%">
       <LineChart
         data={chartData}
-        margin={{ top: 20, right: 10, left: 10, bottom: includeBrush ? 40 : 0 }}
+        margin={{
+          top: 20,
+          right: isRTL ? 10 : 30,
+          left: isRTL ? 30 : 10, 
+          bottom: includeBrush ? 40 : 0
+        }}
       >
         <XAxis
           dataKey="date"
@@ -162,6 +169,7 @@ const TransactionStatisticsChart: React.FC<TransactionStatisticsChartProps> = ({
           tickFormatter={xAxisTickFormatter}
           style={{ fontSize: "10px" }}
           stroke={strokeColor}
+          reversed={isRTL}
         />
         <YAxis
           dataKey="trx_count"
@@ -170,9 +178,14 @@ const TransactionStatisticsChart: React.FC<TransactionStatisticsChartProps> = ({
           stroke={strokeColor}
           tickFormatter={formatYAxis}
           domain={yAxisDomain}
+          orientation={isRTL ? "right" : "left"}
         />
         <Tooltip content={<CustomTooltip />} />
-        <Legend verticalAlign="bottom" height={36} />
+        <Legend
+          verticalAlign="bottom"
+          height={36}
+          align={isRTL ? "right" : "left"}
+        />
         <Line
           name={t("common.transactions")}
           type="monotone"

@@ -23,7 +23,7 @@ const CustomTooltip = ({
   active?: boolean;
   payload?: any[];
 }) => {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
 
   if (active && payload && payload.length) {
     return (
@@ -70,7 +70,9 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({
 }) => {
   const { hiveChain } = useHiveChainContext();
   const { theme } = useTheme();
-  const { t } = useI18n();
+  
+  const { t, dir } = useI18n();
+  const isRTL = dir === "rtl";
 
   const [chartData, setChartData] = useState<ChartData[] | undefined>(
     undefined
@@ -113,20 +115,24 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({
       width="100%"
       height={isFullChart ? 500 : 250}
     >
-      <LineChart data={chartData}>
+      <LineChart data={chartData} layout="horizontal">
         <XAxis
           dataKey="date"
           stroke={strokeColor}
+          reversed={isRTL}
         />
         <YAxis
           dataKey="close"
           domain={[minValue, maxValue]}
           stroke={strokeColor}
+          orientation={isRTL ? "right" : "left"}
         />
         <Tooltip content={<CustomTooltip />} />
         <Legend
           verticalAlign="top"
           height={36}
+          align={isRTL ? "right" : "left"}
+          wrapperStyle={isRTL ? { right: 0, left: 'auto' } : { left: 0, right: 'auto' }}
         />
         <Line
           name={`${t("marketHistoryChart.hivePrice")}: $${lastHivePrice ?? 0}`}

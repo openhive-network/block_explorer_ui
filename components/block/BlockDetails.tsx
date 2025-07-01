@@ -8,7 +8,7 @@ import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { cn } from "@/lib/utils";
 import CopyButton from "../ui/CopyButton";
-import { useI18n } from "@/i18n/i18n"; // Assuming this is your i18n hook import
+import { useI18n } from "@/i18n/i18n";
 
 interface BlockDetailsProps {
   virtualOperationsTypesCounters?: Explorer.OperationCounter[];
@@ -31,7 +31,7 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
   handleEnableVirtualOperations,
   trxOperationsLength,
 }) => {
-  const { t } = useI18n();
+  const { t , dir } = useI18n();
   if (!blockDetails) return;
   interface BlockDetailItemProps {
     label: string;
@@ -49,17 +49,21 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
     return (
       <div
         className={cn(
-          "grid grid-cols-1 md:grid-cols-[360px_1fr] items-center py-1.5",
+          "flex flex-col md:flex-row items-start md:items-center py-1.5",
+          dir === 'rtl' && "md:text-left",
           hasBorder && "border-b"
         )}
       >
         <div
-          className="font-medium md:text-left pr-2 md:pr-0"
+          className="font-medium md:w-[360px] md:flex-shrink-0 text-start"
           data-testid={`${dataTestId}-label`}
         >
           {label}:
         </div>
-        <div className="text-sm" data-testid={dataTestId}>
+        <div
+          className="text-sm w-full flex justify-start" 
+          data-testid={dataTestId}
+        >
           {value}
         </div>
       </div>
@@ -73,12 +77,14 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
       data-testid="block-page-block-details"
     >
       <CardHeader className="px-4 pt-4 pb-2">
-        <CardTitle data-testid="block-number" className="text-lg font-semibold text-left">
-          {t("common.block")} {blockDetails.block_num.toLocaleString()}
-          <CopyButton
-            text={blockDetails.block_num}
-            tooltipText={t("common.copyBlockNumber")}
-          />
+        <CardTitle data-testid="block-number" className="text-lg font-semibold text-start">
+          <div className={cn("flex items-center gap-2", dir === 'rtl' && "text-right")}>
+            <span>{t("common.block")} {blockDetails.block_num.toLocaleString()}</span>
+            <CopyButton
+              text={blockDetails.block_num}
+              tooltipText={t("common.copyBlockNumber")}
+            />
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-0 px-4 py-2">
@@ -94,7 +100,7 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
           label={t("blockDetails.producedBy")}
           value={
             <Link
-              className="flex items-center justify-start gap-2"
+              className={cn("flex items-center justify-start gap-2", dir === 'rtl' && "flex-row-reverse")}
               data-testid="account-name"
               href={`/@${blockDetails.producer_account}`}
             >
@@ -121,13 +127,13 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
         <BlockDetailItem
           label={t("blockDetails.hash")}
           value={
-            <>
-              {blockDetails.hash}
+            <div className={cn("flex items-center gap-2", dir === 'rtl' && "text-right")}>
+              <span>{blockDetails.hash}</span>
               <CopyButton
                 text={blockDetails.hash || ""}
                 tooltipText={t("blockDetails.copyBlockHash")}
               />
-            </>
+            </div>
           }
           dataTestId="hash"
           hasBorder
@@ -136,13 +142,13 @@ const BlockDetails: React.FC<BlockDetailsProps> = ({
         <BlockDetailItem
           label={t("blockDetails.previousHash")}
           value={
-            <>
-              {blockDetails.prev}
+            <div className={cn("flex items-center gap-2", dir === 'rtl' && "ftext-right")}>
+              <span>{blockDetails.prev}</span>
               <CopyButton
                 text={blockDetails.prev || ""}
                 tooltipText={t("blockDetails.copyPrevBlockHash")}
               />
-            </>
+            </div>
           }
           dataTestId="prev-hash"
           hasBorder

@@ -26,6 +26,8 @@
   "common.export":"Exportar",
   "common.copyBlockHash":"Copiar Hash del Bloque",
   "common.blocks":"bloques",
+  "common.date": "Fecha",
+"common.balance": "Saldo",
   "currentBlockCard.currentBlock": "Bloque Actual",
   "currentBlockCard.secsAgo": "hace segundos",
   "currentBlockCard.transactions": "Transacciones",
@@ -669,6 +671,15 @@
   "operationCategories.witnessvoting": "Votación de testigo",
   "operationCategories.proposals": "Propuestas",
   "operationCategories.custom": "Personalizado",
-  "operationCategories.other": "Otro"
+  "operationCategories.other": "Otro",
+  "languageSelector.chinese": "Chino",
+  "languageSelector.german": "Alemán",
+  "languageSelector.french": "Francés",
+  "languageSelector.japanese": "Japonés",
+  "languageSelector.korean": "Coreano",
+  "languageSelector.polish": "Polaco",
+  "languageSelector.portuguese": "Portugués",
+  "languageSelector.romanian": "Rumano",
+  "languageSelector.arabic": "Árabe"
 
 }

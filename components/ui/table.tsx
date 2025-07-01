@@ -1,6 +1,8 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { ChevronRight, ChevronLeft } from "lucide-react";
+import { useI18n } from "@/i18n/i18n";
+
 
 function getDisplayName(Tag: React.ElementType) {
   return typeof Tag === "string"
@@ -14,7 +16,10 @@ function getDisplayName(Tag: React.ElementType) {
  *  • Always applies `baseClasses` (global defaults)
  *  • Then applies `px-4 align-middle`
  *  • Then applies any `className` the consumer passes
- */
+ *  • Is now RTL-aware
+ *  • Applies `right` instead of `left` for sticky positioning in RTL
+ *  • Applies `text-right` instead of `text-left` for alignment in RTL
+*/
 export function withSticky<T extends React.ElementType>(
   Tag: T,
   baseClasses = ""
@@ -25,11 +30,14 @@ export function withSticky<T extends React.ElementType>(
 
   const StickyComp = React.forwardRef<RefType, Props>(
     ({ stickyLeft, style, className, ...props }, ref) => {
+      const { dir } = useI18n();
+      const isRTL = dir === "rtl";
+
       const stickyStyle =
         stickyLeft !== undefined
           ? {
               position: "sticky",
-              left: stickyLeft === true ? 0 : stickyLeft,
+              [isRTL ? "right" : "left"]: stickyLeft === true ? 0 : stickyLeft,
               zIndex: 1,
               background: "inherit",
             }
@@ -39,7 +47,11 @@ export function withSticky<T extends React.ElementType>(
         <Tag
           ref={ref as any}
           style={{ ...(style as React.CSSProperties), ...stickyStyle }}
-          className={cn(baseClasses, className)}
+          className={cn(
+            baseClasses,
+            isRTL ? "text-right" : "text-left",
+            className
+          )}
           {...(props as any)}
         />
       );
@@ -88,12 +100,15 @@ const Table = React.forwardRef<HTMLTableElement, TableProps>(
     const tableRef = React.useRef<HTMLDivElement>(null);
     const [isTableVisible, setIsTableVisible] = React.useState(false);
 
+    const { dir } = useI18n();
+    const isRTL = dir === "rtl";
+
     const handleScroll = React.useCallback(() => {
-      if (!tableRef.current) return;
+        if (!tableRef.current) return;
 
-      const { scrollLeft, scrollWidth, clientWidth } = tableRef.current;
+        const { scrollLeft, scrollWidth, clientWidth } = tableRef.current;
 
-      const atLeftEdge = scrollLeft <= 0;
+        const atLeftEdge = scrollLeft <= 0;
       const atRightEdge = scrollLeft + clientWidth >= scrollWidth - 1;
 
       const shouldShowLeft = scrollLeft > 0 && !atLeftEdge && isTableVisible;
@@ -153,6 +168,9 @@ const Table = React.forwardRef<HTMLTableElement, TableProps>(
     const arrowStyle =
       "fixed top-1/2 transform -translate-y-1/2 bg-gray-200 bg-opacity-70 hover:bg-opacity-100 rounded-full p-2 z-20 cursor-pointer text-gray-700";
 
+    const LeftArrowIcon = isRTL ? ChevronRight : ChevronLeft;
+    const RightArrowIcon = isRTL ? ChevronLeft : ChevronRight;
+
     return (
       <TableContext.Provider value={{ showLeftArrow, showRightArrow }}>
         <div
@@ -164,10 +182,13 @@ const Table = React.forwardRef<HTMLTableElement, TableProps>(
               className={cn(arrowStyle, "left-2")}
               style={{ top: `45vh` }}
               onClick={() => {
-                tableRef.current?.scrollBy({ left: -100, behavior: "smooth" });
+                tableRef.current?.scrollBy({
+                  left: isRTL ? 100 : -100,
+                  behavior: "smooth",
+                });
               }}
             >
-              <ChevronLeft size={20} />
+              <LeftArrowIcon size={20} />
             </div>
           )}
 
@@ -176,10 +197,13 @@ const Table = React.forwardRef<HTMLTableElement, TableProps>(
               className={cn(arrowStyle, "right-2")}
               style={{ top: `45vh` }}
               onClick={() => {
-                tableRef.current?.scrollBy({ left: 100, behavior: "smooth" });
+                tableRef.current?.scrollBy({
+                  left: isRTL ? -100 : 100,
+                  behavior: "smooth",
+                });
               }}
             >
-              <ChevronRight size={20} />
+              <RightArrowIcon size={20} />
             </div>
           )}
           <table
@@ -246,7 +270,7 @@ const TableRow = React.forwardRef<
   <tr
     ref={ref}
     className={cn(
-      "border-b-2 text-left bg-theme dark:border-gray-700",
+      "border-b-2 bg-theme dark:border-gray-700",
       rowVariants[rowVariant],
       className
     )}
@@ -257,7 +281,7 @@ TableRow.displayName = "TableRow";
 
 const TableHead = withSticky(
   "th",
-  "h-12 px-4 text-left align-middle font-medium bg-theme text-text [&:has([role=checkbox])]:pr-0"
+  "h-12 px-4 align-middle font-medium bg-theme text-text [&:has([role=checkbox])]:pr-0"
 );
 TableHead.displayName = "TableHead";
 

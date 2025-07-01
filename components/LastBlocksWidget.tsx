@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
 import useMediaQuery from "@/hooks/common/useMediaQuery";
 import useLastBlocks from "@/hooks/api/homePage/useLastBlocks";
 import { Card, CardHeader, CardTitle } from "./ui/card";
-import { MoveRight } from "lucide-react";
+import { MoveRight, MoveLeft } from "lucide-react";
 import Link from "next/link";
 import { useI18n } from "../i18n/i18n";
 
@@ -129,7 +129,10 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
   className = "",
   strokeColor,
 }) => {
-  const { t } = useI18n();
+  const { t, dir } = useI18n();
+  const isRTL = dir === 'rtl';
+
+  const SeeMoreIcon = isRTL ? MoveLeft : MoveRight;
 
   const [data, setData] = useState<ChartBlockData[]>([]);
   const router = useRouter();
@@ -195,7 +198,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
           data-testid="see-witnesses-link"
         >
           <span>{t("common.seeMore")}</span>
-          <MoveRight width={18} />
+          <SeeMoreIcon width={18} />
         </Link>
       </CardHeader>
       <ResponsiveContainer
@@ -206,8 +209,8 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
           data={data}
           margin={{
             top: 20,
-            right: 55,
-            left: isMobile ? 0 : 10,
+            right: isRTL ? (isMobile ? 0 : 10) : 55,
+            left: isRTL ? 55 : (isMobile ? 0 : 10),
             bottom: isMobile ? 120 : 90,
           }}
         >
@@ -216,10 +219,12 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
             dataKey="name"
             stroke={strokeColor}
             axisLine={false}
-          ></XAxis>
+            reversed={isRTL}
+          />
           <YAxis
             stroke={strokeColor}
             axisLine={false}
+            orientation={isRTL ? 'right' : 'left'}
             domain={[
               0,
               (dataMax: number) => (Math.floor((dataMax + 10) / 50) + 1) * 50,
@@ -233,9 +238,13 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
             content={<CustomTooltip />}
           />
           <Legend
-            wrapperStyle={{ position: "relative", marginLeft: "35px" }}
-            align="center"
-          />
+            wrapperStyle={{
+            position: "relative",
+            marginLeft: isRTL ? 0 : "35px",
+            marginRight: isRTL ? "70px" : "0",
+          }}
+          align="center"
+        />
           <Bar
             dataKey="other"
             stackId="a"
