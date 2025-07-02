@@ -131,56 +131,60 @@ const AutoCompleteInput: React.FC<Props> = ({
     resultRef.current?.scrollIntoView({ block: "nearest" });
   }, [selected]);
 
-  const renderOptions = (d: Hive.InputTypeResponse) => {
-    const resType = getResultTypeHeader(d);
-    const arr = Array.isArray(d.input_value) ? d.input_value : [d.input_value];
+const renderOptions = (d: Hive.InputTypeResponse) => {
+  if (d.input_type === "invalid_input") {
+    return <div >{t("autocompleteInput.invalidInput")}: {searchTerm}</div>;
+  }
 
-    return (
-      <div
-        className="autocomplete-result-container scrollbar-autocomplete"
-        ref={resultRef}
-      >
-        {arr.map((acc, i) => (
-          <div
-            key={acc}
-            className={cn("autocomplete-result-item cursor-pointer", {
-              "bg-navbar-listHover": selected === i,
-            })}
-            onClick={() => pick(acc)}
-          >
-            {linkResult ? (
-              <>
-                {addLabel && (
-                  <span className="autocomplete-result-label">
+  const resType = getResultTypeHeader(d);
+  const arr = Array.isArray(d.input_value) ? d.input_value : [d.input_value];
+
+  return (
+    <div
+      className="autocomplete-result-container scrollbar-autocomplete"
+      ref={resultRef}
+    >
+      {arr.map((acc, i) => (
+        <div
+          key={acc}
+          className={cn("autocomplete-result-item cursor-pointer", {
+            "bg-navbar-listHover": selected === i,
+          })}
+          onClick={() => pick(acc)}
+        >
+          {linkResult ? (
+            <>
+              {addLabel && (
+                <span className="autocomplete-result-label">
                       {capitalizeFirst(t(`autocompleteInput.${resType}`))}:&nbsp;
-                  </span>
-                )}
-                <Link
-                  className="autocomplete-result-link"
+                </span>
+              )}
+              <Link
+                className="autocomplete-result-link"
                   href={
                     resType === "account" ? `/@${acc}` : `/${resType}/${acc}`
                   }
-                  onClick={(e) => e.preventDefault()}
-                >
-                  {acc}
-                </Link>
-              </>
-            ) : (
-              <>
-                {addLabel && (
-                  <span className="autocomplete-result-label">
-                    {capitalizeFirst(resType)}:&nbsp;
-                  </span>
-                )}
+                onClick={(e) => e.preventDefault()}
+              >
                 {acc}
-              </>
-            )}
-            {selected === i && <Enter className="hidden md:inline ml-1" />}
-          </div>
-        ))}
-      </div>
-    );
-  };
+              </Link>
+            </>
+          ) : (
+            <>
+              {addLabel && (
+                <span className="autocomplete-result-label">
+                    {capitalizeFirst(resType)}:&nbsp;
+                </span>
+              )}
+              {acc}
+            </>
+          )}
+          {selected === i && <Enter className="hidden md:inline ml-1" />}
+        </div>
+      ))}
+    </div>
+  );
+};
 
   return (
     <div
