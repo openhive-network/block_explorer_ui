@@ -107,7 +107,7 @@ const renderSortArrow = (
 };
 
 export default function Witnesses() {
-  const { t } = useI18n();
+  const { t , locale } = useI18n();
 
   const [voterAccount, setVoterAccount] = useState<string>("");
   const [isVotersOpen, setIsVotersOpen] = useState<boolean>(false);
@@ -484,7 +484,8 @@ export default function Witnesses() {
                                   <TooltipTrigger asChild>
                                     <span className="cursor-pointer">
                                       {formatAndDelocalizeFromTime(
-                                        singleWitness.feed_updated_at
+                                        singleWitness.feed_updated_at ,
+                                        locale
                                       )}
                                     </span>
                                   </TooltipTrigger>
