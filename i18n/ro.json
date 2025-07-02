@@ -430,6 +430,7 @@
   "autocompleteInput.account": "Cont",
   "autocompleteInput.block": "Bloc",
   "autocompleteInput.transaction": "Tranzacție",
+  "autocompleteInput.invalidInput" : "Contul nu a fost găsit", 
   "delegationSort.Recipient": "Destinatar",
   "delegationSort.Amount": "Sumă",
   "delegationSort.Delegator": "Delegator",

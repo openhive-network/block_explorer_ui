@@ -431,6 +431,7 @@
   "autocompleteInput.account": "账户",
   "autocompleteInput.block": "区块",
   "autocompleteInput.transaction": "交易",
+  "autocompleteInput.invalidInput" : "账户未找到", 
   "delegationSort.Recipient": "接收者",
   "delegationSort.Amount": "金额",
   "delegationSort.Delegator": "委托人",
