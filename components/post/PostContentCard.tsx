@@ -15,6 +15,7 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/hybrid-tooltip";
+import { useI18n } from "@/i18n/i18n";
 
 interface PostContentCardProps {
   isComment?: boolean;
@@ -57,6 +58,7 @@ const PostContentCard: React.FC<PostContentCardProps> = ({
   data,
   commentsLength,
 }) => {
+  const { t , locale } = useI18n();
   if (!data) return;
 
   const {
@@ -85,7 +87,7 @@ const PostContentCard: React.FC<PostContentCardProps> = ({
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <span>{formatAndDelocalizeFromTime(created)}</span>
+                <span>{formatAndDelocalizeFromTime(created ,locale)}</span>
               </TooltipTrigger>
               <TooltipContent
                 side="top"
