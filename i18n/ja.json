@@ -430,7 +430,7 @@
   "autocompleteInput.account": "アカウント",
   "autocompleteInput.block": "ブロック",
   "autocompleteInput.transaction": "トランザクション",
-  "autocompleteInput.invalidInput" : "アカウントが見つかりません", 
+  "autocompleteInput.invalidInput" : "無効な入力",
   "delegationSort.Recipient": "受取人",
   "delegationSort.Amount": "金額",
   "delegationSort.Delegator": "委任者",

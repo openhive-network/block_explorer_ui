@@ -430,7 +430,7 @@
   "autocompleteInput.account": "계정",
   "autocompleteInput.block": "블록",
   "autocompleteInput.transaction": "트랜잭션",
-  "autocompleteInput.invalidInput" : "계정을 찾을 수 없습니다", 
+  "autocompleteInput.invalidInput" :  "잘못된 입력",
   "delegationSort.Recipient": "수신자",
   "delegationSort.Amount": "금액",
   "delegationSort.Delegator": "위임자",

@@ -438,7 +438,7 @@
   "autocompleteInput.account": "حساب",
   "autocompleteInput.block": "بلوك",
   "autocompleteInput.transaction": "معاملة",
-  "autocompleteInput.invalidInput" : "لم يتم العثور على الحساب", 
+  "autocompleteInput.invalidInput" : "إدخال غير صالح",
   "delegationSort.Recipient": "المستلم",
   "delegationSort.Amount": "المبلغ",
   "delegationSort.Delegator": "المفوض",

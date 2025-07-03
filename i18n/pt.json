@@ -430,7 +430,7 @@
   "autocompleteInput.account": "Conta",
   "autocompleteInput.block": "Bloco",
   "autocompleteInput.transaction": "Transação",
-  "autocompleteInput.invalidInput" : "Conta não encontrada", 
+  "autocompleteInput.invalidInput" : "Entrada inválida",
   "delegationSort.Recipient": "Destinatário",
   "delegationSort.Amount": "Quantia",
   "delegationSort.Delegator": "Delegador",
