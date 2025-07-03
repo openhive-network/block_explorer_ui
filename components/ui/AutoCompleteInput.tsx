@@ -133,7 +133,7 @@ const AutoCompleteInput: React.FC<Props> = ({
 
 const renderOptions = (d: Hive.InputTypeResponse) => {
   if (d.input_type === "invalid_input") {
-    return <div >{t("autocompleteInput.invalidInput")}: {searchTerm}</div>;
+    return <div className="p-2" >{t("autocompleteInput.invalidInput")}: {searchTerm}</div>;
   }
 
   const resType = getResultTypeHeader(d);
