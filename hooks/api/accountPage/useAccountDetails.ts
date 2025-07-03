@@ -27,10 +27,24 @@ const useAccountDetails = (accountName: string, liveDataEnabled: boolean) => {
     const voteExpiration = formatAndDelocalizeTime(
       accounts[0].governance_vote_expiration_ts
     );
+    const last_account_update = formatAndDelocalizeTime(
+      accounts[0].last_account_update
+    );
+    const last_owner_update = formatAndDelocalizeTime(
+      accounts[0].last_owner_update
+    );
+    const last_post = formatAndDelocalizeTime(accounts[0].last_post);
+    const last_root_post = formatAndDelocalizeTime(accounts[0].last_root_post);
+    const last_vote_time = formatAndDelocalizeTime(accounts[0].last_vote_time);
 
     const result = {
       ...accountDetails,
       governance_vote_expiration_ts: voteExpiration || null,
+      last_account_update,
+      last_owner_update,
+      last_post,
+      last_root_post,
+      last_vote_time,
     };
 
     return result;

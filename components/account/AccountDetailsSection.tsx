@@ -73,7 +73,6 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
         header={t("accountDetailsSection.wallet")}
         userDetails={accountDetails}
       />
-      {/*  */}
       <AccountBalanceHistoryCard
         header={t("accountDetailsSection.balanceHistory")}
         userDetails={accountDetails}

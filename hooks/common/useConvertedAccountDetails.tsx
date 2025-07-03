@@ -31,21 +31,26 @@ const useConvertedAccountDetails = (
   };
 
   const { hiveChain } = useHiveChainContext();
-  const { accountDetails, notFound, isAccountDetailsLoading } = useAccountDetails(
-    accountName,
-    liveDataEnabled
-  );
+  const { accountDetails, notFound, isAccountDetailsLoading } =
+    useAccountDetails(accountName, liveDataEnabled);
   const { recurrentTransfers } = useAccountRecurrentTransfers(
     accountName,
     liveDataEnabled
   );
 
   if (!dynamicGlobalData || !hiveChain)
-    return { formattedAccountDetails: undefined, notFound: undefined ,isAccountDetailsLoading};
-  
-  if(!accountDetails)
-  {
-   return { formattedAccountDetails: undefined, notFound: !accountDetails ,isAccountDetailsLoading };
+    return {
+      formattedAccountDetails: undefined,
+      notFound: undefined,
+      isAccountDetailsLoading,
+    };
+
+  if (!accountDetails) {
+    return {
+      formattedAccountDetails: undefined,
+      notFound: !accountDetails,
+      isAccountDetailsLoading,
+    };
   }
   const {
     headBlockDetails: {
@@ -215,8 +220,6 @@ const useConvertedAccountDetails = (
       has_hive_reward: !!accountDetails.reward_hive_balance,
     }),
   } as Explorer.FormattedAccountDetails;
-  delete formattedAccountDetails.last_post;
-  delete formattedAccountDetails.last_root_post;
   delete formattedAccountDetails.post_count;
   return {
     formattedAccountDetails,
