@@ -21,6 +21,8 @@ const calculateTimeDiff = (date: string | Date) => {
 };
 
 const LastUpdatedTooltip: React.FC<LastUpdatedProps> = ({ lastUpdatedAt }) => {
+  const { t , locale } = useI18n();
+
   const hasTimeDiff =
     typeof lastUpdatedAt === "string" &&
     lastUpdatedAt.split(" ").includes("ago");
@@ -29,7 +31,7 @@ const LastUpdatedTooltip: React.FC<LastUpdatedProps> = ({ lastUpdatedAt }) => {
     ? Number(lastUpdatedAt.split(" ")[0])
     : calculateTimeDiff(lastUpdatedAt);
   const iconRef = useRef<SVGSVGElement | null>(null);
-  const formattedTime = formatAndDelocalizeFromTime(lastUpdatedAt); // Get the human-readable time.
+  const formattedTime = formatAndDelocalizeFromTime(lastUpdatedAt , locale); // Get the human-readable time.
 
   const getIconColor = (timeDiff: number) => {
     let colorClass = "";
@@ -52,9 +54,9 @@ const LastUpdatedTooltip: React.FC<LastUpdatedProps> = ({ lastUpdatedAt }) => {
 
     return { colorClass, fillColor };
   };
-  const { t } = useI18n();
+
   const { colorClass, fillColor } = getIconColor(timeDiff);
-  const tooltipMessage = `${t("lastUpdatedTooltip.prefix")} ${formattedTime}`;
+  const tooltipMessage = `${t("lastUpdatedTooltip.prefix")}${formattedTime}`;
 
   return (
     <div className="flex items-center space-x-2">

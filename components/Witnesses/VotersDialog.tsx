@@ -250,7 +250,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                     className="flex justify-center text-left font-semibold"
                     data-testid="voters-dialog-witness-name"
                   >
-                     {t("votersDialog.nameVoters")} {accountName.toUpperCase()}
+                     {accountName.toUpperCase()}{t("votersDialog.nameVoters")}
                     {isWitnessVotersLoading && (
                       <Loader2 className="animate-spin mt-1 h-4 w-4 ml-3 ..." />
                     )}

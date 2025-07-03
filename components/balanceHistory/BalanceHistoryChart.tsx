@@ -184,7 +184,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
           )}`}</div>
         </div>
 
-        {showSavingsBalance && savingsBalance !== undefined && (
+        {showSavingsBalance==="yes" && savingsBalance !== undefined && selectedCoinType !=="VESTS" &&(
           <div className=" border-t border-gray-400 dark:border-gray-600 mt-1">
             <div
               className={cn(

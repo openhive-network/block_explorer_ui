@@ -11,8 +11,19 @@ export const formatAndDelocalizeTime = (date?: string | Date): string => {
   return moment(date).format(config.baseMomentTimeFormat);
 }
 
-export const formatAndDelocalizeFromTime = (date?: string | Date): string => {
+/**
+ * Formats a date to a human-readable "from now" string (e.g., "a few seconds ago")
+ * in a specified locale.
+ * @param date The date to format.
+ * @param locale The locale to use for formatting (e.g., 'en', 'es', 'fr'). Defaults to 'en'.
+ * @returns The formatted, localized time string.
+ */
+export const formatAndDelocalizeFromTime = (
+  date?: string | Date,
+  locale?: string
+): string => {
   if (!date) return "";
   if (moment.utc(date).unix() === 0) return "--";
-  return moment.utc(date).fromNow();
-}
+  //The locale to use for formatting (e.g., 'en', 'es', 'fr'). Defaults to 'en'.
+  return moment.utc(date).locale(locale || "en").fromNow();
+};
