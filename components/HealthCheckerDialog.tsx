@@ -12,7 +12,10 @@ import { Button } from "./ui/button";
 import { HiveNodes } from "@/utils/HiveNodes";
 import { Input } from "@/components/ui/input";
 import useApiAddresses from "@/utils/ApiAddresses";
-import { HealthCheckerComponent, HealthCheckerService } from "@hiveio/healthchecker-component";
+import {
+  HealthCheckerComponent,
+  HealthCheckerService,
+} from "@hiveio/healthchecker-component";
 import { useHealthCheckerContext } from "@/contexts/HealthCheckerContext";
 
 type HealthCheckerDialogProps = {
@@ -21,16 +24,19 @@ type HealthCheckerDialogProps = {
   healthCheckerService: HealthCheckerService;
 };
 
-const HealthCheckerDialog: React.FC<HealthCheckerDialogProps> = ({trigerText, apiAddress, healthCheckerService}) => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-
+const HealthCheckerDialog: React.FC<HealthCheckerDialogProps> = ({
+  trigerText,
+  apiAddress,
+  healthCheckerService,
+}) => {
+  const [isOpen, setIsOpen] = useState<boolean>(true);
 
   return (
     <Dialog
       open={isOpen}
       onOpenChange={setIsOpen}
     >
-   <DialogTrigger
+      <DialogTrigger
         data-testid="api-address-link"
         className="flex flex-wrap items-center"
       >
@@ -41,9 +47,12 @@ const HealthCheckerDialog: React.FC<HealthCheckerDialogProps> = ({trigerText, ap
         className="h-[80vh] max-w-5xl overflow-auto flex flex-col rounded-lg shadow-md border"
         data-testid="api-address-dialog"
       >
-        {!!healthCheckerService &&
-        <HealthCheckerComponent healthCheckerService={healthCheckerService} className="mt-4" />
-        }
+        {!!healthCheckerService && (
+          <HealthCheckerComponent
+            healthCheckerService={healthCheckerService}
+            className="mt-4"
+          />
+        )}
       </DialogContent>
     </Dialog>
   );
