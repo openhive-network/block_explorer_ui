@@ -98,7 +98,9 @@ const AccountVestingDelegationsCard: React.FC<
     amount: "vesting_shares",
   }) as Explorer.VestingDelegation[];
 
-  const headerText = `${capitalizeFirst(t(`accountVestingDelegationsCard.${direction}`))} ${t("accountVestingDelegationsCard.hpDelegations")}(${
+  const headerText = `${capitalizeFirst(
+    t(`accountVestingDelegationsCard.${direction}`)
+  )} ${t("accountVestingDelegationsCard.hpDelegations")}(${
     delegations.length
   })`;
 
@@ -120,7 +122,7 @@ const AccountVestingDelegationsCard: React.FC<
         <Table>
           <TableHeader className="text-base">
             <TableRow>
-              {buildTableHead(sortBy, key, isAscending, direction)}
+              {buildTableHead(sortBy, key, isAscending, t, direction)}
             </TableRow>
           </TableHeader>
           <TableBody className="text-sm">

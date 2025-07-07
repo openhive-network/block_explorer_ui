@@ -89,9 +89,9 @@ export const buildTableHead = (
   handleSort: (key: string) => void,
   sortKey: string,
   isOrderAscending: boolean,
+  t: (key: string) => string,
   direction?: "incoming" | "outgoing"
 ) => {
-  const { t } = useI18n();
   const tableHeaderCells =
     direction === "incoming"
       ? TABLE_HEADER_CELLS_INCOMING
@@ -108,7 +108,8 @@ export const buildTableHead = (
             className="bg-inherit hover:bg-inherit p-0 m-0"
             onClick={() => handleSort(cellName.toLocaleLowerCase())}
           >
-           {cellName?t(`delegationSort.${cellName}`) : ''} {renderChevron(cellName, sortKey, isOrderAscending)}
+            {cellName ? t(`delegationSort.${cellName}`) : ""}{" "}
+            {renderChevron(cellName, sortKey, isOrderAscending)}
           </Button>
         </TableHead>
       </Fragment>

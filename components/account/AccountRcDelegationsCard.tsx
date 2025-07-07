@@ -104,14 +104,16 @@ const AccountRcDelegationsCard: React.FC<AccountRcDelegationsCardProps> = ({
           onClick={handlePropertiesVisibility}
           className="h-full flex justify-between align-center p-2 hover:bg-rowHover cursor-pointer px-4"
         >
-          <div className="text-lg">{t("accountRcDelegationsCard.delegations")} ({delegations.length})</div>
+          <div className="text-lg">
+            {t("accountRcDelegationsCard.delegations")} ({delegations.length})
+          </div>
           {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
         </div>
       </CardHeader>
       <CardContent hidden={isPropertiesHidden}>
         <Table>
           <TableHeader className="text-base">
-            <TableRow>{buildTableHead(sortBy, key, isAscending)}</TableRow>
+            <TableRow>{buildTableHead(sortBy, key, isAscending, t)}</TableRow>
           </TableHeader>
           <TableBody className="text-sm">
             {buildTableBody(sortedDelegations)}
