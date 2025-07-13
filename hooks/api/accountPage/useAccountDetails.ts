@@ -23,7 +23,8 @@ const useAccountDetails = (accountName: string, liveDataEnabled: boolean) => {
 
     const accountDetails = await fetchingService.getAccount(accountName);
     const { accounts } = await fetchingService.findAccounts([accountName]);
-
+    const { follower_count, following_count } = await fetchingService.getAccountFollowCount(accountName);
+    const subscriptions  = await fetchingService.getAccountSubscriptions(accountName);
     const voteExpiration = formatAndDelocalizeTime(
       accounts[0].governance_vote_expiration_ts
     );
@@ -36,6 +37,7 @@ const useAccountDetails = (accountName: string, liveDataEnabled: boolean) => {
     const last_post = formatAndDelocalizeTime(accounts[0].last_post);
     const last_root_post = formatAndDelocalizeTime(accounts[0].last_root_post);
     const last_vote_time = formatAndDelocalizeTime(accounts[0].last_vote_time);
+    const post_count = accounts[0].post_count;
 
     const result = {
       ...accountDetails,
@@ -45,6 +47,10 @@ const useAccountDetails = (accountName: string, liveDataEnabled: boolean) => {
       last_post,
       last_root_post,
       last_vote_time,
+      follower_count, 
+      following_count,
+      subscriptions,
+      post_count
     };
 
     return result;

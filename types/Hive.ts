@@ -949,6 +949,31 @@ namespace Hive {
     "from-block"?: number | Date;
     "to-block"?: number | Date;
   }
+  export class AccountFollowCount {
+  account!: string;
+  follower_count!: number;
+  following_count!: number;
+  }
+   export class AccountSubscriptions {
+    subscriptions !: string[];
+  }
+  export class AccountFollower {
+    follower!: string;
+    following!: string;
+    what!: string[];
+    length!: number;
+  }
+
+  export class AccountFollowers {
+    accountFollowers!: AccountFollower[];
+    length!: number;
+  }
+  export class AccountFollowing {
+    follower!: string;
+    following!: string;
+    what!: string[];
+    length!: number;
+  }
 }
 
 export default Hive;

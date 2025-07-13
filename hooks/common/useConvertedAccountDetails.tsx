@@ -220,7 +220,6 @@ const useConvertedAccountDetails = (
       has_hive_reward: !!accountDetails.reward_hive_balance,
     }),
   } as Explorer.FormattedAccountDetails;
-  delete formattedAccountDetails.post_count;
   return {
     formattedAccountDetails,
     notFound,

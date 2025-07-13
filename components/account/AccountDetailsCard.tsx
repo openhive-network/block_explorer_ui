@@ -31,6 +31,10 @@ const EXCLUDE_KEYS = [
   "received_vesting_shares",
   "delegated_vesting_shares",
   "vesting_withdraw_rate",
+  "subscriptions",
+  "follower_count",
+  "following_count",
+  "post_count"
 ];
 
 const LINK_KEYS = ["recovery_account", "reset_account"];
