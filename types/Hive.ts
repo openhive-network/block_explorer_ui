@@ -335,11 +335,12 @@ namespace Hive {
 
   export class GetVotesHistoryParams {
     accountName!: string;
-    sort?: string;
     direction?: Hive.Direction;
-    "result-limit"!: number | null;
+    page!: number | null;
+    "page-size"!: number | null;
     "from-block"?: number | Date;
     "to-block"?: number | Date;
+    "voter-name"!: string | undefined;
   }
 
   export class WitnessVotesHistory {
@@ -973,6 +974,21 @@ namespace Hive {
     following!: string;
     what!: string[];
     length!: number;
+  }
+
+  export class VoterHistorySearchParams {
+  accountName?: string;
+  voterName?: string | undefined;
+  fromBlock: Date | number | undefined;
+  toBlock: Date | number | undefined;
+  fromDate:  Date | undefined;
+  toDate:  Date | undefined;
+  lastBlocks: number | undefined;
+  lastTime: number | undefined;
+  timeUnit: string | undefined;
+  rangeSelectKey: string | undefined;
+  page: number | undefined;
+  filters: boolean[] | undefined;
   }
 }
 

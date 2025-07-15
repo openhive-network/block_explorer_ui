@@ -710,5 +710,10 @@
   "accountSubscriptionsDialog.noResultsFound": "未找到与您的搜索匹配的订阅。",
   "accountSubscriptionsDialog.communityHeader": "社区",
   "accountSubscriptionsDialog.communityID": "社区ID",
-  "accountSubscriptionsDialog.communityUrl": "社区链接"
+  "accountSubscriptionsDialog.communityUrl": "社区链接",
+  "votesHistoryDialog.voterNamePlaceholder": "输入投票人姓名...",
+  "votesHistoryDialog.votes": "投票",
+  "votesHistoryDialog.approve": "赞成",
+  "votesHistoryDialog.disapprove": "反对",
+  "common.vestsChange": "Vests 变动"
 }

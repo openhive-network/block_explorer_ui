@@ -710,5 +710,10 @@
   "accountSubscriptionsDialog.noResultsFound": "검색과 일치하는 구독을 찾을 수 없습니다.",
   "accountSubscriptionsDialog.communityHeader": "커뮤니티",
   "accountSubscriptionsDialog.communityID": "커뮤니티 ID",
-  "accountSubscriptionsDialog.communityUrl": "커뮤니티 URL"
+  "accountSubscriptionsDialog.communityUrl": "커뮤니티 URL",
+  "votesHistoryDialog.voterNamePlaceholder": "투표자 이름을 입력하세요...",
+  "votesHistoryDialog.votes": "투표",
+  "votesHistoryDialog.approve": "찬성",
+  "votesHistoryDialog.disapprove": "반대",
+  "common.vestsChange": "Vests 변경"
 }

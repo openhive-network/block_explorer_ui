@@ -348,18 +348,22 @@ class FetchingService {
   async getWitnessVotesHistory(
     witnessName: string,
     direction: "asc" | "desc",
-    sort: string,
+    page: number | null,
     limit: number | null,
-    fromTime?: Date,
-    toTime?: Date
+    fromTime?: Date ,
+    toTime?: Date ,
+    fromBlock?: number,
+    toBlock?: number,
+    voterName?: string,
   ): Promise<Hive.WitnessesVotesHistoryResponse> {
     return await this.extendedHiveChain!.restApi["hafbe-api"].votesHistory({
       accountName: witnessName,
       direction,
-      sort,
-      "result-limit": limit,
-      "from-block": fromTime,
-      "to-block": toTime,
+      "page": page,
+      "page-size": limit,
+      "from-block": fromTime || fromBlock,
+      "to-block": toTime || toBlock,
+      "voter-name":voterName,
     });
   }
 

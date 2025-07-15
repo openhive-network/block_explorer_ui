@@ -710,5 +710,10 @@
   "accountSubscriptionsDialog.noResultsFound": "No se encontraron suscripciones que coincidan con su búsqueda.",
   "accountSubscriptionsDialog.communityHeader": "Comunidad",
   "accountSubscriptionsDialog.communityID": "ID de Comunidad",
-  "accountSubscriptionsDialog.communityUrl": "URL de la Comunidad"
+  "accountSubscriptionsDialog.communityUrl": "URL de la Comunidad",
+  "votesHistoryDialog.voterNamePlaceholder": "Ingrese el nombre del votante...",
+  "votesHistoryDialog.votes": "Votos",
+  "votesHistoryDialog.approve": "Aprobar",
+  "votesHistoryDialog.disapprove": "Desaprobar",
+  "common.vestsChange": "Cambio de Vests"
 }

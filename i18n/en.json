@@ -710,5 +710,10 @@
   "accountSubscriptionsDialog.noResultsFound": "No subscriptions found matching your search.",
   "accountSubscriptionsDialog.communityHeader": "Community",
   "accountSubscriptionsDialog.communityID": "Community ID",
-  "accountSubscriptionsDialog.communityUrl": "Community URL"
+  "accountSubscriptionsDialog.communityUrl": "Community URL",
+  "votesHistoryDialog.voterNamePlaceholder": "Enter voter name...",
+  "votesHistoryDialog.votes": "Votes",
+  "votesHistoryDialog.approve": "Approve",
+  "votesHistoryDialog.disapprove": "Disapprove",
+  "common.vestsChange": "Vests Change"
 }

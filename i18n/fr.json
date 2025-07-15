@@ -709,5 +709,10 @@
   "accountSubscriptionsDialog.noResultsFound": "Aucun abonnement trouvé correspondant à votre recherche.",
   "accountSubscriptionsDialog.communityHeader": "Communauté",
   "accountSubscriptionsDialog.communityID": "ID de la Communauté",
-  "accountSubscriptionsDialog.communityUrl": "URL de la Communauté"
+  "accountSubscriptionsDialog.communityUrl": "URL de la Communauté",
+  "votesHistoryDialog.voterNamePlaceholder": "Entrez le nom de l'électeur...",
+  "votesHistoryDialog.votes": "Votes",
+  "votesHistoryDialog.approve": "Approuver",
+  "votesHistoryDialog.disapprove": "Désapprouver",
+  "common.vestsChange": "Changement de Vests"
 }

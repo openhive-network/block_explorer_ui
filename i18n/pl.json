@@ -710,5 +710,10 @@
   "accountSubscriptionsDialog.noResultsFound": "Nie znaleziono subskrypcji pasujących do Twojego wyszukiwania.",
   "accountSubscriptionsDialog.communityHeader": "Społeczność",
   "accountSubscriptionsDialog.communityID": "ID Społeczności",
-  "accountSubscriptionsDialog.communityUrl": "URL Społeczności"
+  "accountSubscriptionsDialog.communityUrl": "URL Społeczności",
+  "votesHistoryDialog.voterNamePlaceholder": "Wprowadź nazwę głosującego...",
+  "votesHistoryDialog.votes": "Głosy",
+  "votesHistoryDialog.approve": "Zatwierdź",
+  "votesHistoryDialog.disapprove": "Odrzuć",
+  "common.vestsChange": "Zmiana Vests"
 }
