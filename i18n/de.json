@@ -710,5 +710,10 @@
   "accountSubscriptionsDialog.noResultsFound": "Keine Abonnements gefunden, die Ihrer Suche entsprechen.",
   "accountSubscriptionsDialog.communityHeader": "Community",
   "accountSubscriptionsDialog.communityID": "Community-ID",
-  "accountSubscriptionsDialog.communityUrl": "Community-URL"
+  "accountSubscriptionsDialog.communityUrl": "Community-URL",
+  "votesHistoryDialog.voterNamePlaceholder": "Wählernamen eingeben...",
+  "votesHistoryDialog.votes": "Stimmen",
+  "votesHistoryDialog.approve": "Zustimmen",
+  "votesHistoryDialog.disapprove": "Ablehnen",
+  "common.vestsChange": "Vests-Änderung"
 }

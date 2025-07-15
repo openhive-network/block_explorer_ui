@@ -710,5 +710,10 @@
     "accountSubscriptionsDialog.noResultsFound": "Nu s-au găsit abonamente care să corespundă căutării dvs.",
     "accountSubscriptionsDialog.communityHeader": "Comunitate",
     "accountSubscriptionsDialog.communityID": "ID Comunitate",
-    "accountSubscriptionsDialog.communityUrl": "URL Comunitate"
+    "accountSubscriptionsDialog.communityUrl": "URL Comunitate",
+    "votesHistoryDialog.voterNamePlaceholder": "Introduceți numele votantului...",
+    "votesHistoryDialog.votes": "Voturi",
+    "votesHistoryDialog.approve": "Aprobă",
+    "votesİistoryDialog.disapprove": "Dezaprobă", 
+    "common.vestsChange": "Modificare Vests"
 }

@@ -710,5 +710,10 @@
   "accountSubscriptionsDialog.noResultsFound": "検索に一致する購読が見つかりませんでした。",
   "accountSubscriptionsDialog.communityHeader": "コミュニティ",
   "accountSubscriptionsDialog.communityID": "コミュニティID",
-  "accountSubscriptionsDialog.communityUrl": "コミュニティURL"
+  "accountSubscriptionsDialog.communityUrl": "コミュニティURL",
+  "votesHistoryDialog.voterNamePlaceholder": "投票者の名前を入力...",
+  "votesHistoryDialog.votes": "投票",
+  "votesHistoryDialog.approve": "承認",
+  "votesHistoryDialog.disapprove": "不承認",
+  "common.vestsChange": "Vestsの変更"
 }

@@ -710,5 +710,10 @@
   "accountSubscriptionsDialog.noResultsFound": "لم يتم العثور على اشتراكات تطابق بحثك.",
   "accountSubscriptionsDialog.communityHeader": "المجتمع",
   "accountSubscriptionsDialog.communityID": "معرف المجتمع",
-  "accountSubscriptionsDialog.communityUrl": "رابط المجتمع"
+  "accountSubscriptionsDialog.communityUrl": "رابط المجتمع",
+  "votesHistoryDialog.voterNamePlaceholder": "أدخل اسم المصوت...",
+  "votesHistoryDialog.votes": "الأصوات",
+  "votesHistoryDialog.approve": "موافقة",
+  "votesHistoryDialog.disapprove": "رفض",
+  "common.vestsChange": "تغيير Vests"
 }
