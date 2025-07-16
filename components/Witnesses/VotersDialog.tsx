@@ -16,7 +16,6 @@ import {
 import useWitnessDetails from "@/hooks/api/common/useWitnessDetails";
 import CustomPagination from "../CustomPagination";
 import { config } from "@/Config";
-import LastUpdatedTooltip from "../LastUpdatedTooltip";
 import { convertVestsToHP } from "@/utils/Calculations";
 import fetchingService from "@/services/FetchingService";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
@@ -158,8 +157,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
     return `${formatNumber(value, true)} Vests`;
   };
 
-  const totalAccountVests = Number(witnessDetails?.witness?.vests);
-
+  const totalAccountVests = Number(witnessDetails?.vests);
   const calculateVoterWeight = useCallback(
     (voterVests: number): number => {
       return totalAccountVests > 0 ? (voterVests / totalAccountVests) * 100 : 0;
@@ -261,15 +259,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
 
               {/* Table & Pagination Column */}
               <div className="w-full flex flex-col mt-2">
-                <div className="flex justify-between items-center w-full mb-2">
-                  <div className="flex items-center">
-                    {witnessDetails && (
-                      <LastUpdatedTooltip
-                        lastUpdatedAt={witnessDetails.votes_updated_at}
-                      />
-                    )}
-                  </div>
-
+                <div className="flex items-end justify-end w-full mb-2">
                   <div className="flex items-center">
                     <label className="mr-2">{t("votersDialog.vests")}</label>
                     <Switch

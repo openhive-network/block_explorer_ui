@@ -8,7 +8,6 @@ import { formatNumber } from "@/lib/utils";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import { trimAccountName } from "@/utils/StringUtils";
 import useWitnessVotesHistory from "@/hooks/api/common/useWitnessVotesHistory";
-import useWitnessDetails from "@/hooks/api/common/useWitnessDetails";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import useSearchRanges from "@/hooks/common/useSearchRanges";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
@@ -36,7 +35,6 @@ import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import AutocompleteInput from "@/components/ui/AutoCompleteInput";
 import CustomPagination from "../CustomPagination";
-import LastUpdatedTooltip from "../LastUpdatedTooltip";
 import NoResult from "../NoResult";
 import DataCountMessage from "../DataCountMessage";
 import DataExport from "../DataExport";
@@ -95,10 +93,6 @@ const VotesHistoryDialog: React.FC<VotesHistoryDialogProps> = ({
   // API Hooks
   const { hiveChain } = useHiveChainContext();
   const { dynamicGlobalData } = useDynamicGlobal() as any;
-  const { witnessDetails } = useWitnessDetails(
-    accountName,
-    !!accountDetails?.is_witness
-  );
   const { votesHistory, isVotesHistoryLoading } = useWitnessVotesHistory(
     accountName,
     isVotesHistoryOpen,
@@ -236,14 +230,6 @@ const VotesHistoryDialog: React.FC<VotesHistoryDialogProps> = ({
           </div>
 
           {/* Content Area */}
-          <div className="flex justify-between items-start">
-            <div>
-              {witnessDetails && (
-                <LastUpdatedTooltip
-                  lastUpdatedAt={witnessDetails.votes_updated_at}
-                />
-              )}
-            </div>
             <div className="flex justify-end items-end">
               <div className="flex items-center">
                 <label className="mr-2">{t("votersDialog.vests")}</label>
@@ -255,7 +241,6 @@ const VotesHistoryDialog: React.FC<VotesHistoryDialogProps> = ({
                 <label>{t("votersDialog.hp")}</label>
               </div>
             </div>
-          </div>
           {isVotesHistoryLoading ? (
             <div className="flex justify-center items-center h-64">
               <Loader2 className="animate-spin h-8 w-8" />

@@ -66,7 +66,7 @@ const StatCard = ({
   const cardDiv = (
     <div
       className={cn(
-        "bg-slate-100 dark:bg-slate-800/50 p-3 rounded-xl flex flex-col items-center justify-center text-center",
+        "bg-slate-100 dark:bg-slate-800/50 p-2 rounded-xl flex flex-col items-center justify-center text-center",
         {
           "hover:bg-slate-200 dark:hover:bg-slate-700/80 transition-colors cursor-pointer":
             !!onClick,
@@ -81,7 +81,7 @@ const StatCard = ({
       }}
     >
       <div className="text-explorer-orange mb-1">{icon}</div>
-      <div className="text-base font-bold text-explorer-dark-gray dark:text-white h-6 flex items-center">
+      <div className="mb-1 text-base font-bold text-explorer-dark-gray dark:text-white h-6 flex items-center">
         {value}
       </div>
       <p className="text-[10px] text-explorer-light-gray dark:text-white uppercase font-semibold tracking-wider">
@@ -124,7 +124,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
     accountDetails.is_witness
   );
   const isWitnessActive =
-    witnessDetails?.witness.signing_key !== config.inactiveWitnessKey;
+    witnessDetails?.signing_key !== config.inactiveWitnessKey;
 
   const [isBadActor, setIsBadActor] = useState(false);
   useEffect(() => {
@@ -189,7 +189,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                   >
                     {t("accountMainCard.witness")}
                   </span>
-                  {isWitnessActive && witnessDetails?.witness.rank && (
+                  {isWitnessActive && witnessDetails?.rank && (
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
@@ -199,7 +199,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                               fill="currentColor"
                               size={14}
                             />{" "}
-                            {witnessDetails.witness.rank}
+                            {witnessDetails.rank}
                           </span>
                         </TooltipTrigger>
                         <TooltipContent>
@@ -208,12 +208,12 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                       </Tooltip>
                     </TooltipProvider>
                   )}
-                  {isWitnessActive && witnessDetails?.witness.url && (
+                  {isWitnessActive && witnessDetails?.url && (
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <a
-                            href={witnessDetails.witness.url}
+                            href={witnessDetails.url}
                             target="_blank"
                             rel="noopener noreferrer"
                           >

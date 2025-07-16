@@ -77,7 +77,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
       return (
         <VestsTooltip
           tooltipTrigger={userDetails[key] as string}
-          tooltipContent={vestValue}
+          tooltipContent={vestValue} 
         />
       );
     }

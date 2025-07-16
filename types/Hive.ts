@@ -159,8 +159,21 @@ namespace Hive {
   }
 
   export class SingleWitnessResponse {
-    witness!: Witness;
-    votes_updated_at!: Date;
+    witness_name!: string;
+    rank!: number;
+    url!: string;
+    vests!: string;
+    votes_daily_change!: number;
+    voters_num!: number;
+    voters_num_daily_change!: number;
+    price_feed!: number;
+    bias!: number;
+    feed_updated_at!: Date;
+    block_size!: number;
+    signing_key!: string;
+    version!: string;
+    missed_blocks!: number;
+    hbd_interest_rate!: number;
   }
 
   export class WitnessVotersResponse {
@@ -977,18 +990,13 @@ namespace Hive {
   }
 
   export class VoterHistorySearchParams {
-  accountName?: string;
-  voterName?: string | undefined;
-  fromBlock: Date | number | undefined;
-  toBlock: Date | number | undefined;
-  fromDate:  Date | undefined;
-  toDate:  Date | undefined;
-  lastBlocks: number | undefined;
-  lastTime: number | undefined;
-  timeUnit: string | undefined;
-  rangeSelectKey: string | undefined;
-  page: number | undefined;
-  filters: boolean[] | undefined;
+    accountName?: string;
+    voterName?: string | undefined;
+    fromBlock: Date | number | undefined;
+    toBlock: Date | number | undefined;
+    fromDate:  Date | undefined;
+    toDate:  Date | undefined;
+    page: number | undefined;
   }
 }
 

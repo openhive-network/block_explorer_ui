@@ -29,7 +29,7 @@ const MobileAccountNameCard: React.FC<MobileAccountNameCardProps> = ({
     accountDetails.is_witness
   );
   const isWitnessActive =
-    witnessDetails?.witness.signing_key !== config.inactiveWitnessKey;
+    witnessDetails?.signing_key !== config.inactiveWitnessKey;
 
   const [isBadActor, setIsBadActor] = useState(false);
   useEffect(() => {
@@ -72,19 +72,19 @@ const MobileAccountNameCard: React.FC<MobileAccountNameCardProps> = ({
                   >
                     {t("accountMainCard.witness")}
                   </span>
-                  {witnessDetails?.witness.rank && isWitnessActive && (
+                  {witnessDetails?.rank && isWitnessActive && (
                     <span className="flex items-center gap-1">
                       <Star
                         data-testid="witness-rank-icon"
                         fill="currentColor"
                         size={16}
                         />
-                      <span>{witnessDetails.witness.rank}</span>
+                      <span>{witnessDetails.rank}</span>
                     </span>
                   )}
-                  {witnessDetails?.witness.url && isWitnessActive && (
+                  {witnessDetails?.url && isWitnessActive && (
                     <a
-                      href={witnessDetails.witness.url}
+                      href={witnessDetails.url}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
