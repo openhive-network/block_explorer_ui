@@ -246,7 +246,8 @@ class FetchingService {
     sort: string,
     direction: "asc" | "desc",
     page: number,
-    limit?: number
+    voterName?:string,
+    limit?: number,   
   ): Promise<Hive.WitnessVotersResponse> {
     return await this.extendedHiveChain!.restApi["hafbe-api"].voters({
       accountName: witness,
@@ -254,6 +255,7 @@ class FetchingService {
       direction,
       page,
       "page-size": limit,
+      "voter-name":voterName,
     });
   }
 
