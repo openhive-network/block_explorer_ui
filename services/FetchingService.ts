@@ -34,11 +34,24 @@ export type ExplorerNodeApi = {
   };
   condenser_api: {
     get_witnesses_by_vote: TWaxApiRequest<unknown[], Hive.WitnessesByVote>;
+    get_follow_count: TWaxApiRequest<
+      { account: string },
+      Hive.AccountFollowCount
+    >;
+    get_followers: TWaxApiRequest<
+      { account: string; start: string },
+      Hive.AccountFollower[]
+    >;
+    get_following: TWaxApiRequest<{ account: string }, Hive.AccountFollowing>;
   };
   bridge: {
     get_discussion: TWaxApiRequest<
       { author: string; permlink: string; observer?: string },
       Hive.HivePosts
+    >;
+    list_all_subscriptions: TWaxApiRequest<
+      { account: string },
+      Hive.AccountSubscriptions
     >;
   };
   market_history_api: {
@@ -341,18 +354,22 @@ class FetchingService {
   async getWitnessVotesHistory(
     witnessName: string,
     direction: "asc" | "desc",
-    sort: string,
+    page: number | null,
     limit: number | null,
     fromTime?: Date,
-    toTime?: Date
+    toTime?: Date,
+    fromBlock?: number,
+    toBlock?: number,
+    voterName?: string
   ): Promise<Hive.WitnessesVotesHistoryResponse> {
     return await this.extendedHiveChain!.restApi["hafbe-api"].votesHistory({
       accountName: witnessName,
       direction,
-      sort,
-      "result-limit": limit,
-      "from-block": fromTime,
-      "to-block": toTime,
+      page: page,
+      "page-size": limit,
+      "from-block": fromTime || fromBlock,
+      "to-block": toTime || toBlock,
+      "voter-name": voterName,
     });
   }
 
@@ -546,6 +563,64 @@ class FetchingService {
       "from-block": fromBlock,
       "to-block": toBlock,
     });
+  }
+  async getAccountFollowCount(
+    account: string
+  ): Promise<Hive.AccountFollowCount> {
+    const params = { account };
+    return await this.extendedHiveChain!.api.condenser_api.get_follow_count(
+      params
+    );
+  }
+
+  async getAccountSubscriptions(
+    account: string
+  ): Promise<Hive.AccountSubscriptions> {
+    const params = { account };
+    return await this.extendedHiveChain!.api.bridge.list_all_subscriptions(
+      params
+    );
+  }
+
+  async getAccountFollowers(account: string): Promise<Hive.AccountFollower[]> {
+    const allFollowers: Hive.AccountFollower[] = [];
+    let start = "";
+    const limit = 1000; // Max limit per call as per condenser API
+    let moreFollowers = true;
+
+    while (moreFollowers) {
+      try {
+        const params = { account, start };
+        const results: Hive.AccountFollower[] =
+          await this.extendedHiveChain!.api.condenser_api.get_followers(params);
+        if (results.length > 0) {
+          // On subsequent calls (when startFollower is not empty), the first result is a duplicate.
+          const followersToProcess = start ? results.slice(1) : results;
+
+          if (followersToProcess.length > 0) {
+            allFollowers.push(...followersToProcess);
+            // The new "cursor" is the name of the very last follower in the batch we just got.
+            start = followersToProcess[followersToProcess.length - 1].follower;
+          }
+        }
+
+        // If the API returns fewer than the limit, we've reached the end.
+        if (results.length < limit) {
+          moreFollowers = false;
+        }
+      } catch (error) {
+        moreFollowers = false;
+        throw error;
+      }
+    }
+    return allFollowers;
+  }
+
+  async getAccountFollowing(account: string): Promise<Hive.AccountFollowing> {
+    const params = { account };
+    return await this.extendedHiveChain!.api.condenser_api.get_following(
+      params
+    );
   }
 }
 

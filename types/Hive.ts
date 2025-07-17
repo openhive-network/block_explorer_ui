@@ -159,8 +159,21 @@ namespace Hive {
   }
 
   export class SingleWitnessResponse {
-    witness!: Witness;
-    votes_updated_at!: Date;
+    witness_name!: string;
+    rank!: number;
+    url!: string;
+    vests!: string;
+    votes_daily_change!: number;
+    voters_num!: number;
+    voters_num_daily_change!: number;
+    price_feed!: number;
+    bias!: number;
+    feed_updated_at!: Date;
+    block_size!: number;
+    signing_key!: string;
+    version!: string;
+    missed_blocks!: number;
+    hbd_interest_rate!: number;
   }
 
   export class WitnessVotersResponse {
@@ -335,11 +348,12 @@ namespace Hive {
 
   export class GetVotesHistoryParams {
     accountName!: string;
-    sort?: string;
     direction?: Hive.Direction;
-    "result-limit"!: number | null;
+    page!: number | null;
+    "page-size"!: number | null;
     "from-block"?: number | Date;
     "to-block"?: number | Date;
+    "voter-name"!: string | undefined;
   }
 
   export class WitnessVotesHistory {
@@ -949,6 +963,41 @@ namespace Hive {
     direction!: Hive.Direction;
     "from-block"?: number | Date;
     "to-block"?: number | Date;
+  }
+  export class AccountFollowCount {
+  account!: string;
+  follower_count!: number;
+  following_count!: number;
+  }
+   export class AccountSubscriptions {
+    subscriptions !: string[];
+  }
+  export class AccountFollower {
+    follower!: string;
+    following!: string;
+    what!: string[];
+    length!: number;
+  }
+
+  export class AccountFollowers {
+    accountFollowers!: AccountFollower[];
+    length!: number;
+  }
+  export class AccountFollowing {
+    follower!: string;
+    following!: string;
+    what!: string[];
+    length!: number;
+  }
+
+  export class VoterHistorySearchParams {
+    accountName?: string;
+    voterName?: string | undefined;
+    fromBlock: Date | number | undefined;
+    toBlock: Date | number | undefined;
+    fromDate:  Date | undefined;
+    toDate:  Date | undefined;
+    page: number | undefined;
   }
 }
 

@@ -18,6 +18,9 @@ import AccountRecurrentTransfersCard from "./AccountRecurrentTransfersCard";
 import useAccountRecurrentTransfers from "@/hooks/api/accountPage/useAccoutRecurrentTransfers";
 import { AllTransfers } from "./AccountRecurrentTransfersCard";
 import { useI18n } from "@/i18n/i18n";
+import AccountFollowersDialog from "./AccountFollowersDialog";
+import AccountFollowingDialog from "./AccountFollowingDialog";
+import AccountSubscriptionsDialog from "./AccountSubscriptionsDialog";
 
 interface AccountDetailsSectionProps {
   accountName: string;
@@ -45,12 +48,24 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
 
   const [isVotersModalOpen, setIsVotersModalOpen] = useState(false);
   const [isVotesHistoryModalOpen, setIsVotesHistoryModalOpen] = useState(false);
+  const [isAccountFollowersModalOpen, setIsAccountFollowersModalOpen] = useState(false);
+  const [isAccountFollowingModalOpen , setIsAccountFollowingModalOpen] = useState(false);
+  const [isAccountSubscriptionModalOpen , setIsAccountSubscriptionModalOpen] = useState(false);
 
   const handleOpenVotersModal = () => {
     setIsVotersModalOpen(!isVotersModalOpen);
   };
   const handleOpenVotesHistoryModal = () => {
     setIsVotesHistoryModalOpen(!isVotesHistoryModalOpen);
+  };
+  const handleOpenAccountFollowersModal = () => {
+    setIsAccountFollowersModalOpen(!isAccountFollowersModalOpen);
+  };
+  const handleOpenAccountFollowingModal = () => {
+    setIsAccountFollowingModalOpen(!isAccountFollowingModalOpen);
+  };
+  const handleOpenAccountSubscriptionModal = () => {
+    setIsAccountSubscriptionModalOpen(!isAccountSubscriptionModalOpen);
   };
 
   if (!accountDetails) {
@@ -64,6 +79,9 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
         accountName={accountName}
         openVotersModal={handleOpenVotersModal}
         openVotesHistoryModal={handleOpenVotesHistoryModal}
+        openFollowersModal={handleOpenAccountFollowersModal}
+        openFollowingModal={handleOpenAccountFollowingModal}
+        openSubscriptionsModal={handleOpenAccountSubscriptionModal}
         isWitnessError={isWitnessDetailsError}
         isWitnessLoading={isWitnessDetailsLoading}
         liveDataEnabled={liveDataEnabled}
@@ -151,6 +169,22 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
         changeVoteHistoryDialogue={handleOpenVotesHistoryModal}
         liveDataEnabled={liveDataEnabled}
         accountDetails={accountDetails}
+      />
+      <AccountFollowersDialog
+        accountName={accountName}
+        isFollowersOpen={isAccountFollowersModalOpen}
+        changeFollowersDialogue={handleOpenAccountFollowersModal}
+      />
+      <AccountFollowingDialog
+        accountName={accountName}
+        isFollowingOpen={isAccountFollowingModalOpen}
+        changeFollowingDialogue={handleOpenAccountFollowingModal}
+      />
+      <AccountSubscriptionsDialog
+        accountName={accountName}
+        isSubscriptionsOpen={isAccountSubscriptionModalOpen}
+        changeSubscriptionsDialogue={handleOpenAccountSubscriptionModal}
+        subscriptions={accountDetails.subscriptions}
       />
     </>
   );

@@ -1,13 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { Link, Loader2, Star } from "lucide-react";
+import {
+  Link,
+  Star,
+  PenSquare,
+  CalendarDays,
+  Repeat,
+  Loader2,
+  History,
+  Vote,
+  ShieldCheck,
+  Building2,
+  UserPlus,
+  UserCheck,
+} from "lucide-react";
 import Image from "next/image";
 import Explorer from "@/types/Explorer";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import useManabars from "@/hooks/api/accountPage/useManabars";
-import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
+import { Card, CardContent, CardHeader } from "../ui/card";
 import { Toggle } from "../ui/toggle";
-import { Progress } from "@/components/ui/progress";
 import useWitnessDetails from "@/hooks/api/common/useWitnessDetails";
 import { config } from "@/Config";
 import { cn } from "@/lib/utils";
@@ -21,6 +33,8 @@ import list from "../../utils/BadActorList";
 import ErrorMessage from "../ErrorMessage";
 import { Button } from "../ui/button";
 import { useI18n } from "../../i18n/i18n";
+import TimeAgo from "timeago-react";
+import RadialProgress from "../RadialProgress";
 
 interface AccountMainCardProps {
   accountDetails: Explorer.FormattedAccountDetails;
@@ -29,9 +43,66 @@ interface AccountMainCardProps {
   isWitnessLoading?: boolean;
   openVotersModal: () => void;
   openVotesHistoryModal: () => void;
+  openFollowersModal: () => void;
+  openFollowingModal: () => void;
+  openSubscriptionsModal: () => void;
   liveDataEnabled: boolean;
   changeLiveRefresh: () => void;
 }
+
+const StatCard = ({
+  icon,
+  label,
+  value,
+  onClick,
+  tooltipContent,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: React.ReactNode;
+  onClick?: () => void;
+  tooltipContent?: React.ReactNode;
+}) => {
+  const cardDiv = (
+    <div
+      className={cn(
+        "bg-slate-100 dark:bg-slate-800/50 p-2 rounded-xl flex flex-col items-center justify-center text-center",
+        {
+          "hover:bg-slate-200 dark:hover:bg-slate-700/80 transition-colors cursor-pointer":
+            !!onClick,
+          "cursor-help": !!tooltipContent,
+        }
+      )}
+      onClick={onClick}
+      role={onClick ? "button" : "figure"}
+      tabIndex={onClick ? 0 : -1}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" && onClick) onClick();
+      }}
+    >
+      <div className="text-explorer-orange mb-1">{icon}</div>
+      <div className="mb-1 text-base font-bold text-explorer-dark-gray dark:text-white h-6 flex items-center">
+        {value}
+      </div>
+      <p className="text-[10px] text-explorer-light-gray dark:text-white uppercase font-semibold tracking-wider">
+        {label}
+      </p>
+    </div>
+  );
+
+  if (tooltipContent) {
+    return (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>{cardDiv}</TooltipTrigger>
+          <TooltipContent>{tooltipContent}</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+  }
+
+  return cardDiv;
+};
 
 const AccountMainCard: React.FC<AccountMainCardProps> = ({
   accountDetails,
@@ -40,17 +111,20 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
   isWitnessLoading,
   openVotersModal,
   openVotesHistoryModal,
+  openFollowersModal,
+  openFollowingModal,
+  openSubscriptionsModal,
   liveDataEnabled,
   changeLiveRefresh,
 }) => {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const { manabarsData } = useManabars(accountName, liveDataEnabled);
   const { witnessDetails } = useWitnessDetails(
     accountName,
     accountDetails.is_witness
   );
   const isWitnessActive =
-    witnessDetails?.witness.signing_key !== config.inactiveWitnessKey;
+    witnessDetails?.signing_key !== config.inactiveWitnessKey;
 
   const [isBadActor, setIsBadActor] = useState(false);
   useEffect(() => {
@@ -64,212 +138,239 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
     setIsBadActor(false);
   };
 
-    let profileMetadata;
+  let profileMetadata;
   try {
     profileMetadata = JSON.parse(accountDetails.posting_json_metadata);
   } catch (error) {
     profileMetadata = null;
   }
 
-  const witnessDescription = profileMetadata?.profile?.witness_description || "";
   const about = profileMetadata?.profile?.about || "";
 
   return (
     <Card data-testid="account-details">
-      <CardHeader>
-        <div className="flex flex-wrap items-center justify-between gap-4 bg-theme dark:bg-theme">
-          {/* Avatar and Name */}
-          <div className="flex items-center gap-4">
-            <Image
-              className="rounded-full border-2 border-explorer-orange"
-              src={getHiveAvatarUrl(accountName)}
-              alt="avatar"
-              width={60}
-              height={60}
-              data-testid="user-avatar"
-            />
-            <div>
-              <h2
-                className="text-lg font-semibold text-gray-800 dark:text-white"
-                data-testid="account-name"
-              >
-                {accountDetails.name}
-              </h2>
+      <CardHeader className="flex flex-row items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
+        <h3 className="text-lg font-semibold" title={accountDetails.name}>
+          {accountDetails.name}
+        </h3>
+        <Toggle
+          checked={liveDataEnabled}
+          onClick={changeLiveRefresh}
+          className="text-base"
+          leftLabel={t("headBlockCard.liveData")}
+        />
+      </CardHeader>
+
+      <CardContent className="p-4 flex flex-col gap-5">
+        {isBadActor && (
+          <ErrorMessage
+            message={t("accountMainCard.badActorMessage")}
+            isWarning
+            onClose={handleCloseWarning}
+          />
+        )}
+
+        <div className="flex items-center gap-4">
+          <Image
+            className="rounded-full border-4 border-explorer-orange/50 shadow-md"
+            src={getHiveAvatarUrl(accountName)}
+            alt="avatar"
+            width={72}
+            height={72}
+          />
+          <div className="flex-1">
+            <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
               {accountDetails.is_witness && (
-                <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                <div className="flex items-center gap-2">
                   <span
-                    className={cn({
+                    className={cn("font-semibold", {
                       "line-through text-red-500": !isWitnessActive,
                     })}
                   >
                     {t("accountMainCard.witness")}
                   </span>
-                  {witnessDetails?.witness.rank && isWitnessActive && (
+                  {isWitnessActive && witnessDetails?.rank && (
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <span className="flex items-center gap-1">
+                          <span className="flex items-center gap-1 cursor-default">
                             <Star
                               data-testid="witness-rank-icon"
                               fill="currentColor"
-                              size={16}
-                            />
-                            <span>{witnessDetails.witness.rank}</span>
+                              size={14}
+                            />{" "}
+                            {witnessDetails.rank}
                           </span>
                         </TooltipTrigger>
                         <TooltipContent>
-                          <span className="text-xs">
-                           {t("accountMainCard.witnessRank")} {witnessDetails.witness.rank}
-                          </span>
+                          <p>{t("accountMainCard.witnessRank")}</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                   )}
-                  {witnessDetails?.witness.url && isWitnessActive && (
+                  {isWitnessActive && witnessDetails?.url && (
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <a
-                            href={witnessDetails.witness.url}
+                            href={witnessDetails.url}
                             target="_blank"
                             rel="noopener noreferrer"
                           >
-                            <Link
-                              size={15}
-                              strokeWidth={3}
-                            />
+                            <Link size={14} strokeWidth={2.5} />
                           </a>
                         </TooltipTrigger>
                         <TooltipContent>
-                          <span className="text-xs">{t("accountMainCard.witnessLink")}</span>
+                          <p>{t("accountMainCard.witnessLink")}</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                   )}
                 </div>
               )}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="flex items-center gap-1 cursor-default">
+                      <ShieldCheck size={14} />
+                      {accountDetails.reputation}
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{t("accountMainCard.reputationTooltip")}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
-          </div>
-
-          {/* Live Data Toggle */}
-          <div className="w-full sm:w-auto mt-4 sm:mt-0 top-0">
-            <Toggle
-              checked={liveDataEnabled}
-              onClick={changeLiveRefresh}
-              className="text-base"
-              leftLabel={t("headBlockCard.liveData")}
-            />
-          </div>
-           {/* Description (spans full width) */}
-           {(witnessDescription || about) && (
-            <div className="w-full px-3 py-2 data-box">
-              {witnessDescription && (
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-300 leading-relaxed pb-2">
-                  {witnessDescription}
-                </p>
-              )}
-              {about && (
-                <p className="text-sm text-gray-500 dark:text-gray-300 leading-relaxed">
+            {about && (
+              <div className="mt-3 w-full p-3 bg-slate-100 dark:bg-slate-800/50 rounded-xl">
+                <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
                   {about}
                 </p>
-              )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="grid grid-cols-3 gap-3">
+          <StatCard
+            icon={<UserPlus size={20} />}
+            label={t("accountMainCard.followers")}
+            value={Number(accountDetails.follower_count).toLocaleString()}
+            onClick={openFollowersModal}
+          />
+          <StatCard
+            icon={<UserCheck size={20} />}
+            label={t("accountMainCard.following")}
+            value={Number(accountDetails.following_count).toLocaleString()}
+            onClick={openFollowingModal}
+          />
+          <StatCard
+            icon={<Building2 size={20} />}
+            label={t("accountMainCard.subscriptions")}
+            value={Number(accountDetails.subscriptions.length).toLocaleString()}
+            onClick={openSubscriptionsModal}
+          />
+          <StatCard
+            icon={<PenSquare size={20} />}
+            label={t("accountMainCard.totalPosts")}
+            value={Number(accountDetails.post_count).toLocaleString()}
+            tooltipContent={<p>{t("accountMainCard.totalPostsTooltip")}</p>}
+          />
+          <StatCard
+            icon={<Repeat size={20} />}
+            label={t("accountMainCard.lastActive")}
+            value={
+              <TimeAgo
+                className="text-sm"
+                locale={locale}
+                datetime={
+                  new Date(formatAndDelocalizeTime(accountDetails.last_post))
+                }
+              />
+            }
+            tooltipContent={<p>{t("accountMainCard.lastActiveTooltip")}</p>}
+          />
+          <StatCard
+            icon={<CalendarDays size={20} />}
+            label={t("accountMainCard.joined")}
+            value={
+              <TimeAgo
+                className="text-sm"
+                locale={locale}
+                datetime={
+                  new Date(formatAndDelocalizeTime(accountDetails.created))
+                }
+              />
+            }
+            tooltipContent={<p>{accountDetails.created}</p>}
+          />
+        </div>
+
+        <div className="border-t border-slate-200 dark:border-slate-700 pt-5">
+          <h3 className="text-sm font-semibold uppercase text-gray-500 dark:text-gray-400 tracking-wider mb-4">
+            {t("accountMainCard.resourcesHeader")}
+          </h3>
+          {!!manabarsData ? (
+            <div className="flex items-center justify-around gap-2">
+              <RadialProgress
+                size={70}
+                strokeWidth={6}
+                percentage={manabarsData.upvote.percentageValue}
+                label={t("accountMainCard.votingPower")}
+                color="text-green-500"
+                tooltipContent={
+                  <p className="text-sm">
+                    {manabarsData?.upvote.current} / {manabarsData?.upvote.max}
+                  </p>
+                }
+              />
+              <RadialProgress
+                size={70}
+                strokeWidth={6}
+                percentage={manabarsData.downvote.percentageValue}
+                label={t("accountMainCard.downvotePower")}
+                color="text-red-500"
+                tooltipContent={
+                  <p className="text-sm">
+                    {manabarsData?.downvote.current} /{" "}
+                    {manabarsData?.downvote.max}
+                  </p>
+                }
+              />
+              <RadialProgress
+                size={70}
+                strokeWidth={6}
+                percentage={manabarsData.rc.percentageValue}
+                label={t("accountMainCard.resourceCredits")}
+                color="text-indigo-400"
+                tooltipContent={
+                  <p className="text-sm">
+                    {manabarsData?.rc.current} / {manabarsData?.rc.max}
+                  </p>
+                }
+              />
+            </div>
+          ) : (
+            <div className="flex justify-center items-center h-24 w-full">
+              <Loader2 className="animate-spin h-10 w-10 text-gray-400" />
             </div>
           )}
         </div>
-        {/* Warning Message */}
-        {isBadActor && (
-          <ErrorMessage
-            message={t("accountMainCard.badActorMessage")}
-            isWarning={true}
-            onClose={handleCloseWarning}
-          />
-        )}
-      </CardHeader>
-      <CardContent>
-        {!!manabarsData ? (
-          <>
-            <div className="text-center">
-              <p
-                className="my-2"
-                data-testid="voting-power"
-              >
-                 {t("accountMainCard.votingPower")}
-              </p>
-              <Progress
-                value={manabarsData?.upvote.percentageValue}
-                color="#00c040"
-              />
-              <p className="text-sm text-gray-400">
-                {manabarsData?.upvote.current} / {manabarsData?.upvote.max}
-              </p>
-            </div>
 
-            <div className="text-center">
-              <p
-                className="my-2"
-                data-testid="downvote-power"
-              >
-               {t("accountMainCard.downvotePower")}
-              </p>
-              <Progress
-                value={manabarsData?.downvote.percentageValue}
-                color="#c01000"
-              />
-              <p className="text-sm text-gray-400">
-                {manabarsData?.downvote.current} / {manabarsData?.downvote.max}
-              </p>
-            </div>
-
-            <div className="text-center">
-              <p
-                className="my-2"
-                data-testid="resources-credits"
-              >
-               {t("accountMainCard.resourceCredits")}
-              </p>
-              <Progress
-                value={manabarsData?.rc.percentageValue}
-                color="#cecafa"
-              />
-              <p className="text-sm text-gray-400">
-                {manabarsData?.rc.current} / {manabarsData?.rc.max}
-              </p>
-            </div>
-          </>
-        ) : (
-          <div className="flex justify-center text-center items-center">
-            <Loader2 className="animate-spin mt-1 h-12 w-12 ml-3 ..." />
+        {accountDetails.is_witness && !isWitnessError && !isWitnessLoading && (
+          <div className="w-full flex flex-col sm:flex-row gap-3 border-t border-slate-200 dark:border-slate-700 pt-5">
+            <Button className="w-full" onClick={openVotersModal}>
+              <Vote className="mr-2 h-4 w-4" />
+              {t("accountMainCard.voters")}
+            </Button>
+            <Button className="w-full" onClick={openVotesHistoryModal}>
+              <History className="mr-2 h-4 w-4" />
+              {t("accountMainCard.votesHistory")}
+            </Button>
           </div>
         )}
-        <div className="flex justify-between p-4">
-          <div className="text-center flex flex-col justify-space-between w-full gap-2">
-            <span className="text">{t("accountMainCard.creationDate")}</span>
-            <span
-              className="text"
-              data-testid="creation-date"
-            >
-              {formatAndDelocalizeTime(accountDetails.created)}
-            </span>
-          </div>
-          <div className="text-center flex flex-col justify-space-between w-full gap-2">
-            <span className="text">{t("accountMainCard.reputation")}</span>
-            <span
-              className="text"
-              data-testid="creation-date"
-            >
-              {accountDetails.reputation}
-            </span>
-          </div>
-        </div>
       </CardContent>
-      {accountDetails.is_witness && !isWitnessError && !isWitnessLoading && (
-        <CardFooter>
-          <div className="w-full flex justify-between">
-            <Button onClick={openVotersModal}>{t("accountMainCard.voters")}</Button>
-            <Button onClick={openVotesHistoryModal}>{t("accountMainCard.votesHistory")}</Button>
-          </div>
-        </CardFooter>
-      )}
     </Card>
   );
 };

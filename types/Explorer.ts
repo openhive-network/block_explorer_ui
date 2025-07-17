@@ -295,9 +295,12 @@ declare module Explorer {
     posting_rewards: string;
     curation_rewards: string;
     vesting_balance: string;
-    last_post?: number;
+    last_post?: Date;
     last_root_post?: number;
     post_count?: number;
+    follower_count?: number;
+    following_count?: number;
+    subscriptions: string[];
     last_account_recovery: string;
     created: string;
     vests: AccountDetailsVests;
