@@ -29,7 +29,6 @@ import {
 import VotersDialog from "@/components/Witnesses/VotersDialog";
 import VotesHistoryDialog from "@/components/Witnesses/VotesHistoryDialog";
 import WitnessScheduleIcon from "@/components/WitnessScheduleIcon";
-import LastUpdatedTooltip from "@/components/LastUpdatedTooltip";
 import CopyButton from "@/components/ui/CopyButton";
 import ScrollTopButton from "@/components/ScrollTopButton";
 import { config } from "@/Config";
@@ -234,12 +233,7 @@ export default function Witnesses() {
               />
 
               <div className="flex justify-start md:justify-end mt-2 md:mt-0 ml-1 md:ml-4 mr-4 flex-shrink-0">
-                <div className="flex items-center space-x-4">
                   <WitnessScheduleIcon />
-                  <LastUpdatedTooltip
-                    lastUpdatedAt={witnessesData?.votes_updated_at}
-                  />
-                </div>
               </div>
             </div>
             {isWitnessDataLoading ? (
