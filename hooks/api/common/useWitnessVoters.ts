@@ -40,13 +40,7 @@ const useWitnessVoters = (
     refetchInterval: liveDataEnabled ? config.accountRefreshInterval : false,
     refetchOnWindowFocus: false,
   });
-console.log('queryKey',{ accountName,
-      isModalOpen,
-      isAsc,
-      sortKey,
-      liveDataEnabled,
-      pageNum,
-      voterName});
+  
   return {
     witnessVoters,
     isWitnessVotersLoading,
