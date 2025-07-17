@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Line,
   LineChart,
-  CartesianGrid,
   XAxis,
   YAxis,
   Tooltip,
@@ -15,6 +14,10 @@ import { cn } from "@/lib/utils";
 import moment from "moment";
 import { ArrowDown, ArrowUp, Minus } from "lucide-react";
 import { useI18n } from "@/i18n/i18n";
+import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
+import { useHiveChainContext } from "@/contexts/HiveChainContext";
+import { convertVestsToHive } from "@/utils/Calculations";
+import { grabNumericValue } from "@/utils/StringUtils";
 
 interface BalanceHistoryChartProps {
   hiveBalanceHistoryData?: {
@@ -23,6 +26,7 @@ interface BalanceHistoryChartProps {
     balance: number;
     savings_balance?: number;
     savings_balance_change?: number;
+    hivePrice: string;
   }[];
   vestsBalanceHistoryData?: {
     timestamp: string;
@@ -30,6 +34,7 @@ interface BalanceHistoryChartProps {
     balance: number;
     savings_balance?: number;
     savings_balance_change?: number;
+    hivePrice: string;
   }[];
   hbdBalanceHistoryData?: {
     timestamp: string;
@@ -37,6 +42,7 @@ interface BalanceHistoryChartProps {
     balance: number;
     savings_balance?: number;
     savings_balance_change?: number;
+    hivePrice: string;
   }[];
   className?: string;
   quickView?: boolean;
@@ -48,6 +54,7 @@ export const colorMap: Record<string, string> = {
   VESTS: "#82ca9d",
   HBD: "#ff7300",
   SAVINGS: "#1E90FF",
+  DOLLAR: "#4be7f0",
 };
 
 const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
@@ -59,6 +66,8 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
   showSavingsBalance = "yes",
 }) => {
   const { t, dir, locale } = useI18n();
+  const hiveChain = useHiveChainContext()?.hiveChain;
+  const dynamicGlobalData = useDynamicGlobal()?.dynamicGlobalData;
   const isRTL = dir === "rtl";
 
   const [selectedCoinType, setSelectedCoinType] = useState<string>("HIVE");
@@ -67,7 +76,9 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
 
   // State to store available coins
   const [availableCoins, setAvailableCoins] = useState<string[]>([]);
-  const [zoomedDomain, setZoomedDomain] = useState<[number, number] | null>(null);
+  const [zoomedDomain, setZoomedDomain] = useState<[number, number] | null>(
+    null
+  );
 
   useEffect(() => {
     const newAvailableCoins: string[] = [];
@@ -109,16 +120,67 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
       balance: number;
       savings_balance?: number;
       savings_balance_change?: number;
+      hivePrice: string;
     }[]
-  > = {
-    HIVE: hiveBalanceHistoryData || [],
-    VESTS: vestsBalanceHistoryData || [],
-    HBD: hbdBalanceHistoryData || [],
-  };
+  > = useMemo(() => {
+    return {
+      HIVE: hiveBalanceHistoryData || [],
+      VESTS: vestsBalanceHistoryData || [],
+      HBD: hbdBalanceHistoryData || [],
+    };
+  }, [hiveBalanceHistoryData, vestsBalanceHistoryData, hbdBalanceHistoryData]);
 
   const handleCoinTypeChange = (coinType: string) => {
     setSelectedCoinType(coinType);
   };
+
+  const vestsToHive = useCallback(
+    (vests: string | null) => {
+      if (hiveChain && vests && dynamicGlobalData) {
+        const result = convertVestsToHive(
+          hiveChain,
+          vests,
+          dynamicGlobalData?.headBlockDetails.rawTotalVestingFundHive,
+          dynamicGlobalData?.headBlockDetails.rawTotalVestingShares
+        );
+        return result;
+      }
+    },
+    [hiveChain, dynamicGlobalData]
+  );
+
+  const getDollarValue = useCallback(
+    (hivePrice: string | undefined, balance: number, vests: string) => {
+      switch (selectedCoinType) {
+        case "HIVE":
+          return (
+            Number(hivePrice) * grabNumericValue(formatNumber(balance, false))
+          );
+        case "HBD":
+          return grabNumericValue(formatNumber(balance, false));
+        case "VESTS":
+          return grabNumericValue(
+            formatNumber(grabNumericValue(vests ?? ""), false)
+          );
+        default:
+          return undefined;
+      }
+    },
+    [selectedCoinType]
+  );
+
+  const displayData = useMemo(() => {
+    return dataMap[selectedCoinType].map((item) => {
+      const hivePrice = item.hivePrice;
+      const balance = item.balance ?? 0;
+      const vests = selectedCoinType === "VESTS" ? String(balance) : null;
+      const convertedVests = vestsToHive(vests);
+      const dollarValue =
+        getDollarValue(hivePrice, balance, convertedVests) || undefined;
+
+      return { ...item, dollarValue };
+    });
+  }, [dataMap, selectedCoinType, vestsToHive, getDollarValue]);
 
   const CustomTooltip = ({
     active,
@@ -130,17 +192,20 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     label?: string;
   }) => {
     const { dir: tooltipDir } = useI18n();
-    if (quickView || !active || !payload || payload.length === 0) return null;    
+    if (quickView || !active || !payload || payload.length === 0) return null;
     const isTooltipRTL = tooltipDir === "rtl";
-    const selectedData = dataMap[selectedCoinType]?.find(
-      (item) => item.timestamp === label
-    );
+    const selectedData = displayData?.find((item) => item.timestamp === label);
     if (!selectedData) return null;
 
     const actualBalance = selectedData?.balance ?? 0;
     const balanceChange = selectedData?.balance_change ?? 0;
     const savingsBalance = selectedData?.savings_balance ?? undefined;
     const savingsBalanceChange = selectedData?.savings_balance_change ?? 0;
+    const hivePrice = selectedData?.hivePrice ?? 0;
+
+    const vests = selectedCoinType === "VESTS" ? String(actualBalance) : null;
+
+    const convertedVests = vestsToHive(vests);
 
     const isPositiveChange = balanceChange > 0;
     const isZeroChange = balanceChange === 0;
@@ -149,10 +214,19 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
 
     const currentCoinColor = colorMap[selectedCoinType];
 
+    const dollarValue = getDollarValue(
+      hivePrice,
+      actualBalance,
+      convertedVests
+    );
+
     return (
       <div className="bg-theme dark:bg-theme p-2 rounded border border-explorer-light-gray">
         <p className="font-bold">{`${t("common.date")}: ${label}`}</p>
-        <div className="mb-1" style={{ color: currentCoinColor }}>
+        <div
+          className="mb-1"
+          style={{ color: currentCoinColor }}
+        >
           <div
             className={cn(
               "flex items-center",
@@ -161,7 +235,10 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             style={{ color: currentCoinColor }}
           >
             {isPositiveChange ? (
-              <ArrowUp className="bg-green-400 p-[1.2px]" size={16} />
+              <ArrowUp
+                className="bg-green-400 p-[1.2px]"
+                size={16}
+              />
             ) : isZeroChange ? (
               <Minus
                 className={cn(
@@ -172,7 +249,10 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
                 size={16}
               />
             ) : (
-              <ArrowDown className="bg-red-400  p-[1.2px]" size={16} />
+              <ArrowDown
+                className="bg-red-400  p-[1.2px]"
+                size={16}
+              />
             )}
             {` ${formatNumber(balanceChange, selectedCoinType === "VESTS")}`}
           </div>
@@ -182,44 +262,58 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             actualBalance,
             selectedCoinType === "VESTS"
           )}`}</div>
+
+          {dollarValue ? (
+            <div style={{ color: colorMap.DOLLAR }}>
+              Dollar Value: ${dollarValue.toFixed(4)}
+            </div>
+          ) : null}
         </div>
 
-        {showSavingsBalance==="yes" && savingsBalance !== undefined && selectedCoinType !=="VESTS" &&(
-          <div className=" border-t border-gray-400 dark:border-gray-600 mt-1">
-            <div
-              className={cn(
-                "flex items-center",
-                isTooltipRTL && "flex-row-reverse"
-              )}
-              style={{ color: colorMap.SAVINGS }}
-            >
-              {isSavingsPositiveChange ? (
-                <ArrowUp className="bg-green-400 p-[1.2px]" size={16} />
-              ) : isSavingsZeroChange ? (
-                <Minus
-                  className={cn(
-                    "bg-black p-[1.2px]",
-                    isTooltipRTL ? "ml-1" : "mr-1"
-                  )}
-                  color={colorMap.SAVINGS}
-                  size={16}
-                />
-              ) : (
-                <ArrowDown className="bg-red-400 p-[1.2px]" size={16} />
-              )}
-              {` ${formatNumber(
-                savingsBalanceChange,
-                selectedCoinType === "VESTS"
-              )}`}
+        {showSavingsBalance === "yes" &&
+          savingsBalance !== undefined &&
+          selectedCoinType !== "VESTS" && (
+            <div className=" border-t border-gray-400 dark:border-gray-600 mt-1">
+              <div
+                className={cn(
+                  "flex items-center",
+                  isTooltipRTL && "flex-row-reverse"
+                )}
+                style={{ color: colorMap.SAVINGS }}
+              >
+                {isSavingsPositiveChange ? (
+                  <ArrowUp
+                    className="bg-green-400 p-[1.2px]"
+                    size={16}
+                  />
+                ) : isSavingsZeroChange ? (
+                  <Minus
+                    className={cn(
+                      "bg-black p-[1.2px]",
+                      isTooltipRTL ? "ml-1" : "mr-1"
+                    )}
+                    color={colorMap.SAVINGS}
+                    size={16}
+                  />
+                ) : (
+                  <ArrowDown
+                    className="bg-red-400 p-[1.2px]"
+                    size={16}
+                  />
+                )}
+                {` ${formatNumber(
+                  savingsBalanceChange,
+                  selectedCoinType === "VESTS"
+                )}`}
+              </div>
+              <div style={{ color: colorMap.SAVINGS }}>
+                {`${t("balanceHistoryChart.savingsBalance")}: ${formatNumber(
+                  savingsBalance,
+                  selectedCoinType === "VESTS"
+                )}`}
+              </div>
             </div>
-            <div style={{ color: colorMap.SAVINGS }}>
-              {`${t("balanceHistoryChart.savingsBalance")}: ${formatNumber(
-                savingsBalance,
-                selectedCoinType === "VESTS"
-              )}`}
-            </div>
-          </div>
-        )}
+          )}
       </div>
     );
   };
@@ -241,14 +335,21 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     ));
   };
 
-  const getMinMax = (data: { balance: number; savings_balance?: number }[]) => {
+  const getMinMax = (
+    data: {
+      balance: number;
+      savings_balance?: number;
+    }[]
+  ) => {
     if (!data || data.length === 0) {
       return [0, 1];
     }
 
     let allValues: number[] = data.map((item) => item.balance);
-    if (showSavingsBalance=="yes" && selectedCoinType !== 'VESTS') {
-      const savingsValues = data.map(item => item.savings_balance).filter(value => value !== undefined) as number[];
+    if (showSavingsBalance == "yes" && selectedCoinType !== "VESTS") {
+      const savingsValues = data
+        .map((item) => item.savings_balance)
+        .filter((value) => value !== undefined) as number[];
       allValues = allValues.concat(savingsValues);
     }
 
@@ -257,21 +358,25 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     return [minValue, maxValue];
   };
 
-  const [fullDataMin, fullDataMax] = getMinMax(dataMap[selectedCoinType]);
+  const [fullDataMin, fullDataMax] = getMinMax(displayData);
   const [minValue, maxValue] = zoomedDomain || [fullDataMin, fullDataMax];
 
-  const handleBrushAreaChange = (domain: { startIndex?: number; endIndex?: number }) => {
-    if (!domain || domain.startIndex === undefined || domain.endIndex === undefined) {
+  const handleBrushAreaChange = (domain: {
+    startIndex?: number;
+    endIndex?: number;
+  }) => {
+    if (
+      !domain ||
+      domain.startIndex === undefined ||
+      domain.endIndex === undefined
+    ) {
       // Reset zoom if brush is cleared or start/end index is undefined
       setZoomedDomain([fullDataMin, fullDataMax]);
       return;
     }
 
     const { startIndex, endIndex } = domain;
-    const visibleData = (dataMap[selectedCoinType] || []).slice(
-      startIndex,
-      endIndex + 1
-    );
+    const visibleData = (displayData || []).slice(startIndex, endIndex + 1);
 
     if (visibleData.length > 0) {
       const [min, max] = getMinMax(visibleData);
@@ -279,12 +384,13 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     }
   };
 
-
   return (
     <div className={cn("w-full", className)}>
       {availableCoins.length > 1 && (
-        <div className={cn("flex mb-4", isRTL ? "justify-start" : "justify-end")}>
-            {renderCoinButtons()}
+        <div
+          className={cn("flex mb-4", isRTL ? "justify-start" : "justify-end")}
+        >
+          {renderCoinButtons()}
         </div>
       )}
 
@@ -294,11 +400,11 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
         className="mb-5 items-start"
       >
         <LineChart
-          data={dataMap[selectedCoinType] || []}
+          data={displayData || []}
           margin={{
             top: 20,
-            right: isRTL ? (isMobile ? 0 : 10) : (isMobile ? 0 : 20),
-            left: isRTL ? (isMobile ? 0 : 20) : (isMobile ? 0 : 10),
+            right: isRTL ? (isMobile ? 0 : 10) : isMobile ? 0 : 20,
+            left: isRTL ? (isMobile ? 0 : 20) : isMobile ? 0 : 10,
             bottom: isMobile ? 100 : 60,
           }}
         >
@@ -337,6 +443,17 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             name={selectedCoinType}
             dot={false}
             hide={hiddenDataKeys.includes("balance")}
+          />
+
+          <Line
+            type="monotone"
+            dataKey="dollarValue"
+            stroke={colorMap.DOLLAR}
+            strokeWidth={2}
+            activeDot={{ r: 6 }}
+            name={"DOLLAR"}
+            dot={false}
+            hide={hiddenDataKeys.includes("dollarValue")}
           />
 
           {showSavingsBalance == "yes" && selectedCoinType !== "VESTS" && (

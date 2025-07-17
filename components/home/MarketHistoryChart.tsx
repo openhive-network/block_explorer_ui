@@ -31,9 +31,16 @@ const CustomTooltip = ({
         {payload.map(({ payload: { tooltipDate, close, volume } }) => {
           return (
             <div key={tooltipDate}>
-              <p>{t("marketHistoryChart.date")}: {tooltipDate}</p>
-              <p>{t("marketHistoryChart.closePrice")}: ${close}</p>
-              <p>{t("marketHistoryChart.volume")}: {volume.toLocaleString("en-US")} HIVE</p>
+              <p>
+                {t("marketHistoryChart.date")}: {tooltipDate}
+              </p>
+              <p>
+                {t("marketHistoryChart.closePrice")}: ${close}
+              </p>
+              <p>
+                {t("marketHistoryChart.volume")}:{" "}
+                {volume.toLocaleString("en-US")} HIVE
+              </p>
             </div>
           );
         })}
@@ -45,9 +52,10 @@ const CustomTooltip = ({
 };
 
 export const calculateCloseHivePrice = (
-  hive: Hive.MarketData,
-  nonHive: Hive.MarketData
+  hive: Hive.MarketData | undefined,
+  nonHive: Hive.MarketData | undefined
 ) => {
+  if (!hive || !nonHive) return;
   const hiveClose = hive.close;
   const nonHiveClose = nonHive.close;
 
@@ -60,7 +68,7 @@ interface MarketChartProps {
 }
 interface ChartData {
   date: string;
-  close: string;
+  close: string | undefined;
   volume: number;
 }
 
@@ -70,7 +78,7 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({
 }) => {
   const { hiveChain } = useHiveChainContext();
   const { theme } = useTheme();
-  
+
   const { t, dir } = useI18n();
   const isRTL = dir === "rtl";
 
@@ -96,10 +104,10 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({
     });
 
     const min = Math.min(
-      ...filterData?.map((d: ChartData) => parseFloat(d.close))
+      ...filterData?.map((d: ChartData) => parseFloat(d.close ?? ""))
     );
     const max = Math.max(
-      ...filterData?.map((d: ChartData) => parseFloat(d.close))
+      ...filterData?.map((d: ChartData) => parseFloat(d.close ?? ""))
     );
 
     setChartData(filterData);
@@ -115,7 +123,10 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({
       width="100%"
       height={isFullChart ? 500 : 250}
     >
-      <LineChart data={chartData} layout="horizontal">
+      <LineChart
+        data={chartData}
+        layout="horizontal"
+      >
         <XAxis
           dataKey="date"
           stroke={strokeColor}
@@ -132,7 +143,9 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({
           verticalAlign="top"
           height={36}
           align={isRTL ? "right" : "left"}
-          wrapperStyle={isRTL ? { right: 0, left: 'auto' } : { left: 0, right: 'auto' }}
+          wrapperStyle={
+            isRTL ? { right: 0, left: "auto" } : { left: 0, right: "auto" }
+          }
         />
         <Line
           name={`${t("marketHistoryChart.hivePrice")}: $${lastHivePrice ?? 0}`}

@@ -35,6 +35,7 @@ export interface Operation {
   timestamp: number;
   balance: number;
   savings_balance?: number; // Optional savings balance
+  hivePrice: string;
 }
 
 interface BalanceHistorySearchParams {
@@ -79,10 +80,11 @@ const prepareData = (operations: Operation[]) => {
       balance_change: number;
       savings_balance: number | undefined;
       savings_balance_change: number | undefined;
+      hivePrice: string;
     }
   >();
 
-  operations.forEach((operation: any) => {
+  operations?.forEach((operation: any) => {
     let balance_change =
       operation.balance.balance - operation.prev_balance.balance;
     let balance = parseInt(operation.balance.balance, 10);
@@ -92,11 +94,14 @@ const prepareData = (operations: Operation[]) => {
     let savings_balance_change =
       operation.balance.savings_balance -
       operation.prev_balance.savings_balance;
+    let hivePrice = operation.hivePrice;
+
     aggregatedData.set(operation.date, {
       balance,
       balance_change,
       savings_balance,
       savings_balance_change,
+      hivePrice,
     });
   });
 
@@ -107,6 +112,7 @@ const prepareData = (operations: Operation[]) => {
       balance_change: data.balance_change,
       savings_balance: data.savings_balance,
       savings_balance_change: data.savings_balance_change,
+      hivePrice: data.hivePrice,
     })
   );
 
@@ -234,7 +240,9 @@ export default function BalanceHistory() {
     (routeAccountName && !routeAccountName.startsWith("@")) ||
     (isAccountDetailsError && !isAccountDetailsLoading)
   ) {
-    const accountNotFoundError = `${routeAccountName} : ${t("accountName.accountNotFound")}`;
+    const accountNotFoundError = `${routeAccountName} : ${t(
+      "accountName.accountNotFound"
+    )}`;
     return <ErrorPage errorMessage={accountNotFoundError} />;
   }
   // Return early with a loading state if accountNameFromRoute is not yet available
@@ -339,13 +347,14 @@ export default function BalanceHistory() {
                 <br />
               </div>
             )}
-
             {isChartDataLoading ? (
               <div className="flex justify-center text-center items-center">
                 <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />
               </div>
             ) : isChartDataError ? (
-              <div className="text-center">{t("balanceHistoryPage.errorLoadingChart")}</div>
+              <div className="text-center">
+                {t("balanceHistoryPage.errorLoadingChart")}
+              </div>
             ) : preparedData.length > 0 ? (
               <MemoizedBalanceHistoryChart
                 hiveBalanceHistoryData={
@@ -363,7 +372,7 @@ export default function BalanceHistory() {
                 className="h-[450px] mb-10 mr-0 pr-1 pb-6"
               />
             ) : (
-              <NoResult titleKey="noResult.noChartData"/>
+              <NoResult titleKey="noResult.noChartData" />
             )}
           </Card>
 
