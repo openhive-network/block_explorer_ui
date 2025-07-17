@@ -33,6 +33,26 @@ export const convertVestsToHP = (
   return formattedHP;
 };
 
+export const convertVestsToHive = (
+  hivechain: IHiveChainInterface,
+  vests: Hive.Supply | string,
+  totalVestingFundHive: Hive.Supply,
+  totalVestingShares: Hive.Supply
+) => {
+  if (!hivechain || !vests || !totalVestingFundHive || !totalVestingShares)
+    return;
+
+  const convertedHive = hivechain.vestsToHp(
+    vests,
+    totalVestingFundHive,
+    totalVestingShares
+  );
+
+  const formattedHive = hivechain.formatter.format(convertedHive);
+
+  return formattedHive;
+};
+
 export const getVestsToHiveRatio = (
   headBlockCardData: Explorer.HeadBlockCardData | undefined
 ) => {

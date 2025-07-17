@@ -254,5 +254,6 @@ export const convertBalanceHistoryResultsToTableOperations = (
     balance: operation.balance,
     prev_balance: operation.prev_balance,
     balanceChange: operation.balance_change,
+    hivePrice: operation.hivePrice,
   }));
 };
