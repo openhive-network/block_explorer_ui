@@ -2,6 +2,8 @@ import { UseQueryResult, useQuery } from "@tanstack/react-query";
 import moment from "moment";
 
 import fetchingService from "@/services/FetchingService";
+import useMarketHistory from "@/hooks/common/useMarketHistory";
+import { calculateCloseHivePrice } from "@/components/home/MarketHistoryChart";
 
 const useBalanceHistory = (
   accountName: string,
@@ -48,8 +50,48 @@ const useBalanceHistory = (
     refetchOnWindowFocus: false,
   });
 
+  const start = fromDate
+    ? moment(fromDate).format("YYYY-MM-DDTHH:mm:ss")
+    : undefined;
+
+  const end = toDate
+    ? moment(toDate).format("YYYY-MM-DDTHH:mm:ss")
+    : moment().format("YYYY-MM-DDTHH:mm:ss");
+
+  const { marketHistory } = useMarketHistory(86400, start, end);
+
+  const getHistoryWithHivePrice = () => {
+    if (!marketHistory || !accountBalanceHistory) return [];
+
+    const udatedOperationResult = accountBalanceHistory?.operations_result?.map(
+      (balance: any) => {
+        const { buckets } = marketHistory;
+
+        const { timestamp: balanceDate } = balance;
+        const balanceKey = balanceDate.slice(0, 10);
+        const bucket = buckets.find(
+          ({ open }) => open.slice(0, 10) === balanceKey
+        );
+
+        if (!bucket) return balance;
+
+        const { hive, non_hive } = bucket;
+        const hiveClosePrice = calculateCloseHivePrice(hive, non_hive);
+
+        return {
+          ...balance,
+          hivePrice: hiveClosePrice,
+        };
+      }
+    );
+    return {
+      ...accountBalanceHistory,
+      operations_result: udatedOperationResult,
+    };
+  };
+
   return {
-    accountBalanceHistory,
+    accountBalanceHistory: getHistoryWithHivePrice(),
     isAccountBalanceHistoryLoading,
     isAccountBalanceHistoryError,
   };

@@ -36,6 +36,10 @@ import CopyButton from "../ui/CopyButton";
 import DataExport from "../DataExport";
 import DataCountMessage from "../DataCountMessage";
 import { useI18n } from "@/i18n/i18n";
+import { grabNumericValue } from "@/utils/StringUtils";
+import { useHiveChainContext } from "@/contexts/HiveChainContext";
+import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
+import { convertVestsToHive } from "@/utils/Calculations";
 
 interface BalanceHistoryTableProps {
   operations: Explorer.BalanceHistoryForTable[];
@@ -53,6 +57,8 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
   account_name,
 }) => {
   const router = useRouter();
+  const { hiveChain } = useHiveChainContext();
+  const { dynamicGlobalData } = useDynamicGlobal();
   const { locale: appLocale, t } = useI18n();
   const {
     settings: { rawJsonView, prettyJsonView },
@@ -187,16 +193,53 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
   const prepareExportData = () => {
     return operations.map((operation) => {
       return {
-        [t("balanceHistoryTable.operationType")]: getOperationTypeForDisplayById(operation.opTypeId),
-        [t("balanceHistoryTable.timestamp")]: formatAndDelocalizeTime(operation.timestamp),
-        [t("balanceHistoryTable.blockNumber")]: operation.blockNumber?.toLocaleString() || "",
-        [t("balanceHistoryTable.balance")]: `${formatRawCoin(operation.prev_balance)} ${coinName}`,
+        [t("balanceHistoryTable.operationType")]:
+          getOperationTypeForDisplayById(operation.opTypeId),
+        [t("balanceHistoryTable.timestamp")]: formatAndDelocalizeTime(
+          operation.timestamp
+        ),
+        [t("balanceHistoryTable.blockNumber")]:
+          operation.blockNumber?.toLocaleString() || "",
+        [t("balanceHistoryTable.balance")]: `${formatRawCoin(
+          operation.prev_balance
+        )} ${coinName}`,
         [t("balanceHistoryTable.balanceChange")]: `${formatRawCoin(
           operation.balanceChange
         )} ${coinName}`,
-        [t("balanceHistoryTable.newBalance")]: `${formatRawCoin(operation.balance)} ${coinName}`,
+        [t("balanceHistoryTable.newBalance")]: `${formatRawCoin(
+          operation.balance
+        )} ${coinName}`,
       };
     });
+  };
+
+  const vestsToHive = (vests: string) => {
+    if (hiveChain && vests && dynamicGlobalData) {
+      const result = convertVestsToHive(
+        hiveChain,
+        vests,
+        dynamicGlobalData?.headBlockDetails.rawTotalVestingFundHive,
+        dynamicGlobalData?.headBlockDetails.rawTotalVestingShares
+      );
+      return result;
+    }
+  };
+
+  const getDollarValue = (coin: string, balance: number, hivePrice: string) => {
+    if (coin === "HIVE") {
+      return Number(hivePrice) * grabNumericValue(formatNumber(balance, false));
+    }
+    if (coin === "HBD") {
+      return grabNumericValue(formatNumber(balance, false));
+    }
+    if (coin === "VESTS") {
+      return grabNumericValue(
+        formatNumber(
+          grabNumericValue(vestsToHive(String(balance)) ?? ""),
+          false
+        )
+      );
+    } else return null;
   };
 
   return (
@@ -238,12 +281,15 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
           >
             <TableHeader>
               <TableRow rowVariant="header">
-                <TableHead stickyLeft>{t("balanceHistoryTable.operationType")}</TableHead>
+                <TableHead stickyLeft>
+                  {t("balanceHistoryTable.operationType")}
+                </TableHead>
                 <TableHead>{t("balanceHistoryTable.date")}</TableHead>
                 <TableHead>{t("balanceHistoryTable.blockNumber")}</TableHead>
                 <TableHead>{t("balanceHistoryTable.balance")}</TableHead>
                 <TableHead>{t("balanceHistoryTable.balanceChange")}</TableHead>
                 <TableHead>{t("balanceHistoryTable.newBalance")}</TableHead>
+                <TableHead>{t("balanceHistoryTable.dollarValue")}</TableHead>
                 <TableHead>{t("balanceHistoryTable.details")}</TableHead>
               </TableRow>
             </TableHeader>
@@ -251,6 +297,13 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
               {operations.map((operation, index) => {
                 const operationBgColor = getOperationColor(operation.opTypeId);
                 const isExpanded = expandedRow === operation.operationId;
+
+                const hivePrice = operation.hivePrice;
+                const dollarValue = getDollarValue(
+                  coinName as string,
+                  operation.balance,
+                  hivePrice
+                );
 
                 return (
                   <React.Fragment key={index}>
@@ -322,6 +375,10 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
                       <TableCell>
                         {formatRawCoin(operation.balance)} {coinName}
                       </TableCell>
+
+                      <TableCell>
+                        {dollarValue ? `$${dollarValue?.toFixed(3)}` : "0"}
+                      </TableCell>
                       <TableCell>
                         <button
                           onClick={() => handleRowClick(operation.operationId)}
@@ -355,7 +412,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
                         >
                           <div className="border rounded-2xl p-4">
                             <h3 className="text-lg font-bold">
-                             {t("balanceHistoryTable.operationDetails")}
+                              {t("balanceHistoryTable.operationDetails")}
                             </h3>
                             <OperationDetails
                               operationId={operation.operationId}
