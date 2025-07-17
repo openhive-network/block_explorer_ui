@@ -43,7 +43,7 @@ export type ExplorerNodeApi = {
   };
   market_history_api: {
     get_market_history: TWaxApiRequest<
-      { bucket_seconds: number; start: string; end: string },
+      { bucket_seconds: number; start: string | undefined; end: string },
       Hive.MarketHistory[]
     >;
   };
@@ -495,7 +495,7 @@ class FetchingService {
 
   async getMarketHistory(
     bucketSeconds: number,
-    start: string,
+    start: string | undefined,
     end: string
   ): Promise<Hive.MarketHistory[]> {
     return await this.extendedHiveChain!.api.market_history_api.get_market_history(
@@ -525,8 +525,7 @@ class FetchingService {
       "from-block": allBlockSearchProps
         ? allBlockSearchProps.fromBlock || allBlockSearchProps.startDate
         : undefined,
-      "to-block":
-        toBlock ? toBlock : allBlockSearchProps?.endDate,
+      "to-block": toBlock ? toBlock : allBlockSearchProps?.endDate,
     };
     return await this.extendedHiveChain!.restApi["hafbe-api"].allBlockSearch(
       requestParams
@@ -539,14 +538,15 @@ class FetchingService {
     fromBlock?: Date | number | undefined,
     toBlock?: Date | number | undefined
   ): Promise<Hive.TransactionStatisticsResponse> {
-    return await this.extendedHiveChain!.restApi["hafbe-api"].transactionStatistics({
+    return await this.extendedHiveChain!.restApi[
+      "hafbe-api"
+    ].transactionStatistics({
       granularity,
       direction: direction,
       "from-block": fromBlock,
       "to-block": toBlock,
     });
   }
-
 }
 
 const fetchingService = new FetchingService();

@@ -4,7 +4,7 @@ import Hive from "@/types/Hive";
 
 const useMarketHistory = (
   bucketSeconds: number,
-  start: string,
+  start: string | undefined,
   end: string
 ) => {
   const {
