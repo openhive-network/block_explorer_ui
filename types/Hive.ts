@@ -777,6 +777,7 @@ namespace Hive {
     prev_balance!: number;
     balance_change!: number;
     timestamp!: string;
+    hivePrice!: string;
   }
   export class AccountBalanceHistoryParams {
     "accountName": string;
@@ -934,9 +935,9 @@ namespace Hive {
       to: number;
     };
   }
-  
-   export class TransactionStatisticsResponse {
-    date!: Date ;
+
+  export class TransactionStatisticsResponse {
+    date!: Date;
     trx_count!: number;
     avg_trx!: number;
     min_trx!: number;

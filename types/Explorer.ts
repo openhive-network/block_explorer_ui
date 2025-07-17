@@ -313,6 +313,7 @@ declare module Explorer {
     balance: number;
     prev_balance: number;
     balanceChange: number;
+    hivePrice: string;
   }
 
   interface AllBlocksSearchProps extends CommonSearchProps {
