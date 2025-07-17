@@ -232,6 +232,7 @@
   "balanceHistoryTable.details": "Detalhes",
   "balanceHistoryTable.noResultsMatchingCriteria": "Nenhum resultado corresponde aos critérios fornecidos",
   "balanceHistoryTable.operationDetails": "Detalhes da Operação",
+  "balanceHistoryTable.dollarValue": "Valor em dólar",
   "searchRanges.lastBlocks": "Últimos blocos",
   "searchRanges.lastTime": "Últimos dias/semanas/meses",
   "searchRanges.blockRange": "Intervalo de blocos",
@@ -430,7 +431,7 @@
   "autocompleteInput.account": "Conta",
   "autocompleteInput.block": "Bloco",
   "autocompleteInput.transaction": "Transação",
-  "autocompleteInput.invalidInput" : "Entrada inválida",
+  "autocompleteInput.invalidInput": "Entrada inválida",
   "delegationSort.Recipient": "Destinatário",
   "delegationSort.Amount": "Quantia",
   "delegationSort.Delegator": "Delegador",
@@ -682,5 +683,4 @@
   "languageSelector.polish": "Polonês",
   "languageSelector.romanian": "Romeno",
   "languageSelector.arabic": "Árabe"
-  
 }
