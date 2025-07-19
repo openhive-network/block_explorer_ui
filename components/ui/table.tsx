@@ -19,7 +19,7 @@ function getDisplayName(Tag: React.ElementType) {
  *  • Is now RTL-aware
  *  • Applies `right` instead of `left` for sticky positioning in RTL
  *  • Applies `text-right` instead of `text-left` for alignment in RTL
-*/
+ */
 export function withSticky<T extends React.ElementType>(
   Tag: T,
   baseClasses = ""
@@ -82,6 +82,7 @@ const TableContext = React.createContext<TableContextProps>({
 interface TableProps extends React.HTMLAttributes<HTMLTableElement> {
   enableMobileScrollArrows?: boolean;
   isStandaloneTable?: boolean;
+  isDialog?: boolean;
 }
 
 const Table = React.forwardRef<HTMLTableElement, TableProps>(
@@ -91,6 +92,7 @@ const Table = React.forwardRef<HTMLTableElement, TableProps>(
       children,
       enableMobileScrollArrows = false,
       isStandaloneTable = false,
+      isDialog = false,
       ...props
     },
     ref
@@ -104,11 +106,11 @@ const Table = React.forwardRef<HTMLTableElement, TableProps>(
     const isRTL = dir === "rtl";
 
     const handleScroll = React.useCallback(() => {
-        if (!tableRef.current) return;
+      if (!tableRef.current) return;
 
-        const { scrollLeft, scrollWidth, clientWidth } = tableRef.current;
+      const { scrollLeft, scrollWidth, clientWidth } = tableRef.current;
 
-        const atLeftEdge = scrollLeft <= 0;
+      const atLeftEdge = scrollLeft <= 0;
       const atRightEdge = scrollLeft + clientWidth >= scrollWidth - 1;
 
       const shouldShowLeft = scrollLeft > 0 && !atLeftEdge && isTableVisible;
@@ -165,22 +167,38 @@ const Table = React.forwardRef<HTMLTableElement, TableProps>(
       };
     }, [handleScroll, isStandaloneTable]);
 
-    const arrowStyle =
-      "fixed top-1/2 transform -translate-y-1/2 bg-gray-200 bg-opacity-70 hover:bg-opacity-100 rounded-full p-2 z-20 cursor-pointer text-gray-700";
+    const arrowCommonStyle =
+      "bg-gray-200 bg-opacity-70 hover:bg-opacity-100 rounded-full p-2 z-20 cursor-pointer text-gray-700";
 
-    const LeftArrowIcon = isRTL ? ChevronRight : ChevronLeft;
-    const RightArrowIcon = isRTL ? ChevronLeft : ChevronRight;
+    const arrowConditionalStyle = isDialog
+      ? "absolute"
+      : "fixed top-1/2 transform -translate-y-1/2";
+
+    const PrevArrowIcon = isRTL ? ChevronRight : ChevronLeft;
+    const NextArrowIcon = isRTL ? ChevronLeft : ChevronRight;
+    const prevArrowPosition = isRTL ? "right-2" : "left-2";
+    const nextArrowPosition = isRTL ? "left-2" : "right-2";
 
     return (
       <TableContext.Provider value={{ showLeftArrow, showRightArrow }}>
-        <div
-          className="relative w-full overflow-auto"
-          ref={tableRef}
-        >
-          {enableMobileScrollArrows && showLeftArrow && (
+        <div className="relative">
+          <div className="w-full overflow-auto" ref={tableRef}>
+            <table
+              ref={ref}
+              className={cn(
+                "w-full caption-bottom bg-theme text-xs rounded max-w-full",
+                className
+              )}
+              {...props}
+            >
+              {children}
+            </table>
+          </div>
+
+         {enableMobileScrollArrows && showLeftArrow && (
             <div
-              className={cn(arrowStyle, "left-2")}
-              style={{ top: `45vh` }}
+              className={cn(arrowCommonStyle, arrowConditionalStyle, prevArrowPosition)}
+              style={isDialog ? { top: '10vh' } :  { top: '45vh' }}
               onClick={() => {
                 tableRef.current?.scrollBy({
                   left: isRTL ? 100 : -100,
@@ -188,34 +206,24 @@ const Table = React.forwardRef<HTMLTableElement, TableProps>(
                 });
               }}
             >
-              <LeftArrowIcon size={20} />
+              <PrevArrowIcon size={20} />
             </div>
           )}
 
           {enableMobileScrollArrows && showRightArrow && (
             <div
-              className={cn(arrowStyle, "right-2")}
-              style={{ top: `45vh` }}
+              className={cn(arrowCommonStyle, arrowConditionalStyle, nextArrowPosition)}
+              style={isDialog ? { top: '10vh' } :  { top: '45vh' }}
               onClick={() => {
-                tableRef.current?.scrollBy({
+                tableRef.current?.scrollBy({ 
                   left: isRTL ? -100 : 100,
-                  behavior: "smooth",
+                  behavior: "smooth" 
                 });
               }}
             >
-              <RightArrowIcon size={20} />
+              <NextArrowIcon size={20} />
             </div>
           )}
-          <table
-            ref={ref}
-            className={cn(
-              "w-full caption-bottom bg-theme text-xs rounded max-w-full",
-              className
-            )}
-            {...props}
-          >
-            {children}
-          </table>
         </div>
       </TableContext.Provider>
     );
@@ -266,17 +274,21 @@ TableFooter.displayName = "TableFooter";
 const TableRow = React.forwardRef<
   HTMLTableRowElement,
   React.HTMLAttributes<HTMLTableRowElement> & { rowVariant?: "body" | "header" }
->(({ className, rowVariant = "body", ...props }, ref) => (
-  <tr
-    ref={ref}
-    className={cn(
-      "border-b-2 bg-theme dark:border-gray-700",
-      rowVariants[rowVariant],
-      className
-    )}
-    {...props}
-  />
-));
+>(({ className, rowVariant = "body", ...props }, ref) => {
+  const { dir } = useI18n();
+  const isRTL = dir === "rtl";
+  return (
+    <tr
+      ref={ref}
+      className={cn(
+        "border-b-2 bg-theme dark:border-gray-700",
+        rowVariants[rowVariant],
+        className
+      )}
+      {...props}
+    />
+  );
+});
 TableRow.displayName = "TableRow";
 
 const TableHead = withSticky(
