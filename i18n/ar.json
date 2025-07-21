@@ -716,5 +716,8 @@
   "votesHistoryDialog.votes": "الأصوات",
   "votesHistoryDialog.approve": "موافقة",
   "votesHistoryDialog.disapprove": "رفض",
-  "common.vestsChange": "تغيير Vests"
+  "common.vestsChange": "تغيير Vests",
+  "jsonUtils.malformedJson": "JSON غير صالح",
+"jsonUtils.info": "معلومات",
+"jsonUtils.emptyString": "تم توفير سلسلة فارغة"
 }

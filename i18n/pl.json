@@ -716,5 +716,8 @@
   "votesHistoryDialog.votes": "Głosy",
   "votesHistoryDialog.approve": "Zatwierdź",
   "votesHistoryDialog.disapprove": "Odrzuć",
-  "common.vestsChange": "Zmiana Vests"
+  "common.vestsChange": "Zmiana Vests",
+  "jsonUtils.malformedJson": "Nieprawidłowy format JSON",
+  "jsonUtils.info": "Informacja",
+  "jsonUtils.emptyString": "Podano pusty ciąg znaków"
 }

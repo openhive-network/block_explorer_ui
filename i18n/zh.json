@@ -716,5 +716,8 @@
   "votesHistoryDialog.votes": "投票",
   "votesHistoryDialog.approve": "赞成",
   "votesHistoryDialog.disapprove": "反对",
-  "common.vestsChange": "Vests 变动"
+  "common.vestsChange": "Vests 变动",
+  "jsonUtils.malformedJson": "格式错误的JSON",
+  "jsonUtils.info": "信息",
+  "jsonUtils.emptyString": "提供了空字符串"
 }

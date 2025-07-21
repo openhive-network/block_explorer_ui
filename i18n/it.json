@@ -711,5 +711,8 @@
   "accountSubscriptionsDialog.noResultsFound": "Nessuna iscrizione trovata che corrisponda alla tua ricerca.",
   "accountSubscriptionsDialog.communityHeader": "Comunità",
   "accountSubscriptionsDialog.communityID": "ID della Comunità",
-  "accountSubscriptionsDialog.communityUrl": "URL della Comunità"
+  "accountSubscriptionsDialog.communityUrl": "URL della Comunità",
+  "jsonUtils.malformedJson": "JSON malformato",
+  "jsonUtils.info": "Informazioni",
+  "jsonUtils.emptyString": "Stringa vuota fornita"
 }

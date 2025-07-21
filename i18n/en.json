@@ -716,5 +716,8 @@
   "votesHistoryDialog.votes": "Votes",
   "votesHistoryDialog.approve": "Approve",
   "votesHistoryDialog.disapprove": "Disapprove",
-  "common.vestsChange": "Vests Change"
+  "common.vestsChange": "Vests Change",
+  "jsonUtils.malformedJson": "Malformed JSON",
+  "jsonUtils.info": "Info",
+  "jsonUtils.emptyString": "Empty string provided"
 }

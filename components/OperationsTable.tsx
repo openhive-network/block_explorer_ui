@@ -33,6 +33,7 @@ import DataExport from "./DataExport"; // Import DataExport
 import { extractTextFromReactElement } from "@/utils/StringUtils";
 import DataCountMessage from "./DataCountMessage";
 import { useI18n } from "../i18n/i18n";
+import { safelyParseJson } from "@/utils/JsonUtils";
 
 interface OperationsTableProps {
   operationCount?: number;
@@ -383,10 +384,10 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                             className="py-2"
                           >
                             <JSONView
-                              json={JSON.parse(
+                              json={safelyParseJson(
                                 getOperationValues(operation.operation).json ||
                                   ""
-                              )}
+                              ,t)}
                               skipCopy
                             />
                           </TableCell>

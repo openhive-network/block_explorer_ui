@@ -716,5 +716,8 @@
   "votesHistoryDialog.votes": "투표",
   "votesHistoryDialog.approve": "찬성",
   "votesHistoryDialog.disapprove": "반대",
-  "common.vestsChange": "Vests 변경"
+  "common.vestsChange": "Vests 변경",
+  "jsonUtils.malformedJson": "잘못된 형식의 JSON",
+  "jsonUtils.info": "정보",
+  "jsonUtils.emptyString": "빈 문자열이 제공되었습니다"
 }

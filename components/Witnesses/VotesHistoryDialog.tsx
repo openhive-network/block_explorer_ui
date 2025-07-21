@@ -185,88 +185,80 @@ const VotesHistoryDialog: React.FC<VotesHistoryDialogProps> = ({
 
   return (
     <Dialog open={isVotesHistoryOpen} onOpenChange={changeVoteHistoryDialogue}>
-      <DialogContent className="max-w-5xl  h-5/6 flex flex-col p-4">
-        <DialogHeader>
+      <DialogContent className="max-w-5xl h-[90%] flex flex-col p-4">
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-center text-lg">
             {accountName.toUpperCase()} - {t("votesHistoryDialog.votesHistory")}
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex-grow overflow-y-auto space-y-4 pt-4">
-          {/* Filters Section */}
-          <div className="space-y-4 p-4 border rounded-md">
-            <Label className="text-lg">{t("common.filters")}</Label>
-            <div className="flex flex-col">
-              <div className="w-full md:w-1/3">
-                <AutocompleteInput
-                  value={voterNameInput}
-                  onChange={setVoterNameInput}
-                  placeholder={t("votesHistoryDialog.voterNamePlaceholder")}
-                  inputType="account_name"
-                  className="w-full bg-theme dark:bg-theme border-0 border-b-2"
-                />
-              </div>
-              <div className="w-full md:w-2/3">
-                <SearchRanges
-                  rangesProps={searchRanges}
-                  setIsSearchButtonDisabled={setIsSearchButtonDisabled}
-                />
-              </div>
+        {/* Filters Section */}
+        <div className="flex-shrink-0 space-y-1 p-1 border rounded-md ">
+          <Label className="text-lg">{t("common.filters")}</Label>
+          <div className="flex flex-col">
+            <div className="w-full md:w-1/3">
+              <AutocompleteInput
+                value={voterNameInput}
+                onChange={setVoterNameInput}
+                placeholder={t("votesHistoryDialog.voterNamePlaceholder")}
+                inputType="account_name"
+                className="w-full bg-theme dark:bg-theme border-0 border-b-2"
+              />
             </div>
-            <div className="flex items-end justify-end mt-2 gap-2">
-              <Button
-                onClick={handleSearch}
-                disabled={isSearchButtonDisabled || isVotesHistoryLoading}
-              >
-                {t("common.search")}
-                {isVotesHistoryLoading && (
-                  <Loader2 className="ml-2 animate-spin h-4 w-4" />
-                )}
-              </Button>
-              <Button onClick={handleClear} variant="outline">
-                {t("common.clear")}
-              </Button>
+            <div className="w-full md:w-2/3">
+              <SearchRanges
+                rangesProps={searchRanges}
+                setIsSearchButtonDisabled={setIsSearchButtonDisabled}
+              />
             </div>
           </div>
+          <div className="flex items-end justify-end mt-2 gap-2">
+            <Button
+              onClick={handleSearch}
+              disabled={isSearchButtonDisabled || isVotesHistoryLoading}
+            >
+              {t("common.search")}
+              {isVotesHistoryLoading && (
+                <Loader2 className="ml-2 animate-spin h-4 w-4" />
+              )}
+            </Button>
+            <Button onClick={handleClear} variant="outline">
+              {t("common.clear")}
+            </Button>
+          </div>
+        </div>
 
-          {/* Content Area */}
-            <div className="flex justify-end items-end">
-              <div className="flex items-center">
-                <label className="mr-2">{t("votersDialog.vests")}</label>
-                <Switch
-                  checked={isHP}
-                  onCheckedChange={() => setIsHP((prev) => !prev)}
-                  className="mx-1"
-                />
-                <label>{t("votersDialog.hp")}</label>
-              </div>
-            </div>
+        <div className="flex-grow flex flex-col min-h-0">
           {isVotesHistoryLoading ? (
-            <div className="flex justify-center items-center h-64">
+            <div className="flex justify-center items-center h-full">
               <Loader2 className="animate-spin h-8 w-8" />
             </div>
           ) : votesHistory && votesHistory.votes_history?.length > 0 ? (
-            <div className="space-y-2">
-              <CustomPagination
-                currentPage={pageNum}
-                onPageChange={setPageNum}
-                pageSize={config.standardPaginationSize}
-                totalCount={votesHistory.total_votes}
-                className="rounded"
-                isMirrored={false}
-              />
-              <div className="flex justify-between items-center">
+            <div className="flex flex-col h-full">
+              <div className="flex-shrink-0 flex justify-between items-center mb-2">
                 <DataCountMessage
                   count={votesHistory.total_votes}
                   dataType={t("votesHistoryDialog.votes")}
                 />
-                <DataExport
-                  data={prepareExportData()}
-                  filename={`${accountName}_vote_history.csv`}
-                />
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center">
+                    <label className="mr-2">{t("votersDialog.vests")}</label>
+                    <Switch
+                      checked={isHP}
+                      onCheckedChange={() => setIsHP((prev) => !prev)}
+                      className="mx-1"
+                    />
+                    <label>{t("votersDialog.hp")}</label>
+                  </div>
+                  <DataExport
+                    data={prepareExportData()}
+                    filename={`${accountName}_vote_history.csv`}
+                  />
+                </div>
               </div>
-              <div className="relative rounded overflow-hidden">
-                <div className="text-text w-full overflow-auto bg-theme rounded">
+
+              <div className="flex-grow relative rounded overflow-auto mt-1">
+                <div className="text-text w-full bg-theme rounded">
                   <Table enableMobileScrollArrows>
                     <TableHeader>
                       <TableRow rowVariant="header">
@@ -322,6 +314,16 @@ const VotesHistoryDialog: React.FC<VotesHistoryDialogProps> = ({
                     </TableBody>
                   </Table>
                 </div>
+              </div>              
+              <div className="flex-shrink-0 pt-4">
+                <CustomPagination
+                  currentPage={pageNum}
+                  onPageChange={setPageNum}
+                  pageSize={config.standardPaginationSize}
+                  totalCount={votesHistory.total_votes}
+                  className="rounded"
+                  isMirrored={false}
+                />
               </div>
             </div>
           ) : (

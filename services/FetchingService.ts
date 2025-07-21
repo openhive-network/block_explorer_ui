@@ -39,7 +39,7 @@ export type ExplorerNodeApi = {
       Hive.AccountFollowCount
     >;
     get_followers: TWaxApiRequest<
-      { account: string; start: string },
+      { account: string; start: string; limit: number },
       Hive.AccountFollower[]
     >;
     get_following: TWaxApiRequest<{ account: string }, Hive.AccountFollowing>;
@@ -252,6 +252,7 @@ class FetchingService {
     sort: string,
     direction: "asc" | "desc",
     page: number,
+    voterName?: string,
     limit?: number
   ): Promise<Hive.WitnessVotersResponse> {
     return await this.extendedHiveChain!.restApi["hafbe-api"].voters({
@@ -260,6 +261,7 @@ class FetchingService {
       direction,
       page,
       "page-size": limit,
+      "voter-name": voterName,
     });
   }
 
@@ -585,37 +587,40 @@ class FetchingService {
   async getAccountFollowers(account: string): Promise<Hive.AccountFollower[]> {
     const allFollowers: Hive.AccountFollower[] = [];
     let start = "";
-    const limit = 1000; // Max limit per call as per condenser API
-    let moreFollowers = true;
+    const limit = 1000; // The maximum number of followers to fetch per API call.
 
-    while (moreFollowers) {
+    while (true) {
       try {
-        const params = { account, start };
+        const params = { account, start, limit };
         const results: Hive.AccountFollower[] =
           await this.extendedHiveChain!.api.condenser_api.get_followers(params);
-        if (results.length > 0) {
-          // On subsequent calls (when startFollower is not empty), the first result is a duplicate.
-          const followersToProcess = start ? results.slice(1) : results;
 
-          if (followersToProcess.length > 0) {
-            allFollowers.push(...followersToProcess);
-            // The new "cursor" is the name of the very last follower in the batch we just got.
-            start = followersToProcess[followersToProcess.length - 1].follower;
-          }
+        // If the API returns an empty array, we have finished fetching all pages.
+        if (results.length === 0) {
+          break;
         }
 
-        // If the API returns fewer than the limit, we've reached the end.
+        let followersToProcess = results;
+        if (start && results[0].follower === start) {
+          followersToProcess = results.slice(1);
+        }
+
+        if (followersToProcess.length > 0) {
+          allFollowers.push(...followersToProcess);
+        }
+
         if (results.length < limit) {
-          moreFollowers = false;
+          break;
         }
+
+        start = results[results.length - 1].follower;
       } catch (error) {
-        moreFollowers = false;
         throw error;
       }
     }
+
     return allFollowers;
   }
-
   async getAccountFollowing(account: string): Promise<Hive.AccountFollowing> {
     const params = { account };
     return await this.extendedHiveChain!.api.condenser_api.get_following(

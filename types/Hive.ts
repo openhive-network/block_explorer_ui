@@ -336,6 +336,7 @@ namespace Hive {
     direction?: Hive.Direction;
     "page-size"?: number;
     "page"?: number;
+    "voter-name"?:string;
   }
 
   export class Voter {
