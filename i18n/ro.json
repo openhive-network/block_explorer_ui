@@ -715,5 +715,8 @@
     "votesHistoryDialog.votes": "Voturi",
     "votesHistoryDialog.approve": "Aprobă",
     "votesİistoryDialog.disapprove": "Dezaprobă", 
-    "common.vestsChange": "Modificare Vests"
+    "common.vestsChange": "Modificare Vests",
+    "jsonUtils.malformedJson": "JSON malformat",
+    "jsonUtils.info": "Informații",
+    "jsonUtils.emptyString": "Șir gol furnizat"
 }

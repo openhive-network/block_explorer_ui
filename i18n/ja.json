@@ -715,5 +715,8 @@
   "votesHistoryDialog.votes": "投票",
   "votesHistoryDialog.approve": "承認",
   "votesHistoryDialog.disapprove": "不承認",
-  "common.vestsChange": "Vestsの変更"
+  "common.vestsChange": "Vestsの変更",
+  "jsonUtils.malformedJson": "不正なJSON",
+  "jsonUtils.info": "情報",
+  "jsonUtils.emptyString": "空の文字列が提供されました"
 }
