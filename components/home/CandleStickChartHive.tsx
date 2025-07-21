@@ -43,7 +43,7 @@ const CustomTooltip = ({
   active?: boolean;
   payload?: any[];
 }) => {
-   const { t, locale } = useI18n();
+  const { t, locale } = useI18n();
 
   if (active && payload && payload.length) {
     return (
@@ -53,14 +53,27 @@ const CustomTooltip = ({
             payload: { openTime, tooltipDate, high, low, openClose, volume },
           }) => {
             return (
-            <div key={openTime}>
-              <p>{t("customShapeBarChart.open")}: ${openClose[0].toFixed(4)}</p>
-              <p>{t("customShapeBarChart.close")}: ${openClose[1].toFixed(4)}</p>
-              <p>{t("customShapeBarChart.high")}: ${high.toFixed(4)}</p>
-              <p>{t("customShapeBarChart.low")}: ${low.toFixed(4)}</p>
-                <p>{t("marketHistoryChart.volume")}: {volume.toLocaleString("en-US")} HIVE</p>
-              <p>{t("marketHistoryChart.date")}: {tooltipDate}</p>
-            </div>
+              <div key={openTime}>
+                <p>
+                  {t("customShapeBarChart.open")}: ${openClose[0].toFixed(4)}
+                </p>
+                <p>
+                  {t("customShapeBarChart.close")}: ${openClose[1].toFixed(4)}
+                </p>
+                <p>
+                  {t("customShapeBarChart.high")}: ${high.toFixed(4)}
+                </p>
+                <p>
+                  {t("customShapeBarChart.low")}: ${low.toFixed(4)}
+                </p>
+                <p>
+                  {t("marketHistoryChart.volume")}:{" "}
+                  {volume.toLocaleString("en-US")} HIVE
+                </p>
+                <p>
+                  {t("marketHistoryChart.date")}: {tooltipDate}
+                </p>
+              </div>
             );
           }
         )}
@@ -182,19 +195,19 @@ const CustomShapeBarChart: React.FC<CandleStickChartProps> = ({ data }) => {
           dataKey="openClose"
           domain={[minValue, maxValue]}
           stroke={strokeColor}
-          orientation={isRTL ? 'right' : 'left'}
+          orientation={isRTL ? "right" : "left"}
         />
         <Tooltip content={<CustomTooltip />} />
         <Legend
           verticalAlign="top"
           height={36}
-          align={isRTL ? 'right' : 'left'}
+          align={isRTL ? "right" : "left"}
         />
         <Bar
           name={`${t("marketHistoryChart.hivePrice")}: $${lastHivePrice ?? 0}`}
           dataKey="openClose"
           fill={colorMap.HIVE}
-          shape={Candlestick}
+          shape={(props: any) => <Candlestick {...props} />}
         />
         <Brush
           data={chartData}

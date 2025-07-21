@@ -28,6 +28,7 @@ const prepareData = (operations: Operation[]) => {
       balance_change: number;
       savings_balance: number | undefined;
       savings_balance_change: number | undefined;
+      hivePrice: string;
     }
   >();
 
@@ -41,11 +42,14 @@ const prepareData = (operations: Operation[]) => {
     let savings_balance_change =
       operation.balance.savings_balance -
       operation.prev_balance.savings_balance;
+    let hivePrice = operation.hivePrice;
+
     aggregatedData.set(operation.date, {
       balance,
       balance_change,
       savings_balance,
       savings_balance_change,
+      hivePrice,
     });
   });
 
@@ -56,6 +60,7 @@ const prepareData = (operations: Operation[]) => {
       balance_change: data.balance_change,
       savings_balance: data.savings_balance,
       savings_balance_change: data.savings_balance_change,
+      hivePrice: data.hivePrice,
     })
   );
 
