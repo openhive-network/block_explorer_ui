@@ -64,7 +64,10 @@ export const getOperationColor = (operationType: string) => {
   return color;
 };
 
-const getOneLineDescription = (operation: Explorer.OperationForTable, t: (key: string) => string) => {
+const getOneLineDescription = (
+  operation: Explorer.OperationForTable,
+  t: (key: string) => string
+) => {
   const { value } = operation?.operation;
   if (typeof value === "string" || React.isValidElement(value)) return value;
   if (operation.operation.type === "custom_json_operation")
@@ -174,11 +177,16 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
       // Replace multiple spaces with single space
       contentString = contentString.replace(/\s+/g, " ");
 
-     return {
-        [t("operationsTable.block")]: operation.blockNumber?.toLocaleString() || "",
+      return {
+        [t("operationsTable.block")]:
+          operation.blockNumber?.toLocaleString() || "",
         [t("operationsTable.transaction")]: operation.trxId?.slice(0, 10) || "",
-        [t("operationsTable.date")]: formatAndDelocalizeTime(operation.timestamp),
-        [t("operationsTable.operation")]: getOperationTypeForDisplay(operation.operation?.type),
+        [t("operationsTable.date")]: formatAndDelocalizeTime(
+          operation.timestamp
+        ),
+        [t("operationsTable.operation")]: getOperationTypeForDisplay(
+          operation.operation?.type
+        ),
         [t("operationsTable.content")]: contentString,
       };
     });
@@ -211,7 +219,9 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
             <TableHeader>
               <TableRow rowVariant="header">
                 <TableHead stickyLeft></TableHead>
-                <TableHead stickyLeft={50}>{t("operationsTable.block")}</TableHead>
+                <TableHead stickyLeft={50}>
+                  {t("operationsTable.block")}
+                </TableHead>
                 <TableHead>{t("operationsTable.transaction")}</TableHead>
                 <TableHead>{t("operationsTable.date")}</TableHead>
                 <TableHead>{t("common.operations")}</TableHead>
@@ -381,13 +391,14 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                           <TableCell
                             data-testid="details"
                             colSpan={7}
-                            className="py-2"
+                            className="py-2 break-all"
                           >
                             <JSONView
                               json={safelyParseJson(
                                 getOperationValues(operation.operation).json ||
-                                  ""
-                              ,t)}
+                                  "",
+                                t
+                              )}
                               skipCopy
                             />
                           </TableCell>
