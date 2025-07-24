@@ -81,7 +81,7 @@ const StatCard = ({
       }}
     >
       <div className="text-explorer-orange mb-1">{icon}</div>
-      <div className="mb-1 text-base font-bold text-explorer-dark-gray dark:text-white h-6 flex items-center">
+      <div className="mb-1 text-base font-bold text-explorer-dark-gray dark:text-white min-h-[1.5rem] flex items-center justify-center">
         {value}
       </div>
       <p className="text-[10px] text-explorer-light-gray dark:text-white uppercase font-semibold tracking-wider">
@@ -252,7 +252,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(90px,1fr))] gap-3">
           <StatCard
             icon={<UserPlus size={20} />}
             label={t("accountMainCard.followers")}
@@ -312,7 +312,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
             {t("accountMainCard.resourcesHeader")}
           </h3>
           {!!manabarsData ? (
-            <div className="flex items-center justify-around gap-2">
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(80px,1fr))] justify-items-center gap-4">
               <RadialProgress
                 size={70}
                 strokeWidth={6}
