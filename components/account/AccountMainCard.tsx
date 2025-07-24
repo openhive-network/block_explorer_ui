@@ -252,7 +252,8 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
           </div>
         </div>
 
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(90px,1fr))] gap-3">
+        {/* --- THIS IS THE CHANGED LINE --- */}
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(110px,1fr))] gap-3">
           <StatCard
             icon={<UserPlus size={20} />}
             label={t("accountMainCard.followers")}
