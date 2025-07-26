@@ -84,9 +84,6 @@ const AccountSubscriptionsDialog: React.FC<SubscriptionsDialogProps> = ({
     return processedSubscriptions.allFiltered.map((community) => ({
       [t("accountSubscriptionsDialog.communityID")]: community.id,
       [t("accountSubscriptionsDialog.communityHeader")]: community.name,
-      [t(
-        "accountSubscriptionsDialog.communityUrl"
-      )]: `https://hive.blog/trending/${community.id}`,
     }));
   };
 
@@ -180,7 +177,7 @@ const AccountSubscriptionsDialog: React.FC<SubscriptionsDialogProps> = ({
                         <TableRow key={community.id}>
                           <TableCell>
                             <Link
-                              href={`https://hive.blog/trending/${community.id}`}
+                              href={`/@${community.id}`}
                               className="flex items-center space-x-4 py-1 text-link hover:underline"
                               target="_blank"
                             >

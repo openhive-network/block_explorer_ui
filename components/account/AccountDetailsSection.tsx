@@ -21,12 +21,15 @@ import { useI18n } from "@/i18n/i18n";
 import AccountFollowersDialog from "./AccountFollowersDialog";
 import AccountFollowingDialog from "./AccountFollowingDialog";
 import AccountSubscriptionsDialog from "./AccountSubscriptionsDialog";
+import Hive from "@/types/Hive";
+import CommunityMainCard from "./CommunityMainCard";
 
 interface AccountDetailsSectionProps {
   accountName: string;
   liveDataEnabled: boolean;
   changeLiveRefresh: () => void;
   accountDetails?: Explorer.FormattedAccountDetails;
+  communityDetails?: Hive.CommunityDetails;
   dynamicGlobalData?: Explorer.HeadBlockCardData;
 }
 
@@ -35,6 +38,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
   liveDataEnabled,
   changeLiveRefresh,
   accountDetails,
+  communityDetails,
   dynamicGlobalData,
 }) => {
   const { t } = useI18n();
@@ -72,21 +76,46 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
     return;
   }
 
+  const isCommunity = !!communityDetails;
+
   return (
     <>
-      <AccountMainCard
-        accountDetails={accountDetails}
-        accountName={accountName}
-        openVotersModal={handleOpenVotersModal}
-        openVotesHistoryModal={handleOpenVotesHistoryModal}
-        openFollowersModal={handleOpenAccountFollowersModal}
-        openFollowingModal={handleOpenAccountFollowingModal}
-        openSubscriptionsModal={handleOpenAccountSubscriptionModal}
-        isWitnessError={isWitnessDetailsError}
-        isWitnessLoading={isWitnessDetailsLoading}
-        liveDataEnabled={liveDataEnabled}
-        changeLiveRefresh={changeLiveRefresh}
-      />
+      {isCommunity ? (
+        <>
+          <CommunityMainCard
+            communityDetails={communityDetails}
+            accountDetails={accountDetails}
+            liveDataEnabled={liveDataEnabled}
+            changeLiveRefresh={changeLiveRefresh}
+          />
+          <AccountMainCard
+            isForCommunity={true}
+            accountDetails={accountDetails}
+            accountName={accountName}
+            openVotersModal={handleOpenVotersModal}
+            openVotesHistoryModal={handleOpenVotesHistoryModal}
+            openFollowersModal={handleOpenAccountFollowersModal}
+            openFollowingModal={handleOpenAccountFollowingModal}
+            openSubscriptionsModal={handleOpenAccountSubscriptionModal}
+            liveDataEnabled={liveDataEnabled}
+            changeLiveRefresh={changeLiveRefresh}
+          />
+        </>
+      ) : (
+        <AccountMainCard
+          accountDetails={accountDetails}
+          accountName={accountName}
+          openVotersModal={handleOpenVotersModal}
+          openVotesHistoryModal={handleOpenVotesHistoryModal}
+          openFollowersModal={handleOpenAccountFollowersModal}
+          openFollowingModal={handleOpenAccountFollowingModal}
+          openSubscriptionsModal={handleOpenAccountSubscriptionModal}
+         isWitnessError={isWitnessDetailsError}
+         isWitnessLoading={isWitnessDetailsLoading}
+          liveDataEnabled={liveDataEnabled}
+          changeLiveRefresh={changeLiveRefresh}
+        />
+        )}
       <AccountBalanceCard
         header={t("accountDetailsSection.wallet")}
         userDetails={accountDetails}

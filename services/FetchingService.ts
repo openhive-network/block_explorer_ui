@@ -47,6 +47,17 @@ export type ExplorerNodeApi = {
       { account: string },
       Hive.AccountSubscriptions
     >; 
+     get_community: TWaxApiRequest<
+      { name: string; observer?: string },
+      Hive.CommunityDetails
+    >;
+     list_subscribers: TWaxApiRequest<
+      {
+        community: string; last?: string; limit: number;
+      },
+      Hive.CommunitySubscribers
+    >;
+
   };
   market_history_api: {
     get_market_history: TWaxApiRequest<
@@ -617,7 +628,19 @@ async getAccountFollowers(account: string): Promise<Hive.AccountFollower[]> {
     );
   }
 
+  async getCommunityDetails(name: string): Promise<Hive.CommunityDetails> {
+    const params = { name };
+    return await this.extendedHiveChain!.api.bridge.get_community(
+      params
+    );
+  }
 
+  async getCommunitySubscribers(community: string, last: string | undefined, limit: number): Promise<Hive.CommunitySubscribers> {
+    const params = { community, last, limit };
+    return await this.extendedHiveChain!.api.bridge.list_subscribers(
+      params
+    );
+  }
 }
 
 const fetchingService = new FetchingService();

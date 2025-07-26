@@ -999,6 +999,52 @@ namespace Hive {
     toDate:  Date | undefined;
     page: number | undefined;
   }
+
+  export class CommunityDetails {
+    id!: number;
+    name!: string;
+    title!: string;
+    about!: string;
+    lang!: string;
+    type_id!: number;
+    is_nsfw!: boolean;
+    subscribers!: number;
+    sum_pending!: number;
+    num_pending!: number;
+    num_authors!: number;
+    created_at!: string;
+    admins!: string[];
+    team!: CommunityTeamMember[];
+    description!: string;
+    flag_text!: string;
+  }
+
+  export class CommunityTeamMember {
+    name!: string;
+    role!: "admin" | "mod" | "member";
+    title!: string;
+    
+  }
+
+  export class CommunityStats {
+    posts!: number;
+    comments!: number;
+    authors!: number;
+    payouts!: number;
+    pending!: number;
+    subscribers!: number;
+  }
+
+  export class CommunitySubscribers 
+  {
+    subscribers!: CommunitySubscriber[];
+  }
+
+  export class CommunitySubscriber 
+  {
+    name!: string;
+    created_at!: string;
+  }
 }
 
 export default Hive;

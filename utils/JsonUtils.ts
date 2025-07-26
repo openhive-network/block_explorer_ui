@@ -14,7 +14,6 @@
 type TFunction = (key: string) => string;
 
 export function safelyParseJson(data: any, t: TFunction): object {
-    console.log('t',t);
   if (typeof data !== "string") {
     if (typeof data === "object" && data !== null) {
       return data;

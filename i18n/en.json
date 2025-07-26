@@ -225,6 +225,8 @@
   "accountMainCard.votesHistory": "Votes History",
   "accountMainCard.totalPostsTooltip": "Total number of posts and comments made by the user.",
   "accountMainCard.lastActiveTooltip": "The last time the user published a post or a comment.",
+  "AccountMainCard.never": "No Activity",
+  "AccountMainCard.creatorTooltip": "Statistics and details for the account that created this community.",
   "accountBalanceHistoryCard.fullChart": "Full Chart",
   "accountBalanceHistoryCard.error": "Error loading balance information.",
   "balanceHistoryChart.savingsBalance": "Savings Balance",
@@ -718,5 +720,23 @@
   "common.vestsChange": "Vests Change",
   "jsonUtils.malformedJson": "Malformed JSON",
   "jsonUtils.info": "Info",
-  "jsonUtils.emptyString": "Empty string provided"
+  "jsonUtils.emptyString": "Empty string provided",
+  "communityCard.subscribers": "Subscribers",
+  "communityCard.pendingRewards": "Pending Rewards",
+  "communityCard.activeAuthors": "Active Users",
+  "communityCard.pendingPosts": "Posts",
+  "communityCard.created": "Created",
+  "communityCard.description": "Description",
+  "communityCard.rules": "Rules & Guidelines",
+  "communityCard.team": "Team",
+  "communityCard.roleAdmin": "Admin",
+  "communityCard.roleMod": "Moderator",
+  "communityCard.roleMember": "Member",
+  "communityCard.roleOwner": "Owner",
+  "communityCard.community": "Community",
+  "CommunitySubscribersDialog.title": "Subscribers",
+  "CommunitySubscribersDialog.error": "Failed to load subscribers",
+  "CommunitySubscribersDialog.noResults": "No subscribers found",
+  "CommunitySubscribersDialog.noMoreResults": "No more subscribers to show"
+
 }

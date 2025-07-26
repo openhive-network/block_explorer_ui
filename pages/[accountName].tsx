@@ -14,8 +14,8 @@ import MobileAccountNameCard from "@/components/account/MobileAccountNameCard";
 import { Button } from "@/components/ui/button";
 import AccountOperationViewTabs from "@/components/account/tabs/AccountOperationViewTabs";
 import { AccountTabsProvider } from "@/contexts/TabsContext";
-import moment from "moment";
 import { useI18n } from "@/i18n/i18n";
+import useCommunity from "@/hooks/api/accountPage/useCommunity";
 
 export interface AccountSearchParams {
   accountName?: string | undefined;
@@ -70,10 +70,18 @@ export default function Account() {
   const { dynamicGlobalData } = useDynamicGlobal();
   const { formattedAccountDetails: accountDetails, notFound, isAccountDetailsLoading} =
     useConvertedAccountDetails(
-      accountNameFromRoute,
-      liveDataEnabled,
-      dynamicGlobalData
-    );
+    accountNameFromRoute,
+    liveDataEnabled,
+    dynamicGlobalData
+  );
+
+  //Check if the account name is a community
+  const isCommunityAccount = accountNameFromRoute?.startsWith("hive-");
+  const { communityDetails } = useCommunity(
+    isCommunityAccount && !isAccountDetailsLoading && !notFound
+      ? accountNameFromRoute
+      : null
+  );
 
   const renderAccountDetailsView = () => {
     if (isMobile) {
@@ -107,6 +115,7 @@ export default function Account() {
               liveDataEnabled={liveDataEnabled}
               changeLiveRefresh={changeLiveRefresh}
               accountDetails={accountDetails}
+              communityDetails={communityDetails}
               dynamicGlobalData={dynamicGlobalData}
             />
           </div>
@@ -120,6 +129,7 @@ export default function Account() {
             liveDataEnabled={liveDataEnabled}
             changeLiveRefresh={changeLiveRefresh}
             accountDetails={accountDetails}
+            communityDetails={communityDetails}
             dynamicGlobalData={dynamicGlobalData}
           />
         </div>
@@ -153,12 +163,13 @@ export default function Account() {
   return (
     <AccountTabsProvider>
       <Head>
-        <title>@{accountNameFromRoute} - Hive Explorer</title>
+        <title>@{communityDetails?.title ? communityDetails?.title : accountNameFromRoute} - Hive Explorer</title>
       </Head>
       <div className="grid grid-cols-1 md:grid-cols-3 text-white page-container gap-4">
         {isMobile && (
           <MobileAccountNameCard
             accountName={accountNameFromRoute}
+            communityName={communityDetails?.title}
             liveDataEnabled={liveDataEnabled}
             accountDetails={accountDetails}
           />
