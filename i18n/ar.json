@@ -737,5 +737,21 @@
   "CommunitySubscribersDialog.title": "المشتركون",
   "CommunitySubscribersDialog.error": "فشل تحميل المشتركين",
   "CommunitySubscribersDialog.noResults": "لم يتم العثور على مشتركين",
-  "CommunitySubscribersDialog.noMoreResults": "لا يوجد المزيد من المشتركين لعرضهم"
+  "CommunitySubscribersDialog.noMoreResults": "لا يوجد المزيد من المشتركين لعرضهم",
+  "communityCard.avatarAlt": "الصورة الرمزية لـ {title}",
+  "communityCard.viewSubscribersTitle": "عرض المشتركين",
+  "communityCard.subscribersLabel": "مشتركون",
+  "communityCard.authorsLabel": "مؤلفون",
+  "communityCard.nsfwLabel": "للبالغين",
+  "communitiesPage.errorMessage": "فشل تحميل المجتمعات. يرجى المحاولة مرة أخرى لاحقًا.",
+  "communitiesPage.noResults": "لم يتم العثور على مجتمعات تطابق معاييرك.",
+  "communitiesPage.title": "المجتمعات",
+  "communitiesPage.endOfResults": "لقد وصلت إلى نهاية القائمة.",
+  "pageTitle.communities": "المجتمعات",
+  "communityControls.searchPlaceholder": "ابحث عن مجتمعات...",
+  "communityControls.sortByRank": "حسب الترتيب",
+  "communityControls.sortBySubscribers": "حسب المشتركين",
+  "communityControls.sortByNewest": "حسب الأحدث",
+  "home.topCommunities": "أفضل المجتمعات",
+  "home.noTopCommunitiesFound": "لم يتم العثور على أفضل المجتمعات."
 }

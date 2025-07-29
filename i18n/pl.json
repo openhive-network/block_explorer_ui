@@ -737,5 +737,21 @@
   "CommunitySubscribersDialog.title": "Subskrybenci",
   "CommunitySubscribersDialog.error": "Nie udało się załadować subskrybentów",
   "CommunitySubscribersDialog.noResults": "Nie znaleziono subskrybentów",
-  "CommunitySubscribersDialog.noMoreResults": "Brak dalszych subskrybentów do wyświetlenia"
+  "CommunitySubscribersDialog.noMoreResults": "Brak dalszych subskrybentów do wyświetlenia",
+  "communityCard.avatarAlt": "Awatar dla {title}",
+  "communityCard.viewSubscribersTitle": "Zobacz subskrybentów",
+  "communityCard.subscribersLabel": "Subskrybenci",
+  "communityCard.authorsLabel": "Autorzy",
+  "communityCard.nsfwLabel": "Dla dorosłych",
+  "communitiesPage.errorMessage": "Nie udało się załadować społeczności. Spróbuj ponownie później.",
+  "communitiesPage.noResults": "Nie znaleziono społeczności pasujących do Twoich kryteriów.",
+  "communitiesPage.title": "Społeczności",
+  "communitiesPage.endOfResults": "Osiągnięto koniec listy.",
+  "pageTitle.communities": "Społeczności",
+  "communityControls.searchPlaceholder": "Szukaj społeczności...",
+  "communityControls.sortByRank": "Według rankingu",
+  "communityControls.sortBySubscribers": "Według subskrybentów",
+  "communityControls.sortByNewest": "Według najnowszych",
+  "home.topCommunities": "Najlepsze Społeczności",
+  "home.noTopCommunitiesFound": "Nie znaleziono najlepszych społeczności."
 }

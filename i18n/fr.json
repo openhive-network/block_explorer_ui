@@ -736,5 +736,21 @@
   "CommunitySubscribersDialog.title": "Abonnés",
   "CommunitySubscribersDialog.error": "Échec du chargement des abonnés",
   "CommunitySubscribersDialog.noResults": "Aucun abonné trouvé",
-  "CommunitySubscribersDialog.noMoreResults": "Plus d'abonnés à afficher"
+  "CommunitySubscribersDialog.noMoreResults": "Plus d'abonnés à afficher",
+  "communityCard.avatarAlt": "Avatar pour {title}",
+  "communityCard.viewSubscribersTitle": "Voir les abonnés",
+  "communityCard.subscribersLabel": "Abonnés",
+  "communityCard.authorsLabel": "Auteurs",
+  "communityCard.nsfwLabel": "Contenu adulte",
+  "communitiesPage.errorMessage": "Échec du chargement des communautés. Veuillez réessayer plus tard.",
+  "communitiesPage.noResults": "Aucune communauté ne correspond à vos critères.",
+  "communitiesPage.title": "Communautés",
+  "communitiesPage.endOfResults": "Vous avez atteint la fin de la liste.",
+  "pageTitle.communities": "Communautés",
+  "communityControls.searchPlaceholder": "Rechercher des communautés...",
+  "communityControls.sortByRank": "Par Classement",
+  "communityControls.sortBySubscribers": "Par Abonnés",
+  "communityControls.sortByNewest": "Par Nouveauté",
+  "home.topCommunities": "Top Communautés",
+  "home.noTopCommunitiesFound": "Aucune top communauté trouvée."
 }

@@ -732,5 +732,21 @@
   "CommunitySubscribersDialog.title": "Iscritti",
   "CommunitySubscribersDialog.error": "Caricamento iscritti non riuscito",
   "CommunitySubscribersDialog.noResults": "Nessun iscritto trovato",
-  "CommunitySubscribersDialog.noMoreResults": "Nessun altro iscritto da mostrare"
+  "CommunitySubscribersDialog.noMoreResults": "Nessun altro iscritto da mostrare",
+  "communityCard.avatarAlt": "Avatar per {title}",
+  "communityCard.viewSubscribersTitle": "Visualizza iscritti",
+  "communityCard.subscribersLabel": "Iscritti",
+  "communityCard.authorsLabel": "Autori",
+  "communityCard.nsfwLabel": "Per adulti",
+  "communitiesPage.errorMessage": "Caricamento delle community non riuscito. Riprova più tardi.",
+  "communitiesPage.noResults": "Nessuna community trovata che corrisponda ai tuoi criteri.",
+  "communitiesPage.title": "Community",
+  "communitiesPage.endOfResults": "Hai raggiunto la fine dell'elenco.",
+  "pageTitle.communities": "Community",
+  "communityControls.searchPlaceholder": "Cerca community...",
+  "communityControls.sortByRank": "Per Posizione",
+  "communityControls.sortBySubscribers": "Per Iscritti",
+  "communityControls.sortByNewest": "Per Più recenti",
+  "home.topCommunities": "Comunità Migliori",
+  "home.noTopCommunitiesFound": "Nessuna comunità migliore trovata."
 }

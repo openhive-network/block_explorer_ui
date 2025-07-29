@@ -1045,6 +1045,28 @@ namespace Hive {
     name!: string;
     created_at!: string;
   }
+
+  export class CommunityList {
+    [key: string]: CommunityListItem;
+
+  }
+  export class CommunityListItem {
+    id!: number;
+    name!: string;
+    title!: string;
+    about!: string;
+    avatar_url!: string;
+    lang!: string;
+    type_id!: number;
+    is_nsfw!: boolean;
+    subscribers!: number;
+    sum_pending!: number;
+    num_pending!: number;
+    num_authors!: number;
+    created_at!: string;
+    admins!: string[];
+  }
+
 }
 
 export default Hive;

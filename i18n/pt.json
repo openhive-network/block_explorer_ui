@@ -737,5 +737,21 @@
   "CommunitySubscribersDialog.title": "Inscritos",
   "CommunitySubscribersDialog.error": "Falha ao carregar inscritos",
   "CommunitySubscribersDialog.noResults": "Nenhum inscrito encontrado",
-  "CommunitySubscribersDialog.noMoreResults": "Não há mais inscritos para mostrar"
+  "CommunitySubscribersDialog.noMoreResults": "Não há mais inscritos para mostrar",
+  "communityCard.avatarAlt": "Avatar de {title}",
+  "communityCard.viewSubscribersTitle": "Ver inscritos",
+  "communityCard.subscribersLabel": "Inscritos",
+  "communityCard.authorsLabel": "Autores",
+  "communityCard.nsfwLabel": "Conteúdo Adulto",
+  "communitiesPage.errorMessage": "Falha ao carregar as comunidades. Por favor, tente novamente mais tarde.",
+  "communitiesPage.noResults": "Nenhuma comunidade encontrada com base nos seus critérios.",
+  "communitiesPage.title": "Comunidades",
+  "communitiesPage.endOfResults": "Você chegou ao fim da lista.",
+  "pageTitle.communities": "Comunidades",
+  "communityControls.searchPlaceholder": "Procurar comunidades...",
+  "communityControls.sortByRank": "Por Posição",
+  "communityControls.sortBySubscribers": "Por Inscritos",
+  "communityControls.sortByNewest": "Por Mais recentes",
+  "home.topCommunities": "Principais Comunidades",
+  "home.noTopCommunitiesFound": "Nenhuma comunidade principal encontrada."
 }

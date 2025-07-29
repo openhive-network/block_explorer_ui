@@ -737,5 +737,21 @@
   "CommunitySubscribersDialog.title": "Abonnenten",
   "CommunitySubscribersDialog.error": "Laden der Abonnenten fehlgeschlagen",
   "CommunitySubscribersDialog.noResults": "Keine Abonnenten gefunden",
-  "CommunitySubscribersDialog.noMoreResults": "Keine weiteren Abonnenten zum Anzeigen"
+  "CommunitySubscribersDialog.noMoreResults": "Keine weiteren Abonnenten zum Anzeigen",
+  "communityCard.avatarAlt": "Avatar für {title}",
+  "communityCard.viewSubscribersTitle": "Abonnenten anzeigen",
+  "communityCard.subscribersLabel": "Abonnenten",
+  "communityCard.authorsLabel": "Autoren",
+  "communityCard.nsfwLabel": "Nicht jugendfrei",
+  "communitiesPage.errorMessage": "Laden der Communitys fehlgeschlagen. Bitte versuchen Sie es später erneut.",
+  "communitiesPage.noResults": "Keine Communitys gefunden, die Ihren Kriterien entsprechen.",
+  "communitiesPage.title": "Communitys",
+  "communitiesPage.endOfResults": "Sie haben das Ende der Liste erreicht.",
+  "pageTitle.communities": "Communitys",
+  "communityControls.searchPlaceholder": "Suche nach Communitys...",
+  "communityControls.sortByRank": "Nach Rang",
+  "communityControls.sortBySubscribers": "Nach Abonnenten",
+  "communityControls.sortByNewest": "Nach Neueste",
+  "home.topCommunities": "Top-Gemeinschaften",
+  "home.noTopCommunitiesFound": "Keine Top-Gemeinschaften gefunden."
 }

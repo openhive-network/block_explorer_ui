@@ -737,5 +737,21 @@
   "CommunitySubscribersDialog.title": "購読者",
   "CommunitySubscribersDialog.error": "購読者の読み込みに失敗しました",
   "CommunitySubscribersDialog.noResults": "購読者が見つかりません",
-  "CommunitySubscribersDialog.noMoreResults": "表示する購読者はこれ以上ありません"
+  "CommunitySubscribersDialog.noMoreResults": "表示する購読者はこれ以上ありません",
+  "communityCard.avatarAlt": "{title}のアバター",
+  "communityCard.viewSubscribersTitle": "購読者を表示",
+  "communityCard.subscribersLabel": "購読者",
+  "communityCard.authorsLabel": "作成者",
+  "communityCard.nsfwLabel": "閲覧注意",
+  "communitiesPage.errorMessage": "コミュニティの読み込みに失敗しました。後でもう一度お試しください。",
+  "communitiesPage.noResults": "基準に一致するコミュニティが見つかりませんでした。",
+  "communitiesPage.title": "コミュニティ",
+  "communitiesPage.endOfResults": "リストの最後まで到達しました。",
+  "pageTitle.communities": "コミュニティ",
+  "communityControls.searchPlaceholder": "コミュニティを検索...",
+  "communityControls.sortByRank": "ランク順",
+  "communityControls.sortBySubscribers": "購読者数順",
+  "communityControls.sortByNewest": "新着順",
+  "home.topCommunities": "トップコミュニティ",
+  "home.noTopCommunitiesFound": "トップコミュニティが見つかりませんでした。"
 }

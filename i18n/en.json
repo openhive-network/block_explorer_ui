@@ -737,6 +737,21 @@
   "CommunitySubscribersDialog.title": "Subscribers",
   "CommunitySubscribersDialog.error": "Failed to load subscribers",
   "CommunitySubscribersDialog.noResults": "No subscribers found",
-  "CommunitySubscribersDialog.noMoreResults": "No more subscribers to show"
-
+  "CommunitySubscribersDialog.noMoreResults": "No more subscribers to show",
+  "communityCard.avatarAlt": "Avatar for ",
+  "communityCard.viewSubscribersTitle": "View subscribers",
+  "communityCard.subscribersLabel": "Subscribers",
+  "communityCard.authorsLabel": "Authors",
+  "communityCard.nsfwLabel": "NSFW",
+  "communitiesPage.errorMessage": "Failed to load communities. Please try again later.",
+  "communitiesPage.noResults": "No communities found matching your criteria.",
+  "communitiesPage.title": "Communities",
+  "communitiesPage.endOfResults": "You've reached the end of the list.",
+  "pageTitle.communities": "Communities",
+  "communityControls.searchPlaceholder": "Search for communities...",
+  "communityControls.sortByRank": "By Rank",
+  "communityControls.sortBySubscribers": "By Subscribers",
+  "communityControls.sortByNewest": "By Newest",
+  "home.topCommunities": "Top Communities",
+  "home.noTopCommunitiesFound": "No top communities found."
 }
