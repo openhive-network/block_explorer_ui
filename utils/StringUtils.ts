@@ -137,7 +137,7 @@ export const changeHBDToDollarsDisplay = (hbd: string): string => {
  */
 export const grabNumericValue = (str: string): number => {
   // 1. Remove all non-numeric characters EXCEPT the decimal point (period or comma).
-  const cleaned = str.replace(/[^0-9.,-]/g, "");
+  const cleaned = str?.replace(/[^0-9.,-]/g, "");
 
   // 2. Handle negative sign: Keep only the first one (if present) and make sure it's at the beginning.
   let negative = "";

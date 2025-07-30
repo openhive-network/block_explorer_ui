@@ -150,18 +150,21 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
   );
 
   const getDollarValue = useCallback(
-    (hivePrice: string | undefined, balance: number, vests: string) => {
+    (
+      hivePriceStr: string | undefined,
+      balance: number,
+      vests: string
+    ): number | string | undefined => {
+      const hivePrice = Number(hivePriceStr ?? 0);
+
       switch (selectedCoinType) {
         case "HIVE":
-          return (
-            Number(hivePrice) * grabNumericValue(formatNumber(balance, false))
-          );
+          return hivePrice * balance;
         case "HBD":
-          return grabNumericValue(formatNumber(balance, false));
+          return balance;
         case "VESTS":
-          return grabNumericValue(
-            formatNumber(grabNumericValue(vests ?? ""), false)
-          );
+          const result = grabNumericValue(vests ?? "") * hivePrice;
+          return result;
         default:
           return undefined;
       }
@@ -265,7 +268,10 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
 
           {dollarValue ? (
             <div style={{ color: colorMap.DOLLAR }}>
-              Dollar Value: ${dollarValue.toFixed(4)}
+              Dollar Value: $
+              {selectedCoinType === "VESTS"
+                ? Number(dollarValue).toFixed(2)
+                : formatNumber(dollarValue, false)}
             </div>
           ) : null}
         </div>
@@ -339,6 +345,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     data: {
       balance: number;
       savings_balance?: number;
+      dollarValue: string | number | undefined;
     }[]
   ) => {
     if (!data || data.length === 0) {
@@ -346,6 +353,12 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     }
 
     let allValues: number[] = data.map((item) => item.balance);
+
+    const dollarValues = data
+      .map((item) => item.dollarValue)
+      .filter((v): v is number => typeof v === "number" && !Number.isNaN(v));
+
+    allValues = allValues.concat(dollarValues);
     if (showSavingsBalance == "yes" && selectedCoinType !== "VESTS") {
       const savingsValues = data
         .map((item) => item.savings_balance)

@@ -225,21 +225,20 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
     }
   };
 
-  const getDollarValue = (coin: string, balance: number, hivePrice: string) => {
+  const getDollarValue = (coin: string, balance: number, hivePrice: number) => {
     if (coin === "HIVE") {
-      return Number(hivePrice) * grabNumericValue(formatNumber(balance, false));
+      return hivePrice * balance;
     }
     if (coin === "HBD") {
-      return grabNumericValue(formatNumber(balance, false));
+      return balance;
     }
     if (coin === "VESTS") {
-      return grabNumericValue(
-        formatNumber(
-          grabNumericValue(vestsToHive(String(balance)) ?? ""),
-          false
-        )
-      );
-    } else return null;
+      const vests = vestsToHive(String(balance));
+
+      const convertToNumber = grabNumericValue(String(vests));
+      const result = convertToNumber * hivePrice;
+      return result.toFixed(2);
+    } else return undefined;
   };
 
   return (
@@ -297,13 +296,18 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
               {operations.map((operation, index) => {
                 const operationBgColor = getOperationColor(operation.opTypeId);
                 const isExpanded = expandedRow === operation.operationId;
-
-                const hivePrice = operation.hivePrice;
+                // console.log(operation);
+                const hivePrice = Number(operation.hivePrice);
                 const dollarValue = getDollarValue(
                   coinName as string,
                   operation.balance,
                   hivePrice
                 );
+
+                const showDollarValueByCoin =
+                  coinName === "VESTS"
+                    ? dollarValue
+                    : formatNumber(dollarValue as number, false);
 
                 return (
                   <React.Fragment key={index}>
@@ -376,9 +380,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
                         {formatRawCoin(operation.balance)} {coinName}
                       </TableCell>
 
-                      <TableCell>
-                        {dollarValue ? `$${dollarValue?.toFixed(3)}` : "0"}
-                      </TableCell>
+                      <TableCell>${showDollarValueByCoin}</TableCell>
                       <TableCell>
                         <button
                           onClick={() => handleRowClick(operation.operationId)}
