@@ -31,6 +31,7 @@ export const config = {
   marketHistoryRefreshInterval: 60000,
   lastBlocksForWidget: 20,
   firstBlockTime: "2016-03-24T16:05:00",
+  popularCommunitiesCount: 10,
   precisions: {
     vests: 6,
     hivePower: 3,

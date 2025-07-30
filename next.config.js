@@ -9,8 +9,28 @@ const nextConfig = {
         hostname: 'images.hive.blog',
         pathname: '**',
       },
+      {
+        protocol: 'https',
+        hostname: 'files.steempeak.com',
+        pathname: '**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'files.peakd.com',
+        pathname: '**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.ecency.com',
+        pathname: '**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.leofinance.io',
+        pathname: '**',
+      },
     ],
-},
-}
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

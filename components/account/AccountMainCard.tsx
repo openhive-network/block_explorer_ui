@@ -12,6 +12,7 @@ import {
   Building2,
   UserPlus,
   UserCheck,
+  Info,
 } from "lucide-react";
 import Image from "next/image";
 import Explorer from "@/types/Explorer";
@@ -48,6 +49,7 @@ interface AccountMainCardProps {
   openSubscriptionsModal: () => void;
   liveDataEnabled: boolean;
   changeLiveRefresh: () => void;
+  isForCommunity?: boolean;
 }
 
 const StatCard = ({
@@ -81,7 +83,7 @@ const StatCard = ({
       }}
     >
       <div className="text-explorer-orange mb-1">{icon}</div>
-      <div className="mb-1 text-base font-bold text-explorer-dark-gray dark:text-white h-6 flex items-center">
+      <div className="mb-1 text-base font-bold text-explorer-dark-gray dark:text-white min-h-[1.5rem] flex items-center justify-center">
         {value}
       </div>
       <p className="text-[10px] text-explorer-light-gray dark:text-white uppercase font-semibold tracking-wider">
@@ -116,6 +118,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
   openSubscriptionsModal,
   liveDataEnabled,
   changeLiveRefresh,
+  isForCommunity = false,
 }) => {
   const { t, locale } = useI18n();
   const { manabarsData } = useManabars(accountName, liveDataEnabled);
@@ -147,112 +150,156 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
 
   const about = profileMetadata?.profile?.about || "";
 
+  const lastPostDate = new Date(
+    formatAndDelocalizeTime(accountDetails.last_post)
+  );
+  const lastActiveValue =
+    lastPostDate.getFullYear() <= 1970 ? (
+      <span className="text-sm">{t("AccountMainCard.never")}</span>
+    ) : (
+      <TimeAgo className="text-sm" locale={locale} datetime={lastPostDate} />
+    );
+
   return (
     <Card data-testid="account-details">
-      <CardHeader className="flex flex-row items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
-        <h3 className="text-lg font-semibold" title={accountDetails.name}>
-          {accountDetails.name}
-        </h3>
-        <Toggle
-          checked={liveDataEnabled}
-          onClick={changeLiveRefresh}
-          className="text-base"
-          leftLabel={t("headBlockCard.liveData")}
-        />
-      </CardHeader>
+      {!isForCommunity && (
+        <>
+          <CardHeader className="flex flex-row items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
+            <h3 className="text-lg font-semibold" title={accountDetails.name}>
+              {accountDetails.name}
+            </h3>
+            <Toggle
+              checked={liveDataEnabled}
+              onClick={changeLiveRefresh}
+              className="text-base"
+              leftLabel={t("headBlockCard.liveData")}
+            />
+          </CardHeader>
 
-      <CardContent className="p-4 flex flex-col gap-5">
-        {isBadActor && (
-          <ErrorMessage
-            message={t("accountMainCard.badActorMessage")}
-            isWarning
-            onClose={handleCloseWarning}
-          />
-        )}
+          <CardContent className="p-4 flex flex-col gap-5">
+            {isBadActor && (
+              <ErrorMessage
+                message={t("accountMainCard.badActorMessage")}
+                isWarning
+                onClose={handleCloseWarning}
+              />
+            )}
 
-        <div className="flex items-center gap-4">
-          <Image
-            className="rounded-full border-4 border-explorer-orange/50 shadow-md"
-            src={getHiveAvatarUrl(accountName)}
-            alt="avatar"
-            width={72}
-            height={72}
-          />
-          <div className="flex-1">
-            <div className="flex items-center gap-3 text-sm text-gray-500 dark:text-gray-400">
-              {accountDetails.is_witness && (
-                <div className="flex items-center gap-2">
-                  <span
-                    className={cn("font-semibold", {
-                      "line-through text-red-500": !isWitnessActive,
-                    })}
-                  >
-                    {t("accountMainCard.witness")}
-                  </span>
-                  {isWitnessActive && witnessDetails?.rank && (
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <span className="flex items-center gap-1 cursor-default">
-                            <Star
-                              data-testid="witness-rank-icon"
-                              fill="currentColor"
-                              size={14}
-                            />{" "}
-                            {witnessDetails.rank}
-                          </span>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>{t("accountMainCard.witnessRank")}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-4 align-text-top">
+              <Image
+                className="rounded-full border-4 border-explorer-orange/50 shadow-md"
+                src={getHiveAvatarUrl(accountName)}
+                alt="avatar"
+                width={72}
+                height={72}
+              />
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-wrap items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                  {accountDetails.is_witness && (
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={cn("font-semibold", {
+                          "line-through text-red-500": !isWitnessActive,
+                        })}
+                      >
+                        {t("accountMainCard.witness")}
+                      </span>
+                      {isWitnessActive && witnessDetails?.rank && (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <span className="flex items-center gap-1 cursor-default">
+                                <Star
+                                  data-testid="witness-rank-icon"
+                                  fill="currentColor"
+                                  size={14}
+                                />{" "}
+                                {witnessDetails.rank}
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>{t("accountMainCard.witnessRank")}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      )}
+                      {isWitnessActive && witnessDetails?.url && (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <a
+                                href={witnessDetails.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                <Link size={14} strokeWidth={2.5} />
+                              </a>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>{t("accountMainCard.witnessLink")}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      )}
+                    </div>
                   )}
-                  {isWitnessActive && witnessDetails?.url && (
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <a
-                            href={witnessDetails.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <Link size={14} strokeWidth={2.5} />
-                          </a>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>{t("accountMainCard.witnessLink")}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  )}
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span className="flex items-center gap-1 cursor-default">
+                          <ShieldCheck size={14} />
+                          {accountDetails.reputation}
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{t("accountMainCard.reputationTooltip")}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
-              )}
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span className="flex items-center gap-1 cursor-default">
-                      <ShieldCheck size={14} />
-                      {accountDetails.reputation}
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{t("accountMainCard.reputationTooltip")}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              </div>
             </div>
             {about && (
-              <div className="mt-3 w-full p-3 bg-slate-100 dark:bg-slate-800/50 rounded-xl">
+              <div className="w-full p-3 bg-slate-100 dark:bg-slate-800/50 rounded-xl">
                 <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
                   {about}
                 </p>
               </div>
             )}
-          </div>
-        </div>
+          </CardContent>
+        </>
+      )}
 
-        <div className="grid grid-cols-3 gap-3">
+      <CardContent
+        className={cn("p-4 flex flex-col gap-5", isForCommunity && "pt-6")}
+      >
+        {isForCommunity && (
+          <div className="flex items-center gap-2 -mt-2 -mb-2">
+            <h3 className="text-lg font-semibold" title={accountDetails.name}>
+              {accountDetails.name}
+            </h3>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Info
+                    size={14}
+                    className="text-gray-400 dark:text-gray-500 cursor-help"
+                  />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>
+                    {t(
+                      "AccountMainCard.creatorTooltip",
+                      "Statistics and details for the account that created this community."
+                    )}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
+        )}
+
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(110px,1fr))] gap-3">
           <StatCard
             icon={<UserPlus size={20} />}
             label={t("accountMainCard.followers")}
@@ -280,15 +327,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
           <StatCard
             icon={<Repeat size={20} />}
             label={t("accountMainCard.lastActive")}
-            value={
-              <TimeAgo
-                className="text-sm"
-                locale={locale}
-                datetime={
-                  new Date(formatAndDelocalizeTime(accountDetails.last_post))
-                }
-              />
-            }
+            value={lastActiveValue}
             tooltipContent={<p>{t("accountMainCard.lastActiveTooltip")}</p>}
           />
           <StatCard
@@ -312,7 +351,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
             {t("accountMainCard.resourcesHeader")}
           </h3>
           {!!manabarsData ? (
-            <div className="flex items-center justify-around gap-2">
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(80px,1fr))] justify-items-center gap-4">
               <RadialProgress
                 size={70}
                 strokeWidth={6}
@@ -359,7 +398,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
         </div>
 
         {accountDetails.is_witness && !isWitnessError && !isWitnessLoading && (
-          <div className="w-full flex flex-col sm:flex-row gap-3 border-t border-slate-200 dark:border-slate-700 pt-5">
+          <div className="w-full flex flex-col gap-3 border-t border-slate-200 dark:border-slate-700 pt-5">
             <Button className="w-full" onClick={openVotersModal}>
               <Vote className="mr-2 h-4 w-4" />
               {t("accountMainCard.voters")}

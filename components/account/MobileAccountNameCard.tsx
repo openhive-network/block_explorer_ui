@@ -14,12 +14,14 @@ import { useI18n } from "@/i18n/i18n";
 
 interface MobileAccountNameCardProps {
   accountName: string;
+  communityName :string | undefined;
   liveDataEnabled: boolean;
   accountDetails: Explorer.FormattedAccountDetails;
 }
 
 const MobileAccountNameCard: React.FC<MobileAccountNameCardProps> = ({
   accountName,
+  communityName,
   liveDataEnabled,
   accountDetails,
 }) => {
@@ -61,7 +63,7 @@ const MobileAccountNameCard: React.FC<MobileAccountNameCardProps> = ({
             />
             <div>
               <h2 className="text-lg font-semibold text-gray-800 dark:text-white" data-testid="account-name">
-                {accountDetails.name}
+                {communityName? communityName: accountDetails.name}
               </h2>
               {accountDetails.is_witness && (
                 <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">

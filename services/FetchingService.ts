@@ -53,6 +53,27 @@ export type ExplorerNodeApi = {
       { account: string },
       Hive.AccountSubscriptions
     >;
+    get_community: TWaxApiRequest<
+      { name: string; observer?: string },
+      Hive.CommunityDetails
+    >;
+    list_subscribers: TWaxApiRequest<
+      {
+        community: string;
+        last?: string;
+        limit: number;
+      },
+      Hive.CommunitySubscribers
+    >;
+    list_communities: TWaxApiRequest<
+      {
+        last?: string;
+        limit: number;
+        query?: string;
+        sort: string;
+      },
+      Hive.CommunityList
+    >;
   };
   market_history_api: {
     get_market_history: TWaxApiRequest<
@@ -626,6 +647,46 @@ class FetchingService {
     return await this.extendedHiveChain!.api.condenser_api.get_following(
       params
     );
+  }
+
+  async getCommunityDetails(name: string): Promise<Hive.CommunityDetails> {
+    const params = { name };
+    return await this.extendedHiveChain!.api.bridge.get_community(params);
+  }
+
+  async getCommunitySubscribers(
+    community: string,
+    last: string | undefined,
+    limit: number
+  ): Promise<Hive.CommunitySubscribers> {
+    const params = { community, last, limit };
+    return await this.extendedHiveChain!.api.bridge.list_subscribers(params);
+  }
+
+  async getCommunitiesList(
+    last: string,
+    limit: number,
+    query: string,
+    sort: "rank" | "new" | "subs" = "rank"
+  ): Promise<Hive.CommunityList> {
+    const params: {
+      limit: number;
+      sort: string;
+      last?: string;
+      query?: string;
+    } = {
+      limit,
+      sort,
+    };
+
+    if (last) {
+      params.last = last;
+    }
+
+    if (query) {
+      params.query = query;
+    }
+    return await this.extendedHiveChain!.api.bridge.list_communities(params);
   }
 }
 
