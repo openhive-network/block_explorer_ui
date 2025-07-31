@@ -46,7 +46,7 @@ const useAggregatedBalanceHistory = (
   });
 
   const start = fromDate
-    ? moment(fromDate).format("YYYY-MM-DDTHH:mm:ss")
+    ? moment(fromDate).startOf("day").format("YYYY-MM-DDTHH:mm:ss")
     : undefined;
 
   const end = toDate
