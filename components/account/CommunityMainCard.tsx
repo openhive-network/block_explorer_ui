@@ -26,6 +26,7 @@ import { cn } from "@/lib/utils";
 import Explorer from "@/types/Explorer";
 import Hive from "@/types/Hive";
 import CommunitySubscribersDialog from "./CommunitySubscribersDialog";
+import { isImageWhitelisted } from "@/utils/ImageUtils";
 
 const roleConfig = {
   owner: {
@@ -205,7 +206,8 @@ const CommunityMainCard: React.FC<CommunityMainCardProps> = ({
     profileMetadata = null;
   }
   const coverImageFromProfile = profileMetadata?.profile?.cover_image;
-  const hasCover = !!coverImageFromProfile;
+
+  const hasCover = isImageWhitelisted(coverImageFromProfile);
 
   const sortedTeam = [...(team as unknown as TeamMemberTuple[])].sort(
     (a, b) => {
@@ -312,7 +314,7 @@ const CommunityMainCard: React.FC<CommunityMainCardProps> = ({
             <CompactStat
               icon={<Award size={20} />}
               label={t("communityCard.pendingRewards")}
-              value={`$${sum_pending.toFixed(2)}`}
+              value={`$${sum_pending.toLocaleString()}`}
             />
             <CompactStat
               icon={<FileText size={20} />}
