@@ -27,6 +27,8 @@ interface BalanceHistoryChartProps {
     savings_balance?: number;
     savings_balance_change?: number;
     hivePrice: string;
+    dollarValue?: number;
+    convertedHive?: number;
   }[];
   vestsBalanceHistoryData?: {
     timestamp: string;
@@ -35,6 +37,8 @@ interface BalanceHistoryChartProps {
     savings_balance?: number;
     savings_balance_change?: number;
     hivePrice: string;
+    dollarValue?: number;
+    convertedHive?: number;
   }[];
   hbdBalanceHistoryData?: {
     timestamp: string;
@@ -43,6 +47,8 @@ interface BalanceHistoryChartProps {
     savings_balance?: number;
     savings_balance_change?: number;
     hivePrice: string;
+    dollarValue?: number;
+    convertedHive?: number;
   }[];
   className?: string;
   quickView?: boolean;
@@ -112,6 +118,62 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  const processedData = useCallback(
+    (data: any, type: string) => {
+      if (!dynamicGlobalData || !hiveChain || !data) return [];
+
+      return data.map((item: any) => {
+        const hivePrice = parseFloat(item.hivePrice || "0");
+
+        if (type === "VESTS") {
+          const vests = item.balance?.toString() || "0";
+
+          const hiveAmount = grabNumericValue(
+            convertVestsToHive(
+              hiveChain,
+              vests,
+              dynamicGlobalData.headBlockDetails.rawTotalVestingFundHive,
+              dynamicGlobalData.headBlockDetails.rawTotalVestingShares
+            )
+          );
+
+          const dollarValueFull =
+            !isNaN(hiveAmount) && !isNaN(hivePrice)
+              ? hiveAmount * hivePrice
+              : 0;
+
+          return {
+            ...item,
+            convertedHive: hiveAmount,
+            dollarValue: dollarValueFull,
+          };
+        }
+
+        if (type === "HIVE") {
+          const dollarValue =
+            !isNaN(item.balance) && !isNaN(hivePrice)
+              ? item.balance * hivePrice
+              : 0;
+
+          return {
+            ...item,
+            dollarValue,
+          };
+        }
+
+        if (type === "HBD") {
+          return {
+            ...item,
+            dollarValue: !isNaN(item.balance) ? item.balance : 0,
+          };
+        }
+
+        return item;
+      });
+    },
+    [dynamicGlobalData, hiveChain]
+  );
+
   const dataMap: Record<
     string,
     {
@@ -121,69 +183,29 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
       savings_balance?: number;
       savings_balance_change?: number;
       hivePrice: string;
+      dollarValue?: number;
+      convertedHive?: number;
     }[]
   > = useMemo(() => {
     return {
-      HIVE: hiveBalanceHistoryData || [],
-      VESTS: vestsBalanceHistoryData || [],
-      HBD: hbdBalanceHistoryData || [],
+      HIVE: processedData(hiveBalanceHistoryData, "HIVE") || [],
+      VESTS: processedData(vestsBalanceHistoryData, "VESTS"),
+      HBD: processedData(hbdBalanceHistoryData, "HBD") || [],
     };
-  }, [hiveBalanceHistoryData, vestsBalanceHistoryData, hbdBalanceHistoryData]);
+  }, [
+    processedData,
+    hiveBalanceHistoryData,
+    hbdBalanceHistoryData,
+    vestsBalanceHistoryData,
+  ]);
 
   const handleCoinTypeChange = (coinType: string) => {
     setSelectedCoinType(coinType);
   };
 
-  const vestsToHive = useCallback(
-    (vests: string | null) => {
-      if (hiveChain && vests && dynamicGlobalData) {
-        const result = convertVestsToHive(
-          hiveChain,
-          vests,
-          dynamicGlobalData?.headBlockDetails.rawTotalVestingFundHive,
-          dynamicGlobalData?.headBlockDetails.rawTotalVestingShares
-        );
-        return result;
-      }
-    },
-    [hiveChain, dynamicGlobalData]
-  );
-
-  const getDollarValue = useCallback(
-    (
-      hivePriceStr: string | undefined,
-      balance: number,
-      vests: string
-    ): number | string | undefined => {
-      const hivePrice = Number(hivePriceStr ?? 0);
-
-      switch (selectedCoinType) {
-        case "HIVE":
-          return hivePrice * balance;
-        case "HBD":
-          return balance;
-        case "VESTS":
-          const result = grabNumericValue(vests ?? "") * hivePrice;
-          return result;
-        default:
-          return undefined;
-      }
-    },
-    [selectedCoinType]
-  );
-
   const displayData = useMemo(() => {
-    return dataMap[selectedCoinType].map((item) => {
-      const hivePrice = item.hivePrice;
-      const balance = item.balance ?? 0;
-      const vests = selectedCoinType === "VESTS" ? String(balance) : null;
-      const convertedVests = vestsToHive(vests);
-      const dollarValue =
-        getDollarValue(hivePrice, balance, convertedVests) || undefined;
-
-      return { ...item, dollarValue };
-    });
-  }, [dataMap, selectedCoinType, vestsToHive, getDollarValue]);
+    return dataMap[selectedCoinType];
+  }, [dataMap, selectedCoinType]);
 
   const CustomTooltip = ({
     active,
@@ -204,11 +226,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     const balanceChange = selectedData?.balance_change ?? 0;
     const savingsBalance = selectedData?.savings_balance ?? undefined;
     const savingsBalanceChange = selectedData?.savings_balance_change ?? 0;
-    const hivePrice = selectedData?.hivePrice ?? 0;
-
-    const vests = selectedCoinType === "VESTS" ? String(actualBalance) : null;
-
-    const convertedVests = vestsToHive(vests);
+    const dollarValue = selectedData?.dollarValue ?? 0;
 
     const isPositiveChange = balanceChange > 0;
     const isZeroChange = balanceChange === 0;
@@ -216,12 +234,6 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     const isSavingsZeroChange = savingsBalanceChange === 0;
 
     const currentCoinColor = colorMap[selectedCoinType];
-
-    const dollarValue = getDollarValue(
-      hivePrice,
-      actualBalance,
-      convertedVests
-    );
 
     return (
       <div className="bg-theme dark:bg-theme p-2 rounded border border-explorer-light-gray">
@@ -269,9 +281,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
           {dollarValue ? (
             <div style={{ color: colorMap.DOLLAR }}>
               Dollar Value: $
-              {selectedCoinType === "VESTS"
-                ? Number(dollarValue).toFixed(2)
-                : formatNumber(dollarValue, false)}
+              {formatNumber(dollarValue, false, selectedCoinType === "VESTS")}
             </div>
           ) : null}
         </div>
@@ -340,34 +350,45 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
       </button>
     ));
   };
-
   const getMinMax = (
     data: {
       balance: number;
       savings_balance?: number;
-      dollarValue: string | number | undefined;
+      dollarValue?: number;
+      convertedHive?: number;
     }[]
-  ) => {
+  ): [number, number] => {
     if (!data || data.length === 0) {
       return [0, 1];
     }
 
-    let allValues: number[] = data.map((item) => item.balance);
+    let allValues: number[] = [];
 
-    const dollarValues = data
-      .map((item) => item.dollarValue)
-      .filter((v): v is number => typeof v === "number" && !Number.isNaN(v));
+    if (selectedCoinType === "VESTS") {
+      const dollarValues = data
+        .map((item) => item.dollarValue)
+        .filter((v): v is number => typeof v === "number" && !Number.isNaN(v));
 
-    allValues = allValues.concat(dollarValues);
-    if (showSavingsBalance == "yes" && selectedCoinType !== "VESTS") {
-      const savingsValues = data
-        .map((item) => item.savings_balance)
-        .filter((value) => value !== undefined) as number[];
-      allValues = allValues.concat(savingsValues);
+      allValues = allValues.concat(dollarValues);
+    } else {
+      allValues = data.map((item) => item.balance);
+
+      const dollarValues = data
+        .map((item) => item.dollarValue)
+        .filter((v): v is number => typeof v === "number" && !Number.isNaN(v));
+      allValues = allValues.concat(dollarValues);
+
+      if (showSavingsBalance === "yes") {
+        const savingsValues = data
+          .map((item) => item.savings_balance)
+          .filter((v): v is number => typeof v === "number");
+        allValues = allValues.concat(savingsValues);
+      }
     }
 
     const minValue = Math.min(...allValues);
     const maxValue = Math.max(...allValues);
+
     return [minValue, maxValue];
   };
 
@@ -396,6 +417,10 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
       setZoomedDomain([min, max]);
     }
   };
+
+  const isDualAxis = selectedCoinType === "VESTS";
+  const primaryAxisId = isRTL ? "right" : "left";
+  const secondaryAxisId = isRTL ? "left" : "right";
 
   return (
     <div className={cn("w-full", className)}>
@@ -432,22 +457,32 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             reversed={isRTL}
           />
           <YAxis
+            yAxisId={primaryAxisId}
             domain={[minValue, maxValue]}
-            orientation={isRTL ? "right" : "left"}
-            tickFormatter={(tick) => {
-              if (selectedCoinType === "VESTS") {
-                const valueInK = tick / 1000;
-                let formattedValue = formatNumber(valueInK, true, false);
-                formattedValue = formattedValue.split(".")[0];
-                return `${formattedValue} K`;
-              }
-              return formatNumber(tick, selectedCoinType === "VESTS", false);
-            }}
+            orientation={primaryAxisId}
             style={{ fontSize: "10px" }}
             tickCount={6}
+            tickFormatter={(tick) => {
+              if (selectedCoinType === "VESTS") {
+                const valueInK = tick / 1_000;
+                return `${formatNumber(valueInK, true, false).split(".")[0]} K`;
+              }
+              return formatNumber(tick, false, false);
+            }}
           />
+
+          {isDualAxis && (
+            <YAxis
+              yAxisId={secondaryAxisId}
+              orientation={secondaryAxisId}
+              style={{ fontSize: "10px" }}
+              tickFormatter={(tick) => `$${Math.round(tick)}`}
+            />
+          )}
+
           <Tooltip content={<CustomTooltip />} />
           <Line
+            yAxisId={primaryAxisId}
             type="monotone"
             dataKey="balance"
             stroke={colorMap[selectedCoinType]}
@@ -459,18 +494,20 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
           />
 
           <Line
+            yAxisId={isDualAxis ? secondaryAxisId : primaryAxisId}
             type="monotone"
             dataKey="dollarValue"
             stroke={colorMap.DOLLAR}
             strokeWidth={2}
             activeDot={{ r: 6 }}
-            name={"DOLLAR"}
+            name="DOLLAR"
             dot={false}
             hide={hiddenDataKeys.includes("dollarValue")}
           />
 
-          {showSavingsBalance == "yes" && selectedCoinType !== "VESTS" && (
+          {showSavingsBalance === "yes" && selectedCoinType !== "VESTS" && (
             <Line
+              yAxisId={primaryAxisId}
               type="monotone"
               dataKey="savings_balance"
               stroke={colorMap.SAVINGS}
