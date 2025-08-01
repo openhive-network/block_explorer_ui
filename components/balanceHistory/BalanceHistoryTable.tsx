@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from "react";
-import Hive from "@/types/Hive";
 import {
   Table,
   TableBody,
@@ -296,7 +295,6 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
               {operations.map((operation, index) => {
                 const operationBgColor = getOperationColor(operation.opTypeId);
                 const isExpanded = expandedRow === operation.operationId;
-                // console.log(operation);
                 const hivePrice = Number(operation.hivePrice);
                 const dollarValue = getDollarValue(
                   coinName as string,
@@ -304,10 +302,11 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
                   hivePrice
                 );
 
-                const showDollarValueByCoin =
+                const showDollarValueByCoin = formatNumber(
+                  dollarValue as number,
+                  false,
                   coinName === "VESTS"
-                    ? dollarValue
-                    : formatNumber(dollarValue as number, false);
+                );
 
                 return (
                   <React.Fragment key={index}>
