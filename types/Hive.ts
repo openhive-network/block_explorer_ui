@@ -1068,6 +1068,26 @@ namespace Hive {
     admins!: string[];
   }
 
+  export class Proposal {
+    id!: number;
+    proposal_id!: number;
+    creator!: string;
+    receiver!: string;
+    start_date!: Date;
+    end_date!: Date;
+    daily_pay!: string;
+    subject!: string;
+    permlink!: string;
+    total_votes!: string;
+    status!: "active" | "inactive" | "expired";
+  }
+
+   export interface ProposalVote {
+    id: number;
+    voter: string;
+    proposal: Proposal;
+  }
+
 }
 
 export default Hive;

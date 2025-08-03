@@ -43,6 +43,26 @@ export type ExplorerNodeApi = {
       Hive.AccountFollower[]
     >;
     get_following: TWaxApiRequest<{ account: string }, Hive.AccountFollowing>;
+    list_proposals: TWaxApiRequest<[
+      start: (string | number)[],
+      limit: number,
+      order_by: "by_creator" | "by_start_date" | "by_end_date" | "by_total_votes",
+      order_direction: "ascending" | "descending",
+      status: "all" | "active" | "inactive" | "expired" | "votable"
+    ],
+      Hive.Proposal[]
+    >;
+    list_proposal_votes: TWaxApiRequest<[
+      start: (string | number)[],
+      limit: number,
+      order_by: "by_voter_proposal" | "by_proposal_voter",
+      order_direction: "ascending" | "descending",
+      status: "all" | "active" | "expired" | "inactive" | "votable"
+    ],
+      Hive.ProposalVote[]
+    >;
+
+    find_proposals : TWaxApiRequest<[number[]], Hive.Proposal[]>; 
   };
   bridge: {
     get_discussion: TWaxApiRequest<
@@ -688,6 +708,54 @@ class FetchingService {
     }
     return await this.extendedHiveChain!.api.bridge.list_communities(params);
   }
+
+  async listProposals(
+    start: (string | number)[],
+    limit: number,
+    orderBy: "by_creator" | "by_start_date" | "by_end_date" | "by_total_votes",
+    orderDirection: "ascending" | "descending",
+    status: "all" | "active" | "inactive" | "expired" | "votable"
+  ): Promise<Hive.Proposal[]> {
+
+    const response = await this.extendedHiveChain!.api.condenser_api.list_proposals([
+      start,
+      limit,
+      orderBy,
+      orderDirection,
+      status]
+    );
+    return Array.isArray(response) ? response : [];
+  }
+
+  async listProposalVotes(
+    start: (string | number)[],
+    limit: number,
+    orderBy: "by_voter_proposal" | "by_proposal_voter",
+    orderDirection: "ascending" | "descending",
+    status: "all" | "active" | "inactive" | "expired" | "votable"
+  ): Promise<Hive.ProposalVote[]> {
+
+    const response = await this.extendedHiveChain!.api.condenser_api.list_proposal_votes([
+      start,
+      limit,
+      orderBy,
+      orderDirection,
+      status]
+    );
+    return Array.isArray(response) ? response : [];
+  }
+
+
+  async getProposal(): Promise<Hive.Proposal[]> {
+    const proposal_ids: number[] = [];
+    return await this.extendedHiveChain!.api.condenser_api.find_proposals(
+      [proposal_ids]
+    );
+  }
+
+
+
+
 }
 
 const fetchingService = new FetchingService();

@@ -10,6 +10,7 @@ export const config = {
     env("API_ADDRESS") ? env("API_ADDRESS") : "https://api.hive.blog"
   }`,
   baseMomentTimeFormat: "YYYY/MM/DD HH:mm:ss UTC",
+  momentLocaleDateFormat : "MMM D, YYYY",
   gitHash: process.env.NEXT_PUBLIC_COMMIT_HASH,
   get lastCommitHashRepoUrl() {
     return `https://gitlab.syncad.com/hive/block_explorer_ui/-/commit/${this.gitHash}`;
