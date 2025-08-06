@@ -16,7 +16,7 @@ export interface ProcessedProposal extends Hive.Proposal {
 interface UseProposalsProps {
   status: ProposalStatusFilter;
   orderBy: ProposalSortOrder;
-  direction: ProposalSortDirection;
+  direction?: ProposalSortDirection;
 }
 
 const useProposals = ({ status, orderBy, direction }: UseProposalsProps) => {
@@ -32,7 +32,7 @@ const useProposals = ({ status, orderBy, direction }: UseProposalsProps) => {
         [],
         PROPOSALS_FETCH_LIMIT,
         orderBy,
-        direction,
+        direction ?? "descending",
         status
       );
 
