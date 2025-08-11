@@ -9,7 +9,7 @@ export const ProposalAnalytics = () => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className="mb-8 rounded-lg border bg-slate-50 shadow-sm dark:bg-theme dark:border-slate-800 transition-all duration-300 ">
+    <div className="mb-8 rounded-[8px] border bg-slate-50 shadow-sm dark:bg-theme dark:border-slate-800 transition-all duration-300 ">
       <div
         onClick={() => setIsExpanded(!isExpanded)}
         className="flex items-center justify-between p-3 border-b dark:border-slate-800 flex-wrap gap-2 hover:bg-rowHover cursor-pointer"

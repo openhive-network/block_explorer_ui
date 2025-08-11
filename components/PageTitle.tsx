@@ -15,15 +15,17 @@ const PageTitle: React.FC<TitleProps> = ({ titleKey, className = "" }) => {
 
   const localizedInfoObject = pageTitlesInfo[titleKey];
   // Select the ReactNode based on the current locale, fallback to 'en'
-  const InfoComponentContent = localizedInfoObject?.[locale as keyof typeof localizedInfoObject] || localizedInfoObject?.en || null;
-
+  const InfoComponentContent =
+    localizedInfoObject?.[locale as keyof typeof localizedInfoObject] ||
+    localizedInfoObject?.en ||
+    null;
 
   const toggleInfoVisibility = () => {
     setIsInfoVisible(!isInfoVisible);
   };
 
   return (
-    <div className="md:flex md:items-start md:justify-start flex-col md:flex-row w-full items-start justify-start bg-theme">
+    <div className="md:flex md:items-start md:justify-start flex-col md:flex-row w-full items-start justify-start bg-theme rounded-[8px] pl-2">
       <div className="flex items-center ">
         <h1
           className={`text-xl min-h-16 font-bold leading-tight ${className} mr-2 min-w-max`}
@@ -36,7 +38,11 @@ const PageTitle: React.FC<TitleProps> = ({ titleKey, className = "" }) => {
               aria-label={t("pageTitle.informationAboutTitle")}
               onClick={toggleInfoVisibility}
             >
-              <Info color="red" size={18} className="cursor-pointer" />
+              <Info
+                color="red"
+                size={18}
+                className="cursor-pointer"
+              />
             </button>
           </div>
         )}

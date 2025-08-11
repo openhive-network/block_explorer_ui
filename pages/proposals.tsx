@@ -72,7 +72,8 @@ const ProposalsPage = () => {
     return {
       dailyFunded,
     };
-  }, [dailyBudgetNumber, proposalsData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dailyBudgetNumber]);
 
   const { returnProposal, enrichedProposals, fundingThreshold } =
     useMemo(() => {
