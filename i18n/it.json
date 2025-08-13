@@ -811,5 +811,8 @@
   "navbar.discover": "Scopri",
   "navbar.communitiesTitle": "Comunità",
   "navbar.proposalsTitle": "Proposte",
-  "navbar.witnessesTitle": "Testimoni"
+  "navbar.witnessesTitle": "Testimoni",
+  "votersChart.gained": "Guadagnati",
+  "votersChart.lost": "Persi",
+  "votersChart.title": "Grafici degli elettori"
 }

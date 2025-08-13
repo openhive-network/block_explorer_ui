@@ -816,5 +816,8 @@
   "navbar.discover": "Descobrir",
   "navbar.communitiesTitle": "Comunidades",
   "navbar.proposalsTitle": "Propostas",
-  "navbar.witnessesTitle": "Testemunhas"
+  "navbar.witnessesTitle": "Testemunhas",
+  "votersChart.gained": "Ganho",
+  "votersChart.lost": "Perdido",
+  "votersChart.title": "Gráficos de eleitores"
 }

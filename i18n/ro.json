@@ -815,5 +815,8 @@
   "navbar.discover": "Descoperiți",
   "navbar.communitiesTitle": "Comunități",
   "navbar.proposalsTitle": "Propuneri",
-  "navbar.witnessesTitle": "Martori"
+  "navbar.witnessesTitle": "Martori",
+  "votersChart.gained": "Câștigați",
+  "votersChart.lost": "Pierdut",
+  "votersChart.title": "Grafice alegători"
 }

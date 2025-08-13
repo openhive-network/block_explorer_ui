@@ -755,7 +755,7 @@
   "communityControls.sortByNewest": "حسب الأحدث",
   "home.topCommunities": "أفضل المجتمعات",
   "home.noTopCommunitiesFound": "لم يتم العثور على أفضل المجتمعات.",
-    "proposalControls.statusActive": "نشطة",
+  "proposalControls.statusActive": "نشطة",
   "proposalControls.statusExpired": "منتهية الصلاحية",
   "proposalControls.statusAll": "الكل",
   "proposalControls.searchPlaceholder": "ابحث بالمنشئ أو العنوان...",
@@ -816,5 +816,8 @@
   "navbar.discover": "اكتشاف",
   "navbar.communitiesTitle": "المجتمعات",
   "navbar.proposalsTitle": "المقترحات",
-  "navbar.witnessesTitle": "الشهود"
+  "navbar.witnessesTitle": "الشهود",
+  "votersChart.gained": "مكتسب",
+  "votersChart.lost": "مفقود",
+  "votersChart.title": "مخططات الناخبين"
 }

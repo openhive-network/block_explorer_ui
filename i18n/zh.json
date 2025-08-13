@@ -755,7 +755,7 @@
   "communityControls.sortByNewest": "按最新",
   "home.topCommunities": "顶级社区",
   "home.noTopCommunitiesFound": "未找到顶级社区。",
-    "proposalControls.statusActive": "进行中",
+  "proposalControls.statusActive": "进行中",
   "proposalControls.statusExpired": "已过期",
   "proposalControls.statusAll": "全部",
   "proposalControls.searchPlaceholder": "按创建者或标题搜索...",
@@ -781,7 +781,7 @@
   "proposalCard.statusActive": "进行中",
   "proposalCard.statusExpired": "已过期",
   "proposalCard.statusInactive": "未开始即将开始",
-    "proposalControls.statusInactive": "即将开始",
+  "proposalControls.statusInactive": "即将开始",
   "proposalCard.byCreatorPrefix": "由",
   "proposalCard.receiverPrefix": "接收者",
   "proposalCard.votesLabel": "总票数",
@@ -816,5 +816,8 @@
   "navbar.discover": "发现",
   "navbar.communitiesTitle": "社区",
   "navbar.proposalsTitle": "提案",
-  "navbar.witnessesTitle": "见证人"
+  "navbar.witnessesTitle": "见证人",
+  "votersChart.gained": "获得",
+  "votersChart.lost": "失去",
+  "votersChart.title": "选民图表"
 }

@@ -816,5 +816,8 @@
   "navbar.discover": "発見",
   "navbar.communitiesTitle": "コミュニティ",
   "navbar.proposalsTitle": "提案",
-  "navbar.witnessesTitle": "ウィットネス"
+  "navbar.witnessesTitle": "ウィットネス",
+  "votersChart.gained": "獲得",
+  "votersChart.lost": "失った",
+  "votersChart.title": "投票者チャート"
 }

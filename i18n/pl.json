@@ -755,7 +755,7 @@
   "communityControls.sortByNewest": "Według najnowszych",
   "home.topCommunities": "Najlepsze Społeczności",
   "home.noTopCommunitiesFound": "Nie znaleziono najlepszych społeczności.",
-    "proposalControls.statusActive": "Aktywne",
+  "proposalControls.statusActive": "Aktywne",
   "proposalControls.statusExpired": "Wygasłe",
   "proposalControls.statusAll": "Wszystkie",
   "proposalControls.searchPlaceholder": "Szukaj wg twórcy lub tytułu...",
@@ -816,5 +816,8 @@
   "navbar.discover": "Odkrywaj",
   "navbar.communitiesTitle": "Społeczności",
   "navbar.proposalsTitle": "Propozycje",
-  "navbar.witnessesTitle": "Świadkowie"
+  "navbar.witnessesTitle": "Świadkowie",
+  "votersChart.gained": "Pozyskani",
+  "votersChart.lost": "Straceni",
+  "votersChart.title": "Wykresy wyborców"
 }

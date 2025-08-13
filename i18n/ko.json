@@ -755,7 +755,7 @@
   "communityControls.sortByNewest": "최신 순",
   "home.topCommunities": "상위 커뮤니티",
   "home.noTopCommunitiesFound": "상위 커뮤니티를 찾을 수 없습니다.",
-    "proposalControls.statusActive": "활성",
+  "proposalControls.statusActive": "활성",
   "proposalControls.statusExpired": "만료됨",
   "proposalControls.statusAll": "전체",
   "proposalControls.searchPlaceholder": "작성자 또는 제목으로 검색...",
@@ -816,5 +816,8 @@
   "navbar.discover": "발견",
   "navbar.communitiesTitle": "커뮤니티",
   "navbar.proposalsTitle": "제안",
-  "navbar.witnessesTitle": "증인"
+  "navbar.witnessesTitle": "증인",
+  "votersChart.gained": "획득",
+  "votersChart.lost": "잃음",
+  "votersChart.title": "유권자 차트"
 }
