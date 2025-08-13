@@ -16,7 +16,6 @@ const useDynamicGlobal = (headBlockNum?: number) => {
       fetchingService.getRewardFunds(),
     ]);
   }
-
   const {
     data: dynamicGlobalData,
     isLoading: dynamicGlobalLoading,

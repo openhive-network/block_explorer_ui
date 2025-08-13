@@ -7,6 +7,7 @@ import {
   ProposalControls,
   ProposalStatusFilter,
   ProposalSortOrder,
+  ProposalSortDirection,
 } from "@/components/proposals/ProposalControls";
 import {
   ProposalCard,
@@ -17,6 +18,10 @@ import ErrorMessage from "@/components/ErrorMessage";
 import NoResult from "@/components/NoResult";
 import PageTitle from "@/components/PageTitle";
 import { ProposalAnalytics } from "@/components/proposals/analytics/ProposalAnalytics";
+import ScrollTopButton from "@/components/ScrollTopButton";
+import { formatNumber } from "@/lib/utils";
+import useGetAccounts from "@/hooks/api/proposals/useGetAccounts";
+import { grabNumericValue } from "@/utils/StringUtils";
 
 const ProposalsPage = () => {
   const { t } = useI18n();
@@ -25,14 +30,50 @@ const ProposalsPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOrder, setSortOrder] =
     useState<ProposalSortOrder>("by_total_votes");
+  const [sortDirection, setSortDirection] =
+    useState<ProposalSortDirection>("descending");
 
+  const { accountsData } = useGetAccounts(["hive.fund"]) as any;
+
+  const totalBudgetNumber = grabNumericValue(
+    accountsData?.[0].hbd_balance ?? ""
+  );
+
+  const dailyBudgetNumber = totalBudgetNumber / 100;
 
   const apiStatus = statusFilter === "inactive" ? "all" : statusFilter;
 
   const { proposalsData, isProposalsLoading, isProposalsError } = useProposals({
     status: apiStatus,
     orderBy: sortOrder,
+    direction: sortDirection,
   });
+
+  const { dailyFunded } = useMemo(() => {
+    const teligible = proposalsData?.filter(
+      (proposal) =>
+        proposal.status !== "expired" && proposal.status !== "inactive"
+    );
+    const eligible = [];
+    for (const eKey in teligible) {
+      if (teligible[eKey as any].id != 0) {
+        eligible[eKey as any] = teligible[eKey as any];
+      } else {
+        break;
+      }
+    }
+
+    const dailyFunded = eligible.reduce((a, b) => {
+      const dp = grabNumericValue(b.daily_pay) as any;
+      const _sum_amount = a + dp;
+
+      return _sum_amount <= dailyBudgetNumber ? _sum_amount : a;
+    }, 0);
+    return {
+      dailyFunded,
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dailyBudgetNumber]);
 
   const { returnProposal, enrichedProposals, fundingThreshold } =
     useMemo(() => {
@@ -92,7 +133,7 @@ const ProposalsPage = () => {
       }
       return true;
     });
-  }, [enrichedProposals, searchQuery, statusFilter]); 
+  }, [enrichedProposals, searchQuery, statusFilter]);
 
   const fundedProposals = useMemo(() => {
     return searchedProposals.filter((p) => p.isFunded);
@@ -131,7 +172,10 @@ const ProposalsPage = () => {
         {fundedProposals.length > 0 && (
           <div className="flex flex-col gap-4">
             {fundedProposals.map((proposal) => (
-              <ProposalCard key={proposal.proposal_id} proposal={proposal} />
+              <ProposalCard
+                key={proposal.proposal_id}
+                proposal={proposal}
+              />
             ))}
           </div>
         )}
@@ -169,6 +213,27 @@ const ProposalsPage = () => {
       </>
     );
   };
+  const totalBudgetHBD = formatNumber(totalBudgetNumber ?? 0, false, true);
+  const dailyBudgetHBD = formatNumber(dailyBudgetNumber ?? 0, false, true);
+  const dailyFundedHBD = formatNumber(dailyFunded ?? 0, false, true);
+
+  const budgets = [
+    {
+      key: "daily_funded",
+      label: t("proposalControls.dailyFunded"),
+      value: `${dailyFundedHBD} HBD`,
+    },
+    {
+      key: "daily_budget",
+      label: t("proposalControls.dailyBudget"),
+      value: `${dailyBudgetHBD} HBD`,
+    },
+    {
+      key: "total_budget",
+      label: t("proposalControls.totalBudget"),
+      value: `${totalBudgetHBD} HBD`,
+    },
+  ];
 
   return (
     <>
@@ -176,14 +241,13 @@ const ProposalsPage = () => {
         <title>{t("pageTitle.proposals")}</title>
       </Head>
       <div className="page-container">
-        <PageTitle 
-          titleKey="pageTitle.proposals" 
-          className="py-4 px-2" 
+        <PageTitle
+          titleKey="pageTitle.proposals"
+          className="py-4 px-2"
         />
         <div className="mt-4">
           <ProposalAnalytics />
         </div>
-
         <div className="mt-8">
           <ProposalControls
             currentStatus={statusFilter}
@@ -192,9 +256,15 @@ const ProposalsPage = () => {
             onSearch={setSearchQuery}
             sortOrder={sortOrder}
             onSortChange={setSortOrder}
+            sortDirection={sortDirection}
+            onSortDirectionChange={setSortDirection}
+            budgets={budgets}
           />
         </div>
         <main className="mt-8">{renderContent()}</main>
+        <div className="fixed bottom-[10px] right-0 flex flex-col items-end justify-end px-3 md:px-12">
+          <ScrollTopButton />
+        </div>
       </div>
     </>
   );
