@@ -186,7 +186,7 @@ export const ProposalCard = ({
 
   const { hiveChain } = useHiveChainContext();
   const { dynamicGlobalData } = useDynamicGlobal() as any;
-  console.log(dynamicGlobalData);
+  
   const voteValueInHp =
     dynamicGlobalData && hiveChain
       ? convertVestsToHP(
@@ -651,6 +651,17 @@ export const ReturnProposalCard = ({
                 </TooltipContent>
               </Tooltip>
             </div>
+            <div className="mt-4">
+                <ProposalVotesDialog proposalId={proposal.proposal_id}>
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                  >
+                    <Users className="mr-2 h-4 w-4" />
+                    {t("proposalCard.viewVotesButton")}
+                  </Button>
+                </ProposalVotesDialog>
+              </div>
           </div>
         </div>
       </div>
