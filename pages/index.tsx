@@ -16,7 +16,7 @@ import { useTheme } from "@/contexts/ThemeContext";
 import TransactionStatisticsCard from "@/components/home/TransactionStatisticsCard";
 import { useI18n } from "@/i18n/i18n";
 import TopWitnessesCard from "@/components/home/TopWitnessesCard";
-import useCommunities from "@/hooks/communities/useCommunities";
+import useCommunities from "@/hooks/api/communities/useCommunities";
 import TopCommunitiesCard from "@/components/home/TopCommunitiesCard";
 
 export default function Home() {
