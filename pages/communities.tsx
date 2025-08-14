@@ -12,7 +12,7 @@ import PageTitle from "@/components/PageTitle";
 
 import useCommunitiesList, {
   CommunitySortOrder,
-} from "@/hooks/communities/useCommunities";
+} from "@/hooks/api/communities/useCommunities";
 import Hive from "@/types/Hive";
 
 const CommunitiesPage = () => {

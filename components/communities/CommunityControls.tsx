@@ -1,5 +1,5 @@
 import { Search } from 'lucide-react';
-import type { CommunitySortOrder } from '@/hooks/communities/useCommunities';
+import type { CommunitySortOrder } from '@/hooks/api/communities/useCommunities';
 import { useI18n } from '@/i18n/i18n';
 
 interface CommunityControlsProps {

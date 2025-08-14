@@ -33,7 +33,6 @@ const TopWitnessesCard = ({
   witnessesData,
   isLoading,
 }: TopWitnessesCardProps) => {
-  console.log("witnessesData", witnessesData);
   const { t, dir } = useI18n();
   const SeeMoreIcon = dir === "rtl" ? MoveLeft : MoveRight;
   return (
