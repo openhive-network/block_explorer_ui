@@ -845,5 +845,6 @@
   "navbar.witnessesTitle": "Témoins",
   "votersChart.gained": "Gagnés",
   "votersChart.lost": "Perdus",
-  "votersChart.title": "Graphiques des électeurs"
+  "votersChart.title": "Graphiques des électeurs",
+  "votersChart.votes": "Votes"
 }

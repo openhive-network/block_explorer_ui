@@ -841,5 +841,6 @@
   "navbar.witnessesTitle": "Testimoni",
   "votersChart.gained": "Guadagnati",
   "votersChart.lost": "Persi",
-  "votersChart.title": "Grafici degli elettori"
+  "votersChart.title": "Grafici degli elettori",
+  "votersChart.votes": "Voti"
 }

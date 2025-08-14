@@ -189,7 +189,7 @@ const VotesHistoryDialog: React.FC<VotesHistoryDialogProps> = ({
       open={isVotesHistoryOpen}
       onOpenChange={changeVoteHistoryDialogue}
     >
-      <DialogContent className="max-w-5xl p-0 h-[85%] overflow-auto">
+      <DialogContent className="max-w-5xl p-0 h-[85%]">
         <div className="flex max-h-[85vh] min-h-0 flex-col">
           <DialogHeader className="shrink-0 p-4">
             <DialogTitle className="text-center text-lg">
@@ -198,60 +198,45 @@ const VotesHistoryDialog: React.FC<VotesHistoryDialogProps> = ({
             </DialogTitle>
           </DialogHeader>
 
-          {/* <div className="shrink-0 p-4 pt-0"> */}
-          <>
-            <div className="h-[500px] w-full">
-              <VotesHistoryWidget
-                className="h-full"
-                events={votesHistory?.votes_history}
-                hiveChain={hiveChain as any}
-                totalVestingShares={totalVestingShares}
-                totalVestingFund={totalVestingFundHive}
-              />
-            </div>
-          </>
-
-          {/* </div> */}
-          {/* Filters Section  */}
-          <div className="flex-shrink-0 space-y-1 p-6  rounded-md ">
-            <Label className="text-lg">{t("common.filters")}</Label>
-            <div className="flex flex-col">
-              <div className="w-full md:w-1/3">
-                <AutocompleteInput
-                  value={voterNameInput}
-                  onChange={setVoterNameInput}
-                  placeholder={t("votesHistoryDialog.voterNamePlaceholder")}
-                  inputType="account_name"
-                  className="w-full bg-theme dark:bg-theme border-0 border-b-2"
-                />
+          <div className="flex-1 overflow-y-auto p-4 pt-0">
+            {/* Filters Section  */}
+            <div className="flex-shrink-0 space-y-1 p-6  rounded-md ">
+              <Label className="text-lg">{t("common.filters")}</Label>
+              <div className="flex flex-col">
+                <div className="w-full md:w-1/3">
+                  <AutocompleteInput
+                    value={voterNameInput}
+                    onChange={setVoterNameInput}
+                    placeholder={t("votesHistoryDialog.voterNamePlaceholder")}
+                    inputType="account_name"
+                    className="w-full bg-theme dark:bg-theme border-0 border-b-2"
+                  />
+                </div>
+                <div className="w-full md:w-2/3">
+                  <SearchRanges
+                    rangesProps={searchRanges}
+                    setIsSearchButtonDisabled={setIsSearchButtonDisabled}
+                  />
+                </div>
               </div>
-              <div className="w-full md:w-2/3">
-                <SearchRanges
-                  rangesProps={searchRanges}
-                  setIsSearchButtonDisabled={setIsSearchButtonDisabled}
-                />
+              <div className="flex items-end justify-end mt-2 gap-2">
+                <Button
+                  onClick={handleSearch}
+                  disabled={isSearchButtonDisabled || isVotesHistoryLoading}
+                >
+                  {t("common.search")}
+                  {isVotesHistoryLoading && (
+                    <Loader2 className="ml-2 animate-spin h-4 w-4" />
+                  )}
+                </Button>
+                <Button
+                  onClick={handleClear}
+                  variant="outline"
+                >
+                  {t("common.clear")}
+                </Button>
               </div>
             </div>
-            <div className="flex items-end justify-end mt-2 gap-2">
-              <Button
-                onClick={handleSearch}
-                disabled={isSearchButtonDisabled || isVotesHistoryLoading}
-              >
-                {t("common.search")}
-                {isVotesHistoryLoading && (
-                  <Loader2 className="ml-2 animate-spin h-4 w-4" />
-                )}
-              </Button>
-              <Button
-                onClick={handleClear}
-                variant="outline"
-              >
-                {t("common.clear")}
-              </Button>
-            </div>
-          </div>
-
-          <div className="flex-1 min-h-full overflow-y-auto p-4 pt-0">
             {isVotesHistoryLoading ? (
               <div className="flex h-full items-center justify-center">
                 <Loader2 className="h-8 w-8 animate-spin" />
@@ -278,6 +263,27 @@ const VotesHistoryDialog: React.FC<VotesHistoryDialogProps> = ({
                       filename={`${accountName}_vote_history.csv`}
                     />
                   </div>
+                </div>
+
+                <div className="h-[500px] w-full">
+                  <VotesHistoryWidget
+                    className="h-full"
+                    events={votesHistory?.votes_history}
+                    hiveChain={hiveChain as any}
+                    totalVestingShares={totalVestingShares}
+                    totalVestingFund={totalVestingFundHive}
+                  />
+                </div>
+
+                <div className="pt-4 shrink-0">
+                  <CustomPagination
+                    currentPage={pageNum}
+                    onPageChange={setPageNum}
+                    pageSize={config.standardPaginationSize}
+                    totalCount={votesHistory?.total_votes}
+                    className="rounded"
+                    isMirrored={false}
+                  />
                 </div>
 
                 <div className="flex-1 min-h-0">
@@ -337,17 +343,6 @@ const VotesHistoryDialog: React.FC<VotesHistoryDialogProps> = ({
                       </TableBody>
                     </Table>
                   </div>
-                </div>
-
-                <div className="pt-4 shrink-0">
-                  <CustomPagination
-                    currentPage={pageNum}
-                    onPageChange={setPageNum}
-                    pageSize={config.standardPaginationSize}
-                    totalCount={votesHistory.total_votes}
-                    className="rounded"
-                    isMirrored={false}
-                  />
                 </div>
               </div>
             ) : (

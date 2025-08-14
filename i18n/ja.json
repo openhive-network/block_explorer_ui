@@ -846,5 +846,6 @@
   "navbar.witnessesTitle": "ウィットネス",
   "votersChart.gained": "獲得",
   "votersChart.lost": "失った",
-  "votersChart.title": "投票者チャート"
+  "votersChart.title": "投票者チャート",
+  "votersChart.votes": "投票"
 }

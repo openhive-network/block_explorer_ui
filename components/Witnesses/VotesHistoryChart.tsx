@@ -137,6 +137,10 @@ const VotesTooltip = ({
         <div className="mt-3">
           <div className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
             {t("votersChart.gained")}: +{gainedHP}
+            <span className="px-2 !text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+              {`(+${d.gainedListVests.length}
+              ${t("votersChart.votes")})`}
+            </span>
           </div>
           <div className="mt-2 space-y-2">
             {d.gainedListVests.map((g) => (
@@ -171,6 +175,9 @@ const VotesTooltip = ({
         <div className="mt-3">
           <div className="text-xs font-semibold text-rose-600 dark:text-rose-400">
             {t("votersChart.lost")}: -{lostHP}
+            <span className="px-2 !text-xs font-semibold text-rose-600 dark:text-rose-400">
+              {`(-${d.lostListVests.length} ${t("votersChart.votes")})`}
+            </span>
           </div>
           <div className="mt-2 space-y-2">
             {d.lostListVests.map((l) => (
@@ -262,6 +269,7 @@ const VotesHistoryWidget: React.FC<VotesHistoryWidgetProps> = ({
       >
         <BarChart
           data={data}
+          stackOffset="sign"
           margin={{
             top: 20,
             right: isRTL ? (isMobile ? 0 : 10) : 55,
@@ -290,7 +298,7 @@ const VotesHistoryWidget: React.FC<VotesHistoryWidgetProps> = ({
                 totalVestingShares
               ) as any
             }
-            domain={[minVests, maxVests]}
+            domain={[Math.min(0, minVests), Math.max(0, maxVests)]}
             allowDataOverflow
             type="number"
             interval="preserveStartEnd"
@@ -303,6 +311,7 @@ const VotesHistoryWidget: React.FC<VotesHistoryWidgetProps> = ({
           />
 
           <Tooltip
+            wrapperStyle={{ zIndex: 99999 }}
             cursor={{ fill: "#0000002A" }}
             content={
               <VotesTooltip
@@ -324,12 +333,14 @@ const VotesHistoryWidget: React.FC<VotesHistoryWidgetProps> = ({
 
           <Bar
             dataKey="gainedVests"
+            stackId="net"
             name={t("votersChart.gained")}
             fill="#10b981"
             className="cursor-pointer"
           />
           <Bar
             dataKey="lostNegVests"
+            stackId="net"
             name={t("votersChart.lost")}
             fill="#ef4444"
             className="cursor-pointer"

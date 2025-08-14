@@ -846,5 +846,6 @@
   "navbar.witnessesTitle": "Witnesses",
   "votersChart.gained": "Gewonnen",
   "votersChart.lost": "Verloren",
-  "votersChart.title": "Wählerdiagramme"
+  "votersChart.title": "Wählerdiagramme",
+  "votersChart.votes": "Stimmen"
 }

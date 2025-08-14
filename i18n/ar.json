@@ -846,5 +846,6 @@
   "navbar.witnessesTitle": "الشهود",
   "votersChart.gained": "مكتسب",
   "votersChart.lost": "مفقود",
-  "votersChart.title": "مخططات الناخبين"
+  "votersChart.title": "مخططات الناخبين",
+  "votersChart.votes": "الأصوات"
 }

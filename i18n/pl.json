@@ -846,5 +846,6 @@
   "navbar.witnessesTitle": "Świadkowie",
   "votersChart.gained": "Pozyskani",
   "votersChart.lost": "Straceni",
-  "votersChart.title": "Wykresy wyborców"
+  "votersChart.title": "Wykresy wyborców",
+  "votersChart.votes": "Głosy"
 }

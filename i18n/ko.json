@@ -846,5 +846,6 @@
   "navbar.witnessesTitle": "증인",
   "votersChart.gained": "획득",
   "votersChart.lost": "잃음",
-  "votersChart.title": "유권자 차트"
+  "votersChart.title": "유권자 차트",
+  "votersChart.votes": "투票"
 }

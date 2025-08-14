@@ -845,5 +845,6 @@
   "navbar.witnessesTitle": "Martori",
   "votersChart.gained": "Câștigați",
   "votersChart.lost": "Pierdut",
-  "votersChart.title": "Grafice alegători"
+  "votersChart.title": "Grafice alegători",
+  "votersChart.votes": "Voturi"
 }
