@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { useI18n } from '@/i18n/i18n';
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { convertVestsToHP } from '@/utils/Calculations';
-import { formatNumber } from '@/lib/utils';
+import { cn, formatNumber } from '@/lib/utils';
 import { useHiveChainContext } from '@/contexts/HiveChainContext';
 import useProposalVotes from '@/hooks/api/proposals/useProposalVotes';
 import useDynamicGlobal from '@/hooks/api/homePage/useDynamicGlobal';
@@ -78,7 +78,7 @@ export const ProposalVotesDialog = ({ proposalId, children }: ProposalVotesDialo
   const processedVotesWithVests = useMemo(() => {
     return votes.map(vote => {
       const account = vote.accountDetails;
-      if (!account) { return { voter: vote.voter, directVests: 0, proxiedVests: 0, totalVests: 0, hasProxy: false, isDataLoaded: false, proxy: "" }; }
+      if (!account) { return { voter: vote.voter, directVests: 0, proxiedVests: 0, totalVests: 0, displayTotalVests: 0, hasProxy: false, isDataLoaded: false, proxy: "" }; }
       
       const directVests = grabNumericValue(account.vesting_shares.amount);
       const totalProxiedVests = Array.isArray(account.proxied_vsf_votes) && account.proxied_vsf_votes.length > 0
@@ -87,16 +87,19 @@ export const ProposalVotesDialog = ({ proposalId, children }: ProposalVotesDialo
       
       const hasActiveProxy = (account.proxy || "") !== "";
       
-      //If a proxy is set, the total effective vote is ALWAYS 0.
+      // The value used for all calculations (chart, export)
       const effectiveTotalVests = hasActiveProxy 
         ? 0 
         : (Number(directVests) + Number(totalProxiedVests));
+      
+      const displayTotalVests = Number(directVests) + Number(totalProxiedVests);
 
       return { 
         voter: vote.voter, 
         directVests,
         proxiedVests: Number(totalProxiedVests), 
-        totalVests: effectiveTotalVests, // This is the value used for all calculations
+        totalVests: effectiveTotalVests, // For calculations
+        displayTotalVests, // For sorting
         hasProxy: Number(totalProxiedVests) > 0, 
         isDataLoaded: true,
         proxy: account.proxy || ""
@@ -150,7 +153,7 @@ export const ProposalVotesDialog = ({ proposalId, children }: ProposalVotesDialo
       processed = processed.filter(vote => vote.voter.toLowerCase().includes(searchQuery.toLowerCase()));
     }
     processed.sort((a, b) => {
-        if (sortBy === 'power') { return isAsc ? a.totalVests - b.totalVests : b.totalVests - a.totalVests; }
+        if (sortBy === 'power') { return isAsc ? a.displayTotalVests - b.displayTotalVests : b.displayTotalVests - a.displayTotalVests; }
         else { return isAsc ? a.voter.localeCompare(b.voter) : b.voter.localeCompare(a.voter); }
     });
     return processed;
@@ -166,7 +169,7 @@ export const ProposalVotesDialog = ({ proposalId, children }: ProposalVotesDialo
       const headers = {
         voter: t('proposalVotesDialog.voter'),
         total_hp: t('proposalVotesDialog.totalHp'),
-        direct_hp: t('proposalVotesDialog.directHp'),
+        direct_hp: t('proposalVotesDialog.ownedHp'),
         proxied_hp: t('proposalVotesDialog.proxiedHp')
       };
 
@@ -181,7 +184,7 @@ export const ProposalVotesDialog = ({ proposalId, children }: ProposalVotesDialo
       const headers = {
         voter: t('proposalVotesDialog.voter'),
         total_vests: t('proposalVotesDialog.totalVests'),
-        direct_vests: t('proposalVotesDialog.directVests'),
+        direct_vests: t('proposalVotesDialog.ownedVests'),
         proxied_vests: t('proposalVotesDialog.proxiedVests')
       };
 
@@ -252,7 +255,7 @@ export const ProposalVotesDialog = ({ proposalId, children }: ProposalVotesDialo
                       value={sortBy}
                     >
                       <SelectTrigger className="w-full sm:w-[150px] whitespace-nowrap">
-                        <ListFilter className="h-4 w-4 mr-2" />
+                        <ListFilter className={cn("h-4 w-4 mr-2 transition-transform", { "rotate-180": isAsc })} />
                         <SelectValue
                           placeholder={t(
                             "proposalVotesDialog.sortByPlaceholder"
@@ -279,7 +282,7 @@ export const ProposalVotesDialog = ({ proposalId, children }: ProposalVotesDialo
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p>{t("proposalVotesDialog.toggleSortDirection")}</p>
+                         {t("proposalVotesDialog.toggleSortDirection")}
                       </TooltipContent>
                     </Tooltip>
                     <div className="flex items-center space-x-2 rounded-md p-1.5">
@@ -342,7 +345,7 @@ export const ProposalVotesDialog = ({ proposalId, children }: ProposalVotesDialo
                                         </span>
                                       </TooltipTrigger>
                                       <TooltipContent>
-                                        <p>{t('proposalVotesDialog.proxiedVoteTooltip', { proxy: vote.proxy })}</p>
+                                         {t('proposalVotesDialog.proxiedVoteTooltip', { proxy: vote.proxy })}
                                       </TooltipContent>
                                     </Tooltip>
                                   ) : (
