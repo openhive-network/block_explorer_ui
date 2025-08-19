@@ -295,7 +295,7 @@ const VotesHistoryWidget: React.FC<VotesHistoryWidgetProps> = ({
 
   return (
     <Card
-      className={cn("w-full h-[420px] pb-10", className)}
+      className={cn("h-[420px] pb-10 ", className)}
       data-testid="votes-history-widget"
     >
       <CardHeader>
@@ -312,7 +312,7 @@ const VotesHistoryWidget: React.FC<VotesHistoryWidgetProps> = ({
           margin={{
             top: 20,
             right: isRTL ? (isMobile ? 0 : 10) : 55,
-            left: isRTL ? 55 : isMobile ? 40 : 55,
+            left: isRTL ? 55 : isMobile ? 80 : 125,
             bottom: isMobile ? 80 : 60,
           }}
         >
