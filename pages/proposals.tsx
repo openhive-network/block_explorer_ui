@@ -22,6 +22,7 @@ import ScrollTopButton from "@/components/ScrollTopButton";
 import { formatNumber } from "@/lib/utils";
 import useGetAccounts from "@/hooks/api/proposals/useGetAccounts";
 import { grabNumericValue } from "@/utils/StringUtils";
+import { BudgetsSection } from "@/components/proposals/BudgetsSection";
 
 const ProposalsPage = () => {
   const { t } = useI18n();
@@ -49,31 +50,40 @@ const ProposalsPage = () => {
     direction: sortDirection,
   });
 
+  const { proposalsData: proposalsDataForBudget } = useProposals({
+    status: "all",
+    orderBy: "by_total_votes",
+    direction: "descending",
+  });
+
   const { dailyFunded } = useMemo(() => {
-    const teligible = proposalsData?.filter(
-      (proposal) =>
-        proposal.status !== "expired" && proposal.status !== "inactive"
-    );
-    const eligible = [];
-    for (const eKey in teligible) {
-      if (teligible[eKey as any].id != 0) {
-        eligible[eKey as any] = teligible[eKey as any];
-      } else {
-        break;
-      }
+    if (!proposalsDataForBudget || proposalsDataForBudget.length === 0) {
+      return { dailyFunded: 0 };
     }
 
-    const dailyFunded = eligible.reduce((a, b) => {
-      const dp = grabNumericValue(b.daily_pay) as any;
-      const _sum_amount = a + dp;
+    const now = new Date();
 
-      return _sum_amount <= dailyBudgetNumber ? _sum_amount : a;
-    }, 0);
-    return {
-      dailyFunded,
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dailyBudgetNumber]);
+    const ordered = [...proposalsDataForBudget].sort(
+      (a, b) => parseFloat(b.total_votes) - parseFloat(a.total_votes)
+    );
+
+    const idxReturn = ordered.findIndex((p) => p.proposal_id === 0);
+    const aboveReturn =
+      idxReturn === -1 ? ordered : ordered.slice(0, idxReturn);
+
+    const activeOnly = aboveReturn.filter(
+      (p) => now >= p.start_date && now <= p.end_date
+    );
+
+    let sum = 0;
+    for (const p of activeOnly) {
+      const dp = grabNumericValue(p.daily_pay) as number;
+      if (sum + dp <= dailyBudgetNumber) sum += dp;
+      else break;
+    }
+
+    return { dailyFunded: sum };
+  }, [dailyBudgetNumber, proposalsDataForBudget]);
 
   const { returnProposal, enrichedProposals, fundingThreshold } =
     useMemo(() => {
@@ -246,6 +256,9 @@ const ProposalsPage = () => {
           className="py-4 px-2"
         />
         <div className="mt-4">
+          <BudgetsSection budgets={budgets} />
+        </div>
+        <div className="mt-4">
           <ProposalAnalytics />
         </div>
         <div className="mt-8">
@@ -258,7 +271,6 @@ const ProposalsPage = () => {
             onSortChange={setSortOrder}
             sortDirection={sortDirection}
             onSortDirectionChange={setSortDirection}
-            budgets={budgets}
           />
         </div>
         <main className="mt-8">{renderContent()}</main>
