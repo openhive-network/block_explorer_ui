@@ -14,12 +14,13 @@ import Image from "next/image";
 import { IHiveChainInterface } from "@hiveio/wax";
 
 import { Card, CardHeader, CardTitle } from "../ui/card";
-import { cn } from "@/lib/utils";
+import { cn, formatNumber } from "@/lib/utils";
 import { useI18n } from "@/i18n/i18n";
 import useMediaQuery from "@/hooks/common/useMediaQuery";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { convertVestsToHP } from "@/utils/Calculations";
 import { useTheme } from "@/contexts/ThemeContext";
+import moment from "moment";
 
 type VoteEvent = {
   voter_name: string;
@@ -30,6 +31,7 @@ type VoteEvent = {
 
 type DayRow = {
   date: string;
+  tooltipDate: string;
   gainedVests: number; // VESTS (>= 0)
   lostNegVests: number; // VESTS (<= 0) negative for below-zero bars
   gainedListVests: { name: string; vests: number }[];
@@ -39,10 +41,11 @@ type DayRow = {
 interface VotesHistoryWidgetProps {
   events?: VoteEvent[];
   className?: string;
-  hiveChain: IHiveChainInterface | string;
+  hiveChain: IHiveChainInterface;
   totalVestingFund: number | string;
   totalVestingShares: number | string;
   titleKey?: string;
+  isHp?: boolean;
 }
 
 const toDay = (iso: string) => (iso ? iso.slice(0, 10) : "");
@@ -50,7 +53,6 @@ const toNum = (v: unknown) => {
   const n = typeof v === "number" ? v : Number(v);
   return Number.isFinite(n) ? n : 0;
 };
-
 const vestsToHpSigned = (
   vests: any,
   hiveChain: IHiveChainInterface,
@@ -72,12 +74,14 @@ const vestsToHpSigned = (
 function buildDailyVests(events: VoteEvent[] = []): DayRow[] {
   const map = new Map<string, DayRow>();
   for (const e of events) {
-    const d = toDay(e.timestamp);
+    const d = moment(e.timestamp).format("MMM D");
+    const tooltipDate = moment(e.timestamp).format("YYYY MMM D");
     if (!d) continue;
 
     if (!map.has(d)) {
       map.set(d, {
         date: d,
+        tooltipDate,
         gainedVests: 0,
         lostNegVests: 0,
         gainedListVests: [],
@@ -104,69 +108,85 @@ const VotesTooltip = ({
   hiveChain,
   totalVestingFund,
   totalVestingShares,
+  isHp,
 }: {
   active?: boolean;
   payload?: any[];
   hiveChain: IHiveChainInterface;
   totalVestingFund: number | string;
   totalVestingShares: number | string;
+  isHp: boolean;
 }) => {
   const { t } = useI18n();
   if (!active || !payload?.length) return null;
   const d = payload[0]?.payload as DayRow | undefined;
   if (!d) return null;
 
-  const gainedHP = vestsToHpSigned(
-    d.gainedVests,
-    hiveChain,
-    totalVestingFund,
-    totalVestingShares
-  );
-  const lostHP = vestsToHpSigned(
-    Math.abs(d.lostNegVests),
-    hiveChain,
-    totalVestingFund,
-    totalVestingShares
-  );
+  const gainedVal = isHp
+    ? vestsToHpSigned(
+        d.gainedVests,
+        hiveChain,
+        totalVestingFund,
+        totalVestingShares
+      )
+    : d.gainedVests;
+  const lostVal = isHp
+    ? vestsToHpSigned(
+        Math.abs(d.lostNegVests),
+        hiveChain,
+        totalVestingFund,
+        totalVestingShares
+      )
+    : Math.abs(d.lostNegVests);
+
+  const unit = isHp ? "HP" : "VESTS";
+
+  const formatValues = (value: string | number, unit: "HP" | "VESTS") => {
+    if (unit === "HP") return value;
+    return `${formatNumber(value, unit === "VESTS")} ${unit}`;
+  };
 
   return (
     <div className="data-box">
-      <p className="font-bold text-xl">{d.date}</p>
+      <p className="font-bold text-xl">{d.tooltipDate}</p>
 
       {!!d.gainedListVests.length && (
         <div className="mt-3">
           <div className="text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-            {t("votersChart.gained")}: +{gainedHP}
+            {t("votersChart.gained")}: +{formatValues(gainedVal, unit)}
             <span className="px-2 !text-xs font-semibold text-emerald-600 dark:text-emerald-400">
-              {`(+${d.gainedListVests.length}
-              ${t("votersChart.votes")})`}
+              {`(+${d.gainedListVests.length} ${t("votersChart.votes")})`}
             </span>
           </div>
           <div className="mt-2 space-y-2">
-            {d.gainedListVests.map((g) => (
-              <div
-                key={`g-${g.name}`}
-                className="flex items-center"
-              >
-                <Image
-                  className="rounded-full"
-                  src={getHiveAvatarUrl(g.name)}
-                  alt="avatar"
-                  width={24}
-                  height={24}
-                />
-                <span className="ml-2 text-sm">{g.name}</span>
-                <span className="ml-auto text-sm tabular-nums">
-                  +
-                  {vestsToHpSigned(
+            {d.gainedListVests.map((g) => {
+              const val = isHp
+                ? vestsToHpSigned(
                     g.vests,
                     hiveChain,
                     totalVestingFund,
                     totalVestingShares
-                  )}
-                </span>
-              </div>
-            ))}
+                  )
+                : g.vests;
+              return (
+                <div
+                  key={`g-${g.name}`}
+                  className="flex items-center"
+                >
+                  <Image
+                    className="rounded-full"
+                    src={getHiveAvatarUrl(g.name)}
+                    alt="avatar"
+                    width={24}
+                    height={24}
+                  />
+                  <span className="ml-2 text-sm">{g.name} </span>
+                  <span className="ml-2 text-sm tabular-nums">
+                    +{formatValues(val, unit)}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
@@ -174,36 +194,40 @@ const VotesTooltip = ({
       {!!d.lostListVests.length && (
         <div className="mt-3">
           <div className="text-xs font-semibold text-rose-600 dark:text-rose-400">
-            {t("votersChart.lost")}: -{lostHP}
+            {t("votersChart.lost")}: -{formatValues(lostVal, unit)}
             <span className="px-2 !text-xs font-semibold text-rose-600 dark:text-rose-400">
               {`(-${d.lostListVests.length} ${t("votersChart.votes")})`}
             </span>
           </div>
           <div className="mt-2 space-y-2">
-            {d.lostListVests.map((l) => (
-              <div
-                key={`l-${l.name}`}
-                className="flex items-center"
-              >
-                <Image
-                  className="rounded-full"
-                  src={getHiveAvatarUrl(l.name)}
-                  alt="avatar"
-                  width={24}
-                  height={24}
-                />
-                <span className="ml-2 text-sm">{l.name}</span>
-                <span className="ml-auto text-sm tabular-nums">
-                  -
-                  {vestsToHpSigned(
+            {d.lostListVests.map((l) => {
+              const val = isHp
+                ? vestsToHpSigned(
                     l.vests,
                     hiveChain,
                     totalVestingFund,
                     totalVestingShares
-                  )}
-                </span>
-              </div>
-            ))}
+                  )
+                : l.vests;
+              return (
+                <div
+                  key={`l-${l.name}`}
+                  className="flex items-center"
+                >
+                  <Image
+                    className="rounded-full"
+                    src={getHiveAvatarUrl(l.name)}
+                    alt="avatar"
+                    width={24}
+                    height={24}
+                  />
+                  <span className="ml-2 text-sm">{l.name}</span>
+                  <span className="ml-2 text-sm tabular-nums">
+                    -{formatValues(val, unit)}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
@@ -218,6 +242,7 @@ const VotesHistoryWidget: React.FC<VotesHistoryWidgetProps> = ({
   totalVestingFund,
   totalVestingShares,
   titleKey = "votersChart.title",
+  isHp = true,
 }) => {
   const { t, dir } = useI18n();
   const isRTL = dir === "rtl";
@@ -254,9 +279,23 @@ const VotesHistoryWidget: React.FC<VotesHistoryWidgetProps> = ({
     return [lo, hi];
   }, [data]);
 
+  const yTickFormatter = (vests: number) => {
+    const label = isHp
+      ? String(
+          vestsToHpSigned(
+            vests,
+            hiveChain,
+            totalVestingFund,
+            totalVestingShares
+          )
+        )
+      : `${formatNumber(vests, true)} VESTS`;
+    return label;
+  };
+
   return (
     <Card
-      className={cn("w-full h-[420px] pb-10", className)}
+      className={cn("h-[420px] pb-10 ", className)}
       data-testid="votes-history-widget"
     >
       <CardHeader>
@@ -273,7 +312,7 @@ const VotesHistoryWidget: React.FC<VotesHistoryWidgetProps> = ({
           margin={{
             top: 20,
             right: isRTL ? (isMobile ? 0 : 10) : 55,
-            left: isRTL ? 55 : isMobile ? 40 : 55,
+            left: isRTL ? 55 : isMobile ? 80 : 125,
             bottom: isMobile ? 80 : 60,
           }}
         >
@@ -284,20 +323,14 @@ const VotesHistoryWidget: React.FC<VotesHistoryWidgetProps> = ({
             stroke={strokeColor}
             axisLine={false}
             reversed={isRTL}
+            dy={20}
           />
 
           <YAxis
             stroke={strokeColor}
             axisLine={false}
             orientation={isRTL ? "right" : "left"}
-            tickFormatter={(vests: any) =>
-              vestsToHpSigned(
-                vests,
-                hiveChain as any,
-                totalVestingFund,
-                totalVestingShares
-              ) as any
-            }
+            tickFormatter={yTickFormatter}
             domain={[Math.min(0, minVests), Math.max(0, maxVests)]}
             allowDataOverflow
             type="number"
@@ -315,14 +348,15 @@ const VotesHistoryWidget: React.FC<VotesHistoryWidgetProps> = ({
             cursor={{ fill: "#0000002A" }}
             content={
               <VotesTooltip
-                hiveChain={hiveChain as any}
+                hiveChain={hiveChain}
                 totalVestingFund={totalVestingFund}
                 totalVestingShares={totalVestingShares}
+                isHp={isHp}
               />
             }
           />
           <Legend
-            formatter={(value) => `${value} (HP)`}
+            formatter={(value) => `${value} (${isHp ? "HP" : "VESTS"})`}
             wrapperStyle={{
               position: "relative",
               marginLeft: isRTL ? 0 : "35px",

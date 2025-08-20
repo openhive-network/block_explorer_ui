@@ -243,6 +243,16 @@ const VotesHistoryDialog: React.FC<VotesHistoryDialogProps> = ({
               </div>
             ) : votesHistory && votesHistory.votes_history?.length > 0 ? (
               <div className="flex h-full flex-col min-h-0">
+                <div className="h-[500px] w-full">
+                  <VotesHistoryWidget
+                    className="h-full"
+                    events={votesHistory?.votes_history}
+                    hiveChain={hiveChain as any}
+                    totalVestingShares={totalVestingShares}
+                    totalVestingFund={totalVestingFundHive}
+                    isHp={isHP}
+                  />
+                </div>
                 <div className="mb-2 flex shrink-0 items-center justify-between">
                   <DataCountMessage
                     count={votesHistory.total_votes}
@@ -263,16 +273,6 @@ const VotesHistoryDialog: React.FC<VotesHistoryDialogProps> = ({
                       filename={`${accountName}_vote_history.csv`}
                     />
                   </div>
-                </div>
-
-                <div className="h-[500px] w-full">
-                  <VotesHistoryWidget
-                    className="h-full"
-                    events={votesHistory?.votes_history}
-                    hiveChain={hiveChain as any}
-                    totalVestingShares={totalVestingShares}
-                    totalVestingFund={totalVestingFundHive}
-                  />
                 </div>
 
                 <div className="pt-4 shrink-0">
