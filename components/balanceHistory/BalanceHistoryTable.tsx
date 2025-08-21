@@ -257,12 +257,12 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
     <>
       <div className="sticky z-20 top-[3.2rem] md:top-[4rem]">
         <CustomPagination
-          currentPage={current_page ? current_page : 1}
+          currentPage={current_page ? current_page : total_pages}
           onPageChange={updateUrl}
           pageSize={config.standardPaginationSize}
           totalCount={total_operations}
           className="rounded"
-          isMirrored={false}
+          isMirrored={true}
         />
       </div>
       {total_operations === 0 ? (
