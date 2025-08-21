@@ -442,10 +442,12 @@ const AssetSection = ({
 // ====================================================================
 
 type AccountBalanceCardProps = {
+  header: string;
   userDetails: Explorer.FormattedAccountDetails;
 };
 
 const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
+  header,
   userDetails,
 }) => {
   const { t } = useI18n();
@@ -592,7 +594,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
           <div className="flex justify-between items-center pb-2 border-b border-slate-200 dark:border-slate-800">
             <CardTitle className=" flex items-center gap-2 text-xl font-semibold">
               <Wallet className="h-4 w-4" />
-              {t("accountBalanceCard.wallet")}
+              {header}
             </CardTitle>
             <div className="flex items-center space-x-2">
               <Tooltip>
