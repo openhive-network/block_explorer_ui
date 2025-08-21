@@ -336,7 +336,7 @@ namespace Hive {
     direction?: Hive.Direction;
     "page-size"?: number;
     "page"?: number;
-    "voter-name"?:string;
+    "voter-name"?: string;
   }
 
   export class Voter {
@@ -966,11 +966,11 @@ namespace Hive {
     "to-block"?: number | Date;
   }
   export class AccountFollowCount {
-  account!: string;
-  follower_count!: number;
-  following_count!: number;
+    account!: string;
+    follower_count!: number;
+    following_count!: number;
   }
-   export class AccountSubscriptions {
+  export class AccountSubscriptions {
     subscriptions !: string[];
   }
   export class AccountFollower {
@@ -996,8 +996,8 @@ namespace Hive {
     voterName?: string | undefined;
     fromBlock: Date | number | undefined;
     toBlock: Date | number | undefined;
-    fromDate:  Date | undefined;
-    toDate:  Date | undefined;
+    fromDate: Date | undefined;
+    toDate: Date | undefined;
     page: number | undefined;
   }
 
@@ -1024,7 +1024,7 @@ namespace Hive {
     name!: string;
     role!: "admin" | "mod" | "member";
     title!: string;
-    
+
   }
 
   export class CommunityStats {
@@ -1036,13 +1036,11 @@ namespace Hive {
     subscribers!: number;
   }
 
-  export class CommunitySubscribers 
-  {
+  export class CommunitySubscribers {
     subscribers!: CommunitySubscriber[];
   }
 
-  export class CommunitySubscriber 
-  {
+  export class CommunitySubscriber {
     name!: string;
     created_at!: string;
   }
@@ -1082,12 +1080,19 @@ namespace Hive {
     status!: "active" | "inactive" | "expired";
   }
 
-   export interface ProposalVote {
-    id: number;
-    voter: string;
-    proposal: Proposal;
+  export class ProposalVote {
+    id!: number;
+    voter!: string;
+    proposal!: Proposal;
   }
 
+  export class BlockChainProps {
+    account_creation_fee!: string;
+    maximum_block_size!: number;
+    hbd_interest_rate!: number;
+    account_subsidy_limit!: number;
+
+  }
 }
 
 export default Hive;

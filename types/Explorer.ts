@@ -239,6 +239,10 @@ declare module Explorer {
   }
 
   interface AccountDetailsDollars {
+    balance: string;
+    hbd_balance: string;
+    hbd_saving_balance: string;
+    reward_hbd_balance :string;
     reward_vesting_balance: string;
     vesting_withdraw_rate: string;
     vesting_shares: string;
@@ -249,6 +253,9 @@ declare module Explorer {
     vesting_balance: string;
     reward_vesting_hive: string;
     account_value: string;
+    savings_balance: string;
+    reward_hive_balance: string;
+
   }
 
   interface FormattedAccountDetails

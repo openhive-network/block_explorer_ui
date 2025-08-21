@@ -11,7 +11,7 @@ import VotersDialog from "../Witnesses/VotersDialog";
 import VotesHistoryDialog from "../Witnesses/VotesHistoryDialog";
 import AccountVestingDelegationsCard from "./AccountVestingDelegationsCard";
 import AccountRcDelegationsCard from "./AccountRcDelegationsCard";
-import AccountBalanceCard from "./AccountBalanceCard";
+import AccountBalanceCard from "./AccountBalanceCard/AccountBalanceCard";
 import Explorer from "@/types/Explorer";
 import AccountBalanceHistoryCard from "./AccountBalanceHistoryCard";
 import AccountRecurrentTransfersCard from "./AccountRecurrentTransfersCard";
