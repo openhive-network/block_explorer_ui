@@ -33,6 +33,7 @@ export type ExplorerNodeApi = {
     >;
   };
   condenser_api: {
+    get_chain_properties: TWaxApiRequest<{ }, Hive.BlockChainProps>;
     get_witnesses_by_vote: TWaxApiRequest<unknown[], Hive.WitnessesByVote>;
     get_follow_count: TWaxApiRequest<
       { account: string },
@@ -68,8 +69,8 @@ export type ExplorerNodeApi = {
       ],
       Hive.ProposalVote[]
     >;
-
     find_proposals: TWaxApiRequest<[number[]], Hive.Proposal[]>;
+    
   };
   bridge: {
     get_discussion: TWaxApiRequest<
@@ -763,6 +764,10 @@ class FetchingService {
     return await this.extendedHiveChain!.api.condenser_api.find_proposals([
       proposal_ids,
     ]);
+  }
+
+   async getBlockChainProps(): Promise<Hive.BlockChainProps> {
+    return await this.extendedHiveChain!.api.condenser_api.get_chain_properties([]);
   }
 }
 

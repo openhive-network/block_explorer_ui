@@ -267,3 +267,15 @@ export const extractTextFromReactElement = (element: ReactNode): string => {
 export const formatHash = (hash: string): string => {
   return hash?.slice(0, 10);
 };
+
+/**
+ * Wraps a string in `="<value>"` to ensure spreadsheet software
+ * treats it as a literal string, preventing automatic type conversion (e.g., to a date).
+ * This is a serialization utility, not a formatting utility.
+ * @param value The pre-formatted string or number to wrap.
+ * @returns A CSV-safe string.
+ */
+export const asCsvString = (value: string | number | undefined | null) => {
+  if (value === null || typeof value === "undefined") return "";
+  return `="${String(value)}"`;
+};
