@@ -15,6 +15,13 @@ interface AccountMainCardProps {
   liveDataEnabled: boolean;
 }
 
+type NewAuthTuple = [number, string];
+type NewAuthKeys = {
+  key_auths?: NewAuthTuple[];
+  account_auths?: NewAuthTuple[];
+  weight_threshold?: number;
+};
+
 const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
   accountName,
   liveDataEnabled,
@@ -28,7 +35,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
   const [isPropertiesHidden, setIsPropertiesHidden] = useState<boolean>(true);
 
   const handlePropertiesVisibility = () => {
-    setIsPropertiesHidden(!isPropertiesHidden);
+    setIsPropertiesHidden((v) => !v);
   };
 
   const cutPublicKey = (publicKey?: string): string => {
@@ -40,7 +47,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
 
   const renderAuthority = (
     content: string,
-    weight: string,
+    weight: number,
     isAccount: boolean,
     index: number
   ) => {
@@ -58,7 +65,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
               href={`/@${content}`}
             >
               <User className="w-4 mr-2" />
-              <span>{content} </span>
+              <span>{content}</span>
             </Link>
           ) : (
             <CopyToKeyboard
@@ -76,40 +83,33 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
     authorities?: Hive.AuthKeys,
     title?: string
   ) => {
-    const shouldMarkThreshold = !!(
-      (authorities?.account_auths?.length ||
-        0 + (authorities?.account_auths?.length || 0)) %
-        2 ===
-      1
-    );
+    const a = authorities as unknown as NewAuthKeys;
+
+    const keyAuths = a?.key_auths ?? [];
+    const accountAuths = a?.account_auths ?? [];
+
+    const totalRows = keyAuths.length + accountAuths.length;
+    const shouldMarkThreshold = totalRows % 2 === 1;
+
     return (
       <div>
         <div className="text-lg mt-2">{title}</div>
         <Table>
           <TableBody>
-            {authorities?.account_auths?.map((singleAuthority, index) =>
-              renderAuthority(
-                singleAuthority[0] || "",
-                singleAuthority[1] || "",
-                true,
-                index
-              )
+            {keyAuths.map(([weight, key], index) =>
+              renderAuthority(key, weight, false, index)
             )}
-            {authorities?.key_auths?.map((singleAuthority, index) =>
-              renderAuthority(
-                singleAuthority[0] || "",
-                singleAuthority[1] || "",
-                false,
-                index + authorities?.account_auths.length
-              )
+
+            {accountAuths.map(([weight, account], index) =>
+              renderAuthority(account, weight, true, index + keyAuths.length)
             )}
             <TableRow
               className={cn("font-semibold", {
-                "bg-rowEven ": shouldMarkThreshold,
+                "bg-rowEven": shouldMarkThreshold,
               })}
             >
               <TableCell>{t("accountAuthoritiesCard.threshold")}</TableCell>
-              <TableCell>{authorities?.weight_threshold}</TableCell>
+              <TableCell>{a?.weight_threshold}</TableCell>
             </TableRow>
           </TableBody>
         </Table>
@@ -127,16 +127,21 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
           onClick={handlePropertiesVisibility}
           className="h-full flex justify-between align-center p-2 hover:bg-rowHover cursor-pointer px-4"
         >
-          <div className="text-lg">{t("accountAuthoritiesCard.authorities")}</div>
-
+          <div className="text-lg">
+            {t("accountAuthoritiesCard.authorities")}
+          </div>
           {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
         </div>
       </CardHeader>
+
       <CardContent
         hidden={isPropertiesHidden}
         className="break-all"
       >
-        {renderCollectionOfAuthorities(accountAuthoritiesData?.owner, t("accountAuthoritiesCard.owner"))}
+        {renderCollectionOfAuthorities(
+          accountAuthoritiesData?.owner,
+          t("accountAuthoritiesCard.owner")
+        )}
         {renderCollectionOfAuthorities(
           accountAuthoritiesData?.active,
           t("accountAuthoritiesCard.active")
@@ -146,7 +151,9 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
           t("accountAuthoritiesCard.posting")
         )}
         <div>
-          <div className=" text-lg mt-2">{t("accountAuthoritiesCard.memo")}:</div>
+          <div className="text-lg mt-2">
+            {t("accountAuthoritiesCard.memo")}:
+          </div>
           <Table>
             <TableBody>
               <TableRow className="bg-rowEven">
@@ -161,7 +168,9 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
           </Table>
           {accountAuthoritiesData?.witness_signing && (
             <>
-              <div className=" text-lg mt-2">{t("accountAuthoritiesCard.witnessSigning")}:</div>
+              <div className="text-lg mt-2">
+                {t("accountAuthoritiesCard.witnessSigning")}:
+              </div>
               <Table>
                 <TableBody>
                   <TableRow className="bg-rowEven">
