@@ -520,6 +520,7 @@ namespace Hive {
     ops_count!: number;
     is_witness!: boolean;
     governanceTs!: any;
+    governance_vote_expiration_ts!: Date;
   }
 
   export class GetAccountAuthoritiesParams {
