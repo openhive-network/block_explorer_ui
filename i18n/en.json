@@ -228,8 +228,13 @@
   "accountMainCard.votesHistory": "Votes History",
   "accountMainCard.totalPostsTooltip": "Total number of posts and comments made by the user.",
   "accountMainCard.lastActiveTooltip": "The last time the user published a post or a comment.",
-  "AccountMainCard.never": "No Activity",
-  "AccountMainCard.creatorTooltip": "Statistics and details for the account that created this community.",
+  "accountMainCard.never": "No Activity",
+  "accountMainCard.creatorTooltip": "Statistics and details for the account that created this community.",
+  "accountMainCard.governanceHealth": "Governance Health",
+  "accountMainCard.governanceActive": "Active",
+  "accountMainCard.governanceExpiring": "Expiring Soon",
+  "accountMainCard.governanceExpired": "Expired",
+  "accountMainCard.governanceTooltip": "Witness votes expire on:",
   "accountBalanceHistoryCard.fullChart": "Full Chart",
   "accountBalanceHistoryCard.error": "Error loading balance information.",
   "balanceHistoryChart.savingsBalance": "Savings Balance",
@@ -870,4 +875,6 @@
   "accountBalanceCardExport.asset": "Asset",
   "accountBalanceCardExport.total": "Total",
   "accountBalanceCardExport.unclaimedRewardNote": "(Unclaimed Reward)"
+
+  
 }

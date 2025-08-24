@@ -228,9 +228,13 @@
   "accountMainCard.liveData": "Datos en Vivo",
   "accountMainCard.totalPostsTooltip": "Número total de publicaciones y comentarios realizados por el usuario.",
   "accountMainCard.lastActiveTooltip": "La última vez que el usuario publicó una entrada o un comentario.",
-  "AccountMainCard.never": "Sin actividad",
-  "AccountMainCard.creatorTooltip": "Estadísticas y detalles de la cuenta que creó esta comunidad.",
-  "accountBalanceHistoryCard.fullChart": "Gráfico Completo",
+  "accountMainCard.never": "Sin actividad",
+  "accountMainCard.creatorTooltip": "Estadísticas y detalles de la cuenta que creó esta comunidad.",
+  "accountMainCard.governanceHealth": "Salud de Gobernanza",
+  "accountMainCard.governanceActive": "Activo",
+  "accountMainCard.governanceExpiring": "Expira Pronto",
+  "accountMainCard.governanceExpired": "Expirado",
+  "accountMainCard.governanceTooltip": "Votos de testigo expiran el:",
   "accountBalanceHistoryCard.error": "Error al cargar la información del saldo.",
   "balanceHistoryChart.savingsBalance": "Saldo de Ahorros",
   "balanceHistoryTable.noRecordsForOperation": "No hay registros para la operación {{operationId}}",
@@ -870,5 +874,4 @@
   "accountBalanceCardExport.asset": "Activo",
   "accountBalanceCardExport.total": "Total",
   "accountBalanceCardExport.unclaimedRewardNote": "(Recompensa sin reclamar)"
-
 }

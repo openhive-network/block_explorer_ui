@@ -240,8 +240,13 @@
   "accountMainCard.liveData": "بيانات حية",
   "accountMainCard.totalPostsTooltip": "إجمالي عدد المنشورات والتعليقات التي قام بها المستخدم.",
   "accountMainCard.lastActiveTooltip": "آخر مرة قام فيها المستخدم بنشر منشور أو تعليق.",
-  "AccountMainCard.never": "لا نشاط",
-  "AccountMainCard.creatorTooltip": "إحصائيات وتفاصيل الحساب الذي أنشأ هذا المجتمع.",
+  "accountMainCard.never": "لا نشاط",
+  "accountMainCard.creatorTooltip": "إحصائيات وتفاصيل الحساب الذي أنشأ هذا المجتمع.",
+  "accountMainCard.governanceHealth": "سلامة الحوكمة",
+  "accountMainCard.governanceActive": "نشط",
+  "accountMainCard.governanceExpiring": "ستنتهي قريباً",
+  "accountMainCard.governanceExpired": "منتهية الصلاحية",
+  "accountMainCard.governanceTooltip": "تصويتات الشهود تنتهي في:",
   "accountBalanceHistoryCard.fullChart": "مخطط كامل",
   "accountBalanceHistoryCard.error": "خطأ في تحميل معلومات الرصيد.",
   "balanceHistoryChart.savingsBalance": "رصيد الادخار",
@@ -870,5 +875,4 @@
   "accountBalanceCardExport.asset": "الأصل",
   "accountBalanceCardExport.total": "المجموع",
   "accountBalanceCardExport.unclaimedRewardNote": "(مكافأة غير مُطالب بها)"
-
 }

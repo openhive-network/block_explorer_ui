@@ -183,11 +183,10 @@ export const ProposalCard = ({
   const remainingMs = proposal.end_date.getTime() - new Date().getTime();
   const remainingDays = Math.max(0, remainingMs / (1000 * 60 * 60 * 24));
 
-// If the proposal is funded, calculate remaining pay.
-// Otherwise, the amount to be paid is the total amount.
-  const remainingHbdToBePaid = proposal.isFunded
-  ? dailyPayValue * remainingDays
-  : totalHbdToBePaid;
+// If the proposal is inactive, remaining pay is equal to total. Else, we calculate it based on remaining days
+  const remainingHbdToBePaid = !proposal.isFunded && proposal.status=='inactive'
+  ? totalHbdToBePaid
+  : dailyPayValue * remainingDays;
 
   const { hiveChain } = useHiveChainContext();
   const { dynamicGlobalData } = useDynamicGlobal() as any;

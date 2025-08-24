@@ -8,7 +8,9 @@ import {
   Loader2,
   History,
   Vote,
-  ShieldCheck,
+  ShieldCheck, 
+  AlertTriangle,
+  ShieldOff,
   Building2,
   UserPlus,
   UserCheck,
@@ -155,10 +157,67 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
   );
   const lastActiveValue =
     lastPostDate.getFullYear() <= 1970 ? (
-      <span className="text-sm">{t("AccountMainCard.never")}</span>
+      <span className="text-sm">{t("accountMainCard.never")}</span>
     ) : (
       <TimeAgo className="text-sm" locale={locale} datetime={lastPostDate} />
     );
+
+   const getGovernanceHealthStatus = () => {
+    const expirationTs = accountDetails.governance_vote_expiration_ts;
+    if (!expirationTs) {
+      return null;
+    }
+
+    const expirationDate = new Date(formatAndDelocalizeTime(expirationTs));
+    const now = new Date();
+    const threeMonthsFromNow = new Date();
+    threeMonthsFromNow.setMonth(now.getMonth() + 3);
+
+    const tooltipContent = (
+      <p>
+        {t("accountMainCard.governanceTooltip")}{" "}
+        { formatAndDelocalizeTime(expirationDate)}
+      </p>
+    );
+
+    if (expirationDate < now) {
+      return {
+        icon: <ShieldOff size={20} color="#ef4444" />,
+        label: t("accountMainCard.governanceHealth"),
+        value: (
+          <span className="text-sm text-red-500">
+            {t("accountMainCard.governanceExpired")}
+          </span>
+        ),
+        tooltipContent: tooltipContent,
+      };
+    }
+
+    if (expirationDate < threeMonthsFromNow) {
+      return {
+        icon: <AlertTriangle size={20} color="#eab308" />,
+        label: t("accountMainCard.governanceHealth"),
+        value: (
+          <span className="text-sm text-yellow-500">
+            {t("accountMainCard.governanceExpiring")}
+          </span>
+        ),
+        tooltipContent: tooltipContent,
+      };
+    }
+
+    return {
+      icon: <ShieldCheck size={20} color="#22c55e" />,
+      label: t("accountMainCard.governanceHealth"),
+      value: (
+        <span className="text-sm text-green-500">
+          {t("accountMainCard.governanceActive")}
+        </span>
+      ),
+      tooltipContent: tooltipContent,
+    };
+  };
+  const governanceHealthProps = getGovernanceHealthStatus();
 
   return (
     <Card data-testid="account-details">
@@ -288,10 +347,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>
-                    {t(
-                      "AccountMainCard.creatorTooltip",
-                      "Statistics and details for the account that created this community."
-                    )}
+                    {t( "accountMainCard.creatorTooltip")}
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -344,6 +400,14 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
             }
             tooltipContent={<p>{accountDetails.created}</p>}
           />
+          {governanceHealthProps && (
+            <StatCard
+              icon={governanceHealthProps.icon}
+              label={governanceHealthProps.label}
+              value={governanceHealthProps.value}
+              tooltipContent={governanceHealthProps.tooltipContent}
+            />
+          )}
         </div>
 
         <div className="border-t border-slate-200 dark:border-slate-700 pt-5">
