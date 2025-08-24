@@ -1,7 +1,17 @@
 /** @type {import('next').NextConfig} */
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+
 const nextConfig = {
   reactStrictMode: true,
   output: process.env.BUILD_STANDALONE === "true" ? "standalone" : undefined,
+  // basePath is set at build time from NEXT_PUBLIC_BASE_PATH env variable
+  // This allows building separate images for root (/) and subdirectory (/explorer) deployments
+  basePath: basePath,
+  // assetPrefix must match basePath for proper asset serving
+  assetPrefix: basePath,
+  publicRuntimeConfig: {
+    basePath: basePath,
+  },
   images: {
     remotePatterns: [
       {

@@ -105,9 +105,10 @@ docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY" <<< "$CI_REG
 docker login -u "$DOCKER_HUB_USER" --password-stdin <<< "$DOCKER_HUB_PASSWORD"
 docker login -u "$BLOG_REGISTRY_USER" --password-stdin "registry-upload.hive.blog" <<< "$BLOG_REGISTRY_PASSWORD"
 
+# Build or pull root image
 # Check if image with short SHA already exists (built by docker-build job)
 if docker pull "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" 2>/dev/null; then
-    echo "Found existing image $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA, retagging it..."
+    echo "Found existing root image $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA, retagging it..."
 
     # Tag with release tag for GitLab registry
     docker tag "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG"
@@ -118,7 +119,7 @@ if docker pull "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" 2>/dev/null; then
     # Tag for registry-upload.hive.blog (without /hive path)
     docker tag "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" "registry-upload.hive.blog/$CI_PROJECT_NAME:$CI_COMMIT_TAG"
 else
-    echo "No existing image found, building new image..."
+    echo "No existing root image found, building new image..."
     "$SRC_DIR/scripts/build_instance.sh" "$SRC_DIR" --tag="$CI_COMMIT_TAG" --registry="$CI_REGISTRY_IMAGE" --progress=plain
 
     # Also tag with short SHA for consistency
@@ -131,9 +132,36 @@ else
     docker tag "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG" "registry-upload.hive.blog/$CI_PROJECT_NAME:$CI_COMMIT_TAG"
 fi
 
+# Build or pull explorer subdirectory variant
+echo "Building explorer subdirectory variant image..."
+if docker pull "$CI_REGISTRY_IMAGE/explorer-subdirectory:$CI_COMMIT_SHORT_SHA" 2>/dev/null; then
+    echo "Found existing explorer variant $CI_REGISTRY_IMAGE/explorer-subdirectory:$CI_COMMIT_SHORT_SHA, retagging it..."
+
+    # Tag with release tag for GitLab registry
+    docker tag "$CI_REGISTRY_IMAGE/explorer-subdirectory:$CI_COMMIT_SHORT_SHA" "$CI_REGISTRY_IMAGE/explorer-subdirectory:$CI_COMMIT_TAG"
+
+    # Tag for Docker Hub
+    docker tag "$CI_REGISTRY_IMAGE/explorer-subdirectory:$CI_COMMIT_SHORT_SHA" "hiveio/$CI_PROJECT_NAME-explorer-subdirectory:$CI_COMMIT_TAG"
+
+    # Tag for registry-upload.hive.blog
+    docker tag "$CI_REGISTRY_IMAGE/explorer-subdirectory:$CI_COMMIT_SHORT_SHA" "registry-upload.hive.blog/$CI_PROJECT_NAME/explorer-subdirectory:$CI_COMMIT_TAG"
+else
+    echo "No existing explorer variant found, building new image..."
+    "$SRC_DIR/scripts/build_instance.sh" "$SRC_DIR" --tag="$CI_COMMIT_TAG" --registry="$CI_REGISTRY_IMAGE/explorer-subdirectory" --base-path="/explorer" --progress=plain
+
+    # Also tag with short SHA for consistency
+    docker tag "$CI_REGISTRY_IMAGE/explorer-subdirectory:$CI_COMMIT_TAG" "$CI_REGISTRY_IMAGE/explorer-subdirectory:$CI_COMMIT_SHORT_SHA"
+
+    # Tag for Docker Hub
+    docker tag "$CI_REGISTRY_IMAGE/explorer-subdirectory:$CI_COMMIT_TAG" "hiveio/$CI_PROJECT_NAME-explorer-subdirectory:$CI_COMMIT_TAG"
+
+    # Tag for registry-upload.hive.blog
+    docker tag "$CI_REGISTRY_IMAGE/explorer-subdirectory:$CI_COMMIT_TAG" "registry-upload.hive.blog/$CI_PROJECT_NAME/explorer-subdirectory:$CI_COMMIT_TAG"
+fi
+
 docker images
 
-echo "Pushing instance images"
+echo "Pushing root instance images"
 # Push to GitLab registry with both tags
 docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
 docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG"
@@ -143,3 +171,14 @@ docker push "hiveio/$CI_PROJECT_NAME:$CI_COMMIT_TAG"
 
 # Push to registry-upload.hive.blog (non-proxied endpoint for faster uploads)
 docker push "registry-upload.hive.blog/$CI_PROJECT_NAME:$CI_COMMIT_TAG"
+
+echo "Pushing explorer subdirectory variant images"
+# Push to GitLab registry with both tags
+docker push "$CI_REGISTRY_IMAGE/explorer-subdirectory:$CI_COMMIT_SHORT_SHA"
+docker push "$CI_REGISTRY_IMAGE/explorer-subdirectory:$CI_COMMIT_TAG"
+
+# Push to Docker Hub
+docker push "hiveio/$CI_PROJECT_NAME-explorer-subdirectory:$CI_COMMIT_TAG"
+
+# Push to registry-upload.hive.blog
+docker push "registry-upload.hive.blog/$CI_PROJECT_NAME/explorer-subdirectory:$CI_COMMIT_TAG"

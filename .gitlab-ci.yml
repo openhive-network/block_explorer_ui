@@ -51,7 +51,8 @@ docker-build:
 
       echo "Tags to be applied: $TAGS"
       echo -e "\e[0Ksection_end:$(date +%s):tag\r\e[0K"
-      echo -e "\e[0Ksection_start:$(date +%s):build[collapsed=true]\r\e[0KBaking image..."
+
+      echo -e "\e[0Ksection_start:$(date +%s):build[collapsed=true]\r\e[0KBaking root image..."
       git config --global --add safe.directory "$CI_PROJECT_DIR"
       scripts/build_instance.sh --progress=plain "$CI_PROJECT_DIR"
 
@@ -74,6 +75,33 @@ docker-build:
       echo "Unique image tag:"
       cat docker-build.env
       echo -e "\e[0Ksection_end:$(date +%s):build\r\e[0K"
+
+      echo -e "\e[0Ksection_start:$(date +%s):build-explorer[collapsed=true]\r\e[0KBaking explorer subdirectory variant..."
+      # Save original registry image for second build
+      ORIGINAL_CI_REGISTRY_IMAGE="$CI_REGISTRY_IMAGE"
+      export CI_REGISTRY_IMAGE="$CI_REGISTRY_IMAGE/explorer-subdirectory"
+
+      scripts/build_instance.sh --progress=plain --base-path="/explorer" "$CI_PROJECT_DIR"
+
+      # Pull and tag the explorer variant
+      docker pull "$CI_REGISTRY_IMAGE:$TAG"
+
+      # Apply all tags for explorer variant
+      for TAG_NAME in $TAGS; do
+        if [[ "$TAG_NAME" != "$TAG" ]]; then
+          docker tag "$CI_REGISTRY_IMAGE:$TAG" "$CI_REGISTRY_IMAGE:$TAG_NAME"
+        fi
+      done
+
+      # Push all tags for explorer variant
+      for TAG_NAME in $TAGS; do
+        docker push "$CI_REGISTRY_IMAGE:$TAG_NAME"
+      done
+
+      echo "EXPLORER_SUBDIRECTORY_IMAGE_NAME=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" >> docker-build.env
+      echo "Explorer variant tag:"
+      echo "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
+      echo -e "\e[0Ksection_end:$(date +%s):build-explorer\r\e[0K"
   artifacts:
     reports:
       dotenv: docker-build.env
