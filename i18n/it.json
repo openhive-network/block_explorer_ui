@@ -235,6 +235,7 @@
   "accountMainCard.governanceExpiring": "In Scadenza",
   "accountMainCard.governanceExpired": "Scaduto",
   "accountMainCard.governanceTooltip": "I voti per i testimoni scadono il:",
+  "accountMainCard.proposalVotes": "Voti Proposte",
   "accountBalanceHistoryCard.fullChart": "Grafico Completo",
   "accountBalanceHistoryCard.error": "Errore nel caricamento delle informazioni sul saldo.",
   "balanceHistoryChart.savingsBalance": "Saldo Risparmi",

@@ -1,6 +1,5 @@
 import { ArrowDown, ArrowUp, Search, SortAsc, SortDesc } from "lucide-react";
 import { useI18n } from "@/i18n/i18n";
-import { Button } from "../ui/button";
 
 export type ProposalStatusFilter = "all" | "active" | "inactive" | "expired";
 export type ProposalSortOrder =
@@ -50,8 +49,10 @@ export const ProposalControls = ({
 
   return (
     <div className="flex flex-col gap-4 rounded-[8px] border bg-white p-4 dark:border-slate-800 dark:bg-theme">
-      <div className="flex w-full flex-col items-stretch gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="w-full overflow-x-auto md:w-auto">
+      {/* --- FIX #1: The main container now wraps and switches to a row layout on larger (lg) screens --- */}
+      <div className="flex w-full flex-col flex-wrap items-stretch gap-4 lg:flex-row lg:items-center lg:justify-between">
+        {/* The status filter group */}
+        <div className="w-full overflow-x-auto lg:w-auto">
           <div className="inline-flex w-full rounded-[8px] bg-slate-100 p-1 dark:bg-slate-800">
             <div className="flex items-center space-x-1">
               {STATUS_OPTIONS.map((option) => (
@@ -73,7 +74,8 @@ export const ProposalControls = ({
           </div>
         </div>
 
-        <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:gap-4 md:w-1/2">
+        {/* The search and sort group. Adjusted width for the new breakpoint. */}
+        <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:gap-4 lg:w-1/2">
           <div className="relative flex-grow">
             <div className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2">
               <Search
@@ -91,7 +93,8 @@ export const ProposalControls = ({
             />
           </div>
           <div className="flex w-full items-stretch gap-2 sm:w-auto">
-            <div className="relative w-full sm:w-60">
+            {/* --- FIX #2: Added z-10 to the select dropdown's container to lift it above other content --- */}
+            <div className="relative w-full sm:w-60 z-10">
               <div className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2">
                 {sortDirection === "descending" ? (
                   <SortDesc

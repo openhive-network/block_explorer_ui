@@ -236,6 +236,7 @@
   "accountMainCard.governanceExpiring": "곧 만료",
   "accountMainCard.governanceExpired": "만료됨",
   "accountMainCard.governanceTooltip": "증인 투표 만료일:",
+  "accountMainCard.proposalVotes": "제안 투표",
   "accountBalanceHistoryCard.fullChart": "전체 차트",
   "accountBalanceHistoryCard.error": "잔액 정보 로딩 중 오류 발생.",
   "balanceHistoryChart.savingsBalance": "저축 잔액",

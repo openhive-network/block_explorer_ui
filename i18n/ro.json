@@ -236,6 +236,7 @@
   "accountMainCard.governanceExpiring": "Expiră în curând",
   "accountMainCard.governanceExpired": "Expirat",
   "accountMainCard.governanceTooltip": "Voturile pentru martori expiră la:",
+  "accountMainCard.proposalVotes": "Voturi Propuneri",
   "accountBalanceHistoryCard.fullChart": "Grafic Complet",
   "accountBalanceHistoryCard.error": "Eroare la încărcarea informațiilor despre sold.",
   "balanceHistoryChart.savingsBalance": "Sold Economii",

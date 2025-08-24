@@ -236,6 +236,7 @@
   "accountMainCard.governanceExpiring": "Läuft bald ab",
   "accountMainCard.governanceExpired": "Abgelaufen",
   "accountMainCard.governanceTooltip": "Witness-Stimmen laufen ab am:",
+  "accountMainCard.proposalVotes": "Vorschlagsstimmen",
   "accountBalanceHistoryCard.fullChart": "Vollständiges Diagramm",
   "accountBalanceHistoryCard.error": "Fehler beim Laden der Kontostandsinformationen.",
   "balanceHistoryChart.savingsBalance": "Sparguthaben",

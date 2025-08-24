@@ -235,6 +235,7 @@
   "accountMainCard.governanceExpiring": "Expiring Soon",
   "accountMainCard.governanceExpired": "Expired",
   "accountMainCard.governanceTooltip": "Witness votes expire on:",
+  "accountMainCard.proposalVotes": "Proposal Votes",
   "accountBalanceHistoryCard.fullChart": "Full Chart",
   "accountBalanceHistoryCard.error": "Error loading balance information.",
   "balanceHistoryChart.savingsBalance": "Savings Balance",
@@ -874,7 +875,7 @@
   "accountBalanceCardExport.detailedBreakdownTitle": "Detailed Asset Breakdown",
   "accountBalanceCardExport.asset": "Asset",
   "accountBalanceCardExport.total": "Total",
-  "accountBalanceCardExport.unclaimedRewardNote": "(Unclaimed Reward)"
+  "accountBalanceCardExport.unclaimedRewardNote": "(Unclaimed Reward)" 
 
   
 }

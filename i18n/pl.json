@@ -236,6 +236,7 @@
   "accountMainCard.governanceExpiring": "Wygasa wkrótce",
   "accountMainCard.governanceExpired": "Wygasłe",
   "accountMainCard.governanceTooltip": "Głosy na świadków wygasają:",
+  "accountMainCard.proposalVotes": "Głosy na Wnioski",
   "accountBalanceHistoryCard.fullChart": "Pełny Wykres",
   "accountBalanceHistoryCard.error": "Błąd ładowania informacji o saldzie.",
   "balanceHistoryChart.savingsBalance": "Saldo Oszczędności",

@@ -236,6 +236,7 @@
   "accountMainCard.governanceExpiring": "即将过期",
   "accountMainCard.governanceExpired": "已过期",
   "accountMainCard.governanceTooltip": "见证人投票过期时间：",
+  "accountMainCard.proposalVotes": "提案投票",
   "accountBalanceHistoryCard.fullChart": "完整图表",
   "accountBalanceHistoryCard.error": "加载余额信息时出错。",
   "balanceHistoryChart.savingsBalance": "储蓄余额",
