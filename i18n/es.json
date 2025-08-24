@@ -235,6 +235,7 @@
   "accountMainCard.governanceExpiring": "Expira Pronto",
   "accountMainCard.governanceExpired": "Expirado",
   "accountMainCard.governanceTooltip": "Votos de testigo expiran el:",
+  "accountMainCard.proposalVotes": "Votos de Propuestas",
   "accountBalanceHistoryCard.error": "Error al cargar la información del saldo.",
   "balanceHistoryChart.savingsBalance": "Saldo de Ahorros",
   "balanceHistoryTable.noRecordsForOperation": "No hay registros para la operación {{operationId}}",

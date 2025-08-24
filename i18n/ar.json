@@ -247,6 +247,7 @@
   "accountMainCard.governanceExpiring": "ستنتهي قريباً",
   "accountMainCard.governanceExpired": "منتهية الصلاحية",
   "accountMainCard.governanceTooltip": "تصويتات الشهود تنتهي في:",
+  "accountMainCard.proposalVotes": "أصوات المقترحات",
   "accountBalanceHistoryCard.fullChart": "مخطط كامل",
   "accountBalanceHistoryCard.error": "خطأ في تحميل معلومات الرصيد.",
   "balanceHistoryChart.savingsBalance": "رصيد الادخار",

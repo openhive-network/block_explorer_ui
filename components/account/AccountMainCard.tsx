@@ -8,7 +8,7 @@ import {
   Loader2,
   History,
   Vote,
-  ShieldCheck, 
+  ShieldCheck,
   AlertTriangle,
   ShieldOff,
   Building2,
@@ -17,6 +17,7 @@ import {
   Info,
 } from "lucide-react";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import Explorer from "@/types/Explorer";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
@@ -38,6 +39,7 @@ import { Button } from "../ui/button";
 import { useI18n } from "../../i18n/i18n";
 import TimeAgo from "timeago-react";
 import RadialProgress from "../RadialProgress";
+import useProposalVoteCount from "@/hooks/api/accountPage/useProposalVoteCount";
 
 interface AccountMainCardProps {
   accountDetails: Explorer.FormattedAccountDetails;
@@ -122,12 +124,18 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
   changeLiveRefresh,
   isForCommunity = false,
 }) => {
+  const router = useRouter();
   const { t, locale } = useI18n();
   const { manabarsData } = useManabars(accountName, liveDataEnabled);
   const { witnessDetails } = useWitnessDetails(
     accountName,
     accountDetails.is_witness
   );
+  const {
+    voteCount: proposalVoteCount,
+    isLoading: isVoteCountLoading,
+  } = useProposalVoteCount(accountName);
+
   const isWitnessActive =
     witnessDetails?.signing_key !== config.inactiveWitnessKey;
 
@@ -162,7 +170,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
       <TimeAgo className="text-sm" locale={locale} datetime={lastPostDate} />
     );
 
-   const getGovernanceHealthStatus = () => {
+  const getGovernanceHealthStatus = () => {
     const expirationTs = accountDetails.governance_vote_expiration_ts;
     if (!expirationTs) {
       return null;
@@ -373,6 +381,22 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
             label={t("accountMainCard.subscriptions")}
             value={Number(accountDetails.subscriptions.length).toLocaleString()}
             onClick={openSubscriptionsModal}
+          />
+          <StatCard
+            icon={<Vote size={20} />}
+            label={t("accountMainCard.proposalVotes")}
+            value={
+              isVoteCountLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                (proposalVoteCount ?? 0).toLocaleString()
+              )
+            }
+            onClick={() => {
+              if (proposalVoteCount && proposalVoteCount > 0) {
+                router.push(`/proposals?q=${accountName}`);
+              }
+            }}
           />
           <StatCard
             icon={<PenSquare size={20} />}

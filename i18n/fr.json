@@ -235,6 +235,7 @@
   "accountMainCard.governanceExpiring": "Expire bientôt",
   "accountMainCard.governanceExpired": "Expiré",
   "accountMainCard.governanceTooltip": "Les votes de témoin expirent le :",
+  "accountMainCard.proposalVotes": "Votes sur les Propositions",
   "accountBalanceHistoryCard.fullChart": "Graphique Complet",
   "accountBalanceHistoryCard.error": "Erreur lors du chargement des informations du solde.",
   "balanceHistoryChart.savingsBalance": "Solde d'Épargne",

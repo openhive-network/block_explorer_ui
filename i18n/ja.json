@@ -236,6 +236,7 @@
   "accountMainCard.governanceExpiring": "まもなく失効",
   "accountMainCard.governanceExpired": "失効済み",
   "accountMainCard.governanceTooltip": "証人投票の有効期限:",
+  "accountMainCard.proposalVotes": "提案への投票",
   "accountBalanceHistoryCard.fullChart": "全チャート",
   "accountBalanceHistoryCard.error": "残高情報の読み込み中にエラーが発生しました。",
   "balanceHistoryChart.savingsBalance": "貯蓄残高",

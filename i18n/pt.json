@@ -236,6 +236,7 @@
   "accountMainCard.governanceExpiring": "Expirando em breve",
   "accountMainCard.governanceExpired": "Expirado",
   "accountMainCard.governanceTooltip": "Votos de testemunha expiram em:",
+  "accountMainCard.proposalVotes": "Votos em Propostas",
   "accountBalanceHistoryCard.fullChart": "Gráfico Completo",
   "accountBalanceHistoryCard.error": "Erro ao carregar informações de saldo.",
   "balanceHistoryChart.savingsBalance": "Saldo em Poupança",
