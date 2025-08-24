@@ -56,8 +56,7 @@ const ProposalsPage = () => {
 
   }, [router.query.q]);
 
-  // Create a debounced function that will update the URL.
-  // This is the core of the performance fix.
+
   const debouncedUpdateUrl = useDebounce((query: string) => {
     const { pathname, query: routerQuery } = router;
     const newQuery = { ...routerQuery };
@@ -74,18 +73,19 @@ const ProposalsPage = () => {
     }
   }, 500); // 500ms delay after user stops typing.
 
-  // The handler passed to the search input.
-  // It updates the local state instantly and calls the debounced function.
   const handleSearchChange = (query: string) => {
     setSearchQuery(query);
     debouncedUpdateUrl(query);
   };
 
   const { accountsData } = useGetAccounts(["hive.fund"]) as any;
+
   const totalBudgetNumber = grabNumericValue(
     accountsData?.[0].hbd_balance ?? ""
   );
+
   const dailyBudgetNumber = totalBudgetNumber / 100;
+
   const apiStatus = statusFilter === "inactive" ? "all" : statusFilter;
 
   const { proposalsData, isProposalsLoading, isProposalsError } = useProposals({
@@ -94,8 +94,7 @@ const ProposalsPage = () => {
     direction: sortDirection,
   });
 
-  // The API call for voter data is now driven directly by the URL parameter,
-  // which is our debounced source of truth.
+
   const { votedProposalIds, isLoading: isVoterListLoading } =
     useVoterProposals((router.query.q as string) || "");
 
@@ -109,26 +108,33 @@ const ProposalsPage = () => {
     if (!proposalsDataForBudget || proposalsDataForBudget.length === 0) {
       return { dailyFunded: 0 };
     }
+
     const now = new Date();
+
     const ordered = [...proposalsDataForBudget].sort(
       (a, b) => parseFloat(b.total_votes) - parseFloat(a.total_votes)
     );
+
     const idxReturn = ordered.findIndex((p) => p.proposal_id === 0);
     const aboveReturn =
       idxReturn === -1 ? ordered : ordered.slice(0, idxReturn);
+
     const activeOnly = aboveReturn.filter(
       (p) => now >= p.start_date && now <= p.end_date
     );
+
     let sum = 0;
     for (const p of activeOnly) {
       const dp = grabNumericValue(p.daily_pay) as number;
       if (sum + dp <= dailyBudgetNumber) sum += dp;
       else break;
     }
+
     return { dailyFunded: sum };
   }, [dailyBudgetNumber, proposalsDataForBudget]);
 
-  const { returnProposal, enrichedProposals, fundingThreshold } = useMemo(() => {
+  const { returnProposal, enrichedProposals, fundingThreshold } =
+    useMemo(() => {
     if (!proposalsData || proposalsData.length === 0) {
       return {
         returnProposal: null,
@@ -136,22 +142,32 @@ const ProposalsPage = () => {
         fundingThreshold: 0,
       };
     }
+
     const rawReturnProposal = proposalsData.find((p) => p.proposal_id === 0);
     const threshold = rawReturnProposal
       ? parseFloat(rawReturnProposal.total_votes)
       : 0;
+
     const now = new Date();
+
     const allEnriched = proposalsData.map((proposal) => {
       let status: "active" | "expired" | "inactive";
-      if (now < proposal.start_date) status = "inactive";
-      else if (now > proposal.end_date) status = "expired";
-      else status = "active";
+
+        if (now < proposal.start_date) {
+          status = "inactive";
+        } else if (now > proposal.end_date) {
+          status = "expired";
+        } else {
+          status = "active";
+        }
+
       return {
         ...proposal,
-        status,
+          status: status,
         isFunded: parseFloat(proposal.total_votes) > threshold,
       };
     });
+
     return {
       returnProposal: allEnriched.find((p) => p.proposal_id === 0) || null,
       enrichedProposals: allEnriched.filter((p) => p.proposal_id !== 0),
@@ -159,7 +175,6 @@ const ProposalsPage = () => {
     };
   }, [proposalsData]);
 
-  // The main filtering logic is also driven by the debounced URL parameter.
   const searchedProposals = useMemo(() => {
     const statusFilteredProposals =
       statusFilter === "inactive"
@@ -213,11 +228,10 @@ const ProposalsPage = () => {
       return (
         <div className="flex flex-col gap-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <ProposalCardSkeleton key={`loading-${i}`} />
+            <ProposalCardSkeleton key={`initial-load-${i}`} />
           ))}
         </div>
       );
-    
     if (
       fundedProposals.length === 0 &&
       unfundedProposals.length === 0 &&
@@ -236,17 +250,25 @@ const ProposalsPage = () => {
         {fundedProposals.length > 0 && (
           <div className="flex flex-col gap-4">
             {fundedProposals.map((proposal) => (
-              <ProposalCard key={proposal.proposal_id} proposal={proposal} />
+              <ProposalCard
+                key={proposal.proposal_id}
+                proposal={proposal}
+              />
             ))}
           </div>
         )}
+
         {shouldShowReturnProposal && (
           <div className={fundedProposals.length > 0 ? "mt-4" : ""}>
             <ReturnProposalCard proposal={returnProposal} />
           </div>
         )}
+
         {hasAnyFundedContent && hasUnfundedContent && (
-          <div className="flex items-center text-center my-10" aria-hidden="true">
+          <div
+            className="flex items-center text-center my-10"
+            aria-hidden="true"
+          >
             <div className="flex-grow border-t border-slate-200 dark:border-slate-700" />
             <span className="flex-shrink mx-4 text-sm font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
               {t("proposalsPage.unfundedSeparatorTitle")}
@@ -254,6 +276,7 @@ const ProposalsPage = () => {
             <div className="flex-grow border-t border-slate-200 dark:border-slate-700" />
           </div>
         )}
+
         {hasUnfundedContent && (
           <div className="flex flex-col gap-4">
             {unfundedProposals.map((proposal) => (
@@ -271,10 +294,23 @@ const ProposalsPage = () => {
   const totalBudgetHBD = formatNumber(totalBudgetNumber ?? 0, false, true);
   const dailyBudgetHBD = formatNumber(dailyBudgetNumber ?? 0, false, true);
   const dailyFundedHBD = formatNumber(dailyFunded ?? 0, false, true);
+
   const budgets = [
-    { key: "daily_funded", label: t("proposalControls.dailyFunded"), value: `${dailyFundedHBD} HBD` },
-    { key: "daily_budget", label: t("proposalControls.dailyBudget"), value: `${dailyBudgetHBD} HBD` },
-    { key: "total_budget", label: t("proposalControls.totalBudget"), value: `${totalBudgetHBD} HBD` },
+    {
+      key: "daily_funded",
+      label: t("proposalControls.dailyFunded"),
+      value: `${dailyFundedHBD} HBD`,
+    },
+    {
+      key: "daily_budget",
+      label: t("proposalControls.dailyBudget"),
+      value: `${dailyBudgetHBD} HBD`,
+    },
+    {
+      key: "total_budget",
+      label: t("proposalControls.totalBudget"),
+      value: `${totalBudgetHBD} HBD`,
+    },
   ];
 
   return (
@@ -283,7 +319,10 @@ const ProposalsPage = () => {
         <title>{t("pageTitle.proposals")}</title>
       </Head>
       <div className="page-container">
-        <PageTitle titleKey="pageTitle.proposals" className="py-4 px-2" />
+        <PageTitle
+          titleKey="pageTitle.proposals"
+          className="py-4 px-2"
+        />
         <div className="mt-4">
           <BudgetsSection budgets={budgets} />
         </div>
