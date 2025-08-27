@@ -16,6 +16,7 @@ import { useI18n } from "../../i18n/i18n";
 type AccountBalanceHistoryCardProps = {
   header: string;
   userDetails: Explorer.FormattedAccountDetails;
+  isInitiallyOpen: boolean;
 };
 
 const prepareData = (operations: Operation[]) => {
@@ -70,9 +71,10 @@ const prepareData = (operations: Operation[]) => {
 const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
   header,
   userDetails,
+  isInitiallyOpen
 }) => {
   const { t } = useI18n();
-  const [isBalancesHidden, setIsBalancesHidden] = useState(false);
+  const [isBalancesHidden, setIsBalancesHidden] = useState(!isInitiallyOpen);
   const [coinType, setCoinType] = useState("HIVE");
   const defaultFromDate = useMemo(
     () => moment().subtract(1, "month").toDate(),

@@ -31,6 +31,7 @@ export type AllTransfers =
 type AccountRecurrentTransfersCardProps = {
   direction: "incoming" | "outgoing";
   transfers: AllTransfers[];
+  isInitiallyOpen?: boolean;
 };
 
 const buildTableBody = (transfers: AllTransfers[]) => {
@@ -69,9 +70,9 @@ const buildTableBody = (transfers: AllTransfers[]) => {
 
 const AccountRecurrentTransfersCard: React.FC<
   AccountRecurrentTransfersCardProps
-> = ({ direction, transfers }) => {
+> = ({ direction, transfers , isInitiallyOpen}) => {
   const { t } = useI18n();
-  const [isPropertiesHidden, setIsPropertiesHidden] = useState(true);
+  const [isPropertiesHidden, setIsPropertiesHidden] = useState(!isInitiallyOpen);
   const { hiveChain } = useHiveChainContext();
 
   const [sortConfig, setSortConfig] = useState<{

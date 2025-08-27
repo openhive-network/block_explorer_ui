@@ -12,6 +12,7 @@ type AccountWitnessVotesCardProps = {
   voters: string[];
   accountName: string;
   proxy: string;
+  isInitiallyOpen: boolean;
 };
 
 const buildTableBody = (voters: string[], isProxy: boolean) => {
@@ -39,9 +40,10 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
   voters: initialVoters,
   accountName: accountName,
   proxy: proxy,
+  isInitiallyOpen,
 }) => {
   const { t } = useI18n();
-  const [isPropertiesHidden, setIsPropertiesHidden] = useState(true);
+  const [isPropertiesHidden, setIsPropertiesHidden] = useState(!isInitiallyOpen);
   const voters = [...initialVoters];
   const [votersForProxy, setVotersForProxy] = useState<any[]>([]);
   const [allProxies, setAllProxies] = useState<string[]>([]);

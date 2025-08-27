@@ -44,6 +44,8 @@
   --color-light-gray: #ADA9A9DC;
   --color-dark-gray: #292F3D;
   --color-extra-light-gray: #F9FAFB;
+  --color-slate : #f8fafc;
+  --color-slate-text: #64748b;
 
   --error-bg-light: linear-gradient(135deg, rgba(247, 255, 255, 0.8), rgba(248, 247, 247, 0.8));
   --error-bg: var(--error-bg-light);
@@ -102,6 +104,8 @@
   --color-light-gray: #ADA9A9DC;
   --color-dark-gray: #444c5e;
   --color-extra-light-gray: #34373ed4;
+  --color-slate: #1e293b80;
+  --color-slate-text: #94a3b8;
 
   --error-bg-dark: linear-gradient(135deg, rgba(159, 149, 149, 0.8), rgba(104, 100, 100, 0.8));
   --error-bg: var(--error-bg-dark);

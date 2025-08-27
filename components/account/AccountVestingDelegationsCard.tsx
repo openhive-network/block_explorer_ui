@@ -2,7 +2,6 @@ import { useState, Fragment } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import Link from "next/link";
 
-import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import {
   Table,
@@ -12,16 +11,15 @@ import {
   TableHeader,
 } from "../ui/table";
 import Explorer from "@/types/Explorer";
-import useConvertedVestingShares from "@/hooks/common/useConvertedVestingShares";
 import { buildTableHead, handleSortDelegations } from "@/utils/DelegationsSort";
 import { capitalizeFirst } from "@/utils/StringUtils";
 import { useI18n } from "../../i18n/i18n";
 
 type AccountVestingDelegationsCardProps = {
   direction: "incoming" | "outgoing";
-  delegatorAccount: string;
-  liveDataEnabled: boolean;
+  delegations?: Explorer.VestingDelegation[]; // Data is now a prop
   dynamicGlobalData?: Explorer.HeadBlockCardData;
+  isInitiallyOpen: boolean;
 };
 
 const buildTableBody = (
@@ -58,18 +56,18 @@ const buildTableBody = (
     );
   });
 };
+
 const AccountVestingDelegationsCard: React.FC<
   AccountVestingDelegationsCardProps
-> = ({ direction, delegatorAccount, liveDataEnabled, dynamicGlobalData }) => {
+> = ({
+  direction,
+  delegations,
+  dynamicGlobalData,
+  isInitiallyOpen,
+}) => {
   const { t } = useI18n();
-  const [isPropertiesHidden, setIsPropertiesHidden] = useState(true);
-  const { hiveChain } = useHiveChainContext();
-  const delegations = useConvertedVestingShares(
-    direction,
-    delegatorAccount,
-    liveDataEnabled,
-    dynamicGlobalData
-  );
+  const [isPropertiesHidden, setIsPropertiesHidden] = useState(!isInitiallyOpen);
+  
   const [sortConfig, setSortConfig] = useState<{
     key: string;
     isAscending: boolean;
@@ -80,8 +78,11 @@ const AccountVestingDelegationsCard: React.FC<
 
   const { key, isAscending } = sortConfig;
 
-  if (!hiveChain || !dynamicGlobalData || !delegations || !delegations.length)
-    return;
+  // If there's no data, or the dynamic global data isn't ready, render nothing.
+  if (!dynamicGlobalData || !delegations || !delegations.length) {
+    return null;
+  }
+
   const handlePropertiesVisibility = () => {
     setIsPropertiesHidden(!isPropertiesHidden);
   };

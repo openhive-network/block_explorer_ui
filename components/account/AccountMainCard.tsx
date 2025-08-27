@@ -189,6 +189,12 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
     );
 
     if (expirationDate < now) {
+       const expiredTooltipContent = (
+      <p>
+        {t("accountMainCard.governanceExpiredTooltip")}{" "}
+        { formatAndDelocalizeTime(expirationDate)}
+      </p>
+    );
       return {
         icon: <ShieldOff size={20} color="#ef4444" />,
         label: t("accountMainCard.governanceHealth"),
@@ -197,7 +203,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
             {t("accountMainCard.governanceExpired")}
           </span>
         ),
-        tooltipContent: tooltipContent,
+        tooltipContent: expiredTooltipContent,
       };
     }
 
