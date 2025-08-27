@@ -13,6 +13,7 @@ import { useI18n } from "@/i18n/i18n";
 interface AccountMainCardProps {
   accountName: string;
   liveDataEnabled: boolean;
+  isInitiallyOpen: boolean;
 }
 
 type NewAuthTuple = [number, string];
@@ -25,14 +26,15 @@ type NewAuthKeys = {
 const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
   accountName,
   liveDataEnabled,
+  isInitiallyOpen
 }) => {
   const { t } = useI18n();
   const { accountAuthoritiesData } = useAccountAuthorities(
     accountName,
-    liveDataEnabled
+    liveDataEnabled,
   );
 
-  const [isPropertiesHidden, setIsPropertiesHidden] = useState<boolean>(true);
+  const [isPropertiesHidden, setIsPropertiesHidden] = useState<boolean>(!isInitiallyOpen);
 
   const handlePropertiesVisibility = () => {
     setIsPropertiesHidden((v) => !v);

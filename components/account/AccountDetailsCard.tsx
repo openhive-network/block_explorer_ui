@@ -10,6 +10,7 @@ import VestsTooltip from "../VestsTooltip";
 type AccountDetailsCardProps = {
   header: string;
   userDetails: Record<string, any>;
+  isInitiallyOpen: boolean;
 };
 
 const EXCLUDE_KEYS = [
@@ -44,8 +45,9 @@ const COPY_KEYS = ["signing_key"];
 const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
   header,
   userDetails,
+  isInitiallyOpen
 }) => {
-  const [isPropertiesHidden, setIsPropertiesHidden] = useState(true);
+  const [isPropertiesHidden, setIsPropertiesHidden] = useState(!isInitiallyOpen);
 
   const keys = Object.keys(userDetails);
 

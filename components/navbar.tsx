@@ -1,7 +1,7 @@
 // src/components/layout/Navbar.tsx (Updated)
 
 import { useState } from "react";
-import { Menu, X, Wrench, ChevronDown, Workflow, Users, Compass, Vote, UserCheck } from "lucide-react";
+import { Menu, X, Wrench, ChevronDown, Workflow, Users, Compass, Vote, UserCheck, SettingsIcon } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -98,6 +98,10 @@ export default function Navbar() {
                     <Link href={"/witnesses"} className="py-1 flex items-start justify-start" onClick={() => setMenuOpen(false)}>
                       <UserCheck className="mr-2 mt-1 flex-shrink-0" size={20} />
                       <span className="text-base ml-2">{t("navbar.witnessesTitle")}</span>
+                    </Link>
+                    <Link href={"/settings"} className="py-1 flex items-start justify-start" onClick={() => setMenuOpen(false)}>
+                      <SettingsIcon className="mr-2 mt-1 flex-shrink-0" size={20} />
+                      <span className="text-base ml-2">{t("navbar.additionalSettingsTitle")}</span>
                     </Link>
                   </div>
                 )}

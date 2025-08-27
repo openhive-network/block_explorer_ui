@@ -444,14 +444,16 @@ const AssetSection = ({
 type AccountBalanceCardProps = {
   header: string;
   userDetails: Explorer.FormattedAccountDetails;
+  isInitiallyOpen: boolean;
 };
 
 const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
   header,
   userDetails,
+  isInitiallyOpen
 }) => {
   const { t } = useI18n();
-  const [isCardHidden, setIsCardHidden] = useState(true);
+  const [isCardHidden, setIsCardHidden] = useState(!isInitiallyOpen);
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     hive: false,
     hbd: false,

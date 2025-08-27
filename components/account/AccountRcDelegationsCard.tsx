@@ -3,7 +3,6 @@ import { ArrowDown, ArrowUp } from "lucide-react";
 import Link from "next/link";
 
 import { formatNumber } from "@/lib/utils";
-import useRcDelegations from "@/hooks/api/common/useRcDelegations";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import {
   Table,
@@ -20,14 +19,12 @@ import {
 import { useI18n } from "../../i18n/i18n";
 
 type AccountRcDelegationsCardProps = {
-  delegatorAccount: string;
-  limit: number;
-  liveDataEnabled: boolean;
+  delegations?: RcDelegation[];
+  isInitiallyOpen: boolean;
 };
 
 const buildTableBody = (delegations: RcDelegation[]) => {
   return delegations.map((delegation: RcDelegation, index: number) => {
-    const isLast = index === delegations.length - 1;
     return (
       <Fragment key={index}>
         <TableRow>
@@ -50,14 +47,12 @@ const buildTableBody = (delegations: RcDelegation[]) => {
 };
 
 const AccountRcDelegationsCard: React.FC<AccountRcDelegationsCardProps> = ({
-  delegatorAccount,
-  limit,
-  liveDataEnabled,
+  delegations,
+  isInitiallyOpen,
 }) => {
   const { t } = useI18n();
-  const [isPropertiesHidden, setIsPropertiesHidden] = useState(true);
-  const { rcDelegationsData, isRcDelegationsLoading, isRcDelegationsError } =
-    useRcDelegations(delegatorAccount, limit, liveDataEnabled);
+  const [isPropertiesHidden, setIsPropertiesHidden] = useState(!isInitiallyOpen);
+
   const [sortConfig, setSortConfig] = useState<{
     key: string;
     isAscending: boolean;
@@ -67,17 +62,11 @@ const AccountRcDelegationsCard: React.FC<AccountRcDelegationsCardProps> = ({
   });
 
   const { key, isAscending } = sortConfig;
-
-  if (isRcDelegationsLoading) {
-    return <div></div>;
+  
+  // If there's no data, render nothing.
+  if (!delegations || !delegations.length) {
+    return null;
   }
-
-  if (isRcDelegationsError) {
-    return <div></div>;
-  }
-
-  const delegations = rcDelegationsData;
-  if (!delegations?.length) return <div className="text-black"></div>;
 
   const handlePropertiesVisibility = () => {
     setIsPropertiesHidden(!isPropertiesHidden);

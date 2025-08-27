@@ -7,14 +7,16 @@ interface JSONCardProps {
   header: string;
   json: string;
   showCollapseButton: boolean;
+  isInitiallyOpen: boolean;
 }
 
 const JSONCard: React.FC<JSONCardProps> = ({
   header,
   json,
   showCollapseButton,
+  isInitiallyOpen
 }) => {
-  const [isDataHidden, setIsDataHidden] = useState(true);
+  const [isDataHidden, setIsDataHidden] = useState(!isInitiallyOpen);
 
   if (!json || json === "{}") return null;
 
