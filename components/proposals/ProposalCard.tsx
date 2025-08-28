@@ -311,14 +311,14 @@ export const ProposalCard = ({
   const isReceiverVisible =
     proposal.receiver && proposal.receiver !== proposal.creator;
 
-  const highlightClass = useMemo(() => {
+    const highlightClass = useMemo(() => {
     if (!proposal.matchDetails) return "border-l-transparent";
-    if (proposal.matchDetails.isCreatorMatch) return "border-l-purple-500";
-    if (proposal.matchDetails.isVoterMatch) return "border-l-blue-500";
-    if (proposal.matchDetails.isTitleMatch) return "border-l-slate-500";
+    if (proposal.matchDetails.isCreatorMatch) return "border-l-purple-500 dark:border-l-purple-400";
+    if (proposal.matchDetails.isVoterMatch) return "border-l-blue-500 dark:border-l-blue-400";
+    if (proposal.matchDetails.isTitleMatch) return "border-l-slate-500 dark:border-l-slate-400";
     return "border-l-transparent";
   }, [proposal.matchDetails]);
-
+  
   return (
     <TooltipProvider delayDuration={200}>
       <div className={cn(
