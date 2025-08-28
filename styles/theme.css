@@ -207,7 +207,6 @@ pre {
   flex-direction: column;
   background-color: var(--theme-bg);
   box-shadow: var(--theme-shadow);
-  border-radius: 0.5rem;
   margin-top: 0.25rem;
   max-height: 24rem;
   overflow-y: auto;

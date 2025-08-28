@@ -62,6 +62,7 @@ const AutoCompleteInput: React.FC<Props> = ({
   const [selected, setSelected] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [isChosen, setIsChosen] = useState(false);
+  const [disableInput, setDisableInput] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -131,60 +132,74 @@ const AutoCompleteInput: React.FC<Props> = ({
     resultRef.current?.scrollIntoView({ block: "nearest" });
   }, [selected]);
 
-const renderOptions = (d: Hive.InputTypeResponse) => {
-  if (d.input_type === "invalid_input") {
-    return <div className="p-2" >{t("autocompleteInput.invalidInput")}: {searchTerm}</div>;
-  }
+  useEffect(() => {
+    if (inputTypeData?.input_type === "invalid_input") {
+      setDisableInput(true);
+    } else {
+      setDisableInput(false);
+    }
+  }, [inputTypeData?.input_type]);
 
-  const resType = getResultTypeHeader(d);
-  const arr = Array.isArray(d.input_value) ? d.input_value : [d.input_value];
+  const renderOptions = (d: Hive.InputTypeResponse) => {
+    if (d.input_type === "invalid_input") {
+      return (
+        <div className="p-2">
+          {t("autocompleteInput.invalidInput")}: {searchTerm}
+        </div>
+      );
+    }
 
-  return (
-    <div
-      className="autocomplete-result-container scrollbar-autocomplete"
-      ref={resultRef}
-    >
-      {arr.map((acc, i) => (
-        <div
-          key={acc}
-          className={cn("autocomplete-result-item cursor-pointer", {
-            "bg-navbar-listHover": selected === i,
-          })}
-          onClick={() => pick(acc)}
-        >
-          {linkResult ? (
-            <>
-              {addLabel && (
-                <span className="autocomplete-result-label">
-                      {capitalizeFirst(t(`autocompleteInput.${resType}`))}:&nbsp;
-                </span>
-              )}
-              <Link
-                className="autocomplete-result-link"
+    const resType = getResultTypeHeader(d);
+    const arr = Array.isArray(d.input_value) ? d.input_value : [d.input_value];
+
+    return (
+      <div
+        className="autocomplete-result-container !h-[200px] !border border-explorer-light-gray dark:border-explorer-dark-gray !bg-theme scrollbar-autocomplete"
+        ref={resultRef}
+      >
+        {arr.map((acc, i) => (
+          <div
+            key={acc}
+            className={cn("autocomplete-result-item cursor-pointer", {
+              "bg-navbar-listHover": selected === i,
+            })}
+            onClick={() => pick(acc)}
+          >
+            {linkResult ? (
+              <>
+                {addLabel && (
+                  <span className="autocomplete-result-label">
+                    {capitalizeFirst(t(`autocompleteInput.${resType}`))}:&nbsp;
+                  </span>
+                )}
+                <Link
+                  className="autocomplete-result-link"
                   href={
                     resType === "account" ? `/@${acc}` : `/${resType}/${acc}`
                   }
-                onClick={(e) => e.preventDefault()}
-              >
-                {acc}
-              </Link>
-            </>
-          ) : (
-            <>
-              {addLabel && (
-                <span className="autocomplete-result-label">
+                  onClick={(e) => e.preventDefault()}
+                >
+                  {acc}
+                </Link>
+              </>
+            ) : (
+              <>
+                {addLabel && (
+                  <span className="autocomplete-result-label">
                     {capitalizeFirst(resType)}:&nbsp;
-                </span>
-              )}
-              {acc}
-            </>
-          )}
-          {selected === i && <Enter className="hidden md:inline ml-1" />}
-        </div>
-      ))}
-    </div>
-  );
-};
+                  </span>
+                )}
+                {acc}
+              </>
+            )}
+            {selected === i && <Enter className="hidden md:inline ml-1" />}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  console.log(inputTypeData);
 
   return (
     <div
@@ -207,6 +222,7 @@ const renderOptions = (d: Hive.InputTypeResponse) => {
           onBlur={onBlur}
           onFocus={() => setInputFocus(true)}
           onKeyDown={handleKeyDown}
+          disabled={disableInput}
         />
         {value ? (
           <X
@@ -214,6 +230,7 @@ const renderOptions = (d: Hive.InputTypeResponse) => {
             onClick={() => {
               onChange("");
               setInputFocus(false);
+              setDisableInput(false);
             }}
           />
         ) : linkResult ? (
@@ -222,7 +239,7 @@ const renderOptions = (d: Hive.InputTypeResponse) => {
       </div>
 
       {inputFocus && value && value.length && inputTypeData?.input_value && (
-        <div className="absolute bg-theme w-full max-h-60 border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden">
+        <div className="absolute bg-theme w-full rounded-lg shadow-lg z-50">
           {renderOptions(inputTypeData)}
         </div>
       )}
