@@ -1,6 +1,5 @@
 import { ArrowDown, ArrowUp, Search, SortAsc, SortDesc } from "lucide-react";
 import { useI18n } from "@/i18n/i18n";
-import { Button } from "../ui/button";
 
 export type ProposalStatusFilter = "all" | "active" | "inactive" | "expired";
 export type ProposalSortOrder =

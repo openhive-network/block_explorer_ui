@@ -389,22 +389,6 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
             onClick={openSubscriptionsModal}
           />
           <StatCard
-            icon={<Vote size={20} />}
-            label={t("accountMainCard.proposalVotes")}
-            value={
-              isVoteCountLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
-              ) : (
-                (proposalVoteCount ?? 0).toLocaleString()
-              )
-            }
-            onClick={() => {
-              if (proposalVoteCount && proposalVoteCount > 0) {
-                router.push(`/proposals?q=${accountName}`);
-              }
-            }}
-          />
-          <StatCard
             icon={<PenSquare size={20} />}
             label={t("accountMainCard.totalPosts")}
             value={Number(accountDetails.post_count).toLocaleString()}
@@ -429,6 +413,22 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
               />
             }
             tooltipContent={<p>{accountDetails.created}</p>}
+          />
+          <StatCard
+            icon={<Vote size={20} />}
+            label={t("accountMainCard.proposalVotes")}
+            value={
+              isVoteCountLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                (proposalVoteCount ?? 0).toLocaleString()
+              )
+            }
+            onClick={() => {
+              if (proposalVoteCount && proposalVoteCount > 0) {
+                router.push(`/proposals?q=${accountName}&status='all'`);
+              }
+            }}
           />
           {governanceHealthProps && (
             <StatCard

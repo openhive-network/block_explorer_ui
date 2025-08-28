@@ -22,9 +22,15 @@ import { ProposalAnalytics } from "@/components/proposals/analytics/ProposalAnal
 import ScrollTopButton from "@/components/ScrollTopButton";
 import { formatNumber } from "@/lib/utils";
 import useGetAccounts from "@/hooks/api/proposals/useGetAccounts";
-import { grabNumericValue } from "@/utils/StringUtils";
+import { grabNumericValue, isHiveAccountName } from "@/utils/StringUtils";
 import { BudgetsSection } from "@/components/proposals/BudgetsSection";
 import useDebounce from "@/hooks/common/useDebounce";
+
+export type MatchDetails = {
+  isCreatorMatch: boolean;
+  isVoterMatch: boolean;
+  isTitleMatch: boolean;
+};
 
 const ProposalsPage = () => {
   const { t } = useI18n();
@@ -36,47 +42,41 @@ const ProposalsPage = () => {
     useState<ProposalSortOrder>("by_total_votes");
   const [sortDirection, setSortDirection] =
     useState<ProposalSortDirection>("descending");
+  const [searchQuery, setSearchQuery] = useState("");
 
-  // This state holds the search input's value and updates instantly for a responsive UI.
-  const [searchQuery, setSearchQuery] = useState(
-    (router.query.q as string) || ""
-  );
-
-  // Effect to sync state FROM the URL on initial load or browser navigation (back/forward).
   useEffect(() => {
-    const query = (router.query.q as string) || "";
-    if (query !== searchQuery) {
-      setSearchQuery(query);
-    }
-    if (query) {
-      setStatusFilter("all");
-    } else {
-      setStatusFilter("active");
-    }
-
-  }, [router.query.q]);
-
+    if (!router.isReady) return;
+    const queryStatus = router.query.status as ProposalStatusFilter;
+    const querySearch = (router.query.q as string) || "";
+    const newStatus = ['all', 'active', 'inactive', 'expired'].includes(queryStatus) 
+      ? queryStatus 
+      : (querySearch ? 'all' : 'active');
+    setStatusFilter(newStatus);
+    setSearchQuery(querySearch);
+  }, [router.isReady, router.asPath]);
 
   const debouncedUpdateUrl = useDebounce((query: string) => {
-    const { pathname, query: routerQuery } = router;
-    const newQuery = { ...routerQuery };
-
+    const newQuery = { ...router.query };
     if (query) {
       newQuery.q = query;
     } else {
       delete newQuery.q;
     }
-
-    // Only push to router if the query has actually changed to avoid unnecessary re-renders.
-    if (newQuery.q !== (routerQuery.q || undefined)) {
-      router.push({ pathname, query: newQuery }, undefined, { shallow: true });
-    }
-  }, 500); // 500ms delay after user stops typing.
+    router.push({ pathname: router.pathname, query: newQuery }, undefined, { shallow: true });
+  }, 500);
 
   const handleSearchChange = (query: string) => {
     setSearchQuery(query);
     debouncedUpdateUrl(query);
   };
+  
+  const handleStatusChange = (status: ProposalStatusFilter) => {
+    const newQuery = { ...router.query, status: status };
+    router.push({ pathname: router.pathname, query: newQuery }, undefined, { shallow: true });
+  };
+  
+  const handleSortChange = (order: ProposalSortOrder) => setSortOrder(order);
+  const handleSortDirectionChange = (direction: ProposalSortDirection) => setSortDirection(direction);
 
   const { accountsData } = useGetAccounts(["hive.fund"]) as any;
 
@@ -94,9 +94,8 @@ const ProposalsPage = () => {
     direction: sortDirection,
   });
 
-
-  const { votedProposalIds, isLoading: isVoterListLoading } =
-    useVoterProposals((router.query.q as string) || "");
+  const voterSearchQuery = isHiveAccountName(searchQuery) ? searchQuery : "";
+  const { votedProposalIds, isLoading: isVoterListLoading } = useVoterProposals(voterSearchQuery);
 
   const { proposalsData: proposalsDataForBudget } = useProposals({
     status: "all",
@@ -133,11 +132,9 @@ const ProposalsPage = () => {
     return { dailyFunded: sum };
   }, [dailyBudgetNumber, proposalsDataForBudget]);
 
-  const { returnProposal, enrichedProposals, fundingThreshold } =
-    useMemo(() => {
+  const { enrichedProposals, fundingThreshold } = useMemo(() => {
     if (!proposalsData || proposalsData.length === 0) {
       return {
-        returnProposal: null,
         enrichedProposals: [],
         fundingThreshold: 0,
       };
@@ -153,78 +150,67 @@ const ProposalsPage = () => {
     const allEnriched = proposalsData.map((proposal) => {
       let status: "active" | "expired" | "inactive";
 
-        if (now < proposal.start_date) {
-          status = "inactive";
-        } else if (now > proposal.end_date) {
-          status = "expired";
-        } else {
-          status = "active";
-        }
+      if (now < proposal.start_date) {
+        status = "inactive";
+      } else if (now > proposal.end_date) {
+        status = "expired";
+      } else {
+        status = "active";
+      }
 
       return {
         ...proposal,
-          status: status,
+        status: status,
         isFunded: parseFloat(proposal.total_votes) > threshold,
       };
     });
 
     return {
-      returnProposal: allEnriched.find((p) => p.proposal_id === 0) || null,
-      enrichedProposals: allEnriched.filter((p) => p.proposal_id !== 0),
+      enrichedProposals: allEnriched,
       fundingThreshold: threshold,
     };
   }, [proposalsData]);
 
   const searchedProposals = useMemo(() => {
-    const statusFilteredProposals =
-      statusFilter === "inactive"
-        ? enrichedProposals.filter((p) => p.status === "inactive")
-        : enrichedProposals;
+    const preFilteredProposals = enrichedProposals.filter(proposal => {
+      if (statusFilter === 'all') return true;
+      return proposal.status === statusFilter;
+    });
 
-    const currentQuery = (router.query.q as string) || "";
-    if (currentQuery.length > 2) {
-      const lowerQuery = currentQuery.toLowerCase();
-      const votedIdsSet = new Set(votedProposalIds || []);
-
-      const combinedResults = statusFilteredProposals.filter((proposal) => {
-        const textMatch =
-          proposal.subject.toLowerCase().includes(lowerQuery) ||
-          proposal.creator.toLowerCase().includes(lowerQuery);
-        const voterMatch = votedIdsSet.has(proposal.proposal_id);
-        return textMatch || voterMatch;
-      });
-      const uniqueResults = new Map();
-      combinedResults.forEach((proposal) =>
-        uniqueResults.set(proposal.proposal_id, proposal)
-      );
-      return Array.from(uniqueResults.values());
+    if (searchQuery.length < 3) {
+      return preFilteredProposals;
     }
 
-    return statusFilteredProposals;
-  }, [
-    enrichedProposals,
-    statusFilter,
-    router.query.q,
-    votedProposalIds,
-  ]);
+    const lowerQuery = searchQuery.toLowerCase();
+    const votedIdsSet = new Set(votedProposalIds || []);
 
-  const fundedProposals = useMemo(() => {
-    return searchedProposals.filter((p) => p.isFunded);
-  }, [searchedProposals]);
+    return preFilteredProposals.reduce((accumulator, proposal) => {
+      const isCreatorMatch = proposal.creator.toLowerCase() === lowerQuery;
+      const isVoterMatch = voterSearchQuery !== "" && votedIdsSet.has(proposal.proposal_id);
+      const isTitleMatch = !isCreatorMatch && proposal.subject.toLowerCase().includes(lowerQuery);
 
-  const unfundedProposals = useMemo(() => {
-    return searchedProposals.filter((p) => !p.isFunded);
-  }, [searchedProposals]);
+      if (isCreatorMatch || isVoterMatch || isTitleMatch) {
+        accumulator.push({
+          ...proposal,
+          matchDetails: { isCreatorMatch, isVoterMatch, isTitleMatch },
+        });
+      }
+      return accumulator;
+    }, [] as (typeof enrichedProposals[0] & { matchDetails: MatchDetails })[]);
+  }, [enrichedProposals, statusFilter, searchQuery, votedProposalIds, voterSearchQuery]);
+
+  const searchedReturnProposal = useMemo(() => searchedProposals.find((p) => p.proposal_id === 0), [searchedProposals]);
+  const fundedProposals = useMemo(() => searchedProposals.filter((p) => p.isFunded && p.proposal_id !== 0), [searchedProposals]);
+  const unfundedProposals = useMemo(() => searchedProposals.filter((p) => !p.isFunded && p.proposal_id !== 0), [searchedProposals]);
   
   const renderContent = () => {
-    if (isProposalsError)
+    if (isProposalsError) {
       return <ErrorMessage message={t("proposalsPage.errorMessage")} />;
-    
-    const currentQuery = (router.query.q as string) || "";
-    const isLoading =
-      isProposalsLoading ||
-      (currentQuery.length > 2 && isVoterListLoading);
-    if (isLoading)
+    }
+
+    const isLoading = isProposalsLoading || (voterSearchQuery !== "" && isVoterListLoading);
+
+    if (isLoading) {
       return (
         <div className="flex flex-col gap-4">
           {Array.from({ length: 4 }).map((_, i) => (
@@ -232,17 +218,14 @@ const ProposalsPage = () => {
           ))}
         </div>
       );
-    if (
-      fundedProposals.length === 0 &&
-      unfundedProposals.length === 0 &&
-      !returnProposal
-    )
-      return <NoResult descriptionKey={t("proposalsPage.noResults")} />;
+    }
     
-    const shouldShowReturnProposal =
-      returnProposal && (statusFilter === "active" || statusFilter === "all");
-    const hasAnyFundedContent =
-      fundedProposals.length > 0 || shouldShowReturnProposal;
+    if (fundedProposals.length === 0 && unfundedProposals.length === 0 && !searchedReturnProposal) {
+      return <NoResult descriptionKey={t("proposalsPage.noResults")} />;
+    }
+    
+    const shouldShowReturnProposal = searchedReturnProposal && (statusFilter === "active" || statusFilter === "all");
+    const hasAnyFundedContent = fundedProposals.length > 0 || shouldShowReturnProposal;
     const hasUnfundedContent = unfundedProposals.length > 0;
 
     return (
@@ -260,7 +243,7 @@ const ProposalsPage = () => {
 
         {shouldShowReturnProposal && (
           <div className={fundedProposals.length > 0 ? "mt-4" : ""}>
-            <ReturnProposalCard proposal={returnProposal} />
+            <ReturnProposalCard proposal={searchedReturnProposal} />
           </div>
         )}
 
@@ -291,6 +274,7 @@ const ProposalsPage = () => {
       </>
     );
   };
+  
   const totalBudgetHBD = formatNumber(totalBudgetNumber ?? 0, false, true);
   const dailyBudgetHBD = formatNumber(dailyBudgetNumber ?? 0, false, true);
   const dailyFundedHBD = formatNumber(dailyFunded ?? 0, false, true);
@@ -332,13 +316,13 @@ const ProposalsPage = () => {
         <div className="mt-8">
           <ProposalControls
             currentStatus={statusFilter}
-            onStatusChange={setStatusFilter}
+            onStatusChange={handleStatusChange}
             searchQuery={searchQuery}
             onSearch={handleSearchChange}
             sortOrder={sortOrder}
-            onSortChange={setSortOrder}
+            onSortChange={handleSortChange}
             sortDirection={sortDirection}
-            onSortDirectionChange={setSortDirection}
+            onSortDirectionChange={handleSortDirectionChange}
           />
         </div>
         <main className="mt-8">{renderContent()}</main>

@@ -279,3 +279,22 @@ export const asCsvString = (value: string | number | undefined | null) => {
   if (value === null || typeof value === "undefined") return "";
   return `="${String(value)}"`;
 };
+
+
+
+/**
+ * Validates if a string could be a valid Hive account name.
+ * - Length between 3 and 16 characters.
+ * - Starts with a letter.
+ * - Contains only letters, numbers, hyphens, or periods.
+ * - Ends with a letter or number.
+ * @param name The string to validate.
+ * @returns true if the string is a valid Hive account name format, false otherwise.
+ */
+export const isHiveAccountName = (name: string): boolean => {
+  if (!name) {
+    return false;
+  }
+  const regex = /^[a-z][a-z0-9-.]*$/;
+  return name.length >= 3 && name.length <= 16 && regex.test(name);
+};

@@ -21,8 +21,10 @@ import {
   DollarSign,
   Landmark,
   Loader2,
+  PenLine,
   User,
   Users,
+  Vote,
   Wallet,
   XCircle,
 } from "lucide-react";
@@ -30,14 +32,60 @@ import Image from "next/image";
 import Link from "next/link";
 import { useMemo } from "react";
 import { ProposalVotesDialog } from "./ProposalVotesDialog";
+import { MatchDetails } from "@/pages/proposals"; // Added
 
 // Type definitions
 type EnrichedProposal = ProcessedProposal & {
   isFunded: boolean;
   status: "active" | "expired" | "inactive";
+  matchDetails?: MatchDetails; // Added
 };
 
 // --- SUB-COMPONENTS ---
+
+// ICON-BASED MATCH INDICATORS ---
+const MatchIndicators = ({ matchDetails, t }: { matchDetails: MatchDetails, t: (key: string) => string }) => {
+  return (
+    <div className="flex items-center flex-shrink-0 gap-2">
+      {matchDetails.isCreatorMatch && (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-purple-500 text-white animate-in fade-in zoom-in-75 duration-500">
+              <User className="h-4 w-4" />
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{t("proposalCard.matchCreatorTooltip")}</p>
+          </TooltipContent>
+        </Tooltip>
+      )}
+      {matchDetails.isVoterMatch && (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-blue-500 text-white animate-in fade-in zoom-in-75 duration-700">
+              <Vote className="h-4 w-4" />
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{t("proposalCard.matchVoterTooltip")}</p>
+          </TooltipContent>
+        </Tooltip>
+      )}
+      {matchDetails.isTitleMatch && (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-500 text-white animate-in fade-in zoom-in-75 duration-900">
+              <PenLine className="h-4 w-4" />
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{t("proposalCard.matchTitleTooltip")}</p>
+          </TooltipContent>
+        </Tooltip>
+      )}
+    </div>
+  );
+};
 
 const ProposalStatusBadge = ({
   icon: Icon,
@@ -183,7 +231,7 @@ export const ProposalCard = ({
   const remainingMs = proposal.end_date.getTime() - new Date().getTime();
   const remainingDays = Math.max(0, remainingMs / (1000 * 60 * 60 * 24));
 
-// If the proposal is inactive, remaining pay is equal to total. Else, we calculate it based on remaining days
+  // If the proposal is inactive, remaining pay is equal to total. Else, we calculate it based on remaining days
   const remainingHbdToBePaid = !proposal.isFunded && proposal.status=='inactive'
   ? totalHbdToBePaid
   : dailyPayValue * remainingDays;
@@ -263,23 +311,38 @@ export const ProposalCard = ({
   const isReceiverVisible =
     proposal.receiver && proposal.receiver !== proposal.creator;
 
+  const highlightClass = useMemo(() => {
+    if (!proposal.matchDetails) return "border-l-transparent";
+    if (proposal.matchDetails.isCreatorMatch) return "border-l-purple-500";
+    if (proposal.matchDetails.isVoterMatch) return "border-l-blue-500";
+    if (proposal.matchDetails.isTitleMatch) return "border-l-slate-500";
+    return "border-l-transparent";
+  }, [proposal.matchDetails]);
+
   return (
     <TooltipProvider delayDuration={200}>
-      <div className="group rounded-xl border bg-slate-50 shadow-sm transition-shadow duration-300 hover:shadow-md dark:bg-theme dark:border-slate-800">
+      <div className={cn(
+        "group rounded-xl border bg-slate-50 shadow-sm transition-all duration-300 hover:shadow-lg dark:bg-theme dark:border-slate-800",
+        "border-l-4",
+        highlightClass
+      )}>
         <div className="flex flex-col md:grid md:grid-cols-12">
           <div className="flex flex-col p-4 md:col-span-7 lg:col-span-8">
-            <div className="flex items-baseline gap-2">
-              <Link
-                href={proposalInternalUrl}
-                className="text-xl font-bold line-clamp-2 text-link hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {proposal.subject}
-              </Link>
-              <span className="flex-shrink-0 text-xl font-bold text-slate-400 dark:text-slate-500">
-                #{proposal.proposal_id}
-              </span>
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-2">
+              <div className="flex items-baseline gap-2">
+                <Link
+                  href={proposalInternalUrl}
+                  className="text-xl font-bold line-clamp-2 text-link hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {proposal.subject}
+                </Link>
+                <span className="flex-shrink-0 text-xl font-bold text-slate-400 dark:text-slate-500">
+                  #{proposal.proposal_id}
+                </span>
+              </div>
+              {proposal.matchDetails && <MatchIndicators matchDetails={proposal.matchDetails} t={t} />}
             </div>
             <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-base text-explorer-dark-gray">
               <div className="flex items-center gap-2">
@@ -554,25 +617,38 @@ export const ReturnProposalCard = ({
   };
   const currentStatusConfig = statusConfig[proposal.status];
 
+  const highlightClass = useMemo(() => {
+    if (!proposal.matchDetails) return "border-l-red-500";
+    if (proposal.matchDetails.isCreatorMatch) return "border-l-purple-500";
+    if (proposal.matchDetails.isVoterMatch) return "border-l-blue-500";
+    if (proposal.matchDetails.isTitleMatch) return "border-l-slate-500";
+    return "border-l-red-500";
+  }, [proposal.matchDetails]);
+
   return (
     <TooltipProvider delayDuration={200}>
-      <div className="group rounded-xl border border-slate-200 bg-green-100/80 shadow-sm transition-shadow duration-300 hover:shadow-md dark:border-slate-800 dark:bg-slate-800/40 border-l-4 border-l-red-500">
+      <div className={cn(
+        "group rounded-xl border border-slate-200 bg-green-100/80 shadow-sm transition-all duration-300 hover:shadow-md dark:border-slate-800 dark:bg-slate-800/40 border-l-4",
+        highlightClass
+      )}>
         <div className="flex flex-col md:grid md:grid-cols-12">
           <div className="flex flex-col p-4 md:col-span-7 lg:col-span-8">
-            <div className="flex items-baseline gap-2">
-              <Link
-                href={proposalInternalUrl}
-                className="text-xl font-bold text-link hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {proposal.subject}
-              </Link>
-              <span className="flex-shrink-0 text-xl font-bold">
-                #{proposal.proposal_id}
-              </span>
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-2">
+              <div className="flex items-baseline gap-2">
+                <Link
+                  href={proposalInternalUrl}
+                  className="text-xl font-bold text-link hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {proposal.subject}
+                </Link>
+                <span className="flex-shrink-0 text-xl font-bold">
+                  #{proposal.proposal_id}
+                </span>
+              </div>
+              {proposal.matchDetails && <MatchIndicators matchDetails={proposal.matchDetails} t={t} />}
             </div>
-
             <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-base text-explorer-dark-gray">
               <div className="flex items-center gap-2">
                 <Image
