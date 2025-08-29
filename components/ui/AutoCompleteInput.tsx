@@ -62,7 +62,7 @@ const AutoCompleteInput: React.FC<Props> = ({
   const [selected, setSelected] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [isChosen, setIsChosen] = useState(false);
-  const [disableInput, setDisableInput] = useState(false);
+  const [isInputDisabled, setIsInputDisabled] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -78,8 +78,7 @@ const AutoCompleteInput: React.FC<Props> = ({
   const pick = useCallback(
     (account: string) => {
       setIsChosen(true);
-      onChange(account);
-
+      onChange("");
       if (linkResult) {
         const base = ["account_name", "account_name_array"].includes(
           inputTypeData?.input_type as string
@@ -99,6 +98,7 @@ const AutoCompleteInput: React.FC<Props> = ({
     setInputFocus(true);
     onChange(e.target.value);
     setSearchTerm(e.target.value);
+
     if (!isNumeric(e.target.value) && !isHash(e.target.value)) {
       debouncedSearch(e.target.value + encodeURI("%"));
     } else {
@@ -134,9 +134,9 @@ const AutoCompleteInput: React.FC<Props> = ({
 
   useEffect(() => {
     if (inputTypeData?.input_type === "invalid_input") {
-      setDisableInput(true);
+      setIsInputDisabled(true);
     } else {
-      setDisableInput(false);
+      setIsInputDisabled(false);
     }
   }, [inputTypeData?.input_type]);
 
@@ -199,8 +199,6 @@ const AutoCompleteInput: React.FC<Props> = ({
     );
   };
 
-  console.log(inputTypeData);
-
   return (
     <div
       ref={wrapRef}
@@ -218,11 +216,10 @@ const AutoCompleteInput: React.FC<Props> = ({
           placeholder={required ? `${placeholder} *` : placeholder}
           value={value ?? ""}
           onChange={handleInput}
-          onClick={onClick}
+          onClick={!isInputDisabled ? onClick : undefined}
           onBlur={onBlur}
           onFocus={() => setInputFocus(true)}
-          onKeyDown={handleKeyDown}
-          disabled={disableInput}
+          onKeyDown={!isInputDisabled ? handleKeyDown : undefined}
         />
         {value ? (
           <X
@@ -230,7 +227,6 @@ const AutoCompleteInput: React.FC<Props> = ({
             onClick={() => {
               onChange("");
               setInputFocus(false);
-              setDisableInput(false);
             }}
           />
         ) : linkResult ? (
