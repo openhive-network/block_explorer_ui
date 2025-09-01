@@ -59,14 +59,50 @@ const TABLE_CELL_CONFIGS: TableCellConfig[] = [
   { displayKey: "common.name", sortKey: "name" },
   { displayKey: "witnesses.votes", sortKey: "votes" },
   { displayKey: "witnesses.voters", sortKey: "voters" },
-  { displayKey: "witnesses.missedblocks", sortKey: "missed blocks", isRightAligned: true, isUnsortable: true },
-  { displayKey: "witnesses.lastblock", sortKey: "last block produced", isUnsortable: true },
-  { displayKey: "witnesses.blocksize", sortKey: "block size", isRightAligned: true },
-  { displayKey: "witnesses.apr", sortKey: "apr", isRightAligned: true, isUnsortable: true },
-  { displayKey: "witnesses.pricefeed", sortKey: "price feed", isRightAligned: true },
-  { displayKey: "witnesses.feedage", sortKey: "feed age", isRightAligned: true },
-  { displayKey: "witnesses.acfee", sortKey: "ac fee", isRightAligned: true, isUnsortable: true },
-  { displayKey: "witnesses.version", sortKey: "version", isRightAligned: true, isUnsortable: true },
+  {
+    displayKey: "witnesses.missedblocks",
+    sortKey: "missed blocks",
+    isRightAligned: true,
+    isUnsortable: true,
+  },
+  {
+    displayKey: "witnesses.lastblock",
+    sortKey: "last block produced",
+    isUnsortable: true,
+  },
+  {
+    displayKey: "witnesses.blocksize",
+    sortKey: "block size",
+    isRightAligned: true,
+  },
+  {
+    displayKey: "witnesses.apr",
+    sortKey: "apr",
+    isRightAligned: true,
+    isUnsortable: true,
+  },
+  {
+    displayKey: "witnesses.pricefeed",
+    sortKey: "price feed",
+    isRightAligned: true,
+  },
+  {
+    displayKey: "witnesses.feedage",
+    sortKey: "feed age",
+    isRightAligned: true,
+  },
+  {
+    displayKey: "witnesses.acfee",
+    sortKey: "ac fee",
+    isRightAligned: true,
+    isUnsortable: true,
+  },
+  {
+    displayKey: "witnesses.version",
+    sortKey: "version",
+    isRightAligned: true,
+    isUnsortable: true,
+  },
 ];
 
 const sortKeyByCell: { [objectKey: string]: string } = {
@@ -89,7 +125,12 @@ const renderSortArrow = (
   isOrderAscending: boolean
 ) => {
   if (sortKeyByCell[currentSortKey] !== orderByApiField) {
-    return <ChevronsUpDown size={15} className="ml-1" />;
+    return (
+      <ChevronsUpDown
+        size={15}
+        className="ml-1"
+      />
+    );
   } else {
     return isOrderAscending ? (
       <ChevronDown
@@ -106,12 +147,15 @@ const renderSortArrow = (
 };
 
 export default function Witnesses() {
-  const { t , locale } = useI18n();
+  const { t, locale } = useI18n();
 
   const [voterAccount, setVoterAccount] = useState<string>("");
   const [isVotersOpen, setIsVotersOpen] = useState<boolean>(false);
   const [isVotesHistoryOpen, setIsVotesHistoryOpen] = useState<boolean>(false);
-  const [sort, setSort] = useState<{ orderBy: string; isOrderAscending: boolean }>({
+  const [sort, setSort] = useState<{
+    orderBy: string;
+    isOrderAscending: boolean;
+  }>({
     orderBy: sortKeyByCell["rank"], // Default to API field for rank
     isOrderAscending: true,
   });
@@ -166,7 +210,10 @@ export default function Witnesses() {
     const apiFieldForSort = sortKeyByCell[clickedSortKey];
     setSort((prevSort) => ({
       orderBy: apiFieldForSort,
-      isOrderAscending: apiFieldForSort === prevSort.orderBy ? !prevSort.isOrderAscending : true,
+      isOrderAscending:
+        apiFieldForSort === prevSort.orderBy
+          ? !prevSort.isOrderAscending
+          : true,
     }));
   };
 
@@ -211,7 +258,12 @@ export default function Witnesses() {
             }}
           >
             <span>{t(cellConfig.displayKey)}</span>
-            {!isUnsortable && renderSortArrow(cellConfig.sortKey, sort.orderBy, sort.isOrderAscending)}
+            {!isUnsortable &&
+              renderSortArrow(
+                cellConfig.sortKey,
+                sort.orderBy,
+                sort.isOrderAscending
+              )}
           </button>
         </TableCell>
       );
@@ -233,7 +285,7 @@ export default function Witnesses() {
               />
 
               <div className="flex justify-start md:justify-end mt-2 md:mt-0 ml-1 md:ml-4 mr-4 flex-shrink-0">
-                  <WitnessScheduleIcon />
+                <WitnessScheduleIcon />
               </div>
             </div>
             {isWitnessDataLoading ? (
@@ -255,7 +307,11 @@ export default function Witnesses() {
                   liveDataEnabled={false}
                 />
 
-                <Table className="min-w-full" enableMobileScrollArrows isStandaloneTable>
+                <Table
+                  className="min-w-full"
+                  enableMobileScrollArrows
+                  isStandaloneTable
+                >
                   <TableHeader>
                     <TableRow rowVariant="header">
                       {buildTableHeader()}
@@ -263,7 +319,10 @@ export default function Witnesses() {
                   </TableHeader>
                   <TableBody>
                     {witnessesData?.witnesses.map(
-                      (singleWitness: any, index: number) => ( // Explicitly type index
+                      (
+                        singleWitness: any,
+                        index: number // Explicitly type index
+                      ) => (
                         <TableRow
                           key={singleWitness.witness_id || index} // Prefer a stable ID if available
                           className={cn(
@@ -283,11 +342,16 @@ export default function Witnesses() {
                           )}
                         >
                           <TableCell stickyLeft>{singleWitness.rank}</TableCell>
-                          <TableCell stickyLeft className="flex items-center space-x-2 py-4 whitespace-nowrap">
+                          <TableCell
+                            stickyLeft
+                            className="flex items-center space-x-2 py-4 whitespace-nowrap"
+                          >
                             <Image
                               className="rounded-full border-2 border-explorer-orange"
                               src={getHiveAvatarUrl(singleWitness.witness_name)}
-                              alt={t("common.avatarAltText", {name: singleWitness.witness_name})}
+                              alt={t("common.avatarAltText", {
+                                name: singleWitness.witness_name,
+                              })}
                               width={30}
                               height={30}
                             />
@@ -416,14 +480,14 @@ export default function Witnesses() {
                                 )}
                               </div>
                               <div className="flex items-center space-x-2 justi">
-                              <MenuSquareIcon
-                                className="w-4 h-4 cursor-pointer opacity-50 hover:opacity-80 transition-opacity duration-200 absolute top-1/2 right-0 transform -translate-y-1/2"
-                                onClick={() => {
-                                  setVoterAccount(singleWitness.witness_name);
-                                  setIsVotersOpen(true);
-                                }}
-                                data-testid="witness-voters-button"
-                              />
+                                <MenuSquareIcon
+                                  className="w-4 h-4 cursor-pointer opacity-50 hover:opacity-80 transition-opacity duration-200 absolute top-1/2 right-0 transform -translate-y-1/2"
+                                  onClick={() => {
+                                    setVoterAccount(singleWitness.witness_name);
+                                    setIsVotersOpen(true);
+                                  }}
+                                  data-testid="witness-voters-button"
+                                />
                               </div>
                             </div>
                           </TableCell>
@@ -448,7 +512,9 @@ export default function Witnesses() {
                                   {singleWitness.last_confirmed_block_num.toLocaleString()}
                                 </Link>
                                 <CopyButton
-                                  text={String(singleWitness.last_confirmed_block_num)}
+                                  text={String(
+                                    singleWitness.last_confirmed_block_num
+                                  )}
                                   tooltipText={t("common.copyBlockNumber")}
                                 />
                               </div>
@@ -464,12 +530,12 @@ export default function Witnesses() {
                           <TableCell className="text-right">
                             {singleWitness.hbd_interest_rate
                               ? formatPercent(singleWitness.hbd_interest_rate)
-                              : "--"}
+                              : "0%"}
                           </TableCell>
                           <TableCell className="text-right">
                             {singleWitness.price_feed
                               ? singleWitness.price_feed.toLocaleString()
-                              : "--"}
+                              : "0"}
                           </TableCell>
                           <TableCell className="text-right">
                             {singleWitness.feed_updated_at ? (
@@ -478,7 +544,7 @@ export default function Witnesses() {
                                   <TooltipTrigger asChild>
                                     <span className="cursor-pointer">
                                       {formatAndDelocalizeFromTime(
-                                        singleWitness.feed_updated_at ,
+                                        singleWitness.feed_updated_at,
                                         locale
                                       )}
                                     </span>
