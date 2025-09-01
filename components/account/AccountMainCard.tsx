@@ -180,6 +180,7 @@ const getGovernanceHealthStatus = () => {
 
   const expirationDate = moment(expirationTs);
   const now = moment();
+
   const threeMonthsFromNow = moment().add(3, "months");
 
   if (expirationDate.isBefore(now)) {
@@ -187,7 +188,7 @@ const getGovernanceHealthStatus = () => {
       icon: <ShieldOff size={20} color="#ef4444" />,
       label: t("accountMainCard.governanceHealth"),
       value: (
-        <span className="text-sm">
+        <span className="text-sm text-red-500">
           {t("accountMainCard.governanceExpired")}
         </span>
       ),
@@ -204,7 +205,7 @@ const getGovernanceHealthStatus = () => {
       icon: <AlertTriangle size={20} color="#eab308" />,
       label: t("accountMainCard.governanceHealth"),
       value: (
-        <span className="text-sm">
+        <span className="text-sm text-yellow-500">
           {t("accountMainCard.governanceExpiring")}
         </span>
       ),
@@ -220,7 +221,9 @@ const getGovernanceHealthStatus = () => {
     icon: <ShieldCheck size={20} color="#22c55e" />,
     label: t("accountMainCard.governanceHealth"),
     value: (
-      <span className="text-sm">{t("accountMainCard.governanceActive")}</span>
+      <span className="text-sm text-green-500">
+        {t("accountMainCard.governanceActive")}
+      </span>
     ),
     tooltipContent: (
       <p>
