@@ -383,6 +383,7 @@
   "transactionPage.refBlockPrefix": "Prefisso Blocco Rif.",
   "transactionPage.expiration": "Scadenza",
   "transactionPage.transactionNumber": "Numero Transazione",
+  "transactionPage.transactionSize": "Dimensione della transazione",
   "pageTitle.informationAboutTitle": "Informazioni sul titolo",
   "pageTitle.hiveWitnesses": "Testimoni Hive",
   "pageTitle.hiveBlocks": "Blocchi Hive",

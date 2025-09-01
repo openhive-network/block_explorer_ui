@@ -384,6 +384,7 @@
   "transactionPage.refBlockPrefix": "参照ブロックプレフィックス",
   "transactionPage.expiration": "有効期限",
   "transactionPage.transactionNumber": "トランザクション番号",
+  "transactionPage.transactionSize": "トランザクションサイズ",
   "pageTitle.informationAboutTitle": "タイトルに関する情報",
   "pageTitle.hiveWitnesses": "Hive証人",
   "pageTitle.hiveBlocks": "Hiveブロック",

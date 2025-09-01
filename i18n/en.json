@@ -93,6 +93,7 @@
   "transactionStatisticsFullChartDialog.title": "Transaction Statistics Chart",
   "transactionStatisticsFullChartDialog.granularity": "Granularity",
   "transactionStatisticsFullChartDialog.selectGranularity": "Select Granularity",
+  
   "searchRanges.last": "Last *",
   "searchRanges.from": "From *",
   "searchRanges.to": "To",
@@ -146,6 +147,7 @@
   "syncInfo.lastSyncedBlock": "Last Synced Block At",
   "syncInfo.connecting": "Connecting",
   "searchBar.placeholder": "User, Block, Trx #",
+
   "witnesses.title": "Witnesses",
   "witnesses.votes": "Votes",
   "witnesses.voters": "Voters",
@@ -381,6 +383,7 @@
   "transactionPage.refBlockPrefix": "Ref Block Prefix",
   "transactionPage.expiration": "Expiration",
   "transactionPage.transactionNumber": "Transaction Number",
+  "transactionPage.transactionSize": "Transaction Size",
   "pageTitle.informationAboutTitle": "Information about the title",
   "pageTitle.hiveWitnesses": "Hive Witnesses",
   "pageTitle.hiveBlocks": "Hive Blocks",

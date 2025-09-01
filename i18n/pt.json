@@ -384,6 +384,7 @@
   "transactionPage.refBlockPrefix": "Prefixo Bloco Ref.",
   "transactionPage.expiration": "Expiração",
   "transactionPage.transactionNumber": "Número da Transação",
+  "transactionPage.transactionSize": "Tamanho da transação",
   "pageTitle.informationAboutTitle": "Informações sobre o título",
   "pageTitle.hiveWitnesses": "Testemunhas do Hive",
   "pageTitle.hiveBlocks": "Blocos do Hive",

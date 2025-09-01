@@ -392,6 +392,7 @@
   "transactionPage.refBlockPrefix": "بادئة البلوك المرجعية",
   "transactionPage.expiration": "الانتهاء",
   "transactionPage.transactionNumber": "رقم المعاملة",
+  "transactionPage.transactionSize": "حجم المعاملة",
   "pageTitle.informationAboutTitle": "معلومات حول العنوان",
   "pageTitle.hiveWitnesses": "شهود Hive",
   "pageTitle.hiveBlocks": "بلوكات Hive",
