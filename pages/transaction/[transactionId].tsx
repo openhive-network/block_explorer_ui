@@ -69,6 +69,8 @@ export default function Transaction() {
   if (trxError) {
     return <PageNotFound message={t("transactionPage.transactionNotFound")} />;
   }
+  // Calculate transaction size in bytes
+  const transactionSize = trxData ? new TextEncoder().encode(JSON.stringify(trxData.transaction_json)).length : 0
 
   return (
     <>
@@ -187,6 +189,12 @@ export default function Transaction() {
                       value={trxData.transaction_num}
                       dataTestId="transaction-number"
                       hasBorder
+                    />
+                    <TransactionDetailItem
+                    label={t("transactionPage.transactionSize")}
+                    value={`${transactionSize} Bytes`}
+                    dataTestId="transaction-size"
+                    hasBorder
                     />
                     <TransactionDetailItem
                       label={t("commentPermlinkResultTable.timestamp")}

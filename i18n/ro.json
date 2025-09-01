@@ -383,6 +383,7 @@
   "transactionPage.refBlockPrefix": "Prefix Bloc Ref.",
   "transactionPage.expiration": "Expirare",
   "transactionPage.transactionNumber": "Număr Tranzacție",
+  "transactionPage.transactionSize": "Dimensiunea tranzacției",
   "pageTitle.informationAboutTitle": "Informații despre titlu",
   "pageTitle.hiveWitnesses": "Martori Hive",
   "pageTitle.hiveBlocks": "Blocuri Hive",

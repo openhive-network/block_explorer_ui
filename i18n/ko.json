@@ -383,6 +383,7 @@
   "transactionPage.refBlockPrefix": "참조 블록 접두사",
   "transactionPage.expiration": "만료",
   "transactionPage.transactionNumber": "트랜잭션 번호",
+  "transactionPage.transactionSize": "트랜잭션 크기",
   "pageTitle.informationAboutTitle": "제목에 대한 정보",
   "pageTitle.hiveWitnesses": "Hive 증인",
   "pageTitle.hiveBlocks": "Hive 블록",
