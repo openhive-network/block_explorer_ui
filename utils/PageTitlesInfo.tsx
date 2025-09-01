@@ -12,7 +12,6 @@ interface LocalizedInfo {
   zh: React.ReactNode;
   ja: React.ReactNode;
   ro: React.ReactNode;
-  ko: React.ReactNode;
   ar: React.ReactNode;
 }
 
@@ -662,68 +661,6 @@ const ProposalsInfoRo: React.FC = () => (
   </div>
 );
 
-
-// --- Korean (ko) ---
-const WitnessInfoKo: React.FC = () => (
-  <div>
-    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">하이브 증인이란 무엇인가요?</h2>
-    <p className="text-gray-700 dark:text-gray-300 mb-4">하이브 증인은 체인이 무결하게 운영되도록 보장하는 선출된 대표자이며, 주요 결정을 통해 그 방향을 적극적으로 형성합니다.</p>
-    <p className="text-gray-700 dark:text-gray-300 mb-4">하이브를 번창하는 분산형 도시라고 상상해 보세요. 증인은 시의회, 건설팀, 보안군을 모두 합친 존재입니다.<br />그들은 도시를 운영(블록 생성, 노드 유지)할 뿐만 아니라, 도로 건설(매개변수 설정)과 도시 통화의 가치(가격 피드)와 같은 중요한 정책도 결정합니다.</p>
-    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">주요 기능:</h3>
-    <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 mb-4">
-      <li><span className="font-medium">블록 생성:</span> 하이브 블록체인에서 새로운 블록을 생성하고, 트랜잭션을 확인하며, 네트워크를 보호할 책임이 있습니다.</li>
-      <li><span className="font-medium">네트워크 유지보수:</span> 하이브 네트워크가 안정적으로 운영되도록 강력한 서버를 운영하고 유지합니다.</li>
-      <li><span className="font-medium">매개변수 설정:</span> 블록 크기, 계정 생성 수수료, HBD 이자율(APR) 등 하이브 블록체인의 주요 매개변수 설정에 참여합니다.</li>
-      <li><span className="font-medium">가격 피드:</span> 분산형 스테이블코인 운영에 필수적인 HIVE와 HBD의 가격 피드를 제공합니다.</li>
-    </ul>
-  </div>
-);
-const BlocksInfoKo: React.FC = () => (
-  <ul className="list-disc list-inside">
-    <li>이 페이지는 하이브 블록체인의 블록 목록을 최신순으로 표시합니다. 각 행은 단일 블록을 나타내며 그에 대한 주요 정보를 제공합니다.</li>
-    <li>각 행 끝에 있는 <ChevronDown className="inline-block align-middle h-4 w-4" /> 아이콘을 클릭하여 블록 오퍼레이션에 대한 추가 세부 정보를 볼 수 있습니다.</li>
-    <li>상단의 <Filter className="inline-block align-middle h-4 w-4" /> 깔때기 아이콘을 사용하여 필터에 접근하고 다른 기준에 따라 블록 목록을 좁힐 수 있습니다.</li>
-    <li>보상 값 위로 마우스를 가져가면 해당 HP 값을 볼 수 있습니다.</li>
-  </ul>
-);
-const BalanceHistoryInfoKo: React.FC = () => (
-    <ul className="list-disc list-inside">
-        <li>이 페이지는 선택된 코인 및 기간에 대한 특정 하이브 계정의 잔액 내역을 표시합니다. 시간이 지남에 따라 잔액이 어떻게 변했는지 시각적으로 보여줍니다. 기본적으로 지난 한 달간의 결과가 표시됩니다.</li>
-        <li>상단의 <Filter className="inline-block align-middle h-4 w-4" /> 아이콘을 클릭하여 필터에 접근하고 기록을 좁힐 수 있습니다.</li>
-        <li>차트는 일별 잔액 변화를 보여주기 위해 일 단위로 세분화된 잔액을 표시합니다.</li>
-        <li>차트 아래의 슬라이더를 사용하여 특정 시간 간격으로 확대하고 초점을 맞춰 더 자세한 보기를 할 수 있습니다.</li>
-    </ul>
-);
-const TransactionDetailsInfoKo: React.FC = () => (
-    <ul className="list-disc list-inside">
-        <li>이 페이지는 특정 트랜잭션 해시의 트랜잭션 세부 정보를 표시합니다.</li>
-        <li>아래 오퍼레이션 테이블에 가상 오퍼레이션을 포함하려면 토글 스위치를 클릭하세요.</li>
-        <li>메인 메뉴의 데이터 보기에서 설정을 변경하여 다른 형식으로 데이터를 볼 수 있습니다.</li>
-    </ul>
-);
-const ProposalsInfoKo: React.FC = () => (
-  <div>
-    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-      하이브 제안 시스템(DHF)이란 무엇인가요?
-    </h2>
-    <p className="text-gray-700 dark:text-gray-300 mb-4">
-      분산형 하이브 펀드(DHF)라고도 알려진 하이브 제안 시스템은 커뮤니티가 주도하는 자금 조달 메커니즘으로, 블록체인의 일일 인플레이션 일부를 생태계에 이익이 되는 프로젝트에 할당합니다.
-    </p>
-    <p className="text-gray-700 dark:text-gray-300 mb-4">
-      하이브 생태계를 위한 분산형 보조금 프로그램으로 생각할 수 있습니다. 중앙 위원회 대신, 하이브 이해관계자들이 스테이킹된 HIVE로 투표하여 어떤 개발, 마케팅 또는 커뮤니티 프로젝트가 블록체인에서 직접 자금을 지원받을지 결정합니다.
-    </p>
-    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-      핵심 개념:
-    </h3>
-    <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 mb-4">
-      <li><span className="font-medium">자금 출처:</span> DHF는 하이브의 일일 인플레이션의 10%로 자금을 조달받아, 생태계 성장을 지원하기 위한 지속적인 '일일 예산'을 만듭니다.</li>
-      <li><span className="font-medium">반환 제안(자금 지원 기준):</span> 이것은 일일 예산에서 할당되지 않은 모든 자금을 받는 특별한 제안(ID #0)입니다. 다른 제안이 자금을 지원받으려면 이 반환 제안보다 더 많은 표를 받아야 합니다. 이 메커니즘은 커뮤니티가 결정하는 동적 자금 지원 기준을 설정합니다.</li>
-      <li><span className="font-medium">지분 가중 투표:</span> 제안에 대한 투표는 하이브 파워(스테이킹된 HIVE)에 따라 가중치가 부여됩니다. 사용자가 더 많은 지분을 가질수록 투표의 영향력이 커져, 플랫폼에 가장 많이 투자한 사람들이 개발에 가장 큰 발언권을 갖도록 보장합니다.</li>
-      <li><span className="font-medium">모두에게 개방:</span> 모든 사용자는 수수료를 내고 제안을 제출할 수 있으며, 이는 하이브에 가치를 더할 수 있는 아이디어에 대해 누구나 자금 지원을 요청할 수 있는 무허가 시스템입니다.</li>
-    </ul>
-  </div>
-);
-
 // --- Arabic (ar) ---
 const WitnessInfoAr: React.FC = () => (
     <div>
@@ -813,7 +750,6 @@ const pageTitlesInfo: InfoContent = {
     zh: <WitnessInfoZh />,
     ja: <WitnessInfoJa />,
     ro: <WitnessInfoRo />,
-    ko: <WitnessInfoKo />,
     ar: <WitnessInfoAr/>
   },
   "pageTitle.hiveBlocks": {
@@ -827,7 +763,6 @@ const pageTitlesInfo: InfoContent = {
     zh: <BlocksInfoZh />,
     ja: <BlocksInfoJa />,
     ro: <BlocksInfoRo />,
-    ko: <BlocksInfoKo />,
     ar: <BlocksInfoAr/>
   },
   "pageTitle.balanceHistory": {
@@ -841,7 +776,6 @@ const pageTitlesInfo: InfoContent = {
     zh: <BalanceHistoryInfoZh />,
     ja: <BalanceHistoryInfoJa />,
     ro: <BalanceHistoryInfoRo />,
-    ko: <BalanceHistoryInfoKo />,
     ar : <BalanceHistoryInfoAr/>
   },
   "pageTitle.transactionDetails": {
@@ -855,7 +789,6 @@ const pageTitlesInfo: InfoContent = {
     zh: <TransactionDetailsInfoZh />,
     ja: <TransactionDetailsInfoJa />,
     ro: <TransactionDetailsInfoRo />,
-    ko: <TransactionDetailsInfoKo />,
     ar: <TransactionDetailsInfoAr/>
   },
   "pageTitle.proposals": {
@@ -869,7 +802,6 @@ const pageTitlesInfo: InfoContent = {
     zh: <ProposalsInfoZh />,
     ja: <ProposalsInfoJa />,
     ro: <ProposalsInfoRo />,
-    ko: <ProposalsInfoKo />,
     ar: <ProposalsInfoAr/>
   },
 
