@@ -21,7 +21,6 @@ const languageOptions = [
   { value: "fr", labelKey: "languageSelector.french", flagCode: "FR" },
   { value: "it", labelKey: "languageSelector.italian", flagCode: "IT" },
   { value: "ja", labelKey: "languageSelector.japanese", flagCode: "JP" },
-  { value: "ko", labelKey: "languageSelector.korean", flagCode: "KR" },
   { value: "pl", labelKey: "languageSelector.polish", flagCode: "PL" },
   { value: "pt", labelKey: "languageSelector.portuguese", flagCode: "BR" },
   { value: "ro", labelKey: "languageSelector.romanian", flagCode: "RO" },
