@@ -40,6 +40,7 @@ import { useI18n } from "../../i18n/i18n";
 import TimeAgo from "timeago-react";
 import RadialProgress from "../RadialProgress";
 import useProposalVoteCount from "@/hooks/api/accountPage/useProposalVoteCount";
+import moment from "moment";
 
 interface AccountMainCardProps {
   accountDetails: Explorer.FormattedAccountDetails;
@@ -170,67 +171,65 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
       <TimeAgo className="text-sm" locale={locale} datetime={lastPostDate} />
     );
 
-  const getGovernanceHealthStatus = () => {
-    const expirationTs = accountDetails.governance_vote_expiration_ts;
-    if (!expirationTs) {
-      return null;
-    }
 
-    const expirationDate = new Date(formatAndDelocalizeTime(expirationTs));
-    const now = new Date();
-    const threeMonthsFromNow = new Date();
-    threeMonthsFromNow.setMonth(now.getMonth() + 3);
+const getGovernanceHealthStatus = () => {
+  const expirationTs = accountDetails.governance_vote_expiration_ts;
+  if (!expirationTs) {
+    return null;
+  }
 
-    const tooltipContent = (
-      <p>
-        {t("accountMainCard.governanceTooltip")}{" "}
-        { formatAndDelocalizeTime(expirationDate)}
-      </p>
-    );
+  const expirationDate = moment(expirationTs);
+  const now = moment();
+  const threeMonthsFromNow = moment().add(3, "months");
 
-    if (expirationDate < now) {
-       const expiredTooltipContent = (
-      <p>
-        {t("accountMainCard.governanceExpiredTooltip")}{" "}
-        { formatAndDelocalizeTime(expirationDate)}
-      </p>
-    );
-      return {
-        icon: <ShieldOff size={20} color="#ef4444" />,
-        label: t("accountMainCard.governanceHealth"),
-        value: (
-          <span className="text-sm text-red-500">
-            {t("accountMainCard.governanceExpired")}
-          </span>
-        ),
-        tooltipContent: expiredTooltipContent,
-      };
-    }
-
-    if (expirationDate < threeMonthsFromNow) {
-      return {
-        icon: <AlertTriangle size={20} color="#eab308" />,
-        label: t("accountMainCard.governanceHealth"),
-        value: (
-          <span className="text-sm text-yellow-500">
-            {t("accountMainCard.governanceExpiring")}
-          </span>
-        ),
-        tooltipContent: tooltipContent,
-      };
-    }
-
+  if (expirationDate.isBefore(now)) {
     return {
-      icon: <ShieldCheck size={20} color="#22c55e" />,
+      icon: <ShieldOff size={20} color="#ef4444" />,
       label: t("accountMainCard.governanceHealth"),
       value: (
-        <span className="text-sm text-green-500">
-          {t("accountMainCard.governanceActive")}
+        <span className="text-sm">
+          {t("accountMainCard.governanceExpired")}
         </span>
       ),
-      tooltipContent: tooltipContent,
+      tooltipContent: (
+        <p>
+          {t("accountMainCard.governanceExpiredTooltip")} {String(expirationTs)}
+        </p>
+      ),
     };
+  }
+
+  if (expirationDate.isBefore(threeMonthsFromNow)) {
+    return {
+      icon: <AlertTriangle size={20} color="#eab308" />,
+      label: t("accountMainCard.governanceHealth"),
+      value: (
+        <span className="text-sm">
+          {t("accountMainCard.governanceExpiring")}
+        </span>
+      ),
+      tooltipContent: (
+        <p>
+          {t("accountMainCard.governanceTooltip")} {String(expirationTs)}
+        </p>
+      ),
+    };
+  }
+
+  return {
+    icon: <ShieldCheck size={20} color="#22c55e" />,
+    label: t("accountMainCard.governanceHealth"),
+    value: (
+      <span className="text-sm">{t("accountMainCard.governanceActive")}</span>
+    ),
+    tooltipContent: (
+      <p>
+        {t("accountMainCard.governanceTooltip")} {String(expirationTs)}
+      </p>
+    ),
   };
+};
+
   const governanceHealthProps = getGovernanceHealthStatus();
 
   return (
