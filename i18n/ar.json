@@ -140,7 +140,6 @@
   "languageSelector.french": "الفرنسية",
   "languageSelector.italian": "الإيطالية",
   "languageSelector.japanese": "اليابانية",
-  "languageSelector.korean": "الكورية",
   "languageSelector.polish": "البولندية",
   "languageSelector.portuguese": "البرتغالية",
   "languageSelector.romanian": "الرومانية",
@@ -902,5 +901,11 @@
   "settingsPage.tabbedViewLabel": "عرض مبوب",
   "settingsPage.tabbedViewDescription": "تنظيم تفاصيل الحساب في علامات تبويب منطقية وسهلة التنقل. (افتراضي)",
   "settingsPage.originalViewLabel": "العرض الأصلي",
-  "settingsPage.originalViewDescription": "عرض جميع تفاصيل الحساب في قائمة واحدة شاملة."
+  "settingsPage.originalViewDescription": "عرض جميع تفاصيل الحساب في قائمة واحدة شاملة.",
+  "settingsPage.accountPageViewTitle": "عرض صفحة الحساب",
+  "settingsPage.resourceBarStyleTitle": "نمط شريط الموارد",
+  "settingsPage.radialViewLabel": "عرض دائري",
+  "settingsPage.radialViewDescription": "عرض الموارد مثل قوة التصويت باستخدام مؤشرات دائرية. (الافتراضي)",
+  "settingsPage.linearViewLabel": "عرض خطي",
+  "settingsPage.linearViewDescription": "عرض الموارد مثل قوة التصويت باستخدام أشرطة أفقية تقليدية."
 }

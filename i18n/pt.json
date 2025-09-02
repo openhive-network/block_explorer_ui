@@ -699,7 +699,6 @@
   "languageSelector.german": "Alemão",
   "languageSelector.french": "Francês",
   "languageSelector.japanese": "Japonês",
-  "languageSelector.korean": "Coreano",
   "languageSelector.polish": "Polonês",
   "languageSelector.romanian": "Romeno",
   "languageSelector.arabic": "Árabe",
@@ -902,5 +901,13 @@
   "settingsPage.tabbedViewLabel": "Visualização com Abas",
   "settingsPage.tabbedViewDescription": "Organize os detalhes da conta em abas lógicas e fáceis de navegar. (Padrão)",
   "settingsPage.originalViewLabel": "Visualização Original",
-  "settingsPage.originalViewDescription": "Mostrar todos os detalhes da conta em uma única lista abrangente."
+  "settingsPage.originalViewDescription": "Mostrar todos os detalhes da conta em uma única lista abrangente.",
+  "settingsPage.accountPageViewTitle": "Visualização da Página da Conta",
+  "settingsPage.resourceBarStyleTitle": "Estilo da Barra de Recursos",
+  "settingsPage.radialViewLabel": "Visualização Radial",
+  "settingsPage.radialViewDescription": "Mostrar recursos como poder de voto usando indicadores circulares. (Padrão)",
+  "settingsPage.linearViewLabel": "Visualização Linear",
+  "settingsPage.linearViewDescription": "Mostrar recursos como poder de voto usando barras horizontais tradicionais."
+  
+
 }

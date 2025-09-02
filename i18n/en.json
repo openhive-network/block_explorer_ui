@@ -696,7 +696,6 @@
   "languageSelector.german": "German",
   "languageSelector.french": "French",
   "languageSelector.japanese": "Japanese",
-  "languageSelector.korean": "Korean",
   "languageSelector.polish": "Polish",
   "languageSelector.portuguese": "Portuguese",
   "languageSelector.romanian": "Romanian",
@@ -902,5 +901,11 @@
   "settingsPage.tabbedViewLabel": "Tabbed View",
   "settingsPage.tabbedViewDescription": "Organize account details into logical, easy-to-navigate tabs. (Default)",
   "settingsPage.originalViewLabel": "Original View",
-  "settingsPage.originalViewDescription": "Show all account details in a single, comprehensive list."
+  "settingsPage.originalViewDescription": "Show all account details in a single, comprehensive list.",
+  "settingsPage.accountPageViewTitle": "Account Page View",
+  "settingsPage.resourceBarStyleTitle": "Resource Bar Style",
+  "settingsPage.radialViewLabel": "Radial View",
+  "settingsPage.radialViewDescription": "Show resources like Voting Power using circular indicators. (Default)",
+  "settingsPage.linearViewLabel": "Linear View",
+  "settingsPage.linearViewDescription": "Show resources like Voting Power using traditional horizontal bars."
 }

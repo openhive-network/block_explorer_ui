@@ -191,6 +191,18 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
 
   const prepareExportData = () => {
     return operations.map((operation) => {
+      const hivePrice = Number(operation.hivePrice);
+      const dollarValue = getDollarValue(
+        coinName as string,
+        operation.balance,
+        hivePrice
+      );
+
+      const showDollarValueByCoin = formatNumber(
+        dollarValue as number,
+        false,
+        coinName === "VESTS"
+      );
       return {
         [t("balanceHistoryTable.operationType")]:
           getOperationTypeForDisplayById(operation.opTypeId),
@@ -208,6 +220,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
         [t("balanceHistoryTable.newBalance")]: `${formatRawCoin(
           operation.balance
         )} ${coinName}`,
+        [t("balanceHistoryTable.dollarValue")]: `$${showDollarValueByCoin}`,
       };
     });
   };

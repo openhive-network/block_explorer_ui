@@ -1,9 +1,27 @@
+
+import React from 'react';
 import { useI18n } from '@/i18n/i18n';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import PageTitle from '@/components/PageTitle';
-import { useSettings, ViewMode } from '@/contexts/SettingsContext';
+import { useSettings, AppSettings } from '@/contexts/SettingsContext';
+
+//  To add a new setting, Follow these steps:
+// Step 1: Update the Settings Context
+//    - File: src/contexts/SettingsContext.tsx
+//    - Action: Add your new setting's type and update the `AppSettings` interface.
+//    - Action: Add a default value for your new setting in the `useState` hook.
+//
+// Step 2: Add New Translations
+//    - Action: Add the new translation keys for the titles, labels, and descriptions.
+//  
+// Step 3: Add the Setting to the Configuration Object Below
+//    - Action: Add a new object to the `settingsConfig` array below. This can be
+//              in a new section or an existing one. The UI will render automatically.
+// Step 4: Use the New Setting
+//    - Action: Import `useSettings` in any component and use the new setting to
+//              conditionally render UI or apply classes.
 
 interface SettingSectionProps {
   title: string;
@@ -13,7 +31,7 @@ interface SettingSectionProps {
 
 const SettingSection: React.FC<SettingSectionProps> = ({ title, description, children }) => {
   return (
-    <div className="rounded-xl border bg-explorer-slate dark:border-slate-800 shadow-sm">
+    <div className="rounded border bg-explorer-slate dark:border-slate-800 shadow-sm">
       <div className="p-6">
         <h2 className="text-lg font-semibold">{title}</h2>
         <p className="text-sm text-explorer-slate-text">{description}</p>
@@ -24,6 +42,7 @@ const SettingSection: React.FC<SettingSectionProps> = ({ title, description, chi
     </div>
   );
 };
+
 
 interface SettingItemProps {
   label: string;
@@ -46,90 +65,149 @@ const SettingItem: React.FC<SettingItemProps> = ({ label, description, children 
 };
 
 
-const SettingsPage = () => {
+// --- Type Definitions (Unchanged) ---
+interface SwitchSettingConfig {
+  type: 'switch';
+  key: keyof AppSettings;
+  labelKey: string;
+  descriptionKey: string;
+  trueValue: AppSettings[keyof AppSettings];
+  falseValue: AppSettings[keyof AppSettings];
+}
+
+interface RadioSettingConfig {
+  type: 'radio';
+  key: keyof AppSettings;
+  titleKey: string;
+  options: {
+    value: string;
+    labelKey: string;
+    descriptionKey: string;
+  }[];
+}
+
+type SettingItemConfig = SwitchSettingConfig | RadioSettingConfig;
+
+interface SettingSectionConfig {
+  sectionTitleKey: string;
+  sectionDescriptionKey: string;
+  items: SettingItemConfig[];
+}
+
+
+const SwitchSettingRenderer: React.FC<{ config: SwitchSettingConfig }> = ({ config }) => {
   const { t } = useI18n();
   const { settings, updateSettings } = useSettings();
 
-  const handleViewChange = (value: string) => {
-    updateSettings({ accountPageView: value as ViewMode });
-  };
+  return (
+    <SettingItem label={t(config.labelKey)} description={t(config.descriptionKey)}>
+      <Switch
+        id={config.key}
+        checked={settings[config.key] === config.trueValue}
+        onCheckedChange={(checked) =>
+          updateSettings({ [config.key]: checked ? config.trueValue : config.falseValue })
+        }
+      />
+    </SettingItem>
+  );
+};
 
-  const handleDisplayModeChange = (checked: boolean) => {
-    updateSettings({ displayMode: checked ? 'vests' : 'hp' });
-  };
+const RadioSettingRenderer: React.FC<{ config: RadioSettingConfig }> = ({ config }) => {
+  const { t } = useI18n();
+  const { settings, updateSettings } = useSettings();
+
+  return (
+    <div key={config.key}>
+      <h3 className="text-base font-semibold mb-3 -mt-1">{t(config.titleKey)}</h3>
+      <RadioGroup
+        value={settings[config.key]}
+        onValueChange={(value) => updateSettings({ [config.key]: value as any })}
+        className="space-y-4"
+      >
+        {config.options.map(option => (
+          <div key={option.value}>
+            <Label htmlFor={`${config.key}-${option.value}`} className="flex items-center space-x-3 cursor-pointer">
+              <RadioGroupItem value={option.value} id={`${config.key}-${option.value}`} />
+              <span className="font-medium">{t(option.labelKey)}</span>
+            </Label>
+            <p className="pl-8 text-xs text-explorer-slate-text mt-1">{t(option.descriptionKey)}</p>
+          </div>
+        ))}
+      </RadioGroup>
+    </div>
+  );
+};
+
+// --- Main SettingsPage Component ---
+
+const SettingsPage = () => {
+  const { t } = useI18n();
+  const settingsConfig: SettingSectionConfig[] = [
+    {
+      sectionTitleKey: 'settingsPage.displayTitle',
+      sectionDescriptionKey: 'settingsPage.displayDescription',
+      items: [
+        {
+          type: 'switch',
+          key: 'displayMode',
+          labelKey: 'settingsPage.showVestsLabel',
+          descriptionKey: 'settingsPage.showVestsDescription',
+          trueValue: 'vests',
+          falseValue: 'hp'
+        }
+      ]
+    },
+    {
+      sectionTitleKey: 'settingsPage.layoutTitle',
+      sectionDescriptionKey: 'settingsPage.layoutDescription',
+      items: [
+        {
+          type: 'radio',
+          key: 'accountPageView',
+          titleKey: 'settingsPage.accountPageViewTitle',
+          options: [
+            { value: 'tabbed', labelKey: 'settingsPage.tabbedViewLabel', descriptionKey: 'settingsPage.tabbedViewDescription' },
+            { value: 'original', labelKey: 'settingsPage.originalViewLabel', descriptionKey: 'settingsPage.originalViewDescription' }
+          ]
+        },
+        {
+          type: 'radio',
+          key: 'progressBarType',
+          titleKey: 'settingsPage.resourceBarStyleTitle',
+          options: [
+            { value: 'radial', labelKey: 'settingsPage.radialViewLabel', descriptionKey: 'settingsPage.radialViewDescription' },
+            { value: 'linear', labelKey: 'settingsPage.linearViewLabel', descriptionKey: 'settingsPage.linearViewDescription' }
+          ]
+        }
+      ]
+    }
+  ];
 
   return (
     <div className="page-container mx-auto space-y-8">
       <header>
-         <PageTitle
-              titleKey="pageTitle.settings"
-              className="py-4"
-            />
-        <p className="mt-2">{t('settingsPage.subtitle')}</p>
+        <PageTitle titleKey="pageTitle.settings" className="py-4" />
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-       {/* --- Show Vests Card --- */}
-        <SettingSection
-          title={t('settingsPage.displayTitle')}
-          description={t('settingsPage.displayDescription')}
-        >
-          <SettingItem
-            label={t('settingsPage.showVestsLabel')}
-            description={t('settingsPage.showVestsDescription')}
+        {settingsConfig.map((section, sectionIndex) => (
+          <SettingSection
+            key={sectionIndex}
+            title={t(section.sectionTitleKey)}
+            description={t(section.sectionDescriptionKey)}
           >
-            <Switch
-              id="display-mode"
-              checked={settings.displayMode === 'vests'}
-              onCheckedChange={handleDisplayModeChange}
-            />
-          </SettingItem>
-
-        </SettingSection>
-        
-        {/* Account Page View Setting */}
-        <SettingSection
-          title={t('settingsPage.layoutTitle')}
-          description={t('settingsPage.layoutDescription')}
-        >
-          
-          <RadioGroup
-            value={settings.accountPageView}
-            onValueChange={handleViewChange}
-            className="space-y-4"
-          >
-            <div>
-              <Label htmlFor="view-tabbed" className="flex items-center space-x-3 cursor-pointer">
-                <RadioGroupItem value="tabbed" id="view-tabbed" />
-                <span className="font-medium">{t('settingsPage.tabbedViewLabel')}</span>
-              </Label>
-              <p className="pl-8 text-xs text-explorer-slate-text mt-1">{t('settingsPage.tabbedViewDescription')}</p>
-            </div>
-            <div>
-              <Label htmlFor="view-original" className="flex items-center space-x-3 cursor-pointer">
-                <RadioGroupItem value="original" id="view-original" />
-                <span className="font-medium">{t('settingsPage.originalViewLabel')}</span>
-              </Label>
-              <p className="pl-8 text-xs text-explorer-slate-text mt-1">{t('settingsPage.originalViewDescription')}</p>
-            </div>
-          </RadioGroup>
-        </SettingSection>
-
-        {/* --- How to add a new setting in the future --- */}
-        {/* 
-        <SettingSection
-          title={t('settingsPage.newFeatureTitle')}
-          description={t('settingsPage.newFeatureDescription')}
-        >
-          <SettingItem
-            label={t('settingsPage.newFeatureLabel')}
-            description={t('settingsPage.newFeatureSubDescription')}
-          >
-            <Switch id="new-feature-toggle" />
-          </SettingItem>
-        </SettingSection>
-        */}
-
+            {section.items.map((item, itemIndex) => (
+              <React.Fragment key={item.key}>
+                {item.type === 'radio' && itemIndex > 0 && (
+                  <hr className="my-6 border-slate-200 dark:border-slate-700/50" />
+                )}
+                
+                {item.type === 'switch' && <SwitchSettingRenderer config={item} />}
+                {item.type === 'radio' && <RadioSettingRenderer config={item} />}
+              </React.Fragment>
+            ))}
+          </SettingSection>
+        ))}
       </div>
     </div>
   );

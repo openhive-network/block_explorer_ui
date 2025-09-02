@@ -698,7 +698,6 @@
   "languageSelector.chinese": "Chinesisch",
   "languageSelector.french": "Französisch",
   "languageSelector.japanese": "Japanisch",
-  "languageSelector.korean": "Koreanisch",
   "languageSelector.polish": "Polnisch",
   "languageSelector.portuguese": "Portugiesisch",
   "languageSelector.romanian": "Rumänisch",
@@ -902,5 +901,11 @@
   "settingsPage.tabbedViewLabel": "Registerkartenansicht",
   "settingsPage.tabbedViewDescription": "Organisieren Sie Kontodetails in logischen, einfach zu navigierenden Registerkarten. (Standard)",
   "settingsPage.originalViewLabel": "Originalansicht",
-  "settingsPage.originalViewDescription": "Alle Kontodetails in einer einzigen, umfassenden Liste anzeigen."
+  "settingsPage.originalViewDescription": "Alle Kontodetails in einer einzigen, umfassenden Liste anzeigen.",
+  "settingsPage.accountPageViewTitle": "Kontoseitenansicht",
+  "settingsPage.resourceBarStyleTitle": "Stil der Ressourcenleiste",
+  "settingsPage.radialViewLabel": "Radiale Ansicht",
+  "settingsPage.radialViewDescription": "Ressourcen wie Stimmkraft mit kreisförmigen Indikatoren anzeigen. (Standard)",
+  "settingsPage.linearViewLabel": "Lineare Ansicht",
+  "settingsPage.linearViewDescription": "Ressourcen wie Stimmkraft mit traditionellen horizontalen Balken anzeigen."
 }

@@ -132,7 +132,6 @@
   "languages.en": "English",
   "languages.es": "Español",
   "languages.it": "Italiano",
-  "languageSelector.korean": "한국어",
   "viewPopover.dataView": "데이터 뷰",
   "viewPopover.visualizedData": "시각화된 데이터",
   "viewPopover.rawJson": "원시 JSON",
@@ -902,5 +901,11 @@
   "settingsPage.tabbedViewLabel": "탭 보기",
   "settingsPage.tabbedViewDescription": "계정 세부 정보를 논리적이고 탐색하기 쉬운 탭으로 구성합니다. (기본값)",
   "settingsPage.originalViewLabel": "원본 보기",
-  "settingsPage.originalViewDescription": "모든 계정 세부 정보를 단일의 포괄적인 목록으로 표시합니다."
+  "settingsPage.originalViewDescription": "모든 계정 세부 정보를 단일의 포괄적인 목록으로 표시합니다.",
+  "settingsPage.accountPageViewTitle": "계정 페이지 보기",
+  "settingsPage.resourceBarStyleTitle": "리소스 바 스타일",
+  "settingsPage.radialViewLabel": "원형 보기",
+  "settingsPage.radialViewDescription": "보팅 파워와 같은 리소스를 원형 표시기로 표시합니다. (기본값)",
+  "settingsPage.linearViewLabel": "선형 보기",
+  "settingsPage.linearViewDescription": "보팅 파워와 같은 리소스를 기존의 수평 막대로 표시합니다."
 }
