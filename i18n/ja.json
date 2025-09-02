@@ -898,5 +898,11 @@
   "settingsPage.tabbedViewLabel": "タブ表示",
   "settingsPage.tabbedViewDescription": "アカウントの詳細を論理的でナビゲートしやすいタブに整理します。（デフォルト）",
   "settingsPage.originalViewLabel": "オリジナル表示",
-  "settingsPage.originalViewDescription": "すべてのアカウントの詳細を単一の包括的なリストで表示します。"
+  "settingsPage.originalViewDescription": "すべてのアカウントの詳細を単一の包括的なリストで表示します。",
+  "settingsPage.accountPageViewTitle": "アカウントページの表示形式",
+  "settingsPage.resourceBarStyleTitle": "リソースバーのスタイル",
+  "settingsPage.radialViewLabel": "円形ビュー",
+  "settingsPage.radialViewDescription": "投票パワーなどのリソースを円形のインジケーターで表示します。(デフォルト)",
+  "settingsPage.linearViewLabel": "線形ビュー",
+  "settingsPage.linearViewDescription": "投票パワーなどのリソースを従来の横棒で表示します。"
 }

@@ -897,5 +897,11 @@
   "settingsPage.tabbedViewLabel": "Vue par onglets",
   "settingsPage.tabbedViewDescription": "Organiser les détails du compte dans des onglets logiques et faciles à naviguer. (Par défaut)",
   "settingsPage.originalViewLabel": "Vue originale",
-  "settingsPage.originalViewDescription": "Afficher tous les détails du compte dans une seule liste complète."
+  "settingsPage.originalViewDescription": "Afficher tous les détails du compte dans une seule liste complète.",
+  "settingsPage.accountPageViewTitle": "Vue de la page de compte",
+  "settingsPage.resourceBarStyleTitle": "Style de la barre de ressources",
+  "settingsPage.radialViewLabel": "Vue radiale",
+  "settingsPage.radialViewDescription": "Afficher les ressources comme la puissance de vote avec des indicateurs circulaires. (Défaut)",
+  "settingsPage.linearViewLabel": "Vue linéaire",
+  "settingsPage.linearViewDescription": "Afficher les ressources comme la puissance de vote avec des barres horizontales traditionnelles."
 }

@@ -3,12 +3,14 @@ import React, { createContext, useState, useEffect, useCallback, useContext, Rea
 // Define the types for our settings
 export type ViewMode = 'original' | 'tabbed';
 export type DisplayMode = 'hp' | 'vests';
+export type ProgressBarType = 'radial' | 'linear';
 
 const SETTINGS_KEY = 'app-settings';
 
-interface AppSettings {
+export interface AppSettings {
   accountPageView: ViewMode;
   displayMode: DisplayMode;
+  progressBarType: ProgressBarType;
 }
 
 interface SettingsContextType {
@@ -20,8 +22,10 @@ const SettingsContext = createContext<SettingsContextType | undefined>(undefined
 
 export const SettingsProvider = ({ children }: { children: ReactNode }) => {
   const [settings, setSettings] = useState<AppSettings>({
-    accountPageView: 'tabbed', // Default settings
+    // Default settings
+    accountPageView: 'tabbed',
     displayMode: 'hp',
+    progressBarType: 'radial',
   });
 
   // Effect to load settings from localStorage on initial mount

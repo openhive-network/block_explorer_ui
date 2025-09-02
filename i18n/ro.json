@@ -897,5 +897,11 @@
   "settingsPage.tabbedViewLabel": "Vizualizare cu file",
   "settingsPage.tabbedViewDescription": "Organizați detaliile contului în file logice, ușor de navigat. (Implicit)",
   "settingsPage.originalViewLabel": "Vizualizare originală",
-  "settingsPage.originalViewDescription": "Afișați toate detaliile contului într-o singură listă cuprinzătoare."
+  "settingsPage.originalViewDescription": "Afișați toate detaliile contului într-o singură listă cuprinzătoare.",
+  "settingsPage.accountPageViewTitle": "Vizualizare pagină cont",
+  "settingsPage.resourceBarStyleTitle": "Stil bară de resurse",
+  "settingsPage.radialViewLabel": "Vizualizare radială",
+  "settingsPage.radialViewDescription": "Afișează resurse precum puterea de vot folosind indicatori circulari. (Implicit)",
+  "settingsPage.linearViewLabel": "Vizualizare liniară",
+  "settingsPage.linearViewDescription": "Afișează resurse precum puterea de vot folosind bare orizontale tradiționale."
 }

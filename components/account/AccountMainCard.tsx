@@ -38,9 +38,12 @@ import ErrorMessage from "../ErrorMessage";
 import { Button } from "../ui/button";
 import { useI18n } from "../../i18n/i18n";
 import TimeAgo from "timeago-react";
-import RadialProgress from "../RadialProgress";
 import useProposalVoteCount from "@/hooks/api/accountPage/useProposalVoteCount";
 import moment from "moment";
+
+import { useSettings } from "@/contexts/SettingsContext";
+import { Progress } from "@/components/ui/progress";
+import RadialProgress from "../RadialProgress";
 
 interface AccountMainCardProps {
   accountDetails: Explorer.FormattedAccountDetails;
@@ -127,6 +130,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
 }) => {
   const router = useRouter();
   const { t, locale } = useI18n();
+  const { settings } = useSettings();
   const { manabarsData } = useManabars(accountName, liveDataEnabled);
   const { witnessDetails } = useWitnessDetails(
     accountName,
@@ -447,45 +451,89 @@ const getGovernanceHealthStatus = () => {
             {t("accountMainCard.resourcesHeader")}
           </h3>
           {!!manabarsData ? (
-            <div className="grid grid-cols-[repeat(auto-fit,minmax(80px,1fr))] justify-items-center gap-4">
-              <RadialProgress
-                size={70}
-                strokeWidth={6}
-                percentage={manabarsData.upvote.percentageValue}
-                label={t("accountMainCard.votingPower")}
-                color="text-green-500"
-                tooltipContent={
-                  <p className="text-sm">
+            <>
+              {settings.progressBarType === "linear" ? (
+                <div className="space-y-4">
+                  <div className="text-center">
+                    <p className="mb-2 text-sm font-medium">
+                      {t("accountMainCard.votingPower")}
+                    </p>
+                    <Progress
+                      value={manabarsData.upvote.percentageValue}
+                      color="#00c040"
+                    />
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      {manabarsData.upvote.current} / {manabarsData.upvote.max}
+                    </p>
+                  </div>
+                  <div className="text-center">
+                    <p className="mb-2 text-sm font-medium">
+                      {t("accountMainCard.downvotePower")}
+                    </p>
+                    <Progress
+                      value={manabarsData.downvote.percentageValue}
+                      color="#c01000"
+                    />
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      {manabarsData.downvote.current} /{" "}
+                      {manabarsData.downvote.max}
+                    </p>
+                  </div>
+                  <div className="text-center">
+                    <p className="mb-2 text-sm font-medium">
+                      {t("accountMainCard.resourceCredits")}
+                    </p>
+                    <Progress
+                      value={manabarsData.rc.percentageValue}
+                      color="#cecafa"
+                    />
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      {manabarsData.rc.current} / {manabarsData.rc.max}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-[repeat(auto-fit,minmax(80px,1fr))] justify-items-center gap-4">
+                  <RadialProgress
+                    size={70}
+                    strokeWidth={6}
+                    percentage={manabarsData.upvote.percentageValue}
+                    label={t("accountMainCard.votingPower")}
+                    color="text-green-500"
+                    tooltipContent={
+                      <p className="text-sm">
                     {manabarsData?.upvote.current} / {manabarsData?.upvote.max}
-                  </p>
-                }
-              />
-              <RadialProgress
-                size={70}
-                strokeWidth={6}
-                percentage={manabarsData.downvote.percentageValue}
-                label={t("accountMainCard.downvotePower")}
-                color="text-red-500"
-                tooltipContent={
-                  <p className="text-sm">
+                      </p>
+                    }
+                  />
+                  <RadialProgress
+                    size={70}
+                    strokeWidth={6}
+                    percentage={manabarsData.downvote.percentageValue}
+                    label={t("accountMainCard.downvotePower")}
+                    color="text-red-500"
+                    tooltipContent={
+                      <p className="text-sm">
                     {manabarsData?.downvote.current} /{" "}
                     {manabarsData?.downvote.max}
-                  </p>
-                }
-              />
-              <RadialProgress
-                size={70}
-                strokeWidth={6}
-                percentage={manabarsData.rc.percentageValue}
-                label={t("accountMainCard.resourceCredits")}
-                color="text-indigo-400"
-                tooltipContent={
-                  <p className="text-sm">
+                      </p>
+                    }
+                  />
+                  <RadialProgress
+                    size={70}
+                    strokeWidth={6}
+                    percentage={manabarsData.rc.percentageValue}
+                    label={t("accountMainCard.resourceCredits")}
+                    color="text-indigo-400"
+                    tooltipContent={
+                      <p className="text-sm">
                     {manabarsData?.rc.current} / {manabarsData?.rc.max}
-                  </p>
-                }
-              />
-            </div>
+                      </p>
+                    }
+                  />
+                </div>
+              )}
+            </>
           ) : (
             <div className="flex justify-center items-center h-24 w-full">
               <Loader2 className="animate-spin h-10 w-10 text-gray-400" />

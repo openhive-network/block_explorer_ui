@@ -897,5 +897,11 @@
   "settingsPage.tabbedViewLabel": "Vista con pestañas",
   "settingsPage.tabbedViewDescription": "Organiza los detalles de la cuenta en pestañas lógicas y fáciles de navegar. (Predeterminado)",
   "settingsPage.originalViewLabel": "Vista original",
-  "settingsPage.originalViewDescription": "Muestra todos los detalles de la cuenta en una única lista completa."
+  "settingsPage.originalViewDescription": "Muestra todos los detalles de la cuenta en una única lista completa.",
+  "settingsPage.accountPageViewTitle": "Kontoseitenansicht",
+  "settingsPage.resourceBarStyleTitle": "Stil der Ressourcenleiste",
+  "settingsPage.radialViewLabel": "Radiale Ansicht",
+  "settingsPage.radialViewDescription": "Ressourcen wie Stimmkraft mit kreisförmigen Indikatoren anzeigen. (Standard)",
+  "settingsPage.linearViewLabel": "Lineare Ansicht",
+  "settingsPage.linearViewDescription": "Ressourcen wie Stimmkraft mit traditionellen horizontalen Balken anzeigen."
 }

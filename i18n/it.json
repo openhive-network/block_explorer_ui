@@ -893,5 +893,12 @@
   "settingsPage.tabbedViewLabel": "Visualizzazione a schede",
   "settingsPage.tabbedViewDescription": "Organizza i dettagli dell'account in schede logiche e facili da navigare. (Predefinito)",
   "settingsPage.originalViewLabel": "Visualizzazione originale",
-  "settingsPage.originalViewDescription": "Mostra tutti i dettagli dell'account in un'unica lista completa."
+  "settingsPage.originalViewDescription": "Mostra tutti i dettagli dell'account in un'unica lista completa.",
+  "settingsPage.accountPageViewTitle": "Visualizzazione pagina account",
+  "settingsPage.resourceBarStyleTitle": "Stile barra delle risorse",
+  "settingsPage.radialViewLabel": "Vista radiale",
+  "settingsPage.radialViewDescription": "Mostra risorse come il potere di voto usando indicatori circolari. (Predefinito)",
+  "settingsPage.linearViewLabel": "Vista lineare",
+  "settingsPage.linearViewDescription": "Mostra risorse come il potere di voto usando le tradizionali barre orizzontali."
+  
 }

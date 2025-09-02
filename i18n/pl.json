@@ -898,5 +898,11 @@
   "settingsPage.tabbedViewLabel": "Widok zakładkowy",
   "settingsPage.tabbedViewDescription": "Organizuj szczegóły konta w logiczne, łatwe do nawigacji zakładki. (Domyślne)",
   "settingsPage.originalViewLabel": "Widok oryginalny",
-  "settingsPage.originalViewDescription": "Pokaż wszystkie szczegóły konta w jednej, kompleksowej liście."
+  "settingsPage.originalViewDescription": "Pokaż wszystkie szczegóły konta w jednej, kompleksowej liście.",
+  "settingsPage.accountPageViewTitle": "Widok strony konta",
+  "settingsPage.resourceBarStyleTitle": "Styl paska zasobów",
+  "settingsPage.radialViewLabel": "Widok radialny",
+  "settingsPage.radialViewDescription": "Pokazuj zasoby, takie jak siła głosu, za pomocą wskaźników kołowych. (Domyślnie)",
+  "settingsPage.linearViewLabel": "Widok liniowy",
+  "settingsPage.linearViewDescription": "Pokazuj zasoby, takie jak siła głosu, za pomocą tradycyjnych pasków poziomych."
 }
