@@ -160,7 +160,7 @@ const BlockSearchResults = () => {
       ) : blocksSearchData?.blocks_result &&
         blocksSearchData?.blocks_result.length > 0 ? (
         <>
-          <div className="w-full rounded bg-theme mb-4 pb-2 pt-1">
+          <div className="w-full rounded-t bg-theme pt-1">
             <BlockNavigation
               fromBlock={blocksSearchData?.block_range.from}
               toBlock={blocksSearchData?.block_range.to}

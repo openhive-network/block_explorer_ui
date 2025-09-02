@@ -12,9 +12,18 @@ const DataCountMessage: React.FC<DataCountMessageProps> = ({
 }) => {
   const { t } = useI18n();
   if (!count) return null;
-
-  const message = `${t("dataCountMessage.aTotalOf")} ${count.toLocaleString()} ${t(`${dataType}`)} ${t("dataCountMessage.found")}`;
-  return <div className="text-gray-500">{message}</div>;
+  
+  return (
+    <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/50  rounded-md animate-in fade-in-0 slide-in-from-top-2 duration-300">
+      <span>
+        {t("dataCountMessage.aTotalOf")}{" "}
+        <strong className="font-semibold text-foreground">
+          {count.toLocaleString()}
+        </strong>{" "}
+        {t(`${dataType}`)} {t("dataCountMessage.found")}
+      </span>
+    </div>
+  );
 };
 
 export default DataCountMessage;

@@ -24,7 +24,7 @@ const AccountCommentPermlinkSearchResults: React.FC<
     <>
       {data.total_permlinks ? (
         <div>
-          <div className="rounded flex justify-center items-center text-text sticky z-20 top-[3.2rem] md:top-[4rem]">
+          <div className="flex justify-center items-center text-text sticky z-20 top-[3.2rem] md:top-[4rem]">
             <CustomPagination
               currentPage={paramsState?.page ?? 1}
               totalCount={data.total_permlinks}
@@ -32,11 +32,10 @@ const AccountCommentPermlinkSearchResults: React.FC<
               onPageChange={(page: number) =>
                 setParams({ ...paramsState, page: page })
               }
-              className="rounded"
             />
           </div>
 
-          <div className="flex flex-wrap mt-4">
+          <div className="flex flex-wrap">
             <AccountCommentPermlinkResultTable
               permlinkCount={data.total_permlinks}
               data={data.permlinks_result}

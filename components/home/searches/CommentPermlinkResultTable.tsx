@@ -144,7 +144,7 @@ const CommentPermlinkResultTable = ({
     <>
       <div className="w-full">
         <div
-          className={cn("flex justify-end items-center", {
+          className={cn("table-toolbar", {
             "justify-between": !!permlinkCount,
           })}
         >

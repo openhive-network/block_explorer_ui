@@ -272,7 +272,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
       ) : (
         <>
           <div
-            className={cn("flex items-center justify-end my-2", {
+            className={cn("table-toolbar", {
               "justify-between": !!total_operations,
             })}
           >

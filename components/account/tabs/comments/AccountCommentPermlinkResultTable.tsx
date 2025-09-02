@@ -161,7 +161,7 @@ const AccountCommentPermlinkResultTable = ({
     <>
       <div className="w-full">
         <div
-          className={cn("flex justify-end items-center", {
+          className={cn("table-toolbar", {
             "justify-between": !!permlinkCount,
           })}
         >
@@ -172,7 +172,7 @@ const AccountCommentPermlinkResultTable = ({
           <DataExport
             data={prepareExportData()}
             filename={`${accountName}_comments.csv`}
-            className="mb-2"
+            className=""
           />
         </div>
       </div>

@@ -99,7 +99,6 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
   operations,
   unformattedOperations,
   markedTrxId,
-  className,
   referrer,
   accountName,
 }) => {
@@ -197,7 +196,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
   return (
     <>
       <div
-        className={cn("flex items-center justify-end", {
+        className={cn("table-toolbar", {
           "justify-between": !!operationCount,
         })}
       >
@@ -210,7 +209,6 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
           filename={`${accountName ? `${accountName}_` : ""}${
             referrer ? referrer : ""
           }`}
-          className="mb-2"
         />
       </div>
       <div className="flex w-full overflow-auto rounded">

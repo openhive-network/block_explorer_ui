@@ -60,7 +60,7 @@ const CommentPermlinkSearchResults = () => {
     <>
       {permlinkSearchData.total_permlinks ? (
         <div>
-          <div className="w-full rounded bg-theme mb-4 pb-2 pt-1">
+          <div className="w-full rounded bg-theme  pt-1">
             <BlockNavigation
               fromBlock={permlinkSearchData?.block_range.from}
               toBlock={permlinkSearchData?.block_range.to}
@@ -77,7 +77,6 @@ const CommentPermlinkSearchResults = () => {
               totalCount={permlinkSearchData.total_permlinks}
               pageSize={config.standardPaginationSize}
               onPageChange={changePermlinkSearchPagination}
-              className="mb-4 rounded"
             />
           </div>
           <div className="flex flex-wrap">

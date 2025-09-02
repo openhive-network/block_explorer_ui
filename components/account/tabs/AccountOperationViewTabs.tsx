@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
+import { Filter } from "lucide-react";
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import OperationTabContent from "./operations/OperationsTabContent";
@@ -17,7 +18,7 @@ interface AccountOperationViewTabs {
 const AccountOperationViewTabs: React.FC<AccountOperationViewTabs> = ({
   liveDataEnabled,
 }) => {
-  const { t } = useI18n(); 
+  const { t } = useI18n();
   const router = useRouter();
   const { activeTab, setActiveTab } = useTabs();
 
@@ -50,7 +51,7 @@ const AccountOperationViewTabs: React.FC<AccountOperationViewTabs> = ({
       }
     );
   };
-
+  
   const handleFiltersVisibility = () => {
     if (activeTab === "operations") {
       setIsOperationsFilterSectionVisible(!isOperationsFilterSectionVisible);
@@ -89,23 +90,23 @@ const AccountOperationViewTabs: React.FC<AccountOperationViewTabs> = ({
       onValueChange={handleTabChange}
       className="flex-col w-full"
     >
-      <TabsList className="flex w-full justify-between p-0">
-        <div className="bg-theme p-1 flex gap-2 rounded w-auto">
+      <TabsList className="flex w-full justify-between rounded-t-lg p-0 h-auto bg-muted text-muted-foreground">
+        <div className="flex items-center">
           <TabsTrigger
-            className="rounded cursor-pointer hover:bg-buttonHover"
             value="operations"
+            className="rounded-tl-lg rounded-b-none cursor-pointer px-4 py-3 data-[state=active]:bg-theme data-[state=active]:text-foreground"
           >
             {t("accountOperationViewTabs.operations")}
           </TabsTrigger>
           <TabsTrigger
-            className="rounded cursor-pointer hover:bg-buttonHover"
             value="comments"
+            className="rounded-none cursor-pointer px-4 py-3 data-[state=active]:bg-theme data-[state=active]:text-foreground"
           >
             {t("accountOperationViewTabs.comments")}
           </TabsTrigger>
           <TabsTrigger
-            className="rounded cursor-pointer hover:bg-buttonHover"
             value="interactions"
+            className="rounded-none cursor-pointer px-4 py-3 data-[state=active]:bg-theme data-[state=active]:text-foreground"
           >
             {t("accountOperationViewTabs.interactions")}
           </TabsTrigger>
@@ -118,25 +119,27 @@ const AccountOperationViewTabs: React.FC<AccountOperationViewTabs> = ({
         </div>
       </TabsList>
 
-      <OperationTabContent
-        isVisible={isOperationsFilterSectionVisible}
-        setIsVisible={setIsOperationsFilterSectionVisible}
-        setIsFiltersActive={setIsFiltersActive}
-        liveDataEnabled={liveDataEnabled}
-        isFiltersActive={isFiltersActive}
-      />
-      <CommentsTabContent
-        isVisible={isCommentsFilterSectionVisible}
-        setIsVisible={setIsCommentsFilterSectionVisible}
-        setIsFiltersActive={setIsFiltersActive}
-        isFiltersActive={isFiltersActive}
-      />
-      <InteractionsTabContent
-        isVisible={isInteractionsFilterSectionVisible}
-        setIsVisible={setIsInteractionsFilterSectionVisible}
-        setIsFiltersActive={setIsFiltersActive}
-        isFiltersActive={isFiltersActive}
-      />
+      <div className="bg-theme pt-6">
+        <OperationTabContent
+          isVisible={isOperationsFilterSectionVisible}
+          setIsVisible={setIsOperationsFilterSectionVisible}
+          setIsFiltersActive={setIsFiltersActive}
+          liveDataEnabled={liveDataEnabled}
+          isFiltersActive={isFiltersActive}
+        />
+        <CommentsTabContent
+          isVisible={isCommentsFilterSectionVisible}
+          setIsVisible={setIsCommentsFilterSectionVisible}
+          setIsFiltersActive={setIsFiltersActive}
+          isFiltersActive={isFiltersActive}
+        />
+        <InteractionsTabContent
+          isVisible={isInteractionsFilterSectionVisible}
+          setIsVisible={setIsInteractionsFilterSectionVisible}
+          setIsFiltersActive={setIsFiltersActive}
+          isFiltersActive={isFiltersActive}
+        />
+      </div>
     </Tabs>
   );
 };

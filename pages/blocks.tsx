@@ -322,7 +322,7 @@ const BlocksPage = () => {
           loadPreviousBlocks={handleLoadPreviousBlocks}
           loadNextBlocks={handleLoadNextBlocks}
           urlParams={paramsState}
-          className="md:pr-36 rounded"
+          className="rounded"
         />
 
         {blocksSearchDataLoading && !liveDataEnabled ? (

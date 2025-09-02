@@ -77,7 +77,7 @@ const AccountFollowingDialog: React.FC<FollowingDialogProps> = ({
 
   return (
     <Dialog open={isFollowingOpen} onOpenChange={changeFollowingDialogue}>
-      <DialogContent className="h-3/4 max-w-4xl bg-explorer-bg-start flex flex-col p-4" data-testid="following-dialog">
+      <DialogContent className="h-3/4 max-w-4xl bg-explorer-bg-start flex flex-col p-4 gap-y-0" data-testid="following-dialog">
         <h2 className="text-xl font-bold">{t('accountFollowingDialog.title')} - @{accountName.toUpperCase()} </h2>
 
         {isAccountFollowingLoading ? (
@@ -98,7 +98,7 @@ const AccountFollowingDialog: React.FC<FollowingDialogProps> = ({
                 "justify-end": dir === "rtl",
               })}
             >
-              <div className="relative w-full sm:w-auto">
+              <div className="relative w-full sm:w-auto my-2">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-explorer-dark-gray" />
                 <Input
                   placeholder={t('accountFollowingDialog.searchPlaceholder')}
@@ -118,7 +118,7 @@ const AccountFollowingDialog: React.FC<FollowingDialogProps> = ({
             />
 
             <div
-              className={cn("flex items-center mt-2", {
+              className={cn("table-toolbar", {
                 "justify-between": !!processedFollowing.totalFiltered,
                 "justify-end": !processedFollowing.totalFiltered,
               })}

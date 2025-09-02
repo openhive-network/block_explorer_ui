@@ -136,7 +136,7 @@ const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
         loadPreviousBlocks={handleLoadPreviousBlocks}
         loadNextBlocks={handleLoadNextBlocks}
         urlParams={paramsState}
-        className="rounded mb-4"
+        className="w-full mb-[-1px] relative z-10 rounded-t"
       />
       <AccountCommentPermlinkSearchResults
         data={permlinkSearchData}
