@@ -1,9 +1,29 @@
 import React, { useState, useMemo, useCallback } from "react";
 import Image from "next/image";
-import { ArrowUp, ChevronUp, ChevronsUpDown, Database, DollarSign, FileDown, HandCoins, HelpCircle, Loader2, TrendingDown, User, Users, Wallet, Zap } from "lucide-react";
+import {
+  ArrowUp,
+  ChevronUp,
+  ChevronsUpDown,
+  Database,
+  DollarSign,
+  FileDown,
+  HandCoins,
+  HelpCircle,
+  Loader2,
+  TrendingDown,
+  User,
+  Users,
+  Wallet,
+  Zap,
+} from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../../ui/tooltip";
 import { AccountBalanceCardChart } from "./AccountBalanceCardChart";
 import { prepareAccountBalanceReport } from "./AccountBalanceCardExport";
 import DataExport from "../../DataExport";
@@ -13,7 +33,10 @@ import Explorer from "@/types/Explorer";
 import useBlockChainProperties from "@/hooks/api/common/useBlockChainProperties";
 import { useI18n } from "@/i18n/i18n";
 import { cn, formatNumber } from "@/lib/utils";
-import { changeHBDToDollarsDisplay, grabNumericValue } from "@/utils/StringUtils";
+import {
+  changeHBDToDollarsDisplay,
+  grabNumericValue,
+} from "@/utils/StringUtils";
 
 // ====================================================================
 // SECTION: Static Configurations
@@ -56,7 +79,14 @@ export const ASSET_CONFIG = [
     key: "hive",
     name: "HIVE",
     description: "accountBalanceCard.hiveDescription",
-    icon: <Image src="/hive-logo.png" alt="Hive logo" width={15} height={15} />,
+    icon: (
+      <Image
+        src="/hive-logo.png"
+        alt="Hive logo"
+        width={15}
+        height={15}
+      />
+    ),
     fields: ["balance", "savings_balance", "reward_hive_balance"] as const,
   },
   {
@@ -86,22 +116,53 @@ const useFinancialSummary = (userDetails: Explorer.FormattedAccountDetails) => {
     // --- 1. Raw Numeric Values ---
     const totalValueRaw = grabNumericValue(dollars.account_value);
     const stakedValueRaw = grabNumericValue(dollars.vesting_shares);
-    const poweringDownValueRaw = grabNumericValue(dollars.vesting_withdraw_rate);
-    const liquidValueRaw = grabNumericValue(dollars.balance) + grabNumericValue(dollars.hbd_balance);
-    const savingsValueRaw = grabNumericValue(dollars.savings_balance) + grabNumericValue(dollars.hbd_saving_balance);
-    const unclaimedValueRaw = grabNumericValue(dollars.reward_hive_balance) + grabNumericValue(dollars.reward_hbd_balance) + grabNumericValue(dollars.reward_vesting_balance);
-    const totalHpRaw = grabNumericValue(userDetails.vesting_shares) + grabNumericValue(userDetails.received_vesting_shares) - grabNumericValue(userDetails.delegated_vesting_shares) - grabNumericValue(userDetails.vesting_withdraw_rate);
-    const effectiveHpRaw = grabNumericValue(userDetails.vesting_shares) + grabNumericValue(userDetails.received_vesting_shares) - grabNumericValue(userDetails.delegated_vesting_shares);
-    const totalHiveRaw = grabNumericValue(userDetails.balance) + grabNumericValue(String(userDetails.savings_balance)) + grabNumericValue(userDetails.reward_hive_balance);
-    const totalHbdRaw = grabNumericValue(userDetails.hbd_balance) + grabNumericValue(userDetails.hbd_saving_balance) + grabNumericValue(userDetails.reward_hbd_balance);
-    const totalHiveUsdRaw = grabNumericValue(dollars.balance) + grabNumericValue(dollars.savings_balance) + grabNumericValue(dollars.reward_hive_balance);
-    const totalHbdUsdRaw = grabNumericValue(dollars.hbd_balance) + grabNumericValue(dollars.hbd_saving_balance) + grabNumericValue(dollars.reward_hbd_balance);
+    const poweringDownValueRaw = grabNumericValue(
+      dollars.vesting_withdraw_rate
+    );
+    const liquidValueRaw =
+      grabNumericValue(dollars.balance) + grabNumericValue(dollars.hbd_balance);
+    const savingsValueRaw =
+      grabNumericValue(dollars.savings_balance) +
+      grabNumericValue(dollars.hbd_saving_balance);
+    const unclaimedValueRaw =
+      grabNumericValue(dollars.reward_hive_balance) +
+      grabNumericValue(dollars.reward_hbd_balance) +
+      grabNumericValue(dollars.reward_vesting_balance);
+    const totalHpRaw =
+      grabNumericValue(userDetails.vesting_shares) +
+      grabNumericValue(userDetails.received_vesting_shares) -
+      grabNumericValue(userDetails.delegated_vesting_shares) -
+      grabNumericValue(userDetails.vesting_withdraw_rate);
+    const effectiveHpRaw =
+      grabNumericValue(userDetails.vesting_shares) +
+      grabNumericValue(userDetails.received_vesting_shares) -
+      grabNumericValue(userDetails.delegated_vesting_shares);
+    const totalHiveRaw =
+      grabNumericValue(userDetails.balance) +
+      grabNumericValue(String(userDetails.savings_balance)) +
+      grabNumericValue(userDetails.reward_hive_balance);
+    const totalHbdRaw =
+      grabNumericValue(userDetails.hbd_balance) +
+      grabNumericValue(userDetails.hbd_saving_balance) +
+      grabNumericValue(userDetails.reward_hbd_balance);
+    const totalHiveUsdRaw =
+      grabNumericValue(dollars.balance) +
+      grabNumericValue(dollars.savings_balance) +
+      grabNumericValue(dollars.reward_hive_balance);
+    const totalHbdUsdRaw =
+      grabNumericValue(dollars.hbd_balance) +
+      grabNumericValue(dollars.hbd_saving_balance) +
+      grabNumericValue(dollars.reward_hbd_balance);
 
     // --- 2. Pre-formatted Strings ---
-    const formattedDollars = Object.entries(userDetails.dollars).reduce((acc, [key, value]) => {
-      acc[key as keyof typeof userDetails.dollars] = changeHBDToDollarsDisplay(value);
-      return acc;
-    }, {} as Record<keyof typeof userDetails.dollars, string>);
+    const formattedDollars = Object.entries(userDetails.dollars).reduce(
+      (acc, [key, value]) => {
+        acc[key as keyof typeof userDetails.dollars] =
+          changeHBDToDollarsDisplay(value);
+        return acc;
+      },
+      {} as Record<keyof typeof userDetails.dollars, string>
+    );
 
     return {
       raw: {
@@ -115,9 +176,15 @@ const useFinancialSummary = (userDetails: Explorer.FormattedAccountDetails) => {
       formatted: {
         totalValue: formattedDollars.account_value,
         totalHp: `${formatNumber(totalHpRaw, false, true)} HP`,
-        totalHive: `${totalHiveRaw.toLocaleString(undefined, { maximumFractionDigits: 3 })} HIVE`,
-        totalHbd: `${totalHbdRaw.toLocaleString(undefined, { maximumFractionDigits: 3 })} HBD`,
-        effectiveHp: `${effectiveHpRaw.toLocaleString(undefined, { maximumFractionDigits: 3 })} HP`,
+        totalHive: `${totalHiveRaw.toLocaleString(undefined, {
+          maximumFractionDigits: 3,
+        })} HIVE`,
+        totalHbd: `${totalHbdRaw.toLocaleString(undefined, {
+          maximumFractionDigits: 3,
+        })} HBD`,
+        effectiveHp: `${effectiveHpRaw.toLocaleString(undefined, {
+          maximumFractionDigits: 3,
+        })} HP`,
         totalHiveUsd: changeHBDToDollarsDisplay(totalHiveUsdRaw.toString()),
         totalHbdUsd: changeHBDToDollarsDisplay(totalHbdUsdRaw.toString()),
         dollars: formattedDollars,
@@ -320,8 +387,7 @@ const AssetSection = ({
           <Tooltip>
             <TooltipTrigger asChild>
               <span className="font-semibold text-sm flex items-center gap-1.5">
-                {t(asset.name)}{" "}
-                <HelpCircle className="h-3 w-3" />
+                {t(asset.name)} <HelpCircle className="h-3 w-3" />
               </span>
             </TooltipTrigger>
             <TooltipContent>
@@ -330,14 +396,11 @@ const AssetSection = ({
           </Tooltip>
         </div>
         <div className="flex items-center space-x-2 flex-shrink-0">
-          <span className="font-semibold text-sm">
-            {assetTotalValue}
-          </span>
+          <span className="font-semibold text-sm">{assetTotalValue}</span>
           <ChevronUp
-            className={cn(
-              "h-5 w-5 flex-shrink-0",
-              { "transform rotate-180": !isOpen }
-            )}
+            className={cn("h-5 w-5 flex-shrink-0", {
+              "transform rotate-180": !isOpen,
+            })}
           />
         </div>
       </div>
@@ -395,9 +458,19 @@ const AssetSection = ({
 
                   let icon = null;
                   if (isPoweringDown) {
-                    icon = <TrendingDown className="h-4 w-4" color="#f43f5e" />; // Use rose color
+                    icon = (
+                      <TrendingDown
+                        className="h-4 w-4"
+                        color="#f43f5e"
+                      />
+                    ); // Use rose color
                   } else if (hasClaimableAmount) {
-                    icon = <Database className="h-4 w-4" color="#06b6d4" />;
+                    icon = (
+                      <Database
+                        className="h-4 w-4"
+                        color="#06b6d4"
+                      />
+                    );
                   }
 
                   const isDefaultHighlighted =
@@ -450,7 +523,7 @@ type AccountBalanceCardProps = {
 const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
   header,
   userDetails,
-  isInitiallyOpen
+  isInitiallyOpen,
 }) => {
   const { t } = useI18n();
   const [isCardHidden, setIsCardHidden] = useState(!isInitiallyOpen);
@@ -463,23 +536,27 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
 
   const { blockChainPropertiesData } = useBlockChainProperties();
   const financialSummary = useFinancialSummary(userDetails);
-  
+
   const hbdInterestApr = useMemo(() => {
     return blockChainPropertiesData?.hbd_interest_rate
       ? `${(blockChainPropertiesData.hbd_interest_rate / 100).toFixed(2)}%`
       : null;
   }, [blockChainPropertiesData]);
-  
-  const areAllOpen = useMemo(() => ASSET_CONFIG.every((asset) => !!openSections[asset.key]), [openSections]);
-  
+
+  const areAllOpen = useMemo(
+    () => ASSET_CONFIG.every((asset) => !!openSections[asset.key]),
+    [openSections]
+  );
+
   const chartSegments = useMemo(() => {
-    const total = financialSummary.raw.totalValue || 1; 
+    const total = financialSummary.raw.totalValue || 1;
     const formatDisplayValue = (value: number) => `${value.toLocaleString()} $`;
 
     const liquidPct = (financialSummary.raw.liquidValue / total) * 100;
     const savingsPct = (financialSummary.raw.savingsValue / total) * 100;
     const unclaimedPct = (financialSummary.raw.unclaimedValue / total) * 100;
-    const poweringDownPct = (financialSummary.raw.poweringDownValue / total) * 100;
+    const poweringDownPct =
+      (financialSummary.raw.poweringDownValue / total) * 100;
     const sumOfOthers = liquidPct + savingsPct + unclaimedPct + poweringDownPct;
     const stakedPct = Math.max(0, 100 - sumOfOthers);
 
@@ -527,7 +604,9 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
         key: "poweringDown",
         label: t("accountBalanceCard.powerDown"),
         value: financialSummary.raw.poweringDownValue,
-        displayValue: formatDisplayValue(financialSummary.raw.poweringDownValue),
+        displayValue: formatDisplayValue(
+          financialSummary.raw.poweringDownValue
+        ),
         percent: poweringDownPct,
         color: "#f43f5e", // Rose color
         iconColorClass: "text-rose-500",
@@ -536,7 +615,6 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
 
     return segments;
   }, [financialSummary.raw, t]);
-
 
   const handleSegmentClick = (key: string | null) => {
     const newKey = activeSegmentKey === key ? null : key;
@@ -550,7 +628,8 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
         unclaimed: ["hp", "hive", "hbd"],
         poweringDown: ["hp"],
       };
-      const assetsToOpen = segmentToAssetMap[newKey as keyof typeof segmentToAssetMap];
+      const assetsToOpen =
+        segmentToAssetMap[newKey as keyof typeof segmentToAssetMap];
       if (assetsToOpen) {
         setOpenSections((prev) => ({
           ...prev,
@@ -562,7 +641,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
       }
     }
   };
-  
+
   const handleToggleAll = () =>
     setOpenSections((prev) =>
       ASSET_CONFIG.reduce(
@@ -582,15 +661,23 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
     );
   };
 
-
   const prepareExportData = useCallback(() => {
     if (!userDetails) return [];
-    return prepareAccountBalanceReport( userDetails, financialSummary, chartSegments, hbdInterestApr, t );
+    return prepareAccountBalanceReport(
+      userDetails,
+      financialSummary,
+      chartSegments,
+      hbdInterestApr,
+      t
+    );
   }, [userDetails, financialSummary, chartSegments, hbdInterestApr, t]);
 
   return (
     <TooltipProvider>
-      <Card data-testid="account-balance-card" className="bg-theme shadow-lg dark:shadow-slate-900/50">
+      <Card
+        data-testid="account-balance-card"
+        className="bg-theme shadow-lg dark:shadow-slate-900/50"
+      >
         <CardHeader className="p-3">
           {/* Card Header and top-right controls (Export, Expand/Collapse) */}
           <div className="flex justify-between items-center pb-2 border-b border-slate-200 dark:border-slate-800">
@@ -602,7 +689,9 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
               <Tooltip>
                 <DataExport
                   data={prepareExportData()}
-                  filename={`${userDetails.name}_wallet_report`}
+                  filename={`${userDetails.name}_${t(
+                    "accountBalanceCard.walletReport"
+                  )}`}
                   skipColumnSelection={true}
                 >
                   <TooltipTrigger asChild>
@@ -618,9 +707,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
               <div className="w-px h-4 bg-slate-200 dark:border-slate-700"></div>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <button
-                    onClick={handleToggleAll}
-                  >
+                  <button onClick={handleToggleAll}>
                     <ChevronsUpDown className="h-5 w-5" />
                   </button>
                 </TooltipTrigger>
@@ -633,9 +720,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
                 </TooltipContent>
               </Tooltip>
               <div className="w-px h-4 bg-slate-200 dark:border-slate-700"></div>
-              <button
-                onClick={() => setIsCardHidden(!isCardHidden)}
-              >
+              <button onClick={() => setIsCardHidden(!isCardHidden)}>
                 <ArrowUp
                   className={cn("transition-transform duration-300", {
                     "transform rotate-180": isCardHidden,

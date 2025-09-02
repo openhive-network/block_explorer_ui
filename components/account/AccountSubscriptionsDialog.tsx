@@ -111,7 +111,7 @@ const AccountSubscriptionsDialog: React.FC<SubscriptionsDialogProps> = ({
             <div
               className={cn("flex items-center w-full mb-2", {
                 "justify-start": dir !== "rtl",
-                "justify-end": dir === "rtl", 
+                "justify-end": dir === "rtl",
               })}
             >
               <div className="relative w-full sm:w-auto">
@@ -151,7 +151,9 @@ const AccountSubscriptionsDialog: React.FC<SubscriptionsDialogProps> = ({
               />
               <DataExport
                 data={prepareExportData()}
-                filename={`${accountName}_subscriptions.csv`}
+                filename={`${accountName}_${t(
+                  "accountSubscriptionsDialog.subscriptionsDataType"
+                ).toLowerCase()}.csv`}
               />
             </div>
 

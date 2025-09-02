@@ -1,49 +1,87 @@
-import React, { useState, useMemo, useCallback, useEffect, useRef } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { useI18n } from '@/i18n/i18n';
+import React, {
+  useState,
+  useMemo,
+  useCallback,
+  useEffect,
+  useRef,
+} from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { useI18n } from "@/i18n/i18n";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
-import { convertVestsToHP } from '@/utils/Calculations';
-import { cn, formatNumber } from '@/lib/utils';
-import { useHiveChainContext } from '@/contexts/HiveChainContext';
-import useProposalVotes from '@/hooks/api/proposals/useProposalVotes';
-import useDynamicGlobal from '@/hooks/api/homePage/useDynamicGlobal';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import NoResult from '@/components/NoResult';
-import { Loader2, Search, ArrowDown, ArrowUp, ListFilter } from 'lucide-react';
-import DataCountMessage from '@/components/DataCountMessage';
-import DataExport from '@/components/DataExport';
-import { grabNumericValue } from '@/utils/StringUtils';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
-import ErrorMessage from '../ErrorMessage';
-import { prepareChartData,  ProposalVotesChart,  TOP_CHART_VOTERS } from './analytics/ProposalVotesChart';
-
+import { convertVestsToHP } from "@/utils/Calculations";
+import { cn, formatNumber } from "@/lib/utils";
+import { useHiveChainContext } from "@/contexts/HiveChainContext";
+import useProposalVotes from "@/hooks/api/proposals/useProposalVotes";
+import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import NoResult from "@/components/NoResult";
+import { Loader2, Search, ArrowDown, ArrowUp, ListFilter } from "lucide-react";
+import DataCountMessage from "@/components/DataCountMessage";
+import DataExport from "@/components/DataExport";
+import { grabNumericValue } from "@/utils/StringUtils";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import ErrorMessage from "../ErrorMessage";
+import {
+  prepareChartData,
+  ProposalVotesChart,
+  TOP_CHART_VOTERS,
+} from "./analytics/ProposalVotesChart";
 
 interface ProposalVotesDialogProps {
   proposalId: number;
   children: React.ReactNode;
 }
 
-export const ProposalVotesDialog = ({ proposalId, children }: ProposalVotesDialogProps) => {
+export const ProposalVotesDialog = ({
+  proposalId,
+  children,
+}: ProposalVotesDialogProps) => {
   const { t } = useI18n();
   const [isOpen, setIsOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  
-  const [sortBy, setSortBy] = useState<'name' | 'power'>('power');
-  const [isAsc, setIsAsc] = useState(false); 
-  const [unit, setUnit] = useState<'hp' | 'vests'>('hp');
-  const [activeSegmentFilter, setActiveSegmentFilter] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const [sortBy, setSortBy] = useState<"name" | "power">("power");
+  const [isAsc, setIsAsc] = useState(false);
+  const [unit, setUnit] = useState<"hp" | "vests">("hp");
+  const [activeSegmentFilter, setActiveSegmentFilter] = useState<string | null>(
+    null
+  );
 
   const [isFetchComplete, setIsFetchComplete] = useState(false);
   const prevVotesCount = useRef(0);
 
-  const { votes, isLoading, isError, hasNextPage, fetchNextPage, isFetchingNextPage } = useProposalVotes(proposalId, isOpen);
-  
+  const {
+    votes,
+    isLoading,
+    isError,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useProposalVotes(proposalId, isOpen);
+
   const { hiveChain } = useHiveChainContext();
   const { dynamicGlobalData } = useDynamicGlobal() as any;
 
@@ -76,119 +114,200 @@ export const ProposalVotesDialog = ({ proposalId, children }: ProposalVotesDialo
   ]);
 
   const processedVotesWithVests = useMemo(() => {
-    return votes.map(vote => {
+    return votes.map((vote) => {
       const account = vote.accountDetails;
-      if (!account) { return { voter: vote.voter, directVests: 0, proxiedVests: 0, totalVests: 0, displayTotalVests: 0, hasProxy: false, isDataLoaded: false, proxy: "" }; }
-      
+      if (!account) {
+        return {
+          voter: vote.voter,
+          directVests: 0,
+          proxiedVests: 0,
+          totalVests: 0,
+          displayTotalVests: 0,
+          hasProxy: false,
+          isDataLoaded: false,
+          proxy: "",
+        };
+      }
+
       const directVests = grabNumericValue(account.vesting_shares.amount);
-      const totalProxiedVests = Array.isArray(account.proxied_vsf_votes) && account.proxied_vsf_votes.length > 0
-          ? account.proxied_vsf_votes.reduce((sum, currentVests) => Number(sum) + Number(currentVests), 0)
+      const totalProxiedVests =
+        Array.isArray(account.proxied_vsf_votes) &&
+        account.proxied_vsf_votes.length > 0
+          ? account.proxied_vsf_votes.reduce(
+              (sum, currentVests) => Number(sum) + Number(currentVests),
+              0
+            )
           : 0;
-      
+
       const hasActiveProxy = (account.proxy || "") !== "";
-      
+
       // The value used for all calculations (chart, export)
-      const effectiveTotalVests = hasActiveProxy 
-        ? 0 
-        : (Number(directVests) + Number(totalProxiedVests));
-      
+      const effectiveTotalVests = hasActiveProxy
+        ? 0
+        : Number(directVests) + Number(totalProxiedVests);
+
       const displayTotalVests = Number(directVests) + Number(totalProxiedVests);
 
-      return { 
-        voter: vote.voter, 
+      return {
+        voter: vote.voter,
         directVests,
-        proxiedVests: Number(totalProxiedVests), 
+        proxiedVests: Number(totalProxiedVests),
         totalVests: effectiveTotalVests, // For calculations
         displayTotalVests, // For sorting
-        hasProxy: Number(totalProxiedVests) > 0, 
+        hasProxy: Number(totalProxiedVests) > 0,
         isDataLoaded: true,
-        proxy: account.proxy || ""
+        proxy: account.proxy || "",
       };
     });
   }, [votes]);
 
   const voterListDisplay = useMemo(() => {
-    if (processedVotesWithVests.length === 0 || !hiveChain || !dynamicGlobalData) return [];
-    const { rawTotalVestingFundHive, rawTotalVestingShares } = dynamicGlobalData.headBlockDetails;
+    if (
+      processedVotesWithVests.length === 0 ||
+      !hiveChain ||
+      !dynamicGlobalData
+    )
+      return [];
+    const { rawTotalVestingFundHive, rawTotalVestingShares } =
+      dynamicGlobalData.headBlockDetails;
 
-    return processedVotesWithVests.map(vote => {
+    return processedVotesWithVests.map((vote) => {
       const hasActiveProxy = vote.proxy !== "";
 
-      const directFormatted = unit === 'hp'
-        ? convertVestsToHP(hiveChain, String(vote.directVests), rawTotalVestingFundHive, rawTotalVestingShares)
-        : `${formatNumber(vote.directVests, true, false)} ${t('common.vests')}`;
+      const directFormatted =
+        unit === "hp"
+          ? convertVestsToHP(
+              hiveChain,
+              String(vote.directVests),
+              rawTotalVestingFundHive,
+              rawTotalVestingShares
+            )
+          : `${formatNumber(vote.directVests, true, false)} ${t(
+              "common.vests"
+            )}`;
 
-      const proxiedFormatted = unit === 'hp'
-        ? convertVestsToHP(hiveChain, String(vote.proxiedVests), rawTotalVestingFundHive, rawTotalVestingShares)
-        : `${formatNumber(vote.proxiedVests, true, false)} ${t('common.vests')}`;
-        
+      const proxiedFormatted =
+        unit === "hp"
+          ? convertVestsToHP(
+              hiveChain,
+              String(vote.proxiedVests),
+              rawTotalVestingFundHive,
+              rawTotalVestingShares
+            )
+          : `${formatNumber(vote.proxiedVests, true, false)} ${t(
+              "common.vests"
+            )}`;
+
       return { ...vote, directFormatted, proxiedFormatted, hasActiveProxy };
     });
   }, [processedVotesWithVests, unit, hiveChain, dynamicGlobalData, t]);
-  
+
   const chartProps = useMemo(() => {
-    const chartInput = processedVotesWithVests.map(v => ({ 
-      voter: v.voter, 
-      totalVests: v.totalVests, 
-      proposal_total_votes: votes[0]?.proposal.total_votes || '0' 
+    const chartInput = processedVotesWithVests.map((v) => ({
+      voter: v.voter,
+      totalVests: v.totalVests,
+      proposal_total_votes: votes[0]?.proposal.total_votes || "0",
     }));
     return prepareChartData(chartInput, unit, hiveChain, dynamicGlobalData, t);
   }, [processedVotesWithVests, unit, hiveChain, dynamicGlobalData, t, votes]);
-  
+
   const filteredAndSortedVotes = useMemo(() => {
     let processed = [...voterListDisplay];
-    
-    if (activeSegmentFilter) {
-      const sortedByPower = [...voterListDisplay].sort((a, b) => b.totalVests - a.totalVests);
-      const topVotersByName = sortedByPower.slice(0, TOP_CHART_VOTERS).map(v => v.voter);
 
-      if (activeSegmentFilter === 'Others') {
-        processed = processed.filter(vote => !topVotersByName.includes(vote.voter));
+    if (activeSegmentFilter) {
+      const sortedByPower = [...voterListDisplay].sort(
+        (a, b) => b.totalVests - a.totalVests
+      );
+      const topVotersByName = sortedByPower
+        .slice(0, TOP_CHART_VOTERS)
+        .map((v) => v.voter);
+
+      if (activeSegmentFilter === "Others") {
+        processed = processed.filter(
+          (vote) => !topVotersByName.includes(vote.voter)
+        );
       } else {
-        processed = processed.filter(vote => vote.voter === activeSegmentFilter);
+        processed = processed.filter(
+          (vote) => vote.voter === activeSegmentFilter
+        );
       }
     }
 
     if (searchQuery.length > 2) {
-      processed = processed.filter(vote => vote.voter.toLowerCase().includes(searchQuery.toLowerCase()));
+      processed = processed.filter((vote) =>
+        vote.voter.toLowerCase().includes(searchQuery.toLowerCase())
+      );
     }
     processed.sort((a, b) => {
-        if (sortBy === 'power') { return isAsc ? a.displayTotalVests - b.displayTotalVests : b.displayTotalVests - a.displayTotalVests; }
-        else { return isAsc ? a.voter.localeCompare(b.voter) : b.voter.localeCompare(a.voter); }
+      if (sortBy === "power") {
+        return isAsc
+          ? a.displayTotalVests - b.displayTotalVests
+          : b.displayTotalVests - a.displayTotalVests;
+      } else {
+        return isAsc
+          ? a.voter.localeCompare(b.voter)
+          : b.voter.localeCompare(a.voter);
+      }
     });
     return processed;
   }, [voterListDisplay, searchQuery, isAsc, sortBy, activeSegmentFilter]);
 
-  const showHeaderSpinner = !isFetchComplete && !isLoading && !isError && isOpen;
+  const showHeaderSpinner =
+    !isFetchComplete && !isLoading && !isError && isOpen;
 
   const prepareExportData = useMemo(() => {
-    if (unit === 'hp') {
+    if (unit === "hp") {
       if (!hiveChain || !dynamicGlobalData) return [];
-      const { rawTotalVestingFundHive, rawTotalVestingShares } = dynamicGlobalData.headBlockDetails;
-      
+      const { rawTotalVestingFundHive, rawTotalVestingShares } =
+        dynamicGlobalData.headBlockDetails;
+
       const headers = {
-        voter: t('proposalVotesDialog.voter'),
-        total_hp: t('proposalVotesDialog.totalHp'),
-        direct_hp: t('proposalVotesDialog.ownedHp'),
-        proxied_hp: t('proposalVotesDialog.proxiedHp')
+        voter: t("proposalVotesDialog.voter"),
+        total_hp: t("proposalVotesDialog.totalHp"),
+        direct_hp: t("proposalVotesDialog.ownedHp"),
+        proxied_hp: t("proposalVotesDialog.proxiedHp"),
       };
 
-      return filteredAndSortedVotes.map(vote => ({
+      return filteredAndSortedVotes.map((vote) => ({
         [headers.voter]: vote.voter,
-        [headers.total_hp]: grabNumericValue(convertVestsToHP(hiveChain, String(vote.totalVests), rawTotalVestingFundHive, rawTotalVestingShares)),
-        [headers.direct_hp]: vote.hasActiveProxy ? 0 : grabNumericValue(convertVestsToHP(hiveChain, String(vote.directVests), rawTotalVestingFundHive, rawTotalVestingShares)),
-        [headers.proxied_hp]: vote.hasActiveProxy ? 0 : grabNumericValue(convertVestsToHP(hiveChain, String(vote.proxiedVests), rawTotalVestingFundHive, rawTotalVestingShares)),
+        [headers.total_hp]: grabNumericValue(
+          convertVestsToHP(
+            hiveChain,
+            String(vote.totalVests),
+            rawTotalVestingFundHive,
+            rawTotalVestingShares
+          )
+        ),
+        [headers.direct_hp]: vote.hasActiveProxy
+          ? 0
+          : grabNumericValue(
+              convertVestsToHP(
+                hiveChain,
+                String(vote.directVests),
+                rawTotalVestingFundHive,
+                rawTotalVestingShares
+              )
+            ),
+        [headers.proxied_hp]: vote.hasActiveProxy
+          ? 0
+          : grabNumericValue(
+              convertVestsToHP(
+                hiveChain,
+                String(vote.proxiedVests),
+                rawTotalVestingFundHive,
+                rawTotalVestingShares
+              )
+            ),
       }));
-    } 
-    else {
+    } else {
       const headers = {
-        voter: t('proposalVotesDialog.voter'),
-        total_vests: t('proposalVotesDialog.totalVests'),
-        direct_vests: t('proposalVotesDialog.ownedVests'),
-        proxied_vests: t('proposalVotesDialog.proxiedVests')
+        voter: t("proposalVotesDialog.voter"),
+        total_vests: t("proposalVotesDialog.totalVests"),
+        direct_vests: t("proposalVotesDialog.ownedVests"),
+        proxied_vests: t("proposalVotesDialog.proxiedVests"),
       };
 
-      return filteredAndSortedVotes.map(vote => ({
+      return filteredAndSortedVotes.map((vote) => ({
         [headers.voter]: vote.voter,
         [headers.total_vests]: vote.totalVests,
         [headers.direct_vests]: vote.hasActiveProxy ? 0 : vote.directVests,
@@ -196,23 +315,32 @@ export const ProposalVotesDialog = ({ proposalId, children }: ProposalVotesDialo
       }));
     }
   }, [filteredAndSortedVotes, unit, hiveChain, dynamicGlobalData, t]);
-  
+
   const exportFilename = useMemo(() => {
-    return `proposal_${proposalId}_votes_${unit}.csv`;
-  }, [proposalId, unit]);
+    return t("proposalVotesDialog.exportFilename", {
+      proposalId,
+      unit,
+    });
+  }, [t, proposalId, unit]);
 
   const handleSegmentClick = (segmentName: string | null) => {
-    setSearchQuery('');
+    setSearchQuery("");
     setActiveSegmentFilter(segmentName);
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={setIsOpen}
+    >
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="h-[90vh] max-w-7xl flex flex-col p-4 sm:p-6 overflow-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
-            <span>{t("proposalVotesDialog.title")}{ proposalId }</span>
+            <span>
+              {t("proposalVotesDialog.title")}
+              {proposalId}
+            </span>
             {showHeaderSpinner && (
               <Loader2 className="animate-spin h-5 w-5 text-explorer-extra-light-gray" />
             )}
@@ -230,10 +358,10 @@ export const ProposalVotesDialog = ({ proposalId, children }: ProposalVotesDialo
           <TooltipProvider>
             <div className="flex-grow flex flex-col lg:flex-row gap-6 ">
               <div className="lg:w-2/5 flex flex-col items-center justify-center lg:border-r lg:pr-6 lg:border-slate-200 lg:dark:border-slate-800">
-                <ProposalVotesChart 
-                  {...chartProps} 
-                  onSegmentClick={handleSegmentClick} 
-                  activeSegment={activeSegmentFilter} 
+                <ProposalVotesChart
+                  {...chartProps}
+                  onSegmentClick={handleSegmentClick}
+                  activeSegment={activeSegmentFilter}
                 />
               </div>
               <div className="lg:w-3/5 flex flex-col h-full overflow-hidden">
@@ -255,7 +383,11 @@ export const ProposalVotesDialog = ({ proposalId, children }: ProposalVotesDialo
                       value={sortBy}
                     >
                       <SelectTrigger className="w-full sm:w-[150px] whitespace-nowrap">
-                        <ListFilter className={cn("h-4 w-4 mr-2 transition-transform", { "rotate-180": isAsc })} />
+                        <ListFilter
+                          className={cn("h-4 w-4 mr-2 transition-transform", {
+                            "rotate-180": isAsc,
+                          })}
+                        />
                         <SelectValue
                           placeholder={t(
                             "proposalVotesDialog.sortByPlaceholder"
@@ -278,11 +410,15 @@ export const ProposalVotesDialog = ({ proposalId, children }: ProposalVotesDialo
                           size="icon"
                           onClick={() => setIsAsc((prev) => !prev)}
                         >
-                          {isAsc ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
+                          {isAsc ? (
+                            <ArrowUp className="h-4 w-4" />
+                          ) : (
+                            <ArrowDown className="h-4 w-4" />
+                          )}
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent>
-                         {t("proposalVotesDialog.toggleSortDirection")}
+                        {t("proposalVotesDialog.toggleSortDirection")}
                       </TooltipContent>
                     </Tooltip>
                     <div className="flex items-center space-x-2 rounded-md p-1.5">
@@ -290,7 +426,7 @@ export const ProposalVotesDialog = ({ proposalId, children }: ProposalVotesDialo
                         htmlFor="unit-toggle"
                         className="text-sm"
                       >
-                        {t('common.vests')}
+                        {t("common.vests")}
                       </Label>
                       <Switch
                         id="unit-toggle"
@@ -303,7 +439,7 @@ export const ProposalVotesDialog = ({ proposalId, children }: ProposalVotesDialo
                         htmlFor="unit-toggle"
                         className="text-sm "
                       >
-                        {t('common.hp')}
+                        {t("common.hp")}
                       </Label>
                     </div>
                   </div>
@@ -312,7 +448,10 @@ export const ProposalVotesDialog = ({ proposalId, children }: ProposalVotesDialo
                   {filteredAndSortedVotes.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
                       {filteredAndSortedVotes.map((vote) => (
-                        <div key={vote.voter} className="py-2">
+                        <div
+                          key={vote.voter}
+                          className="py-2"
+                        >
                           <Link
                             href={`/@${vote.voter}`}
                             className="flex items-center space-x-3"
@@ -327,9 +466,7 @@ export const ProposalVotesDialog = ({ proposalId, children }: ProposalVotesDialo
                               className="rounded-full flex-shrink-0"
                             />
                             <div className="flex-grow min-w-0">
-                              <p className="text-link">
-                                {vote.voter}
-                              </p>
+                              <p className="text-link">{vote.voter}</p>
                               {vote.isDataLoaded ? (
                                 <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
                                   {vote.hasActiveProxy ? (
@@ -339,13 +476,18 @@ export const ProposalVotesDialog = ({ proposalId, children }: ProposalVotesDialo
                                           {vote.directFormatted}
                                           {vote.hasProxy && (
                                             <>
-                                              {" "} + {vote.proxiedFormatted} {t('common.proxySuffix')}
+                                              {" "}
+                                              + {vote.proxiedFormatted}{" "}
+                                              {t("common.proxySuffix")}
                                             </>
                                           )}
                                         </span>
                                       </TooltipTrigger>
                                       <TooltipContent>
-                                         {t('proposalVotesDialog.proxiedVoteTooltip', { proxy: vote.proxy })}
+                                        {t(
+                                          "proposalVotesDialog.proxiedVoteTooltip",
+                                          { proxy: vote.proxy }
+                                        )}
                                       </TooltipContent>
                                     </Tooltip>
                                   ) : (
@@ -353,7 +495,9 @@ export const ProposalVotesDialog = ({ proposalId, children }: ProposalVotesDialo
                                       <span>{vote.directFormatted}</span>
                                       {vote.hasProxy && (
                                         <span className="text-slate-400 dark:text-slate-500">
-                                          {" "}  + {vote.proxiedFormatted} {t('common.proxySuffix')}
+                                          {" "}
+                                          + {vote.proxiedFormatted}{" "}
+                                          {t("common.proxySuffix")}
                                         </span>
                                       )}
                                     </>

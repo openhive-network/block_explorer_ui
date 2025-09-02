@@ -82,7 +82,10 @@ const AccountFollowersDialog: React.FC<FollowersDialogProps> = ({
   };
 
   return (
-    <Dialog open={isFollowersOpen} onOpenChange={changeFollowersDialogue}>
+    <Dialog
+      open={isFollowersOpen}
+      onOpenChange={changeFollowersDialogue}
+    >
       <DialogContent
         className="h-3/4 max-w-4xl bg-explorer-bg-start flex flex-col p-4"
         data-testid="followers-dialog"
@@ -142,7 +145,9 @@ const AccountFollowersDialog: React.FC<FollowersDialogProps> = ({
               />
               <DataExport
                 data={prepareExportData()}
-                filename={`${accountName}_followers.csv`}
+                filename={`${accountName}_${t(
+                  "accountFollowersDialog.followersDataType"
+                ).toLowerCase()}.csv`}
               />
             </div>
             <div className="relative rounded-md flex-grow overflow-y-auto">

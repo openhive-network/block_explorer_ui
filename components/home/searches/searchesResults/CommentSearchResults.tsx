@@ -65,7 +65,7 @@ const CommentSearchResults = () => {
               {!isCommentsPage && (
                 <Link href={commentPageLink}>
                   <Button data-testid="go-to-result-page">
-                   {t("common.goToResultPage")}
+                    {t("common.goToResultPage")}
                   </Button>
                 </Link>
               )}

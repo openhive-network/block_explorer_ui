@@ -270,7 +270,9 @@ const VotesHistoryDialog: React.FC<VotesHistoryDialogProps> = ({
                     </div>
                     <DataExport
                       data={prepareExportData()}
-                      filename={`${accountName}_vote_history.csv`}
+                      filename={`${accountName}_${t(
+                        "votesHistoryDialog.votesHistory"
+                      ).toLowerCase()}.csv`}
                     />
                   </div>
                 </div>
