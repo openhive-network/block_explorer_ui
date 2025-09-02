@@ -385,6 +385,7 @@
   "transactionPage.expiration": "Wygaśnięcie",
   "transactionPage.transactionNumber": "Numer Transakcji",
   "transactionPage.transactionSize": "Rozmiar transakcji",
+  "transactionPage.bytes": "Bajt",
   "pageTitle.informationAboutTitle": "Informacje o tytule",
   "pageTitle.hiveWitnesses": "Świadkowie Hive",
   "pageTitle.hiveBlocks": "Bloki Hive",

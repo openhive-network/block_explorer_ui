@@ -192,7 +192,7 @@ export default function Transaction() {
                     />
                     <TransactionDetailItem
                     label={t("transactionPage.transactionSize")}
-                    value={`${transactionSize} Bytes`}
+                    value={`${transactionSize.toLocaleString()} ${t("transactionPage.bytes")}`}
                     dataTestId="transaction-size"
                     hasBorder
                     />

@@ -384,6 +384,7 @@
   "transactionPage.expiration": "Scadenza",
   "transactionPage.transactionNumber": "Numero Transazione",
   "transactionPage.transactionSize": "Dimensione della transazione",
+  "transactionPage.bytes": "Bytes",
   "pageTitle.informationAboutTitle": "Informazioni sul titolo",
   "pageTitle.hiveWitnesses": "Testimoni Hive",
   "pageTitle.hiveBlocks": "Blocchi Hive",

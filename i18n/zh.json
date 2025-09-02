@@ -385,6 +385,7 @@
   "transactionPage.expiration": "过期",
   "transactionPage.transactionNumber": "交易号",
   "transactionPage.transactionSize": "交易大小",
+  "transactionPage.bytes": "字节",
   "pageTitle.informationAboutTitle": "关于标题的信息",
   "pageTitle.hiveWitnesses": "Hive见证人",
   "pageTitle.hiveBlocks": "Hive区块",

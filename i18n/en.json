@@ -384,6 +384,7 @@
   "transactionPage.expiration": "Expiration",
   "transactionPage.transactionNumber": "Transaction Number",
   "transactionPage.transactionSize": "Transaction Size",
+  "transactionPage.bytes": "Bytes",
   "pageTitle.informationAboutTitle": "Information about the title",
   "pageTitle.hiveWitnesses": "Hive Witnesses",
   "pageTitle.hiveBlocks": "Hive Blocks",

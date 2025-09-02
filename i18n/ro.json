@@ -384,6 +384,7 @@
   "transactionPage.expiration": "Expirare",
   "transactionPage.transactionNumber": "Număr Tranzacție",
   "transactionPage.transactionSize": "Dimensiunea tranzacției",
+  "transactionPage.bytes": "Octet",
   "pageTitle.informationAboutTitle": "Informații despre titlu",
   "pageTitle.hiveWitnesses": "Martori Hive",
   "pageTitle.hiveBlocks": "Blocuri Hive",

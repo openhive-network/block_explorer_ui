@@ -392,6 +392,7 @@
   "transactionPage.expiration": "الانتهاء",
   "transactionPage.transactionNumber": "رقم المعاملة",
   "transactionPage.transactionSize": "حجم المعاملة",
+  "transactionPage.bytes": "بايت",
   "pageTitle.informationAboutTitle": "معلومات حول العنوان",
   "pageTitle.hiveWitnesses": "شهود Hive",
   "pageTitle.hiveBlocks": "بلوكات Hive",
