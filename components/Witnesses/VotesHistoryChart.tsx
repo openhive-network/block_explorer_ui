@@ -74,13 +74,13 @@ const vestsToHpSigned = (
 function buildDailyVests(events: VoteEvent[] = []): DayRow[] {
   const map = new Map<string, DayRow>();
   for (const e of events) {
-    const d = moment(e.timestamp).format("MMM D");
+    //fixing date orders
+    const dayKey = moment(e.timestamp).format("YYYY-MM-DD"); 
+    const displayDate = moment(e.timestamp).format("MMM D");
     const tooltipDate = moment(e.timestamp).format("YYYY MMM D");
-    if (!d) continue;
-
-    if (!map.has(d)) {
-      map.set(d, {
-        date: d,
+    if (!map.has(dayKey)) {
+      map.set(dayKey, {
+        date: displayDate,
         tooltipDate,
         gainedVests: 0,
         lostNegVests: 0,
@@ -88,7 +88,7 @@ function buildDailyVests(events: VoteEvent[] = []): DayRow[] {
         lostListVests: [],
       });
     }
-    const row = map.get(d)!;
+    const row = map.get(dayKey)!;
     const v = toNum(e.vests);
 
     if (e.approve) {
@@ -99,7 +99,7 @@ function buildDailyVests(events: VoteEvent[] = []): DayRow[] {
       row.lostListVests.push({ name: e.voter_name, vests: v });
     }
   }
-  return Array.from(map.values()).sort((a, b) => (a.date < b.date ? -1 : 1));
+  return Array.from(map.entries()).sort(([a], [b]) => (a < b ? -1 : 1)).map(([_, row]) => row);
 }
 
 const VotesTooltip = ({
