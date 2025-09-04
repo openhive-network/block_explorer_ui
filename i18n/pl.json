@@ -907,5 +907,9 @@
   "settingsPage.radialViewLabel": "Widok radialny",
   "settingsPage.radialViewDescription": "Pokazuj zasoby, takie jak siła głosu, za pomocą wskaźników kołowych. (Domyślnie)",
   "settingsPage.linearViewLabel": "Widok liniowy",
-  "settingsPage.linearViewDescription": "Pokazuj zasoby, takie jak siła głosu, za pomocą tradycyjnych pasków poziomych."
+  "settingsPage.linearViewDescription": "Pokazuj zasoby, takie jak siła głosu, za pomocą tradycyjnych pasków poziomych.",
+  "accountSearch.accountReactResults": "wyniki_wyszukiwania_konta",
+  "blockDetails.blockDetails": "szczegoly_bloku",
+  "commentsSearch.commentSearchResults": "wyniki_wyszukiwania_komentarzy",
+  "transactionPage.transactionDetailsRefferer": "szczegoly_transakcji"
 }

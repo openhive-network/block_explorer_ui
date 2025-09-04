@@ -907,5 +907,9 @@
   "settingsPage.radialViewLabel": "Radiale Ansicht",
   "settingsPage.radialViewDescription": "Ressourcen wie Stimmkraft mit kreisförmigen Indikatoren anzeigen. (Standard)",
   "settingsPage.linearViewLabel": "Lineare Ansicht",
-  "settingsPage.linearViewDescription": "Ressourcen wie Stimmkraft mit traditionellen horizontalen Balken anzeigen."
+  "settingsPage.linearViewDescription": "Ressourcen wie Stimmkraft mit traditionellen horizontalen Balken anzeigen.",
+  "accountSearch.accountReactResults": "konto_suchergebnisse",
+  "blockDetails.blockDetails": "block_details",
+  "commentsSearch.commentSearchResults": "kommentar_suchergebnisse",
+  "transactionPage.transactionDetailsRefferer": "transaktionsdetails"
 }

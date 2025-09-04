@@ -906,5 +906,9 @@
   "settingsPage.radialViewLabel": "Vue radiale",
   "settingsPage.radialViewDescription": "Afficher les ressources comme la puissance de vote avec des indicateurs circulaires. (Défaut)",
   "settingsPage.linearViewLabel": "Vue linéaire",
-  "settingsPage.linearViewDescription": "Afficher les ressources comme la puissance de vote avec des barres horizontales traditionnelles."
+  "settingsPage.linearViewDescription": "Afficher les ressources comme la puissance de vote avec des barres horizontales traditionnelles.",
+  "accountSearch.accountReactResults": "resultats_recherche_compte",
+  "blockDetails.blockDetails": "details_bloc",
+  "commentsSearch.commentSearchResults": "resultats_recherche_commentaires",
+  "transactionPage.transactionDetailsRefferer": "details_transaction"
 }

@@ -27,7 +27,7 @@ import ScrollTopButton from "@/components/ScrollTopButton";
 import OperationsTable from "@/components/OperationsTable";
 import CustomPagination from "@/components/CustomPagination";
 import useBlockId from "@/hooks/common/useBlockId";
-import { useI18n } from "@/i18n/i18n"; 
+import { useI18n } from "@/i18n/i18n";
 
 interface BlockSearchParams {
   blockId?: number;
@@ -245,10 +245,10 @@ export default function Block() {
     return (
       <PageNotFound
         message={
-          blockError 
-          ? `${t("blockPage.errorCode")}: ${blockError}` 
-          : `${blockId} : ${t("blockPage.blockNotFoundDetails")}`}
-
+          blockError
+            ? `${t("blockPage.errorCode")}: ${blockError}`
+            : `${blockId} : ${t("blockPage.blockNotFoundDetails")}`
+        }
       />
     );
   }
@@ -334,7 +334,9 @@ export default function Block() {
                     operations={convertedTotalOperations}
                     markedTrxId={paramsState.trxId}
                     unformattedOperations={unformattedOperations}
-                    referrer={`${blockId}_block_details.csv`}
+                    referrer={`${blockId}_${t(
+                      "blockDetails.blockDetails"
+                    )}.csv`}
                   />
                 )}
               </div>

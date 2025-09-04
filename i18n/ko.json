@@ -907,5 +907,9 @@
   "settingsPage.radialViewLabel": "원형 보기",
   "settingsPage.radialViewDescription": "보팅 파워와 같은 리소스를 원형 표시기로 표시합니다. (기본값)",
   "settingsPage.linearViewLabel": "선형 보기",
-  "settingsPage.linearViewDescription": "보팅 파워와 같은 리소스를 기존의 수평 막대로 표시합니다."
+  "settingsPage.linearViewDescription": "보팅 파워와 같은 리소스를 기존의 수평 막대로 표시합니다.",
+  "accountSearch.accountReactResults": "계정_검색_결과",
+  "blockDetails.blockDetails": "블록_세부정보",
+  "commentsSearch.commentSearchResults": "댓글_검색_결과",
+  "transactionPage.transactionDetailsRefferer": "거래_세부정보"
 }

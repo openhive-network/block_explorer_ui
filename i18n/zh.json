@@ -901,12 +901,15 @@
   "settingsPage.tabbedViewLabel": "标签视图",
   "settingsPage.tabbedViewDescription": "将帐户详细信息组织到逻辑清晰、易于导航的标签中。（默认）",
   "settingsPage.originalViewLabel": "原始视图",
-  "settingsPage.originalViewDescription": "在单个综合列表中显示所有帐户详细信息。", 
+  "settingsPage.originalViewDescription": "在单个综合列表中显示所有帐户详细信息。",
   "settingsPage.accountPageViewTitle": "账户页面视图",
   "settingsPage.resourceBarStyleTitle": "资源栏样式",
   "settingsPage.radialViewLabel": "环形视图",
   "settingsPage.radialViewDescription": "使用环形指示器显示投票权等资源。(默认)",
   "settingsPage.linearViewLabel": "线性视图",
-  "settingsPage.linearViewDescription": "使用传统的水平条显示投票权等资源。"
-
+  "settingsPage.linearViewDescription": "使用传统的水平条显示投票权等资源。",
+  "accountSearch.accountReactResults": "账户搜索结果",
+  "blockDetails.blockDetails": "区块详情",
+  "commentsSearch.commentSearchResults": "评论搜索结果",
+  "transactionPage.transactionDetailsRefferer": "交易详情"
 }

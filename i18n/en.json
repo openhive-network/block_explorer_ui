@@ -907,5 +907,9 @@
   "settingsPage.radialViewLabel": "Radial View",
   "settingsPage.radialViewDescription": "Show resources like Voting Power using circular indicators. (Default)",
   "settingsPage.linearViewLabel": "Linear View",
-  "settingsPage.linearViewDescription": "Show resources like Voting Power using traditional horizontal bars."
+  "settingsPage.linearViewDescription": "Show resources like Voting Power using traditional horizontal bars.",
+  "transactionPage.transactionDetailsRefferer": "transaction_details",
+  "accountSearch.accountReactResults": "account_search_results",
+  "commentsSearch.commentSearchResults": "comment_search_results",
+  "blockDetails.blockDetails": "block_details"
 }

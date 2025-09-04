@@ -89,7 +89,7 @@ const CommentSearchResults = () => {
             operationCount={commentSearchData.total_operations}
             operations={formattedOperations}
             unformattedOperations={unformattedOperations}
-            referrer="comments_search_results"
+            referrer={t("commentsSearch.commentSearchResults")}
             accountName={commentSearchProps?.accountName}
           />
         </div>

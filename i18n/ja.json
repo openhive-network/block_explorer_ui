@@ -907,5 +907,9 @@
   "settingsPage.radialViewLabel": "円形ビュー",
   "settingsPage.radialViewDescription": "投票パワーなどのリソースを円形のインジケーターで表示します。(デフォルト)",
   "settingsPage.linearViewLabel": "線形ビュー",
-  "settingsPage.linearViewDescription": "投票パワーなどのリソースを従来の横棒で表示します。"
+  "settingsPage.linearViewDescription": "投票パワーなどのリソースを従来の横棒で表示します。",
+  "accountSearch.accountReactResults": "アカウント検索結果",
+  "blockDetails.blockDetails": "ブロック詳細",
+  "commentsSearch.commentSearchResults": "コメント検索結果",
+  "transactionPage.transactionDetailsRefferer": "取引詳細"
 }

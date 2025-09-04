@@ -907,7 +907,9 @@
   "settingsPage.radialViewLabel": "Visualização Radial",
   "settingsPage.radialViewDescription": "Mostrar recursos como poder de voto usando indicadores circulares. (Padrão)",
   "settingsPage.linearViewLabel": "Visualização Linear",
-  "settingsPage.linearViewDescription": "Mostrar recursos como poder de voto usando barras horizontais tradicionais."
-  
-
+  "settingsPage.linearViewDescription": "Mostrar recursos como poder de voto usando barras horizontais tradicionais.",
+  "accountSearch.accountReactResults": "resultados_pesquisa_conta",
+  "blockDetails.blockDetails": "detalhes_bloco",
+  "commentsSearch.commentSearchResults": "resultados_pesquisa_comentarios",
+  "transactionPage.transactionDetailsRefferer": "detalhes_transacao"
 }

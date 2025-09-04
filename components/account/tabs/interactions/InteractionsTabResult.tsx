@@ -89,7 +89,7 @@ const InteractionsTabResult: React.FC<InteractionsTabResultProps> = ({
           operationCount={data.total_operations}
           operations={formattedOperations}
           unformattedOperations={unformattedOperations}
-          referrer="interactions"
+          referrer={t("accountOperationViewTabs.interactions").toLowerCase()}
           accountName={accountName}
         />
       </div>

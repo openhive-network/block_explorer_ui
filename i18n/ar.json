@@ -907,5 +907,9 @@
   "settingsPage.radialViewLabel": "عرض دائري",
   "settingsPage.radialViewDescription": "عرض الموارد مثل قوة التصويت باستخدام مؤشرات دائرية. (الافتراضي)",
   "settingsPage.linearViewLabel": "عرض خطي",
-  "settingsPage.linearViewDescription": "عرض الموارد مثل قوة التصويت باستخدام أشرطة أفقية تقليدية."
+  "settingsPage.linearViewDescription": "عرض الموارد مثل قوة التصويت باستخدام أشرطة أفقية تقليدية.",
+  "accountSearch.accountReactResults": "نتائج_البحث_عن_الحساب",
+  "blockDetails.blockDetails": "تفاصيل_الكتلة",
+  "commentsSearch.commentSearchResults": "نتائج_البحث_عن_التعليقات",
+  "transactionPage.transactionDetailsRefferer": "تفاصيل_المعاملة"
 }

@@ -906,5 +906,9 @@
   "settingsPage.radialViewLabel": "Vizualizare radială",
   "settingsPage.radialViewDescription": "Afișează resurse precum puterea de vot folosind indicatori circulari. (Implicit)",
   "settingsPage.linearViewLabel": "Vizualizare liniară",
-  "settingsPage.linearViewDescription": "Afișează resurse precum puterea de vot folosind bare orizontale tradiționale."
+  "settingsPage.linearViewDescription": "Afișează resurse precum puterea de vot folosind bare orizontale tradiționale.",
+  "accountSearch.accountReactResults": "rezultate_cautare_cont",
+  "blockDetails.blockDetails": "detalii_bloc",
+  "commentsSearch.commentSearchResults": "rezultate_cautare_comentarii",
+  "transactionPage.transactionDetailsRefferer": "detalii_tranzactie"
 }
