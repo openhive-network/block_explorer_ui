@@ -1,9 +1,10 @@
-import { useState } from "react";
+'use client';
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Head from "next/head";
-
 import Hive from "@/types/Hive";
+import React, { useEffect, useState } from "react";
+import { calcTransactionSize, TransactionForSize } from "@/utils/TransactionSize";
 import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
 import { convertTransactionResponseToTableOperations } from "@/lib/utils";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
@@ -70,9 +71,17 @@ export default function Transaction() {
     return <PageNotFound message={t("transactionPage.transactionNotFound")} />;
   }
   // Calculate transaction size in bytes
-  const transactionSize = trxData ? new TextEncoder().encode(JSON.stringify(trxData.transaction_json)).length : 0
-
-  return (
+const transactionSize = trxData
+  ? calcTransactionSize({
+      ref_block_num: trxData.transaction_json.ref_block_num,
+      ref_block_prefix: trxData.transaction_json.ref_block_prefix,
+      expiration: trxData.transaction_json.expiration,
+      operations: trxData.transaction_json.operations || [],
+      extensions: trxData.transaction_json.extensions || [],
+      signatures: (trxData as any).signatures || [],
+    })
+  : 0;
+return(
     <>
       <Head>
         <title>{trxData?.transaction_id?.slice(0, 10)} - Hive Explorer</title>
@@ -210,5 +219,5 @@ export default function Transaction() {
         )}
       </div>
     </>
-  );
+  );  
 }
