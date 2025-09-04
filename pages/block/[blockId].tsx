@@ -315,7 +315,7 @@ export default function Block() {
             >
               {!!totalOperations?.total_operations &&
                 totalOperations?.total_operations > 1000 && (
-                  <div className="my-4 w-full sticky z-20 top-[3.2rem] md:top-[4rem] rounded">
+                  <div className="my-4 w-full sticky z-20 top-[3.2rem] md:top-[4rem] rounded-t">
                     <CustomPagination
                       currentPage={paramsState.page}
                       onPageChange={(newPage: number) =>
@@ -327,7 +327,7 @@ export default function Block() {
                     />
                   </div>
                 )}
-              <div className="w-full max-w-screen-2xl flex flex-col gap-y-2">
+              <div className="w-full max-w-screen-2xl flex flex-col">
                 {!!convertedTotalOperations.length && (
                   <OperationsTable
                     operationCount={totalOperations?.total_operations || 0}

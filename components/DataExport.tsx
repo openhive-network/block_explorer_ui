@@ -36,7 +36,7 @@ const DataExport: React.FC<DataExportProps> = ({
   data,
   filename = "data.csv",
   className,
-  title = "Export",
+  title = "common.export",
   children,
   skipColumnSelection = false,
 }) => {
@@ -173,7 +173,7 @@ const DataExport: React.FC<DataExportProps> = ({
       )}
     >
       <Download className="h-4 w-4" />
-      <span>{title}</span>
+      <span>{t(title)}</span>
     </div>
   );
   

@@ -453,3 +453,25 @@ pre {
 .scrollableContainer.dark::-webkit-scrollbar-thumb:hover {
   background-color: rgba(100, 100, 100, 0.7);
 }
+
+
+.table-toolbar {
+  --toolbar-bg-color: #f8fafc; 
+  --toolbar-border-color: #334155;
+  
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem;  
+  background-color: var(--toolbar-bg-color);
+  border-bottom-width: 2px;
+  border-bottom-color: #e2e8f0; 
+}
+
+.dark .table-toolbar {
+  --toolbar-bg-color: #1e293b;
+  border-bottom-color: var(--toolbar-border-color);
+}

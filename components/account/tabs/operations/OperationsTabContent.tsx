@@ -177,7 +177,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     <TabsContent value="operations">
       <Card
         className={cn(
-          "mb-4 overflow-hidden transition-all duration-500 ease-in max-h-0 opacity-0",
+          "mb-0 pb-0 overflow-hidden transition-all duration-500 ease-in max-h-0 opacity-0",
           {
             "max-h-full opacity-100": isVisible,
           }

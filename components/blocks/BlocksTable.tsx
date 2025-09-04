@@ -147,7 +147,7 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
   return (
     <>
       {totalCount > config.standardPaginationSize ? (
-        <div className="flex flex-wrap justify-between items-center bg-theme p-2 gap-4 my-4 sticky z-20 top-[3.2rem] md:top-[4rem] rounded">
+        <div className="flex flex-wrap justify-between items-center bg-theme px-1 sticky z-20 top-[3.2rem] md:top-[4rem]">
           {isMainPageTable ? (
             <div className="flex justify-center w-full md:w-auto md:justify-start bg-theme">
               <Link
@@ -164,14 +164,13 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
             </div>
           ) : null}
 
-          <div className="flex flex-col md:flex-row items-center gap-2 flex-1 justify-center w-full rounded">
+          <div className="flex flex-col md:flex-row items-center flex-1 justify-center w-full">
             <CustomPagination
               currentPage={currentPage || 1}
               totalCount={totalCount}
               pageSize={config.standardPaginationSize}
               onPageChange={onPageChange}
               isMirrored={true}
-              className="rounded"
             />
             <div className="flex items-center mt-2 w-full md:w-auto justify-center md:justify-end mb-2">
               <JumpToPage
@@ -184,7 +183,7 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
           </div>
         </div>
       ) : isMainPageTable ? (
-        <div className="flex justify-center w-full md:w-auto md:justify-start bg-theme p-2 rounded">
+        <div className="flex justify-center w-full md:w-auto md:justify-start bg-theme px-2 ">
           <Link
             href={allBlocksPageLink ?? "/blocks"}
             target="_blank"
@@ -200,7 +199,7 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
       ) : null}
 
       <div
-        className={cn("flex items-center justify-end mt-8", {
+        className={cn("table-toolbar", {
           "justify-between": !!totalCount,
         })}
       >

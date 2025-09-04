@@ -87,7 +87,7 @@ const AccountFollowersDialog: React.FC<FollowersDialogProps> = ({
       onOpenChange={changeFollowersDialogue}
     >
       <DialogContent
-        className="h-3/4 max-w-4xl bg-explorer-bg-start flex flex-col p-4"
+        className="h-3/4 max-w-4xl bg-explorer-bg-start flex flex-col p-4 gap-y-0"
         data-testid="followers-dialog"
       >
         <h2 className="text-xl font-bold">
@@ -107,12 +107,12 @@ const AccountFollowersDialog: React.FC<FollowersDialogProps> = ({
         ) : (
           <>
             <div
-              className={cn("flex items-center w-full mb-2", {
+              className={cn("flex items-center w-full", {
                 "justify-start": dir !== "rtl",
                 "justify-end": dir === "rtl",
               })}
             >
-              <div className="relative w-full sm:w-auto">
+              <div className="relative w-full sm:w-auto my-2">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-explorer-dark-gray" />
                 <Input
                   placeholder={t("accountFollowersDialog.searchPlaceholder")}
@@ -130,11 +130,11 @@ const AccountFollowersDialog: React.FC<FollowersDialogProps> = ({
               onPageChange={setPageNum}
               pageSize={config.standardPaginationSize}
               totalCount={processedFollowers.totalFiltered}
-              className="rounded"
+              className="rounded-t"
               isMirrored={false}
             />
             <div
-              className={cn("flex items-center mt-2", {
+              className={cn("table-toolbar", {
                 "justify-between": !!processedFollowers.totalFiltered,
                 "justify-end": !processedFollowers.totalFiltered,
               })}
