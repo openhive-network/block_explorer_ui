@@ -41,6 +41,7 @@ interface Props {
   onClick?: (e: React.MouseEvent<HTMLInputElement>) => void;
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
   expand?: boolean;
+  cleanup?: boolean;
 }
 
 const AutoCompleteInput: React.FC<Props> = ({
@@ -55,6 +56,7 @@ const AutoCompleteInput: React.FC<Props> = ({
   onClick,
   onBlur,
   expand = false,
+  cleanup = false,
 }) => {
   const { t } = useI18n();
   const router = useRouter();
@@ -78,7 +80,6 @@ const AutoCompleteInput: React.FC<Props> = ({
   const pick = useCallback(
     (account: string) => {
       setIsChosen(true);
-      onChange("");
       if (linkResult) {
         const base = ["account_name", "account_name_array"].includes(
           inputTypeData?.input_type as string
@@ -90,8 +91,11 @@ const AutoCompleteInput: React.FC<Props> = ({
         router.push(base);
       }
       setInputFocus(false);
+      if (cleanup) {
+        onChange("");
+      }
     },
-    [inputTypeData, linkResult, onChange, router]
+    [inputTypeData, linkResult, cleanup, onChange, router]
   );
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
