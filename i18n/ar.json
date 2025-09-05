@@ -21,7 +21,7 @@
   "common.copyTransactionId": "نسخ معرف المعاملة",
   "common.copyJsonToClipboard": "نسخ JSON إلى الحافظة.",
   "common.settings": "الإعدادات",
-  "common.goToResultPage": "الانتقال إلى صفحة النتائج",
+  "common.goToResultPage": "صفحة النتائج",
   "common.go": "اذهب",
   "common.export": "تصدير",
   "common.copyBlockHash": "نسخ تجزئة البلوك",

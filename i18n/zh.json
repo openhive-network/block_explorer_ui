@@ -21,7 +21,7 @@
   "common.copyTransactionId": "复制交易ID",
   "common.copyJsonToClipboard": "复制JSON到剪贴板。",
   "common.settings": "设置",
-  "common.goToResultPage": "转到结果页面",
+  "common.goToResultPage": "结果页面",
   "common.go": "前往",
   "common.export": "导出",
   "common.copyBlockHash": "复制区块哈希",

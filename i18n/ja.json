@@ -21,7 +21,7 @@
   "common.copyTransactionId": "トランザクションIDをコピー",
   "common.copyJsonToClipboard": "JSONをクリップボードにコピーしました。",
   "common.settings": "設定",
-  "common.goToResultPage": "結果ページへ移動",
+  "common.goToResultPage": "結果ページ",
   "common.go": "移動",
   "common.export": "エクスポート",
   "common.copyBlockHash": "ブロックハッシュをコピー",

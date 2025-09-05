@@ -21,7 +21,7 @@
   "common.copyTransactionId": "Copiază ID-ul tranzacției",
   "common.copyJsonToClipboard": "Copiază JSON în clipboard.",
   "common.settings": "Setări",
-  "common.goToResultPage": "Mergi la pagina de rezultate",
+  "common.goToResultPage": "Pagina de rezultate",
   "common.go": "Mergi",
   "common.export": "Exportă",
   "common.copyBlockHash": "Copiază Hash-ul Blocului",

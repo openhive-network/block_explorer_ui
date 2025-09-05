@@ -21,7 +21,7 @@
   "common.copyTransactionId": "트랜잭션 ID 복사",
   "common.copyJsonToClipboard": "JSON을 클립보드에 복사했습니다.",
   "common.settings": "설정",
-  "common.goToResultPage": "결과 페이지로 이동",
+  "common.goToResultPage": "결과 페이지",
   "common.go": "이동",
   "common.export": "내보내기",
   "common.copyBlockHash": "블록 해시 복사",

@@ -21,7 +21,7 @@
   "common.copyTransactionId": "Transaktions-ID kopieren",
   "common.copyJsonToClipboard": "JSON in die Zwischenablage kopieren.",
   "common.settings": "Einstellungen",
-  "common.goToResultPage": "Zur Ergebnisseite gehen",
+  "common.goToResultPage": "Ergebnisseite",
   "common.go": "Los",
   "common.export": "Exportieren",
   "common.copyBlockHash": "Block-Hash kopieren",
