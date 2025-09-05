@@ -173,7 +173,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
         totalVestingShares
       );
     }
-    return `${formatNumber(value, true)} Vests`;
+    return `${formatNumber(value, true)} VESTS`;
   };
 
   const totalAccountVests = Number(witnessDetails?.vests);
