@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "private": true,
   "scripts": {
-    "dev": "node helpers/versions.js && react-env -- next dev --turbopack",
+    "dev": "node helpers/versions.js && react-env -- next dev ",
     "copy:public": "shx cp -R public/ .next/standalone/",
     "copy:static": "shx cp -R .next/static/ .next/standalone/.next",
     "build": "node helpers/versions.js && next build",
