@@ -200,6 +200,10 @@ const Footer = () => {
                   {t("footer.witnessSchedule")}
                 </Link>
               </li>
+              <li>
+                  <Link href="/top-holders" className="hover:opacity-75">
+                                  Top Holders</Link>
+              </li>
             </ul>
           </div>
 
