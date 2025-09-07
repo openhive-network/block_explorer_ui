@@ -113,7 +113,7 @@ const DataExport: React.FC<DataExportProps> = ({
         );
       });
 
-      const blob = new Blob([csvData], { type: "text/csv;charset=utf-8;" });
+      const blob = new Blob(["\uFEFF" + csvData], { type: "text/csv;charset=utf-8;" });
       const url = URL.createObjectURL(blob);
       const downloadLink = document.createElement("a");
       downloadLink.href = url;
