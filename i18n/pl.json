@@ -904,5 +904,17 @@
   "settingsPage.radialViewLabel": "Widok radialny",
   "settingsPage.radialViewDescription": "Pokazuj zasoby, takie jak siła głosu, za pomocą wskaźników kołowych. (Domyślnie)",
   "settingsPage.linearViewLabel": "Widok liniowy",
-  "settingsPage.linearViewDescription": "Pokazuj zasoby, takie jak siła głosu, za pomocą tradycyjnych pasków poziomych."
+  "settingsPage.linearViewDescription": "Pokazuj zasoby, takie jak siła głosu, za pomocą tradycyjnych pasków poziomych.",
+    "pageTitle.topHolders": "Najwięksi Posiadacze",
+  "filters.filtersAndSearch": "Filtry i Wyszukiwanie",
+  "filters.balance": "Saldo",
+  "filters.savings": "Oszczędności",
+  "table.rank": "Pozycja",
+  "table.account": "Konto",
+  "table.balance": "Saldo",
+  "table.savings": "Oszczędności",
+  "modal.loading": "Ładowanie...",
+  "modal.noHistory": "Brak dostępnej historii.",
+  "modal.error": "Błąd podczas ładowania historii salda.",
+  "modal.close": "Zamknij"
 }

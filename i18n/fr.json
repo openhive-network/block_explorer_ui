@@ -903,5 +903,17 @@
   "settingsPage.radialViewLabel": "Vue radiale",
   "settingsPage.radialViewDescription": "Afficher les ressources comme la puissance de vote avec des indicateurs circulaires. (Défaut)",
   "settingsPage.linearViewLabel": "Vue linéaire",
-  "settingsPage.linearViewDescription": "Afficher les ressources comme la puissance de vote avec des barres horizontales traditionnelles."
+  "settingsPage.linearViewDescription": "Afficher les ressources comme la puissance de vote avec des barres horizontales traditionnelles.",
+    "pageTitle.topHolders": "Principaux Détenteurs",
+  "filters.filtersAndSearch": "Filtres & Recherche",
+  "filters.balance": "Solde",
+  "filters.savings": "Économies",
+  "table.rank": "Rang",
+  "table.account": "Compte",
+  "table.balance": "Solde",
+  "table.savings": "Économies",
+  "modal.loading": "Chargement...",
+  "modal.noHistory": "Aucun historique disponible.",
+  "modal.error": "Erreur lors du chargement de l'historique du solde.",
+  "modal.close": "Fermer"
 }

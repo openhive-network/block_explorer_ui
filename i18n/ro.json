@@ -903,5 +903,17 @@
   "settingsPage.radialViewLabel": "Vizualizare radială",
   "settingsPage.radialViewDescription": "Afișează resurse precum puterea de vot folosind indicatori circulari. (Implicit)",
   "settingsPage.linearViewLabel": "Vizualizare liniară",
-  "settingsPage.linearViewDescription": "Afișează resurse precum puterea de vot folosind bare orizontale tradiționale."
+  "settingsPage.linearViewDescription": "Afișează resurse precum puterea de vot folosind bare orizontale tradiționale.",
+    "pageTitle.topHolders": "Cei mai mari deținători",
+  "filters.filtersAndSearch": "Filtre și Căutare",
+  "filters.balance": "Sold",
+  "filters.savings": "Economii",
+  "table.rank": "Rang",
+  "table.account": "Cont",
+  "table.balance": "Sold",
+  "table.savings": "Economii",
+  "modal.loading": "Se încarcă...",
+  "modal.noHistory": "Nu există istoric disponibil.",
+  "modal.error": "Eroare la încărcarea istoricului soldului.",
+  "modal.close": "Închide"
 }

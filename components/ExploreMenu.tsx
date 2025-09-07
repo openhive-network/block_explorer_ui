@@ -56,7 +56,7 @@ export function ExploreMenu() {
               <ExploreListItem href="/communities" title={t("navbar.communitiesTitle")} icon={Users} closeMenu={() => setIsOpen(false)} />
               <ExploreListItem href="/proposals" title={t("navbar.proposalsTitle")} icon={Vote} closeMenu={() => setIsOpen(false)} />
               <ExploreListItem href="/witnesses" title={t("navbar.witnessesTitle")} icon={UserCheck} closeMenu={() => setIsOpen(false)} />
-              <ExploreListItem href="/top-holders" title="Top Holders" icon={Award}   closeMenu={() => setIsOpen(false)}/>
+              <ExploreListItem href="/top-holders" title={t("pageTitle.topHolders")} icon={Award}   closeMenu={() => setIsOpen(false)}/>
               <ExploreListItem href="/settings" title={t("navbar.settingsTitle")} icon={SettingsIcon} closeMenu={() => setIsOpen(false)} />
           </div>
         </PopoverContent>

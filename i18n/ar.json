@@ -905,4 +905,16 @@
   "settingsPage.radialViewDescription": "عرض الموارد مثل قوة التصويت باستخدام مؤشرات دائرية. (الافتراضي)",
   "settingsPage.linearViewLabel": "عرض خطي",
   "settingsPage.linearViewDescription": "عرض الموارد مثل قوة التصويت باستخدام أشرطة أفقية تقليدية."
+  ,"pageTitle.topHolders": "أعلى الحائزين",
+  "filters.filtersAndSearch": "المرشحات والبحث",
+  "filters.balance": "الرصيد",
+  "filters.savings": "المدخرات",
+  "table.rank": "الترتيب",
+  "table.account": "الحساب",
+  "table.balance": "الرصيد",
+  "table.savings": "المدخرات",
+  "modal.loading": "جار التحميل...",
+  "modal.noHistory": "لا يوجد تاريخ متاح.",
+  "modal.error": "خطأ في تحميل تاريخ الرصيد.",
+  "modal.close": "إغلاق"
 }

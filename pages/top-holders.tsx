@@ -1,29 +1,33 @@
-// pages/top-holders.tsx
 import { useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
 import { Table, TableHeader, TableBody, TableRow, TableCell } from "@/components/ui/table";
-import { Pagination } from "@/components/ui/pagination";
 import PageTitle from "@/components/PageTitle";
 import ErrorMessage from "@/components/ErrorMessage";
 import NoResult from "@/components/NoResult";
 import TopHoldersPagination from "@/components/ui/TopHoldersPagination";
+import SearchBar from "@/components/SearchBar";
+import BalanceHistoryModal from "@/components/Modal";
+import { useI18n } from "@/i18n/i18n";
 
 interface Holder {
+  rank: number;
   account: string;
-  balance: string;
+  value: string;
 }
 
 export default function TopHoldersPage() {
+  const { t } = useI18n(); 
   const [holders, setHolders] = useState<Holder[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
-  const [coinType, setCoinType] = useState("HIVE");
-  const [balanceType, setBalanceType] = useState("balance");
+  const [coinType, setCoinType] = useState<"HIVE" | "HBD" | "VESTS">("HIVE");
+  const [balanceType, setBalanceType] = useState<"balance" | "savings_balance">("balance");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedAccount, setSelectedAccount] = useState<string | null>(null);
 
   useEffect(() => {
+    if (coinType === "VESTS" && balanceType !== "balance") setBalanceType("balance");
     fetchHolders();
   }, [page, coinType, balanceType]);
 
@@ -36,7 +40,7 @@ export default function TopHoldersPage() {
       );
       if (!res.ok) throw new Error(`API error: ${res.status}`);
       const data = await res.json();
-      setHolders(data?.holders || []);
+      setHolders(Array.isArray(data) ? data : []);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -44,66 +48,108 @@ export default function TopHoldersPage() {
     }
   };
 
+  const handleAccountClick = (account: string) => setSelectedAccount(account);
+  const closeModal = () => setSelectedAccount(null);
+
+  const filteredHolders = holders.filter((holder) =>
+    holder.account.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const formatValue = (value: string) => Number(value).toLocaleString();
+
+  const getRankStyle = (rank: number) => {
+    if (rank === 1) return "bg-yellow-300 font-bold";
+    if (rank === 2) return "bg-gray-300 font-bold";
+    if (rank === 3) return "bg-yellow-800 text-white font-bold";
+    return "";
+  };
+
   return (
     <div className="p-6 space-y-6">
-      <PageTitle titleKey="Top Holders (Richlist)" />
+      <PageTitle titleKey={t("pageTitle.topHolders")} />
 
+      {/* Filters */}
       <Card>
         <CardHeader>
-          <CardTitle>Filters</CardTitle>
+          <CardTitle>{t("filters.filtersAndSearch")}</CardTitle>
         </CardHeader>
-        <div className="flex gap-4 p-4">
-          <Select value={coinType} onValueChange={setCoinType}>
-            <option value="HIVE">HIVE</option>
-            <option value="HBD">HBD</option>
-          </Select>
+        <div className="p-4 flex flex-wrap gap-4">
+          <select
+            value={coinType}
+            onChange={(e) => setCoinType(e.target.value as "HIVE" | "HBD" | "VESTS")}
+            className="border rounded px-2 py-1"
+          >
+            <option value="HIVE">{"HIVE"}</option>
+            <option value="HBD">{("HBD")}</option>
+            <option value="VESTS">{("VESTS")}</option>
+          </select>
 
-          <Select value={balanceType} onValueChange={setBalanceType}>
-            <option value="balance">Balance</option>
-            <option value="savings">Savings</option>
-            <option value="staked">Staked</option>
-          </Select>
+          <select
+            value={balanceType}
+            onChange={(e) => setBalanceType(e.target.value as "balance" | "savings_balance")}
+            disabled={coinType === "VESTS"}
+            className="border rounded px-2 py-1"
+          >
+            <option value="balance">{t("filters.balance")}</option>
+            <option value="savings_balance">{t("filters.savings")}</option>
+          </select>
+
+          <div className="flex-1 min-w-[200px]">
+            <SearchBar onSearch={(value: string) => setSearchTerm(value)} open={true} />
+          </div>
         </div>
       </Card>
 
+      {/* Top Holders Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Richlist</CardTitle>
+          <CardTitle>{t("pageTitle.topHolders")}</CardTitle>
         </CardHeader>
         <div className="p-4">
-          {loading && <p>Loading...</p>}
+          {loading && <p>{t("modal.loading")}</p>}
           {error && <ErrorMessage message={error} />}
-          {!loading && !error && holders.length === 0 && <NoResult />}
-          {!loading && !error && holders.length > 0 && (
+          {!loading && !error && filteredHolders.length === 0 && <NoResult />}
+          {!loading && !error && filteredHolders.length > 0 && (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableCell>Rank</TableCell>
-                  <TableCell>Account</TableCell>
-                  <TableCell>Balance</TableCell>
+                  <TableCell>{t("table.rank")}</TableCell>
+                  <TableCell>{t("table.account")}</TableCell>
+                  <TableCell className="text-right">
+                    {balanceType === "savings_balance" ? t("table.savings") : t("table.balance")}
+                  </TableCell>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {holders.map((holder, idx) => (
-                  <TableRow key={holder.account}>
-                    <TableCell>{idx + 1 + (page - 1) * 50}</TableCell>
-                    <TableCell>{holder.account}</TableCell>
-                    <TableCell>{holder.balance}</TableCell>
-                  </TableRow>
-                ))}
+                {filteredHolders.map((holder) => {
+                  const displayRank = holder.rank + (page - 1) * 100;
+                  return (
+                    <TableRow
+                      key={holder.account}
+                      className={getRankStyle(displayRank)}
+                      onClick={() => handleAccountClick(holder.account)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <TableCell>{displayRank}</TableCell>
+                      <TableCell>{holder.account}</TableCell>
+                      <TableCell className="text-right">{formatValue(holder.value)}</TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           )}
 
           <div className="mt-4 flex justify-center">
-            <TopHoldersPagination
-              currentPage={page}
-              onPageChange={setPage}
-              totalPages={1000} // ideally from API if available
-            />
+            <TopHoldersPagination currentPage={page} onPageChange={setPage} totalPages={1000} />
           </div>
         </div>
       </Card>
+
+      {/* Modal */}
+      {selectedAccount && (
+        <BalanceHistoryModal username={selectedAccount} coinType="HIVE" onClose={closeModal} />
+      )}
     </div>
   );
 }

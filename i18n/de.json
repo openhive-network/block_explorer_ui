@@ -904,5 +904,17 @@
   "settingsPage.radialViewLabel": "Radiale Ansicht",
   "settingsPage.radialViewDescription": "Ressourcen wie Stimmkraft mit kreisförmigen Indikatoren anzeigen. (Standard)",
   "settingsPage.linearViewLabel": "Lineare Ansicht",
-  "settingsPage.linearViewDescription": "Ressourcen wie Stimmkraft mit traditionellen horizontalen Balken anzeigen."
+  "settingsPage.linearViewDescription": "Ressourcen wie Stimmkraft mit traditionellen horizontalen Balken anzeigen.",
+  "pageTitle.topHolders": "Top-Inhaber",
+  "filters.filtersAndSearch": "Filter & Suche",
+  "filters.balance": "Kontostand",
+  "filters.savings": "Ersparnisse",
+  "table.rank": "Rang",
+  "table.account": "Konto",
+  "table.balance": "Kontostand",
+  "table.savings": "Ersparnisse",
+  "modal.loading": "Lädt...",
+  "modal.noHistory": "Keine Historie verfügbar.",
+  "modal.error": "Fehler beim Laden des Kontostandverlaufs.",
+  "modal.close": "Schließen"
 }

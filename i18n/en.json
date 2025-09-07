@@ -905,4 +905,16 @@
   "settingsPage.radialViewDescription": "Show resources like Voting Power using circular indicators. (Default)",
   "settingsPage.linearViewLabel": "Linear View",
   "settingsPage.linearViewDescription": "Show resources like Voting Power using traditional horizontal bars."
+  ,"pageTitle.topHolders": "Top Holders",
+  "filters.filtersAndSearch": "Filters & Search",
+  "filters.balance": "Balance",
+  "filters.savings": "Savings",
+  "table.rank": "Rank",
+  "table.account": "Account",
+  "table.balance": "Balance",
+  "table.savings": "Savings",
+  "modal.loading": "Loading...",
+  "modal.noHistory": "No history available.",
+  "modal.error": "Error loading balance history.",
+  "modal.close": "Close"
 }

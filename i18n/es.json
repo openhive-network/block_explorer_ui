@@ -903,5 +903,17 @@
   "settingsPage.radialViewLabel": "Radiale Ansicht",
   "settingsPage.radialViewDescription": "Ressourcen wie Stimmkraft mit kreisförmigen Indikatoren anzeigen. (Standard)",
   "settingsPage.linearViewLabel": "Lineare Ansicht",
-  "settingsPage.linearViewDescription": "Ressourcen wie Stimmkraft mit traditionellen horizontalen Balken anzeigen."
+  "settingsPage.linearViewDescription": "Ressourcen wie Stimmkraft mit traditionellen horizontalen Balken anzeigen.",
+  "pageTitle.topHolders": "Principales Titulares",
+  "filters.filtersAndSearch": "Filtros y Búsqueda",
+  "filters.balance": "Saldo",
+  "filters.savings": "Ahorros",
+  "table.rank": "Rango",
+  "table.account": "Cuenta",
+  "table.balance": "Saldo",
+  "table.savings": "Ahorros",
+  "modal.loading": "Cargando...",
+  "modal.noHistory": "No hay historial disponible.",
+  "modal.error": "Error al cargar el historial de saldo.",
+  "modal.close": "Cerrar"
 }
