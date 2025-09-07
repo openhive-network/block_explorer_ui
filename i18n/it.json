@@ -915,6 +915,7 @@
   "modal.noHistory": "Nessuna cronologia disponibile.",
   "modal.error": "Errore durante il caricamento dello storico saldo.",
   "modal.close": "Chiudi"
+   
   ,"accountSearch.accountReactResults": "risultati_ricerca_account",
   "blockDetails.blockDetails": "dettagli_blocco",
   "commentsSearch.commentSearchResults": "risultati_ricerca_commenti",
