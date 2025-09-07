@@ -912,4 +912,16 @@
   "accountSearch.accountReactResults": "account_search_results",
   "commentsSearch.commentSearchResults": "comment_search_results",
   "blockDetails.blockDetails": "block_details"
+  ,"pageTitle.topHolders": "Top Holders",
+  "filters.filtersAndSearch": "Filters & Search",
+  "filters.balance": "Balance",
+  "filters.savings": "Savings",
+  "table.rank": "Rank",
+  "table.account": "Account",
+  "table.balance": "Balance",
+  "table.savings": "Savings",
+  "modal.loading": "Loading...",
+  "modal.noHistory": "No history available.",
+  "modal.error": "Error loading balance history.",
+  "modal.close": "Close"
 }

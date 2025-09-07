@@ -911,4 +911,16 @@
   "blockDetails.blockDetails": "detalles_bloque",
   "commentsSearch.commentSearchResults": "resultados_busqueda_comentarios",
   "transactionPage.transactionDetailsRefferer": "detalles_transaccion"
+  ,"pageTitle.topHolders": "Principales Titulares",
+  "filters.filtersAndSearch": "Filtros y Búsqueda",
+  "filters.balance": "Saldo",
+  "filters.savings": "Ahorros",
+  "table.rank": "Rango",
+  "table.account": "Cuenta",
+  "table.balance": "Saldo",
+  "table.savings": "Ahorros",
+  "modal.loading": "Cargando...",
+  "modal.noHistory": "No hay historial disponible.",
+  "modal.error": "Error al cargar el historial de saldo.",
+  "modal.close": "Cerrar"
 }

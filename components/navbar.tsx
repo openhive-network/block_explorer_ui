@@ -101,7 +101,7 @@ export default function Navbar() {
                     </Link>
                     <Link href={"/top-holders"} className="py-1 border-b-2 flex items-start justify-start" onClick={() => setMenuOpen(false)}>
                     <Users className="mr-2 mt-1 flex-shrink-0" size={20} />
-                    <span className="text-base ml-2">Top Holders</span>
+                    <span className="text-base ml-2">{t("pageTitle.topHolders")}</span>
                     </Link>
 
                     <Link href={"/settings"} className="py-1 flex items-start justify-start" onClick={() => setMenuOpen(false)}>

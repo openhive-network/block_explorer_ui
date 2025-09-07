@@ -202,7 +202,7 @@ const Footer = () => {
               </li>
               <li>
                   <Link href="/top-holders" className="hover:opacity-75">
-                                  Top Holders</Link>
+                                  {t("pageTitle.topHolders")}</Link>
               </li>
             </ul>
           </div>

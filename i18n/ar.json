@@ -912,4 +912,16 @@
   "blockDetails.blockDetails": "تفاصيل_الكتلة",
   "commentsSearch.commentSearchResults": "نتائج_البحث_عن_التعليقات",
   "transactionPage.transactionDetailsRefferer": "تفاصيل_المعاملة"
+  ,"pageTitle.topHolders": "أعلى الحائزين",
+  "filters.filtersAndSearch": "المرشحات والبحث",
+  "filters.balance": "الرصيد",
+  "filters.savings": "المدخرات",
+  "table.rank": "الترتيب",
+  "table.account": "الحساب",
+  "table.balance": "الرصيد",
+  "table.savings": "المدخرات",
+  "modal.loading": "جار التحميل...",
+  "modal.noHistory": "لا يوجد تاريخ متاح.",
+  "modal.error": "خطأ في تحميل تاريخ الرصيد.",
+  "modal.close": "إغلاق"
 }

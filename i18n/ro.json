@@ -911,4 +911,16 @@
   "blockDetails.blockDetails": "detalii_bloc",
   "commentsSearch.commentSearchResults": "rezultate_cautare_comentarii",
   "transactionPage.transactionDetailsRefferer": "detalii_tranzactie"
+,    "pageTitle.topHolders": "Cei mai mari deținători",
+  "filters.filtersAndSearch": "Filtre și Căutare",
+  "filters.balance": "Sold",
+  "filters.savings": "Economii",
+  "table.rank": "Rang",
+  "table.account": "Cont",
+  "table.balance": "Sold",
+  "table.savings": "Economii",
+  "modal.loading": "Se încarcă...",
+  "modal.noHistory": "Nu există istoric disponibil.",
+  "modal.error": "Eroare la încărcarea istoricului soldului.",
+  "modal.close": "Închide"
 }

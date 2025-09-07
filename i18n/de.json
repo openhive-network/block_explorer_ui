@@ -912,4 +912,16 @@
   "blockDetails.blockDetails": "block_details",
   "commentsSearch.commentSearchResults": "kommentar_suchergebnisse",
   "transactionPage.transactionDetailsRefferer": "transaktionsdetails"
+  ,  "pageTitle.topHolders": "Top-Inhaber",
+  "filters.filtersAndSearch": "Filter & Suche",
+  "filters.balance": "Kontostand",
+  "filters.savings": "Ersparnisse",
+  "table.rank": "Rang",
+  "table.account": "Konto",
+  "table.balance": "Kontostand",
+  "table.savings": "Ersparnisse",
+  "modal.loading": "Lädt...",
+  "modal.noHistory": "Keine Historie verfügbar.",
+  "modal.error": "Fehler beim Laden des Kontostandverlaufs.",
+  "modal.close": "Schließen"
 }
