@@ -167,8 +167,9 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
           typeof content.type === "string" &&
           content.type === "div"
         ) {
+          const { t } = useI18n();
           // Use the recursive function to extract text content
-          contentString = extractTextFromReactElement(content);
+          contentString = extractTextFromReactElement(content,t);
         } else {
           contentString = String(content);
         }
