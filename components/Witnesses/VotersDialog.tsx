@@ -173,7 +173,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
         totalVestingShares
       );
     }
-    return `${formatNumber(value, true)} Vests`;
+    return `${formatNumber(value, true)} VESTS`;
   };
 
   const totalAccountVests = Number(witnessDetails?.vests);
@@ -228,7 +228,6 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
       const voterWeightFormatted = formatPercent(voterWeight * 100);
 
       return {
-        
         [t("votersDialog.voter")]: voter.voter_name,
         [t("votersDialog.votes")]: votesFormatted,
         [t("votersDialog.accountVests")]: accountVestsFormatted,
@@ -326,7 +325,9 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                     </div>
                     <DataExport
                       data={prepareExportData()}
-                      filename={`${accountName}_voters.csv`}
+                      filename={`${accountName}_${t(
+                        "votersDialog.voters"
+                      )}.csv`}
                     />
                   </div>
                 </div>
@@ -342,7 +343,10 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                 ) : (
                   <div className="relative rounded overflow-hidden w-full">
                     <div className="text-text w-full h-full overflow-auto bg-theme rounded">
-                      <Table enableMobileScrollArrows isDialog>
+                      <Table
+                        enableMobileScrollArrows
+                        isDialog
+                      >
                         <TableHeader>
                           <TableRow rowVariant="header">
                             <TableHead stickyLeft>

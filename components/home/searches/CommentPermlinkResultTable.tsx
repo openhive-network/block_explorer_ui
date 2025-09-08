@@ -59,7 +59,11 @@ const buildTableBody = (
   if (!data || !data.length || !accountName) return;
 
   return data.map(
-    ({ block, operation_id, permlink, timestamp, trx_id }: any, index: number) => { // Added index for key
+    (
+      { block, operation_id, permlink, timestamp, trx_id }: any,
+      index: number
+    ) => {
+      // Added index for key
       return (
         <React.Fragment key={trx_id || index}>
           <TableRow>
@@ -133,7 +137,8 @@ const CommentPermlinkResultTable = ({
           [t("commentPermlinkResultTable.block")]: block.toLocaleString(),
           [t("commentPermlinkResultTable.operationId")]: operation_id,
           [t("commentPermlinkResultTable.permlink")]: permlink,
-          [t("commentPermlinkResultTable.timestamp")]: formatAndDelocalizeTime(timestamp),
+          [t("commentPermlinkResultTable.timestamp")]:
+            formatAndDelocalizeTime(timestamp),
           [t("commentPermlinkResultTable.trxId")]: trx_id?.slice(0, 10),
         };
       }
@@ -154,14 +159,17 @@ const CommentPermlinkResultTable = ({
           />
           <DataExport
             data={prepareExportData()}
-            filename={`${accountName}_permlink_search_result.csv`}
+            filename={`${accountName}_${t(
+              "commentPermlinkResultTable.permlink_search_result"
+            ).toLowerCase()}.csv`}
             className="mb-2"
           />
         </div>
       </div>
       <div className="flex w-full overflow-auto">
         <div className="text-text w-[100%] bg-theme dark:bg-theme p-5 rounded">
-          <Table enableMobileScrollArrows
+          <Table
+            enableMobileScrollArrows
             data-testid="table-body"
             className="text-xs"
           >

@@ -90,23 +90,23 @@ const AccountOperationViewTabs: React.FC<AccountOperationViewTabs> = ({
       onValueChange={handleTabChange}
       className="flex-col w-full"
     >
-      <TabsList className="flex w-full justify-between rounded-t-lg p-0 h-auto bg-muted text-muted-foreground">
+      <TabsList className="flex w-full justify-between p-0 h-auto bg-muted text-muted-foreground">
         <div className="flex items-center">
           <TabsTrigger
             value="operations"
-            className="rounded-tl-lg rounded-b-none cursor-pointer px-4 py-3 data-[state=active]:bg-theme data-[state=active]:text-foreground"
+            className="rounded-t-[3px] rounded-b-none cursor-pointer px-4 py-3 data-[state=active]:bg-theme data-[state=active]:text-foreground"
           >
             {t("accountOperationViewTabs.operations")}
           </TabsTrigger>
           <TabsTrigger
             value="comments"
-            className="rounded-none cursor-pointer px-4 py-3 data-[state=active]:bg-theme data-[state=active]:text-foreground"
+            className="rounded-t-[3px] rounded-b-none cursor-pointer px-4 py-3 data-[state=active]:bg-theme data-[state=active]:text-foreground"
           >
             {t("accountOperationViewTabs.comments")}
           </TabsTrigger>
           <TabsTrigger
             value="interactions"
-            className="rounded-none cursor-pointer px-4 py-3 data-[state=active]:bg-theme data-[state=active]:text-foreground"
+            className="rounded-t-[3px] rounded-b-none cursor-pointer px-4 py-3 data-[state=active]:bg-theme data-[state=active]:text-foreground"
           >
             {t("accountOperationViewTabs.interactions")}
           </TabsTrigger>
@@ -119,7 +119,8 @@ const AccountOperationViewTabs: React.FC<AccountOperationViewTabs> = ({
         </div>
       </TabsList>
 
-      <div className="bg-theme pt-6">
+      <div className="bg-theme">
+      <div className="pt-4">
         <OperationTabContent
           isVisible={isOperationsFilterSectionVisible}
           setIsVisible={setIsOperationsFilterSectionVisible}
@@ -127,18 +128,24 @@ const AccountOperationViewTabs: React.FC<AccountOperationViewTabs> = ({
           liveDataEnabled={liveDataEnabled}
           isFiltersActive={isFiltersActive}
         />
+      </div>
+      <div>
         <CommentsTabContent
           isVisible={isCommentsFilterSectionVisible}
           setIsVisible={setIsCommentsFilterSectionVisible}
           setIsFiltersActive={setIsFiltersActive}
           isFiltersActive={isFiltersActive}
+  
         />
+      </div>
+      <div>
         <InteractionsTabContent
           isVisible={isInteractionsFilterSectionVisible}
           setIsVisible={setIsInteractionsFilterSectionVisible}
           setIsFiltersActive={setIsFiltersActive}
           isFiltersActive={isFiltersActive}
         />
+        </div>
       </div>
     </Tabs>
   );

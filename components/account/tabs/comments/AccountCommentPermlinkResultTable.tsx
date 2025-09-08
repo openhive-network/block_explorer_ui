@@ -54,13 +54,13 @@ const buildTableHeader = (t: (key: string) => string) => {
   return (
     <TableRow rowVariant="header">
       {TABLE_CELL_KEYS.map((cellKey, index) => (
-          <TableHead
-            key={cellKey} 
-            stickyLeft={index === 0 ? true : undefined}
-          >
-            {cellKey ? t(cellKey) : ""}
-          </TableHead>
-        ))}
+        <TableHead
+          key={cellKey}
+          stickyLeft={index === 0 ? true : undefined}
+        >
+          {cellKey ? t(cellKey) : ""}
+        </TableHead>
+      ))}
     </TableRow>
   );
 };
@@ -150,7 +150,8 @@ const AccountCommentPermlinkResultTable = ({
           [t("commentPermlinkResultTable.block")]: block.toLocaleString(),
           [t("commentPermlinkResultTable.operationId")]: operation_id,
           [t("commentPermlinkResultTable.permlink")]: permlink,
-          [t("commentPermlinkResultTable.timestamp")]: formatAndDelocalizeTime(timestamp),
+          [t("commentPermlinkResultTable.timestamp")]:
+            formatAndDelocalizeTime(timestamp),
           [t("commentPermlinkResultTable.trxId")]: trx_id?.slice(0, 10),
         };
       }
@@ -171,8 +172,10 @@ const AccountCommentPermlinkResultTable = ({
           />
           <DataExport
             data={prepareExportData()}
-            filename={`${accountName}_comments.csv`}
-            className=""
+            filename={`${accountName}_${t(
+              "accountOperationViewTabs.comments"
+            ).toLowerCase()}.csv`}
+            className="mb-2"
           />
         </div>
       </div>

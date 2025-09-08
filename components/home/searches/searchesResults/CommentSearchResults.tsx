@@ -65,7 +65,7 @@ const CommentSearchResults = () => {
               {!isCommentsPage && (
                 <Link href={commentPageLink}>
                   <Button data-testid="go-to-result-page">
-                   {t("common.goToResultPage")}
+                    {t("common.goToResultPage")}
                   </Button>
                 </Link>
               )}
@@ -89,7 +89,7 @@ const CommentSearchResults = () => {
             operationCount={commentSearchData.total_operations}
             operations={formattedOperations}
             unformattedOperations={unformattedOperations}
-            referrer="comments_search_results"
+            referrer={t("commentsSearch.commentSearchResults")}
             accountName={commentSearchProps?.accountName}
           />
         </div>

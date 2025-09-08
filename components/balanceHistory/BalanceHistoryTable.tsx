@@ -282,7 +282,9 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
             />
             <DataExport
               data={prepareExportData()}
-              filename={`${account_name}_balance_history.csv`}
+              filename={`${account_name}_${t(
+                "accountDetailsSection.balanceHistory"
+              ).toLowerCase()}.csv`}
             />
           </div>
 
