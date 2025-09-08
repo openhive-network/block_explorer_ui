@@ -49,6 +49,7 @@ import {
   ProposalVotesChart,
   TOP_CHART_VOTERS,
 } from "./analytics/ProposalVotesChart";
+import { useSettings } from "@/contexts/SettingsContext";
 
 interface ProposalVotesDialogProps {
   proposalId: number;
@@ -60,12 +61,13 @@ export const ProposalVotesDialog = ({
   children,
 }: ProposalVotesDialogProps) => {
   const { t } = useI18n();
+  const { settings } = useSettings();
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const [sortBy, setSortBy] = useState<"name" | "power">("power");
   const [isAsc, setIsAsc] = useState(false);
-  const [unit, setUnit] = useState<"hp" | "vests">("hp");
+  const [unit, setUnit] = useState<"hp" | "vests">(settings.displayMode);
   const [activeSegmentFilter, setActiveSegmentFilter] = useState<string | null>(
     null
   );

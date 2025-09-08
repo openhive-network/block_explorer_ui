@@ -31,6 +31,7 @@ import { useI18n } from "@/i18n/i18n";
 import AutoCompleteInput from "../ui/AutoCompleteInput";
 import { Button } from "@/components/ui/button";
 import { trimAccountName } from "@/utils/StringUtils";
+import { useSettings } from "@/contexts/SettingsContext";
 
 type VotersDialogProps = {
   accountName: string;
@@ -60,15 +61,18 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
   accountDetails,
 }) => {
   const { t } = useI18n();
+  const { settings } = useSettings();
   const [sortKey, setSortKey] = useState<string>("vests");
   const [isAsc, setIsAsc] = useState<boolean>(false);
   const [pageNum, setPageNum] = useState<number>(1);
-  const [isHP, setIsHP] = useState<boolean>(true);
+  const [isHP, setIsHP] = useState<boolean>(settings.displayMode === "hp");
   const [voterNameInput, setVoterNameInput] = useState<string>("");
 
   const [activeVoterName, setActiveVoterName] = useState<string | undefined>(
     undefined
   );
+
+  // console.log(settings.displayMode);
 
   const handleSearch = () => {
     setActiveVoterName(
