@@ -1,9 +1,11 @@
-import React, {
+import {
   useState,
   useEffect,
   useRef,
   useCallback,
   RefObject,
+  MouseEvent,
+  FocusEvent,
 } from "react";
 import { X, Search, CornerDownLeft as Enter } from "lucide-react";
 import { Input } from "./input";
@@ -38,8 +40,8 @@ interface Props {
   linkResult?: boolean;
   required?: boolean;
   addLabel?: boolean;
-  onClick?: (e: React.MouseEvent<HTMLInputElement>) => void;
-  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onClick?: (e: MouseEvent<HTMLInputElement>) => void;
+  onBlur?: (e: FocusEvent<HTMLInputElement>) => void;
   expand?: boolean;
   cleanup?: boolean;
 }
@@ -63,23 +65,40 @@ const AutoCompleteInput: React.FC<Props> = ({
   const [inputFocus, setInputFocus] = useState(false);
   const [selected, setSelected] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
-  const [isChosen, setIsChosen] = useState(false);
   const [isInputDisabled, setIsInputDisabled] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const wrapRef = useRef<HTMLDivElement>(null);
-  const resultRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const itemRefs = useRef<Array<HTMLDivElement | null>>([]);
 
   const [query, setQuery] = useState("");
   const { inputTypeData } = useInputType(query);
+
   const debouncedSearch = useDebounce(
     (v: string) => setQuery(trimAccountName(v)),
     600
   );
 
+  const submitClosestForm = useCallback(() => {
+    const form =
+      inputRef.current?.form ??
+      (inputRef.current?.closest("form") as HTMLFormElement | null);
+    if (!form) return;
+
+    if (typeof form.requestSubmit === "function") {
+      form.requestSubmit();
+    } else {
+      form.dispatchEvent(
+        new Event("submit", { bubbles: true, cancelable: true })
+      );
+    }
+  }, []);
+
   const pick = useCallback(
     (account: string) => {
-      setIsChosen(true);
+      onChange(account);
+
       if (linkResult) {
         const base = ["account_name", "account_name_array"].includes(
           inputTypeData?.input_type as string
@@ -91,11 +110,12 @@ const AutoCompleteInput: React.FC<Props> = ({
         router.push(base);
       }
       setInputFocus(false);
+      submitClosestForm();
       if (cleanup) {
-        onChange("");
+        setTimeout(() => onChange(""), 0);
       }
     },
-    [inputTypeData, linkResult, cleanup, onChange, router]
+    [inputTypeData, linkResult, cleanup, onChange, router, submitClosestForm]
   );
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -117,14 +137,28 @@ const AutoCompleteInput: React.FC<Props> = ({
       ? inputTypeData.input_value
       : [inputTypeData.input_value];
 
-    if (e.key === "ArrowDown")
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
       setSelected((p) => Math.min(p + 1, arr.length - 1));
-    if (e.key === "ArrowUp") setSelected((p) => Math.max(p - 1, 0));
+      return;
+    }
 
-    if (e.key === "Enter") pick(arr.length === 1 ? arr[0] : arr[selected]);
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setSelected((p) => Math.max(p - 1, 0));
+      return;
+    }
+
+    if (e.key === "Enter") {
+      e.preventDefault();
+      pick(arr.length === 1 ? arr[0] : arr[selected]);
+      return;
+    }
+
     if (e.key === "Tab") {
       e.preventDefault();
-      pick(arr[selected]);
+      pick(arr.length === 1 ? arr[0] : arr[selected]);
+      return;
     }
   };
 
@@ -133,16 +167,17 @@ const AutoCompleteInput: React.FC<Props> = ({
   );
 
   useEffect(() => {
-    resultRef.current?.scrollIntoView({ block: "nearest" });
+    const el = itemRefs.current[selected];
+    el?.scrollIntoView({ block: "nearest", inline: "nearest" });
   }, [selected]);
 
   useEffect(() => {
-    if (inputTypeData?.input_type === "invalid_input") {
-      setIsInputDisabled(true);
-    } else {
-      setIsInputDisabled(false);
-    }
+    setIsInputDisabled(inputTypeData?.input_type === "invalid_input");
   }, [inputTypeData?.input_type]);
+
+  useEffect(() => {
+    if (inputTypeData?.input_value) setSelected(0);
+  }, [inputTypeData?.input_value]);
 
   const renderOptions = (d: Hive.InputTypeResponse) => {
     if (d.input_type === "invalid_input") {
@@ -156,18 +191,28 @@ const AutoCompleteInput: React.FC<Props> = ({
     const resType = getResultTypeHeader(d);
     const arr = Array.isArray(d.input_value) ? d.input_value : [d.input_value];
 
+    itemRefs.current = arr.map((_, i) => itemRefs.current[i] || null);
+
     return (
       <div
-        className="autocomplete-result-container !h-[200px] !border border-explorer-light-gray dark:border-explorer-dark-gray !bg-theme scrollbar-autocomplete"
-        ref={resultRef}
+        className="autocomplete-result-container !h-[200px] !overflow-auto !border border-explorer-light-gray dark:border-explorer-dark-gray !bg-theme scrollbar-autocomplete"
+        ref={containerRef}
+        role="listbox"
+        aria-activedescendant={String(selected)}
       >
         {arr.map((acc, i) => (
           <div
             key={acc}
+            ref={(el) => {
+              itemRefs.current[i] = el;
+            }}
             className={cn("autocomplete-result-item cursor-pointer", {
               "bg-navbar-listHover": selected === i,
             })}
+            role="option"
+            aria-selected={selected === i}
             onClick={() => pick(acc)}
+            onMouseEnter={() => setSelected(i)}
           >
             {linkResult ? (
               <>
@@ -224,6 +269,16 @@ const AutoCompleteInput: React.FC<Props> = ({
           onBlur={onBlur}
           onFocus={() => setInputFocus(true)}
           onKeyDown={!isInputDisabled ? handleKeyDown : undefined}
+          aria-expanded={
+            !!(
+              inputFocus &&
+              value &&
+              value.length &&
+              inputTypeData?.input_value
+            )
+          }
+          aria-autocomplete="list"
+          aria-controls="autocomplete-listbox"
         />
         {value ? (
           <X
@@ -239,7 +294,10 @@ const AutoCompleteInput: React.FC<Props> = ({
       </div>
 
       {inputFocus && value && value.length && inputTypeData?.input_value && (
-        <div className="absolute bg-theme w-full rounded-lg shadow-lg z-50">
+        <div
+          id="autocomplete-listbox"
+          className="absolute bg-theme w-full rounded-lg shadow-lg z-50"
+        >
           {renderOptions(inputTypeData)}
         </div>
       )}
