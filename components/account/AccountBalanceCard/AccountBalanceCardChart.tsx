@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis } from 'recharts';
-import { Lock, PiggyBank, Droplets, Database, TrendingDown } from 'lucide-react';
+import { Lock, PiggyBank, Droplets, Database, TrendingDown, MessageSquareLockIcon, Shield, Zap } from 'lucide-react';
 import { useI18n } from '@/i18n/i18n';
 import { cn } from '@/lib/utils';
 
@@ -25,7 +25,6 @@ export const AccountBalanceCardChart: React.FC<AccountBalanceCardChartProps> = (
 
   const adjustedChartSegments = useMemo(() => {
     const MINIMUM_PERCENTAGE = 1.5;
-    
     // filter out any segments that are too small to be visually relevant (will round to 0.0%).
     const visibleSegments = segments.filter(s => s.percent >= 0.1);
     
@@ -66,7 +65,8 @@ export const AccountBalanceCardChart: React.FC<AccountBalanceCardChartProps> = (
   
   const poweringDownSegment = segments.find(s => s.key === 'poweringDown');
   const mainSegments = segments.filter(s => s.key !== 'poweringDown');
-  const iconMap = { staked: Lock, savings: PiggyBank, liquid: Droplets, unclaimed: Database, poweringDown: TrendingDown };
+  console.log('mainSegments',mainSegments);
+  const iconMap = { staked: Zap, savings: PiggyBank, liquid: Droplets, unclaimed: Database, poweringDown: TrendingDown ,locked:Lock };
 
 
   return (

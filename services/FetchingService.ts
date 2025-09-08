@@ -769,6 +769,17 @@ class FetchingService {
    async getBlockChainProps(): Promise<Hive.BlockChainProps> {
     return await this.extendedHiveChain!.api.condenser_api.get_chain_properties([]);
   }
+
+  async getAccountBalances(
+    accountName: string
+  ): Promise<Hive.AccountBalancesResponse> {
+    return await this.extendedHiveChain!.restApi[
+      "balance-api"
+    ].accountBalances({
+      accountName,
+    });
+  }
+
 }
 
 const fetchingService = new FetchingService();

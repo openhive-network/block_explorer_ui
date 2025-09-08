@@ -343,6 +343,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
                 <AccountBalanceCard
                   header={t("accountDetailsSection.wallet")}
                   userDetails={accountDetails}
+                  accountName = {accountName}
                   isInitiallyOpen={tabExpandedStates.wallet}
                 />
                 <AccountBalanceHistoryCard
@@ -536,6 +537,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
           <div className="space-y-4">
             <AccountBalanceCard
               header={t("accountDetailsSection.wallet")}
+              accountName={accountName}
               userDetails={accountDetails}
               isInitiallyOpen={false}
             />
