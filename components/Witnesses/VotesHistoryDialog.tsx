@@ -41,6 +41,7 @@ import DataExport from "../DataExport";
 import SearchRanges from "../searchRanges/SearchRanges";
 import Hive from "@/types/Hive";
 import VotesHistoryWidget from "./VotesHistoryChart";
+import { useSettings } from "@/contexts/SettingsContext";
 
 type VotesHistoryDialogProps = {
   accountName: string;
@@ -59,9 +60,11 @@ const VotesHistoryDialog: React.FC<VotesHistoryDialogProps> = ({
 }) => {
   const { t } = useI18n();
 
+  const { settings } = useSettings();
+
   // State for UI controls and inputs
   const [pageNum, setPageNum] = useState<number>(1);
-  const [isHP, setIsHP] = useState<boolean>(true);
+  const [isHP, setIsHP] = useState<boolean>(settings.displayMode === "hp");
   const [voterNameInput, setVoterNameInput] = useState<string>("");
   const [isSearchButtonDisabled, setIsSearchButtonDisabled] = useState(false);
   const searchRanges = useSearchRanges();
