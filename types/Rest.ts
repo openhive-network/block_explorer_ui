@@ -83,6 +83,11 @@ export const extendedRest = {
       params: Hive.TransactionStatisticsParams,
       result: Hive.TransactionStatisticsResponse,
       urlPath: "transaction-statistics",
+    },
+    proxyPower: {
+      params: Hive.ProxyPowerParams,
+      result: Hive.ProxyPowerResponse,
+      urlPath: "accounts/{accountName}/proxy-power",
     }
   },
   "hafah-api": {

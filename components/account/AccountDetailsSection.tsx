@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 
 import { config } from "@/Config";
 import useWitnessDetails from "@/hooks/api/common/useWitnessDetails";
@@ -41,6 +41,8 @@ import {
 import { Button } from "../ui/button";
 import { useSettings } from "@/contexts/SettingsContext";
 import useConvertedVestingShares from "@/hooks/common/useConvertedVestingShares";
+import useProxyPower from "@/hooks/api/accountPage/useProxyPower";
+import AccountProxyPowerCard from "./AccountProxyPowerCard"; // <-- 1. Import the new card
 
 interface AccountDetailsSectionProps {
   accountName: string;
@@ -91,6 +93,8 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
     liveDataEnabled
   );
 
+  const { accountProxyPower } = useProxyPower(accountName, 1);
+
   const hasDelegationsContent = useMemo(() => {
     const hasOutgoingVesting =
       outgoingVestingDelegations && outgoingVestingDelegations.length > 0;
@@ -109,8 +113,9 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
       (accountDetails?.witness_votes &&
         accountDetails.witness_votes.length > 0) ||
       !!accountDetails?.proxy;
-    return hasWitnessVotes || !!accountDetails?.is_witness;
-  }, [accountDetails]);
+    const hasProxyPower = accountProxyPower && accountProxyPower.length > 0;
+    return hasWitnessVotes || !!accountDetails?.is_witness || hasProxyPower;
+  }, [accountDetails, accountProxyPower]);
 
   const [isVotersModalOpen, setIsVotersModalOpen] = useState(false);
   const [isVotesHistoryModalOpen, setIsVotesHistoryModalOpen] = useState(false);
@@ -189,6 +194,11 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
         accountName={accountName}
         proxy={accountDetails.proxy}
         isInitiallyOpen={isInitiallyOpen}
+      />
+      <AccountProxyPowerCard
+        accountName={accountName}
+        isInitiallyOpen={isInitiallyOpen}
+        dynamicGlobalData={dynamicGlobalData}
       />
       {accountDetails.is_witness &&
         !isWitnessDetailsError &&
@@ -460,6 +470,11 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
                     accountName={accountName}
                     proxy={accountDetails.proxy}
                     isInitiallyOpen={tabExpandedStates.governance}
+                  />
+                  <AccountProxyPowerCard
+                    accountName={accountName}
+                    isInitiallyOpen={tabExpandedStates.governance}
+                    dynamicGlobalData={dynamicGlobalData}
                   />
                   {accountDetails.is_witness &&
                     !isWitnessDetailsError &&

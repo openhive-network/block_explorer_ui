@@ -31,6 +31,7 @@
   "common.vests": "VESTS",
   "common.hp": "HP",
   "common.proxySuffix": "(代理)",
+  "common.page": "页",
   "currentBlockCard.currentBlock": "当前区块",
   "currentBlockCard.secsAgo": "秒前",
   "currentBlockCard.transactions": "交易",
@@ -911,5 +912,8 @@
   "accountSearch.accountReactResults": "账户搜索结果",
   "blockDetails.blockDetails": "区块详情",
   "commentsSearch.commentSearchResults": "评论搜索结果",
-  "transactionPage.transactionDetailsRefferer": "交易详情"
+  "transactionPage.transactionDetailsRefferer": "交易详情",
+  "accountProxyPowerCard.proxyPowerReceived": "收到的代理权",
+  "accountProxyPowerCard.proxiedBy": "代理来源",
+  "accountProxyPowerCard.power": "代理能量"
 }

@@ -31,6 +31,7 @@
   "common.vests": "VESTS",
   "common.hp": "HP",
   "common.proxySuffix": "(proxy)",
+  "common.page": "strona",
   "currentBlockCard.currentBlock": "Bieżący Blok",
   "currentBlockCard.secsAgo": "sekund temu",
   "currentBlockCard.transactions": "Transakcje",
@@ -911,5 +912,8 @@
   "accountSearch.accountReactResults": "wyniki_wyszukiwania_konta",
   "blockDetails.blockDetails": "szczegoly_bloku",
   "commentsSearch.commentSearchResults": "wyniki_wyszukiwania_komentarzy",
-  "transactionPage.transactionDetailsRefferer": "szczegoly_transakcji"
+  "transactionPage.transactionDetailsRefferer": "szczegoly_transakcji",
+  "accountProxyPowerCard.proxyPowerReceived": "Otrzymana Moc Proxy",
+  "accountProxyPowerCard.proxiedBy": "Delegowane przez",
+  "accountProxyPowerCard.power": "Delegowana Moc"
 }

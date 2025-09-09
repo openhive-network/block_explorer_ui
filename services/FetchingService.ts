@@ -769,6 +769,18 @@ class FetchingService {
    async getBlockChainProps(): Promise<Hive.BlockChainProps> {
     return await this.extendedHiveChain!.api.condenser_api.get_chain_properties([]);
   }
+
+  async getProxyPower(
+    accountName: string,
+    page: number,
+  ): Promise<Hive.ProxyPowerResponse> {
+    return await this.extendedHiveChain!.restApi[
+      "hafbe-api"
+    ].proxyPower({
+      accountName,
+      page
+    });
+  }
 }
 
 const fetchingService = new FetchingService();

@@ -31,6 +31,7 @@
   "common.vests": "VESTS",
   "common.hp": "HP",
   "common.proxySuffix": "(プロキシ)",
+  "common.page": "ページ",
   "currentBlockCard.currentBlock": "現在のブロック",
   "currentBlockCard.secsAgo": "秒前",
   "currentBlockCard.transactions": "トランザクション",
@@ -911,5 +912,8 @@
   "accountSearch.accountReactResults": "アカウント検索結果",
   "blockDetails.blockDetails": "ブロック詳細",
   "commentsSearch.commentSearchResults": "コメント検索結果",
-  "transactionPage.transactionDetailsRefferer": "取引詳細"
+  "transactionPage.transactionDetailsRefferer": "取引詳細",
+  "accountProxyPowerCard.proxyPowerReceived": "受信したプロキシパワー",
+  "accountProxyPowerCard.proxiedBy": "代理元",
+  "accountProxyPowerCard.power": "代理パワー"
 }

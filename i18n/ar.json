@@ -31,6 +31,7 @@
   "common.vests": "فيستس",
   "common.hp": "HP",
   "common.proxySuffix": "(بروكسي)",
+  "common.page": "صفحة",
   "currentBlockCard.currentBlock": "البلوك الحالي",
   "currentBlockCard.secsAgo": "ثانية مضت",
   "currentBlockCard.transactions": "المعاملات",
@@ -911,5 +912,8 @@
   "accountSearch.accountReactResults": "نتائج_البحث_عن_الحساب",
   "blockDetails.blockDetails": "تفاصيل_الكتلة",
   "commentsSearch.commentSearchResults": "نتائج_البحث_عن_التعليقات",
-  "transactionPage.transactionDetailsRefferer": "تفاصيل_المعاملة"
+  "transactionPage.transactionDetailsRefferer": "تفاصيل_المعاملة",
+  "accountProxyPowerCard.proxyPowerReceived": "القوة المُفوَّضة",
+  "accountProxyPowerCard.proxiedBy": "مُفوَّض من",
+  "accountProxyPowerCard.power": "القوة المُفوَّضة"
 }

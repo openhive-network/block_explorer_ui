@@ -1092,8 +1092,19 @@ namespace Hive {
     maximum_block_size!: number;
     hbd_interest_rate!: number;
     account_subsidy_limit!: number;
-
   }
+
+  export class ProxyPowerParams {
+    accountName!: string;
+    page!: number;
+  }
+
+  export class ProxyPowerResponse {
+    account!: string;
+    proxy_date!: Date;
+    proxied_vests!: string;
+  }
+
 }
 
 export default Hive;

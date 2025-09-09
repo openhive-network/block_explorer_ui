@@ -31,6 +31,7 @@
   "common.vests": "VESTS",
   "common.hp": "HP",
   "common.proxySuffix": "(프록시)",
+  "common.page": "페이지",
   "currentBlockCard.currentBlock": "현재 블록",
   "currentBlockCard.secsAgo": "초 전",
   "currentBlockCard.transactions": "트랜잭션",
@@ -911,5 +912,8 @@
   "accountSearch.accountReactResults": "계정_검색_결과",
   "blockDetails.blockDetails": "블록_세부정보",
   "commentsSearch.commentSearchResults": "댓글_검색_결과",
-  "transactionPage.transactionDetailsRefferer": "거래_세부정보"
+  "transactionPage.transactionDetailsRefferer": "거래_세부정보",
+  "accountProxyPowerCard.proxyPowerReceived": "받은 프록시 파워",
+  "accountProxyPowerCard.proxiedBy": "프록시 제공자",
+  "accountProxyPowerCard.power": "프록시된 파워"
 }

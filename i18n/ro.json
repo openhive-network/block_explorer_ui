@@ -31,6 +31,7 @@
   "common.vests": "VESTS",
   "common.hp": "HP",
   "common.proxySuffix": "(proxy)",
+  "common.page": "pagină",
   "currentBlockCard.currentBlock": "Blocul Curent",
   "currentBlockCard.secsAgo": "secunde în urmă",
   "currentBlockCard.transactions": "Tranzacții",
@@ -910,5 +911,8 @@
   "accountSearch.accountReactResults": "rezultate_cautare_cont",
   "blockDetails.blockDetails": "detalii_bloc",
   "commentsSearch.commentSearchResults": "rezultate_cautare_comentarii",
-  "transactionPage.transactionDetailsRefferer": "detalii_tranzactie"
+  "transactionPage.transactionDetailsRefferer": "detalii_tranzactie",
+  "accountProxyPowerCard.proxyPowerReceived": "Putere Proxy Primită",
+  "accountProxyPowerCard.proxiedBy": "Delegat de",
+  "accountProxyPowerCard.power": "Putere Delegată"
 }
