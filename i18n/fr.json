@@ -712,6 +712,7 @@
   "accountFollowingDialog.noResultsFound": "Aucun compte trouvé correspondant à votre recherche.",
   "accountFollowingDialog.followingHeader": "Compte",
   "accountMainCard.subscriptions": "Communautés",
+  "accountMainCard.resourcesHeader": "Ressources",
   "accountSubscriptionsDialog.title": "Abonnements aux Communautés",
   "accountSubscriptionsDialog.searchPlaceholder": "Rechercher des communautés...",
   "accountSubscriptionsDialog.subscriptionsDataType": "Abonnements",
