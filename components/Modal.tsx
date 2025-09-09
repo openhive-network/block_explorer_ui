@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import BalanceHistoryChart from "@/components/balanceHistory/BalanceHistoryChart";
 import useBalanceHistory from "@/hooks/api/balanceHistory/useBalanceHistory";
 
@@ -17,6 +17,21 @@ const BalanceHistoryModal: React.FC<BalanceHistoryModalProps> = ({
 
   const { accountBalanceHistory, isAccountBalanceHistoryLoading, isAccountBalanceHistoryError } =
     useBalanceHistory(username, selectedCoinType, 1, 100, "asc");
+
+  // Map API result to chart-compatible format
+  const parsedOperations = useMemo(() => {
+    return accountBalanceHistory?.operations_result?.map((op: any) => ({
+      timestamp: op.timestamp,
+      balance: Number(op.balance || 0),
+      balance_change: Number(op.balance_change || 0),
+      savings_balance: op.savings_balance !== undefined ? Number(op.savings_balance) : undefined,
+      savings_balance_change:
+        op.savings_balance_change !== undefined ? Number(op.savings_balance_change) : undefined,
+      hivePrice: op.hivePrice || "0",
+      dollarValue: op.dollarValue !== undefined ? Number(op.dollarValue) : undefined,
+      convertedHive: op.convertedHive !== undefined ? Number(op.convertedHive) : undefined,
+    }));
+  }, [accountBalanceHistory]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -48,14 +63,14 @@ const BalanceHistoryModal: React.FC<BalanceHistoryModalProps> = ({
           <p>Loading balance history...</p>
         ) : isAccountBalanceHistoryError ? (
           <p>Error loading balance history.</p>
-        ) : !accountBalanceHistory?.operations_result?.length ? (
+        ) : !parsedOperations?.length ? (
           <p>No balance history available.</p>
         ) : (
           <div className="w-full h-80">
             <BalanceHistoryChart
-              hiveBalanceHistoryData={selectedCoinType === "HIVE" ? accountBalanceHistory.operations_result : undefined}
-              vestsBalanceHistoryData={selectedCoinType === "VESTS" ? accountBalanceHistory.operations_result : undefined}
-              hbdBalanceHistoryData={selectedCoinType === "HBD" ? accountBalanceHistory.operations_result : undefined}
+              hiveBalanceHistoryData={selectedCoinType === "HIVE" ? parsedOperations : undefined}
+              vestsBalanceHistoryData={selectedCoinType === "VESTS" ? parsedOperations : undefined}
+              hbdBalanceHistoryData={selectedCoinType === "HBD" ? parsedOperations : undefined}
               className="h-80 w-full"
               quickView={false}
             />
