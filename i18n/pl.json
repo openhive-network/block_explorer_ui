@@ -923,5 +923,11 @@
   "modal.loading": "Ładowanie...",
   "modal.noHistory": "Brak dostępnej historii.",
   "modal.error": "Błąd podczas ładowania historii salda.",
-  "modal.close": "Zamknij"
+  "modal.close": "Zamknij",
+  "topHoldersPage.infoDescription": "Ta strona pokazuje największych posiadaczy każdej monety. Użyj filtrów, aby wyszukiwać, sortować i wybierać salda.",
+"filters.ascending": "Rosnąco",
+"filters.descending": "Malejąco",
+"filters.searchUser": "Szukaj użytkownika"
+
+
 }

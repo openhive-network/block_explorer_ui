@@ -922,5 +922,10 @@
   "modal.loading": "Chargement...",
   "modal.noHistory": "Aucun historique disponible.",
   "modal.error": "Erreur lors du chargement de l'historique du solde.",
-  "modal.close": "Fermer"
+  "modal.close": "Fermer",
+  "topHoldersPage.infoDescription": "Cette page affiche les principaux détenteurs de chaque crypto-monnaie. Utilisez les filtres pour rechercher, trier et sélectionner les soldes.",
+"filters.ascending": "Croissant",
+"filters.descending": "Décroissant",
+"filters.searchUser": "Rechercher un utilisateur"
+
 }

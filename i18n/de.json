@@ -923,5 +923,10 @@
   "modal.loading": "Lädt...",
   "modal.noHistory": "Keine Historie verfügbar.",
   "modal.error": "Fehler beim Laden des Kontostandverlaufs.",
-  "modal.close": "Schließen"
+  "modal.close": "Schließen",
+  "topHoldersPage.infoDescription": "Diese Seite zeigt die Top-Inhaber jeder Münze. Verwenden Sie Filter, um zu suchen, zu sortieren und Guthaben auszuwählen.",
+"filters.ascending": "Aufsteigend",
+"filters.descending": "Absteigend",
+"filters.searchUser": "Nach Benutzer suchen"
+
 }

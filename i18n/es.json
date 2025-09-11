@@ -922,5 +922,9 @@
   "modal.loading": "Cargando...",
   "modal.noHistory": "No hay historial disponible.",
   "modal.error": "Error al cargar el historial de saldo.",
-  "modal.close": "Cerrar"
+  "modal.close": "Cerrar",
+  "topHoldersPage.infoDescription": "Esta página muestra los principales poseedores de cada moneda. Usa los filtros para buscar, ordenar y seleccionar saldos.",
+"filters.ascending": "Ascendente",
+"filters.descending": "Descendente",
+"filters.searchUser": "Buscar por usuario"
 }

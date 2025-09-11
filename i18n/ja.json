@@ -923,5 +923,11 @@
   "modal.loading": "読み込み中...",
   "modal.noHistory": "履歴はありません。",
   "modal.error": "残高履歴の読み込み中にエラーが発生しました。",
-  "modal.close": "閉じる"
+  "modal.close": "閉じる",
+  "topHoldersPage.infoDescription": "このページでは、各コインの上位保有者を表示します。フィルターを使用して検索、並べ替え、残高を選択してください。",
+"filters.ascending": "昇順",
+"filters.descending": "降順",
+"filters.searchUser": "ユーザーで検索"
+
+
 }

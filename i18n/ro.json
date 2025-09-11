@@ -922,5 +922,11 @@
   "modal.loading": "Se încarcă...",
   "modal.noHistory": "Nu există istoric disponibil.",
   "modal.error": "Eroare la încărcarea istoricului soldului.",
-  "modal.close": "Închide"
+  "modal.close": "Închide",
+  "topHoldersPage.infoDescription": "Această pagină arată cei mai importanți deținători pentru fiecare monedă. Folosiți filtrele pentru a căuta, sorta și selecta soldurile.",
+"filters.ascending": "Ascendent",
+"filters.descending": "Descendent",
+"filters.searchUser": "Căutați după utilizator"
+
+
 }

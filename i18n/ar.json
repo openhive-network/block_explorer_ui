@@ -923,6 +923,10 @@
   "modal.loading": "جار التحميل...",
   "modal.noHistory": "لا يوجد تاريخ متاح.",
   "modal.error": "خطأ في تحميل تاريخ الرصيد.",
-  "modal.close": "إغلاق"
+  "modal.close": "إغلاق",
+  "topHoldersPage.infoDescription": "تُظهر هذه الصفحة أكبر الحائزين لكل عملة. استخدم الفلاتر للبحث، والفرز، وتحديد الأرصدة.",
+"filters.ascending": "تصاعدي",
+"filters.descending": "تنازلي",
+"filters.searchUser":"البحث عن مستخدم"
   
 }

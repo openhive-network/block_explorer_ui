@@ -924,5 +924,11 @@
   ,"accountSearch.accountReactResults": "resultados_pesquisa_conta",
   "blockDetails.blockDetails": "detalhes_bloco",
   "commentsSearch.commentSearchResults": "resultados_pesquisa_comentarios",
-  "transactionPage.transactionDetailsRefferer": "detalhes_transacao"
+  "transactionPage.transactionDetailsRefferer": "detalhes_transacao",
+  "topHoldersPage.infoDescription": "Esta página mostra os principais detentores de cada moeda. Use os filtros para pesquisar, classificar e selecionar saldos.",
+"filters.ascending": "Ascendente",
+"filters.descending": "Descendente",
+"filters.searchUser": "Pesquisar por usuário"
+
+
 }

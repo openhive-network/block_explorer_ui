@@ -919,5 +919,11 @@
   ,"accountSearch.accountReactResults": "risultati_ricerca_account",
   "blockDetails.blockDetails": "dettagli_blocco",
   "commentsSearch.commentSearchResults": "risultati_ricerca_commenti",
-  "transactionPage.transactionDetailsRefferer": "dettagli_transazione"
+  "transactionPage.transactionDetailsRefferer": "dettagli_transazione",
+  "topHoldersPage.infoDescription": "Questa pagina mostra i principali detentori di ogni moneta. Usa i filtri per cercare, ordinare e selezionare i saldi.",
+"filters.ascending": "Crescente",
+"filters.descending": "Decrescente",
+"filters.searchUser": "Cerca per utente"
+
+
 }
