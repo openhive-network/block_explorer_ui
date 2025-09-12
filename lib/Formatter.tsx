@@ -157,6 +157,30 @@ class OperationsFormatter implements IWaxCustomFormatter {
     );
   }
 
+  private getProposalLink(proposalId: number): React.JSX.Element {
+    return (
+        <Link href={`/proposals/?ID=${proposalId}`} key={`proposal-${proposalId}`}>
+            <span className="text-link">{proposalId}</span>
+        </Link>
+    );
+  }
+
+ private generateProposalLinks(proposalIds: readonly string[]): (React.JSX.Element | string)[] {
+    if (!proposalIds || proposalIds.length === 0) {
+        return [];
+    }
+    return proposalIds.flatMap((id: string, index: number) => {
+        const link = this.getProposalLink(parseInt(id, 10));        
+        // If it's the first item, just return the link.
+        if (index === 0) {
+            return [link];
+        }
+        // For subsequent items, return a comma separator and then the link.
+        return [", ", link];
+    });
+}
+
+
   private getOperationMemo(
     memo: string | undefined
   ): React.JSX.Element | string {
@@ -1339,17 +1363,19 @@ formatSetWithdrawVestingRouteOperation({
     target,
   }: IFormatFunctionArguments<{ value: update_proposal_votes }>) {
     let message: string | React.JSX.Element = "";
+    const proposalLinks = this.generateProposalLinks(op.proposal_ids);
+
     if (op.approve) {
       message = this.generateReactLink([
         this.getAccountLink(op.voter),
         this.i18n.t("formatter.formatUpdateProposalVotesOperation.approvedProposalPrefix"),
-        `${op.proposal_ids}`,
+       ...proposalLinks,
       ]);
     } else {
       message = this.generateReactLink([
         this.getAccountLink(op.voter),
         this.i18n.t("formatter.formatUpdateProposalVotesOperation.removedApprovalPrefix"),
-        `${op.proposal_ids}`,
+        ...proposalLinks,
       ]);
     }
     return {
@@ -1366,10 +1392,13 @@ formatSetWithdrawVestingRouteOperation({
     source: { value: op },
     target,
   }: IFormatFunctionArguments<{ value: remove_proposal }>) {
+    
+    const proposalLinks = this.generateProposalLinks(op.proposal_ids);
+
     const message = this.generateReactLink([
       this.getAccountLink(op.proposal_owner),
       this.i18n.t("formatter.formatRemoveProposalOperation.actionPrefix"),
-      `${op.proposal_ids}`,
+      ...proposalLinks,
     ]);
     return {
       ...target,
@@ -1389,7 +1418,7 @@ formatSetWithdrawVestingRouteOperation({
     const message = this.generateReactLink([
       this.getAccountLink(op.creator),
       this.i18n.t("formatter.formatUpdateProposalOperation.updatedProposal"),
-      op.proposal_id,
+      this.getProposalLink(parseInt(op.proposal_id, 10)),
       this.i18n.t("formatter.formatUpdateProposalOperation.prepositionFor"),
       this.getFormattedAmount(op.daily_pay),
       this.i18n.t("formatter.formatUpdateProposalOperation.dailyDetails"),
@@ -1812,7 +1841,7 @@ formatSetWithdrawVestingRouteOperation({
       this.i18n.t("formatter.formatProposalPayOperation.wasPaid"),
       this.getFormattedAmount(op.payment),
       this.i18n.t("formatter.formatProposalPayOperation.forHisProposal"),
-      String(op.proposal_id),
+      this.getProposalLink(op.proposal_id),
       this.i18n.t("formatter.formatProposalPayOperation.byPayer"),
       this.getAccountLink(op.payer),
     ]);
@@ -2278,7 +2307,7 @@ formatSetWithdrawVestingRouteOperation({
       this.i18n.t("formatter.formatProposalFeeOperations.gotProposalFee"),
       this.getFormattedAmount(op.fee),
       this.i18n.t("formatter.formatProposalFeeOperations.idPrefix"),
-      String(op.proposal_id),
+      this.getProposalLink(op.proposal_id),
       this.i18n.t("formatter.formatProposalFeeOperations.prepositionFrom"),
       this.getAccountLink(op.treasury),
     ]);

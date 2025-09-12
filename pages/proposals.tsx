@@ -25,6 +25,7 @@ import useGetAccounts from "@/hooks/api/proposals/useGetAccounts";
 import { grabNumericValue, isHiveAccountName } from "@/utils/StringUtils";
 import { BudgetsSection } from "@/components/proposals/BudgetsSection";
 import useDebounce from "@/hooks/common/useDebounce";
+import useFindProposal from "@/hooks/api/proposals/useFindProposal";
 
 export type MatchDetails = {
   isCreatorMatch: boolean;
@@ -47,22 +48,38 @@ const ProposalsPage = () => {
   useEffect(() => {
     if (!router.isReady) return;
     const queryStatus = router.query.status as ProposalStatusFilter;
-    const querySearch = (router.query.q as string) || "";
+    const queryId = router.query.ID as string;
+    const querySearch = router.query.q as string;
     const newStatus = ['all', 'active', 'inactive', 'expired'].includes(queryStatus) 
       ? queryStatus 
-      : (querySearch ? 'all' : 'active');
+      : (queryId || querySearch) // If an ID or text search exists, default to 'all' status
+      ? "all" 
+      : "active";
+      
     setStatusFilter(newStatus);
-    setSearchQuery(querySearch);
+    setSearchQuery(queryId || querySearch || "");
   }, [router.isReady, router.asPath]);
 
   const debouncedUpdateUrl = useDebounce((query: string) => {
     const newQuery = { ...router.query };
+    // Clear previous search parameters first
+    delete newQuery.q;
+    delete newQuery.ID;
+
     if (query) {
-      newQuery.q = query;
-    } else {
-      delete newQuery.q;
+      const numericId = parseInt(query.trim(), 10);
+      const isIdSearch = !isNaN(numericId) && numericId.toString() === query.trim();
+      
+      if (isIdSearch) {
+        newQuery.ID = query;
+      } else {
+        newQuery.q = query;
+      }
     }
-    router.push({ pathname: router.pathname, query: newQuery }, undefined, { shallow: true });
+    
+    router.push({ pathname: router.pathname, query: newQuery }, undefined, {
+      shallow: true,
+    });
   }, 500);
 
   const handleSearchChange = (query: string) => {
@@ -78,6 +95,11 @@ const ProposalsPage = () => {
   const handleSortChange = (order: ProposalSortOrder) => setSortOrder(order);
   const handleSortDirectionChange = (direction: ProposalSortDirection) => setSortDirection(direction);
 
+  const proposalIdSearch = useMemo(() => {
+    const num = parseInt(searchQuery.trim(), 10);
+    return !isNaN(num) && num.toString() === searchQuery.trim() ? num : null;
+  }, [searchQuery]);
+
   const { accountsData } = useGetAccounts(["hive.fund"]) as any;
 
   const totalBudgetNumber = grabNumericValue(
@@ -88,11 +110,16 @@ const ProposalsPage = () => {
 
   const apiStatus = statusFilter === "inactive" ? "all" : statusFilter;
 
+  const { foundProposalData, isFindProposalLoading } = useFindProposal(proposalIdSearch);
+
   const { proposalsData, isProposalsLoading, isProposalsError } = useProposals({
     status: apiStatus,
     orderBy: sortOrder,
     direction: sortDirection,
+    enabled: proposalIdSearch === null,
   });
+  
+  const proposalsToRender = proposalIdSearch !== null ? foundProposalData : proposalsData;
 
   const voterSearchQuery = isHiveAccountName(searchQuery) ? searchQuery : "";
   const { votedProposalIds, isLoading: isVoterListLoading } = useVoterProposals(voterSearchQuery);
@@ -107,71 +134,45 @@ const ProposalsPage = () => {
     if (!proposalsDataForBudget || proposalsDataForBudget.length === 0) {
       return { dailyFunded: 0 };
     }
-
     const now = new Date();
-
-    const ordered = [...proposalsDataForBudget].sort(
-      (a, b) => parseFloat(b.total_votes) - parseFloat(a.total_votes)
-    );
-
+    const ordered = [...proposalsDataForBudget].sort((a, b) => parseFloat(b.total_votes) - parseFloat(a.total_votes));
     const idxReturn = ordered.findIndex((p) => p.proposal_id === 0);
-    const aboveReturn =
-      idxReturn === -1 ? ordered : ordered.slice(0, idxReturn);
-
-    const activeOnly = aboveReturn.filter(
-      (p) => now >= p.start_date && now <= p.end_date
-    );
-
+    const aboveReturn = idxReturn === -1 ? ordered : ordered.slice(0, idxReturn);
+    const activeOnly = aboveReturn.filter((p) => now >= p.start_date && now <= p.end_date);
     let sum = 0;
     for (const p of activeOnly) {
       const dp = grabNumericValue(p.daily_pay) as number;
       if (sum + dp <= dailyBudgetNumber) sum += dp;
       else break;
     }
-
     return { dailyFunded: sum };
   }, [dailyBudgetNumber, proposalsDataForBudget]);
 
   const { enrichedProposals, fundingThreshold } = useMemo(() => {
-    if (!proposalsData || proposalsData.length === 0) {
+    if (!proposalsToRender || proposalsToRender.length === 0) {
       return {
         enrichedProposals: [],
         fundingThreshold: 0,
       };
     }
-
-    const rawReturnProposal = proposalsData.find((p) => p.proposal_id === 0);
-    const threshold = rawReturnProposal
-      ? parseFloat(rawReturnProposal.total_votes)
-      : 0;
-
+    const rawReturnProposal = proposalsToRender.find((p) => p.proposal_id === 0);
+    const threshold = rawReturnProposal ? parseFloat(rawReturnProposal.total_votes) : 0;
     const now = new Date();
-
-    const allEnriched = proposalsData.map((proposal) => {
+    const allEnriched = proposalsToRender.map((proposal) => {
       let status: "active" | "expired" | "inactive";
-
-      if (now < proposal.start_date) {
-        status = "inactive";
-      } else if (now > proposal.end_date) {
-        status = "expired";
-      } else {
-        status = "active";
-      }
-
-      return {
-        ...proposal,
-        status: status,
-        isFunded: parseFloat(proposal.total_votes) > threshold,
-      };
+      if (now < proposal.start_date) { status = "inactive"; } 
+      else if (now > proposal.end_date) { status = "expired"; } 
+      else { status = "active"; }
+      return { ...proposal, status, isFunded: parseFloat(proposal.total_votes) > threshold };
     });
-
-    return {
-      enrichedProposals: allEnriched,
-      fundingThreshold: threshold,
-    };
-  }, [proposalsData]);
+    return { enrichedProposals: allEnriched, fundingThreshold: threshold };
+  }, [proposalsToRender]); // Dependency is now correct
 
   const searchedProposals = useMemo(() => {
+    if (proposalIdSearch !== null) {
+      return enrichedProposals.map((p) => ({ ...p, matchDetails: { isCreatorMatch: false, isVoterMatch: false, isTitleMatch: false } }));
+    }
+
     const preFilteredProposals = enrichedProposals.filter(proposal => {
       if (statusFilter === 'all') return true;
       return proposal.status === statusFilter;
@@ -188,16 +189,12 @@ const ProposalsPage = () => {
       const isCreatorMatch = proposal.creator.toLowerCase() === lowerQuery;
       const isVoterMatch = voterSearchQuery !== "" && votedIdsSet.has(proposal.proposal_id);
       const isTitleMatch = !isCreatorMatch && proposal.subject.toLowerCase().includes(lowerQuery);
-
       if (isCreatorMatch || isVoterMatch || isTitleMatch) {
-        accumulator.push({
-          ...proposal,
-          matchDetails: { isCreatorMatch, isVoterMatch, isTitleMatch },
-        });
+        accumulator.push({ ...proposal, matchDetails: { isCreatorMatch, isVoterMatch, isTitleMatch } });
       }
       return accumulator;
     }, [] as (typeof enrichedProposals[0] & { matchDetails: MatchDetails })[]);
-  }, [enrichedProposals, statusFilter, searchQuery, votedProposalIds, voterSearchQuery]);
+  }, [enrichedProposals, statusFilter, searchQuery, votedProposalIds, voterSearchQuery, proposalIdSearch]);
 
   const searchedReturnProposal = useMemo(() => searchedProposals.find((p) => p.proposal_id === 0), [searchedProposals]);
   const fundedProposals = useMemo(() => searchedProposals.filter((p) => p.isFunded && p.proposal_id !== 0), [searchedProposals]);
@@ -208,7 +205,9 @@ const ProposalsPage = () => {
       return <ErrorMessage message={t("proposalsPage.errorMessage")} />;
     }
 
-    const isLoading = isProposalsLoading || (voterSearchQuery !== "" && isVoterListLoading);
+    const isLoading = proposalIdSearch !== null
+        ? isFindProposalLoading
+        : isProposalsLoading || (voterSearchQuery !== "" && isVoterListLoading);
 
     if (isLoading) {
       return (
