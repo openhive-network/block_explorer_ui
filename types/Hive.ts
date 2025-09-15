@@ -1095,17 +1095,16 @@ namespace Hive {
 
   }
   export class GetTopHoldersParams {
-  "coin-type"!: string;
-  "balance-type"!: string;
-  page!: number;
-  "page-size"?: number;
-}
+    "coin-type"!: string;
+    "balance-type"!: string;
+    page!: number;
+  }
 
-export class TopHolder {
-  rank!: number;
-  account!: string;
-  value!: string;
-}
+  export class TopHolder {
+    rank!: number;
+    account!: string;
+    value!: string;
+  }
 
 }
 
