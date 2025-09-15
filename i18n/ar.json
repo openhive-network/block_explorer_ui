@@ -765,7 +765,7 @@
   "proposalControls.statusActive": "نشطة",
   "proposalControls.statusExpired": "منتهية الصلاحية",
   "proposalControls.statusAll": "الكل",
-  "proposalControls.searchPlaceholder": "بحث حسب العنوان، المنشئ، أو المصوت",
+  "proposalControls.searchPlaceholder": "البحث حسب العنوان، المنشئ، المعرّف، أو المصوت",
   "proposalControls.sortByVotes": "فرز حسب الأصوات",
   "proposalControls.sortByStartDate": "فرز حسب تاريخ البدء",
   "proposalControls.sortByEndDate": "فرZ حسب تاريخ الانتهاء",

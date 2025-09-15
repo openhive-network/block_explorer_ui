@@ -764,7 +764,7 @@
   "proposalControls.statusActive": "Active",
   "proposalControls.statusExpired": "Expirate",
   "proposalControls.statusAll": "Toate",
-  "proposalControls.searchPlaceholder": "Caută după titlu, creator sau votant",
+  "proposalControls.searchPlaceholder": "Căutați după titlu, creator, ID sau votant",
   "proposalControls.sortByVotes": "Sortează după Voturi",
   "proposalControls.sortByStartDate": "Sortează după Data de început",
   "proposalControls.sortByEndDate": "Sortează după Data de sfârșit",

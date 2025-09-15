@@ -765,7 +765,7 @@
   "proposalControls.statusActive": "进行中",
   "proposalControls.statusExpired": "已过期",
   "proposalControls.statusAll": "全部",
-  "proposalControls.searchPlaceholder": "按标题、创建者或投票人搜索",
+  "proposalControls.searchPlaceholder": "按标题、创建者、ID 或投票者搜索",
   "proposalControls.sortByVotes": "按票数排序",
   "proposalControls.sortByStartDate": "按开始日期排序",
   "proposalControls.sortByEndDate": "按结束日期排序",

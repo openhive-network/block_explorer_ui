@@ -763,7 +763,7 @@
   "proposalControls.statusActive": "Active",
   "proposalControls.statusExpired": "Expired",
   "proposalControls.statusAll": "All",
-  "proposalControls.searchPlaceholder": "Search by title, creator, or voter",
+  "proposalControls.searchPlaceholder": "Search by title, creator, ID, or voter",
   "proposalControls.sortByVotes": "Sort by Votes",
   "proposalControls.sortByStartDate": "Sort by Start Date",
   "proposalControls.sortByEndDate": "Sort by End Date",

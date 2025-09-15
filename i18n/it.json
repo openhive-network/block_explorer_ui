@@ -760,7 +760,7 @@
   "proposalControls.statusActive": "Attive",
   "proposalControls.statusExpired": "Scadute",
   "proposalControls.statusAll": "Tutte",
-  "proposalControls.searchPlaceholder": "Cerca per titolo, creatore o votante",
+  "proposalControls.searchPlaceholder": "Cerca per titolo, creatore, ID o votante",
   "proposalControls.sortByVotes": "Ordina per Voti",
   "proposalControls.sortByStartDate": "Ordina per Data di Inizio",
   "proposalControls.sortByEndDate": "Ordina per Data di Fine",

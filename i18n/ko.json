@@ -765,7 +765,7 @@
   "proposalControls.statusActive": "활성",
   "proposalControls.statusExpired": "만료됨",
   "proposalControls.statusAll": "전체",
-  "proposalControls.searchPlaceholder": "제목, 작성자 또는 투표자로 검색",
+  "proposalControls.searchPlaceholder": "제목, 생성자, ID 또는 투표자로 검색",
   "proposalControls.sortByVotes": "투표 수로 정렬",
   "proposalControls.sortByStartDate": "시작일로 정렬",
   "proposalControls.sortByEndDate": "종료일로 정렬",

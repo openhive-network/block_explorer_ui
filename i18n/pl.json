@@ -765,7 +765,7 @@
   "proposalControls.statusActive": "Aktywne",
   "proposalControls.statusExpired": "Wygasłe",
   "proposalControls.statusAll": "Wszystkie",
-  "proposalControls.searchPlaceholder": "Wyszukaj według tytułu, twórcy lub głosującego",
+  "proposalControls.searchPlaceholder": "Szukaj według tytułu, twórcy, ID lub głosującego",
   "proposalControls.sortByVotes": "Sortuj wg Głosów",
   "proposalControls.sortByStartDate": "Sortuj wg Daty rozpoczęcia",
   "proposalControls.sortByEndDate": "Sortuj wg Daty zakończenia",

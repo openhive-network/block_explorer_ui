@@ -765,7 +765,7 @@
   "proposalControls.statusActive": "アクティブ",
   "proposalControls.statusExpired": "期限切れ",
   "proposalControls.statusAll": "すべて",
-  "proposalControls.searchPlaceholder": "タイトル、作成者、または投票者で検索",
+  "proposalControls.searchPlaceholder": "タイトル、作成者、ID、または投票者で検索",
   "proposalControls.sortByVotes": "投票数で並べ替え",
   "proposalControls.sortByStartDate": "開始日で並べ替え",
   "proposalControls.sortByEndDate": "終了日で並べ替え",
