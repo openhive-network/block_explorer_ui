@@ -15,6 +15,10 @@ export const config = {
   get lastCommitHashRepoUrl() {
     return `https://gitlab.syncad.com/hive/block_explorer_ui/-/commit/${this.gitHash}`;
   },
+   topHolders: {
+    totalCount: 500,       // Total number of top holders
+    pageSize: 100,         // Page size for pagination
+  },
   opsBodyLimit: 100000,
   commentOperationsTypeIds: [0, 1, 17, 19, 51, 53, 61, 63, 72, 73],
   standardPaginationSize: 100,

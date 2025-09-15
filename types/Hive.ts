@@ -1094,6 +1094,19 @@ namespace Hive {
     account_subsidy_limit!: number;
 
   }
+  export class GetTopHoldersParams {
+  "coin-type"!: string;
+  "balance-type"!: string;
+  page!: number;
+  "page-size"?: number;
+}
+
+export class TopHolder {
+  rank!: number;
+  account!: string;
+  value!: string;
+}
+
 }
 
 export default Hive;

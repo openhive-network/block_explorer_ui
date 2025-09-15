@@ -769,6 +769,20 @@ class FetchingService {
    async getBlockChainProps(): Promise<Hive.BlockChainProps> {
     return await this.extendedHiveChain!.api.condenser_api.get_chain_properties([]);
   }
+  async getTopHolders(
+  coinType: "HIVE" | "HBD" | "VESTS",
+  balanceType: "balance" | "savings_balance",
+  page: number
+): Promise<Hive.TopHolder[]> {
+  return await this.extendedHiveChain!.restApi["balance-api"].topHolders({
+    "coin-type": coinType,
+    "balance-type": balanceType,
+    page,
+    
+  });
+}
+
+
 }
 
 const fetchingService = new FetchingService();

@@ -68,6 +68,84 @@ const TransactionDetailsInfoEn: React.FC = () => (
     <li>You can change the setting from Data View in the main menu to view data in other formats</li>
   </ul>
 );
+//top holders section
+// --- English (en) ---
+const TopHoldersInfoEn: React.FC = () => (
+  <ul className="list-disc list-inside">
+    <li>This page shows the top holders for each coin. Use filters to search, sort, and select balances.</li>
+  </ul>
+);
+
+// --- Spanish (es) ---
+const TopHoldersInfoEs: React.FC = () => (
+  <ul className="list-disc list-inside">
+    <li>Esta página muestra los principales poseedores de cada moneda. Usa filtros para buscar, ordenar y seleccionar saldos.</li>
+  </ul>
+);
+
+// --- Italian (it) ---
+const TopHoldersInfoIt: React.FC = () => (
+  <ul className="list-disc list-inside">
+    <li>Questa pagina mostra i principali detentori per ogni moneta. Usa i filtri per cercare, ordinare e selezionare i saldi.</li>
+  </ul>
+);
+
+// --- German (de) ---
+const TopHoldersInfoDe: React.FC = () => (
+  <ul className="list-disc list-inside">
+    <li>Diese Seite zeigt die größten Inhaber jeder Münze. Verwenden Sie Filter, um Salden zu suchen, zu sortieren und auszuwählen.</li>
+  </ul>
+);
+
+// --- Portuguese (pt) ---
+const TopHoldersInfoPt: React.FC = () => (
+  <ul className="list-disc list-inside">
+    <li>Esta página mostra os principais detentores de cada moeda. Use filtros para pesquisar, classificar e selecionar saldos.</li>
+  </ul>
+);
+
+// --- French (fr) ---
+const TopHoldersInfoFr: React.FC = () => (
+  <ul className="list-disc list-inside">
+    <li>Cette page affiche les principaux détenteurs de chaque monnaie. Utilisez des filtres pour rechercher, trier et sélectionner les soldes.</li>
+  </ul>
+);
+
+// --- Polish (pl) ---
+const TopHoldersInfoPl: React.FC = () => (
+  <ul className="list-disc list-inside">
+    <li>Ta strona pokazuje największych posiadaczy każdej monety. Użyj filtrów, aby wyszukać, posortować i wybrać salda.</li>
+  </ul>
+);
+
+// --- Chinese (Simplified) (zh) ---
+const TopHoldersInfoZh: React.FC = () => (
+  <ul className="list-disc list-inside">
+    <li>此页面显示每种代币的最大持有者。使用筛选器来搜索、排序和选择余额。</li>
+  </ul>
+);
+
+// --- Japanese (ja) ---
+const TopHoldersInfoJa: React.FC = () => (
+  <ul className="list-disc list-inside">
+    <li>このページでは、各コインの最大保有者が表示されます。フィルターを使って検索、並べ替え、残高の選択ができます。</li>
+  </ul>
+);
+
+// --- Romanian (ro) ---
+const TopHoldersInfoRo: React.FC = () => (
+  <ul className="list-disc list-inside">
+    <li>Această pagină afișează principalii deținători pentru fiecare monedă. Folosiți filtre pentru a căuta, sorta și selecta soldurile.</li>
+  </ul>
+);
+
+// --- Arabic (ar) ---
+const TopHoldersInfoAr: React.FC = () => (
+  <ul className="list-disc list-inside">
+    <li>تعرض هذه الصفحة كبار الحائزين لكل عملة. استخدم الفلاتر للبحث والفرز وتحديد الأرصدة.</li>
+  </ul>
+);
+
 // src/components/info/ProposalsInfo.tsx
 
 const ProposalsInfoEn: React.FC = () => (
@@ -804,8 +882,20 @@ const pageTitlesInfo: InfoContent = {
     ro: <ProposalsInfoRo />,
     ar: <ProposalsInfoAr/>
   },
+  "pageTitle.topHolders": {
+  en: <TopHoldersInfoEn />,
+  es: <TopHoldersInfoEs />,
+  it: <TopHoldersInfoIt />,
+  de: <TopHoldersInfoDe />,
+  pt: <TopHoldersInfoPt />,
+  fr: <TopHoldersInfoFr />,
+  pl: <TopHoldersInfoPl />,
+  zh: <TopHoldersInfoZh />,
+  ja: <TopHoldersInfoJa />,
+  ro: <TopHoldersInfoRo />,
+  ar: <TopHoldersInfoAr />
+},
 
-  
 };
 
 export default pageTitlesInfo;
