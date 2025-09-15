@@ -65,14 +65,17 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
   const [sortKey, setSortKey] = useState<string>("vests");
   const [isAsc, setIsAsc] = useState<boolean>(false);
   const [pageNum, setPageNum] = useState<number>(1);
-  const [isHP, setIsHP] = useState<boolean>(settings.displayMode === "hp");
+
+  const [isHP, setIsHP] = useState<boolean>(settings.displayVestHpMode === "hp");
+  useEffect(() => {
+      setIsHP(settings.displayVestHpMode === "hp");
+    }, [settings.displayVestHpMode]);
+    
   const [voterNameInput, setVoterNameInput] = useState<string>("");
 
   const [activeVoterName, setActiveVoterName] = useState<string | undefined>(
     undefined
   );
-
-  // console.log(settings.displayMode);
 
   const handleSearch = () => {
     setActiveVoterName(

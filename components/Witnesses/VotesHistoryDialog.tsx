@@ -64,7 +64,12 @@ const VotesHistoryDialog: React.FC<VotesHistoryDialogProps> = ({
 
   // State for UI controls and inputs
   const [pageNum, setPageNum] = useState<number>(1);
-  const [isHP, setIsHP] = useState<boolean>(settings.displayMode === "hp");
+  
+  const [isHP, setIsHP] = useState<boolean>(settings.displayVestHpMode === "hp");
+  useEffect(() => {
+      setIsHP(settings.displayVestHpMode === "hp");
+    }, [settings.displayVestHpMode]);
+    
   const [voterNameInput, setVoterNameInput] = useState<string>("");
   const [isSearchButtonDisabled, setIsSearchButtonDisabled] = useState(false);
   const searchRanges = useSearchRanges();

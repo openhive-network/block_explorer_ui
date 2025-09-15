@@ -1,4 +1,4 @@
-import React, { useState, useMemo, Fragment } from "react";
+import React, { useState, useMemo, Fragment, useEffect } from "react";
 import Link from "next/link";
 import {
   ArrowDown,
@@ -76,7 +76,11 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
   const { settings } = useSettings();
   const { hiveChain } = useHiveChainContext();
   const [currentPage, setCurrentPage] = useState(1);
-  const [isHP, setIsHP] = useState(true);
+  const [isHP, setIsHP] = useState<boolean>(settings.displayVestHpMode === "hp");
+
+    useEffect(() => {
+    setIsHP(settings.displayVestHpMode === "hp");
+  }, [settings.displayVestHpMode]);
 
   const [isPropertiesHidden, setIsPropertiesHidden] = useState(
     !isInitiallyOpen
@@ -225,7 +229,7 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
           <TableBody>
             {sortedProxies.map((proxy) => (
               <Fragment key={proxy.account}>
-                <TableRow>
+                <TableRow className="text-sm">
                   <TableCell>
                     <Link className="text-link" href={`/@${proxy.account}`}>
                       {proxy.account}
