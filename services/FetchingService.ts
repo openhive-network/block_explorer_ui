@@ -69,8 +69,8 @@ export type ExplorerNodeApi = {
       ],
       Hive.ProposalVote[]
     >;
-    find_proposals: TWaxApiRequest<[number[]], Hive.Proposal[]>;
-    
+    find_proposals: TWaxApiRequest<[proposal_ids: number[]], Hive.Proposal[]>;
+
   };
   bridge: {
     get_discussion: TWaxApiRequest<
@@ -759,15 +759,24 @@ class FetchingService {
     return Array.isArray(response) ? response : [];
   }
 
-  async getProposal(): Promise<Hive.Proposal[]> {
-    const proposal_ids: number[] = [];
-    return await this.extendedHiveChain!.api.condenser_api.find_proposals([
-      proposal_ids,
-    ]);
-  }
+async getProposal(proposalId: number[]): Promise<Hive.Proposal[]> {
+  return await this.extendedHiveChain!.api.condenser_api.find_proposals([proposalId]);
+}
 
    async getBlockChainProps(): Promise<Hive.BlockChainProps> {
     return await this.extendedHiveChain!.api.condenser_api.get_chain_properties([]);
+  }
+
+  async getProxyPower(
+    accountName: string,
+    page: number,
+  ): Promise<Hive.ProxyPowerResponse> {
+    return await this.extendedHiveChain!.restApi[
+      "hafbe-api"
+    ].proxyPower({
+      accountName,
+      page
+    });
   }
 }
 

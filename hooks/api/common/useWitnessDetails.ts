@@ -8,10 +8,10 @@ import fetchingService from "@/services/FetchingService";
 const useWitnessDetails = (accountName: string, isWitness: boolean) => {
   const { hiveChain } = useHiveChainContext();
 
-  const selectFunction = (witnessData: Explorer.Witness) => {
+  const selectFunction = (witnessData: Hive.SingleWitnessResponse) => {
     const witness = {
       ...witnessData,
-      hbd_interest_rate: formatPercent(witnessData.witness.hbd_interest_rate),
+      hbd_interest_rate: formatPercent(witnessData.hbd_interest_rate),
     };
     const formattedWitness = hiveChain?.formatter.format(
       witness
@@ -24,7 +24,7 @@ const useWitnessDetails = (accountName: string, isWitness: boolean) => {
     data: witnessDetails,
     isLoading: isWitnessDetailsLoading,
     isError: isWitnessDetailsError,
-  }: UseQueryResult<Explorer.Witness> = useQuery<any, Error, Explorer.Witness>({
+  }: UseQueryResult<Explorer.Witness> = useQuery({
     queryKey: ["witness_details", accountName],
     queryFn: () => fetchingService.getWitness(accountName),
     enabled: !!accountName && isWitness,

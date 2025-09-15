@@ -17,16 +17,16 @@ interface UseProposalsProps {
   status: ProposalStatusFilter;
   orderBy: ProposalSortOrder;
   direction?: ProposalSortDirection;
+  enabled?: boolean;
 }
 
-const useProposals = ({ status, orderBy, direction }: UseProposalsProps) => {
+const useProposals = ({ status, orderBy, direction, enabled = true }: UseProposalsProps) => {
   const {
     data: proposalsData,
     isLoading: isProposalsLoading,
     isError: isProposalsError,
   } = useQuery<ProcessedProposal[], Error>({
     queryKey: ["proposals", status, orderBy, direction],
-
     queryFn: async () => {
       const rawProposals = await fetchingService.listProposals(
         [],
@@ -46,10 +46,9 @@ const useProposals = ({ status, orderBy, direction }: UseProposalsProps) => {
           } as ProcessedProposal;
         });
     },
-
+    enabled: enabled,
     refetchOnWindowFocus: false,
   });
-
   return {
     proposalsData: proposalsData || [],
     isProposalsLoading,

@@ -31,6 +31,7 @@
   "common.vests": "VESTS",
   "common.hp": "HP",
   "common.proxySuffix": "(proxy)",
+  "common.page": "page",
   "currentBlockCard.currentBlock": "Bloc Actuel",
   "currentBlockCard.secsAgo": "secondes plus tôt",
   "currentBlockCard.transactions": "Transactions",
@@ -712,6 +713,7 @@
   "accountFollowingDialog.noResultsFound": "Aucun compte trouvé correspondant à votre recherche.",
   "accountFollowingDialog.followingHeader": "Compte",
   "accountMainCard.subscriptions": "Communautés",
+  "accountMainCard.resourcesHeader": "Ressources",
   "accountSubscriptionsDialog.title": "Abonnements aux Communautés",
   "accountSubscriptionsDialog.searchPlaceholder": "Rechercher des communautés...",
   "accountSubscriptionsDialog.subscriptionsDataType": "Abonnements",
@@ -910,5 +912,8 @@
   "accountSearch.accountReactResults": "resultats_recherche_compte",
   "blockDetails.blockDetails": "details_bloc",
   "commentsSearch.commentSearchResults": "resultats_recherche_commentaires",
-  "transactionPage.transactionDetailsRefferer": "details_transaction"
+  "transactionPage.transactionDetailsRefferer": "details_transaction",
+  "accountProxyPowerCard.proxyPowerReceived": "Puissance de Proxy Reçue",
+  "accountProxyPowerCard.proxiedBy": "Délégué par",
+  "accountProxyPowerCard.power": "Puissance Déléguée"
 }
