@@ -664,7 +664,7 @@
   "formatter.formatLimitOrderCancelledOperation.wasCancelledAnd": "をキャンセルし、",
   "formatter.formatLimitOrderCancelledOperation.wasSentBackSuffix": "が返金されました",
   "formatter.formatProducerMissedOperation.action": "がブロックを見逃しました",
-  "formatter.formatProposalFeeOperations.gotProposalFee": "が提案手数料を受け取りました",
+  "formatter.formatProposalFeeOperations.gotProposalFee": "提案手数料支払い済み",
   "formatter.formatProposalFeeOperations.idPrefix": "、ID：",
   "formatter.formatProposalFeeOperations.prepositionFrom": "から",
   "formatter.formatCollateralizedConvertImmediateConversionOperation.actionReceived": "が受け取りました",

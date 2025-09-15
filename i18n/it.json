@@ -663,7 +663,7 @@
   "formatter.formatLimitOrderCancelledOperation.wasCancelledAnd": "è stato annullato e",
   "formatter.formatLimitOrderCancelledOperation.wasSentBackSuffix": "è stato restituito",
   "formatter.formatProducerMissedOperation.action": "ha mancato il blocco",
-  "formatter.formatProposalFeeOperations.gotProposalFee": "ha ricevuto la commissione per la proposta",
+  "formatter.formatProposalFeeOperations.gotProposalFee": "commissione della proposta pagata",
   "formatter.formatProposalFeeOperations.idPrefix": "ID:",
   "formatter.formatProposalFeeOperations.prepositionFrom": "da",
   "formatter.formatCollateralizedConvertImmediateConversionOperation.actionReceived": "ha ricevuto",

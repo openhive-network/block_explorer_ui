@@ -671,7 +671,7 @@
   "formatter.formatLimitOrderCancelledOperation.wasCancelledAnd": "تم إلغاؤه و",
   "formatter.formatLimitOrderCancelledOperation.wasSentBackSuffix": "تم إرساله مرة أخرى",
   "formatter.formatProducerMissedOperation.action": "فوت بلوك",
-  "formatter.formatProposalFeeOperations.gotProposalFee": "حصل على رسوم الاقتراح",
+  "formatter.formatProposalFeeOperations.gotProposalFee": "دفع رسوم الاقتراح",
   "formatter.formatProposalFeeOperations.idPrefix": "المعرف:",
   "formatter.formatProposalFeeOperations.prepositionFrom": "من",
   "formatter.formatCollateralizedConvertImmediateConversionOperation.actionReceived": "استلم",

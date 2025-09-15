@@ -663,7 +663,7 @@
   "formatter.formatLimitOrderCancelledOperation.wasCancelledAnd": "a été annulé et",
   "formatter.formatLimitOrderCancelledOperation.wasSentBackSuffix": "a été renvoyé",
   "formatter.formatProducerMissedOperation.action": "a manqué le bloc",
-  "formatter.formatProposalFeeOperations.gotProposalFee": "a reçu les frais de proposition",
+  "formatter.formatProposalFeeOperations.gotProposalFee": "frais de proposition payés",
   "formatter.formatProposalFeeOperations.idPrefix": "ID :",
   "formatter.formatProposalFeeOperations.prepositionFrom": "de",
   "formatter.formatCollateralizedConvertImmediateConversionOperation.actionReceived": "a reçu",
