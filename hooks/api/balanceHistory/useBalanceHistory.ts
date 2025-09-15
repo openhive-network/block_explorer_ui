@@ -1,4 +1,4 @@
-import { UseQueryResult, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import moment from "moment";
 
 import fetchingService from "@/services/FetchingService";
@@ -33,6 +33,7 @@ const useBalanceHistory = (
   const {
     data: accountBalanceHistory,
     isLoading: isAccountBalanceHistoryLoading,
+    isFetching: isAccountBalanceHistoryFetching,
     isError: isAccountBalanceHistoryError,
   }: any = useQuery({
     queryKey: [
@@ -46,6 +47,7 @@ const useBalanceHistory = (
       toDate,
     ],
     queryFn: fetchBalanceHist,
+    keepPreviousData: true,
     enabled: !!accountName,
     refetchOnWindowFocus: false,
   });
@@ -93,6 +95,7 @@ const useBalanceHistory = (
   return {
     accountBalanceHistory: getHistoryWithHivePrice(),
     isAccountBalanceHistoryLoading,
+    isAccountBalanceHistoryFetching,
     isAccountBalanceHistoryError,
   };
 };

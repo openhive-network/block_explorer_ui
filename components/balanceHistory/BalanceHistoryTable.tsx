@@ -120,6 +120,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
   }) => {
     const { operationData, operationDataIsFetched, operationDataError } =
       useOperation(operationId.toString());
+
     const formattedAccountOperations = useOperationsFormatter(operationData);
     if (operationDataIsFetched) {
       if (!operationData || Object.keys(operationData).length === 0) {
@@ -255,22 +256,18 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
 
   return (
     <>
-      <div className="sticky z-20 top-[3.2rem] md:top-[4rem]">
-        <CustomPagination
-          currentPage={current_page ? current_page : total_pages}
-          onPageChange={updateUrl}
-          pageSize={config.standardPaginationSize}
-          totalCount={total_operations}
-          className="rounded"
-          isMirrored={true}
-        />
-      </div>
-      {total_operations === 0 ? (
-        <div className="flex justify-center w-full">
-          {t("balanceHistoryTable.noResultsMatchingCriteria")}
-        </div>
-      ) : (
+      {operations.length > 0 && total_operations > 0 && operations ? (
         <>
+          <div className="sticky z-20 top-[3.2rem] md:top-[4rem]">
+            <CustomPagination
+              currentPage={current_page ? current_page : total_pages}
+              onPageChange={updateUrl}
+              pageSize={config.standardPaginationSize}
+              totalCount={total_operations}
+              className="rounded"
+              isMirrored={true}
+            />
+          </div>
           <div
             className={cn("table-toolbar", {
               "justify-between": !!total_operations,
@@ -443,6 +440,11 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
             </TableBody>
           </Table>
         </>
+      ) : null}
+      {total_operations === 0 && (
+        <div className="flex justify-center w-full">
+          {t("balanceHistoryTable.noResultsMatchingCriteria")}
+        </div>
       )}
     </>
   );

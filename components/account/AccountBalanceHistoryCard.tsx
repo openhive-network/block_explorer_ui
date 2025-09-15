@@ -71,7 +71,7 @@ const prepareData = (operations: Operation[]) => {
 const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
   header,
   userDetails,
-  isInitiallyOpen
+  isInitiallyOpen,
 }) => {
   const { t } = useI18n();
   const [isBalancesHidden, setIsBalancesHidden] = useState(!isInitiallyOpen);
@@ -84,36 +84,12 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
   const accountNameFromRoute = (router.query.accountName as string)?.slice(1);
 
   const {
-    aggregatedAccountBalanceHistory: hiveBalanceHistory,
-    isAggregatedAccountBalanceHistoryLoading: hiveBalanceHistoryLoading,
-    isAggregatedAccountBalanceHistoryError: hiveBalanceHistoryError,
+    aggregatedAccountBalanceHistory,
+    isAggregatedAccountBalanceHistoryLoading,
+    isAggregatedAccountBalanceHistoryError,
   } = useAggregatedBalanceHistory(
     accountNameFromRoute,
-    "HIVE",
-    "daily",
-    "asc",
-    defaultFromDate
-  );
-
-  const {
-    aggregatedAccountBalanceHistory: vestsBalanceHistory,
-    isAggregatedAccountBalanceHistoryLoading: vestsBalanceHistoryLoading,
-    isAggregatedAccountBalanceHistoryError: vestsBalanceHistoryError,
-  } = useAggregatedBalanceHistory(
-    accountNameFromRoute,
-    "VESTS",
-    "daily",
-    "asc",
-    defaultFromDate
-  );
-
-  const {
-    aggregatedAccountBalanceHistory: hbdBalanceHistory,
-    isAggregatedAccountBalanceHistoryLoading: hbdBalanceHistoryLoading,
-    isAggregatedAccountBalanceHistoryError: hbdBalanceHistoryError,
-  } = useAggregatedBalanceHistory(
-    accountNameFromRoute,
-    "HBD",
+    coinType,
     "daily",
     "asc",
     defaultFromDate
@@ -123,16 +99,9 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
     setIsBalancesHidden(!isBalancesHidden);
   };
 
-  const isLoading =
-    hiveBalanceHistoryLoading ||
-    vestsBalanceHistoryLoading ||
-    hbdBalanceHistoryLoading;
-  const hasData =
-    hiveBalanceHistory || vestsBalanceHistory || hbdBalanceHistory;
-  const hasError =
-    hiveBalanceHistoryError ||
-    vestsBalanceHistoryError ||
-    hbdBalanceHistoryError;
+  const isLoading = isAggregatedAccountBalanceHistoryLoading;
+  const hasData = aggregatedAccountBalanceHistory;
+  const hasError = isAggregatedAccountBalanceHistoryError;
 
   const handleButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation(); // Prevents the event from bubbling up
@@ -180,11 +149,13 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
         {!isLoading && !hasData && <NoResult />}
         {!isLoading && hasData && (
           <BalanceHistoryChart
-            hiveBalanceHistoryData={prepareData(hiveBalanceHistory)}
-            vestsBalanceHistoryData={prepareData(vestsBalanceHistory)}
-            hbdBalanceHistoryData={prepareData(hbdBalanceHistory)}
+            aggregatedAccountBalanceHistory={prepareData(
+              aggregatedAccountBalanceHistory
+            )}
             quickView={true}
             className="h-[320px]"
+            selectedCoinType={coinType}
+            setSelectedCoinType={setCoinType}
           />
         )}
       </CardContent>
