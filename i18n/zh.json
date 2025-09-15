@@ -664,7 +664,7 @@
   "formatter.formatLimitOrderCancelledOperation.wasCancelledAnd": "已取消并",
   "formatter.formatLimitOrderCancelledOperation.wasSentBackSuffix": "已退回",
   "formatter.formatProducerMissedOperation.action": "错过了区块",
-  "formatter.formatProposalFeeOperations.gotProposalFee": "收到了提案费",
+  "formatter.formatProposalFeeOperations.gotProposalFee": "已支付提案费用",
   "formatter.formatProposalFeeOperations.idPrefix": "ID：",
   "formatter.formatProposalFeeOperations.prepositionFrom": "从",
   "formatter.formatCollateralizedConvertImmediateConversionOperation.actionReceived": "收到了",

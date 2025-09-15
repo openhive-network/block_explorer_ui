@@ -663,7 +663,7 @@
   "formatter.formatLimitOrderCancelledOperation.wasCancelledAnd": "a fost anulat și",
   "formatter.formatLimitOrderCancelledOperation.wasSentBackSuffix": "a fost trimis înapoi",
   "formatter.formatProducerMissedOperation.action": "a ratat blocul",
-  "formatter.formatProposalFeeOperations.gotProposalFee": "a primit taxa de propunere",
+  "formatter.formatProposalFeeOperations.gotProposalFee": "taxă de propunere plătită",
   "formatter.formatProposalFeeOperations.idPrefix": "ID:",
   "formatter.formatProposalFeeOperations.prepositionFrom": "de la",
   "formatter.formatCollateralizedConvertImmediateConversionOperation.actionReceived": "a primit",

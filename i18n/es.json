@@ -662,7 +662,7 @@
   "formatter.formatLimitOrderCancelledOperation.wasCancelledAnd": "fue cancelada y",
   "formatter.formatLimitOrderCancelledOperation.wasSentBackSuffix": "fue devuelto",
   "formatter.formatProducerMissedOperation.action": "perdió el bloque",
-  "formatter.formatProposalFeeOperations.gotProposalFee": "obtuvo tarifa de propuesta",
+  "formatter.formatProposalFeeOperations.gotProposalFee": "tarifa de propuesta pagada",
   "formatter.formatProposalFeeOperations.idPrefix": "ID:",
   "formatter.formatProposalFeeOperations.prepositionFrom": "de",
   "formatter.formatCollateralizedConvertImmediateConversionOperation.actionReceived": "recibió",

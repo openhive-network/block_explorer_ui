@@ -664,7 +664,7 @@
   "formatter.formatLimitOrderCancelledOperation.wasCancelledAnd": "wurde storniert und",
   "formatter.formatLimitOrderCancelledOperation.wasSentBackSuffix": "wurde zurückgeschickt",
   "formatter.formatProducerMissedOperation.action": "verpasste Block",
-  "formatter.formatProposalFeeOperations.gotProposalFee": "erhielt Vorschlagsgebühr",
+  "formatter.formatProposalFeeOperations.gotProposalFee": "Vorschlagsgebühr bezahlt",
   "formatter.formatProposalFeeOperations.idPrefix": "ID:",
   "formatter.formatProposalFeeOperations.prepositionFrom": "von",
   "formatter.formatCollateralizedConvertImmediateConversionOperation.actionReceived": "erhielt",

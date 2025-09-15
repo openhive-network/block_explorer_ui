@@ -663,7 +663,7 @@
   "formatter.formatLimitOrderCancelledOperation.wasCancelledAnd": "을(를) 취소하고",
   "formatter.formatLimitOrderCancelledOperation.wasSentBackSuffix": "이(가) 반환되었습니다",
   "formatter.formatProducerMissedOperation.action": "님이 블록을 놓쳤습니다",
-  "formatter.formatProposalFeeOperations.gotProposalFee": "님이 제안 수수료를 받았습니다",
+  "formatter.formatProposalFeeOperations.gotProposalFee": "제안 수수료 지불됨",
   "formatter.formatProposalFeeOperations.idPrefix": ", ID:",
   "formatter.formatProposalFeeOperations.prepositionFrom": "에서",
   "formatter.formatCollateralizedConvertImmediateConversionOperation.actionReceived": "님이 받았습니다",
