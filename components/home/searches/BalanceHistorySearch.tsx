@@ -171,7 +171,9 @@ const BalanceHistorySearch = ({
       paramsState.fromBlock ||
       paramsState.toBlock ||
       paramsState.fromDate ||
-      paramsState.toDate
+      paramsState.toDate ||
+      paramsState.coinType !== DEFAULT_COIN_TYPE ||
+      paramsState.includeSavings !== "yes"
   );
 
   useEffect(() => {
