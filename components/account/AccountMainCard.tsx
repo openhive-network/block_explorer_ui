@@ -164,10 +164,8 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
   }
 
   const about = profileMetadata?.profile?.about || "";
+  const lastPostDate = moment.utc(accountDetails.last_post).toDate();
 
-  const lastPostDate = new Date(
-    formatAndDelocalizeTime(accountDetails.last_post)
-  );
   const lastActiveValue =
     lastPostDate.getFullYear() <= 1970 ? (
       <span className="text-sm">{t("accountMainCard.never")}</span>

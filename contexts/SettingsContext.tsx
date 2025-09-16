@@ -2,14 +2,14 @@ import React, { createContext, useState, useEffect, useCallback, useContext, Rea
 
 // Define the types for our settings
 export type ViewMode = 'original' | 'tabbed';
-export type DisplayMode = 'hp' | 'vests';
+export type DisplayVestHpMode = 'hp' | 'vests';
 export type ProgressBarType = 'radial' | 'linear';
 
 const SETTINGS_KEY = 'app-settings';
 
 export interface AppSettings {
   accountPageView: ViewMode;
-  displayMode: DisplayMode;
+  displayVestHpMode: DisplayVestHpMode;
   progressBarType: ProgressBarType;
 }
 
@@ -24,7 +24,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
   const [settings, setSettings] = useState<AppSettings>({
     // Default settings
     accountPageView: 'tabbed',
-    displayMode: 'hp',
+    displayVestHpMode: 'hp',
     progressBarType: 'radial',
   });
 

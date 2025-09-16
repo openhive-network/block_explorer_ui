@@ -149,7 +149,7 @@ const SettingsPage = () => {
       items: [
         {
           type: 'switch',
-          key: 'displayMode',
+          key: 'displayVestHpMode',
           labelKey: 'settingsPage.showVestsLabel',
           descriptionKey: 'settingsPage.showVestsDescription',
           trueValue: 'vests',

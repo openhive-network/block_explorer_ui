@@ -67,7 +67,12 @@ export const ProposalVotesDialog = ({
 
   const [sortBy, setSortBy] = useState<"name" | "power">("power");
   const [isAsc, setIsAsc] = useState(false);
-  const [unit, setUnit] = useState<"hp" | "vests">(settings.displayMode);
+  
+  const [unit, setUnit] = useState<"hp" | "vests">(settings.displayVestHpMode);
+  useEffect(() => {
+      setUnit(settings.displayVestHpMode);
+    }, [settings.displayVestHpMode]);
+
   const [activeSegmentFilter, setActiveSegmentFilter] = useState<string | null>(
     null
   );
