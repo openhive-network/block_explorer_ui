@@ -924,5 +924,19 @@
   "postContentCard.votes": "Stimmen",
   "postContentCard.and": "und",
   "postContentCard.others": "andere",
-  "postContentCard.copyBody": "Inhalt kopieren"
+  "postContentCard.copyBody": "Inhalt kopieren",
+  "pageTitle.topHolders": "Top-Inhaber",
+  "filters.filtersAndSearch": "Filter & Suche",
+  "filters.balance": "Guthaben",
+  "filters.savings": "Ersparnisse",
+  "table.rank": "Rang",
+  "table.account": "Konto",
+  "table.balance": "Guthaben",
+  "table.savings": "Ersparnisse",
+  "modal.loading": "Lädt...",
+  "modal.noHistory": "Keine Historie verfügbar.",
+  "modal.error": "Fehler beim Laden der Guthabenhistorie.",
+  "modal.close": "Schließen",
+  "export.topHolders": "top_inhaber"
+
 }

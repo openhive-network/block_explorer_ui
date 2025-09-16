@@ -923,5 +923,19 @@
   "postContentCard.votes": "voturi",
   "postContentCard.and": "și",
   "postContentCard.others": "alții",
-  "postContentCard.copyBody": "Copiază conținutul"
+  "postContentCard.copyBody": "Copiază conținutul",
+  "pageTitle.topHolders": "Deținători principali",
+  "filters.filtersAndSearch": "Filtre & Căutare",
+  "filters.balance": "Sold",
+  "filters.savings": "Economii",
+  "table.rank": "Clasament",
+  "table.account": "Cont",
+  "table.balance": "Sold",
+  "table.savings": "Economii",
+  "modal.loading": "Se încarcă...",
+  "modal.noHistory": "Nu există istoric disponibil.",
+  "modal.error": "Eroare la încărcarea istoricului soldului.",
+  "modal.close": "Închide",
+  "export.topHolders": "detinatori_principali"
+
 }

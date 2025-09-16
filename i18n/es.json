@@ -923,5 +923,19 @@
   "postContentCard.votes": "votos",
   "postContentCard.and": "y",
   "postContentCard.others": "otros",
-  "postContentCard.copyBody": "Copiar contenido"
+  "postContentCard.copyBody": "Copiar contenido",
+  "pageTitle.topHolders": "Principales Poseedores",
+  "filters.filtersAndSearch": "Filtros y Búsqueda",
+  "filters.balance": "Balance",
+  "filters.savings": "Ahorros",
+  "table.rank": "Rango",
+  "table.account": "Cuenta",
+  "table.balance": "Balance",
+  "table.savings": "Ahorros",
+  "modal.loading": "Cargando...",
+  "modal.noHistory": "No hay historial disponible.",
+  "modal.error": "Error al cargar el historial de saldo.",
+  "modal.close": "Cerrar",
+  "export.topHolders": "top_holders"
+
 }

@@ -919,5 +919,19 @@
   "postContentCard.votes": "voti",
   "postContentCard.and": "e",
   "postContentCard.others": "altri",
-  "postContentCard.copyBody": "Copia contenuto"
+  "postContentCard.copyBody": "Copia contenuto",
+  "pageTitle.topHolders": "Top Holder",
+  "filters.filtersAndSearch": "Filtri e Ricerca",
+  "filters.balance": "Saldo",
+  "filters.savings": "Risparmi",
+  "table.rank": "Posizione",
+  "table.account": "Account",
+  "table.balance": "Saldo",
+  "table.savings": "Risparmi",
+  "modal.loading": "Caricamento...",
+  "modal.noHistory": "Nessuna cronologia disponibile.",
+  "modal.error": "Errore nel caricamento della cronologia del saldo.",
+  "modal.close": "Chiudi",
+  "export.topHolders": "principali_detentori"
+
 }

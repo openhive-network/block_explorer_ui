@@ -924,5 +924,18 @@
   "postContentCard.votes": "표",
   "postContentCard.and": "그리고",
   "postContentCard.others": "명 외",
-  "postContentCard.copyBody": "내용 복사"
+  "postContentCard.copyBody": "내용 복사",
+  "pageTitle.topHolders": "상위 보유자",
+  "filters.filtersAndSearch": "필터 및 검색",
+  "filters.balance": "잔액",
+  "filters.savings": "저축",
+  "table.rank": "순위",
+  "table.account": "계정",
+  "table.balance": "잔액",
+  "table.savings": "저축",
+  "modal.loading": "로딩 중...",
+  "modal.noHistory": "사용 가능한 기록이 없습니다.",
+  "modal.error": "잔액 기록을 불러오는 중 오류가 발생했습니다.",
+  "modal.close": "닫기"
+
 }

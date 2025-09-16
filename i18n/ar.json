@@ -924,5 +924,19 @@
   "postContentCard.votes": "أصوات",
   "postContentCard.and": "و",
   "postContentCard.others": "آخرون",
-  "postContentCard.copyBody": "نسخ المحتوى"
+  "postContentCard.copyBody": "نسخ المحتوى",
+  "pageTitle.topHolders": "أعلى الحائزين",
+  "filters.filtersAndSearch": "الفلاتر والبحث",
+  "filters.balance": "الرصيد",
+  "filters.savings": "المدخرات",
+  "table.rank": "الرتبة",
+  "table.account": "الحساب",
+  "table.balance": "الرصيد",
+  "table.savings": "المدخرات",
+  "modal.loading": "جارٍ التحميل...",
+  "modal.noHistory": "لا يوجد سجل متاح.",
+  "modal.error": "خطأ في تحميل سجل الرصيد.",
+  "modal.close": "إغلاق",
+  "export.topHolders": "كبار_الحائزين"
+
 }

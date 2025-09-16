@@ -924,5 +924,19 @@
   "postContentCard.votes": "votes",
   "postContentCard.and": "et",
   "postContentCard.others": "autres",
-  "postContentCard.copyBody": "Copier le contenu"
+  "postContentCard.copyBody": "Copier le contenu",
+  "pageTitle.topHolders": "Meilleurs détenteurs",
+  "filters.filtersAndSearch": "Filtres et Recherche",
+  "filters.balance": "Solde",
+  "filters.savings": "Économies",
+  "table.rank": "Rang",
+  "table.account": "Compte",
+  "table.balance": "Solde",
+  "table.savings": "Économies",
+  "modal.loading": "Chargement...",
+  "modal.noHistory": "Aucun historique disponible.",
+  "modal.error": "Erreur lors du chargement de l'historique du solde.",
+  "modal.close": "Fermer",
+  "export.topHolders": "principaux_detenteurs"
+
 }
