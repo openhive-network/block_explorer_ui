@@ -95,7 +95,7 @@ export default function Navbar() {
                       <Vote className="mr-2 mt-1 flex-shrink-0" size={20} />
                       <span className="text-base ml-2">{t("navbar.proposalsTitle")}</span>
                     </Link>
-                    <Link href={"/witnesses"} className="py-1 flex items-start justify-start" onClick={() => setMenuOpen(false)}>
+                    <Link href={"/witnesses"} className="py-1 flex items-start  border-b-2 justify-start" onClick={() => setMenuOpen(false)}>
                       <UserCheck className="mr-2 mt-1 flex-shrink-0" size={20} />
                       <span className="text-base ml-2">{t("navbar.witnessesTitle")}</span>
                     </Link>
