@@ -910,6 +910,18 @@
   "transactionPage.transactionDetailsRefferer": "dettagli_transazione",
   "accountProxyPowerCard.proxyPowerReceived": "Potere Proxy Ricevuto",
   "accountProxyPowerCard.proxiedBy": "Delegato da",
-  "accountProxyPowerCard.power": "Potere Delegato"
+  "accountProxyPowerCard.power": "Potere Delegato",
+    "pageTitle.topHolders": "Top Holder",
+  "filters.filtersAndSearch": "Filtri e Ricerca",
+  "filters.balance": "Saldo",
+  "filters.savings": "Risparmi",
+  "table.rank": "Posizione",
+  "table.account": "Account",
+  "table.balance": "Saldo",
+  "table.savings": "Risparmi",
+  "modal.loading": "Caricamento...",
+  "modal.noHistory": "Nessuna cronologia disponibile.",
+  "modal.error": "Errore nel caricamento della cronologia del saldo.",
+  "modal.close": "Chiudi"
 
 }

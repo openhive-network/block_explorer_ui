@@ -915,5 +915,18 @@
   "transactionPage.transactionDetailsRefferer": "szczegoly_transakcji",
   "accountProxyPowerCard.proxyPowerReceived": "Otrzymana Moc Proxy",
   "accountProxyPowerCard.proxiedBy": "Delegowane przez",
-  "accountProxyPowerCard.power": "Delegowana Moc"
+  "accountProxyPowerCard.power": "Delegowana Moc",
+  "pageTitle.topHolders": "Najwięksi posiadacze",
+  "filters.filtersAndSearch": "Filtry i wyszukiwanie",
+  "filters.balance": "Saldo",
+  "filters.savings": "Oszczędności",
+  "table.rank": "Ranga",
+  "table.account": "Konto",
+  "table.balance": "Saldo",
+  "table.savings": "Oszczędności",
+  "modal.loading": "Ładowanie...",
+  "modal.noHistory": "Brak dostępnej historii.",
+  "modal.error": "Błąd ładowania historii salda.",
+  "modal.close": "Zamknij"
+
 }

@@ -915,5 +915,17 @@
   "transactionPage.transactionDetailsRefferer": "交易详情",
   "accountProxyPowerCard.proxyPowerReceived": "收到的代理权",
   "accountProxyPowerCard.proxiedBy": "代理来源",
-  "accountProxyPowerCard.power": "代理能量"
+  "accountProxyPowerCard.power": "代理能量",
+    "pageTitle.topHolders": "持币排名",
+  "filters.filtersAndSearch": "筛选与搜索",
+  "filters.balance": "余额",
+  "filters.savings": "储蓄",
+  "table.rank": "排名",
+  "table.account": "账户",
+  "table.balance": "余额",
+  "table.savings": "储蓄",
+  "modal.loading": "加载中...",
+  "modal.noHistory": "没有可用记录。",
+  "modal.error": "加载余额历史出错。",
+  "modal.close": "关闭"
 }

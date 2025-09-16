@@ -915,5 +915,17 @@
   "transactionPage.transactionDetailsRefferer": "detalhes_transacao",
   "accountProxyPowerCard.proxyPowerReceived": "Poder de Proxy Recebido",
   "accountProxyPowerCard.proxiedBy": "Delegado por",
-  "accountProxyPowerCard.power": "Poder Delegado"
+  "accountProxyPowerCard.power": "Poder Delegado",
+    "pageTitle.topHolders": "Principais Detentores",
+  "filters.filtersAndSearch": "Filtros e Pesquisa",
+  "filters.balance": "Saldo",
+  "filters.savings": "Poupança",
+  "table.rank": "Classificação",
+  "table.account": "Conta",
+  "table.balance": "Saldo",
+  "table.savings": "Poupança",
+  "modal.loading": "Carregando...",
+  "modal.noHistory": "Nenhum histórico disponível.",
+  "modal.error": "Erro ao carregar histórico de saldo.",
+  "modal.close": "Fechar"
 }

@@ -914,5 +914,17 @@
   "transactionPage.transactionDetailsRefferer": "detalles_transaccion",
   "accountProxyPowerCard.proxyPowerReceived": "Poder de Proxy Recibido",
   "accountProxyPowerCard.proxiedBy": "Delegado por",
-  "accountProxyPowerCard.power": "Poder Delegado"
+  "accountProxyPowerCard.power": "Poder Delegado",
+   "pageTitle.topHolders": "Principales Poseedores",
+  "filters.filtersAndSearch": "Filtros y Búsqueda",
+  "filters.balance": "Balance",
+  "filters.savings": "Ahorros",
+  "table.rank": "Rango",
+  "table.account": "Cuenta",
+  "table.balance": "Balance",
+  "table.savings": "Ahorros",
+  "modal.loading": "Cargando...",
+  "modal.noHistory": "No hay historial disponible.",
+  "modal.error": "Error al cargar el historial de saldo.",
+  "modal.close": "Cerrar"
 }

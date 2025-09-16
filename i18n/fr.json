@@ -915,5 +915,17 @@
   "transactionPage.transactionDetailsRefferer": "details_transaction",
   "accountProxyPowerCard.proxyPowerReceived": "Puissance de Proxy Reçue",
   "accountProxyPowerCard.proxiedBy": "Délégué par",
-  "accountProxyPowerCard.power": "Puissance Déléguée"
+  "accountProxyPowerCard.power": "Puissance Déléguée",
+    "pageTitle.topHolders": "Meilleurs détenteurs",
+  "filters.filtersAndSearch": "Filtres et Recherche",
+  "filters.balance": "Solde",
+  "filters.savings": "Économies",
+  "table.rank": "Rang",
+  "table.account": "Compte",
+  "table.balance": "Solde",
+  "table.savings": "Économies",
+  "modal.loading": "Chargement...",
+  "modal.noHistory": "Aucun historique disponible.",
+  "modal.error": "Erreur lors du chargement de l'historique du solde.",
+  "modal.close": "Fermer"
 }

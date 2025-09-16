@@ -915,5 +915,17 @@
   "transactionPage.transactionDetailsRefferer": "transaktionsdetails",
   "accountProxyPowerCard.proxyPowerReceived": "Erhaltene Proxy-Stärke",
   "accountProxyPowerCard.proxiedBy": "Geproxt von",
-  "accountProxyPowerCard.power": "Geproxte Stärke"
+  "accountProxyPowerCard.power": "Geproxte Stärke",
+    "pageTitle.topHolders": "Top-Inhaber",
+  "filters.filtersAndSearch": "Filter & Suche",
+  "filters.balance": "Guthaben",
+  "filters.savings": "Ersparnisse",
+  "table.rank": "Rang",
+  "table.account": "Konto",
+  "table.balance": "Guthaben",
+  "table.savings": "Ersparnisse",
+  "modal.loading": "Lädt...",
+  "modal.noHistory": "Keine Historie verfügbar.",
+  "modal.error": "Fehler beim Laden der Guthabenhistorie.",
+  "modal.close": "Schließen"
 }
