@@ -915,5 +915,14 @@
   "transactionPage.transactionDetailsRefferer": "تفاصيل_المعاملة",
   "accountProxyPowerCard.proxyPowerReceived": "القوة المُفوَّضة",
   "accountProxyPowerCard.proxiedBy": "مُفوَّض من",
-  "accountProxyPowerCard.power": "القوة المُفوَّضة"
+  "accountProxyPowerCard.power": "القوة المُفوَّضة",
+  "postPropertiesTable.title": "خصائص المنشور",
+  "voteDetailsTable.title": "تفاصيل الأصوات",
+  "voteDetailsTable.voter": "المصوت",
+  "voteDetailsTable.rshares": "Rshares",
+  "postContentCard.properties": "الخصائص",
+  "postContentCard.votes": "أصوات",
+  "postContentCard.and": "و",
+  "postContentCard.others": "آخرون",
+  "postContentCard.copyBody": "نسخ المحتوى"
 }

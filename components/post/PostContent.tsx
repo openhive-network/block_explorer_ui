@@ -29,33 +29,45 @@ const PostContent: React.FC<PostContentProps> = ({
 
   const voters = active_votes.map((vote) => vote.voter) ?? [];
 
-  return (
-    <>
-      <PostContentCard
-        isComment={isComment}
-        isPropertiesOpen={isPropertiesOpen}
-        isVoteDetailsOpen={isVoteDetailsOpen}
-        isCommentsVisible={isCommentsVisible}
-        handlePropertiesToggle={handlePropertiesToggle}
-        handleVoteDetailsToggle={handleVoteDetailsToggle}
-        handleCommentsToggle={handleCommentsToggle}
-        voteDetailsLength={active_votes.length ?? 0}
-        voters={voters}
-        data={data}
-        commentsLength={data?.children ?? 0}
-      />
-      <PostPropertiesTable
-        isPropertiesOpen={isPropertiesOpen}
-        data={data}
-      />
-      {active_votes.length ? (
-        <VoteDetailsTable
-          isVoteDetailsOpen={isVoteDetailsOpen}
-          voteDetails={active_votes}
-        />
-      ) : null}
-    </>
-  );
+return (
+  <div className="flex flex-col">
+    <PostContentCard
+      isComment={isComment}
+      isPropertiesOpen={isPropertiesOpen}
+      isVoteDetailsOpen={isVoteDetailsOpen}
+      isCommentsVisible={isCommentsVisible}
+      handlePropertiesToggle={handlePropertiesToggle}
+      handleVoteDetailsToggle={handleVoteDetailsToggle}
+      handleCommentsToggle={handleCommentsToggle}
+      voteDetailsLength={active_votes.length ?? 0}
+      voters={voters}
+      data={data}
+      commentsLength={data?.children ?? 0}
+    />
+
+    {(isPropertiesOpen || isVoteDetailsOpen) && (
+      <div className="mt-1 flex flex-col gap-2 md:flex-row">
+        {isPropertiesOpen && (
+          <div className="flex-1 min-w-0">
+            <PostPropertiesTable
+              isPropertiesOpen={isPropertiesOpen}
+              data={data}
+            />
+          </div>
+        )}
+        {isVoteDetailsOpen && active_votes.length > 0 && (
+          <div className="flex-1 min-w-0">
+            <VoteDetailsTable
+              isVoteDetailsOpen={isVoteDetailsOpen}
+              voteDetails={active_votes}
+            />
+          </div>
+        )}
+      </div>
+    )}
+  </div>
+  
+);
 };
 
 export default PostContent;

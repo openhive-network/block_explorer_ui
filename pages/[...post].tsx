@@ -6,6 +6,7 @@ import { Loader2 } from "lucide-react";
 import PageNotFound from "@/components/PageNotFound";
 import PostPageContent from "@/components/post/PostPageContent";
 import usePostDiscussion from "@/hooks/api/postPage/usePostDiscussion";
+import ScrollTopButton from "@/components/ScrollTopButton";
 
 const Post = () => {
   const router = useRouter();
@@ -21,6 +22,16 @@ const Post = () => {
   }
   // Post query as array
   const { post } = router.query;
+
+  const PostPageLayout = () => (
+  <>
+    <PostPageContent />
+    <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50">
+      <ScrollTopButton />
+    </div>
+  </>
+);
+
 
   if (!post || !post.length) {
     return <PageNotFound />;
@@ -54,11 +65,12 @@ const Post = () => {
 
     router.replace(url);
 
-    return <PostPageContent />;
+    return <PostPageLayout />;
   } else if (post.length === 3) {
-    return <PostPageContent />;
+    return <PostPageLayout />;
   } else {
     return <PageNotFound />;
   }
+  
 };
 export default Post;

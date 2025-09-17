@@ -915,5 +915,14 @@
   "transactionPage.transactionDetailsRefferer": "交易详情",
   "accountProxyPowerCard.proxyPowerReceived": "收到的代理权",
   "accountProxyPowerCard.proxiedBy": "代理来源",
-  "accountProxyPowerCard.power": "代理能量"
+  "accountProxyPowerCard.power": "代理能量",
+  "postPropertiesTable.title": "帖子属性",
+  "voteDetailsTable.title": "投票详情",
+  "voteDetailsTable.voter": "投票人",
+  "voteDetailsTable.rshares": "Rshares",
+  "postContentCard.properties": "属性",
+  "postContentCard.votes": "票",
+  "postContentCard.and": "和",
+  "postContentCard.others": "其他",
+  "postContentCard.copyBody": "复制内容"
 }

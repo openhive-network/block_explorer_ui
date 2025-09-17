@@ -1,5 +1,13 @@
 import Link from "next/link";
-import { ChevronDown, ChevronUp, ThumbsUp } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  ThumbsUp,
+  MessageSquare,
+  List,
+  Settings2,
+  Heart, // Changed from List to Heart in your provided code
+} from "lucide-react";
 
 import {
   formatAndDelocalizeFromTime,
@@ -16,6 +24,9 @@ import {
   TooltipContent,
 } from "@/components/ui/hybrid-tooltip";
 import { useI18n } from "@/i18n/i18n";
+import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
+import Image from "next/image";
+import CopyButton from "../ui/CopyButton";
 
 interface PostContentCardProps {
   isComment?: boolean;
@@ -72,23 +83,45 @@ const PostContentCard: React.FC<PostContentCardProps> = ({
     pending_payout_value,
   } = data;
 
+  const ACTIVE_ICON_COLOR = "#3b82f6";
+
   return (
-    <Card className="overflow-hidden pb-0 w-[100%]">
-      <div className="flex text-sm justify-between items-center py-1 px-4 border-b-[1px] border-slate-400 bg-rowHover">
-        <div className="flex gap-2">
-          {!isComment ? <p>{category} - </p> : ""}
+    <Card className="overflow-hidden w-full shadow-md z-10">
+      <CardHeader className="flex flex-row items-center justify-between p-4 bg-muted/50 border-b">
+        <div className="flex items-center gap-3">
           <Link
-            className="text-link"
             href={`/@${author}`}
+            className="flex items-center space-x-4 py-1 text-link hover:underline"
           >
-            @{author}
+            <Image
+              src={getHiveAvatarUrl(author)}
+              alt={author}
+              width={40}
+              height={40}
+              className="rounded-full"
+            />
           </Link>
-          -
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
+
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2 text-sm">
+              <Link
+                className="font-bold text-foreground hover:text-link"
+                href={`/@${author}`}
+              >
+                {author}
+              </Link>
+              {!isComment && (
+                <>
+                  <span>•</span>
+                  <span>{category}</span>
+                </>
+              )}
+            </div>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
                 <span>{formatAndDelocalizeFromTime(created ,locale)}</span>
-              </TooltipTrigger>
+                </TooltipTrigger>
               <TooltipContent
                 side="top"
                 align="start"
@@ -99,94 +132,106 @@ const PostContentCard: React.FC<PostContentCardProps> = ({
                 <div className="bg-theme text-text p-1">
                   <p>{formatAndDelocalizeTime(created)}</p>
                 </div>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </div>
         </div>
         <div>{showPayoutValue(is_paidout, payout, pending_payout_value)}</div>
-      </div>
-      {title && !isComment && (
-        <CardHeader className="p-0">
-          <div className="flex justify-between font-semibold p-2 px-4 border-b-[1px] border-slate-400">
-            {title}
-          </div>
-        </CardHeader>
-      )}
+      </CardHeader>
 
-      <CardContent className="p-0">
-        <div
-          className={cn("w-full text-left", {
-            "pt-2": !title,
-          })}
-        >
-          <div className="px-4 py-2">
-            <pre className="text-sm">{body}</pre>
-          </div>
-          {voters.length ? (
-            <div className="mt-2 border-t-[1px] border-slate-400">
-              <div className="p-2 flex items-center gap-1 flex-wrap">
-                <ThumbsUp />
-                {voters.map((voter, index) => {
-                  if (index < 5) {
-                    return (
-                      <div
-                        key={voter}
-                        className="text-link bg-buttonBg hover:bg-buttonHover cursor-pointer py-1 px-3 m-2 break-word whitespace-nowrap rounded-full"
-                      >
-                        <Link href={`/@${voter}`}>{voter}</Link>
-                      </div>
-                    );
-                  }
-                })}
-                {voters.length > 5 ? (
-                  <p> and {voters.length - 5} others</p>
-                ) : null}
-              </div>
-            </div>
-          ) : null}
+      <CardContent className="p-4">
+        {!isComment && title && (
+          <h2 className="text-2xl font-bold mb-4 break-words">
+            {title}
+            <CopyButton
+              text={body}
+              tooltipText={t("postContentCard.copyBody")}
+              className="w-4 h-4"
+            />
+          </h2>
+        )}
+        <div className="prose dark:prose-invert max-w-none">
+          <pre className="text-base whitespace-pre-wrap font-sans break-words">
+            {body}
+          </pre>
         </div>
+        {voters.length > 0 && (
+          <div className="mt-4 pt-4 border-t">
+            <div className="flex items-center gap-2 flex-wrap">
+              <ThumbsUp className="w-5 h-5 text-primary" />
+              {voters.slice(0, 5).map((voter) => (
+                <Link
+                  key={voter}
+                  href={`/@${voter}`}
+                  className="text-sm text-link bg-secondary hover:bg-secondary/80 py-1 px-3 rounded-full transition-colors"
+                >
+                  {voter}
+                </Link>
+              ))}
+              {voters.length > 5 && (
+                <span className="text-sm text-explorer-slate-text">
+                  {t("postContentCard.and")} {voters.length - 5}{" "}
+                  {t("postContentCard.others")}
+                </span>
+              )}
+            </div>
+          </div>
+        )}
       </CardContent>
 
-      <CardFooter className="p-0">
-        <div className="flex w-full py-1 px-4 border-t-[1px] border-slate-400">
+      <CardFooter className="p-2 bg-muted/50 border-t flex justify-start gap-1">
+        {commentsLength > 0 && (
           <button
-            onClick={handlePropertiesToggle}
-            className="flex items-center text-xs px-2 hover:bg-buttonHover"
+            onClick={handleCommentsToggle}
+            className="flex items-center text-sm font-medium p-2 rounded-md hover:bg-accent"
           >
-            Properties
-            {isPropertiesOpen ? (
+            <MessageSquare
+              className="w-4 h-4 mr-2"
+              color={isCommentsVisible ? ACTIVE_ICON_COLOR : undefined}
+            />
+            <span>{commentsLength}</span>
+            {isCommentsVisible ? (
               <ChevronUp className="w-4 ml-1" />
             ) : (
-              <ChevronDown className="w-4  ml-1" />
+              <ChevronDown className="w-4 ml-1" />
             )}
           </button>
-          {voteDetailsLength ? (
-            <button
-              onClick={handleVoteDetailsToggle}
-              className="flex items-center text-xs px-2 hover:bg-buttonHover"
-            >
-              {`Vote Details (${voteDetailsLength})`}
-              {isVoteDetailsOpen ? (
-                <ChevronUp className="w-4 ml-1" />
-              ) : (
-                <ChevronDown className="w-4  ml-1" />
-              )}
-            </button>
-          ) : null}
-          {commentsLength > 0 ? (
-            <button
-              onClick={handleCommentsToggle}
-              className="flex items-center text-xs px-2 hover:bg-buttonHover"
-            >
-              {`Comments (${commentsLength})`}
-              {isCommentsVisible ? (
-                <ChevronUp className="w-4 ml-1" />
-              ) : (
-                <ChevronDown className="w-4  ml-1" />
-              )}
-            </button>
-          ) : null}
-        </div>
+        )}
+        {voteDetailsLength > 0 && (
+          <button
+            onClick={handleVoteDetailsToggle}
+            className="flex items-center text-sm font-medium p-2 rounded-md hover:bg-accent"
+          >
+            <Heart
+              className="w-4 h-4 mr-2"
+              color={isVoteDetailsOpen ? ACTIVE_ICON_COLOR : undefined}
+            />
+            <span>
+              {voteDetailsLength} {t("postContentCard.votes")}
+            </span>
+            {isVoteDetailsOpen ? (
+              <ChevronUp className="w-4 ml-1" />
+            ) : (
+              <ChevronDown className="w-4 ml-1" />
+            )}
+          </button>
+        )}
+        <button
+          onClick={handlePropertiesToggle}
+          className="flex items-center text-sm font-medium p-2 rounded-md hover:bg-accent"
+        >
+          <List
+            className="w-4 h-4 mr-2"
+            color={isPropertiesOpen ? ACTIVE_ICON_COLOR : undefined}
+          />
+          <span>{t("postContentCard.properties")}</span>
+          {isPropertiesOpen ? (
+            <ChevronUp className="w-4 ml-1" />
+          ) : (
+            <ChevronDown className="w-4 ml-1" />
+          )}
+        </button>
       </CardFooter>
     </Card>
   );

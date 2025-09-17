@@ -915,5 +915,14 @@
   "transactionPage.transactionDetailsRefferer": "szczegoly_transakcji",
   "accountProxyPowerCard.proxyPowerReceived": "Otrzymana Moc Proxy",
   "accountProxyPowerCard.proxiedBy": "Delegowane przez",
-  "accountProxyPowerCard.power": "Delegowana Moc"
+  "accountProxyPowerCard.power": "Delegowana Moc",
+  "postPropertiesTable.title": "Właściwości posta",
+  "voteDetailsTable.title": "Szczegóły głosowania",
+  "voteDetailsTable.voter": "Głosujący",
+  "voteDetailsTable.rshares": "Rshares",
+  "postContentCard.properties": "Właściwości",
+  "postContentCard.votes": "głosów",
+  "postContentCard.and": "i",
+  "postContentCard.others": "innych",
+  "postContentCard.copyBody": "Kopiuj treść"
 }
