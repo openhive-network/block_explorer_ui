@@ -915,5 +915,14 @@
   "transactionPage.transactionDetailsRefferer": "transaktionsdetails",
   "accountProxyPowerCard.proxyPowerReceived": "Erhaltene Proxy-Stärke",
   "accountProxyPowerCard.proxiedBy": "Geproxt von",
-  "accountProxyPowerCard.power": "Geproxte Stärke"
+  "accountProxyPowerCard.power": "Geproxte Stärke",
+  "postPropertiesTable.title": "Beitragseigenschaften",
+  "voteDetailsTable.title": "Abstimmungsdetails",
+  "voteDetailsTable.voter": "Wähler",
+  "voteDetailsTable.rshares": "Rshares",
+  "postContentCard.properties": "Eigenschaften",
+  "postContentCard.votes": "Stimmen",
+  "postContentCard.and": "und",
+  "postContentCard.others": "andere",
+  "postContentCard.copyBody": "Inhalt kopieren"
 }
