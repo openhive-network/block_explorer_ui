@@ -31,17 +31,45 @@ docker-build:
   script:
     - |
       echo -e "\e[0Ksection_start:$(date +%s):tag[collapsed=true]\r\e[0KDetermining tag for the new image..."
+      # Always tag with short SHA
+      export TAGS="$CI_COMMIT_SHORT_SHA"
+
+      # Add branch-specific tags
       if [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
-        echo "Running on default branch '$CI_DEFAULT_BRANCH': tag = 'latest'"
+        echo "Running on default branch '$CI_DEFAULT_BRANCH': adding tag 'latest'"
+        export TAGS="$TAGS latest"
         export TAG="latest"
+      elif [[ "$CI_COMMIT_BRANCH" == "develop" ]]; then
+        echo "Running on develop branch: adding tag 'develop'"
+        export TAGS="$TAGS develop"
+        export TAG="develop"
       else
-        echo "Running on branch '$CI_COMMIT_BRANCH': tag = $CI_COMMIT_REF_SLUG"
+        echo "Running on branch '$CI_COMMIT_BRANCH': adding tag $CI_COMMIT_REF_SLUG"
+        export TAGS="$TAGS $CI_COMMIT_REF_SLUG"
         export TAG="$CI_COMMIT_REF_SLUG"
       fi
+
+      echo "Tags to be applied: $TAGS"
       echo -e "\e[0Ksection_end:$(date +%s):tag\r\e[0K"
-      echo -e "\e[0Ksection_start:$(date +%s):build[collapsed=true]\r\e[0KBaking image "$CI_REGISTRY_IMAGE:$TAG"..."
+      echo -e "\e[0Ksection_start:$(date +%s):build[collapsed=true]\r\e[0KBaking image..."
       git config --global --add safe.directory "$CI_PROJECT_DIR"
       scripts/build_instance.sh --progress=plain "$CI_PROJECT_DIR"
+
+      # Pull the image locally since buildx pushes directly to registry
+      docker pull "$CI_REGISTRY_IMAGE:$TAG"
+
+      # Apply all tags
+      for TAG_NAME in $TAGS; do
+        if [[ "$TAG_NAME" != "$TAG" ]]; then
+          docker tag "$CI_REGISTRY_IMAGE:$TAG" "$CI_REGISTRY_IMAGE:$TAG_NAME"
+        fi
+      done
+
+      # Push all tags
+      for TAG_NAME in $TAGS; do
+        docker push "$CI_REGISTRY_IMAGE:$TAG_NAME"
+      done
+
       echo "IMAGE_NAME=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" > docker-build.env
       echo "Unique image tag:"
       cat docker-build.env
@@ -296,8 +324,26 @@ build_and_publish_image:
   extends: .publish_docker_image_template
   before_script:
     - !reference [.publish_docker_image_template, before_script]
+    - |
+      # Ensure we have the short SHA variable available
+      export CI_COMMIT_SHORT_SHA="${CI_COMMIT_SHORT_SHA:-$(echo $CI_COMMIT_SHA | head -c8)}"
   script:
-    - scripts/ci-helpers/build_and_publish_instance.sh
+    - |
+      if [[ -z "$CI_COMMIT_SHORT_SHA" ]]; then
+        export CI_COMMIT_SHORT_SHA=$(echo $CI_COMMIT_SHA | head -c8)
+      fi
+      # Call the fixed script with all required parameters
+      scripts/ci-helpers/build_and_publish_instance.sh \
+        --registry-user="$CI_REGISTRY_USER" \
+        --registry-password="$CI_REGISTRY_PASSWORD" \
+        --registry="$CI_REGISTRY" \
+        --image-tag="$CI_COMMIT_TAG" \
+        --commit-sha="$CI_COMMIT_SHORT_SHA" \
+        --image-name-prefix="$CI_REGISTRY_IMAGE" \
+        --docker-hub-user="$DOCKER_HUB_USER" \
+        --docker-hub-password="$DOCKER_HUB_PASSWORD" \
+        --blog-registry-user="$BLOG_REGISTRY_USER" \
+        --blog-registry-password="$BLOG_REGISTRY_PASSWORD"
   tags:
     - public-runner-docker
     - hived-for-tests
