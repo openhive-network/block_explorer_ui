@@ -11,8 +11,7 @@ import DataExport from "@/components/DataExport";
 import CustomPagination from "@/components/CustomPagination";
 import useTopHolders, { CoinType, BalanceType } from "@/hooks/api/common/useTopHolders";
 import { config } from "@/Config";
-import { formatNumber } from "@/lib/utils";
-import { ChevronDown, ChevronUp, ChevronsUpDown, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import Image from "next/image";
 import Link from "next/link";
@@ -22,19 +21,27 @@ import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import Hive from "@/types/Hive";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { useSettings } from "@/contexts/SettingsContext";
+import ScrollTopButton from "@/components/ScrollTopButton";
 
 export default function TopHoldersPage() {
   const { t } = useI18n();
   const router = useRouter();
+  const { settings } = useSettings();
 
   const [page, setPage] = useState(1);
   const [coinType, setCoinType] = useState<CoinType>("HIVE");
   const [balanceType, setBalanceType] = useState<BalanceType>("balance");
   const [isFiltersVisible, setIsFiltersVisible] = useState(false);
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-  const [unit, setUnit] = useState<"vests" | "hp">("vests");
+
+  const [unit, setUnit] = useState<"vests" | "hp">(settings.displayVestHpMode === "hp" ? "hp" : "vests");
+
+  useEffect(() => {
+    setUnit(settings.displayVestHpMode === "hp" ? "hp" : "vests");
+  }, [settings.displayVestHpMode]);
 
   const totalCount = config.topHolders.totalCount;
+  const pageSize = 100;
 
   const { holdersData, isTopHoldersLoading, isTopHoldersError } = useTopHolders(
     coinType,
@@ -44,19 +51,10 @@ export default function TopHoldersPage() {
 
   const defaultCoinType: CoinType = "HIVE";
   const defaultBalanceType: BalanceType = "balance";
-  const defaultSortOrder: "asc" | "desc" = "desc";
 
-  const filtersChanged =
-    coinType !== defaultCoinType ||
-    balanceType !== defaultBalanceType ||
-    sortOrder !== defaultSortOrder;
+  const filtersChanged = coinType !== defaultCoinType || balanceType !== defaultBalanceType;
 
-  const filteredHolders = holdersData.sort((a, b) => {
-    const valA = parseFloat(a.value);
-    const valB = parseFloat(b.value);
-    if (isNaN(valA) || isNaN(valB)) return 0;
-    return sortOrder === "asc" ? valA - valB : valB - valA;
-  });
+  const filteredHolders = holdersData;
 
   const { dynamicGlobalData } = useDynamicGlobal() as any;
   const [totalVestingShares, setTotalVestingShares] = useState<Hive.Supply>(
@@ -74,39 +72,32 @@ export default function TopHoldersPage() {
     }
   }, [dynamicGlobalData]);
 
-  const fetchHivePower = (value: string, isHP: boolean): string => {
-    if (isHP) {
-      if (!hiveChain) return "";
-      return convertVestsToHP(
-        hiveChain,
-        value,
-        totalVestingFundHive,
-        totalVestingShares
-      );
+  useEffect(() => {
+    setPage(1);
+  }, [coinType, balanceType]);
+
+  const formatBalance = (value: string, coin: CoinType): string => {
+    if (!hiveChain) return value;
+
+    if (coin === "VESTS") {
+      return unit === "hp"
+        ? convertVestsToHP(hiveChain, value, totalVestingFundHive, totalVestingShares)
+        : hiveChain.formatter.format(hiveChain.vests(value)); // only append VESTS once in UI
+    } else if (coin === "HIVE") {
+      return hiveChain.formatter.format(hiveChain.hive(value));
+    } else if (coin === "HBD") {
+      return hiveChain.formatter.format(hiveChain.hbd(value));
     }
-    return `${formatNumber(value, true)} VESTS`;
+    return value;
   };
 
-  const formatValueForDisplay = (value: string, coinType: CoinType) => {
-    if (coinType === "VESTS" && unit === "hp") {
-      return fetchHivePower(value, true);
-    }
-    return formatNumber(value, coinType === "VESTS") + (coinType === "VESTS" ? " VESTS" : "");
-  };
-
-  // Fixed: export respects the toggle (HP / VESTS)
   const prepareExportData = () =>
-    filteredHolders.map((holder) => {
-      let displayValue = holder.value;
-
-      if (coinType === "VESTS") {
-        displayValue = unit === "hp"
-          ? fetchHivePower(holder.value, true)
-          : `${formatNumber(holder.value, true)} VESTS`;
-      }
+    filteredHolders.map((holder, index) => {
+      const displayValue = formatBalance(holder.value, coinType);
 
       return {
-        [t("table.rank")]: holder.rank + (page - 1) * 100,
+        [t("table.rank")]:
+          holder.rank > 0 ? holder.rank : index + 1 + (page - 1) * pageSize,
         [t("table.account")]: holder.account,
         [balanceType === "savings_balance" ? t("table.savings") : t("table.balance")]: displayValue,
       };
@@ -114,34 +105,30 @@ export default function TopHoldersPage() {
 
   const exportFileName = `top_holders_${coinType.toLowerCase()}.csv`;
 
-  const HolderRow = ({ rank, account, value }: { rank: number; account: string; value: string }) => (
-    <TableRow key={account} className="hover:bg-rowHover cursor-pointer text-sm" data-testid="top-holders-table-row">
-      <TableCell>{rank}</TableCell>
-      <TableCell className="text-link">
-        <div className="flex items-center space-x-2">
-          <Image src={getHiveAvatarUrl(account)} alt={`${account}'s profile`} width={30} height={30} className="rounded-full " />
-          <Link className="text-link" href={`/@${account}`}>{account}</Link>
-        </div>
-      </TableCell>
-      <TableCell className="text-right">{formatValueForDisplay(value, coinType)}</TableCell>
-    </TableRow>
-  );
+  const HolderRow = ({ rank, account, value, index }: { rank: number; account: string; value: string; index: number }) => {
+    const displayRank = rank > 0 ? rank : index + 1 + (page - 1) * pageSize;
+
+    return (
+      <TableRow key={account} className="hover:bg-rowHover cursor-pointer text-sm" data-testid="top-holders-table-row">
+        <TableCell>{displayRank}</TableCell>
+        <TableCell className="text-link">
+          <div className="flex items-center space-x-2">
+            <Image src={getHiveAvatarUrl(account)} alt={`${account}'s profile`} width={30} height={30} className="rounded-full " />
+            <Link className="text-link" href={`/@${account}`}>{account}</Link>
+          </div>
+        </TableCell>
+        <TableCell className="text-right">{formatBalance(value, coinType)}</TableCell>
+      </TableRow>
+    );
+  };
 
   const TableHeaderRow = () => (
     <TableHeader>
       <TableRow className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-left">
-        <TableHead className="cursor-pointer" onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}>
-          <div className="flex items-center">
-            {t("table.rank")}
-            {sortOrder === "asc" ? <ChevronDown size={15} className="ml-1" /> : <ChevronUp size={15} className="ml-1" />}
-          </div>
-        </TableHead>
+        <TableHead>{t("table.rank")}</TableHead>
         <TableHead>{t("table.account")}</TableHead>
-        <TableHead className="text-right cursor-pointer" onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}>
-          <div className="flex items-center justify-end">
-            {balanceType === "savings_balance" ? t("table.savings") : t("table.balance")}
-            <ChevronsUpDown size={15} className="ml-1" />
-          </div>
+        <TableHead className="text-right">
+          {balanceType === "savings_balance" ? t("table.savings") : t("table.balance")}
         </TableHead>
       </TableRow>
     </TableHeader>
@@ -149,9 +136,8 @@ export default function TopHoldersPage() {
 
   return (
     <div className="page-container">
-      {/* Top Section */}
       <Card className="w-full rounded-[0px] rounded-t shadow-md mt-4 py-2">
-        <div className="flex flex-row  items-start justify-between w-full relative gap-3">
+        <div className="flex flex-row items-start justify-between w-full relative gap-3">
           <div className="flex flex-col md:flex-row justify-between items-start">
             <PageTitle titleKey="pageTitle.topHolders" className="py-4" />
           </div>
@@ -164,17 +150,25 @@ export default function TopHoldersPage() {
         </div>
       </Card>
 
-      {/* Filter Section */}
       {isFiltersVisible && (
         <Card className="w-full rounded-[0px] rounded-b shadow-sm">
           <div className="flex flex-col sm:flex-row gap-4 items-start p-4">
-            <select value={coinType} onChange={(e) => setCoinType(e.target.value as CoinType)} className="border rounded px-2 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 w-full sm:w-auto">
+            <select
+              value={coinType}
+              onChange={(e) => setCoinType(e.target.value as CoinType)}
+              className="border rounded px-2 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 w-full sm:w-auto"
+            >
               <option value="HIVE">HIVE</option>
               <option value="HBD">HBD</option>
               <option value="VESTS">VESTS</option>
             </select>
 
-            <select value={balanceType} onChange={(e) => setBalanceType(e.target.value as BalanceType)} disabled={coinType === "VESTS"} className="border rounded px-2 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 w-full sm:w-auto">
+            <select
+              value={balanceType}
+              onChange={(e) => setBalanceType(e.target.value as BalanceType)}
+              disabled={coinType === "VESTS"}
+              className="border rounded px-2 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 w-full sm:w-auto"
+            >
               <option value="balance">{t("filters.balance")}</option>
               <option value="savings_balance">{t("filters.savings")}</option>
             </select>
@@ -182,12 +176,10 @@ export default function TopHoldersPage() {
         </Card>
       )}
 
-      {/* Pagination */}
       <div className="flex justify-center w-full mt-4 ">
-        <CustomPagination currentPage={page} onPageChange={setPage} pageSize={100} totalCount={totalCount} />
+        <CustomPagination currentPage={page} onPageChange={setPage} pageSize={pageSize} totalCount={totalCount} />
       </div>
 
-      {/* Export + Unit Toggle */}
       <div className="table-toolbar w-full flex">
         <div className="ml-auto flex items-center space-x-4">
           {coinType === "VESTS" && (
@@ -201,7 +193,6 @@ export default function TopHoldersPage() {
         </div>
       </div>
 
-      {/* Table */}
       <Card className="w-full rounded">
         {isTopHoldersLoading && (
           <div className="flex justify-center items-center">
@@ -218,14 +209,23 @@ export default function TopHoldersPage() {
           <Table className="w-full">
             <TableHeaderRow />
             <TableBody data-testid="table-body">
-              {filteredHolders.map((holder) => {
-                const displayRank = holder.rank + (page - 1) * 100;
-                return <HolderRow key={holder.account} rank={displayRank} account={holder.account} value={holder.value} />;
-              })}
+              {filteredHolders.map((holder, index) => (
+                <HolderRow
+                  key={holder.account}
+                  rank={holder.rank}
+                  account={holder.account}
+                  value={holder.value}
+                  index={index}
+                />
+              ))}
             </TableBody>
           </Table>
         )}
       </Card>
+
+      <div className="fixed bottom-[10px] right-0 flex flex-col items-end justify-end px-3 md:px-12">
+        <ScrollTopButton />
+      </div>
     </div>
   );
 }

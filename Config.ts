@@ -26,7 +26,7 @@ export const config = {
     home: 20,
   },
    topHolders: {
-    totalCount: 500,       // Total number of top holders
+    totalCount: 2000,       // Total number of top holders
     pageSize: 100,         // Page size for pagination
   },
   maxWitnessVotes: 30,
