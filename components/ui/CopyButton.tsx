@@ -8,6 +8,7 @@ import {
   TooltipTrigger,
 } from "../ui/tooltip";
 import { Button } from "./button";
+import { cn } from "@/lib/utils";
 
 interface CopyButtonProps {
   text: any;
@@ -31,7 +32,7 @@ const CopyButton: React.FC<CopyButtonProps> = ({
     textArea.select();
     try {
       document.execCommand("copy");
-    } catch (err) {}
+    } catch (err) { }
     document.body.removeChild(textArea);
   };
 
@@ -54,32 +55,18 @@ const CopyButton: React.FC<CopyButtonProps> = ({
       <Tooltip>
         <TooltipTrigger asChild>
           <Button
-            className="
-                inline-flex               
-                text-sm
-                font-medium        
-                disabled:pointer-events-none
-                disabled:opacity-50
-                hover:light:bg-explorer-extra-light-gray
-                h-3
-                w-3
-                p-0
-                rounded-md
-                bg-transparent
-                ml-1
-                cursor-pointer"
+            className={cn(
+              "inline-flex h-3 w-3 p-0 rounded-md bg-transparent ml-1 cursor-pointer text-sm font-medium disabled:pointer-events-none disabled:opacity-50 hover:light:bg-explorer-extra-light-gray",
+              className
+            )}
             aria-label={tooltipText}
             onClick={handleCopy}
             onTouchEnd={handleCopy}
           >
             {isCopied ? (
-              <Check
-                className="h-3 w-3"
-                color="green"
-                strokeWidth={4}
-              />
+              <Check className="h-full w-full" color="green" strokeWidth={4} />
             ) : (
-              <Copy className="h-3 w-3" />
+              <Copy className="h-full w-full" />
             )}
           </Button>
         </TooltipTrigger>

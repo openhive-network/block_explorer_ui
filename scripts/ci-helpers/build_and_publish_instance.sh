@@ -7,13 +7,14 @@ print_help () {
 cat <<EOF
 Usage: $0 OPTION[=VALUE]...
 
-Script for building Docker image of Hive instance and pushingit to GitLab registry and to Docker Hub
+Script for building Docker image of Hive instance and pushing it to GitLab registry and to Docker Hub
 All options (except '--help') are required
 OPTIONS:
   --registry-user=USERNAME      Docker registry user
   --registry-password=PASS      Docker registry user
   --registry=URL                Docker registry URL, eg. 'registry.gitlab.syncad.com'
   --image-tag=TAG               Docker image tag, in CI the same as Git tag
+  --commit-sha=SHA              Short commit SHA for additional tagging
   --image-name-prefix=PREFIX    Docker image name prefix, eg. 'registry.gitlab.syncad.com/hive/hive'
   --docker-hub-user=USERNAME    Docker Hub username
   --docker-hub-password=PASS    Docker Hub password
@@ -43,6 +44,10 @@ while [ $# -gt 0 ]; do
     --image-tag=*)
         arg="${1#*=}"
         CI_COMMIT_TAG="$arg"
+        ;;
+    --commit-sha=*)
+        arg="${1#*=}"
+        CI_COMMIT_SHORT_SHA="$arg"
         ;;
     --image-name-prefix=*)
         arg="${1#*=}"
@@ -86,6 +91,7 @@ done
 [[ -z "$CI_REGISTRY_PASSWORD" ]] && echo "Option '--registry-password' must be set" && print_help && exit 1
 [[ -z "$CI_REGISTRY" ]] && echo "Option '--registry' must be set" && print_help && exit 1
 [[ -z "$CI_COMMIT_TAG" ]] && echo "Option '--image-tag' must be set" && print_help && exit 1
+[[ -z "$CI_COMMIT_SHORT_SHA" ]] && echo "Option '--commit-sha' must be set" && print_help && exit 1
 [[ -z "$CI_REGISTRY_IMAGE" ]] && echo "Option '--image-name-prefix' must be set" && print_help && exit 1
 [[ -z "$DOCKER_HUB_USER" ]] && echo "Option '--docker-hub-user' must be set" && print_help && exit 1
 [[ -z "$DOCKER_HUB_PASSWORD" ]] && echo "Option '--docker-hub-password' must be set" && print_help && exit 1
@@ -94,23 +100,85 @@ done
 
 CI_PROJECT_NAME="${CI_REGISTRY_IMAGE##*/}"
 
-echo "Logging to Docker Hub, $CI_REGISTRY and registry.hive.blog"
+echo "Logging to Docker Hub, $CI_REGISTRY and registry-upload.hive.blog"
 docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY" <<< "$CI_REGISTRY_PASSWORD"
 docker login -u "$DOCKER_HUB_USER" --password-stdin <<< "$DOCKER_HUB_PASSWORD"
-docker login -u "$BLOG_REGISTRY_USER" --password-stdin "registry.hive.blog" <<< "$BLOG_REGISTRY_PASSWORD"
+docker login -u "$BLOG_REGISTRY_USER" --password-stdin "registry-upload.hive.blog" <<< "$BLOG_REGISTRY_PASSWORD"
 
-echo "Building an instance image in the source directory $SRC_DIR"
-"$SRC_DIR/scripts/build_instance.sh" "$SRC_DIR" --tag="$CI_COMMIT_TAG" --registry="$CI_REGISTRY_IMAGE" --progress=plain
+# Build or pull root image
+# Check if image with short SHA already exists (built by docker-build job)
+if docker pull "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" 2>/dev/null; then
+    echo "Found existing root image $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA, retagging it..."
 
-echo "Tagging the image built in the previous step as hiveio/$CI_PROJECT_NAME:$CI_COMMIT_TAG"
-docker tag "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG" "hiveio/$CI_PROJECT_NAME:$CI_COMMIT_TAG"
+    # Tag with release tag for GitLab registry
+    docker tag "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG"
 
-echo "Tagging the image built in the previous step as registry.hive.blog/$CI_PROJECT_NAME:$CI_COMMIT_TAG"
-docker tag "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG" "registry.hive.blog/$CI_PROJECT_NAME:$CI_COMMIT_TAG"
+    # Tag for Docker Hub
+    docker tag "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" "hiveio/$CI_PROJECT_NAME:$CI_COMMIT_TAG"
+
+    # Tag for registry-upload.hive.blog (without /hive path)
+    docker tag "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" "registry-upload.hive.blog/$CI_PROJECT_NAME:$CI_COMMIT_TAG"
+else
+    echo "No existing root image found, building new image..."
+    "$SRC_DIR/scripts/build_instance.sh" "$SRC_DIR" --tag="$CI_COMMIT_TAG" --registry="$CI_REGISTRY_IMAGE" --progress=plain
+
+    # Also tag with short SHA for consistency
+    docker tag "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG" "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
+
+    # Tag for Docker Hub
+    docker tag "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG" "hiveio/$CI_PROJECT_NAME:$CI_COMMIT_TAG"
+
+    # Tag for registry-upload.hive.blog (without /hive path)
+    docker tag "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG" "registry-upload.hive.blog/$CI_PROJECT_NAME:$CI_COMMIT_TAG"
+fi
+
+# Build or pull explorer subdirectory variant
+echo "Building explorer subdirectory variant image..."
+if docker pull "$CI_REGISTRY_IMAGE/explorer-subdirectory:$CI_COMMIT_SHORT_SHA" 2>/dev/null; then
+    echo "Found existing explorer variant $CI_REGISTRY_IMAGE/explorer-subdirectory:$CI_COMMIT_SHORT_SHA, retagging it..."
+
+    # Tag with release tag for GitLab registry
+    docker tag "$CI_REGISTRY_IMAGE/explorer-subdirectory:$CI_COMMIT_SHORT_SHA" "$CI_REGISTRY_IMAGE/explorer-subdirectory:$CI_COMMIT_TAG"
+
+    # Tag for Docker Hub
+    docker tag "$CI_REGISTRY_IMAGE/explorer-subdirectory:$CI_COMMIT_SHORT_SHA" "hiveio/$CI_PROJECT_NAME-explorer-subdirectory:$CI_COMMIT_TAG"
+
+    # Tag for registry-upload.hive.blog
+    docker tag "$CI_REGISTRY_IMAGE/explorer-subdirectory:$CI_COMMIT_SHORT_SHA" "registry-upload.hive.blog/$CI_PROJECT_NAME/explorer-subdirectory:$CI_COMMIT_TAG"
+else
+    echo "No existing explorer variant found, building new image..."
+    "$SRC_DIR/scripts/build_instance.sh" "$SRC_DIR" --tag="$CI_COMMIT_TAG" --registry="$CI_REGISTRY_IMAGE/explorer-subdirectory" --base-path="/explorer" --progress=plain
+
+    # Also tag with short SHA for consistency
+    docker tag "$CI_REGISTRY_IMAGE/explorer-subdirectory:$CI_COMMIT_TAG" "$CI_REGISTRY_IMAGE/explorer-subdirectory:$CI_COMMIT_SHORT_SHA"
+
+    # Tag for Docker Hub
+    docker tag "$CI_REGISTRY_IMAGE/explorer-subdirectory:$CI_COMMIT_TAG" "hiveio/$CI_PROJECT_NAME-explorer-subdirectory:$CI_COMMIT_TAG"
+
+    # Tag for registry-upload.hive.blog
+    docker tag "$CI_REGISTRY_IMAGE/explorer-subdirectory:$CI_COMMIT_TAG" "registry-upload.hive.blog/$CI_PROJECT_NAME/explorer-subdirectory:$CI_COMMIT_TAG"
+fi
 
 docker images
 
-echo "Pushing instance images"
+echo "Pushing root instance images"
+# Push to GitLab registry with both tags
+docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
 docker push "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG"
+
+# Push to Docker Hub
 docker push "hiveio/$CI_PROJECT_NAME:$CI_COMMIT_TAG"
-docker push "registry.hive.blog/$CI_PROJECT_NAME:$CI_COMMIT_TAG"
+
+# Push to registry-upload.hive.blog (non-proxied endpoint for faster uploads)
+docker push "registry-upload.hive.blog/$CI_PROJECT_NAME:$CI_COMMIT_TAG"
+
+echo "Pushing explorer subdirectory variant images"
+# Push to GitLab registry with both tags
+docker push "$CI_REGISTRY_IMAGE/explorer-subdirectory:$CI_COMMIT_SHORT_SHA"
+docker push "$CI_REGISTRY_IMAGE/explorer-subdirectory:$CI_COMMIT_TAG"
+
+# Push to Docker Hub
+docker push "hiveio/$CI_PROJECT_NAME-explorer-subdirectory:$CI_COMMIT_TAG"
+
+# Push to registry-upload.hive.blog
+docker push "registry-upload.hive.blog/$CI_PROJECT_NAME/explorer-subdirectory:$CI_COMMIT_TAG"

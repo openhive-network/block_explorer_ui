@@ -1,6 +1,6 @@
-import { Fragment } from "react";
 import { Table, TableBody, TableRow, TableCell } from "../ui/table";
 import Hive from "@/types/Hive";
+import { useI18n } from "@/i18n/i18n";
 
 const EXCLUDE_PROPERTY_KEYS = ["active_votes", "body", "replies"];
 
@@ -31,15 +31,20 @@ const buildTableBody = (data: Hive.HivePost | null | undefined) => {
   const dataKeys = Object.keys(data);
   const visibleKeys = excludeKeys(dataKeys, EXCLUDE_PROPERTY_KEYS);
 
-  return visibleKeys.map((key, index) => (
-    <Fragment key={index}>
-      <TableRow className="border-b border-gray-700 hover:bg-inherit dark:hover:bg-inherit">
-        <TableCell>{key}</TableCell>
-        <TableCell className="text-left break-all">
+  return visibleKeys.map((key) => (
+    <TableRow
+      key={key}
+      className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted"
+    >
+      <TableCell className="font-semibold align-top w-1/4 pr-8">
+        {key}
+      </TableCell>
+      <TableCell className="text-left">
+        <pre className="whitespace-pre-wrap font-sans text-sm break-all">
           {renderParam(data[key as keyof Hive.HivePost])}
-        </TableCell>
-      </TableRow>
-    </Fragment>
+        </pre>
+      </TableCell>
+    </TableRow>
   ));
 };
 
@@ -52,13 +57,21 @@ const PostPropertiesTable: React.FC<PostPropertiesTableProps> = ({
   isPropertiesOpen,
   data,
 }) => {
-  if (!isPropertiesOpen) return null;
+  const { t } = useI18n();
+  if (!isPropertiesOpen) return null; 
 
   return (
-    <div className="mt-2 mx-5">
-      <Table>
-        <TableBody>{buildTableBody(data)}</TableBody>
-      </Table>
+    <div className="rounded-[4px]  border bg-card text-card-foreground overflow-x-auto ">
+      <div className="p-4 border-b bg-theme">
+        <h3 className="text-lg font-semibold">
+          {t("postPropertiesTable.title")}
+        </h3>
+      </div>
+      <div className="overflow-x-auto">
+        <Table>
+          <TableBody>{buildTableBody(data)}</TableBody>
+        </Table>
+      </div>
     </div>
   );
 };

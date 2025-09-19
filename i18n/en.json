@@ -31,7 +31,7 @@
   "common.vests": "VESTS",
   "common.hp": "HP",
   "common.proxySuffix": "(proxy)",
-  "common.page" :"page",
+  "common.page": "page",
   "currentBlockCard.currentBlock": "Current Block",
   "currentBlockCard.secsAgo": "secs ago",
   "currentBlockCard.transactions": "Transactions",
@@ -915,5 +915,14 @@
   "blockDetails.blockDetails": "block_details",
   "accountProxyPowerCard.proxyPowerReceived": "Proxy Power",
   "accountProxyPowerCard.proxiedBy": "Proxied By",
-  "accountProxyPowerCard.power" : "Proxied Power"
+  "accountProxyPowerCard.power": "Proxied Power",
+  "postPropertiesTable.title": "Post Properties",
+  "voteDetailsTable.title": "Vote Details",
+  "voteDetailsTable.voter": "Voter",
+  "voteDetailsTable.rshares": "Rshares",
+  "postContentCard.properties": "Properties",
+  "postContentCard.votes": "votes",
+  "postContentCard.and": "and",
+  "postContentCard.others": "others",
+  "postContentCard.copyBody": "Copy Content"
 }

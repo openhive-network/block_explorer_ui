@@ -914,5 +914,14 @@
   "transactionPage.transactionDetailsRefferer": "detalii_tranzactie",
   "accountProxyPowerCard.proxyPowerReceived": "Putere Proxy Primită",
   "accountProxyPowerCard.proxiedBy": "Delegat de",
-  "accountProxyPowerCard.power": "Putere Delegată"
+  "accountProxyPowerCard.power": "Putere Delegată",
+  "postPropertiesTable.title": "Proprietățile postării",
+  "voteDetailsTable.title": "Detalii vot",
+  "voteDetailsTable.voter": "Votant",
+  "voteDetailsTable.rshares": "Rshares",
+  "postContentCard.properties": "Proprietăți",
+  "postContentCard.votes": "voturi",
+  "postContentCard.and": "și",
+  "postContentCard.others": "alții",
+  "postContentCard.copyBody": "Copiază conținutul"
 }

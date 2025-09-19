@@ -6,6 +6,9 @@ variable "CI_COMMIT_TAG" {}
 variable "TAG" {
   default = "latest"
 }
+variable "BASE_PATH" {
+  default = ""
+}
 variable "BUILD_TIME" {}
 variable "GIT_COMMIT_SHA" {}
 variable "GIT_CURRENT_BRANCH" {}
@@ -30,6 +33,7 @@ target "local-build" {
     notempty(CI_COMMIT_TAG) ? "${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG}": ""
   ]
   args = {
+    BASE_PATH = "${BASE_PATH}",
     BUILD_TIME = "${BUILD_TIME}",
     GIT_COMMIT_SHA = "${GIT_COMMIT_SHA}",
     GIT_CURRENT_BRANCH = "${GIT_CURRENT_BRANCH}",

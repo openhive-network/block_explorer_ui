@@ -915,5 +915,14 @@
   "transactionPage.transactionDetailsRefferer": "거래_세부정보",
   "accountProxyPowerCard.proxyPowerReceived": "받은 프록시 파워",
   "accountProxyPowerCard.proxiedBy": "프록시 제공자",
-  "accountProxyPowerCard.power": "프록시된 파워"
+  "accountProxyPowerCard.power": "프록시된 파워",
+  "postPropertiesTable.title": "게시물 속성",
+  "voteDetailsTable.title": "투표 상세 정보",
+  "voteDetailsTable.voter": "투표자",
+  "voteDetailsTable.rshares": "Rshares",
+  "postContentCard.properties": "속성",
+  "postContentCard.votes": "표",
+  "postContentCard.and": "그리고",
+  "postContentCard.others": "명 외",
+  "postContentCard.copyBody": "내용 복사"
 }
