@@ -915,7 +915,6 @@
   "blockDetails.blockDetails": "block_details",
   "accountProxyPowerCard.proxyPowerReceived": "Proxy Power",
   "accountProxyPowerCard.proxiedBy": "Proxied By",
-<<<<<<< HEAD
   "accountProxyPowerCard.power": "Proxied Power",
   "postPropertiesTable.title": "Post Properties",
   "voteDetailsTable.title": "Vote Details",
@@ -926,9 +925,6 @@
   "postContentCard.and": "and",
   "postContentCard.others": "others",
   "postContentCard.copyBody": "Copy Content",
-=======
-  "accountProxyPowerCard.power" : "Proxied Power",
->>>>>>> a11a30e6478b4a18e89be4e5b86c590ad5455205
   "pageTitle.topHolders": "Top Holders",
   "filters.filtersAndSearch": "Filters & Search",
   "filters.balance": "Balance",
@@ -940,12 +936,8 @@
   "modal.loading": "Loading...",
   "modal.noHistory": "No history available.",
   "modal.error": "Error loading balance history.",
-<<<<<<< HEAD
   "modal.close":"Close",
   "export.topHolders": "top_holders"
 
 
-=======
-  "modal.close":"Close"
->>>>>>> a11a30e6478b4a18e89be4e5b86c590ad5455205
 }

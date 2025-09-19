@@ -916,7 +916,6 @@
   "accountProxyPowerCard.proxyPowerReceived": "القوة المُفوَّضة",
   "accountProxyPowerCard.proxiedBy": "مُفوَّض من",
   "accountProxyPowerCard.power": "القوة المُفوَّضة",
-<<<<<<< HEAD
   "postPropertiesTable.title": "خصائص المنشور",
   "voteDetailsTable.title": "تفاصيل الأصوات",
   "voteDetailsTable.voter": "المصوت",
@@ -926,8 +925,6 @@
   "postContentCard.and": "و",
   "postContentCard.others": "آخرون",
   "postContentCard.copyBody": "نسخ المحتوى",
-=======
->>>>>>> a11a30e6478b4a18e89be4e5b86c590ad5455205
   "pageTitle.topHolders": "أعلى الحائزين",
   "filters.filtersAndSearch": "الفلاتر والبحث",
   "filters.balance": "الرصيد",
@@ -939,11 +936,7 @@
   "modal.loading": "جارٍ التحميل...",
   "modal.noHistory": "لا يوجد سجل متاح.",
   "modal.error": "خطأ في تحميل سجل الرصيد.",
-<<<<<<< HEAD
   "modal.close": "إغلاق",
   "export.topHolders": "كبار_الحائزين"
 
-=======
-  "modal.close": "إغلاق"
->>>>>>> a11a30e6478b4a18e89be4e5b86c590ad5455205
 }

@@ -915,7 +915,6 @@
   "accountProxyPowerCard.proxyPowerReceived": "Putere Proxy Primită",
   "accountProxyPowerCard.proxiedBy": "Delegat de",
   "accountProxyPowerCard.power": "Putere Delegată",
-<<<<<<< HEAD
   "postPropertiesTable.title": "Proprietățile postării",
   "voteDetailsTable.title": "Detalii vot",
   "voteDetailsTable.voter": "Votant",
@@ -925,8 +924,6 @@
   "postContentCard.and": "și",
   "postContentCard.others": "alții",
   "postContentCard.copyBody": "Copiază conținutul",
-=======
->>>>>>> a11a30e6478b4a18e89be4e5b86c590ad5455205
   "pageTitle.topHolders": "Deținători principali",
   "filters.filtersAndSearch": "Filtre & Căutare",
   "filters.balance": "Sold",
@@ -938,11 +935,7 @@
   "modal.loading": "Se încarcă...",
   "modal.noHistory": "Nu există istoric disponibil.",
   "modal.error": "Eroare la încărcarea istoricului soldului.",
-<<<<<<< HEAD
   "modal.close": "Închide",
   "export.topHolders": "detinatori_principali"
 
-=======
-  "modal.close": "Închide"
->>>>>>> a11a30e6478b4a18e89be4e5b86c590ad5455205
 }

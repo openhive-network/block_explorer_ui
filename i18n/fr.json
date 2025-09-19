@@ -916,7 +916,6 @@
   "accountProxyPowerCard.proxyPowerReceived": "Puissance de Proxy Reçue",
   "accountProxyPowerCard.proxiedBy": "Délégué par",
   "accountProxyPowerCard.power": "Puissance Déléguée",
-<<<<<<< HEAD
   "postPropertiesTable.title": "Propriétés de la publication",
   "voteDetailsTable.title": "Détails des votes",
   "voteDetailsTable.voter": "Votant",
@@ -927,9 +926,6 @@
   "postContentCard.others": "autres",
   "postContentCard.copyBody": "Copier le contenu",
   "pageTitle.topHolders": "Meilleurs détenteurs",
-=======
-    "pageTitle.topHolders": "Meilleurs détenteurs",
->>>>>>> a11a30e6478b4a18e89be4e5b86c590ad5455205
   "filters.filtersAndSearch": "Filtres et Recherche",
   "filters.balance": "Solde",
   "filters.savings": "Économies",
@@ -940,10 +936,6 @@
   "modal.loading": "Chargement...",
   "modal.noHistory": "Aucun historique disponible.",
   "modal.error": "Erreur lors du chargement de l'historique du solde.",
-<<<<<<< HEAD
   "modal.close": "Fermer",
   "export.topHolders": "principaux_detenteurs"
-=======
-  "modal.close": "Fermer"
->>>>>>> a11a30e6478b4a18e89be4e5b86c590ad5455205
 }

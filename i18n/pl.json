@@ -916,7 +916,6 @@
   "accountProxyPowerCard.proxyPowerReceived": "Otrzymana Moc Proxy",
   "accountProxyPowerCard.proxiedBy": "Delegowane przez",
   "accountProxyPowerCard.power": "Delegowana Moc",
-<<<<<<< HEAD
   "postPropertiesTable.title": "Właściwości posta",
   "voteDetailsTable.title": "Szczegóły głosowania",
   "voteDetailsTable.voter": "Głosujący",
@@ -926,8 +925,6 @@
   "postContentCard.and": "i",
   "postContentCard.others": "innych",
   "postContentCard.copyBody": "Kopiuj treść",
-=======
->>>>>>> a11a30e6478b4a18e89be4e5b86c590ad5455205
   "pageTitle.topHolders": "Najwięksi posiadacze",
   "filters.filtersAndSearch": "Filtry i wyszukiwanie",
   "filters.balance": "Saldo",
@@ -939,11 +936,7 @@
   "modal.loading": "Ładowanie...",
   "modal.noHistory": "Brak dostępnej historii.",
   "modal.error": "Błąd ładowania historii salda.",
-<<<<<<< HEAD
   "modal.close": "Zamknij",
   "export.topHolders": "najwięksi_posiadacze"
-=======
-  "modal.close": "Zamknij"
->>>>>>> a11a30e6478b4a18e89be4e5b86c590ad5455205
 
 }

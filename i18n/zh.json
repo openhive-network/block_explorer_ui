@@ -916,7 +916,6 @@
   "accountProxyPowerCard.proxyPowerReceived": "收到的代理权",
   "accountProxyPowerCard.proxiedBy": "代理来源",
   "accountProxyPowerCard.power": "代理能量",
-<<<<<<< HEAD
   "postPropertiesTable.title": "帖子属性",
   "voteDetailsTable.title": "投票详情",
   "voteDetailsTable.voter": "投票人",
@@ -927,9 +926,6 @@
   "postContentCard.others": "其他",
   "postContentCard.copyBody": "复制内容",
   "pageTitle.topHolders": "持币排名",
-=======
-    "pageTitle.topHolders": "持币排名",
->>>>>>> a11a30e6478b4a18e89be4e5b86c590ad5455205
   "filters.filtersAndSearch": "筛选与搜索",
   "filters.balance": "余额",
   "filters.savings": "储蓄",
@@ -940,10 +936,6 @@
   "modal.loading": "加载中...",
   "modal.noHistory": "没有可用记录。",
   "modal.error": "加载余额历史出错。",
-<<<<<<< HEAD
   "modal.close": "关闭",
   "export.topHolders": "主要持有人"
-=======
-  "modal.close": "关闭"
->>>>>>> a11a30e6478b4a18e89be4e5b86c590ad5455205
 }
