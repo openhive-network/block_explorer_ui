@@ -916,6 +916,7 @@
   "accountProxyPowerCard.proxyPowerReceived": "Poder de Proxy Recebido",
   "accountProxyPowerCard.proxiedBy": "Delegado por",
   "accountProxyPowerCard.power": "Poder Delegado",
+<<<<<<< HEAD
   "postPropertiesTable.title": "Propriedades da publicação",
   "voteDetailsTable.title": "Detalhes dos votos",
   "voteDetailsTable.voter": "Votante",
@@ -926,6 +927,9 @@
   "postContentCard.others": "outros",
   "postContentCard.copyBody": "Copiar conteúdo",
   "pageTitle.topHolders": "Principais Detentores",
+=======
+    "pageTitle.topHolders": "Principais Detentores",
+>>>>>>> a11a30e6478b4a18e89be4e5b86c590ad5455205
   "filters.filtersAndSearch": "Filtros e Pesquisa",
   "filters.balance": "Saldo",
   "filters.savings": "Poupança",
@@ -936,6 +940,10 @@
   "modal.loading": "Carregando...",
   "modal.noHistory": "Nenhum histórico disponível.",
   "modal.error": "Erro ao carregar histórico de saldo.",
+<<<<<<< HEAD
   "modal.close": "Fechar",
   "export.topHolders": "principais_detentores"
+=======
+  "modal.close": "Fechar"
+>>>>>>> a11a30e6478b4a18e89be4e5b86c590ad5455205
 }
