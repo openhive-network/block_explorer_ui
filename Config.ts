@@ -25,7 +25,7 @@ export const config = {
     witnesses: 200,
     home: 20,
   },
-   topHolders: {
+  topHolders: {
     totalCount: 2000,       // Total number of top holders
     pageSize: 100,         // Page size for pagination
   },
