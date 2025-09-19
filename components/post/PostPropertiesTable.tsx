@@ -57,8 +57,8 @@ const PostPropertiesTable: React.FC<PostPropertiesTableProps> = ({
   isPropertiesOpen,
   data,
 }) => {
-  if (!isPropertiesOpen) return null;
   const { t } = useI18n();
+  if (!isPropertiesOpen) return null; 
 
   return (
     <div className="rounded-[4px]  border bg-card text-card-foreground overflow-x-auto ">

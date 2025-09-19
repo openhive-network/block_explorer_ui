@@ -37,8 +37,8 @@ const VoteDetailsTable: React.FC<VoteDetailsTableProps> = ({
   isVoteDetailsOpen,
   voteDetails,
 }) => {
-  if (!isVoteDetailsOpen || !voteDetails.length) return null;
   const { t } = useI18n();
+  if (!isVoteDetailsOpen || !voteDetails.length) return null;  
 
   return (
     <div className="rounded-[4px]  border bg-card text-card-foreground overflow-x-auto">
