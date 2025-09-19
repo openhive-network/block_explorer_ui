@@ -21,6 +21,10 @@ RUN npm ci
 
 FROM base AS builder
 
+# Accept BASE_PATH as build argument for subdirectory deployment
+# Default to empty string for root deployment
+ARG BASE_PATH=""
+
 WORKDIR /home/node/app
 RUN <<-EOF
     apk add --no-cache git
@@ -30,6 +34,8 @@ COPY --from=deps --chown=node /home/node/app/node_modules ./node_modules
 COPY --chown=node . .
 USER node
 ENV NEXT_TELEMETRY_DISABLED 1
+# Set the basePath at build time
+ENV NEXT_PUBLIC_BASE_PATH=${BASE_PATH}
 RUN npm run build:standalone
 
 FROM base AS runner
@@ -41,12 +47,17 @@ ARG GIT_LAST_LOG_MESSAGE
 ARG GIT_LAST_COMMITTER
 ARG GIT_LAST_COMMIT_DATE
 
+# Accept BASE_PATH as build argument to pass it to runtime
+ARG BASE_PATH=""
+
 RUN apk add --no-cache tini
 
 WORKDIR /home/node/app
 RUN chown node /home/node/app
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
+# Set NEXT_PUBLIC_BASE_PATH for runtime (needed by entrypoint script)
+ENV NEXT_PUBLIC_BASE_PATH=${BASE_PATH}
 
 USER node
 RUN mkdir ~/.npm-global

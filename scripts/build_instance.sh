@@ -11,6 +11,7 @@ by default tagged as 'registry.gitlab.syncad.com/hive/block_explorer_ui:latest'
 OPTIONS:
   --registry=URL        Docker registry to assign the image to (default: 'registry.gitlab.syncad.com/hive/block_explorer_ui')
   --tag=TAG             Docker tag to be build (default: 'latest')
+  --base-path=PATH      Base path for subdirectory deployment (e.g., '/explorer')
   --progress=TYPE       Determines how to display build progress (default: 'auto')
   --help|-h|-?          Display this help screen and exit
 EOF
@@ -18,6 +19,7 @@ EOF
 
 export CI_REGISTRY_IMAGE=${CI_REGISTRY_IMAGE:-"registry.gitlab.syncad.com/hive/block_explorer_ui"}
 export TAG=${TAG:-"latest"}
+export BASE_PATH=${BASE_PATH:-""}
 PROGRESS_DISPLAY=${PROGRESS_DISPLAY:-"auto"}
 
 while [ $# -gt 0 ]; do
@@ -29,6 +31,10 @@ while [ $# -gt 0 ]; do
     --tag=*)
         arg="${1#*=}"
         export TAG="$arg"
+        ;;
+    --base-path=*)
+        arg="${1#*=}"
+        export BASE_PATH="$arg"
         ;;
     --progress=*)
         arg="${1#*=}"

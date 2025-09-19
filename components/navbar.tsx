@@ -14,6 +14,7 @@ import ThemeToggle from "./ThemeToggle";
 import LanguageSelector from "./home/LanguageSelector";
 import { useI18n } from "@/i18n/i18n";
 import { ExploreMenu } from "./ExploreMenu";
+import { getImageSrc } from "@/utils/PathUtils";
 
 export default function Navbar() {
   const { t } = useI18n();
@@ -30,7 +31,7 @@ export default function Navbar() {
         {isMobile ? (
           <div className="flex items-center justify-between w-full">
             <Link href={"/"} className="relative pr-2">
-              <Image src="/hive-logo.png" alt="Hive logo" width={40} height={40} />
+              <Image src={getImageSrc("/hive-logo.png")} alt="Hive logo" width={40} height={40} />
             </Link>
             <div className="flex-grow flex items-center justify-end gap-x-1 w-[90%]">
               <SearchBar open={searchBarOpen} onChange={setSearchBarOpen} className="h-[36px]" />
@@ -114,7 +115,7 @@ export default function Navbar() {
               <div className="flex w-full justify-between items-center">
                 <div className="flex items-center gap-x-4">
                   <Link href={"/"} className="pr-2 flex items-center text-explorer-turquoise font-medium">
-                    <Image src="/hive-logo.png" alt="Hive logo" width={50} height={50} data-testid="hive-logo" />
+                    <Image src={getImageSrc("/hive-logo.png")} alt="Hive logo" width={50} height={50} data-testid="hive-logo" />
                     <div className="ml-4 whitespace-nowrap" data-testid="hive-block-explorer">{t("navbar.hiveBlockExplorer")}</div>
                   </Link>
                 </div>
