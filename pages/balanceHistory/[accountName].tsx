@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import moment from "moment";
 import { config } from "@/Config";
 
@@ -16,7 +16,9 @@ import { convertBalanceHistoryResultsToTableOperations } from "@/lib/utils";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 
 import BalanceHistoryTable from "@/components/balanceHistory/BalanceHistoryTable";
-import BalanceHistorySearch from "@/components/home/searches/BalanceHistorySearch";
+import BalanceHistorySearch, {
+  DEFAULT_COIN_TYPE,
+} from "@/components/home/searches/BalanceHistorySearch";
 import { Card, CardHeader } from "@/components/ui/card";
 import BalanceHistoryChart from "@/components/balanceHistory/BalanceHistoryChart";
 
@@ -126,8 +128,14 @@ export default function BalanceHistory() {
     "@",
     ""
   );
+  const { paramsState, setParams } = useURLParams(
+    defaultBalanceHistorySearchParams,
+    ["accountName"]
+  );
 
-  const [coinType, setCoinType] = useState("HIVE");
+  const [coinType, setCoinType] = useState(
+    paramsState.coinType ?? DEFAULT_COIN_TYPE
+  );
   // Initialize state variables outside the conditional block
   const [isFiltersActive, setIsFiltersActive] = useState(false);
   const [isBalanceFilterSectionVisible, setIsBalanceFilterSectionVisible] =
@@ -143,10 +151,11 @@ export default function BalanceHistory() {
     }
   };
 
-  const { paramsState, setParams } = useURLParams(
-    defaultBalanceHistorySearchParams,
-    ["accountName"]
-  );
+  useEffect(() => {
+    if (paramsState.coinType) {
+      setCoinType(paramsState.coinType);
+    }
+  }, [paramsState.coinType]);
 
   const {
     filters: filtersParam,
@@ -328,6 +337,8 @@ export default function BalanceHistory() {
           setIsVisible={setIsBalanceFilterSectionVisible}
           setIsFiltersActive={setIsFiltersActive}
           isFiltersActive={isFiltersActive}
+          coinType={coinType}
+          setCoinType={setCoinType}
         />
         {(isChartLoading || isAccHistDataLoading) && !chartData ? (
           <div className="flex justify-center text-center align-center items-center mb-5">
