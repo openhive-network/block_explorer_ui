@@ -28,6 +28,26 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, []);
 
+  // This effect listens for changes in localStorage from other tabs
+  useEffect(() => {
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === "theme" && event.newValue) {
+        const newTheme = event.newValue;
+        // Update the React state
+        setTheme(newTheme);
+        // Manually update the DOM class for immediate effect in the other tab
+        document.documentElement.classList.remove("light", "dark");
+        document.documentElement.classList.add(newTheme);
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
+
   useEffect(() => {
     // Apply the CSS variables when the component is mounted
     setCssVariablesFromEnv();

@@ -8,7 +8,9 @@ import { toast } from "sonner";
 import { ErrorBoundary } from "react-error-boundary";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
-import { UserSettingsContextProvider } from "../contexts/UserSettingsContext";
+import { SettingsProvider } from "@/contexts/SettingsContext";
+import { I18nProvider } from "@/i18n/i18n"; 
+
 import { HiveChainContextProvider } from "../contexts/HiveChainContext";
 import { AddressesContextProvider } from "../contexts/AddressesContext";
 import { HeadBlockContextProvider } from "@/contexts/HeadBlockContext";
@@ -49,26 +51,28 @@ const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <HiveChainContextProvider>
-        <AddressesContextProvider>
-          <HealthCheckerContextProvider>
-            <ErrorBoundary fallback={<ErrorPage />}>
-              <ThemeProvider>
-                <UserSettingsContextProvider>
-                  <HeadBlockContextProvider>
-                    <OperationTypesContextProvider>
-                      <SearchesContextProvider>
-                        <Layout>{children}</Layout>
-                        <ReactQueryDevtools initialIsOpen={false} />
-                      </SearchesContextProvider>
-                    </OperationTypesContextProvider>
-                  </HeadBlockContextProvider>
-                </UserSettingsContextProvider>
-              </ThemeProvider>
-            </ErrorBoundary>
-          </HealthCheckerContextProvider>
-        </AddressesContextProvider>
-      </HiveChainContextProvider>
+      <I18nProvider initialLocale="en">
+        <SettingsProvider> 
+          <HiveChainContextProvider>
+            <AddressesContextProvider>
+              <HealthCheckerContextProvider>
+                <ErrorBoundary fallback={<ErrorPage />}>
+                  <ThemeProvider>
+                      <HeadBlockContextProvider>
+                        <OperationTypesContextProvider>
+                          <SearchesContextProvider>
+                            <Layout>{children}</Layout>
+                            <ReactQueryDevtools initialIsOpen={false} />
+                          </SearchesContextProvider>
+                        </OperationTypesContextProvider>
+                      </HeadBlockContextProvider>
+                  </ThemeProvider>
+                </ErrorBoundary>
+              </HealthCheckerContextProvider>
+            </AddressesContextProvider>
+          </HiveChainContextProvider>
+        </SettingsProvider>
+      </I18nProvider>
     </QueryClientProvider>
   );
 };

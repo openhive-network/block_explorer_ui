@@ -4,7 +4,6 @@ import Link from "next/link";
 import Head from "next/head";
 
 import Hive from "@/types/Hive";
-import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
 import { convertTransactionResponseToTableOperations } from "@/lib/utils";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import useTransactionData from "@/hooks/api/common/useTransactionData";
@@ -18,6 +17,7 @@ import { cn } from "@/lib/utils";
 import CopyButton from "@/components/ui/CopyButton";
 import PageTitle from "@/components/PageTitle";
 import { useI18n } from "@/i18n/i18n";
+import { useSettings } from "@/contexts/SettingsContext";
 
 const TransactionDetailItem = ({
   label,
@@ -53,7 +53,7 @@ const TransactionDetailItem = ({
 export default function Transaction() {
   const router = useRouter();
   const { t } = useI18n();
-  const { settings } = useUserSettingsContext();
+  const { settings } = useSettings();
   const transactionId = router.query.transactionId as string;
   const [includeVirtual, setIncludeVirtual] = useState(false);
 

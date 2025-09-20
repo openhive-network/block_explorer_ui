@@ -28,6 +28,7 @@ import { setLocalStorage, getLocalStorage } from "@/utils/LocalStorage";
 import { Toggle } from "@/components/ui/toggle";
 import { useRouter } from "next/router";
 import { useI18n } from "@/i18n/i18n";
+import { useSettings } from "@/contexts/SettingsContext"; // <-- CHANGE 1 of 3: Import hook
 
 export interface Operations {
   op_type_id: number;
@@ -83,10 +84,10 @@ const BlocksPage = () => {
   const [isBlocksFilterSectionVisible, setIsBlocksFilterSectionVisible] =
     useState(getLocalStorage("is_blocks_filters_visible", true) ?? false);
 
-  //Live Data
-  const [liveDataEnabled, setLiveDataEnabled] = useState(false);
+  const { settings, updateSettings } = useSettings();
+  const liveDataEnabled = settings.liveData; 
   const changeLiveRefresh = () => {
-    setLiveDataEnabled((prev) => !prev);
+    updateSettings({ liveData: !liveDataEnabled }); 
   };
   // Ref to store previous blocks data for live updates comparison
   const prevBlocksDataRef = useRef<Block[] | null>(null);
@@ -267,9 +268,9 @@ const BlocksPage = () => {
 
   useEffect(() => {
     if (paramsState.toBlock || paramsState.endDate) {
-      setLiveDataEnabled(false);
+      updateSettings({ liveData: false });
     }
-  }, [paramsState.toBlock, paramsState.endDate]);
+  }, [paramsState.toBlock, paramsState.endDate, updateSettings]);
 
   return (
     <>

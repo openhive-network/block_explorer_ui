@@ -16,6 +16,7 @@ import AccountOperationViewTabs from "@/components/account/tabs/AccountOperation
 import { AccountTabsProvider } from "@/contexts/TabsContext";
 import { useI18n } from "@/i18n/i18n";
 import useCommunity from "@/hooks/api/accountPage/useCommunity";
+import { useSettings } from "@/contexts/SettingsContext";
 
 export interface AccountSearchParams {
   accountName?: string | undefined;
@@ -57,11 +58,12 @@ export default function Account() {
     "@",
     ""
   );
-
-  const [liveDataEnabled, setLiveDataEnabled] = useState(false);
-
+  const { settings, updateSettings } = useSettings();
+  const liveDataEnabled = settings.liveData;
   const changeLiveRefresh = () => {
-    setLiveDataEnabled((prev) => !prev);
+    updateSettings({
+      liveData: !settings.liveData, 
+    });
   };
 
   const [showMobileAccountDetails, setShowMobileAccountDetails] =

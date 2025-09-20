@@ -2,15 +2,15 @@ import React, { useMemo, useState } from "react";
 import useTransactionStatistics from "@/hooks/api/homePage/useTransactionStatistics";
 import { Loader2 } from "lucide-react";
 import TransactionStatisticsChart from "./TransactionStatisticsChart";
-import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
 import TransactionStatisticsFullChartDialog from "./TransactionStatisticsFullChartDialog";
 import { useI18n } from "../../i18n/i18n";
+import { useSettings } from "@/contexts/SettingsContext";
 
 const TransactionStatisticsCard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { t } = useI18n();
 
-  const { settings } = useUserSettingsContext();
+  const { settings } = useSettings();
 
   // --- Date Calculation ---
   const fromDate = useMemo(() => {

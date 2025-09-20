@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 import useMediaQuery from "@/hooks/common/useMediaQuery";
 import SearchBar from "./SearchBar";
 import SyncInfo from "./home/SyncInfo";
-import ViewPopover from "./ViewPopover";
+import DataView from "./DataView";
 import ThemeToggle from "./ThemeToggle";
 import LanguageSelector from "./home/LanguageSelector";
 import { useI18n } from "@/i18n/i18n";
@@ -71,7 +71,7 @@ export default function Navbar() {
                       <LanguageSelector />
                     </div>
                     <div className="py-1 max-w-fit">
-                      <ViewPopover isMobile={isMobile} />
+                      <DataView isMobile={isMobile} />
                     </div>
                   </div>
                 )}
@@ -121,7 +121,7 @@ export default function Navbar() {
                 </div>
                 <div className="flex items-center gap-x-2 w-auto justify-end">
                   <SearchBar open={true} className=" justify-end" />
-                  <ViewPopover />
+                  <DataView />
                   <LanguageSelector />
                   <SyncInfo />
                   <ThemeToggle />
