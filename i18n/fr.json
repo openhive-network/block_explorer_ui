@@ -920,8 +920,6 @@
   "voteDetailsTable.title": "Détails des votes",
   "voteDetailsTable.voter": "Votant",
   "voteDetailsTable.rshares": "Rshares",
-  "postContentCard.properties": "Propriétés",
-  "postContentCard.votes": "votes",
   "postContentCard.and": "et",
   "postContentCard.others": "autres",
   "postContentCard.copyBody": "Copier le contenu"
