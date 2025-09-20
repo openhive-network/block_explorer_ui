@@ -11,7 +11,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getOperationTypeForDisplay } from "@/utils/UI";
-import { useUserSettingsContext } from "../contexts/UserSettingsContext";
 import { cn } from "@/lib/utils";
 import Chip from "./Chip";
 import { categorizedOperationTypes } from "@/utils/CategorizedOperationTypes"; // Assuming this file exports the array as is
@@ -19,6 +18,7 @@ import Explorer from "@/types/Explorer";
 import { ChevronDown, Search } from "lucide-react";
 import { FinancialOperationTypes } from "@/utils/FinancialOperationTypes"; // Assuming this file exports the array as is
 import { useI18n } from "../i18n/i18n";
+import { useSettings } from "@/contexts/SettingsContext";
 
 type OperationTypesDialogProps = {
   operationTypes?: Explorer.ExtendedOperationTypePattern[];
@@ -72,7 +72,7 @@ const OperationTypesDialog: React.FC<OperationTypesDialogProps> = ({
     []
   );
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const { settings } = useUserSettingsContext();
+  const { settings } = useSettings();
   const [searchTerm, setSearchTerm] = useState("");
   const [expandedSections, setExpandedSections] = useState<string[]>(
     categorizedOperationTypes.map((cat) => cat.name)
