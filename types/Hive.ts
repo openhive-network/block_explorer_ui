@@ -459,6 +459,7 @@ namespace Hive {
     "data-size-limit"?: number;
     "from-block"?: number | Date;
     "to-block"?: number | Date;
+    "participation-mode"?: "include" | "exclude" | "all";
   }
 
   export class GetAccountDetailsParams {
@@ -972,7 +973,7 @@ namespace Hive {
     following_count!: number;
   }
   export class AccountSubscriptions {
-    subscriptions !: string[];
+    subscriptions!: string[];
   }
   export class AccountFollower {
     follower!: string;
@@ -1025,7 +1026,6 @@ namespace Hive {
     name!: string;
     role!: "admin" | "mod" | "member";
     title!: string;
-
   }
 
   export class CommunityStats {
@@ -1048,7 +1048,6 @@ namespace Hive {
 
   export class CommunityList {
     [key: string]: CommunityListItem;
-
   }
   export class CommunityListItem {
     id!: number;
@@ -1104,7 +1103,6 @@ namespace Hive {
     proxy_date!: Date;
     proxied_vests!: string;
   }
-
 }
 
 export default Hive;

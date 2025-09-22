@@ -42,6 +42,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
   const { t } = useI18n();
   const router = useRouter();
   const searchRanges = useAccountOperationsTabSearchRanges();
+  const [mode, setMode] = useState("all");
 
   const [accountName, setAccountName] = useState("");
   const { paramsState, setParams } = useURLParams(
@@ -74,13 +75,14 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     toBlock: toBlockParam,
     startDate: fromDateParam,
     endDate: toDateParam,
+    participationMode: mode,
   };
 
   const { accountOperations, isAccountOperationsLoading } =
-    useAccountOperations(accountOperationsProps, liveDataEnabled);
+    useAccountOperations(accountOperationsProps as any, liveDataEnabled);
 
   const { accountOperationTypes } = useAccountOperationTypes(accountName);
-
+  console.log(accountOperations);
   const handleClearFilter = () => {
     const {
       setRangeSelectKey,
@@ -235,6 +237,9 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
           </div>
         </CardContent>
       </Card>
+      <Button onClick={() => setMode("include")}>include</Button>
+      <Button onClick={() => setMode("exclude")}>exclude</Button>
+      <Button onClick={() => setMode("all")}>all</Button>
       <AccountOperationsSection
         accountOperations={accountOperations}
         isAccountOperationsLoading={isAccountOperationsLoading}

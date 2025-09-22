@@ -33,7 +33,7 @@ export type ExplorerNodeApi = {
     >;
   };
   condenser_api: {
-    get_chain_properties: TWaxApiRequest<{ }, Hive.BlockChainProps>;
+    get_chain_properties: TWaxApiRequest<{}, Hive.BlockChainProps>;
     get_witnesses_by_vote: TWaxApiRequest<unknown[], Hive.WitnessesByVote>;
     get_follow_count: TWaxApiRequest<
       { account: string },
@@ -70,7 +70,6 @@ export type ExplorerNodeApi = {
       Hive.ProposalVote[]
     >;
     find_proposals: TWaxApiRequest<[proposal_ids: number[]], Hive.Proposal[]>;
-
   };
   bridge: {
     get_discussion: TWaxApiRequest<
@@ -253,6 +252,7 @@ class FetchingService {
     const requestParams: Hive.GetOpsByAccountParams = {
       accountName: accountOperationsProps.accountName,
       "operation-types": accountOperationsProps.operationTypes?.join(","),
+      "participation-mode": accountOperationsProps.participationMode,
       page: accountOperationsProps.pageNumber,
       "page-size": config.standardPaginationSize,
       "data-size-limit": config.opsBodyLimit,
@@ -759,23 +759,25 @@ class FetchingService {
     return Array.isArray(response) ? response : [];
   }
 
-async getProposal(proposalId: number[]): Promise<Hive.Proposal[]> {
-  return await this.extendedHiveChain!.api.condenser_api.find_proposals([proposalId]);
-}
+  async getProposal(proposalId: number[]): Promise<Hive.Proposal[]> {
+    return await this.extendedHiveChain!.api.condenser_api.find_proposals([
+      proposalId,
+    ]);
+  }
 
-   async getBlockChainProps(): Promise<Hive.BlockChainProps> {
-    return await this.extendedHiveChain!.api.condenser_api.get_chain_properties([]);
+  async getBlockChainProps(): Promise<Hive.BlockChainProps> {
+    return await this.extendedHiveChain!.api.condenser_api.get_chain_properties(
+      []
+    );
   }
 
   async getProxyPower(
     accountName: string,
-    page: number,
+    page: number
   ): Promise<Hive.ProxyPowerResponse> {
-    return await this.extendedHiveChain!.restApi[
-      "hafbe-api"
-    ].proxyPower({
+    return await this.extendedHiveChain!.restApi["hafbe-api"].proxyPower({
       accountName,
-      page
+      page,
     });
   }
 }
