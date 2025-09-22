@@ -4,11 +4,11 @@ import { useI18n } from "../../i18n/i18n";
 import { config } from "@/Config";
 import useMarketHistory from "@/hooks/common/useMarketHistory";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
 import { Dialog, DialogContent } from "../ui/dialog";
 import MarketHistoryChart from "./MarketHistoryChart";
 import DateTimePicker from "../DateTimePicker";
 import CustomShapeBarChart from "./CandleStickChartHive";
+import { useSettings } from "@/contexts/SettingsContext";
 
 interface HiveFullChartDialogProps {
   isOpen: boolean;
@@ -33,7 +33,7 @@ const HiveFullChartDialog: React.FC<HiveFullChartDialogProps> = ({
   isOpen,
   handleHiveFullChartVisibility,
 }) => {
-  const { settings } = useUserSettingsContext();
+  const { settings } = useSettings();
   const { t } = useI18n();
   const [activeChartTab, setActiveChartTab] = useState("candle");
 

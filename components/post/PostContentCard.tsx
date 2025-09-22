@@ -207,9 +207,6 @@ const PostContentCard: React.FC<PostContentCardProps> = ({
               className="w-4 h-4 mr-2"
               color={isVoteDetailsOpen ? ACTIVE_ICON_COLOR : undefined}
             />
-            <span>
-              {voteDetailsLength} {t("postContentCard.votes")}
-            </span>
             {isVoteDetailsOpen ? (
               <ChevronUp className="w-4 ml-1" />
             ) : (
@@ -225,7 +222,6 @@ const PostContentCard: React.FC<PostContentCardProps> = ({
             className="w-4 h-4 mr-2"
             color={isPropertiesOpen ? ACTIVE_ICON_COLOR : undefined}
           />
-          <span>{t("postContentCard.properties")}</span>
           {isPropertiesOpen ? (
             <ChevronUp className="w-4 ml-1" />
           ) : (

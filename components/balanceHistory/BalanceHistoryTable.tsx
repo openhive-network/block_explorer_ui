@@ -14,7 +14,6 @@ import Explorer from "@/types/Explorer";
 import { getOperationTypeForDisplay } from "@/utils/UI";
 import { categorizedOperationTypes } from "@/utils/CategorizedOperationTypes";
 import { colorByOperationCategory } from "../OperationTypesDialog";
-import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
 import TimeAgo from "timeago-react";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import {
@@ -39,6 +38,7 @@ import { grabNumericValue } from "@/utils/StringUtils";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { convertVestsToHive } from "@/utils/Calculations";
+import { useSettings } from "@/contexts/SettingsContext";
 
 interface BalanceHistoryTableProps {
   operations: Explorer.BalanceHistoryForTable[];
@@ -61,7 +61,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
   const { locale: appLocale, t } = useI18n();
   const {
     settings: { rawJsonView, prettyJsonView },
-  } = useUserSettingsContext();
+  } = useSettings();
 
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
   const operationsTypes = useOperationsTypes().operationsTypes || [];

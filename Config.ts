@@ -25,6 +25,10 @@ export const config = {
     witnesses: 200,
     home: 20,
   },
+  topHolders: {
+    totalCount: 2000,       // Total number of top holders
+    pageSize: 100,         // Page size for pagination
+  },
   maxWitnessVotes: 30,
   inactiveWitnessKey: "STM1111111111111111111111111111111114T1Anm",
   maxDelegatorsCount: 1000,

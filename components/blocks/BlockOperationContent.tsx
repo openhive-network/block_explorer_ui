@@ -2,13 +2,13 @@ import React from "react";
 import Link from "next/link";
 import { getOperationColor } from "@/components/OperationsTable";
 import { getOperationTypeForDisplay } from "@/utils/UI";
-import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
 import useBlockOperations from "@/hooks/api/common/useBlockOperations";
 import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
 import CopyButton from "../ui/CopyButton";
 import { convertBooleanArrayToIds } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 import { useI18n } from "@/i18n/i18n";
+import { useSettings } from "@/contexts/SettingsContext";
 
 interface Props {
   blockNum: number;
@@ -19,7 +19,7 @@ const BlockOperationsContent: React.FC<Props> = ({ blockNum, paramsState }) => {
   const { t } = useI18n();
   const {
     settings: { rawJsonView, prettyJsonView },
-  } = useUserSettingsContext();
+  } = useSettings();
 
   const filters = paramsState?.filters
     ? convertBooleanArrayToIds(paramsState?.filters)

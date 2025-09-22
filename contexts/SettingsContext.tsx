@@ -1,9 +1,10 @@
 import React, { createContext, useState, useEffect, useCallback, useContext, ReactNode } from 'react';
 
-// Define the types for our settings
+// Define the types for ALL settings in one place
 export type ViewMode = 'original' | 'tabbed';
 export type DisplayVestHpMode = 'hp' | 'vests';
 export type ProgressBarType = 'radial' | 'linear';
+export type DataViewSwitchStyle = 'popover' | 'icons' | 'cycle';
 
 const SETTINGS_KEY = 'app-settings';
 
@@ -11,6 +12,10 @@ export interface AppSettings {
   accountPageView: ViewMode;
   displayVestHpMode: DisplayVestHpMode;
   progressBarType: ProgressBarType;
+  dataViewSwitchStyle: DataViewSwitchStyle;
+  rawJsonView: boolean;
+  liveData: boolean;
+  prettyJsonView: boolean;
 }
 
 interface SettingsContextType {
@@ -22,13 +27,16 @@ const SettingsContext = createContext<SettingsContextType | undefined>(undefined
 
 export const SettingsProvider = ({ children }: { children: ReactNode }) => {
   const [settings, setSettings] = useState<AppSettings>({
-    // Default settings
     accountPageView: 'tabbed',
     displayVestHpMode: 'hp',
     progressBarType: 'radial',
+    dataViewSwitchStyle: 'popover',
+    rawJsonView: false,
+    liveData: false,
+    prettyJsonView: false,
   });
 
-  // Effect to load settings from localStorage on initial mount
+  // This effect loads ALL settings from localStorage on initial mount
   useEffect(() => {
     try {
       const storedSettings = localStorage.getItem(SETTINGS_KEY);
@@ -84,7 +92,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-// The custom hook remains unchanged
+
 export const useSettings = () => {
   const context = useContext(SettingsContext);
   if (context === undefined) {

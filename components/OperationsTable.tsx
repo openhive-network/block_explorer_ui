@@ -18,7 +18,6 @@ import { getOperationTypeForDisplay } from "@/utils/UI";
 import CopyJSON from "./CopyJSON";
 import { categorizedOperationTypes } from "@/utils/CategorizedOperationTypes";
 import { colorByOperationCategory } from "./OperationTypesDialog";
-import { useUserSettingsContext } from "../contexts/UserSettingsContext";
 import TimeAgo from "timeago-react";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import {
@@ -34,6 +33,7 @@ import { extractTextFromReactElement } from "@/utils/StringUtils";
 import DataCountMessage from "./DataCountMessage";
 import { useI18n } from "../i18n/i18n";
 import { safelyParseJson } from "@/utils/JsonUtils";
+import { useSettings } from "@/contexts/SettingsContext";
 
 interface OperationsTableProps {
   operationCount?: number;
@@ -106,7 +106,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
   const { locale: appLocale, t } = useI18n();
   const {
     settings: { rawJsonView, prettyJsonView },
-  } = useUserSettingsContext();
+  } = useSettings();
 
   const [expanded, setExpanded] = useState<number[]>([]);
 

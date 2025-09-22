@@ -65,7 +65,6 @@ const SettingItem: React.FC<SettingItemProps> = ({ label, description, children 
 };
 
 
-// --- Type Definitions (Unchanged) ---
 interface SwitchSettingConfig {
   type: 'switch';
   key: keyof AppSettings;
@@ -120,7 +119,7 @@ const RadioSettingRenderer: React.FC<{ config: RadioSettingConfig }> = ({ config
     <div key={config.key}>
       <h3 className="text-base font-semibold mb-3 -mt-1">{t(config.titleKey)}</h3>
       <RadioGroup
-        value={settings[config.key]}
+        value={String(settings[config.key])}
         onValueChange={(value) => updateSettings({ [config.key]: value as any })}
         className="space-y-4"
       >
@@ -177,6 +176,17 @@ const SettingsPage = () => {
           options: [
             { value: 'radial', labelKey: 'settingsPage.radialViewLabel', descriptionKey: 'settingsPage.radialViewDescription' },
             { value: 'linear', labelKey: 'settingsPage.linearViewLabel', descriptionKey: 'settingsPage.linearViewDescription' }
+          ]
+        },
+        {
+          type: 'radio',
+          key: 'dataViewSwitchStyle',
+          titleKey: 'settingsPage.dataViewSwitchStyle',
+          options: [
+            { value: 'popover', labelKey: 'settingsPage.popoverDataViewLabel', descriptionKey: 'settingsPage.popoverDataViewDescription' },
+            { value: 'icons', labelKey: 'settingsPage.iconDataViewLabel', descriptionKey: 'settingsPage.iconDataViewDescription' },
+            { value: 'cycle', labelKey: 'settingsPage.cycleDataViewLabel', descriptionKey: 'settingsPage.cycleDataViewDescription' }
+
           ]
         }
       ]

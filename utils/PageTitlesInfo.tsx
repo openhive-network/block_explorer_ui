@@ -167,6 +167,255 @@ const ProposalsInfoEs: React.FC = () => (
 );
 
 
+// --- English (en) ---
+const TopHoldersInfoEn: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      This page displays the top holders of Hive coins (HIVE, HBD, and VESTS),
+      ranked by their balance. Each row shows the account, rank, and value held.
+    </li>
+    <li>
+      Use the <Filter className="inline-block align-middle h-4 w-4" /> funnel
+      icon at the top to apply filters such as coin type and balance type.
+    </li>
+    <li>
+      For VESTS, equivalent Hive Power (HP) is shown to make the values easier
+      to interpret.
+    </li>
+    <li>
+      This list helps track large stakeholders and gain insights into
+      distribution across the Hive ecosystem.
+    </li>
+  </ul>
+);
+
+// --- Spanish (es) ---
+const TopHoldersInfoEs: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Esta página muestra a los principales poseedores de monedas de Hive
+      (HIVE, HBD y VESTS), ordenados por su saldo. Cada fila presenta la cuenta,
+      el rango y el valor mantenido.
+    </li>
+    <li>
+      Use el icono <Filter className="inline-block align-middle h-4 w-4" /> de
+      embudo en la parte superior para aplicar filtros como tipo de moneda y
+      tipo de saldo.
+    </li>
+    <li>
+      Para VESTS, se muestra el equivalente en Hive Power (HP) para facilitar la
+      interpretación.
+    </li>
+    <li>
+      Esta lista ayuda a rastrear a los grandes participantes y comprender la
+      distribución en el ecosistema Hive.
+    </li>
+  </ul>
+);
+
+// --- Italian (it) ---
+const TopHoldersInfoIt: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Questa pagina mostra i principali detentori di monete Hive (HIVE, HBD e
+      VESTS), ordinati per saldo. Ogni riga indica l’account, la posizione e il
+      valore detenuto.
+    </li>
+    <li>
+      Utilizza l’icona <Filter className="inline-block align-middle h-4 w-4" />{" "}
+      a forma di imbuto in alto per applicare filtri come tipo di moneta e tipo
+      di saldo.
+    </li>
+    <li>
+      Per i VESTS viene mostrato l’equivalente in Hive Power (HP) per
+      facilitare la comprensione dei valori.
+    </li>
+    <li>
+      L’elenco consente di monitorare i grandi stakeholder e di analizzare la
+      distribuzione nell’ecosistema Hive.
+    </li>
+  </ul>
+);
+
+// --- German (de) ---
+const TopHoldersInfoDe: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Diese Seite zeigt die größten Inhaber von Hive-Coins (HIVE, HBD und
+      VESTS), sortiert nach ihrem Guthaben. Jede Zeile enthält Konto, Rang und
+      Wert.
+    </li>
+    <li>
+      Verwenden Sie das{" "}
+      <Filter className="inline-block align-middle h-4 w-4" />{" "}
+      Trichtersymbol oben, um Filter wie Münztyp und Saldoart anzuwenden.
+    </li>
+    <li>
+      Für VESTS wird das entsprechende Hive Power (HP) angezeigt, um die Werte
+      leichter verständlich zu machen.
+    </li>
+    <li>
+      Diese Liste hilft, große Stakeholder zu verfolgen und die Verteilung im
+      Hive-Ökosystem besser zu verstehen.
+    </li>
+  </ul>
+);
+
+// --- Portuguese (pt) ---
+const TopHoldersInfoPt: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Esta página mostra os principais detentores de moedas Hive (HIVE, HBD e
+      VESTS), classificados pelo saldo. Cada linha apresenta a conta, a
+      classificação e o valor detido.
+    </li>
+    <li>
+      Use o ícone{" "}
+      <Filter className="inline-block align-middle h-4 w-4" /> de funil no topo
+      para aplicar filtros como tipo de moeda e tipo de saldo.
+    </li>
+    <li>
+      Para VESTS, o equivalente em Hive Power (HP) é exibido para facilitar a
+      interpretação.
+    </li>
+    <li>
+      Esta lista ajuda a acompanhar grandes participantes e a compreender a
+      distribuição no ecossistema Hive.
+    </li>
+  </ul>
+);
+
+// --- French (fr) ---
+const TopHoldersInfoFr: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Cette page affiche les principaux détenteurs de monnaies Hive (HIVE, HBD
+      et VESTS), classés par solde. Chaque ligne indique le compte, le rang et
+      la valeur détenue.
+    </li>
+    <li>
+      Utilisez l’icône{" "}
+      <Filter className="inline-block align-middle h-4 w-4" /> d’entonnoir en
+      haut pour appliquer des filtres tels que le type de monnaie et le type de
+      solde.
+    </li>
+    <li>
+      Pour les VESTS, l’équivalent en Hive Power (HP) est affiché afin de
+      faciliter la lecture des valeurs.
+    </li>
+    <li>
+      Cette liste permet de suivre les principaux acteurs et de mieux
+      comprendre la distribution dans l’écosystème Hive.
+    </li>
+  </ul>
+);
+
+// --- Polish (pl) ---
+const TopHoldersInfoPl: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Ta strona pokazuje największych posiadaczy monet Hive (HIVE, HBD i VESTS),
+      uporządkowanych według salda. Każdy wiersz zawiera konto, pozycję i wartość.
+    </li>
+    <li>
+      Użyj ikony{" "}
+      <Filter className="inline-block align-middle h-4 w-4" /> lejka u góry, aby
+      zastosować filtry takie jak typ monety i rodzaj salda.
+    </li>
+    <li>
+      Dla VESTS wyświetlany jest odpowiednik w Hive Power (HP), aby ułatwić
+      interpretację wartości.
+    </li>
+    <li>
+      Lista ta pomaga śledzić głównych uczestników i zrozumieć dystrybucję w
+      ekosystemie Hive.
+    </li>
+  </ul>
+);
+
+// --- Chinese (Simplified) (zh) ---
+const TopHoldersInfoZh: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      此页面显示 Hive 代币 (HIVE、HBD 和 VESTS) 的最大持有者，按余额排名。每行显示账户、排名和持有金额。
+    </li>
+    <li>
+      使用顶部的{" "}
+      <Filter className="inline-block align-middle h-4 w-4" /> 漏斗图标来筛选，如代币类型和余额类型。
+    </li>
+    <li>
+      对于 VESTS，会显示等值的 Hive Power (HP)，以便更容易理解。
+    </li>
+    <li>
+      此列表有助于跟踪主要持有人并了解 Hive 生态系统中的分布情况。
+    </li>
+  </ul>
+);
+
+// --- Japanese (ja) ---
+const TopHoldersInfoJa: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      このページでは、Hive コイン (HIVE、HBD、VESTS) の最大保有者が残高順に表示されます。各行にはアカウント、順位、保有額が表示されます。
+    </li>
+    <li>
+      上部の{" "}
+      <Filter className="inline-block align-middle h-4 w-4" /> ファネルアイコンを使って、コインの種類や残高の種類などでフィルタできます。
+    </li>
+    <li>
+      VESTS の場合は、理解しやすいように Hive Power (HP) に換算した値が表示されます。
+    </li>
+    <li>
+      このリストは主要なステークホルダーを追跡し、Hive エコシステムにおける分布を理解するのに役立ちます。
+    </li>
+  </ul>
+);
+
+// --- Romanian (ro) ---
+const TopHoldersInfoRo: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Această pagină afișează principalii deținători de monede Hive (HIVE, HBD
+      și VESTS), ordonați după sold. Fiecare rând prezintă contul, rangul și
+      valoarea deținută.
+    </li>
+    <li>
+      Folosiți pictograma{" "}
+      <Filter className="inline-block align-middle h-4 w-4" /> de filtru din
+      partea de sus pentru a aplica filtre precum tipul monedei și tipul de sold.
+    </li>
+    <li>
+      Pentru VESTS, este afișat echivalentul în Hive Power (HP) pentru a facilita
+      interpretarea.
+    </li>
+    <li>
+      Această listă ajută la urmărirea marilor participanți și la înțelegerea
+      distribuției în ecosistemul Hive.
+    </li>
+  </ul>
+);
+
+// --- Arabic (ar) ---
+const TopHoldersInfoAr: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      تعرض هذه الصفحة كبار الحائزين لعملات Hive (HIVE و HBD و VESTS)، مرتبين حسب
+      الرصيد. كل صف يُظهر الحساب والترتيب والقيمة المحتفظ بها.
+    </li>
+    <li>
+      استخدم أيقونة{" "}
+      <Filter className="inline-block align-middle h-4 w-4" /> على شكل قمع في
+      الأعلى لتطبيق فلاتر مثل نوع العملة ونوع الرصيد.
+    </li>
+    <li>
+      بالنسبة لـ VESTS، يتم عرض ما يعادله في Hive Power (HP) لتسهيل الفهم.
+    </li>
+    <li>
+      تساعد هذه القائمة على تتبع كبار المساهمين وفهم توزيع الحصص في نظام Hive البيئي.
+    </li>
+  </ul>
+);
+
 
 
 // =================================================================
@@ -804,6 +1053,20 @@ const pageTitlesInfo: InfoContent = {
     ro: <ProposalsInfoRo />,
     ar: <ProposalsInfoAr/>
   },
+  "pageTitle.topHolders": {
+  en: <TopHoldersInfoEn />,
+  es: <TopHoldersInfoEs />,
+  it: <TopHoldersInfoIt />,
+  de: <TopHoldersInfoDe />,
+  pt: <TopHoldersInfoPt />,
+  fr: <TopHoldersInfoFr />,
+  pl: <TopHoldersInfoPl />,
+  zh: <TopHoldersInfoZh />,
+  ja: <TopHoldersInfoJa />,
+  ro: <TopHoldersInfoRo />,
+  ar: <TopHoldersInfoAr />
+},
+
 
   
 };

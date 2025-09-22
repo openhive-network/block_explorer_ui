@@ -130,8 +130,22 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({
       localStorage.setItem("locale", currentLocale);
     }
 
-  }, [currentLocale]); // This effect runs when currentLocale changes
+  }, [currentLocale]);
 
+  // This effect listens for changes in localStorage from other tabs
+  useEffect(() => {
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === "locale" && event.newValue) {
+        setCurrentLocale(event.newValue);
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
   const t = useCallback(
     (key: string, options?: any) => {
       const currentTranslationSet =

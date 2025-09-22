@@ -778,6 +778,18 @@ async getProposal(proposalId: number[]): Promise<Hive.Proposal[]> {
       page
     });
   }
+  async getTopHolders(
+  coinType: "HIVE" | "HBD" | "VESTS",
+  balanceType: "balance" | "savings_balance",
+  page: number
+): Promise<Hive.TopHolder[]> {
+  return await this.extendedHiveChain!.restApi["balance-api"].topHolders({
+    "coin-type": coinType,
+    "balance-type": balanceType,
+    page,
+    
+  });
+}
 }
 
 const fetchingService = new FetchingService();

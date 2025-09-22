@@ -3,8 +3,8 @@ import fetchingService from "@/services/FetchingService";
 import { createContext, useCallback, useContext, useEffect } from "react";
 import { config } from "@/Config";
 import { useRouter } from "next/router";
-import { useUserSettingsContext } from "./UserSettingsContext";
 import { useHiveChainContext } from "./HiveChainContext";
+import { useSettings } from "./SettingsContext";
 
 interface IHeadBlockContext {
   headBlockNumberData: any;
@@ -31,7 +31,7 @@ export const HeadBlockContextProvider: React.FC<{
 }> = ({ children }) => {
   const {
     settings: { liveData },
-  } = useUserSettingsContext();
+  } = useSettings();
   const router = useRouter();
 
   const { hiveChain } = useHiveChainContext();

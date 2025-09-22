@@ -176,5 +176,11 @@ export const extendedRest = {
       result: Hive.AccountRecurrentBalanceTransfersResponse,
       urlPath: "accounts/{accountName}/recurrent-transfers",
     },
+     topHolders: {
+    params: Hive.GetTopHoldersParams,
+    result: Hive.TopHolder,
+    urlPath: "top-holders",
+    responseArray: true,
+    },
   },
 };

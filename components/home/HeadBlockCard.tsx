@@ -5,7 +5,6 @@ import { config } from "@/Config";
 import Explorer from "@/types/Explorer";
 import Hive from "@/types/Hive";
 import { getVestsToHiveRatio } from "@/utils/Calculations";
-import { useUserSettingsContext } from "../../contexts/UserSettingsContext";
 import useBlockchainSyncInfo from "@/hooks/common/useBlockchainSyncInfo";
 import HeadBlockPropertyCard from "./HeadBlockPropertyCard";
 import {
@@ -20,6 +19,7 @@ import CurrentBlockCard from "./CurrentBlockCard";
 import HeadBlockHiveChartCard from "./HeadBlockHiveChartCard";
 import HiveFullChartDialog from "./HiveFullChartDialog";
 import { useI18n } from "../../i18n/i18n";
+import { useSettings } from "@/contexts/SettingsContext";
 
 interface HeadBlockCardProps {
   headBlockCardData?: Explorer.HeadBlockCardData | any;
@@ -70,7 +70,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
   const [isFullHiveChartVisible, setIsFullHiveChartVisible] =
     useState<boolean>(false);
 
-  const { settings, setSettings } = useUserSettingsContext();
+  const { settings, updateSettings } = useSettings();
 
   const handleHideBlockchainDates = () => {
     setHiddenPropertiesByCard({
@@ -262,7 +262,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
                 disabled={isLiveDataToggleDisabled}
                 checked={settings.liveData}
                 onClick={() =>
-                  setSettings({
+                  updateSettings({
                     ...settings,
                     liveData: !settings.liveData,
                   })
