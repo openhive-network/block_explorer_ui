@@ -61,8 +61,8 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
   setSelectedCoinType,
 }) => {
   const { t, dir, locale } = useI18n();
-  const hiveChain = useHiveChainContext()?.hiveChain;
-  const dynamicGlobalData = useDynamicGlobal()?.dynamicGlobalData;
+  const { hiveChain } = useHiveChainContext();
+  const { dynamicGlobalData } = useDynamicGlobal();
   const isRTL = dir === "rtl";
 
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 480);
@@ -164,7 +164,8 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
 
   const displayData = useMemo(() => {
     return dataMap[selectedCoinType];
-  }, [dataMap, selectedCoinType]);
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCoinType]);
 
   const CustomTooltip = ({
     active,
