@@ -11,7 +11,7 @@ import DataExport from "@/components/DataExport";
 import CustomPagination from "@/components/CustomPagination";
 import useTopHolders, { CoinType, BalanceType } from "@/hooks/api/common/useTopHolders";
 import { config } from "@/Config";
-import { Loader2 } from "lucide-react";
+import { Loader2, ChevronDown } from "lucide-react";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import Image from "next/image";
 import Link from "next/link";
@@ -19,12 +19,19 @@ import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { convertVestsToHP } from "@/utils/Calculations";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import Hive from "@/types/Hive";
+import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useSettings } from "@/contexts/SettingsContext";
 import ScrollTopButton from "@/components/ScrollTopButton";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
-export default function TopHoldersPage() {
+interface TopHoldersPageProps {
+  isMobile?: boolean;
+}
+
+export default function TopHoldersPage({ isMobile }: TopHoldersPageProps) {
   const { t } = useI18n();
   const router = useRouter();
   const { settings } = useSettings();
@@ -82,7 +89,7 @@ export default function TopHoldersPage() {
     if (coin === "VESTS") {
       return unit === "hp"
         ? convertVestsToHP(hiveChain, value, totalVestingFundHive, totalVestingShares)
-        : hiveChain.formatter.format(hiveChain.vests(value)); // only append VESTS once in UI
+        : hiveChain.formatter.format(hiveChain.vests(value));
     } else if (coin === "HIVE") {
       return hiveChain.formatter.format(hiveChain.hive(value));
     } else if (coin === "HBD") {
@@ -104,7 +111,6 @@ export default function TopHoldersPage() {
     });
 
   const exportFileName = `${t("export.topHolders")}_${coinType.toLowerCase()}.csv`;
-
 
   const HolderRow = ({ rank, account, value, index }: { rank: number; account: string; value: string; index: number }) => {
     const displayRank = rank > 0 ? rank : index + 1 + (page - 1) * pageSize;
@@ -135,6 +141,9 @@ export default function TopHoldersPage() {
     </TableHeader>
   );
 
+  const [isCoinPopoverOpen, setIsCoinPopoverOpen] = useState(false);
+  const [isBalancePopoverOpen, setIsBalancePopoverOpen] = useState(false);
+
   return (
     <div className="page-container">
       <Card className="w-full rounded-[0px] rounded-t shadow-md mt-4 py-2">
@@ -154,25 +163,89 @@ export default function TopHoldersPage() {
       {isFiltersVisible && (
         <Card className="w-full rounded-[0px] rounded-b shadow-sm">
           <div className="flex flex-col sm:flex-row gap-4 items-start p-4">
-            <select
-              value={coinType}
-              onChange={(e) => setCoinType(e.target.value as CoinType)}
-              className="border rounded px-2 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 w-full sm:w-auto"
-            >
-              <option value="HIVE">HIVE</option>
-              <option value="HBD">HBD</option>
-              <option value="VESTS">VESTS</option>
-            </select>
 
-            <select
-              value={balanceType}
-              onChange={(e) => setBalanceType(e.target.value as BalanceType)}
-              disabled={coinType === "VESTS"}
-              className="border rounded px-2 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 w-full sm:w-auto"
-            >
-              <option value="balance">{t("filters.balance")}</option>
-              <option value="savings_balance">{t("filters.savings")}</option>
-            </select>
+            {/* Coin Type Dropdown */}
+            <Popover open={isCoinPopoverOpen} onOpenChange={setIsCoinPopoverOpen}>
+              <PopoverTrigger asChild>
+                <div
+                  className={cn(
+                    "border rounded px-2 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 w-full sm:w-auto flex items-center justify-between cursor-pointer",
+                    { "p-1 m-0": isMobile }
+                  )}
+                  data-testid="coin-type-dropdown"
+                >
+                  <span className="truncate">{coinType}</span>
+                  <ChevronDown className="ml-2 h-4 w-4 opacity-60" />
+                </div>
+              </PopoverTrigger>
+
+              <PopoverContent className={cn(
+                "w-40 p-1 bg-theme text-white rounded-md shadow-md border border-gray-300 dark:border-gray-700",
+                isMobile ? "ml-[20px]" : ""
+              )}>
+                <RadioGroup
+                  value={coinType}
+                  onValueChange={(val) => {
+                    setCoinType(val as CoinType);
+                    setIsCoinPopoverOpen(false);
+                  }}
+                >
+                  <Label htmlFor="coin-hive" className="flex items-center space-x-2 p-2 hover:bg-rowHover rounded-md transition-colors duration-200 cursor-pointer">
+                    <RadioGroupItem value="HIVE" id="coin-hive" />
+                    <span>HIVE</span>
+                  </Label>
+                  <Label htmlFor="coin-hbd" className="flex items-center space-x-2 p-2 hover:bg-rowHover rounded-md transition-colors duration-200 cursor-pointer">
+                    <RadioGroupItem value="HBD" id="coin-hbd" />
+                    <span>HBD</span>
+                  </Label>
+                  <Label htmlFor="coin-vests" className="flex items-center space-x-2 p-2 hover:bg-rowHover rounded-md transition-colors duration-200 cursor-pointer">
+                    <RadioGroupItem value="VESTS" id="coin-vests" />
+                    <span>VESTS</span>
+                  </Label>
+                </RadioGroup>
+              </PopoverContent>
+            </Popover>
+
+            {/* Balance Type Dropdown */}
+            <Popover open={isBalancePopoverOpen} onOpenChange={setIsBalancePopoverOpen}>
+              <PopoverTrigger asChild>
+                <div
+                  className={cn(
+                    `border rounded px-2 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 w-full sm:w-auto flex items-center justify-between cursor-pointer ${coinType === "VESTS" ? "opacity-50 cursor-not-allowed" : ""}`,
+                    { "p-1 m-0": isMobile }
+                  )}
+                  data-testid="balance-type-dropdown"
+                >
+                  <span className="truncate">{balanceType === "savings_balance" ? t("filters.savings") : t("filters.balance")}</span>
+                  <ChevronDown className="ml-2 h-4 w-4 opacity-60" />
+                </div>
+              </PopoverTrigger>
+
+              {coinType !== "VESTS" && (
+                <PopoverContent className={cn(
+                  "w-48 p-1 bg-theme text-white rounded-md shadow-md border border-gray-300 dark:border-gray-700",
+                  isMobile ? "ml-[20px]" : ""
+                )}>
+                  <RadioGroup
+                    value={balanceType}
+                    onValueChange={(val) => {
+                      setBalanceType(val as BalanceType);
+                      setIsBalancePopoverOpen(false);
+                    }}
+                  >
+                    <Label htmlFor="bal-balance" className="flex items-center space-x-2 p-2 hover:bg-rowHover rounded-md transition-colors duration-200 cursor-pointer">
+                      <RadioGroupItem value="balance" id="bal-balance" />
+                      <span>{t("filters.balance")}</span>
+                    </Label>
+                    <Label htmlFor="bal-savings" className="flex items-center space-x-2 p-2 hover:bg-rowHover rounded-md transition-colors duration-200 cursor-pointer">
+                      <RadioGroupItem value="savings_balance" id="bal-savings" />
+                      <span>{t("filters.savings")}</span>
+                    </Label>
+                  </RadioGroup>
+                </PopoverContent>
+              )}
+            </Popover>
+
           </div>
         </Card>
       )}
