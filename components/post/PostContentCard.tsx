@@ -207,6 +207,9 @@ const PostContentCard: React.FC<PostContentCardProps> = ({
               className="w-4 h-4 mr-2"
               color={isVoteDetailsOpen ? ACTIVE_ICON_COLOR : undefined}
             />
+            <span>
+              {voteDetailsLength}
+            </span>
             {isVoteDetailsOpen ? (
               <ChevronUp className="w-4 ml-1" />
             ) : (
