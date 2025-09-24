@@ -23,6 +23,8 @@ import useAccountOperationsTabSearchRanges, {
 } from "./useAccountOperationsTabSearchRanges";
 import { getLocalStorage, removeStorageItem } from "@/utils/LocalStorage";
 import { useI18n } from "@/i18n/i18n";
+import BlockNavigation from "@/components/BlockNavigation";
+import useBlockNavigation from "@/hooks/common/useBlockNavigation";
 
 interface OpeationTabContentProps {
   liveDataEnabled: boolean;
@@ -81,8 +83,20 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
   const { accountOperations, isAccountOperationsLoading } =
     useAccountOperations(accountOperationsProps as any, liveDataEnabled);
 
+  const {
+    handleLoadNextBlocks,
+    handleLoadPreviousBlocks,
+    hasMoreBlocks,
+    hasPreviousBlocks,
+  } = useBlockNavigation(
+    fromBlockParam,
+    accountOperations,
+    paramsState,
+    setParams
+  );
+
   const { accountOperationTypes } = useAccountOperationTypes(accountName);
-  console.log(accountOperations);
+
   const handleClearFilter = () => {
     const {
       setRangeSelectKey,
@@ -240,6 +254,16 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
       <Button onClick={() => setMode("include")}>include</Button>
       <Button onClick={() => setMode("exclude")}>exclude</Button>
       <Button onClick={() => setMode("all")}>all</Button>
+      <BlockNavigation
+        fromBlock={accountOperations?.block_range.from}
+        toBlock={accountOperations?.block_range.to}
+        hasPrevious={hasPreviousBlocks}
+        hasNext={hasMoreBlocks}
+        loadPreviousBlocks={handleLoadPreviousBlocks}
+        loadNextBlocks={handleLoadNextBlocks}
+        urlParams={paramsState}
+        className="w-full mb-[-1px] relative z-10 rounded-t"
+      />
       <AccountOperationsSection
         accountOperations={accountOperations}
         isAccountOperationsLoading={isAccountOperationsLoading}

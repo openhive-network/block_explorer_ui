@@ -681,6 +681,9 @@ namespace Hive {
 
   export class AccountOperationsResponse extends AccountOperationTypes {
     operations_result!: OperationResponse[];
+    total_operations!: number;
+    total_pages!: number;
+    block_range!: { from: number; to: number };
   }
 
   export class VestingDelegations {
