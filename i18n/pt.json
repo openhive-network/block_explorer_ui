@@ -457,6 +457,7 @@
   "delegationSort.Amount": "Quantia",
   "delegationSort.Delegator": "Delegador",
   "getOperationButtonTitle.operationTypes": "Tipos de Operação",
+  "formatter.byPayingFee": "pagando a taxa",
   "formatter.getOperationMemo.prefix": "com memo",
   "formatter.getTransferMessage.action": "transferiu",
   "formatter.getTransferMessage.prepositionTo": "para",

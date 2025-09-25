@@ -456,6 +456,7 @@
   "delegationSort.Amount": "Sumă",
   "delegationSort.Delegator": "Delegator",
   "getOperationButtonTitle.operationTypes": "Tipuri de Operațiuni",
+  "formatter.byPayingFee": "prin plata taxei",
   "formatter.getOperationMemo.prefix": "cu memo",
   "formatter.getTransferMessage.action": "a transferat",
   "formatter.getTransferMessage.prepositionTo": "către",
@@ -942,5 +943,4 @@
   "modal.error": "Eroare la încărcarea istoricului soldului.",
   "modal.close": "Închide",
   "export.topHolders": "detinatori_principali"
-
 }

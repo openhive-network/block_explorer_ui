@@ -455,6 +455,7 @@
   "delegationSort.Amount": "Monto",
   "delegationSort.Delegator": "Delegador",
   "getOperationButtonTitle.operationTypes": "Tipos de Operaciones",
+  "formatter.byPayingFee": "pagando la tarifa",
   "formatter.getOperationMemo.prefix": "con memo",
   "formatter.getTransferMessage.action": "transfirió",
   "formatter.getTransferMessage.prepositionTo": "a",
@@ -942,5 +943,4 @@
   "modal.error": "Error al cargar el historial de saldo.",
   "modal.close": "Cerrar",
   "export.topHolders": "top_holders"
-
 }

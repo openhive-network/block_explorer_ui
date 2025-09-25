@@ -456,6 +456,7 @@
   "delegationSort.Amount": "Importo",
   "delegationSort.Delegator": "Delegante",
   "getOperationButtonTitle.operationTypes": "Tipi di Operazione",
+  "formatter.byPayingFee": "pagando la tariffa",
   "formatter.getOperationMemo.prefix": "con memo",
   "formatter.getTransferMessage.action": "ha trasferito",
   "formatter.getTransferMessage.prepositionTo": "a",
@@ -938,5 +939,4 @@
   "modal.error": "Errore nel caricamento della cronologia del saldo.",
   "modal.close": "Chiudi",
   "export.topHolders": "principali_detentori"
-
 }

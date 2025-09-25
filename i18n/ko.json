@@ -456,6 +456,7 @@
   "delegationSort.Amount": "금액",
   "delegationSort.Delegator": "위임자",
   "getOperationButtonTitle.operationTypes": "오퍼레이션 유형",
+  "formatter.byPayingFee": "수수료를 지불하여",
   "formatter.getOperationMemo.prefix": "메모 포함",
   "formatter.getTransferMessage.action": "님이 전송했습니다",
   "formatter.getTransferMessage.prepositionTo": "에게",
@@ -942,5 +943,4 @@
   "modal.noHistory": "사용 가능한 기록이 없습니다.",
   "modal.error": "잔액 기록을 불러오는 중 오류가 발생했습니다.",
   "modal.close": "닫기"
-
 }

@@ -463,6 +463,7 @@
   "delegationSort.Recipient": "المستلم",
   "delegationSort.Amount": "المبلغ",
   "delegationSort.Delegator": "المفوض",
+  "formatter.byPayingFee": "بدفع الرسوم",
   "getOperationButtonTitle.operationTypes": "أنواع العمليات",
   "formatter.getOperationMemo.prefix": "مع مذكرة",
   "formatter.getTransferMessage.action": "حول",
@@ -943,5 +944,4 @@
   "modal.error": "خطأ في تحميل سجل الرصيد.",
   "modal.close": "إغلاق",
   "export.topHolders": "كبار_الحائزين"
-
 }

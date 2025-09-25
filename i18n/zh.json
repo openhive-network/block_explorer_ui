@@ -457,6 +457,7 @@
   "delegationSort.Amount": "金额",
   "delegationSort.Delegator": "委托人",
   "getOperationButtonTitle.operationTypes": "操作类型",
+  "formatter.byPayingFee": "通过支付费用",
   "formatter.getOperationMemo.prefix": "附言",
   "formatter.getTransferMessage.action": "转移了",
   "formatter.getTransferMessage.prepositionTo": "给",

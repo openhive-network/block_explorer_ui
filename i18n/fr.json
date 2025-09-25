@@ -456,6 +456,7 @@
   "delegationSort.Amount": "Montant",
   "delegationSort.Delegator": "Délégant",
   "getOperationButtonTitle.operationTypes": "Types d'Opération",
+  "formatter.byPayingFee": "en payant les frais",
   "formatter.getOperationMemo.prefix": "avec mémo",
   "formatter.getTransferMessage.action": "a transféré",
   "formatter.getTransferMessage.prepositionTo": "à",
