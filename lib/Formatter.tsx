@@ -1457,7 +1457,6 @@ formatSetWithdrawVestingRouteOperation({
         <span key="budget">
           {this.i18n.t("formatter.formatWitnessSetPropertiesOperation.setSubsidyBudget")}
           {subsidyBudget.toLocaleString()}
-          {' '}<FileText size={14} style={{ display: 'inline-block', verticalAlign: 'middle' }} />
         </span>
       );
     }
@@ -1469,7 +1468,6 @@ formatSetWithdrawVestingRouteOperation({
         <span key="decay">
           {this.i18n.t("formatter.formatWitnessSetPropertiesOperation.setSubsidyDecay")}
           {subsidyDecay.toLocaleString()}
-          {' '}<FileText size={14} style={{ display: 'inline-block', verticalAlign: 'middle' }} />
         </span>
       );
     }
