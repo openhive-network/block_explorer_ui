@@ -1497,35 +1497,27 @@ formatSetWithdrawVestingRouteOperation({
       );
     }
 
-    // Join all the generated action phrases with punctuation.
      const joinedActions = actionElements.flatMap((action, index) => {
-      if (actionElements.length === 1) {
-        return [<span style={{ whiteSpace: 'nowrap' }}>{action}</span>];
-      }
-      if (index < actionElements.length - 2) {
-        return [
-          <span style={{ whiteSpace: 'nowrap' }} key={action.key}>{action},</span>,
-          <br key={`br-${index}`} />
-        ];
-      }
-      if (index === actionElements.length - 2) {
-        return [
-          <span style={{ whiteSpace: 'nowrap' }} key={action.key}>{action}</span>,
-          this.i18n.t("common.and")
-        ];
-      }
+    // If it's not the last item, add a comma and a line break.
+    if (index < actionElements.length - 1) {
+      return [
+        <span key={action.key}>{action},</span>,
+        <br key={`br-${index}`} />
+      ];
+    }
       return [<span style={{ whiteSpace: 'nowrap' }} key={action.key}>{action}</span>];
     });
     
-    
-    // Build the final message.
+   // Build the final message.
     const message = this.generateReactLink([
-      this.getAccountLink(op.owner),
-      ...(joinedActions.length > 0 ?
-        joinedActions :
-        [" ", this.i18n.t("formatter.formatWitnessSetPropertiesOperation.action")]
-      )
-    ]);
+    this.getAccountLink(op.owner),
+    " ",
+    this.i18n.t("formatter.formatWitnessSetPropertiesOperation.action"), 
+    ...(joinedActions.length > 0 ?
+      [<br key="title-br" />, ...joinedActions] :
+      []
+    )
+  ]);
     return {
       ...target,
       value: { ...message, ...this.getOperationPerspective(op.owner) },
