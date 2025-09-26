@@ -98,6 +98,7 @@ const CommunitiesPage = () => {
       <div className="page-container">
         <div>
           <PageTitle titleKey="pageTitle.communities" className="py-4 ml-6" />
+          
         </div>
 
         <div className="mt-4">
