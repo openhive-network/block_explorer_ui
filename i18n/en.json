@@ -32,8 +32,6 @@
   "common.hp": "HP",
   "common.proxySuffix": "(proxy)",
   "common.page": "page",
-  "common.and" : "and",
-  "common.bytes": " bytes",
   "currentBlockCard.currentBlock": "Current Block",
   "currentBlockCard.secsAgo": "secs ago",
   "currentBlockCard.transactions": "Transactions",
@@ -456,6 +454,7 @@
   "delegationSort.Amount": "Amount",
   "delegationSort.Delegator": "Delegator",
   "getOperationButtonTitle.operationTypes": "Operation Types",
+  "formatter.byPayingFee": "by paying fee",
   "formatter.getOperationMemo.prefix": "with memo",
   "formatter.getTransferMessage.action": "transferred",
   "formatter.getTransferMessage.prepositionTo": "to",
@@ -951,8 +950,6 @@
   "modal.loading": "Loading...",
   "modal.noHistory": "No history available.",
   "modal.error": "Error loading balance history.",
-  "modal.close":"Close",
+  "modal.close": "Close",
   "export.topHolders": "top_holders"
-
-
 }

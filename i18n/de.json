@@ -32,8 +32,6 @@
   "common.hp": "HP",
   "common.proxySuffix": "(Proxy)",
   "common.page": "Seite",
-  "common.and": "und",
-  "common.bytes": " Bytes",
   "currentBlockCard.currentBlock": "Aktueller Block",
   "currentBlockCard.secsAgo": "Sekunden zuvor",
   "currentBlockCard.transactions": "Transaktionen",
@@ -459,6 +457,7 @@
   "delegationSort.Amount": "Betrag",
   "delegationSort.Delegator": "Delegierender",
   "getOperationButtonTitle.operationTypes": "Operationstypen",
+  "formatter.byPayingFee": "durch die Zahlung der Gebühr",
   "formatter.getOperationMemo.prefix": "mit Memo",
   "formatter.getTransferMessage.action": "überwiesen",
   "formatter.getTransferMessage.prepositionTo": "an",
@@ -953,5 +952,4 @@
   "modal.error": "Fehler beim Laden der Guthabenhistorie.",
   "modal.close": "Schließen",
   "export.topHolders": "top_inhaber"
-
 }

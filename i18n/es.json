@@ -32,8 +32,6 @@
   "common.hp": "HP",
   "common.proxySuffix": "(proxy)",
   "common.page": "página",
-  "common.and": "y",
-  "common.bytes": " bytes",
   "currentBlockCard.currentBlock": "Bloque Actual",
   "currentBlockCard.secsAgo": "hace segundos",
   "currentBlockCard.transactions": "Transacciones",
@@ -457,6 +455,7 @@
   "delegationSort.Amount": "Monto",
   "delegationSort.Delegator": "Delegador",
   "getOperationButtonTitle.operationTypes": "Tipos de Operaciones",
+  "formatter.byPayingFee": "pagando la tarifa",
   "formatter.getOperationMemo.prefix": "con memo",
   "formatter.getTransferMessage.action": "transfirió",
   "formatter.getTransferMessage.prepositionTo": "a",
@@ -952,5 +951,4 @@
   "modal.error": "Error al cargar el historial de saldo.",
   "modal.close": "Cerrar",
   "export.topHolders": "top_holders"
-
 }

@@ -32,8 +32,6 @@
   "common.hp": "HP",
   "common.proxySuffix": "(بروكسي)",
   "common.page": "صفحة",
-  "common.and": "و",
-  "common.bytes": " بايت",
   "currentBlockCard.currentBlock": "البلوك الحالي",
   "currentBlockCard.secsAgo": "ثانية مضت",
   "currentBlockCard.transactions": "المعاملات",
@@ -465,6 +463,7 @@
   "delegationSort.Recipient": "المستلم",
   "delegationSort.Amount": "المبلغ",
   "delegationSort.Delegator": "المفوض",
+  "formatter.byPayingFee": "بدفع الرسوم",
   "getOperationButtonTitle.operationTypes": "أنواع العمليات",
   "formatter.getOperationMemo.prefix": "مع مذكرة",
   "formatter.getTransferMessage.action": "حول",
@@ -953,5 +952,4 @@
   "modal.error": "خطأ في تحميل سجل الرصيد.",
   "modal.close": "إغلاق",
   "export.topHolders": "كبار_الحائزين"
-
 }

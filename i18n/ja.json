@@ -32,8 +32,6 @@
   "common.hp": "HP",
   "common.proxySuffix": "(プロキシ)",
   "common.page": "ページ",
-  "common.and": "、",
-  "common.bytes": " バイトに設定",
   "currentBlockCard.currentBlock": "現在のブロック",
   "currentBlockCard.secsAgo": "秒前",
   "currentBlockCard.transactions": "トランザクション",
@@ -459,6 +457,7 @@
   "delegationSort.Amount": "金額",
   "delegationSort.Delegator": "委任者",
   "getOperationButtonTitle.operationTypes": "オペレーションタイプ",
+  "formatter.byPayingFee": "手数料を支払うことで",
   "formatter.getOperationMemo.prefix": "メモ付き",
   "formatter.getTransferMessage.action": "が送金しました",
   "formatter.getTransferMessage.prepositionTo": "へ",
@@ -953,5 +952,4 @@
   "modal.error": "残高履歴の読み込み中にエラーが発生しました。",
   "modal.close": "閉じる",
   "export.topHolders": "主要保有者"
-
 }

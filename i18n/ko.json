@@ -32,8 +32,6 @@
   "common.hp": "HP",
   "common.proxySuffix": "(프록시)",
   "common.page": "페이지",
-  "common.and": " 그리고 ",
-  "common.bytes": " 바이트로 설정",
   "currentBlockCard.currentBlock": "현재 블록",
   "currentBlockCard.secsAgo": "초 전",
   "currentBlockCard.transactions": "트랜잭션",
@@ -458,6 +456,7 @@
   "delegationSort.Amount": "금액",
   "delegationSort.Delegator": "위임자",
   "getOperationButtonTitle.operationTypes": "오퍼레이션 유형",
+  "formatter.byPayingFee": "수수료를 지불하여",
   "formatter.getOperationMemo.prefix": "메모 포함",
   "formatter.getTransferMessage.action": "님이 전송했습니다",
   "formatter.getTransferMessage.prepositionTo": "에게",
@@ -952,5 +951,4 @@
   "modal.noHistory": "사용 가능한 기록이 없습니다.",
   "modal.error": "잔액 기록을 불러오는 중 오류가 발생했습니다.",
   "modal.close": "닫기"
-
 }
