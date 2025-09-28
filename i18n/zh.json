@@ -943,5 +943,10 @@
   "modal.noHistory": "没有可用记录。",
   "modal.error": "加载余额历史出错。",
   "modal.close": "关闭",
-  "export.topHolders": "主要持有人"
+  "export.topHolders": "主要持有人",
+  "communitiesPage.description1": "本页面显示 Hive 社区列表，包括社区名称、标题和订阅人数。",
+  "communitiesPage.description2": "使用搜索栏按名称筛选社区，并通过排序菜单按照排名、活跃度或其他条件排序。",
+  "communitiesPage.description3": "点击社区卡片即可查看详细信息或打开订阅者窗口。",
+  "communitiesPage.description4": "向下滚动时会自动加载更多社区，方便浏览完整的社区列表。",
+  "communitiesPage.description5": "此页面帮助用户发现活跃的社区，并了解其规模和在 Hive 生态系统中的参与度。"
 }

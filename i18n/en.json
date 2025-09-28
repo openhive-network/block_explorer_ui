@@ -943,5 +943,10 @@
   "modal.noHistory": "No history available.",
   "modal.error": "Error loading balance history.",
   "modal.close": "Close",
-  "export.topHolders": "top_holders"
+  "export.topHolders": "top_holders",
+  "communitiesPage.description1": "This page displays a list of Hive communities, showing their name, title, and subscriber count.",
+  "communitiesPage.description2": "Use the search input to filter communities by name, and the sort dropdown to order communities by rank, activity, or other criteria.",
+  "communitiesPage.description3": "Click on a community card to view detailed information or open the subscribers dialog.",
+  "communitiesPage.description4": "Infinite scrolling loads more communities as you scroll down, ensuring easy browsing of the full community list.",
+  "communitiesPage.description5": "This page helps users discover active communities and understand their size and engagement within the Hive ecosystem."
 }

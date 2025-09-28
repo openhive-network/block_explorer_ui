@@ -943,5 +943,10 @@
   "modal.noHistory": "Nenhum histórico disponível.",
   "modal.error": "Erro ao carregar histórico de saldo.",
   "modal.close": "Fechar",
-  "export.topHolders": "principais_detentores"
+  "export.topHolders": "principais_detentores",
+   "communitiesPage.description1": "Esta página exibe uma lista de comunidades do Hive, mostrando nome, título e número de assinantes.",
+  "communitiesPage.description2": "Use a barra de pesquisa para filtrar comunidades pelo nome e o menu de ordenação para organizá-las por ranking, atividade ou outros critérios.",
+  "communitiesPage.description3": "Clique em um cartão de comunidade para ver informações detalhadas ou abrir a janela de assinantes.",
+  "communitiesPage.description4": "A rolagem infinita carrega mais comunidades conforme você desce, facilitando a navegação por toda a lista.",
+  "communitiesPage.description5": "Esta página ajuda os usuários a descobrir comunidades ativas e entender seu tamanho e engajamento no ecossistema Hive."
 }

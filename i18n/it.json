@@ -938,5 +938,11 @@
   "modal.noHistory": "Nessuna cronologia disponibile.",
   "modal.error": "Errore nel caricamento della cronologia del saldo.",
   "modal.close": "Chiudi",
-  "export.topHolders": "principali_detentori"
+  "export.topHolders": "principali_detentori",
+  "communitiesPage.description1": "Questa pagina mostra un elenco delle comunità di Hive, con nome, titolo e numero di iscritti.",
+  "communitiesPage.description2": "Usa la barra di ricerca per filtrare le comunità per nome e il menu a tendina per ordinarle per rango, attività o altri criteri.",
+  "communitiesPage.description3": "Clicca su una scheda comunità per vedere maggiori informazioni o aprire la finestra degli iscritti.",
+  "communitiesPage.description4": "Lo scorrimento infinito carica altre comunità mentre navighi verso il basso, rendendo semplice esplorare l’elenco completo.",
+  "communitiesPage.description5": "Questa pagina aiuta gli utenti a scoprire comunità attive e a comprendere dimensioni e coinvolgimento all’interno dell’ecosistema Hive."
+
 }

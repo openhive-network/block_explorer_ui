@@ -943,5 +943,10 @@
   "modal.noHistory": "履歴はありません。",
   "modal.error": "残高履歴の読み込み中にエラーが発生しました。",
   "modal.close": "閉じる",
-  "export.topHolders": "主要保有者"
+  "export.topHolders": "主要保有者",
+  "communitiesPage.description1": "このページでは Hive のコミュニティ一覧を表示し、各コミュニティの名前、タイトル、登録者数が確認できます。",
+  "communitiesPage.description2": "検索バーを使って名前でコミュニティを絞り込み、並び替えメニューでランクや活動度などの基準で並べ替えることができます。",
+  "communitiesPage.description3": "コミュニティカードをクリックすると詳細情報を確認したり、登録者ダイアログを開いたりできます。",
+  "communitiesPage.description4": "無限スクロールにより下にスクロールすると自動的にさらに多くのコミュニティが読み込まれ、一覧を簡単に探索できます。",
+  "communitiesPage.description5": "このページはユーザーがアクティブなコミュニティを見つけ、その規模や Hive エコシステムにおける参加度を理解するのに役立ちます。"
 }

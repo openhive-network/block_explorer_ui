@@ -943,5 +943,11 @@
   "modal.noHistory": "Keine Historie verfügbar.",
   "modal.error": "Fehler beim Laden der Guthabenhistorie.",
   "modal.close": "Schließen",
-  "export.topHolders": "top_inhaber"
+  "export.topHolders": "top_inhaber",
+  "communitiesPage.description1": "Diese Seite zeigt eine Liste von Hive-Communities mit Name, Titel und Anzahl der Abonnenten.",
+  "communitiesPage.description2": "Verwende das Suchfeld, um Communities nach Namen zu filtern, und das Sortiermenü, um sie nach Rang, Aktivität oder anderen Kriterien zu ordnen.",
+  "communitiesPage.description3": "Klicke auf eine Community-Karte, um detaillierte Informationen anzuzeigen oder den Abonnenten-Dialog zu öffnen.",
+  "communitiesPage.description4": "Mit dem unendlichen Scrollen werden beim Herunterblättern automatisch weitere Communities geladen, sodass die gesamte Liste leicht durchstöbert werden kann.",
+  "communitiesPage.description5": "Diese Seite hilft Nutzern, aktive Communities zu entdecken und deren Größe und Engagement im Hive-Ökosystem zu verstehen."
+
 }

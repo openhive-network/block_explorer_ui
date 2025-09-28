@@ -943,5 +943,10 @@
   "modal.noHistory": "Brak dostępnej historii.",
   "modal.error": "Błąd ładowania historii salda.",
   "modal.close": "Zamknij",
-  "export.topHolders": "najwięksi_posiadacze"
+  "export.topHolders": "najwięksi_posiadacze",
+  "communitiesPage.description1": "Ta strona wyświetla listę społeczności Hive, pokazując ich nazwę, tytuł i liczbę subskrybentów.",
+  "communitiesPage.description2": "Użyj pola wyszukiwania, aby filtrować społeczności według nazwy, oraz menu sortowania, aby uporządkować je według rankingu, aktywności lub innych kryteriów.",
+  "communitiesPage.description3": "Kliknij kartę społeczności, aby zobaczyć szczegółowe informacje lub otworzyć okno subskrybentów.",
+  "communitiesPage.description4": "Funkcja nieskończonego przewijania ładuje kolejne społeczności podczas przewijania w dół, co ułatwia przeglądanie pełnej listy.",
+  "communitiesPage.description5": "Ta strona pomaga użytkownikom odkrywać aktywne społeczności i zrozumieć ich wielkość oraz zaangażowanie w ekosystemie Hive."
 }

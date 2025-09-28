@@ -942,5 +942,11 @@
   "modal.noHistory": "No hay historial disponible.",
   "modal.error": "Error al cargar el historial de saldo.",
   "modal.close": "Cerrar",
-  "export.topHolders": "top_holders"
+  "export.topHolders": "top_holders",
+  "communitiesPage.description1": "Esta página muestra una lista de comunidades de Hive, con su nombre, título y número de suscriptores.",
+  "communitiesPage.description2": "Usa la barra de búsqueda para filtrar comunidades por nombre, y el menú desplegable de orden para clasificarlas por rango, actividad u otros criterios.",
+  "communitiesPage.description3": "Haz clic en una tarjeta de comunidad para ver información detallada o abrir el diálogo de suscriptores.",
+  "communitiesPage.description4": "El desplazamiento infinito carga más comunidades a medida que bajas, lo que permite explorar fácilmente la lista completa.",
+  "communitiesPage.description5": "Esta página ayuda a los usuarios a descubrir comunidades activas y conocer su tamaño y nivel de participación en el ecosistema Hive."
+
 }

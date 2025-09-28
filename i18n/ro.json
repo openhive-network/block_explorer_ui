@@ -942,5 +942,10 @@
   "modal.noHistory": "Nu există istoric disponibil.",
   "modal.error": "Eroare la încărcarea istoricului soldului.",
   "modal.close": "Închide",
-  "export.topHolders": "detinatori_principali"
+  "export.topHolders": "detinatori_principali",
+  "communitiesPage.description1": "Această pagină afișează o listă a comunităților Hive, cu numele, titlul și numărul de abonați pentru fiecare.",
+  "communitiesPage.description2": "Folosește bara de căutare pentru a filtra comunitățile după nume și meniul de sortare pentru a le ordona după rang, activitate sau alte criterii.",
+  "communitiesPage.description3": "Fă clic pe o cartelă de comunitate pentru a vedea informații detaliate sau pentru a deschide fereastra abonaților.",
+  "communitiesPage.description4": "Derularea infinită încarcă mai multe comunități pe măsură ce cobori, ceea ce face explorarea listei complete mai ușoară.",
+  "communitiesPage.description5": "Această pagină îi ajută pe utilizatori să descopere comunități active și să înțeleagă dimensiunea și gradul lor de implicare în ecosistemul Hive."
 }
