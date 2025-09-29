@@ -55,8 +55,11 @@ const CommunityCard = ({
           {community.about}
         </p>
 
-        <div className="text-explorer-dark-gray mt-auto flex items-end justify-between border-t pt-4 border-slate-200/80 dark:border-slate-800">
+        {/* Footer Section */}
+        <div className="text-explorer-dark-gray mt-auto border-t pt-4 border-slate-200/80 dark:border-slate-800">
+          {/* First row: subscribers + authors */}
           <div className="flex items-center gap-4">
+            {/* Subscribers */}
             <button
               type="button"
               onClick={handleSubscribersClick}
@@ -64,31 +67,35 @@ const CommunityCard = ({
               title={t("communityCard.viewSubscribersTitle")}
             >
               <Users className="h-4 w-4" color="#22c55e" />
-              <span className="font-semibold">
-                {formatSubscribers(community.subscribers)}
-              </span>
-              <span>{t("communityCard.subscribersLabel")}</span>
+              <span className="font-semibold truncate">{formatSubscribers(community.subscribers)}</span>
+              <span className="truncate">{t("communityCard.subscribersLabel")}</span>
             </button>
+
+            {/* Authors */}
             <div className="flex items-center gap-1.5 p-1 text-sm">
               <PenSquare className="h-4 w-4" color="#0ea5e9" />
-              <span className="font-semibold">{community.num_authors}</span>
-              <span>{t("communityCard.authorsLabel")}</span>
+              <span className="font-semibold truncate">{community.num_authors}</span>
+              <span className="truncate">{t("communityCard.authorsLabel")}</span>
             </div>
           </div>
 
-          <div className="flex items-center ">
-            {community.is_nsfw ? (
+          {/* Second row: language badge */}
+          {!community.is_nsfw && (
+            <div className="inline-flex items-center gap-1.5 mt-2 rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium dark:bg-slate-800 text-explorer-dark-gray">
+              <Languages className="h-3 w-3" />
+              <span>{community.lang.toUpperCase()}</span>
+            </div>
+          )}
+
+          {/* NSFW badge */}
+          {community.is_nsfw && (
+            <div className="flex items-center gap-1.5 mt-2">
               <div className="flex items-center gap-1.5 rounded-full bg-red-500/10 px-2 py-0.5 text-xs font-semibold text-red-500 dark:bg-red-500/20 dark:text-red-400">
                 <EyeOff className="h-3 w-3" />
                 {t("communityCard.nsfwLabel")}
               </div>
-            ) : (
-              <div className="flex items-center gap-1.5 rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium dark:bg-slate-800 text-explorer-dark-gray">
-                <Languages className="h-3 w-3" />
-                <span>{community.lang.toUpperCase()}</span>
-              </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
