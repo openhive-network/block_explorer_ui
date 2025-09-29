@@ -93,7 +93,6 @@ import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import ConvertedHiveTooltip from "@/components/ConvertedHiveTooltip";
 import TranslatedFormatterOperation from "@/components/TranslatedFormatterOperation";
 import { KeyRound, LinkIcon } from "lucide-react";
-import { KeyRound, LinkIcon } from "lucide-react";
 
 class OperationsFormatter implements IWaxCustomFormatter {
   public constructor(private readonly wax: IWaxBaseInterface) {}
