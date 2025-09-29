@@ -37,6 +37,7 @@ interface BlockSearchParams {
   keyContent?: string;
   setOfKeys?: string[];
   trxId?: string;
+  opId ?: number;
 }
 
 const defaultParams: BlockSearchParams = {
@@ -333,6 +334,7 @@ export default function Block() {
                     operationCount={totalOperations?.total_operations || 0}
                     operations={convertedTotalOperations}
                     markedTrxId={paramsState.trxId}
+                    markedOpId={paramsState.opId}
                     unformattedOperations={unformattedOperations}
                     referrer={`${blockId}_${t(
                       "blockDetails.blockDetails"

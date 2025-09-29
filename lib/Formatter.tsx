@@ -328,7 +328,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
     elements: Array<string | React.JSX.Element>
   ): React.JSX.Element {
     return (
-      <div>
+      <div onClick={(e) => e.stopPropagation()}>
         {elements.map((element, index) => (
           <React.Fragment key={index}>{element} </React.Fragment>
         ))}

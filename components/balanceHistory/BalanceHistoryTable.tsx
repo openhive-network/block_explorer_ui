@@ -118,23 +118,50 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
   const OperationDetails: React.FC<{ operationId: number }> = ({
     operationId,
   }) => {
+    const router = useRouter();
     const { operationData, operationDataIsFetched, operationDataError } =
       useOperation(operationId.toString());
 
     const formattedAccountOperations = useOperationsFormatter(operationData);
+
+    const handleDetailsClick = (opDetails: any) => {
+
+      if (!opDetails?.block) return;
+
+      const { block, trx_id, operation_id } = opDetails;
+      const params = new URLSearchParams();
+
+      if (trx_id) {
+        params.append("trxId", trx_id);
+      }
+      if (operation_id !== undefined) {
+        params.append("opId", String(operation_id));
+      }
+
+      const queryString = params.toString();
+      const url = `/block/${block}${queryString ? `?${queryString}` : ""}`;
+      router.push(url);
+    };
+
     if (operationDataIsFetched) {
       if (!operationData || Object.keys(operationData).length === 0) {
         return <p>{t("balanceHistoryTable.noRecordsForOperation")}</p>;
       }
-      if (!rawJsonView && !prettyJsonView) {
-        return <div>{getOneLineDescription(formattedAccountOperations)}</div>;
-      }
-
-      if (prettyJsonView) {
-        return <pre>{JSON.stringify(operationData.op, null, 2)}</pre>;
-      } else {
-        return <pre>{JSON.stringify(operationData.op)}</pre>;
-      }
+      
+      return (
+        <div 
+          className="cursor-pointer hover:bg-rowHover"
+          onClick={() => handleDetailsClick(formattedAccountOperations)}
+        >
+          {!rawJsonView && !prettyJsonView ? (
+            <div>{getOneLineDescription(formattedAccountOperations)}</div>
+          ) : prettyJsonView ? (
+            <pre>{JSON.stringify(operationData.op, null, 2)}</pre>
+          ) : (
+            <pre>{JSON.stringify(operationData.op)}</pre>
+          )}
+        </div>
+      );
     }
 
     if (operationDataError) {
@@ -157,13 +184,15 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
               <span>{t("common.transaction")} : </span>
               <Link
                 className="text-link"
-                href={`/transaction/${operation.trx_id}`}
+                href={`/tx/${operation.trx_id}`}
+                onClick={(e) => e.stopPropagation()} // <-- ADDED stopPropagation
               >
                 {operation.trx_id?.slice(0, 10)}{" "}
               </Link>
               <CopyButton
                 text={operation.trx_id || ""}
                 tooltipText={t("common.copyTransactionId")}
+                onClick={(e) => e.stopPropagation()} // <-- ADDED stopPropagation
               />
             </div>
           </>
@@ -255,8 +284,6 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
   };
 
   return (
-    <>
-      {operations.length > 0 && total_operations > 0 && operations ? (
         <>
           <div className="sticky z-20 top-[3.2rem] md:top-[4rem]">
             <CustomPagination
@@ -268,6 +295,12 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
               isMirrored={true}
             />
           </div>
+      {total_operations === 0 ? (
+        <div className="flex justify-center w-full">
+          {t("balanceHistoryTable.noResultsMatchingCriteria")}
+        </div>
+      ) : (
+        <>
           <div
             className={cn("table-toolbar", {
               "justify-between": !!total_operations,
@@ -373,12 +406,14 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
                         <Link
                           className="text-link"
                           href={`/block/${operation.blockNumber}`}
+                          onClick={(e) => e.stopPropagation()} // <-- ADDED stopPropagation
                         >
                           {operation.blockNumber?.toLocaleString()}
                         </Link>
                         <CopyButton
                           text={operation.blockNumber}
                           tooltipText={t("common.copyBlockNumber")}
+                          onClick={(e) => e.stopPropagation()} // <-- ADDED stopPropagation
                         />
                       </TableCell>
                       <TableCell data-testid="operation-prev-balance">
@@ -423,7 +458,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
                           colSpan={7}
                           className="p-4"
                         >
-                          <div className="border rounded-2xl p-4">
+                          <div className="border rounded-2xl p-4 bg-theme">
                             <h3 className="text-lg font-bold">
                               {t("balanceHistoryTable.operationDetails")}
                             </h3>
@@ -440,11 +475,6 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
             </TableBody>
           </Table>
         </>
-      ) : null}
-      {total_operations === 0 && (
-        <div className="flex justify-center w-full">
-          {t("balanceHistoryTable.noResultsMatchingCriteria")}
-        </div>
       )}
     </>
   );

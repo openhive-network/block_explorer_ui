@@ -14,12 +14,14 @@ interface CopyButtonProps {
   text: any;
   tooltipText?: string;
   className?: string;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 const CopyButton: React.FC<CopyButtonProps> = ({
   text,
   tooltipText = "Copy to clipboard",
   className,
+  onClick,
 }) => {
   const [isCopied, setIsCopied] = React.useState(false);
 
@@ -50,6 +52,13 @@ const CopyButton: React.FC<CopyButtonProps> = ({
     }
   };
 
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (onClick) {
+      onClick(event);
+    }
+    handleCopy();
+  };
+
   return (
     <TooltipProvider>
       <Tooltip>
@@ -60,9 +69,9 @@ const CopyButton: React.FC<CopyButtonProps> = ({
               className
             )}
             aria-label={tooltipText}
-            onClick={handleCopy}
+            onClick={handleClick}
             onTouchEnd={handleCopy}
-          >
+            >
             {isCopied ? (
               <Check className="h-full w-full" color="green" strokeWidth={4} />
             ) : (

@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "./ui/table";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import Explorer from "@/types/Explorer";
 import { Button } from "./ui/button";
@@ -40,6 +40,7 @@ interface OperationsTableProps {
   operations: Explorer.OperationForTable[];
   unformattedOperations?: Explorer.OperationForTable[];
   markedTrxId?: string;
+  markedOpId?: number;
   className?: string;
   referrer?: string;
   accountName?: string;
@@ -75,7 +76,8 @@ const getOneLineDescription = (
   if (operation.operation.type === "body_placeholder_operation") {
     return (
       <div className="text-link">
-        <Link
+      <Link
+          onClick={(e) => e.stopPropagation()}
           href={`/longOperation/${operation.operation.value?.["org-op-id"]}`}
         >
           {t("operationsTable.seeFullOperation")}
@@ -99,6 +101,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
   operations,
   unformattedOperations,
   markedTrxId,
+  markedOpId,
   referrer,
   accountName,
 }) => {
@@ -109,6 +112,38 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
   } = useSettings();
 
   const [expanded, setExpanded] = useState<number[]>([]);
+
+  //useEffect to scroll to the marked operation row
+  useEffect(() => {
+    if (markedOpId !== undefined && operations.length > 0) {
+      // Use a short timeout to ensure the DOM has finished rendering after the state update
+      setTimeout(() => {
+        const element = document.querySelector(`[data-op-id="${markedOpId}"]`);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      }, 100);
+    }
+  }, [markedOpId, operations]);
+
+  const handleRowClick = (operation: Explorer.OperationForTable) => {
+    if (!operation.blockNumber) return;
+
+    const { blockNumber, trxId, operationId } = operation;
+
+    const params = new URLSearchParams();
+    if (trxId) {
+      params.append("trxId", trxId);
+    }
+    if (operationId !== undefined && operationId !== null) {
+      params.append("opId", String(operationId));
+    }
+
+    const queryString = params.toString();
+    const url = `/block/${blockNumber}${queryString ? `?${queryString}` : ""}`;
+
+    router.push(url);
+  };
 
   const getUnformattedValue = (operation: Explorer.OperationForTable) => {
     const unformattedOperation = unformattedOperations?.find(
@@ -238,22 +273,44 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                 const operationPerspective =
                   operation.operation?.value?.perspective;
 
+                const isMarkedTransaction =
+                  operation.trxId === markedTrxId && !!markedTrxId;
+                const isFirstInGroup =
+                  isMarkedTransaction &&
+                  allOperations[index - 1]?.trxId !== operation.trxId;
+                const isLastInGroup =
+                  isMarkedTransaction &&
+                  allOperations[index + 1]?.trxId !== operation.trxId;
+                const isMiddleOfGroup =
+                  isMarkedTransaction && !isFirstInGroup && !isLastInGroup;
+
+                const isMarkedOperation = operation.operationId === markedOpId;
+
                 return (
                   <React.Fragment key={index}>
                     <TableRow
                       id={operation.trxId}
+                      data-op-id={operation.operationId}
                       data-testid="detailed-operation-card"
                       key={index}
-                      className={cn({
+                      onClick={() => handleRowClick(operation)}
+                      className={cn("cursor-pointer hover:bg-rowHover", {
                         "border-b-0":
                           nextTransactionId === operation.trxId &&
                           !!operation.trxId,
                         "bg-operationPerspectiveIncoming":
                           operationPerspective === "incoming",
+                        "border-l-8 border-l-sky-400 dark:border-l-sky-500":
+                          isMarkedTransaction,
+                        "bg-rowHover": isMarkedOperation,
+                        " border-l-8 border-l-sky-400 dark:border-l-sky-500":
+                          isMarkedOperation,
                       })}
                     >
                       <TableCell stickyLeft>
-                        <CopyJSON value={getUnformattedValue(operation)} />
+                        <div onClick={(e) => e.stopPropagation()}>
+                          <CopyJSON value={getUnformattedValue(operation)} />
+                        </div>
                       </TableCell>
                       <TableCell
                         className="whitespace-nowrap"
@@ -261,6 +318,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                         data-testid="block-number-operation-table"
                       >
                         <Link
+                          onClick={(e) => e.stopPropagation()}
                           className="text-link"
                           href={`/block/${operation.blockNumber}${
                             operation.trxId ? `?trxId=${operation.trxId}` : ""
@@ -271,6 +329,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                         <CopyButton
                           text={operation.blockNumber}
                           tooltipText={t("common.copyBlockNumber")}
+                          onClick={(e) => e.stopPropagation()}
                         />
                       </TableCell>
                       <TableCell
@@ -278,11 +337,9 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                         data-testid="transaction-number"
                       >
                         <Link
-                          className={cn("text-link", {
-                            "bg-explorer-light-green py-2 px-1 ":
-                              markedTrxId === operation.trxId,
-                          })}
-                          href={`/transaction/${operation.trxId}`}
+                          onClick={(e) => e.stopPropagation()}
+                          className="text-link"
+                          href={`/tx/${operation.trxId}`}
                         >
                           {operation.trxId?.slice(0, 10)}
                         </Link>
@@ -290,6 +347,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                           <CopyButton
                             text={operation.trxId || ""}
                             tooltipText={t("common.copyTransactionId")}
+                            onClick={(e) => e.stopPropagation()}
                           />
                         )}
                       </TableCell>
@@ -349,13 +407,14 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                           {expanded.includes(operation.operationId || 0) ? (
                             <Button
                               className="p-0 h-fit"
-                              onClick={() =>
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 setExpanded((prevExpanded) => [
                                   ...prevExpanded.filter(
                                     (id) => id !== operation.operationId
                                   ),
-                                ])
-                              }
+                                ]);
+                              }}
                             >
                               <ChevronUp
                                 width={20}
@@ -367,12 +426,13 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                             <Button
                               data-testid="expand-details"
                               className="p-0 h-fit bg-inherit"
-                              onClick={() =>
+                              onClick={(e) => {
+                                e.stopPropagation();
                                 setExpanded((prevExpanded) => [
                                   ...prevExpanded,
                                   operation.operationId || 0,
-                                ])
-                              }
+                                ]);
+                              }}
                             >
                               <ChevronDown
                                 width={20}
@@ -390,7 +450,11 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                           <TableCell
                             data-testid="details"
                             colSpan={7}
-                            className="py-2 break-all"
+                            className={cn("py-2 break-all", {
+                              "bg-rowHover": isMarkedOperation,
+                              "border-l-8 border-l-sky-400 dark:border-l-sky-500":
+                                isMarkedOperation,
+                            })}
                           >
                             <JSONView
                               json={safelyParseJson(
