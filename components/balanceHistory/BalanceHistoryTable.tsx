@@ -185,14 +185,14 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
               <Link
                 className="text-link"
                 href={`/tx/${operation.trx_id}`}
-                onClick={(e) => e.stopPropagation()} // <-- ADDED stopPropagation
+                onClick={(e) => e.stopPropagation()}
               >
                 {operation.trx_id?.slice(0, 10)}{" "}
               </Link>
               <CopyButton
                 text={operation.trx_id || ""}
                 tooltipText={t("common.copyTransactionId")}
-                onClick={(e) => e.stopPropagation()} // <-- ADDED stopPropagation
+                onClick={(e) => e.stopPropagation()}
               />
             </div>
           </>

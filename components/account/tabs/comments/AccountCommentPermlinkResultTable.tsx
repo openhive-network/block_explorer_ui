@@ -151,13 +151,13 @@ const AccountCommentPermlinkResultTable = ({
   const { setCommentsSearchPermlink } = useSearchesContext();
   const { handleCommentsSearch } = useHandleInteractionsSearch();
 
-  const handleRowClick = (block: number, trx_id: string, operation_id: bigint) => { // <-- CHANGE 1: Use bigint type
+  const handleRowClick = (block: number, trx_id: string, operation_id: bigint) => {
     const params = new URLSearchParams();
     if (trx_id) {
         params.append("trxId", trx_id);
     }
     if (operation_id !== undefined) {
-        params.append("opId", String(operation_id)); // String(bigint) works correctly
+        params.append("opId", String(operation_id));
     }
     const queryString = params.toString();
     const url = `/block/${block}${queryString ? `?${queryString}` : ""}`;
