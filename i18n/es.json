@@ -32,6 +32,7 @@
   "common.hp": "HP",
   "common.proxySuffix": "(proxy)",
   "common.page": "página",
+  "common.bytes": " bytes",
   "currentBlockCard.currentBlock": "Bloque Actual",
   "currentBlockCard.secsAgo": "hace segundos",
   "currentBlockCard.transactions": "Transacciones",

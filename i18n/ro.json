@@ -32,6 +32,7 @@
   "common.hp": "HP",
   "common.proxySuffix": "(proxy)",
   "common.page": "pagină",
+  "common.bytes": " octeți",
   "currentBlockCard.currentBlock": "Blocul Curent",
   "currentBlockCard.secsAgo": "secunde în urmă",
   "currentBlockCard.transactions": "Tranzacții",

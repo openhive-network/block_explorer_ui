@@ -1541,7 +1541,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
       actionElements.push(
         <span key="blocksize">
           {this.i18n.t("formatter.formatWitnessSetPropertiesOperation.setMaxBlockSize")}
-          {blockSize.toLocaleString()}
+          {blockSize.toLocaleString()}{" "}
           {this.i18n.t("common.bytes")}
         </span>
       );

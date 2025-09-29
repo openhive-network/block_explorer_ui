@@ -32,6 +32,7 @@
   "common.hp": "HP",
   "common.proxySuffix": "(프록시)",
   "common.page": "페이지",
+  "common.bytes": " 바이트",
   "currentBlockCard.currentBlock": "현재 블록",
   "currentBlockCard.secsAgo": "초 전",
   "currentBlockCard.transactions": "트랜잭션",

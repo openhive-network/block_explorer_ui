@@ -32,6 +32,7 @@
   "common.hp": "HP",
   "common.proxySuffix": "(プロキシ)",
   "common.page": "ページ",
+  "common.bytes": " バイト",
   "currentBlockCard.currentBlock": "現在のブロック",
   "currentBlockCard.secsAgo": "秒前",
   "currentBlockCard.transactions": "トランザクション",
