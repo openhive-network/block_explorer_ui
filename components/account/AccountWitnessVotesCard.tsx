@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { config } from "@/Config";
 import fetchingService from "@/services/FetchingService";
 import { useI18n } from "@/i18n/i18n";
+import DataExport from "../DataExport";
 
 type AccountWitnessVotesCardProps = {
   voters: string[];
@@ -50,6 +51,13 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
 
   const handlePropertiesVisibility = () => {
     setIsPropertiesHidden(!isPropertiesHidden);
+  };
+
+  const prepareExportData = (votersList: string[]) => {
+    return votersList.map((voter, index) => ({
+      [t("common.order")]: index + 1,
+      [t("accountWitnessVotesCard.voterExport")]: voter,
+    }));
   };
 
   const fetchWitnessVotes = useCallback(
@@ -111,11 +119,17 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
         <CardHeader className="p-0">
           <div
             onClick={handlePropertiesVisibility}
-            className="h-full flex justify-between align-center p-2 hover:bg-rowHover cursor-pointer px-4"
+            className="h-full flex justify-between items-center p-2 hover:bg-rowHover cursor-pointer px-4"
           >
             <div className="text-lg">{t("accountWitnessVotesCard.witnessVotesProxy")}</div>
-
-            {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
+            <div className="flex items-center space-x-2">
+              <DataExport
+                data={prepareExportData(votersForProxy)}
+                filename={`${accountName}_${t("accountWitnessVotesCard.witnessVotesProxyExport")}`}
+                skipColumnSelection={true}
+              />
+              {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
+            </div>
           </div>
         </CardHeader>
         <CardContent hidden={isPropertiesHidden}>
@@ -163,7 +177,7 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
     );
   } else if (!voters || !voters.length) return null;
   voters.sort(
-    (a, b) => a.toLowerCase().localeCompare(b.toLowerCase()) // Changed: Sorting logic to ensure alphabetical order
+    (a, b) => a.toLowerCase().localeCompare(b.toLowerCase())
   );
 
   return (
@@ -179,8 +193,14 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
           <div className="text-lg">
             {t("accountWitnessVotesCard.witnessVotes")} ({voters.length} / {config.maxWitnessVotes})
           </div>
-
-          {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
+          <div className="flex items-center space-x-2">
+            <DataExport
+              data={prepareExportData(voters)}
+              filename={`${accountName}_${t("accountWitnessVotesCard.witnessVotesExport")}`}
+              skipColumnSelection={true}
+            />
+            {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
+          </div>
         </div>
       </CardHeader>
       <CardContent hidden={isPropertiesHidden}>

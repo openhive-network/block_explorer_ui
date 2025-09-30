@@ -33,6 +33,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import DataExport from "@/components/DataExport";
 
 const handleSortProxyPower = (
   proxies: Hive.ProxyPowerResponse[],
@@ -116,6 +117,29 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
     );
   }, [accountProxyPower, sortConfig]);
 
+  const prepareExportData = () => {
+    return sortedProxies.map((proxy) => {
+      let powerValue = "";
+      if (isHP) {
+        if (hiveChain && dynamicGlobalData?.headBlockDetails) {
+          powerValue = convertVestsToHP(
+            hiveChain,
+            proxy.proxied_vests,
+            dynamicGlobalData.headBlockDetails.rawTotalVestingFundHive,
+            dynamicGlobalData.headBlockDetails.rawTotalVestingShares
+          );
+        }
+      } else {
+        powerValue = `${formatNumber(proxy.proxied_vests, true)} VESTS`;
+      }
+      return {
+        [t("accountProxyPowerCard.proxiedBy")]: proxy.account,
+        [t("common.date")]: formatAndDelocalizeTime(proxy.proxy_date),
+        [t("accountProxyPowerCard.power")]: powerValue,
+      };
+    });
+  };
+
   if (!accountProxyPower || accountProxyPower.length === 0) {
     return null;
   }
@@ -146,6 +170,11 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
             {accountProxyPower.length})
           </div>
           <div className="flex items-center space-x-2">
+            <DataExport
+              data={prepareExportData()}
+              filename={`${accountName}_proxy_power.csv`}
+              skipColumnSelection={true}
+            />
             {isAccountProxyPowerFetching && (
               <Loader2 className="h-4 w-4 animate-spin" />
             )}
