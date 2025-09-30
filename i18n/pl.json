@@ -952,5 +952,8 @@
   "modal.noHistory": "Brak dostępnej historii.",
   "modal.error": "Błąd ładowania historii salda.",
   "modal.close": "Zamknij",
-  "export.topHolders": "najwięksi_posiadacze"
+  "export.topHolders": "najwięksi_posiadacze",
+  "formatter.formatLimitOrderCreateOperation.avgRatePrefix": "po średnim kursie",
+  "formatter.formatFillOrderOperation.avgRatePrefix": "po średnim kursie"
+
 }

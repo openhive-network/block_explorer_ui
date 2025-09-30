@@ -952,5 +952,7 @@
   "modal.noHistory": "Keine Historie verfügbar.",
   "modal.error": "Fehler beim Laden der Guthabenhistorie.",
   "modal.close": "Schließen",
-  "export.topHolders": "top_inhaber"
+  "export.topHolders": "top_inhaber",
+  "formatter.formatLimitOrderCreateOperation.avgRatePrefix": "zu einem durchschnittlichen Kurs von",
+  "formatter.formatFillOrderOperation.avgRatePrefix": "zu einem durchschnittlichen Kurs von"
 }

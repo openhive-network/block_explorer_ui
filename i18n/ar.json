@@ -952,5 +952,7 @@
   "modal.noHistory": "لا يوجد سجل متاح.",
   "modal.error": "خطأ في تحميل سجل الرصيد.",
   "modal.close": "إغلاق",
-  "export.topHolders": "كبار_الحائزين"
+  "export.topHolders": "كبار_الحائزين",
+  "formatter.formatLimitOrderCreateOperation.avgRatePrefix": "بمعدل متوسط قدره",
+  "formatter.formatFillOrderOperation.avgRatePrefix": "بمعدل متوسط قدره"
 }

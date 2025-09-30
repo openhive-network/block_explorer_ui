@@ -952,5 +952,8 @@
   "modal.noHistory": "Nenhum histórico disponível.",
   "modal.error": "Erro ao carregar histórico de saldo.",
   "modal.close": "Fechar",
-  "export.topHolders": "principais_detentores"
+  "export.topHolders": "principais_detentores",
+  "formatter.formatLimitOrderCreateOperation.avgRatePrefix": "a uma taxa média de",
+  "formatter.formatFillOrderOperation.avgRatePrefix": "a uma taxa média de"
+
 }
