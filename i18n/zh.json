@@ -964,5 +964,7 @@
   "modal.noHistory": "没有可用记录。",
   "modal.error": "加载余额历史出错。",
   "modal.close": "关闭",
-  "export.topHolders": "主要持有人"
+  "export.topHolders": "主要持有人",
+  "formatter.formatLimitOrderCreateOperation.avgRatePrefix": "以平均汇率",
+  "formatter.formatFillOrderOperation.avgRatePrefix":"以平均汇率"
 }

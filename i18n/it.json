@@ -959,5 +959,7 @@
   "modal.noHistory": "Nessuna cronologia disponibile.",
   "modal.error": "Errore nel caricamento della cronologia del saldo.",
   "modal.close": "Chiudi",
-  "export.topHolders": "principali_detentori"
+  "export.topHolders": "principali_detentori",
+  "formatter.formatLimitOrderCreateOperation.avgRatePrefix": "a un tasso medio di",
+  "formatter.formatFillOrderOperation.avgRatePrefix": "a un tasso medio di"
 }

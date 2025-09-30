@@ -963,5 +963,7 @@
   "modal.noHistory": "Nu există istoric disponibil.",
   "modal.error": "Eroare la încărcarea istoricului soldului.",
   "modal.close": "Închide",
-  "export.topHolders": "detinatori_principali"
+  "export.topHolders": "detinatori_principali",
+  "formatter.formatLimitOrderCreateOperation.avgRatePrefix": "la o rată medie de",
+  "formatter.formatFillOrderOperation.avgRatePrefix": "la o rată medie de"
 }

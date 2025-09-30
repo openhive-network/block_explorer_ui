@@ -122,6 +122,24 @@ class OperationsFormatter implements IWaxCustomFormatter {
 
     return formattedValue;
   }
+private getAverageRate(
+  hive: { amount: string; precision: number } | undefined,
+  hbd: { amount: string; precision: number } | undefined
+): string {
+  if (!hive || !hbd) return "";
+
+  const parse = (s: { amount: string; precision: number }) =>
+    parseFloat(s.amount) / Math.pow(10, s.precision);
+
+  const hiveVal = parse(hive);
+  const hbdVal = parse(hbd);
+
+  if (!hbdVal) return ""; 
+
+  
+  return `${(hbdVal/hiveVal).toFixed(3)} HBD/HIVE`;
+}
+
 
   private getFormattedDate(time: Date | string): string {
     return formatAndDelocalizeTime(time);
@@ -520,25 +538,34 @@ class OperationsFormatter implements IWaxCustomFormatter {
     source: { value: op },
     target,
   }: IFormatFunctionArguments<{ value: limit_order_create }>) {
-    const message = this.generateReactLink([
+    const avgRate = this.getAverageRate(op.amount_to_sell, op.min_to_receive);
+
+    const messageElements: Array<string | React.JSX.Element> = [
       this.getAccountLink(op.owner),
       this.i18n.t("formatter.formatLimitOrderCreateOperation.actionSell"),
       this.getFormattedAmount(op.amount_to_sell),
-      this.i18n.t(
-        "formatter.formatLimitOrderCreateOperation.conditionMinReceive"
-      ),
+      this.i18n.t("formatter.formatLimitOrderCreateOperation.conditionMinReceive"),
       this.getFormattedAmount(op.min_to_receive),
       this.i18n.t("formatter.formatLimitOrderCreateOperation.idPrefix"),
       `${op.orderid}`,
-      ...(!op.fill_or_kill
-        ? [
-            this.i18n.t(
-              "formatter.formatLimitOrderCreateOperation.expirationPrefix"
-            ),
-            this.getFormattedDate(op.expiration),
-          ]
-        : []),
-    ]);
+    ];
+    
+
+    if (avgRate) {
+      messageElements.push(
+        this.i18n.t("formatter.formatLimitOrderCreateOperation.avgRatePrefix"),
+        avgRate
+      );
+    }
+
+    if (!op.fill_or_kill) {
+      messageElements.push(
+        this.i18n.t("formatter.formatLimitOrderCreateOperation.expirationPrefix"),
+        this.getFormattedDate(op.expiration)
+      );
+    }
+
+    const message = this.generateReactLink(messageElements);
 
     return {
       ...target,
@@ -1989,7 +2016,8 @@ class OperationsFormatter implements IWaxCustomFormatter {
     source: { value: op },
     target,
   }: IFormatFunctionArguments<{ value: fill_order }>) {
-    const message = this.generateReactLink([
+    const avgRate = this.getAverageRate(op.current_pays, op.open_pays);
+    const messageElements: Array<string | React.JSX.Element> = [
       this.getAccountLink(op.current_owner),
       this.i18n.t("formatter.formatFillOrderOperation.actionPaid"),
       this.getFormattedAmount(op.current_pays),
@@ -2001,7 +2029,16 @@ class OperationsFormatter implements IWaxCustomFormatter {
       `${op.current_orderid}`,
       this.i18n.t("formatter.formatFillOrderOperation.arrowSeparator"),
       `${op.open_orderid})`,
-    ]);
+    ];
+    if (avgRate) {
+      messageElements.push(
+        this.i18n.t("formatter.formatFillOrderOperation.avgRatePrefix"),
+        avgRate
+      );
+    }
+
+    const message = this.generateReactLink(messageElements);
+
     return {
       ...target,
       value: { ...message, ...this.getOperationPerspective(op.current_owner) },
