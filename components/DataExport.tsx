@@ -13,9 +13,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { stringify } from "csv-stringify";
-import { Download } from "lucide-react";
-import { Loader2 } from "lucide-react";
+import { Download, FileDown, Loader2 } from "lucide-react"; // 1. Add FileDown
 import { useI18n } from "@/i18n/i18n";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
 
 interface DataItem {
   [key: string]: any;
@@ -185,6 +190,28 @@ const DataExport: React.FC<DataExportProps> = ({
   // If skipping column selection, render a direct-action element
   if (skipColumnSelection) {
     const isDisabled = isExporting || data.length === 0;
+
+    const triggerContent = isExporting ? (
+      <div className={cn("flex items-center justify-center p-1 w-6 h-6", className)}>
+         <Loader2 className="h-4 w-4 animate-spin" />
+      </div>
+    ) : children ? (
+      <>{children}</>
+    ) : (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button className="flex items-center justify-center">
+              <FileDown className="h-5 w-5" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{t("common.export")}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+
     return (
       <div
         onClick={isDisabled ? undefined : handleExport}
@@ -194,16 +221,9 @@ const DataExport: React.FC<DataExportProps> = ({
         role="button"
         tabIndex={isDisabled ? -1 : 0}
         aria-disabled={isDisabled}
-        className={cn({ "cursor-not-allowed": isDisabled })}
+        className={cn({ "cursor-not-allowed opacity-50": isDisabled })}
       >
-        {isExporting ? (
-          <div className={cn("flex items-center space-x-1 max-w-fit h-8 p-2", className)}>
-             <Loader2 className="h-4 w-4 animate-spin" />
-             <span>{t("dataExport.exporting")}</span>
-          </div>
-        ) : (
-          Trigger
-        )}
+        {triggerContent}
       </div>
     );
   }
