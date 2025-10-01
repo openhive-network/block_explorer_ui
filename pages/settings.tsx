@@ -188,9 +188,18 @@ const SettingsPage = () => {
             { value: 'cycle', labelKey: 'settingsPage.cycleDataViewLabel', descriptionKey: 'settingsPage.cycleDataViewDescription' }
 
           ]
-        }
+        },
+         {
+          type: 'switch',
+          key: 'layoutWidth',
+          labelKey: 'settingsPage.compactLayoutLabel',
+          descriptionKey: 'settingsPage.compactLayoutDescription',
+          trueValue: 'compact',  // When switch is ON, layout is 'compact' (75%)
+          falseValue: 'full'      // When switch is OFF, layout is 'full' (98%)
+        },
       ]
     }
+    
   ];
 
   return (
@@ -208,7 +217,7 @@ const SettingsPage = () => {
           >
             {section.items.map((item, itemIndex) => (
               <React.Fragment key={item.key}>
-                {item.type === 'radio' && itemIndex > 0 && (
+                { itemIndex > 0 && (
                   <hr className="my-6 border-slate-200 dark:border-slate-700/50" />
                 )}
                 

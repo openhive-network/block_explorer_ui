@@ -938,6 +938,8 @@
   "settingsPage.iconDataViewDescription": "Affiche les trois options d'affichage sous forme de groupe d'icônes compact pour un accès en un seul clic.",
   "settingsPage.cycleDataViewLabel": "Bouton de cycle",
   "settingsPage.cycleDataViewDescription": "Un seul bouton qui alterne entre les vues Visualisées, JSON brut et JSON formaté à chaque clic.",
+  "settingsPage.compactLayoutLabel": "Affichage Compact",
+  "settingsPage.compactLayoutDescription": "Activez une mise en page plus étroite et compacte sur les grands écrans. Ce paramètre n'affecte pas la mise en page sur les appareils mobiles.",
   "accountSearch.accountReactResults": "resultats_recherche_compte",
   "blockDetails.blockDetails": "details_bloc",
   "commentsSearch.commentSearchResults": "resultats_recherche_commentaires",

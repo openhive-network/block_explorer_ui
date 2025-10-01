@@ -34,6 +34,8 @@
   "common.page": "página",
   "common.bytes": " bytes",
   "common.order": "Orden",
+  "table.switchToCompactView": "Cambiar a Vista Compacta",
+  "table.switchToFullView": "Cambiar a Vista Completa",
   "currentBlockCard.currentBlock": "Bloque Actual",
   "currentBlockCard.secsAgo": "hace segundos",
   "currentBlockCard.transactions": "Transacciones",
@@ -937,6 +939,8 @@
   "settingsPage.iconDataViewDescription": "Muestra las tres opciones de vista como un grupo compacto de iconos para acceso con un solo clic.",
   "settingsPage.cycleDataViewLabel": "Botón de ciclo",
   "settingsPage.cycleDataViewDescription": "Un solo botón que alterna entre las vistas Visualizada, JSON sin formato y JSON con formato con cada clic.",
+  "settingsPage.compactLayoutLabel": "Vista Compacta",
+  "settingsPage.compactLayoutDescription": "Activa un diseño más estrecho y compacto en pantallas grandes. Esta configuración no afecta el diseño en dispositivos móviles.",
   "accountSearch.accountReactResults": "resultados_busqueda_cuenta",
   "blockDetails.blockDetails": "detalles_bloque",
   "commentsSearch.commentSearchResults": "resultados_busqueda_comentarios",
@@ -964,6 +968,4 @@
   "modal.error": "Error al cargar el historial de saldo.",
   "modal.close": "Cerrar",
   "export.topHolders": "top_holders"
-
-
 }
