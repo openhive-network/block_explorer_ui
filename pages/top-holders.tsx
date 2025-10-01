@@ -96,10 +96,10 @@ export default function TopHoldersPage() {
       const displayValue = formatBalance(holder.value, coinType);
 
       return {
-        [t("table.rank")]:
+        [t("topholders.tablerank")]:
           holder.rank > 0 ? holder.rank : index + 1 + (page - 1) * pageSize,
-        [t("table.account")]: holder.account,
-        [balanceType === "savings_balance" ? t("table.savings") : t("table.balance")]: displayValue,
+        [t("topholders.tableaccount")]: holder.account,
+        [balanceType === "savings_balance" ? t("topholders.tablesavings") : t("topholders.tablebalance")]: displayValue,
       };
     });
 
@@ -129,7 +129,7 @@ export default function TopHoldersPage() {
         <TableHead>{t("table.rank")}</TableHead>
         <TableHead>{t("table.account")}</TableHead>
         <TableHead className="text-right pr-6">
-          {balanceType === "savings_balance" ? t("table.savings") : t("table.balance")}
+          {balanceType === "savings_balance" ? t("topholders.tablesavings") : t("topholders.tablebalance")}
         </TableHead>
       </TableRow>
     </TableHeader>
@@ -170,8 +170,8 @@ export default function TopHoldersPage() {
               disabled={coinType === "VESTS"}
               className="border rounded px-2 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 w-full sm:w-auto"
             >
-              <option value="balance">{t("filters.balance")}</option>
-              <option value="savings_balance">{t("filters.savings")}</option>
+              <option value="balance">{t("topholders.filtersbalance")}</option>
+              <option value="savings_balance">{t("topholders.filterssavings")}</option>
             </select>
           </div>
         </Card>
