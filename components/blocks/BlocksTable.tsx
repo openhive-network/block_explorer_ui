@@ -218,6 +218,7 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
           data-testid="table-body"
           className=" overflow-auto"
           enableMobileScrollArrows
+           enableCompactToggle={true}
         >
           <TableHeader>{buildTableHeader()}</TableHeader>
           <TableBody>{buildTableBody()}</TableBody>

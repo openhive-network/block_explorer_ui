@@ -5,6 +5,7 @@ export type ViewMode = 'original' | 'tabbed';
 export type DisplayVestHpMode = 'hp' | 'vests';
 export type ProgressBarType = 'radial' | 'linear';
 export type DataViewSwitchStyle = 'popover' | 'icons' | 'cycle';
+export type LayoutWidth = 'full' | 'compact';
 
 const SETTINGS_KEY = 'app-settings';
 
@@ -16,6 +17,7 @@ export interface AppSettings {
   rawJsonView: boolean;
   liveData: boolean;
   prettyJsonView: boolean;
+   layoutWidth: LayoutWidth; 
 }
 
 interface SettingsContextType {
@@ -34,6 +36,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     rawJsonView: false,
     liveData: false,
     prettyJsonView: false,
+    layoutWidth : 'full',
   });
 
   // This effect loads ALL settings from localStorage on initial mount

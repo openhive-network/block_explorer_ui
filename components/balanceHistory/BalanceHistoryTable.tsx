@@ -321,6 +321,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
           <Table
             className={cn("rounded-[6px] overflow-hidden max-w-full text-xs")}
             enableMobileScrollArrows
+            enableCompactToggle
           >
             <TableHeader>
               <TableRow rowVariant="header">
