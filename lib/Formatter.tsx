@@ -123,22 +123,37 @@ class OperationsFormatter implements IWaxCustomFormatter {
     return formattedValue;
   }
 private getAverageRate(
-  hive: { amount: string; precision: number } | undefined,
-  hbd: { amount: string; precision: number } | undefined
+  a: { amount: string; precision: number } | undefined,
+  b: { amount: string; precision: number } | undefined
 ): string {
-  if (!hive || !hbd) return "";
+  if (!a || !b) return "";
 
   const parse = (s: { amount: string; precision: number }) =>
     parseFloat(s.amount) / Math.pow(10, s.precision);
 
-  const hiveVal = parse(hive);
-  const hbdVal = parse(hbd);
+  const valA = parse(a);
+  const valB = parse(b);
 
-  if (!hbdVal) return ""; 
+  if (valA <= 0 || valB <= 0) return "";
 
-  
-  return `${(hbdVal/hiveVal).toFixed(3)} HBD/HIVE`;
+  const symA = String(this.wax.formatter.format(a)).toUpperCase();
+  const symB = String(this.wax.formatter.format(b)).toUpperCase();
+
+  let hiveVal: number | undefined;
+  let hbdVal: number | undefined;
+
+  if (symA.includes("HIVE")) hiveVal = valA;
+  if (symA.includes("HBD")) hbdVal = valA;
+
+  if (symB.includes("HIVE")) hiveVal = valB;
+  if (symB.includes("HBD")) hbdVal = valB;
+
+  if (!hiveVal || !hbdVal) return "";
+
+  const price = hbdVal / hiveVal;
+  return `${price.toFixed(3)} HBD/HIVE`;
 }
+
 
 
   private getFormattedDate(time: Date | string): string {
