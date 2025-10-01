@@ -128,7 +128,7 @@ export default function TopHoldersPage() {
       <TableRow className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-left">
         <TableHead>{t("table.rank")}</TableHead>
         <TableHead>{t("table.account")}</TableHead>
-        <TableHead className="text-right">
+        <TableHead className="text-right pr-6">
           {balanceType === "savings_balance" ? t("table.savings") : t("table.balance")}
         </TableHead>
       </TableRow>
@@ -207,7 +207,7 @@ export default function TopHoldersPage() {
         )}
         {!isTopHoldersLoading && !isTopHoldersError && filteredHolders.length === 0 && <NoResult />}
         {!isTopHoldersLoading && !isTopHoldersError && filteredHolders.length > 0 && (
-          <Table className="w-full">
+          <Table className="w-full" enableMobileScrollArrows enableCompactToggle>
             <TableHeaderRow />
             <TableBody data-testid="table-body">
               {filteredHolders.map((holder, index) => (

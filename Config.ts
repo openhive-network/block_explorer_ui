@@ -49,6 +49,8 @@ export const config = {
     outgoing: "outgoing",
   },
   maxProxyDepth: 3,
+  compactViewPercentage :"80%",
+  fullViewPercentage: "98%",
   defaultNodeProviders: [
     "https://api.hive.blog",
     "https://api.openhive.network",

@@ -1,4 +1,4 @@
-import React, { ReactNode, useMemo } from "react";
+import React, { ReactNode, useEffect, useMemo } from "react";
 import {
   QueryCache,
   QueryClient,
@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import { ErrorBoundary } from "react-error-boundary";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
-import { SettingsProvider } from "@/contexts/SettingsContext";
+import { SettingsProvider, useSettings } from "@/contexts/SettingsContext";
 import { I18nProvider } from "@/i18n/i18n"; 
 
 import { HiveChainContextProvider } from "../contexts/HiveChainContext";
@@ -21,8 +21,28 @@ import { OperationTypesContextProvider } from "@/contexts/OperationsTypesContext
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { SearchesContextProvider } from "@/contexts/SearchesContext";
 import { HealthCheckerContextProvider } from "@/contexts/HealthCheckerContext";
+import { config } from "@/Config";
+
+// This component lives *inside* the SettingsProvider, so it can safely call useSettings().
+// Its job is to manage the dynamic layout width based on the setting.
+const DynamicLayoutManager: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const { settings } = useSettings();
+
+  useEffect(() => {
+    // Map our setting value to the actual CSS width value
+    const newWidth = settings.layoutWidth === 'compact' ? config.compactViewPercentage : config.fullViewPercentage;
+    
+    // Set the CSS variable on the root <html> element
+    document.documentElement.style.setProperty('--page-container-width', newWidth);
+
+  }, [settings.layoutWidth]); 
+
+  return <>{children}</>;
+};
+
 
 const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
+  // The logic that used useSettings() has been moved to the component above.
   const { apiAddress, nodeAddress } = useApiAddresses();
 
   const queryClient = useMemo(
@@ -53,24 +73,26 @@ const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
     <QueryClientProvider client={queryClient}>
       <I18nProvider initialLocale="en">
         <SettingsProvider> 
-          <HiveChainContextProvider>
-            <AddressesContextProvider>
-              <HealthCheckerContextProvider>
-                <ErrorBoundary fallback={<ErrorPage />}>
-                  <ThemeProvider>
-                      <HeadBlockContextProvider>
-                        <OperationTypesContextProvider>
-                          <SearchesContextProvider>
-                            <Layout>{children}</Layout>
-                            <ReactQueryDevtools initialIsOpen={false} />
-                          </SearchesContextProvider>
-                        </OperationTypesContextProvider>
-                      </HeadBlockContextProvider>
-                  </ThemeProvider>
-                </ErrorBoundary>
-              </HealthCheckerContextProvider>
-            </AddressesContextProvider>
-          </HiveChainContextProvider>
+          <DynamicLayoutManager>
+            <HiveChainContextProvider>
+              <AddressesContextProvider>
+                <HealthCheckerContextProvider>
+                  <ErrorBoundary fallback={<ErrorPage />}>
+                    <ThemeProvider>
+                        <HeadBlockContextProvider>
+                          <OperationTypesContextProvider>
+                            <SearchesContextProvider>
+                              <Layout>{children}</Layout>
+                              <ReactQueryDevtools initialIsOpen={false} />
+                            </SearchesContextProvider>
+                          </OperationTypesContextProvider>
+                        </HeadBlockContextProvider>
+                    </ThemeProvider>
+                  </ErrorBoundary>
+                </HealthCheckerContextProvider>
+              </AddressesContextProvider>
+            </HiveChainContextProvider>
+          </DynamicLayoutManager>
         </SettingsProvider>
       </I18nProvider>
     </QueryClientProvider>
