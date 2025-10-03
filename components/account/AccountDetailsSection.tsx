@@ -53,6 +53,28 @@ interface AccountDetailsSectionProps {
   dynamicGlobalData?: Explorer.HeadBlockCardData;
 }
 
+export type TabKey = "wallet" | "delegations" | "governance" | "profile";
+
+const scrollToCard = (cardElement: HTMLElement | null) => {
+  if (cardElement) {
+    const offset = 50;
+    const elementPosition = cardElement.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.pageYOffset - offset;
+
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: "smooth",
+    });
+
+    if (cardElement.getAttribute("data-state") === "closed") {
+      const toggleButton = cardElement.querySelector("[data-toggle-button]");
+      if (toggleButton instanceof HTMLElement) {
+        toggleButton.click();
+      }
+    }
+  }
+};
+
 const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
   accountName,
   liveDataEnabled,
@@ -126,6 +148,11 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
   const [isAccountSubscriptionModalOpen, setIsAccountSubscriptionModalOpen] =
     useState(false);
 
+  const [activeTab, setActiveTab] = useState<TabKey>("wallet");
+  const [activeDelegationType, setActiveDelegationType] = useState<
+    "incoming" | "outgoing" | null
+  >(null);
+
   const handleOpenVotersModal = () => setIsVotersModalOpen(!isVotersModalOpen);
   const handleOpenVotesHistoryModal = () =>
     setIsVotesHistoryModalOpen(!isVotesHistoryModalOpen);
@@ -145,6 +172,25 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
 
   const handleTabToggleAll = (tab: keyof typeof tabExpandedStates) => {
     setTabExpandedStates((prev) => ({ ...prev, [tab]: !prev[tab] }));
+  };
+
+  const changeTab = (
+    tab: TabKey,
+    context?: { type?: "incoming" | "outgoing" }
+  ) => {
+    if (settings.accountPageView === "tabbed") {
+      setActiveTab(tab);
+      if (context?.type) {
+        setActiveDelegationType(context.type);
+      }
+    } else {
+      setTimeout(() => {
+        const cardId = `${context?.type}-delegations-card`;
+        const cardElement = document.getElementById(cardId);
+        scrollToCard(cardElement);
+        setAreAllCardsOpen(true);
+      }, 100);
+    }
   };
 
   if (!accountDetails) {
@@ -176,6 +222,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
         accountName={accountName}
       />
       <AccountVestingDelegationsCard
+        id="outgoing-delegations-card"
         direction="outgoing"
         delegations={outgoingVestingDelegations}
         dynamicGlobalData={dynamicGlobalData}
@@ -183,6 +230,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
         accountName={accountName}
       />
       <AccountVestingDelegationsCard
+        id="incoming-delegations-card"
         direction="incoming"
         delegations={incomingVestingDelegations}
         dynamicGlobalData={dynamicGlobalData}
@@ -282,7 +330,11 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
 
       {settings.accountPageView === "tabbed" ? (
         <div className="bg-explorer-slate rounded-lg border border-slate-200 dark:border-slate-800 p-3 mt-4">
-          <Tabs defaultValue="wallet" className="w-full">
+          <Tabs
+            value={activeTab}
+            onValueChange={(val) => changeTab(val as TabKey)}
+            className="w-full"
+          >
             <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto p-0 bg-transparent rounded-none gap-x-1">
               <TabsTrigger
                 value="wallet"
@@ -359,6 +411,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
                   header={t("accountDetailsSection.wallet")}
                   userDetails={accountDetails}
                   isInitiallyOpen={tabExpandedStates.wallet}
+                  onChangeTab={changeTab}
                 />
                 <AccountBalanceHistoryCard
                   header={t("accountDetailsSection.balanceHistory")}
@@ -424,6 +477,10 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
                     dynamicGlobalData={dynamicGlobalData}
                     isInitiallyOpen={tabExpandedStates.delegations}
                     accountName={accountName}
+                    forceOpen={
+                      activeTab === "delegations" &&
+                      activeDelegationType === "outgoing"
+                    }
                   />
                   <AccountVestingDelegationsCard
                     direction="incoming"
@@ -431,6 +488,10 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
                     dynamicGlobalData={dynamicGlobalData}
                     isInitiallyOpen={tabExpandedStates.delegations}
                     accountName={accountName}
+                    forceOpen={
+                      activeTab === "delegations" &&
+                      activeDelegationType === "incoming"
+                    }
                   />
                   <AccountRcDelegationsCard
                     delegations={rcDelegationsData}
@@ -563,6 +624,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
               header={t("accountDetailsSection.wallet")}
               userDetails={accountDetails}
               isInitiallyOpen={false}
+              onChangeTab={changeTab}
             />
             <AccountBalanceHistoryCard
               header={t("accountDetailsSection.balanceHistory")}
@@ -594,7 +656,10 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
               </Tooltip>
             </TooltipProvider>
           </div>
-          <div key={areAllCardsOpen ? "open" : "closed"} className="space-y-4">
+          <div
+            key={areAllCardsOpen ? "open" : "closed"}
+            className="space-y-4"
+          >
             <CollapsibleCards isInitiallyOpen={areAllCardsOpen} />
           </div>
         </div>

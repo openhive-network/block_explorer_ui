@@ -1,4 +1,4 @@
-import { useState, Fragment } from "react";
+import { useState, Fragment, useEffect } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import Link from "next/link";
 
@@ -17,10 +17,12 @@ import { useI18n } from "../../i18n/i18n";
 import DataExport from "../DataExport";
 
 type AccountVestingDelegationsCardProps = {
+  id?: string;
   direction: "incoming" | "outgoing";
   delegations?: Explorer.VestingDelegation[]; // Data is now a prop
   dynamicGlobalData?: Explorer.HeadBlockCardData;
   isInitiallyOpen: boolean;
+  forceOpen?: boolean;
   accountName: string;
 };
 
@@ -62,15 +64,25 @@ const buildTableBody = (
 const AccountVestingDelegationsCard: React.FC<
   AccountVestingDelegationsCardProps
 > = ({
+  id,
   direction,
   delegations,
   dynamicGlobalData,
   isInitiallyOpen,
   accountName,
+  forceOpen = false,
 }) => {
   const { t } = useI18n();
-  const [isPropertiesHidden, setIsPropertiesHidden] = useState(!isInitiallyOpen);
-  
+  const [isPropertiesHidden, setIsPropertiesHidden] = useState(
+    !isInitiallyOpen
+  );
+
+  useEffect(() => {
+    if (forceOpen) {
+      setIsPropertiesHidden(false);
+    }
+  }, [forceOpen]);
+
   const [sortConfig, setSortConfig] = useState<{
     key: string;
     isAscending: boolean;
@@ -101,13 +113,17 @@ const AccountVestingDelegationsCard: React.FC<
     recipient: direction === "outgoing" ? "delegatee" : "delegator",
     amount: "vesting_shares",
   }) as Explorer.VestingDelegation[];
-  
+
   const prepareExportData = () => {
     return sortedDelegations.map((delegation, index) => {
       return {
         [t("common.order")]: index + 1,
-        [direction === "outgoing" ? t("delegationSort.Recipient") : t("delegationSort.Delegator")]:
-          direction === "outgoing" ? delegation.delegatee : delegation.delegator,
+        [direction === "outgoing"
+          ? t("delegationSort.Recipient")
+          : t("delegationSort.Delegator")]:
+          direction === "outgoing"
+            ? delegation.delegatee
+            : delegation.delegator,
         [t("delegationSort.Amount")]: delegation.vesting_shares,
       };
     });
@@ -121,6 +137,7 @@ const AccountVestingDelegationsCard: React.FC<
 
   return (
     <Card
+      id={id}
       data-testid="vesting-delegations-dropdown"
       className="overflow-hidden"
     >
