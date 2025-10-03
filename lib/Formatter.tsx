@@ -152,7 +152,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
     if (!hiveVal || !hbdVal) return "";
 
     const price = hbdVal / hiveVal;
-    return `${price.toFixed(3)} HBD/HIVE`;
+    return `${price.toFixed(6)} HBD/HIVE`;
   }
 
   private getFormattedDate(time: Date | string): string {
@@ -560,13 +560,17 @@ class OperationsFormatter implements IWaxCustomFormatter {
       this.getFormattedAmount(op.amount_to_sell),
       this.i18n.t("formatter.formatLimitOrderCreateOperation.conditionMinReceive"),
       this.getFormattedAmount(op.min_to_receive),
+      
       this.i18n.t("formatter.formatLimitOrderCreateOperation.idPrefix"),
       `${op.orderid}`,
     ];
 
 
     if (avgRate) {
-      messageElements.push(
+      const idIndex = messageElements.length - 2; 
+      messageElements.splice(
+        idIndex,
+        0,
         this.i18n.t("formatter.formatLimitOrderCreateOperation.avgRatePrefix"),
         avgRate
       );
@@ -2046,7 +2050,10 @@ class OperationsFormatter implements IWaxCustomFormatter {
       `${op.open_orderid})`,
     ];
     if (avgRate) {
-      messageElements.push(
+      const idIndex = 7; 
+      messageElements.splice(
+        idIndex,
+        0,
         this.i18n.t("formatter.formatFillOrderOperation.avgRatePrefix"),
         avgRate
       );
