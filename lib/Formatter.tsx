@@ -109,6 +109,7 @@ class OperationsFormatter implements IWaxCustomFormatter {
     },
   };
 
+
   private getFormattedAmount(
     supply: Hive.Supply | undefined
   ): React.JSX.Element | string {
@@ -121,6 +122,37 @@ class OperationsFormatter implements IWaxCustomFormatter {
     }
 
     return formattedValue;
+  }
+  private getAverageRate(
+    a: { amount: string; precision: number } | undefined,
+    b: { amount: string; precision: number } | undefined
+  ): string {
+    if (!a || !b) return "";
+
+    const parse = (s: { amount: string; precision: number }) =>
+      parseFloat(s.amount) / Math.pow(10, s.precision);
+
+    const valA = parse(a);
+    const valB = parse(b);
+
+    if (valA <= 0 || valB <= 0) return "";
+
+    const symA = String(this.wax.formatter.format(a)).toUpperCase();
+    const symB = String(this.wax.formatter.format(b)).toUpperCase();
+
+    let hiveVal: number | undefined;
+    let hbdVal: number | undefined;
+
+    if (symA.includes("HIVE")) hiveVal = valA;
+    if (symA.includes("HBD")) hbdVal = valA;
+
+    if (symB.includes("HIVE")) hiveVal = valB;
+    if (symB.includes("HBD")) hbdVal = valB;
+
+    if (!hiveVal || !hbdVal) return "";
+
+    const price = hbdVal / hiveVal;
+    return `${price.toFixed(6)} HBD/HIVE`;
   }
 
   private getFormattedDate(time: Date | string): string {
@@ -520,25 +552,39 @@ class OperationsFormatter implements IWaxCustomFormatter {
     source: { value: op },
     target,
   }: IFormatFunctionArguments<{ value: limit_order_create }>) {
-    const message = this.generateReactLink([
+    const avgRate = this.getAverageRate(op.amount_to_sell, op.min_to_receive);
+
+    const messageElements: Array<string | React.JSX.Element> = [
       this.getAccountLink(op.owner),
       this.i18n.t("formatter.formatLimitOrderCreateOperation.actionSell"),
       this.getFormattedAmount(op.amount_to_sell),
-      this.i18n.t(
-        "formatter.formatLimitOrderCreateOperation.conditionMinReceive"
-      ),
+      this.i18n.t("formatter.formatLimitOrderCreateOperation.conditionMinReceive"),
       this.getFormattedAmount(op.min_to_receive),
+      
       this.i18n.t("formatter.formatLimitOrderCreateOperation.idPrefix"),
       `${op.orderid}`,
-      ...(!op.fill_or_kill
-        ? [
-            this.i18n.t(
-              "formatter.formatLimitOrderCreateOperation.expirationPrefix"
-            ),
-            this.getFormattedDate(op.expiration),
-          ]
-        : []),
-    ]);
+    ];
+
+
+    if (avgRate) {
+      const idIndex = messageElements.length - 2; 
+      messageElements.splice(
+        idIndex,
+        0,
+        this.i18n.t("formatter.formatLimitOrderCreateOperation.avgRatePrefix"),
+        avgRate
+      );
+    }
+
+    if (!op.fill_or_kill) {
+      messageElements.push(
+        this.i18n.t("formatter.formatLimitOrderCreateOperation.expirationPrefix"),
+        this.getFormattedDate(op.expiration)
+      );
+    }
+
+    const message = this.generateReactLink(messageElements);
+
 
     return {
       ...target,
@@ -1989,7 +2035,8 @@ class OperationsFormatter implements IWaxCustomFormatter {
     source: { value: op },
     target,
   }: IFormatFunctionArguments<{ value: fill_order }>) {
-    const message = this.generateReactLink([
+    const avgRate = this.getAverageRate(op.current_pays, op.open_pays);
+    const messageElements: Array<string | React.JSX.Element> = [
       this.getAccountLink(op.current_owner),
       this.i18n.t("formatter.formatFillOrderOperation.actionPaid"),
       this.getFormattedAmount(op.current_pays),
@@ -2001,7 +2048,17 @@ class OperationsFormatter implements IWaxCustomFormatter {
       `${op.current_orderid}`,
       this.i18n.t("formatter.formatFillOrderOperation.arrowSeparator"),
       `${op.open_orderid})`,
-    ]);
+    ];
+    if (avgRate) {
+      const idIndex = 7; 
+      messageElements.splice(
+        idIndex,
+        0,
+        this.i18n.t("formatter.formatFillOrderOperation.avgRatePrefix"),
+        avgRate
+      );
+    }
+    const message = this.generateReactLink(messageElements);
     return {
       ...target,
       value: { ...message, ...this.getOperationPerspective(op.current_owner) },
