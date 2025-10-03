@@ -1,6 +1,10 @@
 {
   "common.by": "由",
   "common.operations": "操作",
+  "operations.participationMode": "参与模式",
+  "operations.all": "所有操作",
+  "operations.include": "仅作为发起人",
+  "operations.exclude": "仅作为参与者",
   "common.seeMore": "查看更多",
   "common.block": "区块",
   "common.transactions": "交易",
@@ -965,5 +969,5 @@
   "topholders.tablesavings": "储蓄",
   "export.topHolders": "主要持有人",
   "formatter.formatLimitOrderCreateOperation.avgRatePrefix": "以平均汇率",
-  "formatter.formatFillOrderOperation.avgRatePrefix":"以平均汇率"
+  "formatter.formatFillOrderOperation.avgRatePrefix": "以平均汇率"
 }

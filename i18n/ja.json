@@ -1,6 +1,10 @@
 {
   "common.by": "作成者",
   "common.operations": "オペレーション",
+  "operations.participationMode": "参加モード",
+  "operations.all": "すべての操作",
+  "operations.include": "開始者として",
+  "operations.exclude": "参加者として",
   "common.seeMore": "もっと見る",
   "common.block": "ブロック",
   "common.transactions": "トランザクション",
@@ -965,5 +969,5 @@
   "topholders.tablesavings": "貯蓄",
   "export.topHolders": "主要保有者",
   "formatter.formatLimitOrderCreateOperation.avgRatePrefix": "平均レートで",
-  "formatter.formatFillOrderOperation.avgRatePrefix":"平均レートで"
+  "formatter.formatFillOrderOperation.avgRatePrefix": "平均レートで"
 }

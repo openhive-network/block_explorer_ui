@@ -117,6 +117,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     });
     setFilters([]);
     removeStorageItem("is_operations_filters_visible");
+    setMode("all");
   };
 
   const handleOperationSelect = (filters: number[] | null) => {
@@ -207,6 +208,43 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
             rangesProps={searchRanges}
             setIsSearchButtonDisabled={setIsSearchButtonDisabled}
           />
+          <div className="flex flex-col space-y-2 mb-4">
+            <div className="text-sm font-medium">
+              {t("operations.participationMode")}
+            </div>
+            <div className="flex space-x-4">
+              <label className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  name="participationMode"
+                  checked={mode === "all"}
+                  onChange={() => setMode("all")}
+                  className="h-4 w-4"
+                />
+                <span className="text-sm">{t("operations.all")}</span>
+              </label>
+              <label className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  name="participationMode"
+                  checked={mode === "include"}
+                  onChange={() => setMode("include")}
+                  className="h-4 w-4"
+                />
+                <span className="text-sm">{t("operations.include")}</span>
+              </label>
+              <label className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  name="participationMode"
+                  checked={mode === "exclude"}
+                  onChange={() => setMode("exclude")}
+                  className="h-4 w-4"
+                />
+                <span className="text-sm">{t("operations.exclude")}</span>
+              </label>
+            </div>
+          </div>
 
           <div className="flex items-center my-2">
             <OperationTypesDialog
@@ -251,9 +289,9 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
           </div>
         </CardContent>
       </Card>
-      <Button onClick={() => setMode("include")}>include</Button>
+      {/* <Button onClick={() => setMode("include")}>include</Button>
       <Button onClick={() => setMode("exclude")}>exclude</Button>
-      <Button onClick={() => setMode("all")}>all</Button>
+      <Button onClick={() => setMode("all")}>all</Button> */}
       <BlockNavigation
         fromBlock={accountOperations?.block_range.from}
         toBlock={accountOperations?.block_range.to}

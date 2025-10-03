@@ -1,6 +1,10 @@
 {
   "common.by": "Par",
   "common.operations": "Opérations",
+  "operations.participationMode": "Mode de Participation",
+  "operations.all": "Toutes les Opérations",
+  "operations.include": "Uniquement comme Initiateur",
+  "operations.exclude": "Uniquement comme Participant",
   "common.seeMore": "Voir plus",
   "common.block": "Bloc",
   "common.transactions": "Transactions",

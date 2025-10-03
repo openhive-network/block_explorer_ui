@@ -1,6 +1,10 @@
 {
   "common.by": "Por",
   "common.operations": "Operações",
+  "operations.participationMode": "Modo de Participação",
+  "operations.all": "Todas as Operações",
+  "operations.include": "Apenas como Iniciador",
+  "operations.exclude": "Apenas como Participante",
   "common.seeMore": "Ver Mais",
   "common.block": "Bloco",
   "common.transactions": "Transações",
