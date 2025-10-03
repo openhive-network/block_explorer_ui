@@ -14,7 +14,7 @@ const useAggregatedBalanceHistory = (
 ) => {
   const fetchBalanceHist = async () => {
     if (fromDate && toDate && moment(fromDate).isAfter(moment(toDate))) {
-      return [];
+      return null;
     }
 
     return await fetchingService.geAccountAggregatedtBalanceHistory(
@@ -30,6 +30,7 @@ const useAggregatedBalanceHistory = (
   const {
     data: aggregatedAccountBalanceHistory,
     isLoading: isAggregatedAccountBalanceHistoryLoading,
+    isFetching: isAggregatedAccountBalanceHistoryFetching,
     isError: isAggregatedAccountBalanceHistoryError,
   }: any = useQuery({
     queryKey: [
@@ -56,7 +57,7 @@ const useAggregatedBalanceHistory = (
   const { marketHistory } = useMarketHistory(86400, start, end);
 
   const getHistoryWithHivePrice = () => {
-    if (!marketHistory || !aggregatedAccountBalanceHistory) return [];
+    if (!marketHistory || !aggregatedAccountBalanceHistory) return null;
 
     return aggregatedAccountBalanceHistory.map((balance: any) => {
       const { buckets } = marketHistory;
@@ -84,6 +85,7 @@ const useAggregatedBalanceHistory = (
   return {
     aggregatedAccountBalanceHistory: newdata,
     isAggregatedAccountBalanceHistoryLoading,
+    isAggregatedAccountBalanceHistoryFetching,
     isAggregatedAccountBalanceHistoryError,
   };
 };

@@ -14,7 +14,6 @@ import Explorer from "@/types/Explorer";
 import { getOperationTypeForDisplay } from "@/utils/UI";
 import { categorizedOperationTypes } from "@/utils/CategorizedOperationTypes";
 import { colorByOperationCategory } from "../OperationTypesDialog";
-import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
 import TimeAgo from "timeago-react";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import {
@@ -39,6 +38,7 @@ import { grabNumericValue } from "@/utils/StringUtils";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { convertVestsToHive } from "@/utils/Calculations";
+import { useSettings } from "@/contexts/SettingsContext";
 
 interface BalanceHistoryTableProps {
   operations: Explorer.BalanceHistoryForTable[];
@@ -61,7 +61,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
   const { locale: appLocale, t } = useI18n();
   const {
     settings: { rawJsonView, prettyJsonView },
-  } = useUserSettingsContext();
+  } = useSettings();
 
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
   const operationsTypes = useOperationsTypes().operationsTypes || [];
@@ -118,22 +118,50 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
   const OperationDetails: React.FC<{ operationId: number }> = ({
     operationId,
   }) => {
+    const router = useRouter();
     const { operationData, operationDataIsFetched, operationDataError } =
       useOperation(operationId.toString());
+
     const formattedAccountOperations = useOperationsFormatter(operationData);
+
+    const handleDetailsClick = (opDetails: any) => {
+
+      if (!opDetails?.block) return;
+
+      const { block, trx_id, operation_id } = opDetails;
+      const params = new URLSearchParams();
+
+      if (trx_id) {
+        params.append("trxId", trx_id);
+      }
+      if (operation_id !== undefined) {
+        params.append("opId", String(operation_id));
+      }
+
+      const queryString = params.toString();
+      const url = `/block/${block}${queryString ? `?${queryString}` : ""}`;
+      router.push(url);
+    };
+
     if (operationDataIsFetched) {
       if (!operationData || Object.keys(operationData).length === 0) {
         return <p>{t("balanceHistoryTable.noRecordsForOperation")}</p>;
       }
-      if (!rawJsonView && !prettyJsonView) {
-        return <div>{getOneLineDescription(formattedAccountOperations)}</div>;
-      }
-
-      if (prettyJsonView) {
-        return <pre>{JSON.stringify(operationData.op, null, 2)}</pre>;
-      } else {
-        return <pre>{JSON.stringify(operationData.op)}</pre>;
-      }
+      
+      return (
+        <div 
+          className="cursor-pointer hover:bg-rowHover"
+          onClick={() => handleDetailsClick(formattedAccountOperations)}
+        >
+          {!rawJsonView && !prettyJsonView ? (
+            <div>{getOneLineDescription(formattedAccountOperations)}</div>
+          ) : prettyJsonView ? (
+            <pre>{JSON.stringify(operationData.op, null, 2)}</pre>
+          ) : (
+            <pre>{JSON.stringify(operationData.op)}</pre>
+          )}
+        </div>
+      );
     }
 
     if (operationDataError) {
@@ -156,13 +184,15 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
               <span>{t("common.transaction")} : </span>
               <Link
                 className="text-link"
-                href={`/transaction/${operation.trx_id}`}
+                href={`/tx/${operation.trx_id}`}
+                onClick={(e) => e.stopPropagation()}
               >
                 {operation.trx_id?.slice(0, 10)}{" "}
               </Link>
               <CopyButton
                 text={operation.trx_id || ""}
                 tooltipText={t("common.copyTransactionId")}
+                onClick={(e) => e.stopPropagation()}
               />
             </div>
           </>
@@ -254,17 +284,17 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
   };
 
   return (
-    <>
-      <div className="sticky z-20 top-[3.2rem] md:top-[4rem]">
-        <CustomPagination
-          currentPage={current_page ? current_page : total_pages}
-          onPageChange={updateUrl}
-          pageSize={config.standardPaginationSize}
-          totalCount={total_operations}
-          className="rounded"
-          isMirrored={true}
-        />
-      </div>
+        <>
+          <div className="sticky z-20 top-[3.2rem] md:top-[4rem]">
+            <CustomPagination
+              currentPage={current_page ? current_page : total_pages}
+              onPageChange={updateUrl}
+              pageSize={config.standardPaginationSize}
+              totalCount={total_operations}
+              className="rounded"
+              isMirrored={true}
+            />
+          </div>
       {total_operations === 0 ? (
         <div className="flex justify-center w-full">
           {t("balanceHistoryTable.noResultsMatchingCriteria")}
@@ -291,6 +321,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
           <Table
             className={cn("rounded-[6px] overflow-hidden max-w-full text-xs")}
             enableMobileScrollArrows
+            enableCompactToggle
           >
             <TableHeader>
               <TableRow rowVariant="header">
@@ -376,12 +407,14 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
                         <Link
                           className="text-link"
                           href={`/block/${operation.blockNumber}`}
+                          onClick={(e) => e.stopPropagation()} // <-- ADDED stopPropagation
                         >
                           {operation.blockNumber?.toLocaleString()}
                         </Link>
                         <CopyButton
                           text={operation.blockNumber}
                           tooltipText={t("common.copyBlockNumber")}
+                          onClick={(e) => e.stopPropagation()} // <-- ADDED stopPropagation
                         />
                       </TableCell>
                       <TableCell data-testid="operation-prev-balance">
@@ -426,7 +459,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
                           colSpan={7}
                           className="p-4"
                         >
-                          <div className="border rounded-2xl p-4">
+                          <div className="border rounded-2xl p-4 bg-theme">
                             <h3 className="text-lg font-bold">
                               {t("balanceHistoryTable.operationDetails")}
                             </h3>

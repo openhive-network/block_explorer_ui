@@ -7,10 +7,10 @@ import Hive from "@/types/Hive";
 import { isJson } from "@/utils/StringUtils";
 import { Button } from "./ui/button";
 import JSONView from "./JSONView";
-import { useUserSettingsContext } from "../contexts/UserSettingsContext";
 import { cn } from "@/lib/utils";
 import { getOperationTypeForDisplay } from "@/utils/UI";
 import CopyJSON from "./CopyJSON";
+import { useSettings } from "@/contexts/SettingsContext";
 
 interface DetailedOperationCardProps {
   operation: Hive.Operation;
@@ -53,7 +53,7 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
   className,
   forceStyle,
 }) => {
-  const { settings } = useUserSettingsContext();
+  const { settings } = useSettings();
   const [seeDetails, setSeeDetails] = useState(false);
 
   let valueAsObject = operation.value;
@@ -87,7 +87,7 @@ const DetailedOperationCard: React.FC<DetailedOperationCardProps> = ({
               Trx{" "}
               <Link
                 className="text-explorer-turquoise"
-                href={`/transaction/${transactionId}`}
+                href={`/tx/${transactionId}`}
               >
                 {transactionId.slice(0, 10)}
               </Link>

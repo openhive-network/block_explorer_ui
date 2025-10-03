@@ -1,4 +1,11 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+  SetStateAction,
+  Dispatch,
+} from "react";
 import {
   Line,
   LineChart,
@@ -20,27 +27,7 @@ import { convertVestsToHive } from "@/utils/Calculations";
 import { grabNumericValue } from "@/utils/StringUtils";
 
 interface BalanceHistoryChartProps {
-  hiveBalanceHistoryData?: {
-    timestamp: string;
-    balance_change: number;
-    balance: number;
-    savings_balance?: number;
-    savings_balance_change?: number;
-    hivePrice: string;
-    dollarValue?: number;
-    convertedHive?: number;
-  }[];
-  vestsBalanceHistoryData?: {
-    timestamp: string;
-    balance_change: number;
-    balance: number;
-    savings_balance?: number;
-    savings_balance_change?: number;
-    hivePrice: string;
-    dollarValue?: number;
-    convertedHive?: number;
-  }[];
-  hbdBalanceHistoryData?: {
+  aggregatedAccountBalanceHistory?: {
     timestamp: string;
     balance_change: number;
     balance: number;
@@ -53,6 +40,8 @@ interface BalanceHistoryChartProps {
   className?: string;
   quickView?: boolean;
   showSavingsBalance?: string;
+  selectedCoinType: string;
+  setSelectedCoinType: Dispatch<SetStateAction<string>>;
 }
 
 export const colorMap: Record<string, string> = {
@@ -64,50 +53,26 @@ export const colorMap: Record<string, string> = {
 };
 
 const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
-  hiveBalanceHistoryData,
-  vestsBalanceHistoryData,
-  hbdBalanceHistoryData,
+  aggregatedAccountBalanceHistory,
   className = "",
   quickView = false,
   showSavingsBalance = "yes",
+  selectedCoinType,
+  setSelectedCoinType,
 }) => {
   const { t, dir, locale } = useI18n();
-  const hiveChain = useHiveChainContext()?.hiveChain;
-  const dynamicGlobalData = useDynamicGlobal()?.dynamicGlobalData;
+  const { hiveChain } = useHiveChainContext();
+  const { dynamicGlobalData } = useDynamicGlobal();
   const isRTL = dir === "rtl";
 
-  const [selectedCoinType, setSelectedCoinType] = useState<string>("HIVE");
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 480);
   const [hiddenDataKeys, setHiddenDataKeys] = useState<string[]>([]);
 
   // State to store available coins
-  const [availableCoins, setAvailableCoins] = useState<string[]>([]);
+  const availableCoins = ["HIVE", "VESTS", "HBD"];
   const [zoomedDomain, setZoomedDomain] = useState<[number, number] | null>(
     null
   );
-
-  useEffect(() => {
-    const newAvailableCoins: string[] = [];
-    if (hiveBalanceHistoryData && hiveBalanceHistoryData.length > 0)
-      newAvailableCoins.push("HIVE");
-    if (vestsBalanceHistoryData && vestsBalanceHistoryData.length > 0)
-      newAvailableCoins.push("VESTS");
-    if (hbdBalanceHistoryData && hbdBalanceHistoryData.length > 0)
-      newAvailableCoins.push("HBD");
-
-    setAvailableCoins(newAvailableCoins);
-  }, [hiveBalanceHistoryData, vestsBalanceHistoryData, hbdBalanceHistoryData]);
-
-  useEffect(() => {
-    if (availableCoins.length === 1) {
-      setSelectedCoinType(availableCoins[0]);
-    } else if (
-      availableCoins.length > 1 &&
-      !availableCoins.includes(selectedCoinType)
-    ) {
-      setSelectedCoinType(availableCoins[0]);
-    }
-  }, [availableCoins, selectedCoinType]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -188,16 +153,10 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     }[]
   > = useMemo(() => {
     return {
-      HIVE: processedData(hiveBalanceHistoryData, "HIVE") || [],
-      VESTS: processedData(vestsBalanceHistoryData, "VESTS"),
-      HBD: processedData(hbdBalanceHistoryData, "HBD") || [],
+      [selectedCoinType]:
+        processedData(aggregatedAccountBalanceHistory, selectedCoinType) || [],
     };
-  }, [
-    processedData,
-    hiveBalanceHistoryData,
-    hbdBalanceHistoryData,
-    vestsBalanceHistoryData,
-  ]);
+  }, [processedData, aggregatedAccountBalanceHistory, selectedCoinType]);
 
   const handleCoinTypeChange = (coinType: string) => {
     setSelectedCoinType(coinType);
@@ -205,7 +164,8 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
 
   const displayData = useMemo(() => {
     return dataMap[selectedCoinType];
-  }, [dataMap, selectedCoinType]);
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCoinType]);
 
   const CustomTooltip = ({
     active,
@@ -418,13 +378,15 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     }
   };
 
+  if (!displayData || !displayData.length) return;
+
   const isDualAxis = selectedCoinType === "VESTS";
   const primaryAxisId = isRTL ? "right" : "left";
   const secondaryAxisId = isRTL ? "left" : "right";
 
   return (
     <div className={cn("w-full", className)}>
-      {availableCoins.length > 1 && (
+      {quickView && (
         <div
           className={cn("flex mb-4", isRTL ? "justify-start" : "justify-end")}
         >

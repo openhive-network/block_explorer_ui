@@ -1,14 +1,15 @@
 import React from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { getOperationColor } from "@/components/OperationsTable";
 import { getOperationTypeForDisplay } from "@/utils/UI";
-import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
 import useBlockOperations from "@/hooks/api/common/useBlockOperations";
 import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
 import CopyButton from "../ui/CopyButton";
 import { convertBooleanArrayToIds } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 import { useI18n } from "@/i18n/i18n";
+import { useSettings } from "@/contexts/SettingsContext";
 
 interface Props {
   blockNum: number;
@@ -16,10 +17,11 @@ interface Props {
 }
 
 const BlockOperationsContent: React.FC<Props> = ({ blockNum, paramsState }) => {
+  const router = useRouter();
   const { t } = useI18n();
   const {
     settings: { rawJsonView, prettyJsonView },
-  } = useUserSettingsContext();
+  } = useSettings();
 
   const filters = paramsState?.filters
     ? convertBooleanArrayToIds(paramsState?.filters)
@@ -36,6 +38,25 @@ const BlockOperationsContent: React.FC<Props> = ({ blockNum, paramsState }) => {
   const formattedOperations = useOperationsFormatter(
     blockOperations?.operations_result
   );
+
+  const handleOperationClick = (operation: any) => {
+    if (!operation) return;
+
+    const { operation_id, trx_id } = operation;
+    const params = new URLSearchParams();
+
+    if (trx_id) {
+      params.append("trxId", trx_id);
+    }
+    if (operation_id !== undefined) {
+      params.append("opId", String(operation_id));
+    }
+
+    const queryString = params.toString();
+    const url = `/block/${blockNum}${queryString ? `?${queryString}` : ""}`;
+
+    router.push(url);
+  };
 
   if (trxLoading) {
     return (
@@ -72,13 +93,15 @@ const BlockOperationsContent: React.FC<Props> = ({ blockNum, paramsState }) => {
               <span>{t("common.transaction")} : </span>
               <Link
                 className="text-link"
-                href={`/transaction/${operation.trx_id}`}
+                href={`/tx/${operation.trx_id}`}
+                onClick={(e) => e.stopPropagation()}
               >
                 {operation.trx_id?.slice(0, 10)}{" "}
               </Link>
               <CopyButton
                 text={operation.trx_id || ""}
                 tooltipText={t("common.copyTransactionId")}
+                onClick={(e) => e.stopPropagation()} 
               />
             </div>
           )}
@@ -125,6 +148,7 @@ const BlockOperationsContent: React.FC<Props> = ({ blockNum, paramsState }) => {
         return <pre>{JSON.stringify(unformattedOperation)}</pre>;
       }
     }
+    return null; 
   };
 
   const operations = formattedOperations.filter((op: any) => !op.virtual_op);
@@ -138,10 +162,13 @@ const BlockOperationsContent: React.FC<Props> = ({ blockNum, paramsState }) => {
         <>
           <h3 className="text-lg font-bold">{t("common.operations")}</h3>
           {operations.map((operation: any) => (
-            <OperationDetails
+            <div
               key={operation.operation_id}
-              operation={operation}
-            />
+              className="border-b p-2 cursor-pointer hover:bg-rowHover"
+              onClick={() => handleOperationClick(operation)}
+            >
+              <OperationDetails operation={operation} />
+            </div>
           ))}
         </>
       )}
@@ -150,10 +177,13 @@ const BlockOperationsContent: React.FC<Props> = ({ blockNum, paramsState }) => {
         <>
           <h3 className="text-lg font-bold">{t("blockPageOperationCount.virtualOperations")}</h3>
           {virtualOperations.map((operation: any) => (
-            <OperationDetails
+            <div
               key={operation.operation_id}
-              operation={operation}
-            />
+              className="border-b p-2 cursor-pointer hover:bg-rowHover"
+              onClick={() => handleOperationClick(operation)}
+            >
+              <OperationDetails operation={operation} />
+            </div>
           ))}
         </>
       )}

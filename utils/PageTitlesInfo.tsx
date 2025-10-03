@@ -166,6 +166,522 @@ const ProposalsInfoEs: React.FC = () => (
   </div>
 );
 
+//communities info
+//english
+const CommunitiesPageInfoEn: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      This page displays a list of Hive communities, showing their name, title, 
+      and subscriber count.
+    </li>
+    <li>
+      Use the search input to filter communities by name, and the sort dropdown 
+      to order communities by rank, activity, or other criteria.
+    </li>
+    <li>
+      Click on a community card to view detailed information or open the subscribers dialog.
+    </li>
+    <li>
+      Infinite scrolling loads more communities as you scroll down, ensuring 
+      easy browsing of the full community list.
+    </li>
+    <li>
+      This page helps users discover active communities and understand their 
+      size and engagement within the Hive ecosystem.
+    </li>
+  </ul>
+);
+//spanish
+const CommunitiesPageInfoEs: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Esta página muestra una lista de comunidades de Hive, con su nombre, título 
+      y número de suscriptores.
+    </li>
+    <li>
+      Usa la barra de búsqueda para filtrar comunidades por nombre, y el menú 
+      desplegable de orden para clasificarlas por rango, actividad u otros criterios.
+    </li>
+    <li>
+      Haz clic en una tarjeta de comunidad para ver información detallada o abrir 
+      el diálogo de suscriptores.
+    </li>
+    <li>
+      El desplazamiento infinito carga más comunidades a medida que bajas, lo que 
+      permite explorar fácilmente la lista completa.
+    </li>
+    <li>
+      Esta página ayuda a los usuarios a descubrir comunidades activas y conocer 
+      su tamaño y nivel de participación en el ecosistema Hive.
+    </li>
+  </ul>
+);
+//italian
+const CommunitiesPageInfoIt: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Questa pagina mostra un elenco delle comunità di Hive, con nome, titolo 
+      e numero di iscritti.
+    </li>
+    <li>
+      Usa la barra di ricerca per filtrare le comunità per nome e il menu a 
+      tendina per ordinarle per rango, attività o altri criteri.
+    </li>
+    <li>
+      Clicca su una scheda comunità per vedere maggiori informazioni o aprire 
+      la finestra degli iscritti.
+    </li>
+    <li>
+      Lo scorrimento infinito carica altre comunità mentre navighi verso il basso, 
+      rendendo semplice esplorare l’elenco completo.
+    </li>
+    <li>
+      Questa pagina aiuta gli utenti a scoprire comunità attive e a comprendere 
+      dimensioni e coinvolgimento all’interno dell’ecosistema Hive.
+    </li>
+  </ul>
+);
+//german
+const CommunitiesPageInfoDe: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Diese Seite zeigt eine Liste von Hive-Communities mit Name, Titel und 
+      Anzahl der Abonnenten.
+    </li>
+    <li>
+      Verwende das Suchfeld, um Communities nach Namen zu filtern, und das 
+      Sortiermenü, um sie nach Rang, Aktivität oder anderen Kriterien zu ordnen.
+    </li>
+    <li>
+      Klicke auf eine Community-Karte, um detaillierte Informationen anzuzeigen 
+      oder den Abonnenten-Dialog zu öffnen.
+    </li>
+    <li>
+      Mit dem unendlichen Scrollen werden beim Herunterblättern automatisch weitere 
+      Communities geladen, sodass die gesamte Liste leicht durchstöbert werden kann.
+    </li>
+    <li>
+      Diese Seite hilft Nutzern, aktive Communities zu entdecken und deren Größe 
+      und Engagement im Hive-Ökosystem zu verstehen.
+    </li>
+  </ul>
+);
+//portuguese
+const CommunitiesPageInfoPt: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Esta página exibe uma lista de comunidades do Hive, mostrando nome, título 
+      e número de assinantes.
+    </li>
+    <li>
+      Use a barra de pesquisa para filtrar comunidades pelo nome e o menu de 
+      ordenação para organizá-las por ranking, atividade ou outros critérios.
+    </li>
+    <li>
+      Clique em um cartão de comunidade para ver informações detalhadas ou abrir 
+      a janela de assinantes.
+    </li>
+    <li>
+      A rolagem infinita carrega mais comunidades conforme você desce, facilitando 
+      a navegação por toda a lista.
+    </li>
+    <li>
+      Esta página ajuda os usuários a descobrir comunidades ativas e entender 
+      seu tamanho e engajamento no ecossistema Hive.
+    </li>
+  </ul>
+);
+//french
+const CommunitiesPageInfoFr: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Cette page affiche une liste des communautés Hive, avec leur nom, titre 
+      et nombre d’abonnés.
+    </li>
+    <li>
+      Utilisez la barre de recherche pour filtrer les communautés par nom et 
+      le menu déroulant pour les trier par rang, activité ou autres critères.
+    </li>
+    <li>
+      Cliquez sur une carte de communauté pour voir plus d’informations ou ouvrir 
+      la fenêtre des abonnés.
+    </li>
+    <li>
+      Le défilement infini charge automatiquement plus de communautés lorsque 
+      vous descendez, ce qui permet d’explorer facilement la liste complète.
+    </li>
+    <li>
+      Cette page aide les utilisateurs à découvrir les communautés actives et à 
+      comprendre leur taille et leur engagement dans l’écosystème Hive.
+    </li>
+  </ul>
+);
+//polish
+const CommunitiesPageInfoPl: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Ta strona wyświetla listę społeczności Hive, pokazując ich nazwę, tytuł 
+      i liczbę subskrybentów.
+    </li>
+    <li>
+      Użyj pola wyszukiwania, aby filtrować społeczności według nazwy, oraz menu 
+      sortowania, aby uporządkować je według rankingu, aktywności lub innych kryteriów.
+    </li>
+    <li>
+      Kliknij kartę społeczności, aby zobaczyć szczegółowe informacje lub otworzyć 
+      okno subskrybentów.
+    </li>
+    <li>
+      Funkcja nieskończonego przewijania ładuje kolejne społeczności podczas 
+      przewijania w dół, co ułatwia przeglądanie pełnej listy.
+    </li>
+    <li>
+      Ta strona pomaga użytkownikom odkrywać aktywne społeczności i zrozumieć 
+      ich wielkość oraz zaangażowanie w ekosystemie Hive.
+    </li>
+  </ul>
+);
+//chinese
+const CommunitiesPageInfoZh: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      本页面显示 Hive 社区列表，包括社区名称、标题和订阅人数。
+    </li>
+    <li>
+      使用搜索栏按名称筛选社区，并通过排序菜单按照排名、活跃度或其他条件排序。
+    </li>
+    <li>
+      点击社区卡片即可查看详细信息或打开订阅者窗口。
+    </li>
+    <li>
+      向下滚动时会自动加载更多社区，方便浏览完整的社区列表。
+    </li>
+    <li>
+      此页面帮助用户发现活跃的社区，并了解其规模和在 Hive 生态系统中的参与度。
+    </li>
+  </ul>
+);
+//japanese
+const CommunitiesPageInfoJa: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      このページでは Hive のコミュニティ一覧を表示し、各コミュニティの名前、タイトル、
+      登録者数が確認できます。
+    </li>
+    <li>
+      検索バーを使って名前でコミュニティを絞り込み、並び替えメニューでランクや活動度
+      などの基準で並べ替えることができます。
+    </li>
+    <li>
+      コミュニティカードをクリックすると詳細情報を確認したり、登録者ダイアログを開いたり
+      できます。
+    </li>
+    <li>
+      無限スクロールにより下にスクロールすると自動的にさらに多くのコミュニティが読み込まれ、
+      一覧を簡単に探索できます。
+    </li>
+    <li>
+      このページはユーザーがアクティブなコミュニティを見つけ、その規模や Hive エコシステムに
+      おける参加度を理解するのに役立ちます。
+    </li>
+  </ul>
+);
+//romanian
+const CommunitiesPageInfoRo: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Această pagină afișează o listă a comunităților Hive, cu numele, titlul și 
+      numărul de abonați pentru fiecare.
+    </li>
+    <li>
+      Folosește bara de căutare pentru a filtra comunitățile după nume și meniul 
+      de sortare pentru a le ordona după rang, activitate sau alte criterii.
+    </li>
+    <li>
+      Fă clic pe o cartelă de comunitate pentru a vedea informații detaliate sau 
+      pentru a deschide fereastra abonaților.
+    </li>
+    <li>
+      Derularea infinită încarcă mai multe comunități pe măsură ce cobori, ceea ce 
+      face explorarea listei complete mai ușoară.
+    </li>
+    <li>
+      Această pagină îi ajută pe utilizatori să descopere comunități active și să 
+      înțeleagă dimensiunea și gradul lor de implicare în ecosistemul Hive.
+    </li>
+  </ul>
+);
+//arabic
+const CommunitiesPageInfoAr: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1" dir="rtl">
+    <li>
+      تعرض هذه الصفحة قائمة بمجتمعات Hive، مع اسم كل مجتمع، العنوان وعدد المشتركين فيه.
+    </li>
+    <li>
+      استخدم شريط البحث لتصفية المجتمعات حسب الاسم، وقائمة الفرز لترتيبها حسب الترتيب،
+      النشاط أو معايير أخرى.
+    </li>
+    <li>
+      اضغط على بطاقة المجتمع لعرض المزيد من المعلومات أو لفتح نافذة المشتركين.
+    </li>
+    <li>
+      يحمّل التمرير اللانهائي المزيد من المجتمعات عند النزول لأسفل، مما يسهل استكشاف القائمة الكاملة.
+    </li>
+    <li>
+      تساعد هذه الصفحة المستخدمين على اكتشاف المجتمعات النشطة وفهم حجمها ومستوى المشاركة
+      في نظام Hive البيئي.
+    </li>
+  </ul>
+);
+
+// --- English (en) ---
+const TopHoldersInfoEn: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      This page displays the top holders of Hive coins (HIVE, HBD, and VESTS),
+      ranked by their balance. Each row shows the account, rank, and value held.
+    </li>
+    <li>
+      Use the <Filter className="inline-block align-middle h-4 w-4" /> funnel
+      icon at the top to apply filters such as coin type and balance type.
+    </li>
+    <li>
+      For VESTS, equivalent Hive Power (HP) is shown to make the values easier
+      to interpret.
+    </li>
+    <li>
+      This list helps track large stakeholders and gain insights into
+      distribution across the Hive ecosystem.
+    </li>
+  </ul>
+);
+
+// --- Spanish (es) ---
+const TopHoldersInfoEs: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Esta página muestra a los principales poseedores de monedas de Hive
+      (HIVE, HBD y VESTS), ordenados por su saldo. Cada fila presenta la cuenta,
+      el rango y el valor mantenido.
+    </li>
+    <li>
+      Use el icono <Filter className="inline-block align-middle h-4 w-4" /> de
+      embudo en la parte superior para aplicar filtros como tipo de moneda y
+      tipo de saldo.
+    </li>
+    <li>
+      Para VESTS, se muestra el equivalente en Hive Power (HP) para facilitar la
+      interpretación.
+    </li>
+    <li>
+      Esta lista ayuda a rastrear a los grandes participantes y comprender la
+      distribución en el ecosistema Hive.
+    </li>
+  </ul>
+);
+
+// --- Italian (it) ---
+const TopHoldersInfoIt: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Questa pagina mostra i principali detentori di monete Hive (HIVE, HBD e
+      VESTS), ordinati per saldo. Ogni riga indica l’account, la posizione e il
+      valore detenuto.
+    </li>
+    <li>
+      Utilizza l’icona <Filter className="inline-block align-middle h-4 w-4" />{" "}
+      a forma di imbuto in alto per applicare filtri come tipo di moneta e tipo
+      di saldo.
+    </li>
+    <li>
+      Per i VESTS viene mostrato l’equivalente in Hive Power (HP) per
+      facilitare la comprensione dei valori.
+    </li>
+    <li>
+      L’elenco consente di monitorare i grandi stakeholder e di analizzare la
+      distribuzione nell’ecosistema Hive.
+    </li>
+  </ul>
+);
+
+// --- German (de) ---
+const TopHoldersInfoDe: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Diese Seite zeigt die größten Inhaber von Hive-Coins (HIVE, HBD und
+      VESTS), sortiert nach ihrem Guthaben. Jede Zeile enthält Konto, Rang und
+      Wert.
+    </li>
+    <li>
+      Verwenden Sie das{" "}
+      <Filter className="inline-block align-middle h-4 w-4" />{" "}
+      Trichtersymbol oben, um Filter wie Münztyp und Saldoart anzuwenden.
+    </li>
+    <li>
+      Für VESTS wird das entsprechende Hive Power (HP) angezeigt, um die Werte
+      leichter verständlich zu machen.
+    </li>
+    <li>
+      Diese Liste hilft, große Stakeholder zu verfolgen und die Verteilung im
+      Hive-Ökosystem besser zu verstehen.
+    </li>
+  </ul>
+);
+
+// --- Portuguese (pt) ---
+const TopHoldersInfoPt: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Esta página mostra os principais detentores de moedas Hive (HIVE, HBD e
+      VESTS), classificados pelo saldo. Cada linha apresenta a conta, a
+      classificação e o valor detido.
+    </li>
+    <li>
+      Use o ícone{" "}
+      <Filter className="inline-block align-middle h-4 w-4" /> de funil no topo
+      para aplicar filtros como tipo de moeda e tipo de saldo.
+    </li>
+    <li>
+      Para VESTS, o equivalente em Hive Power (HP) é exibido para facilitar a
+      interpretação.
+    </li>
+    <li>
+      Esta lista ajuda a acompanhar grandes participantes e a compreender a
+      distribuição no ecossistema Hive.
+    </li>
+  </ul>
+);
+
+// --- French (fr) ---
+const TopHoldersInfoFr: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Cette page affiche les principaux détenteurs de monnaies Hive (HIVE, HBD
+      et VESTS), classés par solde. Chaque ligne indique le compte, le rang et
+      la valeur détenue.
+    </li>
+    <li>
+      Utilisez l’icône{" "}
+      <Filter className="inline-block align-middle h-4 w-4" /> d’entonnoir en
+      haut pour appliquer des filtres tels que le type de monnaie et le type de
+      solde.
+    </li>
+    <li>
+      Pour les VESTS, l’équivalent en Hive Power (HP) est affiché afin de
+      faciliter la lecture des valeurs.
+    </li>
+    <li>
+      Cette liste permet de suivre les principaux acteurs et de mieux
+      comprendre la distribution dans l’écosystème Hive.
+    </li>
+  </ul>
+);
+
+// --- Polish (pl) ---
+const TopHoldersInfoPl: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Ta strona pokazuje największych posiadaczy monet Hive (HIVE, HBD i VESTS),
+      uporządkowanych według salda. Każdy wiersz zawiera konto, pozycję i wartość.
+    </li>
+    <li>
+      Użyj ikony{" "}
+      <Filter className="inline-block align-middle h-4 w-4" /> lejka u góry, aby
+      zastosować filtry takie jak typ monety i rodzaj salda.
+    </li>
+    <li>
+      Dla VESTS wyświetlany jest odpowiednik w Hive Power (HP), aby ułatwić
+      interpretację wartości.
+    </li>
+    <li>
+      Lista ta pomaga śledzić głównych uczestników i zrozumieć dystrybucję w
+      ekosystemie Hive.
+    </li>
+  </ul>
+);
+
+// --- Chinese (Simplified) (zh) ---
+const TopHoldersInfoZh: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      此页面显示 Hive 代币 (HIVE、HBD 和 VESTS) 的最大持有者，按余额排名。每行显示账户、排名和持有金额。
+    </li>
+    <li>
+      使用顶部的{" "}
+      <Filter className="inline-block align-middle h-4 w-4" /> 漏斗图标来筛选，如代币类型和余额类型。
+    </li>
+    <li>
+      对于 VESTS，会显示等值的 Hive Power (HP)，以便更容易理解。
+    </li>
+    <li>
+      此列表有助于跟踪主要持有人并了解 Hive 生态系统中的分布情况。
+    </li>
+  </ul>
+);
+
+// --- Japanese (ja) ---
+const TopHoldersInfoJa: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      このページでは、Hive コイン (HIVE、HBD、VESTS) の最大保有者が残高順に表示されます。各行にはアカウント、順位、保有額が表示されます。
+    </li>
+    <li>
+      上部の{" "}
+      <Filter className="inline-block align-middle h-4 w-4" /> ファネルアイコンを使って、コインの種類や残高の種類などでフィルタできます。
+    </li>
+    <li>
+      VESTS の場合は、理解しやすいように Hive Power (HP) に換算した値が表示されます。
+    </li>
+    <li>
+      このリストは主要なステークホルダーを追跡し、Hive エコシステムにおける分布を理解するのに役立ちます。
+    </li>
+  </ul>
+);
+
+// --- Romanian (ro) ---
+const TopHoldersInfoRo: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Această pagină afișează principalii deținători de monede Hive (HIVE, HBD
+      și VESTS), ordonați după sold. Fiecare rând prezintă contul, rangul și
+      valoarea deținută.
+    </li>
+    <li>
+      Folosiți pictograma{" "}
+      <Filter className="inline-block align-middle h-4 w-4" /> de filtru din
+      partea de sus pentru a aplica filtre precum tipul monedei și tipul de sold.
+    </li>
+    <li>
+      Pentru VESTS, este afișat echivalentul în Hive Power (HP) pentru a facilita
+      interpretarea.
+    </li>
+    <li>
+      Această listă ajută la urmărirea marilor participanți și la înțelegerea
+      distribuției în ecosistemul Hive.
+    </li>
+  </ul>
+);
+
+// --- Arabic (ar) ---
+const TopHoldersInfoAr: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      تعرض هذه الصفحة كبار الحائزين لعملات Hive (HIVE و HBD و VESTS)، مرتبين حسب
+      الرصيد. كل صف يُظهر الحساب والترتيب والقيمة المحتفظ بها.
+    </li>
+    <li>
+      استخدم أيقونة{" "}
+      <Filter className="inline-block align-middle h-4 w-4" /> على شكل قمع في
+      الأعلى لتطبيق فلاتر مثل نوع العملة ونوع الرصيد.
+    </li>
+    <li>
+      بالنسبة لـ VESTS، يتم عرض ما يعادله في Hive Power (HP) لتسهيل الفهم.
+    </li>
+    <li>
+      تساعد هذه القائمة على تتبع كبار المساهمين وفهم توزيع الحصص في نظام Hive البيئي.
+    </li>
+  </ul>
+);
 
 
 
@@ -804,6 +1320,33 @@ const pageTitlesInfo: InfoContent = {
     ro: <ProposalsInfoRo />,
     ar: <ProposalsInfoAr/>
   },
+  "pageTitle.topHolders": {
+  en: <TopHoldersInfoEn />,
+  es: <TopHoldersInfoEs />,
+  it: <TopHoldersInfoIt />,
+  de: <TopHoldersInfoDe />,
+  pt: <TopHoldersInfoPt />,
+  fr: <TopHoldersInfoFr />,
+  pl: <TopHoldersInfoPl />,
+  zh: <TopHoldersInfoZh />,
+  ja: <TopHoldersInfoJa />,
+  ro: <TopHoldersInfoRo />,
+  ar: <TopHoldersInfoAr />
+},
+  "pageTitle.communities": {
+    en: <CommunitiesPageInfoEn />,
+    es: <CommunitiesPageInfoEs />,
+    it: <CommunitiesPageInfoIt />,
+    de: <CommunitiesPageInfoDe />,
+    pt: <CommunitiesPageInfoPt />,
+    fr: <CommunitiesPageInfoFr />,
+    pl: <CommunitiesPageInfoPl />,
+    zh: <CommunitiesPageInfoZh />,
+    ja: <CommunitiesPageInfoJa />,
+    ro: <CommunitiesPageInfoRo />,
+    ar: <CommunitiesPageInfoAr />
+  },
+
 
   
 };

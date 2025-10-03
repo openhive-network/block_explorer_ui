@@ -97,7 +97,8 @@ export const buildTableHead = (
   handleSort: (key: string) => void,
   sortKey: string,
   isOrderAscending: boolean,
-  direction?: "incoming" | "outgoing"
+  direction: "incoming" | "outgoing",
+  t: (key: string) => string,
 ) => {
   const tableHeaderCells =
     direction === "incoming"
@@ -115,7 +116,8 @@ export const buildTableHead = (
             className="bg-inherit hover:bg-inherit p-0 m-0"
             onClick={() => handleSort(cellName.toLocaleLowerCase())}
           >
-            {cellName} {renderChevron(cellName, sortKey, isOrderAscending)}
+            {cellName ? t(`recurrentTransfersSort.${cellName}`) : ""}{" "}
+            {renderChevron(cellName, sortKey, isOrderAscending)}
           </Button>
         </TableHead>
       </Fragment>

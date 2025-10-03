@@ -14,12 +14,14 @@ import Explorer from "@/types/Explorer";
 import { buildTableHead, handleSortDelegations } from "@/utils/DelegationsSort";
 import { capitalizeFirst } from "@/utils/StringUtils";
 import { useI18n } from "../../i18n/i18n";
+import DataExport from "../DataExport";
 
 type AccountVestingDelegationsCardProps = {
   direction: "incoming" | "outgoing";
   delegations?: Explorer.VestingDelegation[]; // Data is now a prop
   dynamicGlobalData?: Explorer.HeadBlockCardData;
   isInitiallyOpen: boolean;
+  accountName: string;
 };
 
 const buildTableBody = (
@@ -64,6 +66,7 @@ const AccountVestingDelegationsCard: React.FC<
   delegations,
   dynamicGlobalData,
   isInitiallyOpen,
+  accountName,
 }) => {
   const { t } = useI18n();
   const [isPropertiesHidden, setIsPropertiesHidden] = useState(!isInitiallyOpen);
@@ -98,6 +101,17 @@ const AccountVestingDelegationsCard: React.FC<
     recipient: direction === "outgoing" ? "delegatee" : "delegator",
     amount: "vesting_shares",
   }) as Explorer.VestingDelegation[];
+  
+  const prepareExportData = () => {
+    return sortedDelegations.map((delegation, index) => {
+      return {
+        [t("common.order")]: index + 1,
+        [direction === "outgoing" ? t("delegationSort.Recipient") : t("delegationSort.Delegator")]:
+          direction === "outgoing" ? delegation.delegatee : delegation.delegator,
+        [t("delegationSort.Amount")]: delegation.vesting_shares,
+      };
+    });
+  };
 
   const headerText = `${capitalizeFirst(
     t(`accountVestingDelegationsCard.${direction}`)
@@ -113,10 +127,19 @@ const AccountVestingDelegationsCard: React.FC<
       <CardHeader className="p-0">
         <div
           onClick={handlePropertiesVisibility}
-          className="h-full flex justify-between align-center p-2 hover:bg-rowHover cursor-pointer px-4"
+          className="h-full flex justify-between items-center p-2 hover:bg-rowHover cursor-pointer px-4"
         >
           <div className="text-lg">{headerText}</div>
-          {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
+          <div className="flex items-center space-x-2">
+            <DataExport
+              data={prepareExportData()}
+              filename={`${accountName}_${t(
+                `accountVestingDelegationsCard.${direction}`
+              )}_${t("accountVestingDelegationsCard.hpDelegationsExport")}`}
+              skipColumnSelection={true}
+            />
+            {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
+          </div>
         </div>
       </CardHeader>
       <CardContent hidden={isPropertiesHidden}>

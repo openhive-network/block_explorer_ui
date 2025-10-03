@@ -36,7 +36,7 @@ const NestedComment: React.FC<NestedCommentProps> = ({
 
   return (
     <div className="flex mt-4 justify-end">
-      <div className="w-[90%]">
+      <div className="w-[90%] border-l-[0.5px] border-white pl-4">
         <PostContent
           isComment={true}
           active_votes={comment.active_votes}

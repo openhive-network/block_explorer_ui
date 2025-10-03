@@ -3,8 +3,8 @@ import Explorer from "@/types/Explorer";
 import { getOperationTypeForDisplay } from "@/utils/UI";
 import { getOperationColor } from "../OperationsTable";
 import { Toggle } from "../ui/toggle";
-import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
 import { useI18n } from "@/i18n/i18n";
+import { useSettings } from "@/contexts/SettingsContext";
 
 interface BlockPageOperationCountProps {
   virtualOperationsTypesCounters?: Explorer.OperationCounter[];
@@ -24,7 +24,7 @@ const BlockPageOperationCount: React.FC<BlockPageOperationCountProps> = ({
   handleEnableVirtualOperations,
 }) => {
   const { t } = useI18n();
-  const { settings } = useUserSettingsContext();
+  const { settings } = useSettings();
 
   const isRawView = settings.rawJsonView || settings.prettyJsonView;
 

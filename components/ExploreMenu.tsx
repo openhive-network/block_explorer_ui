@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useI18n } from "@/i18n/i18n";
-import { Users, Vote, Menu, UserCheck, SettingsIcon } from "lucide-react";
+import { Users, Vote, Menu, UserCheck, SettingsIcon, Award } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -54,6 +54,7 @@ export function ExploreMenu() {
           <div className="flex flex-col gap-1">
               <ExploreListItem href="/communities" title={t("navbar.communitiesTitle")} icon={Users} closeMenu={() => setIsOpen(false)} />
               <ExploreListItem href="/proposals" title={t("navbar.proposalsTitle")} icon={Vote} closeMenu={() => setIsOpen(false)} />
+              <ExploreListItem href="/top-holders" title={t("pageTitle.topHolders")} icon={Award}   closeMenu={() => setIsOpen(false)}/>
               <ExploreListItem href="/witnesses" title={t("navbar.witnessesTitle")} icon={UserCheck} closeMenu={() => setIsOpen(false)} />
               <ExploreListItem href="/settings" title={t("navbar.settingsTitle")} icon={SettingsIcon} closeMenu={() => setIsOpen(false)} />
           </div>

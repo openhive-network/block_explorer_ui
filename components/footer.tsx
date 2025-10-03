@@ -8,6 +8,7 @@ import AddressSwitchedDialog from "./AddressSwitchedDialog";
 import { useTheme } from "@/contexts/ThemeContext";
 import HealthCheckerDialog from "./HealthCheckerDialog";
 import { useHealthCheckerContext } from "@/contexts/HealthCheckerContext";
+import { getImageSrc } from "@/utils/PathUtils";
 import { useI18n } from "../i18n/i18n";
 
 const { lastCommitHashRepoUrl, gitHash } = config;
@@ -33,7 +34,7 @@ const Footer = () => {
           <div className="flex items-center">
             <Link href={"/"} className="relative pr-2">
               <Image
-                src="/hive-logo.png"
+                src={getImageSrc("/hive-logo.png")}
                 alt="Hive logo"
                 width={20}
                 height={20}
@@ -54,7 +55,7 @@ const Footer = () => {
                 aria-label="X (Twitter)"
               >
                 <Image
-                  src={isDarkMode ? "/icons/x_dark.png" : "/icons/x.png"}
+                  src={getImageSrc(isDarkMode ? "/icons/x_dark.png" : "/icons/x.png")}
                   alt="X (Twitter)"
                   width={20}
                   height={20}
@@ -68,11 +69,11 @@ const Footer = () => {
                 aria-label="Telegram"
               >
                 <Image
-                  src={
+                  src={getImageSrc(
                     isDarkMode
                       ? "/icons/telegram_dark.png"
                       : "/icons/telegram.png"
-                  }
+                  )}
                   alt="Telegram"
                   width={20}
                   height={20}
@@ -106,11 +107,11 @@ const Footer = () => {
                 aria-label="Facebook"
               >
                 <Image
-                  src={
+                  src={getImageSrc(
                     isDarkMode
                       ? "/icons/facebook_dark.png"
                       : "/icons/facebook.png"
-                  }
+                  )}
                   alt="Facebook"
                   width={20}
                   height={20}
@@ -124,11 +125,11 @@ const Footer = () => {
                 aria-label="Instagram"
               >
                 <Image
-                  src={
+                  src={getImageSrc(
                     isDarkMode
                       ? "/icons/instagram_dark.png"
                       : "/icons/instagram.png"
-                  }
+                  )}
                   alt="Instagram"
                   width={20}
                   height={20}
@@ -142,11 +143,11 @@ const Footer = () => {
                 aria-label="YouTube"
               >
                 <Image
-                  src={
+                  src={getImageSrc(
                     isDarkMode
                       ? "/icons/youtube_dark.png"
                       : "/icons/youtube.png"
-                  }
+                  )}
                   alt="YouTube"
                   width={20}
                   height={20}
@@ -199,6 +200,10 @@ const Footer = () => {
                 <Link href="/schedule" className="hover:opacity-75">
                   {t("footer.witnessSchedule")}
                 </Link>
+              </li>
+              <li>
+                  <Link href="/top-holders" className="hover:opacity-75">
+                                  {t("pageTitle.topHolders")}</Link>
               </li>
             </ul>
           </div>

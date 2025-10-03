@@ -1,7 +1,7 @@
 // src/components/layout/Navbar.tsx (Updated)
 
 import { useState } from "react";
-import { Menu, X, Wrench, ChevronDown, Workflow, Users, Compass, Vote, UserCheck, SettingsIcon } from "lucide-react";
+import { Menu, X, Wrench, ChevronDown, Workflow, Users, Compass, Vote, UserCheck, SettingsIcon,Award } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -9,11 +9,12 @@ import { cn } from "@/lib/utils";
 import useMediaQuery from "@/hooks/common/useMediaQuery";
 import SearchBar from "./SearchBar";
 import SyncInfo from "./home/SyncInfo";
-import ViewPopover from "./ViewPopover";
+import DataView from "./DataView";
 import ThemeToggle from "./ThemeToggle";
 import LanguageSelector from "./home/LanguageSelector";
 import { useI18n } from "@/i18n/i18n";
 import { ExploreMenu } from "./ExploreMenu";
+import { getImageSrc } from "@/utils/PathUtils";
 
 export default function Navbar() {
   const { t } = useI18n();
@@ -30,7 +31,7 @@ export default function Navbar() {
         {isMobile ? (
           <div className="flex items-center justify-between w-full">
             <Link href={"/"} className="relative pr-2">
-              <Image src="/hive-logo.png" alt="Hive logo" width={40} height={40} />
+              <Image src={getImageSrc("/hive-logo.png")} alt="Hive logo" width={40} height={40} />
             </Link>
             <div className="flex-grow flex items-center justify-end gap-x-1 w-[90%]">
               <SearchBar open={searchBarOpen} onChange={setSearchBarOpen} className="h-[36px]" />
@@ -70,7 +71,7 @@ export default function Navbar() {
                       <LanguageSelector />
                     </div>
                     <div className="py-1 max-w-fit">
-                      <ViewPopover isMobile={isMobile} />
+                      <DataView isMobile={isMobile} />
                     </div>
                   </div>
                 )}
@@ -95,7 +96,11 @@ export default function Navbar() {
                       <Vote className="mr-2 mt-1 flex-shrink-0" size={20} />
                       <span className="text-base ml-2">{t("navbar.proposalsTitle")}</span>
                     </Link>
-                    <Link href={"/witnesses"} className="py-1 flex items-start justify-start" onClick={() => setMenuOpen(false)}>
+                    <Link href={"/top-holders"} className="py-1 border-b-2 flex items-start justify-start" onClick={() => setMenuOpen(false)}>
+                      <Award className="mr-2 mt-1 flex-shrink-0" size={20} />
+                      <span className="text-base ml-2">{t("pageTitle.topHolders")}</span>
+                    </Link>
+                    <Link href={"/witnesses"} className="py-1 flex items-start border-b-2 justify-start" onClick={() => setMenuOpen(false)}>
                       <UserCheck className="mr-2 mt-1 flex-shrink-0" size={20} />
                       <span className="text-base ml-2">{t("navbar.witnessesTitle")}</span>
                     </Link>
@@ -114,13 +119,13 @@ export default function Navbar() {
               <div className="flex w-full justify-between items-center">
                 <div className="flex items-center gap-x-4">
                   <Link href={"/"} className="pr-2 flex items-center text-explorer-turquoise font-medium">
-                    <Image src="/hive-logo.png" alt="Hive logo" width={50} height={50} data-testid="hive-logo" />
+                    <Image src={getImageSrc("/hive-logo.png")} alt="Hive logo" width={50} height={50} data-testid="hive-logo" />
                     <div className="ml-4 whitespace-nowrap" data-testid="hive-block-explorer">{t("navbar.hiveBlockExplorer")}</div>
                   </Link>
                 </div>
                 <div className="flex items-center gap-x-2 w-auto justify-end">
                   <SearchBar open={true} className=" justify-end" />
-                  <ViewPopover />
+                  <DataView />
                   <LanguageSelector />
                   <SyncInfo />
                   <ThemeToggle />

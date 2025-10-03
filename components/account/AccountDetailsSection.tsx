@@ -165,6 +165,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
           recurrentTransfers?.outgoing_recurrent_transfers as AllTransfers[]
         }
         isInitiallyOpen={isInitiallyOpen}
+        accountName={accountName}
       />
       <AccountRecurrentTransfersCard
         direction="incoming"
@@ -172,22 +173,26 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
           recurrentTransfers?.incoming_recurrent_transfers as AllTransfers[]
         }
         isInitiallyOpen={isInitiallyOpen}
+        accountName={accountName}
       />
       <AccountVestingDelegationsCard
         direction="outgoing"
         delegations={outgoingVestingDelegations}
         dynamicGlobalData={dynamicGlobalData}
         isInitiallyOpen={isInitiallyOpen}
+        accountName={accountName}
       />
       <AccountVestingDelegationsCard
         direction="incoming"
         delegations={incomingVestingDelegations}
         dynamicGlobalData={dynamicGlobalData}
         isInitiallyOpen={isInitiallyOpen}
+        accountName={accountName}
       />
       <AccountRcDelegationsCard
         delegations={rcDelegationsData}
         isInitiallyOpen={isInitiallyOpen}
+        accountName={accountName}
       />
       <AccountWitnessVotesCard
         voters={accountDetails.witness_votes}
@@ -366,6 +371,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
                     recurrentTransfers?.outgoing_recurrent_transfers as AllTransfers[]
                   }
                   isInitiallyOpen={tabExpandedStates.wallet}
+                  accountName={accountName}
                 />
                 <AccountRecurrentTransfersCard
                   direction="incoming"
@@ -373,6 +379,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
                     recurrentTransfers?.incoming_recurrent_transfers as AllTransfers[]
                   }
                   isInitiallyOpen={tabExpandedStates.wallet}
+                  accountName={accountName}
                 />
               </div>
             </TabsContent>
@@ -416,16 +423,19 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
                     delegations={outgoingVestingDelegations}
                     dynamicGlobalData={dynamicGlobalData}
                     isInitiallyOpen={tabExpandedStates.delegations}
+                    accountName={accountName}
                   />
                   <AccountVestingDelegationsCard
                     direction="incoming"
                     delegations={incomingVestingDelegations}
                     dynamicGlobalData={dynamicGlobalData}
                     isInitiallyOpen={tabExpandedStates.delegations}
+                    accountName={accountName}
                   />
                   <AccountRcDelegationsCard
                     delegations={rcDelegationsData}
                     isInitiallyOpen={tabExpandedStates.delegations}
+                    accountName={accountName}
                   />
                 </div>
               </TabsContent>

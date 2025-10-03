@@ -1,5 +1,6 @@
 import { Fragment } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router"; 
 
 import {
   TableHead,
@@ -69,6 +70,7 @@ const buildTableBody = (
   data: Hive.Permlink[],
   accountName: string | undefined,
   showCommentsByPermlink: (permlink: string) => void,
+  handleRowClick: (block: number, trx_id: string, operation_id: bigint) => void,
   t: (key: string) => string
 ) => {
   if (!data || !data.length || !accountName) return;
@@ -81,15 +83,21 @@ const buildTableBody = (
 
     return (
       <Fragment key={trx_id}>
-        <TableRow>
+        <TableRow 
+            className="cursor-pointer hover:bg-rowHover"
+            onClick={() => handleRowClick(block, trx_id, BigInt(operation_id))}
+        >
           <TableCell
             stickyLeft
             className="text-link whitespace-nowrap"
           >
-            <Link href={`/block/${block}`}>{block.toLocaleString()}</Link>
+            <Link href={`/block/${block}`} onClick={(e) => e.stopPropagation()}>
+              {block.toLocaleString()}
+            </Link>
             <CopyButton
-              text={block}
+              text={String(block)}
               tooltipText={t("common.copyBlockNumber")}
+              onClick={(e) => e.stopPropagation()} 
             />
           </TableCell>
           <TableCell>{operation_id}</TableCell>
@@ -98,6 +106,7 @@ const buildTableBody = (
               className="text-link break-words"
               href={`/@${accountName}/${permlink}`}
               target="_blank"
+              onClick={(e) => e.stopPropagation()}
             >
               {permlink}
             </Link>
@@ -105,17 +114,23 @@ const buildTableBody = (
           <TableCell className="p-0 m-0">
             <Button
               className="bg-inherit p-2"
-              onClick={handleShowCommentsByPermlink}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleShowCommentsByPermlink();
+              }}
             >
               <SquareArrowOutUpRight size="20" />
             </Button>
           </TableCell>
           <TableCell>{formatAndDelocalizeTime(timestamp)}</TableCell>
           <TableCell className="text-link whitespace-nowrap">
-            <Link href={`/transaction/${trx_id}`}>{trx_id?.slice(0, 10)}</Link>
+            <Link href={`/tx/${trx_id}`} onClick={(e) => e.stopPropagation()}>
+                {trx_id?.slice(0, 10)}
+            </Link>
             <CopyButton
               text={trx_id}
               tooltipText={t("common.copyTransactionId")}
+              onClick={(e) => e.stopPropagation()} 
             />
           </TableCell>
         </TableRow>
@@ -129,11 +144,25 @@ const AccountCommentPermlinkResultTable = ({
   data,
   accountName,
 }: AccountCommentPermlinkResultTableProps) => {
+  const router = useRouter(); 
   const { t } = useI18n();
   const { setActiveTab } = useTabs();
 
   const { setCommentsSearchPermlink } = useSearchesContext();
   const { handleCommentsSearch } = useHandleInteractionsSearch();
+
+  const handleRowClick = (block: number, trx_id: string, operation_id: bigint) => {
+    const params = new URLSearchParams();
+    if (trx_id) {
+        params.append("trxId", trx_id);
+    }
+    if (operation_id !== undefined) {
+        params.append("opId", String(operation_id));
+    }
+    const queryString = params.toString();
+    const url = `/block/${block}${queryString ? `?${queryString}` : ""}`;
+    router.push(url);
+  };
 
   const showCommentsByPermlink = (permlink: string) => {
     setCommentsSearchPermlink(permlink);
@@ -181,11 +210,11 @@ const AccountCommentPermlinkResultTable = ({
       </div>
       <div className="flex w-full overflow-auto rounded">
         <div className="text-text w-[100%] bg-theme">
-          <Table enableMobileScrollArrows>
+          <Table enableMobileScrollArrows enableCompactToggle>
             <TableHeader>{buildTableHeader(t)}</TableHeader>
 
             <TableBody>
-              {buildTableBody(data, accountName, showCommentsByPermlink, t)}
+              {buildTableBody(data, accountName, showCommentsByPermlink, handleRowClick, t)}
             </TableBody>
           </Table>
         </div>

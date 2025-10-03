@@ -17,10 +17,12 @@ import {
   handleSortDelegations,
 } from "@/utils/DelegationsSort";
 import { useI18n } from "../../i18n/i18n";
+import DataExport from "../DataExport"; 
 
 type AccountRcDelegationsCardProps = {
   delegations?: RcDelegation[];
   isInitiallyOpen: boolean;
+  accountName: string;
 };
 
 const buildTableBody = (delegations: RcDelegation[]) => {
@@ -49,6 +51,7 @@ const buildTableBody = (delegations: RcDelegation[]) => {
 const AccountRcDelegationsCard: React.FC<AccountRcDelegationsCardProps> = ({
   delegations,
   isInitiallyOpen,
+  accountName,
 }) => {
   const { t } = useI18n();
   const [isPropertiesHidden, setIsPropertiesHidden] = useState(!isInitiallyOpen);
@@ -83,6 +86,16 @@ const AccountRcDelegationsCard: React.FC<AccountRcDelegationsCardProps> = ({
     amount: "delegated_rc",
   }) as RcDelegation[];
 
+  const prepareExportData = () => {
+    return sortedDelegations.map((delegation, index) => {
+      return {
+        [t("common.order")]: index + 1,
+        [t("delegationSort.Recipient")]: delegation.to,
+        [t("delegationSort.Amount")]: formatNumber(delegation.delegated_rc, false, true),
+      };
+    });
+  };
+
   return (
     <Card
       data-testid="rc-delegations-dropdown"
@@ -96,7 +109,16 @@ const AccountRcDelegationsCard: React.FC<AccountRcDelegationsCardProps> = ({
           <div className="text-lg">
             {t("accountRcDelegationsCard.delegations")} ({delegations.length})
           </div>
-          {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
+          <div className="flex items-center space-x-2">
+            <DataExport
+              data={prepareExportData()}
+              filename={`${accountName}_${t(
+                "accountRcDelegationsCard.delegationsExport"
+              )}.csv`}
+              skipColumnSelection={true}
+            />
+            {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
+          </div>
         </div>
       </CardHeader>
       <CardContent hidden={isPropertiesHidden}>

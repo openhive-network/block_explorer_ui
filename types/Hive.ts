@@ -1106,6 +1106,17 @@ namespace Hive {
     proxy_date!: Date;
     proxied_vests!: string;
   }
+  export class GetTopHoldersParams {
+    "coin-type"!: string;
+    "balance-type"!: string;
+    page!: number;
+  }
+
+  export class TopHolder {
+    rank!: number;
+    account!: string;
+    value!: string;
+  }
 }
 
 export default Hive;

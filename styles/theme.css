@@ -395,14 +395,16 @@ pre {
 
 /*Page Container*/
 .page-container {
-  width: 98%;
-  /* Default for larger screens */
+  /* This uses the variable from your React component on large screens, 
+     with 98% as a fallback if the variable isn't set. */
+  width: var(--page-container-width, 98%);
 }
 
-/* Media query for small screens*/
-@media (max-width: 768px) {
+/* This rule applies ONLY when the screen width is 768px or less. */
+@media (max-width: 1040px) {
   .page-container {
-    width: 99%;
+    /* It overrides the rule above, forcing the width to be 100% on mobile. */
+    width: 100%; 
   }
 }
 

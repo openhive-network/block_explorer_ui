@@ -10,7 +10,6 @@ import {
   convertBooleanArrayToIds,
   convertOperationResultsToTableOperations,
 } from "@/lib/utils";
-import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
 import useBlockData from "@/hooks/api/blockPage/useBlockData";
 import useBlockOperations from "@/hooks/api/common/useBlockOperations";
 import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
@@ -28,6 +27,7 @@ import OperationsTable from "@/components/OperationsTable";
 import CustomPagination from "@/components/CustomPagination";
 import useBlockId from "@/hooks/common/useBlockId";
 import { useI18n } from "@/i18n/i18n";
+import { useSettings } from "@/contexts/SettingsContext";
 
 interface BlockSearchParams {
   blockId?: number;
@@ -37,6 +37,7 @@ interface BlockSearchParams {
   keyContent?: string;
   setOfKeys?: string[];
   trxId?: string;
+  opId ?: number;
 }
 
 const defaultParams: BlockSearchParams = {
@@ -83,7 +84,7 @@ export default function Block() {
     ["blockId"]
   );
 
-  const { settings } = useUserSettingsContext();
+  const { settings } = useSettings();
   const { operationsCountInBlock, countLoading } =
     useOperationsCountInBlock(blockId);
   const { blockDetails, loading } = useBlockData(blockId);
@@ -315,7 +316,7 @@ export default function Block() {
             >
               {!!totalOperations?.total_operations &&
                 totalOperations?.total_operations > 1000 && (
-                  <div className="my-4 w-full sticky z-20 top-[3.2rem] md:top-[4rem] rounded-t">
+                  <div className="my-4 w-full sticky z-20 top-[3.2rem] md:top-[4rem] rounded">
                     <CustomPagination
                       currentPage={paramsState.page}
                       onPageChange={(newPage: number) =>
@@ -333,6 +334,7 @@ export default function Block() {
                     operationCount={totalOperations?.total_operations || 0}
                     operations={convertedTotalOperations}
                     markedTrxId={paramsState.trxId}
+                    markedOpId={paramsState.opId}
                     unformattedOperations={unformattedOperations}
                     referrer={`${blockId}_${t(
                       "blockDetails.blockDetails"

@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import moment from "moment";
 import { config } from "@/Config";
 
@@ -16,7 +16,9 @@ import { convertBalanceHistoryResultsToTableOperations } from "@/lib/utils";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 
 import BalanceHistoryTable from "@/components/balanceHistory/BalanceHistoryTable";
-import BalanceHistorySearch from "@/components/home/searches/BalanceHistorySearch";
+import BalanceHistorySearch, {
+  DEFAULT_COIN_TYPE,
+} from "@/components/home/searches/BalanceHistorySearch";
 import { Card, CardHeader } from "@/components/ui/card";
 import BalanceHistoryChart from "@/components/balanceHistory/BalanceHistoryChart";
 
@@ -126,7 +128,14 @@ export default function BalanceHistory() {
     "@",
     ""
   );
+  const { paramsState, setParams } = useURLParams(
+    defaultBalanceHistorySearchParams,
+    ["accountName"]
+  );
 
+  const [coinType, setCoinType] = useState(
+    paramsState.coinType ?? DEFAULT_COIN_TYPE
+  );
   // Initialize state variables outside the conditional block
   const [isFiltersActive, setIsFiltersActive] = useState(false);
   const [isBalanceFilterSectionVisible, setIsBalanceFilterSectionVisible] =
@@ -142,17 +151,11 @@ export default function BalanceHistory() {
     }
   };
 
-  const {
-    accountDetails,
-    isAccountDetailsLoading,
-    isAccountDetailsError,
-    notFound,
-  } = useAccountDetails(accountNameFromRoute, false);
-
-  const { paramsState, setParams } = useURLParams(
-    defaultBalanceHistorySearchParams,
-    ["accountName"]
-  );
+  useEffect(() => {
+    if (paramsState.coinType) {
+      setCoinType(paramsState.coinType);
+    }
+  }, [paramsState.coinType]);
 
   const {
     filters: filtersParam,
@@ -193,6 +196,7 @@ export default function BalanceHistory() {
   const {
     accountBalanceHistory,
     isAccountBalanceHistoryLoading,
+    isAccountBalanceHistoryFetching,
     isAccountBalanceHistoryError,
   } = useBalanceHistory(
     accountNameFromRoute,
@@ -207,6 +211,7 @@ export default function BalanceHistory() {
   const {
     aggregatedAccountBalanceHistory: chartData,
     isAggregatedAccountBalanceHistoryLoading: isChartDataLoading,
+    isAggregatedAccountBalanceHistoryFetching: isChartDataFetching,
     isAggregatedAccountBalanceHistoryError: isChartDataError,
   } = useAggregatedBalanceHistory(
     accountNameFromRoute,
@@ -236,10 +241,7 @@ export default function BalanceHistory() {
     ? router.query.accountName[0]
     : router.query.accountName;
 
-  if (
-    (routeAccountName && !routeAccountName.startsWith("@")) ||
-    (isAccountDetailsError && !isAccountDetailsLoading)
-  ) {
+  if (routeAccountName && !routeAccountName.startsWith("@")) {
     const accountNotFoundError = `${routeAccountName} : ${t(
       "accountName.accountNotFound"
     )}`;
@@ -259,148 +261,137 @@ export default function BalanceHistory() {
     );
   }
 
+  const isChartLoading = isChartDataFetching || isChartDataLoading;
+
+  const isAccHistDataLoading =
+    isAccountBalanceHistoryLoading || isAccountBalanceHistoryFetching;
+
   return (
     <>
       <Head>
         <title>@{accountNameFromRoute} - Hive Explorer</title>
       </Head>
 
-      {isAccountDetailsLoading ? (
-        <div className="flex justify-center text-center items-center">
-          <Loader2 className="animate-spin mt-1 text-black h-12 w-12 ml-3" />
-        </div>
-      ) : (
-        <div className="page-container">
-          <Card data-testid="account-details">
-            <CardHeader className="pb-0">
-              <div className="flex flex-col md:flex-row items-start md:items-center justify-between bg-theme dark:bg-theme">
-                <div className="flex flex-col items-start w-full">
-                  <div className="flex items-start justify-between w-full">
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-start gap-2">
-                        <Image
-                          className="rounded-full border-2 border-explorer-orange mt-1"
-                          src={getHiveAvatarUrl(accountNameFromRoute)}
-                          alt="avatar"
-                          width={50}
-                          height={50}
-                          data-testid="user-avatar"
-                        />
-                        <div>
-                          <h2
-                            className=" flex items-start"
-                            data-testid="account-name"
+      <div className="page-container">
+        <Card data-testid="account-details">
+          <CardHeader className="pb-0">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between bg-theme dark:bg-theme">
+              <div className="flex flex-col items-start w-full">
+                <div className="flex items-start justify-between w-full">
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-start gap-2">
+                      <Image
+                        className="rounded-full border-2 border-explorer-orange mt-1"
+                        src={getHiveAvatarUrl(accountNameFromRoute)}
+                        alt="avatar"
+                        width={50}
+                        height={50}
+                        data-testid="user-avatar"
+                      />
+                      <div>
+                        <h2
+                          className=" flex items-start"
+                          data-testid="account-name"
+                        >
+                          <Link
+                            className="text-link text-lg font-semibold text-gray-800 dark:text-white mt-4 "
+                            href={`/@${accountNameFromRoute}`}
                           >
-                            <Link
-                              className="text-link text-lg font-semibold text-gray-800 dark:text-white mt-4 "
-                              href={`/@${accountNameFromRoute}`}
-                            >
-                              {accountNameFromRoute}
-                            </Link>
-                            <span className="hidden md:inline mx-1 text-gray-800 dark:text-white mt-4 text-xl">
-                              |
-                            </span>
-                            <div className="hidden md:inline ">
-                              <PageTitle
-                                titleKey="pageTitle.balanceHistory"
-                                className=" py-4 pr-1 mt-[2px]"
-                              />
-                            </div>
-                          </h2>
-                        </div>
+                            {accountNameFromRoute}
+                          </Link>
+                          <span className="hidden md:inline mx-1 text-gray-800 dark:text-white mt-4 text-xl">
+                            |
+                          </span>
+                          <div className="hidden md:inline ">
+                            <PageTitle
+                              titleKey="pageTitle.balanceHistory"
+                              className=" py-4 pr-1 mt-[2px]"
+                            />
+                          </div>
+                        </h2>
                       </div>
                     </div>
-                    <div className="flex-shrink-0 md:mt-2">
-                      <FilterSectionToggle
-                        isFiltersActive={isFiltersActive}
-                        toggleFilters={handleFiltersVisibility}
-                      />
-                    </div>
                   </div>
-                  <div className="md:hidden ml-14 ">
-                    <PageTitle
-                      titleKey="pageTitle.balanceHistory"
-                      className="py-1 pr-1 mt-0 min-h-min"
+                  <div className="flex-shrink-0 md:mt-2">
+                    <FilterSectionToggle
+                      isFiltersActive={isFiltersActive}
+                      toggleFilters={handleFiltersVisibility}
                     />
                   </div>
                 </div>
+                <div className="md:hidden ml-14 ">
+                  <PageTitle
+                    titleKey="pageTitle.balanceHistory"
+                    className="py-1 pr-1 mt-0 min-h-min"
+                  />
+                </div>
               </div>
-            </CardHeader>
-          </Card>
-
-          <BalanceHistorySearch
-            paramsState={paramsState}
-            setParams={setParams}
-            isVisible={isBalanceFilterSectionVisible}
-            setIsVisible={setIsBalanceFilterSectionVisible}
-            setIsFiltersActive={setIsFiltersActive}
-            isFiltersActive={isFiltersActive}
-          />
-
-          <Card
-            data-testid="account-details"
-            className="rounded"
-          >
-            {message && (
-              <div className="rounded p-4 bg-gray-100 dark:bg-gray-700 mb-4 text-center text-sm text-gray-500">
-                {message}
-                <br />
-              </div>
-            )}
-            {isChartDataLoading ? (
-              <div className="flex justify-center text-center items-center">
-                <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />
-              </div>
-            ) : isChartDataError ? (
-              <div className="text-center">
-                {t("balanceHistoryPage.errorLoadingChart")}
-              </div>
-            ) : preparedData.length > 0 ? (
-              <MemoizedBalanceHistoryChart
-                hiveBalanceHistoryData={
-                  !paramsState.coinType || paramsState.coinType === "HIVE"
-                    ? preparedData
-                    : undefined
-                }
-                vestsBalanceHistoryData={
-                  paramsState.coinType === "VESTS" ? preparedData : undefined
-                }
-                hbdBalanceHistoryData={
-                  paramsState.coinType === "HBD" ? preparedData : undefined
-                }
-                showSavingsBalance={includeSavings}
-                className="h-[450px] mb-10 mr-0 pr-1 pb-6"
-              />
-            ) : (
-              <NoResult titleKey="noResult.noChartData" />
-            )}
-          </Card>
-
-          {isAccountBalanceHistoryLoading ? (
-            <div className="flex justify-center text-center items-center">
-              <Loader2 className="animate-spin mt-1 h-12 w-12 ml-3" />
             </div>
-          ) : accountBalanceHistory?.total_operations ? (
+          </CardHeader>
+        </Card>
+
+        <BalanceHistorySearch
+          paramsState={paramsState}
+          setParams={setParams}
+          isVisible={isBalanceFilterSectionVisible}
+          setIsVisible={setIsBalanceFilterSectionVisible}
+          setIsFiltersActive={setIsFiltersActive}
+          isFiltersActive={isFiltersActive}
+          coinType={coinType}
+          setCoinType={setCoinType}
+        />
+        {(isChartLoading || isAccHistDataLoading) && !chartData ? (
+          <div className="flex justify-center text-center align-center items-center mb-5">
+            <Loader2 className="animate-spin h-12 w-12" />
+          </div>
+        ) : (
+          <>
+            <Card
+              data-testid="account-details"
+              className="rounded"
+            >
+              <>
+                {message &&
+                  !isChartLoading &&
+                  chartData &&
+                  chartData.length && (
+                    <div className="rounded p-4 bg-gray-100 dark:bg-gray-700 mb-4 text-center text-sm text-gray-500">
+                      {message}
+                      <br />
+                    </div>
+                  )}
+                <MemoizedBalanceHistoryChart
+                  aggregatedAccountBalanceHistory={preparedData}
+                  selectedCoinType={coinType}
+                  setSelectedCoinType={setCoinType}
+                  showSavingsBalance={includeSavings}
+                  className="h-[450px] mb-10 mr-0 pr-1 pb-6"
+                />
+              </>
+
+              {(!isChartLoading && !chartData) ||
+                (!isChartLoading && chartData?.length === 0 && (
+                  <NoResult titleKey="noResult.noChartData" />
+                ))}
+            </Card>
             <BalanceHistoryTable
               operations={convertBalanceHistoryResultsToTableOperations(
-                accountBalanceHistory
+                accountBalanceHistory ?? []
               )}
-              total_operations={accountBalanceHistory.total_operations}
-              total_pages={accountBalanceHistory.total_pages}
+              total_operations={accountBalanceHistory.total_operations ?? []}
+              total_pages={accountBalanceHistory.total_pages ?? 0}
               current_page={
                 paramsState.page ?? accountBalanceHistory.total_pages
               }
-              account_name={accountNameFromRoute}
+              account_name={accountNameFromRoute ?? ""}
             />
-          ) : (
-            <NoResult titleKey="noResult.noTransactionData" />
-          )}
+          </>
+        )}
 
-          <div className="fixed bottom-[10px] right-0 flex flex-col items-end justify-end px-3 md:px-12">
-            <ScrollTopButton />
-          </div>
+        <div className="fixed bottom-[10px] right-0 flex flex-col items-end justify-end px-3 md:px-12">
+          <ScrollTopButton />
         </div>
-      )}
+      </div>
     </>
   );
 }

@@ -240,7 +240,9 @@ export default function Witnesses() {
       const className = "text-center !bg-navbar py-2";
       const buttonClassName = `w-full flex items-center ${
         isRightAligned ? "justify-end text-right" : "justify-start text-left"
-      }`;
+      } ${
+        cellConfig.displayKey ==="witnesses.version" ? "pr-2" : ""
+      }` ;
 
       return (
         <TableCell
@@ -311,6 +313,7 @@ export default function Witnesses() {
                   className="min-w-full"
                   enableMobileScrollArrows
                   isStandaloneTable
+                  enableCompactToggle
                 >
                   <TableHeader>
                     <TableRow rowVariant="header">
