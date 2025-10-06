@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Card } from "@/components/ui/card";
-import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from "@/components/ui/table";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableCell,
+  TableHead,
+} from "@/components/ui/table";
 import PageTitle from "@/components/PageTitle";
 import ErrorMessage from "@/components/ErrorMessage";
 import NoResult from "@/components/NoResult";
@@ -9,7 +16,10 @@ import FilterSectionToggle from "@/components/account/FilterSectionToggle";
 import { useI18n } from "@/i18n/i18n";
 import DataExport from "@/components/DataExport";
 import CustomPagination from "@/components/CustomPagination";
-import useTopHolders, { CoinType, BalanceType } from "@/hooks/api/common/useTopHolders";
+import useTopHolders, {
+  CoinType,
+  BalanceType,
+} from "@/hooks/api/common/useTopHolders";
 import { config } from "@/Config";
 import { Loader2 } from "lucide-react";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
@@ -23,6 +33,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useSettings } from "@/contexts/SettingsContext";
 import ScrollTopButton from "@/components/ScrollTopButton";
+import JumpToPage from "@/components/JumpToPage";
 
 export default function TopHoldersPage() {
   const { t } = useI18n();
@@ -34,7 +45,9 @@ export default function TopHoldersPage() {
   const [balanceType, setBalanceType] = useState<BalanceType>("balance");
   const [isFiltersVisible, setIsFiltersVisible] = useState(false);
 
-  const [unit, setUnit] = useState<"vests" | "hp">(settings.displayVestHpMode === "hp" ? "hp" : "vests");
+  const [unit, setUnit] = useState<"vests" | "hp">(
+    settings.displayVestHpMode === "hp" ? "hp" : "vests"
+  );
 
   useEffect(() => {
     setUnit(settings.displayVestHpMode === "hp" ? "hp" : "vests");
@@ -52,7 +65,8 @@ export default function TopHoldersPage() {
   const defaultCoinType: CoinType = "HIVE";
   const defaultBalanceType: BalanceType = "balance";
 
-  const filtersChanged = coinType !== defaultCoinType || balanceType !== defaultBalanceType;
+  const filtersChanged =
+    coinType !== defaultCoinType || balanceType !== defaultBalanceType;
 
   const filteredHolders = holdersData;
 
@@ -67,8 +81,12 @@ export default function TopHoldersPage() {
 
   useEffect(() => {
     if (dynamicGlobalData?.headBlockDetails) {
-      setTotalVestingShares(dynamicGlobalData.headBlockDetails.rawTotalVestingShares);
-      setTotalVestingFundHive(dynamicGlobalData.headBlockDetails.rawTotalVestingFundHive);
+      setTotalVestingShares(
+        dynamicGlobalData.headBlockDetails.rawTotalVestingShares
+      );
+      setTotalVestingFundHive(
+        dynamicGlobalData.headBlockDetails.rawTotalVestingFundHive
+      );
     }
   }, [dynamicGlobalData]);
 
@@ -81,7 +99,12 @@ export default function TopHoldersPage() {
 
     if (coin === "VESTS") {
       return unit === "hp"
-        ? convertVestsToHP(hiveChain, value, totalVestingFundHive, totalVestingShares)
+        ? convertVestsToHP(
+            hiveChain,
+            value,
+            totalVestingFundHive,
+            totalVestingShares
+          )
         : hiveChain.formatter.format(hiveChain.vests(value)); // only append VESTS once in UI
     } else if (coin === "HIVE") {
       return hiveChain.formatter.format(hiveChain.hive(value));
@@ -99,26 +122,56 @@ export default function TopHoldersPage() {
         [t("topholders.tablerank")]:
           holder.rank > 0 ? holder.rank : index + 1 + (page - 1) * pageSize,
         [t("topholders.tableaccount")]: holder.account,
-        [balanceType === "savings_balance" ? t("topholders.tablesavings") : t("topholders.tablebalance")]: displayValue,
+        [balanceType === "savings_balance"
+          ? t("topholders.tablesavings")
+          : t("topholders.tablebalance")]: displayValue,
       };
     });
 
-  const exportFileName = `${t("export.topHolders")}_${coinType.toLowerCase()}.csv`;
+  const exportFileName = `${t(
+    "export.topHolders"
+  )}_${coinType.toLowerCase()}.csv`;
 
-
-  const HolderRow = ({ rank, account, value, index }: { rank: number; account: string; value: string; index: number }) => {
+  const HolderRow = ({
+    rank,
+    account,
+    value,
+    index,
+  }: {
+    rank: number;
+    account: string;
+    value: string;
+    index: number;
+  }) => {
     const displayRank = rank > 0 ? rank : index + 1 + (page - 1) * pageSize;
 
     return (
-      <TableRow key={account} className="hover:bg-rowHover cursor-pointer text-sm" data-testid="top-holders-table-row">
+      <TableRow
+        key={account}
+        className="hover:bg-rowHover cursor-pointer text-sm"
+        data-testid="top-holders-table-row"
+      >
         <TableCell>{displayRank}</TableCell>
         <TableCell className="text-link">
           <div className="flex items-center space-x-2">
-            <Image src={getHiveAvatarUrl(account)} alt={`${account}'s profile`} width={30} height={30} className="rounded-full " />
-            <Link className="text-link" href={`/@${account}`}>{account}</Link>
+            <Image
+              src={getHiveAvatarUrl(account)}
+              alt={`${account}'s profile`}
+              width={30}
+              height={30}
+              className="rounded-full "
+            />
+            <Link
+              className="text-link"
+              href={`/@${account}`}
+            >
+              {account}
+            </Link>
           </div>
         </TableCell>
-        <TableCell className="text-right">{formatBalance(value, coinType)}</TableCell>
+        <TableCell className="text-right">
+          {formatBalance(value, coinType)}
+        </TableCell>
       </TableRow>
     );
   };
@@ -129,7 +182,9 @@ export default function TopHoldersPage() {
         <TableHead>{t("table.rank")}</TableHead>
         <TableHead>{t("table.account")}</TableHead>
         <TableHead className="text-right pr-6">
-          {balanceType === "savings_balance" ? t("topholders.tablesavings") : t("topholders.tablebalance")}
+          {balanceType === "savings_balance"
+            ? t("topholders.tablesavings")
+            : t("topholders.tablebalance")}
         </TableHead>
       </TableRow>
     </TableHeader>
@@ -140,7 +195,10 @@ export default function TopHoldersPage() {
       <Card className="w-full rounded-[0px] rounded-t shadow-md mt-4 py-2">
         <div className="flex flex-row items-start justify-between w-full relative gap-3">
           <div className="flex flex-col md:flex-row justify-between items-start">
-            <PageTitle titleKey="pageTitle.topHolders" className="py-4" />
+            <PageTitle
+              titleKey="pageTitle.topHolders"
+              className="py-4"
+            />
           </div>
           <div className="flex-shrink-0 md:mt-2">
             <FilterSectionToggle
@@ -171,26 +229,65 @@ export default function TopHoldersPage() {
               className="border rounded px-2 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 w-full sm:w-auto"
             >
               <option value="balance">{t("topholders.filtersbalance")}</option>
-              <option value="savings_balance">{t("topholders.filterssavings")}</option>
+              <option value="savings_balance">
+                {t("topholders.filterssavings")}
+              </option>
             </select>
           </div>
         </Card>
       )}
 
       <div className="flex justify-center w-full mt-4 ">
-        <CustomPagination currentPage={page} onPageChange={setPage} pageSize={pageSize} totalCount={totalCount} />
+        <div
+          className="flex w-full justify-center items-center flex-wrap bg-theme"
+          data-testid="account-top-bar"
+        >
+          <div className="flex items-center justify-center w-full md:ml-auto md:w-3/4">
+            <CustomPagination
+              currentPage={page}
+              onPageChange={setPage}
+              pageSize={pageSize}
+              totalCount={totalCount}
+            />
+          </div>
+          <div className="flex items-center mt-2 md:ml-auto w-full md:w-auto justify-center md:justify-end mb-2">
+            <JumpToPage
+              currentPage={page}
+              onPageChange={setPage}
+              totalCount={totalCount ?? 1}
+              pageSize={config.standardPaginationSize}
+            />
+          </div>
+        </div>
       </div>
 
       <div className="table-toolbar w-full flex">
         <div className="ml-auto flex items-center space-x-4">
           {coinType === "VESTS" && (
             <div className="flex items-center space-x-2 rounded-md p-1.5">
-              <Label htmlFor="unit-toggle" className="text-sm">{t("common.vests")}</Label>
-              <Switch id="unit-toggle" checked={unit === "hp"} onCheckedChange={(checked) => setUnit(checked ? "hp" : "vests")} />
-              <Label htmlFor="unit-toggle" className="text-sm">{t("common.hp")}</Label>
+              <Label
+                htmlFor="unit-toggle"
+                className="text-sm"
+              >
+                {t("common.vests")}
+              </Label>
+              <Switch
+                id="unit-toggle"
+                checked={unit === "hp"}
+                onCheckedChange={(checked) => setUnit(checked ? "hp" : "vests")}
+              />
+              <Label
+                htmlFor="unit-toggle"
+                className="text-sm"
+              >
+                {t("common.hp")}
+              </Label>
             </div>
           )}
-          <DataExport data={prepareExportData()} filename={exportFileName} />
+          <DataExport
+            data={prepareExportData()}
+            filename={exportFileName}
+          />
         </div>
       </div>
 
@@ -205,23 +302,31 @@ export default function TopHoldersPage() {
             <ErrorMessage message={isTopHoldersError.message} />
           </p>
         )}
-        {!isTopHoldersLoading && !isTopHoldersError && filteredHolders.length === 0 && <NoResult />}
-        {!isTopHoldersLoading && !isTopHoldersError && filteredHolders.length > 0 && (
-          <Table className="w-full" enableMobileScrollArrows enableCompactToggle>
-            <TableHeaderRow />
-            <TableBody data-testid="table-body">
-              {filteredHolders.map((holder, index) => (
-                <HolderRow
-                  key={holder.account}
-                  rank={holder.rank}
-                  account={holder.account}
-                  value={holder.value}
-                  index={index}
-                />
-              ))}
-            </TableBody>
-          </Table>
-        )}
+        {!isTopHoldersLoading &&
+          !isTopHoldersError &&
+          filteredHolders.length === 0 && <NoResult />}
+        {!isTopHoldersLoading &&
+          !isTopHoldersError &&
+          filteredHolders.length > 0 && (
+            <Table
+              className="w-full"
+              enableMobileScrollArrows
+              enableCompactToggle
+            >
+              <TableHeaderRow />
+              <TableBody data-testid="table-body">
+                {filteredHolders.map((holder, index) => (
+                  <HolderRow
+                    key={holder.account}
+                    rank={holder.rank}
+                    account={holder.account}
+                    value={holder.value}
+                    index={index}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          )}
       </Card>
 
       <div className="fixed bottom-[10px] right-0 flex flex-col items-end justify-end px-3 md:px-12">
