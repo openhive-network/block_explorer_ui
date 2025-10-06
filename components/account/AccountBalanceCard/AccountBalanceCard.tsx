@@ -37,6 +37,7 @@ import {
   changeHBDToDollarsDisplay,
   grabNumericValue,
 } from "@/utils/StringUtils";
+import { TabKey } from "../AccountDetailsSection";
 
 // ====================================================================
 // SECTION: Static Configurations
@@ -262,11 +263,16 @@ const DetailRow = ({
   valueClassName = "",
   labelClassName = "text-slate-600 dark:text-slate-400",
   isHighlighted,
+  onClick,
 }: any) => (
   <div
+    onClick={onClick}
     key={fieldKey}
     className={cn(
       "flex flex-wrap justify-between items-baseline px-1 rounded-md transition-colors gap-x-2",
+      {
+        "hover:cursor-pointer": !!onClick,
+      },
       className
     )}
   >
@@ -312,6 +318,7 @@ const AssetSection = ({
   hbdApr,
   t,
   activeSegmentKey,
+  onChangeTab,
 }: any) => {
   const { blockChainPropertiesDataLoading: isLoadingApr } =
     useBlockChainProperties();
@@ -339,6 +346,7 @@ const AssetSection = ({
       sign: "",
       colorClass: "text-slate-600 dark:text-slate-400",
       valueColor: "text-slate-800 dark:text-slate-200",
+      clickable: false,
     },
     {
       key: "received_vesting_shares",
@@ -346,6 +354,7 @@ const AssetSection = ({
       sign: "+",
       colorClass: "text-green-600 dark:text-green-400",
       valueColor: undefined,
+      clickable: true,
     },
     {
       key: "delegated_vesting_shares",
@@ -353,6 +362,7 @@ const AssetSection = ({
       sign: "-",
       colorClass: "text-red-500 dark:text-red-400",
       valueColor: undefined,
+      clickable: true,
     },
   ] as const;
 
@@ -408,22 +418,37 @@ const AssetSection = ({
       {isOpen && (
         <div className="border-t border-slate-200 dark:border-slate-700/50 px-2 py-1.5 space-y-0.5">
           {asset.key === "hp"
-            ? hpDetails.map((detail) => (
-                <DetailRow
-                  key={detail.key}
-                  fieldKey={detail.key}
-                  className={getHighlightClass(detail.key)}
-                  isHighlighted={!!getHighlightClass(detail.key)}
-                  icon={
-                    <detail.icon className={cn("h-4 w-4", detail.colorClass)} />
-                  }
-                  label={t(cardNameMapKeys.get(detail.key)!)}
-                  labelClassName={detail.colorClass}
-                  valueClassName={detail.valueColor || detail.colorClass}
-                  value={renderValue(detail.key, detail.sign)}
-                  dollarValue={financialSummary.formatted.dollars[detail.key]}
-                />
-              ))
+            ? hpDetails.map((detail) => {
+                return (
+                  <DetailRow
+                    onClick={
+                      detail.clickable
+                        ? () =>
+                            onChangeTab("delegations", {
+                              type:
+                                detail.key === "received_vesting_shares"
+                                  ? "incoming"
+                                  : "outgoing",
+                            })
+                        : null
+                    }
+                    key={detail.key}
+                    fieldKey={detail.key}
+                    className={getHighlightClass(detail.key)}
+                    isHighlighted={!!getHighlightClass(detail.key)}
+                    icon={
+                      <detail.icon
+                        className={cn("h-4 w-4", detail.colorClass)}
+                      />
+                    }
+                    label={t(cardNameMapKeys.get(detail.key)!)}
+                    labelClassName={detail.colorClass}
+                    valueClassName={detail.valueColor || detail.colorClass}
+                    value={renderValue(detail.key, detail.sign)}
+                    dollarValue={financialSummary.formatted.dollars[detail.key]}
+                  />
+                );
+              })
             : regularFields.map(
                 (field: keyof Explorer.FormattedAccountDetails) => (
                   <DetailRow
@@ -518,12 +543,17 @@ type AccountBalanceCardProps = {
   header: string;
   userDetails: Explorer.FormattedAccountDetails;
   isInitiallyOpen: boolean;
+  onChangeTab?: (
+    tab: TabKey,
+    context?: { type?: "incoming" | "outgoing" }
+  ) => void;
 };
 
 const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
   header,
   userDetails,
   isInitiallyOpen,
+  onChangeTab,
 }) => {
   const { t } = useI18n();
   const [isCardHidden, setIsCardHidden] = useState(!isInitiallyOpen);
@@ -752,6 +782,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
           <CardContent className="px-3 pb-3 pt-1 space-y-2">
             {ASSET_CONFIG.map((asset) => (
               <AssetSection
+                onChangeTab={onChangeTab}
                 key={asset.key}
                 asset={asset}
                 isOpen={!!openSections[asset.key]}
