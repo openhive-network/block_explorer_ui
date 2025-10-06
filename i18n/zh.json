@@ -1,9 +1,9 @@
 {
   "common.by": "由",
   "common.operations": "操作",
-  "operations.participationMode": "参与模式",
+  "operations.participationMode": "参与方式",
   "operations.all": "所有操作",
-  "operations.include": "仅作为发起人",
+  "operations.include": "仅作为发起者",
   "operations.exclude": "仅作为参与者",
   "common.seeMore": "查看更多",
   "common.block": "区块",
