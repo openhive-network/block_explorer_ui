@@ -260,6 +260,7 @@ class FetchingService {
         accountOperationsProps.fromBlock || accountOperationsProps.startDate,
       "to-block":
         accountOperationsProps.toBlock || accountOperationsProps.endDate,
+      "transacting-account-name": accountOperationsProps.transactingAccountName,
     };
     return await this.extendedHiveChain!.restApi[
       "hafah-api"
@@ -781,17 +782,16 @@ class FetchingService {
     });
   }
   async getTopHolders(
-  coinType: "HIVE" | "HBD" | "VESTS",
-  balanceType: "balance" | "savings_balance",
-  page: number
-): Promise<Hive.TopHolder[]> {
-  return await this.extendedHiveChain!.restApi["balance-api"].topHolders({
-    "coin-type": coinType,
-    "balance-type": balanceType,
-    page,
-    
-  });
-}
+    coinType: "HIVE" | "HBD" | "VESTS",
+    balanceType: "balance" | "savings_balance",
+    page: number
+  ): Promise<Hive.TopHolder[]> {
+    return await this.extendedHiveChain!.restApi["balance-api"].topHolders({
+      "coin-type": coinType,
+      "balance-type": balanceType,
+      page,
+    });
+  }
 }
 
 const fetchingService = new FetchingService();

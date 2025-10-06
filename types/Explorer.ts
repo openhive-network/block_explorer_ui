@@ -124,6 +124,7 @@ declare module Explorer {
     accountName: string;
     pageNumber?: number;
     participationMode?: "include" | "exclude" | "all";
+    transactingAccountName: string;
   }
 
   interface UrlParam {

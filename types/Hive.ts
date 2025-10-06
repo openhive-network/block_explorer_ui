@@ -460,6 +460,7 @@ namespace Hive {
     "from-block"?: number | Date;
     "to-block"?: number | Date;
     "participation-mode"?: "include" | "exclude" | "all";
+    "transacting-account-name"?: string;
   }
 
   export class GetAccountDetailsParams {

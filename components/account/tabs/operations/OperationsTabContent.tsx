@@ -78,6 +78,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     startDate: fromDateParam,
     endDate: toDateParam,
     participationMode: mode,
+    transactingAccountName: mode === "all" ? null : accountName,
   };
 
   const { accountOperations, isAccountOperationsLoading } =
@@ -289,9 +290,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
           </div>
         </CardContent>
       </Card>
-      {/* <Button onClick={() => setMode("include")}>include</Button>
-      <Button onClick={() => setMode("exclude")}>exclude</Button>
-      <Button onClick={() => setMode("all")}>all</Button> */}
+
       <BlockNavigation
         fromBlock={accountOperations?.block_range.from}
         toBlock={accountOperations?.block_range.to}
