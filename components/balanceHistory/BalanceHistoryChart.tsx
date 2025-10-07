@@ -25,6 +25,8 @@ import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { convertVestsToHive } from "@/utils/Calculations";
 import { grabNumericValue } from "@/utils/StringUtils";
+import { Switch } from "@/components/ui/switch";
+import { useSettings } from "@/contexts/SettingsContext";
 
 interface BalanceHistoryChartProps {
   aggregatedAccountBalanceHistory?: {
@@ -63,10 +65,19 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
   const { t, dir, locale } = useI18n();
   const { hiveChain } = useHiveChainContext();
   const { dynamicGlobalData } = useDynamicGlobal();
+  const { settings } = useSettings(); // <-- Get user's VESTS/HP setting
   const isRTL = dir === "rtl";
 
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 480);
   const [hiddenDataKeys, setHiddenDataKeys] = useState<string[]>([]);
+  const [unit, setUnit] = useState<"vests" | "hp">(
+    settings.displayVestHpMode === "hp" ? "hp" : "vests"
+  ); // <-- Added VESTS/HP toggle state
+
+  // Sync unit with user settings
+  useEffect(() => {
+    setUnit(settings.displayVestHpMode === "hp" ? "hp" : "vests");
+  }, [settings.displayVestHpMode]);
 
   // State to store available coins
   const availableCoins = ["HIVE", "VESTS", "HBD"];
@@ -78,66 +89,109 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     const handleResize = () => {
       setIsMobile(window.innerWidth < 480);
     };
-
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const processedData = useCallback(
-    (data: any, type: string) => {
-      if (!dynamicGlobalData || !hiveChain || !data) return [];
+  // Process data for chart depending on selectedCoinType
+const processedData = useCallback(
+  (data: any, type: string) => {
+    if (!dynamicGlobalData || !hiveChain || !data) return [];
 
-      return data.map((item: any) => {
-        const hivePrice = parseFloat(item.hivePrice || "0");
+    const parseAssetField = (field: any): number => {
+      if (field == null) return 0;
 
-        if (type === "VESTS") {
-          const vests = item.balance?.toString() || "0";
+      if (typeof field === "number" && !Number.isNaN(field)) return field;
 
-          const hiveAmount = grabNumericValue(
-            convertVestsToHive(
-              hiveChain,
-              vests,
-              dynamicGlobalData.headBlockDetails.rawTotalVestingFundHive,
-              dynamicGlobalData.headBlockDetails.rawTotalVestingShares
-            )
-          );
+      if (typeof field === "string") {
+        const numericStr = String(grabNumericValue(field));
+        const parsed = Number(numericStr);
+        if (!Number.isNaN(parsed)) return parsed;
 
-          const dollarValueFull =
-            !isNaN(hiveAmount) && !isNaN(hivePrice)
-              ? hiveAmount * hivePrice
-              : 0;
+        const cleaned = field.replace(/[^0-9.\-]/g, "");
+        const parsedAlt = Number(cleaned);
+        return Number.isNaN(parsedAlt) ? 0 : parsedAlt;
+      }
 
-          return {
-            ...item,
-            convertedHive: hiveAmount,
-            dollarValue: dollarValueFull,
-          };
+      if (typeof field === "object") {
+        if ("amount" in field) {
+          const amount = Number(field.amount ?? 0);
+          const precision = Number(field.precision ?? 0);
+          if (!Number.isNaN(amount)) {
+            return amount / Math.pow(10, precision);
+          }
         }
 
-        if (type === "HIVE") {
-          const dollarValue =
-            !isNaN(item.balance) && !isNaN(hivePrice)
-              ? item.balance * hivePrice
-              : 0;
+        try {
+          const asString = JSON.stringify(field);
+          const numericStr = String(grabNumericValue(asString));
+          const parsed = Number(numericStr);
+          if (!Number.isNaN(parsed)) return parsed;
+        } catch {
+          return 0;
+        }
+      }
 
-          return {
-            ...item,
-            dollarValue,
-          };
+      return 0;
+    };
+
+    // Safely extract total vesting fund and shares
+    const fundHive =
+      parseAssetField(dynamicGlobalData.total_vesting_fund_hive) ||
+      parseAssetField(dynamicGlobalData.headBlockDetails?.rawTotalVestingFundHive) ||
+      0;
+
+    const totalVests =
+      parseAssetField(dynamicGlobalData.total_vesting_shares) ||
+      parseAssetField(dynamicGlobalData.headBlockDetails?.rawTotalVestingShares) ||
+      0;
+
+    return data.map((item: any) => {
+      const hivePrice = parseFloat(item.hivePrice || "0");
+      const parsedItemBalance = parseAssetField(item.balance ?? item.vests ?? item.value ?? 0);
+
+      if (type === "VESTS") {
+        let displayValue = parsedItemBalance;
+
+        if (fundHive > 0 && totalVests > 0) {
+          const convertedHP = (fundHive * parsedItemBalance) / totalVests;
+          displayValue = unit === "hp" ? convertedHP : parsedItemBalance;
         }
 
-        if (type === "HBD") {
-          return {
-            ...item,
-            dollarValue: !isNaN(item.balance) ? item.balance : 0,
-          };
-        }
+        const dollarValue = !Number.isNaN(displayValue) && !Number.isNaN(hivePrice)
+          ? displayValue * hivePrice
+          : 0;
 
-        return item;
-      });
-    },
-    [dynamicGlobalData, hiveChain]
-  );
+        return {
+          ...item,
+          convertedHive: displayValue,
+          dollarValue,
+          displayBalance: displayValue,
+        };
+      }
+
+      if (type === "HIVE") {
+        const balanceValue = parseAssetField(item.balance ?? item.hive ?? 0);
+        const dollarValue = !Number.isNaN(balanceValue) && !Number.isNaN(hivePrice)
+          ? balanceValue * hivePrice
+          : 0;
+
+        return { ...item, displayBalance: balanceValue, dollarValue };
+      }
+
+      if (type === "HBD") {
+        const balanceValue = parseAssetField(item.balance ?? item.hbd ?? 0);
+        return { ...item, displayBalance: balanceValue, dollarValue: balanceValue };
+      }
+
+      return { ...item, displayBalance: parseAssetField(item.balance ?? 0) };
+    });
+  },
+  [dynamicGlobalData, hiveChain, unit]
+);
+
+
+
 
   const dataMap: Record<
     string,
@@ -150,6 +204,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
       hivePrice: string;
       dollarValue?: number;
       convertedHive?: number;
+      displayBalance?: number;
     }[]
   > = useMemo(() => {
     return {
@@ -164,9 +219,9 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
 
   const displayData = useMemo(() => {
     return dataMap[selectedCoinType];
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCoinType]);
+  }, [dataMap, selectedCoinType]);
 
+  // Custom tooltip
   const CustomTooltip = ({
     active,
     payload,
@@ -182,7 +237,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     const selectedData = displayData?.find((item) => item.timestamp === label);
     if (!selectedData) return null;
 
-    const actualBalance = selectedData?.balance ?? 0;
+    const actualBalance = selectedData?.displayBalance ?? 0; // <-- Use displayBalance
     const balanceChange = selectedData?.balance_change ?? 0;
     const savingsBalance = selectedData?.savings_balance ?? undefined;
     const savingsBalanceChange = selectedData?.savings_balance_change ?? 0;
@@ -294,28 +349,50 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     );
   };
 
+  // Render buttons for coin selection
   const renderCoinButtons = () => {
-    return availableCoins.map((coinType) => (
-      <button
-        key={coinType}
-        onClick={() => handleCoinTypeChange(coinType)}
-        className={cn(
-          "px-2 py-1 text-sm rounded m-[1px]",
-          selectedCoinType === coinType
-            ? "bg-blue-500 text-white"
-            : "bg-gray-200 text-black hover:bg-gray-300 dark:bg-gray-600 dark:text-white hover:dark:bg-gray-500"
+    return (
+      <div className="flex items-center space-x-2">
+        {availableCoins.map((coinType) => (
+          <button
+            key={coinType}
+            onClick={() => handleCoinTypeChange(coinType)}
+            className={cn(
+              "px-2 py-1 text-sm rounded m-[1px]",
+              selectedCoinType === coinType
+                ? "bg-blue-500 text-white"
+                : "bg-gray-200 text-black hover:bg-gray-300 dark:bg-gray-600 dark:text-white hover:dark:bg-gray-500"
+            )}
+          >
+            {coinType}
+          </button>
+        ))}
+
+        {/* VESTS / HP toggle */}
+        {selectedCoinType === "VESTS" && (
+          <div className="flex items-center space-x-1 ml-4">
+            <span className="text-sm">{t("common.vests")}</span>
+            <Switch
+              id="unit-toggle"
+              checked={unit === "hp"}
+              onCheckedChange={(checked) =>
+                setUnit(checked ? "hp" : "vests")
+              }
+            />
+            <span className="text-sm">{t("common.hp")}</span>
+          </div>
         )}
-      >
-        {coinType}
-      </button>
-    ));
+      </div>
+    );
   };
+
   const getMinMax = (
     data: {
       balance: number;
       savings_balance?: number;
       dollarValue?: number;
       convertedHive?: number;
+      displayBalance?: number;
     }[]
   ): [number, number] => {
     if (!data || data.length === 0) {
@@ -330,8 +407,12 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
         .filter((v): v is number => typeof v === "number" && !Number.isNaN(v));
 
       allValues = allValues.concat(dollarValues);
+      const balances = data
+        .map((item) => item.displayBalance)
+        .filter((v): v is number => typeof v === "number" && !Number.isNaN(v));
+      allValues = allValues.concat(balances);
     } else {
-      allValues = data.map((item) => item.balance);
+      allValues = data.map((item) => item.displayBalance ?? item.balance);
 
       const dollarValues = data
         .map((item) => item.dollarValue)
@@ -355,16 +436,8 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
   const [fullDataMin, fullDataMax] = getMinMax(displayData);
   const [minValue, maxValue] = zoomedDomain || [fullDataMin, fullDataMax];
 
-  const handleBrushAreaChange = (domain: {
-    startIndex?: number;
-    endIndex?: number;
-  }) => {
-    if (
-      !domain ||
-      domain.startIndex === undefined ||
-      domain.endIndex === undefined
-    ) {
-      // Reset zoom if brush is cleared or start/end index is undefined
+  const handleBrushAreaChange = (domain: { startIndex?: number; endIndex?: number }) => {
+    if (!domain || domain.startIndex === undefined || domain.endIndex === undefined) {
       setZoomedDomain([fullDataMin, fullDataMax]);
       return;
     }
@@ -378,7 +451,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     }
   };
 
-  if (!displayData || !displayData.length) return;
+  if (!displayData || !displayData.length) return null;
 
   const isDualAxis = selectedCoinType === "VESTS";
   const primaryAxisId = isRTL ? "right" : "left";
@@ -386,13 +459,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
 
   return (
     <div className={cn("w-full", className)}>
-      {quickView && (
-        <div
-          className={cn("flex mb-4", isRTL ? "justify-start" : "justify-end")}
-        >
-          {renderCoinButtons()}
-        </div>
-      )}
+      {quickView && <div className={cn("flex mb-4", isRTL ? "justify-start" : "justify-end")}>{renderCoinButtons()}</div>}
 
       <ResponsiveContainer
         width="100%"
@@ -446,13 +513,13 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
           <Line
             yAxisId={primaryAxisId}
             type="monotone"
-            dataKey="balance"
+            dataKey="displayBalance" // <-- Use displayBalance for toggle
             stroke={colorMap[selectedCoinType]}
             strokeWidth={2}
             activeDot={{ r: 6 }}
             name={selectedCoinType}
             dot={false}
-            hide={hiddenDataKeys.includes("balance")}
+            hide={hiddenDataKeys.includes("displayBalance")}
           />
 
           <Line
@@ -502,9 +569,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
               const dataKey = event.dataKey as string;
               const isHidden = hiddenDataKeys.includes(dataKey as string);
               if (isHidden) {
-                setHiddenDataKeys(
-                  hiddenDataKeys.filter((key) => key !== dataKey)
-                );
+                setHiddenDataKeys(hiddenDataKeys.filter((key) => key !== dataKey));
               } else {
                 setHiddenDataKeys([...hiddenDataKeys, dataKey]);
               }
