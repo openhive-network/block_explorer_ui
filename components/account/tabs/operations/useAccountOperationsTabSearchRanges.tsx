@@ -24,6 +24,7 @@ export const defaultAccountOperationsTabSearchParams: AccountSearchParams = {
   page: undefined,
   filters: [],
   history: [],
+  direction: undefined,
 };
 
 const useAccountOperationsTabSearchRanges = (

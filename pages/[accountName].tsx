@@ -31,7 +31,8 @@ export interface AccountSearchParams {
   page: number | undefined;
   filters: boolean[];
   activeTab?: "operations" | "comments" | "interactions";
-  history:[];
+  history: [];
+  direction?: "include" | "exclude" | undefined;
 }
 
 export const defaultSearchParams: AccountSearchParams = {
@@ -62,7 +63,7 @@ export default function Account() {
   const liveDataEnabled = settings.liveData;
   const changeLiveRefresh = () => {
     updateSettings({
-      liveData: !settings.liveData, 
+      liveData: !settings.liveData,
     });
   };
 
@@ -70,8 +71,11 @@ export default function Account() {
     useState(false);
 
   const { dynamicGlobalData } = useDynamicGlobal();
-  const { formattedAccountDetails: accountDetails, notFound, isAccountDetailsLoading} =
-    useConvertedAccountDetails(
+  const {
+    formattedAccountDetails: accountDetails,
+    notFound,
+    isAccountDetailsLoading,
+  } = useConvertedAccountDetails(
     accountNameFromRoute,
     liveDataEnabled,
     dynamicGlobalData
@@ -147,13 +151,14 @@ export default function Account() {
   if (routeAccountName && !routeAccountName.startsWith("@")) {
     return <ErrorPage />;
   }
-  
-  if (notFound && !isAccountDetailsLoading) {
-  const accountNotFoundError = `${routeAccountName} : ${t("accountName.accountNotFound")}`;
-  if (notFound && !isAccountDetailsLoading) {
-    return <ErrorPage errorMessage={accountNotFoundError} />;
-  }
 
+  if (notFound && !isAccountDetailsLoading) {
+    const accountNotFoundError = `${routeAccountName} : ${t(
+      "accountName.accountNotFound"
+    )}`;
+    if (notFound && !isAccountDetailsLoading) {
+      return <ErrorPage errorMessage={accountNotFoundError} />;
+    }
   }
 
   if (!accountDetails) {
@@ -165,7 +170,13 @@ export default function Account() {
   return (
     <AccountTabsProvider>
       <Head>
-        <title>@{communityDetails?.title ? communityDetails?.title : accountNameFromRoute} - Hive Explorer</title>
+        <title>
+          @
+          {communityDetails?.title
+            ? communityDetails?.title
+            : accountNameFromRoute}{" "}
+          - Hive Explorer
+        </title>
       </Head>
       <div className="grid grid-cols-1 md:grid-cols-3 text-white page-container gap-4">
         {isMobile && (
