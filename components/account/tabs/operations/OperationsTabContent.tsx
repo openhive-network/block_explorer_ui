@@ -232,7 +232,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
                   onChange={() => setMode("include")}
                   className="h-4 w-4"
                 />
-                <span className="text-sm">{t("operations.include")}</span>
+                <span className="text-sm">{t("operations.incoming")}</span>
               </label>
               <label className="flex items-center space-x-2">
                 <input
@@ -242,7 +242,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
                   onChange={() => setMode("exclude")}
                   className="h-4 w-4"
                 />
-                <span className="text-sm">{t("operations.exclude")}</span>
+                <span className="text-sm">{t("operations.outgoing")}</span>
               </label>
             </div>
           </div>
