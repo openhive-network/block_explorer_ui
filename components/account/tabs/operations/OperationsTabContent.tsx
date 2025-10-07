@@ -44,7 +44,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
   const { t } = useI18n();
   const router = useRouter();
   const searchRanges = useAccountOperationsTabSearchRanges();
-  const [mode, setMode] = useState("all");
+ 
 
   const [accountName, setAccountName] = useState("");
   const { paramsState, setParams } = useURLParams(
@@ -63,6 +63,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     fromDate: fromDateParam,
     toDate: toDateParam,
     activeTab,
+    direction,
   } = paramsState;
 
   const isOperationsTabActive = !activeTab || activeTab === "operations";
@@ -77,8 +78,8 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     toBlock: toBlockParam,
     startDate: fromDateParam,
     endDate: toDateParam,
-    participationMode: mode,
-    transactingAccountName: mode === "all" ? null : accountName,
+    participationMode: direction,
+    transactingAccountName: !direction ? null : accountName,
   };
 
   const { accountOperations, isAccountOperationsLoading } =
@@ -118,7 +119,6 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     });
     setFilters([]);
     removeStorageItem("is_operations_filters_visible");
-    setMode("all");
   };
 
   const handleOperationSelect = (filters: number[] | null) => {
@@ -218,8 +218,14 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
                 <input
                   type="radio"
                   name="participationMode"
-                  checked={mode === "all"}
-                  onChange={() => setMode("all")}
+                  checked={!direction}
+                  onChange={() =>
+                    setParams({
+                      ...paramsState,
+                      page: undefined,
+                      direction: undefined,
+                    })
+                  }
                   className="h-4 w-4"
                 />
                 <span className="text-sm">{t("operations.all")}</span>
@@ -228,21 +234,33 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
                 <input
                   type="radio"
                   name="participationMode"
-                  checked={mode === "include"}
-                  onChange={() => setMode("include")}
+                  checked={direction === "exclude"}
+                  onChange={() =>
+                    setParams({
+                      ...paramsState,
+                      page: undefined,
+                      direction: "exclude",
+                    })
+                  }
                   className="h-4 w-4"
                 />
-                <span className="text-sm">{t("operations.include")}</span>
+                <span className="text-sm">{t("operations.incoming")}</span>
               </label>
               <label className="flex items-center space-x-2">
                 <input
                   type="radio"
                   name="participationMode"
-                  checked={mode === "exclude"}
-                  onChange={() => setMode("exclude")}
+                  checked={direction === "include"}
+                  onChange={() =>
+                    setParams({
+                      ...paramsState,
+                      page: undefined,
+                      direction: "include",
+                    })
+                  }
                   className="h-4 w-4"
                 />
-                <span className="text-sm">{t("operations.exclude")}</span>
+                <span className="text-sm">{t("operations.outgoing")}</span>
               </label>
             </div>
           </div>
