@@ -15,11 +15,18 @@ interface AccountCommentsPermlinkSearchProps {
   isDataLoading: boolean;
   setIsFiltersActive: Dispatch<SetStateAction<boolean>>;
   setIsVisible: Dispatch<SetStateAction<boolean>>;
+  permlinkSearchRefetchData: () => void;
 }
 
 const AccountCommentsPermlinkSearch: React.FC<
   AccountCommentsPermlinkSearchProps
-> = ({ accountName, isDataLoading, setIsFiltersActive, setIsVisible }) => {
+> = ({
+  accountName,
+  isDataLoading,
+  setIsFiltersActive,
+  setIsVisible,
+  permlinkSearchRefetchData,
+}) => {
   const { t } = useI18n();
   const { setPermlinkPaginationPage, setCommentType, searchRanges } =
     useSearchesContext();
@@ -46,6 +53,7 @@ const AccountCommentsPermlinkSearch: React.FC<
     setCommentType(localCommentType);
 
     handleCommentPermlinkSearch();
+    permlinkSearchRefetchData();
   };
 
   const onClearButtonClick = () => {

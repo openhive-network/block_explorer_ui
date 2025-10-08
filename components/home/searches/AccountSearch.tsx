@@ -27,9 +27,8 @@ const AccountSearch = () => {
     searchRanges,
   } = useSearchesContext();
 
-  const { isAccountOperationsFetching } = useAccountOperations(
-    accountOperationsSearchProps
-  );
+  const { isAccountOperationsFetching, refetchAccountOperations } =
+    useAccountOperations(accountOperationsSearchProps);
   const { operationsTypes } = useOperationsTypes();
 
   const [accountName, setAccountName] = useState<string>("");
@@ -89,6 +88,7 @@ const AccountSearch = () => {
         setAccountOperationsSearchProps,
         setPreviousAccountOperationsSearchProps
       );
+      refetchAccountOperations();
     }
   };
 

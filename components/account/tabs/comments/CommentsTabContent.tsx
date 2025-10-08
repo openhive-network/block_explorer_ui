@@ -52,7 +52,6 @@ const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
     ["accountName"]
   );
 
-
   const props = (() => {
     if (paramsState.activeTab === "comments") {
       return {
@@ -62,8 +61,11 @@ const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
     }
   })();
 
-  const { permlinkSearchData, permlinkSearchDataLoading } =
-    usePermlinkSearch(props);
+  const {
+    permlinkSearchData,
+    permlinkSearchDataLoading,
+    permlinkSearchRefetchData,
+  } = usePermlinkSearch(props);
 
   const {
     handleLoadNextBlocks,
@@ -122,6 +124,7 @@ const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
         <CardContent>
           <AccountCommentsPermlinkSearch
             isDataLoading={permlinkSearchDataLoading}
+            permlinkSearchRefetchData={permlinkSearchRefetchData}
             accountName={accountName}
             setIsFiltersActive={setIsFiltersActive}
             setIsVisible={setIsVisible}

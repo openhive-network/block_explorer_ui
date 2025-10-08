@@ -14,7 +14,7 @@ import NoValueErrorMessage from "./NoValueErrorMessage";
 import { useI18n } from "@/i18n/i18n";
 
 const CommentsPermlinkSearch = () => {
-const { t } = useI18n();
+  const { t } = useI18n();
   const {
     permlinkSearchProps,
     setPermlinkSearchProps,
@@ -24,7 +24,8 @@ const { t } = useI18n();
     searchRanges,
   } = useSearchesContext();
 
-  const { permlinkSearchDataLoading } = usePermlinkSearch(permlinkSearchProps);
+  const { permlinkSearchDataLoading, permlinkSearchRefetchData } =
+    usePermlinkSearch(permlinkSearchProps);
 
   const [accountName, setAccountName] = useState<string>("");
   const [localCommentType, setLocalCommentType] =
@@ -75,6 +76,7 @@ const { t } = useI18n();
         setCommentType,
         (val: "comment-permlink") => setLastSearchKey(val)
       );
+      permlinkSearchRefetchData();
     }
   };
 

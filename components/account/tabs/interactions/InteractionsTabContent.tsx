@@ -49,6 +49,7 @@ const InteractionsTabContent: React.FC<InteractionsTabContentProps> = ({
     commentSearchData,
     isCommentSearchDataLoading,
     isCommentSearchDataFetching,
+    refetchCommentSearchData,
   } = useCommentSearch(props);
 
   const buildCommentSearchView = () => {
@@ -107,6 +108,7 @@ const InteractionsTabContent: React.FC<InteractionsTabContentProps> = ({
         <CardContent>
           <AccountPageInteractionSearch
             setIsFiltersActive={setIsFiltersActive}
+            refetchCommentSearchData={refetchCommentSearchData}
             isCommentSearchDataLoading={isCommentSearchDataFetching}
           />
         </CardContent>

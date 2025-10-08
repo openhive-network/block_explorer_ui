@@ -10,6 +10,7 @@ const usePermlinkSearch = (
     data: permlinkSearchData,
     isFetching: permlinkSearchDataLoading,
     isError: permlinkSearchDataError,
+    refetch: permlinkSearchRefetchData,
   } = useQuery({
     queryKey: ["permlinkSearch", permlinkSearchProps],
     queryFn: () => fetchCommentPermlinks(permlinkSearchProps),
@@ -28,6 +29,7 @@ const usePermlinkSearch = (
     permlinkSearchData,
     permlinkSearchDataLoading,
     permlinkSearchDataError,
+    permlinkSearchRefetchData,
   };
 };
 

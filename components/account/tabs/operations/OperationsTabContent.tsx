@@ -44,7 +44,6 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
   const { t } = useI18n();
   const router = useRouter();
   const searchRanges = useAccountOperationsTabSearchRanges();
- 
 
   const [accountName, setAccountName] = useState("");
   const { paramsState, setParams } = useURLParams(
@@ -82,8 +81,11 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     transactingAccountName: !direction ? null : accountName,
   };
 
-  const { accountOperations, isAccountOperationsLoading } =
-    useAccountOperations(accountOperationsProps as any, liveDataEnabled);
+  const {
+    accountOperations,
+    isAccountOperationsLoading,
+    refetchAccountOperations,
+  } = useAccountOperations(accountOperationsProps as any, liveDataEnabled);
 
   const {
     handleLoadNextBlocks,
@@ -158,6 +160,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     };
 
     setParams(props);
+    refetchAccountOperations();
   };
 
   useEffect(() => {

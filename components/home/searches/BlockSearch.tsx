@@ -32,7 +32,7 @@ import useAllBlocksSearch from "@/hooks/api/blocks/useAllBlocksSearch";
 import { useI18n } from "@/i18n/i18n";
 
 const BlockSearch = () => {
-const { t } = useI18n();
+  const { t } = useI18n();
   const {
     allBlocksSearchProps,
     setAllBlocksSearchProps,
@@ -42,7 +42,8 @@ const { t } = useI18n();
   } = useSearchesContext();
   const { operationsTypes } = useOperationsTypes();
 
-  const { blocksSearchDataLoading } = useAllBlocksSearch(allBlocksSearchProps);
+  const { blocksSearchDataLoading, refetchBlockSearchData } =
+    useAllBlocksSearch(allBlocksSearchProps);
 
   const [accountName, setAccountName] = useState<string>("");
   const [selectedOperationTypes, setSelectedOperationTypes] = useState<
@@ -141,6 +142,7 @@ const { t } = useI18n();
       setAllBlocksSearchProps,
       (val: "block") => setLastSearchKey(val)
     );
+    refetchBlockSearchData();
   };
 
   const handleClearSearch = () => {

@@ -13,15 +13,32 @@ import { useSearchesContext } from "@/contexts/SearchesContext";
 import { useI18n } from "@/i18n/i18n";
 
 const ACCORDION_SECTIONS_KEYS = [
-  { nameKey: "searchesAccordionCard.blockSearch", value: "block", originalName: "Block Search" },
-  { nameKey: "searchesAccordionCard.accountSearch", value: "account", originalName: "Account Search" },
-  { nameKey: "searchesAccordionCard.permalinkSearch", value: "comment-permlink", originalName: "Permalink Search" },
-  { nameKey: "searchesAccordionCard.commentSearch", value: "comment", originalName: "Comment Search" },
+  {
+    nameKey: "searchesAccordionCard.blockSearch",
+    value: "block",
+    originalName: "Block Search",
+  },
+  {
+    nameKey: "searchesAccordionCard.accountSearch",
+    value: "account",
+    originalName: "Account Search",
+  },
+  {
+    nameKey: "searchesAccordionCard.permalinkSearch",
+    value: "comment-permlink",
+    originalName: "Permalink Search",
+  },
+  {
+    nameKey: "searchesAccordionCard.commentSearch",
+    value: "comment",
+    originalName: "Comment Search",
+  },
 ];
 
 const getAccordionContentByName = (originalName: string) => {
   switch (originalName) {
     case "Block Search":
+      //
       return <BlockSearch />;
       break;
     case "Account Search":

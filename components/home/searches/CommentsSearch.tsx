@@ -37,7 +37,8 @@ const CommentsSearch = () => {
   const pathname = usePathname();
   const router = useRouter();
 
-  const { isCommentSearchDataFetching } = useCommentSearch(commentSearchProps);
+  const { isCommentSearchDataFetching, refetchCommentSearchData } =
+    useCommentSearch(commentSearchProps);
   const { handleCommentsSearch } = useHandleCommentsSearch();
 
   const { operationsTypes } = useOperationsTypes();
@@ -62,6 +63,7 @@ const CommentsSearch = () => {
   const onSearchButtonClick = () => {
     handleCommentsSearch(accountName, permlink);
     setLastSearchKey("comment");
+    refetchCommentSearchData();
   };
 
   // Passing null if we want to reset operations
