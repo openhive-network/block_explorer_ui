@@ -99,21 +99,24 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
 
         if (type === "VESTS") {
           const vests = item.balance?.toString() || "0";
-          const convertedValue = grabNumericValue(
-            unit === "hp"
-              ? convertVestsToHP(
+
+          const convertedValue = unit === "hp"
+            ? parseFloat(
+                convertVestsToHP(
                   hiveChain,
                   vests,
                   dynamicGlobalData.headBlockDetails.rawTotalVestingFundHive,
                   dynamicGlobalData.headBlockDetails.rawTotalVestingShares
                 )
-              : convertVestsToHive(
+              )
+            : parseFloat(
+                convertVestsToHive(
                   hiveChain,
                   vests,
                   dynamicGlobalData.headBlockDetails.rawTotalVestingFundHive,
                   dynamicGlobalData.headBlockDetails.rawTotalVestingShares
                 )
-          );
+              );
 
           const dollarValueFull =
             !isNaN(convertedValue) && !isNaN(hivePrice)
@@ -171,6 +174,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
 
   const displayData = useMemo(() => dataMap[selectedCoinType], [selectedCoinType]);
 
+  // ---------------- Tooltip ----------------
   const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string; }) => {
     const { dir: tooltipDir } = useI18n();
     if (quickView || !active || !payload || payload.length === 0) return null;
@@ -234,6 +238,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     );
   };
 
+  // ---------------- Coin toggle buttons ----------------
   const renderCoinButtons = () => (
     <div className="flex items-center justify-end mb-2 space-x-3">
       {availableCoins.map((coinType) => (
@@ -255,28 +260,27 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     </div>
   );
 
-  const getMinMax = (data: { balance: number; savings_balance?: number; dollarValue?: number; convertedHive?: number; }[]): [number, number] => {
+  // ---------------- Min/Max for Y-axis ----------------
+  const getMinMax = (data: any[]): [number, number] => {
     if (!data || data.length === 0) return [0, 1];
 
     let allValues: number[] = [];
 
     if (selectedCoinType === "VESTS") {
+      allValues = data.map((item) => item.convertedHive || 0);
       const dollarValues = data.map((item) => item.dollarValue).filter((v): v is number => typeof v === "number" && !Number.isNaN(v));
       allValues = allValues.concat(dollarValues);
     } else {
       allValues = data.map((item) => item.balance);
       const dollarValues = data.map((item) => item.dollarValue).filter((v): v is number => typeof v === "number" && !Number.isNaN(v));
       allValues = allValues.concat(dollarValues);
-
       if (showSavingsBalance === "yes") {
         const savingsValues = data.map((item) => item.savings_balance).filter((v): v is number => typeof v === "number");
         allValues = allValues.concat(savingsValues);
       }
     }
 
-    const minValue = Math.min(...allValues);
-    const maxValue = Math.max(...allValues);
-    return [minValue, maxValue];
+    return [Math.min(...allValues), Math.max(...allValues)];
   };
 
   const [fullDataMin, fullDataMax] = getMinMax(displayData);
@@ -303,8 +307,8 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
   const leftMargin = isMobile
     ? 10
     : selectedCoinType === "VESTS" && unit === "hp"
-    ? 50 // slight nudge for HP numbers
-    : 30; // default margin
+    ? 50
+    : 30;
 
   return (
     <div className={cn("w-full", className)}>
@@ -356,7 +360,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
           <Line
             yAxisId={primaryAxisId}
             type="monotone"
-            dataKey="balance"
+            dataKey={selectedCoinType === "VESTS" && unit === "hp" ? "convertedHive" : "balance"}
             stroke={colorMap[selectedCoinType]}
             strokeWidth={2}
             activeDot={{ r: 6 }}
