@@ -973,5 +973,25 @@
   "modal.loading": "로딩 중...",
   "modal.noHistory": "사용 가능한 기록이 없습니다.",
   "modal.error": "잔액 기록을 불러오는 중 오류가 발생했습니다.",
-  "modal.close": "닫기"
+  "modal.close": "닫기",
+  "analyticsDashboard.addInfluenceMapButton": "영향력 지도 추가",
+  "analyticsDashboard.influenceMapReportTitle": "영향력 및 위임 지도",
+  "analyticsDashboard.emptyTitle": "분석 대시보드가 비어 있습니다",
+  "analyticsDashboard.emptySubtitle": "시작하려면 \"추가\" 버튼을 클릭하세요.",
+  "AnalyticsDashboard.error": "보고서 대시보드에서 오류가 발생했습니다",
+  "accountOperationViewTabs.analytics": "분석",
+  "analyticsDashboard.centralHub": "중앙 허브",
+  "analyticsDashboard.others": "기타",
+  "analyticsDashboard.expandAll": "모두 펼치기",
+  "analyticsDashboard.collapseAll": "모두 접기",
+  "influenceMapReport.legendCentralHub": "중앙 허브",
+  "influenceMapReport.legendIncoming": "받은 위임",
+  "influenceMapReport.legendOtherIncoming": "기타 받은 위임",
+  "influenceMapReport.legendOutgoing": "보낸 위임",
+  "influenceMapReport.legendOtherOutgoing": "기타 보낸 위임",
+  "influenceMapReport.moreDelegations": "개의 추가 위임",
+  "influenceMapReport.more": "더 보기",
+  "influenceMapReport.expandCollapseHint": "클릭하여 펼치기/접기",
+  "influenceMapReport.tooltipDelegationPrefix": "위임: "
+
 }

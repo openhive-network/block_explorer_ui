@@ -310,6 +310,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
             isWitnessLoading={isWitnessDetailsLoading}
             liveDataEnabled={liveDataEnabled}
             changeLiveRefresh={changeLiveRefresh}
+            isInitiallyOpen={true}
           />
         </>
       ) : (
@@ -325,6 +326,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
           isWitnessLoading={isWitnessDetailsLoading}
           liveDataEnabled={liveDataEnabled}
           changeLiveRefresh={changeLiveRefresh}
+          isInitiallyOpen={true}
         />
       )}
 
