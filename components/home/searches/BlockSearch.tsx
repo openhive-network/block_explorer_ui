@@ -30,6 +30,7 @@ import { startBlockSearch } from "./utils/blockSearchHelpers";
 import NoValueErrorMessage from "./NoValueErrorMessage";
 import useAllBlocksSearch from "@/hooks/api/blocks/useAllBlocksSearch";
 import { useI18n } from "@/i18n/i18n";
+import { useQueryClient } from "@tanstack/react-query";
 
 const BlockSearch = () => {
   const { t } = useI18n();
@@ -40,6 +41,7 @@ const BlockSearch = () => {
     searchRanges,
     setBlockSearchPage,
   } = useSearchesContext();
+  const qc = useQueryClient();
   const { operationsTypes } = useOperationsTypes();
 
   const { blocksSearchDataLoading, refetchBlockSearchData } =
@@ -142,7 +144,7 @@ const BlockSearch = () => {
       setAllBlocksSearchProps,
       (val: "block") => setLastSearchKey(val)
     );
-    refetchBlockSearchData();
+    qc.invalidateQueries({ queryKey: ["blockSearch"] });
   };
 
   const handleClearSearch = () => {

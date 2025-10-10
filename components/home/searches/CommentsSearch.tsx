@@ -19,7 +19,10 @@ import { useRouter } from "next/router";
 import useHandleCommentsSearch from "./hooks/useHandleCommentsSearch";
 import NoValueErrorMessage from "./NoValueErrorMessage";
 import { useI18n } from "@/i18n/i18n";
+import { useQueryClient } from "@tanstack/react-query";
+
 const CommentsSearch = () => {
+  const qc = useQueryClient();
   const { t } = useI18n();
   const {
     setCommentSearchProps,
@@ -63,7 +66,7 @@ const CommentsSearch = () => {
   const onSearchButtonClick = () => {
     handleCommentsSearch(accountName, permlink);
     setLastSearchKey("comment");
-    refetchCommentSearchData();
+    qc.invalidateQueries({ queryKey: ["commentSearch"] });
   };
 
   // Passing null if we want to reset operations

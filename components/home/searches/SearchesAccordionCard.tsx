@@ -38,7 +38,6 @@ const ACCORDION_SECTIONS_KEYS = [
 const getAccordionContentByName = (originalName: string) => {
   switch (originalName) {
     case "Block Search":
-      //
       return <BlockSearch />;
       break;
     case "Account Search":

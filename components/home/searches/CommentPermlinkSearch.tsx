@@ -12,8 +12,10 @@ import { startCommentPermlinkSearch } from "./utils/commentPermlinkSearchHelpers
 import PostTypeSelector from "./PostTypeSelector";
 import NoValueErrorMessage from "./NoValueErrorMessage";
 import { useI18n } from "@/i18n/i18n";
+import { useQueryClient } from "@tanstack/react-query";
 
 const CommentsPermlinkSearch = () => {
+  const qc = useQueryClient();
   const { t } = useI18n();
   const {
     permlinkSearchProps,
@@ -76,7 +78,7 @@ const CommentsPermlinkSearch = () => {
         setCommentType,
         (val: "comment-permlink") => setLastSearchKey(val)
       );
-      permlinkSearchRefetchData();
+      qc.invalidateQueries({ queryKey: ["permlinkSearch"] });
     }
   };
 
