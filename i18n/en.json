@@ -5,6 +5,7 @@
   "operations.all": "All",
   "operations.incoming": "Incoming",
   "operations.outgoing": "Outgoing",
+  "common.vestshp": "VESTS/HP",
   "common.seeMore": "See More",
   "common.block": "Block",
   "common.transactions": "Transactions",

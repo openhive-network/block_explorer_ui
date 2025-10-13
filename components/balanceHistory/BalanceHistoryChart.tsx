@@ -126,9 +126,9 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
         }
 
         const dollarValueFull =
-          !isNaN(convertedValue) && !isNaN(hivePrice)
-            ? convertedValue * hivePrice
-            : 0;
+        !isNaN(convertedValue) && !isNaN(hivePrice)
+        ? convertedValue * hivePrice /100
+      : 0;
 
         return {
           ...item,
@@ -248,37 +248,43 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
 
   // ---------------- Coin toggle buttons ----------------
 const renderCoinButtons = () => (
-  <div className="flex items-center justify-end mb-2 space-x-3">
-    {/* HP/VEST Toggle first on the left */}
-    {selectedCoinType === "VESTS" && (
-      <div className="flex items-center space-x-2 rounded-md p-1.5">
-        <Label htmlFor="unit-toggle" className="text-sm font-medium select-none">{t("common.vests")}</Label>
-        <Switch
-          id="unit-toggle"
-          checked={unit === "hp"}
-          onCheckedChange={(checked) => setUnit(checked ? "hp" : "vests")}
-        />
-        <Label htmlFor="unit-toggle" className="text-sm font-medium select-none">{t("common.hp")}</Label>
-      </div>
-    )}
+  <div className="relative flex items-center justify-end mb-2 space-x-3">
+  {/* Toggle on the far left */}
+  {selectedCoinType === "VESTS" && (
+    <div className="absolute left-0 flex items-center space-x-2 rounded-md p-1.5">
+      <Label htmlFor="unit-toggle" className="text-sm font-medium select-none">
+        {t("common.vests")}
+      </Label>
+      <Switch
+        id="unit-toggle"
+        checked={unit === "hp"}
+        onCheckedChange={(checked) => setUnit(checked ? "hp" : "vests")}
+      />
+      <Label htmlFor="unit-toggle" className="text-sm font-medium select-none">
+        {t("common.hp")}
+      </Label>
+    </div>
+  )}
 
-    {/* Coin buttons remain after the toggle */}
-    {availableCoins.map((coinType) => (
-      <button
-        key={coinType}
-        onClick={() => handleCoinTypeChange(coinType)}
-        className={cn(
-          "px-2 py-1 text-sm rounded m-[1px]",
-          selectedCoinType === coinType
-            ? "bg-blue-500 text-white"
-            : "bg-gray-200 text-black hover:bg-gray-300 dark:bg-gray-600 dark:text-white hover:dark:bg-gray-500"
-        )}
-      >
-        {coinType}
-      </button>
-    ))}
-  </div>
+  {/* Coin buttons always on the right */}
+  {availableCoins.map((coinType) => (
+    <button
+      key={coinType}
+      onClick={() => handleCoinTypeChange(coinType)}
+      className={cn(
+        "px-2 py-1 text-sm rounded m-[1px]",
+        selectedCoinType === coinType
+          ? "bg-blue-500 text-white"
+          : "bg-gray-200 text-black hover:bg-gray-300 dark:bg-gray-600 dark:text-white hover:dark:bg-gray-500"
+      )}
+    >
+      {coinType === "VESTS" ? t("common.vestshp") : coinType}
+    </button>
+  ))}
+</div>
+
 );
+
 
 
   // ---------------- Min/Max for Y-axis ----------------
@@ -327,7 +333,7 @@ const renderCoinButtons = () => (
 
   const leftMargin = isMobile
     ? 10
-    : selectedCoinType === "VESTS" && unit === "hp"
+    : selectedCoinType === "VESTS"
     ? 50
     : 30;
 
