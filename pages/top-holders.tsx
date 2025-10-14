@@ -34,6 +34,7 @@ import { Switch } from "@/components/ui/switch";
 import { useSettings } from "@/contexts/SettingsContext";
 import ScrollTopButton from "@/components/ScrollTopButton";
 import JumpToPage from "@/components/JumpToPage";
+import DataCountMessage from "@/components/DataCountMessage";
 
 export default function TopHoldersPage() {
   const { t } = useI18n();
@@ -61,7 +62,7 @@ export default function TopHoldersPage() {
     balanceType,
     page
   );
-
+  
   const defaultCoinType: CoinType = "HIVE";
   const defaultBalanceType: BalanceType = "balance";
 
@@ -119,17 +120,17 @@ export default function TopHoldersPage() {
       const displayValue = formatBalance(holder.value, coinType);
 
       return {
-        [t("topholders.tablerank")]:
+        [t("topHolders.rank")]:
           holder.rank > 0 ? holder.rank : index + 1 + (page - 1) * pageSize,
-        [t("topholders.tableaccount")]: holder.account,
+        [t("topHolders.account")]: holder.account,
         [balanceType === "savings_balance"
-          ? t("topholders.tablesavings")
-          : t("topholders.tablebalance")]: displayValue,
+          ? t("topHolders.savings")
+          : t("topHolders.balance")]: displayValue,
       };
     });
 
   const exportFileName = `${t(
-    "export.topHolders"
+    "topHolders.export"
   )}_${coinType.toLowerCase()}.csv`;
 
   const HolderRow = ({
@@ -179,12 +180,12 @@ export default function TopHoldersPage() {
   const TableHeaderRow = () => (
     <TableHeader>
       <TableRow className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 text-left">
-        <TableHead>{t("table.rank")}</TableHead>
-        <TableHead>{t("table.account")}</TableHead>
+        <TableHead>{t("topHolders.rank")}</TableHead>
+        <TableHead>{t("topHolders.account")}</TableHead>
         <TableHead className="text-right pr-6">
           {balanceType === "savings_balance"
-            ? t("topholders.tablesavings")
-            : t("topholders.tablebalance")}
+            ? t("topHolders.savings")
+            : t("topHolders.balance")}
         </TableHead>
       </TableRow>
     </TableHeader>
@@ -228,9 +229,9 @@ export default function TopHoldersPage() {
               disabled={coinType === "VESTS"}
               className="border rounded px-2 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 w-full sm:w-auto"
             >
-              <option value="balance">{t("topholders.filtersbalance")}</option>
+              <option value="balance">{t("topHolders.filtersBalance")}</option>
               <option value="savings_balance">
-                {t("topholders.filterssavings")}
+                {t("topHolders.filtersSavings")}
               </option>
             </select>
           </div>
@@ -261,8 +262,15 @@ export default function TopHoldersPage() {
         </div>
       </div>
 
-      <div className="table-toolbar w-full flex">
-        <div className="ml-auto flex items-center space-x-4">
+      <div className="table-toolbar w-full flex flex-wrap items-center gap-4">
+        <div>
+          <DataCountMessage
+            count={filteredHolders.length}
+            dataType={t("topHolders.DataType")}
+          />
+        </div>
+
+        <div className="ml-auto flex items-center gap-x-4">
           {coinType === "VESTS" && (
             <div className="flex items-center space-x-2 rounded-md p-1.5">
               <Label
