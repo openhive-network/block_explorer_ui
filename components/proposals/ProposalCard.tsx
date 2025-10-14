@@ -44,7 +44,13 @@ type EnrichedProposal = ProcessedProposal & {
 // --- SUB-COMPONENTS ---
 
 // ICON-BASED MATCH INDICATORS ---
-const MatchIndicators = ({ matchDetails, t }: { matchDetails: MatchDetails, t: (key: string) => string }) => {
+const MatchIndicators = ({
+  matchDetails,
+  t,
+}: {
+  matchDetails: MatchDetails;
+  t: (key: string) => string;
+}) => {
   return (
     <div className="flex items-center flex-shrink-0 gap-2">
       {matchDetails.isCreatorMatch && (
@@ -232,13 +238,14 @@ export const ProposalCard = ({
   const remainingDays = Math.max(0, remainingMs / (1000 * 60 * 60 * 24));
 
   // If the proposal is inactive, remaining pay is equal to total. Else, we calculate it based on remaining days
-  const remainingHbdToBePaid = !proposal.isFunded && proposal.status=='inactive'
-  ? totalHbdToBePaid
-  : dailyPayValue * remainingDays;
+  const remainingHbdToBePaid =
+    !proposal.isFunded && proposal.status == "inactive"
+      ? totalHbdToBePaid
+      : dailyPayValue * remainingDays;
 
   const { hiveChain } = useHiveChainContext();
   const { dynamicGlobalData } = useDynamicGlobal() as any;
-  
+
   const voteValueInHp =
     dynamicGlobalData && hiveChain
       ? convertVestsToHP(
@@ -311,21 +318,27 @@ export const ProposalCard = ({
   const isReceiverVisible =
     proposal.receiver && proposal.receiver !== proposal.creator;
 
-    const highlightClass = useMemo(() => {
+  const highlightClass = useMemo(() => {
     if (!proposal.matchDetails) return "border-l-transparent";
-    if (proposal.matchDetails.isCreatorMatch) return "border-l-purple-500 dark:border-l-purple-400";
-    if (proposal.matchDetails.isVoterMatch) return "border-l-blue-500 dark:border-l-blue-400";
-    if (proposal.matchDetails.isTitleMatch) return "border-l-slate-500 dark:border-l-slate-400";
+    if (proposal.matchDetails.isCreatorMatch)
+      return "border-l-purple-500 dark:border-l-purple-400";
+    if (proposal.matchDetails.isVoterMatch)
+      return "border-l-blue-500 dark:border-l-blue-400";
+    if (proposal.matchDetails.isTitleMatch)
+      return "border-l-slate-500 dark:border-l-slate-400";
     return "border-l-transparent";
   }, [proposal.matchDetails]);
-  
+
   return (
     <TooltipProvider delayDuration={200}>
-      <div className={cn(
-        "group rounded-xl border bg-slate-50 shadow-sm transition-all duration-300 hover:shadow-lg dark:bg-theme dark:border-slate-800",
-        "border-l-4",
-        highlightClass
-      )}>
+      <div
+        id={`proposal-${proposal.proposal_id}`}
+        className={cn(
+          "group rounded-xl border bg-slate-50 shadow-sm transition-all duration-300 hover:shadow-lg dark:bg-theme dark:border-slate-800",
+          "border-l-4",
+          highlightClass
+        )}
+      >
         <div className="flex flex-col md:grid md:grid-cols-12">
           <div className="flex flex-col p-4 md:col-span-7 lg:col-span-8">
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-2">
@@ -342,7 +355,12 @@ export const ProposalCard = ({
                   #{proposal.proposal_id}
                 </span>
               </div>
-              {proposal.matchDetails && <MatchIndicators matchDetails={proposal.matchDetails} t={t} />}
+              {proposal.matchDetails && (
+                <MatchIndicators
+                  matchDetails={proposal.matchDetails}
+                  t={t}
+                />
+              )}
             </div>
             <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-base text-explorer-dark-gray">
               <div className="flex items-center gap-2">
@@ -627,10 +645,12 @@ export const ReturnProposalCard = ({
 
   return (
     <TooltipProvider delayDuration={200}>
-      <div className={cn(
-        "group rounded-xl border border-slate-200 bg-green-100/80 shadow-sm transition-all duration-300 hover:shadow-md dark:border-slate-800 dark:bg-slate-800/40 border-l-4",
-        highlightClass
-      )}>
+      <div
+        className={cn(
+          "group rounded-xl border border-slate-200 bg-green-100/80 shadow-sm transition-all duration-300 hover:shadow-md dark:border-slate-800 dark:bg-slate-800/40 border-l-4",
+          highlightClass
+        )}
+      >
         <div className="flex flex-col md:grid md:grid-cols-12">
           <div className="flex flex-col p-4 md:col-span-7 lg:col-span-8">
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-2">
@@ -647,7 +667,12 @@ export const ReturnProposalCard = ({
                   #{proposal.proposal_id}
                 </span>
               </div>
-              {proposal.matchDetails && <MatchIndicators matchDetails={proposal.matchDetails} t={t} />}
+              {proposal.matchDetails && (
+                <MatchIndicators
+                  matchDetails={proposal.matchDetails}
+                  t={t}
+                />
+              )}
             </div>
             <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-base text-explorer-dark-gray">
               <div className="flex items-center gap-2">
@@ -732,16 +757,16 @@ export const ReturnProposalCard = ({
               </Tooltip>
             </div>
             <div className="mt-4">
-                <ProposalVotesDialog proposalId={proposal.proposal_id}>
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                  >
-                    <Users className="mr-2 h-4 w-4" />
-                    {t("proposalCard.viewVotesButton")}
-                  </Button>
-                </ProposalVotesDialog>
-              </div>
+              <ProposalVotesDialog proposalId={proposal.proposal_id}>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                >
+                  <Users className="mr-2 h-4 w-4" />
+                  {t("proposalCard.viewVotesButton")}
+                </Button>
+              </ProposalVotesDialog>
+            </div>
           </div>
         </div>
       </div>
