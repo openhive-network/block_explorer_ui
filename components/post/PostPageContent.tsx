@@ -52,7 +52,7 @@ const PostPageContent = () => {
 
   return (
     <div className="page-container h-full">
-      <div className="mb-10">
+      <div className="bg-theme border-b p-5 rounded-t">
         <div className="text-3xl my-5">
           {title} by {author}
         </div>

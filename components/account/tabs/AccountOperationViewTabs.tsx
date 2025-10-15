@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
+import { Filter, ChartNoAxesCombined, List, MessageSquare, ArrowRightLeft } from "lucide-react";
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import OperationTabContent from "./operations/OperationsTabContent";
@@ -9,15 +10,21 @@ import { useTabs } from "@/contexts/TabsContext";
 import FilterSectionToggle from "../FilterSectionToggle";
 import { setLocalStorage, getLocalStorage } from "@/utils/LocalStorage";
 import { useI18n } from "@/i18n/i18n";
+import Explorer from "@/types/Explorer";
+import AnalyticsTabContent from "./analytics/AnalyticsTabContent";
 
-interface AccountOperationViewTabs {
+interface AccountOperationViewTabs {  
+  accountName: string;
   liveDataEnabled: boolean;
+  dynamicGlobalData?: Explorer.HeadBlockCardData;
 }
 
 const AccountOperationViewTabs: React.FC<AccountOperationViewTabs> = ({
   liveDataEnabled,
+  accountName,
+  dynamicGlobalData,
 }) => {
-  const { t } = useI18n(); 
+  const { t } = useI18n();
   const router = useRouter();
   const { activeTab, setActiveTab } = useTabs();
 
@@ -50,7 +57,7 @@ const AccountOperationViewTabs: React.FC<AccountOperationViewTabs> = ({
       }
     );
   };
-
+  
   const handleFiltersVisibility = () => {
     if (activeTab === "operations") {
       setIsOperationsFilterSectionVisible(!isOperationsFilterSectionVisible);
@@ -89,54 +96,92 @@ const AccountOperationViewTabs: React.FC<AccountOperationViewTabs> = ({
       onValueChange={handleTabChange}
       className="flex-col w-full"
     >
-      <TabsList className="flex w-full justify-between p-0">
-        <div className="bg-theme p-1 flex gap-2 rounded w-auto">
+      <TabsList className="flex w-full justify-between p-0 h-auto bg-muted text-muted-foreground">
+        <div className="flex items-center">
           <TabsTrigger
-            className="rounded cursor-pointer hover:bg-buttonHover"
             value="operations"
+            className="rounded-t-[3px] rounded-b-none cursor-pointer px-4 py-3 data-[state=active]:bg-theme data-[state=active]:text-foreground flex items-center gap-2"
           >
-            {t("accountOperationViewTabs.operations")}
+            <List className="h-4 w-4" />
+            <span className="hidden sm:inline">
+              {t("accountOperationViewTabs.operations")}
+            </span>
           </TabsTrigger>
           <TabsTrigger
-            className="rounded cursor-pointer hover:bg-buttonHover"
             value="comments"
+            className="rounded-t-[3px] rounded-b-none cursor-pointer px-4 py-3 data-[state=active]:bg-theme data-[state=active]:text-foreground flex items-center gap-2"
           >
-            {t("accountOperationViewTabs.comments")}
+            <MessageSquare className="h-4 w-4" />
+            <span className="hidden sm:inline">
+              {t("accountOperationViewTabs.comments")}
+            </span>
           </TabsTrigger>
           <TabsTrigger
-            className="rounded cursor-pointer hover:bg-buttonHover"
             value="interactions"
+            className="rounded-t-[3px] rounded-b-none cursor-pointer px-4 py-3 data-[state=active]:bg-theme data-[state=active]:text-foreground flex items-center gap-2"
           >
-            {t("accountOperationViewTabs.interactions")}
+            <ArrowRightLeft className="h-4 w-4" />
+            <span className="hidden sm:inline">
+              {t("accountOperationViewTabs.interactions")}
+            </span>
+          </TabsTrigger>
+          <TabsTrigger
+            value="analytics"
+            className="rounded-t-[3px] rounded-b-none cursor-pointer px-4 py-3 data-[state=active]:bg-theme data-[state=active]:text-foreground flex items-center gap-2"
+          >
+            <ChartNoAxesCombined className="h-4 w-6" color="#10b981" />
+            <span className="hidden sm:inline">
+              {t("accountOperationViewTabs.analytics")}
+            </span>
           </TabsTrigger>
         </div>
         <div>
-          <FilterSectionToggle
-            isFiltersActive={isFiltersActive}
-            toggleFilters={handleFiltersVisibility}
-          />
+          {activeTab !== "analytics" && (
+            <FilterSectionToggle
+              isFiltersActive={isFiltersActive}
+              toggleFilters={handleFiltersVisibility}
+            />
+          )}
         </div>
       </TabsList>
 
-      <OperationTabContent
-        isVisible={isOperationsFilterSectionVisible}
-        setIsVisible={setIsOperationsFilterSectionVisible}
-        setIsFiltersActive={setIsFiltersActive}
-        liveDataEnabled={liveDataEnabled}
-        isFiltersActive={isFiltersActive}
-      />
-      <CommentsTabContent
-        isVisible={isCommentsFilterSectionVisible}
-        setIsVisible={setIsCommentsFilterSectionVisible}
-        setIsFiltersActive={setIsFiltersActive}
-        isFiltersActive={isFiltersActive}
-      />
-      <InteractionsTabContent
-        isVisible={isInteractionsFilterSectionVisible}
-        setIsVisible={setIsInteractionsFilterSectionVisible}
-        setIsFiltersActive={setIsFiltersActive}
-        isFiltersActive={isFiltersActive}
-      />
+      <div className="bg-theme">
+        <div className="pt-4">
+          <OperationTabContent
+            isVisible={isOperationsFilterSectionVisible}
+            setIsVisible={setIsOperationsFilterSectionVisible}
+            setIsFiltersActive={setIsFiltersActive}
+            liveDataEnabled={liveDataEnabled}
+            isFiltersActive={isFiltersActive}
+          />
+        </div>
+        <div>
+          <CommentsTabContent
+            isVisible={isCommentsFilterSectionVisible}
+            setIsVisible={setIsCommentsFilterSectionVisible}
+            setIsFiltersActive={setIsFiltersActive}
+            isFiltersActive={isFiltersActive}
+  
+          />
+        </div>
+        <div>
+          <InteractionsTabContent
+            isVisible={isInteractionsFilterSectionVisible}
+            setIsVisible={setIsInteractionsFilterSectionVisible}
+            setIsFiltersActive={setIsFiltersActive}
+            isFiltersActive={isFiltersActive}
+          />
+        </div>
+        {activeTab === "analytics" && (
+          <div className="py-4">
+            <AnalyticsTabContent
+              dynamicGlobalData={dynamicGlobalData}
+              accountName={accountName}
+              liveDataEnabled={liveDataEnabled}
+            />
+          </div>
+        )}
+      </div>
     </Tabs>
   );
 };

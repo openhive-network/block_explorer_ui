@@ -1,11 +1,6 @@
 import React, { ReactNode } from "react";
 
-interface TooltipProps {
-  tooltipContent?: ReactNode;
-  tooltipTrigger?: ReactNode;
-  children?: ReactNode;
-  className?: string;
-}
+
 
 export const capitalizeFirst = (text: string) => {
   return text.charAt(0).toUpperCase() + text.slice(1);
@@ -137,7 +132,7 @@ export const changeHBDToDollarsDisplay = (hbd: string): string => {
  */
 export const grabNumericValue = (str: string): number => {
   // 1. Remove all non-numeric characters EXCEPT the decimal point (period or comma).
-  const cleaned = str.replace(/[^0-9.,-]/g, "");
+  const cleaned = str?.replace(/[^0-9.,-]/g, "");
 
   // 2. Handle negative sign: Keep only the first one (if present) and make sure it's at the beginning.
   let negative = "";
@@ -178,86 +173,78 @@ export const grabNumericValue = (str: string): number => {
 };
 
 /**
- * function to extract content from React Element returned by operations formatter
+ * Extracts plain text from a ReactNode tree.
+ * It can handle nested components, arrays, strings, and numbers.
+ * It can also be "taught" how to handle custom components, like i18n components,
+ * by passing in a translation function.
  *
- * @param element react node of the element
- * @returns content of the react element
+ * @param element The ReactNode to extract text from.
+ * @param i18n_t (Optional) Your app's translation function (`t`) to resolve i18n keys.
+ * @returns A single string of concatenated text.
  */
-export const extractTextFromReactElement = (element: ReactNode): string => {
-  if (typeof element === "string") {
-    let trimmed = element.trim();
-    if (trimmed.startsWith("@")) {
-      // No space after @
-      return trimmed;
-    } else {
-      // Add a space after other strings
-      return trimmed + " ";
-    }
+export const extractTextFromReactElement = (
+  element: ReactNode,
+  i18n_t?: (key: string, options?: any) => string
+): string => {
+  // 1. Handle null, undefined, and booleans first
+  if (element == null || typeof element === "boolean") {
+    return "";
   }
 
+  // 2. Handle primitives (strings and numbers)
+  if (typeof element === "string") {
+    const trimmed = element.trim();
+    if (!trimmed) return ""; // Return empty for whitespace-only strings
+    return trimmed.startsWith("@") ? trimmed : trimmed + " ";
+  }
   if (typeof element === "number") {
     return element.toString() + " ";
   }
 
-  if (!React.isValidElement(element)) {
-    return ""; // Or some other appropriate fallback
-  }
-
-  let text = "";
-
+  // 3. Handle arrays
   if (Array.isArray(element)) {
-    // Recursively process each element in the array
-    element.forEach((child) => {
-      text += extractTextFromReactElement(child);
-    });
-    return text;
+    return element
+      .map((child) => extractTextFromReactElement(child, i18n_t))
+      .join("");
   }
 
-  if (
-    React.isValidElement<TooltipProps>(element) &&
-    typeof element.type === "function" &&
-    element.props &&
-    element.props.tooltipContent != null &&
-    element.props.tooltipTrigger != null
-  ) {
-    let trigger = extractTextFromReactElement(element.props.tooltipTrigger);
-    let content = extractTextFromReactElement(
-      element.props.tooltipContent
-    ).trimEnd();
-    return `${trigger} (${content})`;
+  // 4. If it's not a valid element, we can't process it.
+  if (!React.isValidElement(element)) {
+    return "";
   }
 
-  if (
-    React.isValidElement<TooltipProps>(element) &&
-    element.type === React.Fragment
-  ) {
-    // Handle React Fragment ( <></> )
+  const { type, props } = element as React.ReactElement<{ [key: string]: any }>;
 
-    React.Children.forEach(element.props.children, (child) => {
-      text += extractTextFromReactElement(child);
-    });
-    return text;
-  }
+  // 5. Handle special components
+  if (typeof type === "function") {
+    // Case A: A full Tooltip with trigger AND content.
+    if (props.tooltipContent != null && props.tooltipTrigger != null) {
+      const trigger = extractTextFromReactElement(props.tooltipTrigger, i18n_t);
+      const content = extractTextFromReactElement(
+        props.tooltipContent,
+        i18n_t
+      ).trimEnd();
+      return `${trigger} (${content}) `;
+    }
 
-  if (
-    React.isValidElement<TooltipProps>(element) &&
-    typeof element.type === "string" &&
-    element.type === "span" &&
-    element.props &&
-    element.props.className === "text-link"
-  ) {
-    //It is a link
-    React.Children.forEach(element.props.children, (child) => {
-      text += extractTextFromReactElement(child);
-    });
-  } else {
-    if (React.isValidElement<TooltipProps>(element) && element.props) {
-      React.Children.forEach(element.props.children, (child) => {
-        text += extractTextFromReactElement(child);
-      });
+    // Case B: A component that uses `tooltipTrigger` as its primary text display.
+    if (props.tooltipTrigger != null) {
+      return extractTextFromReactElement(props.tooltipTrigger, i18n_t);
+    }
+
+    // Case C: i18n translation component.
+    if (i18n_t && props.i18nKey && typeof props.i18nKey === "string") {
+      return i18n_t(props.i18nKey) + " ";
     }
   }
-  return text;
+
+  // 6. Generic handler for all other elements with children (div, span, Fragment, etc.)
+  if (props.children) {
+    return extractTextFromReactElement(props.children, i18n_t);
+  }
+
+  // 7. Fallback for elements with no processable text/children
+  return "";
 };
 
 /**
@@ -266,4 +253,35 @@ export const extractTextFromReactElement = (element: ReactNode): string => {
  */
 export const formatHash = (hash: string): string => {
   return hash?.slice(0, 10);
+};
+
+/**
+ * Wraps a string in `="<value>"` to ensure spreadsheet software
+ * treats it as a literal string, preventing automatic type conversion (e.g., to a date).
+ * This is a serialization utility, not a formatting utility.
+ * @param value The pre-formatted string or number to wrap.
+ * @returns A CSV-safe string.
+ */
+export const asCsvString = (value: string | number | undefined | null) => {
+  if (value === null || typeof value === "undefined") return "";
+  return `="${String(value)}"`;
+};
+
+
+
+/**
+ * Validates if a string could be a valid Hive account name.
+ * - Length between 3 and 16 characters.
+ * - Starts with a letter.
+ * - Contains only letters, numbers, hyphens, or periods.
+ * - Ends with a letter or number.
+ * @param name The string to validate.
+ * @returns true if the string is a valid Hive account name format, false otherwise.
+ */
+export const isHiveAccountName = (name: string): boolean => {
+  if (!name) {
+    return false;
+  }
+  const regex = /^[a-z][a-z0-9-.]*$/;
+  return name.length >= 3 && name.length <= 16 && regex.test(name);
 };

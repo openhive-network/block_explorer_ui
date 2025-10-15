@@ -12,7 +12,6 @@ interface LocalizedInfo {
   zh: React.ReactNode;
   ja: React.ReactNode;
   ro: React.ReactNode;
-  ko: React.ReactNode;
   ar: React.ReactNode;
 }
 
@@ -69,6 +68,30 @@ const TransactionDetailsInfoEn: React.FC = () => (
     <li>You can change the setting from Data View in the main menu to view data in other formats</li>
   </ul>
 );
+// src/components/info/ProposalsInfo.tsx
+
+const ProposalsInfoEn: React.FC = () => (
+  <div>
+    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+      What is the Hive Proposal System (DHF)?
+    </h2>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">
+      The Hive Proposal System, also known as the Decentralized Hive Fund (DHF), is a community-driven funding mechanism that allocates a portion of the blockchain's daily inflation to projects that benefit the ecosystem.
+    </p>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">
+      Think of it as a decentralized grant program for the Hive ecosystem. Instead of a central committee, Hive stakeholders vote with their staked HIVE to decide which development, marketing, or community projects receive funding directly from the blockchain.
+    </p>
+    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+      Key Concepts:
+    </h3>
+    <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 mb-4">
+      <li><span className="font-medium">Funding Source:</span> The DHF is funded by 10% of Hive's daily inflation, creating a continuous "Daily Budget" to support the ecosystem's growth.</li>
+      <li><span className="font-medium">The Return Proposal (Funding Threshold):</span> This is a special proposal (ID #0) that receives all unallocated funds from the Daily Budget. For any other proposal to be funded, it must receive more votes than this Return Proposal. This mechanism sets a dynamic, community-decided funding threshold.</li>
+      <li><span className="font-medium">Stake-Weighted Voting:</span> Votes on proposals are weighted by Hive Power (staked HIVE). The more stake a user has, the more influence their vote carries, ensuring that those most invested in the platform have the greatest say in its development.</li>
+      <li><span className="font-medium">Open to All:</span> Any user can submit a proposal for a fee, making it a permissionless system for anyone to request funding for an idea that could add value to Hive.</li>
+    </ul>
+  </div>
+);
 
 // =================================================================
 // Spanish Components (Original)
@@ -120,6 +143,547 @@ const TransactionDetailsInfoEs: React.FC = () => (
   </ul>
 );
 
+const ProposalsInfoEs: React.FC = () => (
+  <div>
+    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+      ¿Qué es el Sistema de Propuestas de Hive (DHF)?
+    </h2>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">
+      El Sistema de Propuestas de Hive, también conocido como el Fondo Descentralizado de Hive (DHF), es un mecanismo de financiación impulsado por la comunidad que asigna una porción de la inflación diaria de la blockchain a proyectos que benefician al ecosistema.
+    </p>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">
+      Piénsalo como un programa de subvenciones descentralizado para el ecosistema de Hive. En lugar de un comité central, los stakeholders de Hive votan con su HIVE en stake para decidir qué proyectos de desarrollo, marketing o comunitarios reciben financiación directamente desde la blockchain.
+    </p>
+    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+      Conceptos Clave:
+    </h3>
+    <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 mb-4">
+      <li><span className="font-medium">Fuente de Financiación:</span> El DHF se financia con el 10% de la inflación diaria de Hive, creando un 'Presupuesto Diario' continuo para apoyar el crecimiento del ecosistema.</li>
+      <li><span className="font-medium">La Propuesta de Retorno (Umbral de Financiación):</span> Esta es una propuesta especial (ID #0) que recibe todos los fondos no asignados del Presupuesto Diario. Para que cualquier otra propuesta sea financiada, debe recibir más votos que esta Propuesta de Retorno. Este mecanismo establece un umbral de financiación dinámico decidido por la comunidad.</li>
+      <li><span className="font-medium">Votación Ponderada por Stake:</span> Los votos en las propuestas se ponderan por Hive Power (HIVE en stake). Cuanto más stake tiene un usuario, más influencia tiene su voto, asegurando que los más invertidos en la plataforma tengan la mayor voz en su desarrollo.</li>
+      <li><span className="font-medium">Abierto para Todos:</span> Cualquier usuario puede presentar una propuesta por una tarifa, convirtiéndolo en un sistema sin permisos para que cualquiera solicite financiación para una idea que pueda agregar valor a Hive.</li>
+    </ul>
+  </div>
+);
+
+//communities info
+//english
+const CommunitiesPageInfoEn: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      This page displays a list of Hive communities, showing their name, title, 
+      and subscriber count.
+    </li>
+    <li>
+      Use the search input to filter communities by name, and the sort dropdown 
+      to order communities by rank, activity, or other criteria.
+    </li>
+    <li>
+      Click on a community card to view detailed information or open the subscribers dialog.
+    </li>
+    <li>
+      Infinite scrolling loads more communities as you scroll down, ensuring 
+      easy browsing of the full community list.
+    </li>
+    <li>
+      This page helps users discover active communities and understand their 
+      size and engagement within the Hive ecosystem.
+    </li>
+  </ul>
+);
+//spanish
+const CommunitiesPageInfoEs: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Esta página muestra una lista de comunidades de Hive, con su nombre, título 
+      y número de suscriptores.
+    </li>
+    <li>
+      Usa la barra de búsqueda para filtrar comunidades por nombre, y el menú 
+      desplegable de orden para clasificarlas por rango, actividad u otros criterios.
+    </li>
+    <li>
+      Haz clic en una tarjeta de comunidad para ver información detallada o abrir 
+      el diálogo de suscriptores.
+    </li>
+    <li>
+      El desplazamiento infinito carga más comunidades a medida que bajas, lo que 
+      permite explorar fácilmente la lista completa.
+    </li>
+    <li>
+      Esta página ayuda a los usuarios a descubrir comunidades activas y conocer 
+      su tamaño y nivel de participación en el ecosistema Hive.
+    </li>
+  </ul>
+);
+//italian
+const CommunitiesPageInfoIt: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Questa pagina mostra un elenco delle comunità di Hive, con nome, titolo 
+      e numero di iscritti.
+    </li>
+    <li>
+      Usa la barra di ricerca per filtrare le comunità per nome e il menu a 
+      tendina per ordinarle per rango, attività o altri criteri.
+    </li>
+    <li>
+      Clicca su una scheda comunità per vedere maggiori informazioni o aprire 
+      la finestra degli iscritti.
+    </li>
+    <li>
+      Lo scorrimento infinito carica altre comunità mentre navighi verso il basso, 
+      rendendo semplice esplorare l’elenco completo.
+    </li>
+    <li>
+      Questa pagina aiuta gli utenti a scoprire comunità attive e a comprendere 
+      dimensioni e coinvolgimento all’interno dell’ecosistema Hive.
+    </li>
+  </ul>
+);
+//german
+const CommunitiesPageInfoDe: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Diese Seite zeigt eine Liste von Hive-Communities mit Name, Titel und 
+      Anzahl der Abonnenten.
+    </li>
+    <li>
+      Verwende das Suchfeld, um Communities nach Namen zu filtern, und das 
+      Sortiermenü, um sie nach Rang, Aktivität oder anderen Kriterien zu ordnen.
+    </li>
+    <li>
+      Klicke auf eine Community-Karte, um detaillierte Informationen anzuzeigen 
+      oder den Abonnenten-Dialog zu öffnen.
+    </li>
+    <li>
+      Mit dem unendlichen Scrollen werden beim Herunterblättern automatisch weitere 
+      Communities geladen, sodass die gesamte Liste leicht durchstöbert werden kann.
+    </li>
+    <li>
+      Diese Seite hilft Nutzern, aktive Communities zu entdecken und deren Größe 
+      und Engagement im Hive-Ökosystem zu verstehen.
+    </li>
+  </ul>
+);
+//portuguese
+const CommunitiesPageInfoPt: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Esta página exibe uma lista de comunidades do Hive, mostrando nome, título 
+      e número de assinantes.
+    </li>
+    <li>
+      Use a barra de pesquisa para filtrar comunidades pelo nome e o menu de 
+      ordenação para organizá-las por ranking, atividade ou outros critérios.
+    </li>
+    <li>
+      Clique em um cartão de comunidade para ver informações detalhadas ou abrir 
+      a janela de assinantes.
+    </li>
+    <li>
+      A rolagem infinita carrega mais comunidades conforme você desce, facilitando 
+      a navegação por toda a lista.
+    </li>
+    <li>
+      Esta página ajuda os usuários a descobrir comunidades ativas e entender 
+      seu tamanho e engajamento no ecossistema Hive.
+    </li>
+  </ul>
+);
+//french
+const CommunitiesPageInfoFr: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Cette page affiche une liste des communautés Hive, avec leur nom, titre 
+      et nombre d’abonnés.
+    </li>
+    <li>
+      Utilisez la barre de recherche pour filtrer les communautés par nom et 
+      le menu déroulant pour les trier par rang, activité ou autres critères.
+    </li>
+    <li>
+      Cliquez sur une carte de communauté pour voir plus d’informations ou ouvrir 
+      la fenêtre des abonnés.
+    </li>
+    <li>
+      Le défilement infini charge automatiquement plus de communautés lorsque 
+      vous descendez, ce qui permet d’explorer facilement la liste complète.
+    </li>
+    <li>
+      Cette page aide les utilisateurs à découvrir les communautés actives et à 
+      comprendre leur taille et leur engagement dans l’écosystème Hive.
+    </li>
+  </ul>
+);
+//polish
+const CommunitiesPageInfoPl: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Ta strona wyświetla listę społeczności Hive, pokazując ich nazwę, tytuł 
+      i liczbę subskrybentów.
+    </li>
+    <li>
+      Użyj pola wyszukiwania, aby filtrować społeczności według nazwy, oraz menu 
+      sortowania, aby uporządkować je według rankingu, aktywności lub innych kryteriów.
+    </li>
+    <li>
+      Kliknij kartę społeczności, aby zobaczyć szczegółowe informacje lub otworzyć 
+      okno subskrybentów.
+    </li>
+    <li>
+      Funkcja nieskończonego przewijania ładuje kolejne społeczności podczas 
+      przewijania w dół, co ułatwia przeglądanie pełnej listy.
+    </li>
+    <li>
+      Ta strona pomaga użytkownikom odkrywać aktywne społeczności i zrozumieć 
+      ich wielkość oraz zaangażowanie w ekosystemie Hive.
+    </li>
+  </ul>
+);
+//chinese
+const CommunitiesPageInfoZh: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      本页面显示 Hive 社区列表，包括社区名称、标题和订阅人数。
+    </li>
+    <li>
+      使用搜索栏按名称筛选社区，并通过排序菜单按照排名、活跃度或其他条件排序。
+    </li>
+    <li>
+      点击社区卡片即可查看详细信息或打开订阅者窗口。
+    </li>
+    <li>
+      向下滚动时会自动加载更多社区，方便浏览完整的社区列表。
+    </li>
+    <li>
+      此页面帮助用户发现活跃的社区，并了解其规模和在 Hive 生态系统中的参与度。
+    </li>
+  </ul>
+);
+//japanese
+const CommunitiesPageInfoJa: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      このページでは Hive のコミュニティ一覧を表示し、各コミュニティの名前、タイトル、
+      登録者数が確認できます。
+    </li>
+    <li>
+      検索バーを使って名前でコミュニティを絞り込み、並び替えメニューでランクや活動度
+      などの基準で並べ替えることができます。
+    </li>
+    <li>
+      コミュニティカードをクリックすると詳細情報を確認したり、登録者ダイアログを開いたり
+      できます。
+    </li>
+    <li>
+      無限スクロールにより下にスクロールすると自動的にさらに多くのコミュニティが読み込まれ、
+      一覧を簡単に探索できます。
+    </li>
+    <li>
+      このページはユーザーがアクティブなコミュニティを見つけ、その規模や Hive エコシステムに
+      おける参加度を理解するのに役立ちます。
+    </li>
+  </ul>
+);
+//romanian
+const CommunitiesPageInfoRo: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Această pagină afișează o listă a comunităților Hive, cu numele, titlul și 
+      numărul de abonați pentru fiecare.
+    </li>
+    <li>
+      Folosește bara de căutare pentru a filtra comunitățile după nume și meniul 
+      de sortare pentru a le ordona după rang, activitate sau alte criterii.
+    </li>
+    <li>
+      Fă clic pe o cartelă de comunitate pentru a vedea informații detaliate sau 
+      pentru a deschide fereastra abonaților.
+    </li>
+    <li>
+      Derularea infinită încarcă mai multe comunități pe măsură ce cobori, ceea ce 
+      face explorarea listei complete mai ușoară.
+    </li>
+    <li>
+      Această pagină îi ajută pe utilizatori să descopere comunități active și să 
+      înțeleagă dimensiunea și gradul lor de implicare în ecosistemul Hive.
+    </li>
+  </ul>
+);
+//arabic
+const CommunitiesPageInfoAr: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1" dir="rtl">
+    <li>
+      تعرض هذه الصفحة قائمة بمجتمعات Hive، مع اسم كل مجتمع، العنوان وعدد المشتركين فيه.
+    </li>
+    <li>
+      استخدم شريط البحث لتصفية المجتمعات حسب الاسم، وقائمة الفرز لترتيبها حسب الترتيب،
+      النشاط أو معايير أخرى.
+    </li>
+    <li>
+      اضغط على بطاقة المجتمع لعرض المزيد من المعلومات أو لفتح نافذة المشتركين.
+    </li>
+    <li>
+      يحمّل التمرير اللانهائي المزيد من المجتمعات عند النزول لأسفل، مما يسهل استكشاف القائمة الكاملة.
+    </li>
+    <li>
+      تساعد هذه الصفحة المستخدمين على اكتشاف المجتمعات النشطة وفهم حجمها ومستوى المشاركة
+      في نظام Hive البيئي.
+    </li>
+  </ul>
+);
+
+// --- English (en) ---
+const TopHoldersInfoEn: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      This page displays the top holders of Hive coins (HIVE, HBD, and VESTS),
+      ranked by their balance. Each row shows the account, rank, and value held.
+    </li>
+    <li>
+      Use the <Filter className="inline-block align-middle h-4 w-4" /> funnel
+      icon at the top to apply filters such as coin type and balance type.
+    </li>
+    <li>
+      For VESTS, equivalent Hive Power (HP) is shown to make the values easier
+      to interpret.
+    </li>
+    <li>
+      This list helps track large stakeholders and gain insights into
+      distribution across the Hive ecosystem.
+    </li>
+  </ul>
+);
+
+// --- Spanish (es) ---
+const TopHoldersInfoEs: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Esta página muestra a los principales poseedores de monedas de Hive
+      (HIVE, HBD y VESTS), ordenados por su saldo. Cada fila presenta la cuenta,
+      el rango y el valor mantenido.
+    </li>
+    <li>
+      Use el icono <Filter className="inline-block align-middle h-4 w-4" /> de
+      embudo en la parte superior para aplicar filtros como tipo de moneda y
+      tipo de saldo.
+    </li>
+    <li>
+      Para VESTS, se muestra el equivalente en Hive Power (HP) para facilitar la
+      interpretación.
+    </li>
+    <li>
+      Esta lista ayuda a rastrear a los grandes participantes y comprender la
+      distribución en el ecosistema Hive.
+    </li>
+  </ul>
+);
+
+// --- Italian (it) ---
+const TopHoldersInfoIt: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Questa pagina mostra i principali detentori di monete Hive (HIVE, HBD e
+      VESTS), ordinati per saldo. Ogni riga indica l’account, la posizione e il
+      valore detenuto.
+    </li>
+    <li>
+      Utilizza l’icona <Filter className="inline-block align-middle h-4 w-4" />{" "}
+      a forma di imbuto in alto per applicare filtri come tipo di moneta e tipo
+      di saldo.
+    </li>
+    <li>
+      Per i VESTS viene mostrato l’equivalente in Hive Power (HP) per
+      facilitare la comprensione dei valori.
+    </li>
+    <li>
+      L’elenco consente di monitorare i grandi stakeholder e di analizzare la
+      distribuzione nell’ecosistema Hive.
+    </li>
+  </ul>
+);
+
+// --- German (de) ---
+const TopHoldersInfoDe: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Diese Seite zeigt die größten Inhaber von Hive-Coins (HIVE, HBD und
+      VESTS), sortiert nach ihrem Guthaben. Jede Zeile enthält Konto, Rang und
+      Wert.
+    </li>
+    <li>
+      Verwenden Sie das{" "}
+      <Filter className="inline-block align-middle h-4 w-4" />{" "}
+      Trichtersymbol oben, um Filter wie Münztyp und Saldoart anzuwenden.
+    </li>
+    <li>
+      Für VESTS wird das entsprechende Hive Power (HP) angezeigt, um die Werte
+      leichter verständlich zu machen.
+    </li>
+    <li>
+      Diese Liste hilft, große Stakeholder zu verfolgen und die Verteilung im
+      Hive-Ökosystem besser zu verstehen.
+    </li>
+  </ul>
+);
+
+// --- Portuguese (pt) ---
+const TopHoldersInfoPt: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Esta página mostra os principais detentores de moedas Hive (HIVE, HBD e
+      VESTS), classificados pelo saldo. Cada linha apresenta a conta, a
+      classificação e o valor detido.
+    </li>
+    <li>
+      Use o ícone{" "}
+      <Filter className="inline-block align-middle h-4 w-4" /> de funil no topo
+      para aplicar filtros como tipo de moeda e tipo de saldo.
+    </li>
+    <li>
+      Para VESTS, o equivalente em Hive Power (HP) é exibido para facilitar a
+      interpretação.
+    </li>
+    <li>
+      Esta lista ajuda a acompanhar grandes participantes e a compreender a
+      distribuição no ecossistema Hive.
+    </li>
+  </ul>
+);
+
+// --- French (fr) ---
+const TopHoldersInfoFr: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Cette page affiche les principaux détenteurs de monnaies Hive (HIVE, HBD
+      et VESTS), classés par solde. Chaque ligne indique le compte, le rang et
+      la valeur détenue.
+    </li>
+    <li>
+      Utilisez l’icône{" "}
+      <Filter className="inline-block align-middle h-4 w-4" /> d’entonnoir en
+      haut pour appliquer des filtres tels que le type de monnaie et le type de
+      solde.
+    </li>
+    <li>
+      Pour les VESTS, l’équivalent en Hive Power (HP) est affiché afin de
+      faciliter la lecture des valeurs.
+    </li>
+    <li>
+      Cette liste permet de suivre les principaux acteurs et de mieux
+      comprendre la distribution dans l’écosystème Hive.
+    </li>
+  </ul>
+);
+
+// --- Polish (pl) ---
+const TopHoldersInfoPl: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Ta strona pokazuje największych posiadaczy monet Hive (HIVE, HBD i VESTS),
+      uporządkowanych według salda. Każdy wiersz zawiera konto, pozycję i wartość.
+    </li>
+    <li>
+      Użyj ikony{" "}
+      <Filter className="inline-block align-middle h-4 w-4" /> lejka u góry, aby
+      zastosować filtry takie jak typ monety i rodzaj salda.
+    </li>
+    <li>
+      Dla VESTS wyświetlany jest odpowiednik w Hive Power (HP), aby ułatwić
+      interpretację wartości.
+    </li>
+    <li>
+      Lista ta pomaga śledzić głównych uczestników i zrozumieć dystrybucję w
+      ekosystemie Hive.
+    </li>
+  </ul>
+);
+
+// --- Chinese (Simplified) (zh) ---
+const TopHoldersInfoZh: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      此页面显示 Hive 代币 (HIVE、HBD 和 VESTS) 的最大持有者，按余额排名。每行显示账户、排名和持有金额。
+    </li>
+    <li>
+      使用顶部的{" "}
+      <Filter className="inline-block align-middle h-4 w-4" /> 漏斗图标来筛选，如代币类型和余额类型。
+    </li>
+    <li>
+      对于 VESTS，会显示等值的 Hive Power (HP)，以便更容易理解。
+    </li>
+    <li>
+      此列表有助于跟踪主要持有人并了解 Hive 生态系统中的分布情况。
+    </li>
+  </ul>
+);
+
+// --- Japanese (ja) ---
+const TopHoldersInfoJa: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      このページでは、Hive コイン (HIVE、HBD、VESTS) の最大保有者が残高順に表示されます。各行にはアカウント、順位、保有額が表示されます。
+    </li>
+    <li>
+      上部の{" "}
+      <Filter className="inline-block align-middle h-4 w-4" /> ファネルアイコンを使って、コインの種類や残高の種類などでフィルタできます。
+    </li>
+    <li>
+      VESTS の場合は、理解しやすいように Hive Power (HP) に換算した値が表示されます。
+    </li>
+    <li>
+      このリストは主要なステークホルダーを追跡し、Hive エコシステムにおける分布を理解するのに役立ちます。
+    </li>
+  </ul>
+);
+
+// --- Romanian (ro) ---
+const TopHoldersInfoRo: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      Această pagină afișează principalii deținători de monede Hive (HIVE, HBD
+      și VESTS), ordonați după sold. Fiecare rând prezintă contul, rangul și
+      valoarea deținută.
+    </li>
+    <li>
+      Folosiți pictograma{" "}
+      <Filter className="inline-block align-middle h-4 w-4" /> de filtru din
+      partea de sus pentru a aplica filtre precum tipul monedei și tipul de sold.
+    </li>
+    <li>
+      Pentru VESTS, este afișat echivalentul în Hive Power (HP) pentru a facilita
+      interpretarea.
+    </li>
+    <li>
+      Această listă ajută la urmărirea marilor participanți și la înțelegerea
+      distribuției în ecosistemul Hive.
+    </li>
+  </ul>
+);
+
+// --- Arabic (ar) ---
+const TopHoldersInfoAr: React.FC = () => (
+  <ul className="list-disc list-inside space-y-1">
+    <li>
+      تعرض هذه الصفحة كبار الحائزين لعملات Hive (HIVE و HBD و VESTS)، مرتبين حسب
+      الرصيد. كل صف يُظهر الحساب والترتيب والقيمة المحتفظ بها.
+    </li>
+    <li>
+      استخدم أيقونة{" "}
+      <Filter className="inline-block align-middle h-4 w-4" /> على شكل قمع في
+      الأعلى لتطبيق فلاتر مثل نوع العملة ونوع الرصيد.
+    </li>
+    <li>
+      بالنسبة لـ VESTS، يتم عرض ما يعادله في Hive Power (HP) لتسهيل الفهم.
+    </li>
+    <li>
+      تساعد هذه القائمة على تتبع كبار المساهمين وفهم توزيع الحصص في نظام Hive البيئي.
+    </li>
+  </ul>
+);
+
+
 
 // =================================================================
 // 2. NEWLY ADDED LANGUAGE COMPONENTS
@@ -164,6 +728,29 @@ const TransactionDetailsInfoIt: React.FC = () => (
     </ul>
 );
 
+const ProposalsInfoIt: React.FC = () => (
+  <div>
+    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+      Cos'è il Sistema di Proposte di Hive (DHF)?
+    </h2>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">
+      Il Sistema di Proposte di Hive, noto anche come Fondo Decentralizzato di Hive (DHF), è un meccanismo di finanziamento guidato dalla comunità che assegna una parte dell'inflazione giornaliera della blockchain a progetti che beneficiano l'ecosistema.
+    </p>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">
+      Pensalo come un programma di sovvenzioni decentralizzato per l'ecosistema di Hive. Invece di un comitato centrale, gli stakeholder di Hive votano con i loro HIVE in stake per decidere quali progetti di sviluppo, marketing o comunitari ricevono finanziamenti direttamente dalla blockchain.
+    </p>
+    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+      Concetti Chiave:
+    </h3>
+    <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 mb-4">
+      <li><span className="font-medium">Fonte di Finanziamento:</span> Il DHF è finanziato dal 10% dell'inflazione giornaliera di Hive, creando un 'Budget Giornaliero' continuo per sostenere la crescita dell'ecosistema.</li>
+      <li><span className="font-medium">La Proposta di Ritorno (Soglia di Finanziamento):</span> Questa è una proposta speciale (ID #0) che riceve tutti i fondi non allocati dal Budget Giornaliero. Affinché qualsiasi altra proposta venga finanziata, deve ricevere più voti di questa Proposta di Ritorno. Questo meccanismo imposta una soglia di finanziamento dinamica decisa dalla comunità.</li>
+      <li><span className="font-medium">Voto Ponderato per Stake:</span> I voti sulle proposte sono ponderati in base all'Hive Power (HIVE in stake). Maggiore è lo stake di un utente, maggiore è l'influenza del suo voto, garantendo che coloro che hanno investito di più nella piattaforma abbiano la voce più importante nel suo sviluppo.</li>
+      <li><span className="font-medium">Aperto a Tutti:</span> Qualsiasi utente può presentare una proposta a pagamento, rendendolo un sistema senza permessi per chiunque voglia richiedere finanziamenti per un'idea che potrebbe aggiungere valore a Hive.</li>
+    </ul>
+  </div>
+);
+
 // --- German (de) ---
 const WitnessInfoDe: React.FC = () => (
   <div>
@@ -201,6 +788,29 @@ const TransactionDetailsInfoDe: React.FC = () => (
         <li>Klicken Sie auf den Umschalter, um die virtuellen Operationen in die unten stehende Operationstabelle aufzunehmen.</li>
         <li>Sie können die Einstellung von Datenansicht im Hauptmenü ändern, um Daten in anderen Formaten anzuzeigen.</li>
     </ul>
+);
+
+const ProposalsInfoDe: React.FC = () => (
+  <div>
+    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+      Was ist das Hive-Vorschlagssystem (DHF)?
+    </h2>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">
+      Das Hive-Vorschlagssystem, auch bekannt als der Dezentralisierte Hive-Fonds (DHF), ist ein von der Community gesteuerter Finanzierungsmechanismus, der einen Teil der täglichen Inflation der Blockchain für Projekte bereitstellt, die dem Ökosystem zugutekommen.
+    </p>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">
+      Stellen Sie es sich wie ein dezentrales Förderprogramm für das Hive-Ökosystem vor. Anstelle eines zentralen Komitees stimmen die Hive-Stakeholder mit ihrem gestaketen HIVE ab, um zu entscheiden, welche Entwicklungs-, Marketing- oder Community-Projekte direkt von der Blockchain finanziert werden.
+    </p>
+    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+      Schlüsselkonzepte:
+    </h3>
+    <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 mb-4">
+      <li><span className="font-medium">Finanzierungsquelle:</span> Der DHF wird durch 10 % der täglichen Inflation von Hive finanziert, wodurch ein kontinuierliches 'Tagesbudget' zur Unterstützung des Wachstums des Ökosystems entsteht.</li>
+      <li><span className="font-medium">Der Rückgabevorschlag (Finanzierungsschwelle):</span> Dies ist ein spezieller Vorschlag (ID #0), der alle nicht zugewiesenen Mittel aus dem Tagesbudget erhält. Damit ein anderer Vorschlag finanziert wird, muss er mehr Stimmen als dieser Rückgabevorschlag erhalten. Dieser Mechanismus setzt eine dynamische, von der Community beschlossene Finanzierungsschwelle.</li>
+      <li><span className="font-medium">Stake-gewichtete Abstimmung:</span> Die Stimmen für Vorschläge werden nach Hive Power (gestaketem HIVE) gewichtet. Je mehr Stake ein Benutzer hat, desto mehr Einfluss hat seine Stimme, was sicherstellt, dass diejenigen, die am meisten in die Plattform investiert haben, das größte Mitspracherecht bei ihrer Entwicklung haben.</li>
+      <li><span className="font-medium">Offen für Alle:</span> Jeder Benutzer kann gegen eine Gebühr einen Vorschlag einreichen, was es zu einem erlaubnisfreien System macht, in dem jeder eine Finanzierung für eine Idee beantragen kann, die Hive einen Mehrwert bringen könnte.</li>
+    </ul>
+  </div>
 );
 
 // --- Portuguese (pt) ---
@@ -242,6 +852,29 @@ const TransactionDetailsInfoPt: React.FC = () => (
     </ul>
 );
 
+const ProposalsInfoPt: React.FC = () => (
+  <div>
+    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+      O que é o Sistema de Propostas da Hive (DHF)?
+    </h2>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">
+      O Sistema de Propostas da Hive, também conhecido como Fundo Descentralizado da Hive (DHF), é um mecanismo de financiamento impulsionado pela comunidade que aloca uma parte da inflação diária da blockchain para projetos que beneficiam o ecossistema.
+    </p>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">
+      Pense nele como um programa de subsídios descentralizado para o ecossistema da Hive. Em vez de um comitê central, os stakeholders da Hive votam com seu HIVE em stake para decidir quais projetos de desenvolvimento, marketing ou comunitários recebem financiamento diretamente da blockchain.
+    </p>
+    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+      Conceitos-Chave:
+    </h3>
+    <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 mb-4">
+      <li><span className="font-medium">Fonte de Financiamento:</span> O DHF é financiado por 10% da inflação diária da Hive, criando um 'Orçamento Diário' contínuo para apoiar o crescimento do ecossistema.</li>
+      <li><span className="font-medium">A Proposta de Retorno (Limite de Financiamento):</span> Esta é uma proposta especial (ID #0) que recebe todos os fundos não alocados do Orçamento Diário. Para que qualquer outra proposta seja financiada, ela deve receber mais votos do que esta Proposta de Retorno. Este mecanismo estabelece um limite de financiamento dinâmico decidido pela comunidade.</li>
+      <li><span className="font-medium">Votação Ponderada por Stake:</span> Os votos nas propostas são ponderados pelo Hive Power (HIVE em stake). Quanto mais stake um usuário tiver, mais influência seu voto carrega, garantindo que aqueles mais investidos na plataforma tenham a maior voz em seu desenvolvimento.</li>
+      <li><span className="font-medium">Aberto a Todos:</span> Qualquer usuário pode enviar uma proposta mediante o pagamento de uma taxa, tornando-o um sistema sem permissão para que qualquer pessoa solicite financiamento para uma ideia que possa agregar valor à Hive.</li>
+    </ul>
+  </div>
+);
+
 // --- French (fr) ---
 const WitnessInfoFr: React.FC = () => (
   <div>
@@ -279,6 +912,28 @@ const TransactionDetailsInfoFr: React.FC = () => (
         <li>Cliquez sur le commutateur pour inclure les opérations virtuelles dans le tableau des opérations ci-dessous.</li>
         <li>Vous pouvez modifier le paramètre de Vue des Données dans le menu principal pour afficher les données dans d'autres formats.</li>
     </ul>
+);
+const ProposalsInfoFr: React.FC = () => (
+  <div>
+    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+      Qu'est-ce que le Système de Propositions de Hive (DHF) ?
+    </h2>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">
+      Le Système de Propositions de Hive, également connu sous le nom de Fonds Décentralisé de Hive (DHF), est un mécanisme de financement communautaire qui alloue une partie de l'inflation quotidienne de la blockchain à des projets qui bénéficient à l'écosystème.
+    </p>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">
+      Considérez-le comme un programme de subventions décentralisé pour l'écosystème Hive. Au lieu d'un comité central, les parties prenantes de Hive votent avec leur HIVE en stake pour décider quels projets de développement, de marketing ou communautaires reçoivent un financement directement de la blockchain.
+    </p>
+    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+      Concepts Clés :
+    </h3>
+    <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 mb-4">
+      <li><span className="font-medium">Source de Financement :</span> Le DHF est financé par 10 % de l'inflation quotidienne de Hive, créant un 'Budget Quotidien' continu pour soutenir la croissance de l'écosystème.</li>
+      <li><span className="font-medium">La Proposition de Retour (Seuil de Financement) :</span> C'est une proposition spéciale (ID #0) qui reçoit tous les fonds non alloués du Budget Quotidien. Pour qu'une autre proposition soit financée, elle doit recevoir plus de votes que cette Proposition de Retour. Ce mécanisme établit un seuil de financement dynamique décidé par la communauté.</li>
+      <li><span className="font-medium">Vote Pondéré par le Stake :</span> Les votes sur les propositions sont pondérés par le Hive Power (HIVE en stake). Plus un utilisateur a de stake, plus son vote a d'influence, garantissant que ceux qui sont le plus investis dans la plateforme ont le plus leur mot à dire dans son développement.</li>
+      <li><span className="font-medium">Ouvert à Tous :</span> Tout utilisateur peut soumettre une proposition moyennant des frais, ce qui en fait un système sans permission pour quiconque souhaite demander un financement pour une idée qui pourrait ajouter de la valeur à Hive.</li>
+    </ul>
+  </div>
 );
 
 // --- Polish (pl) ---
@@ -319,7 +974,28 @@ const TransactionDetailsInfoPl: React.FC = () => (
         <li>Możesz zmienić ustawienie z Widoku Danych w menu głównym, aby wyświetlić dane w innych formatach.</li>
     </ul>
 );
-
+const ProposalsInfoPl: React.FC = () => (
+  <div>
+    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+      Czym jest System Propozycji Hive (DHF)?
+    </h2>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">
+      System Propozycji Hive, znany również jako Zdecentralizowany Fundusz Hive (DHF), to mechanizm finansowania napędzany przez społeczność, który przeznacza część dziennej inflacji blockchain na projekty przynoszące korzyści ekosystemowi.
+    </p>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">
+      Pomyśl o tym jak o zdecentralizowanym programie grantowym dla ekosystemu Hive. Zamiast centralnego komitetu, interesariusze Hive głosują za pomocą swojego HIVE w stake, aby zdecydować, które projekty rozwojowe, marketingowe lub społecznościowe otrzymają finansowanie bezpośrednio z blockchaina.
+    </p>
+    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+      Kluczowe Pojęcia:
+    </h3>
+    <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 mb-4">
+      <li><span className="font-medium">Źródło Finansowania:</span> DHF jest finansowany z 10% dziennej inflacji Hive, tworząc ciągły 'Budżet Dzienny' na wspieranie wzrostu ekosystemu.</li>
+      <li><span className="font-medium">Propozycja Zwrotna (Próg Finansowania):</span> Jest to specjalna propozycja (ID #0), która otrzymuje wszystkie nieprzydzielone środki z Budżetu Dziennego. Aby jakakolwiek inna propozycja została sfinansowana, musi otrzymać więcej głosów niż ta Propozycja Zwrotna. Ten mechanizm ustala dynamiczny, decydowany przez społeczność próg finansowania.</li>
+      <li><span className="font-medium">Głosowanie Ważone Stakiem:</span> Głosy na propozycje są ważone przez Hive Power (HIVE w stake). Im więcej stake'u ma użytkownik, tym większy wpływ ma jego głos, zapewniając, że najbardziej zaangażowani w platformę mają największy wpływ na jej rozwój.</li>
+      <li><span className="font-medium">Otwarty dla Wszystkich:</span> Każdy użytkownik może złożyć propozycję za opłatą, co czyni go systemem bez pozwoleń dla każdego, kto chce ubiegać się o finansowanie pomysłu, który mógłby dodać wartość do Hive.</li>
+    </ul>
+  </div>
+);
 // --- Chinese (zh) ---
 const WitnessInfoZh: React.FC = () => (
   <div>
@@ -358,7 +1034,28 @@ const TransactionDetailsInfoZh: React.FC = () => (
         <li>您可以从主菜单的数据视图更改设置，以其他格式查看数据。</li>
     </ul>
 );
-
+const ProposalsInfoZh: React.FC = () => (
+  <div>
+    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+      什么是 Hive 提案系统 (DHF)？
+    </h2>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">
+      Hive 提案系统，也称为去中心化 Hive 基金 (DHF)，是一个由社区驱动的资金机制，它将区块链每日通胀的一部分分配给有益于生态系统的项目。
+    </p>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">
+      可以把它看作是 Hive 生态系统的一个去中心化资助计划。没有中央委员会，而是由 Hive 的利益相关者用他们质押的 HIVE 进行投票，以决定哪些开发、营销或社区项目能直接从区块链获得资金。
+    </p>
+    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+      核心概念：
+    </h3>
+    <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 mb-4">
+      <li><span className="font-medium">资金来源：</span>DHF 的资金来自 Hive 每日通胀的 10%，形成一个持续的“每日预算”，以支持生态系统的增长。</li>
+      <li><span className="font-medium">返回提案（资金门槛）：</span>这是一个特殊的提案（ID #0），它会接收每日预算中所有未分配的资金。任何其他提案想要获得资助，其得票数必须超过这个返回提案。该机制设定了一个由社区决定的动态资金门槛。</li>
+      <li><span className="font-medium">权益加权投票：</span>提案的投票由 Hive Power（质押的 HIVE）加权。用户持有的权益越多，其投票的影响力就越大，确保了对平台投入最多的人在其发展中拥有最大的发言权。</li>
+      <li><span className="font-medium">向所有人开放：</span>任何用户只需支付一笔费用即可提交提案，这是一个无需许可的系统，任何人都可以为一个可能为 Hive 增加价值的想法申请资金。</li>
+    </ul>
+  </div>
+);
 // --- Japanese (ja) ---
 const WitnessInfoJa: React.FC = () => (
   <div>
@@ -397,7 +1094,28 @@ const TransactionDetailsInfoJa: React.FC = () => (
         <li>メインメニューのデータビューから設定を変更して、他の形式でデータを表示できます。</li>
     </ul>
 );
-
+const ProposalsInfoJa: React.FC = () => (
+  <div>
+    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+      Hive提案システム（DHF）とは何ですか？
+    </h2>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">
+      Hive提案システムは、分散型Hive基金（DHF）としても知られ、コミュニティ主導の資金調達メカニズムであり、ブロックチェーンの毎日のインフレの一部をエコシステムに利益をもたらすプロジェクトに割り当てます。
+    </p>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">
+      Hiveエコシステムのための分散型助成金プログラムと考えてください。中央委員会ではなく、HiveのステークホルダーがステークしたHIVEで投票し、どの開発、マーケティング、またはコミュニティプロジェクトがブロックチェーンから直接資金を受け取るかを決定します。
+    </p>
+    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+      主な概念：
+    </h3>
+    <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 mb-4">
+      <li><span className="font-medium">資金源：</span>DHFはHiveの毎日のインフレの10％から資金を供給され、エコシステムの成長を支援するための継続的な「日次予算」を作成します。</li>
+      <li><span className="font-medium">リターン提案（資金調達の閾値）：</span>これは、日次予算から未割り当ての資金をすべて受け取る特別な提案（ID #0）です。他の提案が資金提供を受けるためには、このリターン提案よりも多くの票を獲得する必要があります。このメカニズムは、コミュニティによって決定される動的な資金調達の閾値を設定します。</li>
+      <li><span className="font-medium">ステーク加重投票：</span>提案への投票はHiveパワー（ステークしたHIVE）によって加重されます。ユーザーが持つステークが多いほど、その投票の影響力は大きくなり、プラットフォームに最も投資している人々がその開発において最も大きな発言権を持つことを保証します。</li>
+      <li><span className="font-medium">誰にでも公開：</span>どのユーザーも手数料を支払うことで提案を提出でき、Hiveに価値をもたらす可能性のあるアイデアに対して誰でも資金を要求できるパーミッションレスなシステムです。</li>
+    </ul>
+  </div>
+);
 // --- Romanian (ro) ---
 const WitnessInfoRo: React.FC = () => (
   <div>
@@ -436,46 +1154,30 @@ const TransactionDetailsInfoRo: React.FC = () => (
         <li>Puteți schimba setarea din Vizualizare Date în meniul principal pentru a vizualiza datele în alte formate.</li>
     </ul>
 );
-
-// --- Korean (ko) ---
-const WitnessInfoKo: React.FC = () => (
+const ProposalsInfoRo: React.FC = () => (
   <div>
-    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">하이브 증인이란 무엇인가요?</h2>
-    <p className="text-gray-700 dark:text-gray-300 mb-4">하이브 증인은 체인이 무결하게 운영되도록 보장하는 선출된 대표자이며, 주요 결정을 통해 그 방향을 적극적으로 형성합니다.</p>
-    <p className="text-gray-700 dark:text-gray-300 mb-4">하이브를 번창하는 분산형 도시라고 상상해 보세요. 증인은 시의회, 건설팀, 보안군을 모두 합친 존재입니다.<br />그들은 도시를 운영(블록 생성, 노드 유지)할 뿐만 아니라, 도로 건설(매개변수 설정)과 도시 통화의 가치(가격 피드)와 같은 중요한 정책도 결정합니다.</p>
-    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">주요 기능:</h3>
+    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+      Ce este Sistemul de Propuneri Hive (DHF)?
+    </h2>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">
+      Sistemul de Propuneri Hive, cunoscut și ca Fondul Descentralizat Hive (DHF), este un mecanism de finanțare condus de comunitate care alocă o parte din inflația zilnică a blockchain-ului către proiecte ce aduc beneficii ecosistemului.
+    </p>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">
+      Gândiți-vă la el ca la un program de granturi descentralizat pentru ecosistemul Hive. În loc de un comitet central, deținătorii de interese (stakeholders) din Hive votează cu HIVE-ul lor pus la stake pentru a decide ce proiecte de dezvoltare, marketing sau comunitare primesc finanțare direct de pe blockchain.
+    </p>
+    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+      Concepte Cheie:
+    </h3>
     <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 mb-4">
-      <li><span className="font-medium">블록 생성:</span> 하이브 블록체인에서 새로운 블록을 생성하고, 트랜잭션을 확인하며, 네트워크를 보호할 책임이 있습니다.</li>
-      <li><span className="font-medium">네트워크 유지보수:</span> 하이브 네트워크가 안정적으로 운영되도록 강력한 서버를 운영하고 유지합니다.</li>
-      <li><span className="font-medium">매개변수 설정:</span> 블록 크기, 계정 생성 수수료, HBD 이자율(APR) 등 하이브 블록체인의 주요 매개변수 설정에 참여합니다.</li>
-      <li><span className="font-medium">가격 피드:</span> 분산형 스테이블코인 운영에 필수적인 HIVE와 HBD의 가격 피드를 제공합니다.</li>
+      <li><span className="font-medium">Sursa de Finanțare:</span> DHF este finanțat din 10% din inflația zilnică a Hive, creând un 'Buget Zilnic' continuu pentru a sprijini creșterea ecosistemului.</li>
+      <li><span className="font-medium">Propunerea de Retur (Pragul de Finanțare):</span> Aceasta este o propunere specială (ID #0) care primește toate fondurile nealocate din Bugetul Zilnic. Pentru ca orice altă propunere să fie finanțată, trebuie să primească mai multe voturi decât această Propunere de Retur. Acest mecanism stabilește un prag de finanțare dinamic, decis de comunitate.</li>
+      <li><span className="font-medium">Vot Ponderat cu Miza (Stake):</span> Voturile pentru propuneri sunt ponderate în funcție de Hive Power (HIVE pus la stake). Cu cât un utilizator are o miză mai mare, cu atât votul său are mai multă influență, asigurând că cei mai investiți în platformă au cel mai important cuvânt de spus în dezvoltarea sa.</li>
+      <li><span className="font-medium">Deschis Tuturor:</span> Orice utilizator poate trimite o propunere contra unei taxe, făcându-l un sistem fără permisiuni pentru oricine dorește să solicite finanțare pentru o idee care ar putea adăuga valoare Hive.</li>
     </ul>
   </div>
 );
-const BlocksInfoKo: React.FC = () => (
-  <ul className="list-disc list-inside">
-    <li>이 페이지는 하이브 블록체인의 블록 목록을 최신순으로 표시합니다. 각 행은 단일 블록을 나타내며 그에 대한 주요 정보를 제공합니다.</li>
-    <li>각 행 끝에 있는 <ChevronDown className="inline-block align-middle h-4 w-4" /> 아이콘을 클릭하여 블록 오퍼레이션에 대한 추가 세부 정보를 볼 수 있습니다.</li>
-    <li>상단의 <Filter className="inline-block align-middle h-4 w-4" /> 깔때기 아이콘을 사용하여 필터에 접근하고 다른 기준에 따라 블록 목록을 좁힐 수 있습니다.</li>
-    <li>보상 값 위로 마우스를 가져가면 해당 HP 값을 볼 수 있습니다.</li>
-  </ul>
-);
-const BalanceHistoryInfoKo: React.FC = () => (
-    <ul className="list-disc list-inside">
-        <li>이 페이지는 선택된 코인 및 기간에 대한 특정 하이브 계정의 잔액 내역을 표시합니다. 시간이 지남에 따라 잔액이 어떻게 변했는지 시각적으로 보여줍니다. 기본적으로 지난 한 달간의 결과가 표시됩니다.</li>
-        <li>상단의 <Filter className="inline-block align-middle h-4 w-4" /> 아이콘을 클릭하여 필터에 접근하고 기록을 좁힐 수 있습니다.</li>
-        <li>차트는 일별 잔액 변화를 보여주기 위해 일 단위로 세분화된 잔액을 표시합니다.</li>
-        <li>차트 아래의 슬라이더를 사용하여 특정 시간 간격으로 확대하고 초점을 맞춰 더 자세한 보기를 할 수 있습니다.</li>
-    </ul>
-);
-const TransactionDetailsInfoKo: React.FC = () => (
-    <ul className="list-disc list-inside">
-        <li>이 페이지는 특정 트랜잭션 해시의 트랜잭션 세부 정보를 표시합니다.</li>
-        <li>아래 오퍼레이션 테이블에 가상 오퍼레이션을 포함하려면 토글 스위치를 클릭하세요.</li>
-        <li>메인 메뉴의 데이터 보기에서 설정을 변경하여 다른 형식으로 데이터를 볼 수 있습니다.</li>
-    </ul>
-);
 
+// --- Arabic (ar) ---
 const WitnessInfoAr: React.FC = () => (
     <div>
       <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
@@ -526,6 +1228,28 @@ const TransactionDetailsInfoAr: React.FC = () => (
     </ul>
 );
 
+export const ProposalsInfoAr: React.FC = () => (
+  <div>
+    <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+      ما هو نظام مقترحات Hive (DHF)؟
+    </h2>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">
+      نظام مقترحات Hive، المعروف أيضًا باسم صندوق Hive اللامركزي (DHF)، هو آلية تمويل يقودها المجتمع تخصص جزءًا من التضخم اليومي للبلوك تشين للمشاريع التي تفيد النظام البيئي.
+    </p>
+    <p className="text-gray-700 dark:text-gray-300 mb-4">
+      فكر فيه كبرنامج منح لامركزي لنظام Hive البيئي. بدلاً من لجنة مركزية، يصوت أصحاب المصلحة في Hive باستخدام عملات HIVE المكدسة لديهم (المحصصة) لتحديد أي من مشاريع التطوير أو التسويق أو المشاريع المجتمعية تتلقى تمويلاً مباشراً من البلوك تشين.
+    </p>
+    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+      المفاهيم الأساسية:
+    </h3>
+    <ul className="list-disc list-inside text-gray-700 dark:text-gray-300 mb-4">
+      <li><span className="font-medium">مصدر التمويل:</span> يتم تمويل DHF بنسبة 10٪ من التضخم اليومي لـ Hive، مما يخلق "ميزانية يومية" مستمرة لدعم نمو النظام البيئي.</li>
+      <li><span className="font-medium">مقترح الإرجاع (عتبة التمويل):</span> هذا مقترح خاص (معرف #0) يتلقى جميع الأموال غير المخصصة من الميزانية اليومية. لكي يتم تمويل أي مقترح آخر، يجب أن يحصل على أصوات أكثر من مقترح الإرجاع هذا. هذه الآلية تضع عتبة تمويل ديناميكية يقررها المجتمع.</li>
+      <li><span className="font-medium">التصويت المرجح بالحصص:</span> يتم ترجيح الأصوات على المقترحات بواسطة قوة Hive (HIVE المكدسة). كلما زادت حصة المستخدم، زاد تأثير صوته، مما يضمن أن يكون للمستثمرين الأكبر في المنصة القول الفصل في تطويرها.</li>
+      <li><span className="font-medium">مفتوح للجميع:</span> يمكن لأي مستخدم تقديم مقترح مقابل رسوم، مما يجعله نظامًا لا يتطلب إذنًا لأي شخص لطلب تمويل لفكرة يمكن أن تضيف قيمة إلى Hive.</li>
+    </ul>
+  </div>
+);
 
 // =================================================================
 // 3. Final Populated Object
@@ -542,7 +1266,6 @@ const pageTitlesInfo: InfoContent = {
     zh: <WitnessInfoZh />,
     ja: <WitnessInfoJa />,
     ro: <WitnessInfoRo />,
-    ko: <WitnessInfoKo />,
     ar: <WitnessInfoAr/>
   },
   "pageTitle.hiveBlocks": {
@@ -556,7 +1279,6 @@ const pageTitlesInfo: InfoContent = {
     zh: <BlocksInfoZh />,
     ja: <BlocksInfoJa />,
     ro: <BlocksInfoRo />,
-    ko: <BlocksInfoKo />,
     ar: <BlocksInfoAr/>
   },
   "pageTitle.balanceHistory": {
@@ -570,7 +1292,6 @@ const pageTitlesInfo: InfoContent = {
     zh: <BalanceHistoryInfoZh />,
     ja: <BalanceHistoryInfoJa />,
     ro: <BalanceHistoryInfoRo />,
-    ko: <BalanceHistoryInfoKo />,
     ar : <BalanceHistoryInfoAr/>
   },
   "pageTitle.transactionDetails": {
@@ -584,9 +1305,50 @@ const pageTitlesInfo: InfoContent = {
     zh: <TransactionDetailsInfoZh />,
     ja: <TransactionDetailsInfoJa />,
     ro: <TransactionDetailsInfoRo />,
-    ko: <TransactionDetailsInfoKo />,
     ar: <TransactionDetailsInfoAr/>
   },
+  "pageTitle.proposals": {
+    en: <ProposalsInfoEn />,
+    es: <ProposalsInfoEs />,
+    it: <ProposalsInfoIt />,
+    de: <ProposalsInfoDe />,
+    pt: <ProposalsInfoPt />,
+    fr: <ProposalsInfoFr />,
+    pl: <ProposalsInfoPl />,
+    zh: <ProposalsInfoZh />,
+    ja: <ProposalsInfoJa />,
+    ro: <ProposalsInfoRo />,
+    ar: <ProposalsInfoAr/>
+  },
+  "pageTitle.topHolders": {
+  en: <TopHoldersInfoEn />,
+  es: <TopHoldersInfoEs />,
+  it: <TopHoldersInfoIt />,
+  de: <TopHoldersInfoDe />,
+  pt: <TopHoldersInfoPt />,
+  fr: <TopHoldersInfoFr />,
+  pl: <TopHoldersInfoPl />,
+  zh: <TopHoldersInfoZh />,
+  ja: <TopHoldersInfoJa />,
+  ro: <TopHoldersInfoRo />,
+  ar: <TopHoldersInfoAr />
+},
+  "pageTitle.communities": {
+    en: <CommunitiesPageInfoEn />,
+    es: <CommunitiesPageInfoEs />,
+    it: <CommunitiesPageInfoIt />,
+    de: <CommunitiesPageInfoDe />,
+    pt: <CommunitiesPageInfoPt />,
+    fr: <CommunitiesPageInfoFr />,
+    pl: <CommunitiesPageInfoPl />,
+    zh: <CommunitiesPageInfoZh />,
+    ja: <CommunitiesPageInfoJa />,
+    ro: <CommunitiesPageInfoRo />,
+    ar: <CommunitiesPageInfoAr />
+  },
+
+
+  
 };
 
 export default pageTitlesInfo;

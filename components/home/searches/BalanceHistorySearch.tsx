@@ -17,7 +17,7 @@ import { defaultBalanceHistorySearchParams } from "@/pages/balanceHistory/[accou
 import { useI18n } from "@/i18n/i18n";
 
 const COIN_TYPES = ["HIVE", "VESTS", "HBD"];
-const DEFAULT_COIN_TYPE = "HIVE";
+export const DEFAULT_COIN_TYPE = "HIVE";
 
 const BalanceHistorySearch = ({
   paramsState,
@@ -26,11 +26,13 @@ const BalanceHistorySearch = ({
   setIsVisible,
   setIsFiltersActive,
   isFiltersActive,
+  coinType,
+  setCoinType,
 }: any) => {
   const { t } = useI18n();
-  const [coinType, setCoinType] = useState<string>(
-    paramsState.coinType ?? DEFAULT_COIN_TYPE
-  ); // State to store the selected coin name
+  // const [coinType, setCoinType] = useState<string>(
+  //   paramsState.coinType ?? DEFAULT_COIN_TYPE
+  // ); // State to store the selected coin name
   const [includeSavings, setIncludeSavings] = useState<string>(
     paramsState.includeSavings
   );
@@ -171,7 +173,9 @@ const BalanceHistorySearch = ({
       paramsState.fromBlock ||
       paramsState.toBlock ||
       paramsState.fromDate ||
-      paramsState.toDate
+      paramsState.toDate ||
+      paramsState.coinType !== DEFAULT_COIN_TYPE ||
+      paramsState.includeSavings !== "yes"
   );
 
   useEffect(() => {

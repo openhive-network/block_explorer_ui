@@ -10,7 +10,6 @@ import {
   convertBooleanArrayToIds,
   convertOperationResultsToTableOperations,
 } from "@/lib/utils";
-import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
 import useBlockData from "@/hooks/api/blockPage/useBlockData";
 import useBlockOperations from "@/hooks/api/common/useBlockOperations";
 import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
@@ -27,7 +26,8 @@ import ScrollTopButton from "@/components/ScrollTopButton";
 import OperationsTable from "@/components/OperationsTable";
 import CustomPagination from "@/components/CustomPagination";
 import useBlockId from "@/hooks/common/useBlockId";
-import { useI18n } from "@/i18n/i18n"; 
+import { useI18n } from "@/i18n/i18n";
+import { useSettings } from "@/contexts/SettingsContext";
 
 interface BlockSearchParams {
   blockId?: number;
@@ -37,6 +37,7 @@ interface BlockSearchParams {
   keyContent?: string;
   setOfKeys?: string[];
   trxId?: string;
+  opId ?: number;
 }
 
 const defaultParams: BlockSearchParams = {
@@ -83,7 +84,7 @@ export default function Block() {
     ["blockId"]
   );
 
-  const { settings } = useUserSettingsContext();
+  const { settings } = useSettings();
   const { operationsCountInBlock, countLoading } =
     useOperationsCountInBlock(blockId);
   const { blockDetails, loading } = useBlockData(blockId);
@@ -245,10 +246,10 @@ export default function Block() {
     return (
       <PageNotFound
         message={
-          blockError 
-          ? `${t("blockPage.errorCode")}: ${blockError}` 
-          : `${blockId} : ${t("blockPage.blockNotFoundDetails")}`}
-
+          blockError
+            ? `${t("blockPage.errorCode")}: ${blockError}`
+            : `${blockId} : ${t("blockPage.blockNotFoundDetails")}`
+        }
       />
     );
   }
@@ -327,14 +328,17 @@ export default function Block() {
                     />
                   </div>
                 )}
-              <div className="w-full max-w-screen-2xl flex flex-col gap-y-2">
+              <div className="w-full max-w-screen-2xl flex flex-col">
                 {!!convertedTotalOperations.length && (
                   <OperationsTable
                     operationCount={totalOperations?.total_operations || 0}
                     operations={convertedTotalOperations}
                     markedTrxId={paramsState.trxId}
+                    markedOpId={paramsState.opId}
                     unformattedOperations={unformattedOperations}
-                    referrer={`${blockId}_block_details.csv`}
+                    referrer={`${blockId}_${t(
+                      "blockDetails.blockDetails"
+                    )}.csv`}
                   />
                 )}
               </div>

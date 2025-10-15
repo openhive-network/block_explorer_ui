@@ -3,10 +3,10 @@ import MarketHistoryChart from "./MarketHistoryChart";
 import moment from "moment";
 import useMarketHistory from "@/hooks/common/useMarketHistory";
 import { useEffect, useState } from "react";
-import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
 import { config } from "@/Config";
 import { Button } from "../ui/button";
 import { useI18n } from "../../i18n/i18n";
+import { useSettings } from "@/contexts/SettingsContext";
 
 interface HeadBlockPropertyCardProps {
   header: string;
@@ -24,7 +24,7 @@ const HeadBlockHiveChartCard: React.FC<HeadBlockPropertyCardProps> = ({
   handleHideParams,
   handleHiveFullChartVisibility,
 }) => {
-  const { settings } = useUserSettingsContext();
+  const { settings } = useSettings();
   const { t } = useI18n();
 
   const CURRENT_TIME = moment().format("YYYY-MM-DDTHH:mm:ss");

@@ -8,14 +8,16 @@ const useConvertedVestingShares = (
   direction: "outgoing" | "incoming",
   accountName: string,
   liveDataEnabled: boolean,
-  dynamicGlobalData?: Explorer.HeadBlockCardData
+  dynamicGlobalData?: Explorer.HeadBlockCardData,
+  enabled?: boolean
 ) => {
   const { hiveChain } = useHiveChainContext();
   const { incomingDelegations, outgoingDelegations } = useVestingDelegations(
     accountName,
     null,
     config.maxDelegatorsCount,
-    liveDataEnabled
+    liveDataEnabled,
+    enabled
   );
   if (!dynamicGlobalData || !hiveChain) return [];
 

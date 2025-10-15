@@ -18,6 +18,8 @@ import {
 } from "@/utils/RecurrentTransfersSort";
 import Hive from "@/types/Hive";
 import { useI18n } from "../../i18n/i18n";
+import DataExport from "../DataExport";
+
 
 type BaseTransfer = Omit<Hive.IncomingRecurrentTransfer, "from" | "amount"> &
   Omit<Hive.OutgoingRecurrentTransfer, "to" | "amount"> & {
@@ -31,6 +33,8 @@ export type AllTransfers =
 type AccountRecurrentTransfersCardProps = {
   direction: "incoming" | "outgoing";
   transfers: AllTransfers[];
+  isInitiallyOpen?: boolean;
+  accountName: string;
 };
 
 const buildTableBody = (transfers: AllTransfers[]) => {
@@ -69,9 +73,9 @@ const buildTableBody = (transfers: AllTransfers[]) => {
 
 const AccountRecurrentTransfersCard: React.FC<
   AccountRecurrentTransfersCardProps
-> = ({ direction, transfers }) => {
+> = ({ direction, transfers, isInitiallyOpen, accountName }) => {
   const { t } = useI18n();
-  const [isPropertiesHidden, setIsPropertiesHidden] = useState(true);
+  const [isPropertiesHidden, setIsPropertiesHidden] = useState(!isInitiallyOpen);
   const { hiveChain } = useHiveChainContext();
 
   const [sortConfig, setSortConfig] = useState<{
@@ -99,7 +103,29 @@ const AccountRecurrentTransfersCard: React.FC<
     key,
     isAscending,
   });
-  
+
+  const prepareExportData = () => {
+    return sortedTransfers.map((transfer, index) => {
+        const commonData = {
+            [t("common.order")]: index + 1,
+            [t("recurrentTransfersSort.Amount")]: transfer.amount,
+            [t("recurrentTransfersSort.Recurrence")]: transfer.recurrence,
+            [t("recurrentTransfersSort.Remaining")]: transfer.remaining_executions,
+        };
+        if ("to" in transfer) {
+            return {
+                ...commonData,
+                [t("recurrentTransfersSort.Recipient")]: transfer.to
+            };
+        } else {
+            return {
+                ...commonData,
+                [t("recurrentTransfersSort.Sender")]: transfer.from
+            };
+        }
+    });
+  };
+
   const headerText = `${capitalizeFirst(t(`accountRecurrentTransfersCard.${direction}`))} ${t("accountRecurrentTransfersCard.recurrentTransfersHeader")}(${
     transfers.length
   })`;
@@ -112,17 +138,28 @@ const AccountRecurrentTransfersCard: React.FC<
       <CardHeader className="p-0">
         <div
           onClick={handlePropertiesVisibility}
-          className="h-full flex justify-between align-center p-2 hover:bg-rowHover cursor-pointer px-4"
+          className="h-full flex justify-between items-center p-2 hover:bg-rowHover cursor-pointer px-4"
         >
           <div className="text-lg">{headerText}</div>
-          {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
+          <div className="flex items-center space-x-2">
+            <DataExport
+              data={prepareExportData()}
+              filename={`${accountName}_${t(
+                `accountRecurrentTransfersCard.${direction}`
+              )}_${t(
+                "accountRecurrentTransfersCard.recurrentTransfersExport"
+              )}`}
+              skipColumnSelection={true}
+            />
+            {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
+          </div>
         </div>
       </CardHeader>
       <CardContent hidden={isPropertiesHidden}>
         <Table>
           <TableHeader className="text-base">
             <TableRow>
-              {buildTableHead(sortBy, key, isAscending, direction)}
+              {buildTableHead(sortBy, key, isAscending, direction,t)}
             </TableRow>
           </TableHeader>
           <TableBody className="text-sm">

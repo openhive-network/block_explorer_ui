@@ -10,6 +10,7 @@ import VestsTooltip from "../VestsTooltip";
 type AccountDetailsCardProps = {
   header: string;
   userDetails: Record<string, any>;
+  isInitiallyOpen: boolean;
 };
 
 const EXCLUDE_KEYS = [
@@ -31,6 +32,10 @@ const EXCLUDE_KEYS = [
   "received_vesting_shares",
   "delegated_vesting_shares",
   "vesting_withdraw_rate",
+  "subscriptions",
+  "follower_count",
+  "following_count",
+  "post_count"
 ];
 
 const LINK_KEYS = ["recovery_account", "reset_account"];
@@ -40,8 +45,9 @@ const COPY_KEYS = ["signing_key"];
 const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
   header,
   userDetails,
+  isInitiallyOpen
 }) => {
-  const [isPropertiesHidden, setIsPropertiesHidden] = useState(true);
+  const [isPropertiesHidden, setIsPropertiesHidden] = useState(!isInitiallyOpen);
 
   const keys = Object.keys(userDetails);
 
@@ -73,7 +79,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
       return (
         <VestsTooltip
           tooltipTrigger={userDetails[key] as string}
-          tooltipContent={vestValue}
+          tooltipContent={vestValue} 
         />
       );
     }

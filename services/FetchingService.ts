@@ -33,17 +33,78 @@ export type ExplorerNodeApi = {
     >;
   };
   condenser_api: {
+    get_chain_properties: TWaxApiRequest<{}, Hive.BlockChainProps>;
     get_witnesses_by_vote: TWaxApiRequest<unknown[], Hive.WitnessesByVote>;
+    get_follow_count: TWaxApiRequest<
+      { account: string },
+      Hive.AccountFollowCount
+    >;
+    get_followers: TWaxApiRequest<
+      { account: string; start: string; limit: number },
+      Hive.AccountFollower[]
+    >;
+    get_accounts: TWaxApiRequest<unknown[], FindAccountsResponse[]>;
+    get_following: TWaxApiRequest<{ account: string }, Hive.AccountFollowing>;
+    list_proposals: TWaxApiRequest<
+      [
+        start: (string | number)[],
+        limit: number,
+        order_by:
+          | "by_creator"
+          | "by_start_date"
+          | "by_end_date"
+          | "by_total_votes",
+        order_direction: "ascending" | "descending",
+        status: "all" | "active" | "inactive" | "expired" | "votable"
+      ],
+      Hive.Proposal[]
+    >;
+    list_proposal_votes: TWaxApiRequest<
+      [
+        start: (string | number)[],
+        limit: number,
+        order_by: "by_voter_proposal" | "by_proposal_voter",
+        order_direction: "ascending" | "descending",
+        status: "all" | "active" | "expired" | "inactive" | "votable"
+      ],
+      Hive.ProposalVote[]
+    >;
+    find_proposals: TWaxApiRequest<[proposal_ids: number[]], Hive.Proposal[]>;
   };
   bridge: {
     get_discussion: TWaxApiRequest<
       { author: string; permlink: string; observer?: string },
       Hive.HivePosts
     >;
+    list_all_subscriptions: TWaxApiRequest<
+      { account: string },
+      Hive.AccountSubscriptions
+    >;
+    get_community: TWaxApiRequest<
+      { name: string; observer?: string },
+      Hive.CommunityDetails
+    >;
+    list_subscribers: TWaxApiRequest<
+      {
+        community: string;
+        last?: string;
+        limit: number;
+      },
+      Hive.CommunitySubscribers
+    >;
+    list_communities: TWaxApiRequest<
+      {
+        last?: string;
+        limit: number;
+        query?: string;
+        sort: string;
+      },
+      Hive.CommunityList
+    >;
   };
   market_history_api: {
     get_market_history: TWaxApiRequest<
-      { bucket_seconds: number; start: string; end: string },
+      { bucket_seconds: number; start: string | undefined; end: string },
       Hive.MarketHistory[]
     >;
   };
@@ -191,6 +252,7 @@ class FetchingService {
     const requestParams: Hive.GetOpsByAccountParams = {
       accountName: accountOperationsProps.accountName,
       "operation-types": accountOperationsProps.operationTypes?.join(","),
+      "participation-mode": accountOperationsProps.participationMode,
       page: accountOperationsProps.pageNumber,
       "page-size": config.standardPaginationSize,
       "data-size-limit": config.opsBodyLimit,
@@ -198,6 +260,7 @@ class FetchingService {
         accountOperationsProps.fromBlock || accountOperationsProps.startDate,
       "to-block":
         accountOperationsProps.toBlock || accountOperationsProps.endDate,
+      "transacting-account-name": accountOperationsProps.transactingAccountName,
     };
     return await this.extendedHiveChain!.restApi[
       "hafah-api"
@@ -239,6 +302,7 @@ class FetchingService {
     sort: string,
     direction: "asc" | "desc",
     page: number,
+    voterName?: string,
     limit?: number
   ): Promise<Hive.WitnessVotersResponse> {
     return await this.extendedHiveChain!.restApi["hafbe-api"].voters({
@@ -247,6 +311,7 @@ class FetchingService {
       direction,
       page,
       "page-size": limit,
+      "voter-name": voterName,
     });
   }
 
@@ -266,6 +331,12 @@ class FetchingService {
     return await this.extendedHiveChain!.api.condenser_api.get_witnesses_by_vote(
       params
     );
+  }
+
+  async getAccounts(accounts: string[]): Promise<FindAccountsResponse[]> {
+    return await this.extendedHiveChain!.api.condenser_api.get_accounts([
+      accounts,
+    ]);
   }
 
   async getPostDiscussion(
@@ -341,18 +412,22 @@ class FetchingService {
   async getWitnessVotesHistory(
     witnessName: string,
     direction: "asc" | "desc",
-    sort: string,
+    page: number | null,
     limit: number | null,
     fromTime?: Date,
-    toTime?: Date
+    toTime?: Date,
+    fromBlock?: number,
+    toBlock?: number,
+    voterName?: string
   ): Promise<Hive.WitnessesVotesHistoryResponse> {
     return await this.extendedHiveChain!.restApi["hafbe-api"].votesHistory({
       accountName: witnessName,
       direction,
-      sort,
-      "result-limit": limit,
-      "from-block": fromTime,
-      "to-block": toTime,
+      page: page,
+      "page-size": limit,
+      "from-block": fromTime || fromBlock,
+      "to-block": toTime || toBlock,
+      "voter-name": voterName,
     });
   }
 
@@ -495,7 +570,7 @@ class FetchingService {
 
   async getMarketHistory(
     bucketSeconds: number,
-    start: string,
+    start: string | undefined,
     end: string
   ): Promise<Hive.MarketHistory[]> {
     return await this.extendedHiveChain!.api.market_history_api.get_market_history(
@@ -525,8 +600,7 @@ class FetchingService {
       "from-block": allBlockSearchProps
         ? allBlockSearchProps.fromBlock || allBlockSearchProps.startDate
         : undefined,
-      "to-block":
-        toBlock ? toBlock : allBlockSearchProps?.endDate,
+      "to-block": toBlock ? toBlock : allBlockSearchProps?.endDate,
     };
     return await this.extendedHiveChain!.restApi["hafbe-api"].allBlockSearch(
       requestParams
@@ -539,14 +613,185 @@ class FetchingService {
     fromBlock?: Date | number | undefined,
     toBlock?: Date | number | undefined
   ): Promise<Hive.TransactionStatisticsResponse> {
-    return await this.extendedHiveChain!.restApi["hafbe-api"].transactionStatistics({
+    return await this.extendedHiveChain!.restApi[
+      "hafbe-api"
+    ].transactionStatistics({
       granularity,
       direction: direction,
       "from-block": fromBlock,
       "to-block": toBlock,
     });
   }
+  async getAccountFollowCount(
+    account: string
+  ): Promise<Hive.AccountFollowCount> {
+    const params = { account };
+    return await this.extendedHiveChain!.api.condenser_api.get_follow_count(
+      params
+    );
+  }
 
+  async getAccountSubscriptions(
+    account: string
+  ): Promise<Hive.AccountSubscriptions> {
+    const params = { account };
+    return await this.extendedHiveChain!.api.bridge.list_all_subscriptions(
+      params
+    );
+  }
+
+  async getAccountFollowers(account: string): Promise<Hive.AccountFollower[]> {
+    const allFollowers: Hive.AccountFollower[] = [];
+    let start = "";
+    const limit = 1000; // The maximum number of followers to fetch per API call.
+
+    while (true) {
+      try {
+        const params = { account, start, limit };
+        const results: Hive.AccountFollower[] =
+          await this.extendedHiveChain!.api.condenser_api.get_followers(params);
+
+        // If the API returns an empty array, we have finished fetching all pages.
+        if (results.length === 0) {
+          break;
+        }
+
+        let followersToProcess = results;
+        if (start && results[0].follower === start) {
+          followersToProcess = results.slice(1);
+        }
+
+        if (followersToProcess.length > 0) {
+          allFollowers.push(...followersToProcess);
+        }
+
+        if (results.length < limit) {
+          break;
+        }
+
+        start = results[results.length - 1].follower;
+      } catch (error) {
+        throw error;
+      }
+    }
+
+    return allFollowers;
+  }
+  async getAccountFollowing(account: string): Promise<Hive.AccountFollowing> {
+    const params = { account };
+    return await this.extendedHiveChain!.api.condenser_api.get_following(
+      params
+    );
+  }
+
+  async getCommunityDetails(name: string): Promise<Hive.CommunityDetails> {
+    const params = { name };
+    return await this.extendedHiveChain!.api.bridge.get_community(params);
+  }
+
+  async getCommunitySubscribers(
+    community: string,
+    last: string | undefined,
+    limit: number
+  ): Promise<Hive.CommunitySubscribers> {
+    const params = { community, last, limit };
+    return await this.extendedHiveChain!.api.bridge.list_subscribers(params);
+  }
+
+  async getCommunitiesList(
+    last: string,
+    limit: number,
+    query: string,
+    sort: "rank" | "new" | "subs" = "rank"
+  ): Promise<Hive.CommunityList> {
+    const params: {
+      limit: number;
+      sort: string;
+      last?: string;
+      query?: string;
+    } = {
+      limit,
+      sort,
+    };
+
+    if (last) {
+      params.last = last;
+    }
+
+    if (query) {
+      params.query = query;
+    }
+    return await this.extendedHiveChain!.api.bridge.list_communities(params);
+  }
+
+  async listProposals(
+    start: (string | number)[],
+    limit: number,
+    orderBy: "by_creator" | "by_start_date" | "by_end_date" | "by_total_votes",
+    orderDirection: "ascending" | "descending",
+    status: "all" | "active" | "inactive" | "expired" | "votable"
+  ): Promise<Hive.Proposal[]> {
+    const response =
+      await this.extendedHiveChain!.api.condenser_api.list_proposals([
+        start,
+        limit,
+        orderBy,
+        orderDirection,
+        status,
+      ]);
+    return Array.isArray(response) ? response : [];
+  }
+
+  async listProposalVotes(
+    start: (string | number)[],
+    limit: number,
+    orderBy: "by_voter_proposal" | "by_proposal_voter",
+    orderDirection: "ascending" | "descending",
+    status: "all" | "active" | "inactive" | "expired" | "votable"
+  ): Promise<Hive.ProposalVote[]> {
+    const response =
+      await this.extendedHiveChain!.api.condenser_api.list_proposal_votes([
+        start,
+        limit,
+        orderBy,
+        orderDirection,
+        status,
+      ]);
+    return Array.isArray(response) ? response : [];
+  }
+
+  async getProposal(proposalId: number[]): Promise<Hive.Proposal[]> {
+    return await this.extendedHiveChain!.api.condenser_api.find_proposals([
+      proposalId,
+    ]);
+  }
+
+  async getBlockChainProps(): Promise<Hive.BlockChainProps> {
+    return await this.extendedHiveChain!.api.condenser_api.get_chain_properties(
+      []
+    );
+  }
+
+  async getProxyPower(
+    accountName: string,
+    page: number
+  ): Promise<Hive.ProxyPowerResponse> {
+    return await this.extendedHiveChain!.restApi["hafbe-api"].proxyPower({
+      accountName,
+      page,
+    });
+  }
+  async getTopHolders(
+    coinType: "HIVE" | "HBD" | "VESTS",
+    balanceType: "balance" | "savings_balance",
+    page: number
+  ): Promise<Hive.TopHolder[]> {
+    return await this.extendedHiveChain!.restApi["balance-api"].topHolders({
+      "coin-type": coinType,
+      "balance-type": balanceType,
+      page,
+    });
+  }
 }
 
 const fetchingService = new FetchingService();

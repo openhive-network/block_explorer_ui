@@ -83,6 +83,11 @@ export const extendedRest = {
       params: Hive.TransactionStatisticsParams,
       result: Hive.TransactionStatisticsResponse,
       urlPath: "transaction-statistics",
+    },
+    proxyPower: {
+      params: Hive.ProxyPowerParams,
+      result: Hive.ProxyPowerResponse,
+      urlPath: "accounts/{accountName}/proxy-power",
     }
   },
   "hafah-api": {
@@ -170,6 +175,12 @@ export const extendedRest = {
       params: Hive.AccountRecurrentBalanceTransfersParams,
       result: Hive.AccountRecurrentBalanceTransfersResponse,
       urlPath: "accounts/{accountName}/recurrent-transfers",
+    },
+     topHolders: {
+    params: Hive.GetTopHoldersParams,
+    result: Hive.TopHolder,
+    urlPath: "top-holders",
+    responseArray: true,
     },
   },
 };

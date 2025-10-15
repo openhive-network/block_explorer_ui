@@ -73,8 +73,8 @@ const AccountSearchResults = () => {
   return (
     <>
       {accountOperations.total_operations > 0 ? (
-        <div data-testid="operations-card" >
-          <div className="flex flex-wrap justify-between items-center bg-theme p-2 gap-4 mb-4 sticky z-20 top-[3.2rem] md:top-[4rem] rounded">
+        <div data-testid="operations-card">
+          <div className="flex flex-wrap justify-between items-center bg-theme p-2 sticky z-20 top-[3.2rem] md:top-[4rem] rounded-t">
             <div className="flex justify-center w-full md:w-auto md:justify-start">
               <Link href={accountPageLink}>
                 <Button
@@ -105,7 +105,7 @@ const AccountSearchResults = () => {
             operationCount={accountOperations.total_operations}
             operations={formattedOperations}
             unformattedOperations={unformattedOperations}
-            referrer="account_search_result"
+            referrer={t("accountSearch.accountReactResults")}
             accountName={accountOperationsSearchProps?.accountName}
           />
         </div>

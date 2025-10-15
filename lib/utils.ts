@@ -63,41 +63,37 @@ export const formatNumber = (
       ? numberToFormat
       : numberToFormat.toString();
 
-  // If not using precision, just format with commas, no rounding
   if (skipPrecision) {
-    // If there's a decimal point
     const [intPart, decPart] = valueStr.split(".");
-    // Add commas to integer part
     const intWithCommas = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    return decPart ? `${intWithCommas}.${decPart}` : intWithCommas;
+    // If no decimals, add .00
+    if (!decPart) return `${intWithCommas}.00`;
+    // Pad decimal to 2 digits if needed
+    const paddedDec = decPart.padEnd(2, "0").slice(0, 2);
+    return `${intWithCommas}.${paddedDec}`;
   }
 
   const precision = isVest
     ? config.precisions.vests
     : config.precisions.hivePower;
 
-  // For precision formatting, convert to string with the decimal at correct position
-  // Only for values that may overflow JS number, otherwise fallback
   if (typeof numberToFormat === "string" && numberToFormat.length > 15) {
-    // Insert decimal at correct position (from the end)
     const intLength = valueStr.length - precision;
     const intPart = valueStr.substring(0, intLength) || "0";
-    const decPart = valueStr.substring(intLength) || "0";
+    const decPart = valueStr.substring(intLength).padEnd(precision, "0");
     const intWithCommas = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    return `${intWithCommas}.${decPart}`;
+    const formattedDec = decPart.slice(0, 2); // Force only 2 decimals
+    return `${intWithCommas}.${formattedDec}`;
   } else {
-    // fallback to normal float logic
     const num =
       typeof numberToFormat === "string"
         ? parseFloat(numberToFormat)
         : numberToFormat;
-    const vestsFormat = isVest
-      ? { minimumFractionDigits: precision, maximumFractionDigits: precision }
-      : undefined;
-    return (num / Math.pow(10, precision)).toLocaleString(
-      undefined,
-      vestsFormat
-    );
+    const fixed = (num / Math.pow(10, precision)).toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+    return fixed;
   }
 };
 
@@ -254,5 +250,6 @@ export const convertBalanceHistoryResultsToTableOperations = (
     balance: operation.balance,
     prev_balance: operation.prev_balance,
     balanceChange: operation.balance_change,
+    hivePrice: operation.hivePrice,
   }));
 };

@@ -123,6 +123,8 @@ declare module Explorer {
   interface AccountSearchOperationsProps extends CommonSearchProps {
     accountName: string;
     pageNumber?: number;
+    participationMode?: "include" | "exclude" | "all";
+    transactingAccountName?: string;
   }
 
   interface UrlParam {
@@ -239,6 +241,10 @@ declare module Explorer {
   }
 
   interface AccountDetailsDollars {
+    balance: string;
+    hbd_balance: string;
+    hbd_saving_balance: string;
+    reward_hbd_balance: string;
     reward_vesting_balance: string;
     vesting_withdraw_rate: string;
     vesting_shares: string;
@@ -249,6 +255,8 @@ declare module Explorer {
     vesting_balance: string;
     reward_vesting_hive: string;
     account_value: string;
+    savings_balance: string;
+    reward_hive_balance: string;
   }
 
   interface FormattedAccountDetails
@@ -295,9 +303,12 @@ declare module Explorer {
     posting_rewards: string;
     curation_rewards: string;
     vesting_balance: string;
-    last_post?: number;
+    last_post?: Date;
     last_root_post?: number;
     post_count?: number;
+    follower_count?: number;
+    following_count?: number;
+    subscriptions: string[];
     last_account_recovery: string;
     created: string;
     vests: AccountDetailsVests;
@@ -313,6 +324,7 @@ declare module Explorer {
     balance: number;
     prev_balance: number;
     balanceChange: number;
+    hivePrice: string;
   }
 
   interface AllBlocksSearchProps extends CommonSearchProps {

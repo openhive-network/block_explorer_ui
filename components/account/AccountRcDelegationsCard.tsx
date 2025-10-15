@@ -3,7 +3,6 @@ import { ArrowDown, ArrowUp } from "lucide-react";
 import Link from "next/link";
 
 import { formatNumber } from "@/lib/utils";
-import useRcDelegations from "@/hooks/api/common/useRcDelegations";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import {
   Table,
@@ -18,16 +17,16 @@ import {
   handleSortDelegations,
 } from "@/utils/DelegationsSort";
 import { useI18n } from "../../i18n/i18n";
+import DataExport from "../DataExport"; 
 
 type AccountRcDelegationsCardProps = {
-  delegatorAccount: string;
-  limit: number;
-  liveDataEnabled: boolean;
+  delegations?: RcDelegation[];
+  isInitiallyOpen: boolean;
+  accountName: string;
 };
 
 const buildTableBody = (delegations: RcDelegation[]) => {
   return delegations.map((delegation: RcDelegation, index: number) => {
-    const isLast = index === delegations.length - 1;
     return (
       <Fragment key={index}>
         <TableRow>
@@ -50,14 +49,13 @@ const buildTableBody = (delegations: RcDelegation[]) => {
 };
 
 const AccountRcDelegationsCard: React.FC<AccountRcDelegationsCardProps> = ({
-  delegatorAccount,
-  limit,
-  liveDataEnabled,
+  delegations,
+  isInitiallyOpen,
+  accountName,
 }) => {
   const { t } = useI18n();
-  const [isPropertiesHidden, setIsPropertiesHidden] = useState(true);
-  const { rcDelegationsData, isRcDelegationsLoading, isRcDelegationsError } =
-    useRcDelegations(delegatorAccount, limit, liveDataEnabled);
+  const [isPropertiesHidden, setIsPropertiesHidden] = useState(!isInitiallyOpen);
+
   const [sortConfig, setSortConfig] = useState<{
     key: string;
     isAscending: boolean;
@@ -67,17 +65,11 @@ const AccountRcDelegationsCard: React.FC<AccountRcDelegationsCardProps> = ({
   });
 
   const { key, isAscending } = sortConfig;
-
-  if (isRcDelegationsLoading) {
-    return <div></div>;
+  
+  // If there's no data, render nothing.
+  if (!delegations || !delegations.length) {
+    return null;
   }
-
-  if (isRcDelegationsError) {
-    return <div></div>;
-  }
-
-  const delegations = rcDelegationsData;
-  if (!delegations?.length) return <div className="text-black"></div>;
 
   const handlePropertiesVisibility = () => {
     setIsPropertiesHidden(!isPropertiesHidden);
@@ -94,6 +86,16 @@ const AccountRcDelegationsCard: React.FC<AccountRcDelegationsCardProps> = ({
     amount: "delegated_rc",
   }) as RcDelegation[];
 
+  const prepareExportData = () => {
+    return sortedDelegations.map((delegation, index) => {
+      return {
+        [t("common.order")]: index + 1,
+        [t("delegationSort.Recipient")]: delegation.to,
+        [t("delegationSort.Amount")]: formatNumber(delegation.delegated_rc, false, true),
+      };
+    });
+  };
+
   return (
     <Card
       data-testid="rc-delegations-dropdown"
@@ -104,14 +106,25 @@ const AccountRcDelegationsCard: React.FC<AccountRcDelegationsCardProps> = ({
           onClick={handlePropertiesVisibility}
           className="h-full flex justify-between align-center p-2 hover:bg-rowHover cursor-pointer px-4"
         >
-          <div className="text-lg">{t("accountRcDelegationsCard.delegations")} ({delegations.length})</div>
-          {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
+          <div className="text-lg">
+            {t("accountRcDelegationsCard.delegations")} ({delegations.length})
+          </div>
+          <div className="flex items-center space-x-2">
+            <DataExport
+              data={prepareExportData()}
+              filename={`${accountName}_${t(
+                "accountRcDelegationsCard.delegationsExport"
+              )}.csv`}
+              skipColumnSelection={true}
+            />
+            {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
+          </div>
         </div>
       </CardHeader>
       <CardContent hidden={isPropertiesHidden}>
         <Table>
           <TableHeader className="text-base">
-            <TableRow>{buildTableHead(sortBy, key, isAscending)}</TableRow>
+            <TableRow>{buildTableHead(sortBy, key, isAscending, t)}</TableRow>
           </TableHeader>
           <TableBody className="text-sm">
             {buildTableBody(sortedDelegations)}

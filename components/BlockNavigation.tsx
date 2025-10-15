@@ -1,6 +1,5 @@
 import React from "react";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { cn } from "@/lib/utils";
 import {
   Tooltip,
@@ -32,7 +31,6 @@ const BlockNavigation: React.FC<BlockNavigationProps> = ({
   urlParams,
   className,
 }) => {
-  const router = useRouter();
   const { t } = useI18n();
 
   if (!fromBlock || !toBlock) {
@@ -40,132 +38,109 @@ const BlockNavigation: React.FC<BlockNavigationProps> = ({
   }
 
   const wrapperClasses = cn(
-    "flex items-center justify-center rounded",
+    "flex items-center justify-between",
+    "bg-gradient-to-b from-white to-slate-50",
+    "dark:from-slate-800 dark:to-slate-800/90",
+    "px-5 py-2",
+    "border-b border-slate-200 dark:border-slate-700",
+    "rounded-t-lg",
     className
   );
 
-  const segmentContainerClasses = cn(
-    "inline-flex items-center gap-3",
-    "bg-white dark:bg-gray-800",
-    "shadow-md dark:shadow-lg dark:shadow-black/30",
-    "rounded",
-    "px-3 py-2 mt-1",
-    "border border-gray-200 dark:border-gray-700"
+  const navLinkClasses = cn(
+    "text-2xl font-bold text-link",
+    "transition-colors duration-200"
   );
 
-  const navLinkClasses = cn("text-link text-sm font-medium");
   const navDisabledClasses = cn(
-    "text-gray-400 dark:text-gray-500",
-    "text-sm font-medium cursor-default"
+    "text-2xl font-bold text-slate-400 dark:text-slate-600",
+    "cursor-default"
   );
 
-  const centralLinkClasses = cn(
-    "text-gray-700 dark:text-gray-200",
-    "text-sm font-medium"
+
+  const centralTextClasses = cn(
+    "text-sm font-sans font-medium text-slate-700 dark:text-slate-200",
+    "tracking-tight"
   );
 
   return (
     <div className={wrapperClasses}>
-      <div className={segmentContainerClasses}>
-        {hasPrevious && loadPreviousBlocks ? (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <span className={centralLinkClasses}>
-                  <Link
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      loadPreviousBlocks();
-                    }}
-                    className={navLinkClasses}
-                    aria-label={t("blockNavigation.loadPreviousBlocks")}
-                  >
-                    {`<<`}
-                  </Link>
-                </span>
-              </TooltipTrigger>
-              <TooltipPortal>
-                <TooltipContent className="bg-white text-black dark:bg-theme dark:text-white">
-                  {t("blockNavigation.previousBlockRange")}
-                </TooltipContent>
-              </TooltipPortal>
-            </Tooltip>
-          </TooltipProvider>
-        ) : (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <span className={navDisabledClasses} aria-hidden="true">
-                  {`<<`}
-                </span>
-              </TooltipTrigger>
-              <TooltipPortal>
-                <TooltipContent className="bg-white text-black dark:bg-theme dark:text-white">
-                  {t("blockNavigation.noPreviousBlockRange")}
-                </TooltipContent>
-              </TooltipPortal>
-            </Tooltip>
-          </TooltipProvider>
-        )}
-
+      {hasPrevious && loadPreviousBlocks ? (
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <span className={centralLinkClasses}>
-                {`[${toBlock.toLocaleString()} - ${fromBlock.toLocaleString()}]`}
-              </span>
+              <Link
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  loadPreviousBlocks();
+                }}
+                className={navLinkClasses}
+                aria-label={t("blockNavigation.loadPreviousBlocks")}
+              >
+                {'«'}
+              </Link>
             </TooltipTrigger>
             <TooltipPortal>
               <TooltipContent className="bg-white text-black dark:bg-theme dark:text-white">
-                {t("blockNavigation.currentBlockRange")}
+                {t("blockNavigation.previousBlockRange")}
               </TooltipContent>
             </TooltipPortal>
           </Tooltip>
         </TooltipProvider>
+      ) : (
+        <span className={navDisabledClasses} aria-hidden="true">
+          {'«'}
+        </span>
+      )}
 
-        {hasNext && loadNextBlocks ? (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <span className={centralLinkClasses}>
-                  <Link
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      loadNextBlocks();
-                    }}
-                    className={navLinkClasses}
-                    aria-label={t("blockNavigation.loadNextBlocks")}
-                  >
-                    {`>>`}
-                  </Link>
-                </span>
-              </TooltipTrigger>
-              <TooltipPortal>
-                <TooltipContent className="bg-white text-black dark:bg-theme dark:text-white">
-                  {t("blockNavigation.nextBlockRange")}
-                </TooltipContent>
-              </TooltipPortal>
-            </Tooltip>
-          </TooltipProvider>
-        ) : (
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <span className={navDisabledClasses} aria-hidden="true">
-                  {`>>`}
-                </span>
-              </TooltipTrigger>
-              <TooltipPortal>
-                <TooltipContent className="bg-white text-black dark:bg-theme dark:text-white">
-                  {t("blockNavigation.noUpcomingBlockRange")}
-                </TooltipContent>
-              </TooltipPortal>
-            </Tooltip>
-          </TooltipProvider>
-        )}
-      </div>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div className="flex items-baseline">
+              <span className="text-slate-400 dark:text-slate-500">[</span>
+              <span className={centralTextClasses}>
+                {`${toBlock.toLocaleString()} - ${fromBlock.toLocaleString()}`}
+              </span>
+              <span className="text-slate-400 dark:text-slate-500">]</span>
+            </div>
+          </TooltipTrigger>
+          <TooltipPortal>
+            <TooltipContent className="bg-white text-black dark:bg-theme dark:text-white">
+              {t("blockNavigation.currentBlockRange")}
+            </TooltipContent>
+          </TooltipPortal>
+        </Tooltip>
+      </TooltipProvider>
+
+      {hasNext && loadNextBlocks ? (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  loadNextBlocks();
+                }}
+                className={navLinkClasses}
+                aria-label={t("blockNavigation.loadNextBlocks")}
+              >
+                {'»'}
+              </Link>
+            </TooltipTrigger>
+            <TooltipPortal>
+              <TooltipContent className="bg-white text-black dark:bg-theme dark:text-white">
+                {t("blockNavigation.nextBlockRange")}
+              </TooltipContent>
+            </TooltipPortal>
+          </Tooltip>
+        </TooltipProvider>
+      ) : (
+        <span className={navDisabledClasses} aria-hidden="true">
+          {'»'}
+        </span>
+      )}
     </div>
   );
 };

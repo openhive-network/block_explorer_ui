@@ -30,9 +30,10 @@ import { startBlockSearch } from "./utils/blockSearchHelpers";
 import NoValueErrorMessage from "./NoValueErrorMessage";
 import useAllBlocksSearch from "@/hooks/api/blocks/useAllBlocksSearch";
 import { useI18n } from "@/i18n/i18n";
+import { useQueryClient } from "@tanstack/react-query";
 
 const BlockSearch = () => {
-const { t } = useI18n();
+  const { t } = useI18n();
   const {
     allBlocksSearchProps,
     setAllBlocksSearchProps,
@@ -40,9 +41,11 @@ const { t } = useI18n();
     searchRanges,
     setBlockSearchPage,
   } = useSearchesContext();
+  const qc = useQueryClient();
   const { operationsTypes } = useOperationsTypes();
 
-  const { blocksSearchDataLoading } = useAllBlocksSearch(allBlocksSearchProps);
+  const { blocksSearchDataLoading, refetchBlockSearchData } =
+    useAllBlocksSearch(allBlocksSearchProps);
 
   const [accountName, setAccountName] = useState<string>("");
   const [selectedOperationTypes, setSelectedOperationTypes] = useState<
@@ -141,6 +144,7 @@ const { t } = useI18n();
       setAllBlocksSearchProps,
       (val: "block") => setLastSearchKey(val)
     );
+    qc.invalidateQueries({ queryKey: ["blockSearch"] });
   };
 
   const handleClearSearch = () => {

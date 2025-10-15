@@ -1,8 +1,7 @@
-import { useState, Fragment } from "react";
+import { useState, Fragment, useEffect } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import Link from "next/link";
 
-import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import {
   Table,
@@ -12,16 +11,19 @@ import {
   TableHeader,
 } from "../ui/table";
 import Explorer from "@/types/Explorer";
-import useConvertedVestingShares from "@/hooks/common/useConvertedVestingShares";
 import { buildTableHead, handleSortDelegations } from "@/utils/DelegationsSort";
 import { capitalizeFirst } from "@/utils/StringUtils";
 import { useI18n } from "../../i18n/i18n";
+import DataExport from "../DataExport";
 
 type AccountVestingDelegationsCardProps = {
+  id?: string;
   direction: "incoming" | "outgoing";
-  delegatorAccount: string;
-  liveDataEnabled: boolean;
+  delegations?: Explorer.VestingDelegation[]; // Data is now a prop
   dynamicGlobalData?: Explorer.HeadBlockCardData;
+  isInitiallyOpen: boolean;
+  forceOpen?: boolean;
+  accountName: string;
 };
 
 const buildTableBody = (
@@ -58,18 +60,29 @@ const buildTableBody = (
     );
   });
 };
+
 const AccountVestingDelegationsCard: React.FC<
   AccountVestingDelegationsCardProps
-> = ({ direction, delegatorAccount, liveDataEnabled, dynamicGlobalData }) => {
+> = ({
+  id,
+  direction,
+  delegations,
+  dynamicGlobalData,
+  isInitiallyOpen,
+  accountName,
+  forceOpen = false,
+}) => {
   const { t } = useI18n();
-  const [isPropertiesHidden, setIsPropertiesHidden] = useState(true);
-  const { hiveChain } = useHiveChainContext();
-  const delegations = useConvertedVestingShares(
-    direction,
-    delegatorAccount,
-    liveDataEnabled,
-    dynamicGlobalData
+  const [isPropertiesHidden, setIsPropertiesHidden] = useState(
+    !isInitiallyOpen
   );
+
+  useEffect(() => {
+    if (forceOpen) {
+      setIsPropertiesHidden(false);
+    }
+  }, [forceOpen]);
+
   const [sortConfig, setSortConfig] = useState<{
     key: string;
     isAscending: boolean;
@@ -80,8 +93,11 @@ const AccountVestingDelegationsCard: React.FC<
 
   const { key, isAscending } = sortConfig;
 
-  if (!hiveChain || !dynamicGlobalData || !delegations || !delegations.length)
-    return;
+  // If there's no data, or the dynamic global data isn't ready, render nothing.
+  if (!dynamicGlobalData || !delegations || !delegations.length) {
+    return null;
+  }
+
   const handlePropertiesVisibility = () => {
     setIsPropertiesHidden(!isPropertiesHidden);
   };
@@ -98,29 +114,56 @@ const AccountVestingDelegationsCard: React.FC<
     amount: "vesting_shares",
   }) as Explorer.VestingDelegation[];
 
-  const headerText = `${capitalizeFirst(t(`accountVestingDelegationsCard.${direction}`))} ${t("accountVestingDelegationsCard.hpDelegations")}(${
+  const prepareExportData = () => {
+    return sortedDelegations.map((delegation, index) => {
+      return {
+        [t("common.order")]: index + 1,
+        [direction === "outgoing"
+          ? t("delegationSort.Recipient")
+          : t("delegationSort.Delegator")]:
+          direction === "outgoing"
+            ? delegation.delegatee
+            : delegation.delegator,
+        [t("delegationSort.Amount")]: delegation.vesting_shares,
+      };
+    });
+  };
+
+  const headerText = `${capitalizeFirst(
+    t(`accountVestingDelegationsCard.${direction}`)
+  )} ${t("accountVestingDelegationsCard.hpDelegations")}(${
     delegations.length
   })`;
 
   return (
     <Card
+      id={id}
       data-testid="vesting-delegations-dropdown"
       className="overflow-hidden"
     >
       <CardHeader className="p-0">
         <div
           onClick={handlePropertiesVisibility}
-          className="h-full flex justify-between align-center p-2 hover:bg-rowHover cursor-pointer px-4"
+          className="h-full flex justify-between items-center p-2 hover:bg-rowHover cursor-pointer px-4"
         >
           <div className="text-lg">{headerText}</div>
-          {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
+          <div className="flex items-center space-x-2">
+            <DataExport
+              data={prepareExportData()}
+              filename={`${accountName}_${t(
+                `accountVestingDelegationsCard.${direction}`
+              )}_${t("accountVestingDelegationsCard.hpDelegationsExport")}`}
+              skipColumnSelection={true}
+            />
+            {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}
+          </div>
         </div>
       </CardHeader>
       <CardContent hidden={isPropertiesHidden}>
         <Table>
           <TableHeader className="text-base">
             <TableRow>
-              {buildTableHead(sortBy, key, isAscending, direction)}
+              {buildTableHead(sortBy, key, isAscending, t, direction)}
             </TableRow>
           </TableHeader>
           <TableBody className="text-sm">

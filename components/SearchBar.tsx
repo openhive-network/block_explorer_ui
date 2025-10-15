@@ -58,6 +58,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ open, onChange, className }) => {
           linkResult={true}
           addLabel={true}
           expand={isMobile === false}
+          cleanup={true}
         />
       )}
       {!isAutocompleteVisible && (

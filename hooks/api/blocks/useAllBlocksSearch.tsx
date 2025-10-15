@@ -14,6 +14,7 @@ const useAllBlocksSearch = (
     data: blocksSearchData,
     isFetching: blocksSearchDataLoading,
     isError: blocksSearchDataError,
+    refetch: refetchBlockSearchData,
   } = useQuery({
     queryKey: ["blockSearch", allBlockSearchProps, page, liveDataEnabled],
     queryFn: () => fetchAllBlocks(allBlockSearchProps, page, toBlock),
@@ -33,7 +34,12 @@ const useAllBlocksSearch = (
     return response;
   };
 
-  return { blocksSearchData, blocksSearchDataLoading, blocksSearchDataError };
+  return {
+    blocksSearchData,
+    blocksSearchDataLoading,
+    blocksSearchDataError,
+    refetchBlockSearchData,
+  };
 };
 
 export default useAllBlocksSearch;

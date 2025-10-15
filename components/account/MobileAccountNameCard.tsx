@@ -14,12 +14,14 @@ import { useI18n } from "@/i18n/i18n";
 
 interface MobileAccountNameCardProps {
   accountName: string;
+  communityName :string | undefined;
   liveDataEnabled: boolean;
   accountDetails: Explorer.FormattedAccountDetails;
 }
 
 const MobileAccountNameCard: React.FC<MobileAccountNameCardProps> = ({
   accountName,
+  communityName,
   liveDataEnabled,
   accountDetails,
 }) => {
@@ -29,7 +31,7 @@ const MobileAccountNameCard: React.FC<MobileAccountNameCardProps> = ({
     accountDetails.is_witness
   );
   const isWitnessActive =
-    witnessDetails?.witness.signing_key !== config.inactiveWitnessKey;
+    witnessDetails?.signing_key !== config.inactiveWitnessKey;
 
   const [isBadActor, setIsBadActor] = useState(false);
   useEffect(() => {
@@ -61,7 +63,7 @@ const MobileAccountNameCard: React.FC<MobileAccountNameCardProps> = ({
             />
             <div>
               <h2 className="text-lg font-semibold text-gray-800 dark:text-white" data-testid="account-name">
-                {accountDetails.name}
+                {communityName? communityName: accountDetails.name}
               </h2>
               {accountDetails.is_witness && (
                 <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
@@ -72,19 +74,19 @@ const MobileAccountNameCard: React.FC<MobileAccountNameCardProps> = ({
                   >
                     {t("accountMainCard.witness")}
                   </span>
-                  {witnessDetails?.witness.rank && isWitnessActive && (
+                  {witnessDetails?.rank && isWitnessActive && (
                     <span className="flex items-center gap-1">
                       <Star
                         data-testid="witness-rank-icon"
                         fill="currentColor"
                         size={16}
                         />
-                      <span>{witnessDetails.witness.rank}</span>
+                      <span>{witnessDetails.rank}</span>
                     </span>
                   )}
-                  {witnessDetails?.witness.url && isWitnessActive && (
+                  {witnessDetails?.url && isWitnessActive && (
                     <a
-                      href={witnessDetails.witness.url}
+                      href={witnessDetails.url}
                       target="_blank"
                       rel="noopener noreferrer"
                     >

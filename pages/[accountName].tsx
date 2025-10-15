@@ -1,5 +1,8 @@
 import { useState } from "react";
-import { Loader2, ArrowBigRightDash, X } from "lucide-react";
+import {
+  Loader2,
+  X,
+} from "lucide-react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 
@@ -11,11 +14,12 @@ import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import ScrollTopButton from "@/components/ScrollTopButton";
 import AccountDetailsSection from "@/components/account/AccountDetailsSection";
 import MobileAccountNameCard from "@/components/account/MobileAccountNameCard";
-import { Button } from "@/components/ui/button";
 import AccountOperationViewTabs from "@/components/account/tabs/AccountOperationViewTabs";
 import { AccountTabsProvider } from "@/contexts/TabsContext";
-import moment from "moment";
 import { useI18n } from "@/i18n/i18n";
+import useCommunity from "@/hooks/api/accountPage/useCommunity";
+import { useSettings } from "@/contexts/SettingsContext";
+import SidebarToggleButton from "@/components/SideBarToggleButton";
 
 export interface AccountSearchParams {
   accountName?: string | undefined;
@@ -30,7 +34,8 @@ export interface AccountSearchParams {
   page: number | undefined;
   filters: boolean[];
   activeTab?: "operations" | "comments" | "interactions";
-  history:[];
+  history: [];
+  direction?: "include" | "exclude" | undefined;
 }
 
 export const defaultSearchParams: AccountSearchParams = {
@@ -57,36 +62,46 @@ export default function Account() {
     "@",
     ""
   );
-
-  const [liveDataEnabled, setLiveDataEnabled] = useState(false);
-
+  const { settings, updateSettings } = useSettings();
+  const liveDataEnabled = settings.liveData;
   const changeLiveRefresh = () => {
-    setLiveDataEnabled((prev) => !prev);
+    updateSettings({
+      liveData: !settings.liveData,
+    });
   };
 
   const [showMobileAccountDetails, setShowMobileAccountDetails] =
     useState(false);
+  const [isDesktopAccountDetailsCollapsed, setIsDesktopAccountDetailsCollapsed] =
+    useState(false);
 
   const { dynamicGlobalData } = useDynamicGlobal();
-  const { formattedAccountDetails: accountDetails, notFound, isAccountDetailsLoading} =
-    useConvertedAccountDetails(
-      accountNameFromRoute,
-      liveDataEnabled,
-      dynamicGlobalData
-    );
+  const {
+    formattedAccountDetails: accountDetails,
+    notFound,
+    isAccountDetailsLoading,
+  } = useConvertedAccountDetails(
+    accountNameFromRoute,
+    liveDataEnabled,
+    dynamicGlobalData
+  );
+
+  //Check if the account name is a community
+  const isCommunityAccount = accountNameFromRoute?.startsWith("hive-");
+  const { communityDetails } = useCommunity(
+    isCommunityAccount && !isAccountDetailsLoading && !notFound
+      ? accountNameFromRoute
+      : null
+  );
 
   const renderAccountDetailsView = () => {
     if (isMobile) {
       return (
         <>
-          <div className="fixed pl-0 left-0 top-[50%] z-50">
-            <Button
-              className="flex justify-center bg-explorer-orange h-[100px] w-[40px] hover:bg-orange-300 align-center [writing-mode:vertical-lr] text-explorer-gray-dark rounded-r"
-              onClick={() => setShowMobileAccountDetails(true)}
-            >
-              <ArrowBigRightDash size={30} />
-            </Button>
-          </div>
+          <SidebarToggleButton
+            isCollapsed={true} 
+            onClick={() => setShowMobileAccountDetails(true)}
+          />
 
           <div
             className={cn(
@@ -107,6 +122,7 @@ export default function Account() {
               liveDataEnabled={liveDataEnabled}
               changeLiveRefresh={changeLiveRefresh}
               accountDetails={accountDetails}
+              communityDetails={communityDetails}
               dynamicGlobalData={dynamicGlobalData}
             />
           </div>
@@ -114,15 +130,26 @@ export default function Account() {
       );
     } else {
       return (
-        <div className="col-start-1 col-span-1 flex flex-col gap-y-2">
-          <AccountDetailsSection
-            accountName={accountNameFromRoute}
-            liveDataEnabled={liveDataEnabled}
-            changeLiveRefresh={changeLiveRefresh}
-            accountDetails={accountDetails}
-            dynamicGlobalData={dynamicGlobalData}
+        <>
+          <SidebarToggleButton
+            isCollapsed={isDesktopAccountDetailsCollapsed}
+            onClick={() =>
+              setIsDesktopAccountDetailsCollapsed((prev) => !prev)
+            }
           />
-        </div>
+          {!isDesktopAccountDetailsCollapsed && (
+            <div className="col-start-1 col-span-1 flex flex-col gap-y-2">
+              <AccountDetailsSection
+                accountName={accountNameFromRoute}
+                liveDataEnabled={liveDataEnabled}
+                changeLiveRefresh={changeLiveRefresh}
+                accountDetails={accountDetails}
+                communityDetails={communityDetails}
+                dynamicGlobalData={dynamicGlobalData}
+              />
+            </div>
+          )}
+        </>
       );
     }
   };
@@ -135,13 +162,14 @@ export default function Account() {
   if (routeAccountName && !routeAccountName.startsWith("@")) {
     return <ErrorPage />;
   }
-  
-  if (notFound && !isAccountDetailsLoading) {
-  const accountNotFoundError = `${routeAccountName} : ${t("accountName.accountNotFound")}`;
-  if (notFound && !isAccountDetailsLoading) {
-    return <ErrorPage errorMessage={accountNotFoundError} />;
-  }
 
+  if (notFound && !isAccountDetailsLoading) {
+    const accountNotFoundError = `${routeAccountName} : ${t(
+      "accountName.accountNotFound"
+    )}`;
+    if (notFound && !isAccountDetailsLoading) {
+    return <ErrorPage errorMessage={accountNotFoundError} />;
+    }
   }
 
   if (!accountDetails) {
@@ -153,12 +181,19 @@ export default function Account() {
   return (
     <AccountTabsProvider>
       <Head>
-        <title>@{accountNameFromRoute} - Hive Explorer</title>
+        <title>
+          @
+          {communityDetails?.title
+            ? communityDetails?.title
+            : accountNameFromRoute}{" "}
+          - Hive Explorer
+        </title>
       </Head>
       <div className="grid grid-cols-1 md:grid-cols-3 text-white page-container gap-4">
         {isMobile && (
           <MobileAccountNameCard
             accountName={accountNameFromRoute}
+            communityName={communityDetails?.title}
             liveDataEnabled={liveDataEnabled}
             accountDetails={accountDetails}
           />
@@ -166,10 +201,20 @@ export default function Account() {
 
         {renderAccountDetailsView()}
         <div
-          className="col-start-1 md:col-start-2 col-span-1 md:col-span-3"
+          className={cn(
+            "col-start-1 col-span-1",
+            !isMobile &&
+              (isDesktopAccountDetailsCollapsed
+                ? "md:col-start-1 md:col-span-3"
+                : "md:col-start-2 md:col-span-2")
+          )}
           data-testid="account-operation-list"
         >
-          <AccountOperationViewTabs liveDataEnabled={liveDataEnabled} />
+          <AccountOperationViewTabs
+            liveDataEnabled={liveDataEnabled}
+            accountName={accountDetails.name}
+            dynamicGlobalData={dynamicGlobalData}
+          />
         </div>
         <div className="fixed bottom-[10px] right-0 flex flex-col items-end justify-end px-3 md:px-12">
           <ScrollTopButton />

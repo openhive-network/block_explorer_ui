@@ -6,13 +6,13 @@ import NoResult from "@/components/NoResult";
 import BlocksTable from "@/components/blocks/BlocksTable";
 import useAllBlocksSearch from "@/hooks/api/blocks/useAllBlocksSearch";
 import { useCallback, useState, useMemo, useRef } from "react";
-import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
 import { Loader2 } from "lucide-react";
 import { Operations, Block } from "@/pages/blocks";
 import BlockNavigation from "@/components/BlockNavigation";
 import useBlockNavigation from "@/hooks/common/useBlockNavigation";
 import { DEFAULT_BLOCKS_SEARCH_PROPS } from "@/components/blocks/BlocksSearch";
 import { useI18n } from "@/i18n/i18n";
+import { useSettings } from "@/contexts/SettingsContext";
 
 const BlockSearchResults = () => {
   const { t } = useI18n();
@@ -34,7 +34,7 @@ const BlockSearchResults = () => {
   const { operationsTypes } = useOperationsTypes();
   const {
     settings: { liveData },
-  } = useUserSettingsContext();
+  } = useSettings();
   const prevBlocksDataRef = useRef<Block[] | null>(null);
 
   const props = {
@@ -160,7 +160,7 @@ const BlockSearchResults = () => {
       ) : blocksSearchData?.blocks_result &&
         blocksSearchData?.blocks_result.length > 0 ? (
         <>
-          <div className="w-full rounded bg-theme mb-4 pb-2 pt-1">
+          <div className="w-full rounded-t bg-theme pt-1">
             <BlockNavigation
               fromBlock={blocksSearchData?.block_range.from}
               toBlock={blocksSearchData?.block_range.to}

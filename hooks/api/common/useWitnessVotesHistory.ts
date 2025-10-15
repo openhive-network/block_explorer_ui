@@ -7,22 +7,19 @@ import fetchingService from "@/services/FetchingService";
 const useWitnessVotesHistory = (
   accountName: string,
   isModalOpen: boolean,
-  fromDate: Date,
-  toDate: Date,
-  liveDataEnabled: boolean
+  page: number,
+  fromDate: Date  | undefined,
+  toDate: Date  | undefined,
+  fromBlock : number | undefined,
+  toBlock: number | undefined,
+  voterName: string | undefined,
+  liveDataEnabled: boolean,
 ) => {
-  const isDatesCorrect =
-    !moment(fromDate).isSame(toDate) && !moment(fromDate).isAfter(toDate);
+  const isDatesCorrect = fromDate && toDate
+    ? !moment(fromDate).isSame(toDate) && !moment(fromDate).isAfter(toDate)
+    : true;
 
-  const fetchVotesHist = async () =>
-    await fetchingService.getWitnessVotesHistory(
-      accountName,
-      "desc",
-      "timestamp",
-      100,
-      fromDate,
-      toDate
-    );
+  const isEnabled = !!accountName && isModalOpen && (isDatesCorrect || !!fromBlock || !!toBlock);
 
   const {
     data: votesHistory,
@@ -32,13 +29,27 @@ const useWitnessVotesHistory = (
     queryKey: [
       "witness_votes_history",
       accountName,
-      isModalOpen,
+      page,
       fromDate,
       toDate,
-      liveDataEnabled,
+      fromBlock,
+      toBlock,
+      voterName,
+     
     ],
-    queryFn: fetchVotesHist,
-    enabled: !!accountName && isModalOpen && isDatesCorrect,
+    queryFn: () => 
+      fetchingService.getWitnessVotesHistory(
+        accountName,
+        "desc",
+        page,
+        config.standardPaginationSize,
+        fromDate,
+        toDate,
+        fromBlock,
+        toBlock,
+        voterName
+      ),
+    enabled: isEnabled,
     refetchInterval: liveDataEnabled ? config.accountRefreshInterval : false,
     refetchOnWindowFocus: false,
   });

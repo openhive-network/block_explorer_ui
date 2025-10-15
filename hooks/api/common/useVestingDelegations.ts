@@ -7,7 +7,8 @@ const useVestingDelegations = (
   delegatorAccount: string,
   startAccount: string | null,
   limit: number,
-  liveDataEnabled: boolean
+  liveDataEnabled: boolean,
+  enabled?: boolean 
 ) => {
   const {
     data: vestingDelegationsData,
@@ -16,7 +17,7 @@ const useVestingDelegations = (
   }: UseQueryResult<Hive.TwoDirectionDelegations> = useQuery({
     queryKey: ["vestingDelegations", delegatorAccount, liveDataEnabled],
     queryFn: () => fetchingService.getVestingDelegations(delegatorAccount),
-    enabled: !!delegatorAccount,
+    enabled: enabled === undefined ? !!delegatorAccount : enabled,
     refetchOnWindowFocus: false,
   });
 

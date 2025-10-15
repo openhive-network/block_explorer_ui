@@ -159,8 +159,21 @@ namespace Hive {
   }
 
   export class SingleWitnessResponse {
-    witness!: Witness;
-    votes_updated_at!: Date;
+    witness_name!: string;
+    rank!: number;
+    url!: string;
+    vests!: string;
+    votes_daily_change!: number;
+    voters_num!: number;
+    voters_num_daily_change!: number;
+    price_feed!: number;
+    bias!: number;
+    feed_updated_at!: Date;
+    block_size!: number;
+    signing_key!: string;
+    version!: string;
+    missed_blocks!: number;
+    hbd_interest_rate!: number;
   }
 
   export class WitnessVotersResponse {
@@ -323,6 +336,7 @@ namespace Hive {
     direction?: Hive.Direction;
     "page-size"?: number;
     "page"?: number;
+    "voter-name"?: string;
   }
 
   export class Voter {
@@ -335,11 +349,12 @@ namespace Hive {
 
   export class GetVotesHistoryParams {
     accountName!: string;
-    sort?: string;
     direction?: Hive.Direction;
-    "result-limit"!: number | null;
+    page!: number | null;
+    "page-size"!: number | null;
     "from-block"?: number | Date;
     "to-block"?: number | Date;
+    "voter-name"!: string | undefined;
   }
 
   export class WitnessVotesHistory {
@@ -444,6 +459,8 @@ namespace Hive {
     "data-size-limit"?: number;
     "from-block"?: number | Date;
     "to-block"?: number | Date;
+    "participation-mode"?: "include" | "exclude" | "all";
+    "transacting-account-name"?: string;
   }
 
   export class GetAccountDetailsParams {
@@ -505,6 +522,7 @@ namespace Hive {
     ops_count!: number;
     is_witness!: boolean;
     governanceTs!: any;
+    governance_vote_expiration_ts!: Date;
   }
 
   export class GetAccountAuthoritiesParams {
@@ -664,6 +682,9 @@ namespace Hive {
 
   export class AccountOperationsResponse extends AccountOperationTypes {
     operations_result!: OperationResponse[];
+    total_operations!: number;
+    total_pages!: number;
+    block_range!: { from: number; to: number };
   }
 
   export class VestingDelegations {
@@ -777,6 +798,7 @@ namespace Hive {
     prev_balance!: number;
     balance_change!: number;
     timestamp!: string;
+    hivePrice!: string;
   }
   export class AccountBalanceHistoryParams {
     "accountName": string;
@@ -934,9 +956,9 @@ namespace Hive {
       to: number;
     };
   }
-  
-   export class TransactionStatisticsResponse {
-    date!: Date ;
+
+  export class TransactionStatisticsResponse {
+    date!: Date;
     trx_count!: number;
     avg_trx!: number;
     min_trx!: number;
@@ -948,6 +970,153 @@ namespace Hive {
     direction!: Hive.Direction;
     "from-block"?: number | Date;
     "to-block"?: number | Date;
+  }
+  export class AccountFollowCount {
+    account!: string;
+    follower_count!: number;
+    following_count!: number;
+  }
+  export class AccountSubscriptions {
+    subscriptions!: string[];
+  }
+  export class AccountFollower {
+    follower!: string;
+    following!: string;
+    what!: string[];
+    length!: number;
+  }
+
+  export class AccountFollowers {
+    accountFollowers!: AccountFollower[];
+    length!: number;
+  }
+  export class AccountFollowing {
+    follower!: string;
+    following!: string;
+    what!: string[];
+    length!: number;
+  }
+
+  export class VoterHistorySearchParams {
+    accountName?: string;
+    voterName?: string | undefined;
+    fromBlock: Date | number | undefined;
+    toBlock: Date | number | undefined;
+    fromDate: Date | undefined;
+    toDate: Date | undefined;
+    page: number | undefined;
+  }
+
+  export class CommunityDetails {
+    id!: number;
+    name!: string;
+    title!: string;
+    about!: string;
+    lang!: string;
+    type_id!: number;
+    is_nsfw!: boolean;
+    subscribers!: number;
+    sum_pending!: number;
+    num_pending!: number;
+    num_authors!: number;
+    created_at!: string;
+    admins!: string[];
+    team!: CommunityTeamMember[];
+    description!: string;
+    flag_text!: string;
+  }
+
+  export class CommunityTeamMember {
+    name!: string;
+    role!: "admin" | "mod" | "member";
+    title!: string;
+  }
+
+  export class CommunityStats {
+    posts!: number;
+    comments!: number;
+    authors!: number;
+    payouts!: number;
+    pending!: number;
+    subscribers!: number;
+  }
+
+  export class CommunitySubscribers {
+    subscribers!: CommunitySubscriber[];
+  }
+
+  export class CommunitySubscriber {
+    name!: string;
+    created_at!: string;
+  }
+
+  export class CommunityList {
+    [key: string]: CommunityListItem;
+  }
+  export class CommunityListItem {
+    id!: number;
+    name!: string;
+    title!: string;
+    about!: string;
+    avatar_url!: string;
+    lang!: string;
+    type_id!: number;
+    is_nsfw!: boolean;
+    subscribers!: number;
+    sum_pending!: number;
+    num_pending!: number;
+    num_authors!: number;
+    created_at!: string;
+    admins!: string[];
+  }
+
+  export class Proposal {
+    id!: number;
+    proposal_id!: number;
+    creator!: string;
+    receiver!: string;
+    start_date!: Date;
+    end_date!: Date;
+    daily_pay!: string;
+    subject!: string;
+    permlink!: string;
+    total_votes!: string;
+    status!: "active" | "inactive" | "expired";
+  }
+
+  export class ProposalVote {
+    id!: number;
+    voter!: string;
+    proposal!: Proposal;
+  }
+
+  export class BlockChainProps {
+    account_creation_fee!: string;
+    maximum_block_size!: number;
+    hbd_interest_rate!: number;
+    account_subsidy_limit!: number;
+  }
+
+  export class ProxyPowerParams {
+    accountName!: string;
+    page!: number;
+  }
+
+  export class ProxyPowerResponse {
+    account!: string;
+    proxy_date!: Date;
+    proxied_vests!: string;
+  }
+  export class GetTopHoldersParams {
+    "coin-type"!: string;
+    "balance-type"!: string;
+    page!: number;
+  }
+
+  export class TopHolder {
+    rank!: number;
+    account!: string;
+    value!: string;
   }
 }
 

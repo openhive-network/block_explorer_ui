@@ -27,3 +27,18 @@ export const formatAndDelocalizeFromTime = (
   //The locale to use for formatting (e.g., 'en', 'es', 'fr'). Defaults to 'en'.
   return moment.utc(date).locale(locale || "en").fromNow();
 };
+
+/**
+ * Formats a date to a human-readable string (e.g., "Jun 25, 2025")
+ * in a specified locale, respecting the app's language setting.
+ * @param date The date to format.
+ * @param locale The locale to use for formatting (e.g., 'en', 'de', 'es'). Defaults to 'en'.
+ * @returns The formatted, localized date string.
+ */
+export const formatDateToLocale = (
+  date?: string | Date,
+  locale?: string
+): string => {
+  if (!date) return "";
+  return moment(date).locale(locale || 'en').format(config.momentLocaleDateFormat);
+};

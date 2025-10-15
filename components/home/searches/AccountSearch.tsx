@@ -14,8 +14,10 @@ import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
 import useAccountOperations from "@/hooks/api/accountPage/useAccountOperations";
 import NoValueErrorMessage from "./NoValueErrorMessage";
 import { useI18n } from "@/i18n/i18n";
+import { useQueryClient } from "@tanstack/react-query";
 
 const AccountSearch = () => {
+  const qc = useQueryClient();
   const { t } = useI18n();
 
   const {
@@ -27,9 +29,8 @@ const AccountSearch = () => {
     searchRanges,
   } = useSearchesContext();
 
-  const { isAccountOperationsFetching } = useAccountOperations(
-    accountOperationsSearchProps
-  );
+  const { isAccountOperationsFetching, refetchAccountOperations } =
+    useAccountOperations(accountOperationsSearchProps);
   const { operationsTypes } = useOperationsTypes();
 
   const [accountName, setAccountName] = useState<string>("");
@@ -89,6 +90,7 @@ const AccountSearch = () => {
         setAccountOperationsSearchProps,
         setPreviousAccountOperationsSearchProps
       );
+      qc.invalidateQueries({ queryKey: ["account_operations"] });
     }
   };
 

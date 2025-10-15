@@ -23,6 +23,8 @@ import useAccountOperationsTabSearchRanges, {
 } from "./useAccountOperationsTabSearchRanges";
 import { getLocalStorage, removeStorageItem } from "@/utils/LocalStorage";
 import { useI18n } from "@/i18n/i18n";
+import BlockNavigation from "@/components/BlockNavigation";
+import useBlockNavigation from "@/hooks/common/useBlockNavigation";
 
 interface OpeationTabContentProps {
   liveDataEnabled: boolean;
@@ -60,6 +62,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     fromDate: fromDateParam,
     toDate: toDateParam,
     activeTab,
+    direction,
   } = paramsState;
 
   const isOperationsTabActive = !activeTab || activeTab === "operations";
@@ -74,10 +77,27 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     toBlock: toBlockParam,
     startDate: fromDateParam,
     endDate: toDateParam,
+    participationMode: direction,
+    transactingAccountName: !direction ? null : accountName,
   };
 
-  const { accountOperations, isAccountOperationsLoading } =
-    useAccountOperations(accountOperationsProps, liveDataEnabled);
+  const {
+    accountOperations,
+    isAccountOperationsLoading,
+    refetchAccountOperations,
+  } = useAccountOperations(accountOperationsProps as any, liveDataEnabled);
+
+  const {
+    handleLoadNextBlocks,
+    handleLoadPreviousBlocks,
+    hasMoreBlocks,
+    hasPreviousBlocks,
+  } = useBlockNavigation(
+    fromBlockParam,
+    accountOperations,
+    paramsState,
+    setParams
+  );
 
   const { accountOperationTypes } = useAccountOperationTypes(accountName);
 
@@ -140,6 +160,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     };
 
     setParams(props);
+    refetchAccountOperations();
   };
 
   useEffect(() => {
@@ -156,7 +177,8 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
       fromBlockParam ||
       (paramsState.toBlock && paramsState.history.length < 2) ||
       fromDateParam ||
-      toDateParam
+      toDateParam ||
+      paramsState.direction
   );
 
   useEffect(() => {
@@ -177,7 +199,7 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
     <TabsContent value="operations">
       <Card
         className={cn(
-          "mb-4 overflow-hidden transition-all duration-500 ease-in max-h-0 opacity-0",
+          "mb-0 pb-0 overflow-hidden transition-all duration-500 ease-in max-h-0 opacity-0",
           {
             "max-h-full opacity-100": isVisible,
           }
@@ -191,6 +213,61 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
             rangesProps={searchRanges}
             setIsSearchButtonDisabled={setIsSearchButtonDisabled}
           />
+          <div className="flex flex-col space-y-2 mb-4">
+            <div className="text-sm font-medium">
+              {t("operations.participationMode")}
+            </div>
+            <div className="flex space-x-4">
+              <label className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  name="participationMode"
+                  checked={!direction}
+                  onChange={() =>
+                    setParams({
+                      ...paramsState,
+                      page: undefined,
+                      direction: undefined,
+                    })
+                  }
+                  className="h-4 w-4"
+                />
+                <span className="text-sm">{t("operations.all")}</span>
+              </label>
+              <label className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  name="participationMode"
+                  checked={direction === "exclude"}
+                  onChange={() =>
+                    setParams({
+                      ...paramsState,
+                      page: undefined,
+                      direction: "exclude",
+                    })
+                  }
+                  className="h-4 w-4"
+                />
+                <span className="text-sm">{t("operations.incoming")}</span>
+              </label>
+              <label className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  name="participationMode"
+                  checked={direction === "include"}
+                  onChange={() =>
+                    setParams({
+                      ...paramsState,
+                      page: undefined,
+                      direction: "include",
+                    })
+                  }
+                  className="h-4 w-4"
+                />
+                <span className="text-sm">{t("operations.outgoing")}</span>
+              </label>
+            </div>
+          </div>
 
           <div className="flex items-center my-2">
             <OperationTypesDialog
@@ -235,6 +312,17 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
           </div>
         </CardContent>
       </Card>
+
+      <BlockNavigation
+        fromBlock={accountOperations?.block_range?.from}
+        toBlock={accountOperations?.block_range?.to}
+        hasPrevious={hasPreviousBlocks}
+        hasNext={hasMoreBlocks}
+        loadPreviousBlocks={handleLoadPreviousBlocks}
+        loadNextBlocks={handleLoadNextBlocks}
+        urlParams={paramsState}
+        className="w-full mb-[-1px] relative z-10 rounded-t"
+      />
       <AccountOperationsSection
         accountOperations={accountOperations}
         isAccountOperationsLoading={isAccountOperationsLoading}

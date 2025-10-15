@@ -62,10 +62,12 @@ const InteractionsTabResult: React.FC<InteractionsTabResultProps> = ({
   return (
     <>
       <div>
-        <div className="flex flex-wrap justify-between items-center bg-theme p-2 gap-4 mb-4  sticky z-20 top-[3.2rem] md:top-[4rem] rounded">
-          <div className="flex justify-center w-full md:w-auto md:justify-start">
+        <div className="flex flex-wrap justify-between items-center bg-theme p-2 sticky z-20 top-[3.2rem] md:top-[4rem] rounded-t">
+          <div className="flex justify-end w-full md:justify-end items-end">
             <Link href={commentPageLink}>
-              <Button data-testid="go-to-result-page">{t("common.goToResultPage")}</Button>
+              <Button data-testid="go-to-result-page">
+                {t("common.goToResultPage")}
+              </Button>
             </Link>
           </div>
           <div className="flex flex-col md:flex-row items-center gap-2 flex-1 justify-center w-full">
@@ -87,7 +89,7 @@ const InteractionsTabResult: React.FC<InteractionsTabResultProps> = ({
           operationCount={data.total_operations}
           operations={formattedOperations}
           unformattedOperations={unformattedOperations}
-          referrer="interactions"
+          referrer={t("accountOperationViewTabs.interactions").toLowerCase()}
           accountName={accountName}
         />
       </div>

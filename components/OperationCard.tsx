@@ -31,7 +31,7 @@ const OperationCard: React.FC<OperationCardProps> = ({
               Trx{" "}
               <Link
                 className="text-explorer-turquoise"
-                href={`/transaction/${transactionId}`}
+                href={`/tx/${transactionId}`}
               >
                 {transactionId.slice(0, 10)}
               </Link>

@@ -8,6 +8,7 @@ import useURLParams from "@/hooks/common/useURLParams";
 import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
 import AccountPagination from "../../AccountPagination";
 import { defaultAccountOperationsTabSearchParams } from "./useAccountOperationsTabSearchRanges";
+import { useI18n } from "@/i18n/i18n";
 
 interface AccountOperationsSectionProps {
   accountOperations: Hive.AccountOperationsResponse | undefined;
@@ -18,6 +19,7 @@ const AccountOperationsSection: React.FC<AccountOperationsSectionProps> = ({
   accountOperations,
   isAccountOperationsLoading,
 }) => {
+  const { t } = useI18n();
   const { paramsState, setParams } = useURLParams(
     defaultAccountOperationsTabSearchParams,
     ["accountName"]
@@ -45,7 +47,7 @@ const AccountOperationsSection: React.FC<AccountOperationsSectionProps> = ({
     <>
       <div
         className={
-          "flex justify-center items-center text-text  sticky z-20 bg-explorer-bg-start my-4 top-[3.2rem] md:top-[4rem]"
+          "flex justify-center items-center text-text sticky z-20 bg-explorer-bg-start top-[3.2rem] md:top-[4rem] rounded-t-sm"
         }
       >
         {accountOperations &&
@@ -69,7 +71,7 @@ const AccountOperationsSection: React.FC<AccountOperationsSectionProps> = ({
         unformattedOperations={convertOperationResultsToTableOperations(
           accountOperations?.operations_result || []
         )}
-        referrer="operations"
+        referrer={t("accountOperationViewTabs.operations").toLowerCase()}
         accountName={
           paramsState.accountName?.startsWith("@")
             ? paramsState.accountName.slice(1)

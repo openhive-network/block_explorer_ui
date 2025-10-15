@@ -1,8 +1,8 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { ChevronRight, ChevronLeft } from "lucide-react";
+import { ChevronRight, ChevronLeft, Minimize2, Maximize2 } from "lucide-react";
 import { useI18n } from "@/i18n/i18n";
-
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";
 
 function getDisplayName(Tag: React.ElementType) {
   return typeof Tag === "string"
@@ -19,7 +19,7 @@ function getDisplayName(Tag: React.ElementType) {
  *  • Is now RTL-aware
  *  • Applies `right` instead of `left` for sticky positioning in RTL
  *  • Applies `text-right` instead of `text-left` for alignment in RTL
-*/
+ */
 export function withSticky<T extends React.ElementType>(
   Tag: T,
   baseClasses = ""
@@ -82,6 +82,8 @@ const TableContext = React.createContext<TableContextProps>({
 interface TableProps extends React.HTMLAttributes<HTMLTableElement> {
   enableMobileScrollArrows?: boolean;
   isStandaloneTable?: boolean;
+  isDialog?: boolean;
+  enableCompactToggle?: boolean;
 }
 
 const Table = React.forwardRef<HTMLTableElement, TableProps>(
@@ -91,10 +93,19 @@ const Table = React.forwardRef<HTMLTableElement, TableProps>(
       children,
       enableMobileScrollArrows = false,
       isStandaloneTable = false,
+      isDialog = false,
+      enableCompactToggle = false,
       ...props
     },
     ref
   ) => {
+    const { t } = useI18n();
+    const [isCompact, setIsCompact] = React.useState(false);
+
+    const handleToggleCompact = () => {
+      setIsCompact(prev => !prev);
+    };
+
     const [showLeftArrow, setShowLeftArrow] = React.useState(false);
     const [showRightArrow, setShowRightArrow] = React.useState(false);
     const tableRef = React.useRef<HTMLDivElement>(null);
@@ -104,11 +115,11 @@ const Table = React.forwardRef<HTMLTableElement, TableProps>(
     const isRTL = dir === "rtl";
 
     const handleScroll = React.useCallback(() => {
-        if (!tableRef.current) return;
+      if (!tableRef.current) return;
 
-        const { scrollLeft, scrollWidth, clientWidth } = tableRef.current;
+      const { scrollLeft, scrollWidth, clientWidth } = tableRef.current;
 
-        const atLeftEdge = scrollLeft <= 0;
+      const atLeftEdge = scrollLeft <= 0;
       const atRightEdge = scrollLeft + clientWidth >= scrollWidth - 1;
 
       const shouldShowLeft = scrollLeft > 0 && !atLeftEdge && isTableVisible;
@@ -165,57 +176,85 @@ const Table = React.forwardRef<HTMLTableElement, TableProps>(
       };
     }, [handleScroll, isStandaloneTable]);
 
-    const arrowStyle =
-      "fixed top-1/2 transform -translate-y-1/2 bg-gray-200 bg-opacity-70 hover:bg-opacity-100 rounded-full p-2 z-20 cursor-pointer text-gray-700";
+    const arrowCommonStyle =
+      "bg-gray-200 bg-opacity-70 hover:bg-opacity-100 rounded-full p-2 z-20 cursor-pointer text-gray-700";
 
-    const LeftArrowIcon = isRTL ? ChevronRight : ChevronLeft;
-    const RightArrowIcon = isRTL ? ChevronLeft : ChevronRight;
+    const arrowConditionalStyle = isDialog
+      ? "absolute"
+      : "fixed top-1/2 transform -translate-y-1/2";
+
+    const PrevArrowIcon = isRTL ? ChevronRight : ChevronLeft;
+    const NextArrowIcon = isRTL ? ChevronLeft : ChevronRight;
+    const prevArrowPosition = isRTL ? "right-2" : "left-2";
+    const nextArrowPosition = isRTL ? "left-2" : "right-2";
 
     return (
       <TableContext.Provider value={{ showLeftArrow, showRightArrow }}>
-        <div
-          className="relative w-full overflow-auto"
-          ref={tableRef}
-        >
-          {enableMobileScrollArrows && showLeftArrow && (
-            <div
-              className={cn(arrowStyle, "left-2")}
-              style={{ top: `45vh` }}
-              onClick={() => {
+        <div className={cn("transition-all duration-300 ease-in-out", isCompact ? "w-4/5 mx-auto" : "w-full")}>
+          <div className="relative">
+            {enableCompactToggle && (
+              <div className="absolute -top-10 right-0 z-10 mt-10">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        onClick={handleToggleCompact}
+                        className="p-1.5 rounded-md hover:bg-muted"
+                      >
+                        {isCompact ? <Maximize2 className="h-4 w-4" /> : <Minimize2 className="h-4 w-4" />}
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{isCompact ? t("table.switchToFullView") : t("table.switchToCompactView")}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+            )}
+
+            <div className="w-full overflow-auto" ref={tableRef}>
+              <table
+                ref={ref}
+                className={cn(
+                  "w-full caption-bottom bg-theme text-xs rounded max-w-full",
+                  className
+                )}
+                {...props}
+              >
+                {children}
+              </table>
+            </div>
+
+           {enableMobileScrollArrows && showLeftArrow && (
+              <div
+                className={cn(arrowCommonStyle, arrowConditionalStyle, prevArrowPosition)}
+                style={isDialog ? { top: '10vh' } :  { top: '45vh' }}
+                onClick={() => {
                 tableRef.current?.scrollBy({
                   left: isRTL ? 100 : -100,
                   behavior: "smooth",
                 });
-              }}
-            >
-              <LeftArrowIcon size={20} />
-            </div>
-          )}
-
-          {enableMobileScrollArrows && showRightArrow && (
-            <div
-              className={cn(arrowStyle, "right-2")}
-              style={{ top: `45vh` }}
-              onClick={() => {
-                tableRef.current?.scrollBy({
-                  left: isRTL ? -100 : 100,
-                  behavior: "smooth",
-                });
-              }}
-            >
-              <RightArrowIcon size={20} />
-            </div>
-          )}
-          <table
-            ref={ref}
-            className={cn(
-              "w-full caption-bottom bg-theme text-xs rounded max-w-full",
-              className
+                }}
+              >
+                <PrevArrowIcon size={20} />
+              </div>
             )}
-            {...props}
-          >
-            {children}
-          </table>
+
+            {enableMobileScrollArrows && showRightArrow && (
+              <div
+                className={cn(arrowCommonStyle, arrowConditionalStyle, nextArrowPosition)}
+                style={isDialog ? { top: '10vh' } :  { top: '45vh' }}
+                onClick={() => {
+                tableRef.current?.scrollBy({ 
+                  left: isRTL ? -100 : 100,
+                  behavior: "smooth" 
+                });
+                }}
+              >
+                <NextArrowIcon size={20} />
+              </div>
+            )}
+          </div>
         </div>
       </TableContext.Provider>
     );
@@ -266,17 +305,21 @@ TableFooter.displayName = "TableFooter";
 const TableRow = React.forwardRef<
   HTMLTableRowElement,
   React.HTMLAttributes<HTMLTableRowElement> & { rowVariant?: "body" | "header" }
->(({ className, rowVariant = "body", ...props }, ref) => (
-  <tr
-    ref={ref}
-    className={cn(
-      "border-b-2 bg-theme dark:border-gray-700",
-      rowVariants[rowVariant],
-      className
-    )}
-    {...props}
-  />
-));
+>(({ className, rowVariant = "body", ...props }, ref) => {
+  const { dir } = useI18n();
+  const isRTL = dir === "rtl";
+  return (
+    <tr
+      ref={ref}
+      className={cn(
+        "border-b-2 bg-theme dark:border-gray-700",
+        rowVariants[rowVariant],
+        className
+      )}
+      {...props}
+    />
+  );
+});
 TableRow.displayName = "TableRow";
 
 const TableHead = withSticky(

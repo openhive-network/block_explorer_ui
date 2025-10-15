@@ -10,6 +10,7 @@ export const config = {
     env("API_ADDRESS") ? env("API_ADDRESS") : "https://api.hive.blog"
   }`,
   baseMomentTimeFormat: "YYYY/MM/DD HH:mm:ss UTC",
+  momentLocaleDateFormat : "MMM D, YYYY",
   gitHash: process.env.NEXT_PUBLIC_COMMIT_HASH,
   get lastCommitHashRepoUrl() {
     return `https://gitlab.syncad.com/hive/block_explorer_ui/-/commit/${this.gitHash}`;
@@ -18,10 +19,15 @@ export const config = {
   commentOperationsTypeIds: [0, 1, 17, 19, 51, 53, 61, 63, 72, 73],
   standardPaginationSize: 100,
   expandedPaginationSize: 20000,
+  proposalVotesSize: 500,
   blockPagePaginationSize: 2000, // Temporary 2000 until cache problem solved
   witnessesPerPages: {
     witnesses: 200,
     home: 20,
+  },
+  topHolders: {
+    totalCount: 2000,       // Total number of top holders
+    pageSize: 100,         // Page size for pagination
   },
   maxWitnessVotes: 30,
   inactiveWitnessKey: "STM1111111111111111111111111111111114T1Anm",
@@ -31,6 +37,7 @@ export const config = {
   marketHistoryRefreshInterval: 60000,
   lastBlocksForWidget: 20,
   firstBlockTime: "2016-03-24T16:05:00",
+  popularCommunitiesCount: 10,
   precisions: {
     vests: 6,
     hivePower: 3,
@@ -42,6 +49,8 @@ export const config = {
     outgoing: "outgoing",
   },
   maxProxyDepth: 3,
+  compactViewPercentage :"80%",
+  fullViewPercentage: "98%",
   defaultNodeProviders: [
     "https://api.hive.blog",
     "https://api.openhive.network",

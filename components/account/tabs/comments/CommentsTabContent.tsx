@@ -52,7 +52,6 @@ const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
     ["accountName"]
   );
 
-
   const props = (() => {
     if (paramsState.activeTab === "comments") {
       return {
@@ -62,8 +61,11 @@ const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
     }
   })();
 
-  const { permlinkSearchData, permlinkSearchDataLoading } =
-    usePermlinkSearch(props);
+  const {
+    permlinkSearchData,
+    permlinkSearchDataLoading,
+    permlinkSearchRefetchData,
+  } = usePermlinkSearch(props);
 
   const {
     handleLoadNextBlocks,
@@ -110,7 +112,7 @@ const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
     <TabsContent value="comments">
       <Card
         className={cn(
-          "mb-4 overflow-hidden transition-all duration-500 ease-in max-h-0 opacity-0",
+          "mb-0 overflow-hidden transition-all duration-500 ease-in max-h-0 opacity-0",
           {
             "max-h-full opacity-100": isVisible,
           }
@@ -122,6 +124,7 @@ const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
         <CardContent>
           <AccountCommentsPermlinkSearch
             isDataLoading={permlinkSearchDataLoading}
+            permlinkSearchRefetchData={permlinkSearchRefetchData}
             accountName={accountName}
             setIsFiltersActive={setIsFiltersActive}
             setIsVisible={setIsVisible}
@@ -136,7 +139,7 @@ const CommentsTabContent: React.FC<CommnetsTabContentProps> = ({
         loadPreviousBlocks={handleLoadPreviousBlocks}
         loadNextBlocks={handleLoadNextBlocks}
         urlParams={paramsState}
-        className="rounded mb-4"
+        className="w-full mb-[-1px] relative z-10 rounded-t"
       />
       <AccountCommentPermlinkSearchResults
         data={permlinkSearchData}

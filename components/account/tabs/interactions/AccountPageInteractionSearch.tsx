@@ -28,11 +28,16 @@ export const DEFAULT_PARAMS = {
 interface AccountPageInteractionSearchProps {
   isCommentSearchDataLoading: boolean;
   setIsFiltersActive: Dispatch<SetStateAction<boolean>>;
+  refetchCommentSearchData: () => void;
 }
 
 const AccountPageInteractionSearch: React.FC<
   AccountPageInteractionSearchProps
-> = ({ isCommentSearchDataLoading, setIsFiltersActive }) => {
+> = ({
+  isCommentSearchDataLoading,
+  setIsFiltersActive,
+  refetchCommentSearchData,
+}) => {
   const { t } = useI18n();
   const {
     setLastSearchKey,
@@ -90,6 +95,7 @@ const AccountPageInteractionSearch: React.FC<
   const onClickSearchButton = () => {
     setLastSearchKey("comment");
     handleCommentsSearch(accountName, permlink);
+    refetchCommentSearchData();
   };
 
   useEffect(() => {

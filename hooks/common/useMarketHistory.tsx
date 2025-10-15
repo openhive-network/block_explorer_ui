@@ -4,7 +4,7 @@ import Hive from "@/types/Hive";
 
 const useMarketHistory = (
   bucketSeconds: number,
-  start: string,
+  start: string | undefined,
   end: string
 ) => {
   const {
@@ -14,6 +14,7 @@ const useMarketHistory = (
   }: UseQueryResult<Hive.MarketHistory> = useQuery({
     queryKey: ["account_details", bucketSeconds, start, end],
     queryFn: () => fetchingService.getMarketHistory(bucketSeconds, start, end),
+    keepPreviousData: true,
     refetchOnWindowFocus: false,
   });
 

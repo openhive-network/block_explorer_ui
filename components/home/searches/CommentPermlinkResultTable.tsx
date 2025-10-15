@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { SquareArrowDown } from "lucide-react";
 
 import {
@@ -54,23 +55,34 @@ const buildTableBody = (
   data: Hive.Permlink[],
   accountName: string | undefined,
   handleOpenCommentsSection: (accountName: string, permlink: string) => void,
+  handleRowClick: (block: number, trx_id: string, operation_id: number) => void,
   t: (key: string) => string
 ) => {
   if (!data || !data.length || !accountName) return;
 
   return data.map(
-    ({ block, operation_id, permlink, timestamp, trx_id }: any, index: number) => { // Added index for key
+    (
+      { block, operation_id, permlink, timestamp, trx_id }: any,
+      index: number
+    ) => {
+      // Added index for key
       return (
         <React.Fragment key={trx_id || index}>
-          <TableRow>
+          <TableRow
+            className="cursor-pointer hover:bg-rowHover"
+            onClick={() => handleRowClick(block, trx_id, operation_id)}
+          >
             <TableCell
               stickyLeft
               className="text-link whitespace-nowrap"
             >
-              <Link href={`/block/${block}`}>{block.toLocaleString()}</Link>
+              <Link href={`/block/${block}`} onClick={(e) => e.stopPropagation()}>
+                {block.toLocaleString()}
+              </Link>
               <CopyButton
                 text={block}
                 tooltipText={t("common.copyBlockNumber")}
+                onClick={(e) => e.stopPropagation()} 
               />
             </TableCell>
             <TableCell>{operation_id}</TableCell>
@@ -79,6 +91,7 @@ const buildTableBody = (
                 className="text-link break-words"
                 target="_blank"
                 href={`/@${accountName}/${permlink}`}
+                onClick={(e) => e.stopPropagation()}
               >
                 {permlink}
               </Link>
@@ -86,7 +99,10 @@ const buildTableBody = (
             <TableCell className="text-left text-text p-0 m-0">
               <Button
                 className="bg-inherit p-2"
-                onClick={() => handleOpenCommentsSection(accountName, permlink)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleOpenCommentsSection(accountName, permlink);
+                }}
               >
                 <SquareArrowDown size="20" />
               </Button>
@@ -95,12 +111,13 @@ const buildTableBody = (
               {formatAndDelocalizeTime(timestamp)}
             </TableCell>
             <TableCell className="text-left text-link whitespace-nowrap">
-              <Link href={`/transaction/${trx_id}`}>
+              <Link href={`/tx/${trx_id}`} onClick={(e) => e.stopPropagation()}>
                 {trx_id?.slice(0, 10)}
               </Link>
               <CopyButton
                 text={trx_id}
                 tooltipText={t("common.copyTransactionId")}
+                onClick={(e) => e.stopPropagation()} 
               />
             </TableCell>
           </TableRow>
@@ -116,12 +133,26 @@ const CommentPermlinkResultTable = ({
   data,
   accountName,
 }: CommentPermlinkResultTableProps) => {
+  const router = useRouter();
   const { t } = useI18n();
   const { handleCommentsSearch } = useHandleCommentsSearch();
 
   const handleOpenCommentsSection = (accountName: string, permlink: string) => {
     handleCommentsSearch(accountName, permlink);
     openCommentsSection(accountName, permlink);
+  };
+
+  const handleRowClick = (block: number, trx_id: string, operation_id: number) => {
+    const params = new URLSearchParams();
+    if (trx_id) {
+        params.append("trxId", trx_id);
+    }
+    if (operation_id !== undefined) {
+        params.append("opId", String(operation_id));
+    }
+    const queryString = params.toString();
+    const url = `/block/${block}${queryString ? `?${queryString}` : ""}`;
+    router.push(url);
   };
 
   const prepareExportData = () => {
@@ -133,7 +164,8 @@ const CommentPermlinkResultTable = ({
           [t("commentPermlinkResultTable.block")]: block.toLocaleString(),
           [t("commentPermlinkResultTable.operationId")]: operation_id,
           [t("commentPermlinkResultTable.permlink")]: permlink,
-          [t("commentPermlinkResultTable.timestamp")]: formatAndDelocalizeTime(timestamp),
+          [t("commentPermlinkResultTable.timestamp")]:
+            formatAndDelocalizeTime(timestamp),
           [t("commentPermlinkResultTable.trxId")]: trx_id?.slice(0, 10),
         };
       }
@@ -144,7 +176,7 @@ const CommentPermlinkResultTable = ({
     <>
       <div className="w-full">
         <div
-          className={cn("flex justify-end items-center", {
+          className={cn("table-toolbar", {
             "justify-between": !!permlinkCount,
           })}
         >
@@ -154,14 +186,17 @@ const CommentPermlinkResultTable = ({
           />
           <DataExport
             data={prepareExportData()}
-            filename={`${accountName}_permlink_search_result.csv`}
+            filename={`${accountName}_${t(
+              "commentPermlinkResultTable.permlink_search_result"
+            ).toLowerCase()}.csv`}
             className="mb-2"
           />
         </div>
       </div>
       <div className="flex w-full overflow-auto">
         <div className="text-text w-[100%] bg-theme dark:bg-theme p-5 rounded">
-          <Table enableMobileScrollArrows
+          <Table
+            enableMobileScrollArrows
             data-testid="table-body"
             className="text-xs"
           >
@@ -169,7 +204,7 @@ const CommentPermlinkResultTable = ({
               <TableRow rowVariant="header">{buildTableHeader(t)}</TableRow>
             </TableHeader>
             <TableBody>
-              {buildTableBody(data, accountName, handleOpenCommentsSection, t)}
+              {buildTableBody(data, accountName, handleOpenCommentsSection, handleRowClick, t)}
             </TableBody>
           </Table>
         </div>

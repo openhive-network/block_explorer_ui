@@ -4,7 +4,6 @@ import Link from "next/link";
 import Head from "next/head";
 
 import Hive from "@/types/Hive";
-import { useUserSettingsContext } from "@/contexts/UserSettingsContext";
 import { convertTransactionResponseToTableOperations } from "@/lib/utils";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import useTransactionData from "@/hooks/api/common/useTransactionData";
@@ -18,6 +17,7 @@ import { cn } from "@/lib/utils";
 import CopyButton from "@/components/ui/CopyButton";
 import PageTitle from "@/components/PageTitle";
 import { useI18n } from "@/i18n/i18n";
+import { useSettings } from "@/contexts/SettingsContext";
 
 const TransactionDetailItem = ({
   label,
@@ -42,7 +42,10 @@ const TransactionDetailItem = ({
     >
       {label}:
     </div>
-    <div className="text-sm" data-testid={dataTestId}>
+    <div
+      className="text-sm"
+      data-testid={dataTestId}
+    >
       {value}
     </div>
   </div>
@@ -50,7 +53,7 @@ const TransactionDetailItem = ({
 export default function Transaction() {
   const router = useRouter();
   const { t } = useI18n();
-  const { settings } = useUserSettingsContext();
+  const { settings } = useSettings();
   const transactionId = router.query.transactionId as string;
   const [includeVirtual, setIncludeVirtual] = useState(false);
 
@@ -79,10 +82,12 @@ export default function Transaction() {
         {!trxLoading && !!trxData && (
           <>
             <Card data-testid="transaction-header">
-            <PageTitle titleKey="pageTitle.transactionDetails" className=" min-h-4 py-4 pl-4"/>
+              <PageTitle
+                titleKey="pageTitle.transactionDetails"
+                className=" min-h-4 py-4 pl-4"
+              />
               <CardHeader className="flex items-center py-2 ">
                 <CardTitle>
-
                   <div className="flex space-x-2">
                     <span className="text-sm">
                       {t("transactionPage.includeVirtualOperations")}:
@@ -99,35 +104,39 @@ export default function Transaction() {
                   data-testid="transaction-header-hash-trx"
                   className="w-full text-left text-sm"
                 >
-                  <span className="font-semibold">{t("transactionPage.transactionId")}:</span>{" "}
+                  <span className="font-semibold">
+                    {t("transactionPage.transactionId")}:
+                  </span>{" "}
                   {trxData?.transaction_id}
                   <CopyButton
                     text={trxData?.transaction_id}
                     tooltipText={t("common.copyTransactionId")}
                   />
                 </div>
-                  <div className="text-left text-sm">
-                    <span className="font-semibold">{t("common.block")}:</span>{" "}
-                    <Link
-                      href={`/block/${trxData?.block_num}`}
-                      data-testid="transaction-header-block-number"
-                    >
-                      <span className="text-link">
-                        {trxData?.block_num.toLocaleString()}
-                      </span>
-                    </Link>
-                    <CopyButton
-                        text={trxData?.block_num}
-                        tooltipText={t("common.copyBlockNumber")}
-                      />
-                  </div>
-                <div
-                    data-testid="transaction-header-date"
-                    className="text-left text-sm"
+                <div className="text-left text-sm">
+                  <span className="font-semibold">{t("common.block")}:</span>{" "}
+                  <Link
+                    href={`/block/${trxData?.block_num}`}
+                    data-testid="transaction-header-block-number"
                   >
-                    <span className="font-semibold">{t("transactionPage.date")}:</span>{" "}
-                    <span>{formatAndDelocalizeTime(trxData.timestamp)}</span>
-                  </div>
+                    <span className="text-link">
+                      {trxData?.block_num.toLocaleString()}
+                    </span>
+                  </Link>
+                  <CopyButton
+                    text={trxData?.block_num}
+                    tooltipText={t("common.copyBlockNumber")}
+                  />
+                </div>
+                <div
+                  data-testid="transaction-header-date"
+                  className="text-left text-sm"
+                >
+                  <span className="font-semibold">
+                    {t("transactionPage.date")}:
+                  </span>{" "}
+                  <span>{formatAndDelocalizeTime(trxData.timestamp)}</span>
+                </div>
               </CardContent>
             </Card>
             {settings.rawJsonView || settings.prettyJsonView ? (
@@ -146,7 +155,9 @@ export default function Transaction() {
                     unformattedOperations={convertTransactionResponseToTableOperations(
                       trxData
                     )}
-                    referrer={`${trxData?.transaction_id?.slice(0, 10)}_transaction_details`}
+                    referrer={`${trxData?.transaction_id?.slice(0, 10)}_${t(
+                      "transactionPage.transactionDetailsRefferer"
+                    )}`}
                   />
                 )}
                 <Card data-testid="transaction-details">
