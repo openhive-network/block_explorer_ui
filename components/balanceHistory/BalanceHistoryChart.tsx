@@ -248,10 +248,11 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
 
   // ---------------- Coin toggle buttons ----------------
 const renderCoinButtons = () => (
-  <div className="flex flex-col md:flex-row items-center justify-between w-full gap-2 mb-2">
-    {/* Toggle switch container (bottom on mobile, left on desktop) */}
+  <div className="flex flex-col md:flex-row items-center justify-center md:justify-end w-full gap-2 mb-2">
+    
+    {/* Toggle switch — visible only when VESTS is selected */}
     {selectedCoinType === "VESTS" && (
-      <div className="flex items-center justify-center md:justify-start space-x-2 rounded-md p-1.5 w-full md:w-auto">
+      <div className="flex items-center justify-center md:justify-end space-x-2 order-2 md:order-1">
         <Label htmlFor="unit-toggle" className="text-sm font-medium select-none">
           {t("common.vests")}
         </Label>
@@ -266,14 +267,14 @@ const renderCoinButtons = () => (
       </div>
     )}
 
-    {/* Coin buttons container (top on mobile, right on desktop) */}
-    <div className="flex justify-center md:justify-end flex-wrap gap-2 w-full md:w-auto">
+    {/* Coin buttons container — always on the right */}
+    <div className="flex justify-center md:justify-end flex-wrap gap-2 order-1 md:order-2 w-full md:w-auto">
       {availableCoins.map((coinType) => (
         <button
           key={coinType}
           onClick={() => handleCoinTypeChange(coinType)}
           className={cn(
-            "px-3 py-1 text-sm rounded",
+            "px-3 py-1 text-sm rounded transition-colors",
             selectedCoinType === coinType
               ? "bg-blue-500 text-white"
               : "bg-gray-200 text-black hover:bg-gray-300 dark:bg-gray-600 dark:text-white hover:dark:bg-gray-500"
