@@ -100,7 +100,18 @@ export const LiveFundingChart = () => {
               key={proposal.id}
               className="grid grid-cols-1 gap-2 md:grid-cols-3 md:gap-4 md:items-center"
             >
+              <Link
+                href={`/proposal/@${proposal.creator}/${proposal.permlink}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="md:col-span-1 truncate font-medium text-slate-700 dark:text-slate-300 hover:text-link hover:underline"
+              >
+                {proposal.title}{" "}
+                <span className="text-slate-400">#{proposal.id}</span>
+              </Link>
+
               <a
+                className="md:col-span-2"
                 href={`#proposal-${proposal.id}`}
                 onClick={(e) => {
                   e.preventDefault();
@@ -111,51 +122,47 @@ export const LiveFundingChart = () => {
                       block: "center",
                     });
                 }}
-                rel="noopener noreferrer"
-                className="md:col-span-1 truncate font-medium text-slate-700 dark:text-slate-300 hover:text-link hover:underline"
               >
-                {proposal.title}{" "}
-                <span className="text-slate-400">#{proposal.id}</span>
-              </a>
-              <div className="md:col-span-2">
-                <Tooltip delayDuration={0}>
-                  <TooltipTrigger asChild>
-                    <div className="relative h-5 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden cursor-pointer">
-                      <div
-                        className="absolute top-0 h-full border-r-2 border-dashed border-red-500/70 z-10"
-                        style={{ left: `${(100 / maxPercentage) * 100}%` }}
-                      />
-                      <div
-                        className={cn(
-                          "absolute top-0 left-0 h-full rounded-full transition-all duration-500",
-                          proposal.isFunded ? "bg-green-500" : "bg-blue-500"
-                        )}
-                        style={{
-                          width: `${
-                            (proposal.percentage / maxPercentage) * 100
-                          }%`,
-                        }}
-                      />
-                      <div className="absolute inset-0 px-2 flex items-center text-white font-bold text-xs">
-                        <span>{proposal.votesInHpFormatted}</span>
+                <div>
+                  <Tooltip delayDuration={0}>
+                    <TooltipTrigger asChild>
+                      <div className="relative h-5 rounded-full bg-slate-200 dark:bg-slate-800 overflow-hidden cursor-pointer">
+                        <div
+                          className="absolute top-0 h-full border-r-2 border-dashed border-red-500/70 z-10"
+                          style={{ left: `${(100 / maxPercentage) * 100}%` }}
+                        />
+                        <div
+                          className={cn(
+                            "absolute top-0 left-0 h-full rounded-full transition-all duration-500",
+                            proposal.isFunded ? "bg-green-500" : "bg-blue-500"
+                          )}
+                          style={{
+                            width: `${
+                              (proposal.percentage / maxPercentage) * 100
+                            }%`,
+                          }}
+                        />
+                        <div className="absolute inset-0 px-2 flex items-center text-white font-bold text-xs">
+                          <span>{proposal.votesInHpFormatted}</span>
+                        </div>
                       </div>
-                    </div>
-                  </TooltipTrigger>
+                    </TooltipTrigger>
 
-                  <TooltipContent
-                    side="top"
-                    align="center"
-                    className="bg-transparent border-none shadow-none px-0 py-0 text-slate-800 dark:text-slate-100"
-                  >
-                    <p className="flex items-baseline">
-                      <span className="font-mono text-sm font-bold">
-                        {proposal.percentage.toFixed(2)}
-                      </span>
-                      <span className="text-sm font-semibold">%</span>
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </div>
+                    <TooltipContent
+                      side="top"
+                      align="center"
+                      className="bg-transparent border-none shadow-none px-0 py-0 text-slate-800 dark:text-slate-100"
+                    >
+                      <p className="flex items-baseline">
+                        <span className="font-mono text-sm font-bold">
+                          {proposal.percentage.toFixed(2)}
+                        </span>
+                        <span className="text-sm font-semibold">%</span>
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </div>
+              </a>
             </div>
           ))}
         </div>
