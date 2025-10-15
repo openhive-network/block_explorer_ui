@@ -265,7 +265,7 @@ export default function TopHoldersPage() {
       <div className="table-toolbar w-full flex flex-wrap items-center gap-4">
         <div>
           <DataCountMessage
-            count={filteredHolders.length}
+            count={totalCount}
             dataType={t("topHolders.DataType")}
           />
         </div>
