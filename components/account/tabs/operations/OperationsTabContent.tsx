@@ -177,7 +177,8 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
       fromBlockParam ||
       (paramsState.toBlock && paramsState.history.length < 2) ||
       fromDateParam ||
-      toDateParam
+      toDateParam ||
+      paramsState.direction
   );
 
   useEffect(() => {
@@ -313,8 +314,8 @@ const OperationTabContent: React.FC<OpeationTabContentProps> = ({
       </Card>
 
       <BlockNavigation
-        fromBlock={accountOperations?.block_range.from}
-        toBlock={accountOperations?.block_range.to}
+        fromBlock={accountOperations?.block_range?.from}
+        toBlock={accountOperations?.block_range?.to}
         hasPrevious={hasPreviousBlocks}
         hasNext={hasMoreBlocks}
         loadPreviousBlocks={handleLoadPreviousBlocks}

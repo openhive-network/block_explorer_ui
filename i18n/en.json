@@ -38,6 +38,7 @@
   "common.page": "page",
   "common.bytes": "Bytes",
   "common.order": "Order",
+  "common.vestshp": "VESTS/HP",
   "table.switchToCompactView": "Switch to Compact View",
   "table.switchToFullView": "Switch to Full View",
   "currentBlockCard.currentBlock": "Current Block",
