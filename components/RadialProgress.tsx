@@ -1,3 +1,5 @@
+// /components/ui/RadialProgress.tsx
+
 import React from "react";
 import { cn } from "@/lib/utils";
 import {
@@ -6,6 +8,7 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/hybrid-tooltip";
+import "@/styles/striped-progress.css"; // import the animation CSS
 
 interface RadialProgressProps {
   percentage: number;
@@ -36,7 +39,7 @@ const RadialProgress: React.FC<RadialProgressProps> = ({
     >
       <div className="relative" style={{ width: size, height: size }}>
         <svg className="transform -rotate-90" width={size} height={size}>
-          {/* Background circle */}
+          {/* Background Circle */}
           <circle
             className="text-gray-200 dark:text-gray-700"
             stroke="currentColor"
@@ -47,7 +50,7 @@ const RadialProgress: React.FC<RadialProgressProps> = ({
             cy={size / 2}
           />
 
-          {/* Main solid progress color */}
+          {/* Solid Progress Circle */}
           <circle
             className={cn("transition-all duration-500", color)}
             stroke="currentColor"
@@ -61,10 +64,22 @@ const RadialProgress: React.FC<RadialProgressProps> = ({
             cy={size / 2}
           />
 
-          {/* Animated diagonal stripe overlay */}
+          {/* Striped Overlay */}
+          <defs>
+            <pattern
+              id="radialStripes"
+              patternUnits="userSpaceOnUse"
+              width="40"
+              height="40"
+              patternTransform="rotate(45)"
+              className="circular-animated-stripes"
+            >
+              <rect width="20" height="40" fill="rgba(255,255,255,0.25)" />
+            </pattern>
+          </defs>
+
           <circle
-            className="animated-stripes-circle"
-            stroke="url(#diagonalStripes)"
+            stroke="url(#radialStripes)"
             strokeWidth={strokeWidth}
             strokeDasharray={circumference}
             strokeDashoffset={offset}
@@ -74,27 +89,9 @@ const RadialProgress: React.FC<RadialProgressProps> = ({
             cx={size / 2}
             cy={size / 2}
           />
-
-          {/* Define animated pattern */}
-          <defs>
-            <pattern
-              id="diagonalStripes"
-              patternUnits="userSpaceOnUse"
-              width="40"
-              height="40"
-              patternTransform="rotate(45)"
-            >
-              <rect
-                width="10"
-                height="40"
-                fill="rgba(255,255,255,0.25)"
-                className="animate-diagonal-stripes"
-              />
-            </pattern>
-          </defs>
         </svg>
 
-        {/* Center text */}
+        {/* Center Percentage */}
         <div className="absolute inset-0 flex items-center justify-center">
           <span className="text-sm font-bold text-gray-800 dark:text-white">
             {percentage.toFixed(2)}%
@@ -109,6 +106,7 @@ const RadialProgress: React.FC<RadialProgressProps> = ({
     </div>
   );
 
+  // Wrap in tooltip if provided
   if (tooltipContent) {
     return (
       <TooltipProvider>
