@@ -1,0 +1,32 @@
+/* /styles/striped-progress.css */
+
+/* Keyframes for moving diagonal stripes */
+@keyframes moveStripes {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 40px 0;
+  }
+}
+
+/* Class to apply animated stripes */
+.animated-stripes {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.25) 0 10px,
+    transparent 10px 20px
+  );
+  background-size: 40px 40px;
+  animation: moveStripes 1s linear infinite;
+  background-blend-mode: overlay;
+}
+/* Circular stripes rules */
+@keyframes circularStripesMove {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(40px); }
+}
+
+.circular-animated-stripes rect {
+  animation: circularStripesMove 1s linear infinite;
+}

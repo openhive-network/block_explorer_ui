@@ -8,6 +8,7 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/hybrid-tooltip";
+import "@/styles/striped-progress.css"; // import the animation CSS
 
 interface RadialProgressProps {
   percentage: number;
@@ -38,6 +39,7 @@ const RadialProgress: React.FC<RadialProgressProps> = ({
     >
       <div className="relative" style={{ width: size, height: size }}>
         <svg className="transform -rotate-90" width={size} height={size}>
+          {/* Background Circle */}
           <circle
             className="text-gray-200 dark:text-gray-700"
             stroke="currentColor"
@@ -47,6 +49,8 @@ const RadialProgress: React.FC<RadialProgressProps> = ({
             cx={size / 2}
             cy={size / 2}
           />
+
+          {/* Solid Progress Circle */}
           <circle
             className={cn("transition-all duration-500", color)}
             stroke="currentColor"
@@ -59,18 +63,50 @@ const RadialProgress: React.FC<RadialProgressProps> = ({
             cx={size / 2}
             cy={size / 2}
           />
+
+          {/* Striped Overlay */}
+          <defs>
+            <pattern
+              id="radialStripes"
+              patternUnits="userSpaceOnUse"
+              width="40"
+              height="40"
+              patternTransform="rotate(45)"
+              className="circular-animated-stripes"
+            >
+              <rect width="20" height="40" fill="rgba(255,255,255,0.25)" />
+            </pattern>
+          </defs>
+
+          <circle
+            stroke="url(#radialStripes)"
+            strokeWidth={strokeWidth}
+            strokeDasharray={circumference}
+            strokeDashoffset={offset}
+            strokeLinecap="round"
+            fill="transparent"
+            r={radius}
+            cx={size / 2}
+            cy={size / 2}
+          />
         </svg>
+
+        {/* Center Percentage */}
         <div className="absolute inset-0 flex items-center justify-center">
           <span className="text-sm font-bold text-gray-800 dark:text-white">
             {percentage.toFixed(2)}%
           </span>
         </div>
       </div>
-      <p className="text-xs text-center text-gray-500 dark:text-gray-400 uppercase tracking-wider">{label}</p>
+
+      {/* Label */}
+      <p className="text-xs text-center text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+        {label}
+      </p>
     </div>
   );
 
-  // If tooltipContent is provided, wrap the element in a tooltip
+  // Wrap in tooltip if provided
   if (tooltipContent) {
     return (
       <TooltipProvider>
