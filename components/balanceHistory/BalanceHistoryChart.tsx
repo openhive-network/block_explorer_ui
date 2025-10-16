@@ -100,7 +100,6 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
         if (type === "VESTS") {
           const vests = item.balance?.toString() || "0";
 
-          // Convert VESTS to HP or Hive
           let convertedHPRaw =
             unit === "hp"
               ? hiveChain.vestsToHp(
@@ -114,7 +113,6 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
                   dynamicGlobalData.headBlockDetails.rawTotalVestingShares
                 );
 
-          // Ensure convertedValue is a number
           let convertedValue: number;
           if (typeof convertedHPRaw === "number") {
             convertedValue = convertedHPRaw;
@@ -294,23 +292,6 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
   // ---------------- Coin toggle buttons ----------------
   const renderCoinButtons = () => (
     <div className="flex flex-wrap items-center justify-center md:justify-end gap-2 mb-2">
-      {/* Desktop: toggle switch — appears left of coin buttons */}
-      {selectedCoinType === "VESTS" && (
-        <div className="flex items-center space-x-2">
-          <Label htmlFor="unit-toggle" className="text-sm font-medium select-none">
-            {t("common.vests")}
-          </Label>
-          <Switch
-            id="unit-toggle"
-            checked={unit === "hp"}
-            onCheckedChange={(checked) => setUnit(checked ? "hp" : "vests")}
-          />
-          <Label htmlFor="unit-toggle" className="text-sm font-medium select-none">
-            {t("common.hp")}
-          </Label>
-        </div>
-      )}
-
       {/* Coin buttons container — right of toggle */}
       <div className="flex flex-wrap gap-2">
         {availableCoins.map((coinType) => (
@@ -482,17 +463,62 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
               onChange={handleBrushAreaChange}
             />
           )}
+
+          {/* ---------- LEGEND with inline toggle ---------- */}
           <Legend
             align={isRTL ? "right" : "left"}
-            wrapperStyle={{ paddingTop: isMobile ? "20px" : "0px" }}
-            onClick={(event) => {
-              const dataKey = event.dataKey as string;
-              const isHidden = hiddenDataKeys.includes(dataKey);
-              if (isHidden)
-                setHiddenDataKeys(hiddenDataKeys.filter((key) => key !== dataKey));
-              else setHiddenDataKeys([...hiddenDataKeys, dataKey]);
+            verticalAlign="bottom"
+            wrapperStyle={{
+              display: "flex",
+              justifyContent: isRTL ? "flex-end" : "flex-start",
+              flexWrap: "wrap", // allow wrapping on small screens
+              gap: "12px", // space between legend items
+              paddingTop: "0px", // keep legend in same vertical position
+            }}
+            content={(props) => {
+              const { payload } = props;
+              return (
+                <ul className="flex items-center gap-4 flex-wrap">
+                  {payload?.map((entry, index) => {
+                    const dataKey = (entry as any).dataKey;
+                    const isHidden = hiddenDataKeys.includes(dataKey);
+                    return (
+                      <li
+                        key={index}
+                        className={`flex items-center cursor-pointer flex-shrink-0 ${isHidden ? "opacity-50" : ""}`}
+                        onClick={() => {
+                          if (isHidden)
+                            setHiddenDataKeys(hiddenDataKeys.filter((key) => key !== dataKey));
+                          else
+                            setHiddenDataKeys([...hiddenDataKeys, dataKey]);
+                        }}
+                      >
+                        <div
+                          className="w-4 h-2 mr-2 rounded-full"
+                          style={{ backgroundColor: (entry as any).color }}
+                        />
+                        <span className="text-sm">{(entry as any).value}</span>
+                      </li>
+                    );
+                  })}
+
+                  {selectedCoinType === "VESTS" && (
+                    <li className="flex items-center gap-1 flex-shrink-0">
+                      <Label className="text-xs font-medium select-none">{t("common.vests")}</Label>
+                      <Switch
+                        id="unit-toggle"
+                        checked={unit === "hp"}
+                        onCheckedChange={(checked) => setUnit(checked ? "hp" : "vests")}
+                        className="w-10 h-5" // slightly bigger toggle
+                      />
+                      <Label className="text-xs font-medium select-none">{t("common.hp")}</Label>
+                    </li>
+                  )}
+                </ul>
+              );
             }}
           />
+
         </LineChart>
       </ResponsiveContainer>
     </div>
