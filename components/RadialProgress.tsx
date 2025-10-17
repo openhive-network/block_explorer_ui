@@ -1,5 +1,3 @@
-// /components/ui/RadialProgress.tsx
-
 import React from "react";
 import { cn } from "@/lib/utils";
 import {
@@ -8,7 +6,7 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/hybrid-tooltip";
-import "@/styles/striped-progress.css"; // import the animation CSS
+import "@/styles/striped-progress.css"; // striped animation CSS
 
 interface RadialProgressProps {
   percentage: number;
@@ -29,7 +27,29 @@ const RadialProgress: React.FC<RadialProgressProps> = ({
 }) => {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (percentage / 100) * circumference;
+
+  // Smooth fill animation
+  const [displayPercentage, setDisplayPercentage] = React.useState(0);
+
+  React.useEffect(() => {
+    let start = 0;
+    const duration = 1200; // 1.2s
+    const step = 16;
+    const increment = (percentage - start) / (duration / step);
+
+    const interval = setInterval(() => {
+      start += increment;
+      if (start >= percentage) {
+        start = percentage;
+        clearInterval(interval);
+      }
+      setDisplayPercentage(parseFloat(start.toFixed(2)));
+    }, step);
+
+    return () => clearInterval(interval);
+  }, [percentage]);
+
+  const offset = circumference - (displayPercentage / 100) * circumference;
 
   const progressElement = (
     <div
@@ -52,7 +72,7 @@ const RadialProgress: React.FC<RadialProgressProps> = ({
 
           {/* Solid Progress Circle */}
           <circle
-            className={cn("transition-all duration-500", color)}
+            className={cn("transition-[stroke-dashoffset] duration-500", color)}
             stroke="currentColor"
             strokeWidth={strokeWidth}
             strokeDasharray={circumference}
@@ -72,9 +92,8 @@ const RadialProgress: React.FC<RadialProgressProps> = ({
               width="40"
               height="40"
               patternTransform="rotate(45)"
-              className="circular-animated-stripes"
             >
-              <rect width="20" height="40" fill="rgba(255,255,255,0.25)" />
+              <rect width="20" height="40" fill="rgba(255,255,255,0.25)" className="circular-animated-stripes" />
             </pattern>
           </defs>
 
@@ -94,7 +113,7 @@ const RadialProgress: React.FC<RadialProgressProps> = ({
         {/* Center Percentage */}
         <div className="absolute inset-0 flex items-center justify-center">
           <span className="text-sm font-bold text-gray-800 dark:text-white">
-            {percentage.toFixed(2)}%
+            {displayPercentage.toFixed(2)}%
           </span>
         </div>
       </div>
@@ -106,7 +125,6 @@ const RadialProgress: React.FC<RadialProgressProps> = ({
     </div>
   );
 
-  // Wrap in tooltip if provided
   if (tooltipContent) {
     return (
       <TooltipProvider>
