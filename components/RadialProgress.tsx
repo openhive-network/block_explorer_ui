@@ -6,7 +6,6 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/hybrid-tooltip";
-import "@/styles/striped-progress.css"; // striped animation CSS
 
 interface RadialProgressProps {
   percentage: number;
@@ -30,10 +29,9 @@ const RadialProgress: React.FC<RadialProgressProps> = ({
 
   // Smooth fill animation
   const [displayPercentage, setDisplayPercentage] = React.useState(0);
-
   React.useEffect(() => {
     let start = 0;
-    const duration = 1200; // 1.2s
+    const duration = 1200;
     const step = 16;
     const increment = (percentage - start) / (duration / step);
 
@@ -87,18 +85,30 @@ const RadialProgress: React.FC<RadialProgressProps> = ({
           {/* Striped Overlay */}
           <defs>
             <pattern
-              id="radialStripes"
+              id="diagonalStripesRadial"
+              width="10"
+              height="10"
               patternUnits="userSpaceOnUse"
-              width="40"
-              height="40"
-              patternTransform="rotate(45)"
             >
-              <rect width="20" height="40" fill="rgba(255,255,255,0.25)" className="circular-animated-stripes" />
+              <path
+                d="M -1,1 l 2,-2 M 0,10 l 10,-10 M 9,11 l 2,-2"
+                stroke="rgba(255,255,255,0.25)"
+                strokeWidth="4"
+                strokeLinecap="square"
+              />
+              <animateTransform
+                attributeName="patternTransform"
+                type="translate"
+                from="0 0"
+                to="10 10"
+                dur="1.5s"
+                repeatCount="indefinite"
+              />
             </pattern>
           </defs>
 
           <circle
-            stroke="url(#radialStripes)"
+            stroke="url(#diagonalStripesRadial)"
             strokeWidth={strokeWidth}
             strokeDasharray={circumference}
             strokeDashoffset={offset}

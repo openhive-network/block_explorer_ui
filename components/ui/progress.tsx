@@ -1,20 +1,19 @@
 import * as React from "react";
 import * as ProgressPrimitive from "@radix-ui/react-progress";
 import { cn } from "@/lib/utils";
-import "@/styles/striped-progress.css";
 
 const Progress = React.forwardRef<
   React.ElementRef<typeof ProgressPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root> & { color?: string }
->(({ className, value, color, ...props }, ref) => {
-  // ✅ Ensure value is always a number (not null)
+>(({ className, value, color = "#3b82f6", ...props }, ref) => {
   const safeValue: number = typeof value === "number" ? value : 0;
   const [displayValue, setDisplayValue] = React.useState<number>(0);
 
+  // Smooth fill animation
   React.useEffect(() => {
     let start = 0;
-    const duration = 1800; // 1.8s smooth fill-up
-    const step = 16; // ~60 FPS
+    const duration = 1800;
+    const step = 16;
     const increment = (safeValue - start) / (duration / step);
 
     const interval = setInterval(() => {
@@ -35,7 +34,7 @@ const Progress = React.forwardRef<
     <ProgressPrimitive.Root
       ref={ref}
       className={cn(
-        "relative h-4 w-full overflow-hidden rounded-full bg-explorer-light-gray dark:bg-[#03182c] z-0",
+        "relative h-4 w-full overflow-hidden rounded-full bg-explorer-light-gray dark:bg-[#03182c]",
         className
       )}
       {...props}
@@ -45,16 +44,57 @@ const Progress = React.forwardRef<
         {`${progressValue.toFixed(2)}%`}
       </div>
 
-      {/* Progress Indicator */}
-      <ProgressPrimitive.Indicator
-        className={cn(
-          "h-full w-full flex-1 rounded-full striped-smooth transition-[transform] duration-[200ms] ease-linear"
-        )}
-        style={{
-          backgroundColor: color,
-          transform: `translateX(-${100 - progressValue}%)`,
-        }}
-      />
+      {/* Progress Fill */}
+      <div className="h-full w-full rounded-full overflow-hidden relative">
+        <svg
+          className="absolute inset-0 w-full h-full"
+          preserveAspectRatio="none"
+        >
+          <defs>
+            <pattern
+              id="diagonalStripes"
+              width="10" 
+              height="10" 
+              patternUnits="userSpaceOnUse"
+            >
+            
+              {/* diagonal line from top-left to bottom-right */}
+              <path
+                d="M -1,1 l 2,-2 M 0,10 l 10,-10 M 9,11 l 2,-2" // diagonal stripe and its repeat
+                stroke="rgba(255,255,255,0.25)"
+                strokeWidth="4" 
+                strokeLinecap="square"
+              />
+              {/* creating the moving stripe effect */}
+              <animateTransform
+                attributeName="patternTransform"
+                type="translate"
+                from="0 0"
+                to="10 10" 
+                dur="1.5s" 
+                repeatCount="indefinite"
+              />
+            </pattern>
+          </defs>
+
+          {/* Base fill */}
+          <rect
+            x="0"
+            y="0"
+            width={`${progressValue}%`}
+            height="100%"
+            fill={color}
+          />
+          {/* Diagonal stripes overlay */}
+          <rect
+            x="0"
+            y="0"
+            width={`${progressValue}%`}
+            height="100%"
+            fill="url(#diagonalStripes)"
+          />
+        </svg>
+      </div>
     </ProgressPrimitive.Root>
   );
 });
