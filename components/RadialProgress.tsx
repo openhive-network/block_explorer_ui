@@ -82,33 +82,31 @@ const RadialProgress: React.FC<RadialProgressProps> = ({
             cy={size / 2}
           />
 
-          {/* Striped Overlay */}
+          {/* Horizontal Striped Overlay (animated left-to-right) */}
           <defs>
             <pattern
-              id="diagonalStripesRadial"
-              width="10"
-              height="10"
+              id="horizontalStripesRadial"
+              width="14"
+              height="8"
               patternUnits="userSpaceOnUse"
             >
-              <path
-                d="M -1,1 l 2,-2 M 0,10 l 10,-10 M 9,11 l 2,-2"
-                stroke="rgba(255,255,255,0.25)"
-                strokeWidth="4"
-                strokeLinecap="square"
-              />
+              {/* Horizontal lines */}
+              <rect x="0" y="0" width="10" height="8" fill="rgba(255,255,255,0.25)" />
+              {/* Animate horizontally */}
               <animateTransform
                 attributeName="patternTransform"
                 type="translate"
                 from="0 0"
-                to="10 10"
-                dur="1.5s"
+                to="14 0"
+                dur="1.2s"
                 repeatCount="indefinite"
               />
             </pattern>
           </defs>
 
+          {/* Apply striped overlay */}
           <circle
-            stroke="url(#diagonalStripesRadial)"
+            stroke="url(#horizontalStripesRadial)"
             strokeWidth={strokeWidth}
             strokeDasharray={circumference}
             strokeDashoffset={offset}
