@@ -1,26 +1,31 @@
-import React, { createContext, useContext, useState, useEffect, useRef } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useRef,
+} from "react";
 import { HealthChecker, TWaxRestExtended } from "@hiveio/wax";
-import { useAddressesContext } from "./AddressesContext"; 
+import { useAddressesContext } from "./AddressesContext";
 // import HealthCheckerService, { HealthCheckerFields } from "@/services/HealthCheckerService";
-import {HealthCheckerService, ApiChecker} from "@hiveio/healthchecker-component";
+import {
+  HealthCheckerService,
+  ApiChecker,
+} from "@hiveio/healthchecker-component";
 import { useHiveChainContext } from "./HiveChainContext";
 import { config } from "@/Config";
 import { ExplorerNodeApi } from "@/services/FetchingService";
 import { extendedRest } from "@/types/Rest";
 
-
 type HealthCheckerContextType = {
-    nodeHealthCheckerService?: HealthCheckerService;
-    restApiHealthCheckerService?: HealthCheckerService;
+  nodeHealthCheckerService?: HealthCheckerService;
+  restApiHealthCheckerService?: HealthCheckerService;
 };
-
-
 
 export const HealthCheckerContext = createContext<HealthCheckerContextType>({
   nodeHealthCheckerService: undefined,
-  restApiHealthCheckerService: undefined
-}
-);
+  restApiHealthCheckerService: undefined,
+});
 
 export const useHealthCheckerContext = () => {
   const context = useContext(HealthCheckerContext);
@@ -35,96 +40,100 @@ export const useHealthCheckerContext = () => {
 export const HealthCheckerContextProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
+  const { defaultNodeProviders, defaultRestApiProvicers } = config;
 
-  const {defaultNodeProviders, defaultRestApiProvicers} = config;
+  const [nodeHealthCheckerService, setNodeHealthCheckerService] = useState<
+    HealthCheckerService | undefined
+  >(undefined);
+  const [restApiHealthCheckerService, setRestApiHealthCheckerService] =
+    useState<HealthCheckerService | undefined>(undefined);
+  const [healthCheckerInitialized, setHealthCheckerInitialized] =
+    useState<boolean>(false);
 
-  const [nodeHealthCheckerService, setNodeHealthCheckerService] = useState<HealthCheckerService | undefined>(undefined);
-  const [restApiHealthCheckerService, setRestApiHealthCheckerService] = useState<HealthCheckerService | undefined>(undefined);
-  const [healthCheckerInitialized, setHealthCheckerInitialized] = useState<boolean>(false);
+  const { nodeAddress, setNodeAddress, apiAddress, setApiAddress } =
+    useAddressesContext();
+  const { hiveChain } = useHiveChainContext();
 
-  const {nodeAddress, setNodeAddress, apiAddress, setApiAddress} = useAddressesContext();
-  const {hiveChain} = useHiveChainContext();
+  const extendedHiveChain = hiveChain?.extend<ExplorerNodeApi>();
 
-  const extendedHiveChain = hiveChain
-  ?.extend<ExplorerNodeApi>();
-
-  const restExtendedHiveChain = hiveChain?.extendRest(extendedRest)
-
+  const restExtendedHiveChain = hiveChain?.extendRest(extendedRest);
 
   const apiCheckers: ApiChecker[] = [
     {
       title: "Reward Funds",
       method: extendedHiveChain?.api.database_api.get_reward_funds,
-      params: {}, 
-      validatorFunction: data => !!data.funds ? true : "Reward funds error",
+      params: {},
+      validatorFunction: (data) => (!!data.funds ? true : "Reward funds error"),
     },
     {
       title: "Dynamic Global",
       method: extendedHiveChain?.api.database_api.get_dynamic_global_properties,
-      params: {}, 
-      validatorFunction: data => data.id === 0 ? true : "Dynamic global error",
+      params: {},
+      validatorFunction: (data) =>
+        data.id === 0 ? true : "Dynamic global error",
     },
     {
       title: "Price Feed",
       method: extendedHiveChain?.api.database_api.get_current_price_feed,
-      params: {}, 
-      validatorFunction: data => !!data.base ? true : "Price feed error",
+      params: {},
+      validatorFunction: (data) => (!!data.base ? true : "Price feed error"),
     },
     // Tempararly remove half of calls
     // {
     //   title: "Witness Schedule",
     //   method: extendedHiveChain?.api.database_api.get_witness_schedule,
-    //   params: { id: 1 }, 
+    //   params: { id: 1 },
     //   validatorFunction: data => /*data.max_scheduled_witnesses === 21*/ !!data ? true : "Witness schedule error",
     //   // This is left wrong on purpose for tests
     // },
     // {
     //   title: "Vesting Delegations",
     //   method: extendedHiveChain?.api.database_api.find_vesting_delegations,
-    //   params: { account: "hiveio" }, 
+    //   params: { account: "hiveio" },
     //   validatorFunction: data => !!data.delegations ? true : "Vesting delegations error",
     // },
     // {
     //   title: "RC Direct Delegations",
     //   method: extendedHiveChain?.api.rc_api.list_rc_direct_delegations,
-    //   params: { start: ["hiveio", ""], limit: 1000 }, 
+    //   params: { start: ["hiveio", ""], limit: 1000 },
     //   validatorFunction: data => !!data.rc_direct_delegations ? true : "RC delegation error",
-    // } 
-  ]
+    // }
+  ];
 
   const restApiCheckers: ApiChecker[] = [
     {
       title: "Block",
       method: restExtendedHiveChain?.restApi["hafah-api"].block,
-      params: { blockNumber: 10000000}, 
-      validatorFunction: data => data.witness === "anyx" ? true : "Block error",
+      params: { blockNumber: 10000000 },
+      validatorFunction: (data) =>
+        data.witness === "anyx" ? true : "Block error",
     },
     {
       title: "Transaction",
-      method: restExtendedHiveChain?.restApi["hafah-api"].transactions.transaction,
-      params: { transactionId: "d6a01f8af1e4250acc8a76a543c6ed1c2a9e3f0a"}, 
-      validatorFunction: data => data.block_num === 10000000 ? true : "Transaction error",
+      method:
+        restExtendedHiveChain?.restApi["hafah-api"].transactions.transaction,
+      params: { transactionId: "d6a01f8af1e4250acc8a76a543c6ed1c2a9e3f0a" },
+      validatorFunction: (data) =>
+        data.block_num === 10000000 ? true : "Transaction error",
     },
-  ]
-
-
+  ];
 
   const startHealthCheckerService = () => {
     try {
-        const healthChecker = new HealthChecker(undefined, 20000);
-        const hcService = new HealthCheckerService(
-          "node",
-          apiCheckers,
-          defaultNodeProviders,
-          healthChecker,
-          nodeAddress,
-          setNodeAddress,
-        )
-        setNodeHealthCheckerService(hcService);
+      const healthChecker = new HealthChecker(undefined, 20000);
+      const hcService = new HealthCheckerService(
+        "node",
+        apiCheckers,
+        defaultNodeProviders,
+        healthChecker as any,
+        nodeAddress as any,
+        setNodeAddress as any
+      );
+      setNodeHealthCheckerService(hcService);
     } catch (error) {
-      console.log('HealthChecker error', error);
+      console.log("HealthChecker error", error);
     }
-  }
+  };
 
   const startRestHealthCheckerService = () => {
     try {
@@ -133,35 +142,32 @@ export const HealthCheckerContextProvider: React.FC<{
         "rest",
         restApiCheckers,
         defaultRestApiProvicers,
-        restHealthChecker,
-        apiAddress,
-        setApiAddress,
-      )
+        restHealthChecker as any,
+        apiAddress as any,
+        setApiAddress as any
+      );
       setRestApiHealthCheckerService(restHcService);
-    } catch (error) {
-      
-    }
-  }
+    } catch (error) {}
+  };
 
-  useEffect(() => { 
+  useEffect(() => {
     if (hiveChain && !healthCheckerInitialized) {
       startHealthCheckerService();
       startRestHealthCheckerService();
       setHealthCheckerInitialized(true);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hiveChain, healthCheckerInitialized])
-
-  
-  
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hiveChain, healthCheckerInitialized]);
 
   if (!hiveChain) return null;
 
   return (
-    <HealthCheckerContext.Provider value={{
+    <HealthCheckerContext.Provider
+      value={{
         nodeHealthCheckerService,
-        restApiHealthCheckerService
-    }}>
+        restApiHealthCheckerService,
+      }}
+    >
       {children}
     </HealthCheckerContext.Provider>
   );
