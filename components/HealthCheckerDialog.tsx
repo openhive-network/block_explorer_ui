@@ -31,7 +31,7 @@ const HealthCheckerDialog: React.FC<HealthCheckerDialogProps> = ({
   healthCheckerService,
 }) => {
   const { locale } = useI18n();
-  const [isOpen, setIsOpen] = useState<boolean>(true);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
     <Dialog
