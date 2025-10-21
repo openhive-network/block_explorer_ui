@@ -12,6 +12,7 @@ import { Button } from "./ui/button";
 import { HiveNodes } from "@/utils/HiveNodes";
 import { Input } from "@/components/ui/input";
 import useApiAddresses from "@/utils/ApiAddresses";
+import { useI18n } from "@/i18n/i18n";
 import {
   HealthCheckerComponent,
   HealthCheckerService,
@@ -29,6 +30,7 @@ const HealthCheckerDialog: React.FC<HealthCheckerDialogProps> = ({
   apiAddress,
   healthCheckerService,
 }) => {
+  const { locale } = useI18n();
   const [isOpen, setIsOpen] = useState<boolean>(true);
 
   return (
@@ -51,6 +53,7 @@ const HealthCheckerDialog: React.FC<HealthCheckerDialogProps> = ({
           <HealthCheckerComponent
             healthCheckerService={healthCheckerService}
             className="mt-4"
+            locale={locale}
           />
         )}
       </DialogContent>
