@@ -316,6 +316,8 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
   const primaryAxisId = isRTL ? "right" : "left";
   const secondaryAxisId = isRTL ? "left" : "right";
 
+  const legendBottomPosition = isMobile ? (selectedCoinType === "VESTS" ? 80 : 60) : 20;
+
   return (
     <div className={cn("w-full max-w-[900px] relative", className)}>
       {renderCoinButtons()}
@@ -420,10 +422,9 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
               textOverflow: "ellipsis",
               paddingTop: isMobile ? 10 : 0,
               position: "absolute",
-              bottom: isMobile ? (selectedCoinType === "VESTS" ? 80 : 60) : 20, 
+              bottom: legendBottomPosition,
               left: isMobile ? 8 : 20,
-              // Adjusted width to allow space for the toggle on the right
-              width: isMobile ? "calc(100% - 150px)" : "auto", // Leave space for toggle
+              width: isMobile ? "calc(100% - 150px)" : "auto", 
             }}
             verticalAlign="bottom"
             onClick={(event) => {
@@ -447,12 +448,11 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
       {/* Toggle next to legend (if VESTS is selected) */}
       {selectedCoinType === "VESTS" && (
         <div
-          className="flex items-center space-x-2 absolute" 
+          className="flex items-center space-x-2 absolute"
           style={{
-            // Position it relative to the Legend's wrapper
-            bottom: isMobile ? (selectedCoinType === "VESTS" ? 80 : 60) : 20, // same as legend's bottom
-            right: isMobile ? 10 : 0, 
-            transform: 'translateY(0%)', 
+            bottom: legendBottomPosition, 
+            right: isMobile ? 10 : 0,
+            transform: 'translateY(31%)', 
           }}
         >
           <Label htmlFor="unit-toggle" className="text-sm font-medium select-none">
