@@ -98,18 +98,11 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
         if (type === "VESTS") {
           const vests = item.balance?.toString() || "0";
 
-          let convertedHPRaw =
-            unit === "hp"
-              ? hiveChain.vestsToHp(
-                  vests,
-                  dynamicGlobalData.headBlockDetails.rawTotalVestingFundHive,
-                  dynamicGlobalData.headBlockDetails.rawTotalVestingShares
-                )
-              : hiveChain.vestsToHp(
-                  vests,
-                  dynamicGlobalData.headBlockDetails.rawTotalVestingFundHive,
-                  dynamicGlobalData.headBlockDetails.rawTotalVestingShares
-                );
+          let convertedHPRaw = hiveChain.vestsToHp(
+            vests,
+            dynamicGlobalData.headBlockDetails.rawTotalVestingFundHive,
+            dynamicGlobalData.headBlockDetails.rawTotalVestingShares
+          );
 
           let convertedValue: number;
           if (typeof convertedHPRaw === "number") convertedValue = convertedHPRaw;
@@ -119,7 +112,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
           else convertedValue = 0;
 
           const dollarValueFull =
-            !isNaN(convertedValue) && !isNaN(hivePrice) ? (convertedValue * hivePrice) / 100 : 0;
+            !isNaN(convertedValue) && !isNaN(hivePrice) ? (convertedValue * hivePrice) : 0;
 
           return { ...item, convertedHive: convertedValue, dollarValue: dollarValueFull };
         }
@@ -136,7 +129,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
         return item;
       });
     },
-    [dynamicGlobalData, hiveChain, unit]
+    [dynamicGlobalData, hiveChain]
   );
 
   const dataMap = useMemo(() => {
@@ -159,7 +152,10 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     const selectedData = displayData?.find((item: any) => item.timestamp === label);
     if (!selectedData) return null;
 
-    const actualBalance = selectedData?.balance ?? 0;
+    const actualBalance = selectedCoinType === "VESTS" && unit === "hp"
+      ? selectedData?.convertedHive ?? 0
+      : selectedData?.balance ?? 0;
+
     const balanceChange = selectedData?.balance_change ?? 0;
     const savingsBalance = selectedData?.savings_balance ?? undefined;
     const savingsBalanceChange = selectedData?.savings_balance_change ?? 0;
@@ -194,7 +190,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             {` ${formatNumber(balanceChange, selectedCoinType === "VESTS" ? unit === "vests" : false)}`}
           </div>
           <div style={{ color: currentCoinColor }}>
-            {`${t("common.balance")}: ${formatNumber(actualBalance, selectedCoinType === "VESTS" ? unit === "vests" : false)}`}
+            {`${t("common.balance")}: ${formatNumber(actualBalance, selectedCoinType === "VESTS" && unit === "vests")}`}
           </div>
           {dollarValue ? (
             <div style={{ color: colorMap.DOLLAR }}>
@@ -253,7 +249,6 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
   // ---------------- Coin toggle buttons ----------------
   const renderCoinButtons = () => (
     <div className="flex items-center justify-end mb-2 space-x-3 relative">
-      {/* Coin buttons always on the right */}
       {availableCoins.map((coinType) => (
         <button
           key={coinType}
@@ -322,16 +317,16 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
   const secondaryAxisId = isRTL ? "left" : "right";
 
   return (
-    <div className={cn("w-full max-w-[900px] mx-auto relative", className)}>
+    <div className={cn("w-full max-w-[900px] relative", className)}>
       {renderCoinButtons()}
-      <ResponsiveContainer width="100%" height={300}>
+      <ResponsiveContainer width="110%" height="90%">
         <LineChart
           data={displayData}
           margin={{
             top: 20,
-            right: 20,
-            left: 30,
-            bottom: isMobile ? 100 : 60,
+            right: 30,
+            left: 10,
+            bottom: isMobile ? 200 : 60,
           }}
         >
           <XAxis
@@ -364,7 +359,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             yAxisId={secondaryAxisId}
             orientation={secondaryAxisId}
             style={{ fontSize: "10px" }}
-            tickFormatter={(tick) => `$${Math.round(tick)}`}
+            tickFormatter={(tick) => `$${formatNumber(tick, false, false)}`}
           />
           <Tooltip content={<CustomTooltip />} />
           <Line
@@ -374,8 +369,8 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             stroke={colorMap[selectedCoinType]}
             strokeWidth={2}
             dot={false}
-            name={selectedCoinType === "VESTS" && unit === "hp" ? "HP" : selectedCoinType === "VESTS" ? "VESTS" : selectedCoinType} // Correct dynamic name for HIVE, VESTS, HP, HBD
-            hide={hiddenDataKeys.includes(selectedCoinType === "VESTS" && unit === "hp" ? "convertedHive" : "balance")} // Hide based on the actual dataKey used
+            name={selectedCoinType === "VESTS" && unit === "hp" ? "HP" : selectedCoinType === "VESTS" ? "VESTS" : selectedCoinType}
+            hide={hiddenDataKeys.includes(selectedCoinType === "VESTS" && unit === "hp" ? "convertedHive" : "balance")}
           />
           <Line
             yAxisId={secondaryAxisId}
@@ -384,7 +379,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             stroke={colorMap.DOLLAR}
             strokeWidth={2}
             dot={false}
-            name="DOLLAR" 
+            name="DOLLAR"
             hide={hiddenDataKeys.includes("dollarValue")}
           />
           {showSavingsBalance === "yes" && selectedCoinType !== "VESTS" && (
@@ -395,7 +390,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
               stroke={colorMap.SAVINGS}
               strokeWidth={2}
               dot={false}
-              name="Savings Balance" 
+              name="Savings Balance"
               hide={hiddenDataKeys.includes("savings_balance")}
             />
           )}
@@ -416,21 +411,27 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
           <Legend
             wrapperStyle={{
               display: "flex",
-              justifyContent: "flex-start", 
+              flexDirection: "row",
+              justifyContent: "flex-start",
               alignItems: "center",
+              flexWrap: "nowrap",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
               paddingTop: isMobile ? 10 : 0,
               position: "absolute",
-              bottom: isMobile ? 60 : 20, 
-              left: 20, 
-              width: "auto", 
-              marginRight: selectedCoinType === "VESTS" ? "150px" : "0", 
+              bottom: isMobile ? (selectedCoinType === "VESTS" ? 80 : 60) : 20, // Keep original legend bottom values
+              left: isMobile ? 8 : 20,
+              // Removed dynamic right/width for legend; toggle will be positioned relative to it.
+              // Adjusted width to allow space for the toggle on the right
+              width: isMobile ? "calc(100% - 150px)" : "auto", // Leave space for toggle
             }}
             verticalAlign="bottom"
             onClick={(event) => {
               const dataKey = event.dataKey;
-              const actualDataKey = 
-                (dataKey === selectedCoinType || dataKey === "HP" || dataKey === "VESTS") ? 
-                  (selectedCoinType === "VESTS" && unit === "hp" ? "convertedHive" : "balance") : 
+              const actualDataKey =
+                (dataKey === selectedCoinType || dataKey === "HP" || dataKey === "VESTS") ?
+                  (selectedCoinType === "VESTS" && unit === "hp" ? "convertedHive" : "balance") :
                   dataKey;
 
               const isHidden = hiddenDataKeys.includes(actualDataKey);
@@ -446,12 +447,13 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
 
       {/* Toggle next to legend (if VESTS is selected) */}
       {selectedCoinType === "VESTS" && (
-        <div 
-          className="flex items-center space-x-2"
+        <div
+          className="flex items-center space-x-2 absolute" // Added 'absolute' here
           style={{
-            position: "absolute",
-            bottom: isMobile ? 60 : -0.1, 
-            right: 20, 
+            // Position it relative to the Legend's wrapper
+            bottom: isMobile ? (selectedCoinType === "VESTS" ? 80 : 60) : 20, // Match legend's bottom
+            right: isMobile ? 10 : 0, // Position it on the far right
+            transform: 'translateY(0%)', // Ensure no vertical offset by default
           }}
         >
           <Label htmlFor="unit-toggle" className="text-sm font-medium select-none">
