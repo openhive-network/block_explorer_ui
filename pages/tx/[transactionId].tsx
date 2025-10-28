@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import Head from "next/head";
@@ -18,6 +18,7 @@ import CopyButton from "@/components/ui/CopyButton";
 import PageTitle from "@/components/PageTitle";
 import { useI18n } from "@/i18n/i18n";
 import { useSettings } from "@/contexts/SettingsContext";
+import { useHiveChainContext } from "@/contexts/HiveChainContext";
 
 const TransactionDetailItem = ({
   label,
@@ -55,7 +56,9 @@ export default function Transaction() {
   const { t } = useI18n();
   const { settings } = useSettings();
   const transactionId = router.query.transactionId as string;
+  const { hiveChain } = useHiveChainContext();
   const [includeVirtual, setIncludeVirtual] = useState(false);
+  const [bytes, setBytes] = useState<Uint8Array | null>(null);
 
   const { trxData, trxLoading, trxError } = useTransactionData(
     transactionId,
@@ -68,10 +71,31 @@ export default function Transaction() {
   const handleToggleIncludeVirtual = () => {
     setIncludeVirtual(!includeVirtual);
   };
+  useEffect(() => {
+    try {
+      if (!hiveChain || !trxData) return;
+      let hex: string | null = null;
+      if (typeof hiveChain.convertTransactionToBinaryForm === "function") {
+        hex = hiveChain.convertTransactionToBinaryForm(
+          trxData.transaction_json as any
+        );
+      }
+      if (hex) {
+        const buf = new Uint8Array(hex.length / 2);
+        for (let i = 0; i < hex.length; i += 2)
+          buf[i / 2] = parseInt(hex.slice(i, i + 2), 16);
+        setBytes(buf);
+      }
+    } catch (err) {
+      console.error("Binary conversion failed:", err);
+    }
+  }, [hiveChain, trxData]);
 
   if (trxError) {
     return <PageNotFound message={t("transactionPage.transactionNotFound")} />;
   }
+
+  const transactionSize = bytes?.length ? `${bytes?.length ?? 0} bytes` : "-";
 
   return (
     <>
@@ -137,11 +161,24 @@ export default function Transaction() {
                   </span>{" "}
                   <span>{formatAndDelocalizeTime(trxData.timestamp)}</span>
                 </div>
+                <div
+                  data-testid="transaction-header-date"
+                  className="text-left text-sm"
+                >
+                  <span className="font-semibold">
+                    {t("transactionPage.transactionSize")}:
+                  </span>{" "}
+                  <span>{transactionSize}</span>
+                </div>
               </CardContent>
             </Card>
+
             {settings.rawJsonView || settings.prettyJsonView ? (
               <JSONView
-                json={trxData.transaction_json}
+                json={{
+                  ...trxData.transaction_json,
+                  transactionSize,
+                }}
                 className="w-full m-auto py-2 px-4 bg-theme rounded text-xs break-words break-all"
                 isPrettyView={settings.prettyJsonView}
               />
@@ -202,6 +239,12 @@ export default function Transaction() {
                     <TransactionDetailItem
                       label={t("commentPermlinkResultTable.timestamp")}
                       value={trxData.timestamp}
+                      dataTestId="transaction-expiration"
+                      hasBorder
+                    />
+                    <TransactionDetailItem
+                      label={t("transactionPage.transactionSize")}
+                      value={transactionSize}
                       dataTestId="transaction-expiration"
                       hasBorder
                     />
