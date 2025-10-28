@@ -404,6 +404,7 @@
   "transactionPage.refBlockPrefix": "참조 블록 접두사",
   "transactionPage.expiration": "만료",
   "transactionPage.transactionNumber": "트랜잭션 번호",
+  "transactionPage.transactionSize": "거래 크기",
   "pageTitle.informationAboutTitle": "제목에 대한 정보",
   "pageTitle.hiveWitnesses": "Hive 증인",
   "pageTitle.hiveBlocks": "Hive 블록",
@@ -993,5 +994,4 @@
   "influenceMapReport.more": "더 보기",
   "influenceMapReport.expandCollapseHint": "클릭하여 펼치기/접기",
   "influenceMapReport.tooltipDelegationPrefix": "위임: "
-
 }
