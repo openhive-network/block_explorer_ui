@@ -37,7 +37,7 @@ const TopWitnessesCard = ({
   const SeeMoreIcon = dir === "rtl" ? MoveLeft : MoveRight;
   return (
     <Card
-      className="col-span-12 md:col-span-12 lg:col-span-3 overflow-hidden"
+      className="col-span-12 md:col-span-12 lg:col-span-3 overflow-hidden h-full flex flex-col"
       data-testid="top-witnesses-sidebar"
     >
       <CardHeader className="flex justify-between items-center border-b px-1 py-3">
@@ -51,7 +51,7 @@ const TopWitnessesCard = ({
           <SeeMoreIcon width={18} />
         </Link>
       </CardHeader>
-      <CardContent className="px-0 py-2">
+      <CardContent className="px-0 py-2 overflow-y-auto flex-grow">
         <Table>
           <TableBody className="text-base">
             {witnessesData &&

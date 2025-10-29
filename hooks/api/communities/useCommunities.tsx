@@ -12,7 +12,8 @@ export type CommunitySortOrder = "rank" | "new" | "subs";
 const useCommunities = (
   query: string = "",
   sort: CommunitySortOrder = "rank",
-  limit: number = DEFAULT_COMMUNITIES_LIMIT
+  limit: number = DEFAULT_COMMUNITIES_LIMIT,
+  enabled: boolean = true 
 ) => {
   const {
     data,
@@ -25,6 +26,7 @@ const useCommunities = (
     queryKey: ["communities", query, sort, limit],
     queryFn: ({ pageParam }) =>
       fetchingService.getCommunitiesList(pageParam, limit, query, sort),
+    enabled: enabled,
     getNextPageParam: (lastPage) => {
       const pageAsArray = Object.values(lastPage);
       if (pageAsArray.length < limit) {
