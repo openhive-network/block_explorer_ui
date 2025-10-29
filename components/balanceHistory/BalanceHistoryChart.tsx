@@ -25,8 +25,9 @@ import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { convertVestsToHive } from "@/utils/Calculations";
 import { grabNumericValue } from "@/utils/StringUtils";
-import { Switch } from "@/components/ui/switch"; // Assuming you have a Switch component
-import { Label } from "@/components/ui/label"; // Assuming you have a Label component
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Payload } from "recharts/types/component/DefaultLegendContent"; // Import Payload type
 
 interface BalanceHistoryChartProps {
   aggregatedAccountBalanceHistory?: {
@@ -71,7 +72,6 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     typeof window !== "undefined" ? window.innerWidth < 480 : false
   );
   const [hiddenDataKeys, setHiddenDataKeys] = useState<string[]>([]);
-  // State to manage the VESTS/HP toggle
   const [vestsHpUnit, setVestsHpUnit] = useState<"vests" | "hp">("hp");
 
   const availableCoins = ["HIVE", "VESTS", "HBD"];
@@ -99,8 +99,6 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
 
         if (type === "VESTS") {
           const vests = item.balance?.toString() || "0";
-
-          // Calculate converted Hive Power (HP)
           const convertedHP = hiveChain.vestsToHp(
             vests,
             dynamicGlobalData.headBlockDetails.rawTotalVestingFundHive,
@@ -110,8 +108,12 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
           let convertedHPNumeric: number;
           if (typeof convertedHP === "number") {
             convertedHPNumeric = convertedHP;
-          } else if (convertedHP && typeof convertedHP === "object" && "amount" in convertedHP) {
-            convertedHPNumeric = parseFloat(String(convertedHP.amount)); // Ensure amount is a string before parsing
+          } else if (
+            convertedHP &&
+            typeof convertedHP === "object" &&
+            "amount" in convertedHP
+          ) {
+            convertedHPNumeric = parseFloat(String(convertedHP.amount));
           } else if (typeof convertedHP === "string") {
             convertedHPNumeric = parseFloat(convertedHP);
           } else {
@@ -125,7 +127,6 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
 
           return {
             ...item,
-            // Store both convertedHive (for HP) and the original balance (for VESTS)
             convertedHive: convertedHPNumeric,
             dollarValue: dollarValueFull,
           };
@@ -166,7 +167,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
       savings_balance_change?: number;
       hivePrice: string;
       dollarValue?: number;
-      convertedHive?: number; // Added for HP conversion
+      convertedHive?: number;
     }[]
   > = useMemo(() => {
     return {
@@ -181,8 +182,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
 
   const displayData = useMemo(() => {
     return dataMap[selectedCoinType];
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCoinType, vestsHpUnit]); // Re-evaluate when vestsHpUnit changes
+  }, [selectedCoinType, vestsHpUnit]);
 
   const CustomTooltip = ({
     active,
@@ -199,7 +199,6 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     const selectedData = displayData?.find((item) => item.timestamp === label);
     if (!selectedData) return null;
 
-    // Use vestsHpUnit to determine which balance to display for VESTS
     const actualBalance =
       selectedCoinType === "VESTS" && vestsHpUnit === "hp"
         ? selectedData?.convertedHive ?? 0
@@ -220,10 +219,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     return (
       <div className="bg-theme dark:bg-theme p-2 rounded border border-explorer-light-gray">
         <p className="font-bold">{`${t("common.date")}: ${label}`}</p>
-        <div
-          className="mb-1"
-          style={{ color: currentCoinColor }}
-        >
+        <div className="mb-1" style={{ color: currentCoinColor }}>
           <div
             className={cn(
               "flex items-center",
@@ -232,10 +228,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             style={{ color: currentCoinColor }}
           >
             {isPositiveChange ? (
-              <ArrowUp
-                className="bg-green-400 p-[1.2px]"
-                size={16}
-              />
+              <ArrowUp className="bg-green-400 p-[1.2px]" size={16} />
             ) : isZeroChange ? (
               <Minus
                 className={cn(
@@ -246,13 +239,12 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
                 size={16}
               />
             ) : (
-              <ArrowDown
-                className="bg-red-400  p-[1.2px]"
-                size={16}
-              />
+              <ArrowDown className="bg-red-400  p-[1.2px]" size={16} />
             )}
-            {/* Format balance change based on vestsHpUnit for VESTS */}
-            {` ${formatNumber(balanceChange, selectedCoinType === "VESTS" && vestsHpUnit === "vests")}`}
+            {` ${formatNumber(
+              balanceChange,
+              selectedCoinType === "VESTS" && vestsHpUnit === "vests"
+            )}`}
           </div>
           <div style={{ color: currentCoinColor }}>{`${t(
             "common.balance"
@@ -261,7 +253,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             selectedCoinType === "VESTS" && vestsHpUnit === "vests"
           )}`}</div>
 
-          {dollarValue || dollarValue === 0 ? ( // Display dollar value if available or zero
+          {dollarValue || dollarValue === 0 ? (
             <div style={{ color: colorMap.DOLLAR }}>
               Dollar Value: $
               {formatNumber(dollarValue, false, selectedCoinType === "VESTS")}
@@ -281,10 +273,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
                 style={{ color: colorMap.SAVINGS }}
               >
                 {isSavingsPositiveChange ? (
-                  <ArrowUp
-                    className="bg-green-400 p-[1.2px]"
-                    size={16}
-                  />
+                  <ArrowUp className="bg-green-400 p-[1.2px]" size={16} />
                 ) : isSavingsZeroChange ? (
                   <Minus
                     className={cn(
@@ -295,10 +284,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
                     size={16}
                   />
                 ) : (
-                  <ArrowDown
-                    className="bg-red-400 p-[1.2px]"
-                    size={16}
-                  />
+                  <ArrowDown className="bg-red-400 p-[1.2px]" size={16} />
                 )}
                 {` ${formatNumber(
                   savingsBalanceChange,
@@ -343,7 +329,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
       balance: number;
       savings_balance?: number;
       dollarValue?: number;
-      convertedHive?: number; 
+      convertedHive?: number;
     }[]
   ): [number, number] => {
     if (!data || data.length === 0) {
@@ -415,13 +401,55 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
   const primaryAxisId = isRTL ? "right" : "left";
   const secondaryAxisId = isRTL ? "left" : "right";
 
-  const secondaryAxisDomain = selectedCoinType === "HBD" ? [minValue, maxValue] : undefined;
+  const secondaryAxisDomain =
+    selectedCoinType === "HBD" ? [minValue, maxValue] : undefined;
 
-  const legendBottomPosition = isMobile ? (selectedCoinType === "VESTS" ? 80 : 60) : 20;
+  const chartBottomMargin = useMemo(() => {
+    let margin = 60;
+    margin += 50;
+    if (isMobile) {
+      margin += 30;
+    }
+    return margin;
+  }, [isMobile]);
 
+
+  const legendPayload: Payload[] = useMemo(() => {
+    const payloadItems: Payload[] = [
+      {
+        value:
+          selectedCoinType === "VESTS" && vestsHpUnit === "hp"
+            ? "HP"
+            : selectedCoinType,
+        id:
+          selectedCoinType === "VESTS" && vestsHpUnit === "hp"
+            ? "convertedHive"
+            : "balance", 
+        type: "line", 
+        color: colorMap[selectedCoinType],
+      },
+      {
+        value: "DOLLAR",
+        id: "dollarValue", 
+        type: "line",
+        color: colorMap.DOLLAR,
+      },
+    ];
+
+    if (showSavingsBalance === "yes" && selectedCoinType !== "VESTS") {
+      payloadItems.push({
+        value: t("balanceHistoryChart.savingsBalance"),
+        id: "savings_balance",
+        type: "line",
+        color: colorMap.SAVINGS,
+      });
+    }
+
+    return payloadItems.filter((item) => !hiddenDataKeys.includes(item.id as string));
+  }, [selectedCoinType, vestsHpUnit, showSavingsBalance, hiddenDataKeys, t]);
 
   return (
-    <div className={cn("w-full relative", className)}> 
+    <div className={cn("w-full relative", className)}>
       {quickView && (
         <div
           className={cn("flex mb-4", isRTL ? "justify-start" : "justify-end")}
@@ -429,12 +457,10 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
           {renderCoinButtons()}
         </div>
       )}
-      
-
 
       <ResponsiveContainer
         width={quickView ? "110%" : "100%"}
-        height="90%"
+        height="100%"
         className="items-start"
       >
         <LineChart
@@ -442,8 +468,8 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
           margin={{
             top: 20,
             right: isRTL ? (isMobile ? 0 : 30) : isMobile ? 0 : 30,
-            left: isRTL ? (isMobile ? 0 : 10) : isMobile ? 0 : 10, 
-            bottom: isMobile ? 200 : 60, 
+            left: isRTL ? (isMobile ? 0 : 10) : isMobile ? 0 : 10,
+            bottom: chartBottomMargin,
           }}
         >
           <XAxis
@@ -451,9 +477,9 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             tickCount={quickView ? 5 : 14}
             tickFormatter={(value) => moment(value).format("MMM D")}
             style={{ fontSize: "10px" }}
-            angle={isMobile ? -90 : 0} 
-            dx={isMobile ? -8 : 0} 
-            dy={isMobile ? 20 : 10} 
+            angle={isMobile ? -90 : 0}
+            dx={isMobile ? -8 : 0}
+            dy={isMobile ? 20 : 10}
             reversed={isRTL}
             interval="preserveStartEnd"
           />
@@ -466,7 +492,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             tickFormatter={(tick) => {
               if (selectedCoinType === "VESTS") {
                 if (vestsHpUnit === "hp") {
-                  return formatNumber(tick, false, false); // No K for HP
+                  return formatNumber(tick, false, false);
                 }
                 const valueInK = tick / 1_000;
                 return `${formatNumber(valueInK, true, false).split(".")[0]} K`;
@@ -502,7 +528,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             }
             dot={false}
             hide={hiddenDataKeys.includes(
-              selectedCoinType === "VESTS" && vestsHpUnit === "hp"
+              (selectedCoinType === "VESTS" && vestsHpUnit === "hp")
                 ? "convertedHive"
                 : "balance"
             )}
@@ -542,77 +568,80 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
               fill="var(--color-background)"
               travellerWidth={10}
               tickFormatter={(value) => moment(value).format("MMM D")}
-              y={300}
+              y={350}
               x={50}
               className="text-xs"
               onChange={handleBrushAreaChange}
             />
           )}
-          <Legend
-            wrapperStyle={{
-              display: "flex",
-              flexDirection: "row",
-              justifyContent: "flex-start",
-              alignItems: "center",
-              flexWrap: "nowrap",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              paddingTop: isMobile ? 10 : 0,
-              position: "absolute",
-              bottom: legendBottomPosition, // Use adjusted bottom position
-              left: isMobile ? 8 : 20,
-              width: isMobile ? "calc(100% - 150px)" : "auto", // Adjusted width for mobile
-            }}
-            verticalAlign="bottom"
-            onClick={(event) => {
-              const dataKey = event.dataKey;
-              // Determine the actual dataKey to hide/show for VESTS based on the unit
-              const actualDataKey =
-                (dataKey === selectedCoinType || dataKey === "HP") &&
-                  selectedCoinType === "VESTS"
-                  ? vestsHpUnit === "hp"
-                    ? "convertedHive"
-                    : "balance"
-                  : dataKey;
-
-              const isHidden = hiddenDataKeys.includes(actualDataKey as string);
-              if (isHidden) {
-                setHiddenDataKeys(
-                  hiddenDataKeys.filter((key) => key !== actualDataKey)
-                );
-              } else {
-                setHiddenDataKeys([...hiddenDataKeys, actualDataKey]);
-              }
-            }}
-          />
         </LineChart>
       </ResponsiveContainer>
 
-      {/* Toggle next to legend (if VESTS is selected) */}
-      {selectedCoinType === "VESTS" && (
-        <div
-          className="flex items-center space-x-2 absolute"
-          style={{
-            bottom: quickView
-              ? 0  
-              : legendBottomPosition + 72, 
-            right: isMobile ? 10 : 5,
+      {/* Container for Legend and VESTS/HP toggle */}
+      <div
+        className={cn(
+          "absolute w-full flex items-center justify-between",
+          isRTL ? "flex-row-reverse" : "flex-row"
+        )}
+        style={{
+          bottom: quickView ? (isMobile ? 0 : 0) : 120,
+          left: 0,
+          padding: "0 20px",
+        }}
+      >
+        <Legend
+          payload={legendPayload}
+          wrapperStyle={{
+            position: "relative",
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            justifyContent: "flex-start",
+            order: isRTL ? 2 : 1,
+            maxWidth: selectedCoinType === "VESTS" ? "calc(100% - 150px)" : "100%",
           }}
-        >
-          <Label htmlFor="vests-hp-toggle" className="text-sm font-medium select-none">
-            {t("common.vests")}
-          </Label>
-          <Switch
-            id="vests-hp-toggle"
-            checked={vestsHpUnit === "hp"}
-            onCheckedChange={(checked) => setVestsHpUnit(checked ? "hp" : "vests")}
-          />
-          <Label htmlFor="vests-hp-toggle" className="text-sm font-medium select-none">
-            {t("common.hp")}
-          </Label>
-        </div>
-      )}
+          onClick={(event) => {
+            const clickedId = event.payload?.id;
+            if (clickedId) {
+              const isHidden = hiddenDataKeys.includes(clickedId as string);
+              if (isHidden) {
+                setHiddenDataKeys(
+                  hiddenDataKeys.filter((key) => key !== clickedId)
+                );
+              } else {
+                setHiddenDataKeys([...hiddenDataKeys, clickedId]);
+              }
+            }
+          }}
+        />
+
+        {selectedCoinType === "VESTS" && (
+          <div
+            className="flex items-center space-x-2"
+            style={{ order: isRTL ? 1 : 2 }}
+          >
+            <Label
+              htmlFor="vests-hp-toggle"
+              className="text-sm font-medium select-none"
+            >
+              {t("common.vests")}
+            </Label>
+            <Switch
+              id="vests-hp-toggle"
+              checked={vestsHpUnit === "hp"}
+              onCheckedChange={(checked) =>
+                setVestsHpUnit(checked ? "hp" : "vests")
+              }
+            />
+            <Label
+              htmlFor="vests-hp-toggle"
+              className="text-sm font-medium select-none"
+            >
+              {t("common.hp")}
+            </Label>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
