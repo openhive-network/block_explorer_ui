@@ -183,7 +183,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
   const displayData = useMemo(() => {
     return dataMap[selectedCoinType];
     //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCoinType, vestsHpUnit]);
+  }, [selectedCoinType, vestsHpUnit, dataMap]);
 
   const CustomTooltip = ({
     active,
@@ -371,39 +371,12 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     return [minValue, maxValue];
   };
 
-  const [fullDataMin, fullDataMax] = getMinMax(displayData);
+  // Move useMemo calls outside of any conditional returns
+  const [fullDataMin, fullDataMax] = useMemo(
+    () => getMinMax(displayData),
+    [displayData, selectedCoinType, vestsHpUnit, showSavingsBalance]
+  );
   const [minValue, maxValue] = zoomedDomain || [fullDataMin, fullDataMax];
-
-  const handleBrushAreaChange = (domain: {
-    startIndex?: number;
-    endIndex?: number;
-  }) => {
-    if (
-      !domain ||
-      domain.startIndex === undefined ||
-      domain.endIndex === undefined
-    ) {
-      setZoomedDomain([fullDataMin, fullDataMax]);
-      return;
-    }
-
-    const { startIndex, endIndex } = domain;
-    const visibleData = (displayData || []).slice(startIndex, endIndex + 1);
-
-    if (visibleData.length > 0) {
-      const [min, max] = getMinMax(visibleData);
-      setZoomedDomain([min, max]);
-    }
-  };
-
-  if (!displayData || !displayData.length) return null;
-
-  const isDualAxis = selectedCoinType === "VESTS";
-  const primaryAxisId = isRTL ? "right" : "left";
-  const secondaryAxisId = isRTL ? "left" : "right";
-
-  const secondaryAxisDomain =
-    selectedCoinType === "HBD" ? [minValue, maxValue] : undefined;
 
   const chartBottomMargin = useMemo(() => {
     let margin = 60;
@@ -450,6 +423,41 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     return payloadItems.filter((item) => !hiddenDataKeys.includes(item.id as string));
   }, [selectedCoinType, vestsHpUnit, showSavingsBalance, hiddenDataKeys, t]);
 
+
+  const handleBrushAreaChange = (domain: {
+    startIndex?: number;
+    endIndex?: number;
+  }) => {
+    if (
+      !domain ||
+      domain.startIndex === undefined ||
+      domain.endIndex === undefined
+    ) {
+      setZoomedDomain([fullDataMin, fullDataMax]);
+      return;
+    }
+
+    const { startIndex, endIndex } = domain;
+    const visibleData = (displayData || []).slice(startIndex, endIndex + 1);
+
+    if (visibleData.length > 0) {
+      const [min, max] = getMinMax(visibleData);
+      setZoomedDomain([min, max]);
+    } else {
+      setZoomedDomain([fullDataMin, fullDataMax]); // Reset if no data visible
+    }
+  };
+
+  if (!displayData || !displayData.length) return null;
+
+  const isDualAxis = selectedCoinType === "VESTS";
+  const primaryAxisId = isRTL ? "right" : "left";
+  const secondaryAxisId = isRTL ? "left" : "right";
+
+  const secondaryAxisDomain =
+    selectedCoinType === "HBD" ? [minValue, maxValue] : undefined;
+
+
   return (
     <div className={cn("w-full relative", className)}>
       {quickView && (
@@ -473,9 +481,9 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             left: isMobile ? 20 : 12,
             bottom: chartBottomMargin,
           }}
-        
+
         >
-        
+
           <XAxis
             dataKey="timestamp"
             tickCount={quickView ? 5 : 14}
