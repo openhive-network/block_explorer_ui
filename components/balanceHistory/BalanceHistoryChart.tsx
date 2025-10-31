@@ -3,6 +3,7 @@ import React, {
   useEffect,
   useMemo,
   useCallback,
+  useRef,
   SetStateAction,
   Dispatch,
 } from "react";
@@ -99,11 +100,22 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
 
         if (type === "VESTS") {
           const vests = item.balance?.toString() || "0";
+          
+          console.log("--- VESTS Processing ---");
+          console.log("Item Timestamp:", item.timestamp);
+          console.log("Raw Vests:", vests);
+          console.log("Hive Price (from item.hivePrice):", item.hivePrice);
+          console.log("Dynamic Global Data (for vestsToHp):", dynamicGlobalData);
+
+
           const convertedHP = hiveChain.vestsToHp(
             vests,
             dynamicGlobalData.headBlockDetails.rawTotalVestingFundHive,
             dynamicGlobalData.headBlockDetails.rawTotalVestingShares
           );
+
+          console.log("Raw convertedHP (from hiveChain.vestsToHp):", convertedHP);
+
 
           let convertedHPNumeric: number;
           if (typeof convertedHP === "number") {
@@ -120,10 +132,17 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             convertedHPNumeric = 0;
           }
 
+          console.log("Parsed convertedHPNumeric:", convertedHPNumeric);
+
+
           const dollarValueFull =
             !isNaN(convertedHPNumeric) && !isNaN(hivePrice)
               ? convertedHPNumeric * hivePrice
               : 0;
+          
+          console.log("Calculated dollarValueFull (HP * Hive Price):", dollarValueFull);
+          console.log("--- End VESTS Processing ---");
+
 
           return {
             ...item,
@@ -157,6 +176,20 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     [dynamicGlobalData, hiveChain]
   );
 
+  const rawTimestampsRef = useRef<string>(
+    (aggregatedAccountBalanceHistory || []).map((d) => d?.timestamp).join("|")
+  );
+  const stableRawDataRef = useRef<any[]>(aggregatedAccountBalanceHistory || []);
+
+  useEffect(() => {
+    const incoming = aggregatedAccountBalanceHistory || [];
+    const serial = incoming.map((d) => d?.timestamp).join("|");
+    if (serial !== rawTimestampsRef.current) {
+      rawTimestampsRef.current = serial;
+      stableRawDataRef.current = incoming;
+    }
+  }, [aggregatedAccountBalanceHistory]);
+
   const dataMap: Record<
     string,
     {
@@ -172,9 +205,9 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
   > = useMemo(() => {
     return {
       [selectedCoinType]:
-        processedData(aggregatedAccountBalanceHistory, selectedCoinType) || [],
+        processedData(stableRawDataRef.current, selectedCoinType) || [],
     };
-  }, [processedData, aggregatedAccountBalanceHistory, selectedCoinType]);
+  }, [processedData, selectedCoinType]);
 
   const handleCoinTypeChange = (coinType: string) => {
     setSelectedCoinType(coinType);
@@ -182,7 +215,6 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
 
   const displayData = useMemo(() => {
     return dataMap[selectedCoinType];
-    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCoinType, vestsHpUnit, dataMap]);
 
   const CustomTooltip = ({
@@ -209,6 +241,9 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     const savingsBalance = selectedData?.savings_balance ?? undefined;
     const savingsBalanceChange = selectedData?.savings_balance_change ?? 0;
     const dollarValue = selectedData?.dollarValue ?? 0;
+
+
+
 
     const isPositiveChange = balanceChange > 0;
     const isZeroChange = balanceChange === 0;
@@ -257,7 +292,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
           {dollarValue || dollarValue === 0 ? (
             <div style={{ color: colorMap.DOLLAR }}>
               Dollar Value: $
-              {formatNumber(dollarValue, false, selectedCoinType === "VESTS")}
+              {formatNumber(dollarValue, false, false)} 
             </div>
           ) : null}
         </div>
@@ -371,7 +406,6 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     return [minValue, maxValue];
   };
 
-  // Move useMemo calls outside of any conditional returns
   const [fullDataMin, fullDataMax] = useMemo(
     () => getMinMax(displayData),
     [displayData, selectedCoinType, vestsHpUnit, showSavingsBalance]
@@ -379,15 +413,14 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
   const [minValue, maxValue] = zoomedDomain || [fullDataMin, fullDataMax];
 
   const chartBottomMargin = useMemo(() => {
-    let margin = 60;
+    let margin = 40;
     margin += 50;
     if (isMobile) {
       margin += 30;
     }
     return margin;
-  }, [isMobile]);
+  }, [isMobile,quickView]);
 
-  // Construct the payload for the Legend component
   const legendPayload: Payload[] = useMemo(() => {
     const payloadItems: Payload[] = [
       {
@@ -398,13 +431,13 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
         id:
           selectedCoinType === "VESTS" && vestsHpUnit === "hp"
             ? "convertedHive"
-            : "balance", // Use the actual dataKey as the id for toggling
-        type: "line", // Shape for the legend item
+            : "balance", 
+        type: "line",
         color: colorMap[selectedCoinType],
       },
       {
         value: "DOLLAR",
-        id: "dollarValue", // Use the actual dataKey as the id for toggling
+        id: "dollarValue", 
         type: "line",
         color: colorMap.DOLLAR,
       },
@@ -413,13 +446,12 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     if (showSavingsBalance === "yes" && selectedCoinType !== "VESTS") {
       payloadItems.push({
         value: t("balanceHistoryChart.savingsBalance"),
-        id: "savings_balance", // Use the actual dataKey as the id for toggling
+        id: "savings_balance", 
         type: "line",
         color: colorMap.SAVINGS,
       });
     }
 
-    // Filter based on hiddenDataKeys using the 'id' of the payload
     return payloadItems.filter((item) => !hiddenDataKeys.includes(item.id as string));
   }, [selectedCoinType, vestsHpUnit, showSavingsBalance, hiddenDataKeys, t]);
 
@@ -428,12 +460,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     startIndex?: number;
     endIndex?: number;
   }) => {
-    if (
-      !domain ||
-      domain.startIndex === undefined ||
-      domain.endIndex === undefined
-    ) {
-      setZoomedDomain([fullDataMin, fullDataMax]);
+    if (!domain || domain.startIndex === undefined || domain.endIndex === undefined) {
       return;
     }
 
@@ -444,7 +471,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
       const [min, max] = getMinMax(visibleData);
       setZoomedDomain([min, max]);
     } else {
-      setZoomedDomain([fullDataMin, fullDataMax]); // Reset if no data visible
+      setZoomedDomain([fullDataMin, fullDataMax]); 
     }
   };
 
@@ -477,8 +504,8 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
           data={displayData || []}
           margin={{
             top: 20,
-            right: isMobile ? 75 : 52,
-            left: isMobile ? 20 : 12,
+            right: isMobile ? 5 : 25, 
+            left: isMobile ? 5 : 5, 
             bottom: chartBottomMargin,
           }}
 
@@ -613,7 +640,6 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             maxWidth: selectedCoinType === "VESTS" ? "calc(100% - 150px)" : "100%",
           }}
           onClick={(event) => {
-            // The event.payload.id contains the dataKey we manually assigned
             const clickedId = event.payload?.id;
             if (clickedId) {
               const isHidden = hiddenDataKeys.includes(clickedId as string);
