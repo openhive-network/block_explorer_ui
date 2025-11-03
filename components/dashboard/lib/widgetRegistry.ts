@@ -71,7 +71,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     id: "hive-price-chart",
     name: "widgets.hivePriceChartName",
     component: HivePriceChartWidget,
-    defaultLayout: { w: 6, h: 5, minW: 4, minH: 4 },
+    defaultLayout: { w: 6, h: 7.2, minW: 4, minH: 4 },
     getProps: (data, widgetState, actions) => ({
       isCollapsed: widgetState?.isCollapsed ?? false,
       onToggleCollapse: actions.handleToggleCollapse,
@@ -84,7 +84,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     id: "fund-and-supply",
     name: "widgets.fundAndSupplyName",
     component: FundAndSupplyWidget,
-    defaultLayout: { w: 3, h: 5, minW: 2, minH: 5 },
+    defaultLayout: { w: 3, h: 5.3, minW: 2, minH: 5 },
     getProps: getCollapsibleCardProps,
     collapsible: true,
     initialCollapsed: true,
@@ -93,7 +93,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     id: "hive-parameters",
     name: "widgets.hiveParametersName",
     component: HiveParametersWidget,
-    defaultLayout: { w: 3, h: 5, minW: 2, minH: 5 },
+    defaultLayout: { w: 3, h: 7.6, minW: 2, minH: 5 },
     getProps: getCollapsibleCardProps,
     collapsible: true,
     initialCollapsed: true,
@@ -102,7 +102,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     id: "blockchain-dates",
     name: "widgets.blockchainDatesName",
     component: BlockchainDatesWidget,
-    defaultLayout: { w: 3, h: 4, minW: 2, minH: 1 },
+    defaultLayout: { w: 3, h: 3.4, minW: 2, minH: 1 },
     getProps: getCollapsibleCardProps,
     collapsible: true,
     initialCollapsed: true,
@@ -111,7 +111,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     id: "market-data",
     name: "widgets.marketDataName",
     component: MarketDataWidget,
-    defaultLayout: { w: 4, h: 3, minW: 3, minH: 2 },
+    defaultLayout: { w: 4, h:1.5, minW: 3, minH: 1 },
     getProps: (data) => ({
       headBlockCardData: data.dynamicGlobalQueryData,
     }),
@@ -156,7 +156,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     id: "searches",
     name: "widgets.searchesName",
     component: SearchesSection,
-    defaultLayout: { w: 8, h: 4, minW: 4, minH: 3 },
+    defaultLayout: { w: 8, h: 11.9, minW: 4, minH: 3 },
   },
 
   // --- Layout Widgets (With descriptions and state-management props) ---

@@ -37,7 +37,7 @@ const TopWitnessesCard = ({
   const SeeMoreIcon = dir === "rtl" ? MoveLeft : MoveRight;
   return (
     <Card
-      className="col-span-12 md:col-span-12 lg:col-span-3 overflow-hidden h-full flex flex-col"
+      className="col-span-12 md:col-span-12 lg:col-span-3 overflow-hidden h-full max-h-[1315px] flex flex-col"
       data-testid="top-witnesses-sidebar"
     >
       <CardHeader className="flex justify-between items-center border-b px-1 py-3">

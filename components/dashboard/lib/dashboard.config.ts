@@ -28,13 +28,13 @@ export const DEFAULT_WIDGETS: Array<{ i: string; type: string }> = [
 export const DEFAULT_MASTER_LAYOUT: Layout[] = [
   { i: "market-data-1", x: 0, y: 6, w: 2.95, h: 1.4, minW: 2, minH: 1 },
   { i: "hive-price-chart-1", x: 0, y: 7.4, w: 2.95, h: 7.2, minW: 2, minH: 0 },
-  { i: "fund-and-supply-1", x: 0, y: 14.6, w: 2.95, h: 6, minW: 2, minH: 5.3 },
-  { i: "hive-params-1", x: 0, y: 19.9, w: 2.95, h: 9.7, minW: 2, minH: 4 },
-  { i: "blockchain-dates-1", x: 0, y: 27.7, w: 2.95, h: 5, minW: 2, minH: 4 },
-  { i: "live-info-1", x: 0, y: 0, w: 2.95, h: 5.9, minW: 2, minH: 4 },
+  { i: "fund-and-supply-1", x: 0, y: 14.6, w: 2.95, h: 5.3, minW: 2, minH: 5.3 },
+  { i: "hive-params-1", x: 0, y: 19.9, w: 2.95, h: 7.6, minW: 2, minH: 4 },
+  { i: "blockchain-dates-1", x: 0, y: 27.7, w: 2.95, h: 3.4, minW: 2, minH: 4 },
+  { i: "live-info-1", x: 0, y: 0, w: 2.95, h: 6, minW: 2, minH: 4 },
   { i: "last-blocks-1", x: 3, y: 0, w: 5.95, h: 9.4, minW: 5, minH: 7 },
   { i: "tx-stats-1", x: 3, y: 9.4, w: 5.95, h: 5.9, minW: 4, minH: 4 },
-  { i: "searches-1", x: 3, y: 15.3, w: 5.95, h: 11, minW: 4, minH: 11 },
+  { i: "searches-1", x: 3, y: 15.3, w: 5.95, h: 11.9, minW: 4, minH: 11 },
   { i: "top-witnesses-1", x: 9, y: 0, w: 3, h: 25.8, minW: 3, minH: 8 },
   { i: "top-communities-1", x: 9, y: 15, w: 3, h: 5.8, minW: 3, minH: 5 },
 ];
