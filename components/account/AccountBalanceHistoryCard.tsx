@@ -153,7 +153,7 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
               aggregatedAccountBalanceHistory
             )}
             quickView={true}
-            className="h-[320px]"
+            className="h-[380px]"
             selectedCoinType={coinType}
             setSelectedCoinType={setCoinType}
           />
