@@ -947,6 +947,8 @@
   "settingsPage.cycleDataViewDescription": "一个按钮，每次点击可在可视化、原始JSON和格式化JSON视图之间循环切换。",
   "settingsPage.compactLayoutLabel": "紧凑视图",
   "settingsPage.compactLayoutDescription": "在较大屏幕上启用更窄、更紧凑的布局。此设置不影响移动设备上的布局。",
+  "settingsPage.displayFullKeysLabel": "显示完整公钥",
+  "settingsPage.displayFullKeysDescription": "启用后，公钥将完整显示。禁用后，公钥将被缩短以获得更紧凑的视图。",
   "accountSearch.accountReactResults": "账户搜索结果",
   "blockDetails.blockDetails": "区块详情",
   "commentsSearch.commentSearchResults": "评论搜索结果",

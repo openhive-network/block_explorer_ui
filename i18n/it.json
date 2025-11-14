@@ -942,6 +942,8 @@
   "settingsPage.cycleDataViewDescription": "Un singolo pulsante che scorre tra le viste Visualizzata, JSON grezzo e JSON formattato a ogni clic.",
   "settingsPage.compactLayoutLabel": "Visualizzazione Compatta",
   "settingsPage.compactLayoutDescription": "Abilita un layout più stretto e compatto sugli schermi più grandi. Questa impostazione non influisce sul layout dei dispositivi mobili.",
+  "settingsPage.displayFullKeysLabel": "Mostra chiavi pubbliche complete",
+  "settingsPage.displayFullKeysDescription": "Se abilitato, le chiavi pubbliche verranno mostrate per intero. Se disabilitato, verranno accorciate per una visualizzazione più compatta.",
   "accountSearch.accountReactResults": "risultati_ricerca_account",
   "blockDetails.blockDetails": "dettagli_blocco",
   "commentsSearch.commentSearchResults": "risultati_ricerca_commenti",

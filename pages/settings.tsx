@@ -143,63 +143,97 @@ const SettingsPage = () => {
   const { t } = useI18n();
   const settingsConfig: SettingSectionConfig[] = [
     {
-      sectionTitleKey: 'settingsPage.displayTitle',
-      sectionDescriptionKey: 'settingsPage.displayDescription',
+      sectionTitleKey: "settingsPage.displayTitle",
+      sectionDescriptionKey: "settingsPage.displayDescription",
       items: [
         {
-          type: 'switch',
-          key: 'displayVestHpMode',
-          labelKey: 'settingsPage.showVestsLabel',
-          descriptionKey: 'settingsPage.showVestsDescription',
-          trueValue: 'vests',
-          falseValue: 'hp'
-        }
-      ]
+          type: "switch",
+          key: "displayVestHpMode",
+          labelKey: "settingsPage.showVestsLabel",
+          descriptionKey: "settingsPage.showVestsDescription",
+          trueValue: "vests",
+          falseValue: "hp",
+        },
+        {
+          type: "switch",
+          key: "displayFullKeys",
+          labelKey: "settingsPage.displayFullKeysLabel",
+          descriptionKey: "settingsPage.displayFullKeysDescription",
+          trueValue: true,
+          falseValue: false,
+        },
+      ],
     },
     {
-      sectionTitleKey: 'settingsPage.layoutTitle',
-      sectionDescriptionKey: 'settingsPage.layoutDescription',
+      sectionTitleKey: "settingsPage.layoutTitle",
+      sectionDescriptionKey: "settingsPage.layoutDescription",
       items: [
         {
-          type: 'radio',
-          key: 'accountPageView',
-          titleKey: 'settingsPage.accountPageViewTitle',
+          type: "radio",
+          key: "accountPageView",
+          titleKey: "settingsPage.accountPageViewTitle",
           options: [
-            { value: 'tabbed', labelKey: 'settingsPage.tabbedViewLabel', descriptionKey: 'settingsPage.tabbedViewDescription' },
-            { value: 'original', labelKey: 'settingsPage.originalViewLabel', descriptionKey: 'settingsPage.originalViewDescription' }
-          ]
+            {
+              value: "tabbed",
+              labelKey: "settingsPage.tabbedViewLabel",
+              descriptionKey: "settingsPage.tabbedViewDescription",
+            },
+            {
+              value: "original",
+              labelKey: "settingsPage.originalViewLabel",
+              descriptionKey: "settingsPage.originalViewDescription",
+            },
+          ],
         },
         {
-          type: 'radio',
-          key: 'progressBarType',
-          titleKey: 'settingsPage.resourceBarStyleTitle',
+          type: "radio",
+          key: "progressBarType",
+          titleKey: "settingsPage.resourceBarStyleTitle",
           options: [
-            { value: 'radial', labelKey: 'settingsPage.radialViewLabel', descriptionKey: 'settingsPage.radialViewDescription' },
-            { value: 'linear', labelKey: 'settingsPage.linearViewLabel', descriptionKey: 'settingsPage.linearViewDescription' }
-          ]
+            {
+              value: "radial",
+              labelKey: "settingsPage.radialViewLabel",
+              descriptionKey: "settingsPage.radialViewDescription",
+            },
+            {
+              value: "linear",
+              labelKey: "settingsPage.linearViewLabel",
+              descriptionKey: "settingsPage.linearViewDescription",
+            },
+          ],
         },
         {
-          type: 'radio',
-          key: 'dataViewSwitchStyle',
-          titleKey: 'settingsPage.dataViewSwitchStyle',
+          type: "radio",
+          key: "dataViewSwitchStyle",
+          titleKey: "settingsPage.dataViewSwitchStyle",
           options: [
-            { value: 'popover', labelKey: 'settingsPage.popoverDataViewLabel', descriptionKey: 'settingsPage.popoverDataViewDescription' },
-            { value: 'icons', labelKey: 'settingsPage.iconDataViewLabel', descriptionKey: 'settingsPage.iconDataViewDescription' },
-            { value: 'cycle', labelKey: 'settingsPage.cycleDataViewLabel', descriptionKey: 'settingsPage.cycleDataViewDescription' }
-
-          ]
+            {
+              value: "popover",
+              labelKey: "settingsPage.popoverDataViewLabel",
+              descriptionKey: "settingsPage.popoverDataViewDescription",
+            },
+            {
+              value: "icons",
+              labelKey: "settingsPage.iconDataViewLabel",
+              descriptionKey: "settingsPage.iconDataViewDescription",
+            },
+            {
+              value: "cycle",
+              labelKey: "settingsPage.cycleDataViewLabel",
+              descriptionKey: "settingsPage.cycleDataViewDescription",
+            },
+          ],
         },
-         {
-          type: 'switch',
-          key: 'layoutWidth',
-          labelKey: 'settingsPage.compactLayoutLabel',
-          descriptionKey: 'settingsPage.compactLayoutDescription',
-          trueValue: 'compact',  // When switch is ON, layout is 'compact' (75%)
-          falseValue: 'full'      // When switch is OFF, layout is 'full' (98%)
+        {
+          type: "switch",
+          key: "layoutWidth",
+          labelKey: "settingsPage.compactLayoutLabel",
+          descriptionKey: "settingsPage.compactLayoutDescription",
+          trueValue: "compact", // When switch is ON, layout is 'compact' (75%)
+          falseValue: "full", // When switch is OFF, layout is 'full' (98%)
         },
-      ]
-    }
-    
+      ],
+    },
   ];
 
   return (

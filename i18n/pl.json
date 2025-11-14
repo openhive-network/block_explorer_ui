@@ -947,6 +947,8 @@
   "settingsPage.cycleDataViewDescription": "Pojedynczy przycisk, który przełącza między widokami Wizualizowanym, Surowym JSON i Sformatowanym JSON przy każdym kliknięciu.",
   "settingsPage.compactLayoutLabel": "Widok kompaktowy",
   "settingsPage.compactLayoutDescription": "Włącza węższy, bardziej kompaktowy układ na większych ekranach. To ustawienie nie wpływa na układ na urządzeniach mobilnych.",
+  "settingsPage.displayFullKeysLabel": "Wyświetl pełne klucze publiczne",
+  "settingsPage.displayFullKeysDescription": "Gdy włączone, klucze publiczne będą wyświetlane w całości. Gdy wyłączone, zostaną skrócone w celu uzyskania bardziej kompaktowego widoku.",
   "accountSearch.accountReactResults": "wyniki_wyszukiwania_konta",
   "blockDetails.blockDetails": "szczegoly_bloku",
   "commentsSearch.commentSearchResults": "wyniki_wyszukiwania_komentarzy",

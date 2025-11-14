@@ -946,6 +946,8 @@
   "settingsPage.cycleDataViewDescription": "Un singur buton care comută între vizualizările Vizualizată, JSON brut și JSON formatat la fiecare clic.",
   "settingsPage.compactLayoutLabel": "Vizualizare Compactă",
   "settingsPage.compactLayoutDescription": "Activează un aspect mai îngust și mai compact pe ecranele mari. Această setare nu afectează aspectul pe dispozitivele mobile.",
+  "settingsPage.displayFullKeysLabel": "Afișează cheile publice complete",
+  "settingsPage.displayFullKeysDescription": "Când este activat, cheile publice vor fi afișate în întregime. Când este dezactivat, acestea vor fi scurtate pentru o vizualizare mai compactă.",
   "accountSearch.accountReactResults": "rezultate_cautare_cont",
   "blockDetails.blockDetails": "detalii_bloc",
   "commentsSearch.commentSearchResults": "rezultate_cautare_comentarii",

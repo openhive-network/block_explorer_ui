@@ -17,7 +17,8 @@ export interface AppSettings {
   rawJsonView: boolean;
   liveData: boolean;
   prettyJsonView: boolean;
-   layoutWidth: LayoutWidth; 
+  displayFullKeys: boolean;
+  layoutWidth: LayoutWidth; 
 }
 
 interface SettingsContextType {
@@ -37,6 +38,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     liveData: false,
     prettyJsonView: false,
     layoutWidth : 'full',
+    displayFullKeys: false
   });
 
   // This effect loads ALL settings from localStorage on initial mount

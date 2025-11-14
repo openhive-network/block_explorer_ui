@@ -946,6 +946,8 @@
   "settingsPage.cycleDataViewDescription": "Un solo botón que alterna entre las vistas Visualizada, JSON sin formato y JSON con formato con cada clic.",
   "settingsPage.compactLayoutLabel": "Vista Compacta",
   "settingsPage.compactLayoutDescription": "Activa un diseño más estrecho y compacto en pantallas grandes. Esta configuración no afecta el diseño en dispositivos móviles.",
+  "settingsPage.displayFullKeysLabel": "Mostrar claves públicas completas",
+  "settingsPage.displayFullKeysDescription": "Cuando está habilitado, las claves públicas se mostrarán en su totalidad. Cuando está deshabilitado, se acortarán para una vista más compacta.",
   "accountSearch.accountReactResults": "resultados_busqueda_cuenta",
   "blockDetails.blockDetails": "detalles_bloque",
   "commentsSearch.commentSearchResults": "resultados_busqueda_comentarios",

@@ -947,6 +947,8 @@
   "settingsPage.cycleDataViewDescription": "クリックするたびに、視覚化、生JSON、整形JSONの表示を切り替える単一のボタン。",
   "settingsPage.compactLayoutLabel": "コンパクト表示",
   "settingsPage.compactLayoutDescription": "大型スクリーンで、より狭くコンパクトなレイアウトを有効にします。この設定はモバイルデバイスのレイアウトには影響しません。",
+  "settingsPage.displayFullKeysLabel": "完全な公開鍵を表示",
+  "settingsPage.displayFullKeysDescription": "有効にすると、公開鍵が完全に表示されます。無効にすると、よりコンパクトな表示のために短縮されます。",
   "accountSearch.accountReactResults": "アカウント検索結果",
   "blockDetails.blockDetails": "ブロック詳細",
   "commentsSearch.commentSearchResults": "コメント検索結果",

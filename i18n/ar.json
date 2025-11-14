@@ -947,6 +947,8 @@
   "settingsPage.cycleDataViewDescription": "زر واحد يبدل بين طرق العرض: المرئي، الخام، والمنسق JSON مع كل نقرة.",
   "settingsPage.compactLayoutLabel": "عرض مضغوط",
   "settingsPage.compactLayoutDescription": "تمكين تصميم أضيق وأكثر ضغطًا على الشاشات الكبيرة. هذا الإعداد لا يؤثر على التصميم في الأجهزة المحمولة.",
+  "settingsPage.displayFullKeysLabel": "عرض المفاتيح العامة الكاملة",
+  "settingsPage.displayFullKeysDescription": "عند التمكين، سيتم عرض المفاتيح العامة بالكامل. عند التعطيل، سيتم اختصارها لعرض أكثر إيجازًا.",
   "accountSearch.accountReactResults": "نتائج_البحث_عن_الحساب",
   "blockDetails.blockDetails": "تفاصيل_الكتلة",
   "commentsSearch.commentSearchResults": "نتائج_البحث_عن_التعليقات",

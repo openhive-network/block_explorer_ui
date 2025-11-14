@@ -947,6 +947,8 @@
   "settingsPage.cycleDataViewDescription": "Eine einzelne Schaltfläche, die bei jedem Klick durch die Ansichten Visualisiert, Rohes JSON und Schönes JSON wechselt.",
   "settingsPage.compactLayoutLabel": "Kompakte Ansicht",
   "settingsPage.compactLayoutDescription": "Aktiviert ein schmaleres, kompakteres Layout auf großen Bildschirmen. Diese Einstellung hat keine Auswirkungen auf das Layout auf Mobilgeräten.",
+  "settingsPage.displayFullKeysLabel": "Vollständige öffentliche Schlüssel anzeigen",
+  "settingsPage.displayFullKeysDescription": "Wenn aktiviert, werden öffentliche Schlüssel vollständig angezeigt. Wenn deaktiviert, werden sie für eine kompaktere Ansicht gekürzt.",
   "accountSearch.accountReactResults": "konto_suchergebnisse",
   "blockDetails.blockDetails": "block_details",
   "commentsSearch.commentSearchResults": "kommentar_suchergebnisse",
