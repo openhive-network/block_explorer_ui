@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableRow } from "../ui/table";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import CopyToKeyboard from "../CopyToKeyboard";
 import { useI18n } from "@/i18n/i18n";
+import { useSettings } from "@/contexts/SettingsContext";
 
 interface AccountMainCardProps {
   accountName: string;
@@ -29,6 +30,8 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
   isInitiallyOpen
 }) => {
   const { t } = useI18n();
+  const { settings } = useSettings();
+
   const { accountAuthoritiesData } = useAccountAuthorities(
     accountName,
     liveDataEnabled,
@@ -72,7 +75,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
           ) : (
             <CopyToKeyboard
               value={content}
-              displayValue={cutPublicKey(content)}
+              displayValue={settings.displayFullKeys ? content : cutPublicKey(content)}
             />
           )}
         </TableCell>
@@ -120,10 +123,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
   };
 
   return (
-    <Card
-      data-testid="authorities"
-      className="overflow-hidden pb-0 w-full"
-    >
+    <Card data-testid="authorities" className="overflow-hidden pb-0 w-full">
       <CardHeader className="p-0">
         <div
           onClick={handlePropertiesVisibility}
@@ -136,10 +136,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
         </div>
       </CardHeader>
 
-      <CardContent
-        hidden={isPropertiesHidden}
-        className="break-all"
-      >
+      <CardContent hidden={isPropertiesHidden} className="break-all">
         {renderCollectionOfAuthorities(
           accountAuthoritiesData?.owner,
           t("accountAuthoritiesCard.owner")
@@ -162,7 +159,11 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
                 <TableCell className="cursor-pointer">
                   <CopyToKeyboard
                     value={accountAuthoritiesData?.memo}
-                    displayValue={cutPublicKey(accountAuthoritiesData?.memo)}
+                    displayValue={
+                      settings.displayFullKeys
+                        ? accountAuthoritiesData?.memo || ""
+                        : cutPublicKey(accountAuthoritiesData?.memo)
+                    }
                   />
                 </TableCell>
               </TableRow>
@@ -179,9 +180,13 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
                     <TableCell className="cursor-pointer">
                       <CopyToKeyboard
                         value={accountAuthoritiesData?.witness_signing}
-                        displayValue={cutPublicKey(
-                          accountAuthoritiesData?.witness_signing
-                        )}
+                        displayValue={
+                          settings.displayFullKeys
+                            ? accountAuthoritiesData?.witness_signing
+                            : cutPublicKey(
+                                accountAuthoritiesData?.witness_signing
+                              )
+                        }
                       />
                     </TableCell>
                   </TableRow>
