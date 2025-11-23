@@ -31,6 +31,7 @@ const useDynamicGlobal = (headBlockNum?: number) => {
         hiveChain!
       ),
     refetchOnWindowFocus: false,
+    keepPreviousData: true,
   });
 
   return { dynamicGlobalData, dynamicGlobalLoading, dynamicGlobalError };

@@ -58,8 +58,8 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
   opcount = 0,
 }) => {
   const { t } = useI18n();
-  const isBlockCardLoading =
-    !headBlockCardData || !headBlockCardData.headBlockDetails ? true : false;
+  // Only show loading if there is no data at all
+  const isBlockCardLoading = !headBlockCardData?.headBlockDetails;
 
   const [hiddenPropertiesByCard, setHiddenPropertiesByCard] = useState<any>({
     timeCard: true,
@@ -307,6 +307,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
               isParamsHidden={hiddenPropertiesByCard.supplyCard}
               handleHideParams={handleHideSupplyParams}
               isLoading={isBlockCardLoading}
+              dynamicGlobalData={headBlockCardData}
             />
             <HeadBlockPropertyCard
               parameters={hiveParameters}
@@ -314,6 +315,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
               isParamsHidden={hiddenPropertiesByCard.hiveParamsCard}
               handleHideParams={handleHideHiveParams}
               isLoading={isBlockCardLoading}
+              dynamicGlobalData={headBlockCardData}
             />
             <HeadBlockPropertyCard
               parameters={blockchainDates}
@@ -321,6 +323,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
               isParamsHidden={hiddenPropertiesByCard.timeCard}
               handleHideParams={handleHideBlockchainDates}
               isLoading={isBlockCardLoading}
+              dynamicGlobalData={headBlockCardData}
             />
           </div>
         </CardContent>
