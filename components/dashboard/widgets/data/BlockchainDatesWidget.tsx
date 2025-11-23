@@ -25,6 +25,7 @@ const BlockchainDatesWidget: React.FC<BlockchainDatesWidgetProps> = ({
       isParamsHidden={isCollapsed}
       handleHideParams={onToggleCollapse}
       isLoading={isLoading}
+      dynamicGlobalData={headBlockCardData}
     />
   );
 };

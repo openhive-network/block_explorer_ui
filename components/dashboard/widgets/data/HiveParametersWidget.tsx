@@ -25,6 +25,7 @@ const HiveParametersWidget: React.FC<HiveParametersWidgetProps> = ({
       isParamsHidden={isCollapsed}
       handleHideParams={onToggleCollapse}
       isLoading={isLoading}
+      dynamicGlobalData={headBlockCardData}
     />
   );
 };
