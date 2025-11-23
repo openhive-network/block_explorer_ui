@@ -11,6 +11,7 @@ const useHeadBlock = (headBlockNum?: number) => {
     queryKey: ["headBlockData", headBlockNum],
     queryFn: () => fetchBlockGlobalState(headBlockNum),
     refetchOnWindowFocus: false,
+    keepPreviousData: true,
   });
 
   const fetchBlockGlobalState = async (headBlockNum: number | undefined) => {

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { convertUTCDateToLocalDate } from "@/utils/TimeUtils";
-import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { Table, TableBody, TableRow, TableCell } from "../ui/table";
 import {
   fundAndSupplyParameters,
@@ -9,6 +8,7 @@ import {
   blockchainDates,
 } from "./headBlockParameters";
 import { useI18n } from "../../i18n/i18n";
+
 import { Loader2 } from "lucide-react";
 
 const cardNameMap = new Map([
@@ -55,6 +55,7 @@ interface HeadBlockPropertyCardProps {
   isParamsHidden: boolean;
   handleHideParams: () => void;
   isLoading: boolean;
+  dynamicGlobalData: any;
 }
 
 const buildTableBody = (
@@ -86,11 +87,9 @@ const HeadBlockPropertyCard: React.FC<HeadBlockPropertyCardProps> = ({
   isParamsHidden,
   handleHideParams,
   isLoading,
+  dynamicGlobalData,
 }) => {
-  const { dynamicGlobalData } = useDynamicGlobal() as any;
-    const { t } = useI18n();
-
-
+  const { t } = useI18n();
   return (
     <div
       className="py-1 rounded-[6px] data-box"
