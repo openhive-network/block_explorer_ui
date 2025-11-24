@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "./ui/table";
 import Link from "next/link";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import Explorer from "@/types/Explorer";
 import { Button } from "./ui/button";
@@ -152,23 +152,44 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
     return unformattedOperation ? JSON.stringify(unformattedOperation) : {};
   };
 
+  // Cache last non-empty operation content by operationId
+  const lastContentRef = useRef<Record<number, React.ReactNode>>({});
+
   const renderOperationContent = (
     rawJsonView: boolean,
     prettyJsonView: boolean,
     operation: Explorer.OperationForTable
   ) => {
+    let content: React.ReactNode;
     if (!rawJsonView && !prettyJsonView) {
-      return <div>{getOneLineDescription(operation, t)}</div>;
-    }
-    const unformattedOperation = unformattedOperations?.find(
-      (op) => op.operationId === operation.operationId
-    )?.operation;
-
-    if (prettyJsonView) {
-      return <pre>{JSON.stringify(unformattedOperation, null, 2)}</pre>;
+      content = <div>{getOneLineDescription(operation, t)}</div>;
     } else {
-      return <pre>{JSON.stringify(unformattedOperation)}</pre>;
+      const unformattedOperation = unformattedOperations?.find(
+        (op) => op.operationId === operation.operationId
+      )?.operation;
+      if (prettyJsonView) {
+        content = <pre>{JSON.stringify(unformattedOperation, null, 2)}</pre>;
+      } else {
+        content = <pre>{JSON.stringify(unformattedOperation)}</pre>;
+      }
     }
+    // Only update cache if content is not empty/null/undefined
+    const opId = operation.operationId;
+    const isValid =
+      content &&
+      !(
+        typeof content === 'string' &&
+        (content as string).trim &&
+        (content as string).trim() === ''
+      );
+    if (opId !== undefined && isValid) {
+      lastContentRef.current[opId] = content;
+    }
+    // Return cached content if current is empty
+    if (opId !== undefined && !isValid && lastContentRef.current[opId]) {
+      return lastContentRef.current[opId];
+    }
+    return content;
   };
 
   const prepareExportData = () => {
