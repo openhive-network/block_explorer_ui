@@ -151,7 +151,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
         return { ...item, balance: balanceNum };
       });
     },
-    [dynamicGlobalData, hiveChain, unit] // Keep `unit` here for now, although not strictly needed by the new logic
+    [dynamicGlobalData, hiveChain] // removed 'unit' for now, to reinstate once needed by new logic
   );
 
   const dataMap: Record<string, any[]> = useMemo(() => {

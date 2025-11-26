@@ -58,7 +58,7 @@ const ProposalsPage = () => {
       
     setStatusFilter(newStatus);
     setSearchQuery(queryId || querySearch || "");
-  }, [router.isReady, router.asPath]);
+  }, [router.isReady, router.query.status, router.query.ID, router.query.q]);
 
   const debouncedUpdateUrl = useDebounce((query: string) => {
     const newQuery = { ...router.query };
