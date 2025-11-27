@@ -197,7 +197,7 @@ const VotesHistoryDialog: React.FC<VotesHistoryDialogProps> = ({
       open={isVotesHistoryOpen}
       onOpenChange={changeVoteHistoryDialogue}
     >
-      <DialogContent className="max-w-5xl p-0 h-[85%]">
+      <DialogContent className="h-3/4 max-w-7xl flex flex-col overflow-y-auto md:p-6 p-1">
         <div className="flex max-h-[85vh] min-h-0 flex-col">
           <DialogHeader className="shrink-0 p-4">
             <DialogTitle className="text-center text-lg">
@@ -297,8 +297,8 @@ const VotesHistoryDialog: React.FC<VotesHistoryDialogProps> = ({
                 </div>
 
                 <div className="flex-1 min-h-0">
-                  <div className="text-text w-full rounded bg-theme">
-                    <Table enableMobileScrollArrows>
+                  <div className="text-text w-full rounded bg-theme overflow-auto relative">
+                      <Table enableMobileScrollArrows isDialog className="min-w-max">
                       <TableHeader>
                         <TableRow rowVariant="header">
                           <TableHead stickyLeft>
