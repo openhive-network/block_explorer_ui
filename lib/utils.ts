@@ -3,6 +3,7 @@ import { twMerge } from "tailwind-merge";
 import Long from "long";
 import Explorer from "@/types/Explorer";
 import { config } from "@/Config";
+import { grabNumericValue } from "@/utils/StringUtils";
 import Hive from "@/types/Hive";
 
 export function cn(...inputs: ClassValue[]) {
@@ -106,6 +107,30 @@ export const formatPercent = (numberToFormat: number): string => {
   return `${(
     numberToFormat / Math.pow(10, config.precisions.percentage)
   ).toLocaleString()}%`;
+};
+
+/**
+ * Format HP values consistently with decimals defined in config.
+ * Accepts number or string (with or without unit) and returns a string like "1.234 HP".
+ */
+export const formatHp = (
+  value: number | string | undefined | null,
+  decimals: number = config.precisions.hivePower,
+  appendUnit: boolean = true
+): string => {
+  if (value === undefined || value === null) return "--";
+
+  const numericValue =
+    typeof value === "string" ? grabNumericValue(value) : Number(value);
+
+  if (Number.isNaN(numericValue)) return "--";
+
+  const formatted = numericValue.toLocaleString(undefined, {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  });
+
+  return appendUnit ? `${formatted} HP` : formatted;
 };
 
 export const convertOperationResultsToTableOperations = (
