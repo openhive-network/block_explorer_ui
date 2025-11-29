@@ -12,7 +12,7 @@ import Link from "next/link";
 import Head from "next/head";
 import Image from "next/image";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
-import { cn, formatNumber, formatPercent } from "@/lib/utils";
+import { cn, formatNumber, formatPercent, formatHp } from "@/lib/utils";
 import {
   formatAndDelocalizeFromTime,
   formatAndDelocalizeTime,
@@ -387,11 +387,13 @@ export default function Witnesses() {
                                       {hiveChain &&
                                       totalVestingFundHive &&
                                       totalVestingShares ? (
-                                        convertVestsToHP(
-                                          hiveChain,
-                                          singleWitness.vests,
-                                          totalVestingFundHive,
-                                          totalVestingShares
+                                        formatHp(
+                                          convertVestsToHP(
+                                            hiveChain,
+                                            singleWitness.vests,
+                                            totalVestingFundHive,
+                                            totalVestingShares
+                                          )
                                         )
                                       ) : (
                                         <Loader2 className="dark:text-white animate-spin mt-1 h-2 w-2" />
@@ -428,11 +430,13 @@ export default function Witnesses() {
                                         {hiveChain &&
                                         totalVestingFundHive &&
                                         totalVestingShares ? (
-                                          convertVestsToHP(
-                                            hiveChain,
-                                            singleWitness.votes_daily_change,
-                                            totalVestingFundHive,
-                                            totalVestingShares
+                                          formatHp(
+                                            convertVestsToHP(
+                                              hiveChain,
+                                              singleWitness.votes_daily_change,
+                                              totalVestingFundHive,
+                                              totalVestingShares
+                                            )
                                           )
                                         ) : (
                                           <Loader2 className="dark:text-white animate-spin mt-1 h-2 w-2" />
