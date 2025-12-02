@@ -209,7 +209,7 @@ namespace Hive {
     current_shuffled_witnesses!: string[];
     current_virtual_time!: number | string;
     elected_weight!: number;
-    future_shuffled_witnesses!: string[];
+    future_shuffled_witnesses?: string[];
     hardfork_required_witnesses!: number;
     id!: number;
     majority_version!: string;
