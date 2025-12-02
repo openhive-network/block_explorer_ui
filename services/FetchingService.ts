@@ -785,7 +785,7 @@ class FetchingService {
     coinType: "HIVE" | "HBD" | "VESTS",
     balanceType: "balance" | "savings_balance",
     page: number
-  ): Promise<Hive.TopHolder[]> {
+  ): Promise<Hive.TopHoldersResponse> {
     return await this.extendedHiveChain!.restApi["balance-api"].topHolders({
       "coin-type": coinType,
       "balance-type": balanceType,

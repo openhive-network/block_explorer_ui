@@ -1113,6 +1113,10 @@ namespace Hive {
     page!: number;
   }
 
+  export class TopHoldersResponse {
+    holders_result!: TopHolder[];
+  }
+
   export class TopHolder {
     rank!: number;
     account!: string;

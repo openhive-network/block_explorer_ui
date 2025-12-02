@@ -178,9 +178,8 @@ export const extendedRest = {
     },
      topHolders: {
     params: Hive.GetTopHoldersParams,
-    result: Hive.TopHolder,
+    result: Hive.TopHoldersResponse,
     urlPath: "top-holders",
-    responseArray: true,
     },
   },
 };

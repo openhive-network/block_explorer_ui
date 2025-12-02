@@ -10,7 +10,7 @@ const useTopHolders = (coinType: CoinType, balanceType: BalanceType, page: numbe
     data: holdersData,
     isLoading: isTopHoldersLoading,
     error: isTopHoldersError,
-  } = useQuery<Hive.TopHolder[]>({
+  } = useQuery<Hive.TopHoldersResponse>({
     queryKey: ["topHolders", coinType, balanceType, page],
     queryFn: () => fetchingService.getTopHolders(coinType, balanceType, page),
     enabled: !(coinType === "VESTS" && balanceType !== "balance"),
@@ -18,7 +18,7 @@ const useTopHolders = (coinType: CoinType, balanceType: BalanceType, page: numbe
   });
 
   return {
-    holdersData: holdersData ?? [],
+    holdersData: holdersData?.holders_result ?? [],
     isTopHoldersLoading,
     isTopHoldersError: isTopHoldersError as Error | null,
   };

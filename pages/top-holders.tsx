@@ -69,7 +69,7 @@ export default function TopHoldersPage() {
   const filtersChanged =
     coinType !== defaultCoinType || balanceType !== defaultBalanceType;
 
-  const filteredHolders = holdersData;
+
 
   const { dynamicGlobalData } = useDynamicGlobal() as any;
   const [totalVestingShares, setTotalVestingShares] = useState<Hive.Supply>(
@@ -116,7 +116,7 @@ export default function TopHoldersPage() {
   };
 
   const prepareExportData = () =>
-    filteredHolders.map((holder, index) => {
+    holdersData.map((holder, index) => {
       const displayValue = formatBalance(holder.value, coinType);
 
       return {
@@ -312,10 +312,10 @@ export default function TopHoldersPage() {
         )}
         {!isTopHoldersLoading &&
           !isTopHoldersError &&
-          filteredHolders.length === 0 && <NoResult />}
+          holdersData.length === 0 && <NoResult />}
         {!isTopHoldersLoading &&
           !isTopHoldersError &&
-          filteredHolders.length > 0 && (
+          holdersData.length > 0 && (
             <Table
               className="w-full"
               enableMobileScrollArrows
@@ -323,7 +323,7 @@ export default function TopHoldersPage() {
             >
               <TableHeaderRow />
               <TableBody data-testid="table-body">
-                {filteredHolders.map((holder, index) => (
+                {holdersData.map((holder, index) => (
                   <HolderRow
                     key={holder.account}
                     rank={holder.rank}
