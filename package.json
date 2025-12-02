@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "private": true,
   "scripts": {
-    "dev": "node helpers/versions.js && react-env -- next dev --turbopack",
+    "dev": "node helpers/versions.js && react-env -- next dev",
     "copy:public": "shx cp -R public/ .next/standalone/",
     "copy:static": "shx cp -R .next/static/ .next/standalone/.next",
     "build": "node helpers/versions.js && next build",
@@ -19,8 +19,8 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.7.15",
-    "@hiveio/healthchecker-component": "1.0.0-stable.250604102752",
-    "@hiveio/wax": "^1.27.6-rc7-stable.250512112737",
+    "@hiveio/healthchecker-component": "1.28.4-rc0",
+    "@hiveio/wax": "^1.28.4-rc0",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-label": "^2.0.2",
