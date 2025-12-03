@@ -172,6 +172,7 @@
   "witnessSchedule.block": "bloco",
   "witnessSchedule.nextShuffle": "Próximo Embaralhamento",
   "witnessSchedule.blocksLeft": "Blocos Restantes",
+  "witnessSchedule.backupWitness": "Testemunha de backup",
   "witnessScheduleIcon.check": "Verificar",
   "witnessScheduleIcon.witnessSchedule": "Agenda de Testemunhas",
   "backupWitnessSchedule.title": "Agenda de Testemunhas de Backup",

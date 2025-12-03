@@ -172,6 +172,7 @@
   "witnessSchedule.block": "blocco",
   "witnessSchedule.nextShuffle": "Prossimo Rimescolamento",
   "witnessSchedule.blocksLeft": "Blocchi Rimanenti",
+  "witnessSchedule.backupWitness": "Testimone di backup",
   "witnessScheduleIcon.check": "Controllo",
   "witnessScheduleIcon.witnessSchedule": "Programma Testimoni",
   "backupWitnessSchedule.title": "Programma Testimoni di Backup",

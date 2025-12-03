@@ -172,6 +172,7 @@
   "witnessScheduleIcon.check": "Comprobar",
   "witnessSchedule.nextShuffle": "Próximo Barajado",
   "witnessSchedule.blocksLeft": "Bloques Restantes",
+  "witnessSchedule.backupWitness": "Testigo de respaldo",
   "witnessScheduleIcon.witnessSchedule": "Horario de Testigos",
   "backupWitnessSchedule.title": "Horario de Testigos de Respaldo",
   "backupWitnessSchedule.rank": "Rango",
