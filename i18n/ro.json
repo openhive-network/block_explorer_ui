@@ -172,6 +172,7 @@
   "witnessSchedule.block": "bloc",
   "witnessSchedule.nextShuffle": "Următoarea Amestecare",
   "witnessSchedule.blocksLeft": "Blocuri Rămase",
+  "witnessSchedule.backupWitness": "Martor de rezervă",
   "witnessScheduleIcon.check": "Verifică",
   "witnessScheduleIcon.witnessSchedule": "Program Martori",
   "backupWitnessSchedule.title": "Program Martori de Rezervă",

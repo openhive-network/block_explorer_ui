@@ -172,6 +172,7 @@
   "witnessSchedule.block": "ブロック",
   "witnessSchedule.nextShuffle": "次回シャッフル",
   "witnessSchedule.blocksLeft": "残りブロック数",
+  "witnessSchedule.backupWitness": "バックアップ証人",
   "witnessScheduleIcon.check": "チェック",
   "witnessScheduleIcon.witnessSchedule": "証人スケジュール",
   "backupWitnessSchedule.title": "バックアップ証人スケジュール",

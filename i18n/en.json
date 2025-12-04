@@ -173,6 +173,7 @@
   "witnessScheduleIcon.check": "Check",
   "witnessSchedule.nextShuffle": "Next Shuffle",
   "witnessSchedule.blocksLeft": "Blocks Left",
+  "witnessSchedule.backupWitness": "Backup witness",
   "witnessScheduleIcon.witnessSchedule": "Witness Schedule",
   "backupWitnessSchedule.title": "Backup Witness Schedule",
   "backupWitnessSchedule.rank": "Rank",

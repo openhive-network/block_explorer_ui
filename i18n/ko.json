@@ -171,6 +171,7 @@
   "witnessSchedule.block": "블록",
   "witnessSchedule.nextShuffle": "다음 셔플",
   "witnessSchedule.blocksLeft": "남은 블록",
+  "witnessSchedule.backupWitness": "백업 증인",
   "witnessScheduleIcon.check": "확인",
   "witnessScheduleIcon.witnessSchedule": "증인 스케줄",
   "backupWitnessSchedule.title": "백업 증인 스케줄",
