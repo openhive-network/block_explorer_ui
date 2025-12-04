@@ -170,6 +170,7 @@
   "witnessSchedule.block": "bloc",
   "witnessSchedule.nextShuffle": "Prochain Mélange",
   "witnessSchedule.blocksLeft": "Blocs Restants",
+  "witnessSchedule.backupWitness": "Témoin de secours",
   "witnessScheduleIcon.check": "Vérifier",
   "witnessScheduleIcon.witnessSchedule": "Calendrier des Témoins",
   "backupWitnessSchedule.title": "Calendrier des Témoins de Secours",

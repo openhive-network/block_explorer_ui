@@ -172,6 +172,7 @@
   "witnessSchedule.block": "blok",
   "witnessSchedule.nextShuffle": "Następne Przetasowanie",
   "witnessSchedule.blocksLeft": "Pozostałe Bloki",
+  "witnessSchedule.backupWitness": "Zapasowy świadek",
   "witnessScheduleIcon.check": "Sprawdź",
   "witnessScheduleIcon.witnessSchedule": "Harmonogram Świadków",
   "backupWitnessSchedule.title": "Zapasowy Harmonogram Świadków",

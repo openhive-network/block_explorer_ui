@@ -182,6 +182,7 @@
   "witnessSchedule.block": "بلوك",
   "witnessSchedule.nextShuffle": "التبديل التالي",
   "witnessSchedule.blocksLeft": "البلوكات المتبقية",
+  "witnessSchedule.backupWitness": "الشاهد الاحتياطي",
   "witnessScheduleIcon.check": "تحقق",
   "witnessScheduleIcon.witnessSchedule": "جدول الشهود",
   "backupWitnessSchedule.title": "جدول الشهود الاحتياطيين",

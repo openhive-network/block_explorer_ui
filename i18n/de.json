@@ -172,6 +172,7 @@
   "witnessSchedule.block": "Block",
   "witnessSchedule.nextShuffle": "Nächste Mischung",
   "witnessSchedule.blocksLeft": "Verbleibende Blöcke",
+  "witnessSchedule.backupWitness": "Backup-Zeuge",
   "witnessScheduleIcon.check": "Prüfen",
   "witnessScheduleIcon.witnessSchedule": "Zeugen-Zeitplan",
   "backupWitnessSchedule.title": "Backup-Zeugen-Zeitplan",

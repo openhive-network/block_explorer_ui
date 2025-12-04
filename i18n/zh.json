@@ -173,6 +173,7 @@
   "witnessSchedule.block": "区块",
   "witnessSchedule.nextShuffle": "下次洗牌",
   "witnessSchedule.blocksLeft": "剩余区块",
+  "witnessSchedule.backupWitness": "备用见证人",
   "witnessScheduleIcon.check": "检查",
   "witnessScheduleIcon.witnessSchedule": "见证人时间表",
   "backupWitnessSchedule.title": "备用见证人时间表",
