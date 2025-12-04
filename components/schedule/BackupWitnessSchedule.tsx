@@ -14,13 +14,11 @@ import { useI18n } from "../../i18n/i18n";
 const TABLE_CELLS = [
   "backupWitnessSchedule.rank",
   "backupWitnessSchedule.witness",
-  "backupWitnessSchedule.timestamp",
   "backupWitnessSchedule.order",
 ];
 
 export interface BackupWitness {
   owner: string;
-  timestamp: string;
   rank: number | null;
 }
 
@@ -45,7 +43,7 @@ const buildTableHeader = (t: (key: string) => string) => {
 const buildTableBody = (data: BackupWitness[], t: (key: string) => string) => {
   if (!data || !data.length) return;
 
-  return data.map(({ rank, owner, timestamp }: any, index: number) => {
+  return data.map(({ rank, owner }: any, index: number) => {
     return (
       <React.Fragment key={index}>
         <TableRow className="transition-colors">
@@ -57,9 +55,6 @@ const buildTableBody = (data: BackupWitness[], t: (key: string) => string) => {
           </TableCell>
           <TableCell className="py-1 px-2 whitespace-nowrap text-sm">
             {owner}
-          </TableCell>
-          <TableCell className="py-1 px-2 whitespace-nowrap">
-            {timestamp}
           </TableCell>
           <TableCell className="py-1 px-2 whitespace-nowrap text-sm">{`[${
             index + 1
