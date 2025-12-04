@@ -87,15 +87,13 @@ const buildBackupWitnessesSchedule = (
       const timeDifferences =
         BigInt(obj.virtual_scheduled_time) - BigInt(obj.virtual_last_update);
 
-      const timestamp = timeDifferences.toString();
-
       return {
         owner: obj.owner,
-        timestamp,
+        priority: timeDifferences,
         rank: rankMap.get(obj.owner) || null,
       };
     })
-    .sort((a, b) => Number(a.timestamp) - Number(b.timestamp));
+    .sort((a, b) => Number(a.priority) - Number(b.priority));
 
   return finalArray;
 };
