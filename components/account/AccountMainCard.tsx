@@ -257,7 +257,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
             className="cursor-pointer border-b border-slate-200 dark:border-slate-700 hover:bg-rowHover transition-colors"
           >
             <div className="flex justify-between items-center w-full">
-              <h3 className="text-lg font-semibold" title={accountDetails.name}>
+              <h3 className="text-lg font-semibold" title={accountDetails.name} data-testid="account-name">
                 {accountDetails.name}
               </h3>
 
@@ -392,6 +392,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                   <h3
                     className="text-lg font-semibold"
                     title={accountDetails.name}
+                    data-testid="account-name"
                   >
                     {accountDetails.name}
                   </h3>
