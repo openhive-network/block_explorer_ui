@@ -47,13 +47,13 @@ test.describe('Account page - account details tests', () => {
         await mainPage.headBlockCardWitnessLink.click()
         await page.waitForTimeout(3000)
         await expect(accountPage.votingPower).toBeVisible()
-        await expect(page.locator('.h-full.w-full.flex-1.bg-primary.transition-all').first()).toHaveCSS('background-color', 'rgb(0, 192, 64)')
+        await expect(page.getByTestId('progress-indicator').first()).toHaveCSS('background-color', 'rgb(0, 192, 64)')
 
         await expect(accountPage.downvotePower).toBeVisible()
-        await expect(page.locator('.h-full.w-full.flex-1.bg-primary.transition-all').nth(1)).toHaveCSS('background-color', 'rgb(192, 16, 0)')
+        await expect(page.getByTestId('progress-indicator').nth(1)).toHaveCSS('background-color', 'rgb(192, 16, 0)')
 
         await expect(accountPage.resourceCredits).toBeVisible()
-        await expect(accountPage.page.locator('.h-full.w-full.flex-1.bg-primary.transition-all').last()).toHaveCSS('background-color', 'rgb(206, 202, 250)')
+        await expect(page.getByTestId('progress-indicator').last()).toHaveCSS('background-color', 'rgb(206, 202, 250)')
     })
 
     test('Check if Creation Date is displayed correctly', async ({page}) =>{

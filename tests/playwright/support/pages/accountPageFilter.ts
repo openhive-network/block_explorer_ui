@@ -39,11 +39,11 @@ export class AccountPageFilter {
       this.searchSelectOptionsList.getByText("Last blocks");
     this.searchSelectOptLastDaysWeeksMonths =
       this.searchSelectOptionsList.getByText(/^Last days\/weeks\/months$/);
-    this.searchSelectOptionsListTimesUnits = page.getByTestId('dropdown-list').last();
-    this.selectOptionHoursInLastTimesUnits = page.locator('[data-testid="select-time-option-units"]').getByLabel('Hours');
-    this.selectOptionDaysInLastTimesUnits = page.locator('[data-testid="select-time-option-units"]').getByLabel('Days');
-    this.selectOptionWeeksInLastTimesUnits = page.locator('[data-testid="select-time-option-units"]').getByLabel('Weeks');
-    this.selectOptionMonthsInLastTimesUnits = page.locator('[data-testid="select-time-option-units"]').getByLabel('Months');
+    this.searchSelectOptionsListTimesUnits = page.getByTestId('time-unit-select-trigger');
+    this.selectOptionHoursInLastTimesUnits = page.getByTestId('time-unit-option-hours');
+    this.selectOptionDaysInLastTimesUnits = page.getByTestId('time-unit-option-days');
+    this.selectOptionWeeksInLastTimesUnits = page.getByTestId('time-unit-option-weeks');
+    this.selectOptionMonthsInLastTimesUnits = page.getByTestId('time-unit-option-months');
     this.searchSelectOptBlockRange =
       this.searchSelectOptionsList.getByText("Block range");
     this.searchSelectOptTimeRange =

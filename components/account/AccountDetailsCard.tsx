@@ -136,6 +136,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
         <div
           onClick={handlePropertiesVisibility}
           className="flex justify-between align-center p-2 hover:bg-rowHover cursor-pointer px-4"
+          data-testid="properties-dropdown-header"
         >
           <div className="text-lg">{header}</div>
           {isPropertiesHidden ? <ArrowDown /> : <ArrowUp />}

@@ -120,6 +120,7 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
           <div
             onClick={handlePropertiesVisibility}
             className="h-full flex justify-between items-center p-2 hover:bg-rowHover cursor-pointer px-4"
+            data-testid="witness-votes-dropdown-header"
           >
             <div className="text-lg">{t("accountWitnessVotesCard.witnessVotesProxy")}</div>
             <div className="flex items-center space-x-2">
@@ -132,7 +133,7 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
             </div>
           </div>
         </CardHeader>
-        <CardContent hidden={isPropertiesHidden}>
+        <CardContent hidden={isPropertiesHidden} data-testid="witness-votes-content">
           <div>
             <Link
               className="text-link"
@@ -189,6 +190,7 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
         <div
           onClick={handlePropertiesVisibility}
           className="h-full flex justify-between align-center p-2 hover:bg-rowHover cursor-pointer px-4"
+          data-testid="witness-votes-dropdown-header"
         >
           <div className="text-lg">
             {t("accountWitnessVotesCard.witnessVotes")} ({voters.length} / {config.maxWitnessVotes})
@@ -203,7 +205,7 @@ const AccountWitnessVotesCard: React.FC<AccountWitnessVotesCardProps> = ({
           </div>
         </div>
       </CardHeader>
-      <CardContent hidden={isPropertiesHidden}>
+      <CardContent hidden={isPropertiesHidden} data-testid="witness-votes-content">
         <Table>
           <TableBody className="text-sm">
             {buildTableBody(voters, false)}

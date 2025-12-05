@@ -243,7 +243,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
             value={timeUnitSelectKey}
             dir={dir}
           >
-            <SelectTrigger className="pl-2 bg-theme border-0 border-b-2 text-text">
+            <SelectTrigger className="pl-2 bg-theme border-0 border-b-2 text-text" data-testid="time-unit-select-trigger">
               {t(`searchRanges.${timeUnitSelectKey}`)}
             </SelectTrigger>
             <SelectContent className="bg-theme text-text rounded-sm max-h-[31rem]">
@@ -252,6 +252,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
                   className="text-center"
                   key={index}
                   value={option.key}
+                  data-testid={`time-unit-option-${option.key}`}
                 >
                   {t(`searchRanges.${option.key}`)}
                 </SelectItem>

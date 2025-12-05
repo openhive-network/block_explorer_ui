@@ -68,11 +68,11 @@ export class AccountPage {
     this.accountTopBar = page.getByTestId('account-top-bar');
     this.accountOperationList = page.getByTestId('account-operation-list');
     this.accountDetailedOperationCard = page.getByTestId('detailed-operation-card');
-    this.accountPropertiesDropdown = page.getByTestId('properties-dropdown').first();
+    this.accountPropertiesDropdown = page.getByTestId('properties-dropdown-header').first();
     this.accountJsonMetadataDropdown = page.getByTestId('account-json-metadata-dropdown').first();
     this.accountPostingJsonMetadataDropdown = page.getByTestId('account-json-metadata-dropdown').last();
-    this.accountWitnessPropertiesDropdown = page.getByTestId('properties-dropdown').last();
-    this.accountWitnessVotesDropdown = page.getByTestId('witness-votes-dropdown');
+    this.accountWitnessPropertiesDropdown = page.getByTestId('properties-dropdown-header').last();
+    this.accountWitnessVotesDropdown = page.getByTestId('witness-votes-dropdown-header');
 
     this.accountOperationTableBlockNumber = page.getByTestId('block-number-operation-table');
     this.accountOperationTableTransactionNumber = page.getByTestId('transaction-number');
@@ -120,7 +120,7 @@ export class AccountPage {
     this.propertiesCardContent = page.getByTestId('card-content').first();
     this.jsonView = page.getByTestId('json-format-view');
     this.witnessCardContent = page.getByTestId('card-content').nth(2);
-    this.witnessVotesCard = page.locator('.p-4.pt-0.pb-2').nth(5);
+    this.witnessVotesCard = page.getByTestId('witness-votes-content');
   }
 
   async validateAccountPageIsLoaded() {
