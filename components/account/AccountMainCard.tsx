@@ -69,12 +69,14 @@ const StatCard = ({
   value,
   onClick,
   tooltipContent,
+  testId,
 }: {
   icon: React.ReactNode;
   label: string;
   value: React.ReactNode;
   onClick?: () => void;
   tooltipContent?: React.ReactNode;
+  testId?: string;
 }) => {
   const cardDiv = (
     <div
@@ -92,6 +94,7 @@ const StatCard = ({
       onKeyDown={(e) => {
         if (e.key === "Enter" && onClick) onClick();
       }}
+      data-testid={testId}
     >
       <div className="text-explorer-orange mb-1">{icon}</div>
       <div className="mb-1 text-base font-bold text-explorer-dark-gray dark:text-white min-h-[1.5rem] flex items-center justify-center">
@@ -299,6 +302,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                   alt="avatar"
                   width={72}
                   height={72}
+                  data-testid="user-avatar"
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
@@ -460,6 +464,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                   />
                 }
                 tooltipContent={<p>{accountDetails.created}</p>}
+                testId="creation-date"
               />
               <StatCard
                 icon={<Vote size={20} />}
@@ -495,7 +500,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                 <>
                   {settings.progressBarType === "linear" ? (
                     <div className="space-y-4">
-                      <div className="text-center">
+                      <div className="text-center" data-testid="voting-power">
                         <p className="mb-2 text-sm font-medium">
                           {t("accountMainCard.votingPower")}
                         </p>
@@ -508,7 +513,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                           {manabarsData.upvote.max}
                         </p>
                       </div>
-                      <div className="text-center">
+                      <div className="text-center" data-testid="downvote-power">
                         <p className="mb-2 text-sm font-medium">
                           {t("accountMainCard.downvotePower")}
                         </p>
@@ -521,7 +526,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                           {manabarsData.downvote.max}
                         </p>
                       </div>
-                      <div className="text-center">
+                      <div className="text-center" data-testid="resources-credits">
                         <p className="mb-2 text-sm font-medium">
                           {t("accountMainCard.resourceCredits")}
                         </p>
@@ -536,44 +541,50 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                     </div>
                   ) : (
                     <div className="grid grid-cols-[repeat(auto-fit,minmax(80px,1fr))] justify-items-center gap-4">
-                      <RadialProgress
-                        size={70}
-                        strokeWidth={6}
-                        percentage={manabarsData.upvote.percentageValue}
-                        label={t("accountMainCard.votingPower")}
-                        color="text-green-500"
-                        tooltipContent={
-                          <p className="text-sm">
-                            {manabarsData?.upvote.current} /{" "}
-                            {manabarsData?.upvote.max}
-                          </p>
-                        }
-                      />
-                      <RadialProgress
-                        size={70}
-                        strokeWidth={6}
-                        percentage={manabarsData.downvote.percentageValue}
-                        label={t("accountMainCard.downvotePower")}
-                        color="text-red-500"
-                        tooltipContent={
-                          <p className="text-sm">
-                            {manabarsData?.downvote.current} /{" "}
-                            {manabarsData?.downvote.max}
-                          </p>
-                        }
-                      />
-                      <RadialProgress
-                        size={70}
-                        strokeWidth={6}
-                        percentage={manabarsData.rc.percentageValue}
-                        label={t("accountMainCard.resourceCredits")}
-                        color="text-indigo-400"
-                        tooltipContent={
-                          <p className="text-sm">
-                            {manabarsData?.rc.current} / {manabarsData?.rc.max}
-                          </p>
-                        }
-                      />
+                      <div data-testid="voting-power">
+                        <RadialProgress
+                          size={70}
+                          strokeWidth={6}
+                          percentage={manabarsData.upvote.percentageValue}
+                          label={t("accountMainCard.votingPower")}
+                          color="text-green-500"
+                          tooltipContent={
+                            <p className="text-sm">
+                              {manabarsData?.upvote.current} /{" "}
+                              {manabarsData?.upvote.max}
+                            </p>
+                          }
+                        />
+                      </div>
+                      <div data-testid="downvote-power">
+                        <RadialProgress
+                          size={70}
+                          strokeWidth={6}
+                          percentage={manabarsData.downvote.percentageValue}
+                          label={t("accountMainCard.downvotePower")}
+                          color="text-red-500"
+                          tooltipContent={
+                            <p className="text-sm">
+                              {manabarsData?.downvote.current} /{" "}
+                              {manabarsData?.downvote.max}
+                            </p>
+                          }
+                        />
+                      </div>
+                      <div data-testid="resources-credits">
+                        <RadialProgress
+                          size={70}
+                          strokeWidth={6}
+                          percentage={manabarsData.rc.percentageValue}
+                          label={t("accountMainCard.resourceCredits")}
+                          color="text-indigo-400"
+                          tooltipContent={
+                            <p className="text-sm">
+                              {manabarsData?.rc.current} / {manabarsData?.rc.max}
+                            </p>
+                          }
+                        />
+                      </div>
                     </div>
                   )}
                 </>
