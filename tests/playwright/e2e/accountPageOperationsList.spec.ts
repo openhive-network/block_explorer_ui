@@ -315,7 +315,9 @@ test.describe("Account page - Operations List", () => {
     // Assert vote operation and producer reward virtual operation in the list of operations
     const listOfOperationTypes = await accountPage.accountOperationTableOperationType.allTextContents();
     await expect(listOfOperationTypes).toContain('vote');
-    // Click Clear in operation types
+    // Click Clear in operation types - scroll to top first to avoid navbar overlap
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await accountPage.filterToggleButton.click();
     await accountPage.accountOperationTypesButton.click();
     await accountPage.validateOperationTypesDialogIsLoaded();
     await accountPage.operationsTypeClearButton.click();
