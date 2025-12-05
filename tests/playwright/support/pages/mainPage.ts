@@ -71,9 +71,9 @@ export class MainPage {
     this.headBlockCardFundAndSupplyExpandableList = this.headBlockCard.getByTestId('expandable-list').getByText('Fund and Supply');
     this.headBlockCardHiveParametersExpandableList = this.headBlockCard.getByTestId('expandable-list').getByText('Hive Parameters');
     this.headBlockCardBlockchainDatesExpandableList = this.headBlockCard.getByTestId('expandable-list').getByText('Blockchain Dates');
-    this.contentFundAndSupplyExpandableList = this.headBlockCard.getByTestId('conntent-expandable-list').first();
-    this.contentHiveParametersExpandableList = this.headBlockCard.getByTestId('conntent-expandable-list').nth(1);
-    this.contentBlockchainDatesExpandableList = this.headBlockCard.getByTestId('conntent-expandable-list').last();
+    this.contentFundAndSupplyExpandableList = this.headBlockCard.getByTestId('content-expandable-list').first();
+    this.contentHiveParametersExpandableList = this.headBlockCard.getByTestId('content-expandable-list').nth(1);
+    this.contentBlockchainDatesExpandableList = this.headBlockCard.getByTestId('content-expandable-list').last();
     this.blockSearchBtn = page.getByTestId('block-search-btn');
     this.blocksearchResultHeader = page.getByTestId('result-section-header');
     this.blockSearchResultSection = page.getByTestId('result-section');
