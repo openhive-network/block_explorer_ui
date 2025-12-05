@@ -31,7 +31,7 @@ export class AccountPageFilter {
 
   constructor(page: Page) {
     this.page = page;
-    this.filterDropdownList = page.getByTestId("dropdown-list").first();
+    this.filterDropdownList = page.getByTestId("search-ranges-select-trigger");
     this.applyFiltersBtn = page.getByTestId("apply-filters");
     this.clearFiltersBtn = page.getByTestId("clear-filters");
     this.searchSelectOptionsList = page.getByTestId("search-select-option");
