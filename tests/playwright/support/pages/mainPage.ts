@@ -99,7 +99,7 @@ export class MainPage {
     this.accountNameInputAccountSection = page.getByPlaceholder('Account name *')
     this.operationsCardResult = page.getByTestId('operations-card')
     this.goToResultPageBtn = page.getByTestId('go-to-result-page')
-    this.lastBlockBtn = page.getByTestId('block-search-section').getByText('Last blocks')
+    this.lastBlockBtn = page.getByTestId('block-search-section').getByTestId('search-ranges-select-trigger')
     this.lastDaysWeeksMonths = page.getByText('Last days/weeks/months')
     this.blockRange = page.getByText('Block range')
     this.timeRange = page.getByLabel('Time range')

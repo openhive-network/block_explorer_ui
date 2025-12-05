@@ -192,7 +192,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
         onValueChange={setRangeSelectKey}
         value={rangeSelectKey}
       >
-        <SelectTrigger className="w-1/2 border-0 border-b-2 bg-theme text-text" dir={dir}>
+        <SelectTrigger className="w-1/2 border-0 border-b-2 bg-theme text-text" dir={dir} data-testid="search-ranges-select-trigger">
           {t(`searchRanges.${rangeSelectKey}`)}
         </SelectTrigger>
         <SelectContent className="bg-theme text-text rounded-sm max-h-[31rem]">
