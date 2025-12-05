@@ -9,6 +9,9 @@ import {
   SearchRangesResult,
   rangeSelectOptions,
   timeSelectOptions,
+  DEFAULT_LAST_BLOCK_VALUE,
+  DEFAULT_LAST_TIME_UNIT_VALUE,
+  DEFAULT_TIME_UNIT_SELECT_KEY,
 } from "@/hooks/common/useSearchRanges";
 
 export const defaultAccountOperationsTabSearchParams: AccountSearchParams = {
@@ -38,17 +41,17 @@ const useAccountOperationsTabSearchRanges = (
     new Date(config.firstBlockTime)
   );
   const [endDate, setEndDate] = useState<Date>(new Date(Date.now()));
-  const [lastBlocksValue, setLastBlocksValue] = useState<number | undefined>(
-    undefined
+  const [lastBlocksValue, setLastBlocksValue] = useState<number>(
+    DEFAULT_LAST_BLOCK_VALUE
   );
-  const [lastTimeUnitValue, setLastTimeUnitValue] = useState<
-    number | undefined
-  >(undefined);
+  const [lastTimeUnitValue, setLastTimeUnitValue] = useState<number>(
+    DEFAULT_LAST_TIME_UNIT_VALUE
+  );
   const [rangeSelectKey, setRangeSelectKey] =
     useState<string>(defaultSelectKey);
-  const [timeUnitSelectKey, setTimeUnitSelectKey] = useState<
-    string | undefined
-  >(undefined);
+  const [timeUnitSelectKey, setTimeUnitSelectKey] = useState<string>(
+    DEFAULT_TIME_UNIT_SELECT_KEY
+  );
   const { checkTemporaryHeadBlockNumber } = useHeadBlockNumber();
 
   const setRangesValues = (params: any) => {
