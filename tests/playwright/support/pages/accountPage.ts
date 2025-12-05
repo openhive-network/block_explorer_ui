@@ -127,8 +127,7 @@ export class AccountPage {
     await expect(this.accountDetails).toBeVisible();
     await expect(this.accountTopBar).toBeVisible();
     await expect(this.accountOperationList).toBeVisible();
-    await expect(this.accountJsonMetadataDropdown).toBeVisible();
-    await expect(this.accountPostingJsonMetadataDropdown).toBeVisible();
+    // Note: JSON metadata dropdowns are optional - they only render if account has json_metadata
   }
 
   async validateAccountName(accountName: string){

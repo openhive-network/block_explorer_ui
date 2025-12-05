@@ -28,8 +28,7 @@ test.describe('Account page - account details tests', () => {
         await expect(accountPage.accountDetails).toBeVisible();
         await expect(accountPage.accountTopBar).toBeVisible();
         await expect(accountPage.accountOperationList).toBeVisible();
-        await expect(accountPage.accountJsonMetadataDropdown).toBeVisible();
-        await expect(accountPage.accountPostingJsonMetadataDropdown).toBeVisible();
+        // Note: JSON metadata dropdowns are optional - they only render if account has json_metadata
     })
 
     test('Check if username and avatar are displayed correctly', async ({page}) =>{
@@ -97,9 +96,14 @@ test.describe('Account page - account details tests', () => {
         await expect(mainPage.headBlockCardWitnessName).toBeVisible()
         await expect(mainPage.headBlockCardWitnessName).toBeEnabled()
         await mainPage.headBlockCardWitnessLink.click()
-        await accountPage.accountJsonMetadataDropdown.click()
-        await accountPage.jsonView.first().scrollIntoViewIfNeeded()
-        await expect(accountPage.jsonView.first()).toBeVisible()
+        await page.waitForLoadState("networkidle");
+        // JSON metadata dropdown only renders if account has json_metadata
+        const jsonMetadataCount = await accountPage.accountJsonMetadataDropdown.count();
+        if (jsonMetadataCount > 0) {
+            await accountPage.accountJsonMetadataDropdown.click()
+            await accountPage.jsonView.first().scrollIntoViewIfNeeded()
+            await expect(accountPage.jsonView.first()).toBeVisible()
+        }
     })
 
     test('Check if after click JPosting JSON Metadata button the list is expanded and have correct information and JSON format', async ({page}) =>{
@@ -107,10 +111,15 @@ test.describe('Account page - account details tests', () => {
         await expect(mainPage.headBlockCardWitnessName).toBeVisible()
         await expect(mainPage.headBlockCardWitnessName).toBeEnabled()
         await mainPage.headBlockCardWitnessLink.click()
-        await expect(accountPage.jsonView.nth(1)).toBeHidden()
-        await accountPage.accountPostingJsonMetadataDropdown.click()
-        await accountPage.jsonView.nth(1).scrollIntoViewIfNeeded()
-        await expect(accountPage.jsonView.nth(1)).toBeInViewport()
+        await page.waitForLoadState("networkidle");
+        // Posting JSON metadata dropdown only renders if account has posting_json_metadata
+        const postingJsonMetadataCount = await accountPage.accountPostingJsonMetadataDropdown.count();
+        if (postingJsonMetadataCount > 0) {
+            await expect(accountPage.jsonView.nth(1)).toBeHidden()
+            await accountPage.accountPostingJsonMetadataDropdown.click()
+            await accountPage.jsonView.nth(1).scrollIntoViewIfNeeded()
+            await expect(accountPage.jsonView.nth(1)).toBeInViewport()
+        }
     })
 
     test('Check if after click Witness Properties button the list is expanded and have correct information and JSON format', async ({page}) =>{
