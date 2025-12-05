@@ -347,6 +347,7 @@ test.describe("Account page - Operations List", () => {
     await accountPage.validateAccountPageIsLoaded();
     await accountPage.validateAccountName(accountName);
 
+    await accountPage.filterToggleButton.click();
     await accountFilter.filterDropdownList.click();
     await accountFilter.searchSelectOptLastBlocks.click();
     await accountFilter.applyFiltersBtn.click();
@@ -361,6 +362,7 @@ test.describe("Account page - Operations List", () => {
     await accountPage.validateAccountPageIsLoaded();
     await accountPage.validateAccountName(accountName);
 
+    await accountPage.filterToggleButton.click();
     await accountFilter.filterDropdownList.click();
     await accountFilter.searchSelectOptLastDaysWeeksMonths.click();
     await accountFilter.applyFiltersBtn.click();
@@ -375,6 +377,7 @@ test.describe("Account page - Operations List", () => {
     await accountPage.validateAccountPageIsLoaded();
     await accountPage.validateAccountName(accountName);
 
+    await accountPage.filterToggleButton.click();
     await accountFilter.filterDropdownList.click();
     await accountFilter.searchSelectOptLastDaysWeeksMonths.click();
     await accountFilter.searchSelectOptionsListTimesUnits.click();
@@ -391,6 +394,7 @@ test.describe("Account page - Operations List", () => {
     await accountPage.validateAccountPageIsLoaded();
     await accountPage.validateAccountName(accountName);
 
+    await accountPage.filterToggleButton.click();
     await accountFilter.filterDropdownList.click();
     await accountFilter.searchSelectOptLastDaysWeeksMonths.click();
     await accountFilter.searchSelectOptionsListTimesUnits.click();
@@ -407,6 +411,7 @@ test.describe("Account page - Operations List", () => {
     await accountPage.validateAccountPageIsLoaded();
     await accountPage.validateAccountName(accountName);
 
+    await accountPage.filterToggleButton.click();
     await accountFilter.filterDropdownList.click();
     await accountFilter.searchSelectOptBlockRange.click();
     await accountFilter.fromBlockInput.fill('84237380');
@@ -424,6 +429,7 @@ test.describe("Account page - Operations List", () => {
     await accountPage.validateAccountPageIsLoaded();
     await accountPage.validateAccountName(accountName);
 
+    await accountPage.filterToggleButton.click();
     await accountFilter.filterDropdownList.click();
     await accountFilter.searchSelectOptBlockRange.click();
     await accountFilter.fromBlockInput.fill('84237380');
@@ -447,6 +453,7 @@ test.describe("Account page - Operations List", () => {
     await accountPage.validateAccountPageIsLoaded();
     await accountPage.validateAccountName(accountName);
 
+    await accountPage.filterToggleButton.click();
     await accountFilter.filterDropdownList.click();
     await accountFilter.searchSelectOptBlockRange.click();
     await accountFilter.fromBlockInput.fill('84237380');
@@ -487,6 +494,7 @@ test.describe("Account page - Operations List", () => {
     await accountPage.validateAccountPageIsLoaded();
     await accountPage.validateAccountName(accountName);
 
+    await accountPage.filterToggleButton.click();
     await accountFilter.filterDropdownList.click();
     await accountFilter.searchSelectOptTimeRange.click();
     await page.waitForTimeout(3000);

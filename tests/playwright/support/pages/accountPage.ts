@@ -137,7 +137,7 @@ export class AccountPage {
   }
 
   async validateOperationTypesDialogIsLoaded(){
-    await expect(this.operationTypesDialog).toContainText('Operation types filters');
+    await expect(this.operationTypesDialog).toContainText('Operation Types Filters');
     await expect(this.operationTypeVoteCheckbox).toBeEnabled();
     await expect(this.operationTypeCommentCheckbox).toBeEnabled();
     // await expect(this.operationTypesDialog).toContainText('Virtual operations');
