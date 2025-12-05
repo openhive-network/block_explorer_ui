@@ -41,6 +41,7 @@ test.describe("Account page - Operations List", () => {
     await accountPage.validateAccountPageIsLoaded();
     await accountPage.validateAccountName(accountName);
 
+    await accountPage.filterToggleButton.click();
     await accountPage.accountOperationTypesButton.click();
     await accountPage.validateOperationTypesDialogIsLoaded();
   });
@@ -50,6 +51,7 @@ test.describe("Account page - Operations List", () => {
     await accountPage.validateAccountPageIsLoaded();
     await accountPage.validateAccountName(accountName);
 
+    await accountPage.filterToggleButton.click();
     await accountPage.accountOperationTypesButton.click();
     await accountPage.validateOperationTypesDialogIsLoaded();
     // Validate unchecked operations
@@ -81,6 +83,7 @@ test.describe("Account page - Operations List", () => {
     await accountPage.validateAccountPageIsLoaded();
     await accountPage.validateAccountName(accountName);
 
+    await accountPage.filterToggleButton.click();
     await accountPage.accountOperationTypesButton.click();
     await accountPage.validateOperationTypesDialogIsLoaded();
     // Validate unchecked operations
@@ -112,6 +115,7 @@ test.describe("Account page - Operations List", () => {
     await accountPage.validateAccountPageIsLoaded();
     await accountPage.validateAccountName(accountName);
 
+    await accountPage.filterToggleButton.click();
     await accountPage.accountOperationTypesButton.click();
     await accountPage.validateOperationTypesDialogIsLoaded();
     // Validate unchecked operations
@@ -143,6 +147,7 @@ test.describe("Account page - Operations List", () => {
     await accountPage.validateAccountPageIsLoaded();
     await accountPage.validateAccountName(accountName);
 
+    await accountPage.filterToggleButton.click();
     await accountPage.accountOperationTypesButton.click();
     await accountPage.validateOperationTypesDialogIsLoaded();
     // Validate unchecked operations
@@ -174,6 +179,7 @@ test.describe("Account page - Operations List", () => {
     await accountPage.validateAccountPageIsLoaded();
     await accountPage.validateAccountName(accountName);
 
+    await accountPage.filterToggleButton.click();
     await accountPage.accountOperationTypesButton.click();
     await accountPage.validateOperationTypesDialogIsLoaded();
     // Validate unchecked operations
@@ -217,6 +223,7 @@ test.describe("Account page - Operations List", () => {
     await accountPage.validateAccountPageIsLoaded();
     await accountPage.validateAccountName(accountName);
 
+    await accountPage.filterToggleButton.click();
     await accountPage.accountOperationTypesButton.click();
     await accountPage.validateOperationTypesDialogIsLoaded();
     // Validate unchecked operations
@@ -246,6 +253,7 @@ test.describe("Account page - Operations List", () => {
     await accountPage.validateAccountPageIsLoaded();
     await accountPage.validateAccountName(accountName);
 
+    await accountPage.filterToggleButton.click();
     await accountPage.accountOperationTypesButton.click();
     await accountPage.validateOperationTypesDialogIsLoaded();
     // Validate unchecked operations
@@ -283,6 +291,7 @@ test.describe("Account page - Operations List", () => {
     await accountPage.validateAccountPageIsLoaded();
     await accountPage.validateAccountName(accountName);
 
+    await accountPage.filterToggleButton.click();
     await accountPage.accountOperationTypesButton.click();
     await accountPage.validateOperationTypesDialogIsLoaded();
     // Validate unchecked operations
@@ -498,6 +507,7 @@ test.describe("Account page - Operations List", () => {
     await accountPage.validateAccountPageIsLoaded();
     await accountPage.validateAccountName(accountName);
 
+    await accountPage.filterToggleButton.click();
     await accountPage.accountOperationTypesButton.click();
     await accountPage.validateOperationTypesDialogIsLoaded();
     await accountPage.operationTypeCustomJsonCheckbox.check();

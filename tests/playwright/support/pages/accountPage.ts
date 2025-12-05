@@ -19,6 +19,7 @@ export class AccountPage {
   readonly accountOperationTableOperationContent: Locator;
 
   readonly accountOperationTypesButton: Locator;
+  readonly filterToggleButton: Locator;
   readonly operationTypesDialog: Locator;
   readonly operationTypeVoteCheckbox: Locator;
   readonly operationTypeCommentCheckbox: Locator;
@@ -79,6 +80,7 @@ export class AccountPage {
     this.accountOperationTableOperationContent = page.getByTestId('operation-content');
 
     this.accountOperationTypesButton = page.getByTestId('operations-types-btn');
+    this.filterToggleButton = page.getByTestId('filter-toggle-btn');
     this.operationTypesDialog = page.getByTestId('operation-types-dialog');
     this.operationTypesDialogFooter = page.getByTestId('operation-types-dialog-footer');
     this.operationTypesDialogApplyButton = this.operationTypesDialogFooter.getByText('Apply');

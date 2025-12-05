@@ -84,7 +84,7 @@ const CurrentBlockCard: React.FC<CurrentBlockCardProps> = ({
                   width={30}
                   height={30}
                 />
-                <p className="text-link text-sm font-semibold">
+                <p className="text-link text-sm font-semibold" data-testid="current-witness-name">
                   {producer.name}
                 </p>
               </Link>

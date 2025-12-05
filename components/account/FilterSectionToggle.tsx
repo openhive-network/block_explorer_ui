@@ -21,6 +21,7 @@ const FilterSectionToggle: React.FC<FilterSectionToggleProps> = ({
       <Button
         className="bg-inherit hover:bg-inherit"
         onClick={toggleFilters}
+        data-testid="filter-toggle-btn"
       >
         <Filter />
       </Button>
