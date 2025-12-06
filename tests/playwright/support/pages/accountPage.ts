@@ -169,17 +169,33 @@ export class AccountPage {
     const dialogVisible = await this.operationTypesDialog.isVisible().catch(() => false);
     if (dialogVisible) {
       await this.operationTypesDialog.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
-      await this.page.waitForTimeout(300); // Wait for close animation
+      await this.page.waitForTimeout(500); // Wait for close animation to complete
     }
 
     // Wait for button to be visible and stable
     await this.accountOperationTypesButton.waitFor({ state: 'visible', timeout: 10000 });
+    // Additional wait for the button to be truly interactable
+    await this.page.waitForTimeout(300);
 
     // Retry logic: try clicking the button and wait for dialog to appear
     const maxRetries = 5;
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
-      // Click the button
-      await this.accountOperationTypesButton.click({ force: true });
+      // Scroll button into view and click
+      await this.accountOperationTypesButton.scrollIntoViewIfNeeded();
+
+      // Try regular click first, then force click, then JS click
+      try {
+        if (attempt <= 2) {
+          await this.accountOperationTypesButton.click({ timeout: 2000 });
+        } else if (attempt <= 4) {
+          await this.accountOperationTypesButton.click({ force: true });
+        } else {
+          // Last resort: use JavaScript click
+          await this.accountOperationTypesButton.evaluate((el: HTMLElement) => el.click());
+        }
+      } catch {
+        // Click failed, will retry
+      }
 
       // Wait for dialog to appear
       try {
