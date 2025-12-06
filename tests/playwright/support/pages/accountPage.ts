@@ -162,8 +162,11 @@ export class AccountPage {
   }
 
   async clickOperationTypesButton() {
-    // Scroll to top to avoid navbar overlap, then use force click
+    // Scroll to top to avoid navbar overlap
     await this.page.evaluate(() => window.scrollTo(0, 0));
+    // Wait for button to be visible and stable
+    await this.accountOperationTypesButton.waitFor({ state: 'visible', timeout: 10000 });
+    // Click with force to bypass any remaining overlay issues
     await this.accountOperationTypesButton.click({ force: true });
   }
 
