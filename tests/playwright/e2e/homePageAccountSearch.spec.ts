@@ -126,7 +126,7 @@ test.describe('Home page - account searches', () => {
         await page.waitForTimeout(1000)
         await mainPage.accountNameInputAccountSection.fill('gtg')
         await mainPage.clickOperationTypesButton();
-        await page.getByRole('button', { name: 'Select all' }).click()
+        await page.getByRole('button', { name: 'All' }).click()
         await page.getByRole('button', {name: 'Apply'}).click();
         await mainPage.searchButtonInAccount.click()
         await expect(mainPage.operationsCardResult).toBeVisible()

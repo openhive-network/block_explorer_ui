@@ -196,7 +196,7 @@ test.describe.skip('Home page - searches', () => {
     test('Validate searching for property only all Operation types - Property and Value inputs should be blocked', async ({page}) => {
         await mainPage.page.waitForLoadState('networkidle');
         await mainPage.operationsTypesBtn.click();
-        await page.getByRole('button', { name: 'Select all' }).click()
+        await page.getByRole('button', { name: 'All' }).click()
         await page.getByRole('button', {name: 'Apply'}).click();
         await expect(mainPage.SearchesSection).toBeVisible()
         await expect(mainPage.pickPropertyBtnBlocked).toBeDisabled()

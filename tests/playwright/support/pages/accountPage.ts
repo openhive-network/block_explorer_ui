@@ -89,10 +89,11 @@ export class AccountPage {
     this.nonVirtualOperationsTypeList = page.getByTestId('non-virtual-operations-list');
     this.virtualOperationsTypeList = page.getByTestId('virtual-operations-list');
 
-    this.operationsTypeSelectAllButton = page.getByText('Select all');
-    this.operationsTypeSelectRealButton = page.getByText('Select real');
-    this.operationsTypeSelectVirtualButton = page.getByText('Select virtual');
-    this.operationsTypeInvertButton = page.getByText('Invert');
+    // These buttons are inside the operation-types-dialog and use i18n translations
+    this.operationsTypeSelectAllButton = page.getByTestId('operation-types-dialog').getByRole('button', { name: 'All' });
+    this.operationsTypeSelectRealButton = page.getByTestId('operation-types-dialog').getByRole('button', { name: 'Real' });
+    this.operationsTypeSelectVirtualButton = page.getByTestId('operation-types-dialog').getByRole('button', { name: 'Virtual' });
+    this.operationsTypeInvertButton = page.getByTestId('operation-types-dialog').getByRole('button', { name: 'Invert' });
     this.operationsTypeClearButton = page.getByTestId('operation-types-dialog').getByRole('button', { name: 'Clear' });
 
     this.operationTypeVoteCheckbox = page.getByTestId('operation-type-checkbox-vote_operation');

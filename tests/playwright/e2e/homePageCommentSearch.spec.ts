@@ -160,7 +160,7 @@ test.describe.skip('Home page - searches', () => {
         await mainPage.accountNameInputCommentSection.fill('gtg')
         await mainPage.operationsTypesBtn.click()
         await expect(mainPage.operationsTypesWindow).toBeVisible();
-        await page.getByRole('button', { name: 'Select all' }).click()
+        await page.getByRole('button', { name: 'All' }).click()
         await page.getByRole('button', {name: 'Apply'}).click();
         await mainPage.searchButtonInComment.click()
 
@@ -324,7 +324,7 @@ test.describe.skip('Home page - searches', () => {
         await mainPage.commentPermlinkInout.fill('vibes-week-1-on-purpose')
         await mainPage.operationsTypesBtn.click()
         await expect(mainPage.operationsTypesWindow).toBeVisible();
-        await page.getByRole('button', { name: 'Select all' }).click()
+        await page.getByRole('button', { name: 'All' }).click()
         await page.getByRole('button', {name: 'Apply'}).click();
         await mainPage.searchButtonInComment.click()
 
