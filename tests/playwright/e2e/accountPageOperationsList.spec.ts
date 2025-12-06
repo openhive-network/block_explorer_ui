@@ -317,7 +317,7 @@ test.describe("Account page - Operations List", () => {
     await expect(listOfOperationTypes).toContain('vote');
     // Click Clear in operation types - scroll to top first to avoid navbar overlap
     await page.evaluate(() => window.scrollTo(0, 0));
-    await accountPage.accountOperationTypesButton.click();
+    await accountPage.accountOperationTypesButton.click({ force: true });
     await accountPage.validateOperationTypesDialogIsLoaded();
     await accountPage.operationsTypeClearButton.click();
     // Validate unchecked operations
