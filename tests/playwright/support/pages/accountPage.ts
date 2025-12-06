@@ -165,11 +165,18 @@ export class AccountPage {
     // Scroll to top to avoid navbar overlap
     await this.page.evaluate(() => window.scrollTo(0, 0));
 
+    // If dialog is currently visible (closing animation), wait for it to close
+    const dialogVisible = await this.operationTypesDialog.isVisible().catch(() => false);
+    if (dialogVisible) {
+      await this.operationTypesDialog.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
+      await this.page.waitForTimeout(300); // Wait for close animation
+    }
+
     // Wait for button to be visible and stable
     await this.accountOperationTypesButton.waitFor({ state: 'visible', timeout: 10000 });
 
     // Retry logic: try clicking the button and wait for dialog to appear
-    const maxRetries = 3;
+    const maxRetries = 5;
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       // Click the button
       await this.accountOperationTypesButton.click({ force: true });
@@ -177,13 +184,15 @@ export class AccountPage {
       // Wait for dialog to appear
       try {
         await this.operationTypesDialog.waitFor({ state: 'visible', timeout: 5000 });
+        // Wait for dialog content to be ready
+        await this.operationTypesDialogFooter.waitFor({ state: 'visible', timeout: 3000 });
         return; // Dialog opened successfully
       } catch {
         if (attempt === maxRetries) {
           throw new Error(`Operation types dialog did not open after ${maxRetries} attempts`);
         }
-        // Wait briefly before retrying
-        await this.page.waitForTimeout(500);
+        // Wait before retrying - increase wait time on each attempt
+        await this.page.waitForTimeout(500 * attempt);
       }
     }
   }
