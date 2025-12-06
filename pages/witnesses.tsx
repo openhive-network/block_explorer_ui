@@ -320,7 +320,7 @@ export default function Witnesses() {
                       {buildTableHeader()}
                     </TableRow>
                   </TableHeader>
-                  <TableBody>
+                  <TableBody data-testid="table-body">
                     {witnessesData?.witnesses.map(
                       (
                         singleWitness: any,

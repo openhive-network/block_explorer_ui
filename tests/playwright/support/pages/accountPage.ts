@@ -161,4 +161,10 @@ export class AccountPage {
     await expect(this.page.url()).toContain('page='+ pageNumber);
   }
 
+  async clickOperationTypesButton() {
+    // Scroll to top to avoid navbar overlap, then use force click
+    await this.page.evaluate(() => window.scrollTo(0, 0));
+    await this.accountOperationTypesButton.click({ force: true });
+  }
+
 }
