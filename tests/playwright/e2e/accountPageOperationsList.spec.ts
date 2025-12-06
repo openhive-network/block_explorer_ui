@@ -277,8 +277,12 @@ test.describe("Account page - Operations List", () => {
     // Wait for dialog to close and results to load
     await accountPage.operationTypesDialog.waitFor({ state: 'hidden', timeout: 10000 });
     await accountPage.page.waitForLoadState('networkidle');
-    // Wait for at least one operation type to be visible (filtered results loaded)
-    await accountPage.accountOperationTableOperationType.first().waitFor({ state: 'visible', timeout: 30000 });
+    // Wait for the filtered results to appear - operation list should show vote or producer_reward
+    // Use a polling wait to ensure the filter has been applied
+    await expect(async () => {
+      const firstOpType = await accountPage.accountOperationTableOperationType.first().textContent();
+      expect(['vote', 'producer_reward']).toContain(firstOpType);
+    }).toPass({ timeout: 30000 });
 
     // Assert results only contain the selected operation types (vote and/or producer_reward)
     const listOfOperationTypes = await accountPage.accountOperationTableOperationType.allTextContents();
