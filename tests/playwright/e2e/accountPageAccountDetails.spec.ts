@@ -45,7 +45,7 @@ test.describe('Account page - account details tests', () => {
         await expect(mainPage.headBlockCardWitnessName).toBeVisible()
         await expect(mainPage.headBlockCardWitnessName).toBeEnabled()
         await mainPage.headBlockCardWitnessLink.click()
-        await page.waitForTimeout(3000)
+        await accountPage.validateAccountPageIsLoaded()
         await expect(accountPage.votingPower).toBeVisible()
         await expect(page.getByTestId('progress-indicator').first()).toHaveCSS('background-color', 'rgb(0, 192, 64)')
 
@@ -61,9 +61,11 @@ test.describe('Account page - account details tests', () => {
         await expect(mainPage.headBlockCardWitnessName).toBeVisible()
         await expect(mainPage.headBlockCardWitnessName).toBeEnabled()
         const currentWitnessName = await mainPage.currentWitnessName.textContent();
-        await mainPage.headBlockCardWitnessLink.click()
 
-        const response = await page.waitForResponse((response) => response.url().includes(`/accounts/${currentWitnessName}`));
+        // Wait for response while clicking to avoid race condition
+        const responsePromise = page.waitForResponse((response) => response.url().includes(`/accounts/${currentWitnessName}`));
+        await mainPage.headBlockCardWitnessLink.click()
+        const response = await responsePromise;
         const responseBody = await response.json()
 
         await expect(response.status()).toBe(200)
@@ -85,6 +87,7 @@ test.describe('Account page - account details tests', () => {
         await expect(mainPage.headBlockCardWitnessName).toBeVisible()
         await expect(mainPage.headBlockCardWitnessName).toBeEnabled()
         await mainPage.headBlockCardWitnessLink.click()
+        await accountPage.validateAccountPageIsLoaded()
         await expect(accountPage.propertiesCardContent).toBeHidden()
         await accountPage.accountPropertiesDropdown.click()
         await accountPage.propertiesCardContent.scrollIntoViewIfNeeded()
@@ -127,6 +130,7 @@ test.describe('Account page - account details tests', () => {
         await expect(mainPage.headBlockCardWitnessName).toBeVisible()
         await expect(mainPage.headBlockCardWitnessName).toBeEnabled()
         await mainPage.headBlockCardWitnessLink.click()
+        await accountPage.validateAccountPageIsLoaded()
         await expect(accountPage.witnessCardContent).toBeHidden()
         await page.getByText('Witness Properties', { exact: true }).click()
         await accountPage.witnessCardContent.scrollIntoViewIfNeeded()
@@ -138,6 +142,7 @@ test.describe('Account page - account details tests', () => {
         await expect(mainPage.headBlockCardWitnessName).toBeVisible()
         await expect(mainPage.headBlockCardWitnessName).toBeEnabled()
         await mainPage.headBlockCardWitnessLink.click()
+        await accountPage.validateAccountPageIsLoaded()
         await expect(accountPage.witnessVotesCard).toBeHidden()
         await page.getByText(/Witness Votes/, { exact: true }).click()
         await accountPage.accountWitnessVotesDropdown.scrollIntoViewIfNeeded()

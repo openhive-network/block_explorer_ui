@@ -74,8 +74,7 @@ test.describe('Home page - account searches', () => {
         await mainPage.accountSearchSection.click()
         await page.waitForTimeout(1000)
         await mainPage.accountNameInputAccountSection.fill('roelandp')
-        await mainPage.operationsTypesBtn.click()
-        await expect(mainPage.operationsTypesWindow).toBeVisible();
+        await mainPage.clickOperationTypesButton();
         await page.getByLabel('Operation Types').locator('li').filter({ hasText: /^vote$/ }).getByRole('checkbox').check();
         await page.getByRole('button', {name: 'Apply'}).click();
         await mainPage.searchButtonInAccount.click()
@@ -101,8 +100,7 @@ test.describe('Home page - account searches', () => {
         await mainPage.accountSearchSection.click()
         await page.waitForTimeout(1000)
         await mainPage.accountNameInputAccountSection.fill('gtg')
-        await mainPage.operationsTypesBtn.click()
-        await expect(mainPage.operationsTypesWindow).toBeVisible();
+        await mainPage.clickOperationTypesButton();
         await page.getByTestId('operation-type-checkbox-author_reward_operation').first().check({force:true});
         await page.getByLabel('Operation Types').locator('li').filter({ hasText: /^comment$/ }).getByRole('checkbox').check()
         await page.getByRole('button', {name: 'Apply'}).click();
@@ -127,8 +125,7 @@ test.describe('Home page - account searches', () => {
         await mainPage.accountSearchSection.click()
         await page.waitForTimeout(1000)
         await mainPage.accountNameInputAccountSection.fill('gtg')
-        await mainPage.operationsTypesBtn.click()
-        await expect(mainPage.operationsTypesWindow).toBeVisible();
+        await mainPage.clickOperationTypesButton();
         await page.getByRole('button', { name: 'Select all' }).click()
         await page.getByRole('button', {name: 'Apply'}).click();
         await mainPage.searchButtonInAccount.click()

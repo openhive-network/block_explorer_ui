@@ -164,10 +164,28 @@ export class AccountPage {
   async clickOperationTypesButton() {
     // Scroll to top to avoid navbar overlap
     await this.page.evaluate(() => window.scrollTo(0, 0));
+
     // Wait for button to be visible and stable
     await this.accountOperationTypesButton.waitFor({ state: 'visible', timeout: 10000 });
-    // Click with force to bypass any remaining overlay issues
-    await this.accountOperationTypesButton.click({ force: true });
+
+    // Retry logic: try clicking the button and wait for dialog to appear
+    const maxRetries = 3;
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      // Click the button
+      await this.accountOperationTypesButton.click({ force: true });
+
+      // Wait for dialog to appear
+      try {
+        await this.operationTypesDialog.waitFor({ state: 'visible', timeout: 5000 });
+        return; // Dialog opened successfully
+      } catch {
+        if (attempt === maxRetries) {
+          throw new Error(`Operation types dialog did not open after ${maxRetries} attempts`);
+        }
+        // Wait briefly before retrying
+        await this.page.waitForTimeout(500);
+      }
+    }
   }
 
 }
