@@ -274,12 +274,11 @@ test.describe("Account page - Operations List", () => {
     await expect(accountPage.virtualOpTypeProducerReward).toBeChecked();
     // Click Apply button
     await accountPage.operationTypesDialogApplyButton.click();
-    // Wait for opeartion type selector
+    // Wait for operation type selector
     await accountPage.page.waitForSelector(accountPage.accountOperationTableOperationType.first()['_selector'], {timeout: 30000});
     await accountPage.page.waitForTimeout(5000);
     // Assert vote operation and producer reward virtual operation in the list of operations
-    const listOfOperationTypes = await page.locator('.flex.justify-stretch.p-1.rounded > span').allTextContents();
-    await page.waitForTimeout(5000)
+    const listOfOperationTypes = await accountPage.accountOperationTableOperationType.allTextContents();
 
     await expect(listOfOperationTypes).toContain('vote')
     await expect(listOfOperationTypes).toContain('producer_reward');

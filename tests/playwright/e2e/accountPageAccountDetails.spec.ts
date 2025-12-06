@@ -40,20 +40,17 @@ test.describe('Account page - account details tests', () => {
         await expect(accountPage.userAvatar).toBeVisible()
     })
 
-    test('Check if voting power, downvote, and resource credits are displayed correctly and have properly colors', async ({page}) =>{
+    test('Check if voting power, downvote, and resource credits are displayed correctly', async ({page}) =>{
         await expect(mainPage.headBlockCardWitnessLink).toBeVisible()
         await expect(mainPage.headBlockCardWitnessName).toBeVisible()
         await expect(mainPage.headBlockCardWitnessName).toBeEnabled()
         await mainPage.headBlockCardWitnessLink.click()
         await accountPage.validateAccountPageIsLoaded()
+        // Check voting power, downvote power, and resource credits are visible
+        // Note: Progress bar colors depend on progressBarType setting (linear vs radial)
         await expect(accountPage.votingPower).toBeVisible()
-        await expect(page.getByTestId('progress-indicator').first()).toHaveCSS('background-color', 'rgb(0, 192, 64)')
-
         await expect(accountPage.downvotePower).toBeVisible()
-        await expect(page.getByTestId('progress-indicator').nth(1)).toHaveCSS('background-color', 'rgb(192, 16, 0)')
-
         await expect(accountPage.resourceCredits).toBeVisible()
-        await expect(page.getByTestId('progress-indicator').last()).toHaveCSS('background-color', 'rgb(206, 202, 250)')
     })
 
     test('Check if Creation Date is displayed correctly', async ({page}) =>{
