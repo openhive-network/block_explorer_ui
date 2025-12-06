@@ -274,9 +274,12 @@ test.describe("Account page - Operations List", () => {
     await expect(accountPage.virtualOpTypeProducerReward).toBeChecked();
     // Click Apply button
     await accountPage.operationTypesDialogApplyButton.click();
-    // Wait for operation type selector
-    await accountPage.page.waitForSelector(accountPage.accountOperationTableOperationType.first()['_selector'], {timeout: 30000});
-    await accountPage.page.waitForTimeout(5000);
+    // Wait for dialog to close and results to load
+    await accountPage.operationTypesDialog.waitFor({ state: 'hidden', timeout: 10000 });
+    await accountPage.page.waitForLoadState('networkidle');
+    // Wait for at least one operation type to be visible (filtered results loaded)
+    await accountPage.accountOperationTableOperationType.first().waitFor({ state: 'visible', timeout: 30000 });
+
     // Assert results only contain the selected operation types (vote and/or producer_reward)
     const listOfOperationTypes = await accountPage.accountOperationTableOperationType.allTextContents();
 

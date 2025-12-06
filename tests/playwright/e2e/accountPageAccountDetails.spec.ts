@@ -160,13 +160,17 @@ test.describe('Account page - account details tests', () => {
         }
 
         // Witness Properties section only renders for witness accounts
-        const witnessPropertiesHeader = page.getByText('Witness Properties', { exact: true })
-        const witnessPropertiesCount = await witnessPropertiesHeader.count()
+        // Find the card containing "Witness Properties" header text
+        const witnessPropertiesCard = page.getByTestId('properties-dropdown').filter({
+            hasText: 'Witness Properties'
+        })
+        const witnessPropertiesCount = await witnessPropertiesCard.count()
         if (witnessPropertiesCount > 0) {
-            await expect(accountPage.witnessCardContent).toBeHidden()
-            await witnessPropertiesHeader.click()
-            await accountPage.witnessCardContent.scrollIntoViewIfNeeded()
-            await expect(accountPage.witnessCardContent).toBeInViewport()
+            const cardContent = witnessPropertiesCard.getByTestId('card-content')
+            await expect(cardContent).toBeHidden()
+            await witnessPropertiesCard.getByTestId('properties-dropdown-header').click()
+            await cardContent.scrollIntoViewIfNeeded()
+            await expect(cardContent).toBeInViewport()
         }
     })
 
