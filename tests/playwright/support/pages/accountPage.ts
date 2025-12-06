@@ -131,6 +131,8 @@ export class AccountPage {
     await expect(this.accountDetails).toBeVisible();
     await expect(this.accountTopBar).toBeVisible();
     await expect(this.accountOperationList).toBeVisible();
+    // Wait for the properties section to load (AccountDetailsSection)
+    await this.page.getByTestId('properties-dropdown').first().waitFor({ state: 'visible', timeout: 30000 });
     // Note: JSON metadata dropdowns are optional - they only render if account has json_metadata
   }
 
