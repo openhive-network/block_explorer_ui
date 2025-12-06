@@ -131,9 +131,8 @@ export class AccountPage {
     await expect(this.accountDetails).toBeVisible();
     await expect(this.accountTopBar).toBeVisible();
     await expect(this.accountOperationList).toBeVisible();
-    // Wait for the properties section to load (AccountDetailsSection)
-    await this.page.getByTestId('properties-dropdown').first().waitFor({ state: 'visible', timeout: 30000 });
-    // Note: JSON metadata dropdowns are optional - they only render if account has json_metadata
+    // Note: In tabbed mode (default), properties-dropdown is inside the Profile tab which is not active by default
+    // So we don't wait for it here. The individual tests will click the Profile tab when needed.
   }
 
   async validateAccountName(accountName: string){

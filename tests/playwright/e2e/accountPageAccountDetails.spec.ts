@@ -74,11 +74,21 @@ test.describe('Account page - account details tests', () => {
         await expect(mainPage.headBlockCardWitnessName).toBeEnabled()
         await mainPage.headBlockCardWitnessLink.click()
         await accountPage.validateAccountPageIsLoaded()
-        // Find the Properties card by looking for the header with exact "Properties" text (not "Witness Properties")
-        // The card that has a header div containing exactly "Properties" text
-        const propertiesCard = page.getByTestId('properties-dropdown').filter({
-            has: page.getByTestId('properties-dropdown-header').filter({ hasText: /^Properties$/ })
-        })
+
+        // In tabbed mode (default), Properties card is under the Profile tab
+        // Click on Profile tab if present to reveal the Properties card
+        const profileTab = page.getByRole('tab', { name: /Profile/i })
+        const profileTabCount = await profileTab.count()
+        if (profileTabCount > 0) {
+            await profileTab.click()
+            // Wait for the tab content to load
+            await page.waitForTimeout(500)
+        }
+
+        // Now find and click the Properties dropdown header
+        // Use last() because in tabbed mode there's only one, but in collapsible mode
+        // Witness Properties (if present) comes before Properties
+        const propertiesCard = page.getByTestId('properties-dropdown').last()
         await propertiesCard.getByTestId('properties-dropdown-header').click()
         // Verify the card content becomes visible
         await expect(propertiesCard.getByTestId('card-content')).toBeInViewport()
@@ -90,6 +100,15 @@ test.describe('Account page - account details tests', () => {
         await expect(mainPage.headBlockCardWitnessName).toBeEnabled()
         await mainPage.headBlockCardWitnessLink.click()
         await page.waitForLoadState("networkidle");
+
+        // In tabbed mode (default), JSON Metadata is under the Profile tab
+        const profileTab = page.getByRole('tab', { name: /Profile/i })
+        const profileTabCount = await profileTab.count()
+        if (profileTabCount > 0) {
+            await profileTab.click()
+            await page.waitForTimeout(500)
+        }
+
         // JSON metadata dropdown only renders if account has json_metadata
         const jsonMetadataCount = await accountPage.accountJsonMetadataDropdown.count();
         if (jsonMetadataCount > 0) {
@@ -105,6 +124,15 @@ test.describe('Account page - account details tests', () => {
         await expect(mainPage.headBlockCardWitnessName).toBeEnabled()
         await mainPage.headBlockCardWitnessLink.click()
         await page.waitForLoadState("networkidle");
+
+        // In tabbed mode (default), Posting JSON Metadata is under the Profile tab
+        const profileTab = page.getByRole('tab', { name: /Profile/i })
+        const profileTabCount = await profileTab.count()
+        if (profileTabCount > 0) {
+            await profileTab.click()
+            await page.waitForTimeout(500)
+        }
+
         // Posting JSON metadata dropdown only renders if account has posting_json_metadata
         const postingJsonMetadataCount = await accountPage.accountPostingJsonMetadataDropdown.count();
         if (postingJsonMetadataCount > 0) {
@@ -121,6 +149,16 @@ test.describe('Account page - account details tests', () => {
         await expect(mainPage.headBlockCardWitnessName).toBeEnabled()
         await mainPage.headBlockCardWitnessLink.click()
         await accountPage.validateAccountPageIsLoaded()
+
+        // In tabbed mode (default), Witness Properties is under the Governance tab
+        // Click on Governance tab if present to reveal the Witness Properties card
+        const governanceTab = page.getByRole('tab', { name: /Governance/i })
+        const governanceTabCount = await governanceTab.count()
+        if (governanceTabCount > 0) {
+            await governanceTab.click()
+            await page.waitForTimeout(500)
+        }
+
         // Witness Properties section only renders for witness accounts
         const witnessPropertiesHeader = page.getByText('Witness Properties', { exact: true })
         const witnessPropertiesCount = await witnessPropertiesHeader.count()
@@ -138,6 +176,16 @@ test.describe('Account page - account details tests', () => {
         await expect(mainPage.headBlockCardWitnessName).toBeEnabled()
         await mainPage.headBlockCardWitnessLink.click()
         await accountPage.validateAccountPageIsLoaded()
+
+        // In tabbed mode (default), Witness Votes is under the Governance tab
+        // Click on Governance tab if present to reveal the Witness Votes card
+        const governanceTab = page.getByRole('tab', { name: /Governance/i })
+        const governanceTabCount = await governanceTab.count()
+        if (governanceTabCount > 0) {
+            await governanceTab.click()
+            await page.waitForTimeout(500)
+        }
+
         // Witness votes dropdown only renders if account has witness_votes or a proxy
         const witnessVotesDropdownCount = await accountPage.accountWitnessVotesDropdown.count()
         if (witnessVotesDropdownCount > 0) {
