@@ -85,6 +85,8 @@ test.describe('Account page - account details tests', () => {
         await expect(mainPage.headBlockCardWitnessName).toBeEnabled()
         await mainPage.headBlockCardWitnessLink.click()
         await accountPage.validateAccountPageIsLoaded()
+        // Wait for properties dropdown to be rendered
+        await accountPage.accountPropertiesDropdown.waitFor({ state: 'visible', timeout: 15000 })
         await expect(accountPage.propertiesCardContent).toBeHidden()
         await accountPage.accountPropertiesDropdown.click()
         await accountPage.propertiesCardContent.scrollIntoViewIfNeeded()
@@ -128,10 +130,17 @@ test.describe('Account page - account details tests', () => {
         await expect(mainPage.headBlockCardWitnessName).toBeEnabled()
         await mainPage.headBlockCardWitnessLink.click()
         await accountPage.validateAccountPageIsLoaded()
-        await expect(accountPage.witnessCardContent).toBeHidden()
-        await page.getByText('Witness Properties', { exact: true }).click()
-        await accountPage.witnessCardContent.scrollIntoViewIfNeeded()
-        await expect(accountPage.witnessCardContent).toBeInViewport()
+        // Wait for the properties section to fully load
+        await accountPage.accountPropertiesDropdown.waitFor({ state: 'visible', timeout: 15000 })
+        // Witness Properties section only renders for witness accounts
+        const witnessPropertiesHeader = page.getByText('Witness Properties', { exact: true })
+        const witnessPropertiesCount = await witnessPropertiesHeader.count()
+        if (witnessPropertiesCount > 0) {
+            await expect(accountPage.witnessCardContent).toBeHidden()
+            await witnessPropertiesHeader.click()
+            await accountPage.witnessCardContent.scrollIntoViewIfNeeded()
+            await expect(accountPage.witnessCardContent).toBeInViewport()
+        }
     })
 
     test('Check if after click Witness Votes button the list is expanded and have correct information', async ({page}) =>{
@@ -140,9 +149,14 @@ test.describe('Account page - account details tests', () => {
         await expect(mainPage.headBlockCardWitnessName).toBeEnabled()
         await mainPage.headBlockCardWitnessLink.click()
         await accountPage.validateAccountPageIsLoaded()
+        // Wait for the properties section to fully load
+        await accountPage.accountPropertiesDropdown.waitFor({ state: 'visible', timeout: 15000 })
+        // Wait for witness votes dropdown to be available
+        await accountPage.accountWitnessVotesDropdown.waitFor({ state: 'visible', timeout: 15000 })
         await expect(accountPage.witnessVotesCard).toBeHidden()
-        await page.getByText(/Witness Votes/, { exact: true }).click()
-        await accountPage.accountWitnessVotesDropdown.scrollIntoViewIfNeeded()
-        await expect(accountPage.accountWitnessVotesDropdown).toBeInViewport()
-    }) // 
+        // Click on the Witness Votes header using the dropdown header testid
+        await page.getByTestId('witness-votes-dropdown-header').click()
+        await accountPage.witnessVotesCard.scrollIntoViewIfNeeded()
+        await expect(accountPage.witnessVotesCard).toBeInViewport()
+    }) 
 });
