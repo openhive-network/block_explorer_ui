@@ -187,8 +187,8 @@ export class MainPage {
       // Wait for dialog to appear
       try {
         await this.operationsTypesWindow.waitFor({ state: 'visible', timeout: 5000 });
-        // Wait for dialog content to be ready (All button - i18n translated text)
-        await this.page.getByRole('button', { name: 'All' }).waitFor({ state: 'visible', timeout: 3000 });
+        // Wait for dialog content to be ready (All button - i18n translated text, exact match)
+        await this.page.getByRole('button', { name: 'All', exact: true }).waitFor({ state: 'visible', timeout: 3000 });
         return; // Dialog opened successfully
       } catch {
         if (attempt === maxRetries) {

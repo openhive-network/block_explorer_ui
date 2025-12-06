@@ -160,14 +160,14 @@ test.describe.skip('Home page - searches', () => {
         await mainPage.accountNameInputCommentSection.fill('gtg')
         await mainPage.operationsTypesBtn.click()
         await expect(mainPage.operationsTypesWindow).toBeVisible();
-        await page.getByRole('button', { name: 'All' }).click()
+        await page.getByRole('button', { name: 'All', exact: true }).click()
         await page.getByRole('button', {name: 'Apply'}).click();
         await mainPage.searchButtonInComment.click()
 
         const response = await page.waitForResponse((response) => response.url().includes("/get_comment_operations"));
-    
+
         await response.finished();
-        
+
 
         if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
             await expect(page.getByText('No operations matching given')).toBeVisible()
@@ -324,12 +324,12 @@ test.describe.skip('Home page - searches', () => {
         await mainPage.commentPermlinkInout.fill('vibes-week-1-on-purpose')
         await mainPage.operationsTypesBtn.click()
         await expect(mainPage.operationsTypesWindow).toBeVisible();
-        await page.getByRole('button', { name: 'All' }).click()
+        await page.getByRole('button', { name: 'All', exact: true }).click()
         await page.getByRole('button', {name: 'Apply'}).click();
         await mainPage.searchButtonInComment.click()
 
         const response = await page.waitForResponse((response) => response.url().includes("/get_comment_operations"));
-    
+
         await response.finished();
 
         if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {

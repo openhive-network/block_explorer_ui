@@ -90,11 +90,12 @@ export class AccountPage {
     this.virtualOperationsTypeList = page.getByTestId('virtual-operations-list');
 
     // These buttons are inside the operation-types-dialog and use i18n translations
-    this.operationsTypeSelectAllButton = page.getByTestId('operation-types-dialog').getByRole('button', { name: 'All' });
-    this.operationsTypeSelectRealButton = page.getByTestId('operation-types-dialog').getByRole('button', { name: 'Real' });
-    this.operationsTypeSelectVirtualButton = page.getByTestId('operation-types-dialog').getByRole('button', { name: 'Virtual' });
-    this.operationsTypeInvertButton = page.getByTestId('operation-types-dialog').getByRole('button', { name: 'Invert' });
-    this.operationsTypeClearButton = page.getByTestId('operation-types-dialog').getByRole('button', { name: 'Clear' });
+    // Use exact: true to avoid matching "Expand All" and "Collapse All" buttons
+    this.operationsTypeSelectAllButton = page.getByTestId('operation-types-dialog').getByRole('button', { name: 'All', exact: true });
+    this.operationsTypeSelectRealButton = page.getByTestId('operation-types-dialog').getByRole('button', { name: 'Real', exact: true });
+    this.operationsTypeSelectVirtualButton = page.getByTestId('operation-types-dialog').getByRole('button', { name: 'Virtual', exact: true });
+    this.operationsTypeInvertButton = page.getByTestId('operation-types-dialog').getByRole('button', { name: 'Invert', exact: true });
+    this.operationsTypeClearButton = page.getByTestId('operation-types-dialog').getByRole('button', { name: 'Clear', exact: true });
 
     this.operationTypeVoteCheckbox = page.getByTestId('operation-type-checkbox-vote_operation');
     this.operationTypeCommentCheckbox = page.getByTestId('operation-type-checkbox-comment_operation');
