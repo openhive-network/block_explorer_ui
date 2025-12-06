@@ -74,11 +74,10 @@ test.describe('Account page - account details tests', () => {
         await expect(mainPage.headBlockCardWitnessName).toBeEnabled()
         await mainPage.headBlockCardWitnessLink.click()
         await accountPage.validateAccountPageIsLoaded()
-        // Click on the Properties header (not Witness Properties) using exact text match
-        const propertiesHeader = page.getByText('Properties', { exact: true })
-        await propertiesHeader.click()
+        // Find the Properties card (not Witness Properties) and click its header
+        const propertiesCard = page.getByTestId('properties-dropdown').filter({ hasNotText: 'Witness' })
+        await propertiesCard.getByTestId('properties-dropdown-header').click()
         // Verify the card content becomes visible
-        const propertiesCard = page.getByTestId('properties-dropdown').filter({ hasText: 'Properties' }).filter({ hasNotText: 'Witness' })
         await expect(propertiesCard.getByTestId('card-content')).toBeInViewport()
     })
 

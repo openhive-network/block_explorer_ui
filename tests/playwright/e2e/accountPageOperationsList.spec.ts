@@ -277,11 +277,14 @@ test.describe("Account page - Operations List", () => {
     // Wait for operation type selector
     await accountPage.page.waitForSelector(accountPage.accountOperationTableOperationType.first()['_selector'], {timeout: 30000});
     await accountPage.page.waitForTimeout(5000);
-    // Assert vote operation and producer reward virtual operation in the list of operations
+    // Assert results only contain the selected operation types (vote and/or producer_reward)
     const listOfOperationTypes = await accountPage.accountOperationTableOperationType.allTextContents();
 
-    await expect(listOfOperationTypes).toContain('vote')
-    await expect(listOfOperationTypes).toContain('producer_reward');
+    // Verify we got some results and they only contain the filtered types
+    expect(listOfOperationTypes.length).toBeGreaterThan(0);
+    for (const opType of listOfOperationTypes) {
+      expect(['vote', 'producer_reward']).toContain(opType);
+    }
   });
 
   test("From operation types list choose vote operation click apply button then click Clear filters button and check if filter is removed", async ({ page }) => {
