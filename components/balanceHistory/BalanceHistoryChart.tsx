@@ -458,20 +458,30 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             tickFormatter={(tick) => {
               if (selectedCoinType === "VESTS") {
                 if (unit === "hp") {
-                  if (!hiveChain || !dynamicGlobalData) return "0"; 
+                  if (!hiveChain || !dynamicGlobalData) return "0";
                   const hpTick = hiveChain.vestsToHp(
-                    tick,
+                    tick * 1000000,
                     dynamicGlobalData.headBlockDetails.rawTotalVestingFundHive,
                     dynamicGlobalData.headBlockDetails.rawTotalVestingShares
                   );
-                  const hpTickNum = typeof hpTick === 'object' && hpTick !== null && 'amount' in hpTick
-                    ? parseFloat(hpTick.amount)
-                    : parseFloat(hpTick as string);
+                  const hpTickNumRaw =
+                    typeof hpTick === "object" && hpTick !== null && "amount" in hpTick
+                      ? parseFloat(hpTick.amount)
+                      : parseFloat(hpTick as string);
+                  const hpTickNum = hpTickNumRaw / 1000000;
                   if (isNaN(hpTickNum)) return "0";
-                  if (hpTickNum >= 1000) return `${formatNumber(Number(hpTickNum / 1000), false, false)}K`;
-                  return hpTickNum < 1 ? (hpTickNum < 0.01 ? hpTickNum.toFixed(4) : hpTickNum.toFixed(3)) : formatNumber(hpTickNum, false, false);
+                  if (hpTickNum >= 1000)
+                    return `${formatNumber(Number(hpTickNum / 1000), false, false)}K`;
+                  return hpTickNum < 1
+                    ? hpTickNum < 0.01
+                      ? hpTickNum.toFixed(4)
+                      : hpTickNum.toFixed(3)
+                    : formatNumber(hpTickNum, false, false);
                 }
-                return tick < 1000 ? formatNumber(tick, true, false) : `${formatNumber(tick / 1000, true, false)}K`;              }
+                return tick < 1000
+                  ? formatNumber(tick, true, false)
+                  : `${formatNumber(tick / 1000, true, false)}K`;
+              }
               return formatNumber(tick, false, false);
             }}
             scale="linear"
