@@ -77,6 +77,20 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
     undefined
   );
 
+  useEffect(() => {
+    setPageNum(1);
+    setSortKey("vests");
+    setIsAsc(false);
+    setVoterNameInput("");
+    setActiveVoterName(undefined);
+  }, [accountName]);
+
+  useEffect(() => {
+    if (!isVotersOpen) {
+      setPageNum(1);
+    }
+  }, [isVotersOpen]);
+
   const handleSearch = () => {
     setActiveVoterName(
       voterNameInput ? trimAccountName(voterNameInput) : undefined
