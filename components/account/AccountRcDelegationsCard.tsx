@@ -40,7 +40,7 @@ const buildTableBody = (delegations: RcDelegation[]) => {
             </Link>
           </TableCell>
           <TableCell className="text-right">
-            {formatNumber(delegation.delegated_rc, false, true)}
+            {formatNumber(delegation.delegated_rc, false, true, 0)}
           </TableCell>
         </TableRow>
       </Fragment>
@@ -91,7 +91,7 @@ const AccountRcDelegationsCard: React.FC<AccountRcDelegationsCardProps> = ({
       return {
         [t("common.order")]: index + 1,
         [t("delegationSort.Recipient")]: delegation.to,
-        [t("delegationSort.Amount")]: formatNumber(delegation.delegated_rc, false, true),
+        [t("delegationSort.Amount")]: formatNumber(delegation.delegated_rc, false, true, 0),
       };
     });
   };
