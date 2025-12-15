@@ -22,7 +22,7 @@ const buildTableBody = (voteDetails: Hive.PostPageVoteDetails[]) => {
         </Link>
       </TableCell>
       <TableCell className="text-right font-mono">
-        {formatNumber(rshares, false, true)}
+        {formatNumber(rshares, false, true, 0)}
       </TableCell>
     </TableRow>
   ));

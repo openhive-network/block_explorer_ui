@@ -57,7 +57,8 @@ export const getPageUrlParams = (urlParams: Explorer.UrlParam[]) => {
 export const formatNumber = (
   numberToFormat: number | string,
   isVest: boolean,
-  skipPrecision: boolean = false
+  skipPrecision: boolean = false,
+  decimalPoints: number = 2
 ): string => {
   let valueStr =
     typeof numberToFormat === "string"
@@ -67,10 +68,11 @@ export const formatNumber = (
   if (skipPrecision) {
     const [intPart, decPart] = valueStr.split(".");
     const intWithCommas = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    // If no decimals, add .00
-    if (!decPart) return `${intWithCommas}.00`;
-    // Pad decimal to 2 digits if needed
-    const paddedDec = decPart.padEnd(2, "0").slice(0, 2);
+    if (decimalPoints === 0) {
+      return intWithCommas;
+    }
+    if (!decPart) return `${intWithCommas}.${"0".repeat(decimalPoints)}`;
+    const paddedDec = decPart.padEnd(decimalPoints, "0").slice(0, decimalPoints);
     return `${intWithCommas}.${paddedDec}`;
   }
 
@@ -83,7 +85,7 @@ export const formatNumber = (
     const intPart = valueStr.substring(0, intLength) || "0";
     const decPart = valueStr.substring(intLength).padEnd(precision, "0");
     const intWithCommas = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    const formattedDec = decPart.slice(0, 2); // Force only 2 decimals
+    const formattedDec = decPart.slice(0, precision); // Force only 2 decimals
     return `${intWithCommas}.${formattedDec}`;
   } else {
     const num =
@@ -91,8 +93,8 @@ export const formatNumber = (
         ? parseFloat(numberToFormat)
         : numberToFormat;
     const fixed = (num / Math.pow(10, precision)).toLocaleString(undefined, {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
+      minimumFractionDigits: precision,
+      maximumFractionDigits: precision,
     });
     return fixed;
   }
