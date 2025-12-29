@@ -54,14 +54,15 @@ export default function TopHoldersPage() {
     setUnit(settings.displayVestHpMode === "hp" ? "hp" : "vests");
   }, [settings.displayVestHpMode]);
 
-  const totalCount = config.topHolders.totalCount;
   const pageSize = config.topHolders.pageSize;
 
-  const { holdersData, isTopHoldersLoading, isTopHoldersError } = useTopHolders(
+  const { holdersData, totalAccounts, isTopHoldersLoading, isTopHoldersError } = useTopHolders(
     coinType,
     balanceType,
     page
   );
+
+  const totalCount = totalAccounts;
   
   const defaultCoinType: CoinType = "HIVE";
   const defaultBalanceType: BalanceType = "balance";

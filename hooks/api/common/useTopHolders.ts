@@ -19,6 +19,8 @@ const useTopHolders = (coinType: CoinType, balanceType: BalanceType, page: numbe
 
   return {
     holdersData: holdersData?.holders_result ?? [],
+    totalAccounts: holdersData?.total_accounts ?? 0,
+    totalPages: holdersData?.total_pages ?? 0,
     isTopHoldersLoading,
     isTopHoldersError: isTopHoldersError as Error | null,
   };

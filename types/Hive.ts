@@ -1114,6 +1114,8 @@ namespace Hive {
   }
 
   export class TopHoldersResponse {
+    total_accounts!: number;
+    total_pages!: number;
     holders_result!: TopHolder[];
   }
 
