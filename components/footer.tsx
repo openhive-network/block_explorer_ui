@@ -26,7 +26,7 @@ const Footer = () => {
   const isDarkMode = theme === "dark"; // Check if the theme is dark
 
   return (
-    <footer className="w-full bg-theme mt-5 border-t border-gray-200 dark:border-gray-700">
+    <footer className="w-full bg-theme mt-5 border-t border-gray-200 dark:border-gray-700" data-testid="footer">
       <div className="container py-4">
         {/* Container for content */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-4">
@@ -41,7 +41,7 @@ const Footer = () => {
                 priority
               />
             </Link>
-            <div className="text-sm font-semibold">HIVE Block Explorer</div>
+            <div className="text-sm font-semibold" data-testid="footer-head">HIVE Block Explorer</div>
           </div>
 
           {/* Social Icons */}
@@ -266,7 +266,7 @@ const Footer = () => {
             </h4>
             {/* Header */}
             <ul className="list-none p-0 ">
-              <li>
+              <li data-testid="footer-last-commit-hash">
                 <span>{t("footer.lastCommit")}#: </span>
                 <Link
                   href={lastCommitHashRepoUrl}
@@ -277,7 +277,7 @@ const Footer = () => {
                   <span className="text-link">{gitHash}</span>
                 </Link>
               </li>
-              <li>
+              <li data-testid="footer-hafbe-version-hash">
                 <span>{t("footer.hafbeVersion")}#: </span>
                 {hafbeVersionData}
               </li>
