@@ -10,11 +10,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-const ExploreListItem = ({ href, title, icon: Icon, closeMenu }: { href: string; title: string; icon: React.ElementType; closeMenu: () => void; }) => (
-    <Link 
-      href={href} 
+const ExploreListItem = ({ href, title, icon: Icon, closeMenu, testId }: { href: string; title: string; icon: React.ElementType; closeMenu: () => void; testId?: string; }) => (
+    <Link
+      href={href}
       className="group flex items-center gap-3 rounded-md p-2 text-sm font-medium transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
       onClick={closeMenu}
+      data-testid={testId}
     >
         <Icon className="h-5 w-5 text-slate-500 transition-colors group-hover:text-slate-800 dark:text-slate-400 dark:group-hover:text-slate-100" />
         <span >{title}</span>
@@ -55,7 +56,7 @@ export function ExploreMenu() {
               <ExploreListItem href="/communities" title={t("navbar.communitiesTitle")} icon={Users} closeMenu={() => setIsOpen(false)} />
               <ExploreListItem href="/proposals" title={t("navbar.proposalsTitle")} icon={Vote} closeMenu={() => setIsOpen(false)} />
               <ExploreListItem href="/top-holders" title={t("pageTitle.topHolders")} icon={Award}   closeMenu={() => setIsOpen(false)}/>
-              <ExploreListItem href="/witnesses" title={t("navbar.witnessesTitle")} icon={UserCheck} closeMenu={() => setIsOpen(false)} />
+              <ExploreListItem href="/witnesses" title={t("navbar.witnessesTitle")} icon={UserCheck} closeMenu={() => setIsOpen(false)} testId="navbar-witnesses-link" />
               <ExploreListItem href="/settings" title={t("navbar.settingsTitle")} icon={SettingsIcon} closeMenu={() => setIsOpen(false)} />
           </div>
         </PopoverContent>
