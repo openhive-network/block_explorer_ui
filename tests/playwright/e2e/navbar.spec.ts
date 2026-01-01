@@ -18,9 +18,11 @@ test.describe("Navbar tests", () => {
     await expect(navbar.navBarElement).toBeVisible();
     await expect(navbar.navBarHiveLogo).toBeVisible();
     await expect(navbar.navBarHiveHeaderText).toHaveText("Hive Block Explorer");
-    await expect(navbar.navBarWitnessesLink).toHaveText("Witnesses");
     await expect(blockPage.viewBtn).toHaveText("Data View");
     await expect(navbar.searchBarInput).toHaveAttribute("placeholder", "Search user, block, transaction");
+    // Open explore menu to check witnesses link
+    await navbar.navBarExploreMenuButton.click();
+    await expect(navbar.navBarWitnessesLink).toHaveText("Witnesses");
   });
 
   test("search for the specific block number and move to the block page", async ({ page }) => {

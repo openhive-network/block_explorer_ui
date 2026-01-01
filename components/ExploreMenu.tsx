@@ -46,6 +46,7 @@ export function ExploreMenu() {
         <PopoverTrigger asChild>
           <button
             className="group flex h-9 w-9 items-center justify-center rounded-full transition-colors hover:bg-slate-500/20"
+            data-testid="explore-menu-button"
           >
             <Menu className="h-8 w-8 text-white transition-transform group-hover:scale-110" />
           </button>
