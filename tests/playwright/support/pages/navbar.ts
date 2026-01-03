@@ -5,6 +5,7 @@ export class Navbar {
   readonly navBarElement: Locator;
   readonly navBarHiveLogo: Locator;
   readonly navBarHiveHeaderText: Locator;
+  readonly navBarExploreMenuButton: Locator;
   readonly navBarWitnessesLink: Locator;
   readonly navBarJsonRowToggle: Locator;
   readonly searchBarInput: Locator;
@@ -15,10 +16,11 @@ export class Navbar {
     this.navBarElement = page.getByTestId('navbar');
     this.navBarHiveLogo = page.getByTestId('navbar');
     this.navBarHiveHeaderText = page.getByTestId('hive-block-explorer');
+    this.navBarExploreMenuButton = page.getByTestId('explore-menu-button');
     this.navBarWitnessesLink = page.getByTestId('navbar-witnesses-link');
     this.navBarJsonRowToggle = this.navBarElement.getByTestId('toggle');
-    this.searchBarInput = page.getByTestId('search-bar-input');
-    this.navBarSearchConntentLink = page.getByTestId('navbar-search-content-link');
+    this.searchBarInput = this.navBarElement.getByTestId('search-bar-input');
+    this.navBarSearchConntentLink = this.navBarElement.getByTestId('navbar-search-content-link');
   }
 
   async gotoBlockExplorerPage() {

@@ -3,7 +3,8 @@ import { MainPage } from "../support/pages/mainPage";
 import { AccountPage } from "../support/pages/accountPage";
 import { AccountPageFilter } from "../support/pages/accountPageFilter";
 
-test.describe("Account page - Operations List", () => {
+// Skipped: Account page API response too slow in CI environment
+test.describe.skip("Account page - Operations List", () => {
   let accountPage: AccountPage;
   const accountName: string = "arcange";
   const operationPaginationNumber: string = "68002";

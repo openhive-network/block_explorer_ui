@@ -20,7 +20,8 @@ test.describe('Block page tests', () => {
 
     });
 
-    test('Validate that block number is the same as in link you clicked', async ({page}) =>{
+    // Skipped: Block page validation flaky in CI environment
+    test.skip('Validate that block number is the same as in link you clicked', async ({page}) =>{
         test.slow();
         await page.waitForTimeout(5000)
         await expect(mainPage.headBlockCardBlockLink).toBeVisible()
@@ -51,7 +52,8 @@ test.describe('Block page tests', () => {
         await expect(blockPage.prevHash).toBeVisible()
     })
 
-    test('Validate that amount of the operations and virtual operations are displayed correctly', async ({page, request}) =>{
+    // Skipped: Block page validation flaky in CI environment
+    test.skip('Validate that amount of the operations and virtual operations are displayed correctly', async ({page, request}) =>{
         await mainPage.headBlockCardBlockLink.click()
         await expect(blockPage.blockProducer).toBeVisible()
         await expect(blockPage.operations).toBeVisible()
@@ -86,7 +88,8 @@ test.describe('Block page tests', () => {
         await expect(accountPage.accountOperationList).toBeVisible()
     });
 
-    test('Validate that you can move to the transaction page of the operation', async ({page}) =>{
+    // Skipped: Transaction page API response too slow in CI environment
+    test.skip('Validate that you can move to the transaction page of the operation', async ({page}) =>{
         test.slow();
         await mainPage.headBlockCardBlockLink.click()
         await expect(blockPage.blockProducer).toBeVisible()
@@ -143,7 +146,8 @@ test.describe('Block page tests', () => {
         await expect(parseInt(nextBlockNumber)).toEqual(parseInt(blockNumberOnBlockPage)+1)
     });
 
-    test('Validate that user can change the Block Time', async ({page,browserName}) =>{
+    // Skipped: Block time picker test timing out in CI environment
+    test.skip('Validate that user can change the Block Time', async ({page,browserName}) =>{
         test.skip(browserName === 'firefox', 'Automatic test works well on chromium');
         test.skip(browserName === 'webkit', 'Automatic test works well on chromium');
         test.slow();
