@@ -11,8 +11,8 @@ test.describe("Footer tests", () => {
   test("footer of block explorer is loaded", async ({ page }) => {
     await footer.gotoBlockExplorerPage();
     await expect(footer.footerElement).toBeVisible();
-    await expect(footer.footerHead).toContainText("Block Explorer by HIVE");
-    await expect(footer.footerLastCommitHash).toContainText("Last commit hash");
-    await expect(footer.footerHafbeVersionHash).toContainText("Hafbe version hash");
+    await expect(footer.footerHead).toContainText("HIVE Block Explorer");
+    await expect(footer.footerLastCommitHash).toContainText("Last Commit");
+    await expect(footer.footerHafbeVersionHash).toContainText("Hafbe version");
   });
 });

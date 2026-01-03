@@ -227,6 +227,7 @@ const AutoCompleteInput: React.FC<Props> = ({
                     resType === "account" ? `/@${acc}` : `/${resType}/${acc}`
                   }
                   onClick={(e) => e.preventDefault()}
+                  data-testid="navbar-search-content-link"
                 >
                   {acc}
                 </Link>
@@ -279,6 +280,7 @@ const AutoCompleteInput: React.FC<Props> = ({
           }
           aria-autocomplete="list"
           aria-controls="autocomplete-listbox"
+          data-testid="search-bar-input"
         />
         {value ? (
           <X
