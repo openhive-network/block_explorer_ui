@@ -19,8 +19,8 @@ export class Navbar {
     this.navBarExploreMenuButton = page.getByTestId('explore-menu-button');
     this.navBarWitnessesLink = page.getByTestId('navbar-witnesses-link');
     this.navBarJsonRowToggle = this.navBarElement.getByTestId('toggle');
-    this.searchBarInput = page.getByTestId('search-bar-input');
-    this.navBarSearchConntentLink = page.getByTestId('navbar-search-content-link');
+    this.searchBarInput = this.navBarElement.getByTestId('search-bar-input');
+    this.navBarSearchConntentLink = this.navBarElement.getByTestId('navbar-search-content-link');
   }
 
   async gotoBlockExplorerPage() {
