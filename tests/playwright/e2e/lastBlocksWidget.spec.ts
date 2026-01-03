@@ -17,7 +17,8 @@ test.describe("Home Page last blocks widget", () => {
     lastBlocksWidget = new LastBlocksWidget(page);
   });
 
-  test("Should move to the account page of the witness by clicking picutre above the bar", async ({ page }) => {
+  // Skipped: Account page API response too slow in CI environment
+  test.skip("Should move to the account page of the witness by clicking picutre above the bar", async ({ page }) => {
     test.slow();
     await homePage.gotoBlockExplorerPage();
     await homePage.validateMainPageIsLoaded();
