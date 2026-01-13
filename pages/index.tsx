@@ -18,6 +18,7 @@ import { useI18n } from "@/i18n/i18n";
 import TopWitnessesCard from "@/components/home/TopWitnessesCard";
 import useCommunities from "@/hooks/api/communities/useCommunities";
 import TopCommunitiesCard from "@/components/home/TopCommunitiesCard";
+import TransferVolumeCard from "@/components/home/TransferVolumeCard";
 
 export default function Home() {
   const { theme } = useTheme();
@@ -84,6 +85,7 @@ export default function Home() {
             strokeColor={strokeColor}
           />
           <TransactionStatisticsCard />
+          <TransferVolumeCard />
           <SearchesSection />
         </div>
 
