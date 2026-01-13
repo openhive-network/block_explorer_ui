@@ -971,6 +971,25 @@ namespace Hive {
     "from-block"?: number | Date;
     "to-block"?: number | Date;
   }
+
+  export class TransferStatisticsResponse {
+    date!: Date;
+    total_transfer_amount!: string;
+    average_transfer_amount!: string;
+    maximum_transfer_amount!: string;
+    minimum_transfer_amount!: string;
+    transfer_count!: number;
+    last_block_num!: number;
+  }
+
+  export class TransferStatisticsParams {
+    granularity!: string;
+    direction!: Hive.Direction;
+    "from-block"?: number | Date;
+    "to-block"?: number | Date;
+    "coin-type": "HBD" | "HIVE";
+  }
+
   export class AccountFollowCount {
     account!: string;
     follower_count!: number;
