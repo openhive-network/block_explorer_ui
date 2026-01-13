@@ -622,6 +622,25 @@ class FetchingService {
       "to-block": toBlock,
     });
   }
+
+  async getTransferStatistics(
+    granularity: "daily" | "monthly" | "yearly",
+    coinType: "HBD" | "HIVE",
+    direction: "asc" | "desc",
+    fromBlock?: Date | number | undefined,
+    toBlock?: Date | number | undefined
+  ): Promise<Hive.TransferStatisticsResponse[]> {
+    return await this.extendedHiveChain!.restApi[
+      "balance-api"
+    ].transferStatistics({
+      granularity,
+      "coin-type": coinType,
+      "from-block": fromBlock,
+      "to-block": toBlock,
+      direction: direction, // Move direction after coin-type
+    });
+  }
+
   async getAccountFollowCount(
     account: string
   ): Promise<Hive.AccountFollowCount> {
