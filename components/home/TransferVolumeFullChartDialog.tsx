@@ -114,7 +114,7 @@ const TransferVolumeFullChartDialog: React.FC<
           <DialogHeader>
             <div className="mb-4">
               <DialogTitle>{t("transferVolumeFullChartDialog.historyTitle")}</DialogTitle>
-           
+
             </div>
           </DialogHeader>
 
