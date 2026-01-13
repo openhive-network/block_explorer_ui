@@ -181,5 +181,11 @@ export const extendedRest = {
     result: Hive.TopHoldersResponse,
     urlPath: "top-holders",
     },
+    transferStatistics: {
+      params: Hive.TransferStatisticsParams,
+      result: Hive.TransferStatisticsResponse,
+      responseArray: true,
+      urlPath: "transfer-statistics",
+    },
   },
 };
