@@ -36,7 +36,7 @@ const TransferVolumeCard = () => {
           isTransferStatisticsLoading: isChartLoading,
           isTransferStatisticsError: isChartError,
         } = useTransferStatistics("daily", "HIVE", "asc", fromDate, undefined, true); // Set liveDataEnabled to true to make the API call
-  
+
   // --- Memoized Data ---
   const todayData = useMemo(() => {
     if (!chartData || chartData.length === 0) return null;
@@ -62,7 +62,7 @@ const TransferVolumeCard = () => {
          if (!todayData || !todayData.total_transfer_amount) return 0;
          // API provides total_transfer_amount as a string. Parse it to a number.
          const amount = parseFloat(todayData.total_transfer_amount);
-         
+
          return amount * hivePrice;
        }, [todayData, hivePrice]);
   // --- Modal Handlers ---
@@ -136,6 +136,11 @@ const TransferVolumeCard = () => {
               ) : (
                 <p className="text-gray-500 text-sm">
                   {t("common.noDataAvailable")}
+                </p>
+              )}
+              {isDailyError && (
+                <p className="text-red-500 text-xs mt-1">
+                  {t("common.errorLoadingData")}
                 </p>
               )}
             </div>
