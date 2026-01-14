@@ -28,16 +28,11 @@ docker-build:
     # Run for all tags
   - if: '$CI_COMMIT_TAG'
   before_script:
-  - !reference [.docker_image_builder_job_template, before_script]
-  - |
-    echo -e "\e[0Ksection_start:$(date +%s):login[collapsed=true]\r\e[0KLogging to Docker registries..."
-    docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-    # For protected tags, also login to registry-upload.hive.blog
-    if [[ -n "$CI_COMMIT_TAG" ]] && [[ "$CI_COMMIT_TAG" =~ ^[v01] ]]; then
-      echo "Protected tag detected, logging into registry-upload.hive.blog..."
-      docker login -u "$BLOG_REGISTRY_USER" -p "$BLOG_REGISTRY_PASSWORD" registry-upload.hive.blog
-    fi
-    echo -e "\e[0Ksection_end:$(date +%s):login\r\e[0K"
+    - !reference [.docker_image_builder_job_template, before_script]
+    - |
+      echo -e "\e[0Ksection_start:$(date +%s):login[collapsed=true]\r\e[0KLogging to Docker registry..."
+      docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+      echo -e "\e[0Ksection_end:$(date +%s):login\r\e[0K"
   script:
   - |
     echo -e "\e[0Ksection_start:$(date +%s):tag[collapsed=true]\r\e[0KDetermining tag for the new image..."
@@ -85,16 +80,6 @@ docker-build:
       docker push "$CI_REGISTRY_IMAGE:$TAG_NAME"
     done
 
-    # For protected tags, also push to registry-upload.hive.blog
-    if [[ -n "$CI_COMMIT_TAG" ]] && [[ "$CI_COMMIT_TAG" =~ ^[v01] ]]; then
-      echo "Pushing to registry-upload.hive.blog for protected tag..."
-      CI_PROJECT_NAME="${CI_REGISTRY_IMAGE##*/}"
-      docker tag "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" "registry-upload.hive.blog/$CI_PROJECT_NAME:$CI_COMMIT_SHORT_SHA"
-      docker tag "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG" "registry-upload.hive.blog/$CI_PROJECT_NAME:$CI_COMMIT_TAG"
-      docker push "registry-upload.hive.blog/$CI_PROJECT_NAME:$CI_COMMIT_SHORT_SHA"
-      docker push "registry-upload.hive.blog/$CI_PROJECT_NAME:$CI_COMMIT_TAG"
-    fi
-
     echo "IMAGE_NAME=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" > docker-build.env
     echo "Unique image tag:"
     cat docker-build.env
@@ -121,16 +106,6 @@ docker-build:
     for TAG_NAME in $TAGS; do
       docker push "$CI_REGISTRY_IMAGE:$TAG_NAME"
     done
-
-    # For protected tags, also push explorer variant to registry-upload.hive.blog
-    if [[ -n "$CI_COMMIT_TAG" ]] && [[ "$CI_COMMIT_TAG" =~ ^[v01] ]]; then
-      echo "Pushing explorer variant to registry-upload.hive.blog for protected tag..."
-      CI_PROJECT_NAME="${ORIGINAL_CI_REGISTRY_IMAGE##*/}"
-      docker tag "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" "registry-upload.hive.blog/$CI_PROJECT_NAME/explorer-subdirectory:$CI_COMMIT_SHORT_SHA"
-      docker tag "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG" "registry-upload.hive.blog/$CI_PROJECT_NAME/explorer-subdirectory:$CI_COMMIT_TAG"
-      docker push "registry-upload.hive.blog/$CI_PROJECT_NAME/explorer-subdirectory:$CI_COMMIT_SHORT_SHA"
-      docker push "registry-upload.hive.blog/$CI_PROJECT_NAME/explorer-subdirectory:$CI_COMMIT_TAG"
-    fi
 
     echo "EXPLORER_SUBDIRECTORY_IMAGE_NAME=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" >> docker-build.env
     echo "Explorer variant tag:"
@@ -381,43 +356,16 @@ test:stop:
     name: test
     action: stop
 
-# DEPRECATED: build_and_publish_image job is no longer needed
-# The docker-build job now handles all image building and publishing:
-# - For all commits: builds and pushes to GitLab registry with short SHA
-# - For develop branch: also tags with 'develop'
-# - For master branch: also tags with 'latest'
-# - For protected tags (matching [v01]*): also pushes to registry-upload.hive.blog
-#
-# If you need to manually push to Docker Hub, use the build_and_publish_instance.sh script directly
-#
-# build_and_publish_image:
-#   stage: publish
-#   extends: .publish_docker_image_template
-#   before_script:
-#     - !reference [.publish_docker_image_template, before_script]
-#     - |
-#       # Ensure we have the short SHA variable available
-#       export CI_COMMIT_SHORT_SHA="${CI_COMMIT_SHORT_SHA:-$(echo $CI_COMMIT_SHA | head -c8)}"
-#   script:
-#     - |
-#       if [[ -z "$CI_COMMIT_SHORT_SHA" ]]; then
-#         export CI_COMMIT_SHORT_SHA=$(echo $CI_COMMIT_SHA | head -c8)
-#       fi
-#       # Call the fixed script with all required parameters
-#       scripts/ci-helpers/build_and_publish_instance.sh \
-#         --registry-user="$CI_REGISTRY_USER" \
-#         --registry-password="$CI_REGISTRY_PASSWORD" \
-#         --registry="$CI_REGISTRY" \
-#         --image-tag="$CI_COMMIT_TAG" \
-#         --commit-sha="$CI_COMMIT_SHORT_SHA" \
-#         --image-name-prefix="$CI_REGISTRY_IMAGE" \
-#         --docker-hub-user="$DOCKER_HUB_USER" \
-#         --docker-hub-password="$DOCKER_HUB_PASSWORD" \
-#         --blog-registry-user="$BLOG_REGISTRY_USER" \
-#         --blog-registry-password="$BLOG_REGISTRY_PASSWORD"
-#   tags:
-#     - public-runner-docker
-#     - hived-for-tests
+# Publish to registry.hive.blog - pull/retag/push only, no rebuild
+publish_images:
+  extends: .docker_publish_job_template
+  stage: publish
+  variables:
+    # Publish both root image and explorer-subdirectory variant to hive.blog
+    # "block_explorer_ui" matches CI_PROJECT_NAME -> publishes root image
+    PUBLISH_IMAGES: "block_explorer_ui explorer-subdirectory"
+  tags:
+    - public-runner-docker
 
 buildkit_cache_cleanup:
   stage: cleanup
