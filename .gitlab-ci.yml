@@ -16,7 +16,7 @@ variables:
 include:
   - template: Workflows/Branch-Pipelines.gitlab-ci.yml
   - project: "hive/common-ci-configuration"
-    ref: 944641b872e1a1e0f184c435233c125acb285957 # develop
+    ref: develop
     file: "/templates/docker_image_jobs.gitlab-ci.yml"
 
 docker-build:
