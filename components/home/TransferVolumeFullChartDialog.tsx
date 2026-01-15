@@ -54,7 +54,7 @@ const TransferVolumeFullChartDialog: React.FC<
     transferStatistics,
     isTransferStatisticsLoading: isChartLoading,
     isTransferStatisticsError: isChartError,
-  } = useTransferStatistics(granularity, "HIVE", "asc", fromDate, toDate, false);
+  } = useTransferStatistics(granularity, "HIVE", "asc", fromDate, toDate, isOpen);
 
   // Set initial data when modal opens or initialData prop changes
   useEffect(() => {
