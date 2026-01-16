@@ -118,6 +118,7 @@
   "transferVolumeChart.maxTransferAmount": "Max Transfer Amount",
   "transferVolumeChart.minTransferAmount": "Min Transfer Amount",
   "transferVolumeFullChartDialog.title": "Transfer Volume Chart",
+  "transferVolumeFullChartDialog.historyTitle": "Transfer Volume History",
   "transferVolumeFullChartDialog.granularity": "Granularity",
   "transferVolumeFullChartDialog.selectGranularity": "Select Granularity",
   "searchRanges.last": "Last *",

@@ -118,6 +118,7 @@
   "transferVolumeChart.maxTransferAmount": "최대 전송 금액",
   "transferVolumeChart.minTransferAmount": "최소 전송 금액",
   "transferVolumeFullChartDialog.title": "전송량 차트",
+  "transferVolumeFullChartDialog.historyTitle": "전송량 기록",
   "transferVolumeFullChartDialog.granularity": "세분성",
   "transferVolumeFullChartDialog.selectGranularity": "세분성 선택",
   "searchRanges.last": "최근 *",
