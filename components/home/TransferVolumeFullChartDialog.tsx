@@ -63,6 +63,10 @@ const TransferVolumeFullChartDialog: React.FC<
       setLastTimeUnitValue(30);
       setRangeSelectKey("lastTime");
       setTimeUnitSelectKey("days");
+
+      const date = new Date();
+      date.setDate(date.getDate() - 30);
+      setFromDate(date);
     }
   }, [
     isOpen,
@@ -109,7 +113,7 @@ const TransferVolumeFullChartDialog: React.FC<
         <div className="max-h-[90vh] overflow-y-auto overflow-x-hidden scrollableContainer">
           <DialogHeader>
             <div className="mb-4">
-              <DialogTitle>Transfer Volume History</DialogTitle>
+              <DialogTitle>{t("transferVolumeFullChartDialog.historyTitle")}</DialogTitle>
            
             </div>
           </DialogHeader>

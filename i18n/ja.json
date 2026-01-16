@@ -118,6 +118,7 @@
   "transferVolumeChart.maxTransferAmount": "最大送金量",
   "transferVolumeChart.minTransferAmount": "最小送金量",
   "transferVolumeFullChartDialog.title": "送金量チャート",
+  "transferVolumeFullChartDialog.historyTitle": "送金量履歴",
   "transferVolumeFullChartDialog.granularity": "粒度",
   "transferVolumeFullChartDialog.selectGranularity": "粒度を選択",
   "searchRanges.last": "最新 *",

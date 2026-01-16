@@ -118,6 +118,7 @@
   "transferVolumeChart.maxTransferAmount": "أقصى مبلغ تحويل",
   "transferVolumeChart.minTransferAmount": "أدنى مبلغ تحويل",
   "transferVolumeFullChartDialog.title": "مخطط حجم التحويل",
+  "transferVolumeFullChartDialog.historyTitle": "تاريخ حجم النقل",
   "transferVolumeFullChartDialog.granularity": "الدقة",
   "transferVolumeFullChartDialog.selectGranularity": "اختر الدقة",
   "searchRanges.last": "آخر *",
