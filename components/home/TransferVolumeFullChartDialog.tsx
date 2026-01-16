@@ -170,7 +170,7 @@ const TransferVolumeFullChartDialog: React.FC<
             </div>
           </div>
 
-          <div className="h-[80%] w-[100%] flex items-center justify-center">
+          <div className="h-[60vh] w-[100%] flex items-center justify-center">
             {isChartLoading ? (
               <div className="flex justify-center items-center">
                 <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />
