@@ -171,7 +171,7 @@ const TransferVolumeChart: React.FC<TransferVolumeChartProps> = ({
           yAxisId="left"
           tickCount={tickCount}
           style={{ fontSize: "10px" }}
-          stroke="#D82B30"
+          stroke={strokeColor}
           tickFormatter={formatYAxis}
           orientation={isRTL ? "right" : "left"}
         />
@@ -179,7 +179,7 @@ const TransferVolumeChart: React.FC<TransferVolumeChartProps> = ({
           yAxisId="right"
           tickCount={tickCount}
           style={{ fontSize: "10px" }}
-          stroke="#3D7D26"
+          stroke={strokeColor}
           tickFormatter={formatYAxis}
           orientation={isRTL ? "left" : "right"}
         />
