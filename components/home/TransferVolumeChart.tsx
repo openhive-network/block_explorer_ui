@@ -83,7 +83,7 @@ const TransferVolumeChart: React.FC<TransferVolumeChartProps> = ({
               <p className="text-[0.6rem] text-gray-500 uppercase leading-none mb-1">
                 {t("transferVolumeChart.totalTransferAmount")}
               </p>
-              <p className="font-semibold leading-none">
+              <p className="font-semibold leading-none text-right">
                 {total_transfer_amount?.toLocaleString()}
               </p>
             </div>
@@ -91,7 +91,7 @@ const TransferVolumeChart: React.FC<TransferVolumeChartProps> = ({
               <p className="text-[0.6rem] text-gray-500 uppercase leading-none mb-1">
                 {t("transferVolumeChart.transferCount")}
               </p>
-              <p className="font-semibold leading-none">
+              <p className="font-semibold leading-none text-right">
                 {transfer_count?.toLocaleString()}
               </p>
             </div>
@@ -99,7 +99,7 @@ const TransferVolumeChart: React.FC<TransferVolumeChartProps> = ({
               <p className="text-[0.6rem] text-gray-500 uppercase leading-none mb-1">
                 {t("transferVolumeChart.averageTransferAmount")}
               </p>
-              <p className="font-semibold leading-none">
+              <p className="font-semibold leading-none text-right">
                 {average_transfer_amount?.toLocaleString(undefined, {
                   maximumFractionDigits: 2,
                 })}
@@ -109,7 +109,7 @@ const TransferVolumeChart: React.FC<TransferVolumeChartProps> = ({
               <p className="text-[0.6rem] text-gray-500 uppercase leading-none mb-1">
                 {t("transferVolumeChart.maxTransferAmount")}
               </p>
-              <p className="font-semibold leading-none">
+              <p className="font-semibold leading-none text-right">
                 {maximum_transfer_amount?.toLocaleString(undefined, {
                   maximumFractionDigits: 2,
                 })}
@@ -119,7 +119,7 @@ const TransferVolumeChart: React.FC<TransferVolumeChartProps> = ({
               <p className="text-[0.6rem] text-gray-500 uppercase leading-none mb-1">
                 {t("transferVolumeChart.minTransferAmount")}
               </p>
-              <p className="font-semibold leading-none">
+              <p className="font-semibold leading-none text-right">
                 {minimum_transfer_amount?.toLocaleString(undefined, {
                   maximumFractionDigits: 2,
                 })}
