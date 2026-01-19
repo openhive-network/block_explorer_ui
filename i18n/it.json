@@ -106,6 +106,7 @@
   "transactionStatisticsFullChartDialog.selectGranularity": "Seleziona Granularità",
   "transferVolumeCard.transferVolume": "Volume di Trasferimento",
   "transferVolumeCard.todaysVolume": "Volume di Oggi",
+  "transferVolumeCard.todaysDetails": "Dettagli di oggi",
   "transferVolumeCard.totalTransferAmount": "Importo Totale Trasferimenti",
   "transferVolumeCard.transferCount": "Numero di Trasferimenti",
   "transferVolumeCard.totalTransfers": "Totale Trasferimenti",
