@@ -92,7 +92,7 @@ const TransferVolumeCard = () => {
                 <>
 
                   <div className="flex flex-col gap-2">
-                    <p className="text-2xl font-bold text-explorer-dark-gray dark:text-text">
+                    <p className="text-2xl font-bold text-explorer-dark-gray dark:text-text text-right">
                       ${totalUsdValue.toLocaleString(undefined, {
                         maximumFractionDigits: 2,
                       })}
@@ -100,11 +100,11 @@ const TransferVolumeCard = () => {
                     <div className="flex flex-col gap-1 mt-1">
                                              <div className="flex justify-between text-sm">
                                                 <span className="text-gray-500">{t("transferVolumeCard.totalTransferAmount")}:</span>
-                                                <span className="font-medium text-gray-700 dark:text-text">{(parseFloat(todayData.total_transfer_amount) ?? 0).toLocaleString()} HIVE</span>
+                                                <span className="font-medium text-gray-700 dark:text-text text-right">{(parseFloat(todayData.total_transfer_amount) ?? 0).toLocaleString()} HIVE</span>
                                              </div>
                                              <div className="flex justify-between text-sm">
                                                 <span className="text-gray-500">{t("transferVolumeCard.transferCount")}:</span>
-                                                <span className="font-medium text-gray-700 dark:text-text">{(todayData.transfer_count ?? 0).toLocaleString()}</span>
+                                                <span className="font-medium text-gray-700 dark:text-text text-right">{(todayData.transfer_count ?? 0).toLocaleString()}</span>
                                              </div>                    </div>
                   </div>
                 </>
