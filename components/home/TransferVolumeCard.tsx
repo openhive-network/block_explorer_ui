@@ -77,9 +77,10 @@ const TransferVolumeCard = () => {
   return (
     <div className="bg-theme rounded mt-4 shadow-md overflow-hidden">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-5">
-        {/* Left Side: Today's Volume */}
+        {/* Left Side: Today's Volume and Details */}
         <div className="md:col-span-1">
           <div className="flex flex-col space-y-4">
+            {/* Today's Volume Card */}
             <div className="bg-explorer-extra-light-gray rounded-lg p-4 shadow-md">
               <h3 className="text-sm font-semibold uppercase tracking-wide mb-1 text-explorer-dark-gray dark:text-text">
                 {t("transferVolumeCard.todaysVolume")}
@@ -89,33 +90,52 @@ const TransferVolumeCard = () => {
                   <Loader2 className="animate-spin h-5 w-5" />
                 </div>
               ) : todayData ? (
-                <>
-
-                  <div className="flex flex-col gap-2">
-                    <p className="text-2xl font-bold text-explorer-dark-gray dark:text-text text-right">
-                      ${totalUsdValue.toLocaleString(undefined, {
-                        maximumFractionDigits: 2,
-                      })}
-                    </p>
-                    <div className="flex flex-col gap-1 mt-1">
-                                             <div className="flex justify-between text-sm">
-                                                <span className="text-gray-500">{t("transferVolumeCard.totalTransferAmount")}:</span>
-                                                <span className="font-medium text-gray-700 dark:text-text text-right">{(parseFloat(todayData.total_transfer_amount) ?? 0).toLocaleString()} HIVE</span>
-                                             </div>
-                                             <div className="flex justify-between text-sm">
-                                                <span className="text-gray-500">{t("transferVolumeCard.transferCount")}:</span>
-                                                <span className="font-medium text-gray-700 dark:text-text text-right">{(todayData.transfer_count ?? 0).toLocaleString()}</span>
-                                             </div>                    </div>
-                  </div>
-                </>
+                <p className="text-2xl font-bold text-explorer-dark-gray dark:text-text text-right">
+                  ${totalUsdValue.toLocaleString(undefined, {
+                    maximumFractionDigits: 2,
+                  })}
+                </p>
               ) : (
                 <p className="text-gray-500 text-sm">
                   {t("common.noDataAvailable")}
                 </p>
               )}
-              {isDailyError && (
-                <p className="text-red-500 text-xs mt-1">
-                  {t("common.errorLoadingData")}
+            </div>
+
+            {/* Today's Details Card */}
+            <div className="bg-explorer-extra-light-gray rounded-lg p-4 shadow-md">
+              <h3 className="text-sm font-semibold uppercase tracking-wide mb-1 text-explorer-dark-gray dark:text-text">
+                {t("transferVolumeCard.todaysDetails") || "Today's Details"}
+              </h3>
+              {isDailyLoading ? (
+                <div className="flex items-center justify-center">
+                  <Loader2 className="animate-spin h-5 w-5" />
+                </div>
+              ) : todayData ? (
+                <div className="flex flex-col gap-1 mt-1">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">
+                      {t("transferVolumeCard.totalTransferAmount")}:
+                    </span>
+                    <span className="font-medium text-gray-700 dark:text-text text-right">
+                      {(
+                        parseFloat(todayData.total_transfer_amount) ?? 0
+                      ).toLocaleString()}{" "}
+                      HIVE
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">
+                      {t("transferVolumeCard.transferCount")}:
+                    </span>
+                    <span className="font-medium text-gray-700 dark:text-text text-right">
+                      {(todayData.transfer_count ?? 0).toLocaleString()}
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-gray-500 text-sm">
+                  {t("common.noDataAvailable")}
                 </p>
               )}
             </div>

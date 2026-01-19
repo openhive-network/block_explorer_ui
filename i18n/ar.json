@@ -105,6 +105,7 @@
   "transactionStatisticsFullChartDialog.selectGranularity": "اختر الدقة",
   "transferVolumeCard.transferVolume": "حجم التحويل",
   "transferVolumeCard.todaysVolume": "حجم اليوم",
+  "transferVolumeCard.todaysDetails": "تفاصيل اليوم",
   "transferVolumeCard.totalTransferAmount": "إجمالي مبلغ التحويل",
   "transferVolumeCard.transferCount": "عدد التحويلات",
   "transferVolumeCard.totalTransfers": "إجمالي التحويلات",

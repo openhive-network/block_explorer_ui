@@ -105,6 +105,7 @@
   "transactionStatisticsFullChartDialog.selectGranularity": "세분성 선택",
   "transferVolumeCard.transferVolume": "전송량",
   "transferVolumeCard.todaysVolume": "오늘의 전송량",
+  "transferVolumeCard.todaysDetails": "오늘의 상세 정보",
   "transferVolumeCard.totalTransferAmount": "총 전송 금액",
   "transferVolumeCard.transferCount": "전송 횟수",
   "transferVolumeCard.totalTransfers": "총 전송",

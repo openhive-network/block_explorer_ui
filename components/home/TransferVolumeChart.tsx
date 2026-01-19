@@ -142,6 +142,20 @@ const TransferVolumeChart: React.FC<TransferVolumeChartProps> = ({
     return tickValue.toLocaleString();
   };
 
+  const calculateYAxisDomain = () => {
+    if (!chartData || chartData.length === 0) {
+      return [0, 1];
+    }
+
+    const amounts = chartData.map((item) => item.total_transfer_amount);
+    const minAmount = Math.min(...amounts);
+    const maxAmount = Math.max(...amounts);
+    return [minAmount, maxAmount];
+  };
+
+  const [lowerBound, upperBound] = calculateYAxisDomain();
+  const yAxisDomain = zoomedDomain || [lowerBound, upperBound];
+
   const xAxisTickFormatter = (value: any) => {
     return moment(value).format(
       showYear ? "YYYY" : dateFormat ? dateFormat : "MMM D, YYYY"
@@ -154,9 +168,9 @@ const TransferVolumeChart: React.FC<TransferVolumeChartProps> = ({
         data={chartData}
         margin={{
           top: 5,
-          right: isRTL ? 0 : 0,
-          left: isRTL ? 0 : 0,
-          bottom: includeBrush ? 20 : 0,
+          right: isRTL ? 10 : 0,
+          left: isRTL ? 0 : 10,
+          bottom: includeBrush ? 40 : 0,
         }}
       >
         <XAxis
@@ -168,20 +182,12 @@ const TransferVolumeChart: React.FC<TransferVolumeChartProps> = ({
           reversed={isRTL}
         />
         <YAxis
-          yAxisId="left"
           tickCount={tickCount}
-          style={{ fontSize: "10px" }}
+          style={{ fontSize: "13px" }}
           stroke={strokeColor}
           tickFormatter={formatYAxis}
           orientation={isRTL ? "right" : "left"}
-        />
-        <YAxis
-          yAxisId="right"
-          tickCount={tickCount}
-          style={{ fontSize: "10px" }}
-          stroke={strokeColor}
-          tickFormatter={formatYAxis}
-          orientation={isRTL ? "left" : "right"}
+          domain={yAxisDomain}
         />
         <Tooltip content={<CustomTooltip />} />
         <Legend
@@ -190,7 +196,6 @@ const TransferVolumeChart: React.FC<TransferVolumeChartProps> = ({
           align={isRTL ? "right" : "left"}
         />
         <Line
-          yAxisId="left"
           name={t("transferVolumeChart.totalTransferAmount")}
           type="monotone"
           dataKey="total_transfer_amount"
