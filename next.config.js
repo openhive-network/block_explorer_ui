@@ -2,6 +2,9 @@
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
 const nextConfig = {
+  generateBuildId: async () => {
+    return 'build-id'
+  },
   reactStrictMode: true,
   output: process.env.BUILD_STANDALONE === "true" ? "standalone" : undefined,
   // basePath is set at build time from NEXT_PUBLIC_BASE_PATH env variable
