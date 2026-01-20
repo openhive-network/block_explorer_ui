@@ -1,10 +1,10 @@
 stages:
-  - build
-  - test
-  - test-report-aggregate
-  - deploy
-  - publish
-  - cleanup
+- build
+- test
+- test-report-aggregate
+- deploy
+- publish
+- cleanup
 
 variables:
   # Variables required by Common CI jobs
@@ -14,133 +14,133 @@ variables:
   IMAGE_REMOVER_TAG: "$CI_COMMON_JOB_VERSION"
 
 include:
-  - template: Workflows/Branch-Pipelines.gitlab-ci.yml
-  - project: "hive/common-ci-configuration"
-    ref: 944641b872e1a1e0f184c435233c125acb285957 # develop
-    file: "/templates/docker_image_jobs.gitlab-ci.yml"
+- template: Workflows/Branch-Pipelines.gitlab-ci.yml
+- project: "hive/common-ci-configuration"
+  ref: develop
+  file: "/templates/docker_image_jobs.gitlab-ci.yml"
 
 docker-build:
   extends: .docker_image_builder_job_template
   stage: build
   rules:
     # Run for all branches
-    - if: '$CI_COMMIT_BRANCH'
+  - if: '$CI_COMMIT_BRANCH'
     # Run for all tags
-    - if: '$CI_COMMIT_TAG'
+  - if: '$CI_COMMIT_TAG'
   before_script:
-    - !reference [.docker_image_builder_job_template, before_script]
-    - |
-      echo -e "\e[0Ksection_start:$(date +%s):login[collapsed=true]\r\e[0KLogging to Docker registries..."
-      docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-      # For protected tags, also login to registry-upload.hive.blog
-      if [[ -n "$CI_COMMIT_TAG" ]] && [[ "$CI_COMMIT_TAG" =~ ^[v01] ]]; then
-        echo "Protected tag detected, logging into registry-upload.hive.blog..."
-        docker login -u "$BLOG_REGISTRY_USER" -p "$BLOG_REGISTRY_PASSWORD" registry-upload.hive.blog
-      fi
-      echo -e "\e[0Ksection_end:$(date +%s):login\r\e[0K"
+  - !reference [.docker_image_builder_job_template, before_script]
+  - |
+    echo -e "\e[0Ksection_start:$(date +%s):login[collapsed=true]\r\e[0KLogging to Docker registries..."
+    docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    # For protected tags, also login to registry-upload.hive.blog
+    if [[ -n "$CI_COMMIT_TAG" ]] && [[ "$CI_COMMIT_TAG" =~ ^[v01] ]]; then
+      echo "Protected tag detected, logging into registry-upload.hive.blog..."
+      docker login -u "$BLOG_REGISTRY_USER" -p "$BLOG_REGISTRY_PASSWORD" registry-upload.hive.blog
+    fi
+    echo -e "\e[0Ksection_end:$(date +%s):login\r\e[0K"
   script:
-    - |
-      echo -e "\e[0Ksection_start:$(date +%s):tag[collapsed=true]\r\e[0KDetermining tag for the new image..."
-      # Always tag with short SHA
-      export TAGS="$CI_COMMIT_SHORT_SHA"
+  - |
+    echo -e "\e[0Ksection_start:$(date +%s):tag[collapsed=true]\r\e[0KDetermining tag for the new image..."
+    # Always tag with short SHA
+    export TAGS="$CI_COMMIT_SHORT_SHA"
 
-      # Add branch-specific tags
-      if [[ -n "$CI_COMMIT_TAG" ]]; then
-        echo "Running on tag '$CI_COMMIT_TAG': adding tag $CI_COMMIT_TAG"
-        export TAGS="$TAGS $CI_COMMIT_TAG"
-        export TAG="$CI_COMMIT_TAG"
-      elif [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
-        echo "Running on default branch '$CI_DEFAULT_BRANCH': adding tag 'latest'"
-        export TAGS="$TAGS latest"
-        export TAG="latest"
-      elif [[ "$CI_COMMIT_BRANCH" == "develop" ]]; then
-        echo "Running on develop branch: adding tag 'develop'"
-        export TAGS="$TAGS develop"
-        export TAG="develop"
-      else
-        echo "Running on branch '$CI_COMMIT_BRANCH': adding tag $CI_COMMIT_REF_SLUG"
-        export TAGS="$TAGS $CI_COMMIT_REF_SLUG"
-        export TAG="$CI_COMMIT_REF_SLUG"
+    # Add branch-specific tags
+    if [[ -n "$CI_COMMIT_TAG" ]]; then
+      echo "Running on tag '$CI_COMMIT_TAG': adding tag $CI_COMMIT_TAG"
+      export TAGS="$TAGS $CI_COMMIT_TAG"
+      export TAG="$CI_COMMIT_TAG"
+    elif [[ "$CI_COMMIT_BRANCH" == "$CI_DEFAULT_BRANCH" ]]; then
+      echo "Running on default branch '$CI_DEFAULT_BRANCH': adding tag 'latest'"
+      export TAGS="$TAGS latest"
+      export TAG="latest"
+    elif [[ "$CI_COMMIT_BRANCH" == "develop" ]]; then
+      echo "Running on develop branch: adding tag 'develop'"
+      export TAGS="$TAGS develop"
+      export TAG="develop"
+    else
+      echo "Running on branch '$CI_COMMIT_BRANCH': adding tag $CI_COMMIT_REF_SLUG"
+      export TAGS="$TAGS $CI_COMMIT_REF_SLUG"
+      export TAG="$CI_COMMIT_REF_SLUG"
+    fi
+
+    echo "Tags to be applied: $TAGS"
+    echo -e "\e[0Ksection_end:$(date +%s):tag\r\e[0K"
+
+    echo -e "\e[0Ksection_start:$(date +%s):build[collapsed=true]\r\e[0KBaking root image..."
+    git config --global --add safe.directory "$CI_PROJECT_DIR"
+    scripts/build_instance.sh --progress=plain "$CI_PROJECT_DIR"
+
+    # Pull the image locally since buildx pushes directly to registry
+    docker pull "$CI_REGISTRY_IMAGE:$TAG"
+
+    # Apply all tags for GitLab registry
+    for TAG_NAME in $TAGS; do
+      if [[ "$TAG_NAME" != "$TAG" ]]; then
+        docker tag "$CI_REGISTRY_IMAGE:$TAG" "$CI_REGISTRY_IMAGE:$TAG_NAME"
       fi
+    done
 
-      echo "Tags to be applied: $TAGS"
-      echo -e "\e[0Ksection_end:$(date +%s):tag\r\e[0K"
+    # Push all tags to GitLab registry
+    for TAG_NAME in $TAGS; do
+      docker push "$CI_REGISTRY_IMAGE:$TAG_NAME"
+    done
 
-      echo -e "\e[0Ksection_start:$(date +%s):build[collapsed=true]\r\e[0KBaking root image..."
-      git config --global --add safe.directory "$CI_PROJECT_DIR"
-      scripts/build_instance.sh --progress=plain "$CI_PROJECT_DIR"
+    # For protected tags, also push to registry-upload.hive.blog
+    if [[ -n "$CI_COMMIT_TAG" ]] && [[ "$CI_COMMIT_TAG" =~ ^[v01] ]]; then
+      echo "Pushing to registry-upload.hive.blog for protected tag..."
+      CI_PROJECT_NAME="${CI_REGISTRY_IMAGE##*/}"
+      docker tag "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" "registry-upload.hive.blog/$CI_PROJECT_NAME:$CI_COMMIT_SHORT_SHA"
+      docker tag "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG" "registry-upload.hive.blog/$CI_PROJECT_NAME:$CI_COMMIT_TAG"
+      docker push "registry-upload.hive.blog/$CI_PROJECT_NAME:$CI_COMMIT_SHORT_SHA"
+      docker push "registry-upload.hive.blog/$CI_PROJECT_NAME:$CI_COMMIT_TAG"
+    fi
 
-      # Pull the image locally since buildx pushes directly to registry
-      docker pull "$CI_REGISTRY_IMAGE:$TAG"
+    echo "IMAGE_NAME=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" > docker-build.env
+    echo "Unique image tag:"
+    cat docker-build.env
+    echo -e "\e[0Ksection_end:$(date +%s):build\r\e[0K"
 
-      # Apply all tags for GitLab registry
-      for TAG_NAME in $TAGS; do
-        if [[ "$TAG_NAME" != "$TAG" ]]; then
-          docker tag "$CI_REGISTRY_IMAGE:$TAG" "$CI_REGISTRY_IMAGE:$TAG_NAME"
-        fi
-      done
+    echo -e "\e[0Ksection_start:$(date +%s):build-explorer[collapsed=true]\r\e[0KBaking explorer subdirectory variant..."
+    # Save original registry image for second build
+    ORIGINAL_CI_REGISTRY_IMAGE="$CI_REGISTRY_IMAGE"
+    export CI_REGISTRY_IMAGE="$CI_REGISTRY_IMAGE/explorer-subdirectory"
 
-      # Push all tags to GitLab registry
-      for TAG_NAME in $TAGS; do
-        docker push "$CI_REGISTRY_IMAGE:$TAG_NAME"
-      done
+    scripts/build_instance.sh --progress=plain --base-path="/explorer" "$CI_PROJECT_DIR"
 
-      # For protected tags, also push to registry-upload.hive.blog
-      if [[ -n "$CI_COMMIT_TAG" ]] && [[ "$CI_COMMIT_TAG" =~ ^[v01] ]]; then
-        echo "Pushing to registry-upload.hive.blog for protected tag..."
-        CI_PROJECT_NAME="${CI_REGISTRY_IMAGE##*/}"
-        docker tag "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" "registry-upload.hive.blog/$CI_PROJECT_NAME:$CI_COMMIT_SHORT_SHA"
-        docker tag "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG" "registry-upload.hive.blog/$CI_PROJECT_NAME:$CI_COMMIT_TAG"
-        docker push "registry-upload.hive.blog/$CI_PROJECT_NAME:$CI_COMMIT_SHORT_SHA"
-        docker push "registry-upload.hive.blog/$CI_PROJECT_NAME:$CI_COMMIT_TAG"
+    # Pull and tag the explorer variant
+    docker pull "$CI_REGISTRY_IMAGE:$TAG"
+
+    # Apply all tags for explorer variant
+    for TAG_NAME in $TAGS; do
+      if [[ "$TAG_NAME" != "$TAG" ]]; then
+        docker tag "$CI_REGISTRY_IMAGE:$TAG" "$CI_REGISTRY_IMAGE:$TAG_NAME"
       fi
+    done
 
-      echo "IMAGE_NAME=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" > docker-build.env
-      echo "Unique image tag:"
-      cat docker-build.env
-      echo -e "\e[0Ksection_end:$(date +%s):build\r\e[0K"
+    # Push all tags for explorer variant to GitLab registry
+    for TAG_NAME in $TAGS; do
+      docker push "$CI_REGISTRY_IMAGE:$TAG_NAME"
+    done
 
-      echo -e "\e[0Ksection_start:$(date +%s):build-explorer[collapsed=true]\r\e[0KBaking explorer subdirectory variant..."
-      # Save original registry image for second build
-      ORIGINAL_CI_REGISTRY_IMAGE="$CI_REGISTRY_IMAGE"
-      export CI_REGISTRY_IMAGE="$CI_REGISTRY_IMAGE/explorer-subdirectory"
+    # For protected tags, also push explorer variant to registry-upload.hive.blog
+    if [[ -n "$CI_COMMIT_TAG" ]] && [[ "$CI_COMMIT_TAG" =~ ^[v01] ]]; then
+      echo "Pushing explorer variant to registry-upload.hive.blog for protected tag..."
+      CI_PROJECT_NAME="${ORIGINAL_CI_REGISTRY_IMAGE##*/}"
+      docker tag "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" "registry-upload.hive.blog/$CI_PROJECT_NAME/explorer-subdirectory:$CI_COMMIT_SHORT_SHA"
+      docker tag "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG" "registry-upload.hive.blog/$CI_PROJECT_NAME/explorer-subdirectory:$CI_COMMIT_TAG"
+      docker push "registry-upload.hive.blog/$CI_PROJECT_NAME/explorer-subdirectory:$CI_COMMIT_SHORT_SHA"
+      docker push "registry-upload.hive.blog/$CI_PROJECT_NAME/explorer-subdirectory:$CI_COMMIT_TAG"
+    fi
 
-      scripts/build_instance.sh --progress=plain --base-path="/explorer" "$CI_PROJECT_DIR"
-
-      # Pull and tag the explorer variant
-      docker pull "$CI_REGISTRY_IMAGE:$TAG"
-
-      # Apply all tags for explorer variant
-      for TAG_NAME in $TAGS; do
-        if [[ "$TAG_NAME" != "$TAG" ]]; then
-          docker tag "$CI_REGISTRY_IMAGE:$TAG" "$CI_REGISTRY_IMAGE:$TAG_NAME"
-        fi
-      done
-
-      # Push all tags for explorer variant to GitLab registry
-      for TAG_NAME in $TAGS; do
-        docker push "$CI_REGISTRY_IMAGE:$TAG_NAME"
-      done
-
-      # For protected tags, also push explorer variant to registry-upload.hive.blog
-      if [[ -n "$CI_COMMIT_TAG" ]] && [[ "$CI_COMMIT_TAG" =~ ^[v01] ]]; then
-        echo "Pushing explorer variant to registry-upload.hive.blog for protected tag..."
-        CI_PROJECT_NAME="${ORIGINAL_CI_REGISTRY_IMAGE##*/}"
-        docker tag "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" "registry-upload.hive.blog/$CI_PROJECT_NAME/explorer-subdirectory:$CI_COMMIT_SHORT_SHA"
-        docker tag "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG" "registry-upload.hive.blog/$CI_PROJECT_NAME/explorer-subdirectory:$CI_COMMIT_TAG"
-        docker push "registry-upload.hive.blog/$CI_PROJECT_NAME/explorer-subdirectory:$CI_COMMIT_SHORT_SHA"
-        docker push "registry-upload.hive.blog/$CI_PROJECT_NAME/explorer-subdirectory:$CI_COMMIT_TAG"
-      fi
-
-      echo "EXPLORER_SUBDIRECTORY_IMAGE_NAME=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" >> docker-build.env
-      echo "Explorer variant tag:"
-      echo "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
-      echo -e "\e[0Ksection_end:$(date +%s):build-explorer\r\e[0K"
+    echo "EXPLORER_SUBDIRECTORY_IMAGE_NAME=$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA" >> docker-build.env
+    echo "Explorer variant tag:"
+    echo "$CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA"
+    echo -e "\e[0Ksection_end:$(date +%s):build-explorer\r\e[0K"
   artifacts:
     reports:
       dotenv: docker-build.env
   tags:
-    - public-runner-docker
+  - public-runner-docker
 
 .node-job:
   extends: .job-defaults
@@ -149,39 +149,39 @@ docker-build:
     entrypoint: []
   stage: test
   script:
-    - |
-      echo -e "\e[0Ksection_start:$(date +%s):deps[collapsed=true]\r\e[0KInstalling dependencies..."
-      npm ci --cache .npm
-      echo -e "\e[0Ksection_end:$(date +%s):deps\r\e[0K"
+  - |
+    echo -e "\e[0Ksection_start:$(date +%s):deps[collapsed=true]\r\e[0KInstalling dependencies..."
+    npm ci --cache .npm
+    echo -e "\e[0Ksection_end:$(date +%s):deps\r\e[0K"
   cache:
     key: block-explorer-ui-cache-1
     paths:
-      - .npm/
-      - .next/
+    - .npm/
+    - .next/
   artifacts:
     name: "$CI_JOB_NAME-$CI_COMMIT_REF_NAME"
     when: always
     expire_in: 1 week
   tags:
-    - public-runner-docker
+  - public-runner-docker
 
 lint:
   extends: .node-job
   script:
-    - !reference [.node-job, script]
-    - |
-      echo -e "\e[0Ksection_start:$(date +%s):lint[collapsed=true]\r\e[0KRunning linter..."
-      npm run lint 2>&1 | tee npm-lint.log
-      echo -e "\e[0Ksection_end:$(date +%s):lint\r\e[0K"
+  - !reference [.node-job, script]
+  - |
+    echo -e "\e[0Ksection_start:$(date +%s):lint[collapsed=true]\r\e[0KRunning linter..."
+    npm run lint 2>&1 | tee npm-lint.log
+    echo -e "\e[0Ksection_end:$(date +%s):lint\r\e[0K"
   artifacts:
     paths:
-      - "npm-lint.log"
+    - "npm-lint.log"
 
 startup-test:
   extends: .docker_image_builder_job_template
   stage: test
   needs:
-    - docker-build
+  - docker-build
   variables:
     PORT: 5000
     API_ENDPOINT: http://192.168.4.250:3000/rpc
@@ -189,75 +189,75 @@ startup-test:
     CONTAINER_NAME: block-explorer-ui
     MESSAGE: Waiting for container startup...
   before_script:
-    - |
-      echo -e "\e[0Ksection_start:$(date +%s):login[collapsed=true]\r\e[0KLogging to Docker registry..."
-      docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-      echo -e "\e[0Ksection_end:$(date +%s):login\r\e[0K"
+  - |
+    echo -e "\e[0Ksection_start:$(date +%s):login[collapsed=true]\r\e[0KLogging to Docker registry..."
+    docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    echo -e "\e[0Ksection_end:$(date +%s):login\r\e[0K"
   script:
-    - |
-      echo -e "\e[0Ksection_start:$(date +%s):startup[collapsed=true]\r\e[0KStarting the test environment..."
+  - |
+    echo -e "\e[0Ksection_start:$(date +%s):startup[collapsed=true]\r\e[0KStarting the test environment..."
 
-      timeout -s INT -k 10 600 scripts/run_instance.sh \
-        --image="$IMAGE_NAME" \
-        --api-endpoint="$API_ENDPOINT" \
-        --hive-blog-api-endpoint="$HIVE_BLOG_API_ENDPOINT" \
-        --port="$PORT" \
-        --name="$CONTAINER_NAME" \
-        --detach
+    timeout -s INT -k 10 600 scripts/run_instance.sh \
+      --image="$IMAGE_NAME" \
+      --api-endpoint="$API_ENDPOINT" \
+      --hive-blog-api-endpoint="$HIVE_BLOG_API_ENDPOINT" \
+      --port="$PORT" \
+      --name="$CONTAINER_NAME" \
+      --detach
 
-      echo -e "\e[0Ksection_end:$(date +%s):startup\r\e[0K"
-      echo -e "\e[0Ksection_start:$(date +%s):wait[collapsed=true]\r\e[0K$MESSAGE"
+    echo -e "\e[0Ksection_end:$(date +%s):startup\r\e[0K"
+    echo -e "\e[0Ksection_start:$(date +%s):wait[collapsed=true]\r\e[0K$MESSAGE"
 
-      until [[ "healthy" == "$(docker inspect -f '{{ .State.Health.Status }}' "$CONTAINER_NAME")" ]]
-      do
-        echo "$MESSAGE"
-        sleep 3
-      done
+    until [[ "healthy" == "$(docker inspect -f '{{ .State.Health.Status }}' "$CONTAINER_NAME")" ]]
+    do
+      echo "$MESSAGE"
+      sleep 3
+    done
 
-      echo -e "\e[0Ksection_end:$(date +%s):wait\r\e[0K"
+    echo -e "\e[0Ksection_end:$(date +%s):wait\r\e[0K"
   after_script:
-    - |
-      docker logs --timestamps "$CONTAINER_NAME" > "$CONTAINER_NAME.log"
-      docker stop "$CONTAINER_NAME"
+  - |
+    docker logs --timestamps "$CONTAINER_NAME" > "$CONTAINER_NAME.log"
+    docker stop "$CONTAINER_NAME"
   artifacts:
     paths:
-      - "$CONTAINER_NAME.log"
+    - "$CONTAINER_NAME.log"
   tags:
-    - public-runner-docker
+  - public-runner-docker
 
 .e2e_tests_template:
   extends: .node-job
   image: mcr.microsoft.com/playwright:v1.47.0-jammy
   parallel:
     matrix:
-      - PROJECT: ["chromium", "firefox", "webkit"]
-        SHARD_INDEX: [1, 2, 3, 4, 5]
-        SHARD_TOTAL: 5
+    - PROJECT: ["chromium", "firefox", "webkit"]
+      SHARD_INDEX: [1, 2, 3, 4, 5]
+      SHARD_TOTAL: 5
   script:
-    - !reference [.node-job, script]
-    - |
-      echo -e "\e[0Ksection_start:$(date +%s):tests[collapsed=false]\r\e[0KRunning tests..."
-      cd ./
-      npx playwright test --project=$PROJECT --shard=$SHARD_INDEX/$SHARD_TOTAL --update-snapshots
-      echo -e "\e[0Ksection_end:$(date +%s):tests\r\e[0K"
+  - !reference [.node-job, script]
+  - |
+    echo -e "\e[0Ksection_start:$(date +%s):tests[collapsed=false]\r\e[0KRunning tests..."
+    cd ./
+    npx playwright test --project=$PROJECT --shard=$SHARD_INDEX/$SHARD_TOTAL --update-snapshots
+    echo -e "\e[0Ksection_end:$(date +%s):tests\r\e[0K"
   artifacts:
     paths:
-      - ./playwright-report/
-      - ./test-results/
-      - ./junit/
+    - ./playwright-report/
+    - ./test-results/
+    - ./junit/
     reports:
       junit: ./junit/**/**/results.xml
 
 e2e-tests:
   extends: .e2e_tests_template
   needs:
-    - docker-build
+  - docker-build
   services:
-    - name: $IMAGE_NAME
-      alias: block-explorer
-      variables:
-        REACT_APP_API_ADDRESS: https://api.hive.blog
-        REACT_APP_HIVE_BLOG_API_ADDRESS: https://api.hive.blog
+  - name: $IMAGE_NAME
+    alias: block-explorer
+    variables:
+      REACT_APP_API_ADDRESS: https://api.hive.blog
+      REACT_APP_HIVE_BLOG_API_ADDRESS: https://api.hive.blog
   variables:
     PORT: 5000
     BLOCK_EXPLORER_URL: http://block-explorer:$PORT
@@ -268,18 +268,18 @@ e2e-tests:
   when: always
   image: mcr.microsoft.com/playwright:v1.47.0-jammy
   script:
-    - cd ./
-    - npm install playwright-merge-html-reports --dev
-    - npx playwright test tests/playwright/merge-reports/ --config playwright.merge.config.ts
+  - cd ./
+  - npm install playwright-merge-html-reports --dev
+  - npx playwright test tests/playwright/merge-reports/ --config playwright.merge.config.ts
   artifacts:
     paths:
-      - ./merged-html-report/
-      - ./junit/
+    - ./merged-html-report/
+    - ./junit/
 
 e2e-report-aggregate:
   extends: .e2e_report_aggregate_template
   needs:
-    - e2e-tests
+  - e2e-tests
   variables:
     PROJECTS: '["chromium", "firefox", "webkit"]'
     SHARD_TOTAL: 5
@@ -290,28 +290,28 @@ e2e-report-aggregate:
   extends: .job-defaults
   stage: deploy
   needs:
-    - docker-build
-    - startup-test
+  - docker-build
+  - startup-test
   before_script:
-    - |
-      echo -e "\e[0Ksection_start:$(date +%s):login[collapsed=true]\r\e[0KLogging to Docker registry..."
-      docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-      echo -e "\e[0Ksection_end:$(date +%s):login\r\e[0K"
+  - |
+    echo -e "\e[0Ksection_start:$(date +%s):login[collapsed=true]\r\e[0KLogging to Docker registry..."
+    docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    echo -e "\e[0Ksection_end:$(date +%s):login\r\e[0K"
   script:
-    - |
-      scripts/run_instance.sh \
-        --image="$IMAGE_NAME" \
-        --api-endpoint="$API_ENDPOINT" \
-        --hive-blog-api-endpoint="$HIVE_BLOG_API_ENDPOINT" \
-        --port="$PORT" \
-        --name="$CONTAINER_NAME" \
-        --detach
+  - |
+    scripts/run_instance.sh \
+      --image="$IMAGE_NAME" \
+      --api-endpoint="$API_ENDPOINT" \
+      --hive-blog-api-endpoint="$HIVE_BLOG_API_ENDPOINT" \
+      --port="$PORT" \
+      --name="$CONTAINER_NAME" \
+      --detach
   rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: manual
-      allow_failure: true
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    when: manual
+    allow_failure: true
   tags:
-    - hs-bexplorer
+  - hs-bexplorer
 
 staging:deploy:
   extends: .deploy
@@ -325,9 +325,9 @@ staging:deploy:
     action: start
     on_stop: staging:stop
   rules:
-    - if: $CI_COMMIT_BRANCH == "master"
-      when: manual
-      allow_failure: true
+  - if: $CI_COMMIT_BRANCH == "master"
+    when: manual
+    allow_failure: true
 
 test:deploy:
   extends: .deploy
@@ -347,18 +347,18 @@ test:deploy:
   variables:
     GIT_STRATEGY: none
   script:
-    - docker ps -q --filter "name=$CONTAINER_NAME" | grep -q . && docker stop $CONTAINER_NAME
+  - docker ps -q --filter "name=$CONTAINER_NAME" | grep -q . && docker stop $CONTAINER_NAME
   rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-      when: manual
-      allow_failure: true
+  - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    when: manual
+    allow_failure: true
   tags:
-    - hs-bexplorer
+  - hs-bexplorer
 
 staging:stop:
   extends: .stop
   needs:
-    - staging:deploy
+  - staging:deploy
   variables:
     CONTAINER_NAME: block-explorer-ui
     GIT_STRATEGY: none
@@ -366,14 +366,14 @@ staging:stop:
     name: staging
     action: stop
   rules:
-    - if: $CI_COMMIT_BRANCH == "master"
-      when: manual
-      allow_failure: true
+  - if: $CI_COMMIT_BRANCH == "master"
+    when: manual
+    allow_failure: true
 
 test:stop:
   extends: .stop
   needs:
-    - test:deploy
+  - test:deploy
   variables:
     CONTAINER_NAME: block-explorer-ui-2
     GIT_STRATEGY: none
