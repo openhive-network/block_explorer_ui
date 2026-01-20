@@ -27,79 +27,96 @@ test.describe("Block Explorer UI tests", () => {
   });
 
   test("Move to the block page by clicking block link", async ({
-    page,
-    browserName,
-  }) => {
-    test.skip(
-      browserName === "webkit",
-      "This feature is fleaky only in Webkit"
-    );
-    test.slow();
-    await mainPage.gotoBlockExplorerPage();
-    await mainPage.validateMainPageIsLoaded();
+  page,
+  browserName,
+}) => {
+  test.skip(
+    browserName === "webkit",
+    "This feature is flaky only in Webkit"
+  );
+  await mainPage.gotoBlockExplorerPage();
+  await mainPage.validateMainPageIsLoaded();
 
-    // Extract number as string from Head Block Card Block Link
-    await mainPage.page.waitForSelector(
-      await mainPage.headBlockCardFundAndSupplyExpandableList["_selector"]
-    );
-    const block: string =
-      (await mainPage.headBlockCardBlockLink.textContent()) || "";
-    const foundNumberInBlock: any = block.match(RegExp(/\d+$/gm));
-    const blockNumber: string = await foundNumberInBlock[0];
-
-    await mainPage.headBlockCardBlockLink.click();
-    await blockPage.validateBlockPageIsLoaded();
-
-    // Extract number as string from Block Page Details Card
-    const blockNumberBlockPage: string =
-      (await blockPage.blockDetailsBlockNumber.textContent()) || "";
-    const foundNumberInBlockDetails: any = blockNumberBlockPage.match(
-      RegExp(/\d+$/gm)
-    );
-    const blockNumberDetails: string = await foundNumberInBlockDetails[0];
-
-    await blockPage.validateBlockNumber(blockNumber); // against block number in head block card
-    await blockPage.validateBlockNumber(blockNumberDetails); // against block number in Block Page Details Card
+  // Wait for the expandable list to be visible
+  await mainPage.headBlockCardFundAndSupplyExpandableList.waitFor({ 
+    state: 'visible',
+    timeout: 30000 
   });
+  
+  // Wait for network to be idle to ensure data is loaded
+  await page.waitForLoadState('networkidle');
+  
+  // Wait for the block link to be visible and have content
+  await expect(mainPage.headBlockCardBlockLink).toBeVisible({ timeout: 30000 });
+  await expect(mainPage.headBlockCardBlockLink).not.toBeEmpty({ timeout: 30000 });
+  await expect(mainPage.headBlockCardBlockLink).toContainText(/\d/, { timeout: 30000 });
+  
+  const block: string =
+    (await mainPage.headBlockCardBlockLink.textContent()) || "";
+  const foundNumberInBlock: any = block.match(RegExp(/\d+$/gm));
+  const blockNumber: string = await foundNumberInBlock[0];
+
+  await mainPage.headBlockCardBlockLink.click();
+  await blockPage.validateBlockPageIsLoaded();
+
+  // Extract number as string from Block Page Details Card
+  const blockNumberBlockPage: string =
+    (await blockPage.blockDetailsBlockNumber.textContent()) || "";
+  const foundNumberInBlockDetails: any = blockNumberBlockPage.match(
+    RegExp(/\d+$/gm)
+  );
+  const blockNumberDetails: string = await foundNumberInBlockDetails[0];
+
+  await blockPage.validateBlockNumber(blockNumber);
+  await blockPage.validateBlockNumber(blockNumberDetails);
+});
 
   test("Move to the block page by clicking block link and back to the home page", async ({
-    page,
-    browserName,
-  }) => {
-    test.skip(
-      browserName === "webkit",
-      "This feature is fleaky only in Webkit"
-    );
-    await mainPage.gotoBlockExplorerPage();
-    await mainPage.validateMainPageIsLoaded();
+  page,
+  browserName,
+}) => {
+  test.skip(
+    browserName === "webkit",
+    "This feature is flaky only in Webkit"
+  );
+  await mainPage.gotoBlockExplorerPage();
+  await mainPage.validateMainPageIsLoaded();
 
-    // Extract number as string from Head Block Card Block Link
-    await mainPage.page.waitForSelector(
-      await mainPage.headBlockCardFundAndSupplyExpandableList["_selector"]
-    );
-    const block: string =
-      (await mainPage.headBlockCardBlockLink.textContent()) || "";
-    const foundNumberInBlock: any = block.match(RegExp(/\d+$/gm));
-    const blockNumber: string = foundNumberInBlock[0];
-
-    await mainPage.headBlockCardBlockLink.click();
-    await blockPage.validateBlockPageIsLoaded();
-
-    // Extract number as string from Block Page Details Card
-    const blockNumberBlockPage: string =
-      (await blockPage.blockDetailsBlockNumber.textContent()) || "";
-    const foundNumberInBlockDetails: any = blockNumberBlockPage.match(
-      RegExp(/\d+$/gm)
-    );
-    const blockNumberDetails: string = foundNumberInBlockDetails[0];
-
-    await blockPage.validateBlockNumber(blockNumber); // against block number in head block card
-    await blockPage.validateBlockNumber(blockNumberDetails);
-    // Click Hive Block Explorer Link
-    await navbar.navBarHiveHeaderText.click();
-    // Validate Home Page is loaded
-    await mainPage.validateMainPageIsLoaded();
+  // Wait for the expandable list to be visible
+  await mainPage.headBlockCardFundAndSupplyExpandableList.waitFor({ 
+    state: 'visible',
+    timeout: 30000 
   });
+  
+  // Wait for network to be idle
+  await page.waitForLoadState('networkidle');
+  
+  // Wait for the block link to have content
+  await expect(mainPage.headBlockCardBlockLink).toBeVisible({ timeout: 30000 });
+  await expect(mainPage.headBlockCardBlockLink).not.toBeEmpty({ timeout: 30000 });
+  await expect(mainPage.headBlockCardBlockLink).toContainText(/\d/, { timeout: 30000 });
+  
+  const block: string =
+    (await mainPage.headBlockCardBlockLink.textContent()) || "";
+  const foundNumberInBlock: any = block.match(RegExp(/\d+$/gm));
+  const blockNumber: string = foundNumberInBlock[0];
+
+  await mainPage.headBlockCardBlockLink.click();
+  await blockPage.validateBlockPageIsLoaded();
+
+  const blockNumberBlockPage: string =
+    (await blockPage.blockDetailsBlockNumber.textContent()) || "";
+  const foundNumberInBlockDetails: any = blockNumberBlockPage.match(
+    RegExp(/\d+$/gm)
+  );
+  const blockNumberDetails: string = foundNumberInBlockDetails[0];
+
+  await blockPage.validateBlockNumber(blockNumber);
+  await blockPage.validateBlockNumber(blockNumberDetails);
+  
+  await navbar.navBarHiveHeaderText.click();
+  await mainPage.validateMainPageIsLoaded();
+});
 
   // Skipped: Account page API response too slow in CI environment
   test.skip("Move to the Account page by clicking current witness link", async ({
@@ -224,6 +241,7 @@ test.describe("Block Explorer UI tests", () => {
   }) => {
     await mainPage.gotoBlockExplorerPage();
     await mainPage.validateMainPageIsLoaded();
+    await expect(mainPage.headBlockCardBlockLink).toContainText(/\d/, { timeout: 30000 });
 
     await expect(mainPage.contentBlockchainDatesExpandableList).toBeHidden();
     await mainPage.headBlockCardBlockchainDatesExpandableList.click();
