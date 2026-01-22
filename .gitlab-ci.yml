@@ -420,7 +420,9 @@ publish_images:
   extends: .docker_publish_job_template
   stage: publish
   variables:
-    PUBLISH_IMAGES: "explorer-subdirectory"
+    # Publish both root image and explorer-subdirectory variant to hive.blog
+    # "block_explorer_ui" matches CI_PROJECT_NAME -> publishes root image
+    PUBLISH_IMAGES: "block_explorer_ui explorer-subdirectory"
   tags:
     - public-runner-docker
 
