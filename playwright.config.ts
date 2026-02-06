@@ -31,13 +31,7 @@ export default defineConfig({
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: process.env.CI
     ? [
-        [
-          'html',
-          {
-            open: 'never',
-            outputFolder: `playwright-report/${process.env.PROJECT}/${process.env.SHARD_INDEX}`
-          }
-        ],
+        ['blob', { outputDir: `blob-report/${process.env.PROJECT}/${process.env.SHARD_INDEX}` }],
         ['junit', { outputFile: `junit/${process.env.PROJECT}/${process.env.SHARD_INDEX}/results.xml` }],
         ['list', { printSteps: false }]
       ]
