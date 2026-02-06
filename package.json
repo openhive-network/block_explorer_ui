@@ -19,8 +19,8 @@
   },
   "dependencies": {
     "@headlessui/react": "^1.7.15",
-    "@hiveio/healthchecker-component": "1.28.4-rc0",
-    "@hiveio/wax": "^1.28.4-rc0",
+    "@hiveio/healthchecker-component": "1.28.4-rc0-stable.260206131716",
+    "@hiveio/wax": "2.0.0-rc2",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-label": "^2.0.2",
@@ -87,5 +87,6 @@
   "overrides": {
     "@types/react": "19.1.8",
     "@types/react-dom": "19.1.6"
-  }
+  },
+  "packageManager": "pnpm@10.15.0+sha512.486ebc259d3e999a4e8691ce03b5cac4a71cbeca39372a9b762cb500cfdf0873e2cb16abe3d951b1ee2cf012503f027b98b6584e4df22524e0c7450d9ec7aa7b"
 }
