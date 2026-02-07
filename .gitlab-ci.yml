@@ -303,7 +303,7 @@ e2e-tests:
   image: mcr.microsoft.com/playwright:v1.57.0-jammy
   script:
   - !reference [.node-job, script]
-  - npx playwright merge-reports --reporter html ./blob-report
+  - npx playwright merge-reports -c playwright.config.ts --reporter html ./blob-report
   artifacts:
     paths:
     - ./playwright-report/
