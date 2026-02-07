@@ -276,7 +276,7 @@ startup-test:
     echo -e "\e[0Ksection_end:$(date +%s):tests\r\e[0K"
   artifacts:
     paths:
-    - ./playwright-report/
+    - ./blob-report/
     - ./test-results/
     - ./junit/
     reports:
@@ -302,23 +302,17 @@ e2e-tests:
   when: always
   image: mcr.microsoft.com/playwright:v1.57.0-jammy
   script:
-  - cd ./
-  - npm install playwright-merge-html-reports --dev
-  - npx playwright test tests/playwright/merge-reports/ --config playwright.merge.config.ts
+  - !reference [.node-job, script]
+  - npx playwright merge-reports -c playwright.config.ts --reporter html ./blob-report
   artifacts:
     paths:
-    - ./merged-html-report/
+    - ./playwright-report/
     - ./junit/
 
 e2e-report-aggregate:
   extends: .e2e_report_aggregate_template
   needs:
   - e2e-tests
-  variables:
-    PROJECTS: '["chromium", "firefox", "webkit"]'
-    SHARD_TOTAL: 5
-    PORT: 5000
-    BLOCK_EXPLORER_URL: http://block-explorer:$PORT
 
 .deploy:
   extends: .job-defaults
