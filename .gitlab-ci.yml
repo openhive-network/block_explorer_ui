@@ -22,11 +22,19 @@ variables:
   # fetch workspaces during transition. Remove once all projects use fetch.
   GIT_CLONE_PATH: $CI_BUILDS_DIR/fetch/$CI_RUNNER_SHORT_TOKEN/$CI_CONCURRENT_ID/$CI_PROJECT_PATH
 
+  # Source change detection patterns
+  SOURCE_CODE_PATTERNS: "^(pages/|components/|hooks/|services/|utils/|types/|contexts/|styles/|i18n/|public/|app/|lib/|helpers/|Config\\.ts|next\\.config\\.js|tailwind\\.config\\.js|postcss\\.config\\.js|tsconfig\\.json|components\\.json|package\\.json|package-lock\\.json|pnpm-lock\\.yaml|Dockerfile|docker-bake\\.hcl|docker/)"
+  TEST_PATTERNS: "^(tests/|playwright\\.config\\.ts|playwright\\.local5000\\.config\\.ts)"
+  CI_SCRIPT_PATTERNS: "^(\\.gitlab-ci\\.yml|scripts/)"
+
 include:
 - template: Workflows/Branch-Pipelines.gitlab-ci.yml
 - project: "hive/common-ci-configuration"
   ref: develop
   file: "/templates/docker_image_jobs.gitlab-ci.yml"
+- project: "hive/common-ci-configuration"
+  ref: develop
+  file: "/templates/source_change_detection.gitlab-ci.yml"
 
 default:
   hooks:
@@ -78,10 +86,90 @@ default:
         fi
         )
 
+detect_changes:
+  extends: .detect_source_changes
+
+find_cached_image:
+  extends: .docker_image_builder_job_template
+  stage: build
+  needs:
+  - job: detect_changes
+    optional: true
+  rules:
+  - if: $TESTS_ONLY == "true"
+    when: on_success
+  - when: never
+  before_script:
+    - !reference [.docker_image_builder_job_template, before_script]
+    - |
+      echo -e "\e[0Ksection_start:$(date +%s):login[collapsed=true]\r\e[0KLogging to Docker registry..."
+      docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+      echo -e "\e[0Ksection_end:$(date +%s):login\r\e[0K"
+  script:
+  - |
+    echo -e "\e[0Ksection_start:$(date +%s):find_image[collapsed=true]\r\e[0KFinding cached image..."
+
+    # Fetch helper scripts from common-ci-configuration
+    SCRIPTS_URL="https://gitlab.syncad.com/hive/common-ci-configuration/-/raw/develop/scripts/bash"
+    mkdir -p /tmp/ci-scripts
+    for script in find-last-source-commit.sh get-cached-image.sh; do
+      wget -q -O "/tmp/ci-scripts/$script" "$SCRIPTS_URL/$script"
+      chmod +x "/tmp/ci-scripts/$script"
+    done
+
+    # Find the last commit that changed source code
+    COMMIT=$(/tmp/ci-scripts/find-last-source-commit.sh \
+      pages/ components/ hooks/ services/ utils/ types/ contexts/ styles/ \
+      i18n/ public/ app/ lib/ helpers/ Config.ts next.config.js \
+      tailwind.config.js postcss.config.js tsconfig.json components.json \
+      package.json package-lock.json pnpm-lock.yaml Dockerfile docker-bake.hcl docker/)
+    echo "Last source commit: $COMMIT"
+
+    # Check root image
+    /tmp/ci-scripts/get-cached-image.sh \
+      --commit="$COMMIT" \
+      --registry="$CI_REGISTRY_IMAGE" \
+      --require-hit \
+      --output=root-image.env
+    . root-image.env
+    ROOT_IMAGE="$IMAGE_NAME"
+    echo "Root image: $ROOT_IMAGE"
+
+    # Check explorer-subdirectory variant
+    /tmp/ci-scripts/get-cached-image.sh \
+      --commit="$COMMIT" \
+      --registry="$CI_REGISTRY_IMAGE" \
+      --image="explorer-subdirectory" \
+      --require-hit \
+      --output=explorer-image.env
+    . explorer-image.env
+    EXPLORER_IMAGE="$IMAGE_NAME"
+    echo "Explorer variant: $EXPLORER_IMAGE"
+
+    # Export for downstream jobs (same variable names as docker-build)
+    echo "IMAGE_NAME=$ROOT_IMAGE" > docker-build.env
+    echo "EXPLORER_SUBDIRECTORY_IMAGE_NAME=$EXPLORER_IMAGE" >> docker-build.env
+
+    echo "Cached images found:"
+    cat docker-build.env
+    echo -e "\e[0Ksection_end:$(date +%s):find_image\r\e[0K"
+  artifacts:
+    reports:
+      dotenv: docker-build.env
+  tags:
+  - public-runner-docker
+
 docker-build:
   extends: .docker_image_builder_job_template
   stage: build
+  needs:
+  - job: detect_changes
+    optional: true
   rules:
+  - if: $DOCS_ONLY == "true"
+    when: never
+  - if: $TESTS_ONLY == "true"
+    when: never
     # Run for all branches
   - if: '$CI_COMMIT_BRANCH'
     # Run for all tags
@@ -201,6 +289,13 @@ docker-build:
 
 lint:
   extends: .node-job
+  needs:
+  - job: detect_changes
+    optional: true
+  rules:
+  - if: $DOCS_ONLY == "true"
+    when: never
+  - when: on_success
   script:
   - !reference [.node-job, script]
   - |
@@ -215,7 +310,16 @@ startup-test:
   extends: .docker_image_builder_job_template
   stage: test
   needs:
-  - docker-build
+  - job: detect_changes
+    optional: true
+  - job: docker-build
+    optional: true
+  - job: find_cached_image
+    optional: true
+  rules:
+  - if: $DOCS_ONLY == "true"
+    when: never
+  - when: on_success
   variables:
     PORT: 5000
     API_ENDPOINT: http://192.168.4.250:3000/rpc
@@ -285,7 +389,16 @@ startup-test:
 e2e-tests:
   extends: .e2e_tests_template
   needs:
-  - docker-build
+  - job: detect_changes
+    optional: true
+  - job: docker-build
+    optional: true
+  - job: find_cached_image
+    optional: true
+  rules:
+  - if: $DOCS_ONLY == "true"
+    when: never
+  - when: on_success
   services:
   - name: $IMAGE_NAME
     alias: block-explorer
@@ -312,7 +425,13 @@ e2e-tests:
 e2e-report-aggregate:
   extends: .e2e_report_aggregate_template
   needs:
+  - job: detect_changes
+    optional: true
   - e2e-tests
+  rules:
+  - if: $DOCS_ONLY == "true"
+    when: never
+  - when: always
 
 .deploy:
   extends: .job-defaults
