@@ -437,8 +437,11 @@ e2e-report-aggregate:
   extends: .job-defaults
   stage: deploy
   needs:
-  - docker-build
-  - startup-test
+  - job: docker-build
+    optional: true
+  - job: find_cached_image
+    optional: true
+  - job: startup-test
   before_script:
   - |
     echo -e "\e[0Ksection_start:$(date +%s):login[collapsed=true]\r\e[0KLogging to Docker registry..."
