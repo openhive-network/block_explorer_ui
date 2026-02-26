@@ -442,6 +442,8 @@ e2e-report-aggregate:
   - job: find_cached_image
     optional: true
   - job: startup-test
+  variables:
+    GIT_CLONE_PATH: ""
   before_script:
   - |
     echo -e "\e[0Ksection_start:$(date +%s):login[collapsed=true]\r\e[0KLogging to Docker registry..."
@@ -496,6 +498,7 @@ test:deploy:
   stage: deploy
   variables:
     GIT_STRATEGY: none
+    GIT_CLONE_PATH: ""
   script:
   - docker ps -q --filter "name=$CONTAINER_NAME" | grep -q . && docker stop $CONTAINER_NAME
   rules:
