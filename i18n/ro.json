@@ -487,7 +487,7 @@
   "postPageContent.viewThread": "Vezi acest fir pe:",
   "autocompleteInput.account": "Cont",
   "autocompleteInput.block": "Bloc",
-  "autocompleteInput.transaction": "Tranzacție",
+  "autocompleteInput.tx": "Tranzacție",
   "autocompleteInput.invalidInput": "Intrare nevalidă",
   "delegationSort.Recipient": "Destinatar",
   "delegationSort.Amount": "Sumă",

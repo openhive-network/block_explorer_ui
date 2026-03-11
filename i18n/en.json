@@ -489,7 +489,7 @@
   "postPageContent.viewThread": "View this thread on:",
   "autocompleteInput.account": "Account",
   "autocompleteInput.block": "Block",
-  "autocompleteInput.transaction": "Transaction",
+  "autocompleteInput.tx": "Transaction",
   "autocompleteInput.invalidInput": "Invalid Entry",
   "delegationSort.Recipient": "Recipient",
   "delegationSort.Amount": "Amount",

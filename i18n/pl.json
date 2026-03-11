@@ -492,7 +492,7 @@
   "postPageContent.viewThread": "Zobacz ten wątek na:",
   "autocompleteInput.account": "Konto",
   "autocompleteInput.block": "Blok",
-  "autocompleteInput.transaction": "Transakcja",
+  "autocompleteInput.tx": "Transakcja",
   "autocompleteInput.invalidInput": "Nieprawidłowy wpis",
   "delegationSort.Recipient": "Odbiorca",
   "delegationSort.Amount": "Ilość",

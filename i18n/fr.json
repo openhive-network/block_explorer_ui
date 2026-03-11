@@ -491,7 +491,7 @@
   "postPageContent.viewThread": "Voir ce fil sur :",
   "autocompleteInput.account": "Compte",
   "autocompleteInput.block": "Bloc",
-  "autocompleteInput.transaction": "Transaction",
+  "autocompleteInput.tx": "Transaction",
   "autocompleteInput.invalidInput": "Entrée invalide",
   "delegationSort.Recipient": "Destinataire",
   "delegationSort.Amount": "Montant",

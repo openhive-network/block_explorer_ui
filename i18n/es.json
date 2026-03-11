@@ -490,7 +490,7 @@
   "postPageContent.viewThread": "Ver este hilo en:",
   "autocompleteInput.account": "Cuenta",
   "autocompleteInput.block": "Bloque",
-  "autocompleteInput.transaction": "Transacción",
+  "autocompleteInput.tx": "Transacción",
   "autocompleteInput.invalidInput": "Entrada inválida",
   "delegationSort.Recipient": "Destinatario",
   "delegationSort.Amount": "Monto",

@@ -499,7 +499,7 @@
   "postPageContent.viewThread": "عرض هذا الموضوع على:",
   "autocompleteInput.account": "حساب",
   "autocompleteInput.block": "بلوك",
-  "autocompleteInput.transaction": "معاملة",
+  "autocompleteInput.tx": "معاملة",
   "autocompleteInput.invalidInput": "إدخال غير صالح",
   "delegationSort.Recipient": "المستلم",
   "delegationSort.Amount": "المبلغ",

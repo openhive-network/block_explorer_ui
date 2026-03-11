@@ -492,7 +492,7 @@
   "postPageContent.viewThread": "Diesen Thread ansehen auf:",
   "autocompleteInput.account": "Konto",
   "autocompleteInput.block": "Block",
-  "autocompleteInput.transaction": "Transaktion",
+  "autocompleteInput.tx": "Transaktion",
   "autocompleteInput.invalidInput": "Ungültige Eingabe",
   "delegationSort.Recipient": "Empfänger",
   "delegationSort.Amount": "Betrag",
