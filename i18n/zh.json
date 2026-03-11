@@ -476,7 +476,7 @@
   "postPageContent.viewThread": "在此处查看此帖子：",
   "autocompleteInput.account": "账户",
   "autocompleteInput.block": "区块",
-  "autocompleteInput.transaction": "交易",
+  "autocompleteInput.tx": "交易",
   "autocompleteInput.invalidInput": "无效输入",
   "delegationSort.Recipient": "接收者",
   "delegationSort.Amount": "金额",

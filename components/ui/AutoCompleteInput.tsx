@@ -26,7 +26,7 @@ const getResultTypeHeader = (r: Hive.InputTypeResponse) =>
   r.input_type === "block_num"
     ? "block"
     : r.input_type === "transaction_hash"
-    ? "transaction"
+    ? "tx"
     : r.input_type === "block_hash"
     ? "block"
     : "account";

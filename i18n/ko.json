@@ -491,7 +491,7 @@
   "postPageContent.viewThread": "이 스레드를 다음에서 보기:",
   "autocompleteInput.account": "계정",
   "autocompleteInput.block": "블록",
-  "autocompleteInput.transaction": "트랜잭션",
+  "autocompleteInput.tx": "트랜잭션",
   "autocompleteInput.invalidInput": "잘못된 입력",
   "delegationSort.Recipient": "수신자",
   "delegationSort.Amount": "금액",

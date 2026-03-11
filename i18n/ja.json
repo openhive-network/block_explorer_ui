@@ -492,7 +492,7 @@
   "postPageContent.viewThread": "このスレッドを以下で表示：",
   "autocompleteInput.account": "アカウント",
   "autocompleteInput.block": "ブロック",
-  "autocompleteInput.transaction": "トランザクション",
+  "autocompleteInput.tx": "トランザクション",
   "autocompleteInput.invalidInput": "無効な入力",
   "delegationSort.Recipient": "受取人",
   "delegationSort.Amount": "金額",

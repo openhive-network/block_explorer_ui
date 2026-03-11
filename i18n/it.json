@@ -492,7 +492,7 @@
   "postPageContent.viewThread": "Visualizza questa discussione su:",
   "autocompleteInput.account": "Account",
   "autocompleteInput.block": "Blocco",
-  "autocompleteInput.transaction": "Transazione",
+  "autocompleteInput.tx": "Transazione",
   "autocompleteInput.invalidInput": "Inserimento non valido",
   "delegationSort.Recipient": "Destinatario",
   "delegationSort.Amount": "Importo",
