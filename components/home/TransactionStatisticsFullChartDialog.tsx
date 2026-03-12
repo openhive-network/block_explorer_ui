@@ -19,6 +19,7 @@ import { useSearchesContext } from "@/contexts/SearchesContext";
 import { Button } from "../ui/button";
 import useTransactionStatistics from "@/hooks/api/homePage/useTransactionStatistics";
 import TransactionStatisticsChart from "./TransactionStatisticsChart";
+import moment from "moment";
 import Hive from "@/types/Hive";
 import { Loader2 } from "lucide-react";
 import { useI18n } from "../../i18n/i18n";
