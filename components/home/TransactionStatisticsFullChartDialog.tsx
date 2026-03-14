@@ -39,10 +39,10 @@ const TransactionStatisticsFullChartDialog: React.FC<
   const [granularity, setGranularity] = useState<
     "daily" | "monthly" | "yearly"
   >("daily");
-  const [fromDate, setFromDate] = useState<Date | undefined>(
+  const [fromDate, setFromDate] = useState<Date | number | undefined>(
     moment().subtract(30, "days").toDate()
   );
-  const [toDate, setToDate] = useState<Date | undefined>(moment().toDate());
+  const [toDate, setToDate] = useState<Date | number | undefined>(moment().toDate());
   const [currentChartData, setCurrentChartData] = useState<
     Hive.TransactionStatisticsResponse[] | undefined
   >(initialData);
