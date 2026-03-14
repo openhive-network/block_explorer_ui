@@ -22,6 +22,8 @@ import TransactionStatisticsChart from "./TransactionStatisticsChart";
 import Hive from "@/types/Hive";
 import { Loader2 } from "lucide-react";
 import { useI18n } from "../../i18n/i18n";
+import useSearchRanges from "@/hooks/common/useSearchRanges";
+import moment from "moment";
 
 interface TransactionStatisticsModalProps {
   isOpen: boolean;
@@ -37,13 +39,17 @@ const TransactionStatisticsFullChartDialog: React.FC<
   const [granularity, setGranularity] = useState<
     "daily" | "monthly" | "yearly"
   >("daily");
-  const [fromDate, setFromDate] = useState<Date | undefined>(undefined);
-  const [toDate, setToDate] = useState<Date | undefined>(undefined);
+  const [fromDate, setFromDate] = useState<Date | undefined>(
+    moment().subtract(30, "days").toDate()
+  );
+  const [toDate, setToDate] = useState<Date | undefined>(moment().toDate());
   const [currentChartData, setCurrentChartData] = useState<
     Hive.TransactionStatisticsResponse[] | undefined
   >(initialData);
 
-  const { searchRanges } = useSearchesContext();
+  const { searchRanges: globalSearchRanges } = useSearchesContext();
+  // Create a local searchRanges instance for this dialog to avoid affecting global state
+  const searchRanges = useSearchRanges();
 
   const [isSearchButtonDisabled, setIsSearchButtonDisabled] = useState(false);
   const [buttonLabel, setButtonLabel] = useState("");
@@ -56,17 +62,18 @@ const TransactionStatisticsFullChartDialog: React.FC<
     isTransactionStatisticsError: isChartError,
   } = useTransactionStatistics(granularity, "asc", fromDate, toDate, false);
 
-  // Set initial data when modal opens or initialData prop changes
+  // Set initial data when modal opens
   useEffect(() => {
-    if (isOpen && initialData) {
-      setCurrentChartData(initialData);
+    if (isOpen) {
       setLastTimeUnitValue(30);
       setRangeSelectKey("lastTime");
       setTimeUnitSelectKey("days");
+      setFromDate(moment().subtract(30, "days").toDate());
+      setToDate(moment().toDate());
+      setGranularity("daily");
     }
   }, [
     isOpen,
-    initialData,
     setLastTimeUnitValue,
     setRangeSelectKey,
     setTimeUnitSelectKey,
@@ -94,13 +101,29 @@ const TransactionStatisticsFullChartDialog: React.FC<
   };
 
   const handleFilterClear = () => {
-    setRangeSelectKey("none");
+    setRangeSelectKey("lastTime");
     setTimeUnitSelectKey("days");
-    setLastTimeUnitValue(1000);
-    setFromDate(undefined);
-    setToDate(undefined);
+    setLastTimeUnitValue(30);
+    setFromDate(moment().subtract(30, "days").toDate());
+    setToDate(moment().toDate());
     setGranularity("daily");
     setCurrentChartData(transactionStatistics);
+  };
+
+  const handleGranularityChange = (value: "daily" | "monthly" | "yearly") => {
+    setGranularity(value);
+    if (value === "daily") {
+      setRangeSelectKey("lastTime");
+      setTimeUnitSelectKey("days");
+      setLastTimeUnitValue(30);
+      setFromDate(moment().subtract(30, "days").toDate());
+      setToDate(moment().toDate());
+    } else {
+      setRangeSelectKey("none");
+      setLastTimeUnitValue(undefined);
+      setFromDate(undefined);
+      setToDate(undefined);
+    }
   };
 
   return (
@@ -118,12 +141,8 @@ const TransactionStatisticsFullChartDialog: React.FC<
             <div className="flex flex-col gap-y-3 w-1/2 md:w-1/4">
               <Label>{t("transactionStatisticsFullChartDialog.granularity")}</Label>
               <Select
-                onValueChange={(value) => {
-                  setGranularity(value as "daily" | "monthly" | "yearly");
-                  setLastTimeUnitValue(undefined);
-                  setRangeSelectKey("none");
-                }}
-                defaultValue="daily"
+                onValueChange={(value) => handleGranularityChange(value as "daily" | "monthly" | "yearly")}
+                value={granularity}
               >
                 <SelectTrigger>
                   <SelectValue placeholder={t("transactionStatisticsFullChartDialog.selectGranularity")} />
