@@ -26,6 +26,7 @@ import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useSettings } from "@/contexts/SettingsContext";
+import { config } from "@/Config";
 
 interface BalanceHistoryChartProps {
   aggregatedAccountBalanceHistory?: {
@@ -456,11 +457,14 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             tickCount={6}
             allowDecimals={true}
             tickFormatter={(tick) => {
+              const precision = selectedCoinType === "VESTS" ? config.precisions.vests : config.precisions.hivePower;
+              const scaledTick = tick / Math.pow(10, precision);
+
               if (selectedCoinType === "VESTS") {
                 if (unit === "hp") {
                   if (!hiveChain || !dynamicGlobalData) return "0";
                   const hpTick = hiveChain.vestsToHp(
-                    tick * 1000000,
+                    tick,
                     dynamicGlobalData.headBlockDetails.rawTotalVestingFundHive,
                     dynamicGlobalData.headBlockDetails.rawTotalVestingShares
                   );
@@ -468,21 +472,32 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
                     typeof hpTick === "object" && hpTick !== null && "amount" in hpTick
                       ? parseFloat(hpTick.amount)
                       : parseFloat(hpTick as string);
-                  const hpTickNum = hpTickNumRaw / 1000000;
+                  const hpTickNum = hpTickNumRaw / 1000; // HP has 3 decimals precision
                   if (isNaN(hpTickNum)) return "0";
                   if (hpTickNum >= 1000)
-                    return `${formatNumber(Number(hpTickNum / 1000), false, false)}K`;
-                  return hpTickNum < 1
-                    ? hpTickNum < 0.01
-                      ? hpTickNum.toFixed(4)
-                      : hpTickNum.toFixed(3)
-                    : formatNumber(hpTickNum, false, false);
+                    return `${(hpTickNum / 1000).toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}K`;
+                  return hpTickNum.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  });
                 }
-                return tick < 1000
-                  ? formatNumber(tick, true, false)
-                  : `${formatNumber(tick / 1000, true, false)}K`;
+                return scaledTick < 1000
+                  ? scaledTick.toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })
+                  : `${(scaledTick / 1000).toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}K`;
               }
-              return formatNumber(tick, false, false);
+              return scaledTick.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              });
             }}
             scale="linear"
             minTickGap={20}
@@ -494,7 +509,10 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             domain={[minDollarValue, maxDollarValue]}
             style={{ fontSize: "10px" }}
             tickFormatter={(tick) =>
-              `$${formatNumber(tick, false, false)}`
+              `$${(tick / 1000).toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`
             }
             tickCount={6}
             allowDecimals={true}

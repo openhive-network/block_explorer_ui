@@ -23,6 +23,8 @@ import moment from "moment";
 import Hive from "@/types/Hive";
 import { Loader2 } from "lucide-react";
 import { useI18n } from "../../i18n/i18n";
+import useSearchRanges from "@/hooks/common/useSearchRanges";
+import moment from "moment";
 
 interface TransactionStatisticsModalProps {
   isOpen: boolean;
@@ -46,7 +48,9 @@ const TransactionStatisticsFullChartDialog: React.FC<
     Hive.TransactionStatisticsResponse[] | undefined
   >(initialData);
 
-  const { searchRanges } = useSearchesContext();
+  const { searchRanges: globalSearchRanges } = useSearchesContext();
+  // Create a local searchRanges instance for this dialog to avoid affecting global state
+  const searchRanges = useSearchRanges();
 
   const [isSearchButtonDisabled, setIsSearchButtonDisabled] = useState(false);
   const [buttonLabel, setButtonLabel] = useState("");
@@ -59,7 +63,7 @@ const TransactionStatisticsFullChartDialog: React.FC<
     isTransactionStatisticsError: isChartError,
   } = useTransactionStatistics(granularity, "asc", fromDate, toDate, false);
 
-  // Set initial data when modal opens or initialData prop changes
+  // Set initial data when modal opens
   useEffect(() => {
     if (isOpen) {
       setLastTimeUnitValue(30);

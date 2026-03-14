@@ -84,7 +84,7 @@ const TransferVolumeChart: React.FC<TransferVolumeChartProps> = ({
                 {t("transferVolumeChart.totalTransferAmount")}
               </p>
               <p className="font-semibold leading-none text-right">
-                {total_transfer_amount?.toLocaleString(locale)}
+                {total_transfer_amount?.toLocaleString()}
               </p>
             </div>
             <div>
@@ -92,7 +92,7 @@ const TransferVolumeChart: React.FC<TransferVolumeChartProps> = ({
                 {t("transferVolumeChart.transferCount")}
               </p>
               <p className="font-semibold leading-none text-right">
-                {transfer_count?.toLocaleString(locale)}
+                {transfer_count?.toLocaleString()}
               </p>
             </div>
             <div>
@@ -100,7 +100,7 @@ const TransferVolumeChart: React.FC<TransferVolumeChartProps> = ({
                 {t("transferVolumeChart.averageTransferAmount")}
               </p>
               <p className="font-semibold leading-none text-right">
-                {average_transfer_amount?.toLocaleString(locale, {
+                {average_transfer_amount?.toLocaleString(undefined, {
                   maximumFractionDigits: 2,
                 })}
               </p>
@@ -110,7 +110,7 @@ const TransferVolumeChart: React.FC<TransferVolumeChartProps> = ({
                 {t("transferVolumeChart.maxTransferAmount")}
               </p>
               <p className="font-semibold leading-none text-right">
-                {maximum_transfer_amount?.toLocaleString(locale, {
+                {maximum_transfer_amount?.toLocaleString(undefined, {
                   maximumFractionDigits: 2,
                 })}
               </p>
@@ -120,7 +120,7 @@ const TransferVolumeChart: React.FC<TransferVolumeChartProps> = ({
                 {t("transferVolumeChart.minTransferAmount")}
               </p>
               <p className="font-semibold leading-none text-right">
-                {minimum_transfer_amount?.toLocaleString(locale, {
+                {minimum_transfer_amount?.toLocaleString(undefined, {
                   maximumFractionDigits: 2,
                 })}
               </p>
@@ -135,19 +135,19 @@ const TransferVolumeChart: React.FC<TransferVolumeChartProps> = ({
   const formatYAxis = (tickValue: number) => {
     if (tickValue >= 1000000) {
       return (
-        (tickValue / 1000000).toLocaleString(locale, {
+        (tickValue / 1000000).toLocaleString(undefined, {
           maximumFractionDigits: 0,
         }) + "M"
       );
     }
     if (tickValue >= 1000) {
       return (
-        (tickValue / 1000).toLocaleString(locale, {
+        (tickValue / 1000).toLocaleString(undefined, {
           maximumFractionDigits: 0,
         }) + "k"
       );
     }
-    return tickValue.toLocaleString(locale, { maximumFractionDigits: 0 });
+    return tickValue.toLocaleString(undefined, { maximumFractionDigits: 0 });
   };
 
   const calculateYAxisDomain = () => {
