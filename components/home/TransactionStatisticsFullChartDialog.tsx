@@ -24,7 +24,6 @@ import Hive from "@/types/Hive";
 import { Loader2 } from "lucide-react";
 import { useI18n } from "../../i18n/i18n";
 import useSearchRanges from "@/hooks/common/useSearchRanges";
-import moment from "moment";
 
 interface TransactionStatisticsModalProps {
   isOpen: boolean;
