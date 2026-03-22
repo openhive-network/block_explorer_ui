@@ -164,7 +164,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
                 <TableCell className="cursor-pointer whitespace-nowrap">
                   <CopyToKeyboard
                     value={accountAuthoritiesData?.memo}
-                    displayValue={isMobile ? cutPublicKey(accountAuthoritiesData?.memo) : accountAuthoritiesData?.memo}
+                    displayValue={isMobile ? cutPublicKey(accountAuthoritiesData?.memo) : (accountAuthoritiesData?.memo ?? "")}
                   />
                 </TableCell>
               </TableRow>
@@ -181,9 +181,8 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
                     <TableCell className="cursor-pointer whitespace-nowrap">
                       <CopyToKeyboard
                         value={accountAuthoritiesData?.witness_signing}
-                        displayValue={isMobile ? cutPublicKey(accountAuthoritiesData?.witness_signing) : accountAuthoritiesData?.witness_signing}
-                      />
-                    </TableCell>
+                        displayValue={isMobile ? cutPublicKey(accountAuthoritiesData?.witness_signing) : (accountAuthoritiesData?.witness_signing ?? "")}
+                      />                    </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
