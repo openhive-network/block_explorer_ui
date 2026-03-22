@@ -84,6 +84,7 @@ interface TableProps extends React.HTMLAttributes<HTMLTableElement> {
   isStandaloneTable?: boolean;
   isDialog?: boolean;
   enableCompactToggle?: boolean;
+  noOverflow?: boolean;
 }
 
 const Table = React.forwardRef<HTMLTableElement, TableProps>(
@@ -95,6 +96,7 @@ const Table = React.forwardRef<HTMLTableElement, TableProps>(
       isStandaloneTable = false,
       isDialog = false,
       enableCompactToggle = false,
+      noOverflow = false,
       ...props
     },
     ref
@@ -212,7 +214,7 @@ const Table = React.forwardRef<HTMLTableElement, TableProps>(
               </div>
             )}
 
-            <div className="w-full overflow-auto" ref={tableRef}>
+            <div className={cn("w-full", noOverflow ? "overflow-hidden" : "overflow-auto")} ref={tableRef}>
               <table
                 ref={ref}
                 className={cn(
