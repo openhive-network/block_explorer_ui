@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableRow } from "../ui/table";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import CopyToKeyboard from "../CopyToKeyboard";
 import { useI18n } from "@/i18n/i18n";
+import useMediaQuery from "@/hooks/common/useMediaQuery";
 
 interface AccountMainCardProps {
   accountName: string;
@@ -33,6 +34,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
     accountName,
     liveDataEnabled,
   );
+  const isMobile = useMediaQuery("(max-width: 639px)");
 
   const [isPropertiesHidden, setIsPropertiesHidden] = useState<boolean>(!isInitiallyOpen);
 
@@ -60,7 +62,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
           "bg-rowEven": index % 2 === 0,
         })}
       >
-        <TableCell className="cursor-pointer">
+        <TableCell className="cursor-pointer whitespace-nowrap">
           {isAccount ? (
             <Link
               className="text-link flex"
@@ -72,11 +74,11 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
           ) : (
             <CopyToKeyboard
               value={content}
-              displayValue={cutPublicKey(content)}
+              displayValue={isMobile ? cutPublicKey(content) : content}
             />
           )}
         </TableCell>
-        <TableCell className="w-1/5">{weight}</TableCell>
+        <TableCell className="text-right">{weight}</TableCell>
       </TableRow>
     );
   };
@@ -96,7 +98,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
     return (
       <div>
         <div className="text-lg mt-2">{title}</div>
-        <Table>
+        <Table noOverflow={true}>
           <TableBody>
             {keyAuths.map(([weight, key], index) =>
               renderAuthority(key, weight, false, index)
@@ -111,7 +113,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
               })}
             >
               <TableCell>{t("accountAuthoritiesCard.threshold")}</TableCell>
-              <TableCell>{a?.weight_threshold}</TableCell>
+              <TableCell className="text-right">{a?.weight_threshold}</TableCell>
             </TableRow>
           </TableBody>
         </Table>
@@ -138,7 +140,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
 
       <CardContent
         hidden={isPropertiesHidden}
-        className="break-all"
+        className="break-normal"
       >
         {renderCollectionOfAuthorities(
           accountAuthoritiesData?.owner,
@@ -156,13 +158,13 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
           <div className="text-lg mt-2">
             {t("accountAuthoritiesCard.memo")}:
           </div>
-          <Table>
+          <Table noOverflow={true}>
             <TableBody>
               <TableRow className="bg-rowEven">
-                <TableCell className="cursor-pointer">
+                <TableCell className="cursor-pointer whitespace-nowrap">
                   <CopyToKeyboard
                     value={accountAuthoritiesData?.memo}
-                    displayValue={cutPublicKey(accountAuthoritiesData?.memo)}
+                    displayValue={isMobile ? cutPublicKey(accountAuthoritiesData?.memo) : accountAuthoritiesData?.memo}
                   />
                 </TableCell>
               </TableRow>
@@ -173,15 +175,13 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
               <div className="text-lg mt-2">
                 {t("accountAuthoritiesCard.witnessSigning")}:
               </div>
-              <Table>
+              <Table noOverflow={true}>
                 <TableBody>
                   <TableRow className="bg-rowEven">
-                    <TableCell className="cursor-pointer">
+                    <TableCell className="cursor-pointer whitespace-nowrap">
                       <CopyToKeyboard
                         value={accountAuthoritiesData?.witness_signing}
-                        displayValue={cutPublicKey(
-                          accountAuthoritiesData?.witness_signing
-                        )}
+                        displayValue={isMobile ? cutPublicKey(accountAuthoritiesData?.witness_signing) : accountAuthoritiesData?.witness_signing}
                       />
                     </TableCell>
                   </TableRow>

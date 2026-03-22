@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table";
 import CopyToKeyboard from "../CopyToKeyboard";
 import VestsTooltip from "../VestsTooltip";
+import useMediaQuery from "@/hooks/common/useMediaQuery";
 
 type AccountDetailsCardProps = {
   header: string;
@@ -48,10 +49,13 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
   isInitiallyOpen
 }) => {
   const [isPropertiesHidden, setIsPropertiesHidden] = useState(!isInitiallyOpen);
+  const isMobile = useMediaQuery("(max-width: 639px)");
 
   const keys = Object.keys(userDetails);
 
   const renderKey = (key: keyof Record<string, any>): ReactNode => {
+// ... (omitting renderKey implementation for now, will use replacement carefully)
+
     if (LINK_KEYS.includes(key)) {
       return (
         <div className="text-link">
@@ -63,14 +67,23 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
     }
     if (COPY_KEYS.includes(key)) {
       const stringProperty = userDetails[key] as string;
-      let shortenedKey: string = "";
-      shortenedKey = `${stringProperty?.slice(0, 8)}...${stringProperty?.slice(
-        stringProperty.length - 5
-      )}`;
+
+      if (isMobile) {
+        const shortenedKey = `${stringProperty?.slice(0, 8)}...${stringProperty?.slice(
+          stringProperty.length - 5
+        )}`;
+        return (
+          <CopyToKeyboard
+            value={stringProperty}
+            displayValue={shortenedKey}
+          />
+        );
+      }
+
       return (
         <CopyToKeyboard
           value={stringProperty}
-          displayValue={shortenedKey}
+          displayValue={stringProperty}
         />
       );
     }
@@ -114,8 +127,8 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
         return (
           <Fragment key={index}>
             <TableRow>
-              <TableCell>{key}</TableCell>
-              <TableCell>{renderKey(key)}</TableCell>
+              <TableCell className="whitespace-nowrap">{key}</TableCell>
+              <TableCell className="whitespace-nowrap">{renderKey(key)}</TableCell>
             </TableRow>
           </Fragment>
         );
@@ -145,7 +158,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
         data-testid="card-content"
         hidden={isPropertiesHidden}
       >
-        <Table>
+        <Table noOverflow={true}>
           <TableBody className="text-sm">{buildTableBody(keys)}</TableBody>
         </Table>
       </CardContent>
