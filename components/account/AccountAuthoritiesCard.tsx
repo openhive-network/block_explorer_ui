@@ -9,7 +9,7 @@ import { Table, TableBody, TableCell, TableRow } from "../ui/table";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import CopyToKeyboard from "../CopyToKeyboard";
 import { useI18n } from "@/i18n/i18n";
-import useMediaQuery from "@/hooks/common/useMediaQuery";
+import useElementWidth from "@/hooks/common/useElementWidth";
 
 interface AccountMainCardProps {
   accountName: string;
@@ -34,7 +34,8 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
     accountName,
     liveDataEnabled,
   );
-  const isMobile = useMediaQuery("(max-width: 639px)");
+  const [containerRef, containerWidth] = useElementWidth<HTMLDivElement>();
+  const isTooNarrow = containerWidth > 0 && containerWidth < 450;
 
   const [isPropertiesHidden, setIsPropertiesHidden] = useState<boolean>(!isInitiallyOpen);
 
@@ -74,7 +75,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
           ) : (
             <CopyToKeyboard
               value={content}
-              displayValue={isMobile ? cutPublicKey(content) : content}
+              displayValue={isTooNarrow ? cutPublicKey(content) : content}
             />
           )}
         </TableCell>
@@ -139,6 +140,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
       </CardHeader>
 
       <CardContent
+        ref={containerRef}
         hidden={isPropertiesHidden}
         className="break-normal"
       >
@@ -164,7 +166,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
                 <TableCell className="cursor-pointer whitespace-nowrap">
                   <CopyToKeyboard
                     value={accountAuthoritiesData?.memo}
-                    displayValue={isMobile ? cutPublicKey(accountAuthoritiesData?.memo) : (accountAuthoritiesData?.memo ?? "")}
+                    displayValue={isTooNarrow ? cutPublicKey(accountAuthoritiesData?.memo) : (accountAuthoritiesData?.memo ?? "")}
                   />
                 </TableCell>
               </TableRow>
@@ -181,7 +183,7 @@ const AccountAuthoritiesCard: React.FC<AccountMainCardProps> = ({
                     <TableCell className="cursor-pointer whitespace-nowrap">
                       <CopyToKeyboard
                         value={accountAuthoritiesData?.witness_signing}
-                        displayValue={isMobile ? cutPublicKey(accountAuthoritiesData?.witness_signing) : (accountAuthoritiesData?.witness_signing ?? "")}
+                        displayValue={isTooNarrow ? cutPublicKey(accountAuthoritiesData?.witness_signing) : (accountAuthoritiesData?.witness_signing ?? "")}
                       />                    </TableCell>
                   </TableRow>
                 </TableBody>

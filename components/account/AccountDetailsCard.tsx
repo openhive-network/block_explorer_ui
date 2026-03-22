@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader } from "../ui/card";
 import { Table, TableBody, TableCell, TableRow } from "../ui/table";
 import CopyToKeyboard from "../CopyToKeyboard";
 import VestsTooltip from "../VestsTooltip";
-import useMediaQuery from "@/hooks/common/useMediaQuery";
+import useElementWidth from "@/hooks/common/useElementWidth";
 
 type AccountDetailsCardProps = {
   header: string;
@@ -49,13 +49,12 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
   isInitiallyOpen
 }) => {
   const [isPropertiesHidden, setIsPropertiesHidden] = useState(!isInitiallyOpen);
-  const isMobile = useMediaQuery("(max-width: 639px)");
+  const [containerRef, containerWidth] = useElementWidth<HTMLDivElement>();
+  const isTooNarrow = containerWidth > 0 && containerWidth < 450;
 
   const keys = Object.keys(userDetails);
 
   const renderKey = (key: keyof Record<string, any>): ReactNode => {
-// ... (omitting renderKey implementation for now, will use replacement carefully)
-
     if (LINK_KEYS.includes(key)) {
       return (
         <div className="text-link">
@@ -68,7 +67,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
     if (COPY_KEYS.includes(key)) {
       const stringProperty = userDetails[key] as string;
 
-      if (isMobile) {
+      if (isTooNarrow) {
         const shortenedKey = `${stringProperty?.slice(0, 8)}...${stringProperty?.slice(
           stringProperty.length - 5
         )}`;
@@ -155,6 +154,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
         </div>
       </CardHeader>
       <CardContent
+        ref={containerRef}
         data-testid="card-content"
         hidden={isPropertiesHidden}
       >
