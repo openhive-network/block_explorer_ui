@@ -42,14 +42,23 @@ const TransferVolumeChart: React.FC<TransferVolumeChartProps> = ({
     if (!data || data.length === 0) {
       return [];
     }
-    return data.map((item) => ({
-      date: item.date,
-      total_transfer_amount: parseFloat(item.total_transfer_amount), // Parse to number
-      transfer_count: item.transfer_count,
-      average_transfer_amount: parseFloat(item.average_transfer_amount),
-      maximum_transfer_amount: parseFloat(item.maximum_transfer_amount),
-      minimum_transfer_amount: parseFloat(item.minimum_transfer_amount),
-    }));
+    const seenDates = new Set();
+    const uniqueData = [];
+    for (const item of data) {
+      const dateStr = moment(item.date).format("YYYY-MM-DD");
+      if (!seenDates.has(dateStr)) {
+        seenDates.add(dateStr);
+        uniqueData.push({
+          date: item.date,
+          total_transfer_amount: parseFloat(item.total_transfer_amount), // Parse to number
+          transfer_count: item.transfer_count,
+          average_transfer_amount: parseFloat(item.average_transfer_amount),
+          maximum_transfer_amount: parseFloat(item.maximum_transfer_amount),
+          minimum_transfer_amount: parseFloat(item.minimum_transfer_amount),
+        });
+      }
+    }
+    return uniqueData;
   }, [data]);
 
   const CustomTooltip = ({

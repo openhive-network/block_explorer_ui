@@ -41,13 +41,22 @@ const TransactionStatisticsChart: React.FC<TransactionStatisticsChartProps> = ({
     if (!data || data.length === 0) {
       return [];
     }
-    return data.map((item) => ({
-      date: item.date,
-      trx_count: item.trx_count,
-      avg_trx: item.avg_trx,
-      min_trx: item.min_trx,
-      max_trx: item.max_trx,
-    }));
+    const seenDates = new Set();
+    const uniqueData = [];
+    for (const item of data) {
+      const dateStr = moment(item.date).format("YYYY-MM-DD");
+      if (!seenDates.has(dateStr)) {
+        seenDates.add(dateStr);
+        uniqueData.push({
+          date: item.date,
+          trx_count: item.trx_count,
+          avg_trx: item.avg_trx,
+          min_trx: item.min_trx,
+          max_trx: item.max_trx,
+        });
+      }
+    }
+    return uniqueData;
   }, [data]);
   
   const CustomTooltip = ({
