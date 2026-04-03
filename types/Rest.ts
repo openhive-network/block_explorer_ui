@@ -187,5 +187,10 @@ export const extendedRest = {
       responseArray: true,
       urlPath: "transfer-statistics",
     },
+    totalValueLocked: {
+      params: undefined,
+      result: Hive.TotalValueLocked,
+      urlPath: "total-value-locked",
+    },
   },
 };
