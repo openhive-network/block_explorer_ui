@@ -53,17 +53,21 @@ const TotalValueLockedCard = () => {
 
     // Convert VESTS to HP
     // The total_vests from the TVL API is a raw integer string with 6 decimals precision
-    const totalHpString = convertVestsToHP(
-      hiveChain,
-      {
-        amount: total_vests,
-        precision: 6,
-        nai: "@@000000037",
-      },
+    const totalVestsSupply: Hive.Supply = {
+      amount: total_vests,
+      precision: 6,
+      nai: "@@000000037",
+    };
+
+    const totalHpAsset = hiveChain.vestsToHp(
+      totalVestsSupply,
       rawTotalVestingFundHive,
       rawTotalVestingShares
     );
-    const totalHpValue = grabNumericValue(totalHpString || "0");
+
+    const totalHpValue = grabNumericValue(
+      hiveChain.formatter.format(totalHpAsset)
+    );
     const totalVestsUsd = totalHpValue * hivePrice;
 
     // Savings HIVE to USD (3 decimals precision)
@@ -83,7 +87,7 @@ const TotalValueLockedCard = () => {
       totalSavingsHbdUsd,
       totalUsdValue,
       totalVests: totalHpValue,
-      totalVestsRaw: grabNumericValue(total_vests) / 1000000,
+      totalVestsFormatted: hiveChain.formatter.format(totalVestsSupply),
       totalSavingsHive: totalSavingsHiveValue,
       totalSavingsHbd: totalSavingsHbdValue,
     };
@@ -129,7 +133,7 @@ const TotalValueLockedCard = () => {
                   <span className="text-xs text-gray-500">
                     {settings.displayVestHpMode === "hp"
                       ? `${tvlDetails?.totalVests.toLocaleString()} HP`
-                      : `${tvlDetails?.totalVestsRaw.toLocaleString()} VESTS`}
+                      : tvlDetails?.totalVestsFormatted}
                   </span>
                 </div>
                 <span className="font-bold text-explorer-dark-gray dark:text-text">
