@@ -6,6 +6,7 @@ import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
 import useTotalValueLocked from "@/hooks/api/homePage/useTotalValueLocked";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
+import Hive from "@/types/Hive";
 
 import { grabNumericValue } from "@/utils/StringUtils";
 
