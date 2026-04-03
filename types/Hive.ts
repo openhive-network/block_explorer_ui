@@ -1143,6 +1143,13 @@ namespace Hive {
     account!: string;
     value!: string;
   }
+
+  export class TotalValueLocked {
+    block_num!: number;
+    total_vests!: string;
+    savings_hive!: string;
+    savings_hbd!: string;
+  }
 }
 
 export default Hive;

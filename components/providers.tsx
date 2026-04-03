@@ -76,9 +76,9 @@ const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
           <DynamicLayoutManager>
             <HiveChainContextProvider>
               <AddressesContextProvider>
-                <HealthCheckerContextProvider>
-                  <ErrorBoundary fallback={<ErrorPage />}>
-                    <ThemeProvider>
+                <ThemeProvider>
+                  <HealthCheckerContextProvider>
+                    <ErrorBoundary fallback={<ErrorPage />}>
                         <HeadBlockContextProvider>
                           <OperationTypesContextProvider>
                             <SearchesContextProvider>
@@ -87,9 +87,9 @@ const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
                             </SearchesContextProvider>
                           </OperationTypesContextProvider>
                         </HeadBlockContextProvider>
-                    </ThemeProvider>
-                  </ErrorBoundary>
-                </HealthCheckerContextProvider>
+                    </ErrorBoundary>
+                  </HealthCheckerContextProvider>
+                </ThemeProvider>
               </AddressesContextProvider>
             </HiveChainContextProvider>
           </DynamicLayoutManager>

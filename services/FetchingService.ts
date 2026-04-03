@@ -811,6 +811,12 @@ class FetchingService {
       page,
     });
   }
+
+  async getTotalValueLocked(): Promise<Hive.TotalValueLocked> {
+    return await this.extendedHiveChain!.restApi[
+      "balance-api"
+    ].totalValueLocked();
+  }
 }
 
 const fetchingService = new FetchingService();
