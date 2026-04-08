@@ -5,6 +5,9 @@ FROM node:18.20-alpine3.20 AS base
 
 FROM base AS deps
 
+ARG NPM_CONFIG_REGISTRY
+ENV NPM_CONFIG_REGISTRY=${NPM_CONFIG_REGISTRY}
+
 RUN apk add --no-cache libc6-compat
 WORKDIR /home/node/app
 RUN chown node /home/node/app

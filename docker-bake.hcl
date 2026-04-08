@@ -15,6 +15,9 @@ variable "GIT_CURRENT_BRANCH" {}
 variable "GIT_LAST_LOG_MESSAGE" {}
 variable "GIT_LAST_COMMITTER" {}
 variable "GIT_LAST_COMMIT_DATE" {}
+variable "NPM_CONFIG_REGISTRY" {
+  default = ""
+}
 
 function "notempty" {
   params = [variable]
@@ -40,6 +43,7 @@ target "local-build" {
     GIT_LAST_LOG_MESSAGE = "${GIT_LAST_LOG_MESSAGE}",
     GIT_LAST_COMMITTER = "${GIT_LAST_COMMITTER}",
     GIT_LAST_COMMIT_DATE = "${GIT_LAST_COMMIT_DATE}",
+    NPM_CONFIG_REGISTRY = "${NPM_CONFIG_REGISTRY}",
   }
   output = [
     "type=docker"
