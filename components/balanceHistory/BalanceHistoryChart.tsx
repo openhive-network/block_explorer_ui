@@ -365,8 +365,17 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     const mainMax = Math.max(...mainValues, 0);
     const secondaryMax = Math.max(...secondaryValues, 0);
 
+   // If coin is VESTS, set min height of at least 1000.
+   // This prevents decimal ticks (0.2, 0.8) which crash the Wasm library.
+    let mainUpperLimit;
+    if (selectedCoinType === "VESTS") {
+      mainUpperLimit = mainMax < 1000 ? 1000 : mainMax * 1.1;
+    } else {
+      mainUpperLimit = mainMax === 0 ? 1 : mainMax * 1.1;
+    }
+
     return {
-      main: [0, mainMax === 0 ? 1 : mainMax * 1.1],
+      main: [0, mainUpperLimit],
       secondary: [0, secondaryMax === 0 ? 1 : secondaryMax * 1.1],
     };
   };
@@ -457,14 +466,17 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             tickCount={6}
             allowDecimals={true}
             tickFormatter={(tick) => {
+              const numericTick = Number(tick);
+              const safeTick = selectedCoinType === "VESTS" ? Math.floor(numericTick) : tick;
+             
               const precision = selectedCoinType === "VESTS" ? config.precisions.vests : config.precisions.hivePower;
-              const scaledTick = tick / Math.pow(10, precision);
+              const scaledTick = safeTick / Math.pow(10, precision);
 
               if (selectedCoinType === "VESTS") {
                 if (unit === "hp") {
                   if (!hiveChain || !dynamicGlobalData) return "0";
                   const hpTick = hiveChain.vestsToHp(
-                    tick,
+                    safeTick,
                     dynamicGlobalData.headBlockDetails.rawTotalVestingFundHive,
                     dynamicGlobalData.headBlockDetails.rawTotalVestingShares
                   );
