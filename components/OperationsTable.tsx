@@ -12,7 +12,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import Explorer from "@/types/Explorer";
 import { Button } from "./ui/button";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, Loader2 } from "lucide-react";
 import JSONView from "./JSONView";
 import { getOperationTypeForDisplay } from "@/utils/UI";
 import CopyJSON from "./CopyJSON";
@@ -34,6 +34,8 @@ import DataCountMessage from "./DataCountMessage";
 import { useI18n } from "../i18n/i18n";
 import { safelyParseJson } from "@/utils/JsonUtils";
 import { useSettings } from "@/contexts/SettingsContext";
+import useOperation from "@/hooks/api/common/useOperation";
+import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
 
 interface OperationsTableProps {
   operationCount?: number;
@@ -74,9 +76,17 @@ const getOneLineDescription = (
   if (operation.operation.type === "custom_json_operation")
     return value.message;
   if (operation.operation.type === "body_placeholder_operation") {
+    const operationId = value?.["org-op-id"];
+    const originalType = (value as any)?.["org-operation_type"];
+
+    //If it's a comment, use the dynamic component
+    if (originalType === "comment_operation" && operationId) {
+      return <LongCommentDescription operationId={String(operationId)} t={t} />;
+    }
+
     return (
       <div className="text-link">
-      <Link
+        <Link
           onClick={(e) => e.stopPropagation()}
           href={`/longOperation/${operation.operation.value?.["org-op-id"]}`}
         >
@@ -87,6 +97,23 @@ const getOneLineDescription = (
   }
   return null;
 };
+
+const LongCommentDescription = ({
+  operationId,
+  t,
+}: {
+  operationId: string;
+  t: (key: string) => string;
+}) => {
+  const { operationData, operationDataIsFetched } = useOperation(operationId);
+  const formattedAccountOperations = useOperationsFormatter(operationData);
+
+  if (!operationDataIsFetched) {
+    return <Loader2 className="h-4 w-4 animate-spin" />;
+  }
+  return formattedAccountOperations.op.value;
+};
+
 
 const getOperationValues = (operation: Hive.Operation) => {
   let valueAsObject = operation.value;
@@ -286,11 +313,18 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
             </TableHeader>
             <TableBody>
               {operations.map((operation, index, allOperations) => {
+                const op = operation.operation;
+                const isPlaceholder = op?.type === "body_placeholder_operation";
+                const originalType = (op.value as any)?.["org-operation_type"];
+                
+                // If it's a placeholder for a comment, treat it as a comment for UI/Color purposes
+                const effectiveType = (isPlaceholder && originalType === "comment_operation")
+                  ? "comment_operation"
+                  : op?.type;
+
                 const nextTransactionId: string | undefined =
                   allOperations[index + 1]?.trxId;
-                const operationBgColor = getOperationColor(
-                  operation.operation?.type
-                );
+                    const operationBgColor = getOperationColor(effectiveType);
                 const operationPerspective =
                   operation.operation?.value?.perspective;
 
@@ -401,9 +435,22 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                             className={`rounded w-4 mr-2 ${operationBgColor}`}
                           ></span>
                           <span>
-                            {getOperationTypeForDisplay(
-                              operation.operation?.type
-                            )}
+                            {(() => {
+                              const op = operation.operation;
+                              let displayType = op?.type;
+
+                              if (op?.type === "body_placeholder_operation") {
+                                // check if the original type is specifically "comment_operation"
+                                const originalType = (op.value as any)?.[
+                                  "org-operation_type"
+                                ];
+                                if (originalType === "comment_operation") {
+                                  displayType = "comment_operation";
+                                }
+                                // If it's something else  it stays as 'body_placeholder_operation'
+                              }
+                              return getOperationTypeForDisplay(displayType);
+                            })()}
                           </span>
                         </div>
                       </TableCell>
@@ -432,7 +479,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                                 e.stopPropagation();
                                 setExpanded((prevExpanded) => [
                                   ...prevExpanded.filter(
-                                    (id) => id !== operation.operationId
+                                    (id) => id !== operation.operationId,
                                   ),
                                 ]);
                               }}
