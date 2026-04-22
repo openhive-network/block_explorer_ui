@@ -21,7 +21,9 @@ import { OperationTypesContextProvider } from "@/contexts/OperationsTypesContext
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { SearchesContextProvider } from "@/contexts/SearchesContext";
 import { HealthCheckerContextProvider } from "@/contexts/HealthCheckerContext";
+
 import { config } from "@/Config";
+import { AuthContextProvider } from "@/contexts/AuthContext";
 
 // This component lives *inside* the SettingsProvider, so it can safely call useSettings().
 // Its job is to manage the dynamic layout width based on the setting.
@@ -72,27 +74,29 @@ const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <QueryClientProvider client={queryClient}>
       <I18nProvider initialLocale="en">
-        <SettingsProvider> 
-          <DynamicLayoutManager>
-            <HiveChainContextProvider>
-              <AddressesContextProvider>
-                <ThemeProvider>
-                  <HealthCheckerContextProvider>
-                    <ErrorBoundary fallback={<ErrorPage />}>
-                        <HeadBlockContextProvider>
-                          <OperationTypesContextProvider>
-                            <SearchesContextProvider>
-                              <Layout>{children}</Layout>
-                              <ReactQueryDevtools initialIsOpen={false} />
-                            </SearchesContextProvider>
-                          </OperationTypesContextProvider>
-                        </HeadBlockContextProvider>
-                    </ErrorBoundary>
-                  </HealthCheckerContextProvider>
-                </ThemeProvider>
-              </AddressesContextProvider>
-            </HiveChainContextProvider>
-          </DynamicLayoutManager>
+        <SettingsProvider>
+           <AuthContextProvider>
+            <DynamicLayoutManager>
+              <HiveChainContextProvider>
+                <AddressesContextProvider>
+                  <ThemeProvider>
+                    <HealthCheckerContextProvider>
+                      <ErrorBoundary fallback={<ErrorPage />}>
+                          <HeadBlockContextProvider>
+                            <OperationTypesContextProvider>
+                              <SearchesContextProvider>
+                                <Layout>{children}</Layout>
+                                <ReactQueryDevtools initialIsOpen={false} />
+                              </SearchesContextProvider>
+                            </OperationTypesContextProvider>
+                          </HeadBlockContextProvider>
+                      </ErrorBoundary>
+                    </HealthCheckerContextProvider>
+                  </ThemeProvider>
+                </AddressesContextProvider>
+              </HiveChainContextProvider>
+            </DynamicLayoutManager>
+          </AuthContextProvider> 
         </SettingsProvider>
       </I18nProvider>
     </QueryClientProvider>

@@ -15,6 +15,8 @@ import LanguageSelector from "./home/LanguageSelector";
 import { useI18n } from "@/i18n/i18n";
 import { ExploreMenu } from "./ExploreMenu";
 import { getImageSrc } from "@/utils/PathUtils";
+import LoginControl from "./login/LoginControl";
+
 
 export default function Navbar() {
   const { t } = useI18n();
@@ -36,6 +38,7 @@ export default function Navbar() {
             <div className="flex-grow flex items-center justify-end gap-x-1 w-[90%]">
               <SearchBar open={searchBarOpen} onChange={setSearchBarOpen} className="h-[36px]" />
               <SyncInfo />
+              <LoginControl isMobile={isMobile}/>
               <Menu height={34} width={34} onClick={() => setMenuOpen(true)} className="flex-shrink-0 cursor-pointer" />
             </div>
             <div
@@ -129,6 +132,7 @@ export default function Navbar() {
                   <LanguageSelector />
                   <SyncInfo />
                   <ThemeToggle />
+                  <LoginControl />
                   <ExploreMenu />
                 </div>
               </div>

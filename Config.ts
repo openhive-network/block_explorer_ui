@@ -72,4 +72,26 @@ export const config = {
     "https://api.hive.blog",
     "https://hafbe.openhive.network",
   ],
+  hivesigner: {
+    // The Hive account name that owns the app
+    app: process.env.HIVESIGNER_APP,
+    defaultCallBack: process.env.REACT_APP_HIVESIGNER_CALLBACK as string,
+    scope: ['vote', 'comment', 'custom_json', 'claim_reward_balance'],
+    endpoints: {
+      authorize: "https://hivesigner.com/oauth2/authorize",
+      token: "https://hivesigner.com/api/oauth2/token",
+      broadcast: "https://hivesigner.com/api/broadcast"
+    }
+  },  
+  security: {
+    keychainTimeout : 60000,
+    nodeTimeout: 8000,
+    sessionMaxAge: 604800,
+    rateLimits: {
+      interval: 60000,            // 1 minute
+      maxTrackedIps: 1000,        // How many unique IPs to keep in memory
+      loginLimit: 5,              // Attempts per interval
+      broadcastLimit: 30,         // Actions per interval
+    }
+  }
 };
