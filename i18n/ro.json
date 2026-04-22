@@ -1064,5 +1064,25 @@
   "dashbord.addWidget": "Adaugă Widget",
   "dashbord.doneEditing": "Finalizează Editarea",
   "dashbord.editLayout": "Editează Aspectul",
-  "dashbord.restoreWarning": "Sunteți sigur că doriți să restaurați aspectul implicit? Toate personalizările dvs. curente, inclusiv pozițiile și dimensiunile widget-urilor, vor fi pierdute permanent. Această acțiune nu poate fi anulată."
+  "dashbord.restoreWarning": "Sunteți sigur că doriți să restaurați aspectul implicit? Toate personalizările dvs. curente, inclusiv pozițiile și dimensiunile widget-urilor, vor fi pierdute permanent. Această acțiune nu poate fi anulată.",
+  "auth.login": "Autentificare",
+  "auth.signIn": "Conectare",
+  "auth.signOut": "Deconectare",
+  "auth.usernameLabel": "Nume utilizator Hive",
+  "auth.usernamePlaceholder": "Introduceți numele de utilizator",
+  "auth.keychain": "Hive Keychain",
+  "auth.keychainDescription": "Autentificat prin extensie",
+  "auth.newToHive": "Nou pe Hive?",
+  "auth.createAccount": "Creează cont",
+  "auth.connectSecurely": "Conectează-te în siguranță la Hive.",
+  "auth.errorNoKeychain": "Extensia Hive Keychain nu a fost găsită. Vă rugăm să o instalați pentru a continua.",
+  "auth.keyChainTimeout": "A apărut o expirare a timpului la conectarea cu Key Chain",
+  "auth.myProfile": "Profilul meu",
+  "auth.errorUserCancelled": "Autentificarea a fost anulată de utilizator.",
+  "auth.errorMissingKey": "În Keychain-ul tău lipsește cheia de postare (Posting Key) necesară pentru acest cont.",
+  "auth.errorInvalidUser": "Acest nume de cont Hive nu există.",
+  "auth.hivesignermessage": "Autentificare Universală / Mobilă",
+  "auth.loggedInVia": "Autentificat prin",
+  "auth.errorTooManyAttempts" : "Prea multe încercări. Vă rugăm așteptați 1 minut."
+
 }
