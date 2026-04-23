@@ -259,7 +259,7 @@ export const ProposalCard = ({
   const formattedVestsTooltip = `${formatNumber(
     proposal.total_votes,
     true,
-    true
+    false
   )} VESTS`;
 
   const votesNeededInVests = useMemo(() => {
@@ -287,7 +287,7 @@ export const ProposalCard = ({
   }, [votesNeededInVests, dynamicGlobalData, hiveChain]);
 
   const formattedNeededVestsTooltip = votesNeededInVests
-    ? `${formatNumber(votesNeededInVests, true, true)} VESTS`
+    ? `${formatNumber(votesNeededInVests, true, false)} VESTS`
     : "";
 
   const statusConfig = {
@@ -604,7 +604,7 @@ export const ReturnProposalCard = ({
   const formattedVestsTooltip = `${formatNumber(
     proposal.total_votes,
     true,
-    true
+    false
   )} VESTS`;
   const totalMs = proposal.end_date.getTime() - proposal.start_date.getTime();
   const totalDays =
