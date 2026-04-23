@@ -18,9 +18,9 @@ Web-based GUI for exploring Hive blockchain data. Features include:
 - **Framework**: Next.js 15.3.3, React 18.3.1, TypeScript 5.1.6 (strict mode)
 - **Styling**: Tailwind CSS 3.4.12, Shadcn UI (Radix UI primitives)
 - **Data Fetching**: React Query (TanStack Query) 4.29.25
-- **Blockchain**: @hiveio/wax 1.28.4-rc0, @hiveio/hb-healthchecker-component
+- **Blockchain**: @hiveio/wax 2.0.1, @hiveio/hb-healthchecker-component
 - **Charts**: ECharts 5.6.0, Recharts 2.9.2
-- **Testing**: Playwright 1.47.0 (Chromium, Firefox, WebKit)
+- **Testing**: Playwright 1.57.0 (Chromium, Firefox, WebKit)
 - **Runtime**: Node.js 18.20.0+
 
 ## Directory Structure
