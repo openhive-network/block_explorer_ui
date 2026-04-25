@@ -10,7 +10,18 @@ To run the application you have to install Node JS (18.20.0 or higher is prefera
 npm install
 ```
 
-After some time you can start the application with:
+## Add .env file with the following 
+
+- REACT_APP_API_ADDRESS=https://api.hive.blog
+- REACT_APP_HIVE_BLOG_API_ADDRESS=https://api.hive.blog
+
+**Private: Backend needs these for the secret handshake for hivesigner login**
+- NEXT_PUBLIC_HIVESIGNER_CALLBACK = your_url -  Registered URL and whitelisted in Hivesigner 
+- NEXT_PUBLIC_HIVESIGNER_APP=your_app_name - App name registered in Hivesigner 
+- HIVESIGNER_SECRET=some_key - Secret Key for handshakes set in Hivesigner
+ 
+
+## Start the application with:
 
 ```bash
 npm run dev

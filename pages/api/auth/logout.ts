@@ -1,16 +1,35 @@
 import { serialize } from 'cookie';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { config } from '@/Config';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Only allow POST to prevent accidental logouts via URL browsing
+  // 1. Only allow POST to prevent accidental logouts via URL browsing
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  res.setHeader('Set-Cookie', serialize('hivescan_auth', '', {
-    maxAge: -1, // Expire immediately
+  // 2. Define standard security flags for deletion
+  const securityFlags = {
     path: '/',
-  }));
+    maxAge: -1, // Expire immediately
+    secure: true,
+    sameSite: 'strict' as const, // Prevents the logout from being triggered by 3rd parties
+  };
+
+  // 3. Clear the AUTH cookie (HttpOnly)
+  const authCookie = serialize('hivescan_auth', '', {
+    ...securityFlags,
+    httpOnly: true,
+  });
+
+  // 4. Clear the CSRF cookie
+  const csrfCookie = serialize('hivescan_csrf', '', {
+    ...securityFlags,
+    httpOnly: false, // CSRF cookie was accessible to JS
+  });
+
+  // Apply both deletion headers
+  res.setHeader('Set-Cookie', [authCookie, csrfCookie]);
   
   res.status(200).json({ success: true });
 }
