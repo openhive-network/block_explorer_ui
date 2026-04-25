@@ -2,14 +2,21 @@ import { serialize } from 'cookie';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { loginLimiter } from '@/utils/RateLimit';
 import { config } from '@/Config';
+import crypto from 'crypto';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'anonymous';
+  // SAFE IP DETECTION: 
+  // We take the first IP in the list (the real client) 
+  // and fallback to remoteAddress if the header is missing.
+  const forwarded = req.headers["x-forwarded-for"];
+  const ip = typeof forwarded === 'string' 
+    ? forwarded.split(',')[0].trim() 
+    : req.socket.remoteAddress || 'anonymous';
 
   try {
-    await loginLimiter.check(res, config.security.rateLimits.loginLimit, ip as string);
+    await loginLimiter.check(res, config.security.rateLimits.loginLimit, ip);
   } catch {
     return res.status(429).json({ error: 'auth.errorTooManyAttempts' });
   }
@@ -31,18 +38,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const data = await response.json();
 
     if (data.access_token) {
-      const cookie = serialize('hivescan_auth', data.access_token, {
+      const csrfToken = crypto.randomBytes(32).toString('hex');
+
+      const authCookie = serialize('hivescan_auth', data.access_token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production', // Only over HTTPS
+        secure: true,
+        sameSite: 'strict',
         path: '/',
         maxAge: config.security.sessionMaxAge,
       });
 
-      res.setHeader('Set-Cookie', cookie);
+      const csrfCookie = serialize('hivescan_csrf', csrfToken, {
+        httpOnly: false, 
+        secure: true,
+        sameSite: 'strict',
+        path: '/',
+        maxAge: config.security.sessionMaxAge,
+      });
+
+      res.setHeader('Set-Cookie', [authCookie, csrfCookie]);
       return res.status(200).json({ username: data.username, success: true });
     }
     
-    // Use a token for the failure
     res.status(400).json({ error: 'auth.errorLoginFailed' });
   } catch (error) {
     console.error("Hivesigner exchange error:", error);

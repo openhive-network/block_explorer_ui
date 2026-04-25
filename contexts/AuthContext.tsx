@@ -1,7 +1,9 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback, useRef } from 'react';
 import { Client } from '@hiveio/dhive';
 import { config } from "@/Config";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
+
+const hiveClient = new Client([config.nodeAddress]);
 
 interface AuthContextType {
     username: string | null;
@@ -9,7 +11,7 @@ interface AuthContextType {
     method: 'keychain' | 'hivesigner' | null;
     accessToken: string | null; 
     login: (username: string, method: 'keychain' | 'hivesigner') => Promise<void>;
-    logout: () => void;
+    logout: () => Promise<void>;
     isLoggedIn: boolean;
     isInitializing: boolean; 
 }
@@ -23,14 +25,19 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({ childre
     const [accessToken, setAccessToken] = useState<string | null>(null);
     const [isInitializing, setIsInitializing] = useState(true);
 
+    const methodRef = useRef(method);
+    useEffect(() => {
+        methodRef.current = method;
+    }, [method]);
+
+    const hasInitialized = useRef(false);
+
     const login = useCallback(async (user: string, authMethod: 'keychain' | 'hivesigner') => {
-        const client = new Client([config.nodeAddress]);
         try {
-            // Use config for node timeout, fallback to 8s if missing
             const nodeTimeout = config.security?.nodeTimeout || 8000;
 
             const account = await Promise.race([
-                client.database.getAccounts([user]).then(res => res[0]),
+                hiveClient.database.getAccounts([user]).then(res => res[0]),
                 new Promise((_, reject) => setTimeout(() => reject(new Error("NODE_TIMEOUT")), nodeTimeout))
             ]) as any;
 
@@ -40,9 +47,6 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({ childre
                 setAvatar(getHiveAvatarUrl(user));
                 
                 if (typeof window !== 'undefined') {
-                    // We only store the basic info. 
-                    // HS tokens are in HttpOnly cookies (JS can't see them)
-                    // Keychain doesn't use tokens.
                     localStorage.setItem('hivescan_user', JSON.stringify({ 
                         username: user, 
                         method: authMethod 
@@ -52,10 +56,10 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({ childre
                 throw new Error("USER_NOT_FOUND");
             }
         } catch (error) {
-            console.error("Login Error:", error);
+            console.error("Login Context Error:", error);
             throw error;
         }
-    }, []);
+    }, []); 
 
     const logout = useCallback(async () => {
         // 1. If Hivesigner, tell the server to wipe the HttpOnly cookie
@@ -77,9 +81,13 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({ childre
             localStorage.removeItem('hivescan_user');
             sessionStorage.removeItem('hs_auth_nonce');
         }
-    }, [method]);
+    }, []); 
 
     useEffect(() => {
+        // Prevent re-runs in StrictMode or during state transitions
+        if (hasInitialized.current) return;
+        hasInitialized.current = true;
+
         const initializeAuth = async () => {
             if (typeof window === 'undefined') return;
             
@@ -88,7 +96,7 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({ childre
             const stateFromUrl = urlParams.get('state');
 
             try {
-                // CASE 1: HIVESIGNER REDIRECT (Authorization Code Flow)
+                // 1. Handle secure Authorization Code redirect
                 if (codeFromUrl && stateFromUrl) {
                     const state = JSON.parse(decodeURIComponent(stateFromUrl));
                     const savedNonce = sessionStorage.getItem('hs_auth_nonce');
@@ -98,7 +106,7 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({ childre
                         throw new Error("CSRF_SPOOF_DETECTED");
                     }
 
-                    // Exchange code for token via our private API
+                    // Exchange code for HttpOnly cookie via private API
                     const res = await fetch('/api/auth/hs-exchange', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -109,22 +117,20 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({ childre
                     
                     if (data.username) {
                         sessionStorage.removeItem('hs_auth_nonce');
-                        // The token is now in an HttpOnly cookie set by the server
                         await login(data.username, 'hivesigner'); 
                         window.history.replaceState({}, document.title, window.location.pathname);
                     }
                 } 
-                // CASE 2: PAGE REFRESH (Persistent Session)
+                // 2. Handle page refresh/returning session
                 else {
                     const saved = localStorage.getItem('hivescan_user');
                     if (saved) {
                         const { username, method } = JSON.parse(saved);
-                        // If HS: Browser sends cookie automatically. If Keychain: No token needed.
                         await login(username, method);
                     }
                 }
             } catch (e) {
-                console.error("Auth initialization failed", e);
+                console.error("Auth initialization failure");
                 if (codeFromUrl) logout();
             } finally {
                 setIsInitializing(false);
@@ -134,7 +140,16 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({ childre
     }, [login, logout]);
 
     return (
-        <AuthContext.Provider value={{ username, avatar, method, accessToken, login, logout, isLoggedIn: !!username, isInitializing }}>
+        <AuthContext.Provider value={{ 
+            username, 
+            avatar, 
+            method, 
+            accessToken, 
+            login, 
+            logout, 
+            isLoggedIn: !!username, 
+            isInitializing 
+        }}>
             {children}
         </AuthContext.Provider>
     );

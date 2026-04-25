@@ -1,10 +1,10 @@
 import React from "react";
 import { useI18n } from "@/i18n/i18n";
-import {
-    User, ChevronRight, Loader2,
-    ShieldCheck,
+import { 
+    User, ChevronRight, Loader2, 
+    ShieldCheck, 
 } from "lucide-react";
-import { DialogHeader, DialogTitle } from "../ui/dialog";
+import { DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog";
 import { cn } from "@/lib/utils";
 import ErrorMessage from "../ErrorMessage";
 import Image from "next/image";
@@ -45,16 +45,16 @@ const LoginDialog: React.FC<LoginDialogProps> = ({
                     <DialogTitle className="text-3xl font-extrabold tracking-tight">
                         {t("auth.signIn")}
                     </DialogTitle>
-                    <p className="text-sm text-explorer-dark-gray dark:text-white mt-1">
+                    <DialogDescription className="text-sm mt-1">
                         {t("auth.connectSecurely")}
-                    </p>
+                    </DialogDescription>
                 </DialogHeader>
 
                 <div className="space-y-6">
-                    <ErrorMessage
-                        message={error}
-                        onClose={() => setError(null)}
-                        isWarning={true}
+                    <ErrorMessage 
+                        message={error} 
+                        onClose={() => setError(null)} 
+                        isWarning={true} 
                     />
 
                     {/* Username Input Section */}
@@ -87,7 +87,8 @@ const LoginDialog: React.FC<LoginDialogProps> = ({
                         >
                             <div className="flex items-center gap-5">
                                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center border border-primary/20 shadow-sm group-hover:scale-110 transition-transform text-primary">
-                                    {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <Image alt="logo" width={40} height={40} src={keychainLogo} />}
+                                    {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <Image alt="logo" width={40} height={40} src={keychainLogo} style={{ height: 'auto' }}
+                                    />}
                                 </div>
                                 <div className="text-left text-text">
                                     <p className="text-md font-bold">{t("auth.keychain")}</p>
@@ -109,7 +110,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({
                         >
                             <div className="flex items-center gap-5">
                                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-500/5 flex items-center justify-center border border-blue-500/20 shadow-sm group-hover:scale-110 transition-transform">
-                                    <Image alt="logo" width={30} height={30} src={Hslogo} />
+                                    <Image alt="logo" width={30} height={30} src={Hslogo} style={{ height: 'auto' }} />
                                 </div>
                                 <div className="text-left text-text">
                                     <p className="text-md font-bold">Hivesigner</p>

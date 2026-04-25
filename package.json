@@ -51,7 +51,7 @@
     "eslint-config-next": "15.3.3",
     "hivesigner": "^4.0.0",
     "long": "^5.2.3",
-    "lru-cache": "^11.3.5",
+    "lru-cache": "^10.4.3",
     "lucide-react": "^0.474.0",
     "moment": "^2.29.4",
     "next": "15.3.3",

@@ -1,4 +1,4 @@
-export type LoginMethod = 'keychain' | 'hivesigner' | 'hiveauth' | 'wif';
+export type LoginMethod = 'keychain' | 'hivesigner';
 
 export interface SmartSignerResponse {
   username: string;

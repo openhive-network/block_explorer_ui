@@ -74,8 +74,8 @@ export const config = {
   ],
   hivesigner: {
     // The Hive account name that owns the app
-    app: process.env.HIVESIGNER_APP,
-    defaultCallBack: process.env.REACT_APP_HIVESIGNER_CALLBACK as string,
+    app: process.env.NEXT_PUBLIC_HIVESIGNER_APP,
+    defaultCallBack: process.env.NEXT_PUBLIC_HIVESIGNER_CALLBACK as string,
     scope: ['vote', 'comment', 'custom_json', 'claim_reward_balance'],
     endpoints: {
       authorize: "https://hivesigner.com/oauth2/authorize",
@@ -92,6 +92,7 @@ export const config = {
       maxTrackedIps: 1000,        // How many unique IPs to keep in memory
       loginLimit: 5,              // Attempts per interval
       broadcastLimit: 30,         // Actions per interval
-    }
+    },
+    allowedOperations: ['vote', 'claim_reward_balance', 'custom_json'],
   }
 };

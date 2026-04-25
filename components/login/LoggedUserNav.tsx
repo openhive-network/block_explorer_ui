@@ -75,6 +75,7 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
           src={avatar || getHiveAvatarUrl(username || "")}
           alt="avatar"
           className="w-7 h-7 rounded-full border border-border/50 object-cover"
+          style={{ height: 'auto' }}
         />
         {!isMobile && (
           <span className="text-xs font-bold text-text">{username}</span>
