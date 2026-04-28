@@ -5,6 +5,7 @@ import Explorer from "@/types/Explorer";
 import Hive from "@/types/Hive";
 import { IHiveChainInterface } from "@hiveio/wax";
 import useAccountRecurrentTransfers from "../api/accountPage/useAccoutRecurrentTransfers";
+import useAccountBalances from "../api/accountPage/useAccountBalances";
 
 export const VEST_HP_KEYS_MAP: Record<string, string> = {
   reward_vesting_balance: "vest_reward_vesting_balance",
@@ -33,6 +34,7 @@ const useConvertedAccountDetails = (
   const { hiveChain } = useHiveChainContext();
   const { accountDetails, notFound, isAccountDetailsLoading } =
     useAccountDetails(accountName, liveDataEnabled);
+  const { accountBalancesData } = useAccountBalances(accountName);
   const { recurrentTransfers } = useAccountRecurrentTransfers(
     accountName,
     liveDataEnabled
@@ -114,10 +116,37 @@ const useConvertedAccountDetails = (
     rawTotalVestingShares
   );
 
+  const api = accountBalancesData as any;
+
+  const balanceApiFormatted = {
+    open_orders_hive_amount: hiveChain.hive(api.open_orders_hive_amount),
+    open_orders_hbd_amount: hiveChain.hbd(api.open_orders_hbd_amount),
+    conversion_pending_amount_hive: hiveChain.hive(
+      api.conversion_pending_amount_hive,
+    ),
+    conversion_pending_amount_hbd: hiveChain.hbd(
+      api.conversion_pending_amount_hbd,
+    ),
+    savings_pending_amount_hive: hiveChain.hive(
+      api.savings_pending_amount_hive,
+    ),
+    savings_pending_amount_hbd: hiveChain.hbd(api.savings_pending_amount_hbd),
+    escrow_pending_amount_hive: hiveChain.hive(api.escrow_pending_amount_hive),
+    escrow_pending_amount_hbd: hiveChain.hbd(api.escrow_pending_amount_hbd),
+
+    // Counts (Passed as raw values)
+    conversion_pending_count_hive: api.conversion_pending_count_hive,
+    conversion_pending_count_hbd: api.conversion_pending_count_hbd,
+    escrow_pending_count: api.escrow_pending_count,
+    open_orders_hbd_count: api.open_orders_hbd_count,
+    open_orders_hive_count: api.open_orders_hive_count,
+  };
+
   // Put values for display
   const accountDetailsForFormat = {
     ...accountDetails,
     ...vests,
+     ...balanceApiFormatted,
     balance: hiveChain.hive(accountDetails.balance),
     savings_balance: hiveChain.hive(accountDetails.savings_balance),
     hbd_balance: hiveChain.hbd(accountDetails.hbd_balance),
@@ -179,7 +208,32 @@ const useConvertedAccountDetails = (
     vesting_withdraw_rate: hiveChain.hiveToHbd(
       vesting_withdraw_rate,
       rawFeedPrice,
-      rawQuote
+      rawQuote,
+    ),
+    open_orders_hbd_amount: balanceApiFormatted.open_orders_hbd_amount,
+    open_orders_hive_amount: hiveChain.hiveToHbd(
+      balanceApiFormatted.open_orders_hive_amount,
+      rawFeedPrice,
+      rawQuote,
+    ),
+    conversion_pending_amount_hbd:
+      balanceApiFormatted.conversion_pending_amount_hbd,
+    conversion_pending_amount_hive: hiveChain.hiveToHbd(
+      balanceApiFormatted.conversion_pending_amount_hive,
+      rawFeedPrice,
+      rawQuote,
+    ),
+    savings_pending_amount_hbd: balanceApiFormatted.savings_pending_amount_hbd,
+    savings_pending_amount_hive: hiveChain.hiveToHbd(
+      balanceApiFormatted.savings_pending_amount_hive,
+      rawFeedPrice,
+      rawQuote,
+    ),
+    escrow_pending_amount_hbd: balanceApiFormatted.escrow_pending_amount_hbd,
+    escrow_pending_amount_hive: hiveChain.hiveToHbd(
+      balanceApiFormatted.escrow_pending_amount_hive,
+      rawFeedPrice,
+      rawQuote,
     ),
   };
   interface NaiAsset {

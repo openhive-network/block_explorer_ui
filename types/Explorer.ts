@@ -257,6 +257,14 @@ declare module Explorer {
     account_value: string;
     savings_balance: string;
     reward_hive_balance: string;
+    conversion_pending_amount_hbd: string;    
+    conversion_pending_amount_hive: string;
+    savings_pending_amount_hbd: string;
+    savings_pending_amount_hive: string;
+    escrow_pending_amount_hbd: string;
+    escrow_pending_amount_hive: string;
+    open_orders_hive_amount: string;
+    open_orders_hbd_amount: string;
   }
 
   interface FormattedAccountDetails
@@ -314,6 +322,20 @@ declare module Explorer {
     vests: AccountDetailsVests;
     dollars: AccountDetailsDollars;
     account_value?: number;
+    open_orders_hive_amount: string;
+    open_orders_hbd_amount: string;
+    conversion_pending_amount_hive: string;
+    conversion_pending_count_hive: string;
+    conversion_pending_amount_hbd: string;
+    conversion_pending_count_hbd: string;
+    savings_pending_amount_hive: string;
+    savings_pending_amount_hbd: string;
+    escrow_pending_amount_hive: string;
+    escrow_pending_amount_hbd: string;
+    escrow_pending_count: string;
+    open_orders_hbd_count: string;
+    open_orders_hive_count: string;
+
   }
 
   interface BalanceHistoryForTable {

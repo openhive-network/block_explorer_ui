@@ -1151,6 +1151,47 @@ namespace Hive {
     savings_hive!: string;
     savings_hbd!: string;
   }
+
+  export class AccountBalancesParams {
+    "accountName": string;
+  }
+
+  export class AccountBalancesResponse {
+    hbd_balance!: number;
+    hive_balance!: number;
+    vesting_shares!: string;
+    vesting_balance_hive!: number;
+    post_voting_power_vests!: string;
+    delegated_vests!: string;
+    received_vests!: string;
+    curation_rewards!: string;
+    posting_rewards!: string;
+    hbd_rewards!: number;
+    hive_rewards!: number;
+    vests_rewards!: string;
+    hive_vesting_rewards!: number;
+    hbd_savings!: number;
+    hive_savings!: number;
+    savings_withdraw_requests!: number;
+    vesting_withdraw_rate!: string;
+    to_withdraw!: string;
+    withdrawn!: string;
+    withdraw_routes!: number;
+    delayed_vests!: number;
+    conversion_pending_amount_hbd!: string;
+    conversion_pending_count_hbd!: number;
+    conversion_pending_amount_hive!: string;
+    conversion_pending_count_hive!: number;
+    open_orders_hbd_count!: number;
+    open_orders_hive_count!: number;
+    open_orders_hive_amount!: string;
+    open_orders_hbd_amount!: string;
+    savings_pending_amount_hbd!: string;
+    savings_pending_amount_hive!: string;
+    escrow_pending_amount_hbd!: string;
+    escrow_pending_amount_hive!: string;
+    escrow_pending_count!: string;
+  }
 }
 
 export default Hive;

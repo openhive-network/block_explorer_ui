@@ -4,12 +4,19 @@ import {
   ArrowUp,
   ChevronUp,
   ChevronsUpDown,
+  Clock7Icon,
   Database,
   DollarSign,
   FileDown,
   HandCoins,
   HelpCircle,
+  Hourglass,
+  Info,
   Loader2,
+  Lock,
+  Package,
+  Shield,
+  ShoppingCart,
   TrendingDown,
   User,
   Users,
@@ -20,9 +27,9 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
 import {
   Tooltip,
-  TooltipContent,
   TooltipProvider,
   TooltipTrigger,
+  TooltipContent,
 } from "../../ui/tooltip";
 import { AccountBalanceCardChart } from "./AccountBalanceCardChart";
 import { prepareAccountBalanceReport } from "./AccountBalanceCardExport";
@@ -59,6 +66,14 @@ export const cardNameMapKeys = new Map<
   ["received_vesting_shares", "accountBalanceCard.received"],
   ["delegated_vesting_shares", "accountBalanceCard.delegated"],
   ["vesting_withdraw_rate", "accountBalanceCard.powerDown"],
+  ["open_orders_hive_amount", "accountBalanceCard.openOrders"],
+  ["open_orders_hbd_amount", "accountBalanceCard.openOrders"],
+  ["conversion_pending_amount_hive", "accountBalanceCard.locked"],
+  ["conversion_pending_amount_hbd", "accountBalanceCard.locked"],
+  ["escrow_pending_amount_hive", "accountBalanceCard.escrow"],
+  ["escrow_pending_amount_hbd", "accountBalanceCard.escrow"],
+  ["savings_pending_amount_hive", "accountBalanceCard.pendingSavings"],
+  ["savings_pending_amount_hbd", "accountBalanceCard.pendingSavings"],
 ]);
 
 /** Defines the structure for each asset section (HP, HIVE, HBD) in the wallet. */
@@ -80,15 +95,16 @@ export const ASSET_CONFIG = [
     key: "hive",
     name: "HIVE",
     description: "accountBalanceCard.hiveDescription",
-    icon: (
-      <Image
-        src="/hive-logo.png"
-        alt="Hive logo"
-        width={15}
-        height={15}
-      />
-    ),
-    fields: ["balance", "savings_balance", "reward_hive_balance"] as const,
+    icon: <Image src="/hive-logo.png" alt="Hive logo" width={15} height={15} />,
+    fields: [
+      "balance",
+      "savings_balance",
+      "savings_pending_amount_hive",
+      "reward_hive_balance",
+      "open_orders_hive_amount",
+      "conversion_pending_amount_hive",
+      "escrow_pending_amount_hive",
+    ] as const,
   },
   {
     key: "hbd",
@@ -98,7 +114,11 @@ export const ASSET_CONFIG = [
     fields: [
       "hbd_balance",
       "hbd_saving_balance",
+      "savings_pending_amount_hbd",
       "reward_hbd_balance",
+      "open_orders_hbd_amount",
+      "conversion_pending_amount_hbd",
+      "escrow_pending_amount_hbd",
     ] as const,
   },
 ];
@@ -118,51 +138,86 @@ const useFinancialSummary = (userDetails: Explorer.FormattedAccountDetails) => {
     const totalValueRaw = grabNumericValue(dollars.account_value);
     const stakedValueRaw = grabNumericValue(dollars.vesting_shares);
     const poweringDownValueRaw = grabNumericValue(
-      dollars.vesting_withdraw_rate
+      dollars.vesting_withdraw_rate,
     );
     const liquidValueRaw =
       grabNumericValue(dollars.balance) + grabNumericValue(dollars.hbd_balance);
     const savingsValueRaw =
       grabNumericValue(dollars.savings_balance) +
-      grabNumericValue(dollars.hbd_saving_balance);
+      grabNumericValue(dollars.hbd_saving_balance) +
+      grabNumericValue(dollars.savings_pending_amount_hive) +
+      grabNumericValue(dollars.savings_pending_amount_hbd);
     const unclaimedValueRaw =
       grabNumericValue(dollars.reward_hive_balance) +
       grabNumericValue(dollars.reward_hbd_balance) +
       grabNumericValue(dollars.reward_vesting_balance);
+
+    const openOrdersValueRaw =
+      grabNumericValue(dollars.open_orders_hive_amount) +
+      grabNumericValue(dollars.open_orders_hbd_amount);
+
+    const lockedValueRaw =
+      grabNumericValue(dollars.conversion_pending_amount_hive) +
+      grabNumericValue(dollars.conversion_pending_amount_hbd);
+
+    const escrowValueRaw =
+      grabNumericValue(dollars.escrow_pending_amount_hive) +
+      grabNumericValue(dollars.escrow_pending_amount_hbd);
+
     const totalHpRaw =
       grabNumericValue(userDetails.vesting_shares) +
       grabNumericValue(userDetails.received_vesting_shares) -
       grabNumericValue(userDetails.delegated_vesting_shares) -
       grabNumericValue(userDetails.vesting_withdraw_rate);
+
     const effectiveHpRaw =
       grabNumericValue(userDetails.vesting_shares) +
       grabNumericValue(userDetails.received_vesting_shares) -
       grabNumericValue(userDetails.delegated_vesting_shares);
+
     const totalHiveRaw =
       grabNumericValue(userDetails.balance) +
       grabNumericValue(String(userDetails.savings_balance)) +
-      grabNumericValue(userDetails.reward_hive_balance);
+      grabNumericValue(userDetails.savings_pending_amount_hive) +
+      grabNumericValue(userDetails.reward_hive_balance) +
+      grabNumericValue(userDetails.open_orders_hive_amount) +
+      grabNumericValue(userDetails.conversion_pending_amount_hive) +
+      grabNumericValue(userDetails.escrow_pending_amount_hive);
+
     const totalHbdRaw =
       grabNumericValue(userDetails.hbd_balance) +
       grabNumericValue(userDetails.hbd_saving_balance) +
-      grabNumericValue(userDetails.reward_hbd_balance);
+      grabNumericValue(userDetails.savings_pending_amount_hbd) +
+      grabNumericValue(userDetails.reward_hbd_balance) +
+      grabNumericValue(userDetails.open_orders_hbd_amount) +
+      grabNumericValue(userDetails.conversion_pending_amount_hbd) +
+      grabNumericValue(userDetails.escrow_pending_amount_hbd);
+
     const totalHiveUsdRaw =
       grabNumericValue(dollars.balance) +
       grabNumericValue(dollars.savings_balance) +
-      grabNumericValue(dollars.reward_hive_balance);
+      grabNumericValue(dollars.savings_pending_amount_hive) +
+      grabNumericValue(dollars.reward_hive_balance) +
+      grabNumericValue(dollars.open_orders_hive_amount) +
+      grabNumericValue(dollars.conversion_pending_amount_hive) +
+      grabNumericValue(dollars.escrow_pending_amount_hive);
+
     const totalHbdUsdRaw =
       grabNumericValue(dollars.hbd_balance) +
       grabNumericValue(dollars.hbd_saving_balance) +
-      grabNumericValue(dollars.reward_hbd_balance);
+      grabNumericValue(dollars.savings_pending_amount_hbd) +
+      grabNumericValue(dollars.reward_hbd_balance) +
+      grabNumericValue(dollars.open_orders_hbd_amount) +
+      grabNumericValue(dollars.conversion_pending_amount_hbd) +
+      grabNumericValue(dollars.escrow_pending_amount_hbd);
 
-    // --- 2. Pre-formatted Strings ---
     const formattedDollars = Object.entries(userDetails.dollars).reduce(
       (acc, [key, value]) => {
         acc[key as keyof typeof userDetails.dollars] =
           changeHBDToDollarsDisplay(value);
         return acc;
       },
-      {} as Record<keyof typeof userDetails.dollars, string>
+      {} as Record<keyof typeof userDetails.dollars, string>,
     );
 
     return {
@@ -173,6 +228,9 @@ const useFinancialSummary = (userDetails: Explorer.FormattedAccountDetails) => {
         savingsValue: savingsValueRaw,
         unclaimedValue: unclaimedValueRaw,
         poweringDownValue: poweringDownValueRaw,
+        openOrdersValue: openOrdersValueRaw,
+        lockedValue: lockedValueRaw,
+        escrowValue: escrowValueRaw,
       },
       formatted: {
         totalValue: formattedDollars.account_value,
@@ -205,13 +263,27 @@ const fieldHighlightConfig = new Map<
   (keyof Explorer.FormattedAccountDetails)[]
 >([
   ["staked", ["vesting_shares"]],
-  ["savings", ["savings_balance", "hbd_saving_balance"]],
+  [
+    "savings",
+    [
+      "savings_balance",
+      "hbd_saving_balance",
+      "savings_pending_amount_hive",
+      "savings_pending_amount_hbd",
+    ],
+  ],
   ["liquid", ["balance", "hbd_balance"]],
   [
     "unclaimed",
     ["reward_hive_balance", "reward_hbd_balance", "reward_vesting_balance"],
   ],
   ["poweringDown", ["vesting_withdraw_rate"]],
+  ["orders", ["open_orders_hive_amount", "open_orders_hbd_amount"]],
+  [
+    "locked",
+    ["conversion_pending_amount_hive", "conversion_pending_amount_hbd"],
+  ],
+  ["escrow", ["escrow_pending_amount_hive", "escrow_pending_amount_hbd"]],
 ]);
 
 /** Maps a segment key to the specific Tailwind CSS classes for highlighting. */
@@ -219,13 +291,19 @@ const highlightConfig = {
   staked:
     "bg-purple-100 border-l-2 border-purple-400 dark:bg-purple-500/15 dark:border-purple-500",
   savings:
-    "bg-amber-100  border-l-2 border-amber-400  dark:bg-amber-400/15  dark:border-amber-400",
+    "bg-amber-100 border-l-2 border-amber-400 dark:bg-amber-400/15 dark:border-amber-400",
   liquid:
-    "bg-sky-100    border-l-2 border-sky-400    dark:bg-sky-500/15    dark:border-sky-500",
+    "bg-sky-100 border-l-2 border-sky-400 dark:bg-sky-500/15 dark:border-sky-500",
   unclaimed:
-    "bg-teal-100   border-l-2 border-teal-400   dark:bg-teal-400/15   dark:border-teal-400",
+    "bg-teal-100 border-l-2 border-teal-400 dark:bg-teal-400/15 dark:border-teal-400",
   poweringDown:
     "bg-rose-100 border-l-2 border-rose-400 dark:bg-rose-400/15 dark:border-rose-400",
+  orders:
+    "bg-indigo-200 border-l-2 border-indigo-400 dark:bg-indigo-500/15 dark:border-indigo-500",
+  locked:
+    "bg-pink-100 border-l-2 border-pink-400 dark:bg-pink-400/15 dark:border-pink-400",
+  escrow:
+    "bg-slate-200 border-l-2 border-slate-400 dark:bg-slate-700/50 dark:border-slate-500",
 };
 
 // ====================================================================
@@ -273,7 +351,7 @@ const DetailRow = ({
       {
         "hover:cursor-pointer": !!onClick,
       },
-      className
+      className,
     )}
   >
     <div className="flex items-center gap-1.5">
@@ -282,7 +360,7 @@ const DetailRow = ({
         className={cn(
           "text-sm",
           { "dark:text-slate-100": isHighlighted },
-          labelClassName
+          labelClassName,
         )}
       >
         {label}
@@ -294,7 +372,7 @@ const DetailRow = ({
         className={cn(
           "font-mono text-sm text-slate-800 dark:text-slate-200",
           { "dark:text-slate-100": isHighlighted },
-          valueClassName
+          valueClassName,
         )}
       >
         {value}
@@ -325,18 +403,47 @@ const AssetSection = ({
 
   const renderValue = (
     key: keyof Explorer.FormattedAccountDetails,
-    sign: "" | "+" | "-" = ""
+    sign: "" | "+" | "-" = "",
   ) => {
+    const rawVal = userDetails[key];
+
+    let countSuffix = null;
+    if (key === "open_orders_hive_amount")
+      countSuffix = userDetails.open_orders_hive_count;
+    if (key === "open_orders_hbd_amount")
+      countSuffix = userDetails.open_orders_hbd_count;
+    if (key === "conversion_pending_amount_hive")
+      countSuffix = userDetails.conversion_pending_count_hive;
+    if (key === "conversion_pending_amount_hbd")
+      countSuffix = userDetails.conversion_pending_count_hbd;
+    if (key.includes("escrow_pending_amount"))
+      countSuffix = userDetails.escrow_pending_count;
+
+    const countDisplay =
+      countSuffix !== null && countSuffix !== undefined && countSuffix > 0 ? (
+        <span className="inline-flex items-center ml-1 text-xs opacity-70">
+          ({countSuffix})
+        </span>
+      ) : null;
+
     if (key in userDetails.vests) {
       const vestKey = key as keyof Explorer.AccountDetailsVests;
       return (
-        <VestsTooltip
-          tooltipTrigger={`${sign}${String(userDetails[key])}`}
-          tooltipContent={String(userDetails.vests[vestKey])}
-        />
+        <span className="flex items-center justify-end">
+          <VestsTooltip
+            tooltipTrigger={`${sign}${String(rawVal)}`}
+            tooltipContent={String(userDetails.vests[vestKey])}
+          />
+          {countDisplay}
+        </span>
       );
     }
-    return `${sign}${userDetails[key]}`;
+    return (
+      <span className="flex items-center justify-end">
+        {sign}
+        {String(rawVal)} {countDisplay}
+      </span>
+    );
   };
 
   const hpDetails = [
@@ -366,19 +473,24 @@ const AssetSection = ({
     },
   ] as const;
 
-  const regularFields = asset.fields.filter(
-    (f: string) => !f.startsWith("reward_") && !f.startsWith("vesting_")
-  );
-  const specialFields = asset.fields.filter(
-    (f: string) => f.startsWith("reward_") || f.startsWith("vesting_withdraw")
-  );
+  const isSpecialField = (f: string) =>
+    f.startsWith("reward_") ||
+    f.startsWith("vesting_withdraw") ||
+    f.includes("open_orders") ||
+    f.includes("conversion_pending") ||
+    f.includes("escrow_pending") ||
+    f.includes("savings_pending");
+
+  const regularFields = asset.fields.filter((f: string) => !isSpecialField(f));
+
+  const specialFields = asset.fields.filter((f: string) => isSpecialField(f));
 
   const assetTotalValue =
     asset.key === "hp"
       ? financialSummary.formatted.totalHp
       : asset.key === "hive"
-      ? financialSummary.formatted.totalHive
-      : financialSummary.formatted.totalHbd;
+        ? financialSummary.formatted.totalHive
+        : financialSummary.formatted.totalHbd;
 
   const isClaimable = (field: keyof Explorer.FormattedAccountDetails) => {
     return (
@@ -450,52 +562,62 @@ const AssetSection = ({
                 );
               })
             : regularFields.map(
-                (field: keyof Explorer.FormattedAccountDetails) => (
-                  <DetailRow
-                    key={field}
-                    fieldKey={field}
-                    className={getHighlightClass(field)}
-                    isHighlighted={!!getHighlightClass(field)}
-                    label={t(cardNameMapKeys.get(field)!)}
-                    value={renderValue(field)}
-                    dollarValue={financialSummary.formatted.dollars[field]}
-                    labelSuffix={
-                      field === "hbd_saving_balance" && hbdApr ? (
-                        <HbdAprTooltip
-                          hbdInterestApr={hbdApr}
-                          isLoading={isLoadingApr}
-                          t={t}
-                        />
-                      ) : null
-                    }
-                  />
-                )
+                (field: keyof Explorer.FormattedAccountDetails) => {
+                  const numericValue = grabNumericValue(userDetails[field]);
+                  return (
+                    <DetailRow
+                      key={field}
+                      fieldKey={field}
+                      className={getHighlightClass(field)}
+                      isHighlighted={!!getHighlightClass(field)}
+                      label={t(cardNameMapKeys.get(field)!)}
+                      value={renderValue(field)}
+                      dollarValue={financialSummary.formatted.dollars[field]}
+                      labelSuffix={
+                        field === "hbd_saving_balance" && hbdApr ? (
+                          <HbdAprTooltip
+                            hbdInterestApr={hbdApr}
+                            isLoading={isLoadingApr}
+                            t={t}
+                          />
+                        ) : null
+                      }
+                    />
+                  );
+                },
               )}
 
           {specialFields.length > 0 && (
             <div className="border-t border-slate-200/80 dark:border-slate-700/80 mt-1.5 pt-1.5 space-y-0.5">
               {specialFields.map(
                 (field: keyof Explorer.FormattedAccountDetails) => {
+                  const numericValue = grabNumericValue(userDetails[field]);
+                  if (
+                    (field.includes("pending") ||
+                      field.includes("open_orders") ||
+                      field.includes("escrow")) &&
+                    numericValue <= 0
+                  ) {
+                    return null;
+                  }
                   const hasClaimableAmount = isClaimable(field);
                   const isPoweringDown =
-                    field === "vesting_withdraw_rate" &&
-                    grabNumericValue(userDetails[field]) > 0;
+                    field === "vesting_withdraw_rate" && numericValue > 0;
 
                   let icon = null;
+                 
                   if (isPoweringDown) {
-                    icon = (
-                      <TrendingDown
-                        className="h-4 w-4"
-                        color="#f43f5e"
-                      />
-                    ); // Use rose color
+                    icon = <TrendingDown size={16} color="#f43f5e" />;
                   } else if (hasClaimableAmount) {
-                    icon = (
-                      <Database
-                        className="h-4 w-4"
-                        color="#06b6d4"
-                      />
-                    );
+                    icon = <Database size={16} color="#06b6d4" />;
+                  } else if (field.includes("conversion_pending")) {
+                    icon = <Lock size={16} color="#ec4899" />;
+                  } else if (field.includes("open_orders")) {
+                    icon = <Clock7Icon size={16} color="#6366f1" />;
+                  } else if (field.includes("escrow_pending")) {
+                    icon = <Shield size={16} color="#64748b" />;
+                  } else if (field.includes("savings_pending")) {
+                    icon = <Hourglass size={16} color="#0ea5e9" />;
                   }
 
                   const isDefaultHighlighted =
@@ -525,7 +647,7 @@ const AssetSection = ({
                       dollarValue={financialSummary.formatted.dollars[field]}
                     />
                   );
-                }
+                },
               )}
             </div>
           )}
@@ -545,7 +667,7 @@ type AccountBalanceCardProps = {
   isInitiallyOpen: boolean;
   onChangeTab?: (
     tab: TabKey,
-    context?: { type?: "incoming" | "outgoing" }
+    context?: { type?: "incoming" | "outgoing" },
   ) => void;
 };
 
@@ -575,7 +697,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
 
   const areAllOpen = useMemo(
     () => ASSET_CONFIG.every((asset) => !!openSections[asset.key]),
-    [openSections]
+    [openSections],
   );
 
   const chartSegments = useMemo(() => {
@@ -587,7 +709,18 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
     const unclaimedPct = (financialSummary.raw.unclaimedValue / total) * 100;
     const poweringDownPct =
       (financialSummary.raw.poweringDownValue / total) * 100;
-    const sumOfOthers = liquidPct + savingsPct + unclaimedPct + poweringDownPct;
+    const ordersPct = (financialSummary.raw.openOrdersValue / total) * 100;
+    const lockedPct = (financialSummary.raw.lockedValue / total) * 100;
+    const escrowPct = (financialSummary.raw.escrowValue / total) * 100;
+
+    const sumOfOthers =
+      liquidPct +
+      savingsPct +
+      unclaimedPct +
+      poweringDownPct +
+      ordersPct +
+      lockedPct +
+      escrowPct;
     const stakedPct = Math.max(0, 100 - sumOfOthers);
 
     const segments = [
@@ -629,13 +762,54 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
       },
     ];
 
+    if (financialSummary.raw.openOrdersValue > 0) {
+      const totalOrdersCount =
+        userDetails.open_orders_hive_count + userDetails.open_orders_hbd_count;
+      segments.push({
+        key: "orders",
+        label: `${t("accountBalanceCard.openOrders")} (${totalOrdersCount})`,
+        value: financialSummary.raw.openOrdersValue,
+        displayValue: formatDisplayValue(financialSummary.raw.openOrdersValue),
+        percent: ordersPct,
+        color: "#6366f1",
+        iconColorClass: "text-indigo-500",
+      });
+    }
+
+    if (financialSummary.raw.lockedValue > 0) {
+      const totalLockedCount =
+        userDetails.conversion_pending_count_hive +
+        userDetails.conversion_pending_count_hbd;
+      segments.push({
+        key: "locked",
+        label: `${t("accountBalanceCard.locked")} (${totalLockedCount})`,
+        value: financialSummary.raw.lockedValue,
+        displayValue: formatDisplayValue(financialSummary.raw.lockedValue),
+        percent: lockedPct,
+        color: "#db2777",
+        iconColorClass: "text-pink-500",
+      });
+    }
+
+    if (financialSummary.raw.escrowValue > 0) {
+      segments.push({
+        key: "escrow",
+        label: t("accountBalanceCard.escrow"),
+        value: financialSummary.raw.escrowValue,
+        displayValue: formatDisplayValue(financialSummary.raw.escrowValue),
+        percent: escrowPct,
+        color: "#94a3b8",
+        iconColorClass: "text-slate-400",
+      });
+    }
+
     if (financialSummary.raw.poweringDownValue > 0) {
       segments.push({
         key: "poweringDown",
         label: t("accountBalanceCard.powerDown"),
         value: financialSummary.raw.poweringDownValue,
         displayValue: formatDisplayValue(
-          financialSummary.raw.poweringDownValue
+          financialSummary.raw.poweringDownValue,
         ),
         percent: poweringDownPct,
         color: "#f43f5e", // Rose color
@@ -644,7 +818,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
     }
 
     return segments;
-  }, [financialSummary.raw, t]);
+  }, [financialSummary.raw, t, userDetails]);
 
   const handleSegmentClick = (key: string | null) => {
     const newKey = activeSegmentKey === key ? null : key;
@@ -657,6 +831,9 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
         savings: ["hive", "hbd"],
         unclaimed: ["hp", "hive", "hbd"],
         poweringDown: ["hp"],
+        orders: ["hive", "hbd"],
+        locked: ["hive", "hbd"],
+        escrow: ["hive", "hbd"],
       };
       const assetsToOpen =
         segmentToAssetMap[newKey as keyof typeof segmentToAssetMap];
@@ -698,7 +875,7 @@ const AccountBalanceCard: React.FC<AccountBalanceCardProps> = ({
       financialSummary,
       chartSegments,
       hbdInterestApr,
-      t
+      t,
     );
   }, [userDetails, financialSummary, chartSegments, hbdInterestApr, t]);
 

@@ -120,9 +120,27 @@ export const prepareAccountBalanceReport = (
     [headers.value]: financialSummary.formatted.effectiveHp,
   });
 
+  const getCountSuffix = (key: string) => {
+    let count = null;
+    if (key === "open_orders_hive_amount")
+      count = userDetails.open_orders_hive_count;
+    if (key === "open_orders_hbd_amount")
+      count = userDetails.open_orders_hbd_count;
+    if (key === "conversion_pending_amount_hive")
+      count = userDetails.conversion_pending_count_hive;
+    if (key === "conversion_pending_amount_hbd")
+      count = userDetails.conversion_pending_count_hbd;
+    if (key.includes("escrow_pending_amount"))
+      count = userDetails.escrow_pending_count;
+
+    return count !== null && count !== undefined && Number(count) > 0
+      ? ` (${count})`
+      : "";
+  };
+
   const addHpRow = (metricKey: FinancialKey, sign: "" | "+" | "-" = "") => {
     const formattedVests = financialSummary.formatted.vests[metricKey as keyof typeof userDetails.vests] || "";
-    
+
     const notes = metricKey.startsWith("reward_") ? t("accountBalanceCardExport.unclaimedRewardNote") : "";
 
     reportData.push({
@@ -161,12 +179,30 @@ export const prepareAccountBalanceReport = (
     [headers.value]: financialSummary.formatted.totalHive,
   });
   hiveConfig.fields.forEach((metricKey) => {
-    const notes = metricKey.startsWith("reward_") ? t("accountBalanceCardExport.unclaimedRewardNote") : "";
+    const numericValue = grabNumericValue(String(userDetails[metricKey]));
+    // Skip pending fields with 0 values to match UI behavior
+    if (
+      (metricKey.includes("savings_pending") ||
+        metricKey.includes("conversion_pending") ||
+        metricKey.includes("open_orders") ||
+        metricKey.includes("escrow")) &&
+      numericValue <= 0
+    ) {
+      return;
+    }
+
+    const notes = metricKey.startsWith("reward_")
+      ? t("accountBalanceCardExport.unclaimedRewardNote")
+      : "";
+    const displayValue = `${userDetails[metricKey]}${getCountSuffix(metricKey)}`;
+
     reportData.push({
       ...baseRow,
       [headers.metric]: t(cardNameMapKeys.get(metricKey)!),
-      [headers.value]: userDetails[metricKey],
-      [headers.valueUSD]: asCsvString(financialSummary.formatted.dollars[metricKey as FinancialKey]),
+      [headers.value]: displayValue,
+      [headers.valueUSD]: asCsvString(
+        financialSummary.formatted.dollars[metricKey as FinancialKey],
+      ),
       [headers.notes]: notes,
     });
   });
@@ -192,6 +228,17 @@ export const prepareAccountBalanceReport = (
     [headers.value]: financialSummary.formatted.totalHbd,
   });
   hbdConfig.fields.forEach((metricKey) => {
+    const numericValue = grabNumericValue(String(userDetails[metricKey]));
+    // Skip pending fields with 0 values to match UI behavior
+    if (
+      (metricKey.includes("savings_pending") ||
+        metricKey.includes("conversion_pending") ||
+        metricKey.includes("open_orders") ||
+        metricKey.includes("escrow")) &&
+      numericValue <= 0
+    ) {
+      return;
+    }
     let notes = "";
     if (metricKey.startsWith("reward_")) {
       notes = t("accountBalanceCardExport.unclaimedRewardNote");
@@ -199,12 +246,16 @@ export const prepareAccountBalanceReport = (
     if (metricKey === "hbd_saving_balance" && hbdInterestApr) {
       notes = `${hbdInterestApr} APR (${t("accountBalanceCard.hbdAprTooltip")})`;
     }
-    
+
+    const displayValue = `${userDetails[metricKey]}${getCountSuffix(metricKey)}`;
+
     reportData.push({
       ...baseRow,
       [headers.metric]: t(cardNameMapKeys.get(metricKey)!),
-      [headers.value]: userDetails[metricKey],
-      [headers.valueUSD]: asCsvString(financialSummary.formatted.dollars[metricKey as FinancialKey]),
+      [headers.value]: displayValue,
+      [headers.valueUSD]: asCsvString(
+        financialSummary.formatted.dollars[metricKey as FinancialKey],
+      ),
       [headers.notes]: notes,
     });
   });
