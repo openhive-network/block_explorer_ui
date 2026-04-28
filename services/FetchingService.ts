@@ -817,6 +817,17 @@ class FetchingService {
       "balance-api"
     ].totalValueLocked();
   }
+
+  async getAccountBalances(
+    accountName: string
+  ): Promise<Hive.AccountBalancesResponse> {
+    return await this.extendedHiveChain!.restApi[
+      "balance-api"
+    ].accountBalances({
+      accountName,
+    });
+  }
+
 }
 
 const fetchingService = new FetchingService();

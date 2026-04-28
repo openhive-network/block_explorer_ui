@@ -192,5 +192,10 @@ export const extendedRest = {
       result: Hive.TotalValueLocked,
       urlPath: "total-value-locked",
     },
+    accountBalances: {
+      params: Hive.AccountBalancesParams,
+      result: Hive.AccountBalancesResponse,
+      urlPath: "accounts/{accountName}/balances",
+    },
   },
 };
