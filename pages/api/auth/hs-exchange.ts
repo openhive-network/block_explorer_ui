@@ -7,13 +7,16 @@ import crypto from 'crypto';
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  // SAFE IP DETECTION: 
-  // We take the first IP in the list (the real client) 
-  // and fallback to remoteAddress if the header is missing.
-  const forwarded = req.headers["x-forwarded-for"];
-  const ip = typeof forwarded === 'string' 
-    ? forwarded.split(',')[0].trim() 
-    : req.socket.remoteAddress || 'anonymous';
+  /**
+   * Trusted Cloudflare IP Detection
+   * We utilize 'cf-connecting-ip' which Cloudflare guarantees to be un-spoofable.
+   * We fallback to the first entry of 'x-forwarded-for' only if the CF header is missing.
+   */
+  const ip = (req.headers["cf-connecting-ip"] as string) || 
+             (typeof req.headers["x-forwarded-for"] === 'string' 
+                ? req.headers["x-forwarded-for"].split(',')[0].trim() 
+                : req.socket.remoteAddress) || 
+             'anonymous';
 
   try {
     await loginLimiter.check(res, config.security.rateLimits.loginLimit, ip);
