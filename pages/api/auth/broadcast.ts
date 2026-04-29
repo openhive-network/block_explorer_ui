@@ -8,11 +8,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-    // 1. IP Detection
-    const forwarded = req.headers["x-forwarded-for"];
-    const ip = typeof forwarded === 'string' 
-      ? forwarded.split(',')[0].trim() 
-      : req.socket.remoteAddress || 'anonymous';
+    // 1 -Trusted Cloudflare IP Detection 
+    const ip = (req.headers["cf-connecting-ip"] as string) || 
+               (typeof req.headers["x-forwarded-for"] === 'string' 
+                  ? req.headers["x-forwarded-for"].split(',')[0].trim() 
+                  : req.socket.remoteAddress) || 
+               'anonymous';
 
     // 2. Rate Limiting
     try {
