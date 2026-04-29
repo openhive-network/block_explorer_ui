@@ -186,7 +186,7 @@ export const prepareAccountBalanceReport = (
         metricKey.includes("conversion_pending") ||
         metricKey.includes("open_orders") ||
         metricKey.includes("escrow")) &&
-      numericValue <= 0
+      numericValue === 0
     ) {
       return;
     }
@@ -235,7 +235,7 @@ export const prepareAccountBalanceReport = (
         metricKey.includes("conversion_pending") ||
         metricKey.includes("open_orders") ||
         metricKey.includes("escrow")) &&
-      numericValue <= 0
+      numericValue=== 0
     ) {
       return;
     }
