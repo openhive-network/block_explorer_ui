@@ -402,49 +402,72 @@ const AssetSection = ({
     useBlockChainProperties();
 
   const renderValue = (
-    key: keyof Explorer.FormattedAccountDetails,
-    sign: "" | "+" | "-" = "",
-  ) => {
-    const rawVal = userDetails[key];
+  key: keyof Explorer.FormattedAccountDetails,
+  sign: "" | "+" | "-" = ""
+) => {
+  const rawVal = userDetails[key];
 
-    let countSuffix = null;
-    if (key === "open_orders_hive_amount")
-      countSuffix = userDetails.open_orders_hive_count;
-    if (key === "open_orders_hbd_amount")
-      countSuffix = userDetails.open_orders_hbd_count;
-    if (key === "conversion_pending_amount_hive")
-      countSuffix = userDetails.conversion_pending_count_hive;
-    if (key === "conversion_pending_amount_hbd")
-      countSuffix = userDetails.conversion_pending_count_hbd;
-    if (key.includes("escrow_pending_amount"))
-      countSuffix = userDetails.escrow_pending_count;
+  // 1. Determine the count and the specific tooltip message
+  let countSuffix = null;
+  let tooltipMsg = "";
 
-    const countDisplay =
-      countSuffix !== null && countSuffix !== undefined && countSuffix > 0 ? (
-        <span className="inline-flex items-center ml-1 text-xs opacity-70">
-          ({countSuffix})
-        </span>
-      ) : null;
+  if (key === "open_orders_hive_amount") {
+    countSuffix = userDetails.open_orders_hive_count;
+    tooltipMsg = t("accountBalanceCard.countTooltipOpenOrdersHive"); // "Number of open orders in HIVE"
+  } else if (key === "open_orders_hbd_amount") {
+    countSuffix = userDetails.open_orders_hbd_count;
+    tooltipMsg = t("accountBalanceCard.countTooltipOpenOrdersHBD"); // "Number of open orders in HBD"
+  } else if (key === "conversion_pending_amount_hive") {
+    countSuffix = userDetails.conversion_pending_count_hive;
+    tooltipMsg = t("accountBalanceCard.countTooltipConversionHive"); // "Number of pending HIVE conversions"
+  } else if (key === "conversion_pending_amount_hbd") {
+    countSuffix = userDetails.conversion_pending_count_hbd;
+    tooltipMsg = t("accountBalanceCard.countTooltipConversionHBD"); // "Number of pending HBD conversions"
+  } else if (key.includes("escrow_pending_amount")) {
+    countSuffix = userDetails.escrow_pending_count;
+    tooltipMsg = t("accountBalanceCard.countTooltipEscrow"); // "Number of escrow orders"
+  }
+
+  // 2. Render the count display with the superscript Info icon and Tooltip
+  const countDisplay =
+    countSuffix !== null && countSuffix !== undefined && countSuffix !== 0 ? (
+      <span className="inline-flex items-center ml-1 text-xs opacity-70">
+        (
+        {countSuffix}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <sup className="ml-0.5 cursor-help" >
+              <Info size={10} strokeWidth={3} color="#0ea5e9" />
+            </sup>
+          </TooltipTrigger>
+          <TooltipContent side="top" align="end" sideOffset={5}>
+            <p className="text-xs" >{tooltipMsg}</p>
+          </TooltipContent>
+        </Tooltip>
+        )
+      </span>
+    ) : null;
 
     if (key in userDetails.vests) {
-      const vestKey = key as keyof Explorer.AccountDetailsVests;
-      return (
-        <span className="flex items-center justify-end">
-          <VestsTooltip
-            tooltipTrigger={`${sign}${String(rawVal)}`}
-            tooltipContent={String(userDetails.vests[vestKey])}
-          />
-          {countDisplay}
-        </span>
-      );
-    }
+    const vestKey = key as keyof Explorer.AccountDetailsVests;
     return (
       <span className="flex items-center justify-end">
-        {sign}
-        {String(rawVal)} {countDisplay}
+        <VestsTooltip
+          tooltipTrigger={`${sign}${String(rawVal)}`}
+          tooltipContent={String(userDetails.vests[vestKey])}
+        />
+        {countDisplay}
       </span>
     );
-  };
+  }
+  return (
+    <span className="flex items-center justify-end">
+      {sign}
+      {String(rawVal)}
+      {countDisplay}
+    </span>
+  );
+};
 
   const hpDetails = [
     {
@@ -596,7 +619,7 @@ const AssetSection = ({
                     (field.includes("pending") ||
                       field.includes("open_orders") ||
                       field.includes("escrow")) &&
-                    numericValue <= 0
+                    numericValue === 0
                   ) {
                     return null;
                   }
