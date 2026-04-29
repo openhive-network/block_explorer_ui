@@ -128,9 +128,9 @@ const useConvertedAccountDetails = (
       api.conversion_pending_amount_hbd,
     ),
     savings_pending_amount_hive: hiveChain.hive(
-      api.savings_pending_amount_hive,
+      Math.abs(api.savings_pending_amount_hive),
     ),
-    savings_pending_amount_hbd: hiveChain.hbd(api.savings_pending_amount_hbd),
+    savings_pending_amount_hbd: hiveChain.hbd(Math.abs(api.savings_pending_amount_hbd)),
     escrow_pending_amount_hive: hiveChain.hive(api.escrow_pending_amount_hive),
     escrow_pending_amount_hbd: hiveChain.hbd(api.escrow_pending_amount_hbd),
 
