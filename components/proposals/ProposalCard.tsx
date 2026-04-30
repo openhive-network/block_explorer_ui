@@ -152,30 +152,39 @@ const FundingProgressBar = ({
 const TimeProgressBar = ({
   startDate,
   endDate,
+  isUpcoming,
   t,
 }: {
   startDate: Date;
   endDate: Date;
+  isUpcoming?: boolean;
   t: (key: string) => string;
 }) => {
   const now = new Date().getTime();
   const end = endDate.getTime();
-  const diff = end - now;
+  // For upcoming proposals use total duration; for active/expired use time remaining from now
+  const diff = isUpcoming
+    ? endDate.getTime() - startDate.getTime()
+    : end - now;
   let timeRemainingText: string;
-  if (diff <= 0) {
+  if (!isUpcoming && diff <= 0) {
     timeRemainingText = t("proposalCard.timeEnded");
   } else {
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     if (days > 0) {
       const unit =
         days > 1 ? t("proposalCard.timeDays") : t("proposalCard.timeDay");
-      timeRemainingText = `${days} ${unit} ${t("proposalCard.timeLeft")}`;
+      timeRemainingText = isUpcoming
+        ? `${days} ${unit}`
+        : `${days} ${unit} ${t("proposalCard.timeLeft")}`;
     } else {
       const hours = Math.floor(diff / (1000 * 60 * 60));
       if (hours > 0) {
         const unit =
           hours > 1 ? t("proposalCard.timeHours") : t("proposalCard.timeHour");
-        timeRemainingText = `${hours} ${unit} ${t("proposalCard.timeLeft")}`;
+        timeRemainingText = isUpcoming
+          ? `${hours} ${unit}`
+          : `${hours} ${unit} ${t("proposalCard.timeLeft")}`;
       } else {
         const minutes = Math.floor(diff / (1000 * 60));
         if (minutes > 0) {
@@ -183,9 +192,9 @@ const TimeProgressBar = ({
             minutes > 1
               ? t("proposalCard.timeMins")
               : t("proposalCard.timeMin");
-          timeRemainingText = `${minutes} ${unit} ${t(
-            "proposalCard.timeLeft"
-          )}`;
+          timeRemainingText = isUpcoming
+            ? `${minutes} ${unit}`
+            : `${minutes} ${unit} ${t("proposalCard.timeLeft")}`;
         } else {
           timeRemainingText = t("proposalCard.timeEndingSoon");
         }
@@ -419,6 +428,7 @@ export const ProposalCard = ({
               <TimeProgressBar
                 startDate={proposal.start_date}
                 endDate={proposal.end_date}
+                isUpcoming={proposal.status === "inactive"}
                 t={t}
               />
             </div>
