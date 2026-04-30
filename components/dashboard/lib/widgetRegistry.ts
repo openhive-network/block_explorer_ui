@@ -6,6 +6,8 @@ import SearchesSection from "@/components/home/SearchesSection";
 import TopCommunitiesCard from "@/components/home/TopCommunitiesCard";
 import TopWitnessesCard from "@/components/home/TopWitnessesCard";
 import TransactionStatisticsCard from "@/components/home/TransactionStatisticsCard";
+import TransferVolumeCard from "@/components/home/TransferVolumeCard";
+import TotalValueLockedCard from "@/components/home/TotalValueLockedCard";
 import LastBlocksWidget from "@/components/LastBlocksWidget";
 import FundAndSupplyWidget from "@/components/dashboard/widgets/data/FundAndSupplyWidget";
 import HiveParametersWidget from "@/components/dashboard/widgets/data/HiveParametersWidget";
@@ -34,6 +36,7 @@ export interface WidgetConfig {
   allowMultiple?: boolean;
   collapsible?: boolean;
   initialCollapsed?: boolean;
+  dynamicHeight?: boolean;
   getProps?: (
     data: DashboardData,
     widgetState: any,
@@ -152,11 +155,24 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     component: TransactionStatisticsCard,
     defaultLayout: { w: 8, h: 5, minW: 4, minH: 4 },
   },
+   "transfer-volume": {
+    id: "transfer-volume",
+    name: "widgets.transferVolumeName",
+    component: TransferVolumeCard,
+    defaultLayout: { w: 8, h: 5, minW: 4, minH: 4 },
+  },
+  "tvl": {
+    id: "tvl",
+    name: "widgets.tvlName",
+    component: TotalValueLockedCard,
+    defaultLayout: { w: 8, h: 5, minW: 4, minH: 4 },
+  },
   searches: {
     id: "searches",
     name: "widgets.searchesName",
     component: SearchesSection,
     defaultLayout: { w: 8, h: 11.9, minW: 4, minH: 3 },
+    dynamicHeight: true,
   },
 
   // --- Layout Widgets (With descriptions and state-management props) ---

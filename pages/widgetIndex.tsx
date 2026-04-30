@@ -2,8 +2,6 @@ import React, { useState, useMemo } from "react";
 import Head from "next/head";
 import { Responsive, WidthProvider } from "react-grid-layout";
 import { Move, X } from "lucide-react";
-import "react-grid-layout/css/styles.css";
-import "react-resizable/css/styles.css";
 
 import WidgetRenderer from "@/components/dashboard/ui/WidgetRenderer";
 import WidgetLibrary from "@/components/dashboard/ui/WidgetLibrary";

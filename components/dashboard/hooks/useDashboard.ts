@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Layouts, Layout } from "react-grid-layout";
 import {
   LAYOUT_STORAGE_KEY,
@@ -6,10 +6,9 @@ import {
   WIDGET_STATES_STORAGE_KEY,
   DEFAULT_WIDGETS,
   DEFAULT_MASTER_LAYOUT,
-  generateDerivedLayouts,
+  generateDerivedLayouts, // We will use this now
   COLLAPSED_WIDGET_HEIGHT,
   EDITABLE_BREAKPOINTS,
-  DEFAULT_MOBILE_WIDGET_ORDER,
 } from "../lib/dashboard.config";
 import { WIDGET_REGISTRY } from "@/components/dashboard/lib/widgetRegistry";
 import { useI18n } from "@/i18n/i18n";
@@ -26,7 +25,7 @@ const createInitialLayoutsAndStates = () => {
   const masterLayout: ExtendedLayout[] = JSON.parse(JSON.stringify(DEFAULT_MASTER_LAYOUT));
   const initialWidgetStates: Record<string, any> = {};
 
-  // First, process the master layout to apply any initial collapsed states
+  // Process master layout for initial collapsed states
   DEFAULT_WIDGETS.forEach(widget => {
     const config = WIDGET_REGISTRY[widget.type];
     if (config?.initialCollapsed) {
@@ -39,25 +38,8 @@ const createInitialLayoutsAndStates = () => {
     }
   });
 
-  // Now, use this MODIFIED masterLayout to build the final layouts object,
-  // respecting the custom mobile order.
-  const initialLayouts: Layouts = { lg: masterLayout };
-  const defaultLayoutMap = new Map(masterLayout.map(item => [item.i, item]));
-  const colsMap: { [key: string]: number } = { md: 10, sm: 6, xs: 4 };
-
-  Object.keys(colsMap).forEach(bp => {
-    let currentY = 0;
-    const mobileLayout: Layout[] = [];
-    DEFAULT_MOBILE_WIDGET_ORDER.forEach(widgetId => {
-      const defaultItem = defaultLayoutMap.get(widgetId);
-      if (defaultItem) {
-        const { minW, minH, originalH, ...rest } = defaultItem;
-        mobileLayout.push({ ...rest, x: 0, y: currentY, w: colsMap[bp] });
-        currentY += defaultItem.h;
-      }
-    });
-    initialLayouts[bp] = mobileLayout;
-  });
+  // Use the generator function to ensure mobile/tablet get the custom heights on first load.
+  const initialLayouts = generateDerivedLayouts(masterLayout);
 
   return { layouts: initialLayouts, widgetStates: initialWidgetStates };
 };
@@ -72,6 +54,7 @@ export function useDashboard() {
   const { t } = useI18n();
 
   useEffect(() => {
+    // 1. Clear storage if you want to force the new logic
     const savedWidgetsStr = localStorage.getItem(WIDGETS_STORAGE_KEY);
     const savedLayoutsStr = localStorage.getItem(LAYOUT_STORAGE_KEY);
     const savedStatesStr = localStorage.getItem(WIDGET_STATES_STORAGE_KEY);
@@ -81,7 +64,11 @@ export function useDashboard() {
     let initialWidgetStates: Record<string, any> = {};
 
     if (savedLayoutsStr) {
-      initialLayouts = JSON.parse(savedLayoutsStr);
+      // 2. If loading from storage, we MUST pass the LG layout back through 
+      // the generator to apply the NEW mobile heights you just added.
+      const parsedLayouts = JSON.parse(savedLayoutsStr);
+      initialLayouts = generateDerivedLayouts(parsedLayouts.lg || DEFAULT_MASTER_LAYOUT);
+      
       if (savedWidgetsStr) initialWidgets = JSON.parse(savedWidgetsStr);
       if (savedStatesStr) initialWidgetStates = JSON.parse(savedStatesStr);
     } else {
@@ -99,9 +86,13 @@ export function useDashboard() {
 
   const onLayoutChange = (currentLayout: Layout[], allLayouts: Layouts) => {
     if (!isEditMode) return;
-    setLayouts(allLayouts);
+    
+    // Only update and save if we are on Desktop
     if (EDITABLE_BREAKPOINTS.includes(currentBreakpoint)) {
-      localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify(allLayouts));
+      // Regenerate all mobile layouts based on the new Desktop changes
+      const updatedLayouts = generateDerivedLayouts(currentLayout);
+      setLayouts(updatedLayouts);
+      localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify(updatedLayouts));
     }
   };
 
@@ -111,11 +102,12 @@ export function useDashboard() {
     const newWidgets = [...widgets, { i: newWidgetId, type: widgetType }];
     setWidgets(newWidgets);
     localStorage.setItem(WIDGETS_STORAGE_KEY, JSON.stringify(newWidgets));
+    
     const masterLayout = layouts.lg || [];
     const newY = masterLayout.reduce((maxY, item) => Math.max(maxY, item.y + item.h), 0);
     const newLayoutItem: Layout = { ...widgetConfig.defaultLayout, i: newWidgetId, x: 0, y: newY };
-    const newMasterLayout = [...masterLayout, newLayoutItem];
-    const newLayouts = generateDerivedLayouts(newMasterLayout);
+    
+    const newLayouts = generateDerivedLayouts([...masterLayout, newLayoutItem]);
     setLayouts(newLayouts);
     localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify(newLayouts));
     setIsLibraryOpen(false);
@@ -125,6 +117,7 @@ export function useDashboard() {
     const newWidgets = widgets.filter((w) => w.i !== widgetId);
     setWidgets(newWidgets);
     localStorage.setItem(WIDGETS_STORAGE_KEY, JSON.stringify(newWidgets));
+    
     const masterLayout = (layouts.lg || []).filter((l) => l.i !== widgetId);
     const newLayouts = generateDerivedLayouts(masterLayout);
     setLayouts(newLayouts);
@@ -133,7 +126,6 @@ export function useDashboard() {
 
   const handleResetLayout = () => {
     if (!window.confirm(t("dashbord.restoreWarning"))) return;
-    
     localStorage.removeItem(WIDGETS_STORAGE_KEY);
     localStorage.removeItem(LAYOUT_STORAGE_KEY);
     localStorage.removeItem(WIDGET_STATES_STORAGE_KEY);
@@ -151,12 +143,6 @@ export function useDashboard() {
     localStorage.setItem(WIDGET_STATES_STORAGE_KEY, JSON.stringify(newWidgetStates));
   };
 
-  /**
-   * NOTE: Toggles Widget Collapse State
-   * Manages the collapsing and expanding of a widget. It adjusts the widget's height in the layout
-   * and saves its original height to restore it upon expansion.
-   * @param widgetId The unique identifier of the widget to toggle.
-   */
   const handleToggleCollapse = (widgetId: string) => {
     const widgetType = widgets.find((w) => w.i === widgetId)?.type;
     const config = widgetType ? WIDGET_REGISTRY[widgetType] : undefined;
@@ -172,8 +158,7 @@ export function useDashboard() {
           newItem.originalH = item.h;
           newItem.h = COLLAPSED_WIDGET_HEIGHT;
         } else {
-          const fallbackHeight = config.defaultLayout.h || 5;
-          newItem.h = item.originalH || fallbackHeight;
+          newItem.h = item.originalH || (config.defaultLayout.h || 5);
         }
         return newItem;
       }
@@ -183,9 +168,20 @@ export function useDashboard() {
     const newLayouts = generateDerivedLayouts(newMasterLayout);
     setLayouts(newLayouts);
     localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify(newLayouts));
-    
     handleWidgetStateChange(widgetId, { isCollapsed: newIsCollapsed });
   };
+
+  const setRuntimeWidgetHeight = useCallback((widgetId: string, newH: number) => {
+    setLayouts(prev => {
+      const updated: Layouts = {};
+      for (const bp of Object.keys(prev)) {
+        updated[bp] = (prev[bp] || []).map(item =>
+          item.i === widgetId ? { ...item, h: newH } : item
+        );
+      }
+      return updated;
+    });
+  }, []);
 
   const isEditableBreakpoint = EDITABLE_BREAKPOINTS.includes(currentBreakpoint);
   const finalIsEditMode = isEditMode && isEditableBreakpoint;
@@ -195,6 +191,6 @@ export function useDashboard() {
     finalIsEditMode, isLargeScreen: isEditableBreakpoint,
     setIsEditMode, setIsLibraryOpen, onBreakpointChange,
     onLayoutChange, onAddWidget, onRemoveWidget, handleResetLayout,
-    handleWidgetStateChange, handleToggleCollapse,
+    handleWidgetStateChange, handleToggleCollapse, setRuntimeWidgetHeight,
   };
 }
