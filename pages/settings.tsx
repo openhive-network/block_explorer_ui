@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useI18n } from '@/i18n/i18n';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -6,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import PageTitle from '@/components/PageTitle';
 import { useSettings, AppSettings } from '@/contexts/SettingsContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 //  To add a new setting, Follow these steps:
 // Step 1: Update the Settings Context
@@ -97,7 +97,7 @@ interface SettingSectionConfig {
 const SwitchSettingRenderer: React.FC<{ config: SwitchSettingConfig }> = ({ config }) => {
   const { t } = useI18n();
   const { settings, updateSettings } = useSettings();
-
+  
   return (
     <SettingItem label={t(config.labelKey)} description={t(config.descriptionKey)}>
       <Switch
@@ -141,6 +141,9 @@ const RadioSettingRenderer: React.FC<{ config: RadioSettingConfig }> = ({ config
 
 const SettingsPage = () => {
   const { t } = useI18n();
+  const { isLoggedIn } = useAuth(); // Added this line to fix the error
+  const { settings, updateSettings } = useSettings();
+
   const settingsConfig: SettingSectionConfig[] = [
     {
       sectionTitleKey: 'settingsPage.displayTitle',
@@ -201,6 +204,24 @@ const SettingsPage = () => {
     }
     
   ];
+
+  // This block now has access to isLoggedIn
+  if (isLoggedIn) {
+    settingsConfig.push({
+      sectionTitleKey: 'settingsPage.dashboardTitle',
+      sectionDescriptionKey: 'settingsPage.dashboardDescription',
+      items: [
+        {
+          type: 'switch',
+          key: 'enableModularDashboard',
+          labelKey: 'settingsPage.modularDashboardLabel',
+          descriptionKey: 'settingsPage.modularDashboardDescription',
+          trueValue: true,
+          falseValue: false
+        }
+      ]
+    });
+  }
 
   return (
     <div className="page-container mx-auto space-y-8">
