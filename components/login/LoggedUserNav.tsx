@@ -71,11 +71,12 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 rounded-full border border-navbar-border bg-secondary/20 p-1 pr-3 hover:bg-secondary/40 transition-all outline-none"
       >
-        <img
+        <Image
           src={avatar || getHiveAvatarUrl(username || "")}
           alt="avatar"
+          width={28}
+          height={28}
           className="w-7 h-7 rounded-full border border-border/50 object-cover"
-          style={{ height: 'auto' }}
         />
         {!isMobile && (
           <span className="text-xs font-bold text-text">{username}</span>

@@ -1,4 +1,4 @@
-{
+﻿{
   "common.by": "بواسطة",
   "common.operations": "العمليات",
   "common.seeMore": "عرض المزيد",
@@ -370,8 +370,10 @@
   "accountWitnessVotesCard.voterExport": "المصوت",
   "accountWitnessVotesCard.witnessVotesProxyExport": "أصوات_الوكيل",
   "accountWitnessVotesCard.witnessVotesExport": "أصوات_الشهود",
-  "accountRcDelegationsCard.delegations": "تفويضات RC",
-  "accountRcDelegationsCard.delegationsExport": "تفويضات_RC",
+  "accountOutgoingRcDelegationsCard.delegations": "تفويضات RC الصادرة",
+  "accountOutgoingRcDelegationsCard.delegationsExport": "صادرة_تفويضات_RC",
+  "accountIncomingRcDelegationsCard.delegations": "تفويضات RC الواردة",
+  "accountIncomingRcDelegationsCard.delegationsExport": "واردة_تفويضات_RC",
   "accountVestingDelegationsCard.incoming": "الواردة",
   "accountVestingDelegationsCard.outgoing": "الصادرة",
   "accountVestingDelegationsCard.hpDelegations": "تفويضات HP",

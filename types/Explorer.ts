@@ -216,7 +216,7 @@ declare module Explorer {
     blockNumber?: number;
     trxId?: string;
     timestamp?: string;
-    operationId?: number;
+    operationId?: string;
   }
 
   class ExtendedOperationTypePattern extends Hive.OperationPattern {

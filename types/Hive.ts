@@ -703,6 +703,29 @@ namespace Hive {
     to!: string;
   }
 
+  export class RcOutgoingDelegation {
+    delegatee!: string;
+    max_rc!: string;
+    operation_id!: string;
+    block_num!: number;
+  }
+
+  export class RcIncomingDelegation {
+    delegator!: string;
+    max_rc!: string;
+    operation_id!: string;
+    block_num!: number;
+  }
+
+  export class GetRcDelegationsParams {
+    accountName!: string;
+  }
+
+  export class RcDelegationsApiResponse {
+    outgoing_delegations!: RcOutgoingDelegation[];
+    incoming_delegations!: RcIncomingDelegation[];
+  }
+
   export interface BlockByOpResponse {
     block_num: number;
     op_type_id: number[];

@@ -11,7 +11,8 @@ import AccountWitnessVotesCard from "./AccountWitnessVotesCard";
 import VotersDialog from "../Witnesses/VotersDialog";
 import VotesHistoryDialog from "../Witnesses/VotesHistoryDialog";
 import AccountVestingDelegationsCard from "./AccountVestingDelegationsCard";
-import AccountRcDelegationsCard from "./AccountRcDelegationsCard";
+import AccountOutgoingRcDelegationsCard from "./AccountOutgoingRcDelegationsCard";
+import AccountIncomingRcDelegationsCard from "./AccountIncomingRcDelegationsCard";
 import AccountBalanceCard from "./AccountBalanceCard/AccountBalanceCard";
 import Explorer from "@/types/Explorer";
 import AccountBalanceHistoryCard from "./AccountBalanceHistoryCard";
@@ -109,9 +110,8 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
     dynamicGlobalData
   );
 
-  const { rcDelegationsData } = useRcDelegations(
+  const { outgoingRcDelegations, incomingRcDelegations } = useRcDelegations(
     accountName,
-    config.maxDelegatorsCount,
     liveDataEnabled
   );
 
@@ -122,12 +122,14 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
       outgoingVestingDelegations && outgoingVestingDelegations.length > 0;
     const hasIncomingVesting =
       incomingVestingDelegations && incomingVestingDelegations.length > 0;
-    const hasRc = rcDelegationsData && rcDelegationsData.length > 0;
-    return hasOutgoingVesting || hasIncomingVesting || hasRc;
+    const hasOutgoingRc = outgoingRcDelegations && outgoingRcDelegations.length > 0;
+    const hasIncomingRc = incomingRcDelegations && incomingRcDelegations.length > 0;
+    return hasOutgoingVesting || hasIncomingVesting || hasOutgoingRc || hasIncomingRc;
   }, [
     outgoingVestingDelegations,
     incomingVestingDelegations,
-    rcDelegationsData,
+    outgoingRcDelegations,
+    incomingRcDelegations,
   ]);
 
   const hasGovernanceContent = useMemo(() => {
@@ -237,8 +239,13 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
         isInitiallyOpen={isInitiallyOpen}
         accountName={accountName}
       />
-      <AccountRcDelegationsCard
-        delegations={rcDelegationsData}
+      <AccountOutgoingRcDelegationsCard
+        delegations={outgoingRcDelegations}
+        isInitiallyOpen={isInitiallyOpen}
+        accountName={accountName}
+      />
+      <AccountIncomingRcDelegationsCard
+        delegations={incomingRcDelegations}
         isInitiallyOpen={isInitiallyOpen}
         accountName={accountName}
       />
@@ -495,8 +502,13 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
                       activeDelegationType === "incoming"
                     }
                   />
-                  <AccountRcDelegationsCard
-                    delegations={rcDelegationsData}
+                  <AccountOutgoingRcDelegationsCard
+                    delegations={outgoingRcDelegations}
+                    isInitiallyOpen={tabExpandedStates.delegations}
+                    accountName={accountName}
+                  />
+                  <AccountIncomingRcDelegationsCard
+                    delegations={incomingRcDelegations}
                     isInitiallyOpen={tabExpandedStates.delegations}
                     accountName={accountName}
                   />

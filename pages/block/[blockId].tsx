@@ -37,7 +37,7 @@ interface BlockSearchParams {
   keyContent?: string;
   setOfKeys?: string[];
   trxId?: string;
-  opId ?: number;
+  opId?: string;
 }
 
 const defaultParams: BlockSearchParams = {

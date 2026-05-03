@@ -1,4 +1,4 @@
-{
+﻿{
   "common.by": "De",
   "common.operations": "Operațiuni",
   "operations.participationMode": "Direcția Tranzacției",
@@ -358,8 +358,10 @@
   "accountWitnessVotesCard.voterExport": "Votant",
   "accountWitnessVotesCard.witnessVotesProxyExport": "voturi_proxy",
   "accountWitnessVotesCard.witnessVotesExport": "voturi_martori",
-  "accountRcDelegationsCard.delegations": "Delegații RC",
-  "accountRcDelegationsCard.delegationsExport": "delegari_RC",
+  "accountOutgoingRcDelegationsCard.delegations": "Delegații RC de ieșire",
+  "accountOutgoingRcDelegationsCard.delegationsExport": "delegari_RC_iesire",
+  "accountIncomingRcDelegationsCard.delegations": "Delegații RC de intrare",
+  "accountIncomingRcDelegationsCard.delegationsExport": "delegari_RC_intrare",
   "accountVestingDelegationsCard.incoming": "Primite",
   "accountVestingDelegationsCard.outgoing": "Trimise",
   "accountVestingDelegationsCard.hpDelegations": "Delegații HP",

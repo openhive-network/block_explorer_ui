@@ -368,13 +368,11 @@ class FetchingService {
   }
 
   async getRcDelegations(
-    delegatorAccount: string,
-    limit: number
-  ): Promise<Hive.RCDelegations[]> {
-    return await this.extendedHiveChain!.api.rc_api.list_rc_direct_delegations({
-      start: [delegatorAccount, ""],
-      limit: limit,
-    }).then((response) => response.rc_direct_delegations);
+    accountName: string
+  ): Promise<Hive.RcDelegationsApiResponse> {
+    return await this.extendedHiveChain!.restApi["balance-api"].rcDelegations({
+      accountName,
+    });
   }
 
   async getBlockByTime(date: Date): Promise<number> {

@@ -1,4 +1,4 @@
-{
+﻿{
   "common.by": "Przez",
   "common.operations": "Operacje",
   "operations.participationMode": "Kierunek Transakcji",
@@ -363,8 +363,10 @@
   "accountWitnessVotesCard.voterExport": "Głosujący",
   "accountWitnessVotesCard.witnessVotesProxyExport": "głosy_proxy",
   "accountWitnessVotesCard.witnessVotesExport": "głosy_świadków",
-  "accountRcDelegationsCard.delegations": "Delegacje RC",
-  "accountRcDelegationsCard.delegationsExport": "delegacje_RC",
+  "accountOutgoingRcDelegationsCard.delegations": "Wychodzące delegacje RC",
+  "accountOutgoingRcDelegationsCard.delegationsExport": "wychodzace_delegacje_RC",
+  "accountIncomingRcDelegationsCard.delegations": "Przychodzące delegacje RC",
+  "accountIncomingRcDelegationsCard.delegationsExport": "przychodzace_delegacje_RC",
   "accountVestingDelegationsCard.incoming": "Przychodzące",
   "accountVestingDelegationsCard.outgoing": "Wychodzące",
   "accountVestingDelegationsCard.hpDelegations": "Delegacje HP",

@@ -1,4 +1,4 @@
-{
+﻿{
   "common.by": "作成者",
   "common.operations": "オペレーション",
   "operations.participationMode": "トランザクション方向",
@@ -363,8 +363,10 @@
   "accountWitnessVotesCard.voterExport": "投票者",
   "accountWitnessVotesCard.witnessVotesProxyExport": "プロキシ投票",
   "accountWitnessVotesCard.witnessVotesExport": "証人投票",
-  "accountRcDelegationsCard.delegations": "RC委任",
-  "accountRcDelegationsCard.delegationsExport": "RC_デリゲーション",
+  "accountOutgoingRcDelegationsCard.delegations": "送信RC委任",
+  "accountOutgoingRcDelegationsCard.delegationsExport": "送信_RC_デリゲーション",
+  "accountIncomingRcDelegationsCard.delegations": "受信RC委任",
+  "accountIncomingRcDelegationsCard.delegationsExport": "受信_RC_デリゲーション",
   "accountVestingDelegationsCard.incoming": "受信",
   "accountVestingDelegationsCard.outgoing": "送信",
   "accountVestingDelegationsCard.hpDelegations": "HP委任",

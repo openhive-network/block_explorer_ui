@@ -6,15 +6,28 @@ import Explorer from "@/types/Explorer";
 import { grabNumericValue } from "./StringUtils";
 import { TableHead } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { useI18n } from "@/i18n/i18n";
 
 export type RcDelegation = {
   to: string;
   delegated_rc: number;
 };
 
+export type OutgoingRcDelegation = {
+  delegatee: string;
+  max_rc: string;
+  operation_id: string;
+  block_num: number;
+};
+
+export type IncomingRcDelegation = {
+  delegator: string;
+  max_rc: string;
+  operation_id: string;
+  block_num: number;
+};
+
 type SortedDelegations = {
-  delegations: Explorer.VestingDelegation[] | RcDelegation[];
+  delegations: Explorer.VestingDelegation[] | RcDelegation[] | OutgoingRcDelegation[] | IncomingRcDelegation[];
   key: string;
   isAscending: boolean;
   recipient: string;
