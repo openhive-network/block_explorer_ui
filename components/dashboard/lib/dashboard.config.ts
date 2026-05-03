@@ -50,8 +50,8 @@ export const DEFAULT_MASTER_LAYOUT: Layout[] = [
   { i: "last-blocks-1", x: 3, y: 0, w: 5.95, h: 9.4, minW: 5, minH: 7 },
   { i: "tx-stats-1", x: 3, y: 9.4, w: 5.95, h: 5.8, minW: 4, minH: 4 },
   { i: "transfer-volume-1", x: 3, y: 15.3, w: 5.95, h: 5.8, minW: 4, minH: 4 },
-  { i: "tvl-1", x: 3, y: 20.8, w: 5.95, h: 4.6, minW: 4, minH: 4.5 },
-  { i: "searches-1", x: 3, y: 25.3, w: 5.95, h: 11.9, minW: 4, minH: 11 },
+  { i: "tvl-1", x: 3, y: 20.8, w: 5.95, h: 4.8, minW: 4, minH: 4.5 },
+  { i: "searches-1", x: 3, y: 25.8, w: 5.95, h: 9, minW: 4, minH: 11 },
   { i: "top-witnesses-1", x: 9, y: 0, w: 3, h: 25.8, minW: 3, minH: 8 },
   { i: "top-communities-1", x: 9, y: 25.8, w: 3, h: 5.8, minW: 3, minH: 5 },
 ];
@@ -66,8 +66,7 @@ export const DEFAULT_MOBILE_WIDGET_ORDER: string[] = [
   "last-blocks-1",
   "tx-stats-1",
   "transfer-volume-1",
-  "tvl-1",
-  
+  "tvl-1",  
   "top-witnesses-1",
   "top-communities-1",
   "searches-1",

@@ -5,6 +5,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/* For widgets that auto-resize (e.g. searches): drop height from the transition so
+   the grid item expands instantly instead of animating visibly. Position (transform)
+   still transitions so other widgets moving around still look smooth. */
+.react-grid-item.instant-height {
+  transition-property: transform !important;
+}
 
 /* Light theme */
 :root {
