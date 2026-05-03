@@ -15,7 +15,6 @@ import { useI18n } from "@/i18n/i18n";
 import useProxyPower from "@/hooks/api/accountPage/useProxyPower";
 import Explorer from "@/types/Explorer";
 import Hive from "@/types/Hive";
-import { config } from "@/Config";
 import { formatNumber } from "@/lib/utils";
 import { convertVestsToHP } from "@/utils/Calculations";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
@@ -34,6 +33,9 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import DataExport from "@/components/DataExport";
+
+// Page size used by the hafbe-api proxy-power endpoint — controls Next button visibility
+const PROXY_POWER_PAGE_SIZE = 1000;
 
 const handleSortProxyPower = (
   proxies: Hive.ProxyPowerResponse[],
@@ -144,7 +146,7 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
     return null;
   }
 
-  const isLastPage = accountProxyPower.length < config.standardPaginationSize;
+  const isLastPage = accountProxyPower.length < PROXY_POWER_PAGE_SIZE;
   const showPagination = currentPage > 1 || !isLastPage;
 
   const renderSortIcon = (columnKey: keyof Hive.ProxyPowerResponse) => {
