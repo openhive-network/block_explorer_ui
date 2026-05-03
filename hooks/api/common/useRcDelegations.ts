@@ -5,31 +5,23 @@ import { config } from "@/Config";
 import fetchingService from "@/services/FetchingService";
 
 const useRcDelegations = (
-  delegatorAccount: string,
-  limit: number,
+  accountName: string,
   liveDataEnabled: boolean
 ) => {
   const {
-    data: rcDelegationsData,
+    data,
     isLoading: isRcDelegationsLoading,
     isError: isRcDelegationsError,
-  }: UseQueryResult<Hive.RCDelegations[]> = useQuery({
-    queryKey: ["RcDelegations", delegatorAccount, limit, liveDataEnabled],
-    queryFn: () => fetchingService.getRcDelegations(delegatorAccount, limit),
+  }: UseQueryResult<Hive.RcDelegationsApiResponse> = useQuery({
+    queryKey: ["RcDelegations", accountName, liveDataEnabled],
+    queryFn: () => fetchingService.getRcDelegations(accountName),
     refetchInterval: liveDataEnabled ? config.accountRefreshInterval : false,
-    select: (data) => {
-      if (Array.isArray(data)) {
-        return data.sort((a: Hive.RCDelegations, b: Hive.RCDelegations) =>
-          a.to.toLowerCase().localeCompare(b.to.toLowerCase())
-        );
-      }
-      return data;
-    },
     refetchOnWindowFocus: false,
   });
 
   return {
-    rcDelegationsData,
+    outgoingRcDelegations: data?.outgoing_delegations,
+    incomingRcDelegations: data?.incoming_delegations,
     isRcDelegationsLoading,
     isRcDelegationsError,
   };

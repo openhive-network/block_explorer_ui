@@ -1,4 +1,4 @@
-{
+﻿{
   "common.by": "由",
   "common.operations": "操作",
   "operations.participationMode": "参与方式",
@@ -347,8 +347,10 @@
   "accountWitnessVotesCard.voterExport": "投票人",
   "accountWitnessVotesCard.witnessVotesProxyExport": "代理投票",
   "accountWitnessVotesCard.witnessVotesExport": "见证人投票",
-  "accountRcDelegationsCard.delegations": "RC代理",
-  "accountRcDelegationsCard.delegationsExport": "RC_代理",
+  "accountOutgoingRcDelegationsCard.delegations": "发出RC代理",
+  "accountOutgoingRcDelegationsCard.delegationsExport": "发出_RC_代理",
+  "accountIncomingRcDelegationsCard.delegations": "收到RC代理",
+  "accountIncomingRcDelegationsCard.delegationsExport": "收到_RC_代理",
   "accountVestingDelegationsCard.incoming": "传入",
   "accountVestingDelegationsCard.outgoing": "传出",
   "accountVestingDelegationsCard.hpDelegations": "HP代理",

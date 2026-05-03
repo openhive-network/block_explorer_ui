@@ -1,4 +1,4 @@
-{
+﻿{
   "common.by": "작성자",
   "common.operations": "오퍼레이션",
   "operations.participationMode": "거래 방향",
@@ -362,8 +362,10 @@
   "accountWitnessVotesCard.voterExport": "투표자",
   "accountWitnessVotesCard.witnessVotesProxyExport": "프록시_투표",
   "accountWitnessVotesCard.witnessVotesExport": "증인_투표",
-  "accountRcDelegationsCard.delegations": "RC 위임",
-  "accountRcDelegationsCard.delegationsExport": "RC_임대",
+  "accountOutgoingRcDelegationsCard.delegations": "발신 RC 위임",
+  "accountOutgoingRcDelegationsCard.delegationsExport": "발신_RC_임대",
+  "accountIncomingRcDelegationsCard.delegations": "수신 RC 위임",
+  "accountIncomingRcDelegationsCard.delegationsExport": "수신_RC_임대",
   "accountVestingDelegationsCard.incoming": "받은 위임",
   "accountVestingDelegationsCard.outgoing": "보낸 위임",
   "accountVestingDelegationsCard.hpDelegations": "HP 위임",

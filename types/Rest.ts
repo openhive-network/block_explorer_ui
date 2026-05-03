@@ -197,5 +197,10 @@ export const extendedRest = {
       result: Hive.AccountBalancesResponse,
       urlPath: "accounts/{accountName}/balances",
     },
+    rcDelegations: {
+      params: Hive.GetRcDelegationsParams,
+      result: Hive.RcDelegationsApiResponse,
+      urlPath: "accounts/{accountName}/rc-delegations",
+    },
   },
 };

@@ -1,4 +1,4 @@
-{
+﻿{
   "common.by": "Por",
   "common.operations": "Operações",
   "operations.participationMode": "Direção da Transação",
@@ -353,8 +353,10 @@
   "accountWitnessVotesCard.voterExport": "Votante",
   "accountWitnessVotesCard.witnessVotesProxyExport": "votos_proxy",
   "accountWitnessVotesCard.witnessVotesExport": "votos_testemunhas",
-  "accountRcDelegationsCard.delegations": "Delegações de RC",
-  "accountRcDelegationsCard.delegationsExport": "delegacoes_RC",
+  "accountOutgoingRcDelegationsCard.delegations": "Delegações de RC de saída",
+  "accountOutgoingRcDelegationsCard.delegationsExport": "delegacoes_RC_saida",
+  "accountIncomingRcDelegationsCard.delegations": "Delegações de RC de entrada",
+  "accountIncomingRcDelegationsCard.delegationsExport": "delegacoes_RC_entrada",
   "accountVestingDelegationsCard.incoming": "Recebidas",
   "accountVestingDelegationsCard.outgoing": "Enviadas",
   "accountVestingDelegationsCard.hpDelegations": "Delegações de HP",

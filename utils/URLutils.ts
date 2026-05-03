@@ -49,8 +49,12 @@ export const dataToURL = (value: any) => {
 };
 
 export const URLToData = (value: any) => {
-  if (!isNaN(Number(value))) {
-    return Number(value);
+  const num = Number(value);
+  if (!isNaN(num)) {
+    if (Number.isInteger(num) && !Number.isSafeInteger(num)) {
+      return String(value);
+    }
+    return num;
   }
 
   if (value.slice(-2) === URL_ARRAY_HEX) {

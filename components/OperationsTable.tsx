@@ -42,7 +42,7 @@ interface OperationsTableProps {
   operations: Explorer.OperationForTable[];
   unformattedOperations?: Explorer.OperationForTable[];
   markedTrxId?: string;
-  markedOpId?: number;
+  markedOpId?: string;
   className?: string;
   referrer?: string;
   accountName?: string;
@@ -138,12 +138,11 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
     settings: { rawJsonView, prettyJsonView },
   } = useSettings();
 
-  const [expanded, setExpanded] = useState<number[]>([]);
+  const [expanded, setExpanded] = useState<string[]>([]);
 
   //useEffect to scroll to the marked operation row
   useEffect(() => {
     if (markedOpId !== undefined && operations.length > 0) {
-      // Use a short timeout to ensure the DOM has finished rendering after the state update
       setTimeout(() => {
         const element = document.querySelector(`[data-op-id="${markedOpId}"]`);
         if (element) {
@@ -180,7 +179,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
   };
 
   // Cache last non-empty operation content by operationId
-  const lastContentRef = useRef<Record<number, React.ReactNode>>({});
+  const lastContentRef = useRef<Record<string, React.ReactNode>>({});
 
   const renderOperationContent = (
     rawJsonView: boolean,
@@ -472,7 +471,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                               "custom_json_operation",
                           })}
                         >
-                          {expanded.includes(operation.operationId || 0) ? (
+                          {expanded.includes(operation.operationId || "") ? (
                             <Button
                               className="p-0 h-fit"
                               onClick={(e) => {
@@ -498,7 +497,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                                 e.stopPropagation();
                                 setExpanded((prevExpanded) => [
                                   ...prevExpanded,
-                                  operation.operationId || 0,
+                                  operation.operationId || "",
                                 ]);
                               }}
                             >
@@ -513,7 +512,7 @@ const OperationsTable: React.FC<OperationsTableProps> = ({
                       </TableCell>
                     </TableRow>
                     {operation.operation.type === "custom_json_operation" &&
-                      expanded.includes(operation.operationId || 0) && (
+                      expanded.includes(operation.operationId || "") && (
                         <TableRow>
                           <TableCell
                             data-testid="details"

@@ -143,7 +143,7 @@ export const convertOperationResultsToTableOperations = (
     blockNumber: operation.block,
     trxId: operation.trx_id,
     timestamp: operation.timestamp,
-    operationId: Number(operation.operation_id),
+    operationId: operation.operation_id,
   }));
 };
 
@@ -153,7 +153,7 @@ export const convertCommentsOperationResultToTableOperations = (
   return operations?.map((operation) => ({
     operation: operation.op,
     blockNumber: operation.block,
-    operationId: Number(operation.operation_id),
+    operationId: String(operation.operation_id),
     trxId: operation.trx_id,
     timestamp: operation.timestamp,
   }));
