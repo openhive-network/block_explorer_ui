@@ -6,7 +6,7 @@ import {
   WIDGET_STATES_STORAGE_KEY,
   DEFAULT_WIDGETS,
   DEFAULT_MASTER_LAYOUT,
-  generateDerivedLayouts, // We will use this now
+  generateDerivedLayouts,
   COLLAPSED_WIDGET_HEIGHT,
   EDITABLE_BREAKPOINTS,
 } from "../lib/dashboard.config";
@@ -54,7 +54,6 @@ export function useDashboard() {
   const { t } = useI18n();
 
   useEffect(() => {
-    // 1. Clear storage if you want to force the new logic
     const savedWidgetsStr = localStorage.getItem(WIDGETS_STORAGE_KEY);
     const savedLayoutsStr = localStorage.getItem(LAYOUT_STORAGE_KEY);
     const savedStatesStr = localStorage.getItem(WIDGET_STATES_STORAGE_KEY);
@@ -64,8 +63,7 @@ export function useDashboard() {
     let initialWidgetStates: Record<string, any> = {};
 
     if (savedLayoutsStr) {
-      // 2. If loading from storage, we MUST pass the LG layout back through 
-      // the generator to apply the NEW mobile heights you just added.
+ 
       const parsedLayouts = JSON.parse(savedLayoutsStr);
       initialLayouts = generateDerivedLayouts(parsedLayouts.lg || DEFAULT_MASTER_LAYOUT);
       

@@ -85,7 +85,9 @@ const StandardHome = () => {
           <TransactionStatisticsCard />
           <TransferVolumeCard />
           <TotalValueLockedCard />
-          <SearchesSection />
+          <div className="mt-4">
+            <SearchesSection />
+          </div>
         </div>
 
         <div className="col-span-12 lg:col-span-3 flex flex-col gap-3">
@@ -93,8 +95,8 @@ const StandardHome = () => {
             witnessesData={witnessesData}
             isLoading={isWitnessDataLoading}
           />
-          <TopCommunitiesCard 
-            communitiesData={popularCommunitiesData} 
+          <TopCommunitiesCard
+            communitiesData={popularCommunitiesData}
             isLoading={isCommunitiesLoading}
           />
         </div>

@@ -73,7 +73,6 @@ const SearchesAccordionCard = () => {
 
   return (
     <Card
-      className="mt-4"
       data-testid="block-search-section"
     >
       <CardHeader>

@@ -99,7 +99,8 @@ const WidgetIndex = () => { // Renamed from Home
 
       const isLayout = widgetConfig?.isLayoutWidget;
       const wrapperClasses = cn(
-        "h-full transition-all duration-200 relative",
+        "h-full relative",
+        widgetConfig.dynamicHeight ? "instant-height" : "transition-all duration-200",
         finalIsEditMode
           ? "border-2 border-dashed border-slate-400 rounded-lg overflow-hidden cursor-move"
           : "border-2 border-transparent",
@@ -131,7 +132,7 @@ const WidgetIndex = () => { // Renamed from Home
                 if (el) contentRefs.current.set(widget.i, el);
                 else contentRefs.current.delete(widget.i);
               }}
-              className="w-full"
+              className="w-full overflow-hidden"
             >
               <WidgetRenderer type={widget.type} props={finalProps} />
             </div>
