@@ -83,6 +83,10 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     main: [number, number];
     secondary: [number, number];
   } | null>(null);
+  const [brushIndices, setBrushIndices] = useState<{
+    startIndex: number;
+    endIndex: number;
+  } | undefined>(undefined);
 
   useEffect(() => {
     const handleResize = () => {
@@ -164,6 +168,8 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
 
   const handleCoinTypeChange = (coinType: string) => {
     setSelectedCoinType(coinType);
+    setBrushIndices(undefined);
+    setZoomedDomain(null);
   };
 
   const displayData = useMemo(
@@ -404,8 +410,11 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
       domain.endIndex === undefined
     ) {
       setZoomedDomain(null);
+      setBrushIndices(undefined);
       return;
     }
+
+    setBrushIndices({ startIndex: domain.startIndex, endIndex: domain.endIndex });
 
     const visibleData = (displayData || []).slice(
       domain.startIndex,
@@ -588,6 +597,8 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
               x={50}
               className="text-xs"
               onChange={handleBrushAreaChange}
+              startIndex={brushIndices?.startIndex ?? 0}
+              endIndex={brushIndices?.endIndex ?? (displayData ? displayData.length - 1 : 0)}
             />
           )}
           <Legend
