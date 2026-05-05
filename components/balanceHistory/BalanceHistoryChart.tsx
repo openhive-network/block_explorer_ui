@@ -338,7 +338,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
         <div className="hidden md:block" />
       )}
 
-      <div className="flex items-center space-x-1 self-end md:self-auto">
+      <div className="flex items-center space-x-1 self-end md:self-auto mr-4">
         {availableCoins.map((coinType) => (
           <button
             key={coinType}
@@ -456,9 +456,9 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
         <LineChart
           data={displayData}
           margin={{
-           top: 20,
-            right: isRTL ? (isMobile ? 0 : 10) : isMobile ? 0 : 20,
-            left: isRTL ? (isMobile ? 0 : 20) : leftMargin,
+            top: 5,
+            right: isRTL ? (isMobile ? 0 : 5) : isMobile ? 0 : 10,
+            left: isRTL ? (isMobile ? 0 : 5) : leftMargin,
             bottom: isMobile ? 100 : 60,
           }}
         >
