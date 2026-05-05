@@ -43,7 +43,7 @@ const buildTableBody = (
           onClick={() => onRowClick(delegation.block_num, delegation.operation_id)}
         >
           <TableCell>{offset + index + 1}</TableCell>
-          <TableCell className="text-right">
+          <TableCell className="text-right break-words">
             <Link
               className="text-link"
               href={`/@${delegation.delegatee}`}
@@ -52,7 +52,7 @@ const buildTableBody = (
               {delegation.delegatee}
             </Link>
           </TableCell>
-          <TableCell className="text-right">
+          <TableCell className="text-right break-words">
             {formatNumber(delegation.max_rc, false, true, 0)}
           </TableCell>
         </TableRow>
@@ -148,7 +148,7 @@ const AccountOutgoingRcDelegationsCard: React.FC<AccountOutgoingRcDelegationsCar
         </div>
       </CardHeader>
       <CardContent hidden={isPropertiesHidden}>
-        <Table>
+        <Table className="table-fixed">
           <TableHeader className="text-base">
             <TableRow>{buildTableHead(sortBy, key, isAscending, t, "outgoing")}</TableRow>
           </TableHeader>

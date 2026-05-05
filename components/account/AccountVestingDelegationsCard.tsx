@@ -35,7 +35,7 @@ const buildTableBody = (
       <Fragment key={index}>
         <TableRow>
           <TableCell>{index + 1}</TableCell>
-          <TableCell className="text-right">
+          <TableCell className="text-right break-words">
             {direction === "outgoing" ? (
               <Link
                 className="text-link"
@@ -52,7 +52,7 @@ const buildTableBody = (
               </Link>
             )}
           </TableCell>
-          <TableCell className="text-right">
+          <TableCell className="text-right break-words">
             {delegation.vesting_shares}
           </TableCell>
         </TableRow>
@@ -160,7 +160,7 @@ const AccountVestingDelegationsCard: React.FC<
         </div>
       </CardHeader>
       <CardContent hidden={isPropertiesHidden}>
-        <Table>
+        <Table className="table-fixed">
           <TableHeader className="text-base">
             <TableRow>
               {buildTableHead(sortBy, key, isAscending, t, direction)}
