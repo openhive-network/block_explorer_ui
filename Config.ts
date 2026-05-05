@@ -98,21 +98,16 @@ export const config = {
 };
 
 /**
- * Validates Hivesigner env vars at module load. Server-only — checks both
- * the public app id (used by the client SDK) and the server-only app id +
- * secret (used by pages/api/auth/hs-exchange.ts). Mismatches and missing
- * values surface as console warnings so misconfigured deploys are obvious
- * in logs instead of producing opaque login failures.
+ * Validates Hivesigner env vars. Caller-driven (not module-load) so Next.js
+ * build workers and unrelated SSR pages don't repeat the warnings. Call
+ * from the auth API handler at request time; the once-per-process guard
+ * suppresses repeats within a server worker.
  */
-function validateHivesignerEnv() {
+export function validateHivesignerEnv() {
   if (typeof window !== "undefined") return;
-  // Next.js re-imports Config.ts per server/static page during build and SSR.
-  // Stash the once-per-process flag on globalThis so module re-evaluation
-  // (separate module registries across page bundles) doesn't repeat the warnings.
-  const flag = "__hivesignerEnvValidated__";
   const g = globalThis as Record<string, unknown>;
-  if (g[flag]) return;
-  g[flag] = true;
+  if (g.__hivesignerEnvValidated__) return;
+  g.__hivesignerEnvValidated__ = true;
 
   const publicApp = process.env.NEXT_PUBLIC_HIVESIGNER_APP;
   const serverApp = process.env.HIVESIGNER_APP;
@@ -131,4 +126,3 @@ function validateHivesignerEnv() {
     );
   }
 }
-validateHivesignerEnv();
