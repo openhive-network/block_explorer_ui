@@ -110,12 +110,13 @@ export const buildTableHead = (
       ? TABLE_HEADER_CELLS_INCOMING
       : TABLE_HEADER_CELLS_OUTGOING;
 
-  return tableHeaderCells.map((cellName: string) => {
+  return tableHeaderCells.map((cellName: string, index: number) => {
+    const widthClass = index === 0 ? "w-10" : "";
     return (
-      <Fragment key={cellName}>
+      <Fragment key={index}>
         <TableHead
-          key={cellName}
-          className="text-right"
+          key={index}
+          className={`text-right ${widthClass}`}
         >
           <Button
             className="bg-inherit hover:bg-inherit p-0 m-0"
