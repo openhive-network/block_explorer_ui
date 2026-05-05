@@ -135,6 +135,7 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
       <CardContent
         hidden={isBalancesHidden}
         data-testid="balance-history-content"
+        className="p-0"
       >
         {isLoading && (
           <div className="flex justify-center items-center">
@@ -153,7 +154,7 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
               aggregatedAccountBalanceHistory
             )}
             quickView={true}
-            className="h-[380px]"
+            className="h-[430px]"
             selectedCoinType={coinType}
             setSelectedCoinType={setCoinType}
           />
