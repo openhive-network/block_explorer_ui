@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import dynamic from "next/dynamic";
 
 import { config } from "@/Config";
 import useWitnessDetails from "@/hooks/api/common/useWitnessDetails";
@@ -8,8 +9,13 @@ import AccountDetailsCard from "./AccountDetailsCard";
 import JSONCard from "../JSONCard";
 import AccountAuthoritiesCard from "./AccountAuthoritiesCard";
 import AccountWitnessVotesCard from "./AccountWitnessVotesCard";
-import VotersDialog from "../Witnesses/VotersDialog";
-import VotesHistoryDialog from "../Witnesses/VotesHistoryDialog";
+const VotersDialog = dynamic(() => import("../Witnesses/VotersDialog"), {
+  ssr: false,
+});
+const VotesHistoryDialog = dynamic(
+  () => import("../Witnesses/VotesHistoryDialog"),
+  { ssr: false }
+);
 import AccountVestingDelegationsCard from "./AccountVestingDelegationsCard";
 import AccountOutgoingRcDelegationsCard from "./AccountOutgoingRcDelegationsCard";
 import AccountIncomingRcDelegationsCard from "./AccountIncomingRcDelegationsCard";
@@ -122,9 +128,13 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
       outgoingVestingDelegations && outgoingVestingDelegations.length > 0;
     const hasIncomingVesting =
       incomingVestingDelegations && incomingVestingDelegations.length > 0;
-    const hasOutgoingRc = outgoingRcDelegations && outgoingRcDelegations.length > 0;
-    const hasIncomingRc = incomingRcDelegations && incomingRcDelegations.length > 0;
-    return hasOutgoingVesting || hasIncomingVesting || hasOutgoingRc || hasIncomingRc;
+    const hasOutgoingRc =
+      outgoingRcDelegations && outgoingRcDelegations.length > 0;
+    const hasIncomingRc =
+      incomingRcDelegations && incomingRcDelegations.length > 0;
+    return (
+      hasOutgoingVesting || hasIncomingVesting || hasOutgoingRc || hasIncomingRc
+    );
   }, [
     outgoingVestingDelegations,
     incomingVestingDelegations,
@@ -670,10 +680,7 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
               </Tooltip>
             </TooltipProvider>
           </div>
-          <div
-            key={areAllCardsOpen ? "open" : "closed"}
-            className="space-y-4"
-          >
+          <div key={areAllCardsOpen ? "open" : "closed"} className="space-y-4">
             <CollapsibleCards isInitiallyOpen={areAllCardsOpen} />
           </div>
         </div>

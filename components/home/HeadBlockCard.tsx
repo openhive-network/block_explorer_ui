@@ -17,7 +17,10 @@ import { Toggle } from "../ui/toggle";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import CurrentBlockCard from "./CurrentBlockCard";
 import HeadBlockHiveChartCard from "./HeadBlockHiveChartCard";
-import HiveFullChartDialog from "./HiveFullChartDialog";
+import dynamic from "next/dynamic";
+const HiveFullChartDialog = dynamic(() => import("./HiveFullChartDialog"), {
+  ssr: false,
+});
 import { useI18n } from "../../i18n/i18n";
 import { useSettings } from "@/contexts/SettingsContext";
 
@@ -245,15 +248,14 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
           {/* Blockchain Time and Live Data Toggle */}
           <div className="flex flex-col items-end space-y-2">
             <div className="flex items-end space-x-2 text-[12px]">
-              <Clock
-                size={18}
-                strokeWidth={2}
-              />
-              <span className="font-semibold">{t("headBlockCard.blockchainTime")}:</span>
+              <Clock size={18} strokeWidth={2} />
+              <span className="font-semibold">
+                {t("headBlockCard.blockchainTime")}:
+              </span>
               <span className="font-semibold text-right">
                 {liveBlockchainTime
                   ? getFormattedLiveBlockchainTime(liveBlockchainTime)
-                  : blockchainTime ?? ""}
+                  : (blockchainTime ?? "")}
               </span>
             </div>
 
@@ -290,7 +292,8 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
               <span>{t("headBlockCard.feedPrice")}:</span> {liveFeedPrice}
             </div>
             <div>
-              <span>{t("headBlockCard.vestsToHiveRatio")}:</span> {liveVestsToHiveRatio} VESTS
+              <span>{t("headBlockCard.vestsToHiveRatio")}:</span>{" "}
+              {liveVestsToHiveRatio} VESTS
             </div>
           </div>
 

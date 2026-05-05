@@ -2,7 +2,11 @@ import React, { useMemo, useState } from "react";
 import useTransactionStatistics from "@/hooks/api/homePage/useTransactionStatistics";
 import { Loader2 } from "lucide-react";
 import TransactionStatisticsChart from "./TransactionStatisticsChart";
-import TransactionStatisticsFullChartDialog from "./TransactionStatisticsFullChartDialog";
+import dynamic from "next/dynamic";
+const TransactionStatisticsFullChartDialog = dynamic(
+  () => import("./TransactionStatisticsFullChartDialog"),
+  { ssr: false }
+);
 import { useI18n } from "../../i18n/i18n";
 import { useSettings } from "@/contexts/SettingsContext";
 
@@ -44,13 +48,7 @@ const TransactionStatisticsCard = () => {
     transactionStatistics: chartData,
     isTransactionStatisticsLoading: isChartLoading,
     isTransactionStatisticsError: isChartError,
-  } = useTransactionStatistics(
-    "daily",
-    "asc",
-    fromDate,
-    yesterday,
-    false
-  );
+  } = useTransactionStatistics("daily", "asc", fromDate, yesterday, false);
 
   const {
     transactionStatistics: yearlyData,
@@ -143,10 +141,14 @@ const TransactionStatisticsCard = () => {
                   </div>
                 </>
               ) : (
-                <p className="text-gray-500 text-sm">{t("common.noDataAvailable")}</p>
+                <p className="text-gray-500 text-sm">
+                  {t("common.noDataAvailable")}
+                </p>
               )}
               {isDailyError && (
-                <p className="text-red-500 text-xs mt-1">{t("common.errorLoadingData")}</p>
+                <p className="text-red-500 text-xs mt-1">
+                  {t("common.errorLoadingData")}
+                </p>
               )}
             </div>
           </div>
@@ -169,11 +171,17 @@ const TransactionStatisticsCard = () => {
               </div>
             ) : (
               <div className="flex-grow min-h-[189px]">
-                <TransactionStatisticsChart data={chartData} tickCount={4} dateFormat="MMM D"/>
+                <TransactionStatisticsChart
+                  data={chartData}
+                  tickCount={4}
+                  dateFormat="MMM D"
+                />
               </div>
             )}
             {isChartError && (
-              <p className="text-red-500 text-xs mt-1">{t("common.errorLoadingData")}</p>
+              <p className="text-red-500 text-xs mt-1">
+                {t("common.errorLoadingData")}
+              </p>
             )}
           </div>
         </div>

@@ -6,7 +6,11 @@ import { Move, X } from "lucide-react";
 
 import WidgetRenderer from "@/components/dashboard/ui/WidgetRenderer";
 import WidgetLibrary from "@/components/dashboard/ui/WidgetLibrary";
-import HiveFullChartDialog from "@/components/home/HiveFullChartDialog";
+import dynamic from "next/dynamic";
+const HiveFullChartDialog = dynamic(
+  () => import("@/components/home/HiveFullChartDialog"),
+  { ssr: false }
+);
 import DashboardControls from "@/components/dashboard/ui/DashboardControls";
 
 import { useDashboard } from "@/components/dashboard/hooks/useDashboard";
@@ -17,7 +21,8 @@ import { cn } from "@/lib/utils";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
-const WidgetIndex = () => { // Renamed from Home
+const WidgetIndex = () => {
+  // Renamed from Home
   const { t } = useI18n();
   const [isFullHiveChartVisible, setIsFullHiveChartVisible] = useState(false);
 
@@ -48,7 +53,7 @@ const WidgetIndex = () => { // Renamed from Home
     const MARGIN_Y = 2;
     const observers: ResizeObserver[] = [];
 
-    widgets.forEach(widget => {
+    widgets.forEach((widget) => {
       const config = WIDGET_REGISTRY[widget.type];
       if (!config?.dynamicHeight) return;
 
@@ -69,7 +74,7 @@ const WidgetIndex = () => { // Renamed from Home
       observers.push(observer);
     });
 
-    return () => observers.forEach(o => o.disconnect());
+    return () => observers.forEach((o) => o.disconnect());
   }, [widgets, finalIsEditMode, setRuntimeWidgetHeight]);
 
   const dashboardData = useDashboardData(widgets);
@@ -100,7 +105,9 @@ const WidgetIndex = () => { // Renamed from Home
       const isLayout = widgetConfig?.isLayoutWidget;
       const wrapperClasses = cn(
         "h-full relative",
-        widgetConfig.dynamicHeight ? "instant-height" : "transition-all duration-200",
+        widgetConfig.dynamicHeight
+          ? "instant-height"
+          : "transition-all duration-200",
         finalIsEditMode
           ? "border-2 border-dashed border-slate-400 rounded-lg overflow-hidden cursor-move"
           : "border-2 border-transparent",
@@ -128,7 +135,7 @@ const WidgetIndex = () => { // Renamed from Home
           {editControls}
           {widgetConfig.dynamicHeight ? (
             <div
-              ref={el => {
+              ref={(el) => {
                 if (el) contentRefs.current.set(widget.i, el);
                 else contentRefs.current.delete(widget.i);
               }}

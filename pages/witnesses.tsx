@@ -26,8 +26,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import VotersDialog from "@/components/Witnesses/VotersDialog";
-import VotesHistoryDialog from "@/components/Witnesses/VotesHistoryDialog";
+import dynamic from "next/dynamic";
+const VotersDialog = dynamic(
+  () => import("@/components/Witnesses/VotersDialog"),
+  { ssr: false }
+);
+const VotesHistoryDialog = dynamic(
+  () => import("@/components/Witnesses/VotesHistoryDialog"),
+  { ssr: false }
+);
 import WitnessScheduleIcon from "@/components/WitnessScheduleIcon";
 import CopyButton from "@/components/ui/CopyButton";
 import ScrollTopButton from "@/components/ScrollTopButton";
@@ -125,23 +132,12 @@ const renderSortArrow = (
   isOrderAscending: boolean
 ) => {
   if (sortKeyByCell[currentSortKey] !== orderByApiField) {
-    return (
-      <ChevronsUpDown
-        size={15}
-        className="ml-1"
-      />
-    );
+    return <ChevronsUpDown size={15} className="ml-1" />;
   } else {
     return isOrderAscending ? (
-      <ChevronDown
-        size={15}
-        className="ml-1"
-      />
+      <ChevronDown size={15} className="ml-1" />
     ) : (
-      <ChevronUp
-        size={15}
-        className="ml-1"
-      />
+      <ChevronUp size={15} className="ml-1" />
     );
   }
 };
@@ -240,9 +236,7 @@ export default function Witnesses() {
       const className = "text-center !bg-navbar py-2";
       const buttonClassName = `w-full flex items-center ${
         isRightAligned ? "justify-end text-right" : "justify-start text-left"
-      } ${
-        cellConfig.displayKey ==="witnesses.version" ? "pr-2" : ""
-      }` ;
+      } ${cellConfig.displayKey === "witnesses.version" ? "pr-2" : ""}`;
 
       return (
         <TableCell
@@ -281,10 +275,7 @@ export default function Witnesses() {
         <div className="mx-4 my-4">
           <main className="flex-1">
             <div className="flex flex-col md:flex-row justify-between items-start bg-theme">
-              <PageTitle
-                titleKey="pageTitle.hiveWitnesses"
-                className="py-4"
-              />
+              <PageTitle titleKey="pageTitle.hiveWitnesses" className="py-4" />
 
               <div className="flex justify-start md:justify-end mt-2 md:mt-0 ml-1 md:ml-4 mr-4 flex-shrink-0">
                 <WitnessScheduleIcon />

@@ -5,7 +5,11 @@ import { Move, X } from "lucide-react";
 
 import WidgetRenderer from "@/components/dashboard/ui/WidgetRenderer";
 import WidgetLibrary from "@/components/dashboard/ui/WidgetLibrary";
-import HiveFullChartDialog from "@/components/home/HiveFullChartDialog";
+import dynamic from "next/dynamic";
+const HiveFullChartDialog = dynamic(
+  () => import("@/components/home/HiveFullChartDialog"),
+  { ssr: false }
+);
 import DashboardControls from "@/components/dashboard/ui/DashboardControls";
 
 import { useDashboard } from "@/components/dashboard/hooks/useDashboard";
