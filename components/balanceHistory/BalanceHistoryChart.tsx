@@ -188,13 +188,18 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     label?: string;
   }) => {
     const { dir: tooltipDir } = useI18n();
-    if (quickView || !active || !payload || payload.length === 0) return null;
+    if (!active || !payload || payload.length === 0) return null;
     const isTooltipRTL = tooltipDir === "rtl";
     const selectedData = displayData?.find((item) => item.timestamp === label);
     if (!selectedData) return null;
 
-    const actualBalance = selectedData?.balance ?? 0;
-    const balanceChange = selectedData?.balance_change ?? 0;
+    const isHpMode = selectedCoinType === "VESTS" && unit === "hp";
+    const rawBalance = selectedData?.balance ?? 0;
+    const rawBalanceChange = selectedData?.balance_change ?? 0;
+    const actualBalance = isHpMode ? (selectedData?.convertedHive ?? 0) : rawBalance;
+    const balanceChange = isHpMode
+      ? (rawBalance !== 0 ? (rawBalanceChange / rawBalance) * (selectedData?.convertedHive ?? 0) : 0)
+      : rawBalanceChange;
     const savingsBalance = selectedData?.savings_balance ?? undefined;
     const savingsBalanceChange = selectedData?.savings_balance_change ?? 0;
     const dollarValue = selectedData?.dollarValue ?? 0;
@@ -242,14 +247,14 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             )}
             {` ${formatNumber(
               balanceChange,
-              selectedCoinType === "VESTS" ? unit === "vests" : false
+              selectedCoinType === "VESTS" ? !isHpMode : false
             )}`}
           </div>
           <div style={{ color: currentCoinColor }}>{`${t(
             "common.balance"
           )}: ${formatNumber(
             actualBalance,
-            selectedCoinType === "VESTS" ? unit === "vests" : false
+            selectedCoinType === "VESTS" ? !isHpMode : false
           )}`}</div>
           {dollarValue ? (
             <div style={{ color: colorMap.DOLLAR }}>
