@@ -546,7 +546,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             minTickGap={20}
           />
 
-          <Tooltip content={<CustomTooltip />} />
+          <Tooltip content={CustomTooltip} />
           <Line
             yAxisId={primaryAxisId}
             type="monotone"
