@@ -1,13 +1,15 @@
 import { serialize } from "cookie";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { loginLimiter } from "@/utils/RateLimit";
-import { config } from "@/Config";
+import { config, validateHivesignerEnv } from "@/Config";
 import crypto from "crypto";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  validateHivesignerEnv();
+
   if (req.method !== "POST")
     return res.status(405).json({ error: "Method not allowed" });
 
