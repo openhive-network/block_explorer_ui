@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/router";
 
 import { adjustDynamicGlobalBlockData } from "@/utils/QueryDataSelectors";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
@@ -7,7 +6,6 @@ import fetchingService from "@/services/FetchingService";
 
 const useDynamicGlobal = (headBlockNum?: number) => {
   const { hiveChain } = useHiveChainContext();
-  const router = useRouter();
 
   function getGlobalBlockData() {
     return Promise.all([
@@ -21,7 +19,7 @@ const useDynamicGlobal = (headBlockNum?: number) => {
     isLoading: dynamicGlobalLoading,
     isError: dynamicGlobalError,
   } = useQuery({
-    queryKey: [`global`, headBlockNum, router],
+    queryKey: [`global`, headBlockNum],
     queryFn: getGlobalBlockData,
     select: (dynamicGlobalBlockData) =>
       adjustDynamicGlobalBlockData(

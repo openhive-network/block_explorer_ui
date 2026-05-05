@@ -10,7 +10,7 @@ export const config = {
     env("API_ADDRESS") ? env("API_ADDRESS") : "https://api.hive.blog"
   }`,
   baseMomentTimeFormat: "YYYY/MM/DD HH:mm:ss UTC",
-  momentLocaleDateFormat : "MMM D, YYYY",
+  momentLocaleDateFormat: "MMM D, YYYY",
   gitHash: process.env.NEXT_PUBLIC_COMMIT_HASH,
   get lastCommitHashRepoUrl() {
     return `https://gitlab.syncad.com/hive/block_explorer_ui/-/commit/${this.gitHash}`;
@@ -26,8 +26,8 @@ export const config = {
     home: 20,
   },
   topHolders: {
-    totalCount: 2000,       // Total number of top holders
-    pageSize: 100,         // Page size for pagination
+    totalCount: 2000, // Total number of top holders
+    pageSize: 100, // Page size for pagination
   },
   maxWitnessVotes: 30,
   inactiveWitnessKey: "STM1111111111111111111111111111111114T1Anm",
@@ -49,7 +49,7 @@ export const config = {
     outgoing: "outgoing",
   },
   maxProxyDepth: 3,
-  compactViewPercentage :"80%",
+  compactViewPercentage: "80%",
   fullViewPercentage: "98%",
   defaultNodeProviders: [
     "https://api.hive.blog",
@@ -76,23 +76,59 @@ export const config = {
     // The Hive account name that owns the app
     app: process.env.NEXT_PUBLIC_HIVESIGNER_APP,
     defaultCallBack: process.env.NEXT_PUBLIC_HIVESIGNER_CALLBACK as string,
-    scope: ['vote', 'comment', 'custom_json', 'claim_reward_balance'],
+    scope: ["vote", "comment", "custom_json", "claim_reward_balance"],
     endpoints: {
       authorize: "https://hivesigner.com/oauth2/authorize",
       token: "https://hivesigner.com/api/oauth2/token",
-      broadcast: "https://hivesigner.com/api/broadcast"
-    }
-  },  
+      broadcast: "https://hivesigner.com/api/broadcast",
+    },
+  },
   security: {
-    keychainTimeout : 60000,
+    keychainTimeout: 60000,
     nodeTimeout: 8000,
     sessionMaxAge: 604800,
     rateLimits: {
-      interval: 60000,            // 1 minute
-      maxTrackedIps: 1000,        // How many unique IPs to keep in memory
-      loginLimit: 5,              // Attempts per interval
-      broadcastLimit: 30,         // Actions per interval
+      interval: 60000, // 1 minute
+      maxTrackedIps: 1000, // How many unique IPs to keep in memory
+      loginLimit: 5, // Attempts per interval
+      broadcastLimit: 30, // Actions per interval
     },
-    allowedOperations: ['vote', 'claim_reward_balance', 'custom_json'],
-  }
+    allowedOperations: ["vote", "claim_reward_balance", "custom_json"],
+  },
 };
+
+/**
+ * Validates Hivesigner env vars at module load. Server-only — checks both
+ * the public app id (used by the client SDK) and the server-only app id +
+ * secret (used by pages/api/auth/hs-exchange.ts). Mismatches and missing
+ * values surface as console warnings so misconfigured deploys are obvious
+ * in logs instead of producing opaque login failures.
+ */
+function validateHivesignerEnv() {
+  if (typeof window !== "undefined") return;
+  // Next.js re-imports Config.ts per server/static page during build and SSR.
+  // Stash the once-per-process flag on globalThis so module re-evaluation
+  // (separate module registries across page bundles) doesn't repeat the warnings.
+  const flag = "__hivesignerEnvValidated__";
+  const g = globalThis as Record<string, unknown>;
+  if (g[flag]) return;
+  g[flag] = true;
+
+  const publicApp = process.env.NEXT_PUBLIC_HIVESIGNER_APP;
+  const serverApp = process.env.HIVESIGNER_APP;
+  const secret = process.env.HIVESIGNER_SECRET;
+
+  const warn = (msg: string) => console.warn(`[hivesigner-env] ${msg}`);
+  if (!publicApp)
+    warn("NEXT_PUBLIC_HIVESIGNER_APP not set — client login UI will be broken");
+  if (!serverApp)
+    warn("HIVESIGNER_APP not set — server token exchange will fail");
+  if (!secret)
+    warn("HIVESIGNER_SECRET not set — server token exchange will fail");
+  if (publicApp && serverApp && publicApp !== serverApp) {
+    warn(
+      `mismatch: NEXT_PUBLIC_HIVESIGNER_APP="${publicApp}" but HIVESIGNER_APP="${serverApp}"`
+    );
+  }
+}
+validateHivesignerEnv();
