@@ -259,7 +259,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
           {dollarValue ? (
             <div style={{ color: colorMap.DOLLAR }}>
               Dollar Value: $
-              {formatNumber(dollarValue, false, selectedCoinType === "VESTS")}
+              {formatNumber(dollarValue, false, false)}
             </div>
           ) : null}
         </div>
