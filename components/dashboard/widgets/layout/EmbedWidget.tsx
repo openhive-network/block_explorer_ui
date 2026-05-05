@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useI18n } from "@/i18n/i18n";
+import { normalizeExternalUrl } from "@/utils/SafeUrl";
 
 interface EmbedWidgetProps {
   initialUrl?: string;
@@ -41,6 +42,8 @@ const EmbedWidget: React.FC<EmbedWidgetProps> = ({
     );
   }
 
+  const safeUrl = normalizeExternalUrl(url);
+
   if (!url) {
     return (
       <div className="p-4 flex justify-center items-center h-full text-center text-gray-500 dark:text-gray-400">
@@ -49,23 +52,32 @@ const EmbedWidget: React.FC<EmbedWidgetProps> = ({
     );
   }
 
+  if (!safeUrl) {
+    return (
+      <div className="p-4 flex justify-center items-center h-full text-center text-gray-500 dark:text-gray-400">
+        {t("embedWidget.invalidUrl")}
+      </div>
+    );
+  }
+
   return (
     <div className="w-full h-full flex flex-col bg-white dark:bg-gray-900 rounded-[4px] overflow-hidden">
       <div className="flex-grow">
         <iframe
-          src={url}
+          src={safeUrl}
           className="w-full h-full border-0"
           title={t("embedWidget.title")}
-          // The sandbox attribute is a crucial security feature
-          sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+          // Drop allow-same-origin: combined with allow-scripts it lets the
+          // iframed page rewrite its own sandbox, defeating the protection.
+          sandbox="allow-scripts allow-popups allow-forms"
         ></iframe>
       </div>
       <div
         className="flex-shrink-0 p-1 text-xs text-center text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 truncate"
-        title={url}
+        title={safeUrl}
       >
         <span className="font-semibold">{t("embedWidget.sourceLabel")}:</span>{" "}
-        {url}
+        {safeUrl}
       </div>
     </div>
   );

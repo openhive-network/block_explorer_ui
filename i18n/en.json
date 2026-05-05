@@ -1049,6 +1049,7 @@
   "embedWidget.label": "Embed URL",
   "embedWidget.placeholder": "Paste a URL here (e.g., https://...)",
   "embedWidget.noUrl": "No URL provided. Enter edit mode to add a URL.",
+  "embedWidget.invalidUrl": "Invalid URL. Only http and https URLs are allowed.",
   "embedWidget.warning": "Warning: Only embed content from trusted websites.",
   "embedWidget.sourceLabel": "Source",
   "widgets.liveInfoName": "Live Info",

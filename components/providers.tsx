@@ -1,4 +1,5 @@
 import React, { ReactNode, useEffect, useMemo } from "react";
+import dynamic from "next/dynamic";
 import {
   QueryCache,
   QueryClient,
@@ -6,7 +7,17 @@ import {
 } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { ErrorBoundary } from "react-error-boundary";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+
+const ReactQueryDevtools =
+  process.env.NODE_ENV === "development"
+    ? dynamic(
+        () =>
+          import("@tanstack/react-query-devtools").then(
+            (m) => m.ReactQueryDevtools
+          ),
+        { ssr: false }
+      )
+    : () => null;
 
 import { SettingsProvider, useSettings } from "@/contexts/SettingsContext";
 import { I18nProvider } from "@/i18n/i18n";
