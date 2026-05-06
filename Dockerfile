@@ -18,9 +18,11 @@ ENV PATH=$PATH:/home/node/.npm-global/bin
 RUN <<-EOF
     npm install -g @beam-australia/react-env@3.1.1
     npm install -g sharp@0.32.4
+    corepack enable
+    corepack prepare pnpm@10.15.0 --activate
 EOF
-COPY --chown=node package.json package-lock.json* ./
-RUN npm ci
+COPY --chown=node package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 
 FROM base AS builder
 
