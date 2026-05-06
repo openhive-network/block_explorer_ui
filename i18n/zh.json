@@ -1,4 +1,4 @@
-﻿{
+{
   "common.by": "由",
   "common.operations": "操作",
   "operations.participationMode": "参与方式",
@@ -1082,5 +1082,30 @@
   "auth.errorInvalidUser": "该 Hive 账户名称不存在。",
   "auth.hivesignermessage": "通用 / 移动端登录",
   "auth.loggedInVia": "登录方式：",
-  "auth.errorTooManyAttempts" : "登录尝试次数过多。请等待 1 分钟。"
+  "auth.errorTooManyAttempts": "登录尝试次数过多。请等待 1 分钟。",
+  "auth.myVotedProposals": "我投票的提案",
+  "watchlist.addToWatchlist": "添加到关注列表",
+  "watchlist.removeFromWatchlist": "从关注列表中移除",
+  "watchlist.proposals.title": "关注的提案",
+  "watchlist.proposals.empty": "关注列表中暂无提案。",
+  "widgets.watchedProposalsName": "关注的提案",
+  "proposalControls.favorites": "收藏",
+  "proposalControls.voted": "已投票",
+  "proposalCard.funded": "已资助",
+  "proposalCard.unfunded": "未资助",
+  "proposalCard.vote": "投票",
+  "proposalCard.voted": "已投票",
+  "proposalCard.unvote": "取消投票",
+  "proposalsPage.voterFilterBanner": "@{{username}} 投票的提案",
+  "proposalsPage.voterFilterClear": "清除",
+  "auth.errorTooManyTransactions": "交易次数过多，请等待1分钟。",
+  "impactSimulator.ifVoted": "如果我投票",
+  "impactSimulator.ifUnvoted": "如果我撤票",
+  "impactSimulator.wouldFund": "将获得资助",
+  "impactSimulator.wouldUnfund": "将失去资助",
+  "smartReminders.endsInDays": "Ends in {{days}}d",
+  "smartReminders.endsToday": "Ends today",
+  "smartReminders.needsAttention": "Need attention",
+  "smartReminders.unfundedTitle": "Watched proposal lost funding",
+  "smartReminders.becameFunded": "Watched proposal became funded"
 }

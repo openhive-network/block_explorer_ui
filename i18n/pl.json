@@ -1,4 +1,4 @@
-﻿{
+{
   "common.by": "Przez",
   "common.operations": "Operacje",
   "operations.participationMode": "Kierunek Transakcji",
@@ -1099,5 +1099,30 @@
   "auth.errorInvalidUser": "Ta nazwa konta Hive nie istnieje.",
   "auth.hivesignermessage": "Logowanie uniwersalne / mobilne",
   "auth.loggedInVia": "Zalogowano przez",
-  "auth.errorTooManyAttempts" : "Zbyt wiele prób logowania. Odczekaj 1 minutę."
+  "auth.errorTooManyAttempts": "Zbyt wiele prób logowania. Odczekaj 1 minutę.",
+  "auth.myVotedProposals": "Moje zagłosowane propozycje",
+  "watchlist.addToWatchlist": "Dodaj do obserwowanych",
+  "watchlist.removeFromWatchlist": "Usuń z obserwowanych",
+  "watchlist.proposals.title": "Obserwowane propozycje",
+  "watchlist.proposals.empty": "Brak propozycji na liście obserwowanych.",
+  "widgets.watchedProposalsName": "Obserwowane propozycje",
+  "proposalControls.favorites": "Ulubione",
+  "proposalControls.voted": "Zagłosowane",
+  "proposalCard.funded": "Finansowane",
+  "proposalCard.unfunded": "Niefinansowane",
+  "proposalCard.vote": "Zagłosuj",
+  "proposalCard.voted": "Zagłosowano",
+  "proposalCard.unvote": "Cofnij głos",
+  "proposalsPage.voterFilterBanner": "Propozycje zagłosowane przez @{{username}}",
+  "proposalsPage.voterFilterClear": "Wyczyść",
+  "auth.errorTooManyTransactions": "Zbyt wiele transakcji. Poczekaj 1 minutę.",
+  "impactSimulator.ifVoted": "Jeśli zagłosuję",
+  "impactSimulator.ifUnvoted": "Jeśli cofnę głos",
+  "impactSimulator.wouldFund": "zostanie sfinansowane",
+  "impactSimulator.wouldUnfund": "nie zostanie sfinansowane",
+  "smartReminders.endsInDays": "Ends in {{days}}d",
+  "smartReminders.endsToday": "Ends today",
+  "smartReminders.needsAttention": "Need attention",
+  "smartReminders.unfundedTitle": "Watched proposal lost funding",
+  "smartReminders.becameFunded": "Watched proposal became funded"
 }

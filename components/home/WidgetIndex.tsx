@@ -55,7 +55,7 @@ const WidgetIndex = () => { // Renamed from Home
       const el = contentRefs.current.get(widget.i);
       if (!el) return;
 
-      const floor = config.defaultLayout.h;
+      const floor = config.defaultLayout.minH ?? config.defaultLayout.h;
 
       const observer = new ResizeObserver(([entry]) => {
         if (finalIsEditMode) return;

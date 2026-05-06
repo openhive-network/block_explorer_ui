@@ -1,4 +1,4 @@
-﻿{
+{
   "common.by": "بواسطة",
   "common.operations": "العمليات",
   "common.seeMore": "عرض المزيد",
@@ -1099,5 +1099,30 @@
   "auth.errorInvalidUser": "اسم حساب Hive هذا غير موجود.",
   "auth.hivesignermessage": "تسجيل دخول عالمي / محمول",
   "auth.loggedInVia": "تم تسجيل الدخول عبر",
-  "auth.errorTooManyAttempts" : "محاولات دخول كثيرة جداً. يرجى الانتظار دقيقة."
+  "auth.errorTooManyAttempts": "محاولات دخول كثيرة جداً. يرجى الانتظار دقيقة.",
+  "auth.myVotedProposals": "مقترحاتي التي صوّتُ عليها",
+  "watchlist.addToWatchlist": "أضف إلى قائمة المراقبة",
+  "watchlist.removeFromWatchlist": "إزالة من قائمة المراقبة",
+  "watchlist.proposals.title": "المقترحات المراقبة",
+  "watchlist.proposals.empty": "لا توجد مقترحات في قائمة المراقبة حتى الآن.",
+  "widgets.watchedProposalsName": "المقترحات المراقبة",
+  "proposalControls.favorites": "المفضلة",
+  "proposalControls.voted": "صوّتُ عليها",
+  "proposalCard.funded": "ممولة",
+  "proposalCard.unfunded": "غير ممولة",
+  "proposalCard.vote": "صوّت",
+  "proposalCard.voted": "تم التصويت",
+  "proposalCard.unvote": "إلغاء التصويت",
+  "proposalsPage.voterFilterBanner": "المقترحات التي صوّت عليها @{{username}}",
+  "proposalsPage.voterFilterClear": "مسح",
+  "auth.errorTooManyTransactions": "عمليات كثيرة جداً. يرجى الانتظار دقيقة.",
+  "impactSimulator.ifVoted": "لو صوّتُ",
+  "impactSimulator.ifUnvoted": "لو ألغيت تصويتي",
+  "impactSimulator.wouldFund": "سيُموَّل هذا",
+  "impactSimulator.wouldUnfund": "لن يُموَّل هذا",
+  "smartReminders.endsInDays": "Ends in {{days}}d",
+  "smartReminders.endsToday": "Ends today",
+  "smartReminders.needsAttention": "Need attention",
+  "smartReminders.unfundedTitle": "Watched proposal lost funding",
+  "smartReminders.becameFunded": "Watched proposal became funded"
 }

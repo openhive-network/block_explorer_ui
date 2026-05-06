@@ -1,4 +1,4 @@
-﻿{
+{
   "common.by": "작성자",
   "common.operations": "오퍼레이션",
   "operations.participationMode": "거래 방향",
@@ -1099,5 +1099,30 @@
   "auth.myProfile": "내 프로필",
   "auth.errorUserCancelled": "사용자가 로그인을 취소했습니다.",
   "auth.errorMissingKey": "Keychain에 이 계정에 필요한 Posting Key가 없습니다.",
-  "auth.errorTooManyAttempts" : "로그인 시도가 너무 많습니다. 1분만 기다려주세요."
+  "auth.errorTooManyAttempts": "로그인 시도가 너무 많습니다. 1분만 기다려주세요.",
+  "auth.myVotedProposals": "내가 투표한 제안",
+  "watchlist.addToWatchlist": "관심 목록에 추가",
+  "watchlist.removeFromWatchlist": "관심 목록에서 제거",
+  "watchlist.proposals.title": "관심 제안",
+  "watchlist.proposals.empty": "관심 목록에 아직 제안이 없습니다.",
+  "widgets.watchedProposalsName": "관심 제안",
+  "proposalControls.favorites": "즐겨찾기",
+  "proposalControls.voted": "투표함",
+  "proposalCard.funded": "지원됨",
+  "proposalCard.unfunded": "미지원",
+  "proposalCard.vote": "투표",
+  "proposalCard.voted": "투표함",
+  "proposalCard.unvote": "투표 취소",
+  "proposalsPage.voterFilterBanner": "@{{username}}이 투표한 제안",
+  "proposalsPage.voterFilterClear": "지우기",
+  "auth.errorTooManyTransactions": "트랜잭션이 너무 많습니다. 1분 기다려주세요.",
+  "impactSimulator.ifVoted": "투표하면",
+  "impactSimulator.ifUnvoted": "투표 취소하면",
+  "impactSimulator.wouldFund": "지원될 것",
+  "impactSimulator.wouldUnfund": "지원 안 됨",
+  "smartReminders.endsInDays": "Ends in {{days}}d",
+  "smartReminders.endsToday": "Ends today",
+  "smartReminders.needsAttention": "Need attention",
+  "smartReminders.unfundedTitle": "Watched proposal lost funding",
+  "smartReminders.becameFunded": "Watched proposal became funded"
 }

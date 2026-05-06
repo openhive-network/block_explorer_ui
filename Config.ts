@@ -76,7 +76,7 @@ export const config = {
     // The Hive account name that owns the app
     app: process.env.NEXT_PUBLIC_HIVESIGNER_APP,
     defaultCallBack: process.env.NEXT_PUBLIC_HIVESIGNER_CALLBACK as string,
-    scope: ['vote', 'comment', 'custom_json', 'claim_reward_balance'],
+    scope: ['vote', 'comment', 'custom_json', 'claim_reward_balance', 'update_proposal_votes'],
     endpoints: {
       authorize: "https://hivesigner.com/oauth2/authorize",
       token: "https://hivesigner.com/api/oauth2/token",
@@ -93,6 +93,6 @@ export const config = {
       loginLimit: 5,              // Attempts per interval
       broadcastLimit: 30,         // Actions per interval
     },
-    allowedOperations: ['vote', 'claim_reward_balance', 'custom_json'],
+    allowedOperations: ['vote', 'claim_reward_balance', 'custom_json', 'update_proposal_votes'],
   }
 };

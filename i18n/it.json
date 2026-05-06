@@ -1,4 +1,4 @@
-﻿{
+{
   "common.by": "Da",
   "common.operations": "Operazioni",
   "operations.participationMode": "Direzione della Transazione",
@@ -1094,5 +1094,30 @@
   "auth.errorInvalidUser": "Questo nome account Hive non esiste.",
   "auth.hivesignermessage": "Login Universale / Mobile",
   "auth.loggedInVia": "Accesso effettuato tramite",
-  "auth.errorTooManyAttempts" : "Troppi tentativi. Si prega di attendere 1 minuto."
+  "auth.errorTooManyAttempts": "Troppi tentativi. Si prega di attendere 1 minuto.",
+  "auth.myVotedProposals": "Le mie proposte votate",
+  "watchlist.addToWatchlist": "Aggiungi alla lista di monitoraggio",
+  "watchlist.removeFromWatchlist": "Rimuovi dalla lista di monitoraggio",
+  "watchlist.proposals.title": "Proposte monitorate",
+  "watchlist.proposals.empty": "Nessuna proposta nella lista di monitoraggio.",
+  "widgets.watchedProposalsName": "Proposte monitorate",
+  "proposalControls.favorites": "Preferiti",
+  "proposalControls.voted": "Votate",
+  "proposalCard.funded": "Finanziata",
+  "proposalCard.unfunded": "Non finanziata",
+  "proposalCard.vote": "Vota",
+  "proposalCard.voted": "Votato",
+  "proposalCard.unvote": "Rimuovi voto",
+  "proposalsPage.voterFilterBanner": "Proposte votate da @{{username}}",
+  "proposalsPage.voterFilterClear": "Cancella",
+  "auth.errorTooManyTransactions": "Troppe transazioni. Attendere 1 minuto.",
+  "impactSimulator.ifVoted": "Se voto",
+  "impactSimulator.ifUnvoted": "Se ritiro il voto",
+  "impactSimulator.wouldFund": "verrebbe finanziata",
+  "impactSimulator.wouldUnfund": "non verrebbe finanziata",
+  "smartReminders.endsInDays": "Ends in {{days}}d",
+  "smartReminders.endsToday": "Ends today",
+  "smartReminders.needsAttention": "Need attention",
+  "smartReminders.unfundedTitle": "Watched proposal lost funding",
+  "smartReminders.becameFunded": "Watched proposal became funded"
 }

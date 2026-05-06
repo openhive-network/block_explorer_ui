@@ -13,15 +13,20 @@ import { cn, formatNumber } from "@/lib/utils";
 import { convertVestsToHP } from "@/utils/Calculations";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { formatDateToLocale } from "@/utils/TimeUtils";
+import { grabNumericValue } from "@/utils/StringUtils";
 import {
   Award,
   Calendar,
   CheckCircle,
   Clock,
   DollarSign,
+  Heart,
   Landmark,
   Loader2,
   PenLine,
+  Star,
+  TrendingDown,
+  TrendingUp,
   User,
   Users,
   Vote,
@@ -33,6 +38,12 @@ import Link from "next/link";
 import { useMemo } from "react";
 import { ProposalVotesDialog } from "./ProposalVotesDialog";
 import { MatchDetails } from "@/pages/proposals"; // Added
+import { useAuth } from "@/contexts/AuthContext";
+import { useWatchlist } from "@/contexts/WatchlistContext";
+import { useQuery } from "@tanstack/react-query";
+import fetchingService from "@/services/FetchingService";
+import useProposalVote from "@/hooks/api/proposals/useProposalVote";
+import useVoterProposals from "@/hooks/api/proposals/useVoterProposals";
 
 // Type definitions
 type EnrichedProposal = ProcessedProposal & {
@@ -117,7 +128,7 @@ const ProposalStatusBadge = ({
 };
 
 // --- Funding Progress Bar Component ---
-const FundingProgressBar = ({
+export const FundingProgressBar = ({
   currentVotes,
   threshold,
   t,
@@ -149,7 +160,7 @@ const FundingProgressBar = ({
   );
 };
 
-const TimeProgressBar = ({
+export const TimeProgressBar = ({
   startDate,
   endDate,
   isUpcoming,
@@ -221,6 +232,190 @@ const TimeProgressBar = ({
           style={{ width: `${progress}%` }}
         />
       </div>
+    </div>
+  );
+};
+
+// --- STAR / WATCH BUTTON ---
+
+const StarButton = ({ proposalId }: { proposalId: number }) => {
+  const { isLoggedIn } = useAuth();
+  const { isWatched, toggleWatch, changedProposalIds, clearProposalChange } = useWatchlist();
+  const { t } = useI18n();
+  const watched = isWatched("proposals", proposalId);
+  const hasChange = watched && changedProposalIds.has(proposalId);
+
+  if (!isLoggedIn) return null;
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button
+          onClick={() => { toggleWatch("proposals", proposalId); clearProposalChange(proposalId); }}
+          className={cn(
+            "relative flex h-9 w-9 items-center justify-center rounded-lg border-2 transition-all duration-200",
+            watched
+              ? "border-amber-400 bg-amber-50 text-amber-500 hover:bg-amber-100 dark:border-amber-500 dark:bg-amber-900/30 dark:text-amber-400 dark:hover:bg-amber-900/50"
+              : "border-slate-200 bg-white text-slate-400 hover:border-amber-300 hover:text-amber-400 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-500 dark:hover:border-amber-600 dark:hover:text-amber-400"
+          )}
+          aria-label={t(watched ? "watchlist.removeFromWatchlist" : "watchlist.addToWatchlist")}
+        >
+          <Star className={cn("h-5 w-5", watched && "fill-amber-400")} />
+          {hasChange && (
+            <span className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-orange-500 ring-2 ring-white dark:ring-slate-900" />
+          )}
+        </button>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>{t(watched ? "watchlist.removeFromWatchlist" : "watchlist.addToWatchlist")}</p>
+      </TooltipContent>
+    </Tooltip>
+  );
+};
+
+// --- VOTE BUTTON ---
+
+const VoteButton = ({ proposalId, status }: { proposalId: number; status: "active" | "inactive" | "expired" }) => {
+  const { t } = useI18n();
+  const { isVoted, isVoting, error, vote, isLoggedIn } = useProposalVote(proposalId);
+
+  if (!isLoggedIn) return null;
+
+  if (status === "expired") {
+    if (!isVoted) return null;
+    return (
+      <div className="flex h-9 items-center gap-1.5 rounded-lg border-2 px-3 text-sm font-semibold border-slate-200 bg-slate-100 text-slate-400 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-500 cursor-default select-none opacity-70">
+        <Heart className="h-4 w-4 fill-slate-400 dark:fill-slate-500" />
+        <span>{t("proposalCard.voted")}</span>
+      </div>
+    );
+  }
+
+  const handleVote = async () => {
+    await vote(!isVoted);
+    setTimeout(() => {
+      document.getElementById(`proposal-${proposalId}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 150);
+  };
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button
+          onClick={handleVote}
+          disabled={isVoting}
+          className={cn(
+            "flex h-9 items-center gap-1.5 rounded-lg border-2 px-3 text-sm font-semibold transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed",
+            error
+              ? "border-orange-300 bg-orange-50 text-orange-500 dark:border-orange-700 dark:bg-orange-900/20 dark:text-orange-400"
+              : isVoted
+              ? "border-red-400 bg-red-50 text-red-500 hover:bg-red-100 dark:border-red-500 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50"
+              : "border-slate-200 bg-white text-slate-500 hover:border-red-300 hover:text-red-400 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400 dark:hover:border-red-600 dark:hover:text-red-400"
+          )}
+          aria-label={isVoted ? t("proposalCard.unvote") : t("proposalCard.vote")}
+        >
+          {isVoting ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Heart className={cn("h-4 w-4", isVoted && !error && "fill-red-500 dark:fill-red-400")} />
+          )}
+          <span>{isVoted ? t("proposalCard.voted") : t("proposalCard.vote")}</span>
+        </button>
+      </TooltipTrigger>
+      <TooltipContent side="bottom" className="max-w-[220px] text-center">
+        <p>{error ?? (isVoted ? t("proposalCard.unvote") : t("proposalCard.vote"))}</p>
+      </TooltipContent>
+    </Tooltip>
+  );
+};
+
+// --- IMPACT SIMULATOR ---
+
+const ImpactSimulator = ({
+  proposalId,
+  proposalHp,
+  fundingThresholdVests,
+  status,
+}: {
+  proposalId: number;
+  proposalHp: string | null | undefined;
+  fundingThresholdVests: number | null;
+  status: "active" | "inactive" | "expired";
+}) => {
+  const { username, isLoggedIn } = useAuth();
+  const { t } = useI18n();
+  const { hiveChain } = useHiveChainContext();
+  const { dynamicGlobalData } = useDynamicGlobal() as any;
+  const { votedProposalIds } = useVoterProposals(username ?? "");
+
+  const { data: findAccountData, isLoading: isAccountLoading } = useQuery({
+    queryKey: ["findAccount", username],
+    queryFn: () => fetchingService.findAccounts([username!]),
+    enabled: !!username && isLoggedIn,
+    refetchOnWindowFocus: false,
+  });
+
+  if (!isLoggedIn || status === "expired") return null;
+
+  if (isAccountLoading || !findAccountData?.accounts?.[0] || !dynamicGlobalData || !hiveChain || !proposalHp) {
+    return <div className="h-4" />;
+  }
+
+  const account = findAccountData.accounts[0] as any;
+  const hasProxy = (account.proxy || "") !== "";
+  if (hasProxy) return null;
+
+  // Mirror ProposalVotesDialog: directVests (NaiAsset) + proxied_vsf_votes
+  const directVests = grabNumericValue(account.vesting_shares?.amount ?? "0");
+  const totalProxiedVests =
+    Array.isArray(account.proxied_vsf_votes) && account.proxied_vsf_votes.length > 0
+      ? account.proxied_vsf_votes.reduce((sum: number, v: unknown) => Number(sum) + Number(v), 0)
+      : 0;
+  const userEffectiveVests = directVests + totalProxiedVests;
+
+  const { rawTotalVestingFundHive, rawTotalVestingShares } = dynamicGlobalData.headBlockDetails;
+  const userHpStr = convertVestsToHP(hiveChain, String(userEffectiveVests), rawTotalVestingFundHive, rawTotalVestingShares) ?? "";
+  const userHpNum = grabNumericValue(userHpStr);
+  const userHpDisplayStr = `${formatNumber(userHpNum, false, true)} HP`;
+
+  const isVoted = !!(votedProposalIds ?? []).includes(proposalId);
+  // Work entirely in HP to avoid NaiAsset vs condenser scale mismatch
+  const proposalHpNum = grabNumericValue(proposalHp);
+  const simulatedHpNum = isVoted ? proposalHpNum - userHpNum : proposalHpNum + userHpNum;
+  const simulatedHpStr = `${formatNumber(simulatedHpNum, false, true)} HP`;
+
+  const fundingThresholdHp =
+    fundingThresholdVests != null
+      ? grabNumericValue(
+          convertVestsToHP(hiveChain, String(fundingThresholdVests), rawTotalVestingFundHive, rawTotalVestingShares) ?? "0"
+        )
+      : null;
+  const isFunded = fundingThresholdHp != null ? proposalHpNum > fundingThresholdHp : false;
+  const wouldBeFunded = fundingThresholdHp != null ? simulatedHpNum > fundingThresholdHp : false;
+  const wouldBecomeFunded = !isVoted && !isFunded && wouldBeFunded;
+  const wouldBeUnfunded = isVoted && isFunded && !wouldBeFunded;
+
+  const Icon = isVoted ? TrendingDown : TrendingUp;
+  const sign = isVoted ? "−" : "+";
+  const actionLabel = isVoted ? t("impactSimulator.ifUnvoted") : t("impactSimulator.ifVoted");
+  const hoverIconColor = isVoted
+    ? "group-hover/impact:text-amber-500 dark:group-hover/impact:text-amber-400"
+    : "group-hover/impact:text-green-500 dark:group-hover/impact:text-green-400";
+  const hoverTextColor = isVoted
+    ? "group-hover/impact:text-amber-600 dark:group-hover/impact:text-amber-400"
+    : "group-hover/impact:text-green-600 dark:group-hover/impact:text-green-400";
+
+  return (
+    <div className="group/impact flex items-center gap-1 text-xs cursor-default select-none min-h-[18px]">
+      <Icon className={cn("h-3.5 w-3.5 flex-shrink-0 transition-colors duration-150 text-slate-300 dark:text-slate-600", hoverIconColor)} />
+      <span className={cn("transition-colors duration-150 text-slate-300 dark:text-slate-600", hoverTextColor)}>
+        {actionLabel}&nbsp;<span className="font-medium">{sign}{userHpDisplayStr}</span>
+      </span>
+      <span className="overflow-hidden max-w-0 group-hover/impact:max-w-xs transition-all duration-200 whitespace-nowrap text-slate-500 dark:text-slate-400">
+        &nbsp;→&nbsp;{simulatedHpStr}&nbsp;total
+        {wouldBecomeFunded && <span className="text-green-500 dark:text-green-400 font-semibold">&nbsp;·&nbsp;{t("impactSimulator.wouldFund")}</span>}
+        {wouldBeUnfunded && <span className="text-amber-500 dark:text-amber-400 font-semibold">&nbsp;·&nbsp;{t("impactSimulator.wouldUnfund")}</span>}
+      </span>
     </div>
   );
 };
@@ -436,35 +631,45 @@ export const ProposalCard = ({
 
           <div className="flex flex-col border-t p-4 md:col-span-5 lg:col-span-4 md:border-t-0 md:border-l dark:border-slate-800">
             <div>
-              <div className="flex justify-end mb-4">
+              <div className="flex justify-end items-center gap-2 mb-4">
+                <VoteButton proposalId={proposal.proposal_id} status={proposal.status} />
+                <StarButton proposalId={proposal.proposal_id} />
                 {currentStatusConfig && (
                   <ProposalStatusBadge {...currentStatusConfig} />
                 )}
               </div>
               <div className="space-y-4">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div>
-                      <div className="flex items-center gap-2 text-sm text-explorer-dark-gray dark:text-white">
-                        <Award
-                          className="h-4 w-4"
-                          color="#a855f7"
-                        />
-                        {t("proposalCard.votesLabel")}
-                      </div>
-                      <p className="text-2xl font-bold min-w-0">
-                        {voteValueInHp ? (
-                          <span>{voteValueInHp}</span>
-                        ) : (
-                          <Loader2 className="h-6 w-6 animate-spin" />
-                        )}
-                      </p>
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{formattedVestsTooltip}</p>
-                  </TooltipContent>
-                </Tooltip>
+                <div>
+                  <div className="flex items-center gap-2 text-sm text-explorer-dark-gray dark:text-white">
+                    <Award
+                      className="h-4 w-4"
+                      color="#a855f7"
+                    />
+                    {t("proposalCard.votesLabel")}
+                  </div>
+                  <div className="flex items-center gap-2 overflow-hidden">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <p className="text-2xl font-bold min-w-0 cursor-default">
+                          {voteValueInHp ? (
+                            <span>{voteValueInHp}</span>
+                          ) : (
+                            <Loader2 className="h-6 w-6 animate-spin" />
+                          )}
+                        </p>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{formattedVestsTooltip}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                     <ImpactSimulator
+                      proposalId={proposal.proposal_id}
+                      proposalHp={voteValueInHp}
+                      fundingThresholdVests={fundingThreshold ?? null}
+                      status={proposal.status}
+                    />
+                </div>
                 {votesNeededInHp && (
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -736,7 +941,8 @@ export const ReturnProposalCard = ({
           </div>
 
           <div className="flex flex-col border-t p-4 md:col-span-5 lg:col-span-4 md:border-t-0 md:border-l dark:border-slate-700/80">
-            <div className="flex justify-end">
+            <div className="flex justify-end items-center gap-2">
+              <StarButton proposalId={proposal.proposal_id} />
               {currentStatusConfig && (
                 <ProposalStatusBadge {...currentStatusConfig} />
               )}

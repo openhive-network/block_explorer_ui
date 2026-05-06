@@ -1,3 +1,4 @@
+import WatchedProposalsWidget from "@/components/home/WatchedProposalsWidget";
 import EmbedWidget from "@/components/dashboard/widgets/layout/EmbedWidget";
 import MarkdownWidget from "@/components/dashboard/widgets/layout/MarkdownWidget";
 import LiveInfoWidget from "@/components/dashboard/widgets/data/LiveInfoWidget";
@@ -172,6 +173,15 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     name: "widgets.searchesName",
     component: SearchesSection,
     defaultLayout: { w: 8, h: 11.9, minW: 4, minH: 3 },
+    dynamicHeight: true,
+  },
+
+  "watched-proposals": {
+    id: "watched-proposals",
+    name: "widgets.watchedProposalsName",
+    component: WatchedProposalsWidget,
+    defaultLayout: { w: 4, h: 10, minW: 3, minH: 6 },
+    allowMultiple: false,
     dynamicHeight: true,
   },
 

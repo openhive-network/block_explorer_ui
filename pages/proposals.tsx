@@ -1,6 +1,7 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@/i18n/i18n";
 import useProposals from "@/hooks/api/proposals/useProposals";
 import useVoterProposals from "@/hooks/api/proposals/useVoterProposals";
@@ -21,6 +22,9 @@ import PageTitle from "@/components/PageTitle";
 import { ProposalAnalytics } from "@/components/proposals/analytics/ProposalAnalytics";
 import ScrollTopButton from "@/components/ScrollTopButton";
 import { formatNumber } from "@/lib/utils";
+import { HeartHandshake, X } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useWatchlist } from "@/contexts/WatchlistContext";
 import useGetAccounts from "@/hooks/api/proposals/useGetAccounts";
 import { grabNumericValue, isHiveAccountName } from "@/utils/StringUtils";
 import { BudgetsSection } from "@/components/proposals/BudgetsSection";
@@ -44,21 +48,42 @@ const ProposalsPage = () => {
   const [sortDirection, setSortDirection] =
     useState<ProposalSortDirection>("descending");
   const [searchQuery, setSearchQuery] = useState("");
+  const [voterFilter, setVoterFilter] = useState("");
+  const [favoritesOnly, setFavoritesOnly] = useState(false);
+  const [votedOnly, setVotedOnly] = useState(false);
+
+  const { isLoggedIn, username } = useAuth();
+  const queryClient = useQueryClient();
+  const { getWatched } = useWatchlist();
+  const watchedProposalIds = getWatched("proposals");
 
   useEffect(() => {
     if (!router.isReady) return;
     const queryStatus = router.query.status as ProposalStatusFilter;
     const queryId = router.query.ID as string;
     const querySearch = router.query.q as string;
-    const newStatus = ['all', 'active', 'inactive', 'expired'].includes(queryStatus) 
-      ? queryStatus 
-      : (queryId || querySearch) // If an ID or text search exists, default to 'all' status
-      ? "all" 
+    const queryVoter = router.query.voter as string;
+
+    setVoterFilter(queryVoter || "");
+
+    const newStatus = ['all', 'active', 'inactive', 'expired'].includes(queryStatus)
+      ? queryStatus
+      : (queryId || querySearch || queryVoter)
+      ? "all"
       : "active";
-      
+
     setStatusFilter(newStatus);
     setSearchQuery(queryId || querySearch || "");
-  }, [router.isReady, router.query.status, router.query.ID, router.query.q]);
+  }, [router.isReady, router.query.status, router.query.ID, router.query.q, router.query.voter]);
+
+  useEffect(() => {
+    if (!router.isReady || !router.query.hs_voted) return;
+    if (username) {
+      queryClient.invalidateQueries(["voterProposals", username]);
+    }
+    const { hs_voted: _, ...rest } = router.query;
+    router.replace({ pathname: router.pathname, query: rest }, undefined, { shallow: true });
+  }, [router.isReady, router.query.hs_voted, username]);
 
   const debouncedUpdateUrl = useDebounce((query: string) => {
     const newQuery = { ...router.query };
@@ -95,6 +120,12 @@ const ProposalsPage = () => {
   const handleSortChange = (order: ProposalSortOrder) => setSortOrder(order);
   const handleSortDirectionChange = (direction: ProposalSortDirection) => setSortDirection(direction);
 
+  const clearVoterFilter = useCallback(() => {
+    const newQuery = { ...router.query };
+    delete newQuery.voter;
+    router.push({ pathname: router.pathname, query: newQuery }, undefined, { shallow: true });
+  }, [router]);
+
   const proposalIdSearch = useMemo(() => {
     const num = parseInt(searchQuery.trim(), 10);
     return !isNaN(num) && num.toString() === searchQuery.trim() ? num : null;
@@ -121,8 +152,19 @@ const ProposalsPage = () => {
   
   const proposalsToRender = proposalIdSearch !== null ? foundProposalData : proposalsData;
 
-  const voterSearchQuery = isHiveAccountName(searchQuery) ? searchQuery : "";
+  useEffect(() => {
+    if (isProposalsLoading) return;
+    const hash = window.location.hash.replace('#', '');
+    if (!hash.startsWith('proposal-')) return;
+    const timer = setTimeout(() => {
+      document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [isProposalsLoading]);
+
+  const voterSearchQuery = voterFilter || (isHiveAccountName(searchQuery) ? searchQuery : "");
   const { votedProposalIds, isLoading: isVoterListLoading } = useVoterProposals(voterSearchQuery);
+  const { votedProposalIds: myVotedProposalIds, isLoading: isMyVotedLoading } = useVoterProposals(username ?? "");
 
   const { proposalsData: proposalsDataForBudget } = useProposals({
     status: "all",
@@ -169,32 +211,53 @@ const ProposalsPage = () => {
   }, [proposalsToRender]); // Dependency is now correct
 
   const searchedProposals = useMemo(() => {
+    let result: (typeof enrichedProposals[0] & { matchDetails?: MatchDetails })[];
+
     if (proposalIdSearch !== null) {
-      return enrichedProposals.map((p) => ({ ...p, matchDetails: { isCreatorMatch: false, isVoterMatch: false, isTitleMatch: false } }));
-    }
+      result = enrichedProposals.map((p) => ({ ...p, matchDetails: { isCreatorMatch: false, isVoterMatch: false, isTitleMatch: false } }));
+    } else {
+      const preFilteredProposals = enrichedProposals.filter(proposal => {
+        if (statusFilter === 'all') return true;
+        return proposal.status === statusFilter;
+      });
 
-    const preFilteredProposals = enrichedProposals.filter(proposal => {
-      if (statusFilter === 'all') return true;
-      return proposal.status === statusFilter;
-    });
-
-    if (searchQuery.length < 3) {
-      return preFilteredProposals;
-    }
-
-    const lowerQuery = searchQuery.toLowerCase();
-    const votedIdsSet = new Set(votedProposalIds || []);
-
-    return preFilteredProposals.reduce((accumulator, proposal) => {
-      const isCreatorMatch = proposal.creator.toLowerCase() === lowerQuery;
-      const isVoterMatch = voterSearchQuery !== "" && votedIdsSet.has(proposal.proposal_id);
-      const isTitleMatch = !isCreatorMatch && proposal.subject.toLowerCase().includes(lowerQuery);
-      if (isCreatorMatch || isVoterMatch || isTitleMatch) {
-        accumulator.push({ ...proposal, matchDetails: { isCreatorMatch, isVoterMatch, isTitleMatch } });
+      if (voterFilter) {
+        const votedIdsSet = new Set(votedProposalIds || []);
+        const voted = preFilteredProposals.filter(p => votedIdsSet.has(p.proposal_id));
+        if (searchQuery.length < 3) {
+          result = voted.map(p => ({ ...p, matchDetails: { isCreatorMatch: false, isVoterMatch: true, isTitleMatch: false } }));
+        } else {
+          const lowerQuery = searchQuery.toLowerCase();
+          result = voted
+            .filter(p => p.creator.toLowerCase().includes(lowerQuery) || p.subject.toLowerCase().includes(lowerQuery))
+            .map(p => ({ ...p, matchDetails: { isCreatorMatch: false, isVoterMatch: true, isTitleMatch: false } }));
+        }
+      } else if (searchQuery.length < 3) {
+        result = preFilteredProposals;
+      } else {
+        const lowerQuery = searchQuery.toLowerCase();
+        const votedIdsSet = new Set(votedProposalIds || []);
+        result = preFilteredProposals.reduce((accumulator, proposal) => {
+          const isCreatorMatch = proposal.creator.toLowerCase() === lowerQuery;
+          const isVoterMatch = voterSearchQuery !== "" && votedIdsSet.has(proposal.proposal_id);
+          const isTitleMatch = !isCreatorMatch && proposal.subject.toLowerCase().includes(lowerQuery);
+          if (isCreatorMatch || isVoterMatch || isTitleMatch) {
+            accumulator.push({ ...proposal, matchDetails: { isCreatorMatch, isVoterMatch, isTitleMatch } });
+          }
+          return accumulator;
+        }, [] as (typeof enrichedProposals[0] & { matchDetails: MatchDetails })[]);
       }
-      return accumulator;
-    }, [] as (typeof enrichedProposals[0] & { matchDetails: MatchDetails })[]);
-  }, [enrichedProposals, statusFilter, searchQuery, votedProposalIds, voterSearchQuery, proposalIdSearch]);
+    }
+
+    if (favoritesOnly) {
+      result = result.filter(p => watchedProposalIds.has(p.proposal_id));
+    }
+    if (votedOnly && myVotedProposalIds) {
+      const myVotedSet = new Set(myVotedProposalIds);
+      result = result.filter(p => myVotedSet.has(p.proposal_id));
+    }
+    return result;
+  }, [enrichedProposals, statusFilter, searchQuery, votedProposalIds, voterSearchQuery, proposalIdSearch, voterFilter, favoritesOnly, watchedProposalIds, votedOnly, myVotedProposalIds]);
 
   const searchedReturnProposal = useMemo(() => searchedProposals.find((p) => p.proposal_id === 0), [searchedProposals]);
   const fundedProposals = useMemo(() => searchedProposals.filter((p) => p.isFunded && p.proposal_id !== 0), [searchedProposals]);
@@ -207,7 +270,7 @@ const ProposalsPage = () => {
 
     const isLoading = proposalIdSearch !== null
         ? isFindProposalLoading
-        : isProposalsLoading || (voterSearchQuery !== "" && isVoterListLoading);
+        : isProposalsLoading || (voterSearchQuery !== "" && isVoterListLoading) || (votedOnly && isMyVotedLoading);
 
     if (isLoading) {
       return (
@@ -322,7 +385,29 @@ const ProposalsPage = () => {
             onSortChange={handleSortChange}
             sortDirection={sortDirection}
             onSortDirectionChange={handleSortDirectionChange}
+            favoritesOnly={favoritesOnly}
+            onFavoritesToggle={() => setFavoritesOnly(v => !v)}
+            votedOnly={votedOnly || !!voterFilter}
+            onVotedToggle={() => {
+              const isActive = votedOnly || !!voterFilter;
+              if (voterFilter) clearVoterFilter();
+              setVotedOnly(!isActive);
+            }}
+            isLoggedIn={isLoggedIn}
           />
+          {voterFilter && (
+            <div className="flex items-center gap-2 px-3 py-2 -mt-px bg-blue-50 dark:bg-blue-950/20 border border-t-0 border-blue-200 dark:border-blue-800/30 rounded-b-[8px] text-sm text-blue-700 dark:text-blue-300">
+              <HeartHandshake className="h-4 w-4 flex-shrink-0" />
+              <span>{t("proposalsPage.voterFilterBanner", { username: voterFilter })}</span>
+              <button
+                onClick={clearVoterFilter}
+                className="ml-auto flex items-center gap-1 text-xs hover:text-blue-900 dark:hover:text-blue-100 transition-colors"
+              >
+                <X className="h-3.5 w-3.5" />
+                {t("proposalsPage.voterFilterClear")}
+              </button>
+            </div>
+          )}
         </div>
         <main className="mt-8">{renderContent()}</main>
         <div className="fixed bottom-[10px] right-0 flex flex-col items-end justify-end px-3 md:px-12">

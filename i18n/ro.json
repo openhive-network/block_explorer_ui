@@ -1,4 +1,4 @@
-﻿{
+{
   "common.by": "De",
   "common.operations": "Operațiuni",
   "operations.participationMode": "Direcția Tranzacției",
@@ -1094,6 +1094,30 @@
   "auth.errorInvalidUser": "Acest nume de cont Hive nu există.",
   "auth.hivesignermessage": "Autentificare Universală / Mobilă",
   "auth.loggedInVia": "Autentificat prin",
-  "auth.errorTooManyAttempts" : "Prea multe încercări. Vă rugăm așteptați 1 minut."
-
+  "auth.errorTooManyAttempts": "Prea multe încercări. Vă rugăm așteptați 1 minut.",
+  "auth.myVotedProposals": "Propunerile mele votate",
+  "watchlist.addToWatchlist": "Adaugă la lista de urmărire",
+  "watchlist.removeFromWatchlist": "Elimină din lista de urmărire",
+  "watchlist.proposals.title": "Propuneri urmărite",
+  "watchlist.proposals.empty": "Nicio propunere în lista de urmărire.",
+  "widgets.watchedProposalsName": "Propuneri urmărite",
+  "proposalControls.favorites": "Favorite",
+  "proposalControls.voted": "Votate",
+  "proposalCard.funded": "Finanțat",
+  "proposalCard.unfunded": "Nefinanțat",
+  "proposalCard.vote": "Votează",
+  "proposalCard.voted": "Votat",
+  "proposalCard.unvote": "Retrage votul",
+  "proposalsPage.voterFilterBanner": "Propuneri votate de @{{username}}",
+  "proposalsPage.voterFilterClear": "Șterge",
+  "auth.errorTooManyTransactions": "Prea multe tranzacții. Așteptați 1 minut.",
+  "impactSimulator.ifVoted": "Dacă votez",
+  "impactSimulator.ifUnvoted": "Dacă retrag votul",
+  "impactSimulator.wouldFund": "ar fi finanțat",
+  "impactSimulator.wouldUnfund": "nu ar mai fi finanțat",
+  "smartReminders.endsInDays": "Ends in {{days}}d",
+  "smartReminders.endsToday": "Ends today",
+  "smartReminders.needsAttention": "Need attention",
+  "smartReminders.unfundedTitle": "Watched proposal lost funding",
+  "smartReminders.becameFunded": "Watched proposal became funded"
 }

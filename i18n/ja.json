@@ -1,4 +1,4 @@
-﻿{
+{
   "common.by": "作成者",
   "common.operations": "オペレーション",
   "operations.participationMode": "トランザクション方向",
@@ -1099,5 +1099,30 @@
   "auth.errorInvalidUser": "このHiveアカウント名は存在しません。",
   "auth.hivesignermessage": "ユニバーサル / モバイルログイン",
   "auth.loggedInVia": "ログイン経由：",
-  "auth.errorTooManyAttempts" : "ログイン試行が多すぎます。1分間お待ちください。"
+  "auth.errorTooManyAttempts": "ログイン試行が多すぎます。1分間お待ちください。",
+  "auth.myVotedProposals": "投票した提案",
+  "watchlist.addToWatchlist": "ウォッチリストに追加",
+  "watchlist.removeFromWatchlist": "ウォッチリストから削除",
+  "watchlist.proposals.title": "ウォッチリスト",
+  "watchlist.proposals.empty": "ウォッチリストにまだ提案がありません。",
+  "widgets.watchedProposalsName": "ウォッチリスト",
+  "proposalControls.favorites": "お気に入り",
+  "proposalControls.voted": "投票済み",
+  "proposalCard.funded": "承認済み",
+  "proposalCard.unfunded": "未承認",
+  "proposalCard.vote": "投票",
+  "proposalCard.voted": "投票済み",
+  "proposalCard.unvote": "投票取消",
+  "proposalsPage.voterFilterBanner": "@{{username}} が投票した提案",
+  "proposalsPage.voterFilterClear": "クリア",
+  "auth.errorTooManyTransactions": "トランザクションが多すぎます。1分待ってください。",
+  "impactSimulator.ifVoted": "投票した場合",
+  "impactSimulator.ifUnvoted": "投票取消の場合",
+  "impactSimulator.wouldFund": "承認される",
+  "impactSimulator.wouldUnfund": "承認されなくなる",
+  "smartReminders.endsInDays": "Ends in {{days}}d",
+  "smartReminders.endsToday": "Ends today",
+  "smartReminders.needsAttention": "Need attention",
+  "smartReminders.unfundedTitle": "Watched proposal lost funding",
+  "smartReminders.becameFunded": "Watched proposal became funded"
 }
