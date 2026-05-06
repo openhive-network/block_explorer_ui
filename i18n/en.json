@@ -1100,5 +1100,11 @@
   "auth.errorInvalidUser": "This Hive account name does not exist.",
   "auth.hivesignermessage":"Universal / Mobile Login" ,
   "auth.loggedInVia" : "Logged in via",
-  "auth.errorTooManyAttempts" : "Too many login attempts. Please wait 1 minute."
+  "auth.errorTooManyAttempts" : "Too many login attempts. Please wait 1 minute.",
+  "errorPage.pageNotFound": "Page not found",
+  "errorPage.serverError": "Server error ({{statusCode}})",
+  "errorPage.unexpectedError": "An unexpected error occurred",
+  "errorPage.inconvenience": "Sorry for the inconvenience. Please try again or return to the home page.",
+  "errorPage.reload": "Reload page",
+  "errorPage.goHome": "Go to home"
 }

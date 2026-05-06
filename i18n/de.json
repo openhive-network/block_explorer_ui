@@ -1100,5 +1100,11 @@
   "auth.errorInvalidUser": "Dieser Hive-Kontoname existiert nicht.",
   "auth.hivesignermessage": "Universeller / Mobiler Login",
   "auth.loggedInVia": "Eingeloggt über",
-  "auth.errorTooManyAttempts": "Zu viele Anmeldeversuche. Bitte warten Sie 1 Minute."
+  "auth.errorTooManyAttempts": "Zu viele Anmeldeversuche. Bitte warten Sie 1 Minute.",
+  "errorPage.pageNotFound": "Seite nicht gefunden",
+  "errorPage.serverError": "Serverfehler ({{statusCode}})",
+  "errorPage.unexpectedError": "Ein unerwarteter Fehler ist aufgetreten",
+  "errorPage.inconvenience": "Entschuldigung für die Unannehmlichkeiten. Bitte versuchen Sie es erneut oder kehren Sie zur Startseite zurück.",
+  "errorPage.reload": "Seite neu laden",
+  "errorPage.goHome": "Zur Startseite"
 }

@@ -1100,5 +1100,11 @@
   "auth.errorInvalidUser": "このHiveアカウント名は存在しません。",
   "auth.hivesignermessage": "ユニバーサル / モバイルログイン",
   "auth.loggedInVia": "ログイン経由：",
-  "auth.errorTooManyAttempts": "ログイン試行が多すぎます。1分間お待ちください。"
+  "auth.errorTooManyAttempts": "ログイン試行が多すぎます。1分間お待ちください。",
+  "errorPage.pageNotFound": "ページが見つかりません",
+  "errorPage.serverError": "サーバーエラー ({{statusCode}})",
+  "errorPage.unexpectedError": "予期しないエラーが発生しました",
+  "errorPage.inconvenience": "ご不便をおかけして申し訳ありません。もう一度お試しいただくか、ホームページに戻ってください。",
+  "errorPage.reload": "ページを再読み込み",
+  "errorPage.goHome": "ホームへ"
 }

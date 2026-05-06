@@ -1100,5 +1100,11 @@
   "auth.errorInvalidUser": "Acest nume de cont Hive nu există.",
   "auth.hivesignermessage": "Autentificare Universală / Mobilă",
   "auth.loggedInVia": "Autentificat prin",
-  "auth.errorTooManyAttempts": "Prea multe încercări. Vă rugăm așteptați 1 minut."
+  "auth.errorTooManyAttempts": "Prea multe încercări. Vă rugăm așteptați 1 minut.",
+  "errorPage.pageNotFound": "Pagina nu a fost găsită",
+  "errorPage.serverError": "Eroare server ({{statusCode}})",
+  "errorPage.unexpectedError": "A apărut o eroare neașteptată",
+  "errorPage.inconvenience": "Ne pare rău pentru inconveniente. Vă rugăm să încercați din nou sau să reveniți la pagina principală.",
+  "errorPage.reload": "Reîncarcă pagina",
+  "errorPage.goHome": "Mergi la pagina principală"
 }

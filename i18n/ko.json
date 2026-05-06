@@ -1100,5 +1100,11 @@
   "auth.errorInvalidUser": "해당 Hive 계정 이름이 존재하지 않습니다.",
   "auth.hivesignermessage": "범용 / 모바일 로그인",
   "auth.loggedInVia": "로그인 방법",
-  "auth.errorTooManyAttempts": "로그인 시도가 너무 많습니다. 1분만 기다려주세요."
+  "auth.errorTooManyAttempts": "로그인 시도가 너무 많습니다. 1분만 기다려주세요.",
+  "errorPage.pageNotFound": "페이지를 찾을 수 없습니다",
+  "errorPage.serverError": "서버 오류 ({{statusCode}})",
+  "errorPage.unexpectedError": "예기치 않은 오류가 발생했습니다",
+  "errorPage.inconvenience": "불편을 드려 죄송합니다. 다시 시도하거나 홈페이지로 돌아가 주세요.",
+  "errorPage.reload": "페이지 새로고침",
+  "errorPage.goHome": "홈으로"
 }
