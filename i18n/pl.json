@@ -1100,5 +1100,11 @@
   "auth.errorInvalidUser": "Ta nazwa konta Hive nie istnieje.",
   "auth.hivesignermessage": "Logowanie uniwersalne / mobilne",
   "auth.loggedInVia": "Zalogowano przez",
-  "auth.errorTooManyAttempts": "Zbyt wiele prób logowania. Odczekaj 1 minutę."
+  "auth.errorTooManyAttempts": "Zbyt wiele prób logowania. Odczekaj 1 minutę.",
+  "errorPage.pageNotFound": "Strona nie znaleziona",
+  "errorPage.serverError": "Błąd serwera ({{statusCode}})",
+  "errorPage.unexpectedError": "Wystąpił nieoczekiwany błąd",
+  "errorPage.inconvenience": "Przepraszamy za niedogodności. Spróbuj ponownie lub wróć do strony głównej.",
+  "errorPage.reload": "Odśwież stronę",
+  "errorPage.goHome": "Przejdź do strony głównej"
 }

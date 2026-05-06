@@ -1100,5 +1100,11 @@
   "auth.errorInvalidUser": "该 Hive 账户名称不存在。",
   "auth.hivesignermessage": "通用 / 移动端登录",
   "auth.loggedInVia": "登录方式：",
-  "auth.errorTooManyAttempts": "登录尝试次数过多。请等待 1 分钟。"
+  "auth.errorTooManyAttempts": "登录尝试次数过多。请等待 1 分钟。",
+  "errorPage.pageNotFound": "页面未找到",
+  "errorPage.serverError": "服务器错误 ({{statusCode}})",
+  "errorPage.unexpectedError": "发生意外错误",
+  "errorPage.inconvenience": "抱歉给您带来不便。请重试或返回首页。",
+  "errorPage.reload": "重新加载页面",
+  "errorPage.goHome": "返回首页"
 }

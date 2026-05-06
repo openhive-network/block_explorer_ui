@@ -1100,5 +1100,11 @@
   "auth.errorInvalidUser": "اسم حساب Hive هذا غير موجود.",
   "auth.hivesignermessage": "تسجيل دخول عالمي / محمول",
   "auth.loggedInVia": "تم تسجيل الدخول عبر",
-  "auth.errorTooManyAttempts": "محاولات دخول كثيرة جداً. يرجى الانتظار دقيقة."
+  "auth.errorTooManyAttempts": "محاولات دخول كثيرة جداً. يرجى الانتظار دقيقة.",
+  "errorPage.pageNotFound": "الصفحة غير موجودة",
+  "errorPage.serverError": "خطأ في الخادم ({{statusCode}})",
+  "errorPage.unexpectedError": "حدث خطأ غير متوقع",
+  "errorPage.inconvenience": "نأسف للإزعاج. يرجى المحاولة مرة أخرى أو العودة إلى الصفحة الرئيسية.",
+  "errorPage.reload": "إعادة تحميل الصفحة",
+  "errorPage.goHome": "الذهاب إلى الصفحة الرئيسية"
 }

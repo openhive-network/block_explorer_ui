@@ -1100,5 +1100,11 @@
   "auth.errorInvalidUser": "Ce nom de compte Hive n'existe pas.",
   "auth.hivesignermessage": "Connexion Universelle / Mobile",
   "auth.loggedInVia": "Connecté via",
-  "auth.errorTooManyAttempts": "Trop de tentatives. Veuillez patienter 1 minute."
+  "auth.errorTooManyAttempts": "Trop de tentatives. Veuillez patienter 1 minute.",
+  "errorPage.pageNotFound": "Page introuvable",
+  "errorPage.serverError": "Erreur du serveur ({{statusCode}})",
+  "errorPage.unexpectedError": "Une erreur inattendue est survenue",
+  "errorPage.inconvenience": "Désolé pour le désagrément. Veuillez réessayer ou retourner à la page d'accueil.",
+  "errorPage.reload": "Recharger la page",
+  "errorPage.goHome": "Retour à l'accueil"
 }

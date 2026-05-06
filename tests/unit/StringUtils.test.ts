@@ -67,11 +67,12 @@ describe("splitStringValue", () => {
 });
 
 describe("changeHBDToDollarsDisplay", () => {
-  // NOTE: current implementation does `split(" ")[0].slice(0, -1)`, which drops
-  // the last digit of the numeric portion. These tests pin actual behavior so
-  // the bug surfaces explicitly — see utils/StringUtils.ts:122.
-  it("strips the last digit of the numeric portion (current behavior)", () => {
-    expect(changeHBDToDollarsDisplay("12.345 HBD")).toBe("12.34 $");
+  it("replaces the unit with $ and preserves the numeric value", () => {
+    expect(changeHBDToDollarsDisplay("12.345 HBD")).toBe("12.345 $");
+  });
+
+  it("handles bare numeric strings", () => {
+    expect(changeHBDToDollarsDisplay("12.345")).toBe("12.345 $");
   });
 });
 
