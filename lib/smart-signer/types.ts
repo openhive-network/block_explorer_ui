@@ -8,7 +8,9 @@ export interface SmartSignerResponse {
   error?: string;
 }
 
+export type KeyAuthorityType = 'Posting' | 'Active';
+
 export interface ISmartSignerProvider {
  login(username?: string, message?: string): Promise<SmartSignerResponse>;
- broadcast(username: string, operations: any[]): Promise<any>;
+ broadcast(username: string, operations: any[], keyType?: KeyAuthorityType): Promise<any>;
 }

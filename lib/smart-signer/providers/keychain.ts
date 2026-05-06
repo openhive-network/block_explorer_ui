@@ -1,4 +1,4 @@
-import { ISmartSignerProvider, SmartSignerResponse } from '../types';
+import { ISmartSignerProvider, KeyAuthorityType, SmartSignerResponse } from '../types';
 import { config } from "@/Config";
 
 declare global {
@@ -39,7 +39,7 @@ export const KeychainProvider: ISmartSignerProvider = {
     });
   },
 
-  async broadcast(username, operations) {
+  async broadcast(username, operations, keyType: KeyAuthorityType = 'Posting') {
     return new Promise((resolve, reject) => {
       if (!window.hive_keychain) return reject("Extension not found");
 
@@ -47,7 +47,7 @@ export const KeychainProvider: ISmartSignerProvider = {
         reject("KEYCHAIN_TIMEOUT");
       }, config.security.keychainTimeout);
 
-      window.hive_keychain.requestBroadcast(username, operations, 'Posting', (response: any) => {
+      window.hive_keychain.requestBroadcast(username, operations, keyType, (response: any) => {
         clearTimeout(timeout);
         response.success ? resolve(response) : reject(response.message);
       });

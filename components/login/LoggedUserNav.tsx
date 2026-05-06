@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
 import { useI18n } from "@/i18n/i18n";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
-import { LogOut, User, ChevronDown } from "lucide-react";
+import { LogOut, User, ChevronDown, HeartHandshake } from "lucide-react";
 import { cn } from "@/lib/utils";
 import useManabars from "@/hooks/api/accountPage/useManabars";
 import { useSettings } from "@/contexts/SettingsContext";
@@ -209,6 +209,12 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
               href={`/@${username}`}
               title={t("auth.myProfile")}
               icon={User}
+              closeMenu={() => setIsOpen(false)}
+            />
+            <UserNavItem
+              href={`/proposals?voter=${username}&status=all`}
+              title={t("auth.myVotedProposals")}
+              icon={HeartHandshake}
               closeMenu={() => setIsOpen(false)}
             />
 

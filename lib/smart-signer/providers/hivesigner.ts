@@ -1,6 +1,24 @@
 import { ISmartSignerProvider, SmartSignerResponse } from '../types';
 import { config } from "@/Config";
 
+export function buildProposalVoteSignUrl(
+  username: string,
+  proposalId: number,
+  approve: boolean,
+  redirectUri: string
+): string {
+  // PeakD format: proposal_ids=["350"] (JSON array of string IDs)
+  const proposalIds = encodeURIComponent(JSON.stringify([String(proposalId)]));
+  return (
+    `${config.hivesigner.endpoints.authorize.replace('/oauth2/authorize', '')}/sign/update_proposal_votes` +
+    `?voter=${encodeURIComponent(username)}` +
+    `&proposal_ids=${proposalIds}` +
+    `&approve=${approve}` +
+    `&extensions=` +
+    `&redirect_uri=${encodeURIComponent(redirectUri)}`
+  );
+}
+
 export const HivesignerProvider: ISmartSignerProvider = {
   async login(): Promise<SmartSignerResponse> {
     const callbackURL = config.hivesigner.defaultCallBack;
@@ -41,7 +59,7 @@ export const HivesignerProvider: ISmartSignerProvider = {
     return { username: '', method: 'hivesigner', success: true };
   },
 
-  async broadcast(username, operations) {
+  async broadcast(_username, operations, _keyType) {
     // Helper to read the CSRF cookie value
     const getCsrfTokenFromCookie = () => {
         if (typeof document === 'undefined') return '';

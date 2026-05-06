@@ -17,10 +17,13 @@ import TransferVolumeCard from "@/components/home/TransferVolumeCard";
 import TotalValueLockedCard from "@/components/home/TotalValueLockedCard";
 import { useEffect, useState } from "react";
 import Head from "next/head";
+import { useAuth } from "@/contexts/AuthContext";
+import WatchedProposalsWidget from "@/components/home/WatchedProposalsWidget";
 
 const StandardHome = () => {
   const { theme } = useTheme();
   const { t } = useI18n();
+  const { isLoggedIn } = useAuth();
 
   const { witnessesData, isWitnessDataLoading } = useWitnesses(
     config.witnessesPerPages.home,
@@ -91,6 +94,7 @@ const StandardHome = () => {
         </div>
 
         <div className="col-span-12 lg:col-span-3 flex flex-col gap-3">
+          {isLoggedIn && <WatchedProposalsWidget />}
           <TopWitnessesCard
             witnessesData={witnessesData}
             isLoading={isWitnessDataLoading}

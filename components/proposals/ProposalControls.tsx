@@ -1,4 +1,4 @@
-import { ArrowDown, ArrowUp, Search, SortAsc, SortDesc } from "lucide-react";
+import { ArrowDown, ArrowUp, Heart, Search, SortAsc, SortDesc, Star } from "lucide-react";
 import { useI18n } from "@/i18n/i18n";
 
 export type ProposalStatusFilter = "all" | "active" | "inactive" | "expired";
@@ -19,6 +19,11 @@ interface ProposalControlsProps {
   sortDirection: ProposalSortDirection;
   onSortChange: (order: ProposalSortOrder) => void;
   onSortDirectionChange: (direction: ProposalSortDirection) => void;
+  favoritesOnly?: boolean;
+  onFavoritesToggle?: () => void;
+  votedOnly?: boolean;
+  onVotedToggle?: () => void;
+  isLoggedIn?: boolean;
 }
 
 export const ProposalControls = ({
@@ -30,6 +35,11 @@ export const ProposalControls = ({
   sortDirection,
   onSortChange,
   onSortDirectionChange,
+  favoritesOnly = false,
+  onFavoritesToggle,
+  votedOnly = false,
+  onVotedToggle,
+  isLoggedIn = false,
 }: ProposalControlsProps) => {
   const { t } = useI18n();
 
@@ -68,6 +78,37 @@ export const ProposalControls = ({
                   {t(option.labelKey)}
                 </button>
               ))}
+              {isLoggedIn && (
+                <>
+                  <div className="w-px h-5 bg-slate-300 dark:bg-slate-600 mx-0.5 flex-shrink-0" />
+                  <button
+                    type="button"
+                    onClick={onFavoritesToggle}
+                    className={`rounded-md px-3 py-1.5 flex items-center gap-1.5 text-sm font-semibold transition-colors duration-200 ${
+                      favoritesOnly
+                        ? "bg-white text-amber-500 shadow-sm dark:bg-slate-700 dark:text-amber-400"
+                        : "text-slate-500 hover:text-amber-500 dark:text-slate-400 dark:hover:text-amber-400"
+                    }`}
+                    title={t("proposalControls.favorites")}
+                  >
+                    <Star className={`h-4 w-4 ${favoritesOnly ? "fill-amber-400" : ""}`} />
+                    <span className="hidden sm:inline">{t("proposalControls.favorites")}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={onVotedToggle}
+                    className={`rounded-md px-3 py-1.5 flex items-center gap-1.5 text-sm font-semibold transition-colors duration-200 ${
+                      votedOnly
+                        ? "bg-white text-red-500 shadow-sm dark:bg-slate-700 dark:text-red-400"
+                        : "text-slate-500 hover:text-red-400 dark:text-slate-400 dark:hover:text-red-400"
+                    }`}
+                    title={t("proposalControls.voted")}
+                  >
+                    <Heart className={`h-4 w-4 ${votedOnly ? "fill-red-500 dark:fill-red-400" : ""}`} />
+                    <span className="hidden sm:inline">{t("proposalControls.voted")}</span>
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>

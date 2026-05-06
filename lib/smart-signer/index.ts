@@ -1,5 +1,5 @@
 // lib/smart-signer/index.ts
-import { LoginMethod, SmartSignerResponse } from './types';
+import { KeyAuthorityType, LoginMethod, SmartSignerResponse } from './types';
 import { KeychainProvider } from './providers/keychain';
 import { HivesignerProvider } from './providers/hivesigner';
 
@@ -16,15 +16,16 @@ export class SmartSigner {
   }
 
   static async broadcast(
-    username: string, 
-    method: LoginMethod, 
-    operations: any[]
+    username: string,
+    method: LoginMethod,
+    operations: any[],
+    keyType: KeyAuthorityType = 'Posting'
   ) {
     switch (method) {
       case 'keychain':
-        return await KeychainProvider.broadcast(username, operations);
+        return await KeychainProvider.broadcast(username, operations, keyType);
       case 'hivesigner':
-        return await HivesignerProvider.broadcast(username, operations);
+        return await HivesignerProvider.broadcast(username, operations, keyType);
       default:
         throw new Error("Broadcasting method not supported");
     }
