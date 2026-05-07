@@ -1103,9 +1103,9 @@
   "impactSimulator.ifUnvoted": "如果我撤票",
   "impactSimulator.wouldFund": "将获得资助",
   "impactSimulator.wouldUnfund": "将失去资助",
-  "smartReminders.endsInDays": "Ends in {{days}}d",
-  "smartReminders.endsToday": "Ends today",
-  "smartReminders.needsAttention": "Need attention",
-  "smartReminders.unfundedTitle": "Watched proposal lost funding",
-  "smartReminders.becameFunded": "Watched proposal became funded"
+  "smartReminders.endsInDays": "{{days}}天后结束",
+  "smartReminders.endsToday": "今天结束",
+  "smartReminders.needsAttention": "需要关注",
+  "smartReminders.unfundedTitle": "关注的提案已失去资助",
+  "smartReminders.becameFunded": "关注的提案已获得资助"
 }

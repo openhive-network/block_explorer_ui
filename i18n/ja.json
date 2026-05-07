@@ -1120,9 +1120,9 @@
   "impactSimulator.ifUnvoted": "投票取消の場合",
   "impactSimulator.wouldFund": "承認される",
   "impactSimulator.wouldUnfund": "承認されなくなる",
-  "smartReminders.endsInDays": "Ends in {{days}}d",
-  "smartReminders.endsToday": "Ends today",
-  "smartReminders.needsAttention": "Need attention",
-  "smartReminders.unfundedTitle": "Watched proposal lost funding",
-  "smartReminders.becameFunded": "Watched proposal became funded"
+  "smartReminders.endsInDays": "{{days}}日後に終了",
+  "smartReminders.endsToday": "本日終了",
+  "smartReminders.needsAttention": "要確認",
+  "smartReminders.unfundedTitle": "ウォッチ中の提案が資金を失いました",
+  "smartReminders.becameFunded": "ウォッチ中の提案が資金調達されました"
 }

@@ -51,6 +51,7 @@ const ProposalsPage = () => {
   const [voterFilter, setVoterFilter] = useState("");
   const [favoritesOnly, setFavoritesOnly] = useState(false);
   const [votedOnly, setVotedOnly] = useState(false);
+  const [scrollTargetId, setScrollTargetId] = useState<string | null>(null);
 
   const { isLoggedIn, username } = useAuth();
   const queryClient = useQueryClient();
@@ -80,6 +81,11 @@ const ProposalsPage = () => {
     if (!router.isReady || !router.query.hs_voted) return;
     if (username) {
       queryClient.invalidateQueries(["voterProposals", username]);
+    }
+    // Capture hash before router.replace strips it
+    const hash = window.location.hash.replace('#', '');
+    if (hash.startsWith('proposal-')) {
+      setScrollTargetId(hash);
     }
     const { hs_voted: _, ...rest } = router.query;
     router.replace({ pathname: router.pathname, query: rest }, undefined, { shallow: true });
@@ -153,14 +159,13 @@ const ProposalsPage = () => {
   const proposalsToRender = proposalIdSearch !== null ? foundProposalData : proposalsData;
 
   useEffect(() => {
-    if (isProposalsLoading) return;
-    const hash = window.location.hash.replace('#', '');
-    if (!hash.startsWith('proposal-')) return;
+    if (!scrollTargetId || isProposalsLoading) return;
     const timer = setTimeout(() => {
-      document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      document.getElementById(scrollTargetId)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setScrollTargetId(null);
     }, 300);
     return () => clearTimeout(timer);
-  }, [isProposalsLoading]);
+  }, [scrollTargetId, isProposalsLoading]);
 
   const voterSearchQuery = voterFilter || (isHiveAccountName(searchQuery) ? searchQuery : "");
   const { votedProposalIds, isLoading: isVoterListLoading } = useVoterProposals(voterSearchQuery);

@@ -1120,9 +1120,9 @@
   "impactSimulator.ifUnvoted": "لو ألغيت تصويتي",
   "impactSimulator.wouldFund": "سيُموَّل هذا",
   "impactSimulator.wouldUnfund": "لن يُموَّل هذا",
-  "smartReminders.endsInDays": "Ends in {{days}}d",
-  "smartReminders.endsToday": "Ends today",
-  "smartReminders.needsAttention": "Need attention",
-  "smartReminders.unfundedTitle": "Watched proposal lost funding",
-  "smartReminders.becameFunded": "Watched proposal became funded"
+  "smartReminders.endsInDays": "ينتهي خلال {{days}} يوم",
+  "smartReminders.endsToday": "ينتهي اليوم",
+  "smartReminders.needsAttention": "يحتاج انتباهاً",
+  "smartReminders.unfundedTitle": "المقترح المتابَع فقد تمويله",
+  "smartReminders.becameFunded": "المقترح المتابَع أصبح ممولاً"
 }
