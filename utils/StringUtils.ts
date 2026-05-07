@@ -1,7 +1,5 @@
 import React, { ReactNode } from "react";
 
-
-
 export const capitalizeFirst = (text: string) => {
   return text.charAt(0).toUpperCase() + text.slice(1);
 };
@@ -120,7 +118,7 @@ export const splitStringValue = (value: string, keyword: string) => {
  * @param hbd Formatted HBD
  */
 export const changeHBDToDollarsDisplay = (hbd: string): string => {
-  const numericValue = hbd.split(" ")[0].slice(0, -1);
+  const numericValue = hbd.split(" ")[0];
 
   return `${numericValue} $`;
 };
@@ -266,8 +264,6 @@ export const asCsvString = (value: string | number | undefined | null) => {
   if (value === null || typeof value === "undefined") return "";
   return `="${String(value)}"`;
 };
-
-
 
 /**
  * Validates if a string could be a valid Hive account name.

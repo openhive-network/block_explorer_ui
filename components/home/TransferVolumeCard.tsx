@@ -2,7 +2,11 @@ import React, { useMemo, useState } from "react";
 import useTransferStatistics from "@/hooks/api/homePage/useTransferStatistics";
 import { Loader2 } from "lucide-react";
 import TransferVolumeChart from "./TransferVolumeChart";
-import TransferVolumeFullChartDialog from "./TransferVolumeFullChartDialog";
+import dynamic from "next/dynamic";
+const TransferVolumeFullChartDialog = dynamic(
+  () => import("./TransferVolumeFullChartDialog"),
+  { ssr: false }
+);
 import { useI18n } from "../../i18n/i18n";
 import { useSettings } from "@/contexts/SettingsContext";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
@@ -15,27 +19,27 @@ const TransferVolumeCard = () => {
   const { headBlockNumberData } = useHeadBlockNumber();
   const { dynamicGlobalData } = useDynamicGlobal(headBlockNumberData);
 
-        // --- Date Calculation ---
-      const fromDate = useMemo(() => {
-        const today = new Date();
-        const fourteenDaysAgo = new Date(today);
-        fourteenDaysAgo.setDate(today.getDate() - 30);
-        return fourteenDaysAgo;
-      }, []);
+  // --- Date Calculation ---
+  const fromDate = useMemo(() => {
+    const today = new Date();
+    const fourteenDaysAgo = new Date(today);
+    fourteenDaysAgo.setDate(today.getDate() - 30);
+    return fourteenDaysAgo;
+  }, []);
 
-      const yesterday = useMemo(() => {
-        const today = new Date();
-        const yesterdayDate = new Date(today);
-        yesterdayDate.setDate(today.getDate() - 1);
-        return yesterdayDate;
-      }, []);
+  const yesterday = useMemo(() => {
+    const today = new Date();
+    const yesterdayDate = new Date(today);
+    yesterdayDate.setDate(today.getDate() - 1);
+    return yesterdayDate;
+  }, []);
   // --- API Calls ---
 
-        const {
-          transferStatistics: chartData,
-          isTransferStatisticsLoading: isChartLoading,
-          isTransferStatisticsError: isChartError,
-        } = useTransferStatistics("daily", "HIVE", "asc", fromDate, undefined, true); // Set liveDataEnabled to true to make the API call
+  const {
+    transferStatistics: chartData,
+    isTransferStatisticsLoading: isChartLoading,
+    isTransferStatisticsError: isChartError,
+  } = useTransferStatistics("daily", "HIVE", "asc", fromDate, undefined, true); // Set liveDataEnabled to true to make the API call
 
   // --- Memoized Data ---
   const todayData = useMemo(() => {
@@ -48,23 +52,30 @@ const TransferVolumeCard = () => {
   const isDailyError = isChartError;
 
   const hivePrice = useMemo(() => {
-    if (dynamicGlobalData?.headBlockDetails?.rawFeedPrice && dynamicGlobalData?.headBlockDetails?.rawQuote) {
-       const baseAmount = parseFloat(dynamicGlobalData.headBlockDetails.rawFeedPrice.amount);
-       const quoteAmount = parseFloat(dynamicGlobalData.headBlockDetails.rawQuote.amount);
-       if (quoteAmount > 0) {
-          return baseAmount / quoteAmount;
-       }
+    if (
+      dynamicGlobalData?.headBlockDetails?.rawFeedPrice &&
+      dynamicGlobalData?.headBlockDetails?.rawQuote
+    ) {
+      const baseAmount = parseFloat(
+        dynamicGlobalData.headBlockDetails.rawFeedPrice.amount
+      );
+      const quoteAmount = parseFloat(
+        dynamicGlobalData.headBlockDetails.rawQuote.amount
+      );
+      if (quoteAmount > 0) {
+        return baseAmount / quoteAmount;
+      }
     }
     return 0;
   }, [dynamicGlobalData]);
 
-       const totalUsdValue = useMemo(() => {
-         if (!todayData || !todayData.total_transfer_amount) return 0;
-         // API provides total_transfer_amount as a string. Parse it to a number.
-         const amount = parseFloat(todayData.total_transfer_amount);
+  const totalUsdValue = useMemo(() => {
+    if (!todayData || !todayData.total_transfer_amount) return 0;
+    // API provides total_transfer_amount as a string. Parse it to a number.
+    const amount = parseFloat(todayData.total_transfer_amount);
 
-         return amount * hivePrice;
-       }, [todayData, hivePrice]);
+    return amount * hivePrice;
+  }, [todayData, hivePrice]);
   // --- Modal Handlers ---
   const openModal = () => {
     setIsModalOpen(true);
@@ -91,7 +102,8 @@ const TransferVolumeCard = () => {
                 </div>
               ) : todayData ? (
                 <p className="text-2xl font-bold text-explorer-dark-gray dark:text-text text-right">
-                  ${totalUsdValue.toLocaleString(undefined, {
+                  $
+                  {totalUsdValue.toLocaleString(undefined, {
                     maximumFractionDigits: 2,
                   })}
                 </p>

@@ -1,0 +1,12 @@
+node_modules
+.next
+out
+build
+dist
+coverage
+public
+i18n/*.json
+package-lock.json
+pnpm-lock.yaml
+*.min.js
+*.min.css

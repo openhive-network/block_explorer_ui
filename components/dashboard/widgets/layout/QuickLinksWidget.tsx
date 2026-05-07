@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, Plus, Trash2 } from "lucide-react";
 import { useI18n } from "@/i18n/i18n";
+import { normalizeExternalUrl } from "@/utils/SafeUrl";
 
 interface LinkItem {
   label: string;
@@ -28,8 +29,9 @@ const QuickLinksWidget: React.FC<QuickLinksWidgetProps> = ({
   }, [initialLinks]);
 
   const handleAddLink = () => {
-    if (newLabel.trim() && newUrl.trim()) {
-      const newLinksArray = [...links, { label: newLabel, url: newUrl }];
+    const safeUrl = normalizeExternalUrl(newUrl);
+    if (newLabel.trim() && safeUrl) {
+      const newLinksArray = [...links, { label: newLabel, url: safeUrl }];
       onLinksChange(newLinksArray);
       setNewLabel("");
       setNewUrl("");
@@ -91,19 +93,23 @@ const QuickLinksWidget: React.FC<QuickLinksWidgetProps> = ({
     );
   }
 
+  const validLinks = links
+    .map((link) => ({ ...link, safeUrl: normalizeExternalUrl(link.url) }))
+    .filter((link): link is LinkItem & { safeUrl: string } => !!link.safeUrl);
+
   return (
     <div className="p-3 bg-theme  h-full rounded-[4px]">
       <h3 className="font-bold mb-2">{t("quickLinksWidget.title")}</h3>
       <div className="space-y-2">
-        {links.length > 0 ? (
-          links.map((link, index) => (
+        {validLinks.length > 0 ? (
+          validLinks.map((link, index) => (
             <a
               key={index}
-              href={link.url}
+              href={link.safeUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center space-x-2  text-link"
-              title={link.url}
+              title={link.safeUrl}
             >
               <Link size={14} />
               <span className="truncate text-md text-link">{link.label}</span>
