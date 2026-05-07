@@ -33,7 +33,7 @@ const loadStore = (username: string): Record<string, Set<WatchlistItemId>> => {
 const saveStore = (username: string, store: Record<string, Set<WatchlistItemId>>) => {
   try {
     const serializable: WatchlistStore = Object.fromEntries(
-      Object.entries(store).map(([type, set]) => [type, [...set]])
+      Object.entries(store).map(([type, set]) => [type, Array.from(set)])
     );
     localStorage.setItem(getStorageKey(username), JSON.stringify(serializable));
   } catch {}
@@ -51,7 +51,7 @@ const loadChangedIds = (username: string): Set<number> => {
 
 const saveChangedIds = (username: string, ids: Set<number>) => {
   try {
-    localStorage.setItem(getChangesKey(username), JSON.stringify([...ids]));
+    localStorage.setItem(getChangesKey(username), JSON.stringify(Array.from(ids)));
   } catch {}
 };
 
