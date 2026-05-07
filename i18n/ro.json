@@ -1115,9 +1115,9 @@
   "impactSimulator.ifUnvoted": "Dacă retrag votul",
   "impactSimulator.wouldFund": "ar fi finanțat",
   "impactSimulator.wouldUnfund": "nu ar mai fi finanțat",
-  "smartReminders.endsInDays": "Ends in {{days}}d",
-  "smartReminders.endsToday": "Ends today",
-  "smartReminders.needsAttention": "Need attention",
-  "smartReminders.unfundedTitle": "Watched proposal lost funding",
-  "smartReminders.becameFunded": "Watched proposal became funded"
+  "smartReminders.endsInDays": "Se termină în {{days}}z",
+  "smartReminders.endsToday": "Se termină azi",
+  "smartReminders.needsAttention": "Necesită atenție",
+  "smartReminders.unfundedTitle": "Propunerea urmărită a pierdut finanțarea",
+  "smartReminders.becameFunded": "Propunerea urmărită a fost finanțată"
 }

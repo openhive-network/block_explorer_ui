@@ -1120,9 +1120,9 @@
   "impactSimulator.ifUnvoted": "투표 취소하면",
   "impactSimulator.wouldFund": "지원될 것",
   "impactSimulator.wouldUnfund": "지원 안 됨",
-  "smartReminders.endsInDays": "Ends in {{days}}d",
-  "smartReminders.endsToday": "Ends today",
-  "smartReminders.needsAttention": "Need attention",
-  "smartReminders.unfundedTitle": "Watched proposal lost funding",
-  "smartReminders.becameFunded": "Watched proposal became funded"
+  "smartReminders.endsInDays": "{{days}}일 후 종료",
+  "smartReminders.endsToday": "오늘 종료",
+  "smartReminders.needsAttention": "확인 필요",
+  "smartReminders.unfundedTitle": "관심 제안이 자금을 잃었습니다",
+  "smartReminders.becameFunded": "관심 제안이 자금을 받았습니다"
 }

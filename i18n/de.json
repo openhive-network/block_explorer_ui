@@ -1120,9 +1120,9 @@
   "impactSimulator.ifUnvoted": "Wenn ich nicht stimme",
   "impactSimulator.wouldFund": "würde finanziert",
   "impactSimulator.wouldUnfund": "würde nicht finanziert",
-  "smartReminders.endsInDays": "Ends in {{days}}d",
-  "smartReminders.endsToday": "Ends today",
-  "smartReminders.needsAttention": "Need attention",
-  "smartReminders.unfundedTitle": "Watched proposal lost funding",
-  "smartReminders.becameFunded": "Watched proposal became funded"
+  "smartReminders.endsInDays": "Endet in {{days}}T",
+  "smartReminders.endsToday": "Endet heute",
+  "smartReminders.needsAttention": "Aufmerksamkeit erforderlich",
+  "smartReminders.unfundedTitle": "Beobachteter Vorschlag hat Finanzierung verloren",
+  "smartReminders.becameFunded": "Beobachteter Vorschlag wurde finanziert"
 }
