@@ -189,8 +189,6 @@ const WatchedProposalsWidget = () => {
     }
   }, [enriched, t, markProposalChanged]);
 
-  if (ids.length === 0) return null;
-
   return (
     <Card className="col-span-12 lg:col-span-3 overflow-hidden">
       <CardHeader className="flex justify-between items-center border-b px-3 py-3">
