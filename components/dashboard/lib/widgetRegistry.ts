@@ -180,7 +180,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     id: "watched-proposals",
     name: "widgets.watchedProposalsName",
     component: WatchedProposalsWidget,
-    defaultLayout: { w: 4, h: 10, minW: 3, minH: 6 },
+    defaultLayout: { w: 4, h: 6, minW: 3, minH: 3 },
     allowMultiple: false,
     dynamicHeight: true,
   },

@@ -48,6 +48,7 @@ export function useDashboard() {
   const [widgets, setWidgets] = useState<Array<{ i: string; type: string }>>([]);
   const [layouts, setLayouts] = useState<Layouts>({});
   const [widgetStates, setWidgetStates] = useState<Record<string, any>>({});
+  const [isLoaded, setIsLoaded] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
   const [currentBreakpoint, setCurrentBreakpoint] = useState<string>("lg");
@@ -78,6 +79,7 @@ export function useDashboard() {
     setWidgets(initialWidgets);
     setLayouts(initialLayouts);
     setWidgetStates(initialWidgetStates);
+    setIsLoaded(true);
   }, []);
 
   const onBreakpointChange = (newBreakpoint: string) => setCurrentBreakpoint(newBreakpoint);
@@ -185,7 +187,7 @@ export function useDashboard() {
   const finalIsEditMode = isEditMode && isEditableBreakpoint;
 
   return {
-    widgets, layouts, widgetStates, isEditMode, isLibraryOpen,
+    widgets, layouts, widgetStates, isLoaded, isEditMode, isLibraryOpen,
     finalIsEditMode, isLargeScreen: isEditableBreakpoint,
     setIsEditMode, setIsLibraryOpen, onBreakpointChange,
     onLayoutChange, onAddWidget, onRemoveWidget, handleResetLayout,
