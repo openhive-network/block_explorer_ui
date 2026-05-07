@@ -1,3 +1,4 @@
+import React from "react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import useProposalVote from "@/hooks/api/proposals/useProposalVote";
 import { useI18n } from "@/i18n/i18n";
