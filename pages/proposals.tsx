@@ -89,7 +89,7 @@ const ProposalsPage = () => {
     }
     const { hs_voted: _, ...rest } = router.query;
     router.replace({ pathname: router.pathname, query: rest }, undefined, { shallow: true });
-  }, [router.isReady, router.query.hs_voted, username]);
+  }, [router, queryClient, username]);
 
   const debouncedUpdateUrl = useDebounce((query: string) => {
     const newQuery = { ...router.query };
