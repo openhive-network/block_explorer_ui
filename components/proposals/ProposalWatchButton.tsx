@@ -1,3 +1,4 @@
+import React from "react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAuth } from "@/contexts/AuthContext";
 import { useWatchlist } from "@/contexts/WatchlistContext";
@@ -11,21 +12,20 @@ interface ProposalWatchButtonProps {
 
 const ProposalWatchButton: React.FC<ProposalWatchButtonProps> = ({ proposalId }) => {
   const { isLoggedIn } = useAuth();
-  const { isWatched, toggleWatch, changedProposalIds, clearProposalChange } = useWatchlist();
+  const { isWatched, toggleWatch } = useWatchlist();
   const { t } = useI18n();
 
   if (!isLoggedIn) return null;
 
   const watched = isWatched("proposals", proposalId);
-  const hasChange = watched && changedProposalIds.has(proposalId);
 
   return (
     <Tooltip>
       <TooltipTrigger asChild>
         <button
-          onClick={() => { toggleWatch("proposals", proposalId); clearProposalChange(proposalId); }}
+          onClick={() => toggleWatch("proposals", proposalId)}
           className={cn(
-            "relative flex h-9 w-9 items-center justify-center rounded-lg border-2 transition-all duration-200",
+            "flex h-9 w-9 items-center justify-center rounded-lg border-2 transition-all duration-200",
             watched
               ? "border-amber-400 bg-amber-50 text-amber-500 hover:bg-amber-100 dark:border-amber-500 dark:bg-amber-900/30 dark:text-amber-400 dark:hover:bg-amber-900/50"
               : "border-slate-200 bg-white text-slate-400 hover:border-amber-300 hover:text-amber-400 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-500 dark:hover:border-amber-600 dark:hover:text-amber-400"
@@ -33,9 +33,6 @@ const ProposalWatchButton: React.FC<ProposalWatchButtonProps> = ({ proposalId })
           aria-label={t(watched ? "watchlist.removeFromWatchlist" : "watchlist.addToWatchlist")}
         >
           <Star className={cn("h-5 w-5", watched && "fill-amber-400")} />
-          {hasChange && (
-            <span className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-orange-500 ring-2 ring-white dark:ring-slate-900" />
-          )}
         </button>
       </TooltipTrigger>
       <TooltipContent>
