@@ -14,6 +14,8 @@ interface RadialProgressProps {
   size?: number;
   strokeWidth?: number;
   tooltipContent?: React.ReactNode;
+  labelClassName?: string;
+  percentageClassName?: string;
 }
 
 const RadialProgress: React.FC<RadialProgressProps> = ({
@@ -23,6 +25,8 @@ const RadialProgress: React.FC<RadialProgressProps> = ({
   size = 80,
   strokeWidth = 8,
   tooltipContent,
+  labelClassName,
+  percentageClassName,
 }) => {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -120,14 +124,14 @@ const RadialProgress: React.FC<RadialProgressProps> = ({
 
         {/* Center Percentage */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-sm font-bold text-gray-800 dark:text-white">
+          <span className={cn("text-sm font-bold text-gray-800 dark:text-white", percentageClassName)}>
             {displayPercentage.toFixed(2)}%
           </span>
         </div>
       </div>
 
       {/* Label */}
-      <p className="text-xs text-center text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+      <p className={cn("text-xs text-center text-gray-500 dark:text-gray-400 uppercase tracking-wider", labelClassName)}>
         {label}
       </p>
     </div>
