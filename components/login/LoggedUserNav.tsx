@@ -6,6 +6,10 @@ import { useI18n } from "@/i18n/i18n";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { LogOut, User, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import useManabars from "@/hooks/api/accountPage/useManabars";
+import { useSettings } from "@/contexts/SettingsContext";
+import RadialProgress from "@/components/RadialProgress";
+import { Progress } from "@/components/ui/progress";
 
 import keychainLogo from "@/lib/smart-signer/logo/keychain.png";
 import Hslogo from "@/lib/smart-signer/logo/hivesigner.svg";
@@ -32,14 +36,17 @@ const UserNavItem = ({ href, title, icon: Icon, closeMenu }: any) => (
 const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
   const { username, avatar, logout, method } = useAuth();
   const { t } = useI18n();
+  const { settings } = useSettings();
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const { manabarsData } = useManabars(username || "", true);
 
   const AUTH_METHODS_CONFIG = useMemo(() => ({
     keychain: {
       name: "Hive Keychain",
       logo: keychainLogo,
-      description: t("auth.keychainDescription"), 
+      description: t("auth.keychainDescription"),
       bgColor: "bg-red-50 dark:bg-red-950/20",
       borderColor: "border-red-200 dark:border-red-800/30",
       textColor: "text-red-900 dark:text-red-200"
@@ -84,7 +91,7 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
         <ChevronDown className={cn("w-3.5 h-3.5 opacity-50 transition-transform", isOpen && "rotate-180")} />
       </button>
 
-      {/* Dropdown - Reduced width from 72 to 60 */}
+      {/* Dropdown */}
       {isOpen && (
         <div className="absolute top-full mt-2 w-60 bg-theme border border-navbar-border rounded-2xl shadow-xl z-[100] p-1.5 animate-in fade-in zoom-in-95 slide-in-from-top-1 duration-150 right-0">
 
@@ -94,7 +101,7 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
             config?.bgColor,
             config?.borderColor
           )}>
-            <p className="text-[10px] text-text uppercase tracking-wider  mb-2">
+            <p className="text-[10px] text-text uppercase tracking-wider mb-2">
               {t("auth.loggedInVia")}
             </p>
 
@@ -124,7 +131,79 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
             </TooltipProvider>
           </div>
 
-          {/* Menu Actions  */}
+          {/* Mana / RC Section */}
+          {!!manabarsData && (
+            <div className="mb-1.5 px-2 py-2 rounded-xl border border-border/30 bg-secondary/10">
+              {settings.progressBarType === "linear" ? (
+                <div className="space-y-2">
+                  {[
+                    { label: "Upvote",    value: manabarsData.upvote.percentageValue,    color: "#00c040", current: manabarsData.upvote.current,    max: manabarsData.upvote.max },
+                    { label: "Downvote",  value: manabarsData.downvote.percentageValue,  color: "#c01000", current: manabarsData.downvote.current,  max: manabarsData.downvote.max },
+                    { label: "RC",        value: manabarsData.rc.percentageValue,        color: "#cecafa", current: manabarsData.rc.current,        max: manabarsData.rc.max },
+                  ].map(({ label, value, color, current, max }) => (
+                    <div key={label}>
+                      <p className="mb-1 text-[10px] font-medium text-gray-500 dark:text-gray-400">{label}</p>
+                      <TooltipProvider>
+                        <Tooltip delayDuration={100}>
+                          <TooltipTrigger asChild>
+                            <div className="cursor-help">
+                              <Progress value={value} color={color} />
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipPortal>
+                            <TooltipContent className="bg-slate-900 text-white border-none text-[11px] py-1 px-2">
+                              {current} / {max}
+                            </TooltipContent>
+                          </TooltipPortal>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-3 justify-items-center gap-1">
+                  <RadialProgress
+                    size={46}
+                    strokeWidth={4}
+                    percentage={manabarsData.upvote.percentageValue}
+                    label="Upvote"
+                    color="text-green-500"
+                    percentageClassName="text-[9px]"
+                    labelClassName="text-[8px]"
+                    tooltipContent={
+                      <p className="text-sm">{manabarsData.upvote.current} / {manabarsData.upvote.max}</p>
+                    }
+                  />
+                  <RadialProgress
+                    size={46}
+                    strokeWidth={4}
+                    percentage={manabarsData.downvote.percentageValue}
+                    label="Downvote"
+                    color="text-red-500"
+                    percentageClassName="text-[9px]"
+                    labelClassName="text-[8px]"
+                    tooltipContent={
+                      <p className="text-sm">{manabarsData.downvote.current} / {manabarsData.downvote.max}</p>
+                    }
+                  />
+                  <RadialProgress
+                    size={46}
+                    strokeWidth={4}
+                    percentage={manabarsData.rc.percentageValue}
+                    label="RC"
+                    color="text-indigo-400"
+                    percentageClassName="text-[9px]"
+                    labelClassName="text-[8px]"
+                    tooltipContent={
+                      <p className="text-sm">{manabarsData.rc.current} / {manabarsData.rc.max}</p>
+                    }
+                  />
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Menu Actions */}
           <div className="flex flex-col gap-0.5">
             <UserNavItem
               href={`/@${username}`}
