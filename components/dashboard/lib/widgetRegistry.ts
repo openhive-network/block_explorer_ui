@@ -87,10 +87,11 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     id: "fund-and-supply",
     name: "widgets.fundAndSupplyName",
     component: FundAndSupplyWidget,
-    defaultLayout: { w: 3, h: 5.3, minW: 2, minH: 5 },
+    defaultLayout: { w: 3, h: 5, minW: 2, minH: 5 },
     getProps: getCollapsibleCardProps,
     collapsible: true,
     initialCollapsed: true,
+    dynamicHeight: true,
   },
   "hive-parameters": {
     id: "hive-parameters",
@@ -100,6 +101,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     getProps: getCollapsibleCardProps,
     collapsible: true,
     initialCollapsed: true,
+    dynamicHeight: true,
   },
   "blockchain-dates": {
     id: "blockchain-dates",
@@ -109,6 +111,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     getProps: getCollapsibleCardProps,
     collapsible: true,
     initialCollapsed: true,
+    dynamicHeight: true,
   },
   "market-data": {
     id: "market-data",
