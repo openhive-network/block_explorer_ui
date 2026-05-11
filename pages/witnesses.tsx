@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useI18n } from "@/i18n/i18n";
 import {
   Loader2,
@@ -7,8 +7,10 @@ import {
   ChevronUp,
   ChevronsUpDown,
   Link as LinkIcon,
+  X,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import Head from "next/head";
 import Image from "next/image";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
@@ -18,6 +20,9 @@ import {
   formatAndDelocalizeTime,
 } from "@/utils/TimeUtils";
 import useWitnesses from "@/hooks/api/common/useWitnesses";
+import useWitnessVoteChain from "@/hooks/api/common/useWitnessVoteChain";
+import { useAuth } from "@/contexts/AuthContext";
+import WitnessVoteButton from "@/components/Witnesses/WitnessVoteButton";
 import {
   Table,
   TableBody,
@@ -144,6 +149,11 @@ const renderSortArrow = (
 
 export default function Witnesses() {
   const { t, locale } = useI18n();
+  const router = useRouter();
+
+  const voterFilter = router.isReady
+    ? (router.query.voter as string | undefined)
+    : undefined;
 
   const [voterAccount, setVoterAccount] = useState<string>("");
   const [isVotersOpen, setIsVotersOpen] = useState<boolean>(false);
@@ -152,13 +162,14 @@ export default function Witnesses() {
     orderBy: string;
     isOrderAscending: boolean;
   }>({
-    orderBy: sortKeyByCell["rank"], // Default to API field for rank
+    orderBy: sortKeyByCell["rank"],
     isOrderAscending: true,
   });
+
   const { witnessesData, isWitnessDataLoading } = useWitnesses(
     config.witnessesPerPages.witnesses,
-    sort.orderBy,
-    sort.isOrderAscending ? "asc" : "desc"
+    voterFilter ? sortKeyByCell["rank"] : sort.orderBy,
+    voterFilter ? "asc" : sort.isOrderAscending ? "asc" : "desc"
   );
 
   const [availableVersions, setAvailableVersions] = useState<string[]>([]);
@@ -184,6 +195,77 @@ export default function Witnesses() {
       );
     }
   }, [dynamicGlobalData]);
+
+  const {
+    witnessVotes: voterWitnessVotes,
+    proxyChain,
+    isLoading: isFilterLoading,
+  } = useWitnessVoteChain(voterFilter || "");
+
+  const { username, isLoggedIn } = useAuth();
+
+  // Vote column only for the logged-in user's own filter view (security: hide from others)
+  const showVoteColumn = isLoggedIn && (!voterFilter || voterFilter === username);
+
+  // Tracks local vote changes for immediate filter re-render (bypasses blockchain latency)
+  const [localVoteChanges, setLocalVoteChanges] = useState<
+    Record<string, boolean>
+  >({});
+
+  const handleVoteChange = (witnessName: string, voted: boolean) => {
+    setLocalVoteChanges((prev) => ({ ...prev, [witnessName]: voted }));
+  };
+
+  const filteredWitnesses = useMemo(() => {
+    if (!witnessesData?.witnesses) return [];
+    if (!voterFilter) return witnessesData.witnesses;
+    const voteSet = new Set(voterWitnessVotes);
+    if (voterFilter === username) {
+      Object.entries(localVoteChanges).forEach(([w, voted]) => {
+        if (voted) voteSet.add(w);
+        else voteSet.delete(w);
+      });
+    }
+    if (voteSet.size === 0) return [];
+    return witnessesData.witnesses.filter((w: any) =>
+      voteSet.has(w.witness_name)
+    );
+  }, [witnessesData, voterFilter, voterWitnessVotes, username, localVoteChanges]);
+
+  const sortedFilteredWitnesses = useMemo(() => {
+    if (!voterFilter || filteredWitnesses.length === 0)
+      return filteredWitnesses;
+    const apiFieldToObjField: Record<string, string> = {
+      rank: "rank",
+      witness: "witness_name",
+      votes: "vests",
+      voters_num: "voters_num",
+      block_size: "block_size",
+      missed_blocks: "missed_blocks",
+      hbd_interest_rate: "hbd_interest_rate",
+      price_feed: "price_feed",
+      feed_updated_at: "feed_updated_at",
+      version: "version",
+      last_confirmed_block_num: "last_confirmed_block_num",
+    };
+    const field = apiFieldToObjField[sort.orderBy] ?? "rank";
+    const dir = sort.isOrderAscending ? 1 : -1;
+    return [...filteredWitnesses].sort((a: any, b: any) => {
+      const av = a[field],
+        bv = b[field];
+      if (av == null && bv == null) return 0;
+      if (av == null) return dir;
+      if (bv == null) return -dir;
+      if (typeof av === "number" && typeof bv === "number")
+        return (av - bv) * dir;
+      if (av instanceof Date && bv instanceof Date)
+        return (av.getTime() - bv.getTime()) * dir;
+      return (
+        String(av).localeCompare(String(bv), undefined, { numeric: true }) *
+        dir
+      );
+    });
+  }, [filteredWitnesses, voterFilter, sort]);
 
   useEffect(() => {
     if (witnessesData?.witnesses) {
@@ -281,11 +363,37 @@ export default function Witnesses() {
                 <WitnessScheduleIcon />
               </div>
             </div>
-            {isWitnessDataLoading ? (
+
+            {voterFilter && (
+              <div className="mb-4 flex items-center justify-between rounded-lg bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800/30 px-4 py-2.5 text-sm text-blue-800 dark:text-blue-200">
+                <span>
+                  {proxyChain.length > 0
+                    ? t("witnesses.myVotesBannerProxy", {
+                        voter: voterFilter,
+                        proxy: proxyChain.join(" → @"),
+                      })
+                    : t("witnesses.myVotesBanner", { voter: voterFilter })}
+                  {!isFilterLoading && ` (${voterWitnessVotes.length}/30)`}
+                </span>
+                <button
+                  onClick={() =>
+                    router.push("/witnesses", undefined, { shallow: true })
+                  }
+                  className="ml-3 rounded-md p-0.5 hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors"
+                  aria-label="Clear filter"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            )}
+
+            {isWitnessDataLoading ||
+            !router.isReady ||
+            (voterFilter && isFilterLoading) ? (
               <div className="flex justify-center items-center py-12">
                 <Loader2 className="dark:text-white animate-spin h-6 w-6" />
               </div>
-            ) : witnessesData?.witnesses?.length > 0 ? (
+            ) : sortedFilteredWitnesses.length > 0 ? (
               <>
                 <VotersDialog
                   accountName={voterAccount}
@@ -309,16 +417,18 @@ export default function Witnesses() {
                   <TableHeader>
                     <TableRow rowVariant="header">
                       {buildTableHeader()}
+                      {showVoteColumn && (
+                        <TableCell className="text-center !bg-navbar py-2">
+                          <span>{t("witnesses.voteAction")}</span>
+                        </TableCell>
+                      )}
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {witnessesData?.witnesses.map(
-                      (
-                        singleWitness: any,
-                        index: number // Explicitly type index
-                      ) => (
+                    {sortedFilteredWitnesses.map(
+                      (singleWitness: any, index: number) => (
                         <TableRow
-                          key={singleWitness.witness_id || index} // Prefer a stable ID if available
+                          key={singleWitness.witness_id || index}
                           className={cn(
                             `${
                               index % 2 === 0
@@ -581,6 +691,15 @@ export default function Witnesses() {
                               {singleWitness.version}
                             </div>
                           </TableCell>
+
+                          {showVoteColumn && (
+                            <TableCell className="text-center">
+                              <WitnessVoteButton
+                                witnessName={singleWitness.witness_name}
+                                onVoteChange={handleVoteChange}
+                              />
+                            </TableCell>
+                          )}
                         </TableRow>
                       )
                     )}

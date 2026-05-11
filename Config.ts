@@ -94,7 +94,7 @@ export const config = {
       loginLimit: 5, // Attempts per interval
       broadcastLimit: 30, // Actions per interval
     },
-    allowedOperations: ["vote", "claim_reward_balance", "custom_json", "update_proposal_votes"],
+    allowedOperations: ["vote", "claim_reward_balance", "custom_json", "update_proposal_votes", "account_witness_vote", "account_witness_proxy"],
   },
 };
 
