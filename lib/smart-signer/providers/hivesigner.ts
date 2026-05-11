@@ -1,6 +1,34 @@
 import { ISmartSignerProvider, SmartSignerResponse } from '../types';
 import { config } from "@/Config";
 
+export function buildWitnessVoteSignUrl(
+  username: string,
+  witnessName: string,
+  approve: boolean,
+  redirectUri: string
+): string {
+  return (
+    `${config.hivesigner.endpoints.baseUrl}/sign/account_witness_vote` +
+    `?account=${encodeURIComponent(username)}` +
+    `&witness=${encodeURIComponent(witnessName)}` +
+    `&approve=${approve}` +
+    `&redirect_uri=${encodeURIComponent(redirectUri)}`
+  );
+}
+
+export function buildProxySignUrl(
+  username: string,
+  proxy: string,
+  redirectUri: string
+): string {
+  return (
+    `${config.hivesigner.endpoints.baseUrl}/sign/account_witness_proxy` +
+    `?account=${encodeURIComponent(username)}` +
+    `&proxy=${encodeURIComponent(proxy)}` +
+    `&redirect_uri=${encodeURIComponent(redirectUri)}`
+  );
+}
+
 export function buildProposalVoteSignUrl(
   username: string,
   proposalId: number,

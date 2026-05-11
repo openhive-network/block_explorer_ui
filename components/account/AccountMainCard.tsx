@@ -41,6 +41,7 @@ import { Button } from "../ui/button";
 import { useI18n } from "../../i18n/i18n";
 import TimeAgo from "timeago-react";
 import useProposalVoteCount from "@/hooks/api/accountPage/useProposalVoteCount";
+import WitnessVoteButton from "@/components/Witnesses/WitnessVoteButton";
 import moment from "moment";
 
 import { useSettings } from "@/contexts/SettingsContext";
@@ -366,6 +367,13 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                   </div>
                 </div>
               </div>
+
+              {accountDetails.is_witness && !isWitnessLoading && !isWitnessError && (
+                <div className="flex flex-wrap gap-2">
+                  <WitnessVoteButton witnessName={accountName} variant="pill" />
+                </div>
+              )}
+
               {about && (
                 <div className="w-full p-3 bg-slate-100 dark:bg-slate-800/50 rounded-xl">
                   <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">

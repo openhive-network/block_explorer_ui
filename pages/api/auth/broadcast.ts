@@ -57,15 +57,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Proxy to Hivesigner
     const response = await fetch(config.hivesigner.endpoints.broadcast, {
       method: 'POST',
-      headers: { 
+      headers: {
         'Authorization': token,
-        'Content-Type': 'application/json' 
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({ operations }),
+      signal: AbortSignal.timeout(config.security.nodeTimeout),
     });
 
     const data = await response.json();
-    return res.status(200).json(data);
+    return res.status(response.ok ? 200 : response.status).json(data);
 
   } catch (error) {
     console.error("CRITICAL API ERROR:", error);

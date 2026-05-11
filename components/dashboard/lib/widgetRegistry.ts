@@ -1,4 +1,5 @@
-import WatchedProposalsWidget from "@/components/home/WatchedProposalsWidget";
+import WatchedProposalsWidget from "@/components/dashboard/widgets/data/WatchedProposalsWidget";
+import WitnessHealthWidget from "@/components/dashboard/widgets/data/WitnessHealthWidget";
 import EmbedWidget from "@/components/dashboard/widgets/layout/EmbedWidget";
 import MarkdownWidget from "@/components/dashboard/widgets/layout/MarkdownWidget";
 import LiveInfoWidget from "@/components/dashboard/widgets/data/LiveInfoWidget";
@@ -183,6 +184,15 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     id: "watched-proposals",
     name: "widgets.watchedProposalsName",
     component: WatchedProposalsWidget,
+    defaultLayout: { w: 4, h: 6, minW: 3, minH: 3 },
+    allowMultiple: false,
+    dynamicHeight: true,
+  },
+
+  "witness-health": {
+    id: "witness-health",
+    name: "widgets.witnessHealthName",
+    component: WitnessHealthWidget,
     defaultLayout: { w: 4, h: 6, minW: 3, minH: 3 },
     allowMultiple: false,
     dynamicHeight: true,

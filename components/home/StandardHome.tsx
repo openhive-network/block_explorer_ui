@@ -18,7 +18,8 @@ import TotalValueLockedCard from "@/components/home/TotalValueLockedCard";
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import { useAuth } from "@/contexts/AuthContext";
-import WatchedProposalsWidget from "@/components/home/WatchedProposalsWidget";
+import WatchedProposalsWidget from "@/components/dashboard/widgets/data/WatchedProposalsWidget";
+import WitnessHealthWidget from "@/components/dashboard/widgets/data/WitnessHealthWidget";
 
 const StandardHome = () => {
   const { theme } = useTheme();
@@ -103,6 +104,7 @@ const StandardHome = () => {
             communitiesData={popularCommunitiesData}
             isLoading={isCommunitiesLoading}
           />
+          {isLoggedIn && <WitnessHealthWidget />}
         </div>
       </div>
     </>
