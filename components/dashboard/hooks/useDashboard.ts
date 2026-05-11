@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { Layouts, Layout } from "react-grid-layout";
 import {
-  LAYOUT_STORAGE_KEY,
-  WIDGETS_STORAGE_KEY,
-  WIDGET_STATES_STORAGE_KEY,
+  getLayoutStorageKey,
+  getWidgetsStorageKey,
+  getWidgetStatesStorageKey,
   DEFAULT_WIDGETS,
   DEFAULT_MASTER_LAYOUT,
   generateDerivedLayouts,
@@ -12,6 +12,7 @@ import {
 } from "../lib/dashboard.config";
 import { WIDGET_REGISTRY } from "@/components/dashboard/lib/widgetRegistry";
 import { useI18n } from "@/i18n/i18n";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface ExtendedLayout extends Layout {
   originalH?: number;
@@ -53,21 +54,27 @@ export function useDashboard() {
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
   const [currentBreakpoint, setCurrentBreakpoint] = useState<string>("lg");
   const { t } = useI18n();
+  const { username } = useAuth();
 
   useEffect(() => {
-    const savedWidgetsStr = localStorage.getItem(WIDGETS_STORAGE_KEY);
-    const savedLayoutsStr = localStorage.getItem(LAYOUT_STORAGE_KEY);
-    const savedStatesStr = localStorage.getItem(WIDGET_STATES_STORAGE_KEY);
+    if (!username) {
+      setIsLoaded(false);
+      return;
+    }
+
+    const savedWidgetsStr = localStorage.getItem(getWidgetsStorageKey(username));
+    const savedLayoutsStr = localStorage.getItem(getLayoutStorageKey(username));
+    const savedStatesStr = localStorage.getItem(getWidgetStatesStorageKey(username));
 
     let initialWidgets = [...DEFAULT_WIDGETS];
     let initialLayouts: Layouts;
     let initialWidgetStates: Record<string, any> = {};
 
     if (savedLayoutsStr) {
- 
+
       const parsedLayouts = JSON.parse(savedLayoutsStr);
       initialLayouts = generateDerivedLayouts(parsedLayouts.lg || DEFAULT_MASTER_LAYOUT);
-      
+
       if (savedWidgetsStr) initialWidgets = JSON.parse(savedWidgetsStr);
       if (savedStatesStr) initialWidgetStates = JSON.parse(savedStatesStr);
     } else {
@@ -75,33 +82,35 @@ export function useDashboard() {
       initialLayouts = initialState.layouts;
       initialWidgetStates = initialState.widgetStates;
     }
-    
+
     setWidgets(initialWidgets);
     setLayouts(initialLayouts);
     setWidgetStates(initialWidgetStates);
     setIsLoaded(true);
-  }, []);
+  }, [username]);
 
   const onBreakpointChange = (newBreakpoint: string) => setCurrentBreakpoint(newBreakpoint);
 
   const onLayoutChange = (currentLayout: Layout[], _allLayouts: Layouts) => {
     if (!isEditMode) return;
-    
+    if (!username) return;
+
     // Only update and save if we are on Desktop
     if (EDITABLE_BREAKPOINTS.includes(currentBreakpoint)) {
       // Regenerate all mobile layouts based on the new Desktop changes
       const updatedLayouts = generateDerivedLayouts(currentLayout);
       setLayouts(updatedLayouts);
-      localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify(updatedLayouts));
+      localStorage.setItem(getLayoutStorageKey(username), JSON.stringify(updatedLayouts));
     }
   };
 
   const onAddWidget = useCallback((widgetType: string, layoutOverride?: Partial<Layout>) => {
+    if (!username) return;
     const widgetConfig = WIDGET_REGISTRY[widgetType];
     const newWidgetId = `${widgetType}-${Date.now()}`;
     const newWidgets = [...widgets, { i: newWidgetId, type: widgetType }];
     setWidgets(newWidgets);
-    localStorage.setItem(WIDGETS_STORAGE_KEY, JSON.stringify(newWidgets));
+    localStorage.setItem(getWidgetsStorageKey(username), JSON.stringify(newWidgets));
 
     const masterLayout = layouts.lg || [];
     const newY = masterLayout.reduce((maxY, item) => Math.max(maxY, item.y + item.h), 0);
@@ -109,27 +118,29 @@ export function useDashboard() {
 
     const newLayouts = generateDerivedLayouts([...masterLayout, newLayoutItem]);
     setLayouts(newLayouts);
-    localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify(newLayouts));
+    localStorage.setItem(getLayoutStorageKey(username), JSON.stringify(newLayouts));
     setIsLibraryOpen(false);
-  }, [widgets, layouts]);
+  }, [widgets, layouts, username]);
 
   const onRemoveWidget = (widgetId: string) => {
+    if (!username) return;
     const newWidgets = widgets.filter((w) => w.i !== widgetId);
     setWidgets(newWidgets);
-    localStorage.setItem(WIDGETS_STORAGE_KEY, JSON.stringify(newWidgets));
-    
+    localStorage.setItem(getWidgetsStorageKey(username), JSON.stringify(newWidgets));
+
     const masterLayout = (layouts.lg || []).filter((l) => l.i !== widgetId);
     const newLayouts = generateDerivedLayouts(masterLayout);
     setLayouts(newLayouts);
-    localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify(newLayouts));
+    localStorage.setItem(getLayoutStorageKey(username), JSON.stringify(newLayouts));
   };
 
   const handleResetLayout = () => {
+    if (!username) return;
     if (!window.confirm(t("dashbord.restoreWarning"))) return;
-    localStorage.removeItem(WIDGETS_STORAGE_KEY);
-    localStorage.removeItem(LAYOUT_STORAGE_KEY);
-    localStorage.removeItem(WIDGET_STATES_STORAGE_KEY);
-    
+    localStorage.removeItem(getWidgetsStorageKey(username));
+    localStorage.removeItem(getLayoutStorageKey(username));
+    localStorage.removeItem(getWidgetStatesStorageKey(username));
+
     const { layouts, widgetStates } = createInitialLayoutsAndStates();
     setWidgets(DEFAULT_WIDGETS);
     setLayouts(layouts);
@@ -138,16 +149,18 @@ export function useDashboard() {
   };
 
   const handleWidgetStateChange = (widgetId: string, newState: any) => {
+    if (!username) return;
     const newWidgetStates = { ...widgetStates, [widgetId]: { ...widgetStates[widgetId], ...newState } };
     setWidgetStates(newWidgetStates);
-    localStorage.setItem(WIDGET_STATES_STORAGE_KEY, JSON.stringify(newWidgetStates));
+    localStorage.setItem(getWidgetStatesStorageKey(username), JSON.stringify(newWidgetStates));
   };
 
   const handleToggleCollapse = (widgetId: string) => {
+    if (!username) return;
     const widgetType = widgets.find((w) => w.i === widgetId)?.type;
     const config = widgetType ? WIDGET_REGISTRY[widgetType] : undefined;
     if (!config?.collapsible) return;
-    
+
     const currentState = widgetStates[widgetId] || {};
     const newIsCollapsed = !currentState.isCollapsed;
 
@@ -167,7 +180,7 @@ export function useDashboard() {
 
     const newLayouts = generateDerivedLayouts(newMasterLayout);
     setLayouts(newLayouts);
-    localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify(newLayouts));
+    localStorage.setItem(getLayoutStorageKey(username), JSON.stringify(newLayouts));
     handleWidgetStateChange(widgetId, { isCollapsed: newIsCollapsed });
   };
 
