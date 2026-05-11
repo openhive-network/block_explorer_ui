@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { MoveRight, ShieldOff, ChevronUp, ChevronDown, ChevronsUpDown, MoveLeft } from "lucide-react";
+import { MoveRight, ShieldOff, ChevronUp, ChevronDown, ChevronsUpDown, MoveLeft, UserCheck } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -85,10 +85,12 @@ const WitnessHealthWidget = () => {
     }
   };
 
-  const { witnessVotes, isLoading: isVotesLoading } = useWitnessVoteChain(
+  const { witnessVotes, proxyChain, isLoading: isVotesLoading } = useWitnessVoteChain(
     isLoggedIn ? (username || "") : ""
   );
   const { witnesses, isLoading: isHealthLoading } = useWatchedWitnesses(witnessVotes);
+
+  const proxy = proxyChain[0] ?? "";
 
   const isLoading = isVotesLoading || isHealthLoading;
   const activeCount  = witnesses.filter((w) => !w.isLoading &&  w.isActive).length;
@@ -130,6 +132,22 @@ const WitnessHealthWidget = () => {
       </CardHeader>
 
       <CardContent className="px-2 pt-2 pb-1">
+        {/* Proxy indicator — votes shown are inherited from this proxy */}
+        {proxy && (
+          <div className="flex items-center gap-1.5 px-2 py-1 mb-1.5 rounded-md bg-amber-50 dark:bg-amber-950/20 border border-amber-200/60 dark:border-amber-900/30 text-xs text-amber-800 dark:text-amber-300">
+            <UserCheck className="h-3 w-3 flex-shrink-0" />
+            <span className="truncate">
+              {t("watchlist.witnesses.viaProxy")}{" "}
+              <Link
+                href={`/@${proxy}`}
+                className="font-semibold hover:underline"
+              >
+                @{proxy}
+              </Link>
+            </span>
+          </div>
+        )}
+
         {/* Vote summary bar */}
         {witnessVotes.length > 0 && (
           <div className="flex items-center gap-1.5 px-2 py-1 mb-1.5 rounded-md bg-slate-50 dark:bg-slate-800/50 text-xs text-slate-600 dark:text-slate-400 flex-wrap">
@@ -149,7 +167,7 @@ const WitnessHealthWidget = () => {
                   <>
                     <span className="text-slate-300 dark:text-slate-600">·</span>
                     <span className="text-red-500 dark:text-red-400">
-                      {inactiveCount} {t("watchlist.witnesses.offline")}
+                      {inactiveCount} {t("watchlist.witnesses.inactive")}
                     </span>
                   </>
                 )}
