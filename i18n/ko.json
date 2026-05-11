@@ -1,4 +1,4 @@
-﻿{
+{
   "common.by": "작성자",
   "common.operations": "오퍼레이션",
   "operations.participationMode": "거래 방향",
@@ -1106,5 +1106,30 @@
   "errorPage.unexpectedError": "예기치 않은 오류가 발생했습니다",
   "errorPage.inconvenience": "불편을 드려 죄송합니다. 다시 시도하거나 홈페이지로 돌아가 주세요.",
   "errorPage.reload": "페이지 새로고침",
-  "errorPage.goHome": "홈으로"
+  "errorPage.goHome": "홈으로",
+  "auth.myVotedProposals": "내가 투표한 제안",
+  "watchlist.addToWatchlist": "관심 목록에 추가",
+  "watchlist.removeFromWatchlist": "관심 목록에서 제거",
+  "watchlist.proposals.title": "관심 제안",
+  "watchlist.proposals.empty": "관심 목록에 아직 제안이 없습니다.",
+  "widgets.watchedProposalsName": "관심 제안",
+  "proposalControls.favorites": "즐겨찾기",
+  "proposalControls.voted": "투표함",
+  "proposalCard.funded": "지원됨",
+  "proposalCard.unfunded": "미지원",
+  "proposalCard.vote": "투표",
+  "proposalCard.voted": "투표함",
+  "proposalCard.unvote": "투표 취소",
+  "proposalsPage.voterFilterBanner": "@{{username}}이 투표한 제안",
+  "proposalsPage.voterFilterClear": "지우기",
+  "auth.errorTooManyTransactions": "트랜잭션이 너무 많습니다. 1분 기다려주세요.",
+  "impactSimulator.ifVoted": "투표하면",
+  "impactSimulator.ifUnvoted": "투표 취소하면",
+  "impactSimulator.wouldFund": "지원될 것",
+  "impactSimulator.wouldUnfund": "지원 안 됨",
+  "smartReminders.endsInDays": "{{days}}일 후 종료",
+  "smartReminders.endsToday": "오늘 종료",
+  "smartReminders.needsAttention": "확인 필요",
+  "smartReminders.unfundedTitle": "관심 제안이 자금을 잃었습니다",
+  "smartReminders.becameFunded": "관심 제안이 자금을 받았습니다"
 }

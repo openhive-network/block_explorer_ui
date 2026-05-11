@@ -1,4 +1,4 @@
-﻿{
+{
   "common.by": "Por",
   "common.operations": "Operações",
   "operations.participationMode": "Direção da Transação",
@@ -1106,5 +1106,30 @@
   "errorPage.unexpectedError": "Ocorreu um erro inesperado",
   "errorPage.inconvenience": "Desculpe pelo inconveniente. Por favor, tente novamente ou retorne à página inicial.",
   "errorPage.reload": "Recarregar página",
-  "errorPage.goHome": "Ir para o início"
+  "errorPage.goHome": "Ir para o início",
+  "auth.myVotedProposals": "Minhas propostas votadas",
+  "watchlist.addToWatchlist": "Adicionar à lista de monitoramento",
+  "watchlist.removeFromWatchlist": "Remover da lista de monitoramento",
+  "watchlist.proposals.title": "Propostas monitoradas",
+  "watchlist.proposals.empty": "Nenhuma proposta na lista de monitoramento ainda.",
+  "widgets.watchedProposalsName": "Propostas monitoradas",
+  "proposalControls.favorites": "Favoritos",
+  "proposalControls.voted": "Votadas",
+  "proposalCard.funded": "Financiada",
+  "proposalCard.unfunded": "Sem financiamento",
+  "proposalCard.vote": "Votar",
+  "proposalCard.voted": "Votado",
+  "proposalCard.unvote": "Remover voto",
+  "proposalsPage.voterFilterBanner": "Propostas votadas por @{{username}}",
+  "proposalsPage.voterFilterClear": "Limpar",
+  "auth.errorTooManyTransactions": "Muitas transações. Aguarde 1 minuto.",
+  "impactSimulator.ifVoted": "Se eu votar",
+  "impactSimulator.ifUnvoted": "Se eu remover meu voto",
+  "impactSimulator.wouldFund": "seria financiado",
+  "impactSimulator.wouldUnfund": "deixaria de ser financiado",
+  "smartReminders.endsInDays": "Termina em {{days}}d",
+  "smartReminders.endsToday": "Termina hoje",
+  "smartReminders.needsAttention": "Requer atenção",
+  "smartReminders.unfundedTitle": "A proposta monitorada perdeu financiamento",
+  "smartReminders.becameFunded": "A proposta monitorada foi financiada"
 }

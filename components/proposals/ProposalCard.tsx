@@ -32,6 +32,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useMemo } from "react";
 import { ProposalVotesDialog } from "./ProposalVotesDialog";
+import ImpactSimulator from "./ImpactSimulator";
+import ProposalWatchButton from "./ProposalWatchButton";
+import ProposalVoteButton from "./ProposalVoteButton";
 import { MatchDetails } from "@/pages/proposals"; // Added
 
 // Type definitions
@@ -117,7 +120,7 @@ const ProposalStatusBadge = ({
 };
 
 // --- Funding Progress Bar Component ---
-const FundingProgressBar = ({
+export const FundingProgressBar = ({
   currentVotes,
   threshold,
   t,
@@ -149,7 +152,7 @@ const FundingProgressBar = ({
   );
 };
 
-const TimeProgressBar = ({
+export const TimeProgressBar = ({
   startDate,
   endDate,
   isUpcoming,
@@ -436,35 +439,45 @@ export const ProposalCard = ({
 
           <div className="flex flex-col border-t p-4 md:col-span-5 lg:col-span-4 md:border-t-0 md:border-l dark:border-slate-800">
             <div>
-              <div className="flex justify-end mb-4">
+              <div className="flex justify-end items-center gap-2 mb-4">
+                <ProposalVoteButton proposalId={proposal.proposal_id} status={proposal.status} />
+                <ProposalWatchButton proposalId={proposal.proposal_id} />
                 {currentStatusConfig && (
                   <ProposalStatusBadge {...currentStatusConfig} />
                 )}
               </div>
               <div className="space-y-4">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div>
-                      <div className="flex items-center gap-2 text-sm text-explorer-dark-gray dark:text-white">
-                        <Award
-                          className="h-4 w-4"
-                          color="#a855f7"
-                        />
-                        {t("proposalCard.votesLabel")}
-                      </div>
-                      <p className="text-2xl font-bold min-w-0">
-                        {voteValueInHp ? (
-                          <span>{voteValueInHp}</span>
-                        ) : (
-                          <Loader2 className="h-6 w-6 animate-spin" />
-                        )}
-                      </p>
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{formattedVestsTooltip}</p>
-                  </TooltipContent>
-                </Tooltip>
+                <div>
+                  <div className="flex items-center gap-2 text-sm text-explorer-dark-gray dark:text-white">
+                    <Award
+                      className="h-4 w-4"
+                      color="#a855f7"
+                    />
+                    {t("proposalCard.votesLabel")}
+                  </div>
+                  <div className="flex items-center gap-2 overflow-hidden">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <p className="text-2xl font-bold min-w-0 cursor-default">
+                          {voteValueInHp ? (
+                            <span>{voteValueInHp}</span>
+                          ) : (
+                            <Loader2 className="h-6 w-6 animate-spin" />
+                          )}
+                        </p>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{formattedVestsTooltip}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                     <ImpactSimulator
+                      proposalId={proposal.proposal_id}
+                      proposalHp={voteValueInHp}
+                      fundingThresholdVests={fundingThreshold ?? null}
+                      status={proposal.status}
+                    />
+                </div>
                 {votesNeededInHp && (
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -736,7 +749,9 @@ export const ReturnProposalCard = ({
           </div>
 
           <div className="flex flex-col border-t p-4 md:col-span-5 lg:col-span-4 md:border-t-0 md:border-l dark:border-slate-700/80">
-            <div className="flex justify-end">
+            <div className="flex justify-end items-center gap-2">
+              <ProposalVoteButton proposalId={proposal.proposal_id} status={proposal.status} />
+              <ProposalWatchButton proposalId={proposal.proposal_id} />
               {currentStatusConfig && (
                 <ProposalStatusBadge {...currentStatusConfig} />
               )}

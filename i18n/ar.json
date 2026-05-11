@@ -1,4 +1,4 @@
-﻿{
+{
   "common.by": "بواسطة",
   "common.operations": "العمليات",
   "operations.participationMode": "اتجاه المعاملة",
@@ -1106,5 +1106,30 @@
   "errorPage.unexpectedError": "حدث خطأ غير متوقع",
   "errorPage.inconvenience": "نأسف للإزعاج. يرجى المحاولة مرة أخرى أو العودة إلى الصفحة الرئيسية.",
   "errorPage.reload": "إعادة تحميل الصفحة",
-  "errorPage.goHome": "الذهاب إلى الصفحة الرئيسية"
+  "errorPage.goHome": "الذهاب إلى الصفحة الرئيسية",
+  "auth.myVotedProposals": "مقترحاتي التي صوّتُ عليها",
+  "watchlist.addToWatchlist": "أضف إلى قائمة المراقبة",
+  "watchlist.removeFromWatchlist": "إزالة من قائمة المراقبة",
+  "watchlist.proposals.title": "المقترحات المراقبة",
+  "watchlist.proposals.empty": "لا توجد مقترحات في قائمة المراقبة حتى الآن.",
+  "widgets.watchedProposalsName": "المقترحات المراقبة",
+  "proposalControls.favorites": "المفضلة",
+  "proposalControls.voted": "صوّتُ عليها",
+  "proposalCard.funded": "ممولة",
+  "proposalCard.unfunded": "غير ممولة",
+  "proposalCard.vote": "صوّت",
+  "proposalCard.voted": "تم التصويت",
+  "proposalCard.unvote": "إلغاء التصويت",
+  "proposalsPage.voterFilterBanner": "المقترحات التي صوّت عليها @{{username}}",
+  "proposalsPage.voterFilterClear": "مسح",
+  "auth.errorTooManyTransactions": "عمليات كثيرة جداً. يرجى الانتظار دقيقة.",
+  "impactSimulator.ifVoted": "لو صوّتُ",
+  "impactSimulator.ifUnvoted": "لو ألغيت تصويتي",
+  "impactSimulator.wouldFund": "سيُموَّل هذا",
+  "impactSimulator.wouldUnfund": "لن يُموَّل هذا",
+  "smartReminders.endsInDays": "ينتهي خلال {{days}} يوم",
+  "smartReminders.endsToday": "ينتهي اليوم",
+  "smartReminders.needsAttention": "يحتاج انتباهاً",
+  "smartReminders.unfundedTitle": "المقترح المتابَع فقد تمويله",
+  "smartReminders.becameFunded": "المقترح المتابَع أصبح ممولاً"
 }

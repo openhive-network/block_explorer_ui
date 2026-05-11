@@ -1,4 +1,4 @@
-﻿{
+{
   "common.by": "Przez",
   "common.operations": "Operacje",
   "operations.participationMode": "Kierunek Transakcji",
@@ -1106,5 +1106,30 @@
   "errorPage.unexpectedError": "Wystąpił nieoczekiwany błąd",
   "errorPage.inconvenience": "Przepraszamy za niedogodności. Spróbuj ponownie lub wróć do strony głównej.",
   "errorPage.reload": "Odśwież stronę",
-  "errorPage.goHome": "Przejdź do strony głównej"
+  "errorPage.goHome": "Przejdź do strony głównej",
+  "auth.myVotedProposals": "Moje zagłosowane propozycje",
+  "watchlist.addToWatchlist": "Dodaj do obserwowanych",
+  "watchlist.removeFromWatchlist": "Usuń z obserwowanych",
+  "watchlist.proposals.title": "Obserwowane propozycje",
+  "watchlist.proposals.empty": "Brak propozycji na liście obserwowanych.",
+  "widgets.watchedProposalsName": "Obserwowane propozycje",
+  "proposalControls.favorites": "Ulubione",
+  "proposalControls.voted": "Zagłosowane",
+  "proposalCard.funded": "Finansowane",
+  "proposalCard.unfunded": "Niefinansowane",
+  "proposalCard.vote": "Zagłosuj",
+  "proposalCard.voted": "Zagłosowano",
+  "proposalCard.unvote": "Cofnij głos",
+  "proposalsPage.voterFilterBanner": "Propozycje zagłosowane przez @{{username}}",
+  "proposalsPage.voterFilterClear": "Wyczyść",
+  "auth.errorTooManyTransactions": "Zbyt wiele transakcji. Poczekaj 1 minutę.",
+  "impactSimulator.ifVoted": "Jeśli zagłosuję",
+  "impactSimulator.ifUnvoted": "Jeśli cofnę głos",
+  "impactSimulator.wouldFund": "zostanie sfinansowane",
+  "impactSimulator.wouldUnfund": "nie zostanie sfinansowane",
+  "smartReminders.endsInDays": "Kończy się za {{days}}d",
+  "smartReminders.endsToday": "Kończy się dzisiaj",
+  "smartReminders.needsAttention": "Wymaga uwagi",
+  "smartReminders.unfundedTitle": "Obserwowana propozycja utraciła finansowanie",
+  "smartReminders.becameFunded": "Obserwowana propozycja została sfinansowana"
 }
