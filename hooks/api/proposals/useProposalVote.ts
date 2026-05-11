@@ -20,10 +20,16 @@ const useProposalVote = (proposalId: number) => {
     setError(null);
 
     if (method === 'hivesigner') {
-      const base = `${window.location.origin}${window.location.pathname}${window.location.search}`;
-      const sep = base.includes('?') ? '&' : '?';
-      const redirectUri = `${base}${sep}hs_voted=1#proposal-${proposalId}`;
-      window.location.href = buildProposalVoteSignUrl(username, proposalId, approve, redirectUri);
+      try {
+        const base = `${window.location.origin}${window.location.pathname}${window.location.search}`;
+        const sep = base.includes('?') ? '&' : '?';
+        const redirectUri = new URL(`${base}${sep}hs_voted=1#proposal-${proposalId}`);
+        if (redirectUri.origin !== window.location.origin) throw new Error("Invalid redirect URI");
+        window.location.href = buildProposalVoteSignUrl(username, proposalId, approve, redirectUri.toString());
+      } catch (err: any) {
+        setError(typeof err === "string" ? err : err?.message ?? "Redirect failed");
+        setIsVoting(false);
+      }
       return;
     }
 

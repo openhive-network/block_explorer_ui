@@ -15,6 +15,8 @@ interface WatchlistContextType {
 
 const WatchlistContext = createContext<WatchlistContextType | undefined>(undefined);
 
+const EMPTY_SET: Set<WatchlistItemId> = new Set();
+
 const getStorageKey = (username: string) => `hivescan_watchlist_${username}`;
 const getChangesKey = (username: string) => `hivescan_proposal_changes_${username}`;
 
@@ -94,7 +96,7 @@ export const WatchlistProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   );
 
   const getWatched = useCallback(
-    (type: string): Set<WatchlistItemId> => store[type] ?? new Set(),
+    (type: string): Set<WatchlistItemId> => store[type] ?? EMPTY_SET,
     [store]
   );
 

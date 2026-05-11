@@ -750,6 +750,7 @@ export const ReturnProposalCard = ({
 
           <div className="flex flex-col border-t p-4 md:col-span-5 lg:col-span-4 md:border-t-0 md:border-l dark:border-slate-700/80">
             <div className="flex justify-end items-center gap-2">
+              <ProposalVoteButton proposalId={proposal.proposal_id} status={proposal.status} />
               <ProposalWatchButton proposalId={proposal.proposal_id} />
               {currentStatusConfig && (
                 <ProposalStatusBadge {...currentStatusConfig} />

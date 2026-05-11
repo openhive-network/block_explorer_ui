@@ -10,7 +10,7 @@ export function buildProposalVoteSignUrl(
   // PeakD format: proposal_ids=["350"] (JSON array of string IDs)
   const proposalIds = encodeURIComponent(JSON.stringify([String(proposalId)]));
   return (
-    `${config.hivesigner.endpoints.authorize.replace('/oauth2/authorize', '')}/sign/update_proposal_votes` +
+    `${config.hivesigner.endpoints.baseUrl}/sign/update_proposal_votes` +
     `?voter=${encodeURIComponent(username)}` +
     `&proposal_ids=${proposalIds}` +
     `&approve=${approve}` +

@@ -56,9 +56,13 @@ const WidgetIndex = () => {
     if (watchedCount === 0) return;
     const alreadyAdded = widgets.some((w) => w.type === "watched-proposals");
     if (!alreadyAdded) {
-      onAddWidget("watched-proposals");
+      const masterLayout = layouts.lg || [];
+      const rightColBottom = masterLayout
+        .filter((item) => item.x >= 9)
+        .reduce((max, item) => Math.max(max, item.y + item.h), 0);
+      onAddWidget("watched-proposals", { x: 9, y: rightColBottom, w: 3 });
     }
-  }, [isLoaded, getWatched, widgets, onAddWidget]);
+  }, [isLoaded, getWatched, widgets, onAddWidget, layouts]);
 
   const contentRefs = useRef(new Map<string, HTMLDivElement>());
 

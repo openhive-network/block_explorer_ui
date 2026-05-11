@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import useProposalVote from "@/hooks/api/proposals/useProposalVote";
 import { useI18n } from "@/i18n/i18n";
@@ -13,6 +13,13 @@ interface ProposalVoteButtonProps {
 const ProposalVoteButton: React.FC<ProposalVoteButtonProps> = ({ proposalId, status }) => {
   const { t } = useI18n();
   const { isVoted, isVoting, error, vote, isLoggedIn } = useProposalVote(proposalId);
+  const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+    };
+  }, []);
 
   if (!isLoggedIn) return null;
 
@@ -28,7 +35,8 @@ const ProposalVoteButton: React.FC<ProposalVoteButtonProps> = ({ proposalId, sta
 
   const handleVote = async () => {
     await vote(!isVoted);
-    setTimeout(() => {
+    if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+    scrollTimerRef.current = setTimeout(() => {
       document.getElementById(`proposal-${proposalId}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 150);
   };

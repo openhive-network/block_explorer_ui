@@ -84,7 +84,7 @@ export function useDashboard() {
 
   const onBreakpointChange = (newBreakpoint: string) => setCurrentBreakpoint(newBreakpoint);
 
-  const onLayoutChange = (currentLayout: Layout[], allLayouts: Layouts) => {
+  const onLayoutChange = (currentLayout: Layout[], _allLayouts: Layouts) => {
     if (!isEditMode) return;
     
     // Only update and save if we are on Desktop
@@ -96,22 +96,22 @@ export function useDashboard() {
     }
   };
 
-  const onAddWidget = (widgetType: string) => {
+  const onAddWidget = useCallback((widgetType: string, layoutOverride?: Partial<Layout>) => {
     const widgetConfig = WIDGET_REGISTRY[widgetType];
     const newWidgetId = `${widgetType}-${Date.now()}`;
     const newWidgets = [...widgets, { i: newWidgetId, type: widgetType }];
     setWidgets(newWidgets);
     localStorage.setItem(WIDGETS_STORAGE_KEY, JSON.stringify(newWidgets));
-    
+
     const masterLayout = layouts.lg || [];
     const newY = masterLayout.reduce((maxY, item) => Math.max(maxY, item.y + item.h), 0);
-    const newLayoutItem: Layout = { ...widgetConfig.defaultLayout, i: newWidgetId, x: 0, y: newY };
-    
+    const newLayoutItem: Layout = { ...widgetConfig.defaultLayout, i: newWidgetId, x: 0, y: newY, ...layoutOverride };
+
     const newLayouts = generateDerivedLayouts([...masterLayout, newLayoutItem]);
     setLayouts(newLayouts);
     localStorage.setItem(LAYOUT_STORAGE_KEY, JSON.stringify(newLayouts));
     setIsLibraryOpen(false);
-  };
+  }, [widgets, layouts]);
 
   const onRemoveWidget = (widgetId: string) => {
     const newWidgets = widgets.filter((w) => w.i !== widgetId);
