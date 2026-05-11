@@ -23,6 +23,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useWatchlist } from "@/contexts/WatchlistContext";
+import { useAuth } from "@/contexts/AuthContext";
 import useWatchedProposals from "@/hooks/api/proposals/useWatchedProposals";
 import { FundingProgressBar, TimeProgressBar } from "@/components/proposals/ProposalCard";
 import { useI18n } from "@/i18n/i18n";
@@ -54,9 +55,10 @@ const STATUS_CONFIG = {
 
 const WatchedProposalsWidget = () => {
   const { t, locale } = useI18n();
-  const { getWatched, toggleWatch } = useWatchlist();
+  const { username } = useAuth();
+  const { getWatched, toggleWatch, markProposalChanged, clearProposalChange, changedProposalIds } = useWatchlist();
   const { hiveChain } = useHiveChainContext();
-  const { dynamicGlobalData } = useDynamicGlobal() as any;
+  const { dynamicGlobalData } = useDynamicGlobal();
 
   const watchedSet = getWatched("proposals");
   const ids = useMemo(() => Array.from(watchedSet) as number[], [watchedSet]);
@@ -106,13 +108,11 @@ const WatchedProposalsWidget = () => {
       .sort((a, b) => parseFloat(b.total_votes) - parseFloat(a.total_votes));
   }, [watchedProposals, fundingThreshold]);
 
-  const { markProposalChanged, clearProposalChange, changedProposalIds } = useWatchlist();
-
   // --- Status watcher: persist status daily, notify on ANY change ---
   useEffect(() => {
-    if (typeof window === "undefined" || !enriched.length) return;
+    if (typeof window === "undefined" || !enriched.length || !username) return;
 
-    const STORAGE_KEY = "hivescan_watched_status";
+    const STORAGE_KEY = `hivescan_watched_status_${username}`;
     const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
     let stored: Record<string, { funded: boolean; status: string; checkedAt: number }> = {};
@@ -122,6 +122,7 @@ const WatchedProposalsWidget = () => {
       stored = {};
     }
 
+    const VALID_STATUSES = new Set(["active", "inactive", "expired"]);
     const now = Date.now();
     const changed: Array<{ id: number; subject: string; reason: string }> = [];
     const updated: typeof stored = {};
@@ -133,6 +134,12 @@ const WatchedProposalsWidget = () => {
 
       if (!prev) {
         // First time seen — store silently, no notification
+        updated[key] = { funded: p.isFunded, status: p.status, checkedAt: now };
+        continue;
+      }
+
+      // Discard tampered or unrecognised persisted entries
+      if (!VALID_STATUSES.has(prev.status) || typeof prev.funded !== "boolean") {
         updated[key] = { funded: p.isFunded, status: p.status, checkedAt: now };
         continue;
       }
@@ -187,7 +194,7 @@ const WatchedProposalsWidget = () => {
         });
       }
     }
-  }, [enriched, t, markProposalChanged]);
+  }, [enriched, t, markProposalChanged, username]);
 
   return (
     <Card className="col-span-12 lg:col-span-3 overflow-hidden">
@@ -248,6 +255,7 @@ const WatchedProposalsWidget = () => {
                       <button
                         onClick={() => toggleWatch("proposals", p.proposal_id)}
                         title={t("watchlist.removeFromWatchlist")}
+                        aria-label={t("watchlist.removeFromWatchlist")}
                         className="p-0.5 rounded text-slate-400 hover:text-red-500 hover:bg-amber-200 dark:hover:bg-amber-900/50 transition-colors"
                       >
                         <X className="h-3 w-3" />
@@ -336,6 +344,7 @@ const WatchedProposalsWidget = () => {
                     <button
                       onClick={() => { toggleWatch("proposals", p.proposal_id); clearProposalChange(p.proposal_id); }}
                       title={t("watchlist.removeFromWatchlist")}
+                      aria-label={t("watchlist.removeFromWatchlist")}
                       className="flex-shrink-0 p-0.5 rounded text-slate-400 hover:text-red-500 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
                     >
                       <X className="h-3 w-3" />

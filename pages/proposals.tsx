@@ -84,7 +84,7 @@ const ProposalsPage = () => {
     }
     // Capture hash before router.replace strips it
     const hash = window.location.hash.replace('#', '');
-    if (hash.startsWith('proposal-')) {
+    if (/^proposal-\d+$/.test(hash)) {
       setScrollTargetId(hash);
     }
     const { hs_voted: _, ...rest } = router.query;
@@ -140,7 +140,7 @@ const ProposalsPage = () => {
   const { accountsData } = useGetAccounts(["hive.fund"]) as any;
 
   const totalBudgetNumber = grabNumericValue(
-    accountsData?.[0].hbd_balance ?? ""
+    accountsData?.[0]?.hbd_balance ?? ""
   );
 
   const dailyBudgetNumber = totalBudgetNumber / 100;
@@ -168,8 +168,11 @@ const ProposalsPage = () => {
   }, [scrollTargetId, isProposalsLoading]);
 
   const voterSearchQuery = voterFilter || (isHiveAccountName(searchQuery) ? searchQuery : "");
+  const isSelfSearch = !!username && voterSearchQuery === username;
   const { votedProposalIds, isLoading: isVoterListLoading } = useVoterProposals(voterSearchQuery);
-  const { votedProposalIds: myVotedProposalIds, isLoading: isMyVotedLoading } = useVoterProposals(username ?? "");
+  const { votedProposalIds: ownVotedIds, isLoading: isOwnVotedLoading } = useVoterProposals(isSelfSearch ? "" : (username ?? ""));
+  const myVotedProposalIds = isSelfSearch ? votedProposalIds : ownVotedIds;
+  const isMyVotedLoading = isSelfSearch ? isVoterListLoading : isOwnVotedLoading;
 
   const { proposalsData: proposalsDataForBudget } = useProposals({
     status: "all",

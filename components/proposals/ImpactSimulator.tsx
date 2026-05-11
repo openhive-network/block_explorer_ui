@@ -27,18 +27,19 @@ const ImpactSimulator: React.FC<ImpactSimulatorProps> = ({
   const { username, isLoggedIn } = useAuth();
   const { t } = useI18n();
   const { hiveChain } = useHiveChainContext();
-  const { dynamicGlobalData } = useDynamicGlobal() as any;
+  const { dynamicGlobalData } = useDynamicGlobal();
   const { votedProposalIds } = useVoterProposals(username ?? "");
 
-  const { data: findAccountData, isLoading: isAccountLoading } = useQuery({
+  const { data: findAccountData, isLoading: isAccountLoading, isError: isAccountError } = useQuery({
     queryKey: ["findAccount", username],
-    queryFn: () => fetchingService.findAccounts([username!]),
+    queryFn: () => fetchingService.findAccounts([username ?? ""]),
     enabled: !!username && isLoggedIn,
     refetchOnWindowFocus: false,
   });
 
   if (!isLoggedIn || status === "expired") return null;
 
+  if (isAccountError) return null;
   if (isAccountLoading || !findAccountData?.accounts?.[0] || !dynamicGlobalData || !hiveChain || !proposalHp) {
     return <div className="h-4" />;
   }
@@ -50,7 +51,7 @@ const ImpactSimulator: React.FC<ImpactSimulatorProps> = ({
   const directVests = grabNumericValue(account.vesting_shares?.amount ?? "0");
   const totalProxiedVests =
     Array.isArray(account.proxied_vsf_votes) && account.proxied_vsf_votes.length > 0
-      ? account.proxied_vsf_votes.reduce((sum: number, v: unknown) => Number(sum) + Number(v), 0)
+      ? account.proxied_vsf_votes.reduce((sum: number, v: unknown) => sum + (Number(v) || 0), 0)
       : 0;
   const userEffectiveVests = directVests + totalProxiedVests;
 
