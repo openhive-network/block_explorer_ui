@@ -1,4 +1,4 @@
-﻿{
+{
   "common.by": "由",
   "common.operations": "操作",
   "operations.participationMode": "参与方式",
@@ -1106,5 +1106,30 @@
   "errorPage.unexpectedError": "发生意外错误",
   "errorPage.inconvenience": "抱歉给您带来不便。请重试或返回首页。",
   "errorPage.reload": "重新加载页面",
-  "errorPage.goHome": "返回首页"
+  "errorPage.goHome": "返回首页",
+  "auth.myVotedProposals": "我投票的提案",
+  "watchlist.addToWatchlist": "添加到关注列表",
+  "watchlist.removeFromWatchlist": "从关注列表中移除",
+  "watchlist.proposals.title": "关注的提案",
+  "watchlist.proposals.empty": "关注列表中暂无提案。",
+  "widgets.watchedProposalsName": "关注的提案",
+  "proposalControls.favorites": "收藏",
+  "proposalControls.voted": "已投票",
+  "proposalCard.funded": "已资助",
+  "proposalCard.unfunded": "未资助",
+  "proposalCard.vote": "投票",
+  "proposalCard.voted": "已投票",
+  "proposalCard.unvote": "取消投票",
+  "proposalsPage.voterFilterBanner": "@{{username}} 投票的提案",
+  "proposalsPage.voterFilterClear": "清除",
+  "auth.errorTooManyTransactions": "交易次数过多，请等待1分钟。",
+  "impactSimulator.ifVoted": "如果我投票",
+  "impactSimulator.ifUnvoted": "如果我撤票",
+  "impactSimulator.wouldFund": "将获得资助",
+  "impactSimulator.wouldUnfund": "将失去资助",
+  "smartReminders.endsInDays": "{{days}}天后结束",
+  "smartReminders.endsToday": "今天结束",
+  "smartReminders.needsAttention": "需要关注",
+  "smartReminders.unfundedTitle": "关注的提案已失去资助",
+  "smartReminders.becameFunded": "关注的提案已获得资助"
 }

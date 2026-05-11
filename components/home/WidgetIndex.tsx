@@ -17,6 +17,7 @@ import { useDashboard } from "@/components/dashboard/hooks/useDashboard";
 import { useI18n } from "@/i18n/i18n";
 import { useDashboardData } from "@/components/dashboard/hooks/useDashboardData";
 import { WIDGET_REGISTRY } from "@/components/dashboard/lib/widgetRegistry";
+import { useWatchlist } from "@/contexts/WatchlistContext";
 import { cn } from "@/lib/utils";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -30,6 +31,7 @@ const WidgetIndex = () => {
     widgets,
     layouts,
     widgetStates,
+    isLoaded,
     isEditMode,
     isLibraryOpen,
     finalIsEditMode,
@@ -45,6 +47,22 @@ const WidgetIndex = () => {
     handleToggleCollapse,
     setRuntimeWidgetHeight,
   } = useDashboard();
+
+  const { getWatched } = useWatchlist();
+
+  useEffect(() => {
+    if (!isLoaded) return;
+    const watchedCount = getWatched("proposals").size;
+    if (watchedCount === 0) return;
+    const alreadyAdded = widgets.some((w) => w.type === "watched-proposals");
+    if (!alreadyAdded) {
+      const masterLayout = layouts.lg || [];
+      const rightColBottom = masterLayout
+        .filter((item) => item.x >= 9)
+        .reduce((max, item) => Math.max(max, item.y + item.h), 0);
+      onAddWidget("watched-proposals", { x: 9, y: rightColBottom, w: 3 });
+    }
+  }, [isLoaded, getWatched, widgets, onAddWidget, layouts]);
 
   const contentRefs = useRef(new Map<string, HTMLDivElement>());
   const widgetStatesRef = useRef(widgetStates);
@@ -62,7 +80,7 @@ const WidgetIndex = () => {
       const el = contentRefs.current.get(widget.i);
       if (!el) return;
 
-      const floor = config.defaultLayout.h;
+      const floor = config.defaultLayout.minH ?? config.defaultLayout.h;
 
       const observer = new ResizeObserver(([entry]) => {
         if (finalIsEditMode) return;

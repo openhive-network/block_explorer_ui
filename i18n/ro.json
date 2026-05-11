@@ -1,4 +1,4 @@
-﻿{
+{
   "common.by": "De",
   "common.operations": "Operațiuni",
   "operations.participationMode": "Direcția Tranzacției",
@@ -1106,5 +1106,30 @@
   "errorPage.unexpectedError": "A apărut o eroare neașteptată",
   "errorPage.inconvenience": "Ne pare rău pentru inconveniente. Vă rugăm să încercați din nou sau să reveniți la pagina principală.",
   "errorPage.reload": "Reîncarcă pagina",
-  "errorPage.goHome": "Mergi la pagina principală"
+  "errorPage.goHome": "Mergi la pagina principală",
+  "auth.myVotedProposals": "Propunerile mele votate",
+  "watchlist.addToWatchlist": "Adaugă la lista de urmărire",
+  "watchlist.removeFromWatchlist": "Elimină din lista de urmărire",
+  "watchlist.proposals.title": "Propuneri urmărite",
+  "watchlist.proposals.empty": "Nicio propunere în lista de urmărire.",
+  "widgets.watchedProposalsName": "Propuneri urmărite",
+  "proposalControls.favorites": "Favorite",
+  "proposalControls.voted": "Votate",
+  "proposalCard.funded": "Finanțat",
+  "proposalCard.unfunded": "Nefinanțat",
+  "proposalCard.vote": "Votează",
+  "proposalCard.voted": "Votat",
+  "proposalCard.unvote": "Retrage votul",
+  "proposalsPage.voterFilterBanner": "Propuneri votate de @{{username}}",
+  "proposalsPage.voterFilterClear": "Șterge",
+  "auth.errorTooManyTransactions": "Prea multe tranzacții. Așteptați 1 minut.",
+  "impactSimulator.ifVoted": "Dacă votez",
+  "impactSimulator.ifUnvoted": "Dacă retrag votul",
+  "impactSimulator.wouldFund": "ar fi finanțat",
+  "impactSimulator.wouldUnfund": "nu ar mai fi finanțat",
+  "smartReminders.endsInDays": "Se termină în {{days}}z",
+  "smartReminders.endsToday": "Se termină azi",
+  "smartReminders.needsAttention": "Necesită atenție",
+  "smartReminders.unfundedTitle": "Propunerea urmărită a pierdut finanțarea",
+  "smartReminders.becameFunded": "Propunerea urmărită a fost finanțată"
 }
