@@ -63,7 +63,8 @@ const WitnessVoteButton: React.FC<WitnessVoteButtonProps> = ({
     // Hivesigner cannot broadcast Active-key operations via its API.
     // Redirect to the Hivesigner sign page instead (same pattern as proposal voting).
     if (method === 'hivesigner') {
-      const redirectUri = `${window.location.origin}${window.location.pathname}`;
+      // Preserve query params so e.g. /witnesses?voter=libanista round-trips intact
+      const redirectUri = `${window.location.origin}${window.location.pathname}${window.location.search}`;
       window.location.href = buildWitnessVoteSignUrl(username, witnessName, approve, redirectUri);
       return;
     }

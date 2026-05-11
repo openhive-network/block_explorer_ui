@@ -52,7 +52,8 @@ const SetProxyButton: React.FC<SetProxyButtonProps> = ({
     // Hivesigner cannot broadcast Active-key operations via its API.
     // Redirect to the Hivesigner sign page (same pattern as WitnessVoteButton).
     if (method === "hivesigner") {
-      const redirectUri = `${window.location.origin}${window.location.pathname}`;
+      // Preserve query params so e.g. /witnesses?voter=libanista round-trips intact
+      const redirectUri = `${window.location.origin}${window.location.pathname}${window.location.search}`;
       window.location.href = buildProxySignUrl(username, proxyValue, redirectUri);
       return;
     }
