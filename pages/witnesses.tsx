@@ -23,6 +23,7 @@ import useWitnesses from "@/hooks/api/common/useWitnesses";
 import useWitnessVoteChain from "@/hooks/api/common/useWitnessVoteChain";
 import { useAuth } from "@/contexts/AuthContext";
 import WitnessVoteButton from "@/components/Witnesses/WitnessVoteButton";
+import SetProxyButton from "@/components/Witnesses/SetProxyButton";
 import {
   Table,
   TableBody,
@@ -203,6 +204,11 @@ export default function Witnesses() {
   } = useWitnessVoteChain(voterFilter || "");
 
   const { username, isLoggedIn } = useAuth();
+
+  // Logged-in user's own proxy chain (for proxy banner on this page)
+  const { proxyChain: userProxyChain } = useWitnessVoteChain(
+    isLoggedIn ? username || "" : ""
+  );
 
   // Vote column only for the logged-in user's own filter view (security: hide from others)
   const showVoteColumn = isLoggedIn && (!voterFilter || voterFilter === username);
@@ -387,6 +393,18 @@ export default function Witnesses() {
               </div>
             )}
 
+            {isLoggedIn && !voterFilter && userProxyChain.length > 0 && (
+              <div className="mb-4 flex items-center justify-between rounded-lg bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/30 px-4 py-2.5 text-sm text-amber-800 dark:text-amber-200">
+                <span>
+                  {t("witnesses.proxyBanner", { proxy: userProxyChain[0] })}
+                </span>
+                <SetProxyButton
+                  witnessName={userProxyChain[0]}
+                  variant="compact"
+                />
+              </div>
+            )}
+
             {isWitnessDataLoading ||
             !router.isReady ||
             (voterFilter && isFilterLoading) ? (
@@ -419,7 +437,7 @@ export default function Witnesses() {
                       {buildTableHeader()}
                       {showVoteColumn && (
                         <TableCell className="text-center !bg-navbar py-2">
-                          <span>{t("witnesses.voteAction")}</span>
+                          <span>{t("witnesses.actions")}</span>
                         </TableCell>
                       )}
                     </TableRow>
@@ -693,11 +711,16 @@ export default function Witnesses() {
                           </TableCell>
 
                           {showVoteColumn && (
-                            <TableCell className="text-center">
-                              <WitnessVoteButton
-                                witnessName={singleWitness.witness_name}
-                                onVoteChange={handleVoteChange}
-                              />
+                            <TableCell className="text-center w-[80px] whitespace-nowrap">
+                              <div className="inline-flex items-center justify-center gap-1">
+                                <WitnessVoteButton
+                                  witnessName={singleWitness.witness_name}
+                                  onVoteChange={handleVoteChange}
+                                />
+                                <SetProxyButton
+                                  witnessName={singleWitness.witness_name}
+                                />
+                              </div>
                             </TableCell>
                           )}
                         </TableRow>

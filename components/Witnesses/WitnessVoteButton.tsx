@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { Loader2, Vote } from "lucide-react";
+import { Loader2, Vote, X } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -137,7 +137,8 @@ const WitnessVoteButton: React.FC<WitnessVoteButtonProps> = ({
     );
   }
 
-  // compact variant (witnesses table)
+  // compact variant (witnesses table) — icon-only button to save horizontal space
+  const tooltipText = disabledReason || label;
   return (
     <TooltipProvider>
       <Tooltip>
@@ -146,19 +147,26 @@ const WitnessVoteButton: React.FC<WitnessVoteButtonProps> = ({
             <button
               disabled={isDisabled}
               onClick={handleToggle}
+              aria-label={label}
               className={cn(
-                "px-2.5 py-1 rounded text-xs font-semibold transition-colors",
+                "inline-flex h-7 w-7 items-center justify-center rounded transition-colors",
                 hasVoted
                   ? "bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50"
                   : "bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400 dark:hover:bg-green-900/50",
                 isDisabled && "opacity-50 cursor-not-allowed"
               )}
             >
-              {inProgress ? <Loader2 className="h-3 w-3 animate-spin" /> : label}
+              {inProgress ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              ) : hasVoted ? (
+                <X className="h-3.5 w-3.5" />
+              ) : (
+                <Vote className="h-3.5 w-3.5" />
+              )}
             </button>
           </span>
         </TooltipTrigger>
-        {disabledReason && <TooltipContent>{disabledReason}</TooltipContent>}
+        <TooltipContent>{tooltipText}</TooltipContent>
       </Tooltip>
     </TooltipProvider>
   );
