@@ -7,7 +7,7 @@ import {
   ChevronUp,
   ChevronsUpDown,
   Link as LinkIcon,
-  X,
+  ArrowRight,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -24,6 +24,7 @@ import useWitnessVoteChain from "@/hooks/api/common/useWitnessVoteChain";
 import { useAuth } from "@/contexts/AuthContext";
 import WitnessVoteButton from "@/components/Witnesses/WitnessVoteButton";
 import SetProxyButton from "@/components/Witnesses/SetProxyButton";
+import VoterFilterBanner from "@/components/Witnesses/VoterFilterBanner";
 import {
   Table,
   TableBody,
@@ -370,40 +371,19 @@ export default function Witnesses() {
               </div>
             </div>
 
-            {voterFilter && (
-              <div className="mb-4 flex items-center justify-between rounded-lg bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800/30 px-4 py-2.5 text-sm text-blue-800 dark:text-blue-200">
-                <span>
-                  {proxyChain.length > 0
-                    ? t("witnesses.myVotesBannerProxy", {
-                        voter: voterFilter,
-                        proxy: proxyChain.join(" → @"),
-                      })
-                    : t("witnesses.myVotesBanner", { voter: voterFilter })}
-                  {!isFilterLoading && ` (${voterWitnessVotes.length}/30)`}
-                </span>
-                <button
-                  onClick={() =>
-                    router.push("/witnesses", undefined, { shallow: true })
-                  }
-                  className="ml-3 rounded-md p-0.5 hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors"
-                  aria-label="Clear filter"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-            )}
-
-            {isLoggedIn && !voterFilter && userProxyChain.length > 0 && (
-              <div className="mb-4 flex items-center justify-between rounded-lg bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800/30 px-4 py-2.5 text-sm text-amber-800 dark:text-amber-200">
-                <span>
-                  {t("witnesses.proxyBanner", { proxy: userProxyChain[0] })}
-                </span>
-                <SetProxyButton
-                  witnessName={userProxyChain[0]}
-                  variant="compact"
-                />
-              </div>
-            )}
+            <VoterFilterBanner
+              voter={voterFilter || username || ""}
+              isOwnView={!voterFilter || voterFilter === username}
+              proxyChain={voterFilter ? proxyChain : userProxyChain}
+              voteCount={voterWitnessVotes.length}
+              isCountLoading={isFilterLoading}
+              onClearFilter={
+                voterFilter
+                  ? () =>
+                      router.push("/witnesses", undefined, { shallow: true })
+                  : undefined
+              }
+            />
 
             {isWitnessDataLoading ||
             !router.isReady ||
@@ -729,6 +709,25 @@ export default function Witnesses() {
                   </TableBody>
                 </Table>
               </>
+            ) : voterFilter ? (
+              <div className="flex flex-col items-center gap-4">
+                <NoResult
+                  titleKey="witnesses.noVotesForVoter"
+                  descriptionKey="witnesses.noVotesForVoterDesc"
+                />
+                <Link
+                  href="/witnesses"
+                  className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-explorer-blue text-white text-sm font-medium shadow-sm hover:bg-explorer-blue/90 hover:shadow-md transition-all"
+                >
+                  {t("witnesses.browseAll")}
+                  <ArrowRight
+                    className={cn(
+                      "w-4 h-4 transition-transform group-hover:translate-x-0.5",
+                      locale === "ar" && "rotate-180 group-hover:-translate-x-0.5"
+                    )}
+                  />
+                </Link>
+              </div>
             ) : (
               <NoResult />
             )}
