@@ -137,26 +137,30 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
               {settings.progressBarType === "linear" ? (
                 <div className="space-y-2">
                   {[
-                    { label: "Upvote",    value: manabarsData.upvote.percentageValue,    color: "#00c040", current: manabarsData.upvote.current,    max: manabarsData.upvote.max },
-                    { label: "Downvote",  value: manabarsData.downvote.percentageValue,  color: "#c01000", current: manabarsData.downvote.current,  max: manabarsData.downvote.max },
-                    { label: "RC",        value: manabarsData.rc.percentageValue,        color: "#cecafa", current: manabarsData.rc.current,        max: manabarsData.rc.max },
-                  ].map(({ label, value, color, current, max }) => (
+                    { label: "Upvote",    value: manabarsData.upvote.percentageValue,    color: "#00c040", showTooltip: false, current: "",                          max: ""                          },
+                    { label: "Downvote",  value: manabarsData.downvote.percentageValue,  color: "#c01000", showTooltip: false, current: "",                          max: ""                          },
+                    { label: "RC",        value: manabarsData.rc.percentageValue,        color: "#cecafa", showTooltip: true,  current: manabarsData.rc.current,     max: manabarsData.rc.max         },
+                  ].map(({ label, value, color, showTooltip, current, max }) => (
                     <div key={label}>
                       <p className="mb-1 text-[10px] font-medium text-gray-500 dark:text-gray-400">{label}</p>
-                      <TooltipProvider>
-                        <Tooltip delayDuration={100}>
-                          <TooltipTrigger asChild>
-                            <div className="cursor-help">
-                              <Progress value={value} color={color} />
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipPortal>
-                            <TooltipContent className="bg-slate-900 text-white border-none text-[11px] py-1 px-2">
-                              {current} / {max}
-                            </TooltipContent>
-                          </TooltipPortal>
-                        </Tooltip>
-                      </TooltipProvider>
+                      {showTooltip ? (
+                        <TooltipProvider>
+                          <Tooltip delayDuration={100}>
+                            <TooltipTrigger asChild>
+                              <div className="cursor-help">
+                                <Progress value={value} color={color} />
+                              </div>
+                            </TooltipTrigger>
+                            <TooltipPortal>
+                              <TooltipContent className="bg-slate-900 text-white border-none text-[11px] py-1 px-2">
+                                {current} / {max}
+                              </TooltipContent>
+                            </TooltipPortal>
+                          </Tooltip>
+                        </TooltipProvider>
+                      ) : (
+                        <Progress value={value} color={color} />
+                      )}
                     </div>
                   ))}
                 </div>
@@ -170,9 +174,6 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
                     color="text-green-500"
                     percentageClassName="text-[9px]"
                     labelClassName="text-[8px]"
-                    tooltipContent={
-                      <p className="text-sm">{manabarsData.upvote.current} / {manabarsData.upvote.max}</p>
-                    }
                   />
                   <RadialProgress
                     size={46}
@@ -182,9 +183,6 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
                     color="text-red-500"
                     percentageClassName="text-[9px]"
                     labelClassName="text-[8px]"
-                    tooltipContent={
-                      <p className="text-sm">{manabarsData.downvote.current} / {manabarsData.downvote.max}</p>
-                    }
                   />
                   <RadialProgress
                     size={46}
