@@ -1,9 +1,9 @@
 import { Layouts, Layout } from "react-grid-layout";
 
-// --- Storage Keys ---
-export const LAYOUT_STORAGE_KEY = "hivescan_dashboard_layout";
-export const WIDGETS_STORAGE_KEY = "hivescan_dashboard_widgets";
-export const WIDGET_STATES_STORAGE_KEY = "hivescan_dashboard_widget_states";
+// --- Storage Keys (per-user; suffixed with username to avoid cross-user pollution) ---
+export const getLayoutStorageKey = (username: string) => `hivescan_dashboard_layout_${username}`;
+export const getWidgetsStorageKey = (username: string) => `hivescan_dashboard_widgets_${username}`;
+export const getWidgetStatesStorageKey = (username: string) => `hivescan_dashboard_widget_states_${username}`;
 
 export const COLLAPSED_WIDGET_HEIGHT = 1.2;
 export const EDITABLE_BREAKPOINTS = ['lg', 'xl'];
