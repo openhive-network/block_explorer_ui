@@ -94,7 +94,9 @@ export const config = {
       loginLimit: 5, // Attempts per interval
       broadcastLimit: 30, // Actions per interval
     },
-    allowedOperations: ["vote", "claim_reward_balance", "custom_json", "update_proposal_votes", "account_witness_vote", "account_witness_proxy"],
+    // Whitelist for /api/auth/broadcast. Active-key ops route through the
+    // Hivesigner sign page client-side, not this endpoint.
+    allowedOperations: ["vote", "claim_reward_balance", "custom_json", "update_proposal_votes"],
   },
 };
 

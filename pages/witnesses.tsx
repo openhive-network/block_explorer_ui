@@ -1,39 +1,29 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useI18n } from "@/i18n/i18n";
-import {
-  Loader2,
-  MenuSquareIcon,
-  ChevronDown,
-  ChevronUp,
-  ChevronsUpDown,
-  Link as LinkIcon,
-  ArrowRight,
-} from "lucide-react";
+import { Loader2, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Head from "next/head";
-import Image from "next/image";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
-import { cn, formatNumber, formatPercent, formatHp } from "@/lib/utils";
-import {
-  formatAndDelocalizeFromTime,
-  formatAndDelocalizeTime,
-} from "@/utils/TimeUtils";
+import dynamic from "next/dynamic";
+import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
+import { cn } from "@/lib/utils";
 import useWitnesses from "@/hooks/api/common/useWitnesses";
 import useWitnessVoteChain from "@/hooks/api/common/useWitnessVoteChain";
 import { useAuth } from "@/contexts/AuthContext";
-import WitnessVoteButton from "@/components/Witnesses/WitnessVoteButton";
-import SetProxyButton from "@/components/Witnesses/SetProxyButton";
 import VoterFilterBanner from "@/components/Witnesses/VoterFilterBanner";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import dynamic from "next/dynamic";
+import WitnessesTable, {
+  SORT_KEY_BY_CELL,
+} from "@/components/Witnesses/WitnessesTable";
+import WitnessScheduleIcon from "@/components/WitnessScheduleIcon";
+import ScrollTopButton from "@/components/ScrollTopButton";
+import { config } from "@/Config";
+import NoResult from "@/components/NoResult";
+import { useHiveChainContext } from "@/contexts/HiveChainContext";
+import Hive from "@/types/Hive";
+import PageTitle from "@/components/PageTitle";
+import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
+
 const VotersDialog = dynamic(
   () => import("@/components/Witnesses/VotersDialog"),
   { ssr: false }
@@ -42,116 +32,88 @@ const VotesHistoryDialog = dynamic(
   () => import("@/components/Witnesses/VotesHistoryDialog"),
   { ssr: false }
 );
-import WitnessScheduleIcon from "@/components/WitnessScheduleIcon";
-import CopyButton from "@/components/ui/CopyButton";
-import ScrollTopButton from "@/components/ScrollTopButton";
-import { config } from "@/Config";
-import NoResult from "@/components/NoResult";
-import fetchingService from "@/services/FetchingService";
-import { useHiveChainContext } from "@/contexts/HiveChainContext";
-import { convertVestsToHP } from "@/utils/Calculations";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import Hive from "@/types/Hive";
-import { IHiveChainInterface } from "@hiveio/wax";
-import PageTitle from "@/components/PageTitle";
-import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
-
-interface TableCellConfig {
-  displayKey: string;
-  sortKey: string;
-  isRightAligned?: boolean;
-  isUnsortable?: boolean;
-}
-
-const TABLE_CELL_CONFIGS: TableCellConfig[] = [
-  { displayKey: "common.rank", sortKey: "rank" },
-  { displayKey: "common.name", sortKey: "name" },
-  { displayKey: "witnesses.votes", sortKey: "votes" },
-  { displayKey: "witnesses.voters", sortKey: "voters" },
-  {
-    displayKey: "witnesses.missedblocks",
-    sortKey: "missed blocks",
-    isRightAligned: true,
-    isUnsortable: true,
-  },
-  {
-    displayKey: "witnesses.lastblock",
-    sortKey: "last block produced",
-    isUnsortable: true,
-  },
-  {
-    displayKey: "witnesses.blocksize",
-    sortKey: "block size",
-    isRightAligned: true,
-  },
-  {
-    displayKey: "witnesses.apr",
-    sortKey: "apr",
-    isRightAligned: true,
-    isUnsortable: true,
-  },
-  {
-    displayKey: "witnesses.pricefeed",
-    sortKey: "price feed",
-    isRightAligned: true,
-  },
-  {
-    displayKey: "witnesses.feedage",
-    sortKey: "feed age",
-    isRightAligned: true,
-  },
-  {
-    displayKey: "witnesses.acfee",
-    sortKey: "ac fee",
-    isRightAligned: true,
-    isUnsortable: true,
-  },
-  {
-    displayKey: "witnesses.version",
-    sortKey: "version",
-    isRightAligned: true,
-    isUnsortable: true,
-  },
-];
-
-const sortKeyByCell: { [objectKey: string]: string } = {
-  rank: "rank",
-  name: "witness",
-  votes: "votes",
-  voters: "voters_num",
-  "block size": "block_size",
-  "missed blocks": "missed_blocks",
-  apr: "hbd_interest_rate",
-  "price feed": "price_feed",
-  "feed age": "feed_updated_at",
-  version: "version",
-  "last block produced": "last_confirmed_block_num",
-};
-
-const renderSortArrow = (
-  currentSortKey: string,
-  orderByApiField: string,
-  isOrderAscending: boolean
-) => {
-  if (sortKeyByCell[currentSortKey] !== orderByApiField) {
-    return <ChevronsUpDown size={15} className="ml-1" />;
-  } else {
-    return isOrderAscending ? (
-      <ChevronDown size={15} className="ml-1" />
-    ) : (
-      <ChevronUp size={15} className="ml-1" />
-    );
-  }
-};
 
 export default function Witnesses() {
   const { t, locale } = useI18n();
   const router = useRouter();
+  const queryClient = useQueryClient();
+
+  // Handle a Hivesigner return — toast, invalidate caches, scroll to the row.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const action = params.get("hsAction");
+    const witness = params.get("hsWitness") || "";
+    if (!action) return;
+
+    // Defer one tick so the Toaster has mounted.
+    const toastTimer = window.setTimeout(() => {
+      let msg = "";
+      switch (action) {
+        case "vote":
+          msg = t("witnesses.voteSuccess", { witness });
+          break;
+        case "unvote":
+          msg = t("witnesses.unvoteSuccess", { witness });
+          break;
+        case "setproxy":
+          msg = t("witnesses.proxySuccess", { proxy: witness });
+          break;
+        case "removeproxy":
+          msg = t("witnesses.removeProxySuccess");
+          break;
+        default:
+          return;
+      }
+      toast.success(msg, { duration: 8000 });
+    }, 50);
+
+    queryClient.invalidateQueries({ queryKey: ["witnesses"] });
+    queryClient.invalidateQueries({ queryKey: ["witnessVoteChain"] });
+    queryClient.invalidateQueries({ queryKey: ["witnessHealth"] });
+
+    const cleanUrl = () => {
+      const p = new URLSearchParams(window.location.search);
+      if (!p.has("hsAction") && !p.has("hsWitness")) return;
+      p.delete("hsAction");
+      p.delete("hsWitness");
+      const remaining = p.toString();
+      history.replaceState(
+        null,
+        "",
+        window.location.pathname + (remaining ? `?${remaining}` : "")
+      );
+    };
+
+    // No row to scroll to when removing a proxy or unvoting inside a
+    // voter-filtered view (the row is gone from the filtered list).
+    const skipScroll =
+      !witness || (action === "unvote" && params.get("voter"));
+    if (skipScroll) {
+      cleanUrl();
+      return () => clearTimeout(toastTimer);
+    }
+
+    const selector = `[data-witness-row="${CSS.escape(witness)}"]`;
+    let attempts = 0;
+    const interval = window.setInterval(() => {
+      attempts++;
+      const el = document.querySelector(selector) as HTMLElement | null;
+      if (el) {
+        clearInterval(interval);
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        cleanUrl();
+      } else if (attempts > 80) {
+        clearInterval(interval);
+        cleanUrl();
+      }
+    }, 250);
+    return () => {
+      clearTimeout(toastTimer);
+      clearInterval(interval);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const voterFilter = router.isReady
     ? (router.query.voter as string | undefined)
@@ -164,17 +126,18 @@ export default function Witnesses() {
     orderBy: string;
     isOrderAscending: boolean;
   }>({
-    orderBy: sortKeyByCell["rank"],
+    orderBy: SORT_KEY_BY_CELL["rank"],
     isOrderAscending: true,
   });
 
+  // When filtering by voter, fetch a larger window so lower-ranked
+  // witnesses can still resolve.
   const { witnessesData, isWitnessDataLoading } = useWitnesses(
-    config.witnessesPerPages.witnesses,
-    voterFilter ? sortKeyByCell["rank"] : sort.orderBy,
+    voterFilter ? 1000 : config.witnessesPerPages.witnesses,
+    voterFilter ? SORT_KEY_BY_CELL["rank"] : sort.orderBy,
     voterFilter ? "asc" : sort.isOrderAscending ? "asc" : "desc"
   );
 
-  const [availableVersions, setAvailableVersions] = useState<string[]>([]);
   const [latestVersion, setLatestVersion] = useState<string | null>(null);
 
   const { hiveChain } = useHiveChainContext();
@@ -206,15 +169,15 @@ export default function Witnesses() {
 
   const { username, isLoggedIn } = useAuth();
 
-  // Logged-in user's own proxy chain (for proxy banner on this page)
+  // Logged-in user's proxy chain — drives the proxy banner.
   const { proxyChain: userProxyChain } = useWitnessVoteChain(
     isLoggedIn ? username || "" : ""
   );
 
-  // Vote column only for the logged-in user's own filter view (security: hide from others)
+  // Only show the actions column when the user is viewing their own votes.
   const showVoteColumn = isLoggedIn && (!voterFilter || voterFilter === username);
 
-  // Tracks local vote changes for immediate filter re-render (bypasses blockchain latency)
+  // Local vote overrides so the filter reflects clicks before the chain commits.
   const [localVoteChanges, setLocalVoteChanges] = useState<
     Record<string, boolean>
   >({});
@@ -283,16 +246,13 @@ export default function Witnesses() {
       const sortedVersions = Array.from(versions).sort((a, b) =>
         b.localeCompare(a, undefined, { numeric: true })
       );
-      setAvailableVersions(sortedVersions);
       setLatestVersion(sortedVersions[0] || null);
     }
   }, [witnessesData]);
 
   const handleSortBy = (clickedSortKey: string) => {
-    if (!clickedSortKey || !sortKeyByCell[clickedSortKey]) {
-      return;
-    }
-    const apiFieldForSort = sortKeyByCell[clickedSortKey];
+    if (!clickedSortKey || !SORT_KEY_BY_CELL[clickedSortKey]) return;
+    const apiFieldForSort = SORT_KEY_BY_CELL[clickedSortKey];
     setSort((prevSort) => ({
       orderBy: apiFieldForSort,
       isOrderAscending:
@@ -308,52 +268,7 @@ export default function Witnesses() {
     );
   }
 
-  if (!witnessesData || !witnessesData.witnesses.length) return;
-
-  const changeVotersDialogue = (isOpen: boolean) => {
-    setIsVotersOpen(isOpen);
-  };
-
-  const changeVotesHistoryDialog = (isOpen: boolean) => {
-    setIsVotesHistoryOpen(isOpen);
-  };
-
-  const buildTableHeader = () => {
-    return TABLE_CELL_CONFIGS.map((cellConfig, index) => {
-      const isRightAligned = !!cellConfig.isRightAligned;
-      const isUnsortable = !!cellConfig.isUnsortable;
-      const className = "text-center !bg-navbar py-2";
-      const buttonClassName = `w-full flex items-center ${
-        isRightAligned ? "justify-end text-right" : "justify-start text-left"
-      } ${cellConfig.displayKey === "witnesses.version" ? "pr-2" : ""}`;
-
-      return (
-        <TableCell
-          stickyLeft={index === 0 ? true : undefined}
-          key={cellConfig.sortKey}
-          className={className}
-        >
-          <button
-            disabled={isUnsortable}
-            className={buttonClassName}
-            onClick={() => {
-              if (!isUnsortable) {
-                handleSortBy(cellConfig.sortKey);
-              }
-            }}
-          >
-            <span>{t(cellConfig.displayKey)}</span>
-            {!isUnsortable &&
-              renderSortArrow(
-                cellConfig.sortKey,
-                sort.orderBy,
-                sort.isOrderAscending
-              )}
-          </button>
-        </TableCell>
-      );
-    });
-  };
+  if (!witnessesData || !witnessesData.witnesses.length) return null;
 
   return (
     <>
@@ -396,318 +311,35 @@ export default function Witnesses() {
                 <VotersDialog
                   accountName={voterAccount}
                   isVotersOpen={isVotersOpen}
-                  changeVotersDialogue={changeVotersDialogue}
+                  changeVotersDialogue={setIsVotersOpen}
                   liveDataEnabled={false}
                 />
                 <VotesHistoryDialog
                   accountName={voterAccount}
                   isVotesHistoryOpen={isVotesHistoryOpen}
-                  changeVoteHistoryDialogue={changeVotesHistoryDialog}
+                  changeVoteHistoryDialogue={setIsVotesHistoryOpen}
                   liveDataEnabled={false}
                 />
 
-                <Table
-                  className="min-w-full"
-                  enableMobileScrollArrows
-                  isStandaloneTable
-                  enableCompactToggle
-                >
-                  <TableHeader>
-                    <TableRow rowVariant="header">
-                      {buildTableHeader()}
-                      {showVoteColumn && (
-                        <TableCell className="text-center !bg-navbar py-2">
-                          <span>{t("witnesses.actions")}</span>
-                        </TableCell>
-                      )}
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {sortedFilteredWitnesses.map(
-                      (singleWitness: any, index: number) => (
-                        <TableRow
-                          key={singleWitness.witness_id || index}
-                          className={cn(
-                            `${
-                              index % 2 === 0
-                                ? "bg-rowEven hover:bg-rowHover"
-                                : "bg-rowOdd  hover:bg-rowHover"
-                            }`,
-                            "transition-colors duration-150 rounded-md",
-                            {
-                              "opacity-50 dark:opacity-45 line-through":
-                                singleWitness.signing_key ===
-                                config.inactiveWitnessKey,
-                              "font-bold":
-                                singleWitness.rank && singleWitness.rank <= 20,
-                            }
-                          )}
-                        >
-                          <TableCell stickyLeft>{singleWitness.rank}</TableCell>
-                          <TableCell
-                            stickyLeft
-                            className="flex items-center space-x-2 py-4 whitespace-nowrap"
-                          >
-                            <Image
-                              className="rounded-full border-2 border-explorer-orange"
-                              src={getHiveAvatarUrl(singleWitness.witness_name)}
-                              alt={t("common.avatarAltText", {
-                                name: singleWitness.witness_name,
-                              })}
-                              width={30}
-                              height={30}
-                            />
-                            <div className="flex items-center">
-                              <Link
-                                href={`/@${singleWitness.witness_name}`}
-                                className="text-link hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium transition-colors duration-200"
-                                target="_blank"
-                              >
-                                {singleWitness.witness_name}
-                              </Link>
-                              {singleWitness.url && (
-                                <Link
-                                  href={singleWitness.url}
-                                  target="_blank"
-                                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 ml-2"
-                                >
-                                  <LinkIcon className="h-4 w-4" />
-                                </Link>
-                              )}
-                            </div>
-                          </TableCell>
-
-                          <TableCell className="text-right relative">
-                            <div className="flex flex-col items-end justify-center pr-2">
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <span className="cursor-pointer">
-                                      {hiveChain &&
-                                      totalVestingFundHive &&
-                                      totalVestingShares ? (
-                                        formatHp(
-                                          convertVestsToHP(
-                                            hiveChain,
-                                            singleWitness.vests,
-                                            totalVestingFundHive,
-                                            totalVestingShares
-                                          )
-                                        )
-                                      ) : (
-                                        <Loader2 className="dark:text-white animate-spin mt-1 h-2 w-2" />
-                                      )}
-                                    </span>
-                                  </TooltipTrigger>
-                                  <TooltipContent className="text-left">
-                                    <p>
-                                      {t("common.vests")}:{" "}
-                                      {formatNumber(
-                                        singleWitness.vests || 0,
-                                        true
-                                      )}
-                                    </p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-                              {singleWitness.votes_daily_change !== "0" && (
-                                <TooltipProvider>
-                                  <Tooltip>
-                                    <TooltipTrigger asChild>
-                                      <span
-                                        className={cn(
-                                          "text-[0.7rem]",
-                                          singleWitness.votes_daily_change >= 0
-                                            ? "text-green-500 dark:text-green-400"
-                                            : "text-red-500 dark:text-red-400",
-                                          "cursor-pointer"
-                                        )}
-                                      >
-                                        {singleWitness.votes_daily_change > 0
-                                          ? "+"
-                                          : ""}
-                                        {hiveChain &&
-                                        totalVestingFundHive &&
-                                        totalVestingShares ? (
-                                          formatHp(
-                                            convertVestsToHP(
-                                              hiveChain,
-                                              singleWitness.votes_daily_change,
-                                              totalVestingFundHive,
-                                              totalVestingShares
-                                            )
-                                          )
-                                        ) : (
-                                          <Loader2 className="dark:text-white animate-spin mt-1 h-2 w-2" />
-                                        )}
-                                      </span>
-                                    </TooltipTrigger>
-                                    <TooltipContent className="text-left">
-                                      {t("common.vestsChange")}:{" "}
-                                      {formatNumber(
-                                        singleWitness.votes_daily_change || 0,
-                                        true
-                                      )}
-                                    </TooltipContent>
-                                  </Tooltip>
-                                </TooltipProvider>
-                              )}
-                              <MenuSquareIcon
-                                className="w-4 h-4 cursor-pointer opacity-50 hover:opacity-80 transition-opacity duration-200 absolute top-1/2 right-0 transform -translate-y-1/2"
-                                onClick={() => {
-                                  setVoterAccount(singleWitness.witness_name);
-                                  setIsVotesHistoryOpen(true);
-                                }}
-                                data-testid="witness-votes-button"
-                              />
-                            </div>
-                          </TableCell>
-                          <TableCell className="text-right relative">
-                            <div className="flex flex-col items-end justify-center pr-2">
-                              <div className="flex flex-col items-end">
-                                <span>
-                                  {singleWitness.voters_num.toLocaleString()}
-                                </span>
-                                {singleWitness.voters_num_daily_change !==
-                                  0 && (
-                                  <span
-                                    className={cn(
-                                      "text-[0.7rem]",
-                                      singleWitness.voters_num_daily_change > 0
-                                        ? "text-green-500 dark:text-green-400"
-                                        : "text-red-500 dark:text-red-400"
-                                    )}
-                                  >
-                                    {singleWitness.voters_num_daily_change > 0
-                                      ? "+"
-                                      : ""}
-                                    {singleWitness.voters_num_daily_change.toLocaleString()}
-                                  </span>
-                                )}
-                              </div>
-                              <div className="flex items-center space-x-2 justi">
-                                <MenuSquareIcon
-                                  className="w-4 h-4 cursor-pointer opacity-50 hover:opacity-80 transition-opacity duration-200 absolute top-1/2 right-0 transform -translate-y-1/2"
-                                  onClick={() => {
-                                    setVoterAccount(singleWitness.witness_name);
-                                    setIsVotersOpen(true);
-                                  }}
-                                  data-testid="witness-voters-button"
-                                />
-                              </div>
-                            </div>
-                          </TableCell>
-                          <TableCell className="text-right">
-                            {singleWitness.missed_blocks
-                              ? singleWitness.missed_blocks.toLocaleString()
-                              : "--"}
-                          </TableCell>
-                          <TableCell className="text-right whitespace-nowrap">
-                            {singleWitness.last_confirmed_block_num ? (
-                              <div className="flex items-center justify-end">
-                                <Link
-                                  className="text-link"
-                                  href={`/block/${
-                                    singleWitness.last_confirmed_block_num
-                                  }${
-                                    singleWitness.trxId
-                                      ? `?trxId=${singleWitness.trxId}`
-                                      : ""
-                                  }`}
-                                >
-                                  {singleWitness.last_confirmed_block_num.toLocaleString()}
-                                </Link>
-                                <CopyButton
-                                  text={String(
-                                    singleWitness.last_confirmed_block_num
-                                  )}
-                                  tooltipText={t("common.copyBlockNumber")}
-                                />
-                              </div>
-                            ) : (
-                              "--"
-                            )}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            {singleWitness.block_size
-                              ? singleWitness.block_size.toLocaleString()
-                              : "--"}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            {singleWitness.hbd_interest_rate
-                              ? formatPercent(singleWitness.hbd_interest_rate)
-                              : "0%"}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            {singleWitness.price_feed
-                              ? singleWitness.price_feed.toLocaleString()
-                              : "0"}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            {singleWitness.feed_updated_at ? (
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <span className="cursor-pointer">
-                                      {formatAndDelocalizeFromTime(
-                                        singleWitness.feed_updated_at,
-                                        locale
-                                      )}
-                                    </span>
-                                  </TooltipTrigger>
-                                  <TooltipContent className="text-left">
-                                    {formatAndDelocalizeTime(
-                                      singleWitness.feed_updated_at
-                                    )}
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-                            ) : (
-                              "--"
-                            )}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            {singleWitness.account_creation_fee
-                              ? (
-                                  singleWitness.account_creation_fee / 1000
-                                ).toLocaleString()
-                              : "--"}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex items-center justify-end">
-                              <span
-                                className={cn(
-                                  "inline-block h-2 w-2 rounded-full mr-1",
-                                  {
-                                    "bg-green-500":
-                                      singleWitness.version === latestVersion,
-                                    "bg-yellow-500":
-                                      singleWitness.version !== latestVersion,
-                                  }
-                                )}
-                              />
-                              {singleWitness.version}
-                            </div>
-                          </TableCell>
-
-                          {showVoteColumn && (
-                            <TableCell className="text-center w-[80px] whitespace-nowrap">
-                              <div className="inline-flex items-center justify-center gap-1">
-                                <WitnessVoteButton
-                                  witnessName={singleWitness.witness_name}
-                                  onVoteChange={handleVoteChange}
-                                />
-                                <SetProxyButton
-                                  witnessName={singleWitness.witness_name}
-                                />
-                              </div>
-                            </TableCell>
-                          )}
-                        </TableRow>
-                      )
-                    )}
-                  </TableBody>
-                </Table>
+                <WitnessesTable
+                  witnesses={sortedFilteredWitnesses}
+                  sort={sort}
+                  onSortBy={handleSortBy}
+                  showVoteColumn={showVoteColumn}
+                  latestVersion={latestVersion}
+                  hiveChain={hiveChain}
+                  totalVestingFundHive={totalVestingFundHive}
+                  totalVestingShares={totalVestingShares}
+                  onOpenVoters={(name) => {
+                    setVoterAccount(name);
+                    setIsVotersOpen(true);
+                  }}
+                  onOpenVotesHistory={(name) => {
+                    setVoterAccount(name);
+                    setIsVotesHistoryOpen(true);
+                  }}
+                  onVoteChange={handleVoteChange}
+                />
               </>
             ) : voterFilter ? (
               <div className="flex flex-col items-center gap-4">
@@ -723,7 +355,8 @@ export default function Witnesses() {
                   <ArrowRight
                     className={cn(
                       "w-4 h-4 transition-transform group-hover:translate-x-0.5",
-                      locale === "ar" && "rotate-180 group-hover:-translate-x-0.5"
+                      locale === "ar" &&
+                        "rotate-180 group-hover:-translate-x-0.5"
                     )}
                   />
                 </Link>

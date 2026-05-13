@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
 import { useI18n } from "@/i18n/i18n";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
-import { LogOut, User, ChevronDown, HeartHandshake, ShieldCheck } from "lucide-react";
+import { LogOut, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import useManabars from "@/hooks/api/accountPage/useManabars";
 import { useSettings } from "@/contexts/SettingsContext";
@@ -22,13 +22,12 @@ import {
   TooltipPortal,
 } from "@/components/ui/tooltip";
 
-const UserNavItem = ({ href, title, icon: Icon, closeMenu }: any) => (
+const UserNavItem = ({ href, title, closeMenu }: { href: string; title: string; closeMenu: () => void }) => (
   <Link
     href={href}
     className="group flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium hover:bg-secondary/60 text-text transition-all active:scale-[0.98]"
     onClick={closeMenu}
   >
-    <Icon className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
     <span>{title}</span>
   </Link>
 );
@@ -206,19 +205,16 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
             <UserNavItem
               href={`/@${username}`}
               title={t("auth.myProfile")}
-              icon={User}
               closeMenu={() => setIsOpen(false)}
             />
             <UserNavItem
               href={`/proposals?voter=${username}&status=all`}
               title={t("auth.myVotedProposals")}
-              icon={HeartHandshake}
               closeMenu={() => setIsOpen(false)}
             />
             <UserNavItem
               href={`/witnesses?voter=${username}`}
               title={t("auth.myWitnessVotes")}
-              icon={ShieldCheck}
               closeMenu={() => setIsOpen(false)}
             />
 
