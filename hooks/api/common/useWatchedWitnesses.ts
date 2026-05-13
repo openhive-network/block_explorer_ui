@@ -1,7 +1,6 @@
-import { useQueries } from "@tanstack/react-query";
-import fetchingService from "@/services/FetchingService";
+import { useMemo } from "react";
 import { config } from "@/Config";
-import Hive from "@/types/Hive";
+import useWitnesses from "@/hooks/api/common/useWitnesses";
 
 export interface WatchedWitnessHealth {
   name: string;
@@ -14,36 +13,54 @@ export interface WatchedWitnessHealth {
   isLoading: boolean;
 }
 
+/**
+ * Health snapshot for a fixed set of witnesses (e.g. the user's votes).
+ * Reuses the bulk `useWitnesses(1000)` cache to avoid N per-witness calls.
+ */
 const useWatchedWitnesses = (
   names: string[]
 ): { witnesses: WatchedWitnessHealth[]; isLoading: boolean } => {
-  const queries = useQueries({
-    queries: names.map((name) => ({
-      queryKey: ["witnessHealth", name],
-      queryFn: () => fetchingService.getWitness(name),
-      staleTime: 60000,
-      refetchOnWindowFocus: false,
-    })),
-  });
+  const enabled = names.length > 0;
+  const { witnessesData, isWitnessDataLoading } = useWitnesses(
+    1000,
+    "rank",
+    "asc",
+    enabled
+  );
 
-  const witnesses: WatchedWitnessHealth[] = names.map((name, i) => {
-    const q = queries[i];
-    const data = q.data as Hive.SingleWitnessResponse | undefined;
-    return {
-      name,
-      isActive: data ? data.signing_key !== config.inactiveWitnessKey : true,
-      rank: data?.rank ?? 0,
-      missedBlocks: data?.missed_blocks ?? 0,
-      version: data?.version ?? "",
-      feedUpdatedAt: data?.feed_updated_at ? new Date(data.feed_updated_at) : null,
-      priceFeed: data?.price_feed ?? 0,
-      isLoading: q.isLoading,
-    };
-  });
+  const byName = useMemo(() => {
+    const map = new Map<string, any>();
+    if (witnessesData?.witnesses) {
+      for (const w of witnessesData.witnesses as any[]) {
+        map.set(w.witness_name, w);
+      }
+    }
+    return map;
+  }, [witnessesData]);
+
+  const witnesses: WatchedWitnessHealth[] = useMemo(
+    () =>
+      names.map((name) => {
+        const data = byName.get(name);
+        return {
+          name,
+          isActive: !!data && data.signing_key !== config.inactiveWitnessKey,
+          rank: data?.rank ?? 0,
+          missedBlocks: data?.missed_blocks ?? 0,
+          version: data?.version ?? "",
+          feedUpdatedAt: data?.feed_updated_at
+            ? new Date(data.feed_updated_at)
+            : null,
+          priceFeed: data?.price_feed ?? 0,
+          isLoading: isWitnessDataLoading,
+        };
+      }),
+    [names, byName, isWitnessDataLoading]
+  );
 
   return {
     witnesses,
-    isLoading: names.length > 0 && queries.some((q) => q.isLoading),
+    isLoading: enabled && isWitnessDataLoading,
   };
 };
 

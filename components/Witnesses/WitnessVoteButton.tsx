@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { Loader2, Vote, X } from "lucide-react";
+import { Loader2, Heart } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -18,12 +18,7 @@ import {
 
 interface WitnessVoteButtonProps {
   witnessName: string;
-  /**
-   * pill   — bordered rounded-full, used in profile action strip
-   * compact — filled rounded, used in witnesses table
-   */
   variant?: "pill" | "compact";
-  /** Called after a successful vote/unvote so the parent can update filter state */
   onVoteChange?: (witnessName: string, voted: boolean) => void;
 }
 
@@ -60,11 +55,20 @@ const WitnessVoteButton: React.FC<WitnessVoteButtonProps> = ({
     if (!username || !method) return;
     const approve = !hasVoted;
 
-    // Hivesigner cannot broadcast Active-key operations via its API.
-    // Redirect to the Hivesigner sign page instead (same pattern as proposal voting).
+    // Hivesigner can't broadcast Active-key ops; redirect to its sign page.
     if (method === 'hivesigner') {
-      const redirectUri = `${window.location.origin}${window.location.pathname}${window.location.search}`;
-      window.location.href = buildWitnessVoteSignUrl(username, witnessName, approve, redirectUri);
+      setInProgress(true);
+      const action = approve ? "vote" : "unvote";
+      const params = new URLSearchParams(window.location.search);
+      params.set("hsAction", action);
+      params.set("hsWitness", witnessName);
+      const redirectUri = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+      window.location.href = buildWitnessVoteSignUrl(
+        username,
+        witnessName,
+        approve,
+        redirectUri
+      );
       return;
     }
 
@@ -78,7 +82,6 @@ const WitnessVoteButton: React.FC<WitnessVoteButtonProps> = ({
       );
       setLocalOverride(approve);
       onVoteChange?.(witnessName, approve);
-      // Optimistically update the cache so other pages see the correct state immediately
       queryClient.setQueryData(
         ["witnessVoteChain", username],
         (old: { witnessVotes: string[]; proxyChain: string[] } | undefined) => {
@@ -89,17 +92,18 @@ const WitnessVoteButton: React.FC<WitnessVoteButtonProps> = ({
           return { ...old, witnessVotes: newVotes };
         }
       );
-      // Delay refetch to allow blockchain to propagate the transaction
+      // Wait for the chain to commit before refetching.
       setTimeout(() => {
         queryClient.invalidateQueries({ queryKey: ["witnessVoteChain", username] });
       }, 6000);
       toast.success(
         approve
           ? t("witnesses.voteSuccess", { witness: witnessName })
-          : t("witnesses.unvoteSuccess", { witness: witnessName })
+          : t("witnesses.unvoteSuccess", { witness: witnessName }),
+        { duration: 8000 }
       );
     } catch {
-      toast.error(t("witnesses.voteError"));
+      toast.error(t("witnesses.voteError"), { duration: 8000 });
     } finally {
       setInProgress(false);
     }
@@ -126,7 +130,15 @@ const WitnessVoteButton: React.FC<WitnessVoteButtonProps> = ({
                   isDisabled && "opacity-50 cursor-not-allowed"
                 )}
               >
-                {inProgress ? <Loader2 size={12} className="animate-spin" /> : <Vote size={13} />}
+                {inProgress ? (
+                  <Loader2 size={12} className="animate-spin" />
+                ) : (
+                  <Heart
+                    size={13}
+                    fill={hasVoted ? "#ef4444" : "none"}
+                    stroke={hasVoted ? "#dc2626" : "currentColor"}
+                  />
+                )}
                 {label}
               </button>
             </span>
@@ -137,7 +149,7 @@ const WitnessVoteButton: React.FC<WitnessVoteButtonProps> = ({
     );
   }
 
-  // compact variant (witnesses table) — icon-only button to save horizontal space
+  // Compact icon-only variant for the witnesses table.
   const tooltipText = disabledReason || label;
   return (
     <TooltipProvider>
@@ -158,10 +170,12 @@ const WitnessVoteButton: React.FC<WitnessVoteButtonProps> = ({
             >
               {inProgress ? (
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              ) : hasVoted ? (
-                <X className="h-3.5 w-3.5" />
               ) : (
-                <Vote className="h-3.5 w-3.5" />
+                <Heart
+                  className="h-3.5 w-3.5"
+                  fill={hasVoted ? "#ef4444" : "none"}
+                  stroke={hasVoted ? "#dc2626" : "currentColor"}
+                />
               )}
             </button>
           </span>

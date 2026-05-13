@@ -16,11 +16,11 @@ const resolveVoteChain = async (
 
   while (currentName && depth <= config.maxProxyDepth) {
     const account = await fetchingService.getAccount(currentName);
-    const proxy: string = (account as any).proxy ?? "";
+    const proxy = account.proxy ?? "";
 
     if (!proxy) {
       return {
-        witnessVotes: (account as any).witness_votes ?? [],
+        witnessVotes: account.witness_votes ?? [],
         proxyChain,
       };
     }
@@ -39,6 +39,8 @@ const useWitnessVoteChain = (accountName: string) => {
     queryFn: () => resolveVoteChain(accountName),
     enabled: !!accountName,
     refetchOnWindowFocus: false,
+    // One SetProxyButton mounts per table row; staleTime avoids per-row refetch churn.
+    staleTime: 60_000,
   });
 
   return {

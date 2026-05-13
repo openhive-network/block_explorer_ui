@@ -2,15 +2,22 @@ import { ISmartSignerProvider, SmartSignerResponse } from '../types';
 import { config } from "@/Config";
 
 /**
- * Encode a string as URL-safe base64 (per RFC 4648 §5, with `=` → `.`).
- * This is the format Hivesigner's `/sign/op/<op>?cb=<cb>` endpoint expects
- * (op names and URLs are ASCII so `btoa` is safe).
+ * URL-safe base64 (RFC 4648 §5, with `=` → `.`) for Hivesigner's
+ * `/sign/op/<op>?cb=<cb>` endpoint. UTF-8-encodes first so multi-byte
+ * characters don't trip `btoa`.
  */
 function base64Url(str: string): string {
-  const b64 =
-    typeof window !== "undefined" && typeof window.btoa === "function"
-      ? window.btoa(str)
-      : Buffer.from(str, "utf8").toString("base64");
+  let b64: string;
+  if (typeof window !== "undefined" && typeof window.btoa === "function") {
+    const bytes = new TextEncoder().encode(str);
+    let binary = "";
+    for (let i = 0; i < bytes.length; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    b64 = window.btoa(binary);
+  } else {
+    b64 = Buffer.from(str, "utf8").toString("base64");
+  }
   return b64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, ".");
 }
 
@@ -20,12 +27,14 @@ export function buildWitnessVoteSignUrl(
   approve: boolean,
   redirectUri: string
 ): string {
+  const op = [
+    "account_witness_vote",
+    { account: username, witness: witnessName, approve },
+  ];
   return (
-    `${config.hivesigner.endpoints.baseUrl}/sign/account_witness_vote` +
-    `?account=${encodeURIComponent(username)}` +
-    `&witness=${encodeURIComponent(witnessName)}` +
-    `&approve=${approve}` +
-    `&redirect_uri=${encodeURIComponent(redirectUri)}`
+    `${config.hivesigner.endpoints.baseUrl}/sign/op/${base64Url(
+      JSON.stringify(op)
+    )}?cb=${base64Url(redirectUri)}`
   );
 }
 
@@ -34,10 +43,8 @@ export function buildProxySignUrl(
   proxy: string,
   redirectUri: string
 ): string {
-  // PeakD-style /sign/op/<base64url(op)>?cb=<base64url(redirect)> works for
-  // any operation including the clear-proxy case (proxy=""), which the typed
-  // /sign/account_witness_proxy endpoint can't serialize from an empty URL
-  // param.
+  // Encoded-op form handles clearing the proxy (empty `proxy`), which the
+  // typed `/sign/account_witness_proxy` endpoint rejects.
   const op = ["account_witness_proxy", { account: username, proxy }];
   return (
     `${config.hivesigner.endpoints.baseUrl}/sign/op/${base64Url(
@@ -52,7 +59,6 @@ export function buildProposalVoteSignUrl(
   approve: boolean,
   redirectUri: string
 ): string {
-  // PeakD format: proposal_ids=["350"] (JSON array of string IDs)
   const proposalIds = encodeURIComponent(JSON.stringify([String(proposalId)]));
   return (
     `${config.hivesigner.endpoints.baseUrl}/sign/update_proposal_votes` +

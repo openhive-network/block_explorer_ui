@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Loader2, UserCheck, UserX, UserCog } from "lucide-react";
+import { Loader2, Handshake, Unlink, ArrowLeftRight } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -18,10 +18,6 @@ import {
 
 interface SetProxyButtonProps {
   witnessName: string;
-  /**
-   * pill   — bordered rounded-full, used in profile action strip
-   * compact — filled rounded, used in witnesses table / banners
-   */
   variant?: "pill" | "compact";
 }
 
@@ -33,7 +29,7 @@ const SetProxyButton: React.FC<SetProxyButtonProps> = ({
   const { username, method, isLoggedIn } = useAuth();
   const queryClient = useQueryClient();
 
-  const { witnessVotes, proxyChain, isLoading } = useWitnessVoteChain(
+  const { proxyChain, isLoading } = useWitnessVoteChain(
     isLoggedIn ? username || "" : ""
   );
 
@@ -49,11 +45,28 @@ const SetProxyButton: React.FC<SetProxyButtonProps> = ({
     if (!username || !method) return;
     const proxyValue = isThisProxy ? "" : witnessName;
 
-    // Hivesigner cannot broadcast Active-key operations via its API.
-    // Redirect to the Hivesigner sign page (same pattern as WitnessVoteButton).
+    // Hivesigner can't broadcast Active-key ops; redirect to its sign page.
     if (method === "hivesigner") {
-      const redirectUri = `${window.location.origin}${window.location.pathname}${window.location.search}`;
-      window.location.href = buildProxySignUrl(username, proxyValue, redirectUri);
+      setInProgress(true);
+      const fromWitnessesPage = window.location.pathname === "/witnesses";
+      const base = fromWitnessesPage
+        ? `${window.location.origin}${window.location.pathname}`
+        : `${window.location.origin}/witnesses`;
+      const params = fromWitnessesPage
+        ? new URLSearchParams(window.location.search)
+        : new URLSearchParams();
+      if (proxyValue) {
+        params.set("hsAction", "setproxy");
+        params.set("hsWitness", proxyValue);
+      } else {
+        params.set("hsAction", "removeproxy");
+      }
+      const redirectUri = `${base}?${params.toString()}`;
+      window.location.href = buildProxySignUrl(
+        username,
+        proxyValue,
+        redirectUri
+      );
       return;
     }
 
@@ -65,6 +78,7 @@ const SetProxyButton: React.FC<SetProxyButtonProps> = ({
         [["account_witness_proxy", { account: username, proxy: proxyValue }]],
         "Active"
       );
+      // Optimistic 1-hop chain; the timed invalidate refills any nested hops.
       queryClient.setQueryData(
         ["witnessVoteChain", username],
         (
@@ -87,10 +101,11 @@ const SetProxyButton: React.FC<SetProxyButtonProps> = ({
       toast.success(
         proxyValue
           ? t("witnesses.proxySuccess", { proxy: proxyValue })
-          : t("witnesses.removeProxySuccess")
+          : t("witnesses.removeProxySuccess"),
+        { duration: 8000 }
       );
     } catch {
-      toast.error(t("witnesses.proxyError"));
+      toast.error(t("witnesses.proxyError"), { duration: 8000 });
     } finally {
       setInProgress(false);
     }
@@ -103,32 +118,7 @@ const SetProxyButton: React.FC<SetProxyButtonProps> = ({
     ? t("witnesses.replaceProxy")
     : t("witnesses.setProxy");
 
-  // Override-warning tooltip text: shown when this click would overwrite manual votes
-  // or an existing proxy. The actual confirmation happens in Keychain's popup or
-  // on the Hivesigner sign page, so we only need to surface the warning here.
-  const warningText = !isThisProxy
-    ? (witnessVotes.length > 0
-        ? t("witnesses.proxyConfirmBody", {
-            witness: witnessName,
-            votes: witnessVotes.length,
-          })
-        : t("witnesses.proxyConfirmBodyNoVotes", { witness: witnessName }))
-    : null;
-  const replaceText = isOtherProxy
-    ? t("witnesses.proxyReplaceBody", { current: currentProxy })
-    : null;
-
-  const tooltipContent =
-    warningText || replaceText ? (
-      <>
-        {warningText && <p className="max-w-xs text-xs">{warningText}</p>}
-        {replaceText && (
-          <p className="max-w-xs text-xs mt-1 font-medium">{replaceText}</p>
-        )}
-      </>
-    ) : (
-      buttonLabel
-    );
+  const tooltipContent = buttonLabel;
 
   if (variant === "pill") {
     return (
@@ -151,8 +141,12 @@ const SetProxyButton: React.FC<SetProxyButtonProps> = ({
               >
                 {inProgress ? (
                   <Loader2 size={12} className="animate-spin" />
+                ) : isThisProxy ? (
+                  <Unlink size={13} />
+                ) : isOtherProxy ? (
+                  <ArrowLeftRight size={13} />
                 ) : (
-                  <UserCheck size={13} />
+                  <Handshake size={13} />
                 )}
                 {buttonLabel}
               </button>
@@ -164,8 +158,12 @@ const SetProxyButton: React.FC<SetProxyButtonProps> = ({
     );
   }
 
-  // compact variant (witnesses table / banner) — icon-only to save space
-  const CompactIcon = isThisProxy ? UserX : isOtherProxy ? UserCog : UserCheck;
+  // Compact icon-only variant for the witnesses table / banner.
+  const CompactIcon = isThisProxy
+    ? Unlink
+    : isOtherProxy
+    ? ArrowLeftRight
+    : Handshake;
 
   return (
     <TooltipProvider>
