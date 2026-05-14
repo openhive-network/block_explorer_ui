@@ -60,7 +60,7 @@ const WidgetIndex = () => {
       const rightColBottom = masterLayout
         .filter((item) => item.x >= 9)
         .reduce((max, item) => Math.max(max, item.y + item.h), 0);
-      onAddWidget("watched-proposals", { x: 9, y: rightColBottom, w: 3 });
+      onAddWidget("watched-proposals", { x: 9, y: rightColBottom, w: 2.95 });
     }
   }, [isLoaded, getWatched, widgets, onAddWidget, layouts]);
 
@@ -88,7 +88,7 @@ const WidgetIndex = () => {
         const contentPx = entry.contentRect.height;
         const contentH = (contentPx + MARGIN_Y) / (ROW_HEIGHT + MARGIN_Y);
         const targetH = Math.max(contentH, floor);
-        setRuntimeWidgetHeight(widget.i, Math.round(targetH * 10) / 10);
+        setRuntimeWidgetHeight(widget.i, Math.ceil(targetH * 10) / 10);
       });
 
       observer.observe(el);
