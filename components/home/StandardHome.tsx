@@ -15,6 +15,7 @@ import useCommunities from "@/hooks/api/communities/useCommunities";
 import TopCommunitiesCard from "@/components/home/TopCommunitiesCard";
 import TransferVolumeCard from "@/components/home/TransferVolumeCard";
 import TotalValueLockedCard from "@/components/home/TotalValueLockedCard";
+import HpMomentumCard from "@/components/home/HpMomentumCard";
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import { useAuth } from "@/contexts/AuthContext";
@@ -89,6 +90,7 @@ const StandardHome = () => {
           <TransactionStatisticsCard />
           <TransferVolumeCard />
           <TotalValueLockedCard />
+          <HpMomentumCard />
           <div className="mt-4">
             <SearchesSection />
           </div>

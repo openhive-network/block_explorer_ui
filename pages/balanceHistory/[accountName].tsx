@@ -20,7 +20,15 @@ import BalanceHistorySearch, {
   DEFAULT_COIN_TYPE,
 } from "@/components/home/searches/BalanceHistorySearch";
 import { Card, CardHeader } from "@/components/ui/card";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 import BalanceHistoryChart from "@/components/balanceHistory/BalanceHistoryChart";
+import PowerActivityTable from "@/components/balanceHistory/PowerActivityTable";
+import Hive from "@/types/Hive";
 
 import ErrorPage from "../ErrorPage";
 import NoResult from "@/components/NoResult";
@@ -54,6 +62,8 @@ interface BalanceHistorySearchParams {
   page: number | undefined;
   filters: boolean[] | undefined;
   includeSavings: string;
+  view: "balance" | "power";
+  vestingFilter: Hive.VestingHistoryFilter;
 }
 
 export const defaultBalanceHistorySearchParams: BalanceHistorySearchParams = {
@@ -70,6 +80,8 @@ export const defaultBalanceHistorySearchParams: BalanceHistorySearchParams = {
   page: undefined,
   filters: undefined,
   includeSavings: "yes",
+  view: "balance",
+  vestingFilter: "all",
 };
 
 const prepareData = (operations: Operation[]) => {
@@ -340,53 +352,101 @@ export default function BalanceHistory() {
           coinType={coinType}
           setCoinType={setCoinType}
         />
-        {(isChartLoading || isAccHistDataLoading) && !chartData ? (
-          <div className="flex justify-center text-center align-center items-center mb-5">
-            <Loader2 className="animate-spin h-12 w-12" />
-          </div>
-        ) : (
-          <>
-            <Card
-              data-testid="account-details"
-              className="rounded"
-            >
+        <Tabs
+          value={paramsState.view}
+          onValueChange={(value) =>
+            setParams({
+              ...paramsState,
+              view: value as "balance" | "power",
+              page: undefined,
+            })
+          }
+          className="w-full"
+        >
+          <TabsList className="grid w-full grid-cols-2 max-w-md mb-3">
+            <TabsTrigger value="balance">
+              {t("balanceHistoryPage.tabBalance")}
+            </TabsTrigger>
+            <TabsTrigger value="power">
+              {t("balanceHistoryPage.tabPowerActivity")}
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="balance">
+            {(isChartLoading || isAccHistDataLoading) && !chartData ? (
+              <div className="flex justify-center text-center align-center items-center mb-5">
+                <Loader2 className="animate-spin h-12 w-12" />
+              </div>
+            ) : (
               <>
-                {message &&
-                  !isChartLoading &&
-                  chartData &&
-                  chartData.length && (
-                    <div className="rounded p-4 bg-gray-100 dark:bg-gray-700 mb-4 text-center text-sm text-gray-500">
-                      {message}
-                      <br />
-                    </div>
+                <Card
+                  data-testid="account-details"
+                  className="rounded"
+                >
+                  <>
+                    {message &&
+                      !isChartLoading &&
+                      chartData &&
+                      chartData.length && (
+                        <div className="rounded p-4 bg-gray-100 dark:bg-gray-700 mb-4 text-center text-sm text-gray-500">
+                          {message}
+                          <br />
+                        </div>
+                      )}
+                    <MemoizedBalanceHistoryChart
+                      aggregatedAccountBalanceHistory={preparedData}
+                      selectedCoinType={coinType}
+                      setSelectedCoinType={setCoinType}
+                      showSavingsBalance={includeSavings}
+                      className="h-[450px] mb-10 mr-0 pr-1 pb-6"
+                    />
+                  </>
+
+                  {(!isChartLoading && !chartData) ||
+                    (!isChartLoading && chartData?.length === 0 && (
+                      <NoResult titleKey="noResult.noChartData" />
+                    ))}
+                </Card>
+                <BalanceHistoryTable
+                  operations={convertBalanceHistoryResultsToTableOperations(
+                    accountBalanceHistory ?? []
                   )}
-                <MemoizedBalanceHistoryChart
-                  aggregatedAccountBalanceHistory={preparedData}
-                  selectedCoinType={coinType}
-                  setSelectedCoinType={setCoinType}
-                  showSavingsBalance={includeSavings}
-                  className="h-[450px] mb-10 mr-0 pr-1 pb-6"
+                  total_operations={accountBalanceHistory.total_operations ?? []}
+                  total_pages={accountBalanceHistory.total_pages ?? 0}
+                  current_page={
+                    paramsState.page ?? accountBalanceHistory.total_pages
+                  }
+                  account_name={accountNameFromRoute ?? ""}
                 />
               </>
+            )}
+          </TabsContent>
 
-              {(!isChartLoading && !chartData) ||
-                (!isChartLoading && chartData?.length === 0 && (
-                  <NoResult titleKey="noResult.noChartData" />
-                ))}
+          <TabsContent value="power">
+            <Card
+              data-testid="power-activity"
+              className="rounded p-4"
+            >
+              <PowerActivityTable
+                accountName={accountNameFromRoute}
+                filter={paramsState.vestingFilter}
+                onFilterChange={(filter) =>
+                  setParams({
+                    ...paramsState,
+                    vestingFilter: filter,
+                    page: undefined,
+                  })
+                }
+                page={paramsState.page}
+                onPageChange={(p) =>
+                  setParams({ ...paramsState, page: p })
+                }
+                fromBlock={effectiveFromBlock}
+                toBlock={effectiveToBlock}
+              />
             </Card>
-            <BalanceHistoryTable
-              operations={convertBalanceHistoryResultsToTableOperations(
-                accountBalanceHistory ?? []
-              )}
-              total_operations={accountBalanceHistory.total_operations ?? []}
-              total_pages={accountBalanceHistory.total_pages ?? 0}
-              current_page={
-                paramsState.page ?? accountBalanceHistory.total_pages
-              }
-              account_name={accountNameFromRoute ?? ""}
-            />
-          </>
-        )}
+          </TabsContent>
+        </Tabs>
 
         <div className="fixed bottom-[10px] right-0 flex flex-col items-end justify-end px-3 md:px-12">
           <ScrollTopButton />

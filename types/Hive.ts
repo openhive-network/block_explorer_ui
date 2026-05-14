@@ -1014,6 +1014,71 @@ namespace Hive {
     "coin-type": "HBD" | "HIVE";
   }
 
+  export class VestingStatsResponse {
+    date!: Date;
+    power_up_hive!: Supply | null;
+    power_up_vests!: Supply | null;
+    power_down_init_hive!: Supply | null;
+    power_down_init_vests!: Supply | null;
+    power_down_fill_hive!: Supply | null;
+    power_down_fill_vests!: Supply | null;
+    last_block_num!: number;
+  }
+
+  export class VestingStatsParams {
+    granularity!: string;
+    direction?: Hive.Direction;
+    "from-block"?: number | Date;
+    "to-block"?: number | Date;
+  }
+
+  export class AccountVestingStatsResponse {
+    power_up_hive!: Supply | null;
+    power_up_vests!: Supply | null;
+    power_down_init_hive!: Supply | null;
+    power_down_init_vests!: Supply | null;
+    power_down_fill_hive!: Supply | null;
+    power_down_fill_vests!: Supply | null;
+  }
+
+  export class AccountVestingStatsParams {
+    accountName!: string;
+    "from-block"?: number | Date;
+    "to-block"?: number | Date;
+  }
+
+  export type VestingHistoryFilter =
+    | "all"
+    | "power_up"
+    | "power_down_init"
+    | "power_down_fill";
+
+  export class VestingHistoryEvent {
+    block_num!: number;
+    operation_id!: number;
+    trx_id?: string;
+    timestamp!: string;
+    event_type!: Exclude<VestingHistoryFilter, "all">;
+    amount_hive!: Supply | null;
+    amount_vests!: Supply | null;
+  }
+
+  export class AccountVestingHistoryResponse {
+    total_operations!: number;
+    total_pages!: number;
+    operations_result!: VestingHistoryEvent[];
+  }
+
+  export class AccountVestingHistoryParams {
+    accountName!: string;
+    filter?: VestingHistoryFilter;
+    direction?: Hive.Direction;
+    page?: number;
+    "page-size"?: number;
+    "from-block"?: number | Date;
+    "to-block"?: number | Date;
+  }
+
   export class AccountFollowCount {
     account!: string;
     follower_count!: number;

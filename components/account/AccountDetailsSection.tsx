@@ -22,6 +22,7 @@ import AccountIncomingRcDelegationsCard from "./AccountIncomingRcDelegationsCard
 import AccountBalanceCard from "./AccountBalanceCard/AccountBalanceCard";
 import Explorer from "@/types/Explorer";
 import AccountBalanceHistoryCard from "./AccountBalanceHistoryCard";
+import AccountHpActivityCard from "./AccountHpActivityCard";
 import AccountRecurrentTransfersCard from "./AccountRecurrentTransfersCard";
 import useAccountRecurrentTransfers from "@/hooks/api/accountPage/useAccoutRecurrentTransfers";
 import { AllTransfers } from "./AccountRecurrentTransfersCard";
@@ -431,6 +432,11 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
                   userDetails={accountDetails}
                   isInitiallyOpen={tabExpandedStates.wallet}
                   onChangeTab={changeTab}
+                />
+                <AccountHpActivityCard
+                  header={t("accountDetailsSection.hpActivity")}
+                  userDetails={accountDetails}
+                  isInitiallyOpen={tabExpandedStates.wallet}
                 />
                 <AccountBalanceHistoryCard
                   header={t("accountDetailsSection.balanceHistory")}
