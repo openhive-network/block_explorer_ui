@@ -6,6 +6,7 @@ import {
   ProposalStatusFilter,
   ProposalSortOrder,
 } from "@/components/proposals/ProposalControls";
+import { convertToUTCDate } from "@/utils/TimeUtils";
 
 const PROPOSALS_FETCH_LIMIT = 1000;
 
@@ -41,8 +42,8 @@ const useProposals = ({ status, orderBy, direction, enabled = true }: UseProposa
         .map((proposal) => {
           return {
             ...proposal,
-            start_date: new Date(proposal.start_date),
-            end_date: new Date(proposal.end_date),
+            start_date: convertToUTCDate(proposal.start_date as unknown as string),
+            end_date: convertToUTCDate(proposal.end_date as unknown as string),
           } as ProcessedProposal;
         });
     },

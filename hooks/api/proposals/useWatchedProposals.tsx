@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
+import { convertToUTCDate } from "@/utils/TimeUtils";
 
 const useWatchedProposals = (ids: number[]) => {
   const sortedKey = [...ids].sort((a, b) => a - b).join(",");
@@ -10,8 +11,8 @@ const useWatchedProposals = (ids: number[]) => {
       const raw = await fetchingService.getProposal(ids);
       return raw.map((p) => ({
         ...p,
-        start_date: new Date(p.start_date),
-        end_date: new Date(p.end_date),
+        start_date: convertToUTCDate(p.start_date as unknown as string),
+        end_date: convertToUTCDate(p.end_date as unknown as string),
       }));
     },
     enabled: ids.length > 0,
