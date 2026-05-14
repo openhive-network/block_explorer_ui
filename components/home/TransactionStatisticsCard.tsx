@@ -88,7 +88,7 @@ const TransactionStatisticsCard = () => {
   };
 
   return (
-    <div className="bg-theme rounded mt-4 shadow-md overflow-hidden">
+    <div className="bg-theme rounded mt-2 shadow-md overflow-hidden">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-5">
         {/* Left Side: Total and Today Transactions */}
         <div className="md:col-span-1">
