@@ -816,6 +816,56 @@ class FetchingService {
     ].totalValueLocked();
   }
 
+  async getVestingStats(
+    granularity: "daily" | "monthly" | "yearly",
+    direction: "asc" | "desc" = "asc",
+    fromBlock?: Date | number | undefined,
+    toBlock?: Date | number | undefined
+  ): Promise<Hive.VestingStatsResponse[]> {
+    return await this.extendedHiveChain!.restApi["balance-api"].vestingStats({
+      granularity,
+      direction,
+      "from-block": fromBlock,
+      "to-block": toBlock,
+    });
+  }
+
+  async getAccountVestingStats(
+    accountName: string,
+    fromBlock?: Date | number | undefined,
+    toBlock?: Date | number | undefined
+  ): Promise<Hive.AccountVestingStatsResponse> {
+    return await this.extendedHiveChain!.restApi[
+      "balance-api"
+    ].accountVestingStats({
+      accountName,
+      "from-block": fromBlock,
+      "to-block": toBlock,
+    });
+  }
+
+  async getAccountVestingHistory(
+    accountName: string,
+    filter: Hive.VestingHistoryFilter = "all",
+    page: number | undefined,
+    pageSize: number | undefined,
+    direction: "asc" | "desc" = "desc",
+    fromBlock?: Date | number | undefined,
+    toBlock?: Date | number | undefined
+  ): Promise<Hive.AccountVestingHistoryResponse> {
+    return await this.extendedHiveChain!.restApi[
+      "balance-api"
+    ].accountVestingHistory({
+      accountName,
+      filter,
+      direction,
+      page,
+      "page-size": pageSize,
+      "from-block": fromBlock,
+      "to-block": toBlock,
+    });
+  }
+
   async getAccountBalances(
     accountName: string
   ): Promise<Hive.AccountBalancesResponse> {

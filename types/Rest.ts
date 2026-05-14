@@ -192,6 +192,12 @@ export const extendedRest = {
       result: Hive.TotalValueLocked,
       urlPath: "total-value-locked",
     },
+    vestingStats: {
+      params: Hive.VestingStatsParams,
+      result: Hive.VestingStatsResponse,
+      responseArray: true,
+      urlPath: "vesting-stats",
+    },
     accountBalances: {
       params: Hive.AccountBalancesParams,
       result: Hive.AccountBalancesResponse,
@@ -201,6 +207,16 @@ export const extendedRest = {
       params: Hive.GetRcDelegationsParams,
       result: Hive.RcDelegationsApiResponse,
       urlPath: "accounts/{accountName}/rc-delegations",
+    },
+    accountVestingStats: {
+      params: Hive.AccountVestingStatsParams,
+      result: Hive.AccountVestingStatsResponse,
+      urlPath: "accounts/{accountName}/vesting-stats",
+    },
+    accountVestingHistory: {
+      params: Hive.AccountVestingHistoryParams,
+      result: Hive.AccountVestingHistoryResponse,
+      urlPath: "accounts/{accountName}/vesting-history",
     },
   },
 };
