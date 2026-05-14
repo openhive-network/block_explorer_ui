@@ -6,6 +6,11 @@ export const convertUTCDateToLocalDate = (date: string | Date) => {
   return formatAndDelocalizeTime(newDate);
 };
 
+// Hive APIs return ISO timestamps without a timezone marker (e.g. "2026-05-15T14:00:00")
+// which JS parses as local time. Force UTC interpretation so date math is correct.
+export const convertToUTCDate = (date: string): Date =>
+  new Date(/[zZ]|[+-]\d{2}:?\d{2}$/.test(date) ? date : `${date}Z`);
+
 export const formatAndDelocalizeTime = (date?: string | Date): string => {
   if (!date) return "";
   return moment(date).format(config.baseMomentTimeFormat);

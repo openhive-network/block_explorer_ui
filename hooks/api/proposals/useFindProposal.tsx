@@ -1,6 +1,7 @@
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
+import { convertToUTCDate } from "@/utils/TimeUtils";
 
 const useFindProposal = (proposalId: number | null) => {
   const {
@@ -19,8 +20,8 @@ const useFindProposal = (proposalId: number | null) => {
       return rawProposals.map((proposal) => {
         return {
           ...proposal,
-          start_date: new Date(proposal.start_date),
-          end_date: new Date(proposal.end_date),
+          start_date: convertToUTCDate(proposal.start_date as unknown as string),
+          end_date: convertToUTCDate(proposal.end_date as unknown as string),
         };
       });
     },
