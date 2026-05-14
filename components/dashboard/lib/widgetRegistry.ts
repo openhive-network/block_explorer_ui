@@ -138,7 +138,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     id: "top-witnesses",
     name: "widgets.topWitnessesName",
     component: TopWitnessesCard,
-    defaultLayout: { w: 4, h: 11, minW: 3, minH: 8 },
+    defaultLayout: { w: 2.95, h: 11, minW: 2, minH: 8 },
     getProps: (data) => ({
       witnessesData: data.witnessesData,
       isLoading: data.isWitnessDataLoading,
@@ -148,7 +148,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     id: "top-communities",
     name: "widgets.topCommunitiesName",
     component: TopCommunitiesCard,
-    defaultLayout: { w: 4, h: 7, minW: 3, minH: 5 },
+    defaultLayout: { w: 2.95, h: 7, minW: 2, minH: 5 },
     getProps: (data) => ({
       communitiesData: data.popularCommunitiesData,
       isLoading: data.isCommunitiesLoading,
@@ -184,7 +184,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     id: "watched-proposals",
     name: "widgets.watchedProposalsName",
     component: WatchedProposalsWidget,
-    defaultLayout: { w: 4, h: 6, minW: 3, minH: 3 },
+    defaultLayout: { w: 2.95, h: 6, minW: 2, minH: 3 },
     allowMultiple: false,
     dynamicHeight: true,
   },
