@@ -113,7 +113,6 @@ const WatchedProposalsWidget = () => {
     if (typeof window === "undefined" || !enriched.length || !username) return;
 
     const STORAGE_KEY = `hivescan_watched_status_${username}`;
-    const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
     let stored: Record<string, { funded: boolean; status: string; checkedAt: number }> = {};
     try {
@@ -144,13 +143,7 @@ const WatchedProposalsWidget = () => {
         continue;
       }
 
-      // Carry forward if within the same day
-      if (now - prev.checkedAt < ONE_DAY_MS) {
-        updated[key] = prev;
-        continue;
-      }
-
-      // New day — detect any status change
+      // Detect any status change
       const fundedChanged = prev.funded !== p.isFunded;
       const statusChanged = prev.status !== p.status;
       if (fundedChanged || statusChanged) {

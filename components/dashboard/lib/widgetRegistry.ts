@@ -193,7 +193,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     id: "witness-health",
     name: "widgets.witnessHealthName",
     component: WitnessHealthWidget,
-    defaultLayout: { w: 4, h: 6, minW: 3, minH: 3 },
+    defaultLayout: { w: 2.95, h: 6, minW: 2, minH: 3 },
     allowMultiple: false,
     dynamicHeight: true,
   },
