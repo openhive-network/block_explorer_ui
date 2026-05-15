@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useI18n } from "@/i18n/i18n";
-import { Loader2, ArrowRight } from "lucide-react";
+import { Loader2, ArrowRight, Heart, Search, Users } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Head from "next/head";
@@ -15,6 +15,7 @@ import VoterFilterBanner from "@/components/Witnesses/VoterFilterBanner";
 import WitnessesTable, {
   SORT_KEY_BY_CELL,
 } from "@/components/Witnesses/WitnessesTable";
+import AutocompleteInput from "@/components/ui/AutoCompleteInput";
 import WitnessScheduleIcon from "@/components/WitnessScheduleIcon";
 import ScrollTopButton from "@/components/ScrollTopButton";
 import { config } from "@/Config";
@@ -122,6 +123,15 @@ export default function Witnesses() {
   const [voterAccount, setVoterAccount] = useState<string>("");
   const [isVotersOpen, setIsVotersOpen] = useState<boolean>(false);
   const [isVotesHistoryOpen, setIsVotesHistoryOpen] = useState<boolean>(false);
+  const [voterSearch, setVoterSearch] = useState<string>("");
+
+  const handleVoterSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const name = voterSearch.trim().replace(/^@/, "");
+    if (!name) return;
+    router.push(`/witnesses?voter=${encodeURIComponent(name)}`);
+    setVoterSearch("");
+  };
   const [sort, setSort] = useState<{
     orderBy: string;
     isOrderAscending: boolean;
@@ -278,10 +288,48 @@ export default function Witnesses() {
       <div className="page-container rounded bg-white dark:bg-theme text-gray-800 dark:text-gray-200 font-sans antialiased">
         <div className="mx-4 my-4">
           <main className="flex-1">
-            <div className="flex flex-col md:flex-row justify-between items-start bg-theme">
+            <div className="flex flex-col md:flex-row md:justify-between md:items-center bg-theme gap-3">
               <PageTitle titleKey="pageTitle.hiveWitnesses" className="py-4" />
 
-              <div className="flex justify-start md:justify-end mt-2 md:mt-0 ml-1 md:ml-4 mr-4 flex-shrink-0">
+              <div className="flex items-center gap-2 mb-2 md:mb-0 ml-1 md:ml-4 mr-4 flex-shrink-0">
+                {/* Unified voter-lookup control: quick shortcuts + autocomplete search */}
+                <div className="inline-flex items-stretch rounded-full border border-navbar-border bg-secondary/20 hover:bg-secondary/30 transition-colors">
+                  {isLoggedIn && voterFilter !== username && username && (
+                    <Link
+                      href={`/witnesses?voter=${username}`}
+                      className="inline-flex items-center gap-1.5 px-3 rounded-l-full text-xs font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 border-r border-navbar-border transition-colors whitespace-nowrap"
+                    >
+                      <Heart
+                        className="h-3.5 w-3.5"
+                        fill="#ef4444"
+                        stroke="#dc2626"
+                      />
+                      {t("witnesses.myVotes")}
+                    </Link>
+                  )}
+                  {voterFilter && (
+                    <Link
+                      href="/witnesses"
+                      className="inline-flex items-center gap-1.5 px-3 rounded-l-full text-xs font-semibold text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 border-r border-navbar-border transition-colors whitespace-nowrap"
+                    >
+                      <Users className="h-3.5 w-3.5" />
+                      {t("witnesses.allWitnesses")}
+                    </Link>
+                  )}
+                  <form
+                    onSubmit={handleVoterSearchSubmit}
+                    className="flex items-center pl-2.5 pr-1 rounded-full"
+                  >
+                    <Search className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+                    <AutocompleteInput
+                      value={voterSearch}
+                      onChange={setVoterSearch}
+                      placeholder={t("witnesses.searchVoterPlaceholder")}
+                      inputType="account_name"
+                      className="!w-44 [&_input]:border-0 [&_input]:bg-transparent [&_input]:h-8 [&_input]:text-xs [&_input]:py-0 [&_input]:px-2 [&_input]:shadow-none [&_input]:focus-visible:ring-0"
+                    />
+                  </form>
+                </div>
                 <WitnessScheduleIcon />
               </div>
             </div>
@@ -292,12 +340,7 @@ export default function Witnesses() {
               proxyChain={voterFilter ? proxyChain : userProxyChain}
               voteCount={voterWitnessVotes.length}
               isCountLoading={isFilterLoading}
-              onClearFilter={
-                voterFilter
-                  ? () =>
-                      router.push("/witnesses", undefined, { shallow: true })
-                  : undefined
-              }
+              showWhenFiltered={!!voterFilter}
             />
 
             {isWitnessDataLoading ||

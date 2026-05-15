@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { Users, Handshake } from "lucide-react";
+import { Handshake } from "lucide-react";
 import { useI18n } from "@/i18n/i18n";
 import { cn } from "@/lib/utils";
 import SetProxyButton from "./SetProxyButton";
@@ -11,7 +11,8 @@ interface VoterFilterBannerProps {
   proxyChain: string[];
   voteCount: number;
   isCountLoading: boolean;
-  onClearFilter?: () => void;
+  /** When true, render even without a proxy chain (filter context comes from the page header). */
+  showWhenFiltered?: boolean;
 }
 
 const VoterFilterBanner: React.FC<VoterFilterBannerProps> = ({
@@ -20,12 +21,12 @@ const VoterFilterBanner: React.FC<VoterFilterBannerProps> = ({
   proxyChain,
   voteCount,
   isCountLoading,
-  onClearFilter,
+  showWhenFiltered,
 }) => {
   const { t } = useI18n();
   const hasProxy = proxyChain.length > 0;
 
-  if (!onClearFilter && !hasProxy) return null;
+  if (!hasProxy && !showWhenFiltered) return null;
 
   const colorClass = hasProxy
     ? "bg-amber-50 dark:bg-amber-950/20 border-amber-200 dark:border-amber-800/30 text-amber-800 dark:text-amber-200"
@@ -71,25 +72,11 @@ const VoterFilterBanner: React.FC<VoterFilterBannerProps> = ({
         )}
         {hasProxy ? proxyMessage : noProxyMessage}
       </div>
-      <div className="flex items-center gap-2 flex-shrink-0">
-        {hasProxy && isOwnView && (
+      {hasProxy && isOwnView && (
+        <div className="flex items-center gap-2 flex-shrink-0">
           <SetProxyButton witnessName={proxyChain[0]} variant="compact" />
-        )}
-        {onClearFilter && (
-          <button
-            onClick={onClearFilter}
-            className={cn(
-              "inline-flex items-center gap-1.5 rounded px-2.5 py-1.5 text-xs font-semibold transition-colors whitespace-nowrap",
-              hasProxy
-                ? "bg-amber-100 text-amber-700 hover:bg-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:hover:bg-amber-900/50"
-                : "bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50"
-            )}
-          >
-            <Users className="h-3.5 w-3.5" />
-            {t("witnesses.showAllWitnesses")}
-          </button>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

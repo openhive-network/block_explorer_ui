@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { formatAndDelocalizeFromTime } from "@/utils/TimeUtils";
 
-type SortKey = "rank" | "missed" | "status" | "feedAge";
+type SortKey = "rank" | "missed" | "feedAge";
 type SortDir = "asc" | "desc";
 
 const FEED_STALE_MS = 24 * 60 * 60 * 1000;
@@ -33,10 +33,9 @@ interface ColHeader {
 }
 
 const COL_HEADERS: ColHeader[] = [
-  { key: "status",  labelKey: "common.status",         className: "w-10 text-center" },
-  { key: "rank",    labelKey: "common.rank",            className: "w-10 text-center" },
-  { key: "missed",  labelKey: "witnesses.missedblocks", className: "flex-1 text-right" },
-  { key: "feedAge", labelKey: "witnesses.feedage",      className: "w-24 text-right"  },
+  { key: "rank",    labelKey: "common.rank",            className: "w-9 text-center" },
+  { key: "missed",  labelKey: "witnesses.missedblocks", className: "w-14 text-right" },
+  { key: "feedAge", labelKey: "witnesses.feedage",      className: "w-20 text-right" },
 ];
 
 function SortIcon({ col, sortKey, sortDir }: { col: SortKey; sortKey: SortKey; sortDir: SortDir }) {
@@ -74,7 +73,7 @@ const WitnessHealthWidget = () => {
       setSortDir((d) => (d === "asc" ? "desc" : "asc"));
     } else {
       setSortKey(col);
-      // missed/feedAge default to desc so worst-first; rank/status to asc.
+      // missed/feedAge default to desc so worst-first; rank to asc.
       setSortDir(col === "missed" || col === "feedAge" ? "desc" : "asc");
     }
   };
@@ -94,9 +93,6 @@ const WitnessHealthWidget = () => {
     const dir = sortDir === "asc" ? 1 : -1;
     list.sort((a, b) => {
       switch (sortKey) {
-        case "status":
-          if (a.isActive !== b.isActive) return (a.isActive ? 1 : -1) * dir;
-          return (a.rank - b.rank) * dir;
         case "missed":
           return (a.missedBlocks - b.missedBlocks) * dir;
         case "feedAge": {
@@ -104,7 +100,7 @@ const WitnessHealthWidget = () => {
           const bT = b.feedUpdatedAt?.getTime() ?? 0;
           return (aT - bT) * dir;
         }
-        default: // rank
+        default:
           return (a.rank - b.rank) * dir;
       }
     });
@@ -203,8 +199,8 @@ const WitnessHealthWidget = () => {
               </div>
             ) : (
               <>
-            <div className="flex items-center gap-1.5 px-2 pb-1 border-b border-slate-100 dark:border-slate-800">
-              <span className="flex-1 text-[0.6rem] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
+            <div className="flex items-center gap-1 px-2 pb-1 border-b border-slate-100 dark:border-slate-800">
+              <span className="flex-1 min-w-0 text-[0.55rem] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500">
                 {t("common.name")}
               </span>
               {COL_HEADERS.map((col) => (
@@ -212,7 +208,7 @@ const WitnessHealthWidget = () => {
                   key={col.key}
                   onClick={() => handleSort(col.key)}
                   className={cn(
-                    "text-[0.6rem] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 hover:text-primary transition-colors whitespace-nowrap",
+                    "text-[0.55rem] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 hover:text-primary transition-colors whitespace-nowrap",
                     col.className,
                     sortKey === col.key && "text-primary dark:text-primary"
                   )}
@@ -230,7 +226,7 @@ const WitnessHealthWidget = () => {
                   <li
                     key={w.name}
                     className={cn(
-                      "flex items-center gap-1.5 px-2 py-1 rounded border",
+                      "flex items-center gap-1 px-2 py-1 rounded border",
                       w.isActive
                         ? "bg-slate-50 dark:bg-slate-900 border-transparent dark:border-slate-800"
                         : "bg-red-50/60 dark:bg-red-950/20 border-red-200/60 dark:border-red-900/30"
@@ -243,6 +239,20 @@ const WitnessHealthWidget = () => {
                       height={18}
                       className="rounded-full flex-shrink-0"
                     />
+                    <span
+                      title={
+                        w.isLoading
+                          ? ""
+                          : w.isActive
+                          ? t("watchlist.witnesses.active")
+                          : t("watchlist.witnesses.inactive")
+                      }
+                      className={cn(
+                        "h-1.5 w-1.5 rounded-full flex-shrink-0",
+                        w.isLoading ? "bg-slate-300 animate-pulse"
+                          : w.isActive ? "bg-green-500" : "bg-red-500"
+                      )}
+                    />
                     <Link
                       href={`/@${w.name}`}
                       className="flex-1 min-w-0 text-xs font-medium text-link hover:underline truncate"
@@ -250,22 +260,12 @@ const WitnessHealthWidget = () => {
                       @{w.name}
                     </Link>
 
-                    <span className="w-10 flex justify-center flex-shrink-0">
-                      <span
-                        className={cn(
-                          "h-1.5 w-1.5 rounded-full",
-                          w.isLoading ? "bg-slate-300 animate-pulse"
-                            : w.isActive ? "bg-green-500" : "bg-red-500"
-                        )}
-                      />
-                    </span>
-
-                    <span className="w-10 text-center flex-shrink-0 text-[0.6rem] font-semibold text-slate-500 dark:text-slate-400">
+                    <span className="w-9 text-center flex-shrink-0 text-[0.6rem] font-semibold text-slate-500 dark:text-slate-400">
                       {w.rank > 0 ? `#${w.rank}` : "—"}
                     </span>
 
                     <span className={cn(
-                      "flex-1 text-right flex-shrink-0 text-[0.6rem] font-medium",
+                      "w-14 text-right flex-shrink-0 text-[0.6rem] font-medium",
                       w.missedBlocks > 500
                         ? "text-red-500 dark:text-red-400"
                         : w.missedBlocks > 0
@@ -276,7 +276,7 @@ const WitnessHealthWidget = () => {
                     </span>
 
                     <span className={cn(
-                      "w-24 text-right flex-shrink-0 text-[0.6rem] font-medium truncate",
+                      "w-20 text-right flex-shrink-0 text-[0.6rem] font-medium truncate",
                       stale && w.isActive
                         ? "text-orange-500 dark:text-orange-400"
                         : "text-slate-300 dark:text-slate-600"
