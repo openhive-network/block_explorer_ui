@@ -197,7 +197,7 @@ const WatchedProposalsWidget = () => {
   }, [enriched, t, markProposalChanged, username]);
 
   return (
-    <Card className="col-span-12 lg:col-span-3 overflow-hidden">
+    <Card className="col-span-12 lg:col-span-3">
       <CardHeader className="flex justify-between items-center border-b px-3 py-3">
         <div className="flex items-center gap-2">
           <CardTitle>{t("watchlist.proposals.title")}</CardTitle>
