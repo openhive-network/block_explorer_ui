@@ -91,16 +91,12 @@ export function useDashboard() {
 
   const onBreakpointChange = (newBreakpoint: string) => setCurrentBreakpoint(newBreakpoint);
 
-  const onLayoutChange = (currentLayout: Layout[], _allLayouts: Layouts) => {
+  const onLayoutChange = (_currentLayout: Layout[], allLayouts: Layouts) => {
     if (!isEditMode) return;
     if (!username) return;
-
-    // Only update and save if we are on Desktop
+    setLayouts(allLayouts);
     if (EDITABLE_BREAKPOINTS.includes(currentBreakpoint)) {
-      // Regenerate all mobile layouts based on the new Desktop changes
-      const updatedLayouts = generateDerivedLayouts(currentLayout);
-      setLayouts(updatedLayouts);
-      localStorage.setItem(getLayoutStorageKey(username), JSON.stringify(updatedLayouts));
+      localStorage.setItem(getLayoutStorageKey(username), JSON.stringify(allLayouts));
     }
   };
 

@@ -5,7 +5,7 @@ export const getLayoutStorageKey = (username: string) => `hivescan_dashboard_lay
 export const getWidgetsStorageKey = (username: string) => `hivescan_dashboard_widgets_${username}`;
 export const getWidgetStatesStorageKey = (username: string) => `hivescan_dashboard_widget_states_${username}`;
 
-export const COLLAPSED_WIDGET_HEIGHT = 1.2;
+export const COLLAPSED_WIDGET_HEIGHT = 1.5;
 export const EDITABLE_BREAKPOINTS = ['lg', 'xl'];
 
 export const DEFAULT_WIDGETS: Array<{ i: string; type: string }> = [
@@ -80,7 +80,7 @@ export const generateDerivedLayouts = (masterLayout: Layout[]): Layouts => {
 
   const getMobileHeight = (item: Layout) => {
     // 1. If the item is currently collapsed, MUST return COLLAPSED_WIDGET_HEIGHT
-    if (Math.abs(item.h - COLLAPSED_WIDGET_HEIGHT) < 0.1) {
+    if (Math.abs(item.h - COLLAPSED_WIDGET_HEIGHT) < 0.2) {
       return COLLAPSED_WIDGET_HEIGHT;
     }
     
