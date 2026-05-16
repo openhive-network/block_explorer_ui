@@ -108,7 +108,7 @@ const WitnessHealthWidget = () => {
   }, [witnesses, sortKey, sortDir]);
 
   return (
-    <Card className="col-span-12 lg:col-span-3 overflow-hidden">
+    <Card className="col-span-12 lg:col-span-3 overflow-hidden mb-2">
       <CardHeader className="flex justify-between items-center border-b px-3 py-2.5">
         <CardTitle>{t("watchlist.witnesses.title")}</CardTitle>
         <Link

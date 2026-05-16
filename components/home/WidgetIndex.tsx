@@ -129,6 +129,8 @@ const WidgetIndex = () => {
         widgetConfig.dynamicHeight
           ? "instant-height"
           : "transition-all duration-200",
+        widgetConfig.collapsible &&
+          "[&_.data-box]:mt-0 [&_.data-box-chart]:mt-0",
         finalIsEditMode
           ? "border-2 border-dashed border-slate-400 rounded-lg overflow-hidden cursor-move"
           : "border-2 border-transparent",
