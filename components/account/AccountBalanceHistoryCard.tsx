@@ -1,5 +1,5 @@
 import React, { useState, useMemo, MouseEvent } from "react";
-import { ArrowDown, ArrowUp } from "lucide-react";
+import { ArrowDown, ArrowUp, Maximize2 } from "lucide-react";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import Explorer from "@/types/Explorer";
 import BalanceHistoryChart from "../balanceHistory/BalanceHistoryChart";
@@ -7,65 +7,15 @@ import moment from "moment";
 import { useRouter } from "next/router";
 import { Loader2 } from "lucide-react";
 import NoResult from "../NoResult";
-import { Button } from "../ui/button";
 import useAggregatedBalanceHistory from "@/hooks/api/balanceHistory/useAggregatedHistory";
-import { Operation } from "@/pages/balanceHistory/[accountName]";
 import { useI18n } from "../../i18n/i18n";
+import { cn } from "@/lib/utils";
+import { prepareBalanceHistoryData } from "@/utils/BalanceHistoryUtils";
 
-// Define the type for balance operation data
 type AccountBalanceHistoryCardProps = {
   header: string;
   userDetails: Explorer.FormattedAccountDetails;
   isInitiallyOpen: boolean;
-};
-
-const prepareData = (operations: Operation[]) => {
-  if (!operations || operations.length === 0) return [];
-
-  const aggregatedData = new Map<
-    string,
-    {
-      balance: number;
-      balance_change: number;
-      savings_balance: number | undefined;
-      savings_balance_change: number | undefined;
-      hivePrice: string;
-    }
-  >();
-
-  operations.forEach((operation: any) => {
-    let balance_change =
-      operation.balance.balance - operation.prev_balance.balance;
-    let balance = parseInt(operation.balance.balance, 10);
-    let savings_balance = operation.balance.savings_balance
-      ? parseInt(operation.balance.savings_balance, 10)
-      : undefined;
-    let savings_balance_change =
-      operation.balance.savings_balance -
-      operation.prev_balance.savings_balance;
-    let hivePrice = operation.hivePrice;
-
-    aggregatedData.set(operation.date, {
-      balance,
-      balance_change,
-      savings_balance,
-      savings_balance_change,
-      hivePrice,
-    });
-  });
-
-  const preparedData = Array.from(aggregatedData.entries()).map(
-    ([date, data]) => ({
-      timestamp: date,
-      balance: data.balance,
-      balance_change: data.balance_change,
-      savings_balance: data.savings_balance,
-      savings_balance_change: data.savings_balance_change,
-      hivePrice: data.hivePrice,
-    })
-  );
-
-  return preparedData;
 };
 
 const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
@@ -123,13 +73,19 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
           <span>{isBalancesHidden ? <ArrowDown /> : <ArrowUp />}</span>
         </div>
 
-        <div className="flex justify-end items-end w-full">
-          <Button
+        <div className="flex justify-end items-end w-full px-4">
+          <button
+            type="button"
             onClick={handleButtonClick}
-            className="rounded p-2 mr-4"
+            className={cn(
+              "inline-flex items-center gap-1 rounded-full border border-navbar-border",
+              "bg-theme text-text px-3 py-1 text-xs font-medium",
+              "hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            )}
           >
+            <Maximize2 size={12} />
             {t("accountBalanceHistoryCard.fullChart")}
-          </Button>
+          </button>
         </div>
       </CardHeader>
       <CardContent
@@ -150,7 +106,7 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
         {!isLoading && !hasData && <NoResult />}
         {!isLoading && hasData && (
           <BalanceHistoryChart
-            aggregatedAccountBalanceHistory={prepareData(
+            aggregatedAccountBalanceHistory={prepareBalanceHistoryData(
               aggregatedAccountBalanceHistory
             )}
             quickView={true}

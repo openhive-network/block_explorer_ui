@@ -19,6 +19,8 @@ import BalanceHistoryTable from "@/components/balanceHistory/BalanceHistoryTable
 import BalanceHistorySearch, {
   DEFAULT_COIN_TYPE,
 } from "@/components/home/searches/BalanceHistorySearch";
+import ActiveFilterChips from "@/components/balanceHistory/ActiveFilterChips";
+import BalanceKpiStrip from "@/components/balanceHistory/BalanceKpiStrip";
 import { Card, CardHeader } from "@/components/ui/card";
 import BalanceHistoryChart from "@/components/balanceHistory/BalanceHistoryChart";
 
@@ -30,8 +32,14 @@ import PageTitle from "@/components/PageTitle";
 import FilterSectionToggle from "@/components/account/FilterSectionToggle";
 import { setLocalStorage, getLocalStorage } from "@/utils/LocalStorage";
 import { useI18n } from "@/i18n/i18n";
+import { useSettings } from "@/contexts/SettingsContext";
+
+export type VestHpUnit = "vests" | "hp";
 
 const MemoizedBalanceHistoryChart = React.memo(BalanceHistoryChart);
+const MemoizedBalanceHistoryTable = React.memo(BalanceHistoryTable);
+
+import { prepareBalanceHistoryData } from "@/utils/BalanceHistoryUtils";
 
 export interface Operation {
   timestamp: number;
@@ -40,13 +48,13 @@ export interface Operation {
   hivePrice: string;
 }
 
-interface BalanceHistorySearchParams {
+export interface BalanceHistorySearchParams {
   accountName?: string;
   coinType: string;
   fromBlock: Date | number | undefined;
   toBlock: Date | number | undefined;
-  fromDate: undefined;
-  toDate: undefined;
+  fromDate: Date | undefined;
+  toDate: Date | undefined;
   lastBlocks: number | undefined;
   lastTime: number | undefined;
   timeUnit: string | undefined;
@@ -72,58 +80,10 @@ export const defaultBalanceHistorySearchParams: BalanceHistorySearchParams = {
   includeSavings: "yes",
 };
 
-const prepareData = (operations: Operation[]) => {
-  if (!operations || operations.length === 0) return [];
-
-  const aggregatedData = new Map<
-    string,
-    {
-      balance: number;
-      balance_change: number;
-      savings_balance: number | undefined;
-      savings_balance_change: number | undefined;
-      hivePrice: string;
-    }
-  >();
-
-  operations?.forEach((operation: any) => {
-    let balance_change =
-      operation.balance.balance - operation.prev_balance.balance;
-    let balance = parseInt(operation.balance.balance, 10);
-    let savings_balance = operation.balance.savings_balance
-      ? parseInt(operation.balance.savings_balance, 10)
-      : undefined;
-    let savings_balance_change =
-      operation.balance.savings_balance -
-      operation.prev_balance.savings_balance;
-    let hivePrice = operation.hivePrice;
-
-    aggregatedData.set(operation.date, {
-      balance,
-      balance_change,
-      savings_balance,
-      savings_balance_change,
-      hivePrice,
-    });
-  });
-
-  const preparedData = Array.from(aggregatedData.entries()).map(
-    ([date, data]) => ({
-      timestamp: date,
-      balance: data.balance,
-      balance_change: data.balance_change,
-      savings_balance: data.savings_balance,
-      savings_balance_change: data.savings_balance_change,
-      hivePrice: data.hivePrice,
-    })
-  );
-
-  return preparedData;
-};
-
 export default function BalanceHistory() {
   const router = useRouter();
   const { t } = useI18n();
+  const { settings } = useSettings();
   const accountNameFromRoute = (router.query.accountName as string)?.replace(
     "@",
     ""
@@ -136,10 +96,30 @@ export default function BalanceHistory() {
   const [coinType, setCoinType] = useState(
     paramsState.coinType ?? DEFAULT_COIN_TYPE
   );
-  // Initialize state variables outside the conditional block
-  const [isFiltersActive, setIsFiltersActive] = useState(false);
+  const [unit, setUnit] = useState<VestHpUnit>(
+    settings.displayVestHpMode === "hp" ? "hp" : "vests"
+  );
+
+  useEffect(() => {
+    setUnit(settings.displayVestHpMode === "hp" ? "hp" : "vests");
+  }, [settings.displayVestHpMode]);
+  const initialHasActiveFilters = Boolean(
+    (paramsState.filters?.length ?? 0) ||
+      paramsState.fromBlock ||
+      paramsState.toBlock ||
+      paramsState.fromDate ||
+      paramsState.toDate ||
+      paramsState.coinType !== DEFAULT_COIN_TYPE ||
+      paramsState.includeSavings !== "yes"
+  );
+  const [isFiltersActive, setIsFiltersActive] = useState(
+    initialHasActiveFilters
+  );
   const [isBalanceFilterSectionVisible, setIsBalanceFilterSectionVisible] =
-    useState(getLocalStorage("is_balance_filters_visible", true) ?? false);
+    useState(
+      initialHasActiveFilters &&
+        (getLocalStorage("is_balance_filters_visible", true) ?? false)
+    );
 
   const handleFiltersVisibility = () => {
     setIsBalanceFilterSectionVisible(!isBalanceFilterSectionVisible);
@@ -223,19 +203,13 @@ export default function BalanceHistory() {
   );
 
   const preparedData = useMemo(() => {
-    return chartData ? prepareData(chartData) : [];
+    return chartData ? prepareBalanceHistoryData(chartData) : [];
   }, [chartData]);
 
-  let message = "";
-  if (
-    effectiveFromBlock === defaultFromDate &&
-    !fromBlockParam &&
-    !toBlockParam
-  ) {
-    message = t("balanceHistoryPage.showingResultsLastMonth");
-  } else {
-    message = t("balanceHistoryPage.showingResultsAppliedFilters");
-  }
+  const tableOperations = useMemo(
+    () => convertBalanceHistoryResultsToTableOperations(accountBalanceHistory ?? []),
+    [accountBalanceHistory]
+  );
 
   const routeAccountName = Array.isArray(router.query.accountName)
     ? router.query.accountName[0]
@@ -247,7 +221,6 @@ export default function BalanceHistory() {
     )}`;
     return <ErrorPage errorMessage={accountNotFoundError} />;
   }
-  // Return early with a loading state if accountNameFromRoute is not yet available
   if (!accountNameFromRoute) {
     return (
       <>
@@ -269,7 +242,7 @@ export default function BalanceHistory() {
   return (
     <>
       <Head>
-        <title>@{accountNameFromRoute} - Hive Explorer</title>
+        <title>@{accountNameFromRoute} Balance History - Hive Explorer</title>
       </Head>
 
       <div className="page-container">
@@ -283,18 +256,18 @@ export default function BalanceHistory() {
                       <Image
                         className="rounded-full border-2 border-explorer-orange mt-1"
                         src={getHiveAvatarUrl(accountNameFromRoute)}
-                        alt="avatar"
+                        alt={`${accountNameFromRoute} avatar`}
                         width={50}
                         height={50}
                         data-testid="user-avatar"
                       />
                       <div>
                         <h2
-                          className=" flex items-start"
+                          className="flex items-start"
                           data-testid="account-name"
                         >
                           <Link
-                            className="text-link text-lg font-semibold text-gray-800 dark:text-white mt-4 "
+                            className="text-link text-lg font-semibold text-gray-800 dark:text-white mt-4"
                             href={`/@${accountNameFromRoute}`}
                           >
                             {accountNameFromRoute}
@@ -302,10 +275,10 @@ export default function BalanceHistory() {
                           <span className="hidden md:inline mx-1 text-gray-800 dark:text-white mt-4 text-xl">
                             |
                           </span>
-                          <div className="hidden md:inline ">
+                          <div className="hidden md:inline">
                             <PageTitle
                               titleKey="pageTitle.balanceHistory"
-                              className=" py-4 pr-1 mt-[2px]"
+                              className="py-4 pr-1 mt-[2px]"
                             />
                           </div>
                         </h2>
@@ -330,6 +303,16 @@ export default function BalanceHistory() {
           </CardHeader>
         </Card>
 
+        <ActiveFilterChips
+          paramsState={paramsState}
+          setParams={setParams}
+          coinType={coinType}
+          setCoinType={setCoinType}
+          unit={unit}
+          setUnit={setUnit}
+          settingsDisplayMode={settings.displayVestHpMode}
+        />
+
         <BalanceHistorySearch
           paramsState={paramsState}
           setParams={setParams}
@@ -339,6 +322,8 @@ export default function BalanceHistory() {
           isFiltersActive={isFiltersActive}
           coinType={coinType}
           setCoinType={setCoinType}
+          unit={unit}
+          setUnit={setUnit}
         />
         {(isChartLoading || isAccHistDataLoading) && !chartData ? (
           <div className="flex justify-center text-center align-center items-center mb-5">
@@ -350,40 +335,36 @@ export default function BalanceHistory() {
               data-testid="account-details"
               className="rounded"
             >
-              <>
-                {message &&
-                  !isChartLoading &&
-                  chartData &&
-                  chartData.length && (
-                    <div className="rounded p-4 bg-gray-100 dark:bg-gray-700 mb-4 text-center text-sm text-gray-500">
-                      {message}
-                      <br />
-                    </div>
-                  )}
-                <MemoizedBalanceHistoryChart
-                  aggregatedAccountBalanceHistory={preparedData}
-                  selectedCoinType={coinType}
-                  setSelectedCoinType={setCoinType}
-                  showSavingsBalance={includeSavings}
-                  className="h-[450px] mb-10 mr-0 pr-1 pb-6"
-                />
-              </>
-
-              {(!isChartLoading && !chartData) ||
-                (!isChartLoading && chartData?.length === 0 && (
-                  <NoResult titleKey="noResult.noChartData" />
-                ))}
-            </Card>
-            <BalanceHistoryTable
-              operations={convertBalanceHistoryResultsToTableOperations(
-                accountBalanceHistory ?? []
+              {!isChartLoading && (!chartData || chartData.length === 0) ? (
+                <NoResult titleKey="noResult.noChartData" />
+              ) : (
+                <>
+                  <BalanceKpiStrip
+                    data={preparedData}
+                    coinType={coinType}
+                    unit={unit}
+                  />
+                  <MemoizedBalanceHistoryChart
+                    aggregatedAccountBalanceHistory={preparedData}
+                    selectedCoinType={coinType}
+                    setSelectedCoinType={setCoinType}
+                    showSavingsBalance={includeSavings}
+                    unit={unit}
+                    setUnit={setUnit}
+                    className="h-[450px] mb-10 mr-0 pr-1 pb-6"
+                  />
+                </>
               )}
-              total_operations={accountBalanceHistory.total_operations ?? []}
+            </Card>
+            <MemoizedBalanceHistoryTable
+              operations={tableOperations}
+              total_operations={accountBalanceHistory.total_operations ?? 0}
               total_pages={accountBalanceHistory.total_pages ?? 0}
               current_page={
                 paramsState.page ?? accountBalanceHistory.total_pages
               }
               account_name={accountNameFromRoute ?? ""}
+              unit={unit}
             />
           </>
         )}

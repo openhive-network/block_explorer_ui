@@ -23,10 +23,9 @@ import { ArrowDown, ArrowUp, Minus } from "lucide-react";
 import { useI18n } from "@/i18n/i18n";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
 import { useSettings } from "@/contexts/SettingsContext";
 import { config } from "@/Config";
+import { compactFormat } from "@/utils/BalanceHistoryUtils";
 
 interface BalanceHistoryChartProps {
   aggregatedAccountBalanceHistory?: {
@@ -44,6 +43,8 @@ interface BalanceHistoryChartProps {
   showSavingsBalance?: string;
   selectedCoinType: string;
   setSelectedCoinType: Dispatch<SetStateAction<string>>;
+  unit?: "vests" | "hp";
+  setUnit?: Dispatch<SetStateAction<"vests" | "hp">>;
 }
 
 export const colorMap: Record<string, string> = {
@@ -61,6 +62,8 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
   showSavingsBalance = "yes",
   selectedCoinType,
   setSelectedCoinType,
+  unit: unitProp,
+  setUnit: setUnitProp,
 }) => {
   const { t, dir, locale } = useI18n();
   const { hiveChain } = useHiveChainContext();
@@ -70,15 +73,19 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
 
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 480);
   const [hiddenDataKeys, setHiddenDataKeys] = useState<string[]>([]);
-  const [unit, setUnit] = useState<"vests" | "hp">(
+  const [localUnit, setLocalUnit] = useState<"vests" | "hp">(
     settings.displayVestHpMode === "hp" ? "hp" : "vests"
   );
 
   useEffect(() => {
-    setUnit(settings.displayVestHpMode === "hp" ? "hp" : "vests");
-  }, [settings.displayVestHpMode]);
+    if (!setUnitProp) {
+      setLocalUnit(settings.displayVestHpMode === "hp" ? "hp" : "vests");
+    }
+  }, [settings.displayVestHpMode, setUnitProp]);
 
-  const availableCoins = ["HIVE", "VESTS", "HBD"];
+  const unit = unitProp ?? localUnit;
+  const setUnit = setUnitProp ?? setLocalUnit;
+
   const [zoomedDomain, setZoomedDomain] = useState<{
     main: [number, number];
     secondary: [number, number];
@@ -177,7 +184,6 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     [dataMap, selectedCoinType]
   );
 
-  // ---------------- Tooltip ----------------
   const CustomTooltip = ({
     active,
     payload,
@@ -203,6 +209,19 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     const savingsBalance = selectedData?.savings_balance ?? undefined;
     const savingsBalanceChange = selectedData?.savings_balance_change ?? 0;
     const dollarValue = selectedData?.dollarValue ?? 0;
+
+    const balancePrecision =
+      selectedCoinType === "VESTS" && !isHpMode
+        ? config.precisions.vests
+        : config.precisions.hivePower;
+    const balanceNumeric = actualBalance / Math.pow(10, balancePrecision);
+    const balanceChangeNumeric =
+      balanceChange / Math.pow(10, balancePrecision);
+    const savingsNumeric =
+      (savingsBalance ?? 0) / Math.pow(10, config.precisions.hivePower);
+    const savingsChangeNumeric =
+      savingsBalanceChange / Math.pow(10, config.precisions.hivePower);
+    const dollarNumeric = dollarValue / Math.pow(10, config.precisions.hivePower);
 
     const isPositiveChange = balanceChange > 0;
     const isZeroChange = balanceChange === 0;
@@ -245,21 +264,15 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
                 size={16}
               />
             )}
-            {` ${formatNumber(
-              balanceChange,
-              selectedCoinType === "VESTS" ? !isHpMode : false
-            )}`}
+            {` ${compactFormat(balanceChangeNumeric)}`}
           </div>
           <div style={{ color: currentCoinColor }}>{`${t(
             "common.balance"
-          )}: ${formatNumber(
-            actualBalance,
-            selectedCoinType === "VESTS" ? !isHpMode : false
-          )}`}</div>
+          )}: ${compactFormat(balanceNumeric)}`}</div>
           {dollarValue ? (
             <div style={{ color: colorMap.DOLLAR }}>
-              Dollar Value: $
-              {formatNumber(dollarValue, false, false)}
+              {t("balanceHistoryChart.dollarValue")}: $
+              {compactFormat(dollarNumeric)}
             </div>
           ) : null}
         </div>
@@ -295,89 +308,94 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
                     size={16}
                   />
                 )}
-                {` ${formatNumber(
-                  savingsBalanceChange,
-                  selectedCoinType === "VESTS" ? unit === "vests" : false
-                )}`}
+                {` ${compactFormat(savingsChangeNumeric)}`}
               </div>
               <div style={{ color: colorMap.SAVINGS }}>
-                {`${t("balanceHistoryChart.savingsBalance")}: ${formatNumber(
-                  savingsBalance,
-                  selectedCoinType === "VESTS" ? unit === "vests" : false
-                )}`}</div>
+                {`${t(
+                  "balanceHistoryChart.savingsBalance"
+                )}: ${compactFormat(savingsNumeric)}`}</div>
             </div>
           )}
       </div>
     );
   };
 
-  // ---------------- Coin toggle buttons ----------------
-  const renderCoinButtons = () => (
-    <div className="flex flex-col-reverse md:flex-row md:items-center md:justify-between gap-2 mb-4">
-      {selectedCoinType === "VESTS" ? (
-        <div className="flex items-center space-x-2 rounded-md self-end md:self-auto">
-          <Label
-            htmlFor="unit-toggle"
-            className="text-sm font-medium select-none"
-          >
-            {t("common.vests")}
-          </Label>
-          <Switch
-            id="unit-toggle"
-            checked={unit === "hp"}
-            onCheckedChange={(checked) => setUnit(checked ? "hp" : "vests")}
-          />
-          <Label
-            htmlFor="unit-toggle"
-            className="text-sm font-medium select-none"
-          >
-            {t("common.hp")}
-          </Label>
-        </div>
-      ) : (
-        <div className="hidden md:block" />
-      )}
+  type ChartCoinOption = {
+    key: "HIVE" | "VESTS" | "HP" | "HBD";
+    coinType: string;
+    unit?: "vests" | "hp";
+  };
 
-      <div className="flex items-center space-x-1 self-end md:self-auto mr-4">
-        {availableCoins.map((coinType) => (
-          <button
-            key={coinType}
-            onClick={() => handleCoinTypeChange(coinType)}
-            className={cn(
-              "px-2 py-1 text-sm rounded",
-              selectedCoinType === coinType
-                ? "bg-blue-500 text-white"
-                : "bg-gray-200 text-black hover:bg-gray-300 dark:bg-gray-600 dark:text-white hover:dark:bg-gray-500"
-            )}
-          >
-            {coinType === "VESTS" ? t("common.vestshp") : coinType}
-          </button>
-        ))}
+  const chartCoinOptions: ChartCoinOption[] = [
+    { key: "HIVE", coinType: "HIVE" },
+    { key: "VESTS", coinType: "VESTS", unit: "vests" },
+    { key: "HP", coinType: "VESTS", unit: "hp" },
+    { key: "HBD", coinType: "HBD" },
+  ];
+
+  const activeChartCoinKey: ChartCoinOption["key"] =
+    selectedCoinType === "VESTS"
+      ? unit === "hp"
+        ? "HP"
+        : "VESTS"
+      : (selectedCoinType as "HIVE" | "HBD");
+
+  const renderCoinButtons = () => (
+    <div className="flex md:items-center md:justify-end gap-2 mb-4">
+      <div
+        className="inline-flex items-stretch rounded-full border border-navbar-border overflow-hidden self-end md:self-auto mr-4"
+        role="group"
+        aria-label={t("balanceHistorySearch.coinTypeAria")}
+      >
+        {chartCoinOptions.map((option, idx) => {
+          const isActive = activeChartCoinKey === option.key;
+          const isFirst = idx === 0;
+          const isLast = idx === chartCoinOptions.length - 1;
+          return (
+            <button
+              key={option.key}
+              type="button"
+              onClick={() => {
+                if (option.unit) setUnit(option.unit);
+                handleCoinTypeChange(option.coinType);
+              }}
+              aria-pressed={isActive}
+              className={cn(
+                "font-medium transition-colors",
+                quickView ? "px-2.5 py-1 text-xs" : "px-4 py-1 text-sm",
+                !isLast && "border-r border-navbar-border",
+                isFirst && "rounded-l-full",
+                isLast && "rounded-r-full",
+                isActive
+                  ? "bg-blue-500 text-white"
+                  : "bg-theme hover:bg-gray-100 dark:hover:bg-gray-700"
+              )}
+            >
+              {option.key}
+            </button>
+          );
+        })}
       </div>
     </div>
   );
 
-  // ---------------- Min/Max for Y-axis ----------------
   const getMinMax = (
     data: any[]
   ): { main: [number, number]; secondary: [number, number] } => {
     if (!data || data.length === 0) return { main: [0, 1], secondary: [0, 1] };
 
-    // Main axis scale is ALWAYS based on 'balance' (VESTS) to keep the line shape stable.
     let mainValues: number[] = data.map((item) => item.balance || 0);
     if (showSavingsBalance === "yes" && selectedCoinType !== "VESTS") {
       const savingsValues = data.map((item) => item.savings_balance || 0);
       mainValues = mainValues.concat(savingsValues);
     }
 
-    // Secondary axis is always for dollars.
     let secondaryValues: number[] = data.map((item) => item.dollarValue || 0);
 
     const mainMax = Math.max(...mainValues, 0);
     const secondaryMax = Math.max(...secondaryValues, 0);
 
-   // If coin is VESTS, set min height of at least 1000.
-   // This prevents decimal ticks (0.2, 0.8) which crash the Wasm library.
+    // VESTS min of 1000 prevents decimal ticks that crash the Wasm library.
     let mainUpperLimit;
     if (selectedCoinType === "VESTS") {
       mainUpperLimit = mainMax < 1000 ? 1000 : mainMax * 1.1;
@@ -404,7 +422,6 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     fullDataDollarMax,
   ];
 
-  // Update the brush handler
   const handleBrushAreaChange = (domain: {
     startIndex?: number;
     endIndex?: number;
@@ -448,6 +465,11 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
           {renderCoinButtons()}
         </div>
       )}
+      {!quickView && (
+        <p className="text-xs text-gray-500 dark:text-gray-400 text-center mb-1 select-none">
+          {t("balanceHistoryChart.dragToZoom")}
+        </p>
+      )}
       <ResponsiveContainer
         width="100%"
         height="100%"
@@ -457,9 +479,17 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
           data={displayData}
           margin={{
             top: 5,
-            right: isRTL ? (isMobile ? 0 : 5) : isMobile ? 0 : 10,
+            right: isRTL
+              ? isMobile
+                ? 0
+                : 5
+              : isMobile
+                ? 10
+                : quickView
+                  ? 50
+                  : 10,
             left: isRTL ? (isMobile ? 0 : 5) : leftMargin,
-            bottom: isMobile ? 100 : 60,
+            bottom: isMobile ? 80 : 60,
           }}
         >
           <XAxis
@@ -599,7 +629,6 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
               travellerWidth={10}
               tickFormatter={(value) => moment(value).format("MMM D")}
               y={380}
-              x={50}
               className="text-xs"
               onChange={handleBrushAreaChange}
               startIndex={brushIndices?.startIndex ?? 0}
@@ -609,7 +638,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
           <Legend
             align="center"
             verticalAlign="bottom"
-            wrapperStyle={{ paddingTop: isMobile ? "20px" : "0px" }}
+            wrapperStyle={{ paddingTop: "0px" }}
             onClick={(event) => {
               const dataKey = event.dataKey as string;
               const isHidden = hiddenDataKeys.includes(dataKey);
