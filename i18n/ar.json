@@ -1158,7 +1158,7 @@
   "watchlist.removeFromWatchlist": "إزالة من قائمة المراقبة",
   "watchlist.proposals.title": "المقترحات المراقبة",
   "watchlist.proposals.empty": "لا توجد مقترحات في قائمة المراقبة حتى الآن.",
-  "watchlist.witnesses.title": "أصواتي للشهود",
+  "watchlist.witnesses.title": "صحة الشاهد",
   "watchlist.witnesses.empty": "لم تصوت لأي شاهد بعد.",
   "watchlist.witnesses.proxyNoVotes": "وكيلك لم يصوّت لأي شاهد بعد.",
   "watchlist.witnesses.votesUsed": "أصوات الشاهد المستخدمة",

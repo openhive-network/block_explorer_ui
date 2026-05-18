@@ -1158,7 +1158,7 @@
   "watchlist.removeFromWatchlist": "Usuń z obserwowanych",
   "watchlist.proposals.title": "Obserwowane propozycje",
   "watchlist.proposals.empty": "Brak propozycji na liście obserwowanych.",
-  "watchlist.witnesses.title": "Moje głosy na świadków",
+  "watchlist.witnesses.title": "Stan świadków",
   "watchlist.witnesses.empty": "Nie oddałeś jeszcze głosu na żadnego świadka.",
   "watchlist.witnesses.proxyNoVotes": "Twoje proxy nie zagłosowało jeszcze na żadnego świadka.",
   "watchlist.witnesses.votesUsed": "wykorzystane głosy świadka",

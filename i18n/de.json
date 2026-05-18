@@ -1158,7 +1158,7 @@
   "watchlist.removeFromWatchlist": "Von der Beobachtungsliste entfernen",
   "watchlist.proposals.title": "Beobachtete Vorschläge",
   "watchlist.proposals.empty": "Noch keine Vorschläge in Ihrer Beobachtungsliste.",
-  "watchlist.witnesses.title": "Meine Zeugenstimmen",
+  "watchlist.witnesses.title": "Zeugenstatus",
   "watchlist.witnesses.empty": "Sie haben noch für keinen Zeugen gestimmt.",
   "watchlist.witnesses.proxyNoVotes": "Dein Proxy hat noch für keinen Zeugen gestimmt.",
   "watchlist.witnesses.votesUsed": "verwendete Zeugenstimmen",

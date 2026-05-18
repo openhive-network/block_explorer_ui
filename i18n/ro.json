@@ -1158,7 +1158,7 @@
   "watchlist.removeFromWatchlist": "Elimină din lista de urmărire",
   "watchlist.proposals.title": "Propuneri urmărite",
   "watchlist.proposals.empty": "Nicio propunere în lista de urmărire.",
-  "watchlist.witnesses.title": "Voturile mele pentru martori",
+  "watchlist.witnesses.title": "Starea martorilor",
   "watchlist.witnesses.empty": "Nu ai votat încă pentru niciun martor.",
   "watchlist.witnesses.proxyNoVotes": "Proxy-ul tău nu a votat încă pentru niciun martor.",
   "watchlist.witnesses.votesUsed": "voturi martor utilizate",

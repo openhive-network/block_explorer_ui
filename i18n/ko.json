@@ -1158,7 +1158,7 @@
   "watchlist.removeFromWatchlist": "관심 목록에서 제거",
   "watchlist.proposals.title": "관심 제안",
   "watchlist.proposals.empty": "관심 목록에 아직 제안이 없습니다.",
-  "watchlist.witnesses.title": "내 증인 투표",
+  "watchlist.witnesses.title": "증인 상태",
   "watchlist.witnesses.empty": "아직 증인에 투표하지 않았습니다.",
   "watchlist.witnesses.proxyNoVotes": "회원님의 프록시는 아직 어떤 증인에게도 투표하지 않았습니다.",
   "watchlist.witnesses.votesUsed": "증인 투표 사용",

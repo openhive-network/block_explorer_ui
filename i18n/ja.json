@@ -1158,7 +1158,7 @@
   "watchlist.removeFromWatchlist": "ウォッチリストから削除",
   "watchlist.proposals.title": "ウォッチリスト",
   "watchlist.proposals.empty": "ウォッチリストにまだ提案がありません。",
-  "watchlist.witnesses.title": "ウィットネス投票",
+  "watchlist.witnesses.title": "ウィットネス状態",
   "watchlist.witnesses.empty": "まだウィットネスに投票していません。",
   "watchlist.witnesses.proxyNoVotes": "あなたのプロキシはまだどの証人にも投票していません。",
   "watchlist.witnesses.votesUsed": "ウィットネス投票使用済み",

@@ -1158,7 +1158,7 @@
   "watchlist.removeFromWatchlist": "Remover da lista de monitoramento",
   "watchlist.proposals.title": "Propostas monitoradas",
   "watchlist.proposals.empty": "Nenhuma proposta na lista de monitoramento ainda.",
-  "watchlist.witnesses.title": "Meus votos de testemunhas",
+  "watchlist.witnesses.title": "Saúde da testemunha",
   "watchlist.witnesses.empty": "Você ainda não votou em nenhuma testemunha.",
   "watchlist.witnesses.proxyNoVotes": "Seu proxy ainda não votou em nenhuma testemunha.",
   "watchlist.witnesses.votesUsed": "votos de testemunha usados",

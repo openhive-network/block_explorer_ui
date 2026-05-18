@@ -18,6 +18,7 @@ import TotalValueLockedCard from "@/components/home/TotalValueLockedCard";
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import { useAuth } from "@/contexts/AuthContext";
+import { useWatchlist } from "@/contexts/WatchlistContext";
 import WatchedProposalsWidget from "@/components/dashboard/widgets/data/WatchedProposalsWidget";
 import WitnessHealthWidget from "@/components/dashboard/widgets/data/WitnessHealthWidget";
 
@@ -25,13 +26,15 @@ const StandardHome = () => {
   const { theme } = useTheme();
   const { t } = useI18n();
   const { isLoggedIn } = useAuth();
+  const { getWatched } = useWatchlist();
+  const hasWatchedProposals = getWatched("proposals").size > 0;
 
   const { witnessesData, isWitnessDataLoading } = useWitnesses(
     config.witnessesPerPages.home,
     "rank",
     "asc"
   );
-  
+
   const {
     communities: popularCommunitiesData,
     isLoading: isCommunitiesLoading,
@@ -95,7 +98,7 @@ const StandardHome = () => {
         </div>
 
         <div className="col-span-12 lg:col-span-3 flex flex-col gap-3">
-          {isLoggedIn && <WatchedProposalsWidget />}
+          {isLoggedIn && hasWatchedProposals && <WatchedProposalsWidget />}
           <TopWitnessesCard
             witnessesData={witnessesData}
             isLoading={isWitnessDataLoading}

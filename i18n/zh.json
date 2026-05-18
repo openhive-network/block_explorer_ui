@@ -1158,7 +1158,7 @@
   "watchlist.removeFromWatchlist": "从关注列表中移除",
   "watchlist.proposals.title": "关注的提案",
   "watchlist.proposals.empty": "关注列表中暂无提案。",
-  "watchlist.witnesses.title": "我的见证人投票",
+  "watchlist.witnesses.title": "见证人健康",
   "watchlist.witnesses.empty": "您还没有为任何见证人投票。",
   "watchlist.witnesses.proxyNoVotes": "您的代理还没有为任何见证人投票。",
   "watchlist.witnesses.votesUsed": "已使用见证人投票",

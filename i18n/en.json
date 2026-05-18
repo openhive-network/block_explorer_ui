@@ -1158,7 +1158,7 @@
   "watchlist.removeFromWatchlist": "Remove from Watchlist",
   "watchlist.proposals.title": "Watched Proposals",
   "watchlist.proposals.empty": "No proposals in your watchlist yet.",
-  "watchlist.witnesses.title": "My Witness Votes",
+  "watchlist.witnesses.title": "Witness Health",
   "watchlist.witnesses.empty": "You haven't voted for any witnesses yet.",
   "watchlist.witnesses.proxyNoVotes": "Your proxy hasn't voted for any witnesses yet.",
   "watchlist.witnesses.votesUsed": "witness votes used",
