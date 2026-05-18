@@ -88,8 +88,7 @@ export default function Witnesses() {
 
     // No row to scroll to when removing a proxy or unvoting inside a
     // voter-filtered view (the row is gone from the filtered list).
-    const skipScroll =
-      !witness || (action === "unvote" && params.get("voter"));
+    const skipScroll = !witness || (action === "unvote" && params.get("voter"));
     if (skipScroll) {
       cleanUrl();
       return () => clearTimeout(toastTimer);
@@ -185,7 +184,8 @@ export default function Witnesses() {
   );
 
   // Only show the actions column when the user is viewing their own votes.
-  const showVoteColumn = isLoggedIn && (!voterFilter || voterFilter === username);
+  const showVoteColumn =
+    isLoggedIn && (!voterFilter || voterFilter === username);
 
   // Local vote overrides so the filter reflects clicks before the chain commits.
   const [localVoteChanges, setLocalVoteChanges] = useState<
@@ -210,7 +210,13 @@ export default function Witnesses() {
     return witnessesData.witnesses.filter((w: any) =>
       voteSet.has(w.witness_name)
     );
-  }, [witnessesData, voterFilter, voterWitnessVotes, username, localVoteChanges]);
+  }, [
+    witnessesData,
+    voterFilter,
+    voterWitnessVotes,
+    username,
+    localVoteChanges,
+  ]);
 
   const sortedFilteredWitnesses = useMemo(() => {
     if (!voterFilter || filteredWitnesses.length === 0)
@@ -241,8 +247,7 @@ export default function Witnesses() {
       if (av instanceof Date && bv instanceof Date)
         return (av.getTime() - bv.getTime()) * dir;
       return (
-        String(av).localeCompare(String(bv), undefined, { numeric: true }) *
-        dir
+        String(av).localeCompare(String(bv), undefined, { numeric: true }) * dir
       );
     });
   }, [filteredWitnesses, voterFilter, sort]);
@@ -293,55 +298,59 @@ export default function Witnesses() {
 
               <div className="flex items-center gap-2 mb-2 md:mb-0 ml-1 md:ml-4 mr-4 flex-shrink-0">
                 {/* Unified voter-lookup control: quick shortcuts + autocomplete search */}
-                <div className="inline-flex items-stretch rounded-full border border-navbar-border bg-secondary/20 hover:bg-secondary/30 transition-colors">
-                  {isLoggedIn && voterFilter !== username && username && (
-                    <Link
-                      href={`/witnesses?voter=${username}`}
-                      className="inline-flex items-center gap-1.5 px-3 rounded-l-full text-xs font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 border-r border-navbar-border transition-colors whitespace-nowrap"
+                {isLoggedIn && (
+                  <div className="inline-flex items-stretch rounded-full border border-navbar-border bg-secondary/20 hover:bg-secondary/30 transition-colors">
+                    {voterFilter !== username && username && (
+                      <Link
+                        href={`/witnesses?voter=${username}`}
+                        className="inline-flex items-center gap-1.5 px-3 rounded-l-full text-xs font-semibold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 border-r border-navbar-border transition-colors whitespace-nowrap"
+                      >
+                        <Heart
+                          className="h-3.5 w-3.5"
+                          fill="#ef4444"
+                          stroke="#dc2626"
+                        />
+                        {t("witnesses.myVotes")}
+                      </Link>
+                    )}
+                    {voterFilter && (
+                      <Link
+                        href="/witnesses"
+                        className="inline-flex items-center gap-1.5 px-3 rounded-l-full text-xs font-semibold text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 border-r border-navbar-border transition-colors whitespace-nowrap"
+                      >
+                        <Users className="h-3.5 w-3.5" />
+                        {t("witnesses.allWitnesses")}
+                      </Link>
+                    )}
+                    <form
+                      onSubmit={handleVoterSearchSubmit}
+                      className="flex items-center pl-2.5 pr-1 rounded-full"
                     >
-                      <Heart
-                        className="h-3.5 w-3.5"
-                        fill="#ef4444"
-                        stroke="#dc2626"
+                      <Search className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+                      <AutocompleteInput
+                        value={voterSearch}
+                        onChange={setVoterSearch}
+                        placeholder={t("witnesses.searchVoterPlaceholder")}
+                        inputType="account_name"
+                        className="!w-44 [&_input]:border-0 [&_input]:bg-transparent [&_input]:h-8 [&_input]:text-xs [&_input]:py-0 [&_input]:px-2 [&_input]:shadow-none [&_input]:focus-visible:ring-0"
                       />
-                      {t("witnesses.myVotes")}
-                    </Link>
-                  )}
-                  {voterFilter && (
-                    <Link
-                      href="/witnesses"
-                      className="inline-flex items-center gap-1.5 px-3 rounded-l-full text-xs font-semibold text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/30 border-r border-navbar-border transition-colors whitespace-nowrap"
-                    >
-                      <Users className="h-3.5 w-3.5" />
-                      {t("witnesses.allWitnesses")}
-                    </Link>
-                  )}
-                  <form
-                    onSubmit={handleVoterSearchSubmit}
-                    className="flex items-center pl-2.5 pr-1 rounded-full"
-                  >
-                    <Search className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
-                    <AutocompleteInput
-                      value={voterSearch}
-                      onChange={setVoterSearch}
-                      placeholder={t("witnesses.searchVoterPlaceholder")}
-                      inputType="account_name"
-                      className="!w-44 [&_input]:border-0 [&_input]:bg-transparent [&_input]:h-8 [&_input]:text-xs [&_input]:py-0 [&_input]:px-2 [&_input]:shadow-none [&_input]:focus-visible:ring-0"
-                    />
-                  </form>
-                </div>
+                    </form>
+                  </div>
+                )}
                 <WitnessScheduleIcon />
               </div>
             </div>
 
-            <VoterFilterBanner
-              voter={voterFilter || username || ""}
-              isOwnView={!voterFilter || voterFilter === username}
-              proxyChain={voterFilter ? proxyChain : userProxyChain}
-              voteCount={voterWitnessVotes.length}
-              isCountLoading={isFilterLoading}
-              showWhenFiltered={!!voterFilter}
-            />
+            {isLoggedIn && (
+              <VoterFilterBanner
+                voter={voterFilter || username || ""}
+                isOwnView={!voterFilter || voterFilter === username}
+                proxyChain={voterFilter ? proxyChain : userProxyChain}
+                voteCount={voterWitnessVotes.length}
+                isCountLoading={isFilterLoading}
+                showWhenFiltered={!!voterFilter}
+              />
+            )}
 
             {isWitnessDataLoading ||
             !router.isReady ||
