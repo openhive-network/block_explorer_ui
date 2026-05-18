@@ -1,4 +1,4 @@
-import React, { useState, useMemo, MouseEvent } from "react";
+import React, { useState, useMemo, useEffect, MouseEvent } from "react";
 import { ArrowDown, ArrowUp, Maximize2 } from "lucide-react";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import Explorer from "@/types/Explorer";
@@ -9,6 +9,7 @@ import { Loader2 } from "lucide-react";
 import NoResult from "../NoResult";
 import useAggregatedBalanceHistory from "@/hooks/api/balanceHistory/useAggregatedHistory";
 import { useI18n } from "../../i18n/i18n";
+import { useSettings } from "@/contexts/SettingsContext";
 import { cn } from "@/lib/utils";
 import { prepareBalanceHistoryData } from "@/utils/BalanceHistoryUtils";
 
@@ -16,22 +17,33 @@ type AccountBalanceHistoryCardProps = {
   header: string;
   userDetails: Explorer.FormattedAccountDetails;
   isInitiallyOpen: boolean;
+  accountName?: string;
 };
 
 const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
   header,
   userDetails,
   isInitiallyOpen,
+  accountName,
 }) => {
   const { t } = useI18n();
+  const { settings } = useSettings();
   const [isBalancesHidden, setIsBalancesHidden] = useState(!isInitiallyOpen);
   const [coinType, setCoinType] = useState("HIVE");
+  const [unit, setUnit] = useState<"vests" | "hp">(
+    settings.displayVestHpMode === "hp" ? "hp" : "vests"
+  );
+
+  useEffect(() => {
+    setUnit(settings.displayVestHpMode === "hp" ? "hp" : "vests");
+  }, [settings.displayVestHpMode]);
   const defaultFromDate = useMemo(
     () => moment().subtract(1, "month").toDate(),
     []
   );
   const router = useRouter();
-  const accountNameFromRoute = (router.query.accountName as string)?.slice(1);
+  const accountNameFromRoute =
+    accountName ?? (router.query.accountName as string)?.slice(1);
 
   const {
     aggregatedAccountBalanceHistory,
@@ -59,10 +71,7 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
   };
 
   return (
-    <Card
-      data-testid="properties-dropdown"
-      className="overflow-hidden pb-0"
-    >
+    <Card data-testid="properties-dropdown" className="overflow-hidden pb-0">
       <CardHeader className="p-0 mb-2">
         <div
           onClick={handleBalancesVisibility}
@@ -113,6 +122,8 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
             className="h-[430px]"
             selectedCoinType={coinType}
             setSelectedCoinType={setCoinType}
+            unit={unit}
+            setUnit={setUnit}
           />
         )}
       </CardContent>
