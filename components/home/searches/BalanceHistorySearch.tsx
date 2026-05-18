@@ -44,6 +44,8 @@ const BalanceHistorySearch = ({
   setCoinType,
   unit,
   setUnit,
+  showCustomRange,
+  setShowCustomRange,
 }: any) => {
   const { t } = useI18n();
   // const [coinType, setCoinType] = useState<string>(
@@ -179,14 +181,20 @@ const BalanceHistorySearch = ({
     custom?: boolean;
   };
 
-  const [showCustomRange, setShowCustomRange] = useState(false);
+  const [pendingPresetLabel, setPendingPresetLabel] = useState<string | null>(
+    null
+  );
 
   const applyDatePreset = async (preset: DatePreset) => {
     if (preset.custom) {
       setShowCustomRange(true);
+      setPendingPresetLabel("Custom");
       return;
     }
-    setShowCustomRange(false);
+    setShowCustomRange(
+      preset.lastTime !== undefined || preset.lastBlocks !== undefined
+    );
+    setPendingPresetLabel(preset.label);
 
     const {
       setRangeSelectKey,
@@ -284,7 +292,18 @@ const BalanceHistorySearch = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const activePresetLabel = showCustomRange ? "Custom" : matchedPresetLabel;
+  const derivedPresetLabel =
+    matchedPresetLabel ?? (showCustomRange ? "Custom" : null);
+  const activePresetLabel = pendingPresetLabel ?? derivedPresetLabel;
+
+  useEffect(() => {
+    if (
+      pendingPresetLabel !== null &&
+      derivedPresetLabel === pendingPresetLabel
+    ) {
+      setPendingPresetLabel(null);
+    }
+  }, [derivedPresetLabel, pendingPresetLabel]);
 
   const handleFilterClear = () => {
     const {
@@ -312,18 +331,19 @@ const BalanceHistorySearch = ({
     setIsVisible(false);
     setIsFiltersActive(false);
     setShowCustomRange(false);
+    setPendingPresetLabel(null);
 
     removeStorageItem("is_balance_filters_visible");
   };
 
   const hasActiveFilters = Boolean(
     (paramsState.filters?.length ?? 0) ||
-      paramsState.fromBlock ||
-      paramsState.toBlock ||
-      paramsState.fromDate ||
-      paramsState.toDate ||
-      paramsState.coinType !== DEFAULT_COIN_TYPE ||
-      paramsState.includeSavings !== "yes"
+    paramsState.fromBlock ||
+    paramsState.toBlock ||
+    paramsState.fromDate ||
+    paramsState.toDate ||
+    paramsState.coinType !== DEFAULT_COIN_TYPE ||
+    paramsState.includeSavings !== "yes"
   );
 
   useEffect(() => {
@@ -480,10 +500,7 @@ const BalanceHistorySearch = ({
             ) : (
               <div />
             )}
-            <Button
-              onClick={handleFilterClear}
-              data-testid="clear-filters"
-            >
+            <Button onClick={handleFilterClear} data-testid="clear-filters">
               {t("common.clear")}
             </Button>
           </div>
