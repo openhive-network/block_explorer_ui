@@ -17,9 +17,11 @@ import {
   Info,
   ArrowDown,
   ArrowUp,
+  Crown,
 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
+import NextLink from "next/link";
 import Explorer from "@/types/Explorer";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
@@ -41,6 +43,7 @@ import { Button } from "../ui/button";
 import { useI18n } from "../../i18n/i18n";
 import TimeAgo from "timeago-react";
 import useProposalVoteCount from "@/hooks/api/accountPage/useProposalVoteCount";
+import useAccountTopHolderRank from "@/hooks/api/common/useAccountTopHolderRank";
 import WitnessVoteButton from "@/components/Witnesses/WitnessVoteButton";
 import SetProxyButton from "@/components/Witnesses/SetProxyButton";
 import moment from "moment";
@@ -137,9 +140,8 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
   const router = useRouter();
   const { t, locale } = useI18n();
   const { settings } = useSettings();
-  const [isPropertiesHidden, setIsPropertiesHidden] = useState(
-    !isInitiallyOpen
-  );
+  const [isPropertiesHidden, setIsPropertiesHidden] =
+    useState(!isInitiallyOpen);
   const handlePropertiesVisibility = () => {
     setIsPropertiesHidden(!isPropertiesHidden);
   };
@@ -149,10 +151,21 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
     accountName,
     accountDetails.is_witness
   );
-  const {
-    voteCount: proposalVoteCount,
-    isLoading: isVoteCountLoading,
-  } = useProposalVoteCount(accountName);
+  const { voteCount: proposalVoteCount, isLoading: isVoteCountLoading } =
+    useProposalVoteCount(accountName);
+  const { entries: topHolderEntries } = useAccountTopHolderRank(accountName);
+  const coinLabel = (coinType: string) =>
+    coinType === "VESTS"
+      ? settings.displayVestHpMode === "hp"
+        ? "HP"
+        : "VESTS"
+      : coinType;
+  const topHolderBadgeColors: Record<string, string> = {
+    HIVE: "bg-red-100 dark:bg-red-950/30 text-red-700 dark:text-red-300 hover:bg-red-200 dark:hover:bg-red-900/40",
+    HBD: "bg-emerald-100 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-200 dark:hover:bg-emerald-900/40",
+    VESTS:
+      "bg-amber-100 dark:bg-amber-950/30 text-amber-700 dark:text-amber-300 hover:bg-amber-200 dark:hover:bg-amber-900/40",
+  };
 
   const isWitnessActive =
     witnessDetails?.signing_key !== config.inactiveWitnessKey;
@@ -186,7 +199,6 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
       <TimeAgo className="text-sm" locale={locale} datetime={lastPostDate} />
     );
 
-
   const getGovernanceHealthStatus = () => {
     const expirationTs = accountDetails.governance_vote_expiration_ts;
     if (!expirationTs) {
@@ -209,7 +221,8 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
         ),
         tooltipContent: (
           <p>
-          {t("accountMainCard.governanceExpiredTooltip")} {String(expirationTs)}
+            {t("accountMainCard.governanceExpiredTooltip")}{" "}
+            {String(expirationTs)}
           </p>
         ),
       };
@@ -271,7 +284,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                   leftLabel={t("headBlockCard.liveData")}
                 />
                 <button
-                  onClick={() => setIsPropertiesHidden(!isPropertiesHidden)} 
+                  onClick={() => setIsPropertiesHidden(!isPropertiesHidden)}
                   className="p-1 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
                   aria-label="Toggle details"
                 >
@@ -365,16 +378,47 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
+                    {topHolderEntries.length > 0 && (
+                      <TooltipProvider>
+                        {topHolderEntries.map(({ rank, coinType }) => (
+                          <Tooltip key={coinType}>
+                            <TooltipTrigger asChild>
+                              <NextLink
+                                href="/top-holders"
+                                className={cn(
+                                  "flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold transition-colors",
+                                  topHolderBadgeColors[coinType]
+                                )}
+                              >
+                                <Crown size={12} fill="currentColor" />
+                                {t("accountMainCard.topHolderBadge", {
+                                  rank: String(rank),
+                                  coin: coinLabel(coinType),
+                                })}
+                              </NextLink>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>{t("accountMainCard.topHolderTooltip")}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        ))}
+                      </TooltipProvider>
+                    )}
                   </div>
                 </div>
               </div>
 
-              {accountDetails.is_witness && !isWitnessLoading && !isWitnessError && (
-                <div className="flex flex-wrap items-center gap-2">
-                  <WitnessVoteButton witnessName={accountName} variant="pill" />
-                  <SetProxyButton witnessName={accountName} variant="pill" />
-                </div>
-              )}
+              {accountDetails.is_witness &&
+                !isWitnessLoading &&
+                !isWitnessError && (
+                  <div className="flex flex-wrap items-center gap-2">
+                    <WitnessVoteButton
+                      witnessName={accountName}
+                      variant="pill"
+                    />
+                    <SetProxyButton witnessName={accountName} variant="pill" />
+                  </div>
+                )}
 
               {about && (
                 <div className="w-full p-3 bg-slate-100 dark:bg-slate-800/50 rounded-xl">

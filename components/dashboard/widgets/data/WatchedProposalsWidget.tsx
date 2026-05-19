@@ -229,9 +229,7 @@ const WatchedProposalsWidget = () => {
         {ids.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 text-center gap-2">
             <Star className="h-8 w-8 opacity-20" />
-            <p className="text-sm text-muted-foreground">
-              {t("watchlist.proposals.empty")}
-            </p>
+            <p className="text-sm">{t("watchlist.proposals.empty")}</p>
           </div>
         ) : isLoading ? (
           <div className="space-y-1.5 py-1">
