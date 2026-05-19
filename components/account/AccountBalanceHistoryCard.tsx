@@ -16,12 +16,14 @@ type AccountBalanceHistoryCardProps = {
   header: string;
   userDetails: Explorer.FormattedAccountDetails;
   isInitiallyOpen: boolean;
+  accountName?: string;
 };
 
 const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
   header,
   userDetails,
   isInitiallyOpen,
+  accountName,
 }) => {
   const { t } = useI18n();
   const [isBalancesHidden, setIsBalancesHidden] = useState(!isInitiallyOpen);
@@ -31,7 +33,8 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
     []
   );
   const router = useRouter();
-  const accountNameFromRoute = (router.query.accountName as string)?.slice(1);
+  const accountNameFromRoute =
+    accountName ?? (router.query.accountName as string)?.slice(1);
 
   const {
     aggregatedAccountBalanceHistory,
@@ -59,10 +62,7 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
   };
 
   return (
-    <Card
-      data-testid="properties-dropdown"
-      className="overflow-hidden pb-0"
-    >
+    <Card data-testid="properties-dropdown" className="overflow-hidden pb-0">
       <CardHeader className="p-0 mb-2">
         <div
           onClick={handleBalancesVisibility}

@@ -1,5 +1,13 @@
 import WatchedProposalsWidget from "@/components/dashboard/widgets/data/WatchedProposalsWidget";
 import WitnessHealthWidget from "@/components/dashboard/widgets/data/WitnessHealthWidget";
+import MyWalletWidget from "@/components/dashboard/widgets/data/MyWalletWidget";
+import MyBalanceHistoryWidget from "@/components/dashboard/widgets/data/MyBalanceHistoryWidget";
+import MyRecurringTransfersWidget from "@/components/dashboard/widgets/data/MyRecurringTransfersWidget";
+import MyHpDelegationsWidget from "@/components/dashboard/widgets/data/MyHpDelegationsWidget";
+import MyRcDelegationsWidget from "@/components/dashboard/widgets/data/MyRcDelegationsWidget";
+import MyAuthoritiesWidget from "@/components/dashboard/widgets/data/MyAuthoritiesWidget";
+import MyRecentActivityWidget from "@/components/dashboard/widgets/data/MyRecentActivityWidget";
+import TopHoldersWidget from "@/components/dashboard/widgets/data/TopHoldersWidget";
 import EmbedWidget from "@/components/dashboard/widgets/layout/EmbedWidget";
 import MarkdownWidget from "@/components/dashboard/widgets/layout/MarkdownWidget";
 import LiveInfoWidget from "@/components/dashboard/widgets/data/LiveInfoWidget";
@@ -119,7 +127,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     id: "market-data",
     name: "widgets.marketDataName",
     component: MarketDataWidget,
-    defaultLayout: { w: 4, h:1.5, minW: 3, minH: 1 },
+    defaultLayout: { w: 4, h: 1.5, minW: 3, minH: 1 },
     getProps: (data) => ({
       headBlockCardData: data.dynamicGlobalQueryData,
     }),
@@ -160,13 +168,13 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     component: TransactionStatisticsCard,
     defaultLayout: { w: 8, h: 5, minW: 4, minH: 4 },
   },
-   "transfer-volume": {
+  "transfer-volume": {
     id: "transfer-volume",
     name: "widgets.transferVolumeName",
     component: TransferVolumeCard,
     defaultLayout: { w: 8, h: 5, minW: 4, minH: 4 },
   },
-  "tvl": {
+  tvl: {
     id: "tvl",
     name: "widgets.tvlName",
     component: TotalValueLockedCard,
@@ -194,6 +202,75 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     name: "widgets.witnessHealthName",
     component: WitnessHealthWidget,
     defaultLayout: { w: 2.95, h: 6, minW: 2, minH: 3 },
+    allowMultiple: false,
+    dynamicHeight: true,
+  },
+
+  "my-wallet": {
+    id: "my-wallet",
+    name: "widgets.myWalletName",
+    component: MyWalletWidget,
+    defaultLayout: { w: 2.95, h: 8, minW: 2, minH: 4 },
+    allowMultiple: false,
+    dynamicHeight: true,
+  },
+
+  "my-balance-history": {
+    id: "my-balance-history",
+    name: "widgets.myBalanceHistoryName",
+    component: MyBalanceHistoryWidget,
+    defaultLayout: { w: 2.95, h: 10.5, minW: 2, minH: 3 },
+    allowMultiple: false,
+    dynamicHeight: true,
+  },
+
+  "my-recurring-transfers": {
+    id: "my-recurring-transfers",
+    name: "widgets.myRecurringTransfersName",
+    component: MyRecurringTransfersWidget,
+    defaultLayout: { w: 2.95, h: 8, minW: 2, minH: 3 },
+    allowMultiple: false,
+    dynamicHeight: true,
+  },
+
+  "my-hp-delegations": {
+    id: "my-hp-delegations",
+    name: "widgets.myHpDelegationsName",
+    component: MyHpDelegationsWidget,
+    defaultLayout: { w: 2.95, h: 8, minW: 2, minH: 3 },
+    allowMultiple: false,
+  },
+
+  "my-rc-delegations": {
+    id: "my-rc-delegations",
+    name: "widgets.myRcDelegationsName",
+    component: MyRcDelegationsWidget,
+    defaultLayout: { w: 2.95, h: 8, minW: 2, minH: 3 },
+    allowMultiple: false,
+  },
+
+  "my-authorities": {
+    id: "my-authorities",
+    name: "widgets.myAuthoritiesName",
+    component: MyAuthoritiesWidget,
+    defaultLayout: { w: 2.95, h: 8, minW: 2, minH: 3 },
+    allowMultiple: false,
+    dynamicHeight: true,
+  },
+
+  "my-recent-activity": {
+    id: "my-recent-activity",
+    name: "widgets.myRecentActivityName",
+    component: MyRecentActivityWidget,
+    defaultLayout: { w: 2.95, h: 7, minW: 2, minH: 3 },
+    allowMultiple: false,
+  },
+
+  "top-holders": {
+    id: "top-holders",
+    name: "widgets.topHoldersName",
+    component: TopHoldersWidget,
+    defaultLayout: { w: 2.95, h: 8, minW: 2, minH: 3 },
     allowMultiple: false,
     dynamicHeight: true,
   },
