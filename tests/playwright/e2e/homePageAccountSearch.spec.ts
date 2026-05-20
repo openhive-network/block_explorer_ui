@@ -124,7 +124,6 @@ test.describe("Home page - account searches", () => {
   test("Validate that got results for Account Name and more than one Operation Types properties", async ({
     page,
   }) => {
-    test.slow();
     await mainPage.accountSearchSection.click();
     await page.waitForTimeout(1000);
     await mainPage.accountNameInputAccountSection.fill("gtg");
@@ -136,7 +135,7 @@ test.describe("Home page - account searches", () => {
     await mainPage.operationsTypesBtn.click();
     await expect(mainPage.operationsTypesWindow).toBeVisible();
     await page
-      .getByTestId("operation-type-checkbox-author_reward_operation")
+      .getByTestId("operation-type-checkbox-effective_comment_vote_operation")
       .first()
       .check({ force: true });
     await page
