@@ -1,5 +1,5 @@
 import React from "react";
-import { X } from "lucide-react";
+import { Loader2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DEFAULT_COIN_TYPE } from "@/components/home/searches/BalanceHistorySearch";
 import type {
@@ -16,7 +16,17 @@ interface ActiveFilterChipsProps {
   unit: VestHpUnit;
   setUnit: (u: VestHpUnit) => void;
   settingsDisplayMode: "vests" | "hp";
+  onExpand?: () => void;
+  onExpandRanges?: () => void;
+  isLoading?: boolean;
 }
+
+type Chip = {
+  key: string;
+  label: string;
+  onRemove?: () => void;
+  onClick?: () => void;
+};
 
 const ActiveFilterChips: React.FC<ActiveFilterChipsProps> = ({
   paramsState,
@@ -26,9 +36,12 @@ const ActiveFilterChips: React.FC<ActiveFilterChipsProps> = ({
   unit,
   setUnit,
   settingsDisplayMode,
+  onExpand,
+  onExpandRanges,
+  isLoading,
 }) => {
   const { t } = useI18n();
-  const chips: { key: string; label: string; onRemove?: () => void }[] = [];
+  const chips: Chip[] = [];
 
   const isHpView = coinType === "VESTS" && unit === "hp";
   const coinLabel = isHpView ? "HP" : coinType;
@@ -76,6 +89,7 @@ const ActiveFilterChips: React.FC<ActiveFilterChipsProps> = ({
       key: "range",
       label: t(labelKey, { value: paramsState.lastTime }),
       onRemove: resetDateRange,
+      onClick: onExpandRanges,
     });
   } else if (
     paramsState.rangeSelectKey === "lastBlocks" &&
@@ -87,6 +101,7 @@ const ActiveFilterChips: React.FC<ActiveFilterChipsProps> = ({
         value: paramsState.lastBlocks.toLocaleString(),
       }),
       onRemove: resetDateRange,
+      onClick: onExpandRanges,
     });
   } else if (
     paramsState.fromDate ||
@@ -98,9 +113,14 @@ const ActiveFilterChips: React.FC<ActiveFilterChipsProps> = ({
       key: "range",
       label: t("activeFilters.customRange"),
       onRemove: resetDateRange,
+      onClick: onExpandRanges,
     });
   } else {
-    chips.push({ key: "range", label: t("activeFilters.allTime") });
+    chips.push({
+      key: "range",
+      label: t("activeFilters.allTime"),
+      onClick: onExpandRanges,
+    });
   }
 
   if (coinType !== "VESTS") {
@@ -128,23 +148,39 @@ const ActiveFilterChips: React.FC<ActiveFilterChipsProps> = ({
         <span className="text-sm text-gray-500">
           {t("activeFilters.title")}:
         </span>
+        {isLoading && (
+          <Loader2
+            size={14}
+            className="animate-spin text-gray-500"
+            aria-label={t("activeFilters.updating")}
+          />
+        )}
         {chips.map((chip) => (
           <span
             key={chip.key}
             className={cn(
-              "inline-flex items-center gap-1 py-0.5 rounded-full",
+              "inline-flex items-center rounded-full",
               "bg-blue-100 text-blue-700 text-xs font-medium",
-              "dark:bg-blue-950/50 dark:text-blue-300",
-              chip.onRemove ? "pl-3 pr-1" : "px-3"
+              "dark:bg-blue-950/50 dark:text-blue-300"
             )}
           >
-            {chip.label}
+            <button
+              type="button"
+              onClick={chip.onClick ?? onExpand}
+              className={cn(
+                "py-0.5 rounded-full hover:bg-blue-200 dark:hover:bg-blue-900 transition-colors cursor-pointer",
+                chip.onRemove ? "pl-3 pr-2" : "px-3"
+              )}
+              aria-label={t("activeFilters.edit", { value: chip.label })}
+            >
+              {chip.label}
+            </button>
             {chip.onRemove && (
               <button
                 type="button"
                 onClick={chip.onRemove}
                 aria-label={t("activeFilters.remove", { value: chip.label })}
-                className="rounded-full p-0.5 hover:bg-blue-200 dark:hover:bg-blue-900 transition-colors"
+                className="rounded-full p-0.5 mr-1 hover:bg-blue-200 dark:hover:bg-blue-900 transition-colors"
               >
                 <X size={12} />
               </button>

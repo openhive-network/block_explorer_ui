@@ -1,4 +1,4 @@
-import React, { useState, useMemo, MouseEvent } from "react";
+import React, { useState, useMemo, useEffect, MouseEvent } from "react";
 import { ArrowDown, ArrowUp, Maximize2 } from "lucide-react";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import Explorer from "@/types/Explorer";
@@ -9,6 +9,7 @@ import { Loader2 } from "lucide-react";
 import NoResult from "../NoResult";
 import useAggregatedBalanceHistory from "@/hooks/api/balanceHistory/useAggregatedHistory";
 import { useI18n } from "../../i18n/i18n";
+import { useSettings } from "@/contexts/SettingsContext";
 import { cn } from "@/lib/utils";
 import { prepareBalanceHistoryData } from "@/utils/BalanceHistoryUtils";
 
@@ -26,8 +27,16 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
   accountName,
 }) => {
   const { t } = useI18n();
+  const { settings } = useSettings();
   const [isBalancesHidden, setIsBalancesHidden] = useState(!isInitiallyOpen);
   const [coinType, setCoinType] = useState("HIVE");
+  const [unit, setUnit] = useState<"vests" | "hp">(
+    settings.displayVestHpMode === "hp" ? "hp" : "vests"
+  );
+
+  useEffect(() => {
+    setUnit(settings.displayVestHpMode === "hp" ? "hp" : "vests");
+  }, [settings.displayVestHpMode]);
   const defaultFromDate = useMemo(
     () => moment().subtract(1, "month").toDate(),
     []
@@ -113,6 +122,8 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
             className="h-[430px]"
             selectedCoinType={coinType}
             setSelectedCoinType={setCoinType}
+            unit={unit}
+            setUnit={setUnit}
           />
         )}
       </CardContent>

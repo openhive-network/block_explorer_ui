@@ -105,12 +105,12 @@ export default function BalanceHistory() {
   }, [settings.displayVestHpMode]);
   const initialHasActiveFilters = Boolean(
     (paramsState.filters?.length ?? 0) ||
-      paramsState.fromBlock ||
-      paramsState.toBlock ||
-      paramsState.fromDate ||
-      paramsState.toDate ||
-      paramsState.coinType !== DEFAULT_COIN_TYPE ||
-      paramsState.includeSavings !== "yes"
+    paramsState.fromBlock ||
+    paramsState.toBlock ||
+    paramsState.fromDate ||
+    paramsState.toDate ||
+    paramsState.coinType !== DEFAULT_COIN_TYPE ||
+    paramsState.includeSavings !== "yes"
   );
   const [isFiltersActive, setIsFiltersActive] = useState(
     initialHasActiveFilters
@@ -120,6 +120,7 @@ export default function BalanceHistory() {
       initialHasActiveFilters &&
         (getLocalStorage("is_balance_filters_visible", true) ?? false)
     );
+  const [showCustomRange, setShowCustomRange] = useState(false);
 
   const handleFiltersVisibility = () => {
     setIsBalanceFilterSectionVisible(!isBalanceFilterSectionVisible);
@@ -207,7 +208,10 @@ export default function BalanceHistory() {
   }, [chartData]);
 
   const tableOperations = useMemo(
-    () => convertBalanceHistoryResultsToTableOperations(accountBalanceHistory ?? []),
+    () =>
+      convertBalanceHistoryResultsToTableOperations(
+        accountBalanceHistory ?? []
+      ),
     [accountBalanceHistory]
   );
 
@@ -311,6 +315,12 @@ export default function BalanceHistory() {
           unit={unit}
           setUnit={setUnit}
           settingsDisplayMode={settings.displayVestHpMode}
+          onExpand={() => setIsBalanceFilterSectionVisible(true)}
+          onExpandRanges={() => {
+            setIsBalanceFilterSectionVisible(true);
+            setShowCustomRange(true);
+          }}
+          isLoading={isChartDataFetching || isAccountBalanceHistoryFetching}
         />
 
         <BalanceHistorySearch
@@ -324,6 +334,8 @@ export default function BalanceHistory() {
           setCoinType={setCoinType}
           unit={unit}
           setUnit={setUnit}
+          showCustomRange={showCustomRange}
+          setShowCustomRange={setShowCustomRange}
         />
         {(isChartLoading || isAccHistDataLoading) && !chartData ? (
           <div className="flex justify-center text-center align-center items-center mb-5">
@@ -331,10 +343,7 @@ export default function BalanceHistory() {
           </div>
         ) : (
           <>
-            <Card
-              data-testid="account-details"
-              className="rounded"
-            >
+            <Card data-testid="account-details" className="rounded">
               {!isChartLoading && (!chartData || chartData.length === 0) ? (
                 <NoResult titleKey="noResult.noChartData" />
               ) : (
