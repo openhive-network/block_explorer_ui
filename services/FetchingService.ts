@@ -55,7 +55,7 @@ export type ExplorerNodeApi = {
           | "by_end_date"
           | "by_total_votes",
         order_direction: "ascending" | "descending",
-        status: "all" | "active" | "inactive" | "expired" | "votable"
+        status: "all" | "active" | "inactive" | "expired" | "votable",
       ],
       Hive.Proposal[]
     >;
@@ -65,7 +65,7 @@ export type ExplorerNodeApi = {
         limit: number,
         order_by: "by_voter_proposal" | "by_proposal_voter",
         order_direction: "ascending" | "descending",
-        status: "all" | "active" | "expired" | "inactive" | "votable"
+        status: "all" | "active" | "expired" | "inactive" | "votable",
       ],
       Hive.ProposalVote[]
     >;
@@ -639,6 +639,22 @@ class FetchingService {
     });
   }
 
+  async getTotalWalletAddresses(
+    granularity: "daily" | "monthly" | "yearly",
+    direction: "asc" | "desc",
+    fromBlock?: Date | number | undefined,
+    toBlock?: Date | number | undefined
+  ): Promise<Hive.WalletStatsResponse[]> {
+    return await this.extendedHiveChain!.restApi[
+      "hafbe-api"
+    ].totalWalletAddresses({
+      granularity,
+      direction,
+      "from-block": fromBlock,
+      "to-block": toBlock,
+    });
+  }
+
   async getAccountFollowCount(
     account: string
   ): Promise<Hive.AccountFollowCount> {
@@ -819,13 +835,12 @@ class FetchingService {
   async getAccountBalances(
     accountName: string
   ): Promise<Hive.AccountBalancesResponse> {
-    return await this.extendedHiveChain!.restApi[
-      "balance-api"
-    ].accountBalances({
-      accountName,
-    });
+    return await this.extendedHiveChain!.restApi["balance-api"].accountBalances(
+      {
+        accountName,
+      }
+    );
   }
-
 }
 
 const fetchingService = new FetchingService();

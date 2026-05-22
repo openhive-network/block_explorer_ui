@@ -15,6 +15,7 @@ import useCommunities from "@/hooks/api/communities/useCommunities";
 import TopCommunitiesCard from "@/components/home/TopCommunitiesCard";
 import TransferVolumeCard from "@/components/home/TransferVolumeCard";
 import TotalValueLockedCard from "@/components/home/TotalValueLockedCard";
+import NetworkGrowthCard from "@/components/home/NetworkGrowthCard";
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import { useAuth } from "@/contexts/AuthContext";
@@ -89,12 +90,11 @@ const StandardHome = () => {
             headBlock={headBlockNum}
             strokeColor={strokeColor}
           />
+          <NetworkGrowthCard />
           <TransactionStatisticsCard />
           <TransferVolumeCard />
           <TotalValueLockedCard />
-          <div className="mt-4">
-            <SearchesSection />
-          </div>
+          <SearchesSection />
         </div>
 
         <div className="col-span-12 lg:col-span-3 flex flex-col gap-3">

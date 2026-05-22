@@ -47,7 +47,7 @@ namespace Hive {
       message?: string;
       "org-op-id"?: string;
       "org-operation_type"?: string;
-      perspective?: "incoming" | "outgoing";    
+      perspective?: "incoming" | "outgoing";
     };
   }
 
@@ -1012,6 +1012,19 @@ namespace Hive {
     "from-block"?: number | Date;
     "to-block"?: number | Date;
     "coin-type": "HBD" | "HIVE";
+  }
+
+  export class WalletStatsResponse {
+    date!: Date;
+    new_wallets!: number;
+    total_wallets!: number;
+  }
+
+  export class WalletStatsParams {
+    granularity!: string;
+    direction!: Hive.Direction;
+    "from-block"?: number | Date;
+    "to-block"?: number | Date;
   }
 
   export class AccountFollowCount {

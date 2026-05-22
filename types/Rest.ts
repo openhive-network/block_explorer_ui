@@ -78,7 +78,7 @@ export const extendedRest = {
       params: Hive.AllBlocksSearchParams,
       result: Hive.AllBlocksSearchResponse,
       urlPath: "block-search",
-    },  
+    },
     transactionStatistics: {
       params: Hive.TransactionStatisticsParams,
       result: Hive.TransactionStatisticsResponse,
@@ -88,7 +88,13 @@ export const extendedRest = {
       params: Hive.ProxyPowerParams,
       result: Hive.ProxyPowerResponse,
       urlPath: "accounts/{accountName}/proxy-power",
-    }
+    },
+    totalWalletAddresses: {
+      params: Hive.WalletStatsParams,
+      result: Hive.WalletStatsResponse,
+      responseArray: true,
+      urlPath: "total_wallet_addresses",
+    },
   },
   "hafah-api": {
     block: {
@@ -176,10 +182,10 @@ export const extendedRest = {
       result: Hive.AccountRecurrentBalanceTransfersResponse,
       urlPath: "accounts/{accountName}/recurrent-transfers",
     },
-     topHolders: {
-    params: Hive.GetTopHoldersParams,
-    result: Hive.TopHoldersResponse,
-    urlPath: "top-holders",
+    topHolders: {
+      params: Hive.GetTopHoldersParams,
+      result: Hive.TopHoldersResponse,
+      urlPath: "top-holders",
     },
     transferStatistics: {
       params: Hive.TransferStatisticsParams,

@@ -54,7 +54,9 @@ const CustomTooltip = ({
     const totalOperations = payload.reduce((acc, pld) => acc + pld.value, 0);
     return (
       <div className="data-box">
-        <p className="font-bold text-xl">{t("common.block")} {label}</p>
+        <p className="font-bold text-xl">
+          {t("common.block")} {label}
+        </p>
         <div className="my-3 flex items-center">
           <Image
             className="rounded-full"
@@ -65,13 +67,12 @@ const CustomTooltip = ({
           />
           <p className="ml-4 font-semibold">{payload[0].payload.witness}</p>
         </div>
-        <div className="text-sm opacity-80">{t("common.operations")}: {totalOperations}</div>
+        <div className="text-sm opacity-80">
+          {t("common.operations")}: {totalOperations}
+        </div>
         <div className="mt-2 space-y-2">
           {payload.map((pld, index) => (
-            <div
-              key={index}
-              className="flex items-center"
-            >
+            <div key={index} className="flex items-center">
               <div
                 className="w-4 h-4 rounded-full"
                 style={{ backgroundColor: pld.fill }}
@@ -130,7 +131,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
   strokeColor,
 }) => {
   const { t, dir } = useI18n();
-  const isRTL = dir === 'rtl';
+  const isRTL = dir === "rtl";
 
   const SeeMoreIcon = isRTL ? MoveLeft : MoveRight;
 
@@ -187,7 +188,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
 
   return (
     <Card
-      className={cn("w-full h-[480px] pb-10", className)}
+      className={cn("w-full h-[480px] pb-10 mb-2", className)}
       data-testid="last-block-widget"
     >
       <CardHeader>
@@ -201,16 +202,13 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
           <SeeMoreIcon width={18} />
         </Link>
       </CardHeader>
-      <ResponsiveContainer
-        width="100%"
-        height="100%"
-      >
+      <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={data}
           margin={{
             top: 20,
             right: isRTL ? (isMobile ? 0 : 10) : 55,
-            left: isRTL ? 55 : (isMobile ? 0 : 10),
+            left: isRTL ? 55 : isMobile ? 0 : 10,
             bottom: isMobile ? 120 : 90,
           }}
         >
@@ -220,11 +218,12 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
             stroke={strokeColor}
             axisLine={false}
             reversed={isRTL}
+            style={{ fontSize: "14px" }}
           />
           <YAxis
             stroke={strokeColor}
             axisLine={false}
-            orientation={isRTL ? 'right' : 'left'}
+            orientation={isRTL ? "right" : "left"}
             domain={[
               0,
               (dataMax: number) => (Math.floor((dataMax + 10) / 50) + 1) * 50,
@@ -233,18 +232,15 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
             type="number"
             interval="preserveStartEnd"
           />
-          <Tooltip
-            cursor={{ fill: "#0000002A" }}
-            content={<CustomTooltip />}
-          />
+          <Tooltip cursor={{ fill: "#0000002A" }} content={<CustomTooltip />} />
           <Legend
             wrapperStyle={{
-            position: "relative",
-            marginLeft: isRTL ? 0 : "35px",
-            marginRight: isRTL ? "70px" : "0",
-          }}
-          align="center"
-        />
+              position: "relative",
+              marginLeft: isRTL ? 0 : "35px",
+              marginRight: isRTL ? "70px" : "0",
+            }}
+            align="center"
+          />
           <Bar
             dataKey="other"
             stackId="a"

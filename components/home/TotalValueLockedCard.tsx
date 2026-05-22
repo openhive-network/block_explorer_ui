@@ -95,10 +95,10 @@ const TotalValueLockedCard = () => {
   }, [totalValueLocked, hiveChain, dynamicGlobalData, hivePrice]);
 
   return (
-    <div className="bg-theme rounded mt-2 shadow-md overflow-hidden">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-5">
+    <div className="bg-theme rounded mb-2 shadow-md overflow-hidden">
+      <div className="flex flex-wrap gap-4 p-5">
         {/* Left Side: Total USD Value */}
-        <div className="md:col-span-1">
+        <div className="flex-1 min-w-[200px]">
           <div className="bg-explorer-extra-light-gray rounded-lg p-4 shadow-md h-full flex flex-col justify-center">
             <h3 className="text-sm font-semibold uppercase tracking-wide mb-1 text-explorer-dark-gray dark:text-text">
               {t("totalValueLockedCard.totalValueLocked")}
@@ -109,7 +109,8 @@ const TotalValueLockedCard = () => {
               </div>
             ) : tvlDetails ? (
               <p className="text-2xl font-bold text-explorer-dark-gray dark:text-text text-right">
-                ${tvlDetails.totalUsdValue.toLocaleString(undefined, {
+                $
+                {tvlDetails.totalUsdValue.toLocaleString(undefined, {
                   maximumFractionDigits: 2,
                 })}
               </p>
@@ -122,7 +123,7 @@ const TotalValueLockedCard = () => {
         </div>
 
         {/* Right Side: Detailed breakdown */}
-        <div className="md:col-span-2">
+        <div className="flex-[2] min-w-[260px]">
           <div className="bg-explorer-extra-light-gray rounded-lg p-4 shadow-md h-full">
             <div className="flex flex-col gap-3">
               {/* Total VESTS (HP) */}
@@ -138,7 +139,8 @@ const TotalValueLockedCard = () => {
                   </span>
                 </div>
                 <span className="font-bold text-explorer-dark-gray dark:text-text">
-                  ${tvlDetails?.totalVestsUsd.toLocaleString(undefined, {
+                  $
+                  {tvlDetails?.totalVestsUsd.toLocaleString(undefined, {
                     maximumFractionDigits: 2,
                   })}
                 </span>
@@ -155,7 +157,8 @@ const TotalValueLockedCard = () => {
                   </span>
                 </div>
                 <span className="font-bold text-explorer-dark-gray dark:text-text">
-                  ${tvlDetails?.totalSavingsHiveUsd.toLocaleString(undefined, {
+                  $
+                  {tvlDetails?.totalSavingsHiveUsd.toLocaleString(undefined, {
                     maximumFractionDigits: 2,
                   })}
                 </span>
@@ -172,7 +175,8 @@ const TotalValueLockedCard = () => {
                   </span>
                 </div>
                 <span className="font-bold text-explorer-dark-gray dark:text-text">
-                  ${tvlDetails?.totalSavingsHbdUsd.toLocaleString(undefined, {
+                  $
+                  {tvlDetails?.totalSavingsHbdUsd.toLocaleString(undefined, {
                     maximumFractionDigits: 2,
                   })}
                 </span>

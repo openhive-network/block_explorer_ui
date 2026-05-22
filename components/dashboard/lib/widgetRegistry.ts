@@ -18,6 +18,7 @@ import TopWitnessesCard from "@/components/home/TopWitnessesCard";
 import TransactionStatisticsCard from "@/components/home/TransactionStatisticsCard";
 import TransferVolumeCard from "@/components/home/TransferVolumeCard";
 import TotalValueLockedCard from "@/components/home/TotalValueLockedCard";
+import NetworkGrowthCard from "@/components/home/NetworkGrowthCard";
 import LastBlocksWidget from "@/components/LastBlocksWidget";
 import FundAndSupplyWidget from "@/components/dashboard/widgets/data/FundAndSupplyWidget";
 import HiveParametersWidget from "@/components/dashboard/widgets/data/HiveParametersWidget";
@@ -166,19 +167,25 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     id: "tx-stats",
     name: "widgets.txStatsName",
     component: TransactionStatisticsCard,
-    defaultLayout: { w: 8, h: 5, minW: 4, minH: 4 },
+    defaultLayout: { w: 8, h: 5, minW: 3, minH: 4 },
   },
   "transfer-volume": {
     id: "transfer-volume",
     name: "widgets.transferVolumeName",
     component: TransferVolumeCard,
-    defaultLayout: { w: 8, h: 5, minW: 4, minH: 4 },
+    defaultLayout: { w: 8, h: 5, minW: 3, minH: 4 },
   },
   tvl: {
     id: "tvl",
     name: "widgets.tvlName",
     component: TotalValueLockedCard,
-    defaultLayout: { w: 8, h: 5, minW: 4, minH: 4 },
+    defaultLayout: { w: 8, h: 5, minW: 3, minH: 4 },
+  },
+  "network-growth": {
+    id: "network-growth",
+    name: "widgets.networkGrowthName",
+    component: NetworkGrowthCard,
+    defaultLayout: { w: 8, h: 3.3, minW: 3, minH: 3 },
   },
   searches: {
     id: "searches",

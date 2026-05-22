@@ -88,10 +88,10 @@ const TransactionStatisticsCard = () => {
   };
 
   return (
-    <div className="bg-theme rounded mt-2 shadow-md overflow-hidden">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-5">
+    <div className="bg-theme rounded mb-2 shadow-md overflow-hidden">
+      <div className="flex flex-wrap gap-4 p-5">
         {/* Left Side: Total and Today Transactions */}
-        <div className="md:col-span-1">
+        <div className="flex-1 min-w-[200px]">
           <div className="flex flex-col space-y-4">
             {/* Total Transactions */}
             <div className="bg-explorer-extra-light-gray rounded-lg p-4 shadow-md">
@@ -155,7 +155,7 @@ const TransactionStatisticsCard = () => {
         </div>
 
         {/* Right Side: Last 30 Days Chart */}
-        <div className="md:col-span-2">
+        <div className="flex-[2] min-w-[260px]">
           <div className="bg-explorer-extra-light-gray rounded-lg p-4 shadow-md h-full flex flex-col">
             <div className="flex justify-between items-center mb-1">
               <h3 className="text-sm font-semibold uppercase tracking-wide text-explorer-dark-gray dark:text-text">
