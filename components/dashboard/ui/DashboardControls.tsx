@@ -19,7 +19,7 @@ const DashboardControls: React.FC<DashboardControlsProps> = ({
   t,
 }) => {
   return (
-    <div className="fixed top-18 right-4 z-50 flex flex-col items-center gap-2">
+    <div className="fixed top-32 right-4 z-50 flex flex-col items-center gap-2">
       <button
         onClick={onToggleEditMode}
         title={
