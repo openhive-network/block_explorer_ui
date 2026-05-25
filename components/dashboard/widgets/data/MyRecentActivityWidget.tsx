@@ -14,66 +14,61 @@ import WidgetLoggedOut from "@/components/dashboard/widgets/common/WidgetLoggedO
 import { useI18n } from "@/i18n/i18n";
 import { cn } from "@/lib/utils";
 
-const FEED_SIZE = 15;
+const FEED_SIZE = 50;
 
 type Category = "all" | "transfers" | "votes" | "rewards" | "witness" | "other";
 
 const TRANSFER_OPS = new Set([
   "transfer_operation",
-  "recurrent_transfer_operation",
-  "fill_recurrent_transfer_operation",
-  "failed_recurrent_transfer_operation",
   "transfer_to_savings_operation",
   "transfer_from_savings_operation",
   "cancel_transfer_from_savings_operation",
   "fill_transfer_from_savings_operation",
+  "recurrent_transfer_operation",
+  "fill_recurrent_transfer_operation",
+  "failed_recurrent_transfer_operation",
+  "escrow_transfer_operation",
   "transfer_to_vesting_operation",
   "transfer_to_vesting_completed_operation",
-  "withdraw_vesting_operation",
-  "fill_vesting_withdraw_operation",
-  "set_withdraw_vesting_route_operation",
-  "delegate_vesting_shares_operation",
-  "return_vesting_delegation_operation",
 ]);
 const VOTE_OPS = new Set([
   "vote_operation",
   "effective_comment_vote_operation",
+  "account_witness_vote_operation",
+  "update_proposal_votes_operation",
 ]);
 const REWARD_OPS = new Set([
-  "curation_reward_operation",
   "author_reward_operation",
-  "comment_reward_operation",
   "comment_benefactor_reward_operation",
+  "comment_reward_operation",
   "claim_reward_balance_operation",
-  "producer_reward_operation",
-  "pow_reward_operation",
+  "curation_reward_operation",
   "liquidity_reward_operation",
-  "interest_operation",
-  "proposal_pay_operation",
+  "pow_reward_operation",
+  "producer_reward_operation",
 ]);
 const WITNESS_OPS = new Set([
-  "account_witness_vote_operation",
-  "account_witness_proxy_operation",
-  "proxy_cleared_operation",
-  "decline_voting_rights_operation",
-  "declined_voting_rights_operation",
-  "delayed_voting_operation",
-  "feed_publish_operation",
-  "witness_update_operation",
-  "witness_set_properties_operation",
   "shutdown_witness_operation",
-  "producer_missed_operation",
   "witness_block_approve_operation",
-  "pow_operation",
-  "pow2_operation",
+  "witness_set_properties_operation",
+  "witness_update_operation",
+  "account_witness_proxy_operation",
+  "account_witness_vote_operation",
 ]);
 
-const categoryOf = (type: string): Exclude<Category, "all"> => {
-  if (TRANSFER_OPS.has(type)) return "transfers";
-  if (VOTE_OPS.has(type)) return "votes";
-  if (REWARD_OPS.has(type)) return "rewards";
-  if (WITNESS_OPS.has(type)) return "witness";
-  return "other";
+const matchesCategory = (type: string, category: Category): boolean => {
+  if (category === "all") return true;
+  if (category === "transfers") return TRANSFER_OPS.has(type);
+  if (category === "votes") return VOTE_OPS.has(type);
+  if (category === "rewards") return REWARD_OPS.has(type);
+  if (category === "witness") return WITNESS_OPS.has(type);
+  // "other": anything not in the four named buckets
+  return (
+    !TRANSFER_OPS.has(type) &&
+    !VOTE_OPS.has(type) &&
+    !REWARD_OPS.has(type) &&
+    !WITNESS_OPS.has(type)
+  );
 };
 
 const formatOpName = (raw: string): string => {
@@ -201,8 +196,8 @@ const MyRecentActivityWidget: React.FC = () => {
 
   const filteredOps = useMemo(() => {
     if (activeCategory === "all") return formattedOps;
-    return formattedOps.filter(
-      (op) => categoryOf(op.op?.type ?? "") === activeCategory
+    return formattedOps.filter((op) =>
+      matchesCategory(op.op?.type ?? "", activeCategory)
     );
   }, [formattedOps, activeCategory]);
 
@@ -358,31 +353,32 @@ const MyRecentActivityWidget: React.FC = () => {
                 );
               })}
             </ul>
-            {total > 0 && (
-              <div className="mt-1.5 px-2 text-[0.6rem] text-slate-400 dark:text-slate-500 flex items-center justify-center gap-1.5 flex-wrap">
-                <span>
-                  {t("widgets.myRecentActivityFooter", {
-                    shown: String(formattedOps.length),
-                    total: total.toLocaleString(),
-                  })}
-                </span>
-                {lastFetchedAt && (
-                  <>
-                    <span aria-hidden>·</span>
-                    <span
-                      className="inline-flex items-center gap-1 whitespace-nowrap"
-                      title={lastFetchedAt.toLocaleString(locale)}
-                    >
-                      {t("widgets.myRecentActivityUpdated")}
-                      <TimeAgo locale={locale} datetime={lastFetchedAt} />
-                    </span>
-                  </>
-                )}
-              </div>
-            )}
           </>
         )}
       </CardContent>
+
+      {total > 0 && (
+        <div className="border-t bg-background px-2 py-1.5 flex-shrink-0 text-[0.6rem] text-slate-400 dark:text-slate-500 flex items-center justify-center gap-1.5 flex-wrap">
+          <span>
+            {t("widgets.myRecentActivityFooter", {
+              shown: String(formattedOps.length),
+              total: total.toLocaleString(),
+            })}
+          </span>
+          {lastFetchedAt && (
+            <>
+              <span aria-hidden>·</span>
+              <span
+                className="inline-flex items-center gap-1 whitespace-nowrap"
+                title={lastFetchedAt.toLocaleString(locale)}
+              >
+                {t("widgets.myRecentActivityUpdated")}
+                <TimeAgo locale={locale} datetime={lastFetchedAt} />
+              </span>
+            </>
+          )}
+        </div>
+      )}
     </Card>
   );
 };
