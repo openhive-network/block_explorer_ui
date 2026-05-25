@@ -54,7 +54,7 @@ const MyHpDelegationsWidget: React.FC = () => {
   const isEmpty = outgoingLen === 0 && incomingLen === 0;
 
   return (
-    <Card className="col-span-12 lg:col-span-3 overflow-hidden h-full flex flex-col">
+    <Card className="col-span-12 lg:col-span-3 overflow-hidden h-full flex flex-col [&_td]:!text-[0.8rem] [&_th]:!text-[0.8rem] [&_td]:!px-2 [&_th]:!px-2 [&_td]:!tabular-nums [&_td]:!whitespace-nowrap [&_td]:!break-normal">
       <CardHeader className="flex justify-between items-center border-b px-3 py-2.5 flex-shrink-0">
         <CardTitle>{t("widgets.myHpDelegationsName")}</CardTitle>
         <Link
@@ -65,7 +65,7 @@ const MyHpDelegationsWidget: React.FC = () => {
           <SeeMoreIcon width={18} />
         </Link>
       </CardHeader>
-      <CardContent className="px-2 pt-2 pb-2 flex-1 min-h-0 overflow-y-auto">
+      <CardContent className="px-2 pt-2 pb-2 flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
         {isEmpty ? (
           <div className="flex flex-col items-center justify-center py-6 text-center gap-2">
             <HandCoins className="h-7 w-7 opacity-20" />
