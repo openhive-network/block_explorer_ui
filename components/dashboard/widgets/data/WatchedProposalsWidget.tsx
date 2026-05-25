@@ -16,16 +16,14 @@ import {
   Landmark,
   Loader2,
 } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useWatchlist } from "@/contexts/WatchlistContext";
 import { useAuth } from "@/contexts/AuthContext";
 import useWatchedProposals from "@/hooks/api/proposals/useWatchedProposals";
-import { FundingProgressBar, TimeProgressBar } from "@/components/proposals/ProposalCard";
+import {
+  FundingProgressBar,
+  TimeProgressBar,
+} from "@/components/proposals/ProposalCard";
 import { useI18n } from "@/i18n/i18n";
 import { cn } from "@/lib/utils";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
@@ -38,7 +36,8 @@ import { convertVestsToHP } from "@/utils/Calculations";
 const STATUS_CONFIG = {
   active: {
     icon: CheckCircle,
-    badgeClass: "text-green-600 bg-green-100 dark:text-green-400 dark:bg-green-500/20",
+    badgeClass:
+      "text-green-600 bg-green-100 dark:text-green-400 dark:bg-green-500/20",
     labelKey: "proposalCard.statusActive",
   },
   expired: {
@@ -48,7 +47,8 @@ const STATUS_CONFIG = {
   },
   inactive: {
     icon: Clock,
-    badgeClass: "text-slate-600 bg-slate-100 dark:text-slate-400 dark:bg-slate-800",
+    badgeClass:
+      "text-slate-600 bg-slate-100 dark:text-slate-400 dark:bg-slate-800",
     labelKey: "proposalCard.statusInactive",
   },
 } as const;
@@ -56,7 +56,13 @@ const STATUS_CONFIG = {
 const WatchedProposalsWidget = () => {
   const { t, locale } = useI18n();
   const { username } = useAuth();
-  const { getWatched, toggleWatch, markProposalChanged, clearProposalChange, changedProposalIds } = useWatchlist();
+  const {
+    getWatched,
+    toggleWatch,
+    markProposalChanged,
+    clearProposalChange,
+    changedProposalIds,
+  } = useWatchlist();
   const { hiveChain } = useHiveChainContext();
   const { dynamicGlobalData } = useDynamicGlobal();
 
@@ -95,7 +101,11 @@ const WatchedProposalsWidget = () => {
     return watchedProposals
       .map((p) => {
         const status: keyof typeof STATUS_CONFIG =
-          now < p.start_date ? "inactive" : now > p.end_date ? "expired" : "active";
+          now < p.start_date
+            ? "inactive"
+            : now > p.end_date
+              ? "expired"
+              : "active";
         const isFunded =
           fundingThreshold > 0 && parseFloat(p.total_votes) > fundingThreshold;
         const daysUntilExpiry = Math.ceil(
@@ -108,14 +118,18 @@ const WatchedProposalsWidget = () => {
       .sort((a, b) => parseFloat(b.total_votes) - parseFloat(a.total_votes));
   }, [watchedProposals, fundingThreshold]);
 
-  // --- Status watcher: persist status daily, notify on ANY change ---
   useEffect(() => {
     if (typeof window === "undefined" || !enriched.length || !username) return;
+    // Skip until threshold loads — otherwise a stub funded:false gets stored
+    // and the next run misreads it as a status change.
+    if (fundingThreshold <= 0) return;
 
     const STORAGE_KEY = `hivescan_watched_status_${username}`;
-    const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
-    let stored: Record<string, { funded: boolean; status: string; checkedAt: number }> = {};
+    let stored: Record<
+      string,
+      { funded: boolean; status: string; checkedAt: number }
+    > = {};
     try {
       stored = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "{}");
     } catch {
@@ -139,18 +153,15 @@ const WatchedProposalsWidget = () => {
       }
 
       // Discard tampered or unrecognised persisted entries
-      if (!VALID_STATUSES.has(prev.status) || typeof prev.funded !== "boolean") {
+      if (
+        !VALID_STATUSES.has(prev.status) ||
+        typeof prev.funded !== "boolean"
+      ) {
         updated[key] = { funded: p.isFunded, status: p.status, checkedAt: now };
         continue;
       }
 
-      // Carry forward if within the same day
-      if (now - prev.checkedAt < ONE_DAY_MS) {
-        updated[key] = prev;
-        continue;
-      }
-
-      // New day — detect any status change
+      // Detect any status change
       const fundedChanged = prev.funded !== p.isFunded;
       const statusChanged = prev.status !== p.status;
       if (fundedChanged || statusChanged) {
@@ -180,7 +191,10 @@ const WatchedProposalsWidget = () => {
     });
 
     // Browser notification — best-effort
-    if (typeof Notification !== "undefined" && Notification.permission !== "denied") {
+    if (
+      typeof Notification !== "undefined" &&
+      Notification.permission !== "denied"
+    ) {
       const fire = () => {
         changed.forEach(({ id, subject, reason }) => {
           new Notification(reason, { body: `#${id} · ${subject}` });
@@ -194,7 +208,7 @@ const WatchedProposalsWidget = () => {
         });
       }
     }
-  }, [enriched, t, markProposalChanged, username]);
+  }, [enriched, t, markProposalChanged, username, fundingThreshold]);
 
   return (
     <Card className="col-span-12 lg:col-span-3">
@@ -215,9 +229,7 @@ const WatchedProposalsWidget = () => {
         {ids.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8 text-center gap-2">
             <Star className="h-8 w-8 opacity-20" />
-            <p className="text-sm text-muted-foreground">
-              {t("watchlist.proposals.empty")}
-            </p>
+            <p className="text-sm">{t("watchlist.proposals.empty")}</p>
           </div>
         ) : isLoading ? (
           <div className="space-y-1.5 py-1">
@@ -305,12 +317,13 @@ const WatchedProposalsWidget = () => {
                 );
               }
 
-              const expiryLabel =
-                p.isExpiringSoon
-                  ? p.daysUntilExpiry === 0
-                    ? t("smartReminders.endsToday")
-                    : t("smartReminders.endsInDays", { days: String(p.daysUntilExpiry) })
-                  : null;
+              const expiryLabel = p.isExpiringSoon
+                ? p.daysUntilExpiry === 0
+                  ? t("smartReminders.endsToday")
+                  : t("smartReminders.endsInDays", {
+                      days: String(p.daysUntilExpiry),
+                    })
+                : null;
 
               const hasChange = changedProposalIds.has(p.proposal_id);
 
@@ -342,7 +355,10 @@ const WatchedProposalsWidget = () => {
                       </span>
                     )}
                     <button
-                      onClick={() => { toggleWatch("proposals", p.proposal_id); clearProposalChange(p.proposal_id); }}
+                      onClick={() => {
+                        toggleWatch("proposals", p.proposal_id);
+                        clearProposalChange(p.proposal_id);
+                      }}
                       title={t("watchlist.removeFromWatchlist")}
                       aria-label={t("watchlist.removeFromWatchlist")}
                       className="flex-shrink-0 p-0.5 rounded text-slate-400 hover:text-red-500 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
@@ -431,7 +447,6 @@ const WatchedProposalsWidget = () => {
           </ul>
         )}
       </CardContent>
-
     </Card>
   );
 };

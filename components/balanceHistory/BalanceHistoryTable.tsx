@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useMemo } from "react";
 import {
   Table,
   TableBody,
@@ -29,7 +29,13 @@ import { formatNumber } from "@/lib/utils";
 import CustomPagination from "../CustomPagination";
 import { config } from "@/Config";
 import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  ArrowDown,
+  ArrowUp,
+  Minus,
+} from "lucide-react";
 import CopyButton from "../ui/CopyButton";
 import DataExport from "../DataExport";
 import DataCountMessage from "../DataCountMessage";
@@ -37,7 +43,7 @@ import { useI18n } from "@/i18n/i18n";
 import { grabNumericValue } from "@/utils/StringUtils";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
-import { convertVestsToHive } from "@/utils/Calculations";
+import { convertVestsToHive, convertVestsToHP } from "@/utils/Calculations";
 import { useSettings } from "@/contexts/SettingsContext";
 
 interface BalanceHistoryTableProps {
@@ -46,6 +52,7 @@ interface BalanceHistoryTableProps {
   total_pages: number;
   current_page: number;
   account_name: string;
+  unit?: "vests" | "hp";
 }
 
 const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
@@ -54,64 +61,103 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
   total_pages,
   current_page,
   account_name,
+  unit,
 }) => {
   const router = useRouter();
   const { hiveChain } = useHiveChainContext();
   const { dynamicGlobalData } = useDynamicGlobal();
   const { locale: appLocale, t } = useI18n();
   const {
-    settings: { rawJsonView, prettyJsonView },
+    settings: { rawJsonView, prettyJsonView, displayVestHpMode },
   } = useSettings();
 
+  const coinName = router.query.coinType ? router.query.coinType : "HIVE";
+  const effectiveUnit: "vests" | "hp" =
+    unit ?? (displayVestHpMode === "hp" ? "hp" : "vests");
+  const isHpMode = coinName === "VESTS" && effectiveUnit === "hp";
+
   const [expandedRow, setExpandedRow] = useState<number | null>(null);
-  const operationsTypes = useOperationsTypes().operationsTypes || [];
+  const { operationsTypes: operationsTypesRaw } = useOperationsTypes();
 
-  // Create refs to store row and detail div elements
-  const rowRefs = useRef<Map<number, HTMLTableRowElement>>(new Map());
-  const detailRefs = useRef<Map<number, HTMLDivElement>>(new Map());
+  const operationsTypesById = useMemo(() => {
+    const list = operationsTypesRaw || [];
+    const map = new Map<number, (typeof list)[number]>();
+    list.forEach((op) => map.set(op.op_type_id, op));
+    return map;
+  }, [operationsTypesRaw]);
 
-  // Track screen size for mobile responsiveness
-  const [isMobile, setIsMobile] = useState(false);
-
-  // Set screen size check for mobile view
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth <= 768); // Adjust breakpoint as needed
-    };
-
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => {
-      window.removeEventListener("resize", checkMobile);
-    };
+  const colorByOperationName = useMemo(() => {
+    const map = new Map<string, string>();
+    categorizedOperationTypes.forEach((cat) => {
+      const color = colorByOperationCategory[cat.name] ?? "";
+      cat.types.forEach((name) => map.set(name, color));
+    });
+    return map;
   }, []);
 
+  const rowRefs = useRef<Map<number, HTMLTableRowElement>>(new Map());
+  const detailRefs = useRef<Map<number, HTMLDivElement>>(new Map());
+  const paginationRef = useRef<HTMLDivElement | null>(null);
+
+  const vestsConvertedRows = useMemo(() => {
+    if (coinName !== "VESTS" || !hiveChain || !dynamicGlobalData) return null;
+    const fundHive = dynamicGlobalData.headBlockDetails.rawTotalVestingFundHive;
+    const totalShares =
+      dynamicGlobalData.headBlockDetails.rawTotalVestingShares;
+    const toHp = (rawVests: number | string) =>
+      convertVestsToHP(hiveChain, String(rawVests), fundHive, totalShares) ??
+      "0 HP";
+    const map = new Map<
+      number,
+      {
+        balance: string;
+        prev_balance: string;
+        balanceChange: string;
+        balanceHpNumeric: number;
+      }
+    >();
+    operations.forEach((op) => {
+      const balanceStr = toHp(op.balance);
+      map.set(op.operationId, {
+        balance: balanceStr,
+        prev_balance: toHp(op.prev_balance),
+        balanceChange: toHp(op.balanceChange),
+        balanceHpNumeric: grabNumericValue(balanceStr),
+      });
+    });
+    return map;
+  }, [coinName, operations, hiveChain, dynamicGlobalData]);
+
+  const hpConvertedRows = isHpMode ? vestsConvertedRows : null;
+
   const formatRawCoin = (coinValue: number) =>
-    router.query.coinType === "VESTS"
+    coinName === "VESTS"
       ? formatNumber(coinValue, true, false)
       : formatNumber(coinValue, false, false);
 
   const getOperationColor = (op_type_id: number) => {
-    const operation = operationsTypes.find(
-      (op) => op.op_type_id === op_type_id
-    );
+    const operation = operationsTypesById.get(op_type_id);
     if (!operation) return "";
-    const category = categorizedOperationTypes.find((cat) =>
-      cat.types.includes(operation.operation_name)
-    );
-    return category ? colorByOperationCategory[category.name] : "";
+    return colorByOperationName.get(operation.operation_name) ?? "";
   };
 
   const getOperationTypeForDisplayById = (op_type_id: number) =>
     getOperationTypeForDisplay(
-      operationsTypes.find((op) => op.op_type_id === op_type_id)
-        ?.operation_name || ""
+      operationsTypesById.get(op_type_id)?.operation_name || ""
     );
 
   const updateUrl = (page: number) => {
-    router.push({
-      pathname: router.pathname,
-      query: { ...router.query, page: page.toString() },
+    router.push(
+      {
+        pathname: router.pathname,
+        query: { ...router.query, page: page.toString() },
+      },
+      undefined,
+      { scroll: false }
+    );
+    paginationRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
     });
   };
 
@@ -125,7 +171,6 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
     const formattedAccountOperations = useOperationsFormatter(operationData);
 
     const handleDetailsClick = (opDetails: any) => {
-
       if (!opDetails?.block) return;
 
       const { block, trx_id, operation_id } = opDetails;
@@ -147,9 +192,9 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
       if (!operationData || Object.keys(operationData).length === 0) {
         return <p>{t("balanceHistoryTable.noRecordsForOperation")}</p>;
       }
-      
+
       return (
-        <div 
+        <div
           className="cursor-pointer hover:bg-rowHover"
           onClick={() => handleDetailsClick(formattedAccountOperations)}
         >
@@ -173,9 +218,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
 
   const getOneLineDescription = (operation: any) => {
     const value = operation.op.value;
-    // Check if 'value' is a string or a valid React element
     if (typeof value === "string" || React.isValidElement(value)) {
-      // If trxId is present, prepend a div with a link to the transaction page
       if (operation.trx_id) {
         return (
           <>
@@ -207,52 +250,12 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
   const handleRowClick = (operationId: number) => {
     setExpandedRow((prev) => (prev === operationId ? null : operationId));
 
-    // Scroll the corresponding row and details into view with additional margin for visibility
     const rowElement = rowRefs.current.get(operationId);
     const detailElement = detailRefs.current.get(operationId);
 
     if (rowElement && detailElement) {
-      // Ensure smooth scrolling for both row and details
       rowElement.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  };
-
-  const coinName = router.query.coinType ? router.query.coinType : "HIVE";
-
-  const prepareExportData = () => {
-    return operations.map((operation) => {
-      const hivePrice = Number(operation.hivePrice);
-      const dollarValue = getDollarValue(
-        coinName as string,
-        operation.balance,
-        hivePrice
-      );
-
-      const showDollarValueByCoin = formatNumber(
-        dollarValue as number,
-        false,
-        coinName === "VESTS"
-      );
-      return {
-        [t("balanceHistoryTable.operationType")]:
-          getOperationTypeForDisplayById(operation.opTypeId),
-        [t("balanceHistoryTable.timestamp")]: formatAndDelocalizeTime(
-          operation.timestamp
-        ),
-        [t("balanceHistoryTable.blockNumber")]:
-          operation.blockNumber?.toLocaleString() || "",
-        [t("balanceHistoryTable.balance")]: `${formatRawCoin(
-          operation.prev_balance
-        )} ${coinName}`,
-        [t("balanceHistoryTable.balanceChange")]: `${formatRawCoin(
-          operation.balanceChange
-        )} ${coinName}`,
-        [t("balanceHistoryTable.newBalance")]: `${formatRawCoin(
-          operation.balance
-        )} ${coinName}`,
-        [t("balanceHistoryTable.dollarValue")]: `$${showDollarValueByCoin}`,
-      };
-    });
   };
 
   const vestsToHive = (vests: string) => {
@@ -267,7 +270,12 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
     }
   };
 
-  const getDollarValue = (coin: string, balance: number, hivePrice: number) => {
+  const getDollarValue = (
+    coin: string,
+    balance: number,
+    hivePrice: number,
+    cachedHp?: number
+  ) => {
     if (coin === "HIVE") {
       return hivePrice * balance;
     }
@@ -275,26 +283,83 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
       return balance;
     }
     if (coin === "VESTS") {
+      if (cachedHp !== undefined) {
+        return (cachedHp * hivePrice).toFixed(2);
+      }
       const vests = vestsToHive(String(balance));
-
       const convertToNumber = grabNumericValue(String(vests));
       const result = convertToNumber * hivePrice;
       return result.toFixed(2);
     } else return undefined;
   };
 
+  const exportData = useMemo(() => {
+    return operations.map((operation) => {
+      const hivePrice = Number(operation.hivePrice);
+      const vestsCached = vestsConvertedRows?.get(operation.operationId);
+      const dollarValue = getDollarValue(
+        coinName as string,
+        operation.balance,
+        hivePrice,
+        vestsCached?.balanceHpNumeric
+      );
+
+      const dollarNumeric = Number(dollarValue);
+      const dollarCell =
+        dollarValue == null || isNaN(dollarNumeric)
+          ? "—"
+          : `$${formatNumber(dollarNumeric, false, coinName === "VESTS")}`;
+
+      const converted = hpConvertedRows?.get(operation.operationId);
+      const prevCell = converted
+        ? converted.prev_balance
+        : `${formatRawCoin(operation.prev_balance)} ${coinName}`;
+      const changeCell = converted
+        ? converted.balanceChange
+        : `${formatRawCoin(operation.balanceChange)} ${coinName}`;
+      const balanceCell = converted
+        ? converted.balance
+        : `${formatRawCoin(operation.balance)} ${coinName}`;
+
+      return {
+        [t("balanceHistoryTable.operationType")]:
+          getOperationTypeForDisplayById(operation.opTypeId),
+        [t("balanceHistoryTable.timestamp")]: formatAndDelocalizeTime(
+          operation.timestamp
+        ),
+        [t("balanceHistoryTable.blockNumber")]:
+          operation.blockNumber?.toLocaleString() || "",
+        [t("balanceHistoryTable.balance")]: prevCell,
+        [t("balanceHistoryTable.balanceChange")]: changeCell,
+        [t("balanceHistoryTable.newBalance")]: balanceCell,
+        [t("balanceHistoryTable.dollarValue")]: dollarCell,
+      };
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    operations,
+    coinName,
+    hpConvertedRows,
+    vestsConvertedRows,
+    operationsTypesById,
+    t,
+  ]);
+
   return (
-        <>
-          <div className="sticky z-20 top-[3.2rem] md:top-[4rem]">
-            <CustomPagination
-              currentPage={current_page ? current_page : total_pages}
-              onPageChange={updateUrl}
-              pageSize={config.standardPaginationSize}
-              totalCount={total_operations}
-              className="rounded"
-              isMirrored={true}
-            />
-          </div>
+    <>
+      <div
+        ref={paginationRef}
+        className="sticky z-20 top-[7rem] md:top-[7.5rem] scroll-mt-[7.5rem]"
+      >
+        <CustomPagination
+          currentPage={current_page ? current_page : total_pages}
+          onPageChange={updateUrl}
+          pageSize={config.standardPaginationSize}
+          totalCount={total_operations}
+          className="rounded"
+          isMirrored={true}
+        />
+      </div>
       {total_operations === 0 ? (
         <div className="flex justify-center w-full">
           {t("balanceHistoryTable.noResultsMatchingCriteria")}
@@ -311,7 +376,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
               dataType="common.operations"
             />
             <DataExport
-              data={prepareExportData()}
+              data={exportData}
               filename={`${account_name}_${t(
                 "accountDetailsSection.balanceHistory"
               ).toLowerCase()}.csv`}
@@ -342,17 +407,39 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
                 const operationBgColor = getOperationColor(operation.opTypeId);
                 const isExpanded = expandedRow === operation.operationId;
                 const hivePrice = Number(operation.hivePrice);
+                const vestsCached = vestsConvertedRows?.get(
+                  operation.operationId
+                );
                 const dollarValue = getDollarValue(
                   coinName as string,
                   operation.balance,
-                  hivePrice
+                  hivePrice,
+                  vestsCached?.balanceHpNumeric
                 );
 
-                const showDollarValueByCoin = formatNumber(
-                  dollarValue as number,
-                  false,
-                  coinName === "VESTS"
-                );
+                const dollarNumeric = Number(dollarValue);
+                const dollarCell =
+                  dollarValue == null || isNaN(dollarNumeric)
+                    ? "—"
+                    : `$${formatNumber(dollarNumeric, false, coinName === "VESTS")}`;
+
+                const converted = hpConvertedRows?.get(operation.operationId);
+                const prevCell = converted
+                  ? converted.prev_balance
+                  : `${formatRawCoin(operation.prev_balance)} ${coinName}`;
+                const changeCell = converted
+                  ? converted.balanceChange
+                  : `${formatRawCoin(operation.balanceChange)} ${coinName}`;
+                const balanceCell = converted
+                  ? converted.balance
+                  : `${formatRawCoin(operation.balance)} ${coinName}`;
+
+                const trendColor =
+                  operation.balanceChange > 0
+                    ? "#22c55e"
+                    : operation.balanceChange < 0
+                      ? "#ef4444"
+                      : "#6b7280";
 
                 return (
                   <React.Fragment key={index}>
@@ -364,10 +451,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
                       }}
                       className={isExpanded ? "bg-rowOdd" : ""}
                     >
-                      <TableCell
-                        stickyLeft
-                        data-testid="operation-type"
-                      >
+                      <TableCell stickyLeft data-testid="operation-type">
                         <div className="flex justify-start rounded">
                           <span
                             className={`rounded w-4 mr-2 ${operationBgColor}`}
@@ -418,16 +502,41 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
                         />
                       </TableCell>
                       <TableCell data-testid="operation-prev-balance">
-                        {formatRawCoin(operation.prev_balance)} {coinName}
+                        {prevCell}
                       </TableCell>
                       <TableCell data-testid="operation-balance-change">
-                        {formatRawCoin(operation.balanceChange)} {coinName}
+                        <span className="inline-flex items-center gap-1 whitespace-nowrap">
+                          {operation.balanceChange > 0 ? (
+                            <ArrowUp
+                              size={14}
+                              color={trendColor}
+                              aria-label={t(
+                                "balanceHistoryTable.trendIncreased"
+                              )}
+                            />
+                          ) : operation.balanceChange < 0 ? (
+                            <ArrowDown
+                              size={14}
+                              color={trendColor}
+                              aria-label={t(
+                                "balanceHistoryTable.trendDecreased"
+                              )}
+                            />
+                          ) : (
+                            <Minus
+                              size={14}
+                              color={trendColor}
+                              aria-label={t(
+                                "balanceHistoryTable.trendUnchanged"
+                              )}
+                            />
+                          )}
+                          {changeCell}
+                        </span>
                       </TableCell>
-                      <TableCell>
-                        {formatRawCoin(operation.balance)} {coinName}
-                      </TableCell>
+                      <TableCell>{balanceCell}</TableCell>
 
-                      <TableCell>${showDollarValueByCoin}</TableCell>
+                      <TableCell>{dollarCell}</TableCell>
                       <TableCell>
                         <button
                           onClick={() => handleRowClick(operation.operationId)}
@@ -455,10 +564,7 @@ const BalanceHistoryTable: React.FC<BalanceHistoryTableProps> = ({
                           }
                         }}
                       >
-                        <TableCell
-                          colSpan={7}
-                          className="p-4"
-                        >
+                        <TableCell colSpan={7} className="p-4">
                           <div className="border rounded-2xl p-4 bg-theme">
                             <h3 className="text-lg font-bold">
                               {t("balanceHistoryTable.operationDetails")}

@@ -1,5 +1,11 @@
 // src/components/dashboard/WidgetIndex.tsx
-import React, { useState, useMemo, useEffect, useRef } from "react";
+import React, {
+  useState,
+  useMemo,
+  useEffect,
+  useRef,
+  useCallback,
+} from "react";
 import Head from "next/head";
 import { Responsive, WidthProvider } from "react-grid-layout";
 import { Move, X } from "lucide-react";
@@ -17,7 +23,9 @@ import { useDashboard } from "@/components/dashboard/hooks/useDashboard";
 import { useI18n } from "@/i18n/i18n";
 import { useDashboardData } from "@/components/dashboard/hooks/useDashboardData";
 import { WIDGET_REGISTRY } from "@/components/dashboard/lib/widgetRegistry";
+import { DEFAULT_WIDGETS } from "@/components/dashboard/lib/dashboard.config";
 import { useWatchlist } from "@/contexts/WatchlistContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -49,24 +57,59 @@ const WidgetIndex = () => {
   } = useDashboard();
 
   const { getWatched } = useWatchlist();
+  const { username } = useAuth();
 
+  // One-time seed of the Network Growth widget (#723) for users with a saved
+  // dashboard; the seeded flag lets them remove it for good afterwards.
   useEffect(() => {
-    if (!isLoaded) return;
-    const watchedCount = getWatched("proposals").size;
-    if (watchedCount === 0) return;
-    const alreadyAdded = widgets.some((w) => w.type === "watched-proposals");
-    if (!alreadyAdded) {
-      const masterLayout = layouts.lg || [];
-      const rightColBottom = masterLayout
-        .filter((item) => item.x >= 9)
-        .reduce((max, item) => Math.max(max, item.y + item.h), 0);
-      onAddWidget("watched-proposals", { x: 9, y: rightColBottom, w: 2.95 });
+    if (!isLoaded || !username) return;
+    const seededKey = `hivescan_dashboard_network_growth_seeded_${username}`;
+    if (localStorage.getItem(seededKey)) return;
+    localStorage.setItem(seededKey, "true");
+    if (widgets.some((w) => w.type === "network-growth")) return;
+    const masterLayout = layouts.lg || [];
+    const mainColBottom = masterLayout
+      .filter((item) => item.x >= 3 && item.x < 9)
+      .reduce((max, item) => Math.max(max, item.y + item.h), 0);
+    onAddWidget("network-growth", {
+      x: 3,
+      y: mainColBottom,
+      w: 6,
+      h: 3.3,
+      minH: 3,
+    });
+  }, [isLoaded, username, widgets, layouts, onAddWidget]);
+
+  // Watched Proposals mirrors standard home: auto-shown when you watch a
+  // proposal, auto-removed when none. X-dismiss persists via a flag.
+  const watchedProposalsCount = getWatched("proposals").size;
+  useEffect(() => {
+    if (!isLoaded || !username) return;
+    const dismissedKey = `hivescan_dashboard_watched_proposals_dismissed_${username}`;
+    // handleResetLayout sets widgets to the DEFAULT_WIDGETS reference.
+    if (widgets === DEFAULT_WIDGETS) localStorage.removeItem(dismissedKey);
+    const present = widgets.find((w) => w.type === "watched-proposals");
+    if (watchedProposalsCount === 0) {
+      if (present) onRemoveWidget(present.i);
+      return;
     }
-  }, [isLoaded, getWatched, widgets, onAddWidget, layouts]);
+    if (present || localStorage.getItem(dismissedKey)) return;
+    // Top of the right column (y: 0), like standard home.
+    onAddWidget("watched-proposals", { x: 9, y: 0, w: 3 });
+  }, [
+    isLoaded,
+    username,
+    watchedProposalsCount,
+    widgets,
+    onAddWidget,
+    onRemoveWidget,
+  ]);
 
   const contentRefs = useRef(new Map<string, HTMLDivElement>());
   const widgetStatesRef = useRef(widgetStates);
-  useEffect(() => { widgetStatesRef.current = widgetStates; }, [widgetStates]);
+  useEffect(() => {
+    widgetStatesRef.current = widgetStates;
+  }, [widgetStates]);
 
   useEffect(() => {
     const ROW_HEIGHT = 50;
@@ -100,6 +143,22 @@ const WidgetIndex = () => {
 
   const dashboardData = useDashboardData(widgets);
 
+  // Removing Watched Proposals via X persists a dismiss flag so the effect
+  // above doesn't re-add it on navigation/refresh.
+  const handleRemoveWidget = useCallback(
+    (widgetId: string) => {
+      const removed = widgets.find((w) => w.i === widgetId);
+      if (removed?.type === "watched-proposals" && username) {
+        localStorage.setItem(
+          `hivescan_dashboard_watched_proposals_dismissed_${username}`,
+          "true"
+        );
+      }
+      onRemoveWidget(widgetId);
+    },
+    [widgets, onRemoveWidget, username]
+  );
+
   const widgetElements = useMemo(() => {
     return (widgets || []).map((widget) => {
       const widgetConfig = WIDGET_REGISTRY[widget.type];
@@ -129,6 +188,8 @@ const WidgetIndex = () => {
         widgetConfig.dynamicHeight
           ? "instant-height"
           : "transition-all duration-200",
+        widgetConfig.collapsible &&
+          "[&_.data-box]:mt-0 [&_.data-box-chart]:mt-0",
         finalIsEditMode
           ? "border-2 border-dashed border-slate-400 rounded-lg overflow-hidden cursor-move"
           : "border-2 border-transparent",
@@ -142,7 +203,7 @@ const WidgetIndex = () => {
           </div>
           <button
             onMouseDown={(e) => e.stopPropagation()}
-            onClick={() => onRemoveWidget(widget.i)}
+            onClick={() => handleRemoveWidget(widget.i)}
             className="absolute top-2 right-2 z-20 w-7 h-7 flex items-center justify-center bg-slate-300 dark:bg-slate-700 text-white rounded-full shadow-lg hover:bg-slate-400 dark:hover:bg-slate-800 transition-all"
             aria-label={`Remove ${widget.type} widget`}
           >
@@ -176,7 +237,7 @@ const WidgetIndex = () => {
     finalIsEditMode,
     isEditMode,
     dashboardData,
-    onRemoveWidget,
+    handleRemoveWidget,
     handleToggleCollapse,
     handleWidgetStateChange,
   ]);
@@ -203,7 +264,8 @@ const WidgetIndex = () => {
         breakpoints={{ lg: 1024, md: 768, sm: 640, xs: 0 }}
         cols={{ xl: 12, lg: 12, md: 10, sm: 6, xs: 4 }}
         rowHeight={50}
-        margin={[2, 2]}
+        margin={[8, 2]}
+        containerPadding={[2, 2]}
         onLayoutChange={onLayoutChange}
         onBreakpointChange={onBreakpointChange}
         compactType="vertical"

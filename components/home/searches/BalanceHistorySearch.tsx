@@ -3,9 +3,11 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import moment from "moment";
 import SearchRanges from "@/components/searchRanges/SearchRanges";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
 
 // import useURLParams from "@/hooks/common/useURLParams";
 // import OperationTypesDialog from "@/components/OperationTypesDialog";
@@ -16,8 +18,20 @@ import { removeStorageItem, getLocalStorage } from "@/utils/LocalStorage";
 import { defaultBalanceHistorySearchParams } from "@/pages/balanceHistory/[accountName]";
 import { useI18n } from "@/i18n/i18n";
 
-const COIN_TYPES = ["HIVE", "VESTS", "HBD"];
 export const DEFAULT_COIN_TYPE = "HIVE";
+
+type CoinOption = {
+  key: "HIVE" | "VESTS" | "HP" | "HBD";
+  coinType: string;
+  unit?: "vests" | "hp";
+};
+
+const COIN_OPTIONS: CoinOption[] = [
+  { key: "HIVE", coinType: "HIVE" },
+  { key: "VESTS", coinType: "VESTS", unit: "vests" },
+  { key: "HP", coinType: "VESTS", unit: "hp" },
+  { key: "HBD", coinType: "HBD" },
+];
 
 const BalanceHistorySearch = ({
   paramsState,
@@ -28,6 +42,10 @@ const BalanceHistorySearch = ({
   isFiltersActive,
   coinType,
   setCoinType,
+  unit,
+  setUnit,
+  showCustomRange,
+  setShowCustomRange,
 }: any) => {
   const { t } = useI18n();
   // const [coinType, setCoinType] = useState<string>(
@@ -38,6 +56,7 @@ const BalanceHistorySearch = ({
   );
   const router = useRouter();
   const { searchRanges } = useSearchesContext();
+  const { checkTemporaryHeadBlockNumber } = useHeadBlockNumber();
   const accountNameFromRoute = (router.query.accountName as string)?.slice(1);
   // const { accountOperationTypes } =
   //   useAccountOperationTypes(accountNameFromRoute);
@@ -125,10 +144,25 @@ const BalanceHistorySearch = ({
     if (newCoinType === "VESTS") {
       paramsUpdate.includeSavings = "no";
       setIncludeSavings("no");
+    } else {
+      paramsUpdate.includeSavings = "yes";
+      setIncludeSavings("yes");
     }
 
     setParams(paramsUpdate);
   };
+
+  const handleCoinOptionChange = (option: CoinOption) => {
+    if (option.unit && setUnit) setUnit(option.unit);
+    handleCoinTypeChange(option.coinType);
+  };
+
+  const activeCoinKey: CoinOption["key"] =
+    coinType === "VESTS"
+      ? unit === "hp"
+        ? "HP"
+        : "VESTS"
+      : (coinType as "HIVE" | "HBD");
 
   const handleSavingsChange = () => {
     setIncludeSavings(includeSavings == "yes" ? "no" : "yes");
@@ -138,6 +172,138 @@ const BalanceHistorySearch = ({
       page: undefined, // Reset the page when the coin type changes
     });
   };
+
+  type DatePreset = {
+    label: string;
+    lastTime?: number;
+    timeUnit?: "days" | "weeks" | "months";
+    lastBlocks?: number;
+    custom?: boolean;
+  };
+
+  const [pendingPresetLabel, setPendingPresetLabel] = useState<string | null>(
+    null
+  );
+
+  const applyDatePreset = async (preset: DatePreset) => {
+    if (preset.custom) {
+      setShowCustomRange(true);
+      setPendingPresetLabel("Custom");
+      return;
+    }
+    setShowCustomRange(
+      preset.lastTime !== undefined || preset.lastBlocks !== undefined
+    );
+    setPendingPresetLabel(preset.label);
+
+    const {
+      setRangeSelectKey,
+      setTimeUnitSelectKey,
+      setLastTimeUnitValue,
+      setLastBlocksValue,
+    } = searchRanges;
+
+    const baseParams = {
+      ...paramsState,
+      fromBlock: undefined,
+      toBlock: undefined,
+      fromDate: undefined,
+      toDate: undefined,
+      lastBlocks: undefined,
+      lastTime: undefined,
+      timeUnit: undefined,
+      page: undefined,
+    };
+
+    if (preset.lastBlocks !== undefined) {
+      setRangeSelectKey("lastBlocks");
+      setLastBlocksValue(preset.lastBlocks);
+
+      const headBlock = await checkTemporaryHeadBlockNumber();
+      const computedFromBlock = Number(headBlock) - preset.lastBlocks;
+
+      setParams({
+        ...baseParams,
+        fromBlock: computedFromBlock > 0 ? computedFromBlock : undefined,
+        lastBlocks: preset.lastBlocks,
+        rangeSelectKey: "lastBlocks",
+      });
+      return;
+    }
+
+    if (preset.lastTime === undefined) {
+      setRangeSelectKey("none");
+      setParams({ ...baseParams, rangeSelectKey: "none" });
+      return;
+    }
+
+    const timeUnit = preset.timeUnit ?? "days";
+    setRangeSelectKey("lastTime");
+    setTimeUnitSelectKey(timeUnit);
+    setLastTimeUnitValue(preset.lastTime);
+
+    const fromDate = moment()
+      .subtract(preset.lastTime, timeUnit)
+      .milliseconds(0)
+      .toDate();
+
+    setParams({
+      ...baseParams,
+      fromDate,
+      lastTime: preset.lastTime,
+      timeUnit,
+      rangeSelectKey: "lastTime",
+    });
+  };
+
+  const datePresets: DatePreset[] = [
+    { label: "1k blocks", lastBlocks: 1000 },
+    { label: "7d", lastTime: 7, timeUnit: "days" },
+    { label: "30d", lastTime: 30, timeUnit: "days" },
+    { label: "90d", lastTime: 90, timeUnit: "days" },
+    { label: "1y", lastTime: 12, timeUnit: "months" },
+    { label: "All" },
+    { label: "Custom", custom: true },
+  ];
+
+  const matchedPresetLabel = (() => {
+    if (paramsState.rangeSelectKey === "none") return "All";
+    if (paramsState.rangeSelectKey === "lastBlocks") {
+      const match = datePresets.find(
+        (p) => p.lastBlocks === paramsState.lastBlocks
+      );
+      return match?.label ?? null;
+    }
+    if (paramsState.rangeSelectKey !== "lastTime") return null;
+    const match = datePresets.find(
+      (p) =>
+        p.lastTime === paramsState.lastTime &&
+        p.timeUnit === paramsState.timeUnit
+    );
+    return match?.label ?? null;
+  })();
+
+  useEffect(() => {
+    const hasRange =
+      paramsState.rangeSelectKey && paramsState.rangeSelectKey !== "none";
+    if (hasRange && matchedPresetLabel === null) {
+      setShowCustomRange(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const derivedPresetLabel =
+    matchedPresetLabel ?? (showCustomRange ? "Custom" : null);
+  const activePresetLabel = pendingPresetLabel ?? derivedPresetLabel;
+
+  useEffect(() => {
+    if (
+      pendingPresetLabel !== null &&
+      derivedPresetLabel === pendingPresetLabel
+    ) {
+      setPendingPresetLabel(null);
+    }
+  }, [derivedPresetLabel, pendingPresetLabel]);
 
   const handleFilterClear = () => {
     const {
@@ -164,18 +330,20 @@ const BalanceHistorySearch = ({
 
     setIsVisible(false);
     setIsFiltersActive(false);
+    setShowCustomRange(false);
+    setPendingPresetLabel(null);
 
     removeStorageItem("is_balance_filters_visible");
   };
 
   const hasActiveFilters = Boolean(
     (paramsState.filters?.length ?? 0) ||
-      paramsState.fromBlock ||
-      paramsState.toBlock ||
-      paramsState.fromDate ||
-      paramsState.toDate ||
-      paramsState.coinType !== DEFAULT_COIN_TYPE ||
-      paramsState.includeSavings !== "yes"
+    paramsState.fromBlock ||
+    paramsState.toBlock ||
+    paramsState.fromDate ||
+    paramsState.toDate ||
+    paramsState.coinType !== DEFAULT_COIN_TYPE ||
+    paramsState.includeSavings !== "yes"
   );
 
   useEffect(() => {
@@ -206,40 +374,96 @@ const BalanceHistorySearch = ({
           <CardTitle className="">{t("common.filters")}</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center mb-3">
-            <select
-              value={coinType}
-              onChange={(e) => handleCoinTypeChange(e.target.value)}
-              className="w-[180px] border border-gray-300 p-2 rounded bg-theme dark:bg-theme"
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-3">
+            <span className="text-sm text-gray-500 sm:mr-4">
+              {t("balanceHistorySearch.coin")}:
+            </span>
+            <div
+              className="inline-flex items-stretch self-start rounded-full border border-navbar-border overflow-hidden"
+              role="group"
+              aria-label={t("balanceHistorySearch.coinTypeAria")}
             >
-              {COIN_TYPES.map((type) => (
-                <option
-                  key={type}
-                  value={type}
-                >
-                  {type}
-                </option>
-              ))}
-            </select>
+              {COIN_OPTIONS.map((option, idx) => {
+                const isActive = activeCoinKey === option.key;
+                const isFirst = idx === 0;
+                const isLast = idx === COIN_OPTIONS.length - 1;
+                return (
+                  <button
+                    key={option.key}
+                    type="button"
+                    onClick={() => handleCoinOptionChange(option)}
+                    aria-pressed={isActive}
+                    data-testid={`balance-coin-type-${option.key.toLowerCase()}`}
+                    className={cn(
+                      "px-2 py-1 text-xs sm:px-4 sm:text-sm font-medium whitespace-nowrap transition-colors",
+                      !isLast && "border-r border-navbar-border",
+                      isFirst && "rounded-l-full",
+                      isLast && "rounded-r-full",
+                      isActive
+                        ? "bg-blue-500 text-white"
+                        : "bg-theme hover:bg-gray-100 dark:hover:bg-gray-700"
+                    )}
+                  >
+                    {option.key}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-          <SearchRanges
-            rangesProps={searchRanges}
-            setIsSearchButtonDisabled={setIsSearchButtonDisabled}
-          />
-          {/* Savings checkbox */}
-          <div className="flex items-center mb-3">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-3">
+            <span className="text-sm text-gray-500 sm:mr-1">
+              {t("balanceHistorySearch.quickRange")}:
+            </span>
+            <div
+              className="inline-flex items-stretch self-start rounded-full border border-navbar-border overflow-hidden"
+              role="group"
+              aria-label={t("balanceHistorySearch.quickRangeAria")}
+            >
+              {datePresets.map((preset, idx) => {
+                const isActive = activePresetLabel === preset.label;
+                const isFirst = idx === 0;
+                const isLast = idx === datePresets.length - 1;
+                return (
+                  <button
+                    key={preset.label}
+                    type="button"
+                    onClick={() => applyDatePreset(preset)}
+                    aria-pressed={isActive}
+                    className={cn(
+                      "px-2 py-1 text-xs sm:px-4 sm:text-sm font-medium whitespace-nowrap transition-colors",
+                      !isLast && "border-r border-navbar-border",
+                      isFirst && "rounded-l-full",
+                      isLast && "rounded-r-full",
+                      isActive
+                        ? "bg-blue-500 text-white"
+                        : "bg-theme hover:bg-gray-100 dark:hover:bg-gray-700"
+                    )}
+                  >
+                    {preset.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          {showCustomRange && (
+            <SearchRanges
+              rangesProps={searchRanges}
+              setIsSearchButtonDisabled={setIsSearchButtonDisabled}
+            />
+          )}
+          <div className="flex items-center mb-3 mt-4">
             <input
               type="checkbox"
               id="includeSavings"
               checked={includeSavings == "yes" ? true : false}
               onChange={handleSavingsChange}
               disabled={coinType === "VESTS"}
-              className="mr-2 h-4 w-4 accent-blue-500 mt-4"
+              className="mr-2 h-4 w-4 accent-blue-500"
               data-testid="savings-checkbox"
             />
             <label
               htmlFor="includeSavings"
-              className={cn("mt-4", { "text-gray-500": coinType === "VESTS" })}
+              className={cn({ "text-gray-500": coinType === "VESTS" })}
             >
               {t("balanceHistorySearch.savings")}
             </label>
@@ -258,24 +482,25 @@ const BalanceHistorySearch = ({
         />
       </div> */}
           <div className="flex items-center justify-between mt-10">
-            <div>
-              <Button
-                onClick={handleSearch}
-                data-testid="apply-filters"
-                disabled={isSearchButtonDisabled}
-              >
-                {t("common.search")}
-              </Button>
-              {isSearchButtonDisabled ? (
-                <label className="ml-2 text-gray-300 dark:text-gray-500 ">
-                  {buttonLabel}
-                </label>
-              ) : null}
-            </div>
-            <Button
-              onClick={handleFilterClear}
-              data-testid="clear-filters"
-            >
+            {showCustomRange ? (
+              <div>
+                <Button
+                  onClick={handleSearch}
+                  data-testid="apply-filters"
+                  disabled={isSearchButtonDisabled}
+                >
+                  {t("common.search")}
+                </Button>
+                {isSearchButtonDisabled ? (
+                  <label className="ml-2 text-gray-300 dark:text-gray-500 ">
+                    {buttonLabel}
+                  </label>
+                ) : null}
+              </div>
+            ) : (
+              <div />
+            )}
+            <Button onClick={handleFilterClear} data-testid="clear-filters">
               {t("common.clear")}
             </Button>
           </div>

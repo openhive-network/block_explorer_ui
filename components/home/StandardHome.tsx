@@ -16,9 +16,11 @@ import TopCommunitiesCard from "@/components/home/TopCommunitiesCard";
 import TransferVolumeCard from "@/components/home/TransferVolumeCard";
 import TotalValueLockedCard from "@/components/home/TotalValueLockedCard";
 import HpMomentumCard from "@/components/home/HpMomentumCard";
+import NetworkGrowthCard from "@/components/home/NetworkGrowthCard";
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import { useAuth } from "@/contexts/AuthContext";
+import { useWatchlist } from "@/contexts/WatchlistContext";
 import WatchedProposalsWidget from "@/components/dashboard/widgets/data/WatchedProposalsWidget";
 import WitnessHealthWidget from "@/components/dashboard/widgets/data/WitnessHealthWidget";
 
@@ -26,13 +28,15 @@ const StandardHome = () => {
   const { theme } = useTheme();
   const { t } = useI18n();
   const { isLoggedIn } = useAuth();
+  const { getWatched } = useWatchlist();
+  const hasWatchedProposals = getWatched("proposals").size > 0;
 
   const { witnessesData, isWitnessDataLoading } = useWitnesses(
     config.witnessesPerPages.home,
     "rank",
     "asc"
   );
-  
+
   const {
     communities: popularCommunitiesData,
     isLoading: isCommunitiesLoading,
@@ -87,17 +91,16 @@ const StandardHome = () => {
             headBlock={headBlockNum}
             strokeColor={strokeColor}
           />
+          <NetworkGrowthCard />
           <TransactionStatisticsCard />
           <TransferVolumeCard />
           <TotalValueLockedCard />
           <HpMomentumCard />
-          <div className="mt-4">
-            <SearchesSection />
-          </div>
+          <SearchesSection />
         </div>
 
         <div className="col-span-12 lg:col-span-3 flex flex-col gap-3">
-          {isLoggedIn && <WatchedProposalsWidget />}
+          {isLoggedIn && hasWatchedProposals && <WatchedProposalsWidget />}
           <TopWitnessesCard
             witnessesData={witnessesData}
             isLoading={isWitnessDataLoading}
