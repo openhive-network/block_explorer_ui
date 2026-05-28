@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import useAccountOperations from "@/hooks/api/accountPage/useAccountOperations";
+import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
 import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
 import { getOperationColor } from "@/components/OperationsTable";
 import { getOperationTypeForDisplay } from "@/utils/UI";
@@ -16,7 +17,7 @@ import { cn } from "@/lib/utils";
 
 const FEED_SIZE = 50;
 
-type Category = "all" | "transfers" | "votes" | "rewards" | "witness" | "other";
+type Category = "all" | "transfers" | "votes" | "rewards" | "witness";
 
 const TRANSFER_OPS = new Set([
   "transfer_operation",
@@ -56,21 +57,6 @@ const WITNESS_OPS = new Set([
   "account_witness_vote_operation",
 ]);
 
-const matchesCategory = (type: string, category: Category): boolean => {
-  if (category === "all") return true;
-  if (category === "transfers") return TRANSFER_OPS.has(type);
-  if (category === "votes") return VOTE_OPS.has(type);
-  if (category === "rewards") return REWARD_OPS.has(type);
-  if (category === "witness") return WITNESS_OPS.has(type);
-  // "other": anything not in the four named buckets
-  return (
-    !TRANSFER_OPS.has(type) &&
-    !VOTE_OPS.has(type) &&
-    !REWARD_OPS.has(type) &&
-    !WITNESS_OPS.has(type)
-  );
-};
-
 const formatOpName = (raw: string): string => {
   const stripped = getOperationTypeForDisplay(raw);
   return stripped
@@ -106,7 +92,6 @@ const FILTER_CHIPS: Array<{ key: Category; labelKey: string }> = [
   { key: "votes", labelKey: "widgets.myRecentActivityFilterVotes" },
   { key: "rewards", labelKey: "widgets.myRecentActivityFilterRewards" },
   { key: "witness", labelKey: "widgets.myRecentActivityFilterWitness" },
-  { key: "other", labelKey: "widgets.myRecentActivityFilterOther" },
 ];
 
 const MyRecentActivityWidget: React.FC = () => {
@@ -125,20 +110,45 @@ const MyRecentActivityWidget: React.FC = () => {
   const [newOpsCount, setNewOpsCount] = useState(0);
   const [lastFetchedAt, setLastFetchedAt] = useState<Date | null>(null);
 
+  // Map op-type names to numeric IDs so we can server-filter by category.
+  const { operationsTypes } = useOperationsTypes();
+  const opTypeIdsByCategory = useMemo(() => {
+    const idsForNames = (names: Set<string>): number[] => {
+      const ids: number[] = [];
+      operationsTypes?.forEach((t) => {
+        if (names.has(t.operation_name)) ids.push(t.op_type_id);
+      });
+      return ids;
+    };
+    return {
+      all: null as number[] | null,
+      transfers: idsForNames(TRANSFER_OPS),
+      votes: idsForNames(VOTE_OPS),
+      rewards: idsForNames(REWARD_OPS),
+      witness: idsForNames(WITNESS_OPS),
+    };
+  }, [operationsTypes]);
+
+  const operationTypesForFetch = opTypeIdsByCategory[activeCategory];
+  const isCatalogReady = !!operationsTypes;
+
   const { accountOperations: latestData, isAccountOperationsLoading } =
     useAccountOperations(
-      isLoggedIn && username ? { accountName: username } : undefined,
+      isLoggedIn && username && isCatalogReady
+        ? { accountName: username, operationTypes: operationTypesForFetch }
+        : undefined,
       settings.liveData
     );
 
-  // Reset all per-account state when the logged-in user changes.
+  // Reset accumulated state on account OR category change. Category needs its
+  // own dataset since the API returns only the matching op types.
   useEffect(() => {
     setOpsMap(new Map());
     setNewOpIds(new Set());
     setNewOpsCount(0);
     setLastFetchedAt(null);
     lastSeenIdsRef.current = new Set();
-  }, [username]);
+  }, [username, activeCategory]);
 
   useEffect(() => {
     const ops = latestData?.operations_result as OpRow[] | undefined;
@@ -194,12 +204,8 @@ const MyRecentActivityWidget: React.FC = () => {
   const formattedOps =
     (useOperationsFormatter(sortedOps) as OpRow[] | undefined) ?? sortedOps;
 
-  const filteredOps = useMemo(() => {
-    if (activeCategory === "all") return formattedOps;
-    return formattedOps.filter((op) =>
-      matchesCategory(op.op?.type ?? "", activeCategory)
-    );
-  }, [formattedOps, activeCategory]);
+  // Server-side filter handles category narrowing; no client filter needed.
+  const filteredOps = formattedOps;
 
   if (!isLoggedIn || !username) {
     return (
