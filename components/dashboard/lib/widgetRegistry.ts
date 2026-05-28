@@ -186,6 +186,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     name: "widgets.networkGrowthName",
     component: NetworkGrowthCard,
     defaultLayout: { w: 8, h: 3.3, minW: 3, minH: 3 },
+    dynamicHeight: true,
   },
   searches: {
     id: "searches",
