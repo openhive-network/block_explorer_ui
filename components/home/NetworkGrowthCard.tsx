@@ -1,12 +1,8 @@
 import React, { useMemo, useState } from "react";
 import { Loader2, TrendingUp, Users } from "lucide-react";
 import moment from "moment";
-import dynamic from "next/dynamic";
 import NetworkGrowthChart from "./NetworkGrowthChart";
-const NetworkGrowthFullChartDialog = dynamic(
-  () => import("./NetworkGrowthFullChartDialog"),
-  { ssr: false }
-);
+import NetworkGrowthFullChartDialog from "./NetworkGrowthFullChartDialog";
 import { useI18n } from "../../i18n/i18n";
 import { useSettings } from "@/contexts/SettingsContext";
 import useTotalWalletAddresses from "@/hooks/api/homePage/useTotalWalletAddresses";
@@ -16,12 +12,7 @@ const NetworkGrowthCard = () => {
   const { settings } = useSettings();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // TEMP (dev): the HAF dev node is re-syncing from genesis and has no recent
-  // data yet. Restore moment().subtract(30, "days") before release.
-  const fromDate = useMemo(
-    () => moment("2016-05-01 00:00:00", "YYYY-MM-DD HH:mm:ss").toDate(),
-    []
-  );
+  const fromDate = useMemo(() => moment().subtract(30, "days").toDate(), []);
 
   // Headline total = every wallet on the chain, fetched with no date range.
   const {

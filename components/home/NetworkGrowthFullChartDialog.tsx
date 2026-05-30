@@ -22,10 +22,6 @@ import NetworkGrowthChart from "./NetworkGrowthChart";
 import useSearchRanges from "@/hooks/common/useSearchRanges";
 import { useI18n } from "../../i18n/i18n";
 
-// TEMP (dev): the HAF dev node is re-syncing from genesis and has no recent
-// data yet. Restore moment().subtract(90, "days") usages before release.
-const DEV_DAILY_FROM = "2016-05-01 00:00:00";
-
 interface NetworkGrowthFullChartDialogProps {
   isOpen: boolean;
   onClose: () => void;
@@ -40,7 +36,7 @@ const NetworkGrowthFullChartDialog: React.FC<
     "daily" | "monthly" | "yearly"
   >("daily");
   const [fromDate, setFromDate] = useState<Date | number | undefined>(
-    moment(DEV_DAILY_FROM, "YYYY-MM-DD HH:mm:ss").toDate()
+    moment().subtract(90, "days").toDate()
   );
   const [toDate, setToDate] = useState<Date | number | undefined>(
     moment().toDate()
@@ -62,7 +58,7 @@ const NetworkGrowthFullChartDialog: React.FC<
       setLastTimeUnitValue(90);
       setRangeSelectKey("lastTime");
       setTimeUnitSelectKey("days");
-      setFromDate(moment(DEV_DAILY_FROM, "YYYY-MM-DD HH:mm:ss").toDate());
+      setFromDate(moment().subtract(90, "days").toDate());
       setToDate(moment().toDate());
       setGranularity("daily");
     }
@@ -83,7 +79,7 @@ const NetworkGrowthFullChartDialog: React.FC<
     setRangeSelectKey("lastTime");
     setTimeUnitSelectKey("days");
     setLastTimeUnitValue(90);
-    setFromDate(moment(DEV_DAILY_FROM, "YYYY-MM-DD HH:mm:ss").toDate());
+    setFromDate(moment().subtract(90, "days").toDate());
     setToDate(moment().toDate());
     setGranularity("daily");
   };
@@ -94,7 +90,7 @@ const NetworkGrowthFullChartDialog: React.FC<
       setRangeSelectKey("lastTime");
       setTimeUnitSelectKey("days");
       setLastTimeUnitValue(90);
-      setFromDate(moment(DEV_DAILY_FROM, "YYYY-MM-DD HH:mm:ss").toDate());
+      setFromDate(moment().subtract(90, "days").toDate());
       setToDate(moment().toDate());
     } else {
       setRangeSelectKey("none");
