@@ -1,6 +1,7 @@
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 
 import fetchingService from "@/services/FetchingService";
+import { config } from "@/Config";
 import Hive from "@/types/Hive";
 
 const useVestingStats = (
@@ -15,18 +16,11 @@ const useVestingStats = (
     isLoading: isVestingStatsLoading,
     isError: isVestingStatsError,
   }: UseQueryResult<Hive.VestingStatsResponse[] | undefined> = useQuery({
-    queryKey: ["vestingStats", granularity, direction, fromDate, toDate, liveDataEnabled],
-    queryFn: async () => {
-      if (liveDataEnabled) {
-        return await fetchingService.getVestingStats(
-          granularity,
-          direction,
-          fromDate,
-          toDate
-        );
-      }
-      return [];
-    },
+    queryKey: ["vestingStats", granularity, direction, fromDate, toDate],
+    queryFn: () =>
+      fetchingService.getVestingStats(granularity, direction, fromDate, toDate),
+    refetchInterval: liveDataEnabled ? config.mainRefreshInterval : false,
+    refetchOnWindowFocus: false,
   });
 
   return {

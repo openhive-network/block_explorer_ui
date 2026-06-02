@@ -26,6 +26,10 @@ import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { config } from "@/Config";
 import { compactFormat } from "@/utils/BalanceHistoryUtils";
+import {
+  ChartBrushDefs,
+  useChartBrushDefaults,
+} from "@/components/ui/ChartBrush";
 
 interface BalanceHistoryChartProps {
   aggregatedAccountBalanceHistory?: {
@@ -70,6 +74,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
   const { dynamicGlobalData } = useDynamicGlobal();
   const { settings } = useSettings();
   const isRTL = dir === "rtl";
+  const brushDefaults = useChartBrushDefaults();
 
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 480);
   const [hiddenDataKeys, setHiddenDataKeys] = useState<string[]>([]);
@@ -90,10 +95,13 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     main: [number, number];
     secondary: [number, number];
   } | null>(null);
-  const [brushIndices, setBrushIndices] = useState<{
-    startIndex: number;
-    endIndex: number;
-  } | undefined>(undefined);
+  const [brushIndices, setBrushIndices] = useState<
+    | {
+        startIndex: number;
+        endIndex: number;
+      }
+    | undefined
+  >(undefined);
 
   useEffect(() => {
     const handleResize = () => {
@@ -112,7 +120,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
         const balanceNum = parseFloat(item.balance || "0");
 
         if (type === "VESTS") {
-         const vests = balanceNum;
+          const vests = balanceNum;
           let hpValueRaw = hiveChain.vestsToHp(
             vests,
             dynamicGlobalData.headBlockDetails.rawTotalVestingFundHive,
@@ -135,13 +143,11 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
           }
 
           const dollarValueFull =
-            !isNaN(hpValue) && !isNaN(hivePrice)
-              ? (hpValue * hivePrice) 
-              : 0;
+            !isNaN(hpValue) && !isNaN(hivePrice) ? hpValue * hivePrice : 0;
 
-        return {
+          return {
             ...item,
-            balance: vests, 
+            balance: vests,
             convertedHive: hpValue,
             dollarValue: dollarValueFull,
           };
@@ -202,9 +208,13 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     const isHpMode = selectedCoinType === "VESTS" && unit === "hp";
     const rawBalance = selectedData?.balance ?? 0;
     const rawBalanceChange = selectedData?.balance_change ?? 0;
-    const actualBalance = isHpMode ? (selectedData?.convertedHive ?? 0) : rawBalance;
+    const actualBalance = isHpMode
+      ? (selectedData?.convertedHive ?? 0)
+      : rawBalance;
     const balanceChange = isHpMode
-      ? (rawBalance !== 0 ? (rawBalanceChange / rawBalance) * (selectedData?.convertedHive ?? 0) : 0)
+      ? rawBalance !== 0
+        ? (rawBalanceChange / rawBalance) * (selectedData?.convertedHive ?? 0)
+        : 0
       : rawBalanceChange;
     const savingsBalance = selectedData?.savings_balance ?? undefined;
     const savingsBalanceChange = selectedData?.savings_balance_change ?? 0;
@@ -215,13 +225,13 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
         ? config.precisions.vests
         : config.precisions.hivePower;
     const balanceNumeric = actualBalance / Math.pow(10, balancePrecision);
-    const balanceChangeNumeric =
-      balanceChange / Math.pow(10, balancePrecision);
+    const balanceChangeNumeric = balanceChange / Math.pow(10, balancePrecision);
     const savingsNumeric =
       (savingsBalance ?? 0) / Math.pow(10, config.precisions.hivePower);
     const savingsChangeNumeric =
       savingsBalanceChange / Math.pow(10, config.precisions.hivePower);
-    const dollarNumeric = dollarValue / Math.pow(10, config.precisions.hivePower);
+    const dollarNumeric =
+      dollarValue / Math.pow(10, config.precisions.hivePower);
 
     const isPositiveChange = balanceChange > 0;
     const isZeroChange = balanceChange === 0;
@@ -233,10 +243,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
     return (
       <div className="bg-theme dark:bg-theme p-2 rounded border border-explorer-light-gray">
         <p className="font-bold">{`${t("common.date")}: ${label}`}</p>
-        <div
-          className="mb-1"
-          style={{ color: currentCoinColor }}
-        >
+        <div className="mb-1" style={{ color: currentCoinColor }}>
           <div
             className={cn(
               "flex items-center",
@@ -245,10 +252,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             style={{ color: currentCoinColor }}
           >
             {isPositiveChange ? (
-              <ArrowUp
-                className="bg-green-400 p-[1.2px]"
-                size={16}
-              />
+              <ArrowUp className="bg-green-400 p-[1.2px]" size={16} />
             ) : isZeroChange ? (
               <Minus
                 className={cn(
@@ -259,10 +263,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
                 size={16}
               />
             ) : (
-              <ArrowDown
-                className="bg-red-400  p-[1.2px]"
-                size={16}
-              />
+              <ArrowDown className="bg-red-400  p-[1.2px]" size={16} />
             )}
             {` ${compactFormat(balanceChangeNumeric)}`}
           </div>
@@ -289,10 +290,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
                 style={{ color: colorMap.SAVINGS }}
               >
                 {isSavingsPositiveChange ? (
-                  <ArrowUp
-                    className="bg-green-400 p-[1.2px]"
-                    size={16}
-                  />
+                  <ArrowUp className="bg-green-400 p-[1.2px]" size={16} />
                 ) : isSavingsZeroChange ? (
                   <Minus
                     className={cn(
@@ -303,17 +301,15 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
                     size={16}
                   />
                 ) : (
-                  <ArrowDown
-                    className="bg-red-400 p-[1.2px]"
-                    size={16}
-                  />
+                  <ArrowDown className="bg-red-400 p-[1.2px]" size={16} />
                 )}
                 {` ${compactFormat(savingsChangeNumeric)}`}
               </div>
               <div style={{ color: colorMap.SAVINGS }}>
                 {`${t(
                   "balanceHistoryChart.savingsBalance"
-                )}: ${compactFormat(savingsNumeric)}`}</div>
+                )}: ${compactFormat(savingsNumeric)}`}
+              </div>
             </div>
           )}
       </div>
@@ -436,7 +432,10 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
       return;
     }
 
-    setBrushIndices({ startIndex: domain.startIndex, endIndex: domain.endIndex });
+    setBrushIndices({
+      startIndex: domain.startIndex,
+      endIndex: domain.endIndex,
+    });
 
     const visibleData = (displayData || []).slice(
       domain.startIndex,
@@ -458,7 +457,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
 
   return (
     <div className={cn("w-full", className)}>
-       {quickView && (
+      {quickView && (
         <div
           className={cn("flex mb-4", isRTL ? "justify-start" : "justify-end")}
         >
@@ -492,6 +491,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             bottom: isMobile ? 80 : 60,
           }}
         >
+          {!quickView && <ChartBrushDefs />}
           <XAxis
             dataKey="timestamp"
             tickCount={quickView ? 5 : 14}
@@ -511,9 +511,13 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             allowDecimals={true}
             tickFormatter={(tick) => {
               const numericTick = Number(tick);
-              const safeTick = selectedCoinType === "VESTS" ? Math.floor(numericTick) : tick;
-             
-              const precision = selectedCoinType === "VESTS" ? config.precisions.vests : config.precisions.hivePower;
+              const safeTick =
+                selectedCoinType === "VESTS" ? Math.floor(numericTick) : tick;
+
+              const precision =
+                selectedCoinType === "VESTS"
+                  ? config.precisions.vests
+                  : config.precisions.hivePower;
               const scaledTick = safeTick / Math.pow(10, precision);
 
               if (selectedCoinType === "VESTS") {
@@ -525,7 +529,9 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
                     dynamicGlobalData.headBlockDetails.rawTotalVestingShares
                   );
                   const hpTickNumRaw =
-                    typeof hpTick === "object" && hpTick !== null && "amount" in hpTick
+                    typeof hpTick === "object" &&
+                    hpTick !== null &&
+                    "amount" in hpTick
                       ? parseFloat(hpTick.amount)
                       : parseFloat(hpTick as string);
                   const hpTickNum = hpTickNumRaw / 1000; // HP has 3 decimals precision
@@ -623,16 +629,15 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
           {!quickView && (
             <Brush
               dataKey="timestamp"
-              height={30}
-              stroke="var(--color-switch-off)"
-              fill="var(--color-background)"
-              travellerWidth={10}
               tickFormatter={(value) => moment(value).format("MMM D")}
               y={380}
-              className="text-xs"
               onChange={handleBrushAreaChange}
               startIndex={brushIndices?.startIndex ?? 0}
-              endIndex={brushIndices?.endIndex ?? (displayData ? displayData.length - 1 : 0)}
+              endIndex={
+                brushIndices?.endIndex ??
+                (displayData ? displayData.length - 1 : 0)
+              }
+              {...brushDefaults}
             />
           )}
           <Legend

@@ -848,13 +848,17 @@ class FetchingService {
 
   async getAccountVestingStats(
     accountName: string,
+    granularity: "daily" | "monthly" | "yearly" = "daily",
     fromBlock?: Date | number | undefined,
-    toBlock?: Date | number | undefined
-  ): Promise<Hive.AccountVestingStatsResponse> {
+    toBlock?: Date | number | undefined,
+    direction: "asc" | "desc" = "asc"
+  ): Promise<Hive.AccountVestingStatsResponse[]> {
     return await this.extendedHiveChain!.restApi[
       "balance-api"
     ].accountVestingStats({
       accountName,
+      granularity,
+      direction,
       "from-block": fromBlock,
       "to-block": toBlock,
     });

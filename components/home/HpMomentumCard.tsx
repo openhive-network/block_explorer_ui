@@ -1,23 +1,30 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { Loader2, TrendingDown, TrendingUp } from "lucide-react";
+import dynamic from "next/dynamic";
 
 import useVestingStats from "@/hooks/api/homePage/useVestingStats";
-import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
-import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
-import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useI18n } from "../../i18n/i18n";
-import Hive from "@/types/Hive";
-import { grabNumericValue } from "@/utils/StringUtils";
+import { cn } from "@/lib/utils";
+import {
+  VestingDisplayUnit,
+  formatCompact,
+  useAggregatedVesting,
+  useVestingDisplayUnit,
+} from "./hpMomentumUtils";
 
-import HpMomentumChart, { HpMomentumChartPoint } from "./HpMomentumChart";
+import HpMomentumChart from "./HpMomentumChart";
+const HpMomentumFullChartDialog = dynamic(
+  () => import("./HpMomentumFullChartDialog"),
+  { ssr: false }
+);
 
 const HpMomentumCard = () => {
   const { t } = useI18n();
   const { settings } = useSettings();
-  const { hiveChain } = useHiveChainContext();
-  const { headBlockNumberData } = useHeadBlockNumber();
-  const { dynamicGlobalData } = useDynamicGlobal(headBlockNumberData);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [unit, setUnit] = useVestingDisplayUnit();
 
   const fromDate = useMemo(() => {
     const d = new Date();
@@ -25,91 +32,89 @@ const HpMomentumCard = () => {
     return d;
   }, []);
 
-  const {
+  const { vestingStats, isVestingStatsLoading, isVestingStatsError } =
+    useVestingStats("daily", "asc", fromDate, undefined, settings.liveData);
+
+  const { chartData, totals, isReady } = useAggregatedVesting(
     vestingStats,
-    isVestingStatsLoading,
-    isVestingStatsError,
-  } = useVestingStats("daily", "asc", fromDate, undefined, settings.liveData);
+    unit
+  );
 
-  const vestsToHpNumber = useMemo(() => {
-    if (!hiveChain || !dynamicGlobalData) return null;
-    const { rawTotalVestingFundHive, rawTotalVestingShares } =
-      dynamicGlobalData.headBlockDetails;
-    return (vests: Hive.Supply | null | undefined): number => {
-      if (!vests || !vests.amount || vests.amount === "0") return 0;
-      const hpAsset = hiveChain.vestsToHp(
-        vests,
-        rawTotalVestingFundHive,
-        rawTotalVestingShares
-      );
-      return grabNumericValue(hiveChain.formatter.format(hpAsset));
-    };
-  }, [hiveChain, dynamicGlobalData]);
-
-  const { chartData, totals } = useMemo(() => {
-    if (!vestingStats || !vestsToHpNumber) {
-      return {
-        chartData: [] as HpMomentumChartPoint[],
-        totals: { up: 0, down: 0, net: 0 },
-      };
-    }
-
-    let upTotal = 0;
-    let downTotal = 0;
-    const points: HpMomentumChartPoint[] = vestingStats.map((row) => {
-      const up = vestsToHpNumber(row.power_up_vests);
-      const down = vestsToHpNumber(row.power_down_fill_vests);
-      upTotal += up;
-      downTotal += down;
-      return {
-        date: row.date,
-        power_up_hp: up,
-        power_down_hp: down,
-        net_hp: up - down,
-      };
-    });
-
-    return {
-      chartData: points,
-      totals: { up: upTotal, down: downTotal, net: upTotal - downTotal },
-    };
-  }, [vestingStats, vestsToHpNumber]);
-
-  const isLoading = isVestingStatsLoading || !vestsToHpNumber;
+  const isLoading = isVestingStatsLoading || !isReady;
   const hasData = chartData.length > 0;
   const netIsPositive = totals.net >= 0;
+  const unitLabel = unit === "hp" ? "HP" : "VESTS";
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
+  const unitOptions: { key: VestingDisplayUnit; label: string }[] = [
+    { key: "hp", label: "HP" },
+    { key: "vests", label: "VESTS" },
+  ];
+
+  const breakdownRows: {
+    label: string;
+    value: number;
+    count: number;
+    color: string;
+    sign: "+" | "-" | "";
+  }[] = [
+    {
+      label: t("hpMomentumCard.poweredUp"),
+      value: totals.up,
+      count: totals.upCount,
+      color: "text-emerald-500",
+      sign: "+",
+    },
+    {
+      label: t("hpMomentumCard.scheduledDown"),
+      value: totals.downInit,
+      count: totals.downInitCount,
+      color: "text-amber-500",
+      sign: "",
+    },
+    {
+      label: t("hpMomentumCard.poweredDown"),
+      value: totals.downFill,
+      count: totals.downFillCount,
+      color: "text-rose-500",
+      sign: "-",
+    },
+  ];
 
   return (
-    <div className="bg-theme rounded mt-4 shadow-md overflow-hidden">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-5">
+    <div className="bg-theme rounded mb-4 shadow-md overflow-hidden">
+      <div className="flex flex-wrap gap-4 p-5">
         {/* Left: Net flow + breakdown */}
-        <div className="md:col-span-1">
-          <div className="flex flex-col space-y-4">
+        <div className="flex-1 min-w-[200px]">
+          <div className="flex flex-col gap-4 h-full">
             <div className="bg-explorer-extra-light-gray rounded-lg p-4 shadow-md">
               <h3 className="text-sm font-semibold uppercase tracking-wide mb-1 text-explorer-dark-gray dark:text-text">
-                {t("hpMomentumCard.netFlow30d")}
+                {t("hpMomentumCard.netFlow30d", { unit: unitLabel })}
               </h3>
               {isLoading ? (
                 <div className="flex items-center justify-center">
                   <Loader2 className="animate-spin h-5 w-5" />
                 </div>
               ) : hasData ? (
-                <div className="flex items-center justify-end gap-1">
+                <div className="flex items-center justify-end gap-1 whitespace-nowrap">
                   {netIsPositive ? (
-                    <TrendingUp className="h-5 w-5 text-emerald-500" />
+                    <TrendingUp className="h-5 w-5" color="#10B981" />
                   ) : (
-                    <TrendingDown className="h-5 w-5 text-rose-500" />
+                    <TrendingDown className="h-5 w-5" color="#EF4444" />
                   )}
                   <p
                     className={`text-2xl font-bold text-right ${
                       netIsPositive ? "text-emerald-500" : "text-rose-500"
                     }`}
+                    title={`${
+                      netIsPositive ? "+" : ""
+                    }${totals.net.toLocaleString()} ${unitLabel}`}
                   >
                     {netIsPositive ? "+" : ""}
-                    {totals.net.toLocaleString(undefined, {
-                      maximumFractionDigits: 0,
-                    })}{" "}
-                    HP
+                    {formatCompact(totals.net)}{" "}
+                    <span className="text-base">{unitLabel}</span>
                   </p>
                 </div>
               ) : (
@@ -119,8 +124,8 @@ const HpMomentumCard = () => {
               )}
             </div>
 
-            <div className="bg-explorer-extra-light-gray rounded-lg p-4 shadow-md">
-              <h3 className="text-sm font-semibold uppercase tracking-wide mb-1 text-explorer-dark-gray dark:text-text">
+            <div className="bg-explorer-extra-light-gray rounded-lg p-4 shadow-md flex-1 flex flex-col">
+              <h3 className="text-sm font-semibold uppercase tracking-wide mb-2 text-explorer-dark-gray dark:text-text">
                 {t("hpMomentumCard.breakdown")}
               </h3>
               {isLoading ? (
@@ -128,31 +133,27 @@ const HpMomentumCard = () => {
                   <Loader2 className="animate-spin h-5 w-5" />
                 </div>
               ) : hasData ? (
-                <div className="flex flex-col gap-1 mt-1">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">
-                      {t("hpMomentumCard.poweredUp")}:
-                    </span>
-                    <span className="font-medium text-emerald-500 text-right">
-                      +
-                      {totals.up.toLocaleString(undefined, {
-                        maximumFractionDigits: 0,
-                      })}{" "}
-                      HP
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">
-                      {t("hpMomentumCard.poweredDown")}:
-                    </span>
-                    <span className="font-medium text-rose-500 text-right">
-                      -
-                      {totals.down.toLocaleString(undefined, {
-                        maximumFractionDigits: 0,
-                      })}{" "}
-                      HP
-                    </span>
-                  </div>
+                <div className="flex flex-col gap-2.5">
+                  {breakdownRows.map((row) => (
+                    <div
+                      key={row.label}
+                      className="flex flex-col leading-tight"
+                    >
+                      <span className="text-xs text-gray-500">{row.label}</span>
+                      <div className="flex justify-between items-baseline gap-2">
+                        <span
+                          className={`text-sm font-semibold whitespace-nowrap ${row.color}`}
+                          title={`${row.sign}${row.value.toLocaleString()} ${unitLabel}`}
+                        >
+                          {row.sign}
+                          {formatCompact(row.value)} {unitLabel}
+                        </span>
+                        <span className="text-[10px] text-gray-400 whitespace-nowrap">
+                          {row.count.toLocaleString()} {t("hpMomentumCard.ops")}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               ) : (
                 <p className="text-gray-500 text-sm">
@@ -169,21 +170,60 @@ const HpMomentumCard = () => {
         </div>
 
         {/* Right: 30-day trend chart */}
-        <div className="md:col-span-2">
+        <div className="flex-[2] min-w-[260px]">
           <div className="bg-explorer-extra-light-gray rounded-lg p-4 shadow-md h-full flex flex-col">
-            <div className="flex justify-between items-center mb-1">
+            <div className="flex justify-between items-center mb-2 gap-2 flex-wrap">
               <h3 className="text-sm font-semibold uppercase tracking-wide text-explorer-dark-gray dark:text-text">
                 {t("hpMomentumCard.last30Days")}
               </h3>
+              <div className="flex items-center gap-3">
+                <div
+                  className="inline-flex items-stretch rounded-full border border-navbar-border overflow-hidden text-[10px]"
+                  role="group"
+                  aria-label="HP or VESTS"
+                >
+                  {unitOptions.map((opt, idx) => {
+                    const isActive = unit === opt.key;
+                    const isFirst = idx === 0;
+                    const isLast = idx === unitOptions.length - 1;
+                    return (
+                      <button
+                        key={opt.key}
+                        type="button"
+                        onClick={() => setUnit(opt.key)}
+                        aria-pressed={isActive}
+                        className={cn(
+                          "font-medium transition-colors px-2 py-0.5",
+                          !isLast && "border-r border-navbar-border",
+                          isFirst && "rounded-l-full",
+                          isLast && "rounded-r-full",
+                          isActive
+                            ? "bg-blue-500 text-white"
+                            : "bg-theme hover:bg-gray-100 dark:hover:bg-gray-700"
+                        )}
+                      >
+                        {opt.label}
+                      </button>
+                    );
+                  })}
+                </div>
+                <button
+                  onClick={openModal}
+                  className="text-[11px] underline text-explorer-dark-gray dark:text-text"
+                >
+                  {t("hpMomentumCard.fullChart")}
+                </button>
+              </div>
             </div>
             {isLoading ? (
               <div className="flex items-center justify-center h-full">
                 <Loader2 className="animate-spin h-6 w-6" />
               </div>
             ) : (
-              <div className="flex-grow min-h-[189px]">
+              <div className="flex-grow min-h-[260px]">
                 <HpMomentumChart
                   data={chartData}
+                  unit={unit}
                   tickCount={4}
                   dateFormat="MMM D"
                 />
@@ -197,6 +237,8 @@ const HpMomentumCard = () => {
           </div>
         </div>
       </div>
+
+      <HpMomentumFullChartDialog isOpen={isModalOpen} onClose={closeModal} />
     </div>
   );
 };

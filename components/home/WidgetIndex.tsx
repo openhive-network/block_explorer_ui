@@ -80,6 +80,27 @@ const WidgetIndex = () => {
     });
   }, [isLoaded, username, widgets, layouts, onAddWidget]);
 
+  // One-time seed of the HP Momentum widget (#721) for users with a saved
+  // dashboard; the seeded flag lets them remove it for good afterwards.
+  useEffect(() => {
+    if (!isLoaded || !username) return;
+    const seededKey = `hivescan_dashboard_hp_momentum_seeded_${username}`;
+    if (localStorage.getItem(seededKey)) return;
+    localStorage.setItem(seededKey, "true");
+    if (widgets.some((w) => w.type === "hp-momentum")) return;
+    const masterLayout = layouts.lg || [];
+    const mainColBottom = masterLayout
+      .filter((item) => item.x >= 3 && item.x < 9)
+      .reduce((max, item) => Math.max(max, item.y + item.h), 0);
+    onAddWidget("hp-momentum", {
+      x: 3,
+      y: mainColBottom,
+      w: 6,
+      h: 9,
+      minH: 6,
+    });
+  }, [isLoaded, username, widgets, layouts, onAddWidget]);
+
   // Watched Proposals mirrors standard home: auto-shown when you watch a
   // proposal, auto-removed when none. X-dismiss persists via a flag.
   const watchedProposalsCount = getWatched("proposals").size;

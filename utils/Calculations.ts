@@ -73,3 +73,31 @@ export const getVestsToHiveRatio = (
 
   return resultToString;
 };
+
+export interface VestingRatios {
+  vestsPerHive: number;
+  hivePerVests: number;
+}
+
+// Numeric global VESTS<->HP exchange rate (both directions) derived from the
+// raw dynamic-global totals. Used for bulk per-row vesting conversions where
+// calling wax once per value would be wasteful.
+export const computeVestingRatios = (
+  hiveChain: IHiveChainInterface | null | undefined,
+  dynamicGlobalData: any
+): VestingRatios | null => {
+  if (!hiveChain || !dynamicGlobalData) return null;
+  const { rawTotalVestingFundHive, rawTotalVestingShares } =
+    dynamicGlobalData.headBlockDetails;
+  const totalHive = grabNumericValue(
+    hiveChain.formatter.format(rawTotalVestingFundHive)
+  );
+  const totalVests = grabNumericValue(
+    hiveChain.formatter.format(rawTotalVestingShares)
+  );
+  if (!totalHive || !totalVests) return null;
+  return {
+    vestsPerHive: totalVests / totalHive,
+    hivePerVests: totalHive / totalVests,
+  };
+};

@@ -1,16 +1,31 @@
-import React, { useMemo, useState } from "react";
+import React, { MouseEvent, useMemo, useState } from "react";
 import moment from "moment";
-import { ArrowDown, ArrowUp, Loader2, TrendingDown, TrendingUp } from "lucide-react";
+import { useRouter } from "next/router";
+import {
+  ArrowDown,
+  ArrowUp,
+  Clock,
+  Loader2,
+  Maximize2,
+  TrendingDown,
+  TrendingUp,
+} from "lucide-react";
 
 import { Card, CardContent, CardHeader } from "../ui/card";
 import Explorer from "@/types/Explorer";
-import Hive from "@/types/Hive";
 import useAccountVestingStats from "@/hooks/api/accountPage/useAccountVestingStats";
-import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
-import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
-import { useHiveChainContext } from "@/contexts/HiveChainContext";
-import { grabNumericValue } from "@/utils/StringUtils";
+import { useSettings } from "@/contexts/SettingsContext";
+import { cn } from "@/lib/utils";
 import { useI18n } from "../../i18n/i18n";
+
+import HpMomentumChart from "../home/HpMomentumChart";
+import {
+  VESTING_COLORS,
+  VestingDisplayUnit,
+  formatCompact,
+  useAggregatedVesting,
+  useVestingDisplayUnit,
+} from "../home/hpMomentumUtils";
 
 type AccountHpActivityCardProps = {
   header: string;
@@ -24,56 +39,50 @@ const AccountHpActivityCard: React.FC<AccountHpActivityCardProps> = ({
   isInitiallyOpen,
 }) => {
   const { t } = useI18n();
+  const { settings } = useSettings();
+  const router = useRouter();
   const [isHidden, setIsHidden] = useState(!isInitiallyOpen);
 
-  const { hiveChain } = useHiveChainContext();
-  const { headBlockNumberData } = useHeadBlockNumber();
-  const { dynamicGlobalData } = useDynamicGlobal(headBlockNumberData);
+  const [unit, setUnit] = useVestingDisplayUnit();
 
-  const fromDate = useMemo(
-    () => moment().subtract(90, "days").toDate(),
-    []
-  );
+  const fromDate = useMemo(() => moment().subtract(30, "days").toDate(), []);
 
   const {
     accountVestingStats,
     isAccountVestingStatsLoading,
     isAccountVestingStatsError,
-  } = useAccountVestingStats(userDetails.name, fromDate);
+  } = useAccountVestingStats(
+    userDetails.name,
+    "daily",
+    fromDate,
+    undefined,
+    "asc",
+    settings.liveData
+  );
 
-  const vestsToHpNumber = useMemo(() => {
-    if (!hiveChain || !dynamicGlobalData) return null;
-    const { rawTotalVestingFundHive, rawTotalVestingShares } =
-      dynamicGlobalData.headBlockDetails;
-    return (vests: Hive.Supply | null | undefined): number => {
-      if (!vests || !vests.amount || vests.amount === "0") return 0;
-      const hpAsset = hiveChain.vestsToHp(
-        vests,
-        rawTotalVestingFundHive,
-        rawTotalVestingShares
-      );
-      return grabNumericValue(hiveChain.formatter.format(hpAsset));
-    };
-  }, [hiveChain, dynamicGlobalData]);
+  const { chartData, totals, isReady } = useAggregatedVesting(
+    accountVestingStats,
+    unit
+  );
 
-  const totals = useMemo(() => {
-    if (!accountVestingStats || !vestsToHpNumber) {
-      return { up: 0, down: 0, net: 0 };
-    }
-    const up = vestsToHpNumber(accountVestingStats.power_up_vests);
-    const down = vestsToHpNumber(accountVestingStats.power_down_fill_vests);
-    return { up, down, net: up - down };
-  }, [accountVestingStats, vestsToHpNumber]);
+  const isLoading = isAccountVestingStatsLoading || !isReady;
+  const hasData = chartData.length > 0;
+  const unitLabel = unit === "hp" ? "HP" : "VESTS";
+  const netIsPositive = totals.net >= 0;
 
-  const isLoading = isAccountVestingStatsLoading || !vestsToHpNumber;
-  const hasData = !!accountVestingStats && !!vestsToHpNumber;
+  const unitOptions: { key: VestingDisplayUnit; label: string }[] = [
+    { key: "hp", label: "HP" },
+    { key: "vests", label: "VESTS" },
+  ];
+
+  const handleFullChartClick = (e: MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation();
+    router.push(`/@${userDetails.name}?activeTab=power-activity`);
+  };
 
   return (
-    <Card
-      data-testid="hp-activity-card"
-      className="overflow-hidden pb-0"
-    >
-      <CardHeader className="p-0 mb-0">
+    <Card data-testid="hp-activity-card" className="overflow-hidden pb-0">
+      <CardHeader className="p-0 mb-2">
         <div
           onClick={() => setIsHidden(!isHidden)}
           className="flex justify-between items-center p-2 hover:bg-rowHover cursor-pointer px-4"
@@ -81,6 +90,23 @@ const AccountHpActivityCard: React.FC<AccountHpActivityCardProps> = ({
           <div className="text-lg">{header}</div>
           <span>{isHidden ? <ArrowDown /> : <ArrowUp />}</span>
         </div>
+
+        {!isHidden && (
+          <div className="flex justify-end items-end w-full px-4">
+            <button
+              type="button"
+              onClick={handleFullChartClick}
+              className={cn(
+                "inline-flex items-center gap-1 rounded-full border border-navbar-border",
+                "bg-theme text-text px-3 py-1 text-xs font-medium",
+                "hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              )}
+            >
+              <Maximize2 size={12} />
+              {t("accountHpActivityCard.fullChart")}
+            </button>
+          </div>
+        )}
       </CardHeader>
       <CardContent
         hidden={isHidden}
@@ -98,51 +124,124 @@ const AccountHpActivityCard: React.FC<AccountHpActivityCardProps> = ({
           </p>
         )}
         {!isLoading && !isAccountVestingStatsError && hasData && (
-          <div className="space-y-2">
-            <p className="text-xs text-gray-500 uppercase tracking-wide">
-              {t("accountHpActivityCard.last90Days")}
-            </p>
-            <div className="flex items-center justify-between text-sm">
-              <span className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
-                <TrendingUp size={16} className="text-emerald-500" />
-                {t("accountHpActivityCard.poweredUp")}
-              </span>
-              <span className="font-semibold text-emerald-500">
-                +
-                {totals.up.toLocaleString(undefined, {
-                  maximumFractionDigits: 0,
-                })}{" "}
-                HP
-              </span>
-            </div>
-            <div className="flex items-center justify-between text-sm">
-              <span className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
-                <TrendingDown size={16} className="text-rose-500" />
-                {t("accountHpActivityCard.poweredDown")}
-              </span>
-              <span className="font-semibold text-rose-500">
-                -
-                {totals.down.toLocaleString(undefined, {
-                  maximumFractionDigits: 0,
-                })}{" "}
-                HP
-              </span>
-            </div>
-            <div className="flex items-center justify-between text-sm border-t pt-2 dark:border-gray-700">
-              <span className="text-slate-600 dark:text-slate-300">
-                {t("accountHpActivityCard.netFlow")}
-              </span>
-              <span
-                className={`font-semibold ${
-                  totals.net >= 0 ? "text-emerald-500" : "text-rose-500"
-                }`}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-xs text-gray-500 uppercase tracking-wide">
+                {t("accountHpActivityCard.last30Days")}
+              </p>
+              <div
+                className="inline-flex items-stretch rounded-full border border-navbar-border overflow-hidden text-xs"
+                role="group"
+                aria-label="HP or VESTS"
               >
-                {totals.net >= 0 ? "+" : ""}
-                {totals.net.toLocaleString(undefined, {
-                  maximumFractionDigits: 0,
-                })}{" "}
-                HP
-              </span>
+                {unitOptions.map((opt, idx) => {
+                  const isActive = unit === opt.key;
+                  const isFirst = idx === 0;
+                  const isLast = idx === unitOptions.length - 1;
+                  return (
+                    <button
+                      key={opt.key}
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setUnit(opt.key);
+                      }}
+                      aria-pressed={isActive}
+                      className={cn(
+                        "font-medium transition-colors px-2.5 py-0.5",
+                        !isLast && "border-r border-navbar-border",
+                        isFirst && "rounded-l-full",
+                        isLast && "rounded-r-full",
+                        isActive
+                          ? "bg-blue-500 text-white"
+                          : "bg-theme hover:bg-gray-100 dark:hover:bg-gray-700"
+                      )}
+                    >
+                      {opt.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="h-[210px] w-full">
+              <HpMomentumChart
+                data={chartData}
+                unit={unit}
+                tickCount={4}
+                dateFormat="MMM D"
+              />
+            </div>
+
+            <div className="space-y-2.5 pt-1">
+              {[
+                {
+                  Icon: TrendingUp,
+                  color: VESTING_COLORS.up,
+                  label: t("accountHpActivityCard.poweredUp"),
+                  value: totals.up,
+                  count: totals.upCount,
+                  sign: "+",
+                },
+                {
+                  Icon: Clock,
+                  color: VESTING_COLORS.downInit,
+                  label: t("accountHpActivityCard.scheduledDown"),
+                  value: totals.downInit,
+                  count: totals.downInitCount,
+                  sign: "",
+                },
+                {
+                  Icon: TrendingDown,
+                  color: VESTING_COLORS.downFill,
+                  label: t("accountHpActivityCard.poweredDown"),
+                  value: totals.downFill,
+                  count: totals.downFillCount,
+                  sign: "-",
+                },
+              ].map(({ Icon, color, label, value, count, sign }) => (
+                <div
+                  key={label}
+                  className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm"
+                >
+                  <span className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
+                    <Icon size={15} color={color} className="shrink-0" />
+                    {label}
+                  </span>
+                  <span className="ml-auto flex items-baseline gap-1.5 whitespace-nowrap">
+                    <span
+                      className="font-semibold tabular-nums"
+                      style={{ color }}
+                      title={`${sign}${value.toLocaleString()} ${unitLabel}`}
+                    >
+                      {sign}
+                      {formatCompact(value)} {unitLabel}
+                    </span>
+                    <span className="text-[11px] text-gray-400 tabular-nums">
+                      ({count.toLocaleString()} {t("accountHpActivityCard.ops")}
+                      )
+                    </span>
+                  </span>
+                </div>
+              ))}
+
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-gray-200 pt-2.5 dark:border-gray-700">
+                <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
+                  {t("accountHpActivityCard.netFlow", { unit: unitLabel })}
+                </span>
+                <span
+                  className="ml-auto text-sm font-bold tabular-nums whitespace-nowrap"
+                  style={{
+                    color: netIsPositive
+                      ? VESTING_COLORS.up
+                      : VESTING_COLORS.downFill,
+                  }}
+                  title={`${netIsPositive ? "+" : ""}${totals.net.toLocaleString()} ${unitLabel}`}
+                >
+                  {netIsPositive ? "+" : ""}
+                  {formatCompact(totals.net)} {unitLabel}
+                </span>
+              </div>
             </div>
           </div>
         )}

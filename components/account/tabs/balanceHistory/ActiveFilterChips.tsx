@@ -5,7 +5,7 @@ import { DEFAULT_COIN_TYPE } from "@/components/home/searches/BalanceHistorySear
 import type {
   VestHpUnit,
   BalanceHistorySearchParams,
-} from "@/pages/balanceHistory/[accountName]";
+} from "./balanceHistoryParams";
 import { useI18n } from "@/i18n/i18n";
 
 interface ActiveFilterChipsProps {
