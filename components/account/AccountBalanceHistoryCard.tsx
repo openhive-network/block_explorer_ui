@@ -66,8 +66,8 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
   const hasError = isAggregatedAccountBalanceHistoryError;
 
   const handleButtonClick = (e: MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation(); // Prevents the event from bubbling up
-    router.push(`/balanceHistory/@${userDetails.name}`); // Navigate programmatically
+    e.stopPropagation();
+    router.push(`/@${userDetails.name}?activeTab=balance-history`);
   };
 
   return (

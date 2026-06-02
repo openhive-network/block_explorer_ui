@@ -1016,12 +1016,13 @@ namespace Hive {
 
   export class VestingStatsResponse {
     date!: Date;
+    power_up_count?: number;
     power_up_hive!: Supply | null;
-    power_up_vests!: Supply | null;
-    power_down_init_hive!: Supply | null;
+    power_down_init_count?: number;
     power_down_init_vests!: Supply | null;
-    power_down_fill_hive!: Supply | null;
+    power_down_fill_count?: number;
     power_down_fill_vests!: Supply | null;
+    power_down_fill_hive!: Supply | null;
     last_block_num!: number;
   }
 
@@ -1033,16 +1034,21 @@ namespace Hive {
   }
 
   export class AccountVestingStatsResponse {
+    date!: Date;
+    power_up_count?: number;
     power_up_hive!: Supply | null;
-    power_up_vests!: Supply | null;
-    power_down_init_hive!: Supply | null;
+    power_down_init_count?: number;
     power_down_init_vests!: Supply | null;
-    power_down_fill_hive!: Supply | null;
+    power_down_fill_count?: number;
     power_down_fill_vests!: Supply | null;
+    power_down_fill_hive!: Supply | null;
+    last_block_num!: number;
   }
 
   export class AccountVestingStatsParams {
     accountName!: string;
+    granularity?: string;
+    direction?: Hive.Direction;
     "from-block"?: number | Date;
     "to-block"?: number | Date;
   }
@@ -1055,10 +1061,13 @@ namespace Hive {
 
   export class VestingHistoryEvent {
     block_num!: number;
-    operation_id!: number;
+    operation_id!: number | string;
+    op_type_id?: number;
     trx_id?: string;
     timestamp!: string;
-    event_type!: Exclude<VestingHistoryFilter, "all">;
+    // API field is named `direction` (not `event_type`); values are
+    // "power_up" | "power_down_init" | "power_down_fill".
+    direction!: Exclude<VestingHistoryFilter, "all">;
     amount_hive!: Supply | null;
     amount_vests!: Supply | null;
   }

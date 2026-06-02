@@ -19,6 +19,7 @@ import TransactionStatisticsCard from "@/components/home/TransactionStatisticsCa
 import TransferVolumeCard from "@/components/home/TransferVolumeCard";
 import TotalValueLockedCard from "@/components/home/TotalValueLockedCard";
 import NetworkGrowthCard from "@/components/home/NetworkGrowthCard";
+import HpMomentumCard from "@/components/home/HpMomentumCard";
 import LastBlocksWidget from "@/components/LastBlocksWidget";
 import FundAndSupplyWidget from "@/components/dashboard/widgets/data/FundAndSupplyWidget";
 import HiveParametersWidget from "@/components/dashboard/widgets/data/HiveParametersWidget";
@@ -186,6 +187,13 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     name: "widgets.networkGrowthName",
     component: NetworkGrowthCard,
     defaultLayout: { w: 8, h: 3.3, minW: 3, minH: 3 },
+  },
+  "hp-momentum": {
+    id: "hp-momentum",
+    name: "widgets.hpMomentumName",
+    component: HpMomentumCard,
+    defaultLayout: { w: 8, h: 5, minW: 3, minH: 4 },
+    dynamicHeight: true,
   },
   searches: {
     id: "searches",

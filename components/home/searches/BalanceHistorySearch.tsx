@@ -15,7 +15,7 @@ import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
 import { useSearchesContext } from "@/contexts/SearchesContext";
 import { cn } from "@/lib/utils";
 import { removeStorageItem, getLocalStorage } from "@/utils/LocalStorage";
-import { defaultBalanceHistorySearchParams } from "@/pages/balanceHistory/[accountName]";
+import { defaultBalanceHistorySearchParams } from "@/components/account/tabs/balanceHistory/balanceHistoryParams";
 import { useI18n } from "@/i18n/i18n";
 
 export const DEFAULT_COIN_TYPE = "HIVE";
@@ -371,7 +371,7 @@ const BalanceHistorySearch = ({
         )}
       >
         <CardHeader>
-          <CardTitle className="">{t("common.filters")}</CardTitle>
+          <CardTitle className="text-left">{t("common.filters")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-3">

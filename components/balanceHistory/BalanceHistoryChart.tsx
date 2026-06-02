@@ -26,6 +26,10 @@ import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import { config } from "@/Config";
 import { compactFormat } from "@/utils/BalanceHistoryUtils";
+import {
+  ChartBrushDefs,
+  useChartBrushDefaults,
+} from "@/components/ui/ChartBrush";
 
 interface BalanceHistoryChartProps {
   aggregatedAccountBalanceHistory?: {
@@ -70,6 +74,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
   const { dynamicGlobalData } = useDynamicGlobal();
   const { settings } = useSettings();
   const isRTL = dir === "rtl";
+  const brushDefaults = useChartBrushDefaults();
 
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth < 480);
   const [hiddenDataKeys, setHiddenDataKeys] = useState<string[]>([]);
@@ -486,6 +491,7 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
             bottom: isMobile ? 80 : 60,
           }}
         >
+          {!quickView && <ChartBrushDefs />}
           <XAxis
             dataKey="timestamp"
             tickCount={quickView ? 5 : 14}
@@ -623,19 +629,15 @@ const BalanceHistoryChart: React.FC<BalanceHistoryChartProps> = ({
           {!quickView && (
             <Brush
               dataKey="timestamp"
-              height={30}
-              stroke="var(--color-switch-off)"
-              fill="var(--color-background)"
-              travellerWidth={10}
               tickFormatter={(value) => moment(value).format("MMM D")}
               y={380}
-              className="text-xs"
               onChange={handleBrushAreaChange}
               startIndex={brushIndices?.startIndex ?? 0}
               endIndex={
                 brushIndices?.endIndex ??
                 (displayData ? displayData.length - 1 : 0)
               }
+              {...brushDefaults}
             />
           )}
           <Legend

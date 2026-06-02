@@ -6,14 +6,14 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../ui/table";
+} from "@/components/ui/table";
 import Link from "next/link";
 import React from "react";
 import { cn } from "@/lib/utils";
 import Explorer from "@/types/Explorer";
 import { getOperationTypeForDisplay } from "@/utils/UI";
 import { categorizedOperationTypes } from "@/utils/CategorizedOperationTypes";
-import { colorByOperationCategory } from "../OperationTypesDialog";
+import { colorByOperationCategory } from "@/components/OperationTypesDialog";
 import TimeAgo from "timeago-react";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import {
@@ -21,12 +21,12 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "../ui/hybrid-tooltip";
+} from "@/components/ui/hybrid-tooltip";
 import { useRouter } from "next/router";
 import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
 import useOperation from "@/hooks/api/common/useOperation";
 import { formatNumber } from "@/lib/utils";
-import CustomPagination from "../CustomPagination";
+import CustomPagination from "@/components/CustomPagination";
 import { config } from "@/Config";
 import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
 import {
@@ -36,9 +36,9 @@ import {
   ArrowUp,
   Minus,
 } from "lucide-react";
-import CopyButton from "../ui/CopyButton";
-import DataExport from "../DataExport";
-import DataCountMessage from "../DataCountMessage";
+import CopyButton from "@/components/ui/CopyButton";
+import DataExport from "@/components/DataExport";
+import DataCountMessage from "@/components/DataCountMessage";
 import { useI18n } from "@/i18n/i18n";
 import { grabNumericValue } from "@/utils/StringUtils";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";

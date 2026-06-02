@@ -217,6 +217,7 @@ export const extendedRest = {
     accountVestingStats: {
       params: Hive.AccountVestingStatsParams,
       result: Hive.AccountVestingStatsResponse,
+      responseArray: true,
       urlPath: "accounts/{accountName}/vesting-stats",
     },
     accountVestingHistory: {
