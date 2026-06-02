@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import useAccountOperations from "@/hooks/api/accountPage/useAccountOperations";
+import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
 import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
 import { getOperationColor } from "@/components/OperationsTable";
 import { getOperationTypeForDisplay } from "@/utils/UI";
@@ -14,67 +15,47 @@ import WidgetLoggedOut from "@/components/dashboard/widgets/common/WidgetLoggedO
 import { useI18n } from "@/i18n/i18n";
 import { cn } from "@/lib/utils";
 
-const FEED_SIZE = 15;
+const FEED_SIZE = 50;
 
-type Category = "all" | "transfers" | "votes" | "rewards" | "witness" | "other";
+type Category = "all" | "transfers" | "votes" | "rewards" | "witness";
 
 const TRANSFER_OPS = new Set([
   "transfer_operation",
-  "recurrent_transfer_operation",
-  "fill_recurrent_transfer_operation",
-  "failed_recurrent_transfer_operation",
   "transfer_to_savings_operation",
   "transfer_from_savings_operation",
   "cancel_transfer_from_savings_operation",
   "fill_transfer_from_savings_operation",
+  "recurrent_transfer_operation",
+  "fill_recurrent_transfer_operation",
+  "failed_recurrent_transfer_operation",
+  "escrow_transfer_operation",
   "transfer_to_vesting_operation",
   "transfer_to_vesting_completed_operation",
-  "withdraw_vesting_operation",
-  "fill_vesting_withdraw_operation",
-  "set_withdraw_vesting_route_operation",
-  "delegate_vesting_shares_operation",
-  "return_vesting_delegation_operation",
 ]);
 const VOTE_OPS = new Set([
   "vote_operation",
   "effective_comment_vote_operation",
+  "account_witness_vote_operation",
+  "update_proposal_votes_operation",
 ]);
 const REWARD_OPS = new Set([
-  "curation_reward_operation",
   "author_reward_operation",
-  "comment_reward_operation",
   "comment_benefactor_reward_operation",
+  "comment_reward_operation",
   "claim_reward_balance_operation",
-  "producer_reward_operation",
-  "pow_reward_operation",
+  "curation_reward_operation",
   "liquidity_reward_operation",
-  "interest_operation",
-  "proposal_pay_operation",
+  "pow_reward_operation",
+  "producer_reward_operation",
 ]);
 const WITNESS_OPS = new Set([
-  "account_witness_vote_operation",
-  "account_witness_proxy_operation",
-  "proxy_cleared_operation",
-  "decline_voting_rights_operation",
-  "declined_voting_rights_operation",
-  "delayed_voting_operation",
-  "feed_publish_operation",
-  "witness_update_operation",
-  "witness_set_properties_operation",
   "shutdown_witness_operation",
-  "producer_missed_operation",
   "witness_block_approve_operation",
-  "pow_operation",
-  "pow2_operation",
+  "witness_set_properties_operation",
+  "witness_update_operation",
+  "account_witness_proxy_operation",
+  "account_witness_vote_operation",
 ]);
-
-const categoryOf = (type: string): Exclude<Category, "all"> => {
-  if (TRANSFER_OPS.has(type)) return "transfers";
-  if (VOTE_OPS.has(type)) return "votes";
-  if (REWARD_OPS.has(type)) return "rewards";
-  if (WITNESS_OPS.has(type)) return "witness";
-  return "other";
-};
 
 const formatOpName = (raw: string): string => {
   const stripped = getOperationTypeForDisplay(raw);
@@ -111,7 +92,6 @@ const FILTER_CHIPS: Array<{ key: Category; labelKey: string }> = [
   { key: "votes", labelKey: "widgets.myRecentActivityFilterVotes" },
   { key: "rewards", labelKey: "widgets.myRecentActivityFilterRewards" },
   { key: "witness", labelKey: "widgets.myRecentActivityFilterWitness" },
-  { key: "other", labelKey: "widgets.myRecentActivityFilterOther" },
 ];
 
 const MyRecentActivityWidget: React.FC = () => {
@@ -130,20 +110,45 @@ const MyRecentActivityWidget: React.FC = () => {
   const [newOpsCount, setNewOpsCount] = useState(0);
   const [lastFetchedAt, setLastFetchedAt] = useState<Date | null>(null);
 
+  // Map op-type names to numeric IDs so we can server-filter by category.
+  const { operationsTypes } = useOperationsTypes();
+  const opTypeIdsByCategory = useMemo(() => {
+    const idsForNames = (names: Set<string>): number[] => {
+      const ids: number[] = [];
+      operationsTypes?.forEach((t) => {
+        if (names.has(t.operation_name)) ids.push(t.op_type_id);
+      });
+      return ids;
+    };
+    return {
+      all: null as number[] | null,
+      transfers: idsForNames(TRANSFER_OPS),
+      votes: idsForNames(VOTE_OPS),
+      rewards: idsForNames(REWARD_OPS),
+      witness: idsForNames(WITNESS_OPS),
+    };
+  }, [operationsTypes]);
+
+  const operationTypesForFetch = opTypeIdsByCategory[activeCategory];
+  const isCatalogReady = !!operationsTypes;
+
   const { accountOperations: latestData, isAccountOperationsLoading } =
     useAccountOperations(
-      isLoggedIn && username ? { accountName: username } : undefined,
+      isLoggedIn && username && isCatalogReady
+        ? { accountName: username, operationTypes: operationTypesForFetch }
+        : undefined,
       settings.liveData
     );
 
-  // Reset all per-account state when the logged-in user changes.
+  // Reset accumulated state on account OR category change. Category needs its
+  // own dataset since the API returns only the matching op types.
   useEffect(() => {
     setOpsMap(new Map());
     setNewOpIds(new Set());
     setNewOpsCount(0);
     setLastFetchedAt(null);
     lastSeenIdsRef.current = new Set();
-  }, [username]);
+  }, [username, activeCategory]);
 
   useEffect(() => {
     const ops = latestData?.operations_result as OpRow[] | undefined;
@@ -199,12 +204,8 @@ const MyRecentActivityWidget: React.FC = () => {
   const formattedOps =
     (useOperationsFormatter(sortedOps) as OpRow[] | undefined) ?? sortedOps;
 
-  const filteredOps = useMemo(() => {
-    if (activeCategory === "all") return formattedOps;
-    return formattedOps.filter(
-      (op) => categoryOf(op.op?.type ?? "") === activeCategory
-    );
-  }, [formattedOps, activeCategory]);
+  // Server-side filter handles category narrowing; no client filter needed.
+  const filteredOps = formattedOps;
 
   if (!isLoggedIn || !username) {
     return (
@@ -358,31 +359,32 @@ const MyRecentActivityWidget: React.FC = () => {
                 );
               })}
             </ul>
-            {total > 0 && (
-              <div className="mt-1.5 px-2 text-[0.6rem] text-slate-400 dark:text-slate-500 flex items-center justify-center gap-1.5 flex-wrap">
-                <span>
-                  {t("widgets.myRecentActivityFooter", {
-                    shown: String(formattedOps.length),
-                    total: total.toLocaleString(),
-                  })}
-                </span>
-                {lastFetchedAt && (
-                  <>
-                    <span aria-hidden>·</span>
-                    <span
-                      className="inline-flex items-center gap-1 whitespace-nowrap"
-                      title={lastFetchedAt.toLocaleString(locale)}
-                    >
-                      {t("widgets.myRecentActivityUpdated")}
-                      <TimeAgo locale={locale} datetime={lastFetchedAt} />
-                    </span>
-                  </>
-                )}
-              </div>
-            )}
           </>
         )}
       </CardContent>
+
+      {total > 0 && (
+        <div className="border-t bg-background px-2 py-1.5 flex-shrink-0 text-[0.6rem] text-slate-400 dark:text-slate-500 flex items-center justify-center gap-1.5 flex-wrap">
+          <span>
+            {t("widgets.myRecentActivityFooter", {
+              shown: String(formattedOps.length),
+              total: total.toLocaleString(),
+            })}
+          </span>
+          {lastFetchedAt && (
+            <>
+              <span aria-hidden>·</span>
+              <span
+                className="inline-flex items-center gap-1 whitespace-nowrap"
+                title={lastFetchedAt.toLocaleString(locale)}
+              >
+                {t("widgets.myRecentActivityUpdated")}
+                <TimeAgo locale={locale} datetime={lastFetchedAt} />
+              </span>
+            </>
+          )}
+        </div>
+      )}
     </Card>
   );
 };
