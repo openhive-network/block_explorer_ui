@@ -1230,6 +1230,8 @@ namespace Hive {
   export class ProxyPowerParams {
     accountName!: string;
     page!: number;
+    sort?: string;
+    direction?: Hive.Direction;
   }
 
   export class ProxyPowerResponse {

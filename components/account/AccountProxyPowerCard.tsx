@@ -1,4 +1,4 @@
-import React, { useState, useMemo, Fragment, useEffect } from "react";
+import React, { useState, Fragment, useEffect } from "react";
 import Link from "next/link";
 import {
   ArrowDown,
@@ -37,33 +37,6 @@ import DataExport from "@/components/DataExport";
 // Page size used by the hafbe-api proxy-power endpoint — controls Next button visibility
 const PROXY_POWER_PAGE_SIZE = 1000;
 
-const handleSortProxyPower = (
-  proxies: Hive.ProxyPowerResponse[],
-  key: keyof Hive.ProxyPowerResponse,
-  isAscending: boolean
-) => {
-  return [...proxies].sort((a, b) => {
-    let valA, valB;
-    switch (key) {
-      case "account":
-        valA = a.account.toLowerCase();
-        valB = b.account.toLowerCase();
-        break;
-      case "proxy_date":
-        valA = new Date(a.proxy_date).getTime();
-        valB = new Date(b.proxy_date).getTime();
-        break;
-      default:
-        valA = parseFloat(a.proxied_vests);
-        valB = parseFloat(b.proxied_vests);
-        break;
-    }
-    if (valA < valB) return isAscending ? -1 : 1;
-    if (valA > valB) return isAscending ? 1 : -1;
-    return 0;
-  });
-};
-
 interface AccountProxyPowerCardProps {
   accountName: string;
   isInitiallyOpen: boolean;
@@ -79,24 +52,29 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
   const { settings } = useSettings();
   const { hiveChain } = useHiveChainContext();
   const [currentPage, setCurrentPage] = useState(1);
-  const [isHP, setIsHP] = useState<boolean>(settings.displayVestHpMode === "hp");
+  const [isHP, setIsHP] = useState<boolean>(
+    settings.displayVestHpMode === "hp"
+  );
 
-    useEffect(() => {
+  useEffect(() => {
     setIsHP(settings.displayVestHpMode === "hp");
   }, [settings.displayVestHpMode]);
 
-  const [isPropertiesHidden, setIsPropertiesHidden] = useState(
-    !isInitiallyOpen
-  );
+  const [isPropertiesHidden, setIsPropertiesHidden] =
+    useState(!isInitiallyOpen);
 
   const [sortConfig, setSortConfig] = useState<{
     key: keyof Hive.ProxyPowerResponse;
     isAscending: boolean;
   }>({ key: "proxied_vests", isAscending: false });
 
+  const sortDirection: Hive.Direction = sortConfig.isAscending ? "asc" : "desc";
+
   const { accountProxyPower, isAccountProxyPowerFetching } = useProxyPower(
     accountName,
-    currentPage
+    currentPage,
+    sortConfig.key,
+    sortDirection
   );
 
   const handlePropertiesVisibility = () => {
@@ -108,19 +86,11 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
       key,
       isAscending: prev.key === key ? !prev.isAscending : true,
     }));
+    setCurrentPage(1);
   };
 
-  const sortedProxies = useMemo(() => {
-    if (!accountProxyPower) return [];
-    return handleSortProxyPower(
-      accountProxyPower,
-      sortConfig.key,
-      sortConfig.isAscending
-    );
-  }, [accountProxyPower, sortConfig]);
-
   const prepareExportData = () => {
-    return sortedProxies.map((proxy) => {
+    return (accountProxyPower ?? []).map((proxy) => {
       let powerValue = "";
       if (isHP) {
         if (hiveChain && dynamicGlobalData?.headBlockDetails) {
@@ -228,9 +198,9 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
         </div>
         <Table className="mt-4">
           <TableHeader>
-            <TableRow className="text-base">
+            <TableRow>
               <TableCell
-                className="cursor-pointer"
+                className="cursor-pointer w-28 p-1"
                 onClick={() => sortBy("account")}
               >
                 <span className="flex items-center whitespace-nowrap">
@@ -239,7 +209,7 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
                 </span>
               </TableCell>
               <TableCell
-                className="cursor-pointer"
+                className="cursor-pointer p-1"
                 onClick={() => sortBy("proxy_date")}
               >
                 <span className="flex items-center whitespace-nowrap">
@@ -247,7 +217,7 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
                 </span>
               </TableCell>
               <TableCell
-                className="cursor-pointer text-right"
+                className="cursor-pointer text-right p-1"
                 onClick={() => sortBy("proxied_vests")}
               >
                 <span className="flex items-center justify-end whitespace-nowrap">
@@ -258,18 +228,18 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sortedProxies.map((proxy) => (
+            {accountProxyPower.map((proxy) => (
               <Fragment key={proxy.account}>
                 <TableRow className="text-sm">
-                  <TableCell>
+                  <TableCell className="w-28 p-1">
                     <Link className="text-link" href={`/@${proxy.account}`}>
                       {proxy.account}
                     </Link>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="p-1 w-28">
                     {formatAndDelocalizeTime(proxy.proxy_date)}
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-right whitespace-nowrap p-1">
                     {isHP ? (
                       <>
                         {hiveChain && dynamicGlobalData?.headBlockDetails && (

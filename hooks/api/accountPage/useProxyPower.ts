@@ -4,7 +4,9 @@ import Hive from "@/types/Hive";
 
 const useProxyPower = (
   accountName: string,
-  page: number
+  page: number,
+  sort?: string,
+  direction?: Hive.Direction
 ) => {
   const {
     data: accountProxyPower,
@@ -12,8 +14,9 @@ const useProxyPower = (
     isError: isAccountProxyPowerError,
     isFetching: isAccountProxyPowerFetching,
   }: UseQueryResult<Hive.ProxyPowerResponse[]> = useQuery({
-    queryKey: ["account_proxy", accountName, page],
-    queryFn: () => fetchingService.getProxyPower(accountName, page),
+    queryKey: ["account_proxy", accountName, page, sort, direction],
+    queryFn: () =>
+      fetchingService.getProxyPower(accountName, page, sort, direction),
     refetchOnWindowFocus: false,
     keepPreviousData: true,
   });
