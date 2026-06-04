@@ -56,27 +56,28 @@ const ActivePowerDownBanner: React.FC<ActivePowerDownBannerProps> = ({
 
   const stats = useMemo(() => {
     if (!accountDetails) return null;
-    // All three are raw VESTS integers from the account API; divide by 1e6
-    // (VESTS precision) so rate/to_withdraw/withdrawn share the same units.
-    const rate =
-      grabNumericValue(accountDetails.vesting_withdraw_rate) / 1_000_000;
+    const isPoweringDown =
+      grabNumericValue(accountDetails.vesting_withdraw_rate) > 0;
+    if (!isPoweringDown) return null;
+
     const toWithdraw = grabNumericValue(accountDetails.to_withdraw) / 1_000_000;
     const withdrawn = grabNumericValue(accountDetails.withdrawn) / 1_000_000;
+    if (toWithdraw <= 0) return null;
 
-    if (!rate || rate <= 0) return null;
-
+    // Hive pays a power-down over a fixed 13 weekly tranches, so derive the
+    // weekly amount from to_withdraw rather than the rate field.
+    const weeklyRateVests = toWithdraw / POWER_DOWN_WEEKS;
     const remainingVests = Math.max(toWithdraw - withdrawn, 0);
-    // Hive pays a power-down over a fixed 13 weekly tranches; deriving the
-    // total from to_withdraw/rate overshoots to 14 because the on-chain rate
-    // is to_withdraw/13 floored, so anchor the total to the protocol constant.
-    const weeksDone = Math.min(Math.round(withdrawn / rate), POWER_DOWN_WEEKS);
+    const weeksDone = Math.min(
+      Math.round(withdrawn / weeklyRateVests),
+      POWER_DOWN_WEEKS
+    );
     const weeksRemaining = Math.max(0, POWER_DOWN_WEEKS - weeksDone);
-    const progressPct =
-      toWithdraw > 0 ? Math.min(100, (withdrawn / toWithdraw) * 100) : 0;
+    const progressPct = Math.min(100, (withdrawn / toWithdraw) * 100);
     const eta = moment().add(weeksRemaining, "weeks");
 
     return {
-      weeklyAmount: vestsToDisplay(rate),
+      weeklyAmount: vestsToDisplay(weeklyRateVests),
       remainingAmount: vestsToDisplay(remainingVests),
       totalAmount: vestsToDisplay(toWithdraw),
       weeksDone,
