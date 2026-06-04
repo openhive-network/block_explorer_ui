@@ -119,8 +119,8 @@ const HpMomentumFullChartDialog: React.FC<HpMomentumFullChartDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="min-w-[90vw] ">
-        <div className="max-h-[90vh] overflow-y-auto overflow-x-hidden scrollableContainer">
+      <DialogContent className="min-w-[90vw] pr-0">
+        <div className="max-h-[90vh] overflow-y-auto overflow-x-hidden pr-6 scrollableContainer">
           <DialogHeader>
             <div className="mb-4 flex items-center justify-between gap-3 pr-6 flex-wrap">
               <DialogTitle>{t("hpMomentumFullChartDialog.title")}</DialogTitle>

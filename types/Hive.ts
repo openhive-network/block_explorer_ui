@@ -863,7 +863,7 @@ namespace Hive {
     max_balance!: Balance;
   }
 
-  type Amount = {
+  export type Amount = {
     nai: string;
     amount: string;
     precision: number;
@@ -998,10 +998,10 @@ namespace Hive {
 
   export class TransferStatisticsResponse {
     date!: Date;
-    total_transfer_amount!: string;
-    average_transfer_amount!: string;
-    maximum_transfer_amount!: string;
-    minimum_transfer_amount!: string;
+    total_transfer_amount!: Amount;
+    average_transfer_amount!: Amount;
+    maximum_transfer_amount!: Amount;
+    minimum_transfer_amount!: Amount;
     transfer_count!: number;
     last_block_num!: number;
   }

@@ -13,6 +13,10 @@ import {
   Legend,
 } from "recharts";
 import { useI18n } from "../../i18n/i18n";
+import {
+  ChartBrushDefs,
+  useChartBrushDefaults,
+} from "@/components/ui/ChartBrush";
 
 interface NetworkGrowthChartProps {
   data: Hive.WalletStatsResponse[] | undefined;
@@ -36,6 +40,7 @@ const NetworkGrowthChart: React.FC<NetworkGrowthChartProps> = ({
   const { theme } = useTheme();
   const { t, dir } = useI18n();
   const isRTL = dir === "rtl";
+  const brushDefaults = useChartBrushDefaults();
 
   const strokeColor = theme === "dark" ? "#FFF" : "#000";
   const [zoomedDomain, setZoomedDomain] = useState<[number, number] | null>(
@@ -210,15 +215,12 @@ const NetworkGrowthChart: React.FC<NetworkGrowthChartProps> = ({
           fill="url(#networkGrowthGradient)"
           dot={false}
         />
+        {includeBrush && <ChartBrushDefs />}
         {includeBrush && (
           <Brush
+            {...brushDefaults}
             dataKey="date"
             tickFormatter={xAxisTickFormatter}
-            height={30}
-            stroke="var(--color-switch-off)"
-            fill="var(--color-background)"
-            travellerWidth={10}
-            className="text-xs"
             onChange={handleBrushAreaChange}
           />
         )}
@@ -227,4 +229,4 @@ const NetworkGrowthChart: React.FC<NetworkGrowthChartProps> = ({
   );
 };
 
-export default React.memo(NetworkGrowthChart);
+export default NetworkGrowthChart;

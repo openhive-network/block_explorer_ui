@@ -15,6 +15,10 @@ import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { colorMap } from "../balanceHistory/BalanceHistoryChart";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useI18n } from "../../i18n/i18n";
+import {
+  ChartBrushDefs,
+  useChartBrushDefaults,
+} from "@/components/ui/ChartBrush";
 
 const CustomTooltip = ({
   active,
@@ -78,6 +82,7 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({
 }) => {
   const { hiveChain } = useHiveChainContext();
   const { theme } = useTheme();
+  const brushDefaults = useChartBrushDefaults();
 
   const { t, dir } = useI18n();
   const isRTL = dir === "rtl";
@@ -119,19 +124,9 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({
   const strokeColor = theme === "dark" ? "#FFF" : "#000";
 
   return (
-    <ResponsiveContainer
-      width="100%"
-      height={isFullChart ? 500 : 250}
-    >
-      <LineChart
-        data={chartData}
-        layout="horizontal"
-      >
-        <XAxis
-          dataKey="date"
-          stroke={strokeColor}
-          reversed={isRTL}
-        />
+    <ResponsiveContainer width="100%" height={isFullChart ? 500 : 250}>
+      <LineChart data={chartData} layout="horizontal">
+        <XAxis dataKey="date" stroke={strokeColor} reversed={isRTL} />
         <YAxis
           dataKey="close"
           domain={[minValue, maxValue]}
@@ -155,16 +150,9 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({
           dot={false}
           strokeWidth={2}
         />
+        {isFullChart && <ChartBrushDefs />}
         {isFullChart && (
-          <Brush
-            data={data as any}
-            dataKey="date"
-            height={30}
-            stroke="var(--color-switch-off)"
-            fill="var(--color-background)"
-            travellerWidth={10}
-            className="text-xs"
-          />
+          <Brush {...brushDefaults} data={data as any} dataKey="date" />
         )}
       </LineChart>
     </ResponsiveContainer>
