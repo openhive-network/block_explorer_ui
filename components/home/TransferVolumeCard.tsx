@@ -8,48 +8,48 @@ const TransferVolumeFullChartDialog = dynamic(
   { ssr: false }
 );
 import { useI18n } from "../../i18n/i18n";
-import { useSettings } from "@/contexts/SettingsContext";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
+import { cn } from "@/lib/utils";
+
+type CoinType = "HIVE" | "HBD";
+
+const coinOptions: { key: CoinType; label: string }[] = [
+  { key: "HIVE", label: "HIVE" },
+  { key: "HBD", label: "HBD" },
+];
 
 const TransferVolumeCard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [coinType, setCoinType] = useState<CoinType>("HIVE");
   const { t } = useI18n();
-  const { settings } = useSettings();
   const { headBlockNumberData } = useHeadBlockNumber();
   const { dynamicGlobalData } = useDynamicGlobal(headBlockNumberData);
 
-  // --- Date Calculation ---
   const fromDate = useMemo(() => {
     const today = new Date();
-    const fourteenDaysAgo = new Date(today);
-    fourteenDaysAgo.setDate(today.getDate() - 30);
-    return fourteenDaysAgo;
+    const d = new Date(today);
+    d.setDate(today.getDate() - 30);
+    return d;
   }, []);
-
-  const yesterday = useMemo(() => {
-    const today = new Date();
-    const yesterdayDate = new Date(today);
-    yesterdayDate.setDate(today.getDate() - 1);
-    return yesterdayDate;
-  }, []);
-  // --- API Calls ---
 
   const {
     transferStatistics: chartData,
     isTransferStatisticsLoading: isChartLoading,
     isTransferStatisticsError: isChartError,
-  } = useTransferStatistics("daily", "HIVE", "asc", fromDate, undefined, true); // Set liveDataEnabled to true to make the API call
+  } = useTransferStatistics(
+    "daily",
+    coinType,
+    "asc",
+    fromDate,
+    undefined,
+    true
+  );
 
-  // --- Memoized Data ---
   const todayData = useMemo(() => {
     if (!chartData || chartData.length === 0) return null;
-    return chartData[chartData.length - 1]; // Get the last element for today's data
+    return chartData[chartData.length - 1];
   }, [chartData]);
-
-  // Adjust loading and error states to use chart's states
-  const isDailyLoading = isChartLoading;
-  const isDailyError = isChartError;
 
   const hivePrice = useMemo(() => {
     if (
@@ -71,32 +71,26 @@ const TransferVolumeCard = () => {
 
   const totalUsdValue = useMemo(() => {
     if (!todayData || !todayData.total_transfer_amount) return 0;
-    // API provides total_transfer_amount as a string. Parse it to a number.
-    const amount = parseFloat(todayData.total_transfer_amount);
+    const amount =
+      parseFloat(todayData.total_transfer_amount.amount) /
+        Math.pow(10, todayData.total_transfer_amount.precision) || 0;
+    // HBD is pegged to $1
+    return coinType === "HBD" ? amount : amount * hivePrice;
+  }, [todayData, hivePrice, coinType]);
 
-    return amount * hivePrice;
-  }, [todayData, hivePrice]);
-  // --- Modal Handlers ---
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
 
   return (
     <div className="bg-theme rounded mb-2 shadow-md overflow-hidden">
       <div className="flex flex-wrap gap-4 p-5">
-        {/* Left Side: Today's Volume and Details */}
         <div className="flex-1 min-w-[200px]">
           <div className="flex flex-col space-y-4">
-            {/* Today's Volume Card */}
             <div className="bg-explorer-extra-light-gray rounded-lg p-4 shadow-md">
               <h3 className="text-sm font-semibold uppercase tracking-wide mb-1 text-explorer-dark-gray dark:text-text">
                 {t("transferVolumeCard.todaysVolume")}
               </h3>
-              {isDailyLoading ? (
+              {isChartLoading ? (
                 <div className="flex items-center justify-center">
                   <Loader2 className="animate-spin h-5 w-5" />
                 </div>
@@ -114,12 +108,11 @@ const TransferVolumeCard = () => {
               )}
             </div>
 
-            {/* Today's Details Card */}
             <div className="bg-explorer-extra-light-gray rounded-lg p-4 shadow-md">
               <h3 className="text-sm font-semibold uppercase tracking-wide mb-1 text-explorer-dark-gray dark:text-text">
-                {t("transferVolumeCard.todaysDetails") || "Today's Details"}
+                {t("transferVolumeCard.todaysDetails")}
               </h3>
-              {isDailyLoading ? (
+              {isChartLoading ? (
                 <div className="flex items-center justify-center">
                   <Loader2 className="animate-spin h-5 w-5" />
                 </div>
@@ -131,9 +124,13 @@ const TransferVolumeCard = () => {
                     </span>
                     <span className="font-medium text-gray-700 dark:text-text text-right">
                       {(
-                        parseFloat(todayData.total_transfer_amount) ?? 0
+                        parseFloat(todayData.total_transfer_amount.amount) /
+                          Math.pow(
+                            10,
+                            todayData.total_transfer_amount.precision
+                          ) || 0
                       ).toLocaleString()}{" "}
-                      HIVE
+                      {coinType}
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
@@ -150,7 +147,7 @@ const TransferVolumeCard = () => {
                   {t("common.noDataAvailable")}
                 </p>
               )}
-              {isDailyError && (
+              {isChartError && (
                 <p className="text-red-500 text-xs mt-1">
                   {t("common.errorLoadingData")}
                 </p>
@@ -159,16 +156,50 @@ const TransferVolumeCard = () => {
           </div>
         </div>
 
-        {/* Right Side: Last 30 Days Chart */}
         <div className="flex-[2] min-w-[260px]">
           <div className="bg-explorer-extra-light-gray rounded-lg p-4 shadow-md h-full flex flex-col">
-            <div className="flex justify-between items-center mb-1">
+            <div className="flex justify-between items-center mb-1 gap-2 flex-wrap">
               <h3 className="text-sm font-semibold uppercase tracking-wide text-explorer-dark-gray dark:text-text">
                 {t("transferVolumeCard.last30Days")}
               </h3>
-              <button onClick={openModal} className="text-xs underline">
-                {t("transferVolumeCard.fullChart")}
-              </button>
+              <div className="flex items-center gap-3">
+                <div
+                  className="inline-flex items-stretch rounded-full border border-navbar-border overflow-hidden text-[10px]"
+                  role="group"
+                  aria-label="HIVE or HBD"
+                >
+                  {coinOptions.map((opt, idx) => {
+                    const isActive = coinType === opt.key;
+                    const isFirst = idx === 0;
+                    const isLast = idx === coinOptions.length - 1;
+                    return (
+                      <button
+                        key={opt.key}
+                        type="button"
+                        onClick={() => setCoinType(opt.key)}
+                        aria-pressed={isActive}
+                        className={cn(
+                          "font-medium transition-colors px-2 py-0.5",
+                          !isLast && "border-r border-navbar-border",
+                          isFirst && "rounded-l-full",
+                          isLast && "rounded-r-full",
+                          isActive
+                            ? "bg-blue-500 text-white"
+                            : "bg-theme hover:bg-gray-100 dark:hover:bg-gray-700"
+                        )}
+                      >
+                        {opt.label}
+                      </button>
+                    );
+                  })}
+                </div>
+                <button
+                  onClick={openModal}
+                  className="text-[11px] underline text-explorer-dark-gray dark:text-text"
+                >
+                  {t("transferVolumeCard.fullChart")}
+                </button>
+              </div>
             </div>
             {isChartLoading ? (
               <div className="flex items-center justify-center h-full">
@@ -178,6 +209,7 @@ const TransferVolumeCard = () => {
               <div className="flex-grow min-h-[189px]">
                 <TransferVolumeChart
                   data={chartData}
+                  coinType={coinType}
                   tickCount={4}
                   dateFormat="MMM D"
                 />
@@ -192,11 +224,11 @@ const TransferVolumeCard = () => {
         </div>
       </div>
 
-      {/* Render the modal */}
       <TransferVolumeFullChartDialog
         isOpen={isModalOpen}
         onClose={closeModal}
         data={chartData}
+        initialCoinType={coinType}
       />
     </div>
   );

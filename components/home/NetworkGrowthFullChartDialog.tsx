@@ -102,8 +102,8 @@ const NetworkGrowthFullChartDialog: React.FC<
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="min-w-[70vw]">
-        <div className="max-h-[90vh] overflow-y-auto overflow-x-hidden scrollableContainer">
+      <DialogContent className="min-w-[70vw] pr-0">
+        <div className="max-h-[90vh] overflow-y-auto overflow-x-hidden pr-6 scrollableContainer">
           <DialogHeader>
             <div className="mb-4">
               <DialogTitle>

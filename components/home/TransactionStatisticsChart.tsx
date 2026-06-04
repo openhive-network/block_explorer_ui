@@ -13,13 +13,17 @@ import {
   Legend,
 } from "recharts";
 import { useI18n } from "../../i18n/i18n";
+import {
+  ChartBrushDefs,
+  useChartBrushDefaults,
+} from "@/components/ui/ChartBrush";
 
 interface TransactionStatisticsChartProps {
   data: Hive.TransactionStatisticsResponse[] | undefined;
   includeBrush?: boolean;
   tickCount?: number;
   showYear?: boolean;
-  dateFormat?:string;
+  dateFormat?: string;
 }
 
 const TransactionStatisticsChart: React.FC<TransactionStatisticsChartProps> = ({
@@ -32,7 +36,8 @@ const TransactionStatisticsChart: React.FC<TransactionStatisticsChartProps> = ({
   const { theme } = useTheme();
   const { t, dir, locale } = useI18n();
   const isRTL = dir === "rtl";
-  
+  const brushDefaults = useChartBrushDefaults();
+
   const strokeColor = theme === "dark" ? "#FFF" : "#000";
   const [zoomedDomain, setZoomedDomain] = useState<[number, number] | null>(
     null
@@ -58,7 +63,7 @@ const TransactionStatisticsChart: React.FC<TransactionStatisticsChartProps> = ({
     }
     return uniqueData;
   }, [data]);
-  
+
   const CustomTooltip = ({
     active,
     payload,
@@ -66,7 +71,7 @@ const TransactionStatisticsChart: React.FC<TransactionStatisticsChartProps> = ({
     active?: boolean;
     payload?: any[];
   }) => {
-      const { t } = useI18n();
+    const { t } = useI18n();
 
     if (active && payload && payload.length) {
       const { date, trx_count, avg_trx, min_trx, max_trx } = payload[0].payload;
@@ -74,7 +79,11 @@ const TransactionStatisticsChart: React.FC<TransactionStatisticsChartProps> = ({
       return (
         <div className="bg-theme rounded shadow-sm py-1 px-2 text-[0.6rem]">
           <p className="text-gray-400 mb-0.5 text-center">
-            {showYear? moment(date).format(" YYYY"): (dateFormat? moment(date).format(dateFormat): moment(date).format("MMM D, YYYY"))}
+            {showYear
+              ? moment(date).format(" YYYY")
+              : dateFormat
+                ? moment(date).format(dateFormat)
+                : moment(date).format("MMM D, YYYY")}
           </p>
           <div className="grid grid-cols-2 gap-1">
             <div>
@@ -155,7 +164,6 @@ const TransactionStatisticsChart: React.FC<TransactionStatisticsChartProps> = ({
   const yAxisDomain = zoomedDomain || [lowerBound, upperBound];
 
   const xAxisTickFormatter = (value: any) => {
-    
     return moment(value).format(
       showYear ? "YYYY" : dateFormat ? dateFormat : "MMM D, YYYY"
     );
@@ -168,8 +176,8 @@ const TransactionStatisticsChart: React.FC<TransactionStatisticsChartProps> = ({
         margin={{
           top: 20,
           right: isRTL ? 10 : 30,
-          left: isRTL ? 30 : 10, 
-          bottom: includeBrush ? 40 : 0
+          left: isRTL ? 30 : 10,
+          bottom: includeBrush ? 40 : 0,
         }}
       >
         <XAxis
@@ -202,15 +210,12 @@ const TransactionStatisticsChart: React.FC<TransactionStatisticsChartProps> = ({
           stroke="#8884d8"
           dot={false}
         />
+        {includeBrush && <ChartBrushDefs />}
         {includeBrush && (
           <Brush
+            {...brushDefaults}
             dataKey="date"
             tickFormatter={xAxisTickFormatter}
-            height={30}
-            stroke="var(--color-switch-off)"
-            fill="var(--color-background)"
-            travellerWidth={10}
-            className="text-xs"
             onChange={handleBrushAreaChange}
           />
         )}

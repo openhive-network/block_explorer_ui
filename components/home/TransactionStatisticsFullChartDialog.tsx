@@ -42,7 +42,9 @@ const TransactionStatisticsFullChartDialog: React.FC<
   const [fromDate, setFromDate] = useState<Date | number | undefined>(
     moment().subtract(30, "days").toDate()
   );
-  const [toDate, setToDate] = useState<Date | number | undefined>(moment().toDate());
+  const [toDate, setToDate] = useState<Date | number | undefined>(
+    moment().toDate()
+  );
   const [currentChartData, setCurrentChartData] = useState<
     Hive.TransactionStatisticsResponse[] | undefined
   >(initialData);
@@ -72,12 +74,7 @@ const TransactionStatisticsFullChartDialog: React.FC<
       setToDate(moment().toDate());
       setGranularity("daily");
     }
-  }, [
-    isOpen,
-    setLastTimeUnitValue,
-    setRangeSelectKey,
-    setTimeUnitSelectKey,
-  ]);
+  }, [isOpen, setLastTimeUnitValue, setRangeSelectKey, setTimeUnitSelectKey]);
 
   useEffect(() => {
     // Fetch new data when granularity changes
@@ -128,24 +125,35 @@ const TransactionStatisticsFullChartDialog: React.FC<
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="min-w-[70vw] ">
-        <div className="max-h-[90vh] overflow-y-auto overflow-x-hidden scrollableContainer">
+      <DialogContent className="min-w-[70vw] pr-0">
+        <div className="max-h-[90vh] overflow-y-auto overflow-x-hidden pr-6 scrollableContainer">
           <DialogHeader>
             <div className="mb-4">
-              <DialogTitle>{t("transactionStatisticsFullChartDialog.title")}</DialogTitle>
-           
+              <DialogTitle>
+                {t("transactionStatisticsFullChartDialog.title")}
+              </DialogTitle>
             </div>
           </DialogHeader>
 
           <div className="flex flex-col md:flex-row items-start gap-4 mb-4 w-full">
             <div className="flex flex-col gap-y-3 w-1/2 md:w-1/4">
-              <Label>{t("transactionStatisticsFullChartDialog.granularity")}</Label>
+              <Label>
+                {t("transactionStatisticsFullChartDialog.granularity")}
+              </Label>
               <Select
-                onValueChange={(value) => handleGranularityChange(value as "daily" | "monthly" | "yearly")}
+                onValueChange={(value) =>
+                  handleGranularityChange(
+                    value as "daily" | "monthly" | "yearly"
+                  )
+                }
                 value={granularity}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder={t("transactionStatisticsFullChartDialog.selectGranularity")} />
+                  <SelectValue
+                    placeholder={t(
+                      "transactionStatisticsFullChartDialog.selectGranularity"
+                    )}
+                  />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="daily">{t("common.daily")}</SelectItem>
@@ -179,10 +187,7 @@ const TransactionStatisticsFullChartDialog: React.FC<
                     </label>
                   )}
                 </div>
-                <Button
-                  onClick={handleFilterClear}
-                  data-testid="clear-filters"
-                >
+                <Button onClick={handleFilterClear} data-testid="clear-filters">
                   {t("common.clear")}
                 </Button>
               </div>

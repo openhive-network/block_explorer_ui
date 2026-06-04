@@ -16,6 +16,10 @@ import Hive from "@/types/Hive";
 import { colorMap } from "../balanceHistory/BalanceHistoryChart";
 import { Props as BarShapeProps } from "recharts/types/cartesian/Bar";
 import { useI18n } from "@/i18n/i18n";
+import {
+  ChartBrushDefs,
+  useChartBrushDefaults,
+} from "@/components/ui/ChartBrush";
 
 interface CandleStickChartProps {
   data: Hive.MarketHistory | undefined;
@@ -100,11 +104,7 @@ const Candlestick = (props: CandlestickProps) => {
   const ratio = Math.abs(height / (open - close));
 
   return (
-    <g
-      stroke={color}
-      fill={color}
-      strokeWidth="2"
-    >
+    <g stroke={color} fill={color} strokeWidth="2">
       <path
         d={`
           M ${x},${y}
@@ -171,6 +171,7 @@ const prepareData = (data: Hive.MarketHistory | undefined) => {
 const CustomShapeBarChart: React.FC<CandleStickChartProps> = ({ data }) => {
   const { theme } = useTheme();
   const { t, dir } = useI18n();
+  const brushDefaults = useChartBrushDefaults();
   const isRTL = dir === "rtl";
 
   const chartData = prepareData(data);
@@ -181,16 +182,9 @@ const CustomShapeBarChart: React.FC<CandleStickChartProps> = ({ data }) => {
   const strokeColor = theme === "dark" ? "#FFF" : "#000";
 
   return (
-    <ResponsiveContainer
-      width="100%"
-      height={500}
-    >
+    <ResponsiveContainer width="100%" height={500}>
       <BarChart data={chartData}>
-        <XAxis
-          dataKey="openTime"
-          stroke={strokeColor}
-          reversed={isRTL}
-        />
+        <XAxis dataKey="openTime" stroke={strokeColor} reversed={isRTL} />
         <YAxis
           dataKey="openClose"
           domain={[minValue, maxValue]}
@@ -209,15 +203,8 @@ const CustomShapeBarChart: React.FC<CandleStickChartProps> = ({ data }) => {
           fill={colorMap.HIVE}
           shape={(props: any) => <Candlestick {...props} />}
         />
-        <Brush
-          data={chartData}
-          dataKey="openTime"
-          height={30}
-          stroke={"var(--color-switch-off)"}
-          fill="var(--color-background)"
-          travellerWidth={10}
-          className="text-xs"
-        />
+        <ChartBrushDefs />
+        <Brush {...brushDefaults} data={chartData} dataKey="openTime" />
       </BarChart>
     </ResponsiveContainer>
   );

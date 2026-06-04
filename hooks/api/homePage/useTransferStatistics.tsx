@@ -5,7 +5,7 @@ import { config } from "@/Config";
 import Hive from "@/types/Hive";
 
 const useTransferStatistics = (
-  granularity: "daily" | "monthly" | "yearly",
+  granularity: "hourly" | "daily" | "monthly" | "yearly",
   coinType: "HBD" | "HIVE" = "HIVE", // Default to HIVE
   direction: "asc" | "desc",
   fromDate?: Date | number | undefined,
@@ -16,9 +16,7 @@ const useTransferStatistics = (
     data: transferStatistics,
     isLoading: isTransferStatisticsLoading,
     isError: isTransferStatisticsError,
-  }: UseQueryResult<
-    Hive.TransferStatisticsResponse[] | undefined
-  > = useQuery({
+  }: UseQueryResult<Hive.TransferStatisticsResponse[] | undefined> = useQuery({
     queryKey: [
       "transferStatistics",
       granularity,

@@ -622,7 +622,7 @@ class FetchingService {
   }
 
   async getTransferStatistics(
-    granularity: "daily" | "monthly" | "yearly",
+    granularity: "hourly" | "daily" | "monthly" | "yearly",
     coinType: "HBD" | "HIVE",
     direction: "asc" | "desc",
     fromBlock?: Date | number | undefined,
