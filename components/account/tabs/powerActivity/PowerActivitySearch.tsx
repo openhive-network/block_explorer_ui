@@ -204,7 +204,7 @@ const PowerActivitySearch: React.FC<PowerActivitySearchProps> = ({
       setShowCustomRange(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [matchedPresetLabel, paramsState.rangeSelectKey]);
 
   const derivedPresetLabel =
     matchedPresetLabel ?? (showCustomRange ? "Custom" : null);

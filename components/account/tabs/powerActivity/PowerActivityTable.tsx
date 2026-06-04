@@ -35,7 +35,7 @@ import Hive from "@/types/Hive";
 import { grabNumericValue } from "@/utils/StringUtils";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import { getOperationTypeForDisplay } from "@/utils/UI";
-import { convertVestsToHP } from "@/utils/Calculations";
+import { convertVestsToHP, computeVestingRatios } from "@/utils/Calculations";
 import { cn } from "@/lib/utils";
 import {
   VESTING_COLORS,
@@ -145,6 +145,12 @@ const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
     return parseFloat(vests.amount) / Math.pow(10, vests.precision);
   };
 
+  // power_up ops carry only HIVE; convert HIVE -> VESTS via the global rate.
+  const vestsPerHive = useMemo(() => {
+    const r = computeVestingRatios(hiveChain, dynamicGlobalData);
+    return r ? r.vestsPerHive : null;
+  }, [hiveChain, dynamicGlobalData]);
+
   const hivePrice = useMemo(() => {
     if (!hiveChain || !dynamicGlobalData?.headBlockDetails) return 0;
     const { rawFeedPrice, rawQuote } = dynamicGlobalData.headBlockDetails;
@@ -201,6 +207,17 @@ const PowerActivityTable: React.FC<PowerActivityTableProps> = ({
   const formatAmountCell = (
     op: Hive.VestingHistoryEvent
   ): { value: number | null; unitSuffix: string } => {
+    // power_up ships only as HIVE (amount_vests is 0); derive from amount_hive:
+    // 1 HIVE powered up == 1 HP added, and HIVE -> VESTS via the current rate.
+    if (op.direction === "power_up") {
+      const hive = formatHive(op.amount_hive);
+      if (hive === null) return { value: null, unitSuffix: unitLabel };
+      if (unit === "hp") return { value: hive, unitSuffix: "HP" };
+      return {
+        value: vestsPerHive !== null ? hive * vestsPerHive : null,
+        unitSuffix: "VESTS",
+      };
+    }
     if (unit === "hp") {
       return { value: vestsToHp(op.amount_vests), unitSuffix: "HP" };
     }
