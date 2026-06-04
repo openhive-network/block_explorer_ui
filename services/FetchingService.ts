@@ -807,11 +807,15 @@ class FetchingService {
 
   async getProxyPower(
     accountName: string,
-    page: number
+    page: number,
+    sort?: string,
+    direction?: Hive.Direction
   ): Promise<Hive.ProxyPowerResponse> {
     return await this.extendedHiveChain!.restApi["hafbe-api"].proxyPower({
       accountName,
       page,
+      sort,
+      direction,
     });
   }
   async getTopHolders(
