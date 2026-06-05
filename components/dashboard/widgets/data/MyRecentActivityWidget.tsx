@@ -15,7 +15,8 @@ import WidgetLoggedOut from "@/components/dashboard/widgets/common/WidgetLoggedO
 import { useI18n } from "@/i18n/i18n";
 import { cn } from "@/lib/utils";
 
-const FEED_SIZE = 50;
+const CATEGORY_FEED_SIZE: Record<string, number> = { all: 50 };
+const DEFAULT_FEED_SIZE = 20;
 
 type Category = "all" | "transfers" | "votes" | "rewards" | "witness";
 
@@ -101,16 +102,14 @@ const MyRecentActivityWidget: React.FC = () => {
   const { username, isLoggedIn } = useAuth();
   const { settings } = useSettings();
 
-  // HAFAH pagination is inverted: page 1 = OLDEST, last page = MOST RECENT.
-  // No page number → API returns the latest page; liveData controls refetch.
   const [activeCategory, setActiveCategory] = useState<Category>("all");
+  const FEED_SIZE = CATEGORY_FEED_SIZE[activeCategory] ?? DEFAULT_FEED_SIZE;
   const [opsMap, setOpsMap] = useState<Map<string, OpRow>>(new Map());
   const lastSeenIdsRef = useRef<Set<string>>(new Set());
   const [newOpIds, setNewOpIds] = useState<Set<string>>(new Set());
   const [newOpsCount, setNewOpsCount] = useState(0);
   const [lastFetchedAt, setLastFetchedAt] = useState<Date | null>(null);
 
-  // Map op-type names to numeric IDs so we can server-filter by category.
   const { operationsTypes } = useOperationsTypes();
   const opTypeIdsByCategory = useMemo(() => {
     const idsForNames = (names: Set<string>): number[] => {
@@ -132,6 +131,12 @@ const MyRecentActivityWidget: React.FC = () => {
   const operationTypesForFetch = opTypeIdsByCategory[activeCategory];
   const isCatalogReady = !!operationsTypes;
 
+  const fortyEightHoursAgo = useMemo(() => {
+    const d = new Date();
+    d.setHours(d.getHours() - 48);
+    return d;
+  }, []);
+
   const { accountOperations: latestData, isAccountOperationsLoading } =
     useAccountOperations(
       isLoggedIn && username && isCatalogReady
@@ -140,8 +145,34 @@ const MyRecentActivityWidget: React.FC = () => {
       settings.liveData
     );
 
-  // Reset accumulated state on account OR category change. Category needs its
-  // own dataset since the API returns only the matching op types.
+  const tailCount = latestData?.operations_result?.length ?? 0;
+  const totalPages = latestData?.total_pages ?? 0;
+  const needsBackfill =
+    totalPages > 1 && tailCount > 0 && tailCount < FEED_SIZE;
+
+  const { accountOperations: backfillData } = useAccountOperations(
+    isLoggedIn && username && isCatalogReady && needsBackfill
+      ? {
+          accountName: username,
+          operationTypes: operationTypesForFetch,
+          pageNumber: totalPages - 1,
+        }
+      : undefined,
+    false
+  );
+
+  const { accountOperations: recentCountData } = useAccountOperations(
+    isLoggedIn && username && isCatalogReady
+      ? {
+          accountName: username,
+          operationTypes: operationTypesForFetch,
+          startDate: fortyEightHoursAgo,
+          pageSize: 1,
+        }
+      : undefined,
+    false
+  );
+
   useEffect(() => {
     setOpsMap(new Map());
     setNewOpIds(new Set());
@@ -193,18 +224,24 @@ const MyRecentActivityWidget: React.FC = () => {
   }, [newOpIds]);
 
   const sortedOps = useMemo(() => {
-    return Array.from(opsMap.values())
+    const map = new Map(opsMap);
+    if (needsBackfill && backfillData?.operations_result) {
+      for (const op of backfillData.operations_result as OpRow[]) {
+        const id = String(op.operation_id);
+        if (!map.has(id)) map.set(id, op);
+      }
+    }
+    return Array.from(map.values())
       .sort((a, b) => {
         if (b.block !== a.block) return b.block - a.block;
         return b.op_pos - a.op_pos;
       })
       .slice(0, FEED_SIZE);
-  }, [opsMap]);
+  }, [opsMap, needsBackfill, backfillData]);
 
   const formattedOps =
     (useOperationsFormatter(sortedOps) as OpRow[] | undefined) ?? sortedOps;
 
-  // Server-side filter handles category narrowing; no client filter needed.
   const filteredOps = formattedOps;
 
   if (!isLoggedIn || !username) {
@@ -216,7 +253,7 @@ const MyRecentActivityWidget: React.FC = () => {
     );
   }
 
-  const total = latestData?.total_operations ?? 0;
+  const recentCount = recentCountData?.total_operations ?? 0;
 
   return (
     <Card className="col-span-12 lg:col-span-3 overflow-hidden mb-2 h-full flex flex-col">
@@ -363,12 +400,12 @@ const MyRecentActivityWidget: React.FC = () => {
         )}
       </CardContent>
 
-      {total > 0 && (
+      {recentCount > 0 && (
         <div className="border-t bg-background px-2 py-1.5 flex-shrink-0 text-[0.6rem] text-slate-400 dark:text-slate-500 flex items-center justify-center gap-1.5 flex-wrap">
           <span>
             {t("widgets.myRecentActivityFooter", {
               shown: String(formattedOps.length),
-              total: total.toLocaleString(),
+              total: recentCount.toLocaleString(),
             })}
           </span>
           {lastFetchedAt && (

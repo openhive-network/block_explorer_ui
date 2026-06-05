@@ -1260,7 +1260,7 @@
   "widgets.myRecentActivityName": "最近のアクティビティ",
   "widgets.myRecentActivityLoggedOut": "最近のアクティビティを確認するにはサインインしてください。",
   "widgets.myRecentActivityEmpty": "最近のアクティビティはありません。",
-  "widgets.myRecentActivityFooter": "最近の操作 {{total}} 件中 {{shown}} 件を表示",
+  "widgets.myRecentActivityFooter": "{{shown}} 件表示 · 過去48時間で {{total}} 件",
   "widgets.myRecentActivityNewOps": "+{{count}} 件新規",
   "widgets.myRecentActivityUpdated": "更新",
   "widgets.myRecentActivityFilterAll": "すべて",

@@ -1260,7 +1260,7 @@
   "widgets.myRecentActivityName": "النشاط الأخير",
   "widgets.myRecentActivityLoggedOut": "سجّل الدخول لعرض نشاطك الأخير.",
   "widgets.myRecentActivityEmpty": "لا يوجد نشاط حديث.",
-  "widgets.myRecentActivityFooter": "عرض {{shown}} من {{total}} عملية حديثة",
+  "widgets.myRecentActivityFooter": "عرض {{shown}} · {{total}} عملية في آخر 48 ساعة",
   "widgets.myRecentActivityNewOps": "+{{count}} جديدة",
   "widgets.myRecentActivityUpdated": "محدث",
   "widgets.myRecentActivityFilterAll": "الكل",

@@ -123,6 +123,7 @@ declare module Explorer {
   interface AccountSearchOperationsProps extends CommonSearchProps {
     accountName: string;
     pageNumber?: number;
+    pageSize?: number;
     participationMode?: "include" | "exclude" | "all";
     transactingAccountName?: string;
   }
@@ -144,20 +145,19 @@ declare module Explorer {
     rc: SingleManabar;
   }
 
-  interface DynamicGlobalBlock
-    extends Omit<
-      GetDynamicGlobalPropertiesResponse,
-      | "virtual_supply"
-      | "current_supply"
-      | "init_hbd_supply"
-      | "current_hbd_supply"
-      | "total_vesting_fund_hive"
-      | "total_vesting_shares"
-      | "total_reward_fund_hive"
-      | "pending_rewarded_vesting_shares"
-      | "pending_rewarded_vesting_hive"
-      | "dhf_interval_ledger"
-    > {
+  interface DynamicGlobalBlock extends Omit<
+    GetDynamicGlobalPropertiesResponse,
+    | "virtual_supply"
+    | "current_supply"
+    | "init_hbd_supply"
+    | "current_hbd_supply"
+    | "total_vesting_fund_hive"
+    | "total_vesting_shares"
+    | "total_reward_fund_hive"
+    | "pending_rewarded_vesting_shares"
+    | "pending_rewarded_vesting_hive"
+    | "dhf_interval_ledger"
+  > {
     virtual_supply: string;
     current_supply: string;
     init_hbd_supply: string;
@@ -175,15 +175,14 @@ declare module Explorer {
     counter: number;
   }
 
-  interface Witness
-    extends Omit<
-      Hive.Witness,
-      | "vests"
-      | "votes_hive_power"
-      | "hbd_interest_rate"
-      | "votes_daily_change_hive_power"
-      | "votes_daily_change"
-    > {
+  interface Witness extends Omit<
+    Hive.Witness,
+    | "vests"
+    | "votes_hive_power"
+    | "hbd_interest_rate"
+    | "votes_daily_change_hive_power"
+    | "votes_daily_change"
+  > {
     vests: string;
     votes_hive_power: string;
     hbd_interest_rate: string;
@@ -223,8 +222,10 @@ declare module Explorer {
     isDisabled?: boolean;
   }
 
-  interface VestingDelegation
-    extends Omit<Hive.VestingDelegations, "vesting_shares"> {
+  interface VestingDelegation extends Omit<
+    Hive.VestingDelegations,
+    "vesting_shares"
+  > {
     vesting_shares: string;
   }
 
@@ -257,7 +258,7 @@ declare module Explorer {
     account_value: string;
     savings_balance: string;
     reward_hive_balance: string;
-    conversion_pending_amount_hbd: string;    
+    conversion_pending_amount_hbd: string;
     conversion_pending_amount_hive: string;
     savings_pending_amount_hbd: string;
     savings_pending_amount_hive: string;
@@ -267,31 +268,30 @@ declare module Explorer {
     open_orders_hbd_amount: string;
   }
 
-  interface FormattedAccountDetails
-    extends Omit<
-      Hive.AccountDetails,
-      | "last_post"
-      | "last_root_post"
-      | "post_count"
-      | "balance"
-      | "saving_balance"
-      | "hbd_balance"
-      | "hbd_saving_balance"
-      | "reward_hbd_balance"
-      | "reward_vesting_balance"
-      | "reward_vesting_hive"
-      | "reward_hive_balance"
-      | "vesting_withdraw_rate"
-      | "vesting_shares"
-      | "delegated_vesting_shares"
-      | "received_vesting_shares"
-      | "post_voting_power"
-      | "posting_rewards"
-      | "curation_rewards"
-      | "vesting_balance"
-      | "last_account_recovery"
-      | "created"
-    > {
+  interface FormattedAccountDetails extends Omit<
+    Hive.AccountDetails,
+    | "last_post"
+    | "last_root_post"
+    | "post_count"
+    | "balance"
+    | "saving_balance"
+    | "hbd_balance"
+    | "hbd_saving_balance"
+    | "reward_hbd_balance"
+    | "reward_vesting_balance"
+    | "reward_vesting_hive"
+    | "reward_hive_balance"
+    | "vesting_withdraw_rate"
+    | "vesting_shares"
+    | "delegated_vesting_shares"
+    | "received_vesting_shares"
+    | "post_voting_power"
+    | "posting_rewards"
+    | "curation_rewards"
+    | "vesting_balance"
+    | "last_account_recovery"
+    | "created"
+  > {
     balance: string;
     saving_balance: string;
     hbd_balance: string;
@@ -335,7 +335,6 @@ declare module Explorer {
     escrow_pending_count: string;
     open_orders_hbd_count: string;
     open_orders_hive_count: string;
-
   }
 
   interface BalanceHistoryForTable {

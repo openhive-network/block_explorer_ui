@@ -1260,7 +1260,7 @@
   "widgets.myRecentActivityName": "最近活动",
   "widgets.myRecentActivityLoggedOut": "登录后查看您的最近活动。",
   "widgets.myRecentActivityEmpty": "无最近活动。",
-  "widgets.myRecentActivityFooter": "显示 {{total}} 个最近操作中的 {{shown}} 个",
+  "widgets.myRecentActivityFooter": "显示 {{shown}} · 近48小时 {{total}} 次操作",
   "widgets.myRecentActivityNewOps": "+{{count}} 新",
   "widgets.myRecentActivityUpdated": "已更新",
   "widgets.myRecentActivityFilterAll": "全部",

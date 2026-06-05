@@ -1260,7 +1260,7 @@
   "widgets.myRecentActivityName": "Actividad Reciente",
   "widgets.myRecentActivityLoggedOut": "Inicia sesión para ver tu actividad reciente.",
   "widgets.myRecentActivityEmpty": "Sin actividad reciente.",
-  "widgets.myRecentActivityFooter": "Mostrando {{shown}} de {{total}} operaciones recientes",
+  "widgets.myRecentActivityFooter": "Mostrando {{shown}} · {{total}} ops en las últimas 48h",
   "widgets.myRecentActivityNewOps": "+{{count}} nuevas",
   "widgets.myRecentActivityUpdated": "Actualizado",
   "widgets.myRecentActivityFilterAll": "Todos",
