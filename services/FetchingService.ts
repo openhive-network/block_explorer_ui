@@ -254,7 +254,8 @@ class FetchingService {
       "operation-types": accountOperationsProps.operationTypes?.join(","),
       "participation-mode": accountOperationsProps.participationMode,
       page: accountOperationsProps.pageNumber,
-      "page-size": config.standardPaginationSize,
+      "page-size":
+        accountOperationsProps.pageSize ?? config.standardPaginationSize,
       "data-size-limit": config.opsBodyLimit,
       "from-block":
         accountOperationsProps.fromBlock || accountOperationsProps.startDate,

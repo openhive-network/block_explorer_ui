@@ -1260,7 +1260,7 @@
   "widgets.myRecentActivityName": "Letzte Aktivität",
   "widgets.myRecentActivityLoggedOut": "Melde dich an, um deine letzten Aktivitäten zu sehen.",
   "widgets.myRecentActivityEmpty": "Keine kürzliche Aktivität.",
-  "widgets.myRecentActivityFooter": "{{shown}} von {{total}} letzten Vorgängen",
+  "widgets.myRecentActivityFooter": "{{shown}} angezeigt · {{total}} Vorgänge (48h)",
   "widgets.myRecentActivityNewOps": "+{{count}} neu",
   "widgets.myRecentActivityUpdated": "Aktualisiert",
   "widgets.myRecentActivityFilterAll": "Alle",

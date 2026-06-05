@@ -1260,7 +1260,7 @@
   "widgets.myRecentActivityName": "최근 활동",
   "widgets.myRecentActivityLoggedOut": "최근 활동을 보려면 로그인하세요.",
   "widgets.myRecentActivityEmpty": "최근 활동이 없습니다.",
-  "widgets.myRecentActivityFooter": "최근 작업 {{total}}개 중 {{shown}}개 표시",
+  "widgets.myRecentActivityFooter": "{{shown}}개 표시 · 최근 48시간 {{total}}개",
   "widgets.myRecentActivityNewOps": "+{{count}}개 신규",
   "widgets.myRecentActivityUpdated": "업데이트됨",
   "widgets.myRecentActivityFilterAll": "전체",

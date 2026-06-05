@@ -1261,7 +1261,7 @@
   "widgets.myRecentActivityName": "Recent Activity",
   "widgets.myRecentActivityLoggedOut": "Sign in to see your recent activity.",
   "widgets.myRecentActivityEmpty": "No recent activity.",
-  "widgets.myRecentActivityFooter": "Showing {{shown}} of {{total}} recent ops",
+  "widgets.myRecentActivityFooter": "Showing {{shown}} · {{total}} ops in last 48h",
   "widgets.myRecentActivityNewOps": "+{{count}} new",
   "widgets.myRecentActivityUpdated": "Updated",
   "widgets.myRecentActivityFilterAll": "All",

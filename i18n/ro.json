@@ -1260,7 +1260,7 @@
   "widgets.myRecentActivityName": "Activitate recentă",
   "widgets.myRecentActivityLoggedOut": "Autentifică-te pentru a vedea activitatea recentă.",
   "widgets.myRecentActivityEmpty": "Nicio activitate recentă.",
-  "widgets.myRecentActivityFooter": "{{shown}} din {{total}} operațiuni recente",
+  "widgets.myRecentActivityFooter": "{{shown}} afișate · {{total}} ops în ultimele 48h",
   "widgets.myRecentActivityNewOps": "+{{count}} noi",
   "widgets.myRecentActivityUpdated": "Actualizat",
   "widgets.myRecentActivityFilterAll": "Toate",
