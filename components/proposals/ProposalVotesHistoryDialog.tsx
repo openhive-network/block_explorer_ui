@@ -608,7 +608,7 @@ export const ProposalVotesHistoryDialog: React.FC<
                   stackId="a"
                   name={disapproveLabel}
                   fill="#ef4444"
-                  radius={[0, 0, 3, 3]}
+                  radius={[3, 3, 0, 0]}
                   hide={hiddenSeries.has("disapproveNeg")}
                 />
                 <Line
