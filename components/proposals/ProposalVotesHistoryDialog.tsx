@@ -81,27 +81,32 @@ type DayCount = {
 
 const TOOLTIP_MAX_NAMES = 8;
 
-const VoterList = ({ names }: { names: string[] }) => (
-  <div className="mt-1.5 space-y-1.5">
-    {names.slice(0, TOOLTIP_MAX_NAMES).map((name) => (
-      <div key={name} className="flex items-center gap-1.5">
-        <Image
-          src={getHiveAvatarUrl(name)}
-          alt="avatar"
-          width={20}
-          height={20}
-          className="rounded-full flex-shrink-0"
-        />
-        <span className="text-sm truncate">{name}</span>
-      </div>
-    ))}
-    {names.length > TOOLTIP_MAX_NAMES && (
-      <p className="text-xs text-slate-400 italic">
-        +{names.length - TOOLTIP_MAX_NAMES} more
-      </p>
-    )}
-  </div>
-);
+const VoterList = ({ names }: { names: string[] }) => {
+  const { t } = useI18n();
+  return (
+    <div className="mt-1.5 space-y-1.5">
+      {names.slice(0, TOOLTIP_MAX_NAMES).map((name) => (
+        <div key={name} className="flex items-center gap-1.5">
+          <Image
+            src={getHiveAvatarUrl(name)}
+            alt={t("proposalVotesHistoryDialog.voterAvatarAlt")}
+            width={20}
+            height={20}
+            className="rounded-full flex-shrink-0"
+          />
+          <span className="text-sm truncate">{name}</span>
+        </div>
+      ))}
+      {names.length > TOOLTIP_MAX_NAMES && (
+        <p className="text-xs text-slate-400 italic">
+          {t("proposalVotesHistoryDialog.nMore", {
+            n: names.length - TOOLTIP_MAX_NAMES,
+          })}
+        </p>
+      )}
+    </div>
+  );
+};
 
 // ---------- custom tooltip ----------
 const VoteTooltip = ({
@@ -147,7 +152,9 @@ const VoteTooltip = ({
             {d.approveList.length > TOOLTIP_MAX_NAMES && (
               <span className="font-normal text-slate-400">
                 {" "}
-                (showing {TOOLTIP_MAX_NAMES})
+                {t("proposalVotesHistoryDialog.showingMax", {
+                  count: TOOLTIP_MAX_NAMES,
+                })}
               </span>
             )}
           </p>
@@ -164,7 +171,9 @@ const VoteTooltip = ({
             {d.disapproveList.length > TOOLTIP_MAX_NAMES && (
               <span className="font-normal text-slate-400">
                 {" "}
-                (showing {TOOLTIP_MAX_NAMES})
+                {t("proposalVotesHistoryDialog.showingMax", {
+                  count: TOOLTIP_MAX_NAMES,
+                })}
               </span>
             )}
           </p>
@@ -379,6 +388,14 @@ export const ProposalVotesHistoryDialog: React.FC<
       });
   }, [chartRawData]);
 
+  const chartYDomain = useMemo((): [number, number] => {
+    if (!chartData.length) return [-5, 5];
+    const minVal = Math.min(0, ...chartData.map((d) => d.disapproveNeg));
+    const maxVal = Math.max(0, ...chartData.map((d) => d.approve));
+    const pad = Math.max(Math.abs(minVal), maxVal) * 0.1 || 1;
+    return [Math.floor(minVal - pad), Math.ceil(maxVal + pad)];
+  }, [chartData]);
+
   const prepareExportData = () => {
     if (!votesHistory?.votes_history) return [];
     return votesHistory.votes_history.map(
@@ -523,6 +540,7 @@ export const ProposalVotesHistoryDialog: React.FC<
                 <YAxis
                   yAxisId="left"
                   allowDecimals={false}
+                  domain={chartYDomain}
                   tick={{ fontSize: 11, fill: strokeColor }}
                   tickLine={false}
                   axisLine={false}
