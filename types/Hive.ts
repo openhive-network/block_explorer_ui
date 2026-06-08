@@ -391,7 +391,6 @@ namespace Hive {
   export class ProposalVotesHistoryResponse {
     total_votes!: number;
     total_pages!: number;
-    votes_updated_at!: string;
     votes_history!: ProposalVoteHistoryEntry[];
   }
 
