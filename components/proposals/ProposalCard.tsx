@@ -19,6 +19,7 @@ import {
   CheckCircle,
   Clock,
   DollarSign,
+  History,
   Landmark,
   Loader2,
   PenLine,
@@ -32,6 +33,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useMemo } from "react";
 import { ProposalVotesDialog } from "./ProposalVotesDialog";
+import { ProposalVotesHistoryDialog } from "./ProposalVotesHistoryDialog";
 import ImpactSimulator from "./ImpactSimulator";
 import ProposalWatchButton from "./ProposalWatchButton";
 import ProposalVoteButton from "./ProposalVoteButton";
@@ -110,10 +112,7 @@ const ProposalStatusBadge = ({
         badgeClasses
       )}
     >
-      <Icon
-        className="h-3.5 w-3.5"
-        color={iconColor}
-      />
+      <Icon className="h-3.5 w-3.5" color={iconColor} />
       {text}
     </div>
   );
@@ -166,9 +165,7 @@ export const TimeProgressBar = ({
   const now = new Date().getTime();
   const end = endDate.getTime();
   // For upcoming proposals use total duration; for active/expired use time remaining from now
-  const diff = isUpcoming
-    ? endDate.getTime() - startDate.getTime()
-    : end - now;
+  const diff = isUpcoming ? endDate.getTime() - startDate.getTime() : end - now;
   let timeRemainingText: string;
   if (!isUpcoming && diff <= 0) {
     timeRemainingText = t("proposalCard.timeEnded");
@@ -368,10 +365,7 @@ export const ProposalCard = ({
                 </span>
               </div>
               {proposal.matchDetails && (
-                <MatchIndicators
-                  matchDetails={proposal.matchDetails}
-                  t={t}
-                />
+                <MatchIndicators matchDetails={proposal.matchDetails} t={t} />
               )}
             </div>
             <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-base text-explorer-dark-gray">
@@ -393,10 +387,7 @@ export const ProposalCard = ({
               </div>
               {isReceiverVisible ? (
                 <div className="flex items-center gap-2">
-                  <User
-                    className="h-4 w-4"
-                    color="#94a3b8"
-                  />
+                  <User className="h-4 w-4" color="#94a3b8" />
                   <span>{t("proposalCard.receiverPrefix")}</span>
                   <Link
                     href={`/@${proposal.receiver}`}
@@ -408,10 +399,7 @@ export const ProposalCard = ({
               ) : null}
             </div>
             <div className="mt-2 flex items-center gap-2 text-base text-explorer-dark-gray">
-              <Calendar
-                className="h-4 w-4 flex-shrink-0"
-                color="#94a3b8"
-              />
+              <Calendar className="h-4 w-4 flex-shrink-0" color="#94a3b8" />
               <span>{`${formatDateToLocale(
                 proposal.start_date,
                 locale
@@ -440,7 +428,10 @@ export const ProposalCard = ({
           <div className="flex flex-col border-t p-4 md:col-span-5 lg:col-span-4 md:border-t-0 md:border-l dark:border-slate-800">
             <div>
               <div className="flex justify-end items-center gap-2 mb-4">
-                <ProposalVoteButton proposalId={proposal.proposal_id} status={proposal.status} />
+                <ProposalVoteButton
+                  proposalId={proposal.proposal_id}
+                  status={proposal.status}
+                />
                 <ProposalWatchButton proposalId={proposal.proposal_id} />
                 {currentStatusConfig && (
                   <ProposalStatusBadge {...currentStatusConfig} />
@@ -449,10 +440,7 @@ export const ProposalCard = ({
               <div className="space-y-4">
                 <div>
                   <div className="flex items-center gap-2 text-sm text-explorer-dark-gray dark:text-white">
-                    <Award
-                      className="h-4 w-4"
-                      color="#a855f7"
-                    />
+                    <Award className="h-4 w-4" color="#a855f7" />
                     {t("proposalCard.votesLabel")}
                   </div>
                   <div className="flex items-center gap-2 overflow-hidden">
@@ -471,12 +459,12 @@ export const ProposalCard = ({
                       </TooltipContent>
                     </Tooltip>
                   </div>
-                     <ImpactSimulator
-                      proposalId={proposal.proposal_id}
-                      proposalHp={voteValueInHp}
-                      fundingThresholdVests={fundingThreshold ?? null}
-                      status={proposal.status}
-                    />
+                  <ImpactSimulator
+                    proposalId={proposal.proposal_id}
+                    proposalHp={voteValueInHp}
+                    fundingThresholdVests={fundingThreshold ?? null}
+                    status={proposal.status}
+                  />
                 </div>
                 {votesNeededInHp && (
                   <Tooltip>
@@ -498,10 +486,7 @@ export const ProposalCard = ({
                 )}
                 <div>
                   <div className="flex items-center gap-2 text-sm text-explorer-dark-gray dark:text-white">
-                    <DollarSign
-                      className="h-4 w-4"
-                      color="#16a34a"
-                    />
+                    <DollarSign className="h-4 w-4" color="#16a34a" />
                     {t("proposalCard.dailyPayLabel")}
                   </div>
                   <p className="text-2xl font-bold">
@@ -514,10 +499,7 @@ export const ProposalCard = ({
               <div className="border-t dark:border-slate-800 pt-3 space-y-2 text-sm">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-explorer-dark-gray dark:text-white">
-                    <Landmark
-                      className="h-4 w-4"
-                      color="#94a3b8"
-                    />
+                    <Landmark className="h-4 w-4" color="#94a3b8" />
                     {t("proposalCard.totalPayoutLabel")}
                   </div>
                   <p className="font-semibold">
@@ -529,10 +511,7 @@ export const ProposalCard = ({
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-explorer-dark-gray dark:text-white">
-                    <Wallet
-                      className="h-4 w-4"
-                      color="#94a3b8"
-                    />
+                    <Wallet className="h-4 w-4" color="#94a3b8" />
                     {t("proposalCard.remainingPayoutLabel")}
                   </div>
                   <p className="font-semibold">
@@ -543,16 +522,19 @@ export const ProposalCard = ({
                   </p>
                 </div>
               </div>
-              <div className="mt-4">
+              <div className="mt-4 space-y-2">
                 <ProposalVotesDialog proposalId={proposal.proposal_id}>
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                  >
+                  <Button variant="outline" className="w-full">
                     <Users className="mr-2 h-4 w-4" />
                     {t("proposalCard.viewVotesButton")}
                   </Button>
                 </ProposalVotesDialog>
+                <ProposalVotesHistoryDialog proposalId={proposal.proposal_id}>
+                  <Button variant="outline" className="w-full">
+                    <History className="mr-2 h-4 w-4" />
+                    {t("proposalCard.viewVoteHistoryButton")}
+                  </Button>
+                </ProposalVotesHistoryDialog>
               </div>
             </div>
           </div>
@@ -691,10 +673,7 @@ export const ReturnProposalCard = ({
                 </span>
               </div>
               {proposal.matchDetails && (
-                <MatchIndicators
-                  matchDetails={proposal.matchDetails}
-                  t={t}
-                />
+                <MatchIndicators matchDetails={proposal.matchDetails} t={t} />
               )}
             </div>
             <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-base text-explorer-dark-gray">
@@ -715,10 +694,7 @@ export const ReturnProposalCard = ({
                 </Link>
               </div>
               <div className="flex items-center gap-2">
-                <User
-                  className="h-4 w-4"
-                  color="#94a3b8"
-                />
+                <User className="h-4 w-4" color="#94a3b8" />
                 <span>{t("proposalCard.receiverPrefix")}</span>
                 <Link
                   href={`/@${proposal.receiver}`}
@@ -730,10 +706,7 @@ export const ReturnProposalCard = ({
             </div>
 
             <div className="mt-2 flex items-center gap-2 text-base text-explorer-dark-gray">
-              <Calendar
-                className="h-4 w-4 flex-shrink-0"
-                color="#94a3b8"
-              />
+              <Calendar className="h-4 w-4 flex-shrink-0" color="#94a3b8" />
               <span>{`${formatDateToLocale(
                 proposal.start_date,
                 locale
@@ -750,7 +723,10 @@ export const ReturnProposalCard = ({
 
           <div className="flex flex-col border-t p-4 md:col-span-5 lg:col-span-4 md:border-t-0 md:border-l dark:border-slate-700/80">
             <div className="flex justify-end items-center gap-2">
-              <ProposalVoteButton proposalId={proposal.proposal_id} status={proposal.status} />
+              <ProposalVoteButton
+                proposalId={proposal.proposal_id}
+                status={proposal.status}
+              />
               <ProposalWatchButton proposalId={proposal.proposal_id} />
               {currentStatusConfig && (
                 <ProposalStatusBadge {...currentStatusConfig} />
@@ -761,10 +737,7 @@ export const ReturnProposalCard = ({
                 <TooltipTrigger asChild>
                   <div>
                     <div className="flex items-center gap-2 text-sm text-explorer-dark-gray">
-                      <Landmark
-                        className="h-4 w-4"
-                        color="#64748b"
-                      />
+                      <Landmark className="h-4 w-4" color="#64748b" />
                       {t("returnProposalCard.fundingThresholdLabel")}
                     </div>
                     <p className="text-4xl font-bold min-w-0 text-slate-800 dark:text-slate-100">
@@ -781,16 +754,19 @@ export const ReturnProposalCard = ({
                 </TooltipContent>
               </Tooltip>
             </div>
-            <div className="mt-4">
+            <div className="mt-4 space-y-2">
               <ProposalVotesDialog proposalId={proposal.proposal_id}>
-                <Button
-                  variant="outline"
-                  className="w-full"
-                >
+                <Button variant="outline" className="w-full">
                   <Users className="mr-2 h-4 w-4" />
                   {t("proposalCard.viewVotesButton")}
                 </Button>
               </ProposalVotesDialog>
+              <ProposalVotesHistoryDialog proposalId={proposal.proposal_id}>
+                <Button variant="outline" className="w-full">
+                  <History className="mr-2 h-4 w-4" />
+                  {t("proposalCard.viewVoteHistoryButton")}
+                </Button>
+              </ProposalVotesHistoryDialog>
             </div>
           </div>
         </div>
