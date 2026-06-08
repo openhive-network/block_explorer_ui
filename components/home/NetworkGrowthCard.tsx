@@ -147,7 +147,7 @@ const NetworkGrowthCard = () => {
               <Loader2 className="animate-spin h-5 w-5" />
             </div>
           ) : (
-            <div className="flex-grow min-h-[100px]">
+            <div className="flex-grow min-h-[100px] overflow-hidden">
               <NetworkGrowthChart
                 data={chartData}
                 tickCount={4}

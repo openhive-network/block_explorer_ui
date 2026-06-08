@@ -27,7 +27,7 @@ const CustomTooltip = ({
   active?: boolean;
   payload?: any[];
 }) => {
-  const { t, locale } = useI18n();
+  const { t } = useI18n();
 
   if (active && payload && payload.length) {
     return (
@@ -36,7 +36,8 @@ const CustomTooltip = ({
           return (
             <div key={tooltipDate}>
               <p>
-                {t("marketHistoryChart.date")}: {tooltipDate}
+                {t("marketHistoryChart.date")}:{" "}
+                {moment(tooltipDate).format("YYYY MMM D")}
               </p>
               <p>
                 {t("marketHistoryChart.closePrice")}: ${close}
@@ -74,6 +75,7 @@ interface ChartData {
   date: string;
   close: string | undefined;
   volume: number;
+  tooltipDate: string;
 }
 
 const MarketHistoryChart: React.FC<MarketChartProps> = ({
@@ -84,7 +86,9 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({
   const { theme } = useTheme();
   const brushDefaults = useChartBrushDefaults();
 
-  const { t, dir } = useI18n();
+  // locale subscription ensures the component re-renders on language switch
+  // so tickFormatter picks up the new locale immediately.
+  const { t, dir, locale } = useI18n();
   const isRTL = dir === "rtl";
 
   const [chartData, setChartData] = useState<ChartData[] | undefined>(
@@ -93,6 +97,9 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({
   const [minValue, setMinValue] = useState<number>(0);
   const [maxValue, setMaxValue] = useState<number>(0);
 
+  // locale is intentionally NOT in the deps: dates are stored as raw ISO strings
+  // and formatted by tickFormatter at render time, so no rebuild is needed on
+  // locale change (avoids Recharts recalculating tick intervals on every switch).
   useEffect(() => {
     if (!data || !hiveChain) return;
 
@@ -101,32 +108,40 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({
       const hiveClosePrice = calculateCloseHivePrice(hive, non_hive);
 
       return {
-        date: moment(bucket.open).format("MMM D"),
-        tooltipDate: moment(bucket.open).format("YYYY MMM D"),
+        date: bucket.open, // raw ISO — formatted by tickFormatter
+        tooltipDate: bucket.open, // raw ISO — formatted inline in CustomTooltip
         close: hiveClosePrice,
         volume: bucket.hive.volume,
       };
     });
 
-    const min = Math.min(
-      ...filterData?.map((d: ChartData) => parseFloat(d.close ?? ""))
-    );
-    const max = Math.max(
-      ...filterData?.map((d: ChartData) => parseFloat(d.close ?? ""))
-    );
+    const min = Math.min(...filterData.map((d) => parseFloat(d.close ?? "")));
+    const max = Math.max(...filterData.map((d) => parseFloat(d.close ?? "")));
 
     setChartData(filterData);
     setMinValue(min);
     setMaxValue(max);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, hiveChain]);
 
   const lastHivePrice = chartData?.[chartData.length - 1].close;
   const strokeColor = theme === "dark" ? "#FFF" : "#000";
 
+  // Stable tick count: show ~6 ticks regardless of locale label widths.
+  const tickInterval = chartData
+    ? Math.max(1, Math.floor((chartData.length - 1) / 5))
+    : "preserveStartEnd";
+
   return (
     <ResponsiveContainer width="100%" height={isFullChart ? 500 : 250}>
       <LineChart data={chartData} layout="horizontal">
-        <XAxis dataKey="date" stroke={strokeColor} reversed={isRTL} />
+        <XAxis
+          dataKey="date"
+          tickFormatter={(d) => moment(d).format("MMM D")}
+          interval={tickInterval}
+          stroke={strokeColor}
+          reversed={isRTL}
+        />
         <YAxis
           dataKey="close"
           domain={[minValue, maxValue]}
@@ -152,7 +167,11 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({
         />
         {isFullChart && <ChartBrushDefs />}
         {isFullChart && (
-          <Brush {...brushDefaults} data={data as any} dataKey="date" />
+          <Brush
+            {...brushDefaults}
+            dataKey="date"
+            tickFormatter={(d) => moment(d).format("MMM D")}
+          />
         )}
       </LineChart>
     </ResponsiveContainer>

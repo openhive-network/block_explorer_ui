@@ -186,9 +186,15 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
     [lastBlocks.lastBlocksData, router]
   );
 
+  const xAxisStep = Math.max(1, Math.floor((data.length - 2) / 6));
+  const xAxisTicks = data
+    .filter((_, i) => i >= 1 && (i - 1) % xAxisStep === 0)
+    .slice(0, 7)
+    .map((d) => d.name);
+
   return (
     <Card
-      className={cn("w-full h-[480px] pb-10 mb-2", className)}
+      className={cn("w-full h-[480px] pb-10 mb-2 overflow-hidden", className)}
       data-testid="last-block-widget"
     >
       <CardHeader>
@@ -219,6 +225,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
             axisLine={false}
             reversed={isRTL}
             style={{ fontSize: "14px" }}
+            ticks={xAxisTicks}
           />
           <YAxis
             stroke={strokeColor}

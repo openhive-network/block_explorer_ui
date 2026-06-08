@@ -7,6 +7,21 @@ import React, {
   useEffect,
 } from "react";
 
+// Moment.js locale setup — loads all supported locales once at startup.
+// Only affects locale-sensitive formatting (e.g. month names in format("MMM D")).
+// Arithmetic methods (subtract, isSame, toDate, etc.) are unaffected.
+// Each time a new language is added it should be listed here.
+import moment from "moment";
+["es", "it", "ar", "zh-cn", "de", "fr", "ja", "ko", "pl", "pt", "ro"].forEach(
+  (l) => require(`moment/locale/${l}`)
+);
+// Keep Western digits (0-9) for Arabic locale so API date strings remain ASCII-safe.
+// Without this, moment's `ar` locale postformat replaces digits with Arabic-Indic
+// numerals (٠١٢٣٤٥٦٧٨٩), which breaks ISO date parsing in the Hive node WASM.
+moment.updateLocale("ar", { postformat: (s: string) => s });
+// Maps app locale codes to moment locale codes where they differ
+const momentLocaleMap: Record<string, string> = { zh: "zh-cn" };
+
 // Timeago.js Setup - Each Time we add new language it should be imported here
 import * as timeago from "timeago.js";
 import esTimeagoLocale from "timeago.js/lib/lang/es";
@@ -117,6 +132,8 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({
     getInitialLocale(initialLocale)
   );
 
+  moment.locale(momentLocaleMap[currentLocale] ?? currentLocale);
+
   useEffect(() => {
     registerTimeagoLocalesOnce(); // For timeago-react
   }, []);
@@ -128,6 +145,7 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({
     if (typeof window !== "undefined" && window.localStorage) {
       localStorage.setItem("locale", currentLocale);
     }
+    moment.locale(momentLocaleMap[currentLocale] ?? currentLocale);
   }, [currentLocale]);
 
   // This effect listens for changes in localStorage from other tabs

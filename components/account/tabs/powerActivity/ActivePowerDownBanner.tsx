@@ -28,7 +28,7 @@ const ActivePowerDownBanner: React.FC<ActivePowerDownBannerProps> = ({
   accountName,
   unit,
 }) => {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const { hiveChain } = useHiveChainContext();
   const { dynamicGlobalData } = useDynamicGlobal();
   const { accountDetails } = useAccountDetails(accountName, false);
@@ -83,10 +83,10 @@ const ActivePowerDownBanner: React.FC<ActivePowerDownBannerProps> = ({
       weeksDone,
       weeksTotal: POWER_DOWN_WEEKS,
       progressPct,
-      etaLabel: eta.format("MMM D, YYYY"),
+      etaLabel: eta.locale(locale).format("MMM D, YYYY"),
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accountDetails, unit, hiveChain, dynamicGlobalData]);
+  }, [accountDetails, unit, hiveChain, dynamicGlobalData, locale]);
 
   if (!stats) return null;
 

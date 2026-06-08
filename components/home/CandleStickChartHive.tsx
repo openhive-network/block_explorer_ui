@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import moment from "moment";
 import {
   BarChart,
@@ -47,7 +47,7 @@ const CustomTooltip = ({
   active?: boolean;
   payload?: any[];
 }) => {
-  const { t, locale } = useI18n();
+  const { t } = useI18n();
 
   if (active && payload && payload.length) {
     return (
@@ -170,11 +170,12 @@ const prepareData = (data: Hive.MarketHistory | undefined) => {
 
 const CustomShapeBarChart: React.FC<CandleStickChartProps> = ({ data }) => {
   const { theme } = useTheme();
-  const { t, dir } = useI18n();
+  const { t, dir, locale } = useI18n();
   const brushDefaults = useChartBrushDefaults();
   const isRTL = dir === "rtl";
 
-  const chartData = prepareData(data);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const chartData = useMemo(() => prepareData(data), [data, locale]);
   const minValue: number = Math.min(...chartData!.map((d) => d.low));
   const maxValue: number = Math.max(...chartData!.map((d) => d.high));
 

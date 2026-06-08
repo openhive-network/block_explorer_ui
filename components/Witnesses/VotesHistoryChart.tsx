@@ -75,7 +75,7 @@ function buildDailyVests(events: VoteEvent[] = []): DayRow[] {
   const map = new Map<string, DayRow>();
   for (const e of events) {
     //fixing date orders
-    const dayKey = moment(e.timestamp).format("YYYY-MM-DD"); 
+    const dayKey = moment(e.timestamp).format("YYYY-MM-DD");
     const displayDate = moment(e.timestamp).format("MMM D");
     const tooltipDate = moment(e.timestamp).format("YYYY MMM D");
     if (!map.has(dayKey)) {
@@ -99,7 +99,9 @@ function buildDailyVests(events: VoteEvent[] = []): DayRow[] {
       row.lostListVests.push({ name: e.voter_name, vests: v });
     }
   }
-  return Array.from(map.entries()).sort(([a], [b]) => (a < b ? -1 : 1)).map(([_, row]) => row);
+  return Array.from(map.entries())
+    .sort(([a], [b]) => (a < b ? -1 : 1))
+    .map(([_, row]) => row);
 }
 
 const VotesTooltip = ({
@@ -169,10 +171,7 @@ const VotesTooltip = ({
                   )
                 : g.vests;
               return (
-                <div
-                  key={`g-${g.name}`}
-                  className="flex items-center"
-                >
+                <div key={`g-${g.name}`} className="flex items-center">
                   <Image
                     className="rounded-full"
                     src={getHiveAvatarUrl(g.name)}
@@ -210,10 +209,7 @@ const VotesTooltip = ({
                   )
                 : l.vests;
               return (
-                <div
-                  key={`l-${l.name}`}
-                  className="flex items-center"
-                >
+                <div key={`l-${l.name}`} className="flex items-center">
                   <Image
                     className="rounded-full"
                     src={getHiveAvatarUrl(l.name)}
@@ -244,7 +240,7 @@ const VotesHistoryWidget: React.FC<VotesHistoryWidgetProps> = ({
   titleKey = "votersChart.title",
   isHp = true,
 }) => {
-  const { t, dir } = useI18n();
+  const { t, dir, locale } = useI18n();
   const isRTL = dir === "rtl";
   const isMobile = useMediaQuery("(max-width: 768px)");
   const { theme } = useTheme();
@@ -253,7 +249,7 @@ const VotesHistoryWidget: React.FC<VotesHistoryWidgetProps> = ({
   const [data, setData] = useState<DayRow[]>([]);
   useEffect(() => {
     setData(buildDailyVests(events ?? []));
-  }, [events]);
+  }, [events, locale]);
 
   useEffect(() => {
     const id = setTimeout(() => window.dispatchEvent(new Event("resize")), 0);
@@ -302,10 +298,7 @@ const VotesHistoryWidget: React.FC<VotesHistoryWidgetProps> = ({
         <CardTitle>{t(titleKey)}</CardTitle>
       </CardHeader>
 
-      <ResponsiveContainer
-        width="100%"
-        height="100%"
-      >
+      <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={data}
           stackOffset="sign"
@@ -337,11 +330,7 @@ const VotesHistoryWidget: React.FC<VotesHistoryWidgetProps> = ({
             interval="preserveStartEnd"
           />
 
-          <ReferenceLine
-            y={0}
-            stroke="#94a3b8"
-            strokeDasharray="3 3"
-          />
+          <ReferenceLine y={0} stroke="#94a3b8" strokeDasharray="3 3" />
 
           <Tooltip
             wrapperStyle={{ zIndex: 99999 }}
