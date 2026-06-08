@@ -430,6 +430,30 @@ class FetchingService {
     });
   }
 
+  async getProposalVotesHistory(
+    proposalId: number,
+    direction: "asc" | "desc",
+    page: number | null,
+    limit: number | null,
+    fromTime?: Date,
+    toTime?: Date,
+    fromBlock?: number,
+    toBlock?: number,
+    voterName?: string
+  ): Promise<Hive.ProposalVotesHistoryResponse> {
+    return await this.extendedHiveChain!.restApi[
+      "hafbe-api"
+    ].proposalVotesHistory({
+      proposalId,
+      direction,
+      page,
+      "page-size": limit,
+      "from-block": fromTime || fromBlock,
+      "to-block": toTime || toBlock,
+      "voter-name": voterName,
+    });
+  }
+
   async getOperation(operationId: string): Promise<Hive.OperationResponse> {
     return await this.extendedHiveChain!.restApi["hafah-api"].operations.byId({
       operationId,

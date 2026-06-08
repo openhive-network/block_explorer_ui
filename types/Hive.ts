@@ -372,6 +372,29 @@ namespace Hive {
     votes_history!: WitnessVotesHistory[];
   }
 
+  export class GetProposalVotesHistoryParams {
+    proposalId!: number;
+    direction?: Hive.Direction;
+    page!: number | null;
+    "page-size"!: number | null;
+    "from-block"?: number | Date;
+    "to-block"?: number | Date;
+    "voter-name"!: string | undefined;
+  }
+
+  export class ProposalVoteHistoryEntry {
+    voter_name!: string;
+    approve!: boolean;
+    timestamp!: string;
+  }
+
+  export class ProposalVotesHistoryResponse {
+    total_votes!: number;
+    total_pages!: number;
+    votes_updated_at!: string;
+    votes_history!: ProposalVoteHistoryEntry[];
+  }
+
   export class GetBlockDetailsParams {
     blockNumber!: number | string;
     "include-virtual"?: boolean;

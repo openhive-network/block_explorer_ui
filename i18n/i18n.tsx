@@ -21,7 +21,6 @@ import plTimeagoLocale from "timeago.js/lib/lang/pl";
 import ptTimeagoLocale from "timeago.js/lib/lang/pt_BR";
 import roTimeagoLocale from "timeago.js/lib/lang/ro";
 
-
 let timeagoLocalesHaveBeenRegistered = false;
 const registerTimeagoLocalesOnce = () => {
   if (!timeagoLocalesHaveBeenRegistered) {
@@ -129,7 +128,6 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({
     if (typeof window !== "undefined" && window.localStorage) {
       localStorage.setItem("locale", currentLocale);
     }
-
   }, [currentLocale]);
 
   // This effect listens for changes in localStorage from other tabs
