@@ -82,7 +82,7 @@ const HpMomentumChart: React.FC<HpMomentumChartProps> = ({
   defaultHiddenKeys = ["power_down_init"],
 }) => {
   const { theme } = useTheme();
-  const { t, dir } = useI18n();
+  const { t, dir, locale } = useI18n();
   const isRTL = dir === "rtl";
   const strokeColor = theme === "dark" ? "#FFF" : "#000";
   const unitLabel = unit === "hp" ? "HP" : "VESTS";
@@ -102,7 +102,8 @@ const HpMomentumChart: React.FC<HpMomentumChartProps> = ({
         row.power_down_fill > 0 ? -row.power_down_fill : null,
       trend: trend[i],
     }));
-  }, [data]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, locale]);
 
   const formatAmount = (n: number) =>
     n.toLocaleString(undefined, { maximumFractionDigits: 0 });
