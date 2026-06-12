@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { loginLimiter } from "@/utils/RateLimit";
 import { config, validateHivesignerEnv } from "@/Config";
 import crypto from "crypto";
+import { createSessionToken } from "@/lib/serverSession";
 
 export default async function handler(
   req: NextApiRequest,
@@ -32,7 +33,8 @@ export default async function handler(
   }
 
   const { code } = req.body;
-  if (!code) return res.status(400).json({ error: "Code required" });
+  if (typeof code !== "string" || !code)
+    return res.status(400).json({ error: "Code required" });
 
   const clientId = process.env.HIVESIGNER_APP;
   const clientSecret = process.env.HIVESIGNER_SECRET;
@@ -75,7 +77,22 @@ export default async function handler(
         maxAge: config.security.sessionMaxAge,
       });
 
-      res.setHeader("Set-Cookie", [authCookie, csrfCookie]);
+      const cookies = [authCookie, csrfCookie];
+
+      const sessionToken = createSessionToken(data.username);
+      if (sessionToken) {
+        cookies.push(
+          serialize("hivescan_session", sessionToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "strict",
+            path: "/",
+            maxAge: config.security.sessionMaxAge,
+          })
+        );
+      }
+
+      res.setHeader("Set-Cookie", cookies);
       return res.status(200).json({ username: data.username, success: true });
     }
 

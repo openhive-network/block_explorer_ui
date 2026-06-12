@@ -10,16 +10,30 @@ To run the application you have to install Node JS (18.20.0 or higher is prefera
 npm install
 ```
 
-## Add .env file with the following 
+## Add .env file with the following
 
 - REACT_APP_API_ADDRESS=https://api.hive.blog
 - REACT_APP_HIVE_BLOG_API_ADDRESS=https://api.hive.blog
 
 **Private: Backend needs these for the secret handshake for hivesigner login**
-- NEXT_PUBLIC_HIVESIGNER_CALLBACK = your_url -  Registered URL and whitelisted in Hivesigner 
-- NEXT_PUBLIC_HIVESIGNER_APP=your_app_name - App name registered in Hivesigner 
+
+- NEXT_PUBLIC_HIVESIGNER_CALLBACK = your_url - Registered URL and whitelisted in Hivesigner
+- NEXT_PUBLIC_HIVESIGNER_APP=your_app_name - App name registered in Hivesigner
 - HIVESIGNER_SECRET=some_key - Secret Key for handshakes set in Hivesigner
- 
+
+**Workspace Sync Encryption (optional but recommended for production)**
+
+- `WORKSPACE_ENCRYPTION_KEY` – 32-byte key as 64 hex characters. Encrypts workspace bundles stored in `posting_json_metadata` using AES-256-GCM before writing to the blockchain and decrypts them on login.
+
+If this key is not set, workspaces are stored unencrypted (compressed only). If it is set, the server also issues signed session cookies that gate the `/api/workspace/decrypt` and `/api/workspace/encrypt` endpoints so they require an authenticated user.
+
+**Generating a key:**
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+**Important:** Never commit this key to version control. Keep the production key only in server environment variables (CI/CD secrets, Docker env, etc.). Rotating the key invalidates all previously encrypted workspaces — users will need to re-sync.
 
 ## Start the application with:
 

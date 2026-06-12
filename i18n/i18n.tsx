@@ -162,11 +162,13 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({
       window.removeEventListener("storage", handleStorageChange);
     };
   }, []);
+
   const t = useCallback(
     (key: string, options?: any) => {
       const currentTranslationSet =
         appTranslations[currentLocale] || appTranslations["en"];
-      let translation = currentTranslationSet[key] || key;
+      let translation =
+        currentTranslationSet[key] || appTranslations["en"][key] || key;
       if (options && typeof translation === "string") {
         Object.keys(options).forEach((optKey) => {
           const regex = new RegExp(`{{${optKey}}}`, "g");
