@@ -1119,6 +1119,18 @@
   "settingsPage.dashboardDescription": "Gérez la disposition de votre tableau de bord personnel et vos préférences de widgets.",
   "settingsPage.modularDashboardLabel": "Tableau de Bord Modulaire",
   "settingsPage.modularDashboardDescription": "Activez une expérience de tableau de bord personnalisable basée sur des widgets.",
+  "settingsPage.workspaceSyncButton": "Synchroniser l'espace de travail",
+  "workspaceSync.cloudDiffersTitle": "Nouvelle version de l'espace de travail disponible",
+  "workspaceSync.cloudDiffersDescription": "Une version plus récente de votre espace de travail a été trouvée sur la blockchain. Restaurez-la pour l'utiliser, ou conservez votre configuration locale actuelle.",
+  "workspaceSync.restoreFromCloud": "Restaurer depuis le cloud",
+  "workspaceSync.keepLocal": "Conserver en local",
+  "workspaceSync.unsyncedLabel": "Non synchronisé",
+  "workspaceSync.unsyncedTooltip": "Votre espace de travail contient des modifications locales qui n'ont pas encore été synchronisées avec la blockchain.",
+  "workspaceSync.unsyncedLogoutWarning": "Vous avez des modifications locales qui n'ont pas été synchronisées avec la blockchain.",
+  "workspaceSync.syncAndLogout": "Synchroniser et se déconnecter",
+  "workspaceSync.logoutAnyway": "Se déconnecter quand même",
+  "workspaceSync.cancel": "Annuler",
+  "workspaceSync.noChangesToSync": "Aucune modification locale à synchroniser",
   "transactionPage.transactionDetailsRefferer": "details_transaction",
   "accountSearch.accountReactResults": "resultats_recherche_compte",
   "commentsSearch.commentSearchResults": "resultats_recherche_commentaires",
@@ -1310,5 +1322,8 @@
   "smartReminders.endsToday": "Se termine aujourd'hui",
   "smartReminders.needsAttention": "Nécessite attention",
   "smartReminders.unfundedTitle": "La proposition suivie a perdu son financement",
-  "smartReminders.becameFunded": "La proposition suivie est désormais financée"
+  "smartReminders.becameFunded": "La proposition suivie est désormais financée",
+  "workspaceSync.rcInfo": "La sync utilise des RC (Crédits de Ressources)",
+  "workspaceSync.rcInfoTooltip": "Chaque synchronisation écrit votre espace de travail sur la blockchain Hive et coûte des RC proportionnels à la taille des données. Les RC se régénèrent automatiquement selon votre Hive Power.",
+  "workspaceSync.rcLowWarning": "Vos RC sont critiquement bas (< 10%). La synchronisation peut échouer. Attendez la régénération ou augmentez votre HIVE."
 }

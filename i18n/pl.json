@@ -1119,6 +1119,18 @@
   "settingsPage.dashboardDescription": "Zarządzaj układem swojego pulpitu i preferencjami widżetów.",
   "settingsPage.modularDashboardLabel": "Pulpit Modułowy",
   "settingsPage.modularDashboardDescription": "Włącz konfigurowalny pulpit oparty na widżetach.",
+  "settingsPage.workspaceSyncButton": "Synchronizuj obszar roboczy",
+  "workspaceSync.cloudDiffersTitle": "Dostępna nowsza wersja obszaru roboczego",
+  "workspaceSync.cloudDiffersDescription": "Na blockchainie znaleziono nowszą wersję Twojego obszaru roboczego. Przywróć ją, aby z niej korzystać, lub zachowaj bieżące ustawienia lokalne.",
+  "workspaceSync.restoreFromCloud": "Przywróć z chmury",
+  "workspaceSync.keepLocal": "Zachowaj lokalnie",
+  "workspaceSync.unsyncedLabel": "Niezsynchonizowany",
+  "workspaceSync.unsyncedTooltip": "Twój obszar roboczy zawiera lokalne zmiany, które nie zostały jeszcze zsynchronizowane z blockchainem.",
+  "workspaceSync.unsyncedLogoutWarning": "Masz lokalne zmiany, które nie zostały zsynchronizowane z blockchainem.",
+  "workspaceSync.syncAndLogout": "Synchronizuj i wyloguj",
+  "workspaceSync.logoutAnyway": "Wyloguj mimo to",
+  "workspaceSync.cancel": "Anuluj",
+  "workspaceSync.noChangesToSync": "Brak lokalnych zmian do synchronizacji",
   "transactionPage.transactionDetailsRefferer": "szczegoly_transakcji",
   "accountSearch.accountReactResults": "wyniki_wyszukiwania_konta",
   "commentsSearch.commentSearchResults": "wyniki_wyszukiwania_komentarzy",
@@ -1310,5 +1322,8 @@
   "smartReminders.endsToday": "Kończy się dzisiaj",
   "smartReminders.needsAttention": "Wymaga uwagi",
   "smartReminders.unfundedTitle": "Obserwowana propozycja utraciła finansowanie",
-  "smartReminders.becameFunded": "Obserwowana propozycja została sfinansowana"
+  "smartReminders.becameFunded": "Obserwowana propozycja została sfinansowana",
+  "workspaceSync.rcInfo": "Sync używa RC (Kredytów Zasobów)",
+  "workspaceSync.rcInfoTooltip": "Każda synchronizacja zapisuje obszar roboczy na blockchainie Hive i kosztuje RC proporcjonalne do rozmiaru danych. RC regeneruje się automatycznie na podstawie Twojej Hive Power.",
+  "workspaceSync.rcLowWarning": "Twoje RC są krytycznie niskie (< 10%). Synchronizacja może się nie powieść. Poczekaj na regenerację RC lub zwiększ swoje HIVE."
 }

@@ -1119,6 +1119,18 @@
   "settingsPage.dashboardDescription": "Manage your personal dashboard layout and widget preferences.",
   "settingsPage.modularDashboardLabel": "Modular Dashboard",
   "settingsPage.modularDashboardDescription": "Enable a customizable, widget-based dashboard experience.",
+  "settingsPage.workspaceSyncButton": "Sync Workspace",
+  "workspaceSync.cloudDiffersTitle": "Newer Workspace Version Available",
+  "workspaceSync.cloudDiffersDescription": "A newer version of your workspace was found on the blockchain. Restore it to use that version, or keep your current local setup.",
+  "workspaceSync.restoreFromCloud": "Restore from Cloud",
+  "workspaceSync.keepLocal": "Keep Local",
+  "workspaceSync.unsyncedLabel": "Unsynced",
+  "workspaceSync.unsyncedTooltip": "Your workspace has local changes that haven't been synced to the blockchain yet.",
+  "workspaceSync.unsyncedLogoutWarning": "You have local changes that haven't been synced to the blockchain.",
+  "workspaceSync.syncAndLogout": "Sync & Logout",
+  "workspaceSync.logoutAnyway": "Logout Anyway",
+  "workspaceSync.cancel": "Cancel",
+  "workspaceSync.noChangesToSync": "No local changes to sync",
   "transactionPage.transactionDetailsRefferer": "transaction_details",
   "accountSearch.accountReactResults": "account_search_results",
   "commentsSearch.commentSearchResults": "comment_search_results",
@@ -1310,5 +1322,8 @@
   "smartReminders.endsToday": "Ends today",
   "smartReminders.needsAttention": "Need attention",
   "smartReminders.unfundedTitle": "Watched proposal lost funding",
-  "smartReminders.becameFunded": "Watched proposal became funded"
+  "smartReminders.becameFunded": "Watched proposal became funded",
+  "workspaceSync.rcInfo": "Sync uses RC (Resource Credits)",
+  "workspaceSync.rcInfoTooltip": "Each sync writes your workspace to the Hive blockchain and costs RC proportional to the data size. RC regenerates automatically based on your Hive Power.",
+  "workspaceSync.rcLowWarning": "Your RC is critically low (< 10%). Sync may fail. Wait for RC to regenerate or power up more HIVE."
 }

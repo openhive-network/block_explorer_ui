@@ -1119,6 +1119,18 @@
   "settingsPage.dashboardDescription": "قم بإدارة تخطيط لوحة التحكم الشخصية وتفضيلات الأدوات الخاصة بك.",
   "settingsPage.modularDashboardLabel": "لوحة تحكم نمطية",
   "settingsPage.modularDashboardDescription": "تفعيل تجربة لوحة تحكم قابلة للتخصيص تعتمد على الأدوات.",
+  "settingsPage.workspaceSyncButton": "مزامنة مساحة العمل",
+  "workspaceSync.cloudDiffersTitle": "يتوفر إصدار أحدث من مساحة العمل",
+  "workspaceSync.cloudDiffersDescription": "تم العثور على إصدار أحدث من مساحة عملك على البلوكتشين. يمكنك استعادته لاستخدامه، أو الاحتفاظ بالإعداد المحلي الحالي.",
+  "workspaceSync.restoreFromCloud": "استعادة من السحابة",
+  "workspaceSync.keepLocal": "الاحتفاظ بالمحلي",
+  "workspaceSync.unsyncedLabel": "غير متزامن",
+  "workspaceSync.unsyncedTooltip": "تحتوي مساحة عملك على تغييرات محلية لم تتم مزامنتها مع البلوكتشين بعد.",
+  "workspaceSync.unsyncedLogoutWarning": "لديك تغييرات محلية لم تتم مزامنتها مع البلوكتشين.",
+  "workspaceSync.syncAndLogout": "مزامنة وتسجيل الخروج",
+  "workspaceSync.logoutAnyway": "تسجيل الخروج على أي حال",
+  "workspaceSync.cancel": "إلغاء",
+  "workspaceSync.noChangesToSync": "لا توجد تغييرات محلية للمزامنة",
   "transactionPage.transactionDetailsRefferer": "تفاصيل_المعاملة",
   "accountSearch.accountReactResults": "نتائج_البحث_عن_الحساب",
   "commentsSearch.commentSearchResults": "نتائج_البحث_عن_التعليقات",
@@ -1310,5 +1322,8 @@
   "smartReminders.endsToday": "ينتهي اليوم",
   "smartReminders.needsAttention": "يحتاج انتباهاً",
   "smartReminders.unfundedTitle": "المقترح المتابَع فقد تمويله",
-  "smartReminders.becameFunded": "المقترح المتابَع أصبح ممولاً"
+  "smartReminders.becameFunded": "المقترح المتابَع أصبح ممولاً",
+  "workspaceSync.rcInfo": "المزامنة تستهلك RC (نقاط الموارد)",
+  "workspaceSync.rcInfoTooltip": "كل مزامنة تكتب بياناتك على بلوكتشين هايف وتستهلك نقاط موارد (RC) بما يتناسب مع حجم البيانات. تتجدد نقاط الموارد تلقائياً بناءً على قوة هايف لديك.",
+  "workspaceSync.rcLowWarning": "نقاط الموارد (RC) لديك منخفضة جداً (< 10%). قد تفشل المزامنة. انتظر حتى تتجدد نقاط الموارد أو احصل على المزيد من HIVE."
 }

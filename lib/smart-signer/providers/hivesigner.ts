@@ -1,11 +1,7 @@
-import { ISmartSignerProvider, SmartSignerResponse } from '../types';
+import { ISmartSignerProvider, SmartSignerResponse } from "../types";
 import { config } from "@/Config";
 
-/**
- * URL-safe base64 (RFC 4648 §5, with `=` → `.`) for Hivesigner's
- * `/sign/op/<op>?cb=<cb>` endpoint. UTF-8-encodes first so multi-byte
- * characters don't trip `btoa`.
- */
+// base64url (RFC 4648 §5) with `=` → `.` — UTF-8 encodes first for multi-byte safety
 function base64Url(str: string): string {
   let b64: string;
   if (typeof window !== "undefined" && typeof window.btoa === "function") {
@@ -31,11 +27,9 @@ export function buildWitnessVoteSignUrl(
     "account_witness_vote",
     { account: username, witness: witnessName, approve },
   ];
-  return (
-    `${config.hivesigner.endpoints.baseUrl}/sign/op/${base64Url(
-      JSON.stringify(op)
-    )}?cb=${base64Url(redirectUri)}`
-  );
+  return `${config.hivesigner.endpoints.baseUrl}/sign/op/${base64Url(
+    JSON.stringify(op)
+  )}?cb=${base64Url(redirectUri)}`;
 }
 
 export function buildProxySignUrl(
@@ -46,11 +40,9 @@ export function buildProxySignUrl(
   // Encoded-op form handles clearing the proxy (empty `proxy`), which the
   // typed `/sign/account_witness_proxy` endpoint rejects.
   const op = ["account_witness_proxy", { account: username, proxy }];
-  return (
-    `${config.hivesigner.endpoints.baseUrl}/sign/op/${base64Url(
-      JSON.stringify(op)
-    )}?cb=${base64Url(redirectUri)}`
-  );
+  return `${config.hivesigner.endpoints.baseUrl}/sign/op/${base64Url(
+    JSON.stringify(op)
+  )}?cb=${base64Url(redirectUri)}`;
 }
 
 export function buildProposalVoteSignUrl(
@@ -70,62 +62,82 @@ export function buildProposalVoteSignUrl(
   );
 }
 
+interface AccountUpdate2Op {
+  account: string;
+  json_metadata?: string;
+  posting_json_metadata: string;
+  extensions: [];
+}
+
+export function buildWorkspaceSyncSignUrl(
+  username: string,
+  account_update2_op: AccountUpdate2Op,
+  redirectUri: string
+): string {
+  const op = ["account_update2", account_update2_op];
+  return `${config.hivesigner.endpoints.baseUrl}/sign/op/${base64Url(
+    JSON.stringify(op)
+  )}?cb=${base64Url(redirectUri)}`;
+}
+
 export const HivesignerProvider: ISmartSignerProvider = {
   async login(): Promise<SmartSignerResponse> {
     const callbackURL = config.hivesigner.defaultCallBack;
-    
+
     // CRYPTOGRAPHICALLY SECURE NONCE GENERATION
     const array = new Uint32Array(2);
-    if (typeof window !== 'undefined' && window.crypto) {
+    if (typeof window !== "undefined" && window.crypto) {
       window.crypto.getRandomValues(array);
     } else {
       // Fallback for SSR
-      throw new Error("Security Error: Cryptographic environment not available");
-    }
-    
-    const nonce = Array.from(array, (num) => num.toString(36)).join('');
-
-    if (typeof window !== 'undefined') {
-      sessionStorage.setItem('hs_auth_nonce', nonce);
+      throw new Error(
+        "Security Error: Cryptographic environment not available"
+      );
     }
 
-    const stateData = { 
-      method: 'hivesigner',
+    const nonce = Array.from(array, (num) => num.toString(36)).join("");
+
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("hs_auth_nonce", nonce);
+    }
+
+    const stateData = {
+      method: "hivesigner",
       nonce: nonce,
-      origin: typeof window !== 'undefined' ? window.location.pathname : '/'
+      origin: typeof window !== "undefined" ? window.location.pathname : "/",
     };
-    
+
     const state = encodeURIComponent(JSON.stringify(stateData));
     const baseUrl = config.hivesigner.endpoints.authorize;
-    
+
     const params = new URLSearchParams({
-        client_id: (config.hivesigner.app) as string,
-        redirect_uri: callbackURL as string,
-        response_type: 'code', 
-        scope: (config.hivesigner.scope.join(',')) as string,
-        state: state as string
+      client_id: config.hivesigner.app as string,
+      redirect_uri: callbackURL as string,
+      response_type: "code",
+      scope: config.hivesigner.scope.join(",") as string,
+      state: state as string,
     });
 
     window.location.href = `${baseUrl}?${params.toString()}`;
-    return { username: '', method: 'hivesigner', success: true };
+    return { username: "", method: "hivesigner", success: true };
   },
 
   async broadcast(_username, operations, _keyType) {
     // Helper to read the CSRF cookie value
     const getCsrfTokenFromCookie = () => {
-        if (typeof document === 'undefined') return '';
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; hivescan_csrf=`);
-        if (parts.length === 2) return parts.pop()?.split(';').shift() || '';
-        return '';
+      if (typeof document === "undefined") return "";
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; hivescan_csrf=`);
+      if (parts.length === 2) return parts.pop()?.split(";").shift() || "";
+      return "";
     };
 
     // PROXY BROADCAST with Double-Submit CSRF header
-    const response = await fetch('/api/auth/broadcast', {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        'X-CSRF-Token': getCsrfTokenFromCookie() 
+    const response = await fetch("/api/auth/broadcast", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": getCsrfTokenFromCookie(),
       },
       body: JSON.stringify({ operations }),
     });
@@ -133,5 +145,5 @@ export const HivesignerProvider: ISmartSignerProvider = {
     const result = await response.json();
     if (result.error) throw new Error(result.error_description || result.error);
     return result;
-  }
+  },
 };

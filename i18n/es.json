@@ -1119,6 +1119,18 @@
   "settingsPage.dashboardDescription": "Gestiona el diseño de tu tablero personal y las preferencias de los widgets.",
   "settingsPage.modularDashboardLabel": "Tablero Modular",
   "settingsPage.modularDashboardDescription": "Activa una experiencia de tablero personalizable basada en widgets.",
+  "settingsPage.workspaceSyncButton": "Sincronizar Espacio de Trabajo",
+  "workspaceSync.cloudDiffersTitle": "Nueva versión del espacio de trabajo disponible",
+  "workspaceSync.cloudDiffersDescription": "Se encontró una versión más reciente de tu espacio de trabajo en la blockchain. Restáurala para usarla, o conserva tu configuración local actual.",
+  "workspaceSync.restoreFromCloud": "Restaurar desde la Nube",
+  "workspaceSync.keepLocal": "Mantener Local",
+  "workspaceSync.unsyncedLabel": "No sincronizado",
+  "workspaceSync.unsyncedTooltip": "Tu espacio de trabajo tiene cambios locales que aún no se han sincronizado con la blockchain.",
+  "workspaceSync.unsyncedLogoutWarning": "Tienes cambios locales que no se han sincronizado con la blockchain.",
+  "workspaceSync.syncAndLogout": "Sincronizar y Cerrar sesión",
+  "workspaceSync.logoutAnyway": "Cerrar sesión de todos modos",
+  "workspaceSync.cancel": "Cancelar",
+  "workspaceSync.noChangesToSync": "Sin cambios locales para sincronizar",
   "transactionPage.transactionDetailsRefferer": "detalles_transaccion",
   "accountSearch.accountReactResults": "resultados_busqueda_cuenta",
   "commentsSearch.commentSearchResults": "resultados_busqueda_comentarios",
@@ -1310,5 +1322,8 @@
   "smartReminders.endsToday": "Termina hoy",
   "smartReminders.needsAttention": "Requiere atención",
   "smartReminders.unfundedTitle": "La propuesta seguida perdió financiación",
-  "smartReminders.becameFunded": "La propuesta seguida obtuvo financiación"
+  "smartReminders.becameFunded": "La propuesta seguida obtuvo financiación",
+  "workspaceSync.rcInfo": "La sincronización usa RC (Créditos de Recursos)",
+  "workspaceSync.rcInfoTooltip": "Cada sincronización escribe tu espacio de trabajo en la blockchain de Hive y cuesta RC proporcional al tamaño de los datos. Los RC se regeneran automáticamente según tu Hive Power.",
+  "workspaceSync.rcLowWarning": "Tu RC está críticamente bajo (< 10%). La sincronización puede fallar. Espera a que se regeneren los RC o aumenta tu HIVE."
 }

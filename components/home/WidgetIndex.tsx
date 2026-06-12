@@ -263,6 +263,8 @@ const WidgetIndex = () => {
     handleWidgetStateChange,
   ]);
 
+  if (!isLoaded) return null;
+
   return (
     <>
       <Head>

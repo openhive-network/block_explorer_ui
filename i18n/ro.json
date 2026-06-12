@@ -1119,6 +1119,18 @@
   "settingsPage.dashboardDescription": "Gestionează aspectul tabloului tău de bord personal și preferințele pentru widgeturi.",
   "settingsPage.modularDashboardLabel": "Tablou de Bord Modular",
   "settingsPage.modularDashboardDescription": "Activează o experiență de tablou de bord personalizabilă, bazată pe widgeturi.",
+  "settingsPage.workspaceSyncButton": "Sincronizează spațiul de lucru",
+  "workspaceSync.cloudDiffersTitle": "Versiune mai nouă a spațiului de lucru disponibilă",
+  "workspaceSync.cloudDiffersDescription": "Pe blockchain a fost găsită o versiune mai recentă a spațiului dvs. de lucru. Restaurați-o pentru a o folosi sau păstrați configurarea locală actuală.",
+  "workspaceSync.restoreFromCloud": "Restaurează din cloud",
+  "workspaceSync.keepLocal": "Păstrează local",
+  "workspaceSync.unsyncedLabel": "Nesincronizat",
+  "workspaceSync.unsyncedTooltip": "Spațiul dvs. de lucru conține modificări locale care nu au fost încă sincronizate cu blockchain-ul.",
+  "workspaceSync.unsyncedLogoutWarning": "Aveți modificări locale care nu au fost sincronizate cu blockchain-ul.",
+  "workspaceSync.syncAndLogout": "Sincronizează și deconectează-te",
+  "workspaceSync.logoutAnyway": "Deconectează-te oricum",
+  "workspaceSync.cancel": "Anulează",
+  "workspaceSync.noChangesToSync": "Nicio modificare locală de sincronizat",
   "transactionPage.transactionDetailsRefferer": "detalii_tranzactie",
   "accountSearch.accountReactResults": "rezultate_cautare_cont",
   "commentsSearch.commentSearchResults": "rezultate_cautare_comentarii",
@@ -1310,5 +1322,8 @@
   "smartReminders.endsToday": "Se termină azi",
   "smartReminders.needsAttention": "Necesită atenție",
   "smartReminders.unfundedTitle": "Propunerea urmărită a pierdut finanțarea",
-  "smartReminders.becameFunded": "Propunerea urmărită a fost finanțată"
+  "smartReminders.becameFunded": "Propunerea urmărită a fost finanțată",
+  "workspaceSync.rcInfo": "Sincronizarea folosește RC (Credite Resurse)",
+  "workspaceSync.rcInfoTooltip": "Fiecare sincronizare scrie spațiul de lucru pe blockchain-ul Hive și costă RC proporțional cu dimensiunea datelor. RC se regenerează automat în funcție de Hive Power-ul tău.",
+  "workspaceSync.rcLowWarning": "RC-urile tale sunt critic scăzute (< 10%). Sincronizarea poate eșua. Așteaptă regenerarea RC sau crește-ți HIVE-ul."
 }

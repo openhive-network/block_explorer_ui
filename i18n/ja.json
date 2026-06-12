@@ -1119,6 +1119,18 @@
   "settingsPage.dashboardDescription": "個人のダッシュボードのレイアウトとウィジェットの設定を管理します。",
   "settingsPage.modularDashboardLabel": "モジュラーダッシュボード",
   "settingsPage.modularDashboardDescription": "カスタマイズ可能なウィジェットベースのダッシュボードを有効にします。",
+  "settingsPage.workspaceSyncButton": "ワークスペースを同期",
+  "workspaceSync.cloudDiffersTitle": "新しいワークスペースバージョンが利用可能",
+  "workspaceSync.cloudDiffersDescription": "ブロックチェーンに新しいバージョンのワークスペースが見つかりました。そのバージョンを使用するには復元するか、現在のローカル設定を維持してください。",
+  "workspaceSync.restoreFromCloud": "クラウドから復元",
+  "workspaceSync.keepLocal": "ローカルを維持",
+  "workspaceSync.unsyncedLabel": "未同期",
+  "workspaceSync.unsyncedTooltip": "ワークスペースにブロックチェーンと同期されていないローカルの変更があります。",
+  "workspaceSync.unsyncedLogoutWarning": "ブロックチェーンと同期されていないローカルの変更があります。",
+  "workspaceSync.syncAndLogout": "同期してログアウト",
+  "workspaceSync.logoutAnyway": "そのままログアウト",
+  "workspaceSync.cancel": "キャンセル",
+  "workspaceSync.noChangesToSync": "同期するローカル変更がありません",
   "transactionPage.transactionDetailsRefferer": "取引詳細",
   "accountSearch.accountReactResults": "アカウント検索結果",
   "commentsSearch.commentSearchResults": "コメント検索結果",
@@ -1310,5 +1322,8 @@
   "smartReminders.endsToday": "本日終了",
   "smartReminders.needsAttention": "要確認",
   "smartReminders.unfundedTitle": "ウォッチ中の提案が資金を失いました",
-  "smartReminders.becameFunded": "ウォッチ中の提案が資金調達されました"
+  "smartReminders.becameFunded": "ウォッチ中の提案が資金調達されました",
+  "workspaceSync.rcInfo": "同期はRC（リソースクレジット）を消費します",
+  "workspaceSync.rcInfoTooltip": "各同期はHiveブロックチェーンにワークスペースを書き込み、データサイズに比例したRCを消費します。RCはHive Powerに基づいて自動的に再生されます。",
+  "workspaceSync.rcLowWarning": "RCが危機的に低い状態です（< 10%）。同期が失敗する可能性があります。RCが回復するまで待つか、HIVEを追加してください。"
 }
