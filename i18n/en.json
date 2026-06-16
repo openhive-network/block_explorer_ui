@@ -1326,4 +1326,5 @@
   "workspaceSync.rcInfo": "Sync uses RC (Resource Credits)",
   "workspaceSync.rcInfoTooltip": "Each sync writes your workspace to the Hive blockchain and costs RC proportional to the data size. RC regenerates automatically based on your Hive Power.",
   "workspaceSync.rcLowWarning": "Your RC is critically low (< 10%). Sync may fail. Wait for RC to regenerate or power up more HIVE."
+
 }
