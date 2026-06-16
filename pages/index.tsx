@@ -8,9 +8,7 @@ export default function Home() {
   const { isLoggedIn, isInitializing } = useAuth();
   const { settings } = useSettings();
 
-  if (isInitializing) return null;
-
-  if (isLoggedIn && settings.enableModularDashboard) {
+  if (!isInitializing && isLoggedIn && settings.enableModularDashboard) {
     return <WidgetIndex />;
   }
 
