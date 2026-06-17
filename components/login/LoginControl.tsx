@@ -52,7 +52,7 @@ const LoginControl: React.FC<LoginControlProps> = ({ isMobile }) => {
       if (response.success) {
         if (method === "keychain") {
           if (response.signature && response.message) {
-            await fetch("/api/auth/keychain-session", {
+            const sessionRes = await fetch("/api/auth/keychain-session", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
@@ -61,12 +61,27 @@ const LoginControl: React.FC<LoginControlProps> = ({ isMobile }) => {
                 signature: response.signature,
                 challenge: response.challenge,
               }),
-            }).catch(() => {
-              /* session cookie is best-effort */
+            }).catch((err) => {
+              console.warn("[workspace-sync] Session request failed:", err);
+              return null;
             });
+            if (sessionRes && !sessionRes.ok) {
+              console.warn(
+                "[workspace-sync] Session establishment failed:",
+                sessionRes.status
+              );
+            }
           }
-          await login(inputUsername, "keychain");
-          setModalOpen(false);
+          const loginErr = await login(inputUsername, "keychain");
+          if (loginErr) {
+            if (loginErr.message === "NODE_TIMEOUT")
+              setError(t("auth.nodeTimeout"));
+            else if (loginErr.message === "auth.errorTooManyAttempts")
+              setError(t("auth.errorTooManyAttempts"));
+            else setError(loginErr.toString());
+          } else {
+            setModalOpen(false);
+          }
         }
       } else if (response.error) {
         const errorMsg = response.error;
@@ -82,11 +97,8 @@ const LoginControl: React.FC<LoginControlProps> = ({ isMobile }) => {
         else setError(errorMsg);
       }
     } catch (e: any) {
-      // Handle specific Node/API errors
-      if (e.message === "NODE_TIMEOUT") setError(t("auth.nodeTimeout"));
-      else if (e.message === "auth.errorTooManyAttempts")
-        setError(t("auth.errorTooManyAttempts"));
-      else setError(e.toString());
+      // SmartSigner.login() errors (extension not found, network, etc.)
+      setError(e.toString());
     } finally {
       setLoading(false);
     }
