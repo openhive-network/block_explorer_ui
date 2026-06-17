@@ -253,19 +253,26 @@ export async function encryptBundle(compressed: string): Promise<string> {
   const isDFlate = compressed.startsWith("D:");
   // Strip the compression prefix so we encrypt raw bytes, not a re-encoded base64 string
   const rawBase64 = isDFlate ? compressed.slice(2) : compressed;
-  try {
-    const res = await fetch("/api/workspace/encrypt", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ data: rawBase64 }),
-    });
-    if (!res.ok) return compressed;
-    const { result } = await res.json();
-    if (typeof result !== "string") return compressed;
-    return (isDFlate ? "ED:" : "EL:") + result;
-  } catch {
-    return compressed;
+  const res = await fetch("/api/workspace/encrypt", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ data: rawBase64 }),
+  });
+  if (!res.ok) {
+    // Only fall back to plaintext when the server explicitly says no key is configured.
+    // Any other failure (401 session expired, 429 rate-limited, 500 server error) means
+    // encryption was expected but unavailable — abort so we never broadcast plaintext silently.
+    const body = await res.json().catch(() => ({}));
+    if (
+      res.status === 400 &&
+      (body as { error?: string }).error === "no_key_configured"
+    )
+      return compressed;
+    throw new Error(`encrypt_failed_${res.status}`);
   }
+  const { result } = await res.json();
+  if (typeof result !== "string") throw new Error("encrypt_invalid_response");
+  return (isDFlate ? "ED:" : "EL:") + result;
 }
 
 export async function decryptBundle(data: string): Promise<string> {
@@ -338,6 +345,8 @@ export function applyBundle(username: string, bundle: WorkspaceBundle): void {
       getWitnessHealthSortKey(username),
       JSON.stringify(bundle.witnessHealthSort)
     );
+  } else {
+    localStorage.removeItem(getWitnessHealthSortKey(username));
   }
 
   window.dispatchEvent(
