@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { loginLimiter } from "@/utils/RateLimit";
-import { createChallengeToken } from "@/lib/serverSession";
+import { challengeLimiter } from "@/utils/RateLimit";
+import { createChallengeToken } from "@/lib/smart-signer/serverSession";
 import { config } from "@/Config";
 
 export default async function handler(
@@ -17,7 +17,11 @@ export default async function handler(
     "anonymous";
 
   try {
-    await loginLimiter.check(res, config.security.rateLimits.loginLimit, ip);
+    await challengeLimiter.check(
+      res,
+      config.security.rateLimits.challengeLimit,
+      ip
+    );
   } catch {
     return res.status(429).json({ error: "auth.errorTooManyAttempts" });
   }
