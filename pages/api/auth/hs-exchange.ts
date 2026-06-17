@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { loginLimiter } from "@/utils/RateLimit";
 import { config, validateHivesignerEnv } from "@/Config";
 import crypto from "crypto";
-import { createSessionToken } from "@/lib/serverSession";
+import { createSessionToken } from "@/lib/smart-signer/serverSession";
 
 export default async function handler(
   req: NextApiRequest,
@@ -59,6 +59,10 @@ export default async function handler(
     const data = await response.json();
 
     if (data.access_token) {
+      if (typeof data.username !== "string" || !data.username) {
+        return res.status(400).json({ error: "auth.errorLoginFailed" });
+      }
+
       const csrfToken = crypto.randomBytes(32).toString("hex");
 
       const authCookie = serialize("hivescan_auth", data.access_token, {
