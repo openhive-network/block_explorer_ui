@@ -114,7 +114,9 @@ export function useWorkspaceSync(): UseWorkspaceSyncReturn {
           posting_json_metadata: newPostingMetaStr,
           extensions: [] as [],
         };
-        const callbackUrl = `${window.location.origin}${window.location.pathname}?sync_nonce=${nonce}`;
+        // Always return to root so initializeAuth runs fresh and processes sync_nonce;
+        // using the current pathname would miss the nonce if auth is already initialized
+        const callbackUrl = `${window.location.origin}/?sync_nonce=${nonce}`;
         window.location.href = buildWorkspaceSyncSignUrl(
           username,
           opData,
