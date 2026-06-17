@@ -29,7 +29,10 @@ interface AuthContextType {
   avatar: string | null;
   method: "keychain" | "hivesigner" | null;
   accessToken: string | null;
-  login: (username: string, method: "keychain" | "hivesigner") => Promise<void>;
+  login: (
+    username: string,
+    method: "keychain" | "hivesigner"
+  ) => Promise<Error | null>;
   logout: () => Promise<void>;
   isLoggedIn: boolean;
   isInitializing: boolean;
@@ -54,7 +57,10 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
   const hasInitialized = useRef(false);
 
   const login = useCallback(
-    async (user: string, authMethod: "keychain" | "hivesigner") => {
+    async (
+      user: string,
+      authMethod: "keychain" | "hivesigner"
+    ): Promise<Error | null> => {
       try {
         const nodeTimeout = config.security?.nodeTimeout || 8000;
 
@@ -66,13 +72,13 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
         ])) as any;
 
         if (account) {
+          // Run unconditionally: signals sync completion regardless of metadata propagation delay
+          consumePendingHivesignerSync(user);
+
           try {
             const rawMeta = account.posting_json_metadata;
             if (rawMeta) {
               const meta = JSON.parse(rawMeta);
-              // Persist the Hivesigner sync fingerprint before cloudMatchesLastSync reads it
-              consumePendingHivesignerSync(user);
-
               const cloudCompressed = meta[getInstanceMetadataKey()];
               if (cloudCompressed) {
                 const bundle = await decompressBundle(
@@ -118,12 +124,13 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
               })
             );
           }
+          return null;
         } else {
-          throw new Error("USER_NOT_FOUND");
+          return new Error("USER_NOT_FOUND");
         }
       } catch (error) {
         console.error("Login Context Error:", error);
-        throw error;
+        return error instanceof Error ? error : new Error(String(error));
       }
     },
     []
@@ -207,13 +214,13 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
 
             if (data.username) {
               sessionStorage.removeItem("hs_auth_nonce");
-              await login(data.username, "hivesigner");
+              const loginErr = await login(data.username, "hivesigner");
               window.history.replaceState(
                 {},
                 document.title,
                 window.location.pathname
               );
-              handledByHivesigner = true;
+              if (!loginErr) handledByHivesigner = true;
             }
           }
         } catch (e) {
