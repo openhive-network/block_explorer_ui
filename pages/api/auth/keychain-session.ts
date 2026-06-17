@@ -39,12 +39,17 @@ export default async function handler(
     return res.status(400).json({ error: "invalid_input" });
   }
 
-  // If a challenge token was supplied, verify it and confirm the nonce appears in the message.
-  // This prevents static-message replay. When challenges are unavailable (no key configured),
-  // the client sends no challenge and we skip this check (graceful degradation).
-  if (challenge !== undefined) {
-    if (typeof challenge !== "string") {
-      return res.status(400).json({ error: "invalid_input" });
+  // Challenge verification is gated on server-side key availability, not client choice.
+  // When WORKSPACE_ENCRYPTION_KEY is configured, a valid challenge is mandatory — omitting it
+  // is a hard rejection, not a bypass. When no key is configured, challenges are unavailable
+  // and we skip the check (graceful degradation).
+  const keyConfigured =
+    typeof process.env.WORKSPACE_ENCRYPTION_KEY === "string" &&
+    process.env.WORKSPACE_ENCRYPTION_KEY.length === 64;
+
+  if (keyConfigured) {
+    if (typeof challenge !== "string" || !challenge) {
+      return res.status(400).json({ error: "challenge_required" });
     }
     const nonce = verifyChallengeToken(challenge);
     if (!nonce) {
