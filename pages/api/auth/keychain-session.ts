@@ -3,7 +3,11 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { Client, Signature, cryptoUtils } from "@hiveio/dhive";
 import { config } from "@/Config";
 import { loginLimiter } from "@/utils/RateLimit";
-import { createSessionToken, verifyChallengeToken } from "@/lib/serverSession";
+import {
+  createSessionToken,
+  verifyChallengeToken,
+} from "@/lib/smart-signer/serverSession";
+import { claimChallenge } from "@/lib/smart-signer/usedChallenges";
 
 const hiveClient = new Client([config.nodeAddress]);
 
@@ -47,15 +51,17 @@ export default async function handler(
     typeof process.env.WORKSPACE_ENCRYPTION_KEY === "string" &&
     process.env.WORKSPACE_ENCRYPTION_KEY.length === 64;
 
+  // Parse and validate the challenge token early (no side effects yet)
+  let verifiedChallenge: { nonce: string; exp: number } | null = null;
   if (keyConfigured) {
     if (typeof challenge !== "string" || !challenge) {
       return res.status(400).json({ error: "challenge_required" });
     }
-    const nonce = verifyChallengeToken(challenge);
-    if (!nonce) {
+    verifiedChallenge = verifyChallengeToken(challenge);
+    if (!verifiedChallenge) {
       return res.status(401).json({ error: "invalid_or_expired_challenge" });
     }
-    if (!message.includes(nonce)) {
+    if (!message.includes(verifiedChallenge.nonce)) {
       return res.status(401).json({ error: "nonce_not_in_message" });
     }
   }
@@ -73,6 +79,15 @@ export default async function handler(
 
     if (!postingKeys.includes(recoveredKeyStr)) {
       return res.status(401).json({ error: "invalid_signature" });
+    }
+
+    // Consume the nonce only after the signature is verified — prevents burning
+    // a valid challenge on a node timeout or attacker-supplied bad signature
+    if (
+      verifiedChallenge &&
+      !claimChallenge(verifiedChallenge.nonce, verifiedChallenge.exp)
+    ) {
+      return res.status(401).json({ error: "challenge_already_used" });
     }
 
     const token = createSessionToken(username);
