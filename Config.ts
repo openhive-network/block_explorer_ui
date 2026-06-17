@@ -111,6 +111,8 @@ export const config = {
       maxTrackedIps: 1000, // How many unique IPs to keep in memory
       loginLimit: 5, // Attempts per interval
       broadcastLimit: 30, // Actions per interval
+      workspaceLimit: 20, // Encrypt/decrypt calls per interval
+      challengeLimit: 10, // Challenge token requests per interval
     },
     // Whitelist for /api/auth/broadcast. Active-key ops route through the
     // Hivesigner sign page client-side, not this endpoint.
