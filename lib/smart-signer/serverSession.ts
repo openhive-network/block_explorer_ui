@@ -91,6 +91,13 @@ export function isAuthenticated(
   return getSessionUser(cookies) !== null;
 }
 
+// Derives a per-user AES-256 key so encrypt/decrypt are bound to the session identity.
+export function deriveUserEncryptionKey(username: string): Uint8Array | null {
+  const keyHex = process.env.WORKSPACE_ENCRYPTION_KEY;
+  if (!keyHex || keyHex.length !== 64) return null;
+  return deriveKey(keyHex, `hivescan_workspace_v1:${username}`);
+}
+
 // --- Keychain login challenge (stateless, HMAC-signed, 5-min expiry) ---
 // The challenge embeds a one-time nonce that the client must include verbatim in the
 // message signed by Keychain. The server verifies the challenge signature + nonce match
@@ -118,8 +125,10 @@ export function createChallengeToken(): {
   return { token: `${payload}.${sig}`, nonce };
 }
 
-// Returns the nonce if the challenge token is valid and unexpired, otherwise null.
-export function verifyChallengeToken(token: string): string | null {
+// Returns { nonce, exp } if the challenge token is valid and unexpired, otherwise null.
+export function verifyChallengeToken(
+  token: string
+): { nonce: string; exp: number } | null {
   const keyHex = process.env.WORKSPACE_ENCRYPTION_KEY;
   if (!keyHex || keyHex.length !== 64) return null;
 
@@ -144,7 +153,7 @@ export function verifyChallengeToken(token: string): string | null {
     );
     if (typeof nonce !== "string" || typeof exp !== "number") return null;
     if (exp < Date.now()) return null;
-    return nonce;
+    return { nonce, exp };
   } catch {
     return null;
   }
