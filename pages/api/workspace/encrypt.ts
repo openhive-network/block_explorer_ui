@@ -1,7 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import crypto from "crypto";
-import { loginLimiter } from "@/utils/RateLimit";
-import { isAuthenticated } from "@/lib/serverSession";
+import { config } from "@/Config";
+import { workspaceLimiter } from "@/utils/RateLimit";
+import {
+  getSessionUser,
+  deriveUserEncryptionKey,
+} from "@/lib/smart-signer/serverSession";
 
 // Max base64 payload size: 512 KB (deflate bundle should never exceed this)
 const MAX_INPUT_BYTES = 512 * 1024;
@@ -20,12 +24,18 @@ export default async function handler(
     "anonymous";
 
   try {
-    await loginLimiter.check(res, 20, ip);
+    await workspaceLimiter.check(
+      res,
+      config.security.rateLimits.workspaceLimit,
+      ip
+    );
   } catch {
     return res.status(429).json({ error: "too_many_requests" });
   }
 
-  if (!isAuthenticated(req.cookies)) {
+  const username = getSessionUser(req.cookies);
+  // Reject the legacy Hivesigner sentinel — it has no real username to derive a key from
+  if (!username || username === "__hivesigner__") {
     return res.status(401).json({ error: "unauthorized" });
   }
 
@@ -37,15 +47,14 @@ export default async function handler(
     return res.status(413).json({ error: "payload_too_large" });
   }
 
-  const keyHex = process.env.WORKSPACE_ENCRYPTION_KEY;
-  if (!keyHex || keyHex.length !== 64) {
-    // No key configured — pass data through unencrypted
-    return res.status(200).json({ result: data });
+  const key = deriveUserEncryptionKey(username);
+  if (!key) {
+    // No key configured — signal the caller to store data as-is (no ED: prefix)
+    return res.status(400).json({ error: "no_key_configured" });
   }
 
   try {
     // data is base64 of raw compressed bytes — decrypt path reverses this
-    const key = new Uint8Array(Buffer.from(keyHex, "hex"));
     const iv = crypto.randomBytes(12);
     const rawBytes = new Uint8Array(Buffer.from(data, "base64"));
     const cipher = crypto.createCipheriv("aes-256-gcm", key, iv);
