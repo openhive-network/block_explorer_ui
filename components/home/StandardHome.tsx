@@ -16,6 +16,7 @@ import TopCommunitiesCard from "@/components/home/TopCommunitiesCard";
 import TransferVolumeCard from "@/components/home/TransferVolumeCard";
 import TotalValueLockedCard from "@/components/home/TotalValueLockedCard";
 import NetworkGrowthCard from "@/components/home/NetworkGrowthCard";
+import DailyActiveUsersCard from "@/components/home/DailyActiveUsersCard";
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import { useAuth } from "@/contexts/AuthContext";
@@ -91,6 +92,7 @@ const StandardHome = () => {
             strokeColor={strokeColor}
           />
           <NetworkGrowthCard />
+          <DailyActiveUsersCard />
           <TransactionStatisticsCard />
           <TransferVolumeCard />
           <TotalValueLockedCard />

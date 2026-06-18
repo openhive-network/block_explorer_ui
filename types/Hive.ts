@@ -1123,6 +1123,12 @@ namespace Hive {
     "to-block"?: number | Date;
   }
 
+  export class DailyActiveUsersResponse {
+    period!: string;
+    active_accounts!: number;
+    operations!: number;
+  }
+
   export class AccountFollowCount {
     account!: string;
     follower_count!: number;
