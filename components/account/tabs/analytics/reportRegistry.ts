@@ -1,5 +1,6 @@
-import React from 'react';
+import React from "react";
 import InfluenceMapReport from "./InfluenceMapReport";
+import FinancialSummaryReport from "./FinancialSummaryReport";
 export interface BaseReportProps {
   accountName: string;
   data: { [key: string]: any };
@@ -23,12 +24,17 @@ export type ReportRegistry = {
 
 export const reportRegistry: ReportRegistry = {
   influenceMap: {
-    component: InfluenceMapReport, 
-    titleKey: 'analyticsDashboard.influenceMapReportTitle',
+    component: InfluenceMapReport,
+    titleKey: "analyticsDashboard.influenceMapReportTitle",
     dataMap: {
-      incoming: 'incomingVestingDelegations',
-      outgoing: 'outgoingVestingDelegations'
-    }
+      incoming: "incomingVestingDelegations",
+      outgoing: "outgoingVestingDelegations",
+    },
+  },
+  financialSummary: {
+    component: FinancialSummaryReport,
+    titleKey: "financialSummary.widgetTitle",
+    dataMap: {},
   },
   // Other reports would go here
 };

@@ -66,6 +66,11 @@ export const config = {
     "https://hive-api.3speak.tv",
     "https://hiveapi.actifit.io",
   ],
+  hafStatsApiAddress: `${
+    env("HAF_STATS_API_ADDRESS")
+      ? env("HAF_STATS_API_ADDRESS")
+      : "https://testapi.hivescan.info"
+  }`,
   defaultRestApiProvicers: [
     "https://hiveapi.actifit.io",
     "https://techcoderx.com",
@@ -76,7 +81,13 @@ export const config = {
     // The Hive account name that owns the app
     app: process.env.NEXT_PUBLIC_HIVESIGNER_APP,
     defaultCallBack: process.env.NEXT_PUBLIC_HIVESIGNER_CALLBACK as string,
-    scope: ["vote", "comment", "custom_json", "claim_reward_balance", "update_proposal_votes"],
+    scope: [
+      "vote",
+      "comment",
+      "custom_json",
+      "claim_reward_balance",
+      "update_proposal_votes",
+    ],
     endpoints: {
       baseUrl: "https://hivesigner.com",
       authorize: "https://hivesigner.com/oauth2/authorize",
@@ -96,7 +107,12 @@ export const config = {
     },
     // Whitelist for /api/auth/broadcast. Active-key ops route through the
     // Hivesigner sign page client-side, not this endpoint.
-    allowedOperations: ["vote", "claim_reward_balance", "custom_json", "update_proposal_votes"],
+    allowedOperations: [
+      "vote",
+      "claim_reward_balance",
+      "custom_json",
+      "update_proposal_votes",
+    ],
   },
 };
 

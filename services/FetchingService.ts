@@ -924,6 +924,18 @@ class FetchingService {
       }
     );
   }
+  async getFinancialSummary(
+    account: string,
+    _from: string,
+    _to: string,
+    _granularity: "day" | "week" | "month" = "month"
+  ): Promise<Hive.FinancialSummaryRow[]> {
+    // Params omitted until API supports them (tracked in API ticket); filtering is client-side.
+    const url = `${config.hafStatsApiAddress}/haf-stats-api/account/${account}/financial-summary`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`financial-summary ${res.status}`);
+    return res.json();
+  }
 }
 
 const fetchingService = new FetchingService();

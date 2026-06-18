@@ -1326,6 +1326,16 @@ namespace Hive {
     escrow_pending_amount_hive!: string;
     escrow_pending_count!: string;
   }
+
+  export interface FinancialSummaryRow {
+    period: string;
+    category: string;
+    direction: "income" | "expense";
+    hive_nai: number;
+    hbd_nai: number;
+    vests_nai: number;
+    op_count: number;
+  }
 }
 
 export default Hive;
