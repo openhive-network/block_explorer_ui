@@ -89,12 +89,6 @@ export const extendedRest = {
       result: Hive.TransactionStatisticsResponse,
       urlPath: "transaction-statistics",
     },
-    operationTypeStatistics: {
-      params: Hive.OperationTypeStatisticsParams,
-      result: Hive.OperationTypeStatisticsResponse,
-      responseArray: true,
-      urlPath: "operation-type-statistics",
-    },
     proxyPower: {
       params: Hive.ProxyPowerParams,
       result: Hive.ProxyPowerResponse,
@@ -237,113 +231,18 @@ export const extendedRest = {
       urlPath: "accounts/{accountName}/vesting-history",
     },
   },
-  "haf-stats-api": {
-    networkVoteStats: {
-      params: Hive.NetworkVoteStatsParams,
-      result: Hive.NetworkVoteStatsResponse,
-      responseArray: true,
-      urlPath: "network/vote-stats",
-    },
-    dailyActiveUsers: {
-      params: Hive.DailyActiveUsersParams,
-      result: Hive.DailyActiveUsersResponse,
-      responseArray: true,
-      urlPath: "network/daily-active-users",
-    },
-    networkHpDistribution: {
-      params: Hive.NetworkHpDistributionParams,
-      result: Hive.NetworkHpDistributionResponse,
-      responseArray: true,
-      urlPath: "network/hp-distribution",
-    },
-    governanceInfluenceConcentration: {
-      params: Hive.GovernanceInfluenceConcentrationParams,
-      result: Hive.GovernanceInfluenceConcentrationResponse,
-      responseArray: true,
-      urlPath: "governance/influence-concentration",
-    },
-    accountFunnel: {
-      params: Hive.AccountFunnelParams,
-      result: Hive.AccountFunnelResponse,
-      responseArray: true,
-      urlPath: "network/account-funnel",
-    },
-    topAccounts: {
-      params: Hive.TopAccountsParams,
-      result: Hive.TopAccountsResponse,
-      responseArray: true,
-      urlPath: "network/top-accounts",
-    },
-    networkRcUtilization: {
-      params: Hive.NetworkRcUtilizationParams,
-      result: Hive.NetworkRcUtilizationResponse,
-      responseArray: true,
-      urlPath: "network/rc-utilization",
-    },
-    networkContentVolume: {
-      params: Hive.NetworkContentVolumeParams,
-      result: Hive.NetworkContentVolumeResponse,
-      responseArray: true,
-      urlPath: "network/content-volume",
-    },
-    networkEngagement: {
-      params: Hive.NetworkEngagementParams,
-      result: Hive.NetworkEngagementResponse,
-      responseArray: true,
-      urlPath: "network/engagement",
-    },
-    networkAuthorRetention: {
-      params: Hive.NetworkAuthorRetentionParams,
-      result: Hive.NetworkAuthorRetentionResponse,
-      responseArray: true,
-      urlPath: "network/author-retention",
-    },
-    networkTopCustomJson: {
-      params: Hive.NetworkTopCustomJsonParams,
-      result: Hive.NetworkTopCustomJsonRow,
-      responseArray: true,
-      urlPath: "network/top-custom-json",
-    },
-    networkCustomJsonUsage: {
-      params: Hive.NetworkCustomJsonUsageParams,
-      result: Hive.NetworkCustomJsonUsageRow,
-      responseArray: true,
-      urlPath: "network/custom-json-usage",
-    },
-    customJsonAppRegistry: {
-      params: Hive.CustomJsonAppRegistryParams,
-      result: Hive.CustomJsonAppRegistryRow,
-      responseArray: true,
-      urlPath: "custom-json-app-registry",
-    },
-    accountContentStats: {
-      params: Hive.AccountContentStatsParams,
-      result: Hive.AccountContentStatsResponse,
-      responseArray: true,
-      urlPath: "account/{accountName}/content-stats",
-    },
-    accountDappFootprint: {
-      params: Hive.AccountDappFootprintParams,
-      result: Hive.AccountDappFootprintResponse,
-      urlPath: "account/{account}/dapp-footprint",
-    },
-    accountRcFootprint: {
-      params: Hive.AccountRcFootprintParams,
-      result: Hive.AccountRcFootprintRow,
-      responseArray: true,
-      urlPath: "account/{account}/rc-footprint",
-    },
-    accountRcFootprintTimeline: {
-      params: Hive.AccountRcFootprintTimelineParams,
-      result: Hive.AccountRcFootprintTimelineRow,
-      responseArray: true,
-      urlPath: "account/{account}/rc-footprint-timeline",
-    },
-    accountFinancialSummary: {
-      params: Hive.AccountFinancialSummaryParams,
-      result: Hive.FinancialSummaryRow,
-      responseArray: true,
-      urlPath: "account/{account}/financial-summary",
+  "hivemind-api": {
+    accounts: {
+      pendingAuthorRewards: {
+        params: Hive.PendingAuthorRewardsParams,
+        result: Hive.PendingAuthorRewardsResponse,
+        urlPath: "{accountName}/pending-author-rewards",
+      },
+      pendingCurationRewards: {
+        params: Hive.PendingCurationRewardsParams,
+        result: Hive.PendingCurationRewardsResponse,
+        urlPath: "{accountName}/pending-curation-rewards",
+      },
     },
   },
 };

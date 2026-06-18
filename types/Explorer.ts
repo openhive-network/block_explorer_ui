@@ -36,6 +36,7 @@ declare module Explorer {
     rawTotalVestingShares: Hive.Supply;
     rawFeedPrice: Hive.Supply;
     rawQuote: Hive.Supply;
+    rawHbdPrintRate: number;
   }
 
   interface HeadBlockCardData {
