@@ -72,6 +72,10 @@ export type ExplorerNodeApi = {
     find_proposals: TWaxApiRequest<[proposal_ids: number[]], Hive.Proposal[]>;
   };
   bridge: {
+    get_account_posts: TWaxApiRequest<
+      { sort: string; account: string; limit: number },
+      Hive.AccountPostSummary[]
+    >;
     get_discussion: TWaxApiRequest<
       { author: string; permlink: string; observer?: string },
       Hive.HivePosts
@@ -923,6 +927,37 @@ class FetchingService {
         accountName,
       }
     );
+  }
+
+  async getAccountPosts(
+    accountName: string,
+    limit: number = 50
+  ): Promise<Hive.AccountPostSummary[]> {
+    return await this.extendedHiveChain!.api.bridge.get_account_posts({
+      sort: "posts",
+      account: accountName,
+      limit,
+    });
+  }
+
+  // TEMP: hardcoded test URL — remove before committing
+  async getPendingAuthorRewards(
+    accountName: string
+  ): Promise<Hive.PendingAuthorRewardsResponse> {
+    const res = await fetch(
+      `https://testapi.hivescan.info/hivemind-api/accounts/${accountName}/pending-author-rewards`
+    );
+    return res.json();
+  }
+
+  // TEMP: hardcoded test URL — remove before committing
+  async getPendingCurationRewards(
+    accountName: string
+  ): Promise<Hive.PendingCurationRewardsResponse> {
+    const res = await fetch(
+      `https://testapi.hivescan.info/hivemind-api/accounts/${accountName}/pending-curation-rewards`
+    );
+    return res.json();
   }
 }
 
