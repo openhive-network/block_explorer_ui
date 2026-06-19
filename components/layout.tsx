@@ -4,6 +4,7 @@ import Navbar from "./navbar";
 import { Toaster } from "sonner";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { useTheme } from "@/contexts/ThemeContext";
+import WorkspaceRestorePrompt from "@/components/workspace/WorkspaceRestorePrompt";
 
 interface LayoutProps {
   children: ReactNode;
@@ -22,6 +23,7 @@ export default function Layout({ children }: LayoutProps) {
         closeButton
         theme={theme === "dark" ? "dark" : "light"}
       />
+      <WorkspaceRestorePrompt />
       <Footer />
     </main>
   );

@@ -10,6 +10,17 @@ import React, {
 import { Client } from "@hiveio/dhive";
 import { config } from "@/Config";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
+import {
+  decompressBundle,
+  decryptBundle,
+  consumePendingHivesignerSync,
+  applyBundle,
+  cloudMatchesLastSync,
+  saveLastSync,
+  getInstanceMetadataKey,
+  WORKSPACE_CLOUD_DIFFERS_EVENT,
+} from "@/utils/workspaceSync";
+import { getLayoutStorageKey } from "@/components/dashboard/lib/dashboard.config";
 
 const hiveClient = new Client([config.nodeAddress]);
 
@@ -18,7 +29,10 @@ interface AuthContextType {
   avatar: string | null;
   method: "keychain" | "hivesigner" | null;
   accessToken: string | null;
-  login: (username: string, method: "keychain" | "hivesigner") => Promise<void>;
+  login: (
+    username: string,
+    method: "keychain" | "hivesigner"
+  ) => Promise<Error | null>;
   logout: () => Promise<void>;
   isLoggedIn: boolean;
   isInitializing: boolean;
@@ -43,7 +57,10 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
   const hasInitialized = useRef(false);
 
   const login = useCallback(
-    async (user: string, authMethod: "keychain" | "hivesigner") => {
+    async (
+      user: string,
+      authMethod: "keychain" | "hivesigner"
+    ): Promise<Error | null> => {
       try {
         const nodeTimeout = config.security?.nodeTimeout || 8000;
 
@@ -55,6 +72,45 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
         ])) as any;
 
         if (account) {
+          // Run unconditionally: signals sync completion regardless of metadata propagation delay
+          consumePendingHivesignerSync(user);
+
+          try {
+            const rawMeta = account.posting_json_metadata;
+            if (rawMeta) {
+              const meta = JSON.parse(rawMeta);
+              const cloudCompressed = meta[getInstanceMetadataKey()];
+              if (cloudCompressed) {
+                const bundle = await decompressBundle(
+                  await decryptBundle(cloudCompressed)
+                );
+                if (bundle) {
+                  const hasLocalDashboard = !!localStorage.getItem(
+                    getLayoutStorageKey(user)
+                  );
+                  if (!hasLocalDashboard) {
+                    // Fresh device — restore silently and record baseline
+                    applyBundle(user, bundle);
+                    saveLastSync(user, bundle);
+                  } else if (!cloudMatchesLastSync(user, bundle)) {
+                    // Same device but cloud differs from last known sync — notify user
+                    window.dispatchEvent(
+                      new CustomEvent(WORKSPACE_CLOUD_DIFFERS_EVENT, {
+                        detail: {
+                          bundle,
+                          username: user,
+                          compressed: cloudCompressed,
+                        },
+                      })
+                    );
+                  }
+                }
+              }
+            }
+          } catch {
+            // Corrupt or missing metadata — proceed without restoring
+          }
+
           setUsername(user);
           setMethod(authMethod);
           setAvatar(getHiveAvatarUrl(user));
@@ -68,25 +124,24 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
               })
             );
           }
+          return null;
         } else {
-          throw new Error("USER_NOT_FOUND");
+          return new Error("USER_NOT_FOUND");
         }
       } catch (error) {
         console.error("Login Context Error:", error);
-        throw error;
+        return error instanceof Error ? error : new Error(String(error));
       }
     },
     []
   );
 
   const logout = useCallback(async () => {
-    // 1. If Hivesigner, tell the server to wipe the HttpOnly cookie
-    if (method === "hivesigner") {
-      try {
-        await fetch("/api/auth/logout", { method: "POST" });
-      } catch (e) {
-        console.error("Failed to clear server session", e);
-      }
+    // Clear server-side session cookies (hivescan_auth, hivescan_session, hivescan_csrf)
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch (e) {
+      console.error("Failed to clear server session", e);
     }
 
     // 2. Clear all local state
@@ -98,6 +153,14 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
     if (typeof window !== "undefined") {
       localStorage.removeItem("hivescan_user");
       sessionStorage.removeItem("hs_auth_nonce");
+      // Clean any pending sync nonce from the URL (in case logout happens before init completes)
+      if (window.location.search.includes("sync_nonce")) {
+        window.history.replaceState(
+          {},
+          document.title,
+          window.location.pathname
+        );
+      }
     }
   }, []);
 
@@ -123,53 +186,70 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
       const codeFromUrl = urlParams.get("code");
       const stateFromUrl = urlParams.get("state");
 
-      try {
-        // 1. Handle secure Authorization Code redirect
-        if (codeFromUrl && stateFromUrl) {
+      let handledByHivesigner = false;
+
+      // 1. Handle Hivesigner Authorization Code redirect
+      if (codeFromUrl && stateFromUrl) {
+        try {
           const state = JSON.parse(decodeURIComponent(stateFromUrl));
           const savedNonce = sessionStorage.getItem("hs_auth_nonce");
 
-          // Security: CSRF Verification
           if (state.nonce !== savedNonce) {
-            throw new Error("CSRF_SPOOF_DETECTED");
-          }
-
-          // Exchange code for HttpOnly cookie via private API
-          const res = await fetch("/api/auth/hs-exchange", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ code: codeFromUrl }),
-          });
-
-          const data = await res.json();
-
-          if (data.username) {
-            sessionStorage.removeItem("hs_auth_nonce");
-            await login(data.username, "hivesigner");
+            // Stale or replayed callback URL — clean it and fall through to session restore.
+            // Never log out the current user over a nonce mismatch.
             window.history.replaceState(
               {},
               document.title,
               window.location.pathname
             );
+          } else {
+            // Valid callback — exchange the code for a session cookie
+            const res = await fetch("/api/auth/hs-exchange", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ code: codeFromUrl }),
+            });
+
+            const data = await res.json();
+
+            if (data.username) {
+              sessionStorage.removeItem("hs_auth_nonce");
+              const loginErr = await login(data.username, "hivesigner");
+              window.history.replaceState(
+                {},
+                document.title,
+                window.location.pathname
+              );
+              if (!loginErr) handledByHivesigner = true;
+            }
           }
+        } catch (e) {
+          console.error("Hivesigner callback error", e);
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+          );
         }
-        // 2. Handle page refresh/returning session
-        else {
+      }
+
+      // 2. Restore saved session (runs whenever Hivesigner didn't complete a fresh login)
+      if (!handledByHivesigner) {
+        try {
           const saved = localStorage.getItem("hivescan_user");
           if (saved) {
             const { username, method } = JSON.parse(saved);
             await login(username, method);
           }
+        } catch (e) {
+          console.error("Auth initialization failure", e);
         }
-      } catch (e) {
-        console.error("Auth initialization failure");
-        if (codeFromUrl) logout();
-      } finally {
-        setIsInitializing(false);
       }
+
+      setIsInitializing(false);
     };
     initializeAuth();
-  }, [login, logout]);
+  }, [login]);
 
   return (
     <AuthContext.Provider

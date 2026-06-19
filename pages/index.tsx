@@ -5,10 +5,10 @@ import StandardHome from "@/components/home/StandardHome";
 import WidgetIndex from "@/components/home/WidgetIndex";
 
 export default function Home() {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, isInitializing } = useAuth();
   const { settings } = useSettings();
 
-  if (isLoggedIn && settings.enableModularDashboard) {
+  if (!isInitializing && isLoggedIn && settings.enableModularDashboard) {
     return <WidgetIndex />;
   }
 

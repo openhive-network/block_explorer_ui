@@ -173,11 +173,22 @@ export function useDashboard() {
   const handleResetLayout = () => {
     if (!username) return;
     if (!window.confirm(t("dashbord.restoreWarning"))) return;
-    localStorage.removeItem(getWidgetsStorageKey(username));
-    localStorage.removeItem(getLayoutStorageKey(username));
-    localStorage.removeItem(getWidgetStatesStorageKey(username));
 
     const { layouts, widgetStates } = createInitialLayoutsAndStates();
+
+    localStorage.setItem(
+      getLayoutStorageKey(username),
+      JSON.stringify(layouts)
+    );
+    localStorage.setItem(
+      getWidgetsStorageKey(username),
+      JSON.stringify(DEFAULT_WIDGETS)
+    );
+    localStorage.setItem(
+      getWidgetStatesStorageKey(username),
+      JSON.stringify(widgetStates)
+    );
+
     setWidgets(DEFAULT_WIDGETS);
     setLayouts(layouts);
     setWidgetStates(widgetStates);

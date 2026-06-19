@@ -1,13 +1,21 @@
-import React, { createContext, useState, useEffect, useCallback, useContext, ReactNode } from 'react';
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  useCallback,
+  useContext,
+  ReactNode,
+} from "react";
+import { WORKSPACE_RESTORED_EVENT } from "@/utils/workspaceSync";
 
 // Define the types for ALL settings in one place
-export type ViewMode = 'original' | 'tabbed';
-export type DisplayVestHpMode = 'hp' | 'vests';
-export type ProgressBarType = 'radial' | 'linear';
-export type DataViewSwitchStyle = 'popover' | 'icons' | 'cycle';
-export type LayoutWidth = 'full' | 'compact';
+export type ViewMode = "original" | "tabbed";
+export type DisplayVestHpMode = "hp" | "vests";
+export type ProgressBarType = "radial" | "linear";
+export type DataViewSwitchStyle = "popover" | "icons" | "cycle";
+export type LayoutWidth = "full" | "compact";
 
-const SETTINGS_KEY = 'app-settings';
+const SETTINGS_KEY = "app-settings";
 
 export interface AppSettings {
   accountPageView: ViewMode;
@@ -17,7 +25,7 @@ export interface AppSettings {
   rawJsonView: boolean;
   liveData: boolean;
   prettyJsonView: boolean;
-  layoutWidth: LayoutWidth; 
+  layoutWidth: LayoutWidth;
   enableModularDashboard: boolean;
 }
 
@@ -26,19 +34,21 @@ interface SettingsContextType {
   updateSettings: (newSettings: Partial<AppSettings>) => void;
 }
 
-const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
+const SettingsContext = createContext<SettingsContextType | undefined>(
+  undefined
+);
 
 export const SettingsProvider = ({ children }: { children: ReactNode }) => {
   const [settings, setSettings] = useState<AppSettings>({
-    accountPageView: 'tabbed',
-    displayVestHpMode: 'hp',
-    progressBarType: 'radial',
-    dataViewSwitchStyle: 'popover',
+    accountPageView: "tabbed",
+    displayVestHpMode: "hp",
+    progressBarType: "radial",
+    dataViewSwitchStyle: "popover",
     rawJsonView: false,
     liveData: false,
     prettyJsonView: false,
-    layoutWidth : 'full',
-    enableModularDashboard: false
+    layoutWidth: "full",
+    enableModularDashboard: false,
   });
 
   // This effect loads ALL settings from localStorage on initial mount
@@ -47,39 +57,56 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
       const storedSettings = localStorage.getItem(SETTINGS_KEY);
       if (storedSettings) {
         const parsedSettings = JSON.parse(storedSettings);
-        setSettings(prev => ({ ...prev, ...parsedSettings }));
+        setSettings((prev) => ({ ...prev, ...parsedSettings }));
       }
     } catch (error) {
       console.error("Failed to parse settings from localStorage", error);
     }
   }, []);
-  
-  // This effect adds an event listener to sync state across browser tabs.
+
+  // Sync across browser tabs
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === SETTINGS_KEY && event.newValue) {
         try {
           const newSettings = JSON.parse(event.newValue);
-          setSettings(prev => ({...prev, ...newSettings}));
+          setSettings((prev) => ({ ...prev, ...newSettings }));
         } catch (error) {
           console.error("Failed to parse settings from storage event", error);
         }
       }
     };
-    
-    // Add the event listener
-    window.addEventListener('storage', handleStorageChange);
-    
-    // Clean up the event listener on component unmount
+
+    window.addEventListener("storage", handleStorageChange);
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener("storage", handleStorageChange);
     };
   }, []);
 
+  // Re-read settings after a workspace restore in the same tab
+  useEffect(() => {
+    const handleWorkspaceRestored = () => {
+      try {
+        const stored = localStorage.getItem(SETTINGS_KEY);
+        if (stored) {
+          setSettings((prev) => ({ ...prev, ...JSON.parse(stored) }));
+        }
+      } catch {
+        // ignore
+      }
+    };
+    window.addEventListener(WORKSPACE_RESTORED_EVENT, handleWorkspaceRestored);
+    return () => {
+      window.removeEventListener(
+        WORKSPACE_RESTORED_EVENT,
+        handleWorkspaceRestored
+      );
+    };
+  }, []);
 
   // Function to update and save settings
   const updateSettings = useCallback((newSettings: Partial<AppSettings>) => {
-    setSettings(prevSettings => {
+    setSettings((prevSettings) => {
       const updatedSettings = { ...prevSettings, ...newSettings };
       try {
         localStorage.setItem(SETTINGS_KEY, JSON.stringify(updatedSettings));
@@ -97,11 +124,10 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-
 export const useSettings = () => {
   const context = useContext(SettingsContext);
   if (context === undefined) {
-    throw new Error('useSettings must be used within a SettingsProvider');
+    throw new Error("useSettings must be used within a SettingsProvider");
   }
   return context;
 };
