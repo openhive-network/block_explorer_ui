@@ -301,12 +301,7 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
 
             <TooltipProvider>
               <Tooltip
-                open={
-                  (isUnsynced || syncStatus !== "idle") &&
-                  !(!isUnsynced && syncStatus === "idle")
-                    ? undefined
-                    : false
-                }
+                open={isUnsynced || syncStatus !== "idle" ? undefined : false}
               >
                 <TooltipTrigger asChild>
                   <button
@@ -318,13 +313,18 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
                       <Loader2 className="h-4 w-4 animate-spin" />
                     )}
                     {syncStatus === "success" && (
-                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                      <CheckCircle2 className="h-4 w-4" color="#22c55e" />
                     )}
                     {syncStatus === "error" && (
-                      <AlertCircle className="h-4 w-4 text-red-500" />
+                      <span className="relative">
+                        <AlertCircle className="h-4 w-4" color="#ef4444" />
+                        {isUnsynced && (
+                          <span className="absolute -top-1 -right-1 h-2 w-2 rounded-full bg-amber-400" />
+                        )}
+                      </span>
                     )}
                     {syncStatus === "oversized" && (
-                      <AlertCircle className="h-4 w-4 text-amber-500" />
+                      <AlertCircle className="h-4 w-4" color="#f59e0b" />
                     )}
                     {syncStatus === "idle" && (
                       <span className="relative">
@@ -335,11 +335,12 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
                       </span>
                     )}
                     <span>{t("settingsPage.workspaceSyncButton")}</span>
-                    {isUnsynced && syncStatus === "idle" && (
-                      <span className="ml-auto text-xs text-amber-500 font-normal">
-                        {t("workspaceSync.unsyncedLabel")}
-                      </span>
-                    )}
+                    {isUnsynced &&
+                      (syncStatus === "idle" || syncStatus === "error") && (
+                        <span className="ml-auto text-xs text-amber-500 font-normal">
+                          {t("workspaceSync.unsyncedLabel")}
+                        </span>
+                      )}
                   </button>
                 </TooltipTrigger>
                 <TooltipPortal>
@@ -347,9 +348,9 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
                     side="left"
                     className="max-w-[200px] text-center"
                   >
-                    {!isUnsynced && syncStatus === "idle"
-                      ? t("workspaceSync.noChangesToSync")
-                      : t("workspaceSync.unsyncedTooltip")}
+                    {isUnsynced
+                      ? t("workspaceSync.unsyncedTooltip")
+                      : t("workspaceSync.noChangesToSync")}
                   </TooltipContent>
                 </TooltipPortal>
               </Tooltip>
@@ -385,7 +386,10 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
             {/* Low-RC warning */}
             {!!manabarsData && manabarsData.rc.percentageValue < 10 && (
               <div className="mx-1 mb-1 flex items-start gap-2 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800/40 px-2.5 py-2">
-                <AlertCircle className="h-3.5 w-3.5 text-red-500 mt-0.5 shrink-0" />
+                <AlertCircle
+                  className="h-3.5 w-3.5 mt-0.5 shrink-0"
+                  color="#ef4444"
+                />
                 <p className="text-[10px] text-red-700 dark:text-red-300 leading-relaxed">
                   {t("workspaceSync.rcLowWarning")}
                 </p>
