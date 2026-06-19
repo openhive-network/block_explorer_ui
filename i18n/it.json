@@ -1122,7 +1122,7 @@
   "settingsPage.workspaceSyncButton": "Sincronizza area di lavoro",
   "workspaceSync.cloudDiffersTitle": "Nuova versione dell'area di lavoro disponibile",
   "workspaceSync.cloudDiffersDescription": "È stata trovata una versione più recente della tua area di lavoro sulla blockchain. Ripristinala per utilizzarla, oppure mantieni la configurazione locale attuale.",
-  "workspaceSync.restoreFromCloud": "Ripristina dal cloud",
+  "workspaceSync.restoreFromCloud": "Ripristina dalla blockchain",
   "workspaceSync.keepLocal": "Mantieni in locale",
   "workspaceSync.unsyncedLabel": "Non sincronizzato",
   "workspaceSync.unsyncedTooltip": "La tua area di lavoro contiene modifiche locali non ancora sincronizzate con la blockchain.",

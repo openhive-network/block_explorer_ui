@@ -1122,7 +1122,7 @@
   "settingsPage.workspaceSyncButton": "Sync Workspace",
   "workspaceSync.cloudDiffersTitle": "Newer Workspace Version Available",
   "workspaceSync.cloudDiffersDescription": "A newer version of your workspace was found on the blockchain. Restore it to use that version, or keep your current local setup.",
-  "workspaceSync.restoreFromCloud": "Restore from Cloud",
+  "workspaceSync.restoreFromCloud": "Restore from Chain",
   "workspaceSync.keepLocal": "Keep Local",
   "workspaceSync.unsyncedLabel": "Unsynced",
   "workspaceSync.unsyncedTooltip": "Your workspace has local changes that haven't been synced to the blockchain yet.",

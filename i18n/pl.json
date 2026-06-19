@@ -1122,7 +1122,7 @@
   "settingsPage.workspaceSyncButton": "Synchronizuj obszar roboczy",
   "workspaceSync.cloudDiffersTitle": "Dostępna nowsza wersja obszaru roboczego",
   "workspaceSync.cloudDiffersDescription": "Na blockchainie znaleziono nowszą wersję Twojego obszaru roboczego. Przywróć ją, aby z niej korzystać, lub zachowaj bieżące ustawienia lokalne.",
-  "workspaceSync.restoreFromCloud": "Przywróć z chmury",
+  "workspaceSync.restoreFromCloud": "Przywróć z blockchainu",
   "workspaceSync.keepLocal": "Zachowaj lokalnie",
   "workspaceSync.unsyncedLabel": "Niezsynchonizowany",
   "workspaceSync.unsyncedTooltip": "Twój obszar roboczy zawiera lokalne zmiany, które nie zostały jeszcze zsynchronizowane z blockchainem.",

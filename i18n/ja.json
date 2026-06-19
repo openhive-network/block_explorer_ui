@@ -1122,7 +1122,7 @@
   "settingsPage.workspaceSyncButton": "ワークスペースを同期",
   "workspaceSync.cloudDiffersTitle": "新しいワークスペースバージョンが利用可能",
   "workspaceSync.cloudDiffersDescription": "ブロックチェーンに新しいバージョンのワークスペースが見つかりました。そのバージョンを使用するには復元するか、現在のローカル設定を維持してください。",
-  "workspaceSync.restoreFromCloud": "クラウドから復元",
+  "workspaceSync.restoreFromCloud": "チェーンから復元",
   "workspaceSync.keepLocal": "ローカルを維持",
   "workspaceSync.unsyncedLabel": "未同期",
   "workspaceSync.unsyncedTooltip": "ワークスペースにブロックチェーンと同期されていないローカルの変更があります。",
