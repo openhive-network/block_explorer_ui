@@ -1140,7 +1140,7 @@
   "settingsPage.workspaceSyncButton": "Sincronizar espaço de trabalho",
   "workspaceSync.cloudDiffersTitle": "Versão mais recente do espaço de trabalho disponível",
   "workspaceSync.cloudDiffersDescription": "Uma versão mais recente do seu espaço de trabalho foi encontrada na blockchain. Restaure-a para usar essa versão ou mantenha sua configuração local atual.",
-  "workspaceSync.restoreFromCloud": "Restaurar da nuvem",
+  "workspaceSync.restoreFromCloud": "Restaurar da blockchain",
   "workspaceSync.keepLocal": "Manter localmente",
   "workspaceSync.unsyncedLabel": "Não sincronizado",
   "workspaceSync.unsyncedTooltip": "Seu espaço de trabalho tem alterações locais que ainda não foram sincronizadas com a blockchain.",

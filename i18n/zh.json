@@ -1140,7 +1140,7 @@
   "settingsPage.workspaceSyncButton": "同步工作区",
   "workspaceSync.cloudDiffersTitle": "有更新的工作区版本可用",
   "workspaceSync.cloudDiffersDescription": "在区块链上发现了您工作区的更新版本。您可以还原该版本，或保留当前的本地设置。",
-  "workspaceSync.restoreFromCloud": "从云端还原",
+  "workspaceSync.restoreFromCloud": "从链上还原",
   "workspaceSync.keepLocal": "保留本地",
   "workspaceSync.unsyncedLabel": "未同步",
   "workspaceSync.unsyncedTooltip": "您的工作区有尚未与区块链同步的本地更改。",

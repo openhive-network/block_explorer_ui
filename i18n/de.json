@@ -1140,7 +1140,7 @@
   "settingsPage.workspaceSyncButton": "Arbeitsbereich synchronisieren",
   "workspaceSync.cloudDiffersTitle": "Neuere Workspace-Version verfügbar",
   "workspaceSync.cloudDiffersDescription": "Auf der Blockchain wurde eine neuere Version Ihres Arbeitsbereichs gefunden. Stellen Sie sie wieder her, oder behalten Sie Ihre aktuelle lokale Einrichtung.",
-  "workspaceSync.restoreFromCloud": "Aus der Cloud wiederherstellen",
+  "workspaceSync.restoreFromCloud": "Aus der Blockchain wiederherstellen",
   "workspaceSync.keepLocal": "Lokal behalten",
   "workspaceSync.unsyncedLabel": "Nicht synchronisiert",
   "workspaceSync.unsyncedTooltip": "Ihr Arbeitsbereich hat lokale Änderungen, die noch nicht mit der Blockchain synchronisiert wurden.",
