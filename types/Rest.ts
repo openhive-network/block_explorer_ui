@@ -231,4 +231,12 @@ export const extendedRest = {
       urlPath: "accounts/{accountName}/vesting-history",
     },
   },
+  "haf-stats-api": {
+    dailyActiveUsers: {
+      params: Hive.DailyActiveUsersParams,
+      result: Hive.DailyActiveUsersResponse,
+      responseArray: true,
+      urlPath: "network/daily-active-users",
+    },
+  },
 };

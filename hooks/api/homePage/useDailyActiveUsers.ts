@@ -3,8 +3,8 @@ import fetchingService from "@/services/FetchingService";
 import Hive from "@/types/Hive";
 
 const useDailyActiveUsers = (
-  from?: Date,
-  to?: Date,
+  fromBlock?: Date | number | undefined,
+  toBlock?: Date | number | undefined,
   granularity?: "day" | "week" | "month",
   operationTypes?: string
 ) => {
@@ -13,11 +13,17 @@ const useDailyActiveUsers = (
     isLoading: isDailyActiveUsersLoading,
     isError: isDailyActiveUsersError,
   }: UseQueryResult<Hive.DailyActiveUsersResponse[] | undefined> = useQuery({
-    queryKey: ["dailyActiveUsers", from, to, granularity, operationTypes],
+    queryKey: [
+      "dailyActiveUsers",
+      fromBlock,
+      toBlock,
+      granularity,
+      operationTypes,
+    ],
     queryFn: () =>
       fetchingService.getDailyActiveUsers(
-        from,
-        to,
+        fromBlock,
+        toBlock,
         granularity,
         operationTypes
       ),

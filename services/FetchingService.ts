@@ -926,24 +926,20 @@ class FetchingService {
   }
 
   async getDailyActiveUsers(
-    from?: Date,
-    to?: Date,
+    fromBlock?: Date | number | undefined,
+    toBlock?: Date | number | undefined,
     granularity?: "day" | "week" | "month",
     operationTypes?: string
   ): Promise<Hive.DailyActiveUsersResponse[]> {
-    // Wax extendRest JSON-encodes string params for custom namespaces, which
-    // corrupts the underscore-prefixed params this endpoint expects. Build the
-    // URL manually so every param is serialised verbatim.
-    const qs = new URLSearchParams();
-    if (from) qs.set("_from", from.toISOString().slice(0, 10));
-    if (to) qs.set("_to", to.toISOString().slice(0, 10));
-    if (granularity) qs.set("_granularity", granularity);
-    if (operationTypes) qs.set("_operation_types", operationTypes);
-    const res = await fetch(
-      `${this.apiUrl}/haf-stats-api/network/daily-active-users?${qs}`
+    const params = {
+      from_date: fromBlock,
+      to_date: toBlock,
+      granularity,
+      operation_types: operationTypes?.trim(),
+    };
+    return this.extendedHiveChain!.restApi["haf-stats-api"].dailyActiveUsers(
+      params
     );
-    if (!res.ok) throw new Error(`DAU API ${res.status}`);
-    return res.json() as Promise<Hive.DailyActiveUsersResponse[]>;
   }
 }
 

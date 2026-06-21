@@ -1,1 +1,5 @@
+if git diff --cached -- ':(exclude).husky/pre-commit' | grep -q "testapi\.hivescan\.info"; then
+  echo "Commit blocked: testapi.hivescan.info proxy detected in staged changes. Remove before committing."
+  exit 1
+fi
 npx lint-staged
