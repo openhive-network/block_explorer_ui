@@ -19,7 +19,10 @@ import { Button } from "@/components/ui/button";
 import SearchRanges from "../searchRanges/SearchRanges";
 import useSearchRanges from "@/hooks/common/useSearchRanges";
 import DailyActiveUsersChart, { DauMetric } from "./DailyActiveUsersChart";
+import DauStackedChart from "./DauStackedChart";
+import DauKpiStrip from "./DauKpiStrip";
 import useDailyActiveUsers from "@/hooks/api/homePage/useDailyActiveUsers";
+import useDauBreakdown from "@/hooks/api/homePage/useDauBreakdown";
 import { useI18n } from "../../i18n/i18n";
 import { cn } from "@/lib/utils";
 
@@ -54,10 +57,12 @@ const DailyActiveUsersFullChartDialog: React.FC<
   const [granularity, setGranularity] = useState<Granularity>("day");
   const [opType, setOpType] = useState<OpType>("all");
   const [metric, setMetric] = useState<DauMetric>("active_accounts");
-  const [fromDate, setFromDate] = useState<Date | undefined>(
-    moment().subtract(90, "days").toDate()
+  const [fromDate, setFromDate] = useState<Date | number | undefined>(
+    moment().subtract(30, "days").toDate()
   );
-  const [toDate, setToDate] = useState<Date | undefined>(moment().toDate());
+  const [toDate, setToDate] = useState<Date | number | undefined>(
+    moment().toDate()
+  );
 
   const searchRanges = useSearchRanges();
   const [isSearchButtonDisabled, setIsSearchButtonDisabled] = useState(false);
@@ -69,11 +74,21 @@ const DailyActiveUsersFullChartDialog: React.FC<
     setEndDate,
   } = searchRanges;
 
+  const isStackedMode = opType === "all" && metric === "operations";
+
   const {
     dailyActiveUsers,
     isDailyActiveUsersLoading,
     isDailyActiveUsersError,
-  } = useDailyActiveUsers(fromDate, toDate, granularity, opType);
+  } = useDailyActiveUsers(
+    fromDate,
+    toDate,
+    granularity,
+    opType === "all" ? undefined : opType
+  );
+
+  const { breakdownData, isBreakdownLoading, isBreakdownError } =
+    useDauBreakdown(fromDate, toDate, granularity, isOpen && isStackedMode);
 
   const chartData = [...(dailyActiveUsers ?? [])].sort((a, b) =>
     a.period < b.period ? -1 : 1
@@ -81,14 +96,14 @@ const DailyActiveUsersFullChartDialog: React.FC<
 
   useEffect(() => {
     if (isOpen) {
-      setLastTimeUnitValue(90);
+      setLastTimeUnitValue(30);
       setRangeSelectKey("lastTime");
       setTimeUnitSelectKey("days");
-      const ninetyDaysAgo = moment().subtract(90, "days").toDate();
+      const thirtyDaysAgo = moment().subtract(30, "days").toDate();
       const now = moment().toDate();
-      setFromDate(ninetyDaysAgo);
+      setFromDate(thirtyDaysAgo);
       setToDate(now);
-      setStartDate(ninetyDaysAgo);
+      setStartDate(thirtyDaysAgo);
       setEndDate(now);
       setGranularity("day");
       setOpType("all");
@@ -110,20 +125,15 @@ const DailyActiveUsersFullChartDialog: React.FC<
       payloadStartDate,
       payloadEndDate,
     } = await searchRanges.getRangesValues();
-    setFromDate(
-      payloadStartDate ??
-        (payloadFromBlock ? new Date(payloadFromBlock) : undefined)
-    );
-    setToDate(
-      payloadEndDate ?? (payloadToBlock ? new Date(payloadToBlock) : undefined)
-    );
+    setFromDate(payloadFromBlock || payloadStartDate);
+    setToDate(payloadToBlock || payloadEndDate);
   };
 
   const handleFilterClear = () => {
     setRangeSelectKey("lastTime");
     setTimeUnitSelectKey("days");
-    setLastTimeUnitValue(90);
-    setFromDate(moment().subtract(90, "days").toDate());
+    setLastTimeUnitValue(30);
+    setFromDate(moment().subtract(30, "days").toDate());
     setToDate(moment().toDate());
     setGranularity("day");
     setOpType("all");
@@ -131,19 +141,15 @@ const DailyActiveUsersFullChartDialog: React.FC<
 
   const handleGranularityChange = (value: Granularity) => {
     setGranularity(value);
-    if (value === "day") {
-      setRangeSelectKey("lastTime");
-      setTimeUnitSelectKey("days");
-      setLastTimeUnitValue(90);
-      setFromDate(moment().subtract(90, "days").toDate());
-      setToDate(moment().toDate());
-    } else {
-      setRangeSelectKey("none");
-      setLastTimeUnitValue(undefined);
-      setFromDate(undefined);
-      setToDate(undefined);
-    }
   };
+
+  const isLoading = isStackedMode
+    ? isBreakdownLoading
+    : isDailyActiveUsersLoading;
+  const isError = isStackedMode ? isBreakdownError : isDailyActiveUsersError;
+  const hasData = isStackedMode
+    ? breakdownData.length > 0
+    : chartData.length > 0;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -155,8 +161,7 @@ const DailyActiveUsersFullChartDialog: React.FC<
             </div>
           </DialogHeader>
 
-          <div className="flex flex-wrap items-start gap-4 mb-4 w-full">
-            {/* Granularity */}
+          <div className="flex flex-wrap gap-4 mb-4 w-full items-start">
             <div className="flex flex-col gap-y-3 w-[140px]">
               <Label>{t("dailyActiveUsersFullChart.granularity")}</Label>
               <Select
@@ -174,12 +179,17 @@ const DailyActiveUsersFullChartDialog: React.FC<
               </Select>
             </div>
 
-            {/* Operation type */}
             <div className="flex flex-col gap-y-3 w-[160px]">
               <Label>{t("dailyActiveUsersFullChart.operationType")}</Label>
               <Select
                 value={opType}
-                onValueChange={(v) => setOpType(v as OpType)}
+                onValueChange={(v) => {
+                  const next = v as OpType;
+                  setOpType(next);
+                  if (next === "all" && metric === "both") {
+                    setMetric("active_accounts");
+                  }
+                }}
               >
                 <SelectTrigger>
                   <SelectValue />
@@ -194,16 +204,13 @@ const DailyActiveUsersFullChartDialog: React.FC<
               </Select>
             </div>
 
-            {/* Date range */}
-            <div className="flex-1 flex flex-col mb-4">
+            <div className="flex flex-col gap-y-3 flex-1 min-w-[260px]">
               <Label>{t("common.filters")}</Label>
-              <div className="m-0 p-0">
-                <SearchRanges
-                  rangesProps={searchRanges}
-                  setIsSearchButtonDisabled={setIsSearchButtonDisabled}
-                />
-              </div>
-              <div className="flex items-end justify-start mt-2 gap-2">
+              <SearchRanges
+                rangesProps={searchRanges}
+                setIsSearchButtonDisabled={setIsSearchButtonDisabled}
+              />
+              <div className="flex gap-2 mt-2">
                 <Button
                   onClick={handleSearch}
                   data-testid="apply-filters"
@@ -223,7 +230,9 @@ const DailyActiveUsersFullChartDialog: React.FC<
             <span className="text-xs font-semibold uppercase tracking-wide text-explorer-dark-gray dark:text-text self-center mr-1">
               {t("dailyActiveUsersFullChart.metric")}:
             </span>
-            {METRIC_OPTIONS.map(({ key, labelKey }) => (
+            {METRIC_OPTIONS.filter(
+              ({ key }) => !(opType === "all" && key === "both")
+            ).map(({ key, labelKey }) => (
               <button
                 key={key}
                 onClick={() => setMetric(key)}
@@ -239,20 +248,35 @@ const DailyActiveUsersFullChartDialog: React.FC<
             ))}
           </div>
 
+          {/* KPI strip */}
+          {!isLoading && !isError && chartData.length > 0 && (
+            <DauKpiStrip
+              data={chartData}
+              granularity={granularity}
+              trendMetric={
+                metric === "operations" ? "operations" : "active_accounts"
+              }
+            />
+          )}
+
           {/* Chart */}
           <div className="h-[55vh] w-full flex items-center justify-center">
-            {isDailyActiveUsersLoading ? (
+            {isLoading ? (
               <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />
-            ) : isDailyActiveUsersError ? (
+            ) : isError ? (
               <p className="text-red-500 text-sm">
                 {t("common.errorLoadingData")}
               </p>
-            ) : chartData.length > 0 ? (
-              <DailyActiveUsersChart
-                data={chartData}
-                metric={metric}
-                includeBrush
-              />
+            ) : hasData ? (
+              isStackedMode ? (
+                <DauStackedChart data={breakdownData} includeBrush />
+              ) : (
+                <DailyActiveUsersChart
+                  data={chartData}
+                  metric={metric}
+                  includeBrush
+                />
+              )
             ) : (
               <p className="text-gray-500 text-sm">
                 {t("common.noDataAvailable")}

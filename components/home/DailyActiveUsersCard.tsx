@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { Loader2, Activity, Zap } from "lucide-react";
+import { Loader2, Activity, Zap, TrendingUp, TrendingDown } from "lucide-react";
 import moment from "moment";
 import dynamic from "next/dynamic";
 import DailyActiveUsersChart, { DauMetric } from "./DailyActiveUsersChart";
@@ -12,13 +12,34 @@ const DailyActiveUsersFullChartDialog = dynamic(
   { ssr: false }
 );
 
+const TrendBadge: React.FC<{ value: number; locale: string }> = ({
+  value,
+  locale,
+}) => {
+  const isPositive = value > 0;
+  const Icon = isPositive ? TrendingUp : TrendingDown;
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center gap-0.5 text-[11px] font-semibold leading-none",
+        isPositive
+          ? "text-explorer-light-green"
+          : "text-rose-600 dark:text-rose-400"
+      )}
+    >
+      <Icon className="h-3 w-3" />
+      {Math.abs(value).toLocaleString(locale, { maximumFractionDigits: 2 })}%
+    </span>
+  );
+};
+
 const METRIC_OPTIONS: { key: DauMetric; labelKey: string }[] = [
   { key: "active_accounts", labelKey: "dailyActiveUsersCard.activeAccounts" },
   { key: "operations", labelKey: "dailyActiveUsersCard.operations" },
 ];
 
 const DailyActiveUsersCard = () => {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [metric, setMetric] = useState<DauMetric>("active_accounts");
 
@@ -54,13 +75,34 @@ const DailyActiveUsersCard = () => {
     );
   }, [chartData]);
 
+  const lastCompletedEntry = useMemo(() => {
+    const todayStr = moment().format("YYYY-MM-DD");
+    return [...chartData].reverse().find((d) => d.period < todayStr) ?? null;
+  }, [chartData]);
+
+  const trendDau = useMemo(() => {
+    if (!lastCompletedEntry || chartData.length < 2) return null;
+    const first = chartData[0].active_accounts;
+    return first > 0
+      ? ((lastCompletedEntry.active_accounts - first) / first) * 100
+      : null;
+  }, [chartData, lastCompletedEntry]);
+
+  const trendOps = useMemo(() => {
+    if (!lastCompletedEntry || chartData.length < 2) return null;
+    const first = chartData[0].operations;
+    return first > 0
+      ? ((lastCompletedEntry.operations - first) / first) * 100
+      : null;
+  }, [chartData, lastCompletedEntry]);
+
   return (
     <div className="bg-theme rounded mb-2 shadow-md overflow-hidden">
       <div className="flex flex-wrap gap-2 p-2">
         {/* KPI — Active Accounts */}
         <div className="flex-1 min-w-[140px] bg-explorer-extra-light-gray rounded-lg p-2.5 shadow-md flex flex-col justify-center">
           <h3 className="text-xs font-semibold uppercase tracking-wide text-explorer-dark-gray dark:text-text">
-            {t("dailyActiveUsersCard.latestDau")}
+            {t("dailyActiveUsersCard.latestDau")} (30D)
           </h3>
           {isDailyActiveUsersLoading ? (
             <Loader2 className="animate-spin h-4 w-4 mt-1" />
@@ -70,13 +112,18 @@ const DailyActiveUsersCard = () => {
             </p>
           ) : latestEntry ? (
             <>
-              <p className="text-xl font-bold leading-tight text-explorer-dark-gray dark:text-text">
-                {latestEntry.active_accounts.toLocaleString()}
-              </p>
+              <div className="flex items-baseline gap-1.5">
+                <p className="text-xl font-bold leading-tight text-explorer-dark-gray dark:text-text">
+                  {latestEntry.active_accounts.toLocaleString(locale)}
+                </p>
+                {trendDau !== null && (
+                  <TrendBadge value={trendDau} locale={locale} />
+                )}
+              </div>
               <p className="flex items-center gap-1 text-[11px] text-gray-500">
                 <Activity className="h-3 w-3" />
                 {avg30dDau !== null &&
-                  `${avg30dDau.toLocaleString()} ${t("dailyActiveUsersCard.avg30d")}`}
+                  `${avg30dDau.toLocaleString(locale)} ${t("dailyActiveUsersCard.avg30d")}`}
               </p>
             </>
           ) : (
@@ -89,7 +136,7 @@ const DailyActiveUsersCard = () => {
         {/* KPI — Operations */}
         <div className="flex-1 min-w-[140px] bg-explorer-extra-light-gray rounded-lg p-2.5 shadow-md flex flex-col justify-center">
           <h3 className="text-xs font-semibold uppercase tracking-wide text-explorer-dark-gray dark:text-text">
-            {t("dailyActiveUsersCard.latestOps")}
+            {t("dailyActiveUsersCard.latestOps")} (30D)
           </h3>
           {isDailyActiveUsersLoading ? (
             <Loader2 className="animate-spin h-4 w-4 mt-1" />
@@ -99,13 +146,18 @@ const DailyActiveUsersCard = () => {
             </p>
           ) : latestEntry ? (
             <>
-              <p className="text-xl font-bold leading-tight text-explorer-dark-gray dark:text-text">
-                {latestEntry.operations.toLocaleString()}
-              </p>
+              <div className="flex items-baseline gap-1.5">
+                <p className="text-xl font-bold leading-tight text-explorer-dark-gray dark:text-text">
+                  {latestEntry.operations.toLocaleString(locale)}
+                </p>
+                {trendOps !== null && (
+                  <TrendBadge value={trendOps} locale={locale} />
+                )}
+              </div>
               <p className="flex items-center gap-1 text-[11px] text-gray-500">
                 <Zap className="h-3 w-3" />
                 {avg30dOps !== null &&
-                  `${avg30dOps.toLocaleString()} ${t("dailyActiveUsersCard.avg30d")}`}
+                  `${avg30dOps.toLocaleString(locale)} ${t("dailyActiveUsersCard.avg30d")}`}
               </p>
             </>
           ) : (

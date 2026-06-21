@@ -1123,6 +1123,13 @@ namespace Hive {
     "to-block"?: number | Date;
   }
 
+  export class DailyActiveUsersParams {
+    from_date?: Date | number | undefined;
+    to_date?: Date | number | undefined;
+    granularity?: string;
+    operation_types?: string;
+  }
+
   export class DailyActiveUsersResponse {
     period!: string;
     active_accounts!: number;

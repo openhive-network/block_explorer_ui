@@ -1,7 +1,7 @@
 import { useTheme } from "@/contexts/ThemeContext";
 import Hive from "@/types/Hive";
 import moment from "moment";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   ComposedChart,
   Area,
@@ -42,7 +42,7 @@ const DailyActiveUsersChart: React.FC<DailyActiveUsersChartProps> = ({
   compact = false,
 }) => {
   const { theme } = useTheme();
-  const { t, dir } = useI18n();
+  const { t, dir, locale } = useI18n();
   const isRTL = dir === "rtl";
   const brushDefaults = useChartBrushDefaults();
   const strokeColor = theme === "dark" ? "#FFF" : "#000";
@@ -50,6 +50,10 @@ const DailyActiveUsersChart: React.FC<DailyActiveUsersChartProps> = ({
   const [zoomedDomain, setZoomedDomain] = useState<[number, number] | null>(
     null
   );
+
+  useEffect(() => {
+    setZoomedDomain(null);
+  }, [metric]);
 
   const chartData = useMemo(() => {
     if (!data || data.length === 0) return [];
@@ -65,9 +69,10 @@ const DailyActiveUsersChart: React.FC<DailyActiveUsersChartProps> = ({
   }, [data]);
 
   const formatYAxis = (value: number) => {
-    if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`;
+    if (value >= 1_000_000)
+      return `${(value / 1_000_000).toLocaleString(locale, { maximumFractionDigits: 1 })}M`;
     if (value >= 1_000) return `${Math.round(value / 1_000)}K`;
-    return value.toLocaleString();
+    return value.toLocaleString(locale);
   };
 
   const calcDomain = (
@@ -136,7 +141,7 @@ const DailyActiveUsersChart: React.FC<DailyActiveUsersChartProps> = ({
               className="font-semibold leading-none"
               style={{ color: DAU_COLOR }}
             >
-              {active_accounts?.toLocaleString()}
+              {active_accounts?.toLocaleString(locale)}
             </p>
           </div>
           <div>
@@ -147,7 +152,7 @@ const DailyActiveUsersChart: React.FC<DailyActiveUsersChartProps> = ({
               className="font-semibold leading-none"
               style={{ color: OPS_COLOR }}
             >
-              {operations?.toLocaleString()}
+              {operations?.toLocaleString(locale)}
             </p>
           </div>
         </div>
@@ -230,11 +235,7 @@ const DailyActiveUsersChart: React.FC<DailyActiveUsersChartProps> = ({
         <Tooltip content={<CustomTooltip />} />
 
         {!compact && (
-          <Legend
-            verticalAlign="bottom"
-            height={36}
-            align={isRTL ? "right" : "left"}
-          />
+          <Legend verticalAlign="bottom" height={36} align="center" />
         )}
 
         {showDau && (

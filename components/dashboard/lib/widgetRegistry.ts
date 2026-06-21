@@ -159,7 +159,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     name: "widgets.lastBlocksName",
     category: "chain" as const,
     component: LastBlocksWidget,
-    defaultLayout: { w: 8, h: 9, minW: 6, minH: 8 },
+    defaultLayout: { w: 6, h: 9, minW: 6, minH: 8 },
     getProps: (data) => ({
       headBlock: data.headBlockNum,
       strokeColor: data.strokeColor,
@@ -192,28 +192,28 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     name: "widgets.txStatsName",
     category: "reports" as const,
     component: TransactionStatisticsCard,
-    defaultLayout: { w: 8, h: 5, minW: 3, minH: 4 },
+    defaultLayout: { w: 6, h: 5, minW: 3, minH: 4 },
   },
   "transfer-volume": {
     id: "transfer-volume",
     name: "widgets.transferVolumeName",
     category: "reports" as const,
     component: TransferVolumeCard,
-    defaultLayout: { w: 8, h: 5, minW: 3, minH: 4 },
+    defaultLayout: { w: 6, h: 5, minW: 3, minH: 4 },
   },
   tvl: {
     id: "tvl",
     name: "widgets.tvlName",
     category: "reports" as const,
     component: TotalValueLockedCard,
-    defaultLayout: { w: 8, h: 5, minW: 3, minH: 4 },
+    defaultLayout: { w: 6, h: 5, minW: 3, minH: 4 },
   },
   "network-growth": {
     id: "network-growth",
     name: "widgets.networkGrowthName",
     category: "reports" as const,
     component: NetworkGrowthCard,
-    defaultLayout: { w: 8, h: 3.3, minW: 3, minH: 3 },
+    defaultLayout: { w: 6, h: 3.3, minW: 3, minH: 3 },
     dynamicHeight: true,
   },
   "hp-momentum": {
@@ -221,7 +221,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     name: "widgets.hpMomentumName",
     category: "reports" as const,
     component: HpMomentumCard,
-    defaultLayout: { w: 8, h: 5, minW: 3, minH: 4 },
+    defaultLayout: { w: 6, h: 5, minW: 3, minH: 4 },
     dynamicHeight: true,
   },
   "daily-active-users": {
@@ -229,7 +229,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     name: "widgets.dailyActiveUsersName",
     category: "reports" as const,
     component: DailyActiveUsersCard,
-    defaultLayout: { w: 8, h: 3.3, minW: 3, minH: 3 },
+    defaultLayout: { w: 6, h: 3.3, minW: 3, minH: 3 },
     dynamicHeight: true,
   },
   searches: {
@@ -237,7 +237,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     name: "widgets.searchesName",
     category: "chain" as const,
     component: SearchesSection,
-    defaultLayout: { w: 8, h: 11.9, minW: 4, minH: 3 },
+    defaultLayout: { w: 6, h: 11.9, minW: 4, minH: 3 },
     dynamicHeight: true,
   },
 
