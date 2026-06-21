@@ -1140,7 +1140,7 @@
   "settingsPage.workspaceSyncButton": "Sincronizează spațiul de lucru",
   "workspaceSync.cloudDiffersTitle": "Versiune mai nouă a spațiului de lucru disponibilă",
   "workspaceSync.cloudDiffersDescription": "Pe blockchain a fost găsită o versiune mai recentă a spațiului dvs. de lucru. Restaurați-o pentru a o folosi sau păstrați configurarea locală actuală.",
-  "workspaceSync.restoreFromCloud": "Restaurează din cloud",
+  "workspaceSync.restoreFromCloud": "Restaurează din blockchain",
   "workspaceSync.keepLocal": "Păstrează local",
   "workspaceSync.unsyncedLabel": "Nesincronizat",
   "workspaceSync.unsyncedTooltip": "Spațiul dvs. de lucru conține modificări locale care nu au fost încă sincronizate cu blockchain-ul.",

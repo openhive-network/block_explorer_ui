@@ -1140,7 +1140,7 @@
   "settingsPage.workspaceSyncButton": "مزامنة مساحة العمل",
   "workspaceSync.cloudDiffersTitle": "يتوفر إصدار أحدث من مساحة العمل",
   "workspaceSync.cloudDiffersDescription": "تم العثور على إصدار أحدث من مساحة عملك على البلوكتشين. يمكنك استعادته لاستخدامه، أو الاحتفاظ بالإعداد المحلي الحالي.",
-  "workspaceSync.restoreFromCloud": "استعادة من السحابة",
+  "workspaceSync.restoreFromCloud": "استعادة من البلوكتشين",
   "workspaceSync.keepLocal": "الاحتفاظ بالمحلي",
   "workspaceSync.unsyncedLabel": "غير متزامن",
   "workspaceSync.unsyncedTooltip": "تحتوي مساحة عملك على تغييرات محلية لم تتم مزامنتها مع البلوكتشين بعد.",

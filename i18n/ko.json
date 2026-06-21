@@ -1140,7 +1140,7 @@
   "settingsPage.workspaceSyncButton": "워크스페이스 동기화",
   "workspaceSync.cloudDiffersTitle": "더 최신 워크스페이스 버전 사용 가능",
   "workspaceSync.cloudDiffersDescription": "블록체인에서 더 최신 버전의 워크스페이스가 발견되었습니다. 해당 버전을 사용하려면 복원하거나, 현재 로컬 설정을 유지하세요.",
-  "workspaceSync.restoreFromCloud": "클라우드에서 복원",
+  "workspaceSync.restoreFromCloud": "체인에서 복원",
   "workspaceSync.keepLocal": "로컬 유지",
   "workspaceSync.unsyncedLabel": "미동기화",
   "workspaceSync.unsyncedTooltip": "워크스페이스에 블록체인과 동기화되지 않은 로컬 변경 사항이 있습니다.",

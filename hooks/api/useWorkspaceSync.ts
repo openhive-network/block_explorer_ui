@@ -44,6 +44,14 @@ export function useWorkspaceSync(): UseWorkspaceSyncReturn {
     }
   }, [username, method]);
 
+  // Auto-reset "success" to "idle" after 3 s so both the syncing browser and
+  // a fresh login in another browser show the same icon (plain cloud, no dot).
+  useEffect(() => {
+    if (syncStatus !== "success") return;
+    const timer = setTimeout(() => setSyncStatus("idle"), 3000);
+    return () => clearTimeout(timer);
+  }, [syncStatus]);
+
   const syncWorkspace = useCallback(async () => {
     if (!username || !method) return;
 
