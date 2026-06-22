@@ -941,6 +941,14 @@ class FetchingService {
       params
     );
   }
+
+  async getNetworkHpDistribution(): Promise<
+    Hive.NetworkHpDistributionResponse[]
+  > {
+    return await this.extendedHiveChain!.restApi[
+      "haf-stats-api"
+    ].networkHpDistribution({});
+  }
 }
 
 const fetchingService = new FetchingService();

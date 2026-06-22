@@ -1339,6 +1339,14 @@ namespace Hive {
     escrow_pending_amount_hive!: string;
     escrow_pending_count!: string;
   }
+
+  export class NetworkHpDistributionParams {}
+
+  export class NetworkHpDistributionResponse {
+    bucket!: string;
+    account_count!: number;
+    pct_accounts!: number;
+  }
 }
 
 export default Hive;

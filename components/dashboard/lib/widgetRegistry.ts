@@ -18,6 +18,7 @@ import TopWitnessesCard from "@/components/home/TopWitnessesCard";
 import TransactionStatisticsCard from "@/components/home/TransactionStatisticsCard";
 import TransferVolumeCard from "@/components/home/TransferVolumeCard";
 import TotalValueLockedCard from "@/components/home/TotalValueLockedCard";
+import NetworkHpDistributionCard from "@/components/home/NetworkHpDistributionCard";
 import NetworkGrowthCard from "@/components/home/NetworkGrowthCard";
 import HpMomentumCard from "@/components/home/HpMomentumCard";
 import DailyActiveUsersCard from "@/components/home/DailyActiveUsersCard";
@@ -207,6 +208,14 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     category: "reports" as const,
     component: TotalValueLockedCard,
     defaultLayout: { w: 6, h: 5, minW: 3, minH: 4 },
+  },
+  "network-hp-distribution": {
+    id: "network-hp-distribution",
+    name: "widgets.networkHpDistributionName",
+    category: "reports" as const,
+    component: NetworkHpDistributionCard,
+    defaultLayout: { w: 6, h: 5, minW: 3, minH: 4 },
+    dynamicHeight: false,
   },
   "network-growth": {
     id: "network-growth",
