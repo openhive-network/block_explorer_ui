@@ -1327,34 +1327,28 @@ namespace Hive {
     escrow_pending_count!: string;
   }
 
-  export class PendingAuthorRewardsParams {
-    accountName!: string;
-  }
-
-  export class PendingAuthorRewardsResponse {
-    account!: string;
-    pending_post_count!: number;
-    gross_pending_payout!: Supply;
-    estimated_author_payout!: Supply;
-    estimated_beneficiaries_payout!: Supply;
-    estimated_curators_payout!: Supply;
-  }
-
-  export class PendingCurationRewardsParams {
-    accountName!: string;
-  }
-
-  export class PendingCurationRewardsResponse {
-    account!: string;
-    pending_vote_count!: number;
-    estimated_curation_payout!: Supply;
-  }
-
   export interface AccountPostSummary {
     cashout_time: string;
     pending_payout_value: string;
     depth: number;
     author: string;
+  }
+
+  export class NetworkVoteStatsParams {
+    from_date?: string;
+    to_date?: string;
+    granularity?: string;
+  }
+
+  export class NetworkVoteStatsResponse {
+    period!: string;
+    total_votes!: number;
+    upvotes!: number;
+    downvotes!: number;
+    unvotes!: number;
+    self_votes!: number;
+    unique_voters!: number;
+    downvote_pct!: number;
   }
 }
 

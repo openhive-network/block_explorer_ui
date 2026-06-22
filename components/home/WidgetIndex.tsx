@@ -106,8 +106,10 @@ const WidgetIndex = () => {
     if (!isLoaded || !username) return;
     const seededKey = `hivescan_dashboard_voting_activity_seeded_${username}`;
     if (localStorage.getItem(seededKey)) return;
-    localStorage.setItem(seededKey, "true");
-    if (widgets.some((w) => w.type === "voting-activity")) return;
+    if (widgets.some((w) => w.type === "voting-activity")) {
+      localStorage.setItem(seededKey, "true");
+      return;
+    }
     const masterLayout = layouts.lg || [];
     const mainColBottom = masterLayout
       .filter((item) => item.x >= 3 && item.x < 9)
@@ -119,6 +121,7 @@ const WidgetIndex = () => {
       h: 5,
       minH: 4,
     });
+    localStorage.setItem(seededKey, "true");
   }, [isLoaded, username, widgets, layouts, onAddWidget]);
 
   // Watched Proposals mirrors standard home: auto-shown when you watch a

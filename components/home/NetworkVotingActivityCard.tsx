@@ -11,11 +11,12 @@ import {
 import moment from "moment";
 import dynamic from "next/dynamic";
 import useNetworkVoteStats from "@/hooks/api/homePage/useNetworkVoteStats";
+import Hive from "@/types/Hive";
 import { useI18n } from "../../i18n/i18n";
 import { useSettings } from "@/contexts/SettingsContext";
 
-const VotingActivityFullChartDialog = dynamic(
-  () => import("./VotingActivityFullChartDialog"),
+const NetworkVotingActivityFullChartDialog = dynamic(
+  () => import("./NetworkVotingActivityFullChartDialog"),
   { ssr: false }
 );
 
@@ -43,33 +44,74 @@ const TrendBadge: React.FC<{ value: number | null; label: string }> = ({
   );
 };
 
-const VotingActivityCard: React.FC = () => {
-  const { t } = useI18n();
+const NetworkVotingActivityCard: React.FC = () => {
+  const { t, locale } = useI18n();
   const { settings } = useSettings();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const from = useMemo(
-    () => moment().subtract(2, "days").format("YYYY-MM-DD"),
+  const cutoff30 = useMemo(
+    () => moment().subtract(30, "days").format("YYYY-MM-DD"),
     []
   );
-  const to = useMemo(() => moment().format("YYYY-MM-DD"), []);
+  const cutoff60 = useMemo(
+    () => moment().subtract(60, "days").format("YYYY-MM-DD"),
+    []
+  );
 
   const { voteStats, isVoteStatsLoading, isVoteStatsError } =
-    useNetworkVoteStats(from, to, "day", settings.liveData);
+    useNetworkVoteStats(cutoff60, undefined, "day", settings.liveData);
+
+  const accumulate = (days: Hive.NetworkVoteStatsResponse[]) => {
+    if (days.length === 0) return null;
+    const totals = days.reduce(
+      (acc, d) => ({
+        total_votes: acc.total_votes + d.total_votes,
+        upvotes: acc.upvotes + d.upvotes,
+        downvotes: acc.downvotes + d.downvotes,
+        unvotes: acc.unvotes + d.unvotes,
+        self_votes: acc.self_votes + d.self_votes,
+        unique_voters: acc.unique_voters + d.unique_voters,
+      }),
+      {
+        total_votes: 0,
+        upvotes: 0,
+        downvotes: 0,
+        unvotes: 0,
+        self_votes: 0,
+        unique_voters: 0,
+      }
+    );
+    const downvote_pct =
+      totals.upvotes + totals.downvotes > 0
+        ? (totals.downvotes / (totals.upvotes + totals.downvotes)) * 100
+        : null;
+    return {
+      ...totals,
+      unique_voters: Math.round(totals.unique_voters / days.length),
+      downvote_pct,
+    };
+  };
 
   const latest = useMemo(() => {
     if (!voteStats || voteStats.length === 0) return null;
-    return voteStats[voteStats.length - 1];
-  }, [voteStats]);
+    return accumulate(voteStats.filter((d) => d.period >= cutoff30));
+  }, [voteStats, cutoff30]);
 
   const prev = useMemo(() => {
-    if (!voteStats || voteStats.length < 2) return null;
-    return voteStats[voteStats.length - 2];
-  }, [voteStats]);
+    if (!voteStats || voteStats.length === 0) return null;
+    return accumulate(
+      voteStats.filter((d) => d.period >= cutoff60 && d.period < cutoff30)
+    );
+  }, [voteStats, cutoff60, cutoff30]);
 
   const pct = (count: number) => {
     if (!latest || latest.total_votes === 0) return "0%";
-    return ((count / latest.total_votes) * 100).toFixed(2) + "%";
+    return (
+      ((count / latest.total_votes) * 100).toLocaleString(locale, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }) + "%"
+    );
   };
 
   return (
@@ -100,11 +142,11 @@ const VotingActivityCard: React.FC = () => {
             ) : latest ? (
               <>
                 <p className="text-xl font-bold leading-tight text-explorer-dark-gray dark:text-text">
-                  {latest.total_votes.toLocaleString()}
+                  {latest.total_votes.toLocaleString(locale)}
                 </p>
                 <TrendBadge
                   value={trendPct(latest.total_votes, prev?.total_votes)}
-                  label={t("votingActivityCard.vsPrevDay")}
+                  label={t("votingActivityCard.vsPrevPeriod")}
                 />
               </>
             ) : (
@@ -123,11 +165,11 @@ const VotingActivityCard: React.FC = () => {
             ) : latest ? (
               <>
                 <p className="text-xl font-bold leading-tight text-blue-500">
-                  {latest.unique_voters.toLocaleString()}
+                  {latest.unique_voters.toLocaleString(locale)}
                 </p>
                 <TrendBadge
                   value={trendPct(latest.unique_voters, prev?.unique_voters)}
-                  label={t("votingActivityCard.vsPrevDay")}
+                  label={t("votingActivityCard.vsPrevPeriod")}
                 />
               </>
             ) : null}
@@ -146,7 +188,7 @@ const VotingActivityCard: React.FC = () => {
             ) : latest ? (
               <>
                 <p className="text-base font-bold text-green-600 dark:text-green-400 leading-tight">
-                  {latest.upvotes.toLocaleString()}
+                  {latest.upvotes.toLocaleString(locale)}
                 </p>
                 <p className="text-[10px] text-gray-500">
                   {pct(latest.upvotes)}
@@ -165,13 +207,29 @@ const VotingActivityCard: React.FC = () => {
             ) : latest ? (
               <>
                 <p className="text-base font-bold text-red-600 dark:text-red-400 leading-tight">
-                  {latest.downvotes.toLocaleString()}
+                  {latest.downvotes.toLocaleString(locale)}
                 </p>
                 <p className="text-[10px] text-gray-500">
-                  {latest.downvote_pct}% &mdash;{" "}
-                  <span className="text-green-500">
-                    {t("votingActivityCard.healthy")}
-                  </span>
+                  {latest.downvote_pct !== null ? (
+                    <>
+                      {latest.downvote_pct.toLocaleString(locale, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                      %
+                      {latest.downvote_pct < 5 && (
+                        <>
+                          {" "}
+                          &mdash;{" "}
+                          <span className="text-green-500">
+                            {t("votingActivityCard.healthy")}
+                          </span>
+                        </>
+                      )}
+                    </>
+                  ) : (
+                    "—"
+                  )}
                 </p>
               </>
             ) : null}
@@ -187,7 +245,7 @@ const VotingActivityCard: React.FC = () => {
             ) : latest ? (
               <>
                 <p className="text-base font-bold text-amber-600 dark:text-amber-400 leading-tight">
-                  {latest.self_votes.toLocaleString()}
+                  {latest.self_votes.toLocaleString(locale)}
                 </p>
                 <p className="text-[10px] text-gray-500">
                   {pct(latest.self_votes)}
@@ -206,7 +264,7 @@ const VotingActivityCard: React.FC = () => {
             ) : latest ? (
               <>
                 <p className="text-base font-bold text-gray-500 dark:text-gray-400 leading-tight">
-                  {latest.unvotes.toLocaleString()}
+                  {latest.unvotes.toLocaleString(locale)}
                 </p>
                 <p className="text-[10px] text-gray-500">
                   {pct(latest.unvotes)}
@@ -226,7 +284,7 @@ const VotingActivityCard: React.FC = () => {
         </div>
       </div>
 
-      <VotingActivityFullChartDialog
+      <NetworkVotingActivityFullChartDialog
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
@@ -234,4 +292,4 @@ const VotingActivityCard: React.FC = () => {
   );
 };
 
-export default VotingActivityCard;
+export default NetworkVotingActivityCard;

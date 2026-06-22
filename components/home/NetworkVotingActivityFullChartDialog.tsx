@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import moment from "moment";
 import { Loader2 } from "lucide-react";
 import {
@@ -20,15 +20,16 @@ import SearchRanges from "../searchRanges/SearchRanges";
 import useSearchRanges from "@/hooks/common/useSearchRanges";
 import useNetworkVoteStats from "@/hooks/api/homePage/useNetworkVoteStats";
 import VotingActivityChart from "./VotingActivityChart";
+import VotingActivityKpiStrip from "./VotingActivityKpiStrip";
 import { useI18n } from "../../i18n/i18n";
 
-interface VotingActivityFullChartDialogProps {
+interface NetworkVotingActivityFullChartDialogProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-const VotingActivityFullChartDialog: React.FC<
-  VotingActivityFullChartDialogProps
+const NetworkVotingActivityFullChartDialog: React.FC<
+  NetworkVotingActivityFullChartDialogProps
 > = ({ isOpen, onClose }) => {
   const { t } = useI18n();
 
@@ -42,22 +43,23 @@ const VotingActivityFullChartDialog: React.FC<
 
   const searchRanges = useSearchRanges();
   const [isSearchButtonDisabled, setIsSearchButtonDisabled] = useState(false);
-  const { setRangeSelectKey, setTimeUnitSelectKey, setLastTimeUnitValue } =
-    searchRanges;
+
+  const searchRangesInitialized = useRef(false);
+  useEffect(() => {
+    if (!isOpen || searchRangesInitialized.current) return;
+    searchRangesInitialized.current = true;
+    searchRanges.setLastTimeUnitValue(30);
+    searchRanges.setRangeSelectKey("lastTime");
+    searchRanges.setTimeUnitSelectKey("days");
+  }, [
+    isOpen,
+    searchRanges.setLastTimeUnitValue,
+    searchRanges.setRangeSelectKey,
+    searchRanges.setTimeUnitSelectKey,
+  ]);
 
   const { voteStats, isVoteStatsLoading, isVoteStatsError } =
     useNetworkVoteStats(fromDate, toDate, granularity, false);
-
-  useEffect(() => {
-    if (isOpen) {
-      setLastTimeUnitValue(30);
-      setRangeSelectKey("lastTime");
-      setTimeUnitSelectKey("days");
-      setFromDate(moment().subtract(30, "days").format("YYYY-MM-DD"));
-      setToDate(moment().format("YYYY-MM-DD"));
-      setGranularity("day");
-    }
-  }, [isOpen, setLastTimeUnitValue, setRangeSelectKey, setTimeUnitSelectKey]);
 
   const handleSearch = async () => {
     const {
@@ -66,16 +68,18 @@ const VotingActivityFullChartDialog: React.FC<
       payloadStartDate,
       payloadEndDate,
     } = await searchRanges.getRangesValues();
-    const from = payloadFromBlock || payloadStartDate;
-    const to = payloadToBlock || payloadEndDate;
-    if (from) setFromDate(moment(from).format("YYYY-MM-DD"));
-    if (to) setToDate(moment(to).format("YYYY-MM-DD"));
+    if (payloadFromBlock) setFromDate(String(payloadFromBlock));
+    else if (payloadStartDate)
+      setFromDate(moment(payloadStartDate).format("YYYY-MM-DD"));
+    if (payloadToBlock) setToDate(String(payloadToBlock));
+    else if (payloadEndDate)
+      setToDate(moment(payloadEndDate).format("YYYY-MM-DD"));
   };
 
   const handleFilterClear = () => {
-    setRangeSelectKey("lastTime");
-    setTimeUnitSelectKey("days");
-    setLastTimeUnitValue(30);
+    searchRanges.setRangeSelectKey("lastTime");
+    searchRanges.setTimeUnitSelectKey("days");
+    searchRanges.setLastTimeUnitValue(30);
     setFromDate(moment().subtract(30, "days").format("YYYY-MM-DD"));
     setToDate(moment().format("YYYY-MM-DD"));
     setGranularity("day");
@@ -139,6 +143,16 @@ const VotingActivityFullChartDialog: React.FC<
             </div>
           </div>
 
+          {!isVoteStatsLoading &&
+            !isVoteStatsError &&
+            voteStats &&
+            voteStats.length > 0 && (
+              <VotingActivityKpiStrip
+                data={voteStats}
+                granularity={granularity}
+              />
+            )}
+
           <div className="h-[55vh] w-full flex items-center justify-center">
             {isVoteStatsLoading ? (
               <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />
@@ -164,4 +178,4 @@ const VotingActivityFullChartDialog: React.FC<
   );
 };
 
-export default VotingActivityFullChartDialog;
+export default NetworkVotingActivityFullChartDialog;

@@ -1,3 +1,4 @@
+import { formatCompact } from "@/utils/chartUtils";
 import { useTheme } from "@/contexts/ThemeContext";
 import Hive from "@/types/Hive";
 import moment from "moment";
@@ -48,6 +49,162 @@ const SERIES_META = [
   { dataKey: "unique_voters", color: VOTERS_COLOR, dash: "5 3" },
 ];
 
+interface ChartTooltipProps {
+  active?: boolean;
+  payload?: any[];
+  locale: string;
+  t: (key: string) => string;
+}
+
+const ChartTooltip: React.FC<ChartTooltipProps> = ({
+  active,
+  payload,
+  locale,
+  t,
+}) => {
+  if (!active || !payload || !payload.length) return null;
+  const d = payload[0].payload;
+  const total =
+    d.total_votes || d.upvotes + d.downvotes + d.self_votes + d.unvotes;
+  const pct = (val: number) =>
+    total > 0
+      ? `${((val / total) * 100).toLocaleString(locale, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}%`
+      : "—";
+
+  const voteRows = [
+    {
+      key: "upvotes",
+      label: t("votingActivityChart.upvotes"),
+      value: d.upvotes,
+      color: UP_COLOR,
+    },
+    {
+      key: "downvotes",
+      label: t("votingActivityChart.downvotes"),
+      value: d.downvotes,
+      color: DOWN_COLOR,
+    },
+    {
+      key: "self_votes",
+      label: t("votingActivityChart.selfVotes"),
+      value: d.self_votes,
+      color: SELF_COLOR,
+    },
+    {
+      key: "unvotes",
+      label: t("votingActivityChart.unvotes"),
+      value: d.unvotes,
+      color: UNVOTE_COLOR,
+    },
+  ];
+
+  return (
+    <div className="bg-theme rounded shadow-md border border-gray-200 dark:border-gray-700 py-2 px-3 text-[0.6rem] min-w-[200px]">
+      <p className="text-center text-gray-400 font-medium mb-2">{d.period}</p>
+      <div className="flex justify-between items-center pb-1.5 mb-1.5 border-b border-gray-200 dark:border-gray-700">
+        <span className="text-gray-500 uppercase tracking-wide">
+          {t("votingActivityChart.totalVotes")}
+        </span>
+        <span className="font-bold">{total.toLocaleString(locale)}</span>
+      </div>
+      <div className="grid grid-cols-[1fr_auto_auto] gap-x-3 gap-y-0.5 items-center">
+        {voteRows.map(({ key, label, value, color }) => (
+          <React.Fragment key={key}>
+            <span style={{ color }}>{label}</span>
+            <span
+              className="font-semibold tabular-nums text-right"
+              style={{ color }}
+            >
+              {value.toLocaleString(locale)}
+            </span>
+            <span className="text-gray-400 tabular-nums text-right">
+              {pct(value)}
+            </span>
+          </React.Fragment>
+        ))}
+      </div>
+      <div className="flex justify-between gap-3 border-t border-gray-200 dark:border-gray-700 pt-1.5 mt-1.5">
+        <span className="text-gray-500">
+          {t("votingActivityChart.uniqueVoters")}
+        </span>
+        <span
+          className="font-semibold tabular-nums"
+          style={{ color: VOTERS_COLOR }}
+        >
+          {d.unique_voters.toLocaleString(locale)}
+        </span>
+      </div>
+    </div>
+  );
+};
+
+interface ChartLegendProps {
+  payload?: any[];
+  hiddenKeys: string[];
+  onToggle: (key: string) => void;
+  t: (key: string) => string;
+}
+
+const ChartLegend: React.FC<ChartLegendProps> = ({
+  payload,
+  hiddenKeys,
+  onToggle,
+  t,
+}) => {
+  if (!payload) return null;
+  return (
+    <TooltipProvider>
+      <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-[10px] pt-2">
+        {payload.map((entry: any) => {
+          const meta = SERIES_META.find((s) => s.dataKey === entry.dataKey);
+          const hidden = hiddenKeys.includes(entry.dataKey);
+          return (
+            <div
+              key={entry.dataKey}
+              className="flex items-center gap-1 cursor-pointer select-none"
+              style={{ opacity: hidden ? 0.35 : 1 }}
+              onClick={() => onToggle(entry.dataKey)}
+            >
+              <svg width="18" height="8" style={{ flexShrink: 0 }}>
+                <line
+                  x1="0"
+                  y1="4"
+                  x2="18"
+                  y2="4"
+                  stroke={meta?.color}
+                  strokeWidth={entry.dataKey === "upvotes" ? 2.5 : 1.5}
+                  strokeDasharray={meta?.dash}
+                />
+              </svg>
+              <span style={{ color: meta?.color }}>{entry.value}</span>
+              {entry.dataKey === "unique_voters" && (
+                <RadixTooltip>
+                  <TooltipTrigger asChild>
+                    <span
+                      className="text-gray-400 hover:text-gray-300 cursor-help"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Info size={10} />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipPortal>
+                    <TooltipContent
+                      side="top"
+                      className="max-w-[200px] text-center text-[10px]"
+                    >
+                      {t("votingActivityChart.uniqueVotersInfo")}
+                    </TooltipContent>
+                  </TooltipPortal>
+                </RadixTooltip>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </TooltipProvider>
+  );
+};
+
 const VotingActivityChart: React.FC<VotingActivityChartProps> = ({
   data,
   includeBrush = false,
@@ -55,7 +212,7 @@ const VotingActivityChart: React.FC<VotingActivityChartProps> = ({
   showGranularity = "day",
 }) => {
   const { theme } = useTheme();
-  const { t, dir } = useI18n();
+  const { t, dir, locale } = useI18n();
   const isRTL = dir === "rtl";
   const strokeColor = theme === "dark" ? "#FFF" : "#000";
   const brushDefaults = useChartBrushDefaults();
@@ -76,134 +233,35 @@ const VotingActivityChart: React.FC<VotingActivityChartProps> = ({
     }));
   }, [data]);
 
+  // Both axes rescale to visible series only — hiding a series lets the remaining ones fill the chart.
+  const votesAxisMax = useMemo(() => {
+    if (!chartData.length || hiddenKeys.includes("upvotes")) return "auto";
+    return Math.max(...chartData.map((d) => d.upvotes));
+  }, [chartData, hiddenKeys]);
+
+  const votersAxisMax = useMemo(() => {
+    if (!chartData.length) return "auto";
+    const rightKeys = (
+      ["downvotes", "self_votes", "unvotes", "unique_voters"] as const
+    ).filter((k) => !hiddenKeys.includes(k));
+    if (rightKeys.length === 0) return "auto";
+    const naturalMax = Math.max(
+      ...chartData.map((d) => Math.max(...rightKeys.map((k) => d[k])))
+    );
+    // When upvotes is visible, double the right axis max so right-axis series
+    // stay in the lower half of the chart and don't appear above upvotes.
+    return hiddenKeys.includes("upvotes") ? naturalMax : naturalMax * 2;
+  }, [chartData, hiddenKeys]);
+
   const xTickFormatter = (value: string) => {
     if (showGranularity === "month") return moment(value).format("MMM YYYY");
     return moment(value).format("MMM D");
-  };
-
-  const formatCount = (n: number) => {
-    if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(1)}M`;
-    if (n >= 1_000) return `${(n / 1_000).toFixed(0)}k`;
-    return n.toLocaleString();
-  };
-
-  const CustomTooltip = ({
-    active,
-    payload,
-  }: {
-    active?: boolean;
-    payload?: any[];
-  }) => {
-    if (!active || !payload || !payload.length) return null;
-    const d = payload[0].payload;
-    return (
-      <div className="bg-theme rounded shadow-sm py-1.5 px-2 text-[0.6rem] min-w-[160px]">
-        <p className="text-gray-400 mb-1 text-center font-medium">{d.period}</p>
-        <div className="grid grid-cols-1 gap-y-0.5">
-          <div className="flex justify-between gap-3">
-            <span className="text-gray-500 uppercase">
-              {t("votingActivityChart.upvotes")}
-            </span>
-            <span className="font-semibold" style={{ color: UP_COLOR }}>
-              {d.upvotes.toLocaleString()}
-            </span>
-          </div>
-          <div className="flex justify-between gap-3">
-            <span className="text-gray-500 uppercase">
-              {t("votingActivityChart.downvotes")}
-            </span>
-            <span className="font-semibold" style={{ color: DOWN_COLOR }}>
-              {d.downvotes.toLocaleString()} ({d.downvote_pct}%)
-            </span>
-          </div>
-          <div className="flex justify-between gap-3">
-            <span className="text-gray-500 uppercase">
-              {t("votingActivityChart.selfVotes")}
-            </span>
-            <span className="font-semibold" style={{ color: SELF_COLOR }}>
-              {d.self_votes.toLocaleString()}
-            </span>
-          </div>
-          <div className="flex justify-between gap-3">
-            <span className="text-gray-500 uppercase">
-              {t("votingActivityChart.unvotes")}
-            </span>
-            <span className="font-semibold" style={{ color: UNVOTE_COLOR }}>
-              {d.unvotes.toLocaleString()}
-            </span>
-          </div>
-          <div className="flex justify-between gap-3 border-t pt-0.5 mt-0.5 dark:border-gray-700">
-            <span className="text-gray-500 uppercase">
-              {t("votingActivityChart.uniqueVoters")}
-            </span>
-            <span className="font-semibold" style={{ color: VOTERS_COLOR }}>
-              {d.unique_voters.toLocaleString()}
-            </span>
-          </div>
-        </div>
-      </div>
-    );
   };
 
   const toggleKey = (key: string) =>
     setHiddenKeys((prev) =>
       prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
     );
-
-  const CustomLegend = ({ payload }: any) => {
-    if (!payload) return null;
-    return (
-      <TooltipProvider>
-        <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-[10px] pt-2">
-          {payload.map((entry: any) => {
-            const meta = SERIES_META.find((s) => s.dataKey === entry.dataKey);
-            const hidden = hiddenKeys.includes(entry.dataKey);
-            return (
-              <div
-                key={entry.dataKey}
-                className="flex items-center gap-1 cursor-pointer select-none"
-                style={{ opacity: hidden ? 0.35 : 1 }}
-                onClick={() => toggleKey(entry.dataKey)}
-              >
-                <svg width="18" height="8" style={{ flexShrink: 0 }}>
-                  <line
-                    x1="0"
-                    y1="4"
-                    x2="18"
-                    y2="4"
-                    stroke={meta?.color}
-                    strokeWidth={entry.dataKey === "upvotes" ? 2.5 : 1.5}
-                    strokeDasharray={meta?.dash}
-                  />
-                </svg>
-                <span style={{ color: meta?.color }}>{entry.value}</span>
-                {entry.dataKey === "unique_voters" && (
-                  <RadixTooltip>
-                    <TooltipTrigger asChild>
-                      <span
-                        className="text-gray-400 hover:text-gray-300 cursor-help"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <Info size={10} />
-                      </span>
-                    </TooltipTrigger>
-                    <TooltipPortal>
-                      <TooltipContent
-                        side="top"
-                        className="max-w-[200px] text-center text-[10px]"
-                      >
-                        {t("votingActivityChart.uniqueVotersInfo")}
-                      </TooltipContent>
-                    </TooltipPortal>
-                  </RadixTooltip>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </TooltipProvider>
-    );
-  };
 
   return (
     <ResponsiveContainer width="100%" height="100%">
@@ -234,7 +292,8 @@ const VotingActivityChart: React.FC<VotingActivityChartProps> = ({
         <YAxis
           yAxisId="votes"
           tickCount={tickCount}
-          tickFormatter={formatCount}
+          tickFormatter={(v) => formatCompact(v, locale)}
+          domain={[0, votesAxisMax]}
           style={{ fontSize: "10px" }}
           stroke={UP_COLOR}
           orientation={isRTL ? "right" : "left"}
@@ -250,7 +309,8 @@ const VotingActivityChart: React.FC<VotingActivityChartProps> = ({
         <YAxis
           yAxisId="voters"
           tickCount={tickCount}
-          tickFormatter={formatCount}
+          tickFormatter={(v) => formatCompact(v, locale)}
+          domain={[0, votersAxisMax]}
           style={{ fontSize: "10px" }}
           stroke={strokeColor}
           orientation={isRTL ? "left" : "right"}
@@ -263,8 +323,16 @@ const VotingActivityChart: React.FC<VotingActivityChartProps> = ({
             style: { fontSize: "9px", fill: strokeColor, textAnchor: "middle" },
           }}
         />
-        <Tooltip content={<CustomTooltip />} cursor={{ opacity: 0.06 }} />
-        <Legend verticalAlign="bottom" content={<CustomLegend />} />
+        <Tooltip
+          content={<ChartTooltip locale={locale} t={t} />}
+          cursor={{ opacity: 0.06 }}
+        />
+        <Legend
+          verticalAlign="bottom"
+          content={
+            <ChartLegend hiddenKeys={hiddenKeys} onToggle={toggleKey} t={t} />
+          }
+        />
 
         {/* Upvotes: gradient-filled area on left axis — the visual anchor */}
         <Area

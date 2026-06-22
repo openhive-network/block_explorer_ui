@@ -940,24 +940,18 @@ class FetchingService {
     });
   }
 
-  // TEMP: hardcoded test URL — remove before committing
-  async getPendingAuthorRewards(
-    accountName: string
-  ): Promise<Hive.PendingAuthorRewardsResponse> {
-    const res = await fetch(
-      `https://testapi.hivescan.info/hivemind-api/accounts/${accountName}/pending-author-rewards`
-    );
-    return res.json();
-  }
-
-  // TEMP: hardcoded test URL — remove before committing
-  async getPendingCurationRewards(
-    accountName: string
-  ): Promise<Hive.PendingCurationRewardsResponse> {
-    const res = await fetch(
-      `https://testapi.hivescan.info/hivemind-api/accounts/${accountName}/pending-curation-rewards`
-    );
-    return res.json();
+  async getNetworkVoteStats(
+    from?: string,
+    to?: string,
+    granularity?: "day" | "week" | "month"
+  ): Promise<Hive.NetworkVoteStatsResponse[]> {
+    return await this.extendedHiveChain!.restApi[
+      "haf-stats-api"
+    ].networkVoteStats({
+      from_date: from,
+      to_date: to,
+      granularity,
+    });
   }
 }
 

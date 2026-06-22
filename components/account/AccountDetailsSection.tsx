@@ -51,7 +51,6 @@ import { useSettings } from "@/contexts/SettingsContext";
 import useConvertedVestingShares from "@/hooks/common/useConvertedVestingShares";
 import useProxyPower from "@/hooks/api/accountPage/useProxyPower";
 import AccountProxyPowerCard from "./AccountProxyPowerCard"; // <-- 1. Import the new card
-import AccountPendingRewardsCard from "./AccountPendingRewardsCard";
 
 interface AccountDetailsSectionProps {
   accountName: string;
@@ -434,11 +433,6 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
                   isInitiallyOpen={tabExpandedStates.wallet}
                   onChangeTab={changeTab}
                 />
-                <AccountPendingRewardsCard
-                  accountName={accountName}
-                  isInitiallyOpen={tabExpandedStates.wallet}
-                  dynamicGlobalData={dynamicGlobalData}
-                />
                 <AccountHpActivityCard
                   header={t("accountDetailsSection.hpActivity")}
                   userDetails={accountDetails}
@@ -661,11 +655,6 @@ const AccountDetailsSection: React.FC<AccountDetailsSectionProps> = ({
               userDetails={accountDetails}
               isInitiallyOpen={false}
               onChangeTab={changeTab}
-            />
-            <AccountPendingRewardsCard
-              accountName={accountName}
-              isInitiallyOpen={false}
-              dynamicGlobalData={dynamicGlobalData}
             />
             <AccountBalanceHistoryCard
               header={t("accountDetailsSection.balanceHistory")}

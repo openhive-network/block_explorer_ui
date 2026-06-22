@@ -20,7 +20,7 @@ import TransferVolumeCard from "@/components/home/TransferVolumeCard";
 import TotalValueLockedCard from "@/components/home/TotalValueLockedCard";
 import NetworkGrowthCard from "@/components/home/NetworkGrowthCard";
 import HpMomentumCard from "@/components/home/HpMomentumCard";
-import VotingActivityCard from "@/components/home/VotingActivityCard";
+import NetworkVotingActivityCard from "@/components/home/NetworkVotingActivityCard";
 import LastBlocksWidget from "@/components/LastBlocksWidget";
 import FundAndSupplyWidget from "@/components/dashboard/widgets/data/FundAndSupplyWidget";
 import HiveParametersWidget from "@/components/dashboard/widgets/data/HiveParametersWidget";
@@ -228,7 +228,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     id: "voting-activity",
     name: "widgets.votingActivityName",
     category: "reports" as const,
-    component: VotingActivityCard,
+    component: NetworkVotingActivityCard,
     defaultLayout: { w: 4, h: 5, minW: 2, minH: 4 },
     dynamicHeight: true,
   },

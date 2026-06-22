@@ -17,7 +17,7 @@ import TransferVolumeCard from "@/components/home/TransferVolumeCard";
 import TotalValueLockedCard from "@/components/home/TotalValueLockedCard";
 import HpMomentumCard from "@/components/home/HpMomentumCard";
 import NetworkGrowthCard from "@/components/home/NetworkGrowthCard";
-import VotingActivityCard from "@/components/home/VotingActivityCard";
+import NetworkVotingActivityCard from "@/components/home/NetworkVotingActivityCard";
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import { useAuth } from "@/contexts/AuthContext";
@@ -94,7 +94,7 @@ const StandardHome = () => {
           />
           <NetworkGrowthCard />
           <div className="w-full lg:w-1/2">
-            <VotingActivityCard />
+            <NetworkVotingActivityCard />
           </div>
           <TransactionStatisticsCard />
           <TransferVolumeCard />
