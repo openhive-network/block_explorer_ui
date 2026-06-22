@@ -72,6 +72,10 @@ export type ExplorerNodeApi = {
     find_proposals: TWaxApiRequest<[proposal_ids: number[]], Hive.Proposal[]>;
   };
   bridge: {
+    get_account_posts: TWaxApiRequest<
+      { sort: string; account: string; limit: number },
+      Hive.AccountPostSummary[]
+    >;
     get_discussion: TWaxApiRequest<
       { author: string; permlink: string; observer?: string },
       Hive.HivePosts
@@ -923,6 +927,31 @@ class FetchingService {
         accountName,
       }
     );
+  }
+
+  async getAccountPosts(
+    accountName: string,
+    limit: number = 50
+  ): Promise<Hive.AccountPostSummary[]> {
+    return await this.extendedHiveChain!.api.bridge.get_account_posts({
+      sort: "posts",
+      account: accountName,
+      limit,
+    });
+  }
+
+  async getNetworkVoteStats(
+    from?: string,
+    to?: string,
+    granularity?: "day" | "week" | "month"
+  ): Promise<Hive.NetworkVoteStatsResponse[]> {
+    return await this.extendedHiveChain!.restApi[
+      "haf-stats-api"
+    ].networkVoteStats({
+      from_date: from,
+      to_date: to,
+      granularity,
+    });
   }
 }
 

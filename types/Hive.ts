@@ -1326,6 +1326,30 @@ namespace Hive {
     escrow_pending_amount_hive!: string;
     escrow_pending_count!: string;
   }
+
+  export interface AccountPostSummary {
+    cashout_time: string;
+    pending_payout_value: string;
+    depth: number;
+    author: string;
+  }
+
+  export class NetworkVoteStatsParams {
+    from_date?: string;
+    to_date?: string;
+    granularity?: string;
+  }
+
+  export class NetworkVoteStatsResponse {
+    period!: string;
+    total_votes!: number;
+    upvotes!: number;
+    downvotes!: number;
+    unvotes!: number;
+    self_votes!: number;
+    unique_voters!: number;
+    downvote_pct!: number;
+  }
 }
 
 export default Hive;

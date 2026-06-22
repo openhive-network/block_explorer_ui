@@ -101,6 +101,29 @@ const WidgetIndex = () => {
     });
   }, [isLoaded, username, widgets, layouts, onAddWidget]);
 
+  // One-time seed of the Voting Activity widget for users with a saved dashboard.
+  useEffect(() => {
+    if (!isLoaded || !username) return;
+    const seededKey = `hivescan_dashboard_voting_activity_seeded_${username}`;
+    if (localStorage.getItem(seededKey)) return;
+    if (widgets.some((w) => w.type === "voting-activity")) {
+      localStorage.setItem(seededKey, "true");
+      return;
+    }
+    const masterLayout = layouts.lg || [];
+    const mainColBottom = masterLayout
+      .filter((item) => item.x >= 3 && item.x < 9)
+      .reduce((max, item) => Math.max(max, item.y + item.h), 0);
+    onAddWidget("voting-activity", {
+      x: 3,
+      y: mainColBottom,
+      w: 3,
+      h: 5,
+      minH: 4,
+    });
+    localStorage.setItem(seededKey, "true");
+  }, [isLoaded, username, widgets, layouts, onAddWidget]);
+
   // Watched Proposals mirrors standard home: auto-shown when you watch a
   // proposal, auto-removed when none. X-dismiss persists via a flag.
   const watchedProposalsCount = getWatched("proposals").size;
@@ -262,8 +285,6 @@ const WidgetIndex = () => {
     handleToggleCollapse,
     handleWidgetStateChange,
   ]);
-
-  if (!isLoaded) return null;
 
   return (
     <>

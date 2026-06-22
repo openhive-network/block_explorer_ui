@@ -231,4 +231,12 @@ export const extendedRest = {
       urlPath: "accounts/{accountName}/vesting-history",
     },
   },
+  "haf-stats-api": {
+    networkVoteStats: {
+      params: Hive.NetworkVoteStatsParams,
+      result: Hive.NetworkVoteStatsResponse,
+      responseArray: true,
+      urlPath: "network/vote-stats",
+    },
+  },
 };
