@@ -15,10 +15,9 @@ import useCommunities from "@/hooks/api/communities/useCommunities";
 import TopCommunitiesCard from "@/components/home/TopCommunitiesCard";
 import TransferVolumeCard from "@/components/home/TransferVolumeCard";
 import TotalValueLockedCard from "@/components/home/TotalValueLockedCard";
-import NetworkHpDistributionCard from "@/components/home/NetworkHpDistributionCard";
 import HpMomentumCard from "@/components/home/HpMomentumCard";
 import NetworkGrowthCard from "@/components/home/NetworkGrowthCard";
-import DailyActiveUsersCard from "@/components/home/DailyActiveUsersCard";
+import NetworkVotingActivityCard from "@/components/home/NetworkVotingActivityCard";
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import { useAuth } from "@/contexts/AuthContext";
@@ -81,17 +80,12 @@ const StandardHome = () => {
         <title>{t("home.title")}</title>
       </Head>
       <div className="page-container grid grid-cols-12 text-white gap-3">
-        <div className="col-span-12 md:col-span-4 lg:col-span-3 flex flex-col gap-3">
-          <HeadBlockCard
-            headBlockCardData={dynamicGlobalQueryData}
-            transactionCount={trxOpsLength}
-            blockDetails={headBlockData}
-            opcount={opcount}
-          />
-          <div className="h-[340px]">
-            <NetworkHpDistributionCard />
-          </div>
-        </div>
+        <HeadBlockCard
+          headBlockCardData={dynamicGlobalQueryData}
+          transactionCount={trxOpsLength}
+          blockDetails={headBlockData}
+          opcount={opcount}
+        />
 
         <div className="col-span-12 md:col-span-8 lg:col-span-6">
           <LastBlocksWidget
@@ -99,7 +93,9 @@ const StandardHome = () => {
             strokeColor={strokeColor}
           />
           <NetworkGrowthCard />
-          <DailyActiveUsersCard />
+          <div className="w-full lg:w-1/2">
+            <NetworkVotingActivityCard />
+          </div>
           <TransactionStatisticsCard />
           <TransferVolumeCard />
           <TotalValueLockedCard />

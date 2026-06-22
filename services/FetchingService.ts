@@ -72,6 +72,10 @@ export type ExplorerNodeApi = {
     find_proposals: TWaxApiRequest<[proposal_ids: number[]], Hive.Proposal[]>;
   };
   bridge: {
+    get_account_posts: TWaxApiRequest<
+      { sort: string; account: string; limit: number },
+      Hive.AccountPostSummary[]
+    >;
     get_discussion: TWaxApiRequest<
       { author: string; permlink: string; observer?: string },
       Hive.HivePosts
@@ -925,29 +929,29 @@ class FetchingService {
     );
   }
 
-  async getDailyActiveUsers(
-    fromBlock?: Date | number | undefined,
-    toBlock?: Date | number | undefined,
-    granularity?: "day" | "week" | "month",
-    operationTypes?: string
-  ): Promise<Hive.DailyActiveUsersResponse[]> {
-    const params = {
-      from_date: fromBlock,
-      to_date: toBlock,
-      granularity,
-      operation_types: operationTypes?.trim(),
-    };
-    return this.extendedHiveChain!.restApi["haf-stats-api"].dailyActiveUsers(
-      params
-    );
+  async getAccountPosts(
+    accountName: string,
+    limit: number = 50
+  ): Promise<Hive.AccountPostSummary[]> {
+    return await this.extendedHiveChain!.api.bridge.get_account_posts({
+      sort: "posts",
+      account: accountName,
+      limit,
+    });
   }
 
-  async getNetworkHpDistribution(): Promise<
-    Hive.NetworkHpDistributionResponse[]
-  > {
+  async getNetworkVoteStats(
+    from?: string,
+    to?: string,
+    granularity?: "day" | "week" | "month"
+  ): Promise<Hive.NetworkVoteStatsResponse[]> {
     return await this.extendedHiveChain!.restApi[
       "haf-stats-api"
-    ].networkHpDistribution({});
+    ].networkVoteStats({
+      from_date: from,
+      to_date: to,
+      granularity,
+    });
   }
 }
 

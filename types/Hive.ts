@@ -1123,19 +1123,6 @@ namespace Hive {
     "to-block"?: number | Date;
   }
 
-  export class DailyActiveUsersParams {
-    from_date?: Date | number | undefined;
-    to_date?: Date | number | undefined;
-    granularity?: string;
-    operation_types?: string;
-  }
-
-  export class DailyActiveUsersResponse {
-    period!: string;
-    active_accounts!: number;
-    operations!: number;
-  }
-
   export class AccountFollowCount {
     account!: string;
     follower_count!: number;
@@ -1340,14 +1327,28 @@ namespace Hive {
     escrow_pending_count!: string;
   }
 
-  export class NetworkHpDistributionParams {}
+  export interface AccountPostSummary {
+    cashout_time: string;
+    pending_payout_value: string;
+    depth: number;
+    author: string;
+  }
 
-  export class NetworkHpDistributionResponse {
-    bucket!: string;
-    account_count!: number;
-    pct_accounts!: number;
-    total_hp!: number;
-    pct_hp!: number;
+  export class NetworkVoteStatsParams {
+    from_date?: string;
+    to_date?: string;
+    granularity?: string;
+  }
+
+  export class NetworkVoteStatsResponse {
+    period!: string;
+    total_votes!: number;
+    upvotes!: number;
+    downvotes!: number;
+    unvotes!: number;
+    self_votes!: number;
+    unique_voters!: number;
+    downvote_pct!: number;
   }
 }
 
