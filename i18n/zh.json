@@ -151,6 +151,7 @@
   "dailyActiveUsersFullChart.vote": "投票",
   "dailyActiveUsersFullChart.transfer": "转账",
   "dailyActiveUsersFullChart.customJson": "自定义JSON",
+  "dailyActiveUsersFullChart.other": "其他",
   "transferVolumeChart.totalTransferAmount": "总转账金额",
   "transferVolumeChart.transferCount": "转账次数",
   "transferVolumeChart.averageTransferAmount": "平均转账金额",

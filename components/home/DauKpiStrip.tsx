@@ -66,10 +66,19 @@ const DauKpiStrip: React.FC<DauKpiStripProps> = ({
     d[trendMetric] > max[trendMetric] ? d : max
   );
 
-  const todayStr = moment().format("YYYY-MM-DD");
+  // Trend excludes the current incomplete period (day/week/month)
+  const currentPeriodStart = moment()
+    .startOf(
+      granularity === "day"
+        ? "day"
+        : granularity === "week"
+          ? "isoWeek"
+          : "month"
+    )
+    .format("YYYY-MM-DD");
+  const completedData = data.filter((d) => d.period < currentPeriodStart);
   const first = data[0];
-  const lastCompleted =
-    [...data].reverse().find((d) => d.period < todayStr) ?? null;
+  const lastCompleted = completedData[completedData.length - 1];
   const firstVal = first[trendMetric];
   const lastVal = lastCompleted?.[trendMetric] ?? null;
   const trendPct =

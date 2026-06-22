@@ -56,10 +56,10 @@ const DailyActiveUsersCard = () => {
     return [...dailyActiveUsers].sort((a, b) => (a.period < b.period ? -1 : 1));
   }, [dailyActiveUsers]);
 
-  const latestEntry = useMemo(
-    () => (chartData.length ? chartData[chartData.length - 1] : null),
-    [chartData]
-  );
+  const lastCompletedEntry = useMemo(() => {
+    const todayStr = moment().format("YYYY-MM-DD");
+    return [...chartData].reverse().find((d) => d.period < todayStr) ?? null;
+  }, [chartData]);
 
   const avg30dDau = useMemo(() => {
     if (!chartData.length) return null;
@@ -73,11 +73,6 @@ const DailyActiveUsersCard = () => {
     return Math.round(
       chartData.reduce((s, d) => s + d.operations, 0) / chartData.length
     );
-  }, [chartData]);
-
-  const lastCompletedEntry = useMemo(() => {
-    const todayStr = moment().format("YYYY-MM-DD");
-    return [...chartData].reverse().find((d) => d.period < todayStr) ?? null;
   }, [chartData]);
 
   const trendDau = useMemo(() => {
@@ -110,11 +105,11 @@ const DailyActiveUsersCard = () => {
             <p className="text-red-500 text-[11px] mt-1">
               {t("common.errorLoadingData")}
             </p>
-          ) : latestEntry ? (
+          ) : lastCompletedEntry ? (
             <>
               <div className="flex items-baseline gap-1.5">
                 <p className="text-xl font-bold leading-tight text-explorer-dark-gray dark:text-text">
-                  {latestEntry.active_accounts.toLocaleString(locale)}
+                  {lastCompletedEntry.active_accounts.toLocaleString(locale)}
                 </p>
                 {trendDau !== null && (
                   <TrendBadge value={trendDau} locale={locale} />
@@ -144,11 +139,11 @@ const DailyActiveUsersCard = () => {
             <p className="text-red-500 text-[11px] mt-1">
               {t("common.errorLoadingData")}
             </p>
-          ) : latestEntry ? (
+          ) : lastCompletedEntry ? (
             <>
               <div className="flex items-baseline gap-1.5">
                 <p className="text-xl font-bold leading-tight text-explorer-dark-gray dark:text-text">
-                  {latestEntry.operations.toLocaleString(locale)}
+                  {lastCompletedEntry.operations.toLocaleString(locale)}
                 </p>
                 {trendOps !== null && (
                   <TrendBadge value={trendOps} locale={locale} />

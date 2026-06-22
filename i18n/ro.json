@@ -151,6 +151,7 @@
   "dailyActiveUsersFullChart.vote": "Voturi",
   "dailyActiveUsersFullChart.transfer": "Transferuri",
   "dailyActiveUsersFullChart.customJson": "JSON personalizat",
+  "dailyActiveUsersFullChart.other": "Altele",
   "transferVolumeChart.totalTransferAmount": "Suma Totală a Transferurilor",
   "transferVolumeChart.transferCount": "Număr de Transferuri",
   "transferVolumeChart.averageTransferAmount": "Suma Medie a Transferurilor",

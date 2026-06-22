@@ -151,6 +151,7 @@
   "dailyActiveUsersFullChart.vote": "الأصوات",
   "dailyActiveUsersFullChart.transfer": "التحويلات",
   "dailyActiveUsersFullChart.customJson": "JSON مخصص",
+  "dailyActiveUsersFullChart.other": "أخرى",
   "transferVolumeChart.totalTransferAmount": "إجمالي مبلغ التحويل",
   "transferVolumeChart.transferCount": "عدد التحويلات",
   "transferVolumeChart.averageTransferAmount": "متوسط مبلغ التحويل",

@@ -6,7 +6,8 @@ const useDailyActiveUsers = (
   fromBlock?: Date | number | undefined,
   toBlock?: Date | number | undefined,
   granularity?: "day" | "week" | "month",
-  operationTypes?: string
+  operationTypes?: string,
+  enabled = true
 ) => {
   const {
     data: dailyActiveUsers,
@@ -27,7 +28,7 @@ const useDailyActiveUsers = (
         granularity,
         operationTypes
       ),
-    enabled: true,
+    enabled,
   });
 
   return {

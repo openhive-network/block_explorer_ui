@@ -151,6 +151,7 @@
   "dailyActiveUsersFullChart.vote": "투표",
   "dailyActiveUsersFullChart.transfer": "전송",
   "dailyActiveUsersFullChart.customJson": "사용자 정의 JSON",
+  "dailyActiveUsersFullChart.other": "기타",
   "transferVolumeChart.totalTransferAmount": "총 전송 금액",
   "transferVolumeChart.transferCount": "전송 횟수",
   "transferVolumeChart.averageTransferAmount": "평균 전송 금액",
