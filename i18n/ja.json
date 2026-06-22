@@ -151,6 +151,7 @@
   "dailyActiveUsersFullChart.vote": "投票",
   "dailyActiveUsersFullChart.transfer": "送金",
   "dailyActiveUsersFullChart.customJson": "カスタムJSON",
+  "dailyActiveUsersFullChart.other": "その他",
   "transferVolumeChart.totalTransferAmount": "送金総額",
   "transferVolumeChart.transferCount": "送金回数",
   "transferVolumeChart.averageTransferAmount": "平均送金量",

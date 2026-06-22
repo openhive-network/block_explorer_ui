@@ -151,6 +151,7 @@
   "dailyActiveUsersFullChart.vote": "Votes",
   "dailyActiveUsersFullChart.transfer": "Transfers",
   "dailyActiveUsersFullChart.customJson": "Custom JSON",
+  "dailyActiveUsersFullChart.other": "Other",
   "transferVolumeChart.totalTransferAmount": "Total Transfer Amount",
   "transferVolumeChart.transferCount": "Transfer Count",
   "transferVolumeChart.averageTransferAmount": "Average Transfer Amount",

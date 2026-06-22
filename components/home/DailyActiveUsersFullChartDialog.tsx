@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import moment from "moment";
 import { Loader2 } from "lucide-react";
 import {
@@ -84,14 +84,19 @@ const DailyActiveUsersFullChartDialog: React.FC<
     fromDate,
     toDate,
     granularity,
-    opType === "all" ? undefined : opType
+    opType === "all" ? undefined : opType,
+    isOpen
   );
 
   const { breakdownData, isBreakdownLoading, isBreakdownError } =
     useDauBreakdown(fromDate, toDate, granularity, isOpen && isStackedMode);
 
-  const chartData = [...(dailyActiveUsers ?? [])].sort((a, b) =>
-    a.period < b.period ? -1 : 1
+  const chartData = useMemo(
+    () =>
+      [...(dailyActiveUsers ?? [])].sort((a, b) =>
+        a.period < b.period ? -1 : 1
+      ),
+    [dailyActiveUsers]
   );
 
   useEffect(() => {
@@ -269,7 +274,11 @@ const DailyActiveUsersFullChartDialog: React.FC<
               </p>
             ) : hasData ? (
               isStackedMode ? (
-                <DauStackedChart data={breakdownData} includeBrush />
+                <DauStackedChart
+                  data={breakdownData}
+                  allData={chartData}
+                  includeBrush
+                />
               ) : (
                 <DailyActiveUsersChart
                   data={chartData}

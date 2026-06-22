@@ -1,6 +1,6 @@
 import { useTheme } from "@/contexts/ThemeContext";
 import moment from "moment";
-import React from "react";
+import React, { useMemo } from "react";
 import {
   AreaChart,
   Area,
@@ -17,9 +17,13 @@ import {
   ChartBrushDefs,
   useChartBrushDefaults,
 } from "@/components/ui/ChartBrush";
+import Hive from "@/types/Hive";
+
+type DauStackedPoint = DauBreakdownPoint & { other: number };
 
 interface DauStackedChartProps {
   data: DauBreakdownPoint[];
+  allData?: Hive.DailyActiveUsersResponse[];
   includeBrush?: boolean;
   dateFormat?: string;
 }
@@ -30,6 +34,7 @@ const STACK_COLORS: Record<string, string> = {
   comment: "#8b5cf6",
   transfer: "#f59e0b",
   custom_json: "#10b981",
+  other: "#94a3b8",
 };
 
 const STACK_KEYS = [
@@ -38,10 +43,12 @@ const STACK_KEYS = [
   "comment",
   "transfer",
   "custom_json",
+  "other",
 ] as const;
 
 const DauStackedChart: React.FC<DauStackedChartProps> = ({
   data,
+  allData,
   includeBrush = false,
   dateFormat,
 }) => {
@@ -50,6 +57,25 @@ const DauStackedChart: React.FC<DauStackedChartProps> = ({
   const isRTL = dir === "rtl";
   const brushDefaults = useChartBrushDefaults();
   const strokeColor = theme === "dark" ? "#FFF" : "#000";
+
+  const totalByPeriod = useMemo(() => {
+    const map = new Map<string, number>();
+    allData?.forEach((d) => map.set(d.period, d.operations));
+    return map;
+  }, [allData]);
+
+  const stackData = useMemo<DauStackedPoint[]>(() => {
+    return data.map((point) => {
+      const knownOps =
+        point.post +
+        point.comment +
+        point.vote +
+        point.transfer +
+        point.custom_json;
+      const totalOps = totalByPeriod.get(point.period) ?? knownOps;
+      return { ...point, other: Math.max(0, totalOps - knownOps) };
+    });
+  }, [data, totalByPeriod]);
 
   const formatYAxis = (value: number) => {
     if (value >= 1_000_000)
@@ -67,6 +93,7 @@ const DauStackedChart: React.FC<DauStackedChartProps> = ({
     comment: t("dailyActiveUsersFullChart.comment"),
     transfer: t("dailyActiveUsersFullChart.transfer"),
     custom_json: t("dailyActiveUsersFullChart.customJson"),
+    other: t("dailyActiveUsersFullChart.other"),
   };
 
   const CustomTooltip = ({
@@ -107,7 +134,7 @@ const DauStackedChart: React.FC<DauStackedChartProps> = ({
   return (
     <ResponsiveContainer width="100%" height="100%">
       <AreaChart
-        data={data}
+        data={stackData}
         margin={{
           top: 20,
           right: isRTL ? 10 : 30,

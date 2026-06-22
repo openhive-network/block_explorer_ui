@@ -42,10 +42,10 @@ const useDauBreakdown = (
   });
 
   const isBreakdownLoading = results.some((r) => r.isLoading);
-  const isBreakdownError = results.some((r) => r.isError);
+  const isBreakdownError = results.every((r) => r.isError);
 
   const breakdownData = useMemo<DauBreakdownPoint[]>(() => {
-    if (isBreakdownLoading || isBreakdownError) return [];
+    if (isBreakdownLoading) return [];
     const merged = new Map<string, DauBreakdownPoint>();
     OP_TYPES.forEach((opType, i) => {
       const rows = results[i].data ?? [];
@@ -67,7 +67,7 @@ const useDauBreakdown = (
       a.period < b.period ? -1 : 1
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [results, isBreakdownLoading, isBreakdownError]);
+  }, [results, isBreakdownLoading]);
 
   return { breakdownData, isBreakdownLoading, isBreakdownError };
 };
