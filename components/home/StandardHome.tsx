@@ -15,6 +15,7 @@ import useCommunities from "@/hooks/api/communities/useCommunities";
 import TopCommunitiesCard from "@/components/home/TopCommunitiesCard";
 import TransferVolumeCard from "@/components/home/TransferVolumeCard";
 import TotalValueLockedCard from "@/components/home/TotalValueLockedCard";
+import NetworkHpDistributionCard from "@/components/home/NetworkHpDistributionCard";
 import HpMomentumCard from "@/components/home/HpMomentumCard";
 import NetworkGrowthCard from "@/components/home/NetworkGrowthCard";
 import DailyActiveUsersCard from "@/components/home/DailyActiveUsersCard";
@@ -96,7 +97,14 @@ const StandardHome = () => {
           <DailyActiveUsersCard />
           <TransactionStatisticsCard />
           <TransferVolumeCard />
-          <TotalValueLockedCard />
+          <div className="flex gap-3 mb-2">
+            <div className="flex-1 min-w-0 flex flex-col [&>div]:flex-1 [&>div]:mb-0">
+              <TotalValueLockedCard />
+            </div>
+            <div className="flex-1 min-w-0">
+              <NetworkHpDistributionCard />
+            </div>
+          </div>
           <HpMomentumCard />
           <SearchesSection />
         </div>

@@ -238,5 +238,11 @@ export const extendedRest = {
       responseArray: true,
       urlPath: "network/daily-active-users",
     },
+    networkHpDistribution: {
+      params: Hive.NetworkHpDistributionParams,
+      result: Hive.NetworkHpDistributionResponse,
+      responseArray: true,
+      urlPath: "network/hp-distribution",
+    },
   },
 };
