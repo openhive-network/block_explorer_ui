@@ -24,7 +24,7 @@ const trendPct = (
   current: number,
   previous: number | undefined
 ): number | null => {
-  if (!previous) return null;
+  if (previous == null || previous === 0) return null;
   return ((current - previous) / previous) * 100;
 };
 
@@ -75,14 +75,9 @@ const NetworkVotingActivityCard: React.FC = () => {
         unique_voters: 0,
       }
     );
-    const downvote_pct =
-      totals.upvotes + totals.downvotes > 0
-        ? (totals.downvotes / (totals.upvotes + totals.downvotes)) * 100
-        : null;
     return {
       ...totals,
       unique_voters: Math.round(totals.unique_voters / days.length),
-      downvote_pct,
     };
   };
 
@@ -111,14 +106,22 @@ const NetworkVotingActivityCard: React.FC = () => {
   return (
     <div className="bg-theme rounded mb-2 shadow-md overflow-hidden">
       <div className="flex flex-wrap gap-2 p-3">
-        {/* Card header with date */}
+        {/* Card header */}
         <div className="w-full flex items-center justify-between">
-          <span className="text-[11px] font-semibold uppercase tracking-wide text-explorer-dark-gray dark:text-text">
-            {t("widgets.votingActivityName")}
-          </span>
-          <span className="text-[10px] text-gray-400">
-            {t("votingActivityCard.last30Days")}
-          </span>
+          <div className="flex flex-col">
+            <span className="text-[11px] font-semibold uppercase tracking-wide text-explorer-dark-gray dark:text-text">
+              {t("widgets.votingActivityName")}
+            </span>
+            <span className="text-[10px] text-gray-400">
+              {t("votingActivityCard.last30Days")}
+            </span>
+          </div>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="text-xs underline"
+          >
+            {t("votingActivityCard.fullChart")}
+          </button>
         </div>
 
         {/* Headline KPIs */}
@@ -208,26 +211,7 @@ const NetworkVotingActivityCard: React.FC = () => {
                   {latest.downvotes.toLocaleString(locale)}
                 </p>
                 <p className="text-[10px] text-gray-500">
-                  {latest.downvote_pct !== null ? (
-                    <>
-                      {latest.downvote_pct.toLocaleString(locale, {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2,
-                      })}
-                      %
-                      {latest.downvote_pct < 5 && (
-                        <>
-                          {" "}
-                          &mdash;{" "}
-                          <span className="text-green-500">
-                            {t("votingActivityCard.healthy")}
-                          </span>
-                        </>
-                      )}
-                    </>
-                  ) : (
-                    "—"
-                  )}
+                  {pct(latest.downvotes)}
                 </p>
               </>
             ) : null}
@@ -236,17 +220,18 @@ const NetworkVotingActivityCard: React.FC = () => {
           {/* Self-votes */}
           <div className="bg-explorer-extra-light-gray rounded-lg p-2.5 shadow-md border-l-2 border-amber-500">
             <h4 className="text-[10px] font-semibold uppercase text-amber-600 dark:text-amber-400 flex items-center gap-1">
-              <User size={11} /> {t("votingActivityCard.selfVotes")}
+              <User size={11} /> {t("votingActivityCard.selfVoteRate")}
             </h4>
             {isVoteStatsLoading ? (
               <Loader2 className="animate-spin h-3 w-3 mt-1" />
             ) : latest ? (
               <>
                 <p className="text-base font-bold text-amber-600 dark:text-amber-400 leading-tight">
-                  {latest.self_votes.toLocaleString(locale)}
+                  {pct(latest.self_votes)}
                 </p>
                 <p className="text-[10px] text-gray-500">
-                  {pct(latest.self_votes)}
+                  {latest.self_votes.toLocaleString(locale)}{" "}
+                  {t("votingActivityCard.selfVotes")}
                 </p>
               </>
             ) : null}
@@ -270,15 +255,6 @@ const NetworkVotingActivityCard: React.FC = () => {
               </>
             ) : null}
           </div>
-        </div>
-
-        <div className="w-full flex justify-end">
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="text-xs underline"
-          >
-            {t("votingActivityCard.fullChart")}
-          </button>
         </div>
       </div>
 

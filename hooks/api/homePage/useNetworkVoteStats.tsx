@@ -7,7 +7,8 @@ const useNetworkVoteStats = (
   from?: string,
   to?: string,
   granularity?: "day" | "week" | "month",
-  liveDataEnabled?: boolean
+  liveDataEnabled?: boolean,
+  enabled = true
 ) => {
   const {
     data: voteStats,
@@ -18,6 +19,7 @@ const useNetworkVoteStats = (
     queryFn: () => fetchingService.getNetworkVoteStats(from, to, granularity),
     refetchInterval: liveDataEnabled ? config.mainRefreshInterval : false,
     refetchOnWindowFocus: false,
+    enabled,
   });
 
   return { voteStats, isVoteStatsLoading, isVoteStatsError };

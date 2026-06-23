@@ -238,5 +238,11 @@ export const extendedRest = {
       responseArray: true,
       urlPath: "network/vote-stats",
     },
+    dailyActiveUsers: {
+      params: Hive.DailyActiveUsersParams,
+      result: Hive.DailyActiveUsersResponse,
+      responseArray: true,
+      urlPath: "network/daily-active-users",
+    },
   },
 };

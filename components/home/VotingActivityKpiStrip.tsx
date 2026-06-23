@@ -25,7 +25,9 @@ const VotingActivityKpiStrip: React.FC<VotingActivityKpiStripProps> = ({
 
   const stats = useMemo(() => {
     if (data.length === 0) return null;
-    const todayStr = moment().format("YYYY-MM-DD");
+    const currentPeriodStart = moment()
+      .startOf(granularity === "week" ? "isoWeek" : granularity)
+      .format("YYYY-MM-DD");
 
     let totalVotes = 0;
     let totalUpvotes = 0;
@@ -41,7 +43,7 @@ const VotingActivityKpiStrip: React.FC<VotingActivityKpiStripProps> = ({
       totalDownvotes += d.downvotes;
       totalSelfVotes += d.self_votes;
       if (d.total_votes > peakEntry.total_votes) peakEntry = d;
-      if (d.period < todayStr) lastCompleted = d;
+      if (d.period < currentPeriodStart) lastCompleted = d;
     }
 
     const avgPerPeriod = Math.round(totalVotes / data.length);
@@ -51,7 +53,7 @@ const VotingActivityKpiStrip: React.FC<VotingActivityKpiStripProps> = ({
         : null;
     const upvotePct = totalVotes > 0 ? (totalUpvotes / totalVotes) * 100 : null;
     const selfVotePct =
-      totalVotes > 0 ? (totalSelfVotes / totalVotes) * 100 : null;
+      totalUpvotes > 0 ? (totalSelfVotes / totalUpvotes) * 100 : null;
 
     const trendPct =
       lastCompleted !== null &&
@@ -74,7 +76,7 @@ const VotingActivityKpiStrip: React.FC<VotingActivityKpiStripProps> = ({
       peakEntry,
       trendPct,
     };
-  }, [data]);
+  }, [data, granularity]);
 
   if (!stats) return null;
 
@@ -145,24 +147,20 @@ const VotingActivityKpiStrip: React.FC<VotingActivityKpiStripProps> = ({
       />
       <KpiTile
         label={t("votingActivityKpiStrip.downvoteRate")}
-        value={
+        value={totalDownvotes.toLocaleString(locale)}
+        sub={
           downvotePct !== null
-            ? `${downvotePct.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`
-            : "—"
+            ? `${downvotePct.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}% ${t("votingActivityKpiStrip.ofTotal")}`
+            : undefined
         }
-        sub={`${totalDownvotes.toLocaleString(locale)} ${t("votingActivityKpiStrip.downvotes")}`}
       />
       <KpiTile
         label={t("votingActivityKpiStrip.selfVoteRate")}
         infoText={t("votingActivityKpiStrip.selfVoteRateInfo")}
-        value={
-          selfVotePct !== null
-            ? `${selfVotePct.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`
-            : "—"
-        }
+        value={totalSelfVotes.toLocaleString(locale)}
         sub={
-          selfVoteHealthLabel !== null
-            ? `${totalSelfVotes.toLocaleString(locale)} ${t("votingActivityKpiStrip.selfVotes")}`
+          selfVotePct !== null
+            ? `${selfVotePct.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}% ${t("votingActivityKpiStrip.ofUpvotes")}`
             : undefined
         }
         subBadge={selfVoteHealthLabel ?? undefined}

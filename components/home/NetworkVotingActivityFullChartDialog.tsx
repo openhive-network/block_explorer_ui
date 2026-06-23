@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import moment from "moment";
 import { Loader2 } from "lucide-react";
 import {
@@ -38,30 +38,38 @@ const NetworkVotingActivityFullChartDialog: React.FC<
   const [granularity, setGranularity] = useState<"day" | "week" | "month">(
     "day"
   );
-  const [fromDate, setFromDate] = useState<string>(
+  const [fromDate, setFromDate] = useState<string | undefined>(
     moment().subtract(30, "days").format("YYYY-MM-DD")
   );
-  const [toDate, setToDate] = useState<string>(moment().format("YYYY-MM-DD"));
+  const [toDate, setToDate] = useState<string | undefined>(
+    moment().format("YYYY-MM-DD")
+  );
 
   const searchRanges = useSearchRanges();
   const [isSearchButtonDisabled, setIsSearchButtonDisabled] = useState(false);
+  const { setRangeSelectKey, setTimeUnitSelectKey, setLastTimeUnitValue } =
+    searchRanges;
 
-  const searchRangesInitialized = useRef(false);
   useEffect(() => {
-    if (!isOpen || searchRangesInitialized.current) return;
-    searchRangesInitialized.current = true;
-    searchRanges.setLastTimeUnitValue(30);
-    searchRanges.setRangeSelectKey("lastTime");
-    searchRanges.setTimeUnitSelectKey("days");
-  }, [
-    isOpen,
-    searchRanges.setLastTimeUnitValue,
-    searchRanges.setRangeSelectKey,
-    searchRanges.setTimeUnitSelectKey,
-  ]);
+    if (!isOpen) return;
+    const thirtyDaysAgo = moment().subtract(30, "days").format("YYYY-MM-DD");
+    const now = moment().format("YYYY-MM-DD");
+    setLastTimeUnitValue(30);
+    setRangeSelectKey("lastTime");
+    setTimeUnitSelectKey("days");
+    setFromDate(thirtyDaysAgo);
+    setToDate(now);
+    setGranularity("day");
+  }, [isOpen, setLastTimeUnitValue, setRangeSelectKey, setTimeUnitSelectKey]);
 
   const { voteStats, isVoteStatsLoading, isVoteStatsError } =
-    useNetworkVoteStats(fromDate, toDate, granularity, settings.liveData);
+    useNetworkVoteStats(
+      fromDate,
+      toDate,
+      granularity,
+      settings.liveData,
+      isOpen
+    );
 
   const handleSearch = async () => {
     const {
@@ -70,12 +78,20 @@ const NetworkVotingActivityFullChartDialog: React.FC<
       payloadStartDate,
       payloadEndDate,
     } = await searchRanges.getRangesValues();
-    if (payloadFromBlock) setFromDate(String(payloadFromBlock));
-    else if (payloadStartDate)
-      setFromDate(moment(payloadStartDate).format("YYYY-MM-DD"));
-    if (payloadToBlock) setToDate(String(payloadToBlock));
-    else if (payloadEndDate)
-      setToDate(moment(payloadEndDate).format("YYYY-MM-DD"));
+    setFromDate(
+      payloadFromBlock
+        ? String(payloadFromBlock)
+        : payloadStartDate
+          ? moment(payloadStartDate).format("YYYY-MM-DD")
+          : undefined
+    );
+    setToDate(
+      payloadToBlock
+        ? String(payloadToBlock)
+        : payloadEndDate
+          ? moment(payloadEndDate).format("YYYY-MM-DD")
+          : undefined
+    );
   };
 
   const handleFilterClear = () => {

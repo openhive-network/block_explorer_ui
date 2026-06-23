@@ -16,14 +16,14 @@ export const formatCompact = (n: number, locale: string): string => {
   if (abs >= 1_000_000)
     return (
       sign +
-      (abs / 1_000_000).toLocaleString(locale, { maximumFractionDigits: 1 }) +
+      (abs / 1_000_000).toLocaleString(locale, { maximumFractionDigits: 2 }) +
       "M"
     );
   if (abs >= 1_000)
     return (
       sign +
-      (abs / 1_000).toLocaleString(locale, { maximumFractionDigits: 0 }) +
-      "k"
+      (abs / 1_000).toLocaleString(locale, { maximumFractionDigits: 1 }) +
+      "K"
     );
   return n.toLocaleString(locale, { maximumFractionDigits: 0 });
 };

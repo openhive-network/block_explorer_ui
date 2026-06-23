@@ -229,7 +229,6 @@ const VotingActivityChart: React.FC<VotingActivityChartProps> = ({
       unvotes: item.unvotes,
       unique_voters: item.unique_voters,
       total_votes: item.total_votes,
-      downvote_pct: item.downvote_pct,
     }));
   }, [data]);
 
