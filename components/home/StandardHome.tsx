@@ -81,12 +81,17 @@ const StandardHome = () => {
         <title>{t("home.title")}</title>
       </Head>
       <div className="page-container grid grid-cols-12 text-white gap-3">
-        <HeadBlockCard
-          headBlockCardData={dynamicGlobalQueryData}
-          transactionCount={trxOpsLength}
-          blockDetails={headBlockData}
-          opcount={opcount}
-        />
+        <div className="col-span-12 md:col-span-4 lg:col-span-3 flex flex-col gap-3">
+          <HeadBlockCard
+            headBlockCardData={dynamicGlobalQueryData}
+            transactionCount={trxOpsLength}
+            blockDetails={headBlockData}
+            opcount={opcount}
+          />
+          <div className="h-[340px]">
+            <NetworkHpDistributionCard />
+          </div>
+        </div>
 
         <div className="col-span-12 md:col-span-8 lg:col-span-6">
           <LastBlocksWidget
@@ -97,14 +102,7 @@ const StandardHome = () => {
           <DailyActiveUsersCard />
           <TransactionStatisticsCard />
           <TransferVolumeCard />
-          <div className="flex gap-3 mb-2">
-            <div className="flex-1 min-w-0 flex flex-col [&>div]:flex-1 [&>div]:mb-0">
-              <TotalValueLockedCard />
-            </div>
-            <div className="flex-1 min-w-0">
-              <NetworkHpDistributionCard />
-            </div>
-          </div>
+          <TotalValueLockedCard />
           <HpMomentumCard />
           <SearchesSection />
         </div>

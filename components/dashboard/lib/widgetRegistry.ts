@@ -194,6 +194,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     category: "reports" as const,
     component: TransactionStatisticsCard,
     defaultLayout: { w: 6, h: 5, minW: 3, minH: 4 },
+    dynamicHeight: true,
   },
   "transfer-volume": {
     id: "transfer-volume",
@@ -201,6 +202,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     category: "reports" as const,
     component: TransferVolumeCard,
     defaultLayout: { w: 6, h: 5, minW: 3, minH: 4 },
+    dynamicHeight: true,
   },
   tvl: {
     id: "tvl",
@@ -208,13 +210,14 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     category: "reports" as const,
     component: TotalValueLockedCard,
     defaultLayout: { w: 6, h: 5, minW: 3, minH: 4 },
+    dynamicHeight: true,
   },
   "network-hp-distribution": {
     id: "network-hp-distribution",
     name: "widgets.networkHpDistributionName",
     category: "reports" as const,
     component: NetworkHpDistributionCard,
-    defaultLayout: { w: 6, h: 5, minW: 3, minH: 4 },
+    defaultLayout: { w: 3, h: 7, minW: 2, minH: 5 },
     dynamicHeight: false,
   },
   "network-growth": {
