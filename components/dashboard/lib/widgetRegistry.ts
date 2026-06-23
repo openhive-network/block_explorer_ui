@@ -238,7 +238,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     name: "widgets.votingActivityName",
     category: "reports" as const,
     component: NetworkVotingActivityCard,
-    defaultLayout: { w: 4, h: 5, minW: 2, minH: 4 },
+    defaultLayout: { w: 3, h: 5.8, minW: 2, minH: 4 },
     dynamicHeight: true,
   },
   searches: {
