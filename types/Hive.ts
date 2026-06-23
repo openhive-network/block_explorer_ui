@@ -1346,6 +1346,8 @@ namespace Hive {
     bucket!: string;
     account_count!: number;
     pct_accounts!: number;
+    total_hp!: number;
+    pct_hp!: number;
   }
 }
 

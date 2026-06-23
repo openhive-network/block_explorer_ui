@@ -139,25 +139,27 @@ const WidgetIndex = () => {
       return;
     }
     const masterLayout = layouts.lg || [];
-    const tvlItem = masterLayout.find((item) => item.i === "tvl-1");
-    if (tvlItem) {
+    const blockchainDatesItem = masterLayout.find(
+      (item) => item.i === "blockchain-dates-1"
+    );
+    if (blockchainDatesItem) {
       onAddWidget("network-hp-distribution", {
-        x: tvlItem.x + tvlItem.w,
-        y: tvlItem.y,
-        w: tvlItem.w,
-        h: tvlItem.h,
-        minH: 4,
+        x: blockchainDatesItem.x,
+        y: blockchainDatesItem.y + blockchainDatesItem.h,
+        w: blockchainDatesItem.w,
+        h: 7,
+        minH: 5,
       });
     } else {
-      const mainColBottom = masterLayout
-        .filter((item) => item.x >= 3 && item.x < 9)
+      const leftColBottom = masterLayout
+        .filter((item) => item.x < 3)
         .reduce((max, item) => Math.max(max, item.y + item.h), 0);
       onAddWidget("network-hp-distribution", {
-        x: 3,
-        y: mainColBottom,
-        w: 6,
-        h: 5,
-        minH: 4,
+        x: 0,
+        y: leftColBottom,
+        w: 3,
+        h: 7,
+        minH: 5,
       });
     }
     localStorage.setItem(seededKey, "true");

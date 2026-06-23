@@ -12,7 +12,7 @@ const useNetworkHpDistribution = () => {
   > = useQuery({
     queryKey: ["networkHpDistribution"],
     queryFn: () => fetchingService.getNetworkHpDistribution(),
-    staleTime: Infinity,
+    staleTime: 30 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
 
