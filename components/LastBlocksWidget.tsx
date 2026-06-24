@@ -18,6 +18,7 @@ import { Card, CardHeader, CardTitle } from "./ui/card";
 import { useI18n } from "../i18n/i18n";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useSettings } from "@/contexts/SettingsContext";
+import useMediaQuery from "@/hooks/common/useMediaQuery";
 
 interface LastBlocksWidgetProps {
   headBlock?: number;
@@ -110,6 +111,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
   const SeeMoreIcon = isRTL ? MoveLeft : MoveRight;
 
   const lastBlocks = useLastBlocks(headBlock);
+  const isMobile = useMediaQuery("(max-width: 640px)");
 
   // API returns newest-first; reverse so x-axis reads oldest→newest left-to-right.
   // JSON.stringify dep prevents re-computation when the query returns a new array reference
@@ -564,7 +566,8 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
                 }}
               />
             )}
-            {peakIdx >= 0 &&
+            {!isMobile &&
+              peakIdx >= 0 &&
               avatarPositions[peakIdx] &&
               (() => {
                 const pos = avatarPositions[peakIdx]!;
@@ -595,36 +598,37 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
                   </div>
                 );
               })()}
-            {avatarPositions.map((pos, i) => {
-              if (!pos) return null;
-              const isLatest = liveData && i === data.length - 1;
-              return (
-                <img
-                  key={data[i]?.name ?? i}
-                  src={getHiveAvatarUrl(pos.witness)}
-                  alt={pos.witness}
-                  width={AVATAR_SIZE}
-                  height={AVATAR_SIZE}
-                  className={isLatest ? "last-block-avatar" : undefined}
-                  style={{
-                    position: "absolute",
-                    left: pos.x - AVATAR_R,
-                    top: pos.y - AVATAR_SIZE - 6,
-                    width: AVATAR_SIZE,
-                    height: AVATAR_SIZE,
-                    borderRadius: "50%",
-                    objectFit: "cover",
-                    border: isLatest
-                      ? "2px solid #3b82f6"
-                      : `1.5px solid ${ringColor}`,
-                    pointerEvents: "none",
-                    transition: liveData
-                      ? "none"
-                      : `left ${ANIMATION_MS}ms ${EASING}, top ${ANIMATION_MS}ms ${EASING}`,
-                  }}
-                />
-              );
-            })}
+            {!isMobile &&
+              avatarPositions.map((pos, i) => {
+                if (!pos) return null;
+                const isLatest = liveData && i === data.length - 1;
+                return (
+                  <img
+                    key={data[i]?.name ?? i}
+                    src={getHiveAvatarUrl(pos.witness)}
+                    alt={pos.witness}
+                    width={AVATAR_SIZE}
+                    height={AVATAR_SIZE}
+                    className={isLatest ? "last-block-avatar" : undefined}
+                    style={{
+                      position: "absolute",
+                      left: pos.x - AVATAR_R,
+                      top: pos.y - AVATAR_SIZE - 6,
+                      width: AVATAR_SIZE,
+                      height: AVATAR_SIZE,
+                      borderRadius: "50%",
+                      objectFit: "cover",
+                      border: isLatest
+                        ? "2px solid #3b82f6"
+                        : `1.5px solid ${ringColor}`,
+                      pointerEvents: "none",
+                      transition: liveData
+                        ? "none"
+                        : `left ${ANIMATION_MS}ms ${EASING}, top ${ANIMATION_MS}ms ${EASING}`,
+                    }}
+                  />
+                );
+              })}
           </div>
           <div
             style={{
