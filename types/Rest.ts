@@ -232,6 +232,12 @@ export const extendedRest = {
     },
   },
   "haf-stats-api": {
+    networkVoteStats: {
+      params: Hive.NetworkVoteStatsParams,
+      result: Hive.NetworkVoteStatsResponse,
+      responseArray: true,
+      urlPath: "network/vote-stats",
+    },
     dailyActiveUsers: {
       params: Hive.DailyActiveUsersParams,
       result: Hive.DailyActiveUsersResponse,

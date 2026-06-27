@@ -4,32 +4,7 @@ import moment from "moment";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/i18n/i18n";
 import Hive from "@/types/Hive";
-
-const fmtCompact = (n: number, locale: string): string => {
-  const abs = Math.abs(n);
-  const sign = n < 0 ? "-" : "";
-  if (abs >= 1_000_000_000)
-    return (
-      sign +
-      (abs / 1_000_000_000).toLocaleString(locale, {
-        maximumFractionDigits: 2,
-      }) +
-      "B"
-    );
-  if (abs >= 1_000_000)
-    return (
-      sign +
-      (abs / 1_000_000).toLocaleString(locale, { maximumFractionDigits: 2 }) +
-      "M"
-    );
-  if (abs >= 1_000)
-    return (
-      sign +
-      (abs / 1_000).toLocaleString(locale, { maximumFractionDigits: 1 }) +
-      "K"
-    );
-  return n.toLocaleString(locale, { maximumFractionDigits: 0 });
-};
+import { formatCompact } from "@/utils/chartUtils";
 
 interface DauKpiStripProps {
   data: Hive.DailyActiveUsersResponse[];
@@ -109,15 +84,19 @@ const DauKpiStrip: React.FC<DauKpiStripProps> = ({
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 mb-4">
       <KpiTile
         label={t("dauKpiStrip.totalAccounts")}
-        value={fmtCompact(totalAccounts, locale)}
+        value={
+          lastCompleted
+            ? formatCompact(lastCompleted.active_accounts, locale)
+            : "—"
+        }
       />
       <KpiTile
         label={t("dauKpiStrip.totalOps")}
-        value={fmtCompact(totalOps, locale)}
+        value={formatCompact(totalOps, locale)}
       />
       <KpiTile
         label={t("dauKpiStrip.avgPer", { period: periodLabel })}
-        value={fmtCompact(avgAccounts, locale)}
+        value={formatCompact(avgAccounts, locale)}
         sub={t("dauKpiStrip.accounts")}
       />
       <KpiTile
@@ -128,7 +107,7 @@ const DauKpiStrip: React.FC<DauKpiStripProps> = ({
       <KpiTile
         label={t("dauKpiStrip.peakPeriod")}
         value={moment(peakEntry.period).format(peakDateFmt)}
-        sub={`${fmtCompact(peakEntry[trendMetric], locale)} ${trendMetric === "active_accounts" ? t("dauKpiStrip.accounts") : "ops"}`}
+        sub={`${formatCompact(peakEntry[trendMetric], locale)} ${trendMetric === "active_accounts" ? t("dauKpiStrip.accounts") : "ops"}`}
       />
       <KpiTile
         label={t("dauKpiStrip.trend")}

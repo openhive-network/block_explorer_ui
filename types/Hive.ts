@@ -1340,6 +1340,23 @@ namespace Hive {
     escrow_pending_count!: string;
   }
 
+  export class NetworkVoteStatsParams {
+    from_date?: string;
+    to_date?: string;
+    granularity?: string;
+  }
+
+  export class NetworkVoteStatsResponse {
+    period!: string;
+    total_votes!: number;
+    upvotes!: number;
+    downvotes!: number;
+    unvotes!: number;
+    self_votes!: number;
+    unique_voters!: number;
+    downvote_pct!: number;
+  }
+
   export class NetworkHpDistributionParams {}
 
   export class NetworkHpDistributionResponse {

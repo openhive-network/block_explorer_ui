@@ -21,6 +21,7 @@ import TotalValueLockedCard from "@/components/home/TotalValueLockedCard";
 import NetworkHpDistributionCard from "@/components/home/NetworkHpDistributionCard";
 import NetworkGrowthCard from "@/components/home/NetworkGrowthCard";
 import HpMomentumCard from "@/components/home/HpMomentumCard";
+import NetworkVotingActivityCard from "@/components/home/NetworkVotingActivityCard";
 import DailyActiveUsersCard from "@/components/home/DailyActiveUsersCard";
 import LastBlocksWidget from "@/components/LastBlocksWidget";
 import FundAndSupplyWidget from "@/components/dashboard/widgets/data/FundAndSupplyWidget";
@@ -242,6 +243,14 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     category: "reports" as const,
     component: DailyActiveUsersCard,
     defaultLayout: { w: 6, h: 3.3, minW: 3, minH: 3 },
+    dynamicHeight: true,
+  },
+  "voting-activity": {
+    id: "voting-activity",
+    name: "widgets.votingActivityName",
+    category: "reports" as const,
+    component: NetworkVotingActivityCard,
+    defaultLayout: { w: 3, h: 5.8, minW: 2, minH: 4 },
     dynamicHeight: true,
   },
   searches: {

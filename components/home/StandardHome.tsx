@@ -7,7 +7,6 @@ import { config } from "@/Config";
 import useHeadBlock from "@/hooks/api/homePage/useHeadBlock";
 import useBlockOperations from "@/hooks/api/common/useBlockOperations";
 import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
-import { useTheme } from "@/contexts/ThemeContext";
 import TransactionStatisticsCard from "@/components/home/TransactionStatisticsCard";
 import { useI18n } from "@/i18n/i18n";
 import TopWitnessesCard from "@/components/home/TopWitnessesCard";
@@ -18,6 +17,7 @@ import TotalValueLockedCard from "@/components/home/TotalValueLockedCard";
 import NetworkHpDistributionCard from "@/components/home/NetworkHpDistributionCard";
 import HpMomentumCard from "@/components/home/HpMomentumCard";
 import NetworkGrowthCard from "@/components/home/NetworkGrowthCard";
+import NetworkVotingActivityCard from "@/components/home/NetworkVotingActivityCard";
 import DailyActiveUsersCard from "@/components/home/DailyActiveUsersCard";
 import { useEffect, useState } from "react";
 import Head from "next/head";
@@ -27,7 +27,6 @@ import WatchedProposalsWidget from "@/components/dashboard/widgets/data/WatchedP
 import WitnessHealthWidget from "@/components/dashboard/widgets/data/WitnessHealthWidget";
 
 const StandardHome = () => {
-  const { theme } = useTheme();
   const { t } = useI18n();
   const { isLoggedIn } = useAuth();
   const { getWatched } = useWatchlist();
@@ -73,8 +72,6 @@ const StandardHome = () => {
     }
   }, [blockOperations?.total_operations, trxOperations]);
 
-  const strokeColor = theme === "dark" ? "#FFF" : "#000";
-
   return (
     <>
       <Head>
@@ -88,16 +85,14 @@ const StandardHome = () => {
             blockDetails={headBlockData}
             opcount={opcount}
           />
+          <NetworkVotingActivityCard />
           <div className="h-[340px]">
             <NetworkHpDistributionCard />
           </div>
         </div>
 
         <div className="col-span-12 md:col-span-8 lg:col-span-6">
-          <LastBlocksWidget
-            headBlock={headBlockNum}
-            strokeColor={strokeColor}
-          />
+          <LastBlocksWidget headBlock={headBlockNum} />
           <NetworkGrowthCard />
           <DailyActiveUsersCard />
           <TransactionStatisticsCard />

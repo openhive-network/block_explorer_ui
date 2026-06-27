@@ -65,29 +65,61 @@ const NetworkHpDistributionChart: React.FC<Props> = ({
           const count = d.account_count.toLocaleString(locale);
           const pctHp = fmtPct(d.pct_hp);
           const pctAccounts = fmtPct(d.pct_accounts);
+          const hpHeld = t("networkHpDistributionCard.hpHeld");
+          const share = t("networkHpDistributionCard.share");
+          const hp = fmtHp(d.total_hp);
           const primary =
             viewMode === "accounts"
-              ? `<b>${pctAccounts}%</b> of all accounts hold ${d.bucket}`
-              : `${count} accounts control <b>${pctHp}%</b> of all HP`;
+              ? t("networkHpDistributionCard.tooltipPrimaryAccounts", {
+                  pct: pctAccounts,
+                  bucket: d.bucket,
+                })
+              : t("networkHpDistributionCard.tooltipPrimaryHp", {
+                  count,
+                  pct: pctHp,
+                });
           const secondary =
             viewMode === "accounts"
-              ? `${count} accounts · ${fmtHp(d.total_hp)} HP total (${pctHp}%)`
-              : `${pctAccounts}% of all accounts · ${fmtHp(d.total_hp)} HP total`;
+              ? t("networkHpDistributionCard.tooltipSecondaryAccounts", {
+                  count,
+                  hp,
+                  hpHeld,
+                  share,
+                  pct: pctHp,
+                })
+              : t("networkHpDistributionCard.tooltipSecondaryHp", {
+                  share,
+                  pct: pctAccounts,
+                  hp,
+                  hpHeld,
+                });
           return `
-            <div style="max-width:210px;line-height:1.5">
+            <div style="max-width:240px;line-height:1.5">
               <div style="font-weight:700;font-size:12px;margin-bottom:4px">${d.bucket}</div>
               <div style="font-size:11px">${primary}</div>
               <div style="font-size:10px;color:${mutedColor};margin-top:2px">${secondary}</div>
             </div>`;
         },
+        // confine:true is ignored when a custom position fn is provided — handle manually.
         position: (
           point: number[],
           _p: unknown,
           _dom: unknown,
           _rect: unknown,
-          size: { contentSize: number[] }
-        ) => [point[0] + 14, Math.max(4, point[1] - size.contentSize[1] / 2)],
-        confine: true,
+          size: { contentSize: number[]; viewSize: number[] }
+        ) => {
+          const [tw, th] = size.contentSize;
+          const [cw, ch] = size.viewSize;
+          const x =
+            point[0] + 14 + tw > cw
+              ? Math.max(0, point[0] - tw - 14)
+              : point[0] + 14;
+          const y = Math.min(
+            Math.max(0, point[1] - th / 2),
+            Math.max(0, ch - th)
+          );
+          return [x, y];
+        },
         backgroundColor: isDark ? "#1f2937" : "#ffffff",
         borderColor: isDark ? "#374151" : "#e5e7eb",
         textStyle: { color: textColor, fontSize: 11 },

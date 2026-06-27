@@ -941,6 +941,19 @@ class FetchingService {
       params
     );
   }
+  async getNetworkVoteStats(
+    from?: string,
+    to?: string,
+    granularity?: "day" | "week" | "month"
+  ): Promise<Hive.NetworkVoteStatsResponse[]> {
+    return await this.extendedHiveChain!.restApi[
+      "haf-stats-api"
+    ].networkVoteStats({
+      from_date: from,
+      to_date: to,
+      granularity,
+    });
+  }
 
   async getNetworkHpDistribution(): Promise<
     Hive.NetworkHpDistributionResponse[]

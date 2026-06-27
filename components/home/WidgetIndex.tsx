@@ -129,7 +129,39 @@ const WidgetIndex = () => {
     });
   }, [isLoaded, username, widgets, layouts, onAddWidget]);
 
-  // One-time seed of the Network HP Distribution widget (#734) for users with a saved dashboard.
+  // One-time seed of the Voting Activity widget for users with a saved dashboard.
+  useEffect(() => {
+    if (!isLoaded || !username) return;
+    const seededKey = `hivescan_dashboard_voting_activity_seeded_${username}`;
+    if (localStorage.getItem(seededKey)) return;
+    if (widgets.some((w) => w.type === "voting-activity")) {
+      localStorage.setItem(seededKey, "true");
+      return;
+    }
+    const masterLayout = layouts.lg || [];
+    // Place directly below blockchain-dates in the left column; fall back to bottom of left column.
+    const blockchainDatesId = widgets.find(
+      (w) => w.type === "blockchain-dates"
+    )?.i;
+    const blockchainDatesItem = blockchainDatesId
+      ? masterLayout.find((item) => item.i === blockchainDatesId)
+      : undefined;
+    const insertY = blockchainDatesItem
+      ? blockchainDatesItem.y + blockchainDatesItem.h
+      : masterLayout
+          .filter((item) => item.x < 3)
+          .reduce((max, item) => Math.max(max, item.y + item.h), 0);
+    onAddWidget("voting-activity", {
+      x: blockchainDatesItem?.x ?? 0,
+      y: insertY,
+      w: 3,
+      h: 5.8,
+      minH: 4,
+    });
+    localStorage.setItem(seededKey, "true");
+  }, [isLoaded, username, widgets, layouts, onAddWidget]);
+
+  // One-time seed of the Network HP Distribution widget for users with a saved dashboard.
   useEffect(() => {
     if (!isLoaded || !username) return;
     const seededKey = `hivescan_dashboard_network_hp_distribution_seeded_${username}`;
@@ -139,29 +171,24 @@ const WidgetIndex = () => {
       return;
     }
     const masterLayout = layouts.lg || [];
-    const blockchainDatesItem = masterLayout.find(
-      (item) => item.i === "blockchain-dates-1"
-    );
-    if (blockchainDatesItem) {
-      onAddWidget("network-hp-distribution", {
-        x: blockchainDatesItem.x,
-        y: blockchainDatesItem.y + blockchainDatesItem.h,
-        w: blockchainDatesItem.w,
-        h: 7,
-        minH: 5,
-      });
-    } else {
-      const leftColBottom = masterLayout
-        .filter((item) => item.x < 3)
-        .reduce((max, item) => Math.max(max, item.y + item.h), 0);
-      onAddWidget("network-hp-distribution", {
-        x: 0,
-        y: leftColBottom,
-        w: 3,
-        h: 7,
-        minH: 5,
-      });
-    }
+    // Place below voting-activity if present; otherwise at the bottom of the left column.
+    const votingActivityId = widgets.find(
+      (w) => w.type === "voting-activity"
+    )?.i;
+    const anchorItem = votingActivityId
+      ? masterLayout.find((item) => item.i === votingActivityId)
+      : undefined;
+    const leftColBottom = masterLayout
+      .filter((item) => item.x < 3)
+      .reduce((max, item) => Math.max(max, item.y + item.h), 0);
+    const insertY = anchorItem ? anchorItem.y + anchorItem.h : leftColBottom;
+    onAddWidget("network-hp-distribution", {
+      x: anchorItem?.x ?? 0,
+      y: insertY,
+      w: 3,
+      h: 7,
+      minH: 5,
+    });
     localStorage.setItem(seededKey, "true");
   }, [isLoaded, username, widgets, layouts, onAddWidget]);
 
@@ -326,8 +353,6 @@ const WidgetIndex = () => {
     handleToggleCollapse,
     handleWidgetStateChange,
   ]);
-
-  if (!isLoaded) return null;
 
   return (
     <>

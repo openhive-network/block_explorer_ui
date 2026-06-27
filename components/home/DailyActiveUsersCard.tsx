@@ -97,7 +97,7 @@ const DailyActiveUsersCard = () => {
         {/* KPI — Active Accounts */}
         <div className="flex-1 min-w-[140px] bg-explorer-extra-light-gray rounded-lg p-2.5 shadow-md flex flex-col justify-center">
           <h3 className="text-xs font-semibold uppercase tracking-wide text-explorer-dark-gray dark:text-text">
-            {t("dailyActiveUsersCard.latestDau")} (30D)
+            {t("dailyActiveUsersCard.activeAccounts")}
           </h3>
           {isDailyActiveUsersLoading ? (
             <Loader2 className="animate-spin h-4 w-4 mt-1" />
@@ -131,7 +131,7 @@ const DailyActiveUsersCard = () => {
         {/* KPI — Operations */}
         <div className="flex-1 min-w-[140px] bg-explorer-extra-light-gray rounded-lg p-2.5 shadow-md flex flex-col justify-center">
           <h3 className="text-xs font-semibold uppercase tracking-wide text-explorer-dark-gray dark:text-text">
-            {t("dailyActiveUsersCard.latestOps")} (30D)
+            {t("dailyActiveUsersCard.operations")}
           </h3>
           {isDailyActiveUsersLoading ? (
             <Loader2 className="animate-spin h-4 w-4 mt-1" />
