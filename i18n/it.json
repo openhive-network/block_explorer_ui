@@ -100,6 +100,7 @@
   "headBlockPropertyCard.minRecurrentTransfersRecurrence": "Ricorrenza minima trasferimenti ricorrenti",
   "headBlockPropertyCard.maxOpenRecurrentTransfers": "Massimi trasferimenti ricorrenti aperti",
   "lastBlocksWidget.lastBlocks": "Ultimi Blocchi",
+  "lastBlocksWidget.avg": "Media:",
   "transactionStatisticsCard.totalTransactions": "Transazioni Totali",
   "transactionStatisticsCard.todaysTransactions": "Transazioni di Oggi",
   "transactionStatisticsCard.avgTrxsBlock": "Media Trx/blocco",

@@ -112,6 +112,9 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
 
   const lastBlocks = useLastBlocks(headBlock);
   const isMobile = useMediaQuery("(max-width: 640px)");
+  const prefersReducedMotion = useMediaQuery(
+    "(prefers-reduced-motion: reduce)"
+  );
 
   // API returns newest-first; reverse so x-axis reads oldest→newest left-to-right.
   // JSON.stringify dep prevents re-computation when the query returns a new array reference
@@ -169,6 +172,15 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
   const prevRightmostRef = useRef<string | null>(null);
   const slotWidthRef = useRef(0);
 
+  // Mirror latest values into refs so the stable `recomputeOverlays` callback can read
+  // them without being re-created on every data/legend/avg change.
+  const dataRef = useRef(data);
+  dataRef.current = data;
+  const legendSelectedRef = useRef(legendSelected);
+  legendSelectedRef.current = legendSelected;
+  const avgOpsRef = useRef(avgOps);
+  avgOpsRef.current = avgOps;
+
   useEffect(() => {
     if (avgOps <= 0) {
       setAvgLineY(null);
@@ -180,12 +192,28 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
     if (Array.isArray(px)) setAvgLineY((px as number[])[1]);
   }, [avgOps, data]);
 
-  // Reads y-axis tick values via ECharts' private internal API then maps them to canvas
-  // pixel coordinates. The internal path is undocumented but stable across ECharts 5.x;
-  // the try/catch guards against any future breakage without crashing the widget.
-  const computeYTicks = useCallback(() => {
+  // Recomputes all DOM overlay positions from ECharts pixel coordinates.
+  // Called on the `finished` event (fires after every draw, including resize),
+  // so overlays stay aligned when the container changes size.
+  // Uses refs for data/legendSelected/avgOps to stay stable ([] deps).
+  const recomputeOverlays = useCallback(() => {
     const chart = chartRef.current?.getEchartsInstance();
     if (!chart) return;
+
+    // avg line — convertToPixel can throw before the grid is registered on the
+    // first finished event; guard each section independently so one failure
+    // doesn't prevent the others from running.
+    try {
+      const avg = avgOpsRef.current;
+      if (avg > 0) {
+        const px = chart.convertToPixel("grid", [0, avg]);
+        if (Array.isArray(px)) setAvgLineY((px as number[])[1]);
+      } else {
+        setAvgLineY(null);
+      }
+    } catch {}
+
+    // y-axis tick positions (private ECharts API, stable across 5.x)
     try {
       const axisModel = (chart as any).getModel().getComponent("yAxis", 0);
       const ticks: { value: number }[] = axisModel.axis.scale.getTicks();
@@ -198,10 +226,59 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
           ];
           return { label: String(t.value), y: px[1] };
         });
-      setYTicks(result);
-    } catch {
-      // ECharts internals are stable across 5.x but guard anyway
-    }
+      setYTicks((prev) => {
+        if (
+          prev.length === result.length &&
+          prev.every(
+            (p, i) => p.label === result[i].label && p.y === result[i].y
+          )
+        )
+          return prev;
+        return result;
+      });
+    } catch {}
+
+    // avatar positions + glow box
+    try {
+      const d = dataRef.current;
+      const ls = legendSelectedRef.current;
+      if (!d.length) return;
+      const visibleTotals = d.map((block) =>
+        OP_SERIES_ORDER.reduce(
+          (sum, k) =>
+            ls[k] ? sum + (block[k as keyof ChartBlockData] as number) : sum,
+          0
+        )
+      );
+      const positions: AvatarPosition[] = d.map((block, i) => {
+        const pixel = chart.convertToPixel("grid", [i, visibleTotals[i]]);
+        if (!Array.isArray(pixel)) return null;
+        const [px, py] = pixel as [number, number];
+        return { x: px, y: py, witness: block.witness };
+      });
+      setAvatarPositions(positions);
+
+      const li = d.length - 1;
+      const topPx = chart.convertToPixel("grid", [li, visibleTotals[li]]);
+      const botPx = chart.convertToPixel("grid", [li, 0]);
+      const p0 = chart.convertToPixel("grid", [0, 0]);
+      const p1 = d.length > 1 ? chart.convertToPixel("grid", [1, 0]) : null;
+      if (
+        Array.isArray(topPx) &&
+        Array.isArray(botPx) &&
+        Array.isArray(p0) &&
+        Array.isArray(p1)
+      ) {
+        const catW = Math.abs((p1 as number[])[0] - (p0 as number[])[0]);
+        setBarGlowBox({
+          x: (topPx as number[])[0],
+          top: (topPx as number[])[1],
+          height: (botPx as number[])[1] - (topPx as number[])[1],
+          width: catW * 0.65,
+        });
+        slotWidthRef.current = catW;
+      }
+    } catch {}
   }, []);
 
   useEffect(() => {
@@ -268,6 +345,9 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
       return;
 
     const el = containerRef.current;
+
+    if (prefersReducedMotion) return;
+
     const offset = isRTL ? -slotWidthRef.current : slotWidthRef.current;
 
     // Snap the container to the offset position synchronously, then start the
@@ -285,7 +365,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
       el.style.transform = "";
     }, ANIMATION_MS + 50);
     return () => clearTimeout(tid);
-  }, [data, liveData, isRTL]);
+  }, [data, liveData, isRTL, prefersReducedMotion]);
 
   const option = useMemo(() => {
     const isDark = theme === "dark";
@@ -331,6 +411,8 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
         formatter: (params: any[]) => {
           if (!params?.length) return "";
           const blockNum = params[0].axisValue as string;
+          // witness is interpolated into raw HTML below; safe because Hive consensus
+          // enforces account names to [a-z0-9.-] — no HTML-special characters possible.
           const witness = witnessMap.get(blockNum) ?? "";
           const total = params.reduce(
             (s: number, p: any) => s + (p.value || 0),
@@ -350,7 +432,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
             .join("");
           return `
             <div style="min-width:170px">
-              <div style="font-weight:700;font-size:14px;margin-bottom:8px">Block ${Number(blockNum).toLocaleString(locale)}</div>
+              <div style="font-weight:700;font-size:14px;margin-bottom:8px">${t("common.block")} ${Number(blockNum).toLocaleString(locale)}</div>
               <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px">
                 <img src="${getHiveAvatarUrl(witness)}" width="30" height="30"
                   style="border-radius:50%;object-fit:cover;flex-shrink:0"/>
@@ -375,9 +457,10 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
           color: labelColor,
           fontSize: 11,
           interval: (index: number) => {
-            if (index === data.length - 1) return true;
-            const step = Math.max(1, Math.round((data.length - 1) / 4));
-            return index % step === 0;
+            const lastIdx = data.length - 1;
+            if (index === lastIdx) return true;
+            if (lastIdx % 3 !== 0 && index === lastIdx - 1) return false;
+            return index % 3 === 0;
           },
           hideOverlap: true,
           formatter: (value: string) => Number(value).toLocaleString(locale),
@@ -438,9 +521,9 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
           router.push(`/block/${params.name}`);
         }
       },
-      finished: computeYTicks,
+      finished: recomputeOverlays,
     }),
-    [router, computeYTicks]
+    [router, recomputeOverlays]
   );
 
   const handleLegendToggle = useCallback((key: string) => {
@@ -458,16 +541,18 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
   return (
     <>
       <style>{`
-        @keyframes lastblock-pulse {
-          0%, 100% { box-shadow: 0 0 0 2px #3b82f6, 0 0 6px 3px rgba(59,130,246,0.55); }
-          50%       { box-shadow: 0 0 0 4px #3b82f6, 0 0 14px 7px rgba(59,130,246,0.8); }
+        @media (prefers-reduced-motion: no-preference) {
+          @keyframes lastblock-pulse {
+            0%, 100% { box-shadow: 0 0 0 2px #3b82f6, 0 0 6px 3px rgba(59,130,246,0.55); }
+            50%       { box-shadow: 0 0 0 4px #3b82f6, 0 0 14px 7px rgba(59,130,246,0.8); }
+          }
+          .last-block-avatar { animation: lastblock-pulse 1.6s ease-in-out infinite; }
+          @keyframes lastblock-bar-ring {
+            0%, 100% { border-color: rgba(59,130,246,0.65); box-shadow: 0 0 6px 2px rgba(59,130,246,0.45); }
+            50%       { border-color: #60a5fa; box-shadow: 0 0 14px 5px rgba(59,130,246,0.8); }
+          }
+          .last-block-bar-ring { animation: lastblock-bar-ring 1.6s ease-in-out infinite; }
         }
-        .last-block-avatar { animation: lastblock-pulse 1.6s ease-in-out infinite; }
-        @keyframes lastblock-bar-ring {
-          0%, 100% { border-color: rgba(59,130,246,0.65); box-shadow: 0 0 6px 2px rgba(59,130,246,0.45); }
-          50%       { border-color: #60a5fa; box-shadow: 0 0 14px 5px rgba(59,130,246,0.8); }
-        }
-        .last-block-bar-ring { animation: lastblock-bar-ring 1.6s ease-in-out infinite; }
       `}</style>
       <Card
         className={cn("w-full h-[480px] pb-2 mb-2 overflow-hidden", className)}
@@ -512,7 +597,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
                   zIndex: 3,
                 }}
               >
-                Avg: {avgOps}
+                {t("lastBlocksWidget.avg")} {avgOps}
               </span>
             </>
           )}

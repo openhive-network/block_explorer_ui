@@ -100,6 +100,7 @@
   "headBlockPropertyCard.minRecurrentTransfersRecurrence": "最小经常性转账周期",
   "headBlockPropertyCard.maxOpenRecurrentTransfers": "最大开放经常性转账数",
   "lastBlocksWidget.lastBlocks": "最新区块",
+  "lastBlocksWidget.avg": "平均:",
   "transactionStatisticsCard.totalTransactions": "总交易数",
   "transactionStatisticsCard.todaysTransactions": "今日交易数",
   "transactionStatisticsCard.avgTrxsBlock": "平均交易数/区块",

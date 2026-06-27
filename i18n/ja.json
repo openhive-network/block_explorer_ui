@@ -100,6 +100,7 @@
   "headBlockPropertyCard.minRecurrentTransfersRecurrence": "最小定期送金周期",
   "headBlockPropertyCard.maxOpenRecurrentTransfers": "最大オープン定期送金数",
   "lastBlocksWidget.lastBlocks": "最新ブロック",
+  "lastBlocksWidget.avg": "平均:",
   "transactionStatisticsCard.totalTransactions": "総トランザクション数",
   "transactionStatisticsCard.todaysTransactions": "今日のトランザクション",
   "transactionStatisticsCard.avgTrxsBlock": "平均Tx/ブロック",

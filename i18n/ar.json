@@ -100,6 +100,7 @@
   "headBlockPropertyCard.minRecurrentTransfersRecurrence": "الحد الأدنى لتكرار التحويلات المتكررة",
   "headBlockPropertyCard.maxOpenRecurrentTransfers": "الحد الأقصى للتحويلات المتكررة المفتوحة",
   "lastBlocksWidget.lastBlocks": "آخر البلوكات",
+  "lastBlocksWidget.avg": "متوسط:",
   "transactionStatisticsCard.totalTransactions": "إجمالي المعاملات",
   "transactionStatisticsCard.todaysTransactions": "معاملات اليوم",
   "transactionStatisticsCard.avgTrxsBlock": "متوسط المعاملات/بلوك",
