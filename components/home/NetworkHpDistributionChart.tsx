@@ -94,7 +94,7 @@ const NetworkHpDistributionChart: React.FC<Props> = ({
                   hpHeld,
                 });
           return `
-            <div style="max-width:240px;line-height:1.5">
+            <div style="max-width:240px;line-height:1.5;white-space:normal;word-break:break-word">
               <div style="font-weight:700;font-size:12px;margin-bottom:4px">${d.bucket}</div>
               <div style="font-size:11px">${primary}</div>
               <div style="font-size:10px;color:${mutedColor};margin-top:2px">${secondary}</div>
