@@ -24,6 +24,7 @@ import Hive from "@/types/Hive";
 import { Loader2 } from "lucide-react";
 import { useI18n } from "../../i18n/i18n";
 import { cn } from "@/lib/utils";
+import { computeTrend } from "@/utils/chartUtils";
 
 type CoinType = "HIVE" | "HBD";
 type Granularity = "hourly" | "daily" | "monthly" | "yearly";
@@ -93,10 +94,7 @@ const TransferVolumeFullChartDialog: React.FC<TransferVolumeModalProps> = ({
     const peakDate = moment(peakItem.date).valueOf();
     const peakValue = volumes[peakIdx];
 
-    const trend =
-      d.length >= 2 && volumes[0] !== 0
-        ? ((volumes[volumes.length - 1] - volumes[0]) / volumes[0]) * 100
-        : null;
+    const trend = computeTrend(volumes);
 
     return { totalVolume, totalTxns, avgPerPeriod, peakDate, peakValue, trend };
   }, [currentChartData]);
