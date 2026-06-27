@@ -100,6 +100,7 @@
   "headBlockPropertyCard.minRecurrentTransfersRecurrence": "Recurența minimă a transferurilor recurente",
   "headBlockPropertyCard.maxOpenRecurrentTransfers": "Număr maxim de transferuri recurente deschise",
   "lastBlocksWidget.lastBlocks": "Ultimele Blocuri",
+  "lastBlocksWidget.avg": "Med.:",
   "transactionStatisticsCard.totalTransactions": "Total Tranzacții",
   "transactionStatisticsCard.todaysTransactions": "Tranzacțiile de Azi",
   "transactionStatisticsCard.avgTrxsBlock": "Medie Trx/bloc",

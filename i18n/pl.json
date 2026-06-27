@@ -100,6 +100,7 @@
   "headBlockPropertyCard.minRecurrentTransfersRecurrence": "Minimalna cykliczność przelewów cyklicznych",
   "headBlockPropertyCard.maxOpenRecurrentTransfers": "Maksymalna liczba otwartych przelewów cyklicznych",
   "lastBlocksWidget.lastBlocks": "Ostatnie Bloki",
+  "lastBlocksWidget.avg": "Śred.:",
   "transactionStatisticsCard.totalTransactions": "Całkowita Liczba Transakcji",
   "transactionStatisticsCard.todaysTransactions": "Dzisiejsze Transakcje",
   "transactionStatisticsCard.avgTrxsBlock": "Śr. Trx/blok",
