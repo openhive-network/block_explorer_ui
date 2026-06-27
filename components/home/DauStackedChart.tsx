@@ -80,7 +80,8 @@ const DauStackedChart: React.FC<DauStackedChartProps> = ({
   const formatYAxis = (value: number) => {
     if (value >= 1_000_000)
       return `${(value / 1_000_000).toLocaleString(locale, { maximumFractionDigits: 1 })}M`;
-    if (value >= 1_000) return `${Math.round(value / 1_000)}K`;
+    if (value >= 1_000)
+      return `${(value / 1_000).toLocaleString(locale, { maximumFractionDigits: 1 })}K`;
     return value.toLocaleString(locale);
   };
 
