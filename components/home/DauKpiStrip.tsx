@@ -84,7 +84,11 @@ const DauKpiStrip: React.FC<DauKpiStripProps> = ({
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 mb-4">
       <KpiTile
         label={t("dauKpiStrip.totalAccounts")}
-        value={formatCompact(totalAccounts, locale)}
+        value={
+          lastCompleted
+            ? formatCompact(lastCompleted.active_accounts, locale)
+            : "—"
+        }
       />
       <KpiTile
         label={t("dauKpiStrip.totalOps")}
