@@ -4,6 +4,7 @@ import moment from "moment";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/i18n/i18n";
 import Hive from "@/types/Hive";
+import { computeTrend } from "@/utils/chartUtils";
 import {
   Tooltip,
   TooltipContent,
@@ -34,8 +35,6 @@ const VotingActivityKpiStrip: React.FC<VotingActivityKpiStripProps> = ({
     let totalDownvotes = 0;
     let totalSelfVotes = 0;
     let peakEntry = data[0];
-    const firstPeriod = data[0];
-    let lastCompleted: Hive.NetworkVoteStatsResponse | null = null;
 
     for (const d of data) {
       totalVotes += d.total_votes;
@@ -43,7 +42,6 @@ const VotingActivityKpiStrip: React.FC<VotingActivityKpiStripProps> = ({
       totalDownvotes += d.downvotes;
       totalSelfVotes += d.self_votes;
       if (d.total_votes > peakEntry.total_votes) peakEntry = d;
-      if (d.period < currentPeriodStart) lastCompleted = d;
     }
 
     const avgPerPeriod = Math.round(totalVotes / data.length);
@@ -55,14 +53,8 @@ const VotingActivityKpiStrip: React.FC<VotingActivityKpiStripProps> = ({
     const selfVotePct =
       totalUpvotes > 0 ? (totalSelfVotes / totalUpvotes) * 100 : null;
 
-    const trendPct =
-      lastCompleted !== null &&
-      lastCompleted.period !== firstPeriod.period &&
-      firstPeriod.total_votes > 0
-        ? ((lastCompleted.total_votes - firstPeriod.total_votes) /
-            firstPeriod.total_votes) *
-          100
-        : null;
+    const completedData = data.filter((d) => d.period < currentPeriodStart);
+    const trendPct = computeTrend(completedData.map((d) => d.total_votes));
 
     return {
       totalVotes,

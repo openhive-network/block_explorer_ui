@@ -100,6 +100,7 @@
   "headBlockPropertyCard.minRecurrentTransfersRecurrence": "최소 반복 전송 주기",
   "headBlockPropertyCard.maxOpenRecurrentTransfers": "최대 개설 반복 전송 수",
   "lastBlocksWidget.lastBlocks": "최신 블록",
+  "lastBlocksWidget.avg": "평균:",
   "transactionStatisticsCard.totalTransactions": "총 트랜잭션 수",
   "transactionStatisticsCard.todaysTransactions": "오늘의 트랜잭션",
   "transactionStatisticsCard.avgTrxsBlock": "블록당 평균 Tx",
