@@ -46,9 +46,7 @@ const VotingActivityKpiStrip: React.FC<VotingActivityKpiStripProps> = ({
 
     const avgPerPeriod = Math.round(totalVotes / data.length);
     const downvotePct =
-      totalUpvotes + totalDownvotes > 0
-        ? (totalDownvotes / (totalUpvotes + totalDownvotes)) * 100
-        : null;
+      totalVotes > 0 ? (totalDownvotes / totalVotes) * 100 : null;
     const upvotePct = totalVotes > 0 ? (totalUpvotes / totalVotes) * 100 : null;
     const selfVotePct =
       totalUpvotes > 0 ? (totalSelfVotes / totalUpvotes) * 100 : null;
@@ -84,24 +82,6 @@ const VotingActivityKpiStrip: React.FC<VotingActivityKpiStripProps> = ({
     peakEntry,
     trendPct,
   } = stats;
-
-  const selfVoteHealthLabel =
-    selfVotePct === null
-      ? null
-      : selfVotePct < 5
-        ? t("votingActivityKpiStrip.selfVoteHealthLow")
-        : selfVotePct < 10
-          ? t("votingActivityKpiStrip.selfVoteHealthModerate")
-          : t("votingActivityKpiStrip.selfVoteHealthHigh");
-
-  const selfVoteHealthColor =
-    selfVotePct === null
-      ? ""
-      : selfVotePct < 5
-        ? "text-explorer-light-green"
-        : selfVotePct < 10
-          ? "text-amber-500"
-          : "text-rose-600 dark:text-rose-400";
 
   const trendSign: 1 | -1 | 0 =
     trendPct === null ? 0 : trendPct > 0 ? 1 : trendPct < 0 ? -1 : 0;
@@ -155,8 +135,6 @@ const VotingActivityKpiStrip: React.FC<VotingActivityKpiStripProps> = ({
             ? `${selfVotePct.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}% ${t("votingActivityKpiStrip.ofUpvotes")}`
             : undefined
         }
-        subBadge={selfVoteHealthLabel ?? undefined}
-        subBadgeColor={selfVoteHealthColor}
       />
       <KpiTile
         label={t("votingActivityKpiStrip.avgPerPeriod", {
@@ -197,10 +175,8 @@ const KpiTile: React.FC<{
   label: string;
   value: React.ReactNode;
   sub?: string;
-  subBadge?: string;
-  subBadgeColor?: string;
   infoText?: string;
-}> = ({ label, value, sub, subBadge, subBadgeColor, infoText }) => (
+}> = ({ label, value, sub, infoText }) => (
   <div className="rounded-md border border-gray-200 dark:border-gray-700 bg-theme px-3 py-2 shadow-sm">
     <div className="text-[11px] text-gray-500 dark:text-gray-400 mb-0.5 uppercase tracking-wide leading-none flex items-center gap-1">
       <span>{label}</span>
@@ -227,12 +203,9 @@ const KpiTile: React.FC<{
     <div className="text-sm font-semibold leading-tight whitespace-nowrap overflow-hidden text-ellipsis">
       {value}
     </div>
-    {(sub || subBadge) && (
-      <div className="text-[10px] text-gray-400 mt-0.5 flex items-center gap-1">
-        {sub && <span>{sub}</span>}
-        {subBadge && (
-          <span className={cn("font-medium", subBadgeColor)}>{subBadge}</span>
-        )}
+    {sub && (
+      <div className="text-[10px] text-gray-400 mt-0.5">
+        <span>{sub}</span>
       </div>
     )}
   </div>

@@ -122,17 +122,17 @@ const ChartTooltip: React.FC<ChartTooltipProps> = ({
             </span>
           </React.Fragment>
         ))}
-      </div>
-      <div className="flex justify-between gap-3 border-t border-gray-200 dark:border-gray-700 pt-1.5 mt-1.5">
-        <span className="text-gray-500">
+        <span className="col-span-3 border-t border-gray-200 dark:border-gray-700 mt-1 mb-0.5" />
+        <span style={{ color: VOTERS_COLOR }}>
           {t("votingActivityChart.uniqueVoters")}
         </span>
         <span
-          className="font-semibold tabular-nums"
+          className="font-semibold tabular-nums text-right"
           style={{ color: VOTERS_COLOR }}
         >
           {d.unique_voters.toLocaleString(locale)}
         </span>
+        <span />
       </div>
     </div>
   );
