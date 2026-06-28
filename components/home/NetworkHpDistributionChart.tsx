@@ -23,7 +23,7 @@ interface Props {
   textColor: string;
   gridColor: string;
   locale: string;
-  t: (key: string) => string;
+  t: (key: string, options?: Record<string, unknown>) => string;
 }
 
 const NetworkHpDistributionChart: React.FC<Props> = ({
