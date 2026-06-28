@@ -1,9 +1,6 @@
-/**
- * Least-squares linear regression trend over a value series.
- * Returns % change of the fitted line from first to last point.
- * Robust to single-period outliers; returns null when underdetermined.
- */
-export const computeTrend = (values: number[]): number | null => {
+const linearRegression = (
+  values: number[]
+): { slope: number; intercept: number } | null => {
   const n = values.length;
   if (n < 2) return null;
   let sumX = 0,
@@ -17,11 +14,24 @@ export const computeTrend = (values: number[]): number | null => {
     sumX2 += i * i;
   }
   const denom = n * sumX2 - sumX * sumX;
-  if (denom === 0) return 0;
-  const slope = (n * sumXY - sumX * sumY) / denom;
+  const slope = denom === 0 ? 0 : (n * sumXY - sumX * sumY) / denom;
   const intercept = (sumY - slope * sumX) / n;
-  if (intercept <= 0) return null;
-  return ((slope * (n - 1)) / intercept) * 100;
+  return { slope, intercept };
+};
+
+/** Returns the fitted regression line as one value per input point (for plotting). */
+export const computeTrendLine = (values: number[]): number[] => {
+  const reg = linearRegression(values);
+  if (!reg) return values.map(() => 0);
+  return values.map((_, i) => reg.slope * i + reg.intercept);
+};
+
+/** Returns % change of the fitted line across the window (for KPI display). */
+export const computeTrendPct = (values: number[]): number | null => {
+  const n = values.length;
+  const reg = linearRegression(values);
+  if (!reg || reg.intercept <= 0) return null;
+  return ((reg.slope * (n - 1)) / reg.intercept) * 100;
 };
 
 /**

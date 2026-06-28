@@ -4,7 +4,7 @@ import moment from "moment";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/i18n/i18n";
 import Hive from "@/types/Hive";
-import { formatCompact, computeTrend } from "@/utils/chartUtils";
+import { formatCompact, computeTrendPct } from "@/utils/chartUtils";
 
 interface DauKpiStripProps {
   data: Hive.DailyActiveUsersResponse[];
@@ -53,7 +53,7 @@ const DauKpiStrip: React.FC<DauKpiStripProps> = ({
     .format("YYYY-MM-DD");
   const completedData = data.filter((d) => d.period < currentPeriodStart);
   const lastCompleted = completedData[completedData.length - 1];
-  const trendPct = computeTrend(completedData.map((d) => d[trendMetric]));
+  const trendPct = computeTrendPct(completedData.map((d) => d[trendMetric]));
   const trendSign: 1 | -1 | 0 =
     trendPct === null ? 0 : trendPct > 0 ? 1 : trendPct < 0 ? -1 : 0;
   const TrendIcon =

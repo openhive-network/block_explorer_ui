@@ -6,6 +6,7 @@ import DailyActiveUsersChart, { DauMetric } from "./DailyActiveUsersChart";
 import { useI18n } from "../../i18n/i18n";
 import useDailyActiveUsers from "@/hooks/api/homePage/useDailyActiveUsers";
 import { cn } from "@/lib/utils";
+import { computeTrendPct } from "@/utils/chartUtils";
 
 const DailyActiveUsersFullChartDialog = dynamic(
   () => import("./DailyActiveUsersFullChartDialog"),
@@ -75,21 +76,20 @@ const DailyActiveUsersCard = () => {
     );
   }, [chartData]);
 
-  const trendDau = useMemo(() => {
-    if (!lastCompletedEntry || chartData.length < 2) return null;
-    const first = chartData[0].active_accounts;
-    return first > 0
-      ? ((lastCompletedEntry.active_accounts - first) / first) * 100
-      : null;
-  }, [chartData, lastCompletedEntry]);
+  const completedChartData = useMemo(() => {
+    const todayStr = moment().format("YYYY-MM-DD");
+    return chartData.filter((d) => d.period < todayStr);
+  }, [chartData]);
 
-  const trendOps = useMemo(() => {
-    if (!lastCompletedEntry || chartData.length < 2) return null;
-    const first = chartData[0].operations;
-    return first > 0
-      ? ((lastCompletedEntry.operations - first) / first) * 100
-      : null;
-  }, [chartData, lastCompletedEntry]);
+  const trendDau = useMemo(
+    () => computeTrendPct(completedChartData.map((d) => d.active_accounts)),
+    [completedChartData]
+  );
+
+  const trendOps = useMemo(
+    () => computeTrendPct(completedChartData.map((d) => d.operations)),
+    [completedChartData]
+  );
 
   return (
     <div className="bg-theme rounded mb-2 shadow-md overflow-hidden">
