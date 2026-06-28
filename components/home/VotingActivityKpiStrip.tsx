@@ -4,7 +4,7 @@ import moment from "moment";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/i18n/i18n";
 import Hive from "@/types/Hive";
-import { computeTrend } from "@/utils/chartUtils";
+import { computeTrendPct } from "@/utils/chartUtils";
 import {
   Tooltip,
   TooltipContent,
@@ -54,7 +54,7 @@ const VotingActivityKpiStrip: React.FC<VotingActivityKpiStripProps> = ({
       totalUpvotes > 0 ? (totalSelfVotes / totalUpvotes) * 100 : null;
 
     const completedData = data.filter((d) => d.period < currentPeriodStart);
-    const trendPct = computeTrend(completedData.map((d) => d.total_votes));
+    const trendPct = computeTrendPct(completedData.map((d) => d.total_votes));
 
     return {
       totalVotes,
