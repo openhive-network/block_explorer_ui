@@ -8,6 +8,7 @@ import React, {
 import ReactECharts from "echarts-for-react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import Image from "next/image";
 import { MoveRight, MoveLeft } from "lucide-react";
 
 import Hive from "@/types/Hive";
@@ -47,7 +48,7 @@ const OP_COLORS: Record<string, string> = {
   other: "#3a86ff",
   virtual: "#b010bf",
   comment: "#ffbe0b",
-  custom: "#80003e",
+  custom: "#e63946",
   vote: "#fb5607",
   transfer: "#8338ec",
 };
@@ -645,7 +646,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
                 if (!pos) return null;
                 const isLatest = liveData && i === data.length - 1;
                 return (
-                  <img
+                  <Image
                     key={data[i]?.name ?? i}
                     src={getHiveAvatarUrl(pos.witness)}
                     alt={pos.witness}
