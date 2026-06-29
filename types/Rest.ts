@@ -89,6 +89,12 @@ export const extendedRest = {
       result: Hive.TransactionStatisticsResponse,
       urlPath: "transaction-statistics",
     },
+    operationTypeStatistics: {
+      params: Hive.OperationTypeStatisticsParams,
+      result: Hive.OperationTypeStatisticsResponse,
+      responseArray: true,
+      urlPath: "operation-type-statistics",
+    },
     proxyPower: {
       params: Hive.ProxyPowerParams,
       result: Hive.ProxyPowerResponse,

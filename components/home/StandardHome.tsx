@@ -19,6 +19,7 @@ import HpMomentumCard from "@/components/home/HpMomentumCard";
 import NetworkGrowthCard from "@/components/home/NetworkGrowthCard";
 import NetworkVotingActivityCard from "@/components/home/NetworkVotingActivityCard";
 import DailyActiveUsersCard from "@/components/home/DailyActiveUsersCard";
+import NetworkOpMixCard from "@/components/home/NetworkOpMixCard";
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import { useAuth } from "@/contexts/AuthContext";
@@ -95,6 +96,7 @@ const StandardHome = () => {
           <LastBlocksWidget headBlock={headBlockNum} />
           <NetworkGrowthCard />
           <DailyActiveUsersCard />
+          <NetworkOpMixCard />
           <TransactionStatisticsCard />
           <TransferVolumeCard />
           <TotalValueLockedCard />

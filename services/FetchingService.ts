@@ -646,6 +646,24 @@ class FetchingService {
     });
   }
 
+  async getOperationTypeStatistics(
+    granularity: "daily" | "monthly" | "yearly",
+    direction: "asc" | "desc",
+    fromBlock?: Date | number,
+    toBlock?: Date | number,
+    opTypes?: number[]
+  ): Promise<Hive.OperationTypeStatisticsResponse[]> {
+    return await this.extendedHiveChain!.restApi[
+      "hafbe-api"
+    ].operationTypeStatistics({
+      granularity,
+      direction,
+      "from-block": fromBlock,
+      "to-block": toBlock,
+      "op-types": opTypes?.join(","),
+    });
+  }
+
   async getTransferStatistics(
     granularity: "hourly" | "daily" | "monthly" | "yearly",
     coinType: "HBD" | "HIVE",

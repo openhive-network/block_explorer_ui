@@ -63,3 +63,10 @@ export const formatCompact = (n: number, locale: string): string => {
     );
   return n.toLocaleString(locale, { maximumFractionDigits: 0 });
 };
+
+export const formatLocalePercent = (value: number, locale: string): string =>
+  (value / 100).toLocaleString(locale, {
+    style: "percent",
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  });

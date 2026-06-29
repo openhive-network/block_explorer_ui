@@ -129,6 +129,35 @@ const WidgetIndex = () => {
     });
   }, [isLoaded, username, widgets, layouts, onAddWidget]);
 
+  // One-time seed of the Op Mix widget for users with a saved dashboard.
+  useEffect(() => {
+    if (!isLoaded || !username) return;
+    const seededKey = `hivescan_dashboard_op_mix_seeded_${username}`;
+    if (localStorage.getItem(seededKey)) return;
+    if (widgets.some((w) => w.type === "op-mix")) {
+      localStorage.setItem(seededKey, "true");
+      return;
+    }
+    const masterLayout = layouts.lg || [];
+    const dauId = widgets.find((w) => w.type === "daily-active-users")?.i;
+    const dauItem = dauId
+      ? masterLayout.find((item) => item.i === dauId)
+      : undefined;
+    const insertY = dauItem
+      ? dauItem.y + dauItem.h
+      : masterLayout
+          .filter((item) => item.x >= 3 && item.x < 9)
+          .reduce((max, item) => Math.max(max, item.y + item.h), 0);
+    onAddWidget("op-mix", {
+      x: dauItem?.x ?? 3,
+      y: insertY,
+      w: dauItem?.w ?? 6,
+      h: 3.3,
+      minH: 3,
+    });
+    localStorage.setItem(seededKey, "true");
+  }, [isLoaded, username, widgets, layouts, onAddWidget]);
+
   // One-time seed of the Voting Activity widget for users with a saved dashboard.
   useEffect(() => {
     if (!isLoaded || !username) return;
