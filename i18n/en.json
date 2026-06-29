@@ -1,4 +1,4 @@
-﻿{
+{
   "common.by": "By",
   "common.operations": "Operations",
   "operations.participationMode": "Transaction Direction",
@@ -140,7 +140,7 @@
   "votingActivityCard.upvotes": "Upvotes",
   "votingActivityCard.downvotes": "Downvotes",
   "votingActivityCard.unvotes": "Unvotes",
-    "votingActivityCard.selfVoteRate": "Self-vote Rate",
+  "votingActivityCard.selfVoteRate": "Self-vote Rate",
   "votingActivityCard.selfVotes": "Self Votes",
   "votingActivityCard.last30Days": "Last 30 Days",
   "votingActivityCard.vsPrevPeriod": "vs prev 30 days",
@@ -177,8 +177,6 @@
   "votingActivityKpiStrip.selfVoteHealthModerate": "Caution",
   "votingActivityKpiStrip.selfVoteHealthHigh": "Unhealthy",
   "votingActivityKpiStrip.selfVoteRateInfo": "Self-votes as a share of upvotes. Below 5% is healthy — most upvoting is directed at others. 5–10% warrants caution; above 10% suggests the community may benefit from reviewing its voting patterns.",
-  "dailyActiveUsersCard.latestDau": "Latest Active Accounts",
-  "dailyActiveUsersCard.latestOps": "Latest Operations",
   "dailyActiveUsersCard.activeAccounts": "Active Accounts",
   "dailyActiveUsersCard.operations": "Operations",
   "dailyActiveUsersCard.avg30d": "avg/day (30 D)",
@@ -1268,11 +1266,8 @@
   "widgetLibrary.layoutWidgets": "Layout Widgets",
   "widgetLibrary.noWidgetsFound": "No widgets found.",
   "widgetLibrary.categoryReports": "Reports",
-  "widgetLibrary.categoryChain": "Chain",
-  "widgetLibrary.categoryAccount": "Account",
   "widgetLibrary.categoryChain": "Chain Info",
   "widgetLibrary.categoryAccount": "My Account",
-
   "widgetLibrary.categoryLayout": "Layout",
   "titleWidget.defaultText": "Title",
   "titleWidget.placeholder": "Enter Title",

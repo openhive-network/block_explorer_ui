@@ -19,6 +19,7 @@ import {
   ChartBrushDefs,
   useChartBrushDefaults,
 } from "@/components/ui/ChartBrush";
+import { computeTrendLine } from "@/utils/chartUtils";
 
 interface HpMomentumChartProps {
   data: HpMomentumChartPoint[] | undefined;
@@ -36,32 +37,6 @@ const COLOR_DOWN_FILL = VESTING_COLORS.downFill;
 const COLOR_DOWN_INIT = VESTING_COLORS.downInit;
 const COLOR_NET = VESTING_COLORS.net;
 const COLOR_TREND = "#4b5563";
-
-// Linear regression on the net series — fits `y = m·i + b` so the "Trend"
-// line summarises whether the user is net-staking or net-unstaking over the
-// visible window.
-const computeTrend = (values: number[]): number[] => {
-  const n = values.length;
-  if (n < 2) return values.map(() => 0);
-  let sumX = 0,
-    sumY = 0,
-    sumXY = 0,
-    sumXX = 0;
-  for (let i = 0; i < n; i++) {
-    sumX += i;
-    sumY += values[i];
-    sumXY += i * values[i];
-    sumXX += i * i;
-  }
-  const denom = n * sumXX - sumX * sumX;
-  if (denom === 0) {
-    const mean = sumY / n;
-    return values.map(() => mean);
-  }
-  const slope = (n * sumXY - sumX * sumY) / denom;
-  const intercept = (sumY - slope * sumX) / n;
-  return values.map((_, i) => slope * i + intercept);
-};
 
 interface BarPoint extends HpMomentumChartPoint {
   // Bar values are null on zero months so minPointSize doesn't paint a stray
@@ -94,7 +69,7 @@ const HpMomentumChart: React.FC<HpMomentumChartProps> = ({
   const chartData = useMemo<BarPoint[]>(() => {
     if (!data || data.length === 0) return [];
     const netValues = data.map((d) => d.net);
-    const trend = computeTrend(netValues);
+    const trend = computeTrendLine(netValues);
     return data.map((row, i) => ({
       ...row,
       power_up_bar: row.power_up > 0 ? row.power_up : null,
