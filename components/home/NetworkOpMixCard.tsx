@@ -142,7 +142,7 @@ const NetworkOpMixFullChartDialog = dynamic(
   { ssr: false }
 );
 
-const NetworkOpMixCard = () => {
+const NetworkOpMixCard: React.FC = () => {
   const { t, locale } = useI18n();
   const { theme } = useTheme();
   const [isModalOpen, setIsModalOpen] = useState(false);
