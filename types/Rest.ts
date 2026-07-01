@@ -238,5 +238,23 @@ export const extendedRest = {
       responseArray: true,
       urlPath: "network/vote-stats",
     },
+    dailyActiveUsers: {
+      params: Hive.DailyActiveUsersParams,
+      result: Hive.DailyActiveUsersResponse,
+      responseArray: true,
+      urlPath: "network/daily-active-users",
+    },
+    networkHpDistribution: {
+      params: Hive.NetworkHpDistributionParams,
+      result: Hive.NetworkHpDistributionResponse,
+      responseArray: true,
+      urlPath: "network/hp-distribution",
+    },
+    accountFunnel: {
+      params: Hive.AccountFunnelParams,
+      result: Hive.AccountFunnelResponse,
+      responseArray: true,
+      urlPath: "network/account-funnel",
+    },
   },
 };

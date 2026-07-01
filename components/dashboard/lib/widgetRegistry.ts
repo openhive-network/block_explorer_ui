@@ -18,9 +18,12 @@ import TopWitnessesCard from "@/components/home/TopWitnessesCard";
 import TransactionStatisticsCard from "@/components/home/TransactionStatisticsCard";
 import TransferVolumeCard from "@/components/home/TransferVolumeCard";
 import TotalValueLockedCard from "@/components/home/TotalValueLockedCard";
+import NetworkHpDistributionCard from "@/components/home/NetworkHpDistributionCard";
 import NetworkGrowthCard from "@/components/home/NetworkGrowthCard";
 import HpMomentumCard from "@/components/home/HpMomentumCard";
 import NetworkVotingActivityCard from "@/components/home/NetworkVotingActivityCard";
+import DailyActiveUsersCard from "@/components/home/DailyActiveUsersCard";
+import AccountRetentionFunnelCard from "@/components/home/AccountRetentionFunnelCard";
 import LastBlocksWidget from "@/components/LastBlocksWidget";
 import FundAndSupplyWidget from "@/components/dashboard/widgets/data/FundAndSupplyWidget";
 import HiveParametersWidget from "@/components/dashboard/widgets/data/HiveParametersWidget";
@@ -159,7 +162,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     name: "widgets.lastBlocksName",
     category: "chain" as const,
     component: LastBlocksWidget,
-    defaultLayout: { w: 8, h: 9, minW: 6, minH: 8 },
+    defaultLayout: { w: 6, h: 9, minW: 6, minH: 8 },
     getProps: (data) => ({
       headBlock: data.headBlockNum,
       strokeColor: data.strokeColor,
@@ -192,28 +195,39 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     name: "widgets.txStatsName",
     category: "reports" as const,
     component: TransactionStatisticsCard,
-    defaultLayout: { w: 8, h: 5, minW: 3, minH: 4 },
+    defaultLayout: { w: 6, h: 5, minW: 3, minH: 4 },
+    dynamicHeight: true,
   },
   "transfer-volume": {
     id: "transfer-volume",
     name: "widgets.transferVolumeName",
     category: "reports" as const,
     component: TransferVolumeCard,
-    defaultLayout: { w: 8, h: 5, minW: 3, minH: 4 },
+    defaultLayout: { w: 6, h: 5, minW: 3, minH: 4 },
+    dynamicHeight: true,
   },
   tvl: {
     id: "tvl",
     name: "widgets.tvlName",
     category: "reports" as const,
     component: TotalValueLockedCard,
-    defaultLayout: { w: 8, h: 5, minW: 3, minH: 4 },
+    defaultLayout: { w: 6, h: 5, minW: 3, minH: 4 },
+    dynamicHeight: true,
+  },
+  "network-hp-distribution": {
+    id: "network-hp-distribution",
+    name: "widgets.networkHpDistributionName",
+    category: "reports" as const,
+    component: NetworkHpDistributionCard,
+    defaultLayout: { w: 3, h: 7, minW: 2, minH: 5 },
+    dynamicHeight: false,
   },
   "network-growth": {
     id: "network-growth",
     name: "widgets.networkGrowthName",
     category: "reports" as const,
     component: NetworkGrowthCard,
-    defaultLayout: { w: 8, h: 3.3, minW: 3, minH: 3 },
+    defaultLayout: { w: 6, h: 3.3, minW: 3, minH: 3 },
     dynamicHeight: true,
   },
   "hp-momentum": {
@@ -221,7 +235,23 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     name: "widgets.hpMomentumName",
     category: "reports" as const,
     component: HpMomentumCard,
-    defaultLayout: { w: 8, h: 5, minW: 3, minH: 4 },
+    defaultLayout: { w: 6, h: 5, minW: 3, minH: 4 },
+    dynamicHeight: true,
+  },
+  "daily-active-users": {
+    id: "daily-active-users",
+    name: "widgets.dailyActiveUsersName",
+    category: "reports" as const,
+    component: DailyActiveUsersCard,
+    defaultLayout: { w: 6, h: 3.3, minW: 3, minH: 3 },
+    dynamicHeight: true,
+  },
+  "account-retention-funnel": {
+    id: "account-retention-funnel",
+    name: "widgets.accountRetentionFunnelName",
+    category: "reports" as const,
+    component: AccountRetentionFunnelCard,
+    defaultLayout: { w: 6, h: 3.3, minW: 3, minH: 3 },
     dynamicHeight: true,
   },
   "voting-activity": {
@@ -237,7 +267,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     name: "widgets.searchesName",
     category: "chain" as const,
     component: SearchesSection,
-    defaultLayout: { w: 8, h: 11.9, minW: 4, minH: 3 },
+    defaultLayout: { w: 6, h: 11.9, minW: 4, minH: 3 },
     dynamicHeight: true,
   },
 

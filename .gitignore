@@ -44,5 +44,6 @@ public/__ENV.js
 /blob-report/
 /playwright/.cache/
 .vscode/settings.json
+.vscode/tasks.json
 
 /.history/
