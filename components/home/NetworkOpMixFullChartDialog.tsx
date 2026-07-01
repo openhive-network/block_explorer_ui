@@ -110,7 +110,14 @@ const NetworkOpMixFullChartDialog: React.FC<
     operationTypeStatistics,
     isOperationTypeStatisticsLoading,
     isOperationTypeStatisticsError,
-  } = useOperationTypeStatistics(granularity, "asc", fromDate, toDate);
+  } = useOperationTypeStatistics(
+    granularity,
+    "asc",
+    fromDate,
+    toDate,
+    undefined,
+    isOpen
+  );
   const { operationsTypes } = useOperationsTypes();
 
   const mixData = useMemo(() => {
