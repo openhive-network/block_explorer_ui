@@ -140,18 +140,20 @@ const NetworkOpMixFullChartDialog: React.FC<
 
   const kpis = useMemo(() => {
     if (!mixData) return null;
-    const totalOps = mixData.points.reduce(
-      (s, p) => s + ((p.total_operations as number) ?? 0),
-      0
-    );
-    const totalTxs = mixData.points.reduce(
-      (s, p) => s + ((p.total_transactions as number) ?? 0),
-      0
-    );
     const topOp = mixData.topOps[0];
     const topOpCount = topOp ? (mixData.aggregateCounts[topOp] ?? 0) : 0;
-    const topOpShare = totalOps > 0 ? (topOpCount / totalOps) * 100 : 0;
-    return { totalOps, totalTxs, topOp, topOpShare };
+    const displayedTotal = mixData.topOps.reduce(
+      (s, op) => s + (mixData.aggregateCounts[op] ?? 0),
+      0
+    );
+    const topOpShare =
+      displayedTotal > 0 ? (topOpCount / displayedTotal) * 100 : 0;
+    return {
+      totalOps: mixData.totalOps,
+      totalTxs: mixData.totalTxs,
+      topOp,
+      topOpShare,
+    };
   }, [mixData]);
 
   const groupedBreakdown = useMemo(() => {
