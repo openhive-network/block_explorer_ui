@@ -7,7 +7,8 @@ const useOperationTypeStatistics = (
   direction: "asc" | "desc",
   fromBlock?: Date | number,
   toBlock?: Date | number,
-  opTypes?: number[]
+  opTypes?: number[],
+  isEnabled: boolean = true
 ) => {
   const {
     data: operationTypeStatistics,
@@ -23,15 +24,18 @@ const useOperationTypeStatistics = (
       fromBlock,
       toBlock,
       opTypes,
+      isEnabled,
     ],
-    queryFn: () =>
-      fetchingService.getOperationTypeStatistics(
+    queryFn: async () => {
+      if (!isEnabled) return [];
+      return fetchingService.getOperationTypeStatistics(
         granularity,
         direction,
         fromBlock,
         toBlock,
         opTypes
-      ),
+      );
+    },
     refetchOnWindowFocus: false,
   });
 
