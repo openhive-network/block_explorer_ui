@@ -250,5 +250,11 @@ export const extendedRest = {
       responseArray: true,
       urlPath: "network/hp-distribution",
     },
+    accountFunnel: {
+      params: Hive.AccountFunnelParams,
+      result: Hive.AccountFunnelResponse,
+      responseArray: true,
+      urlPath: "network/account-funnel",
+    },
   },
 };

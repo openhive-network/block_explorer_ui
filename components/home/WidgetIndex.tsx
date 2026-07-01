@@ -192,6 +192,35 @@ const WidgetIndex = () => {
     localStorage.setItem(seededKey, "true");
   }, [isLoaded, username, widgets, layouts, onAddWidget]);
 
+  // One-time seed of the Account Retention Funnel widget for users with a saved dashboard.
+  useEffect(() => {
+    if (!isLoaded || !username) return;
+    const seededKey = `hivescan_dashboard_account_retention_funnel_seeded_${username}`;
+    if (localStorage.getItem(seededKey)) return;
+    if (widgets.some((w) => w.type === "account-retention-funnel")) {
+      localStorage.setItem(seededKey, "true");
+      return;
+    }
+    const masterLayout = layouts.lg || [];
+    const dauId = widgets.find((w) => w.type === "daily-active-users")?.i;
+    const dauItem = dauId
+      ? masterLayout.find((item) => item.i === dauId)
+      : undefined;
+    const insertY = dauItem
+      ? dauItem.y + dauItem.h
+      : masterLayout
+          .filter((item) => item.x >= 3 && item.x < 9)
+          .reduce((max, item) => Math.max(max, item.y + item.h), 0);
+    onAddWidget("account-retention-funnel", {
+      x: dauItem?.x ?? 3,
+      y: insertY,
+      w: dauItem?.w ?? 6,
+      h: 3.3,
+      minH: 3,
+    });
+    localStorage.setItem(seededKey, "true");
+  }, [isLoaded, username, widgets, layouts, onAddWidget]);
+
   // Watched Proposals mirrors standard home: auto-shown when you watch a
   // proposal, auto-removed when none. X-dismiss persists via a flag.
   const watchedProposalsCount = getWatched("proposals").size;

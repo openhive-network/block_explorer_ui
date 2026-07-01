@@ -1366,6 +1366,22 @@ namespace Hive {
     total_hp!: number;
     pct_hp!: number;
   }
+
+  export class AccountFunnelParams {
+    from_date?: Date | number | undefined;
+    to_date?: Date | number | undefined;
+  }
+
+  export class AccountFunnelResponse {
+    cohort_month!: string;
+    new_accounts!: number;
+    active_at_7d!: number | null;
+    pct_7d!: number | null;
+    active_at_30d!: number | null;
+    pct_30d!: number | null;
+    active_at_90d!: number | null;
+    pct_90d!: number | null;
+  }
 }
 
 export default Hive;

@@ -34,6 +34,14 @@ export const computeTrendPct = (values: number[]): number | null => {
   return ((reg.slope * (n - 1)) / reg.intercept) * 100;
 };
 
+/** Returns the mean of an array of nullable numbers, or null if no non-null values. */
+export const computeAvg = (vals: (number | null)[]): number | null => {
+  const nonNull = vals.filter((v): v is number => v !== null);
+  return nonNull.length
+    ? nonNull.reduce((s, v) => s + v, 0) / nonNull.length
+    : null;
+};
+
 /**
  * Locale-aware compact number formatter for chart axes and tooltips.
  * Handles negative values; tiers: B ≥ 1B, M ≥ 1M, K ≥ 1K, else raw integer.

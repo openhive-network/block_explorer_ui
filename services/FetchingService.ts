@@ -962,6 +962,16 @@ class FetchingService {
       "haf-stats-api"
     ].networkHpDistribution({});
   }
+
+  async getAccountFunnel(
+    from?: Date | number,
+    to?: Date | number
+  ): Promise<Hive.AccountFunnelResponse[]> {
+    return this.extendedHiveChain!.restApi["haf-stats-api"].accountFunnel({
+      from_date: from,
+      to_date: to,
+    });
+  }
 }
 
 const fetchingService = new FetchingService();
