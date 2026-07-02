@@ -1,0 +1,569 @@
+import React, { useEffect, useMemo, useState } from "react";
+import moment from "moment";
+import dynamic from "next/dynamic";
+import Link from "next/link";
+import Image from "next/image";
+import { Loader2 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import SearchRanges from "../searchRanges/SearchRanges";
+import DataExport from "@/components/DataExport";
+import useSearchRanges from "@/hooks/common/useSearchRanges";
+import { useI18n } from "@/i18n/i18n";
+import { cn, formatNumber } from "@/lib/utils";
+import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
+import { useHiveChainContext } from "@/contexts/HiveChainContext";
+import { useTheme } from "@/contexts/ThemeContext";
+import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
+import useNetworkTopAccounts from "@/hooks/api/homePage/useNetworkTopAccounts";
+import Hive from "@/types/Hive";
+import {
+  TOP_ACCOUNTS_METRICS,
+  formatMetricValue,
+  metricUsesDate,
+  metricIsVesting,
+  makeConverters,
+  getPrimaryValue,
+  summaryKeyForMetric,
+  TopAccountsConverters,
+} from "./NetworkTopAccountsCard";
+import { useVestingDisplayUnit, VestingDisplayUnit } from "./hpMomentumUtils";
+
+const NetworkTopAccountsChart = dynamic(
+  () => import("./NetworkTopAccountsChart"),
+  { ssr: false }
+);
+
+// Bars shown in the chart (top slice); the table always shows every loaded row.
+const CHART_ROWS = 15;
+
+interface NetworkTopAccountsFullChartDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  initialMetric?: Hive.TopAccountsMetric;
+}
+
+const LIMIT_OPTIONS = [10, 25, 50, 100];
+
+interface Column {
+  key: string;
+  // i18n key used for BOTH the table header and the CSV export header, so the
+  // export and the column picker are translated and match what's on screen.
+  labelKey: string;
+  // Decimal places for the full-precision, locale-formatted CSV value.
+  decimals: number;
+  render: (
+    row: Hive.TopAccountsResponse,
+    conv: TopAccountsConverters | null,
+    locale: string
+  ) => string;
+  exportValue: (
+    row: Hive.TopAccountsResponse,
+    conv: TopAccountsConverters | null
+  ) => number;
+  primary?: boolean;
+}
+
+// Columns shown after Rank/Account, adapted to the active metric. The primary
+// column is the one the metric ranks by; the rest are contextual breakdowns.
+// The vesting column follows the user's HP/VESTS unit preference.
+const columnsForMetric = (
+  metric: Hive.TopAccountsMetric,
+  unit: VestingDisplayUnit
+): Column[] => {
+  const hp: Column = {
+    key: "hp",
+    labelKey:
+      unit === "vests"
+        ? "topAccountsCard.vestsColumn"
+        : "topAccountsCard.hpColumn",
+    decimals: unit === "vests" ? 6 : 3,
+    primary: true,
+    render: (row, conv, locale) =>
+      unit === "vests"
+        ? formatMetricValue(
+            conv?.toVests(row.value_vests_nai) ?? 0,
+            "VESTS",
+            locale
+          )
+        : formatMetricValue(conv?.toHp(row.value_vests_nai) ?? 0, "HP", locale),
+    exportValue: (row, conv) =>
+      unit === "vests"
+        ? (conv?.toVests(row.value_vests_nai) ?? 0)
+        : (conv?.toHp(row.value_vests_nai) ?? 0),
+  };
+  const hive = (primary = false): Column => ({
+    key: "hive",
+    labelKey: "topAccountsCard.hiveColumn",
+    decimals: 3,
+    primary,
+    render: (row, conv, locale) =>
+      formatMetricValue(conv?.toHive(row.value_hive_nai) ?? 0, "HIVE", locale),
+    exportValue: (row, conv) => conv?.toHive(row.value_hive_nai) ?? 0,
+  });
+  const hbd: Column = {
+    key: "hbd",
+    labelKey: "topAccountsCard.hbdColumn",
+    decimals: 3,
+    render: (row, conv, locale) =>
+      formatMetricValue(conv?.toHbd(row.value_hbd_nai) ?? 0, "HBD", locale),
+    exportValue: (row, conv) => conv?.toHbd(row.value_hbd_nai) ?? 0,
+  };
+  const ops = (primary = false): Column => ({
+    key: "ops",
+    labelKey: "topAccountsCard.opsColumn",
+    decimals: 0,
+    primary,
+    render: (row, _conv, locale) =>
+      formatMetricValue(row.op_count, "count", locale),
+    exportValue: (row) => row.op_count,
+  });
+
+  switch (metric) {
+    case "author_rewards":
+    case "curation_rewards":
+      return [hp, hbd, hive(), ops()];
+    case "transfer_volume_in":
+    case "transfer_volume_out":
+      return [hive(true), hbd, ops()];
+    case "hp_balance":
+      return [hp];
+    case "transaction_count":
+    default:
+      return [ops(true)];
+  }
+};
+
+const NetworkTopAccountsFullChartDialog: React.FC<
+  NetworkTopAccountsFullChartDialogProps
+> = ({ isOpen, onClose, initialMetric = "author_rewards" }) => {
+  const { t, locale } = useI18n();
+
+  const [metric, setMetric] = useState<Hive.TopAccountsMetric>(initialMetric);
+  const [limitCount, setLimitCount] = useState<number>(25);
+  const [fromDate, setFromDate] = useState<Date | number | undefined>(
+    moment().subtract(30, "days").toDate()
+  );
+  const [toDate, setToDate] = useState<Date | number | undefined>(
+    moment().toDate()
+  );
+
+  const searchRanges = useSearchRanges();
+  const [isSearchButtonDisabled, setIsSearchButtonDisabled] = useState(false);
+  const {
+    setRangeSelectKey,
+    setTimeUnitSelectKey,
+    setLastTimeUnitValue,
+    setStartDate,
+    setEndDate,
+  } = searchRanges;
+
+  const usesDate = metricUsesDate(metric);
+  const [unit, setUnit] = useVestingDisplayUnit();
+  const showUnitToggle = metricIsVesting(metric);
+  const unitOptions: { key: VestingDisplayUnit; label: string }[] = [
+    { key: "hp", label: "HP" },
+    { key: "vests", label: "VESTS" },
+  ];
+
+  const { hiveChain } = useHiveChainContext();
+  const { dynamicGlobalData } = useDynamicGlobal();
+  const converters = useMemo(
+    () => makeConverters(hiveChain, dynamicGlobalData),
+    [hiveChain, dynamicGlobalData]
+  );
+
+  const { topAccounts, isTopAccountsLoading, isTopAccountsError } =
+    useNetworkTopAccounts(
+      metric,
+      usesDate ? fromDate : undefined,
+      usesDate ? toDate : undefined,
+      limitCount,
+      isOpen
+    );
+
+  useEffect(() => {
+    if (isOpen) {
+      setMetric(initialMetric);
+      setLimitCount(25);
+      setLastTimeUnitValue(30);
+      setRangeSelectKey("lastTime");
+      setTimeUnitSelectKey("days");
+      const thirtyDaysAgo = moment().subtract(30, "days").toDate();
+      const now = moment().toDate();
+      setFromDate(thirtyDaysAgo);
+      setToDate(now);
+      setStartDate(thirtyDaysAgo);
+      setEndDate(now);
+    }
+  }, [
+    isOpen,
+    initialMetric,
+    setLastTimeUnitValue,
+    setRangeSelectKey,
+    setTimeUnitSelectKey,
+    setStartDate,
+    setEndDate,
+  ]);
+
+  const handleSearch = async () => {
+    const { payloadStartDate, payloadEndDate } =
+      await searchRanges.getRangesValues();
+    setFromDate(payloadStartDate);
+    setToDate(payloadEndDate);
+  };
+
+  const handleFilterClear = () => {
+    setRangeSelectKey("lastTime");
+    setTimeUnitSelectKey("days");
+    setLastTimeUnitValue(30);
+    setFromDate(moment().subtract(30, "days").toDate());
+    setToDate(moment().toDate());
+  };
+
+  const columns = useMemo(() => columnsForMetric(metric, unit), [metric, unit]);
+
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+  const textColor = isDark ? "#e5e7eb" : "#374151";
+  const gridColor = isDark ? "#1e293b" : "#e5e7eb";
+
+  // Vesting/transfer metrics need the wax converters (from dynamic global data).
+  // transaction_count is a raw op count and needs nothing. Until ready we treat
+  // the dialog as loading so it never flashes "0 HP" / all-zero rows.
+  const valuesReady = metric === "transaction_count" || converters !== null;
+
+  // Single conversion pass over the loaded rows. chart / share / summary all
+  // derive from this instead of re-running the wax converters per row 4x.
+  const primary = useMemo(
+    () =>
+      (topAccounts ?? []).map((row) => ({
+        account: row.account,
+        ...getPrimaryValue(row, metric, converters, unit),
+      })),
+    [topAccounts, metric, converters, unit]
+  );
+
+  const primaryUnit = primary[0]?.unit ?? "count";
+  const total = useMemo(
+    () => primary.reduce((sum, p) => sum + p.value, 0),
+    [primary]
+  );
+
+  const chartData = useMemo(
+    () =>
+      primary
+        .slice(0, CHART_ROWS)
+        .map((p) => ({ account: p.account, value: p.value })),
+    [primary]
+  );
+  const chartUnitLabel = primaryUnit === "count" ? "" : primaryUnit;
+
+  const shareByAccount = useMemo(() => {
+    const map = new Map<string, number>();
+    primary.forEach((p) =>
+      map.set(p.account, total > 0 ? (p.value / total) * 100 : 0)
+    );
+    return map;
+  }, [primary, total]);
+
+  const summaryText = useMemo(() => {
+    if (!valuesReady || primary.length === 0) return null;
+    // Share of total network HP only applies to the HP-balance stock metric.
+    let pct: number | null = null;
+    if (metric === "hp_balance" && converters && converters.networkHp > 0) {
+      const combinedHp = (topAccounts ?? []).reduce(
+        (sum, row) => sum + (converters.toHp(row.value_vests_nai) ?? 0),
+        0
+      );
+      pct = (combinedHp / converters.networkHp) * 100;
+    }
+    let text = t(summaryKeyForMetric(metric), {
+      count: primary.length,
+      value: formatMetricValue(total, primaryUnit, locale),
+    });
+    if (pct !== null) {
+      text += ` · ${t("topAccountsCard.ofNetwork", {
+        pct: pct.toLocaleString(locale, { maximumFractionDigits: 1 }),
+      })}`;
+    }
+    return text;
+  }, [
+    valuesReady,
+    primary,
+    total,
+    primaryUnit,
+    metric,
+    converters,
+    topAccounts,
+    locale,
+    t,
+  ]);
+
+  const fmtPct = (v: number) =>
+    `${v.toLocaleString(locale, { maximumFractionDigits: 1 })}%`;
+
+  // CSV export mirrors the table's columns for the active metric. Headers are
+  // translated (same i18n keys as the table, so the column picker and CSV are
+  // localized) and values are full-precision + locale-formatted. Empty until
+  // conversions are ready so we never export all-zero rows.
+  const exportData = useMemo(() => {
+    if (!topAccounts || !valuesReady) return [];
+    // Values are already-converted amounts, so skipPrecision=true just groups
+    // and fixes the decimals (no re-scaling). VESTS keeps its 6-dp rounding.
+    const fmt = (v: number, decimals: number) =>
+      formatNumber(v, false, true, decimals);
+    return topAccounts.map((row) => {
+      const obj: Record<string, string | number> = {
+        [t("topAccountsCard.rank")]: row.rank,
+        [t("topAccountsCard.account")]: row.account,
+      };
+      columns.forEach((c) => {
+        obj[t(c.labelKey)] = fmt(c.exportValue(row, converters), c.decimals);
+      });
+      obj[t("topAccountsCard.shareColumn")] = fmt(
+        shareByAccount.get(row.account) ?? 0,
+        2
+      );
+      return obj;
+    });
+  }, [topAccounts, valuesReady, columns, converters, shareByAccount, t]);
+
+  return (
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="min-w-[70vw] pr-0">
+        <div className="max-h-[90vh] overflow-y-auto overflow-x-hidden pr-6 scrollableContainer">
+          <DialogHeader>
+            <div className="mb-4">
+              <DialogTitle>{t("topAccountsCard.dialogTitle")}</DialogTitle>
+            </div>
+          </DialogHeader>
+
+          {/* Controls */}
+          <div className="flex flex-wrap gap-4 mb-4 w-full items-start">
+            <div className="flex flex-col gap-y-3 w-[130px]">
+              <Label>{t("topAccountsCard.rows")}</Label>
+              <Select
+                value={String(limitCount)}
+                onValueChange={(v) => setLimitCount(Number(v))}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {LIMIT_OPTIONS.map((n) => (
+                    <SelectItem key={n} value={String(n)}>
+                      {t("topAccountsCard.topN", { count: n })}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {usesDate && (
+              <div className="flex flex-col gap-y-3 flex-1 min-w-[260px]">
+                <Label>{t("common.filters")}</Label>
+                <SearchRanges
+                  rangesProps={searchRanges}
+                  setIsSearchButtonDisabled={setIsSearchButtonDisabled}
+                />
+                <div className="flex gap-2 mt-2">
+                  <Button
+                    onClick={handleSearch}
+                    data-testid="apply-filters"
+                    disabled={isSearchButtonDisabled}
+                  >
+                    {t("common.search")}
+                  </Button>
+                  <Button
+                    onClick={handleFilterClear}
+                    data-testid="clear-filters"
+                  >
+                    {t("common.clear")}
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Metric pills */}
+          <div className="flex flex-wrap gap-2 mb-4">
+            {TOP_ACCOUNTS_METRICS.map(({ key, labelKey }) => (
+              <button
+                key={key}
+                onClick={() => setMetric(key)}
+                className={cn(
+                  "text-xs px-2.5 py-1 rounded-full font-medium transition-colors",
+                  metric === key
+                    ? "bg-indigo-500 text-white"
+                    : "bg-explorer-extra-light-gray text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                )}
+              >
+                {t(labelKey)}
+              </button>
+            ))}
+            {showUnitToggle && (
+              <div
+                className="inline-flex items-stretch rounded-full border border-navbar-border overflow-hidden text-xs ml-auto"
+                role="group"
+                aria-label="HP or VESTS"
+              >
+                {unitOptions.map((opt, idx) => {
+                  const isActive = unit === opt.key;
+                  const isFirst = idx === 0;
+                  const isLast = idx === unitOptions.length - 1;
+                  return (
+                    <button
+                      key={opt.key}
+                      type="button"
+                      onClick={() => setUnit(opt.key)}
+                      aria-pressed={isActive}
+                      className={cn(
+                        "font-medium transition-colors px-2.5 py-1",
+                        !isLast && "border-r border-navbar-border",
+                        isFirst && "rounded-l-full",
+                        isLast && "rounded-r-full",
+                        isActive
+                          ? "bg-blue-500 text-white"
+                          : "bg-theme hover:bg-gray-100 dark:hover:bg-gray-700"
+                      )}
+                    >
+                      {opt.label}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Table */}
+          {isTopAccountsLoading || !valuesReady ? (
+            <div className="flex items-center justify-center h-[40vh]">
+              <Loader2 className="animate-spin h-10 w-10 dark:text-white" />
+            </div>
+          ) : isTopAccountsError ? (
+            <p className="text-red-500 text-sm py-8 text-center">
+              {t("common.errorLoadingData")}
+            </p>
+          ) : !topAccounts || topAccounts.length === 0 ? (
+            <p className="text-gray-500 text-sm py-8 text-center">
+              {t("common.noDataAvailable")}
+            </p>
+          ) : (
+            <>
+              {chartData.length > 0 && (
+                <div className="mb-4">
+                  <p className="text-xs text-gray-500 mb-1">
+                    {t("topAccountsCard.topN", { count: chartData.length })}
+                  </p>
+                  <div style={{ height: chartData.length * 28 + 20 }}>
+                    <NetworkTopAccountsChart
+                      data={chartData}
+                      unitLabel={chartUnitLabel}
+                      isDark={isDark}
+                      textColor={textColor}
+                      gridColor={gridColor}
+                      locale={locale}
+                    />
+                  </div>
+                </div>
+              )}
+              <div className="table-toolbar justify-between items-center mb-2">
+                {summaryText ? (
+                  <p className="text-sm text-gray-500">{summaryText}</p>
+                ) : (
+                  <span />
+                )}
+                <DataExport
+                  data={exportData}
+                  filename={`top_accounts_${metric}.csv`}
+                />
+              </div>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-12">
+                      {t("topAccountsCard.rank")}
+                    </TableHead>
+                    <TableHead>{t("topAccountsCard.account")}</TableHead>
+                    {columns.map((col) => (
+                      <TableHead key={col.key} className="text-right">
+                        {t(col.labelKey)}
+                      </TableHead>
+                    ))}
+                    <TableHead className="text-right">
+                      {t("topAccountsCard.shareColumn")}
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {topAccounts.map((row) => (
+                    <TableRow key={row.account}>
+                      <TableCell className="text-gray-500">
+                        {row.rank}
+                      </TableCell>
+                      <TableCell>
+                        <Link
+                          href={`/@${row.account}`}
+                          className="flex items-center gap-2 text-link"
+                        >
+                          <Image
+                            className="rounded-full"
+                            src={getHiveAvatarUrl(row.account)}
+                            alt={row.account}
+                            width={28}
+                            height={28}
+                          />
+                          <span className="truncate">{row.account}</span>
+                        </Link>
+                      </TableCell>
+                      {columns.map((col) => (
+                        <TableCell
+                          key={col.key}
+                          className={cn(
+                            "text-right",
+                            col.primary
+                              ? "font-semibold text-explorer-dark-gray dark:text-text"
+                              : "text-gray-500"
+                          )}
+                        >
+                          {col.render(row, converters, locale)}
+                        </TableCell>
+                      ))}
+                      <TableCell className="text-right text-gray-500">
+                        {fmtPct(shareByAccount.get(row.account) ?? 0)}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default NetworkTopAccountsFullChartDialog;
