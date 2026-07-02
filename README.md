@@ -10,16 +10,39 @@ To run the application you have to install Node JS (18.20.0 or higher is prefera
 npm install
 ```
 
-## Add .env file with the following 
+## Add .env file with the following
 
 - REACT_APP_API_ADDRESS=https://api.hive.blog
 - REACT_APP_HIVE_BLOG_API_ADDRESS=https://api.hive.blog
 
 **Private: Backend needs these for the secret handshake for hivesigner login**
-- NEXT_PUBLIC_HIVESIGNER_CALLBACK = your_url -  Registered URL and whitelisted in Hivesigner 
-- NEXT_PUBLIC_HIVESIGNER_APP=your_app_name - App name registered in Hivesigner 
+
+- NEXT_PUBLIC_HIVESIGNER_CALLBACK = your_url - Registered URL and whitelisted in Hivesigner
+- NEXT_PUBLIC_HIVESIGNER_APP=your_app_name - App name registered in Hivesigner
 - HIVESIGNER_SECRET=some_key - Secret Key for handshakes set in Hivesigner
- 
+
+**Workspace Sync Encryption (optional but recommended for production)**
+
+- `WORKSPACE_ENCRYPTION_KEY` – 32-byte key as 64 hex characters. Encrypts workspace bundles stored in `posting_json_metadata` using AES-256-GCM before writing to the blockchain and decrypts them on login.
+
+If this key is **not** set, workspaces are stored compressed-only (no encryption, no session cookies).  
+If this key is **set**, the server derives three independent keys via HKDF for AES-256-GCM encryption, session token signing, and keychain challenge tokens. The `/api/workspace/encrypt` and `/api/workspace/decrypt` endpoints require a valid session cookie.
+
+**1. Generate a key (run once, save the output):**
+
+```bash
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+
+**2. Add it to your `.env`:**
+
+```
+WORKSPACE_ENCRYPTION_KEY=<paste 64-char hex string here>
+```
+
+**3. Verify it is loaded correctly** — after starting the dev server, open your browser console and log in with Keychain. A successful login should set a `hivescan_session` cookie (visible in DevTools → Application → Cookies). If no cookie appears, the key is missing or malformed.
+
+**Important:** Never commit this key to version control. Store it only in server environment variables (CI/CD secrets, Docker env, etc.). Rotating the key invalidates all previously encrypted workspaces — users will need to re-sync after a key rotation.
 
 ## Start the application with:
 

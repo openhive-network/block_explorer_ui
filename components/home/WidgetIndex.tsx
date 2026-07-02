@@ -101,6 +101,126 @@ const WidgetIndex = () => {
     });
   }, [isLoaded, username, widgets, layouts, onAddWidget]);
 
+  // One-time seed of the Daily Active Users widget for users with a saved
+  // dashboard; the seeded flag lets them remove it for good afterwards.
+  useEffect(() => {
+    if (!isLoaded || !username) return;
+    const seededKey = `hivescan_dashboard_daily_active_users_seeded_${username}`;
+    if (localStorage.getItem(seededKey)) return;
+    localStorage.setItem(seededKey, "true");
+    if (widgets.some((w) => w.type === "daily-active-users")) return;
+    const masterLayout = layouts.lg || [];
+    // Place directly below network-growth; fall back to bottom of main column.
+    const networkGrowthId = widgets.find((w) => w.type === "network-growth")?.i;
+    const networkGrowthItem = networkGrowthId
+      ? masterLayout.find((item) => item.i === networkGrowthId)
+      : undefined;
+    const insertY = networkGrowthItem
+      ? networkGrowthItem.y + networkGrowthItem.h
+      : masterLayout
+          .filter((item) => item.x >= 3 && item.x < 9)
+          .reduce((max, item) => Math.max(max, item.y + item.h), 0);
+    onAddWidget("daily-active-users", {
+      x: networkGrowthItem?.x ?? 3,
+      y: insertY,
+      w: networkGrowthItem?.w ?? 6,
+      h: 3.3,
+      minH: 3,
+    });
+  }, [isLoaded, username, widgets, layouts, onAddWidget]);
+
+  // One-time seed of the Op Mix widget for users with a saved dashboard.
+  useEffect(() => {
+    if (!isLoaded || !username) return;
+    const seededKey = `hivescan_dashboard_op_mix_seeded_${username}`;
+    if (localStorage.getItem(seededKey)) return;
+    if (widgets.some((w) => w.type === "op-mix")) {
+      localStorage.setItem(seededKey, "true");
+      return;
+    }
+    const masterLayout = layouts.lg || [];
+    const dauId = widgets.find((w) => w.type === "daily-active-users")?.i;
+    const dauItem = dauId
+      ? masterLayout.find((item) => item.i === dauId)
+      : undefined;
+    const insertY = dauItem
+      ? dauItem.y + dauItem.h
+      : masterLayout
+          .filter((item) => item.x >= 3 && item.x < 9)
+          .reduce((max, item) => Math.max(max, item.y + item.h), 0);
+    onAddWidget("op-mix", {
+      x: dauItem?.x ?? 3,
+      y: insertY,
+      w: dauItem?.w ?? 6,
+      h: 3.3,
+      minH: 3,
+    });
+    localStorage.setItem(seededKey, "true");
+  }, [isLoaded, username, widgets, layouts, onAddWidget]);
+
+  // One-time seed of the Voting Activity widget for users with a saved dashboard.
+  useEffect(() => {
+    if (!isLoaded || !username) return;
+    const seededKey = `hivescan_dashboard_voting_activity_seeded_${username}`;
+    if (localStorage.getItem(seededKey)) return;
+    if (widgets.some((w) => w.type === "voting-activity")) {
+      localStorage.setItem(seededKey, "true");
+      return;
+    }
+    const masterLayout = layouts.lg || [];
+    // Place directly below blockchain-dates in the left column; fall back to bottom of left column.
+    const blockchainDatesId = widgets.find(
+      (w) => w.type === "blockchain-dates"
+    )?.i;
+    const blockchainDatesItem = blockchainDatesId
+      ? masterLayout.find((item) => item.i === blockchainDatesId)
+      : undefined;
+    const insertY = blockchainDatesItem
+      ? blockchainDatesItem.y + blockchainDatesItem.h
+      : masterLayout
+          .filter((item) => item.x < 3)
+          .reduce((max, item) => Math.max(max, item.y + item.h), 0);
+    onAddWidget("voting-activity", {
+      x: blockchainDatesItem?.x ?? 0,
+      y: insertY,
+      w: 3,
+      h: 5.8,
+      minH: 4,
+    });
+    localStorage.setItem(seededKey, "true");
+  }, [isLoaded, username, widgets, layouts, onAddWidget]);
+
+  // One-time seed of the Network HP Distribution widget for users with a saved dashboard.
+  useEffect(() => {
+    if (!isLoaded || !username) return;
+    const seededKey = `hivescan_dashboard_network_hp_distribution_seeded_${username}`;
+    if (localStorage.getItem(seededKey)) return;
+    if (widgets.some((w) => w.type === "network-hp-distribution")) {
+      localStorage.setItem(seededKey, "true");
+      return;
+    }
+    const masterLayout = layouts.lg || [];
+    // Place below voting-activity if present; otherwise at the bottom of the left column.
+    const votingActivityId = widgets.find(
+      (w) => w.type === "voting-activity"
+    )?.i;
+    const anchorItem = votingActivityId
+      ? masterLayout.find((item) => item.i === votingActivityId)
+      : undefined;
+    const leftColBottom = masterLayout
+      .filter((item) => item.x < 3)
+      .reduce((max, item) => Math.max(max, item.y + item.h), 0);
+    const insertY = anchorItem ? anchorItem.y + anchorItem.h : leftColBottom;
+    onAddWidget("network-hp-distribution", {
+      x: anchorItem?.x ?? 0,
+      y: insertY,
+      w: 3,
+      h: 7,
+      minH: 5,
+    });
+    localStorage.setItem(seededKey, "true");
+  }, [isLoaded, username, widgets, layouts, onAddWidget]);
+
   // Watched Proposals mirrors standard home: auto-shown when you watch a
   // proposal, auto-removed when none. X-dismiss persists via a flag.
   const watchedProposalsCount = getWatched("proposals").size;
@@ -262,6 +382,8 @@ const WidgetIndex = () => {
     handleToggleCollapse,
     handleWidgetStateChange,
   ]);
+
+  if (!isLoaded) return null;
 
   return (
     <>

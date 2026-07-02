@@ -1,5 +1,5 @@
-@import 'react-grid-layout/css/styles.css';
-@import 'react-resizable/css/styles.css';
+@import "react-grid-layout/css/styles.css";
+@import "react-resizable/css/styles.css";
 
 @tailwind base;
 @tailwind components;
@@ -12,12 +12,17 @@
   transition-property: transform !important;
 }
 
+/* Keep Sonner toasts below the fixed navbar (z-50) so the user dropdown renders on top */
+[data-sonner-toaster] {
+  z-index: 40 !important;
+}
+
 /* Light theme */
 :root {
   --background-start-rgb: rgb(214, 219, 220);
   --background-end-rgb: rgb(255, 255, 255);
   --color-text: #000;
-  --color-background: #FFF;
+  --color-background: #fff;
   --color-row-even: rgb(249, 250, 251);
   --color-row-odd: rgb(255, 255, 255);
   --color-row-hover: #e5eaf3;
@@ -34,10 +39,10 @@
   --color-operation-posting: #ffbe0b;
   --color-operation-curation: #fb5607;
   --color-operation-transfer: #8338ec;
-  --color-operation-market: #FF69B4;
+  --color-operation-market: #ff69b4;
   --color-operation-vesting: #780028;
   --color-operation-proposal: #78c814;
-  --color-operation-custom: #80003e;
+  --color-operation-custom: #e63946;
   --color-operation-other: #3a86ff;
   --color-link: #1e4f9c;
   --color-operation-perspective-incoming: #ecf2ff;
@@ -45,18 +50,22 @@
   --color-yellow: #d2c518;
   --color-light-blue: #2ba7b0;
   --color-dark-blue: #160855;
-  --color-blue: #0041F3;
-  --color-turquoise: #00D9FF;
+  --color-blue: #0041f3;
+  --color-turquoise: #00d9ff;
   --color-red: #991b1b;
-  --color-orange: #FFAC33;
+  --color-orange: #ffac33;
   --color-light-green: #15a017;
-  --color-light-gray: #ADA9A9DC;
-  --color-dark-gray: #292F3D;
-  --color-extra-light-gray: #F9FAFB;
-  --color-slate : #f8fafc;
+  --color-light-gray: #ada9a9dc;
+  --color-dark-gray: #292f3d;
+  --color-extra-light-gray: #f9fafb;
+  --color-slate: #f8fafc;
   --color-slate-text: #64748b;
 
-  --error-bg-light: linear-gradient(135deg, rgba(247, 255, 255, 0.8), rgba(248, 247, 247, 0.8));
+  --error-bg-light: linear-gradient(
+    135deg,
+    rgba(247, 255, 255, 0.8),
+    rgba(248, 247, 247, 0.8)
+  );
   --error-bg: var(--error-bg-light);
 
   --color-navbar-icon: #d9e0e8;
@@ -69,20 +78,19 @@
   --cd-day-fg-outmonth: #6b7280;
   --cd-day-bg-selected: #2563eb;
   --cd-day-fg-selected: #fff;
-
 }
 
 /* Dark theme */
 .dark {
   --background-start-rgb: rgb(40, 40, 40);
   --background-end-rgb: rgb(60, 60, 60);
-  --color-text: #FFF;
-  --color-background: #292F3D;
+  --color-text: #fff;
+  --color-background: #292f3d;
   --color-row-even: rgb(31, 41, 55);
   --color-row-odd: rgb(17, 24, 39);
   --color-row-hover: #5c6a89;
   --color-button: #5c6a89;
-  --color-button-text: #FFF;
+  --color-button-text: #fff;
   --color-button-hover: #48526b;
   --color-switch-button: rgb(200, 200, 200);
   --color-switch-off: rgb(100, 100, 100);
@@ -94,32 +102,36 @@
   --color-operation-posting: #ffbe0b;
   --color-operation-curation: #fb5607;
   --color-operation-transfer: #8338ec;
-  --color-operation-market: #FF69B4;
+  --color-operation-market: #ff69b4;
   --color-operation-vesting: #780028;
   --color-operation-proposal: #78c814;
-  --color-operation-custom: #80003e;
+  --color-operation-custom: #e63946;
   --color-operation-other: #3a86ff;
-  --color-link: #00D9FF;
+  --color-link: #00d9ff;
   --color-operation-perspective-incoming: #48526b;
 
-  --color-yellow: #FFF351;
-  --color-light-blue: #6AF5FF;
+  --color-yellow: #fff351;
+  --color-light-blue: #6af5ff;
   --color-dark-blue: #160855;
-  --color-blue: #0041F3;
-  --color-turquoise: #00D9FF;
-  --color-red: #FF0000;
-  --color-orange: #FFAC33;
-  --color-light-green: #64FFAA;
-  --color-light-gray: #ADA9A9DC;
+  --color-blue: #0041f3;
+  --color-turquoise: #00d9ff;
+  --color-red: #ff0000;
+  --color-orange: #ffac33;
+  --color-light-green: #64ffaa;
+  --color-light-gray: #ada9a9dc;
   --color-dark-gray: #444c5e;
   --color-extra-light-gray: #34373ed4;
   --color-slate: #1e293b80;
   --color-slate-text: #94a3b8;
 
-  --error-bg-dark: linear-gradient(135deg, rgba(159, 149, 149, 0.8), rgba(104, 100, 100, 0.8));
+  --error-bg-dark: linear-gradient(
+    135deg,
+    rgba(159, 149, 149, 0.8),
+    rgba(104, 100, 100, 0.8)
+  );
   --error-bg: var(--error-bg-dark);
 
-  --color-navbar-icon: #292F3D;
+  --color-navbar-icon: #292f3d;
   --color-navbar-icon-hover: #34373ed4;
   --color-navbar-icon-border: #6b7280;
   --color-navbar-icon-list-hover: #374151;
@@ -129,7 +141,6 @@
   --cd-day-fg-outmonth: #4b5563;
   --cd-day-bg-selected: #3b82f6;
   --cd-day-fg-selected: #fff;
-
 }
 
 * {
@@ -137,9 +148,8 @@
 }
 
 body {
-  background-color: var(--background-start-rgb)
+  background-color: var(--background-start-rgb);
 }
-
 
 pre {
   white-space: pre-wrap;
@@ -195,7 +205,9 @@ pre {
   font-size: 1rem;
   background-color: transparent;
   border: none;
-  transition: border-bottom-color 0.3s ease, background-color 0.3s ease;
+  transition:
+    border-bottom-color 0.3s ease,
+    background-color 0.3s ease;
   outline: none;
 }
 
@@ -210,7 +222,6 @@ pre {
   transition: color 0.3s ease;
 }
 
-
 .autocomplete-result-container {
   display: flex;
   flex-direction: column;
@@ -219,8 +230,6 @@ pre {
   margin-top: 0.25rem;
   max-height: 24rem;
   overflow-y: auto;
-
-
 }
 
 .autocomplete-result-item {
@@ -231,7 +240,9 @@ pre {
   display: flex;
   align-items: center;
   gap: 6px;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  transition:
+    background-color 0.3s ease,
+    transform 0.2s ease;
   font-size: 14px;
 }
 
@@ -240,7 +251,6 @@ pre {
   transform: translateY(-1px);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
-
 
 .autocomplete-result-link {
   color: var(--color-link);
@@ -298,13 +308,16 @@ pre {
 
 /* Sync Dialog Styles */
 .dialog-content {
-  background: linear-gradient(to right, var(--background-start-rgb), var(--background-end-rgb));
+  background: linear-gradient(
+    to right,
+    var(--background-start-rgb),
+    var(--background-end-rgb)
+  );
   color: var(--color-text);
   backdrop-filter: blur(10px);
   border-radius: 0.75rem;
   box-shadow: 0 10px 15px var(--color-background);
   transition: all 0.5s ease;
-
 }
 
 .dialog-header {
@@ -413,7 +426,7 @@ pre {
 @media (max-width: 1040px) {
   .page-container {
     /* It overrides the rule above, forcing the width to be 100% on mobile. */
-    width: 100%; 
+    width: 100%;
   }
 }
 
@@ -465,21 +478,20 @@ pre {
   background-color: rgba(100, 100, 100, 0.7);
 }
 
-
 .table-toolbar {
-  --toolbar-bg-color: #f8fafc; 
+  --toolbar-bg-color: #f8fafc;
   --toolbar-border-color: #334155;
-  
+
   display: flex;
   width: 100%;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 0.5rem;  
+  padding: 0.5rem;
   background-color: var(--toolbar-bg-color);
   border-bottom-width: 2px;
-  border-bottom-color: #e2e8f0; 
+  border-bottom-color: #e2e8f0;
 }
 
 .dark .table-toolbar {

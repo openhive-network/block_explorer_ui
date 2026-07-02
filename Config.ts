@@ -76,13 +76,31 @@ export const config = {
     // The Hive account name that owns the app
     app: process.env.NEXT_PUBLIC_HIVESIGNER_APP,
     defaultCallBack: process.env.NEXT_PUBLIC_HIVESIGNER_CALLBACK as string,
-    scope: ["vote", "comment", "custom_json", "claim_reward_balance", "update_proposal_votes"],
+    scope: [
+      "vote",
+      "comment",
+      "custom_json",
+      "claim_reward_balance",
+      "update_proposal_votes",
+    ],
     endpoints: {
       baseUrl: "https://hivesigner.com",
       authorize: "https://hivesigner.com/oauth2/authorize",
       token: "https://hivesigner.com/api/oauth2/token",
       broadcast: "https://hivesigner.com/api/broadcast",
     },
+  },
+  workspaceSync: {
+    // Key used inside posting_json_metadata to store the workspace bundle.
+    // WARNING: changing this key will break restore for any user who synced
+    // under the old key — their blockchain data becomes unreachable.
+    metadataKey: "hivescan_workspace",
+    // Maximum compressed bundle size before the user is warned and sync is blocked.
+    sizeLimitBytes: 40 * 1024,
+    // Increment when the bundle schema changes in a breaking way.
+    bundleVersion: 1,
+    // localStorage key for app-wide settings (not per-user).
+    settingsStorageKey: "app-settings",
   },
   security: {
     keychainTimeout: 60000,
@@ -93,10 +111,17 @@ export const config = {
       maxTrackedIps: 1000, // How many unique IPs to keep in memory
       loginLimit: 5, // Attempts per interval
       broadcastLimit: 30, // Actions per interval
+      workspaceLimit: 20, // Encrypt/decrypt calls per interval
+      challengeLimit: 10, // Challenge token requests per interval
     },
     // Whitelist for /api/auth/broadcast. Active-key ops route through the
     // Hivesigner sign page client-side, not this endpoint.
-    allowedOperations: ["vote", "claim_reward_balance", "custom_json", "update_proposal_votes"],
+    allowedOperations: [
+      "vote",
+      "claim_reward_balance",
+      "custom_json",
+      "update_proposal_votes",
+    ],
   },
 };
 

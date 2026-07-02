@@ -1018,6 +1018,27 @@ namespace Hive {
     "to-block"?: number | Date;
   }
 
+  export class OperationTypeStatisticsItem {
+    op_type_id!: number;
+    op_count!: number;
+  }
+
+  export class OperationTypeStatisticsResponse {
+    date!: Date;
+    total_transactions!: number;
+    total_operations!: number;
+    operations!: OperationTypeStatisticsItem[];
+    last_block_num!: number;
+  }
+
+  export class OperationTypeStatisticsParams {
+    granularity!: string;
+    direction!: Hive.Direction;
+    "from-block"?: number | Date;
+    "to-block"?: number | Date;
+    "op-types"?: string;
+  }
+
   export class TransferStatisticsResponse {
     date!: Date;
     total_transfer_amount!: Amount;
@@ -1121,6 +1142,19 @@ namespace Hive {
     direction!: Hive.Direction;
     "from-block"?: number | Date;
     "to-block"?: number | Date;
+  }
+
+  export class DailyActiveUsersParams {
+    from_date?: Date | number | undefined;
+    to_date?: Date | number | undefined;
+    granularity?: string;
+    operation_types?: string;
+  }
+
+  export class DailyActiveUsersResponse {
+    period!: string;
+    active_accounts!: number;
+    operations!: number;
   }
 
   export class AccountFollowCount {
@@ -1355,6 +1389,33 @@ namespace Hive {
     pending_payout_value: string;
     depth: number;
     author: string;
+  }
+
+  export class NetworkVoteStatsParams {
+    from_date?: string;
+    to_date?: string;
+    granularity?: string;
+  }
+
+  export class NetworkVoteStatsResponse {
+    period!: string;
+    total_votes!: number;
+    upvotes!: number;
+    downvotes!: number;
+    unvotes!: number;
+    self_votes!: number;
+    unique_voters!: number;
+    downvote_pct!: number;
+  }
+
+  export class NetworkHpDistributionParams {}
+
+  export class NetworkHpDistributionResponse {
+    bucket!: string;
+    account_count!: number;
+    pct_accounts!: number;
+    total_hp!: number;
+    pct_hp!: number;
   }
 }
 

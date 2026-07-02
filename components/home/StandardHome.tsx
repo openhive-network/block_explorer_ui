@@ -7,7 +7,6 @@ import { config } from "@/Config";
 import useHeadBlock from "@/hooks/api/homePage/useHeadBlock";
 import useBlockOperations from "@/hooks/api/common/useBlockOperations";
 import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
-import { useTheme } from "@/contexts/ThemeContext";
 import TransactionStatisticsCard from "@/components/home/TransactionStatisticsCard";
 import { useI18n } from "@/i18n/i18n";
 import TopWitnessesCard from "@/components/home/TopWitnessesCard";
@@ -15,8 +14,12 @@ import useCommunities from "@/hooks/api/communities/useCommunities";
 import TopCommunitiesCard from "@/components/home/TopCommunitiesCard";
 import TransferVolumeCard from "@/components/home/TransferVolumeCard";
 import TotalValueLockedCard from "@/components/home/TotalValueLockedCard";
+import NetworkHpDistributionCard from "@/components/home/NetworkHpDistributionCard";
 import HpMomentumCard from "@/components/home/HpMomentumCard";
 import NetworkGrowthCard from "@/components/home/NetworkGrowthCard";
+import NetworkVotingActivityCard from "@/components/home/NetworkVotingActivityCard";
+import DailyActiveUsersCard from "@/components/home/DailyActiveUsersCard";
+import NetworkOpMixCard from "@/components/home/NetworkOpMixCard";
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import { useAuth } from "@/contexts/AuthContext";
@@ -25,7 +28,6 @@ import WatchedProposalsWidget from "@/components/dashboard/widgets/data/WatchedP
 import WitnessHealthWidget from "@/components/dashboard/widgets/data/WitnessHealthWidget";
 
 const StandardHome = () => {
-  const { theme } = useTheme();
   const { t } = useI18n();
   const { isLoggedIn } = useAuth();
   const { getWatched } = useWatchlist();
@@ -71,27 +73,30 @@ const StandardHome = () => {
     }
   }, [blockOperations?.total_operations, trxOperations]);
 
-  const strokeColor = theme === "dark" ? "#FFF" : "#000";
-
   return (
     <>
       <Head>
         <title>{t("home.title")}</title>
       </Head>
       <div className="page-container grid grid-cols-12 text-white gap-3">
-        <HeadBlockCard
-          headBlockCardData={dynamicGlobalQueryData}
-          transactionCount={trxOpsLength}
-          blockDetails={headBlockData}
-          opcount={opcount}
-        />
+        <div className="col-span-12 md:col-span-4 lg:col-span-3 flex flex-col gap-3">
+          <HeadBlockCard
+            headBlockCardData={dynamicGlobalQueryData}
+            transactionCount={trxOpsLength}
+            blockDetails={headBlockData}
+            opcount={opcount}
+          />
+          <NetworkVotingActivityCard />
+          <div className="h-[340px]">
+            <NetworkHpDistributionCard />
+          </div>
+        </div>
 
         <div className="col-span-12 md:col-span-8 lg:col-span-6">
-          <LastBlocksWidget
-            headBlock={headBlockNum}
-            strokeColor={strokeColor}
-          />
+          <LastBlocksWidget headBlock={headBlockNum} />
           <NetworkGrowthCard />
+          <DailyActiveUsersCard />
+          <NetworkOpMixCard />
           <TransactionStatisticsCard />
           <TransferVolumeCard />
           <TotalValueLockedCard />

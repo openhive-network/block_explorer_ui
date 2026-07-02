@@ -1,0 +1,113 @@
+import { serialize } from "cookie";
+import type { NextApiRequest, NextApiResponse } from "next";
+import { Client, Signature, cryptoUtils } from "@hiveio/dhive";
+import { config } from "@/Config";
+import { loginLimiter } from "@/utils/RateLimit";
+import {
+  createSessionToken,
+  verifyChallengeToken,
+} from "@/lib/smart-signer/serverSession";
+import { claimChallenge } from "@/lib/smart-signer/usedChallenges";
+
+const hiveClient = new Client([config.nodeAddress]);
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  if (req.method !== "POST") return res.status(405).end();
+
+  const ip =
+    (req.headers["cf-connecting-ip"] as string) ||
+    (typeof req.headers["x-forwarded-for"] === "string"
+      ? req.headers["x-forwarded-for"].split(",")[0].trim()
+      : req.socket.remoteAddress) ||
+    "anonymous";
+
+  try {
+    await loginLimiter.check(res, config.security.rateLimits.loginLimit, ip);
+  } catch {
+    return res.status(429).json({ error: "auth.errorTooManyAttempts" });
+  }
+
+  const { username, message, signature, challenge } = req.body;
+  if (
+    typeof username !== "string" ||
+    !username ||
+    typeof message !== "string" ||
+    !message ||
+    message.length > 2048 ||
+    typeof signature !== "string" ||
+    !signature
+  ) {
+    return res.status(400).json({ error: "invalid_input" });
+  }
+
+  // Challenge verification is gated on server-side key availability, not client choice.
+  // When WORKSPACE_ENCRYPTION_KEY is configured, a valid challenge is mandatory — omitting it
+  // is a hard rejection, not a bypass. When no key is configured, challenges are unavailable
+  // and we skip the check (graceful degradation).
+  const keyConfigured =
+    typeof process.env.WORKSPACE_ENCRYPTION_KEY === "string" &&
+    process.env.WORKSPACE_ENCRYPTION_KEY.length === 64;
+
+  // Parse and validate the challenge token early (no side effects yet)
+  let verifiedChallenge: { nonce: string; exp: number } | null = null;
+  if (keyConfigured) {
+    if (typeof challenge !== "string" || !challenge) {
+      return res.status(400).json({ error: "challenge_required" });
+    }
+    verifiedChallenge = verifyChallengeToken(challenge);
+    if (!verifiedChallenge) {
+      return res.status(401).json({ error: "invalid_or_expired_challenge" });
+    }
+    if (!message.includes(verifiedChallenge.nonce)) {
+      return res.status(401).json({ error: "nonce_not_in_message" });
+    }
+  }
+
+  try {
+    const [account] = await hiveClient.database.getAccounts([username]);
+    if (!account) return res.status(400).json({ error: "account_not_found" });
+
+    const postingKeys = account.posting.key_auths.map(([key]) => key as string);
+
+    const msgHash = cryptoUtils.sha256(message);
+    const sig = Signature.fromString(signature);
+    const recoveredKey = sig.recover(msgHash);
+    const recoveredKeyStr = recoveredKey.toString();
+
+    if (!postingKeys.includes(recoveredKeyStr)) {
+      return res.status(401).json({ error: "invalid_signature" });
+    }
+
+    // Consume the nonce only after the signature is verified — prevents burning
+    // a valid challenge on a node timeout or attacker-supplied bad signature
+    if (
+      verifiedChallenge &&
+      !claimChallenge(verifiedChallenge.nonce, verifiedChallenge.exp)
+    ) {
+      return res.status(401).json({ error: "challenge_already_used" });
+    }
+
+    const token = createSessionToken(username);
+    if (!token) {
+      // Encryption not configured — no session needed
+      return res.status(200).json({ success: true });
+    }
+
+    res.setHeader(
+      "Set-Cookie",
+      serialize("hivescan_session", token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+        path: "/",
+        maxAge: config.security.sessionMaxAge,
+      })
+    );
+    return res.status(200).json({ success: true });
+  } catch {
+    return res.status(400).json({ error: "verification_failed" });
+  }
+}

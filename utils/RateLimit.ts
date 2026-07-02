@@ -1,5 +1,5 @@
-import { LRUCache } from 'lru-cache';
-import { config } from '@/Config';
+import { LRUCache } from "lru-cache";
+import { config } from "@/Config";
 
 interface Options {
   uniqueTokenPerInterval?: number;
@@ -9,7 +9,9 @@ interface Options {
 export const rateLimit = (options?: Options) => {
   const tokenCache = new LRUCache<string, number>({
     // Fallback to config values if no specific options are provided
-    max: options?.uniqueTokenPerInterval || config.security.rateLimits.maxTrackedIps,
+    max:
+      options?.uniqueTokenPerInterval ||
+      config.security.rateLimits.maxTrackedIps,
     ttl: options?.interval || config.security.rateLimits.interval,
   });
 
@@ -22,8 +24,11 @@ export const rateLimit = (options?: Options) => {
         tokenCache.set(token, currentUsage + 1);
 
         if (res && res.setHeader) {
-          res.setHeader('X-RateLimit-Limit', limit);
-          res.setHeader('X-RateLimit-Remaining', isRateLimited ? 0 : limit - (currentUsage + 1));
+          res.setHeader("X-RateLimit-Limit", limit);
+          res.setHeader(
+            "X-RateLimit-Remaining",
+            isRateLimited ? 0 : limit - (currentUsage + 1)
+          );
         }
 
         return isRateLimited ? reject() : resolve();
@@ -33,3 +38,5 @@ export const rateLimit = (options?: Options) => {
 
 export const loginLimiter = rateLimit();
 export const broadcastLimiter = rateLimit();
+export const workspaceLimiter = rateLimit();
+export const challengeLimiter = rateLimit();

@@ -650,6 +650,24 @@ class FetchingService {
     });
   }
 
+  async getOperationTypeStatistics(
+    granularity: "daily" | "monthly" | "yearly",
+    direction: "asc" | "desc",
+    fromBlock?: Date | number,
+    toBlock?: Date | number,
+    opTypes?: number[]
+  ): Promise<Hive.OperationTypeStatisticsResponse[]> {
+    return await this.extendedHiveChain!.restApi[
+      "hafbe-api"
+    ].operationTypeStatistics({
+      granularity,
+      direction,
+      "from-block": fromBlock,
+      "to-block": toBlock,
+      "op-types": opTypes?.join(","),
+    });
+  }
+
   async getTransferStatistics(
     granularity: "hourly" | "daily" | "monthly" | "yearly",
     coinType: "HBD" | "HIVE",
@@ -954,6 +972,45 @@ class FetchingService {
     return await this.extendedHiveChain!.restApi[
       "hivemind-api"
     ].accounts.pendingCurationRewards({ accountName });
+  }
+
+  async getDailyActiveUsers(
+    fromBlock?: Date | number | undefined,
+    toBlock?: Date | number | undefined,
+    granularity?: "day" | "week" | "month",
+    operationTypes?: string
+  ): Promise<Hive.DailyActiveUsersResponse[]> {
+    const params = {
+      from_date: fromBlock,
+      to_date: toBlock,
+      granularity,
+      operation_types: operationTypes?.trim(),
+    };
+    return this.extendedHiveChain!.restApi["haf-stats-api"].dailyActiveUsers(
+      params
+    );
+  }
+
+  async getNetworkVoteStats(
+    from?: string,
+    to?: string,
+    granularity?: "day" | "week" | "month"
+  ): Promise<Hive.NetworkVoteStatsResponse[]> {
+    return await this.extendedHiveChain!.restApi[
+      "haf-stats-api"
+    ].networkVoteStats({
+      from_date: from,
+      to_date: to,
+      granularity,
+    });
+  }
+
+  async getNetworkHpDistribution(): Promise<
+    Hive.NetworkHpDistributionResponse[]
+  > {
+    return await this.extendedHiveChain!.restApi[
+      "haf-stats-api"
+    ].networkHpDistribution({});
   }
 }
 

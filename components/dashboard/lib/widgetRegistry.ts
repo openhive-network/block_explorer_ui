@@ -18,8 +18,12 @@ import TopWitnessesCard from "@/components/home/TopWitnessesCard";
 import TransactionStatisticsCard from "@/components/home/TransactionStatisticsCard";
 import TransferVolumeCard from "@/components/home/TransferVolumeCard";
 import TotalValueLockedCard from "@/components/home/TotalValueLockedCard";
+import NetworkHpDistributionCard from "@/components/home/NetworkHpDistributionCard";
 import NetworkGrowthCard from "@/components/home/NetworkGrowthCard";
 import HpMomentumCard from "@/components/home/HpMomentumCard";
+import NetworkVotingActivityCard from "@/components/home/NetworkVotingActivityCard";
+import DailyActiveUsersCard from "@/components/home/DailyActiveUsersCard";
+import NetworkOpMixCard from "@/components/home/NetworkOpMixCard";
 import LastBlocksWidget from "@/components/LastBlocksWidget";
 import FundAndSupplyWidget from "@/components/dashboard/widgets/data/FundAndSupplyWidget";
 import HiveParametersWidget from "@/components/dashboard/widgets/data/HiveParametersWidget";
@@ -30,6 +34,8 @@ import TitleWidget from "@/components/dashboard/widgets/layout/TitleWidget";
 import SpacerWidget from "@/components/dashboard/widgets/layout/SpacerWidget";
 import SeparatorWidget from "@/components/dashboard/widgets/layout/SeparatorWidget";
 import { DashboardActions, DashboardData } from "../hooks/useDashboardData";
+
+export type WidgetCategory = "reports" | "chain" | "account" | "layout";
 
 export interface WidgetConfig {
   id: string;
@@ -44,6 +50,7 @@ export interface WidgetConfig {
     isDraggable?: boolean;
   };
   description?: string;
+  category?: WidgetCategory;
   isLayoutWidget?: boolean;
   allowMultiple?: boolean;
   collapsible?: boolean;
@@ -55,6 +62,16 @@ export interface WidgetConfig {
     actions: DashboardActions
   ) => object;
 }
+
+export const WIDGET_CATEGORY_META: Record<
+  WidgetCategory,
+  { nameKey: string; order: number }
+> = {
+  reports: { nameKey: "widgetLibrary.categoryReports", order: 0 },
+  chain: { nameKey: "widgetLibrary.categoryChain", order: 1 },
+  account: { nameKey: "widgetLibrary.categoryAccount", order: 2 },
+  layout: { nameKey: "widgetLibrary.categoryLayout", order: 3 },
+};
 
 // --- Helper function for widgets that share props ---
 const getCollapsibleCardProps = (
@@ -73,6 +90,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
   "live-info": {
     id: "live-info",
     name: "widgets.liveInfoName",
+    category: "chain" as const,
     component: LiveInfoWidget,
     defaultLayout: { w: 3, h: 6, minW: 3, minH: 5 },
     getProps: (data) => ({
@@ -85,6 +103,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
   "hive-price-chart": {
     id: "hive-price-chart",
     name: "widgets.hivePriceChartName",
+    category: "chain" as const,
     component: HivePriceChartWidget,
     defaultLayout: { w: 6, h: 7.2, minW: 4, minH: 4 },
     getProps: (data, widgetState, actions) => ({
@@ -98,6 +117,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
   "fund-and-supply": {
     id: "fund-and-supply",
     name: "widgets.fundAndSupplyName",
+    category: "chain" as const,
     component: FundAndSupplyWidget,
     defaultLayout: { w: 3, h: 5, minW: 2, minH: 5 },
     getProps: getCollapsibleCardProps,
@@ -108,6 +128,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
   "hive-parameters": {
     id: "hive-parameters",
     name: "widgets.hiveParametersName",
+    category: "chain" as const,
     component: HiveParametersWidget,
     defaultLayout: { w: 3, h: 7.6, minW: 2, minH: 5 },
     getProps: getCollapsibleCardProps,
@@ -118,6 +139,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
   "blockchain-dates": {
     id: "blockchain-dates",
     name: "widgets.blockchainDatesName",
+    category: "chain" as const,
     component: BlockchainDatesWidget,
     defaultLayout: { w: 3, h: 3.4, minW: 2, minH: 1 },
     getProps: getCollapsibleCardProps,
@@ -128,6 +150,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
   "market-data": {
     id: "market-data",
     name: "widgets.marketDataName",
+    category: "chain" as const,
     component: MarketDataWidget,
     defaultLayout: { w: 4, h: 1.5, minW: 3, minH: 1 },
     getProps: (data) => ({
@@ -137,8 +160,9 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
   "last-blocks": {
     id: "last-blocks",
     name: "widgets.lastBlocksName",
+    category: "chain" as const,
     component: LastBlocksWidget,
-    defaultLayout: { w: 8, h: 9, minW: 6, minH: 8 },
+    defaultLayout: { w: 6, h: 9, minW: 6, minH: 8 },
     getProps: (data) => ({
       headBlock: data.headBlockNum,
       strokeColor: data.strokeColor,
@@ -147,6 +171,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
   "top-witnesses": {
     id: "top-witnesses",
     name: "widgets.topWitnessesName",
+    category: "chain" as const,
     component: TopWitnessesCard,
     defaultLayout: { w: 2.95, h: 11, minW: 2, minH: 8 },
     getProps: (data) => ({
@@ -157,6 +182,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
   "top-communities": {
     id: "top-communities",
     name: "widgets.topCommunitiesName",
+    category: "chain" as const,
     component: TopCommunitiesCard,
     defaultLayout: { w: 2.95, h: 7, minW: 2, minH: 5 },
     getProps: (data) => ({
@@ -167,46 +193,88 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
   "tx-stats": {
     id: "tx-stats",
     name: "widgets.txStatsName",
+    category: "reports" as const,
     component: TransactionStatisticsCard,
-    defaultLayout: { w: 8, h: 5, minW: 3, minH: 4 },
+    defaultLayout: { w: 6, h: 5, minW: 3, minH: 4 },
+    dynamicHeight: true,
   },
   "transfer-volume": {
     id: "transfer-volume",
     name: "widgets.transferVolumeName",
+    category: "reports" as const,
     component: TransferVolumeCard,
-    defaultLayout: { w: 8, h: 5, minW: 3, minH: 4 },
+    defaultLayout: { w: 6, h: 5, minW: 3, minH: 4 },
+    dynamicHeight: true,
   },
   tvl: {
     id: "tvl",
     name: "widgets.tvlName",
+    category: "reports" as const,
     component: TotalValueLockedCard,
-    defaultLayout: { w: 8, h: 5, minW: 3, minH: 4 },
+    defaultLayout: { w: 6, h: 5, minW: 3, minH: 4 },
+    dynamicHeight: true,
+  },
+  "network-hp-distribution": {
+    id: "network-hp-distribution",
+    name: "widgets.networkHpDistributionName",
+    category: "reports" as const,
+    component: NetworkHpDistributionCard,
+    defaultLayout: { w: 3, h: 7, minW: 2, minH: 5 },
+    dynamicHeight: false,
   },
   "network-growth": {
     id: "network-growth",
     name: "widgets.networkGrowthName",
+    category: "reports" as const,
     component: NetworkGrowthCard,
-    defaultLayout: { w: 8, h: 3.3, minW: 3, minH: 3 },
+    defaultLayout: { w: 6, h: 3.3, minW: 3, minH: 3 },
     dynamicHeight: true,
   },
   "hp-momentum": {
     id: "hp-momentum",
     name: "widgets.hpMomentumName",
+    category: "reports" as const,
     component: HpMomentumCard,
-    defaultLayout: { w: 8, h: 5, minW: 3, minH: 4 },
+    defaultLayout: { w: 6, h: 5, minW: 3, minH: 4 },
+    dynamicHeight: true,
+  },
+  "daily-active-users": {
+    id: "daily-active-users",
+    name: "widgets.dailyActiveUsersName",
+    category: "reports" as const,
+    component: DailyActiveUsersCard,
+    defaultLayout: { w: 6, h: 3.3, minW: 3, minH: 3 },
+    dynamicHeight: true,
+  },
+  "op-mix": {
+    id: "op-mix",
+    name: "widgets.opMixName",
+    category: "reports" as const,
+    component: NetworkOpMixCard,
+    defaultLayout: { w: 6, h: 3.3, minW: 3, minH: 3 },
+    dynamicHeight: true,
+  },
+  "voting-activity": {
+    id: "voting-activity",
+    name: "widgets.votingActivityName",
+    category: "reports" as const,
+    component: NetworkVotingActivityCard,
+    defaultLayout: { w: 3, h: 5.8, minW: 2, minH: 4 },
     dynamicHeight: true,
   },
   searches: {
     id: "searches",
     name: "widgets.searchesName",
+    category: "chain" as const,
     component: SearchesSection,
-    defaultLayout: { w: 8, h: 11.9, minW: 4, minH: 3 },
+    defaultLayout: { w: 6, h: 11.9, minW: 4, minH: 3 },
     dynamicHeight: true,
   },
 
   "watched-proposals": {
     id: "watched-proposals",
     name: "widgets.watchedProposalsName",
+    category: "account" as const,
     component: WatchedProposalsWidget,
     defaultLayout: { w: 3, h: 6, minW: 2, minH: 3 },
     allowMultiple: false,
@@ -216,6 +284,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
   "witness-health": {
     id: "witness-health",
     name: "widgets.witnessHealthName",
+    category: "account" as const,
     component: WitnessHealthWidget,
     defaultLayout: { w: 3, h: 6, minW: 2, minH: 3 },
     allowMultiple: false,
@@ -225,6 +294,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
   "my-wallet": {
     id: "my-wallet",
     name: "widgets.myWalletName",
+    category: "account" as const,
     component: MyWalletWidget,
     defaultLayout: { w: 3, h: 8, minW: 2, minH: 4 },
     allowMultiple: false,
@@ -234,6 +304,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
   "my-balance-history": {
     id: "my-balance-history",
     name: "widgets.myBalanceHistoryName",
+    category: "account" as const,
     component: MyBalanceHistoryWidget,
     defaultLayout: { w: 3, h: 10.5, minW: 2, minH: 3 },
     allowMultiple: false,
@@ -243,6 +314,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
   "my-recurring-transfers": {
     id: "my-recurring-transfers",
     name: "widgets.myRecurringTransfersName",
+    category: "account" as const,
     component: MyRecurringTransfersWidget,
     defaultLayout: { w: 3, h: 8, minW: 2, minH: 3 },
     allowMultiple: false,
@@ -252,6 +324,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
   "my-hp-delegations": {
     id: "my-hp-delegations",
     name: "widgets.myHpDelegationsName",
+    category: "account" as const,
     component: MyHpDelegationsWidget,
     defaultLayout: { w: 3, h: 8, minW: 2, minH: 3 },
     allowMultiple: false,
@@ -260,6 +333,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
   "my-rc-delegations": {
     id: "my-rc-delegations",
     name: "widgets.myRcDelegationsName",
+    category: "account" as const,
     component: MyRcDelegationsWidget,
     defaultLayout: { w: 3, h: 8, minW: 2, minH: 3 },
     allowMultiple: false,
@@ -268,6 +342,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
   "my-authorities": {
     id: "my-authorities",
     name: "widgets.myAuthoritiesName",
+    category: "account" as const,
     component: MyAuthoritiesWidget,
     defaultLayout: { w: 3, h: 8, minW: 2, minH: 3 },
     allowMultiple: false,
@@ -277,6 +352,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
   "my-recent-activity": {
     id: "my-recent-activity",
     name: "widgets.myRecentActivityName",
+    category: "account" as const,
     component: MyRecentActivityWidget,
     defaultLayout: { w: 3, h: 7, minW: 2, minH: 3 },
     allowMultiple: false,
@@ -285,6 +361,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
   "top-holders": {
     id: "top-holders",
     name: "widgets.topHoldersName",
+    category: "account" as const,
     component: TopHoldersWidget,
     defaultLayout: { w: 3, h: 8, minW: 2, minH: 3 },
     allowMultiple: false,
@@ -297,6 +374,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     component: TitleWidget,
     name: "widgets.titleName",
     description: "widgets.titleNameDescription",
+    category: "layout" as const,
     defaultLayout: { w: 4, h: 1, minW: 3, minH: 1, isResizable: true },
     isLayoutWidget: true,
     allowMultiple: true,
@@ -314,6 +392,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     component: MarkdownWidget,
     name: "widgets.markdownName",
     description: "widgets.markdownNameDescription",
+    category: "layout" as const,
     defaultLayout: { w: 4, h: 4, minW: 2, minH: 2, isResizable: true },
     isLayoutWidget: true,
     allowMultiple: true,
@@ -328,6 +407,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     component: QuickLinksWidget,
     name: "widgets.quickLinksName",
     description: "widgets.quickLinksNameDescription",
+    category: "layout" as const,
     defaultLayout: { w: 4, h: 4, minW: 2, minH: 3, isResizable: true },
     isLayoutWidget: true,
     allowMultiple: true,
@@ -342,6 +422,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     component: EmbedWidget,
     name: "widgets.embedName",
     description: "widgets.embedNameDescription",
+    category: "layout" as const,
     defaultLayout: { w: 6, h: 8, minW: 3, minH: 4, isResizable: true },
     isLayoutWidget: true,
     allowMultiple: true,
@@ -356,6 +437,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     component: SpacerWidget,
     name: "widgets.spacerName",
     description: "widgets.spacerNameDescription",
+    category: "layout" as const,
     defaultLayout: { w: 1, h: 2 },
     isLayoutWidget: true,
     allowMultiple: true,
@@ -365,6 +447,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     component: SeparatorWidget,
     name: "widgets.separatorName",
     description: "widgets.separatorNameDescription",
+    category: "layout" as const,
     defaultLayout: { w: 12, h: 1, isResizable: true },
     isLayoutWidget: true,
     allowMultiple: true,

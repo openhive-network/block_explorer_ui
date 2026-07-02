@@ -89,6 +89,12 @@ export const extendedRest = {
       result: Hive.TransactionStatisticsResponse,
       urlPath: "transaction-statistics",
     },
+    operationTypeStatistics: {
+      params: Hive.OperationTypeStatisticsParams,
+      result: Hive.OperationTypeStatisticsResponse,
+      responseArray: true,
+      urlPath: "operation-type-statistics",
+    },
     proxyPower: {
       params: Hive.ProxyPowerParams,
       result: Hive.ProxyPowerResponse,
@@ -243,6 +249,26 @@ export const extendedRest = {
         result: Hive.PendingCurationRewardsResponse,
         urlPath: "{accountName}/pending-curation-rewards",
       },
+    },
+  },
+  "haf-stats-api": {
+    networkVoteStats: {
+      params: Hive.NetworkVoteStatsParams,
+      result: Hive.NetworkVoteStatsResponse,
+      responseArray: true,
+      urlPath: "network/vote-stats",
+    },
+    dailyActiveUsers: {
+      params: Hive.DailyActiveUsersParams,
+      result: Hive.DailyActiveUsersResponse,
+      responseArray: true,
+      urlPath: "network/daily-active-users",
+    },
+    networkHpDistribution: {
+      params: Hive.NetworkHpDistributionParams,
+      result: Hive.NetworkHpDistributionResponse,
+      responseArray: true,
+      urlPath: "network/hp-distribution",
     },
   },
 };
