@@ -2,7 +2,9 @@ import React, { useMemo, useState } from "react";
 import { Loader2, TrendingUp, TrendingDown } from "lucide-react";
 import moment from "moment";
 import dynamic from "next/dynamic";
-import AccountRetentionHeatmap from "./AccountRetentionHeatmap";
+import AccountRetentionHeatmap, {
+  HeatmapViewMode,
+} from "./AccountRetentionHeatmap";
 import { useI18n } from "../../i18n/i18n";
 import useAccountFunnel from "@/hooks/api/homePage/useAccountFunnel";
 import { cn } from "@/lib/utils";
@@ -126,6 +128,7 @@ const RetentionKpi: React.FC<RetentionKpiProps> = ({
 const AccountRetentionFunnelCard: React.FC = () => {
   const { t, locale } = useI18n();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<HeatmapViewMode>("rates");
 
   const fromDate = useMemo(() => moment().subtract(6, "months").toDate(), []);
   const toDate = useMemo(
@@ -230,6 +233,12 @@ const AccountRetentionFunnelCard: React.FC = () => {
 
   return (
     <div className="bg-theme rounded mb-2 shadow-md overflow-hidden">
+      <div className="flex items-center gap-2 px-3 py-1.5 border-b border-gray-100 dark:border-gray-800">
+        <span className="block w-[3px] h-3.5 rounded-full bg-indigo-500 flex-shrink-0" />
+        <span className="text-[11px] font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+          {t("accountRetentionFunnelCard.title")}
+        </span>
+      </div>
       <div className="flex flex-wrap gap-2 p-2">
         {/* KPI — New Accounts */}
         <div className="flex-1 min-w-[120px] bg-explorer-extra-light-gray rounded-lg p-2.5 shadow-md flex flex-col justify-center">
@@ -390,9 +399,24 @@ const AccountRetentionFunnelCard: React.FC = () => {
         {/* Chart panel */}
         <div className="flex-[2] min-w-[220px] bg-explorer-extra-light-gray rounded-lg p-2.5 shadow-md flex flex-col">
           <div className="flex justify-between items-center mb-1">
-            <h3 className="text-xs font-semibold uppercase tracking-wide text-explorer-dark-gray dark:text-text">
-              {t("accountRetentionFunnelCard.title")}
-            </h3>
+            <div className="flex gap-1">
+              {(["rates", "counts"] as HeatmapViewMode[]).map((mode) => (
+                <button
+                  key={mode}
+                  onClick={() => setViewMode(mode)}
+                  className={cn(
+                    "text-[10px] px-1.5 py-0.5 rounded font-medium transition-colors",
+                    viewMode === mode
+                      ? "bg-indigo-500 text-white"
+                      : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                  )}
+                >
+                  {mode === "rates"
+                    ? t("accountRetentionFunnelFullChart.viewRates")
+                    : t("accountRetentionFunnelFullChart.viewCounts")}
+                </button>
+              ))}
+            </div>
             <button
               onClick={() => setIsModalOpen(true)}
               className="text-xs underline"
@@ -406,7 +430,11 @@ const AccountRetentionFunnelCard: React.FC = () => {
             </div>
           ) : (
             <div className="flex-grow min-h-[100px] overflow-hidden">
-              <AccountRetentionHeatmap data={sortedData} compact />
+              <AccountRetentionHeatmap
+                data={sortedData}
+                compact
+                viewMode={viewMode}
+              />
             </div>
           )}
         </div>

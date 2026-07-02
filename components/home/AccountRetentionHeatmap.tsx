@@ -144,7 +144,10 @@ const AccountRetentionHeatmap: React.FC<AccountRetentionHeatmapProps> = ({
   const tDataPending = t("accountRetentionFunnelCard.heatmapDataPending");
 
   const months = useMemo(
-    () => data.map((d) => moment(d.cohort_month, "YYYY-MM").format("MMM YYYY")),
+    () =>
+      data.map((d) =>
+        moment(d.cohort_month, "YYYY-MM").locale(locale).format("MMM YYYY")
+      ),
     [data, locale]
   );
 
