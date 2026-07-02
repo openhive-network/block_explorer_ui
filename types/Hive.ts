@@ -1018,6 +1018,27 @@ namespace Hive {
     "to-block"?: number | Date;
   }
 
+  export class OperationTypeStatisticsItem {
+    op_type_id!: number;
+    op_count!: number;
+  }
+
+  export class OperationTypeStatisticsResponse {
+    date!: Date;
+    total_transactions!: number;
+    total_operations!: number;
+    operations!: OperationTypeStatisticsItem[];
+    last_block_num!: number;
+  }
+
+  export class OperationTypeStatisticsParams {
+    granularity!: string;
+    direction!: Hive.Direction;
+    "from-block"?: number | Date;
+    "to-block"?: number | Date;
+    "op-types"?: string;
+  }
+
   export class TransferStatisticsResponse {
     date!: Date;
     total_transfer_amount!: Amount;

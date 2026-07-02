@@ -29,6 +29,7 @@ export const DEFAULT_WIDGETS: Array<{ i: string; type: string }> = [
   { i: "network-growth-1", type: "network-growth" },
   { i: "daily-active-users-1", type: "daily-active-users" },
   { i: "account-retention-funnel-1", type: "account-retention-funnel" },
+  { i: "op-mix-1", type: "op-mix" },
   { i: "voting-activity-1", type: "voting-activity" },
   { i: "hp-momentum-1", type: "hp-momentum" },
 ];
@@ -48,6 +49,7 @@ const MOBILE_WIDGET_HEIGHTS: Record<string, number> = {
   "network-growth-1": 5,
   "daily-active-users-1": 5,
   "account-retention-funnel-1": 5,
+  "op-mix-1": 5,
   "voting-activity-1": 7,
   "hp-momentum-1": 12,
   "searches-1": 10.5,
@@ -74,6 +76,7 @@ export const DEFAULT_MASTER_LAYOUT: Layout[] = [
     minW: 3,
     minH: 3,
   },
+  { i: "op-mix-1", x: 3, y: 19.3, w: 6, h: 3.3, minW: 3, minH: 3 },
   { i: "voting-activity-1", x: 0, y: 31.1, w: 3, h: 5.8, minW: 2, minH: 4 },
   {
     i: "network-hp-distribution-1",
@@ -104,6 +107,7 @@ export const DEFAULT_MOBILE_WIDGET_ORDER: string[] = [
   "network-growth-1",
   "daily-active-users-1",
   "account-retention-funnel-1",
+  "op-mix-1",
   "voting-activity-1",
   "tx-stats-1",
   "transfer-volume-1",

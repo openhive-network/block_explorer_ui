@@ -8,6 +8,7 @@ import React, {
 import ReactECharts from "echarts-for-react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import Image from "next/image";
 import { MoveRight, MoveLeft } from "lucide-react";
 
 import Hive from "@/types/Hive";
@@ -47,7 +48,7 @@ const OP_COLORS: Record<string, string> = {
   other: "#3a86ff",
   virtual: "#b010bf",
   comment: "#ffbe0b",
-  custom: "#80003e",
+  custom: "#e63946",
   vote: "#fb5607",
   transfer: "#8338ec",
 };
@@ -282,51 +283,8 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
   }, []);
 
   useEffect(() => {
-    const chart = chartRef.current?.getEchartsInstance();
-    if (!chart || !data.length) return;
-
-    // "visible" totals respect legend toggles; distinct from outer blockTotals (all ops).
-    const visibleTotals = data.map((d) =>
-      OP_SERIES_ORDER.reduce(
-        (sum, k) =>
-          legendSelected[k]
-            ? sum + (d[k as keyof ChartBlockData] as number)
-            : sum,
-        0
-      )
-    );
-
-    const positions: AvatarPosition[] = data.map((d, i) => {
-      const pixel = chart.convertToPixel("grid", [i, visibleTotals[i]]);
-      if (!Array.isArray(pixel)) return null;
-      const [px, py] = pixel as [number, number];
-      return { x: px, y: py, witness: d.witness };
-    });
-
-    setAvatarPositions(positions);
-
-    // Derive the pixel bounding box for the glow ring around the latest bar.
-    // catW is the per-slot width in pixels; 0.65 matches ECharts barWidth:"65%".
-    const li = data.length - 1;
-    const topPx = chart.convertToPixel("grid", [li, visibleTotals[li]]);
-    const botPx = chart.convertToPixel("grid", [li, 0]);
-    const p0 = chart.convertToPixel("grid", [0, 0]);
-    const p1 = data.length > 1 ? chart.convertToPixel("grid", [1, 0]) : null;
-    if (
-      Array.isArray(topPx) &&
-      Array.isArray(botPx) &&
-      Array.isArray(p0) &&
-      Array.isArray(p1)
-    ) {
-      const catW = Math.abs((p1 as number[])[0] - (p0 as number[])[0]);
-      const barW = catW * 0.65;
-      const cx = (topPx as number[])[0];
-      const top = (topPx as number[])[1];
-      const bottom = (botPx as number[])[1];
-      setBarGlowBox({ x: cx, top, height: bottom - top, width: barW });
-      slotWidthRef.current = catW;
-    }
-  }, [data, legendSelected]);
+    recomputeOverlays();
+  }, [data, legendSelected, recomputeOverlays]);
 
   // Slide new block in from the right (or left in RTL) when live mode is on
   useEffect(() => {
@@ -439,7 +397,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
                 <span style="font-weight:600;font-size:13px">${witness}</span>
               </div>
               <div style="font-size:12px;opacity:.55;margin-bottom:6px">
-                ${t("dauKpiStrip.totalOps")}: <b style="opacity:1">${total}</b>
+                ${t("common.operations")}: <b style="opacity:1">${total}</b>
               </div>
               <div style="border-top:1px solid ${tooltipBorder};padding-top:6px">
                 ${rows}
@@ -688,7 +646,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
                 if (!pos) return null;
                 const isLatest = liveData && i === data.length - 1;
                 return (
-                  <img
+                  <Image
                     key={data[i]?.name ?? i}
                     src={getHiveAvatarUrl(pos.witness)}
                     alt={pos.witness}

@@ -24,6 +24,7 @@ import HpMomentumCard from "@/components/home/HpMomentumCard";
 import NetworkVotingActivityCard from "@/components/home/NetworkVotingActivityCard";
 import DailyActiveUsersCard from "@/components/home/DailyActiveUsersCard";
 import AccountRetentionFunnelCard from "@/components/home/AccountRetentionFunnelCard";
+import NetworkOpMixCard from "@/components/home/NetworkOpMixCard";
 import LastBlocksWidget from "@/components/LastBlocksWidget";
 import FundAndSupplyWidget from "@/components/dashboard/widgets/data/FundAndSupplyWidget";
 import HiveParametersWidget from "@/components/dashboard/widgets/data/HiveParametersWidget";
@@ -251,6 +252,14 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     name: "widgets.accountRetentionFunnelName",
     category: "reports" as const,
     component: AccountRetentionFunnelCard,
+    defaultLayout: { w: 6, h: 3.3, minW: 3, minH: 3 },
+    dynamicHeight: true,
+  },
+  "op-mix": {
+    id: "op-mix",
+    name: "widgets.opMixName",
+    category: "reports" as const,
+    component: NetworkOpMixCard,
     defaultLayout: { w: 6, h: 3.3, minW: 3, minH: 3 },
     dynamicHeight: true,
   },
