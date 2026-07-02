@@ -262,5 +262,11 @@ export const extendedRest = {
       responseArray: true,
       urlPath: "network/account-funnel",
     },
+    topAccounts: {
+      params: Hive.TopAccountsParams,
+      result: Hive.TopAccountsResponse,
+      responseArray: true,
+      urlPath: "network/top-accounts",
+    },
   },
 };

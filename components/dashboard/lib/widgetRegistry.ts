@@ -15,6 +15,7 @@ import MarketDataWidget from "@/components/dashboard/widgets/data/MarketDataWidg
 import SearchesSection from "@/components/home/SearchesSection";
 import TopCommunitiesCard from "@/components/home/TopCommunitiesCard";
 import TopWitnessesCard from "@/components/home/TopWitnessesCard";
+import NetworkTopAccountsCard from "@/components/home/NetworkTopAccountsCard";
 import TransactionStatisticsCard from "@/components/home/TransactionStatisticsCard";
 import TransferVolumeCard from "@/components/home/TransferVolumeCard";
 import TotalValueLockedCard from "@/components/home/TotalValueLockedCard";
@@ -190,6 +191,14 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
       communitiesData: data.popularCommunitiesData,
       isLoading: data.isCommunitiesLoading,
     }),
+  },
+  "top-accounts": {
+    id: "top-accounts",
+    name: "widgets.topAccountsName",
+    category: "reports" as const,
+    component: NetworkTopAccountsCard,
+    defaultLayout: { w: 3, h: 11, minW: 2, minH: 11 },
+    dynamicHeight: true,
   },
   "tx-stats": {
     id: "tx-stats",

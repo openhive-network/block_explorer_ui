@@ -10,6 +10,7 @@ import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
 import TransactionStatisticsCard from "@/components/home/TransactionStatisticsCard";
 import { useI18n } from "@/i18n/i18n";
 import TopWitnessesCard from "@/components/home/TopWitnessesCard";
+import NetworkTopAccountsCard from "@/components/home/NetworkTopAccountsCard";
 import useCommunities from "@/hooks/api/communities/useCommunities";
 import TopCommunitiesCard from "@/components/home/TopCommunitiesCard";
 import TransferVolumeCard from "@/components/home/TransferVolumeCard";
@@ -112,6 +113,7 @@ const StandardHome = () => {
             witnessesData={witnessesData}
             isLoading={isWitnessDataLoading}
           />
+          <NetworkTopAccountsCard />
           <TopCommunitiesCard
             communitiesData={popularCommunitiesData}
             isLoading={isCommunitiesLoading}

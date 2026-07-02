@@ -1403,6 +1403,30 @@ namespace Hive {
     active_at_90d!: number | null;
     pct_90d!: number | null;
   }
+
+  export type TopAccountsMetric =
+    | "author_rewards"
+    | "curation_rewards"
+    | "transfer_volume_in"
+    | "transfer_volume_out"
+    | "hp_balance"
+    | "transaction_count";
+
+  export class TopAccountsParams {
+    metric?: string;
+    from_date?: string | Date | number;
+    to_date?: string | Date | number;
+    limit_count?: number;
+  }
+
+  export class TopAccountsResponse {
+    rank!: number;
+    account!: string;
+    value_hive_nai!: number;
+    value_hbd_nai!: number;
+    value_vests_nai!: number;
+    op_count!: number;
+  }
 }
 
 export default Hive;

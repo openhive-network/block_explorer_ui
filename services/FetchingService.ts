@@ -990,6 +990,20 @@ class FetchingService {
       to_date: to,
     });
   }
+
+  async getNetworkTopAccounts(
+    metric: Hive.TopAccountsMetric,
+    fromDate?: string | Date | number,
+    toDate?: string | Date | number,
+    limitCount?: number
+  ): Promise<Hive.TopAccountsResponse[]> {
+    return await this.extendedHiveChain!.restApi["haf-stats-api"].topAccounts({
+      metric,
+      from_date: fromDate,
+      to_date: toDate,
+      limit_count: limitCount,
+    });
+  }
 }
 
 const fetchingService = new FetchingService();

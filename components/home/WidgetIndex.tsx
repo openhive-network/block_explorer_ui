@@ -158,6 +158,37 @@ const WidgetIndex = () => {
     localStorage.setItem(seededKey, "true");
   }, [isLoaded, username, widgets, layouts, onAddWidget]);
 
+  // One-time seed of the Top Accounts widget for users with a saved dashboard.
+  useEffect(() => {
+    if (!isLoaded || !username) return;
+    const seededKey = `hivescan_dashboard_top_accounts_seeded_${username}`;
+    if (localStorage.getItem(seededKey)) return;
+    if (widgets.some((w) => w.type === "top-accounts")) {
+      localStorage.setItem(seededKey, "true");
+      return;
+    }
+    const masterLayout = layouts.lg || [];
+    // Place directly below top-witnesses in the right column; fall back to the
+    // bottom of the right column.
+    const topWitnessesId = widgets.find((w) => w.type === "top-witnesses")?.i;
+    const topWitnessesItem = topWitnessesId
+      ? masterLayout.find((item) => item.i === topWitnessesId)
+      : undefined;
+    const insertY = topWitnessesItem
+      ? topWitnessesItem.y + topWitnessesItem.h
+      : masterLayout
+          .filter((item) => item.x >= 9)
+          .reduce((max, item) => Math.max(max, item.y + item.h), 0);
+    onAddWidget("top-accounts", {
+      x: topWitnessesItem?.x ?? 9,
+      y: insertY,
+      w: 3,
+      h: 11,
+      minH: 8,
+    });
+    localStorage.setItem(seededKey, "true");
+  }, [isLoaded, username, widgets, layouts, onAddWidget]);
+
   // One-time seed of the Voting Activity widget for users with a saved dashboard.
   useEffect(() => {
     if (!isLoaded || !username) return;

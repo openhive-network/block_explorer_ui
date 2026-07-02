@@ -22,6 +22,7 @@ export const DEFAULT_WIDGETS: Array<{ i: string; type: string }> = [
   { i: "tx-stats-1", type: "tx-stats" },
   { i: "searches-1", type: "searches" },
   { i: "top-witnesses-1", type: "top-witnesses" },
+  { i: "top-accounts-1", type: "top-accounts" },
   { i: "top-communities-1", type: "top-communities" },
   { i: "transfer-volume-1", type: "transfer-volume" },
   { i: "tvl-1", type: "tvl" },
@@ -54,6 +55,7 @@ const MOBILE_WIDGET_HEIGHTS: Record<string, number> = {
   "hp-momentum-1": 12,
   "searches-1": 10.5,
   "top-witnesses-1": 25.8,
+  "top-accounts-1": 12,
   "top-communities-1": 5,
 };
 
@@ -93,7 +95,8 @@ export const DEFAULT_MASTER_LAYOUT: Layout[] = [
   { i: "hp-momentum-1", x: 3, y: 38.0, w: 6, h: 9, minW: 3, minH: 6 },
   { i: "searches-1", x: 3, y: 47.0, w: 6, h: 9, minW: 4, minH: 11 },
   { i: "top-witnesses-1", x: 9, y: 7, w: 3, h: 25.8, minW: 2, minH: 8 },
-  { i: "top-communities-1", x: 9, y: 33, w: 3, h: 5.8, minW: 2, minH: 5 },
+  { i: "top-accounts-1", x: 9, y: 32.8, w: 3, h: 11, minW: 2, minH: 11 },
+  { i: "top-communities-1", x: 9, y: 43.8, w: 3, h: 5.8, minW: 2, minH: 5 },
 ];
 
 export const DEFAULT_MOBILE_WIDGET_ORDER: string[] = [
@@ -115,6 +118,7 @@ export const DEFAULT_MOBILE_WIDGET_ORDER: string[] = [
   "network-hp-distribution-1",
   "hp-momentum-1",
   "top-witnesses-1",
+  "top-accounts-1",
   "top-communities-1",
   "searches-1",
 ];
