@@ -221,17 +221,15 @@ const NetworkOpMixCard: React.FC = () => {
 
   return (
     <div className="bg-theme rounded mb-2 shadow-md overflow-hidden">
+      <div className="flex items-center gap-2 px-3 py-1.5 border-b border-gray-100 dark:border-gray-800">
+        <span className="block w-[3px] h-3.5 rounded-full bg-indigo-500 flex-shrink-0" />
+        <span className="text-[11px] font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+          {t("networkOpMixCard.title")}
+        </span>
+      </div>
       <div className="p-2.5">
         {/* Header row */}
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-baseline gap-2">
-            <span className="text-xs font-semibold uppercase tracking-wide text-explorer-dark-gray dark:text-text">
-              {t("networkOpMixCard.title")}
-            </span>
-            <span className="text-[10px] text-gray-400 dark:text-gray-500">
-              (30 D)
-            </span>
-          </div>
+        <div className="flex items-center justify-end mb-2">
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowVirtual((v) => !v)}
