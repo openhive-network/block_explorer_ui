@@ -105,17 +105,18 @@ const NetworkVotingActivityCard: React.FC = () => {
 
   return (
     <div className="bg-theme rounded mb-2 shadow-md overflow-hidden">
+      <div className="flex items-center gap-2 px-3 py-1.5 border-b border-gray-100 dark:border-gray-800">
+        <span className="block w-[3px] h-3.5 rounded-full bg-indigo-500 flex-shrink-0" />
+        <span className="text-[11px] font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+          {t("widgets.votingActivityName")}
+        </span>
+      </div>
       <div className="flex flex-wrap gap-2 p-3">
         {/* Card header */}
         <div className="w-full flex items-center justify-between">
-          <div className="flex flex-col">
-            <span className="text-[11px] font-semibold uppercase tracking-wide text-explorer-dark-gray dark:text-text">
-              {t("widgets.votingActivityName")}
-            </span>
-            <span className="text-[10px] text-gray-400">
-              {t("votingActivityCard.last30Days")}
-            </span>
-          </div>
+          <span className="text-[10px] text-gray-400">
+            {t("votingActivityCard.last30Days")}
+          </span>
           <button
             onClick={() => setIsModalOpen(true)}
             className="text-xs underline"

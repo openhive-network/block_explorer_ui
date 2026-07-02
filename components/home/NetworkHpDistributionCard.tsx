@@ -85,13 +85,16 @@ const NetworkHpDistributionCard: React.FC = () => {
     : null;
 
   return (
-    <div className="bg-theme rounded mb-2 shadow-md overflow-hidden h-full">
-      <div className="p-3 h-full flex flex-col">
+    <div className="bg-theme rounded mb-2 shadow-md overflow-hidden h-full flex flex-col">
+      <div className="flex items-center gap-2 px-3 py-1.5 border-b border-gray-100 dark:border-gray-800 flex-shrink-0">
+        <span className="block w-[3px] h-3.5 rounded-full bg-indigo-500 flex-shrink-0" />
+        <span className="text-[11px] font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+          {t("networkHpDistributionCard.title")}
+        </span>
+      </div>
+      <div className="p-3 flex-1 min-h-0 flex flex-col">
         <div className="mb-2">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-semibold uppercase tracking-wide text-explorer-dark-gray dark:text-text">
-              {t("networkHpDistributionCard.title")}
-            </span>
+          <div className="flex items-center justify-end">
             <div className="flex rounded overflow-hidden border border-gray-200 dark:border-gray-700 text-[10px] font-medium">
               {(["accounts", "hp"] as const).map((mode) => (
                 <button
