@@ -2,8 +2,9 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import TimeAgo from "timeago-react";
-import { Activity, MoveRight, MoveLeft } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Activity } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import useAccountOperations from "@/hooks/api/accountPage/useAccountOperations";
@@ -96,8 +97,7 @@ const FILTER_CHIPS: Array<{ key: Category; labelKey: string }> = [
 ];
 
 const MyRecentActivityWidget: React.FC = () => {
-  const { t, dir, locale } = useI18n();
-  const SeeMoreIcon = dir === "rtl" ? MoveLeft : MoveRight;
+  const { t, locale } = useI18n();
   const router = useRouter();
   const { username, isLoggedIn } = useAuth();
   const { settings } = useSettings();
@@ -257,28 +257,27 @@ const MyRecentActivityWidget: React.FC = () => {
 
   return (
     <Card className="col-span-12 lg:col-span-3 overflow-hidden mb-2 h-full flex flex-col">
-      <CardHeader className="flex justify-between items-center border-b px-3 py-2.5 flex-shrink-0">
-        <div className="flex items-center gap-2 min-w-0">
-          <CardTitle>{t("widgets.myRecentActivityName")}</CardTitle>
-          {newOpsCount > 0 && (
-            <span
-              className="text-[0.6rem] font-medium px-1.5 py-0.5 rounded-full bg-primary/15 text-primary animate-pulse whitespace-nowrap"
-              aria-live="polite"
-            >
-              {t("widgets.myRecentActivityNewOps", {
-                count: String(newOpsCount),
-              })}
+      <CardHeaderWithLink
+        className="flex-shrink-0"
+        href={`/@${username}`}
+        title={
+          <span className="flex items-center gap-2 min-w-0">
+            <span className="truncate">
+              {t("widgets.myRecentActivityName")}
             </span>
-          )}
-        </div>
-        <Link
-          href={`/@${username}`}
-          className="text-sm flex items-center space-x-1"
-        >
-          <span>{t("common.seeMore")}</span>
-          <SeeMoreIcon width={18} />
-        </Link>
-      </CardHeader>
+            {newOpsCount > 0 && (
+              <span
+                className="text-[0.6rem] font-medium px-1.5 py-0.5 rounded-full bg-primary/15 text-primary animate-pulse whitespace-nowrap"
+                aria-live="polite"
+              >
+                {t("widgets.myRecentActivityNewOps", {
+                  count: String(newOpsCount),
+                })}
+              </span>
+            )}
+          </span>
+        }
+      />
 
       <div className="px-2 pt-2 flex-shrink-0">
         <div className="flex gap-1 flex-wrap">

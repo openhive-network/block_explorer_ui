@@ -15,7 +15,7 @@ interface CurrentBlockCardProps {
   opcount?: number;
   liveBlockNumber?: number | null;
   timeDifferenceInSeconds?: number | null;
-  isLive?:boolean;
+  isLive?: boolean;
 }
 
 interface Producer {
@@ -24,10 +24,10 @@ interface Producer {
   name: string;
 }
 
-const trimBlockNumber = (blockNum: number | undefined) => {
+const trimBlockNumber = (blockNum: number | undefined, locale: string) => {
   if (!blockNum) return;
 
-  return blockNum.toLocaleString();
+  return blockNum.toLocaleString(locale);
 };
 
 const CurrentBlockCard: React.FC<CurrentBlockCardProps> = ({
@@ -49,81 +49,85 @@ const CurrentBlockCard: React.FC<CurrentBlockCardProps> = ({
     }
   }, [blockDetails?.producer_account]);
   return (
-    <div className="data-box relative flex flex-col w-full min-h-[160px]">
-      <div className="flex flex-col w-full">
-        <div className="text-lg border-b">{t("currentBlockCard.currentBlock")}</div>
-        <div className="flex justify-between items-center mt-1 min-h-[35px] flex-wrap">
-          {/* Block Number and Icon */}
-          <div className="flex items-center space-x-1">
-            <Box size={15} />
-            <Link
-              href={`/block/${liveBlockNumber ?? blockDetails?.block_num}`}
-              data-testid="block-number-link"
-            >
-              <span className="text-link text-lg font-semibold">
-                {liveBlockNumber
-                  ? trimBlockNumber(liveBlockNumber)
-                  : trimBlockNumber(blockDetails?.block_num)}
-              </span>
-            </Link>
-          </div>
-
-          {/* Producer Info */}
-          <div className="flex flex-wrap items-center space-x-1 min-w-[140px] min-h-10 transition-opacity duration-500 ease-in-out opacity-100">
-            <p className="text-sm">{t("common.by")}:</p>
-            {producer && (
-              <Link
-                className="flex items-center space-x-1 text-link"
-                href={producer.href}
-                data-testid="current-witness-link"
-              >
-                <Image
-                  className="rounded-full border-2 border-link"
-                  src={producer.avatarUrl}
-                  alt="avatar"
-                  width={30}
-                  height={30}
-                />
-                <p className="text-link text-sm font-semibold" data-testid="current-witness-name">
-                  {producer.name}
-                </p>
-              </Link>
-            )}
-          </div>
-        </div>
-        {/* Time Difference */}
+    <div
+      className="data-box relative flex flex-col w-full"
+      style={{ padding: "6px 8px", margin: "3px 0" }}
+    >
+      <div className="flex items-center justify-between gap-2 border-b pb-0.5">
+        <span className="text-base font-medium">
+          {t("currentBlockCard.currentBlock")}
+        </span>
         {isLive ? (
-          <div className="w-[65px] min-w-[65px] flex text-xs font-semibold text-explorer-red justify-end ">
+          <span className="text-explorer-red text-[11px] font-semibold whitespace-nowrap shrink-0">
             {timeDifferenceInSeconds} {t("currentBlockCard.secsAgo")}
-          </div>
+          </span>
         ) : (
           <TimeAgo
-          locale={appLocale}
+            locale={appLocale}
             datetime={
               new Date(formatAndDelocalizeTime(blockDetails?.created_at))
             }
-            className="text-explorer-red w-[120px] min-w-[120px]flex text-xs font-semibold justify-end "
+            className="text-explorer-red text-[11px] font-semibold whitespace-nowrap shrink-0"
           />
         )}
-        {/* Operations and Transactions Info  */}
-        <div className="flex flex-col justify-end space-y-2 pt-4 min-h-[40px]">
-          <div className="flex items-center justify-end">
-            <div className="min-w-[120px] flex items-center">
-              <Boxes size={14} />
-              <span className="mx-1">{t("common.operations")}:</span>
-              <span className="font-semibold text-sm">
-                {opcount ? opcount : ""}
-              </span>
-            </div>
-          </div>
-          <div className="flex items-center justify-end">
-            <div className="min-w-[120px] flex items-center">
-              <ArrowRightLeft size={14} />
-              <span className="mx-1">{t("common.transactions")}:</span>
-              <span className="font-semibold text-sm">{transactionCount}</span>
-            </div>
-          </div>
+      </div>
+
+      <div className="flex justify-between items-center gap-2 mt-1">
+        <div className="flex items-center gap-1 shrink-0">
+          <Box size={14} className="shrink-0" />
+          <Link
+            href={`/block/${liveBlockNumber ?? blockDetails?.block_num}`}
+            data-testid="block-number-link"
+          >
+            <span className="text-link text-base font-semibold">
+              {liveBlockNumber
+                ? trimBlockNumber(liveBlockNumber, appLocale)
+                : trimBlockNumber(blockDetails?.block_num, appLocale)}
+            </span>
+          </Link>
         </div>
+
+        <div className="flex items-center gap-1 min-w-0">
+          <span className="text-xs shrink-0">{t("common.by")}:</span>
+          {producer && (
+            <Link
+              className="flex items-center gap-1 text-link min-w-0"
+              href={producer.href}
+              data-testid="current-witness-link"
+            >
+              <Image
+                className="rounded-full border-2 border-link shrink-0"
+                src={producer.avatarUrl}
+                alt="avatar"
+                width={22}
+                height={22}
+              />
+              <span
+                className="text-link text-xs font-semibold truncate"
+                data-testid="current-witness-name"
+              >
+                {producer.name}
+              </span>
+            </Link>
+          )}
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between gap-2 mt-1.5 text-xs">
+        <span className="inline-flex items-center gap-1">
+          <Boxes size={13} className="opacity-70" />
+          <span className="font-semibold tabular-nums">
+            {(opcount ?? 0).toLocaleString(appLocale)}
+          </span>
+          <span className="opacity-60">{t("common.operations")}</span>
+        </span>
+        <span className="inline-flex items-center gap-1">
+          <ArrowRightLeft size={13} className="opacity-70" />
+          <span className="font-semibold tabular-nums">
+            {(transactionCount ?? 0).toLocaleString(appLocale)}
+          </span>
+          <span className="opacity-60">{t("common.transactions")}</span>
+        </span>
       </div>
     </div>
   );

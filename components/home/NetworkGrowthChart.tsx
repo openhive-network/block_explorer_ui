@@ -38,7 +38,7 @@ const NetworkGrowthChart: React.FC<NetworkGrowthChartProps> = ({
   compact = false,
 }) => {
   const { theme } = useTheme();
-  const { t, dir } = useI18n();
+  const { t, dir, locale } = useI18n();
   const isRTL = dir === "rtl";
   const brushDefaults = useChartBrushDefaults();
 
@@ -88,7 +88,7 @@ const NetworkGrowthChart: React.FC<NetworkGrowthChartProps> = ({
                 {t("networkGrowthCard.totalAccounts")}
               </p>
               <p className="font-semibold leading-none">
-                {total_wallets?.toLocaleString()}
+                {total_wallets?.toLocaleString(locale)}
               </p>
             </div>
             <div>
@@ -96,7 +96,7 @@ const NetworkGrowthChart: React.FC<NetworkGrowthChartProps> = ({
                 {t("networkGrowthCard.newAccounts")}
               </p>
               <p className="font-semibold leading-none">
-                +{(new_wallets ?? 0).toLocaleString()}
+                +{(new_wallets ?? 0).toLocaleString(locale)}
               </p>
             </div>
           </div>
@@ -109,12 +109,16 @@ const NetworkGrowthChart: React.FC<NetworkGrowthChartProps> = ({
 
   const formatYAxis = (tickValue: number) => {
     if (tickValue >= 1_000_000) {
-      return `${(tickValue / 1_000_000).toFixed(2)}M`;
+      return `${(tickValue / 1_000_000).toLocaleString(locale, {
+        maximumFractionDigits: 2,
+      })}M`;
     }
     if (tickValue >= 1_000) {
-      return `${Math.round(tickValue / 1_000)}K`;
+      return `${(tickValue / 1_000).toLocaleString(locale, {
+        maximumFractionDigits: 0,
+      })}K`;
     }
-    return tickValue.toLocaleString();
+    return tickValue.toLocaleString(locale);
   };
 
   const calculateYAxisDomain = (): [number, number] => {
@@ -203,7 +207,8 @@ const NetworkGrowthChart: React.FC<NetworkGrowthChartProps> = ({
           <Legend
             verticalAlign="bottom"
             height={36}
-            align={isRTL ? "right" : "left"}
+            align="center"
+            wrapperStyle={{ paddingTop: 8 }}
           />
         )}
         <Area

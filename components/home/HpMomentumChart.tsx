@@ -81,7 +81,7 @@ const HpMomentumChart: React.FC<HpMomentumChartProps> = ({
   }, [data, locale]);
 
   const formatAmount = (n: number) =>
-    n.toLocaleString(undefined, { maximumFractionDigits: 0 });
+    n.toLocaleString(locale, { maximumFractionDigits: 0 });
 
   const CustomTooltip = ({
     active,
@@ -124,7 +124,7 @@ const HpMomentumChart: React.FC<HpMomentumChartProps> = ({
               {power_up_count !== undefined && (
                 <span className="text-gray-400 font-normal">
                   {" "}
-                  ({power_up_count.toLocaleString()})
+                  ({power_up_count.toLocaleString(locale)})
                 </span>
               )}
             </span>
@@ -141,7 +141,7 @@ const HpMomentumChart: React.FC<HpMomentumChartProps> = ({
               {power_down_fill_count !== undefined && (
                 <span className="text-gray-400 font-normal">
                   {" "}
-                  ({power_down_fill_count.toLocaleString()})
+                  ({power_down_fill_count.toLocaleString(locale)})
                 </span>
               )}
             </span>
@@ -159,7 +159,7 @@ const HpMomentumChart: React.FC<HpMomentumChartProps> = ({
                 {power_down_init_count !== undefined && (
                   <span className="text-gray-400 font-normal">
                     {" "}
-                    ({power_down_init_count.toLocaleString()})
+                    ({power_down_init_count.toLocaleString(locale)})
                   </span>
                 )}
               </span>
@@ -188,18 +188,18 @@ const HpMomentumChart: React.FC<HpMomentumChartProps> = ({
     const abs = Math.abs(tickValue);
     const sign = tickValue < 0 ? "-" : "";
     if (abs >= 1_000_000_000)
-      return `${sign}${(abs / 1_000_000_000).toLocaleString(undefined, {
+      return `${sign}${(abs / 1_000_000_000).toLocaleString(locale, {
         maximumFractionDigits: 1,
       })}B`;
     if (abs >= 1_000_000)
-      return `${sign}${(abs / 1_000_000).toLocaleString(undefined, {
+      return `${sign}${(abs / 1_000_000).toLocaleString(locale, {
         maximumFractionDigits: 1,
       })}M`;
     if (abs >= 1000)
-      return `${sign}${(abs / 1000).toLocaleString(undefined, {
+      return `${sign}${(abs / 1000).toLocaleString(locale, {
         maximumFractionDigits: 0,
       })}k`;
-    return tickValue.toLocaleString(undefined, { maximumFractionDigits: 0 });
+    return tickValue.toLocaleString(locale, { maximumFractionDigits: 0 });
   };
 
   const xAxisTickFormatter = (value: any) =>
@@ -255,6 +255,7 @@ const HpMomentumChart: React.FC<HpMomentumChartProps> = ({
               width: "100%",
               left: 0,
               bottom: 0,
+              paddingTop: 8,
               paddingInline: 8,
               boxSizing: "border-box",
             }}

@@ -11,6 +11,8 @@ import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { convertVestsToHP } from "@/utils/Calculations";
 import { grabNumericValue } from "@/utils/StringUtils";
 import NetworkHpDistributionChart from "@/components/home/NetworkHpDistributionChart";
+import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
+import SegmentedToggle from "@/components/ui/SegmentedToggle";
 
 // Bucket labels must match exactly what the API returns in NetworkHpDistributionResponse.bucket
 const hpToBucket = (hp: number): string => {
@@ -25,7 +27,7 @@ const hpToBucket = (hp: number): string => {
 };
 
 const NetworkHpDistributionCard: React.FC = () => {
-  const { t, locale } = useI18n();
+  const { t, locale, dir } = useI18n();
   const { theme } = useTheme();
   const [viewMode, setViewMode] = useState<"accounts" | "hp">("accounts");
   const { username } = useAuth();
@@ -85,51 +87,42 @@ const NetworkHpDistributionCard: React.FC = () => {
     : null;
 
   return (
-    <div className="bg-theme rounded mb-2 shadow-md overflow-hidden h-full flex flex-col">
-      <div className="flex items-center gap-2 px-3 py-1.5 border-b border-gray-100 dark:border-gray-800 flex-shrink-0">
-        <span className="block w-[3px] h-3.5 rounded-full bg-indigo-500 flex-shrink-0" />
-        <span className="text-[11px] font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">
-          {t("networkHpDistributionCard.title")}
-        </span>
-      </div>
-      <div className="p-3 flex-1 min-h-0 flex flex-col">
-        <div className="mb-2">
-          <div className="flex items-center justify-end">
-            <div className="flex rounded overflow-hidden border border-gray-200 dark:border-gray-700 text-[10px] font-medium">
-              {(["accounts", "hp"] as const).map((mode) => (
-                <button
-                  key={mode}
-                  onClick={() => setViewMode(mode)}
-                  className={`px-2 py-0.5 transition-colors ${
-                    viewMode === mode
-                      ? "bg-violet-500 text-white"
-                      : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                  }`}
-                >
-                  {t(
-                    mode === "accounts"
-                      ? "networkHpDistributionCard.viewAccounts"
-                      : "networkHpDistributionCard.viewHp"
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
-          {totalAccounts !== null && (
-            <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
-              {totalAccounts.toLocaleString(locale)}{" "}
-              {t("networkHpDistributionCard.accounts")}
-            </p>
-          )}
-          {userHpInfo && (
-            <div className="mt-1 flex items-center gap-1.5">
+    <div className="bg-theme rounded mb-2 shadow-md overflow-hidden h-[340px] flex flex-col">
+      <CardHeaderWithLink
+        className="flex-shrink-0"
+        title={t("networkHpDistributionCard.title")}
+        actions={
+          <SegmentedToggle
+            ariaLabel={t("networkHpDistributionCard.title")}
+            value={viewMode}
+            onChange={setViewMode}
+            options={[
+              {
+                value: "accounts",
+                label: t("networkHpDistributionCard.viewAccounts"),
+              },
+              { value: "hp", label: t("networkHpDistributionCard.viewHp") },
+            ]}
+          />
+        }
+      />
+      <div className="p-3 pt-2 flex-1 min-h-0 flex flex-col">
+        {(totalAccounts !== null || userHpInfo) && (
+          <div className="mb-2 flex items-center gap-2">
+            {userHpInfo && (
               <span className="inline-flex items-center gap-1 rounded-full bg-violet-100 dark:bg-violet-950 border border-violet-200 dark:border-violet-800 px-2 py-0.5 text-[10px] font-semibold text-violet-700 dark:text-violet-300">
                 {t("networkHpDistributionCard.you")} &middot; {formattedUserHp}{" "}
                 HP
               </span>
-            </div>
-          )}
-        </div>
+            )}
+            {totalAccounts !== null && (
+              <p className="ms-auto text-[11px] text-gray-400 dark:text-gray-500 tabular-nums">
+                {totalAccounts.toLocaleString(locale)}{" "}
+                {t("networkHpDistributionCard.accounts")}
+              </p>
+            )}
+          </div>
+        )}
 
         {isHpDistributionLoading ? (
           <div className="flex flex-1 items-center justify-center">
@@ -151,6 +144,7 @@ const NetworkHpDistributionCard: React.FC = () => {
               textColor={textColor}
               gridColor={gridColor}
               locale={locale}
+              isRTL={dir === "rtl"}
               t={t}
             />
           </div>

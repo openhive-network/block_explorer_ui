@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Explorer from "@/types/Explorer";
-import { useI18n } from "@/i18n/i18n";
 import { getVestsToHiveRatio } from "@/utils/Calculations";
+import MarketDataStats from "@/components/home/MarketDataStats";
 
 interface MarketDataWidgetProps {
   headBlockCardData?: Explorer.HeadBlockCardData | any;
@@ -10,8 +10,6 @@ interface MarketDataWidgetProps {
 const MarketDataWidget: React.FC<MarketDataWidgetProps> = ({
   headBlockCardData,
 }) => {
-  const { t } = useI18n();
-
   const [liveFeedPrice, setLiveFeedPrice] = useState<number | undefined>(
     headBlockCardData?.headBlockDetails?.feedPrice
   );
@@ -33,14 +31,11 @@ const MarketDataWidget: React.FC<MarketDataWidgetProps> = ({
   }, [headBlockCardData]);
 
   return (
-    <div className="data-box">
-      <div>
-        <span>{t("headBlockCard.feedPrice")}:</span> {liveFeedPrice}
-      </div>
-      <div>
-        <span>{t("headBlockCard.vestsToHiveRatio")}:</span>{" "}
-        {liveVestsToHiveRatio} VESTS
-      </div>
+    <div className="mb-1">
+      <MarketDataStats
+        feedPrice={liveFeedPrice}
+        vestsToHiveRatio={liveVestsToHiveRatio}
+      />
     </div>
   );
 };

@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Clock } from "lucide-react";
 
 import { config } from "@/Config";
 import Explorer from "@/types/Explorer";
@@ -7,14 +6,15 @@ import Hive from "@/types/Hive";
 import { getVestsToHiveRatio } from "@/utils/Calculations";
 import useBlockchainSyncInfo from "@/hooks/common/useBlockchainSyncInfo";
 import HeadBlockPropertyCard from "./HeadBlockPropertyCard";
+import MarketDataStats from "./MarketDataStats";
+import LiveDataHeader from "./LiveDataHeader";
 import {
   fundAndSupplyParameters,
   hiveParameters,
   blockchainDates,
 } from "./headBlockParameters";
 import { getBlockDifference } from "./SyncInfo";
-import { Toggle } from "../ui/toggle";
-import { Card, CardContent, CardHeader } from "../ui/card";
+import { Card, CardContent } from "../ui/card";
 import CurrentBlockCard from "./CurrentBlockCard";
 import HeadBlockHiveChartCard from "./HeadBlockHiveChartCard";
 import dynamic from "next/dynamic";
@@ -61,7 +61,6 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
   opcount = 0,
 }) => {
   const { t } = useI18n();
-  // Only show loading if there is no data at all
   const isBlockCardLoading = !headBlockCardData?.headBlockDetails;
 
   const [hiddenPropertiesByCard, setHiddenPropertiesByCard] = useState<any>({
@@ -143,7 +142,6 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
     setTimeDifferenceInSeconds(timeDifference);
   }, [blockDetails?.created_at, blockchainDate, timeDifference]);
 
-  // refresh interval
   const intervalTime = config.accountRefreshInterval;
   /*States to handle seamless update of blockNumber , blockChainTime, feedprice, and vests/hive ratio when liveData is on*/
   const [liveBlockchainTime, setLiveBlockchainTime] = useState<Date | null>(
@@ -159,14 +157,12 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
     string | undefined
   >(getVestsToHiveRatio(headBlockCardData));
 
-  // Update liveFeedPrice when feedPrice changes
   useEffect(() => {
     if (headBlockCardData?.headBlockDetails?.feedPrice) {
       setLiveFeedPrice(headBlockCardData.headBlockDetails.feedPrice);
     }
   }, [headBlockCardData?.headBlockDetails?.feedPrice]);
 
-  // Update liveVestsToHiveRatio
   useEffect(() => {
     const newVestsToHiveRatio = getVestsToHiveRatio(headBlockCardData);
     if (newVestsToHiveRatio) {
@@ -215,7 +211,6 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
   useEffect(() => {
     if (!settings.liveData) return;
     const intervalId = setInterval(() => {
-      // Update Feed Price only if it has changed
       setLiveFeedPrice((prevFeedPrice) => {
         const newFeedPrice =
           headBlockCardData?.headBlockDetails?.feedPrice ?? 0;
@@ -225,7 +220,6 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
         return prevFeedPrice;
       });
 
-      // Update Vests to Hive Ratio only if it has changed
       setLiveVestsToHiveRatio((prevRatio) => {
         const newRatio = getVestsToHiveRatio(headBlockCardData);
         if (prevRatio !== newRatio) {
@@ -241,42 +235,23 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
   return (
     <>
       <Card
-        className="col-span-12 md:col-span-4 lg:col-span-3"
+        className="col-span-12 md:col-span-4 lg:col-span-3 mb-2"
         data-testid="head-block-card"
       >
-        <CardHeader className="flex justify-between items-end py-2 border-b ">
-          {/* Blockchain Time and Live Data Toggle */}
-          <div className="flex flex-col items-end space-y-2">
-            <div className="flex items-end space-x-2 text-[12px]">
-              <Clock size={18} strokeWidth={2} />
-              <span className="font-semibold">
-                {t("headBlockCard.blockchainTime")}:
-              </span>
-              <span className="font-semibold text-right">
-                {liveBlockchainTime
-                  ? getFormattedLiveBlockchainTime(liveBlockchainTime)
-                  : (blockchainTime ?? "")}
-              </span>
-            </div>
+        <LiveDataHeader
+          blockchainTime={
+            liveBlockchainTime
+              ? getFormattedLiveBlockchainTime(liveBlockchainTime)
+              : (blockchainTime ?? "")
+          }
+          liveData={settings.liveData}
+          onToggleLiveData={() =>
+            updateSettings({ ...settings, liveData: !settings.liveData })
+          }
+          toggleDisabled={isLiveDataToggleDisabled}
+        />
 
-            <div className="mt-4">
-              <Toggle
-                disabled={isLiveDataToggleDisabled}
-                checked={settings.liveData}
-                onClick={() =>
-                  updateSettings({
-                    ...settings,
-                    liveData: !settings.liveData,
-                  })
-                }
-                className="text-base"
-                leftLabel={t("headBlockCard.liveData")}
-              />
-            </div>
-          </div>
-        </CardHeader>
-
-        <CardContent className="p-4 space-y-4">
+        <CardContent className="px-3 pt-2 pb-2 space-y-1">
           {/* Last Block Information */}
           <CurrentBlockCard
             blockDetails={blockDetails}
@@ -287,48 +262,41 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
             isLive={settings.liveData}
           />
           {/* Other Information*/}
-          <div className="data-box">
-            <div>
-              <span>{t("headBlockCard.feedPrice")}:</span> {liveFeedPrice}
-            </div>
-            <div>
-              <span>{t("headBlockCard.vestsToHiveRatio")}:</span>{" "}
-              {liveVestsToHiveRatio} VESTS
-            </div>
-          </div>
+          <MarketDataStats
+            feedPrice={liveFeedPrice}
+            vestsToHiveRatio={liveVestsToHiveRatio}
+          />
 
-          <div>
-            <HeadBlockHiveChartCard
-              header={t("headBlockCard.hivePriceChart")}
-              isParamsHidden={hiddenPropertiesByCard.hiveChart}
-              handleHideParams={handleHideHiveChart}
-              handleHiveFullChartVisibility={handleHiveFullChartVisibility}
-            />
-            <HeadBlockPropertyCard
-              parameters={fundAndSupplyParameters}
-              header={t("headBlockCard.fundAndSupply")}
-              isParamsHidden={hiddenPropertiesByCard.supplyCard}
-              handleHideParams={handleHideSupplyParams}
-              isLoading={isBlockCardLoading}
-              dynamicGlobalData={headBlockCardData}
-            />
-            <HeadBlockPropertyCard
-              parameters={hiveParameters}
-              header={t("headBlockCard.hiveParameters")}
-              isParamsHidden={hiddenPropertiesByCard.hiveParamsCard}
-              handleHideParams={handleHideHiveParams}
-              isLoading={isBlockCardLoading}
-              dynamicGlobalData={headBlockCardData}
-            />
-            <HeadBlockPropertyCard
-              parameters={blockchainDates}
-              header={t("headBlockCard.blockchainDates")}
-              isParamsHidden={hiddenPropertiesByCard.timeCard}
-              handleHideParams={handleHideBlockchainDates}
-              isLoading={isBlockCardLoading}
-              dynamicGlobalData={headBlockCardData}
-            />
-          </div>
+          <HeadBlockHiveChartCard
+            header={t("headBlockCard.hivePriceChart")}
+            isParamsHidden={hiddenPropertiesByCard.hiveChart}
+            handleHideParams={handleHideHiveChart}
+            handleHiveFullChartVisibility={handleHiveFullChartVisibility}
+          />
+          <HeadBlockPropertyCard
+            parameters={fundAndSupplyParameters}
+            header={t("headBlockCard.fundAndSupply")}
+            isParamsHidden={hiddenPropertiesByCard.supplyCard}
+            handleHideParams={handleHideSupplyParams}
+            isLoading={isBlockCardLoading}
+            dynamicGlobalData={headBlockCardData}
+          />
+          <HeadBlockPropertyCard
+            parameters={hiveParameters}
+            header={t("headBlockCard.hiveParameters")}
+            isParamsHidden={hiddenPropertiesByCard.hiveParamsCard}
+            handleHideParams={handleHideHiveParams}
+            isLoading={isBlockCardLoading}
+            dynamicGlobalData={headBlockCardData}
+          />
+          <HeadBlockPropertyCard
+            parameters={blockchainDates}
+            header={t("headBlockCard.blockchainDates")}
+            isParamsHidden={hiddenPropertiesByCard.timeCard}
+            handleHideParams={handleHideBlockchainDates}
+            isLoading={isBlockCardLoading}
+            dynamicGlobalData={headBlockCardData}
+          />
         </CardContent>
       </Card>
       <HiveFullChartDialog

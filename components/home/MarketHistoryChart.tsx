@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { TrendingUp, TrendingDown } from "lucide-react";
 import {
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   Tooltip,
@@ -19,6 +20,22 @@ import {
   ChartBrushDefs,
   useChartBrushDefaults,
 } from "@/components/ui/ChartBrush";
+import { computeTrendPct } from "@/utils/chartUtils";
+
+// Locale-aware price display. The chart data (`close`) stays a locale-neutral
+// numeric string for plotting; only the rendered price goes through here.
+const formatPrice = (
+  value: number | string | null | undefined,
+  locale: string
+): string => {
+  const n = typeof value === "string" ? parseFloat(value) : (value ?? NaN);
+  return Number.isFinite(n)
+    ? n.toLocaleString(locale, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 4,
+      })
+    : "0";
+};
 
 const CustomTooltip = ({
   active,
@@ -27,33 +44,34 @@ const CustomTooltip = ({
   active?: boolean;
   payload?: any[];
 }) => {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
 
-  if (active && payload && payload.length) {
-    return (
-      <div className="bg-buttonHover text-text p-2 rounded-xl">
-        {payload.map(({ payload: { tooltipDate, close, volume } }) => {
-          return (
-            <div key={tooltipDate}>
-              <p>
-                {t("marketHistoryChart.date")}:{" "}
-                {moment(tooltipDate).format("YYYY MMM D")}
-              </p>
-              <p>
-                {t("marketHistoryChart.closePrice")}: ${close}
-              </p>
-              <p>
-                {t("marketHistoryChart.volume")}:{" "}
-                {volume.toLocaleString("en-US")} HIVE
-              </p>
-            </div>
-          );
-        })}
+  if (!active || !payload || !payload.length) return null;
+
+  const { tooltipDate, close, volume } = payload[0].payload;
+
+  return (
+    <div className="rounded-md border border-gray-200 bg-white/95 px-2 py-1 text-explorer-dark-gray shadow-md backdrop-blur-sm dark:border-gray-700 dark:bg-gray-900/95 dark:text-text">
+      <div className="flex items-center gap-1.5">
+        <span
+          className="h-1.5 w-1.5 shrink-0 rounded-full"
+          style={{ backgroundColor: colorMap.HIVE }}
+        />
+        <span className="text-sm font-bold tabular-nums">
+          ${formatPrice(close, locale)}
+        </span>
+        <span className="text-[9px] font-medium text-gray-400">
+          {moment(tooltipDate).format("MMM D, YYYY")}
+        </span>
       </div>
-    );
-  }
-
-  return null;
+      <div className="mt-0.5 pl-3 text-[10px] text-gray-400">
+        {t("marketHistoryChart.volume")}:{" "}
+        <span className="font-medium tabular-nums text-explorer-dark-gray dark:text-text">
+          {volume.toLocaleString(locale)}
+        </span>
+      </div>
+    </div>
+  );
 };
 
 export const calculateCloseHivePrice = (
@@ -126,6 +144,15 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({
 
   const lastHivePrice = chartData?.[chartData.length - 1].close;
   const strokeColor = theme === "dark" ? "#FFF" : "#000";
+  const fillId = isFullChart ? "hivePriceFillFull" : "hivePriceFillMini";
+
+  const priceTrend = useMemo(() => {
+    if (!chartData || chartData.length < 2) return null;
+    const closes = chartData
+      .map((d) => parseFloat(d.close ?? ""))
+      .filter((v) => Number.isFinite(v));
+    return computeTrendPct(closes);
+  }, [chartData]);
 
   // Stable tick count: show ~6 ticks regardless of locale label widths.
   const tickInterval = chartData
@@ -134,7 +161,17 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({
 
   return (
     <ResponsiveContainer width="100%" height={isFullChart ? 500 : 250}>
-      <LineChart data={chartData} layout="horizontal">
+      <AreaChart
+        data={chartData}
+        layout="horizontal"
+        margin={{ top: 5, right: 10, left: 0, bottom: 0 }}
+      >
+        <defs>
+          <linearGradient id={fillId} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={colorMap.HIVE} stopOpacity={0.45} />
+            <stop offset="100%" stopColor={colorMap.HIVE} stopOpacity={0} />
+          </linearGradient>
+        </defs>
         <XAxis
           dataKey="date"
           tickFormatter={(d) => moment(d).format("MMM D")}
@@ -147,23 +184,67 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({
           domain={[minValue, maxValue]}
           stroke={strokeColor}
           orientation={isRTL ? "right" : "left"}
+          width={48}
+          tick={{ fontSize: 11 }}
+          tickFormatter={(v) => formatPrice(v, locale)}
         />
         <Tooltip content={<CustomTooltip />} />
         <Legend
           verticalAlign="top"
-          height={36}
+          height={30}
           align={isRTL ? "right" : "left"}
+          content={() => (
+            <div
+              className="flex flex-wrap items-center gap-x-2 gap-y-0.5 px-2 text-xs"
+              dir={isRTL ? "rtl" : "ltr"}
+            >
+              <span className="inline-flex items-center gap-1.5 text-explorer-dark-gray dark:text-text">
+                <span
+                  className="inline-block h-[3px] w-4 rounded-full"
+                  style={{ backgroundColor: colorMap.HIVE }}
+                />
+                {t("marketHistoryChart.hivePrice")}: $
+                {formatPrice(lastHivePrice, locale)}
+              </span>
+              {priceTrend !== null && (
+                <span
+                  className="inline-flex items-center gap-0.5 font-semibold"
+                  style={{ color: priceTrend >= 0 ? "#22c55e" : "#ef4444" }}
+                >
+                  {priceTrend >= 0 ? (
+                    <TrendingUp className="h-3.5 w-3.5" />
+                  ) : (
+                    <TrendingDown className="h-3.5 w-3.5" />
+                  )}
+                  {Math.abs(priceTrend).toLocaleString(locale, {
+                    minimumFractionDigits: 1,
+                    maximumFractionDigits: 1,
+                  })}
+                  %
+                </span>
+              )}
+            </div>
+          )}
           wrapperStyle={
             isRTL ? { right: 0, left: "auto" } : { left: 0, right: "auto" }
           }
         />
-        <Line
-          name={`${t("marketHistoryChart.hivePrice")}: $${lastHivePrice ?? 0}`}
+        <Area
+          name={`${t("marketHistoryChart.hivePrice")}: $${formatPrice(
+            lastHivePrice,
+            locale
+          )}`}
           type="monotone"
           dataKey="close"
           stroke={colorMap.HIVE}
-          dot={false}
           strokeWidth={2}
+          fill={`url(#${fillId})`}
+          fillOpacity={1}
+          dot={false}
+          activeDot={{ r: 4 }}
+          isAnimationActive
+          animationDuration={1200}
+          animationEasing="ease-out"
         />
         {isFullChart && <ChartBrushDefs />}
         {isFullChart && (
@@ -173,7 +254,7 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({
             tickFormatter={(d) => moment(d).format("MMM D")}
           />
         )}
-      </LineChart>
+      </AreaChart>
     </ResponsiveContainer>
   );
 };

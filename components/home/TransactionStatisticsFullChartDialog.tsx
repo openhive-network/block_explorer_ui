@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Dialog,
   DialogContent,
@@ -24,6 +24,8 @@ import Hive from "@/types/Hive";
 import { Loader2 } from "lucide-react";
 import { useI18n } from "../../i18n/i18n";
 import useSearchRanges from "@/hooks/common/useSearchRanges";
+import TxStatsKpiStrip from "./TxStatsKpiStrip";
+import { computeTrendPct } from "@/utils/chartUtils";
 
 interface TransactionStatisticsModalProps {
   isOpen: boolean;
@@ -57,14 +59,12 @@ const TransactionStatisticsFullChartDialog: React.FC<
   const [buttonLabel, setButtonLabel] = useState("");
   const { setRangeSelectKey, setTimeUnitSelectKey, setLastTimeUnitValue } =
     searchRanges;
-  // Fetch chart data based on filters (fromDate, toDate, granularity)
   const {
     transactionStatistics,
     isTransactionStatisticsLoading: isChartLoading,
     isTransactionStatisticsError: isChartError,
   } = useTransactionStatistics(granularity, "asc", fromDate, toDate, false);
 
-  // Set initial data when modal opens
   useEffect(() => {
     if (isOpen) {
       setLastTimeUnitValue(30);
@@ -77,7 +77,6 @@ const TransactionStatisticsFullChartDialog: React.FC<
   }, [isOpen, setLastTimeUnitValue, setRangeSelectKey, setTimeUnitSelectKey]);
 
   useEffect(() => {
-    // Fetch new data when granularity changes
     setCurrentChartData(transactionStatistics);
   }, [granularity, transactionStatistics]);
 
@@ -91,7 +90,6 @@ const TransactionStatisticsFullChartDialog: React.FC<
     setFromDate(payloadFromBlock || payloadStartDate);
     setToDate(payloadToBlock || payloadEndDate);
 
-    // Update chart data after fetching from API
     if (transactionStatistics) {
       setCurrentChartData(transactionStatistics);
     }
@@ -106,6 +104,22 @@ const TransactionStatisticsFullChartDialog: React.FC<
     setGranularity("daily");
     setCurrentChartData(transactionStatistics);
   };
+
+  const kpiStats = useMemo(() => {
+    const d = currentChartData;
+    if (!d || d.length === 0) return null;
+    const counts = d.map((item) => item.trx_count);
+    const totalTxns = counts.reduce((s, v) => s + v, 0);
+    const peakIdx = counts.indexOf(Math.max(...counts));
+    const peakItem = d[peakIdx];
+    return {
+      totalTxns,
+      avgPerPeriod: totalTxns / d.length,
+      peakDate: moment(peakItem.date).valueOf(),
+      peakValue: counts[peakIdx],
+      trend: computeTrendPct(counts),
+    };
+  }, [currentChartData]);
 
   const handleGranularityChange = (value: "daily" | "monthly" | "yearly") => {
     setGranularity(value);
@@ -194,7 +208,18 @@ const TransactionStatisticsFullChartDialog: React.FC<
             </div>
           </div>
 
-          <div className="h-[55%] w-[100%] flex items-center justify-center">
+          {kpiStats && (
+            <TxStatsKpiStrip
+              totalTxns={kpiStats.totalTxns}
+              avgPerPeriod={kpiStats.avgPerPeriod}
+              peakDate={kpiStats.peakDate}
+              peakValue={kpiStats.peakValue}
+              trend={kpiStats.trend}
+              granularity={granularity}
+            />
+          )}
+
+          <div className="h-[55vh] w-[100%] flex items-center justify-center">
             {isChartLoading ? (
               <div className="flex justify-center items-center">
                 <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />
@@ -204,7 +229,7 @@ const TransactionStatisticsFullChartDialog: React.FC<
                 <TransactionStatisticsChart
                   data={currentChartData}
                   includeBrush={true}
-                  showYear={granularity === "yearly"} // Pass prop to control year display
+                  showYear={granularity === "yearly"}
                 />
               )
             )}

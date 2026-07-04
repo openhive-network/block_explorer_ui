@@ -131,7 +131,7 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
 
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute top-full mt-2 w-60 bg-theme border border-navbar-border rounded-2xl shadow-xl z-[100] p-1.5 animate-in fade-in zoom-in-95 slide-in-from-top-1 duration-150 right-0">
+        <div className="absolute top-full mt-2 w-60 bg-theme border border-navbar-border rounded-2xl shadow-xl z-[100] p-1.5 animate-in fade-in zoom-in-95 slide-in-from-top-1 duration-150 end-0">
           {/* Header Card */}
           <div
             className={cn(

@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Crown, MoveRight, MoveLeft } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Crown } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
+import SegmentedToggle from "@/components/ui/SegmentedToggle";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
@@ -16,8 +18,7 @@ const FEED_SIZE = 10;
 const COINS: CoinType[] = ["HIVE", "HBD", "VESTS"];
 
 const TopHoldersWidget: React.FC = () => {
-  const { t, dir } = useI18n();
-  const SeeMoreIcon = dir === "rtl" ? MoveLeft : MoveRight;
+  const { t } = useI18n();
   const { settings } = useSettings();
   const { hiveChain } = useHiveChainContext();
   const { dynamicGlobalData } = useDynamicGlobal() as any;
@@ -59,38 +60,27 @@ const TopHoldersWidget: React.FC = () => {
 
   const top = holdersData.slice(0, FEED_SIZE);
 
+  const coinToggle = (
+    <SegmentedToggle
+      className="uppercase tracking-wide"
+      value={coinType}
+      onChange={setCoinType}
+      options={COINS.map((c) => ({
+        value: c,
+        label: c === "VESTS" && unit === "hp" ? "HP" : c,
+      }))}
+    />
+  );
+
   return (
     <Card className="col-span-12 lg:col-span-3 overflow-hidden mb-2">
-      <CardHeader className="flex justify-between items-center border-b px-3 py-2.5">
-        <CardTitle>{t("widgets.topHoldersName")}</CardTitle>
-        <Link
-          href="/top-holders"
-          className="text-sm flex items-center space-x-1"
-        >
-          <span>{t("common.seeMore")}</span>
-          <SeeMoreIcon width={18} />
-        </Link>
-      </CardHeader>
+      <CardHeaderWithLink
+        title={t("widgets.topHoldersName")}
+        href="/top-holders"
+        actions={coinToggle}
+      />
 
       <CardContent className="px-2 pt-2 pb-2">
-        <div className="flex gap-1 mb-2 px-1">
-          {COINS.map((c) => (
-            <button
-              key={c}
-              type="button"
-              onClick={() => setCoinType(c)}
-              className={cn(
-                "text-[0.65rem] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full transition-colors",
-                coinType === c
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
-              )}
-            >
-              {c === "VESTS" && unit === "hp" ? "HP" : c}
-            </button>
-          ))}
-        </div>
-
         {isTopHoldersLoading ? (
           <div className="space-y-1.5">
             {Array.from({ length: 5 }).map((_, i) => (

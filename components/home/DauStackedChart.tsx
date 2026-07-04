@@ -184,7 +184,12 @@ const DauStackedChart: React.FC<DauStackedChartProps> = ({
         />
 
         <Tooltip content={<CustomTooltip />} />
-        <Legend verticalAlign="bottom" height={36} align="center" />
+        <Legend
+          verticalAlign="bottom"
+          height={36}
+          align="center"
+          wrapperStyle={{ paddingTop: 8 }}
+        />
 
         {STACK_KEYS.map((key) => (
           <Area

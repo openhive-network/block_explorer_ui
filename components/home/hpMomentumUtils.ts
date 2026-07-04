@@ -35,38 +35,9 @@ export const VESTING_COLORS = {
   net: "#3B82F6",
 } as const;
 
-export const formatCompact = (n: number): string => {
-  const abs = Math.abs(n);
-  const sign = n < 0 ? "-" : "";
-  if (abs >= 1_000_000_000) {
-    return (
-      sign +
-      (abs / 1_000_000_000).toLocaleString(undefined, {
-        maximumFractionDigits: 2,
-      }) +
-      "B"
-    );
-  }
-  if (abs >= 1_000_000) {
-    return (
-      sign +
-      (abs / 1_000_000).toLocaleString(undefined, {
-        maximumFractionDigits: 2,
-      }) +
-      "M"
-    );
-  }
-  if (abs >= 1_000) {
-    return (
-      sign +
-      (abs / 1_000).toLocaleString(undefined, {
-        maximumFractionDigits: 1,
-      }) +
-      "K"
-    );
-  }
-  return n.toLocaleString(undefined, { maximumFractionDigits: 0 });
-};
+// Re-exported from chartUtils so every vesting surface uses the single
+// locale-aware compact formatter (pass the app locale from useI18n()).
+export { formatCompact } from "@/utils/chartUtils";
 
 export const makeSupplyToNumber = (
   hiveChain: IHiveChainInterface | null | undefined

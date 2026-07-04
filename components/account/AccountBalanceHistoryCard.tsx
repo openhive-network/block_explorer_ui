@@ -93,7 +93,7 @@ const AccountBalanceHistoryCard: React.FC<AccountBalanceHistoryCardProps> = ({
             )}
           >
             <Maximize2 size={12} />
-            {t("accountBalanceHistoryCard.fullChart")}
+            {t("common.fullChart")}
           </button>
         </div>
       </CardHeader>

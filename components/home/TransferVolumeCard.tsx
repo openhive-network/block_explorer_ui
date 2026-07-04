@@ -10,7 +10,8 @@ const TransferVolumeFullChartDialog = dynamic(
 import { useI18n } from "../../i18n/i18n";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
-import { cn } from "@/lib/utils";
+import SegmentedToggle from "@/components/ui/SegmentedToggle";
+import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
 
 type CoinType = "HIVE" | "HBD";
 
@@ -22,7 +23,7 @@ const coinOptions: { key: CoinType; label: string }[] = [
 const TransferVolumeCard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [coinType, setCoinType] = useState<CoinType>("HIVE");
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const { headBlockNumberData } = useHeadBlockNumber();
   const { dynamicGlobalData } = useDynamicGlobal(headBlockNumberData);
 
@@ -83,10 +84,32 @@ const TransferVolumeCard = () => {
 
   return (
     <div className="bg-theme rounded mb-2 shadow-md overflow-hidden">
-      <div className="flex flex-wrap gap-4 p-5">
+      <CardHeaderWithLink
+        title={t("widgets.transferVolumeName")}
+        actions={
+          <>
+            <SegmentedToggle
+              ariaLabel="HIVE or HBD"
+              value={coinType}
+              onChange={setCoinType}
+              options={coinOptions.map((o) => ({
+                value: o.key,
+                label: o.label,
+              }))}
+            />
+            <button
+              onClick={openModal}
+              className="text-[13px] underline text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+            >
+              {t("common.fullChart")}
+            </button>
+          </>
+        }
+      />
+      <div className="flex flex-wrap gap-3 p-3">
         <div className="flex-1 min-w-[200px]">
-          <div className="flex flex-col space-y-4">
-            <div className="bg-explorer-extra-light-gray rounded-lg p-4 shadow-md">
+          <div className="flex flex-col space-y-3">
+            <div className="bg-explorer-extra-light-gray rounded-lg p-3 shadow-md">
               <h3 className="text-sm font-semibold uppercase tracking-wide mb-1 text-explorer-dark-gray dark:text-text">
                 {t("transferVolumeCard.todaysVolume")}
               </h3>
@@ -95,9 +118,9 @@ const TransferVolumeCard = () => {
                   <Loader2 className="animate-spin h-5 w-5" />
                 </div>
               ) : todayData ? (
-                <p className="text-2xl font-bold text-explorer-dark-gray dark:text-text text-right">
+                <p className="text-lg font-bold text-explorer-dark-gray dark:text-text text-right">
                   $
-                  {totalUsdValue.toLocaleString(undefined, {
+                  {totalUsdValue.toLocaleString(locale, {
                     maximumFractionDigits: 2,
                   })}
                 </p>
@@ -108,7 +131,7 @@ const TransferVolumeCard = () => {
               )}
             </div>
 
-            <div className="bg-explorer-extra-light-gray rounded-lg p-4 shadow-md">
+            <div className="bg-explorer-extra-light-gray rounded-lg p-3 shadow-md">
               <h3 className="text-sm font-semibold uppercase tracking-wide mb-1 text-explorer-dark-gray dark:text-text">
                 {t("transferVolumeCard.todaysDetails")}
               </h3>
@@ -118,7 +141,7 @@ const TransferVolumeCard = () => {
                 </div>
               ) : todayData ? (
                 <div className="flex flex-col gap-1 mt-1">
-                  <div className="flex justify-between text-sm">
+                  <div className="flex justify-between text-xs">
                     <span className="text-gray-500">
                       {t("transferVolumeCard.totalTransferAmount")}:
                     </span>
@@ -129,16 +152,16 @@ const TransferVolumeCard = () => {
                             10,
                             todayData.total_transfer_amount.precision
                           ) || 0
-                      ).toLocaleString()}{" "}
+                      ).toLocaleString(locale)}{" "}
                       {coinType}
                     </span>
                   </div>
-                  <div className="flex justify-between text-sm">
+                  <div className="flex justify-between text-xs">
                     <span className="text-gray-500">
                       {t("transferVolumeCard.transferCount")}:
                     </span>
                     <span className="font-medium text-gray-700 dark:text-text text-right">
-                      {(todayData.transfer_count ?? 0).toLocaleString()}
+                      {(todayData.transfer_count ?? 0).toLocaleString(locale)}
                     </span>
                   </div>
                 </div>
@@ -157,61 +180,22 @@ const TransferVolumeCard = () => {
         </div>
 
         <div className="flex-[2] min-w-[260px]">
-          <div className="bg-explorer-extra-light-gray rounded-lg p-4 shadow-md h-full flex flex-col">
-            <div className="flex justify-between items-center mb-1 gap-2 flex-wrap">
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-explorer-dark-gray dark:text-text">
-                {t("transferVolumeCard.last30Days")}
-              </h3>
-              <div className="flex items-center gap-3">
-                <div
-                  className="inline-flex items-stretch rounded-full border border-navbar-border overflow-hidden text-[10px]"
-                  role="group"
-                  aria-label="HIVE or HBD"
-                >
-                  {coinOptions.map((opt, idx) => {
-                    const isActive = coinType === opt.key;
-                    const isFirst = idx === 0;
-                    const isLast = idx === coinOptions.length - 1;
-                    return (
-                      <button
-                        key={opt.key}
-                        type="button"
-                        onClick={() => setCoinType(opt.key)}
-                        aria-pressed={isActive}
-                        className={cn(
-                          "font-medium transition-colors px-2 py-0.5",
-                          !isLast && "border-r border-navbar-border",
-                          isFirst && "rounded-l-full",
-                          isLast && "rounded-r-full",
-                          isActive
-                            ? "bg-blue-500 text-white"
-                            : "bg-theme hover:bg-gray-100 dark:hover:bg-gray-700"
-                        )}
-                      >
-                        {opt.label}
-                      </button>
-                    );
-                  })}
-                </div>
-                <button
-                  onClick={openModal}
-                  className="text-[11px] underline text-explorer-dark-gray dark:text-text"
-                >
-                  {t("transferVolumeCard.fullChart")}
-                </button>
-              </div>
-            </div>
+          <div className="bg-explorer-extra-light-gray rounded-lg p-3 shadow-md h-full flex flex-col">
+            <h3 className="text-[10px] font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-1">
+              {t("transferVolumeCard.last30Days")}
+            </h3>
             {isChartLoading ? (
               <div className="flex items-center justify-center h-full">
                 <Loader2 className="animate-spin h-6 w-6" />
               </div>
             ) : (
-              <div className="flex-grow min-h-[189px]">
+              <div className="flex-grow min-h-[150px]">
                 <TransferVolumeChart
                   data={chartData}
                   coinType={coinType}
                   tickCount={4}
                   dateFormat="MMM D"
+                  showLegend={false}
                 />
               </div>
             )}

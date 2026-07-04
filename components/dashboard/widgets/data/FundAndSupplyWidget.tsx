@@ -16,18 +16,19 @@ const FundAndSupplyWidget: React.FC<FundAndSupplyWidgetProps> = ({
   onToggleCollapse = () => {},
 }) => {
   const { t } = useI18n();
-  // Only show loading if there is no data at all
   const isLoading = !headBlockCardData?.headBlockDetails;
 
   return (
-    <HeadBlockPropertyCard
-      parameters={fundAndSupplyParameters}
-      header={t("headBlockCard.fundAndSupply")}
-      isParamsHidden={isCollapsed}
-      handleHideParams={onToggleCollapse}
-      isLoading={isLoading}
-      dynamicGlobalData={headBlockCardData}
-    />
+    <div className="mb-1">
+      <HeadBlockPropertyCard
+        parameters={fundAndSupplyParameters}
+        header={t("headBlockCard.fundAndSupply")}
+        isParamsHidden={isCollapsed}
+        handleHideParams={onToggleCollapse}
+        isLoading={isLoading}
+        dynamicGlobalData={headBlockCardData}
+      />
+    </div>
   );
 };
 

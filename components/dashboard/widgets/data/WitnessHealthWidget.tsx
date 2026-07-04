@@ -2,15 +2,14 @@ import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
-  MoveRight,
   ShieldOff,
   ChevronUp,
   ChevronDown,
   ChevronsUpDown,
-  MoveLeft,
   Handshake,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
 import { useAuth } from "@/contexts/AuthContext";
 import useWatchedWitnesses from "@/hooks/api/common/useWatchedWitnesses";
 import useWitnessVoteChain from "@/hooks/api/common/useWitnessVoteChain";
@@ -69,7 +68,6 @@ function SortIcon({
 
 const WitnessHealthWidget = () => {
   const { t, dir, locale } = useI18n();
-  const SeeMoreIcon = dir === "rtl" ? MoveLeft : MoveRight;
   const { username, isLoggedIn } = useAuth();
 
   const storageKey = username ? `witnessHealthSort_${username}` : null;
@@ -156,16 +154,10 @@ const WitnessHealthWidget = () => {
 
   return (
     <Card className="col-span-12 lg:col-span-3 overflow-hidden mb-2">
-      <CardHeader className="flex justify-between items-center border-b px-3 py-2.5">
-        <CardTitle>{t("watchlist.witnesses.title")}</CardTitle>
-        <Link
-          href={`/witnesses?voter=${username}`}
-          className="text-sm flex items-center space-x-1"
-        >
-          <span>{t("common.seeMore")}</span>
-          <SeeMoreIcon width={18} />
-        </Link>
-      </CardHeader>
+      <CardHeaderWithLink
+        title={t("watchlist.witnesses.title")}
+        href={`/witnesses?voter=${username}`}
+      />
 
       <CardContent className="px-2 pt-2 pb-1">
         {isVotesLoading ? (

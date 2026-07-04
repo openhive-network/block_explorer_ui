@@ -7,15 +7,14 @@ import React, {
 } from "react";
 import ReactECharts from "echarts-for-react";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import Image from "next/image";
-import { MoveRight, MoveLeft } from "lucide-react";
 
 import Hive from "@/types/Hive";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { cn } from "@/lib/utils";
 import useLastBlocks from "@/hooks/api/homePage/useLastBlocks";
-import { Card, CardHeader, CardTitle } from "./ui/card";
+import { Card } from "./ui/card";
+import CardHeaderWithLink from "./ui/CardHeaderWithLink";
 import { useI18n } from "../i18n/i18n";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useSettings } from "@/contexts/SettingsContext";
@@ -108,8 +107,6 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
   } = useSettings();
   const router = useRouter();
   const chartRef = useRef<ReactECharts>(null);
-
-  const SeeMoreIcon = isRTL ? MoveLeft : MoveRight;
 
   const lastBlocks = useLastBlocks(headBlock);
   const isMobile = useMediaQuery("(max-width: 640px)");
@@ -348,8 +345,8 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
       grid: {
         left: isRTL ? 20 : 48,
         right: isRTL ? 48 : 20,
-        top: 48,
-        bottom: 28,
+        top: 44,
+        bottom: 22,
         containLabel: false,
       },
       // Legend is hidden visually; the component must still be declared so that
@@ -513,21 +510,15 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
         }
       `}</style>
       <Card
-        className={cn("w-full h-[480px] pb-2 mb-2 overflow-hidden", className)}
+        className={cn("w-full h-[430px] pb-2 mb-2 overflow-hidden", className)}
         data-testid="last-block-widget"
       >
-        <CardHeader>
-          <CardTitle>{t("lastBlocksWidget.lastBlocks")}</CardTitle>
-          <Link
-            href="/blocks"
-            className="text-sm flex items-center space-x-1 w-full text-center justify-center"
-            data-testid="see-witnesses-link"
-          >
-            <span>{t("common.seeMore")}</span>
-            <SeeMoreIcon width={18} />
-          </Link>
-        </CardHeader>
-        <div className="relative" style={{ height: "calc(100% - 72px)" }}>
+        <CardHeaderWithLink
+          title={t("lastBlocksWidget.lastBlocks")}
+          href="/blocks"
+          linkTestId="see-witnesses-link"
+        />
+        <div className="relative" style={{ height: "calc(100% - 44px)" }}>
           {avgLineY !== null && (
             <>
               <div
@@ -582,7 +573,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
           <div
             ref={containerRef}
             className="relative"
-            style={{ height: "calc(100% - 40px)" }}
+            style={{ height: "calc(100% - 30px)" }}
           >
             <ReactECharts
               ref={chartRef}
@@ -594,7 +585,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
             />
             {liveData && barGlowBox && (
               <div
-                className="last-block-bar-ring"
+                className="last-block-bar-ring "
                 style={{
                   position: "absolute",
                   // convertToPixel returns the category centre; subtract half bar-width to get the left edge.
@@ -675,7 +666,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
           </div>
           <div
             style={{
-              height: 40,
+              height: 30,
               display: "flex",
               alignItems: "center",
               justifyContent: "center",

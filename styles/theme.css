@@ -498,3 +498,10 @@ pre {
   --toolbar-bg-color: #1e293b;
   border-bottom-color: var(--toolbar-border-color);
 }
+
+/* Recharts SVG text uses LTR anchoring; force LTR so RTL locales don't overlap
+   axis ticks. Visual mirroring stays handled per-chart via axis orientation. */
+.recharts-wrapper,
+.recharts-surface {
+  direction: ltr;
+}

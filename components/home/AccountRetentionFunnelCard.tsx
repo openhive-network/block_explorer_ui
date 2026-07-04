@@ -15,6 +15,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import CardHeaderWithLink from "../ui/CardHeaderWithLink";
+import { computeTrendPct } from "@/utils/chartUtils";
 
 const AccountRetentionFunnelFullChartDialog = dynamic(
   () => import("./AccountRetentionFunnelFullChartDialog"),
@@ -162,50 +164,34 @@ const AccountRetentionFunnelCard: React.FC = () => {
     );
   }, [sortedData]);
 
-  const priorCompleteCohort = useMemo(() => {
-    if (!lastCompleteCohort) return null;
-    const idx = sortedData.findIndex(
-      (d) => d.cohort_month === lastCompleteCohort.cohort_month
-    );
-    return idx > 0 ? sortedData[idx - 1] : null;
-  }, [sortedData, lastCompleteCohort]);
+  const momGrowth = useMemo(
+    () => computeTrendPct(sortedData.map((d) => d.new_accounts)),
+    [sortedData]
+  );
 
-  const momGrowth = useMemo(() => {
-    if (!lastCompleteCohort || !priorCompleteCohort) return null;
-    const prior = priorCompleteCohort.new_accounts;
-    if (prior === 0) return null;
-    return ((lastCompleteCohort.new_accounts - prior) / prior) * 100;
-  }, [lastCompleteCohort, priorCompleteCohort]);
+  const trend7d = useMemo(
+    () =>
+      computeTrendPct(
+        sortedData.filter((d) => d.pct_7d !== null).map((d) => d.pct_7d!)
+      ),
+    [sortedData]
+  );
 
-  const trend7d = useMemo(() => {
-    if (
-      !lastCompleteCohort ||
-      !priorCompleteCohort ||
-      priorCompleteCohort.pct_7d === null
-    )
-      return null;
-    return lastCompleteCohort.pct_7d! - priorCompleteCohort.pct_7d;
-  }, [lastCompleteCohort, priorCompleteCohort]);
+  const trend30d = useMemo(
+    () =>
+      computeTrendPct(
+        sortedData.filter((d) => d.pct_30d !== null).map((d) => d.pct_30d!)
+      ),
+    [sortedData]
+  );
 
-  const trend30d = useMemo(() => {
-    if (
-      !lastCompleteCohort ||
-      !priorCompleteCohort ||
-      priorCompleteCohort.pct_30d === null
-    )
-      return null;
-    return lastCompleteCohort.pct_30d! - priorCompleteCohort.pct_30d;
-  }, [lastCompleteCohort, priorCompleteCohort]);
-
-  const trend90d = useMemo(() => {
-    if (
-      !lastCompleteCohort ||
-      !priorCompleteCohort ||
-      priorCompleteCohort.pct_90d === null
-    )
-      return null;
-    return lastCompleteCohort.pct_90d! - priorCompleteCohort.pct_90d;
-  }, [lastCompleteCohort, priorCompleteCohort]);
+  const trend90d = useMemo(
+    () =>
+      computeTrendPct(
+        sortedData.filter((d) => d.pct_90d !== null).map((d) => d.pct_90d!)
+      ),
+    [sortedData]
+  );
 
   const stickinessPct = useMemo(() => {
     if (
@@ -233,12 +219,17 @@ const AccountRetentionFunnelCard: React.FC = () => {
 
   return (
     <div className="bg-theme rounded mb-2 shadow-md overflow-hidden">
-      <div className="flex items-center gap-2 px-3 py-1.5 border-b border-gray-100 dark:border-gray-800">
-        <span className="block w-[3px] h-3.5 rounded-full bg-indigo-500 flex-shrink-0" />
-        <span className="text-[11px] font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">
-          {t("accountRetentionFunnelCard.title")}
-        </span>
-      </div>
+      <CardHeaderWithLink
+        title={t("accountRetentionFunnelCard.title")}
+        actions={
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="text-[13px] underline text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+          >
+            {t("common.fullChart")}
+          </button>
+        }
+      />
       <div className="flex flex-wrap gap-2 p-2">
         {/* KPI — New Accounts */}
         <div className="flex-1 min-w-[120px] bg-explorer-extra-light-gray rounded-lg p-2.5 shadow-md flex flex-col justify-center">
@@ -417,12 +408,6 @@ const AccountRetentionFunnelCard: React.FC = () => {
                 </button>
               ))}
             </div>
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="text-xs underline"
-            >
-              {t("accountRetentionFunnelCard.fullChart")}
-            </button>
           </div>
           {isAccountFunnelLoading ? (
             <div className="flex items-center justify-center flex-grow min-h-[100px]">

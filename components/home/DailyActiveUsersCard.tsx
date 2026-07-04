@@ -3,6 +3,7 @@ import { Loader2, Activity, Zap, TrendingUp, TrendingDown } from "lucide-react";
 import moment from "moment";
 import dynamic from "next/dynamic";
 import DailyActiveUsersChart, { DauMetric } from "./DailyActiveUsersChart";
+import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
 import { useI18n } from "../../i18n/i18n";
 import useDailyActiveUsers from "@/hooks/api/homePage/useDailyActiveUsers";
 import { cn } from "@/lib/utils";
@@ -93,6 +94,17 @@ const DailyActiveUsersCard = () => {
 
   return (
     <div className="bg-theme rounded mb-2 shadow-md overflow-hidden">
+      <CardHeaderWithLink
+        title={t("dailyActiveUsersFullChart.title")}
+        actions={
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="text-[13px] underline text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+          >
+            {t("common.fullChart")}
+          </button>
+        }
+      />
       <div className="flex flex-wrap gap-2 p-2">
         {/* KPI — Active Accounts */}
         <div className="flex-1 min-w-[140px] bg-explorer-extra-light-gray rounded-lg p-2.5 shadow-md flex flex-col justify-center">
@@ -181,12 +193,6 @@ const DailyActiveUsersCard = () => {
                 </button>
               ))}
             </div>
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="text-xs underline"
-            >
-              {t("dailyActiveUsersCard.fullChart")}
-            </button>
           </div>
 
           {isDailyActiveUsersLoading ? (

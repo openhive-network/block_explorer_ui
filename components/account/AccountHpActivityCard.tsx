@@ -38,7 +38,7 @@ const AccountHpActivityCard: React.FC<AccountHpActivityCardProps> = ({
   userDetails,
   isInitiallyOpen,
 }) => {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const { settings } = useSettings();
   const router = useRouter();
   const [isHidden, setIsHidden] = useState(!isInitiallyOpen);
@@ -103,7 +103,7 @@ const AccountHpActivityCard: React.FC<AccountHpActivityCardProps> = ({
               )}
             >
               <Maximize2 size={12} />
-              {t("accountHpActivityCard.fullChart")}
+              {t("common.fullChart")}
             </button>
           </div>
         )}
@@ -215,7 +215,7 @@ const AccountHpActivityCard: React.FC<AccountHpActivityCardProps> = ({
                       title={`${sign}${value.toLocaleString()} ${unitLabel}`}
                     >
                       {sign}
-                      {formatCompact(value)} {unitLabel}
+                      {formatCompact(value, locale)} {unitLabel}
                     </span>
                     <span className="text-[11px] text-gray-400 tabular-nums">
                       ({count.toLocaleString()} {t("accountHpActivityCard.ops")}
@@ -239,7 +239,7 @@ const AccountHpActivityCard: React.FC<AccountHpActivityCardProps> = ({
                   title={`${netIsPositive ? "+" : ""}${totals.net.toLocaleString()} ${unitLabel}`}
                 >
                   {netIsPositive ? "+" : ""}
-                  {formatCompact(totals.net)} {unitLabel}
+                  {formatCompact(totals.net, locale)} {unitLabel}
                 </span>
               </div>
             </div>

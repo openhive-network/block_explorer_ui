@@ -1,14 +1,16 @@
 import React, { useMemo, useState } from "react";
-import { Loader2, TrendingUp, Users } from "lucide-react";
+import { Loader2, TrendingUp, TrendingDown, Users } from "lucide-react";
 import moment from "moment";
 import NetworkGrowthChart from "./NetworkGrowthChart";
 import NetworkGrowthFullChartDialog from "./NetworkGrowthFullChartDialog";
+import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
 import { useI18n } from "../../i18n/i18n";
 import { useSettings } from "@/contexts/SettingsContext";
 import useTotalWalletAddresses from "@/hooks/api/homePage/useTotalWalletAddresses";
+import { computeTrendPct } from "@/utils/chartUtils";
 
 const NetworkGrowthCard = () => {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const { settings } = useSettings();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -50,11 +52,13 @@ const NetworkGrowthCard = () => {
       (sum, item) => sum + (item.new_wallets ?? 0),
       0
     );
-    const baseTotal =
-      chartData[0].total_wallets - (chartData[0].new_wallets ?? 0);
-    const growthPct = baseTotal > 0 ? (newAccounts / baseTotal) * 100 : 0;
     const avgPerDay = newAccounts / chartData.length;
-    return { newAccounts, growthPct, avgPerDay };
+    const todayStr = moment().format("YYYY-MM-DD");
+    const completed = chartData.filter(
+      (d) => moment(d.date).format("YYYY-MM-DD") < todayStr
+    );
+    const trend = computeTrendPct(completed.map((d) => d.new_wallets ?? 0));
+    return { newAccounts, trend, avgPerDay };
   }, [chartData]);
 
   const openModal = () => setIsModalOpen(true);
@@ -62,6 +66,17 @@ const NetworkGrowthCard = () => {
 
   return (
     <div className="bg-theme rounded mb-2 shadow-md overflow-hidden">
+      <CardHeaderWithLink
+        title={t("networkGrowthCard.accountGrowth")}
+        actions={
+          <button
+            onClick={openModal}
+            className="text-[13px] underline text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+          >
+            {t("common.fullChart")}
+          </button>
+        }
+      />
       <div className="flex flex-wrap gap-2 p-2">
         {/* Total Accounts (all wallets on the chain) */}
         <div className="flex-1 min-w-[140px] bg-explorer-extra-light-gray rounded-lg p-2.5 shadow-md flex flex-col justify-center">
@@ -77,7 +92,7 @@ const NetworkGrowthCard = () => {
           ) : totalAccounts !== null ? (
             <>
               <p className="text-xl font-bold leading-tight text-explorer-dark-gray dark:text-text">
-                {totalAccounts.toLocaleString()}
+                {totalAccounts.toLocaleString(locale)}
               </p>
               <p className="flex items-center gap-1 text-[11px] text-gray-500">
                 <Users className="h-3 w-3" />
@@ -106,19 +121,31 @@ const NetworkGrowthCard = () => {
             <>
               <div className="flex items-center gap-1.5 leading-tight">
                 <p className="text-xl font-bold text-explorer-dark-gray dark:text-text">
-                  +{stats.newAccounts.toLocaleString()}
+                  +{stats.newAccounts.toLocaleString(locale)}
                 </p>
-                <span className="flex items-center gap-0.5 text-[11px] font-semibold text-explorer-light-green">
-                  <TrendingUp className="h-3 w-3" />
-                  {stats.growthPct.toLocaleString(undefined, {
-                    maximumFractionDigits: 2,
-                  })}
-                  %
-                </span>
+                {stats.trend !== null && (
+                  <span
+                    className={`flex items-center gap-0.5 text-[11px] font-semibold ${
+                      stats.trend >= 0
+                        ? "text-explorer-light-green"
+                        : "text-rose-600 dark:text-rose-400"
+                    }`}
+                  >
+                    {stats.trend >= 0 ? (
+                      <TrendingUp className="h-3 w-3" />
+                    ) : (
+                      <TrendingDown className="h-3 w-3" />
+                    )}
+                    {Math.abs(stats.trend).toLocaleString(locale, {
+                      maximumFractionDigits: 2,
+                    })}
+                    %
+                  </span>
+                )}
               </div>
               <p className="text-[11px] text-gray-500">
                 <span className="font-medium text-gray-700 dark:text-text">
-                  {stats.avgPerDay.toLocaleString(undefined, {
+                  {stats.avgPerDay.toLocaleString(locale, {
                     maximumFractionDigits: 0,
                   })}
                 </span>{" "}
@@ -134,14 +161,6 @@ const NetworkGrowthCard = () => {
 
         {/* Cumulative Growth Chart (last 30 days) */}
         <div className="flex-[2] min-w-[220px] bg-explorer-extra-light-gray rounded-lg p-2.5 shadow-md flex flex-col">
-          <div className="flex justify-between items-center mb-1">
-            <h3 className="text-xs font-semibold uppercase tracking-wide text-explorer-dark-gray dark:text-text">
-              {t("networkGrowthCard.accountGrowth")}
-            </h3>
-            <button onClick={openModal} className="text-xs underline">
-              {t("networkGrowthCard.fullChart")}
-            </button>
-          </div>
           {isWindowLoading ? (
             <div className="flex items-center justify-center flex-grow min-h-[100px]">
               <Loader2 className="animate-spin h-5 w-5" />

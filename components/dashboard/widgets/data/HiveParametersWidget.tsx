@@ -19,14 +19,16 @@ const HiveParametersWidget: React.FC<HiveParametersWidgetProps> = ({
   const isLoading = !headBlockCardData || !headBlockCardData.headBlockDetails;
 
   return (
-    <HeadBlockPropertyCard
-      parameters={hiveParameters}
-      header={t("headBlockCard.hiveParameters")}
-      isParamsHidden={isCollapsed}
-      handleHideParams={onToggleCollapse}
-      isLoading={isLoading}
-      dynamicGlobalData={headBlockCardData}
-    />
+    <div className="mb-1">
+      <HeadBlockPropertyCard
+        parameters={hiveParameters}
+        header={t("headBlockCard.hiveParameters")}
+        isParamsHidden={isCollapsed}
+        handleHideParams={onToggleCollapse}
+        isLoading={isLoading}
+        dynamicGlobalData={headBlockCardData}
+      />
+    </div>
   );
 };
 

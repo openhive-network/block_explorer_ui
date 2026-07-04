@@ -19,14 +19,16 @@ const BlockchainDatesWidget: React.FC<BlockchainDatesWidgetProps> = ({
   const isLoading = !headBlockCardData || !headBlockCardData.headBlockDetails;
 
   return (
-    <HeadBlockPropertyCard
-      parameters={blockchainDates}
-      header={t("headBlockCard.blockchainDates")}
-      isParamsHidden={isCollapsed}
-      handleHideParams={onToggleCollapse}
-      isLoading={isLoading}
-      dynamicGlobalData={headBlockCardData}
-    />
+    <div className="mb-1">
+      <HeadBlockPropertyCard
+        parameters={blockchainDates}
+        header={t("headBlockCard.blockchainDates")}
+        isParamsHidden={isCollapsed}
+        handleHideParams={onToggleCollapse}
+        isLoading={isLoading}
+        dynamicGlobalData={headBlockCardData}
+      />
+    </div>
   );
 };
 

@@ -24,6 +24,7 @@ interface TransactionStatisticsChartProps {
   tickCount?: number;
   showYear?: boolean;
   dateFormat?: string;
+  showLegend?: boolean;
 }
 
 const TransactionStatisticsChart: React.FC<TransactionStatisticsChartProps> = ({
@@ -32,6 +33,7 @@ const TransactionStatisticsChart: React.FC<TransactionStatisticsChartProps> = ({
   tickCount,
   showYear = false,
   dateFormat,
+  showLegend = true,
 }) => {
   const { theme } = useTheme();
   const { t, dir, locale } = useI18n();
@@ -91,7 +93,7 @@ const TransactionStatisticsChart: React.FC<TransactionStatisticsChartProps> = ({
                 {t("common.transactions")}
               </p>
               <p className="font-semibold leading-none">
-                {trx_count.toLocaleString()}
+                {trx_count.toLocaleString(locale)}
               </p>
             </div>
             <div>
@@ -121,7 +123,7 @@ const TransactionStatisticsChart: React.FC<TransactionStatisticsChartProps> = ({
   };
 
   const formatYAxis = (tickValue: number) => {
-    return tickValue.toLocaleString();
+    return tickValue.toLocaleString(locale);
   };
 
   const calculateYAxisDomain = () => {
@@ -191,18 +193,21 @@ const TransactionStatisticsChart: React.FC<TransactionStatisticsChartProps> = ({
         <YAxis
           dataKey="trx_count"
           tickCount={tickCount}
-          style={{ fontSize: "13px" }}
+          style={{ fontSize: "11px" }}
           stroke={strokeColor}
           tickFormatter={formatYAxis}
           domain={yAxisDomain}
           orientation={isRTL ? "right" : "left"}
         />
         <Tooltip content={<CustomTooltip />} />
-        <Legend
-          verticalAlign="bottom"
-          height={36}
-          align={isRTL ? "right" : "left"}
-        />
+        {showLegend && (
+          <Legend
+            verticalAlign="bottom"
+            height={36}
+            align="center"
+            wrapperStyle={{ paddingTop: 8 }}
+          />
+        )}
         <Line
           name={t("common.transactions")}
           type="monotone"
