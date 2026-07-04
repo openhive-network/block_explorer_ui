@@ -26,7 +26,7 @@ const PowerActivityKpiStrip: React.FC<PowerActivityKpiStripProps> = ({
   totals,
   unit,
 }) => {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const unitLabel = unit === "hp" ? "HP" : "VESTS";
 
   const netSign: 1 | -1 | 0 = totals.net > 0 ? 1 : totals.net < 0 ? -1 : 0;
@@ -54,7 +54,7 @@ const PowerActivityKpiStrip: React.FC<PowerActivityKpiStripProps> = ({
               title={`${netSign >= 0 ? "+" : ""}${totals.net.toLocaleString()} ${unitLabel}`}
             >
               {netSign >= 0 ? "+" : ""}
-              {formatCompact(totals.net)} {unitLabel}
+              {formatCompact(totals.net, locale)} {unitLabel}
             </span>
           </span>
         }
@@ -65,7 +65,7 @@ const PowerActivityKpiStrip: React.FC<PowerActivityKpiStripProps> = ({
         valueClassName="text-emerald-600 dark:text-emerald-400"
         value={
           <span title={`+${totals.up.toLocaleString()} ${unitLabel}`}>
-            +{formatCompact(totals.up)} {unitLabel}
+            +{formatCompact(totals.up, locale)} {unitLabel}
           </span>
         }
         sub={`${totals.upCount.toLocaleString()} ${t("hpMomentumCard.ops")}`}
@@ -76,7 +76,7 @@ const PowerActivityKpiStrip: React.FC<PowerActivityKpiStripProps> = ({
         valueClassName="text-amber-600 dark:text-amber-400"
         value={
           <span title={`${totals.downInit.toLocaleString()} ${unitLabel}`}>
-            {formatCompact(totals.downInit)} {unitLabel}
+            {formatCompact(totals.downInit, locale)} {unitLabel}
           </span>
         }
         sub={`${totals.downInitCount.toLocaleString()} ${t("hpMomentumCard.ops")}`}
@@ -87,7 +87,7 @@ const PowerActivityKpiStrip: React.FC<PowerActivityKpiStripProps> = ({
         valueClassName="text-rose-600 dark:text-rose-400"
         value={
           <span title={`-${totals.downFill.toLocaleString()} ${unitLabel}`}>
-            -{formatCompact(totals.downFill)} {unitLabel}
+            -{formatCompact(totals.downFill, locale)} {unitLabel}
           </span>
         }
         sub={`${totals.downFillCount.toLocaleString()} ${t("hpMomentumCard.ops")}`}

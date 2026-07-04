@@ -23,6 +23,7 @@ interface Props {
   textColor: string;
   gridColor: string;
   locale: string;
+  isRTL: boolean;
   t: (key: string, options?: Record<string, unknown>) => string;
 }
 
@@ -34,6 +35,7 @@ const NetworkHpDistributionChart: React.FC<Props> = ({
   textColor,
   gridColor,
   locale,
+  isRTL,
   t,
 }) => {
   const option = useMemo(() => {
@@ -94,7 +96,7 @@ const NetworkHpDistributionChart: React.FC<Props> = ({
                   hpHeld,
                 });
           return `
-            <div style="max-width:240px;line-height:1.5;white-space:normal;word-break:break-word">
+            <div style="max-width:240px;line-height:1.5;white-space:normal;word-break:break-word;direction:${isRTL ? "rtl" : "ltr"};text-align:${isRTL ? "right" : "left"}">
               <div style="font-weight:700;font-size:12px;margin-bottom:4px">${d.bucket}</div>
               <div style="font-size:11px">${primary}</div>
               <div style="font-size:10px;color:${mutedColor};margin-top:2px">${secondary}</div>
@@ -124,9 +126,16 @@ const NetworkHpDistributionChart: React.FC<Props> = ({
         borderColor: isDark ? "#374151" : "#e5e7eb",
         textStyle: { color: textColor, fontSize: 11 },
       },
-      grid: { left: 4, right: 52, top: 4, bottom: 4, containLabel: true },
+      grid: {
+        left: isRTL ? 52 : 4,
+        right: isRTL ? 4 : 52,
+        top: 4,
+        bottom: 4,
+        containLabel: true,
+      },
       xAxis: {
         type: "value",
+        inverse: isRTL,
         show: true,
         splitLine: {
           show: true,
@@ -138,6 +147,7 @@ const NetworkHpDistributionChart: React.FC<Props> = ({
       },
       yAxis: {
         type: "category",
+        position: isRTL ? "right" : "left",
         data: reversed.map((d) => d.bucket),
         axisLine: { show: false },
         axisTick: { show: false },
@@ -147,7 +157,8 @@ const NetworkHpDistributionChart: React.FC<Props> = ({
       series: [
         {
           type: "bar",
-          barMaxWidth: 14,
+          barMaxWidth: 20,
+          barCategoryGap: "30%",
           minBarLength: 4,
           data: reversed.map((d, i) => {
             const idx = hpDistribution.length - 1 - i;
@@ -161,16 +172,16 @@ const NetworkHpDistributionChart: React.FC<Props> = ({
               itemStyle: {
                 color: {
                   type: "linear",
-                  x: 0,
+                  x: isRTL ? 1 : 0,
                   y: 0,
-                  x2: 1,
+                  x2: isRTL ? 0 : 1,
                   y2: 0,
                   colorStops: [
                     { offset: 0, color: colorStart },
                     { offset: 1, color: colorEnd },
                   ],
                 },
-                borderRadius: [0, 4, 4, 0],
+                borderRadius: isRTL ? [4, 0, 0, 4] : [0, 4, 4, 0],
               },
               label: {
                 formatter: () =>
@@ -182,7 +193,7 @@ const NetworkHpDistributionChart: React.FC<Props> = ({
           }),
           label: {
             show: true,
-            position: "right",
+            position: isRTL ? "left" : "right",
             color: textColor,
             fontSize: 10,
             fontWeight: "bold",
@@ -213,6 +224,7 @@ const NetworkHpDistributionChart: React.FC<Props> = ({
     textColor,
     gridColor,
     locale,
+    isRTL,
     t,
   ]);
 

@@ -32,6 +32,7 @@ import DataExport from "@/components/DataExport";
 import useSearchRanges from "@/hooks/common/useSearchRanges";
 import { useI18n } from "@/i18n/i18n";
 import { cn, formatNumber } from "@/lib/utils";
+import SegmentedToggle from "@/components/ui/SegmentedToggle";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -424,36 +425,16 @@ const NetworkTopAccountsFullChartDialog: React.FC<
               </button>
             ))}
             {showUnitToggle && (
-              <div
-                className="inline-flex items-stretch rounded-full border border-navbar-border overflow-hidden text-xs ml-auto"
-                role="group"
-                aria-label="HP or VESTS"
-              >
-                {unitOptions.map((opt, idx) => {
-                  const isActive = unit === opt.key;
-                  const isFirst = idx === 0;
-                  const isLast = idx === unitOptions.length - 1;
-                  return (
-                    <button
-                      key={opt.key}
-                      type="button"
-                      onClick={() => setUnit(opt.key)}
-                      aria-pressed={isActive}
-                      className={cn(
-                        "font-medium transition-colors px-2.5 py-1",
-                        !isLast && "border-r border-navbar-border",
-                        isFirst && "rounded-l-full",
-                        isLast && "rounded-r-full",
-                        isActive
-                          ? "bg-blue-500 text-white"
-                          : "bg-theme hover:bg-gray-100 dark:hover:bg-gray-700"
-                      )}
-                    >
-                      {opt.label}
-                    </button>
-                  );
-                })}
-              </div>
+              <SegmentedToggle
+                className="ml-auto"
+                ariaLabel="HP or VESTS"
+                value={unit}
+                onChange={setUnit}
+                options={unitOptions.map((o) => ({
+                  value: o.key,
+                  label: o.label,
+                }))}
+              />
             )}
           </div>
 

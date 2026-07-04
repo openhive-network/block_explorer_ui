@@ -101,7 +101,7 @@ const DauKpiStrip: React.FC<DauKpiStripProps> = ({
       <KpiTile
         label={t("dauKpiStrip.peakPeriod")}
         value={moment(peakEntry.period).format(peakDateFmt)}
-        sub={`${formatCompact(peakEntry[trendMetric], locale)} ${trendMetric === "active_accounts" ? t("dauKpiStrip.accounts") : "ops"}`}
+        sub={`${formatCompact(peakEntry[trendMetric], locale)} ${trendMetric === "active_accounts" ? t("dauKpiStrip.accounts") : t("dauKpiStrip.ops")}`}
       />
       <KpiTile
         label={t("dauKpiStrip.trend")}

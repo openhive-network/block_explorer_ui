@@ -80,12 +80,34 @@ export function useDashboard() {
 
     if (savedLayoutsStr) {
       const parsedLayouts = JSON.parse(savedLayoutsStr);
-      initialLayouts = generateDerivedLayouts(
-        parsedLayouts.lg || DEFAULT_MASTER_LAYOUT
-      );
 
       if (savedWidgetsStr) initialWidgets = JSON.parse(savedWidgetsStr);
       if (savedStatesStr) initialWidgetStates = JSON.parse(savedStatesStr);
+
+      // Reconcile stale saved layouts against the registry: pull minW/minH from
+      // the current widget config so old floors (e.g. a collapsible trapped at
+      // minH 5) can't clamp collapsed/compact widgets tall, and force collapsed
+      // widgets back to the collapsed height.
+      const typeById = new Map(initialWidgets.map((w) => [w.i, w.type]));
+      const reconciledMaster: ExtendedLayout[] = (
+        parsedLayouts.lg || DEFAULT_MASTER_LAYOUT
+      ).map((item: ExtendedLayout) => {
+        const type = typeById.get(item.i);
+        const cfg = type ? WIDGET_REGISTRY[type] : undefined;
+        if (!cfg) return item;
+        const next: ExtendedLayout = {
+          ...item,
+          minW: cfg.defaultLayout.minW ?? item.minW,
+          minH: cfg.defaultLayout.minH ?? item.minH,
+        };
+        if (initialWidgetStates[item.i]?.isCollapsed) {
+          next.originalH = item.originalH ?? item.h;
+          next.h = COLLAPSED_WIDGET_HEIGHT;
+        }
+        return next;
+      });
+
+      initialLayouts = generateDerivedLayouts(reconciledMaster);
     } else {
       const initialState = createInitialLayoutsAndStates();
       initialLayouts = initialState.layouts;
@@ -138,10 +160,23 @@ export function useDashboard() {
         ...layoutOverride,
       };
 
-      const newLayouts = generateDerivedLayouts([
-        ...masterLayout,
-        newLayoutItem,
-      ]);
+      // For an explicit top placement (e.g. Watched Proposals at y:0), push the
+      // overlapping column down by the new item's height so it lands above the
+      // existing widgets, not after them.
+      const nw = newLayoutItem.w ?? 0;
+      const nh = newLayoutItem.h ?? 0;
+      const baseLayout =
+        layoutOverride?.y !== undefined
+          ? masterLayout.map((item) =>
+              item.x < newLayoutItem.x + nw &&
+              item.x + item.w > newLayoutItem.x &&
+              item.y >= newLayoutItem.y
+                ? { ...item, y: item.y + nh }
+                : item
+            )
+          : masterLayout;
+
+      const newLayouts = generateDerivedLayouts([...baseLayout, newLayoutItem]);
       setLayouts(newLayouts);
       localStorage.setItem(
         getLayoutStorageKey(username),

@@ -5,25 +5,21 @@ import { cn } from "@/lib/utils";
 import { formatCompact } from "@/components/home/hpMomentumUtils";
 import { useI18n } from "@/i18n/i18n";
 
-interface TransferStatsKpiStripProps {
-  totalVolume: number;
+interface TxStatsKpiStripProps {
   totalTxns: number;
   avgPerPeriod: number;
   peakDate: number | null;
   peakValue: number;
   trend: number | null;
-  coinType: "HIVE" | "HBD";
-  granularity: "hourly" | "daily" | "monthly" | "yearly";
+  granularity: "daily" | "monthly" | "yearly";
 }
 
-const TransferStatsKpiStrip: React.FC<TransferStatsKpiStripProps> = ({
-  totalVolume,
+const TxStatsKpiStrip: React.FC<TxStatsKpiStripProps> = ({
   totalTxns,
   avgPerPeriod,
   peakDate,
   peakValue,
   trend,
-  coinType,
   granularity,
 }) => {
   const { t, locale } = useI18n();
@@ -39,7 +35,6 @@ const TransferStatsKpiStrip: React.FC<TransferStatsKpiStripProps> = ({
         : "text-gray-500";
 
   const granularityKeyMap: Record<string, string> = {
-    hourly: "common.hour",
     daily: "common.day",
     monthly: "common.month",
     yearly: "common.year",
@@ -47,34 +42,19 @@ const TransferStatsKpiStrip: React.FC<TransferStatsKpiStripProps> = ({
   const periodLabel = t(granularityKeyMap[granularity] ?? "common.day");
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-4">
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
       <KpiTile
-        label={t("transferStatsKpiStrip.totalVolume")}
-        value={`${formatCompact(totalVolume, locale)} ${coinType}`}
-      />
-      <KpiTile
-        label={t("transferStatsKpiStrip.totalTransactions")}
+        label={t("transactionStatisticsCard.totalTransactions")}
         value={totalTxns.toLocaleString(locale)}
-        sub={t("transferStatsKpiStrip.transfers")}
       />
       <KpiTile
         label={t("transferStatsKpiStrip.avgPer", { period: periodLabel })}
-        value={`${formatCompact(avgPerPeriod, locale)} ${coinType}`}
+        value={formatCompact(avgPerPeriod, locale)}
       />
       <KpiTile
         label={t("transferStatsKpiStrip.peakPeriod")}
-        value={
-          peakDate !== null
-            ? moment(peakDate).format(
-                granularity === "hourly" ? "MMM D, HH:mm" : "MMM D, YYYY"
-              )
-            : "—"
-        }
-        sub={
-          peakDate !== null
-            ? `${formatCompact(peakValue, locale)} ${coinType}`
-            : undefined
-        }
+        value={peakDate !== null ? moment(peakDate).format("MMM D, YYYY") : "—"}
+        sub={peakDate !== null ? formatCompact(peakValue, locale) : undefined}
       />
       <KpiTile
         label={t("transferStatsKpiStrip.trend")}
@@ -111,4 +91,4 @@ const KpiTile: React.FC<{
   </div>
 );
 
-export default TransferStatsKpiStrip;
+export default TxStatsKpiStrip;

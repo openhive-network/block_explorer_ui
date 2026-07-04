@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import moment from "moment";
 import { Loader2 } from "lucide-react";
 import {
@@ -19,7 +19,7 @@ import SearchRanges from "../searchRanges/SearchRanges";
 import { Button } from "../ui/button";
 
 import useVestingStats from "@/hooks/api/homePage/useVestingStats";
-import { cn } from "@/lib/utils";
+import SegmentedToggle from "@/components/ui/SegmentedToggle";
 import useSearchRanges from "@/hooks/common/useSearchRanges";
 import { useI18n } from "../../i18n/i18n";
 import {
@@ -29,6 +29,8 @@ import {
 } from "./hpMomentumUtils";
 
 import HpMomentumChart from "./HpMomentumChart";
+import HpMomentumKpiStrip from "./HpMomentumKpiStrip";
+import { computeTrendPct } from "@/utils/chartUtils";
 
 interface HpMomentumFullChartDialogProps {
   isOpen: boolean;
@@ -110,7 +112,13 @@ const HpMomentumFullChartDialog: React.FC<HpMomentumFullChartDialogProps> = ({
     }
   };
 
-  const { chartData } = useAggregatedVesting(vestingStats, unit);
+  const { chartData, totals } = useAggregatedVesting(vestingStats, unit);
+  // Trend the (always-positive) power-up level, not net flow: net oscillates
+  // around zero, which makes computeTrendPct's %-vs-baseline blow up or go null.
+  const trend = useMemo(
+    () => computeTrendPct(chartData.map((d) => d.power_up)),
+    [chartData]
+  );
 
   const unitOptions: { key: VestingDisplayUnit; label: string }[] = [
     { key: "hp", label: "HP" },
@@ -119,41 +127,20 @@ const HpMomentumFullChartDialog: React.FC<HpMomentumFullChartDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="min-w-[90vw] pr-0">
+      <DialogContent className="min-w-[70vw] pr-0">
         <div className="max-h-[90vh] overflow-y-auto overflow-x-hidden pr-6 scrollableContainer">
           <DialogHeader>
             <div className="mb-4 flex items-center justify-between gap-3 pr-6 flex-wrap">
               <DialogTitle>{t("hpMomentumFullChartDialog.title")}</DialogTitle>
-              <div
-                className="inline-flex items-stretch rounded-full border border-navbar-border overflow-hidden text-xs"
-                role="group"
-                aria-label="HP or VESTS"
-              >
-                {unitOptions.map((opt, idx) => {
-                  const isActive = unit === opt.key;
-                  const isFirst = idx === 0;
-                  const isLast = idx === unitOptions.length - 1;
-                  return (
-                    <button
-                      key={opt.key}
-                      type="button"
-                      onClick={() => setUnit(opt.key)}
-                      aria-pressed={isActive}
-                      className={cn(
-                        "font-medium transition-colors px-3 py-1",
-                        !isLast && "border-r border-navbar-border",
-                        isFirst && "rounded-l-full",
-                        isLast && "rounded-r-full",
-                        isActive
-                          ? "bg-blue-500 text-white"
-                          : "bg-theme hover:bg-gray-100 dark:hover:bg-gray-700"
-                      )}
-                    >
-                      {opt.label}
-                    </button>
-                  );
-                })}
-              </div>
+              <SegmentedToggle
+                ariaLabel="HP or VESTS"
+                value={unit}
+                onChange={setUnit}
+                options={unitOptions.map((o) => ({
+                  value: o.key,
+                  label: o.label,
+                }))}
+              />
             </div>
           </DialogHeader>
 
@@ -205,6 +192,16 @@ const HpMomentumFullChartDialog: React.FC<HpMomentumFullChartDialogProps> = ({
               </div>
             </div>
           </div>
+
+          {chartData.length > 0 && (
+            <HpMomentumKpiStrip
+              net={totals.net}
+              up={totals.up}
+              down={totals.downFill}
+              trend={trend}
+              unit={unit}
+            />
+          )}
 
           <div className="h-[55vh] w-full flex items-center justify-center">
             {isChartLoading ? (

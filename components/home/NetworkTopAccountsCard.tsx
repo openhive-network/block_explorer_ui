@@ -5,21 +5,24 @@ import dynamic from "next/dynamic";
 import { Loader2 } from "lucide-react";
 import { IHiveChainInterface } from "@hiveio/wax";
 import { useI18n } from "@/i18n/i18n";
-import { cn } from "@/lib/utils";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { convertVestsToHP } from "@/utils/Calculations";
 import { grabNumericValue } from "@/utils/StringUtils";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
+import moment from "moment";
 import useNetworkTopAccounts from "@/hooks/api/homePage/useNetworkTopAccounts";
 import Hive from "@/types/Hive";
+import { Card, CardContent } from "@/components/ui/card";
 import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
+import SegmentedToggle from "@/components/ui/SegmentedToggle";
 import { useVestingDisplayUnit, VestingDisplayUnit } from "./hpMomentumUtils";
 
 // ---------------------------------------------------------------------------
@@ -235,8 +238,17 @@ const NetworkTopAccountsCard: React.FC = () => {
   // Until ready, keep the card in its loading state so it never shows "0 HP".
   const valuesReady = metric === "transaction_count" || converters !== null;
 
+  const usesDate = metricUsesDate(metric);
+  const fromDate = useMemo(() => moment().subtract(30, "days").toDate(), []);
+  const toDate = useMemo(() => moment().toDate(), []);
+
   const { topAccounts, isTopAccountsLoading, isTopAccountsError } =
-    useNetworkTopAccounts(metric, undefined, undefined, CARD_LIMIT);
+    useNetworkTopAccounts(
+      metric,
+      usesDate ? fromDate : undefined,
+      usesDate ? toDate : undefined,
+      CARD_LIMIT
+    );
 
   const rows = useMemo(() => {
     if (!topAccounts) return [];
@@ -286,67 +298,50 @@ const NetworkTopAccountsCard: React.FC = () => {
 
   return (
     <Card
-      className="col-span-12 md:col-span-11 lg:col-span-3 overflow-hidden flex flex-col"
+      className="col-span-12 md:col-span-11 lg:col-span-3 overflow-hidden flex flex-col mb-2"
       data-testid="top-accounts-sidebar"
     >
-      <CardHeader className="border-b px-3 py-3">
-        <CardTitle className="mb-4">{t("topAccountsCard.title")}</CardTitle>
-        <div className="grid grid-cols-3 gap-1 pb-4">
-          {TOP_ACCOUNTS_METRICS.map(({ key, labelKey }) => (
-            <button
-              key={key}
-              onClick={() => setMetric(key)}
-              className={cn(
-                "w-full text-center whitespace-nowrap text-[10px] px-1.5 py-1 rounded-full font-medium transition-colors",
-                metric === key
-                  ? "bg-indigo-500 text-white"
-                  : "bg-explorer-extra-light-gray text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-              )}
-            >
-              {t(labelKey)}
-            </button>
-          ))}
-        </div>
-        <div className="flex items-center justify-end gap-2 min-h-[20px]">
-          {metricUsesDate(metric) && (
-            <p className="text-[10px] text-gray-500">
-              {t("topAccountsCard.last30d")}
-            </p>
-          )}
+      <CardHeaderWithLink
+        title={t("topAccountsCard.title")}
+        onSeeMore={() => setIsModalOpen(true)}
+        linkTestId="top-accounts-see-more-btn"
+        className="border-b-0 pb-0"
+      />
+      <div className="space-y-2 border-b px-3 pb-2 pt-1">
+        <div className="flex items-center gap-2">
+          <Select
+            value={metric}
+            onValueChange={(v) => setMetric(v as Hive.TopAccountsMetric)}
+          >
+            <SelectTrigger className="h-8 flex-1 gap-1.5 rounded-full border-0 bg-indigo-50 px-3.5 text-xs font-semibold text-indigo-700 shadow-sm ring-1 ring-inset ring-indigo-200 transition-colors hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:bg-indigo-500/15 dark:text-indigo-200 dark:ring-indigo-500/30 dark:hover:bg-indigo-500/25">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="rounded-xl">
+              {TOP_ACCOUNTS_METRICS.map(({ key, labelKey }) => (
+                <SelectItem
+                  key={key}
+                  value={key}
+                  className="rounded-md text-xs font-medium"
+                >
+                  {t(labelKey)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
           {showUnitToggle && (
-            <div
-              className="inline-flex items-stretch rounded-full border border-navbar-border overflow-hidden text-[10px]"
-              role="group"
-              aria-label="HP or VESTS"
-            >
-              {unitOptions.map((opt, idx) => {
-                const isActive = unit === opt.key;
-                const isFirst = idx === 0;
-                const isLast = idx === unitOptions.length - 1;
-                return (
-                  <button
-                    key={opt.key}
-                    type="button"
-                    onClick={() => setUnit(opt.key)}
-                    aria-pressed={isActive}
-                    className={cn(
-                      "font-medium transition-colors px-2 py-0.5",
-                      !isLast && "border-r border-navbar-border",
-                      isFirst && "rounded-l-full",
-                      isLast && "rounded-r-full",
-                      isActive
-                        ? "bg-blue-500 text-white"
-                        : "bg-theme hover:bg-gray-100 dark:hover:bg-gray-700"
-                    )}
-                  >
-                    {opt.label}
-                  </button>
-                );
-              })}
-            </div>
+            <SegmentedToggle
+              ariaLabel="HP or VESTS"
+              value={unit}
+              onChange={setUnit}
+              options={unitOptions.map((o) => ({
+                value: o.key,
+                label: o.label,
+              }))}
+            />
           )}
         </div>
-      </CardHeader>
+      </div>
 
       <CardContent className="px-2 py-3 flex-grow">
         {isTopAccountsLoading ? (
@@ -363,10 +358,19 @@ const NetworkTopAccountsCard: React.FC = () => {
           </p>
         ) : (
           <div className="flex flex-col">
-            {summaryText && (
-              <p className="text-[11px] text-gray-500 px-1 pb-2 mb-1 border-b">
-                {summaryText}
-              </p>
+            {(summaryText || metricUsesDate(metric)) && (
+              <div className="flex items-baseline gap-2 px-1 pb-2 mb-1 border-b">
+                {summaryText && (
+                  <p className="min-w-0 text-[11px] text-gray-500">
+                    {summaryText}
+                  </p>
+                )}
+                {metricUsesDate(metric) && (
+                  <span className="ms-auto flex-shrink-0 text-[10px] text-gray-400">
+                    {t("topAccountsCard.last30d")}
+                  </span>
+                )}
+              </div>
             )}
             {rows.map(({ row, valueLabel, opsLabel }) => (
               <div
@@ -407,18 +411,6 @@ const NetworkTopAccountsCard: React.FC = () => {
           </div>
         )}
       </CardContent>
-
-      <CardFooter className="py-3 px-4 bg-explorer-extra-light-gray">
-        <div className="w-full flex justify-center">
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="text-link"
-            data-testid="top-accounts-see-more-btn"
-          >
-            {t("common.seeMore")}
-          </button>
-        </div>
-      </CardFooter>
 
       <NetworkTopAccountsFullChartDialog
         isOpen={isModalOpen}

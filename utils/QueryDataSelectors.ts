@@ -1,7 +1,10 @@
 import Explorer from "@/types/Explorer";
 import Hive from "@/types/Hive";
 import { formatPercent } from "@/lib/utils";
-import { GetDynamicGlobalPropertiesResponse, IHiveChainInterface } from "@hiveio/wax";
+import {
+  GetDynamicGlobalPropertiesResponse,
+  IHiveChainInterface,
+} from "@hiveio/wax";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 
 /**
@@ -20,9 +23,13 @@ export function adjustDynamicGlobalBlockData(
   hiveChain: IHiveChainInterface
 ): Explorer.HeadBlockCardData {
   const { base, quote } = currentPriceFeed;
-  const { total_vesting_fund_hive: rawTotalVestingFundHive, total_vesting_shares: rawTotalVestingShares } = dynamicGlobalQuery;
+  const {
+    total_vesting_fund_hive: rawTotalVestingFundHive,
+    total_vesting_shares: rawTotalVestingShares,
+  } = dynamicGlobalQuery;
   const basicFormatter = hiveChain.formatter;
-  const formattedBaseValues: Explorer.DynamicGlobalBlock = basicFormatter.format(dynamicGlobalQuery);
+  const formattedBaseValues: Explorer.DynamicGlobalBlock =
+    basicFormatter.format(dynamicGlobalQuery);
   const {
     time,
     current_supply,
@@ -52,9 +59,11 @@ export function adjustDynamicGlobalBlockData(
     min_recurrent_transfers_recurrence,
     max_open_recurrent_transfers,
     head_block_number,
-    current_witness
+    current_witness,
   } = formattedBaseValues;
-  const rewardBalance: string = basicFormatter.format(rewardFunds[0].reward_balance);
+  const rewardBalance: string = basicFormatter.format(
+    rewardFunds[0].reward_balance
+  );
   const headBlockDetails: Explorer.HeadBlockDetails = {
     feedPrice: basicFormatter.format(base),
     blockchainTime: formatAndDelocalizeTime(time),
@@ -66,29 +75,38 @@ export function adjustDynamicGlobalBlockData(
     totalVestingFundHive: total_vesting_fund_hive,
     totalVestingShares: total_vesting_shares,
     pendingRewardedVestingHive: pending_rewarded_vesting_hive,
-    hbdInterestRate: formatPercent(hbd_interest_rate),
-    hbdPrintRate: formatPercent(hbd_print_rate),
-    lastIrreversibleBlockNumber: last_irreversible_block_num.toLocaleString(),
-    availableAccountSubsidies: available_account_subsidies.toLocaleString(),
-    hbdStopPercent: formatPercent(hbd_stop_percent),
-    hbdStartPercent: formatPercent(hbd_start_percent),
-    nextMaintenanceTime: formatAndDelocalizeTime(next_maintenance_time) ,
+    hbdInterestRate: formatPercent(hbd_interest_rate, "en-US"),
+    hbdPrintRate: formatPercent(hbd_print_rate, "en-US"),
+    lastIrreversibleBlockNumber:
+      last_irreversible_block_num.toLocaleString("en-US"),
+    availableAccountSubsidies:
+      available_account_subsidies.toLocaleString("en-US"),
+    hbdStopPercent: formatPercent(hbd_stop_percent, "en-US"),
+    hbdStartPercent: formatPercent(hbd_start_percent, "en-US"),
+    nextMaintenanceTime: formatAndDelocalizeTime(next_maintenance_time),
     lastBudgetTime: formatAndDelocalizeTime(last_budget_time),
-    nextDailyMaintenanceTime: formatAndDelocalizeTime(next_daily_maintenance_time),
-    contentRewardPercent: formatPercent(content_reward_percent), // Remember to fix all percentage values later
-    vestingRewardPercent: formatPercent(vesting_reward_percent),
-    downvotePoolPercent: formatPercent(downvote_pool_percent),
+    nextDailyMaintenanceTime: formatAndDelocalizeTime(
+      next_daily_maintenance_time
+    ),
+    contentRewardPercent: formatPercent(content_reward_percent, "en-US"), // Remember to fix all percentage values later
+    vestingRewardPercent: formatPercent(vesting_reward_percent, "en-US"),
+    downvotePoolPercent: formatPercent(downvote_pool_percent, "en-US"),
     currentRemoveThreshold: current_remove_threshold,
-    earlyVotingSeconds: early_voting_seconds.toLocaleString(),
-    midVotingSeconds: mid_voting_seconds.toLocaleString(),
-    maxConvecutiveRecurrentTransferFailures: max_consecutive_recurrent_transfer_failures.toLocaleString(),
+    earlyVotingSeconds: early_voting_seconds.toLocaleString("en-US"),
+    midVotingSeconds: mid_voting_seconds.toLocaleString("en-US"),
+    maxConvecutiveRecurrentTransferFailures:
+      max_consecutive_recurrent_transfer_failures.toLocaleString("en-US"),
     maxRecurrentTransferEndDate: max_recurrent_transfer_end_date,
     minRecurrentTransfersRecurrence: min_recurrent_transfers_recurrence,
     maxOpenRecurrentTransfers: max_open_recurrent_transfers,
     rawTotalVestingFundHive,
     rawTotalVestingShares,
     rawFeedPrice: base,
-    rawQuote: quote
+    rawQuote: quote,
   };
-  return {headBlockDetails, headBlockNumber: head_block_number, witnessName: current_witness};
+  return {
+    headBlockDetails,
+    headBlockNumber: head_block_number,
+    witnessName: current_witness,
+  };
 }

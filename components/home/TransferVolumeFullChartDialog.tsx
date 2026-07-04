@@ -23,7 +23,7 @@ import TransferStatsKpiStrip from "./TransferStatsKpiStrip";
 import Hive from "@/types/Hive";
 import { Loader2 } from "lucide-react";
 import { useI18n } from "../../i18n/i18n";
-import { cn } from "@/lib/utils";
+import SegmentedToggle from "@/components/ui/SegmentedToggle";
 import { computeTrendPct } from "@/utils/chartUtils";
 
 type CoinType = "HIVE" | "HBD";
@@ -171,43 +171,22 @@ const TransferVolumeFullChartDialog: React.FC<TransferVolumeModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="min-w-[90vw] pr-0">
+      <DialogContent className="min-w-[70vw] pr-0">
         <div className="max-h-[90vh] overflow-y-auto overflow-x-hidden pr-6 scrollableContainer">
           <DialogHeader>
             <div className="mb-4 flex items-center justify-between gap-3 pr-6 flex-wrap">
               <DialogTitle>
                 {t("transferVolumeFullChartDialog.historyTitle")}
               </DialogTitle>
-              <div
-                className="inline-flex items-stretch rounded-full border border-navbar-border overflow-hidden text-xs"
-                role="group"
-                aria-label="HIVE or HBD"
-              >
-                {coinOptions.map((opt, idx) => {
-                  const isActive = coinType === opt.key;
-                  const isFirst = idx === 0;
-                  const isLast = idx === coinOptions.length - 1;
-                  return (
-                    <button
-                      key={opt.key}
-                      type="button"
-                      onClick={() => setCoinType(opt.key)}
-                      aria-pressed={isActive}
-                      className={cn(
-                        "font-medium transition-colors px-3 py-1",
-                        !isLast && "border-r border-navbar-border",
-                        isFirst && "rounded-l-full",
-                        isLast && "rounded-r-full",
-                        isActive
-                          ? "bg-blue-500 text-white"
-                          : "bg-theme hover:bg-gray-100 dark:hover:bg-gray-700"
-                      )}
-                    >
-                      {opt.label}
-                    </button>
-                  );
-                })}
-              </div>
+              <SegmentedToggle
+                ariaLabel="HIVE or HBD"
+                value={coinType}
+                onChange={setCoinType}
+                options={coinOptions.map((o) => ({
+                  value: o.key,
+                  label: o.label,
+                }))}
+              />
             </div>
           </DialogHeader>
 
@@ -280,7 +259,7 @@ const TransferVolumeFullChartDialog: React.FC<TransferVolumeModalProps> = ({
             />
           )}
 
-          <div className="h-[50vh] w-full flex items-center justify-center">
+          <div className="h-[55vh] w-full flex items-center justify-center">
             {isChartLoading ? (
               <div className="flex justify-center items-center">
                 <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />

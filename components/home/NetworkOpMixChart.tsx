@@ -99,7 +99,7 @@ const NetworkOpMixChart: React.FC<NetworkOpMixChartProps> = ({
 
     const manyOps = topOps.length > 12;
     const legendHeight = manyOps ? 40 : Math.ceil(topOps.length / 5) * 20 + 8;
-    const gridBottom = (includeBrush ? 74 : 12) + legendHeight;
+    const gridBottom = (includeBrush ? 74 : 12) + legendHeight + 8;
     const legendBottom = includeBrush ? 74 : 8;
 
     return {
@@ -113,6 +113,7 @@ const NetworkOpMixChart: React.FC<NetworkOpMixChartProps> = ({
       },
       legend: {
         show: true,
+        left: "center",
         bottom: legendBottom,
         type: manyOps ? ("scroll" as const) : ("plain" as const),
         orient: "horizontal" as const,
@@ -163,7 +164,7 @@ const NetworkOpMixChart: React.FC<NetworkOpMixChartProps> = ({
                 </div>`;
             })
             .join("");
-          return `<div style="min-width:160px"><div style="font-weight:700;margin-bottom:6px">${date}</div>${rows}</div>`;
+          return `<div style="min-width:160px;direction:${isRTL ? "rtl" : "ltr"}"><div style="font-weight:700;margin-bottom:6px">${date}</div>${rows}</div>`;
         },
       },
       xAxis: {

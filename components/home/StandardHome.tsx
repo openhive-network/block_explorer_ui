@@ -16,6 +16,7 @@ import TopCommunitiesCard from "@/components/home/TopCommunitiesCard";
 import TransferVolumeCard from "@/components/home/TransferVolumeCard";
 import TotalValueLockedCard from "@/components/home/TotalValueLockedCard";
 import NetworkHpDistributionCard from "@/components/home/NetworkHpDistributionCard";
+import TopHoldersWidget from "@/components/dashboard/widgets/data/TopHoldersWidget";
 import HpMomentumCard from "@/components/home/HpMomentumCard";
 import NetworkGrowthCard from "@/components/home/NetworkGrowthCard";
 import NetworkVotingActivityCard from "@/components/home/NetworkVotingActivityCard";
@@ -81,7 +82,7 @@ const StandardHome = () => {
         <title>{t("home.title")}</title>
       </Head>
       <div className="page-container grid grid-cols-12 text-white gap-3">
-        <div className="col-span-12 md:col-span-4 lg:col-span-3 flex flex-col gap-3">
+        <div className="col-span-12 md:col-span-4 lg:col-span-3 flex flex-col">
           <HeadBlockCard
             headBlockCardData={dynamicGlobalQueryData}
             transactionCount={trxOpsLength}
@@ -89,9 +90,8 @@ const StandardHome = () => {
             opcount={opcount}
           />
           <NetworkVotingActivityCard />
-          <div className="h-[340px]">
-            <NetworkHpDistributionCard />
-          </div>
+          <NetworkHpDistributionCard />
+          <TopHoldersWidget />
         </div>
 
         <div className="col-span-12 md:col-span-8 lg:col-span-6">
@@ -107,7 +107,7 @@ const StandardHome = () => {
           <SearchesSection />
         </div>
 
-        <div className="col-span-12 lg:col-span-3 flex flex-col gap-3">
+        <div className="col-span-12 lg:col-span-3 flex flex-col">
           {isLoggedIn && hasWatchedProposals && <WatchedProposalsWidget />}
           <TopWitnessesCard
             witnessesData={witnessesData}

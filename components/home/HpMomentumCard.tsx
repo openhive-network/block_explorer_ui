@@ -5,7 +5,8 @@ import dynamic from "next/dynamic";
 import useVestingStats from "@/hooks/api/homePage/useVestingStats";
 import { useSettings } from "@/contexts/SettingsContext";
 import { useI18n } from "../../i18n/i18n";
-import { cn } from "@/lib/utils";
+import SegmentedToggle from "@/components/ui/SegmentedToggle";
+import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
 import {
   VestingDisplayUnit,
   formatCompact,
@@ -20,7 +21,7 @@ const HpMomentumFullChartDialog = dynamic(
 );
 
 const HpMomentumCard = () => {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const { settings } = useSettings();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -84,12 +85,34 @@ const HpMomentumCard = () => {
   ];
 
   return (
-    <div className="bg-theme rounded mb-4 shadow-md overflow-hidden">
-      <div className="flex flex-wrap gap-4 p-5">
+    <div className="bg-theme rounded mb-2 shadow-md overflow-hidden">
+      <CardHeaderWithLink
+        title={t("widgets.hpMomentumName")}
+        actions={
+          <>
+            <SegmentedToggle
+              ariaLabel="HP or VESTS"
+              value={unit}
+              onChange={setUnit}
+              options={unitOptions.map((o) => ({
+                value: o.key,
+                label: o.label,
+              }))}
+            />
+            <button
+              onClick={openModal}
+              className="text-[13px] underline text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+            >
+              {t("common.fullChart")}
+            </button>
+          </>
+        }
+      />
+      <div className="flex flex-wrap gap-3 p-3">
         {/* Left: Net flow + breakdown */}
         <div className="flex-1 min-w-[200px]">
-          <div className="flex flex-col gap-4 h-full">
-            <div className="bg-explorer-extra-light-gray rounded-lg p-4 shadow-md">
+          <div className="flex flex-col gap-3 h-full">
+            <div className="bg-explorer-extra-light-gray rounded-lg p-3 shadow-md">
               <h3 className="text-sm font-semibold uppercase tracking-wide mb-1 text-explorer-dark-gray dark:text-text">
                 {t("hpMomentumCard.netFlow30d", { unit: unitLabel })}
               </h3>
@@ -100,20 +123,20 @@ const HpMomentumCard = () => {
               ) : hasData ? (
                 <div className="flex items-center justify-end gap-1 whitespace-nowrap">
                   {netIsPositive ? (
-                    <TrendingUp className="h-5 w-5" color="#10B981" />
+                    <TrendingUp className="h-4 w-4" color="#10B981" />
                   ) : (
-                    <TrendingDown className="h-5 w-5" color="#EF4444" />
+                    <TrendingDown className="h-4 w-4" color="#EF4444" />
                   )}
                   <p
-                    className={`text-2xl font-bold text-right ${
+                    className={`text-lg font-bold text-right ${
                       netIsPositive ? "text-emerald-500" : "text-rose-500"
                     }`}
                     title={`${
                       netIsPositive ? "+" : ""
-                    }${totals.net.toLocaleString()} ${unitLabel}`}
+                    }${totals.net.toLocaleString(locale)} ${unitLabel}`}
                   >
                     {netIsPositive ? "+" : ""}
-                    {formatCompact(totals.net)}{" "}
+                    {formatCompact(totals.net, locale)}{" "}
                     <span className="text-base">{unitLabel}</span>
                   </p>
                 </div>
@@ -124,7 +147,7 @@ const HpMomentumCard = () => {
               )}
             </div>
 
-            <div className="bg-explorer-extra-light-gray rounded-lg p-4 shadow-md flex-1 flex flex-col">
+            <div className="bg-explorer-extra-light-gray rounded-lg p-3 shadow-md flex-1 flex flex-col">
               <h3 className="text-sm font-semibold uppercase tracking-wide mb-2 text-explorer-dark-gray dark:text-text">
                 {t("hpMomentumCard.breakdown")}
               </h3>
@@ -143,13 +166,14 @@ const HpMomentumCard = () => {
                       <div className="flex justify-between items-baseline gap-2">
                         <span
                           className={`text-sm font-semibold whitespace-nowrap ${row.color}`}
-                          title={`${row.sign}${row.value.toLocaleString()} ${unitLabel}`}
+                          title={`${row.sign}${row.value.toLocaleString(locale)} ${unitLabel}`}
                         >
                           {row.sign}
-                          {formatCompact(row.value)} {unitLabel}
+                          {formatCompact(row.value, locale)} {unitLabel}
                         </span>
                         <span className="text-[10px] text-gray-400 whitespace-nowrap">
-                          {row.count.toLocaleString()} {t("hpMomentumCard.ops")}
+                          {row.count.toLocaleString(locale)}{" "}
+                          {t("hpMomentumCard.ops")}
                         </span>
                       </div>
                     </div>
@@ -171,56 +195,16 @@ const HpMomentumCard = () => {
 
         {/* Right: 30-day trend chart */}
         <div className="flex-[2] min-w-[260px]">
-          <div className="bg-explorer-extra-light-gray rounded-lg p-4 shadow-md h-full flex flex-col">
-            <div className="flex justify-between items-center mb-2 gap-2 flex-wrap">
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-explorer-dark-gray dark:text-text">
-                {t("hpMomentumCard.last30Days")}
-              </h3>
-              <div className="flex items-center gap-3">
-                <div
-                  className="inline-flex items-stretch rounded-full border border-navbar-border overflow-hidden text-[10px]"
-                  role="group"
-                  aria-label="HP or VESTS"
-                >
-                  {unitOptions.map((opt, idx) => {
-                    const isActive = unit === opt.key;
-                    const isFirst = idx === 0;
-                    const isLast = idx === unitOptions.length - 1;
-                    return (
-                      <button
-                        key={opt.key}
-                        type="button"
-                        onClick={() => setUnit(opt.key)}
-                        aria-pressed={isActive}
-                        className={cn(
-                          "font-medium transition-colors px-2 py-0.5",
-                          !isLast && "border-r border-navbar-border",
-                          isFirst && "rounded-l-full",
-                          isLast && "rounded-r-full",
-                          isActive
-                            ? "bg-blue-500 text-white"
-                            : "bg-theme hover:bg-gray-100 dark:hover:bg-gray-700"
-                        )}
-                      >
-                        {opt.label}
-                      </button>
-                    );
-                  })}
-                </div>
-                <button
-                  onClick={openModal}
-                  className="text-[11px] underline text-explorer-dark-gray dark:text-text"
-                >
-                  {t("hpMomentumCard.fullChart")}
-                </button>
-              </div>
-            </div>
+          <div className="bg-explorer-extra-light-gray rounded-lg p-3 shadow-md h-full flex flex-col">
+            <h3 className="text-[10px] font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-1">
+              {t("hpMomentumCard.last30Days")}
+            </h3>
             {isLoading ? (
               <div className="flex items-center justify-center h-full">
                 <Loader2 className="animate-spin h-6 w-6" />
               </div>
             ) : (
-              <div className="flex-grow min-h-[260px]">
+              <div className="flex-grow min-h-[240px]">
                 <HpMomentumChart
                   data={chartData}
                   unit={unit}

@@ -9,14 +9,14 @@ import {
   Clock,
   XCircle,
   X,
-  MoveRight,
   Calendar,
   AlertCircle,
   AlertTriangle,
   Landmark,
   Loader2,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
 import { useWatchlist } from "@/contexts/WatchlistContext";
 import { useAuth } from "@/contexts/AuthContext";
 import useWatchedProposals from "@/hooks/api/proposals/useWatchedProposals";
@@ -161,7 +161,6 @@ const WatchedProposalsWidget = () => {
         continue;
       }
 
-      // Detect any status change
       const fundedChanged = prev.funded !== p.isFunded;
       const statusChanged = prev.status !== p.status;
       if (fundedChanged || statusChanged) {
@@ -182,7 +181,6 @@ const WatchedProposalsWidget = () => {
 
     if (changed.length === 0) return;
 
-    // In-app toast (sonner)
     changed.forEach(({ id, subject, reason }) => {
       toast.warning(reason, {
         description: `#${id} · ${subject}`,
@@ -190,7 +188,6 @@ const WatchedProposalsWidget = () => {
       });
     });
 
-    // Browser notification — best-effort
     if (
       typeof Notification !== "undefined" &&
       Notification.permission !== "denied"
@@ -211,19 +208,11 @@ const WatchedProposalsWidget = () => {
   }, [enriched, t, markProposalChanged, username, fundingThreshold]);
 
   return (
-    <Card className="col-span-12 lg:col-span-3">
-      <CardHeader className="flex justify-between items-center border-b px-3 py-3">
-        <div className="flex items-center gap-2">
-          <CardTitle>{t("watchlist.proposals.title")}</CardTitle>
-        </div>
-        <Link
-          href="/proposals"
-          className="text-sm flex items-center space-x-1 text-muted-foreground hover:text-primary"
-        >
-          <span>{t("common.seeMore")}</span>
-          <MoveRight width={18} />
-        </Link>
-      </CardHeader>
+    <Card className="col-span-12 lg:col-span-3 mb-2">
+      <CardHeaderWithLink
+        title={t("watchlist.proposals.title")}
+        href="/proposals"
+      />
 
       <CardContent className="px-2 py-2">
         {ids.length === 0 ? (

@@ -35,6 +35,10 @@ import QuickLinksWidget from "@/components/dashboard/widgets/layout/QuickLinksWi
 import TitleWidget from "@/components/dashboard/widgets/layout/TitleWidget";
 import SpacerWidget from "@/components/dashboard/widgets/layout/SpacerWidget";
 import SeparatorWidget from "@/components/dashboard/widgets/layout/SeparatorWidget";
+import ImageWidget from "@/components/dashboard/widgets/layout/ImageWidget";
+import NoteWidget from "@/components/dashboard/widgets/layout/NoteWidget";
+import LabeledDividerWidget from "@/components/dashboard/widgets/layout/LabeledDividerWidget";
+import ButtonWidget from "@/components/dashboard/widgets/layout/ButtonWidget";
 import { DashboardActions, DashboardData } from "../hooks/useDashboardData";
 
 export type WidgetCategory = "reports" | "chain" | "account" | "layout";
@@ -94,7 +98,8 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     name: "widgets.liveInfoName",
     category: "chain" as const,
     component: LiveInfoWidget,
-    defaultLayout: { w: 3, h: 6, minW: 3, minH: 5 },
+    defaultLayout: { w: 3, h: 2, minW: 3, minH: 2 },
+    dynamicHeight: true,
     getProps: (data) => ({
       headBlockCardData: data.dynamicGlobalQueryData,
       transactionCount: data.trxOpsLength,
@@ -107,7 +112,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     name: "widgets.hivePriceChartName",
     category: "chain" as const,
     component: HivePriceChartWidget,
-    defaultLayout: { w: 6, h: 7.2, minW: 4, minH: 4 },
+    defaultLayout: { w: 6, h: 5.8, minW: 4, minH: 1 },
     getProps: (data, widgetState, actions) => ({
       isCollapsed: widgetState?.isCollapsed ?? false,
       onToggleCollapse: actions.handleToggleCollapse,
@@ -115,13 +120,14 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     }),
     collapsible: true,
     initialCollapsed: false,
+    dynamicHeight: true,
   },
   "fund-and-supply": {
     id: "fund-and-supply",
     name: "widgets.fundAndSupplyName",
     category: "chain" as const,
     component: FundAndSupplyWidget,
-    defaultLayout: { w: 3, h: 5, minW: 2, minH: 5 },
+    defaultLayout: { w: 3, h: 1.2, minW: 2, minH: 0.5 },
     getProps: getCollapsibleCardProps,
     collapsible: true,
     initialCollapsed: true,
@@ -132,7 +138,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     name: "widgets.hiveParametersName",
     category: "chain" as const,
     component: HiveParametersWidget,
-    defaultLayout: { w: 3, h: 7.6, minW: 2, minH: 5 },
+    defaultLayout: { w: 3, h: 1.2, minW: 2, minH: 1 },
     getProps: getCollapsibleCardProps,
     collapsible: true,
     initialCollapsed: true,
@@ -143,7 +149,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     name: "widgets.blockchainDatesName",
     category: "chain" as const,
     component: BlockchainDatesWidget,
-    defaultLayout: { w: 3, h: 3.4, minW: 2, minH: 1 },
+    defaultLayout: { w: 3, h: 1.2, minW: 2, minH: 1 },
     getProps: getCollapsibleCardProps,
     collapsible: true,
     initialCollapsed: true,
@@ -154,7 +160,8 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     name: "widgets.marketDataName",
     category: "chain" as const,
     component: MarketDataWidget,
-    defaultLayout: { w: 4, h: 1.5, minW: 3, minH: 1 },
+    defaultLayout: { w: 4, h: 1.4, minW: 3, minH: 1 },
+    dynamicHeight: true,
     getProps: (data) => ({
       headBlockCardData: data.dynamicGlobalQueryData,
     }),
@@ -164,7 +171,8 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     name: "widgets.lastBlocksName",
     category: "chain" as const,
     component: LastBlocksWidget,
-    defaultLayout: { w: 6, h: 9, minW: 6, minH: 8 },
+    defaultLayout: { w: 6, h: 8.3, minW: 6, minH: 8 },
+    dynamicHeight: true,
     getProps: (data) => ({
       headBlock: data.headBlockNum,
       strokeColor: data.strokeColor,
@@ -175,7 +183,8 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     name: "widgets.topWitnessesName",
     category: "chain" as const,
     component: TopWitnessesCard,
-    defaultLayout: { w: 2.95, h: 11, minW: 2, minH: 8 },
+    defaultLayout: { w: 2.95, h: 13, minW: 2, minH: 6 },
+    dynamicHeight: true,
     getProps: (data) => ({
       witnessesData: data.witnessesData,
       isLoading: data.isWitnessDataLoading,
@@ -186,7 +195,8 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     name: "widgets.topCommunitiesName",
     category: "chain" as const,
     component: TopCommunitiesCard,
-    defaultLayout: { w: 2.95, h: 7, minW: 2, minH: 5 },
+    defaultLayout: { w: 2.95, h: 5.8, minW: 2, minH: 3 },
+    dynamicHeight: true,
     getProps: (data) => ({
       communitiesData: data.popularCommunitiesData,
       isLoading: data.isCommunitiesLoading,
@@ -221,7 +231,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     name: "widgets.tvlName",
     category: "reports" as const,
     component: TotalValueLockedCard,
-    defaultLayout: { w: 6, h: 5, minW: 3, minH: 4 },
+    defaultLayout: { w: 6, h: 3, minW: 3, minH: 3 },
     dynamicHeight: true,
   },
   "network-hp-distribution": {
@@ -229,8 +239,8 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     name: "widgets.networkHpDistributionName",
     category: "reports" as const,
     component: NetworkHpDistributionCard,
-    defaultLayout: { w: 3, h: 7, minW: 2, minH: 5 },
-    dynamicHeight: false,
+    defaultLayout: { w: 3, h: 6.7, minW: 2, minH: 5 },
+    dynamicHeight: true,
   },
   "network-growth": {
     id: "network-growth",
@@ -379,7 +389,7 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
   "top-holders": {
     id: "top-holders",
     name: "widgets.topHoldersName",
-    category: "account" as const,
+    category: "reports" as const,
     component: TopHoldersWidget,
     defaultLayout: { w: 3, h: 8, minW: 2, minH: 3 },
     allowMultiple: false,
@@ -469,6 +479,74 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     defaultLayout: { w: 12, h: 1, isResizable: true },
     isLayoutWidget: true,
     allowMultiple: true,
+  },
+  image: {
+    id: "image",
+    component: ImageWidget,
+    name: "widgets.imageName",
+    description: "widgets.imageNameDescription",
+    category: "layout" as const,
+    defaultLayout: { w: 4, h: 5, minW: 2, minH: 2, isResizable: true },
+    isLayoutWidget: true,
+    allowMultiple: true,
+    getProps: (data, widgetState, actions) => ({
+      initialUrl: widgetState?.url || "",
+      initialFit: widgetState?.fit || "cover",
+      onUrlChange: (url: string) => actions.handleWidgetStateChange({ url }),
+      onFitChange: (fit: string) => actions.handleWidgetStateChange({ fit }),
+    }),
+  },
+  note: {
+    id: "note",
+    component: NoteWidget,
+    name: "widgets.noteName",
+    description: "widgets.noteNameDescription",
+    category: "layout" as const,
+    defaultLayout: { w: 4, h: 3, minW: 2, minH: 2, isResizable: true },
+    isLayoutWidget: true,
+    allowMultiple: true,
+    getProps: (data, widgetState, actions) => ({
+      initialText: widgetState?.text,
+      initialVariant: widgetState?.variant || "info",
+      onTextChange: (text: string) => actions.handleWidgetStateChange({ text }),
+      onVariantChange: (variant: string) =>
+        actions.handleWidgetStateChange({ variant }),
+    }),
+  },
+  "labeled-divider": {
+    id: "labeled-divider",
+    component: LabeledDividerWidget,
+    name: "widgets.labeledDividerName",
+    description: "widgets.labeledDividerNameDescription",
+    category: "layout" as const,
+    defaultLayout: { w: 12, h: 1, minW: 3, minH: 1, isResizable: true },
+    isLayoutWidget: true,
+    allowMultiple: true,
+    getProps: (data, widgetState, actions) => ({
+      initialLabel: widgetState?.label,
+      onLabelChange: (label: string) =>
+        actions.handleWidgetStateChange({ label }),
+    }),
+  },
+  button: {
+    id: "button",
+    component: ButtonWidget,
+    name: "widgets.buttonName",
+    description: "widgets.buttonNameDescription",
+    category: "layout" as const,
+    defaultLayout: { w: 3, h: 2, minW: 2, minH: 1, isResizable: true },
+    isLayoutWidget: true,
+    allowMultiple: true,
+    getProps: (data, widgetState, actions) => ({
+      initialLabel: widgetState?.label,
+      initialUrl: widgetState?.url,
+      initialColor: widgetState?.color,
+      onLabelChange: (label: string) =>
+        actions.handleWidgetStateChange({ label }),
+      onUrlChange: (url: string) => actions.handleWidgetStateChange({ url }),
+      onColorChange: (color: string) =>
+        actions.handleWidgetStateChange({ color }),
+    }),
   },
 };
 

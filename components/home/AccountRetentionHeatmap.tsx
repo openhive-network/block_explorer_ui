@@ -134,7 +134,8 @@ const AccountRetentionHeatmap: React.FC<AccountRetentionHeatmapProps> = ({
   viewMode = "rates",
   showLegend = false,
 }) => {
-  const { t, locale } = useI18n();
+  const { t, locale, dir } = useI18n();
+  const isRTL = dir === "rtl";
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
@@ -227,14 +228,15 @@ const AccountRetentionHeatmap: React.FC<AccountRetentionHeatmapProps> = ({
       },
       grid: {
         top: compact ? 26 : 32,
-        left: compact ? 58 : 74,
-        right: compact ? 8 : 16,
+        left: isRTL ? (compact ? 8 : 16) : compact ? 58 : 74,
+        right: isRTL ? (compact ? 58 : 74) : compact ? 8 : 16,
         bottom: compact ? 4 : 8,
       },
       xAxis: {
         type: "category",
         data: xAxisLabels,
         position: "top",
+        inverse: isRTL,
         axisLine: { show: false },
         axisTick: { show: false },
         axisLabel: {
@@ -256,6 +258,7 @@ const AccountRetentionHeatmap: React.FC<AccountRetentionHeatmapProps> = ({
       },
       yAxis: {
         type: "category",
+        position: isRTL ? "right" : "left",
         data: months,
         axisLine: { show: false },
         axisTick: { show: false },
@@ -318,7 +321,7 @@ const AccountRetentionHeatmap: React.FC<AccountRetentionHeatmapProps> = ({
         borderColor: isDark ? "#374151" : "#e5e7eb",
         borderRadius: 8,
         textStyle: { color: textColor, fontSize: 11 },
-        extraCssText: "box-shadow: 0 4px 12px rgba(0,0,0,0.15);",
+        extraCssText: `box-shadow: 0 4px 12px rgba(0,0,0,0.15); direction: ${isRTL ? "rtl" : "ltr"};`,
         confine: true,
       },
       series: [
@@ -346,6 +349,7 @@ const AccountRetentionHeatmap: React.FC<AccountRetentionHeatmapProps> = ({
       ],
     };
   }, [
+    isRTL,
     data,
     months,
     seriesData,
@@ -375,7 +379,7 @@ const AccountRetentionHeatmap: React.FC<AccountRetentionHeatmapProps> = ({
         />
       </div>
       {showLegend && !compact && viewMode === "rates" && (
-        <div className="flex items-center gap-1 mt-2 px-1 flex-wrap">
+        <div className="flex items-center justify-center gap-1 mt-2 px-1 flex-wrap">
           <span
             className="text-[10px] font-medium mr-1"
             style={{ color: mutedColor }}

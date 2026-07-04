@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, Lock } from "lucide-react";
 import { useI18n } from "../../i18n/i18n";
 import { useSettings } from "@/contexts/SettingsContext";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
@@ -11,9 +11,10 @@ import Hive from "@/types/Hive";
 import { grabNumericValue } from "@/utils/StringUtils";
 
 import { convertVestsToHP } from "@/utils/Calculations";
+import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
 
 const TotalValueLockedCard = () => {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const { settings } = useSettings();
   const { hiveChain } = useHiveChainContext();
   const { headBlockNumberData } = useHeadBlockNumber();
@@ -52,7 +53,6 @@ const TotalValueLockedCard = () => {
     const { rawTotalVestingFundHive, rawTotalVestingShares } =
       dynamicGlobalData.headBlockDetails;
 
-    // Convert VESTS to HP
     // The total_vests from the TVL API is a raw integer string with 6 decimals precision
     const totalVestsSupply: Hive.Supply = {
       amount: total_vests,
@@ -96,100 +96,85 @@ const TotalValueLockedCard = () => {
 
   return (
     <div className="bg-theme rounded mb-2 shadow-md overflow-hidden">
-      <div className="flex flex-wrap gap-4 p-5">
-        {/* Left Side: Total USD Value */}
-        <div className="flex-1 min-w-[200px]">
-          <div className="bg-explorer-extra-light-gray rounded-lg p-4 shadow-md h-full flex flex-col justify-center">
-            <h3 className="text-sm font-semibold uppercase tracking-wide mb-1 text-explorer-dark-gray dark:text-text">
-              {t("totalValueLockedCard.totalValueLocked")}
-            </h3>
-            {isTotalValueLockedLoading ? (
-              <div className="flex items-center justify-center">
-                <Loader2 className="animate-spin h-5 w-5" />
-              </div>
-            ) : tvlDetails ? (
-              <p className="text-2xl font-bold text-explorer-dark-gray dark:text-text text-right">
-                $
-                {tvlDetails.totalUsdValue.toLocaleString(undefined, {
-                  maximumFractionDigits: 2,
-                })}
-              </p>
-            ) : (
-              <p className="text-gray-500 text-sm">
-                {t("common.noDataAvailable")}
-              </p>
-            )}
+      <CardHeaderWithLink title={t("totalValueLockedCard.totalValueLocked")} />
+      <div className="p-3">
+        {isTotalValueLockedLoading ? (
+          <div className="flex items-center justify-center py-6">
+            <Loader2 className="animate-spin h-5 w-5" />
           </div>
-        </div>
-
-        {/* Right Side: Detailed breakdown */}
-        <div className="flex-[2] min-w-[260px]">
-          <div className="bg-explorer-extra-light-gray rounded-lg p-4 shadow-md h-full">
-            <div className="flex flex-col gap-3">
-              {/* Total VESTS (HP) */}
-              <div className="flex justify-between items-center border-b pb-2 dark:border-gray-700">
-                <div className="flex flex-col">
-                  <span className="text-sm font-semibold text-explorer-dark-gray dark:text-text">
-                    {t("totalValueLockedCard.totalVests")}
-                  </span>
-                  <span className="text-xs text-gray-500">
-                    {settings.displayVestHpMode === "hp"
-                      ? `${tvlDetails?.totalVests.toLocaleString()} HP`
-                      : tvlDetails?.totalVestsFormatted}
-                  </span>
-                </div>
-                <span className="font-bold text-explorer-dark-gray dark:text-text">
-                  $
-                  {tvlDetails?.totalVestsUsd.toLocaleString(undefined, {
-                    maximumFractionDigits: 2,
-                  })}
-                </span>
+        ) : isTotalValueLockedError ? (
+          <p className="text-red-500 text-xs text-center py-4">
+            {t("common.errorLoadingData")}
+          </p>
+        ) : tvlDetails ? (
+          <>
+            <div className="mb-2.5 flex items-center gap-3 rounded-lg border border-emerald-200/70 bg-emerald-50/60 px-3.5 py-3 dark:border-emerald-500/25 dark:bg-emerald-500/10">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-white shadow-sm">
+                <Lock className="h-5 w-5" />
               </div>
-
-              {/* Total HIVE Savings */}
-              <div className="flex justify-between items-center border-b pb-2 dark:border-gray-700">
-                <div className="flex flex-col">
-                  <span className="text-sm font-semibold text-explorer-dark-gray dark:text-text">
-                    {t("totalValueLockedCard.totalHiveSavings")}
-                  </span>
-                  <span className="text-xs text-gray-500">
-                    {tvlDetails?.totalSavingsHive.toLocaleString()} HIVE
-                  </span>
-                </div>
-                <span className="font-bold text-explorer-dark-gray dark:text-text">
+              <div className="min-w-0">
+                <p className="text-[10px] font-semibold uppercase tracking-wide text-emerald-700/80 dark:text-emerald-300">
+                  {t("totalValueLockedCard.usdValueLocked")}
+                </p>
+                <p className="text-2xl font-extrabold leading-tight tabular-nums text-explorer-dark-gray dark:text-text">
                   $
-                  {tvlDetails?.totalSavingsHiveUsd.toLocaleString(undefined, {
+                  {tvlDetails.totalUsdValue.toLocaleString(locale, {
                     maximumFractionDigits: 2,
                   })}
-                </span>
-              </div>
-
-              {/* Total HBD Savings */}
-              <div className="flex justify-between items-center">
-                <div className="flex flex-col">
-                  <span className="text-sm font-semibold text-explorer-dark-gray dark:text-text">
-                    {t("totalValueLockedCard.totalHbdSavings")}
-                  </span>
-                  <span className="text-xs text-gray-500">
-                    {tvlDetails?.totalSavingsHbd.toLocaleString()} HBD
-                  </span>
-                </div>
-                <span className="font-bold text-explorer-dark-gray dark:text-text">
-                  $
-                  {tvlDetails?.totalSavingsHbdUsd.toLocaleString(undefined, {
-                    maximumFractionDigits: 2,
-                  })}
-                </span>
+                </p>
               </div>
             </div>
-          </div>
-        </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              {[
+                {
+                  accent: "border-indigo-500",
+                  label:
+                    settings.displayVestHpMode === "hp"
+                      ? t("totalValueLockedCard.totalHp")
+                      : t("totalValueLockedCard.totalVests"),
+                  usd: tvlDetails.totalVestsUsd,
+                  sub:
+                    settings.displayVestHpMode === "hp"
+                      ? `${tvlDetails.totalVests.toLocaleString(locale)} HP`
+                      : tvlDetails.totalVestsFormatted,
+                },
+                {
+                  accent: "border-red-500",
+                  label: t("totalValueLockedCard.totalHiveSavings"),
+                  usd: tvlDetails.totalSavingsHiveUsd,
+                  sub: `${tvlDetails.totalSavingsHive.toLocaleString(locale)} HIVE`,
+                },
+                {
+                  accent: "border-blue-500",
+                  label: t("totalValueLockedCard.totalHbdSavings"),
+                  usd: tvlDetails.totalSavingsHbdUsd,
+                  sub: `${tvlDetails.totalSavingsHbd.toLocaleString(locale)} HBD`,
+                },
+              ].map((s) => (
+                <div
+                  key={s.label}
+                  className={`rounded-lg border-l-2 ${s.accent} bg-explorer-extra-light-gray p-2.5 shadow-sm`}
+                >
+                  <p className="truncate text-[10px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                    {s.label}
+                  </p>
+                  <p className="text-sm font-bold text-explorer-dark-gray dark:text-text">
+                    $
+                    {s.usd.toLocaleString(locale, {
+                      maximumFractionDigits: 2,
+                    })}
+                  </p>
+                  <p className="truncate text-[10px] text-gray-500">{s.sub}</p>
+                </div>
+              ))}
+            </div>
+          </>
+        ) : (
+          <p className="text-gray-500 text-sm text-center py-4">
+            {t("common.noDataAvailable")}
+          </p>
+        )}
       </div>
-      {isTotalValueLockedError && (
-        <p className="text-red-500 text-xs p-2 text-center">
-          {t("common.errorLoadingData")}
-        </p>
-      )}
     </div>
   );
 };

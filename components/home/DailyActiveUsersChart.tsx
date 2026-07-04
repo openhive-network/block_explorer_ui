@@ -236,7 +236,12 @@ const DailyActiveUsersChart: React.FC<DailyActiveUsersChartProps> = ({
         <Tooltip content={<CustomTooltip />} />
 
         {!compact && (
-          <Legend verticalAlign="bottom" height={36} align="center" />
+          <Legend
+            verticalAlign="bottom"
+            height={36}
+            align="center"
+            wrapperStyle={{ paddingTop: 8 }}
+          />
         )}
 
         {showDau && (

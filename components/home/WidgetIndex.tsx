@@ -1,4 +1,3 @@
-// src/components/dashboard/WidgetIndex.tsx
 import React, {
   useState,
   useMemo,
@@ -31,8 +30,7 @@ import { cn } from "@/lib/utils";
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 const WidgetIndex = () => {
-  // Renamed from Home
-  const { t } = useI18n();
+  const { t, dir } = useI18n();
   const [isFullHiveChartVisible, setIsFullHiveChartVisible] = useState(false);
 
   const {
@@ -281,36 +279,26 @@ const WidgetIndex = () => {
     localStorage.setItem(seededKey, "true");
   }, [isLoaded, username, widgets, layouts, onAddWidget]);
 
-  // Watched Proposals mirrors standard home: auto-shown when you watch a
-  // proposal, auto-removed when none. X-dismiss persists via a flag.
+  // Watched Proposals auto-appears the first time you watch a proposal (unless
+  // X-dismissed). A manual add is respected — it's never auto-removed when the
+  // watchlist is empty.
   const watchedProposalsCount = getWatched("proposals").size;
   useEffect(() => {
     if (!isLoaded || !username) return;
     const dismissedKey = `hivescan_dashboard_watched_proposals_dismissed_${username}`;
     // handleResetLayout sets widgets to the DEFAULT_WIDGETS reference.
     if (widgets === DEFAULT_WIDGETS) localStorage.removeItem(dismissedKey);
-    const present = widgets.find((w) => w.type === "watched-proposals");
+    // Empty watchlist clears the dismiss flag, so watching again re-adds the widget.
     if (watchedProposalsCount === 0) {
-      if (present) onRemoveWidget(present.i);
+      localStorage.removeItem(dismissedKey);
       return;
     }
+    const present = widgets.find((w) => w.type === "watched-proposals");
     if (present || localStorage.getItem(dismissedKey)) return;
-    // Top of the right column (y: 0), like standard home.
     onAddWidget("watched-proposals", { x: 9, y: 0, w: 3 });
-  }, [
-    isLoaded,
-    username,
-    watchedProposalsCount,
-    widgets,
-    onAddWidget,
-    onRemoveWidget,
-  ]);
+  }, [isLoaded, username, watchedProposalsCount, widgets, onAddWidget]);
 
   const contentRefs = useRef(new Map<string, HTMLDivElement>());
-  const widgetStatesRef = useRef(widgetStates);
-  useEffect(() => {
-    widgetStatesRef.current = widgetStates;
-  }, [widgetStates]);
 
   useEffect(() => {
     const ROW_HEIGHT = 50;
@@ -328,7 +316,6 @@ const WidgetIndex = () => {
 
       const observer = new ResizeObserver(([entry]) => {
         if (finalIsEditMode) return;
-        if (widgetStatesRef.current[widget.i]?.isCollapsed) return;
         const contentPx = entry.contentRect.height;
         const contentH = (contentPx + MARGIN_Y) / (ROW_HEIGHT + MARGIN_Y);
         const targetH = Math.max(contentH, floor);
@@ -414,7 +401,7 @@ const WidgetIndex = () => {
       );
 
       return (
-        <div key={widget.i} className={wrapperClasses}>
+        <div key={widget.i} className={wrapperClasses} dir={dir}>
           {editControls}
           {widgetConfig.dynamicHeight ? (
             <div
@@ -433,6 +420,7 @@ const WidgetIndex = () => {
       );
     });
   }, [
+    dir,
     widgets,
     widgetStates,
     finalIsEditMode,
@@ -463,6 +451,7 @@ const WidgetIndex = () => {
 
       <ResponsiveGridLayout
         className="layout page-container"
+        style={{ direction: "ltr" }}
         layouts={layouts}
         breakpoints={{ lg: 1024, md: 768, sm: 640, xs: 0 }}
         cols={{ xl: 12, lg: 12, md: 10, sm: 6, xs: 4 }}

@@ -1,32 +1,26 @@
 import React from "react";
 import { ArrowDown, ArrowUp, Minus } from "lucide-react";
-import moment from "moment";
 import { cn } from "@/lib/utils";
 import { formatCompact } from "@/components/home/hpMomentumUtils";
 import { useI18n } from "@/i18n/i18n";
 
-interface TransferStatsKpiStripProps {
-  totalVolume: number;
-  totalTxns: number;
-  avgPerPeriod: number;
-  peakDate: number | null;
-  peakValue: number;
+interface HpMomentumKpiStripProps {
+  net: number;
+  up: number;
+  down: number;
   trend: number | null;
-  coinType: "HIVE" | "HBD";
-  granularity: "hourly" | "daily" | "monthly" | "yearly";
+  unit: "hp" | "vests";
 }
 
-const TransferStatsKpiStrip: React.FC<TransferStatsKpiStripProps> = ({
-  totalVolume,
-  totalTxns,
-  avgPerPeriod,
-  peakDate,
-  peakValue,
+const HpMomentumKpiStrip: React.FC<HpMomentumKpiStripProps> = ({
+  net,
+  up,
+  down,
   trend,
-  coinType,
-  granularity,
+  unit,
 }) => {
   const { t, locale } = useI18n();
+  const unitLabel = unit === "hp" ? "HP" : "VESTS";
 
   const trendSign: 1 | -1 | 0 =
     trend === null ? 0 : trend > 0 ? 1 : trend < 0 ? -1 : 0;
@@ -38,43 +32,30 @@ const TransferStatsKpiStrip: React.FC<TransferStatsKpiStripProps> = ({
         ? "text-rose-600 dark:text-rose-400"
         : "text-gray-500";
 
-  const granularityKeyMap: Record<string, string> = {
-    hourly: "common.hour",
-    daily: "common.day",
-    monthly: "common.month",
-    yearly: "common.year",
-  };
-  const periodLabel = t(granularityKeyMap[granularity] ?? "common.day");
-
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-4">
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
       <KpiTile
-        label={t("transferStatsKpiStrip.totalVolume")}
-        value={`${formatCompact(totalVolume, locale)} ${coinType}`}
-      />
-      <KpiTile
-        label={t("transferStatsKpiStrip.totalTransactions")}
-        value={totalTxns.toLocaleString(locale)}
-        sub={t("transferStatsKpiStrip.transfers")}
-      />
-      <KpiTile
-        label={t("transferStatsKpiStrip.avgPer", { period: periodLabel })}
-        value={`${formatCompact(avgPerPeriod, locale)} ${coinType}`}
-      />
-      <KpiTile
-        label={t("transferStatsKpiStrip.peakPeriod")}
+        label={t("hpMomentumChart.netFlow")}
         value={
-          peakDate !== null
-            ? moment(peakDate).format(
-                granularity === "hourly" ? "MMM D, HH:mm" : "MMM D, YYYY"
-              )
-            : "—"
+          <span
+            className={cn(
+              net >= 0
+                ? "text-emerald-600 dark:text-emerald-400"
+                : "text-rose-600 dark:text-rose-400"
+            )}
+          >
+            {net >= 0 ? "+" : ""}
+            {formatCompact(net, locale)} {unitLabel}
+          </span>
         }
-        sub={
-          peakDate !== null
-            ? `${formatCompact(peakValue, locale)} ${coinType}`
-            : undefined
-        }
+      />
+      <KpiTile
+        label={t("hpMomentumCard.poweredUp")}
+        value={`${formatCompact(up, locale)} ${unitLabel}`}
+      />
+      <KpiTile
+        label={t("hpMomentumCard.poweredDown")}
+        value={`${formatCompact(down, locale)} ${unitLabel}`}
       />
       <KpiTile
         label={t("transferStatsKpiStrip.trend")}
@@ -111,4 +92,4 @@ const KpiTile: React.FC<{
   </div>
 );
 
-export default TransferStatsKpiStrip;
+export default HpMomentumKpiStrip;

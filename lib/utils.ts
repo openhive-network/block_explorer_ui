@@ -72,7 +72,9 @@ export const formatNumber = (
       return intWithCommas;
     }
     if (!decPart) return `${intWithCommas}.${"0".repeat(decimalPoints)}`;
-    const paddedDec = decPart.padEnd(decimalPoints, "0").slice(0, decimalPoints);
+    const paddedDec = decPart
+      .padEnd(decimalPoints, "0")
+      .slice(0, decimalPoints);
     return `${intWithCommas}.${paddedDec}`;
   }
 
@@ -105,10 +107,13 @@ export const formatNumber = (
  * @param numberToFormat raw percentage from Hive backend.
  * @returns Formatted string with % at the end
  */
-export const formatPercent = (numberToFormat: number): string => {
+export const formatPercent = (
+  numberToFormat: number,
+  locale?: string
+): string => {
   return `${(
     numberToFormat / Math.pow(10, config.precisions.percentage)
-  ).toLocaleString()}%`;
+  ).toLocaleString(locale)}%`;
 };
 
 /**
