@@ -105,7 +105,7 @@ const TopWitnessesCard = ({
                   <div
                     key={name}
                     data-testid="witnesses-name"
-                    className="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-explorer-extra-light-gray transition-colors hover:bg-gray-200 dark:hover:bg-gray-700"
+                    className="flex items-center gap-2 px-2 py-1.5 rounded-lg bg-explorer-extra-light-gray transition-colors hover:bg-rowHover"
                   >
                     <span className="w-4 text-center text-xs text-gray-500 shrink-0 tabular-nums">
                       {witness.rank}
