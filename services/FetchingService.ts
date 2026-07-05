@@ -981,6 +981,20 @@ class FetchingService {
     ].networkHpDistribution({});
   }
 
+  async getNetworkContentVolume(
+    from?: Date | number | undefined,
+    to?: Date | number | undefined,
+    granularity?: "day" | "week" | "month"
+  ): Promise<Hive.NetworkContentVolumeResponse[]> {
+    return await this.extendedHiveChain!.restApi[
+      "haf-stats-api"
+    ].networkContentVolume({
+      from_date: from,
+      to_date: to,
+      granularity,
+    });
+  }
+
   async getAccountFunnel(
     from?: Date | number,
     to?: Date | number

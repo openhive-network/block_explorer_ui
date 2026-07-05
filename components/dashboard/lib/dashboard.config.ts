@@ -34,6 +34,7 @@ export const DEFAULT_WIDGETS: Array<{ i: string; type: string }> = [
   { i: "op-mix-1", type: "op-mix" },
   { i: "voting-activity-1", type: "voting-activity" },
   { i: "hp-momentum-1", type: "hp-momentum" },
+  { i: "network-content-volume-1", type: "network-content-volume" },
 ];
 
 const MOBILE_WIDGET_HEIGHTS: Record<string, number> = {
@@ -55,6 +56,7 @@ const MOBILE_WIDGET_HEIGHTS: Record<string, number> = {
   "op-mix-1": 5,
   "voting-activity-1": 7.2,
   "hp-momentum-1": 12,
+  "network-content-volume-1": 9,
   "searches-1": 10.5,
   "top-witnesses-1": 13,
   "top-accounts-1": 12,
@@ -99,7 +101,16 @@ export const DEFAULT_MASTER_LAYOUT: Layout[] = [
   { i: "transfer-volume-1", x: 3, y: 26.5, w: 6, h: 5, minW: 3, minH: 4 },
   { i: "tvl-1", x: 3, y: 31.5, w: 6, h: 3, minW: 3, minH: 3 },
   { i: "hp-momentum-1", x: 3, y: 36.5, w: 6, h: 5, minW: 3, minH: 4 },
-  { i: "searches-1", x: 3, y: 41.5, w: 6, h: 9, minW: 4, minH: 3 },
+  {
+    i: "network-content-volume-1",
+    x: 3,
+    y: 41.5,
+    w: 6,
+    h: 5,
+    minW: 3,
+    minH: 4,
+  },
+  { i: "searches-1", x: 3, y: 46.5, w: 6, h: 9, minW: 4, minH: 3 },
 
   // Right column
   { i: "top-witnesses-1", x: 9, y: 0, w: 3, h: 14, minW: 2, minH: 6 },
@@ -126,6 +137,7 @@ export const DEFAULT_MOBILE_WIDGET_ORDER: string[] = [
   "transfer-volume-1",
   "tvl-1",
   "hp-momentum-1",
+  "network-content-volume-1",
   "top-witnesses-1",
   "top-accounts-1",
   "top-communities-1",
