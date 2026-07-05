@@ -22,6 +22,7 @@ import NetworkGrowthCard from "@/components/home/NetworkGrowthCard";
 import NetworkVotingActivityCard from "@/components/home/NetworkVotingActivityCard";
 import DailyActiveUsersCard from "@/components/home/DailyActiveUsersCard";
 import NetworkOpMixCard from "@/components/home/NetworkOpMixCard";
+import NetworkContentVolumeCard from "@/components/home/NetworkContentVolumeCard";
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import { useAuth } from "@/contexts/AuthContext";
@@ -102,6 +103,7 @@ const StandardHome = () => {
           <TransferVolumeCard />
           <TotalValueLockedCard />
           <HpMomentumCard />
+          <NetworkContentVolumeCard />
           <SearchesSection />
         </div>
 

@@ -1378,6 +1378,19 @@ namespace Hive {
     downvote_pct!: number;
   }
 
+  export class NetworkContentVolumeParams {
+    from_date?: Date | number | undefined;
+    to_date?: Date | number | undefined;
+    granularity?: string;
+  }
+
+  export class NetworkContentVolumeResponse {
+    period!: string;
+    posts!: number;
+    comments!: number;
+    unique_authors!: number;
+  }
+
   export class NetworkHpDistributionParams {}
 
   export class NetworkHpDistributionResponse {

@@ -25,6 +25,7 @@ import HpMomentumCard from "@/components/home/HpMomentumCard";
 import NetworkVotingActivityCard from "@/components/home/NetworkVotingActivityCard";
 import DailyActiveUsersCard from "@/components/home/DailyActiveUsersCard";
 import NetworkOpMixCard from "@/components/home/NetworkOpMixCard";
+import NetworkContentVolumeCard from "@/components/home/NetworkContentVolumeCard";
 import LastBlocksWidget from "@/components/LastBlocksWidget";
 import FundAndSupplyWidget from "@/components/dashboard/widgets/data/FundAndSupplyWidget";
 import HiveParametersWidget from "@/components/dashboard/widgets/data/HiveParametersWidget";
@@ -271,6 +272,14 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     category: "reports" as const,
     component: NetworkOpMixCard,
     defaultLayout: { w: 6, h: 3.3, minW: 3, minH: 3 },
+    dynamicHeight: true,
+  },
+  "network-content-volume": {
+    id: "network-content-volume",
+    name: "widgets.networkContentVolumeName",
+    category: "reports" as const,
+    component: NetworkContentVolumeCard,
+    defaultLayout: { w: 6, h: 5, minW: 3, minH: 4 },
     dynamicHeight: true,
   },
   "voting-activity": {
