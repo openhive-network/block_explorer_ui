@@ -37,50 +37,52 @@ const RETENTION_COLS = [
 const NULL_SENTINEL = -1;
 
 const getPctBg = (pct: number, isDark: boolean): string => {
-  if (pct < 0) return isDark ? "#1f2937" : "#f3f4f6";
-  if (pct < 10) return isDark ? "#7f1d1d" : "#fee2e2";
-  if (pct < 30) return isDark ? "#78350f" : "#fef3c7";
-  if (pct < 50) return isDark ? "#064e3b" : "#d1fae5";
-  if (pct < 70) return isDark ? "#065f46" : "#86efac";
-  return isDark ? "#166534" : "#34d399";
+  if (pct < 0) return isDark ? "#334155" : "#f1f5f9";
+  if (pct < 10) return isDark ? "#881337" : "#fee2e2";
+  if (pct < 30) return isDark ? "#9a3412" : "#fef3c7";
+  if (pct < 50) return isDark ? "#166534" : "#d1fae5";
+  if (pct < 70) return isDark ? "#15803d" : "#86efac";
+  return isDark ? "#16a34a" : "#34d399";
 };
 const getPctText = (pct: number, isDark: boolean): string => {
-  if (pct < 0) return isDark ? "#4b5563" : "#9ca3af";
-  if (pct < 10) return isDark ? "#fca5a5" : "#b91c1c";
-  if (pct < 30) return isDark ? "#fcd34d" : "#92400e";
-  return isDark ? "#6ee7b7" : "#065f46";
+  if (pct < 0) return isDark ? "#64748b" : "#9ca3af";
+  if (pct < 10) return isDark ? "#fda4af" : "#b91c1c";
+  if (pct < 30) return isDark ? "#fdba74" : "#92400e";
+  return isDark ? "#bbf7d0" : "#065f46";
 };
 
 const getCountBg = (t: number, isDark: boolean): string => {
-  if (t < 0) return isDark ? "#1f2937" : "#f3f4f6";
+  if (t < 0) return isDark ? "#334155" : "#f1f5f9";
   if (isDark) {
-    if (t < 0.33) return "#2e1065";
-    if (t < 0.66) return "#4c1d95";
-    return "#5b21b6";
+    // high t = more saturated (darker), low t = lighter — high value more prominent
+    if (t < 0.33) return "#a78bfa";
+    if (t < 0.66) return "#8b5cf6";
+    return "#7c3aed";
   }
   if (t < 0.33) return "#ede9fe";
-  if (t < 0.66) return "#ddd6fe";
-  return "#c4b5fd";
+  if (t < 0.66) return "#c4b5fd";
+  return "#8b5cf6";
 };
 const getCountText = (t: number, isDark: boolean): string => {
-  if (t < 0) return isDark ? "#4b5563" : "#9ca3af";
-  if (isDark) return t < 0.5 ? "#c4b5fd" : "#ede9fe";
-  return t < 0.5 ? "#5b21b6" : "#2e1065";
+  if (t < 0) return isDark ? "#64748b" : "#9ca3af";
+  if (isDark) return t < 0.33 ? "#2e1065" : "#f5f3ff";
+  return t < 0.66 ? "#5b21b6" : "#f5f3ff";
 };
 
 const getNewBg = (t: number, isDark: boolean): string => {
   if (isDark) {
-    if (t < 0.33) return "#1e1b4b";
-    if (t < 0.66) return "#3730a3";
-    return "#4338ca";
+    // high t = more saturated (darker), low t = lighter — high value more prominent
+    if (t < 0.33) return "#818cf8";
+    if (t < 0.66) return "#6366f1";
+    return "#4f46e5";
   }
   if (t < 0.33) return "#e0e7ff";
-  if (t < 0.66) return "#c7d2fe";
-  return "#a5b4fc";
+  if (t < 0.66) return "#a5b4fc";
+  return "#6366f1";
 };
 const getNewText = (t: number, isDark: boolean): string => {
-  if (isDark) return t < 0.5 ? "#a5b4fc" : "#e0e7ff";
-  return t < 0.5 ? "#3730a3" : "#1e1b4b";
+  if (isDark) return t < 0.33 ? "#312e81" : "#e0e7ff";
+  return t < 0.66 ? "#3730a3" : "#e0e7ff";
 };
 
 interface AccountRetentionHeatmapProps {
@@ -244,6 +246,7 @@ const AccountRetentionHeatmap: React.FC<AccountRetentionHeatmapProps> = ({
           fontSize: compact ? 10 : 12,
           fontWeight: "bold",
           margin: compact ? 4 : 6,
+          interval: 0,
           rich: {
             new: {
               color: isDark ? "#818cf8" : "#4338ca",
@@ -251,8 +254,13 @@ const AccountRetentionHeatmap: React.FC<AccountRetentionHeatmapProps> = ({
               fontSize: compact ? 10 : 12,
             },
           },
-          formatter: (value: string) =>
-            value === tNewAccounts ? `{new|${value}}` : value,
+          formatter: (value: string) => {
+            if (value === tNewAccounts) {
+              const label = compact ? value.split(" ")[0] : value;
+              return `{new|${label}}`;
+            }
+            return value;
+          },
         },
         splitLine: { show: false },
       },
@@ -376,6 +384,7 @@ const AccountRetentionHeatmap: React.FC<AccountRetentionHeatmapProps> = ({
           option={option}
           style={{ height: "100%", width: "100%" }}
           notMerge
+          opts={{ devicePixelRatio: window.devicePixelRatio || 2 }}
         />
       </div>
       {showLegend && !compact && viewMode === "rates" && (
