@@ -1,11 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import ReportDialogHeader from "@/components/ui/ReportDialogHeader";
+import DataExport from "@/components/DataExport";
 import {
   Select,
   SelectContent,
@@ -21,7 +17,7 @@ import useTransactionStatistics from "@/hooks/api/homePage/useTransactionStatist
 import TransactionStatisticsChart from "./TransactionStatisticsChart";
 import moment from "moment";
 import Hive from "@/types/Hive";
-import { Loader2 } from "lucide-react";
+import { Loader2, Download } from "lucide-react";
 import { useI18n } from "../../i18n/i18n";
 import useSearchRanges from "@/hooks/common/useSearchRanges";
 import TxStatsKpiStrip from "./TxStatsKpiStrip";
@@ -121,6 +117,19 @@ const TransactionStatisticsFullChartDialog: React.FC<
     };
   }, [currentChartData]);
 
+  const exportData = useMemo(
+    () =>
+      (currentChartData ?? []).map((item) => ({
+        period: moment(item.date).format("YYYY-MM-DD"),
+        trx_count: item.trx_count,
+        avg_trx: item.avg_trx,
+        min_trx: item.min_trx,
+        max_trx: item.max_trx,
+        last_block_num: item.last_block_num,
+      })),
+    [currentChartData]
+  );
+
   const handleGranularityChange = (value: "daily" | "monthly" | "yearly") => {
     setGranularity(value);
     if (value === "daily") {
@@ -141,69 +150,90 @@ const TransactionStatisticsFullChartDialog: React.FC<
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="min-w-[70vw] pr-0">
         <div className="max-h-[90vh] overflow-y-auto overflow-x-hidden pr-6 scrollableContainer">
-          <DialogHeader>
-            <div className="mb-4">
-              <DialogTitle>
-                {t("transactionStatisticsFullChartDialog.title")}
-              </DialogTitle>
-            </div>
-          </DialogHeader>
-
-          <div className="flex flex-col md:flex-row items-start gap-4 mb-4 w-full">
-            <div className="flex flex-col gap-y-3 w-1/2 md:w-1/4">
-              <Label>
-                {t("transactionStatisticsFullChartDialog.granularity")}
-              </Label>
-              <Select
-                onValueChange={(value) =>
-                  handleGranularityChange(
-                    value as "daily" | "monthly" | "yearly"
-                  )
-                }
-                value={granularity}
+          <ReportDialogHeader
+            title={t("transactionStatisticsFullChartDialog.title")}
+            subtitle={t("transactionStatisticsFullChartDialog.subtitle")}
+            actions={
+              <DataExport
+                data={exportData}
+                filename="transaction_statistics.csv"
+                skipColumnSelection
               >
-                <SelectTrigger>
-                  <SelectValue
-                    placeholder={t(
-                      "transactionStatisticsFullChartDialog.selectGranularity"
-                    )}
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="daily">{t("common.daily")}</SelectItem>
-                  <SelectItem value="monthly">{t("common.monthly")}</SelectItem>
-                  <SelectItem value="yearly">{t("common.yearly")}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+                <button
+                  type="button"
+                  title={t("common.export")}
+                  className="report-export-btn"
+                >
+                  <Download className="h-4 w-4" />
+                  {t("common.export")}
+                </button>
+              </DataExport>
+            }
+          />
 
-            {/* Block RANGE FILTER */}
-            <div className="w-full flex flex-col mb-4">
-              <Label>{t("common.filters")}</Label>
-              <div className="m-0 p-0 gap-y-0">
-                <SearchRanges
-                  rangesProps={searchRanges}
-                  setIsSearchButtonDisabled={setIsSearchButtonDisabled}
-                />
+          <div className="report-filters mb-5">
+            <p className="report-filters-label">{t("common.filters")}</p>
+            <div className="flex w-full flex-wrap items-start gap-4">
+              <div className="flex flex-col gap-y-3 w-1/2 md:w-1/4">
+                <Label>
+                  {t("transactionStatisticsFullChartDialog.granularity")}
+                </Label>
+                <Select
+                  onValueChange={(value) =>
+                    handleGranularityChange(
+                      value as "daily" | "monthly" | "yearly"
+                    )
+                  }
+                  value={granularity}
+                >
+                  <SelectTrigger>
+                    <SelectValue
+                      placeholder={t(
+                        "transactionStatisticsFullChartDialog.selectGranularity"
+                      )}
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="daily">{t("common.daily")}</SelectItem>
+                    <SelectItem value="monthly">
+                      {t("common.monthly")}
+                    </SelectItem>
+                    <SelectItem value="yearly">{t("common.yearly")}</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              <div className="w-full flex items-end justify-start mt-2 gap-2">
-                <div>
-                  <Button
-                    onClick={handleSearch}
-                    data-testid="apply-filters"
-                    disabled={isSearchButtonDisabled}
-                  >
-                    {t("common.search")}
-                  </Button>
-                  {isSearchButtonDisabled && (
-                    <label className="ml-2 text-gray-300 dark:text-gray-500 ">
-                      {buttonLabel}
-                    </label>
-                  )}
+
+              {/* Block RANGE FILTER */}
+              <div className="w-full flex flex-col mb-4">
+                <Label>{t("common.dateRange")}</Label>
+                <div className="m-0 p-0 gap-y-0">
+                  <SearchRanges
+                    rangesProps={searchRanges}
+                    setIsSearchButtonDisabled={setIsSearchButtonDisabled}
+                  />
                 </div>
-                <Button onClick={handleFilterClear} data-testid="clear-filters">
-                  {t("common.clear")}
-                </Button>
+                <div className="w-full flex items-end justify-start mt-2 gap-2">
+                  <div>
+                    <Button
+                      onClick={handleSearch}
+                      data-testid="apply-filters"
+                      disabled={isSearchButtonDisabled}
+                    >
+                      {t("common.search")}
+                    </Button>
+                    {isSearchButtonDisabled && (
+                      <label className="ml-2 text-gray-300 dark:text-gray-500 ">
+                        {buttonLabel}
+                      </label>
+                    )}
+                  </div>
+                  <Button
+                    onClick={handleFilterClear}
+                    data-testid="clear-filters"
+                  >
+                    {t("common.clear")}
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

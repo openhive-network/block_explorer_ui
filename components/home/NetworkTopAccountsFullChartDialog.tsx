@@ -3,13 +3,9 @@ import moment from "moment";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import Image from "next/image";
-import { Loader2 } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Loader2, Download } from "lucide-react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import ReportDialogHeader from "@/components/ui/ReportDialogHeader";
 import {
   Select,
   SelectContent,
@@ -355,57 +351,75 @@ const NetworkTopAccountsFullChartDialog: React.FC<
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="min-w-[70vw] pr-0">
         <div className="max-h-[90vh] overflow-y-auto overflow-x-hidden pr-6 scrollableContainer">
-          <DialogHeader>
-            <div className="mb-4">
-              <DialogTitle>{t("topAccountsCard.dialogTitle")}</DialogTitle>
-            </div>
-          </DialogHeader>
-
-          {/* Controls */}
-          <div className="flex flex-wrap gap-4 mb-4 w-full items-start">
-            <div className="flex flex-col gap-y-3 w-[130px]">
-              <Label>{t("topAccountsCard.rows")}</Label>
-              <Select
-                value={String(limitCount)}
-                onValueChange={(v) => setLimitCount(Number(v))}
+          <ReportDialogHeader
+            title={t("topAccountsCard.dialogTitle")}
+            subtitle={t("topAccountsCard.subtitle")}
+            actions={
+              <DataExport
+                data={exportData}
+                filename={`top_accounts_${metric}.csv`}
+                skipColumnSelection
               >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {LIMIT_OPTIONS.map((n) => (
-                    <SelectItem key={n} value={String(n)}>
-                      {t("topAccountsCard.topN", { count: n })}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+                <button
+                  type="button"
+                  title={t("common.export")}
+                  className="report-export-btn"
+                >
+                  <Download className="h-4 w-4" />
+                  {t("common.export")}
+                </button>
+              </DataExport>
+            }
+          />
 
-            {usesDate && (
-              <div className="flex flex-col gap-y-3 flex-1 min-w-[260px]">
-                <Label>{t("common.filters")}</Label>
-                <SearchRanges
-                  rangesProps={searchRanges}
-                  setIsSearchButtonDisabled={setIsSearchButtonDisabled}
-                />
-                <div className="flex gap-2 mt-2">
-                  <Button
-                    onClick={handleSearch}
-                    data-testid="apply-filters"
-                    disabled={isSearchButtonDisabled}
-                  >
-                    {t("common.search")}
-                  </Button>
-                  <Button
-                    onClick={handleFilterClear}
-                    data-testid="clear-filters"
-                  >
-                    {t("common.clear")}
-                  </Button>
-                </div>
+          {/* Query filters */}
+          <div className="report-filters mb-5">
+            <p className="report-filters-label">{t("common.filters")}</p>
+            <div className="flex w-full flex-wrap items-start gap-4">
+              <div className="flex flex-col gap-y-3 w-[130px]">
+                <Label>{t("topAccountsCard.rows")}</Label>
+                <Select
+                  value={String(limitCount)}
+                  onValueChange={(v) => setLimitCount(Number(v))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {LIMIT_OPTIONS.map((n) => (
+                      <SelectItem key={n} value={String(n)}>
+                        {t("topAccountsCard.topN", { count: n })}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-            )}
+
+              {usesDate && (
+                <div className="flex flex-col gap-y-3 flex-1 min-w-[260px]">
+                  <Label>{t("common.dateRange")}</Label>
+                  <SearchRanges
+                    rangesProps={searchRanges}
+                    setIsSearchButtonDisabled={setIsSearchButtonDisabled}
+                  />
+                  <div className="flex gap-2 mt-2">
+                    <Button
+                      onClick={handleSearch}
+                      data-testid="apply-filters"
+                      disabled={isSearchButtonDisabled}
+                    >
+                      {t("common.search")}
+                    </Button>
+                    <Button
+                      onClick={handleFilterClear}
+                      data-testid="clear-filters"
+                    >
+                      {t("common.clear")}
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Metric pills */}
@@ -470,17 +484,9 @@ const NetworkTopAccountsFullChartDialog: React.FC<
                   </div>
                 </div>
               )}
-              <div className="table-toolbar justify-between items-center mb-2">
-                {summaryText ? (
-                  <p className="text-sm text-gray-500">{summaryText}</p>
-                ) : (
-                  <span />
-                )}
-                <DataExport
-                  data={exportData}
-                  filename={`top_accounts_${metric}.csv`}
-                />
-              </div>
+              {summaryText && (
+                <p className="text-sm text-gray-500 mb-2">{summaryText}</p>
+              )}
               <Table>
                 <TableHeader>
                   <TableRow>

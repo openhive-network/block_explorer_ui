@@ -160,7 +160,7 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({
     : "preserveStartEnd";
 
   return (
-    <ResponsiveContainer width="100%" height={isFullChart ? 500 : 250}>
+    <ResponsiveContainer width="100%" height={isFullChart ? 400 : 250}>
       <AreaChart
         data={chartData}
         layout="horizontal"

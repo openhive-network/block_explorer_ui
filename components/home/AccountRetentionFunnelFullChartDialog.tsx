@@ -1,12 +1,9 @@
 import React, { useState, useEffect, useMemo } from "react";
 import moment from "moment";
-import { Loader2, Info } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Loader2, Info, Download } from "lucide-react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import ReportDialogHeader from "@/components/ui/ReportDialogHeader";
+import DataExport from "@/components/DataExport";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import SearchRanges from "../searchRanges/SearchRanges";
@@ -122,6 +119,21 @@ const AccountRetentionFunnelFullChartDialog: React.FC<
     );
   }, [sortedData]);
 
+  const exportData = useMemo(
+    () =>
+      sortedData.map((d) => ({
+        cohort_month: d.cohort_month,
+        new_accounts: d.new_accounts,
+        active_at_7d: d.active_at_7d,
+        pct_7d: d.pct_7d,
+        active_at_30d: d.active_at_30d,
+        pct_30d: d.pct_30d,
+        active_at_90d: d.active_at_90d,
+        pct_90d: d.pct_90d,
+      })),
+    [sortedData]
+  );
+
   useEffect(() => {
     if (!isOpen) return;
     const oneYearAgo = moment().subtract(1, "year").toDate();
@@ -174,30 +186,48 @@ const AccountRetentionFunnelFullChartDialog: React.FC<
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="min-w-[70vw] pr-0">
         <div className="max-h-[90vh] overflow-y-auto overflow-x-hidden pr-6 scrollableContainer">
-          <DialogHeader>
-            <div className="mb-4">
-              <DialogTitle>
-                {t("accountRetentionFunnelFullChart.title")}
-              </DialogTitle>
-            </div>
-          </DialogHeader>
+          <ReportDialogHeader
+            title={t("accountRetentionFunnelFullChart.title")}
+            subtitle={t("accountRetentionFunnelFullChart.subtitle")}
+            actions={
+              <DataExport
+                data={exportData}
+                filename="account_retention.csv"
+                skipColumnSelection
+              >
+                <button
+                  type="button"
+                  title={t("common.export")}
+                  className="report-export-btn"
+                >
+                  <Download className="h-4 w-4" />
+                  {t("common.export")}
+                </button>
+              </DataExport>
+            }
+          />
 
           {/* Filters */}
-          <div className="flex flex-wrap gap-4 mb-4 w-full items-start">
-            <div className="flex flex-col gap-y-3 flex-1 min-w-[260px]">
-              <Label>{t("common.filters")}</Label>
-              <SearchRanges
-                rangesProps={searchRanges}
-                setIsSearchButtonDisabled={setIsSearchButtonDisabled}
-              />
-              <div className="flex gap-2 mt-2">
-                <Button
-                  onClick={handleSearch}
-                  disabled={isSearchButtonDisabled}
-                >
-                  {t("common.search")}
-                </Button>
-                <Button onClick={handleFilterClear}>{t("common.clear")}</Button>
+          <div className="report-filters mb-5">
+            <p className="report-filters-label">{t("common.filters")}</p>
+            <div className="flex w-full flex-wrap items-start gap-4">
+              <div className="flex flex-col gap-y-3 flex-1 min-w-[260px]">
+                <Label>{t("common.dateRange")}</Label>
+                <SearchRanges
+                  rangesProps={searchRanges}
+                  setIsSearchButtonDisabled={setIsSearchButtonDisabled}
+                />
+                <div className="flex gap-2 mt-2">
+                  <Button
+                    onClick={handleSearch}
+                    disabled={isSearchButtonDisabled}
+                  >
+                    {t("common.search")}
+                  </Button>
+                  <Button onClick={handleFilterClear}>
+                    {t("common.clear")}
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
