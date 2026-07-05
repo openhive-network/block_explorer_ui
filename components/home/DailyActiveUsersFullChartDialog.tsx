@@ -1,12 +1,9 @@
 import React, { useState, useEffect, useMemo } from "react";
 import moment from "moment";
-import { Loader2 } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Loader2, Download } from "lucide-react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import ReportDialogHeader from "@/components/ui/ReportDialogHeader";
+import DataExport from "@/components/DataExport";
 import {
   Select,
   SelectContent,
@@ -99,6 +96,16 @@ const DailyActiveUsersFullChartDialog: React.FC<
     [dailyActiveUsers]
   );
 
+  const exportData = useMemo(
+    () =>
+      chartData.map((d) => ({
+        period: d.period,
+        active_accounts: d.active_accounts,
+        operations: d.operations,
+      })),
+    [chartData]
+  );
+
   useEffect(() => {
     if (isOpen) {
       setLastTimeUnitValue(30);
@@ -160,72 +167,95 @@ const DailyActiveUsersFullChartDialog: React.FC<
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="min-w-[70vw] pr-0">
         <div className="max-h-[90vh] overflow-y-auto overflow-x-hidden pr-6 scrollableContainer">
-          <DialogHeader>
-            <div className="mb-4">
-              <DialogTitle>{t("dailyActiveUsersFullChart.title")}</DialogTitle>
-            </div>
-          </DialogHeader>
-
-          <div className="flex flex-wrap gap-4 mb-4 w-full items-start">
-            <div className="flex flex-col gap-y-3 w-[140px]">
-              <Label>{t("dailyActiveUsersFullChart.granularity")}</Label>
-              <Select
-                value={granularity}
-                onValueChange={(v) => handleGranularityChange(v as Granularity)}
+          <ReportDialogHeader
+            title={t("dailyActiveUsersFullChart.title")}
+            subtitle={t("dailyActiveUsersFullChart.subtitle")}
+            actions={
+              <DataExport
+                data={exportData}
+                filename="daily_active_users.csv"
+                skipColumnSelection
               >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="day">{t("common.daily")}</SelectItem>
-                  <SelectItem value="week">{t("common.weekly")}</SelectItem>
-                  <SelectItem value="month">{t("common.monthly")}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex flex-col gap-y-3 w-[160px]">
-              <Label>{t("dailyActiveUsersFullChart.operationType")}</Label>
-              <Select
-                value={opType}
-                onValueChange={(v) => {
-                  const next = v as OpType;
-                  setOpType(next);
-                  if (next === "all" && metric === "both") {
-                    setMetric("active_accounts");
-                  }
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {OP_TYPE_OPTIONS.map(({ key, labelKey }) => (
-                    <SelectItem key={key} value={key}>
-                      {t(labelKey)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex flex-col gap-y-3 flex-1 min-w-[260px]">
-              <Label>{t("common.filters")}</Label>
-              <SearchRanges
-                rangesProps={searchRanges}
-                setIsSearchButtonDisabled={setIsSearchButtonDisabled}
-              />
-              <div className="flex gap-2 mt-2">
-                <Button
-                  onClick={handleSearch}
-                  data-testid="apply-filters"
-                  disabled={isSearchButtonDisabled}
+                <button
+                  type="button"
+                  title={t("common.export")}
+                  className="report-export-btn"
                 >
-                  {t("common.search")}
-                </Button>
-                <Button onClick={handleFilterClear} data-testid="clear-filters">
-                  {t("common.clear")}
-                </Button>
+                  <Download className="h-4 w-4" />
+                  {t("common.export")}
+                </button>
+              </DataExport>
+            }
+          />
+
+          <div className="report-filters mb-5">
+            <p className="report-filters-label">{t("common.filters")}</p>
+            <div className="flex w-full flex-wrap items-start gap-4">
+              <div className="flex flex-col gap-y-3 w-[140px]">
+                <Label>{t("dailyActiveUsersFullChart.granularity")}</Label>
+                <Select
+                  value={granularity}
+                  onValueChange={(v) =>
+                    handleGranularityChange(v as Granularity)
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="day">{t("common.daily")}</SelectItem>
+                    <SelectItem value="week">{t("common.weekly")}</SelectItem>
+                    <SelectItem value="month">{t("common.monthly")}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex flex-col gap-y-3 w-[160px]">
+                <Label>{t("dailyActiveUsersFullChart.operationType")}</Label>
+                <Select
+                  value={opType}
+                  onValueChange={(v) => {
+                    const next = v as OpType;
+                    setOpType(next);
+                    if (next === "all" && metric === "both") {
+                      setMetric("active_accounts");
+                    }
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {OP_TYPE_OPTIONS.map(({ key, labelKey }) => (
+                      <SelectItem key={key} value={key}>
+                        {t(labelKey)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex flex-col gap-y-3 flex-1 min-w-[260px]">
+                <Label>{t("common.dateRange")}</Label>
+                <SearchRanges
+                  rangesProps={searchRanges}
+                  setIsSearchButtonDisabled={setIsSearchButtonDisabled}
+                />
+                <div className="flex gap-2 mt-2">
+                  <Button
+                    onClick={handleSearch}
+                    data-testid="apply-filters"
+                    disabled={isSearchButtonDisabled}
+                  >
+                    {t("common.search")}
+                  </Button>
+                  <Button
+                    onClick={handleFilterClear}
+                    data-testid="clear-filters"
+                  >
+                    {t("common.clear")}
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

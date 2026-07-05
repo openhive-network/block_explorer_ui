@@ -1,12 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import moment from "moment";
-import { Loader2 } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Loader2, Download } from "lucide-react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import ReportDialogHeader from "@/components/ui/ReportDialogHeader";
+import DataExport from "@/components/DataExport";
 import {
   Select,
   SelectContent,
@@ -71,6 +68,20 @@ const NetworkVotingActivityFullChartDialog: React.FC<
       isOpen
     );
 
+  const exportData = useMemo(
+    () =>
+      (voteStats ?? []).map((row) => ({
+        period: row.period,
+        total_votes: row.total_votes,
+        upvotes: row.upvotes,
+        downvotes: row.downvotes,
+        unvotes: row.unvotes,
+        self_votes: row.self_votes,
+        unique_voters: row.unique_voters,
+      })),
+    [voteStats]
+  );
+
   const handleSearch = async () => {
     const {
       payloadFromBlock,
@@ -111,52 +122,72 @@ const NetworkVotingActivityFullChartDialog: React.FC<
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="min-w-[70vw] pr-0">
         <div className="max-h-[90vh] overflow-y-auto overflow-x-hidden pr-6 scrollableContainer">
-          <DialogHeader>
-            <DialogTitle>
-              {t("votingActivityFullChartDialog.title")}
-            </DialogTitle>
-          </DialogHeader>
-
-          <div className="flex flex-col md:flex-row items-start gap-4 mb-4 w-full mt-4">
-            <div className="flex flex-col gap-y-3 w-1/2 md:w-1/4">
-              <Label>{t("votingActivityFullChartDialog.granularity")}</Label>
-              <Select
-                onValueChange={(v) =>
-                  handleGranularityChange(v as "day" | "week" | "month")
-                }
-                value={granularity}
+          <ReportDialogHeader
+            title={t("votingActivityFullChartDialog.title")}
+            subtitle={t("votingActivityFullChartDialog.subtitle")}
+            actions={
+              <DataExport
+                data={exportData}
+                filename="voting_activity.csv"
+                skipColumnSelection
               >
-                <SelectTrigger>
-                  <SelectValue
-                    placeholder={t(
-                      "votingActivityFullChartDialog.selectGranularity"
-                    )}
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="day">{t("common.daily")}</SelectItem>
-                  <SelectItem value="week">{t("common.weekly")}</SelectItem>
-                  <SelectItem value="month">{t("common.monthly")}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="w-full flex flex-col mb-4">
-              <Label>{t("common.filters")}</Label>
-              <div className="m-0 p-0 gap-y-0">
-                <SearchRanges
-                  rangesProps={searchRanges}
-                  setIsSearchButtonDisabled={setIsSearchButtonDisabled}
-                />
-              </div>
-              <div className="w-full flex items-end justify-start mt-2 gap-2">
-                <Button
-                  onClick={handleSearch}
-                  disabled={isSearchButtonDisabled}
+                <button
+                  type="button"
+                  title={t("common.export")}
+                  className="report-export-btn"
                 >
-                  {t("common.search")}
-                </Button>
-                <Button onClick={handleFilterClear}>{t("common.clear")}</Button>
+                  <Download className="h-4 w-4" />
+                  {t("common.export")}
+                </button>
+              </DataExport>
+            }
+          />
+
+          <div className="report-filters mb-5">
+            <p className="report-filters-label">{t("common.filters")}</p>
+            <div className="flex w-full flex-wrap items-start gap-4">
+              <div className="flex flex-col gap-y-3 w-1/2 md:w-1/4">
+                <Label>{t("votingActivityFullChartDialog.granularity")}</Label>
+                <Select
+                  onValueChange={(v) =>
+                    handleGranularityChange(v as "day" | "week" | "month")
+                  }
+                  value={granularity}
+                >
+                  <SelectTrigger>
+                    <SelectValue
+                      placeholder={t(
+                        "votingActivityFullChartDialog.selectGranularity"
+                      )}
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="day">{t("common.daily")}</SelectItem>
+                    <SelectItem value="week">{t("common.weekly")}</SelectItem>
+                    <SelectItem value="month">{t("common.monthly")}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="w-full flex flex-col mb-4">
+                <Label>{t("common.dateRange")}</Label>
+                <div className="m-0 p-0 gap-y-0">
+                  <SearchRanges
+                    rangesProps={searchRanges}
+                    setIsSearchButtonDisabled={setIsSearchButtonDisabled}
+                  />
+                </div>
+                <div className="w-full flex items-end justify-start mt-2 gap-2">
+                  <Button
+                    onClick={handleSearch}
+                    disabled={isSearchButtonDisabled}
+                  >
+                    {t("common.search")}
+                  </Button>
+                  <Button onClick={handleFilterClear}>
+                    {t("common.clear")}
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
