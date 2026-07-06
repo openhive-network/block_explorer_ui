@@ -27,6 +27,7 @@ import DailyActiveUsersCard from "@/components/home/DailyActiveUsersCard";
 import AccountRetentionFunnelCard from "@/components/home/AccountRetentionFunnelCard";
 import NetworkOpMixCard from "@/components/home/NetworkOpMixCard";
 import NetworkContentVolumeCard from "@/components/home/NetworkContentVolumeCard";
+import NetworkEngagementCard from "@/components/home/NetworkEngagementCard";
 import LastBlocksWidget from "@/components/LastBlocksWidget";
 import FundAndSupplyWidget from "@/components/dashboard/widgets/data/FundAndSupplyWidget";
 import HiveParametersWidget from "@/components/dashboard/widgets/data/HiveParametersWidget";
@@ -288,6 +289,14 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     name: "widgets.networkContentVolumeName",
     category: "reports" as const,
     component: NetworkContentVolumeCard,
+    defaultLayout: { w: 6, h: 5, minW: 3, minH: 4 },
+    dynamicHeight: true,
+  },
+  "network-engagement": {
+    id: "network-engagement",
+    name: "widgets.networkEngagementName",
+    category: "reports" as const,
+    component: NetworkEngagementCard,
     defaultLayout: { w: 6, h: 5, minW: 3, minH: 4 },
     dynamicHeight: true,
   },

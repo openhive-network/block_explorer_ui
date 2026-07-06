@@ -24,6 +24,7 @@ import DailyActiveUsersCard from "@/components/home/DailyActiveUsersCard";
 import AccountRetentionFunnelCard from "@/components/home/AccountRetentionFunnelCard";
 import NetworkOpMixCard from "@/components/home/NetworkOpMixCard";
 import NetworkContentVolumeCard from "@/components/home/NetworkContentVolumeCard";
+import NetworkEngagementCard from "@/components/home/NetworkEngagementCard";
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import { useAuth } from "@/contexts/AuthContext";
@@ -101,6 +102,7 @@ const StandardHome = () => {
           <DailyActiveUsersCard />
           <AccountRetentionFunnelCard />
           <NetworkOpMixCard />
+          <NetworkEngagementCard />
           <TransactionStatisticsCard />
           <TransferVolumeCard />
           <TotalValueLockedCard />
