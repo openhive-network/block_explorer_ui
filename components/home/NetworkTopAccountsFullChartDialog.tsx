@@ -3,7 +3,13 @@ import moment from "moment";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import Image from "next/image";
-import { Loader2, Download } from "lucide-react";
+import {
+  Loader2,
+  Download,
+  ChevronUp,
+  ChevronDown,
+  ChevronsUpDown,
+} from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import ReportDialogHeader from "@/components/ui/ReportDialogHeader";
 import {
@@ -159,6 +165,10 @@ const NetworkTopAccountsFullChartDialog: React.FC<
 
   const [metric, setMetric] = useState<Hive.TopAccountsMetric>(initialMetric);
   const [limitCount, setLimitCount] = useState<number>(25);
+  const [sortConfig, setSortConfig] = useState<{
+    key: string;
+    direction: "asc" | "desc";
+  }>({ key: "rank", direction: "asc" });
   const [fromDate, setFromDate] = useState<Date | number | undefined>(
     moment().subtract(30, "days").toDate()
   );
@@ -204,6 +214,7 @@ const NetworkTopAccountsFullChartDialog: React.FC<
     if (isOpen) {
       setMetric(initialMetric);
       setLimitCount(25);
+      setSortConfig({ key: "rank", direction: "asc" });
       setLastTimeUnitValue(30);
       setRangeSelectKey("lastTime");
       setTimeUnitSelectKey("days");
@@ -285,6 +296,63 @@ const NetworkTopAccountsFullChartDialog: React.FC<
     return map;
   }, [primary, total]);
 
+  const handleSort = (key: string) => {
+    setSortConfig((prev) =>
+      prev.key === key
+        ? { key, direction: prev.direction === "asc" ? "desc" : "asc" }
+        : { key, direction: "asc" }
+    );
+  };
+
+  // Only Rank/Account are client-sortable — they reorder the shown rows without
+  // changing the set. Value columns rank a server-truncated top-N, so sorting
+  // them client-side would misrepresent the leaderboard. Ties break by rank.
+  const sortedRows = useMemo(() => {
+    const rows = [...(topAccounts ?? [])];
+    const { key, direction } = sortConfig;
+    const dir = direction === "asc" ? 1 : -1;
+    return rows.sort((a, b) => {
+      const cmp =
+        key === "account"
+          ? a.account.localeCompare(b.account, locale)
+          : a.rank - b.rank;
+      return cmp !== 0 ? cmp * dir : a.rank - b.rank;
+    });
+  }, [topAccounts, sortConfig, locale]);
+
+  const sortIcon = (key: string) => {
+    if (sortConfig.key !== key)
+      return <ChevronsUpDown size={14} className="opacity-40 shrink-0" />;
+    return sortConfig.direction === "asc" ? (
+      <ChevronUp size={14} className="shrink-0" />
+    ) : (
+      <ChevronDown size={14} className="shrink-0" />
+    );
+  };
+
+  const sortableHead = (key: string, label: string, className?: string) => (
+    <TableHead
+      key={key}
+      className={className}
+      aria-sort={
+        sortConfig.key === key
+          ? sortConfig.direction === "asc"
+            ? "ascending"
+            : "descending"
+          : "none"
+      }
+    >
+      <button
+        type="button"
+        onClick={() => handleSort(key)}
+        className="inline-flex items-center gap-1 font-medium hover:text-link transition-colors"
+      >
+        <span>{label}</span>
+        {sortIcon(key)}
+      </button>
+    </TableHead>
+  );
+
   const summaryText = useMemo(() => {
     if (!valuesReady || primary.length === 0) return null;
     // Share of total network HP only applies to the HP-balance stock metric.
@@ -326,12 +394,12 @@ const NetworkTopAccountsFullChartDialog: React.FC<
   // localized) and values are full-precision + locale-formatted. Empty until
   // conversions are ready so we never export all-zero rows.
   const exportData = useMemo(() => {
-    if (!topAccounts || !valuesReady) return [];
+    if (!sortedRows.length || !valuesReady) return [];
     // Values are already-converted amounts, so skipPrecision=true just groups
     // and fixes the decimals (no re-scaling). VESTS keeps its 6-dp rounding.
     const fmt = (v: number, decimals: number) =>
       formatNumber(v, false, true, decimals);
-    return topAccounts.map((row) => {
+    return sortedRows.map((row) => {
       const obj: Record<string, string | number> = {
         [t("topAccountsCard.rank")]: row.rank,
         [t("topAccountsCard.account")]: row.account,
@@ -345,7 +413,7 @@ const NetworkTopAccountsFullChartDialog: React.FC<
       );
       return obj;
     });
-  }, [topAccounts, valuesReady, columns, converters, shareByAccount, t]);
+  }, [sortedRows, valuesReady, columns, converters, shareByAccount, t]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -490,10 +558,8 @@ const NetworkTopAccountsFullChartDialog: React.FC<
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-12">
-                      {t("topAccountsCard.rank")}
-                    </TableHead>
-                    <TableHead>{t("topAccountsCard.account")}</TableHead>
+                    {sortableHead("rank", t("topAccountsCard.rank"), "w-12")}
+                    {sortableHead("account", t("topAccountsCard.account"))}
                     {columns.map((col) => (
                       <TableHead key={col.key} className="text-right">
                         {t(col.labelKey)}
@@ -505,7 +571,7 @@ const NetworkTopAccountsFullChartDialog: React.FC<
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {topAccounts.map((row) => (
+                  {sortedRows.map((row) => (
                     <TableRow key={row.account}>
                       <TableCell className="text-gray-500">
                         {row.rank}
