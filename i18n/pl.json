@@ -203,7 +203,7 @@
   "accountRetentionFunnelCard.retention30d": "Retencja 30D",
   "accountRetentionFunnelCard.retention90d": "Retencja 90D",
   "accountRetentionFunnelCard.tooltipDropOff": "Nowe konta z tej kohorty, które nigdy nie były ponownie aktywne w ciągu pierwszych 7 dni — znikły przed końcem 1. tygodnia. Pobrane z najnowszego miesiąca z kompletnymi danymi 7-dniowymi.",
-  "accountRetentionFunnelCard.tooltipMoM": "Miesięczna zmiana w rejestracji nowych kont w porównaniu z poprzednią kohortą. Ujemna wartość oznacza, że w tym miesiącu dołączyło mniej osób niż w poprzednim.",
+  "accountRetentionFunnelCard.tooltipMoM": "Ogólny trend rejestracji nowych kont w pokazanych kohortach, oszacowany za pomocą regresji liniowej w danym okresie. Wartość dodatnia oznacza, że rejestracje rosną; ujemna oznacza, że spadają.",
   "accountRetentionFunnelCard.tooltipStickiness": "Spośród kont, które wróciły w 1. tygodniu, jaka część pozostała przez cały miesiąc? Wysoka lepkość oznacza, że ciekawscy odwiedzający stają się prawdziwie zaangażowanymi użytkownikami. Obliczane jako: aktywne konta po 30d ÷ aktywne konta po 7d.",
   "accountRetentionFunnelCard.tooltipFunnelDepth": "Spośród kont, które wróciły w 1. tygodniu, jaka część była nadal aktywna po 90 dniach? Jedna liczba podsumowująca pełną głębokość lejka retencji. Obliczane jako: % retencji 90d ÷ % retencji 7d.",
   "accountRetentionFunnelCard.heatmapRetention": "retencja",

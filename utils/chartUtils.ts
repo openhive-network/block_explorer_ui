@@ -30,7 +30,8 @@ export const computeTrendLine = (values: number[]): number[] => {
 export const computeTrendPct = (values: number[]): number | null => {
   const n = values.length;
   const reg = linearRegression(values);
-  if (!reg || reg.intercept <= 0) return null;
+  if (!reg || !Number.isFinite(reg.intercept) || reg.intercept <= 0)
+    return null;
   return ((reg.slope * (n - 1)) / reg.intercept) * 100;
 };
 

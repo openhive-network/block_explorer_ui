@@ -142,7 +142,7 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, hiveChain]);
 
-  const lastHivePrice = chartData?.[chartData.length - 1].close;
+  const lastHivePrice = chartData?.[chartData.length - 1]?.close;
   const strokeColor = theme === "dark" ? "#FFF" : "#000";
   const fillId = isFullChart ? "hivePriceFillFull" : "hivePriceFillMini";
 

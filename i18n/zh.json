@@ -203,7 +203,7 @@
   "accountRetentionFunnelCard.retention30d": "30天留存",
   "accountRetentionFunnelCard.retention90d": "90天留存",
   "accountRetentionFunnelCard.tooltipDropOff": "该队列中从未在前7天内再次活跃的新账户——在第1周结束前就已流失。取自最近一个有完整7天数据的月份。",
-  "accountRetentionFunnelCard.tooltipMoM": "与上一队列相比，新账户注册数的环比变化。负值意味着本月加入的人数少于上月。",
+  "accountRetentionFunnelCard.tooltipMoM": "所显示各队列中新账户注册数的整体趋势，通过对该时间段进行线性回归拟合得出。正值表示注册数在上升；负值表示在下降。",
   "accountRetentionFunnelCard.tooltipStickiness": "在第1周回归的账户中，有多少比例坚持了整整一个月？高粘性意味着好奇的访客正在转化为真正参与的用户。计算方式：30天活跃账户 ÷ 7天活跃账户。",
   "accountRetentionFunnelCard.tooltipFunnelDepth": "在第1周回归的账户中，有多少比例在90天后仍然活跃？一个数字概括了整个留存漏斗的深度。计算方式：90天留存率 ÷ 7天留存率。",
   "accountRetentionFunnelCard.heatmapRetention": "留存率",

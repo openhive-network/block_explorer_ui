@@ -203,7 +203,7 @@
   "accountRetentionFunnelCard.retention30d": "Retenție 30Z",
   "accountRetentionFunnelCard.retention90d": "Retenție 90Z",
   "accountRetentionFunnelCard.tooltipDropOff": "Conturi noi din această cohortă care nu au mai fost văzute active în primele 7 zile — dispărute înainte de sfârșitul săptămânii 1. Preluate din cea mai recentă lună cu date complete pe 7 zile.",
-  "accountRetentionFunnelCard.tooltipMoM": "Variația lunară a înregistrărilor de conturi noi față de cohorta anterioară. Negativ înseamnă că mai puține persoane s-au alăturat în această lună față de luna trecută.",
+  "accountRetentionFunnelCard.tooltipMoM": "Tendința generală a înregistrărilor de conturi noi de-a lungul cohortelor afișate, estimată printr-o regresie liniară pe parcursul perioadei. Pozitiv înseamnă că înregistrările cresc; negativ înseamnă că scad.",
   "accountRetentionFunnelCard.tooltipStickiness": "Din conturile care au revenit în săptămâna 1, ce fracție a rămas un întreg lună? Aderența ridicată înseamnă că vizitatorii curioși devin utilizatori cu adevărat implicați. Calculat ca: conturi active la 30z ÷ conturi active la 7z.",
   "accountRetentionFunnelCard.tooltipFunnelDepth": "Din conturile care au revenit în săptămâna 1, ce fracție era încă activă după 90 de zile? Un singur număr care rezumă adâncimea totală a pâlniei de retenție. Calculat ca: % retenție 90z ÷ % retenție 7z.",
   "accountRetentionFunnelCard.heatmapRetention": "retenție",
