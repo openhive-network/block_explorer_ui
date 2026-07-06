@@ -203,7 +203,7 @@
   "accountRetentionFunnelCard.retention30d": "Rétention 30J",
   "accountRetentionFunnelCard.retention90d": "Rétention 90J",
   "accountRetentionFunnelCard.tooltipDropOff": "Nouveaux comptes de cette cohorte qui n'ont jamais été vus actifs dans leurs 7 premiers jours — disparus avant la fin de la semaine 1. Tiré du mois le plus récent avec des données complètes à 7 jours.",
-  "accountRetentionFunnelCard.tooltipMoM": "Variation mensuelle des nouvelles inscriptions par rapport à la cohorte précédente. Négatif signifie que moins de personnes ont rejoint ce mois-ci que le mois dernier.",
+  "accountRetentionFunnelCard.tooltipMoM": "Tendance générale des nouvelles inscriptions sur les cohortes affichées, estimée par une régression linéaire sur la période. Positif signifie que les inscriptions augmentent ; négatif signifie qu'elles diminuent.",
   "accountRetentionFunnelCard.tooltipStickiness": "Parmi les comptes revenus en semaine 1, quelle fraction est restée un mois entier ? Une forte adhérence signifie que les visiteurs curieux deviennent de vrais utilisateurs engagés. Calculé comme : comptes actifs à 30j ÷ comptes actifs à 7j.",
   "accountRetentionFunnelCard.tooltipFunnelDepth": "Parmi les comptes revenus en semaine 1, quelle fraction était encore active 90 jours plus tard ? Un seul chiffre résumant la profondeur totale de l'entonnoir de rétention. Calculé comme : % de rétention à 90j ÷ % de rétention à 7j.",
   "accountRetentionFunnelCard.heatmapRetention": "rétention",

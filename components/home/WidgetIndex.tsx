@@ -299,6 +299,10 @@ const WidgetIndex = () => {
   }, [isLoaded, username, watchedProposalsCount, widgets, onAddWidget]);
 
   const contentRefs = useRef(new Map<string, HTMLDivElement>());
+  const widgetStatesRef = useRef(widgetStates);
+  useEffect(() => {
+    widgetStatesRef.current = widgetStates;
+  }, [widgetStates]);
 
   useEffect(() => {
     const ROW_HEIGHT = 50;
@@ -316,6 +320,7 @@ const WidgetIndex = () => {
 
       const observer = new ResizeObserver(([entry]) => {
         if (finalIsEditMode) return;
+        if (widgetStatesRef.current[widget.i]?.isCollapsed) return;
         const contentPx = entry.contentRect.height;
         const contentH = (contentPx + MARGIN_Y) / (ROW_HEIGHT + MARGIN_Y);
         const targetH = Math.max(contentH, floor);

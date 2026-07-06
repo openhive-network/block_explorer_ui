@@ -164,7 +164,7 @@ const AccountRetentionFunnelCard: React.FC = () => {
     );
   }, [sortedData]);
 
-  const momGrowth = useMemo(
+  const newAccountsTrend = useMemo(
     () => computeTrendPct(sortedData.map((d) => d.new_accounts)),
     [sortedData]
   );
@@ -248,24 +248,24 @@ const AccountRetentionFunnelCard: React.FC = () => {
                 <p className="text-xl font-bold leading-tight text-explorer-dark-gray dark:text-text">
                   {lastCompleteCohort.new_accounts.toLocaleString(locale)}
                 </p>
-                {momGrowth !== null && (
+                {newAccountsTrend !== null && (
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <span
                           className={cn(
                             "inline-flex items-center gap-0.5 text-[11px] font-semibold leading-none border-b border-dashed cursor-help",
-                            momGrowth >= 0
+                            newAccountsTrend >= 0
                               ? "text-explorer-light-green border-explorer-light-green"
                               : "text-rose-600 dark:text-rose-400 border-rose-600 dark:border-rose-400"
                           )}
                         >
-                          {momGrowth >= 0 ? (
+                          {newAccountsTrend >= 0 ? (
                             <TrendingUp className="h-3 w-3" />
                           ) : (
                             <TrendingDown className="h-3 w-3" />
                           )}
-                          {Math.abs(momGrowth).toLocaleString(locale, {
+                          {Math.abs(newAccountsTrend).toLocaleString(locale, {
                             maximumFractionDigits: 1,
                           })}
                           %

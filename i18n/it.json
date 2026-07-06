@@ -203,7 +203,7 @@
   "accountRetentionFunnelCard.retention30d": "Ritenzione 30G",
   "accountRetentionFunnelCard.retention90d": "Ritenzione 90G",
   "accountRetentionFunnelCard.tooltipDropOff": "Nuovi account di questa coorte che non sono mai stati visti attivi nei loro primi 7 giorni — spariti prima della fine della settimana 1. Rilevato dal mese più recente con dati completi a 7 giorni.",
-  "accountRetentionFunnelCard.tooltipMoM": "Variazione mese su mese nelle nuove registrazioni rispetto alla coorte precedente. Negativo significa che meno persone si sono iscritte questo mese rispetto al mese scorso.",
+  "accountRetentionFunnelCard.tooltipMoM": "Tendenza complessiva delle nuove registrazioni tra le coorti mostrate, stimata con una regressione lineare sul periodo. Positivo significa che le registrazioni sono in aumento; negativo significa che sono in calo.",
   "accountRetentionFunnelCard.tooltipStickiness": "Degli account tornati nella settimana 1, quale frazione è rimasta per un intero mese? Un'alta adesione significa che i visitatori curiosi si stanno convertendo in utenti genuinamente coinvolti. Calcolato come: account attivi a 30g ÷ account attivi a 7g.",
   "accountRetentionFunnelCard.tooltipFunnelDepth": "Degli account tornati nella settimana 1, quale frazione era ancora attiva 90 giorni dopo? Un numero che riassume la profondità totale del funnel di retention. Calcolato come: % retention a 90g ÷ % retention a 7g.",
   "accountRetentionFunnelCard.heatmapRetention": "ritenzione",

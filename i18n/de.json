@@ -203,7 +203,7 @@
   "accountRetentionFunnelCard.retention30d": "30T-Retention",
   "accountRetentionFunnelCard.retention90d": "90T-Retention",
   "accountRetentionFunnelCard.tooltipDropOff": "Neue Konten dieser Kohorte, die in ihren ersten 7 Tagen nie wieder aktiv gesehen wurden — weg vor Ende der ersten Woche. Entnommen aus dem neuesten Monat mit vollständigen 7-Tage-Daten.",
-  "accountRetentionFunnelCard.tooltipMoM": "Monatliche Veränderung der Neuanmeldungen im Vergleich zur vorherigen Kohorte. Negativ bedeutet, dass in diesem Monat weniger Menschen beigetreten sind als im letzten Monat.",
+  "accountRetentionFunnelCard.tooltipMoM": "Gesamttrend der Neuanmeldungen über die angezeigten Kohorten, per linearer Regression über den Zeitraum ermittelt. Positiv bedeutet, dass die Anmeldungen steigen; negativ bedeutet, dass sie zurückgehen.",
   "accountRetentionFunnelCard.tooltipStickiness": "Von den Konten, die in Woche 1 zurückkehrten, wie viele blieben einen ganzen Monat? Hohe Klebrigkeit bedeutet, dass neugierige Besucher zu echten Nutzern werden. Berechnet als: aktive Konten nach 30T ÷ aktive Konten nach 7T.",
   "accountRetentionFunnelCard.tooltipFunnelDepth": "Von den Konten, die in Woche 1 zurückkehrten, wie viele waren nach 90 Tagen noch aktiv? Eine Zahl, die die gesamte Trichtertiefe zusammenfasst. Berechnet als: 90T-Retention % ÷ 7T-Retention %.",
   "accountRetentionFunnelCard.heatmapRetention": "Bindung",
