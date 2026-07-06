@@ -92,41 +92,41 @@ interface AccountRetentionHeatmapProps {
   showLegend?: boolean;
 }
 
-const LEGEND_ITEMS = [
+export const LEGEND_ITEMS = [
   {
     range: "<10%",
     lightBg: "#fee2e2",
-    darkBg: "#7f1d1d",
+    darkBg: "#881337",
     lightText: "#b91c1c",
-    darkText: "#fca5a5",
+    darkText: "#fda4af",
   },
   {
     range: "10–30%",
     lightBg: "#fef3c7",
-    darkBg: "#78350f",
+    darkBg: "#9a3412",
     lightText: "#92400e",
-    darkText: "#fcd34d",
+    darkText: "#fdba74",
   },
   {
     range: "30–50%",
     lightBg: "#d1fae5",
-    darkBg: "#064e3b",
+    darkBg: "#166534",
     lightText: "#065f46",
-    darkText: "#6ee7b7",
+    darkText: "#bbf7d0",
   },
   {
     range: "50–70%",
     lightBg: "#86efac",
-    darkBg: "#065f46",
+    darkBg: "#15803d",
     lightText: "#065f46",
-    darkText: "#6ee7b7",
+    darkText: "#bbf7d0",
   },
   {
     range: "≥70%",
     lightBg: "#34d399",
-    darkBg: "#166534",
+    darkBg: "#16a34a",
     lightText: "#065f46",
-    darkText: "#6ee7b7",
+    darkText: "#bbf7d0",
   },
 ];
 
@@ -242,15 +242,15 @@ const AccountRetentionHeatmap: React.FC<AccountRetentionHeatmapProps> = ({
         axisLine: { show: false },
         axisTick: { show: false },
         axisLabel: {
-          color: mutedColor,
+          color: isDark ? "#ffffff" : "#000000",
           fontSize: compact ? 10 : 12,
-          fontWeight: "bold",
+          fontWeight: 500,
           margin: compact ? 4 : 6,
           interval: 0,
           rich: {
             new: {
               color: isDark ? "#818cf8" : "#4338ca",
-              fontWeight: "bold",
+              fontWeight: 600,
               fontSize: compact ? 10 : 12,
             },
           },
@@ -339,7 +339,7 @@ const AccountRetentionHeatmap: React.FC<AccountRetentionHeatmapProps> = ({
           label: {
             show: true,
             fontSize: compact ? 10 : 11,
-            fontWeight: "bold",
+            fontWeight: 500,
             formatter: (params: { value: [number, number, number] }) => {
               const [xIdx, , rawVal] = params.value;
               if (xIdx === NEW_COL_IDX) return formatCompact(rawVal, locale);
@@ -384,7 +384,11 @@ const AccountRetentionHeatmap: React.FC<AccountRetentionHeatmapProps> = ({
           option={option}
           style={{ height: "100%", width: "100%" }}
           notMerge
-          opts={{ devicePixelRatio: window.devicePixelRatio || 2 }}
+          opts={{
+            devicePixelRatio:
+              (typeof window !== "undefined" ? window.devicePixelRatio : 2) ||
+              2,
+          }}
         />
       </div>
       {showLegend && !compact && viewMode === "rates" && (
