@@ -309,6 +309,36 @@ const WidgetIndex = () => {
     localStorage.setItem(seededKey, "true");
   }, [isLoaded, username, widgets, layouts, onAddWidget]);
 
+  // One-time seed of the Engagement Quality widget for users with a saved dashboard.
+  useEffect(() => {
+    if (!isLoaded || !username) return;
+    const seededKey = `hivescan_dashboard_network_engagement_seeded_${username}`;
+    if (localStorage.getItem(seededKey)) return;
+    if (widgets.some((w) => w.type === "network-engagement")) {
+      localStorage.setItem(seededKey, "true");
+      return;
+    }
+    const masterLayout = layouts.lg || [];
+    // Place directly below op-mix; fall back to bottom of the main column.
+    const opMixId = widgets.find((w) => w.type === "op-mix")?.i;
+    const opMixItem = opMixId
+      ? masterLayout.find((item) => item.i === opMixId)
+      : undefined;
+    const insertY = opMixItem
+      ? opMixItem.y + opMixItem.h
+      : masterLayout
+          .filter((item) => item.x >= 3 && item.x < 9)
+          .reduce((max, item) => Math.max(max, item.y + item.h), 0);
+    onAddWidget("network-engagement", {
+      x: opMixItem?.x ?? 3,
+      y: insertY,
+      w: opMixItem?.w ?? 6,
+      h: 5,
+      minH: 4,
+    });
+    localStorage.setItem(seededKey, "true");
+  }, [isLoaded, username, widgets, layouts, onAddWidget]);
+
   // Watched Proposals auto-appears the first time you watch a proposal (unless
   // X-dismissed). A manual add is respected — it's never auto-removed when the
   // watchlist is empty.

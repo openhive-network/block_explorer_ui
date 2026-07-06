@@ -1391,6 +1391,21 @@ namespace Hive {
     unique_authors!: number;
   }
 
+  export class NetworkEngagementParams {
+    from_date?: Date | number | undefined;
+    to_date?: Date | number | undefined;
+    granularity?: string;
+  }
+
+  export class NetworkEngagementResponse {
+    period!: string;
+    total_posts!: number;
+    avg_votes_per_post!: number;
+    avg_comments_per_post!: number;
+    zero_vote_post_pct!: number;
+    zero_comment_post_pct!: number;
+  }
+
   export class NetworkHpDistributionParams {}
 
   export class NetworkHpDistributionResponse {

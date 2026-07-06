@@ -995,6 +995,20 @@ class FetchingService {
     });
   }
 
+  async getNetworkEngagement(
+    from?: Date | number | undefined,
+    to?: Date | number | undefined,
+    granularity?: "day" | "week" | "month"
+  ): Promise<Hive.NetworkEngagementResponse[]> {
+    return await this.extendedHiveChain!.restApi[
+      "haf-stats-api"
+    ].networkEngagement({
+      from_date: from,
+      to_date: to,
+      granularity,
+    });
+  }
+
   async getAccountFunnel(
     from?: Date | number,
     to?: Date | number

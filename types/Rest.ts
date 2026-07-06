@@ -274,5 +274,11 @@ export const extendedRest = {
       responseArray: true,
       urlPath: "network/content-volume",
     },
+    networkEngagement: {
+      params: Hive.NetworkEngagementParams,
+      result: Hive.NetworkEngagementResponse,
+      responseArray: true,
+      urlPath: "network/engagement",
+    },
   },
 };
