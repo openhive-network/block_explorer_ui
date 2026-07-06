@@ -4,8 +4,10 @@ import moment from "moment";
 import dynamic from "next/dynamic";
 import AccountRetentionHeatmap, {
   HeatmapViewMode,
+  LEGEND_ITEMS,
 } from "./AccountRetentionHeatmap";
 import { useI18n } from "../../i18n/i18n";
+import { useTheme } from "@/contexts/ThemeContext";
 import useAccountFunnel from "@/hooks/api/homePage/useAccountFunnel";
 import { cn } from "@/lib/utils";
 import {
@@ -63,8 +65,8 @@ const RetentionKpi: React.FC<RetentionKpiProps> = ({
     ? getRatioColorClass(displayPct)
     : getRetentionColorClass(pct);
   return (
-    <div className="flex-1 min-w-[120px] bg-explorer-extra-light-gray rounded-lg p-2.5 shadow-md flex flex-col justify-center">
-      <h3 className="text-xs font-semibold uppercase tracking-wide text-explorer-dark-gray dark:text-text">
+    <div className="flex-1 min-w-[110px] bg-explorer-extra-light-gray rounded-lg p-2.5 shadow-md flex flex-col justify-start">
+      <h3 className="text-xs font-semibold uppercase tracking-wide text-explorer-dark-gray dark:text-text whitespace-pre-line">
         {tooltip ? (
           <TooltipProvider>
             <Tooltip>
@@ -87,7 +89,7 @@ const RetentionKpi: React.FC<RetentionKpiProps> = ({
           t(labelKey)
         )}
       </h3>
-      <div className="flex items-baseline gap-1.5">
+      <div className="flex items-baseline gap-1.5 mt-1">
         <p className={cn("text-xl font-bold leading-tight", colorClass)}>
           {displayPct !== null
             ? `${displayPct.toLocaleString(locale, { maximumFractionDigits: 1 })}%`
@@ -96,16 +98,16 @@ const RetentionKpi: React.FC<RetentionKpiProps> = ({
         {trend !== null && (
           <span
             className={cn(
-              "inline-flex items-center gap-0.5 text-[11px] font-semibold leading-none",
+              "inline-flex items-center gap-0.5 text-[10px] font-medium leading-none",
               trend >= 0
                 ? "text-explorer-light-green"
                 : "text-rose-600 dark:text-rose-400"
             )}
           >
             {trend >= 0 ? (
-              <TrendingUp className="h-3 w-3" />
+              <TrendingUp className="h-2.5 w-2.5" />
             ) : (
-              <TrendingDown className="h-3 w-3" />
+              <TrendingDown className="h-2.5 w-2.5" />
             )}
             {Math.abs(trend).toLocaleString(locale, {
               maximumFractionDigits: 1,
@@ -129,6 +131,8 @@ const RetentionKpi: React.FC<RetentionKpiProps> = ({
 
 const AccountRetentionFunnelCard: React.FC = () => {
   const { t, locale } = useI18n();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [viewMode, setViewMode] = useState<HeatmapViewMode>("rates");
 
@@ -232,7 +236,7 @@ const AccountRetentionFunnelCard: React.FC = () => {
       />
       <div className="flex flex-wrap gap-2 p-2">
         {/* KPI — New Accounts */}
-        <div className="flex-1 min-w-[120px] bg-explorer-extra-light-gray rounded-lg p-2.5 shadow-md flex flex-col justify-center">
+        <div className="flex-1 min-w-[110px] bg-explorer-extra-light-gray rounded-lg p-2.5 shadow-md flex flex-col justify-start">
           <h3 className="text-xs font-semibold uppercase tracking-wide text-explorer-dark-gray dark:text-text">
             {t("accountRetentionFunnelCard.newAccounts")}
           </h3>
@@ -244,7 +248,7 @@ const AccountRetentionFunnelCard: React.FC = () => {
             </p>
           ) : lastCompleteCohort ? (
             <>
-              <div className="flex items-baseline gap-1.5">
+              <div className="flex items-baseline gap-1.5 mt-1">
                 <p className="text-xl font-bold leading-tight text-explorer-dark-gray dark:text-text">
                   {lastCompleteCohort.new_accounts.toLocaleString(locale)}
                 </p>
@@ -254,16 +258,16 @@ const AccountRetentionFunnelCard: React.FC = () => {
                       <TooltipTrigger asChild>
                         <span
                           className={cn(
-                            "inline-flex items-center gap-0.5 text-[11px] font-semibold leading-none border-b border-dashed cursor-help",
+                            "inline-flex items-center gap-0.5 text-[10px] font-medium leading-none border-b border-dashed cursor-help",
                             momGrowth >= 0
                               ? "text-explorer-light-green border-explorer-light-green"
                               : "text-rose-600 dark:text-rose-400 border-rose-600 dark:border-rose-400"
                           )}
                         >
                           {momGrowth >= 0 ? (
-                            <TrendingUp className="h-3 w-3" />
+                            <TrendingUp className="h-2.5 w-2.5" />
                           ) : (
-                            <TrendingDown className="h-3 w-3" />
+                            <TrendingDown className="h-2.5 w-2.5" />
                           )}
                           {Math.abs(momGrowth).toLocaleString(locale, {
                             maximumFractionDigits: 1,
@@ -388,7 +392,7 @@ const AccountRetentionFunnelCard: React.FC = () => {
         )}
 
         {/* Chart panel */}
-        <div className="flex-[2] min-w-[220px] bg-explorer-extra-light-gray rounded-lg p-2.5 shadow-md flex flex-col">
+        <div className="flex-[3] min-w-[220px] bg-explorer-extra-light-gray rounded-lg p-2.5 shadow-md flex flex-col">
           <div className="flex justify-between items-center mb-1">
             <div className="flex gap-1">
               {(["rates", "counts"] as HeatmapViewMode[]).map((mode) => (
@@ -414,13 +418,31 @@ const AccountRetentionFunnelCard: React.FC = () => {
               <Loader2 className="animate-spin h-5 w-5" />
             </div>
           ) : (
-            <div className="flex-grow min-h-[100px] overflow-hidden">
-              <AccountRetentionHeatmap
-                data={sortedData}
-                compact
-                viewMode={viewMode}
-              />
-            </div>
+            <>
+              <div className="flex-grow min-h-[100px] overflow-hidden">
+                <AccountRetentionHeatmap
+                  data={sortedData}
+                  compact
+                  viewMode={viewMode}
+                />
+              </div>
+              {viewMode === "rates" && (
+                <div className="flex items-center gap-0.5 mt-1 flex-wrap">
+                  {LEGEND_ITEMS.map((item) => (
+                    <span
+                      key={item.range}
+                      className="inline-flex items-center rounded px-1 py-0.5 text-[9px] font-semibold"
+                      style={{
+                        background: isDark ? item.darkBg : item.lightBg,
+                        color: isDark ? item.darkText : item.lightText,
+                      }}
+                    >
+                      {item.range}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </>
           )}
         </div>
 
@@ -428,12 +450,17 @@ const AccountRetentionFunnelCard: React.FC = () => {
         {!isAccountFunnelLoading &&
           !isAccountFunnelError &&
           lastCompleteCohort && (
-            <p className="w-full text-[10px] text-gray-400 dark:text-gray-500 text-right leading-none pb-0.5">
-              {t("accountRetentionFunnelCard.basedOnLatestCohort")} ·{" "}
-              {moment(lastCompleteCohort.cohort_month, "YYYY-MM").format(
-                "MMM YYYY"
-              )}
-            </p>
+            <div className="w-full flex items-end justify-between pb-0.5">
+              <span className="text-[10px] text-gray-400 dark:text-gray-500 leading-none">
+                {t("accountRetentionFunnelCard.dashNote")}
+              </span>
+              <span className="text-[10px] text-gray-400 dark:text-gray-500 text-right leading-none">
+                {t("accountRetentionFunnelCard.basedOnLatestCohort")} ·{" "}
+                {moment(lastCompleteCohort.cohort_month, "YYYY-MM")
+                  .locale(locale)
+                  .format("MMM YYYY")}
+              </span>
+            </div>
           )}
       </div>
 
