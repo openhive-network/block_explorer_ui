@@ -4,6 +4,7 @@ import { Loader2, Download } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import ReportDialogHeader from "@/components/ui/ReportDialogHeader";
 import DataExport from "@/components/DataExport";
+import { spacesToUnderscores } from "@/utils/StringUtils";
 import {
   Select,
   SelectContent,
@@ -99,11 +100,11 @@ const DailyActiveUsersFullChartDialog: React.FC<
   const exportData = useMemo(
     () =>
       chartData.map((d) => ({
-        period: d.period,
-        active_accounts: d.active_accounts,
-        operations: d.operations,
+        [t("common.date")]: d.period,
+        [t("dailyActiveUsersCard.activeAccounts")]: d.active_accounts,
+        [t("dailyActiveUsersCard.operations")]: d.operations,
       })),
-    [chartData]
+    [chartData, t]
   );
 
   useEffect(() => {
@@ -173,7 +174,9 @@ const DailyActiveUsersFullChartDialog: React.FC<
             actions={
               <DataExport
                 data={exportData}
-                filename="daily_active_users.csv"
+                filename={`${spacesToUnderscores(
+                  t("widgets.dailyActiveUsersName")
+                )}.csv`}
                 skipColumnSelection
               >
                 <button

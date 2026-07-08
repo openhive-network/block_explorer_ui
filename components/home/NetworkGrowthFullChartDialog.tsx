@@ -4,6 +4,7 @@ import { Loader2, Download } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import ReportDialogHeader from "@/components/ui/ReportDialogHeader";
 import DataExport from "@/components/DataExport";
+import { spacesToUnderscores } from "@/utils/StringUtils";
 import {
   Select,
   SelectContent,
@@ -53,11 +54,11 @@ const NetworkGrowthFullChartDialog: React.FC<
   const exportData = useMemo(
     () =>
       (walletStats ?? []).map((d) => ({
-        date: moment(d.date).format("YYYY-MM-DD"),
-        new_wallets: d.new_wallets,
-        total_wallets: d.total_wallets,
+        [t("common.date")]: moment(d.date).format("YYYY-MM-DD"),
+        [t("networkGrowthCard.newAccounts")]: d.new_wallets,
+        [t("networkGrowthCard.totalAccounts")]: d.total_wallets,
       })),
-    [walletStats]
+    [walletStats, t]
   );
 
   useEffect(() => {
@@ -117,7 +118,9 @@ const NetworkGrowthFullChartDialog: React.FC<
             actions={
               <DataExport
                 data={exportData}
-                filename="network_growth.csv"
+                filename={`${spacesToUnderscores(
+                  t("widgets.networkGrowthName")
+                )}.csv`}
                 skipColumnSelection
               >
                 <button

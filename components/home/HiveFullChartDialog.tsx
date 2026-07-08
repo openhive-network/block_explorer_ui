@@ -8,6 +8,7 @@ import ReportDialogHeader from "@/components/ui/ReportDialogHeader";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import DataExport from "@/components/DataExport";
+import { spacesToUnderscores } from "@/utils/StringUtils";
 import MarketHistoryChart from "./MarketHistoryChart";
 import DateTimePicker from "../DateTimePicker";
 import CustomShapeBarChart from "./CandleStickChartHive";
@@ -86,19 +87,19 @@ const HiveFullChartDialog: React.FC<HiveFullChartDialogProps> = ({
   const exportData = useMemo(
     () =>
       (marketHistory?.buckets ?? []).map((b) => ({
-        period: b.open,
-        hive_open: b.hive.open,
-        hive_high: b.hive.high,
-        hive_low: b.hive.low,
-        hive_close: b.hive.close,
-        hive_volume: b.hive.volume,
-        non_hive_open: b.non_hive.open,
-        non_hive_high: b.non_hive.high,
-        non_hive_low: b.non_hive.low,
-        non_hive_close: b.non_hive.close,
-        non_hive_volume: b.non_hive.volume,
+        [t("common.date")]: b.open,
+        [t("hiveFullChartDialog.hiveOpen")]: b.hive.open,
+        [t("hiveFullChartDialog.hiveHigh")]: b.hive.high,
+        [t("hiveFullChartDialog.hiveLow")]: b.hive.low,
+        [t("hiveFullChartDialog.hiveClose")]: b.hive.close,
+        [t("hiveFullChartDialog.hiveVolume")]: b.hive.volume,
+        [t("hiveFullChartDialog.hbdOpen")]: b.non_hive.open,
+        [t("hiveFullChartDialog.hbdHigh")]: b.non_hive.high,
+        [t("hiveFullChartDialog.hbdLow")]: b.non_hive.low,
+        [t("hiveFullChartDialog.hbdClose")]: b.non_hive.close,
+        [t("hiveFullChartDialog.hbdVolume")]: b.non_hive.volume,
       })),
-    [marketHistory]
+    [marketHistory, t]
   );
 
   return (
@@ -111,7 +112,9 @@ const HiveFullChartDialog: React.FC<HiveFullChartDialogProps> = ({
             actions={
               <DataExport
                 data={exportData}
-                filename="hive_market_history.csv"
+                filename={`${spacesToUnderscores(
+                  t("widgets.hivePriceChartName")
+                )}.csv`}
                 skipColumnSelection
               >
                 <button
