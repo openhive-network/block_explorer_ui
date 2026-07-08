@@ -206,6 +206,8 @@
   "networkEngagementCard.avg30d": "30D avg",
   "networkEngagementCard.latest": "latest",
   "networkEngagementCard.last30Days": "Last 30 Days",
+  "networkEngagementCard.toggleDepth": "Depth",
+  "networkEngagementCard.toggleHealth": "Ghost-posting",
   "networkEngagementFullChartDialog.title": "Engagement Quality",
   "networkEngagementFullChartDialog.subtitle": "Votes and comments per post, and ghost-posting rates over time",
   "networkEngagementFullChartDialog.granularity": "Granularity",
