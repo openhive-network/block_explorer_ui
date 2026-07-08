@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import SearchRanges from "../searchRanges/SearchRanges";
 import useSearchRanges from "@/hooks/common/useSearchRanges";
 import DataExport from "@/components/DataExport";
+import { spacesToUnderscores } from "@/utils/StringUtils";
 import NetworkEngagementChart, {
   EngagementGranularity,
 } from "./NetworkEngagementChart";
@@ -67,14 +68,14 @@ const NetworkEngagementFullChartDialog: React.FC<
   const exportData = useMemo(
     () =>
       chartData.map((d) => ({
-        period: d.period,
-        total_posts: d.total_posts,
-        avg_votes_per_post: d.avg_votes_per_post,
-        avg_comments_per_post: d.avg_comments_per_post,
-        zero_vote_post_pct: d.zero_vote_post_pct,
-        zero_comment_post_pct: d.zero_comment_post_pct,
+        [t("common.date")]: d.period,
+        [t("networkEngagementKpiStrip.totalPosts")]: d.total_posts,
+        [t("networkEngagementKpiStrip.avgVotes")]: d.avg_votes_per_post,
+        [t("networkEngagementKpiStrip.avgComments")]: d.avg_comments_per_post,
+        [t("networkEngagementCard.zeroVotePct")]: d.zero_vote_post_pct,
+        [t("networkEngagementCard.zeroCommentPct")]: d.zero_comment_post_pct,
       })),
-    [chartData]
+    [chartData, t]
   );
 
   useEffect(() => {
@@ -131,7 +132,9 @@ const NetworkEngagementFullChartDialog: React.FC<
             actions={
               <DataExport
                 data={exportData}
-                filename="engagement_quality.csv"
+                filename={`${spacesToUnderscores(
+                  t("widgets.networkEngagementName")
+                )}.csv`}
                 skipColumnSelection
               >
                 <button

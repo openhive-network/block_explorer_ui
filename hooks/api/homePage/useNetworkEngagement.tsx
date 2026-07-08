@@ -17,6 +17,8 @@ const useNetworkEngagement = (
     queryFn: () =>
       fetchingService.getNetworkEngagement(fromBlock, toBlock, granularity),
     enabled,
+    keepPreviousData: true,
+    refetchOnWindowFocus: false,
   });
 
   return {

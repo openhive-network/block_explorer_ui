@@ -12,8 +12,10 @@ import moment from "moment";
 import dynamic from "next/dynamic";
 import NetworkEngagementChart, {
   isEngagementBucketProvisional,
+  EngagementVariant,
 } from "./NetworkEngagementChart";
 import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
+import SegmentedToggle from "@/components/ui/SegmentedToggle";
 import { useI18n } from "../../i18n/i18n";
 import useNetworkEngagement from "@/hooks/api/homePage/useNetworkEngagement";
 import { cn } from "@/lib/utils";
@@ -50,8 +52,13 @@ const TrendBadge: React.FC<{
 const NetworkEngagementCard = () => {
   const { t, locale } = useI18n();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [variant, setVariant] = useState<EngagementVariant>("health");
 
-  const fromDate = useMemo(() => moment().subtract(30, "days").toDate(), []);
+  const todayKey = moment().format("YYYY-MM-DD");
+  const fromDate = useMemo(
+    () => moment(todayKey).subtract(30, "days").toDate(),
+    [todayKey]
+  );
 
   const {
     networkEngagement,
@@ -214,9 +221,26 @@ const NetworkEngagementCard = () => {
         </div>
 
         <div className="bg-explorer-extra-light-gray rounded-lg p-2.5 shadow-md flex flex-col">
-          <h3 className="mb-1 text-[10px] font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">
-            {t("networkEngagementCard.last30Days")}
-          </h3>
+          <div className="mb-1 flex items-center justify-between gap-2">
+            <h3 className="text-[10px] font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+              {t("networkEngagementCard.last30Days")}
+            </h3>
+            <SegmentedToggle
+              ariaLabel={t("widgets.networkEngagementName")}
+              value={variant}
+              onChange={setVariant}
+              options={[
+                {
+                  value: "depth",
+                  label: t("networkEngagementCard.toggleDepth"),
+                },
+                {
+                  value: "health",
+                  label: t("networkEngagementCard.toggleHealth"),
+                },
+              ]}
+            />
+          </div>
           {isNetworkEngagementLoading ? (
             <div className="flex items-center justify-center h-[190px]">
               <Loader2 className="animate-spin h-5 w-5" />
@@ -226,7 +250,7 @@ const NetworkEngagementCard = () => {
               <NetworkEngagementChart
                 data={chartData}
                 granularity="day"
-                variant="health"
+                variant={variant}
                 tickCount={4}
                 dateFormat="MMM D"
                 compact
