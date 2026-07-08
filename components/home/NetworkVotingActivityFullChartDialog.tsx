@@ -4,6 +4,7 @@ import { Loader2, Download } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import ReportDialogHeader from "@/components/ui/ReportDialogHeader";
 import DataExport from "@/components/DataExport";
+import { spacesToUnderscores } from "@/utils/StringUtils";
 import {
   Select,
   SelectContent,
@@ -71,15 +72,15 @@ const NetworkVotingActivityFullChartDialog: React.FC<
   const exportData = useMemo(
     () =>
       (voteStats ?? []).map((row) => ({
-        period: row.period,
-        total_votes: row.total_votes,
-        upvotes: row.upvotes,
-        downvotes: row.downvotes,
-        unvotes: row.unvotes,
-        self_votes: row.self_votes,
-        unique_voters: row.unique_voters,
+        [t("common.date")]: row.period,
+        [t("votingActivityChart.totalVotes")]: row.total_votes,
+        [t("votingActivityChart.upvotes")]: row.upvotes,
+        [t("votingActivityChart.downvotes")]: row.downvotes,
+        [t("votingActivityChart.unvotes")]: row.unvotes,
+        [t("votingActivityChart.selfVotes")]: row.self_votes,
+        [t("votingActivityChart.uniqueVoters")]: row.unique_voters,
       })),
-    [voteStats]
+    [voteStats, t]
   );
 
   const handleSearch = async () => {
@@ -128,7 +129,9 @@ const NetworkVotingActivityFullChartDialog: React.FC<
             actions={
               <DataExport
                 data={exportData}
-                filename="voting_activity.csv"
+                filename={`${spacesToUnderscores(
+                  t("widgets.votingActivityName")
+                )}.csv`}
                 skipColumnSelection
               >
                 <button

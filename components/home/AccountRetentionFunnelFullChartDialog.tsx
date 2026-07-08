@@ -4,6 +4,7 @@ import { Loader2, Info, Download } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import ReportDialogHeader from "@/components/ui/ReportDialogHeader";
 import DataExport from "@/components/DataExport";
+import { spacesToUnderscores } from "@/utils/StringUtils";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import SearchRanges from "../searchRanges/SearchRanges";
@@ -122,16 +123,16 @@ const AccountRetentionFunnelFullChartDialog: React.FC<
   const exportData = useMemo(
     () =>
       sortedData.map((d) => ({
-        cohort_month: d.cohort_month,
-        new_accounts: d.new_accounts,
-        active_at_7d: d.active_at_7d,
-        pct_7d: d.pct_7d,
-        active_at_30d: d.active_at_30d,
-        pct_30d: d.pct_30d,
-        active_at_90d: d.active_at_90d,
-        pct_90d: d.pct_90d,
+        [t("accountRetentionFunnelFullChart.cohortMonth")]: d.cohort_month,
+        [t("accountRetentionFunnelCard.newAccounts")]: d.new_accounts,
+        [t("accountRetentionFunnelFullChart.activeAt7d")]: d.active_at_7d,
+        [t("accountRetentionFunnelFullChart.pct7d")]: d.pct_7d,
+        [t("accountRetentionFunnelFullChart.activeAt30d")]: d.active_at_30d,
+        [t("accountRetentionFunnelFullChart.pct30d")]: d.pct_30d,
+        [t("accountRetentionFunnelFullChart.activeAt90d")]: d.active_at_90d,
+        [t("accountRetentionFunnelFullChart.pct90d")]: d.pct_90d,
       })),
-    [sortedData]
+    [sortedData, t]
   );
 
   useEffect(() => {
@@ -192,7 +193,9 @@ const AccountRetentionFunnelFullChartDialog: React.FC<
             actions={
               <DataExport
                 data={exportData}
-                filename="account_retention.csv"
+                filename={`${spacesToUnderscores(
+                  t("widgets.accountRetentionFunnelName")
+                )}.csv`}
                 skipColumnSelection
               >
                 <button

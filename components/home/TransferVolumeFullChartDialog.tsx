@@ -3,6 +3,7 @@ import moment from "moment";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import ReportDialogHeader from "@/components/ui/ReportDialogHeader";
 import DataExport from "@/components/DataExport";
+import { spacesToUnderscores } from "@/utils/StringUtils";
 import {
   Select,
   SelectContent,
@@ -99,15 +100,20 @@ const TransferVolumeFullChartDialog: React.FC<TransferVolumeModalProps> = ({
   const exportData = useMemo(
     () =>
       (currentChartData ?? []).map((item) => ({
-        period: item.date,
-        coin: coinType,
-        total_transfer_amount: naiToDecimal(item.total_transfer_amount),
-        transfer_count: item.transfer_count,
-        average_transfer_amount: naiToDecimal(item.average_transfer_amount),
-        maximum_transfer_amount: naiToDecimal(item.maximum_transfer_amount),
-        minimum_transfer_amount: naiToDecimal(item.minimum_transfer_amount),
+        [t("common.date")]: item.date,
+        [t("transferVolumeFullChartDialog.coin")]: coinType,
+        [t("transferVolumeCard.totalTransferAmount")]: naiToDecimal(
+          item.total_transfer_amount
+        ),
+        [t("transferVolumeCard.transferCount")]: item.transfer_count,
+        [t("transferVolumeFullChartDialog.averageTransferAmount")]:
+          naiToDecimal(item.average_transfer_amount),
+        [t("transferVolumeFullChartDialog.maximumTransferAmount")]:
+          naiToDecimal(item.maximum_transfer_amount),
+        [t("transferVolumeFullChartDialog.minimumTransferAmount")]:
+          naiToDecimal(item.minimum_transfer_amount),
       })),
-    [currentChartData, coinType]
+    [currentChartData, coinType, t]
   );
 
   // Sync coin type when card selection changes and dialog reopens
@@ -190,7 +196,9 @@ const TransferVolumeFullChartDialog: React.FC<TransferVolumeModalProps> = ({
             actions={
               <DataExport
                 data={exportData}
-                filename="transfer_volume.csv"
+                filename={`${spacesToUnderscores(
+                  t("widgets.transferVolumeName")
+                )}.csv`}
                 skipColumnSelection
               >
                 <button

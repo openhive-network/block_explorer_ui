@@ -8,6 +8,14 @@ export const addSpacesAndCapitalizeFirst = (text: string) => {
   return capitalizeFirst(text).replaceAll("_", " ");
 };
 
+/**
+ * Replaces runs of whitespace with single underscores. Used to turn a
+ * translated, human-readable label into a safe export filename token
+ * (e.g. "Content Volume" -> "Content_Volume").
+ */
+export const spacesToUnderscores = (text: string): string =>
+  text.trim().replace(/\s+/g, "_");
+
 export const isJson = (item: unknown) => {
   try {
     JSON.parse(item as string);

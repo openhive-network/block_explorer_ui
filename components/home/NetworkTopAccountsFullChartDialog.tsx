@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/table";
 import SearchRanges from "../searchRanges/SearchRanges";
 import DataExport from "@/components/DataExport";
+import { spacesToUnderscores } from "@/utils/StringUtils";
 import useSearchRanges from "@/hooks/common/useSearchRanges";
 import { useI18n } from "@/i18n/i18n";
 import { cn, formatNumber } from "@/lib/utils";
@@ -425,7 +426,9 @@ const NetworkTopAccountsFullChartDialog: React.FC<
             actions={
               <DataExport
                 data={exportData}
-                filename={`top_accounts_${metric}.csv`}
+                filename={`${spacesToUnderscores(
+                  t("widgets.topAccountsName")
+                )}_${metric}.csv`}
                 skipColumnSelection
               >
                 <button

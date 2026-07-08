@@ -4,6 +4,7 @@ import { Loader2, Download } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import ReportDialogHeader from "@/components/ui/ReportDialogHeader";
 import DataExport from "@/components/DataExport";
+import { spacesToUnderscores } from "@/utils/StringUtils";
 import {
   Select,
   SelectContent,
@@ -120,14 +121,14 @@ const HpMomentumFullChartDialog: React.FC<HpMomentumFullChartDialogProps> = ({
   const exportData = useMemo(
     () =>
       chartData.map((d) => ({
-        period: moment(d.date).format("YYYY-MM-DD"),
-        unit: unit.toUpperCase(),
-        power_up: d.power_up,
-        power_down_fill: d.power_down_fill,
-        power_down_init: d.power_down_init,
-        net: d.net,
+        [t("common.date")]: moment(d.date).format("YYYY-MM-DD"),
+        [t("hpMomentumFullChartDialog.unit")]: unit.toUpperCase(),
+        [t("hpMomentumChart.poweredUp")]: d.power_up,
+        [t("hpMomentumChart.poweredDown")]: d.power_down_fill,
+        [t("hpMomentumChart.scheduledDown")]: d.power_down_init,
+        [t("hpMomentumChart.netFlow")]: d.net,
       })),
-    [chartData, unit]
+    [chartData, unit, t]
   );
 
   const unitOptions: { key: VestingDisplayUnit; label: string }[] = [
@@ -145,7 +146,9 @@ const HpMomentumFullChartDialog: React.FC<HpMomentumFullChartDialogProps> = ({
             actions={
               <DataExport
                 data={exportData}
-                filename="hp_momentum.csv"
+                filename={`${spacesToUnderscores(
+                  t("widgets.hpMomentumName")
+                )}.csv`}
                 skipColumnSelection
               >
                 <button

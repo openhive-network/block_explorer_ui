@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import ReportDialogHeader from "@/components/ui/ReportDialogHeader";
 import DataExport from "@/components/DataExport";
+import { spacesToUnderscores } from "@/utils/StringUtils";
 import {
   Select,
   SelectContent,
@@ -120,14 +121,16 @@ const TransactionStatisticsFullChartDialog: React.FC<
   const exportData = useMemo(
     () =>
       (currentChartData ?? []).map((item) => ({
-        period: moment(item.date).format("YYYY-MM-DD"),
-        trx_count: item.trx_count,
-        avg_trx: item.avg_trx,
-        min_trx: item.min_trx,
-        max_trx: item.max_trx,
-        last_block_num: item.last_block_num,
+        [t("common.date")]: moment(item.date).format("YYYY-MM-DD"),
+        [t("transactionStatisticsFullChartDialog.transactions")]:
+          item.trx_count,
+        [t("transactionStatisticsChart.avgTrxs")]: item.avg_trx,
+        [t("transactionStatisticsChart.minTrxs")]: item.min_trx,
+        [t("transactionStatisticsChart.maxTrxs")]: item.max_trx,
+        [t("transactionStatisticsFullChartDialog.lastBlock")]:
+          item.last_block_num,
       })),
-    [currentChartData]
+    [currentChartData, t]
   );
 
   const handleGranularityChange = (value: "daily" | "monthly" | "yearly") => {
@@ -156,7 +159,9 @@ const TransactionStatisticsFullChartDialog: React.FC<
             actions={
               <DataExport
                 data={exportData}
-                filename="transaction_statistics.csv"
+                filename={`${spacesToUnderscores(
+                  t("widgets.txStatsName")
+                )}.csv`}
                 skipColumnSelection
               >
                 <button

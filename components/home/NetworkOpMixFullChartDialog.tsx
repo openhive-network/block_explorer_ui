@@ -8,6 +8,7 @@ import React, {
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import ReportDialogHeader from "@/components/ui/ReportDialogHeader";
 import DataExport from "@/components/DataExport";
+import { spacesToUnderscores } from "@/utils/StringUtils";
 import {
   Select,
   SelectContent,
@@ -163,12 +164,14 @@ const NetworkOpMixFullChartDialog: React.FC<
     return mixData.topOps.map((op) => {
       const count = mixData.aggregateCounts[op] ?? 0;
       return {
-        op_type: getOperationTypeForDisplay(op),
-        count,
-        share_pct: Number(((count / displayedTotal) * 100).toFixed(2)),
+        [t("networkOpMixDialog.opType")]: getOperationTypeForDisplay(op),
+        [t("networkOpMixDialog.count")]: count,
+        [t("networkOpMixDialog.sharePct")]: Number(
+          ((count / displayedTotal) * 100).toFixed(2)
+        ),
       };
     });
-  }, [mixData]);
+  }, [mixData, t]);
 
   const groupedBreakdown = useMemo(() => {
     if (!dayBreakdown) return null;
@@ -351,7 +354,7 @@ const NetworkOpMixFullChartDialog: React.FC<
             actions={
               <DataExport
                 data={exportData}
-                filename="operations_by_type.csv"
+                filename={`${spacesToUnderscores(t("widgets.opMixName"))}.csv`}
                 skipColumnSelection
               >
                 <button
