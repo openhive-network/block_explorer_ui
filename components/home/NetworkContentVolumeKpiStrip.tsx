@@ -21,23 +21,6 @@ const NetworkContentVolumeKpiStrip: React.FC<
 
   if (data.length === 0) return null;
 
-  const totalPosts = data.reduce((s, d) => s + d.posts, 0);
-  const totalComments = data.reduce((s, d) => s + d.comments, 0);
-  const avgAuthors = Math.round(
-    data.reduce((s, d) => s + d.unique_authors, 0) / data.length
-  );
-  const commentsPerPost =
-    totalPosts > 0
-      ? (totalComments / totalPosts).toLocaleString(locale, {
-          maximumFractionDigits: 1,
-        })
-      : "—";
-
-  const peakEntry = data.reduce((max, d) =>
-    d[trendMetric] > max[trendMetric] ? d : max
-  );
-
-  // Trend excludes the current incomplete period (day/week/month)
   const currentPeriodStart = moment()
     .startOf(
       granularity === "day"
@@ -47,8 +30,26 @@ const NetworkContentVolumeKpiStrip: React.FC<
           : "month"
     )
     .format("YYYY-MM-DD");
-  const completedData = data.filter((d) => d.period < currentPeriodStart);
-  const trendPct = computeTrendPct(completedData.map((d) => d[trendMetric]));
+  const completed = data.filter((d) => d.period < currentPeriodStart);
+  const base = completed.length ? completed : data;
+
+  const totalPosts = base.reduce((s, d) => s + d.posts, 0);
+  const totalComments = base.reduce((s, d) => s + d.comments, 0);
+  const avgAuthors = Math.round(
+    base.reduce((s, d) => s + d.unique_authors, 0) / base.length
+  );
+  const commentsPerPost =
+    totalPosts > 0
+      ? (totalComments / totalPosts).toLocaleString(locale, {
+          maximumFractionDigits: 1,
+        })
+      : "—";
+
+  const peakEntry = base.reduce((max, d) =>
+    d[trendMetric] > max[trendMetric] ? d : max
+  );
+
+  const trendPct = computeTrendPct(base.map((d) => d[trendMetric]));
   const trendSign: 1 | -1 | 0 =
     trendPct === null ? 0 : trendPct > 0 ? 1 : trendPct < 0 ? -1 : 0;
   const TrendIcon =
@@ -101,7 +102,7 @@ const NetworkContentVolumeKpiStrip: React.FC<
         sub={`${formatCompact(peakEntry[trendMetric], locale)} ${trendMetricLabel}`}
       />
       <KpiTile
-        label={t("networkContentVolumeKpiStrip.trend")}
+        label={`${t("networkContentVolumeKpiStrip.trend")} · ${trendMetricLabel}`}
         value={
           <span className={cn("inline-flex items-center gap-1", trendColor)}>
             <TrendIcon size={13} />

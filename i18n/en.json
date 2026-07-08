@@ -212,7 +212,6 @@
   "networkContentVolumeCard.avg30d": "avg/day (30 D)",
   "networkContentVolumeCard.avgPerDay": "avg/day",
   "networkContentVolumeCard.total30d": "30D total",
-  "networkContentVolumeCard.latest": "latest",
   "networkContentVolumeCard.last30Days": "Last 30 Days",
   "networkContentVolumeFullChartDialog.title": "Content Volume",
   "networkContentVolumeFullChartDialog.subtitle": "Posts, comments, and unique authors created over time",

@@ -203,7 +203,6 @@
   "networkContentVolumeCard.avg30d": "平均/日 (30日)",
   "networkContentVolumeCard.avgPerDay": "平均/日",
   "networkContentVolumeCard.total30d": "30日合計",
-  "networkContentVolumeCard.latest": "最新",
   "networkContentVolumeCard.last30Days": "過去30日間",
   "networkContentVolumeFullChartDialog.title": "コンテンツ量",
   "networkContentVolumeFullChartDialog.subtitle": "時系列での投稿、コメント、およびユニーク作成者数",

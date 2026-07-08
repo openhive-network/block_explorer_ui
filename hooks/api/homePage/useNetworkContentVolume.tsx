@@ -22,6 +22,8 @@ const useNetworkContentVolume = (
           granularity
         ),
       enabled,
+      keepPreviousData: true,
+      refetchOnWindowFocus: false,
     }
   );
 

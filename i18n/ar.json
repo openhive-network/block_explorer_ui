@@ -203,7 +203,6 @@
   "networkContentVolumeCard.avg30d": "متوسط/يوم (30 يومًا)",
   "networkContentVolumeCard.avgPerDay": "متوسط/يوم",
   "networkContentVolumeCard.total30d": "إجمالي 30 يومًا",
-  "networkContentVolumeCard.latest": "الأحدث",
   "networkContentVolumeCard.last30Days": "آخر 30 يومًا",
   "networkContentVolumeFullChartDialog.title": "حجم المحتوى",
   "networkContentVolumeFullChartDialog.subtitle": "المنشورات والتعليقات والمؤلفون الفريدون المُنشأون عبر الزمن",
