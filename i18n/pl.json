@@ -203,7 +203,6 @@
   "networkContentVolumeCard.avg30d": "śr./dzień (30 D)",
   "networkContentVolumeCard.avgPerDay": "śr./dzień",
   "networkContentVolumeCard.total30d": "łącznie 30D",
-  "networkContentVolumeCard.latest": "najnowsze",
   "networkContentVolumeCard.last30Days": "Ostatnie 30 dni",
   "networkContentVolumeFullChartDialog.title": "Wolumen treści",
   "networkContentVolumeFullChartDialog.subtitle": "Posty, komentarze i unikalni autorzy tworzeni w czasie",

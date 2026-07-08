@@ -201,7 +201,6 @@
   "networkContentVolumeCard.avg30d": "media/giorno (30 G)",
   "networkContentVolumeCard.avgPerDay": "media/giorno",
   "networkContentVolumeCard.total30d": "totale 30G",
-  "networkContentVolumeCard.latest": "ultimo",
   "networkContentVolumeCard.last30Days": "Ultimi 30 Giorni",
   "networkContentVolumeFullChartDialog.title": "Volume di Contenuti",
   "networkContentVolumeFullChartDialog.subtitle": "Post, commenti e autori unici creati nel tempo",

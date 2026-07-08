@@ -191,7 +191,6 @@
   "networkContentVolumeCard.avg30d": "medie/zi (30 Z)",
   "networkContentVolumeCard.avgPerDay": "medie/zi",
   "networkContentVolumeCard.total30d": "total 30Z",
-  "networkContentVolumeCard.latest": "cel mai recent",
   "networkContentVolumeCard.last30Days": "Ultimele 30 de zile",
   "networkContentVolumeFullChartDialog.title": "Volum de Conținut",
   "networkContentVolumeFullChartDialog.subtitle": "Postări, comentarii și autori unici creați în timp",

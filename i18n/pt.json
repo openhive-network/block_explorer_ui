@@ -203,7 +203,6 @@
   "networkContentVolumeCard.avg30d": "méd./dia (30 D)",
   "networkContentVolumeCard.avgPerDay": "méd./dia",
   "networkContentVolumeCard.total30d": "total 30D",
-  "networkContentVolumeCard.latest": "mais recente",
   "networkContentVolumeCard.last30Days": "Últimos 30 Dias",
   "networkContentVolumeFullChartDialog.title": "Volume de Conteúdo",
   "networkContentVolumeFullChartDialog.subtitle": "Publicações, comentários e autores únicos criados ao longo do tempo",

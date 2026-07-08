@@ -191,7 +191,6 @@
   "networkContentVolumeCard.avg30d": "Ø/Tag (30 T)",
   "networkContentVolumeCard.avgPerDay": "Ø/Tag",
   "networkContentVolumeCard.total30d": "30T gesamt",
-  "networkContentVolumeCard.latest": "aktuell",
   "networkContentVolumeCard.last30Days": "Letzte 30 Tage",
   "networkContentVolumeFullChartDialog.title": "Inhaltsvolumen",
   "networkContentVolumeFullChartDialog.subtitle": "Beiträge, Kommentare und einzelne Autoren im Zeitverlauf",

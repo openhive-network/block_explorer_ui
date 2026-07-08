@@ -203,7 +203,6 @@
   "networkContentVolumeCard.avg30d": "일평균 (30일)",
   "networkContentVolumeCard.avgPerDay": "일평균",
   "networkContentVolumeCard.total30d": "30일 합계",
-  "networkContentVolumeCard.latest": "최신",
   "networkContentVolumeCard.last30Days": "최근 30일",
   "networkContentVolumeFullChartDialog.title": "콘텐츠 볼륨",
   "networkContentVolumeFullChartDialog.subtitle": "시간에 따라 생성된 게시글, 댓글 및 고유 작성자",

@@ -191,7 +191,6 @@
   "networkContentVolumeCard.avg30d": "平均/天 (30 天)",
   "networkContentVolumeCard.avgPerDay": "平均/天",
   "networkContentVolumeCard.total30d": "30天总计",
-  "networkContentVolumeCard.latest": "最新",
   "networkContentVolumeCard.last30Days": "过去30天",
   "networkContentVolumeFullChartDialog.title": "内容量",
   "networkContentVolumeFullChartDialog.subtitle": "一段时间内创建的帖子、评论和独立作者数",

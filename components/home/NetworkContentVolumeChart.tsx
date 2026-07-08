@@ -99,6 +99,7 @@ const NetworkContentVolumeChart: React.FC<NetworkContentVolumeChartProps> = ({
     const vals = chartData.map((d) => d.unique_authors);
     const min = Math.min(...vals);
     const max = Math.max(...vals);
+    if (max === min) return [Math.max(0, min - 1), max + 1];
     const pad = (max - min) * 0.12;
     return [Math.max(0, Math.floor(min - pad)), Math.ceil(max + pad * 0.5)];
   }, [chartData]);
@@ -128,19 +129,24 @@ const NetworkContentVolumeChart: React.FC<NetworkContentVolumeChartProps> = ({
     <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 pt-2 text-[11px]">
       {legendItems.map((it) => {
         const off = hidden.has(it.key);
+        const isLine = it.key === "unique_authors";
         return (
           <button
             type="button"
             key={it.key}
             onClick={() => toggle(it.key)}
             aria-pressed={!off}
+            title={it.label}
             className={cn(
-              "group inline-flex cursor-pointer select-none items-center gap-1.5 transition-opacity",
+              "group inline-flex cursor-pointer select-none items-center gap-1.5 rounded transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500",
               off ? "opacity-40 hover:opacity-70" : "opacity-100"
             )}
           >
             <span
-              className="inline-block h-2 w-2 rounded-[2px]"
+              className={cn(
+                "inline-block",
+                isLine ? "h-[3px] w-3.5 rounded-full" : "h-2 w-2 rounded-[2px]"
+              )}
               style={{ backgroundColor: it.color }}
             />
             <span
@@ -162,7 +168,7 @@ const NetworkContentVolumeChart: React.FC<NetworkContentVolumeChartProps> = ({
     payload,
   }: {
     active?: boolean;
-    payload?: any[];
+    payload?: { payload: Hive.NetworkContentVolumeResponse }[];
   }) => {
     if (!active || !payload?.length) return null;
     const { period, posts, comments, unique_authors } = payload[0].payload;

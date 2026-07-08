@@ -6,6 +6,7 @@ import {
   Users,
   TrendingUp,
   TrendingDown,
+  Minus,
 } from "lucide-react";
 import moment from "moment";
 import dynamic from "next/dynamic";
@@ -25,15 +26,17 @@ const TrendBadge: React.FC<{ value: number; locale: string }> = ({
   value,
   locale,
 }) => {
-  const isPositive = value > 0;
-  const Icon = isPositive ? TrendingUp : TrendingDown;
+  const sign = value > 0 ? 1 : value < 0 ? -1 : 0;
+  const Icon = sign > 0 ? TrendingUp : sign < 0 ? TrendingDown : Minus;
   return (
     <span
       className={cn(
         "inline-flex items-center gap-0.5 text-[11px] font-semibold leading-none",
-        isPositive
+        sign > 0
           ? "text-explorer-light-green"
-          : "text-rose-600 dark:text-rose-400"
+          : sign < 0
+            ? "text-rose-600 dark:text-rose-400"
+            : "text-gray-500"
       )}
     >
       <Icon className="h-3 w-3" />
@@ -46,7 +49,11 @@ const NetworkContentVolumeCard = () => {
   const { t, locale } = useI18n();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const fromDate = useMemo(() => moment().subtract(30, "days").toDate(), []);
+  const todayKey = moment().format("YYYY-MM-DD");
+  const fromDate = useMemo(
+    () => moment(todayKey).subtract(30, "days").toDate(),
+    [todayKey]
+  );
 
   const {
     networkContentVolume,
@@ -66,11 +73,6 @@ const NetworkContentVolumeCard = () => {
     const todayStr = moment().format("YYYY-MM-DD");
     return chartData.filter((d) => d.period < todayStr);
   }, [chartData]);
-
-  const lastCompletedEntry = useMemo(
-    () => completedChartData[completedChartData.length - 1] ?? null,
-    [completedChartData]
-  );
 
   const totals = useMemo(() => {
     if (!completedChartData.length)
@@ -110,10 +112,6 @@ const NetworkContentVolumeCard = () => {
     [completedChartData]
   );
 
-  const lastDateLabel = lastCompletedEntry
-    ? moment(lastCompletedEntry.period).format("MMM D")
-    : "";
-
   const kpis: {
     key: string;
     labelKey: string;
@@ -121,7 +119,6 @@ const NetworkContentVolumeCard = () => {
     Icon: typeof FileText;
     headline: number | null;
     avg: number | null;
-    last: number | null;
     trend: number | null;
   }[] = [
     {
@@ -131,7 +128,6 @@ const NetworkContentVolumeCard = () => {
       Icon: FileText,
       headline: totals.posts,
       avg: totals.avgPosts,
-      last: lastCompletedEntry?.posts ?? null,
       trend: trendPosts,
     },
     {
@@ -141,7 +137,6 @@ const NetworkContentVolumeCard = () => {
       Icon: MessageSquare,
       headline: totals.comments,
       avg: totals.avgComments,
-      last: lastCompletedEntry?.comments ?? null,
       trend: trendComments,
     },
     {
@@ -153,7 +148,6 @@ const NetworkContentVolumeCard = () => {
       // headline, so no separate avg line is shown for this tile.
       headline: totals.avgAuthors,
       avg: null,
-      last: lastCompletedEntry?.unique_authors ?? null,
       trend: trendAuthors,
     },
   ];
@@ -174,36 +168,17 @@ const NetworkContentVolumeCard = () => {
       <div className="p-2 space-y-2">
         <div className="flex flex-wrap gap-2">
           {kpis.map(
-            ({
-              key,
-              labelKey,
-              qualifierKey,
-              Icon,
-              headline,
-              avg,
-              last,
-              trend,
-            }) => {
-              const subline = [
-                avg !== null
-                  ? `${avg.toLocaleString(locale)} ${t("networkContentVolumeCard.avgPerDay")}`
-                  : null,
-                last !== null
-                  ? `${t("networkContentVolumeCard.latest")} ${last.toLocaleString(locale)} (${lastDateLabel})`
-                  : null,
-              ]
-                .filter(Boolean)
-                .join(" · ");
+            ({ key, labelKey, qualifierKey, Icon, headline, avg, trend }) => {
               return (
                 <div
                   key={key}
-                  className="flex-1 min-w-[150px] bg-explorer-extra-light-gray rounded-lg p-2.5 shadow-md flex flex-col justify-center"
+                  className="flex-1 min-w-[150px] bg-explorer-extra-light-gray rounded-lg p-2.5 shadow-md flex flex-col justify-start"
                 >
                   <div className="flex items-center justify-between gap-1">
                     <h3 className="text-xs font-semibold uppercase tracking-wide text-explorer-dark-gray dark:text-text">
                       {t(labelKey)}
                     </h3>
-                    <span className="text-[10px] text-gray-400 whitespace-nowrap">
+                    <span className="text-[10px] font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400 whitespace-nowrap">
                       {t(qualifierKey)}
                     </span>
                   </div>
@@ -223,10 +198,13 @@ const NetworkContentVolumeCard = () => {
                           <TrendBadge value={trend} locale={locale} />
                         )}
                       </div>
-                      <p className="flex items-center gap-1 text-[11px] text-gray-500">
-                        <Icon className="h-3 w-3 shrink-0" />
-                        {subline}
-                      </p>
+                      {avg !== null && (
+                        <p className="mt-0.5 flex items-center gap-1 text-[11px] text-gray-500">
+                          <Icon className="h-3 w-3 shrink-0" />
+                          {avg.toLocaleString(locale)}{" "}
+                          {t("networkContentVolumeCard.avgPerDay")}
+                        </p>
+                      )}
                     </>
                   ) : (
                     <p className="text-gray-500 text-xs mt-1">
@@ -244,11 +222,11 @@ const NetworkContentVolumeCard = () => {
             {t("networkContentVolumeCard.last30Days")}
           </h3>
           {isNetworkContentVolumeLoading ? (
-            <div className="flex items-center justify-center h-[190px]">
+            <div className="flex items-center justify-center h-[215px]">
               <Loader2 className="animate-spin h-5 w-5" />
             </div>
           ) : (
-            <div className="h-[190px] overflow-hidden">
+            <div className="h-[215px] overflow-hidden">
               <NetworkContentVolumeChart
                 data={chartData}
                 tickCount={4}

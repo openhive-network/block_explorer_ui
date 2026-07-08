@@ -19,6 +19,7 @@ import NetworkContentVolumeChart from "./NetworkContentVolumeChart";
 import NetworkContentVolumeKpiStrip from "./NetworkContentVolumeKpiStrip";
 import useNetworkContentVolume from "@/hooks/api/homePage/useNetworkContentVolume";
 import { useI18n } from "../../i18n/i18n";
+import { spacesToUnderscores } from "@/utils/StringUtils";
 
 type Granularity = "day" | "week" | "month";
 
@@ -67,12 +68,12 @@ const NetworkContentVolumeFullChartDialog: React.FC<
   const exportData = useMemo(
     () =>
       chartData.map((d) => ({
-        period: d.period,
-        posts: d.posts,
-        comments: d.comments,
-        unique_authors: d.unique_authors,
+        [t("common.date")]: d.period,
+        [t("networkContentVolumeCard.posts")]: d.posts,
+        [t("networkContentVolumeCard.comments")]: d.comments,
+        [t("networkContentVolumeCard.authors")]: d.unique_authors,
       })),
-    [chartData]
+    [chartData, t]
   );
 
   useEffect(() => {
@@ -109,11 +110,15 @@ const NetworkContentVolumeFullChartDialog: React.FC<
   };
 
   const handleFilterClear = () => {
+    const thirtyDaysAgo = moment().subtract(30, "days").toDate();
+    const now = moment().toDate();
     setRangeSelectKey("lastTime");
     setTimeUnitSelectKey("days");
     setLastTimeUnitValue(30);
-    setFromDate(moment().subtract(30, "days").toDate());
-    setToDate(moment().toDate());
+    setFromDate(thirtyDaysAgo);
+    setToDate(now);
+    setStartDate(thirtyDaysAgo);
+    setEndDate(now);
     setGranularity("day");
   };
 
@@ -129,7 +134,7 @@ const NetworkContentVolumeFullChartDialog: React.FC<
             actions={
               <DataExport
                 data={exportData}
-                filename="network_content_volume.csv"
+                filename={`${spacesToUnderscores(t("widgets.networkContentVolumeName"))}.csv`}
                 skipColumnSelection
               >
                 <button
@@ -204,7 +209,7 @@ const NetworkContentVolumeFullChartDialog: React.FC<
           {/* Chart */}
           <div className="h-[55vh] w-full flex items-center justify-center">
             {isNetworkContentVolumeLoading ? (
-              <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />
+              <Loader2 className="animate-spin h-10 w-10 dark:text-white" />
             ) : isNetworkContentVolumeError ? (
               <p className="text-red-500 text-sm">
                 {t("common.errorLoadingData")}
