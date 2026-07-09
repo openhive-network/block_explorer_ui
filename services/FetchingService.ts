@@ -864,12 +864,16 @@ class FetchingService {
   async getTopHolders(
     coinType: "HIVE" | "HBD" | "VESTS",
     balanceType: "balance" | "savings_balance",
-    page: number
+    page: number,
+    minBalance?: number,
+    maxBalance?: number
   ): Promise<Hive.TopHoldersResponse> {
     return await this.extendedHiveChain!.restApi["balance-api"].topHolders({
       "coin-type": coinType,
       "balance-type": balanceType,
       page,
+      ...(minBalance !== undefined ? { "min-balance": minBalance } : {}),
+      ...(maxBalance !== undefined ? { "max-balance": maxBalance } : {}),
     });
   }
 

@@ -25,6 +25,7 @@ interface Props {
   locale: string;
   isRTL: boolean;
   t: (key: string, options?: Record<string, unknown>) => string;
+  onBucketClick?: (bucket: string) => void;
 }
 
 const NetworkHpDistributionChart: React.FC<Props> = ({
@@ -37,6 +38,7 @@ const NetworkHpDistributionChart: React.FC<Props> = ({
   locale,
   isRTL,
   t,
+  onBucketClick,
 }) => {
   const option = useMemo(() => {
     const reversed = [...hpDistribution].reverse();
@@ -112,14 +114,15 @@ const NetworkHpDistributionChart: React.FC<Props> = ({
         ) => {
           const [tw, th] = size.contentSize;
           const [cw, ch] = size.viewSize;
-          const x =
-            point[0] + 14 + tw > cw
-              ? Math.max(0, point[0] - tw - 14)
-              : point[0] + 14;
-          const y = Math.min(
-            Math.max(0, point[1] - th / 2),
-            Math.max(0, ch - th)
+          // Center horizontally on the cursor, clamped to the viewport.
+          const x = Math.min(
+            Math.max(0, point[0] - tw / 2),
+            Math.max(0, cw - tw)
           );
+          // Sit above the cursor; drop below only if it would clip the top.
+          const above = point[1] - th - 16;
+          const y =
+            above >= 0 ? above : Math.min(point[1] + 16, Math.max(0, ch - th));
           return [x, y];
         },
         backgroundColor: isDark ? "#1f2937" : "#ffffff",
@@ -160,6 +163,7 @@ const NetworkHpDistributionChart: React.FC<Props> = ({
           barMaxWidth: 20,
           barCategoryGap: "30%",
           minBarLength: 4,
+          cursor: onBucketClick ? "pointer" : "default",
           data: reversed.map((d, i) => {
             const idx = hpDistribution.length - 1 - i;
             const [colorStart, colorEnd] =
@@ -226,6 +230,7 @@ const NetworkHpDistributionChart: React.FC<Props> = ({
     locale,
     isRTL,
     t,
+    onBucketClick,
   ]);
 
   return (
@@ -233,6 +238,11 @@ const NetworkHpDistributionChart: React.FC<Props> = ({
       option={option}
       style={{ height: "100%", width: "100%" }}
       notMerge
+      onEvents={{
+        click: (p: { name?: string }) => {
+          if (onBucketClick && p?.name) onBucketClick(p.name);
+        },
+      }}
     />
   );
 };

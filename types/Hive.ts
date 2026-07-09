@@ -1299,6 +1299,8 @@ namespace Hive {
     "coin-type"!: string;
     "balance-type"!: string;
     page!: number;
+    "min-balance"?: number;
+    "max-balance"?: number;
   }
 
   export class TopHoldersResponse {

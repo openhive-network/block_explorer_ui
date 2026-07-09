@@ -79,3 +79,13 @@ export const formatLocalePercent = (value: number, locale: string): string =>
     minimumFractionDigits: 1,
     maximumFractionDigits: 1,
   });
+
+// A 0..1 fraction as a share-of-supply percent ("—" / "<0.01%" / 2-dp).
+export const formatSharePct = (fraction: number, locale: string): string => {
+  if (!Number.isFinite(fraction) || fraction <= 0) return "—";
+  if (fraction < 0.0001) return "<0.01%";
+  return `${(fraction * 100).toLocaleString(locale, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}%`;
+};
