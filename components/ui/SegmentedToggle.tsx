@@ -12,6 +12,7 @@ interface SegmentedToggleProps<T extends string> {
   onChange: (value: T) => void;
   ariaLabel?: string;
   className?: string;
+  size?: "sm" | "md";
 }
 
 // Shared home-card segmented control (e.g. % Accounts/% HP, HIVE/HBD/VESTS).
@@ -21,13 +22,15 @@ function SegmentedToggle<T extends string>({
   onChange,
   ariaLabel,
   className,
+  size = "sm",
 }: SegmentedToggleProps<T>) {
   return (
     <div
       role="group"
       aria-label={ariaLabel}
       className={cn(
-        "flex flex-shrink-0 overflow-hidden rounded border border-gray-200 dark:border-gray-700 text-[10px] font-medium",
+        "flex flex-shrink-0 overflow-hidden rounded border border-gray-200 dark:border-gray-700 font-medium",
+        size === "md" ? "text-sm" : "text-[10px]",
         className
       )}
     >
@@ -40,7 +43,8 @@ function SegmentedToggle<T extends string>({
             aria-pressed={isActive}
             onClick={() => onChange(opt.value)}
             className={cn(
-              "px-2 py-0.5 transition-colors",
+              size === "md" ? "px-3.5 py-1.5" : "px-2 py-0.5",
+              "transition-colors",
               isActive
                 ? "bg-indigo-500 text-white"
                 : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"

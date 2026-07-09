@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { useRouter } from "next/router";
 import { Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@/i18n/i18n";
@@ -8,23 +9,12 @@ import useNetworkHpDistribution from "@/hooks/api/homePage/useNetworkHpDistribut
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import fetchingService from "@/services/FetchingService";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
-import { convertVestsToHP } from "@/utils/Calculations";
+import { convertVestsToHP, computeVestingRatios } from "@/utils/Calculations";
 import { grabNumericValue } from "@/utils/StringUtils";
 import NetworkHpDistributionChart from "@/components/home/NetworkHpDistributionChart";
 import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
 import SegmentedToggle from "@/components/ui/SegmentedToggle";
-
-// Bucket labels must match exactly what the API returns in NetworkHpDistributionResponse.bucket
-const hpToBucket = (hp: number): string => {
-  if (hp < 1) return "0-1 HP";
-  if (hp < 10) return "1-10 HP";
-  if (hp < 100) return "10-100 HP";
-  if (hp < 1_000) return "100-1K HP";
-  if (hp < 10_000) return "1K-10K HP";
-  if (hp < 100_000) return "10K-100K HP";
-  if (hp < 1_000_000) return "100K-1M HP";
-  return "1M+ HP";
-};
+import { HP_BRACKET_BY_BUCKET, hpToBucket } from "@/utils/hpBrackets";
 
 const NetworkHpDistributionCard: React.FC = () => {
   const { t, locale, dir } = useI18n();
@@ -35,6 +25,30 @@ const NetworkHpDistributionCard: React.FC = () => {
   const { hpDistribution, isHpDistributionLoading, isHpDistributionError } =
     useNetworkHpDistribution();
   const { dynamicGlobalData } = useDynamicGlobal();
+  const router = useRouter();
+
+  const vestingRatios = useMemo(
+    () => computeVestingRatios(hiveChain, dynamicGlobalData),
+    [hiveChain, dynamicGlobalData]
+  );
+
+  // Convert the clicked HP bucket to a raw-VESTS range and open Top Holders
+  // pre-filtered to it (the backend only understands VESTS).
+  const handleBucketClick = (bucket: string) => {
+    const bounds = HP_BRACKET_BY_BUCKET[bucket];
+    if (!bounds || !vestingRatios) return;
+    const toRawVests = (hp: number) =>
+      Math.floor(hp * vestingRatios.vestsPerHive * 1e6);
+    const params = new URLSearchParams();
+    params.set("coin", "VESTS");
+    params.set("min", String(toRawVests(bounds.min)));
+    if (bounds.max !== null) {
+      params.set("max", String(toRawVests(bounds.max)));
+    }
+    params.set("unit", "hp");
+    params.set("page", "1");
+    router.push(`/top-holders?${params.toString()}`);
+  };
 
   const { data: accountData } = useQuery({
     queryKey: ["account_hp_bracket", username],
@@ -146,6 +160,7 @@ const NetworkHpDistributionCard: React.FC = () => {
               locale={locale}
               isRTL={dir === "rtl"}
               t={t}
+              onBucketClick={handleBucketClick}
             />
           </div>
         )}

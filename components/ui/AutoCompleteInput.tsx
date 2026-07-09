@@ -26,10 +26,10 @@ const getResultTypeHeader = (r: Hive.InputTypeResponse) =>
   r.input_type === "block_num"
     ? "block"
     : r.input_type === "transaction_hash"
-    ? "tx"
-    : r.input_type === "block_hash"
-    ? "block"
-    : "account";
+      ? "tx"
+      : r.input_type === "block_hash"
+        ? "block"
+        : "account";
 
 interface Props {
   value: string | null;
@@ -37,6 +37,7 @@ interface Props {
   placeholder: string;
   inputType: string | string[];
   className?: string;
+  inputClassName?: string;
   linkResult?: boolean;
   required?: boolean;
   addLabel?: boolean;
@@ -52,6 +53,7 @@ const AutoCompleteInput: React.FC<Props> = ({
   placeholder,
   inputType,
   className,
+  inputClassName,
   linkResult = false,
   required = false,
   addLabel = false,
@@ -261,7 +263,7 @@ const AutoCompleteInput: React.FC<Props> = ({
       <div className="flex items-center pr-2 z-50">
         <Input
           ref={inputRef}
-          className={cn("autocomplete_input")}
+          className={cn("autocomplete_input", inputClassName)}
           type="text"
           placeholder={required ? `${placeholder} *` : placeholder}
           value={value ?? ""}
