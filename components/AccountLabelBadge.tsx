@@ -39,6 +39,7 @@ const AccountLabelBadge: React.FC<Props> = ({ label }) => {
   const { t } = useI18n();
   if (!label) return null;
   const text = label.label || t("topHolders.labelWitness");
+  const isInactive = label.status === "inactive";
   return (
     <TooltipProvider>
       <Tooltip>
@@ -46,13 +47,22 @@ const AccountLabelBadge: React.FC<Props> = ({ label }) => {
           <span
             className={cn(
               "inline-flex items-center gap-1 whitespace-nowrap rounded-full border px-1.5 py-0.5 text-[10px] font-semibold leading-none",
-              COLOR_BY_TYPE[label.type]
+              COLOR_BY_TYPE[label.type],
+              isInactive && "opacity-70"
             )}
             data-testid="account-label-badge"
             data-label-type={label.type}
+            data-label-status={label.status}
           >
             {ICON_BY_TYPE[label.type]}
-            <span className="max-w-[7rem] truncate">{text}</span>
+            <span
+              className={cn(
+                "max-w-[7rem] truncate",
+                isInactive && "line-through"
+              )}
+            >
+              {text}
+            </span>
           </span>
         </TooltipTrigger>
         <TooltipPortal>
@@ -60,7 +70,7 @@ const AccountLabelBadge: React.FC<Props> = ({ label }) => {
             side="top"
             className="max-w-[240px] text-center text-[11px]"
           >
-            {t(label.tooltipKey)}
+            {t(isInactive ? "topHolders.labelInactiveInfo" : label.tooltipKey)}
           </TooltipContent>
         </TooltipPortal>
       </Tooltip>

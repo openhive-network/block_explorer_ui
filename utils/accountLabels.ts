@@ -10,6 +10,7 @@ export type AccountLabelType =
 export interface AccountLabel {
   type: AccountLabelType;
   label: string;
+  status?: "inactive"; // defunct/dormant exchange wallet — shown struck-through
 }
 
 export const ACCOUNT_LABELS: Record<string, AccountLabel> = {
@@ -23,7 +24,7 @@ export const ACCOUNT_LABELS: Record<string, AccountLabel> = {
   "binance-hot": { type: "exchange", label: "Binance" },
   "binance-hot2": { type: "exchange", label: "Binance" },
   deepcrypto8: { type: "exchange", label: "Binance (legacy)" },
-  bittrex: { type: "exchange", label: "Bittrex" },
+  bittrex: { type: "exchange", label: "Bittrex", status: "inactive" },
   "huobi-pro": { type: "exchange", label: "Huobi (HTX)" },
   "htx-withdraw-1": { type: "exchange", label: "HTX (Huobi)" },
   mxchive: { type: "exchange", label: "MEXC" },
@@ -31,12 +32,10 @@ export const ACCOUNT_LABELS: Record<string, AccountLabel> = {
   "gopax-deposit": { type: "exchange", label: "GOPAX" },
   bithumbsend4: { type: "exchange", label: "Bithumb" },
   indodaxhive: { type: "exchange", label: "Indodax" },
-  "hitbtc-payout": { type: "exchange", label: "HitBTC" },
+  "hitbtc-payout": { type: "exchange", label: "HitBTC", status: "inactive" },
   bitgethive: { type: "exchange", label: "Bitget" },
-  ionomy: { type: "exchange", label: "Ionomy" },
-  poloniex: { type: "exchange", label: "Poloniex" },
-  blocktrades: { type: "exchange", label: "BlockTrades" },
-  "blocktrades.com": { type: "exchange", label: "BlockTrades" },
+  ionomy: { type: "exchange", label: "Ionomy", status: "inactive" },
+  poloniex: { type: "exchange", label: "Poloniex", status: "inactive" },
   bdhivesteem: { type: "exchange", label: "Binance" },
   steembasicincome: { type: "service", label: "Basic Income" },
   "honey-swap": { type: "service", label: "Honey Swap" },
@@ -48,6 +47,7 @@ export interface ResolvedAccountLabel {
   type: AccountLabelType;
   label: string;
   tooltipKey: string;
+  status?: "inactive";
 }
 
 const TOOLTIP_KEY_BY_TYPE: Record<AccountLabelType, string> = {
@@ -69,6 +69,7 @@ export const resolveAccountLabel = (
       type: stat.type,
       label: stat.label,
       tooltipKey: TOOLTIP_KEY_BY_TYPE[stat.type],
+      status: stat.status,
     };
   }
   if (opts?.isWitness) {
