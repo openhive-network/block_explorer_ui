@@ -23,6 +23,7 @@ import NetworkVotingActivityCard from "@/components/home/NetworkVotingActivityCa
 import DailyActiveUsersCard from "@/components/home/DailyActiveUsersCard";
 import AccountRetentionFunnelCard from "@/components/home/AccountRetentionFunnelCard";
 import NetworkOpMixCard from "@/components/home/NetworkOpMixCard";
+import NetworkRcUtilizationCard from "@/components/home/NetworkRcUtilizationCard";
 import NetworkContentVolumeCard from "@/components/home/NetworkContentVolumeCard";
 import NetworkEngagementCard from "@/components/home/NetworkEngagementCard";
 import { useEffect, useState } from "react";
@@ -102,6 +103,7 @@ const StandardHome = () => {
           <DailyActiveUsersCard />
           <AccountRetentionFunnelCard />
           <NetworkOpMixCard />
+          <NetworkRcUtilizationCard />
           <NetworkEngagementCard />
           <TransactionStatisticsCard />
           <TransferVolumeCard />

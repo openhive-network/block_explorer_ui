@@ -985,6 +985,20 @@ class FetchingService {
     ].networkHpDistribution({});
   }
 
+  async getNetworkRcUtilization(
+    from?: string | Date | number,
+    to?: string | Date | number,
+    granularity?: "day" | "week" | "month"
+  ): Promise<Hive.NetworkRcUtilizationResponse[]> {
+    return await this.extendedHiveChain!.restApi[
+      "haf-stats-api"
+    ].networkRcUtilization({
+      from_date: from,
+      to_date: to,
+      granularity,
+    });
+  }
+
   async getNetworkContentVolume(
     from?: Date | number | undefined,
     to?: Date | number | undefined,
