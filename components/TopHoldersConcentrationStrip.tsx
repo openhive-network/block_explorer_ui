@@ -19,12 +19,14 @@ interface Props {
   coinType: CoinType;
   balanceType: BalanceType;
   totalSupplyRaw: number | null;
+  baseRaw: number | null; // circulating balance-type denominator (excl. treasury/burn)
 }
 
 const TopHoldersConcentrationStrip: React.FC<Props> = ({
   coinType,
   balanceType,
   totalSupplyRaw,
+  baseRaw,
 }) => {
   const { t, locale } = useI18n();
   const { holders, isLoading } = useTopHoldersConcentration(
@@ -35,8 +37,9 @@ const TopHoldersConcentrationStrip: React.FC<Props> = ({
   const stats = useMemo(() => {
     const real = holders.filter((h) => !isSystemAccount(h.account));
     const values = real.map((h) => Number(h.value) || 0);
-    const supply = totalSupplyRaw ?? 0;
-    const pctOf = (sum: number) => (supply > 0 ? sum / supply : 0);
+    // Page-computed circulating denominator (see getCirculatingBaseRaw).
+    const supply = baseRaw ?? 0;
+    const pctOf = (sum: number) => (supply > 0 ? Math.min(1, sum / supply) : 0);
     const sumTop = (n: number) => values.slice(0, n).reduce((a, b) => a + b, 0);
     let cum = 0;
     let nakamoto: number | null = null;
@@ -55,9 +58,15 @@ const TopHoldersConcentrationStrip: React.FC<Props> = ({
       nakamoto,
       sampled: values.length,
     };
-  }, [holders, totalSupplyRaw]);
+  }, [holders, baseRaw]);
 
-  if (isLoading || totalSupplyRaw === null || !holders.length) return null;
+  if (
+    isLoading ||
+    totalSupplyRaw === null ||
+    baseRaw === null ||
+    !holders.length
+  )
+    return null;
 
   const supplyDisplay =
     coinType === "VESTS" ? totalSupplyRaw / 1e6 : totalSupplyRaw / 1000;

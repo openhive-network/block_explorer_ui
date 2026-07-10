@@ -1,7 +1,9 @@
 import { useMemo } from "react";
 import useWitnesses from "@/hooks/api/common/useWitnesses";
+import { config } from "@/Config";
 
-// Set of the top-200 witness account names, from the shared useWitnesses cache.
+// Set of ACTIVE witness names (top-200 by rank). Disabled witnesses (null
+// signing key) are excluded so a stale registration isn't badged as active.
 const useTopHolderWitnesses = () => {
   const { witnessesData, isWitnessDataLoading } = useWitnesses(
     200,
@@ -13,9 +15,11 @@ const useTopHolderWitnesses = () => {
       new Set<string>(
         (
           (witnessesData?.witnesses as
-            | { witness_name: string }[]
+            | { witness_name: string; signing_key: string }[]
             | undefined) ?? []
-        ).map((w) => w.witness_name)
+        )
+          .filter((w) => w.signing_key !== config.inactiveWitnessKey)
+          .map((w) => w.witness_name)
       ),
     [witnessesData]
   );

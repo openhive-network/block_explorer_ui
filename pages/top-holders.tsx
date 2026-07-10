@@ -40,6 +40,9 @@ import { HP_BRACKETS } from "@/utils/hpBrackets";
 import { isSystemAccount } from "@/utils/systemAccounts";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import Explorer from "@/types/Explorer";
+import Hive from "@/types/Hive";
+import useTotalValueLocked from "@/hooks/api/homePage/useTotalValueLocked";
+import useTopHoldersConcentration from "@/hooks/api/common/useTopHoldersConcentration";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -80,6 +83,46 @@ const getTotalSupplyRaw = (
       : headBlockDetails.currentSupply;
   const n = grabNumericValue(String(formatted ?? ""));
   return Number.isFinite(n) && n > 0 ? n * 1000 : null;
+};
+
+// Denominator for every "% of supply" figure and the concentration KPIs
+// (Largest / Top-N / Nakamoto). It must match the numerator on BOTH axes, or
+// the percentages and the Nakamoto count come out wrong:
+//   1. Balance type — a holder's value is liquid-only or savings-only, so the
+//      base is that same pool: liquid = total supply − savings; savings = the
+//      savings total (from the total-value-locked endpoint). VESTS has no split.
+//   2. Account set — treasury (DHF) and burn are excluded from the ranking, so
+//      subtract their balances from the base too (i.e. circulating, not total).
+// Caveat: Hive's supply fields disagree on the treasury. HIVE's current_supply
+// includes the DHF, but current_hbd_supply already omits it — and the DHF holds
+// far more HBD than that figure. Subtracting it outright would make the base
+// negative, so system balances are only removed when they fit inside the supply.
+const getCirculatingBaseRaw = (
+  coinType: CoinType,
+  balanceType: BalanceType,
+  headBlockDetails: Explorer.HeadBlockDetails | null | undefined,
+  tvl: Hive.TotalValueLocked | undefined,
+  concentrationHolders: { account: string; value: string }[]
+): number | null => {
+  const supplyRaw = getTotalSupplyRaw(coinType, headBlockDetails);
+  if (supplyRaw === null) return null;
+  let total: number;
+  if (coinType === "VESTS") {
+    total = supplyRaw;
+  } else {
+    if (!tvl) return null;
+    const savingsRaw = Number(
+      coinType === "HBD" ? tvl.savings_hbd : tvl.savings_hive
+    );
+    if (!Number.isFinite(savingsRaw)) return null;
+    total =
+      balanceType === "savings_balance" ? savingsRaw : supplyRaw - savingsRaw;
+  }
+  if (!Number.isFinite(total) || total <= 0) return null;
+  const systemBalance = concentrationHolders
+    .filter((h) => isSystemAccount(h.account))
+    .reduce((s, h) => s + (Number(h.value) || 0), 0);
+  return systemBalance < total ? total - systemBalance : total;
 };
 
 export default function TopHoldersPage() {
@@ -148,7 +191,7 @@ export default function TopHoldersPage() {
     const num = (v: unknown): number | undefined => {
       if (typeof v !== "string" || v === "") return undefined;
       const n = Number(v);
-      return Number.isNaN(n) ? undefined : n;
+      return Number.isNaN(n) || n < 0 ? undefined : n;
     };
     if (coin === "HIVE" || coin === "HBD" || coin === "VESTS") {
       setCoinType(coin);
@@ -172,10 +215,6 @@ export default function TopHoldersPage() {
     const p = num(qPage);
     if (p !== undefined && p > 0) setPage(p);
   }, [router.isReady, router.query]);
-
-  useEffect(() => {
-    setPage(1);
-  }, [coinType, balanceType]);
 
   // Mirror the active filters back into the URL (shareable / back-forward).
   useEffect(() => {
@@ -260,14 +299,19 @@ export default function TopHoldersPage() {
   };
 
   const applyRange = () => {
-    const parse = (s: string): number | undefined => {
+    const parse = (s: string): number | undefined | "invalid" => {
       const v = s.trim();
       if (v === "") return undefined;
       const n = Number(v);
-      return Number.isNaN(n) || n < 0 ? undefined : Math.floor(displayToRaw(n));
+      if (Number.isNaN(n) || n < 0) return "invalid";
+      return Math.floor(displayToRaw(n));
     };
     const min = parse(minInput);
     const max = parse(maxInput);
+    if (min === "invalid" || max === "invalid") {
+      setRangeError(t("topHolders.rangeInvalidNumber"));
+      return;
+    }
     if (min !== undefined && max !== undefined && max < min) {
       setRangeError(t("topHolders.rangeInvalid"));
       return;
@@ -366,6 +410,23 @@ export default function TopHoldersPage() {
     [coinType, dynamicGlobalData]
   );
 
+  const { totalValueLocked: tvl } = useTotalValueLocked();
+  const { holders: concentrationHolders } = useTopHoldersConcentration(
+    coinType,
+    balanceType
+  );
+  const circulatingBaseRaw = useMemo(
+    () =>
+      getCirculatingBaseRaw(
+        coinType,
+        balanceType,
+        dynamicGlobalData?.headBlockDetails,
+        tvl,
+        concentrationHolders
+      ),
+    [coinType, balanceType, dynamicGlobalData, tvl, concentrationHolders]
+  );
+
   const applyPreset = (minHp: number, maxHp: number | null) => {
     const vph = vestingRatios?.vestsPerHive ?? 0;
     if (!vph) return;
@@ -432,7 +493,9 @@ export default function TopHoldersPage() {
   }) => {
     const displayRank = rank > 0 ? rank : index + 1 + (page - 1) * pageSize;
     const raw = Number(value) || 0;
-    const share = totalSupplyRaw ? raw / totalSupplyRaw : 0;
+    const share = circulatingBaseRaw
+      ? Math.min(1, raw / circulatingBaseRaw)
+      : 0;
     const label = resolveAccountLabel(account, {
       isWitness: witnessNames.has(account),
     });
@@ -577,10 +640,12 @@ export default function TopHoldersPage() {
                 placeholder={t("topHolders.findAccountPlaceholder")}
                 inputType="account_name"
                 className="w-full"
-                inputClassName="!rounded-md !border !border-solid !border-gray-300 !bg-white dark:!border-gray-600 dark:!bg-gray-800"
+                inputClassName="!rounded !border !border-solid !border-gray-300 !bg-white dark:!border-gray-600 dark:!bg-gray-800"
               />
             </div>
-            <Button type="submit">{t("topHolders.find")}</Button>
+            <Button type="submit" className="rounded">
+              {t("topHolders.find")}
+            </Button>
             {searchError && (
               <span className="pb-2 text-xs text-red-500">
                 {t("topHolders.accountNotFound", { account: searchError })}
@@ -597,9 +662,10 @@ export default function TopHoldersPage() {
                   if (v === "VESTS") setBalanceType("balance");
                   setMinBalance(undefined);
                   setMaxBalance(undefined);
+                  setPage(1);
                 }}
               >
-                <SelectTrigger>
+                <SelectTrigger className="rounded">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -614,10 +680,13 @@ export default function TopHoldersPage() {
               <Label className="text-xs">{t("topHolders.balanceType")}</Label>
               <Select
                 value={balanceType}
-                onValueChange={(v) => setBalanceType(v as BalanceType)}
+                onValueChange={(v) => {
+                  setBalanceType(v as BalanceType);
+                  setPage(1);
+                }}
                 disabled={coinType === "VESTS"}
               >
-                <SelectTrigger>
+                <SelectTrigger className="rounded">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -646,7 +715,7 @@ export default function TopHoldersPage() {
                   onKeyDown={(e) => {
                     if (e.key === "Enter") applyRange();
                   }}
-                  className="w-full sm:w-28"
+                  className="w-full rounded sm:w-28"
                   data-testid="top-holders-min"
                 />
                 <span className="text-gray-400">–</span>
@@ -660,20 +729,25 @@ export default function TopHoldersPage() {
                   onKeyDown={(e) => {
                     if (e.key === "Enter") applyRange();
                   }}
-                  className="w-full sm:w-28"
+                  className="w-full rounded sm:w-28"
                   data-testid="top-holders-max"
                 />
               </div>
             </div>
 
             <div className="flex w-full gap-2 sm:w-auto">
-              <Button onClick={applyRange} data-testid="apply-filters">
+              <Button
+                onClick={applyRange}
+                data-testid="apply-filters"
+                className="rounded"
+              >
                 {t("common.search")}
               </Button>
               <Button
                 variant="outline"
                 onClick={clearFilter}
                 data-testid="clear-filters"
+                className="rounded"
               >
                 {t("common.clear")}
               </Button>
@@ -740,6 +814,7 @@ export default function TopHoldersPage() {
         coinType={coinType}
         balanceType={balanceType}
         totalSupplyRaw={totalSupplyRaw}
+        baseRaw={circulatingBaseRaw}
       />
 
       {filterActive && (
