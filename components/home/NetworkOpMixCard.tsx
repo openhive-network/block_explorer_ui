@@ -10,7 +10,7 @@ import useOperationTypeStatistics from "@/hooks/api/homePage/useOperationTypeSta
 import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
 import Hive from "@/types/Hive";
 import Explorer from "@/types/Explorer";
-import { getOperationColor } from "@/components/OperationsTable";
+import { getOpHexColor, getOpColorClass } from "@/utils/operationColors";
 import { cn } from "@/lib/utils";
 import { getOperationTypeForDisplay } from "@/utils/UI";
 import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
@@ -31,30 +31,6 @@ export interface OpMixData {
   totalOps: number;
   totalTxs: number;
   otherOps: { name: string; count: number }[];
-}
-
-// Reads the actual CSS variable value at runtime so theme.css is the single source of truth.
-// "bg-explorer-operations-posting" → "--color-operation-posting"
-// "Other" is our synthetic bucket — map it to the "other" category directly.
-export function getOpHexColor(opName: string): string {
-  if (typeof window === "undefined") return "#6b7280";
-  const cls =
-    opName === "Other"
-      ? "bg-explorer-operations-other"
-      : getOperationColor(opName);
-  if (!cls) return "#6b7280";
-  const cssVar = `--color-${cls.replace("bg-explorer-", "").replace("operations-", "operation-")}`;
-  return (
-    getComputedStyle(document.documentElement)
-      .getPropertyValue(cssVar)
-      .trim() || "#6b7280"
-  );
-}
-
-export function getOpColorClass(opName: string): string {
-  return opName === "Other"
-    ? "bg-explorer-operations-other"
-    : (getOperationColor(opName) ?? "bg-gray-400");
 }
 
 export function processOpMixData(

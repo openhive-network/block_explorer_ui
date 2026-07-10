@@ -1457,6 +1457,18 @@ namespace Hive {
     value_vests_nai!: number;
     op_count!: number;
   }
+
+  export class NetworkRcUtilizationParams {
+    from_date?: string | Date | number;
+    to_date?: string | Date | number;
+    granularity?: string;
+  }
+
+  export class NetworkRcUtilizationResponse {
+    period!: string;
+    rc_total!: number;
+    by_label!: Record<string, number>;
+  }
 }
 
 export default Hive;

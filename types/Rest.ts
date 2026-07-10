@@ -268,6 +268,12 @@ export const extendedRest = {
       responseArray: true,
       urlPath: "network/top-accounts",
     },
+    networkRcUtilization: {
+      params: Hive.NetworkRcUtilizationParams,
+      result: Hive.NetworkRcUtilizationResponse,
+      responseArray: true,
+      urlPath: "network/rc-utilization",
+    },
     networkContentVolume: {
       params: Hive.NetworkContentVolumeParams,
       result: Hive.NetworkContentVolumeResponse,

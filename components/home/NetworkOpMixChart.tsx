@@ -3,7 +3,8 @@ import ReactECharts from "echarts-for-react";
 import moment from "moment";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useI18n } from "@/i18n/i18n";
-import { getOpHexColor, ProcessedOpMixPoint } from "./NetworkOpMixCard";
+import { ProcessedOpMixPoint } from "./NetworkOpMixCard";
+import { getOpHexColor } from "@/utils/operationColors";
 import { formatCompact, formatLocalePercent } from "@/utils/chartUtils";
 import { getOperationTypeForDisplay } from "@/utils/UI";
 
