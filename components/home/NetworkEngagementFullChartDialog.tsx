@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import moment from "moment";
-import { Loader2, Download } from "lucide-react";
+import { Loader2, Download, Info } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import ReportDialogHeader from "@/components/ui/ReportDialogHeader";
 import {
@@ -233,6 +233,10 @@ const NetworkEngagementFullChartDialog: React.FC<
                 <h3 className="mb-1 text-xs font-semibold uppercase tracking-wide text-explorer-dark-gray dark:text-text">
                   {t("networkEngagementFullChartDialog.healthTitle")}
                 </h3>
+                <p className="mb-1 flex items-start gap-1 text-[11px] leading-snug text-gray-500 dark:text-gray-400">
+                  <Info size={12} className="mt-px shrink-0" />
+                  <span>{t("networkEngagementCard.ghostPostingNote")}</span>
+                </p>
                 <div className="h-[34vh] w-full">
                   <NetworkEngagementChart
                     data={chartData}
