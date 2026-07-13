@@ -286,5 +286,11 @@ export const extendedRest = {
       responseArray: true,
       urlPath: "network/engagement",
     },
+    networkAuthorRetention: {
+      params: Hive.NetworkAuthorRetentionParams,
+      result: Hive.NetworkAuthorRetentionResponse,
+      responseArray: true,
+      urlPath: "network/author-retention",
+    },
   },
 };

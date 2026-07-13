@@ -1408,6 +1408,26 @@ namespace Hive {
     zero_comment_post_pct!: number;
   }
 
+  export class NetworkAuthorRetentionParams {
+    from_date?: string | Date | number | undefined;
+    to_date?: string | Date | number | undefined;
+  }
+
+  // Cohorts of accounts by the month of their first-ever root post, with the
+  // share that created content again (post/comment, edits excluded) in three
+  // non-overlapping day-windows: (0,30], (30,90], (90,180]. The window fields
+  // are null until the cohort month + that horizon has fully elapsed.
+  export class NetworkAuthorRetentionResponse {
+    cohort_month!: string;
+    first_post_accounts!: number;
+    active_at_30d!: number | null;
+    pct_30d!: number | null;
+    active_at_90d!: number | null;
+    pct_90d!: number | null;
+    active_at_180d!: number | null;
+    pct_180d!: number | null;
+  }
+
   export class NetworkHpDistributionParams {}
 
   export class NetworkHpDistributionResponse {

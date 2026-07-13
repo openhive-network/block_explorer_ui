@@ -1037,6 +1037,18 @@ class FetchingService {
     });
   }
 
+  async getNetworkAuthorRetention(
+    from?: string | Date | number,
+    to?: string | Date | number
+  ): Promise<Hive.NetworkAuthorRetentionResponse[]> {
+    return await this.extendedHiveChain!.restApi[
+      "haf-stats-api"
+    ].networkAuthorRetention({
+      from_date: from,
+      to_date: to,
+    });
+  }
+
   async getNetworkTopAccounts(
     metric: Hive.TopAccountsMetric,
     fromDate?: string | Date | number,
