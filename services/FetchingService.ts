@@ -11,6 +11,11 @@ import {
 } from "@hiveio/wax";
 import { extendedRest } from "@/types/Rest";
 import { createPathFilterString } from "@/lib/utils";
+import {
+  classifyEndpointError,
+  EndpointUnsupportedError,
+  isNaiAmount,
+} from "@/utils/nodeSupport";
 
 export type ExplorerNodeApi = {
   database_api: {
@@ -134,6 +139,20 @@ class FetchingService {
     }
     if (this.extendedHiveChain && this.apiUrl) {
       this.extendedHiveChain.restApi.endpointUrl = this.apiUrl;
+    }
+  }
+
+  // Wrap a REST call so a definitive missing-endpoint 404 surfaces as a typed
+  // EndpointUnsupportedError (reported to nodeSupportStore -> graceful widget
+  // fallback). Transient failures pass through unchanged.
+  private async withNodeSupport<T>(
+    supportKey: string,
+    call: () => Promise<T>
+  ): Promise<T> {
+    try {
+      return await call();
+    } catch (err) {
+      throw classifyEndpointError(err, supportKey);
     }
   }
 
@@ -636,14 +655,14 @@ class FetchingService {
     fromBlock?: Date | number | undefined,
     toBlock?: Date | number | undefined
   ): Promise<Hive.TransactionStatisticsResponse> {
-    return await this.extendedHiveChain!.restApi[
-      "hafbe-api"
-    ].transactionStatistics({
-      granularity,
-      direction: direction,
-      "from-block": fromBlock,
-      "to-block": toBlock,
-    });
+    return this.withNodeSupport("hafbe-api:transaction-statistics", () =>
+      this.extendedHiveChain!.restApi["hafbe-api"].transactionStatistics({
+        granularity,
+        direction: direction,
+        "from-block": fromBlock,
+        "to-block": toBlock,
+      })
+    );
   }
 
   async getOperationTypeStatistics(
@@ -653,15 +672,15 @@ class FetchingService {
     toBlock?: Date | number,
     opTypes?: number[]
   ): Promise<Hive.OperationTypeStatisticsResponse[]> {
-    return await this.extendedHiveChain!.restApi[
-      "hafbe-api"
-    ].operationTypeStatistics({
-      granularity,
-      direction,
-      "from-block": fromBlock,
-      "to-block": toBlock,
-      "op-types": opTypes?.join(","),
-    });
+    return this.withNodeSupport("hafbe-api:operation-type-statistics", () =>
+      this.extendedHiveChain!.restApi["hafbe-api"].operationTypeStatistics({
+        granularity,
+        direction,
+        "from-block": fromBlock,
+        "to-block": toBlock,
+        "op-types": opTypes?.join(","),
+      })
+    );
   }
 
   async getTransferStatistics(
@@ -671,14 +690,28 @@ class FetchingService {
     fromBlock?: Date | number | undefined,
     toBlock?: Date | number | undefined
   ): Promise<Hive.TransferStatisticsResponse[]> {
-    return await this.extendedHiveChain!.restApi[
-      "balance-api"
-    ].transferStatistics({
-      granularity,
-      "coin-type": coinType,
-      "from-block": fromBlock,
-      "to-block": toBlock,
-      direction: direction, // Move direction after coin-type
+    return this.withNodeSupport("balance-api:transfer-statistics", async () => {
+      const rows = await this.extendedHiveChain!.restApi[
+        "balance-api"
+      ].transferStatistics({
+        granularity,
+        "coin-type": coinType,
+        "from-block": fromBlock,
+        "to-block": toBlock,
+        direction: direction, // Move direction after coin-type
+      });
+      // Older nodes serve the *_transfer_amount fields as bare strings instead of
+      // NAI objects, which silently renders $0 — treat that version-skew as an
+      // unavailable endpoint rather than showing misleading zeros. Sample the
+      // first row that actually carries an amount (a null/empty leading bucket on
+      // a healthy node must not false-trigger this).
+      const sample = rows?.find((r) => r?.total_transfer_amount != null);
+      if (sample && !isNaiAmount(sample.total_transfer_amount)) {
+        throw new EndpointUnsupportedError("balance-api:transfer-statistics", {
+          transient: false,
+        });
+      }
+      return rows;
     });
   }
 
@@ -688,14 +721,14 @@ class FetchingService {
     fromBlock?: Date | number | undefined,
     toBlock?: Date | number | undefined
   ): Promise<Hive.WalletStatsResponse[]> {
-    return await this.extendedHiveChain!.restApi[
-      "hafbe-api"
-    ].totalWalletAddresses({
-      granularity,
-      direction,
-      "from-block": fromBlock,
-      "to-block": toBlock,
-    });
+    return this.withNodeSupport("hafbe-api:wallet-stats", () =>
+      this.extendedHiveChain!.restApi["hafbe-api"].totalWalletAddresses({
+        granularity,
+        direction,
+        "from-block": fromBlock,
+        "to-block": toBlock,
+      })
+    );
   }
 
   async getAccountFollowCount(
@@ -878,9 +911,9 @@ class FetchingService {
   }
 
   async getTotalValueLocked(): Promise<Hive.TotalValueLocked> {
-    return await this.extendedHiveChain!.restApi[
-      "balance-api"
-    ].totalValueLocked();
+    return this.withNodeSupport("balance-api:tvl", () =>
+      this.extendedHiveChain!.restApi["balance-api"].totalValueLocked()
+    );
   }
 
   async getVestingStats(
@@ -889,12 +922,14 @@ class FetchingService {
     fromBlock?: Date | number | undefined,
     toBlock?: Date | number | undefined
   ): Promise<Hive.VestingStatsResponse[]> {
-    return await this.extendedHiveChain!.restApi["balance-api"].vestingStats({
-      granularity,
-      direction,
-      "from-block": fromBlock,
-      "to-block": toBlock,
-    });
+    return this.withNodeSupport("balance-api:vesting-stats", () =>
+      this.extendedHiveChain!.restApi["balance-api"].vestingStats({
+        granularity,
+        direction,
+        "from-block": fromBlock,
+        "to-block": toBlock,
+      })
+    );
   }
 
   async getAccountVestingStats(

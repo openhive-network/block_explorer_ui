@@ -1,5 +1,6 @@
-import React, { ReactNode, useEffect, useMemo } from "react";
+import React, { ReactNode, useEffect, useMemo, useRef } from "react";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
 import {
   QueryCache,
   QueryClient,
@@ -32,6 +33,10 @@ import { OperationTypesContextProvider } from "@/contexts/OperationsTypesContext
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { SearchesContextProvider } from "@/contexts/SearchesContext";
 import { HealthCheckerContextProvider } from "@/contexts/HealthCheckerContext";
+import { NodeSupportContextProvider } from "@/contexts/NodeSupportContext";
+import { EndpointUnsupportedError } from "@/utils/nodeSupport";
+import { nodeSupportStore } from "@/utils/nodeSupportStore";
+import { WaxError } from "@hiveio/wax";
 
 import { config } from "@/Config";
 import { AuthContextProvider } from "@/contexts/AuthContext";
@@ -65,6 +70,17 @@ const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
   // The logic that used useSettings() has been moved to the component above.
   const { apiAddress, nodeAddress } = useApiAddresses();
 
+  // The home dashboard renders every widget with its own inline error/loading
+  // state, so a global toast there just floods the screen on an incompatible
+  // node. Track whether we're on home so onError can suppress request-error
+  // toasts there only (kept on every other page). Read via ref so the memoized
+  // onError closure always sees the current route.
+  const router = useRouter();
+  const isHomeRouteRef = useRef(false);
+  useEffect(() => {
+    isHomeRouteRef.current = router.pathname === "/";
+  }, [router.pathname]);
+
   const queryClient = useMemo(
     () =>
       new QueryClient({
@@ -73,12 +89,30 @@ const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
             enabled: apiAddress !== null && nodeAddress !== null,
             staleTime: 10000,
             refetchOnWindowFocus: false,
-            retry: 1,
+            retry: (failureCount, error) => {
+              if (error instanceof EndpointUnsupportedError) {
+                // A definitive missing route never retries; a transient
+                // (status-less: timeout/network/CORS) failure gets a couple of
+                // retries before it's allowed to stick.
+                return error.transient && failureCount < 2;
+              }
+              return failureCount < 1;
+            },
           },
         },
 
         queryCache: new QueryCache({
           onError: (error: any) => {
+            // A missing endpoint is handled gracefully by the widget itself
+            // (NodeSupportGate): record it for the active node and stay quiet.
+            if (error instanceof EndpointUnsupportedError) {
+              if (apiAddress)
+                nodeSupportStore.report(apiAddress, error.supportKey);
+              return;
+            }
+            // On home only, request failures are shown inline per widget — don't
+            // also pop a global toast. Everywhere else the toast is the signal.
+            if (isHomeRouteRef.current && error instanceof WaxError) return;
             toast.error("Error occured", {
               description: `${(error as Error).message}`,
               style: {
@@ -102,16 +136,18 @@ const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
                   <AddressesContextProvider>
                     <ThemeProvider>
                       <HealthCheckerContextProvider>
-                        <ErrorBoundary fallback={<ErrorPage />}>
-                          <HeadBlockContextProvider>
-                            <OperationTypesContextProvider>
-                              <SearchesContextProvider>
-                                <Layout>{children}</Layout>
-                                <ReactQueryDevtools initialIsOpen={false} />
-                              </SearchesContextProvider>
-                            </OperationTypesContextProvider>
-                          </HeadBlockContextProvider>
-                        </ErrorBoundary>
+                        <NodeSupportContextProvider>
+                          <ErrorBoundary fallback={<ErrorPage />}>
+                            <HeadBlockContextProvider>
+                              <OperationTypesContextProvider>
+                                <SearchesContextProvider>
+                                  <Layout>{children}</Layout>
+                                  <ReactQueryDevtools initialIsOpen={false} />
+                                </SearchesContextProvider>
+                              </OperationTypesContextProvider>
+                            </HeadBlockContextProvider>
+                          </ErrorBoundary>
+                        </NodeSupportContextProvider>
                       </HealthCheckerContextProvider>
                     </ThemeProvider>
                   </AddressesContextProvider>

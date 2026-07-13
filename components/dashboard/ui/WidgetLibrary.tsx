@@ -6,6 +6,8 @@ import {
   WidgetCategory,
   WidgetConfig,
 } from "@/components/dashboard/lib/widgetRegistry";
+import { getWidgetNodeSupport } from "@/components/dashboard/lib/widgetNodeSupport";
+import { useNodeSupport } from "@/contexts/NodeSupportContext";
 import { useI18n } from "@/i18n/i18n";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +27,7 @@ const WidgetLibrary: React.FC<WidgetLibraryProps> = ({
   const [searchTerm, setSearchTerm] = useState("");
   const [openCategories, setOpenCategories] = useState<Set<string>>(new Set());
   const { t } = useI18n();
+  const { isSupported, isEndpointUnsupported } = useNodeSupport();
 
   const isSearching = searchTerm.trim().length > 0;
 
@@ -80,8 +83,14 @@ const WidgetLibrary: React.FC<WidgetLibraryProps> = ({
   }, [filteredWidgets]);
 
   const renderWidget = (widget: WidgetConfig) => {
-    const isDisabled =
+    const alreadyAdded =
       !widget.allowMultiple && existingWidgetTypes.has(widget.id);
+    // Active node is confirmed to lack this widget's required app or endpoint.
+    const cap = getWidgetNodeSupport(widget.id);
+    const isUnavailable =
+      !!cap &&
+      (isSupported(cap.app) === false || isEndpointUnsupported(cap.endpoint));
+    const isDisabled = alreadyAdded || isUnavailable;
     const description = getDescription(widget);
 
     return (
@@ -89,6 +98,9 @@ const WidgetLibrary: React.FC<WidgetLibraryProps> = ({
         key={widget.id}
         onClick={() => onAddWidget(widget.id)}
         disabled={isDisabled}
+        title={
+          isUnavailable ? t("widgetUnavailable.libraryTooltip") : undefined
+        }
         className={cn(
           "group flex w-full items-start gap-3 rounded-xl border p-3 text-start transition-all",
           isDisabled
@@ -100,6 +112,11 @@ const WidgetLibrary: React.FC<WidgetLibraryProps> = ({
           <div className="text-sm font-semibold text-gray-900 dark:text-white">
             {t(widget.name)}
           </div>
+          {isUnavailable && (
+            <p className="mt-0.5 text-[11px] font-medium text-amber-600 dark:text-amber-400">
+              {t("widgetUnavailable.libraryBadge")}
+            </p>
+          )}
           {description && (
             <p className="mt-0.5 text-xs leading-snug text-gray-500 dark:text-gray-400">
               {description}
@@ -109,12 +126,12 @@ const WidgetLibrary: React.FC<WidgetLibraryProps> = ({
         <span
           className={cn(
             "mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full transition-colors",
-            isDisabled
+            alreadyAdded
               ? "bg-emerald-100 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400"
               : "bg-gray-100 text-gray-400 group-hover:bg-indigo-500 group-hover:text-white dark:bg-gray-800"
           )}
         >
-          {isDisabled ? <Check size={14} /> : <Plus size={14} />}
+          {alreadyAdded ? <Check size={14} /> : <Plus size={14} />}
         </span>
       </button>
     );

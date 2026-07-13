@@ -32,6 +32,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useWatchlist } from "@/contexts/WatchlistContext";
 import WatchedProposalsWidget from "@/components/dashboard/widgets/data/WatchedProposalsWidget";
 import WitnessHealthWidget from "@/components/dashboard/widgets/data/WitnessHealthWidget";
+import NodeSupportGate from "@/components/dashboard/ui/NodeSupportGate";
 
 const StandardHome = () => {
   const { t } = useI18n();
@@ -92,34 +93,68 @@ const StandardHome = () => {
             blockDetails={headBlockData}
             opcount={opcount}
           />
-          <NetworkVotingActivityCard />
-          <NetworkHpDistributionCard />
-          <TopHoldersWidget />
+          <NodeSupportGate widgetId="voting-activity">
+            <NetworkVotingActivityCard />
+          </NodeSupportGate>
+          <NodeSupportGate widgetId="network-hp-distribution">
+            <NetworkHpDistributionCard />
+          </NodeSupportGate>
+          <NodeSupportGate widgetId="top-holders">
+            <TopHoldersWidget />
+          </NodeSupportGate>
         </div>
 
         <div className="col-span-12 md:col-span-8 lg:col-span-6">
-          <LastBlocksWidget headBlock={headBlockNum} />
-          <NetworkGrowthCard />
-          <DailyActiveUsersCard />
-          <AccountRetentionFunnelCard />
-          <NetworkOpMixCard />
-          <NetworkRcUtilizationCard />
-          <NetworkEngagementCard />
-          <TransactionStatisticsCard />
-          <TransferVolumeCard />
-          <TotalValueLockedCard />
-          <HpMomentumCard />
-          <NetworkContentVolumeCard />
+          <NodeSupportGate widgetId="last-blocks">
+            <LastBlocksWidget headBlock={headBlockNum} />
+          </NodeSupportGate>
+          <NodeSupportGate widgetId="network-growth">
+            <NetworkGrowthCard />
+          </NodeSupportGate>
+          <NodeSupportGate widgetId="daily-active-users">
+            <DailyActiveUsersCard />
+          </NodeSupportGate>
+          <NodeSupportGate widgetId="account-retention-funnel">
+            <AccountRetentionFunnelCard />
+          </NodeSupportGate>
+          <NodeSupportGate widgetId="op-mix">
+            <NetworkOpMixCard />
+          </NodeSupportGate>
+          <NodeSupportGate widgetId="network-rc-utilization">
+            <NetworkRcUtilizationCard />
+          </NodeSupportGate>
+          <NodeSupportGate widgetId="network-engagement">
+            <NetworkEngagementCard />
+          </NodeSupportGate>
+          <NodeSupportGate widgetId="tx-stats">
+            <TransactionStatisticsCard />
+          </NodeSupportGate>
+          <NodeSupportGate widgetId="transfer-volume">
+            <TransferVolumeCard />
+          </NodeSupportGate>
+          <NodeSupportGate widgetId="tvl">
+            <TotalValueLockedCard />
+          </NodeSupportGate>
+          <NodeSupportGate widgetId="hp-momentum">
+            <HpMomentumCard />
+          </NodeSupportGate>
+          <NodeSupportGate widgetId="network-content-volume">
+            <NetworkContentVolumeCard />
+          </NodeSupportGate>
           <SearchesSection />
         </div>
 
         <div className="col-span-12 lg:col-span-3 flex flex-col">
           {isLoggedIn && hasWatchedProposals && <WatchedProposalsWidget />}
-          <TopWitnessesCard
-            witnessesData={witnessesData}
-            isLoading={isWitnessDataLoading}
-          />
-          <NetworkTopAccountsCard />
+          <NodeSupportGate widgetId="top-witnesses">
+            <TopWitnessesCard
+              witnessesData={witnessesData}
+              isLoading={isWitnessDataLoading}
+            />
+          </NodeSupportGate>
+          <NodeSupportGate widgetId="top-accounts">
+            <NetworkTopAccountsCard />
+          </NodeSupportGate>
           <TopCommunitiesCard
             communitiesData={popularCommunitiesData}
             isLoading={isCommunitiesLoading}
