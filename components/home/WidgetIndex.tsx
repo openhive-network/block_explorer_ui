@@ -11,6 +11,7 @@ import { Move, X } from "lucide-react";
 
 import WidgetRenderer from "@/components/dashboard/ui/WidgetRenderer";
 import WidgetLibrary from "@/components/dashboard/ui/WidgetLibrary";
+import NodeSupportGate from "@/components/dashboard/ui/NodeSupportGate";
 import dynamic from "next/dynamic";
 const HiveFullChartDialog = dynamic(
   () => import("@/components/home/HiveFullChartDialog"),
@@ -505,10 +506,14 @@ const WidgetIndex = () => {
               }}
               className="w-full overflow-hidden"
             >
-              <WidgetRenderer type={widget.type} props={finalProps} />
+              <NodeSupportGate widgetId={widget.type}>
+                <WidgetRenderer type={widget.type} props={finalProps} />
+              </NodeSupportGate>
             </div>
           ) : (
-            <WidgetRenderer type={widget.type} props={finalProps} />
+            <NodeSupportGate widgetId={widget.type}>
+              <WidgetRenderer type={widget.type} props={finalProps} />
+            </NodeSupportGate>
           )}
         </div>
       );
