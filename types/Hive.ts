@@ -1469,6 +1469,62 @@ namespace Hive {
     rc_total!: number;
     by_label!: Record<string, number>;
   }
+
+  export class AccountDappFootprintParams {
+    account!: string;
+    from_date?: string | Date | number;
+    to_date?: string | Date | number;
+  }
+
+  export class AccountDappFootprintCategory {
+    category!: string;
+    op_count!: number;
+    rc_estimated!: number;
+    pct!: number;
+    rc_pct!: number;
+  }
+
+  export class AccountDappFootprintDapp {
+    app_name!: string;
+    category!: string;
+    op_count!: number;
+    rc_estimated!: number;
+    pct!: number;
+    rc_pct!: number;
+  }
+
+  export class AccountDappFootprintResponse {
+    account!: string;
+    from_date!: string;
+    to_date!: string;
+    total_ops!: number;
+    total_rc_estimated!: number;
+    top_dapp!: string | null;
+    top_category!: string | null;
+    categories!: AccountDappFootprintCategory[];
+    dapps!: AccountDappFootprintDapp[];
+  }
+
+  export class AccountRcFootprintTimelineParams {
+    account!: string;
+    from_date?: string | Date | number;
+    to_date?: string | Date | number;
+    op_type_filter?: string;
+    app_filter?: string;
+    limit_count?: number;
+    before_seq?: number;
+    offset_start?: number;
+  }
+
+  export class AccountRcFootprintTimelineRow {
+    timestamp!: string;
+    block_num!: number;
+    op_type!: string;
+    app!: string | null;
+    custom_json_id!: string | null;
+    rc_consumed!: number;
+    op_seq!: number;
+  }
 }
 
 export default Hive;

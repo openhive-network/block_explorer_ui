@@ -7,6 +7,7 @@ import MyHpDelegationsWidget from "@/components/dashboard/widgets/data/MyHpDeleg
 import MyRcDelegationsWidget from "@/components/dashboard/widgets/data/MyRcDelegationsWidget";
 import MyAuthoritiesWidget from "@/components/dashboard/widgets/data/MyAuthoritiesWidget";
 import MyRecentActivityWidget from "@/components/dashboard/widgets/data/MyRecentActivityWidget";
+import MyRcFootprintWidget from "@/components/dashboard/widgets/data/MyRcFootprintWidget";
 import TopHoldersWidget from "@/components/dashboard/widgets/data/TopHoldersWidget";
 import EmbedWidget from "@/components/dashboard/widgets/layout/EmbedWidget";
 import MarkdownWidget from "@/components/dashboard/widgets/layout/MarkdownWidget";
@@ -411,6 +412,17 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     component: MyRecentActivityWidget,
     defaultLayout: { w: 3, h: 7, minW: 2, minH: 3 },
     allowMultiple: false,
+  },
+
+  "my-rc-footprint": {
+    id: "my-rc-footprint",
+    name: "widgets.myRcFootprintName",
+    description: "widgets.myRcFootprintDescription",
+    category: "account" as const,
+    component: MyRcFootprintWidget,
+    defaultLayout: { w: 6, h: 8, minW: 3, minH: 4 },
+    allowMultiple: false,
+    dynamicHeight: true,
   },
 
   "top-holders": {

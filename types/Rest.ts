@@ -286,5 +286,16 @@ export const extendedRest = {
       responseArray: true,
       urlPath: "network/engagement",
     },
+    accountDappFootprint: {
+      params: Hive.AccountDappFootprintParams,
+      result: Hive.AccountDappFootprintResponse,
+      urlPath: "account/{account}/dapp-footprint",
+    },
+    accountRcFootprintTimeline: {
+      params: Hive.AccountRcFootprintTimelineParams,
+      result: Hive.AccountRcFootprintTimelineRow,
+      responseArray: true,
+      urlPath: "account/{account}/rc-footprint-timeline",
+    },
   },
 };

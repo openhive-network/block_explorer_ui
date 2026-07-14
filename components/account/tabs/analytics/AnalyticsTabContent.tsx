@@ -6,20 +6,21 @@ import { reportRegistry } from "./reportRegistry";
 import { useMemo } from "react";
 import { Layout } from "react-grid-layout";
 import { useAnalyticsDashboardState } from "./useAnalyticsDashboardState";
+import { useAuth } from "@/contexts/AuthContext";
 
 /**
  * Determines the set of required data source keys based on the currently active widgets.
  */
 const getRequiredDataSources = (widgets: Layout[]): Set<string> => {
   const required = new Set<string>();
-  widgets.forEach(widget => {
-    const widgetType = widget.i.split('-')[0];
+  widgets.forEach((widget) => {
+    const widgetType = widget.i.split("-")[0];
     const reportConfig = reportRegistry[widgetType];
     if (reportConfig?.dataMap) {
-      Object.values(reportConfig.dataMap).forEach(sourceKey => {
-         if (typeof sourceKey === 'string') {
-            required.add(sourceKey);
-         }
+      Object.values(reportConfig.dataMap).forEach((sourceKey) => {
+        if (typeof sourceKey === "string") {
+          required.add(sourceKey);
+        }
       });
     }
   });
@@ -33,21 +34,32 @@ interface AnalyticsTabContentProps {
 }
 
 const AnalyticsTabContent: React.FC<AnalyticsTabContentProps> = ({
-   accountName,
-   dynamicGlobalData,
-   liveDataEnabled,
+  accountName,
+  dynamicGlobalData,
+  liveDataEnabled,
 }) => {
-  const { widgets, layouts, onAddWidget, onRemoveWidget, onLayoutChange } = useAnalyticsDashboardState();
-  const requiredData = useMemo(() => getRequiredDataSources(widgets), [widgets]);
+  const { username } = useAuth();
+  const { widgets, layouts, onAddWidget, onRemoveWidget, onLayoutChange } =
+    useAnalyticsDashboardState(username);
+  const requiredData = useMemo(
+    () => getRequiredDataSources(widgets),
+    [widgets]
+  );
 
   // These hooks now ONLY fetch data for the initial, top-level account.
   const outgoingVestingDelegations = useConvertedVestingShares(
-    "outgoing", accountName, liveDataEnabled, dynamicGlobalData,
-    requiredData.has('outgoingVestingDelegations')
+    "outgoing",
+    accountName,
+    liveDataEnabled,
+    dynamicGlobalData,
+    requiredData.has("outgoingVestingDelegations")
   );
   const incomingVestingDelegations = useConvertedVestingShares(
-    "incoming", accountName, liveDataEnabled, dynamicGlobalData,
-    requiredData.has('incomingVestingDelegations')
+    "incoming",
+    accountName,
+    liveDataEnabled,
+    dynamicGlobalData,
+    requiredData.has("incomingVestingDelegations")
   );
 
   // A centralized object of all available data sources for the dashboard.

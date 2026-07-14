@@ -1050,6 +1050,44 @@ class FetchingService {
       limit_count: limitCount,
     });
   }
+
+  async getAccountDappFootprint(
+    account: string,
+    fromDate?: string | Date | number,
+    toDate?: string | Date | number
+  ): Promise<Hive.AccountDappFootprintResponse> {
+    return await this.extendedHiveChain!.restApi[
+      "haf-stats-api"
+    ].accountDappFootprint({
+      account,
+      from_date: fromDate,
+      to_date: toDate,
+    });
+  }
+
+  async getAccountRcFootprintTimeline(
+    account: string,
+    params: {
+      fromDate?: string | Date | number;
+      toDate?: string | Date | number;
+      appFilter?: string;
+      opTypeFilter?: string;
+      limitCount?: number;
+      beforeSeq?: number;
+    }
+  ): Promise<Hive.AccountRcFootprintTimelineRow[]> {
+    return await this.extendedHiveChain!.restApi[
+      "haf-stats-api"
+    ].accountRcFootprintTimeline({
+      account,
+      from_date: params.fromDate,
+      to_date: params.toDate,
+      app_filter: params.appFilter,
+      op_type_filter: params.opTypeFilter,
+      limit_count: params.limitCount,
+      before_seq: params.beforeSeq,
+    });
+  }
 }
 
 const fetchingService = new FetchingService();
