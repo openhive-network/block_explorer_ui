@@ -5,12 +5,10 @@ import React, {
   useCallback,
   useRef,
 } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import ReportDialogHeader from "@/components/ui/ReportDialogHeader";
+import DataExport from "@/components/DataExport";
+import { spacesToUnderscores } from "@/utils/StringUtils";
 import {
   Select,
   SelectContent,
@@ -20,7 +18,7 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Loader2, X, Info } from "lucide-react";
+import { Loader2, X, Info, Download } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -35,7 +33,8 @@ import SearchRanges from "@/components/searchRanges/SearchRanges";
 import useSearchRanges from "@/hooks/common/useSearchRanges";
 import useOperationTypeStatistics from "@/hooks/api/homePage/useOperationTypeStatistics";
 import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
-import { processOpMixData, getOpHexColor } from "./NetworkOpMixCard";
+import { processOpMixData } from "./NetworkOpMixCard";
+import { getOpHexColor } from "@/utils/operationColors";
 import { categorizedOperationTypes } from "@/utils/CategorizedOperationTypes";
 import NetworkOpMixChart from "./NetworkOpMixChart";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
@@ -155,6 +154,25 @@ const NetworkOpMixFullChartDialog: React.FC<
       topOpShare,
     };
   }, [mixData]);
+
+  const exportData = useMemo(() => {
+    if (!mixData) return [];
+    const displayedTotal =
+      mixData.topOps.reduce(
+        (s, op) => s + (mixData.aggregateCounts[op] ?? 0),
+        0
+      ) || 1;
+    return mixData.topOps.map((op) => {
+      const count = mixData.aggregateCounts[op] ?? 0;
+      return {
+        [t("networkOpMixDialog.opType")]: getOperationTypeForDisplay(op),
+        [t("networkOpMixDialog.count")]: count,
+        [t("networkOpMixDialog.sharePct")]: Number(
+          ((count / displayedTotal) * 100).toFixed(2)
+        ),
+      };
+    });
+  }, [mixData, t]);
 
   const groupedBreakdown = useMemo(() => {
     if (!dayBreakdown) return null;
@@ -331,64 +349,84 @@ const NetworkOpMixFullChartDialog: React.FC<
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="min-w-[70vw] pr-0">
         <div className="max-h-[90vh] overflow-y-auto overflow-x-hidden pr-6 scrollableContainer">
-          <DialogHeader>
-            <div className="mb-3">
-              <DialogTitle>{t("networkOpMixDialog.title")}</DialogTitle>
-            </div>
-          </DialogHeader>
-
-          {/* Row 1 — main filter controls */}
-          <div className="flex flex-wrap gap-3 mb-3 w-full items-start">
-            <div className="flex flex-col gap-y-3 w-[140px]">
-              <Label>{t("networkOpMixDialog.granularity")}</Label>
-              <Select
-                onValueChange={(v) =>
-                  handleGranularityChange(v as "daily" | "monthly" | "yearly")
-                }
-                value={granularity}
+          <ReportDialogHeader
+            title={t("networkOpMixDialog.title")}
+            subtitle={t("networkOpMixDialog.subtitle")}
+            actions={
+              <DataExport
+                data={exportData}
+                filename={`${spacesToUnderscores(t("widgets.opMixName"))}.csv`}
+                skipColumnSelection
               >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="daily">{t("common.daily")}</SelectItem>
-                  <SelectItem value="monthly">{t("common.monthly")}</SelectItem>
-                  <SelectItem value="yearly">{t("common.yearly")}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex flex-col gap-y-3 w-[180px]">
-              <Label>{t("networkOpMixDialog.filterOps")}</Label>
-              <OperationTypesDialog
-                operationTypes={operationsTypes}
-                triggerTitle={
-                  selectedOpTypes.length
-                    ? `${selectedOpTypes.length} ${t("networkOpMixDialog.selected")}`
-                    : t("networkOpMixDialog.allOps")
-                }
-                selectedOperations={selectedOpTypes}
-                buttonClassName=""
-                setSelectedOperations={(ids) => setSelectedOpTypes(ids ?? [])}
-              />
-            </div>
-
-            <div className="flex flex-col gap-y-3 flex-1 min-w-[260px]">
-              <Label>{t("common.filters")}</Label>
-              <SearchRanges
-                rangesProps={searchRanges}
-                setIsSearchButtonDisabled={setIsSearchButtonDisabled}
-              />
-              <div className="flex gap-2 mt-2">
-                <Button
-                  onClick={handleSearch}
-                  disabled={isSearchButtonDisabled}
+                <button
+                  type="button"
+                  title={t("common.export")}
+                  className="report-export-btn"
                 >
-                  {t("common.search")}
-                </Button>
-                <Button variant="outline" onClick={handleClear}>
-                  {t("common.clear")}
-                </Button>
+                  <Download className="h-4 w-4" />
+                  {t("common.export")}
+                </button>
+              </DataExport>
+            }
+          />
+
+          {/* Row 1 — query filter controls */}
+          <div className="report-filters mb-5">
+            <p className="report-filters-label">{t("common.filters")}</p>
+            <div className="flex w-full flex-wrap items-start gap-4">
+              <div className="flex flex-col gap-y-3 w-[140px]">
+                <Label>{t("networkOpMixDialog.granularity")}</Label>
+                <Select
+                  onValueChange={(v) =>
+                    handleGranularityChange(v as "daily" | "monthly" | "yearly")
+                  }
+                  value={granularity}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="daily">{t("common.daily")}</SelectItem>
+                    <SelectItem value="monthly">
+                      {t("common.monthly")}
+                    </SelectItem>
+                    <SelectItem value="yearly">{t("common.yearly")}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex flex-col gap-y-3 w-[180px]">
+                <Label>{t("networkOpMixDialog.filterOps")}</Label>
+                <OperationTypesDialog
+                  operationTypes={operationsTypes}
+                  triggerTitle={
+                    selectedOpTypes.length
+                      ? `${selectedOpTypes.length} ${t("networkOpMixDialog.selected")}`
+                      : t("networkOpMixDialog.allOps")
+                  }
+                  selectedOperations={selectedOpTypes}
+                  buttonClassName=""
+                  setSelectedOperations={(ids) => setSelectedOpTypes(ids ?? [])}
+                />
+              </div>
+
+              <div className="flex flex-col gap-y-3 flex-1 min-w-[260px]">
+                <Label>{t("common.dateRange")}</Label>
+                <SearchRanges
+                  rangesProps={searchRanges}
+                  setIsSearchButtonDisabled={setIsSearchButtonDisabled}
+                />
+                <div className="flex gap-2 mt-2">
+                  <Button
+                    onClick={handleSearch}
+                    disabled={isSearchButtonDisabled}
+                  >
+                    {t("common.search")}
+                  </Button>
+                  <Button variant="outline" onClick={handleClear}>
+                    {t("common.clear")}
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

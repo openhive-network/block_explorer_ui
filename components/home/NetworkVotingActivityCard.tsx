@@ -14,24 +14,16 @@ import useNetworkVoteStats from "@/hooks/api/homePage/useNetworkVoteStats";
 import Hive from "@/types/Hive";
 import { useI18n } from "@/i18n/i18n";
 import { useSettings } from "@/contexts/SettingsContext";
+import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
+import { computeTrendPct } from "@/utils/chartUtils";
 
 const NetworkVotingActivityFullChartDialog = dynamic(
   () => import("./NetworkVotingActivityFullChartDialog"),
   { ssr: false }
 );
 
-const trendPct = (
-  current: number,
-  previous: number | undefined
-): number | null => {
-  if (previous == null || previous === 0) return null;
-  return ((current - previous) / previous) * 100;
-};
-
-const TrendBadge: React.FC<{ value: number | null; label: string }> = ({
-  value,
-  label,
-}) => {
+const TrendBadge: React.FC<{ value: number | null }> = ({ value }) => {
+  const { locale } = useI18n();
   if (value === null) return null;
   const positive = value >= 0;
   return (
@@ -39,7 +31,11 @@ const TrendBadge: React.FC<{ value: number | null; label: string }> = ({
       className={`flex items-center gap-0.5 text-[10px] font-medium ${positive ? "text-green-500" : "text-red-500"}`}
     >
       {positive ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
-      {Math.abs(value).toFixed(1)}% {label}
+      {Math.abs(value).toLocaleString(locale, {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1,
+      })}
+      %
     </span>
   );
 };
@@ -86,12 +82,23 @@ const NetworkVotingActivityCard: React.FC = () => {
     return accumulate(voteStats.filter((d) => d.period >= cutoff30));
   }, [voteStats, cutoff30]);
 
-  const prev = useMemo(() => {
-    if (!voteStats || voteStats.length === 0) return null;
-    return accumulate(
-      voteStats.filter((d) => d.period >= cutoff60 && d.period < cutoff30)
-    );
-  }, [voteStats, cutoff60, cutoff30]);
+  const todayStr = moment().format("YYYY-MM-DD");
+  const completedDaily = useMemo(
+    () =>
+      (voteStats ?? []).filter(
+        (d) => d.period >= cutoff30 && d.period < todayStr
+      ),
+    [voteStats, cutoff30, todayStr]
+  );
+
+  const trendVotes = useMemo(
+    () => computeTrendPct(completedDaily.map((d) => d.total_votes)),
+    [completedDaily]
+  );
+  const trendVoters = useMemo(
+    () => computeTrendPct(completedDaily.map((d) => d.unique_voters)),
+    [completedDaily]
+  );
 
   const pct = (count: number) => {
     if (!latest || latest.total_votes === 0) return "0%";
@@ -105,24 +112,22 @@ const NetworkVotingActivityCard: React.FC = () => {
 
   return (
     <div className="bg-theme rounded mb-2 shadow-md overflow-hidden">
-      <div className="flex flex-wrap gap-2 p-3">
-        {/* Card header */}
-        <div className="w-full flex items-center justify-between">
-          <div className="flex flex-col">
-            <span className="text-[11px] font-semibold uppercase tracking-wide text-explorer-dark-gray dark:text-text">
-              {t("widgets.votingActivityName")}
-            </span>
-            <span className="text-[10px] text-gray-400">
-              {t("votingActivityCard.last30Days")}
-            </span>
-          </div>
+      <CardHeaderWithLink
+        title={t("widgets.votingActivityName")}
+        actions={
           <button
             onClick={() => setIsModalOpen(true)}
-            className="text-xs underline"
+            className="text-[13px] underline text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
           >
-            {t("votingActivityCard.fullChart")}
+            {t("common.fullChart")}
           </button>
-        </div>
+        }
+      />
+      <div className="flex flex-wrap gap-2 p-3 pt-2">
+        {/* Last 30 Days label */}
+        <p className="w-full text-[10px] text-gray-400 text-end">
+          {t("votingActivityCard.last30Days")}
+        </p>
 
         {/* Headline KPIs */}
         <div className="flex gap-2 w-full">
@@ -141,10 +146,7 @@ const NetworkVotingActivityCard: React.FC = () => {
                 <p className="text-xl font-bold leading-tight text-explorer-dark-gray dark:text-text">
                   {latest.total_votes.toLocaleString(locale)}
                 </p>
-                <TrendBadge
-                  value={trendPct(latest.total_votes, prev?.total_votes)}
-                  label={t("votingActivityCard.vsPrevPeriod")}
-                />
+                <TrendBadge value={trendVotes} />
               </>
             ) : (
               <p className="text-gray-500 text-xs mt-1">
@@ -168,10 +170,7 @@ const NetworkVotingActivityCard: React.FC = () => {
                 <p className="text-xl font-bold leading-tight text-blue-500">
                   {latest.unique_voters.toLocaleString(locale)}
                 </p>
-                <TrendBadge
-                  value={trendPct(latest.unique_voters, prev?.unique_voters)}
-                  label={t("votingActivityCard.vsPrevPeriod")}
-                />
+                <TrendBadge value={trendVoters} />
               </>
             ) : null}
           </div>

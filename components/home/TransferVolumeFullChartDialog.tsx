@@ -1,11 +1,9 @@
 import React, { useState, useEffect, useMemo } from "react";
 import moment from "moment";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import ReportDialogHeader from "@/components/ui/ReportDialogHeader";
+import DataExport from "@/components/DataExport";
+import { spacesToUnderscores } from "@/utils/StringUtils";
 import {
   Select,
   SelectContent,
@@ -21,9 +19,9 @@ import useTransferStatistics from "@/hooks/api/homePage/useTransferStatistics";
 import TransferVolumeChart from "./TransferVolumeChart";
 import TransferStatsKpiStrip from "./TransferStatsKpiStrip";
 import Hive from "@/types/Hive";
-import { Loader2 } from "lucide-react";
+import { Loader2, Download } from "lucide-react";
 import { useI18n } from "../../i18n/i18n";
-import { cn } from "@/lib/utils";
+import SegmentedToggle from "@/components/ui/SegmentedToggle";
 import { computeTrendPct } from "@/utils/chartUtils";
 
 type CoinType = "HIVE" | "HBD";
@@ -99,6 +97,25 @@ const TransferVolumeFullChartDialog: React.FC<TransferVolumeModalProps> = ({
     return { totalVolume, totalTxns, avgPerPeriod, peakDate, peakValue, trend };
   }, [currentChartData]);
 
+  const exportData = useMemo(
+    () =>
+      (currentChartData ?? []).map((item) => ({
+        [t("common.date")]: item.date,
+        [t("transferVolumeFullChartDialog.coin")]: coinType,
+        [t("transferVolumeCard.totalTransferAmount")]: naiToDecimal(
+          item.total_transfer_amount
+        ),
+        [t("transferVolumeCard.transferCount")]: item.transfer_count,
+        [t("transferVolumeFullChartDialog.averageTransferAmount")]:
+          naiToDecimal(item.average_transfer_amount),
+        [t("transferVolumeFullChartDialog.maximumTransferAmount")]:
+          naiToDecimal(item.maximum_transfer_amount),
+        [t("transferVolumeFullChartDialog.minimumTransferAmount")]:
+          naiToDecimal(item.minimum_transfer_amount),
+      })),
+    [currentChartData, coinType, t]
+  );
+
   // Sync coin type when card selection changes and dialog reopens
   useEffect(() => {
     if (isOpen) setCoinType(initialCoinType);
@@ -171,100 +188,105 @@ const TransferVolumeFullChartDialog: React.FC<TransferVolumeModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="min-w-[90vw] pr-0">
+      <DialogContent className="min-w-[70vw] pr-0">
         <div className="max-h-[90vh] overflow-y-auto overflow-x-hidden pr-6 scrollableContainer">
-          <DialogHeader>
-            <div className="mb-4 flex items-center justify-between gap-3 pr-6 flex-wrap">
-              <DialogTitle>
-                {t("transferVolumeFullChartDialog.historyTitle")}
-              </DialogTitle>
-              <div
-                className="inline-flex items-stretch rounded-full border border-navbar-border overflow-hidden text-xs"
-                role="group"
-                aria-label="HIVE or HBD"
+          <ReportDialogHeader
+            title={t("transferVolumeFullChartDialog.historyTitle")}
+            subtitle={t("transferVolumeFullChartDialog.subtitle")}
+            actions={
+              <DataExport
+                data={exportData}
+                filename={`${spacesToUnderscores(
+                  t("widgets.transferVolumeName")
+                )}.csv`}
+                skipColumnSelection
               >
-                {coinOptions.map((opt, idx) => {
-                  const isActive = coinType === opt.key;
-                  const isFirst = idx === 0;
-                  const isLast = idx === coinOptions.length - 1;
-                  return (
-                    <button
-                      key={opt.key}
-                      type="button"
-                      onClick={() => setCoinType(opt.key)}
-                      aria-pressed={isActive}
-                      className={cn(
-                        "font-medium transition-colors px-3 py-1",
-                        !isLast && "border-r border-navbar-border",
-                        isFirst && "rounded-l-full",
-                        isLast && "rounded-r-full",
-                        isActive
-                          ? "bg-blue-500 text-white"
-                          : "bg-theme hover:bg-gray-100 dark:hover:bg-gray-700"
-                      )}
-                    >
-                      {opt.label}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </DialogHeader>
-
-          <div className="flex flex-col md:flex-row items-start gap-4 mb-4 w-full">
-            <div className="flex flex-col gap-y-3 w-1/2 md:w-1/4">
-              <Label>
-                {t("transactionStatisticsFullChartDialog.granularity")}
-              </Label>
-              <Select
-                onValueChange={(value) =>
-                  handleGranularityChange(value as Granularity)
-                }
-                value={granularity}
-              >
-                <SelectTrigger>
-                  <SelectValue
-                    placeholder={t(
-                      "transactionStatisticsFullChartDialog.selectGranularity"
-                    )}
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="hourly">{t("common.hourly")}</SelectItem>
-                  <SelectItem value="daily">{t("common.daily")}</SelectItem>
-                  <SelectItem value="monthly">{t("common.monthly")}</SelectItem>
-                  <SelectItem value="yearly">{t("common.yearly")}</SelectItem>
-                </SelectContent>
-              </Select>
-              {granularity === "hourly" && (
-                <p className="text-[10px] text-amber-500">
-                  {t("transferVolumeFullChartDialog.hourlyWarning") ||
-                    "Hourly view works best within 30 days."}
-                </p>
-              )}
-            </div>
-
-            <div className="w-full flex flex-col mb-4">
-              <Label>{t("common.filters")}</Label>
-              <div className="m-0 p-0 gap-y-0">
-                <SearchRanges
-                  rangesProps={searchRanges}
-                  setIsSearchButtonDisabled={setIsSearchButtonDisabled}
-                />
-              </div>
-              <div className="w-full flex items-end justify-start mt-2 gap-2">
-                <Button
-                  onClick={handleSearch}
-                  data-testid="apply-filters"
-                  disabled={isSearchButtonDisabled}
+                <button
+                  type="button"
+                  title={t("common.export")}
+                  className="report-export-btn"
                 >
-                  {t("common.search")}
-                </Button>
-                <Button onClick={handleFilterClear} data-testid="clear-filters">
-                  {t("common.clear")}
-                </Button>
+                  <Download className="h-4 w-4" />
+                  {t("common.export")}
+                </button>
+              </DataExport>
+            }
+          />
+
+          <div className="report-filters mb-5">
+            <p className="report-filters-label">{t("common.filters")}</p>
+            <div className="flex w-full flex-wrap items-start gap-4">
+              <div className="flex flex-col gap-y-3 w-1/2 md:w-1/4">
+                <Label>
+                  {t("transactionStatisticsFullChartDialog.granularity")}
+                </Label>
+                <Select
+                  onValueChange={(value) =>
+                    handleGranularityChange(value as Granularity)
+                  }
+                  value={granularity}
+                >
+                  <SelectTrigger>
+                    <SelectValue
+                      placeholder={t(
+                        "transactionStatisticsFullChartDialog.selectGranularity"
+                      )}
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="hourly">{t("common.hourly")}</SelectItem>
+                    <SelectItem value="daily">{t("common.daily")}</SelectItem>
+                    <SelectItem value="monthly">
+                      {t("common.monthly")}
+                    </SelectItem>
+                    <SelectItem value="yearly">{t("common.yearly")}</SelectItem>
+                  </SelectContent>
+                </Select>
+                {granularity === "hourly" && (
+                  <p className="text-[10px] text-amber-500">
+                    {t("transferVolumeFullChartDialog.hourlyWarning") ||
+                      "Hourly view works best within 30 days."}
+                  </p>
+                )}
+              </div>
+
+              <div className="w-full flex flex-col mb-4">
+                <Label>{t("common.dateRange")}</Label>
+                <div className="m-0 p-0 gap-y-0">
+                  <SearchRanges
+                    rangesProps={searchRanges}
+                    setIsSearchButtonDisabled={setIsSearchButtonDisabled}
+                  />
+                </div>
+                <div className="w-full flex items-end justify-start mt-2 gap-2">
+                  <Button
+                    onClick={handleSearch}
+                    data-testid="apply-filters"
+                    disabled={isSearchButtonDisabled}
+                  >
+                    {t("common.search")}
+                  </Button>
+                  <Button
+                    onClick={handleFilterClear}
+                    data-testid="clear-filters"
+                  >
+                    {t("common.clear")}
+                  </Button>
+                </div>
               </div>
             </div>
+          </div>
+
+          <div className="mb-3 flex flex-wrap items-center gap-2">
+            <SegmentedToggle
+              ariaLabel="HIVE or HBD"
+              value={coinType}
+              onChange={setCoinType}
+              options={coinOptions.map((o) => ({
+                value: o.key,
+                label: o.label,
+              }))}
+            />
           </div>
 
           {kpiStats && (
@@ -280,7 +302,7 @@ const TransferVolumeFullChartDialog: React.FC<TransferVolumeModalProps> = ({
             />
           )}
 
-          <div className="h-[50vh] w-full flex items-center justify-center">
+          <div className="h-[55vh] w-full flex items-center justify-center">
             {isChartLoading ? (
               <div className="flex justify-center items-center">
                 <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />

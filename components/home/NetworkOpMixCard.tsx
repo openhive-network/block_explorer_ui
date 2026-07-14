@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import ReactECharts from "echarts-for-react";
 import moment from "moment";
-import { Loader2 } from "lucide-react";
+import { Loader2, Eye, EyeOff } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useI18n } from "@/i18n/i18n";
@@ -10,9 +10,10 @@ import useOperationTypeStatistics from "@/hooks/api/homePage/useOperationTypeSta
 import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
 import Hive from "@/types/Hive";
 import Explorer from "@/types/Explorer";
-import { getOperationColor } from "@/components/OperationsTable";
+import { getOpHexColor, getOpColorClass } from "@/utils/operationColors";
 import { cn } from "@/lib/utils";
 import { getOperationTypeForDisplay } from "@/utils/UI";
+import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
 
 // --- Shared types and helpers used by NetworkOpMixChart and NetworkOpMixFullChartDialog ---
 
@@ -30,30 +31,6 @@ export interface OpMixData {
   totalOps: number;
   totalTxs: number;
   otherOps: { name: string; count: number }[];
-}
-
-// Reads the actual CSS variable value at runtime so theme.css is the single source of truth.
-// "bg-explorer-operations-posting" → "--color-operation-posting"
-// "Other" is our synthetic bucket — map it to the "other" category directly.
-export function getOpHexColor(opName: string): string {
-  if (typeof window === "undefined") return "#6b7280";
-  const cls =
-    opName === "Other"
-      ? "bg-explorer-operations-other"
-      : getOperationColor(opName);
-  if (!cls) return "#6b7280";
-  const cssVar = `--color-${cls.replace("bg-explorer-", "").replace("operations-", "operation-")}`;
-  return (
-    getComputedStyle(document.documentElement)
-      .getPropertyValue(cssVar)
-      .trim() || "#6b7280"
-  );
-}
-
-export function getOpColorClass(opName: string): string {
-  return opName === "Other"
-    ? "bg-explorer-operations-other"
-    : (getOperationColor(opName) ?? "bg-gray-400");
 }
 
 export function processOpMixData(
@@ -143,7 +120,8 @@ const NetworkOpMixFullChartDialog = dynamic(
 );
 
 const NetworkOpMixCard: React.FC = () => {
-  const { t, locale } = useI18n();
+  const { t, locale, dir } = useI18n();
+  const isRTL = dir === "rtl";
   const { theme } = useTheme();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showVirtual, setShowVirtual] = useState(false);
@@ -194,7 +172,7 @@ const NetworkOpMixCard: React.FC = () => {
     return {
       animation: false,
       grid: { top: 0, right: 0, bottom: 0, left: 0, containLabel: false },
-      xAxis: { type: "value", show: false, min: 0, max: 100 },
+      xAxis: { type: "value", show: false, min: 0, max: 100, inverse: isRTL },
       yAxis: { type: "category", data: ["mix"], show: false },
       legend: { show: false },
       tooltip: {
@@ -206,7 +184,7 @@ const NetworkOpMixCard: React.FC = () => {
         padding: [8, 12],
         textStyle: { color: tooltipText, fontSize: 11 },
         formatter: (params: any) =>
-          `<b>${params.seriesName}</b>: ${formatCompact(aggregateCounts[params.seriesName] ?? 0, locale)}`,
+          `<div style="direction:${isRTL ? "rtl" : "ltr"}"><b>${params.seriesName}</b>: ${formatCompact(aggregateCounts[params.seriesName] ?? 0, locale)}</div>`,
       },
       series: visibleOps.map((opName) => ({
         name: opName,
@@ -217,44 +195,47 @@ const NetworkOpMixCard: React.FC = () => {
         data: [((aggregateCounts[opName] ?? 0) / totalRaw) * 100],
       })),
     };
-  }, [mixData, hiddenOps, tooltipBg, tooltipBorder, tooltipText, locale]);
+  }, [
+    mixData,
+    hiddenOps,
+    tooltipBg,
+    tooltipBorder,
+    tooltipText,
+    locale,
+    isRTL,
+  ]);
 
   return (
     <div className="bg-theme rounded mb-2 shadow-md overflow-hidden">
-      <div className="p-2.5">
-        {/* Header row */}
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-baseline gap-2">
-            <span className="text-xs font-semibold uppercase tracking-wide text-explorer-dark-gray dark:text-text">
-              {t("networkOpMixCard.title")}
-            </span>
-            <span className="text-[10px] text-gray-400 dark:text-gray-500">
-              (30 D)
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
+      <CardHeaderWithLink
+        title={t("networkOpMixCard.title")}
+        actions={
+          <>
             <button
               onClick={() => setShowVirtual((v) => !v)}
+              aria-pressed={showVirtual}
               className={cn(
-                "text-[10px] px-1.5 py-0.5 rounded font-medium transition-colors",
+                "inline-flex items-center gap-1 text-[10px] px-2 py-1 rounded-sm border font-medium transition-colors",
                 showVirtual
-                  ? "bg-indigo-500 text-white"
-                  : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                  ? "bg-indigo-500 border-indigo-500 text-white"
+                  : "border-gray-300 dark:border-gray-600 text-gray-500 dark:text-gray-400 hover:border-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
               )}
             >
+              {showVirtual ? <Eye size={11} /> : <EyeOff size={11} />}
               {showVirtual
                 ? t("networkOpMixCard.excludeVirtual")
                 : t("networkOpMixCard.includeVirtual")}
             </button>
             <button
               onClick={() => setIsModalOpen(true)}
-              className="text-xs underline"
+              className="inline-flex items-center leading-none text-[13px] underline text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
             >
-              {t("networkOpMixCard.fullChart")}
+              {t("common.fullChart")}
             </button>
-          </div>
-        </div>
-
+          </>
+        }
+      />
+      <div className="p-2.5">
         {/* KPI row — prominent numbers */}
         <div className="flex gap-4 mb-2.5">
           <div>

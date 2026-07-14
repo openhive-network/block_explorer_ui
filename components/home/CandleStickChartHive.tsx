@@ -47,45 +47,50 @@ const CustomTooltip = ({
   active?: boolean;
   payload?: any[];
 }) => {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
 
-  if (active && payload && payload.length) {
-    return (
-      <div className="bg-buttonHover text-text p-2 rounded-xl">
-        {payload.map(
-          ({
-            payload: { openTime, tooltipDate, high, low, openClose, volume },
-          }) => {
-            return (
-              <div key={openTime}>
-                <p>
-                  {t("customShapeBarChart.open")}: ${openClose[0].toFixed(4)}
-                </p>
-                <p>
-                  {t("customShapeBarChart.close")}: ${openClose[1].toFixed(4)}
-                </p>
-                <p>
-                  {t("customShapeBarChart.high")}: ${high.toFixed(4)}
-                </p>
-                <p>
-                  {t("customShapeBarChart.low")}: ${low.toFixed(4)}
-                </p>
-                <p>
-                  {t("marketHistoryChart.volume")}:{" "}
-                  {volume.toLocaleString("en-US")} HIVE
-                </p>
-                <p>
-                  {t("marketHistoryChart.date")}: {tooltipDate}
-                </p>
-              </div>
-            );
-          }
-        )}
+  if (!active || !payload || !payload.length) return null;
+
+  const { tooltipDate, high, low, openClose, volume } = payload[0].payload;
+  const [open, close] = openClose as [number, number];
+  const isGrowing = open < close;
+  const dotColor = isGrowing ? colors.green : colors.red;
+  const fmt = (n: number) =>
+    n.toLocaleString(locale, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 4,
+    });
+
+  const rows: [string, string][] = [
+    [t("customShapeBarChart.open"), `$${fmt(open)}`],
+    [t("customShapeBarChart.high"), `$${fmt(high)}`],
+    [t("customShapeBarChart.low"), `$${fmt(low)}`],
+    [t("customShapeBarChart.close"), `$${fmt(close)}`],
+    [t("marketHistoryChart.volume"), volume.toLocaleString(locale)],
+  ];
+
+  return (
+    <div className="rounded-md border border-gray-200 bg-white/95 px-2 py-1.5 text-explorer-dark-gray shadow-md backdrop-blur-sm dark:border-gray-700 dark:bg-gray-900/95 dark:text-text">
+      <div className="mb-1 flex items-center gap-1.5">
+        <span
+          className="h-1.5 w-1.5 shrink-0 rounded-full"
+          style={{ backgroundColor: dotColor }}
+        />
+        <span className="text-sm font-bold tabular-nums">${fmt(close)}</span>
+        <span className="text-[9px] font-medium text-gray-400">
+          {moment(tooltipDate, "YYYY MMM D").format("MMM D, YYYY")}
+        </span>
       </div>
-    );
-  }
-
-  return null;
+      <div className="space-y-0.5 pl-3 text-[10px]">
+        {rows.map(([label, value]) => (
+          <div key={label} className="flex items-center justify-between gap-4">
+            <span className="text-gray-400">{label}</span>
+            <span className="font-medium tabular-nums">{value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };
 
 const Candlestick = (props: CandlestickProps) => {
@@ -183,7 +188,7 @@ const CustomShapeBarChart: React.FC<CandleStickChartProps> = ({ data }) => {
   const strokeColor = theme === "dark" ? "#FFF" : "#000";
 
   return (
-    <ResponsiveContainer width="100%" height={500}>
+    <ResponsiveContainer width="100%" height={400}>
       <BarChart data={chartData}>
         <XAxis dataKey="openTime" stroke={strokeColor} reversed={isRTL} />
         <YAxis

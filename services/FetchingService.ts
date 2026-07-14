@@ -868,12 +868,16 @@ class FetchingService {
   async getTopHolders(
     coinType: "HIVE" | "HBD" | "VESTS",
     balanceType: "balance" | "savings_balance",
-    page: number
+    page: number,
+    minBalance?: number,
+    maxBalance?: number
   ): Promise<Hive.TopHoldersResponse> {
     return await this.extendedHiveChain!.restApi["balance-api"].topHolders({
       "coin-type": coinType,
       "balance-type": balanceType,
       page,
+      ...(minBalance !== undefined ? { "min-balance": minBalance } : {}),
+      ...(maxBalance !== undefined ? { "max-balance": maxBalance } : {}),
     });
   }
 
@@ -1011,6 +1015,72 @@ class FetchingService {
     return await this.extendedHiveChain!.restApi[
       "haf-stats-api"
     ].networkHpDistribution({});
+  }
+
+  async getNetworkRcUtilization(
+    from?: string | Date | number,
+    to?: string | Date | number,
+    granularity?: "day" | "week" | "month"
+  ): Promise<Hive.NetworkRcUtilizationResponse[]> {
+    return await this.extendedHiveChain!.restApi[
+      "haf-stats-api"
+    ].networkRcUtilization({
+      from_date: from,
+      to_date: to,
+      granularity,
+    });
+  }
+
+  async getNetworkContentVolume(
+    from?: Date | number | undefined,
+    to?: Date | number | undefined,
+    granularity?: "day" | "week" | "month"
+  ): Promise<Hive.NetworkContentVolumeResponse[]> {
+    return await this.extendedHiveChain!.restApi[
+      "haf-stats-api"
+    ].networkContentVolume({
+      from_date: from,
+      to_date: to,
+      granularity,
+    });
+  }
+
+  async getNetworkEngagement(
+    from?: Date | number | undefined,
+    to?: Date | number | undefined,
+    granularity?: "day" | "week" | "month"
+  ): Promise<Hive.NetworkEngagementResponse[]> {
+    return await this.extendedHiveChain!.restApi[
+      "haf-stats-api"
+    ].networkEngagement({
+      from_date: from,
+      to_date: to,
+      granularity,
+    });
+  }
+
+  async getAccountFunnel(
+    from?: Date | number,
+    to?: Date | number
+  ): Promise<Hive.AccountFunnelResponse[]> {
+    return this.extendedHiveChain!.restApi["haf-stats-api"].accountFunnel({
+      from_date: from,
+      to_date: to,
+    });
+  }
+
+  async getNetworkTopAccounts(
+    metric: Hive.TopAccountsMetric,
+    fromDate?: string | Date | number,
+    toDate?: string | Date | number,
+    limitCount?: number
+  ): Promise<Hive.TopAccountsResponse[]> {
+    return await this.extendedHiveChain!.restApi["haf-stats-api"].topAccounts({
+      metric,
+      from_date: fromDate,
+      to_date: toDate,
+      limit_count: limitCount,
+    });
   }
 }
 

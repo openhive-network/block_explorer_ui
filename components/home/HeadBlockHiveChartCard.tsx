@@ -4,7 +4,6 @@ import moment from "moment";
 import useMarketHistory from "@/hooks/common/useMarketHistory";
 import { useEffect, useState } from "react";
 import { config } from "@/Config";
-import { Button } from "../ui/button";
 import { useI18n } from "../../i18n/i18n";
 import { useSettings } from "@/contexts/SettingsContext";
 
@@ -44,7 +43,6 @@ const HeadBlockHiveChartCard: React.FC<HeadBlockPropertyCardProps> = ({
     marketHistoryEndDate
   );
 
-  // Hive chart market data updates
   useEffect(() => {
     if (!settings.liveData) return;
 
@@ -60,26 +58,38 @@ const HeadBlockHiveChartCard: React.FC<HeadBlockPropertyCardProps> = ({
 
   return (
     <div
-      className="bg-theme py-1 rounded-[6px] data-box-chart"
+      className="bg-theme rounded-[6px] data-box-chart mb-1"
       data-testid="expandable-list"
-      style={{ overflowX: "auto", width: "100%" }}
+      style={{ overflowX: "auto", width: "100%", padding: "5px 8px" }}
     >
       <div
         onClick={handleHideParams}
-        className="h-full w-full flex items-center justify-between py-1 cursor-pointer px-1"
+        className="h-full w-full flex items-center justify-between cursor-pointer px-1"
       >
-        <div className="text-lg">{header}</div>
-        <div>{isParamsHidden ? <ArrowDown /> : <ArrowUp />}</div>
+        <span className="text-base font-medium truncate min-w-0">{header}</span>
+        <div className="flex items-center gap-3 shrink-0">
+          {!isParamsHidden && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleHiveFullChartVisibility();
+              }}
+              className="text-sm underline text-link"
+            >
+              {t("common.fullChart")}
+            </button>
+          )}
+          {isParamsHidden ? (
+            <ArrowDown className="h-4 w-4" />
+          ) : (
+            <ArrowUp className="h-4 w-4" />
+          )}
+        </div>
       </div>
 
-      <div
-        hidden={isParamsHidden}
-        data-testid="content-expandable-list"
-      >
-        <div className="flex flex-col items-end gap-3">
-          <MarketHistoryChart data={marketHistory} />
-          <Button onClick={handleHiveFullChartVisibility}>{t("headBlockHiveChartCard.fullChart")}</Button>
-        </div>
+      <div hidden={isParamsHidden} data-testid="content-expandable-list">
+        <MarketHistoryChart data={marketHistory} />
       </div>
     </div>
   );

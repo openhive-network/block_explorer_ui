@@ -1,10 +1,14 @@
-import { useState, useEffect } from "react";
-import { Loader2 } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
+import { Loader2, Download } from "lucide-react";
 import { useI18n } from "../../i18n/i18n";
 import { config } from "@/Config";
 import useMarketHistory from "@/hooks/common/useMarketHistory";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Dialog, DialogContent } from "../ui/dialog";
+import ReportDialogHeader from "@/components/ui/ReportDialogHeader";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
+import DataExport from "@/components/DataExport";
+import { spacesToUnderscores } from "@/utils/StringUtils";
 import MarketHistoryChart from "./MarketHistoryChart";
 import DateTimePicker from "../DateTimePicker";
 import CustomShapeBarChart from "./CandleStickChartHive";
@@ -35,11 +39,14 @@ const HiveFullChartDialog: React.FC<HiveFullChartDialogProps> = ({
 }) => {
   const { settings } = useSettings();
   const { t } = useI18n();
-  const [activeChartTab, setActiveChartTab] = useState("candle");
+  const [activeChartTab, setActiveChartTab] = useState<"candle" | "line">(
+    "candle"
+  );
 
-  const handleTabChange = (value: string) => {
-    setActiveChartTab(value);
-  };
+  const chartOptions: { value: "candle" | "line"; label: string }[] = [
+    { value: "candle", label: t("hiveFullChartDialog.candle") },
+    { value: "line", label: t("hiveFullChartDialog.line") },
+  ];
 
   const currentTime = new Date();
   const marketHistoryTimePeriod = subtractDaysFromDate(
@@ -77,67 +84,104 @@ const HiveFullChartDialog: React.FC<HiveFullChartDialogProps> = ({
     return () => clearInterval(intervalId);
   }, [settings.liveData]);
 
+  const exportData = useMemo(
+    () =>
+      (marketHistory?.buckets ?? []).map((b) => ({
+        [t("common.date")]: b.open,
+        [t("hiveFullChartDialog.hiveOpen")]: b.hive.open,
+        [t("hiveFullChartDialog.hiveHigh")]: b.hive.high,
+        [t("hiveFullChartDialog.hiveLow")]: b.hive.low,
+        [t("hiveFullChartDialog.hiveClose")]: b.hive.close,
+        [t("hiveFullChartDialog.hiveVolume")]: b.hive.volume,
+        [t("hiveFullChartDialog.hbdOpen")]: b.non_hive.open,
+        [t("hiveFullChartDialog.hbdHigh")]: b.non_hive.high,
+        [t("hiveFullChartDialog.hbdLow")]: b.non_hive.low,
+        [t("hiveFullChartDialog.hbdClose")]: b.non_hive.close,
+        [t("hiveFullChartDialog.hbdVolume")]: b.non_hive.volume,
+      })),
+    [marketHistory, t]
+  );
+
   return (
-    <Dialog
-      open={isOpen}
-      onOpenChange={handleHiveFullChartVisibility}
-    >
-      <DialogContent className="min-w-[70vw] min-h-[60vh]">
-        {!marketHistory && isMarketHistoryLoading ? (
-          <div className="flex justify-center text-center items-center">
-            <Loader2 className="animate-spin mt-1 h-12 w-12 ml-3 ..." />
-          </div>
-        ) : (
-          <div>
-            <div className="flex justify-between items-center mb-4">
-              <div>
-                <label>{t("hiveFullChartDialog.startDate")}</label>
+    <Dialog open={isOpen} onOpenChange={handleHiveFullChartVisibility}>
+      <DialogContent className="min-w-[70vw] pr-0">
+        <div className="max-h-[90vh] overflow-y-auto overflow-x-hidden pr-6 scrollableContainer">
+          <ReportDialogHeader
+            title={t("hiveFullChartDialog.title")}
+            subtitle={t("hiveFullChartDialog.subtitle")}
+            actions={
+              <DataExport
+                data={exportData}
+                filename={`${spacesToUnderscores(
+                  t("widgets.hivePriceChartName")
+                )}.csv`}
+                skipColumnSelection
+              >
+                <button
+                  type="button"
+                  title={t("common.export")}
+                  className="report-export-btn"
+                >
+                  <Download className="h-4 w-4" />
+                  {t("common.export")}
+                </button>
+              </DataExport>
+            }
+          />
+
+          <div className="report-filters mb-4">
+            <p className="report-filters-label">{t("common.filters")}</p>
+            <div className="flex flex-wrap items-end gap-6">
+              <div className="flex flex-col gap-y-1">
+                <Label>{t("hiveFullChartDialog.startDate")}</Label>
                 <DateTimePicker
                   date={marketHistoryStartDate}
                   setDate={setMarketHistoryStartDate}
                 />
               </div>
-              <div>
-                <label>{t("hiveFullChartDialog.endDate")}</label>
+              <div className="flex flex-col gap-y-1">
+                <Label>{t("hiveFullChartDialog.endDate")}</Label>
                 <DateTimePicker
                   date={marketHistoryEndDate}
                   setDate={setMarketHistoryEndDate}
                 />
               </div>
             </div>
-            <Tabs
-              value={activeChartTab}
-              onValueChange={handleTabChange}
-              className="flex-col w-full"
-            >
-              <TabsList className="flex w-full justify-end p-0">
-                <div className="bg-theme p-1 flex rounded w-auto">
-                  <TabsTrigger
-                    className="rounded cursor-pointer hover:bg-buttonHover"
-                    value="candle"
-                  >
-                    {t("hiveFullChartDialog.candle")}
-                  </TabsTrigger>
-                  <TabsTrigger
-                    className="rounded cursor-pointer hover:bg-buttonHover"
-                    value="line"
-                  >
-                    {t("hiveFullChartDialog.line")}
-                  </TabsTrigger>
-                </div>
-              </TabsList>
-              <TabsContent value="candle">
-                <CustomShapeBarChart data={marketHistory} />
-              </TabsContent>
-              <TabsContent value="line">
-                <MarketHistoryChart
-                  data={marketHistory}
-                  isFullChart={true}
-                />
-              </TabsContent>
-            </Tabs>
           </div>
-        )}
+
+          {!marketHistory && isMarketHistoryLoading ? (
+            <div className="flex h-[40vh] items-center justify-center">
+              <Loader2 className="animate-spin h-12 w-12 dark:text-white" />
+            </div>
+          ) : (
+            <div>
+              <div className="mb-3 flex items-center gap-2">
+                <span className="text-xs font-semibold uppercase tracking-wide text-explorer-dark-gray dark:text-text mr-1">
+                  {t("common.view")}:
+                </span>
+                {chartOptions.map((o) => (
+                  <button
+                    key={o.value}
+                    onClick={() => setActiveChartTab(o.value)}
+                    className={cn(
+                      "text-xs px-2.5 py-1 rounded font-medium transition-colors",
+                      activeChartTab === o.value
+                        ? "bg-indigo-500 text-white"
+                        : "bg-explorer-extra-light-gray text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                    )}
+                  >
+                    {o.label}
+                  </button>
+                ))}
+              </div>
+              {activeChartTab === "candle" ? (
+                <CustomShapeBarChart data={marketHistory} />
+              ) : (
+                <MarketHistoryChart data={marketHistory} isFullChart={true} />
+              )}
+            </div>
+          )}
+        </div>
       </DialogContent>
     </Dialog>
   );

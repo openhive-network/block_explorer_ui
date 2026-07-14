@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import moment from "moment";
-import { Loader2 } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Loader2, Download } from "lucide-react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import ReportDialogHeader from "@/components/ui/ReportDialogHeader";
+import DataExport from "@/components/DataExport";
+import { spacesToUnderscores } from "@/utils/StringUtils";
 import {
   Select,
   SelectContent,
@@ -52,6 +50,16 @@ const NetworkGrowthFullChartDialog: React.FC<
     isWalletStatsLoading: isChartLoading,
     isWalletStatsError: isChartError,
   } = useTotalWalletAddresses(granularity, "asc", fromDate, toDate, false);
+
+  const exportData = useMemo(
+    () =>
+      (walletStats ?? []).map((d) => ({
+        [t("common.date")]: moment(d.date).format("YYYY-MM-DD"),
+        [t("networkGrowthCard.newAccounts")]: d.new_wallets,
+        [t("networkGrowthCard.totalAccounts")]: d.total_wallets,
+      })),
+    [walletStats, t]
+  );
 
   useEffect(() => {
     if (isOpen) {
@@ -104,59 +112,82 @@ const NetworkGrowthFullChartDialog: React.FC<
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="min-w-[70vw] pr-0">
         <div className="max-h-[90vh] overflow-y-auto overflow-x-hidden pr-6 scrollableContainer">
-          <DialogHeader>
-            <div className="mb-4">
-              <DialogTitle>
-                {t("networkGrowthFullChartDialog.title")}
-              </DialogTitle>
-            </div>
-          </DialogHeader>
-
-          <div className="flex flex-col md:flex-row items-start gap-4 mb-4 w-full">
-            <div className="flex flex-col gap-y-3 w-1/2 md:w-1/4">
-              <Label>{t("networkGrowthFullChartDialog.granularity")}</Label>
-              <Select
-                onValueChange={(value) =>
-                  handleGranularityChange(
-                    value as "daily" | "monthly" | "yearly"
-                  )
-                }
-                value={granularity}
+          <ReportDialogHeader
+            title={t("networkGrowthFullChartDialog.title")}
+            subtitle={t("networkGrowthFullChartDialog.subtitle")}
+            actions={
+              <DataExport
+                data={exportData}
+                filename={`${spacesToUnderscores(
+                  t("widgets.networkGrowthName")
+                )}.csv`}
+                skipColumnSelection
               >
-                <SelectTrigger>
-                  <SelectValue
-                    placeholder={t(
-                      "networkGrowthFullChartDialog.selectGranularity"
-                    )}
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="daily">{t("common.daily")}</SelectItem>
-                  <SelectItem value="monthly">{t("common.monthly")}</SelectItem>
-                  <SelectItem value="yearly">{t("common.yearly")}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="w-full flex flex-col mb-4">
-              <Label>{t("common.filters")}</Label>
-              <div className="m-0 p-0 gap-y-0">
-                <SearchRanges
-                  rangesProps={searchRanges}
-                  setIsSearchButtonDisabled={setIsSearchButtonDisabled}
-                />
-              </div>
-              <div className="w-full flex items-end justify-start mt-2 gap-2">
-                <Button
-                  onClick={handleSearch}
-                  data-testid="apply-filters"
-                  disabled={isSearchButtonDisabled}
+                <button
+                  type="button"
+                  title={t("common.export")}
+                  className="report-export-btn"
                 >
-                  {t("common.search")}
-                </Button>
-                <Button onClick={handleFilterClear} data-testid="clear-filters">
-                  {t("common.clear")}
-                </Button>
+                  <Download className="h-4 w-4" />
+                  {t("common.export")}
+                </button>
+              </DataExport>
+            }
+          />
+
+          <div className="report-filters mb-5">
+            <p className="report-filters-label">{t("common.filters")}</p>
+            <div className="flex w-full flex-wrap items-start gap-4">
+              <div className="flex flex-col gap-y-3 w-1/2 md:w-1/4">
+                <Label>{t("networkGrowthFullChartDialog.granularity")}</Label>
+                <Select
+                  onValueChange={(value) =>
+                    handleGranularityChange(
+                      value as "daily" | "monthly" | "yearly"
+                    )
+                  }
+                  value={granularity}
+                >
+                  <SelectTrigger>
+                    <SelectValue
+                      placeholder={t(
+                        "networkGrowthFullChartDialog.selectGranularity"
+                      )}
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="daily">{t("common.daily")}</SelectItem>
+                    <SelectItem value="monthly">
+                      {t("common.monthly")}
+                    </SelectItem>
+                    <SelectItem value="yearly">{t("common.yearly")}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="w-full flex flex-col mb-4">
+                <Label>{t("common.dateRange")}</Label>
+                <div className="m-0 p-0 gap-y-0">
+                  <SearchRanges
+                    rangesProps={searchRanges}
+                    setIsSearchButtonDisabled={setIsSearchButtonDisabled}
+                  />
+                </div>
+                <div className="w-full flex items-end justify-start mt-2 gap-2">
+                  <Button
+                    onClick={handleSearch}
+                    data-testid="apply-filters"
+                    disabled={isSearchButtonDisabled}
+                  >
+                    {t("common.search")}
+                  </Button>
+                  <Button
+                    onClick={handleFilterClear}
+                    data-testid="clear-filters"
+                  >
+                    {t("common.clear")}
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

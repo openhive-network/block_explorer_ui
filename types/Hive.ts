@@ -1299,6 +1299,8 @@ namespace Hive {
     "coin-type"!: string;
     "balance-type"!: string;
     page!: number;
+    "min-balance"?: number;
+    "max-balance"?: number;
   }
 
   export class TopHoldersResponse {
@@ -1408,6 +1410,34 @@ namespace Hive {
     downvote_pct!: number;
   }
 
+  export class NetworkContentVolumeParams {
+    from_date?: Date | number | undefined;
+    to_date?: Date | number | undefined;
+    granularity?: string;
+  }
+
+  export class NetworkContentVolumeResponse {
+    period!: string;
+    posts!: number;
+    comments!: number;
+    unique_authors!: number;
+  }
+
+  export class NetworkEngagementParams {
+    from_date?: Date | number | undefined;
+    to_date?: Date | number | undefined;
+    granularity?: string;
+  }
+
+  export class NetworkEngagementResponse {
+    period!: string;
+    total_posts!: number;
+    avg_votes_per_post!: number;
+    avg_comments_per_post!: number;
+    zero_vote_post_pct!: number;
+    zero_comment_post_pct!: number;
+  }
+
   export class NetworkHpDistributionParams {}
 
   export class NetworkHpDistributionResponse {
@@ -1416,6 +1446,58 @@ namespace Hive {
     pct_accounts!: number;
     total_hp!: number;
     pct_hp!: number;
+  }
+
+  export class AccountFunnelParams {
+    from_date?: Date | number | undefined;
+    to_date?: Date | number | undefined;
+  }
+
+  export class AccountFunnelResponse {
+    cohort_month!: string;
+    new_accounts!: number;
+    active_at_7d!: number | null;
+    pct_7d!: number | null;
+    active_at_30d!: number | null;
+    pct_30d!: number | null;
+    active_at_90d!: number | null;
+    pct_90d!: number | null;
+  }
+
+  export type TopAccountsMetric =
+    | "author_rewards"
+    | "curation_rewards"
+    | "transfer_volume_in"
+    | "transfer_volume_out"
+    | "hp_balance"
+    | "transaction_count";
+
+  export class TopAccountsParams {
+    metric?: string;
+    from_date?: string | Date | number;
+    to_date?: string | Date | number;
+    limit_count?: number;
+  }
+
+  export class TopAccountsResponse {
+    rank!: number;
+    account!: string;
+    value_hive_nai!: number;
+    value_hbd_nai!: number;
+    value_vests_nai!: number;
+    op_count!: number;
+  }
+
+  export class NetworkRcUtilizationParams {
+    from_date?: string | Date | number;
+    to_date?: string | Date | number;
+    granularity?: string;
+  }
+
+  export class NetworkRcUtilizationResponse {
+    period!: string;
+    rc_total!: number;
+    by_label!: Record<string, number>;
   }
 }
 

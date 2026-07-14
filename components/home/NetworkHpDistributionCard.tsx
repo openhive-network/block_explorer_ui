@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { useRouter } from "next/router";
 import { Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@/i18n/i18n";
@@ -8,24 +9,15 @@ import useNetworkHpDistribution from "@/hooks/api/homePage/useNetworkHpDistribut
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import fetchingService from "@/services/FetchingService";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
-import { convertVestsToHP } from "@/utils/Calculations";
+import { convertVestsToHP, computeVestingRatios } from "@/utils/Calculations";
 import { grabNumericValue } from "@/utils/StringUtils";
 import NetworkHpDistributionChart from "@/components/home/NetworkHpDistributionChart";
-
-// Bucket labels must match exactly what the API returns in NetworkHpDistributionResponse.bucket
-const hpToBucket = (hp: number): string => {
-  if (hp < 1) return "0-1 HP";
-  if (hp < 10) return "1-10 HP";
-  if (hp < 100) return "10-100 HP";
-  if (hp < 1_000) return "100-1K HP";
-  if (hp < 10_000) return "1K-10K HP";
-  if (hp < 100_000) return "10K-100K HP";
-  if (hp < 1_000_000) return "100K-1M HP";
-  return "1M+ HP";
-};
+import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
+import SegmentedToggle from "@/components/ui/SegmentedToggle";
+import { HP_BRACKET_BY_BUCKET, hpToBucket } from "@/utils/hpBrackets";
 
 const NetworkHpDistributionCard: React.FC = () => {
-  const { t, locale } = useI18n();
+  const { t, locale, dir } = useI18n();
   const { theme } = useTheme();
   const [viewMode, setViewMode] = useState<"accounts" | "hp">("accounts");
   const { username } = useAuth();
@@ -33,6 +25,30 @@ const NetworkHpDistributionCard: React.FC = () => {
   const { hpDistribution, isHpDistributionLoading, isHpDistributionError } =
     useNetworkHpDistribution();
   const { dynamicGlobalData } = useDynamicGlobal();
+  const router = useRouter();
+
+  const vestingRatios = useMemo(
+    () => computeVestingRatios(hiveChain, dynamicGlobalData),
+    [hiveChain, dynamicGlobalData]
+  );
+
+  // Convert the clicked HP bucket to a raw-VESTS range and open Top Holders
+  // pre-filtered to it (the backend only understands VESTS).
+  const handleBucketClick = (bucket: string) => {
+    const bounds = HP_BRACKET_BY_BUCKET[bucket];
+    if (!bounds || !vestingRatios) return;
+    const toRawVests = (hp: number) =>
+      Math.floor(hp * vestingRatios.vestsPerHive * 1e6);
+    const params = new URLSearchParams();
+    params.set("coin", "VESTS");
+    params.set("min", String(toRawVests(bounds.min)));
+    if (bounds.max !== null) {
+      params.set("max", String(toRawVests(bounds.max)));
+    }
+    params.set("unit", "hp");
+    params.set("page", "1");
+    router.push(`/top-holders?${params.toString()}`);
+  };
 
   const { data: accountData } = useQuery({
     queryKey: ["account_hp_bracket", username],
@@ -85,48 +101,42 @@ const NetworkHpDistributionCard: React.FC = () => {
     : null;
 
   return (
-    <div className="bg-theme rounded mb-2 shadow-md overflow-hidden h-full">
-      <div className="p-3 h-full flex flex-col">
-        <div className="mb-2">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-semibold uppercase tracking-wide text-explorer-dark-gray dark:text-text">
-              {t("networkHpDistributionCard.title")}
-            </span>
-            <div className="flex rounded overflow-hidden border border-gray-200 dark:border-gray-700 text-[10px] font-medium">
-              {(["accounts", "hp"] as const).map((mode) => (
-                <button
-                  key={mode}
-                  onClick={() => setViewMode(mode)}
-                  className={`px-2 py-0.5 transition-colors ${
-                    viewMode === mode
-                      ? "bg-violet-500 text-white"
-                      : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                  }`}
-                >
-                  {t(
-                    mode === "accounts"
-                      ? "networkHpDistributionCard.viewAccounts"
-                      : "networkHpDistributionCard.viewHp"
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
-          {totalAccounts !== null && (
-            <p className="text-[11px] text-gray-400 dark:text-gray-500 mt-0.5">
-              {totalAccounts.toLocaleString(locale)}{" "}
-              {t("networkHpDistributionCard.accounts")}
-            </p>
-          )}
-          {userHpInfo && (
-            <div className="mt-1 flex items-center gap-1.5">
+    <div className="bg-theme rounded mb-2 shadow-md overflow-hidden h-[340px] flex flex-col">
+      <CardHeaderWithLink
+        className="flex-shrink-0"
+        title={t("networkHpDistributionCard.title")}
+        actions={
+          <SegmentedToggle
+            ariaLabel={t("networkHpDistributionCard.title")}
+            value={viewMode}
+            onChange={setViewMode}
+            options={[
+              {
+                value: "accounts",
+                label: t("networkHpDistributionCard.viewAccounts"),
+              },
+              { value: "hp", label: t("networkHpDistributionCard.viewHp") },
+            ]}
+          />
+        }
+      />
+      <div className="p-3 pt-2 flex-1 min-h-0 flex flex-col">
+        {(totalAccounts !== null || userHpInfo) && (
+          <div className="mb-2 flex items-center gap-2">
+            {userHpInfo && (
               <span className="inline-flex items-center gap-1 rounded-full bg-violet-100 dark:bg-violet-950 border border-violet-200 dark:border-violet-800 px-2 py-0.5 text-[10px] font-semibold text-violet-700 dark:text-violet-300">
                 {t("networkHpDistributionCard.you")} &middot; {formattedUserHp}{" "}
                 HP
               </span>
-            </div>
-          )}
-        </div>
+            )}
+            {totalAccounts !== null && (
+              <p className="ms-auto text-[11px] text-gray-400 dark:text-gray-500 tabular-nums">
+                {totalAccounts.toLocaleString(locale)}{" "}
+                {t("networkHpDistributionCard.accounts")}
+              </p>
+            )}
+          </div>
+        )}
 
         {isHpDistributionLoading ? (
           <div className="flex flex-1 items-center justify-center">
@@ -148,7 +158,9 @@ const NetworkHpDistributionCard: React.FC = () => {
               textColor={textColor}
               gridColor={gridColor}
               locale={locale}
+              isRTL={dir === "rtl"}
               t={t}
+              onBucketClick={handleBucketClick}
             />
           </div>
         )}

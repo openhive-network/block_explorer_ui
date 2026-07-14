@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Clock } from "lucide-react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Toggle } from "@/components/ui/toggle";
+import { Card, CardContent } from "@/components/ui/card";
 import CurrentBlockCard from "@/components/home/CurrentBlockCard";
+import LiveDataHeader from "@/components/home/LiveDataHeader";
 import Explorer from "@/types/Explorer";
 import Hive from "@/types/Hive";
 import { useSettings } from "@/contexts/SettingsContext";
-import { useI18n } from "@/i18n/i18n";
 import { config } from "@/Config";
 import useBlockchainSyncInfo from "@/hooks/common/useBlockchainSyncInfo";
 import { getBlockDifference } from "@/components/home/SyncInfo";
@@ -38,7 +36,6 @@ const LiveInfoWidget: React.FC<LiveInfoWidgetProps> = ({
   blockDetails,
   opcount = 0,
 }) => {
-  const { t } = useI18n();
   const { settings, updateSettings } = useSettings();
   const {
     explorerBlockNumber,
@@ -85,7 +82,7 @@ const LiveInfoWidget: React.FC<LiveInfoWidgetProps> = ({
     if (!blockDetails?.block_num || !settings.liveData) return;
     setLiveBlockNumber(blockDetails.block_num);
     const intervalId = setInterval(() => {
-      setLiveBlockNumber((prev) => (prev ? prev + 1 : blockDetails.block_num)); // Simplified increment
+      setLiveBlockNumber((prev) => (prev ? prev + 1 : blockDetails.block_num));
     }, intervalTime);
     return () => clearInterval(intervalId);
   }, [blockDetails?.block_num, settings.liveData, intervalTime]);
@@ -95,35 +92,21 @@ const LiveInfoWidget: React.FC<LiveInfoWidgetProps> = ({
       config.liveblockSecurityDifference || isLoading;
 
   return (
-    <Card className="w-full h-full flex flex-col">
-      <CardHeader className="py-2 border-b px-4 space-y-1">
-        <div className="flex items-center justify-end space-x-2 text-xs">
-          <Clock size={16} />
-          <span className="font-semibold">
-            {t("headBlockCard.blockchainTime")}:
-          </span>
-          <span className="font-semibold">
-            {settings.liveData && liveBlockchainTime
-              ? getFormattedLiveBlockchainTime(liveBlockchainTime)
-              : blockchainTime ?? ""}
-          </span>
-        </div>
+    <Card className="w-full flex flex-col mb-1">
+      <LiveDataHeader
+        blockchainTime={
+          settings.liveData && liveBlockchainTime
+            ? getFormattedLiveBlockchainTime(liveBlockchainTime)
+            : (blockchainTime ?? "")
+        }
+        liveData={settings.liveData}
+        onToggleLiveData={() =>
+          updateSettings({ ...settings, liveData: !settings.liveData })
+        }
+        toggleDisabled={isLiveDataToggleDisabled}
+      />
 
-        <div className="flex items-center justify-end space-x-2 text-xs">
-          <span className="text-sm font-medium">
-            {t("headBlockCard.liveData")}
-          </span>
-          <Toggle
-            disabled={isLiveDataToggleDisabled}
-            checked={settings.liveData}
-            onClick={() =>
-              updateSettings({ ...settings, liveData: !settings.liveData })
-            }
-          />
-        </div>
-      </CardHeader>
-
-      <CardContent className="p-4 space-y-4 overflow-y-auto">
+      <CardContent className="px-3 pt-2 pb-2 space-y-1 overflow-y-auto">
         <CurrentBlockCard
           blockDetails={blockDetails}
           transactionCount={transactionCount}

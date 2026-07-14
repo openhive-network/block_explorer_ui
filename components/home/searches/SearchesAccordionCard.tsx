@@ -1,4 +1,5 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
 import {
   Accordion,
   AccordionContent,
@@ -58,12 +59,11 @@ const SearchesAccordionCard = () => {
   const renderAccordionItem = () => {
     return ACCORDION_SECTIONS_KEYS.map(({ nameKey, value, originalName }) => {
       return (
-        <AccordionItem
-          value={value}
-          key={value}
-        >
-          <AccordionTrigger className="p-3 mb-2">{t(nameKey)}</AccordionTrigger>
-          <AccordionContent className="px-2 flex flex-col gap-y-4">
+        <AccordionItem value={value} key={value}>
+          <AccordionTrigger className="px-3 py-2 mb-1">
+            {t(nameKey)}
+          </AccordionTrigger>
+          <AccordionContent className="px-2 flex flex-col gap-y-3">
             {getAccordionContentByName(originalName)}
           </AccordionContent>
         </AccordionItem>
@@ -72,13 +72,9 @@ const SearchesAccordionCard = () => {
   };
 
   return (
-    <Card
-      data-testid="block-search-section"
-    >
-      <CardHeader>
-        <CardTitle>{t("searchesAccordionCard.searchTitle")}</CardTitle>
-      </CardHeader>
-      <CardContent>
+    <Card data-testid="block-search-section">
+      <CardHeaderWithLink title={t("searchesAccordionCard.searchTitle")} />
+      <CardContent className="px-2 pt-2 pb-2">
         <Accordion
           type="single"
           className="w-full"

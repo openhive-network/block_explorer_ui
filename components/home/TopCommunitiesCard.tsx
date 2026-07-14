@@ -1,16 +1,12 @@
 import { useI18n } from "@/i18n/i18n";
 import { cn } from "@/lib/utils";
-import {
-  ChevronLeft,
-  ChevronRight,
-  MoveLeft,
-  MoveRight,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
 
 import Hive from "@/types/Hive";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
@@ -27,7 +23,6 @@ const TopCommunitiesCard = ({
   const { t, dir } = useI18n();
   const [activeCommunity, setActiveCommunity] =
     useState<Hive.CommunityListItem | null>(null);
-  const SeeMoreIcon = dir === "rtl" ? MoveLeft : MoveRight;
   const ChevronNavIcon = dir === "rtl" ? ChevronLeft : ChevronRight;
 
   const handleSelectCommunity = (community: Hive.CommunityListItem) => {
@@ -36,7 +31,6 @@ const TopCommunitiesCard = ({
 
   const renderContent = () => {
     if (isLoading) {
-      // Return a compact skeleton that matches the grid layout
       return (
         <div className="p-4">
           <div className="grid grid-cols-5 gap-y-4 gap-x-2 animate-pulse">
@@ -118,14 +112,11 @@ const TopCommunitiesCard = ({
   };
 
   return (
-    <Card className="overflow-hidden" data-testid="top-communities-card">
-      <CardHeader className="flex justify-between items-center border-b px-1 py-3">
-        <CardTitle>{t("home.topCommunities")}</CardTitle>
-        <Link href="/communities" className="text-sm flex items-center gap-1">
-          <span>{t("common.seeMore")}</span>
-          <SeeMoreIcon width={18} />
-        </Link>
-      </CardHeader>
+    <Card className="overflow-hidden mb-2" data-testid="top-communities-card">
+      <CardHeaderWithLink
+        title={t("home.topCommunities")}
+        href="/communities"
+      />
 
       <CardContent className="p-0">{renderContent()}</CardContent>
     </Card>

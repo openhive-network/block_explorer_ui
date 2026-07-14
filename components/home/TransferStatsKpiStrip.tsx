@@ -26,7 +26,7 @@ const TransferStatsKpiStrip: React.FC<TransferStatsKpiStripProps> = ({
   coinType,
   granularity,
 }) => {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
 
   const trendSign: 1 | -1 | 0 =
     trend === null ? 0 : trend > 0 ? 1 : trend < 0 ? -1 : 0;
@@ -50,16 +50,16 @@ const TransferStatsKpiStrip: React.FC<TransferStatsKpiStripProps> = ({
     <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mb-4">
       <KpiTile
         label={t("transferStatsKpiStrip.totalVolume")}
-        value={`${formatCompact(totalVolume)} ${coinType}`}
+        value={`${formatCompact(totalVolume, locale)} ${coinType}`}
       />
       <KpiTile
         label={t("transferStatsKpiStrip.totalTransactions")}
-        value={totalTxns.toLocaleString()}
+        value={totalTxns.toLocaleString(locale)}
         sub={t("transferStatsKpiStrip.transfers")}
       />
       <KpiTile
         label={t("transferStatsKpiStrip.avgPer", { period: periodLabel })}
-        value={`${formatCompact(avgPerPeriod)} ${coinType}`}
+        value={`${formatCompact(avgPerPeriod, locale)} ${coinType}`}
       />
       <KpiTile
         label={t("transferStatsKpiStrip.peakPeriod")}
@@ -72,7 +72,7 @@ const TransferStatsKpiStrip: React.FC<TransferStatsKpiStripProps> = ({
         }
         sub={
           peakDate !== null
-            ? `${formatCompact(peakValue)} ${coinType}`
+            ? `${formatCompact(peakValue, locale)} ${coinType}`
             : undefined
         }
       />
@@ -82,7 +82,10 @@ const TransferStatsKpiStrip: React.FC<TransferStatsKpiStripProps> = ({
           <span className={cn("inline-flex items-center gap-1", trendColor)}>
             <TrendIcon size={13} />
             {trend !== null
-              ? `${trend >= 0 ? "+" : ""}${trend.toFixed(1)}%`
+              ? `${trend >= 0 ? "+" : ""}${trend.toLocaleString(locale, {
+                  minimumFractionDigits: 1,
+                  maximumFractionDigits: 1,
+                })}%`
               : "—"}
           </span>
         }

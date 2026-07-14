@@ -23,7 +23,9 @@ interface Props {
   textColor: string;
   gridColor: string;
   locale: string;
+  isRTL: boolean;
   t: (key: string, options?: Record<string, unknown>) => string;
+  onBucketClick?: (bucket: string) => void;
 }
 
 const NetworkHpDistributionChart: React.FC<Props> = ({
@@ -34,7 +36,9 @@ const NetworkHpDistributionChart: React.FC<Props> = ({
   textColor,
   gridColor,
   locale,
+  isRTL,
   t,
+  onBucketClick,
 }) => {
   const option = useMemo(() => {
     const reversed = [...hpDistribution].reverse();
@@ -94,7 +98,7 @@ const NetworkHpDistributionChart: React.FC<Props> = ({
                   hpHeld,
                 });
           return `
-            <div style="max-width:240px;line-height:1.5;white-space:normal;word-break:break-word">
+            <div style="max-width:240px;line-height:1.5;white-space:normal;word-break:break-word;direction:${isRTL ? "rtl" : "ltr"};text-align:${isRTL ? "right" : "left"}">
               <div style="font-weight:700;font-size:12px;margin-bottom:4px">${d.bucket}</div>
               <div style="font-size:11px">${primary}</div>
               <div style="font-size:10px;color:${mutedColor};margin-top:2px">${secondary}</div>
@@ -110,23 +114,31 @@ const NetworkHpDistributionChart: React.FC<Props> = ({
         ) => {
           const [tw, th] = size.contentSize;
           const [cw, ch] = size.viewSize;
-          const x =
-            point[0] + 14 + tw > cw
-              ? Math.max(0, point[0] - tw - 14)
-              : point[0] + 14;
-          const y = Math.min(
-            Math.max(0, point[1] - th / 2),
-            Math.max(0, ch - th)
+          // Center horizontally on the cursor, clamped to the viewport.
+          const x = Math.min(
+            Math.max(0, point[0] - tw / 2),
+            Math.max(0, cw - tw)
           );
+          // Sit above the cursor; drop below only if it would clip the top.
+          const above = point[1] - th - 16;
+          const y =
+            above >= 0 ? above : Math.min(point[1] + 16, Math.max(0, ch - th));
           return [x, y];
         },
         backgroundColor: isDark ? "#1f2937" : "#ffffff",
         borderColor: isDark ? "#374151" : "#e5e7eb",
         textStyle: { color: textColor, fontSize: 11 },
       },
-      grid: { left: 4, right: 52, top: 4, bottom: 4, containLabel: true },
+      grid: {
+        left: isRTL ? 52 : 4,
+        right: isRTL ? 4 : 52,
+        top: 4,
+        bottom: 4,
+        containLabel: true,
+      },
       xAxis: {
         type: "value",
+        inverse: isRTL,
         show: true,
         splitLine: {
           show: true,
@@ -138,6 +150,7 @@ const NetworkHpDistributionChart: React.FC<Props> = ({
       },
       yAxis: {
         type: "category",
+        position: isRTL ? "right" : "left",
         data: reversed.map((d) => d.bucket),
         axisLine: { show: false },
         axisTick: { show: false },
@@ -147,8 +160,10 @@ const NetworkHpDistributionChart: React.FC<Props> = ({
       series: [
         {
           type: "bar",
-          barMaxWidth: 14,
+          barMaxWidth: 20,
+          barCategoryGap: "30%",
           minBarLength: 4,
+          cursor: onBucketClick ? "pointer" : "default",
           data: reversed.map((d, i) => {
             const idx = hpDistribution.length - 1 - i;
             const [colorStart, colorEnd] =
@@ -161,16 +176,16 @@ const NetworkHpDistributionChart: React.FC<Props> = ({
               itemStyle: {
                 color: {
                   type: "linear",
-                  x: 0,
+                  x: isRTL ? 1 : 0,
                   y: 0,
-                  x2: 1,
+                  x2: isRTL ? 0 : 1,
                   y2: 0,
                   colorStops: [
                     { offset: 0, color: colorStart },
                     { offset: 1, color: colorEnd },
                   ],
                 },
-                borderRadius: [0, 4, 4, 0],
+                borderRadius: isRTL ? [4, 0, 0, 4] : [0, 4, 4, 0],
               },
               label: {
                 formatter: () =>
@@ -182,7 +197,7 @@ const NetworkHpDistributionChart: React.FC<Props> = ({
           }),
           label: {
             show: true,
-            position: "right",
+            position: isRTL ? "left" : "right",
             color: textColor,
             fontSize: 10,
             fontWeight: "bold",
@@ -213,7 +228,9 @@ const NetworkHpDistributionChart: React.FC<Props> = ({
     textColor,
     gridColor,
     locale,
+    isRTL,
     t,
+    onBucketClick,
   ]);
 
   return (
@@ -221,6 +238,11 @@ const NetworkHpDistributionChart: React.FC<Props> = ({
       option={option}
       style={{ height: "100%", width: "100%" }}
       notMerge
+      onEvents={{
+        click: (p: { name?: string }) => {
+          if (onBucketClick && p?.name) onBucketClick(p.name);
+        },
+      }}
     />
   );
 };

@@ -9,10 +9,11 @@ const TransactionStatisticsFullChartDialog = dynamic(
 );
 import { useI18n } from "../../i18n/i18n";
 import { useSettings } from "@/contexts/SettingsContext";
+import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
 
 const TransactionStatisticsCard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
 
   const { settings } = useSettings();
 
@@ -89,12 +90,23 @@ const TransactionStatisticsCard = () => {
 
   return (
     <div className="bg-theme rounded mb-2 shadow-md overflow-hidden">
-      <div className="flex flex-wrap gap-4 p-5">
+      <CardHeaderWithLink
+        title={t("common.transactions")}
+        actions={
+          <button
+            onClick={openModal}
+            className="text-[13px] underline text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+          >
+            {t("common.fullChart")}
+          </button>
+        }
+      />
+      <div className="flex flex-wrap gap-3 p-3">
         {/* Left Side: Total and Today Transactions */}
         <div className="flex-1 min-w-[200px]">
-          <div className="flex flex-col space-y-4">
+          <div className="flex flex-col space-y-3">
             {/* Total Transactions */}
-            <div className="bg-explorer-extra-light-gray rounded-lg p-4 shadow-md">
+            <div className="bg-explorer-extra-light-gray rounded-lg p-3 shadow-md">
               <h3 className="text-sm font-semibold uppercase tracking-wide mb-1 text-explorer-dark-gray dark:text-text">
                 {t("transactionStatisticsCard.totalTransactions")}
               </h3>
@@ -104,15 +116,15 @@ const TransactionStatisticsCard = () => {
                 </div>
               ) : (
                 lastYearData && (
-                  <p className="text-2xl font-bold text-explorer-dark-gray dark:text-text">
-                    {totalTransactions?.toLocaleString()}
+                  <p className="text-lg font-bold text-explorer-dark-gray dark:text-text">
+                    {totalTransactions?.toLocaleString(locale)}
                   </p>
                 )
               )}
             </div>
 
             {/* Today's Transactions */}
-            <div className="bg-explorer-extra-light-gray rounded-lg p-4 shadow-md">
+            <div className="bg-explorer-extra-light-gray rounded-lg p-3 shadow-md">
               <h3 className="text-sm font-semibold uppercase tracking-wide mb-1 text-explorer-dark-gray dark:text-text">
                 {t("transactionStatisticsCard.todaysTransactions")}
               </h3>
@@ -122,17 +134,17 @@ const TransactionStatisticsCard = () => {
                 </div>
               ) : todayData ? (
                 <>
-                  <p className="text-2xl font-bold text-explorer-dark-gray dark:text-text">
-                    {todayData.trx_count.toLocaleString()}
+                  <p className="text-lg font-bold text-explorer-dark-gray dark:text-text">
+                    {todayData.trx_count.toLocaleString(locale)}
                   </p>
-                  <div className="mt-3">
-                    <p className=" text-sm">
+                  <div className="mt-2">
+                    <p className="text-xs">
                       {t("transactionStatisticsCard.avgTrxsBlock")}:{" "}
                       <span className="font-medium text-gray-700 dark:text-text">
                         {todayData.avg_trx}
                       </span>
                     </p>
-                    <p className="text-sm">
+                    <p className="text-xs">
                       {t("transactionStatisticsCard.maxTrxBlock")}:{" "}
                       <span className="font-medium text-gray-700 dark:text-text">
                         {todayData.max_trx}
@@ -156,25 +168,21 @@ const TransactionStatisticsCard = () => {
 
         {/* Right Side: Last 30 Days Chart */}
         <div className="flex-[2] min-w-[260px]">
-          <div className="bg-explorer-extra-light-gray rounded-lg p-4 shadow-md h-full flex flex-col">
-            <div className="flex justify-between items-center mb-1">
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-explorer-dark-gray dark:text-text">
-                {t("transactionStatisticsCard.last30Days")}
-              </h3>
-              <button onClick={openModal} className="text-xs underline">
-                {t("transactionStatisticsCard.fullChart")}
-              </button>
-            </div>
+          <div className="bg-explorer-extra-light-gray rounded-lg p-3 shadow-md h-full flex flex-col">
+            <h3 className="text-[10px] font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-1">
+              {t("transactionStatisticsCard.last30Days")}
+            </h3>
             {isChartLoading ? (
               <div className="flex items-center justify-center h-full">
                 <Loader2 className="animate-spin h-6 w-6" />
               </div>
             ) : (
-              <div className="flex-grow min-h-[189px]">
+              <div className="flex-grow min-h-[150px]">
                 <TransactionStatisticsChart
                   data={chartData}
                   tickCount={4}
                   dateFormat="MMM D"
+                  showLegend={false}
                 />
               </div>
             )}

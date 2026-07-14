@@ -270,5 +270,35 @@ export const extendedRest = {
       responseArray: true,
       urlPath: "network/hp-distribution",
     },
+    accountFunnel: {
+      params: Hive.AccountFunnelParams,
+      result: Hive.AccountFunnelResponse,
+      responseArray: true,
+      urlPath: "network/account-funnel",
+    },
+    topAccounts: {
+      params: Hive.TopAccountsParams,
+      result: Hive.TopAccountsResponse,
+      responseArray: true,
+      urlPath: "network/top-accounts",
+    },
+    networkRcUtilization: {
+      params: Hive.NetworkRcUtilizationParams,
+      result: Hive.NetworkRcUtilizationResponse,
+      responseArray: true,
+      urlPath: "network/rc-utilization",
+    },
+    networkContentVolume: {
+      params: Hive.NetworkContentVolumeParams,
+      result: Hive.NetworkContentVolumeResponse,
+      responseArray: true,
+      urlPath: "network/content-volume",
+    },
+    networkEngagement: {
+      params: Hive.NetworkEngagementParams,
+      result: Hive.NetworkEngagementResponse,
+      responseArray: true,
+      urlPath: "network/engagement",
+    },
   },
 };

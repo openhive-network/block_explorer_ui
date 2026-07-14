@@ -1,11 +1,8 @@
-import React, { useState, useEffect } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
+import React, { useState, useEffect, useMemo } from "react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import ReportDialogHeader from "@/components/ui/ReportDialogHeader";
+import DataExport from "@/components/DataExport";
+import { spacesToUnderscores } from "@/utils/StringUtils";
 import {
   Select,
   SelectContent,
@@ -21,9 +18,11 @@ import useTransactionStatistics from "@/hooks/api/homePage/useTransactionStatist
 import TransactionStatisticsChart from "./TransactionStatisticsChart";
 import moment from "moment";
 import Hive from "@/types/Hive";
-import { Loader2 } from "lucide-react";
+import { Loader2, Download } from "lucide-react";
 import { useI18n } from "../../i18n/i18n";
 import useSearchRanges from "@/hooks/common/useSearchRanges";
+import TxStatsKpiStrip from "./TxStatsKpiStrip";
+import { computeTrendPct } from "@/utils/chartUtils";
 
 interface TransactionStatisticsModalProps {
   isOpen: boolean;
@@ -57,14 +56,12 @@ const TransactionStatisticsFullChartDialog: React.FC<
   const [buttonLabel, setButtonLabel] = useState("");
   const { setRangeSelectKey, setTimeUnitSelectKey, setLastTimeUnitValue } =
     searchRanges;
-  // Fetch chart data based on filters (fromDate, toDate, granularity)
   const {
     transactionStatistics,
     isTransactionStatisticsLoading: isChartLoading,
     isTransactionStatisticsError: isChartError,
   } = useTransactionStatistics(granularity, "asc", fromDate, toDate, false);
 
-  // Set initial data when modal opens
   useEffect(() => {
     if (isOpen) {
       setLastTimeUnitValue(30);
@@ -77,7 +74,6 @@ const TransactionStatisticsFullChartDialog: React.FC<
   }, [isOpen, setLastTimeUnitValue, setRangeSelectKey, setTimeUnitSelectKey]);
 
   useEffect(() => {
-    // Fetch new data when granularity changes
     setCurrentChartData(transactionStatistics);
   }, [granularity, transactionStatistics]);
 
@@ -91,7 +87,6 @@ const TransactionStatisticsFullChartDialog: React.FC<
     setFromDate(payloadFromBlock || payloadStartDate);
     setToDate(payloadToBlock || payloadEndDate);
 
-    // Update chart data after fetching from API
     if (transactionStatistics) {
       setCurrentChartData(transactionStatistics);
     }
@@ -106,6 +101,37 @@ const TransactionStatisticsFullChartDialog: React.FC<
     setGranularity("daily");
     setCurrentChartData(transactionStatistics);
   };
+
+  const kpiStats = useMemo(() => {
+    const d = currentChartData;
+    if (!d || d.length === 0) return null;
+    const counts = d.map((item) => item.trx_count);
+    const totalTxns = counts.reduce((s, v) => s + v, 0);
+    const peakIdx = counts.indexOf(Math.max(...counts));
+    const peakItem = d[peakIdx];
+    return {
+      totalTxns,
+      avgPerPeriod: totalTxns / d.length,
+      peakDate: moment(peakItem.date).valueOf(),
+      peakValue: counts[peakIdx],
+      trend: computeTrendPct(counts),
+    };
+  }, [currentChartData]);
+
+  const exportData = useMemo(
+    () =>
+      (currentChartData ?? []).map((item) => ({
+        [t("common.date")]: moment(item.date).format("YYYY-MM-DD"),
+        [t("transactionStatisticsFullChartDialog.transactions")]:
+          item.trx_count,
+        [t("transactionStatisticsChart.avgTrxs")]: item.avg_trx,
+        [t("transactionStatisticsChart.minTrxs")]: item.min_trx,
+        [t("transactionStatisticsChart.maxTrxs")]: item.max_trx,
+        [t("transactionStatisticsFullChartDialog.lastBlock")]:
+          item.last_block_num,
+      })),
+    [currentChartData, t]
+  );
 
   const handleGranularityChange = (value: "daily" | "monthly" | "yearly") => {
     setGranularity(value);
@@ -127,74 +153,108 @@ const TransactionStatisticsFullChartDialog: React.FC<
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="min-w-[70vw] pr-0">
         <div className="max-h-[90vh] overflow-y-auto overflow-x-hidden pr-6 scrollableContainer">
-          <DialogHeader>
-            <div className="mb-4">
-              <DialogTitle>
-                {t("transactionStatisticsFullChartDialog.title")}
-              </DialogTitle>
-            </div>
-          </DialogHeader>
-
-          <div className="flex flex-col md:flex-row items-start gap-4 mb-4 w-full">
-            <div className="flex flex-col gap-y-3 w-1/2 md:w-1/4">
-              <Label>
-                {t("transactionStatisticsFullChartDialog.granularity")}
-              </Label>
-              <Select
-                onValueChange={(value) =>
-                  handleGranularityChange(
-                    value as "daily" | "monthly" | "yearly"
-                  )
-                }
-                value={granularity}
+          <ReportDialogHeader
+            title={t("transactionStatisticsFullChartDialog.title")}
+            subtitle={t("transactionStatisticsFullChartDialog.subtitle")}
+            actions={
+              <DataExport
+                data={exportData}
+                filename={`${spacesToUnderscores(
+                  t("widgets.txStatsName")
+                )}.csv`}
+                skipColumnSelection
               >
-                <SelectTrigger>
-                  <SelectValue
-                    placeholder={t(
-                      "transactionStatisticsFullChartDialog.selectGranularity"
-                    )}
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="daily">{t("common.daily")}</SelectItem>
-                  <SelectItem value="monthly">{t("common.monthly")}</SelectItem>
-                  <SelectItem value="yearly">{t("common.yearly")}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+                <button
+                  type="button"
+                  title={t("common.export")}
+                  className="report-export-btn"
+                >
+                  <Download className="h-4 w-4" />
+                  {t("common.export")}
+                </button>
+              </DataExport>
+            }
+          />
 
-            {/* Block RANGE FILTER */}
-            <div className="w-full flex flex-col mb-4">
-              <Label>{t("common.filters")}</Label>
-              <div className="m-0 p-0 gap-y-0">
-                <SearchRanges
-                  rangesProps={searchRanges}
-                  setIsSearchButtonDisabled={setIsSearchButtonDisabled}
-                />
+          <div className="report-filters mb-5">
+            <p className="report-filters-label">{t("common.filters")}</p>
+            <div className="flex w-full flex-wrap items-start gap-4">
+              <div className="flex flex-col gap-y-3 w-1/2 md:w-1/4">
+                <Label>
+                  {t("transactionStatisticsFullChartDialog.granularity")}
+                </Label>
+                <Select
+                  onValueChange={(value) =>
+                    handleGranularityChange(
+                      value as "daily" | "monthly" | "yearly"
+                    )
+                  }
+                  value={granularity}
+                >
+                  <SelectTrigger>
+                    <SelectValue
+                      placeholder={t(
+                        "transactionStatisticsFullChartDialog.selectGranularity"
+                      )}
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="daily">{t("common.daily")}</SelectItem>
+                    <SelectItem value="monthly">
+                      {t("common.monthly")}
+                    </SelectItem>
+                    <SelectItem value="yearly">{t("common.yearly")}</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              <div className="w-full flex items-end justify-start mt-2 gap-2">
-                <div>
-                  <Button
-                    onClick={handleSearch}
-                    data-testid="apply-filters"
-                    disabled={isSearchButtonDisabled}
-                  >
-                    {t("common.search")}
-                  </Button>
-                  {isSearchButtonDisabled && (
-                    <label className="ml-2 text-gray-300 dark:text-gray-500 ">
-                      {buttonLabel}
-                    </label>
-                  )}
+
+              {/* Block RANGE FILTER */}
+              <div className="w-full flex flex-col mb-4">
+                <Label>{t("common.dateRange")}</Label>
+                <div className="m-0 p-0 gap-y-0">
+                  <SearchRanges
+                    rangesProps={searchRanges}
+                    setIsSearchButtonDisabled={setIsSearchButtonDisabled}
+                  />
                 </div>
-                <Button onClick={handleFilterClear} data-testid="clear-filters">
-                  {t("common.clear")}
-                </Button>
+                <div className="w-full flex items-end justify-start mt-2 gap-2">
+                  <div>
+                    <Button
+                      onClick={handleSearch}
+                      data-testid="apply-filters"
+                      disabled={isSearchButtonDisabled}
+                    >
+                      {t("common.search")}
+                    </Button>
+                    {isSearchButtonDisabled && (
+                      <label className="ml-2 text-gray-300 dark:text-gray-500 ">
+                        {buttonLabel}
+                      </label>
+                    )}
+                  </div>
+                  <Button
+                    onClick={handleFilterClear}
+                    data-testid="clear-filters"
+                  >
+                    {t("common.clear")}
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="h-[55%] w-[100%] flex items-center justify-center">
+          {kpiStats && (
+            <TxStatsKpiStrip
+              totalTxns={kpiStats.totalTxns}
+              avgPerPeriod={kpiStats.avgPerPeriod}
+              peakDate={kpiStats.peakDate}
+              peakValue={kpiStats.peakValue}
+              trend={kpiStats.trend}
+              granularity={granularity}
+            />
+          )}
+
+          <div className="h-[55vh] w-[100%] flex items-center justify-center">
             {isChartLoading ? (
               <div className="flex justify-center items-center">
                 <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />
@@ -204,7 +264,7 @@ const TransactionStatisticsFullChartDialog: React.FC<
                 <TransactionStatisticsChart
                   data={currentChartData}
                   includeBrush={true}
-                  showYear={granularity === "yearly"} // Pass prop to control year display
+                  showYear={granularity === "yearly"}
                 />
               )
             )}

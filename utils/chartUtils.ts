@@ -30,8 +30,17 @@ export const computeTrendLine = (values: number[]): number[] => {
 export const computeTrendPct = (values: number[]): number | null => {
   const n = values.length;
   const reg = linearRegression(values);
-  if (!reg || reg.intercept <= 0) return null;
+  if (!reg || !Number.isFinite(reg.intercept) || reg.intercept <= 0)
+    return null;
   return ((reg.slope * (n - 1)) / reg.intercept) * 100;
+};
+
+/** Returns the mean of an array of nullable numbers, or null if no non-null values. */
+export const computeAvg = (vals: (number | null)[]): number | null => {
+  const nonNull = vals.filter((v): v is number => v !== null);
+  return nonNull.length
+    ? nonNull.reduce((s, v) => s + v, 0) / nonNull.length
+    : null;
 };
 
 /**
@@ -70,3 +79,13 @@ export const formatLocalePercent = (value: number, locale: string): string =>
     minimumFractionDigits: 1,
     maximumFractionDigits: 1,
   });
+
+// A 0..1 fraction as a share-of-supply percent ("—" / "<0.01%" / 2-dp).
+export const formatSharePct = (fraction: number, locale: string): string => {
+  if (!Number.isFinite(fraction) || fraction <= 0) return "—";
+  if (fraction < 0.0001) return "<0.01%";
+  return `${(fraction * 100).toLocaleString(locale, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}%`;
+};

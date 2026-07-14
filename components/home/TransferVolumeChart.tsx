@@ -31,6 +31,7 @@ interface TransferVolumeChartProps {
   dateFormat?: string;
   peakDate?: number;
   granularity?: "hourly" | "daily" | "monthly" | "yearly";
+  showLegend?: boolean;
 }
 
 const COIN_COLORS: Record<string, string> = {
@@ -47,9 +48,10 @@ const TransferVolumeChart: React.FC<TransferVolumeChartProps> = ({
   dateFormat,
   peakDate,
   granularity,
+  showLegend = true,
 }) => {
   const { theme } = useTheme();
-  const { t, dir } = useI18n();
+  const { t, dir, locale } = useI18n();
   const isRTL = dir === "rtl";
   const brushDefaults = useChartBrushDefaults();
 
@@ -90,10 +92,19 @@ const TransferVolumeChart: React.FC<TransferVolumeChartProps> = ({
   }, [data]);
 
   const formatVolume = (v: number) => {
-    if (v >= 1_000_000_000) return `${(v / 1_000_000_000).toFixed(1)}B`;
-    if (v >= 1_000_000) return `${(v / 1_000_000).toFixed(1)}M`;
-    if (v >= 1_000) return `${(v / 1_000).toFixed(0)}k`;
-    return v.toLocaleString(undefined, { maximumFractionDigits: 0 });
+    if (v >= 1_000_000_000)
+      return `${(v / 1_000_000_000).toLocaleString(locale, {
+        maximumFractionDigits: 1,
+      })}B`;
+    if (v >= 1_000_000)
+      return `${(v / 1_000_000).toLocaleString(locale, {
+        maximumFractionDigits: 1,
+      })}M`;
+    if (v >= 1_000)
+      return `${(v / 1_000).toLocaleString(locale, {
+        maximumFractionDigits: 0,
+      })}k`;
+    return v.toLocaleString(locale, { maximumFractionDigits: 0 });
   };
 
   const calculateYAxisDomain = (): [number, number] => {
@@ -158,7 +169,7 @@ const TransferVolumeChart: React.FC<TransferVolumeChartProps> = ({
               {t("transferVolumeChart.totalTransferAmount")}
             </p>
             <p className="font-semibold leading-none text-right">
-              {total_transfer_amount?.toLocaleString()}
+              {total_transfer_amount?.toLocaleString(locale)}
             </p>
           </div>
           <div>
@@ -166,7 +177,7 @@ const TransferVolumeChart: React.FC<TransferVolumeChartProps> = ({
               {t("transferVolumeChart.transferCount")}
             </p>
             <p className="font-semibold leading-none text-right">
-              {transfer_count?.toLocaleString()}
+              {transfer_count?.toLocaleString(locale)}
             </p>
           </div>
           <div>
@@ -174,7 +185,7 @@ const TransferVolumeChart: React.FC<TransferVolumeChartProps> = ({
               {t("transferVolumeChart.averageTransferAmount")}
             </p>
             <p className="font-semibold leading-none text-right">
-              {average_transfer_amount?.toLocaleString(undefined, {
+              {average_transfer_amount?.toLocaleString(locale, {
                 maximumFractionDigits: 2,
               })}
             </p>
@@ -184,7 +195,7 @@ const TransferVolumeChart: React.FC<TransferVolumeChartProps> = ({
               {t("transferVolumeChart.maxTransferAmount")}
             </p>
             <p className="font-semibold leading-none text-right">
-              {maximum_transfer_amount?.toLocaleString(undefined, {
+              {maximum_transfer_amount?.toLocaleString(locale, {
                 maximumFractionDigits: 2,
               })}
             </p>
@@ -194,7 +205,7 @@ const TransferVolumeChart: React.FC<TransferVolumeChartProps> = ({
               {t("transferVolumeChart.minTransferAmount")}
             </p>
             <p className="font-semibold leading-none text-right">
-              {minimum_transfer_amount?.toLocaleString(undefined, {
+              {minimum_transfer_amount?.toLocaleString(locale, {
                 maximumFractionDigits: 2,
               })}
             </p>
@@ -249,7 +260,14 @@ const TransferVolumeChart: React.FC<TransferVolumeChartProps> = ({
           domain={yAxisDomain}
         />
         <Tooltip content={<CustomTooltip />} />
-        <Legend verticalAlign="bottom" height={36} align="center" />
+        {showLegend && (
+          <Legend
+            verticalAlign="bottom"
+            height={36}
+            align="center"
+            wrapperStyle={{ paddingTop: 8 }}
+          />
+        )}
 
         {peakDate !== undefined && (
           <ReferenceLine

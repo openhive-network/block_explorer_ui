@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { X, ChevronDown, ChevronRight } from "lucide-react";
+import { X, Search, Plus, Check, ChevronDown } from "lucide-react";
 import {
   ALL_WIDGETS,
   WIDGET_CATEGORY_META,
@@ -7,13 +7,7 @@ import {
   WidgetConfig,
 } from "@/components/dashboard/lib/widgetRegistry";
 import { useI18n } from "@/i18n/i18n";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipPortal,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
 interface WidgetLibraryProps {
   isOpen: boolean;
@@ -34,6 +28,15 @@ const WidgetLibrary: React.FC<WidgetLibraryProps> = ({
 
   const isSearching = searchTerm.trim().length > 0;
 
+  // Description key is explicit on the widget, or derived by convention from the
+  // name key ("...Name" -> "...NameDescription"). Empty string when it doesn't
+  // resolve to real text.
+  const getDescription = (widget: WidgetConfig): string => {
+    const key = widget.description ?? `${widget.name}Description`;
+    const text = t(key);
+    return !text || text === key ? "" : text;
+  };
+
   const toggleCategory = (cat: string) => {
     setOpenCategories((prev) => {
       const next = new Set(prev);
@@ -48,13 +51,16 @@ const WidgetLibrary: React.FC<WidgetLibraryProps> = ({
     [existingWidgets]
   );
 
-  const filteredWidgets = useMemo(
-    () =>
-      ALL_WIDGETS.filter((w) =>
-        t(w.name).toLowerCase().includes(searchTerm.toLowerCase())
-      ),
-    [searchTerm, t]
-  );
+  const filteredWidgets = useMemo(() => {
+    const q = searchTerm.trim().toLowerCase();
+    if (!q) return ALL_WIDGETS;
+    return ALL_WIDGETS.filter(
+      (w) =>
+        t(w.name).toLowerCase().includes(q) ||
+        getDescription(w).toLowerCase().includes(q)
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchTerm, t]);
 
   // Group by category, preserving the defined order
   const grouped = useMemo(() => {
@@ -76,28 +82,41 @@ const WidgetLibrary: React.FC<WidgetLibraryProps> = ({
   const renderWidget = (widget: WidgetConfig) => {
     const isDisabled =
       !widget.allowMultiple && existingWidgetTypes.has(widget.id);
-    const btn = (
+    const description = getDescription(widget);
+
+    return (
       <button
         key={widget.id}
         onClick={() => onAddWidget(widget.id)}
         disabled={isDisabled}
-        className="w-full text-left p-3 bg-gray-100 dark:bg-gray-700 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-gray-900 dark:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+        className={cn(
+          "group flex w-full items-start gap-3 rounded-xl border p-3 text-start transition-all",
+          isDisabled
+            ? "cursor-not-allowed border-gray-100 bg-gray-50/50 opacity-70 dark:border-gray-800 dark:bg-gray-800/30"
+            : "border-gray-200 bg-theme hover:-translate-y-0.5 hover:border-indigo-400 hover:bg-indigo-50/50 hover:shadow-md dark:border-gray-700 dark:hover:border-indigo-500/60 dark:hover:bg-indigo-500/10"
+        )}
       >
-        {t(widget.name)}
+        <div className="min-w-0 flex-1">
+          <div className="text-sm font-semibold text-gray-900 dark:text-white">
+            {t(widget.name)}
+          </div>
+          {description && (
+            <p className="mt-0.5 text-xs leading-snug text-gray-500 dark:text-gray-400">
+              {description}
+            </p>
+          )}
+        </div>
+        <span
+          className={cn(
+            "mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full transition-colors",
+            isDisabled
+              ? "bg-emerald-100 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-400"
+              : "bg-gray-100 text-gray-400 group-hover:bg-indigo-500 group-hover:text-white dark:bg-gray-800"
+          )}
+        >
+          {isDisabled ? <Check size={14} /> : <Plus size={14} />}
+        </span>
       </button>
-    );
-
-    if (!widget.description) return btn;
-
-    return (
-      <TooltipProvider key={widget.id}>
-        <Tooltip>
-          <TooltipTrigger asChild>{btn}</TooltipTrigger>
-          <TooltipPortal>
-            <TooltipContent>{t(widget.description)}</TooltipContent>
-          </TooltipPortal>
-        </Tooltip>
-      </TooltipProvider>
     );
   };
 
@@ -109,55 +128,77 @@ const WidgetLibrary: React.FC<WidgetLibraryProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-theme rounded-[5px] p-6 w-full max-w-md flex flex-col">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="flex max-h-[85vh] w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-theme shadow-2xl ring-1 ring-black/5 dark:ring-white/10"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">{t("widgetLibrary.addWidget")}</h2>
+        <div className="flex items-center justify-between gap-3 px-5 pb-3 pt-5">
+          <h2 className="text-lg font-bold">{t("widgetLibrary.addWidget")}</h2>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+            aria-label={t("widgetLibrary.addWidget")}
+            className="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-200"
           >
-            <X size={24} />
+            <X size={18} />
           </button>
         </div>
 
         {/* Search */}
-        <input
-          type="text"
-          placeholder={t("widgetLibrary.searchWidget")}
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full px-3 py-2 mb-4 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
-          autoFocus
-        />
+        <div className="px-5 pb-2">
+          <div className="relative">
+            <Search
+              size={16}
+              className="pointer-events-none absolute start-3 top-1/2 -translate-y-1/2 text-gray-400"
+            />
+            <input
+              type="text"
+              placeholder={t("widgetLibrary.searchWidget")}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full rounded-xl border border-gray-200 bg-gray-50 py-2.5 pe-3 ps-9 text-sm outline-none transition-colors focus:border-indigo-400 focus:ring-2 focus:ring-indigo-400/40 dark:border-gray-700 dark:bg-gray-800/50"
+              autoFocus
+            />
+          </div>
+        </div>
 
         {/* Category groups */}
-        <div className="space-y-1 max-h-[60vh] overflow-y-auto pr-2">
+        <div className="flex-1 space-y-1 overflow-y-auto px-5 py-3">
           {grouped.length === 0 && (
-            <div className="text-center py-4 text-explorer-slate-text">
+            <div className="py-10 text-center text-sm text-explorer-slate-text">
               {t("widgetLibrary.noWidgetsFound")}
             </div>
           )}
 
           {grouped.map(({ key, widgets }) => {
-            const isOpen = isSearching || openCategories.has(key);
+            const open = isSearching || openCategories.has(key);
             return (
-              <div key={key}>
+              <div key={key} className="pb-1">
                 <button
                   onClick={() => toggleCategory(key)}
-                  className="w-full flex items-center justify-between py-2 px-1 text-sm font-semibold text-explorer-slate-text uppercase tracking-wider hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+                  className="flex w-full items-center justify-between py-2 text-xs font-semibold uppercase tracking-wider text-explorer-slate-text transition-colors hover:text-gray-700 dark:hover:text-gray-200"
                 >
-                  <span>{getCategoryLabel(key)}</span>
-                  {isOpen ? (
-                    <ChevronDown size={14} />
-                  ) : (
-                    <ChevronRight size={14} />
-                  )}
+                  <span className="flex items-center gap-1.5">
+                    {getCategoryLabel(key)}
+                    <span className="rounded-full bg-gray-100 px-1.5 text-[10px] font-medium text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+                      {widgets.length}
+                    </span>
+                  </span>
+                  <ChevronDown
+                    size={14}
+                    className={cn(
+                      "transition-transform duration-200",
+                      open ? "" : "-rotate-90"
+                    )}
+                  />
                 </button>
 
-                {isOpen && (
-                  <div className="space-y-2 mb-2">
+                {open && (
+                  <div className="mb-2 space-y-2">
                     {widgets.map(renderWidget)}
                   </div>
                 )}

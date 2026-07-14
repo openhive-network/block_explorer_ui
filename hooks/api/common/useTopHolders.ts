@@ -5,15 +5,37 @@ import Hive from "@/types/Hive";
 export type CoinType = "HIVE" | "HBD" | "VESTS";
 export type BalanceType = "balance" | "savings_balance";
 
-const useTopHolders = (coinType: CoinType, balanceType: BalanceType, page: number) => {
+const useTopHolders = (
+  coinType: CoinType,
+  balanceType: BalanceType,
+  page: number,
+  minBalance?: number,
+  maxBalance?: number
+) => {
   const {
     data: holdersData,
     isLoading: isTopHoldersLoading,
     error: isTopHoldersError,
   } = useQuery<Hive.TopHoldersResponse>({
-    queryKey: ["topHolders", coinType, balanceType, page],
-    queryFn: () => fetchingService.getTopHolders(coinType, balanceType, page),
+    queryKey: [
+      "topHolders",
+      coinType,
+      balanceType,
+      page,
+      minBalance,
+      maxBalance,
+    ],
+    queryFn: () =>
+      fetchingService.getTopHolders(
+        coinType,
+        balanceType,
+        page,
+        minBalance,
+        maxBalance
+      ),
     enabled: !(coinType === "VESTS" && balanceType !== "balance"),
+    keepPreviousData: true,
+    staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
 

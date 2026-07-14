@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import moment from "moment";
-import { Loader2 } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Loader2, Download } from "lucide-react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import ReportDialogHeader from "@/components/ui/ReportDialogHeader";
+import DataExport from "@/components/DataExport";
+import { spacesToUnderscores } from "@/utils/StringUtils";
 import {
   Select,
   SelectContent,
@@ -19,7 +17,7 @@ import SearchRanges from "../searchRanges/SearchRanges";
 import { Button } from "../ui/button";
 
 import useVestingStats from "@/hooks/api/homePage/useVestingStats";
-import { cn } from "@/lib/utils";
+import SegmentedToggle from "@/components/ui/SegmentedToggle";
 import useSearchRanges from "@/hooks/common/useSearchRanges";
 import { useI18n } from "../../i18n/i18n";
 import {
@@ -29,6 +27,8 @@ import {
 } from "./hpMomentumUtils";
 
 import HpMomentumChart from "./HpMomentumChart";
+import HpMomentumKpiStrip from "./HpMomentumKpiStrip";
+import { computeTrendPct } from "@/utils/chartUtils";
 
 interface HpMomentumFullChartDialogProps {
   isOpen: boolean;
@@ -110,7 +110,26 @@ const HpMomentumFullChartDialog: React.FC<HpMomentumFullChartDialogProps> = ({
     }
   };
 
-  const { chartData } = useAggregatedVesting(vestingStats, unit);
+  const { chartData, totals } = useAggregatedVesting(vestingStats, unit);
+  // Trend the (always-positive) power-up level, not net flow: net oscillates
+  // around zero, which makes computeTrendPct's %-vs-baseline blow up or go null.
+  const trend = useMemo(
+    () => computeTrendPct(chartData.map((d) => d.power_up)),
+    [chartData]
+  );
+
+  const exportData = useMemo(
+    () =>
+      chartData.map((d) => ({
+        [t("common.date")]: moment(d.date).format("YYYY-MM-DD"),
+        [t("hpMomentumFullChartDialog.unit")]: unit.toUpperCase(),
+        [t("hpMomentumChart.poweredUp")]: d.power_up,
+        [t("hpMomentumChart.poweredDown")]: d.power_down_fill,
+        [t("hpMomentumChart.scheduledDown")]: d.power_down_init,
+        [t("hpMomentumChart.netFlow")]: d.net,
+      })),
+    [chartData, unit, t]
+  );
 
   const unitOptions: { key: VestingDisplayUnit; label: string }[] = [
     { key: "hp", label: "HP" },
@@ -119,92 +138,109 @@ const HpMomentumFullChartDialog: React.FC<HpMomentumFullChartDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="min-w-[90vw] pr-0">
+      <DialogContent className="min-w-[70vw] pr-0">
         <div className="max-h-[90vh] overflow-y-auto overflow-x-hidden pr-6 scrollableContainer">
-          <DialogHeader>
-            <div className="mb-4 flex items-center justify-between gap-3 pr-6 flex-wrap">
-              <DialogTitle>{t("hpMomentumFullChartDialog.title")}</DialogTitle>
-              <div
-                className="inline-flex items-stretch rounded-full border border-navbar-border overflow-hidden text-xs"
-                role="group"
-                aria-label="HP or VESTS"
+          <ReportDialogHeader
+            title={t("hpMomentumFullChartDialog.title")}
+            subtitle={t("hpMomentumFullChartDialog.subtitle")}
+            actions={
+              <DataExport
+                data={exportData}
+                filename={`${spacesToUnderscores(
+                  t("widgets.hpMomentumName")
+                )}.csv`}
+                skipColumnSelection
               >
-                {unitOptions.map((opt, idx) => {
-                  const isActive = unit === opt.key;
-                  const isFirst = idx === 0;
-                  const isLast = idx === unitOptions.length - 1;
-                  return (
-                    <button
-                      key={opt.key}
-                      type="button"
-                      onClick={() => setUnit(opt.key)}
-                      aria-pressed={isActive}
-                      className={cn(
-                        "font-medium transition-colors px-3 py-1",
-                        !isLast && "border-r border-navbar-border",
-                        isFirst && "rounded-l-full",
-                        isLast && "rounded-r-full",
-                        isActive
-                          ? "bg-blue-500 text-white"
-                          : "bg-theme hover:bg-gray-100 dark:hover:bg-gray-700"
-                      )}
-                    >
-                      {opt.label}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </DialogHeader>
-
-          <div className="flex flex-col md:flex-row items-start gap-4 mb-4 w-full">
-            <div className="flex flex-col gap-y-3 w-1/2 md:w-1/4">
-              <Label>{t("hpMomentumFullChartDialog.granularity")}</Label>
-              <Select
-                onValueChange={(value) =>
-                  handleGranularityChange(
-                    value as "daily" | "monthly" | "yearly"
-                  )
-                }
-                value={granularity}
-              >
-                <SelectTrigger>
-                  <SelectValue
-                    placeholder={t(
-                      "hpMomentumFullChartDialog.selectGranularity"
-                    )}
-                  />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="daily">{t("common.daily")}</SelectItem>
-                  <SelectItem value="monthly">{t("common.monthly")}</SelectItem>
-                  <SelectItem value="yearly">{t("common.yearly")}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="w-full flex flex-col mb-4">
-              <Label>{t("common.filters")}</Label>
-              <div className="m-0 p-0 gap-y-0">
-                <SearchRanges
-                  rangesProps={searchRanges}
-                  setIsSearchButtonDisabled={setIsSearchButtonDisabled}
-                />
-              </div>
-              <div className="w-full flex items-end justify-start mt-2 gap-2">
-                <Button
-                  onClick={handleSearch}
-                  data-testid="apply-filters"
-                  disabled={isSearchButtonDisabled}
+                <button
+                  type="button"
+                  title={t("common.export")}
+                  className="report-export-btn"
                 >
-                  {t("common.search")}
-                </Button>
-                <Button onClick={handleFilterClear} data-testid="clear-filters">
-                  {t("common.clear")}
-                </Button>
+                  <Download className="h-4 w-4" />
+                  {t("common.export")}
+                </button>
+              </DataExport>
+            }
+          />
+
+          <div className="report-filters mb-5">
+            <p className="report-filters-label">{t("common.filters")}</p>
+            <div className="flex w-full flex-wrap items-start gap-4">
+              <div className="flex flex-col gap-y-3 w-1/2 md:w-1/4">
+                <Label>{t("hpMomentumFullChartDialog.granularity")}</Label>
+                <Select
+                  onValueChange={(value) =>
+                    handleGranularityChange(
+                      value as "daily" | "monthly" | "yearly"
+                    )
+                  }
+                  value={granularity}
+                >
+                  <SelectTrigger>
+                    <SelectValue
+                      placeholder={t(
+                        "hpMomentumFullChartDialog.selectGranularity"
+                      )}
+                    />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="daily">{t("common.daily")}</SelectItem>
+                    <SelectItem value="monthly">
+                      {t("common.monthly")}
+                    </SelectItem>
+                    <SelectItem value="yearly">{t("common.yearly")}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="w-full flex flex-col mb-4">
+                <Label>{t("common.dateRange")}</Label>
+                <div className="m-0 p-0 gap-y-0">
+                  <SearchRanges
+                    rangesProps={searchRanges}
+                    setIsSearchButtonDisabled={setIsSearchButtonDisabled}
+                  />
+                </div>
+                <div className="w-full flex items-end justify-start mt-2 gap-2">
+                  <Button
+                    onClick={handleSearch}
+                    data-testid="apply-filters"
+                    disabled={isSearchButtonDisabled}
+                  >
+                    {t("common.search")}
+                  </Button>
+                  <Button
+                    onClick={handleFilterClear}
+                    data-testid="clear-filters"
+                  >
+                    {t("common.clear")}
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
+
+          <div className="mb-4 flex items-center justify-end">
+            <SegmentedToggle
+              ariaLabel="HP or VESTS"
+              value={unit}
+              onChange={setUnit}
+              options={unitOptions.map((o) => ({
+                value: o.key,
+                label: o.label,
+              }))}
+            />
+          </div>
+
+          {chartData.length > 0 && (
+            <HpMomentumKpiStrip
+              net={totals.net}
+              up={totals.up}
+              down={totals.downFill}
+              trend={trend}
+              unit={unit}
+            />
+          )}
 
           <div className="h-[55vh] w-full flex items-center justify-center">
             {isChartLoading ? (

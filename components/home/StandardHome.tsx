@@ -10,16 +10,22 @@ import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
 import TransactionStatisticsCard from "@/components/home/TransactionStatisticsCard";
 import { useI18n } from "@/i18n/i18n";
 import TopWitnessesCard from "@/components/home/TopWitnessesCard";
+import NetworkTopAccountsCard from "@/components/home/NetworkTopAccountsCard";
 import useCommunities from "@/hooks/api/communities/useCommunities";
 import TopCommunitiesCard from "@/components/home/TopCommunitiesCard";
 import TransferVolumeCard from "@/components/home/TransferVolumeCard";
 import TotalValueLockedCard from "@/components/home/TotalValueLockedCard";
 import NetworkHpDistributionCard from "@/components/home/NetworkHpDistributionCard";
+import TopHoldersWidget from "@/components/dashboard/widgets/data/TopHoldersWidget";
 import HpMomentumCard from "@/components/home/HpMomentumCard";
 import NetworkGrowthCard from "@/components/home/NetworkGrowthCard";
 import NetworkVotingActivityCard from "@/components/home/NetworkVotingActivityCard";
 import DailyActiveUsersCard from "@/components/home/DailyActiveUsersCard";
+import AccountRetentionFunnelCard from "@/components/home/AccountRetentionFunnelCard";
 import NetworkOpMixCard from "@/components/home/NetworkOpMixCard";
+import NetworkRcUtilizationCard from "@/components/home/NetworkRcUtilizationCard";
+import NetworkContentVolumeCard from "@/components/home/NetworkContentVolumeCard";
+import NetworkEngagementCard from "@/components/home/NetworkEngagementCard";
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import { useAuth } from "@/contexts/AuthContext";
@@ -79,7 +85,7 @@ const StandardHome = () => {
         <title>{t("home.title")}</title>
       </Head>
       <div className="page-container grid grid-cols-12 text-white gap-3">
-        <div className="col-span-12 md:col-span-4 lg:col-span-3 flex flex-col gap-3">
+        <div className="col-span-12 md:col-span-4 lg:col-span-3 flex flex-col">
           <HeadBlockCard
             headBlockCardData={dynamicGlobalQueryData}
             transactionCount={trxOpsLength}
@@ -87,29 +93,33 @@ const StandardHome = () => {
             opcount={opcount}
           />
           <NetworkVotingActivityCard />
-          <div className="h-[340px]">
-            <NetworkHpDistributionCard />
-          </div>
+          <NetworkHpDistributionCard />
+          <TopHoldersWidget />
         </div>
 
         <div className="col-span-12 md:col-span-8 lg:col-span-6">
           <LastBlocksWidget headBlock={headBlockNum} />
           <NetworkGrowthCard />
           <DailyActiveUsersCard />
+          <AccountRetentionFunnelCard />
           <NetworkOpMixCard />
+          <NetworkRcUtilizationCard />
+          <NetworkEngagementCard />
           <TransactionStatisticsCard />
           <TransferVolumeCard />
           <TotalValueLockedCard />
           <HpMomentumCard />
+          <NetworkContentVolumeCard />
           <SearchesSection />
         </div>
 
-        <div className="col-span-12 lg:col-span-3 flex flex-col gap-3">
+        <div className="col-span-12 lg:col-span-3 flex flex-col">
           {isLoggedIn && hasWatchedProposals && <WatchedProposalsWidget />}
           <TopWitnessesCard
             witnessesData={witnessesData}
             isLoading={isWitnessDataLoading}
           />
+          <NetworkTopAccountsCard />
           <TopCommunitiesCard
             communitiesData={popularCommunitiesData}
             isLoading={isCommunitiesLoading}

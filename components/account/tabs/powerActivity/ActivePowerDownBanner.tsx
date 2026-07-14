@@ -119,14 +119,14 @@ const ActivePowerDownBanner: React.FC<ActivePowerDownBannerProps> = ({
           </span>
           <span>
             <span className="font-mono font-medium">
-              {formatCompact(stats.weeklyAmount)} {unitLabel}
+              {formatCompact(stats.weeklyAmount, locale)} {unitLabel}
             </span>{" "}
             {t("powerActivityBanner.perWeek")}
           </span>
           <span>
             {t("powerActivityBanner.remaining")}{" "}
             <span className="font-mono font-medium">
-              {formatCompact(stats.remainingAmount)} {unitLabel}
+              {formatCompact(stats.remainingAmount, locale)} {unitLabel}
             </span>
           </span>
           <span>
