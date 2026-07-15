@@ -1,5 +1,5 @@
 import React from "react";
-import { TrendingDown, TrendingUp, Minus } from "lucide-react";
+import { TrendingDown, TrendingUp, Minus, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/i18n/i18n";
 import Hive from "@/types/Hive";
@@ -8,6 +8,13 @@ import {
   EngagementGranularity,
   isEngagementBucketProvisional,
 } from "./NetworkEngagementChart";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipPortal,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface NetworkEngagementKpiStripProps {
   data: Hive.NetworkEngagementResponse[];
@@ -67,10 +74,12 @@ const NetworkEngagementKpiStrip: React.FC<NetworkEngagementKpiStripProps> = ({
         <KpiTile
           label={t("networkEngagementKpiStrip.zeroVote")}
           value={fmtP(avgZeroVote)}
+          infoText={t("networkEngagementCard.zeroVoteInfo")}
         />
         <KpiTile
           label={t("networkEngagementKpiStrip.zeroComment")}
           value={fmtP(avgZeroComment)}
+          infoText={t("networkEngagementCard.zeroCommentInfo")}
         />
         <KpiTile
           label={t("networkEngagementKpiStrip.totalPosts")}
@@ -102,10 +111,30 @@ const KpiTile: React.FC<{
   label: string;
   value: React.ReactNode;
   sub?: string;
-}> = ({ label, value, sub }) => (
+  infoText?: string;
+}> = ({ label, value, sub, infoText }) => (
   <div className="rounded-md border border-gray-200 dark:border-gray-700 bg-theme px-3 py-2 shadow-sm">
-    <div className="text-[11px] text-gray-500 dark:text-gray-400 mb-0.5 uppercase tracking-wide leading-none">
-      {label}
+    <div className="text-[11px] text-gray-500 dark:text-gray-400 mb-0.5 uppercase tracking-wide leading-none flex items-start gap-1">
+      <span>{label}</span>
+      {infoText && (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="shrink-0 cursor-help text-gray-400 hover:text-gray-500">
+                <Info size={10} />
+              </span>
+            </TooltipTrigger>
+            <TooltipPortal>
+              <TooltipContent
+                side="top"
+                className="max-w-[240px] text-center text-[11px]"
+              >
+                {infoText}
+              </TooltipContent>
+            </TooltipPortal>
+          </Tooltip>
+        </TooltipProvider>
+      )}
     </div>
     <div className="text-sm font-semibold leading-tight whitespace-nowrap overflow-hidden text-ellipsis">
       {value}

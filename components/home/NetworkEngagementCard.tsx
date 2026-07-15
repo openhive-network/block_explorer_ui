@@ -7,6 +7,7 @@ import {
   EyeOff,
   TrendingUp,
   TrendingDown,
+  Info,
 } from "lucide-react";
 import moment from "moment";
 import dynamic from "next/dynamic";
@@ -20,6 +21,13 @@ import { useI18n } from "../../i18n/i18n";
 import useNetworkEngagement from "@/hooks/api/homePage/useNetworkEngagement";
 import { cn } from "@/lib/utils";
 import { computeTrendPct } from "@/utils/chartUtils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipPortal,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const NetworkEngagementFullChartDialog = dynamic(
   () => import("./NetworkEngagementFullChartDialog"),
@@ -98,6 +106,7 @@ const NetworkEngagementCard = () => {
     trend: number | null;
     pct: boolean;
     positiveIsGood: boolean;
+    infoKey?: string;
   }[] = [
     {
       key: "votes",
@@ -122,6 +131,7 @@ const NetworkEngagementCard = () => {
     {
       key: "zeroVote",
       labelKey: "networkEngagementCard.zeroVotePct",
+      infoKey: "networkEngagementCard.zeroVoteInfo",
       Icon: Ghost,
       value: mean((d) => d.zero_vote_post_pct),
       last: lastMature?.zero_vote_post_pct ?? null,
@@ -132,6 +142,7 @@ const NetworkEngagementCard = () => {
     {
       key: "zeroComment",
       labelKey: "networkEngagementCard.zeroCommentPct",
+      infoKey: "networkEngagementCard.zeroCommentInfo",
       Icon: EyeOff,
       value: mean((d) => d.zero_comment_post_pct),
       last: lastMature?.zero_comment_post_pct ?? null,
@@ -165,6 +176,7 @@ const NetworkEngagementCard = () => {
             ({
               key,
               labelKey,
+              infoKey,
               Icon,
               value,
               last,
@@ -176,9 +188,28 @@ const NetworkEngagementCard = () => {
                 key={key}
                 className="flex-1 min-w-[140px] bg-explorer-extra-light-gray rounded-lg p-2.5 shadow-md flex flex-col justify-center"
               >
-                <div className="flex items-center justify-between gap-1">
-                  <h3 className="text-xs font-semibold uppercase tracking-wide text-explorer-dark-gray dark:text-text">
-                    {t(labelKey)}
+                <div className="flex items-start justify-between gap-1">
+                  <h3 className="flex items-start gap-1 text-xs font-semibold uppercase tracking-wide text-explorer-dark-gray dark:text-text">
+                    <span>{t(labelKey)}</span>
+                    {infoKey && (
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span className="shrink-0 cursor-help text-gray-400 hover:text-gray-500">
+                              <Info size={11} />
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipPortal>
+                            <TooltipContent
+                              side="top"
+                              className="max-w-[240px] text-center text-[11px]"
+                            >
+                              {t(infoKey)}
+                            </TooltipContent>
+                          </TooltipPortal>
+                        </Tooltip>
+                      </TooltipProvider>
+                    )}
                   </h3>
                   <span className="text-[10px] text-gray-400 whitespace-nowrap">
                     {t("networkEngagementCard.avg30d")}
@@ -256,6 +287,12 @@ const NetworkEngagementCard = () => {
                 compact
               />
             </div>
+          )}
+          {variant === "health" && (
+            <p className="mt-1.5 flex items-start gap-1 text-[10px] leading-snug text-gray-400">
+              <Info size={11} className="mt-px shrink-0" />
+              <span>{t("networkEngagementCard.ghostPostingNote")}</span>
+            </p>
           )}
         </div>
       </div>
