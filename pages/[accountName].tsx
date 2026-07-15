@@ -1,8 +1,5 @@
-import { useState } from "react";
-import {
-  Loader2,
-  X,
-} from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Loader2, X } from "lucide-react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 
@@ -72,8 +69,23 @@ export default function Account() {
 
   const [showMobileAccountDetails, setShowMobileAccountDetails] =
     useState(false);
-  const [isDesktopAccountDetailsCollapsed, setIsDesktopAccountDetailsCollapsed] =
-    useState(false);
+  const [
+    isDesktopAccountDetailsCollapsed,
+    setIsDesktopAccountDetailsCollapsed,
+  ] = useState(false);
+
+  // Collapse the sidebar on Analytics for full width; restore on leave, but only
+  // if we auto-collapsed it (don't override a manual collapse).
+  const autoCollapsedSidebarRef = useRef(false);
+  useEffect(() => {
+    if (router.query.activeTab === "analytics") {
+      setIsDesktopAccountDetailsCollapsed(true);
+      autoCollapsedSidebarRef.current = true;
+    } else if (autoCollapsedSidebarRef.current) {
+      setIsDesktopAccountDetailsCollapsed(false);
+      autoCollapsedSidebarRef.current = false;
+    }
+  }, [router.query.activeTab]);
 
   const { dynamicGlobalData } = useDynamicGlobal();
   const {
@@ -99,7 +111,7 @@ export default function Account() {
       return (
         <>
           <SidebarToggleButton
-            isCollapsed={true} 
+            isCollapsed={true}
             onClick={() => setShowMobileAccountDetails(true)}
           />
 
@@ -133,9 +145,7 @@ export default function Account() {
         <>
           <SidebarToggleButton
             isCollapsed={isDesktopAccountDetailsCollapsed}
-            onClick={() =>
-              setIsDesktopAccountDetailsCollapsed((prev) => !prev)
-            }
+            onClick={() => setIsDesktopAccountDetailsCollapsed((prev) => !prev)}
           />
           {!isDesktopAccountDetailsCollapsed && (
             <div className="col-start-1 col-span-1 flex flex-col gap-y-2">
@@ -168,7 +178,7 @@ export default function Account() {
       "accountName.accountNotFound"
     )}`;
     if (notFound && !isAccountDetailsLoading) {
-    return <ErrorPage errorMessage={accountNotFoundError} />;
+      return <ErrorPage errorMessage={accountNotFoundError} />;
     }
   }
 
