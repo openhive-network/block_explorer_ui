@@ -24,6 +24,12 @@ export const WIDGET_NODE_SUPPORT: Record<string, WidgetNodeSupport> = {
   "top-accounts": { app: "haf-stats-api" },
   "network-rc-utilization": { app: "haf-stats-api" },
 
+  // haf-stats-api account analytics — gate on whole-app presence.
+  "my-content-activity": { app: "haf-stats-api" },
+  "my-rc-footprint": { app: "haf-stats-api" },
+  "my-rc-consumption": { app: "haf-stats-api" },
+  "my-financial-summary": { app: "haf-stats-api" },
+
   // balance-api — analytics routes can be missing while the app itself is present.
   "transfer-volume": {
     app: "balance-api",

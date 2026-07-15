@@ -1084,6 +1084,22 @@ class FetchingService {
     });
   }
 
+  async getAccountContentStats(
+    accountName: string,
+    from?: Date | number | undefined,
+    to?: Date | number | undefined,
+    granularity?: "day" | "week" | "month"
+  ): Promise<Hive.AccountContentStatsResponse[]> {
+    return await this.extendedHiveChain!.restApi[
+      "haf-stats-api"
+    ].accountContentStats({
+      accountName,
+      from_date: from,
+      to_date: to,
+      granularity,
+    });
+  }
+
   async getNetworkTopAccounts(
     metric: Hive.TopAccountsMetric,
     fromDate?: string | Date | number,
@@ -1095,6 +1111,76 @@ class FetchingService {
       from_date: fromDate,
       to_date: toDate,
       limit_count: limitCount,
+    });
+  }
+
+  async getAccountDappFootprint(
+    account: string,
+    fromDate?: string | Date | number,
+    toDate?: string | Date | number
+  ): Promise<Hive.AccountDappFootprintResponse> {
+    return await this.extendedHiveChain!.restApi[
+      "haf-stats-api"
+    ].accountDappFootprint({
+      account,
+      from_date: fromDate,
+      to_date: toDate,
+    });
+  }
+
+  async getAccountRcFootprint(
+    account: string,
+    fromDate?: string | Date | number,
+    toDate?: string | Date | number,
+    groupBy: "op_type" | "app" = "op_type"
+  ): Promise<Hive.AccountRcFootprintRow[]> {
+    return await this.extendedHiveChain!.restApi[
+      "haf-stats-api"
+    ].accountRcFootprint({
+      account,
+      from_date: fromDate,
+      to_date: toDate,
+      group_by: groupBy,
+    });
+  }
+
+  async getAccountRcFootprintTimeline(
+    account: string,
+    params: {
+      fromDate?: string | Date | number;
+      toDate?: string | Date | number;
+      appFilter?: string;
+      opTypeFilter?: string;
+      limitCount?: number;
+      beforeSeq?: number;
+    }
+  ): Promise<Hive.AccountRcFootprintTimelineRow[]> {
+    return await this.extendedHiveChain!.restApi[
+      "haf-stats-api"
+    ].accountRcFootprintTimeline({
+      account,
+      from_date: params.fromDate,
+      to_date: params.toDate,
+      app_filter: params.appFilter,
+      op_type_filter: params.opTypeFilter,
+      limit_count: params.limitCount,
+      before_seq: params.beforeSeq,
+    });
+  }
+
+  async getFinancialSummary(
+    account: string,
+    fromDate?: string,
+    toDate?: string,
+    granularity: "day" | "week" | "month" = "month"
+  ): Promise<Hive.FinancialSummaryRow[]> {
+    return await this.extendedHiveChain!.restApi[
+      "haf-stats-api"
+    ].accountFinancialSummary({
+      account,
+      from_date: fromDate,
+      to_date: toDate,
+      granularity,
     });
   }
 }
