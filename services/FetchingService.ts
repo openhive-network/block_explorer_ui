@@ -1084,6 +1084,18 @@ class FetchingService {
     });
   }
 
+  async getNetworkDappFootprint(
+    from?: string | Date | number,
+    to?: string | Date | number
+  ): Promise<Hive.NetworkDappFootprintResponse> {
+    return await this.extendedHiveChain!.restApi[
+      "haf-stats-api"
+    ].networkDappFootprint({
+      from_date: from,
+      to_date: to,
+    });
+  }
+
   async getNetworkTopAccounts(
     metric: Hive.TopAccountsMetric,
     fromDate?: string | Date | number,

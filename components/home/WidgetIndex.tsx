@@ -310,6 +310,39 @@ const WidgetIndex = () => {
     localStorage.setItem(seededKey, "true");
   }, [isLoaded, username, widgets, layouts, onAddWidget]);
 
+  // One-time seed of the Network DApp Usage widget (#757) for users with a saved dashboard.
+  useEffect(() => {
+    if (!isLoaded || !username) return;
+    const seededKey = `hivescan_dashboard_network_dapp_usage_seeded_${username}`;
+    if (localStorage.getItem(seededKey)) return;
+    if (widgets.some((w) => w.type === "network-dapp-usage")) {
+      localStorage.setItem(seededKey, "true");
+      return;
+    }
+    const masterLayout = layouts.lg || [];
+    // Place directly below the Content Volume card; fall back to the bottom of
+    // the main column.
+    const anchorId = widgets.find(
+      (w) => w.type === "network-content-volume"
+    )?.i;
+    const anchorItem = anchorId
+      ? masterLayout.find((item) => item.i === anchorId)
+      : undefined;
+    const insertY = anchorItem
+      ? anchorItem.y + anchorItem.h
+      : masterLayout
+          .filter((item) => item.x >= 3 && item.x < 9)
+          .reduce((max, item) => Math.max(max, item.y + item.h), 0);
+    onAddWidget("network-dapp-usage", {
+      x: anchorItem?.x ?? 3,
+      y: insertY,
+      w: anchorItem?.w ?? 6,
+      h: 8,
+      minH: 4,
+    });
+    localStorage.setItem(seededKey, "true");
+  }, [isLoaded, username, widgets, layouts, onAddWidget]);
+
   // One-time seed of the Engagement Quality widget for users with a saved dashboard.
   useEffect(() => {
     if (!isLoaded || !username) return;

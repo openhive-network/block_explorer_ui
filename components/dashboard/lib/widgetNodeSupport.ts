@@ -23,6 +23,7 @@ export const WIDGET_NODE_SUPPORT: Record<string, WidgetNodeSupport> = {
   "network-author-retention": { app: "haf-stats-api" },
   "top-accounts": { app: "haf-stats-api" },
   "network-rc-utilization": { app: "haf-stats-api" },
+  "network-dapp-usage": { app: "haf-stats-api" },
 
   // balance-api — analytics routes can be missing while the app itself is present.
   "transfer-volume": {

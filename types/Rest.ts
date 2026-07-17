@@ -292,5 +292,10 @@ export const extendedRest = {
       responseArray: true,
       urlPath: "network/author-retention",
     },
+    networkDappFootprint: {
+      params: Hive.NetworkDappFootprintParams,
+      result: Hive.NetworkDappFootprintResponse,
+      urlPath: "network/dapp-footprint",
+    },
   },
 };

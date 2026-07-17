@@ -27,6 +27,7 @@ import NetworkOpMixCard from "@/components/home/NetworkOpMixCard";
 import NetworkRcUtilizationCard from "@/components/home/NetworkRcUtilizationCard";
 import NetworkContentVolumeCard from "@/components/home/NetworkContentVolumeCard";
 import NetworkEngagementCard from "@/components/home/NetworkEngagementCard";
+import NetworkDappUsageCard from "@/components/home/NetworkDappUsageCard";
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import { useAuth } from "@/contexts/AuthContext";
@@ -144,6 +145,9 @@ const StandardHome = () => {
           </NodeSupportGate>
           <NodeSupportGate widgetId="network-content-volume">
             <NetworkContentVolumeCard />
+          </NodeSupportGate>
+          <NodeSupportGate widgetId="network-dapp-usage">
+            <NetworkDappUsageCard />
           </NodeSupportGate>
           <SearchesSection />
         </div>

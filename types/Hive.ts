@@ -1428,6 +1428,50 @@ namespace Hive {
     pct_180d!: number | null;
   }
 
+  export class NetworkDappFootprintParams {
+    from_date?: string | Date | number | undefined;
+    to_date?: string | Date | number | undefined;
+  }
+
+  // Network-wide custom_json usage resolved to DApps and grouped by category over
+  // a date window — the network-scope twin of account/{account}/dapp-footprint.
+  // Adds unique_accounts (the network value-add) and the raw custom_json_id per
+  // DApp. rc_estimated is an op-count estimate, labelled as such in the UI.
+  // unique_accounts is null when the backend can't provide it (non-additive
+  // across DApps: one account can use many).
+  export class NetworkDappFootprintCategory {
+    category!: string;
+    op_count!: number;
+    rc_estimated!: number;
+    unique_accounts!: number | null;
+    pct!: number;
+    rc_pct!: number;
+  }
+
+  export class NetworkDappFootprintDapp {
+    app_name!: string;
+    custom_json_id!: string;
+    category!: string;
+    op_count!: number;
+    rc_estimated!: number;
+    unique_accounts!: number | null;
+    pct!: number;
+    rc_pct!: number;
+  }
+
+  export class NetworkDappFootprintResponse {
+    from_date!: string;
+    to_date!: string;
+    total_ops!: number;
+    total_rc_estimated!: number;
+    total_dapps!: number;
+    total_unique_accounts!: number | null;
+    top_dapp!: string | null;
+    top_category!: string | null;
+    categories!: NetworkDappFootprintCategory[];
+    dapps!: NetworkDappFootprintDapp[];
+  }
+
   export class NetworkHpDistributionParams {}
 
   export class NetworkHpDistributionResponse {

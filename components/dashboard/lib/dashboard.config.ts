@@ -38,6 +38,7 @@ export const DEFAULT_WIDGETS: Array<{ i: string; type: string }> = [
   { i: "voting-activity-1", type: "voting-activity" },
   { i: "hp-momentum-1", type: "hp-momentum" },
   { i: "network-content-volume-1", type: "network-content-volume" },
+  { i: "network-dapp-usage-1", type: "network-dapp-usage" },
 ];
 
 const MOBILE_WIDGET_HEIGHTS: Record<string, number> = {
@@ -63,6 +64,7 @@ const MOBILE_WIDGET_HEIGHTS: Record<string, number> = {
   "voting-activity-1": 7.2,
   "hp-momentum-1": 12,
   "network-content-volume-1": 9,
+  "network-dapp-usage-1": 13,
   "searches-1": 10.5,
   "top-witnesses-1": 13,
   "top-accounts-1": 12,
@@ -135,7 +137,8 @@ export const DEFAULT_MASTER_LAYOUT: Layout[] = [
     minW: 3,
     minH: 4,
   },
-  { i: "searches-1", x: 3, y: 57.8, w: 6, h: 9, minW: 4, minH: 3 },
+  { i: "network-dapp-usage-1", x: 3, y: 57.8, w: 6, h: 8, minW: 3, minH: 4 },
+  { i: "searches-1", x: 3, y: 65.8, w: 6, h: 9, minW: 4, minH: 3 },
 
   // Right column
   { i: "top-witnesses-1", x: 9, y: 0, w: 3, h: 14, minW: 2, minH: 6 },
@@ -166,6 +169,7 @@ export const DEFAULT_MOBILE_WIDGET_ORDER: string[] = [
   "tvl-1",
   "hp-momentum-1",
   "network-content-volume-1",
+  "network-dapp-usage-1",
   "top-witnesses-1",
   "top-accounts-1",
   "top-communities-1",
