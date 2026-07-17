@@ -1838,6 +1838,7 @@
   "rcConsumption.eventsFor": "イベント: {{label}}",
   "financialSummary.widgetTitle": "財務サマリー",
   "financialSummary.rootName": "財務アクティビティ",
+  "financialSummary.otherCategory": "その他",
   "financialSummary.direction": "方向",
   "financialSummary.currency": "通貨",
   "financialSummary.granularity": "粒度",

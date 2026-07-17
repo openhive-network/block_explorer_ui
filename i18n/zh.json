@@ -1838,6 +1838,7 @@
   "rcConsumption.eventsFor": "事件：{{label}}",
   "financialSummary.widgetTitle": "财务摘要",
   "financialSummary.rootName": "财务活动",
+  "financialSummary.otherCategory": "其他",
   "financialSummary.direction": "方向",
   "financialSummary.currency": "货币",
   "financialSummary.granularity": "粒度",

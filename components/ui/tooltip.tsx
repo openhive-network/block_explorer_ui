@@ -56,13 +56,20 @@ const TooltipTrigger = React.forwardRef<
       }}
       onClick={(e) => {
         // Touch/pen tap → toggle open; preventDefault skips Radix's own
-        // click-close. Skip mouse (hover), keyboard (detail 0) and <a> (nav).
+        // click-close. Skip mouse (hover) and keyboard (detail 0). Also skip
+        // triggers with a native default action (link nav, form submit, label)
+        // so the tap isn't swallowed — those still get hover/focus tooltips.
         const el = e.currentTarget as HTMLElement;
+        const hasNativeAction =
+          el.tagName === "A" ||
+          el.tagName === "LABEL" ||
+          (el.tagName === "BUTTON" &&
+            (el as HTMLButtonElement).type === "submit");
         if (
           toggle &&
           e.detail !== 0 &&
           pointerType.current !== "mouse" &&
-          el.tagName !== "A"
+          !hasNativeAction
         ) {
           e.preventDefault();
           toggle();

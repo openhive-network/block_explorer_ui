@@ -1838,6 +1838,7 @@
   "rcConsumption.eventsFor": "이벤트: {{label}}",
   "financialSummary.widgetTitle": "재무 요약",
   "financialSummary.rootName": "재무 활동",
+  "financialSummary.otherCategory": "기타",
   "financialSummary.direction": "방향",
   "financialSummary.currency": "통화",
   "financialSummary.granularity": "세분성",

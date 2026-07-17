@@ -34,6 +34,8 @@ const useAccountContentStats = (
     enabled: !!accountName && enabled,
     refetchInterval: liveDataEnabled ? config.mainRefreshInterval : false,
     refetchOnWindowFocus: false,
+    keepPreviousData: true,
+    staleTime: 30 * 60 * 1000,
   });
 
   return {

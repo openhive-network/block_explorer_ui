@@ -1838,6 +1838,7 @@
   "rcConsumption.eventsFor": "Eventos: {{label}}",
   "financialSummary.widgetTitle": "Resumen financiero",
   "financialSummary.rootName": "Actividad financiera",
+  "financialSummary.otherCategory": "Otros",
   "financialSummary.direction": "Dirección",
   "financialSummary.currency": "Moneda",
   "financialSummary.granularity": "Granularidad",

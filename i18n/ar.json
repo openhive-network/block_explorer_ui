@@ -1838,6 +1838,7 @@
   "rcConsumption.eventsFor": "الأحداث: {{label}}",
   "financialSummary.widgetTitle": "الملخص المالي",
   "financialSummary.rootName": "النشاط المالي",
+  "financialSummary.otherCategory": "أخرى",
   "financialSummary.direction": "الاتجاه",
   "financialSummary.currency": "العملة",
   "financialSummary.granularity": "الدقة",

@@ -16,7 +16,7 @@ import { useRegisterReportExport } from "./reportExports";
 import Hive from "@/types/Hive";
 import Explorer from "@/types/Explorer";
 
-type Currency = "hive" | "hbd";
+type Currency = "hive" | "hbd" | "hp";
 type Direction = "incoming" | "outgoing";
 type Granularity = "day" | "week" | "month";
 
@@ -34,14 +34,22 @@ for (const cat of categorizedOperationTypes) {
   for (const type of cat.types) OP_TYPE_TO_CATEGORY[type] = cat.name;
 }
 
-// HBD view = liquid HBD; HIVE view = liquid HIVE + vesting rewards as HP.
+// The claimed reward balance settles (moves to the wallet) the same tokens the
+// itemised accrual ops — author/curation/benefactor — already reported when
+// earned. Counting both double-counts the same value, so the claim roll-up is
+// excluded from every aggregation (chart, totals, export).
+const SETTLEMENT_OP_TYPES = new Set(["claim_reward_balance_operation"]);
+
+// One asset per view — HIVE (liquid), HBD (liquid), HP (vesting). They are never
+// summed together: mixing liquid HIVE with vesting HP is not a spendable figure.
 function getRowValue(
   row: Hive.FinancialSummaryRow,
   currency: Currency,
   hpPerVest: number
 ): number {
   if (currency === "hbd") return row.hbd_nai / 1000;
-  return row.hive_nai / 1000 + (row.vests_nai / 1e6) * hpPerVest;
+  if (currency === "hp") return (row.vests_nai / 1e6) * hpPerVest;
+  return row.hive_nai / 1000;
 }
 
 // 3 decimals like the operations table; sub-precision slivers show "<0.001".
@@ -50,7 +58,7 @@ function formatValue(
   currency: Currency,
   locale: string
 ): string {
-  const unit = currency === "hbd" ? "HBD" : "HIVE";
+  const unit = currency === "hbd" ? "HBD" : currency === "hp" ? "HP" : "HIVE";
   if (value > 0 && value < 0.001) return `<0.001 ${unit}`;
   return `${value.toLocaleString(locale, {
     minimumFractionDigits: 3,
@@ -97,7 +105,8 @@ function buildSunburstTree(
   direction: Direction,
   rootName: string,
   granularity: Granularity,
-  locale: string
+  locale: string,
+  otherLabel: string
 ): DataNode {
   const periodFmt = granularity === "month" ? "MMM YYYY" : "MMM D, YYYY";
   type Bucket = { value: number; opCount: number };
@@ -106,7 +115,8 @@ function buildSunburstTree(
   for (const row of rows) {
     if (row.direction !== direction) continue;
     const opType = row.category;
-    const catName = OP_TYPE_TO_CATEGORY[opType] ?? "Other";
+    if (SETTLEMENT_OP_TYPES.has(opType)) continue;
+    const catName = OP_TYPE_TO_CATEGORY[opType] ?? otherLabel;
 
     if (!tree.has(catName)) tree.set(catName, new Map());
     const opMap = tree.get(catName)!;
@@ -170,8 +180,10 @@ function buildSunburstTree(
   };
 }
 
+// Emit the UTC calendar day (chain time), so the from_date/to_date the endpoint
+// buckets on don't drift by a day for users in non-UTC timezones near midnight.
 const toDayStr = (d?: Date | number) =>
-  d ? moment(d).format("YYYY-MM-DD") : undefined;
+  d ? moment.utc(d).format("YYYY-MM-DD") : undefined;
 
 const FinancialSummaryReport: React.FC<
   BaseReportProps & { fillHeight?: boolean }
@@ -184,12 +196,12 @@ const FinancialSummaryReport: React.FC<
     from?: Date | number;
     to?: Date | number;
   }>(() => ({
-    from: moment().subtract(180, "days").toDate(),
-    to: moment().toDate(),
+    from: moment.utc().subtract(30, "days").toDate(),
+    to: moment.utc().toDate(),
   }));
   const [currency, setCurrency] = useState<Currency>("hive");
   const [direction, setDirection] = useState<Direction>("incoming");
-  const [granularity, setGranularity] = useState<Granularity>("month");
+  const [granularity, setGranularity] = useState<Granularity>("day");
   const [historyStack, setHistoryStack] = useState<DataNode[]>([]);
 
   const { data, isLoading, isError } = useFinancialSummary(
@@ -208,9 +220,10 @@ const FinancialSummaryReport: React.FC<
   }, [dynamicGlobalData]);
 
   // hpPerVest is 0 until chain props load; treat that as loading, not "no data".
-  const hpPending = currency === "hive" && hpPerVest <= 0 && !!data?.length;
+  const hpPending = currency === "hp" && hpPerVest <= 0 && !!data?.length;
 
   const rootName = t("financialSummary.rootName");
+  const otherLabel = t("financialSummary.otherCategory");
   const rootNode = useMemo(() => {
     if (!data?.length || hpPending) return null;
     return buildSunburstTree(
@@ -220,7 +233,8 @@ const FinancialSummaryReport: React.FC<
       direction,
       rootName,
       granularity,
-      locale
+      locale,
+      otherLabel
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -231,6 +245,7 @@ const FinancialSummaryReport: React.FC<
     rootName,
     granularity,
     locale,
+    otherLabel,
     hpPending,
   ]);
 
@@ -266,36 +281,41 @@ const FinancialSummaryReport: React.FC<
     []
   );
 
-  // CSV export: the full dataset (both directions), translated headers.
+  // CSV export: the full dataset (both directions), translated headers. Wait for
+  // the vests→HP ratio so the HP column isn't exported as all-zeros.
   const exportDatasets = useMemo(() => {
-    if (!data?.length) return [];
+    if (!data?.length || hpPerVest <= 0) return [];
     return [
       {
         name: t("financialSummary.exportCsv"),
         filename: `${spacesToUnderscores(
           t("financialSummary.widgetTitle")
         )}_${accountName}`,
-        rows: data.map((r) => ({
-          [t("financialSummary.colPeriod")]: r.period,
-          [t("financialSummary.colCategory")]:
-            OP_TYPE_TO_CATEGORY[r.category] ?? "Other",
-          [t("financialSummary.colOpType")]: formatOpTypeName(r.category),
-          [t("financialSummary.colDirection")]: t(
-            `financialSummary.${r.direction}`
-          ),
-          [t("financialSummary.colHive")]: Number(
-            (r.hive_nai / 1000).toFixed(3)
-          ),
-          [t("financialSummary.colHbd")]: Number((r.hbd_nai / 1000).toFixed(3)),
-          [t("financialSummary.colHp")]: Number(
-            ((r.vests_nai / 1e6) * hpPerVest).toFixed(3)
-          ),
-          [t("financialSummary.colOps")]: r.op_count,
-        })),
+        rows: data
+          .filter((r) => !SETTLEMENT_OP_TYPES.has(r.category))
+          .map((r) => ({
+            [t("financialSummary.colPeriod")]: r.period,
+            [t("financialSummary.colCategory")]:
+              OP_TYPE_TO_CATEGORY[r.category] ?? otherLabel,
+            [t("financialSummary.colOpType")]: formatOpTypeName(r.category),
+            [t("financialSummary.colDirection")]: t(
+              `financialSummary.${r.direction}`
+            ),
+            [t("financialSummary.colHive")]: Number(
+              (r.hive_nai / 1000).toFixed(3)
+            ),
+            [t("financialSummary.colHbd")]: Number(
+              (r.hbd_nai / 1000).toFixed(3)
+            ),
+            [t("financialSummary.colHp")]: Number(
+              ((r.vests_nai / 1e6) * hpPerVest).toFixed(3)
+            ),
+            [t("financialSummary.colOps")]: r.op_count,
+          })),
       },
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, accountName, hpPerVest, t]);
+  }, [data, accountName, hpPerVest, otherLabel, t]);
   useRegisterReportExport(widgetId, exportDatasets);
 
   const labelColor = isDark ? "#f1f5f9" : "#1e293b";
@@ -416,7 +436,7 @@ const FinancialSummaryReport: React.FC<
           <div className="flex flex-col items-start gap-2">
             <ReportSearchRanges
               onApply={(from, to) => setRange({ from, to })}
-              defaultRangeKey="180"
+              defaultRangeKey="30"
             />
             <SegmentedToggle<Granularity>
               value={granularity}
@@ -449,6 +469,7 @@ const FinancialSummaryReport: React.FC<
               options={[
                 { value: "hive", label: "HIVE" },
                 { value: "hbd", label: "HBD" },
+                { value: "hp", label: "HP" },
               ]}
             />
           </div>
