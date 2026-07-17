@@ -102,6 +102,14 @@ const ContentActivityChart: React.FC<ContentActivityChartProps> = ({
           markArea: {
             silent: true,
             itemStyle: { color: currentBand },
+            label: {
+              show: true,
+              position: isRTL ? "insideTopLeft" : "insideTopRight",
+              align: isRTL ? "left" : "right",
+              color: mutedColor,
+              fontSize: 10,
+              padding: [2, 2, 0, 2],
+            },
             data: [
               [
                 { xAxis: currentLabel, name: t("contentActivity.inProgress") },
