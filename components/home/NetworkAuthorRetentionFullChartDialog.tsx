@@ -13,7 +13,7 @@ import NetworkAuthorRetentionHeatmap, {
   HeatmapViewMode,
 } from "./NetworkAuthorRetentionHeatmap";
 import useNetworkAuthorRetention from "@/hooks/api/homePage/useNetworkAuthorRetention";
-import { useI18n } from "../../i18n/i18n";
+import { useI18n } from "@/i18n/i18n";
 import { cn } from "@/lib/utils";
 import { formatCompact, computeAvg } from "@/utils/chartUtils";
 
@@ -51,9 +51,9 @@ const NetworkAuthorRetentionFullChartDialog: React.FC<
   const { t, locale } = useI18n();
   const [viewMode, setViewMode] = useState<HeatmapViewMode>("rates");
   const [fromDate, setFromDate] = useState<Date | undefined>(
-    moment().subtract(1, "year").toDate()
+    moment.utc().subtract(1, "year").toDate()
   );
-  const [toDate, setToDate] = useState<Date | undefined>(moment().toDate());
+  const [toDate, setToDate] = useState<Date | undefined>(moment.utc().toDate());
   const [isSearchButtonDisabled, setIsSearchButtonDisabled] = useState(false);
 
   const searchRanges = useSearchRanges();
@@ -113,10 +113,11 @@ const NetworkAuthorRetentionFullChartDialog: React.FC<
   }, [sortedData]);
 
   const hasPendingData = useMemo(() => {
-    const cutoff = moment().subtract(180, "days");
+    const cutoff = moment.utc().subtract(180, "days");
     return sortedData.some(
       (d) =>
-        d.pct_180d === null && moment(d.cohort_month, "YYYY-MM").isAfter(cutoff)
+        d.pct_180d === null &&
+        moment.utc(d.cohort_month, "YYYY-MM").isAfter(cutoff)
     );
   }, [sortedData]);
 
@@ -137,8 +138,8 @@ const NetworkAuthorRetentionFullChartDialog: React.FC<
 
   useEffect(() => {
     if (!isOpen) return;
-    const oneYearAgo = moment().subtract(1, "year").toDate();
-    const now = moment().toDate();
+    const oneYearAgo = moment.utc().subtract(1, "year").toDate();
+    const now = moment.utc().toDate();
     setLastTimeUnitValue(12);
     setRangeSelectKey("lastTime");
     setTimeUnitSelectKey("months");
@@ -159,15 +160,15 @@ const NetworkAuthorRetentionFullChartDialog: React.FC<
     const { payloadStartDate, payloadEndDate } =
       await searchRanges.getRangesValues();
     setFromDate(payloadStartDate);
-    setToDate(payloadEndDate ?? moment().toDate());
+    setToDate(payloadEndDate ?? moment.utc().toDate());
   };
 
   const handleFilterClear = () => {
     setRangeSelectKey("lastTime");
     setTimeUnitSelectKey("months");
     setLastTimeUnitValue(12);
-    setFromDate(moment().subtract(1, "year").toDate());
-    setToDate(moment().toDate());
+    setFromDate(moment.utc().subtract(1, "year").toDate());
+    setToDate(moment.utc().toDate());
   };
 
   const fmtPct = (n: number | null) =>
@@ -331,9 +332,10 @@ const NetworkAuthorRetentionFullChartDialog: React.FC<
                 label={t("networkAuthorRetentionFullChart.bestCohort")}
                 value={
                   bestCohort
-                    ? moment(bestCohort.cohort_month, "YYYY-MM").format(
-                        "MMM YYYY"
-                      )
+                    ? moment
+                        .utc(bestCohort.cohort_month, "YYYY-MM")
+                        .locale(locale)
+                        .format("MMM YYYY")
                     : "—"
                 }
                 sub={
