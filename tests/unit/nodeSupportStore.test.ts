@@ -45,14 +45,42 @@ describe("nodeSupportStore", () => {
     expect(calls).toBe(1);
   });
 
-  // A report sticks for the session by design — only DEFINITIVE failures reach
-  // the store (transient/status-less failures are retried first, see
-  // classifyEndpointError.transient + the retry policy), and a node switch does a
-  // full page reload which resets this module.
-  it("a report persists for the session (node switch reloads the module)", () => {
+  // A DEFINITIVE report (route missing, 404/501) persists for the session and a
+  // node switch reloads the module. TRANSIENT reports (5xx/timeout) also land
+  // here but are cleared periodically so a recovered node's widgets come back.
+  it("a definitive report persists for the session", () => {
     nodeSupportStore.report("https://nodeE", "permanent");
     expect(nodeSupportStore.isReported("https://nodeE", "permanent")).toBe(
       true
     );
+  });
+
+  it("clearTransient drops transient reports but keeps definitive ones", () => {
+    nodeSupportStore.report("https://nodeF", "transient-key", true);
+    nodeSupportStore.report("https://nodeF", "definitive-key", false);
+    nodeSupportStore.clearTransient("https://nodeF");
+    expect(nodeSupportStore.isReported("https://nodeF", "transient-key")).toBe(
+      false
+    );
+    expect(nodeSupportStore.isReported("https://nodeF", "definitive-key")).toBe(
+      true
+    );
+  });
+
+  it("clearTransient bumps the version only when it removed something", () => {
+    nodeSupportStore.report("https://nodeG", "t", true);
+    const withTransient = nodeSupportStore.getVersion();
+    nodeSupportStore.clearTransient("https://nodeG");
+    const afterClear = nodeSupportStore.getVersion();
+    expect(afterClear).toBeGreaterThan(withTransient);
+    nodeSupportStore.clearTransient("https://nodeG"); // nothing left -> no bump
+    expect(nodeSupportStore.getVersion()).toBe(afterClear);
+  });
+
+  it("a definitive report is not downgraded by a later transient one", () => {
+    nodeSupportStore.report("https://nodeH", "k", false);
+    nodeSupportStore.report("https://nodeH", "k", true); // ignored, stays definitive
+    nodeSupportStore.clearTransient("https://nodeH");
+    expect(nodeSupportStore.isReported("https://nodeH", "k")).toBe(true);
   });
 });

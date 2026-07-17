@@ -12,6 +12,7 @@ import ContentActivityReport from "./contentActivity/ContentActivityReport";
 import RcFootprintReport from "./RcFootprintReport";
 import RcConsumptionReport from "./rcConsumption/RcConsumptionReport";
 import FinancialSummaryReport from "./FinancialSummaryReport";
+import type { WidgetNodeSupport } from "@/components/dashboard/lib/widgetNodeSupport";
 export interface BaseReportProps {
   accountName: string;
   data: { [key: string]: any };
@@ -27,6 +28,9 @@ export type ReportConfig = {
   dataMap: { [key: string]: string };
   icon?: LucideIcon;
   descriptionKey?: string;
+  // Node-support requirement — lets the dashboard gate the report to the
+  // graceful "Unavailable" card (like the home widgets) on incompatible nodes.
+  nodeSupport?: WidgetNodeSupport;
 };
 
 /**
@@ -56,6 +60,10 @@ export const reportRegistry: ReportRegistry = {
     // This report fetches its own content-stats internally, so it needs no
     // top-level data sources from AnalyticsTabContent.
     dataMap: {},
+    nodeSupport: {
+      app: "haf-stats-api",
+      endpoint: "haf-stats-api:content-stats",
+    },
   },
   rcFootprint: {
     component: RcFootprintReport,
@@ -63,6 +71,10 @@ export const reportRegistry: ReportRegistry = {
     descriptionKey: "analyticsDashboard.rcFootprintReportDesc",
     icon: PieChart,
     dataMap: {},
+    nodeSupport: {
+      app: "haf-stats-api",
+      endpoint: "haf-stats-api:dapp-footprint",
+    },
   },
   rcConsumption: {
     component: RcConsumptionReport,
@@ -70,12 +82,20 @@ export const reportRegistry: ReportRegistry = {
     descriptionKey: "analyticsDashboard.rcConsumptionReportDesc",
     icon: Gauge,
     dataMap: {},
+    nodeSupport: {
+      app: "haf-stats-api",
+      endpoint: "haf-stats-api:rc-footprint",
+    },
   },
   financialSummary: {
     component: FinancialSummaryReport,
     titleKey: "financialSummary.widgetTitle",
     icon: Coins,
     dataMap: {},
+    nodeSupport: {
+      app: "haf-stats-api",
+      endpoint: "haf-stats-api:financial-summary",
+    },
   },
   // Other reports would go here
 };

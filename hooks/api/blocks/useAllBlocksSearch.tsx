@@ -20,6 +20,8 @@ const useAllBlocksSearch = (
     queryFn: () => fetchAllBlocks(allBlockSearchProps, page, toBlock),
     refetchOnWindowFocus: false,
     refetchInterval: liveDataEnabled ? config.mainRefreshInterval : false,
+    // User-initiated search: surface errors via toast even on the home route.
+    meta: { showErrorToast: true },
   });
   const fetchAllBlocks = async (
     allBlockSearchProps: Explorer.AllBlocksSearchProps | undefined,

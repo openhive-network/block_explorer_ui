@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import { Responsive, WidthProvider, Layout, Layouts } from "react-grid-layout";
 import ReportLibrary from "./ReportLibrary";
-import { Move, X, RotateCcw } from "lucide-react";
+import { Move, X, RotateCcw, Loader2 } from "lucide-react";
+import { useNodeSupport } from "@/contexts/NodeSupportContext";
+import WidgetUnavailable from "@/components/dashboard/ui/WidgetUnavailable";
 import useMediaQuery from "@/hooks/common/useMediaQuery";
 import { useI18n } from "@/i18n/i18n";
 import {
@@ -114,6 +116,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
   dynamicGlobalData,
 }) => {
   const { t } = useI18n();
+  const { isSupported, isEndpointUnsupported } = useNodeSupport();
   // Below md: force the single-column stack and lock drag/resize.
   const isSmallScreen = useMediaQuery("(max-width: 995px)");
   const gridLayouts = useMemo<Layouts>(
@@ -191,6 +194,17 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
               )
             );
 
+            // Node-support gate: show the graceful "Unavailable" card (and skip
+            // the fetch entirely when the whole app is down) instead of the
+            // report's raw error, matching the home dashboard.
+            const cap = reportConfig.nodeSupport;
+            const appStatus = cap ? isSupported(cap.app) : true;
+            const gateUnavailable =
+              !!cap &&
+              (appStatus === false || isEndpointUnsupported(cap.endpoint));
+            const gatePending =
+              !!cap && appStatus === undefined && !gateUnavailable;
+
             return (
               <div
                 key={widget.i}
@@ -233,14 +247,22 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
                   className="p-2 flex-grow relative"
                   style={{ minHeight: "300px" }}
                 >
-                  <reportConfig.component
-                    accountName={accountName}
-                    data={reportDataProp}
-                    liveDataEnabled={liveDataEnabled}
-                    dynamicGlobalData={dynamicGlobalData}
-                    widgetId={widget.i}
-                    key={`${widget.i}-${accountName}`}
-                  />
+                  {gateUnavailable ? (
+                    <WidgetUnavailable />
+                  ) : gatePending ? (
+                    <div className="flex h-full items-center justify-center">
+                      <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
+                    </div>
+                  ) : (
+                    <reportConfig.component
+                      accountName={accountName}
+                      data={reportDataProp}
+                      liveDataEnabled={liveDataEnabled}
+                      dynamicGlobalData={dynamicGlobalData}
+                      widgetId={widget.i}
+                      key={`${widget.i}-${accountName}`}
+                    />
+                  )}
                 </div>
               </div>
             );

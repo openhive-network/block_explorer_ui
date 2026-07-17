@@ -12,6 +12,9 @@ const useBlockSearch = (blockSearchProps?: Explorer.BlockSearchProps) => {
     queryKey: ["blockSearch", blockSearchProps],
     queryFn: () => fetchBlocksNumbers(blockSearchProps),
     refetchOnWindowFocus: false,
+    // User-initiated search: surface errors via toast even on the home route,
+    // where background widget errors are otherwise suppressed.
+    meta: { showErrorToast: true },
   });
 
   const fetchBlocksNumbers = async (

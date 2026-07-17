@@ -54,9 +54,10 @@ describe("classifyEndpointError", () => {
     ).toBeInstanceOf(EndpointUnsupportedError);
   });
 
-  it("500 -> passed through (transient, stays retryable)", () => {
-    const err = { response: { status: 500 } };
-    expect(classifyEndpointError(err, CAP)).toBe(err);
+  it("500 -> EndpointUnsupportedError (transient, gated but retryable)", () => {
+    const out = classifyEndpointError({ response: { status: 500 } }, CAP);
+    expect(out).toBeInstanceOf(EndpointUnsupportedError);
+    expect((out as EndpointUnsupportedError).transient).toBe(true);
   });
 
   it("an existing EndpointUnsupportedError is returned unchanged", () => {
@@ -73,9 +74,10 @@ describe("classifyEndpointError", () => {
     expect(classifyEndpointError(e, CAP)).toBe(e);
   });
 
-  it("a plain non-Wax error is passed through", () => {
-    const e = new Error("boom");
-    expect(classifyEndpointError(e, CAP)).toBe(e);
+  it("a plain (status-less) error -> EndpointUnsupportedError marked transient", () => {
+    const out = classifyEndpointError(new Error("boom"), CAP);
+    expect(out).toBeInstanceOf(EndpointUnsupportedError);
+    expect((out as EndpointUnsupportedError).transient).toBe(true);
   });
 
   // A status-less WaxError (timeout / network / CORS) is classified as unsupported

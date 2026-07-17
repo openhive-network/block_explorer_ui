@@ -112,26 +112,15 @@ export const classifyEndpointError = (
   // Query cancellation / navigation / tab close — not a supportKey problem.
   if (err instanceof WaxRequestAbortedByUser) return err;
 
+  // Every remaining failure on a gated optional endpoint degrades to the
+  // graceful "Unavailable" card instead of a raw error. A missing route
+  // (404 / 501) is a definitive gap; anything else (5xx, timeout, network, CORS)
+  // is treated as transient — still gated, but retried and periodically re-checked
+  // so a node that was merely erroring recovers on its own.
   const status = getHttpStatus(err);
-  if (status !== undefined) {
-    // Readable HTTP status: only a missing route (404 / 501) is a supportKey
-    // gap; a 5xx is a transient server error, keep it retryable.
-    return status === 404 || status === 501
-      ? new EndpointUnsupportedError(supportKey, {
-          transient: false,
-          cause: err,
-        })
-      : err;
-  }
-
-  // No HTTP status: timeout / network / CORS on this optional endpoint. It might
-  // be a blip, so flag it transient (a couple of retries) rather than sticking it
-  // permanently on the first failure. (Aborts were already excluded above.)
-  if (err instanceof WaxError) {
-    return new EndpointUnsupportedError(supportKey, {
-      transient: true,
-      cause: err,
-    });
-  }
-  return err;
+  const definitive = status === 404 || status === 501;
+  return new EndpointUnsupportedError(supportKey, {
+    transient: !definitive,
+    cause: err,
+  });
 };
