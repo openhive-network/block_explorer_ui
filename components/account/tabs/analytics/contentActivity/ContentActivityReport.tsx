@@ -32,12 +32,12 @@ const ContentActivityReport: React.FC<
   const { hiveChain } = useHiveChainContext();
 
   const [view, setView] = useState<ActivityView>("activity");
-  const [granularity, setGranularity] = useState<Granularity>("month");
+  const [granularity, setGranularity] = useState<Granularity>("day");
   const [range, setRange] = useState<{
     from: Date | number | undefined;
     to: Date | number | undefined;
   }>(() => ({
-    from: moment().subtract(180, "days").toDate(),
+    from: moment().subtract(30, "days").toDate(),
     to: moment().toDate(),
   }));
 
@@ -135,7 +135,7 @@ const ContentActivityReport: React.FC<
         <div className="flex flex-col items-start gap-2">
           <ReportSearchRanges
             onApply={(from, to) => setRange({ from, to })}
-            defaultRangeKey="180"
+            defaultRangeKey="30"
           />
           <SegmentedToggle
             options={granularityOptions}

@@ -1457,6 +1457,7 @@
   "analyticsDashboard.removeReport": "Remove report",
   "financialSummary.widgetTitle": "Financial Summary",
   "financialSummary.rootName": "Financial Activity",
+  "financialSummary.otherCategory": "Other",
   "financialSummary.direction": "Direction",
   "financialSummary.currency": "Currency",
   "financialSummary.granularity": "Granularity",

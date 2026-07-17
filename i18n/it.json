@@ -1838,6 +1838,7 @@
   "rcConsumption.eventsFor": "Eventi: {{label}}",
   "financialSummary.widgetTitle": "Riepilogo finanziario",
   "financialSummary.rootName": "Attività finanziaria",
+  "financialSummary.otherCategory": "Altro",
   "financialSummary.direction": "Direzione",
   "financialSummary.currency": "Valuta",
   "financialSummary.granularity": "Granularità",

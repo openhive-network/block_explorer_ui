@@ -1838,6 +1838,7 @@
   "rcConsumption.eventsFor": "Zdarzenia: {{label}}",
   "financialSummary.widgetTitle": "Podsumowanie finansowe",
   "financialSummary.rootName": "Aktywność finansowa",
+  "financialSummary.otherCategory": "Inne",
   "financialSummary.direction": "Kierunek",
   "financialSummary.currency": "Waluta",
   "financialSummary.granularity": "Szczegółowość",

@@ -43,24 +43,30 @@ const ReportSearchRanges: React.FC<ReportSearchRangesProps> = ({
   const searchRanges = useSearchRanges("timeRange");
   const [isSearchButtonDisabled, setIsSearchButtonDisabled] = useState(false);
 
-  // Seed the Custom pickers with a sensible default window.
+  // Seed the Custom pickers with a sensible default window (UTC, chain time).
   useEffect(() => {
-    searchRanges.setStartDate(moment().subtract(30, "days").toDate());
-    searchRanges.setEndDate(moment().toDate());
+    searchRanges.setStartDate(moment.utc().subtract(30, "days").toDate());
+    searchRanges.setEndDate(moment.utc().toDate());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const applyPreset = (key: RangeKey, days: number) => {
     setRangeKey(key);
     setOpen(false);
-    onApply(moment().subtract(days, "days").toDate(), moment().toDate());
+    onApply(
+      moment.utc().subtract(days, "days").toDate(),
+      moment.utc().toDate()
+    );
   };
 
   const handleCustomSearch = async () => {
     const { payloadStartDate, payloadEndDate } =
       await searchRanges.getRangesValues();
-    // Date-based reports: emit dates only (block tabs → undefined → default window).
-    onApply(payloadStartDate, payloadEndDate);
+    // These reports are date-based; block-mode tabs resolve to no dates. Fall
+    // back to a bounded 30-day window so no report silently queries all-time.
+    const from = payloadStartDate ?? moment.utc().subtract(30, "days").toDate();
+    const to = payloadEndDate ?? moment.utc().toDate();
+    onApply(from, to);
     setRangeKey("custom");
     setOpen(false);
   };
@@ -97,7 +103,6 @@ const ReportSearchRanges: React.FC<ReportSearchRangesProps> = ({
           <button
             type="button"
             aria-pressed={rangeKey === "custom"}
-            onClick={() => setRangeKey("custom")}
             className={cn(
               pill,
               "flex items-center gap-1",

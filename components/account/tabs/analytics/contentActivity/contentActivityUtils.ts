@@ -10,13 +10,6 @@ export type ActivityView = "activity" | "rewards";
 // HIVE/HBD nai amounts are integers in milli-units (3 decimals).
 const LIQUID_PRECISION = 3;
 
-// Rolling window sizes per granularity (periods shown, including the current one).
-export const WINDOW_SIZE: Record<Granularity, number> = {
-  day: 30,
-  week: 26,
-  month: 12,
-};
-
 const UNIT: Record<Granularity, moment.unitOfTime.StartOf> = {
   day: "day",
   week: "isoWeek",
@@ -28,14 +21,6 @@ const STEP: Record<Granularity, moment.unitOfTime.DurationConstructor> = {
   week: "weeks",
   month: "months",
 };
-
-// Start of the rolling window, aligned to the granularity boundary. Passed to the
-// API as `from_date` and reused to build a continuous, gap-free period axis.
-export const windowStart = (granularity: Granularity): Date =>
-  moment()
-    .startOf(UNIT[granularity])
-    .subtract(WINDOW_SIZE[granularity] - 1, STEP[granularity])
-    .toDate();
 
 export interface FilledRow extends Hive.AccountContentStatsResponse {
   isCurrent: boolean;
@@ -67,14 +52,16 @@ export const buildPeriods = (
   toDate?: Date | number
 ): { rows: FilledRow[]; currentKey: string } => {
   const unit = UNIT[granularity];
-  const currentKey = moment().startOf(unit).format("YYYY-MM-DD");
+  // Server periods are UTC calendar boundaries — bucket/format in UTC to match,
+  // so the axis and "current period" don't drift a day in non-UTC timezones.
+  const currentKey = moment.utc().startOf(unit).format("YYYY-MM-DD");
   const byPeriod = new Map<string, Hive.AccountContentStatsResponse>();
   (data ?? []).forEach((d) => byPeriod.set(d.period, d));
 
   const dataKeys = [...byPeriod.keys()].sort();
   let startKey =
     fromDate instanceof Date
-      ? moment(fromDate).startOf(unit).format("YYYY-MM-DD")
+      ? moment.utc(fromDate).startOf(unit).format("YYYY-MM-DD")
       : dataKeys[0];
   // Never start after the first period that actually has data.
   if (dataKeys[0] && (!startKey || dataKeys[0] < startKey))
@@ -86,15 +73,15 @@ export const buildPeriods = (
   const lastKey = dataKeys[dataKeys.length - 1];
   const toKey =
     toDate instanceof Date
-      ? moment(toDate).startOf(unit).format("YYYY-MM-DD")
+      ? moment.utc(toDate).startOf(unit).format("YYYY-MM-DD")
       : undefined;
   let endKey =
     toKey ?? (lastKey && lastKey > currentKey ? lastKey : currentKey);
   if (lastKey && lastKey > endKey) endKey = lastKey;
 
   const rows: FilledRow[] = [];
-  const cursor = moment(startKey);
-  const end = moment(endKey);
+  const cursor = moment.utc(startKey);
+  const end = moment.utc(endKey);
   while (cursor.isSameOrBefore(end)) {
     const key = cursor.format("YYYY-MM-DD");
     const isCurrent = key === currentKey;

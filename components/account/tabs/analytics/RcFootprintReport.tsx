@@ -55,6 +55,13 @@ const RcFootprintReport: React.FC<
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedDapp, setSelectedDapp] = useState<string | null>(null);
 
+  // Close any open drill-down when switching accounts; the category effect below
+  // then re-seeds to the new account's top category once its data arrives.
+  useEffect(() => {
+    setSelectedCategory(null);
+    setSelectedDapp(null);
+  }, [accountName]);
+
   // Keep the selected category valid as the window/data changes: default to the
   // account's top category (matches the ticket's Step 1 initial view).
   useEffect(() => {

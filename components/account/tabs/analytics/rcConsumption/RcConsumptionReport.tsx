@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Loader2, Cpu, Activity, Trophy, Info } from "lucide-react";
 import moment from "moment";
 import { useI18n } from "@/i18n/i18n";
@@ -38,12 +38,16 @@ const RcConsumptionReport: React.FC<
     from?: Date | number;
     to?: Date | number;
   }>(() => ({
-    from: moment().subtract(30, "days").toDate(),
-    to: moment().toDate(),
+    from: moment.utc().subtract(30, "days").toDate(),
+    to: moment.utc().toDate(),
   }));
 
   const { rcFootprint, isRcFootprintLoading, isRcFootprintError } =
     useAccountRcFootprint(accountName, range.from, range.to, groupBy);
+
+  // Close any open drill-down when switching accounts, so a stale bucket from
+  // the previous account can't auto-open against the new account's data.
+  useEffect(() => setSelected(null), [accountName]);
 
   const displayLabel = (label: string) =>
     groupBy === "op_type" ? formatOpLabel(label) : label;

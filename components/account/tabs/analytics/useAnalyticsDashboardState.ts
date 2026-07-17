@@ -1,6 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Layout, Layouts } from "react-grid-layout";
-import { getLocalStorage, setLocalStorage } from "@/utils/LocalStorage";
+import {
+  getLocalStorage,
+  setLocalStorage,
+  removeStorageItem,
+} from "@/utils/LocalStorage";
 
 // The default size for a new widget: half-width (6/12) so two reports sit side
 // by side, with a small minW so they can be dragged narrower for denser layouts.
@@ -61,9 +65,31 @@ const buildDefaultLayouts = (): Layouts => ({
 // shared "guest" bucket when logged out.
 const layoutKeyFor = (user: string) => `analytics_layout_${user}`;
 const widgetsKeyFor = (user: string) => `analytics_widgets_${user}`;
-// Legacy global keys, migrated once into the per-user bucket on first load.
+// Legacy global keys (pre per-user). The first account to load after upgrade
+// claims them into its bucket, then they're removed (see migrateLegacyKeys) so
+// the pre-upgrade layout doesn't leak as a shared baseline to other accounts.
 const LEGACY_LAYOUT_KEY = "analytics_layout";
 const LEGACY_WIDGETS_KEY = "analytics_widgets";
+
+// Runs once on mount: adopt any legacy global layout/widgets into the current
+// user's keys (only if that user has nothing stored yet), then drop the globals.
+const migrateLegacyKeys = (layoutKey: string, widgetsKey: string) => {
+  const legacyLayout = getLocalStorage(LEGACY_LAYOUT_KEY);
+  const legacyWidgets = getLocalStorage(LEGACY_WIDGETS_KEY);
+  if (legacyLayout == null && legacyWidgets == null) return;
+  try {
+    if (legacyLayout != null && getLocalStorage(layoutKey) == null) {
+      setLocalStorage(layoutKey, JSON.parse(legacyLayout));
+    }
+    if (legacyWidgets != null && getLocalStorage(widgetsKey) == null) {
+      setLocalStorage(widgetsKey, JSON.parse(legacyWidgets));
+    }
+  } catch {
+    // Corrupt legacy value — nothing to carry over; still clear it below.
+  }
+  removeStorageItem(LEGACY_LAYOUT_KEY);
+  removeStorageItem(LEGACY_WIDGETS_KEY);
+};
 
 // Define a type for the context passed when drilling down
 export interface WidgetContext {
@@ -128,9 +154,10 @@ export const useAnalyticsDashboardState = (username: string | null) => {
   const layoutStorageKey = layoutKeyFor(user);
   const widgetsStorageKey = widgetsKeyFor(user);
 
-  const [layouts, setLayouts] = useState<Layouts>(() =>
-    loadLayouts(layoutStorageKey)
-  );
+  const [layouts, setLayouts] = useState<Layouts>(() => {
+    migrateLegacyKeys(layoutStorageKey, widgetsStorageKey);
+    return loadLayouts(layoutStorageKey);
+  });
   const [widgets, setWidgets] = useState<Layout[]>(() =>
     loadWidgets(widgetsStorageKey)
   );

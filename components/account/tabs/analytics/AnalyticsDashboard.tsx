@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { Responsive, WidthProvider, Layout, Layouts } from "react-grid-layout";
 import ReportLibrary from "./ReportLibrary";
 import { Move, X, RotateCcw } from "lucide-react";
@@ -47,22 +47,38 @@ const mobileStackFor = (widgets: Layout[], cols: number): Layout[] => {
   });
 };
 
-// Visible, grabbable resize grips — RGL's default corner handle is easy to miss
-// when sizing reports to sit side by side. Adds a right-edge (width) grip.
+// Invisible drag-to-resize strips on every edge and corner (no visible grip).
 const RESIZE_HANDLE_CSS = `
 /* Keep the drag-to-resize areas (cursor changes on the edges) but draw no
    visible grip — a stray bar on the edge reads as chart noise. */
 .analytics-grid .react-resizable-handle { z-index: 5; background: none; }
 .analytics-grid .react-resizable-handle::after { display: none; }
-.analytics-grid .react-resizable-handle-e {
-  top: 0; bottom: 0; height: auto; right: 0; width: 10px;
+/* Full-edge draggable strips (invisible) on every side. */
+.analytics-grid .react-resizable-handle-e,
+.analytics-grid .react-resizable-handle-w {
+  top: 0; bottom: 0; height: auto; width: 10px;
   margin: 0; transform: none; cursor: ew-resize;
 }
+.analytics-grid .react-resizable-handle-e { right: 0; left: auto; }
+.analytics-grid .react-resizable-handle-w { left: 0; right: auto; }
+.analytics-grid .react-resizable-handle-n,
 .analytics-grid .react-resizable-handle-s {
-  left: 0; right: 0; width: auto; bottom: 0; height: 10px;
+  left: 0; right: 0; width: auto; height: 10px;
   margin: 0; transform: none; cursor: ns-resize;
 }
-.analytics-grid .react-resizable-handle-se { cursor: nwse-resize; }
+.analytics-grid .react-resizable-handle-s { bottom: 0; top: auto; }
+.analytics-grid .react-resizable-handle-n { top: 0; bottom: auto; }
+/* Corner grips sit above the edge strips. */
+.analytics-grid .react-resizable-handle-se,
+.analytics-grid .react-resizable-handle-sw,
+.analytics-grid .react-resizable-handle-ne,
+.analytics-grid .react-resizable-handle-nw {
+  z-index: 6; width: 16px; height: 16px; margin: 0; transform: none;
+}
+.analytics-grid .react-resizable-handle-se { right: 0; bottom: 0; cursor: nwse-resize; }
+.analytics-grid .react-resizable-handle-nw { left: 0; top: 0; cursor: nwse-resize; }
+.analytics-grid .react-resizable-handle-ne { right: 0; top: 0; cursor: nesw-resize; }
+.analytics-grid .react-resizable-handle-sw { left: 0; bottom: 0; cursor: nesw-resize; }
 .analytics-grid * { scrollbar-width: thin; scrollbar-color: rgba(120,120,140,0.35) transparent; }
 .analytics-grid *::-webkit-scrollbar { width: 6px; height: 6px; }
 .analytics-grid *::-webkit-scrollbar-track { background: transparent; }
@@ -113,13 +129,33 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
     [layouts, widgets, isSmallScreen]
   );
 
+  // WidthProvider only re-measures on window resize, but our container width
+  // changes without one (the account sidebar collapses on entering Analytics,
+  // and the tab mounts after account data loads). Nudge it to re-measure on any
+  // container width change so it never stays stuck on a stale, narrow width.
+  const gridWrapRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = gridWrapRef.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    let lastWidth = el.offsetWidth;
+    const ro = new ResizeObserver(() => {
+      const w = el.offsetWidth;
+      if (w !== lastWidth) {
+        lastWidth = w;
+        window.dispatchEvent(new Event("resize"));
+      }
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   if (!accountName) {
     return <ErrorMessage message={t("AnalyticsDashboard.error")} />;
   }
 
   return (
     <ReportExportsProvider>
-      <div className="px-4 sm:px-6">
+      <div ref={gridWrapRef} className="px-4 sm:px-6">
         <style>{RESIZE_HANDLE_CSS}</style>
         <div className="mb-4 flex items-center justify-end gap-2">
           <ResetLayoutButton onReset={onResetLayout} />
@@ -136,7 +172,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
           draggableCancel=".no-drag"
           isDraggable={!isSmallScreen}
           isResizable={!isSmallScreen}
-          resizeHandles={["se", "e", "s"]}
+          resizeHandles={["s", "w", "e", "n", "sw", "nw", "se", "ne"]}
         >
           {widgets.map((widget) => {
             const widgetType = widget.i.split("-")[0];
@@ -257,8 +293,7 @@ const ResetLayoutButton: React.FC<{ onReset: () => void }> = ({ onReset }) => {
 // Renders the export affordance for a widget when its report has published
 // datasets (consumes the context, so it must live inside the provider).
 const WidgetExportSlot: React.FC<{ widgetId: string }> = ({ widgetId }) => {
-  const ctx = useReportExports();
-  const datasets = ctx?.exportsByWidget[widgetId];
+  const datasets = useReportExports(widgetId);
   if (!datasets || datasets.length === 0) return null;
   return <ReportExportMenu datasets={datasets} />;
 };
