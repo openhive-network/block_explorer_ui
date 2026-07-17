@@ -16,6 +16,7 @@ const usePermlinkSearch = (
     queryFn: () => fetchCommentPermlinks(permlinkSearchProps),
     refetchOnWindowFocus: false,
     enabled: !!permlinkSearchProps?.accountName,
+    meta: { showErrorToast: true },
   });
 
   const fetchCommentPermlinks = async (
