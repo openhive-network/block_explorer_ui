@@ -1020,6 +1020,14 @@ class FetchingService {
     ].networkHpDistribution({});
   }
 
+  async getGovernanceInfluenceConcentration(): Promise<
+    Hive.GovernanceInfluenceConcentrationResponse[]
+  > {
+    return await this.extendedHiveChain!.restApi[
+      "haf-stats-api"
+    ].governanceInfluenceConcentration({});
+  }
+
   async getNetworkRcUtilization(
     from?: string | Date | number,
     to?: string | Date | number,

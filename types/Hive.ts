@@ -1438,6 +1438,17 @@ namespace Hive {
     pct_hp!: number;
   }
 
+  export class GovernanceInfluenceConcentrationParams {}
+
+  export class GovernanceInfluenceConcentrationResponse {
+    gini!: number;
+    top_1pct_hp_share!: number;
+    top_10pct_hp_share!: number;
+    total_hp_holders!: number;
+    median_hp!: number;
+    mean_hp!: number;
+  }
+
   export class AccountFunnelParams {
     from_date?: Date | number | undefined;
     to_date?: Date | number | undefined;
