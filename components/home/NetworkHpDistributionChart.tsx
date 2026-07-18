@@ -4,6 +4,8 @@ import Hive from "@/types/Hive";
 
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
+const CHART_STYLE = { height: "100%", width: "100%" } as const;
+
 const BAR_GRADIENT: [string, string][] = [
   ["#8b5cf6", "#a78bfa"],
   ["#3b82f6", "#60a5fa"],
@@ -233,16 +235,21 @@ const NetworkHpDistributionChart: React.FC<Props> = ({
     onBucketClick,
   ]);
 
+  const onEvents = useMemo(
+    () => ({
+      click: (p: { name?: string }) => {
+        if (onBucketClick && p?.name) onBucketClick(p.name);
+      },
+    }),
+    [onBucketClick]
+  );
+
   return (
     <ReactECharts
       option={option}
-      style={{ height: "100%", width: "100%" }}
+      style={CHART_STYLE}
       notMerge
-      onEvents={{
-        click: (p: { name?: string }) => {
-          if (onBucketClick && p?.name) onBucketClick(p.name);
-        },
-      }}
+      onEvents={onEvents}
     />
   );
 };

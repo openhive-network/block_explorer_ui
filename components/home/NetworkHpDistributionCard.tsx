@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 import { Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -6,25 +6,44 @@ import { useI18n } from "@/i18n/i18n";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useAuth } from "@/contexts/AuthContext";
 import useNetworkHpDistribution from "@/hooks/api/homePage/useNetworkHpDistribution";
+import useGovernanceStakeConcentration from "@/hooks/api/homePage/useGovernanceStakeConcentration";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import fetchingService from "@/services/FetchingService";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { convertVestsToHP, computeVestingRatios } from "@/utils/Calculations";
 import { grabNumericValue } from "@/utils/StringUtils";
 import NetworkHpDistributionChart from "@/components/home/NetworkHpDistributionChart";
+import LorenzConcentrationChart from "@/components/home/LorenzConcentrationChart";
 import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
 import SegmentedToggle from "@/components/ui/SegmentedToggle";
 import { HP_BRACKET_BY_BUCKET, hpToBucket } from "@/utils/hpBrackets";
 
+const ConcChip: React.FC<{ label: string; value: string }> = ({
+  label,
+  value,
+}) => (
+  <span className="inline-flex items-baseline gap-1 rounded bg-gray-50 px-2 py-0.5 text-[10px] tabular-nums dark:bg-gray-800/60">
+    <span className="font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">
+      {label}
+    </span>
+    <span className="font-bold text-gray-800 dark:text-gray-100">{value}</span>
+  </span>
+);
+
 const NetworkHpDistributionCard: React.FC = () => {
   const { t, locale, dir } = useI18n();
   const { theme } = useTheme();
-  const [viewMode, setViewMode] = useState<"accounts" | "hp">("accounts");
+  const [viewMode, setViewMode] = useState<"accounts" | "hp" | "lorenz">(
+    "accounts"
+  );
   const { username } = useAuth();
   const { hiveChain } = useHiveChainContext();
   const { hpDistribution, isHpDistributionLoading, isHpDistributionError } =
     useNetworkHpDistribution();
+  const { concentration } = useGovernanceStakeConcentration();
   const { dynamicGlobalData } = useDynamicGlobal();
+
+  const concentrationStats = concentration?.[0];
   const router = useRouter();
 
   const vestingRatios = useMemo(
@@ -34,21 +53,24 @@ const NetworkHpDistributionCard: React.FC = () => {
 
   // Convert the clicked HP bucket to a raw-VESTS range and open Top Holders
   // pre-filtered to it (the backend only understands VESTS).
-  const handleBucketClick = (bucket: string) => {
-    const bounds = HP_BRACKET_BY_BUCKET[bucket];
-    if (!bounds || !vestingRatios) return;
-    const toRawVests = (hp: number) =>
-      Math.floor(hp * vestingRatios.vestsPerHive * 1e6);
-    const params = new URLSearchParams();
-    params.set("coin", "VESTS");
-    params.set("min", String(toRawVests(bounds.min)));
-    if (bounds.max !== null) {
-      params.set("max", String(toRawVests(bounds.max)));
-    }
-    params.set("unit", "hp");
-    params.set("page", "1");
-    router.push(`/top-holders?${params.toString()}`);
-  };
+  const handleBucketClick = useCallback(
+    (bucket: string) => {
+      const bounds = HP_BRACKET_BY_BUCKET[bucket];
+      if (!bounds || !vestingRatios) return;
+      const toRawVests = (hp: number) =>
+        Math.floor(hp * vestingRatios.vestsPerHive * 1e6);
+      const params = new URLSearchParams();
+      params.set("coin", "VESTS");
+      params.set("min", String(toRawVests(bounds.min)));
+      if (bounds.max !== null) {
+        params.set("max", String(toRawVests(bounds.max)));
+      }
+      params.set("unit", "hp");
+      params.set("page", "1");
+      router.push(`/top-holders?${params.toString()}`);
+    },
+    [vestingRatios, router]
+  );
 
   const { data: accountData } = useQuery({
     queryKey: ["account_hp_bracket", username],
@@ -101,7 +123,7 @@ const NetworkHpDistributionCard: React.FC = () => {
     : null;
 
   return (
-    <div className="bg-theme rounded mb-2 shadow-md overflow-hidden h-[340px] flex flex-col">
+    <div className="bg-theme rounded mb-2 shadow-md overflow-hidden h-[372px] flex flex-col">
       <CardHeaderWithLink
         className="flex-shrink-0"
         title={t("networkHpDistributionCard.title")}
@@ -116,6 +138,10 @@ const NetworkHpDistributionCard: React.FC = () => {
                 label: t("networkHpDistributionCard.viewAccounts"),
               },
               { value: "hp", label: t("networkHpDistributionCard.viewHp") },
+              {
+                value: "lorenz",
+                label: t("networkHpDistributionCard.viewLorenz"),
+              },
             ]}
           />
         }
@@ -138,6 +164,32 @@ const NetworkHpDistributionCard: React.FC = () => {
           </div>
         )}
 
+        {concentrationStats && (
+          <div className="mb-2 flex flex-wrap items-center gap-1.5">
+            <ConcChip
+              label={t("networkHpDistributionCard.gini")}
+              value={concentrationStats.gini.toLocaleString(locale, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
+            />
+            <ConcChip
+              label={t("networkHpDistributionCard.top1")}
+              value={`${concentrationStats.top_1pct_hp_share.toLocaleString(
+                locale,
+                { maximumFractionDigits: 1 }
+              )}%`}
+            />
+            <ConcChip
+              label={t("networkHpDistributionCard.top10")}
+              value={`${concentrationStats.top_10pct_hp_share.toLocaleString(
+                locale,
+                { maximumFractionDigits: 1 }
+              )}%`}
+            />
+          </div>
+        )}
+
         {isHpDistributionLoading ? (
           <div className="flex flex-1 items-center justify-center">
             <Loader2 className="animate-spin h-5 w-5" />
@@ -149,24 +201,43 @@ const NetworkHpDistributionCard: React.FC = () => {
             </p>
           </div>
         ) : (
-          <div className="flex-1 min-h-[220px]">
-            <NetworkHpDistributionChart
-              hpDistribution={hpDistribution}
-              viewMode={viewMode}
-              userBucket={userHpInfo?.bucket ?? null}
-              isDark={isDark}
-              textColor={textColor}
-              gridColor={gridColor}
-              locale={locale}
-              isRTL={dir === "rtl"}
-              t={t}
-              onBucketClick={handleBucketClick}
-            />
-          </div>
+          <>
+            <div className="flex-1 min-h-[200px]">
+              {viewMode === "lorenz" ? (
+                <LorenzConcentrationChart
+                  buckets={hpDistribution}
+                  isDark={isDark}
+                  textColor={textColor}
+                  gridColor={gridColor}
+                  locale={locale}
+                  isRTL={dir === "rtl"}
+                  t={t}
+                />
+              ) : (
+                <NetworkHpDistributionChart
+                  hpDistribution={hpDistribution}
+                  viewMode={viewMode}
+                  userBucket={userHpInfo?.bucket ?? null}
+                  isDark={isDark}
+                  textColor={textColor}
+                  gridColor={gridColor}
+                  locale={locale}
+                  isRTL={dir === "rtl"}
+                  t={t}
+                  onBucketClick={handleBucketClick}
+                />
+              )}
+            </div>
+            {viewMode === "lorenz" && (
+              <p className="mt-1 text-[10px] leading-tight text-gray-400 dark:text-gray-500">
+                {t("networkHpDistributionCard.lorenzInfo")}
+              </p>
+            )}
+          </>
         )}
       </div>
     </div>
   );
 };
 
-export default NetworkHpDistributionCard;
+export default React.memo(NetworkHpDistributionCard);

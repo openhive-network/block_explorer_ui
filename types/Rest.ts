@@ -256,6 +256,12 @@ export const extendedRest = {
       responseArray: true,
       urlPath: "network/hp-distribution",
     },
+    governanceInfluenceConcentration: {
+      params: Hive.GovernanceInfluenceConcentrationParams,
+      result: Hive.GovernanceInfluenceConcentrationResponse,
+      responseArray: true,
+      urlPath: "governance/influence-concentration",
+    },
     accountFunnel: {
       params: Hive.AccountFunnelParams,
       result: Hive.AccountFunnelResponse,
