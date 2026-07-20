@@ -54,7 +54,9 @@ ARG GIT_LAST_COMMIT_DATE
 # Accept BASE_PATH as build argument to pass it to runtime
 ARG BASE_PATH=""
 
-RUN apk add --no-cache tini
+# tini for signal handling; fonts so sharp/resvg can render text (and the
+# ★ ♛ ◆ ✍ glyphs) in the server-generated OG share-card images.
+RUN apk add --no-cache tini font-noto font-noto-emoji ttf-dejavu fontconfig
 
 WORKDIR /home/node/app
 RUN chown node /home/node/app

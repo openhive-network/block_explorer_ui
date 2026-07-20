@@ -18,6 +18,7 @@ import {
   ArrowDown,
   ArrowUp,
   Crown,
+  Share2,
 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -51,6 +52,13 @@ import moment from "moment";
 import { useSettings } from "@/contexts/SettingsContext";
 import { Progress } from "@/components/ui/progress";
 import RadialProgress from "../RadialProgress";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import AccountShareCard from "@/components/account/AccountShareCard";
 
 interface AccountMainCardProps {
   accountDetails: Explorer.FormattedAccountDetails;
@@ -142,6 +150,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
   const { settings } = useSettings();
   const [isPropertiesHidden, setIsPropertiesHidden] =
     useState(!isInitiallyOpen);
+  const [shareOpen, setShareOpen] = useState(false);
   const handlePropertiesVisibility = () => {
     setIsPropertiesHidden(!isPropertiesHidden);
   };
@@ -267,6 +276,17 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
     <Card data-testid="account-details">
       {!isForCommunity && (
         <>
+          <Dialog open={shareOpen} onOpenChange={setShareOpen}>
+            <DialogContent className="w-[94vw] max-w-[920px]">
+              <DialogHeader>
+                <DialogTitle>{t("accountShareCard.shareCard")}</DialogTitle>
+              </DialogHeader>
+              <AccountShareCard
+                accountName={accountName}
+                accountDetails={accountDetails}
+              />
+            </DialogContent>
+          </Dialog>
           <CardHeader
             onClick={handlePropertiesVisibility}
             className="cursor-pointer border-b border-slate-200 dark:border-slate-700 hover:bg-rowHover transition-colors"
@@ -405,6 +425,20 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                       </TooltipProvider>
                     )}
                   </div>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setShareOpen(true);
+                    }}
+                    className="mt-2.5 inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-600 transition-colors hover:bg-indigo-100 dark:border-indigo-800 dark:bg-indigo-950/40 dark:text-indigo-300 dark:hover:bg-indigo-900/50"
+                    aria-label={t("accountShareCard.shareCard")}
+                    title={t("accountShareCard.shareCard")}
+                  >
+                    <Share2 className="h-3.5 w-3.5" />
+                    <span className="whitespace-nowrap">
+                      {t("accountShareCard.shareCard")}
+                    </span>
+                  </button>
                 </div>
               </div>
 
