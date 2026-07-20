@@ -5,21 +5,44 @@
 
 type Listener = () => void;
 
-const reportedByNode: Record<string, Set<string>> = {};
+// Per node: endpoint supportKey -> transient. A definitive report (404/501, i.e.
+// the route is genuinely absent) sticks; a transient one (5xx/timeout/network)
+// can be cleared periodically so a recovered node's widgets come back.
+const reportedByNode: Record<string, Map<string, boolean>> = {};
 const listeners = new Set<Listener>();
 let version = 0;
 
+const notify = () => {
+  version += 1;
+  listeners.forEach((l) => l());
+};
+
 export const nodeSupportStore = {
-  report(node: string, supportKey: string) {
+  report(node: string, supportKey: string, transient = false) {
     if (!node) return;
-    const set = reportedByNode[node] ?? (reportedByNode[node] = new Set());
-    if (set.has(supportKey)) return;
-    set.add(supportKey);
-    version += 1;
-    listeners.forEach((l) => l());
+    const map = reportedByNode[node] ?? (reportedByNode[node] = new Map());
+    const prev = map.get(supportKey);
+    // Already recorded with the same (or a stickier, definitive) severity.
+    if (prev === false || prev === transient) return;
+    map.set(supportKey, transient);
+    notify();
   },
   isReported(node: string, supportKey: string): boolean {
     return reportedByNode[node]?.has(supportKey) ?? false;
+  },
+  // Drop transient reports for a node so its widgets retry; definitive
+  // (route-missing) reports are kept.
+  clearTransient(node: string) {
+    const map = reportedByNode[node];
+    if (!map) return;
+    let changed = false;
+    for (const [key, transient] of map) {
+      if (transient) {
+        map.delete(key);
+        changed = true;
+      }
+    }
+    if (changed) notify();
   },
   subscribe(listener: Listener): () => void {
     listeners.add(listener);
