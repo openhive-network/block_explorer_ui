@@ -17,6 +17,7 @@ export interface AccountCardData {
   badges: string[];
   stats: AccountCardStat[];
   sparkline?: number[];
+  rtl?: boolean;
   brand: string;
   brandLogoHref: string;
   ctaLabel: string;
@@ -39,8 +40,6 @@ export const ACCOUNT_CARD_HEIGHT = 630;
 const divider = (y: number): string =>
   `<rect x="72" y="${y}" width="${ACCOUNT_CARD_WIDTH - 144}" height="1.5" fill="url(#divider)"/>`;
 
-// Full-width HP sparkline occupying the band where the divider sat, between the
-// badges and the stats — it replaces that separator rather than doubling it.
 const SPARK_X0 = 72;
 const SPARK_W = ACCOUNT_CARD_WIDTH - 144;
 const SPARK_Y0 = 344;
@@ -89,17 +88,26 @@ export const buildAccountCardSvg = (d: AccountCardData): string => {
   const n = Math.max(1, Math.min(4, d.stats.length));
   const colW = (W - 144) / n;
   const vFont = n >= 4 ? 48 : 56;
+  // In RTL the inline trend collides with the value's Arabic scale-word, so it
+  // moves to its own line below; that drops all labels to keep them aligned.
+  const anyBelow = d.stats.slice(0, 4).some((s) => s.sub || (d.rtl && s.delta));
+  const labelY = anyBelow ? 100 : 74;
   const stats = d.stats
     .slice(0, 4)
     .map((s, i) => {
       const x = 72 + i * colW;
-      const sub = s.sub
-        ? `<text x="0" y="72" font-family="${FONT}" font-size="18" font-weight="700" fill="${s.accent || "rgba(255,255,255,0.55)"}">${esc(s.sub)}</text>`
+      const below = s.sub
+        ? { text: s.sub, fill: s.accent || "rgba(255,255,255,0.55)" }
+        : d.rtl && s.delta
+          ? { text: s.delta, fill: s.deltaUp ? "#7dffb0" : "#ff8a8a" }
+          : null;
+      const sub = below
+        ? `<text x="0" y="72" font-family="${FONT}" font-size="18" font-weight="700" fill="${below.fill}">${esc(below.text)}</text>`
         : "";
-      const delta = s.delta
-        ? `<tspan font-size="${Math.round(vFont * 0.4)}" font-weight="800" dx="10" fill="${s.deltaUp ? "#7dffb0" : "#ff8a8a"}">${esc(s.delta)}</tspan>`
-        : "";
-      const labelY = s.sub ? 100 : 74;
+      const delta =
+        !d.rtl && s.delta
+          ? `<tspan font-size="${Math.round(vFont * 0.4)}" font-weight="800" dx="10" fill="${s.deltaUp ? "#7dffb0" : "#ff8a8a"}" style="unicode-bidi:isolate">${esc(s.delta)}</tspan>`
+          : "";
       return `
         <g transform="translate(${x},400)">
           <text x="0" y="44" font-family="${FONT}" font-size="${vFont}" font-weight="900" fill="#ffffff" letter-spacing="-1">${esc(s.value)}${delta}</text>
@@ -127,8 +135,9 @@ export const buildAccountCardSvg = (d: AccountCardData): string => {
         })()
       : "";
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" direction="ltr" style="direction:ltr">
   <defs>
+    <style>text{unicode-bidi:plaintext}</style>
     <clipPath id="avatarClip"><circle cx="150" cy="190" r="72"/></clipPath>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#15121a"/>
