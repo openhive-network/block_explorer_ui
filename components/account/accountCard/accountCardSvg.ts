@@ -5,7 +5,6 @@ export interface AccountCardStat {
   accent?: string;
   delta?: string;
   deltaUp?: boolean;
-  spark?: number[];
 }
 
 export interface AccountCardData {
@@ -17,6 +16,7 @@ export interface AccountCardData {
   isWitness: boolean;
   badges: string[];
   stats: AccountCardStat[];
+  sparkline?: number[];
   brand: string;
   brandLogoHref: string;
   ctaLabel: string;
@@ -39,22 +39,31 @@ export const ACCOUNT_CARD_HEIGHT = 630;
 const divider = (y: number): string =>
   `<rect x="72" y="${y}" width="${ACCOUNT_CARD_WIDTH - 144}" height="1.5" fill="url(#divider)"/>`;
 
-// A small sparkline in local cell coordinates: x 0..w, baseline at y0+h.
-// Rendered inside a stat cell, directly under its label, as the HP KPI's trend.
-const cellSpark = (pts: number[], w: number, y0: number, h: number): string => {
+// Full-width HP sparkline occupying the band where the divider sat, between the
+// badges and the stats — it replaces that separator rather than doubling it.
+const SPARK_X0 = 72;
+const SPARK_W = ACCOUNT_CARD_WIDTH - 144;
+const SPARK_Y0 = 344;
+const SPARK_H = 28;
+
+const sparkPath = (
+  pts: number[]
+): { line: string; area: string; end: number[] } => {
   const min = Math.min(...pts);
   const max = Math.max(...pts);
   const span = max - min || 1;
-  const step = w / (pts.length - 1);
-  const coords = pts.map((v, i) => [i * step, y0 + h - ((v - min) / span) * h]);
+  const step = SPARK_W / (pts.length - 1);
+  const coords = pts.map((v, i) => [
+    SPARK_X0 + i * step,
+    SPARK_Y0 + SPARK_H - ((v - min) / span) * SPARK_H,
+  ]);
   const line = coords
     .map((c, i) => `${i ? "L" : "M"}${c[0].toFixed(1)} ${c[1].toFixed(1)}`)
     .join(" ");
-  const area = `${line} L${w.toFixed(1)} ${y0 + h} L0 ${y0 + h} Z`;
-  const end = coords[coords.length - 1];
-  return `<path d="${area}" fill="url(#spark)"/><path d="${line}" fill="none" stroke="#ffd7a0" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" opacity="0.95"/><circle cx="${end[0].toFixed(
-    1
-  )}" cy="${end[1].toFixed(1)}" r="3.5" fill="#ffffff"/>`;
+  const area = `${line} L${(SPARK_X0 + SPARK_W).toFixed(1)} ${
+    SPARK_Y0 + SPARK_H
+  } L${SPARK_X0} ${SPARK_Y0 + SPARK_H} Z`;
+  return { line, area, end: coords[coords.length - 1] };
 };
 
 export const buildAccountCardSvg = (d: AccountCardData): string => {
@@ -91,16 +100,11 @@ export const buildAccountCardSvg = (d: AccountCardData): string => {
         ? `<tspan font-size="${Math.round(vFont * 0.4)}" font-weight="800" dx="10" fill="${s.deltaUp ? "#7dffb0" : "#ff8a8a"}">${esc(s.delta)}</tspan>`
         : "";
       const labelY = s.sub ? 100 : 74;
-      const spark =
-        s.spark && s.spark.length > 1
-          ? cellSpark(s.spark, colW - 34, labelY + 8, 28)
-          : "";
       return `
         <g transform="translate(${x},400)">
           <text x="0" y="44" font-family="${FONT}" font-size="${vFont}" font-weight="900" fill="#ffffff" letter-spacing="-1">${esc(s.value)}${delta}</text>
           ${sub}
           <text x="0" y="${labelY}" font-family="${FONT}" font-size="17" font-weight="800" letter-spacing="1.2" fill="rgba(255,255,255,0.5)">${esc(s.label.toUpperCase())}</text>
-          ${spark}
         </g>`;
     })
     .join("");
@@ -111,6 +115,17 @@ export const buildAccountCardSvg = (d: AccountCardData): string => {
          <text x="0" y="9" text-anchor="middle" font-family="${FONT}" font-size="26" fill="#ffffff">♛</text>
        </g>`
     : "";
+
+  const spark =
+    d.sparkline && d.sparkline.length > 1
+      ? (() => {
+          const { line, area, end } = sparkPath(d.sparkline);
+          return `
+    <path d="${area}" fill="url(#spark)"/>
+    <path d="${line}" fill="none" stroke="#ffd7a0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+    <circle cx="${end[0].toFixed(1)}" cy="${end[1].toFixed(1)}" r="4.5" fill="#ffffff"/>`;
+        })()
+      : "";
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
   <defs>
@@ -134,7 +149,7 @@ export const buildAccountCardSvg = (d: AccountCardData): string => {
       <stop offset="100%" stop-color="#ffd7a0" stop-opacity="0"/>
     </linearGradient>
     <linearGradient id="spark" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#ffd7a0" stop-opacity="0.36"/>
+      <stop offset="0%" stop-color="#ffd7a0" stop-opacity="0.28"/>
       <stop offset="100%" stop-color="#ffd7a0" stop-opacity="0"/>
     </linearGradient>
     <filter id="gray">
@@ -171,7 +186,7 @@ export const buildAccountCardSvg = (d: AccountCardData): string => {
   </g>
   ${badges}
 
-  ${divider(354)}
+  ${spark || divider(354)}
   ${stats}
   ${divider(524)}
 
