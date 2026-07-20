@@ -34,8 +34,6 @@ const compact = (n: number, locale: string) =>
       })
     : n.toLocaleString(locale, { maximumFractionDigits: 0 });
 
-// Parse an integer VESTS balance string to BigInt (drops any fractional part);
-// returns null for empty/non-numeric values.
 const toBigInt = (s?: string): bigint | null => {
   if (!s) return null;
   const intPart = String(s).trim().split(".")[0];
@@ -170,8 +168,6 @@ const AccountShareCard: React.FC<Props> = ({ accountName, accountDetails }) => {
     [accountDetails]
   );
 
-  // Year-over-year HP trend from the account's VESTS balance history (now vs
-  // ~12 months ago). % change in own stake — a growth signal.
   const hpTrend = useMemo(() => {
     const arr = vestsHistory as unknown as
       | { balance?: { balance?: string } }[]
@@ -181,14 +177,12 @@ const AccountShareCard: React.FC<Props> = ({ accountName, accountDetails }) => {
     const past = toBigInt(arr[arr.length - 1]?.balance?.balance);
     if (current === null || past === null || past <= BigInt(0))
       return undefined;
-    // Percentage from a BigInt delta so whale-sized VESTS balances (> 2^53)
-    // don't lose integer precision before the ratio is taken.
+    // BigInt delta first: whale VESTS balances exceed 2^53 and lose precision as floats.
     const pct = (Number(current - past) / Number(past)) * 100;
     return isFinite(pct) ? pct : undefined;
   }, [vestsHistory]);
 
-  // HP-over-12-months line for the card sparkline, from the same VESTS balance
-  // series (API returns newest-first, so reverse to oldest→newest).
+  // API returns newest-first, so reverse to oldest→newest for the line.
   const sparkline = useMemo(() => {
     const arr = vestsHistory as unknown as
       | { balance?: { balance?: string } }[]
@@ -282,7 +276,6 @@ const AccountShareCard: React.FC<Props> = ({ accountName, accountDetails }) => {
 
     let stats: (AccountCardData["stats"][number] | null)[];
     if (isWit) {
-      // Witness-focused: HP, vote weight, voters, then value/earned.
       stats = [
         hpStat,
         voteWeightHp
@@ -313,6 +306,7 @@ const AccountShareCard: React.FC<Props> = ({ accountName, accountDetails }) => {
       badges,
       stats: stats.filter(Boolean).slice(0, 4) as AccountCardData["stats"],
       sparkline,
+      rtl: locale === "ar",
       brand: "hivescan.info",
       brandLogoHref: getImageSrc("/hive-logo.png"),
       ctaLabel: t("accountShareCard.cta"),
@@ -353,8 +347,6 @@ const AccountShareCard: React.FC<Props> = ({ accountName, accountDetails }) => {
     }
   };
 
-  // Best-effort: embed the avatar as a data URI so the rasterised PNG is
-  // self-contained; fall back to the initials placeholder if it can't be fetched.
   const handleDownload = async () => {
     setDownloading(true);
     try {
@@ -408,6 +400,7 @@ const AccountShareCard: React.FC<Props> = ({ accountName, accountDetails }) => {
         href={shareUrl || undefined}
         target="_blank"
         rel="noopener noreferrer"
+        dir="ltr"
         title={t("accountShareCard.cta")}
         className="block w-full cursor-pointer overflow-hidden rounded-2xl shadow-md transition-shadow hover:shadow-lg [&>svg]:block [&>svg]:h-auto [&>svg]:w-full"
         // eslint-disable-next-line react/no-danger
