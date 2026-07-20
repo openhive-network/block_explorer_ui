@@ -198,6 +198,29 @@ export default function Account() {
             : accountNameFromRoute}{" "}
           - Hive Explorer
         </title>
+        {accountNameFromRoute && !communityDetails && (
+          <>
+            <meta
+              property="og:title"
+              content={`@${accountNameFromRoute} on Hive`}
+            />
+            <meta
+              property="og:image"
+              content={`${
+                process.env.NEXT_PUBLIC_BASE_PATH || ""
+              }/api/og/account/${accountNameFromRoute}`}
+            />
+            <meta property="og:image:width" content="1200" />
+            <meta property="og:image:height" content="630" />
+            <meta name="twitter:card" content="summary_large_image" />
+            <meta
+              name="twitter:image"
+              content={`${
+                process.env.NEXT_PUBLIC_BASE_PATH || ""
+              }/api/og/account/${accountNameFromRoute}`}
+            />
+          </>
+        )}
       </Head>
       <div className="grid grid-cols-1 md:grid-cols-3 text-white page-container gap-4">
         {isMobile && (
