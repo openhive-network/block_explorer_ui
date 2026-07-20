@@ -254,7 +254,6 @@ const AccountShareCard: React.FC<Props> = ({ accountName, accountDetails }) => {
       label: t("accountShareCard.hivePower"),
       value: compact(Math.round(hp), locale),
       accent: "#7dffb0",
-      ...(sparkline ? { spark: sparkline } : {}),
       ...(hpTrend !== undefined && Math.abs(hpTrend) >= 0.5
         ? {
             delta: `${hpTrend >= 0 ? "▲" : "▼"}${Math.abs(hpTrend).toFixed(0)}%`,
@@ -313,6 +312,7 @@ const AccountShareCard: React.FC<Props> = ({ accountName, accountDetails }) => {
       isWitness: isWit,
       badges,
       stats: stats.filter(Boolean).slice(0, 4) as AccountCardData["stats"],
+      sparkline,
       brand: "hivescan.info",
       brandLogoHref: getImageSrc("/hive-logo.png"),
       ctaLabel: t("accountShareCard.cta"),
