@@ -8,7 +8,10 @@ import {
   ACCOUNT_CARD_WIDTH,
   ACCOUNT_CARD_HEIGHT,
 } from "@/components/account/accountCard/accountCardSvg";
-import { buildAccountCardData } from "@/components/account/accountCard/accountCardData";
+import {
+  buildAccountCardData,
+  sumAuthorCurationVests,
+} from "@/components/account/accountCard/accountCardData";
 
 const RPC = config.nodeAddress;
 const REST = config.apiAddress.replace(/\/+$/, "");
@@ -265,25 +268,9 @@ export default async function handler(
           accountName
         )}/financial-summary?from-date=${from.toISOString()}&granularity=month`
       );
-      const rows: {
-        category?: string;
-        direction?: string;
-        vests_nai?: number;
-      }[] = Array.isArray(fin) ? fin : fin?.financial_summary;
-      if (rows?.length) {
-        let vests = 0;
-        rows.forEach((r) => {
-          if (
-            r.direction === "incoming" &&
-            String(r.category).includes("reward") &&
-            r.category !== "claim_reward_balance_operation"
-          ) {
-            vests += Number(r.vests_nai) || 0;
-          }
-        });
-        const val = toHp(vests / 1e6);
-        if (val > 0) earnedHp = val;
-      }
+      const rows = Array.isArray(fin) ? fin : fin?.financial_summary;
+      const val = toHp(sumAuthorCurationVests(rows) / 1e6);
+      if (val > 0) earnedHp = val;
     } catch {
       /* no earned figure */
     }
