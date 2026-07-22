@@ -23,7 +23,8 @@ const NodeSupportGate: React.FC<NodeSupportGateProps> = ({
   widgetId,
   children,
 }) => {
-  const { isSupported, isEndpointUnsupported } = useNodeSupport();
+  const { isSupported, isEndpointUnsupported, isEndpointTransient } =
+    useNodeSupport();
   const { t } = useI18n();
 
   const cap = getWidgetNodeSupport(widgetId);
@@ -31,6 +32,10 @@ const NodeSupportGate: React.FC<NodeSupportGateProps> = ({
 
   const appStatus = isSupported(cap.app);
   const endpointMissing = isEndpointUnsupported(cap.endpoint);
+  // Transient only when a present app's endpoint is merely erroring (5xx/timeout).
+  // A missing whole app (appStatus === false) or a 404/501 route is definitive.
+  const transient =
+    appStatus !== false && endpointMissing && isEndpointTransient(cap.endpoint);
 
   // App present and endpoint (if any) fine -> render the real widget.
   if (appStatus === true && !endpointMissing) return <>{children}</>;
@@ -54,7 +59,7 @@ const NodeSupportGate: React.FC<NodeSupportGateProps> = ({
     <div className="bg-theme rounded mb-2 shadow-md overflow-hidden">
       {title && <CardHeaderWithLink title={title} />}
       <div className="min-h-[140px] p-3">
-        <WidgetUnavailable />
+        <WidgetUnavailable transient={transient} />
       </div>
     </div>
   );

@@ -83,4 +83,20 @@ describe("nodeSupportStore", () => {
     nodeSupportStore.clearTransient("https://nodeH");
     expect(nodeSupportStore.isReported("https://nodeH", "k")).toBe(true);
   });
+
+  it("isTransient is true only for a reported transient report", () => {
+    nodeSupportStore.report("https://nodeI", "transient-key", true);
+    nodeSupportStore.report("https://nodeI", "definitive-key", false);
+    expect(nodeSupportStore.isTransient("https://nodeI", "transient-key")).toBe(
+      true
+    );
+    // Definitive report -> reported, but not transient.
+    expect(
+      nodeSupportStore.isTransient("https://nodeI", "definitive-key")
+    ).toBe(false);
+    // Never reported -> not transient.
+    expect(nodeSupportStore.isTransient("https://nodeI", "unknown")).toBe(
+      false
+    );
+  });
 });

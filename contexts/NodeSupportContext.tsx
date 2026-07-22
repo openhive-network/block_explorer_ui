@@ -21,6 +21,9 @@ import { PROBED_APPS } from "@/components/dashboard/lib/widgetNodeSupport";
 interface NodeSupportContextValue {
   isSupported: (app?: RequiredApi | null) => boolean | undefined;
   isEndpointUnsupported: (endpoint?: string | null) => boolean;
+  // Whether the reported endpoint failure is a recoverable blip (transient 5xx)
+  // rather than a definitive route-missing gap — drives the "unavailable" copy.
+  isEndpointTransient: (endpoint?: string | null) => boolean;
 }
 
 const NodeSupportContext = createContext<NodeSupportContextValue | undefined>(
@@ -132,12 +135,18 @@ export const NodeSupportContextProvider: React.FC<{
     [node]
   );
 
+  const isEndpointTransient = useCallback(
+    (endpoint?: string | null): boolean =>
+      !!endpoint && nodeSupportStore.isTransient(node, endpoint),
+    [node]
+  );
+
   const value = useMemo(
-    () => ({ isSupported, isEndpointUnsupported }),
+    () => ({ isSupported, isEndpointUnsupported, isEndpointTransient }),
     // storeVersion is an invalidation key: a new report bumps it, producing a new
     // context value so consumers (gates, library) re-render and re-read the store.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isSupported, isEndpointUnsupported, storeVersion]
+    [isSupported, isEndpointUnsupported, isEndpointTransient, storeVersion]
   );
 
   return (

@@ -6,6 +6,9 @@ import { cn } from "@/lib/utils";
 interface WidgetUnavailableProps {
   // Compact variant for small widgets: tighter spacing, no description body.
   compact?: boolean;
+  // Transient = the node supports the endpoint but is temporarily erroring
+  // (5xx/timeout); definitive = the feature is genuinely absent (404/501).
+  transient?: boolean;
   className?: string;
 }
 
@@ -14,9 +17,16 @@ interface WidgetUnavailableProps {
 // plus a hint to switch nodes. Inherits dir from its wrapper for RTL.
 const WidgetUnavailable: React.FC<WidgetUnavailableProps> = ({
   compact = false,
+  transient = false,
   className,
 }) => {
   const { t } = useI18n();
+  const titleKey = transient
+    ? "widgetUnavailable.transientTitle"
+    : "widgetUnavailable.title";
+  const descriptionKey = transient
+    ? "widgetUnavailable.transientDescription"
+    : "widgetUnavailable.description";
 
   return (
     <div
@@ -29,11 +39,11 @@ const WidgetUnavailable: React.FC<WidgetUnavailableProps> = ({
         <ServerOff size={18} />
       </span>
       <p className="text-sm font-semibold text-explorer-dark-gray dark:text-text">
-        {t("widgetUnavailable.title")}
+        {t(titleKey)}
       </p>
       {!compact && (
         <p className="max-w-[240px] text-xs leading-snug text-gray-500 dark:text-gray-400">
-          {t("widgetUnavailable.description")}
+          {t(descriptionKey)}
         </p>
       )}
       <p className="text-[11px] text-gray-400 dark:text-gray-500">
