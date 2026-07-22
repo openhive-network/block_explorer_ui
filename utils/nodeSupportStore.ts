@@ -30,6 +30,11 @@ export const nodeSupportStore = {
   isReported(node: string, supportKey: string): boolean {
     return reportedByNode[node]?.has(supportKey) ?? false;
   },
+  // True only when the endpoint is reported AND its report is transient (a
+  // recoverable 5xx/timeout/network blip), not a definitive route-missing gap.
+  isTransient(node: string, supportKey: string): boolean {
+    return reportedByNode[node]?.get(supportKey) === true;
+  },
   // Drop transient reports for a node so its widgets retry; definitive
   // (route-missing) reports are kept.
   clearTransient(node: string) {
