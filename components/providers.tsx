@@ -70,16 +70,20 @@ const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
   // The logic that used useSettings() has been moved to the component above.
   const { apiAddress, nodeAddress } = useApiAddresses();
 
-  // The home dashboard renders every widget with its own inline error/loading
-  // state, so a global toast there just floods the screen on an incompatible
-  // node. Track whether we're on home so onError can suppress request-error
-  // toasts there only (kept on every other page). Read via ref so the memoized
-  // onError closure always sees the current route.
+  // Dashboards (the home dashboard and the account Analytics tab) render every
+  // widget/report with its own inline error + node-support gate, so a global
+  // toast there just floods the screen on an incompatible node. Track whether
+  // we're on such a route so onError can suppress request-error toasts there
+  // only (kept on every other page). Read via ref so the memoized onError
+  // closure always sees the current route.
   const router = useRouter();
-  const isHomeRouteRef = useRef(false);
+  const isDashboardRouteRef = useRef(false);
   useEffect(() => {
-    isHomeRouteRef.current = router.pathname === "/";
-  }, [router.pathname]);
+    isDashboardRouteRef.current =
+      router.pathname === "/" ||
+      (router.pathname === "/[accountName]" &&
+        router.query.activeTab === "analytics");
+  }, [router.pathname, router.query.activeTab]);
 
   const queryClient = useMemo(
     () =>
@@ -102,17 +106,29 @@ const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
         },
 
         queryCache: new QueryCache({
-          onError: (error: any) => {
-            // A missing endpoint is handled gracefully by the widget itself
-            // (NodeSupportGate): record it for the active node and stay quiet.
+          onError: (error: any, query) => {
+            // A missing endpoint is recorded for the active node so the widget's
+            // gate can show its inline "Unavailable" card.
             if (error instanceof EndpointUnsupportedError) {
               if (apiAddress)
-                nodeSupportStore.report(apiAddress, error.supportKey);
+                nodeSupportStore.report(
+                  apiAddress,
+                  error.supportKey,
+                  error.transient
+                );
+              // Home widgets surface it inline via the gate; other pages (e.g.
+              // /top-holders) have no gate, so still show the toast there.
+              if (isDashboardRouteRef.current) return;
+            } else if (
+              isDashboardRouteRef.current &&
+              error instanceof WaxError &&
+              query.meta?.showErrorToast !== true
+            ) {
+              // Home dashboard widgets each render their own inline error, so
+              // don't also flood a global toast — but user-initiated queries
+              // (search) opt back in via meta.showErrorToast.
               return;
             }
-            // On home only, request failures are shown inline per widget — don't
-            // also pop a global toast. Everywhere else the toast is the signal.
-            if (isHomeRouteRef.current && error instanceof WaxError) return;
             toast.error("Error occured", {
               description: `${(error as Error).message}`,
               style: {

@@ -6,7 +6,7 @@ import NetworkAuthorRetentionHeatmap, {
   HeatmapViewMode,
   LEGEND_ITEMS,
 } from "./NetworkAuthorRetentionHeatmap";
-import { useI18n } from "../../i18n/i18n";
+import { useI18n } from "@/i18n/i18n";
 import { useTheme } from "@/contexts/ThemeContext";
 import useNetworkAuthorRetention from "@/hooks/api/homePage/useNetworkAuthorRetention";
 import { cn } from "@/lib/utils";
@@ -123,9 +123,12 @@ const NetworkAuthorRetentionCard: React.FC = () => {
   // Show a compact 6-cohort window (like the Retention Funnel card). Shifted
   // back so the deepest 180-day window has data for the older rows; the most
   // recent shown cohorts still read "—" until that window elapses.
-  const fromDate = useMemo(() => moment().subtract(9, "months").toDate(), []);
+  const fromDate = useMemo(
+    () => moment.utc().subtract(9, "months").toDate(),
+    []
+  );
   const toDate = useMemo(
-    () => moment().subtract(4, "month").endOf("month").toDate(),
+    () => moment.utc().subtract(4, "month").endOf("month").toDate(),
     []
   );
 
@@ -142,7 +145,7 @@ const NetworkAuthorRetentionCard: React.FC = () => {
   // Most recent cohort whose deepest (180-day) window has fully elapsed, so all
   // three windows carry data (cohort month + 6 months < current month).
   const lastCompleteCohort = useMemo(() => {
-    const cutoff = moment().subtract(7, "months").format("YYYY-MM");
+    const cutoff = moment.utc().subtract(7, "months").format("YYYY-MM");
     return (
       [...sortedData]
         .reverse()
@@ -373,7 +376,8 @@ const NetworkAuthorRetentionCard: React.FC = () => {
               </span>
               <span className="text-[10px] text-gray-400 dark:text-gray-500 text-right leading-none">
                 {t("networkAuthorRetentionCard.basedOnLatestCohort")} ·{" "}
-                {moment(lastCompleteCohort.cohort_month, "YYYY-MM")
+                {moment
+                  .utc(lastCompleteCohort.cohort_month, "YYYY-MM")
                   .locale(locale)
                   .format("MMM YYYY")}
               </span>

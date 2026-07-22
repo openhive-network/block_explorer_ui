@@ -13,17 +13,67 @@ export interface WidgetNodeSupport {
 // Core apps (hafah-api) and widgets backed only by them (live-info, last-blocks,
 // top-witnesses, top-communities, market data, searches, ...) are never gated.
 export const WIDGET_NODE_SUPPORT: Record<string, WidgetNodeSupport> = {
-  // haf-stats-api — whole app is absent on non-stats nodes, so app-level suffices.
-  "daily-active-users": { app: "haf-stats-api" },
-  "voting-activity": { app: "haf-stats-api" },
-  "network-hp-distribution": { app: "haf-stats-api" },
-  "network-content-volume": { app: "haf-stats-api" },
-  "network-engagement": { app: "haf-stats-api" },
-  "account-retention-funnel": { app: "haf-stats-api" },
-  "network-author-retention": { app: "haf-stats-api" },
-  "top-accounts": { app: "haf-stats-api" },
-  "network-rc-utilization": { app: "haf-stats-api" },
-  "network-dapp-usage": { app: "haf-stats-api" },
+  // haf-stats-api — proactively probed (whole app absent on non-stats nodes) AND
+  // reactively gated per endpoint, so a partial/5xx outage on one route still
+  // degrades that widget to the graceful card instead of a raw error.
+  "daily-active-users": {
+    app: "haf-stats-api",
+    endpoint: "haf-stats-api:daily-active-users",
+  },
+  "voting-activity": {
+    app: "haf-stats-api",
+    endpoint: "haf-stats-api:vote-stats",
+  },
+  "network-hp-distribution": {
+    app: "haf-stats-api",
+    endpoint: "haf-stats-api:hp-distribution",
+  },
+  "network-content-volume": {
+    app: "haf-stats-api",
+    endpoint: "haf-stats-api:content-volume",
+  },
+  "network-engagement": {
+    app: "haf-stats-api",
+    endpoint: "haf-stats-api:engagement",
+  },
+  "account-retention-funnel": {
+    app: "haf-stats-api",
+    endpoint: "haf-stats-api:account-funnel",
+  },
+  "network-author-retention": {
+    app: "haf-stats-api",
+    endpoint: "haf-stats-api:author-retention",
+  },
+  "top-accounts": {
+    app: "haf-stats-api",
+    endpoint: "haf-stats-api:top-accounts",
+  },
+  "network-rc-utilization": {
+    app: "haf-stats-api",
+    endpoint: "haf-stats-api:rc-utilization",
+  },
+  "network-dapp-usage": {
+    app: "haf-stats-api",
+    endpoint: "haf-stats-api:dapp-usage",
+  },
+
+  // haf-stats-api account analytics — proactive app probe + reactive per endpoint.
+  "my-content-activity": {
+    app: "haf-stats-api",
+    endpoint: "haf-stats-api:content-stats",
+  },
+  "my-rc-footprint": {
+    app: "haf-stats-api",
+    endpoint: "haf-stats-api:dapp-footprint",
+  },
+  "my-rc-consumption": {
+    app: "haf-stats-api",
+    endpoint: "haf-stats-api:rc-footprint",
+  },
+  "my-financial-summary": {
+    app: "haf-stats-api",
+    endpoint: "haf-stats-api:financial-summary",
+  },
 
   // balance-api — analytics routes can be missing while the app itself is present.
   "transfer-volume": {

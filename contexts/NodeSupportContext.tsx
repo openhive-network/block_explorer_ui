@@ -27,6 +27,10 @@ const NodeSupportContext = createContext<NodeSupportContextValue | undefined>(
   undefined
 );
 
+// How often to re-probe apps still marked unsupported/unresolved, so a node that
+// was transiently down or 5xx-ing recovers without a manual page reload.
+const RE_PROBE_INTERVAL_MS = 30000;
+
 export const NodeSupportContextProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
@@ -70,6 +74,40 @@ export const NodeSupportContextProvider: React.FC<{
       // runs later, in a microtask). Without this, a StrictMode/remount second
       // run early-returns on still-in-flight keys and the probe never restarts.
       startedHere.forEach((key) => inFlightSet.delete(key));
+    };
+  }, [node]);
+
+  // Recovery: periodically re-probe apps currently unsupported (false) or still
+  // unresolved (undefined), so a node that was down / 5xx-ing flips back to
+  // supported on its own. Apps already known supported (true) are left alone.
+  useEffect(() => {
+    if (!node) return;
+    const controller = new AbortController();
+    const inFlightSet = inFlight.current;
+
+    const id = setInterval(() => {
+      // Reactive layer: drop transient endpoint reports so a healed node's
+      // widgets remount and retry (definitive 404/501 reports are kept).
+      nodeSupportStore.clearTransient(node);
+      // Proactive layer: re-probe apps still unsupported/unresolved.
+      PROBED_APPS.forEach(async (app) => {
+        const key = `${node}::${app}`;
+        if (supportMapRef.current[key] === true || inFlightSet.has(key)) return;
+        inFlightSet.add(key);
+        try {
+          const ok = await probeAppSupported(node, app, controller.signal);
+          setSupportMap((prev) => ({ ...prev, [key]: ok }));
+        } catch {
+          // aborted / threw — leave as-is for the next interval
+        } finally {
+          inFlightSet.delete(key);
+        }
+      });
+    }, RE_PROBE_INTERVAL_MS);
+
+    return () => {
+      controller.abort();
+      clearInterval(id);
     };
   }, [node]);
 

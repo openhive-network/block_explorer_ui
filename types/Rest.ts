@@ -256,6 +256,12 @@ export const extendedRest = {
       responseArray: true,
       urlPath: "network/hp-distribution",
     },
+    governanceInfluenceConcentration: {
+      params: Hive.GovernanceInfluenceConcentrationParams,
+      result: Hive.GovernanceInfluenceConcentrationResponse,
+      responseArray: true,
+      urlPath: "governance/influence-concentration",
+    },
     accountFunnel: {
       params: Hive.AccountFunnelParams,
       result: Hive.AccountFunnelResponse,
@@ -296,6 +302,35 @@ export const extendedRest = {
       params: Hive.NetworkDappFootprintParams,
       result: Hive.NetworkDappFootprintResponse,
       urlPath: "network/dapp-footprint",
+    },
+    accountContentStats: {
+      params: Hive.AccountContentStatsParams,
+      result: Hive.AccountContentStatsResponse,
+      responseArray: true,
+      urlPath: "account/{accountName}/content-stats",
+    },
+    accountDappFootprint: {
+      params: Hive.AccountDappFootprintParams,
+      result: Hive.AccountDappFootprintResponse,
+      urlPath: "account/{account}/dapp-footprint",
+    },
+    accountRcFootprint: {
+      params: Hive.AccountRcFootprintParams,
+      result: Hive.AccountRcFootprintRow,
+      responseArray: true,
+      urlPath: "account/{account}/rc-footprint",
+    },
+    accountRcFootprintTimeline: {
+      params: Hive.AccountRcFootprintTimelineParams,
+      result: Hive.AccountRcFootprintTimelineRow,
+      responseArray: true,
+      urlPath: "account/{account}/rc-footprint-timeline",
+    },
+    accountFinancialSummary: {
+      params: Hive.AccountFinancialSummaryParams,
+      result: Hive.FinancialSummaryRow,
+      responseArray: true,
+      urlPath: "account/{account}/financial-summary",
     },
   },
 };

@@ -1482,6 +1482,17 @@ namespace Hive {
     pct_hp!: number;
   }
 
+  export class GovernanceInfluenceConcentrationParams {}
+
+  export class GovernanceInfluenceConcentrationResponse {
+    gini!: number;
+    top_1pct_hp_share!: number;
+    top_10pct_hp_share!: number;
+    total_hp_holders!: number;
+    median_hp!: number;
+    mean_hp!: number;
+  }
+
   export class AccountFunnelParams {
     from_date?: Date | number | undefined;
     to_date?: Date | number | undefined;
@@ -1496,6 +1507,25 @@ namespace Hive {
     pct_30d!: number | null;
     active_at_90d!: number | null;
     pct_90d!: number | null;
+  }
+
+  export class AccountContentStatsParams {
+    accountName!: string;
+    from_date?: Date | number | undefined;
+    to_date?: Date | number | undefined;
+    granularity?: string;
+  }
+
+  export class AccountContentStatsResponse {
+    period!: string;
+    posts!: number;
+    comments!: number;
+    votes_cast!: number;
+    votes_received!: number;
+    replies_received!: number;
+    author_reward_hive_nai!: number;
+    author_reward_hbd_nai!: number;
+    author_reward_vests_nai!: number;
   }
 
   export type TopAccountsMetric =
@@ -1532,6 +1562,94 @@ namespace Hive {
     period!: string;
     rc_total!: number;
     by_label!: Record<string, number>;
+  }
+
+  export class AccountDappFootprintParams {
+    account!: string;
+    from_date?: string | Date | number;
+    to_date?: string | Date | number;
+  }
+
+  export class AccountDappFootprintCategory {
+    category!: string;
+    op_count!: number;
+    rc_estimated!: number;
+    pct!: number;
+    rc_pct!: number;
+  }
+
+  export class AccountDappFootprintDapp {
+    app_name!: string;
+    category!: string;
+    op_count!: number;
+    rc_estimated!: number;
+    pct!: number;
+    rc_pct!: number;
+  }
+
+  export class AccountDappFootprintResponse {
+    account!: string;
+    from_date!: string;
+    to_date!: string;
+    total_ops!: number;
+    total_rc_estimated!: number;
+    top_dapp!: string | null;
+    top_category!: string | null;
+    categories!: AccountDappFootprintCategory[];
+    dapps!: AccountDappFootprintDapp[];
+  }
+
+  export class AccountRcFootprintParams {
+    account!: string;
+    from_date?: string | Date | number;
+    to_date?: string | Date | number;
+    group_by?: "op_type" | "app";
+  }
+
+  export class AccountRcFootprintRow {
+    label!: string;
+    rc_consumed!: number;
+    op_count!: number;
+    pct!: number;
+  }
+
+  export class AccountRcFootprintTimelineParams {
+    account!: string;
+    from_date?: string | Date | number;
+    to_date?: string | Date | number;
+    op_type_filter?: string;
+    app_filter?: string;
+    limit_count?: number;
+    before_seq?: number;
+    offset_start?: number;
+  }
+
+  export class AccountRcFootprintTimelineRow {
+    timestamp!: string;
+    block_num!: number;
+    op_type!: string;
+    app!: string | null;
+    custom_json_id!: string | null;
+    rc_consumed!: number;
+    op_seq!: number;
+  }
+
+  export class AccountFinancialSummaryParams {
+    account!: string;
+    from_date?: string;
+    to_date?: string;
+    granularity?: "day" | "week" | "month";
+  }
+
+  export class FinancialSummaryRow {
+    period!: string;
+    // Canonical Hive op-type name, e.g. "author_reward_operation".
+    category!: string;
+    direction!: "incoming" | "outgoing";
+    hive_nai!: number;
+    hbd_nai!: number;
+    vests_nai!: number;
+    op_count!: number;
   }
 }
 

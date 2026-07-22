@@ -18,6 +18,7 @@ const useCommentSearch = (
     refetchOnWindowFocus: false,
     enabled:
       !!commentSearchProps?.permlink && !!commentSearchProps?.accountName,
+    meta: { showErrorToast: true },
   });
 
   const fetchCommentOperations = async (
