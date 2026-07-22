@@ -20,19 +20,12 @@ import {
   ACCOUNT_CARD_WIDTH,
   ACCOUNT_CARD_HEIGHT,
 } from "@/components/account/accountCard/accountCardSvg";
+import { buildAccountCardData } from "@/components/account/accountCard/accountCardData";
 
 interface Props {
   accountName: string;
   accountDetails: Explorer.FormattedAccountDetails;
 }
-
-const compact = (n: number, locale: string) =>
-  Math.abs(n) >= 1000
-    ? n.toLocaleString(locale, {
-        notation: "compact",
-        maximumFractionDigits: 1,
-      })
-    : n.toLocaleString(locale, { maximumFractionDigits: 0 });
 
 const toBigInt = (s?: string): bigint | null => {
   if (!s) return null;
@@ -196,121 +189,42 @@ const AccountShareCard: React.FC<Props> = ({ accountName, accountDetails }) => {
   }, [vestsHistory]);
 
   const cardData: AccountCardData = useMemo(() => {
-    const created = accountDetails.created
-      ? new Date(accountDetails.created)
-      : null;
-    const monthYear = created
-      ? created.toLocaleString(locale, { month: "long", year: "numeric" })
-      : null;
-    const years = created
-      ? Math.max(
-          0,
-          Math.floor(
-            (Date.now() - created.getTime()) / (365.25 * 24 * 3600 * 1000)
-          )
-        )
-      : null;
-
     // Only treat as a witness if the witness is active (a deactivated witness
     // uses the null signing key); otherwise present as a regular account.
     const isWit =
       !!accountDetails.is_witness &&
       !!witnessDetails &&
       witnessDetails.signing_key !== config.inactiveWitnessKey;
-    const followers = Number(accountDetails.follower_count) || 0;
-    const posts = Number(accountDetails.post_count) || 0;
-    const voters = witnessDetails?.voters_num ?? 0;
-
-    const rolePieces = [
-      isWit ? t("accountShareCard.witness") : null,
-      monthYear ? t("accountShareCard.joined", { date: monthYear }) : null,
-    ].filter(Boolean) as string[];
-
-    const witnessRank =
-      isWit && witnessDetails?.rank ? witnessDetails.rank : null;
     const stakeRank = topHolderEntries?.find(
       (e) => e.coinType === "VESTS"
     )?.rank;
 
-    const badges = [
-      witnessRank
-        ? `♛ ${t("accountShareCard.topWitness", { rank: witnessRank })}`
-        : isWit
-          ? `♛ ${t("accountShareCard.witness")}`
+    return buildAccountCardData(
+      {
+        accountName,
+        avatarHref: getHiveAvatarUrl(accountName),
+        brandLogoHref: getImageSrc("/hive-logo.png"),
+        reputation: Number(accountDetails.reputation) || 0,
+        hp,
+        accountValue,
+        followers: Number(accountDetails.follower_count) || 0,
+        posts: Number(accountDetails.post_count) || 0,
+        earnedHp,
+        isWitness: isWit,
+        witnessRank: witnessDetails?.rank ?? null,
+        voteWeightHp,
+        voters: witnessDetails?.voters_num ?? 0,
+        stakeRank: stakeRank ?? null,
+        created: accountDetails.created
+          ? new Date(accountDetails.created)
           : null,
-      stakeRank
-        ? `◆ ${t("accountShareCard.stakeRank", { rank: stakeRank })}`
-        : null,
-      `✍ ${compact(posts, locale)} ${t("accountShareCard.posts")}`,
-    ].filter(Boolean) as string[];
-
-    const hpStat = {
-      label: t("accountShareCard.hivePower"),
-      value: compact(Math.round(hp), locale),
-      accent: "#7dffb0",
-      ...(hpTrend !== undefined && Math.abs(hpTrend) >= 0.5
-        ? {
-            delta: `${hpTrend >= 0 ? "▲" : "▼"}${Math.abs(hpTrend).toFixed(0)}%`,
-            deltaUp: hpTrend >= 0,
-          }
-        : {}),
-    };
-    const valueStat =
-      accountValue > 0
-        ? {
-            label: t("accountShareCard.accountValue"),
-            value: `$${compact(accountValue, locale)}`,
-          }
-        : null;
-    const followersStat = {
-      label: t("accountShareCard.followers"),
-      value: compact(followers, locale),
-    };
-    const earnedStat = earnedHp
-      ? {
-          label: t("accountShareCard.earned"),
-          value: compact(earnedHp, locale),
-          sub: t("accountShareCard.authorCuration"),
-        }
-      : null;
-
-    let stats: (AccountCardData["stats"][number] | null)[];
-    if (isWit) {
-      stats = [
-        hpStat,
-        voteWeightHp
-          ? {
-              label: `${t("accountShareCard.voteWeight")} (${t(
-                "accountShareCard.hp"
-              )})`,
-              value: compact(Math.round(voteWeightHp), locale),
-            }
-          : null,
-        {
-          label: t("accountShareCard.witnessVoters"),
-          value: compact(voters, locale),
-        },
-        valueStat ?? earnedStat ?? followersStat,
-      ];
-    } else {
-      stats = [hpStat, valueStat, followersStat, earnedStat];
-    }
-
-    return {
-      name: accountName,
-      avatarHref: getHiveAvatarUrl(accountName),
-      reputation: Math.round(Number(accountDetails.reputation) || 0),
-      role: rolePieces.join(" · "),
-      tenure: years !== null ? t("accountShareCard.tenure", { years }) : "",
-      isWitness: isWit,
-      badges,
-      stats: stats.filter(Boolean).slice(0, 4) as AccountCardData["stats"],
-      sparkline,
-      rtl: locale === "ar",
-      brand: "hivescan.info",
-      brandLogoHref: getImageSrc("/hive-logo.png"),
-      ctaLabel: t("accountShareCard.cta"),
-    };
+        hpTrend,
+        sparkline,
+        rtl: locale === "ar",
+      },
+      t,
+      locale
+    );
   }, [
     accountName,
     accountDetails,
@@ -332,14 +246,22 @@ const AccountShareCard: React.FC<Props> = ({ accountName, accountDetails }) => {
     [svg]
   );
 
+  // The clickable card links to the full profile; "Copy link" instead yields the
+  // card itself (the OG image URL) so recipients land on the card.
   const shareUrl =
     typeof window !== "undefined"
       ? `${window.location.origin}${window.location.pathname}`
       : "";
+  const cardUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}${
+          process.env.NEXT_PUBLIC_BASE_PATH || ""
+        }/api/og/account/${accountName}`
+      : "";
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(shareUrl);
+      await navigator.clipboard.writeText(cardUrl);
       setCopied(true);
       setTimeout(() => setCopied(false), 1600);
     } catch {
