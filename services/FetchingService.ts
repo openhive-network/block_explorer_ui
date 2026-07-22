@@ -1114,12 +1114,12 @@ class FetchingService {
     from?: string | Date | number,
     to?: string | Date | number
   ): Promise<Hive.NetworkDappFootprintResponse> {
-    return await this.extendedHiveChain!.restApi[
-      "haf-stats-api"
-    ].networkDappFootprint({
-      from_date: from,
-      to_date: to,
-    });
+    return this.withNodeSupport("haf-stats-api:dapp-usage", () =>
+      this.extendedHiveChain!.restApi["haf-stats-api"].networkDappFootprint({
+        from_date: from,
+        to_date: to,
+      })
+    );
   }
 
   async getNetworkTopAccounts(
