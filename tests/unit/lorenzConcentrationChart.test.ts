@@ -50,4 +50,26 @@ describe("buildLorenzCurve", () => {
   it("returns empty when totals are non-positive", () => {
     expect(buildLorenzCurve([bucket(0, 0)])).toEqual([]);
   });
+
+  it("orders by per-account mean HP, not aggregate total_hp", () => {
+    // richBucket: 10 accounts, 100 HP  -> mean 10 (richer per account, small aggregate)
+    // poorBucket: 100 accounts, 300 HP -> mean 3  (poorer per account, LARGER aggregate)
+    // Sorting by total_hp (300 > 100) would wrongly place the rich bucket first;
+    // the Lorenz curve must order by mean, so the poor/populous bucket comes first.
+    const richBucket = bucket(10, 100);
+    const poorBucket = bucket(100, 300);
+    const pts = buildLorenzCurve([richBucket, poorBucket]);
+
+    // First segment is the poorer-by-mean (populous) bucket.
+    const first = pts[1];
+    expect(first.cumAccounts).toBeCloseTo((100 / 110) * 100, 6); // ~90.9%
+    expect(first.cumHp).toBeCloseTo((300 / 400) * 100, 6); // 75%
+
+    // Defining property: the curve stays at or below the diagonal everywhere.
+    // The old total_hp sort would put the rich bucket first (9.1% accounts /
+    // 25% HP), breaking this.
+    pts.forEach((p) =>
+      expect(p.cumHp).toBeLessThanOrEqual(p.cumAccounts + 1e-9)
+    );
+  });
 });
