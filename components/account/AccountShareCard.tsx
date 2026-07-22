@@ -20,7 +20,10 @@ import {
   ACCOUNT_CARD_WIDTH,
   ACCOUNT_CARD_HEIGHT,
 } from "@/components/account/accountCard/accountCardSvg";
-import { buildAccountCardData } from "@/components/account/accountCard/accountCardData";
+import {
+  buildAccountCardData,
+  sumAuthorCurationVests,
+} from "@/components/account/accountCard/accountCardData";
 
 interface Props {
   accountName: string;
@@ -131,16 +134,7 @@ const AccountShareCard: React.FC<Props> = ({ accountName, accountDetails }) => {
 
   const earnedHp = useMemo(() => {
     if (!finRows?.length || hpPerVest <= 0) return undefined;
-    let vests = 0;
-    finRows.forEach((r) => {
-      if (
-        r.direction === "incoming" &&
-        r.category.includes("reward") &&
-        r.category !== "claim_reward_balance_operation"
-      ) {
-        vests += Number(r.vests_nai) || 0;
-      }
-    });
+    const vests = sumAuthorCurationVests(finRows);
     const value = (vests / 1e6) * hpPerVest;
     return value > 0 ? value : undefined;
   }, [finRows, hpPerVest]);

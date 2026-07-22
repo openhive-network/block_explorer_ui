@@ -4,6 +4,30 @@ import {
   AccountCardBadge,
 } from "./accountCardSvg";
 
+// "Earned · 1Y" counts only genuine author + curation rewards — NOT benefactor
+// or witness block-production rewards (which also carry "reward" in their op
+// name) — so the figure matches its "author + curation" label for every account.
+export const AUTHOR_CURATION_CATEGORIES = [
+  "author_reward_operation",
+  "curation_reward_operation",
+];
+
+// Sum author + curation reward VESTS (nai, i.e. ×1e6) across financial-summary
+// rows. Shared by both card paths so the definition can't drift.
+export const sumAuthorCurationVests = (
+  rows:
+    | { category?: string; direction?: string; vests_nai?: number | string }[]
+    | undefined
+): number =>
+  (rows ?? []).reduce(
+    (sum, r) =>
+      r.direction === "incoming" &&
+      AUTHOR_CURATION_CATEGORIES.includes(r.category ?? "")
+        ? sum + (Number(r.vests_nai) || 0)
+        : sum,
+    0
+  );
+
 // Compact number formatting shared by both card paths (12.1M, $831.3K, 45.3K).
 export const compactNumber = (n: number, locale: string): string =>
   Math.abs(n) >= 1000
