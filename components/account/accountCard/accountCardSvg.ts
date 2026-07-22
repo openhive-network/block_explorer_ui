@@ -7,6 +7,15 @@ export interface AccountCardStat {
   deltaUp?: boolean;
 }
 
+// Badge icons drawn as inline SVG vector paths (not emoji glyphs), so they
+// rasterise identically server-side without depending on emoji fonts.
+export type BadgeIcon = "crown" | "gem" | "pen";
+
+export interface AccountCardBadge {
+  icon?: BadgeIcon;
+  text: string;
+}
+
 export interface AccountCardData {
   name: string;
   avatarHref: string;
@@ -14,8 +23,12 @@ export interface AccountCardData {
   role: string;
   tenure: string;
   isWitness: boolean;
-  badges: string[];
+  badges: AccountCardBadge[];
   stats: AccountCardStat[];
+  // Witness-only metrics (vote weight, voters) rendered right-aligned, stacked,
+  // in the upper-right — kept out of the lower stats row so its layout is the
+  // same for witness and non-witness accounts.
+  witnessMetrics?: { value: string; label: string }[];
   sparkline?: number[];
   rtl?: boolean;
   brand: string;
@@ -39,6 +52,24 @@ export const ACCOUNT_CARD_HEIGHT = 630;
 
 const divider = (y: number): string =>
   `<rect x="72" y="${y}" width="${ACCOUNT_CARD_WIDTH - 144}" height="1.5" fill="url(#divider)"/>`;
+
+// Inline vector icons (24x24 viewBox), so no emoji font is needed to rasterise.
+const ICON_PATHS: Record<BadgeIcon, string> = {
+  crown: "M2 18 L4.5 8 L9 12 L12 5.5 L15 12 L19.5 8 L22 18 Z",
+  gem: "M12 2 L22 12 L12 22 L2 12 Z",
+  pen: "M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.9959.9959 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z",
+};
+
+const icon = (
+  name: BadgeIcon,
+  size: number,
+  x: number,
+  y: number,
+  fill: string
+): string =>
+  `<path d="${ICON_PATHS[name]}" fill="${fill}" transform="translate(${x} ${y}) scale(${(
+    size / 24
+  ).toFixed(4)})"/>`;
 
 const SPARK_X0 = 72;
 const SPARK_W = ACCOUNT_CARD_WIDTH - 144;
@@ -73,17 +104,35 @@ export const buildAccountCardSvg = (d: AccountCardData): string => {
   const badges = d.badges
     .slice(0, 3)
     .map((b) => {
-      const label = esc(b);
-      const w = 40 + label.length * 12;
+      const text = esc(b.text);
+      const iconSize = 19;
+      const gap = 8;
+      const padX = 22;
+      const iconW = b.icon ? iconSize + gap : 0;
+      const w = Math.round(padX * 2 + iconW + text.length * 11);
+      const textX = padX + iconW;
       const g = `
         <g transform="translate(${bx},256)">
           <rect x="0" y="0" width="${w}" height="42" rx="21" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.16)"/>
-          <text x="${w / 2}" y="27" text-anchor="middle" font-family="${FONT}" font-size="18" font-weight="800" fill="#ffffff">${label}</text>
+          ${b.icon ? icon(b.icon, iconSize, padX, (42 - iconSize) / 2, "#ffffff") : ""}
+          <text x="${textX}" y="27" font-family="${FONT}" font-size="18" font-weight="800" fill="#ffffff">${text}</text>
         </g>`;
       bx += w + 16;
       return g;
     })
     .join("");
+
+  // Witness metrics: right-aligned, stacked in the upper-right (value + label).
+  const witnessBlock =
+    d.witnessMetrics && d.witnessMetrics.length
+      ? `<g font-family="${FONT}">${d.witnessMetrics
+          .slice(0, 2)
+          .map((m, i) => {
+            const yv = 168 + i * 60;
+            return `<text x="${W - 72}" y="${yv}" text-anchor="end" font-size="38" font-weight="900" letter-spacing="-1" fill="#ffffff">${esc(m.value)}</text><text x="${W - 72}" y="${yv + 22}" text-anchor="end" font-size="15" font-weight="800" letter-spacing="1.2" fill="rgba(255,255,255,0.5)">${esc(m.label.toUpperCase())}</text>`;
+          })
+          .join("")}</g>`
+      : "";
 
   const n = Math.max(1, Math.min(4, d.stats.length));
   const colW = (W - 144) / n;
@@ -120,7 +169,7 @@ export const buildAccountCardSvg = (d: AccountCardData): string => {
   const crown = d.isWitness
     ? `<g transform="translate(196,232)">
          <circle cx="0" cy="0" r="27" fill="#E31337" stroke="#0d0f15" stroke-width="5"/>
-         <text x="0" y="9" text-anchor="middle" font-family="${FONT}" font-size="26" fill="#ffffff">♛</text>
+         ${icon("crown", 26, -13, -13, "#ffffff")}
        </g>`
     : "";
 
@@ -194,6 +243,7 @@ export const buildAccountCardSvg = (d: AccountCardData): string => {
     <text x="262" y="228" font-size="26" font-weight="600" fill="rgba(255,255,255,0.72)">${esc(d.role)}</text>
   </g>
   ${badges}
+  ${witnessBlock}
 
   ${spark || divider(354)}
   ${stats}
