@@ -5,6 +5,12 @@ const path = require("path");
 const I18N_DIR = path.join(__dirname, "..", "i18n");
 const REFERENCE_LOCALE = "en";
 
+// Server-only SEO copy (getServerSideProps meta) is intentionally English-only
+// and lives solely in en.json; other locales fall back to it. Exempt it from
+// translation-parity so it isn't required in every locale. Remove this if SEO
+// ever goes multilingual.
+const isExempt = (key) => key.startsWith("seo.");
+
 function flatten(obj, prefix = "") {
   const out = new Set();
   for (const [key, value] of Object.entries(obj)) {
@@ -37,12 +43,14 @@ if (!locales.includes(REFERENCE_LOCALE)) {
   process.exit(2);
 }
 
-const referenceKeys = loadLocale(REFERENCE_LOCALE);
+const referenceKeys = new Set(
+  [...loadLocale(REFERENCE_LOCALE)].filter((k) => !isExempt(k))
+);
 let hasGaps = false;
 
 for (const locale of locales) {
   if (locale === REFERENCE_LOCALE) continue;
-  const keys = loadLocale(locale);
+  const keys = new Set([...loadLocale(locale)].filter((k) => !isExempt(k)));
   const missing = [...referenceKeys].filter((k) => !keys.has(k));
   const extra = [...keys].filter((k) => !referenceKeys.has(k));
   if (missing.length || extra.length) {

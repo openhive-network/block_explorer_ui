@@ -3,6 +3,13 @@ import type { GetServerSideProps } from "next";
 import { Loader2, X } from "lucide-react";
 import { useRouter } from "next/router";
 import Head from "next/head";
+import {
+  canonicalUrl,
+  clamp,
+  profilePageJsonLd,
+  siteConfig,
+} from "@/utils/seo";
+import { seoText } from "@/utils/seoStrings";
 
 import ErrorPage from "./ErrorPage";
 import { cn } from "@/lib/utils";
@@ -54,9 +61,18 @@ export const defaultSearchParams: AccountSearchParams = {
 interface AccountPageProps {
   ogImageUrl: string | null;
   ogTitle: string | null;
+  canonical: string | null;
+  description: string | null;
+  jsonLd: Record<string, unknown> | null;
 }
 
-export default function Account({ ogImageUrl, ogTitle }: AccountPageProps) {
+export default function Account({
+  ogImageUrl,
+  ogTitle,
+  canonical,
+  description,
+  jsonLd,
+}: AccountPageProps) {
   const { t } = useI18n();
   const router = useRouter();
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -190,6 +206,26 @@ export default function Account({ ogImageUrl, ogTitle }: AccountPageProps) {
       </Head>
     ) : null;
 
+  // Search meta (canonical/description/JSON-LD) — crawlers never run the client
+  // fetch, so these are built server-side. Complements the OG share card above.
+  const seoHead = (
+    <Head>
+      {canonical && <link rel="canonical" href={canonical} />}
+      {description && <meta name="description" content={description} />}
+      {description && <meta property="og:description" content={description} />}
+      {jsonLd && <meta property="og:type" content="profile" />}
+      {ogTitle && <meta name="twitter:title" content={ogTitle} />}
+      {description && <meta name="twitter:description" content={description} />}
+      {jsonLd && (
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      )}
+    </Head>
+  );
+
   if (routeAccountName && !routeAccountName.startsWith("@")) {
     return <ErrorPage />;
   }
@@ -206,6 +242,7 @@ export default function Account({ ogImageUrl, ogTitle }: AccountPageProps) {
   if (!accountDetails) {
     return (
       <>
+        {seoHead}
         {ogMeta}
         <Loader2 className="animate-spin mt-1 text-black dark:text-white h-12 w-12 ml-3 ..." />
       </>
@@ -223,6 +260,7 @@ export default function Account({ ogImageUrl, ogTitle }: AccountPageProps) {
           - Hive Explorer
         </title>
       </Head>
+      {seoHead}
       {!communityDetails && ogMeta}
       <div className="grid grid-cols-1 md:grid-cols-3 text-white page-container gap-4">
         {isMobile && (
@@ -267,10 +305,21 @@ export const getServerSideProps: GetServerSideProps<AccountPageProps> = async ({
     ? params?.accountName[0]
     : params?.accountName;
   const name = (raw || "").replace(/^@/, "").replace(/^%40/i, "");
+  const canonical = name
+    ? canonicalUrl({ headers: req.headers }, `/@${name}`)
+    : null;
 
-  // Communities (hive-*) don't get an account share card.
+  // Communities (hive-*) don't get an account share card, but still get canonical.
   if (!name || name.startsWith("hive-")) {
-    return { props: { ogImageUrl: null, ogTitle: null } };
+    return {
+      props: {
+        ogImageUrl: null,
+        ogTitle: null,
+        canonical,
+        description: null,
+        jsonLd: null,
+      },
+    };
   }
 
   const forwardedProto = String(req.headers["x-forwarded-proto"] || "").split(
@@ -284,10 +333,17 @@ export const getServerSideProps: GetServerSideProps<AccountPageProps> = async ({
     ? `${proto}://${host}${basePath}/api/og/account/${encodeURIComponent(name)}`
     : null;
 
+  const description = clamp(
+    seoText("seo.account.description", { name, site: siteConfig.name })
+  );
+
   return {
     props: {
       ogImageUrl,
       ogTitle: `@${name} on Hive`,
+      canonical,
+      description,
+      jsonLd: canonical ? profilePageJsonLd(canonical, `@${name}`) : null,
     },
   };
 };

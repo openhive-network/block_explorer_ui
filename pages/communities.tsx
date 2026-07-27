@@ -7,7 +7,10 @@ import CommunityCard, {
   CommunityCardSkeleton,
 } from "@/components/communities/CommunityCard";
 import CommunitySubscribersDialog from "@/components/account/CommunitySubscribersDialog";
-import Head from "next/head";
+import type { GetServerSideProps } from "next";
+import Seo from "@/components/seo/Seo";
+import { SeoMeta, listPageMeta, pageTitle } from "@/utils/seo";
+import { seoText } from "@/utils/seoStrings";
 import PageTitle from "@/components/PageTitle";
 
 import useCommunitiesList, {
@@ -15,7 +18,7 @@ import useCommunitiesList, {
 } from "@/hooks/api/communities/useCommunities";
 import Hive from "@/types/Hive";
 
-const CommunitiesPage = () => {
+const CommunitiesPage = ({ meta }: { meta: SeoMeta }) => {
   const { t } = useI18n();
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<CommunitySortOrder>("rank");
@@ -90,11 +93,7 @@ const CommunitiesPage = () => {
 
   return (
     <>
-      <Head>
-        <title>
-          {t("communitiesPage.title")} - {t("home.title")}
-        </title>
-      </Head>
+      <Seo meta={meta} title={pageTitle(t("communitiesPage.title"))} />
       <div className="page-container">
         <div>
           <PageTitle titleKey="pageTitle.communities" className="py-4 ml-6" />
@@ -131,3 +130,16 @@ const CommunitiesPage = () => {
 };
 
 export default CommunitiesPage;
+
+export const getServerSideProps: GetServerSideProps<{
+  meta: SeoMeta;
+}> = async ({ req }) => ({
+  props: {
+    meta: listPageMeta(
+      req,
+      "/communities",
+      seoText("seo.communities.title"),
+      seoText("seo.communities.description")
+    ),
+  },
+});

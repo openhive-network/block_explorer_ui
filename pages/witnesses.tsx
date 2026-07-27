@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useI18n } from "@/i18n/i18n";
+import Seo from "@/components/seo/Seo";
+import { SeoMeta, listPageMeta, pageTitle } from "@/utils/seo";
+import { seoText } from "@/utils/seoStrings";
 import { Loader2, ArrowRight, Heart, Search, Users } from "lucide-react";
 import Link from "next/link";
+import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import Head from "next/head";
 import dynamic from "next/dynamic";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
@@ -34,8 +37,9 @@ const VotesHistoryDialog = dynamic(
   { ssr: false }
 );
 
-export default function Witnesses() {
+export default function Witnesses({ meta }: { meta: SeoMeta }) {
   const { t, locale } = useI18n();
+  const seoTitle = pageTitle(t("witnesses.title"));
   const router = useRouter();
   const queryClient = useQueryClient();
 
@@ -279,17 +283,19 @@ export default function Witnesses() {
 
   if (isWitnessDataLoading) {
     return (
-      <Loader2 className="dark:text-white animate-spin mt-1 h-8 w-8 ml-3 ..." />
+      <>
+        <Seo meta={meta} title={seoTitle} />
+        <Loader2 className="dark:text-white animate-spin mt-1 h-8 w-8 ml-3 ..." />
+      </>
     );
   }
 
-  if (!witnessesData || !witnessesData.witnesses.length) return null;
+  if (!witnessesData || !witnessesData.witnesses.length)
+    return <Seo meta={meta} title={seoTitle} />;
 
   return (
     <>
-      <Head>
-        <title>{t("witnesses.title")} - Hive Explorer</title>
-      </Head>
+      <Seo meta={meta} title={seoTitle} />
       <div className="page-container rounded bg-white dark:bg-theme text-gray-800 dark:text-gray-200 font-sans antialiased">
         <div className="mx-4 my-4">
           <main className="flex-1">
@@ -425,3 +431,16 @@ export default function Witnesses() {
     </>
   );
 }
+
+export const getServerSideProps: GetServerSideProps<{
+  meta: SeoMeta;
+}> = async ({ req }) => ({
+  props: {
+    meta: listPageMeta(
+      req,
+      "/witnesses",
+      seoText("seo.witnesses.title"),
+      seoText("seo.witnesses.description")
+    ),
+  },
+});

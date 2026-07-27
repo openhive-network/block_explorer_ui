@@ -5,8 +5,11 @@ import React, {
   useState,
   useRef,
 } from "react";
-import Head from "next/head";
+import type { GetServerSideProps } from "next";
 import { Loader2 } from "lucide-react";
+import Seo from "@/components/seo/Seo";
+import { SeoMeta, listPageMeta, pageTitle } from "@/utils/seo";
+import { seoText } from "@/utils/seoStrings";
 
 import BlocksTable from "@/components/blocks/BlocksTable";
 import NoResult from "@/components/NoResult";
@@ -52,10 +55,11 @@ export interface BlockRow extends Block {
   isNew?: boolean; // Added property to indicate new block
 }
 
-const BlocksPage = () => {
+const BlocksPage = ({ meta }: { meta: SeoMeta }) => {
   const { t } = useI18n();
 
-  const TABLE_CELLS = [ // Moved inside component to access `t`
+  const TABLE_CELLS = [
+    // Moved inside component to access `t`
     t("common.block"),
     t("blocksPage.producer"),
     t("blocksPage.prevHash"),
@@ -85,9 +89,9 @@ const BlocksPage = () => {
     useState(getLocalStorage("is_blocks_filters_visible", true) ?? false);
 
   const { settings, updateSettings } = useSettings();
-  const liveDataEnabled = settings.liveData; 
+  const liveDataEnabled = settings.liveData;
   const changeLiveRefresh = () => {
-    updateSettings({ liveData: !liveDataEnabled }); 
+    updateSettings({ liveData: !liveDataEnabled });
   };
   // Ref to store previous blocks data for live updates comparison
   const prevBlocksDataRef = useRef<Block[] | null>(null);
@@ -110,8 +114,8 @@ const BlocksPage = () => {
         (!paramsState.toBlock || router.query.history?.length == 2)
         ? undefined
         : paramsState.toBlock
-        ? paramsState.toBlock
-        : paramsState.firstBlock,
+          ? paramsState.toBlock
+          : paramsState.firstBlock,
       liveDataEnabled
     );
 
@@ -274,17 +278,12 @@ const BlocksPage = () => {
 
   return (
     <>
-      <Head>
-        <title>{t("blocksPage.title")} - {t("home.title")}</title>
-      </Head>
+      <Seo meta={meta} title={pageTitle(t("blocksPage.title"))} />
 
       <div className="page-container">
         <div className="flex items-start justify-between w-full bg-theme rounded">
           <div className="ml-6">
-            <PageTitle
-              titleKey="pageTitle.hiveBlocks"
-              className="py-4"
-            />
+            <PageTitle titleKey="pageTitle.hiveBlocks" className="py-4" />
           </div>
           {/* Live Data Toggle */}
           <div className="w-full sm:w-auto mt-4 top-0">
@@ -352,5 +351,18 @@ const BlocksPage = () => {
     </>
   );
 };
+
+export const getServerSideProps: GetServerSideProps<{
+  meta: SeoMeta;
+}> = async ({ req }) => ({
+  props: {
+    meta: listPageMeta(
+      req,
+      "/blocks",
+      seoText("seo.blocks.title"),
+      seoText("seo.blocks.description")
+    ),
+  },
+});
 
 export default BlocksPage;

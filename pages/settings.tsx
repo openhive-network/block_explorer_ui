@@ -1,4 +1,5 @@
 import React from "react";
+import Head from "next/head";
 import { useI18n } from "@/i18n/i18n";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -275,6 +276,9 @@ const SettingsPage = () => {
 
   return (
     <div className="page-container mx-auto space-y-8">
+      <Head>
+        <meta name="robots" content="noindex,follow" />
+      </Head>
       <header>
         <PageTitle titleKey="pageTitle.settings" className="py-4" />
       </header>
