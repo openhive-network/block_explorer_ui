@@ -52,6 +52,10 @@ export const WIDGET_NODE_SUPPORT: Record<string, WidgetNodeSupport> = {
     app: "haf-stats-api",
     endpoint: "haf-stats-api:rc-utilization",
   },
+  "network-dapp-usage": {
+    app: "haf-stats-api",
+    endpoint: "haf-stats-api:top-custom-json",
+  },
 
   // haf-stats-api account analytics — proactive app probe + reactive per endpoint.
   "my-content-activity": {

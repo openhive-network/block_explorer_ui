@@ -369,6 +369,38 @@ const WidgetIndex = () => {
     localStorage.setItem(seededKey, "true");
   }, [isLoaded, username, widgets, layouts, onAddWidget]);
 
+  // One-time seed of the Network DApp Usage widget (#757) for users with a saved dashboard.
+  useEffect(() => {
+    if (!isLoaded || !username) return;
+    const seededKey = `hivescan_dashboard_network_dapp_usage_seeded_${username}`;
+    if (localStorage.getItem(seededKey)) return;
+    if (widgets.some((w) => w.type === "network-dapp-usage")) {
+      localStorage.setItem(seededKey, "true");
+      return;
+    }
+    const masterLayout = layouts.lg || [];
+    // Place directly below network-content-volume; fall back to bottom of main column.
+    const contentVolumeId = widgets.find(
+      (w) => w.type === "network-content-volume"
+    )?.i;
+    const anchorItem = contentVolumeId
+      ? masterLayout.find((item) => item.i === contentVolumeId)
+      : undefined;
+    const insertY = anchorItem
+      ? anchorItem.y + anchorItem.h
+      : masterLayout
+          .filter((item) => item.x >= 3 && item.x < 9)
+          .reduce((max, item) => Math.max(max, item.y + item.h), 0);
+    onAddWidget("network-dapp-usage", {
+      x: anchorItem?.x ?? 3,
+      y: insertY,
+      w: anchorItem?.w ?? 6,
+      h: 7,
+      minH: 5,
+    });
+    localStorage.setItem(seededKey, "true");
+  }, [isLoaded, username, widgets, layouts, onAddWidget]);
+
   // Watched Proposals auto-appears the first time you watch a proposal (unless
   // X-dismissed). A manual add is respected — it's never auto-removed when the
   // watchlist is empty.

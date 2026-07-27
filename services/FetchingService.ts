@@ -1094,6 +1094,32 @@ class FetchingService {
     );
   }
 
+  async getNetworkTopCustomJson(
+    params: Hive.NetworkTopCustomJsonParams
+  ): Promise<Hive.NetworkTopCustomJsonRow[]> {
+    return this.withNodeSupport("haf-stats-api:top-custom-json", () =>
+      this.extendedHiveChain!.restApi["haf-stats-api"].networkTopCustomJson(
+        params
+      )
+    );
+  }
+
+  async getNetworkCustomJsonUsage(
+    params: Hive.NetworkCustomJsonUsageParams
+  ): Promise<Hive.NetworkCustomJsonUsageRow[]> {
+    return this.withNodeSupport("haf-stats-api:custom-json-usage", () =>
+      this.extendedHiveChain!.restApi["haf-stats-api"].networkCustomJsonUsage(
+        params
+      )
+    );
+  }
+
+  async getCustomJsonAppRegistry(): Promise<Hive.CustomJsonAppRegistryRow[]> {
+    return this.withNodeSupport("haf-stats-api:custom-json-registry", () =>
+      this.extendedHiveChain!.restApi["haf-stats-api"].customJsonAppRegistry({})
+    );
+  }
+
   async getAccountContentStats(
     accountName: string,
     from?: Date | number | undefined,
