@@ -17,7 +17,12 @@ export const buildLorenzCurve = (
 ): LorenzPoint[] => {
   if (!buckets?.length) return [];
 
-  const ordered = [...buckets].sort((a, b) => a.total_hp - b.total_hp);
+  // A Lorenz curve orders the population poorest -> richest by per-account wealth
+  // (mean HP = total_hp / account_count), not by the bucket's aggregate total_hp
+  // — a populous middle bucket can have a large aggregate but a small mean.
+  const meanHp = (b: Hive.NetworkHpDistributionResponse) =>
+    b.account_count > 0 ? b.total_hp / b.account_count : 0;
+  const ordered = [...buckets].sort((a, b) => meanHp(a) - meanHp(b));
 
   const totalAccounts = ordered.reduce((s, b) => s + b.account_count, 0);
   const totalHp = ordered.reduce((s, b) => s + b.total_hp, 0);
