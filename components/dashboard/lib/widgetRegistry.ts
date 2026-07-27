@@ -34,6 +34,7 @@ import NetworkOpMixCard from "@/components/home/NetworkOpMixCard";
 import NetworkRcUtilizationCard from "@/components/home/NetworkRcUtilizationCard";
 import NetworkContentVolumeCard from "@/components/home/NetworkContentVolumeCard";
 import NetworkEngagementCard from "@/components/home/NetworkEngagementCard";
+import NetworkDappUsageCard from "@/components/home/NetworkDappUsage/NetworkDappUsageCard";
 import LastBlocksWidget from "@/components/LastBlocksWidget";
 import FundAndSupplyWidget from "@/components/dashboard/widgets/data/FundAndSupplyWidget";
 import HiveParametersWidget from "@/components/dashboard/widgets/data/HiveParametersWidget";
@@ -320,6 +321,14 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     category: "reports" as const,
     component: NetworkEngagementCard,
     defaultLayout: { w: 6, h: 5, minW: 3, minH: 4 },
+    dynamicHeight: true,
+  },
+  "network-dapp-usage": {
+    id: "network-dapp-usage",
+    name: "widgets.networkDappUsageName",
+    category: "reports" as const,
+    component: NetworkDappUsageCard,
+    defaultLayout: { w: 6, h: 7, minW: 3, minH: 5 },
     dynamicHeight: true,
   },
   "voting-activity": {

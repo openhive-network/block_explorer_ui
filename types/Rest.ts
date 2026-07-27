@@ -298,6 +298,24 @@ export const extendedRest = {
       responseArray: true,
       urlPath: "network/author-retention",
     },
+    networkTopCustomJson: {
+      params: Hive.NetworkTopCustomJsonParams,
+      result: Hive.NetworkTopCustomJsonRow,
+      responseArray: true,
+      urlPath: "network/top-custom-json",
+    },
+    networkCustomJsonUsage: {
+      params: Hive.NetworkCustomJsonUsageParams,
+      result: Hive.NetworkCustomJsonUsageRow,
+      responseArray: true,
+      urlPath: "network/custom-json-usage",
+    },
+    customJsonAppRegistry: {
+      params: Hive.CustomJsonAppRegistryParams,
+      result: Hive.CustomJsonAppRegistryRow,
+      responseArray: true,
+      urlPath: "custom-json-app-registry",
+    },
     accountContentStats: {
       params: Hive.AccountContentStatsParams,
       result: Hive.AccountContentStatsResponse,

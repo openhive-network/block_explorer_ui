@@ -1386,6 +1386,47 @@ namespace Hive {
     granularity?: string;
   }
 
+  export class NetworkTopCustomJsonParams {
+    from_date?: string | Date | number;
+    to_date?: string | Date | number;
+    limit_count?: number;
+    group_by?: "id" | "app" | "category";
+    order_by?: "op_count" | "op_bytes" | "rc_estimate";
+  }
+
+  export class NetworkTopCustomJsonRow {
+    json_id!: string | null;
+    app_name!: string | null;
+    category!: string;
+    op_count!: number;
+    op_bytes!: number;
+    rc_estimate!: number;
+  }
+
+  export class NetworkCustomJsonUsageParams {
+    json_id!: string;
+    from_date?: string | Date | number;
+    to_date?: string | Date | number;
+    granularity?: "day" | "week" | "month";
+  }
+
+  export class NetworkCustomJsonUsageRow {
+    period!: string;
+    op_count!: number;
+    op_bytes!: number;
+    rc_estimate!: number;
+  }
+
+  // The registry takes no params.
+  export class CustomJsonAppRegistryParams {}
+
+  export class CustomJsonAppRegistryRow {
+    app_id_pattern!: string;
+    app_name!: string;
+    category!: string;
+    homepage!: string | null;
+  }
+
   export class NetworkContentVolumeResponse {
     period!: string;
     posts!: number;

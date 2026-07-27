@@ -110,7 +110,9 @@ const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
             // A missing endpoint is recorded for the active node so the widget's
             // gate can show its inline "Unavailable" card.
             if (error instanceof EndpointUnsupportedError) {
-              if (apiAddress)
+              // Exploratory queries (full-chart dialog) opt out of the widget gate.
+              const skipGate = query.meta?.skipNodeSupportGate === true;
+              if (apiAddress && !skipGate)
                 nodeSupportStore.report(
                   apiAddress,
                   error.supportKey,
@@ -118,7 +120,7 @@ const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
                 );
               // Home widgets surface it inline via the gate; other pages (e.g.
               // /top-holders) have no gate, so still show the toast there.
-              if (isDashboardRouteRef.current) return;
+              if (isDashboardRouteRef.current || skipGate) return;
             } else if (
               isDashboardRouteRef.current &&
               error instanceof WaxError &&
