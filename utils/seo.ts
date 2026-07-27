@@ -76,6 +76,27 @@ export const pageTitle = (title?: string): string =>
     ? `${title} | ${siteConfig.name}`
     : siteConfig.name;
 
+// Brand social profiles for the Organization `sameAs` (helps Google associate
+// the site with its accounts). Ops sets a comma-separated list of profile URLs
+// in NEXT_PUBLIC_SITE_SOCIAL_PROFILES (or REACT_APP_*); the X/Twitter handle in
+// siteConfig.twitter is folded in automatically.
+export const socialProfiles = (): string[] => {
+  const listed = (
+    process.env.NEXT_PUBLIC_SITE_SOCIAL_PROFILES ||
+    process.env.REACT_APP_SITE_SOCIAL_PROFILES ||
+    ""
+  )
+    .split(",")
+    .map((s) => s.trim())
+    .filter((s) => /^https?:\/\//i.test(s));
+  const twitter = siteConfig.twitter
+    ? `https://x.com/${siteConfig.twitter.replace(/^@/, "")}`
+    : null;
+  return [...(twitter ? [twitter] : []), ...listed].filter(
+    (v, i, a) => a.indexOf(v) === i
+  );
+};
+
 // --- JSON-LD builders -------------------------------------------------------
 
 export const webSiteJsonLd = (
@@ -89,12 +110,16 @@ export const webSiteJsonLd = (
   description,
 });
 
-export const organizationJsonLd = (base: string): Record<string, unknown> => ({
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: siteConfig.name,
-  url: base || "/",
-});
+export const organizationJsonLd = (base: string): Record<string, unknown> => {
+  const sameAs = socialProfiles();
+  return {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: siteConfig.name,
+    url: base || "/",
+    ...(sameAs.length ? { sameAs } : {}),
+  };
+};
 
 export const breadcrumbJsonLd = (
   base: string,
