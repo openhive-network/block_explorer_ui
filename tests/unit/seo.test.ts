@@ -6,6 +6,7 @@ import {
   listPageMeta,
   webSiteJsonLd,
   organizationJsonLd,
+  socialProfiles,
   siteConfig,
 } from "@/utils/seo";
 
@@ -98,6 +99,29 @@ describe("seo utils", () => {
 
       const o = organizationJsonLd("https://h.info");
       expect(o["@type"]).toBe("Organization");
+    });
+  });
+
+  describe("socialProfiles / sameAs", () => {
+    const OLD = process.env.NEXT_PUBLIC_SITE_SOCIAL_PROFILES;
+    afterEach(() => {
+      process.env.NEXT_PUBLIC_SITE_SOCIAL_PROFILES = OLD;
+    });
+    it("parses a comma-separated list and drops non-URLs", () => {
+      process.env.NEXT_PUBLIC_SITE_SOCIAL_PROFILES =
+        "https://x.com/a, https://facebook.com/b ,nope";
+      const p = socialProfiles();
+      expect(p).toContain("https://x.com/a");
+      expect(p).toContain("https://facebook.com/b");
+      expect(p).not.toContain("nope");
+    });
+    it("Organization gets sameAs when profiles are set, omits it otherwise", () => {
+      process.env.NEXT_PUBLIC_SITE_SOCIAL_PROFILES = "https://youtube.com/@c";
+      expect(organizationJsonLd("https://h.info").sameAs).toEqual(
+        expect.arrayContaining(["https://youtube.com/@c"])
+      );
+      process.env.NEXT_PUBLIC_SITE_SOCIAL_PROFILES = "";
+      expect(organizationJsonLd("https://h.info").sameAs).toBeUndefined();
     });
   });
 });
