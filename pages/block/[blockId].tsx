@@ -1,8 +1,19 @@
 import { useCallback, useEffect, useState } from "react";
+import type { GetServerSideProps } from "next";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/router";
-import Head from "next/head";
 
+import Seo from "@/components/seo/Seo";
+import {
+  SeoMeta,
+  siteConfig,
+  absoluteBaseUrl,
+  canonicalUrl,
+  defaultOgImage,
+  pageTitle,
+  clamp,
+} from "@/utils/seo";
+import { seoText } from "@/utils/seoStrings";
 import { config } from "@/Config";
 import Hive from "@/types/Hive";
 import Explorer from "@/types/Explorer";
@@ -68,7 +79,7 @@ const scrollToTrxSection = (trxId?: string) => {
   };
 };
 
-export default function Block() {
+export default function Block({ meta }: { meta: SeoMeta }) {
   const router = useRouter();
   const { t } = useI18n();
   const { blockId } = useBlockId();
@@ -256,9 +267,7 @@ export default function Block() {
 
   return (
     <>
-      <Head>
-        <title>{blockId} - Hive Explorer</title>
-      </Head>
+      <Seo meta={meta} />
       {loading ? (
         <div>
           <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />
@@ -348,10 +357,7 @@ export default function Block() {
       ) : (
         <div>
           <div className="mt-9 mb-6">{t("blockPage.blockNotFound")}</div>
-          <Button
-            variant="outline"
-            onClick={() => router.reload()}
-          >
+          <Button variant="outline" onClick={() => router.reload()}>
             {t("errorPage.reloadPage")}
           </Button>
         </div>
@@ -359,3 +365,34 @@ export default function Block() {
     </>
   );
 }
+
+export const getServerSideProps: GetServerSideProps<{
+  meta: SeoMeta;
+}> = async ({ req, params }) => {
+  const raw = Array.isArray(params?.blockId)
+    ? params?.blockId[0]
+    : params?.blockId;
+  const block = String(raw || "").trim();
+  const canonical = canonicalUrl(req, `/block/${encodeURIComponent(block)}`);
+  const description = clamp(
+    seoText("seo.block.description", { num: block, site: siteConfig.name })
+  );
+  return {
+    props: {
+      meta: {
+        title: pageTitle(seoText("seo.block.title", { num: block })),
+        description,
+        canonical,
+        ogType: "article",
+        ogImage: defaultOgImage(absoluteBaseUrl(req)),
+        jsonLd: {
+          "@context": "https://schema.org",
+          "@type": "Dataset",
+          name: seoText("seo.block.datasetName", { num: block }),
+          description,
+          url: canonical,
+        },
+      },
+    },
+  };
+};

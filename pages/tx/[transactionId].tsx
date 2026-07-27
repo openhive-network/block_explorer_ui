@@ -1,8 +1,19 @@
 import { useState, useEffect } from "react";
+import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import Head from "next/head";
 
+import Seo from "@/components/seo/Seo";
+import {
+  SeoMeta,
+  siteConfig,
+  absoluteBaseUrl,
+  canonicalUrl,
+  defaultOgImage,
+  pageTitle,
+  clamp,
+} from "@/utils/seo";
+import { seoText } from "@/utils/seoStrings";
 import Hive from "@/types/Hive";
 import { convertTransactionResponseToTableOperations } from "@/lib/utils";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
@@ -43,15 +54,12 @@ const TransactionDetailItem = ({
     >
       {label}:
     </div>
-    <div
-      className="text-sm"
-      data-testid={dataTestId}
-    >
+    <div className="text-sm" data-testid={dataTestId}>
       {value}
     </div>
   </div>
 );
-export default function Transaction() {
+export default function Transaction({ meta }: { meta: SeoMeta }) {
   const router = useRouter();
   const { t } = useI18n();
   const { settings } = useSettings();
@@ -99,9 +107,7 @@ export default function Transaction() {
 
   return (
     <>
-      <Head>
-        <title>{trxData?.transaction_id?.slice(0, 10)} - Hive Explorer</title>
-      </Head>
+      <Seo meta={meta} />
       <div className="page-container flex flex-col gap-y-4">
         {!trxLoading && !!trxData && (
           <>
@@ -258,3 +264,35 @@ export default function Transaction() {
     </>
   );
 }
+
+export const getServerSideProps: GetServerSideProps<{
+  meta: SeoMeta;
+}> = async ({ req, params }) => {
+  const raw = Array.isArray(params?.transactionId)
+    ? params?.transactionId[0]
+    : params?.transactionId;
+  const tx = String(raw || "").trim();
+  const shortTx = tx.length > 12 ? `${tx.slice(0, 12)}…` : tx;
+  const canonical = canonicalUrl(req, `/tx/${encodeURIComponent(tx)}`);
+  const description = clamp(
+    seoText("seo.tx.description", { short: shortTx, site: siteConfig.name })
+  );
+  return {
+    props: {
+      meta: {
+        title: pageTitle(seoText("seo.tx.title", { short: shortTx })),
+        description,
+        canonical,
+        ogType: "article",
+        ogImage: defaultOgImage(absoluteBaseUrl(req)),
+        jsonLd: {
+          "@context": "https://schema.org",
+          "@type": "Dataset",
+          name: seoText("seo.tx.datasetName", { short: shortTx }),
+          description,
+          url: canonical,
+        },
+      },
+    },
+  };
+};
