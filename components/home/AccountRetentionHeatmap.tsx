@@ -145,6 +145,7 @@ const AccountRetentionHeatmap: React.FC<AccountRetentionHeatmapProps> = ({
   const tAccounts = t("accountRetentionFunnelCard.heatmapAccounts");
   const tNewAccounts = t("accountRetentionFunnelCard.newAccounts");
   const tDataPending = t("accountRetentionFunnelCard.heatmapDataPending");
+  const tSurvivalNote = t("accountRetentionFunnelCard.survivalNote");
 
   const months = useMemo(
     () =>
@@ -323,6 +324,7 @@ const AccountRetentionHeatmap: React.FC<AccountRetentionHeatmapProps> = ({
               ${newLine}
               <div style="font-size:11px;margin-top:4px">${col.label} ${tRetention}: <strong>${pctText}</strong></div>
               ${countLine}
+              <div style="font-size:10px;color:${mutedColor};margin-top:4px;max-width:200px;white-space:normal">${tSurvivalNote}</div>
             </div>`;
         },
         backgroundColor: isDark ? "#1f2937" : "#ffffff",
@@ -371,6 +373,7 @@ const AccountRetentionHeatmap: React.FC<AccountRetentionHeatmapProps> = ({
     tAccounts,
     tNewAccounts,
     tDataPending,
+    tSurvivalNote,
   ]);
 
   const rowH = compact ? 22 : 36;
