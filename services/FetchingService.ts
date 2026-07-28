@@ -988,7 +988,7 @@ class FetchingService {
 
   async getAccountPosts(
     accountName: string,
-    limit: number = 50
+    limit: number = 20
   ): Promise<Hive.AccountPostSummary[]> {
     return await this.extendedHiveChain!.api.bridge.get_account_posts({
       sort: "posts",

@@ -5,7 +5,7 @@ import fetchingService from "@/services/FetchingService";
 const useAccountNextPayout = (accountName: string) => {
   const { data: posts, isLoading } = useQuery({
     queryKey: ["account_posts_cashout", accountName],
-    queryFn: () => fetchingService.getAccountPosts(accountName, 50),
+    queryFn: () => fetchingService.getAccountPosts(accountName, 20),
     refetchOnWindowFocus: false,
     enabled: !!accountName,
   });
