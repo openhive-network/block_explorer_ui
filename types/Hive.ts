@@ -1367,13 +1367,22 @@ namespace Hive {
     accountName!: string;
   }
 
+  // Each pending-reward component is split into total / direct / liquid / vesting,
+  // where every part is a nai asset (HBD basis).
+  export class RewardBasis {
+    total!: Supply;
+    direct!: Supply;
+    liquid!: Supply;
+    vesting!: Supply;
+  }
+
   export class PendingAuthorRewardsResponse {
     account!: string;
     pending_post_count!: number;
-    gross_pending_payout!: Supply;
-    estimated_author_payout!: Supply;
-    estimated_beneficiaries_payout!: Supply;
-    estimated_curators_payout!: Supply;
+    gross_reward_basis!: Supply;
+    author_reward_basis!: RewardBasis;
+    beneficiaries_reward_basis!: RewardBasis;
+    curators_reward_basis!: RewardBasis;
   }
 
   export class PendingCurationRewardsParams {
@@ -1383,7 +1392,7 @@ namespace Hive {
   export class PendingCurationRewardsResponse {
     account!: string;
     pending_vote_count!: number;
-    estimated_curation_payout!: Supply;
+    curation_reward_basis!: RewardBasis;
   }
 
   export interface AccountPostSummary {
