@@ -83,6 +83,10 @@ export const WIDGET_NODE_SUPPORT: Record<string, WidgetNodeSupport> = {
   tvl: { app: "balance-api", endpoint: "balance-api:tvl" },
   "hp-momentum": { app: "balance-api", endpoint: "balance-api:vesting-stats" },
 
+  // hivemind-api account widget — pending author/curation rewards live only on
+  // nodes running the hivemind pending-rewards routes; gate on whole-app presence.
+  "my-pending-rewards": { app: "hivemind-api" },
+
   // balance-api account widgets — gate only on whole-app presence.
   "top-holders": { app: "balance-api" },
   "my-wallet": { app: "balance-api" },
