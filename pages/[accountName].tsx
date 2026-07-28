@@ -1,8 +1,6 @@
-import { useState } from "react";
-import {
-  Loader2,
-  X,
-} from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import type { GetServerSideProps } from "next";
+import { Loader2, X } from "lucide-react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 
@@ -53,7 +51,12 @@ export const defaultSearchParams: AccountSearchParams = {
   history: [],
 };
 
-export default function Account() {
+interface AccountPageProps {
+  ogImageUrl: string | null;
+  ogTitle: string | null;
+}
+
+export default function Account({ ogImageUrl, ogTitle }: AccountPageProps) {
   const { t } = useI18n();
   const router = useRouter();
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -72,8 +75,23 @@ export default function Account() {
 
   const [showMobileAccountDetails, setShowMobileAccountDetails] =
     useState(false);
-  const [isDesktopAccountDetailsCollapsed, setIsDesktopAccountDetailsCollapsed] =
-    useState(false);
+  const [
+    isDesktopAccountDetailsCollapsed,
+    setIsDesktopAccountDetailsCollapsed,
+  ] = useState(false);
+
+  // Collapse the sidebar on Analytics for full width; restore on leave, but only
+  // if we auto-collapsed it (don't override a manual collapse).
+  const autoCollapsedSidebarRef = useRef(false);
+  useEffect(() => {
+    if (router.query.activeTab === "analytics") {
+      setIsDesktopAccountDetailsCollapsed(true);
+      autoCollapsedSidebarRef.current = true;
+    } else if (autoCollapsedSidebarRef.current) {
+      setIsDesktopAccountDetailsCollapsed(false);
+      autoCollapsedSidebarRef.current = false;
+    }
+  }, [router.query.activeTab]);
 
   const { dynamicGlobalData } = useDynamicGlobal();
   const {
@@ -99,7 +117,7 @@ export default function Account() {
       return (
         <>
           <SidebarToggleButton
-            isCollapsed={true} 
+            isCollapsed={true}
             onClick={() => setShowMobileAccountDetails(true)}
           />
 
@@ -133,9 +151,7 @@ export default function Account() {
         <>
           <SidebarToggleButton
             isCollapsed={isDesktopAccountDetailsCollapsed}
-            onClick={() =>
-              setIsDesktopAccountDetailsCollapsed((prev) => !prev)
-            }
+            onClick={() => setIsDesktopAccountDetailsCollapsed((prev) => !prev)}
           />
           {!isDesktopAccountDetailsCollapsed && (
             <div className="col-start-1 col-span-1 flex flex-col gap-y-2">
@@ -159,6 +175,21 @@ export default function Account() {
     ? router.query.accountName[0] // If it's an array, get the first element
     : router.query.accountName; // Otherwise, treat it as a string directly
 
+  // Open Graph / Twitter card meta, built server-side (getServerSideProps) with
+  // an absolute URL so crawlers — which never run the client fetch below — can
+  // unfurl the share card. Rendered on every path, including the loader.
+  const ogMeta =
+    ogImageUrl && ogTitle ? (
+      <Head>
+        <meta property="og:title" content={ogTitle} />
+        <meta property="og:image" content={ogImageUrl} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content={ogImageUrl} />
+      </Head>
+    ) : null;
+
   if (routeAccountName && !routeAccountName.startsWith("@")) {
     return <ErrorPage />;
   }
@@ -168,13 +199,16 @@ export default function Account() {
       "accountName.accountNotFound"
     )}`;
     if (notFound && !isAccountDetailsLoading) {
-    return <ErrorPage errorMessage={accountNotFoundError} />;
+      return <ErrorPage errorMessage={accountNotFoundError} />;
     }
   }
 
   if (!accountDetails) {
     return (
-      <Loader2 className="animate-spin mt-1 text-black dark:text-white h-12 w-12 ml-3 ..." />
+      <>
+        {ogMeta}
+        <Loader2 className="animate-spin mt-1 text-black dark:text-white h-12 w-12 ml-3 ..." />
+      </>
     );
   }
 
@@ -189,6 +223,7 @@ export default function Account() {
           - Hive Explorer
         </title>
       </Head>
+      {!communityDetails && ogMeta}
       <div className="grid grid-cols-1 md:grid-cols-3 text-white page-container gap-4">
         {isMobile && (
           <MobileAccountNameCard
@@ -223,3 +258,36 @@ export default function Account() {
     </AccountTabsProvider>
   );
 }
+
+export const getServerSideProps: GetServerSideProps<AccountPageProps> = async ({
+  params,
+  req,
+}) => {
+  const raw = Array.isArray(params?.accountName)
+    ? params?.accountName[0]
+    : params?.accountName;
+  const name = (raw || "").replace(/^@/, "").replace(/^%40/i, "");
+
+  // Communities (hive-*) don't get an account share card.
+  if (!name || name.startsWith("hive-")) {
+    return { props: { ogImageUrl: null, ogTitle: null } };
+  }
+
+  const forwardedProto = String(req.headers["x-forwarded-proto"] || "").split(
+    ","
+  )[0];
+  const proto = forwardedProto || "https";
+  const host =
+    (req.headers["x-forwarded-host"] as string) || req.headers.host || "";
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+  const ogImageUrl = host
+    ? `${proto}://${host}${basePath}/api/og/account/${encodeURIComponent(name)}`
+    : null;
+
+  return {
+    props: {
+      ogImageUrl,
+      ogTitle: `@${name} on Hive`,
+    },
+  };
+};

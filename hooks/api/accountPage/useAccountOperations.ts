@@ -33,6 +33,8 @@ const useAccountOperations = (
     enabled:
       !!accountOperationsProps?.accountName &&
       !!accountOperationsProps?.accountName.length,
+    // User-initiated account search: surface errors via toast even on home.
+    meta: { showErrorToast: true },
   });
 
   return {

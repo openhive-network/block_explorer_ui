@@ -1,5 +1,6 @@
-import React, { ReactNode, useEffect, useMemo } from "react";
+import React, { ReactNode, useEffect, useMemo, useRef } from "react";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
 import {
   QueryCache,
   QueryClient,
@@ -32,6 +33,10 @@ import { OperationTypesContextProvider } from "@/contexts/OperationsTypesContext
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { SearchesContextProvider } from "@/contexts/SearchesContext";
 import { HealthCheckerContextProvider } from "@/contexts/HealthCheckerContext";
+import { NodeSupportContextProvider } from "@/contexts/NodeSupportContext";
+import { EndpointUnsupportedError } from "@/utils/nodeSupport";
+import { nodeSupportStore } from "@/utils/nodeSupportStore";
+import { WaxError } from "@hiveio/wax";
 
 import { config } from "@/Config";
 import { AuthContextProvider } from "@/contexts/AuthContext";
@@ -65,6 +70,21 @@ const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
   // The logic that used useSettings() has been moved to the component above.
   const { apiAddress, nodeAddress } = useApiAddresses();
 
+  // Dashboards (the home dashboard and the account Analytics tab) render every
+  // widget/report with its own inline error + node-support gate, so a global
+  // toast there just floods the screen on an incompatible node. Track whether
+  // we're on such a route so onError can suppress request-error toasts there
+  // only (kept on every other page). Read via ref so the memoized onError
+  // closure always sees the current route.
+  const router = useRouter();
+  const isDashboardRouteRef = useRef(false);
+  useEffect(() => {
+    isDashboardRouteRef.current =
+      router.pathname === "/" ||
+      (router.pathname === "/[accountName]" &&
+        router.query.activeTab === "analytics");
+  }, [router.pathname, router.query.activeTab]);
+
   const queryClient = useMemo(
     () =>
       new QueryClient({
@@ -73,12 +93,44 @@ const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
             enabled: apiAddress !== null && nodeAddress !== null,
             staleTime: 10000,
             refetchOnWindowFocus: false,
-            retry: 1,
+            retry: (failureCount, error) => {
+              if (error instanceof EndpointUnsupportedError) {
+                // A definitive missing route never retries; a transient
+                // (status-less: timeout/network/CORS) failure gets a couple of
+                // retries before it's allowed to stick.
+                return error.transient && failureCount < 2;
+              }
+              return failureCount < 1;
+            },
           },
         },
 
         queryCache: new QueryCache({
-          onError: (error: any) => {
+          onError: (error: any, query) => {
+            // A missing endpoint is recorded for the active node so the widget's
+            // gate can show its inline "Unavailable" card.
+            if (error instanceof EndpointUnsupportedError) {
+              // Exploratory queries (full-chart dialog) opt out of the widget gate.
+              const skipGate = query.meta?.skipNodeSupportGate === true;
+              if (apiAddress && !skipGate)
+                nodeSupportStore.report(
+                  apiAddress,
+                  error.supportKey,
+                  error.transient
+                );
+              // Home widgets surface it inline via the gate; other pages (e.g.
+              // /top-holders) have no gate, so still show the toast there.
+              if (isDashboardRouteRef.current || skipGate) return;
+            } else if (
+              isDashboardRouteRef.current &&
+              error instanceof WaxError &&
+              query.meta?.showErrorToast !== true
+            ) {
+              // Home dashboard widgets each render their own inline error, so
+              // don't also flood a global toast — but user-initiated queries
+              // (search) opt back in via meta.showErrorToast.
+              return;
+            }
             toast.error("Error occured", {
               description: `${(error as Error).message}`,
               style: {
@@ -102,16 +154,18 @@ const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
                   <AddressesContextProvider>
                     <ThemeProvider>
                       <HealthCheckerContextProvider>
-                        <ErrorBoundary fallback={<ErrorPage />}>
-                          <HeadBlockContextProvider>
-                            <OperationTypesContextProvider>
-                              <SearchesContextProvider>
-                                <Layout>{children}</Layout>
-                                <ReactQueryDevtools initialIsOpen={false} />
-                              </SearchesContextProvider>
-                            </OperationTypesContextProvider>
-                          </HeadBlockContextProvider>
-                        </ErrorBoundary>
+                        <NodeSupportContextProvider>
+                          <ErrorBoundary fallback={<ErrorPage />}>
+                            <HeadBlockContextProvider>
+                              <OperationTypesContextProvider>
+                                <SearchesContextProvider>
+                                  <Layout>{children}</Layout>
+                                  <ReactQueryDevtools initialIsOpen={false} />
+                                </SearchesContextProvider>
+                              </OperationTypesContextProvider>
+                            </HeadBlockContextProvider>
+                          </ErrorBoundary>
+                        </NodeSupportContextProvider>
                       </HealthCheckerContextProvider>
                     </ThemeProvider>
                   </AddressesContextProvider>

@@ -270,6 +270,12 @@ export const extendedRest = {
       responseArray: true,
       urlPath: "network/hp-distribution",
     },
+    governanceInfluenceConcentration: {
+      params: Hive.GovernanceInfluenceConcentrationParams,
+      result: Hive.GovernanceInfluenceConcentrationResponse,
+      responseArray: true,
+      urlPath: "governance/influence-concentration",
+    },
     accountFunnel: {
       params: Hive.AccountFunnelParams,
       result: Hive.AccountFunnelResponse,
@@ -299,6 +305,59 @@ export const extendedRest = {
       result: Hive.NetworkEngagementResponse,
       responseArray: true,
       urlPath: "network/engagement",
+    },
+    networkAuthorRetention: {
+      params: Hive.NetworkAuthorRetentionParams,
+      result: Hive.NetworkAuthorRetentionResponse,
+      responseArray: true,
+      urlPath: "network/author-retention",
+    },
+    networkTopCustomJson: {
+      params: Hive.NetworkTopCustomJsonParams,
+      result: Hive.NetworkTopCustomJsonRow,
+      responseArray: true,
+      urlPath: "network/top-custom-json",
+    },
+    networkCustomJsonUsage: {
+      params: Hive.NetworkCustomJsonUsageParams,
+      result: Hive.NetworkCustomJsonUsageRow,
+      responseArray: true,
+      urlPath: "network/custom-json-usage",
+    },
+    customJsonAppRegistry: {
+      params: Hive.CustomJsonAppRegistryParams,
+      result: Hive.CustomJsonAppRegistryRow,
+      responseArray: true,
+      urlPath: "custom-json-app-registry",
+    },
+    accountContentStats: {
+      params: Hive.AccountContentStatsParams,
+      result: Hive.AccountContentStatsResponse,
+      responseArray: true,
+      urlPath: "account/{accountName}/content-stats",
+    },
+    accountDappFootprint: {
+      params: Hive.AccountDappFootprintParams,
+      result: Hive.AccountDappFootprintResponse,
+      urlPath: "account/{account}/dapp-footprint",
+    },
+    accountRcFootprint: {
+      params: Hive.AccountRcFootprintParams,
+      result: Hive.AccountRcFootprintRow,
+      responseArray: true,
+      urlPath: "account/{account}/rc-footprint",
+    },
+    accountRcFootprintTimeline: {
+      params: Hive.AccountRcFootprintTimelineParams,
+      result: Hive.AccountRcFootprintTimelineRow,
+      responseArray: true,
+      urlPath: "account/{account}/rc-footprint-timeline",
+    },
+    accountFinancialSummary: {
+      params: Hive.AccountFinancialSummaryParams,
+      result: Hive.FinancialSummaryRow,
+      responseArray: true,
+      urlPath: "account/{account}/financial-summary",
     },
   },
 };

@@ -7,6 +7,10 @@ import MyHpDelegationsWidget from "@/components/dashboard/widgets/data/MyHpDeleg
 import MyRcDelegationsWidget from "@/components/dashboard/widgets/data/MyRcDelegationsWidget";
 import MyAuthoritiesWidget from "@/components/dashboard/widgets/data/MyAuthoritiesWidget";
 import MyRecentActivityWidget from "@/components/dashboard/widgets/data/MyRecentActivityWidget";
+import MyRcFootprintWidget from "@/components/dashboard/widgets/data/MyRcFootprintWidget";
+import MyContentActivityWidget from "@/components/dashboard/widgets/data/MyContentActivityWidget";
+import MyRcConsumptionWidget from "@/components/dashboard/widgets/data/MyRcConsumptionWidget";
+import MyFinancialSummaryWidget from "@/components/dashboard/widgets/data/MyFinancialSummaryWidget";
 import TopHoldersWidget from "@/components/dashboard/widgets/data/TopHoldersWidget";
 import EmbedWidget from "@/components/dashboard/widgets/layout/EmbedWidget";
 import MarkdownWidget from "@/components/dashboard/widgets/layout/MarkdownWidget";
@@ -25,10 +29,12 @@ import HpMomentumCard from "@/components/home/HpMomentumCard";
 import NetworkVotingActivityCard from "@/components/home/NetworkVotingActivityCard";
 import DailyActiveUsersCard from "@/components/home/DailyActiveUsersCard";
 import AccountRetentionFunnelCard from "@/components/home/AccountRetentionFunnelCard";
+import NetworkAuthorRetentionCard from "@/components/home/NetworkAuthorRetentionCard";
 import NetworkOpMixCard from "@/components/home/NetworkOpMixCard";
 import NetworkRcUtilizationCard from "@/components/home/NetworkRcUtilizationCard";
 import NetworkContentVolumeCard from "@/components/home/NetworkContentVolumeCard";
 import NetworkEngagementCard from "@/components/home/NetworkEngagementCard";
+import NetworkDappUsageCard from "@/components/home/NetworkDappUsage/NetworkDappUsageCard";
 import LastBlocksWidget from "@/components/LastBlocksWidget";
 import FundAndSupplyWidget from "@/components/dashboard/widgets/data/FundAndSupplyWidget";
 import HiveParametersWidget from "@/components/dashboard/widgets/data/HiveParametersWidget";
@@ -277,6 +283,14 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     defaultLayout: { w: 6, h: 3.3, minW: 3, minH: 3 },
     dynamicHeight: true,
   },
+  "network-author-retention": {
+    id: "network-author-retention",
+    name: "widgets.networkAuthorRetentionName",
+    category: "reports" as const,
+    component: NetworkAuthorRetentionCard,
+    defaultLayout: { w: 6, h: 8, minW: 3, minH: 4 },
+    dynamicHeight: true,
+  },
   "op-mix": {
     id: "op-mix",
     name: "widgets.opMixName",
@@ -307,6 +321,14 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     category: "reports" as const,
     component: NetworkEngagementCard,
     defaultLayout: { w: 6, h: 5, minW: 3, minH: 4 },
+    dynamicHeight: true,
+  },
+  "network-dapp-usage": {
+    id: "network-dapp-usage",
+    name: "widgets.networkDappUsageName",
+    category: "reports" as const,
+    component: NetworkDappUsageCard,
+    defaultLayout: { w: 6, h: 7, minW: 3, minH: 5 },
     dynamicHeight: true,
   },
   "voting-activity": {
@@ -411,6 +433,50 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     component: MyRecentActivityWidget,
     defaultLayout: { w: 3, h: 7, minW: 2, minH: 3 },
     allowMultiple: false,
+  },
+
+  "my-rc-footprint": {
+    id: "my-rc-footprint",
+    name: "widgets.myRcFootprintName",
+    description: "widgets.myRcFootprintDescription",
+    category: "account" as const,
+    component: MyRcFootprintWidget,
+    defaultLayout: { w: 6, h: 8, minW: 3, minH: 3 },
+    allowMultiple: false,
+    dynamicHeight: true,
+  },
+
+  "my-content-activity": {
+    id: "my-content-activity",
+    name: "widgets.myContentActivityName",
+    description: "widgets.myContentActivityDescription",
+    category: "account" as const,
+    component: MyContentActivityWidget,
+    defaultLayout: { w: 6, h: 8, minW: 3, minH: 3 },
+    allowMultiple: false,
+    dynamicHeight: true,
+  },
+
+  "my-rc-consumption": {
+    id: "my-rc-consumption",
+    name: "widgets.myRcConsumptionName",
+    description: "widgets.myRcConsumptionDescription",
+    category: "account" as const,
+    component: MyRcConsumptionWidget,
+    defaultLayout: { w: 6, h: 8, minW: 3, minH: 3 },
+    allowMultiple: false,
+    dynamicHeight: true,
+  },
+
+  "my-financial-summary": {
+    id: "my-financial-summary",
+    name: "widgets.myFinancialSummaryName",
+    description: "widgets.myFinancialSummaryDescription",
+    category: "account" as const,
+    component: MyFinancialSummaryWidget,
+    defaultLayout: { w: 6, h: 8, minW: 3, minH: 3 },
+    allowMultiple: false,
+    dynamicHeight: true,
   },
 
   "top-holders": {
