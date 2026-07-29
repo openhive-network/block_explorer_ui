@@ -7,6 +7,13 @@ import DataExport from "@/components/DataExport";
 import { spacesToUnderscores } from "@/utils/StringUtils";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipPortal,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import SearchRanges from "../searchRanges/SearchRanges";
 import useSearchRanges from "@/hooks/common/useSearchRanges";
 import AccountRetentionHeatmap, {
@@ -26,10 +33,30 @@ const KpiTile: React.FC<{
   label: string;
   value: React.ReactNode;
   sub?: React.ReactNode;
-}> = ({ label, value, sub }) => (
+  tooltip?: string;
+}> = ({ label, value, sub, tooltip }) => (
   <div className="rounded-md border border-gray-200 dark:border-gray-700 bg-theme px-3 py-2 shadow-sm">
-    <div className="text-[11px] text-gray-500 dark:text-gray-400 mb-0.5 uppercase tracking-wide leading-none">
-      {label}
+    <div className="flex items-center gap-1 text-[11px] text-gray-500 dark:text-gray-400 mb-0.5 uppercase tracking-wide leading-none">
+      <span>{label}</span>
+      {tooltip && (
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="shrink-0 cursor-help text-gray-400 hover:text-gray-500">
+                <Info size={12} />
+              </span>
+            </TooltipTrigger>
+            <TooltipPortal>
+              <TooltipContent
+                side="top"
+                className="max-w-[260px] text-[12px] text-left normal-case"
+              >
+                {tooltip}
+              </TooltipContent>
+            </TooltipPortal>
+          </Tooltip>
+        </TooltipProvider>
+      )}
     </div>
     <div className="text-sm font-semibold leading-tight whitespace-nowrap overflow-hidden text-ellipsis">
       {value}
@@ -276,6 +303,12 @@ const AccountRetentionFunnelFullChartDialog: React.FC<
               />
               <KpiTile
                 label={t("accountRetentionFunnelCard.retention7d")}
+                tooltip={t(
+                  "accountRetentionFunnelCard.tooltipRetentionSurvival",
+                  {
+                    n: 7,
+                  }
+                )}
                 value={
                   viewMode === "rates" ? (
                     <span className={retentionColor(avg7d)}>
@@ -293,6 +326,12 @@ const AccountRetentionFunnelFullChartDialog: React.FC<
               />
               <KpiTile
                 label={t("accountRetentionFunnelCard.retention30d")}
+                tooltip={t(
+                  "accountRetentionFunnelCard.tooltipRetentionSurvival",
+                  {
+                    n: 30,
+                  }
+                )}
                 value={
                   viewMode === "rates" ? (
                     <span className={retentionColor(avg30d)}>
@@ -310,6 +349,12 @@ const AccountRetentionFunnelFullChartDialog: React.FC<
               />
               <KpiTile
                 label={t("accountRetentionFunnelCard.retention90d")}
+                tooltip={t(
+                  "accountRetentionFunnelCard.tooltipRetentionSurvival",
+                  {
+                    n: 90,
+                  }
+                )}
                 value={
                   viewMode === "rates" ? (
                     <span className={retentionColor(avg90d)}>
