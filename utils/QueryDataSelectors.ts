@@ -101,7 +101,6 @@ export function adjustDynamicGlobalBlockData(
     rawTotalVestingShares,
     rawFeedPrice: base,
     rawQuote: quote,
-    rawHbdPrintRate: hbd_print_rate as unknown as number,
   };
   return {
     headBlockDetails,
