@@ -1000,17 +1000,21 @@ class FetchingService {
   async getPendingAuthorRewards(
     accountName: string
   ): Promise<Hive.PendingAuthorRewardsResponse> {
-    return await this.extendedHiveChain!.restApi[
-      "hivemind-api"
-    ].accounts.pendingAuthorRewards({ accountName });
+    return this.withNodeSupport("hivemind-api:pending-author-rewards", () =>
+      this.extendedHiveChain!.restApi[
+        "hivemind-api"
+      ].accounts.pendingAuthorRewards({ accountName })
+    );
   }
 
   async getPendingCurationRewards(
     accountName: string
   ): Promise<Hive.PendingCurationRewardsResponse> {
-    return await this.extendedHiveChain!.restApi[
-      "hivemind-api"
-    ].accounts.pendingCurationRewards({ accountName });
+    return this.withNodeSupport("hivemind-api:pending-curation-rewards", () =>
+      this.extendedHiveChain!.restApi[
+        "hivemind-api"
+      ].accounts.pendingCurationRewards({ accountName })
+    );
   }
 
   async getDailyActiveUsers(

@@ -14,7 +14,8 @@ const NAI_SYMBOL: Record<string, string> = {
 
 export const naiAssetToFloat = (asset: NaiAsset | undefined): number => {
   if (!asset) return 0;
-  return parseFloat(asset.amount) / Math.pow(10, asset.precision);
+  const value = parseFloat(asset.amount) / Math.pow(10, asset.precision);
+  return isFinite(value) ? value : 0;
 };
 
 export const formatNaiAsset = (asset: NaiAsset | undefined): string => {

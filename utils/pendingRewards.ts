@@ -61,8 +61,9 @@ export const derivePendingRewards = (
   const authorPct = grossHbd > 0 ? (authorTotalHbd / grossHbd) * 100 : 0;
   const beneficiariesPct =
     grossHbd > 0 ? (beneficiariesTotalHbd / grossHbd) * 100 : 0;
-  const curatorsPct =
-    grossHbd > 0 ? Math.max(0, 100 - authorPct - beneficiariesPct) : 0;
+  // Derived from the actual value (not a 100−rest remainder) so the bar's % and
+  // the row's displayed amount can't disagree.
+  const curatorsPct = grossHbd > 0 ? (curatorsTotalHbd / grossHbd) * 100 : 0;
 
   const postCount = author?.pending_post_count ?? 0;
   const voteCount = curation?.pending_vote_count ?? 0;

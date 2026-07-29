@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   ArrowDown,
   ArrowUp,
@@ -107,6 +107,11 @@ const AccountPendingRewardsCard: React.FC<AccountPendingRewardsCardProps> = ({
 }) => {
   const { t } = useI18n();
   const [isHidden, setIsHidden] = useState(!isInitiallyOpen);
+
+  // Re-sync when the wallet tab is expanded/collapsed, like the sibling cards.
+  useEffect(() => {
+    setIsHidden(!isInitiallyOpen);
+  }, [isInitiallyOpen]);
   const [currency, setCurrency] = useState<Currency>("HBD");
 
   const {
