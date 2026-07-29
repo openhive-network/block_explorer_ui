@@ -8,6 +8,10 @@ import {
   organizationJsonLd,
   socialProfiles,
   siteConfig,
+  serializeJsonLd,
+  profilePageJsonLd,
+  defaultOgImage,
+  verification,
 } from "@/utils/seo";
 
 const req = (headers: Record<string, string>) => ({ headers });
@@ -86,6 +90,79 @@ describe("seo utils", () => {
       const jsonLd = meta.jsonLd as Record<string, unknown>;
       expect(jsonLd["@type"]).toBe("CollectionPage");
       expect(jsonLd.url).toBe("https://h.info/witnesses");
+    });
+  });
+
+  describe("serializeJsonLd (XSS-safe injection)", () => {
+    it("escapes < so a </script> value can't break out of the tag", () => {
+      const out = serializeJsonLd({
+        name: "</script><img src=x onerror=alert(1)>",
+      });
+      expect(out).not.toContain("</script>");
+      expect(out).not.toContain("<");
+      expect(out).toContain("\\u003c");
+    });
+
+    it("escapes the U+2028 / U+2029 line separators", () => {
+      const u2028 = String.fromCharCode(0x2028);
+      const u2029 = String.fromCharCode(0x2029);
+      const out = serializeJsonLd({ name: `a${u2028}b${u2029}c` });
+      expect(out).toContain("\\u2028");
+      expect(out).toContain("\\u2029");
+      expect(out).not.toContain(u2028);
+      expect(out).not.toContain(u2029);
+    });
+
+    it("still produces valid JSON", () => {
+      const obj = { "@type": "Person", name: "a<b" };
+      expect(JSON.parse(serializeJsonLd(obj))).toEqual(obj);
+    });
+  });
+
+  describe("profilePageJsonLd", () => {
+    it("builds a ProfilePage with handle + bare identifier", () => {
+      const ld = profilePageJsonLd("https://h.info/@alice", "@alice");
+      expect(ld["@type"]).toBe("ProfilePage");
+      expect(ld.url).toBe("https://h.info/@alice");
+      const person = ld.mainEntity as Record<string, unknown>;
+      expect(person.name).toBe("@alice");
+      expect(person.identifier).toBe("alice");
+    });
+  });
+
+  describe("defaultOgImage", () => {
+    const OLD_NEXT = process.env.NEXT_PUBLIC_DEFAULT_OG_IMAGE;
+    const OLD_RA = process.env.REACT_APP_DEFAULT_OG_IMAGE;
+    afterEach(() => {
+      process.env.NEXT_PUBLIC_DEFAULT_OG_IMAGE = OLD_NEXT;
+      process.env.REACT_APP_DEFAULT_OG_IMAGE = OLD_RA;
+    });
+    it("falls back to the generated cover route", () => {
+      delete process.env.NEXT_PUBLIC_DEFAULT_OG_IMAGE;
+      delete process.env.REACT_APP_DEFAULT_OG_IMAGE;
+      expect(defaultOgImage("https://h.info")).toBe(
+        "https://h.info/api/og/cover"
+      );
+    });
+    it("uses an absolute override verbatim", () => {
+      process.env.NEXT_PUBLIC_DEFAULT_OG_IMAGE =
+        "https://cdn.example.com/x.png";
+      expect(defaultOgImage("https://h.info")).toBe(
+        "https://cdn.example.com/x.png"
+      );
+    });
+    it("resolves a site-relative override against the base", () => {
+      process.env.NEXT_PUBLIC_DEFAULT_OG_IMAGE = "/img/share.png";
+      expect(defaultOgImage("https://h.info")).toBe(
+        "https://h.info/img/share.png"
+      );
+    });
+  });
+
+  describe("verification", () => {
+    it("exposes string google/bing token slots", () => {
+      expect(typeof verification.google).toBe("string");
+      expect(typeof verification.bing).toBe("string");
     });
   });
 

@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import fs from "fs";
 import path from "path";
+import { siteConfig, escapeXml } from "@/utils/seo";
 
 // Default Open Graph share image (1200x630) for pages without their own (the
 // account card supplies its own via /api/og/account). PNG where sharp is
@@ -133,7 +134,7 @@ const buildSvg =
       ? `<image href="${logoDataUri}" x="72" y="70" width="64" height="64"/>`
       : ""
   }
-  <text x="${logoDataUri ? 150 : 72}" y="105" font-family="${FONT}" font-size="42" font-weight="800" fill="#ffffff">hivescan.info</text>
+  <text x="${logoDataUri ? 150 : 72}" y="105" font-family="${FONT}" font-size="42" font-weight="800" fill="#ffffff">${escapeXml(siteConfig.name)}</text>
   <text x="${logoDataUri ? 152 : 74}" y="132" font-family="${FONT}" font-size="17" font-weight="600" letter-spacing="4" fill="#64748b">HIVE BLOCK EXPLORER</text>
 
   <rect x="72" y="188" width="92" height="8" rx="4" fill="url(#accent)"/>

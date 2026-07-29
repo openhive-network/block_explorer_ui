@@ -2,7 +2,12 @@ import { useState, useMemo, useEffect, useCallback } from "react";
 import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import Seo from "@/components/seo/Seo";
-import { SeoMeta, listPageMeta, pageTitle } from "@/utils/seo";
+import {
+  SeoMeta,
+  listPageMeta,
+  pageTitle,
+  SEO_LIST_CACHE_CONTROL,
+} from "@/utils/seo";
 import { seoText } from "@/utils/seoStrings";
 import { useQueryClient } from "@tanstack/react-query";
 import { useI18n } from "@/i18n/i18n";
@@ -542,13 +547,16 @@ const ProposalsPage = ({ meta }: { meta: SeoMeta }) => {
 export default ProposalsPage;
 export const getServerSideProps: GetServerSideProps<{
   meta: SeoMeta;
-}> = async ({ req }) => ({
-  props: {
-    meta: listPageMeta(
-      req,
-      "/proposals",
-      seoText("seo.proposals.title"),
-      seoText("seo.proposals.description")
-    ),
-  },
-});
+}> = async ({ req, res }) => {
+  res.setHeader("Cache-Control", SEO_LIST_CACHE_CONTROL);
+  return {
+    props: {
+      meta: listPageMeta(
+        req,
+        "/proposals",
+        seoText("seo.proposals.title"),
+        seoText("seo.proposals.description")
+      ),
+    },
+  };
+};

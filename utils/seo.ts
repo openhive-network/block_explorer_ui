@@ -24,9 +24,27 @@ export const verification = {
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || "";
 
-// Resolve the deployment's absolute base URL from the request (proxy-aware) so
-// SEO output is correct on any domain without hardcoding one.
+// A configured canonical origin (trusted env). When set it takes precedence over
+// request headers so canonical/OG/sitemap URLs can't be poisoned by a spoofed
+// Host / X-Forwarded-Host behind a shared cache.
+const SITE_URL = (
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  process.env.REACT_APP_SITE_URL ||
+  ""
+).replace(/\/+$/, "");
+
+// Cache policy for the meta-only SSR pages. A shared-cacheable TTL is safe ONLY
+// when the base is a configured origin (constant); a host-derived response is
+// per-request and must never be shared-cached (else a spoofed Host could be
+// served to others), so it is marked private/no-store.
+export const SEO_LIST_CACHE_CONTROL = SITE_URL
+  ? "public, s-maxage=300, stale-while-revalidate=600"
+  : "private, no-store";
+
+// Resolve the deployment's absolute base URL. Prefer the configured origin;
+// fall back to the (proxy-aware) request host so zero-config deploys still work.
 export const absoluteBaseUrl = (req: SeoRequest): string => {
+  if (SITE_URL) return `${SITE_URL}${BASE_PATH}`;
   const proto =
     String(req.headers["x-forwarded-proto"] || "").split(",")[0] || "https";
   const host =
@@ -36,10 +54,34 @@ export const absoluteBaseUrl = (req: SeoRequest): string => {
   return host ? `${proto}://${host}${BASE_PATH}` : BASE_PATH;
 };
 
+// Escape a value for inclusion in XML text/attributes (sitemap <loc>).
+export const escapeXml = (s: string): string =>
+  s.replace(/[&<>"']/g, (c) =>
+    c === "&"
+      ? "&amp;"
+      : c === "<"
+        ? "&lt;"
+        : c === ">"
+          ? "&gt;"
+          : c === '"'
+            ? "&quot;"
+            : "&apos;"
+  );
+
 export const canonicalUrl = (req: SeoRequest, path: string): string => {
   const p = path.startsWith("/") ? path : `/${path}`;
   return `${absoluteBaseUrl(req)}${p === "/" ? "" : p}` || "/";
 };
+
+// Serialize a JSON-LD object for injection inside a <script> tag. JSON.stringify
+// does NOT escape `<`, so a value containing `</script>` would break out of the
+// tag (XSS). Neutralize `<` and the line/paragraph separators that are valid in
+// JSON strings but not in JS source.
+export const serializeJsonLd = (jsonLd: unknown): string =>
+  JSON.stringify(jsonLd).replace(
+    /[<\u2028\u2029]/g,
+    (c) => "\\u" + c.charCodeAt(0).toString(16).padStart(4, "0")
+  );
 
 // Default share image for pages without their own. Falls back to the generated
 // cover route (/api/og/cover); deployments can override with an absolute URL or

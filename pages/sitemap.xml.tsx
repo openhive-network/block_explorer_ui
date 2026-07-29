@@ -1,5 +1,5 @@
 import type { GetServerSideProps } from "next";
-import { absoluteBaseUrl } from "@/utils/seo";
+import { absoluteBaseUrl, escapeXml } from "@/utils/seo";
 
 // Entity pages (accounts, blocks, transactions) number in the millions, so the
 // sitemap lists only the stable index routes; crawlers reach entity pages via
@@ -20,7 +20,7 @@ const SiteMap = () => null;
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   const base = absoluteBaseUrl(req);
   const urls = STATIC_ROUTES.map(({ path, changefreq, priority }) => {
-    const loc = `${base}${path === "/" ? "" : path}` || base || "/";
+    const loc = escapeXml(`${base}${path === "/" ? "" : path}` || base || "/");
     return `  <url><loc>${loc}</loc><changefreq>${changefreq}</changefreq><priority>${priority}</priority></url>`;
   }).join("\n");
   const xml = `<?xml version="1.0" encoding="UTF-8"?>

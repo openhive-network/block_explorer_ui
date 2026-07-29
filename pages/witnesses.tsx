@@ -1,7 +1,12 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useI18n } from "@/i18n/i18n";
 import Seo from "@/components/seo/Seo";
-import { SeoMeta, listPageMeta, pageTitle } from "@/utils/seo";
+import {
+  SeoMeta,
+  listPageMeta,
+  pageTitle,
+  SEO_LIST_CACHE_CONTROL,
+} from "@/utils/seo";
 import { seoText } from "@/utils/seoStrings";
 import { Loader2, ArrowRight, Heart, Search, Users } from "lucide-react";
 import Link from "next/link";
@@ -434,13 +439,16 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
 
 export const getServerSideProps: GetServerSideProps<{
   meta: SeoMeta;
-}> = async ({ req }) => ({
-  props: {
-    meta: listPageMeta(
-      req,
-      "/witnesses",
-      seoText("seo.witnesses.title"),
-      seoText("seo.witnesses.description")
-    ),
-  },
-});
+}> = async ({ req, res }) => {
+  res.setHeader("Cache-Control", SEO_LIST_CACHE_CONTROL);
+  return {
+    props: {
+      meta: listPageMeta(
+        req,
+        "/witnesses",
+        seoText("seo.witnesses.title"),
+        seoText("seo.witnesses.description")
+      ),
+    },
+  };
+};

@@ -3,7 +3,7 @@ import type { GetServerSideProps } from "next";
 import { Loader2 } from "lucide-react";
 
 import Seo from "@/components/seo/Seo";
-import { SeoMeta, listPageMeta } from "@/utils/seo";
+import { SeoMeta, listPageMeta, SEO_LIST_CACHE_CONTROL } from "@/utils/seo";
 import { seoText } from "@/utils/seoStrings";
 import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
 import useWitnesses from "@/hooks/api/common/useWitnesses";
@@ -94,15 +94,18 @@ const Schedule = ({ meta }: { meta: SeoMeta }) => {
 
 export const getServerSideProps: GetServerSideProps<{
   meta: SeoMeta;
-}> = async ({ req }) => ({
-  props: {
-    meta: listPageMeta(
-      req,
-      "/schedule",
-      seoText("seo.schedule.title"),
-      seoText("seo.schedule.description")
-    ),
-  },
-});
+}> = async ({ req, res }) => {
+  res.setHeader("Cache-Control", SEO_LIST_CACHE_CONTROL);
+  return {
+    props: {
+      meta: listPageMeta(
+        req,
+        "/schedule",
+        seoText("seo.schedule.title"),
+        seoText("seo.schedule.description")
+      ),
+    },
+  };
+};
 
 export default Schedule;

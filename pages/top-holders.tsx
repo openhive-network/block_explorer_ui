@@ -2,7 +2,12 @@ import { useEffect, useState, useRef, useMemo } from "react";
 import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import Seo from "@/components/seo/Seo";
-import { SeoMeta, listPageMeta, pageTitle } from "@/utils/seo";
+import {
+  SeoMeta,
+  listPageMeta,
+  pageTitle,
+  SEO_LIST_CACHE_CONTROL,
+} from "@/utils/seo";
 import { seoText } from "@/utils/seoStrings";
 import { Card } from "@/components/ui/card";
 import {
@@ -950,13 +955,16 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
 
 export const getServerSideProps: GetServerSideProps<{
   meta: SeoMeta;
-}> = async ({ req }) => ({
-  props: {
-    meta: listPageMeta(
-      req,
-      "/top-holders",
-      seoText("seo.topHolders.title"),
-      seoText("seo.topHolders.description")
-    ),
-  },
-});
+}> = async ({ req, res }) => {
+  res.setHeader("Cache-Control", SEO_LIST_CACHE_CONTROL);
+  return {
+    props: {
+      meta: listPageMeta(
+        req,
+        "/top-holders",
+        seoText("seo.topHolders.title"),
+        seoText("seo.topHolders.description")
+      ),
+    },
+  };
+};

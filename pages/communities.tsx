@@ -9,7 +9,12 @@ import CommunityCard, {
 import CommunitySubscribersDialog from "@/components/account/CommunitySubscribersDialog";
 import type { GetServerSideProps } from "next";
 import Seo from "@/components/seo/Seo";
-import { SeoMeta, listPageMeta, pageTitle } from "@/utils/seo";
+import {
+  SeoMeta,
+  listPageMeta,
+  pageTitle,
+  SEO_LIST_CACHE_CONTROL,
+} from "@/utils/seo";
 import { seoText } from "@/utils/seoStrings";
 import PageTitle from "@/components/PageTitle";
 
@@ -133,13 +138,16 @@ export default CommunitiesPage;
 
 export const getServerSideProps: GetServerSideProps<{
   meta: SeoMeta;
-}> = async ({ req }) => ({
-  props: {
-    meta: listPageMeta(
-      req,
-      "/communities",
-      seoText("seo.communities.title"),
-      seoText("seo.communities.description")
-    ),
-  },
-});
+}> = async ({ req, res }) => {
+  res.setHeader("Cache-Control", SEO_LIST_CACHE_CONTROL);
+  return {
+    props: {
+      meta: listPageMeta(
+        req,
+        "/communities",
+        seoText("seo.communities.title"),
+        seoText("seo.communities.description")
+      ),
+    },
+  };
+};

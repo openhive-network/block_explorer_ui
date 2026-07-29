@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { SeoMeta, siteConfig } from "@/utils/seo";
+import { SeoMeta, siteConfig, serializeJsonLd } from "@/utils/seo";
 
 interface SeoProps {
   meta: SeoMeta;
@@ -38,7 +38,7 @@ const Seo: React.FC<SeoProps> = ({ meta, title: titleOverride }) => {
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
         />
       )}
     </Head>
