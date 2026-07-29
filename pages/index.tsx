@@ -12,6 +12,7 @@ import {
   defaultOgImage,
   webSiteJsonLd,
   organizationJsonLd,
+  SEO_LIST_CACHE_CONTROL,
 } from "@/utils/seo";
 import { seoText } from "@/utils/seoStrings";
 
@@ -36,7 +37,8 @@ export default function Home({ meta }: { meta: SeoMeta }) {
 
 export const getServerSideProps: GetServerSideProps<{
   meta: SeoMeta;
-}> = async ({ req }) => {
+}> = async ({ req, res }) => {
+  res.setHeader("Cache-Control", SEO_LIST_CACHE_CONTROL);
   const base = absoluteBaseUrl(req);
   const description =
     process.env.NEXT_PUBLIC_SITE_DESCRIPTION || seoText("seo.home.description");

@@ -8,7 +8,12 @@ import React, {
 import type { GetServerSideProps } from "next";
 import { Loader2 } from "lucide-react";
 import Seo from "@/components/seo/Seo";
-import { SeoMeta, listPageMeta, pageTitle } from "@/utils/seo";
+import {
+  SeoMeta,
+  listPageMeta,
+  pageTitle,
+  SEO_LIST_CACHE_CONTROL,
+} from "@/utils/seo";
 import { seoText } from "@/utils/seoStrings";
 
 import BlocksTable from "@/components/blocks/BlocksTable";
@@ -354,15 +359,18 @@ const BlocksPage = ({ meta }: { meta: SeoMeta }) => {
 
 export const getServerSideProps: GetServerSideProps<{
   meta: SeoMeta;
-}> = async ({ req }) => ({
-  props: {
-    meta: listPageMeta(
-      req,
-      "/blocks",
-      seoText("seo.blocks.title"),
-      seoText("seo.blocks.description")
-    ),
-  },
-});
+}> = async ({ req, res }) => {
+  res.setHeader("Cache-Control", SEO_LIST_CACHE_CONTROL);
+  return {
+    props: {
+      meta: listPageMeta(
+        req,
+        "/blocks",
+        seoText("seo.blocks.title"),
+        seoText("seo.blocks.description")
+      ),
+    },
+  };
+};
 
 export default BlocksPage;

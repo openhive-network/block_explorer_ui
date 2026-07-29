@@ -7,6 +7,7 @@ import {
   canonicalUrl,
   clamp,
   profilePageJsonLd,
+  serializeJsonLd,
   siteConfig,
 } from "@/utils/seo";
 import { seoText } from "@/utils/seoStrings";
@@ -220,7 +221,7 @@ export default function Account({
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
         />
       )}
     </Head>
@@ -306,7 +307,7 @@ export const getServerSideProps: GetServerSideProps<AccountPageProps> = async ({
     : params?.accountName;
   const name = (raw || "").replace(/^@/, "").replace(/^%40/i, "");
   const canonical = name
-    ? canonicalUrl({ headers: req.headers }, `/@${name}`)
+    ? canonicalUrl({ headers: req.headers }, `/@${encodeURIComponent(name)}`)
     : null;
 
   // Communities (hive-*) don't get an account share card, but still get canonical.
