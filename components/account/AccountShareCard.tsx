@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Download, Link2, Check } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useI18n } from "@/i18n/i18n";
@@ -30,6 +30,19 @@ interface Props {
   accountDetails: Explorer.FormattedAccountDetails;
 }
 
+// Exports must be self-contained: an SVG downloaded standalone or drawn to a
+// <canvas> for PNG can't resolve relative asset URLs, so inline them as data URIs.
+const toDataUri = async (url: string): Promise<string> => {
+  const res = await fetch(url, { mode: "cors" });
+  const blob = await res.blob();
+  return new Promise<string>((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(r.result as string);
+    r.onerror = reject;
+    r.readAsDataURL(blob);
+  });
+};
+
 const toBigInt = (s?: string): bigint | null => {
   if (!s) return null;
   const intPart = String(s).trim().split(".")[0];
@@ -47,6 +60,19 @@ const AccountShareCard: React.FC<Props> = ({ accountName, accountDetails }) => {
   const { dynamicGlobalData } = useDynamicGlobal();
   const [downloading, setDownloading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [logoDataUri, setLogoDataUri] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    toDataUri(getImageSrc("/hive-logo.png"))
+      .then((uri) => {
+        if (active) setLogoDataUri(uri);
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const from1y = useMemo(() => {
     const d = new Date();
@@ -197,7 +223,7 @@ const AccountShareCard: React.FC<Props> = ({ accountName, accountDetails }) => {
       {
         accountName,
         avatarHref: getHiveAvatarUrl(accountName),
-        brandLogoHref: getImageSrc("/hive-logo.png"),
+        brandLogoHref: logoDataUri || getImageSrc("/hive-logo.png"),
         reputation: Number(accountDetails.reputation) || 0,
         hp,
         accountValue,
@@ -230,6 +256,7 @@ const AccountShareCard: React.FC<Props> = ({ accountName, accountDetails }) => {
     voteWeightHp,
     witnessDetails,
     topHolderEntries,
+    logoDataUri,
     t,
     locale,
   ]);
@@ -268,19 +295,25 @@ const AccountShareCard: React.FC<Props> = ({ accountName, accountDetails }) => {
     try {
       let avatarHref = "";
       try {
-        const res = await fetch(cardData.avatarHref, { mode: "cors" });
-        const blob = await res.blob();
-        avatarHref = await new Promise<string>((resolve, reject) => {
-          const r = new FileReader();
-          r.onload = () => resolve(r.result as string);
-          r.onerror = reject;
-          r.readAsDataURL(blob);
-        });
+        avatarHref = await toDataUri(cardData.avatarHref);
       } catch {
         avatarHref = "";
       }
 
-      const pngSvg = buildAccountCardSvg({ ...cardData, avatarHref });
+      let brandLogoHref = logoDataUri || "";
+      if (!brandLogoHref) {
+        try {
+          brandLogoHref = await toDataUri(getImageSrc("/hive-logo.png"));
+        } catch {
+          brandLogoHref = "";
+        }
+      }
+
+      const pngSvg = buildAccountCardSvg({
+        ...cardData,
+        avatarHref,
+        brandLogoHref,
+      });
       const url = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(pngSvg)}`;
       const img = new Image();
       img.crossOrigin = "anonymous";

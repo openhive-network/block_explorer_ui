@@ -351,6 +351,12 @@ const AccountRetentionFunnelCard: React.FC = () => {
               trend={trend7d}
               locale={locale}
               t={t}
+              tooltip={t(
+                "accountRetentionFunnelCard.tooltipRetentionSurvival",
+                {
+                  n: 7,
+                }
+              )}
             />
             <RetentionKpi
               labelKey="accountRetentionFunnelCard.retention30d"
@@ -359,6 +365,12 @@ const AccountRetentionFunnelCard: React.FC = () => {
               trend={trend30d}
               locale={locale}
               t={t}
+              tooltip={t(
+                "accountRetentionFunnelCard.tooltipRetentionSurvival",
+                {
+                  n: 30,
+                }
+              )}
             />
             <RetentionKpi
               labelKey="accountRetentionFunnelCard.retention90d"
@@ -367,6 +379,12 @@ const AccountRetentionFunnelCard: React.FC = () => {
               trend={trend90d}
               locale={locale}
               t={t}
+              tooltip={t(
+                "accountRetentionFunnelCard.tooltipRetentionSurvival",
+                {
+                  n: 90,
+                }
+              )}
             />
             <RetentionKpi
               labelKey="accountRetentionFunnelCard.stickiness"
