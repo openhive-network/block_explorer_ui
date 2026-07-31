@@ -1,3 +1,6 @@
+import type { GetServerSideProps } from "next";
+import { SeoMeta, noindexMeta, SEO_LIST_CACHE_CONTROL } from "@/utils/seo";
+import { seoText } from "@/utils/seoStrings";
 import { useRouter } from "next/router";
 import React from "react";
 import { Button } from "../components/ui/button";
@@ -23,7 +26,7 @@ const ErrorPage: React.FC<ErrorPageProps> = ({ errorMessage }) => {
   return (
     <div className="page-container rounded  flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       {/* Error Icon */}
-      <AlertTriangleIcon size={42} color="red" className="mb-2"/>
+      <AlertTriangleIcon size={42} color="red" className="mb-2" />
 
       {/* Error Message */}
       <div className="text-center mb-6">
@@ -79,3 +82,22 @@ const ErrorPage: React.FC<ErrorPageProps> = ({ errorMessage }) => {
 };
 
 export default ErrorPage;
+
+// This component lives in pages/, so Next also publishes it as the /ErrorPage
+// route. Keep that phantom route out of the index. (Proper fix: move the file to
+// components/ — deferred, it has six import sites.)
+export const getServerSideProps: GetServerSideProps<{
+  meta: SeoMeta;
+}> = async ({ req, res }) => {
+  res.setHeader("Cache-Control", SEO_LIST_CACHE_CONTROL);
+  return {
+    props: {
+      meta: noindexMeta(
+        req,
+        "/ErrorPage",
+        seoText("pageNotFound.error"),
+        seoText("errorPage.defaultErrorMessage")
+      ),
+    },
+  };
+};

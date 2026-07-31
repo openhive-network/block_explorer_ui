@@ -4,6 +4,7 @@ import { Loader2, X } from "lucide-react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import {
+  absoluteBaseUrl,
   canonicalUrl,
   clamp,
   profilePageJsonLd,
@@ -259,27 +260,37 @@ export const getServerSideProps: GetServerSideProps<AccountPageProps> = async ({
     ? params?.accountName[0]
     : params?.accountName;
   const name = (raw || "").replace(/^@/, "").replace(/^%40/i, "");
+  // This route matches every unclaimed single-segment path, so the same guard the
+  // /block and /tx routes use applies here — and over a much broader input space.
+  // Anything that isn't a Hive account name is neither indexed nor echoed back
+  // into the title, so a crafted URL can't put attacker-chosen text under our
+  // brand in a search result or a link unfurl.
+  const isAccountRef = /^[a-z][a-z0-9.-]{2,15}$/.test(name);
   const canonical = name
     ? canonicalUrl({ headers: req.headers }, `/@${encodeURIComponent(name)}`)
     : "";
-  const title = name ? `@${name} - Hive Explorer` : "Hive Explorer";
+  const title = isAccountRef ? `@${name} - Hive Explorer` : "Hive Explorer";
 
   // Communities (hive-*) don't get an account share card, but still get canonical.
-  if (!name || name.startsWith("hive-")) {
+  if (!isAccountRef || name.startsWith("hive-")) {
     return {
-      props: { meta: { title, description: "", canonical, ogType: "website" } },
+      props: {
+        meta: {
+          title,
+          description: "",
+          canonical,
+          ogType: "website",
+          noindex: !isAccountRef,
+        },
+      },
     };
   }
 
-  const forwardedProto = String(req.headers["x-forwarded-proto"] || "").split(
-    ","
-  )[0];
-  const proto = forwardedProto || "https";
-  const host =
-    (req.headers["x-forwarded-host"] as string) || req.headers.host || "";
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
-  const ogImageUrl = host
-    ? `${proto}://${host}${basePath}/api/og/account/${encodeURIComponent(name)}`
+  // Same base as the canonical above: prefers the configured origin so a spoofed
+  // Host can't redirect the share card. Only absolute bases are usable here.
+  const base = absoluteBaseUrl({ headers: req.headers });
+  const ogImageUrl = /^https?:\/\//i.test(base)
+    ? `${base}/api/og/account/${encodeURIComponent(name)}`
     : null;
 
   const description = clamp(

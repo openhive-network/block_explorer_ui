@@ -41,6 +41,21 @@ export const SEO_LIST_CACHE_CONTROL = SITE_URL
   ? "public, s-maxage=300, stale-while-revalidate=600"
   : "private, no-store";
 
+// Without a configured origin every SEO URL falls back to request headers, which
+// costs shared caching and leaves canonical/OG/sitemap URLs host-derived. Fine
+// for local dev; say so loudly on a server build so it isn't missed in prod.
+if (
+  typeof window === "undefined" &&
+  !SITE_URL &&
+  process.env.NODE_ENV === "production"
+) {
+  console.warn(
+    "[seo] NEXT_PUBLIC_SITE_URL / REACT_APP_SITE_URL is not set — canonical, OG " +
+      "and sitemap URLs will be derived from request headers and cannot be " +
+      "shared-cached. Set it to the public origin (e.g. https://hivescan.info)."
+  );
+}
+
 // Resolve the deployment's absolute base URL. Prefer the configured origin;
 // fall back to the (proxy-aware) request host so zero-config deploys still work.
 export const absoluteBaseUrl = (req: SeoRequest): string => {
@@ -202,6 +217,24 @@ export const collectionPageJsonLd = (
   name,
   description,
   url: canonical,
+});
+
+// Meta for a utility or parameterized view that shouldn't be indexed — a thin
+// page, an internal search, or a slice of data that already has a canonical home
+// elsewhere. Still declares a canonical so the URL consolidates correctly.
+// NOTE: this must come from getServerSideProps. A <Head> in the page body sits
+// under the hiveChain-gated <Layout>, which renders null on the server, so a
+// crawler would never see the robots tag.
+export const noindexMeta = (
+  req: SeoRequest,
+  path: string,
+  title: string,
+  description = ""
+): SeoMeta => ({
+  title: pageTitle(title),
+  description: clamp(description),
+  canonical: canonicalUrl(req, path),
+  noindex: true,
 });
 
 // Meta for a static index/list route (witnesses, proposals, …).

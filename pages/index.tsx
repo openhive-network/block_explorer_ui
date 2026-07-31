@@ -9,6 +9,7 @@ import {
   SeoMeta,
   absoluteBaseUrl,
   canonicalUrl,
+  clamp,
   defaultOgImage,
   webSiteJsonLd,
   organizationJsonLd,
@@ -40,8 +41,9 @@ export const getServerSideProps: GetServerSideProps<{
 }> = async ({ req, res }) => {
   res.setHeader("Cache-Control", SEO_LIST_CACHE_CONTROL);
   const base = absoluteBaseUrl(req);
-  const description =
-    process.env.NEXT_PUBLIC_SITE_DESCRIPTION || seoText("seo.home.description");
+  const description = clamp(
+    process.env.NEXT_PUBLIC_SITE_DESCRIPTION || seoText("seo.home.description")
+  );
   return {
     props: {
       meta: {

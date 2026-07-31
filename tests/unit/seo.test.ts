@@ -1,4 +1,20 @@
-import {
+// utils/seo captures SITE_URL once at module load. Load it here with no
+// configured origin so this file always exercises the request-header fallback,
+// regardless of what the developer happens to have in .env. The configured-origin
+// branch is covered separately in seoTrustedOrigin.test.ts.
+const loadSeo = () => {
+  let mod: typeof import("@/utils/seo");
+  jest.isolateModules(() => {
+    const prev = { ...process.env };
+    delete process.env.NEXT_PUBLIC_SITE_URL;
+    delete process.env.REACT_APP_SITE_URL;
+    mod = require("@/utils/seo");
+    process.env = prev;
+  });
+  return mod!;
+};
+
+const {
   absoluteBaseUrl,
   canonicalUrl,
   pageTitle,
@@ -12,7 +28,10 @@ import {
   profilePageJsonLd,
   defaultOgImage,
   verification,
-} from "@/utils/seo";
+  escapeXml,
+  noindexMeta,
+  SEO_LIST_CACHE_CONTROL,
+} = loadSeo();
 
 const req = (headers: Record<string, string>) => ({ headers });
 
@@ -199,6 +218,94 @@ describe("seo utils", () => {
       );
       process.env.NEXT_PUBLIC_SITE_SOCIAL_PROFILES = "";
       expect(organizationJsonLd("https://h.info").sameAs).toBeUndefined();
+    });
+  });
+
+  describe("escapeXml", () => {
+    it("escapes the five XML entities", () => {
+      expect(escapeXml(`&<>"'`)).toBe("&amp;&lt;&gt;&quot;&apos;");
+    });
+
+    // A spoofed Host reaches <loc> in the sitemap; escaping keeps it from
+    // closing the tag and injecting markup into the XML.
+    it("neutralizes a host that tries to break out of <loc>", () => {
+      expect(escapeXml("https://evil.com</loc><loc>x")).not.toContain("<loc>");
+    });
+
+    it("escapes ampersands before the other entities (no double-encoding)", () => {
+      expect(escapeXml("a&amp;b")).toBe("a&amp;amp;b");
+    });
+  });
+
+  // /block/[blockId] and /tx/[transactionId] accept any string, so the gSSPs
+  // gate indexability on the id actually looking like one. Kept in step with the
+  // regexes in those two pages.
+  describe("entity-id shapes used to gate indexability", () => {
+    const isBlockRef = (s: string) =>
+      /^\d[\d,]*$/.test(s) || /^[0-9a-f]{40}$/i.test(s);
+    const isTxId = (s: string) => /^[0-9a-f]{40}$/i.test(s);
+    const HASH = "a".repeat(40);
+
+    it("accepts a block number (with thousands separators) or a block hash", () => {
+      expect(isBlockRef("12345")).toBe(true);
+      expect(isBlockRef("12,345,678")).toBe(true);
+      expect(isBlockRef(HASH)).toBe(true);
+    });
+
+    it("rejects arbitrary text that would become an indexable soft-404", () => {
+      expect(isBlockRef("not-a-block")).toBe(false);
+      expect(isBlockRef("buy cheap followers")).toBe(false);
+      expect(isBlockRef("")).toBe(false);
+      expect(isTxId("hello-world")).toBe(false);
+      expect(isTxId("")).toBe(false);
+      expect(isTxId(`${HASH}extra`)).toBe(false);
+    });
+
+    it("accepts a 40-hex transaction id in either case", () => {
+      expect(isTxId(HASH)).toBe(true);
+      expect(isTxId(HASH.toUpperCase())).toBe(true);
+    });
+  });
+
+  describe("noindexMeta", () => {
+    it("marks the page noindex but still declares a canonical", () => {
+      const m = noindexMeta(
+        req({ host: "h.info" }),
+        "/settings",
+        "Settings",
+        "Prefs."
+      );
+      expect(m.noindex).toBe(true);
+      expect(m.canonical).toBe("https://h.info/settings");
+      expect(m.title).toBe(`Settings | ${siteConfig.name}`);
+    });
+
+    it("clamps the description like every other meta builder", () => {
+      const m = noindexMeta(
+        req({ host: "h.info" }),
+        "/x",
+        "T",
+        "y".repeat(300)
+      );
+      expect(m.description.length).toBeLessThanOrEqual(160);
+      expect(m.description.endsWith("…")).toBe(true);
+    });
+
+    it("tolerates an omitted description", () => {
+      expect(noindexMeta(req({ host: "h.info" }), "/x", "T").description).toBe(
+        ""
+      );
+    });
+  });
+
+  describe("SEO_LIST_CACHE_CONTROL", () => {
+    // The guarantee: a response whose URLs came from request headers must never
+    // be shared-cached, or one spoofed Host gets served to everyone after it.
+    // This module was loaded with no configured origin, so every URL it builds is
+    // host-derived and the policy must forbid shared caching.
+    it("is never shared-cacheable when URLs come from request headers", () => {
+      expect(SEO_LIST_CACHE_CONTROL).toBe("private, no-store");
+      expect(SEO_LIST_CACHE_CONTROL).not.toContain("s-maxage");
     });
   });
 });

@@ -1,6 +1,8 @@
 import React from "react";
-import Head from "next/head";
+import type { GetServerSideProps } from "next";
 import { useI18n } from "@/i18n/i18n";
+import { SeoMeta, noindexMeta, SEO_LIST_CACHE_CONTROL } from "@/utils/seo";
+import { seoText } from "@/utils/seoStrings";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -276,9 +278,6 @@ const SettingsPage = () => {
 
   return (
     <div className="page-container mx-auto space-y-8">
-      <Head>
-        <meta name="robots" content="noindex,follow" />
-      </Head>
       <header>
         <PageTitle titleKey="pageTitle.settings" className="py-4" />
       </header>
@@ -309,6 +308,25 @@ const SettingsPage = () => {
       </div>
     </div>
   );
+};
+
+// noindex has to come from getServerSideProps: a <Head> inside the page body
+// sits under the hiveChain-gated <Layout>, which renders null on the server, so
+// a crawler would never see it. _app emits this meta above <Providers>.
+export const getServerSideProps: GetServerSideProps<{
+  meta: SeoMeta;
+}> = async ({ req, res }) => {
+  res.setHeader("Cache-Control", SEO_LIST_CACHE_CONTROL);
+  return {
+    props: {
+      meta: noindexMeta(
+        req,
+        "/settings",
+        seoText("seo.settings.title"),
+        seoText("seo.settings.description")
+      ),
+    },
+  };
 };
 
 export default SettingsPage;
