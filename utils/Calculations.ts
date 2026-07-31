@@ -3,6 +3,30 @@ import { IHiveChainInterface } from "@hiveio/wax";
 import Hive from "@/types/Hive";
 import Explorer from "@/types/Explorer";
 import { formatNumber } from "@/lib/utils";
+
+type NaiAsset = { nai: string; amount: string; precision: number };
+
+const NAI_SYMBOL: Record<string, string> = {
+  "@@000000013": "HBD",
+  "@@000000021": "HIVE",
+  "@@000000037": "VESTS",
+};
+
+export const naiAssetToFloat = (asset: NaiAsset | undefined): number => {
+  if (!asset) return 0;
+  const value = parseFloat(asset.amount) / Math.pow(10, asset.precision);
+  return isFinite(value) ? value : 0;
+};
+
+export const formatNaiAsset = (asset: NaiAsset | undefined): string => {
+  const precision = asset?.precision ?? 3;
+  const value = naiAssetToFloat(asset);
+  const symbol = asset ? (NAI_SYMBOL[asset.nai] ?? asset.nai) : "HBD";
+  return `${value.toLocaleString(undefined, {
+    minimumFractionDigits: precision,
+    maximumFractionDigits: precision,
+  })} ${symbol}`;
+};
 /**
  * Function converting vests to hive power
  * @param  hivechain response from HiveChainContext.ts as type IHiveChainInterface | undefined,

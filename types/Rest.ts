@@ -237,6 +237,20 @@ export const extendedRest = {
       urlPath: "accounts/{accountName}/vesting-history",
     },
   },
+  "hivemind-api": {
+    accounts: {
+      pendingAuthorRewards: {
+        params: Hive.PendingAuthorRewardsParams,
+        result: Hive.PendingAuthorRewardsResponse,
+        urlPath: "{accountName}/pending-author-rewards",
+      },
+      pendingCurationRewards: {
+        params: Hive.PendingCurationRewardsParams,
+        result: Hive.PendingCurationRewardsResponse,
+        urlPath: "{accountName}/pending-curation-rewards",
+      },
+    },
+  },
   "haf-stats-api": {
     networkVoteStats: {
       params: Hive.NetworkVoteStatsParams,

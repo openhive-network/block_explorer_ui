@@ -14,7 +14,11 @@
 import { WaxError, WaxRequestAbortedByUser } from "@hiveio/wax";
 
 // Optional HAF app groups (core hafah-api is always assumed present).
-export type RequiredApi = "haf-stats-api" | "balance-api" | "hafbe-api";
+export type RequiredApi =
+  | "haf-stats-api"
+  | "balance-api"
+  | "hafbe-api"
+  | "hivemind-api";
 
 // ---- Layer 1: proactive whole-app probe ----
 

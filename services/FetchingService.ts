@@ -77,6 +77,10 @@ export type ExplorerNodeApi = {
     find_proposals: TWaxApiRequest<[proposal_ids: number[]], Hive.Proposal[]>;
   };
   bridge: {
+    get_account_posts: TWaxApiRequest<
+      { sort: string; account: string; limit: number },
+      Hive.AccountPostSummary[]
+    >;
     get_discussion: TWaxApiRequest<
       { author: string; permlink: string; observer?: string },
       Hive.HivePosts
@@ -982,6 +986,37 @@ class FetchingService {
     );
   }
 
+  async getAccountPosts(
+    accountName: string,
+    limit: number = 20
+  ): Promise<Hive.AccountPostSummary[]> {
+    return await this.extendedHiveChain!.api.bridge.get_account_posts({
+      sort: "posts",
+      account: accountName,
+      limit,
+    });
+  }
+
+  async getPendingAuthorRewards(
+    accountName: string
+  ): Promise<Hive.PendingAuthorRewardsResponse> {
+    return this.withNodeSupport("hivemind-api:pending-author-rewards", () =>
+      this.extendedHiveChain!.restApi[
+        "hivemind-api"
+      ].accounts.pendingAuthorRewards({ accountName })
+    );
+  }
+
+  async getPendingCurationRewards(
+    accountName: string
+  ): Promise<Hive.PendingCurationRewardsResponse> {
+    return this.withNodeSupport("hivemind-api:pending-curation-rewards", () =>
+      this.extendedHiveChain!.restApi[
+        "hivemind-api"
+      ].accounts.pendingCurationRewards({ accountName })
+    );
+  }
+
   async getDailyActiveUsers(
     fromBlock?: Date | number | undefined,
     toBlock?: Date | number | undefined,
@@ -998,6 +1033,7 @@ class FetchingService {
       this.extendedHiveChain!.restApi["haf-stats-api"].dailyActiveUsers(params)
     );
   }
+
   async getNetworkVoteStats(
     from?: string,
     to?: string,

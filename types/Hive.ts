@@ -1363,6 +1363,45 @@ namespace Hive {
     escrow_pending_count!: string;
   }
 
+  export class PendingAuthorRewardsParams {
+    accountName!: string;
+  }
+
+  // Each pending-reward component is split into total / direct / liquid / vesting,
+  // where every part is a nai asset (HBD basis).
+  export class RewardBasis {
+    total!: Supply;
+    direct!: Supply;
+    liquid!: Supply;
+    vesting!: Supply;
+  }
+
+  export class PendingAuthorRewardsResponse {
+    account!: string;
+    pending_post_count!: number;
+    gross_reward_basis!: Supply;
+    author_reward_basis!: RewardBasis;
+    beneficiaries_reward_basis!: RewardBasis;
+    curators_reward_basis!: RewardBasis;
+  }
+
+  export class PendingCurationRewardsParams {
+    accountName!: string;
+  }
+
+  export class PendingCurationRewardsResponse {
+    account!: string;
+    pending_vote_count!: number;
+    curation_reward_basis!: RewardBasis;
+  }
+
+  export interface AccountPostSummary {
+    cashout_time: string;
+    pending_payout_value: string;
+    depth: number;
+    author: string;
+  }
+
   export class NetworkVoteStatsParams {
     from_date?: string;
     to_date?: string;
