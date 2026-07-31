@@ -27,6 +27,7 @@ const MOBILE_TILE_HEIGHTS: Record<string, number> = {
   rcConsumption: 8,
   rcFootprint: 10,
   contentActivity: 10,
+  socialInteractions: 10,
 };
 const MOBILE_TILE_H_FALLBACK = 8;
 
@@ -115,7 +116,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
   liveDataEnabled,
   dynamicGlobalData,
 }) => {
-  const { t } = useI18n();
+  const { t, dir } = useI18n();
   const { isSupported, isEndpointUnsupported } = useNodeSupport();
   // Below md: force the single-column stack and lock drag/resize.
   const isSmallScreen = useMediaQuery("(max-width: 995px)");
@@ -143,7 +144,8 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
     let lastWidth = el.offsetWidth;
     const ro = new ResizeObserver(() => {
       const w = el.offsetWidth;
-      if (w !== lastWidth) {
+
+      if (Math.abs(w - lastWidth) > 24) {
         lastWidth = w;
         window.dispatchEvent(new Event("resize"));
       }
@@ -166,6 +168,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
         </div>
         <ResponsiveGridLayout
           className="analytics-grid"
+          style={{ direction: "ltr" }}
           layouts={gridLayouts}
           onLayoutChange={onLayoutChange}
           breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
@@ -182,7 +185,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
             const reportConfig = reportRegistry[widgetType];
             if (!reportConfig) {
               return (
-                <div key={widget.i}>
+                <div key={widget.i} dir={dir}>
                   <ErrorMessage message={t("AnalyticsDashboard.error")} />
                 </div>
               );
@@ -208,6 +211,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
             return (
               <div
                 key={widget.i}
+                dir={dir}
                 className="bg-muted border border-border rounded-md flex flex-col overflow-hidden"
               >
                 <div className="drag-handle bg-theme/50 px-2 py-1 flex justify-between items-center cursor-move border-b border-border">
