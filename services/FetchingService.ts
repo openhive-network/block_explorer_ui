@@ -11,6 +11,11 @@ import {
 } from "@hiveio/wax";
 import { extendedRest } from "@/types/Rest";
 import { createPathFilterString } from "@/lib/utils";
+import {
+  classifyEndpointError,
+  EndpointUnsupportedError,
+  isNaiAmount,
+} from "@/utils/nodeSupport";
 
 export type ExplorerNodeApi = {
   database_api: {
@@ -138,6 +143,20 @@ class FetchingService {
     }
     if (this.extendedHiveChain && this.apiUrl) {
       this.extendedHiveChain.restApi.endpointUrl = this.apiUrl;
+    }
+  }
+
+  // Wrap a REST call so a definitive missing-endpoint 404 surfaces as a typed
+  // EndpointUnsupportedError (reported to nodeSupportStore -> graceful widget
+  // fallback). Transient failures pass through unchanged.
+  private async withNodeSupport<T>(
+    supportKey: string,
+    call: () => Promise<T>
+  ): Promise<T> {
+    try {
+      return await call();
+    } catch (err) {
+      throw classifyEndpointError(err, supportKey);
     }
   }
 
@@ -640,14 +659,32 @@ class FetchingService {
     fromBlock?: Date | number | undefined,
     toBlock?: Date | number | undefined
   ): Promise<Hive.TransactionStatisticsResponse> {
-    return await this.extendedHiveChain!.restApi[
-      "hafbe-api"
-    ].transactionStatistics({
-      granularity,
-      direction: direction,
-      "from-block": fromBlock,
-      "to-block": toBlock,
-    });
+    return this.withNodeSupport("hafbe-api:transaction-statistics", () =>
+      this.extendedHiveChain!.restApi["hafbe-api"].transactionStatistics({
+        granularity,
+        direction: direction,
+        "from-block": fromBlock,
+        "to-block": toBlock,
+      })
+    );
+  }
+
+  async getOperationTypeStatistics(
+    granularity: "daily" | "monthly" | "yearly",
+    direction: "asc" | "desc",
+    fromBlock?: Date | number,
+    toBlock?: Date | number,
+    opTypes?: number[]
+  ): Promise<Hive.OperationTypeStatisticsResponse[]> {
+    return this.withNodeSupport("hafbe-api:operation-type-statistics", () =>
+      this.extendedHiveChain!.restApi["hafbe-api"].operationTypeStatistics({
+        granularity,
+        direction,
+        "from-block": fromBlock,
+        "to-block": toBlock,
+        "op-types": opTypes?.join(","),
+      })
+    );
   }
 
   async getTransferStatistics(
@@ -657,14 +694,28 @@ class FetchingService {
     fromBlock?: Date | number | undefined,
     toBlock?: Date | number | undefined
   ): Promise<Hive.TransferStatisticsResponse[]> {
-    return await this.extendedHiveChain!.restApi[
-      "balance-api"
-    ].transferStatistics({
-      granularity,
-      "coin-type": coinType,
-      "from-block": fromBlock,
-      "to-block": toBlock,
-      direction: direction, // Move direction after coin-type
+    return this.withNodeSupport("balance-api:transfer-statistics", async () => {
+      const rows = await this.extendedHiveChain!.restApi[
+        "balance-api"
+      ].transferStatistics({
+        granularity,
+        "coin-type": coinType,
+        "from-block": fromBlock,
+        "to-block": toBlock,
+        direction: direction, // Move direction after coin-type
+      });
+      // Older nodes serve the *_transfer_amount fields as bare strings instead of
+      // NAI objects, which silently renders $0 — treat that version-skew as an
+      // unavailable endpoint rather than showing misleading zeros. Sample the
+      // first row that actually carries an amount (a null/empty leading bucket on
+      // a healthy node must not false-trigger this).
+      const sample = rows?.find((r) => r?.total_transfer_amount != null);
+      if (sample && !isNaiAmount(sample.total_transfer_amount)) {
+        throw new EndpointUnsupportedError("balance-api:transfer-statistics", {
+          transient: false,
+        });
+      }
+      return rows;
     });
   }
 
@@ -674,14 +725,14 @@ class FetchingService {
     fromBlock?: Date | number | undefined,
     toBlock?: Date | number | undefined
   ): Promise<Hive.WalletStatsResponse[]> {
-    return await this.extendedHiveChain!.restApi[
-      "hafbe-api"
-    ].totalWalletAddresses({
-      granularity,
-      direction,
-      "from-block": fromBlock,
-      "to-block": toBlock,
-    });
+    return this.withNodeSupport("hafbe-api:wallet-stats", () =>
+      this.extendedHiveChain!.restApi["hafbe-api"].totalWalletAddresses({
+        granularity,
+        direction,
+        "from-block": fromBlock,
+        "to-block": toBlock,
+      })
+    );
   }
 
   async getAccountFollowCount(
@@ -850,19 +901,23 @@ class FetchingService {
   async getTopHolders(
     coinType: "HIVE" | "HBD" | "VESTS",
     balanceType: "balance" | "savings_balance",
-    page: number
+    page: number,
+    minBalance?: number,
+    maxBalance?: number
   ): Promise<Hive.TopHoldersResponse> {
     return await this.extendedHiveChain!.restApi["balance-api"].topHolders({
       "coin-type": coinType,
       "balance-type": balanceType,
       page,
+      ...(minBalance !== undefined ? { "min-balance": minBalance } : {}),
+      ...(maxBalance !== undefined ? { "max-balance": maxBalance } : {}),
     });
   }
 
   async getTotalValueLocked(): Promise<Hive.TotalValueLocked> {
-    return await this.extendedHiveChain!.restApi[
-      "balance-api"
-    ].totalValueLocked();
+    return this.withNodeSupport("balance-api:tvl", () =>
+      this.extendedHiveChain!.restApi["balance-api"].totalValueLocked()
+    );
   }
 
   async getVestingStats(
@@ -871,12 +926,14 @@ class FetchingService {
     fromBlock?: Date | number | undefined,
     toBlock?: Date | number | undefined
   ): Promise<Hive.VestingStatsResponse[]> {
-    return await this.extendedHiveChain!.restApi["balance-api"].vestingStats({
-      granularity,
-      direction,
-      "from-block": fromBlock,
-      "to-block": toBlock,
-    });
+    return this.withNodeSupport("balance-api:vesting-stats", () =>
+      this.extendedHiveChain!.restApi["balance-api"].vestingStats({
+        granularity,
+        direction,
+        "from-block": fromBlock,
+        "to-block": toBlock,
+      })
+    );
   }
 
   async getAccountVestingStats(
@@ -957,6 +1014,265 @@ class FetchingService {
       this.extendedHiveChain!.restApi[
         "hivemind-api"
       ].accounts.pendingCurationRewards({ accountName })
+    );
+  }
+
+  async getDailyActiveUsers(
+    fromBlock?: Date | number | undefined,
+    toBlock?: Date | number | undefined,
+    granularity?: "day" | "week" | "month",
+    operationTypes?: string
+  ): Promise<Hive.DailyActiveUsersResponse[]> {
+    const params = {
+      from_date: fromBlock,
+      to_date: toBlock,
+      granularity,
+      operation_types: operationTypes?.trim(),
+    };
+    return this.withNodeSupport("haf-stats-api:daily-active-users", () =>
+      this.extendedHiveChain!.restApi["haf-stats-api"].dailyActiveUsers(params)
+    );
+  }
+
+  async getNetworkVoteStats(
+    from?: string,
+    to?: string,
+    granularity?: "day" | "week" | "month"
+  ): Promise<Hive.NetworkVoteStatsResponse[]> {
+    return this.withNodeSupport("haf-stats-api:vote-stats", () =>
+      this.extendedHiveChain!.restApi["haf-stats-api"].networkVoteStats({
+        from_date: from,
+        to_date: to,
+        granularity,
+      })
+    );
+  }
+
+  async getNetworkHpDistribution(): Promise<
+    Hive.NetworkHpDistributionResponse[]
+  > {
+    return this.withNodeSupport("haf-stats-api:hp-distribution", () =>
+      this.extendedHiveChain!.restApi["haf-stats-api"].networkHpDistribution({})
+    );
+  }
+
+  async getGovernanceInfluenceConcentration(): Promise<
+    Hive.GovernanceInfluenceConcentrationResponse[]
+  > {
+    return await this.extendedHiveChain!.restApi[
+      "haf-stats-api"
+    ].governanceInfluenceConcentration({});
+  }
+
+  async getNetworkRcUtilization(
+    from?: string | Date | number,
+    to?: string | Date | number,
+    granularity?: "day" | "week" | "month"
+  ): Promise<Hive.NetworkRcUtilizationResponse[]> {
+    return this.withNodeSupport("haf-stats-api:rc-utilization", () =>
+      this.extendedHiveChain!.restApi["haf-stats-api"].networkRcUtilization({
+        from_date: from,
+        to_date: to,
+        granularity,
+      })
+    );
+  }
+
+  async getNetworkContentVolume(
+    from?: Date | number | undefined,
+    to?: Date | number | undefined,
+    granularity?: "day" | "week" | "month"
+  ): Promise<Hive.NetworkContentVolumeResponse[]> {
+    return this.withNodeSupport("haf-stats-api:content-volume", () =>
+      this.extendedHiveChain!.restApi["haf-stats-api"].networkContentVolume({
+        from_date: from,
+        to_date: to,
+        granularity,
+      })
+    );
+  }
+
+  async getNetworkEngagement(
+    from?: Date | number | undefined,
+    to?: Date | number | undefined,
+    granularity?: "day" | "week" | "month"
+  ): Promise<Hive.NetworkEngagementResponse[]> {
+    return this.withNodeSupport("haf-stats-api:engagement", () =>
+      this.extendedHiveChain!.restApi["haf-stats-api"].networkEngagement({
+        from_date: from,
+        to_date: to,
+        granularity,
+      })
+    );
+  }
+
+  async getAccountFunnel(
+    from?: Date | number,
+    to?: Date | number
+  ): Promise<Hive.AccountFunnelResponse[]> {
+    return this.withNodeSupport("haf-stats-api:account-funnel", () =>
+      this.extendedHiveChain!.restApi["haf-stats-api"].accountFunnel({
+        from_date: from,
+        to_date: to,
+      })
+    );
+  }
+
+  async getNetworkAuthorRetention(
+    from?: string | Date | number,
+    to?: string | Date | number
+  ): Promise<Hive.NetworkAuthorRetentionResponse[]> {
+    return this.withNodeSupport("haf-stats-api:author-retention", () =>
+      this.extendedHiveChain!.restApi["haf-stats-api"].networkAuthorRetention({
+        from_date: from,
+        to_date: to,
+      })
+    );
+  }
+
+  async getNetworkTopCustomJson(
+    params: Hive.NetworkTopCustomJsonParams
+  ): Promise<Hive.NetworkTopCustomJsonRow[]> {
+    return this.withNodeSupport("haf-stats-api:top-custom-json", () =>
+      this.extendedHiveChain!.restApi["haf-stats-api"].networkTopCustomJson(
+        params
+      )
+    );
+  }
+
+  async getNetworkCustomJsonUsage(
+    params: Hive.NetworkCustomJsonUsageParams
+  ): Promise<Hive.NetworkCustomJsonUsageRow[]> {
+    return this.withNodeSupport("haf-stats-api:custom-json-usage", () =>
+      this.extendedHiveChain!.restApi["haf-stats-api"].networkCustomJsonUsage(
+        params
+      )
+    );
+  }
+
+  async getCustomJsonAppRegistry(): Promise<Hive.CustomJsonAppRegistryRow[]> {
+    return this.withNodeSupport("haf-stats-api:custom-json-registry", () =>
+      this.extendedHiveChain!.restApi["haf-stats-api"].customJsonAppRegistry({})
+    );
+  }
+
+  async getAccountContentStats(
+    accountName: string,
+    from?: Date | number | undefined,
+    to?: Date | number | undefined,
+    granularity?: "day" | "week" | "month"
+  ): Promise<Hive.AccountContentStatsResponse[]> {
+    return this.withNodeSupport("haf-stats-api:content-stats", () =>
+      this.extendedHiveChain!.restApi["haf-stats-api"].accountContentStats({
+        accountName,
+        from_date: from,
+        to_date: to,
+        granularity,
+      })
+    );
+  }
+
+  async getNetworkTopAccounts(
+    metric: Hive.TopAccountsMetric,
+    fromDate?: string | Date | number,
+    toDate?: string | Date | number,
+    limitCount?: number
+  ): Promise<Hive.TopAccountsResponse[]> {
+    return this.withNodeSupport("haf-stats-api:top-accounts", () =>
+      this.extendedHiveChain!.restApi["haf-stats-api"].topAccounts({
+        metric,
+        from_date: fromDate,
+        to_date: toDate,
+        limit_count: limitCount,
+      })
+    );
+  }
+
+  async getAccountDappFootprint(
+    account: string,
+    fromDate?: string | Date | number,
+    toDate?: string | Date | number
+  ): Promise<Hive.AccountDappFootprintResponse> {
+    return this.withNodeSupport("haf-stats-api:dapp-footprint", () =>
+      this.extendedHiveChain!.restApi["haf-stats-api"].accountDappFootprint({
+        account,
+        from_date: fromDate,
+        to_date: toDate,
+      })
+    );
+  }
+
+  async getAccountInteractions(
+    account: string,
+    fromDate?: string | Date | number,
+    toDate?: string | Date | number,
+    topN?: number,
+    typeFilter?: Hive.AccountInteractionType
+  ): Promise<Hive.AccountInteractionRow[]> {
+    return this.withNodeSupport("haf-stats-api:account-interactions", () =>
+      this.extendedHiveChain!.restApi["haf-stats-api"].accountInteractions({
+        account,
+        from_date: fromDate,
+        to_date: toDate,
+        top_n: topN,
+        type_filter: typeFilter,
+      })
+    );
+  }
+
+  async getAccountRcFootprint(
+    account: string,
+    fromDate?: string | Date | number,
+    toDate?: string | Date | number,
+    groupBy: "op_type" | "app" = "op_type"
+  ): Promise<Hive.AccountRcFootprintRow[]> {
+    return this.withNodeSupport("haf-stats-api:rc-footprint", () =>
+      this.extendedHiveChain!.restApi["haf-stats-api"].accountRcFootprint({
+        account,
+        from_date: fromDate,
+        to_date: toDate,
+        group_by: groupBy,
+      })
+    );
+  }
+
+  async getAccountRcFootprintTimeline(
+    account: string,
+    params: {
+      fromDate?: string | Date | number;
+      toDate?: string | Date | number;
+      appFilter?: string;
+      opTypeFilter?: string;
+      limitCount?: number;
+      beforeSeq?: number;
+    }
+  ): Promise<Hive.AccountRcFootprintTimelineRow[]> {
+    return await this.extendedHiveChain!.restApi[
+      "haf-stats-api"
+    ].accountRcFootprintTimeline({
+      account,
+      from_date: params.fromDate,
+      to_date: params.toDate,
+      app_filter: params.appFilter,
+      op_type_filter: params.opTypeFilter,
+      limit_count: params.limitCount,
+      before_seq: params.beforeSeq,
+    });
+  }
+
+  async getFinancialSummary(
+    account: string,
+    fromDate?: string,
+    toDate?: string,
+    granularity: "day" | "week" | "month" = "month"
+  ): Promise<Hive.FinancialSummaryRow[]> {
+    return this.withNodeSupport("haf-stats-api:financial-summary", () =>
+      this.extendedHiveChain!.restApi["haf-stats-api"].accountFinancialSummary({
+        account,
+        from_date: fromDate,
+        to_date: toDate,
+        granularity,
+      })
     );
   }
 }

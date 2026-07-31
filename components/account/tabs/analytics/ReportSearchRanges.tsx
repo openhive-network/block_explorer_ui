@@ -12,7 +12,7 @@ import SearchRanges from "@/components/searchRanges/SearchRanges";
 import useSearchRanges from "@/hooks/common/useSearchRanges";
 import { useI18n } from "@/i18n/i18n";
 
-export type RangeKey = "30" | "90" | "180" | "custom";
+export type RangeKey = "today" | "30" | "90" | "180" | "365" | "all" | "custom";
 
 interface ReportSearchRangesProps {
   onApply: (
@@ -21,9 +21,14 @@ interface ReportSearchRangesProps {
   ) => void;
   defaultRangeKey?: RangeKey;
   className?: string;
+  // Override the quick day-presets (default 30/90/180). Labels come from
+  // reportRange.d<days>, so any new preset needs a matching i18n key.
+  presets?: { days: number; key: RangeKey }[];
+  // Add an "All" pill that applies an unbounded (all-time) range.
+  showAll?: boolean;
 }
 
-const PRESETS: { days: number; key: RangeKey }[] = [
+const DEFAULT_PRESETS: { days: number; key: RangeKey }[] = [
   { days: 30, key: "30" },
   { days: 90, key: "90" },
   { days: 180, key: "180" },
@@ -31,11 +36,14 @@ const PRESETS: { days: number; key: RangeKey }[] = [
 
 // Date-range control for the analytics reports: quick day presets plus a Custom
 // option that opens the full SearchRanges plugin (last-time / last-blocks /
-// block-range / time-range) in a popover — no inline layout shift.
+// block-range / time-range) in a popover — no inline layout shift. Shared across
+// reports; presets and the optional All pill are configurable per report.
 const ReportSearchRanges: React.FC<ReportSearchRangesProps> = ({
   onApply,
   defaultRangeKey = "30",
   className,
+  presets = DEFAULT_PRESETS,
+  showAll = false,
 }) => {
   const { t } = useI18n();
   const [rangeKey, setRangeKey] = useState<RangeKey>(defaultRangeKey);
@@ -57,6 +65,12 @@ const ReportSearchRanges: React.FC<ReportSearchRangesProps> = ({
       moment.utc().subtract(days, "days").toDate(),
       moment.utc().toDate()
     );
+  };
+
+  const applyAll = () => {
+    setRangeKey("all");
+    setOpen(false);
+    onApply(undefined, undefined);
   };
 
   const handleCustomSearch = async () => {
@@ -86,7 +100,7 @@ const ReportSearchRanges: React.FC<ReportSearchRangesProps> = ({
       role="group"
       aria-label={t("reportRange.label")}
     >
-      {PRESETS.map(({ days, key }) => (
+      {presets.map(({ days, key }) => (
         <button
           key={key}
           type="button"
@@ -97,6 +111,17 @@ const ReportSearchRanges: React.FC<ReportSearchRangesProps> = ({
           {t(`reportRange.d${days}`)}
         </button>
       ))}
+
+      {showAll && (
+        <button
+          type="button"
+          aria-pressed={rangeKey === "all"}
+          onClick={applyAll}
+          className={cn(pill, rangeKey === "all" ? pillActive : pillIdle)}
+        >
+          {t("reportRange.all")}
+        </button>
+      )}
 
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>

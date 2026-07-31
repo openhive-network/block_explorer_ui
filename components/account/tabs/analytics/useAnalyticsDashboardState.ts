@@ -24,6 +24,7 @@ const DEFAULT_REPORTS: { type: string; h: number }[] = [
   { type: "rcFootprint", h: 8 },
   { type: "rcConsumption", h: 8 },
   { type: "contentActivity", h: 8 },
+  { type: "socialInteractions", h: 8 },
 ];
 
 // `perRow` tiles across at `w` cols; y tracks the running sum of row heights.
@@ -70,6 +71,69 @@ const widgetsKeyFor = (user: string) => `analytics_widgets_${user}`;
 // the pre-upgrade layout doesn't leak as a shared baseline to other accounts.
 const LEGACY_LAYOUT_KEY = "analytics_layout";
 const LEGACY_WIDGETS_KEY = "analytics_widgets";
+
+// Reports added after a user already has a stored dashboard would never surface
+// on their own — DEFAULT_REPORTS only seeds a first visit — so each new report
+// is appended once per user. The flag is written even when the append is
+// skipped, so removing the report afterwards sticks.
+const SEED_REPORTS: string[] = ["socialInteractions"];
+const seedKeyFor = (user: string, type: string) =>
+  `analytics_seeded_${type}_${user}`;
+
+// Appends `type` to the stored widgets + every stored breakpoint, each at the
+// bottom of its own column stack. Runs before state init so the first render
+// already has it; a fresh visit is skipped (defaults include it already).
+const seedNewReports = (
+  user: string,
+  layoutKey: string,
+  widgetsKey: string
+) => {
+  if (getLocalStorage(widgetsKey) == null) {
+    SEED_REPORTS.forEach((type) =>
+      setLocalStorage(seedKeyFor(user, type), true)
+    );
+    return;
+  }
+  SEED_REPORTS.forEach((type) => {
+    const flagKey = seedKeyFor(user, type);
+    if (getLocalStorage(flagKey) != null) return;
+    setLocalStorage(flagKey, true);
+    try {
+      const widgets = JSON.parse(getLocalStorage(widgetsKey) ?? "[]");
+      if (!Array.isArray(widgets)) return;
+      if (widgets.some((w: Layout) => w?.i?.split("-")[0] === type)) return;
+
+      // Read both before writing either, so a missing/unusable layouts entry
+      // can't leave widgets seeded against a layout that never got the report.
+      // Writing an empty object here would also be destructive: loadLayouts
+      // falls back to the defaults only while the key is absent.
+      const storedLayouts = getLocalStorage(layoutKey);
+      const layouts = storedLayouts == null ? null : JSON.parse(storedLayouts);
+      const usableLayouts =
+        !!layouts && typeof layouts === "object" && !Array.isArray(layouts);
+
+      // `y: Infinity` would serialize to null, so the row is computed instead.
+      const bottomOf = (items: Layout[]) =>
+        items.reduce((max, w) => Math.max(max, (w?.y ?? 0) + (w?.h ?? 0)), 0);
+      const base = { ...DEFAULT_WIDGET_LAYOUT, i: `${type}-seed`, x: 0 };
+      setLocalStorage(widgetsKey, [
+        ...widgets,
+        { ...base, y: bottomOf(widgets) },
+      ]);
+
+      if (!usableLayouts) return;
+      Object.keys(layouts).forEach((breakpoint) => {
+        const items = layouts[breakpoint];
+        if (!Array.isArray(items)) return;
+        layouts[breakpoint] = [...items, { ...base, y: bottomOf(items) }];
+      });
+      setLocalStorage(layoutKey, layouts);
+    } catch {
+      // Corrupt stored dashboard — leave it alone; the flag is already set so
+      // this never retries.
+    }
+  });
+};
 
 // Runs once on mount: adopt any legacy global layout/widgets into the current
 // user's keys (only if that user has nothing stored yet), then drop the globals.
@@ -156,6 +220,7 @@ export const useAnalyticsDashboardState = (username: string | null) => {
 
   const [layouts, setLayouts] = useState<Layouts>(() => {
     migrateLegacyKeys(layoutStorageKey, widgetsStorageKey);
+    seedNewReports(user, layoutStorageKey, widgetsStorageKey);
     return loadLayouts(layoutStorageKey);
   });
   const [widgets, setWidgets] = useState<Layout[]>(() =>
@@ -167,6 +232,7 @@ export const useAnalyticsDashboardState = (username: string | null) => {
   useEffect(() => {
     if (prevUserRef.current !== user) {
       prevUserRef.current = user;
+      seedNewReports(user, layoutStorageKey, widgetsStorageKey);
       setLayouts(loadLayouts(layoutStorageKey));
       setWidgets(loadWidgets(widgetsStorageKey));
     }

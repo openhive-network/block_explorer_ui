@@ -1018,6 +1018,27 @@ namespace Hive {
     "to-block"?: number | Date;
   }
 
+  export class OperationTypeStatisticsItem {
+    op_type_id!: number;
+    op_count!: number;
+  }
+
+  export class OperationTypeStatisticsResponse {
+    date!: Date;
+    total_transactions!: number;
+    total_operations!: number;
+    operations!: OperationTypeStatisticsItem[];
+    last_block_num!: number;
+  }
+
+  export class OperationTypeStatisticsParams {
+    granularity!: string;
+    direction!: Hive.Direction;
+    "from-block"?: number | Date;
+    "to-block"?: number | Date;
+    "op-types"?: string;
+  }
+
   export class TransferStatisticsResponse {
     date!: Date;
     total_transfer_amount!: Amount;
@@ -1121,6 +1142,19 @@ namespace Hive {
     direction!: Hive.Direction;
     "from-block"?: number | Date;
     "to-block"?: number | Date;
+  }
+
+  export class DailyActiveUsersParams {
+    from_date?: Date | number | undefined;
+    to_date?: Date | number | undefined;
+    granularity?: string;
+    operation_types?: string;
+  }
+
+  export class DailyActiveUsersResponse {
+    period!: string;
+    active_accounts!: number;
+    operations!: number;
   }
 
   export class AccountFollowCount {
@@ -1265,6 +1299,8 @@ namespace Hive {
     "coin-type"!: string;
     "balance-type"!: string;
     page!: number;
+    "min-balance"?: number;
+    "max-balance"?: number;
   }
 
   export class TopHoldersResponse {
@@ -1364,6 +1400,316 @@ namespace Hive {
     pending_payout_value: string;
     depth: number;
     author: string;
+  }
+
+  export class NetworkVoteStatsParams {
+    from_date?: string;
+    to_date?: string;
+    granularity?: string;
+  }
+
+  export class NetworkVoteStatsResponse {
+    period!: string;
+    total_votes!: number;
+    upvotes!: number;
+    downvotes!: number;
+    unvotes!: number;
+    self_votes!: number;
+    unique_voters!: number;
+    downvote_pct!: number;
+  }
+
+  export class NetworkContentVolumeParams {
+    from_date?: Date | number | undefined;
+    to_date?: Date | number | undefined;
+    granularity?: string;
+  }
+
+  export class NetworkTopCustomJsonParams {
+    from_date?: string | Date | number;
+    to_date?: string | Date | number;
+    limit_count?: number;
+    group_by?: "id" | "app" | "category";
+    order_by?: "op_count" | "op_bytes" | "rc_estimate";
+  }
+
+  export class NetworkTopCustomJsonRow {
+    json_id!: string | null;
+    app_name!: string | null;
+    category!: string;
+    op_count!: number;
+    op_bytes!: number;
+    rc_estimate!: number;
+  }
+
+  export class NetworkCustomJsonUsageParams {
+    json_id!: string;
+    from_date?: string | Date | number;
+    to_date?: string | Date | number;
+    granularity?: "day" | "week" | "month";
+  }
+
+  export class NetworkCustomJsonUsageRow {
+    period!: string;
+    op_count!: number;
+    op_bytes!: number;
+    rc_estimate!: number;
+  }
+
+  // The registry takes no params.
+  export class CustomJsonAppRegistryParams {}
+
+  export class CustomJsonAppRegistryRow {
+    app_id_pattern!: string;
+    app_name!: string;
+    category!: string;
+    homepage!: string | null;
+  }
+
+  export class NetworkContentVolumeResponse {
+    period!: string;
+    posts!: number;
+    comments!: number;
+    unique_authors!: number;
+  }
+
+  export class NetworkEngagementParams {
+    from_date?: Date | number | undefined;
+    to_date?: Date | number | undefined;
+    granularity?: string;
+  }
+
+  export class NetworkEngagementResponse {
+    period!: string;
+    total_posts!: number;
+    avg_votes_per_post!: number;
+    avg_comments_per_post!: number;
+    zero_vote_post_pct!: number;
+    zero_comment_post_pct!: number;
+  }
+
+  export class NetworkAuthorRetentionParams {
+    from_date?: string | Date | number | undefined;
+    to_date?: string | Date | number | undefined;
+  }
+
+  // Cohorts of accounts by the month of their first-ever root post, with the
+  // share that created content again (post/comment, edits excluded) in three
+  // non-overlapping day-windows: (0,30], (30,90], (90,180]. The window fields
+  // are null until the cohort month + that horizon has fully elapsed.
+  export class NetworkAuthorRetentionResponse {
+    cohort_month!: string;
+    first_post_accounts!: number;
+    active_at_30d!: number | null;
+    pct_30d!: number | null;
+    active_at_90d!: number | null;
+    pct_90d!: number | null;
+    active_at_180d!: number | null;
+    pct_180d!: number | null;
+  }
+
+  export class NetworkHpDistributionParams {}
+
+  export class NetworkHpDistributionResponse {
+    bucket!: string;
+    account_count!: number;
+    pct_accounts!: number;
+    total_hp!: number;
+    pct_hp!: number;
+  }
+
+  export class GovernanceInfluenceConcentrationParams {}
+
+  export class GovernanceInfluenceConcentrationResponse {
+    gini!: number;
+    top_1pct_hp_share!: number;
+    top_10pct_hp_share!: number;
+    total_hp_holders!: number;
+    median_hp!: number;
+    mean_hp!: number;
+  }
+
+  export class AccountFunnelParams {
+    from_date?: Date | number | undefined;
+    to_date?: Date | number | undefined;
+  }
+
+  export class AccountFunnelResponse {
+    cohort_month!: string;
+    new_accounts!: number;
+    active_at_7d!: number | null;
+    pct_7d!: number | null;
+    active_at_30d!: number | null;
+    pct_30d!: number | null;
+    active_at_90d!: number | null;
+    pct_90d!: number | null;
+  }
+
+  export class AccountContentStatsParams {
+    accountName!: string;
+    from_date?: Date | number | undefined;
+    to_date?: Date | number | undefined;
+    granularity?: string;
+  }
+
+  export class AccountContentStatsResponse {
+    period!: string;
+    posts!: number;
+    comments!: number;
+    votes_cast!: number;
+    votes_received!: number;
+    replies_received!: number;
+    author_reward_hive_nai!: number;
+    author_reward_hbd_nai!: number;
+    author_reward_vests_nai!: number;
+  }
+
+  export type TopAccountsMetric =
+    | "author_rewards"
+    | "curation_rewards"
+    | "transfer_volume_in"
+    | "transfer_volume_out"
+    | "hp_balance"
+    | "transaction_count";
+
+  export class TopAccountsParams {
+    metric?: string;
+    from_date?: string | Date | number;
+    to_date?: string | Date | number;
+    limit_count?: number;
+  }
+
+  export class TopAccountsResponse {
+    rank!: number;
+    account!: string;
+    value_hive_nai!: number;
+    value_hbd_nai!: number;
+    value_vests_nai!: number;
+    op_count!: number;
+  }
+
+  export class NetworkRcUtilizationParams {
+    from_date?: string | Date | number;
+    to_date?: string | Date | number;
+    granularity?: string;
+  }
+
+  export class NetworkRcUtilizationResponse {
+    period!: string;
+    rc_total!: number;
+    by_label!: Record<string, number>;
+  }
+
+  export class AccountDappFootprintParams {
+    account!: string;
+    from_date?: string | Date | number;
+    to_date?: string | Date | number;
+  }
+
+  export class AccountDappFootprintCategory {
+    category!: string;
+    op_count!: number;
+    rc_estimated!: number;
+    pct!: number;
+    rc_pct!: number;
+  }
+
+  export class AccountDappFootprintDapp {
+    app_name!: string;
+    category!: string;
+    op_count!: number;
+    rc_estimated!: number;
+    pct!: number;
+    rc_pct!: number;
+  }
+
+  export class AccountDappFootprintResponse {
+    account!: string;
+    from_date!: string;
+    to_date!: string;
+    total_ops!: number;
+    total_rc_estimated!: number;
+    top_dapp!: string | null;
+    top_category!: string | null;
+    categories!: AccountDappFootprintCategory[];
+    dapps!: AccountDappFootprintDapp[];
+  }
+
+  export type AccountInteractionType =
+    | "reply"
+    | "vote"
+    | "transfer"
+    | "reblog"
+    | "follow";
+
+  export class AccountInteractionsParams {
+    account!: string;
+    from_date?: string | Date | number;
+    to_date?: string | Date | number;
+    top_n?: number;
+    type_filter?: string;
+  }
+
+  export class AccountInteractionRow {
+    interaction_type!: AccountInteractionType;
+    partner!: string | null;
+    interaction_count!: number;
+    partner_rank!: number;
+    partners_merged!: number;
+    covered_from!: string;
+  }
+
+  export class AccountRcFootprintParams {
+    account!: string;
+    from_date?: string | Date | number;
+    to_date?: string | Date | number;
+    group_by?: "op_type" | "app";
+  }
+
+  export class AccountRcFootprintRow {
+    label!: string;
+    rc_consumed!: number;
+    op_count!: number;
+    pct!: number;
+  }
+
+  export class AccountRcFootprintTimelineParams {
+    account!: string;
+    from_date?: string | Date | number;
+    to_date?: string | Date | number;
+    op_type_filter?: string;
+    app_filter?: string;
+    limit_count?: number;
+    before_seq?: number;
+    offset_start?: number;
+  }
+
+  export class AccountRcFootprintTimelineRow {
+    timestamp!: string;
+    block_num!: number;
+    op_type!: string;
+    app!: string | null;
+    custom_json_id!: string | null;
+    rc_consumed!: number;
+    op_seq!: number;
+  }
+
+  export class AccountFinancialSummaryParams {
+    account!: string;
+    from_date?: string;
+    to_date?: string;
+    granularity?: "day" | "week" | "month";
+  }
+
+  export class FinancialSummaryRow {
+    period!: string;
+    // Canonical Hive op-type name, e.g. "author_reward_operation".
+    category!: string;
+    direction!: "incoming" | "outgoing";
+    hive_nai!: number;
+    hbd_nai!: number;
+    vests_nai!: number;
+    op_count!: number;
   }
 }
 
