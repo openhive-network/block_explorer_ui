@@ -1,3 +1,6 @@
+import type { GetServerSideProps } from "next";
+import { SeoMeta, noindexMeta, SEO_LIST_CACHE_CONTROL } from "@/utils/seo";
+import { seoText } from "@/utils/seoStrings";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
@@ -43,3 +46,23 @@ export default function BalanceHistoryRedirect() {
     </>
   );
 }
+
+export const getServerSideProps: GetServerSideProps<{
+  meta: SeoMeta;
+}> = async ({ req, res, params }) => {
+  res.setHeader("Cache-Control", SEO_LIST_CACHE_CONTROL);
+  const raw = Array.isArray(params?.accountName)
+    ? params?.accountName[0]
+    : params?.accountName;
+  const name = String(raw || "").replace(/^@/, "");
+  return {
+    props: {
+      meta: noindexMeta(
+        req,
+        `/balanceHistory/${encodeURIComponent(name)}`,
+        seoText("pageTitle.balanceHistory"),
+        seoText("seo.balanceHistory.description")
+      ),
+    },
+  };
+};

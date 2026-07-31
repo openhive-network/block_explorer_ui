@@ -1,5 +1,5 @@
 import type { GetServerSideProps } from "next";
-import { absoluteBaseUrl } from "@/utils/seo";
+import { absoluteBaseUrl, SEO_LIST_CACHE_CONTROL } from "@/utils/seo";
 
 const Robots = () => null;
 
@@ -16,7 +16,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     "",
   ].join("\n");
   res.setHeader("Content-Type", "text/plain; charset=utf-8");
-  res.setHeader("Cache-Control", "public, max-age=3600, s-maxage=3600");
+  // The Sitemap: line is host-derived without a configured origin — same
+  // shared-cache hazard as the sitemap itself.
+  res.setHeader("Cache-Control", SEO_LIST_CACHE_CONTROL);
   res.write(body);
   res.end();
   return { props: {} };

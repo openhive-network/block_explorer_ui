@@ -272,6 +272,8 @@ export const getServerSideProps: GetServerSideProps<{
     ? params?.transactionId[0]
     : params?.transactionId;
   const tx = String(raw || "").trim();
+  // Same soft-404 guard as /block: only a real 40-hex trx id is indexable.
+  const isTxId = /^[0-9a-f]{40}$/i.test(tx);
   const shortTx = tx.length > 12 ? `${tx.slice(0, 12)}…` : tx;
   const canonical = canonicalUrl(req, `/tx/${encodeURIComponent(tx)}`);
   const description = clamp(
@@ -284,6 +286,7 @@ export const getServerSideProps: GetServerSideProps<{
         description,
         canonical,
         ogType: "article",
+        noindex: !isTxId,
         ogImage: defaultOgImage(absoluteBaseUrl(req)),
         jsonLd: {
           "@context": "https://schema.org",

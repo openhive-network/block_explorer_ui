@@ -1,3 +1,6 @@
+import type { GetServerSideProps } from "next";
+import { SeoMeta, noindexMeta, SEO_LIST_CACHE_CONTROL } from "@/utils/seo";
+import { seoText } from "@/utils/seoStrings";
 import React, { useEffect } from "react";
 
 import CommentsSearch from "@/components/home/searches/CommentsSearch";
@@ -46,20 +49,33 @@ const Comments: React.FC = () => {
   }, [commentSearchProps, router.query]);
 
   return (
-    <div
-      className="page-container"
-      data-testid="comments-search-comments-page"
-    >
+    <div className="page-container" data-testid="comments-search-comments-page">
       <Card>
         <CardContent className="pt-2">
           <CommentsSearch />
         </CardContent>
       </Card>
       <div className="mt-4">
-      <CommentSearchResults />
+        <CommentSearchResults />
       </div>
     </div>
   );
 };
 
 export default Comments;
+
+export const getServerSideProps: GetServerSideProps<{
+  meta: SeoMeta;
+}> = async ({ req, res }) => {
+  res.setHeader("Cache-Control", SEO_LIST_CACHE_CONTROL);
+  return {
+    props: {
+      meta: noindexMeta(
+        req,
+        "/comments",
+        seoText("seo.comments.title"),
+        seoText("seo.comments.description")
+      ),
+    },
+  };
+};

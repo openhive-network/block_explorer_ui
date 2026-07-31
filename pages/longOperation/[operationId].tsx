@@ -1,3 +1,6 @@
+import type { GetServerSideProps } from "next";
+import { SeoMeta, noindexMeta, SEO_LIST_CACHE_CONTROL } from "@/utils/seo";
+import { seoText } from "@/utils/seoStrings";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/router";
 
@@ -34,3 +37,22 @@ export default function LongOperation() {
     </div>
   );
 }
+
+export const getServerSideProps: GetServerSideProps<{
+  meta: SeoMeta;
+}> = async ({ req, res, params }) => {
+  res.setHeader("Cache-Control", SEO_LIST_CACHE_CONTROL);
+  const raw = Array.isArray(params?.operationId)
+    ? params?.operationId[0]
+    : params?.operationId;
+  return {
+    props: {
+      meta: noindexMeta(
+        req,
+        `/longOperation/${encodeURIComponent(String(raw || ""))}`,
+        seoText("seo.longOperation.title"),
+        seoText("seo.longOperation.description")
+      ),
+    },
+  };
+};

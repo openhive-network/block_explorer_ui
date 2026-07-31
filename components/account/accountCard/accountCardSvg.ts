@@ -36,6 +36,9 @@ export interface AccountCardData {
   ctaLabel: string;
 }
 
+// This SVG is served as image/svg+xml by /api/og/account and injected via
+// dangerouslySetInnerHTML by AccountShareCard, so it must be self-defending:
+// escape every string and coerce every number here rather than trusting callers.
 const esc = (s: string): string =>
   String(s)
     .replace(/&/g, "&amp;")
@@ -43,6 +46,8 @@ const esc = (s: string): string =>
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
+
+const num = (n: unknown): number => Math.round(Number(n) || 0);
 
 const FONT =
   "'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif";
@@ -239,7 +244,7 @@ export const buildAccountCardSvg = (d: AccountCardData): string => {
   ${crown}
 
   <g font-family="${FONT}">
-    <text x="260" y="180" font-size="58" font-weight="900" letter-spacing="-2" fill="#ffffff">@${esc(d.name)}<tspan font-size="27" font-weight="800" letter-spacing="0" fill="#ffd7a0" dx="18">rep ${d.reputation} ★</tspan></text>
+    <text x="260" y="180" font-size="58" font-weight="900" letter-spacing="-2" fill="#ffffff">@${esc(d.name)}<tspan font-size="27" font-weight="800" letter-spacing="0" fill="#ffd7a0" dx="18">rep ${num(d.reputation)} ★</tspan></text>
     <text x="262" y="228" font-size="26" font-weight="600" fill="rgba(255,255,255,0.72)">${esc(d.role)}</text>
   </g>
   ${badges}

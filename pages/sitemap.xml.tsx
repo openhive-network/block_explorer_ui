@@ -1,5 +1,9 @@
 import type { GetServerSideProps } from "next";
-import { absoluteBaseUrl, escapeXml } from "@/utils/seo";
+import {
+  absoluteBaseUrl,
+  escapeXml,
+  SEO_LIST_CACHE_CONTROL,
+} from "@/utils/seo";
 
 // Entity pages (accounts, blocks, transactions) number in the millions, so the
 // sitemap lists only the stable index routes; crawlers reach entity pages via
@@ -28,10 +32,10 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
 ${urls}
 </urlset>`;
   res.setHeader("Content-Type", "application/xml; charset=utf-8");
-  res.setHeader(
-    "Cache-Control",
-    "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400"
-  );
+  // Every <loc> is built from absoluteBaseUrl, so without a configured origin
+  // this body is host-derived and must not be shared-cached — a spoofed Host
+  // would otherwise be served to every later crawler.
+  res.setHeader("Cache-Control", SEO_LIST_CACHE_CONTROL);
   res.write(xml);
   res.end();
   return { props: {} };

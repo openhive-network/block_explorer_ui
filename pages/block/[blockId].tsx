@@ -373,6 +373,10 @@ export const getServerSideProps: GetServerSideProps<{
     ? params?.blockId[0]
     : params?.blockId;
   const block = String(raw || "").trim();
+  // Any string routes here, so without this a bogus id yields an indexable
+  // "Block <anything>" page with Dataset JSON-LD — an unbounded soft-404 space,
+  // and attacker-chosen text in our indexed titles.
+  const isBlockRef = /^\d[\d,]*$/.test(block) || /^[0-9a-f]{40}$/i.test(block);
   const canonical = canonicalUrl(req, `/block/${encodeURIComponent(block)}`);
   const description = clamp(
     seoText("seo.block.description", { num: block, site: siteConfig.name })
@@ -384,6 +388,7 @@ export const getServerSideProps: GetServerSideProps<{
         description,
         canonical,
         ogType: "article",
+        noindex: !isBlockRef,
         ogImage: defaultOgImage(absoluteBaseUrl(req)),
         jsonLd: {
           "@context": "https://schema.org",
