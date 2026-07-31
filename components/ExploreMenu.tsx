@@ -3,25 +3,44 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useI18n } from "@/i18n/i18n";
-import { Users, Vote, Menu, UserCheck, SettingsIcon, Award } from "lucide-react";
+import {
+  Users,
+  Vote,
+  Menu,
+  UserCheck,
+  SettingsIcon,
+  Award,
+  Wrench,
+} from "lucide-react";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-const ExploreListItem = ({ href, title, icon: Icon, closeMenu, testId }: { href: string; title: string; icon: React.ElementType; closeMenu: () => void; testId?: string; }) => (
-    <Link
-      href={href}
-      className="group flex items-center gap-3 rounded-md p-2 text-sm font-medium transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
-      onClick={closeMenu}
-      data-testid={testId}
-    >
-        <Icon className="h-5 w-5 text-slate-500 transition-colors group-hover:text-slate-800 dark:text-slate-400 dark:group-hover:text-slate-100" />
-        <span >{title}</span>
-    </Link>
+const ExploreListItem = ({
+  href,
+  title,
+  icon: Icon,
+  closeMenu,
+  testId,
+}: {
+  href: string;
+  title: string;
+  icon: React.ElementType;
+  closeMenu: () => void;
+  testId?: string;
+}) => (
+  <Link
+    href={href}
+    className="group flex items-center gap-3 rounded-md p-2 text-sm font-medium transition-colors hover:bg-slate-100 dark:hover:bg-slate-800"
+    onClick={closeMenu}
+    data-testid={testId}
+  >
+    <Icon className="h-5 w-5 text-slate-500 transition-colors group-hover:text-slate-800 dark:text-slate-400 dark:group-hover:text-slate-100" />
+    <span>{title}</span>
+  </Link>
 );
-
 
 export function ExploreMenu() {
   const { t } = useI18n();
@@ -52,13 +71,49 @@ export function ExploreMenu() {
           </button>
         </PopoverTrigger>
 
-        <PopoverContent className="w-64 p-2 border-slate-200 dark:border-slate-700 mt-2" align="end">
+        <PopoverContent
+          className="w-64 p-2 border-slate-200 dark:border-slate-700 mt-2"
+          align="end"
+        >
           <div className="flex flex-col gap-1">
-              <ExploreListItem href="/communities" title={t("navbar.communitiesTitle")} icon={Users} closeMenu={() => setIsOpen(false)} />
-              <ExploreListItem href="/proposals" title={t("navbar.proposalsTitle")} icon={Vote} closeMenu={() => setIsOpen(false)} />
-              <ExploreListItem href="/top-holders" title={t("pageTitle.topHolders")} icon={Award}   closeMenu={() => setIsOpen(false)}/>
-              <ExploreListItem href="/witnesses" title={t("navbar.witnessesTitle")} icon={UserCheck} closeMenu={() => setIsOpen(false)} testId="navbar-witnesses-link" />
-              <ExploreListItem href="/settings" title={t("navbar.settingsTitle")} icon={SettingsIcon} closeMenu={() => setIsOpen(false)} />
+            <ExploreListItem
+              href="/communities"
+              title={t("navbar.communitiesTitle")}
+              icon={Users}
+              closeMenu={() => setIsOpen(false)}
+            />
+            <ExploreListItem
+              href="/proposals"
+              title={t("navbar.proposalsTitle")}
+              icon={Vote}
+              closeMenu={() => setIsOpen(false)}
+            />
+            <ExploreListItem
+              href="/top-holders"
+              title={t("pageTitle.topHolders")}
+              icon={Award}
+              closeMenu={() => setIsOpen(false)}
+            />
+            <ExploreListItem
+              href="/witnesses"
+              title={t("navbar.witnessesTitle")}
+              icon={UserCheck}
+              closeMenu={() => setIsOpen(false)}
+              testId="navbar-witnesses-link"
+            />
+            <ExploreListItem
+              href="/tools/compare"
+              title={t("tools.title")}
+              icon={Wrench}
+              closeMenu={() => setIsOpen(false)}
+              testId="navbar-tools-link"
+            />
+            <ExploreListItem
+              href="/settings"
+              title={t("navbar.settingsTitle")}
+              icon={SettingsIcon}
+              closeMenu={() => setIsOpen(false)}
+            />
           </div>
         </PopoverContent>
       </Popover>

@@ -19,6 +19,7 @@ import {
   ArrowUp,
   Crown,
   Share2,
+  ArrowLeftRight,
 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -425,20 +426,35 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                       </TooltipProvider>
                     )}
                   </div>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setShareOpen(true);
-                    }}
-                    className="mt-2.5 inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-600 transition-colors hover:bg-indigo-100 dark:border-indigo-800 dark:bg-indigo-950/40 dark:text-indigo-300 dark:hover:bg-indigo-900/50"
-                    aria-label={t("accountShareCard.shareCard")}
-                    title={t("accountShareCard.shareCard")}
-                  >
-                    <Share2 className="h-3.5 w-3.5" />
-                    <span className="whitespace-nowrap">
-                      {t("accountShareCard.shareCard")}
-                    </span>
-                  </button>
+                  <div className="mt-2.5 flex flex-wrap items-center gap-2">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShareOpen(true);
+                      }}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-600 transition-colors hover:bg-indigo-100 dark:border-indigo-800 dark:bg-indigo-950/40 dark:text-indigo-300 dark:hover:bg-indigo-900/50"
+                      aria-label={t("accountShareCard.shareCard")}
+                      title={t("accountShareCard.shareCard")}
+                    >
+                      <Share2 className="h-3.5 w-3.5" />
+                      <span className="whitespace-nowrap">
+                        {t("accountShareCard.shareCard")}
+                      </span>
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(`/tools/compare?a=${accountName}`);
+                      }}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-600 transition-colors hover:bg-sky-100 dark:border-sky-800 dark:bg-sky-950/40 dark:text-sky-300 dark:hover:bg-sky-900/50"
+                      aria-label={t("compare.entry.tooltip")}
+                    >
+                      <ArrowLeftRight className="h-3.5 w-3.5" />
+                      <span className="whitespace-nowrap">
+                        {t("compare.entry.button")}
+                      </span>
+                    </button>
+                  </div>
                 </div>
               </div>
 

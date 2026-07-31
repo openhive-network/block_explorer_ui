@@ -36,6 +36,7 @@ const useAccountVestingStats = (
     enabled: !!accountName,
     refetchInterval: liveDataEnabled ? config.mainRefreshInterval : false,
     refetchOnWindowFocus: false,
+    keepPreviousData: true,
   });
 
   return {

@@ -6,7 +6,8 @@ const useProxyPower = (
   accountName: string,
   page: number,
   sort?: string,
-  direction?: Hive.Direction
+  direction?: Hive.Direction,
+  enabled: boolean = true
 ) => {
   const {
     data: accountProxyPower,
@@ -19,6 +20,7 @@ const useProxyPower = (
       fetchingService.getProxyPower(accountName, page, sort, direction),
     refetchOnWindowFocus: false,
     keepPreviousData: true,
+    enabled: !!accountName && enabled,
   });
 
   return {
