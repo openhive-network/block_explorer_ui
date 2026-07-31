@@ -16,7 +16,9 @@ const Seo: React.FC<SeoProps> = ({ meta, title: titleOverride }) => {
     <Head>
       <title>{title}</title>
       <meta name="description" content={description} />
-      <link rel="canonical" href={canonical} />
+      {/* key so the App-level <Seo> and the per-page <Seo> collapse to one link
+          (next/head only auto-dedupes title + meta, not <link>/<script>). */}
+      <link rel="canonical" href={canonical} key="seo-canonical" />
       {noindex && <meta name="robots" content="noindex,follow" />}
       <meta property="og:site_name" content={siteConfig.name} />
       <meta property="og:title" content={title} />
@@ -36,6 +38,7 @@ const Seo: React.FC<SeoProps> = ({ meta, title: titleOverride }) => {
       {ogImage && <meta name="twitter:image" content={ogImage} />}
       {jsonLd && (
         <script
+          key="seo-jsonld"
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
