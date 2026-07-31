@@ -6,7 +6,8 @@ import fetchingService from "@/services/FetchingService";
 
 const useRcDelegations = (
   accountName: string,
-  liveDataEnabled: boolean
+  liveDataEnabled: boolean,
+  enabled = true
 ) => {
   const {
     data,
@@ -15,6 +16,7 @@ const useRcDelegations = (
   }: UseQueryResult<Hive.RcDelegationsApiResponse> = useQuery({
     queryKey: ["RcDelegations", accountName, liveDataEnabled],
     queryFn: () => fetchingService.getRcDelegations(accountName),
+    enabled: enabled && !!accountName,
     refetchInterval: liveDataEnabled ? config.accountRefreshInterval : false,
     refetchOnWindowFocus: false,
   });

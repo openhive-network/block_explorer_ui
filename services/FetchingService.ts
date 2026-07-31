@@ -943,15 +943,15 @@ class FetchingService {
     toBlock?: Date | number | undefined,
     direction: "asc" | "desc" = "asc"
   ): Promise<Hive.AccountVestingStatsResponse[]> {
-    return await this.extendedHiveChain!.restApi[
-      "balance-api"
-    ].accountVestingStats({
-      accountName,
-      granularity,
-      direction,
-      "from-block": fromBlock,
-      "to-block": toBlock,
-    });
+    return this.withNodeSupport("balance-api:account-vesting-stats", () =>
+      this.extendedHiveChain!.restApi["balance-api"].accountVestingStats({
+        accountName,
+        granularity,
+        direction,
+        "from-block": fromBlock,
+        "to-block": toBlock,
+      })
+    );
   }
 
   async getAccountVestingHistory(

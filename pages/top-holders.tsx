@@ -1,14 +1,5 @@
 import { useEffect, useState, useRef, useMemo } from "react";
-import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import Seo from "@/components/seo/Seo";
-import {
-  SeoMeta,
-  listPageMeta,
-  pageTitle,
-  SEO_LIST_CACHE_CONTROL,
-} from "@/utils/seo";
-import { seoText } from "@/utils/seoStrings";
 import { Card } from "@/components/ui/card";
 import {
   Table,
@@ -75,6 +66,9 @@ import { resolveAccountLabel } from "@/utils/accountLabels";
 import useTopHolderWitnesses from "@/hooks/api/common/useTopHolderWitnesses";
 import AccountLocator from "@/components/AccountLocator";
 import AutoCompleteInput from "@/components/ui/AutoCompleteInput";
+import useCompareSelection from "@/hooks/common/useCompareSelection";
+import CompareSelectToggle from "@/components/compare/CompareSelectToggle";
+import CompareSelectionBar from "@/components/compare/CompareSelectionBar";
 
 // Total supply in the same raw unit as a holder's balance (VESTS ×1e6, HIVE/HBD ×1e3).
 const getTotalSupplyRaw = (
@@ -134,10 +128,11 @@ const getCirculatingBaseRaw = (
   return systemBalance < total ? total - systemBalance : total;
 };
 
-export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
+export default function TopHoldersPage() {
   const { t, locale } = useI18n();
   const router = useRouter();
   const { settings } = useSettings();
+  const compareSelection = useCompareSelection();
 
   const [page, setPage] = useState(1);
   const [coinType, setCoinType] = useState<CoinType>("HIVE");
@@ -539,6 +534,14 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
                 {t("topHolders.you")}
               </span>
             )}
+            {!isSystemAccount(account) && (
+              <CompareSelectToggle
+                account={account}
+                selected={compareSelection.isSelected(account)}
+                onToggle={compareSelection.toggle}
+                t={t}
+              />
+            )}
           </div>
         </TableCell>
         <TableCell className="hidden sm:table-cell text-right tabular-nums text-xs text-gray-500 dark:text-gray-400">
@@ -616,355 +619,333 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
   );
 
   return (
-    <>
-      <Seo meta={meta} title={pageTitle(t("pageTitle.topHolders"))} />
-      <div className="page-container">
-        <Card className="w-full rounded shadow-md mt-4 py-2">
-          <div className="flex flex-row items-start justify-between w-full relative gap-3">
-            <div className="flex flex-col md:flex-row justify-between items-start">
-              <PageTitle titleKey="pageTitle.topHolders" className="py-4" />
-            </div>
-            <div className="flex-shrink-0 mr-2 md:mt-2">
-              <FilterSectionToggle
-                isFiltersActive={filtersChanged}
-                toggleFilters={() => setIsFiltersVisible(!isFiltersVisible)}
-              />
-            </div>
+    <div className="page-container">
+      <Card className="w-full rounded shadow-md mt-4 py-2">
+        <div className="flex flex-row items-start justify-between w-full relative gap-3">
+          <div className="flex flex-col md:flex-row justify-between items-start">
+            <PageTitle titleKey="pageTitle.topHolders" className="py-4" />
           </div>
-        </Card>
-
-        {isFiltersVisible && (
-          <div
-            className="report-filters mt-2"
-            data-testid="top-holders-filters"
-          >
-            <p className="report-filters-label">{t("common.filters")}</p>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                runAccountSearch();
-              }}
-              className="mb-3 flex flex-wrap items-end gap-2"
-            >
-              <div className="flex w-full flex-col gap-y-2 sm:w-[260px]">
-                <Label className="text-xs">{t("topHolders.findAccount")}</Label>
-                <AutoCompleteInput
-                  value={accountSearch}
-                  onChange={onAccountSearchChange}
-                  placeholder={t("topHolders.findAccountPlaceholder")}
-                  inputType="account_name"
-                  className="w-full"
-                  inputClassName="!rounded !border !border-solid !border-gray-300 !bg-white dark:!border-gray-600 dark:!bg-gray-800"
-                />
-              </div>
-              <Button type="submit" className="rounded">
-                {t("topHolders.find")}
-              </Button>
-              {searchError && (
-                <span className="pb-2 text-xs text-red-500">
-                  {t("topHolders.accountNotFound", { account: searchError })}
-                </span>
-              )}
-            </form>
-            <div className="flex flex-wrap items-end gap-4">
-              <div className="flex w-full flex-col gap-y-2 sm:w-[130px]">
-                <Label className="text-xs">{t("topHolders.coin")}</Label>
-                <Select
-                  value={coinType}
-                  onValueChange={(v) => {
-                    setCoinType(v as CoinType);
-                    if (v === "VESTS") setBalanceType("balance");
-                    setMinBalance(undefined);
-                    setMaxBalance(undefined);
-                    setPage(1);
-                  }}
-                >
-                  <SelectTrigger className="rounded">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="HIVE">HIVE</SelectItem>
-                    <SelectItem value="HBD">HBD</SelectItem>
-                    <SelectItem value="VESTS">VESTS</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex w-full flex-col gap-y-2 sm:w-[160px]">
-                <Label className="text-xs">{t("topHolders.balanceType")}</Label>
-                <Select
-                  value={balanceType}
-                  onValueChange={(v) => {
-                    setBalanceType(v as BalanceType);
-                    setPage(1);
-                  }}
-                  disabled={coinType === "VESTS"}
-                >
-                  <SelectTrigger className="rounded">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="balance">
-                      {t("topHolders.filtersBalance")}
-                    </SelectItem>
-                    <SelectItem value="savings_balance">
-                      {t("topHolders.filtersSavings")}
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex w-full flex-col gap-y-2 sm:w-auto">
-                <Label className="text-xs">
-                  {t("topHolders.range", { unit: currentUnitLabel })}
-                </Label>
-                <div className="flex items-center gap-2">
-                  <Input
-                    type="number"
-                    inputMode="decimal"
-                    min={0}
-                    placeholder={t("topHolders.min")}
-                    value={minInput}
-                    onChange={(e) => setMinInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") applyRange();
-                    }}
-                    className="w-full rounded sm:w-28"
-                    data-testid="top-holders-min"
-                  />
-                  <span className="text-gray-400">–</span>
-                  <Input
-                    type="number"
-                    inputMode="decimal"
-                    min={0}
-                    placeholder={t("topHolders.max")}
-                    value={maxInput}
-                    onChange={(e) => setMaxInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") applyRange();
-                    }}
-                    className="w-full rounded sm:w-28"
-                    data-testid="top-holders-max"
-                  />
-                </div>
-              </div>
-
-              <div className="flex w-full gap-2 sm:w-auto">
-                <Button
-                  onClick={applyRange}
-                  data-testid="apply-filters"
-                  className="rounded"
-                >
-                  {t("common.search")}
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={clearFilter}
-                  data-testid="clear-filters"
-                  className="rounded"
-                >
-                  {t("common.clear")}
-                </Button>
-              </div>
-
-              {rangeError && (
-                <div className="w-full">
-                  <ErrorMessage
-                    message={rangeError}
-                    onClose={() => setRangeError(null)}
-                    timeout={4000}
-                  />
-                </div>
-              )}
-
-              {coinType === "VESTS" && (
-                <div className="flex w-full flex-col gap-y-2">
-                  <Label className="text-xs">
-                    {t("topHolders.quickRanges")}
-                  </Label>
-                  <div className="flex flex-wrap gap-1.5">
-                    {HP_BRACKETS.map((p) => {
-                      const active = p.chip === activePresetLabel;
-                      return (
-                        <button
-                          key={p.chip}
-                          type="button"
-                          onClick={() => applyPreset(p.min, p.max)}
-                          aria-pressed={active}
-                          className={`rounded-full border px-2.5 py-1 text-xs transition-colors ${
-                            active
-                              ? "border-indigo-500 bg-indigo-500 text-white"
-                              : "border-gray-300 text-gray-700 hover:border-indigo-400 hover:bg-indigo-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-indigo-950/50"
-                          }`}
-                        >
-                          {p.chip}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {searchTarget && (
-          <AccountLocator
-            key={`${searchTarget}-${searchNonce}`}
-            account={searchTarget}
-            coinType={coinType}
-            balanceType={balanceType}
-            onLocated={(rank) => {
-              handleJumpToRank(rank, searchTarget);
-              setSearchTarget(null);
-            }}
-            onNotFound={() => {
-              setSearchError(searchTarget);
-              setFoundAccount(null);
-              foundAccountRef.current = null;
-              setSearchTarget(null);
-            }}
-          />
-        )}
-        <TopHoldersConcentrationStrip
-          coinType={coinType}
-          balanceType={balanceType}
-          totalSupplyRaw={totalSupplyRaw}
-          baseRaw={circulatingBaseRaw}
-        />
-
-        {filterActive && (
-          <div
-            className="mt-3 flex items-center justify-between gap-2 rounded-md border border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-950/40 px-3 py-2 text-sm"
-            data-testid="top-holders-filter-banner"
-          >
-            <span className="font-medium text-indigo-700 dark:text-indigo-300">
-              {t("topHolders.filteredBanner", { range: rangeLabel() })}
-            </span>
-            <button
-              type="button"
-              onClick={clearFilter}
-              className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-medium text-indigo-700 hover:bg-indigo-100 dark:text-indigo-300 dark:hover:bg-indigo-900"
-            >
-              {t("common.clear")}
-              <X className="h-3.5 w-3.5" />
-            </button>
-          </div>
-        )}
-
-        <div className="flex justify-center w-full mt-4 ">
-          <div
-            className="flex w-full justify-center items-center flex-wrap bg-theme"
-            data-testid="account-top-bar"
-          >
-            <div className="flex items-center justify-center w-full md:ml-auto md:w-3/4">
-              <CustomPagination
-                currentPage={page}
-                onPageChange={setPage}
-                pageSize={pageSize}
-                totalCount={totalCount}
-              />
-            </div>
-            <div className="flex items-center mt-2 md:ml-auto w-full md:w-auto justify-center md:justify-end mb-2">
-              <JumpToPage
-                currentPage={page}
-                onPageChange={setPage}
-                totalCount={totalCount ?? 1}
-                pageSize={config.standardPaginationSize}
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="table-toolbar w-full flex flex-wrap items-center gap-4">
-          <div>
-            <DataCountMessage
-              count={totalCount}
-              dataType={t("topHolders.DataType")}
+          <div className="flex-shrink-0 mr-2 md:mt-2">
+            <FilterSectionToggle
+              isFiltersActive={filtersChanged}
+              toggleFilters={() => setIsFiltersVisible(!isFiltersVisible)}
             />
           </div>
+        </div>
+      </Card>
 
-          <TopHolderYouBadge
-            coinType={coinType}
-            balanceType={balanceType}
-            onJump={(rank) => handleJumpToRank(rank, username ?? undefined)}
-          />
-
-          <div className="ml-auto flex items-center gap-x-4">
-            {coinType === "VESTS" && (
-              <SegmentedToggle
-                ariaLabel={`${t("common.vests")} / ${t("common.hp")}`}
-                size="md"
-                value={unit}
-                onChange={setUnit}
-                options={[
-                  { value: "vests", label: t("common.vests") },
-                  { value: "hp", label: t("common.hp") },
-                ]}
+      {isFiltersVisible && (
+        <div className="report-filters mt-2" data-testid="top-holders-filters">
+          <p className="report-filters-label">{t("common.filters")}</p>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              runAccountSearch();
+            }}
+            className="mb-3 flex flex-wrap items-end gap-2"
+          >
+            <div className="flex w-full flex-col gap-y-2 sm:w-[260px]">
+              <Label className="text-xs">{t("topHolders.findAccount")}</Label>
+              <AutoCompleteInput
+                value={accountSearch}
+                onChange={onAccountSearchChange}
+                placeholder={t("topHolders.findAccountPlaceholder")}
+                inputType="account_name"
+                className="w-full"
+                inputClassName="!rounded !border !border-solid !border-gray-300 !bg-white dark:!border-gray-600 dark:!bg-gray-800"
               />
+            </div>
+            <Button type="submit" className="rounded">
+              {t("topHolders.find")}
+            </Button>
+            {searchError && (
+              <span className="pb-2 text-xs text-red-500">
+                {t("topHolders.accountNotFound", { account: searchError })}
+              </span>
             )}
-            <DataExport data={prepareExportData()} filename={exportFileName} />
+          </form>
+          <div className="flex flex-wrap items-end gap-4">
+            <div className="flex w-full flex-col gap-y-2 sm:w-[130px]">
+              <Label className="text-xs">{t("topHolders.coin")}</Label>
+              <Select
+                value={coinType}
+                onValueChange={(v) => {
+                  setCoinType(v as CoinType);
+                  if (v === "VESTS") setBalanceType("balance");
+                  setMinBalance(undefined);
+                  setMaxBalance(undefined);
+                  setPage(1);
+                }}
+              >
+                <SelectTrigger className="rounded">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="HIVE">HIVE</SelectItem>
+                  <SelectItem value="HBD">HBD</SelectItem>
+                  <SelectItem value="VESTS">VESTS</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex w-full flex-col gap-y-2 sm:w-[160px]">
+              <Label className="text-xs">{t("topHolders.balanceType")}</Label>
+              <Select
+                value={balanceType}
+                onValueChange={(v) => {
+                  setBalanceType(v as BalanceType);
+                  setPage(1);
+                }}
+                disabled={coinType === "VESTS"}
+              >
+                <SelectTrigger className="rounded">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="balance">
+                    {t("topHolders.filtersBalance")}
+                  </SelectItem>
+                  <SelectItem value="savings_balance">
+                    {t("topHolders.filtersSavings")}
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex w-full flex-col gap-y-2 sm:w-auto">
+              <Label className="text-xs">
+                {t("topHolders.range", { unit: currentUnitLabel })}
+              </Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  type="number"
+                  inputMode="decimal"
+                  min={0}
+                  placeholder={t("topHolders.min")}
+                  value={minInput}
+                  onChange={(e) => setMinInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") applyRange();
+                  }}
+                  className="w-full rounded sm:w-28"
+                  data-testid="top-holders-min"
+                />
+                <span className="text-gray-400">–</span>
+                <Input
+                  type="number"
+                  inputMode="decimal"
+                  min={0}
+                  placeholder={t("topHolders.max")}
+                  value={maxInput}
+                  onChange={(e) => setMaxInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") applyRange();
+                  }}
+                  className="w-full rounded sm:w-28"
+                  data-testid="top-holders-max"
+                />
+              </div>
+            </div>
+
+            <div className="flex w-full gap-2 sm:w-auto">
+              <Button
+                onClick={applyRange}
+                data-testid="apply-filters"
+                className="rounded"
+              >
+                {t("common.search")}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={clearFilter}
+                data-testid="clear-filters"
+                className="rounded"
+              >
+                {t("common.clear")}
+              </Button>
+            </div>
+
+            {rangeError && (
+              <div className="w-full">
+                <ErrorMessage
+                  message={rangeError}
+                  onClose={() => setRangeError(null)}
+                  timeout={4000}
+                />
+              </div>
+            )}
+
+            {coinType === "VESTS" && (
+              <div className="flex w-full flex-col gap-y-2">
+                <Label className="text-xs">{t("topHolders.quickRanges")}</Label>
+                <div className="flex flex-wrap gap-1.5">
+                  {HP_BRACKETS.map((p) => {
+                    const active = p.chip === activePresetLabel;
+                    return (
+                      <button
+                        key={p.chip}
+                        type="button"
+                        onClick={() => applyPreset(p.min, p.max)}
+                        aria-pressed={active}
+                        className={`rounded-full border px-2.5 py-1 text-xs transition-colors ${
+                          active
+                            ? "border-indigo-500 bg-indigo-500 text-white"
+                            : "border-gray-300 text-gray-700 hover:border-indigo-400 hover:bg-indigo-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-indigo-950/50"
+                        }`}
+                      >
+                        {p.chip}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         </div>
+      )}
 
-        <Card className="w-full rounded">
-          {isTopHoldersLoading && (
-            <div className="flex justify-center items-center">
-              <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />
-            </div>
-          )}
-          {!isTopHoldersLoading && isTopHoldersError && (
-            <p className="text-sm text-center">
-              <ErrorMessage message={isTopHoldersError.message} />
-            </p>
-          )}
-          {!isTopHoldersLoading &&
-            !isTopHoldersError &&
-            holdersData.length === 0 && <NoResult />}
-          {!isTopHoldersLoading &&
-            !isTopHoldersError &&
-            holdersData.length > 0 && (
-              <Table
-                className="w-full"
-                enableMobileScrollArrows
-                enableCompactToggle
-              >
-                <TableHeaderRow />
-                <TableBody data-testid="table-body">
-                  {holdersData.map((holder, index) => (
-                    <HolderRow
-                      key={holder.account}
-                      rank={holder.rank}
-                      account={holder.account}
-                      value={holder.value}
-                      index={index}
-                    />
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-        </Card>
+      {searchTarget && (
+        <AccountLocator
+          key={`${searchTarget}-${searchNonce}`}
+          account={searchTarget}
+          coinType={coinType}
+          balanceType={balanceType}
+          onLocated={(rank) => {
+            handleJumpToRank(rank, searchTarget);
+            setSearchTarget(null);
+          }}
+          onNotFound={() => {
+            setSearchError(searchTarget);
+            setFoundAccount(null);
+            foundAccountRef.current = null;
+            setSearchTarget(null);
+          }}
+        />
+      )}
+      <TopHoldersConcentrationStrip
+        coinType={coinType}
+        balanceType={balanceType}
+        totalSupplyRaw={totalSupplyRaw}
+        baseRaw={circulatingBaseRaw}
+      />
 
-        <div className="fixed bottom-[10px] right-0 flex flex-col items-end justify-end px-3 md:px-12">
-          <ScrollTopButton />
+      {filterActive && (
+        <div
+          className="mt-3 flex items-center justify-between gap-2 rounded-md border border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-950/40 px-3 py-2 text-sm"
+          data-testid="top-holders-filter-banner"
+        >
+          <span className="font-medium text-indigo-700 dark:text-indigo-300">
+            {t("topHolders.filteredBanner", { range: rangeLabel() })}
+          </span>
+          <button
+            type="button"
+            onClick={clearFilter}
+            className="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs font-medium text-indigo-700 hover:bg-indigo-100 dark:text-indigo-300 dark:hover:bg-indigo-900"
+          >
+            {t("common.clear")}
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+      )}
+
+      <div className="flex justify-center w-full mt-4 ">
+        <div
+          className="flex w-full justify-center items-center flex-wrap bg-theme"
+          data-testid="account-top-bar"
+        >
+          <div className="flex items-center justify-center w-full md:ml-auto md:w-3/4">
+            <CustomPagination
+              currentPage={page}
+              onPageChange={setPage}
+              pageSize={pageSize}
+              totalCount={totalCount}
+            />
+          </div>
+          <div className="flex items-center mt-2 md:ml-auto w-full md:w-auto justify-center md:justify-end mb-2">
+            <JumpToPage
+              currentPage={page}
+              onPageChange={setPage}
+              totalCount={totalCount ?? 1}
+              pageSize={config.standardPaginationSize}
+            />
+          </div>
         </div>
       </div>
-    </>
+
+      <div className="table-toolbar w-full flex flex-wrap items-center gap-4">
+        <div>
+          <DataCountMessage
+            count={totalCount}
+            dataType={t("topHolders.DataType")}
+          />
+        </div>
+
+        <TopHolderYouBadge
+          coinType={coinType}
+          balanceType={balanceType}
+          onJump={(rank) => handleJumpToRank(rank, username ?? undefined)}
+        />
+
+        <div className="ml-auto flex items-center gap-x-4">
+          {coinType === "VESTS" && (
+            <SegmentedToggle
+              ariaLabel={`${t("common.vests")} / ${t("common.hp")}`}
+              size="md"
+              value={unit}
+              onChange={setUnit}
+              options={[
+                { value: "vests", label: t("common.vests") },
+                { value: "hp", label: t("common.hp") },
+              ]}
+            />
+          )}
+          <DataExport data={prepareExportData()} filename={exportFileName} />
+        </div>
+      </div>
+
+      <Card className="w-full rounded">
+        {isTopHoldersLoading && (
+          <div className="flex justify-center items-center">
+            <Loader2 className="animate-spin mt-1 h-16 w-10 ml-10 dark:text-white" />
+          </div>
+        )}
+        {!isTopHoldersLoading && isTopHoldersError && (
+          <p className="text-sm text-center">
+            <ErrorMessage message={isTopHoldersError.message} />
+          </p>
+        )}
+        {!isTopHoldersLoading &&
+          !isTopHoldersError &&
+          holdersData.length === 0 && <NoResult />}
+        {!isTopHoldersLoading &&
+          !isTopHoldersError &&
+          holdersData.length > 0 && (
+            <Table
+              className="w-full"
+              enableMobileScrollArrows
+              enableCompactToggle
+            >
+              <TableHeaderRow />
+              <TableBody data-testid="table-body">
+                {holdersData.map((holder, index) => (
+                  <HolderRow
+                    key={holder.account}
+                    rank={holder.rank}
+                    account={holder.account}
+                    value={holder.value}
+                    index={index}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          )}
+      </Card>
+
+      <div className="fixed bottom-[10px] right-0 flex flex-col items-end justify-end px-3 md:px-12">
+        <ScrollTopButton />
+      </div>
+
+      <CompareSelectionBar selection={compareSelection} t={t} />
+    </div>
   );
 }
-
-export const getServerSideProps: GetServerSideProps<{
-  meta: SeoMeta;
-}> = async ({ req, res }) => {
-  res.setHeader("Cache-Control", SEO_LIST_CACHE_CONTROL);
-  return {
-    props: {
-      meta: listPageMeta(
-        req,
-        "/top-holders",
-        seoText("seo.topHolders.title"),
-        seoText("seo.topHolders.description")
-      ),
-    },
-  };
-};
