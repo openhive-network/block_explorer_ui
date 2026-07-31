@@ -1635,6 +1635,30 @@ namespace Hive {
     dapps!: AccountDappFootprintDapp[];
   }
 
+  export type AccountInteractionType =
+    | "reply"
+    | "vote"
+    | "transfer"
+    | "reblog"
+    | "follow";
+
+  export class AccountInteractionsParams {
+    account!: string;
+    from_date?: string | Date | number;
+    to_date?: string | Date | number;
+    top_n?: number;
+    type_filter?: string;
+  }
+
+  export class AccountInteractionRow {
+    interaction_type!: AccountInteractionType;
+    partner!: string | null;
+    interaction_count!: number;
+    partner_rank!: number;
+    partners_merged!: number;
+    covered_from!: string;
+  }
+
   export class AccountRcFootprintParams {
     account!: string;
     from_date?: string | Date | number;

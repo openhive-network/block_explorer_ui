@@ -1202,6 +1202,24 @@ class FetchingService {
     );
   }
 
+  async getAccountInteractions(
+    account: string,
+    fromDate?: string | Date | number,
+    toDate?: string | Date | number,
+    topN?: number,
+    typeFilter?: Hive.AccountInteractionType
+  ): Promise<Hive.AccountInteractionRow[]> {
+    return this.withNodeSupport("haf-stats-api:account-interactions", () =>
+      this.extendedHiveChain!.restApi["haf-stats-api"].accountInteractions({
+        account,
+        from_date: fromDate,
+        to_date: toDate,
+        top_n: topN,
+        type_filter: typeFilter,
+      })
+    );
+  }
+
   async getAccountRcFootprint(
     account: string,
     fromDate?: string | Date | number,
