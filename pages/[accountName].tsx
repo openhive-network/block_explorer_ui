@@ -7,8 +7,8 @@ import {
   canonicalUrl,
   clamp,
   profilePageJsonLd,
-  serializeJsonLd,
   siteConfig,
+  SeoMeta,
 } from "@/utils/seo";
 import { seoText } from "@/utils/seoStrings";
 
@@ -60,20 +60,12 @@ export const defaultSearchParams: AccountSearchParams = {
 };
 
 interface AccountPageProps {
-  ogImageUrl: string | null;
-  ogTitle: string | null;
-  canonical: string | null;
-  description: string | null;
-  jsonLd: Record<string, unknown> | null;
+  // SEO meta rendered server-side by the app-level <Seo> in _app.tsx (which sits
+  // above the hiveChain-gated Layout, so it actually reaches the crawler HTML).
+  meta: SeoMeta;
 }
 
-export default function Account({
-  ogImageUrl,
-  ogTitle,
-  canonical,
-  description,
-  jsonLd,
-}: AccountPageProps) {
+export default function Account() {
   const { t } = useI18n();
   const router = useRouter();
   const isMobile = useMediaQuery("(max-width: 768px)");
@@ -192,41 +184,6 @@ export default function Account({
     ? router.query.accountName[0] // If it's an array, get the first element
     : router.query.accountName; // Otherwise, treat it as a string directly
 
-  // Open Graph / Twitter card meta, built server-side (getServerSideProps) with
-  // an absolute URL so crawlers — which never run the client fetch below — can
-  // unfurl the share card. Rendered on every path, including the loader.
-  const ogMeta =
-    ogImageUrl && ogTitle ? (
-      <Head>
-        <meta property="og:title" content={ogTitle} />
-        <meta property="og:image" content={ogImageUrl} />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:image" content={ogImageUrl} />
-      </Head>
-    ) : null;
-
-  // Search meta (canonical/description/JSON-LD) — crawlers never run the client
-  // fetch, so these are built server-side. Complements the OG share card above.
-  const seoHead = (
-    <Head>
-      {canonical && <link rel="canonical" href={canonical} />}
-      {description && <meta name="description" content={description} />}
-      {description && <meta property="og:description" content={description} />}
-      {jsonLd && <meta property="og:type" content="profile" />}
-      {ogTitle && <meta name="twitter:title" content={ogTitle} />}
-      {description && <meta name="twitter:description" content={description} />}
-      {jsonLd && (
-        <script
-          type="application/ld+json"
-          // eslint-disable-next-line react/no-danger
-          dangerouslySetInnerHTML={{ __html: serializeJsonLd(jsonLd) }}
-        />
-      )}
-    </Head>
-  );
-
   if (routeAccountName && !routeAccountName.startsWith("@")) {
     return <ErrorPage />;
   }
@@ -243,8 +200,6 @@ export default function Account({
   if (!accountDetails) {
     return (
       <>
-        {seoHead}
-        {ogMeta}
         <Loader2 className="animate-spin mt-1 text-black dark:text-white h-12 w-12 ml-3 ..." />
       </>
     );
@@ -261,8 +216,6 @@ export default function Account({
           - Hive Explorer
         </title>
       </Head>
-      {seoHead}
-      {!communityDetails && ogMeta}
       <div className="grid grid-cols-1 md:grid-cols-3 text-white page-container gap-4">
         {isMobile && (
           <MobileAccountNameCard
@@ -308,18 +261,13 @@ export const getServerSideProps: GetServerSideProps<AccountPageProps> = async ({
   const name = (raw || "").replace(/^@/, "").replace(/^%40/i, "");
   const canonical = name
     ? canonicalUrl({ headers: req.headers }, `/@${encodeURIComponent(name)}`)
-    : null;
+    : "";
+  const title = name ? `@${name} - Hive Explorer` : "Hive Explorer";
 
   // Communities (hive-*) don't get an account share card, but still get canonical.
   if (!name || name.startsWith("hive-")) {
     return {
-      props: {
-        ogImageUrl: null,
-        ogTitle: null,
-        canonical,
-        description: null,
-        jsonLd: null,
-      },
+      props: { meta: { title, description: "", canonical, ogType: "website" } },
     };
   }
 
@@ -340,11 +288,16 @@ export const getServerSideProps: GetServerSideProps<AccountPageProps> = async ({
 
   return {
     props: {
-      ogImageUrl,
-      ogTitle: `@${name} on Hive`,
-      canonical,
-      description,
-      jsonLd: canonical ? profilePageJsonLd(canonical, `@${name}`) : null,
+      meta: {
+        title,
+        description,
+        canonical,
+        ogImage: ogImageUrl,
+        ogType: "profile",
+        jsonLd: canonical
+          ? profilePageJsonLd(canonical, `@${name}`)
+          : undefined,
+      },
     },
   };
 };
