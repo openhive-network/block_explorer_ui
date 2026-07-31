@@ -670,7 +670,7 @@ const SocialInteractionsReport: React.FC<
                 <tr className="border-b border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400">
                   <th
                     scope="col"
-                    className="text-start font-medium py-1.5 pe-2"
+                    className="text-start font-medium py-1.5 pe-2 sticky start-0 z-10 bg-theme border-e border-gray-200 dark:border-gray-700"
                   >
                     {t("socialInteractions.colPartner")}
                   </th>
@@ -720,7 +720,7 @@ const SocialInteractionsReport: React.FC<
                     onClick={() => router.push(`/@${r.account}`)}
                     className="border-b border-gray-100 dark:border-gray-800 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/40"
                   >
-                    <td className="py-1.5 pe-2">
+                    <td className="py-1.5 pe-2 sticky start-0 z-10 bg-theme border-e border-gray-200 dark:border-gray-700">
                       <span className="inline-flex items-center gap-1.5">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
@@ -742,7 +742,7 @@ const SocialInteractionsReport: React.FC<
                         <Link
                           href={`/@${r.account}`}
                           onClick={(e) => e.stopPropagation()}
-                          className="text-link"
+                          className="text-link whitespace-nowrap"
                         >
                           @{r.account}
                         </Link>
@@ -763,7 +763,7 @@ const SocialInteractionsReport: React.FC<
                 ))}
                 {othersInfo.total > 0 && (
                   <tr className="italic text-gray-500 dark:text-gray-400">
-                    <td className="py-1.5 pe-2">
+                    <td className="py-1.5 pe-2 sticky start-0 z-10 bg-theme border-e border-gray-200 dark:border-gray-700">
                       {t("socialInteractions.others")}
                     </td>
                     {tableColumns.map((ty) => (
@@ -790,14 +790,19 @@ const SocialInteractionsReport: React.FC<
             )}
           </div>
         ) : (
-          <ReactECharts
-            ref={chartRef}
-            option={option}
-            onEvents={onEvents}
-            style={{ height: `${chartHeight}px`, width: "100%" }}
-            notMerge
-            lazyUpdate={false}
-          />
+          // Min width so the 3 columns don't collide on mobile; scroll instead.
+          <div className="overflow-x-auto">
+            <div className="min-w-[500px]">
+              <ReactECharts
+                ref={chartRef}
+                option={option}
+                onEvents={onEvents}
+                style={{ height: `${chartHeight}px`, width: "100%" }}
+                notMerge
+                lazyUpdate={false}
+              />
+            </div>
+          </div>
         )}
       </div>
 
