@@ -2145,5 +2145,8 @@
   "socialInteractions.colPartner": "Partener",
   "socialInteractions.colTotal": "Total",
   "socialInteractions.multiTieNote": "★ Atins prin 2+ tipuri de interacțiune",
-  "socialInteractions.multiTypeBadge": "Atins prin 2+ tipuri de interacțiune"
+  "socialInteractions.multiTypeBadge": "Atins prin 2+ tipuri de interacțiune",
+  "widgets.mySocialInteractionsName": "Interacțiunile mele sociale",
+  "widgets.mySocialInteractionsDescription": "Cu cine interacționezi și cum — răspunsuri, voturi, transferuri, reblog-uri și urmăriri către partenerii principali.",
+  "widgets.mySocialInteractionsLoggedOut": "Autentifică-te pentru a-ți vedea interacțiunile sociale."
 }

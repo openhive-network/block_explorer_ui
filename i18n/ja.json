@@ -2145,5 +2145,8 @@
   "socialInteractions.colPartner": "相手",
   "socialInteractions.colTotal": "合計",
   "socialInteractions.multiTieNote": "★ 2種類以上の交流でつながっている",
-  "socialInteractions.multiTypeBadge": "2種類以上の交流でつながっている"
+  "socialInteractions.multiTypeBadge": "2種類以上の交流でつながっている",
+  "widgets.mySocialInteractionsName": "自分のソーシャルインタラクション",
+  "widgets.mySocialInteractionsDescription": "誰とどのように交流しているか — 返信・投票・送金・リブログ・フォローが主要な相手に流れます。",
+  "widgets.mySocialInteractionsLoggedOut": "ソーシャルインタラクションを見るにはサインインしてください。"
 }

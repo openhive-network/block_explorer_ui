@@ -2145,5 +2145,8 @@
   "socialInteractions.colPartner": "상대",
   "socialInteractions.colTotal": "합계",
   "socialInteractions.multiTieNote": "★ 2가지 이상의 상호작용 유형으로 연결됨",
-  "socialInteractions.multiTypeBadge": "2가지 이상의 상호작용 유형으로 연결됨"
+  "socialInteractions.multiTypeBadge": "2가지 이상의 상호작용 유형으로 연결됨",
+  "widgets.mySocialInteractionsName": "내 소셜 상호작용",
+  "widgets.mySocialInteractionsDescription": "누구와 어떻게 상호작용하는지 — 답글, 투표, 전송, 리블로그, 팔로우가 주요 상대에게 흐릅니다.",
+  "widgets.mySocialInteractionsLoggedOut": "소셜 상호작용을 보려면 로그인하세요."
 }

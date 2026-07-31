@@ -2145,5 +2145,8 @@
   "socialInteractions.colPartner": "Socio",
   "socialInteractions.colTotal": "Total",
   "socialInteractions.multiTieNote": "★ Alcanzado por 2+ tipos de interacción",
-  "socialInteractions.multiTypeBadge": "Alcanzado por 2+ tipos de interacción"
+  "socialInteractions.multiTypeBadge": "Alcanzado por 2+ tipos de interacción",
+  "widgets.mySocialInteractionsName": "Mis interacciones sociales",
+  "widgets.mySocialInteractionsDescription": "Con quién interactúas y cómo: respuestas, votos, transferencias, reblogs y seguimientos a tus principales socios.",
+  "widgets.mySocialInteractionsLoggedOut": "Inicia sesión para ver tus interacciones sociales."
 }

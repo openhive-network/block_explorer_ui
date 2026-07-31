@@ -2145,5 +2145,8 @@
   "socialInteractions.colPartner": "الشريك",
   "socialInteractions.colTotal": "الإجمالي",
   "socialInteractions.multiTieNote": "★ تم الوصول إليه عبر نوعين أو أكثر من التفاعلات",
-  "socialInteractions.multiTypeBadge": "تم الوصول إليه عبر نوعين أو أكثر من التفاعلات"
+  "socialInteractions.multiTypeBadge": "تم الوصول إليه عبر نوعين أو أكثر من التفاعلات",
+  "widgets.mySocialInteractionsName": "تفاعلاتي الاجتماعية",
+  "widgets.mySocialInteractionsDescription": "مع مَن تتفاعل وكيف — الردود والتصويتات والتحويلات وإعادات النشر والمتابعات إلى أبرز شركائك.",
+  "widgets.mySocialInteractionsLoggedOut": "سجّل الدخول لعرض تفاعلاتك الاجتماعية."
 }

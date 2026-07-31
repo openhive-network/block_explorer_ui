@@ -2145,5 +2145,8 @@
   "socialInteractions.colPartner": "伙伴",
   "socialInteractions.colTotal": "合计",
   "socialInteractions.multiTieNote": "★ 通过 2 种以上互动类型建立联系",
-  "socialInteractions.multiTypeBadge": "通过 2 种以上互动类型建立联系"
+  "socialInteractions.multiTypeBadge": "通过 2 种以上互动类型建立联系",
+  "widgets.mySocialInteractionsName": "我的社交互动",
+  "widgets.mySocialInteractionsDescription": "你与谁互动、如何互动——回复、投票、转账、转发和关注流向你的主要伙伴。",
+  "widgets.mySocialInteractionsLoggedOut": "登录以查看你的社交互动。"
 }
