@@ -25,6 +25,7 @@ const DEFAULT_REPORTS: { type: string; h: number }[] = [
   { type: "rcConsumption", h: 8 },
   { type: "contentActivity", h: 8 },
   { type: "socialInteractions", h: 8 },
+  { type: "communityActivity", h: 8 },
 ];
 
 // `perRow` tiles across at `w` cols; y tracks the running sum of row heights.

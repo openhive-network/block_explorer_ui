@@ -347,6 +347,12 @@ export const extendedRest = {
       responseArray: true,
       urlPath: "account/{account}/interactions",
     },
+    accountCommunityActivity: {
+      params: Hive.AccountCommunityActivityParams,
+      result: Hive.AccountCommunityActivityRow,
+      responseArray: true,
+      urlPath: "account/{account}/community-activity",
+    },
     accountRcFootprint: {
       params: Hive.AccountRcFootprintParams,
       result: Hive.AccountRcFootprintRow,
