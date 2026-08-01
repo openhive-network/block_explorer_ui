@@ -1659,6 +1659,19 @@ namespace Hive {
     covered_from!: string;
   }
 
+  export class AccountCommunityActivityParams {
+    account!: string;
+    from_date?: string | Date | number;
+    to_date?: string | Date | number;
+  }
+
+  export class AccountCommunityActivityRow {
+    community!: string | null;
+    title!: string;
+    post_count!: number;
+    comment_count!: number;
+  }
+
   export class AccountRcFootprintParams {
     account!: string;
     from_date?: string | Date | number;

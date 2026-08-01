@@ -1220,6 +1220,22 @@ class FetchingService {
     );
   }
 
+  async getAccountCommunityActivity(
+    account: string,
+    fromDate?: string | Date | number,
+    toDate?: string | Date | number
+  ): Promise<Hive.AccountCommunityActivityRow[]> {
+    return this.withNodeSupport("haf-stats-api:community-activity", () =>
+      this.extendedHiveChain!.restApi["haf-stats-api"].accountCommunityActivity(
+        {
+          account,
+          from_date: fromDate,
+          to_date: toDate,
+        }
+      )
+    );
+  }
+
   async getAccountRcFootprint(
     account: string,
     fromDate?: string | Date | number,

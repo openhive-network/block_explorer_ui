@@ -78,6 +78,10 @@ export const WIDGET_NODE_SUPPORT: Record<string, WidgetNodeSupport> = {
     app: "haf-stats-api",
     endpoint: "haf-stats-api:account-interactions",
   },
+  "my-community-activity": {
+    app: "haf-stats-api",
+    endpoint: "haf-stats-api:community-activity",
+  },
 
   // balance-api — analytics routes can be missing while the app itself is present.
   "transfer-volume": {
