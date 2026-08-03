@@ -77,7 +77,7 @@ const LEGACY_WIDGETS_KEY = "analytics_widgets";
 // on their own — DEFAULT_REPORTS only seeds a first visit — so each new report
 // is appended once per user. The flag is written even when the append is
 // skipped, so removing the report afterwards sticks.
-const SEED_REPORTS: string[] = ["socialInteractions"];
+const SEED_REPORTS: string[] = ["socialInteractions", "communityActivity"];
 const seedKeyFor = (user: string, type: string) =>
   `analytics_seeded_${type}_${user}`;
 
