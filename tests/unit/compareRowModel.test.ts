@@ -2,8 +2,21 @@ import {
   buildComparisonSections,
   CompareAccountData,
 } from "@/utils/compare/rowModel";
-import { sectionWins, winnerOf } from "@/utils/compare/scoring";
-import { compareCellPair, compareCellText } from "@/utils/compare/format";
+import {
+  sectionWins,
+  winnerOf,
+  sparkScale,
+  overallWins,
+} from "@/utils/compare/scoring";
+import {
+  buildCompareExportRows,
+  buildCompareExportJson,
+} from "@/utils/compare/export";
+import {
+  compareCellPair,
+  compareCellText,
+  compareSecondaryText,
+} from "@/utils/compare/format";
 import { CompareRow } from "@/utils/compare/types";
 
 const DAY = 24 * 3600 * 1000;
@@ -25,10 +38,18 @@ const themarkymark: CompareAccountData = {
   effectiveHp: 1_310_000,
   receivedHp: 70_000,
   delegatedOutHp: 0,
-  liquidUsd: 42_000,
-  savingsUsd: 120_000,
+  liquidHive: 30_000,
+  liquidHiveUsd: 12_000,
+  liquidHbd: 30_000,
+  liquidHbdUsd: 30_000,
+  savingsHive: 50_000,
+  savingsHiveUsd: 20_000,
+  savingsHbd: 100_000,
+  savingsHbdUsd: 100_000,
   reputation: 78,
-  topHolderRank: 182,
+  topHolderRankHive: null,
+  topHolderRankHbd: 40,
+  topHolderRankVests: 18,
   wealthComposition: {
     staked: 1_078_000,
     liquid: 42_000,
@@ -65,8 +86,14 @@ const themarkymark: CompareAccountData = {
   authorRewardsHbdW: 1240,
   authorRewardsHiveW: 103,
   authorRewardsHpW: 320,
-  rewardsPerPostHbd: 103,
-  votesReceivedPerPost: 342,
+  curationRewardsHpW: 4_100,
+  benefactorRewardsHpW: 250,
+  benefactorRewardsHbdW: 12,
+  producerRewardsHpW: 9_500,
+  interestHbdW: 640,
+  financialUnavailable: false,
+  rewardsPerContentHbdEq: 103,
+  votesReceivedPerContent: 342,
   poweredUpHp: 5000,
   powerDownHp: 800,
   netHpFlow: 4200,
@@ -88,10 +115,18 @@ const cryptomaria: CompareAccountData = {
   effectiveHp: 640_000,
   receivedHp: 160_000,
   delegatedOutHp: 8_000,
-  liquidUsd: 9_100,
-  savingsUsd: 2_300,
+  liquidHive: 15_000,
+  liquidHiveUsd: 6_000,
+  liquidHbd: 3_100,
+  liquidHbdUsd: 3_100,
+  savingsHive: 2_000,
+  savingsHiveUsd: 800,
+  savingsHbd: 1_500,
+  savingsHbdUsd: 1_500,
   reputation: 71,
-  topHolderRank: 1_204,
+  topHolderRankHive: 12,
+  topHolderRankHbd: null,
+  topHolderRankVests: 87,
   wealthComposition: {
     staked: 274_600,
     liquid: 9_100,
@@ -128,8 +163,14 @@ const cryptomaria: CompareAccountData = {
   authorRewardsHbdW: 1240,
   authorRewardsHiveW: 103,
   authorRewardsHpW: 320,
-  rewardsPerPostHbd: 103,
-  votesReceivedPerPost: 342,
+  curationRewardsHpW: 980,
+  benefactorRewardsHpW: 40,
+  benefactorRewardsHbdW: 3,
+  producerRewardsHpW: null,
+  interestHbdW: 0,
+  financialUnavailable: false,
+  rewardsPerContentHbdEq: 103,
+  votesReceivedPerContent: 342,
   poweredUpHp: 5000,
   powerDownHp: 800,
   netHpFlow: 4200,
@@ -148,32 +189,85 @@ describe("buildComparisonSections", () => {
     expect(wealth.id).toBe("wealth");
     expect(influence.id).toBe("influence");
     expect(wealth.rows.map((r) => r.id)).toEqual([
+      "totalValue",
       "totalHp",
       "effectiveHp",
       "receivedHp",
       "delegatedOutHp",
-      "liquid",
-      "savings",
+      "liquidHive",
+      "liquidHbd",
+      "savingsHive",
+      "savingsHbd",
       "reputation",
-      "topHolderRank",
+      "topHolderRankVests",
+      "topHolderRankHive",
+      "topHolderRankHbd",
     ]);
   });
 
-  it("matches the demo's section win-counts (Wealth 6·1, Influence 4·1)", () => {
-    expect(sectionWins(wealth)).toEqual({ a: 6, b: 1 });
+  it("blanks only the rows whose own source is down", () => {
+    const earnings = buildComparisonSections(
+      { ...themarkymark, financialUnavailable: true },
+      { ...cryptomaria, financialUnavailable: true }
+    ).find((s) => s.id === "earnings")!;
+    const rowById = (id: string) => earnings.rows.find((r) => r.id === id)!;
+    expect(rowById("rewardsPerContent").unavailable).toBe(true);
+    expect(rowById("votesReceivedPerContent").unavailable).toBe(false);
+  });
+
+  it("matches the demo's section win-counts (Wealth 10·2, Influence 4·1)", () => {
+    expect(sectionWins(wealth)).toEqual({ a: 10, b: 2 });
     expect(sectionWins(influence)).toEqual({ a: 4, b: 1 });
   });
 
   it("received-HP goes to @b, top-holder rank (lower) to @a", () => {
     const received = wealth.rows.find((r) => r.id === "receivedHp")!;
-    const rank = wealth.rows.find((r) => r.id === "topHolderRank")!;
+    const rank = wealth.rows.find((r) => r.id === "topHolderRankVests")!;
     expect(winnerOf(received)).toBe("b");
     expect(winnerOf(rank)).toBe("a");
+  });
+
+  it("ranks each coin against the same coin, never across coins", () => {
+    const vests = wealth.rows.find((r) => r.id === "topHolderRankVests")!;
+    const hive = wealth.rows.find((r) => r.id === "topHolderRankHive")!;
+    const hbd = wealth.rows.find((r) => r.id === "topHolderRankHbd")!;
+    expect([vests.aValue, vests.bValue]).toEqual([18, 87]);
+    expect(winnerOf(vests)).toBe("a");
+    // Placing beats not placing, but only within the same coin.
+    expect([hive.aValue, hive.bValue]).toEqual([null, 12]);
+    expect(winnerOf(hive)).toBe("b");
+    expect([hbd.aValue, hbd.bValue]).toEqual([40, null]);
+    expect(winnerOf(hbd)).toBe("a");
+  });
+
+  it("an unplaced side gets no bar, and both unplaced scores nothing", () => {
+    const hive = wealth.rows.find((r) => r.id === "topHolderRankHive")!;
+    expect(sparkScale(hive)).toEqual({ a: 0, b: 1 });
+    const [{ rows }] = buildComparisonSections(
+      { ...themarkymark, topHolderRankHive: null },
+      { ...cryptomaria, topHolderRankHive: null }
+    );
+    const none = rows.find((r) => r.id === "topHolderRankHive")!;
+    expect(winnerOf(none)).toBeNull();
+    expect(sparkScale(none)).toEqual({ a: 0, b: 0 });
+  });
+
+  it("flags the top-100 cutoff and renders an outside-top-100 side blank", () => {
+    const hive = wealth.rows.find((r) => r.id === "topHolderRankHive")!;
+    expect(hive.infoKey).toBe("compare.info.topHolderRank");
+    expect(compareCellText(hive, "a", "en", (k) => k)).toBe("—");
+    expect(compareCellText(hive, "b", "en", (k) => k)).toBe("#12");
   });
 
   it("delegated-out is neutral; witness rank is unscored when one side isn't a witness", () => {
     const deleg = wealth.rows.find((r) => r.id === "delegatedOutHp")!;
     const wRank = influence.rows.find((r) => r.id === "witnessRank")!;
+    // All three sit out when only one side is a witness.
+    const wVotes = influence.rows.find((r) => r.id === "witnessVotes")!;
+    const wVoters = influence.rows.find((r) => r.id === "witnessVoters")!;
+    expect(winnerOf(wVotes)).toBeNull();
+    expect(winnerOf(wVoters)).toBeNull();
+    expect(sparkScale(wRank)).toEqual({ a: 0, b: 0 });
     expect(deleg.scored).toBe(false);
     expect(winnerOf(wRank)).toBeNull();
   });
@@ -307,5 +401,101 @@ describe("compareCellPair", () => {
     const row = cell({ aValue: 5, bValue: 9, unavailable: true });
     expect(compareCellText(row, "a", "en", t)).toBe("compare.unavailable");
     expect(compareCellPair(row, "en", t).b).toBe("compare.unavailable");
+  });
+});
+
+describe("compare export parity with the rendered table", () => {
+  const t = (k: string) => k;
+  const sections = buildComparisonSections(themarkymark, cryptomaria);
+  const ctx = {
+    a: themarkymark,
+    b: cryptomaria,
+    sections,
+    rangeLabel: "compare.window.all",
+    locale: "en",
+    t,
+  };
+  const rows = buildCompareExportRows(ctx);
+  const aCol = "@themarkymark";
+  const bCol = "@cryptomaria";
+
+  it("exports every row of every section, none dropped", () => {
+    const total = sections.reduce((n, s) => n + s.rows.length, 0);
+    expect(rows).toHaveLength(total);
+    expect(total).toBeGreaterThan(0);
+  });
+
+  it("exports the same cell text the table renders, row for row", () => {
+    const displayed = (row: CompareRow, side: "a" | "b", primary: string) => {
+      const sec = compareSecondaryText(row, side, "en");
+      return sec ? `${primary} (${sec})` : primary;
+    };
+    let i = 0;
+    for (const section of sections) {
+      for (const row of section.rows) {
+        const shown = compareCellPair(row, "en", t);
+        expect(rows[i][aCol]).toBe(displayed(row, "a", shown.a));
+        expect(rows[i][bCol]).toBe(displayed(row, "b", shown.b));
+        expect(rows[i]["compare.export.metric"]).toBe(t(row.labelKey));
+        expect(rows[i]["compare.export.section"]).toBe(t(section.titleKey));
+        i += 1;
+      }
+    }
+  });
+
+  it("winner column agrees with the caret the table draws", () => {
+    let i = 0;
+    for (const section of sections) {
+      for (const row of section.rows) {
+        const w = winnerOf(row);
+        const expected =
+          w === "a"
+            ? aCol
+            : w === "b"
+              ? bCol
+              : w === "tie"
+                ? "compare.tie"
+                : "";
+        expect(rows[i]["compare.export.winner"]).toBe(expected);
+        i += 1;
+      }
+    }
+  });
+
+  it("JSON export carries raw numbers alongside the display strings", () => {
+    const json = buildCompareExportJson(ctx);
+    const wealth = json.sections.find((s) => s.id === "wealth")!;
+    const totalValue = wealth.rows.find(
+      (r) => r.metric === t("compare.rows.totalValue")
+    )!;
+    expect(totalValue.a).toBe(themarkymark.totalValueUsd);
+    expect(totalValue.b).toBe(cryptomaria.totalValueUsd);
+    expect(json.overall).toEqual(overallWins(sections));
+  });
+
+  it("carries the secondary value into the CSV cell, not just the primary", () => {
+    const exported = rows.find(
+      (r) => r["compare.export.metric"] === t("compare.rows.liquidHive")
+    )!;
+    expect(exported[aCol]).toBe("30K HIVE ($12K)");
+    expect(exported[bCol]).toBe("15K HIVE ($6K)");
+  });
+
+  it("leaves rows without a secondary untouched", () => {
+    const exported = rows.find(
+      (r) => r["compare.export.metric"] === t("compare.rows.reputation")
+    )!;
+    expect(exported[aCol]).toBe("78");
+    expect(exported[bCol]).toBe("71");
+  });
+
+  it("exposes the secondary as a number in the JSON export", () => {
+    const json = buildCompareExportJson(ctx);
+    const liquid = json.sections
+      .find((s) => s.id === "wealth")!
+      .rows.find((r) => r.metric === t("compare.rows.liquidHive"))!;
+    expect(liquid.aSecondary).toBe(themarkymark.liquidHiveUsd);
+    expect(liquid.bSecondary).toBe(cryptomaria.liquidHiveUsd);
+    expect(liquid.aSecondaryDisplay).toBe("$12K");
   });
 });

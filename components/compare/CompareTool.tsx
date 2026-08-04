@@ -5,6 +5,7 @@ import { useI18n } from "@/i18n/i18n";
 import { trimAccountName } from "@/utils/StringUtils";
 import useAccountComparison from "@/hooks/api/compare/useAccountComparison";
 import { CompareRange, COMPARE_RANGES } from "@/utils/compare/range";
+import { Side } from "@/utils/compare/types";
 import AccountPicker from "@/components/compare/AccountPicker";
 import CompareHeader from "@/components/compare/CompareHeader";
 import CompareTable from "@/components/compare/CompareTable";
@@ -46,6 +47,17 @@ const CompareTool: React.FC = () => {
     router.push({
       pathname: "/tools/compare",
       query: { a: na, b: nb, ...(range !== "30d" && { range }) },
+    });
+
+  // Dropping one side sends the picker back with the other still filled in.
+  const removeSide = (side: Side) =>
+    router.push({
+      pathname: "/tools/compare",
+      query: {
+        ...(side === "a" ? {} : { a }),
+        ...(side === "b" ? {} : { b }),
+        ...(range !== "30d" && { range }),
+      },
     });
 
   const notFound =
@@ -93,6 +105,7 @@ const CompareTool: React.FC = () => {
             t={t}
             range={range}
             onRangeChange={setRange}
+            onRemove={removeSide}
           />
           <CompareTable
             sections={comparison.sections}

@@ -1,6 +1,6 @@
 import { CompareSection, Side } from "./types";
 import { CompareAccountData } from "./rowModel";
-import { compareCellPair } from "./format";
+import { compareCellPair, compareSecondaryText } from "./format";
 import { winnerOf, sectionWins, overallWins } from "./scoring";
 
 export interface CompareExportContext {
@@ -19,6 +19,18 @@ const rawValue = (
   if (row.unavailable) return null;
   if (side === "a" ? row.aDisplayKey : row.bDisplayKey) return null;
   return side === "a" ? row.aValue : row.bValue;
+};
+
+// The table stacks a muted secondary under the primary; flattening it into the
+// same cell keeps it without changing the column shape.
+const cellWithSecondary = (
+  row: CompareSection["rows"][number],
+  side: Side,
+  locale: string,
+  text: string
+): string => {
+  const secondary = compareSecondaryText(row, side, locale);
+  return secondary ? `${text} (${secondary})` : text;
 };
 
 const winnerLabel = (
@@ -52,8 +64,8 @@ export const buildCompareExportRows = (
       return {
         [colSection]: t(s.titleKey),
         [colMetric]: t(r.labelKey),
-        [aCol]: cells.a,
-        [bCol]: cells.b,
+        [aCol]: cellWithSecondary(r, "a", locale, cells.a),
+        [bCol]: cellWithSecondary(r, "b", locale, cells.b),
         [colWinner]: winnerLabel(r, aCol, bCol, t),
       };
     })
@@ -83,6 +95,10 @@ export const buildCompareExportJson = (ctx: CompareExportContext) => {
           b: rawValue(r, "b"),
           aDisplay: cells.a,
           bDisplay: cells.b,
+          aSecondary: r.aSecondary ?? null,
+          bSecondary: r.bSecondary ?? null,
+          aSecondaryDisplay: compareSecondaryText(r, "a", locale),
+          bSecondaryDisplay: compareSecondaryText(r, "b", locale),
           winner: winnerOf(r),
         };
       }),

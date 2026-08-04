@@ -1,7 +1,9 @@
-// Shared date-range for the windowed comparison rows/charts.
-export type CompareRange = "30d" | "90d" | "1y";
+import { config } from "@/Config";
 
-export const COMPARE_RANGES: CompareRange[] = ["30d", "90d", "1y"];
+// Shared date-range for the windowed comparison rows/charts.
+export type CompareRange = "30d" | "90d" | "1y" | "all";
+
+export const COMPARE_RANGES: CompareRange[] = ["30d", "90d", "1y", "all"];
 
 export interface CompareWindow {
   fromDate: Date;
@@ -22,6 +24,14 @@ export const rangeToWindow = (range: CompareRange): CompareWindow => {
   if (range === "90d") {
     fromDate.setUTCDate(fromDate.getUTCDate() - 90);
     return { fromDate, toDate, granularity: "week" };
+  }
+  // First block, not account creation, so both sides span the same window.
+  if (range === "all") {
+    return {
+      fromDate: new Date(config.firstBlockTime),
+      toDate,
+      granularity: "month",
+    };
   }
   fromDate.setUTCFullYear(fromDate.getUTCFullYear() - 1);
   return { fromDate, toDate, granularity: "month" };

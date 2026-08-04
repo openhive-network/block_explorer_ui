@@ -2,9 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import moment from "moment";
-import { Link2 } from "lucide-react";
+import { Link2, X } from "lucide-react";
 import { toast } from "sonner";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
+import { resolveAccountLabel } from "@/utils/accountLabels";
+import AccountLabelBadge from "@/components/AccountLabelBadge";
 import CompareExportMenu from "./CompareExportMenu";
 import CompareVerdict from "./CompareVerdict";
 import { CompareAccountData, govHealth } from "@/utils/compare/rowModel";
@@ -25,6 +27,7 @@ interface CompareHeaderProps {
   t: (k: string) => string;
   range: CompareRange;
   onRangeChange: (r: CompareRange) => void;
+  onRemove?: (side: Side) => void;
 }
 
 const RING: Record<Side, string> = {
@@ -57,7 +60,8 @@ const Identity: React.FC<{
   locale: string;
   // Sticky bar shows only avatar + name (no descriptor) to stay compact.
   compact?: boolean;
-}> = ({ d, side, t, locale, compact }) => {
+  onRemove?: () => void;
+}> = ({ d, side, t, locale, compact, onRemove }) => {
   const avatar = (
     <Image
       src={getHiveAvatarUrl(d.account)}
@@ -67,14 +71,24 @@ const Identity: React.FC<{
       className={`h-9 w-9 flex-shrink-0 rounded-full ring-2 sm:h-11 sm:w-11 ${RING[side]}`}
     />
   );
+  // No isWitness fallback — the descriptor below already says "Witness #N".
+  const accountLabel = resolveAccountLabel(d.account);
   const text = (
     <div className={`min-w-0 ${side === "b" ? "text-end" : ""}`}>
-      <Link
-        href={`/@${d.account}`}
-        className="block truncate text-[13px] font-extrabold text-link hover:underline sm:text-[15px]"
+      <div
+        className={cn(
+          "flex min-w-0 items-center gap-1.5",
+          side === "b" && "justify-end"
+        )}
       >
-        @{d.account}
-      </Link>
+        <Link
+          href={`/@${d.account}`}
+          className="truncate text-[13px] font-extrabold text-link hover:underline sm:text-[15px]"
+        >
+          @{d.account}
+        </Link>
+        {!compact && <AccountLabelBadge label={accountLabel} />}
+      </div>
       {/* Each part stays whole and drops to its own line when the column is
           too narrow, rather than the whole descriptor being clipped. */}
       {!compact && (
@@ -101,14 +115,35 @@ const Identity: React.FC<{
       )}
     </div>
   );
+  const removeBtn = onRemove ? (
+    <button
+      type="button"
+      onClick={onRemove}
+      aria-label={t("compare.removeAccount").replace("{account}", d.account)}
+      className="flex-shrink-0 rounded-full p-1 text-slate-300 transition-colors hover:bg-rose-50 hover:text-rose-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400 dark:text-slate-600 dark:hover:bg-rose-950/30 dark:hover:text-rose-400"
+    >
+      <X className="h-3.5 w-3.5" />
+    </button>
+  ) : null;
   return (
     <div
       className={`flex items-center gap-2 px-3 py-3 sm:gap-3 sm:px-4 sm:py-3.5 ${
         side === "b" ? "justify-end" : ""
       }`}
     >
-      {side === "a" ? avatar : text}
-      {side === "a" ? text : avatar}
+      {side === "a" ? (
+        <>
+          {removeBtn}
+          {avatar}
+          {text}
+        </>
+      ) : (
+        <>
+          {text}
+          {avatar}
+          {removeBtn}
+        </>
+      )}
     </div>
   );
 };
@@ -158,7 +193,7 @@ const RangeTabs: React.FC<{
         onClick={() => onChange(r)}
         aria-pressed={range === r}
         className={cn(
-          "px-2.5 py-1 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-400",
+          "whitespace-nowrap px-2.5 py-1 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-400",
           range === r
             ? "bg-indigo-500 text-white"
             : "text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
@@ -178,6 +213,7 @@ const CompareHeader: React.FC<CompareHeaderProps> = ({
   t,
   range,
   onRangeChange,
+  onRemove,
 }) => {
   const race = overallWins(sections);
   const ratio = deltaRatio({
@@ -267,11 +303,23 @@ const CompareHeader: React.FC<CompareHeaderProps> = ({
       >
         {/* Identities */}
         <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">
-          <Identity d={a} side="a" t={t} locale={locale} />
+          <Identity
+            d={a}
+            side="a"
+            t={t}
+            locale={locale}
+            onRemove={onRemove ? () => onRemove("a") : undefined}
+          />
           <div className="flex items-center justify-center bg-slate-50 px-2 text-[10px] font-bold tracking-wider text-slate-400 dark:bg-slate-800/40 sm:px-4 sm:text-[11px]">
             {t("compare.vs")}
           </div>
-          <Identity d={b} side="b" t={t} locale={locale} />
+          <Identity
+            d={b}
+            side="b"
+            t={t}
+            locale={locale}
+            onRemove={onRemove ? () => onRemove("b") : undefined}
+          />
         </div>
 
         {/* Value duel — light-gray band */}
@@ -364,7 +412,7 @@ const CompareHeader: React.FC<CompareHeaderProps> = ({
               @{b.account} {race.b}
             </b>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <RangeTabs range={range} onChange={onRangeChange} t={t} />
             <button
               type="button"

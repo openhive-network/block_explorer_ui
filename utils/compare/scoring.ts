@@ -3,17 +3,20 @@ import { CompareRow, CompareSection, Winner } from "./types";
 // Values equal within this tolerance count as a tie (guards float noise).
 const EPS = 1e-9;
 
-const comparable = (row: CompareRow): boolean =>
-  row.scored &&
-  !row.unavailable &&
-  row.aValue !== null &&
-  row.bValue !== null &&
-  isFinite(row.aValue) &&
-  isFinite(row.bValue);
+const hasValue = (v: number | null): v is number => v !== null && isFinite(v);
+
+const comparable = (row: CompareRow): boolean => {
+  if (!row.scored || row.unavailable) return false;
+  if (row.nullMeansWorst) return hasValue(row.aValue) || hasValue(row.bValue);
+  return hasValue(row.aValue) && hasValue(row.bValue);
+};
 
 // Winner of a single row, honoring scored / lowerWins / ties / missing data.
 export const winnerOf = (row: CompareRow): Winner => {
   if (!comparable(row)) return null;
+  const aHas = hasValue(row.aValue);
+  const bHas = hasValue(row.bValue);
+  if (!aHas || !bHas) return aHas ? "a" : "b";
   const a = row.aValue as number;
   const b = row.bValue as number;
   if (Math.abs(a - b) <= EPS) return "tie";
@@ -42,17 +45,17 @@ export const deltaRatio = (row: CompareRow): string | null => {
 // Twin sparkbar widths (0..1). The bar encodes "better", not "bigger", so on a
 // lowerWins row it inverts and never contradicts the winner caret.
 export const sparkScale = (row: CompareRow): { a: number; b: number } => {
-  // Not comparable → no bars. Coercing a missing side to 0 would, on a lowerWins
-  // row, draw a full "winner" bar under the side that has no value at all.
-  if (
-    row.aValue == null ||
-    row.bValue == null ||
-    !isFinite(row.aValue) ||
-    !isFinite(row.bValue)
-  )
+  const av = row.aValue;
+  const bv = row.bValue;
+  if (!hasValue(av) || !hasValue(bv)) {
+    // Otherwise no bars: coercing a missing side to 0 would, on a lowerWins row,
+    // draw a full "winner" bar under the side that has no value at all.
+    if (row.nullMeansWorst && (hasValue(av) || hasValue(bv)))
+      return { a: hasValue(av) ? 1 : 0, b: hasValue(bv) ? 1 : 0 };
     return { a: 0, b: 0 };
-  const a = Math.abs(row.aValue);
-  const b = Math.abs(row.bValue);
+  }
+  const a = Math.abs(av);
+  const b = Math.abs(bv);
   if (row.lowerWins) {
     const min = Math.min(a, b);
     if (min <= 0) return { a: a <= 0 ? 1 : 0, b: b <= 0 ? 1 : 0 };
