@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Ban } from "lucide-react";
+import { Ban, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CompareRow as Row, Side } from "@/utils/compare/types";
 import { winnerOf, deltaRatio, sparkScale } from "@/utils/compare/scoring";
@@ -76,12 +76,10 @@ const Val: React.FC<ValProps> = ({ side, row, text, isWinner, locale }) => {
       {isWinner && side === "b" && (
         <span className={cn(CARET, "text-blue-500")}>◂</span>
       )}
-      <span className="min-w-0">
-        <span className={cn("block truncate", isWinner && SIDE_TEXT[side])}>
-          {text}
-        </span>
+      <span className="min-w-0 break-words">
+        <span className={cn("block", isWinner && SIDE_TEXT[side])}>{text}</span>
         {secondary && (
-          <span className="block truncate text-[10px] font-medium text-slate-400 dark:text-slate-500">
+          <span className="block text-[10px] font-medium text-slate-400 dark:text-slate-500">
             {secondary}
           </span>
         )}
@@ -144,6 +142,7 @@ const CompareRowView: React.FC<CompareRowProps> = ({
           : isNeutral
             ? `${t("compare.notScored")}.`
             : "",
+        row.infoKey ? t(row.infoKey) : "",
       ]
         .join(" ")
         .trim();
@@ -159,8 +158,8 @@ const CompareRowView: React.FC<CompareRowProps> = ({
       <span className="sr-only">{spoken}</span>
 
       <div aria-hidden className="min-w-0 sm:order-1 sm:flex-1">
-        <div className="flex min-w-0 items-center gap-1">
-          <span className="truncate text-sm font-medium text-slate-700 dark:text-slate-100">
+        <div className="flex min-w-0 items-start gap-1">
+          <span className="text-sm font-medium text-slate-700 dark:text-slate-100">
             {t(row.labelKey)}
           </span>
           {isNeutral && (
@@ -180,9 +179,26 @@ const CompareRowView: React.FC<CompareRowProps> = ({
               </Tooltip>
             </TooltipProvider>
           )}
+          {row.infoKey && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="flex-shrink-0 cursor-help text-slate-300 dark:text-slate-600">
+                    <Info className="h-3 w-3" />
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent
+                  side="top"
+                  className="max-w-[220px] text-[11px]"
+                >
+                  {t(row.infoKey)}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
         </div>
         {row.subLabelKey && (
-          <div className="truncate text-[11px] text-slate-400 dark:text-slate-500">
+          <div className="text-[11px] text-slate-400 dark:text-slate-500">
             {t(row.subLabelKey)}
           </div>
         )}

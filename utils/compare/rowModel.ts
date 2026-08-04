@@ -22,10 +22,20 @@ export interface CompareAccountData {
   effectiveHp: number | null;
   receivedHp: number | null;
   delegatedOutHp: number | null;
-  liquidUsd: number | null;
-  savingsUsd: number | null;
+  // Savings includes the pending (withdrawing) amount.
+  liquidHive: number | null;
+  liquidHiveUsd: number | null;
+  liquidHbd: number | null;
+  liquidHbdUsd: number | null;
+  savingsHive: number | null;
+  savingsHiveUsd: number | null;
+  savingsHbd: number | null;
+  savingsHbdUsd: number | null;
   reputation: number | null;
-  topHolderRank: number | null;
+  // null means outside that coin's top 100.
+  topHolderRankHive: number | null;
+  topHolderRankHbd: number | null;
+  topHolderRankVests: number | null;
   // Full USD segment breakdown for the wealth-composition "wallet chart".
   wealthComposition: WealthComposition | null;
   // 🕸️ Influence & Governance
@@ -41,7 +51,7 @@ export interface CompareAccountData {
   witnessVoteWeightHp: number | null;
   witnessVoters: number | null;
   govVoteExpirationMs: number | null;
-  // ✍️ Activity & Content (windowed; content-stats + dapp-footprint, node-gated)
+  // Activity & Content (windowed; content-stats + dapp-footprint, node-gated)
   postsW: number | null;
   commentsW: number | null;
   repliesReceivedW: number | null;
@@ -54,13 +64,21 @@ export interface CompareAccountData {
   // Full category distribution for the footprint donut small-multiple.
   dappCategories: Hive.AccountDappFootprintCategory[] | null;
   dappUnavailable: boolean;
-  // 🤑 Earnings (windowed; content-stats rewards, node-gated)
+  // Earnings (windowed; content-stats rewards, node-gated)
   authorRewardsHbdW: number | null;
   authorRewardsHiveW: number | null;
   authorRewardsHpW: number | null;
-  rewardsPerPostHbd: number | null;
-  votesReceivedPerPost: number | null;
-  // ⚡ Resources & Momentum
+  curationRewardsHpW: number | null;
+  benefactorRewardsHpW: number | null;
+  benefactorRewardsHbdW: number | null;
+  // null for non-witnesses, so the row shows but never scores.
+  producerRewardsHpW: number | null;
+  interestHbdW: number | null;
+  financialUnavailable: boolean;
+  // Per post or comment, in HBD-equivalent across all three payout currencies.
+  rewardsPerContentHbdEq: number | null;
+  votesReceivedPerContent: number | null;
+  // Resources & Momentum
   poweredUpHp: number | null;
   powerDownHp: number | null;
   netHpFlow: number | null;
@@ -85,6 +103,13 @@ const row = (
   ...opts,
 });
 
+const TOP_RANK_OPTS: Partial<CompareRow> = {
+  lowerWins: true,
+  subLabelKey: "compare.sub.lowerBetter",
+  infoKey: "compare.info.topHolderRank",
+  nullMeansWorst: true,
+};
+
 const GOV_HEALTH_WINDOW_MS = 30 * 24 * 3600 * 1000;
 
 // Bucketed, not compared as a raw date: two accounts that both read "Active"
@@ -108,6 +133,9 @@ export const buildComparisonSections = (
     id: "wealth",
     titleKey: "compare.sections.wealth",
     rows: [
+      row("totalValue", "usd", a.totalValueUsd, b.totalValueUsd, {
+        infoKey: "compare.info.totalValue",
+      }),
       row("totalHp", "hp", a.totalHp, b.totalHp),
       row("effectiveHp", "hp", a.effectiveHp, b.effectiveHp, {
         subLabelKey: "compare.sub.inclDelegatedIn",
@@ -116,13 +144,48 @@ export const buildComparisonSections = (
       row("delegatedOutHp", "hp", a.delegatedOutHp, b.delegatedOutHp, {
         scored: false,
       }),
-      row("liquid", "usd", a.liquidUsd, b.liquidUsd),
-      row("savings", "usd", a.savingsUsd, b.savingsUsd),
-      row("reputation", "reputation", a.reputation, b.reputation),
-      row("topHolderRank", "rank", a.topHolderRank, b.topHolderRank, {
-        lowerWins: true,
-        subLabelKey: "compare.sub.byVests",
+      row("liquidHive", "hive", a.liquidHive, b.liquidHive, {
+        aSecondary: a.liquidHiveUsd,
+        bSecondary: b.liquidHiveUsd,
+        secondaryFormat: "usd",
       }),
+      row("liquidHbd", "hbd", a.liquidHbd, b.liquidHbd, {
+        aSecondary: a.liquidHbdUsd,
+        bSecondary: b.liquidHbdUsd,
+        secondaryFormat: "usd",
+      }),
+      row("savingsHive", "hive", a.savingsHive, b.savingsHive, {
+        aSecondary: a.savingsHiveUsd,
+        bSecondary: b.savingsHiveUsd,
+        secondaryFormat: "usd",
+      }),
+      row("savingsHbd", "hbd", a.savingsHbd, b.savingsHbd, {
+        aSecondary: a.savingsHbdUsd,
+        bSecondary: b.savingsHbdUsd,
+        secondaryFormat: "usd",
+      }),
+      row("reputation", "reputation", a.reputation, b.reputation),
+      row(
+        "topHolderRankVests",
+        "rank",
+        a.topHolderRankVests,
+        b.topHolderRankVests,
+        TOP_RANK_OPTS
+      ),
+      row(
+        "topHolderRankHive",
+        "rank",
+        a.topHolderRankHive,
+        b.topHolderRankHive,
+        TOP_RANK_OPTS
+      ),
+      row(
+        "topHolderRankHbd",
+        "rank",
+        a.topHolderRankHbd,
+        b.topHolderRankHbd,
+        TOP_RANK_OPTS
+      ),
     ],
   };
 
@@ -209,15 +272,13 @@ export const buildComparisonSections = (
       row("votesReceived", "number", a.votesReceivedW, b.votesReceivedW, {
         unavailable: contentNA,
       }),
-      row("lifetimePosts", "number", a.lifetimePosts, b.lifetimePosts, {
-        subLabelKey: "compare.sub.allTime",
-      }),
       // Account age & last active are instant; age is neutral, last active
       // scores on recency (later timestamp wins).
       row("accountAge", "date", a.createdMs, b.createdMs, { scored: false }),
       row("lastActive", "date", a.lastPostMs, b.lastPostMs),
       row("totalOps", "number", a.totalOpsW, b.totalOpsW, {
         scored: false,
+        infoKey: "compare.info.totalOps",
         unavailable: dappNA,
       }),
       row("topDapp", "text", null, null, {
@@ -235,34 +296,76 @@ export const buildComparisonSections = (
     ],
   };
 
+  const finNA = a.financialUnavailable || b.financialUnavailable;
+
   const earnings: CompareSection = {
     id: "earnings",
     titleKey: "compare.sections.earnings",
     windowed: true,
     rows: [
       row("authorRewardsHbd", "hbd", a.authorRewardsHbdW, b.authorRewardsHbdW, {
-        unavailable: contentNA,
+        unavailable: finNA,
       }),
       row("authorRewardsHp", "hp", a.authorRewardsHpW, b.authorRewardsHpW, {
-        unavailable: contentNA,
+        unavailable: finNA,
       }),
       row(
         "authorRewardsHive",
         "hive",
         a.authorRewardsHiveW,
         b.authorRewardsHiveW,
-        { unavailable: contentNA }
+        { unavailable: finNA }
       ),
-      row("rewardsPerPost", "hbd", a.rewardsPerPostHbd, b.rewardsPerPostHbd, {
-        subLabelKey: "compare.sub.perPost",
-        unavailable: contentNA,
+      row(
+        "curationRewardsHp",
+        "hp",
+        a.curationRewardsHpW,
+        b.curationRewardsHpW,
+        {
+          unavailable: finNA,
+        }
+      ),
+      row(
+        "benefactorRewardsHp",
+        "hp",
+        a.benefactorRewardsHpW,
+        b.benefactorRewardsHpW,
+        {
+          infoKey: "compare.info.benefactorRewards",
+          aSecondary: a.benefactorRewardsHbdW,
+          bSecondary: b.benefactorRewardsHbdW,
+          secondaryFormat: "hbd",
+          unavailable: finNA,
+        }
+      ),
+      row(
+        "producerRewardsHp",
+        "hp",
+        a.producerRewardsHpW,
+        b.producerRewardsHpW,
+        { infoKey: "compare.info.producerRewards", unavailable: finNA }
+      ),
+      row("interestHbd", "hbd", a.interestHbdW, b.interestHbdW, {
+        infoKey: "compare.info.interest",
+        unavailable: finNA,
       }),
       row(
-        "votesReceivedPerPost",
+        "rewardsPerContent",
+        "hbd",
+        a.rewardsPerContentHbdEq,
+        b.rewardsPerContentHbdEq,
+        {
+          infoKey: "compare.info.rewardsPerContent",
+          // Rewards come from the financial summary, the denominator from content stats.
+          unavailable: finNA || contentNA,
+        }
+      ),
+      row(
+        "votesReceivedPerContent",
         "number",
-        a.votesReceivedPerPost,
-        b.votesReceivedPerPost,
-        { subLabelKey: "compare.sub.perPost", unavailable: contentNA }
+        a.votesReceivedPerContent,
+        b.votesReceivedPerContent,
+        { unavailable: contentNA }
       ),
     ],
   };

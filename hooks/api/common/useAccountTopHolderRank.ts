@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import useTopHolders, { CoinType } from "./useTopHolders";
 
-const TOP_RANK_LIMIT = 20;
+// One page is fetched and the API returns 100 per page, so 100 is the ceiling.
+const TOP_RANK_LIMIT = 100;
 
 export type TopHolderEntry = { rank: number; coinType: CoinType };
 

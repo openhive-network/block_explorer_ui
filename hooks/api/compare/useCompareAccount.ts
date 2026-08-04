@@ -9,6 +9,7 @@ import useProposalVoteCount from "@/hooks/api/accountPage/useProposalVoteCount";
 import useWitnessDetails from "@/hooks/api/common/useWitnessDetails";
 import useConvertedVestingShares from "@/hooks/common/useConvertedVestingShares";
 import useAccountContentStats from "@/hooks/api/accountPage/useAccountContentStats";
+import useFinancialSummary from "@/hooks/api/accountPage/useFinancialSummary";
 import useAccountDappFootprint from "@/hooks/api/accountPage/useAccountDappFootprint";
 import useAccountVestingStats from "@/hooks/api/accountPage/useAccountVestingStats";
 import useManabars from "@/hooks/api/accountPage/useManabars";
@@ -46,10 +47,18 @@ const emptyData = (
   effectiveHp: null,
   receivedHp: null,
   delegatedOutHp: null,
-  liquidUsd: null,
-  savingsUsd: null,
+  liquidHive: null,
+  liquidHiveUsd: null,
+  liquidHbd: null,
+  liquidHbdUsd: null,
+  savingsHive: null,
+  savingsHiveUsd: null,
+  savingsHbd: null,
+  savingsHbdUsd: null,
   reputation: null,
-  topHolderRank: null,
+  topHolderRankHive: null,
+  topHolderRankHbd: null,
+  topHolderRankVests: null,
   wealthComposition: null,
   incomingDelegationsCount: null,
   incomingDelegationsHp: null,
@@ -77,8 +86,14 @@ const emptyData = (
   authorRewardsHbdW: null,
   authorRewardsHiveW: null,
   authorRewardsHpW: null,
-  rewardsPerPostHbd: null,
-  votesReceivedPerPost: null,
+  curationRewardsHpW: null,
+  benefactorRewardsHpW: null,
+  benefactorRewardsHbdW: null,
+  producerRewardsHpW: null,
+  interestHbdW: null,
+  financialUnavailable: false,
+  rewardsPerContentHbdEq: null,
+  votesReceivedPerContent: null,
   poweredUpHp: null,
   powerDownHp: null,
   netHpFlow: null,
@@ -137,6 +152,16 @@ const useCompareAccount = (
     win.granularity,
     win.fromDate,
     win.toDate
+  );
+  const {
+    data: financialSummary,
+    isLoading: isFinancialSummaryLoading,
+    isError: isFinancialSummaryError,
+  } = useFinancialSummary(
+    accountName,
+    win.fromDate.toISOString().slice(0, 10),
+    win.toDate.toISOString().slice(0, 10),
+    win.granularity
   );
   const { dappFootprint, isDappFootprintLoading, isDappFootprintError } =
     useAccountDappFootprint(accountName, win.fromDate, win.toDate);
@@ -203,10 +228,8 @@ const useCompareAccount = (
     const receivedHp = num(fad.received_vesting_shares);
     const delegatedOutHp = num(fad.delegated_vesting_shares);
 
-    const rankVests = rankEntries?.find((e) => e.coinType === "VESTS")?.rank;
-    const rankBest = rankEntries?.length
-      ? Math.min(...rankEntries.map((e) => e.rank))
-      : undefined;
+    const rankOf = (coin: "HIVE" | "HBD" | "VESTS"): number | null =>
+      rankEntries?.find((e) => e.coinType === coin)?.rank ?? null;
 
     const proxyPowerHp = accountProxyPower
       ? accountProxyPower.reduce((sum, p) => sum + toHp(p.proxied_vests), 0)
@@ -254,18 +277,75 @@ const useCompareAccount = (
       isAccountContentStatsError && !isAccountContentStatsLoading;
     const dappUnavailable = isDappFootprintError && !isDappFootprintLoading;
 
-    // 🤑 Earnings — author rewards over the window (nai → HBD/HIVE, vests → HP).
-    const sumHbdNai = sumCs((r) => r.author_reward_hbd_nai);
-    const sumHiveNai = sumCs((r) => r.author_reward_hive_nai);
-    const sumVestsNai = sumCs((r) => r.author_reward_vests_nai);
-    const authorRewardsHbdW = sumHbdNai == null ? null : sumHbdNai / 1000;
-    const authorRewardsHiveW = sumHiveNai == null ? null : sumHiveNai / 1000;
-    const authorRewardsHpW =
-      sumVestsNai == null ? null : toHp(String(sumVestsNai));
+    // claim_reward_balance_operation is deliberately never summed — it is the
+    // claim of rewards already counted by category, so it would double them.
+    const sumFs = (
+      category: string,
+      field: "hive_nai" | "hbd_nai" | "vests_nai"
+    ): number | null =>
+      financialSummary
+        ? financialSummary.reduce(
+            (s, r) =>
+              r.direction === "incoming" && r.category === category
+                ? s + (Number(r[field]) || 0)
+                : s,
+            0
+          )
+        : null;
+    const financialUnavailable =
+      isFinancialSummaryError && !isFinancialSummaryLoading;
+
+    // HBD/HIVE are precision-3 nai; VESTS is precision-6.
+    const asCoin = (v: number | null): number | null =>
+      v == null ? null : v / 1000;
+    const asHp = (v: number | null): number | null =>
+      v == null ? null : toHp(String(v));
+
+    const authorRewardsHbdW = asCoin(
+      sumFs("author_reward_operation", "hbd_nai")
+    );
+    const authorRewardsHiveW = asCoin(
+      sumFs("author_reward_operation", "hive_nai")
+    );
+    const authorRewardsHpW = asHp(
+      sumFs("author_reward_operation", "vests_nai")
+    );
+    const curationRewardsHpW = asHp(
+      sumFs("curation_reward_operation", "vests_nai")
+    );
+    const benefactorRewardsHpW = asHp(
+      sumFs("comment_benefactor_reward_operation", "vests_nai")
+    );
+    const benefactorRewardsHbdW = asCoin(
+      sumFs("comment_benefactor_reward_operation", "hbd_nai")
+    );
+    // null, not 0, so a non-witness leaves the row unscored.
+    const producerRewardsHpW = isActiveWitness
+      ? asHp(sumFs("producer_reward_operation", "vests_nai"))
+      : null;
+    const interestHbdW = asCoin(sumFs("interest_operation", "hbd_nai"));
+
+    // Median feed is base HBD over quote HIVE.
+    const hbdPerHive =
+      g?.rawFeedPrice && g?.rawQuote
+        ? naiToFloat(g.rawFeedPrice) / (naiToFloat(g.rawQuote) || 1)
+        : null;
+    const authorRewardsHbdEq =
+      hbdPerHive == null
+        ? null
+        : (authorRewardsHbdW ?? 0) +
+          ((authorRewardsHiveW ?? 0) + (authorRewardsHpW ?? 0)) * hbdPerHive;
+
+    // Author rewards accrue on comments too, so the denominator is both.
     const postsWin = sumCs((r) => r.posts);
+    const commentsWin = sumCs((r) => r.comments);
+    const contentWin =
+      postsWin == null && commentsWin == null
+        ? null
+        : (postsWin ?? 0) + (commentsWin ?? 0);
     const votesRecWin = sumCs((r) => r.votes_received);
-    const perPost = (v: number | null): number | null =>
-      v != null && postsWin && postsWin > 0 ? v / postsWin : null;
+    const perContent = (v: number | null): number | null =>
+      v != null && contentWin && contentWin > 0 ? v / contentWin : null;
 
     // ⚡ Resources & Momentum — windowed power up/down (HIVE == HP for flow).
     const vsSum = (
@@ -292,14 +372,23 @@ const useCompareAccount = (
       effectiveHp: totalHp + receivedHp - delegatedOutHp,
       receivedHp,
       delegatedOutHp,
-      liquidUsd: num(dollars.balance) + num(dollars.hbd_balance),
-      savingsUsd:
-        num(dollars.savings_balance) +
+      liquidHive: num(fad.balance),
+      liquidHiveUsd: num(dollars.balance),
+      liquidHbd: num(fad.hbd_balance),
+      liquidHbdUsd: num(dollars.hbd_balance),
+      savingsHive:
+        num(fad.savings_balance) + num(fad.savings_pending_amount_hive),
+      savingsHiveUsd:
+        num(dollars.savings_balance) + num(dollars.savings_pending_amount_hive),
+      savingsHbd:
+        num(fad.hbd_saving_balance) + num(fad.savings_pending_amount_hbd),
+      savingsHbdUsd:
         num(dollars.hbd_saving_balance) +
-        num(dollars.savings_pending_amount_hive) +
         num(dollars.savings_pending_amount_hbd),
       reputation: fad.reputation != null ? num(fad.reputation) : null,
-      topHolderRank: rankVests ?? rankBest ?? null,
+      topHolderRankHive: rankOf("HIVE"),
+      topHolderRankHbd: rankOf("HBD"),
+      topHolderRankVests: rankOf("VESTS"),
       wealthComposition: buildWealthComposition(dollars),
       incomingDelegationsCount,
       incomingDelegationsHp,
@@ -337,8 +426,14 @@ const useCompareAccount = (
       authorRewardsHbdW,
       authorRewardsHiveW,
       authorRewardsHpW,
-      rewardsPerPostHbd: perPost(authorRewardsHbdW),
-      votesReceivedPerPost: perPost(votesRecWin),
+      curationRewardsHpW,
+      benefactorRewardsHpW,
+      benefactorRewardsHbdW,
+      producerRewardsHpW,
+      interestHbdW,
+      financialUnavailable,
+      rewardsPerContentHbdEq: perContent(authorRewardsHbdEq),
+      votesReceivedPerContent: perContent(votesRecWin),
       // ⚡ Resources & Momentum
       poweredUpHp,
       powerDownHp,
@@ -370,6 +465,9 @@ const useCompareAccount = (
     accountContentStats,
     isAccountContentStatsLoading,
     isAccountContentStatsError,
+    financialSummary,
+    isFinancialSummaryLoading,
+    isFinancialSummaryError,
     dappFootprint,
     isDappFootprintLoading,
     isDappFootprintError,

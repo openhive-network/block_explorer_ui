@@ -23,11 +23,16 @@ export interface CompareRow {
   id: string;
   labelKey: string;
   subLabelKey?: string;
+  // i18n key for an info tooltip next to the label.
+  infoKey?: string;
   format: ValueFormat;
   // Winner-highlighted when true; neutral (shown, not scored) when false.
   scored: boolean;
   // Rank, power-down, etc. — the smaller value wins.
   lowerWins?: boolean;
+  // A null here is a real position that loses to any value ("outside the top
+  // 100"), not absent data. Both sides null still leaves the row unscored.
+  nullMeansWorst?: boolean;
   // Raw comparable numbers; null means unavailable for that side.
   aValue: number | null;
   bValue: number | null;
