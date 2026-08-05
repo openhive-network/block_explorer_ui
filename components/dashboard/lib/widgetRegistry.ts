@@ -12,6 +12,7 @@ import MyContentActivityWidget from "@/components/dashboard/widgets/data/MyConte
 import MyRcConsumptionWidget from "@/components/dashboard/widgets/data/MyRcConsumptionWidget";
 import MyFinancialSummaryWidget from "@/components/dashboard/widgets/data/MyFinancialSummaryWidget";
 import MySocialInteractionsWidget from "@/components/dashboard/widgets/data/MySocialInteractionsWidget";
+import MyCommunityActivityWidget from "@/components/dashboard/widgets/data/MyCommunityActivityWidget";
 import MyPendingRewardsWidget from "@/components/dashboard/widgets/data/MyPendingRewardsWidget";
 import TopHoldersWidget from "@/components/dashboard/widgets/data/TopHoldersWidget";
 import EmbedWidget from "@/components/dashboard/widgets/layout/EmbedWidget";
@@ -488,6 +489,16 @@ export const WIDGET_REGISTRY: Record<string, WidgetConfig> = {
     category: "account" as const,
     component: MySocialInteractionsWidget,
     defaultLayout: { w: 6, h: 13, minW: 3, minH: 3 },
+    allowMultiple: false,
+    dynamicHeight: true,
+  },
+  "my-community-activity": {
+    id: "my-community-activity",
+    name: "widgets.myCommunityActivityName",
+    description: "widgets.myCommunityActivityDescription",
+    category: "account" as const,
+    component: MyCommunityActivityWidget,
+    defaultLayout: { w: 6, h: 8, minW: 3, minH: 3 },
     allowMultiple: false,
     dynamicHeight: true,
   },
