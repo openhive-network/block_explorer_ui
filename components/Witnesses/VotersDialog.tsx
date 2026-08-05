@@ -66,11 +66,19 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
   const [isAsc, setIsAsc] = useState<boolean>(false);
   const [pageNum, setPageNum] = useState<number>(1);
 
-  const [isHP, setIsHP] = useState<boolean>(settings.displayVestHpMode === "hp");
+  const [isHP, setIsHP] = useState<boolean>(
+    settings.displayVestHpMode === "hp"
+  );
+  const accountPowerLabel = t(
+    isHP ? "votersDialog.accountHp" : "votersDialog.accountVests"
+  );
+  const proxiedPowerLabel = t(
+    isHP ? "votersDialog.proxiedHp" : "votersDialog.proxiedVests"
+  );
   useEffect(() => {
-      setIsHP(settings.displayVestHpMode === "hp");
-    }, [settings.displayVestHpMode]);
-    
+    setIsHP(settings.displayVestHpMode === "hp");
+  }, [settings.displayVestHpMode]);
+
   const [voterNameInput, setVoterNameInput] = useState<string>("");
 
   const [activeVoterName, setActiveVoterName] = useState<string | undefined>(
@@ -222,12 +230,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
       };
     });
 
-    return (
-      <VotersChart
-        voters={chartVoters}
-        accountName={accountName}
-      />
-    );
+    return <VotersChart voters={chartVoters} accountName={accountName} />;
   }, [chartData, accountName, calculateVoterWeight]);
 
   const prepareExportData = () => {
@@ -251,18 +254,15 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
       return {
         [t("votersDialog.voter")]: voter.voter_name,
         [t("votersDialog.votes")]: votesFormatted,
-        [t("votersDialog.accountVests")]: accountVestsFormatted,
-        [t("votersDialog.proxiedVests")]: proxiedVestsFormatted,
+        [accountPowerLabel]: accountVestsFormatted,
+        [proxiedPowerLabel]: proxiedVestsFormatted,
         [t("votersDialog.voterWeight")]: voterWeightFormatted,
       };
     });
   };
 
   return (
-    <Dialog
-      open={isVotersOpen}
-      onOpenChange={changeVotersDialogue}
-    >
+    <Dialog open={isVotersOpen} onOpenChange={changeVotersDialogue}>
       <DialogContent
         className={cn(
           "h-3/4 max-w-7xl flex flex-col md:flex-row overflow-y-auto md:p-6 p-1",
@@ -364,10 +364,7 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                 ) : (
                   <div className="relative rounded overflow-hidden w-full">
                     <div className="text-text w-full h-full overflow-auto bg-theme rounded">
-                      <Table
-                        enableMobileScrollArrows
-                        isDialog
-                      >
+                      <Table enableMobileScrollArrows isDialog>
                         <TableHeader>
                           <TableRow rowVariant="header">
                             <TableHead stickyLeft>
@@ -384,14 +381,14 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
 
                             <TableHead className="text-right">
                               <span className="flex justify-end">
-                                {t("votersDialog.accountVests")}{" "}
+                                {accountPowerLabel}{" "}
                                 {showSorter("account_vests")}
                               </span>
                             </TableHead>
 
                             <TableHead className="text-right">
                               <span className="flex justify-end">
-                                {t("votersDialog.proxiedVests")}{" "}
+                                {proxiedPowerLabel}{" "}
                                 {showSorter("proxied_vests")}
                               </span>
                             </TableHead>
