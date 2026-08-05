@@ -36,7 +36,7 @@ const EXCLUDE_KEYS = [
   "subscriptions",
   "follower_count",
   "following_count",
-  "post_count"
+  "post_count",
 ];
 
 const LINK_KEYS = ["recovery_account", "reset_account"];
@@ -46,9 +46,10 @@ const COPY_KEYS = ["signing_key"];
 const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
   header,
   userDetails,
-  isInitiallyOpen
+  isInitiallyOpen,
 }) => {
-  const [isPropertiesHidden, setIsPropertiesHidden] = useState(!isInitiallyOpen);
+  const [isPropertiesHidden, setIsPropertiesHidden] =
+    useState(!isInitiallyOpen);
   const [containerRef, containerWidth] = useElementWidth<HTMLDivElement>();
   const isTooNarrow = containerWidth > 0 && containerWidth < 450;
 
@@ -72,18 +73,12 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
           stringProperty.length - 5
         )}`;
         return (
-          <CopyToKeyboard
-            value={stringProperty}
-            displayValue={shortenedKey}
-          />
+          <CopyToKeyboard value={stringProperty} displayValue={shortenedKey} />
         );
       }
 
       return (
-        <CopyToKeyboard
-          value={stringProperty}
-          displayValue={stringProperty}
-        />
+        <CopyToKeyboard value={stringProperty} displayValue={stringProperty} />
       );
     }
     if (userDetails.vests && Object.keys(userDetails?.vests).includes(key)) {
@@ -91,7 +86,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
       return (
         <VestsTooltip
           tooltipTrigger={userDetails[key] as string}
-          tooltipContent={vestValue} 
+          tooltipContent={vestValue}
         />
       );
     }
@@ -99,11 +94,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
       const stringProperty = userDetails[key] as string;
       return (
         <div className="text-link">
-          <Link
-            href={stringProperty || ""}
-            target="_blank"
-            rel="noreferrer"
-          >
+          <Link href={stringProperty || ""} target="_blank" rel="noreferrer">
             {stringProperty}
           </Link>
         </div>
@@ -127,7 +118,15 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
           <Fragment key={index}>
             <TableRow>
               <TableCell className="whitespace-nowrap">{key}</TableCell>
-              <TableCell className="whitespace-nowrap">{renderKey(key)}</TableCell>
+              <TableCell
+                className={
+                  Array.isArray(userDetails[key])
+                    ? "whitespace-normal break-all"
+                    : "whitespace-nowrap"
+                }
+              >
+                {renderKey(key)}
+              </TableCell>
             </TableRow>
           </Fragment>
         );
@@ -140,10 +139,7 @@ const AccountDetailsCard: React.FC<AccountDetailsCardProps> = ({
   };
 
   return (
-    <Card
-      data-testid="properties-dropdown"
-      className="overflow-hidden pb-0"
-    >
+    <Card data-testid="properties-dropdown" className="overflow-hidden pb-0">
       <CardHeader className="p-0">
         <div
           onClick={handlePropertiesVisibility}
