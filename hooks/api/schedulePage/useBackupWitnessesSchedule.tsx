@@ -1,59 +1,49 @@
-import { useState, useEffect } from "react";
-import {
-  useQuery,
-  useQueryClient,
-  UseQueryResult,
-} from "@tanstack/react-query";
+import { useMemo } from "react";
+import { useQuery, UseQueryResult } from "@tanstack/react-query";
 
+import { config } from "@/Config";
 import Hive from "@/types/Hive";
 import fetchingService from "@/services/FetchingService";
 import { BackupWitness } from "@/components/schedule/BackupWitnessSchedule";
 import useWitnessesSchedule from "./useWitnessesSchedule";
-import { Witness } from "@/components/schedule/WitnessSchedule";
+
+// Witnesses with this key are skipped by the chain, so they never take a turn.
+const NULL_SIGNING_KEY = "STM1111111111111111111111111111111114T1Anm";
+const SCHEDULE_QUEUE_LIMIT = 100;
 
 const useBackupWitnessesSchedule = (
   witnesses: Hive.Witness[],
   headBlockNumberData: number
 ) => {
-  const queryClient = useQueryClient();
-  const { scheduledWitnessesData } = useWitnessesSchedule(
+  const { shuffledWitnesses, futureShuffledWitnesses } = useWitnessesSchedule(
     witnesses,
     headBlockNumberData
   );
+
   const {
     data,
     isLoading: isBackupWitnessScheduleLoading,
     isError: isBackupWitnessScheduleError,
     refetch: refetchBackupWitnessSchedule,
   }: UseQueryResult<Hive.WitnessesByVote[]> = useQuery({
-    queryKey: ["witnesses_by_vote"],
-    queryFn: () => fetchingService.getWitnessesByVote(),
+    queryKey: ["witnesses_by_schedule_time"],
+    queryFn: () =>
+      fetchingService.getWitnessesByScheduleTime(SCHEDULE_QUEUE_LIMIT),
+    refetchOnWindowFocus: false,
+    refetchInterval: config.mainRefreshInterval,
+    keepPreviousData: true,
   });
 
-  const [backupWitnessScheduleData, setBackupWintessScheduleData] = useState<
-    BackupWitness[]
-  >([]);
-
-  useEffect(() => {
-    if (!data || (!data.length && !scheduledWitnessesData?.length)) return;
-    const filterWitnessRank = buildBackupWitnessesSchedule(
-      scheduledWitnessesData,
-      data,
-      witnesses
-    );
-
-    if (!filterWitnessRank) return;
-
-    queryClient.invalidateQueries({ queryKey: ["witnesses_by_vote"] });
-
-    setBackupWintessScheduleData(filterWitnessRank);
-  }, [
-    queryClient,
-    data,
-    scheduledWitnessesData,
-    witnesses,
-    headBlockNumberData,
-  ]);
+  const backupWitnessScheduleData = useMemo(
+    () =>
+      buildBackupWitnessesSchedule(
+        data,
+        witnesses,
+        shuffledWitnesses,
+        futureShuffledWitnesses
+      ),
+    [data, witnesses, shuffledWitnesses, futureShuffledWitnesses]
+  );
 
   return {
     backupWitnessScheduleData,
@@ -66,34 +56,42 @@ const useBackupWitnessesSchedule = (
 export default useBackupWitnessesSchedule;
 
 const buildBackupWitnessesSchedule = (
-  witnessesSchedule: Witness[],
-  backupWitnessesSchedule: Hive.WitnessesByVote[],
-  witnesses: Hive.Witness[]
-) => {
-  if (
-    !witnessesSchedule?.length ||
-    !backupWitnessesSchedule?.length ||
-    !witnesses?.length
-  )
-    return;
+  witnessesByScheduleTime: Hive.WitnessesByVote[] | undefined,
+  witnesses: Hive.Witness[],
+  shuffledWitnesses: string[] | undefined,
+  futureShuffledWitnesses: string[] | undefined
+): BackupWitness[] => {
+  if (!witnessesByScheduleTime?.length || !shuffledWitnesses?.length) return [];
 
-  const namesSet = new Set(witnessesSchedule.map((obj) => obj.producerName));
+  const rankMap = new Map(
+    (witnesses ?? []).map((obj) => [obj.witness_name, obj.rank])
+  );
+  const toBackupWitness = (owner: string): BackupWitness => ({
+    owner,
+    rank: rankMap.get(owner) ?? null,
+  });
 
-  const rankMap = new Map(witnesses.map((obj) => [obj.witness_name, obj.rank]));
+  const currentRound = new Set(shuffledWitnesses);
+  const nextRound = new Set(futureShuffledWitnesses ?? []);
 
-  const finalArray = backupWitnessesSchedule
-    .filter((obj) => !namesSet.has(obj.owner))
-    .map((obj) => {
-      const timeDifferences =
-        BigInt(obj.virtual_scheduled_time) - BigInt(obj.virtual_last_update);
+  // Elected seats carry over, so whoever is new to the next round is its backup.
+  const decidedNext = (futureShuffledWitnesses ?? [])
+    .filter((name) => !currentRound.has(name))
+    .sort(
+      (a, b) =>
+        (rankMap.get(b) ?? Number.MAX_SAFE_INTEGER) -
+        (rankMap.get(a) ?? Number.MAX_SAFE_INTEGER)
+    )[0];
 
-      return {
-        owner: obj.owner,
-        priority: timeDifferences,
-        rank: rankMap.get(obj.owner) || null,
-      };
-    })
-    .sort((a, b) => Number(a.priority) - Number(b.priority));
+  // Taking a seat pushes a witness to the back, so both rounds are left out.
+  const queue = witnessesByScheduleTime
+    .filter(
+      (witness) =>
+        !currentRound.has(witness.owner) &&
+        !nextRound.has(witness.owner) &&
+        witness.signing_key !== NULL_SIGNING_KEY
+    )
+    .map((witness) => toBackupWitness(witness.owner));
 
-  return finalArray;
+  return decidedNext ? [toBackupWitness(decidedNext), ...queue] : queue;
 };
