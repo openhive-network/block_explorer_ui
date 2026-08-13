@@ -7,7 +7,6 @@ import { useSettings } from "@/contexts/SettingsContext";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import useConvertedVestingShares from "@/hooks/common/useConvertedVestingShares";
 import AccountVestingDelegationsCard from "@/components/account/AccountVestingDelegationsCard";
-import WidgetLoggedOut from "@/components/dashboard/widgets/common/WidgetLoggedOut";
 import { useI18n } from "@/i18n/i18n";
 
 const MyHpDelegationsWidget: React.FC = () => {
