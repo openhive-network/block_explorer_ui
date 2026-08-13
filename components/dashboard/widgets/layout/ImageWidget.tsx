@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useI18n } from "@/i18n/i18n";
-import { normalizeExternalUrl } from "@/utils/SafeUrl";
+import { isInAppPath, normalizeExternalUrl } from "@/utils/SafeUrl";
+import { getImageSrc } from "@/utils/PathUtils";
 import { ImageIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import SegmentedToggle from "@/components/ui/SegmentedToggle";
 
 type Fit = "cover" | "contain";
 
@@ -46,32 +48,27 @@ const ImageWidget: React.FC<ImageWidgetProps> = ({
           placeholder={t("imageWidget.placeholder")}
           className="w-full p-2 rounded border bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
         />
-        <div className="flex gap-2" onMouseDown={(e) => e.stopPropagation()}>
-          {(["cover", "contain"] as Fit[]).map((f) => (
-            <button
-              key={f}
-              type="button"
-              onClick={() => onFitChange(f)}
-              className={cn(
-                "text-xs px-2.5 py-1 rounded font-medium transition-colors",
-                fit === f
-                  ? "bg-indigo-500 text-white"
-                  : "bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
-              )}
-            >
-              {t(
-                f === "cover"
-                  ? "imageWidget.fitCover"
-                  : "imageWidget.fitContain"
-              )}
-            </button>
-          ))}
+        <div onMouseDown={(e) => e.stopPropagation()}>
+          <SegmentedToggle<Fit>
+            options={[
+              { value: "cover", label: t("imageWidget.fitCover") },
+              { value: "contain", label: t("imageWidget.fitContain") },
+            ]}
+            value={fit}
+            onChange={onFitChange}
+            ariaLabel={t("imageWidget.label")}
+            className="self-start"
+          />
         </div>
       </div>
     );
   }
 
-  const safeUrl = url ? normalizeExternalUrl(url) : null;
+  const safeUrl = isInAppPath(url)
+    ? getImageSrc(url)
+    : url
+      ? normalizeExternalUrl(url)
+      : null;
 
   if (!safeUrl) {
     return (
@@ -94,7 +91,7 @@ const ImageWidget: React.FC<ImageWidgetProps> = ({
   }
 
   return (
-    <div className="w-full h-full overflow-hidden rounded-[4px]">
+    <div className="w-full h-full overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         key={safeUrl}
