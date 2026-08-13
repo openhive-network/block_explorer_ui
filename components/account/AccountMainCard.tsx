@@ -60,6 +60,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import AccountShareCard from "@/components/account/AccountShareCard";
+import StatCard from "@/components/ui/StatCard";
 
 interface AccountMainCardProps {
   accountDetails: Explorer.FormattedAccountDetails;
@@ -76,60 +77,6 @@ interface AccountMainCardProps {
   isForCommunity?: boolean;
   isInitiallyOpen: boolean;
 }
-
-const StatCard = ({
-  icon,
-  label,
-  value,
-  onClick,
-  tooltipContent,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: React.ReactNode;
-  onClick?: () => void;
-  tooltipContent?: React.ReactNode;
-}) => {
-  const cardDiv = (
-    <div
-      className={cn(
-        "bg-slate-100 dark:bg-slate-800/50 p-2 rounded-xl flex flex-col items-center justify-center text-center",
-        {
-          "hover:bg-slate-200 dark:hover:bg-slate-700/80 transition-colors cursor-pointer":
-            !!onClick,
-          "cursor-help": !!tooltipContent,
-        }
-      )}
-      onClick={onClick}
-      role={onClick ? "button" : "figure"}
-      tabIndex={onClick ? 0 : -1}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" && onClick) onClick();
-      }}
-    >
-      <div className="text-explorer-orange mb-1">{icon}</div>
-      <div className="mb-1 text-base font-bold text-explorer-dark-gray dark:text-white min-h-[1.5rem] flex items-center justify-center">
-        {value}
-      </div>
-      <p className="text-[10px] text-explorer-light-gray dark:text-white uppercase font-semibold tracking-wider">
-        {label}
-      </p>
-    </div>
-  );
-
-  if (tooltipContent) {
-    return (
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>{cardDiv}</TooltipTrigger>
-          <TooltipContent>{tooltipContent}</TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    );
-  }
-
-  return cardDiv;
-};
 
 const AccountMainCard: React.FC<AccountMainCardProps> = ({
   accountDetails,
