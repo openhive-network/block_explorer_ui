@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import useAccountOperations from "@/hooks/api/accountPage/useAccountOperations";
 import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
+import { opTypeIdsByName } from "@/utils/OperationTypes";
 import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
 import { getOperationColor } from "@/components/OperationsTable";
 import { getOperationTypeForDisplay } from "@/utils/UI";
@@ -111,22 +112,16 @@ const MyRecentActivityWidget: React.FC = () => {
   const [lastFetchedAt, setLastFetchedAt] = useState<Date | null>(null);
 
   const { operationsTypes } = useOperationsTypes();
-  const opTypeIdsByCategory = useMemo(() => {
-    const idsForNames = (names: Set<string>): number[] => {
-      const ids: number[] = [];
-      operationsTypes?.forEach((t) => {
-        if (names.has(t.operation_name)) ids.push(t.op_type_id);
-      });
-      return ids;
-    };
-    return {
+  const opTypeIdsByCategory = useMemo(
+    () => ({
       all: null as number[] | null,
-      transfers: idsForNames(TRANSFER_OPS),
-      votes: idsForNames(VOTE_OPS),
-      rewards: idsForNames(REWARD_OPS),
-      witness: idsForNames(WITNESS_OPS),
-    };
-  }, [operationsTypes]);
+      transfers: opTypeIdsByName(operationsTypes, TRANSFER_OPS),
+      votes: opTypeIdsByName(operationsTypes, VOTE_OPS),
+      rewards: opTypeIdsByName(operationsTypes, REWARD_OPS),
+      witness: opTypeIdsByName(operationsTypes, WITNESS_OPS),
+    }),
+    [operationsTypes]
+  );
 
   const operationTypesForFetch = opTypeIdsByCategory[activeCategory];
   const isCatalogReady = !!operationsTypes;
