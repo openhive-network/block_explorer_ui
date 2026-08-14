@@ -14,7 +14,7 @@ export const convertToUTCDate = (date: string): Date =>
 export const formatAndDelocalizeTime = (date?: string | Date): string => {
   if (!date) return "";
   return moment(date).format(config.baseMomentTimeFormat);
-}
+};
 
 /**
  * Formats a date to a human-readable "from now" string (e.g., "a few seconds ago")
@@ -30,7 +30,10 @@ export const formatAndDelocalizeFromTime = (
   if (!date) return "";
   if (moment.utc(date).unix() === 0) return "--";
   //The locale to use for formatting (e.g., 'en', 'es', 'fr'). Defaults to 'en'.
-  return moment.utc(date).locale(locale || "en").fromNow();
+  return moment
+    .utc(date)
+    .locale(locale || "en")
+    .fromNow();
 };
 
 /**
@@ -45,5 +48,24 @@ export const formatDateToLocale = (
   locale?: string
 ): string => {
   if (!date) return "";
-  return moment(date).locale(locale || 'en').format(config.momentLocaleDateFormat);
+  return moment(date)
+    .locale(locale || "en")
+    .format(config.momentLocaleDateFormat);
+};
+// The chain reports zoneless timestamps, which are always UTC. "Z" is appended
+// only when the string carries no zone, so "…+00:00" keeps parsing. Returns
+// null when the input is missing or unparseable.
+export const parseChainDate = (raw?: string | null): Date | null => {
+  if (!raw) return null;
+  const hasZone = /(Z|[+-]\d{2}:?\d{2})$/.test(raw);
+  const date = new Date(hasZone ? raw : `${raw}Z`);
+  return Number.isNaN(date.getTime()) ? null : date;
+};
+
+export const formatBlockchainTime = (value?: string | Date | null): string => {
+  const date = value instanceof Date ? value : parseChainDate(value);
+  if (!date) return "";
+  return `${
+    date.toISOString().replace("T", " ").replaceAll("-", "/").split(".")[0]
+  } UTC`;
 };
