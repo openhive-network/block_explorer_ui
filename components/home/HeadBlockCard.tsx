@@ -4,16 +4,13 @@ import { config } from "@/Config";
 import Explorer from "@/types/Explorer";
 import Hive from "@/types/Hive";
 import { getVestsToHiveRatio } from "@/utils/Calculations";
-import useBlockchainSyncInfo from "@/hooks/common/useBlockchainSyncInfo";
 import HeadBlockPropertyCard from "./HeadBlockPropertyCard";
 import MarketDataStats from "./MarketDataStats";
-import LiveDataHeader from "./LiveDataHeader";
 import {
   fundAndSupplyParameters,
   hiveParameters,
   blockchainDates,
 } from "./headBlockParameters";
-import { getBlockDifference } from "./SyncInfo";
 import { Card, CardContent } from "../ui/card";
 import CurrentBlockCard from "./CurrentBlockCard";
 import HeadBlockHiveChartCard from "./HeadBlockHiveChartCard";
@@ -40,20 +37,6 @@ const calculateTimeDifference = (createdAt: string, blockchainDate: number) => {
   return timeDiffInSeconds;
 };
 
-const getFormattedLiveBlockchainTime = (liveBlockchainTime: Date | null) => {
-  if (!liveBlockchainTime) return "";
-
-  const formattedLiveBlockChainTime = `${
-    liveBlockchainTime
-      .toISOString()
-      .replace("T", " ")
-      .replaceAll("-", "/")
-      .split(".")[0]
-  } UTC`;
-
-  return formattedLiveBlockChainTime;
-};
-
 const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
   headBlockCardData,
   transactionCount,
@@ -72,7 +55,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
   const [isFullHiveChartVisible, setIsFullHiveChartVisible] =
     useState<boolean>(false);
 
-  const { settings, updateSettings } = useSettings();
+  const { settings } = useSettings();
 
   const handleHideBlockchainDates = () => {
     setHiddenPropertiesByCard({
@@ -105,20 +88,6 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
     setIsFullHiveChartVisible(!isFullHiveChartVisible);
   };
 
-  const {
-    explorerBlockNumber,
-    hiveBlockNumber,
-    loading: isLoading,
-  } = useBlockchainSyncInfo();
-
-  const blockDifference = getBlockDifference(
-    hiveBlockNumber,
-    explorerBlockNumber
-  );
-
-  const isLiveDataToggleDisabled =
-    blockDifference > config.liveblockSecurityDifference || isLoading;
-
   const blockchainTime = headBlockCardData?.headBlockDetails.blockchainTime;
   const formattedBlockchainTime = blockchainTime
     ?.replace(/\//g, "-")
@@ -144,9 +113,6 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
 
   const intervalTime = config.accountRefreshInterval;
   /*States to handle seamless update of blockNumber , blockChainTime, feedprice, and vests/hive ratio when liveData is on*/
-  const [liveBlockchainTime, setLiveBlockchainTime] = useState<Date | null>(
-    null
-  );
   const [liveBlockNumber, setLiveBlockNumber] = useState<number | null>(
     blockDetails?.block_num ?? null
   );
@@ -169,27 +135,6 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
       setLiveVestsToHiveRatio(newVestsToHiveRatio);
     }
   }, [headBlockCardData]);
-
-  /*Block Chain Time Update*/
-  useEffect(() => {
-    if (!blockchainDate || !settings.liveData) return;
-    const initialTimeDifference = Date.now() - blockchainDate;
-
-    setLiveBlockchainTime(new Date(blockchainDate + initialTimeDifference));
-
-    const intervalId = setInterval(() => {
-      setLiveBlockchainTime((prevTime) => {
-        if (!prevTime) return new Date(blockchainDate);
-        const currentTime = Date.now();
-        const updatedTime = new Date(
-          blockchainDate + (currentTime - blockchainDate)
-        );
-        return updatedTime;
-      });
-    }, intervalTime);
-
-    return () => clearInterval(intervalId);
-  }, [blockchainDate, settings.liveData, intervalTime]);
 
   /*Block Number Update*/
   useEffect(() => {
@@ -238,19 +183,6 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
         className="col-span-12 md:col-span-4 lg:col-span-3 mb-2"
         data-testid="head-block-card"
       >
-        <LiveDataHeader
-          blockchainTime={
-            liveBlockchainTime
-              ? getFormattedLiveBlockchainTime(liveBlockchainTime)
-              : (blockchainTime ?? "")
-          }
-          liveData={settings.liveData}
-          onToggleLiveData={() =>
-            updateSettings({ ...settings, liveData: !settings.liveData })
-          }
-          toggleDisabled={isLiveDataToggleDisabled}
-        />
-
         <CardContent className="px-3 pt-2 pb-2 space-y-1">
           {/* Last Block Information */}
           <CurrentBlockCard

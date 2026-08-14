@@ -90,6 +90,10 @@ export const WIDGET_NODE_SUPPORT: Record<string, WidgetNodeSupport> = {
   },
   tvl: { app: "balance-api", endpoint: "balance-api:tvl" },
   "hp-momentum": { app: "balance-api", endpoint: "balance-api:vesting-stats" },
+  "my-hp-activity": {
+    app: "balance-api",
+    endpoint: "balance-api:account-vesting-stats",
+  },
 
   // hivemind-api account widget — pending author/curation rewards live only on
   // nodes running the hivemind pending-rewards routes; gate on whole-app presence.
@@ -122,6 +126,8 @@ export const WIDGET_NODE_SUPPORT: Record<string, WidgetNodeSupport> = {
   // card) instead of leaving it blank + flooding toasts.
   "top-witnesses": { app: "hafbe-api" },
   "last-blocks": { app: "hafbe-api" },
+  // Same witness list as top-witnesses, so it fails the same way without hafbe.
+  "witness-schedule": { app: "hafbe-api" },
 };
 
 export const getWidgetNodeSupport = (
