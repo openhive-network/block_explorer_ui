@@ -51,15 +51,17 @@ test.describe("Guest home views", () => {
     await guestHome.validateViewIsNotActive("overview");
   });
 
+  // url comes from the fixture: CI serves the app on its own host, so a
+  // hardcoded one would set the cookie on a domain the app never reads.
   test("A view set by cookie is server-rendered on a cold load", async ({
-    page,
     context,
+    baseURL,
   }) => {
     await context.addCookies([
       {
         name: GUEST_VIEW_COOKIE,
         value: "essentials",
-        url: "http://localhost:5000",
+        url: baseURL!,
       },
     ]);
 
@@ -68,17 +70,21 @@ test.describe("Guest home views", () => {
     await guestHome.validateActiveView("essentials");
   });
 
-  // An unknown value must not strand the visitor on a blank view.
+  // An unknown value must not strand the visitor on a blank view. The cookie is
+  // read back first: with none set the fallback is Overview anyway, so without
+  // that check this passes whether or not the bad value ever reached the app.
   test("An unrecognised cookie value falls back to Overview", async ({
     context,
+    baseURL,
   }) => {
     await context.addCookies([
       {
         name: GUEST_VIEW_COOKIE,
         value: "not-a-view",
-        url: "http://localhost:5000",
+        url: baseURL!,
       },
     ]);
+    expect(await guestHome.readViewCookie()).toBe("not-a-view");
 
     await guestHome.goto();
 
