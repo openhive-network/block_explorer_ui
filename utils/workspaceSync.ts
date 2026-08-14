@@ -9,6 +9,16 @@ import {
   DEFAULT_MASTER_LAYOUT,
   generateDerivedLayouts,
 } from "@/components/dashboard/lib/dashboard.config";
+import {
+  WIDGET_SEEDS,
+  seedStorageKey,
+  watchedProposalsDismissedKey,
+} from "@/components/dashboard/lib/widgetSeeds";
+import {
+  clearBoardOrigin,
+  clearBoardUndo,
+  selectMyBoard,
+} from "@/components/dashboard/lib/boardSlots";
 import { config } from "@/Config";
 
 export const WORKSPACE_RESTORED_EVENT = "hivescan:workspace-restored";
@@ -40,8 +50,12 @@ export function bundleFingerprint(bundle: WorkspaceBundle): string {
       return [id, rest];
     })
   );
+  // savedAt changes every build; including it would pin the unsynced dot on.
+  // autoAdd is invisible bookkeeping: two devices showing the same board must
+  // not be reported as differing because they were seeded on different days.
+  const { savedAt: _savedAt, autoAdd: _autoAdd, ...withoutVolatile } = bundle;
   const fingerprintBundle = {
-    ...bundle,
+    ...withoutVolatile,
     dashboard: {
       layout: bundle.dashboard.layout,
       widgets: bundle.dashboard.widgets,
@@ -67,6 +81,50 @@ function getStoredFingerprint(username: string): string | null {
   return localStorage.getItem(getLastSyncKey(username));
 }
 
+// Whole-bundle snapshot taken before a restore, so undo also puts back theme,
+// settings and watchlist. sessionStorage: a second copy parked permanently in
+// localStorage is what fills the quota writeAllOrNothing guards against.
+const getRestoreUndoKey = (username: string) =>
+  `hivescan_workspace_restore_undo_${username}`;
+
+export function saveRestoreUndo(username: string): void {
+  if (typeof window === "undefined") return;
+  const snapshot = buildBundle(username);
+  if (!snapshot) return;
+  try {
+    sessionStorage.setItem(
+      getRestoreUndoKey(username),
+      JSON.stringify(snapshot)
+    );
+  } catch {
+    // No undo is better than a failed restore.
+  }
+}
+
+export function readRestoreUndo(username: string): WorkspaceBundle | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = sessionStorage.getItem(getRestoreUndoKey(username));
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return parsed?.dashboard ? (parsed as WorkspaceBundle) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function clearRestoreUndo(username: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    sessionStorage.removeItem(getRestoreUndoKey(username));
+  } catch {
+    // Best effort.
+  }
+}
+
+// Whether the cloud copy matches the one we last saw, NOT whether it matches
+// local — only a cloud another device moved is worth interrupting the user for.
+// Unsynced local edits have their own quiet indicator (hasLocalChanges).
 export function cloudMatchesLastSync(
   username: string,
   cloudBundle: WorkspaceBundle
@@ -108,8 +166,29 @@ export interface WorkspaceBundle {
     widgetStates: Record<string, any>;
   };
   watchlist: Record<string, Array<number | string>>;
+  /** When the bundle was built. Absent on bundles written before it existed. */
+  savedAt?: string;
+  /** Seed flags, so a restore cannot re-add a widget the user removed. */
+  autoAdd?: Record<string, string>;
   proposalChanges: number[];
   witnessHealthSort: { key: string; dir: string } | null;
+}
+
+// Not a seed — the watchlist widget auto-appears on its own rule — but it is
+// the same kind of "already offered" bookkeeping, so it rides along.
+const WATCHED_PROPOSALS_FLAG = "watched_proposals_dismissed";
+
+function readAutoAdd(username: string): Record<string, string> {
+  const entries: Array<[string, string]> = [];
+  WIDGET_SEEDS.forEach((seed) => {
+    const value = localStorage.getItem(seedStorageKey(seed.flag, username));
+    if (value) entries.push([seed.flag, value]);
+  });
+  const dismissed = localStorage.getItem(
+    watchedProposalsDismissedKey(username)
+  );
+  if (dismissed) entries.push([WATCHED_PROPOSALS_FLAG, dismissed]);
+  return Object.fromEntries(entries);
 }
 
 export function buildBundle(username: string): WorkspaceBundle | null {
@@ -128,7 +207,6 @@ export function buildBundle(username: string): WorkspaceBundle | null {
     const witnessHealthSortRaw = localStorage.getItem(
       getWitnessHealthSortKey(username)
     );
-
     return {
       version: config.workspaceSync.bundleVersion,
       theme: localStorage.getItem("theme") || "light",
@@ -148,6 +226,8 @@ export function buildBundle(username: string): WorkspaceBundle | null {
       witnessHealthSort: witnessHealthSortRaw
         ? JSON.parse(witnessHealthSortRaw)
         : null,
+      savedAt: new Date().toISOString(),
+      autoAdd: readAutoAdd(username),
     };
   } catch {
     return null;
@@ -348,6 +428,31 @@ export function applyBundle(username: string, bundle: WorkspaceBundle): void {
   } else {
     localStorage.removeItem(getWitnessHealthSortKey(username));
   }
+
+  // Restoring without the seed flags would re-add widgets the user removed. A
+  // bundle predating the field has no record, so settle every seed instead.
+  const restoredAutoAdd = bundle.autoAdd;
+  WIDGET_SEEDS.forEach((seed) => {
+    const key = seedStorageKey(seed.flag, username);
+    const value = restoredAutoAdd ? restoredAutoAdd[seed.flag] : "true";
+    if (value) localStorage.setItem(key, value);
+    else localStorage.removeItem(key);
+  });
+  const dismissed = restoredAutoAdd
+    ? restoredAutoAdd[WATCHED_PROPOSALS_FLAG]
+    : "true";
+  if (dismissed) {
+    localStorage.setItem(watchedProposalsDismissedKey(username), dismissed);
+  } else {
+    localStorage.removeItem(watchedProposalsDismissedKey(username));
+  }
+
+  // The restored board replaces whatever was here, so adoption state from the
+  // old one would otherwise let a later undo discard what was just restored.
+  clearBoardOrigin(username);
+  clearBoardUndo(username);
+  // Land on the board that was just restored, whatever tab was open before.
+  selectMyBoard(username);
 
   window.dispatchEvent(
     new CustomEvent(WORKSPACE_RESTORED_EVENT, { detail: { username } })
