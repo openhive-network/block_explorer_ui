@@ -8,6 +8,7 @@ import {
   LogOut,
   ChevronDown,
   CloudUpload,
+  CloudDownload,
   Loader2,
   CheckCircle2,
   AlertCircle,
@@ -20,7 +21,12 @@ import { useSettings } from "@/contexts/SettingsContext";
 import RadialProgress from "@/components/RadialProgress";
 import { Progress } from "@/components/ui/progress";
 import { useWorkspaceSync } from "@/hooks/api/useWorkspaceSync";
-import { hasLocalChanges } from "@/utils/workspaceSync";
+import { buildBundle, hasLocalChanges } from "@/utils/workspaceSync";
+import { diffBundles } from "@/utils/workspaceDiff";
+import {
+  fetchCloudBundle,
+  requestWorkspaceRestore,
+} from "@/utils/workspaceCloud";
 import { toast } from "sonner";
 
 import keychainLogo from "@/lib/smart-signer/logo/keychain.png";
@@ -63,6 +69,34 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
   const { syncStatus, syncWorkspace, lastBundleBytes } = useWorkspaceSync();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isUnsynced, setIsUnsynced] = useState(false);
+  const [isRestoring, setIsRestoring] = useState(false);
+
+  // Pulls the saved workspace and hands it to the restore prompt, which owns
+  // the comparison and the actual apply.
+  const handleRestoreFromChain = async () => {
+    if (!username || isRestoring) return;
+    setIsRestoring(true);
+    try {
+      const result = await fetchCloudBundle(username);
+      if (result.status === "found") {
+        // Offering a choice between two copies that match reads as a bug. Say
+        // they match instead.
+        const local = buildBundle(username);
+        if (local && diffBundles(local, result.bundle).identical) {
+          toast.info(t("workspaceSync.restoreAlreadyMatches"));
+          return;
+        }
+        requestWorkspaceRestore(username, result);
+        setIsOpen(false);
+      } else if (result.status === "none") {
+        toast.info(t("workspaceSync.restoreNothingSaved"));
+      } else {
+        toast.error(t("workspaceSync.restoreFailed"));
+      }
+    } finally {
+      setIsRestoring(false);
+    }
+  };
 
   useEffect(() => {
     setIsUnsynced(!!username && hasLocalChanges(username));
@@ -351,6 +385,35 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
                     {isUnsynced
                       ? t("workspaceSync.unsyncedTooltip")
                       : t("workspaceSync.noChangesToSync")}
+                  </TooltipContent>
+                </TooltipPortal>
+              </Tooltip>
+            </TooltipProvider>
+
+            {/* The other direction: the prompt shown at login is otherwise the
+                only way to pull the saved workspace back. */}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={handleRestoreFromChain}
+                    disabled={isRestoring}
+                    className="relative flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium hover:bg-secondary/60 transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    {isRestoring ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <CloudDownload className="h-4 w-4" />
+                    )}
+                    <span>{t("workspaceSync.restoreFromChainButton")}</span>
+                  </button>
+                </TooltipTrigger>
+                <TooltipPortal>
+                  <TooltipContent
+                    side="left"
+                    className="max-w-[200px] text-center"
+                  >
+                    {t("workspaceSync.restoreFromChainTooltip")}
                   </TooltipContent>
                 </TooltipPortal>
               </Tooltip>

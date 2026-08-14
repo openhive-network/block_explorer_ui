@@ -5,6 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { SmartSigner } from "@/lib/smart-signer";
 import {
   buildBundle,
+  clearRestoreUndo,
   compressBundle,
   encryptBundle,
   isBundleOverLimit,
@@ -104,6 +105,9 @@ export function useWorkspaceSync(): UseWorkspaceSyncReturn {
           "Posting"
         );
         saveLastSync(username, bundle);
+        // This board is now the saved one, so undoing back past it would
+        // discard exactly what was just published.
+        clearRestoreUndo(username);
         setSyncStatus("success");
       } else if (method === "hivesigner") {
         // Hivesigner: only update posting_json_metadata (omit json_metadata to keep URL short)
