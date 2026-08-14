@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import { X, Search, Plus, Check, ChevronDown } from "lucide-react";
 import {
   ALL_WIDGETS,
@@ -14,9 +14,14 @@ import { cn } from "@/lib/utils";
 interface WidgetLibraryProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddWidget: (widgetType: string) => void;
+  /** False when the board refused it — a singleton already placed. */
+  onAddWidget: (widgetType: string) => boolean | void;
   existingWidgets: Array<{ type: string }>;
 }
+
+// Long enough to register, short enough not to linger while adding a run of
+// widgets one after another.
+const ADDED_FLASH_MS = 1600;
 
 const WidgetLibrary: React.FC<WidgetLibraryProps> = ({
   isOpen,
@@ -26,8 +31,36 @@ const WidgetLibrary: React.FC<WidgetLibraryProps> = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [openCategories, setOpenCategories] = useState<Set<string>>(new Set());
+  const [justAdded, setJustAdded] = useState<string | null>(null);
+  const [addedCount, setAddedCount] = useState(0);
+  const flashTimer = useRef<number | null>(null);
   const { t } = useI18n();
   const { isSupported, isEndpointUnsupported } = useNodeSupport();
+
+  useEffect(
+    () => () => {
+      if (flashTimer.current) window.clearTimeout(flashTimer.current);
+    },
+    []
+  );
+
+  // Fresh tally each time it opens, so the footer counts this visit only.
+  useEffect(() => {
+    if (isOpen) return;
+    setAddedCount(0);
+    setJustAdded(null);
+  }, [isOpen]);
+
+  const handleAdd = (widgetType: string) => {
+    if (onAddWidget(widgetType) === false) return;
+    setAddedCount((n) => n + 1);
+    setJustAdded(widgetType);
+    if (flashTimer.current) window.clearTimeout(flashTimer.current);
+    flashTimer.current = window.setTimeout(
+      () => setJustAdded(null),
+      ADDED_FLASH_MS
+    );
+  };
 
   const isSearching = searchTerm.trim().length > 0;
 
@@ -92,11 +125,14 @@ const WidgetLibrary: React.FC<WidgetLibraryProps> = ({
       (isSupported(cap.app) === false || isEndpointUnsupported(cap.endpoint));
     const isDisabled = alreadyAdded || isUnavailable;
     const description = getDescription(widget);
+    // Repeatable widgets never gain the permanent tick, so they get a flash.
+    const flashing = justAdded === widget.id;
 
     return (
       <button
         key={widget.id}
-        onClick={() => onAddWidget(widget.id)}
+        onClick={() => handleAdd(widget.id)}
+        data-testid={`widget-library-add-${widget.id}`}
         disabled={isDisabled}
         title={
           isUnavailable ? t("widgetUnavailable.libraryTooltip") : undefined
@@ -109,8 +145,16 @@ const WidgetLibrary: React.FC<WidgetLibraryProps> = ({
         )}
       >
         <div className="min-w-0 flex-1">
-          <div className="text-sm font-semibold text-gray-900 dark:text-white">
+          <div className="flex items-center gap-2 text-sm font-semibold text-gray-900 dark:text-white">
             {t(widget.name)}
+            {flashing && (
+              <span
+                aria-live="polite"
+                className="rounded-full bg-emerald-100 px-1.5 py-px text-[10px] font-semibold uppercase tracking-wide text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400"
+              >
+                {t("widgetLibrary.added")}
+              </span>
+            )}
           </div>
           {isUnavailable && (
             <p className="mt-0.5 text-[11px] font-medium text-amber-600 dark:text-amber-400">
@@ -146,6 +190,7 @@ const WidgetLibrary: React.FC<WidgetLibraryProps> = ({
 
   return (
     <div
+      data-testid="widget-library"
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
       onClick={onClose}
     >
@@ -174,6 +219,7 @@ const WidgetLibrary: React.FC<WidgetLibraryProps> = ({
             />
             <input
               type="text"
+              data-testid="widget-library-search"
               placeholder={t("widgetLibrary.searchWidget")}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -222,6 +268,24 @@ const WidgetLibrary: React.FC<WidgetLibraryProps> = ({
               </div>
             );
           })}
+        </div>
+
+        {/* The panel no longer closes itself, so say so and offer the exit. */}
+        <div className="flex items-center justify-between gap-3 border-t border-gray-200 px-5 py-3 dark:border-gray-700">
+          <p className="min-w-0 text-xs text-gray-500 dark:text-gray-400">
+            {addedCount > 0
+              ? t("widgetLibrary.addedCount").replace(
+                  "{count}",
+                  String(addedCount)
+                )
+              : t("widgetLibrary.keepAdding")}
+          </p>
+          <button
+            onClick={onClose}
+            className="shrink-0 rounded-lg bg-indigo-500 px-4 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-1"
+          >
+            {t("widgetLibrary.done")}
+          </button>
         </div>
       </div>
     </div>
