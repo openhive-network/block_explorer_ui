@@ -81,11 +81,15 @@ function getStoredFingerprint(username: string): string | null {
   return localStorage.getItem(getLastSyncKey(username));
 }
 
-// Whole-bundle snapshot taken before a restore, so undo also puts back theme,
-// settings and watchlist. sessionStorage: a second copy parked permanently in
-// localStorage is what fills the quota writeAllOrNothing guards against.
+// Whole bundle, so undo also restores theme, settings and watchlist.
+// sessionStorage: a permanent second copy would eat the localStorage quota.
 const getRestoreUndoKey = (username: string) =>
   `hivescan_workspace_restore_undo_${username}`;
+
+// Separate from the snapshot: that lives as long as undo is offered, this is
+// spent the first time it is shown.
+const getRestoreAnnounceKey = (username: string) =>
+  `hivescan_workspace_restore_announce_${username}`;
 
 export function saveRestoreUndo(username: string): void {
   if (typeof window === "undefined") return;
@@ -96,8 +100,22 @@ export function saveRestoreUndo(username: string): void {
       getRestoreUndoKey(username),
       JSON.stringify(snapshot)
     );
+    sessionStorage.setItem(getRestoreAnnounceKey(username), "true");
   } catch {
     // No undo is better than a failed restore.
+  }
+}
+
+/** True once per restore; the undo button carries it from then on. */
+export function consumeRestoreAnnouncement(username: string): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    const key = getRestoreAnnounceKey(username);
+    if (sessionStorage.getItem(key) !== "true") return false;
+    sessionStorage.removeItem(key);
+    return true;
+  } catch {
+    return false;
   }
 }
 
@@ -117,14 +135,14 @@ export function clearRestoreUndo(username: string): void {
   if (typeof window === "undefined") return;
   try {
     sessionStorage.removeItem(getRestoreUndoKey(username));
+    sessionStorage.removeItem(getRestoreAnnounceKey(username));
   } catch {
     // Best effort.
   }
 }
 
-// Whether the cloud copy matches the one we last saw, NOT whether it matches
-// local — only a cloud another device moved is worth interrupting the user for.
-// Unsynced local edits have their own quiet indicator (hasLocalChanges).
+// Against the copy we last saw, not against local: only a cloud another device
+// moved is worth interrupting for. Local edits have hasLocalChanges.
 export function cloudMatchesLastSync(
   username: string,
   cloudBundle: WorkspaceBundle

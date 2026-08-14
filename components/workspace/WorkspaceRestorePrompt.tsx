@@ -12,6 +12,7 @@ import {
   applyBundle,
   buildBundle,
   clearRestoreUndo,
+  consumeRestoreAnnouncement,
   readRestoreUndo,
   saveLastSync,
   saveRestoreUndo,
@@ -170,8 +171,8 @@ const WorkspaceToastBody: React.FC<ToastBodyProps> = ({
         <button
           data-testid="workspace-restore-cloud"
           onClick={() => {
-            // Dismiss first: applyBundle updates settings in place and the
-            // reload needs a server round trip, so the click must register.
+            // Dismiss first: the reload needs a server round trip, so the
+            // click has to register immediately.
             toast.dismiss(id);
             // Snapshot first: applyBundle overwrites the very thing undo needs.
             saveRestoreUndo(username);
@@ -206,10 +207,12 @@ const WorkspaceRestorePrompt: React.FC = () => {
   const [pending, setPending] = useState<PendingRestore | null>(null);
   const undoOffered = useRef(false);
 
-  // A restore reloads, so a surviving snapshot is itself the signal that one
-  // just happened. Offered once per page load.
+  // Announced once, on the dashboard. The snapshot outlives this toast for the
+  // undo button, so it cannot double as the signal.
   useEffect(() => {
     if (!username || undoOffered.current) return;
+    if (router.pathname !== DASHBOARD_ROUTE) return;
+    if (!consumeRestoreAnnouncement(username)) return;
     const snapshot = readRestoreUndo(username);
     if (!snapshot) return;
     undoOffered.current = true;
@@ -227,10 +230,9 @@ const WorkspaceRestorePrompt: React.FC = () => {
           window.location.reload();
         },
       },
-      // Deliberately not cleared when the toast closes: the undo button in the
-      // dashboard controls is the durable affordance, and it reads this snapshot.
+      // Not cleared on close: the undo button reads the same snapshot.
     });
-  }, [username, t]);
+  }, [username, t, router.pathname]);
 
   useEffect(() => {
     const handle = (e: Event) => {
