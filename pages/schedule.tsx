@@ -1,7 +1,10 @@
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
 
-import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
+import {
+  useHeadBlockNumber,
+  useLiveHeadBlock,
+} from "@/contexts/HeadBlockContext";
 import useWitnesses from "@/hooks/api/common/useWitnesses";
 import useHeadBlock from "@/hooks/api/homePage/useHeadBlock";
 import ErrorPage from "./ErrorPage";
@@ -12,6 +15,9 @@ import useBackupWitnessesSchedule from "@/hooks/api/schedulePage/useBackupWitnes
 import ScrollTopButton from "@/components/ScrollTopButton";
 
 const Schedule = () => {
+  // Every row is derived from the head block, so it has to keep advancing even
+  // with live data off.
+  useLiveHeadBlock();
   const { witnessesData } = useWitnesses(200, "rank", "asc");
   const { headBlockNumberData } = useHeadBlockNumber();
   const { headBlockData } = useHeadBlock(headBlockNumberData);
@@ -64,22 +70,22 @@ const Schedule = () => {
       <Loader2 className="animate-spin mt-1 h-12 w-12 ml-3 ..." />
     </div>
   ) : (
-  <div className="page-container">
-    <div className="w-full grid lg:grid-cols-2 gap-4 content-start">
-      <WitnessSchedule
-        data={scheduledWitnessesData}
-        currentProducer={producerAccount}
-        currentBlock={headBlockNumberData}
-        nextShuffleBlockNumber={nextShuffleBlockNumber}
-        blocksLeftBeforeRefetch={blocksLeftBeforeRefetch}
-      />
+    <div className="page-container">
+      <div className="w-full grid lg:grid-cols-2 gap-4 content-start">
+        <WitnessSchedule
+          data={scheduledWitnessesData}
+          currentProducer={producerAccount}
+          currentBlock={headBlockNumberData}
+          nextShuffleBlockNumber={nextShuffleBlockNumber}
+          blocksLeftBeforeRefetch={blocksLeftBeforeRefetch}
+        />
 
-      <BackupWitnessSchedule data={backupWitnessScheduleData} />
+        <BackupWitnessSchedule data={backupWitnessScheduleData} />
+      </div>
+      <div className="fixed bottom-[10px] right-0 flex flex-col items-end justify-end px-3 md:px-12">
+        <ScrollTopButton />
+      </div>
     </div>
-    <div className="fixed bottom-[10px] right-0 flex flex-col items-end justify-end px-3 md:px-12">
-      <ScrollTopButton />
-    </div>
-  </div>
   );
 };
 
