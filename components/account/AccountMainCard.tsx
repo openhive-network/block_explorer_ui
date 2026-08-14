@@ -468,13 +468,17 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
               <StatCard
                 icon={<UserPlus size={20} />}
                 label={t("accountMainCard.followers")}
-                value={Number(accountDetails.follower_count).toLocaleString()}
+                value={Number(accountDetails.follower_count).toLocaleString(
+                  locale
+                )}
                 onClick={openFollowersModal}
               />
               <StatCard
                 icon={<UserCheck size={20} />}
                 label={t("accountMainCard.following")}
-                value={Number(accountDetails.following_count).toLocaleString()}
+                value={Number(accountDetails.following_count).toLocaleString(
+                  locale
+                )}
                 onClick={openFollowingModal}
               />
               <StatCard
@@ -482,13 +486,13 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                 label={t("accountMainCard.subscriptions")}
                 value={Number(
                   accountDetails.subscriptions.length
-                ).toLocaleString()}
+                ).toLocaleString(locale)}
                 onClick={openSubscriptionsModal}
               />
               <StatCard
                 icon={<PenSquare size={20} />}
                 label={t("accountMainCard.totalPosts")}
-                value={Number(accountDetails.post_count).toLocaleString()}
+                value={Number(accountDetails.post_count).toLocaleString(locale)}
                 tooltipContent={<p>{t("accountMainCard.totalPostsTooltip")}</p>}
               />
               <StatCard
@@ -518,7 +522,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                   isVoteCountLoading ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
-                    (proposalVoteCount ?? 0).toLocaleString()
+                    (proposalVoteCount ?? 0).toLocaleString(locale)
                   )
                 }
                 onClick={() => {

@@ -2,6 +2,11 @@ import { useState, useEffect } from "react";
 import { useI18n } from "@/i18n/i18n";
 import { Palette } from "lucide-react";
 
+// The picker only emits #rrggbb; anything else came from a restored bundle.
+const HEX_COLOR = /^#[0-9a-fA-F]{6}$/;
+const safeColor = (value?: string): string | undefined =>
+  value && value !== "transparent" && HEX_COLOR.test(value) ? value : undefined;
+
 interface TitleWidgetProps {
   initialText?: string;
   initialColor?: string;
@@ -20,18 +25,14 @@ const TitleWidget: React.FC<TitleWidgetProps> = ({
   const { t } = useI18n();
 
   const [text, setText] = useState(initialText || t("titleWidget.defaultText"));
-  const [color, setColor] = useState(
-    initialColor && initialColor !== "transparent" ? initialColor : "#ffffff"
-  );
+  const [color, setColor] = useState(safeColor(initialColor) ?? "#ffffff");
 
   useEffect(() => {
     setText(initialText || t("titleWidget.defaultText"));
   }, [initialText, t]);
 
   useEffect(() => {
-    setColor(
-      initialColor && initialColor !== "transparent" ? initialColor : "#ffffff"
-    );
+    setColor(safeColor(initialColor) ?? "#ffffff");
   }, [initialColor]);
 
   const handleTextBlur = () => {
@@ -42,18 +43,14 @@ const TitleWidget: React.FC<TitleWidgetProps> = ({
     onColorChange(newColor);
   };
   const handleIconClick = () => {
-    const newColor =
-      initialColor && initialColor !== "transparent"
-        ? "transparent"
-        : "#ffffff";
+    const newColor = safeColor(initialColor) ? "transparent" : "#ffffff";
     setColor(newColor);
     onColorChange(newColor);
   };
 
   const shell =
     "flex items-center gap-3 w-full h-full px-4 rounded-xl bg-theme border border-gray-200 dark:border-gray-700";
-  const customColor =
-    initialColor && initialColor !== "transparent" ? initialColor : undefined;
+  const customColor = safeColor(initialColor);
   const accent = (
     <span className="h-6 w-1 shrink-0 rounded-full bg-indigo-500" />
   );

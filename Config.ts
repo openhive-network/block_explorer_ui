@@ -9,6 +9,12 @@ export const config = {
   apiAddress: `${
     env("API_ADDRESS") ? env("API_ADDRESS") : "https://api.hive.blog"
   }`,
+  // Front end for post and comment links, which this explorer does not render.
+  hiveFrontendUrl: `${
+    env("HIVE_FRONTEND_ADDRESS")
+      ? env("HIVE_FRONTEND_ADDRESS")
+      : "https://hive.blog"
+  }`,
   baseMomentTimeFormat: "YYYY/MM/DD HH:mm:ss UTC",
   momentLocaleDateFormat: "MMM D, YYYY",
   gitHash: process.env.NEXT_PUBLIC_COMMIT_HASH,
@@ -18,6 +24,8 @@ export const config = {
   opsBodyLimit: 100000,
   commentOperationsTypeIds: [0, 1, 17, 19, 51, 53, 61, 63, 72, 73],
   standardPaginationSize: 100,
+  // hivemind's bridge rejects anything above 20 with an assert, not an empty page.
+  bridgePageMax: 20,
   expandedPaginationSize: 20000,
   proposalVotesSize: 500,
   blockPagePaginationSize: 2000, // Temporary 2000 until cache problem solved
@@ -33,7 +41,13 @@ export const config = {
   inactiveWitnessKey: "STM1111111111111111111111111111111114T1Anm",
   maxDelegatorsCount: 1000,
   mainRefreshInterval: 3000,
+  // The witness schedule advances a slot roughly every 3s and is the only view
+  // that needs the head block to tick with live data off.
+  scheduleRefreshInterval: 1000,
   accountRefreshInterval: 20000,
+  // Authored content and its payouts move over hours, not seconds. Polling
+  // these at the account interval is all cost and no freshness.
+  contentRefreshInterval: 120000,
   marketHistoryRefreshInterval: 60000,
   lastBlocksForWidget: 20,
   firstBlockTime: "2016-03-24T16:05:00",

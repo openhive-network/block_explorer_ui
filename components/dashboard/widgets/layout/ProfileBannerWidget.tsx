@@ -88,6 +88,7 @@ const ProfileBannerWidget: React.FC<ProfileBannerWidgetProps> = ({
       {spine}
       <div className="relative flex h-full flex-col justify-center gap-1 px-3 py-2 sm:flex-row sm:items-center sm:gap-4 sm:px-0 sm:py-2 sm:ps-5 sm:pe-4">
         <div className="flex min-w-0 items-center gap-3 sm:contents">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={getHiveAvatarUrl(username)}
             alt=""

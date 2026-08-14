@@ -34,7 +34,8 @@ const useConvertedAccountDetails = (
   const { hiveChain } = useHiveChainContext();
   const { accountDetails, notFound, isAccountDetailsLoading } =
     useAccountDetails(accountName, liveDataEnabled);
-  const { accountBalancesData } = useAccountBalances(accountName);
+  const { accountBalancesData, accountBalancesDataLoading } =
+    useAccountBalances(accountName);
   const { recurrentTransfers } = useAccountRecurrentTransfers(
     accountName,
     liveDataEnabled
@@ -45,6 +46,7 @@ const useConvertedAccountDetails = (
       formattedAccountDetails: undefined,
       notFound: undefined,
       isAccountDetailsLoading,
+      balancesUnavailable: false,
     };
 
   if (!accountDetails) {
@@ -52,6 +54,18 @@ const useConvertedAccountDetails = (
       formattedAccountDetails: undefined,
       notFound: !accountDetails,
       isAccountDetailsLoading,
+      balancesUnavailable: false,
+    };
+  }
+
+  // Wait only while actually loading: a node without balance-api never resolves
+  // one, and the rest of the account still renders without it.
+  if (!accountBalancesData && accountBalancesDataLoading) {
+    return {
+      formattedAccountDetails: undefined,
+      notFound,
+      isAccountDetailsLoading: true,
+      balancesUnavailable: false,
     };
   }
   const {
@@ -116,37 +130,49 @@ const useConvertedAccountDetails = (
     rawTotalVestingShares
   );
 
-  const api = accountBalancesData as any;
+  const api = accountBalancesData;
+  // balance-api is optional. Absent, these rows read zero rather than blanking
+  // the whole account; the API also returns them as strings, so coerce.
+  const num = (value: unknown): number => {
+    const parsed = Number(value ?? 0);
+    return Number.isFinite(parsed) ? parsed : 0;
+  };
 
   const balanceApiFormatted = {
-    open_orders_hive_amount: hiveChain.hive(api.open_orders_hive_amount),
-    open_orders_hbd_amount: hiveChain.hbd(api.open_orders_hbd_amount),
+    open_orders_hive_amount: hiveChain.hive(num(api?.open_orders_hive_amount)),
+    open_orders_hbd_amount: hiveChain.hbd(num(api?.open_orders_hbd_amount)),
     conversion_pending_amount_hive: hiveChain.hive(
-      api.conversion_pending_amount_hive,
+      num(api?.conversion_pending_amount_hive)
     ),
     conversion_pending_amount_hbd: hiveChain.hbd(
-      api.conversion_pending_amount_hbd,
+      num(api?.conversion_pending_amount_hbd)
     ),
     savings_pending_amount_hive: hiveChain.hive(
-      Math.abs(api.savings_pending_amount_hive),
+      Math.abs(num(api?.savings_pending_amount_hive))
     ),
-    savings_pending_amount_hbd: hiveChain.hbd(Math.abs(api.savings_pending_amount_hbd)),
-    escrow_pending_amount_hive: hiveChain.hive(api.escrow_pending_amount_hive),
-    escrow_pending_amount_hbd: hiveChain.hbd(api.escrow_pending_amount_hbd),
+    savings_pending_amount_hbd: hiveChain.hbd(
+      Math.abs(num(api?.savings_pending_amount_hbd))
+    ),
+    escrow_pending_amount_hive: hiveChain.hive(
+      num(api?.escrow_pending_amount_hive)
+    ),
+    escrow_pending_amount_hbd: hiveChain.hbd(
+      num(api?.escrow_pending_amount_hbd)
+    ),
 
     // Counts (Passed as raw values)
-    conversion_pending_count_hive: api.conversion_pending_count_hive,
-    conversion_pending_count_hbd: api.conversion_pending_count_hbd,
-    escrow_pending_count: api.escrow_pending_count,
-    open_orders_hbd_count: api.open_orders_hbd_count,
-    open_orders_hive_count: api.open_orders_hive_count,
+    conversion_pending_count_hive: num(api?.conversion_pending_count_hive),
+    conversion_pending_count_hbd: num(api?.conversion_pending_count_hbd),
+    escrow_pending_count: num(api?.escrow_pending_count),
+    open_orders_hbd_count: num(api?.open_orders_hbd_count),
+    open_orders_hive_count: num(api?.open_orders_hive_count),
   };
 
   // Put values for display
   const accountDetailsForFormat = {
     ...accountDetails,
     ...vests,
-     ...balanceApiFormatted,
+    ...balanceApiFormatted,
     balance: hiveChain.hive(accountDetails.balance),
     savings_balance: hiveChain.hive(accountDetails.savings_balance),
     hbd_balance: hiveChain.hbd(accountDetails.hbd_balance),
@@ -208,32 +234,32 @@ const useConvertedAccountDetails = (
     vesting_withdraw_rate: hiveChain.hiveToHbd(
       vesting_withdraw_rate,
       rawFeedPrice,
-      rawQuote,
+      rawQuote
     ),
     open_orders_hbd_amount: balanceApiFormatted.open_orders_hbd_amount,
     open_orders_hive_amount: hiveChain.hiveToHbd(
       balanceApiFormatted.open_orders_hive_amount,
       rawFeedPrice,
-      rawQuote,
+      rawQuote
     ),
     conversion_pending_amount_hbd:
       balanceApiFormatted.conversion_pending_amount_hbd,
     conversion_pending_amount_hive: hiveChain.hiveToHbd(
       balanceApiFormatted.conversion_pending_amount_hive,
       rawFeedPrice,
-      rawQuote,
+      rawQuote
     ),
     savings_pending_amount_hbd: balanceApiFormatted.savings_pending_amount_hbd,
     savings_pending_amount_hive: hiveChain.hiveToHbd(
       balanceApiFormatted.savings_pending_amount_hive,
       rawFeedPrice,
-      rawQuote,
+      rawQuote
     ),
     escrow_pending_amount_hbd: balanceApiFormatted.escrow_pending_amount_hbd,
     escrow_pending_amount_hive: hiveChain.hiveToHbd(
       balanceApiFormatted.escrow_pending_amount_hive,
       rawFeedPrice,
-      rawQuote,
+      rawQuote
     ),
   };
   interface NaiAsset {
@@ -278,6 +304,9 @@ const useConvertedAccountDetails = (
     formattedAccountDetails,
     notFound,
     isAccountDetailsLoading,
+    // The balance-derived rows above are zeros, not real values: consumers that
+    // show them should say so rather than report an empty wallet.
+    balancesUnavailable: !accountBalancesData,
   };
 };
 
