@@ -1,59 +1,78 @@
-import React from "react";
+import React, { useState } from "react";
 import type { GetServerSideProps } from "next";
 import { useAuth } from "@/contexts/AuthContext";
-import { useSettings } from "@/contexts/SettingsContext";
 import StandardHome from "@/components/home/StandardHome";
 import WidgetIndex from "@/components/home/WidgetIndex";
-import Seo from "@/components/seo/Seo";
+import { GuestViewProvider } from "@/components/home/guest/GuestViewTabs";
+import GuestBoardHeader from "@/components/home/guest/GuestBoardHeader";
+import { useI18n } from "@/i18n/i18n";
+import GuestEssentialsHome from "@/components/home/guest/GuestEssentialsHome";
+import GuestNetworkHome from "@/components/home/guest/GuestNetworkHome";
+import GuestMarketHome from "@/components/home/guest/GuestMarketHome";
+import GuestGovernanceHome from "@/components/home/guest/GuestGovernanceHome";
 import {
-  SeoMeta,
-  absoluteBaseUrl,
-  canonicalUrl,
-  clamp,
-  defaultOgImage,
-  webSiteJsonLd,
-  organizationJsonLd,
-  SEO_LIST_CACHE_CONTROL,
-} from "@/utils/seo";
-import { seoText } from "@/utils/seoStrings";
+  DEFAULT_GUEST_VIEW,
+  GUEST_VIEW_META,
+  GuestView,
+  guestViewFromCookies,
+  writeGuestView,
+} from "@/components/home/guest/guestViews";
 
-export default function Home({ meta }: { meta: SeoMeta }) {
-  const { isLoggedIn, isInitializing } = useAuth();
-  const { settings } = useSettings();
+const GUEST_VIEWS: Record<GuestView, React.ComponentType> = {
+  overview: StandardHome,
+  essentials: GuestEssentialsHome,
+  network: GuestNetworkHome,
+  market: GuestMarketHome,
+  governance: GuestGovernanceHome,
+};
 
-  const body =
-    !isInitializing && isLoggedIn && settings.enableModularDashboard ? (
-      <WidgetIndex />
-    ) : (
-      <StandardHome />
-    );
-
-  return (
-    <>
-      <Seo meta={meta} />
-      {body}
-    </>
-  );
+interface HomeProps {
+  initialGuestView: GuestView;
 }
 
-export const getServerSideProps: GetServerSideProps<{
-  meta: SeoMeta;
-}> = async ({ req, res }) => {
-  res.setHeader("Cache-Control", SEO_LIST_CACHE_CONTROL);
-  const base = absoluteBaseUrl(req);
-  const description = clamp(
-    process.env.NEXT_PUBLIC_SITE_DESCRIPTION || seoText("seo.home.description")
+// The guest view lives in a cookie so the server can render the one the visitor
+// last chose. Reading it after mount instead would paint the default view, then
+// tear down its whole data-fetching tree to mount the real one.
+export const getServerSideProps: GetServerSideProps<HomeProps> = async ({
+  req,
+}) => ({
+  props: { initialGuestView: guestViewFromCookies(req.cookies) },
+});
+
+export default function Home({ initialGuestView }: HomeProps) {
+  const { isLoggedIn } = useAuth();
+  const { t } = useI18n();
+
+  // Seeded from the cookie the server already read, so first paint is correct
+  // and hydration matches.
+  const [guestView, setGuestView] = useState<GuestView>(
+    initialGuestView ?? DEFAULT_GUEST_VIEW
   );
-  return {
-    props: {
-      meta: {
-        title: seoText("seo.home.title"),
-        description,
-        canonical: canonicalUrl(req, "/"),
-        ogType: "website",
-        ogImage: defaultOgImage(base),
-        jsonLd: [webSiteJsonLd(base, description), organizationJsonLd(base)],
-      },
-    },
+
+  const chooseGuestView = (view: GuestView) => {
+    setGuestView(view);
+    writeGuestView(view);
   };
-};
+
+  // The modular dashboard is the signed-in home. StandardHome lives on only as
+  // the guest Overview view below.
+  if (isLoggedIn) return <WidgetIndex />;
+
+  const GuestHome = GUEST_VIEWS[guestView] ?? StandardHome;
+  return (
+    <GuestViewProvider value={guestView} onChange={chooseGuestView}>
+      {/* The other four draw their own; StandardHome is shared, so it gets one here */}
+      {guestView === "overview" && (
+        <GuestBoardHeader
+          icon={GUEST_VIEW_META.overview.icon}
+          accent={GUEST_VIEW_META.overview.accent}
+          eyebrow={t("guestHome.overview.eyebrow")}
+          title={t("guestHome.overview.title")}
+          subtitle={t("guestHome.overview.subtitle")}
+          headingLevel="h1"
+        />
+      )}
+      <GuestHome />
+    </GuestViewProvider>
+  );
+}
