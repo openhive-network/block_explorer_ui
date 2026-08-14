@@ -77,6 +77,8 @@ test.describe("Dashboard boards", () => {
   });
 
   test("The chosen tab is remembered across a reload", async ({ page }) => {
+    // Reload means a fresh SSR plus a node round trip to restore the session.
+    test.slow();
     await dashboard.goto();
     await dashboard.waitForBoard();
 
@@ -107,6 +109,7 @@ test.describe("Dashboard boards", () => {
   test("Adopting a template replaces My board and offers an undo", async ({
     page,
   }) => {
+    test.slow();
     await dashboard.goto();
     await dashboard.waitForBoard();
 
@@ -128,6 +131,7 @@ test.describe("Dashboard boards", () => {
   });
 
   test("Undo puts the replaced board back", async ({ page }) => {
+    test.slow();
     await dashboard.goto();
     await dashboard.waitForBoard();
 

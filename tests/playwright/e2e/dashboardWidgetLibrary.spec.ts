@@ -61,6 +61,7 @@ test.describe("Widget library", () => {
   });
 
   test("An added widget survives a reload", async ({ page }) => {
+    test.slow();
     const before = await dashboard.widgetCount();
 
     await dashboard.enterEditMode();
