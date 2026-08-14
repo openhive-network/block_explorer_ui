@@ -47,7 +47,7 @@ const GuestViewTabs: React.FC = () => {
   const edge = "border-b border-gray-200 dark:border-gray-700";
 
   const select = (
-    <div className={cn("p-2 sm:hidden", edge)}>
+    <div className={cn("p-2 sm:hidden", edge)} data-testid="guest-view-mobile">
       <Select
         value={value}
         onValueChange={(view) => onChange(view as GuestView)}
@@ -105,7 +105,11 @@ const GuestViewTabs: React.FC = () => {
   const tabs = (
     <nav
       aria-label={label}
-      className={cn("relative hidden items-center pe-2 ps-3 sm:flex", edge)}
+      className={cn(
+        "relative hidden items-center overflow-x-auto pe-2 ps-3 sm:flex",
+        "[scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+        edge
+      )}
     >
       {GUEST_VIEWS.map((view) => {
         const meta = GUEST_VIEW_META[view];
@@ -116,6 +120,7 @@ const GuestViewTabs: React.FC = () => {
           <button
             key={view}
             type="button"
+            data-testid={`guest-view-tab-${view}`}
             onClick={() => onChange(view)}
             aria-current={isActive ? "page" : undefined}
             className={cn(

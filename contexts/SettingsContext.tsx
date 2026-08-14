@@ -26,7 +26,6 @@ export interface AppSettings {
   liveData: boolean;
   prettyJsonView: boolean;
   layoutWidth: LayoutWidth;
-  enableModularDashboard: boolean;
 }
 
 interface SettingsContextType {
@@ -48,7 +47,6 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
     liveData: false,
     prettyJsonView: false,
     layoutWidth: "full",
-    enableModularDashboard: false,
   });
 
   // This effect loads ALL settings from localStorage on initial mount
