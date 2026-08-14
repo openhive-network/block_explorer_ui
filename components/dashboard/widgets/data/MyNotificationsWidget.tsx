@@ -21,6 +21,7 @@ import { useSettings } from "@/contexts/SettingsContext";
 import useAccountNotifications from "@/hooks/api/accountPage/useAccountNotifications";
 import { useI18n } from "@/i18n/i18n";
 import { parseChainDate } from "@/utils/TimeUtils";
+import { isInAppPath, normalizeExternalUrl } from "@/utils/SafeUrl";
 import { cn } from "@/lib/utils";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 
@@ -52,11 +53,16 @@ const TYPE_ICON: Record<string, { icon: LucideIcon; color: string }> = {
 // The account that acted, from the message hivemind composed.
 const actorOf = (msg: string) => msg.match(/@([a-z0-9.-]+)/)?.[1];
 
-// Posts go to a front end; this explorer only renders accounts.
-const linkFor = (url: string) =>
-  url.includes("/")
-    ? { href: `${config.hiveFrontendUrl}/${url}`, external: true }
-    : { href: `/${url}`, external: false };
+// hivemind returns a bare path: "@author/permlink" or "@account". Posts go to a
+// front end. Gated like any user URL, so an odd payload degrades to a plain row.
+const linkFor = (url: string): { href: string; external: boolean } | null => {
+  if (url.includes("/")) {
+    const href = normalizeExternalUrl(`${config.hiveFrontendUrl}/${url}`);
+    return href ? { href, external: true } : null;
+  }
+  const href = `/${url}`;
+  return isInAppPath(href) ? { href, external: false } : null;
+};
 
 const MyNotificationsWidget: React.FC = () => {
   const { t, locale } = useI18n();
@@ -141,43 +147,58 @@ const MyNotificationsWidget: React.FC = () => {
             {filtered.map((notification) => {
               const actor = actorOf(notification.msg);
               const created = parseChainDate(notification.date);
-              const { href, external } = linkFor(notification.url);
+              const link = linkFor(notification.url);
               const glyph = TYPE_ICON[notification.type];
               const Icon = glyph?.icon ?? Bell;
+              const rowClasses =
+                "flex items-start gap-2.5 rounded px-1.5 py-2 transition-colors";
+              const row = (
+                <>
+                  {actor ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={getHiveAvatarUrl(actor)}
+                      alt=""
+                      className="h-7 w-7 shrink-0 rounded-full object-cover"
+                    />
+                  ) : (
+                    <span className="h-7 w-7 shrink-0 rounded-full bg-slate-100 dark:bg-slate-800" />
+                  )}
+
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm leading-snug text-gray-800 dark:text-gray-100">
+                      {notification.msg}
+                    </span>
+                    <span className="mt-0.5 flex items-center gap-1.5 text-[11px] text-gray-400 dark:text-gray-500">
+                      <Icon
+                        size={12}
+                        className={cn("shrink-0", glyph?.color)}
+                      />
+                      {created && (
+                        <TimeAgo locale={locale} datetime={created} />
+                      )}
+                    </span>
+                  </span>
+                </>
+              );
               return (
                 <li key={notification.id}>
-                  <Link
-                    href={href}
-                    {...(external
-                      ? { target: "_blank", rel: "noopener noreferrer" }
-                      : {})}
-                    className="flex items-start gap-2.5 rounded px-1.5 py-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700/40"
-                  >
-                    {actor ? (
-                      <img
-                        src={getHiveAvatarUrl(actor)}
-                        alt=""
-                        className="h-7 w-7 shrink-0 rounded-full object-cover"
-                      />
-                    ) : (
-                      <span className="h-7 w-7 shrink-0 rounded-full bg-slate-100 dark:bg-slate-800" />
-                    )}
-
-                    <span className="min-w-0 flex-1">
-                      <span className="block text-sm leading-snug text-gray-800 dark:text-gray-100">
-                        {notification.msg}
-                      </span>
-                      <span className="mt-0.5 flex items-center gap-1.5 text-[11px] text-gray-400 dark:text-gray-500">
-                        <Icon
-                          size={12}
-                          className={cn("shrink-0", glyph?.color)}
-                        />
-                        {created && (
-                          <TimeAgo locale={locale} datetime={created} />
-                        )}
-                      </span>
-                    </span>
-                  </Link>
+                  {link ? (
+                    <Link
+                      href={link.href}
+                      {...(link.external
+                        ? { target: "_blank", rel: "noopener noreferrer" }
+                        : {})}
+                      className={cn(
+                        rowClasses,
+                        "hover:bg-gray-100 dark:hover:bg-gray-700/40"
+                      )}
+                    >
+                      {row}
+                    </Link>
+                  ) : (
+                    <div className={rowClasses}>{row}</div>
+                  )}
                 </li>
               );
             })}

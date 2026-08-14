@@ -1400,6 +1400,24 @@ namespace Hive {
     pending_payout_value: string;
     depth: number;
     author: string;
+    // Present on bridge post payloads; optional for the caller above.
+    permlink?: string;
+    title?: string;
+    category?: string;
+    created?: string;
+    payout?: number;
+    net_votes?: number;
+    children?: number;
+    reblogged_by?: string[];
+  }
+
+  export interface AccountNotification {
+    id: number;
+    type: string;
+    score: number;
+    date: string;
+    msg: string;
+    url: string;
   }
 
   export class NetworkVoteStatsParams {
