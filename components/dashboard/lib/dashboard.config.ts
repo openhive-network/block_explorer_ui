@@ -9,6 +9,12 @@ export const getWidgetStatesStorageKey = (username: string) =>
   `hivescan_dashboard_widget_states_${username}`;
 
 export const COLLAPSED_WIDGET_HEIGHT = 1.1;
+
+// Rows a masthead needs once it stacks: icon and title row, subtitle wrapping
+// to two lines on a narrow phone, then the live-data row.
+export const MASTHEAD_MOBILE_HEIGHT = 2.5;
+
+export const MASTHEAD_TYPES = ["board-header", "profile-banner"];
 export const EDITABLE_BREAKPOINTS = ["lg", "xl"];
 
 export const DEFAULT_WIDGETS: Array<{ i: string; type: string }> = [
@@ -188,21 +194,38 @@ export const generateDerivedLayouts = (masterLayout: Layout[]): Layouts => {
   const colsMap: { [key: string]: number } = { lg: 12, md: 10, sm: 6, xs: 4 };
   const layouts: Layouts = { lg: masterLayout, xl: masterLayout };
 
+  // By type, not by position: a board can carry both mastheads, and only the
+  // upper one sits at y 0. Ids are "<type>-<n>" or "<board>-<type>-<n>".
+  const isMasthead = (item: Layout) =>
+    MASTHEAD_TYPES.some((type) => item.i.includes(type));
+
   const getMobileHeight = (item: Layout) => {
     // 1. If the item is currently collapsed, MUST return COLLAPSED_WIDGET_HEIGHT
     if (Math.abs(item.h - COLLAPSED_WIDGET_HEIGHT) < 0.2) {
       return COLLAPSED_WIDGET_HEIGHT;
     }
 
-    // 2. Otherwise, use the Mobile Override height, or fallback to the item's current h
+    // 2. A masthead lays out in one row on desktop and stacks on a phone, so
+    // its desktop height clips the title, subtitle and live-data row.
+    if (isMasthead(item)) {
+      return Math.max(item.h, MASTHEAD_MOBILE_HEIGHT);
+    }
+
+    // 3. Otherwise, use the Mobile Override height, or fallback to the item's current h
     return MOBILE_WIDGET_HEIGHTS[item.i] ?? item.h;
   };
 
-  const sortedByMobileOrder = [...masterLayout].sort((a, b) => {
-    const indexA = DEFAULT_MOBILE_WIDGET_ORDER.indexOf(a.i);
-    const indexB = DEFAULT_MOBILE_WIDGET_ORDER.indexOf(b.i);
-    return (indexA === -1 ? 99 : indexA) - (indexB === -1 ? 99 : indexB);
-  });
+  // Mastheads lead on mobile, in the order they stack on desktop. Without this
+  // they are absent from DEFAULT_MOBILE_WIDGET_ORDER and sort last.
+  const mobileOrderIndex = (item: Layout) => {
+    if (isMasthead(item)) return -100 + item.y;
+    const index = DEFAULT_MOBILE_WIDGET_ORDER.indexOf(item.i);
+    return index === -1 ? 99 : index;
+  };
+
+  const sortedByMobileOrder = [...masterLayout].sort(
+    (a, b) => mobileOrderIndex(a) - mobileOrderIndex(b)
+  );
 
   // --- Generate Tablet Layout ('md') ---
   const mdLayout: Layout[] = [];
