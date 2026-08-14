@@ -118,7 +118,7 @@ const MyAccountSnapshotWidget: React.FC = () => {
   })();
 
   const count = (value?: number) =>
-    value === undefined ? "—" : Number(value).toLocaleString();
+    value === undefined ? "—" : Number(value).toLocaleString(locale);
 
   return (
     <>

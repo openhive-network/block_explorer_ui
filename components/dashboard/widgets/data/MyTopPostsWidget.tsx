@@ -3,7 +3,6 @@ import TimeAgo from "timeago-react";
 import { ArrowUpRight, MessageSquare, PenSquare, ThumbsUp } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
-import { config } from "@/Config";
 import WidgetUnavailable from "@/components/dashboard/ui/WidgetUnavailable";
 import WidgetLoggedOut from "@/components/dashboard/widgets/common/WidgetLoggedOut";
 import { useAuth } from "@/contexts/AuthContext";
@@ -11,6 +10,7 @@ import { useSettings } from "@/contexts/SettingsContext";
 import useAccountTopPosts from "@/hooks/api/accountPage/useAccountTopPosts";
 import { useI18n } from "@/i18n/i18n";
 import { parseChainDate } from "@/utils/TimeUtils";
+import { getHivePostUrl } from "@/utils/HiveBlogUtils";
 
 // bridge reports payout as a number once paid, a string while pending.
 const payoutOf = (post: {
@@ -71,7 +71,7 @@ const MyTopPostsWidget: React.FC = () => {
               return (
                 <li key={`${post.permlink}-${index}`}>
                   <a
-                    href={`${config.hiveFrontendUrl}/@${post.author}/${post.permlink}`}
+                    href={getHivePostUrl(post.author, post.permlink)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="group flex items-start gap-2.5 rounded px-1.5 py-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700/40"

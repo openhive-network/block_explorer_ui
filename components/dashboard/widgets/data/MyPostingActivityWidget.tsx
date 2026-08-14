@@ -10,7 +10,6 @@ import {
 import { Card } from "@/components/ui/card";
 import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
 import SegmentedToggle from "@/components/ui/SegmentedToggle";
-import { config } from "@/Config";
 import WidgetUnavailable from "@/components/dashboard/ui/WidgetUnavailable";
 import WidgetLoggedOut from "@/components/dashboard/widgets/common/WidgetLoggedOut";
 import { useAuth } from "@/contexts/AuthContext";
@@ -20,6 +19,7 @@ import useAccountContentFeed, {
 } from "@/hooks/api/accountPage/useAccountContentFeed";
 import { useI18n } from "@/i18n/i18n";
 import { parseChainDate } from "@/utils/TimeUtils";
+import { getHivePostUrl } from "@/utils/HiveBlogUtils";
 
 const KINDS: ContentFeedKind[] = ["posts", "comments", "reblogs"];
 
@@ -113,7 +113,7 @@ const MyPostingActivityWidget: React.FC = () => {
               return (
                 <li key={`${entry.author}-${entry.permlink}-${index}`}>
                   <a
-                    href={`${config.hiveFrontendUrl}/@${entry.author}/${entry.permlink}`}
+                    href={getHivePostUrl(entry.author, entry.permlink)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="group flex items-start gap-2.5 rounded px-1.5 py-2 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700/40"
