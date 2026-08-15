@@ -5,6 +5,7 @@ import { AccountPage } from "../support/pages/accountPage";
 import {
   mockAccountOperations,
   mockInputTypeAccounts,
+  mockOperationTypes,
   voteOperation,
   commentOperation,
 } from "../support/mocks/accountOperationsMock";
@@ -94,6 +95,7 @@ test.describe("Home page - account searches", () => {
     // Mock the live backend so the test is deterministic and independent of
     // backend latency (the operations query used to time out on a slow node).
     await mockInputTypeAccounts(page, ["roelandp"]);
+    await mockOperationTypes(page);
     await mockAccountOperations(page, [
       voteOperation(1),
       voteOperation(2),
@@ -135,6 +137,7 @@ test.describe("Home page - account searches", () => {
     // Mock the live backend so the test is deterministic and independent of
     // backend latency (the operations query used to time out on a slow node).
     await mockInputTypeAccounts(page, ["gtg"]);
+    await mockOperationTypes(page);
     await mockAccountOperations(page, [
       commentOperation(1),
       voteOperation(2),
