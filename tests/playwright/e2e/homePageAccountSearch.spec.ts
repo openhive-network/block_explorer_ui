@@ -2,6 +2,12 @@ import { test, expect } from "@playwright/test";
 import { MainPage } from "../support/pages/mainPage";
 import { BlockPage } from "../support/pages/blockPage";
 import { AccountPage } from "../support/pages/accountPage";
+import {
+  mockAccountOperations,
+  mockInputTypeAccounts,
+  voteOperation,
+  commentOperation,
+} from "../support/mocks/accountOperationsMock";
 
 test.describe("Home page - account searches", () => {
   let mainPage: MainPage;
@@ -81,6 +87,20 @@ test.describe("Home page - account searches", () => {
   test("Validate that got results for Account Name and One Operation Type properties", async ({
     page,
   }) => {
+    // Fail fast on a mistake (well under the old 120s live-response wait)
+    // while leaving headroom for the app's one-time wax/wasm init on load.
+    test.setTimeout(60_000);
+
+    // Mock the live backend so the test is deterministic and independent of
+    // backend latency (the operations query used to time out on a slow node).
+    await mockInputTypeAccounts(page, ["roelandp"]);
+    await mockAccountOperations(page, [
+      voteOperation(1),
+      voteOperation(2),
+      voteOperation(3),
+      voteOperation(4),
+    ]);
+
     await mainPage.accountSearchSection.click();
     await page.waitForTimeout(1000);
     await mainPage.accountNameInputAccountSection.fill("roelandp");
@@ -100,30 +120,27 @@ test.describe("Home page - account searches", () => {
     await page.getByRole("button", { name: "Apply" }).click();
     await mainPage.searchButtonInAccount.click();
 
-    const response = await page.waitForResponse((response) =>
-      response.url().includes("/operations?operation-types")
-    );
-
-    expect(response.status()).toBe(200);
-
+    await expect(mainPage.operationsCardResult).toBeVisible();
+    await expect(mainPage.goToResultPageBtn).toBeVisible();
     await expect(page.getByText("vote", { exact: true }).nth(2)).toBeVisible();
-
-    if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
-      await expect(
-        page.getByText("No operations matching given criteria")
-      ).toBeVisible();
-    } else {
-      await expect(mainPage.operationsCardResult).toBeVisible();
-      await expect(mainPage.goToResultPageBtn).toBeVisible();
-      await expect(
-        page.getByText("vote", { exact: true }).nth(2)
-      ).toBeVisible();
-    }
   });
 
   test("Validate that got results for Account Name and more than one Operation Types properties", async ({
     page,
   }) => {
+    // Fail fast on a mistake (well under the old 120s live-response wait)
+    // while leaving headroom for the app's one-time wax/wasm init on load.
+    test.setTimeout(60_000);
+
+    // Mock the live backend so the test is deterministic and independent of
+    // backend latency (the operations query used to time out on a slow node).
+    await mockInputTypeAccounts(page, ["gtg"]);
+    await mockAccountOperations(page, [
+      commentOperation(1),
+      voteOperation(2),
+      commentOperation(3),
+    ]);
+
     await mainPage.accountSearchSection.click();
     await page.waitForTimeout(1000);
     await mainPage.accountNameInputAccountSection.fill("gtg");
@@ -147,20 +164,8 @@ test.describe("Home page - account searches", () => {
     await page.getByRole("button", { name: "Apply" }).click();
     await mainPage.searchButtonInAccount.click();
 
-    const response = await page.waitForResponse((response) =>
-      response.url().includes("/operations?operation-types")
-    );
-
-    expect(response.status()).toBe(200);
-
-    if (await page.isVisible(mainPage.noOperationsMatchingTextSection)) {
-      await expect(
-        page.getByText("No operations matching given criteria")
-      ).toBeVisible();
-    } else {
-      await expect(mainPage.operationsCardResult).toBeVisible();
-      await expect(mainPage.goToResultPageBtn).toBeVisible();
-    }
+    await expect(mainPage.operationsCardResult).toBeVisible();
+    await expect(mainPage.goToResultPageBtn).toBeVisible();
   });
 
   // Skipped: Account search API response too slow in CI environment
