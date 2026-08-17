@@ -5,7 +5,7 @@ import moment from "moment";
 import { useI18n } from "@/i18n/i18n";
 import { useTheme } from "@/contexts/ThemeContext";
 import SegmentedToggle from "@/components/ui/SegmentedToggle";
-import { getOpHexColor } from "@/utils/operationColors";
+import { getOpHexColor, getContrastText } from "@/utils/operationColors";
 import { categorizedOperationTypes } from "@/utils/CategorizedOperationTypes";
 import { getVestsToHiveRatio } from "@/utils/Calculations";
 import { spacesToUnderscores } from "@/utils/StringUtils";
@@ -325,7 +325,6 @@ const FinancialSummaryReport: React.FC<
   const chartOption = useMemo(() => {
     if (!currentNode?.children?.length) return {};
     const depth = historyStack.length; // 1=groups, 2=sub-groups, 3=dates
-    const shadow = isDark ? "rgba(0,0,0,0.75)" : "rgba(255,255,255,0.85)";
     // Dates are the deepest, most numerous ring — keep their labels to the name.
     const showValue = depth < 3;
 
@@ -334,19 +333,22 @@ const FinancialSummaryReport: React.FC<
       (c) => c.itemStyle?.color ?? "#64748b"
     );
     const uniform = new Set(bases).size === 1;
-    const ring = currentNode.children.map((c, i) => ({
-      name: c.name,
-      value: c.value,
-      opCount: c.opCount,
-      itemStyle: {
-        color: uniform
-          ? shadeColor(
-              bases[i],
-              (i / Math.max(1, currentNode.children!.length - 1)) * 0.55 - 0.1
-            )
-          : bases[i],
-      },
-    }));
+    const ring = currentNode.children.map((c, i) => {
+      const color = uniform
+        ? shadeColor(
+            bases[i],
+            (i / Math.max(1, currentNode.children!.length - 1)) * 0.55 - 0.1
+          )
+        : bases[i];
+      return {
+        name: c.name,
+        value: c.value,
+        opCount: c.opCount,
+        itemStyle: { color },
+        // Slice colours vary widely, so pick each label's colour off its own slice.
+        label: { color: getContrastText(color) },
+      };
+    });
 
     return {
       backgroundColor: "transparent",
@@ -396,8 +398,6 @@ const FinancialSummaryReport: React.FC<
             color: labelColor,
             rotate: "tangential",
             minAngle: 5,
-            textShadowBlur: 4,
-            textShadowColor: shadow,
             fontSize: 11,
             formatter: (p: any) =>
               showValue
