@@ -89,9 +89,8 @@ export const AuthContextProvider: React.FC<{ children: ReactNode }> = ({
                     getLayoutStorageKey(user)
                   );
                   if (!hasLocalDashboard) {
-                    // Fresh device — restore silently and record baseline
-                    applyBundle(user, bundle);
-                    saveLastSync(user, bundle);
+                    // Fresh device — restore silently and record baseline.
+                    if (applyBundle(user, bundle)) saveLastSync(user, bundle);
                   } else if (!cloudMatchesLastSync(user, bundle)) {
                     // Same device but cloud differs from last known sync — notify user
                     window.dispatchEvent(

@@ -18,6 +18,7 @@ import {
   clearBoardOrigin,
   clearBoardUndo,
   selectMyBoard,
+  writeAllOrNothing,
 } from "@/components/dashboard/lib/boardSlots";
 import { config } from "@/Config";
 
@@ -401,11 +402,58 @@ export function isBundleOverLimit(compressed: string): boolean {
   return getBundleSizeBytes(compressed) > config.workspaceSync.sizeLimitBytes;
 }
 
-export function applyBundle(username: string, bundle: WorkspaceBundle): void {
-  if (typeof window === "undefined") return;
+/**
+ * Restores a bundle as one unit. Every key is written through
+ * writeAllOrNothing, so a throw part-way (quota, private mode, an oversized
+ * bundle) rolls the board back to what it was rather than leaving it half
+ * overwritten with the undo snapshot already spent. Returns false when the
+ * write was refused and nothing changed.
+ */
+export function applyBundle(
+  username: string,
+  bundle: WorkspaceBundle
+): boolean {
+  if (typeof window === "undefined") return false;
 
-  localStorage.setItem("theme", bundle.theme);
-  localStorage.setItem("locale", bundle.locale);
+  // Restoring without the seed flags would re-add widgets the user removed. A
+  // bundle predating the field has no record, so settle every seed instead.
+  const restoredAutoAdd = bundle.autoAdd;
+  const seedEntries: Array<[string, string | null]> = WIDGET_SEEDS.map(
+    (seed) => [
+      seedStorageKey(seed.flag, username),
+      restoredAutoAdd ? (restoredAutoAdd[seed.flag] ?? null) : "true",
+    ]
+  );
+  const dismissed = restoredAutoAdd
+    ? (restoredAutoAdd[WATCHED_PROPOSALS_FLAG] ?? null)
+    : "true";
+
+  const committed = writeAllOrNothing([
+    ["theme", bundle.theme],
+    ["locale", bundle.locale],
+    [config.workspaceSync.settingsStorageKey, JSON.stringify(bundle.settings)],
+    [getLayoutStorageKey(username), JSON.stringify(bundle.dashboard.layout)],
+    [getWidgetsStorageKey(username), JSON.stringify(bundle.dashboard.widgets)],
+    [
+      getWidgetStatesStorageKey(username),
+      JSON.stringify(bundle.dashboard.widgetStates),
+    ],
+    [getWatchlistKey(username), JSON.stringify(bundle.watchlist)],
+    [getProposalChangesKey(username), JSON.stringify(bundle.proposalChanges)],
+    [
+      getWitnessHealthSortKey(username),
+      bundle.witnessHealthSort
+        ? JSON.stringify(bundle.witnessHealthSort)
+        : null,
+    ],
+    ...seedEntries,
+    [watchedProposalsDismissedKey(username), dismissed],
+  ]);
+
+  // Nothing was written, so the board is untouched and the caller still has its
+  // undo snapshot. No events fire: there is no restore to announce.
+  if (!committed) return false;
+
   // Synthetic StorageEvents so same-tab listeners in ThemeContext and i18n react
   // without those files needing to know about workspace sync.
   window.dispatchEvent(
@@ -414,59 +462,10 @@ export function applyBundle(username: string, bundle: WorkspaceBundle): void {
   window.dispatchEvent(
     new StorageEvent("storage", { key: "locale", newValue: bundle.locale })
   );
-  localStorage.setItem(
-    config.workspaceSync.settingsStorageKey,
-    JSON.stringify(bundle.settings)
-  );
-  localStorage.setItem(
-    getLayoutStorageKey(username),
-    JSON.stringify(bundle.dashboard.layout)
-  );
-  localStorage.setItem(
-    getWidgetsStorageKey(username),
-    JSON.stringify(bundle.dashboard.widgets)
-  );
-  localStorage.setItem(
-    getWidgetStatesStorageKey(username),
-    JSON.stringify(bundle.dashboard.widgetStates)
-  );
-  localStorage.setItem(
-    getWatchlistKey(username),
-    JSON.stringify(bundle.watchlist)
-  );
-  localStorage.setItem(
-    getProposalChangesKey(username),
-    JSON.stringify(bundle.proposalChanges)
-  );
-  if (bundle.witnessHealthSort) {
-    localStorage.setItem(
-      getWitnessHealthSortKey(username),
-      JSON.stringify(bundle.witnessHealthSort)
-    );
-  } else {
-    localStorage.removeItem(getWitnessHealthSortKey(username));
-  }
-
-  // Restoring without the seed flags would re-add widgets the user removed. A
-  // bundle predating the field has no record, so settle every seed instead.
-  const restoredAutoAdd = bundle.autoAdd;
-  WIDGET_SEEDS.forEach((seed) => {
-    const key = seedStorageKey(seed.flag, username);
-    const value = restoredAutoAdd ? restoredAutoAdd[seed.flag] : "true";
-    if (value) localStorage.setItem(key, value);
-    else localStorage.removeItem(key);
-  });
-  const dismissed = restoredAutoAdd
-    ? restoredAutoAdd[WATCHED_PROPOSALS_FLAG]
-    : "true";
-  if (dismissed) {
-    localStorage.setItem(watchedProposalsDismissedKey(username), dismissed);
-  } else {
-    localStorage.removeItem(watchedProposalsDismissedKey(username));
-  }
 
   // The restored board replaces whatever was here, so adoption state from the
   // old one would otherwise let a later undo discard what was just restored.
+  // Individually best-effort: a stale flag is cosmetic, not data loss.
   clearBoardOrigin(username);
   clearBoardUndo(username);
   // Land on the board that was just restored, whatever tab was open before.
@@ -475,4 +474,5 @@ export function applyBundle(username: string, bundle: WorkspaceBundle): void {
   window.dispatchEvent(
     new CustomEvent(WORKSPACE_RESTORED_EVENT, { detail: { username } })
   );
+  return true;
 }

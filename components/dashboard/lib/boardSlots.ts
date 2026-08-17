@@ -170,12 +170,17 @@ export function clearBoardUndo(username: string): void {
   }
 }
 
-export function writeAllOrNothing(entries: Array<[string, string]>): boolean {
+export function writeAllOrNothing(
+  entries: Array<[string, string | null]>
+): boolean {
   const previous = entries.map(
     ([key]) => [key, localStorage.getItem(key)] as const
   );
   try {
-    for (const [key, value] of entries) localStorage.setItem(key, value);
+    for (const [key, value] of entries) {
+      if (value === null) localStorage.removeItem(key);
+      else localStorage.setItem(key, value);
+    }
     return true;
   } catch {
     for (const [key, value] of previous) {

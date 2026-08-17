@@ -114,10 +114,14 @@ const WidgetIndex = () => {
     }
     // The saved workspace itself has not changed, so the sync fingerprint stays
     // put — undoing must not start the restore prompt asking again.
-    applyBundle(username, snapshot);
+    if (!applyBundle(username, snapshot)) {
+      // The snapshot is the only copy of the pre-restore board, so it is kept.
+      toast.error(t("dashbord.boardSwitchFailed"));
+      return;
+    }
     clearRestoreUndo(username);
     window.location.reload();
-  }, [username]);
+  }, [username, t]);
 
   // Read by the seeding pass, deliberately not depended on: every ResizeObserver
   // tick replaces `layouts` and onAddWidget's identity, which would re-run the

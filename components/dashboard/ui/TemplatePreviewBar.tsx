@@ -97,7 +97,7 @@ const TemplatePreviewBar: React.FC<TemplatePreviewBarProps> = ({
         {/* Touch has no hover, so small screens keep the label visible. */}
         <button
           type="button"
-          data-testid="template-adopt-trigger"
+          data-testid="template-adopt-trigger-mobile"
           onClick={() => setIsConfirmOpen(true)}
           className={cn(
             actionClasses,
@@ -114,7 +114,7 @@ const TemplatePreviewBar: React.FC<TemplatePreviewBarProps> = ({
             <TooltipTrigger asChild>
               <button
                 type="button"
-                data-testid="template-adopt-trigger"
+                data-testid="template-adopt-trigger-desktop"
                 onClick={() => setIsConfirmOpen(true)}
                 aria-label={label}
                 className={cn(actionClasses, "hidden h-7 w-7 sm:flex")}
