@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
 import { useSearchesContext } from "@/contexts/SearchesContext";
 import useAccountOperations from "@/hooks/api/accountPage/useAccountOperations";
-import ErrorPage from "@/pages/ErrorPage";
+import ErrorPage from "@/components/ErrorPage";
 import { getAccountPageLink } from "../utils/accountSearchHelpers";
 import NoResult from "@/components/NoResult";
 import { useI18n } from "@/i18n/i18n";

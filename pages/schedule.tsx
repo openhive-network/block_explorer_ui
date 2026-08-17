@@ -11,7 +11,7 @@ import {
 } from "@/contexts/HeadBlockContext";
 import useWitnesses from "@/hooks/api/common/useWitnesses";
 import useHeadBlock from "@/hooks/api/homePage/useHeadBlock";
-import ErrorPage from "./ErrorPage";
+import ErrorPage from "@/components/ErrorPage";
 import WitnessSchedule from "@/components/schedule/WitnessSchedule";
 import BackupWitnessSchedule from "@/components/schedule/BackupWitnessSchedule";
 import useWitnessesSchedule from "@/hooks/api/schedulePage/useWitnessesSchedule";

@@ -13,7 +13,7 @@ import {
 } from "@/utils/seo";
 import { seoText } from "@/utils/seoStrings";
 
-import ErrorPage from "./ErrorPage";
+import ErrorPage from "@/components/ErrorPage";
 import { cn } from "@/lib/utils";
 import useMediaQuery from "@/hooks/common/useMediaQuery";
 import useConvertedAccountDetails from "@/hooks/common/useConvertedAccountDetails";

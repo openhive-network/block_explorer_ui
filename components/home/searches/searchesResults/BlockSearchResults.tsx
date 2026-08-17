@@ -1,6 +1,6 @@
 import { useSearchesContext } from "@/contexts/SearchesContext";
 import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
-import ErrorPage from "@/pages/ErrorPage";
+import ErrorPage from "@/components/ErrorPage";
 import { getAllBlocksPageLink } from "../utils/blockSearchHelpers";
 import NoResult from "@/components/NoResult";
 import BlocksTable from "@/components/blocks/BlocksTable";
@@ -21,7 +21,7 @@ const BlockSearchResults = () => {
     t("blocksPage.producer"),
     t("blocksPage.time"),
     t("common.transactions"),
-    "", 
+    "",
   ];
 
   const {
