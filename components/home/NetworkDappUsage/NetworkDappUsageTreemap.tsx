@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import dynamic from "next/dynamic";
+import EChart from "@/components/ui/EChart";
 import type { ECharts } from "echarts";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useI18n } from "@/i18n/i18n";
@@ -12,8 +12,6 @@ import {
   formatMetricValue,
   rowLabelFor,
 } from "./networkCustomJsonUtils";
-
-const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
 interface Props {
   apps: Hive.NetworkTopCustomJsonRow[];
@@ -119,7 +117,7 @@ const NetworkDappUsageTreemap: React.FC<Props> = ({
   }, [apps, metric, isDark, isRTL, locale, limit, total, t]);
 
   return (
-    <ReactECharts
+    <EChart
       option={option}
       onChartReady={(inst: ECharts) => inst.resize()}
       style={{ height: "100%", width: "100%" }}

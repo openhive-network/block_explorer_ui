@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import dynamic from "next/dynamic";
+import EChart from "@/components/ui/EChart";
 import type { ECharts } from "echarts";
 import { useI18n } from "@/i18n/i18n";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -8,8 +8,6 @@ import {
   DonutSlice,
   formatMetricValue,
 } from "./networkCustomJsonUtils";
-
-const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
 interface Props {
   slices: DonutSlice[];
@@ -117,7 +115,7 @@ const NetworkDappUsageDonut: React.FC<Props> = ({
   );
 
   return (
-    <ReactECharts
+    <EChart
       option={option}
       onEvents={onEvents}
       onChartReady={(inst: ECharts) => inst.resize()}

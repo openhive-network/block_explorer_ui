@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback } from "react";
-import ReactECharts from "echarts-for-react";
+import EChart from "@/components/ui/EChart";
 import moment from "moment";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useI18n } from "@/i18n/i18n";
@@ -246,7 +246,7 @@ const NetworkOpMixChart: React.FC<NetworkOpMixChartProps> = ({
   );
 
   return (
-    <ReactECharts
+    <EChart
       option={option}
       style={{ width: "100%", height: "100%" }}
       notMerge={true}

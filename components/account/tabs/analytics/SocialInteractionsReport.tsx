@@ -795,6 +795,7 @@ const SocialInteractionsReport: React.FC<
             <div className="min-w-[500px]">
               <ReactECharts
                 ref={chartRef}
+                opts={{ renderer: "svg" }}
                 option={option}
                 onEvents={onEvents}
                 style={{ height: `${chartHeight}px`, width: "100%" }}

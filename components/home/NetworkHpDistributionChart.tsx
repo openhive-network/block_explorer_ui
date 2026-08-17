@@ -1,8 +1,6 @@
 import React, { useMemo } from "react";
-import dynamic from "next/dynamic";
+import EChart from "@/components/ui/EChart";
 import Hive from "@/types/Hive";
-
-const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
 const CHART_STYLE = { height: "100%", width: "100%" } as const;
 
@@ -245,12 +243,7 @@ const NetworkHpDistributionChart: React.FC<Props> = ({
   );
 
   return (
-    <ReactECharts
-      option={option}
-      style={CHART_STYLE}
-      notMerge
-      onEvents={onEvents}
-    />
+    <EChart option={option} style={CHART_STYLE} notMerge onEvents={onEvents} />
   );
 };
 

@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import dynamic from "next/dynamic";
+import EChart from "@/components/ui/EChart";
 import type { ECharts } from "echarts";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useI18n } from "@/i18n/i18n";
@@ -11,8 +11,6 @@ import {
   metricPct,
   formatMetricValue,
 } from "./rcFootprintUtils";
-
-const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
 interface RcFootprintCategoryDonutProps {
   categories: Hive.AccountDappFootprintCategory[];
@@ -119,7 +117,7 @@ const RcFootprintCategoryDonut: React.FC<RcFootprintCategoryDonutProps> = ({
   );
 
   return (
-    <ReactECharts
+    <EChart
       option={option}
       onEvents={onEvents}
       // A single resize once the chart is ready fixes any init-timing collapse

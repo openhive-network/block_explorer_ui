@@ -1,8 +1,6 @@
 import React, { useMemo } from "react";
-import dynamic from "next/dynamic";
+import EChart from "@/components/ui/EChart";
 import Hive from "@/types/Hive";
-
-const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
 const COLOR_LORENZ = "#6366f1";
 const CHART_STYLE = { height: "100%", width: "100%" } as const;
@@ -146,7 +144,7 @@ const LorenzConcentrationChart: React.FC<Props> = ({
     };
   }, [buckets, isDark, textColor, gridColor, locale, isRTL, t]);
 
-  return <ReactECharts option={option} style={CHART_STYLE} notMerge />;
+  return <EChart option={option} style={CHART_STYLE} notMerge />;
 };
 
 export default LorenzConcentrationChart;

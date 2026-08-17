@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import dynamic from "next/dynamic";
+import EChart from "@/components/ui/EChart";
 import moment from "moment";
 import type { ECharts } from "echarts";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -10,8 +10,6 @@ import {
   metricValue,
   formatMetricValue,
 } from "./networkCustomJsonUtils";
-
-const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
 const COLOR = "#6366f1";
 const BRUSH_THRESHOLD = 40;
@@ -138,7 +136,7 @@ const NetworkDappUsageTrendChart: React.FC<Props> = ({
   }, [rows, metric, granularity, isDark, isRTL, textColor, gridColor, locale]);
 
   return (
-    <ReactECharts
+    <EChart
       option={option}
       onChartReady={(inst: ECharts) => inst.resize()}
       style={{ height: "100%", width: "100%" }}

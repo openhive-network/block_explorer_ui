@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import ReactECharts from "echarts-for-react";
+import EChart from "@/components/ui/EChart";
 import { ChevronLeft, ChevronRight, Coins } from "lucide-react";
 import moment from "moment";
 import { useI18n } from "@/i18n/i18n";
@@ -540,12 +540,11 @@ const FinancialSummaryReport: React.FC<
                   : "aspect-square w-full max-w-[420px]"
               }
             >
-              <ReactECharts
+              <EChart
                 option={chartOption}
                 onEvents={{ click: handleChartClick }}
                 onChartReady={(inst) => inst.resize()}
                 style={{ height: "100%", width: "100%" }}
-                opts={{ renderer: "canvas" }}
                 notMerge
               />
             </div>

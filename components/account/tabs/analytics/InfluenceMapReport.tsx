@@ -1000,6 +1000,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
       )}
       <ReactECharts
         ref={chartRef}
+        opts={{ renderer: "svg" }}
         option={getChartOption(
           graphData.nodes,
           graphData.links,
