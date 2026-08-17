@@ -62,6 +62,25 @@ export const parseChainDate = (raw?: string | null): Date | null => {
   return Number.isNaN(date.getTime()) ? null : date;
 };
 
+// Some hooks hand back timestamps already formatted for display while others
+// pass the raw chain value through. new Date() on the display form is
+// browser-dependent (Invalid Date on Firefox/WebKit) and on the zone-less chain
+// form is read as local time, so both shapes are normalised to UTC here.
+const DISPLAY_TIME = /^(\d{4})\/(\d{2})\/(\d{2}) (\d{2}:\d{2}:\d{2})(?: UTC)?$/;
+
+export const parseDisplayOrChainDate = (
+  value?: string | Date | null
+): Date | null => {
+  if (!value) return null;
+  if (value instanceof Date) {
+    return Number.isNaN(value.getTime()) ? null : value;
+  }
+  const match = value.match(DISPLAY_TIME);
+  return parseChainDate(
+    match ? `${match[1]}-${match[2]}-${match[3]}T${match[4]}Z` : value
+  );
+};
+
 export const formatBlockchainTime = (value?: string | Date | null): string => {
   const date = value instanceof Date ? value : parseChainDate(value);
   if (!date) return "";
