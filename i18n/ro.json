@@ -2449,6 +2449,8 @@
   "workspaceSync.diffRemoves": "Elimină",
   "workspaceSync.diffAdds": "Adaugă",
   "workspaceSync.diffMore": "+{count} altele",
+  "workspaceSync.diffUnreadable": "Nu am putut citi panoul acestui dispozitiv, așa că restaurarea nu este disponibilă.",
+  "workspaceSync.diffContentsDiffer": "Unele conținuturi ale widgeturilor diferă.",
   "workspaceSync.diffAlso": "Mai schimbă: {list}",
   "workspaceSync.diffLayout": "aranjarea",
   "workspaceSync.diffContent": "conținutul widgeturilor",

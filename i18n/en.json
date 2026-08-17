@@ -2487,6 +2487,8 @@
   "workspaceSync.diffRemoves": "Removes",
   "workspaceSync.diffAdds": "Adds",
   "workspaceSync.diffMore": "+{count} more",
+  "workspaceSync.diffUnreadable": "Could not read this device's board, so restoring is unavailable.",
+  "workspaceSync.diffContentsDiffer": "Some widget contents differ.",
   "workspaceSync.diffAlso": "Also changes: {list}",
   "workspaceSync.diffLayout": "layout",
   "workspaceSync.diffContent": "widget content",

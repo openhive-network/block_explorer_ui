@@ -2449,6 +2449,8 @@
   "workspaceSync.diffRemoves": "Rimuove",
   "workspaceSync.diffAdds": "Aggiunge",
   "workspaceSync.diffMore": "+{count} altri",
+  "workspaceSync.diffUnreadable": "Non è stato possibile leggere la bacheca di questo dispositivo, quindi il ripristino non è disponibile.",
+  "workspaceSync.diffContentsDiffer": "Alcuni contenuti dei widget sono diversi.",
   "workspaceSync.diffAlso": "Cambia anche: {list}",
   "workspaceSync.diffLayout": "disposizione",
   "workspaceSync.diffContent": "contenuto dei widget",

@@ -2449,6 +2449,8 @@
   "workspaceSync.diffRemoves": "يزيل",
   "workspaceSync.diffAdds": "يضيف",
   "workspaceSync.diffMore": "و{count} غيرها",
+  "workspaceSync.diffUnreadable": "لم نتمكن من قراءة لوحة هذا الجهاز، لذا الاستعادة غير متاحة.",
+  "workspaceSync.diffContentsDiffer": "تختلف محتويات بعض العناصر.",
   "workspaceSync.diffAlso": "ويغيّر أيضًا: {list}",
   "workspaceSync.diffLayout": "التخطيط",
   "workspaceSync.diffContent": "محتوى العناصر",

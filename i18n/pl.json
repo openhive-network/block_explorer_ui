@@ -2449,6 +2449,8 @@
   "workspaceSync.diffRemoves": "Usuwa",
   "workspaceSync.diffAdds": "Dodaje",
   "workspaceSync.diffMore": "+{count} więcej",
+  "workspaceSync.diffUnreadable": "Nie udało się odczytać tablicy tego urządzenia, więc przywracanie jest niedostępne.",
+  "workspaceSync.diffContentsDiffer": "Część treści widżetów się różni.",
   "workspaceSync.diffAlso": "Zmienia też: {list}",
   "workspaceSync.diffLayout": "układ",
   "workspaceSync.diffContent": "zawartość widgetów",

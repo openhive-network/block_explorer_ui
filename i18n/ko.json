@@ -2449,6 +2449,8 @@
   "workspaceSync.diffRemoves": "제거",
   "workspaceSync.diffAdds": "추가",
   "workspaceSync.diffMore": "외 {count}개",
+  "workspaceSync.diffUnreadable": "이 기기의 보드를 읽을 수 없어 복원할 수 없습니다.",
+  "workspaceSync.diffContentsDiffer": "일부 위젯 내용이 다릅니다.",
   "workspaceSync.diffAlso": "그 밖의 변경: {list}",
   "workspaceSync.diffLayout": "레이아웃",
   "workspaceSync.diffContent": "위젯 내용",

@@ -31,6 +31,9 @@ export interface WorkspaceDiff {
   /** Total instances, so "Top Holders ×2" is not reported as one. */
   addedCount: number;
   removedCount: number;
+  /** Per type, so the prompt can name what it is losing two of. */
+  addedCounts: Record<string, number>;
+  removedCounts: Record<string, number>;
   /** Position or size moved, for widgets both copies share. */
   layoutChanged: boolean;
   /** Widget content — note text, links, titles — for widgets both copies share. */
@@ -88,6 +91,8 @@ export function diffBundles(
 
   const added: string[] = [];
   const removed: string[] = [];
+  const addedCounts: Record<string, number> = {};
+  const removedCounts: Record<string, number> = {};
   let addedCount = 0;
   let removedCount = 0;
 
@@ -96,9 +101,11 @@ export function diffBundles(
     const delta = (chainTypes.get(type) ?? 0) - (localTypes.get(type) ?? 0);
     if (delta > 0) {
       added.push(type);
+      addedCounts[type] = delta;
       addedCount += delta;
     } else if (delta < 0) {
       removed.push(type);
+      removedCounts[type] = -delta;
       removedCount += -delta;
     }
   });
@@ -148,6 +155,8 @@ export function diffBundles(
     removed,
     addedCount,
     removedCount,
+    addedCounts,
+    removedCounts,
     layoutChanged,
     contentChanged,
     settingsChanged,

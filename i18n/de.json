@@ -2449,6 +2449,8 @@
   "workspaceSync.diffRemoves": "Entfernt",
   "workspaceSync.diffAdds": "Fügt hinzu",
   "workspaceSync.diffMore": "+{count} weitere",
+  "workspaceSync.diffUnreadable": "Das Board dieses Geräts konnte nicht gelesen werden, Wiederherstellen ist daher nicht möglich.",
+  "workspaceSync.diffContentsDiffer": "Einige Widget-Inhalte unterscheiden sich.",
   "workspaceSync.diffAlso": "Ändert außerdem: {list}",
   "workspaceSync.diffLayout": "Layout",
   "workspaceSync.diffContent": "Widget-Inhalte",
