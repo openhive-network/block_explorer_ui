@@ -23,12 +23,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import useAccountDetails from "@/hooks/api/accountPage/useAccountDetails";
 import { useI18n } from "@/i18n/i18n";
-
-const asDate = (value: unknown): Date | null => {
-  if (!value) return null;
-  const date = value instanceof Date ? value : new Date(String(value));
-  return Number.isNaN(date.getTime()) ? null : date;
-};
+import { parseDisplayOrChainDate } from "@/utils/TimeUtils";
 
 const MyAccountSnapshotWidget: React.FC = () => {
   const { t, locale } = useI18n();
@@ -77,13 +72,15 @@ const MyAccountSnapshotWidget: React.FC = () => {
     );
   }
 
-  const joined = asDate(accountDetails?.created);
-  const lastPost = asDate(accountDetails?.last_post);
+  const joined = parseDisplayOrChainDate(accountDetails?.created);
+  const lastPost = parseDisplayOrChainDate(accountDetails?.last_post);
 
   const lastActive =
     lastPost && lastPost.getFullYear() > 1970 ? lastPost : null;
 
-  const expiry = asDate(accountDetails?.governance_vote_expiration_ts);
+  const expiry = parseDisplayOrChainDate(
+    accountDetails?.governance_vote_expiration_ts
+  );
   const governance = (() => {
     if (!expiry) return null;
     const now = new Date();

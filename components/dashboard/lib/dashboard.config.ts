@@ -232,7 +232,9 @@ export const generateDerivedLayouts = (masterLayout: Layout[]): Layouts => {
   const yTops = [0, 0];
   sortedByMobileOrder.forEach((item) => {
     const targetH = getMobileHeight(item);
-    const isWide = item.minW && item.minW >= 5;
+    // Mastheads are full-width bands by nature but carry a small minW so they
+    // stay resizable, so minW alone would drop them into a half-width column.
+    const isWide = isMasthead(item) || (item.minW && item.minW >= 5);
 
     if (isWide) {
       const y = Math.max(...yTops);
