@@ -36,7 +36,11 @@ const StatCard = ({
       role={onClick ? "button" : "figure"}
       tabIndex={onClick ? 0 : -1}
       onKeyDown={(e) => {
-        if (e.key === "Enter" && onClick) onClick();
+        if (!onClick) return;
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick();
+        }
       }}
     >
       <div className="text-explorer-orange mb-1">{icon}</div>

@@ -20,13 +20,7 @@ const useAccountContentFeed = (
   limit: number = 20
 ) => {
   const { data, isLoading, isError } = useQuery<ContentFeed>({
-    queryKey: [
-      "account_content_feed",
-      accountName,
-      kind,
-      limit,
-      liveDataEnabled,
-    ],
+    queryKey: ["account_content_feed", accountName, kind, limit],
     queryFn: async () => {
       if (kind !== "reblogs") {
         const items =
@@ -50,6 +44,7 @@ const useAccountContentFeed = (
     },
     refetchInterval: liveDataEnabled ? config.contentRefreshInterval : false,
     refetchOnWindowFocus: false,
+    keepPreviousData: true,
     enabled: !!accountName,
   });
 
