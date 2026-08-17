@@ -83,6 +83,10 @@ const WorkspaceToastBody: React.FC<ToastBodyProps> = ({
 
   const local = buildBundle(username);
   const diff = local ? diffBundles(local, bundle) : null;
+  // Local storage was unreadable, so nothing below describes what a restore
+  // would cost. Offering the button anyway would overwrite a board we cannot
+  // even show the user.
+  const localUnreadable = !local;
 
   // The registry owns the human name for a widget type; an unknown type (a
   // bundle from a newer build) falls back to its id rather than vanishing.
@@ -90,6 +94,19 @@ const WorkspaceToastBody: React.FC<ToastBodyProps> = ({
     const key = WIDGET_REGISTRY[type]?.name;
     return key ? t(key) : type;
   };
+
+  // "Note ×2" — losing two of something reads very differently from losing one.
+  const named = (types: string[], counts: Record<string, number>) =>
+    types.map((type) => {
+      const count = counts[type] ?? 1;
+      return count > 1 ? `${nameOf(type)} ×${count}` : nameOf(type);
+    });
+
+  // The prompt only opens because the fingerprint says the two copies differ.
+  // The diff matches widgets by id, and user-added widgets carry a timestamp id,
+  // so the same note on two devices never lines up and its text change is
+  // invisible here. Say so rather than implying nothing would change.
+  const unnamedDifference = !!diff?.identical;
 
   // Everything the bundle carries that is not a widget, named plainly.
   const alsoDiffers = diff
@@ -129,20 +146,36 @@ const WorkspaceToastBody: React.FC<ToastBodyProps> = ({
       {/* Named, not counted: two boards can hold the same number of widgets and
           still be different, and losing one is the part worth knowing. */}
       <div className="mt-1.5 space-y-0.5 text-xs leading-snug">
+        {localUnreadable && (
+          <p
+            data-testid="workspace-diff-unreadable"
+            className="text-amber-600 dark:text-amber-400"
+          >
+            {t("workspaceSync.diffUnreadable")}
+          </p>
+        )}
         <DiffLine
           sign="−"
           tone="text-rose-600 dark:text-rose-400"
           label={t("workspaceSync.diffRemoves")}
-          names={(diff?.removed ?? []).map(nameOf)}
+          names={named(diff?.removed ?? [], diff?.removedCounts ?? {})}
           more={t("workspaceSync.diffMore")}
         />
         <DiffLine
           sign="+"
           tone="text-emerald-600 dark:text-emerald-400"
           label={t("workspaceSync.diffAdds")}
-          names={(diff?.added ?? []).map(nameOf)}
+          names={named(diff?.added ?? [], diff?.addedCounts ?? {})}
           more={t("workspaceSync.diffMore")}
         />
+        {unnamedDifference && (
+          <p
+            data-testid="workspace-diff-unnamed"
+            className="text-gray-500 dark:text-gray-400"
+          >
+            {t("workspaceSync.diffContentsDiffer")}
+          </p>
+        )}
         {alsoDiffers.length > 0 && (
           <p className="text-gray-400 dark:text-gray-500">
             {t("workspaceSync.diffAlso").replace(
@@ -170,17 +203,34 @@ const WorkspaceToastBody: React.FC<ToastBodyProps> = ({
         </button>
         <button
           data-testid="workspace-restore-cloud"
+          // Unreadable local storage means an unknown cost and no usable undo
+          // snapshot, so restoring is refused rather than done blind.
+          disabled={localUnreadable}
+          title={
+            localUnreadable ? t("workspaceSync.diffUnreadable") : undefined
+          }
           onClick={() => {
             // Dismiss first: the reload needs a server round trip, so the
             // click has to register immediately.
             toast.dismiss(id);
             // Snapshot first: applyBundle overwrites the very thing undo needs.
             saveRestoreUndo(username);
-            applyBundle(username, bundle);
+            if (!applyBundle(username, bundle)) {
+              // Nothing was written, so drop the snapshot — leaving it would
+              // offer an undo for a restore that never happened.
+              clearRestoreUndo(username);
+              toast.error(t("dashbord.boardSwitchFailed"));
+              return;
+            }
             saveLastSync(username, bundle);
             window.location.reload();
           }}
-          className={cn(action, "bg-indigo-500 text-white hover:bg-indigo-600")}
+          className={cn(
+            action,
+            "bg-indigo-500 text-white hover:bg-indigo-600",
+            "disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-500",
+            "dark:disabled:bg-gray-700 dark:disabled:text-gray-400"
+          )}
         >
           {t("workspaceSync.restoreFromCloud")}
         </button>
@@ -225,7 +275,11 @@ const WorkspaceRestorePrompt: React.FC = () => {
         onClick: () => {
           // The cloud fingerprint stays as it is: the saved workspace has not
           // changed, so undoing must not start the prompt asking again.
-          applyBundle(username, snapshot);
+          if (!applyBundle(username, snapshot)) {
+            // The snapshot is the only copy of the pre-restore board: keep it.
+            toast.error(t("dashbord.boardSwitchFailed"));
+            return;
+          }
           clearRestoreUndo(username);
           window.location.reload();
         },

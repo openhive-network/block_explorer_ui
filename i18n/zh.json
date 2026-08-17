@@ -2449,6 +2449,8 @@
   "workspaceSync.diffRemoves": "移除",
   "workspaceSync.diffAdds": "添加",
   "workspaceSync.diffMore": "等 {count} 项",
+  "workspaceSync.diffUnreadable": "无法读取此设备的面板，因此无法恢复。",
+  "workspaceSync.diffContentsDiffer": "部分小组件内容不同。",
   "workspaceSync.diffAlso": "还会更改：{list}",
   "workspaceSync.diffLayout": "布局",
   "workspaceSync.diffContent": "小组件内容",

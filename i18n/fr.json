@@ -2449,6 +2449,8 @@
   "workspaceSync.diffRemoves": "Retire",
   "workspaceSync.diffAdds": "Ajoute",
   "workspaceSync.diffMore": "+{count} autres",
+  "workspaceSync.diffUnreadable": "Le tableau de cet appareil n'a pas pu être lu, la restauration est donc indisponible.",
+  "workspaceSync.diffContentsDiffer": "Certains contenus de widgets diffèrent.",
   "workspaceSync.diffAlso": "Change aussi : {list}",
   "workspaceSync.diffLayout": "disposition",
   "workspaceSync.diffContent": "contenu des widgets",
