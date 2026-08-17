@@ -34,8 +34,9 @@ test.describe("Guest home views", () => {
       .toBe("market");
   });
 
-  // The cookie exists so the server can render the right view on first paint;
-  // reading it after mount is what used to flash the default view.
+  // The cookie is read during SSR and seeded into the initial props, so the
+  // first client paint is already correct. It is not in the served HTML —
+  // Layout gates on client-side chain init — the win is no flash, not SEO.
   test("The chosen view survives a reload without flashing Overview", async ({
     page,
   }) => {
@@ -53,7 +54,7 @@ test.describe("Guest home views", () => {
 
   // url comes from the fixture: CI serves the app on its own host, so a
   // hardcoded one would set the cookie on a domain the app never reads.
-  test("A view set by cookie is server-rendered on a cold load", async ({
+  test("A view set by cookie is the first view painted on a cold load", async ({
     context,
     baseURL,
   }) => {
