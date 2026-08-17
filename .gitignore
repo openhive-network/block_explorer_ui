@@ -47,3 +47,6 @@ public/__ENV.js
 .vscode/tasks.json
 
 /.history/
+# Claude Code tooling — local agent config, not part of the app
+/.claude/
+/skills-lock.json

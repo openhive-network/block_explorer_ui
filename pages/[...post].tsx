@@ -78,9 +78,14 @@ const Post = () => {
 
 // This is the root catch-all: every URL that matches no other route lands here
 // and renders PageNotFound with a 200, so without this each junk path would be
-// an indexable soft-404. Post pages themselves are noindex for now because they
-// still ship no real meta — see the follow-up ticket for title/description/
-// Article JSON-LD, which is what should lift this.
+// an indexable soft-404.
+//
+// Post pages are noindex by decision, not pending work. The same post is served
+// by hive.blog, peakd and ecency, which will win that ranking; indexing millions
+// of near-duplicate posts here would dilute the domain's quality signal and drag
+// down the pages that are actually ours (witnesses, proposals, top holders,
+// accounts, blocks). The route stays for click-through from an operation — it is
+// just not a search entry point. Do not "finish" this by adding meta.
 export const getServerSideProps: GetServerSideProps<{
   meta: SeoMeta;
 }> = async ({ req, res, params }) => {
