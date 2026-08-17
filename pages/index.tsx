@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import type { GetServerSideProps } from "next";
+import { Loader2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import StandardHome from "@/components/home/StandardHome";
 import WidgetIndex from "@/components/home/WidgetIndex";
@@ -30,9 +31,11 @@ interface HomeProps {
   initialGuestView: GuestView;
 }
 
-// The guest view lives in a cookie so the server can render the one the visitor
-// last chose. Reading it after mount instead would paint the default view, then
-// tear down its whole data-fetching tree to mount the real one.
+// The guest view lives in a cookie so the choice is known before the first
+// client paint. Reading it after mount instead would paint the default view,
+// then tear down its whole data-fetching tree to mount the real one.
+// Note: this is not SSR-visible content — Layout returns null until the Hive
+// chain initialises on the client, so the served HTML carries no view at all.
 export const getServerSideProps: GetServerSideProps<HomeProps> = async ({
   req,
 }) => ({
@@ -40,7 +43,7 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async ({
 });
 
 export default function Home({ initialGuestView }: HomeProps) {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, isInitializing } = useAuth();
   const { t } = useI18n();
 
   // Seeded from the cookie the server already read, so first paint is correct
@@ -53,6 +56,14 @@ export default function Home({ initialGuestView }: HomeProps) {
     setGuestView(view);
     writeGuestView(view);
   };
+
+  if (isInitializing) {
+    return (
+      <div className="flex w-full items-center justify-center py-20">
+        <Loader2 className="h-10 w-10 animate-spin text-slate-400" />
+      </div>
+    );
+  }
 
   // The modular dashboard is the signed-in home. StandardHome lives on only as
   // the guest Overview view below.
