@@ -102,10 +102,10 @@ export class DashboardPage {
     await expect(this.previewBadge).toBeVisible();
   }
 
-  /** Mobile and desktop each render a trigger; only one is visible at a time. */
+  /** Separate mobile and desktop triggers; only one is ever visible. */
   adoptTrigger(): Locator {
     return this.page
-      .getByTestId("template-adopt-trigger")
+      .getByTestId(/^template-adopt-trigger-(mobile|desktop)$/)
       .locator("visible=true");
   }
 

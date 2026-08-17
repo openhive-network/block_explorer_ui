@@ -26,6 +26,11 @@ import { cn } from "@/lib/utils";
 
 const CATEGORY_FEED_SIZE: Record<string, number> = { all: 50 };
 const DEFAULT_FEED_SIZE = 20;
+const HOUR_MS = 3_600_000;
+// Only the newest FEED_SIZE rows are ever rendered, so these caps leave ample
+// headroom while stopping a day-long live session from growing without bound.
+const OPS_CACHE_CAP = 200;
+const SEEN_IDS_CAP = 500;
 
 type Category = "all" | "transfers" | "votes" | "rewards" | "witness";
 
@@ -133,11 +138,23 @@ const MyRecentActivityWidget: React.FC = () => {
   const operationTypesForFetch = opTypeIdsByCategory[activeCategory];
   const isCatalogReady = !!operationsTypes;
 
-  const fortyEightHoursAgo = useMemo(() => {
-    const d = new Date();
-    d.setHours(d.getHours() - 48);
-    return d;
+  // Bucketed to the hour so the 48h window slides over a long live session.
+  // It feeds a query key, which is why it cannot simply be recomputed per
+  // render — that would churn the key on every tick.
+  const [hourBucket, setHourBucket] = useState(() =>
+    Math.floor(Date.now() / HOUR_MS)
+  );
+  useEffect(() => {
+    const id = window.setInterval(
+      () => setHourBucket(Math.floor(Date.now() / HOUR_MS)),
+      60_000
+    );
+    return () => window.clearInterval(id);
   }, []);
+  const fortyEightHoursAgo = useMemo(
+    () => new Date((hourBucket - 48) * HOUR_MS),
+    [hourBucket]
+  );
 
   const { accountOperations: latestData, isAccountOperationsLoading } =
     useAccountOperations(
@@ -195,11 +212,24 @@ const MyRecentActivityWidget: React.FC = () => {
       }
     }
     ops.forEach((op) => lastSeenIdsRef.current.add(String(op.operation_id)));
+    // A Set keeps insertion order, so dropping from the front keeps the newest.
+    if (lastSeenIdsRef.current.size > SEEN_IDS_CAP) {
+      lastSeenIdsRef.current = new Set(
+        Array.from(lastSeenIdsRef.current).slice(-SEEN_IDS_CAP)
+      );
+    }
 
     setOpsMap((prev) => {
       const next = new Map(prev);
       for (const op of ops) next.set(String(op.operation_id), op);
-      return next;
+      if (next.size <= OPS_CACHE_CAP) return next;
+      // Trim oldest-first by chain position, the order the feed renders in.
+      const newest = Array.from(next.values())
+        .sort((a, b) =>
+          b.block !== a.block ? b.block - a.block : b.op_pos - a.op_pos
+        )
+        .slice(0, OPS_CACHE_CAP);
+      return new Map(newest.map((op) => [String(op.operation_id), op]));
     });
 
     if (incomingNewIds.size > 0) {

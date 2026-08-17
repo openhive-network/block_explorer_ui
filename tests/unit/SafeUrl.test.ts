@@ -23,6 +23,30 @@ describe("normalizeExternalUrl", () => {
     expect(normalizeExternalUrl("javascript:alert(1)")).toBeNull();
   });
 
+  // Rejected by the http/https allowlist rather than a blocklist, so these hold
+  // by construction — pinned so a future switch to blocklisting cannot slip.
+  it("rejects vbscript: URLs", () => {
+    expect(normalizeExternalUrl("vbscript:msgbox(1)")).toBeNull();
+  });
+
+  it("rejects a scheme regardless of case", () => {
+    expect(normalizeExternalUrl("JavaScript:alert(1)")).toBeNull();
+    expect(normalizeExternalUrl("JAVASCRIPT:alert(1)")).toBeNull();
+    expect(normalizeExternalUrl("VbScript:msgbox(1)")).toBeNull();
+    // The allowlist itself must stay case-insensitive the other way too.
+    expect(normalizeExternalUrl("HTTPS://example.com")).toBe(
+      "https://example.com/"
+    );
+  });
+
+  // Browsers strip tabs and newlines out of URLs, so a split scheme can slip
+  // past a naive string check. new URL() rejects it outright.
+  it("rejects a scheme broken up by control characters", () => {
+    expect(normalizeExternalUrl("java\tscript:alert(1)")).toBeNull();
+    expect(normalizeExternalUrl("java\nscript:alert(1)")).toBeNull();
+    expect(normalizeExternalUrl("java\rscript:alert(1)")).toBeNull();
+  });
+
   it("rejects data: URLs", () => {
     expect(
       normalizeExternalUrl("data:text/html,<script>alert(1)</script>")
@@ -79,6 +103,9 @@ describe("isInAppPath", () => {
   it("rejects absolute and non-path input", () => {
     expect(isInAppPath("https://example.com")).toBe(false);
     expect(isInAppPath("javascript:alert(1)")).toBe(false);
+    expect(isInAppPath("JavaScript:alert(1)")).toBe(false);
+    expect(isInAppPath("vbscript:msgbox(1)")).toBe(false);
+    expect(isInAppPath("java\tscript:alert(1)")).toBe(false);
     expect(isInAppPath("witnesses")).toBe(false);
     expect(isInAppPath("")).toBe(false);
     expect(isInAppPath(undefined)).toBe(false);

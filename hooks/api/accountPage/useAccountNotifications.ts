@@ -15,10 +15,11 @@ const useAccountNotifications = (
     isLoading,
     isError,
   } = useQuery<Hive.AccountNotification[]>({
-    queryKey: ["account_notifications", accountName, limit, liveDataEnabled],
+    queryKey: ["account_notifications", accountName, limit],
     queryFn: () => fetchingService.getAccountNotifications(accountName!, limit),
     refetchInterval: liveDataEnabled ? config.accountRefreshInterval : false,
     refetchOnWindowFocus: false,
+    keepPreviousData: true,
     enabled: !!accountName,
   });
 
