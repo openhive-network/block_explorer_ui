@@ -28,7 +28,7 @@ import { AddressesContextProvider } from "../contexts/AddressesContext";
 import { HeadBlockContextProvider } from "@/contexts/HeadBlockContext";
 import Layout from "./layout";
 import useApiAddresses from "@/utils/ApiAddresses";
-import ErrorPage from "@/pages/ErrorPage";
+import ErrorPage from "@/components/ErrorPage";
 import { OperationTypesContextProvider } from "@/contexts/OperationsTypesContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { SearchesContextProvider } from "@/contexts/SearchesContext";
