@@ -65,33 +65,32 @@ interface I18nContextProps {
   dir: "ltr" | "rtl";
 }
 
-// Import Translations - Each Time we add new language it should be imported here
+// Static by necessity: defaultContext reads it at module-eval and t() falls back
+// to it for every missing key.
 import enTranslations from "./en.json";
-import esTranslations from "./es.json";
-import itTranslations from "./it.json";
-import deTranslations from "./de.json";
-import ptTranslations from "./pt.json";
-import frTranslations from "./fr.json";
-import plTranslations from "./pl.json";
-import zhTranslations from "./zh.json";
-import jaTranslations from "./ja.json";
-import roTranslations from "./ro.json";
-import koTranslations from "./ko.json";
-import arTranslations from "./ar.json";
 
+// Fetched on demand, one chunk each, so a visitor downloads one language not 12.
+const localeLoaders: Record<string, () => Promise<{ default: Translations }>> =
+  {
+    ar: () => import("./ar.json"),
+    es: () => import("./es.json"),
+    it: () => import("./it.json"),
+    de: () => import("./de.json"),
+    pt: () => import("./pt.json"),
+    fr: () => import("./fr.json"),
+    pl: () => import("./pl.json"),
+    zh: () => import("./zh.json"),
+    ja: () => import("./ja.json"),
+    ro: () => import("./ro.json"),
+    ko: () => import("./ko.json"),
+  };
+
+// Static: appTranslations only holds what has loaded, so it cannot validate.
+export const SUPPORTED_LOCALES = ["en", ...Object.keys(localeLoaders)];
+
+// Filled in as locales arrive; en is always present so no key renders raw.
 const appTranslations: { [key: string]: Translations } = {
-  ar: arTranslations,
   en: enTranslations,
-  es: esTranslations,
-  it: itTranslations,
-  de: deTranslations,
-  pt: ptTranslations,
-  fr: frTranslations,
-  pl: plTranslations,
-  zh: zhTranslations,
-  ja: jaTranslations,
-  ro: roTranslations,
-  ko: koTranslations,
 };
 
 const rtlLanguages = ["ar"];
@@ -101,7 +100,7 @@ const isRTL = (locale: string) => rtlLanguages.includes(getBaseLocale(locale));
 const getInitialLocale = (defaultLocale: string): string => {
   if (typeof window !== "undefined" && window.localStorage) {
     const savedLocale = localStorage.getItem("locale");
-    if (savedLocale && appTranslations[savedLocale]) {
+    if (savedLocale && SUPPORTED_LOCALES.includes(savedLocale)) {
       return savedLocale;
     }
   }
@@ -131,6 +130,29 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({
   const [currentLocale, setCurrentLocale] = useState<string>(() =>
     getInitialLocale(initialLocale)
   );
+  // Re-render once a dictionary lands; t() stays synchronous.
+  const [loadedTick, setLoadedTick] = useState(0);
+
+  useEffect(() => {
+    if (appTranslations[currentLocale]) return;
+    const loader = localeLoaders[currentLocale];
+    if (!loader) return;
+
+    // Ignore a resolution the user has already switched away from.
+    let active = true;
+    loader()
+      .then((mod) => {
+        appTranslations[currentLocale] = mod.default;
+        if (active) setLoadedTick((n) => n + 1);
+      })
+      .catch(() => {
+        // English fallback already covers a failed fetch.
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [currentLocale]);
 
   moment.locale(momentLocaleMap[currentLocale] ?? currentLocale);
 
@@ -177,7 +199,9 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({
       }
       return translation;
     },
-    [currentLocale]
+    // loadedTick: the dict is swapped in outside React.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [currentLocale, loadedTick]
   );
 
   const contextValue = useMemo(
@@ -188,7 +212,8 @@ export const I18nProvider: React.FC<I18nProviderProps> = ({
       t,
       dir: isRTL(currentLocale) ? ("rtl" as const) : ("ltr" as const),
     }),
-    [currentLocale, t]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [currentLocale, t, loadedTick]
   );
 
   return (
