@@ -19,6 +19,7 @@ import {
   ArrowUp,
   Crown,
   Share2,
+  ArrowLeftRight,
 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -59,6 +60,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import AccountShareCard from "@/components/account/AccountShareCard";
+import StatCard from "@/components/ui/StatCard";
 
 interface AccountMainCardProps {
   accountDetails: Explorer.FormattedAccountDetails;
@@ -75,60 +77,6 @@ interface AccountMainCardProps {
   isForCommunity?: boolean;
   isInitiallyOpen: boolean;
 }
-
-const StatCard = ({
-  icon,
-  label,
-  value,
-  onClick,
-  tooltipContent,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: React.ReactNode;
-  onClick?: () => void;
-  tooltipContent?: React.ReactNode;
-}) => {
-  const cardDiv = (
-    <div
-      className={cn(
-        "bg-slate-100 dark:bg-slate-800/50 p-2 rounded-xl flex flex-col items-center justify-center text-center",
-        {
-          "hover:bg-slate-200 dark:hover:bg-slate-700/80 transition-colors cursor-pointer":
-            !!onClick,
-          "cursor-help": !!tooltipContent,
-        }
-      )}
-      onClick={onClick}
-      role={onClick ? "button" : "figure"}
-      tabIndex={onClick ? 0 : -1}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" && onClick) onClick();
-      }}
-    >
-      <div className="text-explorer-orange mb-1">{icon}</div>
-      <div className="mb-1 text-base font-bold text-explorer-dark-gray dark:text-white min-h-[1.5rem] flex items-center justify-center">
-        {value}
-      </div>
-      <p className="text-[10px] text-explorer-light-gray dark:text-white uppercase font-semibold tracking-wider">
-        {label}
-      </p>
-    </div>
-  );
-
-  if (tooltipContent) {
-    return (
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>{cardDiv}</TooltipTrigger>
-          <TooltipContent>{tooltipContent}</TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    );
-  }
-
-  return cardDiv;
-};
 
 const AccountMainCard: React.FC<AccountMainCardProps> = ({
   accountDetails,
@@ -425,20 +373,35 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                       </TooltipProvider>
                     )}
                   </div>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setShareOpen(true);
-                    }}
-                    className="mt-2.5 inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-600 transition-colors hover:bg-indigo-100 dark:border-indigo-800 dark:bg-indigo-950/40 dark:text-indigo-300 dark:hover:bg-indigo-900/50"
-                    aria-label={t("accountShareCard.shareCard")}
-                    title={t("accountShareCard.shareCard")}
-                  >
-                    <Share2 className="h-3.5 w-3.5" />
-                    <span className="whitespace-nowrap">
-                      {t("accountShareCard.shareCard")}
-                    </span>
-                  </button>
+                  <div className="mt-2.5 flex flex-wrap items-center gap-2">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setShareOpen(true);
+                      }}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-600 transition-colors hover:bg-indigo-100 dark:border-indigo-800 dark:bg-indigo-950/40 dark:text-indigo-300 dark:hover:bg-indigo-900/50"
+                      aria-label={t("accountShareCard.shareCard")}
+                      title={t("accountShareCard.shareCard")}
+                    >
+                      <Share2 className="h-3.5 w-3.5" />
+                      <span className="whitespace-nowrap">
+                        {t("accountShareCard.shareCard")}
+                      </span>
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(`/tools/compare?a=${accountName}`);
+                      }}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-600 transition-colors hover:bg-sky-100 dark:border-sky-800 dark:bg-sky-950/40 dark:text-sky-300 dark:hover:bg-sky-900/50"
+                      aria-label={t("compare.entry.tooltip")}
+                    >
+                      <ArrowLeftRight className="h-3.5 w-3.5" />
+                      <span className="whitespace-nowrap">
+                        {t("compare.entry.button")}
+                      </span>
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -505,13 +468,17 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
               <StatCard
                 icon={<UserPlus size={20} />}
                 label={t("accountMainCard.followers")}
-                value={Number(accountDetails.follower_count).toLocaleString()}
+                value={Number(accountDetails.follower_count).toLocaleString(
+                  locale
+                )}
                 onClick={openFollowersModal}
               />
               <StatCard
                 icon={<UserCheck size={20} />}
                 label={t("accountMainCard.following")}
-                value={Number(accountDetails.following_count).toLocaleString()}
+                value={Number(accountDetails.following_count).toLocaleString(
+                  locale
+                )}
                 onClick={openFollowingModal}
               />
               <StatCard
@@ -519,13 +486,13 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                 label={t("accountMainCard.subscriptions")}
                 value={Number(
                   accountDetails.subscriptions.length
-                ).toLocaleString()}
+                ).toLocaleString(locale)}
                 onClick={openSubscriptionsModal}
               />
               <StatCard
                 icon={<PenSquare size={20} />}
                 label={t("accountMainCard.totalPosts")}
-                value={Number(accountDetails.post_count).toLocaleString()}
+                value={Number(accountDetails.post_count).toLocaleString(locale)}
                 tooltipContent={<p>{t("accountMainCard.totalPostsTooltip")}</p>}
               />
               <StatCard
@@ -555,7 +522,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
                   isVoteCountLoading ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
-                    (proposalVoteCount ?? 0).toLocaleString()
+                    (proposalVoteCount ?? 0).toLocaleString(locale)
                   )
                 }
                 onClick={() => {

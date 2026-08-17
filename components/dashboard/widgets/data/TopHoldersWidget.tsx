@@ -12,7 +12,6 @@ import useTopHolders, { CoinType } from "@/hooks/api/common/useTopHolders";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { convertVestsToHP } from "@/utils/Calculations";
 import { useI18n } from "@/i18n/i18n";
-import { cn } from "@/lib/utils";
 
 const FEED_SIZE = 10;
 const COINS: CoinType[] = ["HIVE", "HBD", "VESTS"];

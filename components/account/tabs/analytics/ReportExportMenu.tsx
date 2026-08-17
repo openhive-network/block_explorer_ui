@@ -28,6 +28,34 @@ const ReportExportMenu: React.FC<ReportExportMenuProps> = ({ datasets }) => {
   const usable = datasets.filter((d) => d.rows.length > 0);
   if (usable.length === 0) return null;
 
+  if (usable.length === 1) {
+    const ds = usable[0];
+    return (
+      <DataExport
+        data={ds.rows}
+        filename={`${ds.filename}.csv`}
+        skipColumnSelection
+      >
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                aria-label={t("common.export")}
+                className="no-drag shrink-0 rounded p-1 text-muted-foreground hover:text-foreground hover:bg-gray-200/60 dark:hover:bg-gray-700/60"
+              >
+                <Download className="h-4 w-4" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="text-[11px]">
+              {t("common.export")}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </DataExport>
+    );
+  }
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <TooltipProvider>

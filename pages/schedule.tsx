@@ -5,7 +5,10 @@ import { Loader2 } from "lucide-react";
 import Seo from "@/components/seo/Seo";
 import { SeoMeta, listPageMeta, SEO_LIST_CACHE_CONTROL } from "@/utils/seo";
 import { seoText } from "@/utils/seoStrings";
-import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
+import {
+  useHeadBlockNumber,
+  useLiveHeadBlock,
+} from "@/contexts/HeadBlockContext";
 import useWitnesses from "@/hooks/api/common/useWitnesses";
 import useHeadBlock from "@/hooks/api/homePage/useHeadBlock";
 import ErrorPage from "./ErrorPage";
@@ -16,6 +19,9 @@ import useBackupWitnessesSchedule from "@/hooks/api/schedulePage/useBackupWitnes
 import ScrollTopButton from "@/components/ScrollTopButton";
 
 const Schedule = ({ meta }: { meta: SeoMeta }) => {
+  // Every row is derived from the head block, so it has to keep advancing even
+  // with live data off.
+  useLiveHeadBlock();
   const { witnessesData } = useWitnesses(200, "rank", "asc");
   const { headBlockNumberData } = useHeadBlockNumber();
   const { headBlockData } = useHeadBlock(headBlockNumberData);

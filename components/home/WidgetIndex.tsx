@@ -18,14 +18,36 @@ const HiveFullChartDialog = dynamic(
   { ssr: false }
 );
 import DashboardControls from "@/components/dashboard/ui/DashboardControls";
+import BoardTabs from "@/components/dashboard/ui/BoardTabs";
 
 import { useDashboard } from "@/components/dashboard/hooks/useDashboard";
+import {
+  MY_BOARD_KEY,
+  getBoardTemplate,
+} from "@/components/dashboard/templates";
+import TemplatePreviewBar from "@/components/dashboard/ui/TemplatePreviewBar";
+import ConfirmDialog from "@/components/ui/ConfirmDialog";
+import { toast } from "sonner";
+import { resolveSeeds } from "@/components/dashboard/lib/boardSlots";
 import { useI18n } from "@/i18n/i18n";
 import { useDashboardData } from "@/components/dashboard/hooks/useDashboardData";
 import { WIDGET_REGISTRY } from "@/components/dashboard/lib/widgetRegistry";
+import {
+  COLUMN_W,
+  COLUMN_X,
+  WIDGET_SEEDS,
+  inColumn,
+  seedStorageKey,
+  watchedProposalsDismissedKey,
+} from "@/components/dashboard/lib/widgetSeeds";
 import { DEFAULT_WIDGETS } from "@/components/dashboard/lib/dashboard.config";
 import { useWatchlist } from "@/contexts/WatchlistContext";
 import { useAuth } from "@/contexts/AuthContext";
+import {
+  applyBundle,
+  clearRestoreUndo,
+  readRestoreUndo,
+} from "@/utils/workspaceSync";
 import { cn } from "@/lib/utils";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -33,6 +55,7 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 const WidgetIndex = () => {
   const { t, dir } = useI18n();
   const [isFullHiveChartVisible, setIsFullHiveChartVisible] = useState(false);
+  const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
 
   const {
     widgets,
@@ -41,10 +64,17 @@ const WidgetIndex = () => {
     isLoaded,
     isEditMode,
     isLibraryOpen,
+    activeBoardKey,
+    isTemplateView,
+    hasBoardUndo,
+    myBoardWidgetCount,
     finalIsEditMode,
     isLargeScreen,
     setIsEditMode,
     setIsLibraryOpen,
+    viewBoard,
+    adoptTemplate,
+    restorePreviousBoard,
     onBreakpointChange,
     onLayoutChange,
     onAddWidget,
@@ -55,359 +85,105 @@ const WidgetIndex = () => {
     setRuntimeWidgetHeight,
   } = useDashboard();
 
+  const isOwnBoard = activeBoardKey === MY_BOARD_KEY;
+
   const { getWatched } = useWatchlist();
   const { username } = useAuth();
 
-  // One-time seed of the Network Growth widget (#723) for users with a saved
-  // dashboard; the seeded flag lets them remove it for good afterwards.
+  // Read once: a restore reloads the page, so the snapshot is either already
+  // there on mount or not coming. Undoing reloads again, which clears it.
+  const [hasRestoreUndo, setHasRestoreUndo] = useState(false);
   useEffect(() => {
-    if (!isLoaded || !username) return;
-    const seededKey = `hivescan_dashboard_network_growth_seeded_${username}`;
-    if (localStorage.getItem(seededKey)) return;
-    localStorage.setItem(seededKey, "true");
-    if (widgets.some((w) => w.type === "network-growth")) return;
-    const masterLayout = layouts.lg || [];
-    const mainColBottom = masterLayout
-      .filter((item) => item.x >= 3 && item.x < 9)
-      .reduce((max, item) => Math.max(max, item.y + item.h), 0);
-    onAddWidget("network-growth", {
-      x: 3,
-      y: mainColBottom,
-      w: 6,
-      h: 3.3,
-      minH: 3,
-    });
-  }, [isLoaded, username, widgets, layouts, onAddWidget]);
+    setHasRestoreUndo(!!username && !!readRestoreUndo(username));
+  }, [username]);
 
-  // One-time seed of the HP Momentum widget (#721) for users with a saved
-  // dashboard; the seeded flag lets them remove it for good afterwards.
-  useEffect(() => {
-    if (!isLoaded || !username) return;
-    const seededKey = `hivescan_dashboard_hp_momentum_seeded_${username}`;
-    if (localStorage.getItem(seededKey)) return;
-    localStorage.setItem(seededKey, "true");
-    if (widgets.some((w) => w.type === "hp-momentum")) return;
-    const masterLayout = layouts.lg || [];
-    const mainColBottom = masterLayout
-      .filter((item) => item.x >= 3 && item.x < 9)
-      .reduce((max, item) => Math.max(max, item.y + item.h), 0);
-    onAddWidget("hp-momentum", {
-      x: 3,
-      y: mainColBottom,
-      w: 6,
-      h: 9,
-      minH: 6,
-    });
-  }, [isLoaded, username, widgets, layouts, onAddWidget]);
+  // Resetting replaces the board the snapshot was taken against, so undoing
+  // afterwards would resurrect something the user has already thrown away.
+  const handleResetLayoutAndUndo = useCallback(() => {
+    if (username) clearRestoreUndo(username);
+    setHasRestoreUndo(false);
+    handleResetLayout();
+  }, [username, handleResetLayout]);
 
-  // One-time seed of the Daily Active Users widget for users with a saved
-  // dashboard; the seeded flag lets them remove it for good afterwards.
-  useEffect(() => {
-    if (!isLoaded || !username) return;
-    const seededKey = `hivescan_dashboard_daily_active_users_seeded_${username}`;
-    if (localStorage.getItem(seededKey)) return;
-    localStorage.setItem(seededKey, "true");
-    if (widgets.some((w) => w.type === "daily-active-users")) return;
-    const masterLayout = layouts.lg || [];
-    // Place directly below network-growth; fall back to bottom of main column.
-    const networkGrowthId = widgets.find((w) => w.type === "network-growth")?.i;
-    const networkGrowthItem = networkGrowthId
-      ? masterLayout.find((item) => item.i === networkGrowthId)
-      : undefined;
-    const insertY = networkGrowthItem
-      ? networkGrowthItem.y + networkGrowthItem.h
-      : masterLayout
-          .filter((item) => item.x >= 3 && item.x < 9)
-          .reduce((max, item) => Math.max(max, item.y + item.h), 0);
-    onAddWidget("daily-active-users", {
-      x: networkGrowthItem?.x ?? 3,
-      y: insertY,
-      w: networkGrowthItem?.w ?? 6,
-      h: 3.3,
-      minH: 3,
-    });
-  }, [isLoaded, username, widgets, layouts, onAddWidget]);
-
-  // One-time seed of the Op Mix widget for users with a saved dashboard.
-  useEffect(() => {
-    if (!isLoaded || !username) return;
-    const seededKey = `hivescan_dashboard_op_mix_seeded_${username}`;
-    if (localStorage.getItem(seededKey)) return;
-    if (widgets.some((w) => w.type === "op-mix")) {
-      localStorage.setItem(seededKey, "true");
+  const handleUndoRestore = useCallback(() => {
+    if (!username) return;
+    const snapshot = readRestoreUndo(username);
+    if (!snapshot) {
+      setHasRestoreUndo(false);
       return;
     }
-    const masterLayout = layouts.lg || [];
-    const dauId = widgets.find((w) => w.type === "daily-active-users")?.i;
-    const dauItem = dauId
-      ? masterLayout.find((item) => item.i === dauId)
-      : undefined;
-    const insertY = dauItem
-      ? dauItem.y + dauItem.h
-      : masterLayout
-          .filter((item) => item.x >= 3 && item.x < 9)
-          .reduce((max, item) => Math.max(max, item.y + item.h), 0);
-    onAddWidget("op-mix", {
-      x: dauItem?.x ?? 3,
-      y: insertY,
-      w: dauItem?.w ?? 6,
-      h: 3.3,
-      minH: 3,
-    });
-    localStorage.setItem(seededKey, "true");
-  }, [isLoaded, username, widgets, layouts, onAddWidget]);
+    // The saved workspace itself has not changed, so the sync fingerprint stays
+    // put — undoing must not start the restore prompt asking again.
+    applyBundle(username, snapshot);
+    clearRestoreUndo(username);
+    window.location.reload();
+  }, [username]);
 
-  // One-time seed of the Top Accounts widget for users with a saved dashboard.
+  // Read by the seeding pass, deliberately not depended on: every ResizeObserver
+  // tick replaces `layouts` and onAddWidget's identity, which would re-run the
+  // whole localStorage scan. `widgets` changing is the real trigger.
+  const seedInputsRef = useRef({ layouts, onAddWidget });
   useEffect(() => {
-    if (!isLoaded || !username) return;
-    const seededKey = `hivescan_dashboard_top_accounts_seeded_${username}`;
-    if (localStorage.getItem(seededKey)) return;
-    if (widgets.some((w) => w.type === "top-accounts")) {
-      localStorage.setItem(seededKey, "true");
+    seedInputsRef.current = { layouts, onAddWidget };
+  }, [layouts, onAddWidget]);
+
+  // Seeds each new widget once into an existing saved dashboard. One per pass:
+  // onAddWidget re-renders, and the next seed needs the previous one placed
+  // before it can anchor to it.
+  useEffect(() => {
+    if (!isLoaded || !username || !isOwnBoard) return;
+    const { layouts: currentLayouts, onAddWidget: addWidget } =
+      seedInputsRef.current;
+    const masterLayout = currentLayouts.lg || [];
+
+    for (const seed of WIDGET_SEEDS) {
+      const seededKey = seedStorageKey(seed.flag, username);
+      if (localStorage.getItem(seededKey)) continue;
+
+      // Marked done only once the widget is actually on the board, so a
+      // refused add cannot leave the seed flagged and never retried.
+      if (widgets.some((w) => w.type === seed.type)) {
+        localStorage.setItem(seededKey, "true");
+        continue;
+      }
+
+      const anchorId = seed.anchor
+        ? widgets.find((w) => w.type === seed.anchor)?.i
+        : undefined;
+      const anchor = anchorId
+        ? masterLayout.find((item) => item.i === anchorId)
+        : undefined;
+
+      const layout = seed.masthead
+        ? { x: 0, y: 0, w: 12, h: seed.h, minH: seed.minH }
+        : {
+            x: anchor?.x ?? COLUMN_X[seed.column],
+            y: anchor
+              ? anchor.y + anchor.h
+              : masterLayout
+                  .filter((item) => inColumn(seed.column, item.x))
+                  .reduce((max, item) => Math.max(max, item.y + item.h), 0),
+            w: seed.w ?? anchor?.w ?? COLUMN_W[seed.column],
+            h: seed.h,
+            minH: seed.minH,
+          };
+
+      // A refusal is flagged here instead, or the loop would retry every render.
+      if (!addWidget(seed.type, layout, seed.state)) {
+        localStorage.setItem(seededKey, "true");
+        continue;
+      }
       return;
     }
-    const masterLayout = layouts.lg || [];
-    // Place directly below top-witnesses in the right column; fall back to the
-    // bottom of the right column.
-    const topWitnessesId = widgets.find((w) => w.type === "top-witnesses")?.i;
-    const topWitnessesItem = topWitnessesId
-      ? masterLayout.find((item) => item.i === topWitnessesId)
-      : undefined;
-    const insertY = topWitnessesItem
-      ? topWitnessesItem.y + topWitnessesItem.h
-      : masterLayout
-          .filter((item) => item.x >= 9)
-          .reduce((max, item) => Math.max(max, item.y + item.h), 0);
-    onAddWidget("top-accounts", {
-      x: topWitnessesItem?.x ?? 9,
-      y: insertY,
-      w: 3,
-      h: 11,
-      minH: 8,
-    });
-    localStorage.setItem(seededKey, "true");
-  }, [isLoaded, username, widgets, layouts, onAddWidget]);
-
-  // One-time seed of the Voting Activity widget for users with a saved dashboard.
-  useEffect(() => {
-    if (!isLoaded || !username) return;
-    const seededKey = `hivescan_dashboard_voting_activity_seeded_${username}`;
-    if (localStorage.getItem(seededKey)) return;
-    if (widgets.some((w) => w.type === "voting-activity")) {
-      localStorage.setItem(seededKey, "true");
-      return;
-    }
-    const masterLayout = layouts.lg || [];
-    // Place directly below blockchain-dates in the left column; fall back to bottom of left column.
-    const blockchainDatesId = widgets.find(
-      (w) => w.type === "blockchain-dates"
-    )?.i;
-    const blockchainDatesItem = blockchainDatesId
-      ? masterLayout.find((item) => item.i === blockchainDatesId)
-      : undefined;
-    const insertY = blockchainDatesItem
-      ? blockchainDatesItem.y + blockchainDatesItem.h
-      : masterLayout
-          .filter((item) => item.x < 3)
-          .reduce((max, item) => Math.max(max, item.y + item.h), 0);
-    onAddWidget("voting-activity", {
-      x: blockchainDatesItem?.x ?? 0,
-      y: insertY,
-      w: 3,
-      h: 5.8,
-      minH: 4,
-    });
-    localStorage.setItem(seededKey, "true");
-  }, [isLoaded, username, widgets, layouts, onAddWidget]);
-
-  // One-time seed of the Network HP Distribution widget for users with a saved dashboard.
-  useEffect(() => {
-    if (!isLoaded || !username) return;
-    const seededKey = `hivescan_dashboard_network_hp_distribution_seeded_${username}`;
-    if (localStorage.getItem(seededKey)) return;
-    if (widgets.some((w) => w.type === "network-hp-distribution")) {
-      localStorage.setItem(seededKey, "true");
-      return;
-    }
-    const masterLayout = layouts.lg || [];
-    // Place below voting-activity if present; otherwise at the bottom of the left column.
-    const votingActivityId = widgets.find(
-      (w) => w.type === "voting-activity"
-    )?.i;
-    const anchorItem = votingActivityId
-      ? masterLayout.find((item) => item.i === votingActivityId)
-      : undefined;
-    const leftColBottom = masterLayout
-      .filter((item) => item.x < 3)
-      .reduce((max, item) => Math.max(max, item.y + item.h), 0);
-    const insertY = anchorItem ? anchorItem.y + anchorItem.h : leftColBottom;
-    onAddWidget("network-hp-distribution", {
-      x: anchorItem?.x ?? 0,
-      y: insertY,
-      w: 3,
-      h: 7,
-      minH: 5,
-    });
-    localStorage.setItem(seededKey, "true");
-  }, [isLoaded, username, widgets, layouts, onAddWidget]);
-
-  // One-time seed of the Account Retention Funnel widget for users with a saved dashboard.
-  useEffect(() => {
-    if (!isLoaded || !username) return;
-    const seededKey = `hivescan_dashboard_account_retention_funnel_seeded_${username}`;
-    if (localStorage.getItem(seededKey)) return;
-    if (widgets.some((w) => w.type === "account-retention-funnel")) {
-      localStorage.setItem(seededKey, "true");
-      return;
-    }
-    const masterLayout = layouts.lg || [];
-    const dauId = widgets.find((w) => w.type === "daily-active-users")?.i;
-    const dauItem = dauId
-      ? masterLayout.find((item) => item.i === dauId)
-      : undefined;
-    const insertY = dauItem
-      ? dauItem.y + dauItem.h
-      : masterLayout
-          .filter((item) => item.x >= 3 && item.x < 9)
-          .reduce((max, item) => Math.max(max, item.y + item.h), 0);
-    onAddWidget("account-retention-funnel", {
-      x: dauItem?.x ?? 3,
-      y: insertY,
-      w: dauItem?.w ?? 6,
-      h: 3.3,
-      minH: 3,
-    });
-    localStorage.setItem(seededKey, "true");
-  }, [isLoaded, username, widgets, layouts, onAddWidget]);
-
-  // One-time seed of the Content Volume widget for users with a saved dashboard.
-  useEffect(() => {
-    if (!isLoaded || !username) return;
-    const seededKey = `hivescan_dashboard_network_content_volume_seeded_${username}`;
-    if (localStorage.getItem(seededKey)) return;
-    if (widgets.some((w) => w.type === "network-content-volume")) {
-      localStorage.setItem(seededKey, "true");
-      return;
-    }
-    const masterLayout = layouts.lg || [];
-    // Place directly below hp-momentum; fall back to bottom of main column.
-    const hpMomentumId = widgets.find((w) => w.type === "hp-momentum")?.i;
-    const anchorItem = hpMomentumId
-      ? masterLayout.find((item) => item.i === hpMomentumId)
-      : undefined;
-    const insertY = anchorItem
-      ? anchorItem.y + anchorItem.h
-      : masterLayout
-          .filter((item) => item.x >= 3 && item.x < 9)
-          .reduce((max, item) => Math.max(max, item.y + item.h), 0);
-    onAddWidget("network-content-volume", {
-      x: anchorItem?.x ?? 3,
-      y: insertY,
-      w: anchorItem?.w ?? 6,
-      h: 5,
-      minH: 4,
-    });
-    localStorage.setItem(seededKey, "true");
-  }, [isLoaded, username, widgets, layouts, onAddWidget]);
-
-  // One-time seed of the Engagement Quality widget for users with a saved dashboard.
-  useEffect(() => {
-    if (!isLoaded || !username) return;
-    const seededKey = `hivescan_dashboard_network_engagement_seeded_${username}`;
-    if (localStorage.getItem(seededKey)) return;
-    if (widgets.some((w) => w.type === "network-engagement")) {
-      localStorage.setItem(seededKey, "true");
-      return;
-    }
-    const masterLayout = layouts.lg || [];
-    // Place directly below op-mix; fall back to bottom of the main column.
-    const opMixId = widgets.find((w) => w.type === "op-mix")?.i;
-    const opMixItem = opMixId
-      ? masterLayout.find((item) => item.i === opMixId)
-      : undefined;
-    const insertY = opMixItem
-      ? opMixItem.y + opMixItem.h
-      : masterLayout
-          .filter((item) => item.x >= 3 && item.x < 9)
-          .reduce((max, item) => Math.max(max, item.y + item.h), 0);
-    onAddWidget("network-engagement", {
-      x: opMixItem?.x ?? 3,
-      y: insertY,
-      w: opMixItem?.w ?? 6,
-      h: 5,
-      minH: 4,
-    });
-    localStorage.setItem(seededKey, "true");
-  }, [isLoaded, username, widgets, layouts, onAddWidget]);
-
-  // One-time seed of the Network RC Utilization widget (#752) for users with a saved dashboard.
-  useEffect(() => {
-    if (!isLoaded || !username) return;
-    const seededKey = `hivescan_dashboard_network_rc_utilization_seeded_${username}`;
-    if (localStorage.getItem(seededKey)) return;
-    if (widgets.some((w) => w.type === "network-rc-utilization")) {
-      localStorage.setItem(seededKey, "true");
-      return;
-    }
-    const masterLayout = layouts.lg || [];
-    const opMixId = widgets.find((w) => w.type === "op-mix")?.i;
-    const opMixItem = opMixId
-      ? masterLayout.find((item) => item.i === opMixId)
-      : undefined;
-    const insertY = opMixItem
-      ? opMixItem.y + opMixItem.h
-      : masterLayout
-          .filter((item) => item.x >= 3 && item.x < 9)
-          .reduce((max, item) => Math.max(max, item.y + item.h), 0);
-    onAddWidget("network-rc-utilization", {
-      x: opMixItem?.x ?? 3,
-      y: insertY,
-      w: opMixItem?.w ?? 6,
-      h: 3.3,
-      minH: 3,
-    });
-    localStorage.setItem(seededKey, "true");
-  }, [isLoaded, username, widgets, layouts, onAddWidget]);
-
-  // One-time seed of the Network DApp Usage widget (#757) for users with a saved dashboard.
-  useEffect(() => {
-    if (!isLoaded || !username) return;
-    const seededKey = `hivescan_dashboard_network_dapp_usage_seeded_${username}`;
-    if (localStorage.getItem(seededKey)) return;
-    if (widgets.some((w) => w.type === "network-dapp-usage")) {
-      localStorage.setItem(seededKey, "true");
-      return;
-    }
-    const masterLayout = layouts.lg || [];
-    // Place directly below network-content-volume; fall back to bottom of main column.
-    const contentVolumeId = widgets.find(
-      (w) => w.type === "network-content-volume"
-    )?.i;
-    const anchorItem = contentVolumeId
-      ? masterLayout.find((item) => item.i === contentVolumeId)
-      : undefined;
-    const insertY = anchorItem
-      ? anchorItem.y + anchorItem.h
-      : masterLayout
-          .filter((item) => item.x >= 3 && item.x < 9)
-          .reduce((max, item) => Math.max(max, item.y + item.h), 0);
-    onAddWidget("network-dapp-usage", {
-      x: anchorItem?.x ?? 3,
-      y: insertY,
-      w: anchorItem?.w ?? 6,
-      h: 7,
-      minH: 5,
-    });
-    localStorage.setItem(seededKey, "true");
-  }, [isLoaded, username, widgets, layouts, onAddWidget]);
+  }, [isLoaded, username, isOwnBoard, widgets]);
 
   // Watched Proposals auto-appears the first time you watch a proposal (unless
   // X-dismissed). A manual add is respected — it's never auto-removed when the
   // watchlist is empty.
   const watchedProposalsCount = getWatched("proposals").size;
   useEffect(() => {
-    if (!isLoaded || !username) return;
-    const dismissedKey = `hivescan_dashboard_watched_proposals_dismissed_${username}`;
+    if (!isLoaded || !username || !isOwnBoard) return;
+    const dismissedKey = watchedProposalsDismissedKey(username);
     // handleResetLayout sets widgets to the DEFAULT_WIDGETS reference.
     if (widgets === DEFAULT_WIDGETS) localStorage.removeItem(dismissedKey);
     // Empty watchlist clears the dismiss flag, so watching again re-adds the widget.
@@ -418,7 +194,14 @@ const WidgetIndex = () => {
     const present = widgets.find((w) => w.type === "watched-proposals");
     if (present || localStorage.getItem(dismissedKey)) return;
     onAddWidget("watched-proposals", { x: 9, y: 0, w: 3 });
-  }, [isLoaded, username, watchedProposalsCount, widgets, onAddWidget]);
+  }, [
+    isLoaded,
+    username,
+    isOwnBoard,
+    watchedProposalsCount,
+    widgets,
+    onAddWidget,
+  ]);
 
   const contentRefs = useRef(new Map<string, HTMLDivElement>());
   const widgetStatesRef = useRef(widgetStates);
@@ -464,14 +247,23 @@ const WidgetIndex = () => {
     (widgetId: string) => {
       const removed = widgets.find((w) => w.i === widgetId);
       if (removed?.type === "watched-proposals" && username) {
-        localStorage.setItem(
-          `hivescan_dashboard_watched_proposals_dismissed_${username}`,
-          "true"
-        );
+        localStorage.setItem(watchedProposalsDismissedKey(username), "true");
       }
       onRemoveWidget(widgetId);
     },
     [widgets, onRemoveWidget, username]
+  );
+
+  // Memoised because resolveSeeds rebuilds every array it walks: a widget that
+  // mirrors an array prop into local state (Quick Links) would reset on every
+  // head-block tick, discarding whatever the user was typing.
+  const resolvedStates = useMemo(
+    () =>
+      resolveSeeds(widgetStates, {
+        t,
+        username: username ?? undefined,
+      }) as Record<string, any>,
+    [widgetStates, t, username]
   );
 
   const widgetElements = useMemo(() => {
@@ -479,7 +271,7 @@ const WidgetIndex = () => {
       const widgetConfig = WIDGET_REGISTRY[widget.type];
       if (!widgetConfig) return null;
 
-      const widgetState = widgetStates[widget.i];
+      const widgetState = resolvedStates[widget.i];
 
       const actions = {
         setIsFullHiveChartVisible,
@@ -513,18 +305,24 @@ const WidgetIndex = () => {
 
       const editControls = finalIsEditMode && (
         <>
-          <div className="absolute top-2 left-2 z-20 text-white/50 pointer-events-none">
+          <div className="absolute top-2 start-2 z-20 text-white/50 pointer-events-none">
             <Move size={20} />
           </div>
           <button
             onMouseDown={(e) => e.stopPropagation()}
             onClick={() => handleRemoveWidget(widget.i)}
-            className="absolute top-2 right-2 z-20 w-7 h-7 flex items-center justify-center bg-slate-300 dark:bg-slate-700 text-white rounded-full shadow-lg hover:bg-slate-400 dark:hover:bg-slate-800 transition-all"
+            className="absolute top-2 end-2 z-20 w-7 h-7 flex items-center justify-center bg-slate-300 dark:bg-slate-700 text-white rounded-full shadow-lg hover:bg-slate-400 dark:hover:bg-slate-800 transition-all"
             aria-label={`Remove ${widget.type} widget`}
           >
             <X size={18} strokeWidth={2.5} />
           </button>
         </>
+      );
+
+      const rendered = (
+        <NodeSupportGate widgetId={widget.type}>
+          <WidgetRenderer type={widget.type} props={finalProps} />
+        </NodeSupportGate>
       );
 
       return (
@@ -538,22 +336,19 @@ const WidgetIndex = () => {
               }}
               className="w-full overflow-hidden"
             >
-              <NodeSupportGate widgetId={widget.type}>
-                <WidgetRenderer type={widget.type} props={finalProps} />
-              </NodeSupportGate>
+              {rendered}
             </div>
           ) : (
-            <NodeSupportGate widgetId={widget.type}>
-              <WidgetRenderer type={widget.type} props={finalProps} />
-            </NodeSupportGate>
+            rendered
           )}
         </div>
       );
     });
   }, [
     dir,
+    // Seeded copy is resolved into this, so a language change re-renders it.
+    resolvedStates,
     widgets,
-    widgetStates,
     finalIsEditMode,
     isEditMode,
     dashboardData,
@@ -561,6 +356,28 @@ const WidgetIndex = () => {
     handleToggleCollapse,
     handleWidgetStateChange,
   ]);
+
+  const handleRestorePreviousBoard = () => {
+    if (!restorePreviousBoard()) toast.error(t("dashbord.boardSwitchFailed"));
+  };
+
+  const handleAdoptTemplate = () => {
+    const template = getBoardTemplate(activeBoardKey);
+    if (!template) return;
+    if (!adoptTemplate(activeBoardKey)) {
+      toast.error(t("dashbord.boardSwitchFailed"));
+      return;
+    }
+    toast.success(
+      t("boards.adopt.done").replace("{board}", t(template.nameKey)),
+      {
+        action: {
+          label: t("boards.adopt.undo"),
+          onClick: handleRestorePreviousBoard,
+        },
+      }
+    );
+  };
 
   if (!isLoaded) return null;
 
@@ -570,15 +387,43 @@ const WidgetIndex = () => {
         <title>{t("home.title")}</title>
       </Head>
 
-      {isLargeScreen && (
+      <BoardTabs activeBoardKey={activeBoardKey} onApplyBoard={viewBoard} />
+
+      {isTemplateView && (
+        <TemplatePreviewBar
+          boardKey={activeBoardKey}
+          replacedWidgetCount={myBoardWidgetCount}
+          onConfirm={handleAdoptTemplate}
+        />
+      )}
+
+      {/* Adopting and restoring work on any screen, so either pending undo
+          shows the cluster even where editing is unavailable. */}
+      {!isTemplateView && (isLargeScreen || hasBoardUndo || hasRestoreUndo) && (
         <DashboardControls
           isEditMode={isEditMode}
           onToggleEditMode={() => setIsEditMode(!isEditMode)}
           onAddWidget={() => setIsLibraryOpen(true)}
-          onResetLayout={handleResetLayout}
+          onResetLayout={() => setIsResetConfirmOpen(true)}
+          hasBoardUndo={hasBoardUndo}
+          onRestorePreviousBoard={handleRestorePreviousBoard}
+          hasRestoreUndo={hasRestoreUndo}
+          onUndoRestore={handleUndoRestore}
+          showEditControls={isLargeScreen}
           t={t}
         />
       )}
+
+      <ConfirmDialog
+        isOpen={isResetConfirmOpen}
+        onOpenChange={setIsResetConfirmOpen}
+        title={t("dashbord.restoreTitle")}
+        description={t("dashbord.restoreWarning")}
+        confirmLabel={t("dashbord.restoreConfirm")}
+        cancelLabel={t("boards.adopt.cancel")}
+        isDestructive
+        onConfirm={handleResetLayoutAndUndo}
+      />
 
       <ResponsiveGridLayout
         className="layout page-container"
@@ -588,7 +433,7 @@ const WidgetIndex = () => {
         cols={{ xl: 12, lg: 12, md: 10, sm: 6, xs: 4 }}
         rowHeight={50}
         margin={[8, 2]}
-        containerPadding={[2, 2]}
+        containerPadding={[2, 0]}
         onLayoutChange={onLayoutChange}
         onBreakpointChange={onBreakpointChange}
         compactType="vertical"

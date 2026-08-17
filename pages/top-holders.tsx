@@ -75,6 +75,9 @@ import { resolveAccountLabel } from "@/utils/accountLabels";
 import useTopHolderWitnesses from "@/hooks/api/common/useTopHolderWitnesses";
 import AccountLocator from "@/components/AccountLocator";
 import AutoCompleteInput from "@/components/ui/AutoCompleteInput";
+import useCompareSelection from "@/hooks/common/useCompareSelection";
+import CompareSelectToggle from "@/components/compare/CompareSelectToggle";
+import CompareSelectionBar from "@/components/compare/CompareSelectionBar";
 
 // Total supply in the same raw unit as a holder's balance (VESTS ×1e6, HIVE/HBD ×1e3).
 const getTotalSupplyRaw = (
@@ -138,6 +141,7 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
   const { t, locale } = useI18n();
   const router = useRouter();
   const { settings } = useSettings();
+  const compareSelection = useCompareSelection();
 
   const [page, setPage] = useState(1);
   const [coinType, setCoinType] = useState<CoinType>("HIVE");
@@ -538,6 +542,14 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
               <span className="inline-flex items-center rounded-full border border-violet-200 bg-violet-100 px-1.5 py-0.5 text-[10px] font-semibold text-violet-700 dark:border-violet-800 dark:bg-violet-950 dark:text-violet-300">
                 {t("topHolders.you")}
               </span>
+            )}
+            {!isSystemAccount(account) && (
+              <CompareSelectToggle
+                account={account}
+                selected={compareSelection.isSelected(account)}
+                onToggle={compareSelection.toggle}
+                t={t}
+              />
             )}
           </div>
         </TableCell>
@@ -948,6 +960,8 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
         <div className="fixed bottom-[10px] right-0 flex flex-col items-end justify-end px-3 md:px-12">
           <ScrollTopButton />
         </div>
+
+        <CompareSelectionBar selection={compareSelection} t={t} />
       </div>
     </>
   );

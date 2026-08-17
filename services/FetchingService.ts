@@ -78,7 +78,13 @@ export type ExplorerNodeApi = {
   };
   bridge: {
     get_account_posts: TWaxApiRequest<
-      { sort: string; account: string; limit: number },
+      {
+        sort: string;
+        account: string;
+        limit: number;
+        start_author?: string;
+        start_permlink?: string;
+      },
       Hive.AccountPostSummary[]
     >;
     get_discussion: TWaxApiRequest<
@@ -109,6 +115,10 @@ export type ExplorerNodeApi = {
         sort: string;
       },
       Hive.CommunityList
+    >;
+    account_notifications: TWaxApiRequest<
+      { account: string; limit: number; last_id?: number },
+      Hive.AccountNotification[]
     >;
   };
   market_history_api: {
@@ -943,15 +953,15 @@ class FetchingService {
     toBlock?: Date | number | undefined,
     direction: "asc" | "desc" = "asc"
   ): Promise<Hive.AccountVestingStatsResponse[]> {
-    return await this.extendedHiveChain!.restApi[
-      "balance-api"
-    ].accountVestingStats({
-      accountName,
-      granularity,
-      direction,
-      "from-block": fromBlock,
-      "to-block": toBlock,
-    });
+    return this.withNodeSupport("balance-api:account-vesting-stats", () =>
+      this.extendedHiveChain!.restApi["balance-api"].accountVestingStats({
+        accountName,
+        granularity,
+        direction,
+        "from-block": fromBlock,
+        "to-block": toBlock,
+      })
+    );
   }
 
   async getAccountVestingHistory(
@@ -988,10 +998,38 @@ class FetchingService {
 
   async getAccountPosts(
     accountName: string,
-    limit: number = 20
+    limit: number = 20,
+    sort: "posts" | "comments" | "blog" | "replies" = "posts",
+    // Cursor is the last entry of the previous page, which bridge repeats as
+    // the first entry of the next one.
+    cursor?: { author: string; permlink: string }
   ): Promise<Hive.AccountPostSummary[]> {
     return await this.extendedHiveChain!.api.bridge.get_account_posts({
-      sort: "posts",
+      sort,
+      account: accountName,
+      limit: Math.min(limit, config.bridgePageMax),
+      ...(cursor
+        ? { start_author: cursor.author, start_permlink: cursor.permlink }
+        : {}),
+    });
+  }
+
+  async getAccountTopPosts(
+    accountName: string,
+    limit: number = 10
+  ): Promise<Hive.AccountPostSummary[]> {
+    return await this.extendedHiveChain!.api.bridge.get_account_posts({
+      sort: "payout",
+      account: accountName,
+      limit: Math.min(limit, config.bridgePageMax),
+    });
+  }
+
+  async getAccountNotifications(
+    accountName: string,
+    limit: number = 50
+  ): Promise<Hive.AccountNotification[]> {
+    return await this.extendedHiveChain!.api.bridge.account_notifications({
       account: accountName,
       limit,
     });
@@ -1199,6 +1237,40 @@ class FetchingService {
         from_date: fromDate,
         to_date: toDate,
       })
+    );
+  }
+
+  async getAccountInteractions(
+    account: string,
+    fromDate?: string | Date | number,
+    toDate?: string | Date | number,
+    topN?: number,
+    typeFilter?: Hive.AccountInteractionType
+  ): Promise<Hive.AccountInteractionRow[]> {
+    return this.withNodeSupport("haf-stats-api:account-interactions", () =>
+      this.extendedHiveChain!.restApi["haf-stats-api"].accountInteractions({
+        account,
+        from_date: fromDate,
+        to_date: toDate,
+        top_n: topN,
+        type_filter: typeFilter,
+      })
+    );
+  }
+
+  async getAccountCommunityActivity(
+    account: string,
+    fromDate?: string | Date | number,
+    toDate?: string | Date | number
+  ): Promise<Hive.AccountCommunityActivityRow[]> {
+    return this.withNodeSupport("haf-stats-api:community-activity", () =>
+      this.extendedHiveChain!.restApi["haf-stats-api"].accountCommunityActivity(
+        {
+          account,
+          from_date: fromDate,
+          to_date: toDate,
+        }
+      )
     );
   }
 

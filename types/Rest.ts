@@ -341,6 +341,18 @@ export const extendedRest = {
       result: Hive.AccountDappFootprintResponse,
       urlPath: "account/{account}/dapp-footprint",
     },
+    accountInteractions: {
+      params: Hive.AccountInteractionsParams,
+      result: Hive.AccountInteractionRow,
+      responseArray: true,
+      urlPath: "account/{account}/interactions",
+    },
+    accountCommunityActivity: {
+      params: Hive.AccountCommunityActivityParams,
+      result: Hive.AccountCommunityActivityRow,
+      responseArray: true,
+      urlPath: "account/{account}/community-activity",
+    },
     accountRcFootprint: {
       params: Hive.AccountRcFootprintParams,
       result: Hive.AccountRcFootprintRow,

@@ -5,15 +5,23 @@ import TimeAgo from "timeago-react";
 import { Activity } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/hybrid-tooltip";
 import { useAuth } from "@/contexts/AuthContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import useAccountOperations from "@/hooks/api/accountPage/useAccountOperations";
 import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
+import { opTypeIdsByName } from "@/utils/OperationTypes";
 import useOperationsFormatter from "@/hooks/common/useOperationsFormatter";
 import { getOperationColor } from "@/components/OperationsTable";
 import { getOperationTypeForDisplay } from "@/utils/UI";
 import WidgetLoggedOut from "@/components/dashboard/widgets/common/WidgetLoggedOut";
 import { useI18n } from "@/i18n/i18n";
+import { parseChainDate } from "@/utils/TimeUtils";
 import { cn } from "@/lib/utils";
 
 const CATEGORY_FEED_SIZE: Record<string, number> = { all: 50 };
@@ -111,22 +119,16 @@ const MyRecentActivityWidget: React.FC = () => {
   const [lastFetchedAt, setLastFetchedAt] = useState<Date | null>(null);
 
   const { operationsTypes } = useOperationsTypes();
-  const opTypeIdsByCategory = useMemo(() => {
-    const idsForNames = (names: Set<string>): number[] => {
-      const ids: number[] = [];
-      operationsTypes?.forEach((t) => {
-        if (names.has(t.operation_name)) ids.push(t.op_type_id);
-      });
-      return ids;
-    };
-    return {
+  const opTypeIdsByCategory = useMemo(
+    () => ({
       all: null as number[] | null,
-      transfers: idsForNames(TRANSFER_OPS),
-      votes: idsForNames(VOTE_OPS),
-      rewards: idsForNames(REWARD_OPS),
-      witness: idsForNames(WITNESS_OPS),
-    };
-  }, [operationsTypes]);
+      transfers: opTypeIdsByName(operationsTypes, TRANSFER_OPS),
+      votes: opTypeIdsByName(operationsTypes, VOTE_OPS),
+      rewards: opTypeIdsByName(operationsTypes, REWARD_OPS),
+      witness: opTypeIdsByName(operationsTypes, WITNESS_OPS),
+    }),
+    [operationsTypes]
+  );
 
   const operationTypesForFetch = opTypeIdsByCategory[activeCategory];
   const isCatalogReady = !!operationsTypes;
@@ -237,7 +239,7 @@ const MyRecentActivityWidget: React.FC = () => {
         return b.op_pos - a.op_pos;
       })
       .slice(0, FEED_SIZE);
-  }, [opsMap, needsBackfill, backfillData]);
+  }, [opsMap, needsBackfill, backfillData, FEED_SIZE]);
 
   const formattedOps =
     (useOperationsFormatter(sortedOps) as OpRow[] | undefined) ?? sortedOps;
@@ -255,173 +257,192 @@ const MyRecentActivityWidget: React.FC = () => {
 
   const recentCount = recentCountData?.total_operations ?? 0;
 
+  // One provider for the whole feed: a per-tooltip provider would mean dozens
+  // of them in a 50-row list.
   return (
-    <Card className="col-span-12 lg:col-span-3 overflow-hidden mb-2 h-full flex flex-col">
-      <CardHeaderWithLink
-        className="flex-shrink-0"
-        href={`/@${username}`}
-        title={
-          <span className="flex items-center gap-2 min-w-0">
-            <span className="truncate">
-              {t("widgets.myRecentActivityName")}
-            </span>
-            {newOpsCount > 0 && (
-              <span
-                className="text-[0.6rem] font-medium px-1.5 py-0.5 rounded-full bg-primary/15 text-primary animate-pulse whitespace-nowrap"
-                aria-live="polite"
-              >
-                {t("widgets.myRecentActivityNewOps", {
-                  count: String(newOpsCount),
-                })}
+    <TooltipProvider>
+      <Card className="col-span-12 lg:col-span-3 overflow-hidden mb-2 h-full flex flex-col">
+        <CardHeaderWithLink
+          className="flex-shrink-0"
+          href={`/@${username}`}
+          title={
+            <span className="flex items-center gap-2 min-w-0">
+              <span className="truncate">
+                {t("widgets.myRecentActivityName")}
               </span>
-            )}
-          </span>
-        }
-      />
-
-      <div className="px-2 pt-2 flex-shrink-0">
-        <div className="flex gap-1 flex-wrap">
-          {FILTER_CHIPS.map(({ key, labelKey }) => (
-            <button
-              key={key}
-              type="button"
-              onClick={() => setActiveCategory(key)}
-              className={cn(
-                "text-[0.6rem] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full transition-colors",
-                activeCategory === key
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
+              {newOpsCount > 0 && (
+                <span
+                  className="text-[0.6rem] font-medium px-1.5 py-0.5 rounded-full bg-primary/15 text-primary animate-pulse whitespace-nowrap"
+                  aria-live="polite"
+                >
+                  {t("widgets.myRecentActivityNewOps", {
+                    count: String(newOpsCount),
+                  })}
+                </span>
               )}
-            >
-              {t(labelKey)}
-            </button>
-          ))}
-        </div>
-      </div>
+            </span>
+          }
+        />
 
-      <CardContent className="px-2 pt-2 pb-2 flex-1 min-h-0 overflow-y-auto">
-        {isAccountOperationsLoading && opsMap.size === 0 ? (
-          <div className="space-y-1.5">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <div
-                key={i}
-                className="h-9 animate-pulse rounded bg-slate-100 dark:bg-slate-800"
-              />
+        <div className="px-2 pt-2 flex-shrink-0">
+          <div className="flex gap-1 flex-wrap">
+            {FILTER_CHIPS.map(({ key, labelKey }) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setActiveCategory(key)}
+                className={cn(
+                  "text-[0.6rem] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full transition-colors",
+                  activeCategory === key
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
+                )}
+              >
+                {t(labelKey)}
+              </button>
             ))}
           </div>
-        ) : filteredOps.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-6 text-center gap-2">
-            <Activity className="h-7 w-7 opacity-20" />
-            <p className="text-xs text-muted-foreground">
-              {t("widgets.myRecentActivityEmpty")}
-            </p>
-          </div>
-        ) : (
-          <>
-            <ul className="space-y-0.5">
-              {filteredOps.map((op) => {
-                const type = op.op?.type ?? "";
-                const dotClass = getOperationColor(type) || "bg-slate-400";
-                const label = formatOpName(type);
-                const detail = extractDetail(op.op?.value);
-                const absoluteDate = new Date(
-                  op.timestamp + "Z"
-                ).toLocaleString(locale);
-                const trxShort = op.trx_id ? op.trx_id.slice(0, 8) : null;
-                const params = new URLSearchParams();
-                if (op.trx_id) params.append("trxId", op.trx_id);
-                if (op.operation_id !== undefined)
-                  params.append("opId", String(op.operation_id));
-                const href = `/block/${op.block}${
-                  params.toString() ? `?${params.toString()}` : ""
-                }`;
-                const isNew = newOpIds.has(String(op.operation_id));
-                const handleRowClick = (e: React.MouseEvent<HTMLLIElement>) => {
-                  if ((e.target as HTMLElement).closest("a")) return;
-                  router.push(href);
-                };
-                return (
-                  <li
-                    key={op.operation_id}
-                    onClick={handleRowClick}
-                    className={cn(
-                      "flex items-start gap-2 px-2 py-1.5 rounded cursor-pointer transition-colors",
-                      isNew
-                        ? "bg-amber-50 dark:bg-amber-950/20 ring-1 ring-amber-300/60 dark:ring-amber-700/40 animate-pulse"
-                        : "hover:bg-slate-50 dark:hover:bg-slate-800/50"
-                    )}
-                  >
-                    <span
-                      className={`h-1.5 w-1.5 mt-1.5 rounded-full flex-shrink-0 ${dotClass}`}
-                      aria-hidden
-                    />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
-                        <Link
-                          href={href}
-                          className="text-xs font-medium text-link hover:underline truncate"
-                        >
-                          {label}
-                        </Link>
-                        {trxShort && (
+        </div>
+
+        <CardContent className="px-2 pt-2 pb-2 flex-1 min-h-0 overflow-y-auto">
+          {isAccountOperationsLoading && opsMap.size === 0 ? (
+            <div className="space-y-1.5">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="h-9 animate-pulse rounded bg-slate-100 dark:bg-slate-800"
+                />
+              ))}
+            </div>
+          ) : filteredOps.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-6 text-center gap-2">
+              <Activity className="h-7 w-7 opacity-20" />
+              <p className="text-xs text-muted-foreground">
+                {t("widgets.myRecentActivityEmpty")}
+              </p>
+            </div>
+          ) : (
+            <>
+              <ul className="space-y-0.5">
+                {filteredOps.map((op) => {
+                  const type = op.op?.type ?? "";
+                  const dotClass = getOperationColor(type) || "bg-slate-400";
+                  const label = formatOpName(type);
+                  const detail = extractDetail(op.op?.value);
+                  const created = parseChainDate(op.timestamp);
+                  const absoluteDate = created?.toLocaleString(locale) ?? "";
+                  const trxShort = op.trx_id ? op.trx_id.slice(0, 8) : null;
+                  const params = new URLSearchParams();
+                  if (op.trx_id) params.append("trxId", op.trx_id);
+                  if (op.operation_id !== undefined)
+                    params.append("opId", String(op.operation_id));
+                  const href = `/block/${op.block}${
+                    params.toString() ? `?${params.toString()}` : ""
+                  }`;
+                  const isNew = newOpIds.has(String(op.operation_id));
+                  const handleRowClick = (
+                    e: React.MouseEvent<HTMLLIElement>
+                  ) => {
+                    if ((e.target as HTMLElement).closest("a")) return;
+                    router.push(href);
+                  };
+                  return (
+                    <li
+                      key={op.operation_id}
+                      onClick={handleRowClick}
+                      className={cn(
+                        "flex items-start gap-2 px-2 py-1.5 rounded cursor-pointer transition-colors",
+                        isNew
+                          ? "bg-amber-50 dark:bg-amber-950/20 ring-1 ring-amber-300/60 dark:ring-amber-700/40 animate-pulse"
+                          : "hover:bg-slate-50 dark:hover:bg-slate-800/50"
+                      )}
+                    >
+                      <span
+                        className={`h-1.5 w-1.5 mt-1.5 rounded-full flex-shrink-0 ${dotClass}`}
+                        aria-hidden
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5 min-w-0 flex-wrap">
                           <Link
                             href={href}
-                            className="font-mono text-[0.55rem] tracking-tight text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-1 py-px rounded hover:text-primary transition-colors flex-shrink-0"
-                            title={op.trx_id}
+                            className="text-xs font-medium text-link hover:underline truncate"
                           >
-                            {trxShort}
+                            {label}
                           </Link>
-                        )}
-                        <span
-                          className="font-mono text-[0.55rem] tracking-tight text-slate-400 dark:text-slate-500 flex-shrink-0"
-                          title={`Block ${op.block}`}
-                        >
-                          #{op.block.toLocaleString()}
-                        </span>
-                      </div>
-                      {detail != null && (
-                        <div className="text-[0.65rem] text-slate-500 dark:text-slate-400 break-words line-clamp-2">
-                          {detail}
+                          {trxShort && (
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Link
+                                  href={href}
+                                  className="font-mono text-[0.55rem] tracking-tight text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-1 py-px rounded hover:text-primary transition-colors flex-shrink-0"
+                                >
+                                  {trxShort}
+                                </Link>
+                              </TooltipTrigger>
+                              <TooltipContent className="font-mono text-xs">
+                                {op.trx_id}
+                              </TooltipContent>
+                            </Tooltip>
+                          )}
+                          {/* No tooltip: it would only restate the number shown. */}
+                          <span className="font-mono text-[0.55rem] tracking-tight text-slate-400 dark:text-slate-500 flex-shrink-0">
+                            #{op.block.toLocaleString(locale)}
+                          </span>
                         </div>
+                        {detail != null && (
+                          <div className="text-[0.65rem] text-slate-500 dark:text-slate-400 break-words line-clamp-2">
+                            {detail}
+                          </div>
+                        )}
+                      </div>
+                      {created && (
+                        <Tooltip>
+                          {/* A span, not TimeAgo itself: asChild needs a ref the
+                            third-party component does not forward. */}
+                          <TooltipTrigger asChild>
+                            <span className="text-[0.6rem] text-slate-400 dark:text-slate-500 flex-shrink-0 whitespace-nowrap mt-0.5">
+                              <TimeAgo locale={locale} datetime={created} />
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent>{absoluteDate}</TooltipContent>
+                        </Tooltip>
                       )}
-                    </div>
-                    <TimeAgo
-                      className="text-[0.6rem] text-slate-400 dark:text-slate-500 flex-shrink-0 whitespace-nowrap mt-0.5"
-                      locale={locale}
-                      datetime={op.timestamp + "Z"}
-                      title={absoluteDate}
-                    />
-                  </li>
-                );
-              })}
-            </ul>
-          </>
-        )}
-      </CardContent>
-
-      {recentCount > 0 && (
-        <div className="border-t bg-background px-2 py-1.5 flex-shrink-0 text-[0.6rem] text-slate-400 dark:text-slate-500 flex items-center justify-center gap-1.5 flex-wrap">
-          <span>
-            {t("widgets.myRecentActivityFooter", {
-              shown: String(formattedOps.length),
-              total: recentCount.toLocaleString(),
-            })}
-          </span>
-          {lastFetchedAt && (
-            <>
-              <span aria-hidden>·</span>
-              <span
-                className="inline-flex items-center gap-1 whitespace-nowrap"
-                title={lastFetchedAt.toLocaleString(locale)}
-              >
-                {t("widgets.myRecentActivityUpdated")}
-                <TimeAgo locale={locale} datetime={lastFetchedAt} />
-              </span>
+                    </li>
+                  );
+                })}
+              </ul>
             </>
           )}
-        </div>
-      )}
-    </Card>
+        </CardContent>
+
+        {recentCount > 0 && (
+          <div className="border-t bg-background px-2 py-1.5 flex-shrink-0 text-[0.6rem] text-slate-400 dark:text-slate-500 flex items-center justify-center gap-1.5 flex-wrap">
+            <span>
+              {t("widgets.myRecentActivityFooter", {
+                shown: String(formattedOps.length),
+                total: recentCount.toLocaleString(locale),
+              })}
+            </span>
+            {lastFetchedAt && (
+              <>
+                <span aria-hidden>·</span>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span className="inline-flex items-center gap-1 whitespace-nowrap">
+                      {t("widgets.myRecentActivityUpdated")}
+                      <TimeAgo locale={locale} datetime={lastFetchedAt} />
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    {lastFetchedAt.toLocaleString(locale)}
+                  </TooltipContent>
+                </Tooltip>
+              </>
+            )}
+          </div>
+        )}
+      </Card>
+    </TooltipProvider>
   );
 };
 

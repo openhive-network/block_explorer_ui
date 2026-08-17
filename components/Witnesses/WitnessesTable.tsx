@@ -36,6 +36,8 @@ import Hive from "@/types/Hive";
 import { IHiveChainInterface } from "@hiveio/wax";
 import WitnessVoteButton from "./WitnessVoteButton";
 import SetProxyButton from "./SetProxyButton";
+import CompareSelectToggle from "@/components/compare/CompareSelectToggle";
+import { CompareSelection } from "@/hooks/common/useCompareSelection";
 
 interface TableCellConfig {
   displayKey: string;
@@ -60,15 +62,27 @@ const TABLE_CELL_CONFIGS: TableCellConfig[] = [
     sortKey: "last block produced",
     isUnsortable: true,
   },
-  { displayKey: "witnesses.blocksize", sortKey: "block size", isRightAligned: true },
+  {
+    displayKey: "witnesses.blocksize",
+    sortKey: "block size",
+    isRightAligned: true,
+  },
   {
     displayKey: "witnesses.apr",
     sortKey: "apr",
     isRightAligned: true,
     isUnsortable: true,
   },
-  { displayKey: "witnesses.pricefeed", sortKey: "price feed", isRightAligned: true },
-  { displayKey: "witnesses.feedage", sortKey: "feed age", isRightAligned: true },
+  {
+    displayKey: "witnesses.pricefeed",
+    sortKey: "price feed",
+    isRightAligned: true,
+  },
+  {
+    displayKey: "witnesses.feedage",
+    sortKey: "feed age",
+    isRightAligned: true,
+  },
   {
     displayKey: "witnesses.acfee",
     sortKey: "ac fee",
@@ -124,6 +138,7 @@ interface WitnessesTableProps {
   onOpenVoters: (witnessName: string) => void;
   onOpenVotesHistory: (witnessName: string) => void;
   onVoteChange: (witnessName: string, voted: boolean) => void;
+  compareSelection?: CompareSelection;
 }
 
 const WitnessesTable: React.FC<WitnessesTableProps> = ({
@@ -138,6 +153,7 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
   onOpenVoters,
   onOpenVotesHistory,
   onVoteChange,
+  compareSelection,
 }) => {
   const { t, locale } = useI18n();
 
@@ -207,8 +223,7 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
               {
                 "opacity-50 dark:opacity-45 line-through":
                   singleWitness.signing_key === config.inactiveWitnessKey,
-                "font-bold":
-                  singleWitness.rank && singleWitness.rank <= 20,
+                "font-bold": singleWitness.rank && singleWitness.rank <= 20,
               }
             )}
           >
@@ -243,6 +258,18 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
                     <LinkIcon className="h-4 w-4" />
                   </Link>
                 )}
+                {compareSelection && (
+                  <span className="ms-2">
+                    <CompareSelectToggle
+                      account={singleWitness.witness_name}
+                      selected={compareSelection.isSelected(
+                        singleWitness.witness_name
+                      )}
+                      onToggle={compareSelection.toggle}
+                      t={t}
+                    />
+                  </span>
+                )}
               </div>
             </TableCell>
 
@@ -252,7 +279,9 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <span className="cursor-pointer">
-                        {hiveChain && totalVestingFundHive && totalVestingShares ? (
+                        {hiveChain &&
+                        totalVestingFundHive &&
+                        totalVestingShares ? (
                           formatHp(
                             convertVestsToHP(
                               hiveChain,
@@ -268,7 +297,8 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
                     </TooltipTrigger>
                     <TooltipContent className="text-left">
                       <p>
-                        {t("common.vests")}: {formatNumber(singleWitness.vests || 0, true)}
+                        {t("common.vests")}:{" "}
+                        {formatNumber(singleWitness.vests || 0, true)}
                       </p>
                     </TooltipContent>
                   </Tooltip>
@@ -287,7 +317,9 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
                           )}
                         >
                           {singleWitness.votes_daily_change > 0 ? "+" : ""}
-                          {hiveChain && totalVestingFundHive && totalVestingShares ? (
+                          {hiveChain &&
+                          totalVestingFundHive &&
+                          totalVestingShares ? (
                             formatHp(
                               convertVestsToHP(
                                 hiveChain,
@@ -303,7 +335,10 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
                       </TooltipTrigger>
                       <TooltipContent className="text-left">
                         {t("common.vestsChange")}:{" "}
-                        {formatNumber(singleWitness.votes_daily_change || 0, true)}
+                        {formatNumber(
+                          singleWitness.votes_daily_change || 0,
+                          true
+                        )}
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>

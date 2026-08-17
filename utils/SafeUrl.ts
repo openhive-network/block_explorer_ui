@@ -1,3 +1,8 @@
+const URL_IGNORED = /[\t\n\r]/g;
+
+export const isInAppPath = (url: unknown): url is string =>
+  typeof url === "string" && /^\/(?![/\\])/.test(url.replace(URL_IGNORED, ""));
+
 /**
  * Returns the URL as a string if it parses as http(s), otherwise null.
  * Used to gate user-supplied URLs (dashboard widgets, embeds) before

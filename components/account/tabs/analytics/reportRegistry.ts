@@ -6,12 +6,16 @@ import {
   Newspaper,
   Gauge,
   Coins,
+  Waypoints,
+  LayoutGrid,
 } from "lucide-react";
 import InfluenceMapReport from "./InfluenceMapReport";
 import ContentActivityReport from "./contentActivity/ContentActivityReport";
 import RcFootprintReport from "./RcFootprintReport";
 import RcConsumptionReport from "./rcConsumption/RcConsumptionReport";
 import FinancialSummaryReport from "./FinancialSummaryReport";
+import SocialInteractionsReport from "./SocialInteractionsReport";
+import CommunityActivityReport from "./CommunityActivityReport";
 import type { WidgetNodeSupport } from "@/components/dashboard/lib/widgetNodeSupport";
 export interface BaseReportProps {
   accountName: string;
@@ -95,6 +99,28 @@ export const reportRegistry: ReportRegistry = {
     nodeSupport: {
       app: "haf-stats-api",
       endpoint: "haf-stats-api:financial-summary",
+    },
+  },
+  socialInteractions: {
+    component: SocialInteractionsReport,
+    titleKey: "analyticsDashboard.socialInteractionsReportTitle",
+    descriptionKey: "analyticsDashboard.socialInteractionsReportDesc",
+    icon: Waypoints,
+    dataMap: {},
+    nodeSupport: {
+      app: "haf-stats-api",
+      endpoint: "haf-stats-api:account-interactions",
+    },
+  },
+  communityActivity: {
+    component: CommunityActivityReport,
+    titleKey: "analyticsDashboard.communityActivityReportTitle",
+    descriptionKey: "analyticsDashboard.communityActivityReportDesc",
+    icon: LayoutGrid,
+    dataMap: {},
+    nodeSupport: {
+      app: "haf-stats-api",
+      endpoint: "haf-stats-api:community-activity",
     },
   },
   // Other reports would go here

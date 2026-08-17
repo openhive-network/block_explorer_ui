@@ -1,8 +1,11 @@
-// components/dashboard/widgets/TitleWidget.tsx
+import { useState, useEffect } from "react";
+import { useI18n } from "@/i18n/i18n";
+import { Palette } from "lucide-react";
 
-import { useState, useEffect } from 'react';
-import { useI18n } from '@/i18n/i18n';
-import { Palette } from 'lucide-react';
+// The picker only emits #rrggbb; anything else came from a restored bundle.
+const HEX_COLOR = /^#[0-9a-fA-F]{6}$/;
+const safeColor = (value?: string): string | undefined =>
+  value && value !== "transparent" && HEX_COLOR.test(value) ? value : undefined;
 
 interface TitleWidgetProps {
   initialText?: string;
@@ -21,41 +24,55 @@ const TitleWidget: React.FC<TitleWidgetProps> = ({
 }) => {
   const { t } = useI18n();
 
-  const [text, setText] = useState(initialText || t('titleWidget.defaultText'));
-  const [color, setColor] = useState(initialColor && initialColor !== 'transparent' ? initialColor : '#ffffff');
+  const [text, setText] = useState(initialText || t("titleWidget.defaultText"));
+  const [color, setColor] = useState(safeColor(initialColor) ?? "#ffffff");
 
   useEffect(() => {
-    setText(initialText || t('titleWidget.defaultText'));
+    setText(initialText || t("titleWidget.defaultText"));
   }, [initialText, t]);
 
   useEffect(() => {
-    setColor(initialColor && initialColor !== 'transparent' ? initialColor : '#ffffff');
+    setColor(safeColor(initialColor) ?? "#ffffff");
   }, [initialColor]);
 
-  const handleTextBlur = () => { onTextChange(text); };
-  const handleColorChange = (newColor: string) => { setColor(newColor); onColorChange(newColor); };
-  const handleIconClick = () => { const newColor = initialColor && initialColor !== 'transparent' ? 'transparent' : '#ffffff'; setColor(newColor); onColorChange(newColor); };
+  const handleTextBlur = () => {
+    onTextChange(text);
+  };
+  const handleColorChange = (newColor: string) => {
+    setColor(newColor);
+    onColorChange(newColor);
+  };
+  const handleIconClick = () => {
+    const newColor = safeColor(initialColor) ? "transparent" : "#ffffff";
+    setColor(newColor);
+    onColorChange(newColor);
+  };
+
+  const shell =
+    "flex items-center gap-3 w-full h-full px-4 rounded-xl bg-theme border border-gray-200 dark:border-gray-700";
+  const customColor = safeColor(initialColor);
+  const accent = (
+    <span className="h-6 w-1 shrink-0 rounded-full bg-indigo-500" />
+  );
 
   if (isEditMode) {
     return (
-      <div
-        className="flex items-center w-full h-full p-2 rounded-md"
-        style={{ backgroundColor: initialColor || 'transparent' }}
-      >
+      <div className={shell} style={{ backgroundColor: customColor }}>
+        {accent}
         <input
           type="text"
           value={text}
           onChange={(e) => setText(e.target.value)}
           onBlur={handleTextBlur}
-          className="flex-grow h-full text-2xl font-bold bg-transparent focus:bg-white/20 outline-none rounded-md px-2"
-          placeholder={t('titleWidget.placeholder')}
+          className="flex-grow h-full text-2xl font-bold tracking-tight bg-transparent focus:bg-black/5 dark:focus:bg-white/10 outline-none rounded-md px-2"
+          placeholder={t("titleWidget.placeholder")}
           onMouseDown={(e) => e.stopPropagation()}
         />
 
         <div
-          className="absolute top-2 right-10 flex items-center justify-center w-8 h-8" // Use `right-8` to create space
+          className="absolute top-2 end-10 flex items-center justify-center w-8 h-8"
           onMouseDown={(e) => e.stopPropagation()}
-          title={t('titleWidget.colorTooltip')}
+          title={t("titleWidget.colorTooltip")}
         >
           <Palette
             className="w-6 h-6 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 cursor-pointer"
@@ -74,12 +91,10 @@ const TitleWidget: React.FC<TitleWidgetProps> = ({
 
   // View Mode
   return (
-    <div
-      className="w-full h-full flex items-center p-2 rounded-[4px]"
-      style={{ backgroundColor: initialColor || 'transparent' }}
-    >
-      <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-200 truncate px-2">
-        {text || t('titleWidget.defaultText')}
+    <div className={shell} style={{ backgroundColor: customColor }}>
+      {accent}
+      <h2 className="text-2xl font-bold tracking-[-0.02em] text-gray-900 dark:text-white truncate">
+        {text || t("titleWidget.defaultText")}
       </h2>
     </div>
   );

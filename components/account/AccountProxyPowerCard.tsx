@@ -9,6 +9,9 @@ import {
   ChevronLeft,
   ChevronRight,
   ChevronsUpDown,
+  Zap,
+  Users,
+  Crown,
 } from "lucide-react";
 
 import { useI18n } from "@/i18n/i18n";
@@ -118,6 +121,38 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
 
   const isLastPage = accountProxyPower.length < PROXY_POWER_PAGE_SIZE;
   const showPagination = currentPage > 1 || !isLastPage;
+  const isCompleteTotal = currentPage === 1 && isLastPage;
+
+  // BigInt, not parseFloat: raw vests overflow the exact range of a double.
+  const rawVests = (v: unknown): bigint =>
+    BigInt(String(v).split(".")[0] || "0");
+  const totalProxiedVests = accountProxyPower.reduce(
+    (sum, p) => sum + rawVests(p.proxied_vests),
+    BigInt(0)
+  );
+
+  const formatPower = (vests: bigint | string): string => {
+    const value = String(vests);
+    if (!isHP) return `${formatNumber(value, true)} VESTS`;
+    return hiveChain && dynamicGlobalData?.headBlockDetails
+      ? convertVestsToHP(
+          hiveChain,
+          value,
+          dynamicGlobalData.headBlockDetails.rawTotalVestingFundHive,
+          dynamicGlobalData.headBlockDetails.rawTotalVestingShares
+        )
+      : "";
+  };
+
+  const largest = accountProxyPower.reduce((top, p) =>
+    rawVests(p.proxied_vests) > rawVests(top.proxied_vests) ? p : top
+  );
+  const largestSharePct =
+    totalProxiedVests > BigInt(0)
+      ? Number(
+          (rawVests(largest.proxied_vests) * BigInt(1000)) / totalProxiedVests
+        ) / 10
+      : 0;
 
   const renderSortIcon = (columnKey: keyof Hive.ProxyPowerResponse) => {
     if (sortConfig.key === columnKey) {
@@ -155,6 +190,36 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
         </div>
       </CardHeader>
       <CardContent hidden={isPropertiesHidden} className="p-0">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 p-3">
+          <KpiTile
+            icon={<Zap size={14} className="text-explorer-orange" />}
+            label={
+              isCompleteTotal
+                ? t("accountProxyPowerCard.total")
+                : t("accountProxyPowerCard.totalPage")
+            }
+            value={formatPower(totalProxiedVests)}
+          />
+          <KpiTile
+            icon={<Users size={14} />}
+            label={t("accountProxyPowerCard.accounts")}
+            value={accountProxyPower.length.toLocaleString()}
+          />
+          <KpiTile
+            icon={<Crown size={14} />}
+            label={
+              isCompleteTotal
+                ? t("accountProxyPowerCard.largest")
+                : t("accountProxyPowerCard.largestPage")
+            }
+            value={formatPower(largest.proxied_vests)}
+            sub={`@${largest.account} · ${t(
+              isCompleteTotal
+                ? "accountProxyPowerCard.shareOfTotal"
+                : "accountProxyPowerCard.shareOfPage"
+            ).replace("{pct}", largestSharePct.toFixed(1))}`}
+          />
+        </div>
         <div className="flex items-center justify-between space-x-4 p-2 border-b">
           {showPagination ? (
             <div className="flex items-center space-x-1 my-2">
@@ -268,5 +333,23 @@ const AccountProxyPowerCard: React.FC<AccountProxyPowerCardProps> = ({
     </Card>
   );
 };
+
+const KpiTile: React.FC<{
+  label: string;
+  value: React.ReactNode;
+  sub?: string;
+  icon?: React.ReactNode;
+}> = ({ label, value, sub, icon }) => (
+  <div className="rounded-md border border-gray-200 dark:border-gray-700 bg-theme px-3 py-2 shadow-sm">
+    <div className="text-[11px] text-gray-500 dark:text-gray-400 mb-0.5 flex items-center gap-1 uppercase tracking-wide">
+      {icon}
+      <span>{label}</span>
+    </div>
+    <div className="text-sm font-semibold leading-tight">{value}</div>
+    {sub && (
+      <div className="text-[10px] text-gray-400 mt-0.5 break-words">{sub}</div>
+    )}
+  </div>
+);
 
 export default AccountProxyPowerCard;

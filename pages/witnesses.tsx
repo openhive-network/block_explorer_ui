@@ -20,6 +20,8 @@ import useWitnesses from "@/hooks/api/common/useWitnesses";
 import useWitnessVoteChain from "@/hooks/api/common/useWitnessVoteChain";
 import { useAuth } from "@/contexts/AuthContext";
 import VoterFilterBanner from "@/components/Witnesses/VoterFilterBanner";
+import useCompareSelection from "@/hooks/common/useCompareSelection";
+import CompareSelectionBar from "@/components/compare/CompareSelectionBar";
 import WitnessesTable, {
   SORT_KEY_BY_CELL,
 } from "@/components/Witnesses/WitnessesTable";
@@ -47,6 +49,7 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
   const seoTitle = pageTitle(t("witnesses.title"));
   const router = useRouter();
   const queryClient = useQueryClient();
+  const compareSelection = useCompareSelection();
 
   // Handle a Hivesigner return — toast, invalidate caches, scroll to the row.
   useEffect(() => {
@@ -402,6 +405,7 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
                     setIsVotesHistoryOpen(true);
                   }}
                   onVoteChange={handleVoteChange}
+                  compareSelection={compareSelection}
                 />
               </>
             ) : voterFilter ? (
@@ -432,6 +436,8 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
         <div className="fixed bottom-[10px] right-0 flex flex-col items-end justify-end px-3 md:px-12">
           <ScrollTopButton />
         </div>
+
+        <CompareSelectionBar selection={compareSelection} t={t} />
       </div>
     </>
   );

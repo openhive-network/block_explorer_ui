@@ -1400,6 +1400,24 @@ namespace Hive {
     pending_payout_value: string;
     depth: number;
     author: string;
+    // Present on bridge post payloads; optional for the caller above.
+    permlink?: string;
+    title?: string;
+    category?: string;
+    created?: string;
+    payout?: number;
+    net_votes?: number;
+    children?: number;
+    reblogged_by?: string[];
+  }
+
+  export interface AccountNotification {
+    id: number;
+    type: string;
+    score: number;
+    date: string;
+    msg: string;
+    url: string;
   }
 
   export class NetworkVoteStatsParams {
@@ -1633,6 +1651,43 @@ namespace Hive {
     top_category!: string | null;
     categories!: AccountDappFootprintCategory[];
     dapps!: AccountDappFootprintDapp[];
+  }
+
+  export type AccountInteractionType =
+    | "reply"
+    | "vote"
+    | "transfer"
+    | "reblog"
+    | "follow";
+
+  export class AccountInteractionsParams {
+    account!: string;
+    from_date?: string | Date | number;
+    to_date?: string | Date | number;
+    top_n?: number;
+    type_filter?: string;
+  }
+
+  export class AccountInteractionRow {
+    interaction_type!: AccountInteractionType;
+    partner!: string | null;
+    interaction_count!: number;
+    partner_rank!: number;
+    partners_merged!: number;
+    covered_from!: string;
+  }
+
+  export class AccountCommunityActivityParams {
+    account!: string;
+    from_date?: string | Date | number;
+    to_date?: string | Date | number;
+  }
+
+  export class AccountCommunityActivityRow {
+    community!: string | null;
+    title!: string;
+    post_count!: number;
+    comment_count!: number;
   }
 
   export class AccountRcFootprintParams {
