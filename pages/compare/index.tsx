@@ -10,7 +10,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   return {
     redirect: {
       destination: `/tools/compare${qs ? `?${qs}` : ""}`,
-      permanent: false,
+      permanent: true,
     },
   };
 };
