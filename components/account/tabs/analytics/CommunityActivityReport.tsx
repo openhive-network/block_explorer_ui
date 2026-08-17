@@ -606,6 +606,7 @@ const CommunityActivityReport: React.FC<
         ) : (
           <ReactECharts
             ref={chartRef}
+            opts={{ renderer: "svg" }}
             option={option}
             onEvents={onEvents}
             style={{ height: `${chartHeight}px`, width: "100%" }}

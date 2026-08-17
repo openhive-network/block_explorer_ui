@@ -1,7 +1,5 @@
 import React, { useMemo } from "react";
-import dynamic from "next/dynamic";
-
-const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
+import EChart from "@/components/ui/EChart";
 
 export interface TopAccountsChartItem {
   account: string;
@@ -109,7 +107,7 @@ const NetworkTopAccountsChart: React.FC<Props> = ({
   }, [data, unitLabel, isDark, textColor, gridColor, locale]);
 
   return (
-    <ReactECharts
+    <EChart
       option={option}
       style={{ height: "100%", width: "100%" }}
       notMerge

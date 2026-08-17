@@ -1,12 +1,10 @@
 import React, { useMemo } from "react";
-import dynamic from "next/dynamic";
+import EChart from "@/components/ui/EChart";
 import type { ECharts } from "echarts";
 import { Radar as RadarIcon } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { CompareSection } from "@/utils/compare/types";
 import { sectionStrength } from "@/utils/compare/scoring";
-
-const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
 const A_COLOR = "#ef4444"; // @a red
 const B_COLOR = "#3b82f6"; // @b blue
@@ -96,9 +94,9 @@ const CompareRadar: React.FC<CompareRadarProps> = ({ a, b, sections, t }) => {
         {t("compare.radar.subtitle")}
       </p>
       {/* Decorative: the same numbers live in the section Score pills and each
-          row's screen-reader text, so hide the canvas from assistive tech. */}
+          row's screen-reader text, so hide the chart from assistive tech. */}
       <div aria-hidden className="h-[300px] w-full">
-        <ReactECharts
+        <EChart
           option={option}
           onChartReady={(inst: ECharts) => inst.resize()}
           style={{ height: "100%", width: "100%" }}

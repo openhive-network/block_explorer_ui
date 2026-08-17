@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import ReactECharts from "echarts-for-react";
+import EChart from "@/components/ui/EChart";
 import moment from "moment";
 import { Loader2, Eye, EyeOff } from "lucide-react";
 import dynamic from "next/dynamic";
@@ -281,7 +281,7 @@ const NetworkOpMixCard: React.FC = () => {
             </p>
           ) : compactOption ? (
             <>
-              <ReactECharts
+              <EChart
                 option={compactOption}
                 style={{ width: "100%", height: "28px", display: "block" }}
                 notMerge={true}

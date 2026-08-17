@@ -1,12 +1,10 @@
 import React, { useMemo } from "react";
-import dynamic from "next/dynamic";
+import EChart from "@/components/ui/EChart";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useI18n } from "../../i18n/i18n";
 import Hive from "@/types/Hive";
 import { aggregateRcByOp, formatRc, formatOpLabel } from "./networkRcUtils";
 import { getOpHexColor, getContrastText } from "@/utils/operationColors";
-
-const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
 interface NetworkRcUtilizationTreemapProps {
   data: Hive.NetworkRcUtilizationResponse[] | undefined;
@@ -112,7 +110,7 @@ const NetworkRcUtilizationTreemap: React.FC<
   ]);
 
   return (
-    <ReactECharts
+    <EChart
       option={option}
       style={{ height: "100%", width: "100%" }}
       notMerge

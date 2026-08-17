@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import dynamic from "next/dynamic";
+import EChart from "@/components/ui/EChart";
 import moment from "moment";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useI18n } from "@/i18n/i18n";
@@ -12,9 +12,6 @@ import {
   periodFormat,
   periodFormatLong,
 } from "./contentActivityUtils";
-
-// Client-only, like the other analytics charts (SSR-safe on the home dashboard).
-const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
 export const COLORS = {
   posts: "#6366f1",
@@ -432,11 +429,10 @@ const ContentActivityChart: React.FC<ContentActivityChartProps> = ({
         ))}
       </div>
       <div className="min-h-0 flex-1">
-        <ReactECharts
+        <EChart
           option={option}
           notMerge={true}
           style={{ height: "100%", width: "100%" }}
-          opts={{ renderer: "canvas" }}
         />
       </div>
     </div>

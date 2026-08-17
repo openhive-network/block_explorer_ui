@@ -1,12 +1,10 @@
 import React, { useMemo } from "react";
 import moment from "moment";
-import dynamic from "next/dynamic";
+import EChart from "@/components/ui/EChart";
 import Hive from "@/types/Hive";
 import { useI18n } from "@/i18n/i18n";
 import { useTheme } from "@/contexts/ThemeContext";
 import { formatCompact } from "@/utils/chartUtils";
-
-const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
 export type HeatmapViewMode = "rates" | "counts";
 
@@ -375,16 +373,11 @@ const NetworkAuthorRetentionHeatmap: React.FC<
   return (
     <div style={{ width: "100%" }}>
       <div style={{ width: "100%", height: chartH }}>
-        <ReactECharts
+        <EChart
           key={locale}
           option={option}
           style={{ height: "100%", width: "100%" }}
           notMerge
-          opts={{
-            devicePixelRatio:
-              (typeof window !== "undefined" ? window.devicePixelRatio : 2) ||
-              2,
-          }}
         />
       </div>
       {showLegend && !compact && viewMode === "rates" && (
