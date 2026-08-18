@@ -17,7 +17,8 @@ const useAccountTopPosts = (
     isLoading,
     isError,
   } = useQuery<Hive.AccountPostSummary[]>({
-    queryKey: ["account_top_posts", accountName, limit, liveDataEnabled],
+    // Poll interval only — see useAccountNotifications.
+    queryKey: ["account_top_posts", accountName, limit],
     queryFn: async () => {
       // bridge ranks posts and comments together, so over-fetch then filter.
       const posts = await fetchingService.getAccountTopPosts(
@@ -28,6 +29,7 @@ const useAccountTopPosts = (
     },
     refetchInterval: liveDataEnabled ? config.contentRefreshInterval : false,
     refetchOnWindowFocus: false,
+    keepPreviousData: true,
     enabled: !!accountName,
   });
 

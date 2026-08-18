@@ -2449,6 +2449,8 @@
   "workspaceSync.diffRemoves": "削除",
   "workspaceSync.diffAdds": "追加",
   "workspaceSync.diffMore": "ほか{count}件",
+  "workspaceSync.diffUnreadable": "このデバイスのボードを読み取れなかったため、復元は利用できません。",
+  "workspaceSync.diffContentsDiffer": "一部のウィジェットの内容が異なります。",
   "workspaceSync.diffAlso": "その他の変更: {list}",
   "workspaceSync.diffLayout": "レイアウト",
   "workspaceSync.diffContent": "ウィジェットの内容",
