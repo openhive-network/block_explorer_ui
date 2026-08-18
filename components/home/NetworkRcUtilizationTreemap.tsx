@@ -34,13 +34,7 @@ const NetworkRcUtilizationTreemap: React.FC<
         name,
         value,
         itemStyle: { color },
-        label: {
-          color: labelColor,
-          textShadowColor:
-            labelColor === "#ffffff"
-              ? "rgba(0,0,0,0.55)"
-              : "rgba(255,255,255,0.6)",
-        },
+        label: { color: labelColor },
       };
     };
     const nodes = top.map((o) => makeNode(formatOpLabel(o.op), o.value, o.op));
@@ -84,7 +78,6 @@ const NetworkRcUtilizationTreemap: React.FC<
             fontSize: 11,
             lineHeight: 14,
             overflow: "truncate",
-            textShadowBlur: 2,
             formatter: (info: { name: string; value: number }) =>
               `${info.name}\n${pctOf(info.value).toLocaleString(locale, {
                 maximumFractionDigits: 1,
