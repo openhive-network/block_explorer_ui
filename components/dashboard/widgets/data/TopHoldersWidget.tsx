@@ -17,7 +17,7 @@ const FEED_SIZE = 10;
 const COINS: CoinType[] = ["HIVE", "HBD", "VESTS"];
 
 const TopHoldersWidget: React.FC = () => {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const { settings } = useSettings();
   const { hiveChain } = useHiveChainContext();
   const { dynamicGlobalData } = useDynamicGlobal() as any;
@@ -36,7 +36,7 @@ const TopHoldersWidget: React.FC = () => {
     dynamicGlobalData?.headBlockDetails?.rawTotalVestingFundHive;
   const unit = settings.displayVestHpMode === "hp" ? "hp" : "vests";
 
-  const formatBalance = (value: string): string => {
+  const formatRawBalance = (value: string): string => {
     if (!hiveChain) return value;
     if (coinType === "VESTS") {
       return unit === "hp" && totalVestingFundHive && totalVestingShares
@@ -55,6 +55,22 @@ const TopHoldersWidget: React.FC = () => {
       return hiveChain.formatter.format(hiveChain.hbd(value));
     }
     return value;
+  };
+
+  // Wax formats against the browser locale, so restate the number in the app one.
+  const formatBalance = (value: string): string => {
+    const formatted = formatRawBalance(value);
+    const [amount, ...unit] = formatted.split(" ");
+    const decimals = (amount.split(".")[1] ?? "").length;
+    const numeric = Number(amount.replace(/,/g, ""));
+    if (!Number.isFinite(numeric)) return formatted;
+    return [
+      numeric.toLocaleString(locale, {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
+      }),
+      ...unit,
+    ].join(" ");
   };
 
   const top = holdersData.slice(0, FEED_SIZE);
