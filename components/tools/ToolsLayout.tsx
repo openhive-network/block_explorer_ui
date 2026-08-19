@@ -76,7 +76,7 @@ const ToolsLayout: React.FC<ToolsLayoutProps> = ({ active, children }) => {
       </Head>
       <div className={cn(TOOLS_GUTTER)}>
         <div className="mb-3">
-          <PageTitle titleKey="tools.title" className="py-2" />
+          <PageTitle titleKey="tools.title" className="py-4 ml-6" />
         </div>
         <div className={TOOLS_ROW}>
           <nav
