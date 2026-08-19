@@ -58,9 +58,11 @@ const CurrentBlockCard: React.FC<CurrentBlockCardProps> = ({
           {t("currentBlockCard.currentBlock")}
         </span>
         {isLive ? (
-          <span className="text-explorer-red text-[11px] font-semibold whitespace-nowrap shrink-0">
-            {timeDifferenceInSeconds} {t("currentBlockCard.secsAgo")}
-          </span>
+          typeof timeDifferenceInSeconds === "number" ? (
+            <span className="text-explorer-red text-[11px] font-semibold whitespace-nowrap shrink-0">
+              {timeDifferenceInSeconds} {t("currentBlockCard.secsAgo")}
+            </span>
+          ) : null
         ) : (
           <TimeAgo
             locale={appLocale}
