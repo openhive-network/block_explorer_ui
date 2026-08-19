@@ -8,7 +8,7 @@ import { TOOLS, ToolDef } from "./toolsRegistry";
 
 // Shared with anything that lines up with the content column from outside the
 // flow (CompareHeader's sticky bar).
-export const TOOLS_GUTTER = "page-container px-2 sm:px-3";
+export const TOOLS_GUTTER = "page-container";
 export const TOOLS_ROW = "flex flex-col gap-3 lg:flex-row";
 export const TOOLS_RAIL_WIDTH = "lg:w-72 lg:flex-shrink-0";
 
@@ -74,7 +74,7 @@ const ToolsLayout: React.FC<ToolsLayoutProps> = ({ active, children }) => {
           {t("tools.title")}
         </title>
       </Head>
-      <div className={cn(TOOLS_GUTTER, "py-4")}>
+      <div className={cn(TOOLS_GUTTER)}>
         <div className="mb-3">
           <PageTitle titleKey="tools.title" className="py-2" />
         </div>
