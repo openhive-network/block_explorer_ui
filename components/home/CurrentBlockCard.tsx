@@ -53,7 +53,7 @@ const CurrentBlockCard: React.FC<CurrentBlockCardProps> = ({
       className="data-box relative flex flex-col w-full"
       style={{ padding: "6px 8px", margin: "3px 0" }}
     >
-      <div className="flex items-center justify-between gap-2 border-b pb-0.5">
+      <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-0.5 border-b pb-0.5">
         <span className="text-base font-medium">
           {t("currentBlockCard.currentBlock")}
         </span>
@@ -72,7 +72,7 @@ const CurrentBlockCard: React.FC<CurrentBlockCardProps> = ({
         )}
       </div>
 
-      <div className="flex justify-between items-center gap-2 mt-1">
+      <div className="flex flex-wrap justify-between items-center gap-x-2 gap-y-1 mt-1">
         <div className="flex items-center gap-1 shrink-0">
           <Box size={14} className="shrink-0" />
           <Link
@@ -113,7 +113,7 @@ const CurrentBlockCard: React.FC<CurrentBlockCardProps> = ({
         </div>
       </div>
 
-      <div className="flex items-center justify-between gap-2 mt-1.5 text-xs">
+      <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 mt-1.5 text-xs">
         <span className="inline-flex items-center gap-1">
           <Boxes size={13} className="opacity-70" />
           <span className="font-semibold tabular-nums">
