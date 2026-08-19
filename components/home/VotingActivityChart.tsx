@@ -15,6 +15,7 @@ import {
   Brush,
 } from "recharts";
 import { useI18n } from "@/i18n/i18n";
+import useMediaQuery from "@/hooks/common/useMediaQuery";
 import {
   ChartBrushDefs,
   useChartBrushDefaults,
@@ -214,6 +215,11 @@ const VotingActivityChart: React.FC<VotingActivityChartProps> = ({
   const { theme } = useTheme();
   const { t, dir, locale } = useI18n();
   const isRTL = dir === "rtl";
+  // Two Y axes plus margins reserve ~180px, which swallows half a phone screen.
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  const axisWidth = isMobile ? 40 : 52;
+  const outerMargin = isMobile ? 12 : 60;
+  const innerMargin = isMobile ? 4 : 16;
   const strokeColor = theme === "dark" ? "#FFF" : "#000";
   const brushDefaults = useChartBrushDefaults();
 
@@ -268,8 +274,8 @@ const VotingActivityChart: React.FC<VotingActivityChartProps> = ({
         data={chartData}
         margin={{
           top: 10,
-          right: isRTL ? 16 : 60,
-          left: isRTL ? 60 : 16,
+          right: isRTL ? innerMargin : outerMargin,
+          left: isRTL ? outerMargin : innerMargin,
           bottom: includeBrush ? 46 : 0,
         }}
       >
@@ -296,7 +302,7 @@ const VotingActivityChart: React.FC<VotingActivityChartProps> = ({
           style={{ fontSize: "10px" }}
           stroke={UP_COLOR}
           orientation={isRTL ? "right" : "left"}
-          width={52}
+          width={axisWidth}
           label={{
             value: t("votingActivityChart.upvotes"),
             angle: -90,
@@ -313,7 +319,7 @@ const VotingActivityChart: React.FC<VotingActivityChartProps> = ({
           style={{ fontSize: "10px" }}
           stroke={strokeColor}
           orientation={isRTL ? "left" : "right"}
-          width={52}
+          width={axisWidth}
           label={{
             value: t("votingActivityChart.othersAxisLabel"),
             angle: 90,
