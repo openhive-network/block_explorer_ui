@@ -245,7 +245,7 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [coinType, balanceType, minBalance, maxBalance, unit, page]);
 
-  const formatBalance = (value: string, coin: CoinType): string => {
+  const formatRawBalance = (value: string, coin: CoinType): string => {
     if (!hiveChain) return value;
 
     if (coin === "VESTS") {
@@ -261,6 +261,22 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
       return hiveChain.formatter.format(hiveChain.hbd(value));
     }
     return value;
+  };
+
+  // Wax formats against the browser locale, so restate the number in the app one.
+  const formatBalance = (value: string, coin: CoinType): string => {
+    const formatted = formatRawBalance(value, coin);
+    const [amount, ...unit] = formatted.split(" ");
+    const decimals = (amount.split(".")[1] ?? "").length;
+    const numeric = Number(amount.replace(/,/g, ""));
+    if (!Number.isFinite(numeric)) return formatted;
+    return [
+      numeric.toLocaleString(locale, {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals,
+      }),
+      ...unit,
+    ].join(" ");
   };
 
   const filterActive = minBalance !== undefined || maxBalance !== undefined;
