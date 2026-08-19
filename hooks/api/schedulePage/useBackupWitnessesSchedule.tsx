@@ -75,13 +75,10 @@ const buildBackupWitnessesSchedule = (
   const nextRound = new Set(futureShuffledWitnesses ?? []);
 
   // Elected seats carry over, so whoever is new to the next round is its backup.
-  const decidedNext = (futureShuffledWitnesses ?? [])
-    .filter((name) => !currentRound.has(name))
-    .sort(
-      (a, b) =>
-        (rankMap.get(b) ?? Number.MAX_SAFE_INTEGER) -
-        (rankMap.get(a) ?? Number.MAX_SAFE_INTEGER)
-    )[0];
+  // Only the timeshare seat rotates, so there is at most one such witness.
+  const decidedNext = (futureShuffledWitnesses ?? []).find(
+    (name) => !currentRound.has(name)
+  );
 
   // Taking a seat pushes a witness to the back, so both rounds are left out.
   const queue = witnessesByScheduleTime

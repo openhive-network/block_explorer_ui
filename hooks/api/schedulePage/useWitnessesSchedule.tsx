@@ -1,4 +1,4 @@
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import useHeadBlock from "../homePage/useHeadBlock";
 import useLastBlocks from "../homePage/useLastBlocks";
@@ -52,37 +52,80 @@ const useWitnessesSchedule = (
   }, [shuffledWitnesses, producerAccount]);
 
   // The block list cannot miss a block but trails the head, so both are merged.
-  const seenBlocks = useRef(new Map<string, number>());
-  const latestBlockByWitness = useMemo(() => {
-    const blocksByWitness = seenBlocks.current;
+  const [latestBlockByWitness, setLatestBlockByWitness] = useState(
+    () => new Map<string, number>()
+  );
 
-    const remember = (witness: string, block: number) => {
-      const knownBlock = blocksByWitness.get(witness);
+  useEffect(() => {
+    setLatestBlockByWitness((knownBlocks) => {
+      const blocksByWitness = new Map(knownBlocks);
+      let changed = false;
 
-      if (knownBlock === undefined || block > knownBlock) {
-        blocksByWitness.set(witness, block);
+      const remember = (witness: string, block: number) => {
+        const knownBlock = blocksByWitness.get(witness);
+
+        if (knownBlock === undefined || block > knownBlock) {
+          blocksByWitness.set(witness, block);
+          changed = true;
+        }
+      };
+
+      (lastBlocksData || []).forEach(({ witness, block_num }) =>
+        remember(witness, block_num)
+      );
+
+      if (producerAccount && blockNumber !== undefined) {
+        remember(producerAccount, blockNumber);
       }
-    };
 
-    (lastBlocksData || []).forEach(({ witness, block_num }) =>
-      remember(witness, block_num)
+      return changed ? blocksByWitness : knownBlocks;
+    });
+  }, [lastBlocksData, producerAccount, blockNumber]);
+
+  // Head minus index only holds if every earlier slot produced, so the round is
+  // walked back over the blocks that were actually produced instead.
+  const earliestBlockInRound = useMemo(() => {
+    if (
+      !shuffledWitnesses?.length ||
+      blockNumber === undefined ||
+      currentProducerIndex < 0
+    )
+      return null;
+
+    const witnessByBlock = new Map<number, string>(
+      (lastBlocksData || []).map(
+        ({ block_num, witness }): [number, string] => [block_num, witness]
+      )
     );
 
-    if (producerAccount && blockNumber !== undefined) {
-      remember(producerAccount, blockNumber);
+    // A round has one slot per witness, so it can span no more blocks than that.
+    const oldestPossibleBlock = blockNumber - shuffledWitnesses.length + 1;
+    let roundStart = blockNumber;
+    let previousIndex = currentProducerIndex;
+
+    for (let block = blockNumber - 1; block >= oldestPossibleBlock; block--) {
+      const witness = witnessByBlock.get(block);
+
+      // A block the list has not caught up with yet says nothing either way.
+      if (witness === undefined) continue;
+
+      const index = shuffledWitnesses.indexOf(witness);
+
+      // Slots only move forward within a round, so anything else is the one
+      // before it: a witness dropped from the schedule, or a repeated position.
+      if (index < 0 || index >= previousIndex) break;
+
+      previousIndex = index;
+      roundStart = block;
+
+      if (index === 0) break;
     }
 
-    return new Map(blocksByWitness);
-  }, [lastBlocksData, producerAccount, blockNumber]);
+    return roundStart;
+  }, [shuffledWitnesses, lastBlocksData, blockNumber, currentProducerIndex]);
 
   const scheduledWitnessesData = useMemo<WitnessScheduleTableData[]>(() => {
     if (!shuffledWitnesses?.length) return [];
-
-    // A missed slot produces no block, so this bounds the round from below.
-    const earliestBlockInRound =
-      blockNumber !== undefined && currentProducerIndex >= 0
-        ? blockNumber - currentProducerIndex
-        : null;
 
     return shuffledWitnesses.map((producerName: string, index: number) => {
       const producerRank =
@@ -117,6 +160,7 @@ const useWitnessesSchedule = (
     shuffledWitnesses,
     blockNumber,
     currentProducerIndex,
+    earliestBlockInRound,
     latestBlockByWitness,
   ]);
 
