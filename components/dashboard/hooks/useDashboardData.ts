@@ -3,7 +3,7 @@ import useWitnesses from "@/hooks/api/common/useWitnesses";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { config } from "@/Config";
 import useHeadBlock from "@/hooks/api/homePage/useHeadBlock";
-import useBlockOperations from "@/hooks/api/common/useBlockOperations";
+import useBlockOperationCounts from "@/hooks/common/useBlockOperationCounts";
 import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
 import useCommunities from "@/hooks/api/communities/useCommunities";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -60,21 +60,7 @@ export function useDashboardData(widgets: ActiveWidgetList) {
 
   const { dynamicGlobalData } = useDynamicGlobal(headBlockNum);
   const { headBlockData } = useHeadBlock(headBlockNum);
-  const { blockOperations } = useBlockOperations(headBlockNum || 0);
-  const { opcount, trxOpsLength } = useMemo(() => {
-    const total_operations = blockOperations?.total_operations || 0;
-    const trx_in_block = blockOperations?.operations_result.reduce(
-      (max, op) =>
-        typeof op?.trx_in_block === "number"
-          ? Math.max(max, op.trx_in_block)
-          : max,
-      0
-    );
-    return {
-      opcount: total_operations,
-      trxOpsLength: trx_in_block ? trx_in_block + 1 : 0,
-    };
-  }, [blockOperations]);
+  const { opcount, trxOpsLength } = useBlockOperationCounts(headBlockNum);
 
   const strokeColor = theme === "dark" ? "#FFF" : "#000";
   const hasLiveInfo = activeWidgetTypes.has("live-info");
