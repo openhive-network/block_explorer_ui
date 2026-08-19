@@ -5,7 +5,7 @@ import useWitnesses from "@/hooks/api/common/useWitnesses";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { config } from "@/Config";
 import useHeadBlock from "@/hooks/api/homePage/useHeadBlock";
-import useBlockOperations from "@/hooks/api/common/useBlockOperations";
+import useBlockOperationCounts from "@/hooks/common/useBlockOperationCounts";
 import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
 import TransactionStatisticsCard from "@/components/home/TransactionStatisticsCard";
 import { useI18n } from "@/i18n/i18n";
@@ -28,7 +28,6 @@ import NetworkRcUtilizationCard from "@/components/home/NetworkRcUtilizationCard
 import NetworkContentVolumeCard from "@/components/home/NetworkContentVolumeCard";
 import NetworkEngagementCard from "@/components/home/NetworkEngagementCard";
 import NetworkDappUsageCard from "@/components/home/NetworkDappUsage/NetworkDappUsageCard";
-import { useEffect, useState } from "react";
 import Head from "next/head";
 import { useAuth } from "@/contexts/AuthContext";
 import { useWatchlist } from "@/contexts/WatchlistContext";
@@ -57,30 +56,7 @@ const StandardHome = () => {
   const dynamicGlobalQueryData =
     useDynamicGlobal(headBlockNum).dynamicGlobalData;
   const headBlockData = useHeadBlock(headBlockNum).headBlockData;
-  const { blockOperations } = useBlockOperations(headBlockNum || 0);
-
-  const trxOperations = blockOperations?.operations_result.reduce(
-    (max, operation) => {
-      if (typeof operation?.trx_in_block === "number") {
-        return Math.max(max, operation.trx_in_block);
-      } else {
-        return max;
-      }
-    },
-    0
-  );
-
-  const [opcount, setOpcount] = useState<number>(0);
-  const [trxOpsLength, setTrxOpLength] = useState<number>(0);
-
-  useEffect(() => {
-    if (blockOperations?.total_operations) {
-      setOpcount(blockOperations?.total_operations);
-    }
-    if (trxOperations) {
-      setTrxOpLength(trxOperations + 1);
-    }
-  }, [blockOperations?.total_operations, trxOperations]);
+  const { opcount, trxOpsLength } = useBlockOperationCounts(headBlockNum);
 
   return (
     <>

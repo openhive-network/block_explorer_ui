@@ -8,13 +8,12 @@ import useWitnesses from "@/hooks/api/common/useWitnesses";
 import useCommunities from "@/hooks/api/communities/useCommunities";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import useHeadBlock from "@/hooks/api/homePage/useHeadBlock";
-import useBlockOperations from "@/hooks/api/common/useBlockOperations";
+import useBlockOperationCounts from "@/hooks/common/useBlockOperationCounts";
 import { useHeadBlockNumber } from "@/contexts/HeadBlockContext";
 import GuestBoardHeader from "./GuestBoardHeader";
 import { config } from "@/Config";
 import { useI18n } from "@/i18n/i18n";
 import { Zap } from "lucide-react";
-import { useEffect, useState } from "react";
 
 const GuestEssentialsHome = () => {
   const { t } = useI18n();
@@ -32,27 +31,7 @@ const GuestEssentialsHome = () => {
   const dynamicGlobalQueryData =
     useDynamicGlobal(headBlockNum).dynamicGlobalData;
   const headBlockData = useHeadBlock(headBlockNum).headBlockData;
-  const { blockOperations } = useBlockOperations(headBlockNum || 0);
-
-  const trxOperations = blockOperations?.operations_result.reduce(
-    (max, operation) =>
-      typeof operation?.trx_in_block === "number"
-        ? Math.max(max, operation.trx_in_block)
-        : max,
-    0
-  );
-
-  const [opcount, setOpcount] = useState<number>(0);
-  const [trxOpsLength, setTrxOpLength] = useState<number>(0);
-
-  useEffect(() => {
-    if (blockOperations?.total_operations) {
-      setOpcount(blockOperations.total_operations);
-    }
-    if (trxOperations) {
-      setTrxOpLength(trxOperations + 1);
-    }
-  }, [blockOperations?.total_operations, trxOperations]);
+  const { opcount, trxOpsLength } = useBlockOperationCounts(headBlockNum);
 
   return (
     <>
