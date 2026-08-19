@@ -188,11 +188,11 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
 
   return (
     <div className="py-2 flex flex-col gap-y-2">
-      <Select
-        onValueChange={setRangeSelectKey}
-        value={rangeSelectKey}
-      >
-        <SelectTrigger className="w-1/2 border-0 border-b-2 bg-theme text-text" dir={dir}>
+      <Select onValueChange={setRangeSelectKey} value={rangeSelectKey}>
+        <SelectTrigger
+          className="w-1/2 border-0 border-b-2 bg-theme text-start text-text"
+          dir={dir}
+        >
           {t(`searchRanges.${rangeSelectKey}`)}
         </SelectTrigger>
         <SelectContent className="bg-theme text-text rounded-sm max-h-[31rem]">
@@ -226,11 +226,16 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
       )}
 
       {rangeSelectKey === "lastTime" && (
-        <div className={cn("flex items-center justify-center", isRTL && "flex-row-reverse")}>
+        <div
+          className={cn(
+            "flex items-center justify-center",
+            isRTL && "flex-row-reverse"
+          )}
+        >
           <Input
             required
             type="text"
-            className="bg-theme border-0 border-b-2 text-text mr-2 ml-2" 
+            className="bg-theme border-0 border-b-2 text-text mr-2 ml-2"
             value={localLastTimeUnit}
             onChange={(e) =>
               setLocalLastTimeUnit(sanitizeNumericInput(e.target.value, true))
@@ -243,7 +248,7 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
             value={timeUnitSelectKey}
             dir={dir}
           >
-            <SelectTrigger className="pl-2 bg-theme border-0 border-b-2 text-text">
+            <SelectTrigger className="pl-2 bg-theme border-0 border-b-2 text-start text-text">
               {t(`searchRanges.${timeUnitSelectKey}`)}
             </SelectTrigger>
             <SelectContent className="bg-theme text-text rounded-sm max-h-[31rem]">
@@ -262,7 +267,12 @@ const SearchRanges: React.FC<SearchRangesProps> = ({
       )}
 
       {rangeSelectKey === "blockRange" && (
-        <div className={cn("flex items-center gap-x-2", isRTL && "flex-row-reverse")}>
+        <div
+          className={cn(
+            "flex items-center gap-x-2",
+            isRTL && "flex-row-reverse"
+          )}
+        >
           <div className="mr-2 w-full">
             <Input
               required
