@@ -16,7 +16,7 @@ import NetworkHpDistributionChart from "@/components/home/NetworkHpDistributionC
 import LorenzConcentrationChart from "@/components/home/LorenzConcentrationChart";
 import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
 import SegmentedToggle from "@/components/ui/SegmentedToggle";
-import { HP_BRACKET_BY_BUCKET, hpToBucket } from "@/utils/hpBrackets";
+import { COIN_BRACKET_BY_BUCKET, coinToBucket } from "@/utils/coinBrackets";
 
 const ConcChip: React.FC<{ label: string; value: string }> = ({
   label,
@@ -55,7 +55,7 @@ const NetworkHpDistributionCard: React.FC = () => {
   // pre-filtered to it (the backend only understands VESTS).
   const handleBucketClick = useCallback(
     (bucket: string) => {
-      const bounds = HP_BRACKET_BY_BUCKET[bucket];
+      const bounds = COIN_BRACKET_BY_BUCKET[bucket];
       if (!bounds || !vestingRatios) return;
       const toRawVests = (hp: number) =>
         Math.floor(hp * vestingRatios.vestsPerHive * 1e6);
@@ -100,7 +100,7 @@ const NetworkHpDistributionCard: React.FC = () => {
         toHp(accountData.received_vesting_shares) -
         toHp(accountData.delegated_vesting_shares);
       if (hp <= 0) return null;
-      return { bucket: hpToBucket(hp), hp };
+      return { bucket: coinToBucket(hp), hp };
     } catch {
       return null;
     }

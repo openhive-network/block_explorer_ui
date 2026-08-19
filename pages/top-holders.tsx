@@ -45,7 +45,7 @@ import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { convertVestsToHP, computeVestingRatios } from "@/utils/Calculations";
 import { formatCompact, formatSharePct } from "@/utils/chartUtils";
 import { grabNumericValue } from "@/utils/StringUtils";
-import { HP_BRACKETS } from "@/utils/hpBrackets";
+import { COIN_BRACKETS } from "@/utils/coinBrackets";
 import { isSystemAccount } from "@/utils/systemAccounts";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import Explorer from "@/types/Explorer";
@@ -456,33 +456,47 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
     [coinType, balanceType, dynamicGlobalData, tvl, concentrationHolders]
   );
 
-  const applyPreset = (minHp: number, maxHp: number | null) => {
-    const vph = vestingRatios?.vestsPerHive ?? 0;
-    if (!vph) return;
-    unitForcedByReport.current = true;
+  const applyPreset = (min: number, max: number | null) => {
+    if (coinType === "VESTS") {
+      const vph = vestingRatios?.vestsPerHive ?? 0;
+      if (!vph) return;
+      unitForcedByReport.current = true;
+      setUnit("hp");
+      setMinBalance(Math.floor(min * vph * 1e6));
+      setMaxBalance(max === null ? undefined : Math.floor(max * vph * 1e6));
+    } else {
+      // setUnit is async, so convert here rather than via displayToRaw.
+      setMinBalance(Math.floor(min * 1000));
+      setMaxBalance(max === null ? undefined : Math.floor(max * 1000));
+    }
     prefilledInputs.current = true;
-    setUnit("hp");
-    setMinBalance(Math.floor(minHp * vph * 1e6));
-    setMaxBalance(maxHp === null ? undefined : Math.floor(maxHp * vph * 1e6));
-    setMinInput(String(minHp));
-    setMaxInput(maxHp === null ? "" : String(maxHp));
+    setMinInput(String(min));
+    setMaxInput(max === null ? "" : String(max));
     setPage(1);
     clearSelection();
   };
 
   // Preset matching the active range (tolerant of rate drift; also on deep-link).
   const activePresetLabel = useMemo(() => {
-    if (coinType !== "VESTS" || !vestingRatios) return null;
     if (minBalance === undefined && maxBalance === undefined) return null;
-    const vph = vestingRatios.vestsPerHive;
-    const minHp = minBalance !== undefined ? minBalance / 1e6 / vph : null;
-    const maxHp = maxBalance !== undefined ? maxBalance / 1e6 / vph : null;
     const near = (a: number | null, b: number | null) => {
       if (a === null || b === null) return a === b;
       return Math.abs(a - b) <= Math.max(1, b * 0.02);
     };
+    if (coinType === "VESTS") {
+      if (!vestingRatios) return null;
+      const vph = vestingRatios.vestsPerHive;
+      const minHp = minBalance !== undefined ? minBalance / 1e6 / vph : null;
+      const maxHp = maxBalance !== undefined ? maxBalance / 1e6 / vph : null;
+      return (
+        COIN_BRACKETS.find((p) => near(minHp, p.min) && near(maxHp, p.max))
+          ?.chip ?? null
+      );
+    }
+    const min = minBalance !== undefined ? minBalance / 1000 : null;
+    const max = maxBalance !== undefined ? maxBalance / 1000 : null;
     return (
-      HP_BRACKETS.find((p) => near(minHp, p.min) && near(maxHp, p.max))?.chip ??
+      COIN_BRACKETS.find((p) => near(min, p.min) && near(max, p.max))?.chip ??
       null
     );
   }, [coinType, minBalance, maxBalance, vestingRatios]);
@@ -805,33 +819,29 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
                 </div>
               )}
 
-              {coinType === "VESTS" && (
-                <div className="flex w-full flex-col gap-y-2">
-                  <Label className="text-xs">
-                    {t("topHolders.quickRanges")}
-                  </Label>
-                  <div className="flex flex-wrap gap-1.5">
-                    {HP_BRACKETS.map((p) => {
-                      const active = p.chip === activePresetLabel;
-                      return (
-                        <button
-                          key={p.chip}
-                          type="button"
-                          onClick={() => applyPreset(p.min, p.max)}
-                          aria-pressed={active}
-                          className={`rounded-full border px-2.5 py-1 text-xs transition-colors ${
-                            active
-                              ? "border-indigo-500 bg-indigo-500 text-white"
-                              : "border-gray-300 text-gray-700 hover:border-indigo-400 hover:bg-indigo-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-indigo-950/50"
-                          }`}
-                        >
-                          {p.chip}
-                        </button>
-                      );
-                    })}
-                  </div>
+              <div className="flex w-full flex-col gap-y-2">
+                <Label className="text-xs">{t("topHolders.quickRanges")}</Label>
+                <div className="flex flex-wrap gap-1.5">
+                  {COIN_BRACKETS.map((p) => {
+                    const active = p.chip === activePresetLabel;
+                    return (
+                      <button
+                        key={p.chip}
+                        type="button"
+                        onClick={() => applyPreset(p.min, p.max)}
+                        aria-pressed={active}
+                        className={`rounded-full border px-2.5 py-1 text-xs transition-colors ${
+                          active
+                            ? "border-indigo-500 bg-indigo-500 text-white"
+                            : "border-gray-300 text-gray-700 hover:border-indigo-400 hover:bg-indigo-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-indigo-950/50"
+                        }`}
+                      >
+                        {p.chip}
+                      </button>
+                    );
+                  })}
                 </div>
-              )}
+              </div>
             </div>
           </div>
         )}
