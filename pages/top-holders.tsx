@@ -661,7 +661,7 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
     <>
       <Seo meta={meta} title={pageTitle(t("pageTitle.topHolders"))} />
       <div className="page-container">
-        <Card className="w-full rounded shadow-md mt-4 py-2">
+        <Card className="w-full rounded shadow-md py-2">
           <div className="flex flex-row items-start justify-between w-full relative gap-3">
             <div className="flex flex-col md:flex-row justify-between items-start">
               <PageTitle titleKey="pageTitle.topHolders" className="py-4" />
