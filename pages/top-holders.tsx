@@ -357,6 +357,8 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
     setMaxBalance(undefined);
     setMinInput("");
     setMaxInput("");
+    setAccountSearch("");
+    accountSearchRef.current = "";
     setPage(1);
     clearSelection();
   };
