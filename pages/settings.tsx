@@ -1,5 +1,7 @@
 import React from "react";
 import type { GetServerSideProps } from "next";
+import { LayoutGrid, LucideIcon, Monitor } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { useI18n } from "@/i18n/i18n";
 import { SeoMeta, noindexMeta, SEO_LIST_CACHE_CONTROL } from "@/utils/seo";
 import { seoText } from "@/utils/seoStrings";
@@ -28,21 +30,30 @@ import { useSettings, AppSettings } from "@/contexts/SettingsContext";
 interface SettingSectionProps {
   title: string;
   description: string;
+  icon: LucideIcon;
   children: React.ReactNode;
 }
 
 const SettingSection: React.FC<SettingSectionProps> = ({
   title,
   description,
+  icon: Icon,
   children,
 }) => {
   return (
-    <div className="rounded border bg-explorer-slate dark:border-slate-800 shadow-sm">
-      <div className="p-6">
-        <h2 className="text-lg font-semibold">{title}</h2>
-        <p className="text-sm text-explorer-slate-text">{description}</p>
+    <div className="rounded-lg border bg-explorer-slate dark:border-slate-800 shadow-sm">
+      <div className="flex items-start gap-2.5 px-4 py-3">
+        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-indigo-500/10 dark:bg-indigo-400/15">
+          <Icon className="h-4 w-4 text-indigo-600 dark:text-indigo-300" />
+        </span>
+        <div className="min-w-0">
+          <h2 className="text-base font-semibold leading-tight">{title}</h2>
+          <p className="mt-0.5 text-xs text-explorer-slate-text">
+            {description}
+          </p>
+        </div>
       </div>
-      <div className="border-t dark:border-slate-700/50 p-6 space-y-6">
+      <div className="border-t dark:border-slate-700/50 p-4 space-y-3">
         {children}
       </div>
     </div>
@@ -61,9 +72,9 @@ const SettingItem: React.FC<SettingItemProps> = ({
   children,
 }) => {
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex flex-col space-y-1 pr-4">
-        <span className="font-medium">{label}</span>
+    <div className="flex items-center justify-between gap-3">
+      <div className="flex min-w-0 flex-col gap-0.5">
+        <span className="text-sm font-medium">{label}</span>
         <span className="text-xs text-explorer-slate-text">{description}</span>
       </div>
       {children}
@@ -96,6 +107,7 @@ type SettingItemConfig = SwitchSettingConfig | RadioSettingConfig;
 interface SettingSectionConfig {
   sectionTitleKey: string;
   sectionDescriptionKey: string;
+  icon: LucideIcon;
   items: SettingItemConfig[];
 }
 
@@ -129,35 +141,48 @@ const RadioSettingRenderer: React.FC<{ config: RadioSettingConfig }> = ({
   const { t } = useI18n();
   const { settings, updateSettings } = useSettings();
 
+  const selected = String(settings[config.key]);
+  // Spelled out so Tailwind can see both column counts.
+  const columns =
+    config.options.length >= 3 ? "sm:grid-cols-3" : "sm:grid-cols-2";
+
   return (
     <div key={config.key}>
-      <h3 className="text-base font-semibold mb-3 -mt-1">
-        {t(config.titleKey)}
-      </h3>
+      <h3 className="mb-2 text-sm font-semibold">{t(config.titleKey)}</h3>
       <RadioGroup
-        value={String(settings[config.key])}
+        value={selected}
         onValueChange={(value) =>
           updateSettings({ [config.key]: value as any })
         }
-        className="space-y-4"
+        className={cn("grid grid-cols-1 gap-2", columns)}
       >
-        {config.options.map((option) => (
-          <div key={option.value}>
+        {config.options.map((option) => {
+          const id = `${config.key}-${option.value}`;
+          const isSelected = selected === option.value;
+
+          return (
             <Label
-              htmlFor={`${config.key}-${option.value}`}
-              className="flex items-center space-x-3 cursor-pointer"
+              key={option.value}
+              htmlFor={id}
+              className={cn(
+                "flex cursor-pointer flex-col gap-1 rounded-lg border p-2.5 transition-colors",
+                isSelected
+                  ? "border-indigo-500 bg-indigo-500/10 dark:bg-indigo-400/15"
+                  : "border-slate-200 hover:border-slate-300 dark:border-slate-700 dark:hover:border-slate-600"
+              )}
             >
-              <RadioGroupItem
-                value={option.value}
-                id={`${config.key}-${option.value}`}
-              />
-              <span className="font-medium">{t(option.labelKey)}</span>
+              <span className="flex items-center gap-2">
+                <RadioGroupItem value={option.value} id={id} />
+                <span className="text-sm font-medium">
+                  {t(option.labelKey)}
+                </span>
+              </span>
+              <span className="text-xs text-explorer-slate-text">
+                {t(option.descriptionKey)}
+              </span>
             </Label>
-            <p className="pl-8 text-xs text-explorer-slate-text mt-1">
-              {t(option.descriptionKey)}
-            </p>
-          </div>
-        ))}
+          );
+        })}
       </RadioGroup>
     </div>
   );
@@ -172,6 +197,7 @@ const SettingsPage = () => {
     {
       sectionTitleKey: "settingsPage.displayTitle",
       sectionDescriptionKey: "settingsPage.displayDescription",
+      icon: Monitor,
       items: [
         {
           type: "switch",
@@ -181,11 +207,21 @@ const SettingsPage = () => {
           trueValue: "vests",
           falseValue: "hp",
         },
+        // App-wide, unlike the page-scoped pickers under Layout Preferences.
+        {
+          type: "switch",
+          key: "layoutWidth",
+          labelKey: "settingsPage.compactLayoutLabel",
+          descriptionKey: "settingsPage.compactLayoutDescription",
+          trueValue: "compact", // When switch is ON, layout is 'compact' (75%)
+          falseValue: "full", // When switch is OFF, layout is 'full' (98%)
+        },
       ],
     },
     {
       sectionTitleKey: "settingsPage.layoutTitle",
       sectionDescriptionKey: "settingsPage.layoutDescription",
+      icon: LayoutGrid,
       items: [
         {
           type: "radio",
@@ -243,35 +279,28 @@ const SettingsPage = () => {
             },
           ],
         },
-        {
-          type: "switch",
-          key: "layoutWidth",
-          labelKey: "settingsPage.compactLayoutLabel",
-          descriptionKey: "settingsPage.compactLayoutDescription",
-          trueValue: "compact", // When switch is ON, layout is 'compact' (75%)
-          falseValue: "full", // When switch is OFF, layout is 'full' (98%)
-        },
       ],
     },
   ];
 
   return (
-    <div className="page-container mx-auto space-y-8">
+    <div className="page-container mx-auto space-y-4">
       <header>
         <PageTitle titleKey="pageTitle.settings" className="py-4" />
       </header>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {settingsConfig.map((section, sectionIndex) => (
           <SettingSection
             key={sectionIndex}
             title={t(section.sectionTitleKey)}
             description={t(section.sectionDescriptionKey)}
+            icon={section.icon}
           >
             {section.items.map((item, itemIndex) => (
               <React.Fragment key={item.key}>
                 {itemIndex > 0 && (
-                  <hr className="my-6 border-slate-200 dark:border-slate-700/50" />
+                  <hr className="border-slate-200 dark:border-slate-700/50" />
                 )}
 
                 {item.type === "switch" && (
