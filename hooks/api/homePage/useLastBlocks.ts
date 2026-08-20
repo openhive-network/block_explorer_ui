@@ -5,15 +5,18 @@ import { config } from "@/Config";
 import Hive from "@/types/Hive";
 import fetchingService from "@/services/FetchingService";
 
-const useLastBlocks = (headBlockNum?: number) => {
+const useLastBlocks = (
+  headBlockNum?: number,
+  limit: number = config.lastBlocksForWidget
+) => {
   const [lastBlocks, setLastBlocks] = useState<Hive.LastBlocksTypeResponse[]>(
     []
   );
 
   const { isLoading: lastBlocksDataLoading, isError: lastBlocksDataError } =
     useQuery({
-      queryKey: ["lastBlocks", headBlockNum],
-      queryFn: () => fetchingService.getLastBlocks(config.lastBlocksForWidget),
+      queryKey: ["lastBlocks", headBlockNum, limit],
+      queryFn: () => fetchingService.getLastBlocks(limit),
       refetchOnWindowFocus: false,
       onSuccess: (data: Hive.LastBlocksTypeResponse[]) => setLastBlocks(data),
     });

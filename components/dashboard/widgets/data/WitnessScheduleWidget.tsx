@@ -8,7 +8,6 @@ import {
   useLiveHeadBlock,
 } from "@/contexts/HeadBlockContext";
 import useWitnesses from "@/hooks/api/common/useWitnesses";
-import useHeadBlock from "@/hooks/api/homePage/useHeadBlock";
 import useWitnessesSchedule from "@/hooks/api/schedulePage/useWitnessesSchedule";
 import WitnessSchedule from "@/components/schedule/WitnessSchedule";
 import WidgetUnavailable from "@/components/dashboard/ui/WidgetUnavailable";
@@ -27,11 +26,10 @@ const WitnessScheduleWidget: React.FC<WitnessScheduleWidgetProps> = ({
   // 100, not the page's 200: anything below that shows "-" for its rank.
   const { witnessesData } = useWitnesses(100, "rank", "asc");
   const { headBlockNumberData } = useHeadBlockNumber();
-  const { headBlockData } = useHeadBlock(headBlockNumberData);
 
   const {
     scheduledWitnessesData,
-    setBlockSchedule,
+    currentProducerIndex,
     refetchWitnessSchedule,
     nextShuffleBlockNumber,
     blocksLeftBeforeRefetch,
@@ -45,7 +43,6 @@ const WitnessScheduleWidget: React.FC<WitnessScheduleWidgetProps> = ({
   // Past the shuffle block the cached order is stale.
   useEffect(() => {
     if (blocksLeftBeforeRefetch < 0) {
-      setBlockSchedule({});
       refetchWitnessSchedule();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -78,8 +75,7 @@ const WitnessScheduleWidget: React.FC<WitnessScheduleWidgetProps> = ({
     >
       <WitnessSchedule
         data={scheduledWitnessesData}
-        currentProducer={headBlockData?.producer_account}
-        currentBlock={headBlockNumberData}
+        currentProducerIndex={currentProducerIndex}
         nextShuffleBlockNumber={nextShuffleBlockNumber}
         blocksLeftBeforeRefetch={blocksLeftBeforeRefetch}
       />

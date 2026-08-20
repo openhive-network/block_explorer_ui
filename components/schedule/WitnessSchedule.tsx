@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import Link from "next/link";
 import { Loader2, Check, ShieldCheck } from "lucide-react";
 import {
   Tooltip,
@@ -12,37 +13,23 @@ import { useI18n } from "../../i18n/i18n";
 export interface Witness {
   producerRank: number | null;
   producerName: string;
-  blockNumber: number;
+  blockNumber: number | null;
 }
 
 interface WitnessScheduleProps {
   data: Witness[];
-  currentProducer: string | undefined;
-  currentBlock: number | undefined;
+  currentProducerIndex: number;
   nextShuffleBlockNumber: number | string;
   blocksLeftBeforeRefetch: number | string;
 }
 
 const WitnessSchedule: React.FC<WitnessScheduleProps> = ({
   data,
-  currentProducer,
-  currentBlock,
+  currentProducerIndex,
   nextShuffleBlockNumber,
   blocksLeftBeforeRefetch,
 }) => {
   const { t } = useI18n();
-  const isCurrentProducer = (producerName: string) =>
-    producerName === currentProducer;
-  const [producedBlocks, setProducedBlocks] = useState<number[]>([]);
-  useEffect(() => {
-    if (
-      currentBlock !== undefined &&
-      currentBlock !== null &&
-      !producedBlocks.includes(currentBlock)
-    ) {
-      setProducedBlocks((prevBlocks) => [...prevBlocks, currentBlock]);
-    }
-  }, [currentBlock, producedBlocks]);
 
   return (
     <div className="bg-theme rounded-xl shadow-lg w-full p-4">
@@ -61,19 +48,17 @@ const WitnessSchedule: React.FC<WitnessScheduleProps> = ({
       {/* Block Production Timeline List */}
       <div className="flex flex-col items-stretch justify-start space-y-1">
         {data.map((witness, index) => {
-          const isCurrent = isCurrentProducer(witness.producerName);
-          const blockHasBeenProduced =
-            witness.blockNumber !== null &&
-            witness.blockNumber !== undefined &&
-            producedBlocks.includes(witness.blockNumber);
+          const isCurrent = index === currentProducerIndex;
+          const hasHadItsTurn =
+            currentProducerIndex >= 0 && index < currentProducerIndex;
 
           return (
             <div
-              key={witness.blockNumber}
+              key={witness.producerName}
               className={`relative w-full grid grid-cols-[1fr_2fr_1fr] items-center p-1 ${
                 isCurrent
                   ? "bg-green-500 text-white"
-                  : blockHasBeenProduced
+                  : hasHadItsTurn
                   ? "bg-gray-400 text-gray-700 dark:bg-gray-600 dark:text-gray-300"
                   : "bg-rowHover"
               } shadow-sm text-xs`}
@@ -82,7 +67,14 @@ const WitnessSchedule: React.FC<WitnessScheduleProps> = ({
                 #{witness.producerRank != null ? witness.producerRank : "-"}
               </div>
               <div className="justify-self-start flex items-center gap-1">
-                {witness.producerName}
+                <Link
+                  href={`/@${witness.producerName}`}
+                  className={`hover:underline ${
+                    isCurrent ? "text-white" : "text-link"
+                  }`}
+                >
+                  {witness.producerName}
+                </Link>
                 {witness.producerRank && witness.producerRank > 20 ? (
                   <TooltipProvider>
                     <Tooltip>
@@ -102,22 +94,28 @@ const WitnessSchedule: React.FC<WitnessScheduleProps> = ({
                   ""
                 )}
               </div>
-              {witness.blockNumber !== null &&
-              witness.blockNumber !== undefined ? (
+              {witness.blockNumber !== null ? (
                 <div className="justify-self-end flex items-center space-x-1">
                   {isCurrent ? (
                     <Loader2
                       className="animate-spin dark:text-white"
                       size={14}
                     />
-                  ) : blockHasBeenProduced ? (
+                  ) : hasHadItsTurn ? (
                     <Check
                       size={14}
                       color="green"
                       strokeWidth={4}
                     />
                   ) : null}
-                  <span>{t("witnessSchedule.block")} #{witness.blockNumber}</span>
+                  <Link
+                    href={`/block/${witness.blockNumber}`}
+                    className={`hover:underline ${
+                      isCurrent ? "text-white" : "text-link"
+                    }`}
+                  >
+                    {t("witnessSchedule.block")} #{witness.blockNumber}
+                  </Link>
                 </div>
               ) : null}
             </div>

@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 
 import {
   TableHead,
@@ -43,9 +44,9 @@ const buildTableHeader = (t: (key: string) => string) => {
 const buildTableBody = (data: BackupWitness[], t: (key: string) => string) => {
   if (!data || !data.length) return;
 
-  return data.map(({ rank, owner }: any, index: number) => {
+  return data.map(({ rank, owner }: BackupWitness, index: number) => {
     return (
-      <React.Fragment key={index}>
+      <React.Fragment key={owner}>
         <TableRow className="transition-colors">
           <TableCell
             stickyLeft
@@ -54,7 +55,12 @@ const buildTableBody = (data: BackupWitness[], t: (key: string) => string) => {
             {rank !== null ? `#${rank}` : "-"}
           </TableCell>
           <TableCell className="py-1 px-2 whitespace-nowrap text-sm">
-            {owner}
+            <Link
+              href={`/@${owner}`}
+              className="text-link hover:underline"
+            >
+              {owner}
+            </Link>
           </TableCell>
           <TableCell className="py-1 px-2 whitespace-nowrap text-sm">{`[${
             index + 1

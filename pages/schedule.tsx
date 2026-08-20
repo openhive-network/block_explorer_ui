@@ -1,12 +1,15 @@
 import { useEffect } from "react";
+import type { GetServerSideProps } from "next";
 import { Loader2 } from "lucide-react";
 
+import Seo from "@/components/seo/Seo";
+import { SeoMeta, listPageMeta, SEO_LIST_CACHE_CONTROL } from "@/utils/seo";
+import { seoText } from "@/utils/seoStrings";
 import {
   useHeadBlockNumber,
   useLiveHeadBlock,
 } from "@/contexts/HeadBlockContext";
 import useWitnesses from "@/hooks/api/common/useWitnesses";
-import useHeadBlock from "@/hooks/api/homePage/useHeadBlock";
 import ErrorPage from "@/components/ErrorPage";
 import WitnessSchedule from "@/components/schedule/WitnessSchedule";
 import BackupWitnessSchedule from "@/components/schedule/BackupWitnessSchedule";
@@ -14,17 +17,16 @@ import useWitnessesSchedule from "@/hooks/api/schedulePage/useWitnessesSchedule"
 import useBackupWitnessesSchedule from "@/hooks/api/schedulePage/useBackupWitnessesSchedule";
 import ScrollTopButton from "@/components/ScrollTopButton";
 
-const Schedule = () => {
+const Schedule = ({ meta }: { meta: SeoMeta }) => {
   // Every row is derived from the head block, so it has to keep advancing even
   // with live data off.
   useLiveHeadBlock();
   const { witnessesData } = useWitnesses(200, "rank", "asc");
   const { headBlockNumberData } = useHeadBlockNumber();
-  const { headBlockData } = useHeadBlock(headBlockNumberData);
 
   const {
     scheduledWitnessesData,
-    setBlockSchedule,
+    currentProducerIndex,
     refetchWitnessSchedule,
     nextShuffleBlockNumber,
     blocksLeftBeforeRefetch,
@@ -45,11 +47,8 @@ const Schedule = () => {
     headBlockNumberData || ""
   );
 
-  const producerAccount = headBlockData?.producer_account;
-
   useEffect(() => {
     if (blocksLeftBeforeRefetch < 0) {
-      setBlockSchedule({});
       refetchWitnessSchedule();
       refetchBackupWitnessSchedule();
     }
@@ -65,28 +64,48 @@ const Schedule = () => {
     !nextShuffleBlockNumber ||
     !headBlockNumberData;
 
-  return isDataLoading ? (
-    <div className="flex justify-center items-center">
-      <Loader2 className="animate-spin mt-1 h-12 w-12 ml-3 ..." />
-    </div>
-  ) : (
-    <div className="page-container">
-      <div className="w-full grid lg:grid-cols-2 gap-4 content-start">
-        <WitnessSchedule
-          data={scheduledWitnessesData}
-          currentProducer={producerAccount}
-          currentBlock={headBlockNumberData}
-          nextShuffleBlockNumber={nextShuffleBlockNumber}
-          blocksLeftBeforeRefetch={blocksLeftBeforeRefetch}
-        />
+  return (
+    <>
+      <Seo meta={meta} />
+      {isDataLoading ? (
+        <div className="flex justify-center items-center">
+          <Loader2 className="animate-spin mt-1 h-12 w-12 ml-3 ..." />
+        </div>
+      ) : (
+        <div className="page-container">
+          <div className="w-full grid lg:grid-cols-2 gap-4 content-start">
+            <WitnessSchedule
+              data={scheduledWitnessesData}
+              currentProducerIndex={currentProducerIndex}
+              nextShuffleBlockNumber={nextShuffleBlockNumber}
+              blocksLeftBeforeRefetch={blocksLeftBeforeRefetch}
+            />
 
-        <BackupWitnessSchedule data={backupWitnessScheduleData} />
-      </div>
-      <div className="fixed bottom-[10px] right-0 flex flex-col items-end justify-end px-3 md:px-12">
-        <ScrollTopButton />
-      </div>
-    </div>
+            <BackupWitnessSchedule data={backupWitnessScheduleData} />
+          </div>
+          <div className="fixed bottom-[10px] right-0 flex flex-col items-end justify-end px-3 md:px-12">
+            <ScrollTopButton />
+          </div>
+        </div>
+      )}
+    </>
   );
+};
+
+export const getServerSideProps: GetServerSideProps<{
+  meta: SeoMeta;
+}> = async ({ req, res }) => {
+  res.setHeader("Cache-Control", SEO_LIST_CACHE_CONTROL);
+  return {
+    props: {
+      meta: listPageMeta(
+        req,
+        "/schedule",
+        seoText("seo.schedule.title"),
+        seoText("seo.schedule.description")
+      ),
+    },
+  };
 };
 
 export default Schedule;
