@@ -67,7 +67,7 @@ const CommunitiesPage = ({ meta }: { meta: SeoMeta }) => {
 
     if (isLoading) {
       return (
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
           {Array.from({ length: 12 }).map((_, i) => (
             <CommunityCardSkeleton key={`initial-load-${i}`} />
           ))}
@@ -80,7 +80,7 @@ const CommunitiesPage = ({ meta }: { meta: SeoMeta }) => {
     }
 
     return (
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
         {communities.map((community) => (
           <CommunityCard
             key={community.name}
@@ -101,7 +101,7 @@ const CommunitiesPage = ({ meta }: { meta: SeoMeta }) => {
       <Seo meta={meta} title={pageTitle(t("communitiesPage.title"))} />
       <div className="page-container">
         <div>
-          <PageTitle titleKey="pageTitle.communities" className="py-4 ml-6" />
+          <PageTitle titleKey="pageTitle.communities" className="py-4 ms-6" />
         </div>
 
         <div className="mt-4">
@@ -115,7 +115,7 @@ const CommunitiesPage = ({ meta }: { meta: SeoMeta }) => {
 
         <main>{renderContent()}</main>
 
-        <footer className="pt-8 pb-4 text-center text-sm text-slate-500">
+        <footer className="pt-4 pb-2 text-center text-sm text-slate-500">
           {!hasNextPage && !isLoading && communities.length > 0 && (
             <p>{t("communitiesPage.endOfResults")}</p>
           )}
