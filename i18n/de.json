@@ -801,6 +801,7 @@
   "commentPermlinkResultTable.trxId": "Trx-Id",
   "commentPermlinkResultTable.copyTransactionId": "Transaktions-ID kopieren",
   "commentPermlinkResultTable.permlinksDataType": "Permalinks",
+  "commentPermlinkResultTable.viewComments": "Kommentare zu diesem Permlink anzeigen",
   "languageSelector.english": "English",
   "languageSelector.spanish": "Español",
   "languageSelector.italian": "Italiano",

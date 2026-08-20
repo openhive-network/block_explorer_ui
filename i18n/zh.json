@@ -801,6 +801,7 @@
   "commentPermlinkResultTable.trxId": "交易ID",
   "commentPermlinkResultTable.copyTransactionId": "复制交易ID",
   "commentPermlinkResultTable.permlinksDataType": "固定链接",
+  "commentPermlinkResultTable.viewComments": "查看此固定链接的评论",
   "languageSelector.english": "English",
   "languageSelector.spanish": "Español",
   "languageSelector.italian": "Italiano",

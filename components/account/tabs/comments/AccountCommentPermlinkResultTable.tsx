@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 import Link from "next/link";
-import { useRouter } from "next/router"; 
+import { useRouter } from "next/router";
 
 import {
   TableHead,
@@ -15,8 +15,7 @@ import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 
 import { useTabs } from "@/contexts/TabsContext";
 import { useSearchesContext } from "@/contexts/SearchesContext";
-import { SquareArrowOutUpRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import ViewCommentsButton from "@/components/ui/ViewCommentsButton";
 import { useHandleInteractionsSearch } from "../interactions/useHandleInteractionsSearch";
 import CopyButton from "@/components/ui/CopyButton";
 import DataExport from "@/components/DataExport";
@@ -55,10 +54,7 @@ const buildTableHeader = (t: (key: string) => string) => {
   return (
     <TableRow rowVariant="header">
       {TABLE_CELL_KEYS.map((cellKey, index) => (
-        <TableHead
-          key={cellKey}
-          stickyLeft={index === 0 ? true : undefined}
-        >
+        <TableHead key={cellKey} stickyLeft={index === 0 ? true : undefined}>
           {cellKey ? t(cellKey) : ""}
         </TableHead>
       ))}
@@ -83,21 +79,18 @@ const buildTableBody = (
 
     return (
       <Fragment key={trx_id}>
-        <TableRow 
-            className="cursor-pointer hover:bg-rowHover"
-            onClick={() => handleRowClick(block, trx_id, BigInt(operation_id))}
+        <TableRow
+          className="cursor-pointer hover:bg-rowHover"
+          onClick={() => handleRowClick(block, trx_id, BigInt(operation_id))}
         >
-          <TableCell
-            stickyLeft
-            className="text-link whitespace-nowrap"
-          >
+          <TableCell stickyLeft className="text-link whitespace-nowrap">
             <Link href={`/block/${block}`} onClick={(e) => e.stopPropagation()}>
               {block.toLocaleString()}
             </Link>
             <CopyButton
               text={String(block)}
               tooltipText={t("common.copyBlockNumber")}
-              onClick={(e) => e.stopPropagation()} 
+              onClick={(e) => e.stopPropagation()}
             />
           </TableCell>
           <TableCell>{operation_id}</TableCell>
@@ -112,25 +105,22 @@ const buildTableBody = (
             </Link>
           </TableCell>
           <TableCell className="p-0 m-0">
-            <Button
-              className="bg-inherit p-2"
+            <ViewCommentsButton
               onClick={(e) => {
                 e.stopPropagation();
                 handleShowCommentsByPermlink();
               }}
-            >
-              <SquareArrowOutUpRight size="20" />
-            </Button>
+            />
           </TableCell>
           <TableCell>{formatAndDelocalizeTime(timestamp)}</TableCell>
           <TableCell className="text-link whitespace-nowrap">
             <Link href={`/tx/${trx_id}`} onClick={(e) => e.stopPropagation()}>
-                {trx_id?.slice(0, 10)}
+              {trx_id?.slice(0, 10)}
             </Link>
             <CopyButton
               text={trx_id}
               tooltipText={t("common.copyTransactionId")}
-              onClick={(e) => e.stopPropagation()} 
+              onClick={(e) => e.stopPropagation()}
             />
           </TableCell>
         </TableRow>
@@ -144,20 +134,24 @@ const AccountCommentPermlinkResultTable = ({
   data,
   accountName,
 }: AccountCommentPermlinkResultTableProps) => {
-  const router = useRouter(); 
+  const router = useRouter();
   const { t } = useI18n();
   const { setActiveTab } = useTabs();
 
   const { setCommentsSearchPermlink } = useSearchesContext();
   const { handleCommentsSearch } = useHandleInteractionsSearch();
 
-  const handleRowClick = (block: number, trx_id: string, operation_id: bigint) => {
+  const handleRowClick = (
+    block: number,
+    trx_id: string,
+    operation_id: bigint
+  ) => {
     const params = new URLSearchParams();
     if (trx_id) {
-        params.append("trxId", trx_id);
+      params.append("trxId", trx_id);
     }
     if (operation_id !== undefined) {
-        params.append("opId", String(operation_id));
+      params.append("opId", String(operation_id));
     }
     const queryString = params.toString();
     const url = `/block/${block}${queryString ? `?${queryString}` : ""}`;
@@ -214,7 +208,13 @@ const AccountCommentPermlinkResultTable = ({
             <TableHeader>{buildTableHeader(t)}</TableHeader>
 
             <TableBody>
-              {buildTableBody(data, accountName, showCommentsByPermlink, handleRowClick, t)}
+              {buildTableBody(
+                data,
+                accountName,
+                showCommentsByPermlink,
+                handleRowClick,
+                t
+              )}
             </TableBody>
           </Table>
         </div>
