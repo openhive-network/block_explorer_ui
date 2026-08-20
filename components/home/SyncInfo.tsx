@@ -39,7 +39,7 @@ export const getBlockDifference = (
 };
 
 const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const {
@@ -59,21 +59,15 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
     blockDifference > 20
       ? "text-explorer-red"
       : blockDifference > 3
-      ? "text-explorer-orange"
-      : "text-explorer-light-green";
+        ? "text-explorer-orange"
+        : "text-explorer-light-green";
 
   const iconColor =
     blockDifference > 20 ? "red" : blockDifference > 3 ? "orange" : "green";
 
   return !syncLoading ? (
-    <Dialog
-      open={dialogOpen}
-      onOpenChange={(open) => setDialogOpen(open)}
-    >
-      <DialogTrigger
-        asChild={true}
-        style={{ width: "32px" }}
-      >
+    <Dialog open={dialogOpen} onOpenChange={(open) => setDialogOpen(open)}>
+      <DialogTrigger asChild={true} style={{ width: "32px" }}>
         <div
           className={cn(
             "bg-navbar hover:bg-navbar-hover border rounded-[6px] py-px cursor-pointer",
@@ -93,11 +87,7 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
-                    <RefreshCcw
-                      color={iconColor}
-                      size={18}
-                      strokeWidth={2}
-                    />
+                    <RefreshCcw color={iconColor} size={18} strokeWidth={2} />
                   </TooltipTrigger>
                   <TooltipContent className="bg-theme text-text">
                     {t("syncInfo.explorerSynced")}
@@ -117,7 +107,8 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
                     </TooltipTrigger>
                     <TooltipContent className="bg-theme text-text">
                       <p>
-                        {blockDifference.toLocaleString()} {t("syncInfo.blocksOutOfSync")}
+                        {blockDifference.toLocaleString(locale)}{" "}
+                        {t("syncInfo.blocksOutOfSync")}
                       </p>
                     </TooltipContent>
                   </Tooltip>
@@ -134,7 +125,7 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
                 >
                   {blockDifference > 999
                     ? "999+"
-                    : blockDifference.toLocaleString()}
+                    : blockDifference.toLocaleString(locale)}
                 </span>
               </div>
             )}
@@ -142,50 +133,81 @@ const SyncInfo: React.FC<SyncInfoProps> = ({ className }) => {
         </div>
       </DialogTrigger>
 
-      <DialogContent className="dialog-content p-6 max-w-lg ">
-        <DialogHeader className="dialog-header">
-          <DialogTitle className="dialog-title">{t("syncInfo.blockchainSync")}</DialogTitle>
+      <DialogContent className="max-w-sm p-5">
+        <DialogHeader className="text-start sm:text-start">
+          <DialogTitle className="text-base font-semibold">
+            {t("syncInfo.blockchainSync")}
+          </DialogTitle>
         </DialogHeader>
-        <section className="dialog-section">
-          <div className="dialog-item">
-            <div className="dialog-item-text">
-              <Boxes size={18} />
-              <div>{t("syncInfo.blockchainHeadblock")}:</div>
+
+        {/* Lead with the verdict: the numbers below are the supporting detail. */}
+        <div
+          className={cn(
+            "flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium",
+            blockDifference > 20
+              ? "bg-red-500/10"
+              : blockDifference > 3
+                ? "bg-orange-500/10"
+                : "bg-green-500/10",
+            differenceColorText
+          )}
+        >
+          <span className="h-2 w-2 shrink-0 rounded-full bg-current" />
+          {blockDifference === 0
+            ? t("syncInfo.explorerSynced")
+            : `${blockDifference.toLocaleString(locale)} ${t(
+                "syncInfo.blocksOutOfSync"
+              )}`}
+        </div>
+
+        <dl className="divide-y divide-gray-200 text-sm dark:divide-gray-700">
+          {[
+            {
+              icon: <Boxes size={15} />,
+              label: t("syncInfo.blockchainHeadblock"),
+              value: hiveBlockNumber?.toLocaleString(locale),
+            },
+            {
+              icon: <Box size={15} />,
+              label: t("syncInfo.hafbeLastBlock"),
+              value: explorerBlockNumber?.toLocaleString(locale),
+            },
+            {
+              icon: <AlertCircle size={15} />,
+              label: t("syncInfo.blockDifference"),
+              value: `${blockDifference.toLocaleString(locale)} ${t(
+                "syncInfo.blocks"
+              )}`,
+              accent: true,
+            },
+            {
+              icon: <Clock size={15} />,
+              label: t("syncInfo.lastSyncedBlock"),
+              value: explorerTime
+                ? convertUTCDateToLocalDate(new Date(explorerTime))
+                : undefined,
+              accent: true,
+            },
+          ].map((row) => (
+            <div
+              key={row.label}
+              className="flex items-center justify-between gap-3 py-2"
+            >
+              <dt className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+                {row.icon}
+                <span>{row.label}:</span>
+              </dt>
+              <dd
+                className={cn(
+                  "text-end font-medium tabular-nums",
+                  row.accent && differenceColorText
+                )}
+              >
+                {row.value ?? "-"}
+              </dd>
             </div>
-            <div className="dialog-item-value">
-              {hiveBlockNumber?.toLocaleString()}
-            </div>
-          </div>
-          <div className="dialog-item">
-            <div className="dialog-item-text">
-              <Box size={18} />
-              <div>{t("syncInfo.hafbeLastBlock")}:</div>
-            </div>
-            <div className="dialog-item-value">
-              {explorerBlockNumber?.toLocaleString()}
-            </div>
-          </div>
-          <div className={cn("dialog-item", differenceColorText)}>
-            <div className="dialog-item-text">
-              <AlertCircle size={18} />
-              <div>{t("syncInfo.blockDifference")}:</div>
-            </div>
-            <div className="dialog-item-value">
-              {blockDifference.toLocaleString()} {t("syncInfo.blocks")}
-            </div>
-          </div>
-          <div className={cn("dialog-item", differenceColorText)}>
-            <div className="dialog-item-text">
-              <Clock size={18} />
-              <div>{t("syncInfo.lastSyncedBlock")}:</div>
-            </div>
-            {explorerTime && (
-              <div className="dialog-item-value">
-                {convertUTCDateToLocalDate(new Date(explorerTime))}
-              </div>
-            )}
-          </div>
-        </section>
+          ))}
+        </dl>
       </DialogContent>
     </Dialog>
   ) : (
