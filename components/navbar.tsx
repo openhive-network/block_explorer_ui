@@ -13,6 +13,8 @@ import {
   UserCheck,
   SettingsIcon,
   Award,
+  Boxes,
+  CalendarClock,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -143,69 +145,114 @@ export default function Navbar() {
                   />
                 </div>
                 {exploreOpen && (
-                  <div className="mt-2 pl-8 space-y-2">
+                  <div className="mt-2 pl-4 space-y-0.5">
+                    <p className="px-2 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                      {t("navbar.explore")}
+                    </p>
                     <Link
-                      href={"/communities"}
-                      className="py-1 border-b-2 flex items-start justify-start"
+                      href={"/blocks"}
+                      className="flex items-center gap-3 rounded-md px-2 py-2 transition-colors hover:bg-navbar-listHover"
                       onClick={() => setMenuOpen(false)}
                     >
-                      <Users className="mr-2 mt-1 flex-shrink-0" size={20} />
-                      <span className="text-base ml-2">
+                      <Boxes
+                        className="flex-shrink-0 text-slate-500 dark:text-slate-400"
+                        size={20}
+                      />
+                      <span className="text-base">
+                        {t("pageTitle.hiveBlocks")}
+                      </span>
+                    </Link>
+                    <Link
+                      href={"/communities"}
+                      className="flex items-center gap-3 rounded-md px-2 py-2 transition-colors hover:bg-navbar-listHover"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      <Users
+                        className="flex-shrink-0 text-slate-500 dark:text-slate-400"
+                        size={20}
+                      />
+                      <span className="text-base">
                         {t("navbar.communitiesTitle")}
                       </span>
                     </Link>
                     <Link
-                      href={"/proposals"}
-                      className="py-1 border-b-2 flex items-start justify-start"
+                      href={"/top-holders"}
+                      className="flex items-center gap-3 rounded-md px-2 py-2 transition-colors hover:bg-navbar-listHover"
                       onClick={() => setMenuOpen(false)}
                     >
-                      <Vote className="mr-2 mt-1 flex-shrink-0" size={20} />
-                      <span className="text-base ml-2">
+                      <Award
+                        className="flex-shrink-0 text-slate-500 dark:text-slate-400"
+                        size={20}
+                      />
+                      <span className="text-base">
+                        {t("pageTitle.topHolders")}
+                      </span>
+                    </Link>
+                    <p className="px-2 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
+                      {t("boards.governance.name")}
+                    </p>
+                    <Link
+                      href={"/proposals"}
+                      className="flex items-center gap-3 rounded-md px-2 py-2 transition-colors hover:bg-navbar-listHover"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      <Vote
+                        className="flex-shrink-0 text-slate-500 dark:text-slate-400"
+                        size={20}
+                      />
+                      <span className="text-base">
                         {t("navbar.proposalsTitle")}
                       </span>
                     </Link>
                     <Link
-                      href={"/top-holders"}
-                      className="py-1 border-b-2 flex items-start justify-start"
-                      onClick={() => setMenuOpen(false)}
-                    >
-                      <Award className="mr-2 mt-1 flex-shrink-0" size={20} />
-                      <span className="text-base ml-2">
-                        {t("pageTitle.topHolders")}
-                      </span>
-                    </Link>
-                    <Link
                       href={"/witnesses"}
-                      className="py-1 flex items-start border-b-2 justify-start"
+                      className="flex items-center gap-3 rounded-md px-2 py-2 transition-colors hover:bg-navbar-listHover"
                       onClick={() => setMenuOpen(false)}
                     >
                       <UserCheck
-                        className="mr-2 mt-1 flex-shrink-0"
+                        className="flex-shrink-0 text-slate-500 dark:text-slate-400"
                         size={20}
                       />
-                      <span className="text-base ml-2">
+                      <span className="text-base">
                         {t("navbar.witnessesTitle")}
                       </span>
                     </Link>
                     <Link
-                      href={"/tools/compare"}
-                      className="py-1 flex items-start border-b-2 justify-start"
+                      href={"/schedule"}
+                      className="flex items-center gap-3 rounded-md px-2 py-2 transition-colors hover:bg-navbar-listHover"
                       onClick={() => setMenuOpen(false)}
                     >
-                      <Wrench className="mr-2 mt-1 flex-shrink-0" size={20} />
-                      <span className="text-base ml-2">{t("tools.title")}</span>
+                      <CalendarClock
+                        className="flex-shrink-0 text-slate-500 dark:text-slate-400"
+                        size={20}
+                      />
+                      <span className="text-base">
+                        {t("witnessSchedule.title")}
+                      </span>
+                    </Link>
+                    <div className="my-1 h-px bg-slate-200 dark:bg-slate-700" />
+                    <Link
+                      href={"/tools/compare"}
+                      className="flex items-center gap-3 rounded-md px-2 py-2 transition-colors hover:bg-navbar-listHover"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      <Wrench
+                        className="flex-shrink-0 text-slate-500 dark:text-slate-400"
+                        size={20}
+                      />
+                      <span className="text-base">{t("tools.title")}</span>
                     </Link>
                     <Link
                       href={"/settings"}
-                      className="py-1 flex items-start justify-start"
+                      className="flex items-center gap-3 rounded-md px-2 py-2 transition-colors hover:bg-navbar-listHover"
                       onClick={() => setMenuOpen(false)}
                     >
                       <SettingsIcon
-                        className="mr-2 mt-1 flex-shrink-0"
+                        className="flex-shrink-0 text-slate-500 dark:text-slate-400"
                         size={20}
                       />
-                      <span className="text-base ml-2">
-                        {t("navbar.additionalSettingsTitle")}
+                      <span className="text-base">
+                        {t("navbar.settingsTitle")}
                       </span>
                     </Link>
                   </div>
