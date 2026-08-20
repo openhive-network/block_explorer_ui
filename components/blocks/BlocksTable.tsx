@@ -303,14 +303,14 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({
             />
           </div>
         </TableCell>
-        <TableCell className="whitespace-nowrap p-3">
+        <TableCell className="whitespace-nowrap py-3 px-4">
           <Link className="text-link" href={`@${row.producer_account}`}>
             {row.producer_account}
           </Link>
         </TableCell>
         {!isMainPageTable ? (
           <>
-            <TableCell className="whitespace-nowrap p-3">
+            <TableCell className="whitespace-nowrap py-3 px-4">
               <div className="flex items-center space-x-2">
                 <Link href={`/block/${row.block_num}`} className="text-link">
                   {formatHash(row.prev)}
@@ -321,7 +321,7 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({
                 />
               </div>
             </TableCell>
-            <TableCell className="whitespace-nowrap p-3">
+            <TableCell className="whitespace-nowrap py-3 px-4">
               <div className="flex items-center space-x-2">
                 <Link href={`/block/${row.block_num}`} className="text-link">
                   {formatHash(row.hash)}
@@ -335,7 +335,7 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({
           </>
         ) : null}
 
-        <TableCell className="whitespace-nowrap p-3">
+        <TableCell className="whitespace-nowrap py-3 px-4">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -353,7 +353,7 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({
           </TooltipProvider>
         </TableCell>
         {!isMainPageTable ? (
-          <TableCell className="whitespace-nowrap p-3">
+          <TableCell className="whitespace-nowrap py-3 px-4">
             {row.producer_reward !== undefined ? (
               <TooltipProvider>
                 <Tooltip>
@@ -380,13 +380,15 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({
             )}
           </TableCell>
         ) : null}
-        <TableCell className="whitespace-nowrap p-3">{row.trx_count}</TableCell>
+        <TableCell className="whitespace-nowrap py-3 px-4">
+          {row.trx_count}
+        </TableCell>
         {!isMainPageTable ? (
           <>
-            <TableCell className="whitespace-nowrap p-3">
+            <TableCell className="whitespace-nowrap py-3 px-4">
               {row.operationCount}
             </TableCell>
-            <TableCell className="whitespace-nowrap p-3">
+            <TableCell className="whitespace-nowrap py-3 px-4">
               {row.virtualOperationCount}
             </TableCell>
           </>
