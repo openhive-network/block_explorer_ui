@@ -18,7 +18,8 @@ const ReportDialogHeader: React.FC<ReportDialogHeaderProps> = ({
   actions,
   className,
 }) => (
-  <DialogHeader>
+  // DialogHeader centres below sm; start-align it at every width, RTL included.
+  <DialogHeader className="text-start sm:text-start">
     <div className={cn("mb-5 flex items-center gap-3 pr-8", className)}>
       <span
         aria-hidden
