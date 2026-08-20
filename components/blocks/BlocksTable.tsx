@@ -55,7 +55,7 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
   isMainPageTable = false,
   allBlocksPageLink,
 }) => {
-  const { t , dir} = useI18n();
+  const { t, dir } = useI18n();
   const [expandedRows, setExpandedRows] = useState<number[]>([]);
   const expandedRowRef = useRef<HTMLTableRowElement>(null); // Ref to expanded row
 
@@ -88,9 +88,8 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
             key={index}
             scope="col"
             className={cn(
-             
               index === 0 ? "sticky left-0 z-10 bg-theme" : "",
-              dir === "rtl" ?  "text-right" : "text-left"
+              dir === "rtl" ? "text-right" : "text-left"
             )}
           >
             {cell}
@@ -150,10 +149,7 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
         <div className="flex flex-wrap justify-between items-center bg-theme px-1 sticky z-20 top-[3.2rem] md:top-[4rem]">
           {isMainPageTable ? (
             <div className="flex justify-center w-full md:w-auto md:justify-start bg-theme">
-              <Link
-                href={allBlocksPageLink ?? "/blocks"}
-                target="_blank"
-              >
+              <Link href={allBlocksPageLink ?? "/blocks"} target="_blank">
                 <Button
                   data-testid="go-to-result-page"
                   className="w-full md:w-auto"
@@ -184,10 +180,7 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
         </div>
       ) : isMainPageTable ? (
         <div className="flex justify-center w-full md:w-auto md:justify-start bg-theme px-2 ">
-          <Link
-            href={allBlocksPageLink ?? "/blocks"}
-            target="_blank"
-          >
+          <Link href={allBlocksPageLink ?? "/blocks"} target="_blank">
             <Button
               data-testid="go-to-result-page"
               className="w-full md:w-auto"
@@ -218,7 +211,7 @@ const BlocksTable: React.FC<BlocksTableProps> = ({
           data-testid="table-body"
           className=" overflow-auto"
           enableMobileScrollArrows
-           enableCompactToggle={true}
+          enableCompactToggle={true}
         >
           <TableHeader>{buildTableHeader()}</TableHeader>
           <TableBody>{buildTableBody()}</TableBody>
@@ -296,16 +289,13 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({
 
   return (
     <>
-      <TableRow 
+      <TableRow
         className={`text-left ${bgColor} hover:bg-rowHover border-b-2 transition-colors duration-300 ease-in-out ${textColorClass} ${shadowClass}`}
       >
         <TableCell className="whitespace-nowrap sticky left-[0px] z-10 bg-inherit p-4">
           <div className="flex items-center space-x-2">
-            <Link
-              href={`/block/${row.block_num}`}
-              className="text-link"
-            >
-              {row.block_num.toLocaleString()}
+            <Link href={`/block/${row.block_num}`} className="text-link">
+              {row.block_num.toLocaleString(appLocale)}
             </Link>
             <CopyButton
               text={String(row.block_num)}
@@ -314,10 +304,7 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({
           </div>
         </TableCell>
         <TableCell className="whitespace-nowrap p-3">
-          <Link
-            className="text-link"
-            href={`@${row.producer_account}`}
-          >
+          <Link className="text-link" href={`@${row.producer_account}`}>
             {row.producer_account}
           </Link>
         </TableCell>
@@ -325,10 +312,7 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({
           <>
             <TableCell className="whitespace-nowrap p-3">
               <div className="flex items-center space-x-2">
-                <Link
-                  href={`/block/${row.block_num}`}
-                  className="text-link"
-                >
+                <Link href={`/block/${row.block_num}`} className="text-link">
                   {formatHash(row.prev)}
                 </Link>
                 <CopyButton
@@ -339,10 +323,7 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({
             </TableCell>
             <TableCell className="whitespace-nowrap p-3">
               <div className="flex items-center space-x-2">
-                <Link
-                  href={`/block/${row.block_num}`}
-                  className="text-link"
-                >
+                <Link href={`/block/${row.block_num}`} className="text-link">
                   {formatHash(row.hash)}
                 </Link>
                 <CopyButton
@@ -417,17 +398,9 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({
             onClick={() => toggleRow(row.block_num)}
           >
             {expandedRows.includes(row.block_num) ? (
-              <ChevronUp
-                width={20}
-                height={20}
-                className="mt-1"
-              />
+              <ChevronUp width={20} height={20} className="mt-1" />
             ) : (
-              <ChevronDown
-                width={20}
-                height={20}
-                className="mt-1"
-              />
+              <ChevronDown width={20} height={20} className="mt-1" />
             )}
           </Button>
         </TableCell>
@@ -435,15 +408,9 @@ const TableRowComponent: React.FC<TableRowComponentProps> = ({
 
       {/* Conditional rendering of BlockOperationsContent */}
       {expandedRows.includes(row.block_num) && (
-        <TableRow
-          className="hover:bg-transparent"
-          ref={expandedRowRef}
-        >
+        <TableRow className="hover:bg-transparent" ref={expandedRowRef}>
           {/* Add the ref here */}
-          <TableCell
-            colSpan={TABLE_CELLS.length}
-            className="p-2"
-          >
+          <TableCell colSpan={TABLE_CELLS.length} className="p-2">
             <BlockOperationsContent
               blockNum={row.block_num}
               paramsState={paramsState}
