@@ -801,6 +801,7 @@
   "commentPermlinkResultTable.trxId": "Tx ID",
   "commentPermlinkResultTable.copyTransactionId": "트랜잭션 ID 복사",
   "commentPermlinkResultTable.permlinksDataType": "퍼머링크",
+  "commentPermlinkResultTable.viewComments": "이 퍼머링크의 댓글 보기",
   "languageSelector.english": "English",
   "languageSelector.spanish": "Español",
   "languageSelector.italian": "Italiano",

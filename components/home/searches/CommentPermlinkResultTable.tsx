@@ -1,7 +1,6 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { SquareArrowDown } from "lucide-react";
 
 import {
   TableHead,
@@ -14,7 +13,7 @@ import {
 import Hive from "@/types/Hive";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import useHandleCommentsSearch from "./hooks/useHandleCommentsSearch";
-import { Button } from "@/components/ui/button";
+import ViewCommentsButton from "@/components/ui/ViewCommentsButton";
 import CopyButton from "@/components/ui/CopyButton";
 import DataExport from "@/components/DataExport";
 import { cn } from "@/lib/utils";
@@ -72,17 +71,17 @@ const buildTableBody = (
             className="cursor-pointer hover:bg-rowHover"
             onClick={() => handleRowClick(block, trx_id, operation_id)}
           >
-            <TableCell
-              stickyLeft
-              className="text-link whitespace-nowrap"
-            >
-              <Link href={`/block/${block}`} onClick={(e) => e.stopPropagation()}>
+            <TableCell stickyLeft className="text-link whitespace-nowrap">
+              <Link
+                href={`/block/${block}`}
+                onClick={(e) => e.stopPropagation()}
+              >
                 {block.toLocaleString()}
               </Link>
               <CopyButton
                 text={block}
                 tooltipText={t("common.copyBlockNumber")}
-                onClick={(e) => e.stopPropagation()} 
+                onClick={(e) => e.stopPropagation()}
               />
             </TableCell>
             <TableCell>{operation_id}</TableCell>
@@ -97,15 +96,12 @@ const buildTableBody = (
               </Link>
             </TableCell>
             <TableCell className="text-left text-text p-0 m-0">
-              <Button
-                className="bg-inherit p-2"
+              <ViewCommentsButton
                 onClick={(e) => {
                   e.stopPropagation();
                   handleOpenCommentsSection(accountName, permlink);
                 }}
-              >
-                <SquareArrowDown size="20" />
-              </Button>
+              />
             </TableCell>
             <TableCell className="text-left text-text">
               {formatAndDelocalizeTime(timestamp)}
@@ -117,7 +113,7 @@ const buildTableBody = (
               <CopyButton
                 text={trx_id}
                 tooltipText={t("common.copyTransactionId")}
-                onClick={(e) => e.stopPropagation()} 
+                onClick={(e) => e.stopPropagation()}
               />
             </TableCell>
           </TableRow>
@@ -142,13 +138,17 @@ const CommentPermlinkResultTable = ({
     openCommentsSection(accountName, permlink);
   };
 
-  const handleRowClick = (block: number, trx_id: string, operation_id: number) => {
+  const handleRowClick = (
+    block: number,
+    trx_id: string,
+    operation_id: number
+  ) => {
     const params = new URLSearchParams();
     if (trx_id) {
-        params.append("trxId", trx_id);
+      params.append("trxId", trx_id);
     }
     if (operation_id !== undefined) {
-        params.append("opId", String(operation_id));
+      params.append("opId", String(operation_id));
     }
     const queryString = params.toString();
     const url = `/block/${block}${queryString ? `?${queryString}` : ""}`;
@@ -204,7 +204,13 @@ const CommentPermlinkResultTable = ({
               <TableRow rowVariant="header">{buildTableHeader(t)}</TableRow>
             </TableHeader>
             <TableBody>
-              {buildTableBody(data, accountName, handleOpenCommentsSection, handleRowClick, t)}
+              {buildTableBody(
+                data,
+                accountName,
+                handleOpenCommentsSection,
+                handleRowClick,
+                t
+              )}
             </TableBody>
           </Table>
         </div>

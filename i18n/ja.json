@@ -801,6 +801,7 @@
   "commentPermlinkResultTable.trxId": "Tx ID",
   "commentPermlinkResultTable.copyTransactionId": "トランザクションIDをコピー",
   "commentPermlinkResultTable.permlinksDataType": "パーマリンク",
+  "commentPermlinkResultTable.viewComments": "このパーマリンクのコメントを表示",
   "languageSelector.english": "English",
   "languageSelector.spanish": "Español",
   "languageSelector.italian": "Italiano",
