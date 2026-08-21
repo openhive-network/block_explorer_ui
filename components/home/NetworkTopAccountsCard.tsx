@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { Loader2 } from "lucide-react";
 import { IHiveChainInterface } from "@hiveio/wax";
 import { useI18n } from "@/i18n/i18n";
+import { formatCompact } from "@/utils/chartUtils";
 import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { convertVestsToHP } from "@/utils/Calculations";
 import { grabNumericValue } from "@/utils/StringUtils";
@@ -202,10 +203,10 @@ export const formatMetricValue = (
   unit: string,
   locale: string
 ): string => {
-  const num = value.toLocaleString(locale, {
-    notation: value >= 100_000 ? "compact" : "standard",
-    maximumFractionDigits: value >= 100_000 ? 2 : 0,
-  });
+  const num =
+    value >= 100_000
+      ? formatCompact(value, locale)
+      : value.toLocaleString(locale, { maximumFractionDigits: 0 });
   return unit === "count" ? num : `${num} ${unit}`;
 };
 
