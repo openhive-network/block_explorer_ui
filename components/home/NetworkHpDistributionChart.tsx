@@ -242,8 +242,18 @@ const NetworkHpDistributionChart: React.FC<Props> = ({
     [onBucketClick]
   );
 
+  // The option already mirrors the layout for RTL, but an RTL container also
+  // flips SVG text anchoring, which drags the bucket labels back over the bars.
+  // Keep the chart subtree LTR; the tooltip sets its own direction.
   return (
-    <EChart option={option} style={CHART_STYLE} notMerge onEvents={onEvents} />
+    <div dir="ltr" className="h-full w-full">
+      <EChart
+        option={option}
+        style={CHART_STYLE}
+        notMerge
+        onEvents={onEvents}
+      />
+    </div>
   );
 };
 
