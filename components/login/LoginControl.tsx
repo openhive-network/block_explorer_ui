@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { SmartSigner } from "@/lib/smart-signer";
 import { useI18n } from "@/i18n/i18n";
@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
 import { cn } from "@/lib/utils";
 import LoggedUserNav from "./LoggedUserNav";
 import LoginDialog from "./LoginDialog";
+import { REQUEST_LOGIN_EVENT } from "@/utils/loginPrompt";
 
 interface LoginControlProps {
   isMobile?: boolean;
@@ -31,6 +32,13 @@ const LoginControl: React.FC<LoginControlProps> = ({ isMobile }) => {
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Gated controls elsewhere in the app ask for the dialog rather than owning it.
+  useEffect(() => {
+    const openDialog = () => setModalOpen(true);
+    window.addEventListener(REQUEST_LOGIN_EVENT, openDialog);
+    return () => window.removeEventListener(REQUEST_LOGIN_EVENT, openDialog);
+  }, []);
 
   const handleLoginRequest = async (method: "keychain" | "hivesigner") => {
     if (method === "keychain" && !inputUsername) {

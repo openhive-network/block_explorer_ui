@@ -195,9 +195,9 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
     isLoggedIn ? username || "" : ""
   );
 
-  // Only show the actions column when the user is viewing their own votes.
-  const showVoteColumn =
-    isLoggedIn && (!voterFilter || voterFilter === username);
+  // Hidden only while viewing someone else's votes: the actions would not be
+  // theirs to take. Guests keep it, since the controls there prompt sign-in.
+  const showVoteColumn = !voterFilter || voterFilter === username;
 
   // Local vote overrides so the filter reflects clicks before the chain commits.
   const [localVoteChanges, setLocalVoteChanges] = useState<
