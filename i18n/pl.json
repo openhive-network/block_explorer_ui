@@ -1586,6 +1586,7 @@
   "accountLabel.treasuryInfo": "Konto Hive DAO / skarbca — finansuje propozycje ekosystemu i jest wykluczone z podaży w obiegu, więc nie jest tu liczone jako posiadacz.",
   "accountLabel.burnInfo": "Konto do spalania @null — salda wysłane tutaj są trwale niszczone, więc jest wykluczone z udziału posiadaczy.",
   "accountLabel.witness": "Witness",
+  "accountLabel.badActor": "Potencjalnie szkodliwe konto",
   "accountLabel.exchangeInfo": "Przypuszczalne przypisanie do znanego portfela giełdy — może być nieaktywny. Nie jest to fakt na poziomie protokołu.",
   "accountLabel.inactiveInfo": "Nieużywany lub uśpiony portfel giełdy — nie jest już aktywnym adresem depozytowym, choć może nadal przechowywać lub przenosić pozostałe środki.",
   "accountLabel.witnessInfo": "To konto jest aktualnie wybranym witnessem Hive (producentem bloków).",

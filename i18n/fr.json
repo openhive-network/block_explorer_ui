@@ -1586,6 +1586,7 @@
   "accountLabel.treasuryInfo": "Compte Hive DAO / trésorerie — finance les propositions de l'écosystème et est exclu de l'offre en circulation, il n'est donc pas comptabilisé comme détenteur ici.",
   "accountLabel.burnInfo": "Compte de destruction @null — les soldes envoyés ici sont définitivement détruits, il est donc exclu de la part des détenteurs.",
   "accountLabel.witness": "Témoin",
+  "accountLabel.badActor": "Acteur potentiellement malveillant",
   "accountLabel.exchangeInfo": "Attribution au mieux d'un portefeuille d'échange connu — il peut être inactif. Ce n'est pas une donnée au niveau du protocole.",
   "accountLabel.inactiveInfo": "Portefeuille d'échange hors service ou dormant — ce n'est plus une adresse de dépôt active, bien qu'il puisse encore détenir ou déplacer des fonds résiduels.",
   "accountLabel.witnessInfo": "Ce compte est un témoin Hive actuellement élu (producteur de blocs).",

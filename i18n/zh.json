@@ -1586,6 +1586,7 @@
   "accountLabel.treasuryInfo": "Hive DAO / 国库账户——为生态系统提案提供资金，且不计入流通供应量，因此此处不将其视为持有者。",
   "accountLabel.burnInfo": "@null 销毁账户——发送到此处的余额将被永久销毁，因此不计入持有者份额。",
   "accountLabel.witness": "见证人",
+  "accountLabel.badActor": "可能的不良行为者",
   "accountLabel.exchangeInfo": "对已知交易所钱包的尽力归因——它可能处于休眠状态。这并非协议层面的事实。",
   "accountLabel.inactiveInfo": "已停用或休眠的交易所钱包——不再是活跃的充值地址，但仍可能持有或转移剩余资金。",
   "accountLabel.witnessInfo": "该账户是当前当选的 Hive 见证人（出块者）。",

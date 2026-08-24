@@ -1586,6 +1586,7 @@
   "accountLabel.treasuryInfo": "Account Hive DAO / treasury — finanzia le proposte dell'ecosistema ed è escluso dalla fornitura circolante, quindi non viene conteggiato qui come detentore.",
   "accountLabel.burnInfo": "Account di burn @null — i saldi inviati qui vengono distrutti in modo permanente, quindi è escluso dalla quota dei detentori.",
   "accountLabel.witness": "Witness",
+  "accountLabel.badActor": "Potenziale malintenzionato",
   "accountLabel.exchangeInfo": "Attribuzione best-effort di un wallet di un exchange noto — potrebbe essere inattivo. Non è un dato a livello di protocollo.",
   "accountLabel.inactiveInfo": "Wallet di un exchange dismesso o inattivo — non è più un indirizzo di deposito attivo, anche se potrebbe ancora detenere o movimentare fondi residui.",
   "accountLabel.witnessInfo": "Questo account è un witness Hive attualmente eletto (produttore di blocchi).",
