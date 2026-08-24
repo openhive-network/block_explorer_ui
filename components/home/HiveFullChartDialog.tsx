@@ -1,7 +1,6 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Loader2, Download } from "lucide-react";
 import { useI18n } from "../../i18n/i18n";
-import { config } from "@/Config";
 import useMarketHistory from "@/hooks/common/useMarketHistory";
 import { Dialog, DialogContent } from "../ui/dialog";
 import ReportDialogHeader from "@/components/ui/ReportDialogHeader";
@@ -12,7 +11,6 @@ import { spacesToUnderscores } from "@/utils/StringUtils";
 import MarketHistoryChart from "./MarketHistoryChart";
 import DateTimePicker from "../DateTimePicker";
 import CustomShapeBarChart from "./CandleStickChartHive";
-import { useSettings } from "@/contexts/SettingsContext";
 
 interface HiveFullChartDialogProps {
   isOpen: boolean;
@@ -20,7 +18,6 @@ interface HiveFullChartDialogProps {
 }
 
 const MARKET_HISTORY_INTERVAL = 86400; // 1 day
-const CHART_UPDATE_INTERVAL = config.marketHistoryRefreshInterval;
 const DEFAULT_FULL_CHART_HISTORY_PERIOD = 30; //days
 
 function subtractDaysFromDate(currentDate: Date, daysToSubtract: number) {
@@ -37,7 +34,6 @@ const HiveFullChartDialog: React.FC<HiveFullChartDialogProps> = ({
   isOpen,
   handleHiveFullChartVisibility,
 }) => {
-  const { settings } = useSettings();
   const { t } = useI18n();
   const [activeChartTab, setActiveChartTab] = useState<"candle" | "line">(
     "candle"
@@ -66,23 +62,8 @@ const HiveFullChartDialog: React.FC<HiveFullChartDialogProps> = ({
     marketHistoryEndDate.toISOString().slice(0, 19)
   );
 
-  // Hive chart market data updates
-  useEffect(() => {
-    if (!settings.liveData) return;
-
-    const intervalId = setInterval(() => {
-      const now = new Date();
-      const chartHistoryPeriod = subtractDaysFromDate(
-        now,
-        DEFAULT_FULL_CHART_HISTORY_PERIOD
-      );
-
-      setMarketHistoryStartDate(chartHistoryPeriod);
-      setMarketHistoryEndDate(now);
-    }, CHART_UPDATE_INTERVAL);
-
-    return () => clearInterval(intervalId);
-  }, [settings.liveData]);
+  // No live rolling window here on purpose: these two dates are the pickers'
+  // own state, so advancing them would discard the range and zoom the user set.
 
   const exportData = useMemo(
     () =>
