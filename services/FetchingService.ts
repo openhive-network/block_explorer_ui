@@ -27,8 +27,12 @@ export type ExplorerNodeApi = {
       { delegations: Hive.VestingDelegations[] }
     >;
     get_witness_schedule: TWaxApiRequest<
-      { id: number },
+      { id: number; include_future: boolean },
       Hive.WitnessesSchedule
+    >;
+    list_witnesses: TWaxApiRequest<
+      { limit: number; order: string },
+      { witnesses: Hive.WitnessesByVote[] }
     >;
   };
   rc_api: {
@@ -350,11 +354,24 @@ class FetchingService {
   }
 
   async getWitnessSchedule(): Promise<Hive.WitnessesSchedule> {
-    const params = { id: 1, include_future: false };
+    const params = { id: 1, include_future: true };
 
     return await this.extendedHiveChain!.api.database_api.get_witness_schedule(
       params
     );
+  }
+
+  // Witnesses in the order the chain schedules them, not limited to top voted.
+  async getWitnessesByScheduleTime(
+    limit: number
+  ): Promise<Hive.WitnessesByVote[]> {
+    const response =
+      await this.extendedHiveChain!.api.database_api.list_witnesses({
+        limit,
+        order: "by_schedule_time",
+      });
+
+    return response.witnesses;
   }
 
   async getWitnessesByVote(): Promise<Hive.WitnessesByVote> {

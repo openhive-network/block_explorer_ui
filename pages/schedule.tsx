@@ -10,7 +10,6 @@ import {
   useLiveHeadBlock,
 } from "@/contexts/HeadBlockContext";
 import useWitnesses from "@/hooks/api/common/useWitnesses";
-import useHeadBlock from "@/hooks/api/homePage/useHeadBlock";
 import ErrorPage from "@/components/ErrorPage";
 import WitnessSchedule from "@/components/schedule/WitnessSchedule";
 import BackupWitnessSchedule from "@/components/schedule/BackupWitnessSchedule";
@@ -24,11 +23,10 @@ const Schedule = ({ meta }: { meta: SeoMeta }) => {
   useLiveHeadBlock();
   const { witnessesData } = useWitnesses(200, "rank", "asc");
   const { headBlockNumberData } = useHeadBlockNumber();
-  const { headBlockData } = useHeadBlock(headBlockNumberData);
 
   const {
     scheduledWitnessesData,
-    setBlockSchedule,
+    currentProducerIndex,
     refetchWitnessSchedule,
     nextShuffleBlockNumber,
     blocksLeftBeforeRefetch,
@@ -49,11 +47,8 @@ const Schedule = ({ meta }: { meta: SeoMeta }) => {
     headBlockNumberData || ""
   );
 
-  const producerAccount = headBlockData?.producer_account;
-
   useEffect(() => {
     if (blocksLeftBeforeRefetch < 0) {
-      setBlockSchedule({});
       refetchWitnessSchedule();
       refetchBackupWitnessSchedule();
     }
@@ -81,8 +76,7 @@ const Schedule = ({ meta }: { meta: SeoMeta }) => {
           <div className="w-full grid lg:grid-cols-2 gap-4 content-start">
             <WitnessSchedule
               data={scheduledWitnessesData}
-              currentProducer={producerAccount}
-              currentBlock={headBlockNumberData}
+              currentProducerIndex={currentProducerIndex}
               nextShuffleBlockNumber={nextShuffleBlockNumber}
               blocksLeftBeforeRefetch={blocksLeftBeforeRefetch}
             />
