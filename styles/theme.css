@@ -176,8 +176,6 @@ pre {
 
 /*AutoCompleteInput Styles*/
 .scrollbar-autocomplete {
-  max-height: 18rem;
-  overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-bg) var(--scrollbar-thumb);
 }
@@ -222,43 +220,15 @@ pre {
   transition: color 0.3s ease;
 }
 
-.autocomplete-result-container {
-  display: flex;
-  flex-direction: column;
-  background-color: var(--theme-bg);
-  box-shadow: var(--theme-shadow);
-  margin-top: 0.25rem;
-  max-height: 24rem;
-  overflow-y: auto;
-}
-
+/* Layout/appearance live in the components as Tailwind; these two class names
+   are kept as stable hooks for the e2e specs. */
+.autocomplete-result-container,
 .autocomplete-result-item {
-  padding: 6px 12px;
-  margin: 4px 8px;
-  border-radius: 4px;
   color: var(--text-color);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition:
-    background-color 0.3s ease,
-    transform 0.2s ease;
-  font-size: 14px;
-}
-
-.autocomplete-result-item:hover {
-  background-color: var(--color-navbar-icon-list-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
 }
 
 .autocomplete-result-link {
-  color: var(--color-link);
   text-decoration: none;
-}
-
-.autocomplete-result-label {
-  color: var(--explorer-dark-gray);
 }
 
 .autocomplete-result-highlight {

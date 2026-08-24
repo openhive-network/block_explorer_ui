@@ -1,20 +1,22 @@
 import {
   useState,
   useEffect,
+  useId,
   useRef,
   useCallback,
   RefObject,
   MouseEvent,
   FocusEvent,
 } from "react";
-import { X, Search, CornerDownLeft as Enter } from "lucide-react";
+import { X, Search, SearchX } from "lucide-react";
 import { Input } from "./input";
 import useDebounce from "@/hooks/common/useDebounce";
 import useOnClickOutside from "@/hooks/common/useOnClickOutside";
 import useInputType from "@/hooks/api/common/useInputType";
+import useActiveWitnessNames from "@/hooks/api/common/useActiveWitnessNames";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
-import { trimAccountName, capitalizeFirst } from "@/utils/StringUtils";
+import AutocompleteResultRow from "./AutocompleteResultRow";
+import { trimAccountName } from "@/utils/StringUtils";
 import Hive from "@/types/Hive";
 import { useRouter } from "next/router";
 import { useI18n } from "@/i18n/i18n";
@@ -30,6 +32,12 @@ const getResultTypeHeader = (r: Hive.InputTypeResponse) =>
       : r.input_type === "block_hash"
         ? "block"
         : "account";
+
+const GROUP_LABEL_KEY = {
+  account: "autocompleteInput.accounts",
+  block: "autocompleteInput.blocks",
+  tx: "autocompleteInput.transactions",
+} as const;
 
 interface Props {
   value: string | null;
@@ -64,6 +72,10 @@ const AutoCompleteInput: React.FC<Props> = ({
 }) => {
   const { t } = useI18n();
   const router = useRouter();
+  // Several of these can share a page (block search, dialogs), so the listbox
+  // and option ids have to be instance-scoped.
+  const listboxId = useId();
+  const optionId = (i: number) => `${listboxId}-option-${i}`;
   const [inputFocus, setInputFocus] = useState(false);
   const [selected, setSelected] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
@@ -76,6 +88,15 @@ const AutoCompleteInput: React.FC<Props> = ({
 
   const [query, setQuery] = useState("");
   const { inputTypeData } = useInputType(query);
+
+  // Only pull the witness list while account suggestions are actually on
+  // screen — otherwise every page mounting the navbar would fetch it.
+  const showsAccounts =
+    inputFocus &&
+    ["account_name", "account_name_array"].includes(
+      inputTypeData?.input_type as string
+    );
+  const { witnessNames } = useActiveWitnessNames(showsAccounts);
 
   const debouncedSearch = useDebounce(
     (v: string) => setQuery(trimAccountName(v)),
@@ -184,8 +205,11 @@ const AutoCompleteInput: React.FC<Props> = ({
   const renderOptions = (d: Hive.InputTypeResponse) => {
     if (d.input_type === "invalid_input") {
       return (
-        <div className="p-2">
-          {t("autocompleteInput.invalidInput")}: {searchTerm}
+        <div className="autocomplete-result-container flex items-center gap-2 rounded-xl border border-explorer-light-gray bg-theme px-3 py-2.5 text-sm shadow-lg dark:border-explorer-dark-gray">
+          <SearchX className="h-4 w-4 shrink-0 text-rose-500" />
+          <span className="min-w-0 truncate">
+            {t("autocompleteInput.invalidInput")}: {searchTerm}
+          </span>
         </div>
       );
     }
@@ -196,57 +220,41 @@ const AutoCompleteInput: React.FC<Props> = ({
     itemRefs.current = arr.map((_, i) => itemRefs.current[i] || null);
 
     return (
-      <div
-        className="autocomplete-result-container !h-[200px] !overflow-auto !border border-explorer-light-gray dark:border-explorer-dark-gray !bg-theme scrollbar-autocomplete"
-        ref={containerRef}
-        role="listbox"
-        aria-activedescendant={String(selected)}
-      >
-        {arr.map((acc, i) => (
-          <div
-            key={acc}
-            ref={(el) => {
-              itemRefs.current[i] = el;
-            }}
-            className={cn("autocomplete-result-item cursor-pointer", {
-              "bg-navbar-listHover": selected === i,
-            })}
-            role="option"
-            aria-selected={selected === i}
-            onClick={() => pick(acc)}
-            onMouseEnter={() => setSelected(i)}
-          >
-            {linkResult ? (
-              <>
-                {addLabel && (
-                  <span className="autocomplete-result-label">
-                    {capitalizeFirst(t(`autocompleteInput.${resType}`))}:&nbsp;
-                  </span>
-                )}
-                <Link
-                  className="autocomplete-result-link"
-                  href={
-                    resType === "account" ? `/@${acc}` : `/${resType}/${acc}`
-                  }
-                  onClick={(e) => e.preventDefault()}
-                  data-testid="navbar-search-content-link"
-                >
-                  {acc}
-                </Link>
-              </>
-            ) : (
-              <>
-                {addLabel && (
-                  <span className="autocomplete-result-label">
-                    {capitalizeFirst(resType)}:&nbsp;
-                  </span>
-                )}
-                {acc}
-              </>
-            )}
-            {selected === i && <Enter className="hidden md:inline ml-1" />}
+      <div className="autocomplete-result-container overflow-hidden rounded-xl border border-explorer-light-gray bg-theme shadow-lg dark:border-explorer-dark-gray">
+        {addLabel && (
+          <div className="flex items-center justify-between gap-2 border-b border-explorer-light-gray px-3 py-1.5 dark:border-explorer-dark-gray">
+            <span className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+              {t(GROUP_LABEL_KEY[resType])}
+            </span>
+            <span className="rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-500 dark:bg-slate-800 dark:text-slate-400">
+              {arr.length}
+            </span>
           </div>
-        ))}
+        )}
+        <div
+          className="scrollbar-autocomplete max-h-[min(20rem,60vh)] space-y-0.5 overflow-y-auto p-1.5"
+          ref={containerRef}
+          role="listbox"
+          aria-activedescendant={optionId(selected)}
+        >
+          {arr.map((acc, i) => (
+            <AutocompleteResultRow
+              key={acc}
+              id={optionId(i)}
+              ref={(el) => {
+                itemRefs.current[i] = el;
+              }}
+              value={acc}
+              resultType={resType}
+              query={searchTerm}
+              selected={selected === i}
+              isWitness={witnessNames.has(acc)}
+              linkResult={linkResult}
+              onSelect={() => pick(acc)}
+              onHover={() => setSelected(i)}
+            />
+          ))}
+        </div>
       </div>
     );
   };
@@ -281,7 +289,7 @@ const AutoCompleteInput: React.FC<Props> = ({
             )
           }
           aria-autocomplete="list"
-          aria-controls="autocomplete-listbox"
+          aria-controls={listboxId}
           data-testid="search-bar-input"
         />
         {value ? (
@@ -298,10 +306,7 @@ const AutoCompleteInput: React.FC<Props> = ({
       </div>
 
       {inputFocus && value && value.length && inputTypeData?.input_value && (
-        <div
-          id="autocomplete-listbox"
-          className="absolute bg-theme w-full rounded-lg shadow-lg z-50"
-        >
+        <div id={listboxId} className="absolute z-50 mt-1 w-full min-w-[15rem]">
           {renderOptions(inputTypeData)}
         </div>
       )}

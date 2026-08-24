@@ -72,7 +72,7 @@ import TopHoldersConcentrationStrip from "@/components/TopHoldersConcentrationSt
 import TopHolderYouBadge from "@/components/TopHolderYouBadge";
 import AccountLabelBadge from "@/components/AccountLabelBadge";
 import { resolveAccountLabel } from "@/utils/accountLabels";
-import useTopHolderWitnesses from "@/hooks/api/common/useTopHolderWitnesses";
+import useActiveWitnessNames from "@/hooks/api/common/useActiveWitnessNames";
 import AccountLocator from "@/components/AccountLocator";
 import AutoCompleteInput from "@/components/ui/AutoCompleteInput";
 import useCompareSelection from "@/hooks/common/useCompareSelection";
@@ -189,7 +189,7 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
 
   const { dynamicGlobalData } = useDynamicGlobal();
   const { hiveChain } = useHiveChainContext();
-  const { witnessNames } = useTopHolderWitnesses();
+  const { witnessNames } = useActiveWitnessNames();
   const { username } = useAuth();
   const vestingRatios = useMemo(
     () => computeVestingRatios(hiveChain, dynamicGlobalData),
@@ -602,8 +602,8 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
                       className="max-w-[240px] text-center text-[11px]"
                     >
                       {account === "null"
-                        ? t("topHolders.burnInfo")
-                        : t("topHolders.treasuryInfo")}
+                        ? t("accountLabel.burnInfo")
+                        : t("accountLabel.treasuryInfo")}
                     </TooltipContent>
                   </TooltipPortal>
                 </Tooltip>
