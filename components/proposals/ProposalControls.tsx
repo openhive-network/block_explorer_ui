@@ -1,5 +1,14 @@
-import { ArrowDown, ArrowUp, Heart, Search, SortAsc, SortDesc, Star } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  Heart,
+  Search,
+  SortAsc,
+  SortDesc,
+  Star,
+} from "lucide-react";
 import { useI18n } from "@/i18n/i18n";
+import SignInPromptButton from "@/components/login/SignInPromptButton";
 
 export type ProposalStatusFilter = "all" | "active" | "inactive" | "expired";
 export type ProposalSortOrder =
@@ -91,8 +100,12 @@ export const ProposalControls = ({
                     }`}
                     title={t("proposalControls.favorites")}
                   >
-                    <Star className={`h-4 w-4 ${favoritesOnly ? "fill-amber-400" : ""}`} />
-                    <span className="hidden sm:inline">{t("proposalControls.favorites")}</span>
+                    <Star
+                      className={`h-4 w-4 ${favoritesOnly ? "fill-amber-400" : ""}`}
+                    />
+                    <span className="hidden sm:inline">
+                      {t("proposalControls.favorites")}
+                    </span>
                   </button>
                   <button
                     type="button"
@@ -104,9 +117,34 @@ export const ProposalControls = ({
                     }`}
                     title={t("proposalControls.voted")}
                   >
-                    <Heart className={`h-4 w-4 ${votedOnly ? "fill-red-500 dark:fill-red-400" : ""}`} />
-                    <span className="hidden sm:inline">{t("proposalControls.voted")}</span>
+                    <Heart
+                      className={`h-4 w-4 ${votedOnly ? "fill-red-500 dark:fill-red-400" : ""}`}
+                    />
+                    <span className="hidden sm:inline">
+                      {t("proposalControls.voted")}
+                    </span>
                   </button>
+                </>
+              )}
+              {!isLoggedIn && (
+                <>
+                  <div className="w-px h-5 bg-slate-300 dark:bg-slate-600 mx-0.5 flex-shrink-0" />
+                  <SignInPromptButton
+                    variant="toolbar"
+                    colorClassName="text-slate-500 hover:text-amber-500 dark:text-slate-400 dark:hover:text-amber-400"
+                    icon={Star}
+                    label={t("proposalControls.favorites")}
+                    signInLabel={t("auth.signIn")}
+                    tooltip={t("auth.unlock.favoritesFilter")}
+                  />
+                  <SignInPromptButton
+                    variant="toolbar"
+                    colorClassName="text-slate-500 hover:text-red-400 dark:text-slate-400 dark:hover:text-red-400"
+                    icon={Heart}
+                    label={t("proposalControls.voted")}
+                    signInLabel={t("auth.signIn")}
+                    tooltip={t("auth.unlock.votedFilter")}
+                  />
                 </>
               )}
             </div>
@@ -116,10 +154,7 @@ export const ProposalControls = ({
         <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:gap-4 lg:w-1/2">
           <div className="relative flex-grow">
             <div className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2">
-              <Search
-                className="h-5 w-5 text-slate-400"
-                aria-hidden="true"
-              />
+              <Search className="h-5 w-5 text-slate-400" aria-hidden="true" />
             </div>
             <input
               type="search"
@@ -155,10 +190,7 @@ export const ProposalControls = ({
                 aria-label={t("proposalControls.sortBy")}
               >
                 {SORT_OPTIONS.map((option) => (
-                  <option
-                    key={option.value}
-                    value={option.value}
-                  >
+                  <option key={option.value} value={option.value}>
                     {t(option.labelKey)}
                   </option>
                 ))}
@@ -186,15 +218,9 @@ export const ProposalControls = ({
               aria-pressed={sortDirection === "descending"}
             >
               {sortDirection === "descending" ? (
-                <ArrowDown
-                  className="h-5 w-5"
-                  aria-hidden="true"
-                />
+                <ArrowDown className="h-5 w-5" aria-hidden="true" />
               ) : (
-                <ArrowUp
-                  className="h-5 w-5"
-                  aria-hidden="true"
-                />
+                <ArrowUp className="h-5 w-5" aria-hidden="true" />
               )}
               <span className="sr-only">
                 {t("proposalControls.sortDirection")}

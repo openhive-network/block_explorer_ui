@@ -1,4 +1,5 @@
 import React from "react";
+import { Lock } from "lucide-react";
 import { useI18n } from "@/i18n/i18n";
 import { cn } from "@/lib/utils";
 import {
@@ -7,8 +8,18 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { requestLogin } from "@/utils/loginPrompt";
 import { GUEST_VIEWS, GUEST_VIEW_META, GuestView } from "./guestViews";
 import { resolveAccent } from "@/components/dashboard/lib/accents";
+
+// Not a guest view: the board only exists once there is an account behind it.
+const LOCKED_DASHBOARD = "__dashboard_locked";
 
 interface GuestViewSwitch {
   value: GuestView;
@@ -50,7 +61,13 @@ const GuestViewTabs: React.FC = () => {
     <div className={cn("p-2 sm:hidden", edge)} data-testid="guest-view-mobile">
       <Select
         value={value}
-        onValueChange={(view) => onChange(view as GuestView)}
+        onValueChange={(view) => {
+          if (view === LOCKED_DASHBOARD) {
+            requestLogin();
+            return;
+          }
+          onChange(view as GuestView);
+        }}
         dir={dir}
       >
         <SelectTrigger
@@ -97,6 +114,17 @@ const GuestViewTabs: React.FC = () => {
               </SelectItem>
             );
           })}
+          <SelectItem value={LOCKED_DASHBOARD}>
+            <div
+              className={cn(
+                "flex w-full items-center gap-2 text-gray-400 dark:text-gray-500",
+                isRTL && "flex-row-reverse justify-end"
+              )}
+            >
+              <Lock size={14} className="shrink-0" />
+              <span>{t("guestHome.view.dashboard")}</span>
+            </div>
+          </SelectItem>
         </SelectContent>
       </Select>
     </div>
@@ -145,6 +173,32 @@ const GuestViewTabs: React.FC = () => {
           </button>
         );
       })}
+
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span>
+              <button
+                type="button"
+                data-testid="guest-view-tab-dashboard-locked"
+                onClick={requestLogin}
+                aria-label={t("guestHome.dashboardLockedTooltip")}
+                className={cn(
+                  "relative flex shrink-0 items-center gap-1.5 whitespace-nowrap px-3 py-2.5 text-sm font-semibold transition-colors",
+                  "text-gray-400 hover:text-gray-600 dark:text-gray-600 dark:hover:text-gray-400",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
+                )}
+              >
+                <Lock size={13} strokeWidth={2} className="shrink-0" />
+                {t("guestHome.view.dashboard")}
+              </button>
+            </span>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" className="max-w-[220px] text-center">
+            <p>{t("guestHome.dashboardLockedTooltip")}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
     </nav>
   );
 

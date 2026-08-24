@@ -8,6 +8,7 @@ import { SmartSigner } from "@/lib/smart-signer";
 import { LoginMethod } from "@/lib/smart-signer/types";
 import { buildWitnessVoteSignUrl } from "@/lib/smart-signer/providers/hivesigner";
 import useWitnessVoteChain from "@/hooks/api/common/useWitnessVoteChain";
+import SignInPromptButton from "@/components/login/SignInPromptButton";
 import { useI18n } from "@/i18n/i18n";
 import {
   Tooltip,
@@ -32,7 +33,7 @@ const WitnessVoteButton: React.FC<WitnessVoteButtonProps> = ({
   const queryClient = useQueryClient();
 
   const { witnessVotes, proxyChain, isLoading } = useWitnessVoteChain(
-    isLoggedIn ? (username || "") : ""
+    isLoggedIn ? username || "" : ""
   );
 
   const [localOverride, setLocalOverride] = useState<boolean | null>(null);
@@ -43,11 +44,12 @@ const WitnessVoteButton: React.FC<WitnessVoteButtonProps> = ({
     return witnessVotes.includes(witnessName);
   }, [localOverride, witnessVotes, witnessName]);
 
-  const disabledReason = proxyChain.length > 0
-    ? t("witnesses.voteTooltipProxy")
-    : (!hasVoted && witnessVotes.length >= 30)
-      ? t("witnesses.voteTooltipLimit")
-      : null;
+  const disabledReason =
+    proxyChain.length > 0
+      ? t("witnesses.voteTooltipProxy")
+      : !hasVoted && witnessVotes.length >= 30
+        ? t("witnesses.voteTooltipLimit")
+        : null;
 
   const isDisabled = !!disabledReason || inProgress || isLoading;
 
@@ -56,7 +58,7 @@ const WitnessVoteButton: React.FC<WitnessVoteButtonProps> = ({
     const approve = !hasVoted;
 
     // Hivesigner can't broadcast Active-key ops; redirect to its sign page.
-    if (method === 'hivesigner') {
+    if (method === "hivesigner") {
       setInProgress(true);
       const action = approve ? "vote" : "unvote";
       const params = new URLSearchParams(window.location.search);
@@ -77,7 +79,12 @@ const WitnessVoteButton: React.FC<WitnessVoteButtonProps> = ({
       await SmartSigner.broadcast(
         username,
         method as LoginMethod,
-        [["account_witness_vote", { account: username, witness: witnessName, approve }]],
+        [
+          [
+            "account_witness_vote",
+            { account: username, witness: witnessName, approve },
+          ],
+        ],
         "Active"
       );
       setLocalOverride(approve);
@@ -94,7 +101,9 @@ const WitnessVoteButton: React.FC<WitnessVoteButtonProps> = ({
       );
       // Wait for the chain to commit before refetching.
       setTimeout(() => {
-        queryClient.invalidateQueries({ queryKey: ["witnessVoteChain", username] });
+        queryClient.invalidateQueries({
+          queryKey: ["witnessVoteChain", username],
+        });
       }, 6000);
       toast.success(
         approve
@@ -109,7 +118,22 @@ const WitnessVoteButton: React.FC<WitnessVoteButtonProps> = ({
     }
   };
 
-  if (!isLoggedIn) return null;
+  if (!isLoggedIn) {
+    return (
+      <SignInPromptButton
+        variant={variant}
+        colorClassName={
+          variant === "pill"
+            ? "bg-green-50 text-green-700 border-green-300 hover:bg-green-100 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800/50 dark:hover:bg-green-900/40"
+            : "bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400 dark:hover:bg-green-900/50"
+        }
+        icon={Heart}
+        label={t("witnesses.vote")}
+        signInLabel={t("auth.signIn")}
+        tooltip={t("auth.unlock.voteWitness")}
+      />
+    );
+  }
 
   const label = hasVoted ? t("witnesses.unvote") : t("witnesses.vote");
 

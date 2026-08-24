@@ -8,6 +8,7 @@ import { SmartSigner } from "@/lib/smart-signer";
 import { LoginMethod } from "@/lib/smart-signer/types";
 import { buildProxySignUrl } from "@/lib/smart-signer/providers/hivesigner";
 import useWitnessVoteChain from "@/hooks/api/common/useWitnessVoteChain";
+import SignInPromptButton from "@/components/login/SignInPromptButton";
 import { useI18n } from "@/i18n/i18n";
 import {
   Tooltip,
@@ -35,7 +36,22 @@ const SetProxyButton: React.FC<SetProxyButtonProps> = ({
 
   const [inProgress, setInProgress] = useState(false);
 
-  if (!isLoggedIn) return null;
+  if (!isLoggedIn) {
+    return (
+      <SignInPromptButton
+        variant={variant}
+        colorClassName={
+          variant === "pill"
+            ? "bg-blue-50 text-blue-700 border-blue-300 hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800/50 dark:hover:bg-blue-900/40"
+            : "bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50"
+        }
+        icon={Handshake}
+        label={t("witnesses.setProxy")}
+        signInLabel={t("auth.signIn")}
+        tooltip={t("auth.unlock.setProxy")}
+      />
+    );
+  }
 
   const currentProxy = proxyChain[0] ?? "";
   const isThisProxy = currentProxy === witnessName;
@@ -81,11 +97,7 @@ const SetProxyButton: React.FC<SetProxyButtonProps> = ({
       // Optimistic 1-hop chain; the timed invalidate refills any nested hops.
       queryClient.setQueryData(
         ["witnessVoteChain", username],
-        (
-          old:
-            | { witnessVotes: string[]; proxyChain: string[] }
-            | undefined
-        ) => {
+        (old: { witnessVotes: string[]; proxyChain: string[] } | undefined) => {
           if (!old) return old;
           return {
             ...old,
@@ -115,8 +127,8 @@ const SetProxyButton: React.FC<SetProxyButtonProps> = ({
   const buttonLabel = isThisProxy
     ? t("witnesses.removeProxy")
     : isOtherProxy
-    ? t("witnesses.replaceProxy")
-    : t("witnesses.setProxy");
+      ? t("witnesses.replaceProxy")
+      : t("witnesses.setProxy");
 
   const tooltipContent = buttonLabel;
 
@@ -134,8 +146,8 @@ const SetProxyButton: React.FC<SetProxyButtonProps> = ({
                   isThisProxy
                     ? "bg-red-50 text-red-700 border-red-300 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800/50"
                     : isOtherProxy
-                    ? "bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800/50"
-                    : "bg-blue-50 text-blue-700 border-blue-300 hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800/50",
+                      ? "bg-amber-50 text-amber-700 border-amber-300 hover:bg-amber-100 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800/50"
+                      : "bg-blue-50 text-blue-700 border-blue-300 hover:bg-blue-100 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800/50",
                   isDisabled && "opacity-50 cursor-not-allowed"
                 )}
               >
@@ -162,8 +174,8 @@ const SetProxyButton: React.FC<SetProxyButtonProps> = ({
   const CompactIcon = isThisProxy
     ? Unlink
     : isOtherProxy
-    ? ArrowLeftRight
-    : Handshake;
+      ? ArrowLeftRight
+      : Handshake;
 
   return (
     <TooltipProvider>
@@ -179,8 +191,8 @@ const SetProxyButton: React.FC<SetProxyButtonProps> = ({
                 isThisProxy
                   ? "bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50"
                   : isOtherProxy
-                  ? "bg-amber-100 text-amber-700 hover:bg-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:hover:bg-amber-900/50"
-                  : "bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50",
+                    ? "bg-amber-100 text-amber-700 hover:bg-amber-200 dark:bg-amber-900/30 dark:text-amber-400 dark:hover:bg-amber-900/50"
+                    : "bg-blue-100 text-blue-700 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-400 dark:hover:bg-blue-900/50",
                 isDisabled && "opacity-50 cursor-not-allowed"
               )}
             >
