@@ -1,3 +1,5 @@
+import { isBadActor } from "./badActors";
+
 // Curated known-account map; ship only verifiable treasury/burn or documented
 // exchange wallets — better unbadged than mislabeled.
 export type AccountLabelType =
@@ -5,7 +7,8 @@ export type AccountLabelType =
   | "treasury"
   | "burn"
   | "witness"
-  | "service";
+  | "service"
+  | "badActor";
 
 export interface AccountLabel {
   type: AccountLabelType;
@@ -51,11 +54,12 @@ export interface ResolvedAccountLabel {
 }
 
 const TOOLTIP_KEY_BY_TYPE: Record<AccountLabelType, string> = {
-  exchange: "topHolders.labelExchangeInfo",
-  treasury: "topHolders.treasuryInfo",
-  burn: "topHolders.burnInfo",
-  witness: "topHolders.labelWitnessInfo",
-  service: "topHolders.labelServiceInfo",
+  exchange: "accountLabel.exchangeInfo",
+  treasury: "accountLabel.treasuryInfo",
+  burn: "accountLabel.burnInfo",
+  witness: "accountLabel.witnessInfo",
+  service: "accountLabel.serviceInfo",
+  badActor: "accountMainCard.badActorMessage",
 };
 
 // Static label wins; witness is a low-priority dynamic fallback.
@@ -81,3 +85,12 @@ export const resolveAccountLabel = (
   }
   return null;
 };
+
+// Orthogonal to the curated label above — an account can be both a known
+// exchange and community-flagged, so this resolves separately.
+export const resolveBadActorLabel = (
+  account: string
+): ResolvedAccountLabel | null =>
+  isBadActor(account)
+    ? { type: "badActor", label: "", tooltipKey: TOOLTIP_KEY_BY_TYPE.badActor }
+    : null;

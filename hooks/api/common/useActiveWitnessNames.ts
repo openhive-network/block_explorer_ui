@@ -4,11 +4,12 @@ import { config } from "@/Config";
 
 // Set of ACTIVE witness names (top-200 by rank). Disabled witnesses (null
 // signing key) are excluded so a stale registration isn't badged as active.
-const useTopHolderWitnesses = () => {
+const useActiveWitnessNames = (enabled: boolean = true) => {
   const { witnessesData, isWitnessDataLoading } = useWitnesses(
     200,
     "rank",
-    "asc"
+    "asc",
+    enabled
   );
   const witnessNames = useMemo(
     () =>
@@ -26,4 +27,4 @@ const useTopHolderWitnesses = () => {
   return { witnessNames, isLoading: isWitnessDataLoading };
 };
 
-export default useTopHolderWitnesses;
+export default useActiveWitnessNames;

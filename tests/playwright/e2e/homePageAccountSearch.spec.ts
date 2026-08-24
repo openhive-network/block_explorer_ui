@@ -109,7 +109,8 @@ test.describe("Home page - account searches", () => {
     await page.waitForSelector(".autocomplete-result-item");
     await page
       .locator(".autocomplete-result-item")
-      .getByText("roelandp", { exact: true })
+      .filter({ hasText: "roelandp" })
+      .first()
       .click();
     await mainPage.operationsTypesBtn.click();
     await expect(mainPage.operationsTypesWindow).toBeVisible();
@@ -150,7 +151,8 @@ test.describe("Home page - account searches", () => {
     await page.waitForSelector(".autocomplete-result-item");
     await page
       .locator(".autocomplete-result-item")
-      .getByText("gtg", { exact: true })
+      .filter({ hasText: "gtg" })
+      .first()
       .click();
     await mainPage.operationsTypesBtn.click();
     await expect(mainPage.operationsTypesWindow).toBeVisible();
@@ -182,7 +184,8 @@ test.describe("Home page - account searches", () => {
     await page.waitForSelector(".autocomplete-result-item");
     await page
       .locator(".autocomplete-result-item")
-      .getByText("gtg", { exact: true })
+      .filter({ hasText: "gtg" })
+      .first()
       .click();
     await mainPage.operationsTypesBtn.click();
     await expect(mainPage.operationsTypesWindow).toBeVisible();
