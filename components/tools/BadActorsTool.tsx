@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { trimAccountName } from "@/utils/StringUtils";
 import badActors from "@/utils/BadActorList";
+import { isBadActor } from "@/utils/badActors";
 
 const fill = (s: string, vars: Record<string, string>) =>
   Object.entries(vars).reduce((acc, [k, v]) => acc.replace(`{${k}}`, v), s);
@@ -13,7 +14,6 @@ const fill = (s: string, vars: Record<string, string>) =>
 // Bucket the flagged names by first letter once (module scope — the list is a
 // static import). Non a–z first chars fall into the "#" bucket.
 const ALL = (badActors as string[]).filter(Boolean);
-const SET = new Set(ALL);
 const GROUPED: Record<string, string[]> = {};
 for (const name of ALL) {
   const c = name[0].toLowerCase();
@@ -32,7 +32,11 @@ const BadActorsTool: React.FC = () => {
 
   const lookupName = trimAccountName(lookup);
   const verdict =
-    lookupName.length > 0 ? (SET.has(lookupName) ? "flagged" : "clear") : null;
+    lookupName.length > 0
+      ? isBadActor(lookupName)
+        ? "flagged"
+        : "clear"
+      : null;
 
   const rows = GROUPED[active] ?? [];
 

@@ -8,13 +8,13 @@ import useWitnessDetails from "@/hooks/api/common/useWitnessDetails";
 import { Link, Star } from "lucide-react";
 
 import { useEffect, useState } from "react";
-import list from '../../utils/BadActorList';
+import { isBadActor } from "@/utils/badActors";
 import ErrorMessage from "../ErrorMessage";
 import { useI18n } from "@/i18n/i18n";
 
 interface MobileAccountNameCardProps {
   accountName: string;
-  communityName :string | undefined;
+  communityName: string | undefined;
   liveDataEnabled: boolean;
   accountDetails: Explorer.FormattedAccountDetails;
 }
@@ -33,17 +33,18 @@ const MobileAccountNameCard: React.FC<MobileAccountNameCardProps> = ({
   const isWitnessActive =
     witnessDetails?.signing_key !== config.inactiveWitnessKey;
 
-  const [isBadActor, setIsBadActor] = useState(false);
+  // Only the dismissal needs state; the flag itself is a pure lookup. The old
+  // effect only ever set it true, so a flagged account's warning carried over
+  // to the next, clean account.
+  const [warningDismissed, setWarningDismissed] = useState(false);
   useEffect(() => {
-       // Check if the accountName is in the list
-       if (list.includes(accountName)) {
-           setIsBadActor(true);
-       }
-   }, [accountName]);
+    setWarningDismissed(false);
+  }, [accountName]);
+  const showBadActorWarning = isBadActor(accountName) && !warningDismissed;
 
   const handleCloseWarning = () => {
-       setIsBadActor(false); // Clear the error by setting state to false
-   };
+    setWarningDismissed(true);
+  };
 
   if (!accountDetails) return;
 
@@ -62,8 +63,11 @@ const MobileAccountNameCard: React.FC<MobileAccountNameCardProps> = ({
               data-testid="user-avatar"
             />
             <div>
-              <h2 className="text-lg font-semibold text-gray-800 dark:text-white" data-testid="account-name">
-                {communityName? communityName: accountDetails.name}
+              <h2
+                className="text-lg font-semibold text-gray-800 dark:text-white"
+                data-testid="account-name"
+              >
+                {communityName ? communityName : accountDetails.name}
               </h2>
               {accountDetails.is_witness && (
                 <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
@@ -80,7 +84,7 @@ const MobileAccountNameCard: React.FC<MobileAccountNameCardProps> = ({
                         data-testid="witness-rank-icon"
                         fill="currentColor"
                         size={16}
-                        />
+                      />
                       <span>{witnessDetails.rank}</span>
                     </span>
                   )}
@@ -90,10 +94,7 @@ const MobileAccountNameCard: React.FC<MobileAccountNameCardProps> = ({
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <Link 
-                        size={15}
-                        strokeWidth={3}
-                      />
+                      <Link size={15} strokeWidth={3} />
                     </a>
                   )}
                 </div>
@@ -101,16 +102,16 @@ const MobileAccountNameCard: React.FC<MobileAccountNameCardProps> = ({
             </div>
           </div>
         </div>
-         {/* Warning Message */}
-         <div>
-            {isBadActor && (
-              <ErrorMessage
-                message={t("accountMainCard.badActorMessage")}
-                isWarning={true}
-                onClose={handleCloseWarning}
-              />
-            )}
-          </div>
+        {/* Warning Message */}
+        <div>
+          {showBadActorWarning && (
+            <ErrorMessage
+              message={t("accountMainCard.badActorMessage")}
+              isWarning={true}
+              onClose={handleCloseWarning}
+            />
+          )}
+        </div>
       </CardHeader>
     </Card>
   );
