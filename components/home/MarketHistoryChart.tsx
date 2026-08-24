@@ -154,11 +154,6 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({
     return computeTrendPct(closes);
   }, [chartData]);
 
-  // Stable tick count: show ~6 ticks regardless of locale label widths.
-  const tickInterval = chartData
-    ? Math.max(1, Math.floor((chartData.length - 1) / 5))
-    : "preserveStartEnd";
-
   return (
     <ResponsiveContainer width="100%" height={isFullChart ? 400 : 250}>
       <AreaChart
@@ -175,7 +170,9 @@ const MarketHistoryChart: React.FC<MarketChartProps> = ({
         <XAxis
           dataKey="date"
           tickFormatter={(d) => moment(d).format("MMM D")}
-          interval={tickInterval}
+          tickCount={6}
+          minTickGap={12}
+          style={{ fontSize: "10px" }}
           stroke={strokeColor}
           reversed={isRTL}
         />
