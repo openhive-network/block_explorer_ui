@@ -64,9 +64,9 @@ const HeadBlockHiveChartCard: React.FC<HeadBlockPropertyCardProps> = ({
     >
       <div
         onClick={handleHideParams}
-        className="h-full w-full flex items-center justify-between cursor-pointer px-1"
+        className="h-full w-full flex flex-wrap items-center justify-between gap-x-2 gap-y-0.5 cursor-pointer px-1"
       >
-        <span className="text-base font-medium truncate min-w-0">{header}</span>
+        <span className="text-base font-medium min-w-0">{header}</span>
         <div className="flex items-center gap-3 shrink-0">
           {!isParamsHidden && (
             <button
