@@ -239,6 +239,7 @@
   "headBlockPropertyCard.maxOpenRecurrentTransfers": "Max open recurrent transfers",
   "lastBlocksWidget.lastBlocks": "Last Blocks",
   "lastBlocksWidget.avg": "Avg:",
+  "lastBlocksWidget.shown": "shown",
   "transactionStatisticsCard.totalTransactions": "Total Transactions",
   "transactionStatisticsCard.todaysTransactions": "Today's Transactions",
   "transactionStatisticsCard.avgTrxsBlock": "Avg Trxs/block",

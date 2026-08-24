@@ -40,6 +40,13 @@ type AvatarPosition = { x: number; y: number; witness: string } | null;
 
 const AVATAR_SIZE = 24;
 const AVATAR_R = AVATAR_SIZE / 2;
+
+// Grid insets, shared by the ECharts grid and the avg-line overlay drawn on top of it.
+// The axis side clears the y-tick overlay; the outer side has to fit half a
+// block-number label, because the last category sits flush against that edge and
+// its label is always rendered. 20px clipped it once bars got narrow.
+const GRID_AXIS_INSET = 48;
+const GRID_OUTER_INSET = 34;
 const ANIMATION_MS = 500;
 const EASING = `cubic-bezier(0.215, 0.61, 0.355, 1)`;
 
@@ -101,6 +108,9 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
 }) => {
   const { t, dir, locale } = useI18n();
   const isRTL = dir === "rtl";
+  // In RTL the axis is inverted, so the last category sits against the left edge.
+  const gridLeft = isRTL ? GRID_OUTER_INSET : GRID_AXIS_INSET;
+  const gridRight = isRTL ? GRID_AXIS_INSET : GRID_OUTER_INSET;
   const { theme } = useTheme();
   const {
     settings: { liveData },
@@ -138,23 +148,39 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
     [data]
   );
 
+  // Totals of the legend-selected series only. The avg line and peak badge read
+  // from these so they always describe the bars actually on screen.
+  const visibleTotals = useMemo(
+    () =>
+      data.map((d) =>
+        OP_SERIES_ORDER.reduce(
+          (s, k) =>
+            legendSelected[k]
+              ? s + ((d[k as keyof ChartBlockData] as number) || 0)
+              : s,
+          0
+        )
+      ),
+    [data, legendSelected]
+  );
+
   const avgOps = useMemo(
     () =>
-      blockTotals.length
+      visibleTotals.length
         ? Math.round(
-            blockTotals.reduce((a, b) => a + b, 0) / blockTotals.length
+            visibleTotals.reduce((a, b) => a + b, 0) / visibleTotals.length
           )
         : 0,
-    [blockTotals]
+    [visibleTotals]
   );
 
   // Only badge the peak when it actually stands out above average; suppress otherwise.
   const peakIdx = useMemo(() => {
-    if (!blockTotals.length) return -1;
-    const max = Math.max(...blockTotals);
+    if (!visibleTotals.length) return -1;
+    const max = Math.max(...visibleTotals);
     if (max <= avgOps) return -1;
-    return blockTotals.indexOf(max);
-  }, [blockTotals, avgOps]);
+    return visibleTotals.indexOf(max);
+  }, [visibleTotals, avgOps]);
 
   const [avatarPositions, setAvatarPositions] = useState<AvatarPosition[]>([]);
   const [yTicks, setYTicks] = useState<{ label: string; y: number }[]>([]);
@@ -174,8 +200,8 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
   // them without being re-created on every data/legend/avg change.
   const dataRef = useRef(data);
   dataRef.current = data;
-  const legendSelectedRef = useRef(legendSelected);
-  legendSelectedRef.current = legendSelected;
+  const visibleTotalsRef = useRef(visibleTotals);
+  visibleTotalsRef.current = visibleTotals;
   const avgOpsRef = useRef(avgOps);
   avgOpsRef.current = avgOps;
 
@@ -239,15 +265,8 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
     // avatar positions + glow box
     try {
       const d = dataRef.current;
-      const ls = legendSelectedRef.current;
+      const visibleTotals = visibleTotalsRef.current;
       if (!d.length) return;
-      const visibleTotals = d.map((block) =>
-        OP_SERIES_ORDER.reduce(
-          (sum, k) =>
-            ls[k] ? sum + (block[k as keyof ChartBlockData] as number) : sum,
-          0
-        )
-      );
       const positions: AvatarPosition[] = d.map((block, i) => {
         const pixel = chart.convertToPixel("grid", [i, visibleTotals[i]]);
         if (!Array.isArray(pixel)) return null;
@@ -335,6 +354,9 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
     const witnessMap = new Map<string, string>(
       data.map((d) => [d.name, d.witness])
     );
+    const totalMap = new Map<string, number>(
+      data.map((d, i) => [d.name, blockTotals[i]])
+    );
 
     return {
       animation: true,
@@ -343,8 +365,8 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
       animationDurationUpdate: liveData ? 0 : ANIMATION_MS,
       animationEasingUpdate: "cubicOut" as const,
       grid: {
-        left: isRTL ? 20 : 48,
-        right: isRTL ? 48 : 20,
+        left: gridLeft,
+        right: gridRight,
         top: 44,
         bottom: 22,
         containLabel: false,
@@ -369,7 +391,10 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
           // witness is interpolated into raw HTML below; safe because Hive consensus
           // enforces account names to [a-z0-9.-] — no HTML-special characters possible.
           const witness = witnessMap.get(blockNum) ?? "";
-          const total = params.reduce(
+          // ECharts drops legend-deselected series from params, so summing params
+          // yields the visible subtotal, not the block's operation count.
+          const blockTotal = totalMap.get(blockNum) ?? 0;
+          const shown = params.reduce(
             (s: number, p: any) => s + (p.value || 0),
             0
           );
@@ -394,7 +419,11 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
                 <span style="font-weight:600;font-size:13px">${witness}</span>
               </div>
               <div style="font-size:12px;opacity:.55;margin-bottom:6px">
-                ${t("common.operations")}: <b style="opacity:1">${total}</b>
+                ${t("common.operations")}: <b style="opacity:1">${blockTotal.toLocaleString(locale)}</b>${
+                  shown !== blockTotal
+                    ? ` (${shown.toLocaleString(locale)} ${t("lastBlocksWidget.shown")})`
+                    : ""
+                }
               </div>
               <div style="border-top:1px solid ${tooltipBorder};padding-top:6px">
                 ${rows}
@@ -467,7 +496,17 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
         cursor: "pointer",
       })),
     };
-  }, [data, theme, isRTL, locale, liveData, t]);
+  }, [
+    data,
+    blockTotals,
+    theme,
+    isRTL,
+    gridLeft,
+    gridRight,
+    locale,
+    liveData,
+    t,
+  ]);
 
   const onEvents = useMemo(
     () => ({
@@ -524,8 +563,8 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
               <div
                 style={{
                   position: "absolute",
-                  left: isRTL ? 20 : 48,
-                  right: isRTL ? 48 : 20,
+                  left: gridLeft,
+                  right: gridRight,
                   top: avgLineY,
                   height: 0,
                   borderTop: `1.5px dashed ${yAxisLabelColor}`,
@@ -628,7 +667,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
                         : `left ${ANIMATION_MS}ms ${EASING}, top ${ANIMATION_MS}ms ${EASING}`,
                     }}
                   >
-                    ▲ {blockTotals[peakIdx]}
+                    ▲ {visibleTotals[peakIdx]}
                   </div>
                 );
               })()}

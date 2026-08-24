@@ -63,7 +63,7 @@ const StandardHome = () => {
       <Head>
         <title>{t("home.title")}</title>
       </Head>
-      <div className="page-container grid grid-cols-12 text-white gap-3">
+      <div className="page-container grid grid-cols-12 text-white gap-x-3 gap-y-0">
         <div className="col-span-12 md:col-span-4 lg:col-span-3 flex flex-col">
           <HeadBlockCard
             headBlockCardData={dynamicGlobalQueryData}
