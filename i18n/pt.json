@@ -1586,6 +1586,7 @@
   "accountLabel.treasuryInfo": "Conta da Hive DAO / tesouraria — financia propostas do ecossistema e é excluída do fornecimento em circulação, por isso não é contabilizada como detentora aqui.",
   "accountLabel.burnInfo": "Conta de queima @null — os saldos enviados para aqui são destruídos permanentemente, por isso são excluídos da participação dos detentores.",
   "accountLabel.witness": "Testemunha",
+  "accountLabel.badActor": "Possível ator malicioso",
   "accountLabel.exchangeInfo": "Atribuição aproximada de uma carteira de exchange conhecida — pode estar inativa. Não é um facto ao nível do protocolo.",
   "accountLabel.inactiveInfo": "Carteira de exchange extinta ou inativa — já não é um endereço de depósito ativo, embora ainda possa deter ou movimentar fundos residuais.",
   "accountLabel.witnessInfo": "Esta conta é uma testemunha da Hive atualmente eleita (produtora de blocos).",

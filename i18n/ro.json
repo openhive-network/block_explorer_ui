@@ -1586,6 +1586,7 @@
   "accountLabel.treasuryInfo": "Contul Hive DAO / trezorerie — finanțează propunerile ecosistemului și este exclus din oferta în circulație, așa că nu este considerat aici drept deținător.",
   "accountLabel.burnInfo": "Contul de ardere @null — soldurile trimise aici sunt distruse definitiv, așa că sunt excluse din cota deținătorilor.",
   "accountLabel.witness": "Witness",
+  "accountLabel.badActor": "Posibil actor rău intenționat",
   "accountLabel.exchangeInfo": "Atribuire aproximativă a unui portofel de schimb (exchange) cunoscut — este posibil să fie inactiv. Nu este un fapt confirmat la nivel de protocol.",
   "accountLabel.inactiveInfo": "Portofel de schimb (exchange) desființat sau inactiv — nu mai este o adresă activă de depunere, deși este posibil să dețină în continuare sau să mute fonduri reziduale.",
   "accountLabel.witnessInfo": "Acest cont este un witness Hive ales în prezent (producător de blocuri).",

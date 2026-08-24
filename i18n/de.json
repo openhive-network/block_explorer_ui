@@ -1586,6 +1586,7 @@
   "accountLabel.treasuryInfo": "Hive DAO / Treasury-Konto — finanziert Ökosystem-Proposals und ist vom zirkulierenden Angebot ausgeschlossen, daher wird es hier nicht als Inhaber gezählt.",
   "accountLabel.burnInfo": "@null Burn-Konto — hierher gesendete Guthaben werden dauerhaft vernichtet, daher ist es vom Inhaberanteil ausgeschlossen.",
   "accountLabel.witness": "Witness",
+  "accountLabel.badActor": "Möglicher bösartiger Akteur",
   "accountLabel.exchangeInfo": "Bestmögliche Zuordnung einer bekannten Exchange-Wallet — sie kann inaktiv sein. Keine Tatsache auf Protokollebene.",
   "accountLabel.inactiveInfo": "Stillgelegte oder ruhende Exchange-Wallet — keine aktive Einzahlungsadresse mehr, kann jedoch weiterhin Restguthaben halten oder bewegen.",
   "accountLabel.witnessInfo": "Dieses Konto ist ein derzeit gewählter Hive-Witness (Blockproduzent).",

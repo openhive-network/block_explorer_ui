@@ -1586,6 +1586,7 @@
   "accountLabel.treasuryInfo": "Hive DAO / トレジャリーアカウント — エコシステムの提案に資金を供給し、循環供給量から除外されるため、ここでは保有者として数えられません。",
   "accountLabel.burnInfo": "@null バーンアカウント — ここに送られた残高は永久に破棄されるため、保有者シェアから除外されます。",
   "accountLabel.witness": "ウィットネス",
+  "accountLabel.badActor": "不正行為者の可能性",
   "accountLabel.exchangeInfo": "既知の取引所ウォレットの推定による帰属です — 休眠中の可能性があります。プロトコルレベルの事実ではありません。",
   "accountLabel.inactiveInfo": "使われなくなった、または休眠状態の取引所ウォレット — すでにアクティブな入金アドレスではありませんが、残余資金を保有または移動する可能性があります。",
   "accountLabel.witnessInfo": "このアカウントは現在選出されている Hive ウィットネス（ブロック生成者）です。",

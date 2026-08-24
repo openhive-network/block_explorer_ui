@@ -1586,6 +1586,7 @@
   "accountLabel.treasuryInfo": "Hive DAO / treasury 계정 — 생태계 제안에 자금을 지원하며 유통 공급량에서 제외되므로 여기서는 보유자로 집계되지 않습니다.",
   "accountLabel.burnInfo": "@null 소각 계정 — 이곳으로 전송된 잔액은 영구적으로 소멸되므로 보유자 지분에서 제외됩니다.",
   "accountLabel.witness": "증인",
+  "accountLabel.badActor": "잠재적 악성 행위자",
   "accountLabel.exchangeInfo": "알려진 거래소 지갑에 대한 최선의 추정 — 휴면 상태일 수 있습니다. 프로토콜 수준의 사실은 아닙니다.",
   "accountLabel.inactiveInfo": "폐쇄되었거나 휴면 상태인 거래소 지갑 — 더 이상 활성 입금 주소가 아니지만, 잔여 자금을 여전히 보유하거나 이동할 수 있습니다.",
   "accountLabel.witnessInfo": "이 계정은 현재 선출된 Hive 증인(블록 생산자)입니다.",
