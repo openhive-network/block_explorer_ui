@@ -39,7 +39,7 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/hybrid-tooltip";
-import list from "../../utils/BadActorList";
+import { isBadActor } from "@/utils/badActors";
 import ErrorMessage from "../ErrorMessage";
 import { Button } from "../ui/button";
 import { useI18n } from "../../i18n/i18n";
@@ -127,16 +127,17 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
   const isWitnessActive =
     witnessDetails?.signing_key !== config.inactiveWitnessKey;
 
-  const [isBadActor, setIsBadActor] = useState(false);
+  // Only the dismissal needs state; the flag itself is a pure lookup. The old
+  // effect only ever set it true, so a flagged account's warning carried over
+  // to the next, clean account.
+  const [warningDismissed, setWarningDismissed] = useState(false);
   useEffect(() => {
-    // Check if the accountName is in the list
-    if (list.includes(accountName)) {
-      setIsBadActor(true);
-    }
+    setWarningDismissed(false);
   }, [accountName]);
+  const showBadActorWarning = isBadActor(accountName) && !warningDismissed;
 
   const handleCloseWarning = () => {
-    setIsBadActor(false);
+    setWarningDismissed(true);
   };
 
   let profileMetadata;
@@ -267,7 +268,7 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
           </CardHeader>
           {!isPropertiesHidden && (
             <CardContent className="p-4 flex flex-col gap-5">
-              {isBadActor && (
+              {showBadActorWarning && (
                 <ErrorMessage
                   message={t("accountMainCard.badActorMessage")}
                   isWarning
