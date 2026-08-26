@@ -44,6 +44,10 @@ export const config = {
   // The witness schedule advances a slot roughly every 3s and is the only view
   // that needs the head block to tick with live data off.
   scheduleRefreshInterval: 1000,
+  // A missed slot costs a block search plus a fetch per hit, so this is polled
+  // on its own slower clock than the schedule rows it annotates. A round runs
+  // about 63s, giving roughly four reads per round.
+  missedProducersRefreshInterval: 15000,
   accountRefreshInterval: 20000,
   // Authored content and its payouts move over hours, not seconds. Polling
   // these at the account interval is all cost and no freshness.

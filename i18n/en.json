@@ -630,6 +630,8 @@
   "witnessSchedule.nextShuffle": "Next Shuffle",
   "witnessSchedule.blocksLeft": "Blocks Left",
   "witnessSchedule.backupWitness": "Backup witness",
+  "witnessSchedule.missed": "Missed",
+  "witnessSchedule.youVoteFor": "You vote for this witness",
   "witnessScheduleIcon.witnessSchedule": "Witness Schedule",
   "backupWitnessSchedule.title": "Backup Witness Schedule",
   "backupWitnessSchedule.rank": "Rank",

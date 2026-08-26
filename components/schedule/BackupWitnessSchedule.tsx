@@ -48,17 +48,11 @@ const buildTableBody = (data: BackupWitness[], t: (key: string) => string) => {
     return (
       <React.Fragment key={owner}>
         <TableRow className="transition-colors">
-          <TableCell
-            stickyLeft
-            className="py-1 px-2 whitespace-nowrap text-sm"
-          >
+          <TableCell stickyLeft className="py-1 px-2 whitespace-nowrap text-sm">
             {rank !== null ? `#${rank}` : "-"}
           </TableCell>
           <TableCell className="py-1 px-2 whitespace-nowrap text-sm">
-            <Link
-              href={`/@${owner}`}
-              className="text-link hover:underline"
-            >
+            <Link href={`/@${owner}`} className="text-link hover:underline">
               {owner}
             </Link>
           </TableCell>
@@ -79,7 +73,7 @@ const BackupWitnessSchedule: React.FC<BackupWitnessScheduleProps> = ({
   return (
     <div className="flex w-full overflow-auto">
       <div className="bg-theme rounded-xl shadow-md w-full p-3">
-        <PageTitle titleKey={t("backupWitnessSchedule.title")} />
+        <PageTitle titleKey={t("backupWitnessSchedule.title")} classic />
 
         <div className="overflow-x-auto">
           <Table data-testid="table-body">
