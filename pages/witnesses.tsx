@@ -305,12 +305,12 @@ export default function Witnesses({ meta }: { meta: SeoMeta }) {
     <>
       <Seo meta={meta} title={seoTitle} />
       <div className="page-container rounded bg-white dark:bg-theme text-gray-800 dark:text-gray-200 font-sans antialiased">
-        <div className="mx-4 my-4">
+        <div className="my-4">
           <main className="flex-1">
-            <div className="flex flex-col md:flex-row md:justify-between md:items-center bg-theme gap-3">
+            <div className="flex flex-col md:flex-row md:justify-between md:items-start bg-theme gap-3">
               <PageTitle titleKey="pageTitle.hiveWitnesses" className="py-4" />
 
-              <div className="flex items-center gap-2 mb-2 md:mb-0 ml-1 md:ml-4 mr-4 flex-shrink-0">
+              <div className="flex items-center justify-end gap-2 mb-2 me-4 md:mb-0 md:mt-2.5 md:ms-4 md:justify-start flex-shrink-0">
                 {/* Unified voter-lookup control: quick shortcuts + autocomplete search */}
                 {isLoggedIn && (
                   <div className="inline-flex items-stretch rounded-full border border-navbar-border bg-secondary/20 hover:bg-secondary/30 transition-colors">

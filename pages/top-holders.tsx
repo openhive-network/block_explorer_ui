@@ -668,7 +668,7 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
             <div className="flex flex-col md:flex-row justify-between items-start">
               <PageTitle titleKey="pageTitle.topHolders" className="py-4" />
             </div>
-            <div className="flex-shrink-0 mr-2 md:mt-2">
+            <div className="flex flex-shrink-0 items-center gap-2 mt-3.5 pe-6">
               <FilterSectionToggle
                 isFiltersActive={filtersChanged}
                 toggleFilters={() => setIsFiltersVisible(!isFiltersVisible)}
