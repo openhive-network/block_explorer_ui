@@ -458,6 +458,36 @@ class FetchingService {
     );
   }
 
+  // Names the witnesses the chain recorded as skipping a slot in the range.
+  // maxBlocks bounds the per-block fan-out below; the caller passes the round
+  // length, since a round cannot contain more missed slots than it has slots.
+  async getMissedProducers(
+    fromBlock: number,
+    toBlock: number,
+    opTypeId: number,
+    maxBlocks: number
+  ): Promise<string[]> {
+    const search = await this.getBlockByOp({
+      operationTypes: [opTypeId],
+      fromBlock,
+      toBlock,
+      limit: config.standardPaginationSize,
+    });
+
+    const blocks = (search?.blocks_result ?? []).slice(0, maxBlocks);
+    if (!blocks.length) return [];
+
+    // Block search says which blocks carry the op, not who it names.
+    const operations = await Promise.all(
+      blocks.map((block) => this.getOpsByBlock(block.block_num, [opTypeId]))
+    );
+
+    return operations
+      .flatMap((response) => response?.operations_result ?? [])
+      .map((operation) => (operation as any)?.op?.value?.producer)
+      .filter((producer: unknown): producer is string => !!producer);
+  }
+
   async getWitnessVotesHistory(
     witnessName: string,
     direction: "asc" | "desc",
