@@ -101,7 +101,7 @@ const CommunitiesPage = ({ meta }: { meta: SeoMeta }) => {
       <Seo meta={meta} title={pageTitle(t("communitiesPage.title"))} />
       <div className="page-container">
         <div>
-          <PageTitle titleKey="pageTitle.communities" className="py-4 ms-6" />
+          <PageTitle titleKey="pageTitle.communities" className="py-4" />
         </div>
 
         <div className="mt-4">

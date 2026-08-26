@@ -490,7 +490,7 @@ const ProposalsPage = ({ meta }: { meta: SeoMeta }) => {
     <>
       <Seo meta={meta} title={pageTitle(t("pageTitle.proposals"))} />
       <div className="page-container">
-        <PageTitle titleKey="pageTitle.proposals" className="py-4 px-2" />
+        <PageTitle titleKey="pageTitle.proposals" className="py-4" />
         <div className="mt-4">
           <BudgetsSection budgets={budgets} />
         </div>

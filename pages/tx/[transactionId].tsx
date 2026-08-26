@@ -114,7 +114,7 @@ export default function Transaction({ meta }: { meta: SeoMeta }) {
             <Card data-testid="transaction-header">
               <PageTitle
                 titleKey="pageTitle.transactionDetails"
-                className=" min-h-4 py-4 pl-4"
+                className="py-4"
               />
               <CardHeader className="flex items-center py-2 ">
                 <CardTitle>

@@ -286,20 +286,17 @@ const BlocksPage = ({ meta }: { meta: SeoMeta }) => {
       <Seo meta={meta} title={pageTitle(t("blocksPage.title"))} />
 
       <div className="page-container">
-        <div className="flex items-start justify-between w-full bg-theme rounded">
-          <div className="ml-6">
+        <div className="flex items-start justify-between w-full gap-3 bg-theme rounded">
+          <div className="min-w-0">
             <PageTitle titleKey="pageTitle.hiveBlocks" className="py-4" />
           </div>
-          {/* Live Data Toggle */}
-          <div className="w-full sm:w-auto mt-4 top-0">
+          <div className="flex flex-shrink-0 items-center gap-2 mt-3.5 pe-6">
             <Toggle
               checked={liveDataEnabled}
               onClick={changeLiveRefresh}
-              className="text-base whitespace-nowrap"
+              className="text-[11px] text-gray-500 dark:text-gray-400 whitespace-nowrap"
               leftLabel={t("headBlockCard.liveData")}
             />
-          </div>
-          <div className="flex-shrink-0 mt-2">
             <FilterSectionToggle
               isFiltersActive={isFiltersActive}
               toggleFilters={handleFiltersVisibility}

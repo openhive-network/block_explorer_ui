@@ -174,6 +174,34 @@ pre {
   color: rgb(0, 0, 0) !important;
 }
 
+/*PageTitle accent rule*/
+@keyframes page-title-rule {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+.page-title-rule {
+  transform-origin: left center;
+  animation: page-title-rule 1s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+[dir="rtl"] .page-title-rule {
+  transform-origin: right center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-title-rule {
+    animation: none;
+  }
+}
+/*End PageTitle accent rule*/
+
 /*AutoCompleteInput Styles*/
 .scrollbar-autocomplete {
   scrollbar-width: thin;
