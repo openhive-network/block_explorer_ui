@@ -2,9 +2,8 @@ import { currentRoundBlockRange } from "@/utils/witnessScheduleRound";
 
 describe("currentRoundBlockRange", () => {
   it("recovers the head block from the blocks-left counter", () => {
-    // Observed on /schedule: next shuffle 109,300,149 with 14 blocks left, and
-    // the producing witness signing 109,300,135. Only toBlock is pinned by that
-    // reading - fromBlock depends on the schedule length, which was not observed.
+    // Observed on /schedule. Only toBlock is pinned by that reading; fromBlock
+    // depends on the schedule length, which was not observed.
     expect(currentRoundBlockRange(109_300_149, 14, 21)?.toBlock).toBe(
       109_300_135
     );
@@ -14,8 +13,7 @@ describe("currentRoundBlockRange", () => {
   });
 
   it("starts the round one schedule-length before the next shuffle", () => {
-    // fromBlock tracks the length of current_shuffled_witnesses, never a
-    // hard-coded round size: the two differ and only the list is authoritative.
+    // Tracks current_shuffled_witnesses, never a hard-coded round size.
     expect(currentRoundBlockRange(109_300_149, 14, 21)?.fromBlock).toBe(
       109_300_128
     );

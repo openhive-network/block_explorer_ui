@@ -12,8 +12,7 @@ const NO_MISSES: ReadonlySet<string> = new Set<string>();
 
 describe("fillAttributionGaps", () => {
   it("credits the slot the head-block poll skipped", () => {
-    // Observed on /schedule: blocktrades on 485, threespeak on 487, and arcange
-    // between them showing nothing. One slot, one block: it produced 486.
+    // Observed on /schedule: one blank slot, one unaccounted block.
     const result = fillAttributionGaps(
       rows([
         ["blocktrades", 109_302_485],
@@ -26,7 +25,7 @@ describe("fillAttributionGaps", () => {
   });
 
   it("skips a slot the chain reported as missed and numbers around it", () => {
-    // Three slots apart, two blocks apart, and b is a known miss: c produced 501.
+    // Two blank slots, one block, and b is a known miss: c produced 501.
     const result = fillAttributionGaps(
       rows([
         ["a", 500],
@@ -40,7 +39,6 @@ describe("fillAttributionGaps", () => {
   });
 
   it("fills nothing when the span does not reconcile", () => {
-    // Two blank slots but only one block between, and no miss to explain it.
     const result = fillAttributionGaps(
       rows([
         ["a", 500],

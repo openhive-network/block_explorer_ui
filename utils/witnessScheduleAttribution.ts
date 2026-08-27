@@ -3,24 +3,10 @@ export interface ScheduleRow {
   blockNumber: number | null;
 }
 
-/**
- * Credits slots whose block is known by arithmetic but has not been attributed.
- *
- * The schedule merges two sources: the head block, which is seen the instant it
- * arrives but is sampled on a timer and so skips blocks, and the last-blocks
- * list, which is complete but trails. Between the two, a slot can sit blank for
- * a few seconds even though its block plainly exists.
- *
- * Between any two slots with known blocks, every slot either produced exactly
- * one block or missed its turn producing none, so:
- *
- *     slots between - missed between === blocks between
- *
- * When that balances, the blocks in the span belong to the non-missed slots in
- * order and nothing is being guessed. When it does not, the span is left alone
- * rather than putting a block number against the wrong account. Slots outside
- * the outermost anchors are never touched - they are unknown or still to come.
- */
+// Between two slots with known blocks, every slot either produced one block or
+// missed producing none, so `slots between - missed between === blocks between`.
+// Spans that fail to balance are left alone rather than credited to the wrong
+// account, and slots outside the outermost anchors are never touched.
 export const fillAttributionGaps = <T extends ScheduleRow>(
   rows: T[],
   missedProducers: ReadonlySet<string>
