@@ -13,17 +13,22 @@ const useBlockOperationCounts = (headBlockNum?: number) => {
     // Show last counts instead of flashing zeros.
     if (!totalOperations) return lastCounts.current;
 
-    const trxInBlock = blockOperations?.operations_result.reduce(
+    // trx_in_block is 0-based, so seed below zero to tell "one transaction"
+    // apart from "no transaction carried an index".
+    const maxTrxInBlock = blockOperations?.operations_result.reduce(
       (max, op) =>
         typeof op?.trx_in_block === "number"
           ? Math.max(max, op.trx_in_block)
           : max,
-      0
+      -1
     );
 
     lastCounts.current = {
       opcount: totalOperations,
-      trxOpsLength: trxInBlock ? trxInBlock + 1 : 0,
+      trxOpsLength:
+        maxTrxInBlock !== undefined && maxTrxInBlock >= 0
+          ? maxTrxInBlock + 1
+          : 0,
     };
     return lastCounts.current;
   }, [blockOperations]);
