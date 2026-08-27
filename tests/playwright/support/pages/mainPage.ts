@@ -59,59 +59,102 @@ export class MainPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.headBlockCard = page.getByTestId('head-block-card');
-    this.lastBlockWidget = page.getByTestId('last-block-widget');
-    this.SearchesSection = page.getByTestId('block-search-section');
-    this.topWitnessesSidebar = page.getByTestId('top-witnesses-sidebar');
-    this.witnessesName = page.getByTestId('witnesses-name')
-    this.seeMoreBtn = page.getByTestId('see-more-btn')
-    this.headBlockCardBlockLink = this.headBlockCard.getByTestId('block-number-link');
-    this.headBlockCardWitnessLink = this.headBlockCard.getByTestId('current-witness-link');
-    this.headBlockCardWitnessName = this.headBlockCard.getByTestId('current-witness-name');
-    this.headBlockCardFundAndSupplyExpandableList = this.headBlockCard.getByTestId('expandable-list').getByText('Fund and Supply');
-    this.headBlockCardHiveParametersExpandableList = this.headBlockCard.getByTestId('expandable-list').getByText('Hive Parameters');
-    this.headBlockCardBlockchainDatesExpandableList = this.headBlockCard.getByTestId('expandable-list').getByText('Blockchain Dates');
-    this.contentFundAndSupplyExpandableList = this.headBlockCard.getByTestId('content-expandable-list').first();
-    this.contentHiveParametersExpandableList = this.headBlockCard.getByTestId('content-expandable-list').nth(1);
-    this.contentBlockchainDatesExpandableList = this.headBlockCard.getByTestId('content-expandable-list').last();
-    this.blockSearchBtn = page.getByTestId('block-search-btn');
-    this.blocksearchResultHeader = page.getByTestId('result-section-header');
-    this.blockSearchResultSection = page.getByTestId('result-section');
-    this.firstResultBlock = page.getByTestId('result-block').first();
-    this.accountNameInput = page.getByTestId('account-name-input');
-    this.blockSearchPropertiesFilterBtn = page.locator('[role="combobox"]').first();
+    this.headBlockCard = page.getByTestId("head-block-card");
+    this.lastBlockWidget = page.getByTestId("last-block-widget");
+    this.SearchesSection = page.getByTestId("block-search-section");
+    this.topWitnessesSidebar = page.getByTestId("top-witnesses-sidebar");
+    this.witnessesName = page.getByTestId("witnesses-name");
+    this.seeMoreBtn = page.getByTestId("see-more-btn");
+    this.headBlockCardBlockLink =
+      this.headBlockCard.getByTestId("block-number-link");
+    this.headBlockCardWitnessLink = this.headBlockCard.getByTestId(
+      "current-witness-link"
+    );
+    this.headBlockCardWitnessName = this.headBlockCard.getByTestId(
+      "current-witness-name"
+    );
+    this.headBlockCardFundAndSupplyExpandableList = this.headBlockCard
+      .getByTestId("expandable-list")
+      .getByText("Fund and Supply");
+    this.headBlockCardHiveParametersExpandableList = this.headBlockCard
+      .getByTestId("expandable-list")
+      .getByText("Hive Parameters");
+    this.headBlockCardBlockchainDatesExpandableList = this.headBlockCard
+      .getByTestId("expandable-list")
+      .getByText("Blockchain Dates");
+    this.contentFundAndSupplyExpandableList = this.headBlockCard
+      .getByTestId("content-expandable-list")
+      .first();
+    this.contentHiveParametersExpandableList = this.headBlockCard
+      .getByTestId("content-expandable-list")
+      .nth(1);
+    this.contentBlockchainDatesExpandableList = this.headBlockCard
+      .getByTestId("content-expandable-list")
+      .last();
+    this.blockSearchBtn = page.getByTestId("block-search-btn");
+    this.blocksearchResultHeader = page.getByTestId("result-section-header");
+    this.blockSearchResultSection = page.getByTestId("result-section");
+    this.firstResultBlock = page.getByTestId("result-block").first();
+    this.accountNameInput = page.getByTestId("account-name-input");
+    this.blockSearchPropertiesFilterBtn = page
+      .getByTestId("dropdown-list")
+      .first();
     this.blockSearchPropertiesOption = page.locator('[role="option"]');
-    this.headblockNumber = page.getByTestId('headblock-number');
-    this.resultBlock = page.getByTestId('result-block');
-    this.datetimePicker = page.locator('.react-datetime-picker__inputGroup__input.react-datetime-picker__inputGroup__year').first();
-    this.calendarNavigationLabel = page.locator('.react-calendar__navigation__label');
-    this.calendarNavigationNextButton = page.locator('.react-calendar__navigation__arrow.react-calendar__navigation__next-button');
-    this.monthViewDays = page.locator('.react-calendar__tile.react-calendar__month-view__days__day').nth(7);
+    this.headblockNumber = page.getByTestId("headblock-number");
+    this.resultBlock = page.getByTestId("result-block");
+    this.datetimePicker = page
+      .locator(
+        ".react-datetime-picker__inputGroup__input.react-datetime-picker__inputGroup__year"
+      )
+      .first();
+    this.calendarNavigationLabel = page.locator(
+      ".react-calendar__navigation__label"
+    );
+    this.calendarNavigationNextButton = page.locator(
+      ".react-calendar__navigation__arrow.react-calendar__navigation__next-button"
+    );
+    this.monthViewDays = page
+      .locator(".react-calendar__tile.react-calendar__month-view__days__day")
+      .nth(7);
     this.monthName = page.locator('[name="month"]').first();
     this.dayName = page.locator('[name="day"]').first();
-    this.operationsTypesBtn = page.getByTestId('operations-types-btn')
-    this.RawJsonViewToggle = page.getByTestId('toggle').locator('.w-10')
-    this.operationsTypesWindow = page.locator('[role="dialog"]').last()
-    this.pickPropertyBtn = page.locator('button').filter({ hasText: 'Pick a property' })
-    this.pickPropertyBtnBlocked = page.locator('.text-blocked')
-    this.accountSearchSection = page.getByRole('button', { name: 'Account search' })
-    this.searchButtonInAccount = page.getByTestId('search-button')
-    this.accountNameInputAccountSection = page.getByPlaceholder('Account name *')
-    this.operationsCardResult = page.getByTestId('operations-card')
-    this.goToResultPageBtn = page.getByTestId('go-to-result-page')
-    this.lastBlockBtn = page.getByTestId('block-search-section').getByText('Last blocks')
-    this.lastDaysWeeksMonths = page.getByText('Last days/weeks/months')
-    this.blockRange = page.getByText('Block range')
-    this.timeRange = page.getByLabel('Time range')
-    this.commentSearchSection = page.getByRole('button', { name: 'Comment search' })
-    this.searchButtonInComment = page.getByTestId('search-button')
-    this.accountNameInputCommentSection = page.getByTestId('account-name')
-    this.noOperationsMatchingTextSection = '.flex.justify-center.w-full.text-black'
-    this.detailedOperationCard = page.getByTestId('detailed-operation-card')
-    this.commentPermlinkInout = page.getByTestId('permlink-input')
-    this.currentWitnessName = page.getByTestId('current-witness-name')
-    this.datePickerTriggerFromDate = page.locator('[data-testid="datepicker-trigger"]').first();
-    this.datePickerTriggerToDate = page.locator('[data-testid="datepicker-trigger"]').last();
+    this.operationsTypesBtn = page.getByTestId("operations-types-btn");
+    this.RawJsonViewToggle = page.getByTestId("toggle").locator(".w-10");
+    this.operationsTypesWindow = page.locator('[role="dialog"]').last();
+    this.pickPropertyBtn = page
+      .locator("button")
+      .filter({ hasText: "Pick a property" });
+    this.pickPropertyBtnBlocked = page.locator(".text-blocked");
+    this.accountSearchSection = page.getByRole("button", {
+      name: "Account search",
+    });
+    this.searchButtonInAccount = page.getByTestId("search-button");
+    this.accountNameInputAccountSection =
+      page.getByPlaceholder("Account name *");
+    this.operationsCardResult = page.getByTestId("operations-card");
+    this.goToResultPageBtn = page.getByTestId("go-to-result-page");
+    this.lastBlockBtn = page
+      .getByTestId("block-search-section")
+      .getByText("Last blocks");
+    this.lastDaysWeeksMonths = page.getByText("Last days/weeks/months");
+    this.blockRange = page.getByText("Block range");
+    this.timeRange = page.getByLabel("Time range");
+    this.commentSearchSection = page.getByRole("button", {
+      name: "Comment search",
+    });
+    this.searchButtonInComment = page.getByTestId("search-button");
+    this.accountNameInputCommentSection = page.getByTestId("account-name");
+    this.noOperationsMatchingTextSection =
+      ".flex.justify-center.w-full.text-black";
+    this.detailedOperationCard = page.getByTestId("detailed-operation-card");
+    this.commentPermlinkInout = page.getByTestId("permlink-input");
+    this.currentWitnessName = page.getByTestId("current-witness-name");
+    this.datePickerTriggerFromDate = page
+      .locator('[data-testid="datepicker-trigger"]')
+      .first();
+    this.datePickerTriggerToDate = page
+      .locator('[data-testid="datepicker-trigger"]')
+      .last();
   }
 
   async gotoBlockExplorerPage() {
@@ -141,10 +184,10 @@ export class MainPage {
   }
 
   async getOptionfromDropdownOptions(text: string) {
-    this.blockSearchPropertiesOption.getByText(text).click()
+    this.blockSearchPropertiesOption.getByText(text).click();
   }
 
-  async choosePropertyOption(option: string){
-    this.page.getByLabel(option, { exact: true }).click()
+  async choosePropertyOption(option: string) {
+    this.page.getByLabel(option, { exact: true }).click();
   }
 }
