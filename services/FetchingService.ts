@@ -473,7 +473,9 @@ class FetchingService {
       limit: config.standardPaginationSize,
     });
 
-    const blocks = (search?.blocks_result ?? []).slice(0, maxBlocks);
+    const blocks = [...(search?.blocks_result ?? [])]
+      .sort((a, b) => a.block_num - b.block_num)
+      .slice(0, maxBlocks);
     if (!blocks.length) return [];
 
     // Block search says which blocks carry the op, not who it names.
@@ -483,8 +485,8 @@ class FetchingService {
 
     return operations
       .flatMap((response) => response?.operations_result ?? [])
-      .map((operation) => (operation as any)?.op?.value?.producer)
-      .filter((producer: unknown): producer is string => !!producer);
+      .map((operation) => operation?.op?.value?.producer)
+      .filter((producer): producer is string => !!producer);
   }
 
   async getWitnessVotesHistory(
