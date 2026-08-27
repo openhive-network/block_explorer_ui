@@ -16,7 +16,7 @@ export interface AccountLabel {
   status?: "inactive"; // defunct/dormant exchange wallet — shown struck-through
 }
 
-export const ACCOUNT_LABELS: Record<string, AccountLabel> = {
+const CURATED_LABELS: Record<string, AccountLabel> = {
   "hive.fund": { type: "treasury", label: "DHF" },
   "steem.dao": { type: "treasury", label: "DHF" },
   null: { type: "burn", label: "Burn" },
@@ -45,6 +45,12 @@ export const ACCOUNT_LABELS: Record<string, AccountLabel> = {
   "graphene-swap": { type: "service", label: "Graphene Swap" },
   "vsc.gateway": { type: "service", label: "VSC Gateway" },
 };
+
+// Null-prototype: names reach this map straight from user input.
+export const ACCOUNT_LABELS: Record<string, AccountLabel> = Object.assign(
+  Object.create(null),
+  CURATED_LABELS
+);
 
 export interface ResolvedAccountLabel {
   type: AccountLabelType;
