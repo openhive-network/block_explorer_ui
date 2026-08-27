@@ -80,7 +80,7 @@ const WitnessSchedule: React.FC<WitnessScheduleProps> = ({
       </div>
 
       {/* Block Production Timeline List */}
-      <div className="flex flex-col items-stretch justify-start space-y-1">
+      <div className="flex flex-col items-stretch justify-start space-y-0.5">
         {scheduleRows.map((witness, index) => {
           const isCurrent = index === currentProducerIndex;
           const hasHadItsTurn =
@@ -95,7 +95,7 @@ const WitnessSchedule: React.FC<WitnessScheduleProps> = ({
             <div
               key={witness.producerName}
               className={cn(
-                "relative w-full grid grid-cols-[auto_1fr_auto] items-center gap-x-2 gap-y-1 p-1.5 shadow-sm text-xs rounded",
+                "relative w-full grid grid-cols-[2.25rem_1fr_auto] items-center gap-x-2 gap-y-0.5 px-2 py-1 shadow-sm text-xs rounded",
                 isCurrent
                   ? "bg-green-500 text-white"
                   : isMissed
@@ -112,9 +112,9 @@ const WitnessSchedule: React.FC<WitnessScheduleProps> = ({
               <div className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1 justify-self-start">
                 <HiveAvatar
                   accountName={witness.producerName}
-                  size={20}
+                  size={18}
                   alt={witness.producerName}
-                  className="h-5 w-5 shrink-0 rounded-full object-cover"
+                  className="h-[18px] w-[18px] shrink-0 rounded-full object-cover"
                 />
                 <Link
                   href={`/@${witness.producerName}`}

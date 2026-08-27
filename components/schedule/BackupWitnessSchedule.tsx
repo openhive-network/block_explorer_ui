@@ -32,7 +32,7 @@ const buildTableHeader = (t: (key: string) => string) => {
     return (
       <TableHead
         stickyLeft={index === 0 ? true : undefined}
-        className="text-left text-sm font-medium uppercase tracking-wider py-1 px-2"
+        className="h-auto text-left text-xs font-medium uppercase tracking-wider py-1 px-2"
         key={cell}
       >
         {t(cell)}
@@ -48,15 +48,15 @@ const buildTableBody = (data: BackupWitness[], t: (key: string) => string) => {
     return (
       <React.Fragment key={owner}>
         <TableRow className="transition-colors">
-          <TableCell stickyLeft className="py-1 px-2 whitespace-nowrap text-sm">
+          <TableCell stickyLeft className="py-1 px-2 whitespace-nowrap text-xs">
             {rank !== null ? `#${rank}` : "-"}
           </TableCell>
-          <TableCell className="py-1 px-2 whitespace-nowrap text-sm">
+          <TableCell className="py-1 px-2 whitespace-nowrap text-xs">
             <Link href={`/@${owner}`} className="text-link hover:underline">
               {owner}
             </Link>
           </TableCell>
-          <TableCell className="py-1 px-2 whitespace-nowrap text-sm">{`[${
+          <TableCell className="py-1 px-2 whitespace-nowrap text-xs">{`[${
             index + 1
           }]`}</TableCell>
         </TableRow>
