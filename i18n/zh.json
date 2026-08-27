@@ -1602,7 +1602,7 @@
   "topHolders.findAccountPlaceholder": "例如 blocktrades",
   "topHolders.find": "查找",
   "topHolders.accountNotFound": "@{{account}} 在此币种中没有余额。",
-  "topHolders.quickRanges": "快速范围（HP）",
+  "topHolders.quickRanges": "快速范围",
   "topHolders.kpiLargest": "最大持有者",
   "topHolders.kpiTop10": "前 10 名持有",
   "topHolders.kpiTop100": "前 100 名持有",

@@ -1602,7 +1602,7 @@
   "topHolders.findAccountPlaceholder": "مثال: blocktrades",
   "topHolders.find": "بحث",
   "topHolders.accountNotFound": "لا يملك @{{account}} رصيداً في هذه العملة.",
-  "topHolders.quickRanges": "نطاقات سريعة (HP)",
+  "topHolders.quickRanges": "نطاقات سريعة",
   "topHolders.kpiLargest": "أكبر حائز",
   "topHolders.kpiTop10": "حصة أكبر 10",
   "topHolders.kpiTop100": "حصة أكبر 100",

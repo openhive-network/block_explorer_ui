@@ -1602,7 +1602,7 @@
   "topHolders.findAccountPlaceholder": "de ex. blocktrades",
   "topHolders.find": "Găsește",
   "topHolders.accountNotFound": "@{{account}} nu are niciun sold în această monedă.",
-  "topHolders.quickRanges": "Intervale rapide (HP)",
+  "topHolders.quickRanges": "Intervale rapide",
   "topHolders.kpiLargest": "Cel mai mare deținător",
   "topHolders.kpiTop10": "Primii 10 dețin",
   "topHolders.kpiTop100": "Primii 100 dețin",
