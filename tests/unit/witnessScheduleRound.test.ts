@@ -12,27 +12,38 @@ describe("currentRoundBlockRange", () => {
     );
   });
 
-  it("starts the round one schedule-length before the next shuffle", () => {
+  it("starts the round so the next shuffle block is its last slot", () => {
     // Tracks current_shuffled_witnesses, never a hard-coded round size.
     expect(currentRoundBlockRange(109_300_149, 14, 21)?.fromBlock).toBe(
-      109_300_128
+      109_300_129
     );
     expect(currentRoundBlockRange(109_300_149, 14, 30)?.fromBlock).toBe(
-      109_300_119
+      109_300_120
     );
   });
 
-  it("spans a single block at the start of a round", () => {
-    // Blocks-left equal to the round length means the round just began.
-    expect(currentRoundBlockRange(1_000, 21, 21)).toEqual({
-      fromBlock: 979,
-      toBlock: 979,
+  it("spans exactly the round length when the round is complete", () => {
+    const range = currentRoundBlockRange(1_000, 0, 21);
+    expect(range).toEqual({ fromBlock: 980, toBlock: 1_000 });
+    expect(range!.toBlock - range!.fromBlock + 1).toBe(21);
+  });
+
+  it("spans a single block once the round's first block lands", () => {
+    expect(currentRoundBlockRange(1_000, 20, 21)).toEqual({
+      fromBlock: 980,
+      toBlock: 980,
     });
+  });
+
+  it("returns null before the round has produced a block", () => {
+    // Blocks-left equal to the round length means the reshuffle just happened
+    // and the head is still the previous round's last block.
+    expect(currentRoundBlockRange(1_000, 21, 21)).toBeNull();
   });
 
   it("reaches the last block before the next shuffle", () => {
     expect(currentRoundBlockRange(1_000, 1, 21)).toEqual({
-      fromBlock: 979,
+      fromBlock: 980,
       toBlock: 999,
     });
   });

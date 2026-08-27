@@ -3,8 +3,8 @@ export interface RoundBlockRange {
   toBlock: number;
 }
 
-// next_shuffle_block_num is set to head plus one slot per scheduled witness, so
-// the round starts that many blocks before it. Null while anything is unknown.
+// next_shuffle_block_num is the round's last block, not the next round's first:
+// the reshuffle runs as that block is applied. Null until the round has a block.
 export const currentRoundBlockRange = (
   nextShuffleBlockNumber: number,
   blocksLeftBeforeRefetch: number,
@@ -19,7 +19,7 @@ export const currentRoundBlockRange = (
   )
     return null;
 
-  const fromBlock = nextShuffleBlockNumber - roundLength;
+  const fromBlock = nextShuffleBlockNumber - roundLength + 1;
   const toBlock = nextShuffleBlockNumber - blocksLeftBeforeRefetch;
 
   if (fromBlock <= 0 || toBlock < fromBlock) return null;
