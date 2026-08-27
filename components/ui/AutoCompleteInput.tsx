@@ -234,8 +234,8 @@ const AutoCompleteInput: React.FC<Props> = ({
         <div
           className="scrollbar-autocomplete max-h-[min(20rem,60vh)] space-y-0.5 overflow-y-auto p-1.5"
           ref={containerRef}
+          id={listboxId}
           role="listbox"
-          aria-activedescendant={optionId(selected)}
         >
           {arr.map((acc, i) => (
             <AutocompleteResultRow
@@ -259,6 +259,15 @@ const AutoCompleteInput: React.FC<Props> = ({
     );
   };
 
+  const isOpen = !!(
+    inputFocus &&
+    value &&
+    value.length &&
+    inputTypeData?.input_value
+  );
+  // The invalid-input branch renders no listbox, so nothing to point at.
+  const hasOptions = isOpen && inputTypeData?.input_type !== "invalid_input";
+
   return (
     <div
       ref={wrapRef}
@@ -280,16 +289,11 @@ const AutoCompleteInput: React.FC<Props> = ({
           onBlur={onBlur}
           onFocus={() => setInputFocus(true)}
           onKeyDown={!isInputDisabled ? handleKeyDown : undefined}
-          aria-expanded={
-            !!(
-              inputFocus &&
-              value &&
-              value.length &&
-              inputTypeData?.input_value
-            )
-          }
+          role="combobox"
+          aria-expanded={isOpen}
           aria-autocomplete="list"
-          aria-controls={listboxId}
+          aria-controls={hasOptions ? listboxId : undefined}
+          aria-activedescendant={hasOptions ? optionId(selected) : undefined}
           data-testid="search-bar-input"
         />
         {value ? (
@@ -305,8 +309,8 @@ const AutoCompleteInput: React.FC<Props> = ({
         ) : null}
       </div>
 
-      {inputFocus && value && value.length && inputTypeData?.input_value && (
-        <div id={listboxId} className="absolute z-50 mt-1 w-full min-w-[15rem]">
+      {isOpen && (
+        <div className="absolute z-50 mt-1 w-full min-w-[15rem]">
           {renderOptions(inputTypeData)}
         </div>
       )}
