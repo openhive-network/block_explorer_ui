@@ -668,7 +668,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
                         : `left ${ANIMATION_MS}ms ${EASING}, top ${ANIMATION_MS}ms ${EASING}`,
                     }}
                   >
-                    ▲ {visibleTotals[peakIdx]}
+                    ▲ {visibleTotals[peakIdx].toLocaleString(locale)}
                   </div>
                 );
               })()}
