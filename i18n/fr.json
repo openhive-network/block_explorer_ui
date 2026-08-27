@@ -1602,7 +1602,7 @@
   "topHolders.findAccountPlaceholder": "par ex. blocktrades",
   "topHolders.find": "Rechercher",
   "topHolders.accountNotFound": "@{{account}} n'a aucun solde dans ce jeton.",
-  "topHolders.quickRanges": "Plages rapides (HP)",
+  "topHolders.quickRanges": "Plages rapides",
   "topHolders.kpiLargest": "Plus gros détenteur",
   "topHolders.kpiTop10": "Détention du top 10",
   "topHolders.kpiTop100": "Détention du top 100",

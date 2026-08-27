@@ -1602,7 +1602,7 @@
   "topHolders.findAccountPlaceholder": "例: blocktrades",
   "topHolders.find": "検索",
   "topHolders.accountNotFound": "@{{account}} はこのコインに残高がありません。",
-  "topHolders.quickRanges": "クイック範囲 (HP)",
+  "topHolders.quickRanges": "クイック範囲",
   "topHolders.kpiLargest": "最大保有者",
   "topHolders.kpiTop10": "上位10名の保有",
   "topHolders.kpiTop100": "上位100名の保有",

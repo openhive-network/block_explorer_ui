@@ -1602,7 +1602,7 @@
   "topHolders.findAccountPlaceholder": "e.g. blocktrades",
   "topHolders.find": "Find",
   "topHolders.accountNotFound": "@{{account}} has no balance in this coin.",
-  "topHolders.quickRanges": "Quick ranges (HP)",
+  "topHolders.quickRanges": "Quick ranges",
   "topHolders.kpiLargest": "Largest holder",
   "topHolders.kpiTop10": "Top 10 hold",
   "topHolders.kpiTop100": "Top 100 hold",

@@ -1602,7 +1602,7 @@
   "topHolders.findAccountPlaceholder": "예: blocktrades",
   "topHolders.find": "찾기",
   "topHolders.accountNotFound": "@{{account}}는 이 코인에 잔액이 없습니다.",
-  "topHolders.quickRanges": "빠른 범위 (HP)",
+  "topHolders.quickRanges": "빠른 범위",
   "topHolders.kpiLargest": "최대 보유자",
   "topHolders.kpiTop10": "상위 10 보유",
   "topHolders.kpiTop100": "상위 100 보유",

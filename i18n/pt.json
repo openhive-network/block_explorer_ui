@@ -1602,7 +1602,7 @@
   "topHolders.findAccountPlaceholder": "por exemplo, blocktrades",
   "topHolders.find": "Procurar",
   "topHolders.accountNotFound": "@{{account}} não tem saldo nesta moeda.",
-  "topHolders.quickRanges": "Intervalos rápidos (HP)",
+  "topHolders.quickRanges": "Intervalos rápidos",
   "topHolders.kpiLargest": "Maior detentor",
   "topHolders.kpiTop10": "Top 10 detêm",
   "topHolders.kpiTop100": "Top 100 detêm",

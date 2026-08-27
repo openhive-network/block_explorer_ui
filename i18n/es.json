@@ -1602,7 +1602,7 @@
   "topHolders.findAccountPlaceholder": "p. ej. blocktrades",
   "topHolders.find": "Buscar",
   "topHolders.accountNotFound": "@{{account}} no tiene saldo en esta moneda.",
-  "topHolders.quickRanges": "Rangos rápidos (HP)",
+  "topHolders.quickRanges": "Rangos rápidos",
   "topHolders.kpiLargest": "Mayor poseedor",
   "topHolders.kpiTop10": "Top 10 poseen",
   "topHolders.kpiTop100": "Top 100 poseen",

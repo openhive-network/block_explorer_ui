@@ -1602,7 +1602,7 @@
   "topHolders.findAccountPlaceholder": "z. B. blocktrades",
   "topHolders.find": "Suchen",
   "topHolders.accountNotFound": "@{{account}} hat kein Guthaben in dieser Münze.",
-  "topHolders.quickRanges": "Schnellbereiche (HP)",
+  "topHolders.quickRanges": "Schnellbereiche",
   "topHolders.kpiLargest": "Größter Inhaber",
   "topHolders.kpiTop10": "Top 10 halten",
   "topHolders.kpiTop100": "Top 100 halten",
