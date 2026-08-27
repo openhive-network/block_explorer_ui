@@ -168,6 +168,34 @@ const InfoSection = ({
   );
 };
 
+const CommunityCover = ({ src, alt }: { src: string; alt: string }) => {
+  const [source, setSource] = useState<"optimized" | "direct" | "failed">(
+    "optimized"
+  );
+
+  if (source === "failed") return null;
+
+  return source === "optimized" ? (
+    <Image
+      src={src}
+      alt={alt}
+      fill
+      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+      priority
+      className="z-0 object-cover"
+      onError={() => setSource("direct")}
+    />
+  ) : (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={src}
+      alt={alt}
+      className="absolute inset-0 z-0 h-full w-full object-cover"
+      onError={() => setSource("failed")}
+    />
+  );
+};
+
 interface CommunityMainCardProps {
   communityDetails: Hive.CommunityDetails;
   accountDetails: Explorer.FormattedAccountDetails;
@@ -208,10 +236,6 @@ const CommunityMainCard: React.FC<CommunityMainCardProps> = ({
 
   const hasCover = isImageWhitelisted(coverImageFromProfile);
 
-  const [coverSource, setCoverSource] = useState<
-    "optimized" | "direct" | "failed"
-  >("optimized");
-
   const sortedTeam = [...(team as unknown as TeamMemberTuple[])].sort(
     (a, b) => {
       return (roleOrder[a[1]] ?? 99) - (roleOrder[b[1]] ?? 99);
@@ -223,29 +247,11 @@ const CommunityMainCard: React.FC<CommunityMainCardProps> = ({
       <Card data-testid="community-details" className="overflow-hidden">
         {hasCover && (
           <div className="relative h-32 bg-slate-200 dark:bg-slate-700">
-            {/* The optimizer has to pull the cover server-side first, which 500s
-                on a slow link or a heavy file. Fall back to letting the browser
-                fetch it directly, then to the plain banner if that fails too. */}
-            {coverSource === "optimized" && (
-              <Image
-                src={coverImageFromProfile}
-                alt={`${title} cover image`}
-                fill
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                priority
-                className="z-0 object-cover"
-                onError={() => setCoverSource("direct")}
-              />
-            )}
-            {coverSource === "direct" && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={coverImageFromProfile}
-                alt={`${title} cover image`}
-                className="absolute inset-0 z-0 h-full w-full object-cover"
-                onError={() => setCoverSource("failed")}
-              />
-            )}
+            <CommunityCover
+              key={coverImageFromProfile}
+              src={coverImageFromProfile}
+              alt={`${title} cover image`}
+            />
             <div className="absolute -bottom-10 left-4 z-10">
               <HiveAvatar
                 accountName={name}
