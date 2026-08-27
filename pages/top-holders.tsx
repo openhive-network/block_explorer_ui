@@ -44,6 +44,7 @@ import { convertVestsToHP, computeVestingRatios } from "@/utils/Calculations";
 import { formatCompact, formatSharePct } from "@/utils/chartUtils";
 import { grabNumericValue } from "@/utils/StringUtils";
 import { COIN_BRACKETS } from "@/utils/coinBrackets";
+import { relocalizeAmount } from "@/utils/localeAmount";
 import { isSystemAccount } from "@/utils/systemAccounts";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import Explorer from "@/types/Explorer";
@@ -262,21 +263,8 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
     return value;
   };
 
-  // Wax formats against the browser locale, so restate the number in the app one.
-  const formatBalance = (value: string, coin: CoinType): string => {
-    const formatted = formatRawBalance(value, coin);
-    const [amount, ...unit] = formatted.split(" ");
-    const decimals = (amount.split(".")[1] ?? "").length;
-    const numeric = Number(amount.replace(/,/g, ""));
-    if (!Number.isFinite(numeric)) return formatted;
-    return [
-      numeric.toLocaleString(locale, {
-        minimumFractionDigits: decimals,
-        maximumFractionDigits: decimals,
-      }),
-      ...unit,
-    ].join(" ");
-  };
+  const formatBalance = (value: string, coin: CoinType): string =>
+    relocalizeAmount(formatRawBalance(value, coin), locale);
 
   const filterActive = minBalance !== undefined || maxBalance !== undefined;
 

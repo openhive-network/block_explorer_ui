@@ -9,6 +9,7 @@ import { useSettings } from "@/contexts/SettingsContext";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import useTopHolders, { CoinType } from "@/hooks/api/common/useTopHolders";
 import { convertVestsToHP } from "@/utils/Calculations";
+import { relocalizeAmount } from "@/utils/localeAmount";
 import { useI18n } from "@/i18n/i18n";
 import HiveAvatar from "@/components/ui/HiveAvatar";
 
@@ -56,21 +57,8 @@ const TopHoldersWidget: React.FC = () => {
     return value;
   };
 
-  // Wax formats against the browser locale, so restate the number in the app one.
-  const formatBalance = (value: string): string => {
-    const formatted = formatRawBalance(value);
-    const [amount, ...unit] = formatted.split(" ");
-    const decimals = (amount.split(".")[1] ?? "").length;
-    const numeric = Number(amount.replace(/,/g, ""));
-    if (!Number.isFinite(numeric)) return formatted;
-    return [
-      numeric.toLocaleString(locale, {
-        minimumFractionDigits: decimals,
-        maximumFractionDigits: decimals,
-      }),
-      ...unit,
-    ].join(" ");
-  };
+  const formatBalance = (value: string): string =>
+    relocalizeAmount(formatRawBalance(value), locale);
 
   const top = holdersData.slice(0, FEED_SIZE);
 
