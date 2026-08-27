@@ -1,4 +1,5 @@
 import { config } from "@/Config";
+import { getImageSrc } from "@/utils/PathUtils";
 
 export function getHiveAvatarUrl(userName?: string): string {
   if (userName) {
@@ -6,6 +7,11 @@ export function getHiveAvatarUrl(userName?: string): string {
   } else {
     return "";
   }
+}
+
+// Local copy of the placeholder images.hive.blog serves for accounts with no avatar.
+export function getDefaultAvatarUrl(): string {
+  return getImageSrc("/default-avatar.png");
 }
 
 // Both segments come off the API, so they are encoded rather than trusted.

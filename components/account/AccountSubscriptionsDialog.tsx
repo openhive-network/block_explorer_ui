@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Loader2, Search, ChevronDown, ChevronUp } from "lucide-react";
 
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -20,8 +19,8 @@ import DataExport from "../DataExport";
 import { cn } from "@/lib/utils";
 
 import { useI18n } from "@/i18n/i18n";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { config } from "@/Config";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 type SubscriptionsDialogProps = {
   accountName: string;
@@ -183,12 +182,10 @@ const AccountSubscriptionsDialog: React.FC<SubscriptionsDialogProps> = ({
                               className="flex items-center space-x-4 py-1 text-link hover:underline"
                               target="_blank"
                             >
-                              <Image
-                                src={getHiveAvatarUrl(community.id)}
+                              <HiveAvatar
+                                accountName={community.id}
                                 alt={community.name}
-                                width={40}
-                                height={40}
-                                className="rounded-full"
+                                size={40}
                               />
                               <span className="font-medium">
                                 {community.name}

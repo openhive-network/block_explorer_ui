@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import ReportSearchRanges from "./ReportSearchRanges";
 import SegmentedToggle from "@/components/ui/SegmentedToggle";
 import { spacesToUnderscores } from "@/utils/StringUtils";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
+import { getDefaultAvatarUrl, getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import useAccountInteractions from "@/hooks/api/accountPage/useAccountInteractions";
 import Hive from "@/types/Hive";
 import {
@@ -22,6 +22,7 @@ import {
 } from "@/utils/socialInteractions";
 import { BaseReportProps } from "./reportRegistry";
 import { useRegisterReportExport } from "./reportExports";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 type TopNKey = "5" | "10" | "15";
 
@@ -43,7 +44,9 @@ const esc = (value: unknown) =>
 // Tooltip card: avatar (via getHiveAvatarUrl) + @handle + subtitle.
 const avatarCard = (account: string, subtitleHtml: string) =>
   `<div style="display:flex;align-items:center;gap:8px;max-width:260px">
-    <img src="${esc(getHiveAvatarUrl(account))}" alt="" style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex:0 0 auto" />
+    <img src="${esc(getHiveAvatarUrl(account))}" alt="" onerror="this.onerror=null;this.src='${esc(
+      getDefaultAvatarUrl()
+    )}'" style="width:32px;height:32px;border-radius:50%;object-fit:cover;flex:0 0 auto" />
     <div style="line-height:1.4">
       <div style="font-weight:600">@${esc(account)}</div>
       ${subtitleHtml}
@@ -722,9 +725,9 @@ const SocialInteractionsReport: React.FC<
                   >
                     <td className="py-1.5 pe-2 sticky start-0 z-10 bg-theme border-e border-gray-200 dark:border-gray-700">
                       <span className="inline-flex items-center gap-1.5">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={getHiveAvatarUrl(r.account)}
+                        <HiveAvatar
+                          accountName={r.account}
+                          size={20}
                           alt=""
                           className="h-5 w-5 rounded-full object-cover shrink-0"
                         />

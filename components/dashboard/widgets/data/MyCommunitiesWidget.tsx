@@ -9,7 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import useAccountDetails from "@/hooks/api/accountPage/useAccountDetails";
 import { useI18n } from "@/i18n/i18n";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 // bridge returns [id, title, role, ...]; the id is an account with its own page.
 type Subscription = string[];
@@ -84,9 +84,9 @@ const MyCommunitiesWidget: React.FC = () => {
                   href={`/@${community.id}`}
                   className="group flex items-center gap-2.5 rounded-md px-2 py-1.5 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700/40"
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={getHiveAvatarUrl(community.id)}
+                  <HiveAvatar
+                    accountName={community.id}
+                    size={28}
                     alt=""
                     className="h-7 w-7 shrink-0 rounded-md object-cover"
                   />

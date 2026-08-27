@@ -4,13 +4,12 @@ import React, { useRef, useEffect, useCallback } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Loader2 } from "lucide-react";
 import { useI18n } from "@/i18n/i18n";
-import Image from "next/image";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import Link from "next/link";
 import ErrorMessage from "../ErrorMessage";
 import useCommunitySubscribers from "@/hooks/api/accountPage/useCommunitySubscribers";
 import Hive from "@/types/Hive";
 import NoResult from "../NoResult";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 interface CommunitySubscribersDialogProps {
   isOpen: boolean;
@@ -31,14 +30,15 @@ const SubscriberCard = ({
       href={`/@${name}`}
       className="group flex flex-col items-center justify-center gap-2 p-2 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-xl aspect-square transition-all duration-200 ease-in-out hover:shadow-lg hover:border-slate-300 dark:hover:border-slate-600 hover:scale-105"
     >
-      <Image 
-        src={getHiveAvatarUrl(name)} 
-        alt={`${name} avatar`} 
-        width={60}
-        height={60} 
-        className="rounded-full transition-transform duration-200 group-hover:scale-110" 
+      <HiveAvatar
+        accountName={name}
+        alt={`${name} avatar`}
+        size={60}
+        className="transition-transform duration-200 group-hover:scale-110"
       />
-      <p className="w-full text-center text-sm font-bold text-slate-900 dark:text-slate-100 truncate">{name}</p>
+      <p className="w-full text-center text-sm font-bold text-slate-900 dark:text-slate-100 truncate">
+        {name}
+      </p>
     </Link>
   );
 };
@@ -101,7 +101,9 @@ const CommunitySubscribersDialog: React.FC<CommunitySubscribersDialogProps> = ({
     if (subscribersData.length === 0) {
       return (
         <div className="flex h-full w-full items-center justify-center">
-          <NoResult descriptionKey={t("CommunitySubscribersDialog.noResults")} />
+          <NoResult
+            descriptionKey={t("CommunitySubscribersDialog.noResults")}
+          />
         </div>
       );
     }

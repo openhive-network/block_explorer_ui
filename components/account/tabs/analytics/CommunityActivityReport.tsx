@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import SegmentedToggle from "@/components/ui/SegmentedToggle";
 import ReportSearchRanges from "./ReportSearchRanges";
 import { spacesToUnderscores } from "@/utils/StringUtils";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
+import { getDefaultAvatarUrl, getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import useAccountCommunityActivity from "@/hooks/api/accountPage/useAccountCommunityActivity";
 import {
   POST_COLOR,
@@ -22,6 +22,7 @@ import {
 } from "@/utils/communityActivity";
 import { BaseReportProps } from "./reportRegistry";
 import { useRegisterReportExport } from "./reportExports";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 type TopNKey = "5" | "10" | "15";
 
@@ -274,7 +275,9 @@ const CommunityActivityReport: React.FC<
           if (d.kind === "community" && d.community) {
             return `<div style="${box}"><div style="display:flex;align-items:center;gap:8px"><img src="${esc(
               getHiveAvatarUrl(d.community)
-            )}" alt="" style="width:26px;height:26px;border-radius:6px;object-fit:cover;flex:0 0 auto" /><div><div style="font-weight:600">${esc(
+            )}" alt="" onerror="this.onerror=null;this.src='${esc(
+              getDefaultAvatarUrl()
+            )}'" style="width:26px;height:26px;border-radius:6px;object-fit:cover;flex:0 0 auto" /><div><div style="font-weight:600">${esc(
               d.name
             )}</div>${line}</div></div>${bar}</div>`;
           }
@@ -539,9 +542,9 @@ const CommunityActivityReport: React.FC<
                         <span className="inline-flex items-center gap-1.5">
                           {clickable ? (
                             <>
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              <img
-                                src={getHiveAvatarUrl(c.community as string)}
+                              <HiveAvatar
+                                accountName={c.community as string}
+                                size={20}
                                 alt=""
                                 className="h-5 w-5 rounded object-cover shrink-0"
                               />

@@ -1,12 +1,10 @@
 import React, { useMemo, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import dynamic from "next/dynamic";
 import { Loader2 } from "lucide-react";
 import { IHiveChainInterface } from "@hiveio/wax";
 import { useI18n } from "@/i18n/i18n";
 import { formatCompact } from "@/utils/chartUtils";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { convertVestsToHP } from "@/utils/Calculations";
 import { grabNumericValue } from "@/utils/StringUtils";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
@@ -25,6 +23,7 @@ import {
 import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
 import SegmentedToggle from "@/components/ui/SegmentedToggle";
 import { useVestingDisplayUnit, VestingDisplayUnit } from "./hpMomentumUtils";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 // ---------------------------------------------------------------------------
 // Shared helpers for the Network Top Accounts feature (card + dialog).
@@ -382,12 +381,11 @@ const NetworkTopAccountsCard: React.FC = () => {
                   {row.rank}
                 </span>
                 <Link href={`/@${row.account}`} className="shrink-0">
-                  <Image
-                    className="rounded-full"
-                    src={getHiveAvatarUrl(row.account)}
+                  <HiveAvatar
+                    accountName={row.account}
+                    size={28}
                     alt={row.account}
-                    width={28}
-                    height={28}
+                    className="rounded-full"
                   />
                 </Link>
                 <div className="flex flex-col flex-grow min-w-0">

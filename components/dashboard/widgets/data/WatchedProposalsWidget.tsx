@@ -1,7 +1,6 @@
 import { useMemo, useEffect } from "react";
 import { toast } from "sonner";
 import Link from "next/link";
-import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import {
   Star,
@@ -26,12 +25,12 @@ import {
 } from "@/components/proposals/ProposalCard";
 import { useI18n } from "@/i18n/i18n";
 import { cn } from "@/lib/utils";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { formatDateToLocale } from "@/utils/TimeUtils";
 import fetchingService from "@/services/FetchingService";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { convertVestsToHP } from "@/utils/Calculations";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 const STATUS_CONFIG = {
   active: {
@@ -273,11 +272,10 @@ const WatchedProposalsWidget = () => {
 
                     {/* Creator + status */}
                     <div className="flex items-center gap-1 mt-1 flex-wrap">
-                      <Image
-                        src={getHiveAvatarUrl(p.creator)}
+                      <HiveAvatar
+                        accountName={p.creator}
+                        size={14}
                         alt={p.creator}
-                        width={14}
-                        height={14}
                         className="rounded-full flex-shrink-0"
                       />
                       <Link
@@ -358,11 +356,10 @@ const WatchedProposalsWidget = () => {
 
                   {/* Creator + badges row */}
                   <div className="flex items-center gap-1 mt-1 flex-wrap">
-                    <Image
-                      src={getHiveAvatarUrl(p.creator)}
+                    <HiveAvatar
+                      accountName={p.creator}
+                      size={14}
                       alt={p.creator}
-                      width={14}
-                      height={14}
                       className="rounded-full flex-shrink-0"
                     />
                     <Link

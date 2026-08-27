@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Crown } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
@@ -9,9 +8,9 @@ import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import useTopHolders, { CoinType } from "@/hooks/api/common/useTopHolders";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { convertVestsToHP } from "@/utils/Calculations";
 import { useI18n } from "@/i18n/i18n";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 const FEED_SIZE = 10;
 const COINS: CoinType[] = ["HIVE", "HBD", "VESTS"];
@@ -122,11 +121,10 @@ const TopHoldersWidget: React.FC = () => {
                   <span className="w-5 text-center text-[0.65rem] font-semibold text-slate-500 dark:text-slate-400 flex-shrink-0">
                     {rank}
                   </span>
-                  <Image
-                    src={getHiveAvatarUrl(h.account)}
+                  <HiveAvatar
+                    accountName={h.account}
+                    size={18}
                     alt={h.account}
-                    width={18}
-                    height={18}
                     className="rounded-full flex-shrink-0"
                   />
                   <Link

@@ -2,12 +2,12 @@ import React, { forwardRef } from "react";
 import Link from "next/link";
 import { Box, Hash, CornerDownLeft as Enter } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import {
   resolveAccountLabel,
   resolveBadActorLabel,
 } from "@/utils/accountLabels";
 import AccountLabelBadge from "@/components/AccountLabelBadge";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 export type AutocompleteResultType = "account" | "block" | "tx";
 
@@ -79,12 +79,10 @@ const AutocompleteResultRow = forwardRef<HTMLDivElement, Props>(
         {isAccount ? (
           // Plain img: the list re-renders per keystroke, so these 24px avatars
           // skip the Next optimizer.
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={getHiveAvatarUrl(value)}
+          <HiveAvatar
+            accountName={value}
+            size={24}
             alt=""
-            aria-hidden="true"
-            loading="lazy"
             className="h-6 w-6 shrink-0 rounded-full bg-slate-200 object-cover dark:bg-slate-700"
           />
         ) : (

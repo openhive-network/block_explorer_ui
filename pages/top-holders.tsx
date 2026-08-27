@@ -38,8 +38,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
-import Image from "next/image";
 import Link from "next/link";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import { convertVestsToHP, computeVestingRatios } from "@/utils/Calculations";
@@ -78,6 +76,7 @@ import AutoCompleteInput from "@/components/ui/AutoCompleteInput";
 import useCompareSelection from "@/hooks/common/useCompareSelection";
 import CompareSelectToggle from "@/components/compare/CompareSelectToggle";
 import CompareSelectionBar from "@/components/compare/CompareSelectionBar";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 // Total supply in the same raw unit as a holder's balance (VESTS ×1e6, HIVE/HBD ×1e3).
 const getTotalSupplyRaw = (
@@ -559,11 +558,10 @@ export default function TopHoldersPage({ meta }: { meta: SeoMeta }) {
         <TableCell>{displayRank}</TableCell>
         <TableCell className="text-link">
           <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
-            <Image
-              src={getHiveAvatarUrl(account)}
+            <HiveAvatar
+              accountName={account}
+              size={30}
               alt={`${account}'s profile`}
-              width={30}
-              height={30}
               className="flex-shrink-0 rounded-full"
             />
             <Link className="text-link" href={`/@${account}`}>

@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Loader2, Search, ChevronDown, ChevronUp } from "lucide-react";
 
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -20,9 +19,9 @@ import DataExport from "../DataExport";
 import { cn } from "@/lib/utils";
 
 import { useI18n } from "@/i18n/i18n";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { config } from "@/Config";
 import useAccountFollowers from "@/hooks/api/accountPage/useAccountFollowers";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 type FollowersDialogProps = {
   accountName: string;
@@ -82,10 +81,7 @@ const AccountFollowersDialog: React.FC<FollowersDialogProps> = ({
   };
 
   return (
-    <Dialog
-      open={isFollowersOpen}
-      onOpenChange={changeFollowersDialogue}
-    >
+    <Dialog open={isFollowersOpen} onOpenChange={changeFollowersDialogue}>
       <DialogContent
         className="h-3/4 max-w-4xl bg-explorer-bg-start flex flex-col p-4 gap-y-0"
         data-testid="followers-dialog"
@@ -175,12 +171,9 @@ const AccountFollowersDialog: React.FC<FollowersDialogProps> = ({
                               href={`/@${followerName}`}
                               className="flex items-center space-x-4 py-1 text-link hover:underline"
                             >
-                              <Image
-                                src={getHiveAvatarUrl(followerName)}
-                                alt={followerName}
-                                width={40}
-                                height={40}
-                                className="rounded-full"
+                              <HiveAvatar
+                                accountName={followerName}
+                                size={40}
                               />
                               <span className="font-medium">
                                 {followerName}

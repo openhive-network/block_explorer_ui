@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import moment from "moment";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import Image from "next/image";
 import {
   Loader2,
   Download,
@@ -36,7 +35,6 @@ import useSearchRanges from "@/hooks/common/useSearchRanges";
 import { useI18n } from "@/i18n/i18n";
 import { cn, formatNumber } from "@/lib/utils";
 import SegmentedToggle from "@/components/ui/SegmentedToggle";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
@@ -53,6 +51,7 @@ import {
   TopAccountsConverters,
 } from "./NetworkTopAccountsCard";
 import { useVestingDisplayUnit, VestingDisplayUnit } from "./hpMomentumUtils";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 const NetworkTopAccountsChart = dynamic(
   () => import("./NetworkTopAccountsChart"),
@@ -584,12 +583,11 @@ const NetworkTopAccountsFullChartDialog: React.FC<
                           href={`/@${row.account}`}
                           className="flex items-center gap-2 text-link"
                         >
-                          <Image
-                            className="rounded-full"
-                            src={getHiveAvatarUrl(row.account)}
+                          <HiveAvatar
+                            accountName={row.account}
+                            size={28}
                             alt={row.account}
-                            width={28}
-                            height={28}
+                            className="rounded-full"
                           />
                           <span className="truncate">{row.account}</span>
                         </Link>

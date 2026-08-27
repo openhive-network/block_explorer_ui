@@ -21,12 +21,10 @@ import {
   Share2,
   ArrowLeftRight,
 } from "lucide-react";
-import Image from "next/image";
 import { useRouter } from "next/router";
 import NextLink from "next/link";
 import Explorer from "@/types/Explorer";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import useManabars from "@/hooks/api/accountPage/useManabars";
 import { Card, CardContent, CardHeader } from "../ui/card";
 import { Toggle } from "../ui/toggle";
@@ -61,6 +59,7 @@ import {
 } from "@/components/ui/dialog";
 import AccountShareCard from "@/components/account/AccountShareCard";
 import StatCard from "@/components/ui/StatCard";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 interface AccountMainCardProps {
   accountDetails: Explorer.FormattedAccountDetails;
@@ -277,12 +276,11 @@ const AccountMainCard: React.FC<AccountMainCardProps> = ({
               )}
 
               <div className="flex flex-col md:flex-row items-start md:items-center gap-4 align-text-top">
-                <Image
-                  className="rounded-full border-4 border-explorer-orange/50 shadow-md"
-                  src={getHiveAvatarUrl(accountName)}
+                <HiveAvatar
+                  accountName={accountName}
+                  size={72}
                   alt="avatar"
-                  width={72}
-                  height={72}
+                  className="rounded-full border-4 border-explorer-orange/50 shadow-md"
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2 text-sm text-gray-500 dark:text-gray-400">

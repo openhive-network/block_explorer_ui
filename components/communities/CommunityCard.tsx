@@ -3,8 +3,6 @@ import { Users, PenSquare, EyeOff, Languages } from "lucide-react";
 import React from "react";
 import type Hive from "@/types/Hive";
 import { useI18n } from "@/i18n/i18n";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
-import Image from "next/image";
 import {
   Tooltip,
   TooltipContent,
@@ -12,6 +10,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 interface CommunityCardProps {
   community: Hive.CommunityListItem;
@@ -48,11 +47,10 @@ const CommunityCard = ({
           href={`/@${community.name}`}
           className="flex items-center gap-2.5"
         >
-          <Image
-            src={getHiveAvatarUrl(community.name)}
+          <HiveAvatar
+            accountName={community.name}
+            size={44}
             alt={community.name}
-            width={44}
-            height={44}
             className="h-11 w-11 flex-shrink-0 rounded-full border-2 object-cover border-slate-200 dark:border-slate-700"
           />
           <div className="flex-1 overflow-hidden">

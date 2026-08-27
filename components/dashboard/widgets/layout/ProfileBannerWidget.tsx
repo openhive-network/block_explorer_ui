@@ -4,7 +4,6 @@ import { ArrowRight, UserCircle } from "lucide-react";
 import { useI18n } from "@/i18n/i18n";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import LiveHeadBlock from "@/components/dashboard/ui/LiveHeadBlock";
 import LiveDataToggle from "@/components/dashboard/ui/LiveDataToggle";
 import {
@@ -13,6 +12,7 @@ import {
   AccentKey,
   resolveAccent,
 } from "@/components/dashboard/lib/accents";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 interface ProfileBannerWidgetProps {
   initialTagline?: string;
@@ -88,9 +88,9 @@ const ProfileBannerWidget: React.FC<ProfileBannerWidgetProps> = ({
       {spine}
       <div className="relative flex h-full flex-col justify-center gap-1 px-3 py-2 sm:flex-row sm:items-center sm:gap-4 sm:px-0 sm:py-2 sm:ps-5 sm:pe-4">
         <div className="flex min-w-0 items-center gap-3 sm:contents">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={getHiveAvatarUrl(username)}
+          <HiveAvatar
+            accountName={username}
+            size={40}
             alt=""
             className="h-10 w-10 shrink-0 rounded-2xl object-cover ring-2 ring-white/70 dark:ring-black/30 sm:h-14 sm:w-14"
           />

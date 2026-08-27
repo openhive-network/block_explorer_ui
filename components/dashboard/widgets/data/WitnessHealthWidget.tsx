@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import {
   ShieldOff,
   ChevronUp,
@@ -15,8 +14,8 @@ import useWatchedWitnesses from "@/hooks/api/common/useWatchedWitnesses";
 import useWitnessVoteChain from "@/hooks/api/common/useWitnessVoteChain";
 import { useI18n } from "@/i18n/i18n";
 import { cn } from "@/lib/utils";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { formatAndDelocalizeFromTime } from "@/utils/TimeUtils";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 type SortKey = "name" | "rank" | "missed" | "feedAge";
 type SortDir = "asc" | "desc";
@@ -302,11 +301,10 @@ const WitnessHealthWidget = () => {
                             : "bg-red-50/60 dark:bg-red-950/20 border-red-200/60 dark:border-red-900/30"
                         )}
                       >
-                        <Image
-                          src={getHiveAvatarUrl(w.name)}
+                        <HiveAvatar
+                          accountName={w.name}
+                          size={18}
                           alt={w.name}
-                          width={18}
-                          height={18}
                           className="rounded-full flex-shrink-0"
                         />
                         <span

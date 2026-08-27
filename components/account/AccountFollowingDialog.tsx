@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Loader2, Search, ChevronDown, ChevronUp } from "lucide-react";
 
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -20,9 +19,9 @@ import DataExport from "../DataExport";
 import { cn } from "@/lib/utils";
 
 import { useI18n } from "@/i18n/i18n";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { config } from "@/Config";
 import useAccountFollowing from "@/hooks/api/accountPage/useAccountFollowing";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 type FollowingDialogProps = {
   accountName: string;
@@ -87,16 +86,14 @@ const AccountFollowingDialog: React.FC<FollowingDialogProps> = ({
   };
 
   return (
-    <Dialog
-      open={isFollowingOpen}
-      onOpenChange={changeFollowingDialogue}
-    >
+    <Dialog open={isFollowingOpen} onOpenChange={changeFollowingDialogue}>
       <DialogContent
         className="h-3/4 max-w-4xl bg-explorer-bg-start flex flex-col p-4"
         data-testid="following-dialog"
       >
         <h2 className="text-xl font-bold">
-          {t("accountFollowingDialog.title")} - @{accountName.toUpperCase()}{" "}
+          {t("accountFollowingDialog.title")} - @
+          {accountName.toUpperCase()}{" "}
         </h2>
 
         {isAccountFollowingLoading ? (
@@ -182,12 +179,9 @@ const AccountFollowingDialog: React.FC<FollowingDialogProps> = ({
                               href={`/@${followingName}`}
                               className="flex items-center space-x-4 py-1 text-link hover:underline"
                             >
-                              <Image
-                                src={getHiveAvatarUrl(followingName)}
-                                alt={followingName}
-                                width={40}
-                                height={40}
-                                className="rounded-full"
+                              <HiveAvatar
+                                accountName={followingName}
+                                size={40}
                               />
                               <span className="font-medium">
                                 {followingName}

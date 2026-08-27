@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
 import { useI18n } from "@/i18n/i18n";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 import {
   LogOut,
   ChevronDown,
@@ -59,7 +59,7 @@ const UserNavItem = ({
 );
 
 const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
-  const { username, avatar, logout, method } = useAuth();
+  const { username, logout, method } = useAuth();
   const { t } = useI18n();
   const { settings } = useSettings();
   const [isOpen, setIsOpen] = useState(false);
@@ -145,12 +145,11 @@ const LoggedUserNav: React.FC<{ isMobile?: boolean }> = ({ isMobile }) => {
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-2 rounded-full border border-navbar-border bg-secondary/20 p-1 pr-3 hover:bg-secondary/40 transition-all outline-none"
       >
-        <Image
-          src={avatar || getHiveAvatarUrl(username || "")}
+        <HiveAvatar
+          accountName={username}
           alt="avatar"
-          width={28}
-          height={28}
-          className="w-7 h-7 rounded-full border border-border/50 object-cover"
+          size={28}
+          className="w-7 h-7 border border-border/50"
         />
         {!isMobile && (
           <span className="text-xs font-bold text-text">{username}</span>

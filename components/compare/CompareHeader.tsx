@@ -1,10 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import moment from "moment";
 import { Link2, X } from "lucide-react";
 import { toast } from "sonner";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { resolveAccountLabel } from "@/utils/accountLabels";
 import AccountLabelBadge from "@/components/AccountLabelBadge";
 import CompareExportMenu from "./CompareExportMenu";
@@ -18,6 +16,7 @@ import { cn } from "@/lib/utils";
 import { CompareRange, COMPARE_RANGES } from "@/utils/compare/range";
 import { TOOLS_GUTTER, TOOLS_RAIL_WIDTH } from "@/components/tools/ToolsLayout";
 import useCountUp from "@/hooks/common/useCountUp";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 interface CompareHeaderProps {
   a: CompareAccountData;
@@ -63,11 +62,10 @@ const Identity: React.FC<{
   onRemove?: () => void;
 }> = ({ d, side, t, locale, compact, onRemove }) => {
   const avatar = (
-    <Image
-      src={getHiveAvatarUrl(d.account)}
+    <HiveAvatar
+      accountName={d.account}
+      size={36}
       alt={d.account}
-      width={44}
-      height={44}
       className={`h-9 w-9 flex-shrink-0 rounded-full ring-2 sm:h-11 sm:w-11 ${RING[side]}`}
     />
   );

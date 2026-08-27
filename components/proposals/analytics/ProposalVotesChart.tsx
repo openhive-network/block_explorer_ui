@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import Image from "next/image";
 import { useI18n } from "@/i18n/i18n";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { Users } from "lucide-react";
 import {
   PieChart,
@@ -14,6 +12,7 @@ import {
 import { convertVestsToHP } from "@/utils/Calculations";
 import { formatNumber } from "@/lib/utils";
 import { grabNumericValue } from "@/utils/StringUtils";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 // Constants related to chart presentation now live with the chart.
 export const TOP_CHART_VOTERS = 10;
@@ -178,11 +177,10 @@ const CustomTooltip = ({ active, payload }: any) => {
                 <Users className="h-6 w-6 text-slate-500" />
               </div>
             ) : (
-              <Image
-                src={getHiveAvatarUrl(data.name)}
+              <HiveAvatar
+                accountName={data.name}
+                size={40}
                 alt={data.name}
-                width={40}
-                height={40}
                 className="rounded-full"
               />
             )}

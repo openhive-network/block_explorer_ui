@@ -23,7 +23,7 @@ import { useI18n } from "@/i18n/i18n";
 import { parseChainDate } from "@/utils/TimeUtils";
 import { isInAppPath, normalizeExternalUrl } from "@/utils/SafeUrl";
 import { cn } from "@/lib/utils";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 type Category =
   | "all"
@@ -155,9 +155,9 @@ const MyNotificationsWidget: React.FC = () => {
               const row = (
                 <>
                   {actor ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={getHiveAvatarUrl(actor)}
+                    <HiveAvatar
+                      accountName={actor}
+                      size={28}
                       alt=""
                       className="h-7 w-7 shrink-0 rounded-full object-cover"
                     />
