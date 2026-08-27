@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { ArrowUpCircleIcon, ArrowDownCircleIcon, Loader2 } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 
 import Explorer from "@/types/Explorer";
 import { formatNumber } from "@/lib/utils";
@@ -13,7 +12,6 @@ import useSearchRanges from "@/hooks/common/useSearchRanges";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
 import { useI18n } from "../../i18n/i18n";
 import { convertVestsToHP } from "@/utils/Calculations";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { config } from "@/Config";
 
 import {
@@ -42,6 +40,7 @@ import SearchRanges from "../searchRanges/SearchRanges";
 import Hive from "@/types/Hive";
 import VotesHistoryWidget from "./VotesHistoryChart";
 import { useSettings } from "@/contexts/SettingsContext";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 type VotesHistoryDialogProps = {
   accountName: string;
@@ -64,12 +63,14 @@ const VotesHistoryDialog: React.FC<VotesHistoryDialogProps> = ({
 
   // State for UI controls and inputs
   const [pageNum, setPageNum] = useState<number>(1);
-  
-  const [isHP, setIsHP] = useState<boolean>(settings.displayVestHpMode === "hp");
+
+  const [isHP, setIsHP] = useState<boolean>(
+    settings.displayVestHpMode === "hp"
+  );
   useEffect(() => {
-      setIsHP(settings.displayVestHpMode === "hp");
-    }, [settings.displayVestHpMode]);
-    
+    setIsHP(settings.displayVestHpMode === "hp");
+  }, [settings.displayVestHpMode]);
+
   const [voterNameInput, setVoterNameInput] = useState<string>("");
   const [isSearchButtonDisabled, setIsSearchButtonDisabled] = useState(false);
   const searchRanges = useSearchRanges();
@@ -193,10 +194,7 @@ const VotesHistoryDialog: React.FC<VotesHistoryDialogProps> = ({
   }, [isVotesHistoryOpen]);
 
   return (
-    <Dialog
-      open={isVotesHistoryOpen}
-      onOpenChange={changeVoteHistoryDialogue}
-    >
+    <Dialog open={isVotesHistoryOpen} onOpenChange={changeVoteHistoryDialogue}>
       <DialogContent className="h-3/4 max-w-7xl flex flex-col overflow-y-auto md:p-6 p-1">
         <div className="flex max-h-[85vh] min-h-0 flex-col">
           <DialogHeader className="shrink-0 p-4">
@@ -237,10 +235,7 @@ const VotesHistoryDialog: React.FC<VotesHistoryDialogProps> = ({
                     <Loader2 className="ml-2 animate-spin h-4 w-4" />
                   )}
                 </Button>
-                <Button
-                  onClick={handleClear}
-                  variant="outline"
-                >
+                <Button onClick={handleClear} variant="outline">
                   {t("common.clear")}
                 </Button>
               </div>
@@ -298,7 +293,11 @@ const VotesHistoryDialog: React.FC<VotesHistoryDialogProps> = ({
 
                 <div className="flex-1 min-h-0">
                   <div className="text-text w-full rounded bg-theme overflow-auto relative">
-                      <Table enableMobileScrollArrows isDialog className="min-w-max">
+                    <Table
+                      enableMobileScrollArrows
+                      isDialog
+                      className="min-w-max"
+                    >
                       <TableHeader>
                         <TableRow rowVariant="header">
                           <TableHead stickyLeft>
@@ -322,11 +321,10 @@ const VotesHistoryDialog: React.FC<VotesHistoryDialogProps> = ({
                               </TableCell>
                               <TableCell>
                                 <div className="flex items-center space-x-2">
-                                  <Image
-                                    src={getHiveAvatarUrl(vote.voter_name)}
+                                  <HiveAvatar
+                                    accountName={vote.voter_name}
+                                    size={30}
                                     alt={`${vote.voter_name}'s profile`}
-                                    width={30}
-                                    height={30}
                                     className="rounded-full"
                                   />
                                   <Link

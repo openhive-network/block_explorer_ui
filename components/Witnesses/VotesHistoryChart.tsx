@@ -10,17 +10,16 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import Image from "next/image";
 import { IHiveChainInterface } from "@hiveio/wax";
 
 import { Card, CardHeader, CardTitle } from "../ui/card";
 import { cn, formatNumber } from "@/lib/utils";
 import { useI18n } from "@/i18n/i18n";
 import useMediaQuery from "@/hooks/common/useMediaQuery";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { convertVestsToHP } from "@/utils/Calculations";
 import { useTheme } from "@/contexts/ThemeContext";
 import moment from "moment";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 type VoteEvent = {
   voter_name: string;
@@ -172,12 +171,11 @@ const VotesTooltip = ({
                 : g.vests;
               return (
                 <div key={`g-${g.name}`} className="flex items-center">
-                  <Image
-                    className="rounded-full"
-                    src={getHiveAvatarUrl(g.name)}
+                  <HiveAvatar
+                    accountName={g.name}
+                    size={24}
                     alt="avatar"
-                    width={24}
-                    height={24}
+                    className="rounded-full"
                   />
                   <span className="ml-2 text-sm">{g.name} </span>
                   <span className="ml-2 text-sm tabular-nums">
@@ -210,12 +208,11 @@ const VotesTooltip = ({
                 : l.vests;
               return (
                 <div key={`l-${l.name}`} className="flex items-center">
-                  <Image
-                    className="rounded-full"
-                    src={getHiveAvatarUrl(l.name)}
+                  <HiveAvatar
+                    accountName={l.name}
+                    size={24}
                     alt="avatar"
-                    width={24}
-                    height={24}
+                    className="rounded-full"
                   />
                   <span className="ml-2 text-sm">{l.name}</span>
                   <span className="ml-2 text-sm tabular-nums">

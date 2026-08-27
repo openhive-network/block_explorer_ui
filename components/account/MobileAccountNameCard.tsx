@@ -1,5 +1,3 @@
-import Image from "next/image";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { Card, CardHeader } from "../ui/card";
 import Explorer from "@/types/Explorer";
 import { config } from "@/Config";
@@ -11,6 +9,7 @@ import { useEffect, useState } from "react";
 import { isBadActor } from "@/utils/badActors";
 import ErrorMessage from "../ErrorMessage";
 import { useI18n } from "@/i18n/i18n";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 interface MobileAccountNameCardProps {
   accountName: string;
@@ -54,12 +53,11 @@ const MobileAccountNameCard: React.FC<MobileAccountNameCardProps> = ({
         <div className="flex flex-wrap items-center justify-between gap-4 bg-theme dark:bg-theme">
           {/* Avatar and Name */}
           <div className="flex items-center gap-4">
-            <Image
-              className="rounded-full border-2 border-explorer-orange"
-              src={getHiveAvatarUrl(accountName)}
+            <HiveAvatar
+              accountName={accountName}
+              size={60}
               alt="avatar"
-              width={60}
-              height={60}
+              className="rounded-full border-2 border-explorer-orange"
               data-testid="user-avatar"
             />
             <div>

@@ -17,7 +17,6 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { Card, CardContent } from "../ui/card";
 import { Toggle } from "../ui/toggle";
 import { useI18n } from "../../i18n/i18n";
@@ -27,6 +26,7 @@ import Explorer from "@/types/Explorer";
 import Hive from "@/types/Hive";
 import CommunitySubscribersDialog from "./CommunitySubscribersDialog";
 import { isImageWhitelisted } from "@/utils/ImageUtils";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 const roleConfig = {
   owner: {
@@ -99,11 +99,10 @@ const TeamMember = ({ memberTuple }: { memberTuple: TeamMemberTuple }) => {
       href={`/@${name}`}
       className="flex items-start gap-3 p-2 rounded-lg transition-colors hover:bg-slate-100 dark:hover:bg-slate-800/50"
     >
-      <Image
-        src={getHiveAvatarUrl(name)}
+      <HiveAvatar
+        accountName={name}
+        size={40}
         alt={`${name} avatar`}
-        width={40}
-        height={40}
         className="rounded-full flex-shrink-0"
       />
       <div className="flex-1 min-w-0">
@@ -248,12 +247,11 @@ const CommunityMainCard: React.FC<CommunityMainCardProps> = ({
               />
             )}
             <div className="absolute -bottom-10 left-4 z-10">
-              <Image
-                className="rounded-full border-4 border-white dark:border-slate-800 shadow-lg"
-                src={getHiveAvatarUrl(name)}
+              <HiveAvatar
+                accountName={name}
+                size={80}
                 alt={`${title} avatar`}
-                width={80}
-                height={80}
+                className="rounded-full border-4 border-white dark:border-slate-800 shadow-lg"
               />
             </div>
           </div>
@@ -275,12 +273,11 @@ const CommunityMainCard: React.FC<CommunityMainCardProps> = ({
             <div className="flex-1">
               {!hasCover ? (
                 <div className="flex items-center gap-4 mb-4">
-                  <Image
-                    className="rounded-full shadow-md"
-                    src={getHiveAvatarUrl(name)}
+                  <HiveAvatar
+                    accountName={name}
+                    size={64}
                     alt={`${title} avatar`}
-                    width={64}
-                    height={64}
+                    className="rounded-full shadow-md"
                   />
                   <div>
                     <div className="flex items-center gap-3">

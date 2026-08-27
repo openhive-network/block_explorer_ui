@@ -1,7 +1,6 @@
 import { useI18n } from "@/i18n/i18n";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -9,7 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
 
 import Hive from "@/types/Hive";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 interface TopCommunitiesCardProps {
   communitiesData?: Hive.CommunityListItem[];
@@ -66,12 +65,11 @@ const TopCommunitiesCard = ({
                     "scale-110 ring-2 border-link"
                 )}
               >
-                <Image
-                  className="rounded-full"
-                  src={getHiveAvatarUrl(community.name)}
+                <HiveAvatar
+                  accountName={community.name}
+                  size={40}
                   alt={community.title}
-                  width={40}
-                  height={40}
+                  className="rounded-full"
                 />
                 <div className="absolute -top-1 start-1 flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-slate-900/70 px-1 font-mono text-xs font-bold text-white backdrop-blur-sm">
                   {index + 1}

@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { ArrowRightLeft, Box, Boxes } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 
 import Hive from "@/types/Hive";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 import TimeAgo from "timeago-react";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import { useI18n } from "../../i18n/i18n";
@@ -20,7 +19,6 @@ interface CurrentBlockCardProps {
 
 interface Producer {
   href: string;
-  avatarUrl: string;
   name: string;
 }
 
@@ -43,9 +41,8 @@ const CurrentBlockCard: React.FC<CurrentBlockCardProps> = ({
   useEffect(() => {
     if (blockDetails?.producer_account) {
       const href = `/@${blockDetails?.producer_account}`;
-      const avatarUrl = getHiveAvatarUrl(blockDetails?.producer_account);
       const name = blockDetails?.producer_account;
-      setProducer({ href, avatarUrl, name });
+      setProducer({ href, name });
     }
   }, [blockDetails?.producer_account]);
   return (
@@ -97,12 +94,11 @@ const CurrentBlockCard: React.FC<CurrentBlockCardProps> = ({
               href={producer.href}
               data-testid="current-witness-link"
             >
-              <Image
-                className="rounded-full border-2 border-link shrink-0"
-                src={producer.avatarUrl}
+              <HiveAvatar
+                className="border-2 border-link"
+                accountName={producer.name}
                 alt="avatar"
-                width={22}
-                height={22}
+                size={22}
               />
               <span
                 className="text-link text-xs font-semibold truncate"

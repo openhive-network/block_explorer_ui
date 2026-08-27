@@ -1,6 +1,5 @@
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import {
   Loader2,
   MenuSquareIcon,
@@ -29,7 +28,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import CopyButton from "@/components/ui/CopyButton";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { convertVestsToHP } from "@/utils/Calculations";
 import { config } from "@/Config";
 import Hive from "@/types/Hive";
@@ -38,6 +36,7 @@ import WitnessVoteButton from "./WitnessVoteButton";
 import SetProxyButton from "./SetProxyButton";
 import CompareSelectToggle from "@/components/compare/CompareSelectToggle";
 import { CompareSelection } from "@/hooks/common/useCompareSelection";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 interface TableCellConfig {
   displayKey: string;
@@ -232,14 +231,13 @@ const WitnessesTable: React.FC<WitnessesTableProps> = ({
               stickyLeft
               className="flex items-center space-x-2 py-4 whitespace-nowrap"
             >
-              <Image
-                className="rounded-full border-2 border-explorer-orange"
-                src={getHiveAvatarUrl(singleWitness.witness_name)}
+              <HiveAvatar
+                accountName={singleWitness.witness_name}
+                size={30}
                 alt={t("common.avatarAltText", {
                   name: singleWitness.witness_name,
                 })}
-                width={30}
-                height={30}
+                className="rounded-full border-2 border-explorer-orange"
               />
               <div className="flex items-center">
                 <Link

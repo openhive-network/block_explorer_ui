@@ -7,10 +7,9 @@ import React, {
 } from "react";
 import ReactECharts from "echarts-for-react";
 import { useRouter } from "next/router";
-import Image from "next/image";
 
 import Hive from "@/types/Hive";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
+import { getDefaultAvatarUrl, getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { cn } from "@/lib/utils";
 import useLastBlocks from "@/hooks/api/homePage/useLastBlocks";
 import { Card } from "./ui/card";
@@ -19,6 +18,7 @@ import { useI18n } from "../i18n/i18n";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import useMediaQuery from "@/hooks/common/useMediaQuery";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 interface LastBlocksWidgetProps {
   headBlock?: number;
@@ -415,6 +415,7 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
               <div style="font-weight:700;font-size:14px;margin-bottom:8px">${t("common.block")} ${Number(blockNum).toLocaleString(locale)}</div>
               <div style="display:flex;align-items:center;gap:9px;margin-bottom:8px">
                 <img src="${getHiveAvatarUrl(witness)}" width="30" height="30"
+                  onerror="this.onerror=null;this.src='${getDefaultAvatarUrl()}'"
                   style="border-radius:50%;object-fit:cover;flex-shrink:0"/>
                 <span style="font-weight:600;font-size:13px">${witness}</span>
               </div>
@@ -676,12 +677,11 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
                 if (!pos) return null;
                 const isLatest = liveData && i === data.length - 1;
                 return (
-                  <Image
+                  <HiveAvatar
                     key={data[i]?.name ?? i}
-                    src={getHiveAvatarUrl(pos.witness)}
+                    accountName={pos.witness}
+                    size={AVATAR_SIZE}
                     alt={pos.witness}
-                    width={AVATAR_SIZE}
-                    height={AVATAR_SIZE}
                     className={isLatest ? "last-block-avatar" : undefined}
                     style={{
                       position: "absolute",

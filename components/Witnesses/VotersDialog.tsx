@@ -24,14 +24,13 @@ import Explorer from "@/types/Explorer";
 import useDynamicGlobal from "@/hooks/api/homePage/useDynamicGlobal";
 import Hive from "@/types/Hive";
 import VotersChart from "./VotersChart";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
-import Image from "next/image";
 import DataExport from "../DataExport";
 import { useI18n } from "@/i18n/i18n";
 import AutoCompleteInput from "../ui/AutoCompleteInput";
 import { Button } from "@/components/ui/button";
 import { trimAccountName } from "@/utils/StringUtils";
 import { useSettings } from "@/contexts/SettingsContext";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 type VotersDialogProps = {
   accountName: string;
@@ -408,11 +407,10 @@ const VotersDialog: React.FC<VotersDialogProps> = ({
                               <TableRow key={index}>
                                 <TableCell stickyLeft>
                                   <div className="flex items-center space-x-2 p-2">
-                                    <Image
-                                      src={getHiveAvatarUrl(voter.voter_name)}
+                                    <HiveAvatar
+                                      accountName={voter.voter_name}
+                                      size={30}
                                       alt={`${voter.voter_name}'s profile`}
-                                      width={30}
-                                      height={30}
                                       className="rounded-full"
                                     />
                                     <Link

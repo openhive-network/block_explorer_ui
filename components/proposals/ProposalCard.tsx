@@ -11,7 +11,6 @@ import type { ProcessedProposal } from "@/hooks/api/proposals/useProposals";
 import { useI18n } from "@/i18n/i18n";
 import { cn, formatNumber } from "@/lib/utils";
 import { convertVestsToHP } from "@/utils/Calculations";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { formatDateToLocale } from "@/utils/TimeUtils";
 import {
   Award,
@@ -29,7 +28,6 @@ import {
   Wallet,
   XCircle,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { useMemo } from "react";
 import { ProposalVotesDialog } from "./ProposalVotesDialog";
@@ -37,6 +35,7 @@ import { ProposalVotesHistoryDialog } from "./ProposalVotesHistoryDialog";
 import ImpactSimulator from "./ImpactSimulator";
 import ProposalWatchButton from "./ProposalWatchButton";
 import ProposalVoteButton from "./ProposalVoteButton";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 import { MatchDetails } from "@/pages/proposals"; // Added
 
 // Type definitions
@@ -370,11 +369,10 @@ export const ProposalCard = ({
             </div>
             <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-base text-explorer-dark-gray">
               <div className="flex items-center gap-2">
-                <Image
-                  src={getHiveAvatarUrl(proposal.creator)}
+                <HiveAvatar
+                  accountName={proposal.creator}
+                  size={32}
                   alt={proposal.creator}
-                  width={50}
-                  height={50}
                   className="h-8 w-8 rounded-full"
                 />
                 <span>{t("proposalCard.byCreatorPrefix")}</span>
@@ -678,11 +676,10 @@ export const ReturnProposalCard = ({
             </div>
             <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-base text-explorer-dark-gray">
               <div className="flex items-center gap-2">
-                <Image
-                  src={getHiveAvatarUrl(proposal.creator)}
+                <HiveAvatar
+                  accountName={proposal.creator}
+                  size={20}
                   alt={proposal.creator}
-                  width={20}
-                  height={20}
                   className="h-5 w-5 rounded-full"
                 />
                 <span>{t("proposalCard.byCreatorPrefix")}</span>

@@ -24,9 +24,8 @@ import {
   TooltipContent,
 } from "@/components/ui/hybrid-tooltip";
 import { useI18n } from "@/i18n/i18n";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
-import Image from "next/image";
 import CopyButton from "../ui/CopyButton";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 interface PostContentCardProps {
   isComment?: boolean;
@@ -69,7 +68,7 @@ const PostContentCard: React.FC<PostContentCardProps> = ({
   data,
   commentsLength,
 }) => {
-  const { t , locale } = useI18n();
+  const { t, locale } = useI18n();
   if (!data) return;
 
   const {
@@ -93,11 +92,10 @@ const PostContentCard: React.FC<PostContentCardProps> = ({
             href={`/@${author}`}
             className="flex items-center space-x-4 py-1 text-link hover:underline"
           >
-            <Image
-              src={getHiveAvatarUrl(author)}
+            <HiveAvatar
+              accountName={author}
+              size={40}
               alt={author}
-              width={40}
-              height={40}
               className="rounded-full"
             />
           </Link>
@@ -120,18 +118,18 @@ const PostContentCard: React.FC<PostContentCardProps> = ({
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                <span>{formatAndDelocalizeFromTime(created ,locale)}</span>
+                  <span>{formatAndDelocalizeFromTime(created, locale)}</span>
                 </TooltipTrigger>
-              <TooltipContent
-                side="top"
-                align="start"
-                sideOffset={5}
-                alignOffset={10}
-                className="border-0"
-              >
-                <div className="bg-theme text-text p-1">
-                  <p>{formatAndDelocalizeTime(created)}</p>
-                </div>
+                <TooltipContent
+                  side="top"
+                  align="start"
+                  sideOffset={5}
+                  alignOffset={10}
+                  className="border-0"
+                >
+                  <div className="bg-theme text-text p-1">
+                    <p>{formatAndDelocalizeTime(created)}</p>
+                  </div>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -207,9 +205,7 @@ const PostContentCard: React.FC<PostContentCardProps> = ({
               className="w-4 h-4 mr-2"
               color={isVoteDetailsOpen ? ACTIVE_ICON_COLOR : undefined}
             />
-            <span>
-              {voteDetailsLength}
-            </span>
+            <span>{voteDetailsLength}</span>
             {isVoteDetailsOpen ? (
               <ChevronUp className="w-4 ml-1" />
             ) : (

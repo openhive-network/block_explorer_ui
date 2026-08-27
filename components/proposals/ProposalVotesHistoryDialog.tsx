@@ -11,7 +11,6 @@ import {
   TrendingUp,
 } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import moment from "moment";
 import {
   Bar,
@@ -30,7 +29,6 @@ import {
 import { cn } from "@/lib/utils";
 import { formatAndDelocalizeTime } from "@/utils/TimeUtils";
 import { trimAccountName } from "@/utils/StringUtils";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import useProposalVotesHistory from "@/hooks/api/proposals/useProposalVotesHistory";
 import useProposalVotesHistoryChart from "@/hooks/api/proposals/useProposalVotesHistoryChart";
 import useSearchRanges from "@/hooks/common/useSearchRanges";
@@ -63,6 +61,7 @@ import DataExport from "@/components/DataExport";
 import SearchRanges from "@/components/searchRanges/SearchRanges";
 import ErrorMessage from "@/components/ErrorMessage";
 import Hive from "@/types/Hive";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 interface ProposalVotesHistoryDialogProps {
   proposalId: number;
@@ -87,11 +86,10 @@ const VoterList = ({ names }: { names: string[] }) => {
     <div className="mt-1.5 space-y-1.5">
       {names.slice(0, TOOLTIP_MAX_NAMES).map((name) => (
         <div key={name} className="flex items-center gap-1.5">
-          <Image
-            src={getHiveAvatarUrl(name)}
+          <HiveAvatar
+            accountName={name}
+            size={20}
             alt={t("proposalVotesHistoryDialog.voterAvatarAlt")}
-            width={20}
-            height={20}
             className="rounded-full flex-shrink-0"
           />
           <span className="text-sm truncate">{name}</span>
@@ -700,11 +698,10 @@ export const ProposalVotesHistoryDialog: React.FC<
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center space-x-2">
-                            <Image
-                              src={getHiveAvatarUrl(vote.voter_name)}
+                            <HiveAvatar
+                              accountName={vote.voter_name}
+                              size={30}
                               alt={`${vote.voter_name}'s profile`}
-                              width={30}
-                              height={30}
                               className="rounded-full"
                             />
                             <Link

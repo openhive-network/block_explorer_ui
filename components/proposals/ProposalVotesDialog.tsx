@@ -6,9 +6,7 @@ import React, {
   useRef,
 } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useI18n } from "@/i18n/i18n";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { convertVestsToHP } from "@/utils/Calculations";
 import { cn, formatNumber } from "@/lib/utils";
 import { useHiveChainContext } from "@/contexts/HiveChainContext";
@@ -50,6 +48,7 @@ import {
   TOP_CHART_VOTERS,
 } from "./analytics/ProposalVotesChart";
 import { useSettings } from "@/contexts/SettingsContext";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 interface ProposalVotesDialogProps {
   proposalId: number;
@@ -67,11 +66,11 @@ export const ProposalVotesDialog = ({
 
   const [sortBy, setSortBy] = useState<"name" | "power">("power");
   const [isAsc, setIsAsc] = useState(false);
-  
+
   const [unit, setUnit] = useState<"hp" | "vests">(settings.displayVestHpMode);
   useEffect(() => {
-      setUnit(settings.displayVestHpMode);
-    }, [settings.displayVestHpMode]);
+    setUnit(settings.displayVestHpMode);
+  }, [settings.displayVestHpMode]);
 
   const [activeSegmentFilter, setActiveSegmentFilter] = useState<string | null>(
     null
@@ -336,10 +335,7 @@ export const ProposalVotesDialog = ({
   };
 
   return (
-    <Dialog
-      open={isOpen}
-      onOpenChange={setIsOpen}
-    >
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="h-[90vh] max-w-7xl flex flex-col p-4 sm:p-6 overflow-auto">
         <DialogHeader>
@@ -429,10 +425,7 @@ export const ProposalVotesDialog = ({
                       </TooltipContent>
                     </Tooltip>
                     <div className="flex items-center space-x-2 rounded-md p-1.5">
-                      <Label
-                        htmlFor="unit-toggle"
-                        className="text-sm"
-                      >
+                      <Label htmlFor="unit-toggle" className="text-sm">
                         {t("common.vests")}
                       </Label>
                       <Switch
@@ -442,10 +435,7 @@ export const ProposalVotesDialog = ({
                           setUnit(checked ? "hp" : "vests")
                         }
                       />
-                      <Label
-                        htmlFor="unit-toggle"
-                        className="text-sm "
-                      >
+                      <Label htmlFor="unit-toggle" className="text-sm ">
                         {t("common.hp")}
                       </Label>
                     </div>
@@ -455,21 +445,17 @@ export const ProposalVotesDialog = ({
                   {filteredAndSortedVotes.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
                       {filteredAndSortedVotes.map((vote) => (
-                        <div
-                          key={vote.voter}
-                          className="py-2"
-                        >
+                        <div key={vote.voter} className="py-2">
                           <Link
                             href={`/@${vote.voter}`}
                             className="flex items-center space-x-3"
                             target="_blank"
                             rel="noopener noreferrer"
                           >
-                            <Image
-                              src={getHiveAvatarUrl(vote.voter)}
+                            <HiveAvatar
+                              accountName={vote.voter}
+                              size={32}
                               alt={vote.voter}
-                              width={32}
-                              height={32}
                               className="rounded-full flex-shrink-0"
                             />
                             <div className="flex-grow min-w-0">

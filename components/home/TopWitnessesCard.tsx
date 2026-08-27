@@ -1,9 +1,7 @@
 import React, { useMemo } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { useI18n } from "@/i18n/i18n";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import { cn } from "@/lib/utils";
 import { config } from "@/Config";
 import Hive from "@/types/Hive";
@@ -13,6 +11,7 @@ import { convertVestsToHP } from "@/utils/Calculations";
 import { grabNumericValue } from "@/utils/StringUtils";
 import { Card, CardContent } from "@/components/ui/card";
 import CardHeaderWithLink from "@/components/ui/CardHeaderWithLink";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 interface TopWitnessesCardProps {
   witnessesData?: { witnesses: Hive.Witness[] };
@@ -111,12 +110,11 @@ const TopWitnessesCard = ({
                       {witness.rank}
                     </span>
                     <Link href={`/@${name}`} className="shrink-0">
-                      <Image
-                        className="rounded-full border border-link/60"
-                        src={getHiveAvatarUrl(name)}
+                      <HiveAvatar
+                        accountName={name}
+                        size={22}
                         alt={name}
-                        width={22}
-                        height={22}
+                        className="rounded-full border border-link/60"
                       />
                     </Link>
                     <Link
