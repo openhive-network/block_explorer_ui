@@ -459,8 +459,7 @@ class FetchingService {
   }
 
   // Names the witnesses the chain recorded as skipping a slot in the range.
-  // maxBlocks bounds the per-block fan-out below; the caller passes the round
-  // length, since a round cannot contain more missed slots than it has slots.
+  // maxBlocks bounds the per-block fan-out below.
   async getMissedProducers(
     fromBlock: number,
     toBlock: number,

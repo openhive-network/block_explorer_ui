@@ -3,17 +3,8 @@ export interface RoundBlockRange {
   toBlock: number;
 }
 
-/**
- * Block span of the round currently on screen.
- *
- * `next_shuffle_block_num` is set to head + one slot per witness when the
- * schedule shuffles, so the round starts exactly `roundLength` blocks before
- * it - no observation needed, and unaffected by missed slots, which produce no
- * block and so consume no block number. The head block is recovered from the
- * blocks-left counter, which is that same shuffle point minus the head.
- *
- * Returns null while any input is still unknown, so callers can hold the query.
- */
+// next_shuffle_block_num is set to head plus one slot per scheduled witness, so
+// the round starts that many blocks before it. Null while anything is unknown.
 export const currentRoundBlockRange = (
   nextShuffleBlockNumber: number,
   blocksLeftBeforeRefetch: number,

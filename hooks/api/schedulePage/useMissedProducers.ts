@@ -10,15 +10,9 @@ const PRODUCER_MISSED_OP = "producer_missed_operation";
 // Stable identity: the result feeds a memo dependency list.
 const NO_MISSES: string[] = [];
 
-/**
- * Witnesses the chain recorded as skipping a slot in the round on screen.
- *
- * Keyed on the round's first block, not the head: the head moves every ~3s and
- * would refetch the whole fan-out with it, while the round is the thing the
- * answer belongs to. Freshness within a round comes from the interval instead,
- * which runs unconditionally - the schedule keeps advancing with live data off
- * (see headBlockRefresh), so these labels have to keep up with it.
- */
+// Keyed on the round, not the head block, which would refetch the fan-out every
+// few seconds. The interval is unconditional because the schedule keeps
+// advancing with live data off - see headBlockRefresh.
 const useMissedProducers = (
   range: RoundBlockRange | null,
   roundLength: number

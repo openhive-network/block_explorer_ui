@@ -1,6 +1,5 @@
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { Loader2, Check, ShieldCheck, Star, AlertTriangle } from "lucide-react";
 import {
   Tooltip,
@@ -11,12 +10,12 @@ import {
 import PageTitle from "../PageTitle";
 import { useI18n } from "../../i18n/i18n";
 import { cn } from "@/lib/utils";
-import { getHiveAvatarUrl } from "@/utils/HiveBlogUtils";
 import useWitnessVoteChain from "@/hooks/api/common/useWitnessVoteChain";
 import useMissedProducers from "@/hooks/api/schedulePage/useMissedProducers";
 import { currentRoundBlockRange } from "@/utils/witnessScheduleRound";
 import { fillAttributionGaps } from "@/utils/witnessScheduleAttribution";
 import { useAuth } from "@/contexts/AuthContext";
+import HiveAvatar from "@/components/ui/HiveAvatar";
 
 export interface Witness {
   producerRank: number | null;
@@ -42,9 +41,8 @@ const WitnessSchedule: React.FC<WitnessScheduleProps> = ({
   const { witnessVotes } = useWitnessVoteChain(username ?? "");
   const votedFor = React.useMemo(() => new Set(witnessVotes), [witnessVotes]);
 
-  // Misses come from the chain's own producer_missed_operation. An absent block
-  // cannot stand in for it: the schedule's block attribution has holes, and a
-  // hole looks identical to a skipped slot.
+  // Misses come from the chain, never from an absent block: attribution has
+  // holes, and a hole is indistinguishable from a skipped slot.
   const roundRange = React.useMemo(
     () =>
       currentRoundBlockRange(
@@ -60,8 +58,7 @@ const WitnessSchedule: React.FC<WitnessScheduleProps> = ({
     [missedProducers]
   );
 
-  // The two block sources leave short-lived holes; anything the anchors settle
-  // outright is credited rather than left blank for a few seconds.
+  // Credits slots the two block sources have not caught up on yet.
   const scheduleRows = React.useMemo(
     () => fillAttributionGaps(data, missed),
     [data, missed]
@@ -89,8 +86,6 @@ const WitnessSchedule: React.FC<WitnessScheduleProps> = ({
           const hasHadItsTurn =
             currentProducerIndex >= 0 && index < currentProducerIndex;
           const isVoted = votedFor.has(witness.producerName);
-          // Only a passed slot with nothing attributed to it, that the chain
-          // also names as a miss.
           const isMissed =
             hasHadItsTurn &&
             witness.blockNumber === null &&
@@ -115,11 +110,10 @@ const WitnessSchedule: React.FC<WitnessScheduleProps> = ({
               </div>
 
               <div className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1 justify-self-start">
-                <Image
-                  src={getHiveAvatarUrl(witness.producerName)}
+                <HiveAvatar
+                  accountName={witness.producerName}
+                  size={20}
                   alt={witness.producerName}
-                  width={20}
-                  height={20}
                   className="h-5 w-5 shrink-0 rounded-full object-cover"
                 />
                 <Link
