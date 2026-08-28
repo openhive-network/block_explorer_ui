@@ -115,14 +115,16 @@ const CurrentBlockCard: React.FC<CurrentBlockCardProps> = ({
         <span className="inline-flex items-center gap-1">
           <Boxes size={13} className="opacity-70" />
           <span className="font-semibold tabular-nums">
-            {(opcount ?? 0).toLocaleString(appLocale)}
+            {opcount === undefined ? "—" : opcount.toLocaleString(appLocale)}
           </span>
           <span className="opacity-60">{t("common.operations")}</span>
         </span>
         <span className="inline-flex items-center gap-1">
           <ArrowRightLeft size={13} className="opacity-70" />
           <span className="font-semibold tabular-nums">
-            {(transactionCount ?? 0).toLocaleString(appLocale)}
+            {transactionCount === undefined
+              ? "—"
+              : transactionCount.toLocaleString(appLocale)}
           </span>
           <span className="opacity-60">{t("common.transactions")}</span>
         </span>
