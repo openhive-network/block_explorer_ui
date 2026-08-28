@@ -6,6 +6,8 @@ import { useI18n } from "@/i18n/i18n";
 
 interface TitleProps {
   titleKey: string;
+  // Applied to the wrapper, not the <h1>: pass layout only. Text and colour
+  // classes here style the container and will not reach the heading.
   className?: string;
   // Plain title, for cards that set their own alignment: no rule, no inset.
   classic?: boolean;
