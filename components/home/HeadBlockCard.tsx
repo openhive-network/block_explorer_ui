@@ -41,7 +41,7 @@ const HeadBlockCard: React.FC<HeadBlockCardProps> = ({
   headBlockCardData,
   transactionCount,
   blockDetails,
-  opcount = 0,
+  opcount,
 }) => {
   const { t } = useI18n();
   const isBlockCardLoading = !headBlockCardData?.headBlockDetails;
