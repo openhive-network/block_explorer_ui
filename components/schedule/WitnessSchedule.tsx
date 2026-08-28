@@ -12,7 +12,6 @@ import { useI18n } from "../../i18n/i18n";
 import { cn } from "@/lib/utils";
 import useWitnessVoteChain from "@/hooks/api/common/useWitnessVoteChain";
 import useMissedProducers from "@/hooks/api/schedulePage/useMissedProducers";
-import { currentRoundBlockRange } from "@/utils/witnessScheduleRound";
 import { fillAttributionGaps } from "@/utils/witnessScheduleAttribution";
 import { useAuth } from "@/contexts/AuthContext";
 import HiveAvatar from "@/components/ui/HiveAvatar";
@@ -28,6 +27,7 @@ interface WitnessScheduleProps {
   currentProducerIndex: number;
   nextShuffleBlockNumber: number | string;
   blocksLeftBeforeRefetch: number | string;
+  roundStartBlock: number | null;
 }
 
 const WitnessSchedule: React.FC<WitnessScheduleProps> = ({
@@ -35,6 +35,7 @@ const WitnessSchedule: React.FC<WitnessScheduleProps> = ({
   currentProducerIndex,
   nextShuffleBlockNumber,
   blocksLeftBeforeRefetch,
+  roundStartBlock,
 }) => {
   const { t, locale } = useI18n();
   const { username } = useAuth();
@@ -43,16 +44,7 @@ const WitnessSchedule: React.FC<WitnessScheduleProps> = ({
 
   // Misses come from the chain, never from an absent block: attribution has
   // holes, and a hole is indistinguishable from a skipped slot.
-  const roundRange = React.useMemo(
-    () =>
-      currentRoundBlockRange(
-        Number(nextShuffleBlockNumber),
-        Number(blocksLeftBeforeRefetch),
-        data.length
-      ),
-    [nextShuffleBlockNumber, blocksLeftBeforeRefetch, data.length]
-  );
-  const { missedProducers } = useMissedProducers(roundRange, data.length);
+  const { missedProducers } = useMissedProducers(roundStartBlock, data.length);
   const missed = React.useMemo(
     () => new Set(missedProducers),
     [missedProducers]

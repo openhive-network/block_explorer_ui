@@ -93,9 +93,10 @@ const useWitnessesSchedule = (
       return null;
 
     const witnessByBlock = new Map<number, string>(
-      (lastBlocksData || []).map(
-        ({ block_num, witness }): [number, string] => [block_num, witness]
-      )
+      (lastBlocksData || []).map(({ block_num, witness }): [number, string] => [
+        block_num,
+        witness,
+      ])
     );
 
     // A round has one slot per witness, so it can span no more blocks than that.
@@ -169,6 +170,7 @@ const useWitnessesSchedule = (
     currentProducerIndex,
     shuffledWitnesses,
     futureShuffledWitnesses,
+    earliestBlockInRound,
     refetchWitnessSchedule,
     nextShuffleBlockNumber,
     blocksLeftBeforeRefetch,
