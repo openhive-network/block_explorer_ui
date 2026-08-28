@@ -1,22 +1,48 @@
 // Wax formats amounts against the browser locale, so its output has to be
-// restated in the app locale. The separators and digits are read from the
-// browser locale rather than assumed, because "1.234,5" and "1,234.5" are the
-// same number and guessing inflates the value by a factor of 1000.
+// restated in the app locale. The separators and digits are read from each
+// locale rather than assumed, because "1.234,5" and "1,234.5" are the same
+// number and guessing inflates the value by a factor of 1000.
 
-const partsOf = (value: number) =>
-  new Intl.NumberFormat(undefined).formatToParts(value);
+interface LocaleNumbers {
+  format: Intl.NumberFormat;
+  group: string;
+  decimal: string;
+  minus: string;
+  // Locale digit -> ASCII, for locales such as ar-EG that render Arabic-Indic.
+  toAscii: Record<string, string>;
+  // ASCII -> locale digit, indexed by value, to re-render the fraction.
+  fromAscii: string[];
+}
 
-const separator = (type: "group" | "decimal"): string =>
-  partsOf(12345.6).find((p) => p.type === type)?.value ?? "";
+const probes = new Map<string, LocaleNumbers>();
 
-// Locales such as ar-EG render Arabic-Indic digits, which Number() cannot read.
-const digitMap = (): Record<string, string> => {
-  const map: Record<string, string> = {};
+const probe = (locale?: string): LocaleNumbers => {
+  const key = locale ?? "";
+  const cached = probes.get(key);
+  if (cached) return cached;
+
+  const format = new Intl.NumberFormat(locale);
+  const partOf = (value: number, type: Intl.NumberFormatPartTypes) =>
+    format.formatToParts(value).find((p) => p.type === type)?.value;
+
+  const toAscii: Record<string, string> = {};
+  const fromAscii: string[] = [];
   for (let d = 0; d <= 9; d++) {
-    const rendered = partsOf(d).find((p) => p.type === "integer")?.value;
-    if (rendered && rendered !== String(d)) map[rendered] = String(d);
+    const rendered = partOf(d, "integer") ?? String(d);
+    fromAscii[d] = rendered;
+    if (rendered !== String(d)) toAscii[rendered] = String(d);
   }
-  return map;
+
+  const probed: LocaleNumbers = {
+    format,
+    group: partOf(12345.6, "group") ?? "",
+    decimal: partOf(12345.6, "decimal") ?? "",
+    minus: partOf(-1, "minusSign") ?? "-",
+    toAscii,
+    fromAscii,
+  };
+  probes.set(key, probed);
+  return probed;
 };
 
 /**
@@ -28,30 +54,39 @@ export const relocalizeAmount = (formatted: string, locale: string): string => {
   const [amount, ...unit] = formatted.split(" ");
   if (!amount) return formatted;
 
-  const group = separator("group");
-  const decimal = separator("decimal");
-  const digits = digitMap();
+  const source = probe();
 
   let normalized = amount;
-  for (const [rendered, ascii] of Object.entries(digits)) {
+  for (const [rendered, ascii] of Object.entries(source.toAscii)) {
     normalized = normalized.split(rendered).join(ascii);
   }
-  if (group) normalized = normalized.split(group).join("");
+  if (source.group) normalized = normalized.split(source.group).join("");
   // Strip the separators Intl omits from formatToParts but browsers still emit.
-  normalized = normalized.replace(/[   ]/g, "");
-  if (decimal && decimal !== ".")
-    normalized = normalized.split(decimal).join(".");
+  normalized = normalized.replace(/[\u00a0\u202f\u2009]/g, "");
+  if (source.decimal && source.decimal !== ".")
+    normalized = normalized.split(source.decimal).join(".");
 
-  const numeric = Number(normalized);
-  if (!Number.isFinite(numeric)) return formatted;
+  const parsed = /^(-?)(\d+)(?:\.(\d*))?$/.exec(normalized);
+  if (!parsed) return formatted;
 
-  const decimals = normalized.split(".")[1]?.length ?? 0;
+  const [, sign, integer, fraction = ""] = parsed;
+  const target = probe(locale);
 
-  return [
-    numeric.toLocaleString(locale, {
-      minimumFractionDigits: decimals,
-      maximumFractionDigits: decimals,
-    }),
-    ...unit,
-  ].join(" ");
+  // Wax formats the integer part through BigInt to stay exact, so the digits
+  // are regrouped as a string: Number() drops them past 2^53, which a network
+  // total of ~3.8e14 VESTS at six decimals is well beyond.
+  const signed = BigInt(sign + integer);
+  const grouped =
+    sign && signed === BigInt(0)
+      ? target.minus + target.format.format(signed)
+      : target.format.format(signed);
+
+  const rendered = fraction
+    .split("")
+    .map((digit) => target.fromAscii[Number(digit)] ?? digit)
+    .join("");
+
+  return [grouped + (fraction ? target.decimal + rendered : ""), ...unit].join(
+    " "
+  );
 };
