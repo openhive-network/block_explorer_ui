@@ -1,9 +1,13 @@
 // Canonical balance brackets shared by the HP Distribution card and the Top
-// Holders quick-range chips for every coin. The bucket labels mirror the API's
-// HP bucketing, so keep them in sync.
+// Holders quick-range chips for every coin.
+//
+// The two labels are not interchangeable: `bucket` is an API key that must
+// match the HP endpoint's own strings verbatim ("HP" and all), and is read only
+// by the HP Distribution card. `chip` is the displayed label and is unit-free,
+// because Top Holders reuses these bounds for HIVE, HBD and VESTS.
 export interface CoinBracket {
-  bucket: string; // matches NetworkHpDistributionResponse.bucket
-  chip: string; // compact chip label
+  bucket: string; // API key: matches NetworkHpDistributionResponse.bucket
+  chip: string; // compact display label, unit-free by design
   min: number; // lower bound (inclusive)
   max: number | null; // upper bound (exclusive); null = open-ended top
 }
