@@ -30,6 +30,7 @@ const WitnessScheduleWidget: React.FC<WitnessScheduleWidgetProps> = ({
   const {
     scheduledWitnessesData,
     currentProducerIndex,
+    earliestBlockInRound,
     refetchWitnessSchedule,
     nextShuffleBlockNumber,
     blocksLeftBeforeRefetch,
@@ -78,6 +79,7 @@ const WitnessScheduleWidget: React.FC<WitnessScheduleWidgetProps> = ({
         currentProducerIndex={currentProducerIndex}
         nextShuffleBlockNumber={nextShuffleBlockNumber}
         blocksLeftBeforeRefetch={blocksLeftBeforeRefetch}
+        roundStartBlock={earliestBlockInRound}
       />
     </div>
   );

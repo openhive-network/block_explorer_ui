@@ -27,6 +27,7 @@ const Schedule = ({ meta }: { meta: SeoMeta }) => {
   const {
     scheduledWitnessesData,
     currentProducerIndex,
+    earliestBlockInRound,
     refetchWitnessSchedule,
     nextShuffleBlockNumber,
     blocksLeftBeforeRefetch,
@@ -79,6 +80,7 @@ const Schedule = ({ meta }: { meta: SeoMeta }) => {
               currentProducerIndex={currentProducerIndex}
               nextShuffleBlockNumber={nextShuffleBlockNumber}
               blocksLeftBeforeRefetch={blocksLeftBeforeRefetch}
+              roundStartBlock={earliestBlockInRound}
             />
 
             <BackupWitnessSchedule data={backupWitnessScheduleData} />
