@@ -31,7 +31,13 @@ describe("isBadActor", () => {
     expect(isBadActor(null)).toBe(false);
   });
 
-  it("reports the size of the list", () => {
-    expect(badActorCount()).toBe(new Set(names).size);
+  it("counts distinct names, collapsing case and whitespace variants", () => {
+    // Not new Set(names).size: that repeats the raw list back at itself and
+    // would fail if the list ever carried "Foo" and " foo " as two entries.
+    const distinct = new Set(names.map((name) => name.trim().toLowerCase()));
+
+    expect(badActorCount()).toBe(distinct.size);
+    expect(badActorCount()).toBeLessThanOrEqual(names.length);
+    expect(badActorCount()).toBeGreaterThan(0);
   });
 });
