@@ -489,6 +489,17 @@ class FetchingService {
       .filter((producer): producer is string => !!producer);
   }
 
+  // The chain records a missed slot in the block that follows it.
+  async getMissedProducersInBlock(
+    blockNumber: number,
+    opTypeId: number
+  ): Promise<string[]> {
+    const response = await this.getOpsByBlock(blockNumber, [opTypeId]);
+    return (response?.operations_result ?? [])
+      .map((operation) => operation?.op?.value?.producer)
+      .filter((producer): producer is string => !!producer);
+  }
+
   async getWitnessVotesHistory(
     witnessName: string,
     direction: "asc" | "desc",
@@ -716,7 +727,7 @@ class FetchingService {
     direction: "asc" | "desc",
     fromBlock?: Date | number | undefined,
     toBlock?: Date | number | undefined
-  ): Promise<Hive.TransactionStatisticsResponse> {
+  ): Promise<Hive.TransactionStatisticsResponse[]> {
     return this.withNodeSupport("hafbe-api:transaction-statistics", () =>
       this.extendedHiveChain!.restApi["hafbe-api"].transactionStatistics({
         granularity,
