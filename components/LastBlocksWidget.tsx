@@ -615,6 +615,9 @@ const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
             className="relative"
             style={{ height: "calc(100% - 30px)" }}
           >
+            {/* Stays on the default canvas renderer: this chart repaints on a
+                3s live poll, and its avatar overlay is positioned from chart
+                pixel coordinates. */}
             <ReactECharts
               ref={chartRef}
               option={option}

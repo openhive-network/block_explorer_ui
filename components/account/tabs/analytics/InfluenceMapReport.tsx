@@ -6,6 +6,7 @@ import React, {
   useMemo,
 } from "react";
 import ReactECharts from "echarts-for-react";
+import { resolveEChartOpts } from "@/utils/echartOpts";
 import { useI18n } from "@/i18n/i18n";
 import Explorer from "@/types/Explorer";
 import { Button } from "@/components/ui/button";
@@ -1000,7 +1001,7 @@ const InfluenceMapReport: React.FC<InfluenceMapReportProps> = ({
       )}
       <ReactECharts
         ref={chartRef}
-        opts={{ renderer: "svg" }}
+        opts={resolveEChartOpts()}
         option={getChartOption(
           graphData.nodes,
           graphData.links,
