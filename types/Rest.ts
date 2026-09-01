@@ -87,6 +87,7 @@ export const extendedRest = {
     transactionStatistics: {
       params: Hive.TransactionStatisticsParams,
       result: Hive.TransactionStatisticsResponse,
+      responseArray: true,
       urlPath: "transaction-statistics",
     },
     operationTypeStatistics: {
