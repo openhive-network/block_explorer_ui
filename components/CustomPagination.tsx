@@ -22,7 +22,7 @@ interface CustomPaginationProps {
   isMirrored?: boolean;
   className?: string;
   handleLatestPage?: () => void;
-  handleFirstPage?:()=>void;
+  handleFirstPage?: () => void;
 }
 
 const CustomPagination: React.FC<CustomPaginationProps> = ({
@@ -34,7 +34,7 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
   isMirrored = false,
   className,
   handleLatestPage,
-  handleFirstPage
+  handleFirstPage,
 }) => {
   const { dir } = useI18n();
   const isRTL = dir === "rtl";
@@ -65,7 +65,7 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
     } else {
       onPageChange(1); // Default behavior: go to first page
     }
-  }
+  };
 
   const maxPage = Math.max(
     Number(paginationRange[0]),
@@ -97,18 +97,16 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
   let iconPaddingClass = "";
   let pageItemPaddingClass = "";
 
-
   if (totalPages > 10 && totalPages < 100) {
     iconPaddingClass = "p-1.5 md:p-2.5 m-0";
     pageItemPaddingClass = "px-1.5 md:px-2.5";
-  }
-  else if (totalPages > 100 && totalPages < 1000) {
+  } else if (totalPages > 100 && totalPages < 1000) {
     iconPaddingClass = "p-0.5 md:p-2.5 m-0";
     pageItemPaddingClass = "px-1 md:px-2";
   } else if (totalPages >= 1000) {
     iconPaddingClass = "p-0.5 md:p-1 m-0";
     pageItemPaddingClass = "px-[0.5px] md:px-1.5";
-  }else {
+  } else {
     iconPaddingClass = "p-2";
     pageItemPaddingClass = "px-3";
   }
@@ -122,7 +120,7 @@ const CustomPagination: React.FC<CustomPaginationProps> = ({
     <Pagination
       className={cn("bg-theme p-2 flex items-center justify-center", className)}
     >
-      <PaginationContent className="md:gap-x-1">
+      <PaginationContent className="flex-wrap justify-center md:gap-x-1">
         {paginationRange.length > 1 &&
           (isMirrored ? currentPage !== maxPage : currentPage !== 1) && (
             <>
