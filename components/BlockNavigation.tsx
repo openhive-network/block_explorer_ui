@@ -31,7 +31,7 @@ const BlockNavigation: React.FC<BlockNavigationProps> = ({
   urlParams,
   className,
 }) => {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
 
   if (!fromBlock || !toBlock) {
     return null;
@@ -57,7 +57,6 @@ const BlockNavigation: React.FC<BlockNavigationProps> = ({
     "cursor-default"
   );
 
-
   const centralTextClasses = cn(
     "text-sm font-sans font-medium text-slate-700 dark:text-slate-200",
     "tracking-tight"
@@ -78,7 +77,7 @@ const BlockNavigation: React.FC<BlockNavigationProps> = ({
                 className={navLinkClasses}
                 aria-label={t("blockNavigation.loadPreviousBlocks")}
               >
-                {'«'}
+                {"«"}
               </Link>
             </TooltipTrigger>
             <TooltipPortal>
@@ -90,7 +89,7 @@ const BlockNavigation: React.FC<BlockNavigationProps> = ({
         </TooltipProvider>
       ) : (
         <span className={navDisabledClasses} aria-hidden="true">
-          {'«'}
+          {"«"}
         </span>
       )}
 
@@ -100,7 +99,7 @@ const BlockNavigation: React.FC<BlockNavigationProps> = ({
             <div className="flex items-baseline">
               <span className="text-slate-400 dark:text-slate-500">[</span>
               <span className={centralTextClasses}>
-                {`${toBlock.toLocaleString()} - ${fromBlock.toLocaleString()}`}
+                {`${toBlock.toLocaleString(locale)} - ${fromBlock.toLocaleString(locale)}`}
               </span>
               <span className="text-slate-400 dark:text-slate-500">]</span>
             </div>
@@ -126,7 +125,7 @@ const BlockNavigation: React.FC<BlockNavigationProps> = ({
                 className={navLinkClasses}
                 aria-label={t("blockNavigation.loadNextBlocks")}
               >
-                {'»'}
+                {"»"}
               </Link>
             </TooltipTrigger>
             <TooltipPortal>
@@ -138,7 +137,7 @@ const BlockNavigation: React.FC<BlockNavigationProps> = ({
         </TooltipProvider>
       ) : (
         <span className={navDisabledClasses} aria-hidden="true">
-          {'»'}
+          {"»"}
         </span>
       )}
     </div>
