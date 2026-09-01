@@ -1,13 +1,13 @@
 import { useSearchesContext } from "@/contexts/SearchesContext";
-import useOperationsTypes from "@/hooks/api/common/useOperationsTypes";
+import useOperationBuckets from "@/hooks/common/useOperationBuckets";
 import ErrorPage from "@/components/ErrorPage";
 import { getAllBlocksPageLink } from "../utils/blockSearchHelpers";
 import NoResult from "@/components/NoResult";
 import BlocksTable from "@/components/blocks/BlocksTable";
 import useAllBlocksSearch from "@/hooks/api/blocks/useAllBlocksSearch";
-import { useCallback, useState, useMemo, useRef } from "react";
+import { useMemo, useRef } from "react";
 import { Loader2 } from "lucide-react";
-import { Operations, Block } from "@/pages/blocks";
+import { Block } from "@/pages/blocks";
 import BlockNavigation from "@/components/BlockNavigation";
 import useBlockNavigation from "@/hooks/common/useBlockNavigation";
 import { DEFAULT_BLOCKS_SEARCH_PROPS } from "@/components/blocks/BlocksSearch";
@@ -31,7 +31,6 @@ const BlockSearchResults = () => {
     blockSearchPage,
     setBlockSearchPage,
   } = useSearchesContext();
-  const { operationsTypes } = useOperationsTypes();
   const {
     settings: { liveData },
   } = useSettings();
@@ -45,43 +44,7 @@ const BlockSearchResults = () => {
   const { blocksSearchData, blocksSearchDataError, blocksSearchDataLoading } =
     useAllBlocksSearch(props, blockSearchPage, props.toBlock, liveData);
 
-  const getOperationsCounts = useCallback(
-    (operations: Operations[] | undefined) => {
-      if (!operations || !operationsTypes) {
-        return {
-          operationCount: 0,
-          virtualOperationCount: 0,
-        };
-      }
-
-      let operationCount = 0;
-      let virtualOperationCount = 0;
-
-      const operationTypesMap = new Map<number, any>();
-      for (const operationType of operationsTypes) {
-        operationTypesMap.set(operationType.op_type_id, operationType);
-      }
-
-      if (operations) {
-        for (const op of operations) {
-          const operationType = operationTypesMap.get(op.op_type_id);
-          if (operationType) {
-            if (operationType.is_virtual) {
-              virtualOperationCount += op.op_count;
-            } else {
-              operationCount += op.op_count;
-            }
-          }
-        }
-      }
-
-      return {
-        operationCount,
-        virtualOperationCount,
-      };
-    },
-    [operationsTypes]
-  );
+  const { getOperationsCounts } = useOperationBuckets();
 
   const allBlocksPageLink = getAllBlocksPageLink(
     allBlocksSearchProps,
@@ -108,15 +71,15 @@ const BlockSearchResults = () => {
     }
 
     return blocksSearchData.blocks_result.map((block) => {
-      const { operationCount, virtualOperationCount } = getOperationsCounts(
-        block.operations
-      );
+      const { operationCount, virtualOperationCount, buckets } =
+        getOperationsCounts(block.operations);
       const isNew = liveData && newBlocks.includes(block.block_num);
 
       return {
         ...block,
         operationCount,
         virtualOperationCount,
+        buckets,
         isNew,
       };
     });

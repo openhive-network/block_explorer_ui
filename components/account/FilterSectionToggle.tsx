@@ -16,6 +16,7 @@ const FilterSectionToggle: React.FC<FilterSectionToggleProps> = ({
   return (
     <button
       type="button"
+      data-testid="filters-toggle"
       onClick={toggleFilters}
       aria-pressed={isFiltersActive}
       aria-label={t("common.filters")}
