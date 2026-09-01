@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import ReactECharts from "echarts-for-react";
+import { resolveEChartOpts } from "@/utils/echartOpts";
 import moment from "moment";
 import { useRouter } from "next/router";
 import Link from "next/link";
@@ -609,7 +610,7 @@ const CommunityActivityReport: React.FC<
         ) : (
           <ReactECharts
             ref={chartRef}
-            opts={{ renderer: "svg" }}
+            opts={resolveEChartOpts()}
             option={option}
             onEvents={onEvents}
             style={{ height: `${chartHeight}px`, width: "100%" }}
