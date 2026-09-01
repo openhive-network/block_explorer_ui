@@ -19,6 +19,11 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { useSettings } from "@/contexts/SettingsContext";
 import useMediaQuery from "@/hooks/common/useMediaQuery";
 import HiveAvatar from "@/components/ui/HiveAvatar";
+import {
+  OP_BUCKET_COLORS,
+  OP_BUCKET_ORDER,
+  bucketOperations,
+} from "@/utils/operationBuckets";
 
 interface LastBlocksWidgetProps {
   headBlock?: number;
@@ -50,57 +55,17 @@ const GRID_OUTER_INSET = 34;
 const ANIMATION_MS = 500;
 const EASING = `cubic-bezier(0.215, 0.61, 0.355, 1)`;
 
-const OP_COLORS: Record<string, string> = {
-  other: "#3a86ff",
-  virtual: "#b010bf",
-  comment: "#ffbe0b",
-  custom: "#e63946",
-  vote: "#fb5607",
-  transfer: "#8338ec",
-};
-
-// Rendered bottom-to-top in the stacked bar; changing this order shifts which colour sits on top.
-const OP_SERIES_ORDER = [
-  "other",
-  "virtual",
-  "comment",
-  "custom",
-  "vote",
-  "transfer",
-] as const;
+const OP_COLORS = OP_BUCKET_COLORS;
+const OP_SERIES_ORDER = OP_BUCKET_ORDER;
 
 const getOpsCount = (
   lastBlocks: Hive.LastBlocksTypeResponse[]
-): ChartBlockData[] => {
-  const opsCount: ChartBlockData[] = lastBlocks.map((block) => ({
+): ChartBlockData[] =>
+  lastBlocks.map((block) => ({
     name: block.block_num.toString(),
     witness: block.witness,
-    virtual: 0,
-    other: 0,
-    comment: 0,
-    custom: 0,
-    vote: 0,
-    transfer: 0,
+    ...bucketOperations(block.operations),
   }));
-
-  lastBlocks.forEach((block, index) => {
-    let other = 0;
-    let virtual = 0;
-    block.operations?.forEach((op) => {
-      const typeId = op.op_type_id;
-      // Hive protocol op_type_ids: 0=vote, 1=comment, 2=transfer, 18=custom_json, ≥50=virtual ops
-      if (typeId === 0) opsCount[index].vote = op.op_count;
-      else if (typeId === 1) opsCount[index].comment = op.op_count;
-      else if (typeId === 2) opsCount[index].transfer = op.op_count;
-      else if (typeId === 18) opsCount[index].custom = op.op_count;
-      else if (typeId >= 50) virtual += op.op_count;
-      else other += op.op_count;
-    });
-    opsCount[index].other = other;
-    opsCount[index].virtual = virtual;
-  });
-  return opsCount;
-};
 
 const LastBlocksWidget: React.FC<LastBlocksWidgetProps> = ({
   headBlock,
