@@ -6,12 +6,14 @@ import React, {
   Dispatch,
 } from "react";
 import { useRouter } from "next/router";
+import moment from "moment";
 import { config } from "@/Config";
 import Explorer from "@/types/Explorer";
 import { getOperationButtonTitle } from "@/utils/UI";
 import SearchRanges from "@/components/searchRanges/SearchRanges";
 import OperationTypesDialog from "@/components/OperationTypesDialog";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   cn,
@@ -41,6 +43,13 @@ export const DEFAULT_BLOCKS_SEARCH_PROPS: Explorer.AllBlocksSearchProps = {
   page: undefined,
   filters: null,
 };
+
+const RANGE_PRESETS = [
+  { key: "lastHour", value: 1, unit: "hours" },
+  { key: "last24h", value: 24, unit: "hours" },
+  { key: "last7d", value: 7, unit: "days" },
+  { key: "last30d", value: 30, unit: "days" },
+] as const;
 
 interface BlocksSearchProps {
   isVisible: boolean;
@@ -72,7 +81,6 @@ const BlocksSearch = ({
 
   const { operationsTypes } = useOperationsTypes();
 
-  // Use URL params hook
   const { paramsState, setParams } = useURLParams(DEFAULT_BLOCKS_SEARCH_PROPS);
 
   const [accountName, setAccountName] = useState<string>(
@@ -109,6 +117,7 @@ const BlocksSearch = ({
     setRangesValues,
     setLastTimeUnitValue,
     setRangeSelectKey,
+    setTimeUnitSelectKey,
     setFromBlock,
     setToBlock,
     setStartDate,
@@ -152,7 +161,7 @@ const BlocksSearch = ({
       limit: config.standardPaginationSize,
       page: undefined,
       history: undefined,
-      firstBlock:undefined,
+      firstBlock: undefined,
     };
     setParams(newParams);
   }, [
@@ -163,6 +172,43 @@ const BlocksSearch = ({
     getRangesValues,
     setIsNewSearch,
   ]);
+
+  // Builds the payload directly: the setters below have not flushed yet, so
+  // getRangesValues() would read stale values.
+  const applyPreset = useCallback(
+    (value: number, unit: "hours" | "days") => {
+      setRangeSelectKey("lastTime");
+      setLastTimeUnitValue(value);
+      setTimeUnitSelectKey(unit);
+      setIsNewSearch(true);
+
+      setParams({
+        ...paramsState,
+        accountName: accountName ? trimAccountName(accountName) : undefined,
+        fromBlock: undefined,
+        toBlock: undefined,
+        startDate: moment().subtract(value, unit).milliseconds(0).toDate(),
+        endDate: undefined,
+        lastBlocks: undefined,
+        lastTime: value,
+        timeUnit: unit,
+        rangeSelectKey: "lastTime",
+        limit: config.standardPaginationSize,
+        page: undefined,
+        history: undefined,
+        firstBlock: undefined,
+      });
+    },
+    [
+      accountName,
+      paramsState,
+      setParams,
+      setIsNewSearch,
+      setRangeSelectKey,
+      setLastTimeUnitValue,
+      setTimeUnitSelectKey,
+    ]
+  );
 
   const handleFilterClear = useCallback(() => {
     setIsNewSearch(true);
@@ -204,13 +250,15 @@ const BlocksSearch = ({
 
   const hasActiveFilters = Boolean(
     (paramsState.filters?.length ?? 0) ||
-      paramsState.fromBlock ||
-      paramsState.toBlock ||
-      paramsState.startDate ||
-      paramsState.endDate ||
-      paramsState.accountName
+    paramsState.fromBlock ||
+    paramsState.toBlock ||
+    paramsState.startDate ||
+    paramsState.endDate ||
+    paramsState.accountName
   );
 
+  // Applying a filter collapses the panel and surfaces the pulsing dot on the
+  // Filters toggle instead — a requested behaviour, not a bug. Leave it alone.
   useEffect(() => {
     setIsFiltersActive(hasActiveFilters);
 
@@ -225,7 +273,12 @@ const BlocksSearch = ({
 
   //When we are in Block Range we need to preserve the firstBlock
   useEffect(() => {
-    if (isFromRangeSelection === true && firstUserSelectedBlock && paramsState.rangeSelectKey == "blockRange" && !isNewSearch) {
+    if (
+      isFromRangeSelection === true &&
+      firstUserSelectedBlock &&
+      paramsState.rangeSelectKey == "blockRange" &&
+      !isNewSearch
+    ) {
       searchRanges.setToBlock(firstUserSelectedBlock);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -237,12 +290,14 @@ const BlocksSearch = ({
         className={cn(
           "mb-4 overflow-hidden transition-all duration-500 ease-in max-h-0 opacity-0",
           {
-            "max-h-fit opacity-100": isVisible,
+            "max-h-fit opacity-100 overflow-visible": isVisible,
           }
         )}
       >
         <CardHeader>
-          <CardTitle>{t("common.filters")}</CardTitle>
+          <CardTitle className="text-start text-xl">
+            {t("common.filters")}
+          </CardTitle>
         </CardHeader>
         <CardContent className="max-h-fit">
           <div className="flex flex-col mb-4">
@@ -253,6 +308,33 @@ const BlocksSearch = ({
               inputType="account_name"
               className="bg-theme border-0 border-b-2 w-1/2"
             />
+          </div>
+          <div className="mb-4 flex w-full flex-col gap-y-2">
+            <Label className="text-xs">{t("blocksPage.presets.label")}</Label>
+            <div className="flex flex-wrap gap-1.5">
+              {RANGE_PRESETS.map((preset) => {
+                const active =
+                  paramsState.rangeSelectKey === "lastTime" &&
+                  paramsState.lastTime === preset.value &&
+                  paramsState.timeUnit === preset.unit;
+                return (
+                  <button
+                    key={preset.key}
+                    type="button"
+                    data-testid={`range-preset-${preset.key}`}
+                    onClick={() => applyPreset(preset.value, preset.unit)}
+                    aria-pressed={active}
+                    className={`rounded-full border px-2.5 py-1 text-xs transition-colors ${
+                      active
+                        ? "border-indigo-500 bg-indigo-500 text-white"
+                        : "border-gray-300 text-gray-700 hover:border-indigo-400 hover:bg-indigo-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-indigo-950/50"
+                    }`}
+                  >
+                    {t(`blocksPage.presets.${preset.key}`)}
+                  </button>
+                );
+              })}
+            </div>
           </div>
           <SearchRanges
             rangesProps={searchRanges}
