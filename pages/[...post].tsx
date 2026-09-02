@@ -91,7 +91,10 @@ export const getServerSideProps: GetServerSideProps<{
 }> = async ({ req, res, params }) => {
   res.setHeader("Cache-Control", SEO_LIST_CACHE_CONTROL);
   const segments = Array.isArray(params?.post) ? params!.post : [];
-  const path = `/${segments.map(encodeURIComponent).join("/")}`;
+  // Keep "@" literal: %40 would be a different URL to a crawler than /@account emits.
+  const path = `/${segments
+    .map((s) => encodeURIComponent(s).replace(/%40/g, "@"))
+    .join("/")}`;
   return {
     props: {
       meta: noindexMeta(
