@@ -4,7 +4,12 @@ import { useRouter } from "next/router";
 import type { GetServerSideProps } from "next";
 import { Loader2 } from "lucide-react";
 
-import { SeoMeta, noindexMeta, SEO_LIST_CACHE_CONTROL } from "@/utils/seo";
+import {
+  SeoMeta,
+  noindexMeta,
+  notFoundMeta,
+  SEO_LIST_CACHE_CONTROL,
+} from "@/utils/seo";
 import { seoText } from "@/utils/seo/seoStrings";
 
 import PageNotFound from "@/components/PageNotFound";
@@ -91,6 +96,17 @@ export const getServerSideProps: GetServerSideProps<{
 }> = async ({ req, res, params }) => {
   res.setHeader("Cache-Control", SEO_LIST_CACHE_CONTROL);
   const segments = Array.isArray(params?.post) ? params!.post : [];
+  // The only shapes this route serves are /@author/permlink and /community/@author/permlink.
+  const author =
+    segments.length === 2
+      ? segments[0]
+      : segments.length === 3
+        ? segments[1]
+        : "";
+  if (!author.startsWith("@")) {
+    res.statusCode = 404;
+    return { props: { meta: notFoundMeta(seoText("seo.notFound.title")) } };
+  }
   // Keep "@" literal: %40 would be a different URL to a crawler than /@account emits.
   const path = `/${segments
     .map((s) => encodeURIComponent(s).replace(/%40/g, "@"))
