@@ -2227,6 +2227,7 @@
   "seo.txIndex.title": "Transaction",
   "seo.txIndex.description": "Look up a Hive transaction by its id.",
   "seo.post.title": "Hive Post",
+  "seo.notFound.title": "Page not found",
   "seo.post.description": "A post on the Hive blockchain.",
   "seo.comments.title": "Comment Search",
   "seo.comments.description": "Search Hive comments and replies by account.",
