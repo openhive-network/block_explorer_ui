@@ -12,7 +12,14 @@ import {
   defaultOgImage,
   pageTitle,
   clamp,
+  notFoundMeta,
+  SEO_LIST_CACHE_CONTROL,
 } from "@/utils/seo";
+import {
+  normalizeBlockId,
+  queryStringOf,
+  shortHex,
+} from "@/utils/seo/entityIds";
 import { seoText } from "@/utils/seo/seoStrings";
 import { config } from "@/Config";
 import Hive from "@/types/Hive";
@@ -368,32 +375,64 @@ export default function Block({ meta }: { meta: SeoMeta }) {
 
 export const getServerSideProps: GetServerSideProps<{
   meta: SeoMeta;
-}> = async ({ req, params }) => {
+}> = async ({ req, res, params, resolvedUrl }) => {
   const raw = Array.isArray(params?.blockId)
     ? params?.blockId[0]
     : params?.blockId;
-  const block = String(raw || "").trim();
-  // Any string routes here, so without this a bogus id yields an indexable
-  // "Block <anything>" page with Dataset JSON-LD — an unbounded soft-404 space,
-  // and attacker-chosen text in our indexed titles.
-  const isBlockRef = /^\d[\d,]*$/.test(block) || /^[0-9a-f]{40}$/i.test(block);
-  const canonical = canonicalUrl(req, `/block/${encodeURIComponent(block)}`);
+  const { normalized, kind } = normalizeBlockId(String(raw || "").trim());
+
+  // 404 via statusCode, not `notFound`: app/not-found.tsx would win and lose the localized UI.
+  if (kind === "invalid") {
+    res.statusCode = 404;
+    return { props: { meta: notFoundMeta(seoText("seo.notFound.title")) } };
+  }
+
+  // Commas, leading zeros and hex case all address the same block; only one URL stays reachable.
+  if (normalized !== raw) {
+    return {
+      redirect: {
+        destination: `/block/${normalized}${queryStringOf(resolvedUrl)}`,
+        permanent: true,
+      },
+    };
+  }
+
+  res.setHeader("Cache-Control", SEO_LIST_CACHE_CONTROL);
+  const canonical = canonicalUrl(req, `/block/${normalized}`);
+
+  // The hash view duplicates the numbered page, so it stays out of the index.
+  if (kind === "hash") {
+    return {
+      props: {
+        meta: {
+          title: pageTitle(
+            seoText("seo.block.hashTitle", { short: shortHex(normalized) })
+          ),
+          description: "",
+          canonical,
+          ogType: "website",
+          noindex: true,
+        },
+      },
+    };
+  }
+
   const description = clamp(
-    seoText("seo.block.description", { num: block, site: siteConfig.name })
+    seoText("seo.block.description", { num: normalized, site: siteConfig.name })
   );
+  const title = pageTitle(seoText("seo.block.title", { num: normalized }));
   return {
     props: {
       meta: {
-        title: pageTitle(seoText("seo.block.title", { num: block })),
+        title,
         description,
         canonical,
         ogType: "article",
-        noindex: !isBlockRef,
         ogImage: defaultOgImage(absoluteBaseUrl(req)),
         jsonLd: {
           "@context": "https://schema.org",
           "@type": "Dataset",
-          name: seoText("seo.block.datasetName", { num: block }),
+          name: seoText("seo.block.datasetName", { num: normalized }),
           description,
           url: canonical,
         },
