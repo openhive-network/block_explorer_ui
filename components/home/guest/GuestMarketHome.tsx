@@ -14,6 +14,7 @@ const GuestMarketHome = () => {
   return (
     <>
       <GuestBoardHeader
+        headingLevel="h1"
         icon={LineChart}
         accent="amber"
         eyebrow={t("guestHome.market.eyebrow")}

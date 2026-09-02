@@ -21,6 +21,7 @@ const GuestGovernanceHome = () => {
   return (
     <>
       <GuestBoardHeader
+        headingLevel="h1"
         icon={Landmark}
         accent="teal"
         eyebrow={t("guestHome.governance.eyebrow")}

@@ -45,6 +45,7 @@ import OperationsTable from "@/components/OperationsTable";
 import CustomPagination from "@/components/CustomPagination";
 import useBlockId from "@/hooks/common/useBlockId";
 import { useI18n } from "@/i18n/i18n";
+import PageTitle from "@/components/PageTitle";
 import { useSettings } from "@/contexts/SettingsContext";
 
 interface BlockSearchParams {
@@ -88,7 +89,7 @@ const scrollToTrxSection = (trxId?: string) => {
 
 export default function Block({ meta }: { meta: SeoMeta }) {
   const router = useRouter();
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
   const { blockId } = useBlockId();
 
   const [blockDate, setBlockDate] = useState<Date>();
@@ -285,6 +286,11 @@ export default function Block({ meta }: { meta: SeoMeta }) {
           style={{ scrollMargin: "100px" }}
           id="block-page-top"
         >
+          <PageTitle
+            titleKey="pageTitle.blockDetails"
+            titleValues={{ num: blockDetails.block_num.toLocaleString(locale) }}
+            className="py-4"
+          />
           <BlockPageNavigation
             blockNumber={blockDetails.block_num}
             goToBlock={handleGoToBlock}

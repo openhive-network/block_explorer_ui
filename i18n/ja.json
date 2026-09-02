@@ -946,6 +946,7 @@
   "pageTitle.hiveWitnesses": "Hive証人",
   "pageTitle.hiveBlocks": "Hiveブロック",
   "pageTitle.blockDetails": "ブロック {{num}}",
+  "pageTitle.blockDetails": "ブロック {{num}}",
   "pageTitle.balanceHistory": "残高履歴",
   "pageTitle.transactionDetails": "トランザクション詳細",
   "pageTitle.settings": "設定",

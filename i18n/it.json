@@ -946,6 +946,7 @@
   "pageTitle.hiveWitnesses": "Testimoni Hive",
   "pageTitle.hiveBlocks": "Blocchi Hive",
   "pageTitle.blockDetails": "Blocco {{num}}",
+  "pageTitle.blockDetails": "Blocco {{num}}",
   "pageTitle.balanceHistory": "Cronologia Saldo",
   "pageTitle.transactionDetails": "Dettagli Transazione",
   "pageTitle.settings": "Impostazioni",

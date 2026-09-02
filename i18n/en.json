@@ -945,6 +945,7 @@
   "pageTitle.informationAboutTitle": "Information about the title",
   "pageTitle.hiveWitnesses": "Hive Witnesses",
   "pageTitle.hiveBlocks": "Hive Blocks",
+  "pageTitle.blockDetails": "Block {{num}}",
   "pageTitle.balanceHistory": "Balance History",
   "pageTitle.transactionDetails": "Transaction Details",
   "pageTitle.settings": "Settings",
