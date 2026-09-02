@@ -11,8 +11,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     // Allow the OG share-image routes; block the rest of the API.
     "Allow: /api/og/",
     "Disallow: /api/",
-    "Disallow: /settings",
+    // /settings is not disallowed on purpose: it serves noindex, which a crawler must fetch to see.
     `Sitemap: ${base}/sitemap.xml`,
+    `Sitemap: ${base}/sitemap-accounts.xml`,
     "",
   ].join("\n");
   res.setHeader("Content-Type", "text/plain; charset=utf-8");
