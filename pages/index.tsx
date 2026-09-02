@@ -27,6 +27,8 @@ import {
   defaultOgImage,
   webSiteJsonLd,
   organizationJsonLd,
+  siteConfig,
+  siteNameSaysExplorer,
   SEO_LIST_CACHE_CONTROL,
 } from "@/utils/seo";
 import { seoText } from "@/utils/seo/seoStrings";
@@ -108,18 +110,25 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async ({
   res,
 }) => {
   res.setHeader("Cache-Control", SEO_LIST_CACHE_CONTROL);
+  // initialGuestView is cookie-derived, so a shared cache must not reuse this response.
+  res.setHeader("Vary", "Cookie");
   const base = absoluteBaseUrl(req);
   const description = clamp(
     process.env.NEXT_PUBLIC_SITE_DESCRIPTION || seoText("seo.home.description")
   );
+  const title = seoText(
+    siteNameSaysExplorer ? "seo.home.title" : "seo.home.titleWithDescriptor",
+    { site: siteConfig.name }
+  );
   return {
     props: {
       meta: {
-        title: seoText("seo.home.title"),
+        title,
         description,
         canonical: canonicalUrl(req, "/"),
         ogType: "website",
         ogImage: defaultOgImage(base),
+        ogImageAlt: title,
         jsonLd: [webSiteJsonLd(base, description), organizationJsonLd(base)],
       },
       initialGuestView: guestViewFromCookies(req.cookies),
