@@ -323,6 +323,7 @@ export const getServerSideProps: GetServerSideProps<AccountPageProps> = async ({
             canonical,
             ogType: "website",
             ogImage: defaultOgImage(absoluteBaseUrl({ headers: req.headers })),
+            ogImageAlt: communityTitle,
           },
         },
       };
@@ -349,6 +350,7 @@ export const getServerSideProps: GetServerSideProps<AccountPageProps> = async ({
         description,
         canonical,
         ogImage: ogImageUrl,
+        ogImageAlt: `@${name}`,
         ogType: "profile",
         jsonLd: canonical
           ? profilePageJsonLd(canonical, `@${name}`)
