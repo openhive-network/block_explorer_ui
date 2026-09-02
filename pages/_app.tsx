@@ -15,7 +15,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       {meta && <Seo meta={meta} />}
-      <Providers>
+      <Providers seo={meta}>
         <Component {...pageProps} />
       </Providers>
     </>

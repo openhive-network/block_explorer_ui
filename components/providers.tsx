@@ -23,7 +23,10 @@ const ReactQueryDevtools =
 import { SettingsProvider, useSettings } from "@/contexts/SettingsContext";
 import { I18nProvider } from "@/i18n/i18n";
 
-import { HiveChainContextProvider } from "../contexts/HiveChainContext";
+import {
+  HiveChainContextProvider,
+  useHiveChainContext,
+} from "../contexts/HiveChainContext";
 import { AddressesContextProvider } from "../contexts/AddressesContext";
 import { HeadBlockContextProvider } from "@/contexts/HeadBlockContext";
 import Layout from "./layout";
@@ -41,6 +44,8 @@ import { WaxError } from "@hiveio/wax";
 import { config } from "@/Config";
 import { AuthContextProvider } from "@/contexts/AuthContext";
 import { WatchlistProvider } from "@/contexts/WatchlistContext";
+import SeoFallback from "@/components/seo/SeoFallback";
+import type { SeoMeta } from "@/utils/seo";
 
 // This component lives *inside* the SettingsProvider, so it can safely call useSettings().
 // Its job is to manage the dynamic layout width based on the setting.
@@ -66,7 +71,21 @@ const DynamicLayoutManager: React.FC<{ children: ReactNode }> = ({
   return <>{children}</>;
 };
 
-const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
+// HealthCheckerContextProvider and everything under it render null without a chain, so without
+// this gate the server emits an empty body for every page.
+const ChainGate: React.FC<{ children: ReactNode; seo?: SeoMeta }> = ({
+  children,
+  seo,
+}) => {
+  const { hiveChain } = useHiveChainContext();
+  if (!hiveChain) return <SeoFallback meta={seo} />;
+  return <>{children}</>;
+};
+
+const Providers: React.FC<{ children: ReactNode; seo?: SeoMeta }> = ({
+  children,
+  seo,
+}) => {
   // The logic that used useSettings() has been moved to the component above.
   const { apiAddress, nodeAddress } = useApiAddresses();
 
@@ -153,20 +172,22 @@ const Providers: React.FC<{ children: ReactNode }> = ({ children }) => {
                 <HiveChainContextProvider>
                   <AddressesContextProvider>
                     <ThemeProvider>
-                      <HealthCheckerContextProvider>
-                        <NodeSupportContextProvider>
-                          <ErrorBoundary fallback={<ErrorPage />}>
-                            <HeadBlockContextProvider>
-                              <OperationTypesContextProvider>
-                                <SearchesContextProvider>
-                                  <Layout>{children}</Layout>
-                                  <ReactQueryDevtools initialIsOpen={false} />
-                                </SearchesContextProvider>
-                              </OperationTypesContextProvider>
-                            </HeadBlockContextProvider>
-                          </ErrorBoundary>
-                        </NodeSupportContextProvider>
-                      </HealthCheckerContextProvider>
+                      <ChainGate seo={seo}>
+                        <HealthCheckerContextProvider>
+                          <NodeSupportContextProvider>
+                            <ErrorBoundary fallback={<ErrorPage />}>
+                              <HeadBlockContextProvider>
+                                <OperationTypesContextProvider>
+                                  <SearchesContextProvider>
+                                    <Layout>{children}</Layout>
+                                    <ReactQueryDevtools initialIsOpen={false} />
+                                  </SearchesContextProvider>
+                                </OperationTypesContextProvider>
+                              </HeadBlockContextProvider>
+                            </ErrorBoundary>
+                          </NodeSupportContextProvider>
+                        </HealthCheckerContextProvider>
+                      </ChainGate>
                     </ThemeProvider>
                   </AddressesContextProvider>
                 </HiveChainContextProvider>
