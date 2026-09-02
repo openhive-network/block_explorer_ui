@@ -1507,6 +1507,7 @@
   "proposalAnalytics.funded": "Funded",
   "proposalAnalytics.notFunded": "Not Funded",
   "navbar.explore": "Explore",
+  "seoShell.loading": "Loading the explorer…",
   "navbar.discover": "Discover",
   "navbar.communitiesTitle": "Communities",
   "navbar.proposalsTitle": "Proposals",
