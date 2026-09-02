@@ -237,6 +237,14 @@ export const noindexMeta = (
   noindex: true,
 });
 
+// 404 meta: no canonical, no description. Title is passed in so en.json stays out of the client bundle.
+export const notFoundMeta = (title: string): SeoMeta => ({
+  title: pageTitle(title),
+  description: "",
+  canonical: "",
+  noindex: true,
+});
+
 // Meta for a static index/list route (witnesses, proposals, …).
 export const listPageMeta = (
   req: SeoRequest,
